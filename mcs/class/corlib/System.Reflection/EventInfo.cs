@@ -37,7 +37,11 @@ namespace System.Reflection {
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
+#if MOBILE
+	public abstract class EventInfo : MemberInfo {
+#else
 	public abstract class EventInfo : MemberInfo, _EventInfo {
+#endif
 		AddEventAdapter cached_add_event;
 
 		public abstract EventAttributes Attributes {get;}
@@ -180,6 +184,7 @@ namespace System.Reflection {
 		}
 #endif
 
+#if !MOBILE
 		void _EventInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -205,6 +210,7 @@ namespace System.Reflection {
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		delegate void AddEventAdapter (object _this, Delegate dele);
 
@@ -269,6 +275,18 @@ namespace System.Reflection {
 			adapterFrame = typeof (EventInfo).GetMethod (frameName, BindingFlags.Static | BindingFlags.NonPublic);
 			adapterFrame = adapterFrame.MakeGenericMethod (typeVector);
 			return (AddEventAdapter)Delegate.CreateDelegate (typeof (AddEventAdapter), addHandlerDelegate, adapterFrame, true);
+		}
+#endif
+
+#if NET_4_5
+		public virtual MethodInfo AddMethod {
+			get { return GetAddMethod (true); }
+		}
+		public virtual MethodInfo RaiseMethod {
+			get { return GetRaiseMethod (true); }
+		}
+		public virtual MethodInfo RemoveMethod {
+			get { return GetRemoveMethod (true); }
 		}
 #endif
 	}

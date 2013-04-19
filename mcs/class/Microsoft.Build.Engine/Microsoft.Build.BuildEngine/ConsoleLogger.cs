@@ -149,7 +149,7 @@ namespace Microsoft.Build.BuildEngine {
 
 		bool TryParseConsoleColor (string color_str, ref ConsoleColor color)
 		{
-			switch (color_str.ToLower ()) {
+			switch (color_str.ToLowerInvariant ()) {
 			case "black": color = ConsoleColor.Black; break;
 
 			case "blue": color = ConsoleColor.DarkBlue; break;

@@ -60,6 +60,7 @@
 #include <mono/utils/mono-stdlib.h>
 #include <mono/utils/mono-io-portability.h>
 #include <mono/utils/mono-error-internals.h>
+#include <mono/utils/atomic.h>
 #ifdef HOST_WIN32
 #include <direct.h>
 #endif
@@ -2011,6 +2012,9 @@ ves_icall_System_AppDomain_InternalUnload (gint32 domain_id)
 	 */
 	if (g_getenv ("MONO_NO_UNLOAD"))
 		return;
+#ifdef __native_client__
+	return;
+#endif
 
 	mono_domain_unload (domain);
 }

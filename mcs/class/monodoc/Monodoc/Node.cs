@@ -20,6 +20,9 @@ namespace Monodoc
 		bool loaded;
 		Node parent;
 		List<Node> nodes;
+#if LEGACY_MODE
+		ArrayList legacyNodes;
+#endif
 		Dictionary<string, Node> childrenLookup;
 		bool elementSort;
 		/* Address has three types of value, 
@@ -110,11 +113,13 @@ namespace Monodoc
 		[Obsolete ("Use ChildNodes")]
 		public ArrayList Nodes {
 			get {
-				return new ArrayList (ChildNodes);
+				if (legacyNodes == null)
+					legacyNodes = new ArrayList (ChildNodes as ICollection);
+				return legacyNodes;
 			}
 		}
 
-		public List<Node> ChildNodes {
+		public IList<Node> ChildNodes {
 			get {
 				EnsureLoaded ();
 				return nodes != null ? nodes : new List<Node> ();
@@ -352,6 +357,26 @@ namespace Monodoc
 			}
 
 			return string.Compare (cap1, cap2, StringComparison.Ordinal);
+		}
+	}
+
+	internal static class IListExtensions
+	{
+		// TODO: if the backing store ever change from List<T>, we need to tune these methods to have a fallback mechanism
+		public static int BinarySearch<T> (this IList<T> ilist, T item)
+		{
+			var list = ilist as List<T>;
+			if (list == null)
+				throw new NotSupportedException ();
+			return list.BinarySearch (item);
+		}
+
+		public static int BinarySearch<T> (this IList<T> ilist, T item, IComparer<T> comparer)
+		{
+			var list = ilist as List<T>;
+			if (list == null)
+				throw new NotSupportedException ();
+			return list.BinarySearch (item, comparer);
 		}
 	}
 }

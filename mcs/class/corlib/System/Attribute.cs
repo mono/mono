@@ -40,7 +40,11 @@ namespace System
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_Attribute))]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+#if MOBILE
+	public abstract class Attribute {
+#else
 	public abstract class Attribute : _Attribute {
+#endif
 		protected Attribute ()
 		{
 		}
@@ -420,6 +424,7 @@ namespace System
 			return ValueType.DefaultEquals (this, obj);
 		}
 
+#if !MOBILE
 		void _Attribute.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -440,5 +445,6 @@ namespace System
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 	}
 }

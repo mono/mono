@@ -231,6 +231,10 @@ namespace MonoTests.System.Globalization
 		// make sure that all CultureInfo holds non-null calendars.
 		public void OptionalCalendars ()
 		{
+#if MOBILE
+			// ensure the linker does not remove them so we can test them
+			Assert.IsNotNull (typeof (UmAlQuraCalendar), "UmAlQuraCalendar");
+#endif
 			foreach (CultureInfo ci in CultureInfo.GetCultures (
 				CultureTypes.AllCultures))
 				Assert.IsNotNull (ci.OptionalCalendars, String.Format ("{0} {1}",
@@ -564,6 +568,8 @@ namespace MonoTests.System.Globalization
 		{
 			Assert.AreEqual (31748, new CultureInfo ("zh-Hant").LCID);
 			Assert.AreEqual (31748, CultureInfo.GetCultureInfo ("zh-Hant").LCID);
+			Assert.AreEqual (31748, new CultureInfo ("zh-CHT").LCID);
+			Assert.AreEqual (31748, new CultureInfo ("zh-CHT").Parent.LCID);
 		}
 		
 		[Test]

@@ -222,6 +222,8 @@ namespace System.IO {
 
 				if (l >= 2 && DirectorySeparatorChar == '\\' && ret [l - 1] == VolumeSeparatorChar)
 					return ret + DirectorySeparatorChar;
+				else if (l == 1 && DirectorySeparatorChar == '\\' && path.Length >= 2 && path [nLast] == VolumeSeparatorChar)
+					return ret + VolumeSeparatorChar;
 				else {
 					//
 					// Important: do not use CanonicalizePath here, use
@@ -367,7 +369,7 @@ namespace System.IO {
 					if (current [1] == VolumeSeparatorChar)
 						path = current.Substring (0, 2) + path;
 					else
-						path = current.Substring (0, current.IndexOf ('\\', current.IndexOf ("\\\\") + 1));
+						path = current.Substring (0, current.IndexOf ('\\', current.IndexOfOrdinalUnchecked ("\\\\") + 1));
 				}
 			}
 			

@@ -42,6 +42,9 @@ namespace System.ComponentModel.Composition.Primitives
 
         private Type CreateStandardDelegateType()
         {
+#if MONOTOUCH
+            throw new NotImplementedException ();
+#else
             ParameterInfo[] parameters = this._method.GetParameters();
 
             // This array should contains a lit of all argument types, and the last one is the return type (could be void)
@@ -53,6 +56,7 @@ namespace System.ComponentModel.Composition.Primitives
             }
 
             return Expression.GetDelegateType(parameterTypes);
+#endif
         }
     }
 }

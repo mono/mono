@@ -1006,12 +1006,10 @@ public abstract class Calendar : ICloneable
 	/// </value>
 	internal string[] EraNames {
 		get {
-			if (M_EraNames == null ||
-			    M_EraNames.Length != Eras.Length)
-				throw new Exception(
-					"Internal: M_EraNames " +
-					"not initialized!");
-			return (string[])M_EraNames.Clone();
+			if (M_EraNames == null || M_EraNames.Length != Eras.Length)
+				throw new Exception ("Internal: M_EraNames not initialized!");
+
+			return M_EraNames;
 		}
 		set {
 			CheckReadOnly ();

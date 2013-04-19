@@ -48,7 +48,9 @@ namespace System.Reflection {
 	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
-#if NET_4_0
+#if MOBILE
+	public abstract class Module : ISerializable, ICustomAttributeProvider {
+#elif NET_4_0
 	public abstract class Module : ISerializable, ICustomAttributeProvider, _Module {
 #else
 	public partial class Module : ISerializable, ICustomAttributeProvider, _Module {
@@ -220,7 +222,7 @@ namespace System.Reflection {
 		private static bool filter_by_type_name (Type m, object filterCriteria) {
 			string s = (string)filterCriteria;
 			if (s.Length > 0 && s [s.Length - 1] == '*')
-				return m.Name.StartsWith (s.Substring (0, s.Length - 1), StringComparison.Ordinal);
+				return m.Name.StartsWithOrdinalUnchecked (s.Substring (0, s.Length - 1));
 			
 			return m.Name == s;
 		}
@@ -228,9 +230,9 @@ namespace System.Reflection {
 		private static bool filter_by_type_name_ignore_case (Type m, object filterCriteria) {
 			string s = (string)filterCriteria;
 			if (s.Length > 0 && s [s.Length - 1] == '*')
-				return m.Name.StartsWith (s.Substring (0, s.Length - 1), StringComparison.OrdinalIgnoreCase);
+				return m.Name.StartsWithOrdinalCaseInsensitiveUnchecked (s.Substring (0, s.Length - 1));
 			
-			return String.Equals (m.Name, s, StringComparison.OrdinalIgnoreCase);
+			return string.CompareOrdinalCaseInsensitiveUnchecked (m.Name, s) == 0;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -263,6 +265,7 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern void GetPEKind (IntPtr module, out PortableExecutableKinds peKind, out ImageFileMachine machine);
 
+#if !MOBILE
 		void _Module.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -283,6 +286,7 @@ namespace System.Reflection {
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 #if NET_4_0
 		public override bool Equals (object o)
@@ -452,5 +456,10 @@ namespace System.Reflection {
 		}
 #endif
 
+#if NET_4_5
+		public virtual IEnumerable<CustomAttributeData> CustomAttributes {
+			get { return GetCustomAttributesData (); }
+		}
+#endif
 	}
 }

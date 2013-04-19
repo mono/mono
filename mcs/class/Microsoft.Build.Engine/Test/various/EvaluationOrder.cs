@@ -233,6 +233,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestImportOrder1 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -255,6 +256,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		[ExpectedException (typeof (InvalidProjectFileException))]
 		public void TestImportOrder2 ()
 		{
@@ -326,6 +328,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestImportOrder5 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -348,6 +351,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestImportOrder6 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -370,6 +374,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestImportOrder7 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);

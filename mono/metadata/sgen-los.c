@@ -554,19 +554,8 @@ sgen_los_update_cardtable_mod_union (void)
 	LOSObject *obj;
 
 	for (obj = los_object_list; obj; obj = obj->next) {
-		guint8 *start_card = sgen_card_table_get_card_scan_address ((mword)obj->data);
-		guint8 *end_card = sgen_card_table_get_card_scan_address ((mword)obj->data + obj->size - 1) + 1;
-		size_t num_cards = end_card - start_card;
-
-		if (!obj->cardtable_mod_union) {
-			obj->cardtable_mod_union = sgen_alloc_internal_dynamic (num_cards,
-					INTERNAL_MEM_CARDTABLE_MOD_UNION, TRUE);
-			memcpy (obj->cardtable_mod_union, start_card, num_cards);
-		} else {
-			int i;
-			for (i = 0; i < num_cards; ++i)
-				obj->cardtable_mod_union [i] |= start_card [i];
-		}
+		obj->cardtable_mod_union = sgen_card_table_update_mod_union (obj->cardtable_mod_union,
+				obj->data, obj->size, NULL);
 	}
 }
 
@@ -579,7 +568,7 @@ sgen_los_object_size (LOSObject *obj)
 LOSObject*
 sgen_los_header_for_object (char *data)
 {
-	return (LOSObject*)(data - (sizeof (LOSObject*) + sizeof (mword)));
+	return (LOSObject*)(data - sizeof (LOSObject));
 }
 
 void

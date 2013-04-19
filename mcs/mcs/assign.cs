@@ -310,6 +310,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override Location StartLocation {
+			get {
+				return target.StartLocation;
+			}
+		}
+
 		public override bool ContainsEmitWithAwait ()
 		{
 			return target.ContainsEmitWithAwait () || source.ContainsEmitWithAwait ();
@@ -536,7 +542,7 @@ namespace Mono.CSharp {
 		// Keep resolved value because field initializers have their own rules
 		//
 		ExpressionStatement resolved;
-		IMemberContext mc;
+		FieldBase mc;
 
 		public FieldInitializer (FieldBase mc, Expression expression, Location loc)
 			: base (new FieldExpr (mc.Spec, expression.Location), expression, loc)
@@ -544,6 +550,12 @@ namespace Mono.CSharp {
 			this.mc = mc;
 			if (!mc.IsStatic)
 				((FieldExpr)target).InstanceExpression = new CompilerGeneratedThis (mc.CurrentType, expression.Location);
+		}
+
+		public override Location StartLocation {
+			get {
+				return loc;
+			}
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)

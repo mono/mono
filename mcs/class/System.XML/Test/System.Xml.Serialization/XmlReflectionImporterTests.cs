@@ -1639,18 +1639,19 @@ namespace MonoTests.System.XmlSerialization
 		[Test]
 		public void Bug708178Type()
 		{
+			string file = Path.Combine (Path.GetTempPath (), "Bug708178Type.xml");
 			XmlSerializer xmlSerializer = new XmlSerializer (typeof(Bug708178Type));
 			Bug708178Type bugType = new Bug708178Type ();
 			bugType.Foo.Add ("test");
 			Assert.AreEqual (1, bugType.Foo.Count);
 		 
 			//xml Serialize
-			TextWriter WriteFileStream = new StreamWriter (@"Bug708178Type.xml", false);
+			TextWriter WriteFileStream = new StreamWriter (file, false);
 			xmlSerializer.Serialize (WriteFileStream, bugType);
 			WriteFileStream.Close ();
 		 
 			//xml Deserialize
-			FileStream ReadFileStream = new FileStream (@"Bug708178Type.xml", FileMode.Open, FileAccess.Read, FileShare.Read);
+			FileStream ReadFileStream = new FileStream (file, FileMode.Open, FileAccess.Read, FileShare.Read);
 			Bug708178Type bugTypeReload = (Bug708178Type)xmlSerializer.Deserialize (ReadFileStream);
 		 
 			//should have deserialized the relationship

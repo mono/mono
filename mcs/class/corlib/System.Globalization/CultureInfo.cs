@@ -279,8 +279,15 @@ namespace System.Globalization
 				if (parent_culture == null) {
 					if (!constructed)
 						Construct ();
-					if (parent_lcid == cultureID)
+					if (parent_lcid == cultureID) {
+						//
+						// Parent lcid is same but culture info is not for legacy zh culture
+						//
+						if (parent_lcid == 0x7C04 && EnglishName.EndsWith (" Legacy", StringComparison.Ordinal))
+							return parent_culture = new CultureInfo ("zh-Hant");
+
 						return null;
+					}
 					
 					if (parent_lcid == InvariantCultureId)
 						parent_culture = InvariantCulture;
@@ -1000,5 +1007,27 @@ namespace System.Globalization
 				throw new NotSupportedException ("Calendar not found, if the linker is enabled make sure to preserve this type: " + name);
 			return (Calendar) Activator.CreateInstance (type);
 		}
+		
+#if NET_4_5
+		[MonoTODO]
+		public static CultureInfo DefaultThreadCurrentCulture {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		[MonoTODO]
+		public static CultureInfo DefaultThreadCurrentUICulture {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 	}
 }

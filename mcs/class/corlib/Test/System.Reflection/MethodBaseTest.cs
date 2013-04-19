@@ -53,6 +53,68 @@ namespace MonoTests.System.Reflection
 		}
 	}
 
+	class MethodBaseOverloadTestDoesNotCauseCompilerError : MethodBase
+	{
+		public override MethodAttributes Attributes
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		public override MethodImplAttributes GetMethodImplementationFlags ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override ParameterInfo[] GetParameters ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override object Invoke (object obj, BindingFlags invokeAttr, Binder binder, object[] parameters, global::System.Globalization.CultureInfo culture)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override RuntimeMethodHandle MethodHandle
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		public override Type DeclaringType
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override object[] GetCustomAttributes (bool inherit)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override bool IsDefined (Type attributeType, bool inherit)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override MemberTypes MemberType
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		public override string Name
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		public override Type ReflectedType
+		{
+			get { throw new NotImplementedException (); }
+		}
+	}
 
 	[TestFixture]
 	public class MethodBaseTest
@@ -339,6 +401,9 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+#if MOBILE
+		[Category ("NotWorking")] // #10552
+#endif
 		public void MutableString ()
 		{
 			var m = typeof (MethodBaseTest).GetMethod ("UnsafeConversion", BindingFlags.NonPublic | BindingFlags.Static);

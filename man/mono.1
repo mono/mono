@@ -144,6 +144,12 @@ Defaults to 128.
 .I nodebug
 Instructs the AOT compiler to not output any debugging information.
 .TP
+.I dwarfdebug
+Instructs the AOT compiler to emit DWARF debugging information. When
+used together with the nodebug option, only DWARF debugging
+information is emitted, but not the information that can be used at
+runtime.
+.TP
 .I nrgctx-trampolines=[number]
 When compiling in full aot mode, the generic sharing trampolines must be precreated
 in the AOT image.  You can add additional method trampolines with this argument.
@@ -1169,6 +1175,11 @@ the nursery at collection time, instead of the default, when buffers
 are allocated (clear-at-gc).   The consistency check ensures that
 there are no major to minor references that are not on the remembered
 sets. 
+.TP
+\fBmod-union-consistency-check\fR
+Checks that the mod-union cardtable is consistent before each
+finishing major collection pause.  This check is only applicable to
+concurrent major collectors.
 .TP
 \fBcheck-mark-bits\fR
 Checks that mark bits in the major heap are consistent at the end of

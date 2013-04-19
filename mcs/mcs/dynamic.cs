@@ -447,6 +447,7 @@ namespace Mono.CSharp
 				d.CreateContainer ();
 				d.DefineContainer ();
 				d.Define ();
+				d.PrepareEmit ();
 
 				site.AddTypeContainer (d);
 				del_type = new TypeExpression (d.CurrentType, loc);

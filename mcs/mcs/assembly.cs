@@ -288,7 +288,7 @@ namespace Mono.CSharp
 				} else if (emitted_forwarders.ContainsKey (t.MemberDefinition)) {
 					Report.SymbolRelatedToPreviousError (emitted_forwarders[t.MemberDefinition].Location, null);
 					Report.Error (739, a.Location, "A duplicate type forward of type `{0}'",
-						TypeManager.CSharpName (t));
+						t.GetSignatureForError ());
 					return;
 				}
 
@@ -297,13 +297,13 @@ namespace Mono.CSharp
 				if (t.MemberDefinition.DeclaringAssembly == this) {
 					Report.SymbolRelatedToPreviousError (t);
 					Report.Error (729, a.Location, "Cannot forward type `{0}' because it is defined in this assembly",
-						TypeManager.CSharpName (t));
+						t.GetSignatureForError ());
 					return;
 				}
 
 				if (t.IsNested) {
 					Report.Error (730, a.Location, "Cannot forward type `{0}' because it is a nested type",
-						TypeManager.CSharpName (t));
+						t.GetSignatureForError ());
 					return;
 				}
 

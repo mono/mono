@@ -6,8 +6,6 @@
 
 #include <config.h>
 
-#ifndef DISABLE_JIT
-
 #include "mini.h"
 #include <ctype.h>
 #include <mono/metadata/opcodes.h>
@@ -15,6 +13,8 @@
 #ifndef HOST_WIN32
 #include <unistd.h>
 #endif
+
+#ifndef DISABLE_JIT
 
 #ifndef DISABLE_LOGGING
 
@@ -130,6 +130,9 @@ mono_blockset_print (MonoCompile *cfg, MonoBitSet *set, const char *name, guint 
 void
 mono_disassemble_code (MonoCompile *cfg, guint8 *code, int size, char *id)
 {
+#if defined(__native_client__)
+	return;
+#endif
 #ifndef DISABLE_LOGGING
 	GHashTable *offset_to_bb_hash = NULL;
 	int i, cindex, bb_num;
@@ -280,6 +283,13 @@ mono_disassemble_code (MonoCompile *cfg, guint8 *code, int size, char *id)
 	g_free (o_file);
 	g_free (as_file);
 #endif
+}
+
+#else /* DISABLE_JIT */
+
+void
+mono_blockset_print (MonoCompile *cfg, MonoBitSet *set, const char *name, guint idom)
+{
 }
 
 #endif /* DISABLE_JIT */

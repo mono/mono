@@ -1465,6 +1465,10 @@ namespace MonoTests.System.ComponentModel
 		[Test]
 		public void GetProperties_Order ()
 		{
+#if MOBILE
+			// Component.Container will be be linked out (when using Link SDK) if unused
+			Assert.Null (new Component ().Container, "pre-test");
+#endif
 			MyComponent com = new MyComponent (new MyContainer ());
 
 			PropertyDescriptorCollection col = TypeDescriptor.GetProperties (com);

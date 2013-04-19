@@ -32,6 +32,7 @@
 #include "mono/metadata/attrdefs.h"
 #include "mono/metadata/gc-internal.h"
 #include "mono/utils/mono-counters.h"
+#include "mono/utils/atomic.h"
 #include <string.h>
 #include <errno.h>
 
@@ -254,7 +255,7 @@ cominterop_object_is_rcw (MonoObject *obj)
 	if (!obj)
 		return FALSE;
 	klass = mono_object_class (obj);
-	if (mono_class_is_transparent_proxy (klass))
+	if (!mono_class_is_transparent_proxy (klass))
 		return FALSE;
 
 	real_proxy = ((MonoTransparentProxy*)obj)->rp;
@@ -1458,7 +1459,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetIUnknownForObjectInternal (M
 		if (!object)
 			return NULL;
 		klass = mono_object_class (object);
-		if (mono_class_is_transparent_proxy (klass)) {
+		if (!mono_class_is_transparent_proxy (klass)) {
 			g_assert_not_reached ();
 			return NULL;
 		}

@@ -88,6 +88,15 @@ typedef guint64 mword;
  */
 //#define SGEN_COUNT_NUMBER_OF_MAJOR_OBJECTS_MARKED
 
+/*
+ * Object layout statistics gather a histogram of reference locations
+ * over all scanned objects.  We use this information to improve GC
+ * descriptors to speed up scanning.  This does not provide any
+ * troubleshooting assistance (unless you are troubled in highly
+ * unusual ways) and makes scanning slower.
+ */
+//#define SGEN_OBJECT_LAYOUT_STATISTICS
+
 #ifndef SGEN_BINARY_PROTOCOL
 #ifndef HEAVY_STATISTICS
 #define MANAGED_ALLOCATION
@@ -148,22 +157,6 @@ typedef guint64 mword;
  * 512 annedoctally keeps wastage under control and doesn't impact allocation performance too much. 
 */
 #define SGEN_MAX_NURSERY_WASTE 512
-
-
-/* This is also the MAJOR_SECTION_SIZE for the copying major
-   collector */
-#define SGEN_PINNED_CHUNK_SIZE	(128 * 1024)
-
-/*
- * Number of entries of a sequential store buffer.
- * This number represents how frequently we'll have to alloc
- * a new buffer, so it's a tradeoff of potential wasted space and
- * increased performance.
- * 
- * The current value of 1024 was probably selected because it fits a x86 page.
- * There's no history on the why's of this value besides this.
- */
-#define DEFAULT_REMSET_SIZE 1024
 
 
 /*

@@ -220,7 +220,7 @@ typedef struct {
 } AllocatorWrapperInfo;
 
 MonoMethod* mono_gc_get_managed_allocator (MonoVTable *vtable, gboolean for_box) MONO_INTERNAL;
-MonoMethod* mono_gc_get_managed_array_allocator (MonoVTable *vtable, int rank) MONO_INTERNAL;
+MonoMethod* mono_gc_get_managed_array_allocator (MonoClass *klass) MONO_INTERNAL;
 MonoMethod *mono_gc_get_managed_allocator_by_type (int atype) MONO_INTERNAL;
 
 guint32 mono_gc_get_managed_allocator_types (void) MONO_INTERNAL;
@@ -362,6 +362,10 @@ gboolean mono_gc_reference_queue_add (MonoReferenceQueue *queue, MonoObject *obj
 BOOL APIENTRY mono_gc_dllmain (HMODULE module_handle, DWORD reason, LPVOID reserved) MONO_INTERNAL;
 #endif
 
+/*
+Those functions must be used when it's possible that either destination is not
+word aligned or size is not a multiple of word size.
+*/
 void mono_gc_bzero (void *dest, size_t size) MONO_INTERNAL;
 void mono_gc_memmove (void *dest, const void *src, size_t size) MONO_INTERNAL;
 

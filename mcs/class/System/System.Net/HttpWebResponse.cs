@@ -155,6 +155,9 @@ namespace System.Net
 			}
 		}
 		
+#if NET_4_5
+		virtual
+#endif
 		public CookieCollection Cookies {
 			get {
 				CheckDisposed ();
@@ -199,6 +202,9 @@ namespace System.Net
 			}
 		}
 		
+#if NET_4_5
+		virtual
+#endif
 		public string Method {
 			get {
 				CheckDisposed ();
@@ -227,12 +233,18 @@ namespace System.Net
 			}
 		}
 		
+#if NET_4_5
+		virtual
+#endif
 		public HttpStatusCode StatusCode {
 			get {
 				return statusCode; 
 			}
 		}
 		
+#if NET_4_5
+		virtual
+#endif
 		public string StatusDescription {
 			get {
 				CheckDisposed ();
@@ -309,13 +321,21 @@ namespace System.Net
 			Dispose (true);
 			GC.SuppressFinalize (this);  
 		}
-
+		
+#if NET_4_0
+		protected override void Dispose (bool disposing)
+		{
+			this.disposed = true;
+			base.Dispose (true);
+		}
+#else
 		void Dispose (bool disposing) 
 		{
 			this.disposed = true;
 			if (disposing)
 				Close ();
 		}
+#endif
 		
 		private void CheckDisposed () 
 		{

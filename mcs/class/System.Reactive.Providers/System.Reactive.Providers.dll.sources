@@ -1,3 +1,4 @@
+Assembly/AssemblyInfo.cs
 ../../../external/rx/Rx/NET/Source/System.Reactive.Providers/GlobalSuppressions.cs
 ../../../external/rx/Rx/NET/Source/System.Reactive.Providers/Properties/AssemblyInfo.cs
 ../../../external/rx/Rx/NET/Source/System.Reactive.Providers/Reactive/Internal/Constants.cs

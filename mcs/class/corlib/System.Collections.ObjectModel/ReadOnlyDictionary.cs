@@ -1,8 +1,9 @@
 //
 // ReadOnlyDictionary.cs
 //
-// Author:
+// Authors:
 //       Martin Baulig <martin.baulig@xamarin.com>
+//       Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (c) 2013 Xamarin Inc. (http://www.xamarin.com)
 //
@@ -27,45 +28,60 @@
 #if NET_4_5
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace System.Collections.ObjectModel {
 
-	[SerializableAttribute]
+	[Serializable]
+	[DebuggerDisplay ("Count={Count}")]
+	[DebuggerTypeProxy (typeof (CollectionDebuggerView<,>))]
 	public class ReadOnlyDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IDictionary,
-		IReadOnlyDictionary<TKey, TValue> {
+		IReadOnlyDictionary<TKey, TValue>
+	{
+		readonly IDictionary<TKey, TValue> inner;
 
-		IDictionary<TKey, TValue> inner;
-
-		public ReadOnlyDictionary (IDictionary<TKey, TValue> inner)
+		public ReadOnlyDictionary (IDictionary<TKey, TValue> dictionary)
 		{
-			this.inner = inner;
+			if (dictionary == null)
+				throw new ArgumentNullException ("dictionary");
+
+			this.inner = dictionary;
 		}
 
-		#region IReadOnlyDictionary<TKey, TValue> implementation
+		protected IDictionary<TKey, TValue> Dictionary {
+			get {
+				return inner;
+			}
+		}
+
 		public bool ContainsKey (TKey key)
 		{
 			return inner.ContainsKey (key);
 		}
+
 		public bool TryGetValue (TKey key, out TValue value)
 		{
 			return inner.TryGetValue (key, out value);
 		}
+
 		public TValue this [TKey key] {
 			get {
 				return inner [key];
 			}
 		}
-		public IEnumerable<TKey> Keys {
+
+		public KeyCollection Keys {
 			get {
-				return inner.Keys;
+				return new KeyCollection (inner.Keys);
 			}
 		}
-		public IEnumerable<TValue> Values {
+
+		public ValueCollection Values {
 			get {
-				return inner.Values;
+				return new ValueCollection (inner.Values);
 			}
 		}
-		#endregion
+
 		#region IEnumerable<KeyValuePair<TKey, TValue>> implementation
 		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator ()
 		{
@@ -102,13 +118,13 @@ namespace System.Collections.ObjectModel {
 
 		ICollection<TKey> IDictionary<TKey, TValue>.Keys {
 			get {
-				return inner.Keys;
+				return Keys;
 			}
 		}
 
 		ICollection<TValue> IDictionary<TKey, TValue>.Values {
 			get {
-				return inner.Values;
+				return Values;
 			}
 		}
 
@@ -164,13 +180,13 @@ namespace System.Collections.ObjectModel {
 
 		ICollection IDictionary.Keys {
 			get {
-				return ((IDictionary)inner).Keys;
+				return Keys;
 			}
 		}
 
 		ICollection IDictionary.Values {
 			get {
-				return ((IDictionary)inner).Values;
+				return Values;
 			}
 		}
 
@@ -228,19 +244,197 @@ namespace System.Collections.ObjectModel {
 			}
 		}
 
-		public bool IsSynchronized {
+		bool ICollection.IsSynchronized {
 			get {
 				return false;
 			}
 		}
 
-		public object SyncRoot {
+		object ICollection.SyncRoot {
 			get {
 				throw new NotSupportedException ();
 			}
 		}
 
 		#endregion
+
+		IEnumerable<TKey> IReadOnlyDictionary<TKey, TValue>.Keys {
+			get {
+				return Keys;
+			}
+		}
+
+		IEnumerable<TValue> IReadOnlyDictionary<TKey, TValue>.Values {
+			get {
+				return Values;
+			}
+		}
+
+		[Serializable]
+		[DebuggerDisplay ("Count={Count}")]
+		[DebuggerTypeProxy (typeof (CollectionDebuggerView<,>))]		
+		public sealed class KeyCollection : ICollection<TKey>, IEnumerable<TKey>, ICollection, IEnumerable
+		{
+			readonly ICollection<TKey> collection;
+
+			internal KeyCollection (ICollection<TKey> collection)
+			{
+				this.collection = collection;
+			}
+
+			public void CopyTo (TKey [] array, int arrayIndex)
+			{
+				collection.CopyTo (array, arrayIndex);
+			}
+
+			public IEnumerator<TKey> GetEnumerator ()
+			{
+				return collection.GetEnumerator ();
+			}
+
+			void ICollection<TKey>.Add (TKey item)
+			{
+				throw new NotSupportedException ("this is a read-only collection");
+			}
+
+			void ICollection<TKey>.Clear ()
+			{
+				throw new NotSupportedException ("this is a read-only collection");
+			}
+
+			bool ICollection<TKey>.Contains (TKey item)
+			{
+				return collection.Contains (item);
+			}
+
+			bool ICollection<TKey>.Remove (TKey item)
+			{
+				throw new NotSupportedException ("this is a read-only collection");
+			}
+
+			void ICollection.CopyTo (Array array, int index)
+			{
+				var target = array as TKey [];
+				if (target != null) {
+					CopyTo (target, index);
+					return;
+				}
+
+				throw new NotImplementedException ();
+			}
+
+			IEnumerator IEnumerable.GetEnumerator ()
+			{
+				return collection.GetEnumerator ();
+			}
+
+			public int Count {
+				get {
+					return collection.Count;
+				}
+			}
+
+			bool ICollection<TKey>.IsReadOnly {
+				get {
+					return true;
+				}
+			}
+
+			bool ICollection.IsSynchronized {
+				get {
+					return false;
+				}
+			}
+
+			object ICollection.SyncRoot {
+				get {
+					throw new NotImplementedException ();
+				}
+			}
+		}
+
+		[Serializable]
+		[DebuggerDisplay ("Count={Count}")]
+		[DebuggerTypeProxy (typeof (CollectionDebuggerView<,>))]		
+		public sealed class ValueCollection : ICollection<TValue>, IEnumerable<TValue>, ICollection, IEnumerable
+		{
+			readonly ICollection<TValue> collection;
+
+			internal ValueCollection (ICollection<TValue> collection)
+			{
+				this.collection = collection;
+			}
+
+			public void CopyTo (TValue [] array, int arrayIndex)
+			{
+				collection.CopyTo (array, arrayIndex);
+			}
+
+			public IEnumerator<TValue> GetEnumerator ()
+			{
+				return collection.GetEnumerator ();
+			}
+
+			void ICollection<TValue>.Add (TValue item)
+			{
+				throw new NotSupportedException ("this is a read-only collection");
+			}
+
+			void ICollection<TValue>.Clear ()
+			{
+				throw new NotSupportedException ("this is a read-only collection");
+			}
+
+			bool ICollection<TValue>.Contains (TValue item)
+			{
+				return collection.Contains (item);
+			}
+
+			bool ICollection<TValue>.Remove (TValue item)
+			{
+				throw new NotSupportedException ("this is a read-only collection");
+			}
+
+			void ICollection.CopyTo (Array array, int index)
+			{
+				var target = array as TValue [];
+				if (target != null) {
+					CopyTo (target, index);
+					return;
+				}
+
+				throw new NotImplementedException ();
+			}
+
+			IEnumerator IEnumerable.GetEnumerator ()
+			{
+				return collection.GetEnumerator ();
+			}
+
+			public int Count {
+				get {
+					return collection.Count;
+				}
+			}
+
+			bool ICollection<TValue>.IsReadOnly {
+				get {
+					return true;
+				}
+			}
+
+			bool ICollection.IsSynchronized {
+				get {
+					return false;
+				}
+			}
+
+			object ICollection.SyncRoot {
+				get {
+					throw new NotImplementedException ();
+				}
+			}
+		}
 	}
 }
 #endif

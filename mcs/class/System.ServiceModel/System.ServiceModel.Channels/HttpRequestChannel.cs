@@ -90,11 +90,11 @@ namespace System.ServiceModel.Channels
 			result.WebRequest = web_request;
 			web_request.Method = "POST";
 			web_request.ContentType = Encoder.ContentType;
-#if NET_2_1
+#if NET_2_1 || NET_4_0
 			HttpWebRequest hwr = (web_request as HttpWebRequest);
-				var cmgr = source.GetProperty<IHttpCookieContainerManager> ();
-				if (cmgr != null)
-					hwr.CookieContainer = cmgr.CookieContainer;
+			var cmgr = source.GetProperty<IHttpCookieContainerManager> ();
+			if (cmgr != null)
+				hwr.CookieContainer = cmgr.CookieContainer;
 #endif
 
 			// client authentication (while SL3 has NetworkCredential class, it is not implemented yet. So, it is non-SL only.)

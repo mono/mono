@@ -376,7 +376,7 @@ namespace System
 		DateTime (SerializationInfo info, StreamingContext context)
 		{
 			if (info.HasKey ("dateData")){
-				encoded = info.GetInt64 ("dateData");
+				encoded = (Int64)info.GetUInt64 ("dateData");
 			} else if (info.HasKey ("ticks")){
 				encoded = info.GetInt64 ("ticks") & TicksMask;
 			} else {
@@ -2003,10 +2003,9 @@ namespace System
 			if (format == null || format == String.Empty)
 				format = "G";
 
-			bool useutc = false, use_invariant = false;
-
 			if (format.Length == 1) {
 				char fchar = format [0];
+				bool use_invariant, useutc;
 				format = DateTimeUtils.GetStandardPattern (fchar, dfi, out useutc, out use_invariant);
 				if (fchar == 'U')
 					return DateTimeUtils.ToString (ToUniversalTime (), format, dfi);
@@ -2014,6 +2013,9 @@ namespace System
 
 				if (format == null)
 					throw new FormatException ("format is not one of the format specifier characters defined for DateTimeFormatInfo");
+
+				if (use_invariant)
+					dfi = DateTimeFormatInfo.InvariantInfo;
 			}
 
 			// Don't convert UTC value. It just adds 'Z' for 
@@ -2186,7 +2188,7 @@ namespace System
 			info.AddValue ("ticks", t);
 
 			// This is the new .NET format, encodes the kind on the top bits
-			info.AddValue ("dateData", encoded);
+			info.AddValue ("dateData", (UInt64)encoded);
 		}
 		
 #if MONOTOUCH

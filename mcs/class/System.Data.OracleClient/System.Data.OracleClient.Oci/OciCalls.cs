@@ -461,19 +461,19 @@ namespace System.Data.OracleClient.Oci
 			internal static extern int OCICharSetToUnicode (
 				IntPtr svchp,
 				[MarshalAs (UnmanagedType.LPWStr)] StringBuilder dst,
-				[MarshalAs (UnmanagedType.U4)] int dstlen,
+				[MarshalAs (UnmanagedType.SysUInt)] int dstlen,
 				byte [] src,
-				[MarshalAs (UnmanagedType.U4)] int srclen,
-				[MarshalAs (UnmanagedType.U4)] out int rsize);
+				[MarshalAs (UnmanagedType.SysUInt)] int srclen,
+				[MarshalAs (UnmanagedType.SysUInt)] out int rsize);
 
 			[DllImport ("oci")]
 			internal static extern int OCIUnicodeToCharSet (
 				IntPtr svchp,
 				byte [] dst,
-				[MarshalAs (UnmanagedType.U4)] int dstlen,
+				[MarshalAs (UnmanagedType.SysUInt)] int dstlen,
 				[MarshalAs (UnmanagedType.LPWStr)] string src,
-				[MarshalAs (UnmanagedType.U4)] int srclen,
-				[MarshalAs (UnmanagedType.U4)] out int rsize);
+				[MarshalAs (UnmanagedType.SysUInt)] int srclen,
+				[MarshalAs (UnmanagedType.SysUInt)] out int rsize);
 		}
 
 		#endregion
@@ -1196,7 +1196,7 @@ namespace System.Data.OracleClient.Oci
 			IntPtr svchp,
 			byte [] dst,
 			[MarshalAs (UnmanagedType.LPWStr)] string src,
-			[MarshalAs (UnmanagedType.U4)] out int rsize)
+			[MarshalAs (UnmanagedType.SysUInt)] out int rsize)
 		{
 			#if TRACE
 			Trace.WriteLineIf(traceOci, "OCIUnicodeToCharSet", "OCI");

@@ -1021,14 +1021,26 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 					return FALSE;
 				ref->method = mono_marshal_get_runtime_invoke (m, TRUE);
 			} else {
-				if (sig_matches_target (module, target, p, &p))
+				MonoMethodSignature *sig;
+				WrapperInfo *info;
+
+				sig = decode_signature_with_target (module, NULL, p, &p);
+				info = mono_marshal_get_wrapper_info (target);
+				g_assert (info);
+
+				if (info->subtype != subtype)
+					return FALSE;
+				g_assert (info->d.runtime_invoke.sig);
+				if (mono_metadata_signature_equal (sig, info->d.runtime_invoke.sig))
 					ref->method = target;
 				else
 					return FALSE;
 			}
 			break;
 		}
-		case MONO_WRAPPER_DELEGATE_INVOKE: {
+		case MONO_WRAPPER_DELEGATE_INVOKE:
+		case MONO_WRAPPER_DELEGATE_BEGIN_INVOKE:
+		case MONO_WRAPPER_DELEGATE_END_INVOKE: {
 			gboolean is_inflated = decode_value (p, &p);
 
 			if (is_inflated) {
@@ -1038,29 +1050,40 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 				klass = decode_klass_ref (module, p, &p);
 				if (!klass)
 					return FALSE;
-				invoke = mono_get_delegate_invoke (klass);
-				wrapper = mono_marshal_get_delegate_invoke (invoke, NULL);
+
+				switch (wrapper_type) {
+				case MONO_WRAPPER_DELEGATE_INVOKE:
+					invoke = mono_get_delegate_invoke (klass);
+					wrapper = mono_marshal_get_delegate_invoke (invoke, NULL);
+					break;
+				case MONO_WRAPPER_DELEGATE_BEGIN_INVOKE:
+					invoke = mono_get_delegate_begin_invoke (klass);
+					wrapper = mono_marshal_get_delegate_begin_invoke (invoke);
+					break;
+				case MONO_WRAPPER_DELEGATE_END_INVOKE:
+					invoke = mono_get_delegate_end_invoke (klass);
+					wrapper = mono_marshal_get_delegate_end_invoke (invoke);
+					break;
+				default:
+					g_assert_not_reached ();
+					break;
+				}
 				if (target && wrapper != target)
 					return FALSE;
 				ref->method = wrapper;
-				break;
 			} else {
-				/* Fall through */
-			}
-		}
-		case MONO_WRAPPER_DELEGATE_BEGIN_INVOKE:
-		case MONO_WRAPPER_DELEGATE_END_INVOKE: {
-			/*
-			 * These wrappers are associated with a signature, not with a method.
-			 * Since we can't decode them into methods, they need a target method.
-			 */
-			if (!target)
-				return FALSE;
+				/*
+				 * These wrappers are associated with a signature, not with a method.
+				 * Since we can't decode them into methods, they need a target method.
+				 */
+				if (!target)
+					return FALSE;
 
-			if (sig_matches_target (module, target, p, &p))
-				ref->method = target;
-			else
-				return FALSE;
+				if (sig_matches_target (module, target, p, &p))
+					ref->method = target;
+				else
+					return FALSE;
+			}
 			break;
 		}
 		case MONO_WRAPPER_NATIVE_TO_MANAGED: {
@@ -1341,6 +1364,11 @@ find_symbol (MonoDl *module, gpointer *globals, const char *name, gpointer *valu
 		guint16 *table, *entry;
 		guint16 table_size;
 		guint32 hash;		
+		char *symbol = (char*)name;
+
+#ifdef TARGET_MACH
+		symbol = g_strdup_printf ("_%s", name);
+#endif
 
 		/* The first entry points to the hash */
 		table = globals [0];
@@ -1349,7 +1377,7 @@ find_symbol (MonoDl *module, gpointer *globals, const char *name, gpointer *valu
 		table_size = table [0];
 		table ++;
 
-		hash = mono_metadata_str_hash (name) % table_size;
+		hash = mono_metadata_str_hash (symbol) % table_size;
 
 		entry = &table [hash * 2];
 
@@ -1361,7 +1389,7 @@ find_symbol (MonoDl *module, gpointer *globals, const char *name, gpointer *valu
 
 			//printf ("X: %s %s\n", (char*)globals [index * 2], name);
 
-			if (!strcmp (globals [index * 2], name)) {
+			if (!strcmp (globals [index * 2], symbol)) {
 				global_index = index;
 				break;
 			}
@@ -1377,6 +1405,9 @@ find_symbol (MonoDl *module, gpointer *globals, const char *name, gpointer *valu
 			*value = globals [global_index * 2 + 1];
 		else
 			*value = NULL;
+
+		if (symbol != name)
+			g_free (symbol);
 	} else {
 		char *err = mono_dl_symbol (module, name, value);
 
@@ -1485,10 +1516,10 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 		 */
 		return;
 
-	if (assembly->image->dynamic)
+	if (assembly->image->dynamic || assembly->ref_only)
 		return;
 
-	if (mono_security_get_mode () == MONO_SECURITY_MODE_CAS)
+	if (mono_security_cas_enabled ())
 		return;
 
 	mono_aot_lock ();
@@ -1809,7 +1840,9 @@ mono_aot_init (void)
 	InitializeCriticalSection (&aot_page_mutex);
 	aot_modules = g_hash_table_new (NULL, NULL);
 
+#ifndef __native_client__
 	mono_install_assembly_load_hook (load_aot_module, NULL);
+#endif
 
 	if (g_getenv ("MONO_LASTAOT"))
 		mono_last_aot_method = atoi (g_getenv ("MONO_LASTAOT"));
@@ -2087,7 +2120,17 @@ decode_llvm_mono_eh_frame (MonoAotModule *amodule, MonoDomain *domain,
 	cie = p + ((fde_count + 1) * 8);
 
 	/* Binary search in the table to find the entry for code */
-	offset = code - amodule->mono_eh_frame;
+	if (func_encoding == DW_EH_PE_absptr) {
+		/*
+		 * Table entries are encoded as DW_EH_PE_absptr, because the ios linker can move functions inside object files to make thumb work,
+		 * so the offsets between two symbols in the text segment are not assembler constant.
+		 */
+		g_assert (sizeof(gpointer) == 4);
+		offset = GPOINTER_TO_INT (code);
+	} else {
+		/* Table entries are encoded as DW_EH_PE_pcrel relative to mono_eh_frame */
+		offset = code - amodule->mono_eh_frame;
+	}
 
 	left = 0;
 	right = fde_count;
@@ -2096,21 +2139,12 @@ decode_llvm_mono_eh_frame (MonoAotModule *amodule, MonoDomain *domain,
 
 		offset1 = table [(pos * 2)];
 		if (pos + 1 == fde_count) {
-			/* FIXME: */
-			offset2 = amodule->code_end - amodule->code;
+			if (func_encoding == DW_EH_PE_absptr)
+				offset2 = GPOINTER_TO_INT (amodule->code_end);
+			else
+				offset2 = amodule->code_end - amodule->code;
 		} else {
-			/* Encoded as DW_EH_PE_pcrel, but relative to mono_eh_frame */
 			offset2 = table [(pos + 1) * 2];
-		}
-
-		if (func_encoding == DW_EH_PE_absptr) {
-			/*
-			 * Encoded as DW_EH_PE_absptr, because the ios linker can move functions inside object files to make thumb work,
-			 * so the offsets between two symbols in the text segment are not assembler constant.
-			 */
-			g_assert (sizeof(gpointer) == 4);
-			offset1 -= (gint32)(gsize)amodule->mono_eh_frame;
-			offset2 -= (gint32)(gsize)amodule->mono_eh_frame;
 		}
 
 		if (offset < offset1)
@@ -2885,6 +2919,7 @@ decode_patch (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guin
 	case MONO_PATCH_INFO_MONITOR_EXIT:
 	case MONO_PATCH_INFO_GC_CARD_TABLE_ADDR:
 	case MONO_PATCH_INFO_CASTCLASS_CACHE:
+	case MONO_PATCH_INFO_JIT_TLS_ID:
 		break;
 	case MONO_PATCH_INFO_RGCTX_FETCH: {
 		gboolean res;
@@ -3452,7 +3487,11 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method)
 		}
 
 		/* Same for CompareExchange<T> and Exchange<T> */
-		if (method_index == 0xffffff && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE && method->klass->image == mono_defaults.corlib && !strcmp (method->klass->name_space, "System.Threading") && !strcmp (method->klass->name, "Interlocked") && (!strcmp (method->name, "CompareExchange") || !strcmp (method->name, "Exchange")) && MONO_TYPE_IS_REFERENCE (mono_method_signature (method)->params [1])) {
+		/* Same for Volatile.Read<T>/Write<T> */
+		if (method_index == 0xffffff && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE && method->klass->image == mono_defaults.corlib && 
+			((!strcmp (method->klass->name_space, "System.Threading") && !strcmp (method->klass->name, "Interlocked") && (!strcmp (method->name, "CompareExchange") || !strcmp (method->name, "Exchange")) && MONO_TYPE_IS_REFERENCE (mono_method_signature (method)->params [1])) ||
+			 (!strcmp (method->klass->name_space, "System.Threading") && !strcmp (method->klass->name, "Volatile") && (!strcmp (method->name, "Read") && MONO_TYPE_IS_REFERENCE (mono_method_signature (method)->ret))) ||
+			 (!strcmp (method->klass->name_space, "System.Threading") && !strcmp (method->klass->name, "Volatile") && (!strcmp (method->name, "Write") && MONO_TYPE_IS_REFERENCE (mono_method_signature (method)->params [1]))))) {
 			MonoMethod *m;
 			MonoGenericContext ctx;
 			MonoType *args [16];

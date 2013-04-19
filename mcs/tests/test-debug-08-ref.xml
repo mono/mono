@@ -5,25 +5,30 @@
   </files>
   <methods>
     <method token="0x6000001">
+      <sequencepoints />
+      <locals />
+      <scopes />
+    </method>
+    <method token="0x6000002">
       <sequencepoints>
         <entry il="0x0" row="7" col="3" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes />
     </method>
-    <method token="0x6000002">
+    <method token="0x6000003">
       <sequencepoints />
       <locals />
       <scopes />
     </method>
-    <method token="0x6000003">
+    <method token="0x6000004">
       <sequencepoints>
         <entry il="0x0" row="16" col="3" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes />
     </method>
-    <method token="0x6000004">
+    <method token="0x6000005">
       <sequencepoints>
         <entry il="0x0" row="23" col="5" file_ref="1" hidden="false" />
       </sequencepoints>
@@ -32,11 +37,6 @@
         <entry index="0" start="0x0" end="0x2" />
         <entry index="1" start="0x0" end="0x2" />
       </scopes>
-    </method>
-    <method token="0x6000005">
-      <sequencepoints />
-      <locals />
-      <scopes />
     </method>
   </methods>
 </symbols>

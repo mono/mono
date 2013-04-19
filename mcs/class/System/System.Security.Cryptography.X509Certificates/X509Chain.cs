@@ -893,7 +893,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			string ski = GetSubjectKeyIdentifier (caCertificate);
 
 			// consider that the LocalMachine directories could not exists... and cannot be created by the user
-			MX.X509Crl result = (LMCAStore.Store == null) ? null : CheckCrls (subject, ski, LMCAStore.Store.Crls);
+			var result = (LMCAStore.Store == null) ? null : CheckCrls (subject, ski, LMCAStore.Store.Crls);
 			if (result != null)
 				return result;
 			if (location == StoreLocation.CurrentUser) {

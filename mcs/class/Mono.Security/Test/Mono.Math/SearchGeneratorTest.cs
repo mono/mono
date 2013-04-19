@@ -62,7 +62,7 @@ namespace MonoTests.Mono.Math {
 			for (int i = 0; i < 5; i++) {
 				ContextData ctx = new ContextData (128, (uint)r.Next (int.MinValue, int.MaxValue));
 				BigInteger p = GenerateNewPrime (128, ctx);
-				Assertion.Assert (p.TestBit (1));
+				Assert.IsTrue (p.TestBit (1));
 				uint d = ctx.testData;
 				for (uint j = 128 - 2; d > 0; j--, d >>= 1)
 					Assertion.AssertEquals ((d&1) == 1, p.TestBit (j));

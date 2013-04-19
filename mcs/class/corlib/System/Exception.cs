@@ -45,7 +45,11 @@ namespace System
 	[ComDefaultInterface (typeof (_Exception))]
 	[ClassInterface (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
+#if MOBILE
+	public class Exception : ISerializable
+#else
 	public class Exception : ISerializable, _Exception
+#endif
 	{
 #pragma warning disable 169, 649
 		#region Sync with object-internals.h

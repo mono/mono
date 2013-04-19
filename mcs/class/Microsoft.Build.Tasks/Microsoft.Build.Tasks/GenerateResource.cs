@@ -186,7 +186,7 @@ namespace Microsoft.Build.Tasks {
 		private IResourceReader GetReader (Stream stream, string name)
 		{
 			string format = Path.GetExtension (name);
-			switch (format.ToLower ()) {
+			switch (format.ToLowerInvariant ()) {
 			case ".po":
 				return new PoResourceReader (stream);
 			case ".txt":
@@ -210,7 +210,7 @@ namespace Microsoft.Build.Tasks {
 		private IResourceWriter GetWriter (Stream stream, string name)
 		{
 			string format = Path.GetExtension (name);
-			switch (format.ToLower ()) {
+			switch (format.ToLowerInvariant ()) {
 			case ".po":
 				return new PoResourceWriter (stream);
 			case ".txt":

@@ -35,6 +35,8 @@
 #include <mono/utils/mono-memory-model.h>
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/dtrace.h>
+#include <mono/utils/mono-threads.h>
+#include <mono/utils/atomic.h>
 
 #ifndef HOST_WIN32
 #include <pthread.h>
@@ -261,20 +263,14 @@ mono_gc_out_of_memory (size_t size)
 static void
 object_register_finalizer (MonoObject *obj, void (*callback)(void *, void*))
 {
-#if HAVE_BOEHM_GC
-	guint offset = 0;
 	MonoDomain *domain;
 
 	if (obj == NULL)
 		mono_raise_exception (mono_get_exception_argument_null ("obj"));
-	
+
 	domain = obj->vtable->domain;
 
-#ifndef GC_DEBUG
-	/* This assertion is not valid when GC_DEBUG is defined */
-	g_assert (GC_base (obj) == (char*)obj - offset);
-#endif
-
+#if HAVE_BOEHM_GC
 	if (mono_domain_is_unloading (domain) && (callback != NULL))
 		/*
 		 * Can't register finalizers in a dying appdomain, since they
@@ -291,17 +287,14 @@ object_register_finalizer (MonoObject *obj, void (*callback)(void *, void*))
 
 	mono_domain_finalizers_unlock (domain);
 
-	GC_REGISTER_FINALIZER_NO_ORDER ((char*)obj - offset, callback, GUINT_TO_POINTER (offset), NULL, NULL);
+	mono_gc_register_for_finalization (obj, callback);
 #elif defined(HAVE_SGEN_GC)
-	if (obj == NULL)
-		mono_raise_exception (mono_get_exception_argument_null ("obj"));
-
 	/*
 	 * If we register finalizers for domains that are unloading we might
 	 * end up running them while or after the domain is being cleared, so
 	 * the objects will not be valid anymore.
 	 */
-	if (!mono_domain_is_unloading (obj->vtable->domain))
+	if (!mono_domain_is_unloading (domain))
 		mono_gc_register_for_finalization (obj, callback);
 #endif
 }
@@ -339,6 +332,10 @@ mono_domain_finalize (MonoDomain *domain, guint32 timeout)
 	guint32 res;
 	HANDLE done_event;
 	MonoInternalThread *thread = mono_thread_internal_current ();
+
+#if defined(__native_client__)
+	return FALSE;
+#endif
 
 	if (mono_thread_internal_current () == gc_thread)
 		/* We are called from inside a finalizer, not much we can do here */
@@ -1135,6 +1132,7 @@ mono_gc_init (void)
 	MONO_GC_REGISTER_ROOT_FIXED (gc_handles [HANDLE_NORMAL].entries);
 	MONO_GC_REGISTER_ROOT_FIXED (gc_handles [HANDLE_PINNED].entries);
 
+	mono_counters_register ("Created object count", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &mono_stats.new_object_count);
 	mono_counters_register ("Minor GC collections", MONO_COUNTER_GC | MONO_COUNTER_INT, &gc_stats.minor_gc_count);
 	mono_counters_register ("Major GC collections", MONO_COUNTER_GC | MONO_COUNTER_INT, &gc_stats.major_gc_count);
 	mono_counters_register ("Minor GC time", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &gc_stats.minor_gc_time_usecs);
@@ -1214,7 +1212,7 @@ mono_gc_cleanup (void)
 				 * The above wait only waits for the exited event to be signalled, the thread might still be running. To fix this race, we
 				 * create the finalizer thread without calling pthread_detach () on it, so we can wait for it manually.
 				 */
-				ret = pthread_join ((gpointer)(gsize)gc_thread->tid, NULL);
+				ret = pthread_join ((MonoNativeThreadId)(gpointer)(gsize)gc_thread->tid, NULL);
 				g_assert (ret == 0);
 #endif
 			}
@@ -1559,6 +1557,12 @@ mono_gc_reference_queue_free (MonoReferenceQueue *queue)
 #define align_down(ptr) ((void*)(_toi(ptr) & ~ptr_mask))
 #define align_up(ptr) ((void*) ((_toi(ptr) + ptr_mask) & ~ptr_mask))
 
+#define BZERO_WORDS(dest,words) do {	\
+	int __i;	\
+	for (__i = 0; __i < (words); ++__i)	\
+		((void **)(dest))[__i] = 0;	\
+} while (0)
+
 /**
  * mono_gc_bzero:
  * @dest: address to start to clear
@@ -1573,24 +1577,53 @@ mono_gc_reference_queue_free (MonoReferenceQueue *queue)
 void
 mono_gc_bzero (void *dest, size_t size)
 {
-	char *p = (char*)dest;
-	char *end = p + size;
-	char *align_end = align_up (p);
-	char *word_end;
+	char *d = (char*)dest;
+	size_t tail_bytes, word_bytes;
 
-	while (p < align_end)
-		*p++ = 0;
+	/*
+	If we're copying less than a word, just use memset.
 
-	word_end = align_down (end);
-	while (p < word_end) {
-		*((void**)p) = NULL;
-		p += sizeof (void*);
+	We cannot bail out early if both are aligned because some implementations
+	use byte copying for sizes smaller than 16. OSX, on this case.
+	*/
+	if (size < sizeof(void*)) {
+		memset (dest, 0, size);
+		return;
 	}
 
-	while (p < end)
-		*p++ = 0;
-}
+	/*align to word boundary */
+	while (unaligned_bytes (d) && size) {
+		*d++ = 0;
+		--size;
+	}
 
+	/* copy all words with memmove */
+	word_bytes = (size_t)align_down (size);
+	switch (word_bytes) {
+	case sizeof (void*) * 1:
+		BZERO_WORDS (d, 1);
+		break;
+	case sizeof (void*) * 2:
+		BZERO_WORDS (d, 2);
+		break;
+	case sizeof (void*) * 3:
+		BZERO_WORDS (d, 3);
+		break;
+	case sizeof (void*) * 4:
+		BZERO_WORDS (d, 4);
+		break;
+	default:
+		memset (d, 0, word_bytes);
+	}
+
+	tail_bytes = unaligned_bytes (size);
+	if (tail_bytes) {
+		d += word_bytes;
+		do {
+			*d++ = 0;
+		} while (--tail_bytes);
+	}
+}
 
 /**
  * mono_gc_memmove:
@@ -1601,18 +1634,19 @@ mono_gc_bzero (void *dest, size_t size)
  * Move @size bytes from @src to @dest.
  * size MUST be a multiple of sizeof (gpointer)
  *
- * FIXME borrow faster code from some BSD libc or bionic
  */
 void
 mono_gc_memmove (void *dest, const void *src, size_t size)
 {
 	/*
-	 * If dest and src are differently aligned with respect to
-	 * pointer size then it makes no sense to do aligned copying.
-	 * In fact, we would end up with unaligned loads which is
-	 * incorrect on some architectures.
-	 */
-	if ((char*)dest - (char*)align_down (dest) != (char*)src - (char*)align_down (src)) {
+	If we're copying less than a word we don't need to worry about word tearing
+	so we bailout to memmove early.
+
+	If both dest is aligned and size is a multiple of word size, we can go straigh
+	to memmove.
+
+	*/
+	if (size < sizeof(void*) || !((_toi (dest) | (size)) & sizeof (void*))) {
 		memmove (dest, src, size);
 		return;
 	}
@@ -1621,45 +1655,51 @@ mono_gc_memmove (void *dest, const void *src, size_t size)
 	 * A bit of explanation on why we align only dest before doing word copies.
 	 * Pointers to managed objects must always be stored in word aligned addresses, so
 	 * even if dest is misaligned, src will be by the same amount - this ensure proper atomicity of reads.
+	 *
+	 * We don't need to case when source and destination have different alignments since we only do word stores
+	 * using memmove, which must handle it.
 	 */
-	if (dest > src && ((size_t)((char*)dest - (char*)src) < size)) {
+	if (dest > src && ((size_t)((char*)dest - (char*)src) < size)) { /*backward copy*/
 		char *p = (char*)dest + size;
-		char *s = (char*)src + size;
-		char *start = (char*)dest;
-		char *align_end = MAX((char*)dest, (char*)align_down (p));
-		char *word_start;
+			char *s = (char*)src + size;
+			char *start = (char*)dest;
+			char *align_end = MAX((char*)dest, (char*)align_down (p));
+			char *word_start;
+			size_t bytes_to_memmove;
 
-		while (p > align_end)
-			*--p = *--s;
+			while (p > align_end)
+				*--p = *--s;
 
-		word_start = align_up (start);
-		while (p > word_start) {
-			p -= sizeof (void*);
-			s -= sizeof (void*);
-			*((void**)p) = *((void**)s);
-		}
+			word_start = align_up (start);
+			bytes_to_memmove = p - word_start;
+			p -= bytes_to_memmove;
+			s -= bytes_to_memmove;
+			memmove (p, s, bytes_to_memmove);
 
-		while (p > start)
-			*--p = *--s;
+			while (p > start)
+				*--p = *--s;
 	} else {
-		char *p = (char*)dest;
-		char *s = (char*)src;
-		char *end = p + size;
-		char *align_end = MIN ((char*)end, (char*)align_up (p));
-		char *word_end;
+		char *d = (char*)dest;
+		const char *s = (const char*)src;
+		size_t tail_bytes;
 
-		while (p < align_end)
-			*p++ = *s++;
-
-		word_end = align_down (end);
-		while (p < word_end) {
-			*((void**)p) = *((void**)s);
-			p += sizeof (void*);
-			s += sizeof (void*);
+		/*align to word boundary */
+		while (unaligned_bytes (d)) {
+			*d++ = *s++;
+			--size;
 		}
 
-		while (p < end)
-			*p++ = *s++;
+		/* copy all words with memmove */
+		memmove (d, s, (size_t)align_down (size));
+
+		tail_bytes = unaligned_bytes (size);
+		if (tail_bytes) {
+			d += (size_t)align_down (size);
+			s += (size_t)align_down (size);
+			do {
+				*d++ = *s++;
+			} while (--tail_bytes);
+		}
 	}
 }
 

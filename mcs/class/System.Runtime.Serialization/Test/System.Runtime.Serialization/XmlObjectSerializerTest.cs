@@ -81,7 +81,7 @@ namespace MonoTests.System.Runtime.Serialization
 		public void ConstructorKnownTypesNull ()
 		{
 			// null knownTypes is allowed. Though the property is filled.
-			Assert.IsNotNull (new DataContractSerializer (typeof (Sample1), null).KnownTypes, "#1");
+			Assert.IsNotNull (new DataContractSerializer (typeof (Sample1), (IEnumerable<Type>)null).KnownTypes, "#1");
 			Assert.IsNotNull (new DataContractSerializer (typeof (Sample1), "Foo", String.Empty, null).KnownTypes, "#2");
 			Assert.IsNotNull (new DataContractSerializer (typeof (Sample1), new XmlDictionary ().Add ("Foo"), XmlDictionaryString.Empty, null).KnownTypes, "#3");
 		}
@@ -138,7 +138,8 @@ namespace MonoTests.System.Runtime.Serialization
 			ser.WriteObject (sw, 1);
 			string expected = "<int xmlns=\"http://schemas.microsoft.com/2003/10/Serialization/\">1</int>";
 			byte[] buf = sw.ToArray ();
-			Assert.AreEqual (expected, Encoding.UTF8.GetString (buf, 0, buf.Length));
+			// Skip the utf8 bom
+			Assert.AreEqual (expected, Encoding.UTF8.GetString (buf, 3, buf.Length - 3));
 		}
 
 		[Test]

@@ -54,8 +54,11 @@ namespace System.Reflection {
 	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
+#if MOBILE
+	public sealed class AssemblyName  : ICloneable, ISerializable, IDeserializationCallback {
+#else
 	public sealed class AssemblyName  : ICloneable, ISerializable, IDeserializationCallback, _AssemblyName {
-
+#endif
 #pragma warning disable 169
 		#region Synch with object-internals.h
 		string name;
@@ -401,6 +404,7 @@ namespace System.Reflection {
 			return aname;
 		}
 
+#if !MOBILE
 		void _AssemblyName.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -421,5 +425,28 @@ namespace System.Reflection {
 		{
 			throw new NotImplementedException ();
 		}
+#endif
+
+#if NET_4_5
+		public string CultureName {
+			get {
+				if (cultureinfo == null)
+					return string.Empty;
+				else if (cultureinfo.LCID == CultureInfo.InvariantCulture.LCID)
+					return "neutral";
+				else
+					return cultureinfo.Name;
+			}
+		}
+
+		[ComVisibleAttribute(false)]
+		public AssemblyContentType ContentType {
+			get { return AssemblyContentType.Default; }
+			set {
+				if (value != AssemblyContentType.Default)
+					throw new InvalidOperationException ();
+			}
+		}
+#endif
 	}
 }

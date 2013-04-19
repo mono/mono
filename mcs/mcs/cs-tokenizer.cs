@@ -2819,7 +2819,8 @@ namespace Mono.CSharp
 				}
 			case PreprocessorDirective.Define:
 				if (any_token_seen){
-					Error_TokensSeen ();
+					if (caller_is_taking)
+						Error_TokensSeen ();
 					return caller_is_taking;
 				}
 				PreProcessDefinition (true, arg, caller_is_taking);
@@ -2827,7 +2828,8 @@ namespace Mono.CSharp
 
 			case PreprocessorDirective.Undef:
 				if (any_token_seen){
-					Error_TokensSeen ();
+					if (caller_is_taking)
+						Error_TokensSeen ();
 					return caller_is_taking;
 				}
 				PreProcessDefinition (false, arg, caller_is_taking);
@@ -2940,6 +2942,7 @@ namespace Mono.CSharp
 
 					advance_line ();
 				} else if (c == '\\' && !quoted) {
+					++col;
 					int surrogate;
 					c = escape (c, out surrogate);
 					if (c == -1)

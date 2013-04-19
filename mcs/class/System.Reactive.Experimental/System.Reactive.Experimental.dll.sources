@@ -1,3 +1,4 @@
+Assembly/AssemblyInfo.cs
 ../../../external/rx/Rx/NET/Source/System.Reactive.Experimental/ExperimentalAttribute.cs
 ../../../external/rx/Rx/NET/Source/System.Reactive.Experimental/InternalsVisibleTo.cs
 ../../../external/rx/Rx/NET/Source/System.Reactive.Experimental/Properties/AssemblyInfo.cs

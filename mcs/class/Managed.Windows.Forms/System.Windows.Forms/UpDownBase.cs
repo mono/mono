@@ -369,8 +369,8 @@ namespace System.Windows.Forms
 			txtView.Dock = DockStyle.Fill;
 			
 			SuspendLayout ();
-			Controls.Add (txtView);
 			Controls.Add (spnSpinner);
+			Controls.Add (txtView);	
 			ResumeLayout ();
 
 			Height = PreferredHeight;

@@ -678,7 +678,7 @@ namespace MonoTests.Mono.Security.Authenticode {
 
 		private string WriteFile () 
 		{
-			string filename = "helloworld_signed.exe";
+			string filename = Path.Combine (Path.GetTempPath (), "helloworld_signed.exe");
 			try {
 				if (File.Exists (filename)) {
 					File.Delete (filename);

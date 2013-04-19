@@ -192,6 +192,12 @@ namespace System.Xml
 				isAsync = value;
 			}
 		}
+		
+		[MonoTODO]
+		public bool WriteEndDocumentOnClose {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
 #endif
 
 	}

@@ -97,7 +97,7 @@ namespace MonoTests.System.Collections.Concurrent
 				threads[i].Start ();
 			}
 			foreach (var t in threads)
-				Assert.IsTrue (t.Join (200));
+				Assert.IsTrue (t.Join (2000));
 
 			Assert.IsFalse (bag.IsEmpty);
 			Assert.AreEqual (threads.Length, bag.Count);

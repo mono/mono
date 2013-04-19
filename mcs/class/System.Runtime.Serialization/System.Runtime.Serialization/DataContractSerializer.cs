@@ -25,7 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -211,6 +211,16 @@ namespace System.Runtime.Serialization
 			: this (type, rootName, rootNamespace, knownTypes, maxObjectsInGraph, ignoreExtensionDataObject, preserveObjectReferences, dataContractSurrogate)
 		{
 			DataContractResolver = dataContractResolver;
+		}
+#endif
+
+#if NET_4_5
+		public DataContractSerializer (Type type, DataContractSerializerSettings settings)
+			: this (type, settings.RootName, settings.RootNamespace, settings.KnownTypes,
+			        settings.MaxItemsInObjectGraph, settings.IgnoreExtensionDataObject,
+			        settings.PreserveObjectReferences, settings.DataContractSurrogate,
+			        settings.DataContractResolver)
+		{
 		}
 #endif
 
@@ -540,6 +550,12 @@ namespace System.Runtime.Serialization
 		{
 			WriteEndObject (XmlDictionaryWriter.CreateDictionaryWriter (writer));
 		}
+
+#if NET_4_5
+		[MonoTODO]
+		public bool SerializeReadOnlyTypes {
+			get { throw new NotImplementedException (); }
+		}
+#endif
 	}
 }
-#endif

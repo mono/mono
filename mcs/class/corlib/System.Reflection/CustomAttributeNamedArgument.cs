@@ -67,6 +67,16 @@ namespace System.Reflection {
 			}
 		}
 
+#if NET_4_5
+		public bool IsField {
+			get { return memberInfo.MemberType == MemberTypes.Field; }
+		}
+
+		public string MemberName {
+			get { return memberInfo.Name; }
+		}
+#endif
+
 		public override string ToString ()
 		{
 			return memberInfo.Name + " = " + typedArgument.ToString ();

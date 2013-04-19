@@ -728,6 +728,7 @@ namespace MonoTests.System.Diagnostics
 // Not technically a 2.0 only test, but I use lambdas, so I need gmcs
 
 		[Test]
+		[NUnit.Framework.Category ("MobileNotWorking")]
 		// This was for bug #459450
 		public void TestEventRaising ()
 		{
@@ -797,6 +798,7 @@ namespace MonoTests.System.Diagnostics
 		}
 		
 		[Test]
+		[NUnit.Framework.Category ("MobileNotWorking")]
 		public void ProcessName_AfterExit ()
 		{
 			Process p = new Process ();

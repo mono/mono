@@ -98,6 +98,7 @@ description_for_type (int type)
 	case INTERNAL_MEM_GRAY_QUEUE: return "gray-queue";
 	case INTERNAL_MEM_MS_TABLES: return "marksweep-tables";
 	case INTERNAL_MEM_MS_BLOCK_INFO: return "marksweep-block-info";
+	case INTERNAL_MEM_MS_BLOCK_INFO_SORT: return "marksweep-block-info-sort";
 	case INTERNAL_MEM_EPHEMERON_LINK: return "ephemeron-link";
 	case INTERNAL_MEM_WORKER_DATA: return "worker-data";
 	case INTERNAL_MEM_WORKER_JOB_DATA: return "worker-job-data";
@@ -180,7 +181,7 @@ sgen_free_internal (void *addr, int type)
 	mono_lock_free_free (addr);
 
 	if (MONO_GC_INTERNAL_DEALLOC_ENABLED ()) {
-		int size = allocator_sizes [index];
+		int size G_GNUC_UNUSED = allocator_sizes [index];
 		MONO_GC_INTERNAL_DEALLOC ((mword)addr, size, type);
 	}
 }

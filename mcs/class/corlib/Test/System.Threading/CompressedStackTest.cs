@@ -26,9 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-// Note: the class existed in 1.1 but the only thing we know about it is that
-// it has a finalizer ;-)
-#if NET_2_0
+#if !MOBILE
 
 using System;
 using System.Runtime.Serialization;

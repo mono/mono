@@ -1428,13 +1428,42 @@ namespace System.Numerics {
 				throw ex;
 			return result;
 		}
-
-
+		
 		public static bool TryParse (string value, out BigInteger result)
 		{
 			Exception ex;
 			return Parse (value, true, out result, out ex);
 		}
+		
+#if NET_4_0
+		[MonoTODO]
+		public static BigInteger Parse (string value, NumberStyles style)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static BigInteger Parse (string value, IFormatProvider provider)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static BigInteger Parse (
+			string value, NumberStyles style, IFormatProvider provider)
+		{
+			throw new InvalidOperationException ();
+		}
+		
+		[MonoTODO]
+		public static bool TryParse (
+			string value, NumberStyles style, IFormatProvider provider,
+			out BigInteger result)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+		
 
 		static Exception GetFormatException ()
 		{

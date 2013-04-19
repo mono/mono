@@ -38,7 +38,9 @@ using System.Runtime.Serialization;
 using System.ServiceModel;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
+#if !MOBILE
 using NUnit.Framework.SyntaxHelpers;
+#endif
 
 namespace MonoTests.System.Runtime.Serialization
 {
@@ -239,7 +241,7 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.That (Serialize<ICollection<int>> (list), Is.EqualTo (arrayResult), "#3");
 
 			Assert.That (Serialize<IList<object>> (list),
-			             Is.InstanceOfType (typeof (InvalidCastException)), "#4");
+			             InstanceOf (typeof (InvalidCastException)), "#4");
 
 			Assert.That (Serialize<IList<int>> (mylist), Is.EqualTo (arrayResult), "#5");
 			Assert.That (Serialize<IList<int>> (list.AsReadOnly ()), Is.EqualTo (arrayResult), "#6");
@@ -261,7 +263,7 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.That (Serialize<IList<int>> (mylist), Is.EqualTo (arrayResult), "#1");
 			Assert.That (Serialize<List<int>> (mylist), Is.EqualTo (arrayResult), "#2");
 			Assert.That (Serialize<IMyList<int>> (mylist),
-			             Is.InstanceOfType (typeof (SerializationException)), "#3");
+			             InstanceOf (typeof (SerializationException)), "#3");
 			Assert.That (Serialize<MyList<int>> (mylist), Is.EqualTo (arrayResult), "#4");
 		}
 
@@ -295,14 +297,14 @@ namespace MonoTests.System.Runtime.Serialization
 				Deserialize<CustomList<int>> (arrayResult);
 				Assert.Fail ("#5");
 			} catch (Exception ex) {
-				Assert.That (ex, Is.InstanceOfType (typeof (SerializationException)), "#6");
+				Assert.That (ex, InstanceOf (typeof (SerializationException)), "#6");
 			}
 
 			try {
 				Deserialize<ReadOnlyCollection<int>> (arrayResult);
 				Assert.Fail ("#7");
 			} catch (Exception ex) {
-				Assert.That (ex, Is.InstanceOfType (typeof (SerializationException)), "#8");
+				Assert.That (ex, InstanceOf (typeof (SerializationException)), "#8");
 			}
 
 			/*
@@ -324,9 +326,9 @@ namespace MonoTests.System.Runtime.Serialization
 			var list = new List<int> (array);
 
 			Assert.That (Serialize<int[]> (list),
-			             Is.InstanceOfType (typeof (InvalidCastException)), "#1");
+			             InstanceOf (typeof (InvalidCastException)), "#1");
 			Assert.That (Serialize<object[]> (array),
-			             Is.InstanceOfType (typeof (InvalidCastException)), "#2");
+			             InstanceOf (typeof (InvalidCastException)), "#2");
 		}
 
 		[Test]
@@ -412,33 +414,33 @@ namespace MonoTests.System.Runtime.Serialization
 		public void TestCollectionDataContract ()
 		{
 			Assert.That (Serialize<MissingAddMethod<int>> (new MissingAddMethod<int> ()),
-			             Is.InstanceOfType (typeof (InvalidDataContractException)), "#1");
+			             InstanceOf (typeof (InvalidDataContractException)), "#1");
 			Assert.That (Serialize<MissingEnumerable<int>> (new MissingEnumerable<int> ()),
-			             Is.InstanceOfType (typeof (InvalidDataContractException)), "#2");
+			             InstanceOf (typeof (InvalidDataContractException)), "#2");
 
 			var array = new[] { 1, 2, 3 };
 			var arrayResult = (string)Serialize<int[]> (array);
 			var collection = new MyDataContractCollection<int> (array);
 			
 			var result = Serialize<MyDataContractCollection<int>> (collection);
-			Assert.That (result, Is.InstanceOfType (typeof(string)), "#3");
+			Assert.That (result, InstanceOf (typeof(string)), "#3");
 
 			Assert.That (Serialize<MyDataContractCollection<int>> (array),
-			             Is.InstanceOfType (typeof (SerializationException)), "#4");
+			             InstanceOf (typeof (SerializationException)), "#4");
 
 			var derived = new MyDerivedDataContract<int> ();
 			Assert.That (Serialize<MyDataContractCollection<int>> (derived),
-			             Is.InstanceOfType (typeof (SerializationException)), "#5");
+			             InstanceOf (typeof (SerializationException)), "#5");
 
 			try {
 				Deserialize<MyDataContractCollection<int>> (arrayResult);
 				Assert.Fail ("#6");
 			} catch (Exception ex) {
-				Assert.That (ex, Is.InstanceOfType (typeof(SerializationException)), "#7");
+				Assert.That (ex, InstanceOf (typeof(SerializationException)), "#7");
 			}
 			
 			var deserialized = Deserialize<MyDataContractCollection<int>> ((string)result);
-			Assert.That (deserialized, Is.InstanceOfType (typeof (MyDataContractCollection<int>)), "#8");
+			Assert.That (deserialized, InstanceOf (typeof (MyDataContractCollection<int>)), "#8");
 		}
 
 		[Test]
@@ -446,9 +448,13 @@ namespace MonoTests.System.Runtime.Serialization
 		{
 			var derived = new MyDerivedDataContract<int> ();
 			Assert.That (Serialize<MyDataContractCollection<int>> (derived),
-			             Is.InstanceOfType (typeof (SerializationException)), "#5");
+			             InstanceOf (typeof (SerializationException)), "#5");
 		}
 
+		public static InstanceOfTypeConstraint InstanceOf (Type expectedType)
+		{
+			return new InstanceOfTypeConstraint (expectedType);
+		}
 	}
 }
 

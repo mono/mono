@@ -29,6 +29,7 @@
 #include <mono/utils/mono-stack-unwinding.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-tls.h>
+#include <mono/utils/atomic.h>
 
 #define MONO_BREAKPOINT_ARRAY_SIZE 64
 
@@ -37,6 +38,11 @@
 #include "declsec.h"
 #include "mini-unwind.h"
 #include "jit.h"
+
+#ifdef __native_client_codegen__
+#include <nacl/nacl_dyncode.h>
+#endif
+
 
 /*
  * The mini code should not have any compile time dependencies on the GC being used, so the same object file from mini/
@@ -127,7 +133,7 @@
 #endif
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION 87
+#define MONO_AOT_FILE_VERSION 88
 
 //TODO: This is x86/amd64 specific.
 #define mono_simd_shuffle_mask(a,b,c,d) ((a) | ((b) << 2) | ((c) << 4) | ((d) << 6))
@@ -516,7 +522,12 @@ extern gboolean mono_use_llvm;
 extern const char ins_info[];
 extern const gint8 ins_sreg_counts [];
 
+#ifndef DISABLE_JIT
 #define mono_inst_get_num_src_registers(ins) (ins_sreg_counts [(ins)->opcode - OP_START - 1])
+#else
+#define mono_inst_get_num_src_registers(ins) 0
+#endif
+
 #define mono_inst_get_src_registers(ins, regs) (((regs) [0] = (ins)->sreg1), ((regs) [1] = (ins)->sreg2), ((regs) [2] = (ins)->sreg3), mono_inst_get_num_src_registers ((ins)))
 
 #define MONO_BB_FOR_EACH_INS(bb, ins) for ((ins) = (bb)->code; (ins); (ins) = (ins)->next)
@@ -1185,7 +1196,9 @@ typedef enum {
 	MONO_TRAMPOLINE_AOT_PLT,
 	MONO_TRAMPOLINE_DELEGATE,
 	MONO_TRAMPOLINE_RESTORE_STACK_PROT,
+#ifndef DISABLE_REMOTING
 	MONO_TRAMPOLINE_GENERIC_VIRTUAL_REMOTING,
+#endif
 	MONO_TRAMPOLINE_MONITOR_ENTER,
 	MONO_TRAMPOLINE_MONITOR_EXIT,
 	MONO_TRAMPOLINE_VCALL,
@@ -1856,6 +1869,7 @@ void      mono_merge_basic_blocks           (MonoCompile *cfg, MonoBasicBlock *b
 void      mono_optimize_branches            (MonoCompile *cfg) MONO_INTERNAL;
 
 void      mono_blockset_print               (MonoCompile *cfg, MonoBitSet *set, const char *name, guint idom) MONO_INTERNAL;
+void      mono_print_ji                     (const MonoJumpInfo *ji) MONO_INTERNAL;
 void      mono_print_ins_index              (int i, MonoInst *ins) MONO_INTERNAL;
 void      mono_print_ins                    (MonoInst *ins) MONO_INTERNAL;
 void      mono_print_bb                     (MonoBasicBlock *bb, const char *msg) MONO_INTERNAL;
@@ -1948,6 +1962,8 @@ extern const guint kNaClAlignmentMask;
 #endif
 
 #if defined(__native_client__) || defined(__native_client_codegen__)
+extern volatile int __nacl_thread_suspension_needed;
+extern void __nacl_suspend_thread_if_needed();
 void mono_nacl_gc();
 #endif
 
@@ -2457,6 +2473,9 @@ gboolean
 mono_method_is_generic_sharable_impl_full (MonoMethod *method, gboolean allow_type_vars, gboolean allow_partial, gboolean allow_gsharedvt) MONO_INTERNAL;
 
 gboolean
+mini_class_is_generic_sharable (MonoClass *klass) MONO_INTERNAL;
+
+gboolean
 mono_is_partially_sharable_inst (MonoGenericInst *inst) MONO_INTERNAL;
 
 MonoGenericSharingContext* mono_get_generic_context_from_code (guint8 *code) MONO_INTERNAL;
@@ -2492,16 +2511,17 @@ void mono_cfg_add_try_hole (MonoCompile *cfg, MonoExceptionClause *clause, guint
 
 void mono_cfg_set_exception (MonoCompile *cfg, int type) MONO_INTERNAL;
 gboolean mini_type_is_reference (MonoCompile *cfg, MonoType *type) MONO_INTERNAL;
-gboolean mini_type_is_vtype (MonoCompile *cfg, MonoType *t) MONO_INTERNAL;
-gboolean mini_type_var_is_vt (MonoCompile *cfg, MonoType *type) MONO_INTERNAL;
-gboolean mini_is_gsharedvt_klass (MonoCompile *cfg, MonoClass *klass) MONO_INTERNAL;
+gboolean mini_type_is_vtype (MonoCompile *cfg, MonoType *t); /* should be internal but it's used by llvm */
+gboolean mini_type_var_is_vt (MonoCompile *cfg, MonoType *type); /* should be internal but it's used by llvm */
+gboolean mini_is_gsharedvt_klass (MonoCompile *cfg, MonoClass *klass); /* should be internal but it's used by llvm */
 gboolean mini_is_gsharedvt_type (MonoCompile *cfg, MonoType *t) MONO_INTERNAL;
 gboolean mini_is_gsharedvt_signature (MonoCompile *cfg, MonoMethodSignature *sig) MONO_INTERNAL;
 gboolean mini_is_gsharedvt_type_gsctx (MonoGenericSharingContext *gsctx, MonoType *t) MONO_INTERNAL;
 gboolean mini_is_gsharedvt_variable_type (MonoCompile *cfg, MonoType *t) MONO_INTERNAL;
-MonoType* mini_get_gsharedvt_alloc_type_for_type (MonoCompile *cfg, MonoType *t) MONO_INTERNAL;
+MonoType* mini_get_gsharedvt_alloc_type_for_type (MonoCompile *cfg, MonoType *t); /* should be internal but it's used by llvm */
 gboolean mini_is_gsharedvt_sharable_method (MonoMethod *method) MONO_INTERNAL;
 gboolean mini_is_gsharedvt_variable_signature (MonoMethodSignature *sig) MONO_INTERNAL;
+gboolean mini_is_gsharedvt_sharable_inst (MonoGenericInst *inst) MONO_INTERNAL;
 gpointer mini_method_get_rgctx (MonoMethod *m) MONO_INTERNAL;
 void mini_init_gsctx (MonoGenericContext *context, MonoGenericSharingContext *gsctx) MONO_INTERNAL;
 

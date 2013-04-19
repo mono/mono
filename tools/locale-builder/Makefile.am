@@ -42,7 +42,7 @@ minimal: locale-builder.exe locale-data
 
 locale-data:
 	if ! test -d CLDR/common ; then \
-		wget http://www.unicode.org/Public/cldr/21/core.zip ; \
+		curl http://www.unicode.org/Public/cldr/21/core.zip -o core.zip ; \
 		unzip core.zip -d CLDR ; \
 	fi
 

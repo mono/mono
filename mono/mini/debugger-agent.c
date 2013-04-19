@@ -72,6 +72,7 @@ int WSAAPI getnameinfo(const struct sockaddr*,socklen_t,char*,DWORD,
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/socket-io.h>
 #include <mono/metadata/assembly.h>
+#include <mono/metadata/runtime.h>
 #include <mono/utils/mono-semaphore.h>
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/mono-stack-unwinding.h>
@@ -280,7 +281,7 @@ typedef struct {
 #define HEADER_LENGTH 11
 
 #define MAJOR_VERSION 2
-#define MINOR_VERSION 22
+#define MINOR_VERSION 23
 
 typedef enum {
 	CMD_SET_VM = 1,
@@ -482,6 +483,7 @@ typedef enum {
 	CMD_TYPE_GET_METHODS_BY_NAME_FLAGS = 15,
 	CMD_TYPE_GET_INTERFACES = 16,
 	CMD_TYPE_GET_INTERFACE_MAP = 17,
+	CMD_TYPE_IS_INITIALIZED = 18
 } CmdType;
 
 typedef enum {
@@ -2937,16 +2939,13 @@ get_seq_points (MonoDomain *domain, MonoMethod *method)
 	return seq_points;
 }
 
-static MonoSeqPointInfo*
-find_seq_points (MonoDomain *domain, MonoMethod *method)
+static void
+no_seq_points_found (MonoMethod *method)
 {
-	MonoSeqPointInfo *seq_points = get_seq_points (domain, method);
-
-	if (!seq_points)
-		printf ("Unable to find seq points for method '%s'.\n", mono_method_full_name (method, TRUE));
-	g_assert (seq_points);
-
-	return seq_points;
+	/*
+	 * This can happen in full-aot mode with assemblies AOTed without the 'soft-debug' option to save space.
+	 */
+	printf ("Unable to find seq points for method '%s'.\n", mono_method_full_name (method, TRUE));
 }
 
 /*
@@ -2960,7 +2959,12 @@ find_next_seq_point_for_native_offset (MonoDomain *domain, MonoMethod *method, g
 	MonoSeqPointInfo *seq_points;
 	int i;
 
-	seq_points = find_seq_points (domain, method);
+	seq_points = get_seq_points (domain, method);
+	if (!seq_points) {
+		if (info)
+			*info = NULL;
+		return NULL;
+	}
 	g_assert (seq_points);
 	if (info)
 		*info = seq_points;
@@ -4034,11 +4038,13 @@ insert_breakpoint (MonoSeqPointInfo *seq_points, MonoDomain *domain, MonoJitInfo
 
 		if (error) {
 			mono_error_set_error (error, MONO_ERROR_GENERIC, "%s", s);
+			g_warning ("%s", s);
 			g_free (s);
 			return;
 		} else {
-			g_error ("%s", s);
+			g_warning ("%s", s);
 			g_free (s);
+			return;
 		}
 	}
 
@@ -4404,6 +4410,8 @@ process_breakpoint_inner (DebuggerTlsData *tls)
 	 * the offset recorded in the seq point map, so find the prev seq point before ip.
 	 */
 	sp = find_prev_seq_point_for_native_offset (mono_domain_get (), ji->method, native_offset, &info);
+	if (!sp)
+		no_seq_points_found (ji->method);
 	g_assert (sp);
 
 	DEBUG(1, fprintf (log_file, "[%p] Breakpoint hit, method=%s, ip=%p, offset=0x%x, sp il offset=0x%x.\n", (gpointer)GetCurrentThreadId (), ji->method->name, ip, native_offset, sp ? sp->il_offset : -1));
@@ -4934,13 +4942,16 @@ ss_start (SingleStepReq *ss_req, MonoMethod *method, SeqPoint *sp, MonoSeqPointI
 			// There could be method calls before the next seq point in the caller when using nested calls
 			//enable_global = TRUE;
 		} else {
-			while (sp && sp->next_len == 0) {
+			if (sp && sp->next_len == 0) {
 				sp = NULL;
-				if (frame_index < tls->frame_count) {
+				while (frame_index < tls->frame_count) {
 					StackFrame *frame = tls->frames [frame_index];
 
 					method = frame->method;
 					sp = find_prev_seq_point_for_native_offset (frame->domain, frame->method, frame->native_offset, &info);
+					if (sp && sp->next_len != 0)
+						break;
+					sp = NULL;
 					frame_index ++;
 				}
 			}
@@ -5062,6 +5073,8 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, EventRequ
 		 * point after ip.
 		 */
 		sp = find_next_seq_point_for_native_offset (frame.domain, frame.method, frame.native_offset, &info);
+		if (!sp)
+			no_seq_points_found (frame.method);
 		g_assert (sp);
 
 		method = frame.method;
@@ -5106,6 +5119,8 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, EventRequ
 			if (!method && frame->il_offset != -1) {
 				/* FIXME: Sort the table and use a binary search */
 				sp = find_prev_seq_point_for_native_offset (frame->domain, frame->method, frame->native_offset, &info);
+				if (!sp)
+					no_seq_points_found (frame->method);
 				g_assert (sp);
 				method = frame->method;
 			}
@@ -5373,8 +5388,12 @@ buffer_add_value_full (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain,
 	MonoObject *obj;
 
 	if (t->byref) {
-		if (!(*(void**)addr))
-			printf ("%s\n", mono_type_full_name (t));
+		if (!(*(void**)addr)) {
+			/* This can happen with compiler generated locals */
+			//printf ("%s\n", mono_type_full_name (t));
+			buffer_add_byte (buf, VALUE_TYPE_ID_NULL);
+			return;
+		}
 		g_assert (*(void**)addr);
 		addr = *(void**)addr;
 	}
@@ -6437,9 +6456,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 			while (suspend_count > 0)
 				resume_vm ();
 
-			mono_runtime_set_shutting_down ();
-
-			mono_threads_set_shutting_down ();
+			mono_runtime_shutdown ();
 
 			/* Suspend all managed threads since the runtime is going away */
 			DEBUG(1, fprintf (log_file, "Suspending all threads...\n"));
@@ -7674,6 +7691,15 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 			for (i = 0; i < nmethods; ++i)
 				buffer_add_methodid (buf, domain, klass->vtable [i + ioffset]);
 		}
+		break;
+	}
+	case CMD_TYPE_IS_INITIALIZED: {
+		MonoVTable *vtable = mono_class_vtable (domain, klass);
+
+		if (vtable)
+			buffer_add_int (buf, (vtable->initialized || vtable->init_failed) ? 1 : 0);
+		else
+			buffer_add_int (buf, 0);
 		break;
 	}
 	default:

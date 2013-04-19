@@ -1007,5 +1007,163 @@ namespace MonoTests.System.Data
 			AssertEquals (DataRowState.Detached, dr.RowState);
 			object o = dr ["col"];
 		}
+
+		[Test]
+		public void SetParentRow_Null ()
+		{
+			DataSet ds = new DataSet();
+
+			DataTable	child 	= ds.Tables.Add("child");
+			child.Columns.Add("column1");
+
+			DataRow r1 = child.NewRow();
+
+			r1.SetParentRow(null);
+		}
+
+		[Test]
+		public void SetParentRow_DataInheritance ()
+		{
+			var ds = new DataSet() ;
+
+			var	child 			= ds.Tables.Add("child") ;
+
+			var	childColumn1 	= child.Columns.Add("column1");
+			var	childColumn2 	= child.Columns.Add("column2");
+
+			var	parent1 		= ds.Tables.Add("parent1");
+			var	parent1Column1 	= parent1.Columns.Add("column1");
+			var	parent1Column2 	= parent1.Columns.Add("column2");
+
+			var	parent2 		= ds.Tables.Add("parent2");
+			var	parent2Column1 	= parent2.Columns.Add("column1");
+			var	parent2Column2 	= parent2.Columns.Add("column2");
+
+			var relation1 = ds.Relations.Add("parent1-child", parent1Column1, childColumn1);
+							ds.Relations.Add("parent2-child", parent2Column2, childColumn2);
+
+			var childRow1 	= child.NewRow();
+			var parent1Row 	= parent1.NewRow();
+			var parent2Row	= parent2.NewRow();
+
+			parent1Row[parent1Column1] = "p1c1";
+			parent1Row[parent1Column2] = "p1c2";
+			parent2Row[parent2Column1] = "p2c1";
+			parent2Row[parent2Column2] = "p2c2";
+
+			child.Rows.Add(childRow1);
+			parent1.Rows.Add(parent1Row);
+			parent2.Rows.Add(parent2Row);
+
+			childRow1.SetParentRow(parent1Row);
+			AssertEquals ("p1c1", childRow1[childColumn1]);
+			AssertEquals (DBNull.Value, childRow1[childColumn2]);
+
+			childRow1.SetParentRow(parent2Row);
+			AssertEquals ("p1c1", childRow1[childColumn1]);
+			AssertEquals ("p2c2", childRow1[childColumn2]);
+
+			childRow1.SetParentRow(null);
+			AssertEquals (DBNull.Value, childRow1[childColumn1]);
+			AssertEquals (DBNull.Value, childRow1[childColumn2]);
+
+			childRow1.SetParentRow(parent2Row);
+			AssertEquals (DBNull.Value, childRow1[childColumn1]);
+			AssertEquals ("p2c2", childRow1[childColumn2]);
+		}
+
+		[Test]
+		public void SetParentRow_with_Relation ()
+		{
+			var ds = new DataSet() ;
+
+			var	child 			= ds.Tables.Add("child") ;
+
+			var	childColumn1 	= child.Columns.Add("column1");
+			var	childColumn2 	= child.Columns.Add("column2");
+
+			var	parent1 		= ds.Tables.Add("parent1");
+			var	parent1Column1 	= parent1.Columns.Add("column1");
+			var	parent1Column2 	= parent1.Columns.Add("column2");
+
+			var	parent2 		= ds.Tables.Add("parent2");
+			var	parent2Column1 	= parent2.Columns.Add("column1");
+			var	parent2Column2 	= parent2.Columns.Add("column2");
+
+			var relation1 = ds.Relations.Add("parent1-child", parent1Column1, childColumn1) ; 
+			var relation2 = ds.Relations.Add("parent2-child", parent2Column2, childColumn2) ;
+
+			var childRow1 	= child.NewRow();
+			var parent1Row 	= parent1.NewRow();
+			var parent2Row	= parent2.NewRow();
+
+			parent1Row[parent1Column1] = "p1c1";
+			parent1Row[parent1Column2] = "p1c2";
+			parent2Row[parent2Column1] = "p2c1";
+			parent2Row[parent2Column2] = "p2c2";
+
+			child.Rows.Add(childRow1);
+			parent1.Rows.Add(parent1Row);
+			parent2.Rows.Add(parent2Row);
+
+
+			childRow1.SetParentRow (null, relation2);
+			AssertEquals (DBNull.Value, childRow1[childColumn1]);
+			AssertEquals (DBNull.Value, childRow1[childColumn2]);
+
+			try {
+				childRow1.SetParentRow(parent1Row, relation2);
+				Fail ("Must throw InvalidConstaintException");
+			} catch (InvalidConstraintException e) {
+			}
+			AssertEquals (DBNull.Value, childRow1[childColumn1]);
+			AssertEquals (DBNull.Value, childRow1[childColumn2]);
+
+			childRow1.SetParentRow(parent1Row, relation1);
+			AssertEquals ("p1c1", childRow1[childColumn1]);
+			AssertEquals (DBNull.Value, childRow1[childColumn2]);
+
+
+			childRow1.SetParentRow (null, relation2);
+			AssertEquals ("p1c1", childRow1[childColumn1]);
+			AssertEquals (DBNull.Value, childRow1[childColumn2]);
+
+			childRow1.SetParentRow (null, relation1);
+			AssertEquals (DBNull.Value, childRow1[childColumn1]);
+			AssertEquals (DBNull.Value, childRow1[childColumn2]);
+		}
+
+		[Test]
+		public void SetParent_missing_ParentRow ()
+		{
+			var ds = new DataSet() ;
+
+			var	child 			= ds.Tables.Add("child") ;
+
+			var	childColumn1 	= child.Columns.Add("column1");
+			var	childColumn2 	= child.Columns.Add("column2");
+
+			var	parent1 		= ds.Tables.Add("parent1");
+			var	parentColumn1 	= parent1.Columns.Add("column1");
+
+			var	parent2 		= ds.Tables.Add("parent2");
+			var	parentColumn2 	= parent2.Columns.Add("column2");
+
+			ds.Relations.Add("parent1-child", parentColumn1, childColumn1);
+			ds.Relations.Add("parent2-child", parentColumn2, childColumn2);
+
+			var childRow = child.NewRow();
+			var parentRow = parent2.NewRow();
+
+			parentRow[parentColumn2] = "value";
+
+			child.Rows.Add(childRow);
+			parent2.Rows.Add(parentRow);
+
+			childRow.SetParentRow(parentRow);
+			AssertEquals (DBNull.Value, childRow[childColumn1]);
+			AssertEquals ("value", childRow[childColumn2]);
+		}
+
 	}
 }

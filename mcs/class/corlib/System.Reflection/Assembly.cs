@@ -50,7 +50,7 @@ namespace System.Reflection {
 	[ClassInterface(ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
 #if MOBILE
-	public partial class Assembly : ICustomAttributeProvider, _Assembly {
+	public partial class Assembly : ICustomAttributeProvider {
 #elif NET_4_0
 	public abstract class Assembly : ICustomAttributeProvider, _Assembly, IEvidenceFactory, ISerializable {
 #else
@@ -73,6 +73,8 @@ namespace System.Reflection {
 		internal PermissionSet _refuse;		// for SecurityAction.RequestRefuse
 		private PermissionSet _granted;		// for the resolved assembly granted permissions
 		private PermissionSet _denied;		// for the resolved assembly denied permissions
+#else
+		object _evidence, _minimum, _optional, _refuse, _granted, _denied;
 #endif
 		private bool fromByteArray;
 		private string assemblyName;
@@ -375,10 +377,12 @@ namespace System.Reflection {
 		[MonoTODO ("copiedName == true is not supported")]
 		public virtual AssemblyName GetName (Boolean copiedName)
 		{
+#if !MOBILE
 			// CodeBase, which is restricted, will be copied into the AssemblyName object so...
 			if (SecurityManager.SecurityEnabled) {
 				GetCodeBase (true); // this will ensure the Demand is made
 			}
+#endif
 			return UnprotectedGetName ();
 		}
 
@@ -458,12 +462,14 @@ namespace System.Reflection {
 			return LoadFrom (fullName);
 		}
 
+#if !MOBILE
 		Type _Assembly.GetType ()
 		{
 			// Required or object::GetType becomes virtual final
 			return base.GetType ();
 		}		
-		
+#endif
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static Assembly LoadFrom (String assemblyFile, bool refonly);
 
@@ -701,10 +707,6 @@ namespace System.Reflection {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal virtual extern Module[] GetModulesInternal ();
-
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern string[] GetNamespaces ();
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern virtual String[] GetManifestResourceNames ();
@@ -972,6 +974,27 @@ namespace System.Reflection {
 			if ((object)left == null ^ (object)right == null)
 				return true;
 			return !left.Equals (right);
+		}
+#endif
+
+#if NET_4_5
+		public virtual IEnumerable<TypeInfo> DefinedTypes {
+			get {
+				foreach (var type in GetTypes ())
+					yield return new TypeDelegator (type);
+			}
+		}
+
+		public virtual IEnumerable<Type> ExportedTypes {
+			get { return GetExportedTypes (); }
+		}
+
+		public virtual IEnumerable<Module> Modules {
+			get { return GetModules (); }
+		}
+
+		public virtual IEnumerable<CustomAttributeData> CustomAttributes {
+			get { return GetCustomAttributesData (); }
 		}
 #endif
 	}

@@ -451,7 +451,7 @@ namespace MonoTests.System.Xml.Linq
 			Assert.IsNotNull ((double?) new XAttribute (m), "m:double?:null");
 			Assert.AreEqual (double.NegativeInfinity, ((double?) new XAttribute (m)).Value, "m:double?:value");
 			Assert.IsNotNull ((double?) new XAttribute (n), "n:double?:null");
-			Assert.IsNaN (((double?) new XAttribute (n)).Value, "n:double?:value");
+			Assert.AreEqual (double.NaN, ((double?) new XAttribute (n)).Value, "n:double?:value");
 			Assert.IsNotNull ((float?) new XAttribute (a), "a:float?:null");
 			Assert.AreEqual (7f, ((float?) new XAttribute (a)).Value, "a:float?:value");
 			Assert.IsNotNull ((float?) new XAttribute (b), "b:float?:null");
@@ -473,7 +473,7 @@ namespace MonoTests.System.Xml.Linq
 			Assert.IsNotNull ((float?) new XAttribute (m), "m:float?:null");
 			Assert.AreEqual (float.NegativeInfinity, ((float?) new XAttribute (m)).Value, "m:float?:value");
 			Assert.IsNotNull ((float?) new XAttribute (n), "n:float?:null");
-			Assert.IsNaN (((float?) new XAttribute (n)).Value, "n:float?:value");
+			Assert.AreEqual (float.NaN, ((float?) new XAttribute (n)).Value, "n:float?:value");
 			AssertThrows<FormatException> (() => { Guid? z = (Guid?) new XAttribute (a); }, "a:Guid?");
 			AssertThrows<FormatException> (() => { Guid? z = (Guid?) new XAttribute (b); }, "b:Guid?");
 			AssertThrows<FormatException> (() => { Guid? z = (Guid?) new XAttribute (c); }, "c:Guid?");
@@ -629,7 +629,7 @@ namespace MonoTests.System.Xml.Linq
 			Assert.AreEqual (double.PositiveInfinity, (double) new XAttribute (i), "i:double");
 			Assert.AreEqual (double.NegativeInfinity, (double) new XAttribute (M), "M:double");
 			Assert.AreEqual (double.NegativeInfinity, (double) new XAttribute (m), "m:double");
-			Assert.IsNaN (((double) new XAttribute (n)), "n:double");
+			Assert.AreEqual (double.NaN, ((double) new XAttribute (n)), "n:double");
 			Assert.AreEqual (7f, (float) new XAttribute (a), "a:float");
 			Assert.AreEqual (42f, (float) new XAttribute (b), "b:float");
 			Assert.AreEqual (123f, (float) new XAttribute (c), "c:float");
@@ -640,7 +640,7 @@ namespace MonoTests.System.Xml.Linq
 			Assert.AreEqual (float.PositiveInfinity, (float) new XAttribute (i), "i:float");
 			Assert.AreEqual (float.NegativeInfinity, (float) new XAttribute (M), "M:float");
 			Assert.AreEqual (float.NegativeInfinity, (float) new XAttribute (m), "m:float");
-			Assert.IsNaN (((float) new XAttribute (n)), "n:float");
+			Assert.AreEqual (float.NaN, ((float) new XAttribute (n)), "n:float");
 			AssertThrows<FormatException> (() => { Guid z = (Guid) new XAttribute (a); }, "a:Guid");
 			AssertThrows<FormatException> (() => { Guid z = (Guid) new XAttribute (b); }, "b:Guid");
 			AssertThrows<FormatException> (() => { Guid z = (Guid) new XAttribute (c); }, "c:Guid");

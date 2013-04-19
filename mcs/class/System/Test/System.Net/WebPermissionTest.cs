@@ -37,6 +37,9 @@ namespace MonoTests.System.Net {
 	
 	[TestFixture]
 	[Category ("CAS")]
+#if MOBILE
+	[Ignore ("CAS is not supported and parts will be linked away")]
+#endif
 	public class WebPermissionTest {
 
 		[Test]

@@ -91,6 +91,7 @@ namespace System.ServiceModel.Channels
 			token.SetAttribute ("RequireClientCertificate", req_cli_cert ? "true" : "false");
 			return token;
 		}
+#endif
 
 		// overriden only in full profile
 		public override T GetProperty<T> (BindingContext context)
@@ -99,10 +100,8 @@ namespace System.ServiceModel.Channels
 				return (T) (object) new HttpsBindingProperties (this);
 			return base.GetProperty<T> (context);
 		}
-#endif
 	}
 
-#if !NET_2_1
 	class HttpsBindingProperties : HttpBindingProperties
 	{
 		HttpsTransportBindingElement source;
@@ -133,5 +132,4 @@ namespace System.ServiceModel.Channels
 			get { return source.RequireClientCertificate || base.SupportsClientWindowsIdentity; }
 		}
 	}
-#endif
 }

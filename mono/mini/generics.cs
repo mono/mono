@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 
 class Tests {
 
@@ -1013,4 +1015,25 @@ class Tests {
 			return 3;
 		return 0;
 	}
+
+	public static int test_0_volatile_read_write () {
+		string foo = "ABC";
+		Volatile.Write (ref foo, "DEF");
+		return Volatile.Read (ref foo) == "DEF" ? 0 : 1;
+	}
+
+	// FIXME: Doesn't work with --regression as Interlocked.Add(ref long) is only implemented as an intrinsic
+#if FALSE
+	public static async Task<T> FooAsync<T> (int i, int j) {
+		Task<int> t = new Task<int> (delegate () { Console.WriteLine ("HIT!"); return 0; });
+		var response = await t;
+		return default(T);
+	}
+
+	public static int test_0_fullaot_generic_async () {
+		Task<string> t = FooAsync<string> (1, 2);
+		t.RunSynchronously ();
+		return 0;
+	}
+#endif
 }

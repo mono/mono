@@ -2113,10 +2113,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class, gboolean
 			MONO_GC_REGISTER_ROOT_IF_MOVING(vt->type);
 	}
 
-	if (mono_class_is_contextbound (class))
-		vt->remote = 1;
-	else
-		vt->remote = 0;
+	mono_vtable_set_is_remote (vt, mono_class_is_contextbound (class));
 
 	/*  class_vtable_array keeps an array of created vtables
 	 */
@@ -2174,7 +2171,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class, gboolean
 	mono_loader_unlock ();
 
 	/* Initialization is now complete, we can throw if the InheritanceDemand aren't satisfied */
-	if (mono_is_security_manager_active () && (class->exception_type == MONO_EXCEPTION_SECURITY_INHERITANCEDEMAND) && raise_on_error)
+	if (mono_security_enabled () && (class->exception_type == MONO_EXCEPTION_SECURITY_INHERITANCEDEMAND) && raise_on_error)
 		mono_raise_exception (mono_class_get_exception_for_failure (class));
 
 	/* make sure the parent is initialized */
@@ -2629,8 +2626,8 @@ mono_remote_class_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mon
 		MonoClass *klass;
 		type = ((MonoReflectionType *)rp->class_to_proxy)->type;
 		klass = mono_class_from_mono_type (type);
-#ifndef DISABLE_COM
-		if ((klass->is_com_object || (mono_defaults.com_object_class && klass == mono_defaults.com_object_class)) && !mono_class_vtable (mono_domain_get (), klass)->remote)
+#ifndef DISABLE_COMf
+		if ((mono_class_is_com_object (klass) || (mono_defaults.com_object_class && klass == mono_defaults.com_object_class)) && !mono_vtable_is_remote (mono_class_vtable (mono_domain_get (), klass)))
 			remote_class->default_vtable = mono_class_proxy_vtable (domain, remote_class, MONO_REMOTING_TARGET_COMINTEROP);
 		else
 #endif
@@ -2753,7 +2750,7 @@ mono_object_get_virtual_method (MonoObject *obj, MonoMethod *method)
 			res = mono_marshal_get_remoting_invoke_with_check (res);
 		else {
 #ifndef DISABLE_COM
-			if (klass == mono_defaults.com_object_class || klass->is_com_object)
+			if (klass == mono_defaults.com_object_class || mono_class_is_com_object (klass))
 				res = mono_cominterop_get_invoke (res);
 			else
 #endif
@@ -3481,6 +3478,44 @@ mono_get_delegate_invoke (MonoClass *klass)
 	if (klass->exception_type)
 		return NULL;
 	im = mono_class_get_method_from_name (klass, "Invoke", -1);
+	return im;
+}
+
+/**
+ * mono_get_delegate_begin_invoke:
+ * @klass: The delegate class
+ *
+ * Returns: the MonoMethod for the "BeginInvoke" method in the delegate klass or NULL if @klass is a broken delegate type
+ */
+MonoMethod *
+mono_get_delegate_begin_invoke (MonoClass *klass)
+{
+	MonoMethod *im;
+
+	/* This is called at runtime, so avoid the slower search in metadata */
+	mono_class_setup_methods (klass);
+	if (klass->exception_type)
+		return NULL;
+	im = mono_class_get_method_from_name (klass, "BeginInvoke", -1);
+	return im;
+}
+
+/**
+ * mono_get_delegate_end_invoke:
+ * @klass: The delegate class
+ *
+ * Returns: the MonoMethod for the "EndInvoke" method in the delegate klass or NULL if @klass is a broken delegate type
+ */
+MonoMethod *
+mono_get_delegate_end_invoke (MonoClass *klass)
+{
+	MonoMethod *im;
+
+	/* This is called at runtime, so avoid the slower search in metadata */
+	mono_class_setup_methods (klass);
+	if (klass->exception_type)
+		return NULL;
+	im = mono_class_get_method_from_name (klass, "EndInvoke", -1);
 	return im;
 }
 
@@ -4390,7 +4425,7 @@ mono_object_new_specific (MonoVTable *vtable)
 	MONO_ARCH_SAVE_REGS;
 	
 	/* check for is_com_object for COM Interop */
-	if (vtable->remote || vtable->klass->is_com_object)
+	if (mono_vtable_is_remote (vtable) || mono_class_is_com_object (vtable->klass))
 	{
 		gpointer pa [1];
 		MonoMethod *im = vtable->domain->create_proxy_for_type_method;

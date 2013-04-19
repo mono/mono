@@ -16,9 +16,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#if !HOST_WIN32
-#include <mono/io-layer/atomic.h>
-#endif
 #include <mono/metadata/image.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/metadata.h>
@@ -44,6 +41,7 @@
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/mono-logger-internal.h>
 #include <mono/utils/mono-memory-model.h>
+#include <mono/utils/atomic.h>
 MonoStats mono_stats;
 
 gboolean mono_print_vtable = FALSE;
@@ -3739,8 +3737,9 @@ check_interface_method_override (MonoClass *class, MonoMethod *im, MonoMethod *c
 			mono_secman_inheritancedemand_method (cm, im);
 		}
 
-		if (mono_security_get_mode () == MONO_SECURITY_MODE_CORE_CLR)
+		if (mono_security_core_clr_enabled ())
 			mono_security_core_clr_check_override (class, cm, im);
+
 		TRACE_INTERFACE_VTABLE (printf ("[NAME CHECK OK]"));
 		if (is_wcf_hack_disabled () && !mono_method_can_access_method_full (cm, im, NULL)) {
 			char *body_name = mono_method_full_name (cm, TRUE);
@@ -3824,9 +3823,9 @@ check_interface_method_override (MonoClass *class, MonoMethod *im, MonoMethod *c
 			mono_secman_inheritancedemand_method (cm, im);
 		}
 
-		if (mono_security_get_mode () == MONO_SECURITY_MODE_CORE_CLR)
+		if (mono_security_core_clr_enabled ())
 			mono_security_core_clr_check_override (class, cm, im);
-		
+
 		TRACE_INTERFACE_VTABLE (printf ("[INJECTED INTERFACE CHECK OK]"));
 		if (is_wcf_hack_disabled () && !mono_method_can_access_method_full (cm, im, NULL)) {
 			char *body_name = mono_method_full_name (cm, TRUE);
@@ -4056,7 +4055,7 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 	int i, max_vtsize = 0, max_iid, cur_slot = 0;
 	GPtrArray *ifaces = NULL;
 	GHashTable *override_map = NULL;
-	gboolean security_enabled = mono_is_security_manager_active ();
+	gboolean security_enabled = mono_security_enabled ();
 	MonoMethod *cm;
 	gpointer class_iter;
 #if (DEBUG_INTERFACE_VTABLE_CODE|TRACE_INTERFACE_VTABLE_CODE)
@@ -4228,7 +4227,7 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 
 			g_hash_table_insert (override_map, overrides [i * 2], overrides [i * 2 + 1]);
 
-			if (mono_security_get_mode () == MONO_SECURITY_MODE_CORE_CLR)
+			if (mono_security_core_clr_enabled ())
 				mono_security_core_clr_check_override (class, vtable [dslot], decl);
 		}
 	}
@@ -4408,7 +4407,7 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 							mono_secman_inheritancedemand_method (cm, m1);
 						}
 
-						if (mono_security_get_mode () == MONO_SECURITY_MODE_CORE_CLR)
+						if (mono_security_core_clr_enabled ())
 							mono_security_core_clr_check_override (class, cm, m1);
 
 						slot = mono_method_get_vtable_slot (m1);
@@ -4469,7 +4468,7 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 				mono_method_full_name (overrides [i * 2 + 1], 1), overrides [i * 2 + 1]));
 			g_hash_table_insert (override_map, decl, overrides [i * 2 + 1]);
 
-			if (mono_security_get_mode () == MONO_SECURITY_MODE_CORE_CLR)
+			if (mono_security_core_clr_enabled ())
 				mono_security_core_clr_check_override (class, vtable [decl->slot], decl);
 		}
 	}
@@ -4896,7 +4895,7 @@ mono_class_init (MonoClass *class)
 	}
 
 	/* CAS - SecurityAction.InheritanceDemand */
-	if (mono_is_security_manager_active () && class->parent && (class->parent->flags & TYPE_ATTRIBUTE_HAS_SECURITY)) {
+	if (mono_security_enabled () && class->parent && (class->parent->flags & TYPE_ATTRIBUTE_HAS_SECURITY)) {
 		mono_secman_inheritancedemand_class (class, class->parent);
 	}
 
@@ -5079,7 +5078,7 @@ mono_class_init (MonoClass *class)
 		setup_interface_offsets (class, 0, TRUE);
 	}
 
-	if (mono_security_get_mode () == MONO_SECURITY_MODE_CORE_CLR)
+	if (mono_security_core_clr_enabled ())
 		mono_security_core_clr_check_inheritance (class);
 
 	if (mono_loader_get_last_error ()) {
@@ -5314,7 +5313,7 @@ static void
 init_com_from_comimport (MonoClass *class)
 {
 	/* we don't always allow COM initialization under the CoreCLR (e.g. Moonlight does not require it) */
-	if ((mono_security_get_mode () == MONO_SECURITY_MODE_CORE_CLR)) {
+	if (mono_security_core_clr_enabled ()) {
 		/* but some other CoreCLR user could requires it for their platform (i.e. trusted) code */
 		if (!mono_security_core_clr_determine_platform_image (class->image)) {
 			/* but it can not be made available for application (i.e. user code) since all COM calls
@@ -5324,6 +5323,7 @@ init_com_from_comimport (MonoClass *class)
 			return;
 		}
 	}
+
 	/* FIXME : we should add an extra checks to ensure COM can be initialized properly before continuing */
 	mono_init_com_types ();
 }
@@ -5384,10 +5384,9 @@ mono_class_setup_parent (MonoClass *class, MonoClass *parent)
 #endif
 
 		class->delegate  = parent->delegate;
-		if (MONO_CLASS_IS_IMPORT (class))
-			class->is_com_object = 1;
-		else
-			class->is_com_object = parent->is_com_object;
+
+		if (MONO_CLASS_IS_IMPORT (class) || mono_class_is_com_object (parent))
+			mono_class_set_is_com_object (class);
 		
 		if (system_namespace) {
 #ifndef DISABLE_REMOTING
@@ -9245,6 +9244,7 @@ mono_class_get_exception_for_failure (MonoClass *klass)
 	gpointer exception_data = mono_class_get_exception_data (klass);
 
 	switch (klass->exception_type) {
+#ifndef DISABLE_SECURITY
 	case MONO_EXCEPTION_SECURITY_INHERITANCEDEMAND: {
 		MonoDomain *domain = mono_domain_get ();
 		MonoSecurityManager* secman = mono_security_manager_get_methods ();
@@ -9261,6 +9261,7 @@ mono_class_get_exception_for_failure (MonoClass *klass)
 		mono_runtime_invoke (secman->inheritsecurityexception, NULL, args, &exc);
 		return (MonoException*) exc;
 	}
+#endif
 	case MONO_EXCEPTION_TYPE_LOAD: {
 		MonoString *name;
 		MonoException *ex;
@@ -9395,7 +9396,7 @@ can_access_internals (MonoAssembly *accessing, MonoAssembly* accessed)
 
 	/* extra safety under CoreCLR - the runtime does not verify the strongname signatures
 	 * anywhere so untrusted friends are not safe to access platform's code internals */
-	if (mono_security_get_mode () == MONO_SECURITY_MODE_CORE_CLR) {
+	if (mono_security_core_clr_enabled ()) {
 		if (!mono_security_core_clr_can_access_internals (accessing->image, accessed->image))
 			return FALSE;
 	}

@@ -531,10 +531,10 @@ namespace System {
 							string path = line.Substring (delim_index + 1).Trim ('"');
 							bool relative = false;
 							
-							if (path.StartsWith ("$HOME/")) {
+							if (path.StartsWithOrdinalUnchecked ("$HOME/")) {
 								relative = true;
 								path = path.Substring (6);
-							} else if (!path.StartsWith ("/")) {
+							} else if (!path.StartsWithOrdinalUnchecked ("/")) {
 								relative = true;
 							}
 							

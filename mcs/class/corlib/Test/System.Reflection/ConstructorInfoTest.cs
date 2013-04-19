@@ -119,5 +119,19 @@ namespace MonoTests.System.Reflection
 			{
 			}
 		}
+
+		[Test]
+		[ExpectedException (typeof (TargetException))]
+		public void InvokeWithNullTarget ()
+		{
+			typeof (Foo).GetConstructors ()[0].Invoke (null, BindingFlags.Default, null, null, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (TargetException))]
+		public void InvokeWithWrongTarget ()
+		{
+			typeof (Foo).GetConstructors ()[0].Invoke (new object (), BindingFlags.Default, null, null, null);
+		}
 	}
 }

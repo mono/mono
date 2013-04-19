@@ -130,7 +130,7 @@ namespace Mono.CSharp.Linq
 
 					if (!Convert.ImplicitConversionExists (rc, a.Expr, source_type)) {
 						rc.Report.Error (1936, loc, "An implementation of `{0}' query expression pattern for source type `{1}' could not be found",
-							best.Name, TypeManager.CSharpName (a.Type));
+							best.Name, a.Type.GetSignatureForError ());
 						return true;
 					}
 				}

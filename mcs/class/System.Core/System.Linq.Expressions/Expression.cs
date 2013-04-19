@@ -1333,7 +1333,7 @@ namespace System.Linq.Expressions {
 				throw new ArgumentNullException ("addMethod");
 			if (arguments == null)
 				throw new ArgumentNullException ("arguments");
-			if (addMethod.Name.ToLower (CultureInfo.InvariantCulture) != "add")
+			if (addMethod.Name.ToLowerInvariant () != "add")
 				throw new ArgumentException ("addMethod");
 			if (addMethod.IsStatic)
 				throw new ArgumentException ("addMethod must be an instance method", "addMethod");
@@ -1713,7 +1713,7 @@ namespace System.Linq.Expressions {
 			var inits = CheckListInit (newExpression, initializers);
 
 			if (addMethod != null) {
-				if (addMethod.Name.ToLower (CultureInfo.InvariantCulture) != "add")
+				if (addMethod.Name.ToLowerInvariant () != "add")
 					throw new ArgumentException ("addMethod");
 
 				var parameters = addMethod.GetParameters ();

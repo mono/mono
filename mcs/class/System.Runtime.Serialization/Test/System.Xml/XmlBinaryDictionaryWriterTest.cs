@@ -32,6 +32,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 
 namespace MonoTests.System.Xml
 {
@@ -717,7 +718,7 @@ Console.WriteLine ();
 			int [] arr = new int [] {0, 2, 0, 6, 8, 10,};
 			w.WriteArray ("", "el", "", arr, 2, 3);
 			w.Close ();
-			Assert.AreEqual (array_int32, ms.ToArray ());
+			Assert.That (ms.ToArray (), new CollectionEquivalentConstraint (array_int32));
 		}
 
 		// make sure that 0 is not written in shortened format.

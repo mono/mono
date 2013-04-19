@@ -44,8 +44,22 @@ public sealed class Tests3 {
 
 }
 
+public static class Tests4 {
+	static Tests4 () {
+	}
+}
+
+public class AAttribute : Attribute {
+	public int afield;
+}
+
+public class BAttribute : AAttribute {
+	public int bfield;
+}
+
 [DebuggerDisplay ("Tests", Name="FOO", Target=typeof (int))]
 [DebuggerTypeProxy (typeof (Tests))]
+[BAttribute (afield = 1, bfield = 2)]
 public class Tests2 {
 	[DebuggerBrowsableAttribute (DebuggerBrowsableState.Collapsed)]
 	public int field_j;
@@ -508,8 +522,15 @@ public class Tests : TestsBase
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static void locals11 (double a, ref double b) {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void locals1 (string[] args) {
 		long foo = 42;
+
+		double ri = 1;
+		locals11 (b: ref ri, a: ri);
 
 		for (int j = 0; j < 10; ++j) {
 			foo ++;

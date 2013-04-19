@@ -34,7 +34,7 @@ namespace System.Reflection
 	{
 		public static TypeInfo GetTypeInfo (this Type type)
 		{
-			throw new NotImplementedException ();
+			return new TypeDelegator (type);
 		}
 	}
 }

@@ -429,7 +429,7 @@ namespace Mono.CSharp
 			FieldBuilder = Parent.TypeBuilder.DefineField (Name, fixed_buffer_type, ModifiersExtensions.FieldAttr (ModFlags));
 
 			var element_spec = new FieldSpec (null, this, MemberType, ffield, ModFlags);
-			spec = new FixedFieldSpec (Parent.Definition, this, FieldBuilder, element_spec, ModFlags);
+			spec = new FixedFieldSpec (Module, Parent.Definition, this, FieldBuilder, element_spec, ModFlags);
 
 			Parent.MemberCache.AddMember (spec);
 			return true;
@@ -482,7 +482,7 @@ namespace Mono.CSharp
 
 			if (buffer_size > int.MaxValue / type_size) {
 				Report.Error (1664, Location, "Fixed size buffer `{0}' of length `{1}' and type `{2}' exceeded 2^31 limit",
-					GetSignatureForError (), buffer_size.ToString (), TypeManager.CSharpName (MemberType));
+					GetSignatureForError (), buffer_size.ToString (), MemberType.GetSignatureForError ());
 				return;
 			}
 
@@ -534,8 +534,8 @@ namespace Mono.CSharp
 	{
 		readonly FieldSpec element;
 
-		public FixedFieldSpec (TypeSpec declaringType, IMemberDefinition definition, FieldInfo info, FieldSpec element, Modifiers modifiers)
-			: base (declaringType, definition, element.MemberType, info, modifiers)
+		public FixedFieldSpec (ModuleContainer module, TypeSpec declaringType, IMemberDefinition definition, FieldInfo info, FieldSpec element, Modifiers modifiers)
+			: base (declaringType, definition, PointerContainer.MakeType (module, element.MemberType), info, modifiers)
 		{
 			this.element = element;
 
@@ -548,10 +548,10 @@ namespace Mono.CSharp
 				return element;
 			}
 		}
-
+		
 		public TypeSpec ElementType {
 			get {
-				return MemberType;
+				return element.MemberType;
 			}
 		}
 	}
@@ -664,7 +664,7 @@ namespace Mono.CSharp
 			if ((ModFlags & Modifiers.VOLATILE) != 0) {
 				if (!CanBeVolatile ()) {
 					Report.Error (677, Location, "`{0}': A volatile field cannot be of the type `{1}'",
-						GetSignatureForError (), TypeManager.CSharpName (MemberType));
+						GetSignatureForError (), MemberType.GetSignatureForError ());
 				}
 
 				if ((ModFlags & Modifiers.READONLY) != 0) {

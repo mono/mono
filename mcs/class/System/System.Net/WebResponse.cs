@@ -85,7 +85,7 @@ namespace System.Net
 		public virtual Uri ResponseUri {		
 			get { throw new NotSupportedException (); }
 		}		
-#if NET_4_5
+#if NET_4_0
 		[MonoTODO ("for portable library support")]
 		public virtual bool SupportsHeaders {
 			get { throw new NotImplementedException (); }
@@ -110,8 +110,20 @@ namespace System.Net
 		void IDisposable.Dispose()
 #endif
 		{
+#if NET_4_0
+			Dispose (true);
+#else
 			Close ();
+#endif
 		}
+		
+#if NET_4_0
+		protected virtual void Dispose (bool disposing)
+		{
+			if (disposing)
+				Close ();
+		}
+#endif
 
 		void ISerializable.GetObjectData
 			(SerializationInfo serializationInfo,

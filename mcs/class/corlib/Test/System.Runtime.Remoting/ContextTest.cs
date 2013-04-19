@@ -33,7 +33,6 @@ namespace MonoTests.System.Runtime.Remoting
 	}
 	
 	[TestFixture]
-	[Category ("MobileNotWorking")] // Bug #10267
 	public class ContextTest
 	{
 		TestCbo cbo = new TestCbo ();

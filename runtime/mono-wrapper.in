@@ -4,4 +4,13 @@ MONO_CFG_DIR='@mono_cfg_dir@'
 PATH="$r/runtime/_tmpinst/bin:$PATH"
 MONO_SHARED_DIR=$r/runtime
 export MONO_CFG_DIR MONO_SHARED_DIR PATH
+if [ -n "@nacl_self_host@" ]; then
+  case "$@" in
+    # gacutil.exe and mdoc.exe require filesystem functionality not
+    # exposed in NaCl.
+    # mcs.exe was added to the list recently because mcs under NaCl
+    # no longer produces equivalent output. TODO: investigate
+    */mcs.exe* | */gacutil.exe* | */mdoc.exe* ) exec /usr/local/bin/mono "$@";;
+  esac
+fi
 exec "$r/libtool" --mode=execute "$r/@mono_runtime@" --config "@mono_cfg_dir@/mono/config" "$@"

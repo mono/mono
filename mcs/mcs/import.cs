@@ -220,7 +220,7 @@ namespace Mono.CSharp
 
 					// TODO: Sanity check on field_type (only few types are allowed)
 					var element_field = CreateField (fi.FieldType.GetField (FixedField.FixedElementName), declaringType);
-					return new FixedFieldSpec (declaringType, definition, fi, element_field, mod);
+					return new FixedFieldSpec (module, declaringType, definition, fi, element_field, mod);
 				}
 			}
 
@@ -420,7 +420,7 @@ namespace Mono.CSharp
 				}
 			}
 
-			IMemberDefinition definition;
+			IMethodDefinition definition;
 			if (tparams != null) {
 				var gmd = new ImportedGenericMethodDefinition ((MethodInfo) mb, returnType, parameters, tparams, this);
 				foreach (var tp in gmd.TypeParameters) {
@@ -429,10 +429,10 @@ namespace Mono.CSharp
 
 				definition = gmd;
 			} else {
-				definition = new ImportedParameterMemberDefinition (mb, returnType, parameters, this);
+				definition = new ImportedMethodDefinition (mb, returnType, parameters, this);
 			}
 
-			MethodSpec ms = new MethodSpec (kind, declaringType, definition, returnType, mb, parameters, mod);
+			MethodSpec ms = new MethodSpec (kind, declaringType, definition, returnType, parameters, mod);
 			if (tparams != null)
 				ms.IsGeneric = true;
 
@@ -1005,58 +1005,6 @@ namespace Mono.CSharp
 
 				spec.BaseType = base_type;
 			}
-
-			MetaType[] ifaces;
-#if STATIC
-			ifaces = type.__GetDeclaredInterfaces ();
-			if (ifaces.Length != 0) {
-				foreach (var iface in ifaces) {
-					var it = CreateType (iface);
-					if (it == null)
-						continue;
-
-					spec.AddInterface (it);
-
-					// Unfortunately not all languages expand inherited interfaces
-					var bifaces = it.Interfaces;
-					if (bifaces != null) {
-						foreach (var biface in bifaces) {
-							spec.AddInterface (biface);
-						}
-					}
-				}
-			}
-
-			//
-			// It's impossible to get declared interfaces only using System.Reflection
-			// hence we need to mimic the behavior with ikvm-reflection too to keep
-			// our type look-up logic same
-			//
-			if (spec.BaseType != null) {
-				var bifaces = spec.BaseType.Interfaces;
-				if (bifaces != null) {
-					//
-					// Before adding base class interfaces close defined interfaces
-					// on type parameter
-					//
-					var tp = spec as TypeParameterSpec;
-					if (tp != null && tp.InterfacesDefined == null) {
-						tp.InterfacesDefined = TypeSpec.EmptyTypes;
-					}
-
-					foreach (var iface in bifaces)
-						spec.AddInterface (iface);
-				}
-			}
-#else
-			ifaces = type.GetInterfaces ();
-
-			if (ifaces.Length > 0) {
-				foreach (var iface in ifaces) {
-					spec.AddInterface (CreateType (iface));
-				}
-			}
-#endif
 
 			if (spec.MemberDefinition.TypeParametersCount > 0) {
 				foreach (var tp in spec.MemberDefinition.TypeParameters) {
@@ -1735,7 +1683,7 @@ namespace Mono.CSharp
 	{
 		readonly AParametersCollection parameters;
 
-		public ImportedParameterMemberDefinition (MethodBase provider, TypeSpec type, AParametersCollection parameters, MetadataImporter importer)
+		protected ImportedParameterMemberDefinition (MethodBase provider, TypeSpec type, AParametersCollection parameters, MetadataImporter importer)
 			: base (provider, type, importer)
 		{
 			this.parameters = parameters;
@@ -1758,7 +1706,21 @@ namespace Mono.CSharp
 		#endregion
 	}
 
-	class ImportedGenericMethodDefinition : ImportedParameterMemberDefinition, IGenericMethodDefinition
+	class ImportedMethodDefinition : ImportedParameterMemberDefinition, IMethodDefinition
+	{
+		public ImportedMethodDefinition (MethodBase provider, TypeSpec type, AParametersCollection parameters, MetadataImporter importer)
+			: base (provider, type, parameters, importer)
+		{
+		}
+
+		MethodBase IMethodDefinition.Metadata {
+			get {
+				return (MethodBase) provider;
+			}
+		}
+	}
+
+	class ImportedGenericMethodDefinition : ImportedMethodDefinition, IGenericMethodDefinition
 	{
 		readonly TypeParameterSpec[] tparams;
 
@@ -1864,6 +1826,63 @@ namespace Mono.CSharp
 
 		#endregion
 
+		public void DefineInterfaces (TypeSpec spec)
+		{
+			var type = (MetaType) provider;
+			MetaType[] ifaces;
+#if STATIC
+			ifaces = type.__GetDeclaredInterfaces ();
+			if (ifaces.Length != 0) {
+				foreach (var iface in ifaces) {
+					var it = importer.CreateType (iface);
+					if (it == null)
+						continue;
+
+					spec.AddInterfaceDefined (it);
+
+					// Unfortunately not all languages expand inherited interfaces
+					var bifaces = it.Interfaces;
+					if (bifaces != null) {
+						foreach (var biface in bifaces) {
+							spec.AddInterfaceDefined (biface);
+						}
+					}
+				}
+			}
+			
+			//
+			// It's impossible to get declared interfaces only using System.Reflection
+			// hence we need to mimic the behavior with ikvm-reflection too to keep
+			// our type look-up logic same
+			//
+			if (spec.BaseType != null) {
+				var bifaces = spec.BaseType.Interfaces;
+				if (bifaces != null) {
+					//
+					// Before adding base class interfaces close defined interfaces
+					// on type parameter
+					//
+					var tp = spec as TypeParameterSpec;
+					if (tp != null && tp.InterfacesDefined == null) {
+						tp.InterfacesDefined = TypeSpec.EmptyTypes;
+					}
+
+					foreach (var iface in bifaces)
+						spec.AddInterfaceDefined (iface);
+				}
+			}
+#else
+			ifaces = type.GetInterfaces ();
+
+			if (ifaces.Length > 0) {
+				foreach (var iface in ifaces) {
+					spec.AddInterface (importer.CreateType (iface));
+				}
+			}
+#endif
+
+		}
+
 		public static void Error_MissingDependency (IMemberContext ctx, List<TypeSpec> types, Location loc)
 		{
 			// 
@@ -1872,33 +1891,36 @@ namespace Mono.CSharp
 			// or referenced from the user core in which case compilation error has to
 			// be reported because compiler cannot continue anyway
 			//
+
+			var report = ctx.Module.Compiler.Report;
+
 			for (int i = 0; i < types.Count; ++i) {
 				var t = types [i];
 
 				//
-				// Report missing types only once per type
+				// Report missing types only once
 				//
-				if (i > 0 && types.IndexOf (t) < i)
+				if (report.Printer.MissingTypeReported (t.MemberDefinition))
 					continue;
 
 				string name = t.GetSignatureForError ();
 
 				if (t.MemberDefinition.DeclaringAssembly == ctx.Module.DeclaringAssembly) {
-					ctx.Module.Compiler.Report.Error (1683, loc,
+					report.Error (1683, loc,
 						"Reference to type `{0}' claims it is defined in this assembly, but it is not defined in source or any added modules",
 						name);
 				} else if (t.MemberDefinition.DeclaringAssembly.IsMissing) {
 					if (t.MemberDefinition.IsTypeForwarder) {
-						ctx.Module.Compiler.Report.Error (1070, loc,
+						report.Error (1070, loc,
 							"The type `{0}' has been forwarded to an assembly that is not referenced. Consider adding a reference to assembly `{1}'",
 							name, t.MemberDefinition.DeclaringAssembly.FullName);
 					} else {
-						ctx.Module.Compiler.Report.Error (12, loc,
+						report.Error (12, loc,
 							"The type `{0}' is defined in an assembly that is not referenced. Consider adding a reference to assembly `{1}'",
 							name, t.MemberDefinition.DeclaringAssembly.FullName);
 					}
 				} else {
-					ctx.Module.Compiler.Report.Error (1684, loc,
+					report.Error (1684, loc,
 						"Reference to type `{0}' claims it is defined assembly `{1}', but it could not be found",
 						name, t.MemberDefinition.DeclaringAssembly.FullName);
 				}

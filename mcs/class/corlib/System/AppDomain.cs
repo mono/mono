@@ -59,13 +59,13 @@ using System.Text;
 namespace System {
 
 	[ComVisible (true)]
-#if !NET_2_1
+#if !MOBILE
 	[ComDefaultInterface (typeof (_AppDomain))]
 #endif
 	[ClassInterface(ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
-#if NET_2_1
-	public sealed class AppDomain : MarshalByRefObject, _AppDomain {
+#if MOBILE
+	public sealed class AppDomain : MarshalByRefObject {
 #else
 	public sealed class AppDomain : MarshalByRefObject, _AppDomain, IEvidenceFactory {
 #endif
@@ -84,6 +84,7 @@ namespace System {
 
 		[ThreadStatic]
 		static Dictionary<string, object> assembly_resolve_in_progress_refonly;
+#if !MOBILE
 		// CAS
 		private Evidence _evidence;
 		private PermissionSet _granted;
@@ -93,6 +94,17 @@ namespace System {
 
 		[ThreadStatic]
 		private static IPrincipal _principal;
+#else
+		object _evidence;
+		object _granted;
+
+		// non-CAS
+		int _principalPolicy;
+
+		[ThreadStatic]
+		static object _principal;
+#endif
+
 
 		static AppDomain default_domain;
 
@@ -183,6 +195,9 @@ namespace System {
 
 		public Evidence Evidence {
 			get {
+#if MONOTOUCH
+				return null;
+#else
 				// if the host (runtime) hasn't provided it's own evidence...
 				if (_evidence == null) {
 					// ... we will provide our own
@@ -202,14 +217,15 @@ namespace System {
 						}
 					}
 				}
-				return new Evidence (_evidence);	// return a copy
+				return new Evidence ((Evidence)_evidence);	// return a copy
+#endif
 			}
 		}
 
 		internal IPrincipal DefaultPrincipal {
 			get {
 				if (_principal == null) {
-					switch (_principalPolicy) {
+					switch ((PrincipalPolicy)_principalPolicy) {
 						case PrincipalPolicy.UnauthenticatedPrincipal:
 							_principal = new GenericPrincipal (
 								new GenericIdentity (String.Empty, String.Empty), null);
@@ -219,19 +235,19 @@ namespace System {
 							break;
 					}
 				}
-				return _principal; 
+				return (IPrincipal)_principal; 
 			}
 		}
 
 		// for AppDomain there is only an allowed (i.e. granted) set
 		// http://msdn.microsoft.com/library/en-us/cpguide/html/cpcondetermininggrantedpermissions.asp
 		internal PermissionSet GrantedPermissionSet {
-			get { return _granted; }
+			get { return (PermissionSet)_granted; }
 		}
 
 #if NET_4_0
 		public PermissionSet PermissionSet {
-			get { return _granted ?? (_granted = new PermissionSet (PermissionState.Unrestricted)); }
+			get { return (PermissionSet)_granted ?? (PermissionSet)(_granted = new PermissionSet (PermissionState.Unrestricted)); }
 		}
 #endif
 
@@ -832,7 +848,7 @@ namespace System {
 			if (IsFinalizingForUnload ())
 				throw new AppDomainUnloadedException ();
 
-			PolicyStatement ps = domainPolicy.Resolve (_evidence);
+			PolicyStatement ps = domainPolicy.Resolve ((Evidence)_evidence);
 			_granted = ps.PermissionSet;
 		}
 
@@ -849,7 +865,11 @@ namespace System {
 			if (IsFinalizingForUnload ())
 				throw new AppDomainUnloadedException ();
 
+#if MOBILE
+			_principalPolicy = (int)policy;
+#else
 			_principalPolicy = policy;
+#endif
 			_principal = null;
 		}
 
@@ -1398,12 +1418,16 @@ namespace System {
 #endif
 
         #pragma warning disable 649
+#if !MOBILE
 		private AppDomainManager _domain_manager;
+#else
+		object _domain_manager;
+#endif
         #pragma warning restore 649
 
 		// default is null
 		public AppDomainManager DomainManager {
-			get { return _domain_manager; }
+			get { return (AppDomainManager)_domain_manager; }
 		}
 
 #if !MOBILE
@@ -1520,7 +1544,7 @@ namespace System {
 			return GetAssemblies (true);
 		}
 
-#if !NET_2_1
+#if !MOBILE
 		void _AppDomain.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();

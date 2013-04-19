@@ -580,7 +580,6 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-		[Category ("MobileNotWorking")] // bug #10266
 		public void NullableTests ()
 		{
 			MethodInfo mi = typeof (MethodInfoTest).GetMethod ("pass_nullable");
@@ -710,6 +709,9 @@ namespace MonoTests.System.Reflection
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
+#if MOBILE
+		[Category ("NotWorking")] // #10552
+#endif
 		public void MakeGenericMethodRespectConstraints ()
 		{
 			var m = typeof (MethodInfoTest).GetMethod ("TestMethod");

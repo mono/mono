@@ -62,6 +62,13 @@ namespace System
 			Collect (generation);
 		}
 
+#if NET_4_5
+		[MonoDocumentationNote ("mode and blocking parameters ignored")]
+		public static void Collect (int generation, GCCollectionMode mode, bool blocking) {
+			Collect (generation);
+		}
+#endif
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static int GetGeneration (object obj);
 

@@ -49,10 +49,16 @@ namespace Monodoc.Generators.Html
 		{
 			var args = new XsltArgumentList ();
 			args.AddExtensionObject("monodoc:///extensions", ExtObject);
+			string specialPage;
+			if (extraArgs.TryGetValue ("specialpage", out specialPage) && specialPage == "root") {
+				extraArgs.Remove ("specialpage");
+				extraArgs["show"] = "masteroverview";
+			}
+
 			foreach (var kvp in extraArgs)
 				args.AddParam (kvp.Key, string.Empty, kvp.Value);
 
-			return Htmlize(ecma_xml, args);
+			return Htmlize (ecma_xml, args);
 		}
 
 		public string Htmlize (XmlReader ecma_xml, XsltArgumentList args)

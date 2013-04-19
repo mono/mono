@@ -71,6 +71,7 @@ namespace Mono.Tools.LocaleBuilder
 		List<CultureInfoEntry> cultures;
 		Dictionary<string, string> region_currency;
 		Dictionary<string, string> currency_fractions;
+		Dictionary<string, string> extra_parent_locales; 
 
 		// The lang is the language that display names will be displayed in
 		public string Lang
@@ -259,6 +260,19 @@ namespace Mono.Tools.LocaleBuilder
 			foreach (XmlNode entry in supplemental.SelectNodes ("supplementalData/currencyData/region")) {
 				var child = entry.SelectSingleNode ("currency");
 				region_currency.Add (entry.Attributes["iso3166"].Value, child.Attributes["iso4217"].Value);
+			}
+
+			// Parent locales
+			extra_parent_locales = new Dictionary<string, string> (StringComparer.OrdinalIgnoreCase);
+			foreach (XmlNode entry in supplemental.SelectNodes ("supplementalData/parentLocales/parentLocale")) {
+				var parent = entry.Attributes["parent"].Value;
+
+				if (parent == "root")
+					continue;
+
+				var locales = entry.Attributes["locales"].Value;
+				foreach (var locale in locales.Split (' '))
+					extra_parent_locales.Add (locale, parent);
 			}
 
 			var lcdids = GetXmlDocument ("lcids.xml");
@@ -837,7 +851,17 @@ namespace Mono.Tools.LocaleBuilder
 
 					fname += part;
 
-					var xml = GetXmlDocument (Path.Combine (data_root, "main", fname + ".xml"));
+					XmlDocument xml;
+					string extra;
+					if (extra_parent_locales.TryGetValue (fname, out extra)) {
+						xml = GetXmlDocument (Path.Combine (data_root, "main", extra + ".xml"));
+						if (doc == null)
+							doc = xml;
+
+						Import (xml, data);
+					}
+
+					xml = GetXmlDocument (Path.Combine (data_root, "main", fname + ".xml"));
 					if (doc == null)
 						doc = xml;
 
@@ -886,14 +910,6 @@ namespace Mono.Tools.LocaleBuilder
 						}
 					}
 				}
-
-				if (data.DateTimeFormatEntry.MonthGenitiveNames[0] == null)
-					data.DateTimeFormatEntry.MonthGenitiveNames = data.DateTimeFormatEntry.MonthNames;
-
-				if (data.DateTimeFormatEntry.AbbreviatedMonthGenitiveNames[0] == null)
-					data.DateTimeFormatEntry.AbbreviatedMonthGenitiveNames = data.DateTimeFormatEntry.AbbreviatedMonthNames;
-
-
 			}
 
 			// It looks like it never changes
@@ -981,8 +997,12 @@ namespace Mono.Tools.LocaleBuilder
 				ProcessAllNodes (nodes, df.AbbreviatedMonthNames, AddOrReplaceValue);
 
 				nodes = node.SelectNodes ("months/monthContext[@type='format']/monthWidth[@type='wide']/month");
-				if (nodes != null)
+				if (nodes != null) {
 					ProcessAllNodes (nodes, df.MonthGenitiveNames, AddOrReplaceValue);
+				}
+
+				// All values seem to match
+				Array.Copy (df.AbbreviatedMonthNames, df.AbbreviatedMonthGenitiveNames, df.AbbreviatedMonthNames.Length);
 
 				nodes = node.SelectNodes ("days/dayContext[@type='format']/dayWidth[@type='wide']/day");
 				ProcessAllNodes (nodes, df.DayNames, AddOrReplaceDayValue);
@@ -1070,7 +1090,10 @@ namespace Mono.Tools.LocaleBuilder
 				// We cannot use the value from CLDR because many broken
 				// .NET serializers (e.g. JSON) use text value of NegativeInfinity
 				// and different value would break interoperability with .NET
-				if (el != null && el.InnerText != "∞") {
+				var inf = GetInfinitySymbol (ci);
+				if (inf != null)
+					ni.InfinitySymbol = inf;
+				else if (el != null && el.InnerText != "∞") {
 					ni.InfinitySymbol = el.InnerText;
 				}
 
@@ -1093,6 +1116,50 @@ namespace Mono.Tools.LocaleBuilder
 					ni.CurrencyGroupSeparator = el.InnerText;
 				}
 			}
+		}
+
+		string GetInfinitySymbol (CultureInfoEntry ci)
+		{
+			// TODO: Add more
+			switch (ci.TwoLetterISOLanguageName) {
+				case "ca":
+					return "Infinit";
+				case "cs":
+				case "sk":
+					return "+nekonečno";
+				case "de":
+					return "+unendlich";
+				case "el":
+					return "Άπειρο";
+				case "es":
+				case "gl":
+					return "Infinito";
+				case "it":
+				case "pt":
+					return "+Infinito";
+				case "nl":
+					return "oneindig";
+				case "fr":
+				case "tzm":
+					return "+Infini";
+				case "pl":
+					return "+nieskończoność";
+				case "ru":
+			 	case "tg":
+					return "бесконечность";
+				case "sl":
+					return "neskončnost";
+				case "rm":
+					return "+infinit";
+				case "lv":
+					return "bezgalība";
+				case "lt":
+					return "begalybė";
+				case "eu":
+					return "Infinitu";
+			}
+
+			return null;
 		}
 
 		static string ConvertDatePatternFormat (string format)

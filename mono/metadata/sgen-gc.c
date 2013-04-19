@@ -214,6 +214,7 @@
 #include "metadata/sgen-cardtable.h"
 #include "metadata/sgen-pinning.h"
 #include "metadata/sgen-workers.h"
+#include "metadata/sgen-layout-stats.h"
 #include "utils/mono-mmap.h"
 #include "utils/mono-time.h"
 #include "utils/mono-semaphore.h"
@@ -262,6 +263,8 @@ guint32 collect_before_allocs = 0;
 static gboolean whole_heap_check_before_collection = FALSE;
 /* If set, do a heap consistency check before each minor collection */
 static gboolean consistency_check_at_minor_collection = FALSE;
+/* If set, do a mod union consistency check before each finishing collection pause */
+static gboolean mod_union_consistency_check = FALSE;
 /* If set, check whether mark bits are consistent after major collections */
 static gboolean check_mark_bits_after_major_collection = FALSE;
 /* If set, check that all nursery objects are pinned/not pinned, depending on context */
@@ -545,7 +548,7 @@ static void report_registered_roots (void);
 
 static void pin_from_roots (void *start_nursery, void *end_nursery, GrayQueue *queue);
 static int pin_objects_from_addresses (GCMemSection *section, void **start, void **end, void *start_nursery, void *end_nursery, ScanCopyContext ctx);
-static void finish_gray_stack (char *start_addr, char *end_addr, int generation, GrayQueue *queue);
+static void finish_gray_stack (int generation, GrayQueue *queue);
 
 void mono_gc_scan_for_specific_ref (MonoObject *key, gboolean precise);
 
@@ -1103,9 +1106,10 @@ mono_gc_clear_domain (MonoDomain * domain)
 	major_collector.iterate_objects (TRUE, FALSE, (IterateObjectCallbackFunc)clear_domain_free_major_non_pinned_object_callback, domain);
 	major_collector.iterate_objects (FALSE, TRUE, (IterateObjectCallbackFunc)clear_domain_free_major_pinned_object_callback, domain);
 
-	if (G_UNLIKELY (do_pin_stats)) {
-		if (domain == mono_get_root_domain ())
+	if (domain == mono_get_root_domain ()) {
+		if (G_UNLIKELY (do_pin_stats))
 			sgen_pin_stats_print_class_stats ();
+		sgen_object_layout_dump (stdout);
 	}
 
 	UNLOCK_GC;
@@ -1869,7 +1873,7 @@ sgen_get_current_object_ops (void){
 
 
 static void
-finish_gray_stack (char *start_addr, char *end_addr, int generation, GrayQueue *queue)
+finish_gray_stack (int generation, GrayQueue *queue)
 {
 	TV_DECLARE (atv);
 	TV_DECLARE (btv);
@@ -1877,6 +1881,8 @@ finish_gray_stack (char *start_addr, char *end_addr, int generation, GrayQueue *
 	CopyOrMarkObjectFunc copy_func = current_object_ops.copy_or_mark_object;
 	ScanObjectFunc scan_func = current_object_ops.scan_object;
 	ScanCopyContext ctx = { scan_func, copy_func, queue };
+	char *start_addr = generation == GENERATION_NURSERY ? sgen_get_nursery_start () : NULL;
+	char *end_addr = generation == GENERATION_NURSERY ? sgen_get_nursery_end () : (char*)-1;
 
 	/*
 	 * We copied all the reachable objects. Now it's the time to copy
@@ -1917,8 +1923,6 @@ finish_gray_stack (char *start_addr, char *end_addr, int generation, GrayQueue *
 	} while (!done_with_ephemerons);
 
 	sgen_scan_togglerefs (start_addr, end_addr, ctx);
-	if (generation == GENERATION_OLD)
-		sgen_scan_togglerefs (sgen_get_nursery_start (), sgen_get_nursery_end (), ctx);
 
 	if (sgen_need_bridge_processing ()) {
 		sgen_collect_bridge_objects (generation, ctx);
@@ -2658,7 +2662,7 @@ collect_nursery (SgenGrayQueue *unpin_queue, gboolean finish_up_concurrent_mark)
 
 	MONO_GC_CHECKPOINT_8 (GENERATION_NURSERY);
 
-	finish_gray_stack (sgen_get_nursery_start (), nursery_next, GENERATION_NURSERY, &gray_queue);
+	finish_gray_stack (GENERATION_NURSERY, &gray_queue);
 	TV_GETTIME (atv);
 	time_minor_finish_gray_stack += TV_ELAPSED (btv, atv);
 	mono_profiler_gc_event (MONO_GC_EVENT_MARK_END, 0);
@@ -3093,8 +3097,6 @@ major_finish_collection (const char *reason, int old_next_pin_slot, gboolean sca
 	LOSObject *bigobj, *prevbo;
 	TV_DECLARE (atv);
 	TV_DECLARE (btv);
-	char *heap_start = NULL;
-	char *heap_end = (char*)-1;
 
 	TV_GETTIME (btv);
 
@@ -3124,7 +3126,7 @@ major_finish_collection (const char *reason, int old_next_pin_slot, gboolean sca
 	g_assert (sgen_section_gray_queue_is_empty (sgen_workers_get_distribute_section_gray_queue ()));
 
 	/* all the objects in the heap */
-	finish_gray_stack (heap_start, heap_end, GENERATION_OLD, &gray_queue);
+	finish_gray_stack (GENERATION_OLD, &gray_queue);
 	TV_GETTIME (atv);
 	time_major_finish_gray_stack += TV_ELAPSED (btv, atv);
 
@@ -3315,6 +3317,9 @@ major_update_or_finish_concurrent_collection (gboolean force_finish)
 		return FALSE;
 	}
 
+	if (mod_union_consistency_check)
+		sgen_check_mod_union_consistency ();
+
 	collect_nursery (&unpin_queue, TRUE);
 
 	current_collection_generation = GENERATION_OLD;
@@ -3387,6 +3392,8 @@ sgen_perform_collection (size_t requested_size, int generation_to_collect, const
 	const char *overflow_reason = NULL;
 
 	MONO_GC_REQUESTED (generation_to_collect, requested_size, wait_to_finish ? 1 : 0);
+	if (wait_to_finish)
+		binary_protocol_collection_force (generation_to_collect);
 
 	g_assert (generation_to_collect == GENERATION_NURSERY || generation_to_collect == GENERATION_OLD);
 
@@ -4748,7 +4755,40 @@ is_critical_method (MonoMethod *method)
 {
 	return mono_runtime_is_critical_method (method) || sgen_is_critical_method (method);
 }
-	
+
+void
+sgen_env_var_error (const char *env_var, const char *fallback, const char *description_format, ...)
+{
+	va_list ap;
+
+	va_start (ap, description_format);
+
+	fprintf (stderr, "Warning: In environment variable `%s': ", env_var);
+	vfprintf (stderr, description_format, ap);
+	if (fallback)
+		fprintf (stderr, " - %s", fallback);
+	fprintf (stderr, "\n");
+
+	va_end (ap);
+}
+
+static gboolean
+parse_double_in_interval (const char *env_var, const char *opt_name, const char *opt, double min, double max, double *result)
+{
+	char *endptr;
+	double val = strtod (opt, &endptr);
+	if (endptr == opt) {
+		sgen_env_var_error (env_var, "Using default value.", "`%s` must be a number.", opt_name);
+		return FALSE;
+	}
+	else if (val < min || val > max) {
+		sgen_env_var_error (env_var, "Using default value.", "`%s` must be between %.2f - %.2f.", opt_name, min, max);
+		return FALSE;
+	}
+	*result = val;
+	return TRUE;
+}
+
 void
 mono_gc_base_init (void)
 {
@@ -4805,7 +4845,7 @@ mono_gc_base_init (void)
 
 	init_user_copy_or_mark_key ();
 
-	if ((env = getenv ("MONO_GC_PARAMS"))) {
+	if ((env = getenv (MONO_GC_PARAMS_NAME))) {
 		opts = g_strsplit (env, ",", -1);
 		for (ptr = opts; *ptr; ++ptr) {
 			char *opt = *ptr;
@@ -4847,17 +4887,19 @@ mono_gc_base_init (void)
 		sgen_simple_nursery_init (&sgen_minor_collector);
 	} else {
 		if (!strcmp (minor_collector_opt, "simple")) {
+		use_simple_nursery:
 			sgen_simple_nursery_init (&sgen_minor_collector);
 		} else if (!strcmp (minor_collector_opt, "split")) {
 			sgen_split_nursery_init (&sgen_minor_collector);
 			have_split_nursery = TRUE;
 		} else {
-			fprintf (stderr, "Unknown minor collector `%s'.\n", minor_collector_opt);
-			exit (1);
+			sgen_env_var_error (MONO_GC_PARAMS_NAME, "Using `simple` instead.", "Unknown minor collector `%s'.", minor_collector_opt);
+			goto use_simple_nursery;
 		}
 	}
 
 	if (!major_collector_opt || !strcmp (major_collector_opt, "marksweep")) {
+	use_marksweep_major:
 		sgen_marksweep_init (&major_collector);
 	} else if (!major_collector_opt || !strcmp (major_collector_opt, "marksweep-fixed")) {
 		sgen_marksweep_fixed_init (&major_collector);
@@ -4868,8 +4910,13 @@ mono_gc_base_init (void)
 	} else if (!major_collector_opt || !strcmp (major_collector_opt, "marksweep-conc")) {
 		sgen_marksweep_conc_init (&major_collector);
 	} else {
-		fprintf (stderr, "Unknown major collector `%s'.\n", major_collector_opt);
-		exit (1);
+		sgen_env_var_error (MONO_GC_PARAMS_NAME, "Using `marksweep` instead.", "Unknown major collector `%s'.", major_collector_opt);
+		goto use_marksweep_major;
+	}
+
+	if (have_split_nursery && major_collector.is_parallel) {
+		sgen_env_var_error (MONO_GC_PARAMS_NAME, "Disabling split minor collector.", "`minor=split` is not supported with the parallel collector yet.");
+		have_split_nursery = FALSE;
 	}
 
 	num_workers = mono_cpu_count ();
@@ -4884,22 +4931,25 @@ mono_gc_base_init (void)
 	sgen_nursery_size = DEFAULT_NURSERY_SIZE;
 
 	if (opts) {
+		gboolean usage_printed = FALSE;
+
 		for (ptr = opts; *ptr; ++ptr) {
 			char *opt = *ptr;
+			if (!strcmp (opt, ""))
+				continue;
 			if (g_str_has_prefix (opt, "major="))
 				continue;
 			if (g_str_has_prefix (opt, "minor="))
 				continue;
 			if (g_str_has_prefix (opt, "max-heap-size=")) {
+				glong max_heap_candidate = 0;
 				opt = strchr (opt, '=') + 1;
-				if (*opt && mono_gc_parse_environment_string_extract_number (opt, &max_heap)) {
-					if ((max_heap & (mono_pagesize () - 1))) {
-						fprintf (stderr, "max-heap-size size must be a multiple of %d.\n", mono_pagesize ());
-						exit (1);
-					}
+				if (*opt && mono_gc_parse_environment_string_extract_number (opt, &max_heap_candidate)) {
+					max_heap = (max_heap_candidate + mono_pagesize () - 1) & ~(glong)(mono_pagesize () - 1);
+					if (max_heap != max_heap_candidate)
+						sgen_env_var_error (MONO_GC_PARAMS_NAME, "Rounding up.", "`max-heap-size` size must be a multiple of %d.", mono_pagesize ());
 				} else {
-					fprintf (stderr, "max-heap-size must be an integer.\n");
-					exit (1);
+					sgen_env_var_error (MONO_GC_PARAMS_NAME, NULL, "`max-heap-size` must be an integer.");
 				}
 				continue;
 			}
@@ -4907,12 +4957,11 @@ mono_gc_base_init (void)
 				opt = strchr (opt, '=') + 1;
 				if (*opt && mono_gc_parse_environment_string_extract_number (opt, &soft_limit)) {
 					if (soft_limit <= 0) {
-						fprintf (stderr, "soft-heap-limit must be positive.\n");
-						exit (1);
+						sgen_env_var_error (MONO_GC_PARAMS_NAME, NULL, "`soft-heap-limit` must be positive.");
+						soft_limit = 0;
 					}
 				} else {
-					fprintf (stderr, "soft-heap-limit must be an integer.\n");
-					exit (1);
+					sgen_env_var_error (MONO_GC_PARAMS_NAME, NULL, "`soft-heap-limit` must be an integer.");
 				}
 				continue;
 			}
@@ -4920,18 +4969,18 @@ mono_gc_base_init (void)
 				long val;
 				char *endptr;
 				if (!major_collector.is_parallel) {
-					fprintf (stderr, "The workers= option can only be used for parallel collectors.");
-					exit (1);
+					sgen_env_var_error (MONO_GC_PARAMS_NAME, "Ignoring.", "The `workers` option can only be used for parallel collectors.");
+					continue;
 				}
 				opt = strchr (opt, '=') + 1;
 				val = strtol (opt, &endptr, 10);
 				if (!*opt || *endptr) {
-					fprintf (stderr, "Cannot parse the workers= option value.");
-					exit (1);
+					sgen_env_var_error (MONO_GC_PARAMS_NAME, "Ignoring.", "Cannot parse the `workers` option value.");
+					continue;
 				}
 				if (val <= 0 || val > 16) {
-					fprintf (stderr, "The number of workers must be in the range 1 to 16.");
-					exit (1);
+					sgen_env_var_error (MONO_GC_PARAMS_NAME, "Using default value.", "The number of `workers` must be in the range 1 to 16.");
+					continue;
 				}
 				num_workers = (int)val;
 				continue;
@@ -4943,8 +4992,8 @@ mono_gc_base_init (void)
 				} else if (!strcmp (opt, "conservative")) {
 					conservative_stack_mark = TRUE;
 				} else {
-					fprintf (stderr, "Invalid value '%s' for stack-mark= option, possible values are: 'precise', 'conservative'.\n", opt);
-					exit (1);
+					sgen_env_var_error (MONO_GC_PARAMS_NAME, conservative_stack_mark ? "Using `conservative`." : "Using `precise`.",
+							"Invalid value `%s` for `stack-mark` option, possible values are: `precise`, `conservative`.", opt);
 				}
 				continue;
 			}
@@ -4958,61 +5007,53 @@ mono_gc_base_init (void)
 				long val;
 				opt = strchr (opt, '=') + 1;
 				if (*opt && mono_gc_parse_environment_string_extract_number (opt, &val)) {
-					sgen_nursery_size = val;
 #ifdef SGEN_ALIGN_NURSERY
 					if ((val & (val - 1))) {
-						fprintf (stderr, "The nursery size must be a power of two.\n");
-						exit (1);
+						sgen_env_var_error (MONO_GC_PARAMS_NAME, "Using default value.", "`nursery-size` must be a power of two.");
+						continue;
 					}
 
 					if (val < SGEN_MAX_NURSERY_WASTE) {
-						fprintf (stderr, "The nursery size must be at least %d bytes.\n", SGEN_MAX_NURSERY_WASTE);
-						exit (1);
+						sgen_env_var_error (MONO_GC_PARAMS_NAME, "Using default value.",
+								"`nursery-size` must be at least %d bytes.\n", SGEN_MAX_NURSERY_WASTE);
+						continue;
 					}
 
+					sgen_nursery_size = val;
 					sgen_nursery_bits = 0;
 					while (1 << (++ sgen_nursery_bits) != sgen_nursery_size)
 						;
+#else
+					sgen_nursery_size = val;
 #endif
 				} else {
-					fprintf (stderr, "nursery-size must be an integer.\n");
-					exit (1);
+					sgen_env_var_error (MONO_GC_PARAMS_NAME, "Using default value.", "`nursery-size` must be an integer.");
+					continue;
 				}
 				continue;
 			}
 #endif
 			if (g_str_has_prefix (opt, "save-target-ratio=")) {
-				char *endptr;
+				double val;
 				opt = strchr (opt, '=') + 1;
-				save_target = strtod (opt, &endptr);
-				if (endptr == opt) {
-					fprintf (stderr, "save-target-ratio must be a number.");
-					exit (1);
-				}
-				if (save_target < SGEN_MIN_SAVE_TARGET_RATIO || save_target > SGEN_MAX_SAVE_TARGET_RATIO) {
-					fprintf (stderr, "save-target-ratio must be between %.2f - %.2f.", SGEN_MIN_SAVE_TARGET_RATIO, SGEN_MAX_SAVE_TARGET_RATIO);
-					exit (1);
+				if (parse_double_in_interval (MONO_GC_PARAMS_NAME, "save-target-ratio", opt,
+						SGEN_MIN_SAVE_TARGET_RATIO, SGEN_MAX_SAVE_TARGET_RATIO, &val)) {
+					save_target = val;
 				}
 				continue;
 			}
 			if (g_str_has_prefix (opt, "default-allowance-ratio=")) {
-				char *endptr;
+				double val;
 				opt = strchr (opt, '=') + 1;
-
-				allowance_ratio = strtod (opt, &endptr);
-				if (endptr == opt) {
-					fprintf (stderr, "save-target-ratio must be a number.");
-					exit (1);
-				}
-				if (allowance_ratio < SGEN_MIN_ALLOWANCE_NURSERY_SIZE_RATIO || allowance_ratio > SGEN_MIN_ALLOWANCE_NURSERY_SIZE_RATIO) {
-					fprintf (stderr, "default-allowance-ratio must be between %.2f - %.2f.", SGEN_MIN_ALLOWANCE_NURSERY_SIZE_RATIO, SGEN_MIN_ALLOWANCE_NURSERY_SIZE_RATIO);
-					exit (1);
+				if (parse_double_in_interval (MONO_GC_PARAMS_NAME, "default-allowance-ratio", opt,
+						SGEN_MIN_ALLOWANCE_NURSERY_SIZE_RATIO, SGEN_MIN_ALLOWANCE_NURSERY_SIZE_RATIO, &val)) {
+					allowance_ratio = val;
 				}
 				continue;
 			}
 			if (g_str_has_prefix (opt, "allow-synchronous-major=")) {
 				if (!major_collector.is_concurrent) {
-					fprintf (stderr, "Warning: allow-synchronous-major has no effect because the major collector is not concurrent.\n");
+					sgen_env_var_error (MONO_GC_PARAMS_NAME, "Ignoring.", "`allow-synchronous-major` is only valid for the concurrent major collector.");
 					continue;
 				}
 
@@ -5023,8 +5064,8 @@ mono_gc_base_init (void)
 				} else if (!strcmp (opt, "no")) {
 					allow_synchronous_major = FALSE;
 				} else {
-					fprintf (stderr, "allow-synchronous-major must be either `yes' or `no'.\n");
-					exit (1);
+					sgen_env_var_error (MONO_GC_PARAMS_NAME, "Using default value.", "`allow-synchronous-major` must be either `yes' or `no'.");
+					continue;
 				}
 			}
 
@@ -5043,7 +5084,12 @@ mono_gc_base_init (void)
 			if (sgen_minor_collector.handle_gc_param && sgen_minor_collector.handle_gc_param (opt))
 				continue;
 
-			fprintf (stderr, "MONO_GC_PARAMS must be a comma-delimited list of one or more of the following:\n");
+			sgen_env_var_error (MONO_GC_PARAMS_NAME, "Ignoring.", "Unknown option `%s`.", opt);
+
+			if (usage_printed)
+				continue;
+
+			fprintf (stderr, "\n%s must be a comma-delimited list of one or more of the following:\n", MONO_GC_PARAMS_NAME);
 			fprintf (stderr, "  max-heap-size=N (where N is an integer, possibly with a k, m or a g suffix)\n");
 			fprintf (stderr, "  soft-heap-limit=n (where N is an integer, possibly with a k, m or a g suffix)\n");
 			fprintf (stderr, "  nursery-size=N (where N is an integer, possibly with a k, m or a g suffix)\n");
@@ -5061,7 +5107,9 @@ mono_gc_base_init (void)
 			fprintf (stderr, " Experimental options:\n");
 			fprintf (stderr, "  save-target-ratio=R (where R must be between %.2f - %.2f).\n", SGEN_MIN_SAVE_TARGET_RATIO, SGEN_MAX_SAVE_TARGET_RATIO);
 			fprintf (stderr, "  default-allowance-ratio=R (where R must be between %.2f - %.2f).\n", SGEN_MIN_ALLOWANCE_NURSERY_SIZE_RATIO, SGEN_MAX_ALLOWANCE_NURSERY_SIZE_RATIO);
-			exit (1);
+			fprintf (stderr, "\n");
+
+			usage_printed = TRUE;
 		}
 		g_strfreev (opts);
 	}
@@ -5081,10 +5129,14 @@ mono_gc_base_init (void)
 
 	sgen_cement_init (cement_enabled);
 
-	if ((env = getenv ("MONO_GC_DEBUG"))) {
+	if ((env = getenv (MONO_GC_DEBUG_NAME))) {
+		gboolean usage_printed = FALSE;
+
 		opts = g_strsplit (env, ",", -1);
 		for (ptr = opts; ptr && *ptr; ptr ++) {
 			char *opt = *ptr;
+			if (!strcmp (opt, ""))
+				continue;
 			if (opt [0] >= '0' && opt [0] <= '9') {
 				gc_debug_level = atoi (opt);
 				opt++;
@@ -5124,6 +5176,12 @@ mono_gc_base_init (void)
 			} else if (!strcmp (opt, "check-at-minor-collections")) {
 				consistency_check_at_minor_collection = TRUE;
 				nursery_clear_policy = CLEAR_AT_GC;
+			} else if (!strcmp (opt, "mod-union-consistency-check")) {
+				if (!major_collector.is_concurrent) {
+					sgen_env_var_error (MONO_GC_DEBUG_NAME, "Ignoring.", "`mod-union-consistency-check` only works with concurrent major collector.");
+					continue;
+				}
+				mod_union_consistency_check = TRUE;
 			} else if (!strcmp (opt, "check-mark-bits")) {
 				check_mark_bits_after_major_collection = TRUE;
 			} else if (!strcmp (opt, "check-nursery-pinned")) {
@@ -5140,8 +5198,8 @@ mono_gc_base_init (void)
 				do_verify_nursery = TRUE;
 			} else if (!strcmp (opt, "check-concurrent")) {
 				if (!major_collector.is_concurrent) {
-					fprintf (stderr, "Error: check-concurrent only world with concurrent major collectors.\n");
-					exit (1);
+					sgen_env_var_error (MONO_GC_DEBUG_NAME, "Ignoring.", "`check-concurrent` only works with concurrent major collectors.");
+					continue;
 				}
 				do_concurrent_checks = TRUE;
 			} else if (!strcmp (opt, "dump-nursery-at-minor-gc")) {
@@ -5166,9 +5224,13 @@ mono_gc_base_init (void)
 				binary_protocol_init (filename);
 #endif
 			} else {
-				fprintf (stderr, "Invalid format for the MONO_GC_DEBUG env variable: '%s'\n", env);
-				fprintf (stderr, "The format is: MONO_GC_DEBUG=[l[:filename]|<option>]+ where l is a debug level 0-9.\n");
-				fprintf (stderr, "Valid options are:\n");
+				sgen_env_var_error (MONO_GC_DEBUG_NAME, "Ignoring.", "Unknown option `%s`.", opt);
+
+				if (usage_printed)
+					continue;
+
+				fprintf (stderr, "\n%s must be of the format [<l>[:<filename>]|<option>]+ where <l> is a debug level 0-9.\n", MONO_GC_DEBUG_NAME);
+				fprintf (stderr, "Valid <option>s are:\n");
 				fprintf (stderr, "  collect-before-allocs[=<n>]\n");
 				fprintf (stderr, "  verify-before-allocs[=<n>]\n");
 				fprintf (stderr, "  check-at-minor-collections\n");
@@ -5191,7 +5253,9 @@ mono_gc_base_init (void)
 #ifdef SGEN_BINARY_PROTOCOL
 				fprintf (stderr, "  binary-protocol=<filename>\n");
 #endif
-				exit (1);
+				fprintf (stderr, "\n");
+
+				usage_printed = TRUE;
 			}
 		}
 		g_strfreev (opts);
@@ -5199,12 +5263,13 @@ mono_gc_base_init (void)
 
 	if (major_collector.is_parallel) {
 		if (heap_dump_file) {
-			fprintf (stderr, "Error: Cannot do heap dump with the parallel collector.\n");
-			exit (1);
+			sgen_env_var_error (MONO_GC_DEBUG_NAME, "Disabling.", "Cannot do `heap-dump` with the parallel collector.");
+			fclose (heap_dump_file);
+			heap_dump_file = NULL;
 		}
 		if (do_pin_stats) {
-			fprintf (stderr, "Error: Cannot gather pinning statistics with the parallel collector.\n");
-			exit (1);
+			sgen_env_var_error (MONO_GC_DEBUG_NAME, "Disabling.", "`print-pinning` is not supported with the parallel collector.");
+			do_pin_stats = FALSE;
 		}
 	}
 

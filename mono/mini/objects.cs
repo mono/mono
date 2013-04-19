@@ -114,8 +114,8 @@ struct Gamma {
 
 class Tests {
 
-	static int Main () {
-		return TestDriver.RunTests (typeof (Tests));
+	public static int Main (string[] args) {
+		return TestDriver.RunTests (typeof (Tests), args);
 	}
 	
 	public static int test_0_return () {
@@ -1567,6 +1567,32 @@ ncells ) {
 		BStruct b = act ();
 		if (b.t != typeof (string))
 			return 1;
+		return 0;
+	}
+
+	static int test_0_regress_11058 () {
+		int foo = -252674008;
+		int foo2 = (int)(foo ^ 0xF0F0F0F0); // = 28888
+		var arr = new byte[foo2].Length;
+		return 0;
+	}
+
+	public static void do_throw () {
+		throw new Exception ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static void empty () {
+	}
+
+	// #11297
+	public static int test_0_llvm_inline_throw () {
+		try {
+			empty ();
+		} catch (Exception ex) {
+			do_throw ();
+		}
+
 		return 0;
 	}
 }

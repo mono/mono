@@ -378,6 +378,10 @@ namespace Mono.CSharp
 			}
 		}
 
+		public TypeSpec DelegateType {
+			get; set;
+		}
+
 		public override bool IsIterator {
 			get {
 				return false;

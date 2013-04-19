@@ -19,6 +19,7 @@ read_entry (FILE *in, void **data)
 	if (fread (&type, 1, 1, in) != 1)
 		return SGEN_PROTOCOL_EOF;
 	switch (type) {
+	case SGEN_PROTOCOL_COLLECTION_FORCE: size = sizeof (SGenProtocolCollectionForce); break;
 	case SGEN_PROTOCOL_COLLECTION_BEGIN: size = sizeof (SGenProtocolCollection); break;
 	case SGEN_PROTOCOL_COLLECTION_END: size = sizeof (SGenProtocolCollection); break;
 	case SGEN_PROTOCOL_ALLOC: size = sizeof (SGenProtocolAlloc); break;
@@ -61,6 +62,11 @@ static void
 print_entry (int type, void *data)
 {
 	switch (type) {
+	case SGEN_PROTOCOL_COLLECTION_FORCE: {
+		SGenProtocolCollectionForce *entry = data;
+		printf ("collection force generation %d\n", entry->generation);
+		break;
+	}
 	case SGEN_PROTOCOL_COLLECTION_BEGIN: {
 		SGenProtocolCollection *entry = data;
 		printf ("collection begin %d generation %d\n", entry->index, entry->generation);
@@ -201,6 +207,7 @@ static gboolean
 is_match (gpointer ptr, int type, void *data)
 {
 	switch (type) {
+	case SGEN_PROTOCOL_COLLECTION_FORCE:
 	case SGEN_PROTOCOL_COLLECTION_BEGIN:
 	case SGEN_PROTOCOL_COLLECTION_END:
 	case SGEN_PROTOCOL_THREAD_SUSPEND:
@@ -278,17 +285,26 @@ is_match (gpointer ptr, int type, void *data)
 	}
 }
 
+static gboolean dump_all = FALSE;
+
 int
 main (int argc, char *argv[])
 {
 	int type;
 	void *data;
-	int num_nums = argc - 1;
+	int num_args = argc - 1;
+	int num_nums = 0;
 	int i;
-	long nums [num_nums];
+	long nums [num_args];
 
-	for (i = 0; i < num_nums; ++i)
-		nums [i] = strtoul (argv [i + 1], NULL, 16);
+	for (i = 0; i < num_args; ++i) {
+		char *arg = argv [i + 1];
+		if (!strcmp (arg, "--all")) {
+			dump_all = TRUE;
+		} else {
+			nums [num_nums++] = strtoul (arg, NULL, 16);
+		}
+	}
 
 	while ((type = read_entry (stdin, &data)) != SGEN_PROTOCOL_EOF) {
 		gboolean match = FALSE;
@@ -298,7 +314,9 @@ main (int argc, char *argv[])
 				break;
 			}
 		}
-		if (match)
+		if (dump_all)
+			printf (match ? "* " : "  ");
+		if (match || dump_all)
 			print_entry (type, data);
 		free (data);
 	}

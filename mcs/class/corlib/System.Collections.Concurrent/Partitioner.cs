@@ -98,6 +98,15 @@ namespace System.Collections.Concurrent
 
 			return new UserLongRangePartitioner (fromInclusive, toExclusive, rangeSize);
 		}
+		
+#if NET_4_5
+		[MonoTODO]
+		public static OrderablePartitioner<TSource> Create<TSource> (IEnumerable<TSource> source,
+									     EnumerablePartitionerOptions partitionerOptions)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 	
 	public abstract class Partitioner<TSource>

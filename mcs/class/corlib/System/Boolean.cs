@@ -170,10 +170,10 @@ namespace System
 
 			value = value.Trim ();
 
-			if (string.CompareOrdinalCaseInsensitive (value, TrueString) == 0)
+			if (string.CompareOrdinalCaseInsensitiveUnchecked (value, TrueString) == 0)
 				return true;
 
-			if (string.CompareOrdinalCaseInsensitive (value, FalseString) == 0)
+			if (string.CompareOrdinalCaseInsensitiveUnchecked (value, FalseString) == 0)
 				return false;
 
 			throw new FormatException (Locale.GetText (
@@ -188,12 +188,12 @@ namespace System
 
 			value = value.Trim ();
 
-			if (string.CompareOrdinalCaseInsensitive (value, TrueString) == 0) {
+			if (string.CompareOrdinalCaseInsensitiveUnchecked (value, TrueString) == 0) {
 				result = true;
 				return true;
 			}
 
-			if (string.CompareOrdinalCaseInsensitive (value, FalseString) == 0) {
+			if (string.CompareOrdinalCaseInsensitiveUnchecked (value, FalseString) == 0) {
 				// result = false; // already set at false by default
 				return true;
 			}

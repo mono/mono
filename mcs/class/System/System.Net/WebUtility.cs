@@ -54,6 +54,28 @@ namespace System.Net
 		{
 			output.Write (HtmlEncode (value));
 		}
+		
+		public static string UrlDecode (string encodedValue)
+		{
+			return HttpUtility.UrlDecode (encodedValue);
+		}
+		
+		public static byte[] UrlDecodeToBytes (
+			byte[] encodedValue, int offset, int count)
+		{
+			return HttpUtility.UrlDecodeToBytes (encodedValue, offset, count);
+		}
+		
+		public static string UrlEncode (string value)
+		{
+			return HttpUtility.UrlEncode (value);
+		}
+		
+		public static byte[] UrlEncodeToBytes (
+			byte[] value, int offset, int count)
+		{
+			return HttpUtility.UrlEncodeToBytes (value, offset, count);
+		}
 	}
 }
 #endif

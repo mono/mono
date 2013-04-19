@@ -149,7 +149,19 @@ namespace Mono.Unix.Native {
 		O_DIRECTORY = 0x00010000,
 		O_DIRECT    = 0x00004000,
 		O_ASYNC     = 0x00002000,
-		O_LARGEFILE = 0x00008000
+		O_LARGEFILE = 0x00008000,
+		O_CLOEXEC   = 0x00080000,
+		O_PATH      = 0x00200000
+	}
+	
+	[Map][Flags]
+	[CLSCompliant (false)]
+	public enum AtFlags : int {
+		AT_SYMLINK_NOFOLLOW = 0x00000100,
+		AT_REMOVEDIR        = 0x00000200,
+		AT_SYMLINK_FOLLOW   = 0x00000400,
+		AT_NO_AUTOMOUNT     = 0x00000800,
+		AT_EMPTY_PATH       = 0x00001000
 	}
 	
 	// mode_t
@@ -808,7 +820,7 @@ namespace Mono.Unix.Native {
 		}
 	}
 
-	[Map ("struct stat")]
+	// Use manually written To/From methods to handle fields st_atime_nsec etc.
 	public struct Stat
 #if NET_2_0
 		: IEquatable <Stat>
@@ -838,6 +850,39 @@ namespace Mono.Unix.Native {
 		[time_t]    public  long    st_atime;   // time of last access
 		[time_t]    public  long    st_mtime;   // time of last modification
 		[time_t]    public  long    st_ctime;   // time of last status change
+		public  long             st_atime_nsec; // Timespec.tv_nsec partner to st_atime
+		public  long             st_mtime_nsec; // Timespec.tv_nsec partner to st_mtime
+		public  long             st_ctime_nsec; // Timespec.tv_nsec partner to st_ctime
+
+		public Timespec st_atim {
+			get {
+				return new Timespec { tv_sec = st_atime, tv_nsec = st_atime_nsec };
+			}
+			set {
+				st_atime = value.tv_sec;
+				st_atime_nsec = value.tv_nsec;
+			}
+		}
+
+		public Timespec st_mtim {
+			get {
+				return new Timespec { tv_sec = st_mtime, tv_nsec = st_mtime_nsec };
+			}
+			set {
+				st_mtime = value.tv_sec;
+				st_mtime_nsec = value.tv_nsec;
+			}
+		}
+
+		public Timespec st_ctim {
+			get {
+				return new Timespec { tv_sec = st_ctime, tv_nsec = st_ctime_nsec };
+			}
+			set {
+				st_ctime = value.tv_sec;
+				st_ctime_nsec = value.tv_nsec;
+			}
+		}
 
 		public override int GetHashCode ()
 		{
@@ -853,7 +898,10 @@ namespace Mono.Unix.Native {
 				st_blocks.GetHashCode () ^
 				st_atime.GetHashCode () ^
 				st_mtime.GetHashCode () ^
-				st_ctime.GetHashCode ();
+				st_ctime.GetHashCode () ^
+				st_atime_nsec.GetHashCode () ^
+				st_mtime_nsec.GetHashCode () ^
+				st_ctime_nsec.GetHashCode ();
 		}
 
 		public override bool Equals (object obj)
@@ -873,7 +921,10 @@ namespace Mono.Unix.Native {
 				value.st_blocks == st_blocks &&
 				value.st_atime == st_atime &&
 				value.st_mtime == st_mtime &&
-				value.st_ctime == st_ctime;
+				value.st_ctime == st_ctime &&
+				value.st_atime_nsec == st_atime_nsec &&
+				value.st_mtime_nsec == st_mtime_nsec &&
+				value.st_ctime_nsec == st_ctime_nsec;
 		}
 
 		public bool Equals (Stat value)
@@ -890,7 +941,10 @@ namespace Mono.Unix.Native {
 				value.st_blocks == st_blocks &&
 				value.st_atime == st_atime &&
 				value.st_mtime == st_mtime &&
-				value.st_ctime == st_ctime;
+				value.st_ctime == st_ctime &&
+				value.st_atime_nsec == st_atime_nsec &&
+				value.st_mtime_nsec == st_mtime_nsec &&
+				value.st_ctime_nsec == st_ctime_nsec;
 		}
 
 		public static bool operator== (Stat lhs, Stat rhs)
@@ -1135,6 +1189,14 @@ namespace Mono.Unix.Native {
 		{
 			return !lhs.Equals (rhs);
 		}
+	}
+
+	[Map ("struct iovec")]
+	public struct Iovec
+	{
+		public IntPtr   iov_base; // Starting address
+		[CLSCompliant (false)]
+		public ulong    iov_len;  // Number of bytes to transfer
 	}
 
 	[Flags][Map]
@@ -2005,6 +2067,9 @@ namespace Mono.Unix.Native {
 
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int dirfd (IntPtr dir);
+
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern IntPtr fdopendir (int fd);
 		#endregion
 
 		#region <fcntl.h> Declarations
@@ -2068,6 +2133,40 @@ namespace Mono.Unix.Native {
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_posix_fallocate")]
 		public static extern int posix_fallocate (int fd, long offset, ulong len);
+
+		[DllImport (LIBC, SetLastError=true, 
+				EntryPoint="openat")]
+		private static extern int sys_openat (int dirfd,
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string pathname, int flags);
+
+		// openat(2)
+		//    int openat(int dirfd, const char *pathname, int flags, mode_t mode);
+		[DllImport (LIBC, SetLastError=true, 
+				EntryPoint="openat")]
+		private static extern int sys_openat (int dirfd,
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string pathname, int flags, uint mode);
+
+		public static int openat (int dirfd, string pathname, OpenFlags flags)
+		{
+			int _flags = NativeConvert.FromOpenFlags (flags);
+			return sys_openat (dirfd, pathname, _flags);
+		}
+
+		public static int openat (int dirfd, string pathname, OpenFlags flags, FilePermissions mode)
+		{
+			int _flags = NativeConvert.FromOpenFlags (flags);
+			uint _mode = NativeConvert.FromFilePermissions (mode);
+			return sys_openat (dirfd, pathname, _flags, _mode);
+		}
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_get_at_fdcwd")]
+		private static extern int get_at_fdcwd ();
+
+		public static readonly int AT_FDCWD = get_at_fdcwd ();
+
 		#endregion
 
 		#region <fstab.h> Declarations
@@ -2664,6 +2763,12 @@ namespace Mono.Unix.Native {
 			}
 		}
 
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int renameat (int olddirfd,
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string oldpath, int newdirfd,
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string newpath);
 		#endregion
 
 		#region <stdlib.h> Declarations
@@ -2672,6 +2777,16 @@ namespace Mono.Unix.Native {
 		//
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int mkstemp (StringBuilder template);
+
+		[DllImport (LIBC, SetLastError=true, EntryPoint="mkdtemp")]
+		private static extern IntPtr sys_mkdtemp (StringBuilder template);
+
+		public static StringBuilder mkdtemp (StringBuilder template)
+		{
+			if (sys_mkdtemp (template) == IntPtr.Zero)
+				return null;
+			return template;
+		}
 
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int ttyslot ();
@@ -2980,6 +3095,100 @@ namespace Mono.Unix.Native {
 			return sys_mkfifo (pathname, _mode);
 		}
 
+		// fchmodat(2)
+		//    int fchmodat(int dirfd, const char *pathname, mode_t mode, int flags);
+		[DllImport (LIBC, SetLastError=true, EntryPoint="fchmodat")]
+		private static extern int sys_fchmodat (int dirfd,
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string pathname, uint mode, int flags);
+
+		public static int fchmodat (int dirfd, string pathname, FilePermissions mode, AtFlags flags)
+		{
+			uint _mode = NativeConvert.FromFilePermissions (mode);
+			int _flags = NativeConvert.FromAtFlags (flags);
+			return sys_fchmodat (dirfd, pathname, _mode, _flags);
+		}
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_fstatat")]
+		public static extern int fstatat (int dirfd,
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string file_name, out Stat buf, AtFlags flags);
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_get_utime_now")]
+		private static extern long get_utime_now ();
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_get_utime_omit")]
+		private static extern long get_utime_omit ();
+
+		public static readonly long UTIME_NOW = get_utime_now ();
+
+		public static readonly long UTIME_OMIT = get_utime_omit ();
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_futimens")]
+		private static extern int sys_futimens (int fd, Timespec[] times);
+
+		public static int futimens (int fd, Timespec[] times)
+		{
+			if (times != null && times.Length != 2) {
+				SetLastError (Errno.EINVAL);
+				return -1;
+			}
+			return sys_futimens (fd, times);
+		}
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_utimensat")]
+		private static extern int sys_utimensat (int dirfd,
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string pathname, Timespec[] times, int flags);
+
+		public static int utimensat (int dirfd, string pathname, Timespec[] times, AtFlags flags)
+		{
+			if (times != null && times.Length != 2) {
+				SetLastError (Errno.EINVAL);
+				return -1;
+			}
+			int _flags = NativeConvert.FromAtFlags (flags);
+			return sys_utimensat (dirfd, pathname, times, _flags);
+		}
+
+		// mkdirat(2)
+		//    int mkdirat(int dirfd, const char *pathname, mode_t mode);
+		[DllImport (LIBC, SetLastError=true, EntryPoint="mkdirat")]
+		private static extern int sys_mkdirat (int dirfd,
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string oldpath, uint mode);
+
+		public static int mkdirat (int dirfd, string oldpath, FilePermissions mode)
+		{
+			uint _mode = NativeConvert.FromFilePermissions (mode);
+			return sys_mkdirat (dirfd, oldpath, _mode);
+		}
+
+		// mknodat(2)
+		//    int mknodat (int dirfd, const char *pathname, mode_t mode, dev_t dev);
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_mknodat")]
+		public static extern int mknodat (int dirfd,
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string pathname, FilePermissions mode, ulong dev);
+
+		// mkfifoat(3)
+		//    int mkfifoat(int dirfd, const char *pathname, mode_t mode);
+		[DllImport (LIBC, SetLastError=true, EntryPoint="mkfifoat")]
+		private static extern int sys_mkfifoat (int dirfd,
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string pathname, uint mode);
+
+		public static int mkfifoat (int dirfd, string pathname, FilePermissions mode)
+		{
+			uint _mode = NativeConvert.FromFilePermissions (mode);
+			return sys_mkfifoat (dirfd, pathname, _mode);
+		}
 		#endregion
 
 		#region <sys/stat.h> Declarations
@@ -3978,6 +4187,74 @@ namespace Mono.Unix.Native {
 			swab ((IntPtr) from, (IntPtr) to, n);
 		}
 
+		[DllImport (LIBC, SetLastError=true, EntryPoint="faccessat")]
+		private static extern int sys_faccessat (int dirfd,
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string pathname, int mode, int flags);
+
+		public static int faccessat (int dirfd, string pathname, AccessModes mode, AtFlags flags)
+		{
+			int _mode = NativeConvert.FromAccessModes (mode);
+			int _flags = NativeConvert.FromAtFlags (flags);
+			return sys_faccessat (dirfd, pathname, _mode, _flags);
+		}
+
+		// fchownat(2)
+		//    int fchownat(int dirfd, const char *path, uid_t owner, gid_t group, int flags);
+		[DllImport (LIBC, SetLastError=true, EntryPoint="fchownat")]
+		private static extern int sys_fchownat (int dirfd,
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string pathname, uint owner, uint group, int flags);
+
+		public static int fchownat (int dirfd, string pathname, uint owner, uint group, AtFlags flags)
+		{
+			int _flags = NativeConvert.FromAtFlags (flags);
+			return sys_fchownat (dirfd, pathname, owner, group, _flags);
+		}
+
+		[DllImport (LIBC, SetLastError=true, EntryPoint="linkat")]
+		private static extern int sys_linkat (int olddirfd,
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string oldpath, int newdirfd,
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string newpath, int flags);
+
+		public static int linkat (int olddirfd, string oldpath, int newdirfd, string newpath, AtFlags flags)
+		{
+			int _flags = NativeConvert.FromAtFlags (flags);
+			return sys_linkat (olddirfd, oldpath, newdirfd, newpath, _flags);
+		}
+
+		// readlinkat(2)
+		//    int readlinkat(int dirfd, const char *pathname, char *buf, size_t bufsize);
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_readlinkat")]
+		public static extern int readlinkat (int dirfd,
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string pathname, [Out] StringBuilder buf, ulong bufsiz);
+
+		public static int readlinkat (int dirfd, string pathname, [Out] StringBuilder buf)
+		{
+			return readlinkat (dirfd, pathname, buf, (ulong) buf.Capacity);
+		}
+
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int symlinkat (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string oldpath, int dirfd,
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string newpath);
+
+		[DllImport (LIBC, SetLastError=true, EntryPoint="unlinkat")]
+		private static extern int sys_unlinkat (int dirfd,
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string pathname, int flags);
+
+		public static int unlinkat (int dirfd, string pathname, AtFlags flags)
+		{
+			int _flags = NativeConvert.FromAtFlags (flags);
+			return sys_unlinkat (dirfd, pathname, _flags);
+		}
 		#endregion
 
 		#region <utime.h> Declarations
@@ -4000,6 +4277,56 @@ namespace Mono.Unix.Native {
 		{
 			Utimbuf buf = new Utimbuf ();
 			return sys_utime (filename, ref buf, 0);
+		}
+		#endregion
+
+		#region <sys/uio.h> Declarations
+		//
+		// <sys/uio.h> -- COMPLETE
+		//
+
+		// readv(2)
+		//    ssize_t readv(int fd, const struct iovec *iov, int iovcnt);
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_readv")]
+		private static extern long sys_readv (int fd, Iovec[] iov, int iovcnt);
+
+		public static long readv (int fd, Iovec[] iov)
+		{
+			return sys_readv (fd, iov, iov.Length);
+		}
+
+		// writev(2)
+		//    ssize_t writev(int fd, const struct iovec *iov, int iovcnt);
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_writev")]
+		private static extern long sys_writev (int fd, Iovec[] iov, int iovcnt);
+
+		public static long writev (int fd, Iovec[] iov)
+		{
+			return sys_writev (fd, iov, iov.Length);
+		}
+
+		// preadv(2)
+		//    ssize_t preadv(int fd, const struct iovec *iov, int iovcnt, off_t offset);
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_preadv")]
+		private static extern long sys_preadv (int fd, Iovec[] iov, int iovcnt, long offset);
+
+		public static long preadv (int fd, Iovec[] iov, long offset)
+		{
+			return sys_preadv (fd, iov, iov.Length, offset);
+		}
+
+		// pwritev(2)
+		//    ssize_t pwritev(int fd, const struct iovec *iov, int iovcnt, off_t offset);
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_pwritev")]
+		private static extern long sys_pwritev (int fd, Iovec[] iov, int iovcnt, long offset);
+
+		public static long pwritev (int fd, Iovec[] iov, long offset)
+		{
+			return sys_pwritev (fd, iov, iov.Length, offset);
 		}
 		#endregion
 	}

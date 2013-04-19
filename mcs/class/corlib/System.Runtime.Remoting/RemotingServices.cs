@@ -107,10 +107,17 @@ namespace System.Runtime.Remoting
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static MethodBase GetVirtualMethod (Type type, MethodBase method);
 
+#if DISABLE_REMOTING
+		public static bool IsTransparentProxy (object proxy)
+		{
+			throw new NotSupportedException ();
+		}
+#else
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static bool IsTransparentProxy (object proxy);
-		
+#endif
+
 		internal static IMethodReturnMessage InternalExecuteMessage (
 		        MarshalByRefObject target, IMethodCallMessage reqMsg)
 		{

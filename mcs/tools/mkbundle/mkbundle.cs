@@ -11,18 +11,22 @@
 using System;
 using System.Diagnostics;
 using System.Xml;
-using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
+using System.IO.Compression;
 using System.Runtime.InteropServices;
 using System.Text;
-using Mono.Unix;
-using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
+
+
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 class MakeBundle {
 	static string output = "a.out";
 	static string object_out = null;
-	static ArrayList link_paths = new ArrayList ();
+	static List<string> link_paths = new List<string> ();
 	static bool autodeps = false;
 	static bool keeptemp = false;
 	static bool compile_only = false;
@@ -36,7 +40,7 @@ class MakeBundle {
 	
 	static int Main (string [] args)
 	{
-		ArrayList sources = new ArrayList ();
+		List<string> sources = new List<string> ();
 		int top = args.Length;
 		link_paths.Add (".");
 
@@ -158,8 +162,8 @@ class MakeBundle {
 			Environment.Exit (1);
 		}
 
-		ArrayList assemblies = LoadAssemblies (sources);
-		ArrayList files = new ArrayList ();
+		List<Assembly> assemblies = LoadAssemblies (sources);
+		List<string> files = new List<string> ();
 		foreach (Assembly a in assemblies)
 			QueueAssembly (files, a.CodeBase);
 			
@@ -228,18 +232,26 @@ class MakeBundle {
 		// Preallocate the strings we need.
 		if (chars [0] == null) {
 			for (int i = 0; i < chars.Length; i++)
-				chars [i] = string.Format ("\t.byte {0}\n", i.ToString ());
+				chars [i] = string.Format ("{0}", i.ToString ());
 		}
 
 		while ((n = stream.Read (buffer, 0, buffer.Length)) != 0) {
-			for (int i = 0; i < n; i++)
+			int count = 0;
+			for (int i = 0; i < n; i++) {
+				if (count % 32 == 0) {
+					ts.Write ("\n\t.byte ");
+				} else {
+					ts.Write (",");
+				}
 				ts.Write (chars [buffer [i]]);
+				count ++;
+			}
 		}
 
 		ts.WriteLine ();
 	}
 	
-	static void GenerateBundles (ArrayList files)
+	static void GenerateBundles (List<string> files)
 	{
 		string temp_s = "temp.s"; // Path.GetTempFileName ();
 		string temp_c = "temp.c";
@@ -251,8 +263,8 @@ class MakeBundle {
 			temp_o = object_out;
 		
 		try {
-			ArrayList c_bundle_names = new ArrayList ();
-			ArrayList config_names = new ArrayList ();
+			List<string> c_bundle_names = new List<string> ();
+			List<string[]> config_names = new List<string[]> ();
 			byte [] buffer = new byte [8192];
 
 			using (StreamWriter ts = new StreamWriter (File.Create (temp_s))) {
@@ -270,32 +282,56 @@ class MakeBundle {
 				tc.WriteLine ("} CompressedAssembly;\n");
 			}
 
-			foreach (string url in files){
+			object monitor = new object ();
+
+			var streams = new Dictionary<string, Stream> ();
+			var sizes = new Dictionary<string, long> ();
+
+			// Do the file reading and compression in parallel
+			Action<string> body = delegate (string url) {
+				string fname = new Uri (url).LocalPath;
+				Stream stream = File.OpenRead (fname);
+
+				long real_size = stream.Length;
+				int n;
+				if (compress) {
+					MemoryStream ms = new MemoryStream ();
+					GZipStream deflate = new GZipStream (ms, CompressionMode.Compress, leaveOpen:true);
+					while ((n = stream.Read (buffer, 0, buffer.Length)) != 0){
+						deflate.Write (buffer, 0, n);
+					}
+					stream.Close ();
+					deflate.Close ();
+					byte [] bytes = ms.GetBuffer ();
+					stream = new MemoryStream (bytes, 0, (int) ms.Length, false, false);
+				}
+
+				lock (monitor) {
+					streams [url] = stream;
+					sizes [url] = real_size;
+				}
+			};
+
+#if NET_4_5
+			Parallel.ForEach (files, body);
+#else
+			foreach (var url in files)
+				body (url);
+#endif
+
+			// The non-parallel part
+			foreach (var url in files) {
 				string fname = new Uri (url).LocalPath;
 				string aname = Path.GetFileName (fname);
 				string encoded = aname.Replace ("-", "_").Replace (".", "_");
 
 				if (prog == null)
 					prog = aname;
-				
-				Console.WriteLine ("   embedding: " + fname);
-				
-				Stream stream = File.OpenRead (fname);
 
-				// Compression can be parallelized
-				long real_size = stream.Length;
-				int n;
-				if (compress) {
-					MemoryStream ms = new MemoryStream ();
-					DeflaterOutputStream deflate = new DeflaterOutputStream (ms);
-					while ((n = stream.Read (buffer, 0, buffer.Length)) != 0){
-						deflate.Write (buffer, 0, n);
-					}
-					stream.Close ();
-					deflate.Finish ();
-					byte [] bytes = ms.GetBuffer ();
-					stream = new MemoryStream (bytes, 0, (int) ms.Length, false, false);
-				}
+				var stream = streams [url];
+				var real_size = sizes [url];
+
+				Console.WriteLine ("   embedding: " + fname);
 
 				WriteSymbol (ts, "assembly_data_" + encoded, stream.Length);
 			
@@ -304,14 +340,14 @@ class MakeBundle {
 				if (compress) {
 					tc.WriteLine ("extern const unsigned char assembly_data_{0} [];", encoded);
 					tc.WriteLine ("static CompressedAssembly assembly_bundle_{0} = {{{{\"{1}\"," +
-							" assembly_data_{0}, {2}}}, {3}}};",
-						      encoded, aname, real_size, stream.Length);
+								  " assembly_data_{0}, {2}}}, {3}}};",
+								  encoded, aname, real_size, stream.Length);
 					double ratio = ((double) stream.Length * 100) / real_size;
 					Console.WriteLine ("   compression ratio: {0:.00}%", ratio);
 				} else {
 					tc.WriteLine ("extern const unsigned char assembly_data_{0} [];", encoded);
 					tc.WriteLine ("static const MonoBundledAssembly assembly_bundle_{0} = {{\"{1}\", assembly_data_{0}, {2}}};",
-						      encoded, aname, real_size);
+								  encoded, aname, real_size);
 				}
 				stream.Close ();
 
@@ -328,8 +364,8 @@ class MakeBundle {
 				} catch (FileNotFoundException) {
 					/* we ignore if the config file doesn't exist */
 				}
-
 			}
+
 			if (config_file != null){
 				FileStream conf;
 				try {
@@ -466,9 +502,9 @@ class MakeBundle {
 		}
 	}
 	
-	static ArrayList LoadAssemblies (ArrayList sources)
+	static List<Assembly> LoadAssemblies (List<string> sources)
 	{
-		ArrayList assemblies = new ArrayList ();
+		List<Assembly> assemblies = new List<Assembly> ();
 		bool error = false;
 		
 		foreach (string name in sources){
@@ -488,7 +524,7 @@ class MakeBundle {
 		return assemblies;
 	}
 	
-	static void QueueAssembly (ArrayList files, string codebase)
+	static void QueueAssembly (List<string> files, string codebase)
 	{
 		if (files.Contains (codebase))
 			return;
@@ -588,10 +624,10 @@ class MakeBundle {
 			return;
 		}
 
-		IntPtr buf = UnixMarshal.AllocHeap(8192);
+		IntPtr buf = Marshal.AllocHGlobal (8192);
 		if (uname (buf) != 0){
 			Console.WriteLine ("Warning: Unable to detect OS");
-			UnixMarshal.FreeHeap(buf);
+			Marshal.FreeHGlobal (buf);
 			return;
 		}
 		string os = Marshal.PtrToStringAnsi (buf);
@@ -599,7 +635,7 @@ class MakeBundle {
 		if (os == "Darwin")
 			style = "osx";
 		
-		UnixMarshal.FreeHeap(buf);
+		Marshal.FreeHGlobal (buf);
 	}
 
 	static bool IsUnix {

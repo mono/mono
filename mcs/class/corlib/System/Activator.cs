@@ -4,10 +4,12 @@
 // Authors:
 //   Nick Drochak II (ndrochak@gol.com)
 //   Gonzalo Paniagua (gonzalo@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2001 Nick Drochak II
 // (c) 2002 Ximian, Inc. (http://www.ximian.com)
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2013 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -278,8 +280,11 @@ namespace System
 			}
 
 			CheckAbstractType (type);
-#if !MOBILE
+
 			if (activationAttributes != null && activationAttributes.Length > 0) {
+#if DISABLE_REMOTING
+				throw new NotSupportedException ("Activation attributes are not supported");
+#else
 				if (!type.IsMarshalByRef) {
 					string msg = Locale.GetText ("Type '{0}' doesn't derive from MarshalByRefObject.", type.FullName);
 					throw new NotSupportedException (msg);
@@ -290,8 +295,9 @@ namespace System
 					ctor.Invoke (newOb, bindingAttr, binder, args, culture);
 					return newOb;
 				}
-			}
 #endif
+			}
+
 			return ctor.Invoke (bindingAttr, binder, args, culture);
 		}
 
@@ -302,31 +308,25 @@ namespace System
 			if (type.ContainsGenericParameters)
 				throw new ArgumentException (type + " is an open generic type", "type");
 
-			CheckAbstractType (type);
+			MonoType monoType = type.UnderlyingSystemType as MonoType;
+			if (monoType == null)
+				throw new ArgumentException ("Type must be a type provided by the runtime");
 
-			ConstructorInfo ctor;
-			MonoType monoType = type as MonoType;
+			CheckAbstractType (monoType);
 
-			if (monoType != null) {
-				ctor = monoType.GetDefaultConstructor ();
-				if (!nonPublic && ctor != null && !ctor.IsPublic)
-					ctor = null;
-			} else {
-				BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
-				if (nonPublic)
-					flags |= BindingFlags.NonPublic;
-				ctor = type.GetConstructor (flags, null, CallingConventions.Any, Type.EmptyTypes, null);
+			var ctor = monoType.GetDefaultConstructor ();
+			if (!nonPublic && ctor != null && !ctor.IsPublic) {
+				ctor = null;
 			}
 
 			if (ctor == null) {
 				if (type.IsValueType)
 					return CreateInstanceInternal (type);
 
-				throw new MissingMethodException (Locale.GetText ("Default constructor not found for type " + 
-							type.FullName + "."));
+				throw new MissingMethodException (Locale.GetText ("Default constructor not found for type " + type.FullName));
 			}
 
-			return ctor.Invoke (null);
+			return ctor.InternalInvoke (null, null);
 		}
 
 		private static void CheckType (Type type)

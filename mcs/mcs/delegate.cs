@@ -153,7 +153,7 @@ namespace Mono.CSharp {
 					Report.SymbolRelatedToPreviousError (partype);
 					Report.Error (59, Location,
 						"Inconsistent accessibility: parameter type `{0}' is less accessible than delegate `{1}'",
-						TypeManager.CSharpName (partype), GetSignatureForError ());
+						partype.GetSignatureForError (), GetSignatureForError ());
 				}
 			}
 
@@ -169,7 +169,7 @@ namespace Mono.CSharp {
 				Report.SymbolRelatedToPreviousError (ret_type);
 				Report.Error (58, Location,
 						  "Inconsistent accessibility: return type `" +
-						  TypeManager.CSharpName (ret_type) + "' is less " +
+						  ret_type.GetSignatureForError () + "' is less " +
 						  "accessible than delegate `" + GetSignatureForError () + "'");
 				return false;
 			}
@@ -296,6 +296,12 @@ namespace Mono.CSharp {
 		{
 			if (!Parameters.IsEmpty) {
 				parameters.ResolveDefaultValues (this);
+			}
+
+			InvokeBuilder.PrepareEmit ();
+			if (BeginInvokeBuilder != null) {
+				BeginInvokeBuilder.PrepareEmit ();
+				EndInvokeBuilder.PrepareEmit ();
 			}
 		}
 
@@ -436,6 +442,8 @@ namespace Mono.CSharp {
 		protected MethodSpec constructor_method;
 		protected MethodGroupExpr method_group;
 
+		public bool AllowSpecialMethodsInvocation { get; set; }
+
 		public override bool ContainsEmitWithAwait ()
 		{
 			return false;
@@ -511,7 +519,8 @@ namespace Mono.CSharp {
 				return null;
 			}		
 			
-			Invocation.IsSpecialMethodInvocation (ec, delegate_method, loc);
+			if (!AllowSpecialMethodsInvocation)
+				Invocation.IsSpecialMethodInvocation (ec, delegate_method, loc);
 
 			ExtensionMethodGroupExpr emg = method_group as ExtensionMethodGroupExpr;
 			if (emg != null) {
@@ -519,7 +528,7 @@ namespace Mono.CSharp {
 				TypeSpec e_type = emg.ExtensionExpression.Type;
 				if (TypeSpec.IsValueType (e_type)) {
 					ec.Report.Error (1113, loc, "Extension method `{0}' of value type `{1}' cannot be used to create delegates",
-						delegate_method.GetSignatureForError (), TypeManager.CSharpName (e_type));
+						delegate_method.GetSignatureForError (), e_type.GetSignatureForError ());
 				}
 			}
 
@@ -583,8 +592,8 @@ namespace Mono.CSharp {
 			ec.Report.SymbolRelatedToPreviousError (method);
 			if (ec.Module.Compiler.Settings.Version == LanguageVersion.ISO_1) {
 				ec.Report.Error (410, loc, "A method or delegate `{0} {1}' parameters and return type must be same as delegate `{2} {3}' parameters and return type",
-					TypeManager.CSharpName (method.ReturnType), member_name,
-					TypeManager.CSharpName (invoke_method.ReturnType), Delegate.FullDelegateDesc (invoke_method));
+					method.ReturnType.GetSignatureForError (), member_name,
+					invoke_method.ReturnType.GetSignatureForError (), Delegate.FullDelegateDesc (invoke_method));
 				return;
 			}
 
@@ -596,7 +605,7 @@ namespace Mono.CSharp {
 
 			ec.Report.Error (407, loc, "A method or delegate `{0} {1}' return type does not match delegate `{2} {3}' return type",
 				return_type.GetSignatureForError (), member_name,
-				TypeManager.CSharpName (invoke_method.ReturnType), Delegate.FullDelegateDesc (invoke_method));
+				invoke_method.ReturnType.GetSignatureForError (), Delegate.FullDelegateDesc (invoke_method));
 		}
 
 		public static bool ImplicitStandardConversionExists (ResolveContext ec, MethodGroupExpr mg, TypeSpec target_type)
@@ -642,18 +651,92 @@ namespace Mono.CSharp {
 	//
 	public class ImplicitDelegateCreation : DelegateCreation
 	{
-		ImplicitDelegateCreation (TypeSpec t, MethodGroupExpr mg, Location l)
+		Field mg_cache;
+
+		public ImplicitDelegateCreation (TypeSpec delegateType, MethodGroupExpr mg, Location loc)
 		{
-			type = t;
+			type = delegateType;
 			this.method_group = mg;
-			loc = l;
+			this.loc = loc;
 		}
 
-		static public Expression Create (ResolveContext ec, MethodGroupExpr mge,
-						 TypeSpec target_type, Location loc)
+		//
+		// Returns true when type is MVAR or has MVAR reference
+		//
+		static bool ContainsMethodTypeParameter (TypeSpec type)
 		{
-			ImplicitDelegateCreation d = new ImplicitDelegateCreation (target_type, mge, loc);
-			return d.DoResolve (ec);
+			var tps = type as TypeParameterSpec;
+			if (tps != null)
+				return tps.IsMethodOwned;
+
+			var ec = type as ElementTypeSpec;
+			if (ec != null)
+				return ContainsMethodTypeParameter (ec.Element);
+
+			foreach (var t in type.TypeArguments) {
+				if (ContainsMethodTypeParameter (t)) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		protected override Expression DoResolve (ResolveContext ec)
+		{
+			var expr = base.DoResolve (ec);
+			if (expr == null)
+				return null;
+
+			if (ec.IsInProbingMode)
+				return expr;
+
+			//
+			// Cache any static delegate creation
+			//
+			if (method_group.InstanceExpression != null)
+				return expr;
+
+			//
+			// Cannot easily cache types with MVAR
+			//
+			if (ContainsMethodTypeParameter (type))
+				return expr;
+
+			if (ContainsMethodTypeParameter (method_group.BestCandidate.DeclaringType))
+				return expr;
+
+			//
+			// Create type level cache for a delegate instance
+			//
+			var parent = ec.CurrentMemberDefinition.Parent.PartialContainer;
+			int id = parent.MethodGroupsCounter++;
+
+			mg_cache = new Field (parent, new TypeExpression (type, loc),
+				Modifiers.STATIC | Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED,
+				new MemberName (CompilerGeneratedContainer.MakeName (null, "f", "mg$cache", id), loc), null);
+			mg_cache.Define ();
+			parent.AddField (mg_cache);
+
+			return expr;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			Label l_initialized = ec.DefineLabel ();
+
+			if (mg_cache != null) {
+				ec.Emit (OpCodes.Ldsfld, mg_cache.Spec);
+				ec.Emit (OpCodes.Brtrue_S, l_initialized);
+			}
+
+			base.Emit (ec);
+
+			if (mg_cache != null) {
+				ec.Emit (OpCodes.Stsfld, mg_cache.Spec);
+				ec.MarkLabel (l_initialized);
+				ec.Emit (OpCodes.Ldsfld, mg_cache.Spec);
+			}
 		}
 	}
 	

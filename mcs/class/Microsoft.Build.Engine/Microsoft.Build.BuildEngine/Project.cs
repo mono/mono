@@ -390,7 +390,7 @@ namespace Microsoft.Build.BuildEngine {
 		internal string GetKeyForTarget (string target_name, bool include_global_properties)
 		{
 			// target name is case insensitive
-			return fullFileName + ":" + target_name.ToLower () +
+			return fullFileName + ":" + target_name.ToLowerInvariant () +
 					(include_global_properties ? (":" + GlobalPropertiesToString (GlobalProperties))
 					 			   : String.Empty);
 		}

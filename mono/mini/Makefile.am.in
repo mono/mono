@@ -311,12 +311,6 @@ ia64_sources = \
 	exceptions-ia64.c	\
 	tramp-ia64.c
 
-alpha_sources = \
-	mini-alpha.c		\
-	mini-alpha.h		\
-	exceptions-alpha.c	\
-	tramp-alpha.c
-
 darwin_sources = \
 	mini-darwin.c
 
@@ -420,6 +414,10 @@ test_sources = 			\
 	gshared.cs
 
 regtests=basic.exe basic-float.exe basic-long.exe basic-calls.exe objects.exe arrays.exe basic-math.exe exceptions.exe iltests.exe devirtualization.exe generics.exe basic-simd.exe
+if NACL_CODEGEN
+test_sources += nacl.cs
+regtests += nacl.exe
+endif
 
 if X86
 if MONO_DEBUGGER_SUPPORTED
@@ -502,12 +500,6 @@ arch_built = cpu-ia64.h
 arch_define=__ia64__
 endif
 
-if ALPHA
-arch_sources = $(alpha_sources) $(mono_debugger_sources)
-arch_built = cpu-alpha.h
-arch_define=__alpha__
-endif
-
 if HOST_WIN32
 os_sources = $(windows_sources)
 monobin_platform_ldflags=
@@ -565,10 +557,10 @@ libmonoinclude_HEADERS = jit.h
 
 CSFLAGS = -unsafe -nowarn:0219,0169,0414,0649
 
-basic-simd.exe: basic-simd.cs
+basic-simd.exe: basic-simd.cs TestDriver.dll
 	$(MCS) -out:$@ $(CSFLAGS) $< -r:TestDriver.dll -r:Mono.Simd.dll
 
-nacl.exe: nacl.cs
+nacl.exe: nacl.cs TestDriver.dll
 	$(MCS) -out:$@ $(CSFLAGS) $< -r:TestDriver.dll -r:Mono.Simd.dll
 
 generics.exe: generics.cs TestDriver.dll generics-variant-types.dll
@@ -603,7 +595,11 @@ endif !NACL_CODEGEN
 if CROSS_COMPILING
 GENMDESC_PRG=perl $(srcdir)/genmdesc.pl $(arch_define) $(srcdir) $(GENMDESC_OPTS)
 else !CROSS_COMPILING
+if NACL_CODEGEN
+GENMDESC_PRG=perl $(srcdir)/genmdesc.pl $(arch_define) $(srcdir) $(GENMDESC_OPTS)
+else
 GENMDESC_PRG=./genmdesc $(GENMDESC_OPTS)
+endif
 endif !CROSS_COMPILING
 
 cpu-x86.h: cpu-x86.md genmdesc$(EXEEXT)
@@ -633,9 +629,6 @@ cpu-s390x.h: cpu-s390x.md genmdesc$(EXEEXT)
 cpu-ia64.h: cpu-ia64.md genmdesc$(EXEEXT)
 	$(GENMDESC_PRG) cpu-ia64.h ia64_desc $(srcdir)/cpu-ia64.md
 
-cpu-alpha.h: cpu-alpha.md genmdesc$(EXEEXT)
-	$(GENMDESC_PRG) cpu-alpha.h alpha_desc $(srcdir)/cpu-alpha.md
-
 cpu-mips.h: cpu-mips.md genmdesc$(EXEEXT)
 	$(GENMDESC_PRG) cpu-mips.h mips_desc $(srcdir)/cpu-mips.md
 
@@ -647,7 +640,11 @@ checktests: $(regtests)
 	for i in $(regtests); do $(RUNTIME) $$i; done
 
 rcheck: mono $(regtests)
+if NACL_CODEGEN
+	for i in $(regtests); do echo "running test $$i"; $(RUNTIME) $$i --exclude 'NaClDisable' || exit 1; done
+else
 	$(RUNTIME) --regression $(regtests)
+endif
 
 gctest: mono gc-test.exe
 	MONO_DEBUG_OPTIONS=clear-nursery-at-gc $(RUNTIME) --regression gc-test.exe
@@ -732,10 +729,10 @@ EXTRA_DIST = TestDriver.cs ldscript ldscript.mono \
 	$(s390_sources) cpu-s390.md 		\
 	$(s390x_sources) cpu-s390x.md 		\
 	$(ia64_sources) cpu-ia64.md 		\
-	$(alpha_sources) cpu-alpha.md 		\
 	$(windows_sources)			\
 	$(darwin_sources) Info.plist		\
-	$(posix_sources)
+	$(posix_sources)					\
+	Makefile.am.in
 
 version.h: Makefile
 	if test -d $(top_srcdir)/.git; then \

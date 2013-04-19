@@ -35,6 +35,21 @@ enum Mono_Posix_AccessModes {
 int Mono_Posix_FromAccessModes (int x, int *r);
 int Mono_Posix_ToAccessModes (int x, int *r);
 
+enum Mono_Posix_AtFlags {
+	Mono_Posix_AtFlags_AT_EMPTY_PATH             = 0x00001000,
+	#define Mono_Posix_AtFlags_AT_EMPTY_PATH       Mono_Posix_AtFlags_AT_EMPTY_PATH
+	Mono_Posix_AtFlags_AT_NO_AUTOMOUNT           = 0x00000800,
+	#define Mono_Posix_AtFlags_AT_NO_AUTOMOUNT     Mono_Posix_AtFlags_AT_NO_AUTOMOUNT
+	Mono_Posix_AtFlags_AT_REMOVEDIR              = 0x00000200,
+	#define Mono_Posix_AtFlags_AT_REMOVEDIR        Mono_Posix_AtFlags_AT_REMOVEDIR
+	Mono_Posix_AtFlags_AT_SYMLINK_FOLLOW         = 0x00000400,
+	#define Mono_Posix_AtFlags_AT_SYMLINK_FOLLOW   Mono_Posix_AtFlags_AT_SYMLINK_FOLLOW
+	Mono_Posix_AtFlags_AT_SYMLINK_NOFOLLOW       = 0x00000100,
+	#define Mono_Posix_AtFlags_AT_SYMLINK_NOFOLLOW Mono_Posix_AtFlags_AT_SYMLINK_NOFOLLOW
+};
+int Mono_Posix_FromAtFlags (int x, int *r);
+int Mono_Posix_ToAtFlags (int x, int *r);
+
 enum Mono_Posix_ConfstrName {
 	Mono_Posix_ConfstrName__CS_GNU_LIBC_VERSION                      = 0x00000002,
 	#define Mono_Posix_ConfstrName__CS_GNU_LIBC_VERSION                Mono_Posix_ConfstrName__CS_GNU_LIBC_VERSION
@@ -669,6 +684,8 @@ enum Mono_Posix_OpenFlags {
 	#define Mono_Posix_OpenFlags_O_APPEND    Mono_Posix_OpenFlags_O_APPEND
 	Mono_Posix_OpenFlags_O_ASYNC           = 0x00002000,
 	#define Mono_Posix_OpenFlags_O_ASYNC     Mono_Posix_OpenFlags_O_ASYNC
+	Mono_Posix_OpenFlags_O_CLOEXEC         = 0x00080000,
+	#define Mono_Posix_OpenFlags_O_CLOEXEC   Mono_Posix_OpenFlags_O_CLOEXEC
 	Mono_Posix_OpenFlags_O_CREAT           = 0x00000040,
 	#define Mono_Posix_OpenFlags_O_CREAT     Mono_Posix_OpenFlags_O_CREAT
 	Mono_Posix_OpenFlags_O_DIRECT          = 0x00004000,
@@ -685,6 +702,8 @@ enum Mono_Posix_OpenFlags {
 	#define Mono_Posix_OpenFlags_O_NOFOLLOW  Mono_Posix_OpenFlags_O_NOFOLLOW
 	Mono_Posix_OpenFlags_O_NONBLOCK        = 0x00000800,
 	#define Mono_Posix_OpenFlags_O_NONBLOCK  Mono_Posix_OpenFlags_O_NONBLOCK
+	Mono_Posix_OpenFlags_O_PATH            = 0x00200000,
+	#define Mono_Posix_OpenFlags_O_PATH      Mono_Posix_OpenFlags_O_PATH
 	Mono_Posix_OpenFlags_O_RDONLY          = 0x00000000,
 	#define Mono_Posix_OpenFlags_O_RDONLY    Mono_Posix_OpenFlags_O_RDONLY
 	Mono_Posix_OpenFlags_O_RDWR            = 0x00000002,
@@ -1411,6 +1430,7 @@ int Mono_Posix_ToXattrFlags (int x, int *r);
  */
 
 struct Mono_Posix_Flock;
+struct Mono_Posix_Iovec;
 struct Mono_Posix_Pollfd;
 struct Mono_Posix_Stat;
 struct Mono_Posix_Statvfs;
@@ -1430,8 +1450,8 @@ struct Mono_Unix_UnixSignal_SignalInfo;
  */
 
 struct flock;
+struct iovec;
 struct pollfd;
-struct stat;
 struct timespec;
 struct timeval;
 struct timezone;
@@ -1461,6 +1481,17 @@ int
 Mono_Posix_ToFlock (struct flock *from, struct Mono_Posix_Flock* to);
 
 
+struct Mono_Posix_Iovec {
+	void*   iov_base;
+	guint64 iov_len;
+};
+
+int
+Mono_Posix_FromIovec (struct Mono_Posix_Iovec* from, struct iovec *to);
+int
+Mono_Posix_ToIovec (struct iovec *from, struct Mono_Posix_Iovec* to);
+
+
 struct Mono_Posix_Pollfd {
 	int   fd;
 	short events;
@@ -1474,27 +1505,24 @@ Mono_Posix_ToPollfd (struct pollfd *from, struct Mono_Posix_Pollfd* to);
 
 
 struct Mono_Posix_Stat {
-	guint64      st_dev;      /* dev_t     */
-	guint64      st_ino;      /* ino_t     */
+	guint64      st_dev;         /* dev_t     */
+	guint64      st_ino;         /* ino_t     */
 	unsigned int st_mode;
 	unsigned int _padding_;
-	guint64      st_nlink;    /* nlink_t   */
-	unsigned int st_uid;      /* uid_t     */
-	unsigned int st_gid;      /* gid_t     */
-	guint64      st_rdev;     /* dev_t     */
-	gint64       st_size;     /* off_t     */
-	gint64       st_blksize;  /* blksize_t */
-	gint64       st_blocks;   /* blkcnt_t  */
-	gint64       st_atime_;   /* time_t    */
-	gint64       st_mtime_;   /* time_t    */
-	gint64       st_ctime_;   /* time_t    */
+	guint64      st_nlink;       /* nlink_t   */
+	unsigned int st_uid;         /* uid_t     */
+	unsigned int st_gid;         /* gid_t     */
+	guint64      st_rdev;        /* dev_t     */
+	gint64       st_size;        /* off_t     */
+	gint64       st_blksize;     /* blksize_t */
+	gint64       st_blocks;      /* blkcnt_t  */
+	gint64       st_atime_;      /* time_t    */
+	gint64       st_mtime_;      /* time_t    */
+	gint64       st_ctime_;      /* time_t    */
+	gint64       st_atime_nsec;
+	gint64       st_mtime_nsec;
+	gint64       st_ctime_nsec;
 };
-
-int
-Mono_Posix_FromStat (struct Mono_Posix_Stat* from, struct stat *to);
-int
-Mono_Posix_ToStat (struct stat *from, struct Mono_Posix_Stat* to);
-
 
 struct Mono_Posix_Statvfs {
 	guint64 f_bsize;
@@ -1626,6 +1654,7 @@ int map_Mono_Posix_FileMode (int mode);
 int map_Mono_Posix_OpenFlags (int flags);
 int map_Mono_Posix_WaitOptions (int wait_options);
 int Mono_Posix_FromRealTimeSignum (int offset, int* rval);
+int Mono_Posix_FromStat (struct Mono_Posix_Stat* source, void* destination);
 int Mono_Posix_FromStatvfs (struct Mono_Posix_Statvfs* source, void* destination);
 int Mono_Posix_SIGRTMAX (void);
 int Mono_Posix_SIGRTMIN (void);
@@ -1685,9 +1714,14 @@ gint64 Mono_Posix_Syscall_fpathconf (int filedes, int name, int defaultError);
 int Mono_Posix_Syscall_fremovexattr (int fd, const char* name);
 int Mono_Posix_Syscall_fsetxattr (int fd, const char* name, unsigned char* value, guint64 size, int flags);
 int Mono_Posix_Syscall_fstat (int filedes, struct Mono_Posix_Stat* buf);
+int Mono_Posix_Syscall_fstatat (int dirfd, const char* file_name, struct Mono_Posix_Stat* buf, int flags);
 int Mono_Posix_Syscall_fstatvfs (int fd, struct Mono_Posix_Statvfs* buf);
 int Mono_Posix_Syscall_ftruncate (int fd, gint64 length);
+int Mono_Posix_Syscall_futimens (int fd, struct Mono_Posix_Timespec* times);
 int Mono_Posix_Syscall_futimes (int fd, struct Mono_Posix_Timeval* tvp);
+int Mono_Posix_Syscall_get_at_fdcwd (void);
+gint64 Mono_Posix_Syscall_get_utime_now (void);
+gint64 Mono_Posix_Syscall_get_utime_omit (void);
 void* Mono_Posix_Syscall_getcwd (char* buf, guint64 size);
 int Mono_Posix_Syscall_getdomainname (char* name, guint64 len);
 int Mono_Posix_Syscall_getfsent (struct Mono_Posix_Syscall__Fstab* fs);
@@ -1721,6 +1755,7 @@ int Mono_Posix_Syscall_lstat (const char* file_name, struct Mono_Posix_Stat* buf
 int Mono_Posix_Syscall_lutimes (const char* filename, struct Mono_Posix_Timeval* tvp);
 int Mono_Posix_Syscall_mincore (void* start, guint64 length, unsigned char* vec);
 int Mono_Posix_Syscall_mknod (const char* pathname, unsigned int mode, guint64 dev);
+int Mono_Posix_Syscall_mknodat (int dirfd, const char* pathname, unsigned int mode, guint64 dev);
 int Mono_Posix_Syscall_mlock (void* start, guint64 len);
 void* Mono_Posix_Syscall_mmap (void* start, guint64 length, int prot, int flags, int fd, gint64 offset);
 int Mono_Posix_Syscall_mprotect (void* start, guint64 len, int prot);
@@ -1738,12 +1773,16 @@ int Mono_Posix_Syscall_posix_fadvise (int fd, gint64 offset, gint64 len, int adv
 int Mono_Posix_Syscall_posix_fallocate (int fd, gint64 offset, guint64 len);
 int Mono_Posix_Syscall_posix_madvise (void* addr, guint64 len, int advice);
 gint64 Mono_Posix_Syscall_pread (int fd, void* buf, guint64 count, gint64 offset);
+gint64 Mono_Posix_Syscall_preadv (int fd, struct Mono_Posix_Iovec* iov, int iovcnt, gint64 offset);
 int Mono_Posix_Syscall_psignal (int sig, const char* s);
 gint64 Mono_Posix_Syscall_pwrite (int fd, void* buf, guint64 count, gint64 offset);
+gint64 Mono_Posix_Syscall_pwritev (int fd, struct Mono_Posix_Iovec* iov, int iovcnt, gint64 offset);
 gint64 Mono_Posix_Syscall_read (int fd, void* buf, guint64 count);
 int Mono_Posix_Syscall_readdir (void* dir, struct Mono_Posix_Syscall__Dirent* dentry);
 int Mono_Posix_Syscall_readdir_r (void* dirp, struct Mono_Posix_Syscall__Dirent* entry, void** result);
 int Mono_Posix_Syscall_readlink (const char* path, char* buf, guint64 bufsiz);
+int Mono_Posix_Syscall_readlinkat (int dirfd, const char* pathname, char* buf, guint64 bufsiz);
+gint64 Mono_Posix_Syscall_readv (int fd, struct Mono_Posix_Iovec* iov, int iovcnt);
 int Mono_Posix_Syscall_remap_file_pages (void* start, guint64 size, int prot, gint64 pgoff, int flags);
 int Mono_Posix_Syscall_removexattr (const char* path, const char* name);
 int Mono_Posix_Syscall_rewinddir (void* dir);
@@ -1773,14 +1812,17 @@ int Mono_Posix_Syscall_truncate (const char* path, gint64 length);
 int Mono_Posix_Syscall_ttyname_r (int fd, char* buf, guint64 buflen);
 int Mono_Posix_Syscall_uname (struct Mono_Posix_Syscall__Utsname* buf);
 int Mono_Posix_Syscall_utime (const char* filename, struct Mono_Posix_Utimbuf* buf, int use_buf);
+int Mono_Posix_Syscall_utimensat (int dirfd, const char* pathname, struct Mono_Posix_Timespec* times, int flags);
 int Mono_Posix_Syscall_utimes (const char* filename, struct Mono_Posix_Timeval* tvp);
 int Mono_Posix_Syscall_WEXITSTATUS (int status);
 int Mono_Posix_Syscall_WIFEXITED (int status);
 int Mono_Posix_Syscall_WIFSIGNALED (int status);
 int Mono_Posix_Syscall_WIFSTOPPED (int status);
 gint64 Mono_Posix_Syscall_write (int fd, void* buf, guint64 count);
+gint64 Mono_Posix_Syscall_writev (int fd, struct Mono_Posix_Iovec* iov, int iovcnt);
 int Mono_Posix_Syscall_WSTOPSIG (int status);
 int Mono_Posix_Syscall_WTERMSIG (int status);
+int Mono_Posix_ToStat (void* source, struct Mono_Posix_Stat* destination);
 int Mono_Posix_ToStatvfs (void* source, struct Mono_Posix_Statvfs* destination);
 void* Mono_Unix_UnixSignal_install (int signum);
 int Mono_Unix_UnixSignal_uninstall (void* info);

@@ -47,6 +47,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void EncodingTest ()
 		{
 			// For Stream it makes sense

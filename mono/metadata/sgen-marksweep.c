@@ -38,7 +38,12 @@
 #include "metadata/sgen-protocol.h"
 #include "metadata/sgen-cardtable.h"
 #include "metadata/sgen-memory-governor.h"
+#include "metadata/sgen-layout-stats.h"
 #include "metadata/gc-internal.h"
+
+#if !defined(SGEN_PARALLEL_MARK) && !defined(FIXED_HEAP)
+#define SGEN_HAVE_CONCURRENT_MARK
+#endif
 
 #define MS_BLOCK_SIZE	(16*1024)
 #define MS_BLOCK_SIZE_SHIFT	14
@@ -51,7 +56,7 @@
 
 /*
  * Don't allocate single blocks, but alloc a contingent of this many
- * blocks in one swoop.
+ * blocks in one swoop.  This must be a power of two.
  */
 #define MS_BLOCK_ALLOC_NUM	32
 
@@ -93,7 +98,7 @@ struct _MSBlockInfo {
 	void **free_list;
 	MSBlockInfo *next_free;
 	void **pin_queue_start;
-#ifdef SGEN_CONCURRENT_MARK
+#ifdef SGEN_HAVE_CONCURRENT_MARK
 	guint8 *cardtable_mod_union;
 #endif
 	mword mark_words [MS_NUM_MARK_WORDS];
@@ -183,13 +188,17 @@ static LOCK_DECLARE (ms_block_list_mutex);
 
 static gboolean *evacuate_block_obj_sizes;
 static float evacuation_threshold = 0.666;
-#ifdef SGEN_CONCURRENT_MARK
+#ifdef SGEN_HAVE_CONCURRENT_MARK
 static float concurrent_evacuation_threshold = 0.666;
 static gboolean want_evacuation = FALSE;
 #endif
 
 static gboolean lazy_sweep = TRUE;
 static gboolean have_swept;
+
+#ifdef SGEN_HAVE_CONCURRENT_MARK
+static gboolean concurrent_mark;
+#endif
 
 /* all allocated blocks in the system */
 static MSBlockInfo *all_blocks;
@@ -223,6 +232,12 @@ static long long stat_major_blocks_freed = 0;
 static long long stat_major_blocks_lazy_swept = 0;
 static long long stat_major_objects_evacuated = 0;
 
+#if SIZEOF_VOID_P != 8
+static long long stat_major_blocks_freed_ideal = 0;
+static long long stat_major_blocks_freed_less_ideal = 0;
+static long long stat_major_blocks_freed_individual = 0;
+static long long stat_major_blocks_alloced_less_ideal = 0;
+#endif
 
 #ifdef SGEN_COUNT_NUMBER_OF_MAJOR_OBJECTS_MARKED
 static long long num_major_objects_marked = 0;
@@ -354,9 +369,21 @@ ms_get_empty_block (void)
 
  retry:
 	if (!empty_blocks) {
-		p = sgen_alloc_os_memory_aligned (MS_BLOCK_SIZE * MS_BLOCK_ALLOC_NUM, MS_BLOCK_SIZE, SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE, "major heap section");
+		/*
+		 * We try allocating MS_BLOCK_ALLOC_NUM blocks first.  If that's
+		 * unsuccessful, we halve the number of blocks and try again, until we're at
+		 * 1.  If that doesn't work, either, we assert.
+		 */
+		int alloc_num = MS_BLOCK_ALLOC_NUM;
+		for (;;) {
+			p = sgen_alloc_os_memory_aligned (MS_BLOCK_SIZE * alloc_num, MS_BLOCK_SIZE, SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE,
+					alloc_num == 1 ? "major heap section" : NULL);
+			if (p)
+				break;
+			alloc_num >>= 1;
+		}
 
-		for (i = 0; i < MS_BLOCK_ALLOC_NUM; ++i) {
+		for (i = 0; i < alloc_num; ++i) {
 			block = p;
 			/*
 			 * We do the free list update one after the
@@ -370,9 +397,13 @@ ms_get_empty_block (void)
 			p += MS_BLOCK_SIZE;
 		}
 
-		SGEN_ATOMIC_ADD (num_empty_blocks, MS_BLOCK_ALLOC_NUM);
+		SGEN_ATOMIC_ADD (num_empty_blocks, alloc_num);
 
-		stat_major_blocks_alloced += MS_BLOCK_ALLOC_NUM;
+		stat_major_blocks_alloced += alloc_num;
+#if SIZEOF_VOID_P != 8
+		if (alloc_num != MS_BLOCK_ALLOC_NUM)
+			stat_major_blocks_alloced_less_ideal += alloc_num;
+#endif
 	}
 
 	do {
@@ -541,7 +572,7 @@ ms_alloc_block (int size_index, gboolean pinned, gboolean has_references)
 	header = (MSBlockHeader*) info->block;
 	header->info = info;
 #endif
-#ifdef SGEN_CONCURRENT_MARK
+#ifdef SGEN_HAVE_CONCURRENT_MARK
 	info->cardtable_mod_union = NULL;
 #endif
 
@@ -646,6 +677,11 @@ alloc_obj_par (MonoVTable *vtable, int size, gboolean pinned, gboolean has_refer
 	MSBlockInfo *block;
 	void *obj;
 
+#ifdef SGEN_HAVE_CONCURRENT_MARK
+	if (concurrent_mark)
+		g_assert_not_reached ();
+#endif
+
 	SGEN_ASSERT (9, current_collection_generation == GENERATION_OLD, "old gen parallel allocator called from a %d collection", current_collection_generation);
 
 	if (free_blocks_local [size_index]) {
@@ -681,10 +717,6 @@ alloc_obj_par (MonoVTable *vtable, int size, gboolean pinned, gboolean has_refer
 	}
 
 	*(MonoVTable**)obj = vtable;
-
-#ifdef SGEN_CONCURRENT_MARK
-	g_assert_not_reached ();
-#endif
 
 	return obj;
 }
@@ -1062,13 +1094,16 @@ major_dump_heap (FILE *heap_dump_file)
 static void
 pin_major_object (char *obj, SgenGrayQueue *queue)
 {
-#ifdef SGEN_CONCURRENT_MARK
-	g_assert_not_reached ();
-#else
-	MSBlockInfo *block = MS_BLOCK_FOR_OBJ (obj);
+	MSBlockInfo *block;
+
+#ifdef SGEN_HAVE_CONCURRENT_MARK
+	if (concurrent_mark)
+		g_assert_not_reached ();
+#endif
+
+	block = MS_BLOCK_FOR_OBJ (obj);
 	block->has_pinned = TRUE;
 	MS_MARK_OBJECT_AND_ENQUEUE (obj, block, queue);
-#endif
 }
 
 #include "sgen-major-copy-object.h"
@@ -1231,7 +1266,7 @@ major_copy_or_mark_object (void **ptr, void *obj, SgenGrayQueue *queue)
 	}
 }
 #else
-#ifdef SGEN_CONCURRENT_MARK
+#ifdef SGEN_HAVE_CONCURRENT_MARK
 static void
 major_copy_or_mark_object_concurrent (void **ptr, void *obj, SgenGrayQueue *queue)
 {
@@ -1414,7 +1449,7 @@ major_copy_or_mark_object_canonical (void **ptr, SgenGrayQueue *queue)
 	major_copy_or_mark_object (ptr, *ptr, queue);
 }
 
-#ifdef SGEN_CONCURRENT_MARK
+#ifdef SGEN_HAVE_CONCURRENT_MARK
 static void
 major_copy_or_mark_object_concurrent_canonical (void **ptr, SgenGrayQueue *queue)
 {
@@ -1436,7 +1471,7 @@ major_get_and_reset_num_major_objects_marked (void)
 
 #include "sgen-major-scan-object.h"
 
-#ifdef SGEN_CONCURRENT_MARK
+#ifdef SGEN_HAVE_CONCURRENT_MARK
 #define SCAN_FOR_CONCURRENT_MARK
 #include "sgen-major-scan-object.h"
 #undef SCAN_FOR_CONCURRENT_MARK
@@ -1568,7 +1603,7 @@ ms_sweep (void)
 	int *slots_used = alloca (sizeof (int) * num_block_obj_sizes);
 	int *num_blocks = alloca (sizeof (int) * num_block_obj_sizes);
 
-#ifdef SGEN_CONCURRENT_MARK
+#ifdef SGEN_HAVE_CONCURRENT_MARK
 	mword total_evacuate_heap = 0;
 	mword total_evacuate_saved = 0;
 #endif
@@ -1605,7 +1640,7 @@ ms_sweep (void)
 
 		count = MS_BLOCK_FREE / block->obj_size;
 
-#ifdef SGEN_CONCURRENT_MARK
+#ifdef SGEN_HAVE_CONCURRENT_MARK
 		if (block->cardtable_mod_union) {
 			sgen_free_internal_dynamic (block->cardtable_mod_union, CARDS_PER_BLOCK, INTERNAL_MEM_CARDTABLE_MOD_UNION);
 			block->cardtable_mod_union = NULL;
@@ -1676,7 +1711,7 @@ ms_sweep (void)
 		} else {
 			evacuate_block_obj_sizes [i] = FALSE;
 		}
-#ifdef SGEN_CONCURRENT_MARK
+#ifdef SGEN_HAVE_CONCURRENT_MARK
 		{
 			mword total_bytes = block_obj_sizes [i] * slots_available [i];
 			total_evacuate_heap += total_bytes;
@@ -1686,7 +1721,7 @@ ms_sweep (void)
 #endif
 	}
 
-#ifdef SGEN_CONCURRENT_MARK
+#ifdef SGEN_HAVE_CONCURRENT_MARK
 	want_evacuation = (float)total_evacuate_saved / (float)total_evacuate_heap > (1 - concurrent_evacuation_threshold);
 #endif
 
@@ -1831,6 +1866,18 @@ major_finish_major_collection (void)
 {
 }
 
+#if !defined(FIXED_HEAP) && SIZEOF_VOID_P != 8
+static int
+compare_pointers (const void *va, const void *vb) {
+	char *a = *(char**)va, *b = *(char**)vb;
+	if (a < b)
+		return -1;
+	if (a > b)
+		return 1;
+	return 0;
+}
+#endif
+
 static void
 major_have_computer_minor_collection_allowance (void)
 {
@@ -1839,13 +1886,127 @@ major_have_computer_minor_collection_allowance (void)
 
 	g_assert (have_swept);
 
+#if SIZEOF_VOID_P != 8
+	{
+		int i, num_empty_blocks_orig, num_blocks, arr_length;
+		void *block;
+		void **empty_block_arr;
+		void **rebuild_next;
+
+		if (num_empty_blocks <= section_reserve)
+			return;
+		SGEN_ASSERT (0, num_empty_blocks > 0, "section reserve can't be negative");
+
+		num_empty_blocks_orig = num_empty_blocks;
+		empty_block_arr = (void**)sgen_alloc_internal_dynamic (sizeof (void*) * num_empty_blocks_orig,
+				INTERNAL_MEM_MS_BLOCK_INFO_SORT, FALSE);
+		if (!empty_block_arr)
+			goto fallback;
+
+		i = 0;
+		for (block = empty_blocks; block; block = *(void**)block)
+			empty_block_arr [i++] = block;
+		SGEN_ASSERT (0, i == num_empty_blocks, "empty block count wrong");
+
+		qsort (empty_block_arr, num_empty_blocks, sizeof (void*), compare_pointers);
+
+		/*
+		 * We iterate over the free blocks, trying to find MS_BLOCK_ALLOC_NUM
+		 * contiguous ones.  If we do, we free them.  If that's not enough to get to
+		 * section_reserve, we halve the number of contiguous blocks we're looking
+		 * for and have another go, until we're done with looking for pairs of
+		 * blocks, at which point we give up and go to the fallback.
+		 */
+		arr_length = num_empty_blocks_orig;
+		num_blocks = MS_BLOCK_ALLOC_NUM;
+		while (num_empty_blocks > section_reserve && num_blocks > 1) {
+			int first = -1;
+			int dest = 0;
+
+			dest = 0;
+			for (i = 0; i < arr_length; ++i) {
+				int d = dest;
+				void *block = empty_block_arr [i];
+				SGEN_ASSERT (0, block, "we're not shifting correctly");
+				if (i != dest) {
+					empty_block_arr [dest] = block;
+					/*
+					 * This is not strictly necessary, but we're
+					 * cautious.
+					 */
+					empty_block_arr [i] = NULL;
+				}
+				++dest;
+
+				if (first < 0) {
+					first = d;
+					continue;
+				}
+
+				SGEN_ASSERT (0, first >= 0 && d > first, "algorithm is wrong");
+
+				if ((char*)block != ((char*)empty_block_arr [d-1]) + MS_BLOCK_SIZE) {
+					first = d;
+					continue;
+				}
+
+				if (d + 1 - first == num_blocks) {
+					/*
+					 * We found num_blocks contiguous blocks.  Free them
+					 * and null their array entries.  As an optimization
+					 * we could, instead of nulling the entries, shift
+					 * the following entries over to the left, while
+					 * we're iterating.
+					 */
+					int j;
+					sgen_free_os_memory (empty_block_arr [first], MS_BLOCK_SIZE * num_blocks, SGEN_ALLOC_HEAP);
+					for (j = first; j <= d; ++j)
+						empty_block_arr [j] = NULL;
+					dest = first;
+					first = -1;
+
+					num_empty_blocks -= num_blocks;
+
+					stat_major_blocks_freed += num_blocks;
+					if (num_blocks == MS_BLOCK_ALLOC_NUM)
+						stat_major_blocks_freed_ideal += num_blocks;
+					else
+						stat_major_blocks_freed_less_ideal += num_blocks;
+
+				}
+			}
+
+			SGEN_ASSERT (0, dest <= i && dest <= arr_length, "array length is off");
+			arr_length = dest;
+			SGEN_ASSERT (0, arr_length == num_empty_blocks, "array length is off");
+
+			num_blocks >>= 1;
+		}
+
+		/* rebuild empty_blocks free list */
+		rebuild_next = (void**)&empty_blocks;
+		for (i = 0; i < arr_length; ++i) {
+			void *block = empty_block_arr [i];
+			SGEN_ASSERT (0, block, "we're missing blocks");
+			*rebuild_next = block;
+			rebuild_next = (void**)block;
+		}
+		*rebuild_next = NULL;
+
+		/* free array */
+		sgen_free_internal_dynamic (empty_block_arr, sizeof (void*) * num_empty_blocks_orig, INTERNAL_MEM_MS_BLOCK_INFO_SORT);
+	}
+
+	SGEN_ASSERT (0, num_empty_blocks >= 0, "we freed more blocks than we had in the first place?");
+
+ fallback:
 	/*
-	 * FIXME: We don't free blocks on 32 bit platforms because it
-	 * can lead to address space fragmentation, since we're
-	 * allocating blocks in larger contingents.
+	 * This is our threshold.  If there's not more empty than used blocks, we won't
+	 * release uncontiguous blocks, in fear of fragmenting the address space.
 	 */
-	if (sizeof (mword) < 8)
+	if (num_empty_blocks <= num_major_sections)
 		return;
+#endif
 
 	while (num_empty_blocks > section_reserve) {
 		void *next = *(void**)empty_blocks;
@@ -1858,6 +2019,9 @@ major_have_computer_minor_collection_allowance (void)
 		--num_empty_blocks;
 
 		++stat_major_blocks_freed;
+#if SIZEOF_VOID_P != 8
+		++stat_major_blocks_freed_individual;
+#endif
 	}
 #endif
 }
@@ -2037,6 +2201,13 @@ major_scan_card_table (gboolean mod_union, SgenGrayQueue *queue)
 	MSBlockInfo *block;
 	ScanObjectFunc scan_func = sgen_get_current_object_ops ()->scan_object;
 
+#ifdef SGEN_HAVE_CONCURRENT_MARK
+	if (!concurrent_mark)
+		g_assert (!mod_union);
+#else
+	g_assert (!mod_union);
+#endif
+
 	FOREACH_BLOCK (block) {
 		int block_obj_size;
 		char *block_start;
@@ -2055,7 +2226,7 @@ major_scan_card_table (gboolean mod_union, SgenGrayQueue *queue)
 			char *obj, *end, *base;
 
 			if (mod_union) {
-#ifdef SGEN_CONCURRENT_MARK
+#ifdef SGEN_HAVE_CONCURRENT_MARK
 				cards = block->cardtable_mod_union;
 				/*
 				 * This happens when the nursery
@@ -2065,8 +2236,6 @@ major_scan_card_table (gboolean mod_union, SgenGrayQueue *queue)
 				 */
 				if (!cards)
 					continue;
-#else
-				g_assert_not_reached ();
 #endif
 			} else {
 			/*We can avoid the extra copy since the remark cardtable was cleaned before */
@@ -2118,7 +2287,7 @@ major_scan_card_table (gboolean mod_union, SgenGrayQueue *queue)
 			 * sizes, they won't overflow the cardtable overlap modulus.
 			 */
 			if (mod_union) {
-#ifdef SGEN_CONCURRENT_MARK
+#ifdef SGEN_HAVE_CONCURRENT_MARK
 				card_data = card_base = block->cardtable_mod_union;
 				/*
 				 * This happens when the nursery
@@ -2128,8 +2297,6 @@ major_scan_card_table (gboolean mod_union, SgenGrayQueue *queue)
 				 */
 				if (!card_data)
 					continue;
-#else
-				g_assert_not_reached ();
 #endif
 			} else {
 				card_data = card_base = sgen_card_table_get_card_scan_address ((mword)block_start);
@@ -2185,31 +2352,27 @@ major_scan_card_table (gboolean mod_union, SgenGrayQueue *queue)
 	} END_FOREACH_BLOCK;
 }
 
-#ifdef SGEN_CONCURRENT_MARK
+#ifdef SGEN_HAVE_CONCURRENT_MARK
 static void
 update_cardtable_mod_union (void)
 {
 	MSBlockInfo *block;
 
 	FOREACH_BLOCK (block) {
-		guint8 *cards;
-		gboolean init = FALSE;
+		size_t num_cards;
 
-		if (!block->cardtable_mod_union) {
-			block->cardtable_mod_union = sgen_alloc_internal_dynamic (CARDS_PER_BLOCK,
-					INTERNAL_MEM_CARDTABLE_MOD_UNION, TRUE);
-			init = TRUE;
-		}
+		block->cardtable_mod_union = sgen_card_table_update_mod_union (block->cardtable_mod_union,
+				block->block, MS_BLOCK_SIZE, &num_cards);
 
-		cards = sgen_card_table_get_card_scan_address ((mword)block->block);
-		if (init) {
-			memcpy (block->cardtable_mod_union, cards, CARDS_PER_BLOCK);
-		} else {
-			int i;
-			for (i = 0; i < CARDS_PER_BLOCK; ++i)
-				block->cardtable_mod_union [i] |= cards [i];
-		}
+		SGEN_ASSERT (0, num_cards == CARDS_PER_BLOCK, "Number of cards calculation is wrong");
 	} END_FOREACH_BLOCK;
+}
+
+static guint8*
+major_get_cardtable_mod_union_for_object (char *obj)
+{
+	MSBlockInfo *block = MS_BLOCK_FOR_OBJ (obj);
+	return &block->cardtable_mod_union [(obj - (char*)sgen_card_table_align_pointer (block->block)) >> CARD_BITS];
 }
 #endif
 
@@ -2272,25 +2435,27 @@ post_param_init (SgenMajorCollector *collector)
 	collector->sweeps_lazily = lazy_sweep;
 }
 
-void
-#ifdef SGEN_CONCURRENT_MARK
-sgen_marksweep_conc_init
-#else
+#ifdef SGEN_HAVE_CONCURRENT_MARK
+static void
+sgen_marksweep_init_internal (SgenMajorCollector *collector, gboolean is_concurrent)
+#else // SGEN_HAVE_CONCURRENT_MARK
 #ifdef SGEN_PARALLEL_MARK
 #ifdef FIXED_HEAP
-sgen_marksweep_fixed_par_init
-#else
-sgen_marksweep_par_init
-#endif
-#else
+void
+sgen_marksweep_fixed_par_init (SgenMajorCollector *collector)
+#else // FIXED_HEAP
+void
+sgen_marksweep_par_init (SgenMajorCollector *collector)
+#endif // FIXED_HEAP
+#else // SGEN_PARALLEL_MARK
 #ifdef FIXED_HEAP
-sgen_marksweep_fixed_init
-#else
-sgen_marksweep_init
-#endif
-#endif
-#endif
-	(SgenMajorCollector *collector)
+void
+sgen_marksweep_fixed_init (SgenMajorCollector *collector)
+#else // FIXED_HEAP
+#error unknown configuration
+#endif // FIXED_HEAP
+#endif // SGEN_PARALLEL_MARK
+#endif // SGEN_HAVE_CONCURRENT_MARK
 {
 	int i;
 
@@ -2330,6 +2495,13 @@ sgen_marksweep_init
 	mono_counters_register ("# major blocks freed", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_major_blocks_freed);
 	mono_counters_register ("# major blocks lazy swept", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_major_blocks_lazy_swept);
 	mono_counters_register ("# major objects evacuated", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_major_objects_evacuated);
+#if SIZEOF_VOID_P != 8
+	mono_counters_register ("# major blocks freed ideally", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_major_blocks_freed_ideal);
+	mono_counters_register ("# major blocks freed less ideally", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_major_blocks_freed_less_ideal);
+	mono_counters_register ("# major blocks freed individually", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_major_blocks_freed_individual);
+	mono_counters_register ("# major blocks allocated less ideally", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_major_blocks_alloced_less_ideal);
+#endif
+
 #ifdef SGEN_PARALLEL_MARK
 #ifndef HAVE_KW_THREAD
 	mono_native_tls_alloc (&workers_free_block_lists_key, NULL);
@@ -2345,14 +2517,18 @@ sgen_marksweep_init
 #else
 	collector->is_parallel = FALSE;
 #endif
-#ifdef SGEN_CONCURRENT_MARK
-	collector->is_concurrent = TRUE;
-	collector->want_synchronous_collection = &want_evacuation;
-	collector->get_and_reset_num_major_objects_marked = major_get_and_reset_num_major_objects_marked;
-#else
-	collector->is_concurrent = FALSE;
-	collector->want_synchronous_collection = NULL;
+#ifdef SGEN_HAVE_CONCURRENT_MARK
+	concurrent_mark = is_concurrent;
+	if (is_concurrent) {
+		collector->is_concurrent = TRUE;
+		collector->want_synchronous_collection = &want_evacuation;
+		collector->get_and_reset_num_major_objects_marked = major_get_and_reset_num_major_objects_marked;
+	} else
 #endif
+	{
+		collector->is_concurrent = FALSE;
+		collector->want_synchronous_collection = NULL;
+	}
 	collector->supports_cardtable = TRUE;
 
 	collector->have_swept = &have_swept;
@@ -2374,8 +2550,11 @@ sgen_marksweep_init
 	collector->pin_major_object = pin_major_object;
 	collector->scan_card_table = major_scan_card_table;
 	collector->iterate_live_block_ranges = (void*)(void*) major_iterate_live_block_ranges;
-#ifdef SGEN_CONCURRENT_MARK
-	collector->update_cardtable_mod_union = update_cardtable_mod_union;
+#ifdef SGEN_HAVE_CONCURRENT_MARK
+	if (is_concurrent) {
+		collector->update_cardtable_mod_union = update_cardtable_mod_union;
+		collector->get_cardtable_mod_union_for_object = major_get_cardtable_mod_union_for_object;
+	}
 #endif
 	collector->init_to_space = major_init_to_space;
 	collector->sweep = major_sweep;
@@ -2399,14 +2578,30 @@ sgen_marksweep_init
 
 	collector->major_ops.copy_or_mark_object = major_copy_or_mark_object_canonical;
 	collector->major_ops.scan_object = major_scan_object;
-#ifdef SGEN_CONCURRENT_MARK
-	collector->major_concurrent_ops.copy_or_mark_object = major_copy_or_mark_object_concurrent_canonical;
-	collector->major_concurrent_ops.scan_object = major_scan_object_concurrent;
-	collector->major_concurrent_ops.scan_vtype = major_scan_vtype_concurrent;
+#ifdef SGEN_HAVE_CONCURRENT_MARK
+	if (is_concurrent) {
+		collector->major_concurrent_ops.copy_or_mark_object = major_copy_or_mark_object_concurrent_canonical;
+		collector->major_concurrent_ops.scan_object = major_scan_object_concurrent;
+		collector->major_concurrent_ops.scan_vtype = major_scan_vtype_concurrent;
+	}
 #endif
 
 	/*cardtable requires major pages to be 8 cards aligned*/
 	g_assert ((MS_BLOCK_SIZE % (8 * CARD_SIZE_IN_BYTES)) == 0);
 }
+
+#ifdef SGEN_HAVE_CONCURRENT_MARK
+void
+sgen_marksweep_init (SgenMajorCollector *collector)
+{
+	sgen_marksweep_init_internal (collector, FALSE);
+}
+
+void
+sgen_marksweep_conc_init (SgenMajorCollector *collector)
+{
+	sgen_marksweep_init_internal (collector, TRUE);
+}
+#endif
 
 #endif

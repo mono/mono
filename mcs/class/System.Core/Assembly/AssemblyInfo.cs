@@ -69,5 +69,6 @@ using System.Runtime.InteropServices;
 
 #if NET_4_0
 [assembly: TypeForwardedTo (typeof (System.Security.Cryptography.Aes))]
+[assembly: TypeForwardedTo (typeof (System.Threading.LazyThreadSafetyMode ))]
+[assembly: TypeForwardedTo (typeof (System.Lazy<>))]
 #endif
-

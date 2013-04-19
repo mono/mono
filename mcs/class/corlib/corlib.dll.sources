@@ -284,6 +284,7 @@ System/Variant.cs
 System/Version.cs
 System/Void.cs
 System/WeakReference.cs
+System/WeakReference_T.cs
 System/WindowsConsoleDriver.cs
 System/_AppDomain.cs
 System/__ComObject.cs
@@ -344,6 +345,7 @@ System.Diagnostics.Contracts/ContractException.cs
 System.Diagnostics.Contracts/ContractFailedEventArgs.cs
 System.Diagnostics.Contracts/ContractFailureKind.cs
 System.Diagnostics.Contracts/ContractInvariantMethodAttribute.cs
+System.Diagnostics.Contracts/ContractOptionAttribute.cs
 System.Diagnostics.Contracts/ContractPublicPropertyNameAttribute.cs
 System.Diagnostics.Contracts/ContractReferenceAssemblyAttribute.cs
 System.Diagnostics.Contracts/ContractRuntimeIgnoredAttribute.cs
@@ -466,6 +468,7 @@ System.Reflection/Assembly.cs
 System.Reflection/AssemblyAlgorithmIdAttribute.cs
 System.Reflection/AssemblyCompanyAttribute.cs
 System.Reflection/AssemblyConfigurationAttribute.cs
+System.Reflection/AssemblyContentType.cs
 System.Reflection/AssemblyCopyrightAttribute.cs
 System.Reflection/AssemblyCultureAttribute.cs
 System.Reflection/AssemblyDefaultAliasAttribute.cs
@@ -545,6 +548,7 @@ System.Reflection/ReflectionContext.cs
 System.Reflection/ReflectionTypeLoadException.cs
 System.Reflection/ResourceAttributes.cs
 System.Reflection/ResourceLocation.cs
+System.Reflection/RuntimeReflectionExtensions.cs
 System.Reflection/StrongNameKeyPair.cs
 System.Reflection/TargetException.cs
 System.Reflection/TargetInvocationException.cs
@@ -1516,6 +1520,7 @@ System.Threading/LockRecursionException.cs
 System.Threading/ManualResetEvent.cs
 System.Threading/Monitor.cs
 System.Threading/Mutex.cs
+System.Threading/NamedDataSlot.cs
 System.Threading/NativeEventCalls.cs
 System.Threading/NativeOverlapped.cs
 System.Threading/Overlapped.cs
@@ -1568,6 +1573,7 @@ System/ArraySegment.cs
 System/Comparison.cs
 System/Converter.cs
 System/Predicate.cs
+System/Progress.cs
 System.Collections.Generic/Comparer.cs
 
 System.Threading.Tasks/ConcurrentExclusiveSchedulerPair.cs
@@ -1597,6 +1603,7 @@ System.Collections.Concurrent/OrderablePartitioner.cs
 System.Collections.Concurrent/ConcurrentDictionary.cs
 System.Collections.Concurrent/Partitioner.cs
 System.Collections.Concurrent/ConcurrentQueue.cs
+System.Collections.Concurrent/EnumerablePartitionerOptions.cs
 System.Collections.Concurrent.Partitioners/ListPartitioner.cs
 System.Collections.Concurrent.Partitioners/EnumerablePartitioner.cs
 System.Collections.Concurrent.Partitioners/UserRangePartitioner.cs

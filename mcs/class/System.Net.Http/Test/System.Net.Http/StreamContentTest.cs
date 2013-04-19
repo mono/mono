@@ -331,7 +331,7 @@ namespace MonoTests.System.Net.Http
 				Assert.IsTrue (sc.LoadIntoBufferAsync (50).Wait (200));
 				Assert.Fail ("#1");
 			} catch (AggregateException e) {
-				Assert.IsInstanceOfType (typeof (HttpRequestException), e.InnerException, "#2");
+				Assert.IsTrue (e.InnerException is HttpRequestException, "#2");
 			}
 		}
 

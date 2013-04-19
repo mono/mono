@@ -39,7 +39,11 @@ namespace System.Reflection {
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
 	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
+#if MOBILE
+	public abstract class MemberInfo : ICustomAttributeProvider {
+#else
 	public abstract class MemberInfo : ICustomAttributeProvider, _MemberInfo {
+#endif
 
 		protected MemberInfo ()
 		{
@@ -112,6 +116,13 @@ namespace System.Reflection {
 		}
 #endif
 
+#if NET_4_5
+		public virtual IEnumerable<CustomAttributeData> CustomAttributes {
+			get { return GetCustomAttributesData (); }
+		}
+#endif
+
+#if !MOBILE
 		void _MemberInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -137,5 +148,6 @@ namespace System.Reflection {
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 	}
 }

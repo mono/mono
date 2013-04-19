@@ -21,6 +21,7 @@ namespace MonoTests.System.ComponentModel
 	public class ComponentConverterTests
 	{
 		[Test]
+		[NUnit.Framework.Category ("MobileNotWorking")] // IComponent doesn't have the TypeConverter attribute
 		public void DataSetConversions ()
 		{
 			TypeConverter converter = TypeDescriptor.GetConverter (typeof (DataSet));

@@ -206,8 +206,7 @@ namespace System.Reflection {
 
 			/*Avoid allocating an array every time*/
 			ParameterInfo[] pinfo = GetParametersInternal ();
-			if (!binder.ConvertArgs (parameters, pinfo, culture, (invokeAttr & BindingFlags.ExactBinding) != 0))
-				throw new ArgumentException ("failed to convert parameters");
+			binder.ConvertValues (parameters, pinfo, culture, (invokeAttr & BindingFlags.ExactBinding) != 0);
 
 #if !NET_2_1
 			if (SecurityManager.SecurityEnabled) {
@@ -496,7 +495,7 @@ namespace System.Reflection {
 		}
 
 		/*
-		 * InternalInvoke() receives the parameters corretcly converted by the binder
+		 * InternalInvoke() receives the parameters correctly converted by the binder
 		 * to match the types of the method signature.
 		 */
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -504,15 +503,26 @@ namespace System.Reflection {
 
 		[DebuggerHidden]
 		[DebuggerStepThrough]
-		public override Object Invoke (Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) 
+		public override object Invoke (object obj, BindingFlags invokeAttr, Binder binder, object[] parameters, CultureInfo culture) 
+		{
+			if (obj == null) {
+				if (!IsStatic)
+					throw new TargetException ("Instance constructor requires a target");
+			} else if (!DeclaringType.IsInstanceOfType (obj)) {
+				throw new TargetException ("Constructor does not match target type");				
+			}
+
+			return DoInvoke (obj, invokeAttr, binder, parameters, culture);
+		}
+
+		object DoInvoke (object obj, BindingFlags invokeAttr, Binder binder, object[] parameters, CultureInfo culture) 
 		{
 			if (binder == null)
 				binder = Binder.DefaultBinder;
 
 			ParameterInfo[] pinfo = MonoMethodInfo.GetParametersInfo (mhandle, this);
 
-			if (!binder.ConvertArgs (parameters, pinfo, culture, (invokeAttr & BindingFlags.ExactBinding) != 0))
-				throw new ArgumentException ("failed to convert parameters");
+			binder.ConvertValues (parameters, pinfo, culture, (invokeAttr & BindingFlags.ExactBinding) != 0);
 
 #if !NET_2_1
 			if (SecurityManager.SecurityEnabled) {
@@ -530,7 +540,12 @@ namespace System.Reflection {
 				throw new MemberAccessException (String.Format ("Cannot create an instance of {0} because it is an abstract class", DeclaringType));
 			}
 
-			Exception exc = null;
+			return InternalInvoke (obj, parameters);
+		}
+
+		public object InternalInvoke (object obj, object[] parameters)
+		{
+			Exception exc;
 			object o = null;
 
 			try {
@@ -545,14 +560,15 @@ namespace System.Reflection {
 
 			if (exc != null)
 				throw exc;
-			return (obj == null) ? o : null;
+
+			return obj == null ? o : null;
 		}
 
 		[DebuggerHidden]
 		[DebuggerStepThrough]
 		public override Object Invoke (BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
 		{
-			return Invoke (null, invokeAttr, binder, parameters, culture);
+			return DoInvoke (null, invokeAttr, binder, parameters, culture);
 		}
 
 		public override RuntimeMethodHandle MethodHandle { 

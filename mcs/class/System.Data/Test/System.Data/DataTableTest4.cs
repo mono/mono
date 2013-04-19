@@ -27,7 +27,6 @@
 using System;
 using System.Data;
 using System.Collections;
-using System.Data.Odbc;
 using System.IO;
 using System.Xml;
 using NUnit.Framework;

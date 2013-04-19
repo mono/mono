@@ -139,7 +139,7 @@ namespace Monodoc
 				hs.RootTree = rootTree;
 				rootTree.helpSources.Add (hs);
 				string epath = "extra-help-source-" + hs.Name;
-				Node hsn = rootTree.RootNode.CreateNode (hs.Name, "root:/" + epath);
+				Node hsn = rootTree.RootNode.CreateNode (hs.Name, RootNamespace + epath);
 				rootTree.nameToHelpSource [epath] = hs;
 				hsn.EnsureNodes ();
 				foreach (Node n in hs.Tree.RootNode.ChildNodes)
@@ -332,7 +332,7 @@ namespace Monodoc
 					continue;
 				}
 				string name = e.InnerText;
-				Node orCreateNode = parent.GetOrCreateNode (label, "root:/" + name);
+				Node orCreateNode = parent.GetOrCreateNode (label, RootNamespace + name);
 				orCreateNode.EnsureNodes ();
 				this.nameToNode[name] = orCreateNode;
 				XmlNodeList xmlNodeList = xmlNode.SelectNodes ("./node");
@@ -345,9 +345,8 @@ namespace Monodoc
 		public Node LookupEntryPoint (string name)
 		{
 			Node result = null;
-			if (!this.nameToNode.TryGetValue (name, out result)) {
+			if (!this.nameToNode.TryGetValue (name, out result))
 				result = null;
-			}
 			return result;
 		}
 
@@ -383,8 +382,17 @@ namespace Monodoc
 			internalId = null;
 			context = null;
 
-			if (url.StartsWith ("root:/", StringComparison.OrdinalIgnoreCase))
-				return this.GetHelpSourceAndIdFromName (url.Substring ("root:/".Length), out internalId, out node);
+			if (url == "root:") {
+				context = new Dictionary<string, string> { {"specialpage", "master-root"} };
+				internalId = url;
+				node = null;
+				// We return the first help source available since the generator will simply fetch this RootTree instance through it
+				return helpSources.FirstOrDefault ();
+			}
+			if (url.StartsWith (RootNamespace, StringComparison.OrdinalIgnoreCase)) {
+				context = new Dictionary<string, string> { {"specialpage", "root"} };
+				return GetHelpSourceAndIdFromName (url.Substring (RootNamespace.Length), out internalId, out node);
+			}
 
 			HelpSource helpSource = hintSource;
 			if (helpSource == null || string.IsNullOrEmpty (internalId = helpSource.GetInternalIdForUrl (url, out node, out context))) {
@@ -403,9 +411,9 @@ namespace Monodoc
 		public HelpSource GetHelpSourceAndIdFromName (string name, out string internalId, out Node node)
 		{
 			internalId = "root:";
-			node = this.LookupEntryPoint (name);
+			node = LookupEntryPoint (name);
 
-			return node == null ? null : node.ChildNodes.Select (n => n.Tree.HelpSource).Where (hs => hs != null).Distinct ().FirstOrDefault ();
+			return node == null ? null : node.ChildNodes.Select (n => n.Tree.HelpSource).FirstOrDefault (hs => hs != null);
 		}
 
 		public HelpSource GetHelpSourceFromId (int id)

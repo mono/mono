@@ -82,8 +82,8 @@ foreach (var ass in asses) {
 		if (!Directory.Exists (assdir))
 			Directory.CreateDirectory (assdir);
 		using (var tw = File.CreateText (assinfo)) {
-			tw.WriteLine ("// Due to InternalsVisibleTo issue we don't add versions so far...");
-			tw.WriteLine ("// [assembly:System.Reflection.AssemblyVersion (\"0.0.0.0\")]");
+			tw.WriteLine ("[assembly:System.Reflection.AssemblyVersion (\"2.1.30214.0\")]");
+			tw.WriteLine ("[assembly:System.Reflection.AssemblyFileVersion (\"2.1.30214.0\")]");
 		}
 	}
 
@@ -104,8 +104,8 @@ foreach (var ass in asses) {
 
 	Console.WriteLine ("Writing " + sources + " ...");
 	using (var tw = File.CreateText (sources)) {
-		//if (monoass != "Tests.System.Reactive")
-		//	tw.WriteLine ("Assembly/AssemblyInfo.cs");
+		if (monoass != "Tests.System.Reactive")
+			tw.WriteLine ("Assembly/AssemblyInfo.cs");
 		foreach (var path in doc.XPathSelectElements ("//*[local-name()='Compile']")
 			.Select (el => el.Attribute ("Include").Value)
 			.Select (s => s.Replace ("\\", "/"))) {

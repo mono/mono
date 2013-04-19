@@ -192,7 +192,10 @@ namespace Monodoc.Providers
 		public override Stream GetHelpStream (string id)
 		{
 			var idParts = id.Split ('?');
-			return base.GetHelpStream (idParts[0]);
+			var name = idParts[0];
+			if (name == "root:")
+				name = "mastersummary.xml";
+			return base.GetHelpStream (name);
 		}
 
 		public override Stream GetCachedHelpStream (string id)

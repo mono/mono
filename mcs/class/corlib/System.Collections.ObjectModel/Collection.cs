@@ -53,7 +53,8 @@ namespace System.Collections.ObjectModel
 		, IReadOnlyList<T>
 #endif
 	{
-		IList <T> list;
+		IList <T> items;
+		[field:NonSerializedAttribute()]
 		object syncRoot;
 		
 		public Collection ()
@@ -61,21 +62,21 @@ namespace System.Collections.ObjectModel
 			List <T> l = new List <T> ();
 			IList l2 = l as IList;
 			syncRoot = l2.SyncRoot;
-			list = l;
+			items = l;
 		}
 
-		public Collection (IList <T> list)
+		public Collection (IList <T> items)
 		{
-			if (list == null)
-				throw new ArgumentNullException ("list");
-			this.list = list;
-			ICollection l = list as ICollection;
+			if (items == null)
+				throw new ArgumentNullException ("items");
+			this.items = items;
+			ICollection l = items as ICollection;
 			syncRoot = (l != null) ? l.SyncRoot : new object ();
 		}
 
 		public void Add (T item)
 		{
-			int idx = list.Count;
+			int idx = items.Count;
 			InsertItem (idx, item);
 		}
 
@@ -86,27 +87,27 @@ namespace System.Collections.ObjectModel
 
 		protected virtual void ClearItems ()
 		{
-			list.Clear ();
+			items.Clear ();
 		}
 
 		public bool Contains (T item)
 		{
-			return list.Contains (item);
+			return items.Contains (item);
 		}
 
 		public void CopyTo (T [] array, int index)
 		{
-			list.CopyTo (array, index);
+			items.CopyTo (array, index);
 		}
 
 		public IEnumerator <T> GetEnumerator ()
 		{
-			return list.GetEnumerator ();
+			return items.GetEnumerator ();
 		}
 
 		public int IndexOf (T item)
 		{
-			return list.IndexOf (item);
+			return items.IndexOf (item);
 		}
 
 		public void Insert (int index, T item)
@@ -116,11 +117,11 @@ namespace System.Collections.ObjectModel
 
 		protected virtual void InsertItem (int index, T item)
 		{
-			list.Insert (index, item);
+			items.Insert (index, item);
 		}
 
 		protected IList<T> Items {
-			get { return list; }
+			get { return items; }
 		}
 
 		public bool Remove (T item)
@@ -141,57 +142,52 @@ namespace System.Collections.ObjectModel
 
 		protected virtual void RemoveItem (int index)
 		{
-			list.RemoveAt (index);
+			items.RemoveAt (index);
 		}
 
 		public int Count {
-			get { return list.Count; }
+			get { return items.Count; }
 		}
 
 		public T this [int index] {
-			get { return list [index]; }
+			get { return items [index]; }
 			set { SetItem (index, value); }
 		}
 
 		bool ICollection<T>.IsReadOnly {
-			get { return list.IsReadOnly; }
+			get { return items.IsReadOnly; }
 		}
 
 		protected virtual void SetItem (int index, T item)
 		{
-			list[index] = item;
+			items[index] = item;
 		}
 
 		
 #region Helper methods for non-generic interfaces
 		
-		internal static bool IsValidItem (object item)
-		{
-			return (item is T || (item == null && ! typeof (T).IsValueType));
-		}
-		
 		internal static T ConvertItem (object item)
 		{
-			if (IsValidItem (item))
+			if (CollectionHelpers.IsValidItem<T> (item))
 				return (T)item;
 			throw new ArgumentException ("item");
 		}
 		
-		internal static void CheckWritable (IList <T> list)
+		internal static void CheckWritable (IList <T> items)
 		{
-			if (list.IsReadOnly)
+			if (items.IsReadOnly)
 				throw new NotSupportedException ();
 		}
 		
-		internal static bool IsSynchronized (IList <T> list)
+		internal static bool IsSynchronized (IList <T> items)
 		{
-			ICollection c = list as ICollection;
+			ICollection c = items as ICollection;
 			return (c != null) ? c.IsSynchronized : false;
 		}
 		
-		internal static bool IsFixedSize (IList <T> list)
+		internal static bool IsFixedSize (IList <T> items)
 		{
-			IList l = list as IList;
+			IList l = items as IList;
 			return (l != null) ? l.IsFixedSize : false;
 		}
 #endregion
@@ -199,32 +195,32 @@ namespace System.Collections.ObjectModel
 #region Not generic interface implementations
 		void ICollection.CopyTo (Array array, int index)
 		{
-			((ICollection)list).CopyTo (array, index);
+			((ICollection)items).CopyTo (array, index);
 		}
 		
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			return (IEnumerator) list.GetEnumerator ();
+			return (IEnumerator) items.GetEnumerator ();
 		}
 				
 		int IList.Add (object value)
 		{
-			int idx = list.Count;
+			int idx = items.Count;
 			InsertItem (idx, ConvertItem (value));
 			return idx;
 		}
 		
 		bool IList.Contains (object value)
 		{
-			if (IsValidItem (value))
-				return list.Contains ((T) value);
+			if (CollectionHelpers.IsValidItem<T> (value))
+				return items.Contains ((T) value);
 			return false;
 		}
 		
 		int IList.IndexOf (object value)
 		{
-			if (IsValidItem (value))
-				return list.IndexOf ((T) value);
+			if (CollectionHelpers.IsValidItem<T> (value))
+				return items.IndexOf ((T) value);
 			return -1;
 		}
 		
@@ -235,7 +231,7 @@ namespace System.Collections.ObjectModel
 		
 		void IList.Remove (object value)
 		{
-			CheckWritable (list);
+			CheckWritable (items);
 
 			int idx = IndexOf (ConvertItem (value));
 
@@ -243,24 +239,32 @@ namespace System.Collections.ObjectModel
 		}
 		
 		bool ICollection.IsSynchronized {
-			get { return IsSynchronized (list); }
+			get { return IsSynchronized (items); }
 		}
 		
 		object ICollection.SyncRoot {
 			get { return syncRoot; }
 		}
 		bool IList.IsFixedSize {
-			get { return IsFixedSize (list); }
+			get { return IsFixedSize (items); }
 		}
 		
 		bool IList.IsReadOnly {
-			get { return list.IsReadOnly; }
+			get { return items.IsReadOnly; }
 		}
 		
 		object IList.this [int index] {
-			get { return list [index]; }
+			get { return items [index]; }
 			set { SetItem (index, ConvertItem (value)); }
 		}
 #endregion
+	}
+
+	static class CollectionHelpers
+	{
+		public static bool IsValidItem<T> (object item)
+		{
+			return item is T || (item == null && ! typeof (T).IsValueType);
+		}
 	}
 }

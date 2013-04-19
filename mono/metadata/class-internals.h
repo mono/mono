@@ -421,10 +421,23 @@ int mono_class_interface_match (const uint8_t *bitmap, int id) MONO_INTERNAL;
 #ifdef DISABLE_REMOTING
 #define mono_class_is_marshalbyref(klass) (FALSE)
 #define mono_class_is_contextbound(klass) (FALSE)
+#define mono_vtable_is_remote(vtable) (FALSE)
+#define mono_vtable_set_is_remote(vtable,enable) do {} while (0)
 #else
 #define mono_class_is_marshalbyref(klass) ((klass)->marshalbyref)
 #define mono_class_is_contextbound(klass) ((klass)->contextbound)
+#define mono_vtable_is_remote(vtable) ((vtable)->remote)
+#define mono_vtable_set_is_remote(vtable,enable) do { (vtable)->remote = enable ? 1 : 0; } while (0)
 #endif
+
+#ifdef DISABLE_COM
+#define mono_class_is_com_object(klass) (FALSE)
+#define mono_class_set_is_com_object(klass) do {} while (0)
+#else
+#define mono_class_is_com_object(klass) ((klass)->is_com_object)
+#define mono_class_set_is_com_object(klass) do { (klass)->is_com_object = 1; } while (0)
+#endif
+
 
 int mono_class_interface_offset (MonoClass *klass, MonoClass *itf);
 int mono_class_interface_offset_with_variance (MonoClass *klass, MonoClass *itf, gboolean *non_exact_match) MONO_INTERNAL;
@@ -698,7 +711,7 @@ typedef struct {
 #define MONO_SIZEOF_REMOTE_CLASS (sizeof (MonoRemoteClass) - MONO_ZERO_LEN_ARRAY * SIZEOF_VOID_P)
 
 typedef struct {
-	gulong new_object_count;
+	guint64 new_object_count;
 	gulong initialized_class_count;
 	gulong generic_vtable_count;
 	gulong used_class_count;

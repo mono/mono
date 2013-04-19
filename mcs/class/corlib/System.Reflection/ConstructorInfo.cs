@@ -37,8 +37,11 @@ namespace System.Reflection {
 	[ComDefaultInterfaceAttribute (typeof (_ConstructorInfo))]	
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
+#if MOBILE
+	public abstract class ConstructorInfo : MethodBase {
+#else
 	public abstract class ConstructorInfo : MethodBase, _ConstructorInfo {
-
+#endif
 		[ComVisible (true)]
 		public static readonly string ConstructorName = ".ctor";
 		[ComVisible (true)]
@@ -61,6 +64,8 @@ namespace System.Reflection {
 
 		public abstract object Invoke (BindingFlags invokeAttr, Binder binder, object[] parameters,
 					       CultureInfo culture);
+
+#if !MOBILE
 
 		void _ConstructorInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
@@ -107,6 +112,7 @@ namespace System.Reflection {
 		{
 			return this.Invoke (parameters);
 		}
+#endif
 
 #if NET_4_0
 		public override bool Equals (object obj)
