@@ -67,7 +67,7 @@
 /* Determine the machine type: */
 # if defined(__native_client__)
 #    define NACL
-#    if !defined(__portable_native_client__)
+#    if !defined(__portable_native_client__) && !defined(__arm__)
 #        define I386
 #        define mach_type_known
 #    else
