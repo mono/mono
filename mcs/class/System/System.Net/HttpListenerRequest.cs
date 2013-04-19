@@ -298,7 +298,7 @@ namespace System.Net {
 									current.Value = String.Empty;
 								}
 								current.Version = version;
-							} catch {
+							} catch (CookieException) {
 								current = null;
 							}
 						}
