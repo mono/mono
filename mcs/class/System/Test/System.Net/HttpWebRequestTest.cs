@@ -5,9 +5,11 @@
 //   Lawrence Pit (loz@cable.a2000.nl)
 //   Martin Willemoes Hansen (mwh@sysrq.dk)
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Andres G. Aragoneses (andres@7digital.com)
 //
 // (C) 2003 Martin Willemoes Hansen
 // Copyright (c) 2005 Novell, Inc. (http://www.novell.com
+// Copyright (c) 2013 7digital Media Ltd (http://www.7digital.com)
 //
 
 using NUnit.Framework;
@@ -1432,6 +1434,122 @@ namespace MonoTests.System.Net
 				Assert.AreEqual (((HttpWebResponse) ex.Response).StatusCode, HttpStatusCode.NotModified, "#4");
 			}
 		}
+
+
+		#region Timeout_Bug // https://bugzilla.novell.com/show_bug.cgi?id=317553
+
+		class TimeoutTestHelper {
+
+			string url_to_test;
+			internal DateTime? Start { get; private set; }
+			internal DateTime? End { get; private set; }
+			internal Exception Exception { get; private set; }
+			internal string Body { get; private set; }
+			internal int TimeOutInMilliSeconds { get; private set; }
+
+			internal TimeoutTestHelper (string url, int timeoutInMilliseconds)
+			{
+				url_to_test = url;
+				TimeOutInMilliSeconds = timeoutInMilliseconds;
+			}
+
+			internal void LaunchWebRequest ()
+			{
+				var req = (HttpWebRequest) WebRequest.Create (url_to_test);
+				req.Timeout = TimeOutInMilliSeconds;
+
+				Start = DateTime.Now;
+				try {
+					using (var resp = (HttpWebResponse) req.GetResponse ())
+					{
+						var sr = new StreamReader (resp.GetResponseStream (), Encoding.UTF8);
+						Body = sr.ReadToEnd ();
+					}
+				} catch (Exception e) {
+					End = DateTime.Now;
+					Exception = e;
+				}
+			}
+		}
+
+		void TestTimeOut (string url)
+		{
+			var timeoutWorker = new TimeoutTestHelper (url, three_seconds_in_milliseconds);
+			var threadStart = new ThreadStart (timeoutWorker.LaunchWebRequest);
+			var thread = new Thread (threadStart);
+			thread.Start ();
+			Thread.Sleep (three_seconds_in_milliseconds * 3);
+
+			if (timeoutWorker.End == null) {
+				thread.Abort ();
+				Assert.Fail ("Thread did not finish after double the timout specified passed");
+			}
+
+			if (!String.IsNullOrEmpty (timeoutWorker.Body)) {
+				if (timeoutWorker.Body == response_of_timeout_handler) {
+					Assert.Fail ("Should not be reached, timeout exception was not thrown and webrequest managed to retrieve proper body");
+				}
+				Assert.Fail ("Should not be reached, timeout exception was not thrown and webrequest managed to retrieve an incorrect body: " + timeoutWorker.Body);
+			}
+
+			Assert.IsNotNull (timeoutWorker.Exception,
+			                  "Timeout exception was not thrown");
+
+			var webEx = timeoutWorker.Exception as WebException;
+			Assert.IsNotNull (webEx, "Exception thrown should be WebException, but was: " +
+			                  timeoutWorker.Exception.GetType ().FullName);
+
+			Assert.AreEqual (webEx.Status, WebExceptionStatus.Timeout,
+			                 "WebException was thrown, but with a wrong status (should be timeout): " + webEx.Status);
+
+			Assert.IsFalse (timeoutWorker.End > (timeoutWorker.Start + TimeSpan.FromMilliseconds (three_seconds_in_milliseconds + 500)));
+		}
+
+		[Test] // 1st possible case of https://bugzilla.novell.com/show_bug.cgi?id=MONO74177
+		public void TestTimeoutPropertyWithServerThatExistsAndRespondsButTooLate ()
+		{
+			var ep = new IPEndPoint (IPAddress.Loopback, 8123);
+			string url = "http://" + ep + "/foobar/";
+
+			using (var responder = new SocketResponder (ep, TimeOutHandler))
+			{
+				responder.Start ();
+
+				TestTimeOut (url);
+
+				responder.Stop ();
+			}
+		}
+
+		[Test] // 2nd possible case of https://bugzilla.novell.com/show_bug.cgi?id=MONO74177
+		public void TestTimeoutPropertyWithServerThatDoesntExist ()
+		{
+			string url = "http://10.128.200.100:8271/"; // some endpoint that is unlikely to exist
+
+			TestTimeOut (url);
+		}
+
+		const string response_of_timeout_handler = "RESPONSE_OF_TIMEOUT_HANDLER";
+		const int three_seconds_in_milliseconds = 3000;
+
+		private static byte[] TimeOutHandler (Socket socket)
+		{
+			socket.Receive (new byte[4096]);
+
+			Thread.Sleep (three_seconds_in_milliseconds * 2);
+
+			var sw = new StringWriter ();
+			sw.WriteLine ("HTTP/1.1 200 OK");
+			sw.WriteLine ("Content-Type: text/plain");
+			sw.WriteLine ("Content-Length: " + response_of_timeout_handler.Length);
+			sw.WriteLine ();
+			sw.Write (response_of_timeout_handler);
+			sw.Flush ();
+
+			return Encoding.UTF8.GetBytes (sw.ToString ());
+		}
+
+		#endregion
 
 		internal static byte [] EchoRequestHandler (Socket socket)
 		{
