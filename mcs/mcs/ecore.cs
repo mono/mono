@@ -3294,8 +3294,12 @@ namespace Mono.CSharp {
 			if (ExtensionExpression == null)
 				return null;
 
+			var cand = candidates;
 			arguments.Insert (0, new Argument (ExtensionExpression, Argument.AType.ExtensionType));
 			var res = base.OverloadResolve (ec, ref arguments, ehandler ?? this, restr);
+			
+			// Restore candidates in case we are running in probing mode 
+			candidates = cand;
 
 			// Store resolved argument and restore original arguments
 			if (res == null) {
