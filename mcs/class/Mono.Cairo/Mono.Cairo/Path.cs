@@ -58,7 +58,7 @@ namespace Cairo {
                 protected virtual void Dispose (bool disposing)
                 {
 			if (!disposing){
-				Console.Error.WriteLine ("Cairo.Context: called from finalization thread, programmer is missing a call to Dispose");
+				Console.Error.WriteLine ("Cairo.Path: called from finalization thread, programmer is missing a call to Dispose");
 				return;
 			}
 			

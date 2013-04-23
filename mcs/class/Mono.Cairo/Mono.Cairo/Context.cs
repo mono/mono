@@ -185,9 +185,11 @@ namespace Cairo {
 			state = NativeMethods.cairo_create (surface.Handle);
                 }
 		
-		public Context (IntPtr state)
+		public Context (IntPtr state) : this (state, true) {}
+
+		public Context (IntPtr state, bool owned)
 		{
-			this.state = state;
+			this.state = owned ? state : NativeMethods.cairo_reference (state);
 		}
 		
 		~Context ()
@@ -324,7 +326,7 @@ namespace Cairo {
 
                 public Pattern Pattern {
                         set {
-                                NativeMethods.cairo_set_source (state, value.Pointer);
+                                NativeMethods.cairo_set_source (state, value.Handle);
                         }
 			
 			get {
@@ -334,7 +336,7 @@ namespace Cairo {
 		
                 public Pattern Source {
                         set {
-                                NativeMethods.cairo_set_source (state, value.Pointer);
+                                NativeMethods.cairo_set_source (state, value.Handle);
                         }
 			
 			get {
@@ -546,7 +548,7 @@ namespace Cairo {
 		
 		public void Mask (Pattern pattern)
 		{
-			NativeMethods.cairo_mask (state, pattern.Pointer);
+			NativeMethods.cairo_mask (state, pattern.Handle);
 		}
 		
 		public void MaskSurface (Surface surface, double surface_x, double surface_y)
@@ -568,7 +570,7 @@ namespace Cairo {
 		{
 			double x1, y1, x2, y2;
 			NativeMethods.cairo_stroke_extents (state, out x1, out y1, out x2, out y2);
-			return new Rectangle (x1, y1, x2, y2);
+			return new Rectangle (x1, y1, x2 - x1, y2 - y1);
 		}
 
                 public void Fill ()
@@ -580,7 +582,7 @@ namespace Cairo {
 		{
 			double x1, y1, x2, y2;
 			NativeMethods.cairo_fill_extents (state, out x1, out y1, out x2, out y2);
-			return new Rectangle (x1, y1, x2, y2);
+			return new Rectangle (x1, y1, x2 - x1, y2 - y1);
 		}
 
 		public void FillPreserve ()

@@ -42,11 +42,6 @@ namespace Cairo {
 			pattern = NativeMethods.cairo_pattern_create_for_surface (surface.Handle);
 		}
 
-		public Extend Extend {
-			set { NativeMethods.cairo_pattern_set_extend (pattern, value); }
-			get { return NativeMethods.cairo_pattern_get_extend (pattern); }
-		}
-
 		public Filter Filter {
 			set { NativeMethods.cairo_pattern_set_filter (pattern, value); }
 			get { return NativeMethods.cairo_pattern_get_filter (pattern); }
