@@ -4367,5 +4367,15 @@ namespace MonoTests.System
 		{
 			Assert.AreEqual ("", 0.0.ToString ("X99", _nfi) , "#01");
 		}
+
+		[Test]
+		public void Test18000 ()
+		{
+			string formatString = "p 00.0000\\';n 0000.00\\';0.#\\'";
+
+			Assert.AreEqual ("p 08.3266'", 8.32663472.ToString (formatString, CultureInfo.InvariantCulture), "#1");
+			Assert.AreEqual ("n 0001.13'", (-1.1345343).ToString (formatString, CultureInfo.InvariantCulture), "#2");
+			Assert.AreEqual ("0'", 0.0.ToString (formatString, CultureInfo.InvariantCulture), "#3");
+		}
 	}
 }
