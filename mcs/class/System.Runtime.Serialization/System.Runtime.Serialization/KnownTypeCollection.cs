@@ -999,7 +999,7 @@ namespace System.Runtime.Serialization
 
 			QName qname = GetSerializableQName (type);
 
-			if (!Qname.Empty.Equals (qname) && FindUserMap (qname, type) != null)
+			if (!QName.Empty.Equals (qname) && FindUserMap (qname, type) != null)
 				throw new InvalidOperationException (String.Format ("There is already a registered type for XML name {0}", qname));
 
 			XmlSerializableMap ret = new XmlSerializableMap (type, qname, this);
