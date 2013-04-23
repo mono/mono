@@ -76,7 +76,8 @@ namespace System.Web.Configuration {
 #if !TARGET_J2EE
 		static IInternalConfigConfigurationFactory configFactory;
 		static Hashtable configurations = Hashtable.Synchronized (new Hashtable ());
-		static Dictionary <int, object> sectionCache = new Dictionary <int, object> ();
+		const int MAX_CACHED_SECTIONS = 100;
+		static LruCache<int, object> sectionCache = new LruCache<int, object> (MAX_CACHED_SECTIONS);
 		static Hashtable configPaths = Hashtable.Synchronized (new Hashtable ());
 		static bool suppressAppReload;
 #else
