@@ -14,6 +14,13 @@
 
 #define MONO_DEFAULT_SUPERTABLE_SIZE 6
 
+/* This macro is used to make bit field packing compatible with MSVC */
+#if defined(_MSC_VER) && defined(PLATFORM_IPHONE_XCOMP)
+#   define USE_UINT8_BIT_FIELD(type, field) guint8 field 
+#else
+#   define USE_UINT8_BIT_FIELD(type, field) type field
+#endif
+
 extern gboolean mono_print_vtable;
 
 extern gboolean mono_setup_vtable_in_class_init;
@@ -294,9 +301,9 @@ struct _MonoClass {
 
 	int        instance_size; /* object instance size */
 
-	guint inited          : 1;
+	USE_UINT8_BIT_FIELD(guint, inited          : 1);
 	/* We use init_pending to detect cyclic calls to mono_class_init */
-	guint init_pending    : 1;
+	USE_UINT8_BIT_FIELD(guint, init_pending    : 1);
 
 	/* A class contains static and non static data. Static data can be
 	 * of the same type as the class itselfs, but it does not influence
@@ -306,40 +313,40 @@ struct _MonoClass {
 	 * to 1, because we know the instance size now. After that we 
 	 * initialise all static fields.
 	 */
-	guint size_inited     : 1;
-	guint valuetype       : 1; /* derives from System.ValueType */
-	guint enumtype        : 1; /* derives from System.Enum */
-	guint blittable       : 1; /* class is blittable */
-	guint unicode         : 1; /* class uses unicode char when marshalled */
-	guint wastypebuilder  : 1; /* class was created at runtime from a TypeBuilder */
+	USE_UINT8_BIT_FIELD(guint, size_inited     : 1);
+	USE_UINT8_BIT_FIELD(guint, valuetype       : 1); /* derives from System.ValueType */
+	USE_UINT8_BIT_FIELD(guint, enumtype        : 1); /* derives from System.Enum */
+	USE_UINT8_BIT_FIELD(guint, blittable       : 1); /* class is blittable */
+	USE_UINT8_BIT_FIELD(guint, unicode         : 1); /* class uses unicode char when marshalled */
+	USE_UINT8_BIT_FIELD(guint, wastypebuilder  : 1); /* class was created at runtime from a TypeBuilder */
 	/* next byte */
 	guint8 min_align;
 	/* next byte */
-	guint packing_size    : 4;
+	USE_UINT8_BIT_FIELD(guint, packing_size    : 4);
 	/* still 4 bits free */
 	/* next byte */
-	guint ghcimpl         : 1; /* class has its own GetHashCode impl */ 
-	guint has_finalize    : 1; /* class has its own Finalize impl */ 
-	guint marshalbyref    : 1; /* class is a MarshalByRefObject */
-	guint contextbound    : 1; /* class is a ContextBoundObject */
-	guint delegate        : 1; /* class is a Delegate */
-	guint gc_descr_inited : 1; /* gc_descr is initialized */
-	guint has_cctor       : 1; /* class has a cctor */
-	guint has_references  : 1; /* it has GC-tracked references in the instance */
+	USE_UINT8_BIT_FIELD(guint, ghcimpl         : 1); /* class has its own GetHashCode impl */ 
+	USE_UINT8_BIT_FIELD(guint, has_finalize    : 1); /* class has its own Finalize impl */ 
+	USE_UINT8_BIT_FIELD(guint, marshalbyref    : 1); /* class is a MarshalByRefObject */
+	USE_UINT8_BIT_FIELD(guint, contextbound    : 1); /* class is a ContextBoundObject */
+	USE_UINT8_BIT_FIELD(guint, delegate        : 1); /* class is a Delegate */
+	USE_UINT8_BIT_FIELD(guint, gc_descr_inited : 1); /* gc_descr is initialized */
+	USE_UINT8_BIT_FIELD(guint, has_cctor       : 1); /* class has a cctor */
+	USE_UINT8_BIT_FIELD(guint, has_references  : 1); /* it has GC-tracked references in the instance */
 	/* next byte */
-	guint has_static_refs : 1; /* it has static fields that are GC-tracked */
-	guint no_special_static_fields : 1; /* has no thread/context static fields */
+	USE_UINT8_BIT_FIELD(guint, has_static_refs : 1); /* it has static fields that are GC-tracked */
+	USE_UINT8_BIT_FIELD(guint, no_special_static_fields : 1); /* has no thread/context static fields */
 	/* directly or indirectly derives from ComImport attributed class.
 	 * this means we need to create a proxy for instances of this class
 	 * for COM Interop. set this flag on loading so all we need is a quick check
 	 * during object creation rather than having to traverse supertypes
 	 */
-	guint is_com_object : 1; 
-	guint nested_classes_inited : 1; /* Whenever nested_class is initialized */
-	guint interfaces_inited : 1; /* interfaces is initialized */
-	guint simd_type : 1; /* class is a simd intrinsic type */
-	guint is_generic : 1; /* class is a generic type definition */
-	guint is_inflated : 1; /* class is a generic instance */
+	USE_UINT8_BIT_FIELD(guint, is_com_object   : 1); 
+	USE_UINT8_BIT_FIELD(guint, nested_classes_inited : 1); /* Whenever nested_class is initialized */
+	USE_UINT8_BIT_FIELD(guint, interfaces_inited : 1); /* interfaces is initialized */
+	USE_UINT8_BIT_FIELD(guint, simd_type       : 1); /* class is a simd intrinsic type */
+	USE_UINT8_BIT_FIELD(guint, is_generic      : 1); /* class is a generic type definition */
+	USE_UINT8_BIT_FIELD(guint, is_inflated     : 1); /* class is a generic instance */
 
 	guint8     exception_type;	/* MONO_EXCEPTION_* */
 
@@ -434,9 +441,9 @@ struct MonoVTable {
 	guint8     *interface_bitmap;
 	guint16     max_interface_id;
 	guint8      rank;
-	guint remote          : 1; /* class is remotely activated */
-	guint initialized     : 1; /* cctor has been run */
-	guint init_failed     : 1; /* cctor execution failed */
+	USE_UINT8_BIT_FIELD(guint, remote      : 1); /* class is remotely activated */
+	USE_UINT8_BIT_FIELD(guint, initialized : 1); /* cctor has been run */
+	USE_UINT8_BIT_FIELD(guint, init_failed : 1); /* cctor execution failed */
 	guint32     imt_collisions_bitmap;
 	MonoRuntimeGenericContext *runtime_generic_context;
 	/* do not add any fields after vtable, the structure is dynamically extended */

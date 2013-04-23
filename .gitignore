@@ -16,6 +16,8 @@
 /ltconfig
 /ltmain.sh
 /mono-*.tar.gz
+/msvc/ipch
+/msvc/Win32-Release_eglib_xarm
 /*.pc
 /mono.spec
 /semantic.cache
@@ -23,6 +25,8 @@
 /stamp-h.in
 /stamp-h1
 /tmpinst-dir.stamp
+/unity/smalltestcases/asyncsocketshutdown/Win32-Release_eglib_xarm
+/unity/smalltestcases/asyncsocketshutdown2/Win32-Release_eglib_xarm
 /missing
 /compile
 /depcomp
@@ -32,6 +36,7 @@
 /external
 /builds
 *.pidb
+*.user
 libeglib.la
 libeglib_la-*.lo
 libeglib_la-*.o
