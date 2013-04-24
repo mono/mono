@@ -471,7 +471,7 @@ namespace System.Runtime.Serialization
 
 		protected override void ClearItems ()
 		{
-			base.Clear ();
+			throw new NotSupportedException();
 		}
 
 		protected override void InsertItem (int index, Type type)
@@ -484,40 +484,14 @@ namespace System.Runtime.Serialization
 			}
 		}
 
-		// FIXME: it could remove other types' dependencies.
 		protected override void RemoveItem (int index)
 		{
-			lock (this)
-				DoRemoveItem (index);
-		}
-
-		void DoRemoveItem (int index)
-		{
-			Type t = base [index];
-			List<SerializationMap> l = new List<SerializationMap> ();
-			foreach (SerializationMap m in contracts) {
-				if (m.RuntimeType == t)
-					l.Add (m);
-			}
-			foreach (SerializationMap m in l) {
-				contracts.Remove (m);
-				base.RemoveItem (index);
-			}
+			throw new NotSupportedException();
 		}
 
 		protected override void SetItem (int index, Type type)
 		{
-			if (ShouldNotRegister (type))
-				return;
-
-			// Since this collection is not assured to be ordered, it ignores the whole Set operation if the type already exists.
-			if (Contains (type))
-				return;
-
-			if (index != Count)
-				RemoveItem (index);
-			if (TryRegister (type))
-				base.InsertItem (index - 1, type);
+			throw new NotSupportedException();
 		}
 
 		internal SerializationMap FindUserMap (Type type)
