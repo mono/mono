@@ -32,7 +32,7 @@ using System.Collections.Generic;
 
 namespace System.Web.Configuration {
 
-	internal class LruCache<TKey, TValue> {
+	class LruCache<TKey, TValue> {
 		Dictionary<TKey, LinkedListNode <TValue>> dict;
 		Dictionary<LinkedListNode<TValue>, TKey> revdict;
 		LinkedList<TValue> list;
@@ -73,7 +73,8 @@ namespace System.Web.Configuration {
 			list.Clear ();
 		}
 
-		void DisposeValue (TValue value) {
+		void DisposeValue (TValue value)
+		{
 			if (value is IDisposable) {
 				((IDisposable)value).Dispose ();
 			}
@@ -94,7 +95,8 @@ namespace System.Web.Configuration {
 			return false;
 		}
 
-		public void Add (TKey key, TValue value) {
+		public void Add (TKey key, TValue value)
+		{
 			LinkedListNode<TValue> node;
 
 			if (dict.TryGetValue (key, out node)){
