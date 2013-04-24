@@ -92,6 +92,7 @@ namespace System.Web.Configuration {
 			revdict.Clear ();
 			list.Clear ();
 			eviction_warning_shown = false;
+			evictions = 0;
 		}
 
 		void DisposeValue (TValue value)
