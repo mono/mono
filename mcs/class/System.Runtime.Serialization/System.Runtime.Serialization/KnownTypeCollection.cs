@@ -588,7 +588,7 @@ namespace System.Runtime.Serialization
 
 			Type element = GetCollectionElementType (type);
 			if (element != null) {
-				if (type.IsInterface || IsCustomCollectionType (type, element))
+				if (type.IsArray || type.IsInterface || IsCustomCollectionType (type, element))
 					return GetCollectionQName (element);
 			}
 
