@@ -27,6 +27,7 @@ if ($ENV{UNITY_THISISABUILDMACHINE})
 	rmtree("$root/builds");
 	$teamcity=1;
 	$jobs = "";
+	$ENV{'LIBTOOLIZE'} = '/usr/local/bin/libtoolize';
 } else {
 	print "not rmtree-ing $root/builds, as we're not on a buildmachine";
 	if (($debug==0) && ($skipbuild==0))
