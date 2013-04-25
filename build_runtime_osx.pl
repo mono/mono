@@ -101,9 +101,9 @@ for my $arch (@arches)
 		
 		#this will fail on a fresh working copy, so don't die on it.
 		system("make distclean");
-		system("autoreconf -i") eq 0 or die ("Failed autoreconfing eglib");
+		system("autoreconf -i");
 		chdir("$root") eq 1 or die ("failed to chdir 2");
-		system("autoreconf -i") eq 0 or die ("Failed autoreconfing mono");
+		system("autoreconf -i");
 		my @autogenparams = ();
 		unshift(@autogenparams, "--cache-file=osx.cache");
 		unshift(@autogenparams, "--disable-mcs-build");
