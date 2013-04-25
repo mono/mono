@@ -1003,7 +1003,11 @@ long a, b, c, d, e, f;
     buf[1024] = 0x15;
     (void) sprintf(buf, format, a, b, c, d, e, f);
     if (buf[1024] != 0x15) ABORT("GC_printf clobbered stack");
+#ifdef NACL
+    WRITE(GC_stdout, buf, strlen(buf));
+#else
     if (WRITE(GC_stdout, buf, strlen(buf)) < 0) ABORT("write to stdout failed");
+#endif
 }
 
 void GC_err_printf(format, a, b, c, d, e, f)
@@ -1015,13 +1019,21 @@ long a, b, c, d, e, f;
     buf[1024] = 0x15;
     (void) sprintf(buf, format, a, b, c, d, e, f);
     if (buf[1024] != 0x15) ABORT("GC_err_printf clobbered stack");
+#ifdef NACL
+    WRITE(GC_stderr, buf, strlen(buf));
+#else
     if (WRITE(GC_stderr, buf, strlen(buf)) < 0) ABORT("write to stderr failed");
+#endif
 }
 
 void GC_err_puts(s)
 GC_CONST char *s;
 {
+#ifdef NACL
+    WRITE(GC_stderr, s, strlen(s));
+#else
     if (WRITE(GC_stderr, s, strlen(s)) < 0) ABORT("write to stderr failed");
+#endif
 }
 
 #if defined(LINUX) && !defined(SMALL_CONFIG)

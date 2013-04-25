@@ -866,7 +866,7 @@ named_attribute_argument
 	;
 	
 named_argument
-	: identifier_inside_body COLON opt_named_modifier expression
+	: identifier_inside_body COLON opt_named_modifier expression_or_error
 	  {
 		if (lang_version <= LanguageVersion.V_3)
 			FeatureIsNotAvailable (GetLocation ($1), "named argument");
@@ -1344,8 +1344,8 @@ method_header
 
 		async_block = (method.ModFlags & Modifiers.ASYNC) != 0;
 
-		if ($11 != null)
-			method.SetConstraints ((List<Constraints>) $11);
+		if ($12 != null)
+			method.SetConstraints ((List<Constraints>) $12);
 
 		if (doc_support)
 			method.DocComment = Lexer.consume_doc_comment ();

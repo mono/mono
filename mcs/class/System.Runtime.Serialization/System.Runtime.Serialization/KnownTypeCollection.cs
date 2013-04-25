@@ -689,6 +689,8 @@ namespace System.Runtime.Serialization
 			// First, check XmlSchemaProviderAttribute and try GetSchema() to see if it returns a schema in the expected format.
 			var xpa = type.GetCustomAttribute<XmlSchemaProviderAttribute> (true);
 			if (xpa != null) {
+				if (xpa.IsAny)
+					return XmlQualifiedName.Empty;
 				var mi = type.GetMethod (xpa.MethodName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
 				if (mi != null) {
 					try {
@@ -997,7 +999,7 @@ namespace System.Runtime.Serialization
 
 			QName qname = GetSerializableQName (type);
 
-			if (FindUserMap (qname, type) != null)
+			if (!QName.Empty.Equals (qname) && FindUserMap (qname, type) != null)
 				throw new InvalidOperationException (String.Format ("There is already a registered type for XML name {0}", qname));
 
 			XmlSerializableMap ret = new XmlSerializableMap (type, qname, this);

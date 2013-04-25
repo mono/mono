@@ -46,34 +46,40 @@ namespace System.Runtime.CompilerServices
 
 			public void OnCompleted (Action continuation)
 			{
+				OnCompleted (continuation, false);
+			}
+
+			public void UnsafeOnCompleted (Action continuation)
+			{
+				OnCompleted (continuation, true);
+			}
+
+			void OnCompleted (Action continuation, bool isUnsafe)
+			{
 				if (continuation == null)
 					throw new ArgumentNullException ("continuation");
+
+				var ctx = SynchronizationContext.Current;
+				if (ctx != null) {
+					ctx.Post (l => ((Action) l) (), continuation);
+					return;
+				}
 
 				if (TaskScheduler.Current == TaskScheduler.Default) {
 					//
 					// Pass continuation as an argument to avoid allocating
 					// hoisting class
 					//
-					ThreadPool.QueueUserWorkItem (l => ((Action) l) (), continuation);
-				} else {
-					new Task (continuation).Start (TaskScheduler.Current);
+					WaitCallback callBack = l => ((Action) l) ();
+					if (isUnsafe) {
+						ThreadPool.UnsafeQueueUserWorkItem (callBack, continuation);
+					} else {
+						ThreadPool.QueueUserWorkItem (callBack, continuation);
+					}
+					return;
 				}
-			}
-			
-			public void UnsafeOnCompleted (Action continuation)
-			{
-				if (continuation == null)
-					throw new ArgumentNullException ("continuation");
 
-				if (TaskScheduler.Current == TaskScheduler.Default) {
-					//
-					// Pass the continuation as an argument to avoid allocating
-					// hoisting class
-					//
-					ThreadPool.UnsafeQueueUserWorkItem (l => ((Action) l) (), continuation);
-				} else {
-					new Task (continuation).Start (TaskScheduler.Current);
-				}
+				new Task (continuation).Start (TaskScheduler.Current);
 			}
 
 			public void GetResult ()

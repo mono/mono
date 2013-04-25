@@ -361,6 +361,8 @@ namespace Mono.CSharp {
 		{
 			if (rhs == EmptyExpression.LValueMemberAccess || rhs == EmptyExpression.LValueMemberOutAccess) {
 				// Already reported as CS1612
+			} else if (rhs == EmptyExpression.OutAccess) {
+				rc.Report.Error (1510, loc, "A ref or out argument must be an assignable variable");
 			} else {
 				rc.Report.Error (131, loc, "The left-hand side of an assignment must be a variable, a property or an indexer");
 			}
@@ -495,10 +497,7 @@ namespace Mono.CSharp {
 
 			if (e == null) {
 				if (errors == ec.Report.Errors) {
-					if (out_access)
-						ec.Report.Error (1510, loc, "A ref or out argument must be an assignable variable");
-					else
-						Error_ValueAssignment (ec, right_side);
+					Error_ValueAssignment (ec, right_side);
 				}
 				return null;
 			}
@@ -3295,8 +3294,12 @@ namespace Mono.CSharp {
 			if (ExtensionExpression == null)
 				return null;
 
+			var cand = candidates;
 			arguments.Insert (0, new Argument (ExtensionExpression, Argument.AType.ExtensionType));
 			var res = base.OverloadResolve (ec, ref arguments, ehandler ?? this, restr);
+			
+			// Restore candidates in case we are running in probing mode 
+			candidates = cand;
 
 			// Store resolved argument and restore original arguments
 			if (res == null) {
@@ -5048,10 +5051,10 @@ namespace Mono.CSharp {
 			string index = (idx + 1).ToString ();
 			if (((mod & Parameter.Modifier.RefOutMask) ^ (a.Modifier & Parameter.Modifier.RefOutMask)) != 0) {
 				if ((mod & Parameter.Modifier.RefOutMask) == 0)
-					ec.Report.Error (1615, loc, "Argument `#{0}' does not require `{1}' modifier. Consider removing `{1}' modifier",
+					ec.Report.Error (1615, a.Expr.Location, "Argument `#{0}' does not require `{1}' modifier. Consider removing `{1}' modifier",
 						index, Parameter.GetModifierSignature (a.Modifier));
 				else
-					ec.Report.Error (1620, loc, "Argument `#{0}' is missing `{1}' modifier",
+					ec.Report.Error (1620, a.Expr.Location, "Argument `#{0}' is missing `{1}' modifier",
 						index, Parameter.GetModifierSignature (mod));
 			} else {
 				string p1 = a.GetSignatureForError ();

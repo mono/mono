@@ -49,8 +49,17 @@ public static class Tests4 {
 	}
 }
 
+public class AAttribute : Attribute {
+	public int afield;
+}
+
+public class BAttribute : AAttribute {
+	public int bfield;
+}
+
 [DebuggerDisplay ("Tests", Name="FOO", Target=typeof (int))]
 [DebuggerTypeProxy (typeof (Tests))]
+[BAttribute (afield = 1, bfield = 2)]
 public class Tests2 {
 	[DebuggerBrowsableAttribute (DebuggerBrowsableState.Collapsed)]
 	public int field_j;

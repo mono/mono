@@ -1738,6 +1738,7 @@ namespace Mono.CSharp {
 				//
 				method = DoCreateMethodHost (ec);
 				method.Define ();
+				method.PrepareEmit ();
 			}
 
 			bool is_static = (method.ModFlags & Modifiers.STATIC) != 0;
@@ -2086,6 +2087,7 @@ namespace Mono.CSharp {
 
 			equals.Block = equals_block;
 			equals.Define ();
+			equals.PrepareEmit ();
 			Members.Add (equals);
 
 			//
@@ -2140,6 +2142,7 @@ namespace Mono.CSharp {
 			hashcode_block.AddStatement (new Return (hash_variable, loc));
 			hashcode.Block = hashcode_top;
 			hashcode.Define ();
+			hashcode.PrepareEmit ();
 			Members.Add (hashcode);
 
 			//
@@ -2150,6 +2153,7 @@ namespace Mono.CSharp {
 			tostring_block.AddStatement (new Return (string_concat, loc));
 			tostring.Block = tostring_block;
 			tostring.Define ();
+			tostring.PrepareEmit ();
 			Members.Add (tostring);
 
 			return true;

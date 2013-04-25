@@ -370,7 +370,7 @@ namespace Mono.CSharp
 			// no working SRE API
 			foreach (var entry in Importer.Assemblies) {
 				var a = entry as ImportedAssemblyDefinition;
-				if (a == null)
+				if (a == null || a.IsMissing)
 					continue;
 
 				if (public_key != null && !a.HasStrongName) {

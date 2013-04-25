@@ -26,12 +26,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using Mono.XBuild.Utilities;
 
 namespace Microsoft.Build.BuildEngine {
 	public class Target : IEnumerable {
@@ -44,7 +46,7 @@ namespace Microsoft.Build.BuildEngine {
 		Project		project;
 		XmlElement	targetElement;
 		List <XmlElement>	onErrorElements;
-		List <BuildTask>	buildTasks;
+		List <IBuildTask>	buildTasks;
 		
 		internal Target (XmlElement targetElement, Project project, ImportedProject importedProject)
 		{
@@ -62,7 +64,7 @@ namespace Microsoft.Build.BuildEngine {
 
 			this.onErrorElements  = new List <XmlElement> ();
 			this.buildState = BuildState.NotStarted;
-			this.buildTasks = new List <BuildTask> ();
+			this.buildTasks = new List <IBuildTask> ();
 			this.batchingImpl = new TargetBatchingImpl (project, this.targetElement);
 
 			bool onErrorFound = false;
@@ -77,8 +79,10 @@ namespace Microsoft.Build.BuildEngine {
 							"The element <OnError> must be last under element <Target>. Found element <Error> instead.");
 #if NET_3_5
 					else if (xe.Name == "ItemGroup") {
-						//don't blow up for ItemGroups inside Targets in >= 3.5
-						// TODO: evaluate them (see https://bugzilla.xamarin.com/show_bug.cgi?id=1862 and test in TargetTest.cs )
+						buildTasks.Add (new BuildTaskItemGroup (xe, this));
+						continue;
+					} else if (xe.Name == "PropertyGroup") {
+						buildTasks.Add (new BuildTaskPropertyGroup (xe, this));
 						continue;
 					}
 #endif
@@ -379,7 +383,7 @@ namespace Microsoft.Build.BuildEngine {
 		internal List<string> AfterThisTargets { get; set; }
 #endif
 
-		internal List<BuildTask> BuildTasks {
+		internal List<IBuildTask> BuildTasks {
 			get { return buildTasks; }
 		}
 

@@ -26,14 +26,15 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
 using System;
 using System.Collections;
 using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using MonoTests.Microsoft.Build.Tasks;
 using NUnit.Framework;
 using System.IO;
+using System.Xml;
 
 namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
@@ -349,38 +350,87 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 #if NET_3_5
-		[Test]
-		public void BuildProjectWithItemGroupInsideTarget()
+		bool Build (string projectXml, ILogger logger)
 		{
-			ItemGroupInsideATarget ();
+			if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
+				var reader = new StringReader (projectXml);
+				var xml = XmlReader.Create (reader);
+				return BuildOnWindows (xml, logger);
+			} else {
+				return BuildOnLinux (projectXml, logger);
+			}
 		}
 
-		private MonoTests.Microsoft.Build.Tasks.TestMessageLogger ItemGroupInsideATarget() {
-			var engine = new Engine(Consts.BinPath);
-			var project = engine.CreateNewProject();
-			var projectXml = GetProjectXmlWithItemGroupInsideATarget ();
-			project.LoadXml(projectXml);
+		bool BuildOnWindows (XmlReader reader, ILogger logger)
+		{
+			var type = Type.GetType ("Microsoft.Build.Evaluation.ProjectCollection, Microsoft.Build, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
 
-			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
-				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			var prop = type.GetProperty ("GlobalProjectCollection");
+			var coll = prop.GetValue (null);
+				
+			var loadProject = coll.GetType ().GetMethod (
+					"LoadProject", new Type[] { typeof (XmlReader), typeof (string) });
+			var proj = loadProject.Invoke (coll, new object[] { reader, "4.0" });
+				
+			var build = proj.GetType ().GetMethod ("Build", new Type[] { typeof (string), typeof (ILogger[]) });
+			var ret = (bool)build.Invoke (proj, new object[] { "Main", new ILogger[] { logger }});
+			return ret;
+		}
+
+		bool BuildOnLinux (string projectXml, ILogger logger)
+		{
+			var engine = new Engine (Consts.BinPath);
+			var project = engine.CreateNewProject ();
+			project.LoadXml (projectXml);
+			
 			engine.RegisterLogger (logger);
+			
+			return project.Build ("Main");
+		}
 
-			bool result = project.Build("Main");
-			if (!result)
-			{
+		TestMessageLogger CreateLogger (string projectXml)
+		{
+			var logger = new TestMessageLogger ();
+			var result = Build (projectXml, logger);
+
+			if (!result) {
 				logger.DumpMessages ();
-				Assert.Fail("Build failed");
+				Assert.Fail ("Build failed");
 			}
 
 			return logger;
 		}
 
-		private string GetProjectXmlWithItemGroupInsideATarget ()
+		void ItemGroupInsideTarget (string xml, params string[] messages)
 		{
-			return
+			var logger = CreateLogger (xml);
+			
+			try
+			{
+				Assert.AreEqual(messages.Length, logger.NormalMessageCount, "Expected number of messages");
+				for (int i = 0; i < messages.Length; i++)
+					logger.CheckLoggedMessageHead (messages [i], i.ToString ());
+				Assert.AreEqual(0, logger.NormalMessageCount, "Extra messages found");
+				
+				Assert.AreEqual(1, logger.TargetStarted, "TargetStarted count");
+				Assert.AreEqual(1, logger.TargetFinished, "TargetFinished count");
+				Assert.AreEqual(messages.Length, logger.TaskStarted, "TaskStarted count");
+				Assert.AreEqual(messages.Length, logger.TaskFinished, "TaskFinished count");
+			}
+			catch (AssertionException)
+			{
+				logger.DumpMessages();
+				throw;
+			}
+		}
+
+		[Test]
+		public void BuildProjectWithItemGroupInsideTarget ()
+		{
+			ItemGroupInsideTarget (
 				@"<Project ToolsVersion=""4.0"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<ItemGroup>
-						<fruit Include=""apple""/>
+					<fruit Include=""apple""/>
 						<fruit Include=""apricot""/>
 					</ItemGroup>
 
@@ -390,35 +440,258 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 						</ItemGroup>
 						<Message Text=""%(fruit.Identity)""/>
 					</Target>
-				</Project>";
+				</Project>", "apple", "apricot", "raspberry");
+		}
+		
+		[Test]
+		public void BuildProjectWithItemGroupInsideTarget2 ()
+		{
+			ItemGroupInsideTarget (
+				@"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""4.0"">
+					<ItemGroup>
+						<A Include='1'>
+							<Sub>Foo</Sub>
+						</A>
+					</ItemGroup>
+					<PropertyGroup>
+						<Foo>Bar</Foo>
+					</PropertyGroup>
+
+					<Target Name='Main'>
+						<ItemGroup>
+							<A Include='2'>
+								<Sub>$(Foo);Hello</Sub>
+							</A>
+						</ItemGroup>
+				
+						<Message Text='@(A)' />
+						<Message Text='%(A.Sub)' />
+					</Target>
+				</Project>", "1;2", "Foo", "Bar;Hello");
+		}
+		
+		[Test]
+		public void BuildProjectWithPropertyGroupInsideTarget ()
+		{
+			ItemGroupInsideTarget (
+				@"<Project ToolsVersion=""4.0"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<PropertyGroup>
+						<A>Foo</A>
+						<B>Bar</B>
+					</PropertyGroup>
+
+					<Target Name=""Main"">
+						<Message Text='$(A)' />
+						<PropertyGroup>
+							<A>$(B)</A>
+						</PropertyGroup>
+						<Message Text='$(A)' />
+					</Target>
+				</Project>", "Foo", "Bar");
 		}
 
 		[Test]
-		[Category ("NotWorking")] //https://bugzilla.xamarin.com/show_bug.cgi?id=1862
-		public void BuildProjectOutputWithItemGroupInsideTarget()
+		public void BuildProjectWithPropertyGroupInsideTarget2 ()
 		{
-			var logger = ItemGroupInsideATarget ();
+			ItemGroupInsideTarget (
+				@"<Project ToolsVersion=""4.0"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<PropertyGroup>
+						<A>Foo</A>
+						<B>Bar</B>
+					</PropertyGroup>
 
-			try
-			{
-				Assert.AreEqual(3, logger.NormalMessageCount, "Expected number of messages");
-				logger.CheckLoggedMessageHead("apple", "A1");
-				logger.CheckLoggedMessageHead("apricot", "A2");
-				logger.CheckLoggedMessageHead("raspberry", "A3");
-				Assert.AreEqual(0, logger.NormalMessageCount, "Extra messages found");
-
-				Assert.AreEqual(1, logger.TargetStarted, "TargetStarted count");
-				Assert.AreEqual(1, logger.TargetFinished, "TargetFinished count");
-				Assert.AreEqual(3, logger.TaskStarted, "TaskStarted count");
-				Assert.AreEqual(3, logger.TaskFinished, "TaskFinished count");
-
-			}
-			catch (AssertionException)
-			{
-				logger.DumpMessages();
-				throw;
-			}
+					<Target Name=""Main"">
+						<Message Text='$(A)' />
+						<PropertyGroup Condition='true'>
+							<B Condition='false'>False</B>
+						</PropertyGroup>
+						<PropertyGroup Condition='true'>
+							<A>$(B)</A>
+						</PropertyGroup>
+						<Message Text='$(A)' />
+						<Message Text='$(B)' />
+						<PropertyGroup>
+							<A Condition='$(A) == $(B)'>Equal</A>
+						</PropertyGroup>
+						<Message Text='$(A)' />
+					</Target>
+				</Project>", "Foo", "Bar", "Bar", "Equal");
 		}
+
+		[Test]
+		public void ItemGroupInsideTarget_ModifyMetadata ()
+		{
+			ItemGroupInsideTarget (
+				@"<Project ToolsVersion=""4.0"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup>
+						<Server Include='Server1'>
+							<AdminContact>Mono</AdminContact>
+						</Server>
+						<Server Include='Server2'>
+							<AdminContact>Mono</AdminContact>
+						</Server>
+						<Server Include='Server3'>
+							<AdminContact>Root</AdminContact>
+						</Server>
+					</ItemGroup>
+
+					<Target Name='Main'>
+						<ItemGroup>
+							<Server Condition=""'%(Server.AdminContact)' == 'Mono'"">
+								<AdminContact>Monkey</AdminContact>
+							</Server>
+						</ItemGroup>
+					
+						<Message Text='%(Server.Identity) : %(Server.AdminContact)' />
+						</Target>
+					</Project>", "Server1 : Monkey", "Server2 : Monkey", "Server3 : Root");
+		}
+
+		[Test]
+		public void ItemGroupInsideTarget_RemoveItem ()
+		{
+			ItemGroupInsideTarget (
+				@"<Project ToolsVersion=""4.0"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup>
+						<Foo Include='A;B;C;D' />
+					</ItemGroup>
+
+					<Target Name='Main'>
+						<ItemGroup>
+							<Foo Remove='B' />
+						</ItemGroup>
+
+						<Message Text='@(Foo)' />
+					</Target>
+				</Project>", "A;C;D");
+		}
+
+		[Test]
+		public void ItemGroupInsideTarget_DontKeepDuplicates ()
+		{
+			ItemGroupInsideTarget (
+				@"<Project ToolsVersion=""4.0"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup>
+						<Foo Include='A;B' />
+						<Foo Include='C'>
+							<Hello>World</Hello>
+						</Foo>
+						<Foo Include='D'>
+							<Hello>Boston</Hello>
+						</Foo>
+					</ItemGroup>
+
+					<Target Name='Main'>
+						<ItemGroup>
+							<Foo Include='B;C;D' KeepDuplicates='false'>
+								<Hello>Boston</Hello>
+							</Foo>
+						</ItemGroup>
+				
+						<Message Text='@(Foo)' />
+					</Target>
+				</Project>", "A;B;C;D;B;C");
+		}
+
+		[Test]
+		public void ItemGroupInsideTarget_RemoveMetadata ()
+		{
+			ItemGroupInsideTarget (
+				@"<Project ToolsVersion=""4.0"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup>
+						<Foo Include='A' />
+						<Foo Include='B'>
+							<Hello>World</Hello>
+						</Foo>
+						<Foo Include='C'>
+							<Hello>Boston</Hello>
+						</Foo>
+						<Foo Include='D'>
+							<Test>Monkey</Test>
+						</Foo>
+					</ItemGroup>
+					<PropertyGroup>
+						<Foo>Hello</Foo>
+					</PropertyGroup>
+
+					<Target Name='Main'>
+						<ItemGroup>
+							<Bar Include='@(Foo)' RemoveMetadata='$(Foo)' />
+							<Bar Include='E'>
+								<Hello>Monkey</Hello>
+							</Bar>
+						</ItemGroup>
+				
+						<Message Text='%(Bar.Identity)' Condition=""'%(Bar.Hello)' != ''""/>
+					</Target>
+				</Project>", "E");
+		}
+
+		[Test]
+		public void ItemGroupInsideTarget_RemoveMetadata2 ()
+		{
+			ItemGroupInsideTarget (
+				@"<Project ToolsVersion=""4.0"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup>
+						<Foo Include='A' />
+						<Foo Include='B'>
+							<Hello>World</Hello>
+						</Foo>
+						<Foo Include='C'>
+							<Hello>Boston</Hello>
+						</Foo>
+						<Foo Include='D'>
+							<Test>Monkey</Test>
+						</Foo>
+					</ItemGroup>
+					<PropertyGroup>
+					<Foo>Hello</Foo>
+					</PropertyGroup>
+
+					<Target Name='Main'>
+						<ItemGroup>
+							<Foo RemoveMetadata='$(Foo)' />
+							<Foo Include='E'>
+								<Hello>Monkey</Hello>
+							</Foo>
+						</ItemGroup>
+				
+					<Message Text='%(Foo.Identity)' Condition=""'%(Foo.Hello)' != ''""/>
+					</Target>
+				</Project>", "E");
+		}
+
+		[Test]
+		public void ItemGroupInsideTarget_KeepMetadata ()
+		{
+			ItemGroupInsideTarget (
+				@"<Project ToolsVersion=""4.0"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup>
+						<Foo Include='A' />
+						<Foo Include='B'>
+							<Hello>World</Hello>
+						</Foo>
+						<Foo Include='C'>
+							<Hello>Boston</Hello>
+						</Foo>
+						<Foo Include='D'>
+							<Test>Monkey</Test>
+						</Foo>
+					</ItemGroup>
+
+					<Target Name='Main'>
+						<ItemGroup>
+							<Foo KeepMetadata='Test' />
+							<Foo Include='E'>
+								<Hello>Monkey</Hello>
+							</Foo>
+						</ItemGroup>
+				
+						<Message Text='%(Foo.Identity)' Condition=""'%(Foo.Test)' != ''""/>
+					</Target>
+				</Project>", "D");
+		}
+
 #endif
 
 		[Test]
@@ -542,6 +815,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 #if NET_4_0
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestBeforeAndAfterTargets ()
 		{
 			Engine engine;

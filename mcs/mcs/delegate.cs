@@ -297,6 +297,12 @@ namespace Mono.CSharp {
 			if (!Parameters.IsEmpty) {
 				parameters.ResolveDefaultValues (this);
 			}
+
+			InvokeBuilder.PrepareEmit ();
+			if (BeginInvokeBuilder != null) {
+				BeginInvokeBuilder.PrepareEmit ();
+				EndInvokeBuilder.PrepareEmit ();
+			}
 		}
 
 		public override void Emit ()

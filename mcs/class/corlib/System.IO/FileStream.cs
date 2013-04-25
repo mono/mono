@@ -404,13 +404,6 @@ namespace System.IO
 				return(buf_start + buf_offset);
 			}
 			set {
-				if (handle == MonoIO.InvalidHandle)
-					throw new ObjectDisposedException ("Stream has been closed");
-
-				if(CanSeek == false) {
-					throw new NotSupportedException("The stream does not support seeking");
-				}
-
 				if(value < 0) {
 					throw new ArgumentOutOfRangeException("Attempt to set the position to a negative value");
 				}

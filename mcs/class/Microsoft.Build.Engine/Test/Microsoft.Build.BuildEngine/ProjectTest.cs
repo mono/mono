@@ -1301,6 +1301,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestBatchedMetadataRef1 ()
 		{
 			//test for multiple items with same metadata also
@@ -1341,6 +1342,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestBatchedMetadataRef2 ()
 		{
 			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
@@ -1394,6 +1396,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestBatchedMetadataRef3 ()
 		{
 			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
@@ -1429,6 +1432,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestBatchedMetadataRef4 ()
 		{
 			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
@@ -1457,6 +1461,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestBatchedMetadataRef5 ()
 		{
 			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
@@ -1492,6 +1497,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestBatchedMetadataRefInOutput () {
 			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 			<UsingTask TaskName=""BatchingTestTask"" AssemblyFile=""Test/resources/TestTasks.dll"" />
@@ -1831,6 +1837,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestMSBuildThisProperties ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -2005,6 +2012,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestRequiredTask_TaskItemArray1 ()
 		{
 			Project p = CheckProjectForRequiredTests ("RequiredTestTask_TaskItems", "@(NonExistant)",
@@ -2016,6 +2024,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestRequiredTask_TaskItemArray2 ()
 		{
 			Project p = CheckProjectForRequiredTests ("RequiredTestTask_TaskItems", "$(NonExistant)",
@@ -2027,6 +2036,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestRequiredTask_TaskItemArray3 ()
 		{
 			Project p = CheckProjectForRequiredTests ("RequiredTestTask_IntArray", "$(NonExistant)",
@@ -2038,6 +2048,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestRequiredTask_TaskItemArray4 () {
 			Project p = CheckProjectForRequiredTests ("RequiredTestTask_IntArray", "%(NonExistant.Md)",
 				true, "Build failed", "count: 0");
@@ -2048,6 +2059,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestRequiredTask_TaskItemArray5 () {
 			// with extra space in prop value
 			Project p = CheckProjectForRequiredTests ("RequiredTestTask_IntArray", "  %(NonExistant.Md)",

@@ -2663,6 +2663,7 @@ namespace Mono.CSharp {
 			}
 
 			storey.Define ();
+			storey.PrepareEmit ();
 			storey.Parent.PartialContainer.AddCompilerGeneratedClass (storey);
 		}
 
@@ -4538,6 +4539,7 @@ namespace Mono.CSharp {
 
 			if (finally_host != null) {
 				finally_host.Define ();
+				finally_host.PrepareEmit ();
 				finally_host.Emit ();
 
 				// Now it's safe to add, to close it properly and emit sequence points
