@@ -34,8 +34,8 @@ if ($ENV{UNITY_THISISABUILDMACHINE})
 		print "\n\nARE YOU SURE YOU DONT WANT TO MAKE A DEBUG BUILD?!?!?!!!!!\n\n\n";
 	}
 	$jobs = "-j$jobs";
+	$ENV{'LIBTOOLIZE'} = 'glibtoolize';
 }
-$ENV{'LIBTOOLIZE'} = 'glibtoolize';
 
 my @arches = ('x86_64','i386');
 if ($iphone_simulator || $minimal) {
