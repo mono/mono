@@ -5660,7 +5660,7 @@ event_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		buffer_add_int (buf, req->id);
 
 		/* This needs to be after the request was added to event_requests */
-		if (agent_config.defer && !mono_is_debugger_attached () && EVENT_KIND_TYPE_LOAD == req->event_kind)
+		if (agent_config.defer && EVENT_KIND_TYPE_LOAD == req->event_kind)
 			send_pending_type_load_events = TRUE;
 
 		break;
