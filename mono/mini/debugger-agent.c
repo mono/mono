@@ -72,6 +72,7 @@ int WSAAPI getnameinfo(const struct sockaddr*,socklen_t,char*,DWORD,
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/socket-io.h>
 #include <mono/metadata/assembly.h>
+#include <mono/metadata/threadpool.h>
 #include <mono/utils/mono-semaphore.h>
 #include <mono/utils/mono-error-internals.h>
 #include "debugger-agent.h"
@@ -2241,6 +2242,12 @@ suspend_vm (void)
 
 	mono_mutex_unlock (&suspend_mutex);
 
+	if (suspend_count == 1)
+		/*
+		 * Suspend creation of new threadpool threads, since they cannot run
+		 */
+		mono_thread_pool_suspend ();
+
 	mono_loader_unlock ();
 }
 
@@ -2278,6 +2285,9 @@ resume_vm (void)
 
 	mono_mutex_unlock (&suspend_mutex);
 	//g_assert (err == 0);
+
+	if (suspend_count == 0)
+		mono_thread_pool_resume ();
 
 	mono_loader_unlock ();
 }
