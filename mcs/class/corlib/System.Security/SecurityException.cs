@@ -147,9 +147,8 @@ namespace System.Security {
 		// Constructors
 
 		public SecurityException ()
-			: base (Locale.GetText ("A security error has been detected."))
+			: this (Locale.GetText ("A security error has been detected."))
 		{
-			base.HResult = unchecked ((int)0x8013150A);
 		}
 
 		public SecurityException (string message) 
@@ -237,7 +236,7 @@ namespace System.Security {
 		{
 			base.GetObjectData (info, context);
 			try {
-				info.AddValue ("PermissionState", PermissionState);
+				info.AddValue ("PermissionState", permissionState);
 			}
 			catch (SecurityException) {
 				// serialize only if permitted to do so
