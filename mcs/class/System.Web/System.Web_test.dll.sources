@@ -560,3 +560,4 @@ System.Web.Util/TransactionsCas.cs
 System.Web.Util/UrlUtilsTest.cs
 System.Web.Util/WorkItemCas.cs
 System.Web/XmlSiteMapProviderTest.cs
+SysConfigInteroperabilityTest.cs
