@@ -69,7 +69,7 @@ namespace System.Web.Configuration {
 			evictions++;
 
 			if (!String.IsNullOrEmpty (EvictionWarning) && !eviction_warning_shown && (evictions >= entry_limit)) {
-				Console.WriteLine ("WARNING: " + EvictionWarning);
+				Console.Error.WriteLine ("WARNING: " + EvictionWarning);
 				eviction_warning_shown = true;
 			}
 		}
