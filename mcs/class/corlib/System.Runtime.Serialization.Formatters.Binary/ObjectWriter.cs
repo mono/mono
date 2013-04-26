@@ -35,9 +35,25 @@ using System.Runtime.Serialization;
 using System.Runtime.Remoting.Messaging;
 using System.Reflection;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace System.Runtime.Serialization.Formatters.Binary
 {
+#if NET_4_0
+	public class GetForwardedAttribute
+	{
+		public static string GetAssemblyName (Type self) 
+		{
+			var attrs = self.GetCustomAttributes(
+					typeof (TypeForwardedFromAttribute), false);
+			if (attrs.Length == 0)
+				return self.Assembly.FullName;
+			else
+				return ((TypeForwardedFromAttribute)attrs [0]).AssemblyFullName;
+		}
+	}
+#endif
+
 	abstract class TypeMetadata
 	{
 		public string TypeAssemblyName;
@@ -73,7 +89,11 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		{
 			InstanceType = instanceType;
 			InstanceTypeName = instanceType.FullName;
+#if NET_4_0
+			TypeAssemblyName = GetForwardedAttribute.GetAssemblyName(instanceType);
+#else
 			TypeAssemblyName = instanceType.Assembly.FullName;
+#endif
 		}
 		
 		public override bool RequiresTypes {
@@ -102,7 +122,11 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			}
 
 			TypeAssemblyName = info.AssemblyName;
+#if NET_4_0
+			InstanceTypeName = GetForwardedAttribute.GetAssemblyName(itype);
+#else
 			InstanceTypeName = info.FullTypeName;
+#endif
 		}
 		
 		public override bool IsCompatible (TypeMetadata other)
@@ -129,7 +153,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				while (type.IsArray) 
 					type = type.GetElementType();
 					
-				ow.WriteAssembly (writer, type.Assembly);
+				ow.WriteTypeAssembly (writer, type);
 			}
 		}
 		
@@ -142,7 +166,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				writer.Write (name);
 
 			// Types of fields
-			foreach (Type type in types)
+			foreach (Type type in types) 
 				ObjectWriter.WriteTypeCode (writer, type);
 
 			// Type specs of fields
@@ -181,7 +205,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				while (type.IsArray) 
 					type = type.GetElementType();
 					
-				ow.WriteAssembly (writer, type.Assembly);
+				ow.WriteTypeAssembly (writer, type);
 			}
 		}
 		
@@ -511,7 +535,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 			var tag = GetTypeTag (elementType);
 			if ((tag != TypeTag.ArrayOfObject) && (tag != TypeTag.ArrayOfString) && (tag != TypeTag.ArrayOfPrimitiveType))
-				WriteAssembly (writer, elementType.Assembly);
+				WriteTypeAssembly (writer, elementType);
 
 			// Writes the array
 
@@ -809,6 +833,15 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			writer.Write (str);
 		}
 
+		public int WriteTypeAssembly (BinaryWriter writer, Type aType)
+		{
+#if NET_4_0
+			return WriteAssemblyName (writer, GetForwardedAttribute.GetAssemblyName(aType));
+#else
+			return WriteAssemblyName (writer, aType.Assembly.FullName);
+#endif
+		}
+		
 		public int WriteAssembly (BinaryWriter writer, Assembly assembly)
 		{
 			return WriteAssemblyName (writer, assembly.FullName);
@@ -994,7 +1027,12 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 				case TypeTag.GenericType:
 					writer.Write (type.FullName);
+#if NET_4_0
+					string asmName = GetForwardedAttribute.GetAssemblyName(type);
+					writer.Write ((int) GetAssemblyNameId (asmName));
+#else
 					writer.Write ((int)GetAssemblyId (type.Assembly));
+#endif
 					break;
 
 				case TypeTag.ArrayOfPrimitiveType:
