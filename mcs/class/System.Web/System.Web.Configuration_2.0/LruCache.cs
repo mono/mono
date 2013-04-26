@@ -36,23 +36,17 @@ namespace System.Web.Configuration {
 		Dictionary<TKey, LinkedListNode <TValue>> dict;
 		Dictionary<LinkedListNode<TValue>, TKey> revdict;
 		LinkedList<TValue> list;
-		int entry_limit = DEFAULT_ENTRY_LIMIT;
-
-		const int DEFAULT_ENTRY_LIMIT = 100;
-		const string CACHE_SIZE_OVERRIDING_KEY = "MONO_ASPNET_WEBCONFIG_CACHESIZE";
+		int entry_limit;
 
 		bool eviction_warning_shown;
 		int evictions;
 		bool size_overriden;
 
-		public LruCache ()
+		internal string EvictionWarning { set; private get; }
+
+		public LruCache (int entryLimit)
 		{
-			int override_limit;
-			if (int.TryParse (Environment.GetEnvironmentVariable (CACHE_SIZE_OVERRIDING_KEY), out override_limit)) {
-				size_overriden = true;
-				entry_limit = override_limit;
-				Console.WriteLine ("WebConfigurationManager's LRUcache Size overriden to: {0} (via {1})", override_limit, CACHE_SIZE_OVERRIDING_KEY);
-			}
+			entry_limit = entryLimit;
 			dict = new Dictionary<TKey, LinkedListNode<TValue>> ();
 			revdict = new Dictionary<LinkedListNode<TValue>, TKey> ();
 			list = new LinkedList<TValue> ();
@@ -74,11 +68,9 @@ namespace System.Web.Configuration {
 			DisposeValue (last.Value);
 			evictions++;
 
-			if (!eviction_warning_shown && (evictions >= entry_limit)) {
-				Console.WriteLine ("WARNING: WebConfigurationManager's LRUcache evictions count reached its max size");
+			if (!String.IsNullOrEmpty (EvictionWarning) && !eviction_warning_shown && (evictions >= entry_limit)) {
+				Console.WriteLine ("WARNING: " + EvictionWarning);
 				eviction_warning_shown = true;
-				if (!size_overriden)
-					Console.WriteLine ("Cache Size: {0} (overridable via {1})", entry_limit, CACHE_SIZE_OVERRIDING_KEY);
 			}
 		}
 
