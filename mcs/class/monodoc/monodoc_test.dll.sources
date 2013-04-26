@@ -2,6 +2,7 @@ Monodoc/HelpSourceTests.cs
 Monodoc/EcmaDocTests.cs
 Monodoc/TreeTest.cs
 Monodoc.Ecma/EcmaUrlTests.cs
+Monodoc.Ecma/EcmaProviderTests.cs
 Monodoc/SettingsTest.cs
 Monodoc.Generators/RawGeneratorTests.cs
 Monodoc/NodeTest.cs
