@@ -57,7 +57,7 @@ namespace System.Collections {
 		private void Resize(int ncapacity)
 		{
 			
-			ncapacity = Math.Max (ncapacity, 16);
+			ncapacity = Math.Max (ncapacity, default_capacity);
 			object[] ncontents = new object[ncapacity];
 
 			Array.Copy(contents, ncontents, count);
@@ -72,7 +72,7 @@ namespace System.Collections {
 			capacity = default_capacity;
 		}
 
-		public Stack(ICollection col) : this (col == null ? 16 : col.Count) {
+		public Stack(ICollection col) : this (col == null ? default_capacity : col.Count) {
 			if (col == null)
 				throw new ArgumentNullException("col");
 			
