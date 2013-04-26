@@ -53,7 +53,6 @@ namespace MonoTests.System.ServiceProcess
 			try {
 				bool value = sc.CanPauseAndContinue;
 				Assert.Fail ("#A1: " + value.ToString ());
-#if NET_2_0
 			} catch (ArgumentException ex) {
 				// Service name  contains invalid characters, is empty or is
 				// too long (max length = 80)
@@ -64,29 +63,10 @@ namespace MonoTests.System.ServiceProcess
 				Assert.IsNull (ex.ParamName, "#A6");
 				Assert.IsNull (ex.InnerException, "#A7");
 			}
-#else
-			} catch (InvalidOperationException ex) {
-				// Cannot open  service on computer '.'
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
-				Assert.IsNotNull (ex.Message, "#A3");
-				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#A4");
-				Assert.IsTrue (ex.Message.IndexOf ("'.'") != -1, "#A5");
-				Assert.IsNotNull (ex.InnerException, "#A6");
-
-				// The filename, directory name, or volume label is incorrect
-				Assert.AreEqual (typeof (Win32Exception), ex.InnerException.GetType (), "#A7");
-				Win32Exception win32Error = (Win32Exception) ex.InnerException;
-				//Assert.AreEqual (-2147467259, win32Error.ErrorCode, "#A8");
-				Assert.IsNotNull (win32Error.Message, "#A9");
-				Assert.AreEqual (123, win32Error.NativeErrorCode, "#A10");
-				Assert.IsNull (win32Error.InnerException, "#A11");
-			}
-#endif
 
 			try {
 				bool value = sc.CanShutdown;
 				Assert.Fail ("#B1: " + value.ToString ());
-#if NET_2_0
 			} catch (ArgumentException ex) {
 				// Service name  contains invalid characters, is empty or is
 				// too long (max length = 80)
@@ -97,29 +77,10 @@ namespace MonoTests.System.ServiceProcess
 				Assert.IsNull (ex.ParamName, "#B6");
 				Assert.IsNull (ex.InnerException, "#B7");
 			}
-#else
-			} catch (InvalidOperationException ex) {
-				// Cannot open  service on computer '.'
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
-				Assert.IsNotNull (ex.Message, "#B3");
-				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#B4");
-				Assert.IsTrue (ex.Message.IndexOf ("'.'") != -1, "#B5");
-				Assert.IsNotNull (ex.InnerException, "#B6");
-
-				// The filename, directory name, or volume label is incorrect
-				Assert.AreEqual (typeof (Win32Exception), ex.InnerException.GetType (), "#B7");
-				Win32Exception win32Error = (Win32Exception) ex.InnerException;
-				//Assert.AreEqual (-2147467259, win32Error.ErrorCode, "#B8");
-				Assert.IsNotNull (win32Error.Message, "#B9");
-				Assert.AreEqual (123, win32Error.NativeErrorCode, "#B10");
-				Assert.IsNull (win32Error.InnerException, "#B11");
-			}
-#endif
 
 			try {
 				bool value = sc.CanStop;
 				Assert.Fail ("#C1: " + value.ToString ());
-#if NET_2_0
 			} catch (ArgumentException ex) {
 				// Service name  contains invalid characters, is empty or is
 				// too long (max length = 80)
@@ -130,24 +91,6 @@ namespace MonoTests.System.ServiceProcess
 				Assert.IsNull (ex.ParamName, "#C6");
 				Assert.IsNull (ex.InnerException, "#C7");
 			}
-#else
-			} catch (InvalidOperationException ex) {
-				// Cannot open  service on computer '.'
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#C2");
-				Assert.IsNotNull (ex.Message, "#C3");
-				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#C4");
-				Assert.IsTrue (ex.Message.IndexOf ("'.'") != -1, "#C5");
-				Assert.IsNotNull (ex.InnerException, "#C6");
-
-				// The filename, directory name, or volume label is incorrect
-				Assert.AreEqual (typeof (Win32Exception), ex.InnerException.GetType (), "#C7");
-				Win32Exception win32Error = (Win32Exception) ex.InnerException;
-				//Assert.AreEqual (-2147467259, win32Error.ErrorCode, "#C8");
-				Assert.IsNotNull (win32Error.Message, "#C9");
-				Assert.AreEqual (123, win32Error.NativeErrorCode, "#C10");
-				Assert.IsNull (win32Error.InnerException, "#C11");
-			}
-#endif
 
 			// closing the ServiceController does not result in exception
 			sc.Close ();
@@ -155,7 +98,6 @@ namespace MonoTests.System.ServiceProcess
 			try {
 				sc.Continue ();
 				Assert.Fail ("#D1");
-#if NET_2_0
 			} catch (ArgumentException ex) {
 				// Service name  contains invalid characters, is empty or is
 				// too long (max length = 80)
@@ -166,28 +108,9 @@ namespace MonoTests.System.ServiceProcess
 				Assert.IsNull (ex.ParamName, "#D6");
 				Assert.IsNull (ex.InnerException, "#D7");
 			}
-#else
-			} catch (InvalidOperationException ex) {
-				// Cannot open  service on computer '.'
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#D2");
-				Assert.IsNotNull (ex.Message, "#D3");
-				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#D4");
-				Assert.IsTrue (ex.Message.IndexOf ("'.'") != -1, "#D5");
-				Assert.IsNotNull (ex.InnerException, "#D6");
-
-				// The filename, directory name, or volume label is incorrect
-				Assert.AreEqual (typeof (Win32Exception), ex.InnerException.GetType (), "#D7");
-				Win32Exception win32Error = (Win32Exception) ex.InnerException;
-				//Assert.AreEqual (-2147467259, win32Error.ErrorCode, "#D8");
-				Assert.IsNotNull (win32Error.Message, "#D9");
-				Assert.AreEqual (123, win32Error.NativeErrorCode, "#D10");
-				Assert.IsNull (win32Error.InnerException, "#D11");
-			}
-#endif
 
 			try {
 				Assert.Fail ("#E1: " + sc.DependentServices.Length);
-#if NET_2_0
 			} catch (ArgumentException ex) {
 				// Service name  contains invalid characters, is empty or is
 				// too long (max length = 80)
@@ -198,24 +121,6 @@ namespace MonoTests.System.ServiceProcess
 				Assert.IsNull (ex.ParamName, "#E6");
 				Assert.IsNull (ex.InnerException, "#E7");
 			}
-#else
-			} catch (InvalidOperationException ex) {
-				// Cannot open  service on computer '.'
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#E2");
-				Assert.IsNotNull (ex.Message, "#E3");
-				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#E4");
-				Assert.IsTrue (ex.Message.IndexOf ("'.'") != -1, "#E5");
-				Assert.IsNotNull (ex.InnerException, "#E6");
-
-				// The filename, directory name, or volume label is incorrect
-				Assert.AreEqual (typeof (Win32Exception), ex.InnerException.GetType (), "#E7");
-				Win32Exception win32Error = (Win32Exception) ex.InnerException;
-				//Assert.AreEqual (-2147467259, win32Error.ErrorCode, "#E8");
-				Assert.IsNotNull (win32Error.Message, "#E9");
-				Assert.AreEqual (123, win32Error.NativeErrorCode, "#E10");
-				Assert.IsNull (win32Error.InnerException, "#E11");
-			}
-#endif
 
 			Assert.IsNotNull (sc.DisplayName, "#F1");
 			Assert.AreEqual (string.Empty, sc.DisplayName, "#F2");
@@ -223,7 +128,6 @@ namespace MonoTests.System.ServiceProcess
 			try {
 				sc.ExecuteCommand (0);
 				Assert.Fail ("#G1");
-#if NET_2_0
 			} catch (ArgumentException ex) {
 				// Service name  contains invalid characters, is empty or is
 				// too long (max length = 80)
@@ -234,24 +138,6 @@ namespace MonoTests.System.ServiceProcess
 				Assert.IsNull (ex.ParamName, "#G6");
 				Assert.IsNull (ex.InnerException, "#G7");
 			}
-#else
-			} catch (InvalidOperationException ex) {
-				// Cannot open  service on computer '.'
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#G2");
-				Assert.IsNotNull (ex.Message, "#G3");
-				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#G4");
-				Assert.IsTrue (ex.Message.IndexOf ("'.'") != -1, "#G5");
-				Assert.IsNotNull (ex.InnerException, "#G6");
-
-				// The filename, directory name, or volume label is incorrect
-				Assert.AreEqual (typeof (Win32Exception), ex.InnerException.GetType (), "#G7");
-				Win32Exception win32Error = (Win32Exception) ex.InnerException;
-				//Assert.AreEqual (-2147467259, win32Error.ErrorCode, "#G8");
-				Assert.IsNotNull (win32Error.Message, "#G9");
-				Assert.AreEqual (123, win32Error.NativeErrorCode, "#G10");
-				Assert.IsNull (win32Error.InnerException, "#G11");
-			}
-#endif
 
 			Assert.IsNotNull (sc.MachineName, "#H1");
 			Assert.AreEqual (".", sc.MachineName, "#H2");
@@ -260,7 +146,6 @@ namespace MonoTests.System.ServiceProcess
 			try {
 				sc.Pause ();
 				Assert.Fail ("#I1");
-#if NET_2_0
 			} catch (ArgumentException ex) {
 				// Service name  contains invalid characters, is empty or is
 				// too long (max length = 80)
@@ -271,24 +156,6 @@ namespace MonoTests.System.ServiceProcess
 				Assert.IsNull (ex.ParamName, "#I6");
 				Assert.IsNull (ex.InnerException, "#I7");
 			}
-#else
-			} catch (InvalidOperationException ex) {
-				// Cannot open  service on computer '.'
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#I2");
-				Assert.IsNotNull (ex.Message, "#I3");
-				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#I4");
-				Assert.IsTrue (ex.Message.IndexOf ("'.'") != -1, "#I5");
-				Assert.IsNotNull (ex.InnerException, "#I6");
-
-				// The filename, directory name, or volume label is incorrect
-				Assert.AreEqual (typeof (Win32Exception), ex.InnerException.GetType (), "#I7");
-				Win32Exception win32Error = (Win32Exception) ex.InnerException;
-				//Assert.AreEqual (-2147467259, win32Error.ErrorCode, "#I8");
-				Assert.IsNotNull (win32Error.Message, "#I9");
-				Assert.AreEqual (123, win32Error.NativeErrorCode, "#I10");
-				Assert.IsNull (win32Error.InnerException, "#I11");
-			}
-#endif
 		}
 
 		[Test]
@@ -695,16 +562,10 @@ namespace MonoTests.System.ServiceProcess
 		[Test]
 		public void CanPauseAndContinue_ServiceName_Empty ()
 		{
-#if ONLY_1_1
-			if (RunningOnUnix)
-				return;
-#endif
-
 			ServiceController sc = new ServiceController ();
 			try {
 				bool canPauseAndContinue = sc.CanPauseAndContinue;
 				Assert.Fail ("#1: " + canPauseAndContinue);
-#if NET_2_0
 			} catch (ArgumentException ex) {
 				// Service name  contains invalid characters, is empty or is
 				// too long (max length = 80)
@@ -715,24 +576,6 @@ namespace MonoTests.System.ServiceProcess
 				Assert.IsNull (ex.ParamName, "#6");
 				Assert.IsNull (ex.InnerException, "#7");
 			}
-#else
-			} catch (InvalidOperationException ex) {
-				// Cannot open  service on computer '.'
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#4");
-				Assert.IsTrue (ex.Message.IndexOf ("'.'") != -1, "#5");
-				Assert.IsNotNull (ex.InnerException, "#6");
-
-				// The filename, directory name, or volume label is incorrect
-				Assert.AreEqual (typeof (Win32Exception), ex.InnerException.GetType (), "#7");
-				Win32Exception win32Error = (Win32Exception) ex.InnerException;
-				//Assert.AreEqual (-2147467259, win32Error.ErrorCode, "#8");
-				Assert.IsNotNull (win32Error.Message, "#9");
-				Assert.AreEqual (123, win32Error.NativeErrorCode, "#10");
-				Assert.IsNull (win32Error.InnerException, "#11");
-			}
-#endif
 		}
 
 		[Test]
@@ -934,16 +777,10 @@ namespace MonoTests.System.ServiceProcess
 		[Test]
 		public void CanShutdown_ServiceName_Empty ()
 		{
-#if ONLY_1_1
-			if (RunningOnUnix)
-				return;
-#endif
-
 			ServiceController sc = new ServiceController ();
 			try {
 				bool canShutdown = sc.CanShutdown;
 				Assert.Fail ("#1: " + canShutdown);
-#if NET_2_0
 			} catch (ArgumentException ex) {
 				// Service name  contains invalid characters, is empty or is
 				// too long (max length = 80)
@@ -954,24 +791,6 @@ namespace MonoTests.System.ServiceProcess
 				Assert.IsNull (ex.ParamName, "#6");
 				Assert.IsNull (ex.InnerException, "#7");
 			}
-#else
-			} catch (InvalidOperationException ex) {
-				// Cannot open  service on computer '.'
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#4");
-				Assert.IsTrue (ex.Message.IndexOf ("'.'") != -1, "#5");
-				Assert.IsNotNull (ex.InnerException, "#6");
-
-				// The filename, directory name, or volume label is incorrect
-				Assert.AreEqual (typeof (Win32Exception), ex.InnerException.GetType (), "#7");
-				Win32Exception win32Error = (Win32Exception) ex.InnerException;
-				//Assert.AreEqual (-2147467259, win32Error.ErrorCode, "#8");
-				Assert.IsNotNull (win32Error.Message, "#9");
-				Assert.AreEqual (123, win32Error.NativeErrorCode, "#10");
-				Assert.IsNull (win32Error.InnerException, "#11");
-			}
-#endif
 		}
 
 		[Test]
@@ -1173,16 +992,10 @@ namespace MonoTests.System.ServiceProcess
 		[Test]
 		public void CanStop_ServiceName_Empty ()
 		{
-#if ONLY_1_1
-			if (RunningOnUnix)
-				return;
-#endif
-
 			ServiceController sc = new ServiceController ();
 			try {
 				bool canStop = sc.CanStop;
 				Assert.Fail ("#1: " + canStop);
-#if NET_2_0
 			} catch (ArgumentException ex) {
 				// Service name  contains invalid characters, is empty or is
 				// too long (max length = 80)
@@ -1193,24 +1006,6 @@ namespace MonoTests.System.ServiceProcess
 				Assert.IsNull (ex.ParamName, "#6");
 				Assert.IsNull (ex.InnerException, "#7");
 			}
-#else
-			} catch (InvalidOperationException ex) {
-				// Cannot open  service on computer '.'
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#4");
-				Assert.IsTrue (ex.Message.IndexOf ("'.'") != -1, "#5");
-				Assert.IsNotNull (ex.InnerException, "#6");
-
-				// The filename, directory name, or volume label is incorrect
-				Assert.AreEqual (typeof (Win32Exception), ex.InnerException.GetType (), "#7");
-				Win32Exception win32Error = (Win32Exception) ex.InnerException;
-				//Assert.AreEqual (-2147467259, win32Error.ErrorCode, "#8");
-				Assert.IsNotNull (win32Error.Message, "#9");
-				Assert.AreEqual (123, win32Error.NativeErrorCode, "#10");
-				Assert.IsNull (win32Error.InnerException, "#11");
-			}
-#endif
 		}
 
 		[Test]
@@ -1450,16 +1245,10 @@ namespace MonoTests.System.ServiceProcess
 		[Test]
 		public void Continue_ServiceName_Empty ()
 		{
-#if ONLY_1_1
-			if (RunningOnUnix)
-				return;
-#endif
-
 			ServiceController sc = new ServiceController ();
 			try {
 				sc.Continue ();
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentException ex) {
 				// Service name  contains invalid characters, is empty or is
 				// too long (max length = 80)
@@ -1470,24 +1259,6 @@ namespace MonoTests.System.ServiceProcess
 				Assert.IsNull (ex.ParamName, "#6");
 				Assert.IsNull (ex.InnerException, "#7");
 			}
-#else
-			} catch (InvalidOperationException ex) {
-				// Cannot open  service on computer '.'
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#4");
-				Assert.IsTrue (ex.Message.IndexOf ("'.'") != -1, "#5");
-				Assert.IsNotNull (ex.InnerException, "#6");
-
-				// The filename, directory name, or volume label is incorrect
-				Assert.AreEqual (typeof (Win32Exception), ex.InnerException.GetType (), "#7");
-				Win32Exception win32Error = (Win32Exception) ex.InnerException;
-				//Assert.AreEqual (-2147467259, win32Error.ErrorCode, "#8");
-				Assert.IsNotNull (win32Error.Message, "#9");
-				Assert.AreEqual (123, win32Error.NativeErrorCode, "#10");
-				Assert.IsNull (win32Error.InnerException, "#11");
-			}
-#endif
 		}
 
 		[Test]
@@ -1666,16 +1437,10 @@ namespace MonoTests.System.ServiceProcess
 		[Test]
 		public void DependentServices_ServiceName_Empty ()
 		{
-#if ONLY_1_1
-			if (RunningOnUnix)
-				return;
-#endif
-
 			ServiceController sc = new ServiceController ();
 			try {
 				ServiceController [] dependenServices = sc.DependentServices;
 				Assert.Fail ("#1: " + dependenServices.Length);
-#if NET_2_0
 			} catch (ArgumentException ex) {
 				// Service name  contains invalid characters, is empty or is
 				// too long (max length = 80)
@@ -1686,24 +1451,6 @@ namespace MonoTests.System.ServiceProcess
 				Assert.IsNull (ex.ParamName, "#6");
 				Assert.IsNull (ex.InnerException, "#7");
 			}
-#else
-			} catch (InvalidOperationException ex) {
-				// Cannot open  service on computer '.'
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#4");
-				Assert.IsTrue (ex.Message.IndexOf ("'.'") != -1, "#5");
-				Assert.IsNotNull (ex.InnerException, "#6");
-
-				// The filename, directory name, or volume label is incorrect
-				Assert.AreEqual (typeof (Win32Exception), ex.InnerException.GetType (), "#7");
-				Win32Exception win32Error = (Win32Exception) ex.InnerException;
-				//Assert.AreEqual (-2147467259, win32Error.ErrorCode, "#8");
-				Assert.IsNotNull (win32Error.Message, "#9");
-				Assert.AreEqual (123, win32Error.NativeErrorCode, "#10");
-				Assert.IsNull (win32Error.InnerException, "#11");
-			}
-#endif
 		}
 
 		[Test]
@@ -2912,16 +2659,10 @@ namespace MonoTests.System.ServiceProcess
 		[Test]
 		public void ExecuteCommand_ServiceName_Empty ()
 		{
-#if ONLY_1_1
-			if (RunningOnUnix)
-				return;
-#endif
-
 			ServiceController sc = new ServiceController ();
 			try {
 				sc.ExecuteCommand ((int) SERVICE_CONTROL_TYPE.SERVICE_CONTROL_INTERROGATE);
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentException ex) {
 				// Service name  contains invalid characters, is empty or is
 				// too long (max length = 80)
@@ -2932,24 +2673,6 @@ namespace MonoTests.System.ServiceProcess
 				Assert.IsNull (ex.ParamName, "#6");
 				Assert.IsNull (ex.InnerException, "#7");
 			}
-#else
-			} catch (InvalidOperationException ex) {
-				// Cannot open  service on computer '.'
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#4");
-				Assert.IsTrue (ex.Message.IndexOf ("'.'") != -1, "#5");
-				Assert.IsNotNull (ex.InnerException, "#6");
-
-				// The filename, directory name, or volume label is incorrect
-				Assert.AreEqual (typeof (Win32Exception), ex.InnerException.GetType (), "#7");
-				Win32Exception win32Error = (Win32Exception) ex.InnerException;
-				//Assert.AreEqual (-2147467259, win32Error.ErrorCode, "#8");
-				Assert.IsNotNull (win32Error.Message, "#9");
-				Assert.AreEqual (123, win32Error.NativeErrorCode, "#10");
-				Assert.IsNull (win32Error.InnerException, "#11");
-			}
-#endif
 		}
 
 		[Test]
@@ -3020,9 +2743,6 @@ namespace MonoTests.System.ServiceProcess
 				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.Message, "#3");
 				Assert.IsTrue (ex.Message.IndexOf ("'doesnotexist'") != -1, "#4");
-#if ONLY_1_1
-				Assert.IsNull (ex.InnerException, "#5");
-#else
 				Assert.IsNotNull (ex.InnerException, "#5");
 
 				// The RPC server is unavailable
@@ -3032,7 +2752,6 @@ namespace MonoTests.System.ServiceProcess
 				Assert.IsNotNull (win32Error.Message, "#8");
 				Assert.AreEqual (1722, win32Error.NativeErrorCode, "#9");
 				Assert.IsNull (win32Error.InnerException, "#10");
-#endif
 			}
 		}
 
@@ -3136,9 +2855,6 @@ namespace MonoTests.System.ServiceProcess
 				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.Message, "#3");
 				Assert.IsTrue (ex.Message.IndexOf ("'doesnotexist'") != -1, "#4");
-#if ONLY_1_1
-				Assert.IsNull (ex.InnerException, "#5");
-#else
 				Assert.IsNotNull (ex.InnerException, "#5");
 
 				// The RPC server is unavailable
@@ -3148,7 +2864,6 @@ namespace MonoTests.System.ServiceProcess
 				Assert.IsNotNull (win32Error.Message, "#8");
 				Assert.AreEqual (1722, win32Error.NativeErrorCode, "#9");
 				Assert.IsNull (win32Error.InnerException, "#10");
-#endif
 			}
 		}
 
@@ -3508,16 +3223,10 @@ namespace MonoTests.System.ServiceProcess
 		[Test]
 		public void Pause_ServiceName_Empty ()
 		{
-#if ONLY_1_1
-			if (RunningOnUnix)
-				return;
-#endif
-
 			ServiceController sc = new ServiceController ();
 			try {
 				sc.Pause ();
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentException ex) {
 				// Service name  contains invalid characters, is empty or is
 				// too long (max length = 80)
@@ -3528,24 +3237,6 @@ namespace MonoTests.System.ServiceProcess
 				Assert.IsNull (ex.ParamName, "#6");
 				Assert.IsNull (ex.InnerException, "#7");
 			}
-#else
-			} catch (InvalidOperationException ex) {
-				// Cannot open  service on computer '.'
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#4");
-				Assert.IsTrue (ex.Message.IndexOf ("'.'") != -1, "#5");
-				Assert.IsNotNull (ex.InnerException, "#6");
-
-				// The filename, directory name, or volume label is incorrect
-				Assert.AreEqual (typeof (Win32Exception), ex.InnerException.GetType (), "#7");
-				Win32Exception win32Error = (Win32Exception) ex.InnerException;
-				//Assert.AreEqual (-2147467259, win32Error.ErrorCode, "#8");
-				Assert.IsNotNull (win32Error.Message, "#9");
-				Assert.AreEqual (123, win32Error.NativeErrorCode, "#10");
-				Assert.IsNull (win32Error.InnerException, "#11");
-			}
-#endif
 		}
 
 		[Test]
@@ -3915,12 +3606,6 @@ namespace MonoTests.System.ServiceProcess
 			Assert.AreEqual ("Workstation", sc.DisplayName, "#B1");
 			Assert.AreEqual ("lanmanworkstation", sc.ServiceName, "#B2");
 
-#if ONLY_1_1
-			sc.ServiceName = string.Empty;
-
-			Assert.AreEqual (string.Empty, sc.DisplayName, "#C1");
-			Assert.AreEqual (string.Empty, sc.ServiceName, "#C2");
-#else
 			try {
 				sc.ServiceName = string.Empty;
 				Assert.Fail ("#C1");
@@ -3934,7 +3619,6 @@ namespace MonoTests.System.ServiceProcess
 				Assert.IsNull (ex.ParamName, "#A6");
 				Assert.IsNull (ex.InnerException, "#A7");
 			}
-#endif
 		}
 
 		[Test]
@@ -4174,16 +3858,10 @@ namespace MonoTests.System.ServiceProcess
 		[Test]
 		public void ServicesDependedOn_ServiceName_Empty ()
 		{
-#if ONLY_1_1
-			if (RunningOnUnix)
-				return;
-#endif
-
 			ServiceController sc = new ServiceController ();
 			try {
 				ServiceController [] servicesDependedOn = sc.ServicesDependedOn;
 				Assert.Fail ("#1: " + servicesDependedOn.Length);
-#if NET_2_0
 			} catch (ArgumentException ex) {
 				// Service name  contains invalid characters, is empty or is
 				// too long (max length = 80)
@@ -4194,24 +3872,6 @@ namespace MonoTests.System.ServiceProcess
 				Assert.IsNull (ex.ParamName, "#6");
 				Assert.IsNull (ex.InnerException, "#7");
 			}
-#else
-			} catch (InvalidOperationException ex) {
-				// Cannot open  service on computer '.'
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#4");
-				Assert.IsTrue (ex.Message.IndexOf ("'.'") != -1, "#5");
-				Assert.IsNotNull (ex.InnerException, "#6");
-
-				// The filename, directory name, or volume label is incorrect
-				Assert.AreEqual (typeof (Win32Exception), ex.InnerException.GetType (), "#7");
-				Win32Exception win32Error = (Win32Exception) ex.InnerException;
-				//Assert.AreEqual (-2147467259, win32Error.ErrorCode, "#8");
-				Assert.IsNotNull (win32Error.Message, "#9");
-				Assert.AreEqual (123, win32Error.NativeErrorCode, "#10");
-				Assert.IsNull (win32Error.InnerException, "#11");
-			}
-#endif
 		}
 
 		[Test]
@@ -4610,16 +4270,10 @@ namespace MonoTests.System.ServiceProcess
 		[Test]
 		public void Stop_ServiceName_Empty ()
 		{
-#if ONLY_1_1
-			if (RunningOnUnix)
-				return;
-#endif
-
 			ServiceController sc = new ServiceController ();
 			try {
 				sc.Stop ();
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentException ex) {
 				// Service name  contains invalid characters, is empty or is
 				// too long (max length = 80)
@@ -4630,24 +4284,6 @@ namespace MonoTests.System.ServiceProcess
 				Assert.IsNull (ex.ParamName, "#6");
 				Assert.IsNull (ex.InnerException, "#7");
 			}
-#else
-			} catch (InvalidOperationException ex) {
-				// Cannot open  service on computer '.'
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#4");
-				Assert.IsTrue (ex.Message.IndexOf ("'.'") != -1, "#5");
-				Assert.IsNotNull (ex.InnerException, "#6");
-
-				// The filename, directory name, or volume label is incorrect
-				Assert.AreEqual (typeof (Win32Exception), ex.InnerException.GetType (), "#7");
-				Win32Exception win32Error = (Win32Exception) ex.InnerException;
-				//Assert.AreEqual (-2147467259, win32Error.ErrorCode, "#8");
-				Assert.IsNotNull (win32Error.Message, "#9");
-				Assert.AreEqual (123, win32Error.NativeErrorCode, "#10");
-				Assert.IsNull (win32Error.InnerException, "#11");
-			}
-#endif
 		}
 
 		[Test]
@@ -4748,10 +4384,8 @@ namespace MonoTests.System.ServiceProcess
 			} catch (TimeoutException ex) {
 				// Time out has expired and the operation has not been completed
 				Assert.AreEqual (typeof (TimeoutException), ex.GetType (), "#B2");
-#if NET_2_0
 				Assert.IsNotNull (ex.Data, "#B3");
 				Assert.AreEqual (0, ex.Data.Count, "#B4");
-#endif
 				Assert.IsNotNull (ex.Message, "#B5");
 				Assert.IsNull (ex.InnerException, "#B6");
 			}
@@ -4810,10 +4444,8 @@ namespace MonoTests.System.ServiceProcess
 			} catch (TimeoutException ex) {
 				// Time out has expired and the operation has not been completed
 				Assert.AreEqual (typeof (TimeoutException), ex.GetType (), "#B2");
-#if NET_2_0
 				Assert.IsNotNull (ex.Data, "#B3");
 				Assert.AreEqual (0, ex.Data.Count, "#B4");
-#endif
 				Assert.IsNotNull (ex.Message, "#B5");
 				Assert.IsNull (ex.InnerException, "#B6");
 			}
@@ -4825,17 +4457,11 @@ namespace MonoTests.System.ServiceProcess
 		[Test]
 		public void WaitForStatus_ServiceName_Empty ()
 		{
-#if ONLY_1_1
-			if (RunningOnUnix)
-				return;
-#endif
-
 			ServiceController sc = new ServiceController ();
 			try {
 				sc.WaitForStatus (ServiceControllerStatus.Stopped,
 					new TimeSpan (0, 0, 1));
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentException ex) {
 				// Service name  contains invalid characters, is empty or is
 				// too long (max length = 80)
@@ -4846,24 +4472,6 @@ namespace MonoTests.System.ServiceProcess
 				Assert.IsNull (ex.ParamName, "#6");
 				Assert.IsNull (ex.InnerException, "#7");
 			}
-#else
-			} catch (InvalidOperationException ex) {
-				// Cannot open  service on computer '.'
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.Message, "#3");
-				Assert.IsTrue (ex.Message.IndexOf ("  ") != -1, "#4");
-				Assert.IsTrue (ex.Message.IndexOf ("'.'") != -1, "#5");
-				Assert.IsNotNull (ex.InnerException, "#6");
-
-				// The filename, directory name, or volume label is incorrect
-				Assert.AreEqual (typeof (Win32Exception), ex.InnerException.GetType (), "#7");
-				Win32Exception win32Error = (Win32Exception) ex.InnerException;
-				//Assert.AreEqual (-2147467259, win32Error.ErrorCode, "#8");
-				Assert.IsNotNull (win32Error.Message, "#9");
-				Assert.AreEqual (123, win32Error.NativeErrorCode, "#10");
-				Assert.IsNull (win32Error.InnerException, "#11");
-			}
-#endif
 		}
 
 		[Test]
@@ -4885,10 +4493,8 @@ namespace MonoTests.System.ServiceProcess
 			} catch (TimeoutException ex) {
 				// Time out has expired and the operation has not been completed
 				Assert.AreEqual (typeof (TimeoutException), ex.GetType (), "#B2");
-#if NET_2_0
 				Assert.IsNotNull (ex.Data, "#B3");
 				Assert.AreEqual (0, ex.Data.Count, "#B4");
-#endif
 				Assert.IsNotNull (ex.Message, "#B5");
 				Assert.IsNull (ex.InnerException, "#B6");
 			}
