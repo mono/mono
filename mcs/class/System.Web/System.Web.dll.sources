@@ -191,6 +191,7 @@ System.Web.Configuration_2.0/IConfigMapPath.cs
 System.Web.Configuration_2.0/IConfigMapPathFactory.cs
 System.Web.Configuration_2.0/IRemoteWebConfigurationHostServer.cs
 System.Web.Configuration_2.0/LowerCaseStringConverter.cs
+System.Web.Configuration_2.0/LruCache.cs
 System.Web.Configuration_2.0/MachineKeyRegistryStorage.cs
 System.Web.Configuration_2.0/MachineKeySection.cs
 System.Web.Configuration_2.0/MachineKeyValidation.cs
