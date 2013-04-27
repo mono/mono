@@ -211,6 +211,7 @@ System.Diagnostics/ProcessThread.cs
 System.Diagnostics/ProcessThreadCollection.cs
 System.Diagnostics/ProcessWindowStyle.cs
 System.Diagnostics/Stopwatch.cs
+System.Diagnostics/Trace.cs
 System.Diagnostics/TraceImpl.cs
 System.Diagnostics/TraceListener.cs
 System.Diagnostics/TraceListenerCollection.cs
