@@ -2064,11 +2064,11 @@ operator_declarator
 					Operator.GetName (op));
 			}
 		} else {
-			if (p_count > 2) {
+			if (p_count == 1) {
+				report.Error (1019, loc, "Overloadable unary operator expected");
+			} else if (p_count != 2) {
 				report.Error (1534, loc, "Overloaded binary operator `{0}' takes two parameters",
 					Operator.GetName (op));
-			} else if (p_count != 2) {
-				report.Error (1019, loc, "Overloadable unary operator expected");
 			}
 		}
 		

@@ -51,6 +51,12 @@ namespace MonoTests.EvaluatorTest
 		}
 
 		[Test]
+		public void AnonymousType ()
+		{
+			Evaluator.Run ("var foo = new { Bar = \"baz\" };");
+		}
+
+		[Test]
 		public void Simple ()
 		{
 			object res;

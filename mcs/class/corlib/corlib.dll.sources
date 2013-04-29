@@ -114,6 +114,7 @@ System/CLSCompliantAttribute.cs
 System/CStreamReader.cs
 System/CStreamWriter.cs
 System/Console.cs
+System/Console.iOS.cs
 System/ConsoleCancelEventArgs.cs
 System/ConsoleCancelEventHandler.cs
 System/ConsoleColor.cs
