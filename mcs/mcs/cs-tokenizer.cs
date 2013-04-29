@@ -21,10 +21,47 @@ using System.Collections;
 
 namespace Mono.CSharp
 {
+	//
+	// This class has to be used by parser only, it reuses token
+	// details once a file is parsed
+	//
+	public class LocatedToken
+	{
+		public int row, column;
+		public string value;
+		public SourceFile file;
+
+		public LocatedToken ()
+		{
+		}
+
+		public LocatedToken (string value, Location loc)
+		{
+			this.value = value;
+			file = loc.SourceFile;
+			row = loc.Row;
+			column = loc.Column;
+		}
+
+		public override string ToString ()
+		{
+			return string.Format ("Token '{0}' at {1},{2}", Value, row, column);
+		}
+
+		public Location Location
+		{
+			get { return new Location (file, row, column); }
+		}
+
+		public string Value
+		{
+			get { return value; }
+		}
+	}
+
 	/// <summary>
 	///    Tokenizer for C# source code. 
 	/// </summary>
-
 	public class Tokenizer : yyParser.yyInput
 	{
 		class KeywordEntry<T>
@@ -65,42 +102,6 @@ namespace Mono.CSharp
 					h = (h << 5) - h + obj [i];
 
 				return h;
-			}
-		}
-
-		//
-		// This class has to be used by parser only, it reuses token
-		// details after each file parse completion
-		//
-		public class LocatedToken
-		{
-			public int row, column;
-			public string value;
-			public SourceFile file;
-
-			public LocatedToken ()
-			{
-			}
-
-			public LocatedToken (string value, Location loc)
-			{
-				this.value = value;
-				file = loc.SourceFile;
-				row = loc.Row;
-				column = loc.Column;
-			}
-
-			public override string ToString ()
-			{
-				return string.Format ("Token '{0}' at {1},{2}", Value, row, column);
-			}
-			
-			public Location Location {
-				get { return new Location (file, row, column); }
-			}
-
-			public string Value {
-				get { return value; }
 			}
 		}
 
