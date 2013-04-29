@@ -67,7 +67,7 @@ public class UTF8Encoding : Encoding
 	// INTERNAL DECODING FUNCTION (UTF8 -> CHAR/UTF16)
 	///////////////////////////////////////////////////////////////////////
 
-        internal enum DecoderStatus {
+	internal enum DecoderStatus {
 		Ok,
 		InsufficientSpace,
 		InvalidChar,
@@ -85,10 +85,10 @@ public class UTF8Encoding : Encoding
 	// 	 See http://www.cl.cam.ac.uk/~mgk25/unicode.html
 	private unsafe static DecoderStatus InternalGetChar (
 		byte* bytes, int byteCount,
-                char* chars, int charCount,
+		char* chars, int charCount,
 		out int bytesProcessed, out int charsProcessed,
 		ref uint leftBytes, ref uint leftBits, ref uint procBytes)
-        {
+	{
 		uint ch;
 		bool checkByte;
 
@@ -183,15 +183,15 @@ public class UTF8Encoding : Encoding
 
 		// convert this character to UTF-16
 		if (leftBits < (uint) 0x10000) {
-			if(chars != null) {
-				if(charCount < 1)
+			if (chars != null) {
+				if (charCount < 1)
 					return DecoderStatus.InsufficientSpace;
 				*chars = (char) leftBits;
 			}
 			charsProcessed++;
 		} else  {
-			if(chars != null) {
-				if(charCount < 2)
+			if (chars != null) {
+				if (charCount < 2)
 					return DecoderStatus.InsufficientSpace;
 				leftBits -= (uint) 0x10000;
 				*chars++ = (char) ((leftBits >> 10) + (uint) 0xD800);
@@ -203,7 +203,7 @@ public class UTF8Encoding : Encoding
 		// we've read a complete char... reset decoder status and finish
 		leftBytes = leftBits = procBytes = 0;
 		return DecoderStatus.Ok;
-        }
+	}
 
 	internal unsafe static DecoderStatus InternalGetChars (
 		byte* bytes, int byteCount,
@@ -228,7 +228,7 @@ public class UTF8Encoding : Encoding
 		bytesProcessed = 0;
 
 		// byte processing loop
-		while(byteCount - bytesProcessed > 0 && (chars == null || charCount - charsProcessed > 0)) {
+		while (byteCount - bytesProcessed > 0 && (chars == null || charCount - charsProcessed > 0)) {
 			// fetch a char from the input byte array
 			s = chars != null
 				? InternalGetChar (
@@ -246,7 +246,7 @@ public class UTF8Encoding : Encoding
 			charsProcessed += t_charsProcessed;
 			bytesProcessed += t_bytesProcessed;
 
-			switch(s) {
+			switch (s) {
 			case DecoderStatus.Ok:
 				break;	// everything OK :D
 
@@ -273,7 +273,7 @@ public class UTF8Encoding : Encoding
 					leftBytes = 0;
 				// call the fallback and cross fingers
 				fallbackBuffer.Fallback (bytesUnknown, bytesProcessed - extra);
-				if(chars != null) {
+				if (chars != null) {
 					while (fallbackBuffer.Remaining > 0) {
 						if (charsProcessed >= charCount)
 							throw new ArgumentException ("Insufficient Space", "chars/fallback");
@@ -328,7 +328,7 @@ public class UTF8Encoding : Encoding
 	// INTERNAL ENCODING FUNCTION (CHAR/UTF16 -> UTF8)
 	///////////////////////////////////////////////////////////////////////
 
-        internal enum EncoderStatus {
+	internal enum EncoderStatus {
 		Ok,
 		InputRunOut,
 		InsufficientSpace,
@@ -365,7 +365,7 @@ again:
 			charCount--;
 			if (ch < (uint) 0x80) {
 				if (bytes != null) {
-					if(byteCount < 1)
+					if (byteCount < 1)
 						return EncoderStatus.InsufficientSpace;
 					*bytes++ = (byte) ch;
 					byteCount--;
@@ -403,7 +403,7 @@ again:
 			if (ch >= (uint) 0xDC00 && ch <= (uint) 0xDFFF) {
 				// We have a correct surrogate pair.
 				ch = 0x10000 + (uint) ch - (uint) 0xDC00
-				   + ((leftChar - (uint) 0xD800) << 10);
+					+ ((leftChar - (uint) 0xD800) << 10);
 				if (bytes != null) {
 					if (byteCount < 4)
 						return EncoderStatus.InsufficientSpace;
@@ -490,7 +490,7 @@ again:
 					// 'InvalidSurrogate'
 					return s;
 				}
-				if(t_charsProcessed >= 1) {
+				if (t_charsProcessed >= 1) {
 					// one-char invalid UTF-16 or an
 					// invalid surrogate
 					fallbackBuffer.Fallback (
@@ -695,7 +695,7 @@ again:
 		InternalGetChars (
 			bytes, index, count,
 			null, 0,
-			DecoderFallback.CreateFallbackBuffer(),
+			DecoderFallback.CreateFallbackBuffer (),
 			out bytesProcessed, out charsProcessed,
 			ref leftBytes, ref leftBits, ref procBytes);
 		return charsProcessed;
@@ -710,7 +710,7 @@ again:
 		InternalGetChars (
 			bytes, count,
 			null, 0,
-			DecoderFallback.CreateFallbackBuffer(),
+			DecoderFallback.CreateFallbackBuffer (),
 			out bytesProcessed, out charsProcessed,
 			ref leftBytes, ref leftBits, ref procBytes);
 		return charsProcessed;
@@ -727,7 +727,7 @@ again:
 		InternalGetChars (
 			bytes, byteIndex, byteCount,
 			chars, charIndex,
-			DecoderFallback.CreateFallbackBuffer(),
+			DecoderFallback.CreateFallbackBuffer (),
 			out bytesProcessed, out charsProcessed,
 			ref leftBytes, ref leftBits, ref procBytes);
 		return charsProcessed;
@@ -742,7 +742,7 @@ again:
 		InternalGetChars (
 			bytes, byteCount,
 			chars, charCount,
-			DecoderFallback.CreateFallbackBuffer(),
+			DecoderFallback.CreateFallbackBuffer (),
 			out bytesProcessed, out charsProcessed,
 			ref leftBytes, ref leftBits, ref procBytes);
 		return charsProcessed;
@@ -917,7 +917,7 @@ again:
 
 		public override void Reset ()
 		{
-			base.Reset();
+			base.Reset ();
 			leftBytes = 0;
 			leftBits = 0;
 			procBytes = 0;
@@ -990,7 +990,7 @@ again:
 		}
 
 		public override int GetByteCount (char[] chars, int index,
-					 int count, bool flush)
+							int count, bool flush)
 		{
 			int charsProcessed, bytesProcessed, preambleSize = 0;
 			if (emitIdentifier && !emittedIdentifier) {
@@ -1033,7 +1033,8 @@ again:
 		}
 
 		public override int GetBytes (char[] chars, int charIndex,
-					 int charCount, byte[] bytes, int byteIndex, bool flush)
+						int charCount, byte[] bytes,
+						int byteIndex, bool flush)
 		{
 			int charsProcessed, bytesProcessed, preambleSize = 0;
 			if (emitIdentifier && !emittedIdentifier) {
@@ -1057,7 +1058,7 @@ again:
 
 		public override void Reset ()
 		{
-			base.Reset();
+			base.Reset ();
 			this.leftChar = 0;
 			this.emittedIdentifier = false;
 		}
