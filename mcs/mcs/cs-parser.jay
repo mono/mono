@@ -54,7 +54,7 @@ namespace Mono.CSharp
 		/// </summary>
 		Block      current_block;
 		
-		BlockVariableDeclaration current_variable;
+		BlockVariable current_variable;
 
 		Delegate   current_delegate;
 		
@@ -5202,7 +5202,7 @@ block_variable_declaration
 		var lt = (Tokenizer.LocatedToken) $2;
 		var li = new LocalVariable (current_block, lt.Value, lt.Location);
 		current_block.AddLocalName (li);
-		current_variable = new BlockVariableDeclaration ((FullNamedExpression) $1, li);
+		current_variable = new BlockVariable ((FullNamedExpression) $1, li);
 	  }
 	  opt_local_variable_initializer opt_variable_declarators SEMICOLON
 	  {
@@ -5218,7 +5218,7 @@ block_variable_declaration
 		var lt = (Tokenizer.LocatedToken) $3;
 		var li = new LocalVariable (current_block, lt.Value, LocalVariable.Flags.Constant, lt.Location);
 		current_block.AddLocalName (li);
-		current_variable = new BlockConstantDeclaration ((FullNamedExpression) $2, li);
+		current_variable = new BlockConstant ((FullNamedExpression) $2, li);
 	  }
 	  const_variable_initializer opt_const_declarators SEMICOLON
 	  {
@@ -5273,7 +5273,7 @@ variable_declarator
 	  {
 		var lt = (Tokenizer.LocatedToken) $2;	  
 		var li = new LocalVariable (current_variable.Variable, lt.Value, lt.Location);
-		var d = new BlockVariableDeclaration.Declarator (li, null);
+		var d = new BlockVariableDeclarator (li, null);
 		current_variable.AddDeclarator (d);
 		current_block.AddLocalName (li);
 	  	lbag.AddLocation (d, GetLocation ($1));
@@ -5282,7 +5282,7 @@ variable_declarator
 	  {
 		var lt = (Tokenizer.LocatedToken) $2;	  
 		var li = new LocalVariable (current_variable.Variable, lt.Value, lt.Location);
-		var d = new BlockVariableDeclaration.Declarator (li, (Expression) $4);
+		var d = new BlockVariableDeclarator (li, (Expression) $4);
 		current_variable.AddDeclarator (d);
 		current_block.AddLocalName (li);
 	  	lbag.AddLocation (d, GetLocation ($1), GetLocation ($3));
@@ -5315,7 +5315,7 @@ const_declarator
 	  {
 		var lt = (Tokenizer.LocatedToken) $2;	  
 		var li = new LocalVariable (current_block, lt.Value, LocalVariable.Flags.Constant, lt.Location);
-		var d = new BlockVariableDeclaration.Declarator (li, (Expression) $4);
+		var d = new BlockVariableDeclarator (li, (Expression) $4);
 		current_variable.AddDeclarator (d);
 		current_block.AddLocalName (li);
 	  	lbag.AddLocation (d, GetLocation ($1), GetLocation ($3));
@@ -5635,7 +5635,7 @@ for_initializer
 		var lt = (Tokenizer.LocatedToken) $2;
 		var li = new LocalVariable (current_block, lt.Value, lt.Location);
 		current_block.AddLocalName (li);
-		current_variable = new BlockVariableDeclaration ((FullNamedExpression) $1, li);
+		current_variable = new BlockVariable ((FullNamedExpression) $1, li);
 	  }
 	  opt_local_variable_initializer opt_variable_declarators
 	  {
@@ -7141,7 +7141,7 @@ AnonymousMethodExpression end_anonymous (ParametersBlock anon_block)
 	retval = current_anonymous_method;
 
 	async_block = (bool) oob_stack.Pop ();
-	current_variable = (BlockVariableDeclaration) oob_stack.Pop ();
+	current_variable = (BlockVariable) oob_stack.Pop ();
 	current_local_parameters = (ParametersCompiled) oob_stack.Pop ();
 	current_anonymous_method = (AnonymousMethodExpression) oob_stack.Pop ();
 

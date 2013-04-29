@@ -262,7 +262,7 @@ namespace Mono.CSharp
 				return mod;
 			}
 
-			for (i = 1; i <= (int) Modifiers.TOP; i <<= 1) {
+			for (i = 1; i < (int) Modifiers.TOP; i <<= 1) {
 				if ((i & invalid_flags) == 0)
 					continue;
 
