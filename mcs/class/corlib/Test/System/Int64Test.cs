@@ -392,6 +392,66 @@ public class Int64Test
 	}
 
 	[Test]
+	public void TestTryParse()
+	{
+		long result;
+
+		Assert.AreEqual (true, long.TryParse (MyString1, out result));
+		Assert.AreEqual (MyInt64_1, result);
+		Assert.AreEqual (true, long.TryParse (MyString2, out result));
+		Assert.AreEqual (MyInt64_2, result);
+		Assert.AreEqual (true, long.TryParse (MyString3, out result));
+		Assert.AreEqual (MyInt64_3, result);
+
+		Assert.AreEqual (true, long.TryParse ("1", out result));
+		Assert.AreEqual (1, result);
+		Assert.AreEqual (true, long.TryParse (" 1", out result));
+		Assert.AreEqual (1, result);
+		Assert.AreEqual (true, long.TryParse ("     1", out result));
+		Assert.AreEqual (1, result);
+		Assert.AreEqual (true, long.TryParse ("1    ", out result));
+		Assert.AreEqual (1, result);
+		Assert.AreEqual (true, long.TryParse ("+1", out result));
+		Assert.AreEqual (1, result);
+		Assert.AreEqual (true, long.TryParse ("-1", out result));
+		Assert.AreEqual (-1, result);
+		Assert.AreEqual (true, long.TryParse ("  -1", out result));
+		Assert.AreEqual (-1, result);
+		Assert.AreEqual (true, long.TryParse ("  -1  ", out result));
+		Assert.AreEqual (-1, result);
+		Assert.AreEqual (true, long.TryParse ("  -1  ", out result));
+		Assert.AreEqual (-1, result);
+
+		result = 1;
+		Assert.AreEqual (false, long.TryParse (null, out result));
+		Assert.AreEqual (0, result);
+
+		Assert.AreEqual (false, long.TryParse ("not-a-number", out result));
+
+		double OverInt = (double)long.MaxValue + 1;
+		Assert.AreEqual (false, long.TryParse (OverInt.ToString (), out result));
+		Assert.AreEqual (false, long.TryParse (OverInt.ToString (), NumberStyles.None, CultureInfo.InvariantCulture, out result));
+
+		Assert.AreEqual (false, long.TryParse ("$42", NumberStyles.Integer, null, out result));
+		Assert.AreEqual (false, long.TryParse ("%42", NumberStyles.Integer, Nfi, out result));
+		Assert.AreEqual (false, long.TryParse ("$42", NumberStyles.Integer, Nfi, out result));
+		Assert.AreEqual (false, long.TryParse (" - 1 ", out result));
+		Assert.AreEqual (false, long.TryParse (" - ", out result));
+		Assert.AreEqual (true, long.TryParse ("100000000", NumberStyles.HexNumber, Nfi, out result));
+		Assert.AreEqual (true, long.TryParse ("10000000000", out result));
+		Assert.AreEqual (true, long.TryParse ("-10000000000", out result));
+		Assert.AreEqual (true, long.TryParse ("7fffffff", NumberStyles.HexNumber, Nfi, out result));
+		Assert.AreEqual (int.MaxValue, result);
+		Assert.AreEqual (true, long.TryParse ("80000000", NumberStyles.HexNumber, Nfi, out result));
+		Assert.AreEqual (2147483648, result);
+		Assert.AreEqual (true, long.TryParse ("ffffffff", NumberStyles.HexNumber, Nfi, out result));
+		Assert.AreEqual (uint.MaxValue, result);
+		Assert.AreEqual (true, long.TryParse ("100000000", NumberStyles.HexNumber, Nfi, out result));
+		Assert.IsFalse (long.TryParse ("-", NumberStyles.AllowLeadingSign, Nfi, out result));
+		Assert.IsFalse (long.TryParse (Nfi.CurrencySymbol + "-", NumberStyles.AllowLeadingSign | NumberStyles.AllowCurrencySymbol, Nfi, out result));
+	}	
+
+	[Test]
     public void TestToString() 
     {
         string s;
