@@ -169,8 +169,12 @@ mcs-compileall: mono-wrapper etc/mono/config
 	    fi; done; done; \
 	$$ok
 
+if NACL_CODEGEN
+check-local:
+else
 check-local: mcs-compileall mcs-do-test-profiles
 	$(MAKE) $(test_select) mcs-do-run-test-profiles
+endif
 
 # Compile all mcs tests
 test: mcs-do-test-profiles

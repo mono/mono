@@ -232,12 +232,20 @@ class MakeBundle {
 		// Preallocate the strings we need.
 		if (chars [0] == null) {
 			for (int i = 0; i < chars.Length; i++)
-				chars [i] = string.Format ("\t.byte {0}\n", i.ToString ());
+				chars [i] = string.Format ("{0}", i.ToString ());
 		}
 
 		while ((n = stream.Read (buffer, 0, buffer.Length)) != 0) {
-			for (int i = 0; i < n; i++)
+			int count = 0;
+			for (int i = 0; i < n; i++) {
+				if (count % 32 == 0) {
+					ts.Write ("\n\t.byte ");
+				} else {
+					ts.Write (",");
+				}
 				ts.Write (chars [buffer [i]]);
+				count ++;
+			}
 		}
 
 		ts.WriteLine ();
@@ -276,15 +284,12 @@ class MakeBundle {
 
 			object monitor = new object ();
 
+			var streams = new Dictionary<string, Stream> ();
+			var sizes = new Dictionary<string, long> ();
+
 			// Do the file reading and compression in parallel
 			Action<string> body = delegate (string url) {
 				string fname = new Uri (url).LocalPath;
-				string aname = Path.GetFileName (fname);
-				string encoded = aname.Replace ("-", "_").Replace (".", "_");
-
-				if (prog == null)
-					prog = aname;
-								
 				Stream stream = File.OpenRead (fname);
 
 				long real_size = stream.Length;
@@ -301,41 +306,9 @@ class MakeBundle {
 					stream = new MemoryStream (bytes, 0, (int) ms.Length, false, false);
 				}
 
-				// The non-parallel part
 				lock (monitor) {
-					Console.WriteLine ("   embedding: " + fname);
-
-					WriteSymbol (ts, "assembly_data_" + encoded, stream.Length);
-			
-					WriteBuffer (ts, stream, buffer);
-
-					if (compress) {
-						tc.WriteLine ("extern const unsigned char assembly_data_{0} [];", encoded);
-						tc.WriteLine ("static CompressedAssembly assembly_bundle_{0} = {{{{\"{1}\"," +
-									  " assembly_data_{0}, {2}}}, {3}}};",
-									  encoded, aname, real_size, stream.Length);
-						double ratio = ((double) stream.Length * 100) / real_size;
-						Console.WriteLine ("   compression ratio: {0:.00}%", ratio);
-					} else {
-						tc.WriteLine ("extern const unsigned char assembly_data_{0} [];", encoded);
-						tc.WriteLine ("static const MonoBundledAssembly assembly_bundle_{0} = {{\"{1}\", assembly_data_{0}, {2}}};",
-									  encoded, aname, real_size);
-					}
-					stream.Close ();
-
-					c_bundle_names.Add ("assembly_bundle_" + encoded);
-
-					try {
-						FileStream cf = File.OpenRead (fname + ".config");
-						Console.WriteLine (" config from: " + fname + ".config");
-						tc.WriteLine ("extern const unsigned char assembly_config_{0} [];", encoded);
-						WriteSymbol (ts, "assembly_config_" + encoded, cf.Length);
-						WriteBuffer (ts, cf, buffer);
-						ts.WriteLine ();
-						config_names.Add (new string[] {aname, encoded});
-					} catch (FileNotFoundException) {
-						/* we ignore if the config file doesn't exist */
-					}
+					streams [url] = stream;
+					sizes [url] = real_size;
 				}
 			};
 
@@ -345,6 +318,53 @@ class MakeBundle {
 			foreach (var url in files)
 				body (url);
 #endif
+
+			// The non-parallel part
+			foreach (var url in files) {
+				string fname = new Uri (url).LocalPath;
+				string aname = Path.GetFileName (fname);
+				string encoded = aname.Replace ("-", "_").Replace (".", "_");
+
+				if (prog == null)
+					prog = aname;
+
+				var stream = streams [url];
+				var real_size = sizes [url];
+
+				Console.WriteLine ("   embedding: " + fname);
+
+				WriteSymbol (ts, "assembly_data_" + encoded, stream.Length);
+			
+				WriteBuffer (ts, stream, buffer);
+
+				if (compress) {
+					tc.WriteLine ("extern const unsigned char assembly_data_{0} [];", encoded);
+					tc.WriteLine ("static CompressedAssembly assembly_bundle_{0} = {{{{\"{1}\"," +
+								  " assembly_data_{0}, {2}}}, {3}}};",
+								  encoded, aname, real_size, stream.Length);
+					double ratio = ((double) stream.Length * 100) / real_size;
+					Console.WriteLine ("   compression ratio: {0:.00}%", ratio);
+				} else {
+					tc.WriteLine ("extern const unsigned char assembly_data_{0} [];", encoded);
+					tc.WriteLine ("static const MonoBundledAssembly assembly_bundle_{0} = {{\"{1}\", assembly_data_{0}, {2}}};",
+								  encoded, aname, real_size);
+				}
+				stream.Close ();
+
+				c_bundle_names.Add ("assembly_bundle_" + encoded);
+
+				try {
+					FileStream cf = File.OpenRead (fname + ".config");
+					Console.WriteLine (" config from: " + fname + ".config");
+					tc.WriteLine ("extern const unsigned char assembly_config_{0} [];", encoded);
+					WriteSymbol (ts, "assembly_config_" + encoded, cf.Length);
+					WriteBuffer (ts, cf, buffer);
+					ts.WriteLine ();
+					config_names.Add (new string[] {aname, encoded});
+				} catch (FileNotFoundException) {
+					/* we ignore if the config file doesn't exist */
+				}
+			}
 
 			if (config_file != null){
 				FileStream conf;

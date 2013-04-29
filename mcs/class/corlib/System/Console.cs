@@ -39,7 +39,7 @@ using System.Text;
 
 namespace System
 {
-	public static class Console
+	public static partial class Console
 	{
 #if !NET_2_1
 		private class WindowsConsole
@@ -158,17 +158,16 @@ namespace System
 				stdin = new CStreamReader (OpenStandardInput (0), inputEncoding);
 			} else {
 #endif
-#if FULL_AOT_RUNTIME
-				Type nslogwriter = Type.GetType ("MonoTouch.Foundation.NSLogWriter, monotouch, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
-				stdout = (TextWriter) Activator.CreateInstance (nslogwriter);
+#if MONOTOUCH
+				stdout = new NSLogWriter ();
 #else
 				stdout = new UnexceptionalStreamWriter (OpenStandardOutput (0), outputEncoding);
 				((StreamWriter)stdout).AutoFlush = true;
 #endif
 				stdout = TextWriter.Synchronized (stdout, true);
 
-#if FULL_AOT_RUNTIME
-				stderr = (TextWriter) Activator.CreateInstance (nslogwriter);
+#if MONOTOUCH
+				stderr = new NSLogWriter ();
 #else
 				stderr = new UnexceptionalStreamWriter (OpenStandardError (0), outputEncoding); 
 				((StreamWriter)stderr).AutoFlush = true;

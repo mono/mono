@@ -21492,6 +21492,41 @@
       </method>
     </type>
   </test>
+  <test name="gtest-exmethod-46.cs">
+    <type name="ExtensionTest.Two.AxFunc`2[T1,TResult]">
+      <method name="TResult Invoke(T1)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(T1, System.AsyncCallback, System.Object)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="TResult EndInvoke(IAsyncResult)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)" attrs="6278">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="ExtensionTest.Two.Extensions">
+      <method name="Boolean Contains[T](IEnumerable`1, T)" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="Boolean All[T](IEnumerable`1, ExtensionTest.Two.AxFunc`2[T,System.Boolean])" attrs="150">
+        <size>10</size>
+      </method>
+    </type>
+    <type name="ExtensionTest.MyClass">
+      <method name="Boolean IsCharacters(System.String, System.Char[])" attrs="150">
+        <size>27</size>
+      </method>
+      <method name="Boolean Contains(System.String, System.String, StringComparison)" attrs="150">
+        <size>23</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-fixedbuffer-01.cs">
     <type name="TestNew">
       <method name="Void SetTest()" attrs="134">
@@ -27335,6 +27370,22 @@
       </method>
       <method name="Void Main()" attrs="145">
         <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-partial-06.cs">
+    <type name="Test">
+      <method name="Void Baz[U]()" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Bar[U](U)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>13</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -46755,6 +46806,48 @@
       </method>
     </type>
   </test>
+  <test name="test-867.cs">
+    <type name="Test">
+      <method name="Void Main()" attrs="150">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="User">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="BaseController">
+      <method name="IUser get_User()" attrs="2502">
+        <size>14</size>
+      </method>
+      <method name="Void set_User(IUser)" attrs="2502">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="BaseJobController">
+      <method name="User get_User()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_User(User)" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="JobController">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-87.cs">
     <type name="Top">
       <method name="Int32 Main()" attrs="150">
@@ -59274,6 +59367,19 @@
   </test>
   <test name="test-debug-25.cs">
     <type name="TestClass">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-debug-26.cs">
+    <type name="P">
+      <method name="Void Foo()" attrs="129">
+        <size>2</size>
+      </method>
       <method name="Void Main()" attrs="150">
         <size>2</size>
       </method>

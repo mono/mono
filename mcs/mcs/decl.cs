@@ -1275,6 +1275,11 @@ namespace Mono.CSharp {
 		void SetIsUsed ();
 	}
 
+	public interface IMethodDefinition : IMemberDefinition
+	{
+		MethodBase Metadata { get; }
+	}
+
 	public interface IParametersMember : IInterfaceMemberSpec
 	{
 		AParametersCollection Parameters { get; }
