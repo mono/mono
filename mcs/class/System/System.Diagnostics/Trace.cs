@@ -66,11 +66,9 @@ namespace System.Diagnostics {
 			get {return TraceImpl.Listeners;}
 		}
 
-#if !MOBILE
 		public static CorrelationManager CorrelationManager {
 			get { return TraceImpl.CorrelationManager; }
 		}
-#endif
 
 		public static bool UseGlobalLock {
 			get { return TraceImpl.UseGlobalLock; }
