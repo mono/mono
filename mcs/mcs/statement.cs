@@ -1436,69 +1436,72 @@ namespace Mono.CSharp {
 		Location Location { get; }
 	}
 
-	public class BlockVariableDeclaration : Statement
+	public class BlockVariableDeclarator
 	{
-		public class Declarator
+		LocalVariable li;
+		Expression initializer;
+
+		public BlockVariableDeclarator (LocalVariable li, Expression initializer)
 		{
-			LocalVariable li;
-			Expression initializer;
+			if (li.Type != null)
+				throw new ArgumentException ("Expected null variable type");
 
-			public Declarator (LocalVariable li, Expression initializer)
-			{
-				if (li.Type != null)
-					throw new ArgumentException ("Expected null variable type");
-
-				this.li = li;
-				this.initializer = initializer;
-			}
-
-			public Declarator (Declarator clone, Expression initializer)
-			{
-				this.li = clone.li;
-				this.initializer = initializer;
-			}
-
-			#region Properties
-
-			public LocalVariable Variable {
-				get {
-					return li;
-				}
-			}
-
-			public Expression Initializer {
-				get {
-					return initializer;
-				}
-				set {
-					initializer = value;
-				}
-			}
-
-			#endregion
+			this.li = li;
+			this.initializer = initializer;
 		}
 
+		#region Properties
+
+		public LocalVariable Variable {
+			get {
+				return li;
+			}
+		}
+
+		public Expression Initializer {
+			get {
+				return initializer;
+			}
+			set {
+				initializer = value;
+			}
+		}
+
+		#endregion
+
+		public virtual BlockVariableDeclarator Clone (CloneContext cloneCtx)
+		{
+			var t = (BlockVariableDeclarator) MemberwiseClone ();
+			if (initializer != null)
+				t.initializer = initializer.Clone (cloneCtx);
+
+			return t;
+		}
+	}
+
+	public class BlockVariable : Statement
+	{
 		Expression initializer;
 		protected FullNamedExpression type_expr;
 		protected LocalVariable li;
-		protected List<Declarator> declarators;
+		protected List<BlockVariableDeclarator> declarators;
 		TypeSpec type;
 
-		public BlockVariableDeclaration (FullNamedExpression type, LocalVariable li)
+		public BlockVariable (FullNamedExpression type, LocalVariable li)
 		{
 			this.type_expr = type;
 			this.li = li;
 			this.loc = type_expr.Location;
 		}
 
-		protected BlockVariableDeclaration (LocalVariable li)
+		protected BlockVariable (LocalVariable li)
 		{
 			this.li = li;
 		}
 
 		#region Properties
 
-		public List<Declarator> Declarators {
+		public List<BlockVariableDeclarator> Declarators {
 			get {
 				return declarators;
 			}
@@ -1527,10 +1530,10 @@ namespace Mono.CSharp {
 
 		#endregion
 
-		public void AddDeclarator (Declarator decl)
+		public void AddDeclarator (BlockVariableDeclarator decl)
 		{
 			if (declarators == null)
-				declarators = new List<Declarator> ();
+				declarators = new List<BlockVariableDeclarator> ();
 
 			declarators.Add (decl);
 		}
@@ -1677,7 +1680,7 @@ namespace Mono.CSharp {
 
 		protected override void CloneTo (CloneContext clonectx, Statement target)
 		{
-			BlockVariableDeclaration t = (BlockVariableDeclaration) target;
+			BlockVariable t = (BlockVariable) target;
 
 			if (type_expr != null)
 				t.type_expr = (FullNamedExpression) type_expr.Clone (clonectx);
@@ -1688,7 +1691,7 @@ namespace Mono.CSharp {
 			if (declarators != null) {
 				t.declarators = null;
 				foreach (var d in declarators)
-					t.AddDeclarator (new Declarator (d, d.Initializer == null ? null : d.Initializer.Clone (clonectx)));
+					t.AddDeclarator (d.Clone (clonectx));
 			}
 		}
 
@@ -1698,9 +1701,9 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class BlockConstantDeclaration : BlockVariableDeclaration
+	public class BlockConstant : BlockVariable
 	{
-		public BlockConstantDeclaration (FullNamedExpression type, LocalVariable li)
+		public BlockConstant (FullNamedExpression type, LocalVariable li)
 			: base (type, li)
 		{
 		}
@@ -5077,7 +5080,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public class VariableDeclaration : BlockVariableDeclaration
+		public class VariableDeclaration : BlockVariable
 		{
 			public VariableDeclaration (FullNamedExpression type, LocalVariable li)
 				: base (type, li)
@@ -5202,7 +5205,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public BlockVariableDeclaration Variables {
+		public BlockVariable Variables {
 			get {
 				return decl;
 			}
@@ -5576,7 +5579,7 @@ namespace Mono.CSharp {
 
 	public class Using : TryFinallyBlock
 	{
-		public class VariableDeclaration : BlockVariableDeclaration
+		public class VariableDeclaration : BlockVariable
 		{
 			Statement dispose_call;
 
@@ -5753,7 +5756,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public BlockVariableDeclaration Variables {
+		public BlockVariable Variables {
 			get {
 				return decl;
 			}

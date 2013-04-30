@@ -300,7 +300,7 @@ namespace System
 
 			// Number stuff
 			// Just the same as Int32, but this one adds instead of substract
-			do {
+			while (pos < s.Length) {
 
 				if (!Int32.ValidDigit (s [pos], AllowHexSpecifier)) {
 					if (AllowThousands &&
@@ -350,7 +350,7 @@ namespace System
 						exc = new OverflowException (Locale.GetText ("Value too large or too small."));
 					return false;
 				}
-			} while (pos < s.Length);
+			}
 
 			// Post number stuff
 			if (nDigits == 0) {

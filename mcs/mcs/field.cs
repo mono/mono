@@ -42,6 +42,11 @@ namespace Mono.CSharp
 		public Expression Initializer { get; private set; }
 
 		#endregion
+
+		public virtual FullNamedExpression GetFieldTypeExpression (FieldBase field)
+		{
+			return new TypeExpression (field.MemberType, Name.Location); 
+		}
 	}
 
 	//
@@ -408,9 +413,8 @@ namespace Mono.CSharp
 					"`{0}': Fixed size buffers type must be one of the following: bool, byte, short, int, long, char, sbyte, ushort, uint, ulong, float or double",
 					GetSignatureForError ());
 			} else if (declarators != null) {
-				var t = new TypeExpression (MemberType, TypeExpression.Location);
 				foreach (var d in declarators) {
-					var f = new FixedField (Parent, t, ModFlags, new MemberName (d.Name.Value, d.Name.Location), OptAttributes);
+					var f = new FixedField (Parent, d.GetFieldTypeExpression (this), ModFlags, new MemberName (d.Name.Value, d.Name.Location), OptAttributes);
 					f.initializer = d.Initializer;
 					((ConstInitializer) f.initializer).Name = d.Name.Value;
 					f.Define ();
@@ -641,8 +645,7 @@ namespace Mono.CSharp
 
 			if (declarators != null) {
 				foreach (var d in declarators) {
-					var t = new TypeExpression (MemberType, d.Name.Location);
-					var f = new Field (Parent, t, ModFlags, new MemberName (d.Name.Value, d.Name.Location), OptAttributes);
+					var f = new Field (Parent, d.GetFieldTypeExpression (this), ModFlags, new MemberName (d.Name.Value, d.Name.Location), OptAttributes);
 					if (d.Initializer != null)
 						f.initializer = d.Initializer;
 

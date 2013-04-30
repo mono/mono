@@ -1380,6 +1380,9 @@ namespace Mono.CSharp {
 				return ac;
 			}
 
+			if (type.Kind == MemberKind.MissingType)
+				return type;
+
 			//
 			// When inflating a nested type, inflate its parent first
 			// in case it's using same type parameters (was inflated within the type)

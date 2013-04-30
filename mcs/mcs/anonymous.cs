@@ -2004,7 +2004,7 @@ namespace Mono.CSharp {
 			}
 
 			var li_other = LocalVariable.CreateCompilerGenerated (CurrentType, equals_block, loc);
-			equals_block.AddStatement (new BlockVariableDeclaration (new TypeExpression (li_other.Type, loc), li_other));
+			equals_block.AddStatement (new BlockVariable (new TypeExpression (li_other.Type, loc), li_other));
 			var other_variable = new LocalVariableReference (li_other, loc);
 
 			MemberAccess system_collections_generic = new MemberAccess (new MemberAccess (
@@ -2117,7 +2117,7 @@ namespace Mono.CSharp {
 			hashcode_top.AddStatement (new Unchecked (hashcode_block, loc));
 
 			var li_hash = LocalVariable.CreateCompilerGenerated (Compiler.BuiltinTypes.Int, hashcode_top, loc);
-			hashcode_block.AddStatement (new BlockVariableDeclaration (new TypeExpression (li_hash.Type, loc), li_hash));
+			hashcode_block.AddStatement (new BlockVariable (new TypeExpression (li_hash.Type, loc), li_hash));
 			LocalVariableReference hash_variable_assign = new LocalVariableReference (li_hash, loc);
 			hashcode_block.AddStatement (new StatementExpression (
 				new SimpleAssign (hash_variable_assign, rs_hashcode)));

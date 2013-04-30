@@ -298,7 +298,7 @@ namespace System {
 			char hexDigit;
 				
 			// Number stuff
-			do {
+			while (pos < s.Length) {
 
 				if (!Int32.ValidDigit (s [pos], AllowHexSpecifier)) {
 					if (AllowThousands &&
@@ -350,7 +350,7 @@ namespace System {
 						exc = new OverflowException ("Value too large or too small.");
 					return false;
 				}				
-			} while (pos < s.Length);
+			}
 
 			// Post number stuff
 			if (nDigits == 0) {

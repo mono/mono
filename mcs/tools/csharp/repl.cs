@@ -41,9 +41,14 @@ namespace Mono {
 			var cmd = new CommandLineParser (Console.Out);
 			cmd.UnknownOptionHandler += HandleExtraArguments;
 
-			var settings = cmd.ParseArguments (args);
-			if (settings == null)
+			// Enable unsafe code by default
+			var settings = new CompilerSettings () {
+				Unsafe = true
+			};
+
+			if (!cmd.ParseArguments (settings, args))
 				return 1;
+
 			var startup_files = new string [settings.SourceFiles.Count];
 			int i = 0;
 			foreach (var source in settings.SourceFiles)
