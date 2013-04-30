@@ -44,7 +44,7 @@ namespace System.Collections.ObjectModel
 	public class ObservableCollection<T> : Collection<T>, INotifyCollectionChanged, INotifyPropertyChanged {
 		
 		private class Reentrant : IDisposable {
-			private int _busyCount = 0;
+			private int count = 0;
 
 			public Reentrant()
 			{
@@ -52,17 +52,17 @@ namespace System.Collections.ObjectModel
 
 			public void Enter()
 			{
-				_busyCount++;
+				count++;
 			}
 
 			public void Dispose()
 			{
-				_busyCount--;
+				count--;
 			}
 
 			public bool Busy
 			{
-				get { return _busyCount > 0; }
+				get { return count > 0; }
 			}
 		}
 

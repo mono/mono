@@ -87,15 +87,20 @@ namespace System
 			MulticastDelegate d = obj as MulticastDelegate;
 			if (d == null)
 				return false;
-			
-			if (this.prev == null) {
-				if (d.prev == null)
-					return true;
-				else
-					return false;
-			}
 
-			return this.prev.Equals (d.prev);
+			MulticastDelegate this_prev = this.prev;
+			MulticastDelegate obj_prev = d.prev;
+
+			do {
+				if (this_prev == null)
+					return obj_prev == null;
+
+				if (!this_prev.Compare (obj_prev))
+					return false;
+				
+				this_prev = this_prev.prev;
+				obj_prev = obj_prev.prev;
+			} while (true);
 		}
 
 		//

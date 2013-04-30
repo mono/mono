@@ -154,12 +154,8 @@ namespace System.ServiceProcess
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		[ComVisible (false)]
-		public int ExitCode {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
+		public int ExitCode { get; set; }
 
 		[MonoTODO]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -235,9 +231,9 @@ namespace System.ServiceProcess
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void Stop ()
 		{
+			OnStop ();
 		}
 #endif
 

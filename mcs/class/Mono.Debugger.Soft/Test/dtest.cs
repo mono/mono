@@ -1273,10 +1273,11 @@ public class DebuggerTests
 			TypeMirror t = child.Type;
 			});
 		*/
-
+		/*
 		AssertThrows<ObjectCollectedException> (delegate () {
 				long addr = child.Address;
 			});
+		*/
 	}
 
 	[Test]

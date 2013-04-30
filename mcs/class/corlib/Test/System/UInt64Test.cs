@@ -265,6 +265,62 @@ public class UInt64Test
 	}
 
 	[Test]
+	public void TestTryParse()
+	{
+		ulong result;
+
+		Assert.AreEqual (true, ulong.TryParse (MyString1, out result));
+		Assert.AreEqual (MyUInt64_1, result);
+		Assert.AreEqual (true, ulong.TryParse (MyString2, out result));
+		Assert.AreEqual (MyUInt64_2, result);
+		Assert.AreEqual (true, ulong.TryParse (MyString3, out result));
+		Assert.AreEqual (MyUInt64_3, result);
+
+		Assert.AreEqual (true, ulong.TryParse ("1", out result));
+		Assert.AreEqual (1, result);
+		Assert.AreEqual (true, ulong.TryParse (" 1", out result));
+		Assert.AreEqual (1, result);
+		Assert.AreEqual (true, ulong.TryParse ("     1", out result));
+		Assert.AreEqual (1, result);
+		Assert.AreEqual (true, ulong.TryParse ("1    ", out result));
+		Assert.AreEqual (1, result);
+		Assert.AreEqual (true, ulong.TryParse ("+1", out result));
+		Assert.AreEqual (1, result);
+		Assert.AreEqual (false, ulong.TryParse ("-1", out result));
+		Assert.AreEqual (false, ulong.TryParse ("  -1", out result));
+		Assert.AreEqual (false, ulong.TryParse ("  -1  ", out result));
+		Assert.AreEqual (false, ulong.TryParse ("  -1  ", out result));
+
+		result = 1;
+		Assert.AreEqual (false, ulong.TryParse (null, out result));
+		Assert.AreEqual (0, result);
+
+		Assert.AreEqual (false, ulong.TryParse ("not-a-number", out result));
+
+		double OverInt = (double)ulong.MaxValue + 1;
+		Assert.AreEqual (false, ulong.TryParse (OverInt.ToString (), out result));
+		Assert.AreEqual (false, ulong.TryParse (OverInt.ToString (), NumberStyles.None, CultureInfo.InvariantCulture, out result));
+
+		Assert.AreEqual (false, ulong.TryParse ("$42", NumberStyles.Integer, null, out result));
+		Assert.AreEqual (false, ulong.TryParse ("%42", NumberStyles.Integer, Nfi, out result));
+		Assert.AreEqual (false, ulong.TryParse ("$42", NumberStyles.Integer, Nfi, out result));
+		Assert.AreEqual (false, ulong.TryParse (" - 1 ", out result));
+		Assert.AreEqual (false, ulong.TryParse (" - ", out result));
+		Assert.AreEqual (true, ulong.TryParse ("100000000", NumberStyles.HexNumber, Nfi, out result));
+		Assert.AreEqual (true, ulong.TryParse ("10000000000", out result));
+		Assert.AreEqual (false, ulong.TryParse ("-10000000000", out result));
+		Assert.AreEqual (true, ulong.TryParse ("7fffffff", NumberStyles.HexNumber, Nfi, out result));
+		Assert.AreEqual (int.MaxValue, result);
+		Assert.AreEqual (true, ulong.TryParse ("80000000", NumberStyles.HexNumber, Nfi, out result));
+		Assert.AreEqual (2147483648, result);
+		Assert.AreEqual (true, ulong.TryParse ("ffffffff", NumberStyles.HexNumber, Nfi, out result));
+		Assert.AreEqual (uint.MaxValue, result);
+		Assert.AreEqual (true, ulong.TryParse ("100000000", NumberStyles.HexNumber, Nfi, out result));
+		Assert.IsFalse (ulong.TryParse ("-", NumberStyles.AllowLeadingSign, Nfi, out result));
+		Assert.IsFalse (ulong.TryParse (Nfi.CurrencySymbol + "-", NumberStyles.AllowLeadingSign | NumberStyles.AllowCurrencySymbol, Nfi, out result));
+	}	
+
+	[Test]
 	public void TestToString()
 	{
 		//test ToString()

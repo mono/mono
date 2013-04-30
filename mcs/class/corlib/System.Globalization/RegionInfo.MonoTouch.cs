@@ -5,7 +5,7 @@
 // Authors:
 //	Sebastien Pouliot  <sebastien@xamarin.com>
 //
-// Copyright 2012 Xamarin Inc.
+// Copyright 2012-2013 Xamarin Inc.
 //
 // The class can be either constructed from a string (from user code)
 // or from a handle (from iphone-sharp.dll internal calls).  This
@@ -35,34 +35,18 @@
 #if MONOTOUCH
 
 using System;
-using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace System.Globalization {
 
 	public partial class RegionInfo {
-		
-		static Type nslocale;
-		
-		static Type NSLocale {
-			get {
-				if (nslocale == null)
-					nslocale = Type.GetType ("MonoTouch.Foundation.NSLocale, monotouch, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
-				return nslocale;
-			}
-		}
-		
+
+		[DllImport ("__Internal")]
+		extern static string monotouch_get_locale_country_code ();
+
 		static RegionInfo CreateFromNSLocale ()
 		{
-			try {
-				var cl = NSLocale.GetProperty ("CurrentLocale", BindingFlags.Static | BindingFlags.Public).GetGetMethod ();
-				var cc = NSLocale.GetProperty ("CountryCode", BindingFlags.Instance | BindingFlags.Public).GetGetMethod ();
-				
-				object current = cl.Invoke (null, null);
-				return new RegionInfo ((string) cc.Invoke (current, null));
-			}
-			catch (TargetInvocationException tie) {
-				throw tie.InnerException;
-			}
+			return new RegionInfo (monotouch_get_locale_country_code ());
 		}
 	}
 }

@@ -148,12 +148,6 @@ mobile_dirs := \
 	Mono.Data.Sqlite	\
 	System.Numerics	\
 	System.Data.Services.Client \
-	System.Reactive.Interfaces \
-	System.Reactive.Core \
-	System.Reactive.Linq \
-	System.Reactive.PlatformServices \
-	System.Reactive.Experimental \
-	System.Reactive.Debugger	\
 	System.IO.Compression \
 	System.IO.Compression.FileSystem \
 	System.ComponentModel.DataAnnotations \
@@ -163,8 +157,7 @@ monodroid_dirs := \
 	Mono.CompilerServices.SymbolWriter	\
 	Mono.CSharp	\
 	Microsoft.CSharp \
-	System.Net.Http \
-	System.Reactive.Providers
+	System.Net.Http
 
 monotouch_runtime_dirs := \
 	corlib \

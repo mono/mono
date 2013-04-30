@@ -239,7 +239,11 @@ class MonoServiceRunner : MarshalByRefObject
 			} else {
 				service = services [0];
 			}
-	
+
+			if (service.ExitCode != 0) {
+				//likely due to a previous execution, so we need to reset it to default
+				service.ExitCode = 0;
+			}
 			call (service, "OnStart", args);
 			info (logname, "Service {0} started", service.ServiceName);
 	
@@ -264,6 +268,8 @@ class MonoServiceRunner : MarshalByRefObject
 					term.Reset ();
 					info (logname, "Stopping service {0}", service.ServiceName);
 					call (service, "OnStop", null);
+					if (service.ExitCode != 0)
+						error (logname, "Service stopped with a non-zero ExitCode: {0}", service.ExitCode);
 					running = false;
 				}
 				else if (usr1.IsSet && service.CanPauseAndContinue) {

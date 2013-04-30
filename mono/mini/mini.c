@@ -2757,6 +2757,10 @@ setup_jit_tls_data (gpointer stack_start, gpointer abort_func)
 	jit_tls->lmf = lmf;
 #endif
 
+#ifdef MONO_ARCH_HAVE_TLS_INIT
+	mono_arch_tls_init ();
+#endif
+
 	mono_setup_altstack (jit_tls);
 
 	return jit_tls;
@@ -3410,8 +3414,10 @@ mono_add_seq_point (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, int nat
 {
 	ins->inst_offset = native_offset;
 	g_ptr_array_add (cfg->seq_points, ins);
-	bb->seq_points = g_slist_prepend_mempool (cfg->mempool, bb->seq_points, ins);
-	bb->last_seq_point = ins;
+	if (bb) {
+		bb->seq_points = g_slist_prepend_mempool (cfg->mempool, bb->seq_points, ins);
+		bb->last_seq_point = ins;
+	}
 }
 
 void
@@ -3668,6 +3674,8 @@ mono_save_seq_point_info (MonoCompile *cfg)
 
 			if (ins->inst_imm == METHOD_ENTRY_IL_OFFSET || ins->inst_imm == METHOD_EXIT_IL_OFFSET)
 				/* Used to implement method entry/exit events */
+				continue;
+			if (ins->inst_offset == SEQ_POINT_NATIVE_OFFSET_DEAD_CODE)
 				continue;
 
 			if (last != NULL) {
@@ -4443,7 +4451,7 @@ mini_get_shared_method_full (MonoMethod *method, gboolean all_vt, gboolean is_gs
 	gboolean gsharedvt = FALSE;
 	MonoGenericContainer *class_container, *method_container = NULL;
 
-	if (method->is_generic || method->klass->generic_container) {
+	if (method->is_generic || (method->klass->generic_container && !method->is_inflated)) {
 		declaring_method = method;
 	} else {
 		declaring_method = mono_method_get_declaring_generic_method (method);
@@ -6800,7 +6808,9 @@ mini_init (const char *filename, const char *runtime_version)
 
 	if (getenv ("MONO_DEBUG") != NULL)
 		mini_parse_debug_options ();
-	
+
+	mono_code_manager_init ();
+
 	mono_arch_cpu_init ();
 
 	mono_arch_init ();
@@ -6905,9 +6915,9 @@ mini_init (const char *filename, const char *runtime_version)
 			mono_install_imt_thunk_builder (mono_arch_build_imt_thunk);
 	}
 #endif
+
 	/*Init arch tls information only after the metadata side is inited to make sure we see dynamic appdomain tls keys*/
 	mono_arch_finish_init ();
-	
 
 	/* This must come after mono_init () in the aot-only case */
 	mono_exceptions_init ();
@@ -7303,6 +7313,8 @@ mini_cleanup (MonoDomain *domain)
 	DeleteCriticalSection (&jit_mutex);
 
 	DeleteCriticalSection (&mono_delegate_section);
+
+	mono_code_manager_cleanup ();
 
 #ifdef USE_JUMP_TABLES
 	mono_jumptable_cleanup ();

@@ -782,7 +782,7 @@ namespace Mono.CSharp
 
 		public LocationsBag LocationsBag { get; set; }
 		public bool UseJayGlobalArrays { get; set; }
-		public Tokenizer.LocatedToken[] LocatedTokens { get; set; }
+		public LocatedToken[] LocatedTokens { get; set; }
 
 		public MD5 GetChecksumAlgorithm ()
 		{

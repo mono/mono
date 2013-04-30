@@ -390,6 +390,10 @@ static void thread_cleanup (MonoInternalThread *thread)
 
 	/* if the thread is not in the hash it has been removed already */
 	if (!handle_remove (thread)) {
+		if (thread == mono_thread_internal_current ()) {
+			mono_domain_unset ();
+			mono_memory_barrier ();
+		}
 		/* This needs to be called even if handle_remove () fails */
 		if (mono_thread_cleanup_fn)
 			mono_thread_cleanup_fn (thread);
@@ -806,7 +810,7 @@ mono_thread_create (MonoDomain *domain, gpointer func, gpointer arg)
 	mono_thread_create_internal (domain, func, arg, FALSE, FALSE, 0);
 }
 
-#if defined(HOST_WIN32) && defined(__GNUC__) && defined(TARGET_X86)
+#if defined(HOST_WIN32) && defined(__GNUC__)
 static __inline__ __attribute__((always_inline))
 /* This is not defined by gcc */
 unsigned long long
@@ -837,7 +841,6 @@ mono_thread_get_stack_bounds (guint8 **staddr, size_t *stsize)
 	return;
 	/* FIXME: simplify the mess below */
 #elif defined(HOST_WIN32)
-#ifdef TARGET_X86
 	/* http://en.wikipedia.org/wiki/Win32_Thread_Information_Block */
 	void* tib = (void*)__readfsdword(0x18);
 	guint8 *stackTop = (guint8*)*(int*)((char*)tib + 4);
@@ -845,10 +848,6 @@ mono_thread_get_stack_bounds (guint8 **staddr, size_t *stsize)
 
 	*staddr = stackBottom;
 	*stsize = stackTop - stackBottom;
-#else
-	*staddr = NULL;
-	*stsize = (size_t)-1;
-#endif
 	return;
 #else
 	pthread_attr_t attr;
@@ -900,6 +899,7 @@ mono_thread_get_stack_bounds (guint8 **staddr, size_t *stsize)
 MonoThread *
 mono_thread_attach (MonoDomain *domain)
 {
+	MonoThreadInfo *info;
 	MonoInternalThread *thread;
 	MonoThread *current_thread;
 	HANDLE thread_handle;
@@ -949,6 +949,10 @@ mono_thread_attach (MonoDomain *domain)
 
 	THREAD_DEBUG (g_message ("%s: Attached thread ID %"G_GSIZE_FORMAT" (handle %p)", __func__, tid, thread_handle));
 
+	info = mono_thread_info_current ();
+	g_assert (info);
+	thread->thread_info = info;
+
 	current_thread = new_thread_with_internal (domain, thread);
 
 	if (!handle_store (current_thread)) {
@@ -995,8 +999,6 @@ mono_thread_detach (MonoThread *thread)
 	g_return_if_fail (thread != NULL);
 
 	THREAD_DEBUG (g_message ("%s: mono_thread_detach for %p (%"G_GSIZE_FORMAT")", __func__, thread, (gsize)thread->internal_thread->tid));
-	
-	mono_profiler_thread_end (thread->internal_thread->tid);
 
 	thread_cleanup (thread->internal_thread);
 
@@ -4761,4 +4763,21 @@ resume_thread_internal (MonoInternalThread *thread)
 	thread->state &= ~ThreadState_Suspended;
 	LeaveCriticalSection (thread->synch_cs);
 	return TRUE;
+}
+
+
+/*
+ * mono_thread_is_foreign:
+ * @thread: the thread to query
+ *
+ * This function allows one to determine if a thread was created by the mono runtime and has
+ * a well defined lifecycle or it's a foreigh one, created by the native environment.
+ *
+ * Returns: true if @thread was not created by the runtime.
+ */
+mono_bool
+mono_thread_is_foreign (MonoThread *thread)
+{
+	MonoThreadInfo *info = thread->internal_thread->thread_info;
+	return info->runtime_thread == FALSE;
 }

@@ -13,9 +13,7 @@
 #include <mono/utils/mono-semaphore.h>
 #include <mono/utils/mono-stack-unwinding.h>
 #include <mono/utils/mono-linked-list-set.h>
-
-/* FIXME used for CRITICAL_SECTION replace with mono-mutex  */
-#include <mono/io-layer/io-layer.h>
+#include <mono/utils/mono-mutex.h>
 
 #include <glib.h>
 
@@ -98,8 +96,11 @@ typedef struct {
 	MonoNativeThreadHandle native_handle; /* Valid on mach and android */
 	int thread_state;
 
+	/*Tells if this thread was created by the runtime or not.*/
+	gboolean runtime_thread;
+
 	/* suspend machinery, fields protected by the suspend_lock */
-	CRITICAL_SECTION suspend_lock;
+	mono_mutex_t suspend_lock;
 	int suspend_count;
 
 	MonoSemType finish_resume_semaphore;

@@ -391,6 +391,8 @@ public class Int32Test
 		Assert.AreEqual (true, Int32.TryParse ("ffffffff", NumberStyles.HexNumber, Nfi, out result));
 		Assert.AreEqual (-1, result);
 		Assert.AreEqual (false, Int32.TryParse ("100000000", NumberStyles.HexNumber, Nfi, out result));
+		Assert.IsFalse (int.TryParse ("-", NumberStyles.AllowLeadingSign, Nfi, out result));
+		Assert.IsFalse (int.TryParse (Nfi.CurrencySymbol + "-", NumberStyles.AllowLeadingSign | NumberStyles.AllowCurrencySymbol, Nfi, out result));
 	}
 
 	[Test]	
