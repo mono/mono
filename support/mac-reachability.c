@@ -30,7 +30,7 @@
 
 int mono_sc_reachability_enabled ();
 
-#ifdef PLATFORM_MACOSX
+#if defined(PLATFORM_MACOSX) || defined(TARGET_IOS)
 
 int
 mono_sc_reachability_enabled ()
