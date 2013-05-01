@@ -97,9 +97,14 @@ namespace Microsoft.Build.Tasks
 
 			Log.LogMessage (MessageImportance.Low, "Looking for framework '{0}' in root path '{1}'",
 					moniker, base_path);
-			string framework_path = Path.Combine (base_path, Path.Combine (moniker.Identifier, moniker.Version));
-			if (!String.IsNullOrEmpty (moniker.Profile))
-				framework_path = Path.Combine (framework_path, moniker.Profile);
+			string framework_path;
+			if (moniker.Identifier.Equals (".NETPortable"))
+				framework_path = Path.Combine (base_path, ".NETPortable", moniker.Version, "Profile", moniker.Profile);
+			else {
+				framework_path = Path.Combine (base_path, Path.Combine (moniker.Identifier, moniker.Version));
+				if (!String.IsNullOrEmpty (moniker.Profile))
+					framework_path = Path.Combine (framework_path, moniker.Profile);
+			}
 
 			string redistlist_dir = Path.Combine (framework_path, "RedistList");
 			string framework_list = Path.Combine (redistlist_dir, "FrameworkList.xml");
