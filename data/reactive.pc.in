@@ -1,12 +1,4 @@
 Name: Reactive Extensions
 Description: Reactive Extensions
 Version: @VERSION@
-Libs: 
--r:@prefix@/lib/mono/4.5/System.Reactive.Interfaces.dll
--r:@prefix@/lib/mono/4.5/System.Reactive.Core.dll
--r:@prefix@/lib/mono/4.5/System.Reactive.Linq.dll
--r:@prefix@/lib/mono/4.5/System.Reactive.PlatformServices.dll
--r:@prefix@/lib/mono/4.5/System.Reactive.Providers.dll
--r:@prefix@/lib/mono/4.5/System.Reactive.Debugger.dll
--r:@prefix@/lib/mono/4.5/System.Reactive.Experimental.dll
--r:@prefix@/lib/mono/4.5/System.Reactive.Runtime.Remoting.dll
+Libs: -r:@prefix@/lib/mono/4.5/System.Reactive.Interfaces.dll -r:@prefix@/lib/mono/4.5/System.Reactive.Core.dll -r:@prefix@/lib/mono/4.5/System.Reactive.Linq.dll -r:@prefix@/lib/mono/4.5/System.Reactive.PlatformServices.dll -r:@prefix@/lib/mono/4.5/System.Reactive.Providers.dll -r:@prefix@/lib/mono/4.5/System.Reactive.Debugger.dll -r:@prefix@/lib/mono/4.5/System.Reactive.Experimental.dll -r:@prefix@/lib/mono/4.5/System.Reactive.Runtime.Remoting.dll
