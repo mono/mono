@@ -32,6 +32,7 @@ MPH_UNIX_SOURCE =				\
 	fstab.c					\
 	grp.c					\
 	macros.c				\
+	mac-reachability.c			\
 	nl.c					\
 	nl.h					\
 	old-map.c				\
@@ -114,6 +115,10 @@ libMonoPosixHelper_la_LIBADD =			\
 # libMonoPosixHelper_la_LDFLAGS = -no-undefined -version-info 1:0:1
 libMonoPosixHelper_la_LDFLAGS = -no-undefined -avoid-version
 libMonoSupportW_la_LDFLAGS = -no-undefined -avoid-version
+
+if PLATFORM_DARWIN
+libMonoPosixHelper_la_LDFLAGS += -framework CoreFoundation -framework SystemConfiguration
+endif
 
 libMonoSupportW_la_SOURCES =			\
 		supportw.c			\
