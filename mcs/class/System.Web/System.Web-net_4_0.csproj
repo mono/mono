@@ -282,7 +282,6 @@
     <Compile Include="System.Web.Configuration_2.0\IConfigMapPathFactory.cs" />
     <Compile Include="System.Web.Configuration_2.0\IdentitySection.cs" />
     <Compile Include="System.Web.Configuration_2.0\IRemoteWebConfigurationHostServer.cs" />
-    <Compile Include="System.Web.Configuration_2.0\LruCache.cs" />
     <Compile Include="System.Web.Configuration_2.0\LowerCaseStringConverter.cs" />
     <Compile Include="System.Web.Configuration_2.0\MachineKeyCompatibilityMode.cs" />
     <Compile Include="System.Web.Configuration_2.0\MachineKeyRegistryStorage.cs" />
