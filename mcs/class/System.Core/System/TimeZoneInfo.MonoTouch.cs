@@ -69,7 +69,7 @@ namespace System {
 			int size = 0;
 			IntPtr data = monotouch_timezone_get_data (name, ref size);
 			if (size <= 0)
-				return Stream.Null;
+				throw new TimeZoneNotFoundException ();
 
 			unsafe {
 				var s = new UnmanagedMemoryStream ((byte*) data, size);
