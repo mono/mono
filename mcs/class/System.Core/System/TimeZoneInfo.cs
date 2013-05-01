@@ -88,7 +88,7 @@ namespace System
 #if MONODROID
 					local = ZoneInfoDB.Default;
 #elif MONOTOUCH
-					using (Stream stream = GetMonoTouchDefault ()) {
+					using (Stream stream = GetMonoTouchData (null)) {
 						local = BuildFromStream ("Local", stream);
 					}
 #elif LIBC
