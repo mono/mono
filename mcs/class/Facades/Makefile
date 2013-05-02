@@ -19,3 +19,5 @@ net_4_5_SUBDIRS = System.Runtime System.Linq System.Xml.Serialization System.Xml
 SUBDIRS = $(net_4_5_SUBDIRS)
 
 include ../../build/rules.make
+
+dist-local: dist-default
