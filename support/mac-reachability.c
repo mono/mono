@@ -28,12 +28,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-int mono_sc_reachability_enabled ();
+#if HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+int mono_sc_reachability_enabled (void);
 
 #if defined(PLATFORM_MACOSX) || defined(TARGET_IOS)
 
 int
-mono_sc_reachability_enabled ()
+mono_sc_reachability_enabled (void)
 {
 	return 1;
 }
@@ -80,7 +84,7 @@ mono_sc_reachability_new (mono_sc_reachability_callback callback)
 {
 	struct sockaddr_in zero;
 	SCNetworkReachabilityRef reachability;
-	SCNetworkReachabilityContext context = {0,};
+	SCNetworkReachabilityContext context;
 	mono_sc_reachability *instance;
 
 	if (callback == NULL) {
@@ -100,6 +104,7 @@ mono_sc_reachability_new (mono_sc_reachability_callback callback)
 	instance->reachability = reachability;
 	instance->callback = callback;
 
+	bzero (&context, sizeof (context));
 	context.info = instance;
 
 	if (!SCNetworkReachabilitySetCallback (reachability, _mono_sc_reachability_callback, &context) ||
@@ -140,7 +145,7 @@ mono_sc_reachability_is_available (mono_sc_reachability *reachability)
 #else
 
 int
-mono_sc_reachability_enabled ()
+mono_sc_reachability_enabled (void)
 {
 	return 0;
 }
