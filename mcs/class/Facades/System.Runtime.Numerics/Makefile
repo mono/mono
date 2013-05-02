@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.Runtime.Numerics
+thisdir = class/Facades/System.Runtime.Numerics
 SUBDIRS = 
 include ../../../build/rules.make
 

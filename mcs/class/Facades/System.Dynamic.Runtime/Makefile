@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.Dynamic.Runtime
+thisdir = class/Facades/System.Dynamic.Runtime
 SUBDIRS = 
 include ../../../build/rules.make
 

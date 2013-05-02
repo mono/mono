@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.Threading.Tasks.Parallel
+thisdir = class/Facades/System.Threading.Tasks.Parallel
 SUBDIRS = 
 include ../../../build/rules.make
 

@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.Xml.XmlSerializer
+thisdir = class/Facades/System.Xml.XmlSerializer
 SUBDIRS = 
 include ../../../build/rules.make
 

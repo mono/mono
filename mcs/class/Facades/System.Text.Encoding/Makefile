@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.Text.Encoding
+thisdir = class/Facades/System.Text.Encoding
 SUBDIRS = 
 include ../../../build/rules.make
 

@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.Runtime.Serialization.Primitives
+thisdir = class/Facades/System.Runtime.Serialization.Primitives
 SUBDIRS = 
 include ../../../build/rules.make
 

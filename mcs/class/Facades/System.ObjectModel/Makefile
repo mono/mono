@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.ObjectModel
+thisdir = class/Facades/System.ObjectModel
 SUBDIRS = 
 include ../../../build/rules.make
 

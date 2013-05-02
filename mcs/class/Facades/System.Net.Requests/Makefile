@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.Net.Requests
+thisdir = class/Facades/System.Net.Requests
 SUBDIRS = 
 include ../../../build/rules.make
 

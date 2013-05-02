@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders
+thisdir = class/Facades
 
 net_4_5_SUBDIRS = System.Runtime System.Linq System.Xml.Serialization System.Xml.XmlSerializer \
 	System.ServiceModel.Primitives System.Xml.ReaderWriter System.Diagnostics.Debug \

@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.Xml.ReaderWriter
+thisdir = class/Facades/System.Xml.ReaderWriter
 SUBDIRS = 
 include ../../../build/rules.make
 

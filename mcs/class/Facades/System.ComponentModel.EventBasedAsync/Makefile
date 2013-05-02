@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.ComponentModel.EventBasedAsync
+thisdir = class/Facades/System.ComponentModel.EventBasedAsync
 SUBDIRS = 
 include ../../../build/rules.make
 

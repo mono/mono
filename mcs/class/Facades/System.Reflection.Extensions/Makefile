@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.Reflection.Extensions
+thisdir = class/Facades/System.Reflection.Extensions
 SUBDIRS = 
 include ../../../build/rules.make
 

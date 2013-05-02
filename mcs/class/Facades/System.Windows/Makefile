@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.Windows
+thisdir = class/Facades/System.Windows
 SUBDIRS = 
 include ../../../build/rules.make
 

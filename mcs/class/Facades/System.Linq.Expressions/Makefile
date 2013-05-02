@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.Linq.Expressions
+thisdir = class/Facades/System.Linq.Expressions
 SUBDIRS = 
 include ../../../build/rules.make
 

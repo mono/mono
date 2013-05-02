@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.Collections.Concurrent
+thisdir = class/Facades/System.Collections.Concurrent
 SUBDIRS = 
 include ../../../build/rules.make
 

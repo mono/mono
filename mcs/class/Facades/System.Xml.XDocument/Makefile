@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.Xml.XDocument
+thisdir = class/Facades/System.Xml.XDocument
 SUBDIRS = 
 include ../../../build/rules.make
 

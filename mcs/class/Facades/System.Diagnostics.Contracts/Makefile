@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.Diagnostics.Contracts
+thisdir = class/Facades/System.Diagnostics.Contracts
 SUBDIRS = 
 include ../../../build/rules.make
 

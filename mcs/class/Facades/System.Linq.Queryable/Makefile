@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.Linq.Queryable
+thisdir = class/Facades/System.Linq.Queryable
 SUBDIRS = 
 include ../../../build/rules.make
 

@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.ComponentModel.Annotations
+thisdir = class/Facades/System.ComponentModel.Annotations
 SUBDIRS = 
 include ../../../build/rules.make
 

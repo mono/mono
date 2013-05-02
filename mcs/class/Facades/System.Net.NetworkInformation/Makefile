@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.Net.NetworkInformation
+thisdir = class/Facades/System.Net.NetworkInformation
 SUBDIRS = 
 include ../../../build/rules.make
 

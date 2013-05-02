@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.Resources.ResourceManager
+thisdir = class/Facades/System.Resources.ResourceManager
 SUBDIRS = 
 include ../../../build/rules.make
 

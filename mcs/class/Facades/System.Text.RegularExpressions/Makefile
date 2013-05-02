@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.Text.RegularExpressions
+thisdir = class/Facades/System.Text.RegularExpressions
 SUBDIRS = 
 include ../../../build/rules.make
 

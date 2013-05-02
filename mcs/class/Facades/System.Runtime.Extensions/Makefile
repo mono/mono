@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.Runtime.Extensions
+thisdir = class/Facades/System.Runtime.Extensions
 SUBDIRS = 
 include ../../../build/rules.make
 

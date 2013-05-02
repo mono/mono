@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.ServiceModel.Primitives
+thisdir = class/Facades/System.ServiceModel.Primitives
 SUBDIRS = 
 include ../../../build/rules.make
 

@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.Runtime.InteropServices
+thisdir = class/Facades/System.Runtime.InteropServices
 SUBDIRS = 
 include ../../../build/rules.make
 

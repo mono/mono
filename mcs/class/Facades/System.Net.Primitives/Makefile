@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.Net.Primitives
+thisdir = class/Facades/System.Net.Primitives
 SUBDIRS = 
 include ../../../build/rules.make
 

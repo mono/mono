@@ -1,4 +1,4 @@
-thisdir = class/TypeForwarders/System.Globalization
+thisdir = class/Facades/System.Globalization
 SUBDIRS = 
 include ../../../build/rules.make
 
