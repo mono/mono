@@ -332,6 +332,9 @@ namespace System.Net
 		[MonoTODO("Look in other places for proxy config info")]
 		public static IWebProxy GetSystemWebProxy ()
 		{
+#if MONOTOUCH
+			return CFNetwork.GetDefaultProxy ();
+#else
 #if !NET_2_1
 			if (IsWindows ()) {
 				int iProxyEnable = (int)Microsoft.Win32.Registry.GetValue ("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", "ProxyEnable", 0);
@@ -422,6 +425,7 @@ namespace System.Net
 #endif
 			
 			return new WebProxy ();
+#endif // MONOTOUCH
 		}
 
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
