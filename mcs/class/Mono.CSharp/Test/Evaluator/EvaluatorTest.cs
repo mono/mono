@@ -40,5 +40,12 @@ namespace MonoTests.EvaluatorTest
 			var evaluator2 = new Evaluator (ctx);
 			evaluator2.Run ("int i = 0;");
 		}
+
+		[Test]
+		public void NewActionExpression()
+		{
+			Evaluator.Run ("using System;");
+			Evaluator.Evaluate ("new Action<object>();");
+		}
  	}
  }
