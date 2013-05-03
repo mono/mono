@@ -127,6 +127,7 @@
     <Compile Include="System.Data.Common\SchemaTableColumn.cs" />
     <Compile Include="System.Data.Common\SchemaTableOptionalColumn.cs" />
     <Compile Include="System.Data.Common\SupportedJoinOperators.cs" />
+    <Compile Include="System.Data.Common\TaskHelper.cs" />
     <Compile Include="System.Data.Odbc\libodbc.cs" />
     <Compile Include="System.Data.Odbc\NativeBuffer.cs" />
     <Compile Include="System.Data.Odbc\OdbcCategoryAttribute.cs" />

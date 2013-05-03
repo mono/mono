@@ -754,10 +754,18 @@ namespace System.Data.Common {
 			return OpenAsync (CancellationToken.None);
 		}
 		
-		[MonoTODO]
 		public virtual Task OpenAsync (CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			if (cancellationToken.IsCancellationRequested) {
+				return TaskHelper.CreateCanceledTask ();
+			}
+			
+			try {
+				Open ();
+				return TaskHelper.CreateVoidTask ();
+			} catch (Exception e) {
+				return TaskHelper.CreateExceptionTask (e);
+			}
 		}
 #endif
 
