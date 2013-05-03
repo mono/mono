@@ -200,10 +200,17 @@ namespace System.Data.Common {
 			return GetFieldValueAsync<T> (ordinal, CancellationToken.None);
 		}
 		
-		[MonoTODO]
 		public virtual Task<T> GetFieldValueAsync<T> (int ordinal, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			if (cancellationToken.IsCancellationRequested) {
+				return TaskHelper.CreateCanceledTask<T> ();
+			}
+			
+			try {
+				return Task.FromResult<T> (GetFieldValue<T> (ordinal));
+			} catch (Exception e) {
+				return TaskHelper.CreateExceptionTask<T> (e);
+			}
 		}
 		
 		public Task<bool> NextResultAsync ()
@@ -228,16 +235,30 @@ namespace System.Data.Common {
 			throw new NotImplementedException ();	
 		}
 
-		[MonoTODO]
 		public virtual Task<bool> IsDBNullAsync (int ordinal, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			if (cancellationToken.IsCancellationRequested) {
+				return TaskHelper.CreateCanceledTask<bool> ();
+			}
+			
+			try {
+				return Task.FromResult (IsDBNull (ordinal));
+			} catch (Exception e) {
+				return TaskHelper.CreateExceptionTask<bool> (e);
+			}
 		}
 		
-		[MonoTODO]
 		public virtual Task<bool> NextResultAsync (CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			if (cancellationToken.IsCancellationRequested) {
+				return TaskHelper.CreateCanceledTask<bool> ();
+			}
+			
+			try {
+				return Task.FromResult (NextResult ());
+			} catch (Exception e) {
+				return TaskHelper.CreateExceptionTask<bool> (e);
+			}
 		}
 		
 		public Task<bool> ReadAsync ()
@@ -245,10 +266,17 @@ namespace System.Data.Common {
 			return ReadAsync (CancellationToken.None);
 		}
 		
-		[MonoTODO]
 		public virtual Task<bool> ReadAsync (CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			if (cancellationToken.IsCancellationRequested) {
+				return TaskHelper.CreateCanceledTask<bool> ();
+			}
+			
+			try {
+				return Task.FromResult (Read ());
+			} catch (Exception e) {
+				return TaskHelper.CreateExceptionTask<bool> (e);
+			}
 		}
 #endif
 

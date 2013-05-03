@@ -151,10 +151,17 @@ namespace System.Data.Common {
 		public abstract void Prepare ();
 		
 #if NET_4_5
-		[MonoTODO]
 		protected virtual Task<DbDataReader> ExecuteDbDataReaderAsync (CommandBehavior behavior, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			if (cancellationToken.IsCancellationRequested) {
+				return TaskHelper.CreateCanceledTask<DbDataReader> ();
+			}
+			
+			try {
+				return Task.FromResult (ExecuteDbDataReader (behavior));
+			} catch (Exception e) {
+				return TaskHelper.CreateExceptionTask<DbDataReader> (e);
+			}
 		}
 		
 		public Task<int> ExecuteNonQueryAsync ()
@@ -162,10 +169,17 @@ namespace System.Data.Common {
 			return ExecuteNonQueryAsync (CancellationToken.None);
 		}
 		
-		[MonoTODO]
 		public virtual Task<int> ExecuteNonQueryAsync (CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			if (cancellationToken.IsCancellationRequested) {
+				return TaskHelper.CreateCanceledTask<int> ();
+			}
+			
+			try {
+				return Task.FromResult (ExecuteNonQuery ());
+			} catch (Exception e) {
+				return TaskHelper.CreateExceptionTask<int> (e);
+			}
 		}
 		
 		public Task<Object> ExecuteScalarAsync ()
@@ -173,10 +187,17 @@ namespace System.Data.Common {
 			return ExecuteScalarAsync (CancellationToken.None);
 		}
 		
-		[MonoTODO]
 		public virtual Task<Object> ExecuteScalarAsync (CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			if (cancellationToken.IsCancellationRequested) {
+				return TaskHelper.CreateCanceledTask<Object> ();
+			}
+			
+			try {
+				return Task.FromResult (ExecuteScalar ());
+			} catch (Exception e) {
+				return TaskHelper.CreateExceptionTask<Object> (e);
+			}
 		}
 		
 		public Task<DbDataReader> ExecuteReaderAsync ()
@@ -184,10 +205,17 @@ namespace System.Data.Common {
 			return ExecuteReaderAsync (CancellationToken.None);
 		}
 		
-		[MonoTODO]
 		public Task<DbDataReader> ExecuteReaderAsync (CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			if (cancellationToken.IsCancellationRequested) {
+				return TaskHelper.CreateCanceledTask<DbDataReader> ();
+			}
+			
+			try {
+				return Task.FromResult (ExecuteReader ());
+			} catch (Exception e) {
+				return TaskHelper.CreateExceptionTask<DbDataReader> (e);
+			}
 		}
 		
 		public Task<DbDataReader> ExecuteReaderAsync (CommandBehavior behavior)
@@ -195,10 +223,17 @@ namespace System.Data.Common {
 			return ExecuteReaderAsync (behavior, CancellationToken.None);
 		}
 		
-		[MonoTODO]
 		public Task<DbDataReader> ExecuteReaderAsync (CommandBehavior behavior, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			if (cancellationToken.IsCancellationRequested) {
+				return TaskHelper.CreateCanceledTask<DbDataReader> ();
+			}
+			
+			try {
+				return Task.FromResult (ExecuteReader (behavior));
+			} catch (Exception e) {
+				return TaskHelper.CreateExceptionTask<DbDataReader> (e);
+			}
 		}
 
 #endif
