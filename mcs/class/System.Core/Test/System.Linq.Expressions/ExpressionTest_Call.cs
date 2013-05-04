@@ -98,6 +98,9 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
+#if MOBILE
+		[Category ("NotWorking")] // String:Intern () is linked away
+#endif
 		[ExpectedException (typeof (ArgumentException))]
 		public void InstanceTypeDoesntMatchMethodDeclaringType ()
 		{
