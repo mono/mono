@@ -1362,5 +1362,61 @@ namespace Mono.Options
 			return StringCoda.WrappedLines (description, firstWidth, remWidth);
 		}
 	}
+	
+        /// <summary>
+        /// Makes this possible:
+        /// 
+        /// public class Options : AttributedOptionSet
+        /// {
+        ///     [Option("name=", "Service Name")] public string Name;
+        ///     [Option("install|inst|i", "Install Service")] public bool InstallSwitch;
+        /// }
+        /// 
+        /// private static void Main(string[] args)
+        /// {
+        ///     var options = AttributedOptionSet.Parse<Options>(args);
+        /// </summary>
+        public class AttributedOptionSet : OptionSet
+	{
+		public static T Parse<T>(string[] args) where T : AttributedOptionSet, new()
+		{
+			T retval = new T();
+			
+			System.Reflection.FieldInfo[] fields = typeof(T).GetFields();
+			foreach (System.Reflection.FieldInfo propertyInfo in fields)
+			{
+				object[] propertyAttribs = propertyInfo.GetCustomAttributes(false);
+				
+				OptionAttribute optionAttribute = null;
+				foreach (object propertyAttrib in propertyAttribs)
+				if (propertyAttrib is OptionAttribute)
+					optionAttribute = propertyAttrib as OptionAttribute;
+				if (optionAttribute == null)
+					continue;
+				
+				retval.Add(optionAttribute.Prototype, optionAttribute.Description, p =>
+				{
+				        if (optionAttribute.Prototype.EndsWith("="))
+						propertyInfo.SetValue(retval, p);
+				        else
+						propertyInfo.SetValue(retval, true);
+				});
+			}
+			
+			retval.Parse(args);
+			return retval;
+		}
+	}
+	
+	public class OptionAttribute : System.Attribute
+	{
+		public string Prototype = null;
+		public string Description = null;
+		public OptionAttribute(string prototype, string description)
+		{
+			Prototype = prototype;
+			Description = description;
+		}
+	}
 }
 
