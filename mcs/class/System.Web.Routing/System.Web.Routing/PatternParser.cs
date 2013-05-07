@@ -210,7 +210,7 @@ namespace System.Web.Routing
 			return dict;
 		}
 
-		private static bool ParametersAreEqual (object a, object b)
+		static bool ParametersAreEqual (object a, object b)
 		{
 			if (a is string && b is string) {
 				return String.Equals (a as string, b as string, StringComparison.OrdinalIgnoreCase);
@@ -220,7 +220,7 @@ namespace System.Web.Routing
 			}
 		}
 
-		private static bool ParameterIsNonEmpty (object param)
+		static bool ParameterIsNonEmpty (object param)
 		{
 			if (param is string)
 				return !string.IsNullOrEmpty (param as string);
@@ -228,7 +228,7 @@ namespace System.Web.Routing
 			return param != null;
 		}
 
-		private bool IsParameterRequired (string parameterName, RouteValueDictionary defaultValues, out object defaultValue)
+		bool IsParameterRequired (string parameterName, RouteValueDictionary defaultValues, out object defaultValue)
 		{
 			foreach (var token in tokens) {
 				if (token == null)
@@ -242,16 +242,25 @@ namespace System.Web.Routing
 				}
 			}
 
+			if (defaultValues == null)
+				throw new ArgumentNullException ("defaultValues is null?!");
+
 			return !defaultValues.TryGetValue (parameterName, out defaultValue);
 		}
 
-		private static string EscapeReservedCharacters (Match m)
+		static string EscapeReservedCharacters (Match m)
 		{
+			if (m == null)
+				throw new ArgumentNullException("m");
+
 			return Uri.HexEscape (m.Value[0]);
 		}
 
-		private static string UriEncode (string str)
+		static string UriEncode (string str)
 		{
+			if (string.IsNullOrEmpty (str))
+				return str;
+
 			string escape = Uri.EscapeUriString (str);
 			return Regex.Replace (escape, "([#?])", new MatchEvaluator (EscapeReservedCharacters));
 		}
@@ -475,45 +484,37 @@ namespace System.Web.Routing
 
 			// Add all remaining new values to the list of values we will use for URL generation
 			foreach (var newValue in values) {
-				if (ParameterIsNonEmpty (newValue.Value)) {
-					if (!acceptedValues.ContainsKey (newValue.Key)) {
-						acceptedValues.Add (newValue.Key, newValue.Value);
-					}
+				if (ParameterIsNonEmpty (newValue.Value) && !acceptedValues.ContainsKey (newValue.Key)) {
+					acceptedValues.Add (newValue.Key, newValue.Value);
 				}
 			}
 
 			// Add all current values that aren't in the URL at all
 			foreach (var currentValue in currentValues) {
-				if (!acceptedValues.ContainsKey (currentValue.Key)) {
-					if (!parameterNames.ContainsKey (currentValue.Key)) {
-						acceptedValues.Add (currentValue.Key, currentValue.Value);
-					}
+				if (!acceptedValues.ContainsKey (currentValue.Key) && !parameterNames.ContainsKey (currentValue.Key)) {
+					acceptedValues.Add (currentValue.Key, currentValue.Value);
 				}
 			}
 
 			// Add all remaining default values from the route to the list of values we will use for URL generation
 			foreach (var item in parameterNames) {
-				if (!acceptedValues.ContainsKey (item.Key)) {
-					object defaultValue;
-					if (!IsParameterRequired (item.Key, defaultValues, out defaultValue)) {
-						// Add the default value only if there isn't already a new value for it and
-						// only if it actually has a default value, which we determine based on whether
-						// the parameter value is required.
-						acceptedValues.Add (item.Key, defaultValue);
-					}
+				object defaultValue;
+				if (!acceptedValues.ContainsKey (item.Key) && !IsParameterRequired (item.Key, defaultValues, out defaultValue)) {
+					// Add the default value only if there isn't already a new value for it and
+					// only if it actually has a default value, which we determine based on whether
+					// the parameter value is required.
+					acceptedValues.Add (item.Key, defaultValue);
 				}
 			}
 
 			// All required parameters in this URL must have values from somewhere (i.e. the accepted values)
 			foreach (var item in parameterNames) {
 				object defaultValue;
-				if (IsParameterRequired (item.Key, defaultValues, out defaultValue)) {
-					if (!acceptedValues.ContainsKey (item.Key)) {
-						// If the route parameter value is required that means there's
-						// no default value, so if there wasn't a new value for it
-						// either, this route won't match.
-						return null;
-					}
+				if (IsParameterRequired (item.Key, defaultValues, out defaultValue) && !acceptedValues.ContainsKey (item.Key)) {
+					// If the route parameter value is required that means there's
+					// no default value, so if there wasn't a new value for it
+					// either, this route won't match.
+					return null;
 				}
 			}
 
@@ -552,56 +553,45 @@ namespace System.Web.Routing
 			}
 
 			// Finally loop thru al segment-templates building the actual uri.
-			foreach (var item in allSegments)
-			{
-				var segment = item.GetValueOrDefault();
+			foreach (var item in allSegments) {
+				var segment = item.GetValueOrDefault ();
 
 				// If segment is a separator..
-				if (item == null)
-				{
-					if (pendingPartsAreAllSafe)
-					{
+				if (item == null) {
+					if (pendingPartsAreAllSafe) {
 						// Accept
-						if (pendingParts.Length > 0)
-						{
+						if (pendingParts.Length > 0) {
 							if (blockAllUriAppends)
 								return null;
 
 							// Append any pending literals to the URL
-							uri.Append(pendingParts.ToString());
+							uri.Append (pendingParts.ToString ());
 							pendingParts.Length = 0;
 						}
 					}
 					pendingPartsAreAllSafe = false;
 
 					// Guard against appending multiple separators for empty segments
-					if (pendingParts.Length > 0 && pendingParts[pendingParts.Length - 1] == '/')
-					{
+					if (pendingParts.Length > 0 && pendingParts[pendingParts.Length - 1] == '/') {
 						// Dev10 676725: Route should not be matched if that causes mismatched tokens
 						// Dev11 86819: We will allow empty matches if all subsequent segments are null
 						if (blockAllUriAppends)
 							return null;
 
 						// Append any pending literals to the URI (without the trailing slash) and prevent any future appends
-						uri.Append(pendingParts.ToString(0, pendingParts.Length - 1));
+						uri.Append(pendingParts.ToString (0, pendingParts.Length - 1));
 						pendingParts.Length = 0;
-					}
-					else
-					{
-						pendingParts.Append("/");
+					} else {
+						pendingParts.Append ("/");
 					}
 #if false
-				}
-				// Spezial (optimized) case: all elements of segment are literals.
-				else if (segment.AllLiteral)
-				{
+				} else if (segment.AllLiteral) {
+					// Spezial (optimized) case: all elements of segment are literals.
 					pendingPartsAreAllSafe = true;
 					foreach (var tk in segment.Tokens)
 						pendingParts.Append (tk.Name);
 #endif
-				}
-				else
-				{
+				} else {
 					// Segments are treated as all-or-none. We should never output a partial segment.
 					// If we add any subsegment of this segment to the generated URL, we have to add
 					// the complete match. For example, if the subsegment is "{p1}-{p2}.xml" and we
@@ -610,28 +600,21 @@ namespace System.Web.Routing
 					// segment "v1-v2.xml".
 					bool addedAnySubsegments = false;
 
-					foreach (var token in segment.Tokens)
-					{
-						if (token.Type == PatternTokenType.Literal)
-						{
+					foreach (var token in segment.Tokens) {
+						if (token.Type == PatternTokenType.Literal) {
 							// If it's a literal we hold on to it until we are sure we need to add it
 							pendingPartsAreAllSafe = true;
-							pendingParts.Append(token.Name);
-						}
-						else
-						{
-							if (token.Type == PatternTokenType.Standard)
-							{
-								if (pendingPartsAreAllSafe)
-								{
+							pendingParts.Append (token.Name);
+						} else {
+							if (token.Type == PatternTokenType.Standard) {
+								if (pendingPartsAreAllSafe) {
 									// Accept
-									if (pendingParts.Length > 0)
-									{
+									if (pendingParts.Length > 0) {
 										if (blockAllUriAppends)
 											return null;
 
 										// Append any pending literals to the URL
-										uri.Append(pendingParts.ToString());
+										uri.Append (pendingParts.ToString ());
 										pendingParts.Length = 0;
 
 										addedAnySubsegments = true;
@@ -641,55 +624,45 @@ namespace System.Web.Routing
 
 								// If it's a parameter, get its value
 								object acceptedParameterValue;
-								bool hasAcceptedParameterValue = acceptedValues.TryGetValue(token.Name, out acceptedParameterValue);
+								bool hasAcceptedParameterValue = acceptedValues.TryGetValue (token.Name, out acceptedParameterValue);
 								if (hasAcceptedParameterValue)
-								{
-									unusedNewValues.Remove(token.Name);
-								}
+									unusedNewValues.Remove (token.Name);
 
 								object defaultParameterValue;
-								defaultValues.TryGetValue(token.Name, out defaultParameterValue);
+								defaultValues.TryGetValue (token.Name, out defaultParameterValue);
 
-								if (ParametersAreEqual(acceptedParameterValue, defaultParameterValue))
-								{
+								if (ParametersAreEqual (acceptedParameterValue, defaultParameterValue)) {
 									// If the accepted value is the same as the default value, mark it as pending since
 									// we won't necessarily add it to the URL we generate.
-									pendingParts.Append(Convert.ToString(acceptedParameterValue, CultureInfo.InvariantCulture));
-								}
-								else
-								{
+									pendingParts.Append (Convert.ToString (acceptedParameterValue, CultureInfo.InvariantCulture));
+								} else {
 									if (blockAllUriAppends)
 										return null;
 
 									// Add the new part to the URL as well as any pending parts
-									if (pendingParts.Length > 0)
-									{
+									if (pendingParts.Length > 0) {
 										// Append any pending literals to the URL
-										uri.Append(pendingParts.ToString());
+										uri.Append (pendingParts.ToString ());
 										pendingParts.Length = 0;
 									}
-									uri.Append(Convert.ToString(acceptedParameterValue, CultureInfo.InvariantCulture));
+									uri.Append (Convert.ToString (acceptedParameterValue, CultureInfo.InvariantCulture));
 
 									addedAnySubsegments = true;
 								}
-							}
-							else
-							{
-								Debug.Fail("Invalid path subsegment type");
+							} else {
+								Debug.Fail ("Invalid path subsegment type");
 							}
 						}
 					}
 
-					if (addedAnySubsegments)
-					{
+					if (addedAnySubsegments) {
 						// See comment above about why we add the pending parts
-						if (pendingParts.Length > 0)
-						{
+						if (pendingParts.Length > 0) {
 							if (blockAllUriAppends)
 								return null;
 
 							// Append any pending literals to the URL
-							uri.Append(pendingParts.ToString());
+							uri.Append (pendingParts.ToString ());
 							pendingParts.Length = 0;
 						}
 					}
