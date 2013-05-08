@@ -691,6 +691,7 @@ namespace Mono.CSharp
 		readonly MemberKind kind;
 		protected readonly ModuleContainer module;
 		protected TypeSpec type;
+		bool defined;
 
 		public PredefinedType (ModuleContainer module, MemberKind kind, string ns, string name, int arity)
 			: this (module, kind, ns, name)
@@ -753,7 +754,11 @@ namespace Mono.CSharp
 			if (type != null)
 				return true;
 
-			type = Resolve (module, kind, ns, name, arity, false, false);
+			if (!defined) {
+				defined = true;
+				type = Resolve (module, kind, ns, name, arity, false, false);
+			}
+
 			return type != null;
 		}
 
@@ -771,12 +776,13 @@ namespace Mono.CSharp
 			// fake namespaces when type is optional and does not exist (e.g. System.Linq).
 			//
 			Namespace type_ns = module.GlobalRootNamespace.GetNamespace (ns, required);
+
 			IList<TypeSpec> found = null;
 			if (type_ns != null)
 				found = type_ns.GetAllTypes (name);
 
 			if (found == null) {
-				if (reportErrors )
+				if (reportErrors)
 					module.Compiler.Report.Error (518, "The predefined type `{0}.{1}' is not defined or imported", ns, name);
 
 				return null;

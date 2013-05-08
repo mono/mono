@@ -1820,7 +1820,7 @@ namespace Mono.CSharp {
 			//
 			// Handle all parameter-less attributes as optional
 			//
-			if (!IsDefined)
+			if (!Define ())
 				return false;
 
 			ctor = (MethodSpec) MemberCache.FindMember (type, MemberFilter.Constructor (ParametersCompiled.EmptyReadOnlyParameters), BindingRestriction.DeclaredOnly);
