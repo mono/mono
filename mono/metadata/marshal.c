@@ -5015,6 +5015,10 @@ mono_marshal_get_ldfld_wrapper (MonoType *type)
 			mono_mb_emit_byte (mb, CEE_LDIND_REF);
 		}
 		break;
+	case MONO_TYPE_VAR:
+	case MONO_TYPE_MVAR:
+		mono_mb_emit_op (mb, CEE_LDOBJ, klass);
+		break;
 	default:
 		g_warning ("type %x not implemented", type->type);
 		g_assert_not_reached ();
@@ -5337,6 +5341,8 @@ mono_marshal_get_stfld_wrapper (MonoType *type)
 		mono_mb_emit_op (mb, CEE_STOBJ, klass);
 		break;
 	case MONO_TYPE_GENERICINST:
+	case MONO_TYPE_VAR:
+	case MONO_TYPE_MVAR:
 		mono_mb_emit_op (mb, CEE_STOBJ, klass);
 		break;
 	default:
