@@ -1536,7 +1536,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Constant ConvertExplicitly(bool in_checked_context, TypeSpec target_type)
+		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
 			if (Child.Type == target_type)
 				return Child;
@@ -2420,15 +2420,15 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext ec)
+		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext mc)
 		{
-			FullNamedExpression fne = ec.LookupNamespaceOrType (Name, Arity, LookupMode.Normal, loc);
+			FullNamedExpression fne = mc.LookupNamespaceOrType (Name, Arity, LookupMode.Normal, loc);
 
 			if (fne != null) {
 				if (fne.Type != null && Arity > 0) {
 					if (HasTypeArguments) {
 						GenericTypeExpr ct = new GenericTypeExpr (fne.Type, targs, loc);
-						if (ct.ResolveAsType (ec) == null)
+						if (ct.ResolveAsType (mc) == null)
 							return null;
 
 						return ct;
@@ -2444,21 +2444,21 @@ namespace Mono.CSharp {
 					return fne;
 			}
 
-			if (Arity == 0 && Name == "dynamic" && ec.Module.Compiler.Settings.Version > LanguageVersion.V_3) {
-				if (!ec.Module.PredefinedAttributes.Dynamic.IsDefined) {
-					ec.Module.Compiler.Report.Error (1980, Location,
+			if (Arity == 0 && Name == "dynamic" && mc.Module.Compiler.Settings.Version > LanguageVersion.V_3) {
+				if (!mc.Module.PredefinedAttributes.Dynamic.IsDefined) {
+					mc.Module.Compiler.Report.Error (1980, Location,
 						"Dynamic keyword requires `{0}' to be defined. Are you missing System.Core.dll assembly reference?",
-						ec.Module.PredefinedAttributes.Dynamic.GetSignatureForError ());
+						mc.Module.PredefinedAttributes.Dynamic.GetSignatureForError ());
 				}
 
 				fne = new DynamicTypeExpr (loc);
-				fne.ResolveAsType (ec);
+				fne.ResolveAsType (mc);
 			}
 
 			if (fne != null)
 				return fne;
 
-			Error_TypeOrNamespaceNotFound (ec);
+			Error_TypeOrNamespaceNotFound (mc);
 			return null;
 		}
 
