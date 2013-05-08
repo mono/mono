@@ -562,7 +562,7 @@ namespace System.Net
 
 			cnc.position = 0;
 
-			WebConnectionStream stream = new WebConnectionStream (cnc);
+			WebConnectionStream stream = new WebConnectionStream (cnc, data);
 			bool expect_content = ExpectContent (data.StatusCode, data.request.Method);
 			string tencoding = null;
 			if (expect_content)
