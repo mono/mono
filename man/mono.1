@@ -570,7 +570,8 @@ itself, and not typically of interest to runtime users or developers.
 \fB--break method\fR
 Inserts a breakpoint before the method whose name is `method'
 (namespace.class:methodname).  Use `Main' as method name to insert a
-breakpoint on the application's main method.
+breakpoint on the application's main method.  You can use it also with
+generics, for example "System.Collections.Generic.Queue`1:Peek"
 .TP
 \fB--breakonex\fR
 Inserts a breakpoint on exceptions.  This allows you to debug your
