@@ -173,7 +173,7 @@ namespace System.Runtime.CompilerServices
 
 		public bool TryGetValue (TKey key, out TValue value)
 		{
-			if (key == default (TKey))
+			if (key == null)
 				throw new ArgumentNullException ("Null key", "key");
 
 			value = default (TValue);
@@ -204,8 +204,6 @@ namespace System.Runtime.CompilerServices
 
 		public TValue GetValue (TKey key, CreateValueCallback createValueCallback)
 		{
-			if (key == default (TKey))
-				throw new ArgumentNullException ("Null key", "key");
 			if (createValueCallback == null)
 				throw new ArgumentNullException ("Null create delegate", "createValueCallback");
 
