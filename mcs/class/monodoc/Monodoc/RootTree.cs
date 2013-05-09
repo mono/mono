@@ -535,5 +535,11 @@ namespace Monodoc
 				yield return indexDirectory;
 			yield return Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData), "monodoc");
 		}
+
+		[Obsolete]
+		public string GetTitle (string url)
+		{
+			return "Mono Documentation";
+		}
 	}
 }
