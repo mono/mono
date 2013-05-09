@@ -163,6 +163,7 @@ foreach (var ass in asses) {
 				.Replace ("OPTIONAL_MONOTOUCH_NUNITLITE", nunitRef)
 				.Replace ("PROJECT_REFERENCES_GO_HERE",
 					projectRefsXml
+						.Replace (" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\"", "")
 						.Replace ("Microsoft.Reactive.Testing", "Mono.Reactive.Testing")
 						.Replace ("System", prj_prefix + "System")
 						.Replace ("Mono", prj_prefix + "Mono")
