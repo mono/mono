@@ -67,7 +67,7 @@ void mono_mkbundle_init ()
 		buffer = (Bytef *) malloc (real_size);
 		result = my_inflate ((*ptr)->assembly.data, zsize, buffer, real_size);
 		if (result != 0) {
-			fprintf (stderr, "Error %d decompresing data for %s\n", result, (*ptr)->assembly.name);
+			fprintf (stderr, "mkbundle: Error %d decompressing data for %s\n", result, (*ptr)->assembly.name);
 			exit (1);
 		}
 		(*ptr)->assembly.data = buffer;
