@@ -7,7 +7,7 @@
 //
 // Copyright 2001, 2002, 2003 Ximian, Inc.
 // Copyright 2004-2011 Novell, Inc.
-// Copyright 2011 Xamarin Inc
+// Copyright 2011-2013 Xamarin Inc
 //
 
 
@@ -73,6 +73,9 @@ namespace Mono.CSharp
 		SecurityType declarative_security;
 		Dictionary<ITypeDefinition, Attribute> emitted_forwarders;
 		AssemblyAttributesPlaceholder module_target_attrs;
+
+		// Win32 version info values
+		string vi_product, vi_product_version, vi_company, vi_copyright, vi_trademark;
 
 		protected AssemblyDefinition (ModuleContainer module, string name)
 		{
@@ -347,14 +350,23 @@ namespace Mono.CSharp
 			} else if (a.Type == pa.RuntimeCompatibility) {
 				wrap_non_exception_throws_custom = true;
 			} else if (a.Type == pa.AssemblyFileVersion) {
-				string value = a.GetString ();
-				if (string.IsNullOrEmpty (value) || IsValidAssemblyVersion (value, false) == null) {
+				vi_product_version = a.GetString ();
+				if (string.IsNullOrEmpty (vi_product_version) || IsValidAssemblyVersion (vi_product_version, false) == null) {
 					Report.Warning (1607, 1, a.Location, "The version number `{0}' specified for `{1}' is invalid",
-						value, a.Name);
+						vi_product_version, a.Name);
 					return;
 				}
+			} else if (a.Type == pa.AssemblyProduct) {
+				vi_product = a.GetString ();
+			} else if (a.Type == pa.AssemblyCompany) {
+				vi_company = a.GetString ();
+			} else if (a.Type == pa.AssemblyDescription) {
+				// TODO: Needs extra api
+			} else if (a.Type == pa.AssemblyCopyright) {
+				vi_copyright = a.GetString ();
+			} else if (a.Type == pa.AssemblyTrademark) {
+				vi_trademark = a.GetString ();
 			}
-
 
 			SetCustomAttribute (ctor, cdata);
 		}
@@ -749,7 +761,7 @@ namespace Mono.CSharp
 			if (Compiler.Settings.Win32ResourceFile != null) {
 				Builder.DefineUnmanagedResource (Compiler.Settings.Win32ResourceFile);
 			} else {
-				Builder.DefineVersionInfoResource ();
+				Builder.DefineVersionInfoResource (vi_product, vi_product_version, vi_company, vi_copyright, vi_trademark);
 			}
 
 			if (Compiler.Settings.Win32IconFile != null) {
