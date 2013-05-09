@@ -312,7 +312,8 @@ class MakeBundle {
 				}
 			};
 
-#if NET_4_5
+			//#if NET_4_5
+#if FALSE
 			Parallel.ForEach (files, body);
 #else
 			foreach (var url in files)
