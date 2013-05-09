@@ -91,10 +91,6 @@ foreach (var ass in asses) {
 	var projectRefsXml = "";
 	var resourcesXml = "";
 
-	var signing_xml_template = "<SignAssembly>True</SignAssembly>\n    <DelaySign>True</DelaySign>\n    <AssemblyOriginatorKeyFile>../../../reactive.pub</AssemblyOriginatorKeyFile>\n";
-	var signingXml = ass.StartsWith ("System") ? signing_xml_template : "";
-	
-
 	var doc = XDocument.Load (csproj);
 	var rootNS = doc.XPathSelectElement ("//*[local-name()='RootNamespace']").Value;
 	var guid = doc.XPathSelectElement ("//*[local-name()='ProjectGuid']").Value;
@@ -110,9 +106,10 @@ foreach (var ass in asses) {
 			.Select (el => el.Attribute ("Include").Value)
 			.Select (s => s.Replace ("\\", "/"))) {
 			if (!blacklist.Any (b => path.Contains (b))) {
-				var p = Path.Combine ("..", basePath, ass, path);
-				tw.WriteLine (Path.Combine (pathPrefix, p));
-				sourcesXml += "    <Compile Include='..\\..\\..\\..\\..\\..\\" + p.Replace ('/', '\\') + "'>\n      <Link>" + path + "</Link>\n    </Compile>\n";
+				var p = Path.Combine (ass, path);
+				var p2 = Path.Combine ("..", basePath, ass, path);
+				tw.WriteLine (Path.Combine (pathPrefix, p2));
+				sourcesXml += "    <Compile Include=\"..\\..\\..\\..\\" + p.Replace ('/', '\\') + "\">\n      <Link>" + path.Replace ('/', '\\') + "</Link>\n    </Compile>\n";
 			}
 		}
 	}
@@ -146,13 +143,13 @@ foreach (var ass in asses) {
 		string template, prj_prefix, nunitProjRef, nunitRef;
 		var androidNUnit = "<ProjectReference Include=\"..\\..\\Andr.Unit\\Android.NUnitLite\\Android.NUnitLite.csproj\"><Project>{6A005891-A3D6-4398-A729-F645397D573A}</Project><Name>Android.NUnitLite</Name></ProjectReference>";
 		if (f == android_proj) {
-			prj_guid = guids_android [guid_idx];
+			prj_guid = guids_android [guid_idx].ToUpper ();
 			template = template_android;
 			prj_prefix ="android_";
 			nunitProjRef = ass.Contains ("Test") ? androidNUnit : "";
 			nunitRef = "";
 		} else {
-			prj_guid = guids_ios [guid_idx];
+			prj_guid = guids_ios [guid_idx].ToUpper ();
 			template = template_ios;
 			prj_prefix ="ios_";
 			nunitProjRef = "";
@@ -170,9 +167,8 @@ foreach (var ass in asses) {
 						.Replace ("System", prj_prefix + "System")
 						.Replace ("Mono", prj_prefix + "Mono")
 						.Replace ("Include=\"..\\" + prj_prefix, "Include=\"..\\"))
-				.Replace ("RESOURCES_GO_HERE", sourcesXml.Replace ('\\', f == ios_proj ? '/' : '\\')) // whoa, BACKSLASH doesn't work only on android on MD/mac...!
-				.Replace ("SOURCES_GO_HERE", resourcesXml.Replace ('\\', f == ios_proj ? '/' : '\\')) // whoa, BACKSLASH doesn't work only on android on MD/mac...!
-				.Replace ("SIGNING_SPEC_GOES_HERE", signingXml));
+				.Replace ("RESOURCES_GO_HERE", resourcesXml.Replace ('\\', f == ios_proj ? '/' : '\\')) // whoa, BACKSLASH doesn't work only on android on MD/mac...!
+				.Replace ("SOURCES_GO_HERE", sourcesXml.Replace ('\\', f == ios_proj ? '/' : '\\'))); // whoa, BACKSLASH doesn't work only on android on MD/mac...!
 		}
 	}
 	guid_idx++;
