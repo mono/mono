@@ -8,7 +8,8 @@ using NUnit.Framework;
 using Monodoc;
 using Monodoc.Generators;
 
-using HtmlAgilityPack;
+// Used by ReachabilityWithCrefsTest
+// using HtmlAgilityPack;
 
 namespace MonoTests.Monodoc
 {
@@ -152,6 +153,7 @@ namespace MonoTests.Monodoc
 			Assert.IsTrue (rootTree.RenderUrl ("T:System.IComparable{T}", generator, out result), "#6");
 		}
 
+		/*
 		[Test, Ignore ("Mono documentation is full of syntax errors so we can't use it reliably for this test")]
 		public void ReachabilityWithCrefsTest ()
 		{
@@ -202,6 +204,6 @@ namespace MonoTests.Monodoc
 			}
 
 			Assert.AreEqual (0, errorCount, errorCount + " / " + crefs.Count);
-		}
+		}*/
 	}
 }
