@@ -1066,9 +1066,9 @@ namespace Mono.CSharp
 			}
 		}
 
-		public virtual void AddBasesForPart (List<FullNamedExpression> bases)
+		public virtual void SetBaseTypes (List<FullNamedExpression> baseTypes)
 		{
-			type_bases = bases;
+			type_bases = baseTypes;
 		}
 
 		/// <summary>
@@ -2577,14 +2577,14 @@ namespace Mono.CSharp
 			visitor.Visit (this);
 		}
 
-		public override void AddBasesForPart (List<FullNamedExpression> bases)
+		public override void SetBaseTypes (List<FullNamedExpression> baseTypes)
 		{
 			var pmn = MemberName;
 			if (pmn.Name == "Object" && !pmn.IsGeneric && Parent.MemberName.Name == "System" && Parent.MemberName.Left == null)
 				Report.Error (537, Location,
 					"The class System.Object cannot have a base class or implement an interface.");
 
-			base.AddBasesForPart (bases);
+			base.SetBaseTypes (baseTypes);
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)

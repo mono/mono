@@ -4779,13 +4779,13 @@ opt_class_base
 	: /* empty */
 	| COLON type_list
 	 {
-		current_type.AddBasesForPart ((List<FullNamedExpression>) $2);
+		current_type.SetBaseTypes ((List<FullNamedExpression>) $2);
 	 }
 	| COLON type_list error
 	  {
 		Error_SyntaxError (yyToken);
 
-		current_type.AddBasesForPart ((List<FullNamedExpression>) $2);
+		current_type.SetBaseTypes ((List<FullNamedExpression>) $2);
 	  }
 	;
 
