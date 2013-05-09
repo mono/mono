@@ -1,7 +1,7 @@
 //
 // System.Data.Common.TaskHelper.cs
 //
-// Copyright (C) 2013 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2013 Pēteris Ņikiforovs
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,7 +29,7 @@ using System;
 using System.Threading.Tasks;
 
 namespace System.Data.Common {
-	internal sealed class TaskHelper
+	static class TaskHelper
 	{
 		internal static Task CreateCanceledTask ()
 		{
