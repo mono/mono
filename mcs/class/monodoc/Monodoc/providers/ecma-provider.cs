@@ -77,15 +77,13 @@ namespace Monodoc.Providers
 			using (var reader = XmlReader.Create (nsFile)) {
 				reader.ReadToFollowing ("Namespace");
 				var name = reader.GetAttribute ("Name");
-				reader.ReadToFollowing ("summary");
-				var summary = reader.ReadInnerXml ();
-				reader.ReadToFollowing ("remarks");
-				var remarks = reader.ReadInnerXml ();
+				var summary = reader.ReadToFollowing ("summary") ? XElement.Load (reader.ReadSubtree ()) : new XElement ("summary");
+				var remarks = reader.ReadToFollowing ("remarks") ? XElement.Load (reader.ReadSubtree ()) : new XElement ("remarks");
 
 				return new XElement ("namespace",
 				                     new XAttribute ("ns", name ?? string.Empty),
-				                     new XElement ("summary", new XCData (summary)),
-				                     new XElement ("remarks", new XCData (remarks)));
+				                     summary,
+				                     remarks);
 			}
 		}
 
