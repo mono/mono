@@ -276,16 +276,7 @@ namespace Mono.CSharp {
 
 		public Namespace AddNamespace (MemberName name)
 		{
-			Namespace ns_parent;
-			if (name.Left != null) {
-				if (parent != null)
-					ns_parent = parent.AddNamespace (name.Left);
-				else
-					ns_parent = AddNamespace (name.Left);
-			} else {
-				ns_parent = this;
-			}
-
+			var ns_parent = name.Left == null ? this : AddNamespace (name.Left);
 			return ns_parent.TryAddNamespace (name.Basename);
 		}
 
