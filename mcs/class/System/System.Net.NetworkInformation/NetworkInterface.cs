@@ -41,15 +41,21 @@ using System.Globalization;
 
 namespace System.Net.NetworkInformation {
 	public abstract class NetworkInterface {
+#if MONOTOUCH
+		internal const bool runningOnUnix = true;
+#else
 		static Version windowsVer51 = new Version (5, 1);
 		static internal readonly bool runningOnUnix = (Environment.OSVersion.Platform == PlatformID.Unix);
-		
+#endif	
 		protected NetworkInterface ()
 		{
 		}
 
 		public static NetworkInterface [] GetAllNetworkInterfaces ()
 		{
+#if MONOTOUCH
+			return MacOsNetworkInterface.ImplGetAllNetworkInterfaces ();
+#else
 			if (runningOnUnix) {
 				try {
 					if (Platform.IsMacOS)
@@ -66,6 +72,7 @@ namespace System.Net.NetworkInformation {
 					return Win32NetworkInterface2.ImplGetAllNetworkInterfaces ();
 				return new NetworkInterface [0];
 			}
+#endif
 		}
 
 		[MonoTODO("Always returns true")]
