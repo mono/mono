@@ -7,7 +7,7 @@
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 // (C) 2004,2005 Novell, Inc. (http://www.novell.com)
-//
+// Copyright 2013 Xamarin Inc. (http://www.xamarin.com)
 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -158,7 +158,10 @@ namespace System
 				stdin = new CStreamReader (OpenStandardInput (0), inputEncoding);
 			} else {
 #endif
-#if MONOTOUCH
+// FULL_AOT_RUNTIME is used (instead of MONOTOUCH) since we only want this code when running on 
+// iOS (simulator or devices) and *not* when running tools (e.g. btouch #12179) that needs to use 
+// the mscorlib.dll shipped with Xamarin.iOS
+#if FULL_AOT_RUNTIME
 				stdout = new NSLogWriter ();
 #else
 				stdout = new UnexceptionalStreamWriter (OpenStandardOutput (0), outputEncoding);
@@ -166,7 +169,7 @@ namespace System
 #endif
 				stdout = TextWriter.Synchronized (stdout, true);
 
-#if MONOTOUCH
+#if FULL_AOT_RUNTIME
 				stderr = new NSLogWriter ();
 #else
 				stderr = new UnexceptionalStreamWriter (OpenStandardError (0), outputEncoding); 

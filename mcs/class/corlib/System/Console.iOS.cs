@@ -7,7 +7,7 @@
 // Copyright 2012-2013 Xamarin Inc. All rights reserved.
 //
 
-#if MONOTOUCH
+#if FULL_AOT_RUNTIME
 
 using System;
 using System.IO;
