@@ -663,7 +663,7 @@ namespace System
 
 		public override string ToString ()
 		{
-			return ToString ("G");
+			return Format (GetType (), Value, "G");
 		}
 
 		[Obsolete("Provider is ignored, just use ToString")]
@@ -763,24 +763,24 @@ namespace System
 		private static string FormatSpecifier_X (Type enumType, object value, bool upper)
 		{
 			switch (Type.GetTypeCode (enumType)) {
-				case TypeCode.SByte:
-					return ((sbyte)value).ToString (upper ? "X2" : "x2");
-				case TypeCode.Byte:
-					return ((byte)value).ToString (upper ? "X2" : "x2");
-				case TypeCode.Int16:
-					return ((short)value).ToString (upper ? "X4" : "x4");
-				case TypeCode.UInt16:
-					return ((ushort)value).ToString (upper ? "X4" : "x4");
-				case TypeCode.Int32:
-					return ((int)value).ToString (upper ? "X8" : "x8");
-				case TypeCode.UInt32:
-					return ((uint)value).ToString (upper ? "X8" : "x8");
-				case TypeCode.Int64:
-					return ((long)value).ToString (upper ? "X16" : "x16");
-				case TypeCode.UInt64:
-					return ((ulong)value).ToString (upper ? "X16" : "x16");
-				default:
-					throw new Exception ("Invalid type code for enumeration.");
+			case TypeCode.SByte:
+				return NumberFormatter.NumberToString (upper ? "X2" : "x2", ((sbyte)value), null);
+			case TypeCode.Byte:
+				return NumberFormatter.NumberToString (upper ? "X2" : "x2", ((byte)value), null);
+			case TypeCode.Int16:
+				return NumberFormatter.NumberToString (upper ? "X4" : "x4", ((short)value), null);
+			case TypeCode.UInt16:
+				return NumberFormatter.NumberToString (upper ? "X4" : "x4", ((ushort)value), null);
+			case TypeCode.Int32:
+				return NumberFormatter.NumberToString (upper ? "X8" : "x8", ((int)value), null);
+			case TypeCode.UInt32:
+				return NumberFormatter.NumberToString (upper ? "X8" : "x8", ((uint)value), null);
+			case TypeCode.Int64:
+				return NumberFormatter.NumberToString (upper ? "X16" : "x16", ((long)value), null);
+			case TypeCode.UInt64:
+				return NumberFormatter.NumberToString (upper ? "X16" : "x16", ((ulong)value), null);
+			default:
+				throw new Exception ("Invalid type code for enumeration.");
 			}
 		}
 
