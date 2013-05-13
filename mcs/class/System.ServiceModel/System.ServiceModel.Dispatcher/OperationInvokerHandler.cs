@@ -27,12 +27,14 @@ namespace System.ServiceModel.Dispatcher
 				DoProcessRequest (mrc);
 				if (!mrc.Operation.IsOneWay)
 					Reply (mrc, true);
-			} catch (TargetInvocationException ex) {
-				mrc.ReplyMessage = BuildExceptionMessage (mrc, ex.InnerException, 
+			} catch (Exception ex) {
+				var targetException = (ex is TargetInvocationException ? ex.InnerException : ex);
+				
+				mrc.ReplyMessage = BuildExceptionMessage (mrc, targetException, 
 					dispatchRuntime.ChannelDispatcher.IncludeExceptionDetailInFaults);
 				if (!mrc.Operation.IsOneWay)
 					Reply (mrc, true);
-				ProcessCustomErrorHandlers (mrc, ex);
+				ProcessCustomErrorHandlers (mrc, targetException);
 			}
 			return false;
 		}
