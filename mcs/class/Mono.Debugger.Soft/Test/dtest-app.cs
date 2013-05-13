@@ -191,6 +191,18 @@ public class Tests : TestsBase
 		if (args.Length > 0 && args [0] == "suspend-test")
 			/* This contains an infinite loop, so execute it conditionally */
 			suspend ();
+		if (args.Length >0 && args [0] == "unhandled-exception") {
+			unhandled_exception ();
+			return 0;
+		}
+		if (args.Length >0 && args [0] == "unhandled-exception-endinvoke") {
+			unhandled_exception_endinvoke ();
+			return 0;
+		}
+		if (args.Length >0 && args [0] == "unhandled-exception-user") {
+			unhandled_exception_user ();
+			return 0;
+		}
 		breakpoints ();
 		single_stepping ();
 		arguments ();
@@ -690,6 +702,50 @@ public class Tests : TestsBase
 			exceptions2 ();
 		} catch (Exception) {
 		}
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void unhandled_exception () {
+		ThreadPool.QueueUserWorkItem (delegate {
+				throw new InvalidOperationException ();
+			});
+		Thread.Sleep (10000);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void unhandled_exception_endinvoke_2 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void unhandled_exception_endinvoke () {
+			Action action = new Action (() => 
+			{
+				throw new Exception ("thrown");
+			});
+			action.BeginInvoke ((ar) => {
+				try {
+					action.EndInvoke (ar);
+				} catch (Exception ex) {
+					//Console.WriteLine (ex);
+				}
+			}, null);
+		Thread.Sleep (1000);
+		unhandled_exception_endinvoke_2 ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void unhandled_exception_user () {
+#if NET_4_5
+		System.Threading.Tasks.Task.Factory.StartNew (() => {
+				Throw ();
+			});
+		Thread.Sleep (10000);
+#endif
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void Throw () {
+		throw new Exception ();
 	}
 
 	internal static Delegate create_filter_delegate (Delegate dlg, MethodInfo filter_method)

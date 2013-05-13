@@ -2652,4 +2652,68 @@ public class DebuggerTests
 		Assert.IsTrue (e is StepEvent);
 	}
 
+	[Test]
+	public void UnhandledException () {
+		vm.Exit (0);
+
+		Start (new string [] { "dtest-app.exe", "unhandled-exception" });
+
+		var req = vm.CreateExceptionRequest (null, false, true);
+		req.Enable ();
+
+		var e = run_until ("unhandled_exception");
+		vm.Resume ();
+
+		var e2 = GetNextEvent ();
+		Assert.IsTrue (e2 is ExceptionEvent);
+
+		vm.Exit (0);
+		vm = null;
+	}
+
+	[Test]
+	public void UnhandledException_2 () {
+		vm.Exit (0);
+
+		Start (new string [] { "dtest-app.exe", "unhandled-exception-endinvoke" });
+
+		var req = vm.CreateExceptionRequest (null, false, true);
+		req.Enable ();
+
+		MethodMirror m = entry_point.DeclaringType.GetMethod ("unhandled_exception_endinvoke_2");
+		Assert.IsNotNull (m);
+		vm.SetBreakpoint (m, m.ILOffsets [0]);
+
+		var e = run_until ("unhandled_exception_endinvoke");
+		vm.Resume ();
+
+		var e2 = GetNextEvent ();
+		Assert.IsFalse (e2 is ExceptionEvent);
+
+		vm.Exit (0);
+		vm = null;
+	}
+
+#if NET_4_5
+	[Test]
+	public void UnhandledExceptionUserCode () {
+		vm.Detach ();
+
+		// Exceptions caught in non-user code are treated as unhandled
+		Start (new string [] { "dtest-app.exe", "unhandled-exception-user" });
+
+		var req = vm.CreateExceptionRequest (null, false, true);
+		req.AssemblyFilter = new List<AssemblyMirror> () { entry_point.DeclaringType.Assembly };
+		req.Enable ();
+
+		var e = run_until ("unhandled_exception_user");
+		vm.Resume ();
+
+		var e2 = GetNextEvent ();
+		Assert.IsTrue (e2 is ExceptionEvent);
+
+		vm.Exit (0);
+		vm = null;
+	}
+#endif
 }
