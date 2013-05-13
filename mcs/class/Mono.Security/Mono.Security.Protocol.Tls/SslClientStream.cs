@@ -37,11 +37,21 @@ namespace Mono.Security.Protocol.Tls
 {
 	#region Delegates
 
-	public delegate bool CertificateValidationCallback(
+#if INSIDE_SYSTEM
+	internal
+#else
+	public
+#endif
+	delegate bool CertificateValidationCallback(
 		X509Certificate certificate, 
 		int[]			certificateErrors);
 
-	public class ValidationResult {
+#if INSIDE_SYSTEM
+	internal
+#else
+	public
+#endif
+	class ValidationResult {
 		bool trusted;
 		bool user_denied;
 		int error_code;
@@ -66,22 +76,41 @@ namespace Mono.Security.Protocol.Tls
 		}
 	}
 
+#if INSIDE_SYSTEM
+	internal
+#else
 	public
+#endif
 	delegate ValidationResult CertificateValidationCallback2 (Mono.Security.X509.X509CertificateCollection collection);
 
-	public delegate X509Certificate CertificateSelectionCallback(
+#if INSIDE_SYSTEM
+	internal
+#else
+	public
+#endif
+	delegate X509Certificate CertificateSelectionCallback(
 		X509CertificateCollection	clientCertificates, 
 		X509Certificate				serverCertificate, 
 		string						targetHost, 
 		X509CertificateCollection	serverRequestedCertificates);
 
-	public delegate AsymmetricAlgorithm PrivateKeySelectionCallback(
+#if INSIDE_SYSTEM
+	internal
+#else
+	public
+#endif
+	delegate AsymmetricAlgorithm PrivateKeySelectionCallback(
 		X509Certificate	certificate, 
 		string			targetHost);
 
 	#endregion
 
-	public class SslClientStream : SslStreamBase
+#if INSIDE_SYSTEM
+	internal
+#else
+	public
+#endif
+	class SslClientStream : SslStreamBase
 	{
 		#region Internal Events
 		

@@ -40,7 +40,12 @@ namespace Mono.Security.Authenticode {
 	// References:
 	// a.	http://www.drh-consultancy.demon.co.uk/pvk.html
 
-	public class PrivateKey {
+#if INSIDE_SYSTEM
+	internal
+#else
+	public
+#endif
+	class PrivateKey {
 
 		private const uint magic = 0xb0b5f11e;
 

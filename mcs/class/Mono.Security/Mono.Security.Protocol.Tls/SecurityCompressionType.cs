@@ -29,7 +29,12 @@ namespace Mono.Security.Protocol.Tls
 	// Information about compression methods allowed by TLS
 	// can be found in:
 	//	draft-ietf-tls-compression-05.txt (http://www.ietf.org/internet-drafts/draft-ietf-tls-compression-05.txt)
-	public enum SecurityCompressionType
+#if INSIDE_SYSTEM
+	internal
+#else
+	public
+#endif
+	enum SecurityCompressionType
 	{
 		None = 0,
 		Zlib = 1
