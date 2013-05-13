@@ -3090,7 +3090,7 @@ public class DebuggerTests
 
 	[Test]
 	public void UnhandledException () {
-		vm.Detach ();
+		vm.Exit (0);
 
 		Start (new string [] { "dtest-app.exe", "unhandled-exception" });
 
@@ -3102,6 +3102,29 @@ public class DebuggerTests
 
 		var e2 = GetNextEvent ();
 		Assert.IsTrue (e2 is ExceptionEvent);
+
+		vm.Exit (0);
+		vm = null;
+	}
+
+	[Test]
+	public void UnhandledException_2 () {
+		vm.Exit (0);
+
+		Start (new string [] { "dtest-app.exe", "unhandled-exception-endinvoke" });
+
+		var req = vm.CreateExceptionRequest (null, false, true);
+		req.Enable ();
+
+		MethodMirror m = entry_point.DeclaringType.GetMethod ("unhandled_exception_endinvoke_2");
+		Assert.IsNotNull (m);
+		vm.SetBreakpoint (m, m.ILOffsets [0]);
+
+		var e = run_until ("unhandled_exception_endinvoke");
+		vm.Resume ();
+
+		var e2 = GetNextEvent ();
+		Assert.IsFalse (e2 is ExceptionEvent);
 
 		vm.Exit (0);
 		vm = null;

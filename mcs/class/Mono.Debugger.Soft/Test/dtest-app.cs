@@ -233,6 +233,10 @@ public class Tests : TestsBase
 			unhandled_exception ();
 			return 0;
 		}
+		if (args.Length >0 && args [0] == "unhandled-exception-endinvoke") {
+			unhandled_exception_endinvoke ();
+			return 0;
+		}
 		if (args.Length >0 && args [0] == "unhandled-exception-user") {
 			unhandled_exception_user ();
 			return 0;
@@ -825,6 +829,27 @@ public class Tests : TestsBase
 				throw new InvalidOperationException ();
 			});
 		Thread.Sleep (10000);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void unhandled_exception_endinvoke_2 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void unhandled_exception_endinvoke () {
+			Action action = new Action (() => 
+			{
+				throw new Exception ("thrown");
+			});
+			action.BeginInvoke ((ar) => {
+				try {
+					action.EndInvoke (ar);
+				} catch (Exception ex) {
+					//Console.WriteLine (ex);
+				}
+			}, null);
+		Thread.Sleep (1000);
+		unhandled_exception_endinvoke_2 ();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
