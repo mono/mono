@@ -2463,7 +2463,6 @@ instr			: INSTR_NONE
                                         case MiscInstr.ldc_r8:
 						fpdata = (byte []) $2;
 						if (!BitConverter.IsLittleEndian) {
-							// FIXME: handle the stupid ARM FPA format
 							System.Array.Reverse (fpdata, 0, 8);
 						}
                                                 double d = BitConverter.ToDouble (fpdata, 0);
