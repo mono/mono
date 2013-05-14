@@ -3,8 +3,10 @@
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
+//   Andres G. Aragoneses (andres@7digital.com)
 //
 // (C) 2004-2006 Jonathan Pryor
+// (C) 2013 7digital Media Ltd (http://www.7digital.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -421,6 +423,25 @@ namespace Mono.Unix {
 				entry = new UnixFileInfo (path, stat);
 
 			return true;
+		}
+
+		public override bool Equals (System.Object obj)
+		{
+			if (obj == null) {
+				return false;
+			}
+
+			UnixFileSystemInfo f = obj as UnixFileSystemInfo;
+			if (f == null) {
+				return false;
+			}
+
+			return f.stat.st_ino == stat.st_ino;
+		}
+
+		public override int GetHashCode ()
+		{
+			return stat.st_ino.GetHashCode ();
 		}
 	}
 }
