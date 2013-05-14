@@ -207,6 +207,31 @@
 			PrepareForBuild
 		</ResolveAssemblyReferencesDependsOn>
 	</PropertyGroup>
+	
+	<PropertyGroup Condition="'$(TargetFrameworkMoniker)' != ''">
+		<TargetFrameworkMonikerAssemblyAttributesPath Condition="'$(TargetFrameworkMonikerAssemblyAttributesPath)' == ''">$(IntermediateOutputPath)$(TargetFrameworkMoniker).AssemblyAttribute$(DefaultLanguageSourceExtension)</TargetFrameworkMonikerAssemblyAttributesPath>
+		<GenerateTargetFrameworkAttribute Condition="'$(GenerateTargetFrameworkAttribute)' == '' and '$(TargetFrameworkMoniker)' 
+	!= '' and '$(TargetingClr2Framework)' != 'true'">true</GenerateTargetFrameworkAttribute>
+	</PropertyGroup>
+	
+	<ItemGroup Condition="'$(GenerateTargetFrameworkAttribute)' == 'true'">
+		<FileWrites Include="$(TargetFrameworkMonikerAssemblyAttributesPath)" />
+	</ItemGroup>
+	
+	<Target Name="GenerateTargetFrameworkMonikerAttribute"
+		DependsOnTargets="PrepareForBuild;GetReferenceAssemblyPaths"
+		Inputs="$(MSBuildToolsPath)\Microsoft.Common.targets"
+		Outputs="$(TargetFrameworkMonikerAssemblyAttributesPath)"
+		Condition="'$(GenerateTargetFrameworkAttribute)' == 'true'">
+		
+		<WriteLinesToFile
+			File="$(TargetFrameworkMonikerAssemblyAttributesPath)"
+			Lines="$(TargetFrameworkMonikerAssemblyAttributeText)"
+			Overwrite="true"
+			ContinueOnError="true"
+			Condition="'@(Compile)' != '' and '$(TargetFrameworkMonikerAssemblyAttributeText)' != ''"
+		/>
+	</Target>
 
 	<Target Name="ResolveReferences" DependsOnTargets="$(ResolveReferencesDependsOn)"/>
 
@@ -369,6 +394,7 @@
 	<PropertyGroup>
 		<CompileDependsOn>
 			ResolveReferences;
+			GenerateTargetFrameworkMonikerAttribute;
 			BeforeCompile;
 			_TimestampBeforeCompile;
 			CoreCompile;
