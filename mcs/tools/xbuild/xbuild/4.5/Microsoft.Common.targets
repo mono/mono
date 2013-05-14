@@ -80,6 +80,7 @@
 		<TargetPath Condition=" '$(TargetPath)' == '' ">@(_OutDirItem->'%(FullPath)\$(TargetFileName)')</TargetPath>
 		<MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildProjectFullPath);$(MSBuildToolsPath)\Microsoft.Common.targets</MSBuildAllProjects>
 		<KeyOriginatorFile Condition=" '$(SignAssembly)' == 'true' ">$(AssemblyOriginatorKeyFile)</KeyOriginatorFile>
+		<TargetingClr2Framework Condition="'$(TargetFrameworkVersion)' == 'v2.0' or '$(TargetFrameworkVersion)' == 'v3.0' or '$(TargetFrameworkVersion)' == 'v3.5'">true</TargetingClr2Framework>
 	</PropertyGroup>
 
 	<Target Name="_ValidateEssentialProperties">
@@ -206,6 +207,36 @@
 			PrepareForBuild
 		</ResolveAssemblyReferencesDependsOn>
 	</PropertyGroup>
+	
+	<PropertyGroup Condition="'$(TargetFrameworkMoniker)' != ''">
+		<TargetFrameworkMonikerAssemblyAttributesPath Condition="'$(TargetFrameworkMonikerAssemblyAttributesPath)' == ''">$(IntermediateOutputPath)$(TargetFrameworkMoniker).AssemblyAttribute$(DefaultLanguageSourceExtension)</TargetFrameworkMonikerAssemblyAttributesPath>
+		<TargetFrameworkMonikerAssemblyAttributesFileClean Condition="'$(TargetFrameworkMonikerAssemblyAttributesFileClean)' == '' and '$(TargetFrameworkMonikerAssemblyAttributesPath)' != ''">true</TargetFrameworkMonikerAssemblyAttributesFileClean>
+		<GenerateTargetFrameworkAttribute Condition="'$(GenerateTargetFrameworkAttribute)' == '' and '$(TargetFrameworkMoniker)' 
+	!= '' and '$(TargetingClr2Framework)' != 'true'">true</GenerateTargetFrameworkAttribute>
+	</PropertyGroup>
+	
+	<ItemGroup Condition="'@(Compile)' != '' and '$(TargetFrameworkMonikerAssemblyAttributeText)' != ''">
+		<Compile Include="$(TargetFrameworkMonikerAssemblyAttributesPath)"/>
+	</ItemGroup>
+	
+	<ItemGroup Condition="'$(TargetFrameworkMonikerAssemblyAttributesFileClean)' == 'true'">
+		<Clean Include="$(TargetFrameworkMonikerAssemblyAttributesPath)"/>
+	</ItemGroup>
+	
+	<Target Name="GenerateTargetFrameworkMonikerAttribute"
+		DependsOnTargets="PrepareForBuild;GetReferenceAssemblyPaths"
+		Inputs="$(MSBuildToolsPath)\Microsoft.Common.targets"
+		Outputs="$(TargetFrameworkMonikerAssemblyAttributesPath)"
+		Condition="'$(GenerateTargetFrameworkAttribute)' == 'true'">
+		
+		<WriteLinesToFile
+			File="$(TargetFrameworkMonikerAssemblyAttributesPath)"
+			Lines="$(TargetFrameworkMonikerAssemblyAttributeText)"
+			Overwrite="true"
+			ContinueOnError="true"
+			Condition="'@(Compile)' != '' and '$(TargetFrameworkMonikerAssemblyAttributeText)' != ''"
+		/>
+	</Target>
 
 	<Target Name="ResolveReferences" DependsOnTargets="$(ResolveReferencesDependsOn)"/>
 
@@ -368,6 +399,7 @@
 	<PropertyGroup>
 		<CompileDependsOn>
 			ResolveReferences;
+			GenerateTargetFrameworkMonikerAttribute;
 			BeforeCompile;
 			_TimestampBeforeCompile;
 			CoreCompile;
@@ -812,6 +844,9 @@
 	<Target Name="AfterClean" />
 
 	<Target Name="CoreClean" DependsOnTargets="_GetCleanFileWrites">
+	
+		<Delete Files="@(Clean)" TreatErrorsAsWarnings="true"/>
+
 		<Delete Files="@(PreviousFileWrites);@(FileWrites)" TreatErrorsAsWarnings="true"/>
 
 		<!-- all previous files written for this platform/config have been deleted,
