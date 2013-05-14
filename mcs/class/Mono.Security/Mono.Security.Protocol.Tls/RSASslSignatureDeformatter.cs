@@ -77,6 +77,9 @@ namespace Mono.Security.Protocol.Tls
 
 		public override void SetHashAlgorithm(string strName)
 		{
+#if INSIDE_SYSTEM
+			hash = new Mono.Security.Cryptography.MD5SHA1 ();
+#else
 			switch (strName)
 			{
 				case "MD5SHA1":
@@ -87,6 +90,7 @@ namespace Mono.Security.Protocol.Tls
 					this.hash = HashAlgorithm.Create(strName);
 					break;
 			}
+#endif
 		}
 
 		public override void SetKey(AsymmetricAlgorithm key)
