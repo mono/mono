@@ -158,7 +158,8 @@ monodroid_dirs := \
 	Mono.CompilerServices.SymbolWriter	\
 	Mono.CSharp	\
 	Microsoft.CSharp \
-	System.Net.Http
+	System.Net.Http \
+	System.Net.Http.Formatting
 
 monotouch_runtime_dirs := \
 	corlib \
