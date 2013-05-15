@@ -2,10 +2,11 @@
 // HMACSHA1.cs: Handles HMAC with SHA-1
 //
 // Author:
-//	Sebastien Pouliot  <sebastien@ximian.com>
+//	Sebastien Pouliot  <sebastien@xamarin.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright 2013 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -57,7 +58,11 @@ namespace System.Security.Cryptography {
 
 		public HMACSHA1 (byte[] key)
 		{
+#if FULL_AOT_RUNTIME
+			SetHash ("SHA1", new SHA1Managed ());
+#else
 			HashName = "SHA1";
+#endif
 			HashSizeValue = 160;
 			Key = key;
 		}
