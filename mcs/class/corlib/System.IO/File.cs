@@ -124,15 +124,14 @@ namespace System.IO
 				FileShare.None, bufferSize);
 		}
 
+#if !NET_2_1
 		[MonoLimitation ("FileOptions are ignored")]
 		public static FileStream Create (string path, int bufferSize,
 						 FileOptions options)
 		{
-			return new FileStream (path, FileMode.Create, FileAccess.ReadWrite,
-				FileShare.None, bufferSize, options);
+			return Create (path, bufferSize, options, null);
 		}
 		
-#if !NET_2_1
 		[MonoLimitation ("FileOptions and FileSecurity are ignored")]
 		public static FileStream Create (string path, int bufferSize,
 						 FileOptions options,

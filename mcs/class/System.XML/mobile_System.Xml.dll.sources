@@ -161,7 +161,6 @@ System.Xml/XmlWriterSettings.cs
 System.Xml/XmlTextWriter2.cs
 System.Xml/XmlInputStream.cs
 System.Xml/XmlParserInput.cs
-System.Xml/XmlSecureResolver.cs
 System.Xml.XPath/IXPathNavigable.cs
 System.Xml.XPath/XPathNavigator.cs
 System.Xml.XPath/XPathExpression.cs
