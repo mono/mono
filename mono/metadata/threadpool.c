@@ -1053,8 +1053,8 @@ threadpool_append_jobs (ThreadPool *tp, MonoObject **jobs, gint njobs)
 		}
 		/* Create on demand up to min_threads to avoid startup penalty for apps that don't use
 		 * the threadpool that much
-		* mono_thread_create_internal (mono_get_root_domain (), threadpool_start_idle_threads, tp, TRUE, FALSE, SMALL_STACK);
-		*/
+                 */
+		mono_thread_create_internal (mono_get_root_domain (), threadpool_start_idle_threads, tp, TRUE, FALSE, SMALL_STACK);
 	}
 
 	for (i = 0; i < njobs; i++) {
