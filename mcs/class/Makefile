@@ -158,6 +158,8 @@ monodroid_dirs := \
 	Mono.CompilerServices.SymbolWriter	\
 	Mono.CSharp	\
 	Microsoft.CSharp \
+	System.Security			\
+	System.Configuration		\
 	System.Net.Http \
 	System.Net.Http.Formatting
 
