@@ -251,12 +251,14 @@ namespace System.Diagnostics.Contracts
 			AssertMustUseRewriter (ContractFailureKind.Precondition, "Contract.Requires");
 		}
 
+		[ConditionalAttribute("CONTRACTS_FULL")]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void Requires<TException> (bool condition) where TException : Exception
 		{
 			AssertMustUseRewriter (ContractFailureKind.Precondition, "Contract.Requires<TException>");
 		}
 
+		[ConditionalAttribute("CONTRACTS_FULL")]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void Requires<TException> (bool condition, string userMessage) where TException : Exception
 		{
