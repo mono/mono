@@ -37,7 +37,7 @@ SILVERLIGHT_DIR = $(mono_libdir)/mono/xbuild/Microsoft/Silverlight
 PORTABLE_DIR = $(mono_libdir)/mono/xbuild/Microsoft/Portable
 EXTRAS_DIR = $(mono_libdir)/mono/$(INSTALL_FRAMEWORK_VERSION)
 install-extras: 
-	$(MKINSTALLDIRS) $(DESTDIR)$(EXTRAS_DIR) $(DESTDIR)$(REDISTLIST_DIR) $(DESTDIR)$(XBUILD_FRAMEWORKS_DIR)/v3.0/RedistList $(DESTDIR)$(XBUILD_FRAMEWORKS_DIR)/v4.0/RedistList
+	$(MKINSTALLDIRS) $(DESTDIR)$(EXTRAS_DIR) $(DESTDIR)$(REDISTLIST_DIR) $(DESTDIR)$(XBUILD_FRAMEWORKS_DIR)/v3.0/RedistList $(DESTDIR)$(XBUILD_FRAMEWORKS_DIR)/v4.0/RedistList $(DESTDIR)$(mono_libdir)/mono/3.5
 	$(INSTALL_DATA) xbuild/xbuild.rsp $(DESTDIR)$(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 	$(INSTALL_DATA) xbuild/$(INSTALL_FRAMEWORK_VERSION)/Microsoft.Common.tasks $(DESTDIR)$(EXTRAS_DIR)
 	$(INSTALL_DATA) xbuild/$(INSTALL_FRAMEWORK_VERSION)/Microsoft.Common.targets $(DESTDIR)$(EXTRAS_DIR)
@@ -71,10 +71,9 @@ EXTRA_DISTFILES = \
 	xbuild/2.0/Microsoft.Common.tasks \
 	xbuild/3.5/Microsoft.Common.tasks \
 	xbuild/4.0/Microsoft.Common.tasks \
-	xbuild/4.5/Microsoft.Common.tasks \
 	xbuild/2.0/Microsoft.Common.targets \
 	xbuild/3.5/Microsoft.Common.targets \
-	xbuild/4.5/Microsoft.Common.targets \
+	xbuild/4.0/Microsoft.Common.targets \
 	xbuild/2.0/FrameworkList.xml \
 	xbuild/3.5/FrameworkList.xml \
 	xbuild/4.0/FrameworkList.xml \
