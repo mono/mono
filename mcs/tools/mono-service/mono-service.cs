@@ -269,7 +269,8 @@ class MonoServiceRunner : MarshalByRefObject
 					info (logname, "Stopping service {0}", service.ServiceName);
 					call (service, "OnStop", null);
 					if (service.ExitCode != 0)
-						error (logname, "Service stopped with a non-zero ExitCode: {0}", service.ExitCode);
+						error (logname, "Service {0} stopped returning a non-zero ExitCode: {1}",
+						       service.ServiceName, service.ExitCode);
 					running = false;
 				}
 				else if (usr1.IsSet && service.CanPauseAndContinue) {
