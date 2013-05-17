@@ -339,6 +339,7 @@ struct _RefQueueEntry {
 #else
 	guint32 gchandle;
 #endif
+	MonoDomain *domain;
 	void *user_data;
 	RefQueueEntry *next;
 };
