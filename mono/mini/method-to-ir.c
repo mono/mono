@@ -9698,6 +9698,14 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						if (cfg->verbose_level > 3)
 							g_print ("converting (in B%d: stack: %d) %s", bblock->block_num, (int)(sp - stack_start), mono_disasm_code_one (NULL, method, ip, NULL));
 						target_ins = sp [-1];
+
+						if (!(cmethod->flags & METHOD_ATTRIBUTE_STATIC)) {
+							if (mono_method_signature (invoke)->param_count == mono_method_signature (cmethod)->param_count) {
+								MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, target_ins->dreg, 0);
+								MONO_EMIT_NEW_COND_EXC (cfg, EQ, "ArgumentException");
+							}
+						}
+
 						sp --;
 						*sp = handle_delegate_ctor (cfg, ctor_method->klass, target_ins, cmethod);
 						CHECK_CFG_EXCEPTION;

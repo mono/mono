@@ -539,7 +539,7 @@ guint32
 mono_arch_cpu_optimizazions (guint32 *exclude_mask)
 {
 	guint32 opts = 0;
-#if __APPLE__
+#if __APPLE__ || defined(PLATFORM_IPHONE_XCOMP)
 	thumb_supported = TRUE;
 	v5_supported = TRUE;
 	iphone_abi = TRUE;
@@ -784,7 +784,7 @@ add_general (guint *gr, guint *stack_size, ArgInfo *ainfo, gboolean simple)
 			ainfo->reg = *gr;
 		}
 	} else {
-#if defined(__APPLE__) && defined(MONO_CROSS_COMPILE)
+#if (defined(__APPLE__) && defined(MONO_CROSS_COMPILE)) || defined(PLATFORM_IPHONE_XCOMP)
 		int i8_align = 4;
 #else
 		int i8_align = __alignof__ (gint64);
@@ -4849,6 +4849,8 @@ exception_id_by_name (const char *name)
 		return MONO_EXC_NULL_REF;
 	if (strcmp (name, "ArrayTypeMismatchException") == 0)
 		return MONO_EXC_ARRAY_TYPE_MISMATCH;
+	if (strcmp (name, "ArgumentException") == 0)
+		return MONO_EXC_ARGUMENT_EXCEPTION;
 	g_error ("Unknown intrinsic exception %s\n", name);
 	return -1;
 }

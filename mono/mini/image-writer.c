@@ -1433,7 +1433,7 @@ bin_writer_emit_writeout (MonoImageWriter *acfg)
 static void
 asm_writer_emit_start (MonoImageWriter *acfg)
 {
-#if defined(TARGET_ARM) && defined(__APPLE__) 
+#if defined(TARGET_ARM) && (defined(__APPLE__) || defined(PLATFORM_IPHONE_XCOMP))
 	fprintf (acfg->fp, "#if defined(__arm__)\n");
 #endif
 }
@@ -1441,7 +1441,7 @@ asm_writer_emit_start (MonoImageWriter *acfg)
 static int
 asm_writer_emit_writeout (MonoImageWriter *acfg)
 {
-#if defined(TARGET_ARM) && defined(__APPLE__) 
+#if defined(TARGET_ARM) && (defined(__APPLE__) || defined(PLATFORM_IPHONE_XCOMP)) 
 	fprintf (acfg->fp, "#endif\n");
 #endif
 	fclose (acfg->fp);

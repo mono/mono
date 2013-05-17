@@ -36,9 +36,6 @@
 gchar *
 g_strndup (const gchar *str, gsize n)
 {
-#ifdef HAVE_STRNDUP
-	return strndup (str, n);
-#else
 	if (str) {
 		char *retval = g_malloc(n+1);
 		if (retval) {
@@ -47,7 +44,6 @@ g_strndup (const gchar *str, gsize n)
 		return retval;
 	}
 	return NULL;
-#endif
 }
 
 void
