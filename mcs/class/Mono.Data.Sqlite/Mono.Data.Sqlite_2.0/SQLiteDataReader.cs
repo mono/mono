@@ -555,6 +555,8 @@ namespace Mono.Data.Sqlite
       return GetSchemaTable(true, false);
     }
 
+    static bool hasColumnMetadataSupport = true;
+
     internal DataTable GetSchemaTable(bool wantUniqueInfo, bool wantDefaultValue)
     {
       CheckClosed();
@@ -620,18 +622,34 @@ namespace Mono.Data.Sqlite
         row[SchemaTableColumn.DataType] = GetFieldType(n);
         row[SchemaTableOptionalColumn.IsHidden] = false;
 
+        // HACK: Prevent exploding if Sqlite was built without the SQLITE_ENABLE_COLUMN_METADATA option.
+        //
+        // This code depends on sqlite3_column_origin_name, which only exists if Sqlite was built with
+        // the SQLITE_ENABLE_COLUMN_METADATA option. This is not the case on iOS, MacOS or (most?)
+        // Androids, so we exclude it from the MONOTOUCH build, and degrade on other systems by simply
+        //  omitting the metadata from the result.
+        //
+        // TODO: we could implement better fallbacks as proposed in
+        // https://bugzilla.xamarin.com/show_bug.cgi?id=2128
+        //
 #if !MONOTOUCH
-        strColumn = _command.Connection._sql.ColumnOriginalName(_activeStatement, n);
-        if (String.IsNullOrEmpty(strColumn) == false) row[SchemaTableColumn.BaseColumnName] = strColumn;
+        if (hasColumnMetadataSupport) {
+            try {
+                strColumn = _command.Connection._sql.ColumnOriginalName(_activeStatement, n);
+                if (String.IsNullOrEmpty(strColumn) == false) row[SchemaTableColumn.BaseColumnName] = strColumn;
 
-        row[SchemaTableColumn.IsExpression] = String.IsNullOrEmpty(strColumn);
-        row[SchemaTableColumn.IsAliased] = (String.Compare(GetName(n), strColumn, true, CultureInfo.InvariantCulture) != 0);
+                row[SchemaTableColumn.IsExpression] = String.IsNullOrEmpty(strColumn);
+                row[SchemaTableColumn.IsAliased] = (String.Compare(GetName(n), strColumn, true, CultureInfo.InvariantCulture) != 0);
 
-        temp = _command.Connection._sql.ColumnTableName(_activeStatement, n);
-        if (String.IsNullOrEmpty(temp) == false) row[SchemaTableColumn.BaseTableName] = temp;
+                temp = _command.Connection._sql.ColumnTableName(_activeStatement, n);
+                if (String.IsNullOrEmpty(temp) == false) row[SchemaTableColumn.BaseTableName] = temp;
 
-        temp = _command.Connection._sql.ColumnDatabaseName(_activeStatement, n);
-        if (String.IsNullOrEmpty(temp) == false) row[SchemaTableOptionalColumn.BaseCatalogName] = temp;
+                temp = _command.Connection._sql.ColumnDatabaseName(_activeStatement, n);
+                if (String.IsNullOrEmpty(temp) == false) row[SchemaTableOptionalColumn.BaseCatalogName] = temp;
+            } catch (EntryPointNotFoundException) {
+                hasColumnMetadataSupport = false;
+            }
+        }
 #endif
 
         string dataType = null;
