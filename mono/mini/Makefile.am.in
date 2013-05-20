@@ -117,6 +117,10 @@ shared_libraries = $(boehm_libraries) $(sgen_libraries)
 else
 if SHARED_MONO
 shared_libraries = $(boehm_libraries) $(sgen_libraries)
+else
+if NACL_CODEGEN
+shared_libraries = $(boehm_libraries)
+endif
 endif
 endif
 
