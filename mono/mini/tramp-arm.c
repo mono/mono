@@ -299,8 +299,8 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 		ARM_LDR_REG_REG (code, ARMREG_R0, ARMREG_PC, ARMREG_R0);
 	} else {
 #ifdef USE_JUMP_TABLES
-                load_get_lmf_addr = mono_jumptable_add_entry ();
-                code = mono_arm_load_jumptable_entry (code, load_get_lmf_addr, ARMREG_R0);
+		load_get_lmf_addr = mono_jumptable_add_entry ();
+		code = mono_arm_load_jumptable_entry (code, load_get_lmf_addr, ARMREG_R0);
 #else
 		load_get_lmf_addr = code;
 		code += 4;
@@ -893,7 +893,6 @@ mono_arch_create_general_rgctx_lazy_fetch_trampoline (MonoTrampInfo **info, gboo
 	/* Ensure we complete the bundle. */
 	code = mono_arm_nacl_ensure_at_position (code, 0);
 #endif
-
 	/* Commit code to the executable section for Native Client. */
 	g_assert ((code - buf) <= tramp_size);
 	nacl_global_codeman_validate (&buf, code - buf, &code);

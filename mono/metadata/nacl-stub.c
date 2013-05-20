@@ -51,29 +51,29 @@ int lstat(const char *path, struct stat *buf)
 int getdtablesize(void)
 {
 #ifdef OPEN_MAX
-  return OPEN_MAX;
+	return OPEN_MAX;
 #else
-  return 256;
+	return 256;
 #endif
 }
 
 size_t getpagesize(void)
 {
 #ifdef PAGE_SIZE
-  return PAGE_SIZE;
+	return PAGE_SIZE;
 #else
-  return 4096;
+	return 4096;
 #endif
 }
 
 int sem_trywait(sem_t *sem) {
-  g_assert_not_reached ();
-  return -1;
+	g_assert_not_reached ();
+	return -1;
 }
 
 int sem_timedwait(sem_t *sem, const struct timespec *abs_timeout) {
-  g_assert_not_reached ();
-  return -1;
+	g_assert_not_reached ();
+	return -1;
 }
 
 #endif

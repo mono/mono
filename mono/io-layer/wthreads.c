@@ -136,7 +136,7 @@ void _wapi_thread_set_termination_details (gpointer handle,
 	struct _WapiHandle_thread *thread_handle;
 	gboolean ok;
 	int thr_ret;
-	
+
 	if (_wapi_handle_issignalled (handle) ||
 	    _wapi_handle_type (handle) == WAPI_HANDLE_UNUSED) {
 		/* We must have already deliberately finished with
@@ -489,7 +489,7 @@ static gboolean find_thread_by_id (gpointer handle, gpointer user_data)
 	pthread_t tid = (pthread_t)user_data;
 	struct _WapiHandle_thread *thread_handle;
 	gboolean ok;
-	
+
 	/* Ignore threads that have already exited (ie they are signalled) */
 	if (_wapi_handle_issignalled (handle) == FALSE) {
 		ok = _wapi_lookup_handle (handle, WAPI_HANDLE_THREAD,
