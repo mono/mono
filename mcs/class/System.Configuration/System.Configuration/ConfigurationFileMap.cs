@@ -26,7 +26,6 @@
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 using System.Collections;
 
 namespace System.Configuration
@@ -56,4 +55,4 @@ namespace System.Configuration
 		}
 	}
 }
-#endif
+

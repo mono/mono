@@ -26,7 +26,6 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 namespace System.Configuration
 {
         public enum ConfigurationAllowDefinition
@@ -37,4 +36,4 @@ namespace System.Configuration
                 Everywhere = 300
         }
 }
-#endif
+
