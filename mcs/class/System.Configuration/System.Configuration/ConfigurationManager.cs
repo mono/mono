@@ -177,7 +177,6 @@ namespace System.Configuration {
 			}
 		}
 
-		[MonoTODO]
 		public static ConnectionStringSettingsCollection ConnectionStrings {
 			get {
 				ConnectionStringsSection connectionStrings = (ConnectionStringsSection) GetSection ("connectionStrings");
