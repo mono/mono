@@ -34,9 +34,7 @@ using System.Security.Cryptography;
 
 namespace Mono.Security.Cryptography {
 
-#if INSIDE_SYSTEM
-	internal
-#else
+#if !INSIDE_CORLIB
 	public
 #endif
 	abstract class MD4 : HashAlgorithm {
