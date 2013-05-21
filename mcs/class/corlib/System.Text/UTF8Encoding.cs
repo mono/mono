@@ -468,15 +468,15 @@ again:
 					null, 0,
 					out t_charsProcessed, out t_bytesProcessed, ref leftChar);
 
+			if(s == EncoderStatus.InsufficientSpace)
+				return EncoderStatus.InsufficientSpace;
+
 			charsProcessed += t_charsProcessed;
 			bytesProcessed += t_bytesProcessed;
 
 			switch (s) {
 			case EncoderStatus.Ok:
 				break;	// everything OK :D
-
-			case EncoderStatus.InsufficientSpace:
-				throw new ArgumentException ("Insufficient Space", "bytes");
 
 			case EncoderStatus.InputRunOut:
 				return EncoderStatus.InputRunOut;
