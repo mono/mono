@@ -34,23 +34,20 @@ using System.Web;
 
 using NUnit.Framework;
 
-// this single test has this AAAAAA prefix in its namespace to make sure
-// it is the very first to run within this test suite,
-// otherwise BXC#11972 cannot be reproduced within this test suite
-namespace AAAAAAA_MonoTests.System.Web {
+namespace MonoTests.System.Web {
 
 	[TestFixture]
 	public class SystemConfigurationConfigurationManagerAppSettingsTest
 	{
 		[Test]
-		public void UsageOfSystemWebApiShouldNotBreakAccessToAppSettings()
+		public void UsageOfSystemWebApiShouldNotBreakAccessToAppSettings ()
 		{
-			Assert.IsNotNull (ConfigurationManager.AppSettings ["BXC11972"], "Null on first try");
-
-			// any API in System.Web seems to expose the bug, i.e. this too: VirtualPathUtility.Combine ("/hi", "there");
+			// any API in System.Web makes the ConfigurationManager replace its configSystem with the HttpConfigurationSystem,
+			// which causes BXC#11972
 			HttpUtility.HtmlEncode ("foo");
 
-			Assert.IsNotNull (ConfigurationManager.AppSettings ["BXC11972"], "Null on second try");
+			Assert.IsNotNull (ConfigurationManager.AppSettings ["BXC11972"],
+			                  "Should still be able to access <appSettings> when System.Web.WebConfigurationManager is used");
 		}
 	}
 }
