@@ -790,7 +790,7 @@ namespace System.Web.Configuration {
 						throw new ConfigurationException ("Cannot find method CCS");
 
 					object [] args = new object [] {system};
-					changeConfig.Invoke (null, args);
+					system.fallback = (IInternalConfigSystem)changeConfig.Invoke (null, args);
 					//configSystem = system;
 				}
 			}

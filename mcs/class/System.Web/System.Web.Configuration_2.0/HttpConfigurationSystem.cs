@@ -3,6 +3,7 @@
 //
 // Authors:
 //  Chris Toshok (toshok@ximian.com)
+//  Andres G. Aragoneses (andres@7digital.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,19 +25,31 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2013 7digital Media, Ltd (http://www.7digital.com)
 //
 
 using System;
 using System.Reflection;
 using System.Configuration.Internal;
+using System.Collections.Specialized;
 
 namespace System.Web.Configuration {
 
 	internal class HttpConfigurationSystem : IInternalConfigSystem
 	{
+		internal IInternalConfigSystem fallback;
+
 		object IInternalConfigSystem.GetSection (string configKey)
 		{
-			return WebConfigurationManager.GetSection (configKey);
+			var section = WebConfigurationManager.GetSection (configKey);
+
+			if (fallback != null) {
+				var col = section as NameValueCollection;
+
+				if (section == null || (col != null && col.Count == 0))
+					return fallback.GetSection (configKey);
+			}
+			return section;
 		}
 
 		void IInternalConfigSystem.RefreshConfig (string sectionName)
