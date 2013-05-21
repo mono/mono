@@ -334,10 +334,9 @@ namespace Microsoft.Build.Tasks {
 						continue;
 
 					ResolvedReference resolved_ref = ResolveDependencyByAssemblyName (
-							aname, asm.FullName, parent_copy_local);
+						aname, asm.FullName, parent_copy_local);
 
-					if (resolved_ref != null && !IsFromGacOrTargetFramework (resolved_ref)
-							&& resolved_ref.FoundInSearchPath != SearchPath.PkgConfig) {
+					if (IncludeDependencies (resolved_ref, aname.FullName)) {
 						tempResolvedDepFiles[resolved_ref.AssemblyName.FullName] = resolved_ref.TaskItem;
 						dependencies.Enqueue (resolved_ref.TaskItem.ItemSpec);
 					}
@@ -527,6 +526,15 @@ namespace Microsoft.Build.Tasks {
 		{
 			return rr.FoundInSearchPath == SearchPath.Gac ||
 				rr.FoundInSearchPath == SearchPath.TargetFrameworkDirectory;
+		}
+
+		bool IncludeDependencies (ResolvedReference rr, string aname)
+		{
+			if (rr == null)
+				return false;
+			if (aname.Equals ("System.Runtime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"))
+				return true;
+			return !IsFromGacOrTargetFramework (rr) && rr.FoundInSearchPath != SearchPath.PkgConfig;
 		}
 
 		void LogTaskParameters ()
