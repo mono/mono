@@ -320,6 +320,9 @@ namespace Mono.Security.X509 {
 						case "1.2.840.113549.1.1.13":	// SHA-512 with RSA Encryption
 							hash = SHA512.Create ();
 							break;
+						case "1.3.36.3.3.1.2":
+							hash = RIPEMD160.Create ();
+							break;
 						default:
 							return null;
 					}
@@ -421,6 +424,7 @@ namespace Mono.Security.X509 {
 					case "1.2.840.113549.1.1.11":	// SHA-256 with RSA Encryption
 					case "1.2.840.113549.1.1.12":	// SHA-384 with RSA Encryption
 					case "1.2.840.113549.1.1.13":	// SHA-512 with RSA Encryption
+					case "1.3.36.3.3.1.2":			// RIPEMD160 with RSA Encryption
 						return (byte[]) signature.Clone ();
 
 					case "1.2.840.10040.4.3":	// SHA-1 with DSA
@@ -544,6 +548,10 @@ namespace Mono.Security.X509 {
 				// SHA-512 with RSA Encryption 
 				case "1.2.840.113549.1.1.13":
 					v.SetHashAlgorithm ("SHA512");
+					break;
+				// RIPEMD160
+				case "1.3.36.3.3.1.2":
+					v.SetHashAlgorithm ("RIPEMD160");
 					break;
 				// SHA1-1 with DSA
 				case "1.2.840.10040.4.3":

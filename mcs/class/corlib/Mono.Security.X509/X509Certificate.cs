@@ -34,8 +34,6 @@ using SSCX = System.Security.Cryptography.X509Certificates;
 using System.Security.Permissions;
 using System.Text;
 
-using Mono.Security.Cryptography;
-
 namespace Mono.Security.X509 {
 
 	// References:
@@ -44,7 +42,7 @@ namespace Mono.Security.X509 {
 	// b.	ITU ASN.1 standards (free download)
 	//	http://www.itu.int/ITU-T/studygroups/com17/languages/
 
-#if INSIDE_CORLIB && !MOONLIGHT
+#if INSIDE_CORLIB
 	internal class X509Certificate : ISerializable {
 #else
 	public class X509Certificate : ISerializable {
@@ -267,12 +265,8 @@ namespace Mono.Security.X509 {
 					// BUG: MS BCL 1.0 can't import a key which 
 					// isn't the same size as the one present in
 					// the container.
-#if MOONLIGHT
-					_dsa = new DSAManaged (dsaParams.Y.Length << 3);
-#else
 					_dsa = (DSA) new DSACryptoServiceProvider (dsaParams.Y.Length << 3);
 					_dsa.ImportParameters (dsaParams);
-#endif
 				}
 				return _dsa; 
 			}
@@ -301,6 +295,14 @@ namespace Mono.Security.X509 {
 							hash = Mono.Security.Cryptography.MD2.Create ();
 #endif
 							break;
+						case "1.2.840.113549.1.1.3":	// MD4 with RSA encryption 
+							// maybe someone installed MD4 ?
+#if INSIDE_CORLIB
+							hash = HashAlgorithm.Create ("MD4");
+#else
+							hash = Mono.Security.Cryptography.MD4.Create ();
+#endif
+							break;
 						case "1.2.840.113549.1.1.4":	// MD5 with RSA encryption 
 							hash = MD5.Create ();
 							break;
@@ -308,6 +310,18 @@ namespace Mono.Security.X509 {
 						case "1.3.14.3.2.29":		// SHA1 with RSA signature 
 						case "1.2.840.10040.4.3":	// SHA1-1 with DSA
 							hash = SHA1.Create ();
+							break;
+						case "1.2.840.113549.1.1.11":	// SHA-256 with RSA Encryption
+							hash = SHA256.Create ();
+							break;
+						case "1.2.840.113549.1.1.12":	// SHA-384 with RSA Encryption
+							hash = SHA384.Create ();
+							break;
+						case "1.2.840.113549.1.1.13":	// SHA-512 with RSA Encryption
+							hash = SHA512.Create ();
+							break;
+						case "1.3.36.3.3.1.2":
+							hash = RIPEMD160.Create ();
 							break;
 						default:
 							return null;
@@ -367,12 +381,8 @@ namespace Mono.Security.X509 {
 					// isn't the same size as the one present in
 					// the container.
 					int keySize = (rsaParams.Modulus.Length << 3);
-#if MOONLIGHT
-					_rsa = new RSAManaged (keySize);
-#else
 					_rsa = (RSA) new RSACryptoServiceProvider (keySize);
 					_rsa.ImportParameters (rsaParams);
-#endif
 				}
 				return _rsa; 
 			}
@@ -407,9 +417,14 @@ namespace Mono.Security.X509 {
 
 				switch (m_signaturealgo) {
 					case "1.2.840.113549.1.1.2":	// MD2 with RSA encryption 
+					case "1.2.840.113549.1.1.3":	// MD4 with RSA encryption 
 					case "1.2.840.113549.1.1.4":	// MD5 with RSA encryption 
 					case "1.2.840.113549.1.1.5":	// SHA-1 with RSA Encryption 
 					case "1.3.14.3.2.29":		// SHA1 with RSA signature
+					case "1.2.840.113549.1.1.11":	// SHA-256 with RSA Encryption
+					case "1.2.840.113549.1.1.12":	// SHA-384 with RSA Encryption
+					case "1.2.840.113549.1.1.13":	// SHA-512 with RSA Encryption
+					case "1.3.36.3.3.1.2":			// RIPEMD160 with RSA Encryption
 						return (byte[]) signature.Clone ();
 
 					case "1.2.840.10040.4.3":	// SHA-1 with DSA
@@ -499,33 +514,53 @@ namespace Mono.Security.X509 {
 			return v.VerifySignature (this.Hash, this.Signature);
 		}
 
-		internal string GetHashNameFromOID (string oid)
-		{
-			switch (oid) {
-			// MD2 with RSA encryption 
-			case "1.2.840.113549.1.1.2":
-				// maybe someone installed MD2 ?
-				return "MD2";
-			// MD5 with RSA encryption 
-			case "1.2.840.113549.1.1.4":
-				return "MD5";
-			// SHA-1 with RSA Encryption 
-			case "1.2.840.113549.1.1.5":
-			case "1.3.14.3.2.29":
-				return "SHA1";
-			default:
-				return null;
-			}
-		}
-
 		internal bool VerifySignature (RSA rsa) 
 		{
 			RSAPKCS1SignatureDeformatter v = new RSAPKCS1SignatureDeformatter (rsa);
-			string hashName = GetHashNameFromOID (m_signaturealgo);
-			if (hashName == null)
-				throw new CryptographicException ("Unsupported hash algorithm: " + m_signaturealgo);
-
-			v.SetHashAlgorithm (hashName);
+			switch (m_signaturealgo) {
+				// MD2 with RSA encryption 
+				case "1.2.840.113549.1.1.2":
+					// maybe someone installed MD2 ?
+					v.SetHashAlgorithm ("MD2");
+					break;
+				// MD4 with RSA encryption 
+				case "1.2.840.113549.1.1.3":
+					// maybe someone installed MD4 ?
+					v.SetHashAlgorithm ("MD4");
+					break;
+				// MD5 with RSA encryption 
+				case "1.2.840.113549.1.1.4":
+					v.SetHashAlgorithm ("MD5");
+					break;
+				// SHA-1 with RSA Encryption 
+				case "1.2.840.113549.1.1.5":
+				case "1.3.14.3.2.29":
+					v.SetHashAlgorithm ("SHA1");
+					break;
+				// SHA-256 with RSA Encryption 
+				case "1.2.840.113549.1.1.11":
+					v.SetHashAlgorithm ("SHA256");
+					break;
+				// SHA-384 with RSA Encryption 
+				case "1.2.840.113549.1.1.12":
+					v.SetHashAlgorithm ("SHA384");
+					break;
+				// SHA-512 with RSA Encryption 
+				case "1.2.840.113549.1.1.13":
+					v.SetHashAlgorithm ("SHA512");
+					break;
+				// RIPEMD160
+				case "1.3.36.3.3.1.2":
+					v.SetHashAlgorithm ("RIPEMD160");
+					break;
+				// SHA1-1 with DSA
+				case "1.2.840.10040.4.3":
+					// invalid but this can occurs when building a bad chain - e.g. missing certificate(s)
+					// we return false so we can report the "chain" error to the user (not an exception)
+					return false;
+				default:
+					throw new CryptographicException ("Unsupported hash algorithm: " + m_signaturealgo);
+			}
 			return v.VerifySignature (this.Hash, this.Signature);
 		}
 
@@ -544,22 +579,26 @@ namespace Mono.Security.X509 {
 
 		public bool CheckSignature (byte[] hash, string hashAlgorithm, byte[] signature) 
 		{
-#if MOONLIGHT
-			string hashName = GetHashNameFromOID (hashAlgorithm);
-			HashAlgorithm algo = HashAlgorithm.Create (hashName);
-			return PKCS1.Verify_v15 (RSA, algo, hash, signature);
-#else
 			RSACryptoServiceProvider r = (RSACryptoServiceProvider) RSA;
 			return r.VerifyHash (hash, hashAlgorithm, signature);
-#endif
 		}
 
 		public bool IsSelfSigned {
 			get { 
-				if (m_issuername == m_subject)
-					return VerifySignature (RSA); 
-				else
+				if (m_issuername != m_subject)
 					return false;
+
+				try {
+					if (RSA != null)
+						return VerifySignature (RSA);
+					else if (DSA != null)
+						return VerifySignature (DSA);
+					else
+						return false; // e.g. a certificate with only DSA parameters
+				}
+				catch (CryptographicException) {
+					return false;
+				}
 			}
 		}
 
