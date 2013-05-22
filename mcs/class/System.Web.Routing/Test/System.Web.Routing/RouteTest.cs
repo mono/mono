@@ -1117,6 +1117,53 @@ namespace MonoTests.System.Web.Routing
 		}
 
 		[Test]
+		public void GetVirtualPath4_2 ()
+		{
+			var r = new MyRoute("{foo}/{bar}", new MyRouteHandler());
+			var hc = new HttpContextStub2("~/x/y", String.Empty);
+			var rd = r.GetRouteData(hc);
+
+			// override a value incompletely
+			var values = new RouteValueDictionary();
+			values["bar"] = "A";
+
+			var vp = r.GetVirtualPath(new RequestContext(hc, rd), values);
+			Assert.IsNotNull(vp);
+			Assert.AreEqual("x/A", vp.VirtualPath);
+		}
+
+		[Test]
+		public void GetVirtualPath4Bis ()
+		{
+			var r = new MyRoute("part/{foo}/{bar}", new MyRouteHandler());
+			var hc = new HttpContextStub2("~/part/x/y", String.Empty);
+			var rd = r.GetRouteData(hc);
+
+			// override a value incompletely
+			var values = new RouteValueDictionary();
+			values["foo"] = "A";
+
+			var vp = r.GetVirtualPath(new RequestContext(hc, rd), values);
+			Assert.IsNull(vp);
+		}
+
+		[Test]
+		public void GetVirtualPath4_2Bis ()
+		{
+			var r = new MyRoute("part/{foo}/{bar}", new MyRouteHandler());
+			var hc = new HttpContextStub2("~/part/x/y", String.Empty);
+			var rd = r.GetRouteData(hc);
+
+			// override a value incompletely
+			var values = new RouteValueDictionary();
+			values["bar"] = "A";
+
+			var vp = r.GetVirtualPath(new RequestContext(hc, rd), values);
+			Assert.IsNotNull(vp);
+			Assert.AreEqual("part/x/A", vp.VirtualPath);
+		}
+
+		[Test]
 		public void GetVirtualPath5 ()
 		{
 			var r = new MyRoute ("{foo}/{bar}", new MyRouteHandler ());
@@ -1489,6 +1536,167 @@ namespace MonoTests.System.Web.Routing
 
 			Assert.IsNotNull(uppercase, "#A5");
 			Assert.AreEqual ("HelloWorld", uppercase.VirtualPath, "#A6");
+		}
+
+		[Test]
+		public void GetVirtualPath20 ()
+		{
+			var r = new MyRoute("summary/{controller}/{id}/{action}", new MyRouteHandler())
+			{
+				Defaults = new RouteValueDictionary(new { action = "Index" })
+			};
+			var hc = new HttpContextStub2("~/summary/kind/1/test", String.Empty);
+			var rd = r.GetRouteData(hc);
+			Assert.IsNotNull(rd, "#1");
+
+			var values = new RouteValueDictionary(new { id = "2", action = "save" });
+			var vp = r.GetVirtualPath(new RequestContext(hc, rd), values);
+
+			Assert.IsNotNull(vp, "#2");
+			Assert.AreEqual("summary/kind/2/save", vp.VirtualPath, "#2-1");
+			Assert.AreEqual(r, vp.Route, "#2-2");
+			Assert.AreEqual(0, vp.DataTokens.Count, "#2-3");
+
+			values = new RouteValueDictionary(new { id = "3", action = "save", extra = "stuff" });
+			vp = r.GetVirtualPath(new RequestContext(hc, rd), values);
+
+			Assert.IsNotNull(vp, "#3");
+			Assert.AreEqual("summary/kind/3/save?extra=stuff", vp.VirtualPath, "#3-2");
+			Assert.AreEqual(0, vp.DataTokens.Count, "#3-3");
+		}
+
+		[Test]
+		public void GetVirtualPath21 ()
+		{
+			var r = new MyRoute("summary/{controller}/{id}/{action}", new MyRouteHandler())
+			{
+				Defaults = new RouteValueDictionary(new { action = "Index" })
+			};
+			var hc = new HttpContextStub2("~/summary/kind/1/test", String.Empty);
+			var rd = r.GetRouteData(hc);
+			Assert.IsNotNull(rd, "#1");
+			Assert.AreEqual("1", rd.Values["id"]);
+
+			var values = new RouteValueDictionary(new { action = "save" });
+			var vp = r.GetVirtualPath(new RequestContext(hc, rd), values);
+
+			Assert.IsNotNull(vp, "#2");
+			Assert.AreEqual("summary/kind/1/save", vp.VirtualPath, "#2-1");
+			Assert.AreEqual(r, vp.Route, "#2-2");
+			Assert.AreEqual(0, vp.DataTokens.Count, "#2-3");
+
+			values = new RouteValueDictionary(new { action = "save", extra = "stuff" });
+			vp = r.GetVirtualPath(new RequestContext(hc, rd), values);
+
+			Assert.IsNotNull(vp, "#3");
+			Assert.AreEqual("summary/kind/1/save?extra=stuff", vp.VirtualPath, "#3-2");
+			Assert.AreEqual(0, vp.DataTokens.Count, "#3-3");
+		}
+
+		[Test]
+		public void GetVirtualPath22 ()
+		{
+			var r = new MyRoute("summary/{controller}/{id}/{action}", new MyRouteHandler())
+			{
+				Defaults = new RouteValueDictionary(new { action = "Index" })
+			};
+			var hc = new HttpContextStub2("~/summary/kind/90941a4f-daf3-4c89-a6dc-83e8de4e3db5/test", String.Empty);
+			var rd = r.GetRouteData(hc);
+			Assert.IsNotNull(rd, "#0");
+			Assert.AreEqual("90941a4f-daf3-4c89-a6dc-83e8de4e3db5", rd.Values["id"]);
+
+			var values = new RouteValueDictionary(new { action = "Index" });
+			var vp = r.GetVirtualPath(new RequestContext(hc, rd), values);
+
+			Assert.IsNotNull(vp, "#1");
+			Assert.AreEqual("summary/kind/90941a4f-daf3-4c89-a6dc-83e8de4e3db5", vp.VirtualPath, "#1-1");
+			Assert.AreEqual(r, vp.Route, "#1-2");
+			Assert.AreEqual(0, vp.DataTokens.Count, "#1-3");
+
+			values = new RouteValueDictionary(new { action = "save" });
+			vp = r.GetVirtualPath(new RequestContext(hc, rd), values);
+
+			Assert.IsNotNull(vp, "#2");
+			Assert.AreEqual("summary/kind/90941a4f-daf3-4c89-a6dc-83e8de4e3db5/save", vp.VirtualPath, "#2-1");
+			Assert.AreEqual(r, vp.Route, "#2-2");
+			Assert.AreEqual(0, vp.DataTokens.Count, "#2-3");
+
+			values = new RouteValueDictionary(new { action = "save", extra = "stuff" });
+			vp = r.GetVirtualPath(new RequestContext(hc, rd), values);
+
+			Assert.IsNotNull(vp, "#3");
+			Assert.AreEqual("summary/kind/90941a4f-daf3-4c89-a6dc-83e8de4e3db5/save?extra=stuff", vp.VirtualPath, "#3-2");
+			Assert.AreEqual(0, vp.DataTokens.Count, "#3-3");
+		}
+
+		[Test]
+		public void GetVirtualPath23 ()
+		{
+			var r0 = new MyRoute ("summary/{id}", new MyRouteHandler());
+			var r1 = new MyRoute ("summary/{controller}/{id}/{action}", new MyRouteHandler())
+			{
+				Defaults = new RouteValueDictionary (new { action = "Index" })
+			};
+			var hc = new HttpContextStub2 ("~/summary/90941a4f-daf3-4c89-a6dc-83e8de4e3db5", String.Empty);
+			var rd = r0.GetRouteData (hc);
+			Assert.IsNotNull (rd, "#0");
+			Assert.AreEqual ("90941a4f-daf3-4c89-a6dc-83e8de4e3db5", rd.Values["id"]);
+
+			var values = new RouteValueDictionary ()
+			{
+				{ "controller", "SomeThing" },
+				{ "action", "Index" }
+			};
+			var vp = r1.GetVirtualPath (new RequestContext (hc, rd), values);
+
+			Assert.IsNotNull (vp, "#1");
+			Assert.AreEqual ("summary/SomeThing/90941a4f-daf3-4c89-a6dc-83e8de4e3db5", vp.VirtualPath, "#1-1");
+			Assert.AreEqual (r1, vp.Route, "#1-2");
+			Assert.AreEqual (0, vp.DataTokens.Count, "#1-3");
+		}
+
+		[Test]
+		public void GetVirtualPath24 ()
+		{
+			var r = new MyRoute ("{controller}/{country}-{locale}/{action}", new MyRouteHandler())
+			{
+				Defaults = new RouteValueDictionary (new { action = "Index", country = "us", locale = "en" })
+			};
+			var hc = new HttpContextStub2 ("~/login", String.Empty);
+			var rd = r.GetRouteData (hc);
+			Assert.IsNull (rd, "#0");
+
+			var values = new RouteValueDictionary ()
+			{
+				{ "controller", "SomeThing" },
+				{ "action", "Index" },
+				{ "country", "es" }
+			};
+			var vp = r.GetVirtualPath (new RequestContext (hc, new RouteData()), values);
+
+			Assert.IsNotNull (vp, "#1");
+			Assert.AreEqual ("SomeThing/es-en", vp.VirtualPath, "#1-1");
+			Assert.AreEqual (r, vp.Route, "#1-2");
+			Assert.AreEqual (0, vp.DataTokens.Count, "#1-3");
+
+			// Case #2: pass no country, but locale as user value.
+			values.Remove("country");
+			values.Add("locale", "xx");
+			vp = r.GetVirtualPath(new RequestContext(hc, new RouteData()), values);
+
+			Assert.IsNotNull(vp, "#2");
+			Assert.AreEqual("SomeThing/us-xx", vp.VirtualPath, "#2-1");
+			Assert.AreEqual(r, vp.Route, "#2-2");
+			Assert.AreEqual(0, vp.DataTokens.Count, "#2-3");
+
+			// Case #3: make contry required.
+			r = new MyRoute("{controller}/{country}-{locale}/{action}", new MyRouteHandler())
+			{
+				Defaults = new RouteValueDictionary(new { action = "Index", locale = "en" })
+			};
+			vp = r.GetVirtualPath(new RequestContext(hc, new RouteData()), values);
+
+			Assert.IsNull(vp, "#3");
 		}
 
 		// Bug #500739
