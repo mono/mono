@@ -611,5 +611,17 @@ namespace MonoTests.System.Configuration {
 				Assert.That (EvaluationContext != null, label);
 			}
 		}
+
+
+		[Test]
+		public void TestConnectionStringRetrieval ()
+		{
+			var connStringObj = ConfigurationManager.ConnectionStrings ["test-connstring"];
+			Assert.IsNotNull (connStringObj);
+			var connString = connStringObj.ConnectionString;
+			Assert.IsFalse (String.IsNullOrEmpty (connString));
+			Assert.AreEqual ("Server=(local);Initial Catalog=someDb;User Id=someUser;Password=somePassword;Application Name=someAppName;Min Pool Size=5;Max Pool Size=500;Connect Timeout=10;Connection Lifetime=29;",
+			                 connString);
+		}
 	}
 }

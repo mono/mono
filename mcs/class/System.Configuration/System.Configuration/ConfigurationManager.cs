@@ -26,7 +26,7 @@
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
-#if NET_2_0
+
 using System;
 using System.Collections;
 using System.Runtime.CompilerServices;
@@ -177,7 +177,6 @@ namespace System.Configuration {
 			}
 		}
 
-		[MonoTODO]
 		public static ConnectionStringSettingsCollection ConnectionStrings {
 			get {
 				ConnectionStringsSection connectionStrings = (ConnectionStringsSection) GetSection ("connectionStrings");
@@ -209,5 +208,3 @@ namespace System.Configuration {
 		}
 	}
 }
-
-#endif

@@ -29,8 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 using System.Configuration.Internal;
 using System.Globalization;
@@ -189,4 +187,3 @@ namespace System.Configuration
 #pragma warning restore
 }
 
-#endif
