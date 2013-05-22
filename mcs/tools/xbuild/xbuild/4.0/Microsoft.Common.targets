@@ -264,10 +264,13 @@
 		>
 			<Output TaskParameter="ResolvedFiles" ItemName="ResolvedFiles"/>
 			<Output TaskParameter="ResolvedFiles" ItemName="ReferencePath"/>
-			<Output TaskParameter="ResolvedDependencyFiles" ItemName="_ResolvedDependencyFiles"/>
+			<Output TaskParameter="ResolvedDependencyFiles" ItemName="ReferenceDependencyPaths"/>
 			<Output TaskParameter="RelatedFiles" ItemName="_ReferenceRelatedPaths"/>
 			<Output TaskParameter="SatelliteFiles" ItemName="ReferenceSatellitePaths"/>
 			<Output TaskParameter="CopyLocalFiles" ItemName="ReferenceCopyLocalPaths"/>
+			
+			<!-- FIXME: backwards compatibility -->
+			<Output TaskParameter="ResolvedDependencyFiles" ItemName="_ResolvedDependencyFiles"/>
 		</ResolveAssemblyReference>
 	</Target>
 
@@ -541,7 +544,7 @@
 			LicenseTarget = "$(TargetFileName)"
 			OutputDirectory = "$(IntermediateOutputPath)"
 			OutputLicense = "$(IntermediateOutputPath)$(TargetFileName).licenses"
-			ReferencedAssemblies = "@(ReferencePath);@(_ResolvedDependencyFiles)"
+			ReferencedAssemblies = "@(ReferencePath);@(ReferenceDependencyPaths)"
 			ToolPath = "$(LCToolPath)"
 			ToolExe = "$(LCToolExe)">
 
