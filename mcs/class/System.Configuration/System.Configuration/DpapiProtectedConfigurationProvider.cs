@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Xml;
 using System.Collections.Specialized;
 
@@ -67,4 +66,3 @@ it is suggested that you use the RsaProtectedConfigurationProvider.";
 		}
 	}
 }
-#endif

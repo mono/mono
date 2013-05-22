@@ -28,8 +28,6 @@
 // Copyright (C) 2004,2005 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
-
 using System;
 using System.Xml;
 using System.Collections.Specialized;
@@ -123,4 +121,3 @@ namespace System.Configuration
 	}
 }
 
-#endif
