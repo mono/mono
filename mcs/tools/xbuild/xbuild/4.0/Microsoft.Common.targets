@@ -352,12 +352,14 @@
 
 	<PropertyGroup>
 		<BuildDependsOn>
+			BuildOnlySettings;
 			BeforeBuild;
 			CoreBuild;
 			AfterBuild
 		</BuildDependsOn>
 	</PropertyGroup>
-
+	
+	<Target Name="BuildOnlySettings"/>
 	<Target Name="BeforeBuild"/>
 	<Target Name="AfterBuild"/>
 
