@@ -18,6 +18,7 @@ Microsoft.Build.BuildEngine/BuildPropertyGroupCollection.cs
 Microsoft.Build.BuildEngine/BuildPropertyGroup.cs
 Microsoft.Build.BuildEngine/BuildSettings.cs
 Microsoft.Build.BuildEngine/BuildTask.cs
+Microsoft.Build.BuildEngine/BuildTaskItem.cs
 Microsoft.Build.BuildEngine/BuildTaskItemGroup.cs
 Microsoft.Build.BuildEngine/BuildTaskPropertyGroup.cs
 Microsoft.Build.BuildEngine/BuildWhen.cs

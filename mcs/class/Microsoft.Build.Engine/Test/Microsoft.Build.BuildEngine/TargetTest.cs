@@ -692,7 +692,21 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				</Project>", "D");
 		}
 
-#endif
+		[Test]
+		public void ItemGroupInsideTarget_Batching ()
+		{
+			ItemGroupInsideTarget (
+				@"<Project ToolsVersion=""4.0"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<Target Name='Main'>
+						<ItemGroup>
+							<Foo Include='A;B' />
+							<All Include='%(Foo.Identity)' />
+						</ItemGroup>
+						<Message Text='%(All.Identity)' />
+					</Target>
+				</Project>", "A", "B");
+		}
+		#endif
 
 		[Test]
 		public void TestTargetOutputsIncludingMetadata ()

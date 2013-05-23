@@ -1,5 +1,5 @@
 //
-// BuildTaskItemGroup.cs
+// BuildTaskItem.cs
 //
 // Author:
 //       Martin Baulig <martin.baulig@xamarin.com>
@@ -23,31 +23,41 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
 using System.Xml;
 
-namespace Microsoft.Build.BuildEngine {
+namespace Microsoft.Build.BuildEngine
+{
+	internal class BuildTaskItem : BuildItem, IBuildTask
+	{
+		Project project;
 
-	internal class BuildTaskItemGroup : BuildItemGroup {
-
-		List<BuildTaskItem> items = new List<BuildTaskItem> ();
-
-		internal BuildTaskItemGroup (XmlElement element, Target target)
-			: base (element, target.Project, null, false, true)
+		public bool ContinueOnError {
+			get; set;
+		}
+		
+		internal BuildTaskItem (Project project, XmlElement itemElement, BuildTaskItemGroup parentItemGroup)
+			: base (itemElement, parentItemGroup)
 		{
+			this.project = project;
 		}
 
-		internal override BuildItem CreateItem (Project project, XmlElement xe)
+		public bool Execute ()
 		{
-			var item = new BuildTaskItem (project, xe, this);
-			items.Add (item);
-			return item;
+			if (Condition == String.Empty)
+				Evaluate (project, true);
+			else {
+				ConditionExpression ce = ConditionParser.ParseCondition (Condition);
+				Evaluate (project, ce.BoolEvaluate (project));
+			}
+			return true;
 		}
-
-		public List<BuildTaskItem> Items {
-			get { return items; }
+		
+		public IEnumerable<string> GetAttributes ()
+		{
+			foreach (XmlAttribute attrib in XmlElement.Attributes)
+				yield return attrib.Value;
 		}
 	}
 }
