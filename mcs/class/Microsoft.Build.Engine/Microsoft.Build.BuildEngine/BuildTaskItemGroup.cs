@@ -32,7 +32,7 @@ namespace Microsoft.Build.BuildEngine {
 
 	internal class BuildTaskItemGroup : BuildItemGroup {
 
-		List<BuildTaskItem> items = new List<BuildTaskItem> ();
+		List<IBuildTask> items = new List<IBuildTask> ();
 
 		internal BuildTaskItemGroup (XmlElement element, Target target)
 			: base (element, target.Project, null, false, true)
@@ -46,7 +46,7 @@ namespace Microsoft.Build.BuildEngine {
 			return item;
 		}
 
-		public List<BuildTaskItem> Items {
+		public List<IBuildTask> Items {
 			get { return items; }
 		}
 	}
