@@ -87,7 +87,6 @@ public class IPAddressTest
 		"20.65535", "20.0.255.255",
 		"0313.027035210", "203.92.58.136", // bug #411920
 		"0313.0134.035210", "203.92.58.136", // too
-		"7848198702", "211.202.2.46", // too
 		"1434328179", "85.126.28.115", // too
 		"3397943208", "202.136.127.168", // too
 	};
@@ -113,7 +112,8 @@ public class IPAddressTest
 		"12.",
 		"12.1.2.",
 		"12...",
-		"  "
+		"  ",
+		"7848198702",
 	};
 
 	static byte [] ipv4MappedIPv6Prefix = new byte [] { 0,0, 0,0, 0,0, 0,0, 0,0, 0xFF,0xFF };
@@ -587,6 +587,17 @@ public class IPAddressTest
 	}
 
 #endif
+
+	[Test]
+	public void EqualsFromBytes ()
+	{
+		for (int i = 0; i < ipv4ParseOk.Length / 2; i++) {
+			IPAddress ip = IPAddress.Parse (ipv4ParseOk [i * 2]);
+			IPAddress ipFromBytes = new IPAddress (ip.GetAddressBytes ());
+			Assert.IsTrue (ip.Equals (ipFromBytes), "EqualsFromBytes #" + i);
+		}
+
+	}
 
 }
 }

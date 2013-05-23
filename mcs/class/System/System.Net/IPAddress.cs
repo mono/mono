@@ -257,7 +257,7 @@ namespace System.Net {
 					if (i == (ips.Length - 1)) {
 						if (i != 0  && val >= (256 << ((3 - i) * 8)))
 							return null;
-						else if (val > 0x3fffffffe) // this is the last number that parses correctly with MS
+						else if (val > 0xffffffff)
 							return null;
 						i = 3;
 					} else if (val >= 0x100)
