@@ -336,7 +336,7 @@ public class UTF8Encoding : Encoding
 		// Validate the parameters.
 		if (bytes == null)
 			throw new ArgumentNullException ("bytes");
-		if (byteIndex < 0 || byteIndex >= bytes.Length)
+		if (byteIndex < 0 || byteIndex > bytes.Length)
 			throw new ArgumentOutOfRangeException ("byteIndex", _("ArgRange_Array"));
 		if (byteCount < 0 || byteCount > (bytes.Length - byteIndex))
 			throw new ArgumentOutOfRangeException ("byteCount", _("ArgRange_Array"));
