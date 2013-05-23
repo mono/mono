@@ -1082,7 +1082,10 @@ namespace MonoTests.System.Text
 #else
 				Assert.Fail ("ArgumentException is expected: char[]");
 #endif
-			} catch (ArgumentException) {
+			} catch (ArgumentException ae) {
+#if ! NET_2_0
+				throw ae;
+#endif
 			}
 
 			string s = "\uD800";
@@ -1093,7 +1096,10 @@ namespace MonoTests.System.Text
 #else
 				Assert.Fail ("ArgumentException is expected: string");
 #endif
-			} catch (ArgumentException) {
+			} catch (ArgumentException ae) {
+#if ! NET_2_0
+				throw ae;
+#endif
 			}
 		}
 		
