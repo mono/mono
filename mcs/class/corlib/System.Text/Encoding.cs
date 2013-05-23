@@ -797,6 +797,7 @@ public abstract class Encoding : ICloneable
 	static volatile Encoding bigEndianEncoding;
 	static volatile Encoding defaultEncoding;
 	static volatile Encoding utf7Encoding;
+	static volatile Encoding utf8EncodingWithMarkers;
 	static volatile Encoding utf8EncodingWithoutMarkers;
 	static volatile Encoding unicodeEncoding;
 	static volatile Encoding isoLatin1Encoding;
@@ -936,7 +937,23 @@ public abstract class Encoding : ICloneable
 	public static Encoding UTF8
 	{
 		get {
-			return UTF8Unmarked;
+			if (utf8EncodingWithMarkers == null) {
+				lock (lockobj) {
+					if (utf8EncodingWithMarkers == null) {
+						// MS.NET does not enable BOM
+						// preamble by default
+						// NOTE: In fact is a bad idea
+						// to add an UTF8 BOM because
+						// it breaks compatibility with
+						// ASCII (i.e. shell scripts):
+						// http://www.unicode.org/faq/utf_bom.html#bom5
+						utf8EncodingWithMarkers = new UTF8Encoding (true);
+//						utf8EncodingWithMarkers.is_readonly = true;
+					}
+				}
+			}
+
+			return utf8EncodingWithMarkers;
 		}
 	}
 

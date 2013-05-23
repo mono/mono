@@ -1101,7 +1101,7 @@ again:
 		{
 			this.Fallback = fallback;
 			this.leftChar = 0;
-			this.emitIdentifier = emitIdentifier;
+			this.emitIdentifier = false; //emitIdentifier;
 			this.emittedIdentifier = false;
 		}
 
