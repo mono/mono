@@ -2,6 +2,7 @@ thisdir = class/Facades/System.IO
 SUBDIRS = 
 include ../../../build/rules.make
 
+LIBRARY_SUBDIR = Facades
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)/Facades
 
 LIBRARY = System.IO.dll
