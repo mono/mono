@@ -32,6 +32,8 @@
 using System.Globalization;
 using System.Runtime.InteropServices;
 
+using Mono.Security.Cryptography;
+
 namespace System.Security.Cryptography {
 
 	[ComVisible (true)]
@@ -63,7 +65,7 @@ namespace System.Security.Cryptography {
 			if (strName == null)
 				throw new ArgumentNullException ("strName");
 
-			var instance = HashAlgorithm.Create (strName) as SHA1;
+			var instance = PKCS1.CreateFromName (strName) as SHA1;
 			if (instance == null)
 				throw new CryptographicUnexpectedOperationException (
 					Locale.GetText ("DSA requires SHA1"));

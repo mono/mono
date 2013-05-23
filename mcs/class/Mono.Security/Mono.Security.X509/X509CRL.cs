@@ -2,9 +2,10 @@
 // X509CRL.cs: Handles X.509 certificates revocation lists.
 //
 // Author:
-//	Sebastien Pouliot  <sebastien@ximian.com>
+//	Sebastien Pouliot  <sebastien@xamarin.com>
 //
 // Copyright (C) 2004,2006 Novell Inc. (http://www.novell.com)
+// Copyright 2013 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,6 +33,7 @@ using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 
+using Mono.Security.Cryptography;
 using Mono.Security.X509.Extensions;
 
 namespace Mono.Security.X509 {
@@ -58,9 +60,7 @@ namespace Mono.Security.X509 {
 	 *	crlExtensions           [0] Extensions OPTIONAL }
 	 *		-- if present, MUST be v2
 	 */
-#if INSIDE_CORLIB
-	internal
-#else
+#if !INSIDE_CORLIB
 	public 
 #endif
 	class X509Crl {
@@ -218,8 +218,8 @@ namespace Mono.Security.X509 {
 				if (hash_value == null) {
 					ASN1 encodedCRL = new ASN1 (encoded);
 					byte[] toBeSigned = encodedCRL [0].GetBytes ();
-					HashAlgorithm ha = HashAlgorithm.Create (GetHashName ());
-					hash_value = ha.ComputeHash (toBeSigned);
+					using (var ha = PKCS1.CreateFromOid (signatureOID))
+						hash_value = ha.ComputeHash (toBeSigned);
 				}
 				return hash_value;
 			}
@@ -349,26 +349,6 @@ namespace Mono.Security.X509 {
 			}
 		}
 
-		private string GetHashName ()
-		{
-			switch (signatureOID) {
-			// MD2 with RSA encryption 
-			case "1.2.840.113549.1.1.2":
-				// maybe someone installed MD2 ?
-				return "MD2";
-			// MD5 with RSA encryption 
-			case "1.2.840.113549.1.1.4":
-				return "MD5";
-			// SHA-1 with DSA
-			case "1.2.840.10040.4.3":
-			// SHA-1 with RSA Encryption 
-			case "1.2.840.113549.1.1.5":
-				return "SHA1";
-			default:
-				throw new CryptographicException ("Unsupported hash algorithm: " + signatureOID);
-			}
-		}
-
 		internal bool VerifySignature (DSA dsa) 
 		{
 			if (signatureOID != "1.2.840.10040.4.3")
@@ -397,7 +377,7 @@ namespace Mono.Security.X509 {
 		internal bool VerifySignature (RSA rsa) 
 		{
 			RSAPKCS1SignatureDeformatter v = new RSAPKCS1SignatureDeformatter (rsa);
-			v.SetHashAlgorithm (GetHashName ());
+			v.SetHashAlgorithm (PKCS1.HashNameFromOid (signatureOID));
 			return v.VerifySignature (Hash, signature);
 		}
 

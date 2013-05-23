@@ -77,7 +77,7 @@ namespace System.Security.Cryptography {
 			if (rgbSignature == null)
 				throw new ArgumentNullException ("rgbSignature");
 
-			return PKCS1.Verify_v15 (rsa, HashAlgorithm.Create (hashName), rgbHash, rgbSignature);
+			return PKCS1.Verify_v15 (rsa, hashName, rgbHash, rgbSignature);
 		}
 	}
 }
