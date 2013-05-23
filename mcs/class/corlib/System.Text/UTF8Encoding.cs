@@ -79,8 +79,8 @@ public class UTF8Encoding : Encoding
 	};
 
 	// following method decodes an utf8 character from a byte buffer.
-	// NOTE: If 'chars' is null, this function only counts bytes and chars
-	//	 without writing anything.
+	// NOTE: If 'charCount' is < 0, this function only counts bytes and
+	//       chars without writing anything.
 	// NOTE: BOM (0xEF 0xBB 0xBF) is not yet supported.
 	// 	 See http://www.cl.cam.ac.uk/~mgk25/unicode.html
 	private unsafe static DecoderStatus InternalGetChar (
@@ -183,14 +183,14 @@ public class UTF8Encoding : Encoding
 
 		// convert this character to UTF-16
 		if (leftBits < (uint) 0x10000) {
-			if (chars != null) {
+			if (charCount >= 0) {
 				if (charCount < 1)
 					return DecoderStatus.InsufficientSpace;
 				*chars = (char) leftBits;
 			}
 			charsProcessed++;
 		} else  {
-			if (chars != null) {
+			if (charCount >= 0) {
 				if (charCount < 2)
 					return DecoderStatus.InsufficientSpace;
 				leftBits -= (uint) 0x10000;
@@ -207,7 +207,10 @@ public class UTF8Encoding : Encoding
 
 	// This function is called when we want to flush the decoder state
 	// (i.e. in case of invalid UTF-8 characters or interrupted sequences)
-	internal unsafe static void InternalGetChars_flush (
+	// TODO: if we run out of output space during fallback replacement an
+	//       ArgumentException is thrown -- maybe this is not the correct
+	//       behaviour
+	internal unsafe static void InternalGetCharsFlush (
 		char* chars, int charCount,
 		DecoderFallbackBuffer fallbackBuffer,
 		DecoderStatus s,
@@ -241,6 +244,12 @@ public class UTF8Encoding : Encoding
 		leftBits = leftBytes = procBytes = 0;
 	}
 
+	// InternalGetBytes processor. Can decode or count space needed for
+	// decoding, depending on the enabled mode:
+	//   - decoder
+	//       enabled when charCount >= 0 (but chars may be null)
+	//   - counter
+	//       enabled when chars == null && charCount < 0
 	internal unsafe static DecoderStatus InternalGetChars (
 		byte* bytes, int byteCount,
 		char* chars, int charCount,
@@ -258,11 +267,13 @@ public class UTF8Encoding : Encoding
 		else
 			if (byteCount > 0 && bytes == null)
 				throw new ArgumentNullException ("bytes");
-		if (charCount < 0)
-			throw new ArgumentOutOfRangeException ("charCount", _("ArgRange_NonNegative"));
-		else
-			if (charCount > 0 && chars == null)
+		if (chars == null) {
+			if (charCount > 0)
 				throw new ArgumentNullException ("chars");
+		} else {
+			if (charCount < 0)
+				throw new ArgumentOutOfRangeException ("charCount", _("ArgRange_NonNegative"));
+		}
 
 		// reset counters
 		charsProcessed = 0;
@@ -279,7 +290,7 @@ public class UTF8Encoding : Encoding
 					ref leftBytes, ref leftBits, ref procBytes)
 				: InternalGetChar (
 					bytes + bytesProcessed, byteCount - bytesProcessed,
-					null, 0,
+					null, charCount,
 					out t_bytesProcessed, out t_charsProcessed,
 					ref leftBytes, ref leftBits, ref procBytes);
 
@@ -302,7 +313,7 @@ public class UTF8Encoding : Encoding
 			case DecoderStatus.InvalidStart:
 			case DecoderStatus.InvalidChar:
 			case DecoderStatus.SurrogateFound:
-				InternalGetChars_flush (
+				InternalGetCharsFlush (
 					chars, charCount,
 					fallbackBuffer,
 					s,
@@ -312,7 +323,7 @@ public class UTF8Encoding : Encoding
 
 			case DecoderStatus.InputRunOut:
 				if (flush)
-					InternalGetChars_flush (
+					InternalGetCharsFlush (
 						chars, charCount,
 						fallbackBuffer,
 						s,
@@ -324,8 +335,29 @@ public class UTF8Encoding : Encoding
 		return DecoderStatus.Ok;
 	}
 
-	// Get the characters that result from decoding a byte buffer.
-	internal unsafe static DecoderStatus InternalGetChars (
+	internal unsafe static DecoderStatus InternalGetCharsDecode (
+		byte* bytes, int byteCount,
+		char* chars, int charCount,
+		DecoderFallbackBuffer fallbackBuffer,
+		out int bytesProcessed, out int charsProcessed,
+		ref uint leftBytes, ref uint leftBits, ref uint procBytes,
+		bool flush)
+	{
+		if (byteCount < 0)
+			throw new ArgumentOutOfRangeException ("byteCount", _("ArgRange_Array"));
+		if (charCount < 0)
+			throw new ArgumentOutOfRangeException ("charCount", _("ArgRange_Array"));
+
+		return InternalGetChars (
+				bytes, byteCount,
+				chars, charCount,
+				fallbackBuffer,
+				out bytesProcessed, out charsProcessed,
+				ref leftBytes, ref leftBits, ref procBytes,
+				flush);
+	}
+
+	internal unsafe static DecoderStatus InternalGetCharsDecode (
 		byte[] bytes, int byteIndex, int byteCount,
 		char[] chars, int charIndex,
 		DecoderFallbackBuffer fallbackBuffer,
@@ -333,27 +365,71 @@ public class UTF8Encoding : Encoding
 		ref uint leftBytes, ref uint leftBits, ref uint procBytes,
 		bool flush)
 	{
-		// Validate the parameters.
 		if (bytes == null)
 			throw new ArgumentNullException ("bytes");
+		if (chars == null)
+			throw new ArgumentNullException ("chars");
 		if (byteIndex < 0 || byteIndex > bytes.Length)
 			throw new ArgumentOutOfRangeException ("byteIndex", _("ArgRange_Array"));
 		if (byteCount < 0 || byteCount > (bytes.Length - byteIndex))
 			throw new ArgumentOutOfRangeException ("byteCount", _("ArgRange_Array"));
-		if (charIndex < 0 || charIndex > (chars != null && chars.Length > 0 ? chars.Length : 0))
+		if (charIndex < 0 || charIndex > chars.Length)
 			throw new ArgumentOutOfRangeException ("charIndex", _("ArgRange_Array"));
 
 		fixed (char* cptr = chars) {
 			fixed (byte* bptr = bytes) {
 				return InternalGetChars (
 						bptr + byteIndex, byteCount,
-						chars != null ? cptr + charIndex : null,
-						chars != null ? chars.Length - charIndex : 0,
+						cptr + charIndex, chars.Length - charIndex,
 						fallbackBuffer,
 						out bytesProcessed, out charsProcessed,
 						ref leftBytes, ref leftBits, ref procBytes,
 						flush);
 			}
+		}
+	}
+
+	internal unsafe static DecoderStatus InternalGetCharsCount (
+		byte* bytes, int byteCount,
+		DecoderFallbackBuffer fallbackBuffer,
+		out int bytesProcessed, out int charsProcessed,
+		ref uint leftBytes, ref uint leftBits, ref uint procBytes,
+		bool flush)
+	{
+		if (byteCount < 0)
+			throw new ArgumentOutOfRangeException ("byteCount", _("ArgRange_Array"));
+
+		return InternalGetChars (
+				bytes, byteCount,
+				null, -1,
+				fallbackBuffer,
+				out bytesProcessed, out charsProcessed,
+				ref leftBytes, ref leftBits, ref procBytes,
+				flush);
+	}
+
+	internal unsafe static DecoderStatus InternalGetCharsCount (
+		byte[] bytes, int byteIndex, int byteCount,
+		DecoderFallbackBuffer fallbackBuffer,
+		out int bytesProcessed, out int charsProcessed,
+		ref uint leftBytes, ref uint leftBits, ref uint procBytes,
+		bool flush)
+	{
+		if (bytes == null)
+			throw new ArgumentNullException ("bytes");
+		if (byteIndex < 0 || byteIndex > bytes.Length)
+			throw new ArgumentOutOfRangeException ("byteIndex", _("ArgRange_Array"));
+		if (byteCount < 0 || byteCount > (bytes.Length - byteIndex))
+			throw new ArgumentOutOfRangeException ("byteCount", _("ArgRange_Array"));
+
+		fixed (byte* bptr = bytes) {
+			return InternalGetChars (
+					bptr + byteIndex, byteCount,
+					null, -1,
+					fallbackBuffer,
+					out bytesProcessed, out charsProcessed,
+					ref leftBytes, ref leftBits, ref procBytes,
+					flush);
 		}
 	}
 
@@ -470,6 +546,9 @@ again:
 
 	// This function is called when we want to flush the decoder state
 	// (i.e. in case of invalid UTF-16 characters or dangling surrogates)
+	// TODO: if we run out of output space during fallback replacement an
+	//       ArgumentException is thrown -- maybe this is not the correct
+	//       behaviour
 	internal unsafe static void InternalGetBytesFlush (
 		byte* bytes, int byteCount,
 		EncoderFallbackBuffer fallbackBuffer,
@@ -547,8 +626,7 @@ again:
 		else
 			if (charCount > 0 && chars == null)
 				throw new ArgumentNullException ("chars");
- 		if (bytes == null)
- 		{
+ 		if (bytes == null) {
  			if (byteCount > 0)
 				throw new ArgumentNullException ("bytes");
 		} else {
@@ -642,7 +720,7 @@ again:
 			throw new ArgumentNullException ("chars");
 		if (bytes == null)
 			throw new ArgumentNullException ("bytes");
-		if (charIndex < 0 || charIndex >= chars.Length)
+		if (charIndex < 0 || charIndex > chars.Length)
 			throw new ArgumentOutOfRangeException ("charIndex", _("ArgRange_Array"));
 		if (charCount < 0 || charCount > (chars.Length - charIndex))
 			throw new ArgumentOutOfRangeException ("charCount", _("ArgRange_Array"));
@@ -692,21 +770,19 @@ again:
 	{
 		if (chars == null)
 			throw new ArgumentNullException ("chars");
-		if (charIndex < 0 || charIndex >= chars.Length)
+		if (charIndex < 0 || charIndex > chars.Length)
 			throw new ArgumentOutOfRangeException ("charIndex", _("ArgRange_Array"));
 		if (charCount < 0 || charCount > (chars.Length - charIndex))
 			throw new ArgumentOutOfRangeException ("charCount", _("ArgRange_Array"));
 
-		unsafe {
-			fixed (char *cptr = chars) {
-				return InternalGetBytes (
-					cptr + charIndex, charCount,
-					null, -1,
-					fallbackBuffer,
-					out charsProcessed, out bytesProcessed,
-					ref leftChar,
-					flush);
-			}
+		fixed (char *cptr = chars) {
+			return InternalGetBytes (
+				cptr + charIndex, charCount,
+				null, -1,
+				fallbackBuffer,
+				out charsProcessed, out bytesProcessed,
+				ref leftChar,
+				flush);
 		}
 	}
 
@@ -821,13 +897,12 @@ again:
 	{
 		int bytesProcessed, charsProcessed;
 		uint leftBytes = 0, leftBits = 0, procBytes = 0;
-		InternalGetChars (
-			bytes, index, count,
-			null, 0,
-			DecoderFallback.CreateFallbackBuffer (),
-			out bytesProcessed, out charsProcessed,
-			ref leftBytes, ref leftBits, ref procBytes,
-			true);
+		InternalGetCharsCount (
+				bytes, index, count,
+				DecoderFallback.CreateFallbackBuffer (),
+				out bytesProcessed, out charsProcessed,
+				ref leftBytes, ref leftBits, ref procBytes,
+				true);
 		return charsProcessed;
 	}
 
@@ -837,13 +912,12 @@ again:
 	{
 		int bytesProcessed, charsProcessed;
 		uint leftBytes = 0, leftBits = 0, procBytes = 0;
-		InternalGetChars (
-			bytes, count,
-			null, 0,
-			DecoderFallback.CreateFallbackBuffer (),
-			out bytesProcessed, out charsProcessed,
-			ref leftBytes, ref leftBits, ref procBytes,
-			true);
+		InternalGetCharsCount (
+				bytes, count,
+				DecoderFallback.CreateFallbackBuffer (),
+				out bytesProcessed, out charsProcessed,
+				ref leftBytes, ref leftBits, ref procBytes,
+				true);
 		return charsProcessed;
 	}
 
@@ -855,16 +929,14 @@ again:
 	{
 		int bytesProcessed, charsProcessed;
 		uint leftBytes = 0, leftBits = 0, procBytes = 0;
-		DecoderStatus status;
 
-		status = InternalGetChars (
-			bytes, byteIndex, byteCount,
-			chars, charIndex,
-			DecoderFallback.CreateFallbackBuffer (),
-			out bytesProcessed, out charsProcessed,
-			ref leftBytes, ref leftBits, ref procBytes,
-			true);
-		if (status == DecoderStatus.InsufficientSpace)
+		if (InternalGetCharsDecode (
+				bytes, byteIndex, byteCount,
+				chars, charIndex,
+				DecoderFallback.CreateFallbackBuffer (),
+				out bytesProcessed, out charsProcessed,
+				ref leftBytes, ref leftBits, ref procBytes,
+				true) == DecoderStatus.InsufficientSpace)
 			throw new ArgumentException ("Insufficient Space", "bytes");
 
 		return charsProcessed;
@@ -876,16 +948,14 @@ again:
 	{
 		int bytesProcessed, charsProcessed;
 		uint leftBytes = 0, leftBits = 0, procBytes = 0;
-		DecoderStatus status;
 
-		status = InternalGetChars (
-			bytes, byteCount,
-			chars, charCount,
-			DecoderFallback.CreateFallbackBuffer (),
-			out bytesProcessed, out charsProcessed,
-			ref leftBytes, ref leftBits, ref procBytes,
-			true);
-		if (status == DecoderStatus.InsufficientSpace)
+		if (InternalGetCharsDecode (
+				bytes, byteCount,
+				chars, charCount,
+				DecoderFallback.CreateFallbackBuffer (),
+				out bytesProcessed, out charsProcessed,
+				ref leftBytes, ref leftBits, ref procBytes,
+				true) == DecoderStatus.InsufficientSpace)
 			throw new ArgumentException ("Insufficient Space", "bytes");
 
 		return charsProcessed;
@@ -987,13 +1057,12 @@ again:
 		public override int GetCharCount (byte[] bytes, int index, int count, bool flush)
 		{
 			int bytesProcessed, charsProcessed;
-			InternalGetChars (
-				bytes, index, count,
-				null, 0,
-				this.FallbackBuffer,
-				out bytesProcessed, out charsProcessed,
-				ref leftBytes, ref leftBits, ref procBytes,
-				flush);
+			InternalGetCharsCount (
+					bytes, index, count,
+					this.FallbackBuffer,
+					out bytesProcessed, out charsProcessed,
+					ref leftBytes, ref leftBits, ref procBytes,
+					flush);
 			return charsProcessed;
 		}
 
@@ -1007,13 +1076,12 @@ again:
 		public unsafe override int GetCharCount (byte* bytes, int count, bool flush)
 		{
 			int bytesProcessed, charsProcessed;
-			InternalGetChars (
-				bytes, count,
-				null, 0,
-				this.FallbackBuffer,
-				out bytesProcessed, out charsProcessed,
-				ref leftBytes, ref leftBits, ref procBytes,
-				flush);
+			InternalGetCharsCount (
+					bytes, count,
+					this.FallbackBuffer,
+					out bytesProcessed, out charsProcessed,
+					ref leftBytes, ref leftBits, ref procBytes,
+					flush);
 			return charsProcessed;
 		}
 
@@ -1022,16 +1090,13 @@ again:
 						char* chars, int charCount, bool flush)
 		{
 			int bytesProcessed, charsProcessed;
-			DecoderStatus status;
-
-			status = InternalGetChars (
-				bytes, byteCount,
-				chars, charCount,
-				this.FallbackBuffer,
-				out bytesProcessed, out charsProcessed,
-				ref leftBytes, ref leftBits, ref procBytes,
-				flush);
-			if (status == DecoderStatus.InsufficientSpace)
+			if (InternalGetCharsDecode (
+					bytes, byteCount,
+					chars, charCount,
+					this.FallbackBuffer,
+					out bytesProcessed, out charsProcessed,
+					ref leftBytes, ref leftBits, ref procBytes,
+					flush) == DecoderStatus.InsufficientSpace)
 				throw new ArgumentException ("Insufficient Space", "bytes");
 			return charsProcessed;
 		}
@@ -1040,16 +1105,13 @@ again:
 						 int byteCount, char[] chars, int charIndex, bool flush)
 		{
 			int bytesProcessed, charsProcessed;
-			DecoderStatus status;
-
-			status = InternalGetChars (
-				bytes, byteIndex, byteCount,
-				chars, charIndex,
-				this.FallbackBuffer,
-				out bytesProcessed, out charsProcessed,
-				ref leftBytes, ref leftBits, ref procBytes,
-				flush);
-			if (status == DecoderStatus.InsufficientSpace)
+			if (InternalGetCharsDecode (
+					bytes, byteIndex, byteCount,
+					chars, charIndex,
+					this.FallbackBuffer,
+					out bytesProcessed, out charsProcessed,
+					ref leftBytes, ref leftBits, ref procBytes,
+					flush) == DecoderStatus.InsufficientSpace)
 				throw new ArgumentException ("Insufficient Space", "bytes");
 			return charsProcessed;
 		}
@@ -1073,7 +1135,7 @@ again:
 			char* chars, int charCount, bool flush,
 			out int bytesUsed, out int charsUsed, out bool completed)
 		{
-			UTF8Encoding.InternalGetChars (
+			InternalGetCharsDecode (
 					bytes, byteCount,
 					chars, charCount,
 					this.FallbackBuffer,
