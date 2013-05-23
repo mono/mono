@@ -116,6 +116,8 @@ public class IPAddressTest
 		"  "
 	};
 
+	static byte [] ipv4MappedIPv6Prefix = new byte [] { 0,0, 0,0, 0,0, 0,0, 0,0, 0xFF,0xFF };
+
 	[Test]
 	public void PublicFields ()
 	{
@@ -545,6 +547,47 @@ public class IPAddressTest
 		Assert.IsTrue (IPAddress.Parse ("FF01::1").IsIPv6Multicast, "#2");
 		Assert.IsFalse (IPAddress.Parse ("FE00::1").IsIPv6Multicast, "#3");
 	}
+
+#if NET_4_5
+
+	[Test]
+	public void MapToIPv6 ()
+	{
+		for (int i = 0; i < ipv4ParseOk.Length / 2; i++) {
+			IPAddress v4 = IPAddress.Parse (ipv4ParseOk [i * 2]);
+			byte [] v4bytes = v4.GetAddressBytes ();
+			IPAddress v6 = v4.MapToIPv6 ();
+			byte [] v6bytes = v6.GetAddressBytes ();
+			IPAddress v4back = v6.MapToIPv4 ();
+
+			Assert.IsTrue (StartsWith (v6bytes, ipv4MappedIPv6Prefix), "MapToIPv6 #" + i + ".1");
+			Assert.IsTrue (v6bytes [12] == v4bytes [0], "MapToIPv6 #" + i + ".2");
+			Assert.IsTrue (v6bytes [13] == v4bytes [1], "MapToIPv6 #" + i + ".3");
+			Assert.IsTrue (v6bytes [14] == v4bytes [2], "MapToIPv6 #" + i + ".4");
+			Assert.IsTrue (v6bytes [15] == v4bytes [3], "MapToIPv6 #" + i + ".5");
+			Assert.IsTrue (v4.Equals (v4back), "MapToIPv4 #" + i);
+		}
+
+		var ex = Assert.Throws<Exception> (() => IPAddress.IPv6Any.MapToIPv4 ());
+		Assert.IsTrue (ex.Message == "Only AddressFamily.InterNetworkV6 can be converted to IPv4", "MapToIPv4 (ipv6)");
+		//TODO: Test using MapToIPv4/6 with anything other than IPv4/6 addresses.
+		//Currently it is not possible to do with the IPAddress implementation.
+	}
+
+	static bool StartsWith (byte [] a, byte [] b)
+	{
+		if (a.Length < b.Length)
+			return false;
+		for (int i = 0; i < b.Length; i++)
+		{
+			if (a [i] != b [i])
+				return false;
+		}
+		return true;
+	}
+
+#endif
+
 }
 }
 
