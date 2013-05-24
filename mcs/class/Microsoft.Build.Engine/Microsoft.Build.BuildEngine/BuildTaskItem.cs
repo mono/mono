@@ -31,6 +31,7 @@ namespace Microsoft.Build.BuildEngine
 {
 	internal class BuildTaskItem : BuildItem, IBuildTask
 	{
+		BuildTaskItemGroup parent;
 		Project project;
 
 		public bool ContinueOnError {
@@ -40,22 +41,35 @@ namespace Microsoft.Build.BuildEngine
 		internal BuildTaskItem (Project project, XmlElement itemElement, BuildTaskItemGroup parentItemGroup)
 			: base (itemElement, parentItemGroup)
 		{
+			this.parent = parentItemGroup;
 			this.project = project;
+		}
+
+		bool CheckCondition (string condition)
+		{
+			if (string.IsNullOrEmpty (condition))
+				return true;
+			var ce = ConditionParser.ParseCondition (condition);
+			return ce.BoolEvaluate (project);
+		}
+
+		bool CheckCondition ()
+		{
+			return CheckCondition (parent.Condition) && CheckCondition (Condition);
 		}
 
 		public bool Execute ()
 		{
-			if (Condition == String.Empty)
-				Evaluate (project, true);
-			else {
-				ConditionExpression ce = ConditionParser.ParseCondition (Condition);
-				Evaluate (project, ce.BoolEvaluate (project));
-			}
+			var condition = CheckCondition ();
+			Evaluate (project, condition);
 			return true;
 		}
 		
 		public IEnumerable<string> GetAttributes ()
 		{
+			foreach (XmlAttribute attrib in parent.XmlElement.Attributes)
+				yield return attrib.Value;
+
 			foreach (XmlAttribute attrib in XmlElement.Attributes)
 				yield return attrib.Value;
 		}
