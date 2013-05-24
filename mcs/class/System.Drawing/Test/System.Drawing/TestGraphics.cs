@@ -2082,6 +2082,7 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void MeasureString_Bug80680 ()
 		{
 			if (font == null)
