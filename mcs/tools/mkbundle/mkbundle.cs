@@ -12,11 +12,11 @@ using System;
 using System.Diagnostics;
 using System.Xml;
 using System.Collections.Generic;
-using System.Reflection;
 using System.IO;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
 using System.Text;
+using IKVM.Reflection;
 
 
 #if NET_4_5
@@ -452,9 +452,9 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 
 			Stream template_stream;
 			if (compress) {
-				template_stream = Assembly.GetAssembly (typeof(MakeBundle)).GetManifestResourceStream ("template_z.c");
+				template_stream = System.Reflection.Assembly.GetAssembly (typeof(MakeBundle)).GetManifestResourceStream ("template_z.c");
 			} else {
-				template_stream = Assembly.GetAssembly (typeof(MakeBundle)).GetManifestResourceStream ("template.c");
+				template_stream = System.Reflection.Assembly.GetAssembly (typeof(MakeBundle)).GetManifestResourceStream ("template.c");
 			}
 
 			StreamReader s = new StreamReader (template_stream);
@@ -462,7 +462,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			tc.Write (template);
 
 			if (!nomain) {
-				Stream template_main_stream = Assembly.GetAssembly (typeof(MakeBundle)).GetManifestResourceStream ("template_main.c");
+				Stream template_main_stream = System.Reflection.Assembly.GetAssembly (typeof(MakeBundle)).GetManifestResourceStream ("template_main.c");
 				StreamReader st = new StreamReader (template_main_stream);
 				string maintemplate = st.ReadToEnd ();
 				tc.Write (maintemplate);
@@ -538,19 +538,21 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		return assemblies;
 	}
 	
+	static readonly Universe universe = new Universe ();
+	
 	static void QueueAssembly (List<string> files, string codebase)
 	{
 		if (files.Contains (codebase))
 			return;
 
 		files.Add (codebase);
-		Assembly a = Assembly.LoadFrom (new Uri(codebase).LocalPath);
+		Assembly a = universe.LoadFile (new Uri(codebase).LocalPath);
 
 		if (!autodeps)
 			return;
 		
 		foreach (AssemblyName an in a.GetReferencedAssemblies ()) {
-			a = Assembly.Load (an);
+			a = universe.Load (an.Name);
 			QueueAssembly (files, a.CodeBase);
 		}
 	}
@@ -563,12 +565,12 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			char[] path_chars = { '/', '\\' };
 			
 			if (assembly.IndexOfAny (path_chars) != -1) {
-				a = Assembly.LoadFrom (assembly);
+				a = universe.LoadFile (assembly);
 			} else {
 				string ass = assembly;
 				if (ass.EndsWith (".dll"))
 					ass = assembly.Substring (0, assembly.Length - 4);
-				a = Assembly.Load (ass);
+				a = universe.Load (ass);
 			}
 			return a;
 		} catch (FileNotFoundException){
@@ -580,7 +582,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 					full_path += ".dll";
 				
 				try {
-					a = Assembly.LoadFrom (full_path);
+					a = universe.LoadFile (full_path);
 					return a;
 				} catch (FileNotFoundException ff) {
 					total_log += ff.FusionLog;
@@ -589,10 +591,10 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			}
 			Error ("Cannot find assembly `" + assembly + "'" );
 			Console.WriteLine ("Log: \n" + total_log);
-		} catch (BadImageFormatException f) {
-			Error ("Cannot load assembly (bad file format)" + f.FusionLog);
+		} catch (IKVM.Reflection.BadImageFormatException f) {
+			Error ("Cannot load assembly (bad file format) " + f.Message);
 		} catch (FileLoadException f){
-			Error ("Cannot load assembly " + f.FusionLog);
+			Error ("Cannot load assembly " + f.Message);
 		} catch (ArgumentNullException){
 			Error("Cannot load assembly (null argument)");
 		}
