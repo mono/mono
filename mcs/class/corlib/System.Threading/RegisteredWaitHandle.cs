@@ -64,6 +64,14 @@ namespace System.Threading
 
 		internal void Wait (object state)
 		{
+			if (_waitObject != null) {
+				WaitLoop (state);
+			}
+			WaitEnd ();
+		}
+
+		void WaitLoop (object state)
+		{
 			try
 			{
 				WaitHandle[] waits = new WaitHandle[] {_waitObject, _cancelEvent};
@@ -79,7 +87,10 @@ namespace System.Threading
 				while (!_unregistered && !_executeOnlyOnce);
 			}
 			catch {}
+		}
 
+		void WaitEnd ()
+		{
 			lock (this) {
 				_unregistered = true;
 				if (_callsInProcess == 0 && _finalEvent != null)
