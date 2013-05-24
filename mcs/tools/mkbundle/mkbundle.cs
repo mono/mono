@@ -271,9 +271,24 @@ class MakeBundle {
 			using (StreamWriter tc = new StreamWriter (File.Create (temp_c))) {
 			string prog = null;
 
+#if XAMARIN_ANDROID
 			tc.WriteLine ("/* This source code was produced by mkbundle, do not edit */");
+			tc.WriteLine (@"
+#ifndef NULL
+#define NULL (void *)0
+#endif
+typedef struct {
+	const char *name;
+	const unsigned char *data;
+	const unsigned int size;
+} MonoBundledAssembly;
+void          mono_register_bundled_assemblies (const MonoBundledAssembly **assemblies);
+void          mono_register_config_for_assembly (const char* assembly_name, const char* config_xml);
+");
+#else
 			tc.WriteLine ("#include <mono/metadata/mono-config.h>");
 			tc.WriteLine ("#include <mono/metadata/assembly.h>\n");
+#endif
 
 			if (compress) {
 				tc.WriteLine ("typedef struct _compressed_data {");
