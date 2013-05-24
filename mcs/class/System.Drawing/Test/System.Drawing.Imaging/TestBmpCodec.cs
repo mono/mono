@@ -548,28 +548,36 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
+#if TARGET_JVM
 		[Category("NotWorking")]
+#endif
 		public void Save_24bppRgb ()
 		{
 			Save (PixelFormat.Format24bppRgb, PixelFormat.Format24bppRgb, true);
 		}
 
 		[Test]
+#if TARGET_JVM
 		[Category("NotWorking")]
+#endif
 		public void Save_32bppRgb ()
 		{
 			Save (PixelFormat.Format32bppRgb, PixelFormat.Format32bppRgb, true);
 		}
 
 		[Test]
+#if TARGET_JVM
 		[Category("NotWorking")]
+#endif
 		public void Save_32bppArgb ()
 		{
 			Save (PixelFormat.Format32bppArgb, PixelFormat.Format32bppRgb, true);
 		}
 
 		[Test]
+#if TARGET_JVM
 		[Category("NotWorking")]
+#endif
 		public void Save_32bppPArgb ()
 		{
 			Save (PixelFormat.Format32bppPArgb, PixelFormat.Format32bppRgb, true);

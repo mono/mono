@@ -2002,28 +2002,24 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Save_24bppRgb ()
 		{
 			Save (PixelFormat.Format24bppRgb, PixelFormat.Format24bppRgb, true);
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Save_32bppRgb ()
 		{
 			Save (PixelFormat.Format32bppRgb, PixelFormat.Format32bppArgb, true);
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Save_32bppArgb ()
 		{
 			Save (PixelFormat.Format32bppArgb, PixelFormat.Format32bppArgb, true);
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Save_32bppPArgb ()
 		{
 			Save (PixelFormat.Format32bppPArgb, PixelFormat.Format32bppArgb, true);
