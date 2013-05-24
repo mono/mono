@@ -917,16 +917,14 @@ public class Tests : TestsBase
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void frames_in_native () {
 		Thread.Sleep (500);
+		var evt = new ManualResetEvent (false);
+		
 		object mon = new object ();
 		ThreadPool.QueueUserWorkItem (delegate {
 				frames_in_native_2 ();
-				lock (mon) {
-					Monitor.Pulse (mon);
-				}
+				evt.Set ();
 			});
-		lock (mon) {
-			Monitor.Wait (mon);
-		}
+		evt.WaitOne ();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
