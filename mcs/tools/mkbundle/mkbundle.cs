@@ -273,10 +273,8 @@ class MakeBundle {
 
 #if XAMARIN_ANDROID
 			tc.WriteLine ("/* This source code was produced by mkbundle, do not edit */");
+			tc.WriteLine ("\n#ifndef NULL\n#define NULL (void *)0\n#endif");
 			tc.WriteLine (@"
-#ifndef NULL
-#define NULL (void *)0
-#endif
 typedef struct {
 	const char *name;
 	const unsigned char *data;
