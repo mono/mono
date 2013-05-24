@@ -2172,6 +2172,7 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test] // adapted from bug #78777
+		[Category ("NotWorking")]
 		public void MeasureCharacterRanges_TwoLines ()
 		{
 			if (font == null)
