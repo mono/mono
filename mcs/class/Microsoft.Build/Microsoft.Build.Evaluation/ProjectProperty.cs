@@ -26,16 +26,47 @@
 //
 
 using System;
+using Microsoft.Build.Construction;
 
 namespace Microsoft.Build.Evaluation
 {
-        public class ProjectProperty
+	// In .NET 4.0 MSDN says it is non-abstract, but some of those
+	// members are abstract and had been there since 4.0.
+	// I take this as doc bug, as non-abstract to abstract is a
+	// breaking change and I'd rather believe API designer's sanity.
+        public abstract class ProjectProperty
         {
+		internal ProjectProperty () // hide default ctor
+		{
+		}
+
                 public string EvaluatedValue {
                         get {
                                 throw new NotImplementedException ();
                         }
                 }
+
+		public abstract bool IsEnvironmentProperty { get; }
+		public abstract bool IsGlobalProperty { get; }
+		public abstract bool IsImported { get; }
+		public abstract bool IsReservedProperty { get; }
+
+		public string Name {
+			get {
+                                throw new NotImplementedException ();
+			}
+		}
+
+		public abstract ProjectProperty Predecessor { get; }
+
+		public Project Project {
+			get {
+                                throw new NotImplementedException ();
+			}
+		}
+
+		public abstract string UnevaluatedValue { get; set; }
+		public abstract ProjectPropertyElement Xml { get; }
         }
 }
 
