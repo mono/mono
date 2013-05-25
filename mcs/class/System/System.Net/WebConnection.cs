@@ -916,20 +916,23 @@ namespace System.Net
 			}
 
 			int nbytes = 0;
+			bool done = false;
 			WebAsyncResult wr = null;
 			IAsyncResult nsAsync = ((WebAsyncResult) result).InnerAsyncResult;
 			if (chunkedRead && (nsAsync is WebAsyncResult)) {
 				wr = (WebAsyncResult) nsAsync;
 				IAsyncResult inner = wr.InnerAsyncResult;
-				if (inner != null && !(inner is WebAsyncResult))
+				if (inner != null && !(inner is WebAsyncResult)) {
 					nbytes = s.EndRead (inner);
+					done = nbytes == 0;
+				}
 			} else if (!(nsAsync is WebAsyncResult)) {
 				nbytes = s.EndRead (nsAsync);
 				wr = (WebAsyncResult) result;
+				done = nbytes == 0;
 			}
 
 			if (chunkedRead) {
-				bool done = (nbytes == 0);
 				try {
 					chunkStream.WriteAndReadBack (wr.Buffer, wr.Offset, wr.Size, ref nbytes);
 					if (!done && nbytes == 0 && chunkStream.WantMore)
