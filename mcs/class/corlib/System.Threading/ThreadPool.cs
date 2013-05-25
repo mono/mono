@@ -115,6 +115,12 @@ namespace System.Threading {
 										long millisecondsTimeOutInterval,
 										bool executeOnlyOnce)
 		{
+			if (waitObject == null)
+				throw new ArgumentNullException ("waitObject");
+
+			if (callBack == null)
+				throw new ArgumentNullException ("callBack");
+			
 			if (millisecondsTimeOutInterval < -1)
 				throw new ArgumentOutOfRangeException ("timeout", "timeout < -1");
 
