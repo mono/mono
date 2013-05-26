@@ -774,66 +774,66 @@ namespace Mono.Unix.Native {
 			return rval;
 		}
 
-		[DllImport (LIB, EntryPoint="Mono_Posix_FromRLimit")]
-		private static extern int FromRLimit (RLimit value, out Int32 rval);
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromRlimitResource")]
+		private static extern int FromRlimitResource (RlimitResource value, out Int32 rval);
 
-		public static bool TryFromRLimit (RLimit value, out Int32 rval)
+		public static bool TryFromRlimitResource (RlimitResource value, out Int32 rval)
 		{
-			return FromRLimit (value, out rval) == 0;
+			return FromRlimitResource (value, out rval) == 0;
 		}
 
-		public static Int32 FromRLimit (RLimit value)
+		public static Int32 FromRlimitResource (RlimitResource value)
 		{
 			Int32 rval;
-			if (FromRLimit (value, out rval) == -1)
+			if (FromRlimitResource (value, out rval) == -1)
 				ThrowArgumentException (value);
 			return rval;
 		}
 
-		[DllImport (LIB, EntryPoint="Mono_Posix_ToRLimit")]
-		private static extern int ToRLimit (Int32 value, out RLimit rval);
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToRlimitResource")]
+		private static extern int ToRlimitResource (Int32 value, out RlimitResource rval);
 
-		public static bool TryToRLimit (Int32 value, out RLimit rval)
+		public static bool TryToRlimitResource (Int32 value, out RlimitResource rval)
 		{
-			return ToRLimit (value, out rval) == 0;
+			return ToRlimitResource (value, out rval) == 0;
 		}
 
-		public static RLimit ToRLimit (Int32 value)
+		public static RlimitResource ToRlimitResource (Int32 value)
 		{
-			RLimit rval;
-			if (ToRLimit (value, out rval) == -1)
+			RlimitResource rval;
+			if (ToRlimitResource (value, out rval) == -1)
 				ThrowArgumentException (value);
 			return rval;
 		}
 
-		[DllImport (LIB, EntryPoint="Mono_Posix_FromRUsage")]
-		private static extern int FromRUsage (RUsage value, out Int32 rval);
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromRusageWho")]
+		private static extern int FromRusageWho (RusageWho value, out Int32 rval);
 
-		public static bool TryFromRUsage (RUsage value, out Int32 rval)
+		public static bool TryFromRusageWho (RusageWho value, out Int32 rval)
 		{
-			return FromRUsage (value, out rval) == 0;
+			return FromRusageWho (value, out rval) == 0;
 		}
 
-		public static Int32 FromRUsage (RUsage value)
+		public static Int32 FromRusageWho (RusageWho value)
 		{
 			Int32 rval;
-			if (FromRUsage (value, out rval) == -1)
+			if (FromRusageWho (value, out rval) == -1)
 				ThrowArgumentException (value);
 			return rval;
 		}
 
-		[DllImport (LIB, EntryPoint="Mono_Posix_ToRUsage")]
-		private static extern int ToRUsage (Int32 value, out RUsage rval);
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToRusageWho")]
+		private static extern int ToRusageWho (Int32 value, out RusageWho rval);
 
-		public static bool TryToRUsage (Int32 value, out RUsage rval)
+		public static bool TryToRusageWho (Int32 value, out RusageWho rval)
 		{
-			return ToRUsage (value, out rval) == 0;
+			return ToRusageWho (value, out rval) == 0;
 		}
 
-		public static RUsage ToRUsage (Int32 value)
+		public static RusageWho ToRusageWho (Int32 value)
 		{
-			RUsage rval;
-			if (ToRUsage (value, out rval) == -1)
+			RusageWho rval;
+			if (ToRusageWho (value, out rval) == -1)
 				ThrowArgumentException (value);
 			return rval;
 		}
