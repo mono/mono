@@ -138,6 +138,7 @@
 		<AssemblySearchPaths Condition="'$(AssemblySearchPaths)' == ''">
 			{CandidateAssemblyFiles};
 			$(ReferencePath);
+			@(AdditionalReferencePath);
 			{HintPathFromItem};
 			{TargetFrameworkDirectory};
 			{PkgConfig};
