@@ -168,9 +168,14 @@
 			<Output TaskParameter="TargetFrameworkMonikerDisplayName" PropertyName="TargetFrameworkMonikerDisplayName"/>
 		</GetReferenceAssemblyPaths>
 
-		<CreateProperty Value="$(_TargetFrameworkDirectories);$(TargetFrameworkDirectory)">
-			<Output TaskParameter="Value" PropertyName="TargetFrameworkDirectory"/>
-		</CreateProperty>
+		
+		<!-- Remove duplicates. -->
+		<ItemGroup>
+			<_TargetFrameworkDirectories Include="$(_TargetFrameworkDirectories);$(TargetFrameworkDirectory)" KeepDuplicates="false" />
+		</ItemGroup>
+		<PropertyGroup>
+			<TargetFrameworkDirectory>@(_TargetFrameworkDirectories)</TargetFrameworkDirectory>
+		</PropertyGroup>
 		
 		<ItemGroup Condition="'$(ImplicitlyExpandDesignTimeFacades)' == 'true'">
 			<DesignTimeFacadeDirectoryRoots Include="$(TargetFrameworkDirectory)" />
