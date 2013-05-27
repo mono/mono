@@ -711,19 +711,19 @@ namespace System.Web.Configuration {
 		{
 			object cachedSection;
 
+			bool locked = false;
 			try {
 				if (!sectionCacheLock.TryEnterWriteLock (SECTION_CACHE_LOCK_TIMEOUT))
 					return;
-					
+				locked = true;
+
 				if (sectionCache.TryGetValue (key, out cachedSection) && cachedSection != null)
 					return;
 
 				sectionCache.Add (key, section);
 			} finally {
-				try {
+				if (locked) {
 					sectionCacheLock.ExitWriteLock ();
-				} catch (SynchronizationLockException) {
-					// we can ignore it here
 				}
 			}
 		}
