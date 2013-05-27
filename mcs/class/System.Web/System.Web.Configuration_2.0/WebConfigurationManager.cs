@@ -72,11 +72,10 @@ namespace System.Web.Configuration {
 		
 		// See comment for the cacheLock field at top of System.Web.Caching/Cache.cs
 		static readonly ReaderWriterLockSlim sectionCacheLock;
-		
+
 #if !TARGET_J2EE
 		static IInternalConfigConfigurationFactory configFactory;
 		static Hashtable configurations = Hashtable.Synchronized (new Hashtable ());
-		static Dictionary <int, object> sectionCache = new Dictionary <int, object> ();
 		static Hashtable configPaths = Hashtable.Synchronized (new Hashtable ());
 		static bool suppressAppReload;
 #else
@@ -188,9 +187,28 @@ namespace System.Web.Configuration {
 				}
 			}
 		}
+
+		const int DEFAULT_SECTION_CACHE_SIZE = 100;
+		const string CACHE_SIZE_OVERRIDING_KEY = "MONO_ASPNET_WEBCONFIG_CACHESIZE";
+		static LruCache<int, object> sectionCache;
 		
 		static WebConfigurationManager ()
 		{
+			var section_cache_size = DEFAULT_SECTION_CACHE_SIZE;
+			int section_cache_size_override;
+			bool size_overriden = false;
+			if (int.TryParse (Environment.GetEnvironmentVariable (CACHE_SIZE_OVERRIDING_KEY), out section_cache_size_override)) {
+				section_cache_size = section_cache_size_override;
+				size_overriden = true;
+				Console.WriteLine ("WebConfigurationManager's LRUcache Size overriden to: {0} (via {1})", section_cache_size_override, CACHE_SIZE_OVERRIDING_KEY);
+			}
+			sectionCache = new LruCache<int, object> (section_cache_size);
+			string eviction_warning = "WebConfigurationManager's LRUcache evictions count reached its max size";
+			if (!size_overriden)
+				eviction_warning += String.Format ("{0}Cache Size: {1} (overridable via {2})",
+				                                   Environment.NewLine, section_cache_size, CACHE_SIZE_OVERRIDING_KEY);
+			sectionCache.EvictionWarning = eviction_warning;
+
 			configFactory = ConfigurationManager.ConfigurationFactory;
 			_Configuration.SaveStart += ConfigurationSaveHandler;
 			_Configuration.SaveEnd += ConfigurationSaveHandler;
@@ -452,7 +470,7 @@ namespace System.Web.Configuration {
 				baseCacheKey ^= configPath.GetHashCode ();
 			
 			try {
-				sectionCacheLock.EnterReadLock ();
+				sectionCacheLock.EnterWriteLock ();
 				
 				object o;
 				if (pathPresent) {
@@ -468,7 +486,7 @@ namespace System.Web.Configuration {
 				if (sectionCache.TryGetValue (baseCacheKey, out o))
 					return o;
 			} finally {
-				sectionCacheLock.ExitReadLock ();
+				sectionCacheLock.ExitWriteLock ();
 			}
 
 			string cachePath = null;
@@ -693,29 +711,19 @@ namespace System.Web.Configuration {
 		{
 			object cachedSection;
 
+			bool locked = false;
 			try {
-				if (!sectionCacheLock.TryEnterUpgradeableReadLock (SECTION_CACHE_LOCK_TIMEOUT))
+				if (!sectionCacheLock.TryEnterWriteLock (SECTION_CACHE_LOCK_TIMEOUT))
 					return;
-					
+				locked = true;
+
 				if (sectionCache.TryGetValue (key, out cachedSection) && cachedSection != null)
 					return;
 
-				try {
-					if (!sectionCacheLock.TryEnterWriteLock (SECTION_CACHE_LOCK_TIMEOUT))
-						return;
-					sectionCache.Add (key, section);
-				} finally {
-					try {
-						sectionCacheLock.ExitWriteLock ();
-					} catch (SynchronizationLockException) {
-						// we can ignore it here
-					}
-				}
+				sectionCache.Add (key, section);
 			} finally {
-				try {
-					sectionCacheLock.ExitUpgradeableReadLock ();
-				} catch (SynchronizationLockException) {
-					// we can ignore it here
+				if (locked) {
+					sectionCacheLock.ExitWriteLock ();
 				}
 			}
 		}
