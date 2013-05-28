@@ -478,7 +478,12 @@ namespace Mono.Security.Cryptography {
 			case "RIPEMD160":
 				return RIPEMD160.Create ();
 			default:
-				throw new CryptographicException ("Unsupported hash algorithm: " + name);
+				try {
+					return (HashAlgorithm) Activator.CreateInstance (Type.GetType (name));
+				}
+				catch {
+					throw new CryptographicException ("Unsupported hash algorithm: " + name);
+				}
 			}
 #else
 			return HashAlgorithm.Create (name);
