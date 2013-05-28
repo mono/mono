@@ -46,7 +46,6 @@ namespace System.Media {
 		int load_timeout = 10000;
 
 		#region Only used for Alsa implementation
-		AudioDevice adev;
 		AudioData adata;
 		bool stopped;
 		#endregion
@@ -126,7 +125,6 @@ namespace System.Media {
 
 			// force recreate for new stream
 			adata = null;
-			adev = null;
 
 			load_completed = true;
 			AsyncCompletedEventArgs e = new AsyncCompletedEventArgs (null, false, this);
@@ -239,9 +237,8 @@ namespace System.Media {
 				try {
 					if (adata == null)
 						adata = new WavData (mstream);
-					if (adev == null)
-						adev = AudioDevice.CreateDevice (null);
 					if (adata != null) {
+						AudioDevice adev = AudioDevice.CreateDevice (null);
 						adata.Setup (adev);
 						adata.Play (adev);
 					}

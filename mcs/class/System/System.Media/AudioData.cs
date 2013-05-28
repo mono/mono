@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace Mono.Audio {
  
@@ -60,8 +61,10 @@ namespace Mono.Audio {
 		int data_len;
 		long data_offset;
 		AudioFormat format;
-
+		Mutex mutex;
+		
 		public WavData (Stream data) {
+			mutex = new Mutex();
 			stream = data;
 			byte[] buffer = new byte [12 + 32];
 			int idx;
@@ -163,10 +166,12 @@ namespace Mono.Audio {
 			byte[] buffer            = new byte [data_len];
 			byte[] chunk_to_play     = new byte [chunk_size];
 
+			mutex.WaitOne();
 			// Read only wave data, don't care about file header here !
 			stream.Position = data_offset;
 			stream.Read (buffer, 0, data_len); 
-
+			mutex.ReleaseMutex();
+			
 			while (!IsStopped && count >= 0){
 				// Copy one chunk from buffer
 				Buffer.BlockCopy(buffer, total_data_played, chunk_to_play, 0, chunk_size);
