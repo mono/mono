@@ -89,8 +89,6 @@ namespace Mono.Audio {
 
 	class AlsaDevice: AudioDevice, IDisposable {
 		IntPtr handle;
-		IntPtr hw_param;
-		IntPtr sw_param;
 		
 		[DllImport ("libasound.so.2")]
 		static extern int snd_pcm_open (ref IntPtr handle, string pcm_name, int stream, int mode);
@@ -175,8 +173,6 @@ namespace Mono.Audio {
 
 		public AlsaDevice (string name) {
 			handle = IntPtr.Zero;
-			hw_param = IntPtr.Zero;
-			sw_param = IntPtr.Zero;
 			
 			if (name == null)
 				name = "default";
@@ -198,14 +194,6 @@ namespace Mono.Audio {
 			if (disposing) {
 				
 			}
-			if (sw_param != IntPtr.Zero) {
-				snd_pcm_sw_params_free (sw_param);
-				sw_param = IntPtr.Zero;
-			}
-			if (hw_param != IntPtr.Zero) {
-				snd_pcm_hw_params_free (hw_param);
-				hw_param = IntPtr.Zero;
-			}
 			if (handle != IntPtr.Zero) {
 				snd_pcm_close (handle);
 				handle = IntPtr.Zero;
@@ -220,84 +208,87 @@ namespace Mono.Audio {
 			uint buffer_time = 0;
 			int dir = 0;
 			uint sampling_rate = (uint)rate;
+			IntPtr hw_param = IntPtr.Zero;
+			IntPtr sw_param = IntPtr.Zero;
+			
+			try {
+				// Alloc hw params structure
+				alsa_err = snd_pcm_hw_params_malloc (ref hw_param);
 
-			// Alloc hw params structure
-			alsa_err = snd_pcm_hw_params_malloc (ref hw_param);
+				if (alsa_err == 0) {
+					// get current hardware param
+					snd_pcm_hw_params_any (handle, hw_param);
 
-			if (alsa_err == 0) {
-				// get current hardware param
-				snd_pcm_hw_params_any (handle, hw_param);
+					// Set access to SND_PCM_ACCESS_RW_INTERLEAVED
+					snd_pcm_hw_params_set_access (handle, hw_param, 3);
+					// Set format to the file's format
+					snd_pcm_hw_params_set_format (handle, hw_param, (int)format);
+					// Set channel to the file's channel number
+					snd_pcm_hw_params_set_channels (handle, hw_param, (uint)channels);
 
-				// Set access to SND_PCM_ACCESS_RW_INTERLEAVED
-				snd_pcm_hw_params_set_access (handle, hw_param, 3);
-				// Set format to the file's format
-				snd_pcm_hw_params_set_format (handle, hw_param, (int)format);
-				// Set channel to the file's channel number
-				snd_pcm_hw_params_set_channels (handle, hw_param, (uint)channels);
+					dir = 0;
+					// Set the sampling rate to the closest value
+					snd_pcm_hw_params_set_rate_near (handle, hw_param, ref sampling_rate, ref dir);
 
-				dir = 0;
-				// Set the sampling rate to the closest value
-				snd_pcm_hw_params_set_rate_near (handle, hw_param, ref sampling_rate, ref dir);
+					dir = 0;
+					// Get the maximum buffer time allowed by hardware
+					snd_pcm_hw_params_get_buffer_time_max (hw_param, ref buffer_time, ref dir);
+					// At least, max buffer time = 500ms
+					if (buffer_time > 500000) 
+						buffer_time = 500000;
+					// The optimum time for a period is the quarter of the buffer time
+					if (buffer_time > 0)
+						period_time = buffer_time / 4;
 
-				dir = 0;
-				// Get the maximum buffer time allowed by hardware
-				snd_pcm_hw_params_get_buffer_time_max (hw_param, ref buffer_time, ref dir);
-				// At least, max buffer time = 500ms
-				if (buffer_time > 500000) 
-					buffer_time = 500000;
-				// The optimum time for a period is the quarter of the buffer time
-				if (buffer_time > 0)
-					period_time = buffer_time / 4;
+					dir = 0;
+					snd_pcm_hw_params_set_period_time_near (handle, hw_param, ref period_time, ref dir);
 
-				dir = 0;
-				snd_pcm_hw_params_set_period_time_near (handle, hw_param, ref period_time, ref dir);
+					dir = 0;
+					snd_pcm_hw_params_set_buffer_time_near (handle, hw_param, ref buffer_time, ref dir);
 
-				dir = 0;
-				snd_pcm_hw_params_set_buffer_time_near (handle, hw_param, ref buffer_time, ref dir);
+					// Get the period size in byte
+					snd_pcm_hw_params_get_period_size (hw_param, ref period_size, ref dir);
+					// Set the chunk size to the periode size
+					// a chunk is a piece of wave raw data send to alsa, data are played chunk by chunk !
+					chunk_size = period_size;
 
-				// Get the period size in byte
-				snd_pcm_hw_params_get_period_size (hw_param, ref period_size, ref dir);
-				// Set the chunk size to the periode size
-				// a chunk is a piece of wave raw data send to alsa, data are played chunk by chunk !
-				chunk_size = period_size;
+					snd_pcm_hw_params_get_buffer_size (hw_param, ref buffer_size);
 
-				snd_pcm_hw_params_get_buffer_size (hw_param, ref buffer_size);
-
-				// Apply hardware params
-				snd_pcm_hw_params (handle, hw_param);
+					// Apply hardware params
+					snd_pcm_hw_params (handle, hw_param);
 
 
-			} else {
-				hw_param = IntPtr.Zero;
-				Console.WriteLine ("failed to alloc Alsa hw param struct");
+				} else {
+					hw_param = IntPtr.Zero;
+					Console.WriteLine ("failed to alloc Alsa hw param struct");
+				}
+
+				alsa_err = snd_pcm_sw_params_malloc (ref sw_param);
+				if (alsa_err == 0) {
+					// get current software param
+					snd_pcm_sw_params_current (handle, sw_param);
+
+					// Alsa becomes ready when there is at least chunk_size bytes (i.e. period) in its ring buffer !
+					snd_pcm_sw_params_set_avail_min(handle, sw_param, chunk_size);
+					// Alsa starts playing when there is buffer_size (i.e. the buffer is full) bytes in its ring buffer
+					snd_pcm_sw_params_set_start_threshold(handle, sw_param, buffer_size);
+
+					// apply software param
+					snd_pcm_sw_params(handle, sw_param);
+				} else {
+					sw_param = IntPtr.Zero;
+					Console.WriteLine ("failed to alloc Alsa sw param struct");
+				}
+			} finally {
+				if (hw_param != IntPtr.Zero) {
+					snd_pcm_hw_params_free (hw_param);  // free hw params
+					hw_param = IntPtr.Zero;
+				}
+				if (sw_param != IntPtr.Zero) {
+					snd_pcm_sw_params_free (sw_param);  // free sw params
+					sw_param = IntPtr.Zero;
+				}
 			}
-
-			alsa_err = snd_pcm_sw_params_malloc (ref sw_param);
-			if (alsa_err == 0) {
-				// get current software param
-				snd_pcm_sw_params_current (handle, sw_param);
-
-				// Alsa becomes ready when there is at least chunk_size bytes (i.e. period) in its ring buffer !
-				snd_pcm_sw_params_set_avail_min(handle, sw_param, chunk_size);
-				// Alsa starts playing when there is buffer_size (i.e. the buffer is full) bytes in its ring buffer
-				snd_pcm_sw_params_set_start_threshold(handle, sw_param, buffer_size);
-
-				// apply software param
-				snd_pcm_sw_params(handle, sw_param);
-			} else {
-				sw_param = IntPtr.Zero;
-				Console.WriteLine ("failed to alloc Alsa sw param struct");
-			}
-
-			if (hw_param != IntPtr.Zero) {
-				snd_pcm_hw_params_free (hw_param);  // free hw params
-				hw_param = IntPtr.Zero;
-			}
-			if (sw_param != IntPtr.Zero) {
-				snd_pcm_sw_params_free (sw_param);  // free sw params
-				sw_param = IntPtr.Zero;
-			}
-
 			return alsa_err == 0;
 		}
 
