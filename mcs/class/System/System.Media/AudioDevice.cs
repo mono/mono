@@ -174,6 +174,10 @@ namespace Mono.Audio {
 		static extern int snd_pcm_sw_params_set_start_threshold(IntPtr handle, IntPtr param, uint StartThreshold);
 
 		public AlsaDevice (string name) {
+			handle = IntPtr.Zero;
+			hw_param = IntPtr.Zero;
+			sw_param = IntPtr.Zero;
+			
 			if (name == null)
 				name = "default";
 			int err = snd_pcm_open (ref handle, name, 0, 0);
@@ -194,15 +198,18 @@ namespace Mono.Audio {
 			if (disposing) {
 				
 			}
-			if (sw_param != IntPtr.Zero)
+			if (sw_param != IntPtr.Zero) {
 				snd_pcm_sw_params_free (sw_param);
-			if (hw_param != IntPtr.Zero)
+				sw_param = IntPtr.Zero;
+			}
+			if (hw_param != IntPtr.Zero) {
 				snd_pcm_hw_params_free (hw_param);
-			if (handle != IntPtr.Zero)
+				hw_param = IntPtr.Zero;
+			}
+			if (handle != IntPtr.Zero) {
 				snd_pcm_close (handle);
-			sw_param = IntPtr.Zero;
-			hw_param = IntPtr.Zero;
-			handle = IntPtr.Zero;
+				handle = IntPtr.Zero;
+			}
 		}
 
 		public override bool SetFormat (AudioFormat format, int channels, int rate) {
@@ -261,6 +268,7 @@ namespace Mono.Audio {
 
 
 			} else {
+				hw_param = IntPtr.Zero;
 				Console.WriteLine ("failed to alloc Alsa hw param struct");
 			}
 
@@ -277,6 +285,7 @@ namespace Mono.Audio {
 				// apply software param
 				snd_pcm_sw_params(handle, sw_param);
 			} else {
+				sw_param = IntPtr.Zero;
 				Console.WriteLine ("failed to alloc Alsa sw param struct");
 			}
 
