@@ -57,6 +57,7 @@ namespace Mono.CSharp {
 			}
 
 			ec.StartFlowBranching (FlowBranching.BranchingType.Block, loc);
+			ec.CurrentBranching.CurrentUsageVector.Goto ();
 			bool ok = Resolve (ec);
 			ec.KillFlowBranching ();
 
