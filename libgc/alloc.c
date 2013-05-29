@@ -412,7 +412,7 @@ GC_stop_func stop_func;
     	    GC_collect_a_little_inner(1);
     	}
     }
-    set_realtime (5000000);
+    //set_realtime (5000000);
     if (stop_func == GC_never_stop_func) GC_notify_full_gc();
 #   ifdef CONDPRINT
       if (GC_print_stats) {

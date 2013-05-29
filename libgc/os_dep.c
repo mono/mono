@@ -16,7 +16,7 @@
 
 # include "private/gc_priv.h"
 
-# if defined(LINUX) && !defined(POWERPC)
+# if defined(LINUX) && !defined(POWERPC) && !defined(TIZEN)
 #   include <linux/version.h>
 #   if (LINUX_VERSION_CODE <= 0x10400)
       /* Ugly hack to get struct sigcontext_struct definition.  Required      */
