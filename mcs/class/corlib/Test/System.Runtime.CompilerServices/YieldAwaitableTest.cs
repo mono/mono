@@ -125,7 +125,6 @@ namespace MonoTests.System.Runtime.CompilerServices
 		}
 
 		[Test]
-		[Category ("MobileNotWorking")] // #12446
 		public void OnCompleted_2 ()
 		{
 			TaskScheduler scheduler = null;
@@ -143,7 +142,6 @@ namespace MonoTests.System.Runtime.CompilerServices
 		}
 
 		[Test]
-		[Category ("MobileNotWorking")] // #12446
 		public void OnCompleted_3 ()
 		{
 			var scheduler = new MyScheduler ();
