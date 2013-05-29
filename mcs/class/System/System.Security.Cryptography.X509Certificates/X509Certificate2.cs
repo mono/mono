@@ -580,7 +580,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (_cert == null)
 				throw new CryptographicException (empty_error);
 
-			X509Chain chain = (X509Chain) CryptoConfig.CreateFromName ("X509Chain");
+			X509Chain chain = X509Chain.Create ();
 			if (!chain.Build (this))
 				return false;
 			// TODO - check chain and other stuff ???
