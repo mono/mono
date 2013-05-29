@@ -47,13 +47,11 @@ namespace Mono.Documentation {
 		internal ExceptionSources (TypeReference exception)
 		{
 			Exception = exception;
-			SourcesList = new List<MemberReference> ();
-			Sources = new ReadOnlyCollection<MemberReference> (SourcesList);
+			Sources   = new HashSet<MemberReference> ();
 		}
 
 		public TypeReference Exception { get; private set; }
-		public ReadOnlyCollection<MemberReference> Sources { get; private set; }
-		internal List<MemberReference> SourcesList;
+		internal  HashSet<MemberReference>  Sources;
 	}
 
 
@@ -93,13 +91,13 @@ namespace Mono.Documentation {
 				Dictionary<string, ExceptionSources> e;
 				if (!db.TryGetValue (memberDecl, out e)) {
 					e = new Dictionary<string, ExceptionSources> ();
+					db.Add (memberDecl, e);
 					var bodies = GetMethodBodies (member);
 					foreach (var body in bodies) {
 						if (body == null)
 							continue;
 						FillExceptions (body, e);
 					}
-					db.Add (memberDecl, e);
 				}
 				return e.Values;
 			}
@@ -146,9 +144,6 @@ namespace Mono.Documentation {
 								((locations & ExceptionLocations.DependentAssemblies) != 0 && 
 									body.Method.DeclaringType.Scope.Name != memberRef.DeclaringType.Scope.Name)) {
 
-							if (memberRef.Resolve () == body.Method)
-								break;
-
 							IEnumerable<ExceptionSources> memberExceptions = this [memberRef];
 							AddExceptions (body, instruction, 
 									memberExceptions.Select (es => es.Exception),
@@ -185,7 +180,8 @@ namespace Mono.Documentation {
 						s = new ExceptionSources (ex);
 						exceptions.Add (eName, s);
 					}
-					s.SourcesList.AddRange (sources);
+					foreach (var m in sources)
+						s.Sources.Add (m);
 				}
 			}
 		}
