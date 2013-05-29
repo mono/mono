@@ -145,6 +145,10 @@ namespace Mono.Documentation {
 									body.Method.DeclaringType.Scope.Name == memberRef.DeclaringType.Scope.Name) ||
 								((locations & ExceptionLocations.DependentAssemblies) != 0 && 
 									body.Method.DeclaringType.Scope.Name != memberRef.DeclaringType.Scope.Name)) {
+
+							if (memberRef.Resolve () == body.Method)
+								break;
+
 							IEnumerable<ExceptionSources> memberExceptions = this [memberRef];
 							AddExceptions (body, instruction, 
 									memberExceptions.Select (es => es.Exception),
