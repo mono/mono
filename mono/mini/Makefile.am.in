@@ -179,8 +179,9 @@ endif
 # instead, here we are using buildver-sgen.h to trigger a REBUILD of buildver.h
 # (if both sgen and boehm versions are built in the same build), but only buildver.h
 # is included, regardless of which gc is selected.
-buildver-sgen.h: libmini-static.la buildver.h
+buildver-sgen.h: libmini-static.la
 	@echo "const char *build_date = \"`date`\";" > buildver-sgen.h
+	@echo "const char *build_date = \"`date`\";" > buildver.h
 mono_sgen-main.$(OBJEXT): buildver-sgen.h
 
 if DTRACE_G_REQUIRED
