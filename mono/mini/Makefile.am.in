@@ -173,7 +173,13 @@ buildver.h: libmini-static.la
 mono-main.$(OBJEXT): buildver.h
 endif
 
-buildver-sgen.h: libmini-static.la
+# Previously, buildver-sgen.h was included for the sgen build, and buildver.h
+# was included for the boehm build, but that meant main.c needed to be aware
+# of the gc being used in order to include the right file. This didn't work.
+# instead, here we are using buildver-sgen.h to trigger a REBUILD of buildver.h
+# (if both sgen and boehm versions are built in the same build), but only buildver.h
+# is included, regardless of which gc is selected.
+buildver-sgen.h: libmini-static.la buildver.h
 	@echo "const char *build_date = \"`date`\";" > buildver-sgen.h
 mono_sgen-main.$(OBJEXT): buildver-sgen.h
 
