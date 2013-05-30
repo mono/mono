@@ -55,13 +55,13 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			block.LinkTo (action1);
 			block.LinkTo (action2);
 
-			Assert.IsTrue (block.Post (42));
-			Assert.IsFalse (block.Post (43));
+			Assert.IsTrue (block.Post (42), "#1");
+			Assert.IsFalse (block.Post (43), "#2");
 
-			Assert.IsTrue (evt.Wait (100));
+			Assert.IsTrue (evt.Wait (100), "#3");
 
-			Assert.IsTrue (act1);
-			Assert.IsTrue (act2);
+			Assert.IsTrue (act1, "#4");
+			Assert.IsTrue (act2, "#5");
 		}
 
 		[Test]
