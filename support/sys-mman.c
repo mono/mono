@@ -7,8 +7,6 @@
  * Copyright (C) 2004-2006 Jonathan Pryor
  */
 
-#include <config.h>
-
 #define _XOPEN_SOURCE 600
 
 #ifdef PLATFORM_MACOSX

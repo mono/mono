@@ -7,8 +7,6 @@
  * Copyright (C) 2004-2006 Jonathan Pryor
  */
 
-#include <config.h>
-
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif /* ndef _GNU_SOURCE */
