@@ -2321,6 +2321,8 @@ namespace Mono.Debugger.Soft
 
 		public void ForceDisconnect ()
 		{
+			closed = true;
+			disconnected = true;
 			TransportClose ();
 		}
 	}
