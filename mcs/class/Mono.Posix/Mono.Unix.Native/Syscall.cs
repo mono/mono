@@ -365,6 +365,25 @@ namespace Mono.Unix.Native {
 
 	[Map]
 	[CLSCompliant (false)]
+	public enum RlimitResource : int {
+		RLIMIT_CPU    = 0,
+		RLIMIT_FSIZE  = 1,
+		RLIMIT_DATA   = 2,
+		RLIMIT_STACK  = 3,
+		RLIMIT_CORE   = 4,
+		// TODO: RlimitResource MPH helper functions 
+		// additional RLIMIT_ values that differ on non-x86 archs 
+	}
+
+	[Map]
+	[CLSCompliant (false)]
+	public enum RusageWho : int {
+		RUSAGE_SELF      =  0,
+		RUSAGE_CHILDREN  = -1,
+	}
+
+	[Map]
+	[CLSCompliant (false)]
 	public enum SysconfName : int {
 		_SC_ARG_MAX,
 		_SC_CHILD_MAX,
@@ -1243,6 +1262,35 @@ namespace Mono.Unix.Native {
 		[FieldOffset (4)]
 		public ulong u64;
 	}
+
+	[Map]
+	[CLSCompliant (false)]
+	public struct Rlimit {
+		public ulong rlim_cur;    /* soft limit */
+		public ulong rlim_max;    /* hard limit */
+	}
+
+	[Map]
+	[CLSCompliant (false)]
+	public struct Rusage {
+		public Timeval ru_utime;        /* user CPU time used */
+		public Timeval ru_stime;        /* system CPU time used */
+		public long   ru_maxrss;        /* maximum resident set size */
+		public long   ru_ixrss;         /* integral shared memory size */
+		public long   ru_idrss;         /* integral unshared data size */
+		public long   ru_isrss;         /* integral unshared stack size */
+		public long   ru_minflt;        /* page reclaims (soft page faults) */
+		public long   ru_majflt;        /* page faults (hard page faults) */
+		public long   ru_nswap;         /* swaps */
+		public long   ru_inblock;       /* block input operations */
+		public long   ru_oublock;       /* block output operations */
+		public long   ru_msgsnd;        /* IPC messages sent */
+		public long   ru_msgrcv;        /* IPC messages received */
+		public long   ru_nsignals;      /* signals received */
+		public long   ru_nvcsw;         /* voluntary context switches */
+		public long   ru_nivcsw;        /* involuntary context switches */
+	}; 
+
 	#endregion
 
 	#region Classes
@@ -2979,13 +3027,20 @@ namespace Mono.Unix.Native {
 
 		// TODO: ptrace(2)
 
+    #endregion
+
+    #region <sys/resource.h>
 		//
 		// <sys/resource.h>
 		//
 
 		// TODO: setrlimit(2)
-		// TODO: getrlimit(2)
-		// TODO: getrusage(2)
+
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int getrlimit( RlimitResource resource, ref Rlimit limit );
+
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int getrusage( RusageWho who, ref Rusage usage );
 
 		#endregion
 
