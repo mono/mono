@@ -3180,6 +3180,7 @@ namespace Mono.CSharp
 						case Token.FOREACH:
 						case Token.TYPEOF:
 						case Token.WHILE:
+						case Token.SWITCH:
 						case Token.USING:
 						case Token.DEFAULT:
 						case Token.DELEGATE:
