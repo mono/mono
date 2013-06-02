@@ -80,6 +80,7 @@
 		<TargetPath Condition=" '$(TargetPath)' == '' ">@(_OutDirItem->'%(FullPath)\$(TargetFileName)')</TargetPath>
 		<MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildProjectFullPath);$(MSBuildToolsPath)\Microsoft.Common.targets</MSBuildAllProjects>
 		<KeyOriginatorFile Condition=" '$(SignAssembly)' == 'true' ">$(AssemblyOriginatorKeyFile)</KeyOriginatorFile>
+		<TargetingClr2Framework Condition="('$(TargetFrameworkIdentifier)' == '.NETFramework') and ('$(TargetFrameworkVersion)' == 'v2.0' or '$(TargetFrameworkVersion)' == 'v3.0' or '$(TargetFrameworkVersion)' == 'v3.5')">true</TargetingClr2Framework>
 	</PropertyGroup>
 
 	<Target Name="_ValidateEssentialProperties">
@@ -123,6 +124,9 @@
 		Condition="'$(TargetFrameworkIdentifier)' == '' or '$(TargetFrameworkIdentifier)' == '.NETFramework'"
 		DependsOnTargets="$(GetFrameworkPathsDependsOn)">
 		<GetFrameworkPath>
+			<Output Condition="'$(TargetFrameworkVersion)' == 'v4.5'"
+				TaskParameter="FrameworkVersion45Path"
+				ItemName="_CombinedTargetFrameworkDirectoriesItem"/>
 			<Output Condition="'$(TargetFrameworkVersion)' == 'v4.0'"
 				TaskParameter="FrameworkVersion40Path"
 				ItemName="_CombinedTargetFrameworkDirectoriesItem"/>
@@ -141,7 +145,7 @@
 		</CreateProperty>
 
 		<Warning Text="TargetFrameworkVersion '$(TargetFrameworkVersion)' not supported by this toolset (ToolsVersion: $(MSBuildToolsVersion))."
-			Condition="'$(TargetFrameworkVersion)' != 'v4.0' and '$(TargetFrameworkVersion)' != 'v3.5' and '$(TargetFrameworkVersion)' != 'v3.0' and '$(TargetFrameworkVersion)' != 'v2.0'"/>
+			Condition="'$(TargetFrameworkVersion)' != 'v4.5' and '$(TargetFrameworkVersion)' != 'v4.0' and '$(TargetFrameworkVersion)' != 'v3.5' and '$(TargetFrameworkVersion)' != 'v3.0' and '$(TargetFrameworkVersion)' != 'v2.0'"/>
 	</Target>
 
 	<PropertyGroup>
@@ -164,9 +168,25 @@
 			<Output TaskParameter="TargetFrameworkMonikerDisplayName" PropertyName="TargetFrameworkMonikerDisplayName"/>
 		</GetReferenceAssemblyPaths>
 
-		<CreateProperty Value="$(_TargetFrameworkDirectories);$(TargetFrameworkDirectory)">
-			<Output TaskParameter="Value" PropertyName="TargetFrameworkDirectory"/>
-		</CreateProperty>
+		
+		<!-- Remove duplicates. -->
+		<ItemGroup>
+			<_TargetFrameworkDirectories Include="$(_TargetFrameworkDirectories);$(TargetFrameworkDirectory)" KeepDuplicates="false" />
+		</ItemGroup>
+		<PropertyGroup>
+			<TargetFrameworkDirectory>@(_TargetFrameworkDirectories)</TargetFrameworkDirectory>
+		</PropertyGroup>
+		
+		<ItemGroup Condition="'$(ImplicitlyExpandDesignTimeFacades)' == 'true'">
+			<DesignTimeFacadeDirectoryRoots Include="$(TargetFrameworkDirectory)" />
+			<DesignTimeFacadeDirectories Include="%(DesignTimeFacadeDirectoryRoots.Identity)\Facades\" Condition="Exists('%(DesignTimeFacadeDirectoryRoots.Identity)\Facades\')" />
+			<_DesignTimeFacadeAssemblies Include="%(DesignTimeFacadeDirectories.Identity)\*.dll"/>
+		</ItemGroup>
+		
+		<PropertyGroup Condition="'@(DesignTimeFacadeDirectories)' != ''">
+			<TargetFrameworkDirectory>$(TargetFrameworkDirectory);@(DesignTimeFacadeDirectories)</TargetFrameworkDirectory>
+		</PropertyGroup>
+		
 	</Target>
 
 	<PropertyGroup>
@@ -203,6 +223,31 @@
 			PrepareForBuild
 		</ResolveAssemblyReferencesDependsOn>
 	</PropertyGroup>
+	
+	<PropertyGroup Condition="'$(TargetFrameworkMoniker)' != ''">
+		<TargetFrameworkMonikerAssemblyAttributesPath Condition="'$(TargetFrameworkMonikerAssemblyAttributesPath)' == ''">$(IntermediateOutputPath)$(TargetFrameworkMoniker).AssemblyAttribute$(DefaultLanguageSourceExtension)</TargetFrameworkMonikerAssemblyAttributesPath>
+		<GenerateTargetFrameworkAttribute Condition="'$(GenerateTargetFrameworkAttribute)' == '' and '$(TargetFrameworkMoniker)' 
+	!= '' and '$(TargetingClr2Framework)' != 'true'">true</GenerateTargetFrameworkAttribute>
+	</PropertyGroup>
+	
+	<ItemGroup Condition="'$(GenerateTargetFrameworkAttribute)' == 'true'">
+		<FileWrites Include="$(TargetFrameworkMonikerAssemblyAttributesPath)" />
+	</ItemGroup>
+	
+	<Target Name="GenerateTargetFrameworkMonikerAttribute"
+		DependsOnTargets="PrepareForBuild;GetReferenceAssemblyPaths"
+		Inputs="$(MSBuildToolsPath)\Microsoft.Common.targets"
+		Outputs="$(TargetFrameworkMonikerAssemblyAttributesPath)"
+		Condition="'$(GenerateTargetFrameworkAttribute)' == 'true'">
+		
+		<WriteLinesToFile
+			File="$(TargetFrameworkMonikerAssemblyAttributesPath)"
+			Lines="$(TargetFrameworkMonikerAssemblyAttributeText)"
+			Overwrite="true"
+			ContinueOnError="true"
+			Condition="'@(Compile)' != '' and '$(TargetFrameworkMonikerAssemblyAttributeText)' != ''"
+		/>
+	</Target>
 
 	<Target Name="ResolveReferences" DependsOnTargets="$(ResolveReferencesDependsOn)"/>
 
@@ -235,10 +280,13 @@
 		>
 			<Output TaskParameter="ResolvedFiles" ItemName="ResolvedFiles"/>
 			<Output TaskParameter="ResolvedFiles" ItemName="ReferencePath"/>
-			<Output TaskParameter="ResolvedDependencyFiles" ItemName="_ResolvedDependencyFiles"/>
+			<Output TaskParameter="ResolvedDependencyFiles" ItemName="ReferenceDependencyPaths"/>
 			<Output TaskParameter="RelatedFiles" ItemName="_ReferenceRelatedPaths"/>
 			<Output TaskParameter="SatelliteFiles" ItemName="ReferenceSatellitePaths"/>
 			<Output TaskParameter="CopyLocalFiles" ItemName="ReferenceCopyLocalPaths"/>
+			
+			<!-- FIXME: backwards compatibility -->
+			<Output TaskParameter="ResolvedDependencyFiles" ItemName="_ResolvedDependencyFiles"/>
 		</ResolveAssemblyReference>
 	</Target>
 
@@ -323,12 +371,14 @@
 
 	<PropertyGroup>
 		<BuildDependsOn>
+			BuildOnlySettings;
 			BeforeBuild;
 			CoreBuild;
 			AfterBuild
 		</BuildDependsOn>
 	</PropertyGroup>
-
+	
+	<Target Name="BuildOnlySettings"/>
 	<Target Name="BeforeBuild"/>
 	<Target Name="AfterBuild"/>
 
@@ -365,6 +415,7 @@
 	<PropertyGroup>
 		<CompileDependsOn>
 			ResolveReferences;
+			GenerateTargetFrameworkMonikerAttribute;
 			BeforeCompile;
 			_TimestampBeforeCompile;
 			CoreCompile;
@@ -509,7 +560,7 @@
 			LicenseTarget = "$(TargetFileName)"
 			OutputDirectory = "$(IntermediateOutputPath)"
 			OutputLicense = "$(IntermediateOutputPath)$(TargetFileName).licenses"
-			ReferencedAssemblies = "@(ReferencePath);@(_ResolvedDependencyFiles)"
+			ReferencedAssemblies = "@(ReferencePath);@(ReferenceDependencyPaths)"
 			ToolPath = "$(LCToolPath)"
 			ToolExe = "$(LCToolExe)">
 
@@ -815,7 +866,42 @@
 		     we can safely remove the file list now -->
 		<Delete Files="$(IntermediateOutputPath)$(CleanFile)" TreatErrorsAsWarnings="true" />
 	</Target>
+	
+	<PropertyGroup>
+		<ImplicitlyExpandDesignTimeFacades>true</ImplicitlyExpandDesignTimeFacades>
 
+		<ResolveReferencesDependsOn>
+			$(ResolveReferencesDependsOn);
+			ImplicitlyExpandDesignTimeFacades
+		</ResolveReferencesDependsOn>
+
+		<ImplicitlyExpandDesignTimeFacadesDependsOn>
+			$(ImplicitlyExpandDesignTimeFacadesDependsOn);
+			GetReferenceAssemblyPaths
+		</ImplicitlyExpandDesignTimeFacadesDependsOn>
+	</PropertyGroup>
+	
+	<Target Name="ImplicitlyExpandDesignTimeFacades" Condition="'$(ImplicitlyExpandDesignTimeFacades)' == 'true'" DependsOnTargets="$(ImplicitlyExpandDesignTimeFacadesDependsOn)">
+	
+		<PropertyGroup>
+			<_HasReferenceToSystemRuntime Condition="'%(_ResolvedDependencyFiles.Filename)' == 'System.Runtime'">true</_HasReferenceToSystemRuntime>
+		</PropertyGroup>
+
+		<ItemGroup Condition="'$(_HasReferenceToSystemRuntime)' == 'true'">
+			<!-- If the user has manually referenced these assemblies, remove them so we don't end up with duplicates -->
+			<ReferencePath Remove="@(_DesignTimeFacadeAssemblies)"/>
+			<ReferencePath Include="%(_DesignTimeFacadeAssemblies.Identity)">
+				<WinMDFile>false</WinMDFile>
+				<CopyLocal>false</CopyLocal>
+				<ResolvedFrom>ImplicitlyExpandDesignTimeFacades</ResolvedFrom>
+			</ReferencePath>
+			<_ResolveAssemblyReferenceResolvedFiles Include="@(ReferencePath)" Condition="'%(ReferencePath.ResolvedFrom)' == 'ImplicitlyExpandDesignTimeFacades'" />
+		</ItemGroup>
+    
+		<Message Importance="Low" Text="Including @(ReferencePath)" Condition="'%(ReferencePath.ResolvedFrom)' == 'ImplicitlyExpandDesignTimeFacades'" />
+
+	</Target>
+	
 	<Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\$(MSBuildThisFile)\ImportAfter\*"
 		Condition="'$(ImportByWildcardAfterMicrosoftCommonTargets)' == 'true' and Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\$(MSBuildThisFile)\ImportAfter')"/>
 </Project>

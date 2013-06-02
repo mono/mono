@@ -133,10 +133,15 @@
 #endif
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION 88
+#define MONO_AOT_FILE_VERSION 89
 
 //TODO: This is x86/amd64 specific.
 #define mono_simd_shuffle_mask(a,b,c,d) ((a) | ((b) << 2) | ((c) << 4) | ((d) << 6))
+
+/* Remap printf to g_print (we use a mix of these in the mini code) */
+#ifdef PLATFORM_ANDROID
+#define printf g_print
+#endif
 
 /* Constants used to encode different types of methods in AOT */
 enum {
@@ -1955,14 +1960,24 @@ void mono_nacl_fix_patches(const guint8 *code, MonoJumpInfo *ji);
 guint8 *mono_arch_nacl_pad(guint8 *code, int pad);
 guint8 *mono_arch_nacl_skip_nops(guint8 *code);
 
-extern const guint kNaClAlignment;
-extern const guint kNaClAlignmentMask;
+#if defined(TARGET_X86)
+#define kNaClAlignment kNaClAlignmentX86
+#define kNaClAlignmentMask kNaClAlignmentMaskX86
+#elif defined(TARGET_AMD64)
+#define kNaClAlignment kNaClAlignmentAMD64
+#define kNaClAlignmentMask kNaClAlignmentMaskAMD64
+#elif defined(TARGET_ARM)
+#define kNaClAlignment kNaClAlignmentARM
+#define kNaClAlignmentMask kNaClAlignmentMaskARM
+#endif
+
+#define NACL_BUNDLE_ALIGN_UP(p) ((((p)+kNaClAlignmentMask)) & ~kNaClAlignmentMask)
 #endif
 
 #if defined(__native_client__) || defined(__native_client_codegen__)
 extern volatile int __nacl_thread_suspension_needed;
-extern void __nacl_suspend_thread_if_needed();
-void mono_nacl_gc();
+void __nacl_suspend_thread_if_needed(void);
+void mono_nacl_gc(void);
 #endif
 
 #if defined(__native_client_codegen__) || defined(__native_client__)
@@ -2078,7 +2093,7 @@ gconstpointer     mono_get_trampoline_func (MonoTrampolineType tramp_type);
 gpointer          mini_get_vtable_trampoline (int slot_index) MONO_INTERNAL;
 char*             mono_get_generic_trampoline_name (MonoTrampolineType tramp_type) MONO_INTERNAL;
 char*             mono_get_rgctx_fetch_trampoline_name (int slot) MONO_INTERNAL;
-gpointer          mini_add_method_trampoline (MonoMethod *orig_method, MonoMethod *m, gpointer compiled_method, gboolean add_static_rgctx_tramp) MONO_INTERNAL;
+gpointer          mini_add_method_trampoline (MonoMethod *orig_method, MonoMethod *m, gpointer compiled_method, gboolean add_static_rgctx_tramp, gboolean add_unbox_tramp) MONO_INTERNAL;
 
 gboolean          mono_running_on_valgrind (void) MONO_INTERNAL;
 void*             mono_global_codeman_reserve (int size) MONO_INTERNAL;
@@ -2419,6 +2434,9 @@ mono_set_generic_sharing_supported (gboolean supported) MONO_INTERNAL;
 void
 mono_set_generic_sharing_vt_supported (gboolean supported) MONO_INTERNAL;
 
+void
+mono_set_partial_sharing_supported (gboolean supported) MONO_INTERNAL;
+
 gboolean
 mono_class_generic_sharing_enabled (MonoClass *class) MONO_INTERNAL;
 
@@ -2466,10 +2484,10 @@ gboolean
 mono_method_is_generic_impl (MonoMethod *method) MONO_INTERNAL;
 
 gboolean
-mono_method_is_generic_sharable_impl (MonoMethod *method, gboolean allow_type_vars) MONO_INTERNAL;
+mono_method_is_generic_sharable (MonoMethod *method, gboolean allow_type_vars) MONO_INTERNAL;
 
 gboolean
-mono_method_is_generic_sharable_impl_full (MonoMethod *method, gboolean allow_type_vars, gboolean allow_partial, gboolean allow_gsharedvt) MONO_INTERNAL;
+mono_method_is_generic_sharable_full (MonoMethod *method, gboolean allow_type_vars, gboolean allow_partial, gboolean allow_gsharedvt) MONO_INTERNAL;
 
 gboolean
 mini_class_is_generic_sharable (MonoClass *klass) MONO_INTERNAL;

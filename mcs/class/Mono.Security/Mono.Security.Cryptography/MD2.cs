@@ -33,7 +33,10 @@ using System.Security.Cryptography;
 
 namespace Mono.Security.Cryptography {
 
-	public abstract class MD2 : HashAlgorithm {
+#if !INSIDE_CORLIB
+	public 
+#endif
+	abstract class MD2 : HashAlgorithm {
 
 		protected MD2 () 
 		{
@@ -43,8 +46,12 @@ namespace Mono.Security.Cryptography {
 
 		public static new MD2 Create ()
 		{
+#if FULL_AOT_RUNTIME
+			return new MD2Managed ();
+#else
 			// for this to work we must register ourself with CryptoConfig
 			return Create ("MD2");
+#endif
 		}
 
 		public static new MD2 Create (string hashName)

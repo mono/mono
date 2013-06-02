@@ -92,6 +92,7 @@ namespace Microsoft.Build.Evaluation
 
                 public string ItemType {
                         get { throw new NotImplementedException (); }
+                        set { throw new NotImplementedException (); }
                 }
 
                 public ICollection<ProjectMetadata> Metadata {
@@ -108,6 +109,7 @@ namespace Microsoft.Build.Evaluation
 
                 public string UnevaluatedInclude {
                         get { throw new NotImplementedException (); }
+                        set { throw new NotImplementedException (); }
                 }
 
                 public ProjectItemElement Xml { get; private set; }

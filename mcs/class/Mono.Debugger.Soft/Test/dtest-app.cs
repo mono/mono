@@ -233,6 +233,10 @@ public class Tests : TestsBase
 			unhandled_exception ();
 			return 0;
 		}
+		if (args.Length >0 && args [0] == "unhandled-exception-endinvoke") {
+			unhandled_exception_endinvoke ();
+			return 0;
+		}
 		if (args.Length >0 && args [0] == "unhandled-exception-user") {
 			unhandled_exception_user ();
 			return 0;
@@ -828,6 +832,27 @@ public class Tests : TestsBase
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void unhandled_exception_endinvoke_2 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void unhandled_exception_endinvoke () {
+			Action action = new Action (() => 
+			{
+				throw new Exception ("thrown");
+			});
+			action.BeginInvoke ((ar) => {
+				try {
+					action.EndInvoke (ar);
+				} catch (Exception ex) {
+					//Console.WriteLine (ex);
+				}
+			}, null);
+		Thread.Sleep (1000);
+		unhandled_exception_endinvoke_2 ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void unhandled_exception_user () {
 #if NET_4_5
 		System.Threading.Tasks.Task.Factory.StartNew (() => {
@@ -1017,16 +1042,14 @@ public class Tests : TestsBase
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void frames_in_native () {
 		Thread.Sleep (500);
+		var evt = new ManualResetEvent (false);
+		
 		object mon = new object ();
 		ThreadPool.QueueUserWorkItem (delegate {
 				frames_in_native_2 ();
-				lock (mon) {
-					Monitor.Pulse (mon);
-				}
+				evt.Set ();
 			});
-		lock (mon) {
-			Monitor.Wait (mon);
-		}
+		evt.WaitOne ();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]

@@ -162,20 +162,22 @@ mono_CFLAGS = $(AM_CFLAGS)
 
 AM_CPPFLAGS = $(LIBGC_CPPFLAGS)
 
-mono_sgen_SOURCES = $(mono_SOURCES)
+mono_sgen_SOURCES = \
+	main-sgen.c
+
 mono_sgen_CFLAGS = $(AM_CFLAGS)
 
 # We build this after libmono was built so it contains the date when the final
 # link was done
 if SUPPORT_BOEHM
-buildver.h: libmini-static.la
+buildver.h: libmini-static.la $(monodir)/mono/metadata/libmonoruntime-static.la
 	@echo "const char *build_date = \"`date`\";" > buildver.h
 mono-main.$(OBJEXT): buildver.h
 endif
 
-buildver-sgen.h: libmini-static.la
+buildver-sgen.h: libmini-static.la $(monodir)/mono/metadata/libmonoruntimesgen-static.la
 	@echo "const char *build_date = \"`date`\";" > buildver-sgen.h
-mono_sgen-main.$(OBJEXT): buildver-sgen.h
+mono_sgen-main-sgen.$(OBJEXT): buildver-sgen.h
 
 if DTRACE_G_REQUIRED
 LIBMONO_DTRACE_OBJECT = .libs/mono-dtrace.$(OBJEXT)
@@ -457,7 +459,7 @@ arch_define=__mips__
 endif
 
 if ARM
-# pick up arm_dpimacros.h and arm_fpamacros.h
+# pick up arm_dpimacros.h
 ARCH_CFLAGS = -I../arch/arm
 arch_sources = $(arm_sources)
 arch_built=cpu-arm.h

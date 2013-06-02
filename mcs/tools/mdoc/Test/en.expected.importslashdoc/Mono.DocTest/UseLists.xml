@@ -102,7 +102,8 @@
             <see cref="M:System.Collections.Generic.List{System.Int32}.Remove(`0)" />
           </para>
         </remarks>
-        <exception cref="T:System.Exception">To be added; from: <see cref="M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Int32})" /></exception>
+        <exception cref="T:System.Exception">To be added; from:
+          <see cref="M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Int32})" /></exception>
       </Docs>
     </Member>
     <Member MemberName="Process">
@@ -123,8 +124,13 @@
         <summary>To be added.</summary>
         <remarks>
           <c>M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Predicate{System.Int32}})</c>.</remarks>
-        <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" />, <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" />, <see cref="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})" /></exception>
-        <exception cref="T:System.ArgumentNullException">To be added; from: <see cref="M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Predicate{System.Int32}})" />, <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" />, <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" />, <see cref="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})" /></exception>
+        <exception cref="T:System.ArgumentException">To be added; from:
+          <see cref="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})" />,
+          <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" /></exception>
+        <exception cref="T:System.ArgumentNullException">To be added; from:
+          <see cref="M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Predicate{System.Int32}})" />,
+          <see cref="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})" />,
+          <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" /></exception>
       </Docs>
     </Member>
     <Member MemberName="Process&lt;T&gt;">
@@ -149,8 +155,10 @@
         <summary>To be added.</summary>
         <remarks>
           <c>M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})</c>.</remarks>
-        <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})" /></exception>
-        <exception cref="T:System.ArgumentNullException">To be added; from: <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" />, <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" /></exception>
+        <exception cref="T:System.ArgumentException">To be added; from:
+          <see cref="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})" /></exception>
+        <exception cref="T:System.ArgumentNullException">To be added; from:
+          <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" /></exception>
       </Docs>
     </Member>
     <Member MemberName="UseHelper&lt;T,U,V&gt;">

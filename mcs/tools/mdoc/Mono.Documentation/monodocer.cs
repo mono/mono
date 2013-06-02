@@ -1813,6 +1813,7 @@ class MDocUpdater : MDocCommand
 	
 	private void UpdateExceptions (XmlNode docs, MemberReference member)
 	{
+		string indent = new string (' ', 10);
 		foreach (var source in new ExceptionLookup (exceptions.Value)[member]) {
 			string cref = slashdocFormatter.GetDeclaration (source.Exception);
 			var node = docs.SelectSingleNode ("exception[@cref='" + cref + "']");
@@ -1820,10 +1821,10 @@ class MDocUpdater : MDocCommand
 				continue;
 			XmlElement e = docs.OwnerDocument.CreateElement ("exception");
 			e.SetAttribute ("cref", cref);
-			e.InnerXml = "To be added; from: <see cref=\"" + 
-				string.Join ("\" />, <see cref=\"", 
+			e.InnerXml = "To be added; from:\n" + indent + "<see cref=\"" +
+				string.Join ("\" />,\n" + indent + "<see cref=\"",
 						source.Sources.Select (m => slashdocFormatter.GetDeclaration (m))
-						.ToArray ()) +
+						.OrderBy (s => s)) +
 				"\" />";
 			docs.AppendChild (e);
 		}

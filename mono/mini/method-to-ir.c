@@ -2922,7 +2922,10 @@ mini_emit_stobj (MonoCompile *cfg, MonoInst *dest, MonoInst *src, MonoClass *kla
 				}
 			}
 
-			mono_emit_jit_icall (cfg, mono_value_copy, iargs);
+			if (size_ins)
+				mono_emit_jit_icall (cfg, mono_gsharedvt_value_copy, iargs);
+			else
+				mono_emit_jit_icall (cfg, mono_value_copy, iargs);
 			return;
 		}
 	}
@@ -7291,22 +7294,24 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					/*
 					 * Constrained calls need to behave differently at runtime dependending on whenever the receiver is instantiated as ref type or as a vtype.
 					 */
-					/* Special case Object:ToString () as its easy to implement */
-					if (cmethod->klass == mono_defaults.object_class && !strcmp (cmethod->name, "ToString")) {
+					/* Special case Object methods as they are easy to implement */
+					if (cmethod->klass == mono_defaults.object_class) {
 						MonoInst *args [3];
 
 						args [0] = sp [0];
 						EMIT_NEW_METHODCONST (cfg, args [1], cmethod);
 						args [2] = emit_get_rgctx_klass (cfg, mono_class_check_context_used (constrained_call), constrained_call, MONO_RGCTX_INFO_KLASS);
-						ins = mono_emit_jit_icall (cfg, mono_object_tostring_gsharedvt, args);
-						goto call_end;
-					} else if (cmethod->klass == mono_defaults.object_class && !strcmp (cmethod->name, "GetHashCode")) {
-						MonoInst *args [3];
 
-						args [0] = sp [0];
-						EMIT_NEW_METHODCONST (cfg, args [1], cmethod);
-						args [2] = emit_get_rgctx_klass (cfg, mono_class_check_context_used (constrained_call), constrained_call, MONO_RGCTX_INFO_KLASS);
-						ins = mono_emit_jit_icall (cfg, mono_object_gethashcode_gsharedvt, args);
+						if (!strcmp (cmethod->name, "ToString")) {
+							ins = mono_emit_jit_icall (cfg, mono_object_tostring_gsharedvt, args);
+						} else if (!strcmp (cmethod->name, "Equals")) {
+							args [3] = sp [1];
+							ins = mono_emit_jit_icall (cfg, mono_object_equals_gsharedvt, args);
+						} else if (!strcmp (cmethod->name, "GetHashCode")) {
+							ins = mono_emit_jit_icall (cfg, mono_object_gethashcode_gsharedvt, args);
+						} else {
+							GSHAREDVT_FAILURE (*ip);
+						}
 						goto call_end;
 					} else if (constrained_call->valuetype && cmethod->klass->valuetype) {
 						/* The 'Own method' case below */
@@ -7392,7 +7397,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			 * If the callee is a shared method, then its static cctor
 			 * might not get called after the call was patched.
 			 */
-			if (cfg->generic_sharing_context && cmethod && cmethod->klass != method->klass && cmethod->klass->generic_class && mono_method_is_generic_sharable_impl (cmethod, TRUE) && mono_class_needs_cctor_run (cmethod->klass, method)) {
+			if (cfg->generic_sharing_context && cmethod && cmethod->klass != method->klass && cmethod->klass->generic_class && mono_method_is_generic_sharable (cmethod, TRUE) && mono_class_needs_cctor_run (cmethod->klass, method)) {
 				emit_generic_class_init (cfg, cmethod->klass);
 				CHECK_TYPELOAD (cmethod->klass);
 			}
@@ -7401,7 +7406,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					(cmethod->klass->generic_class || cmethod->klass->generic_container)) {
 				gboolean sharable = FALSE;
 
-				if (mono_method_is_generic_sharable_impl (cmethod, TRUE)) {
+				if (mono_method_is_generic_sharable (cmethod, TRUE)) {
 					sharable = TRUE;
 				} else {
 					gboolean sharing_enabled = mono_class_generic_sharing_enabled (cmethod->klass);
@@ -7426,7 +7431,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					mini_method_get_context (cmethod)->method_inst) {
 				g_assert (!pass_vtable);
 
-				if (mono_method_is_generic_sharable_impl (cmethod, TRUE)) {
+				if (mono_method_is_generic_sharable (cmethod, TRUE)) {
  					pass_mrgctx = TRUE;
 				} else {
 					gboolean sharing_enabled = mono_class_generic_sharing_enabled (cmethod->klass);
@@ -7733,7 +7738,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			/* FIXME: only do this for generic methods if
 			   they are not shared! */
 			if (context_used && !imt_arg && !array_rank && !delegate_invoke &&
-				(!mono_method_is_generic_sharable_impl (cmethod, TRUE) ||
+				(!mono_method_is_generic_sharable (cmethod, TRUE) ||
 				 !mono_class_generic_sharing_enabled (cmethod->klass)) &&
 				(!virtual || MONO_METHOD_IS_FINAL (cmethod) ||
 				 !(cmethod->flags & METHOD_ATTRIBUTE_VIRTUAL))) {
@@ -8730,7 +8735,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				ensure_method_is_allowed_to_call_method (cfg, method, cmethod, bblock, ip);
  			}
 
-			if (cfg->generic_sharing_context && cmethod && cmethod->klass != method->klass && cmethod->klass->generic_class && mono_method_is_generic_sharable_impl (cmethod, TRUE) && mono_class_needs_cctor_run (cmethod->klass, method)) {
+			if (cfg->generic_sharing_context && cmethod && cmethod->klass != method->klass && cmethod->klass->generic_class && mono_method_is_generic_sharable (cmethod, TRUE) && mono_class_needs_cctor_run (cmethod->klass, method)) {
 				emit_generic_class_init (cfg, cmethod->klass);
 				CHECK_TYPELOAD (cmethod->klass);
 			}
@@ -8743,7 +8748,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			*/
 
 			if (cmethod->klass->valuetype && mono_class_generic_sharing_enabled (cmethod->klass) &&
-					mono_method_is_generic_sharable_impl (cmethod, TRUE)) {
+					mono_method_is_generic_sharable (cmethod, TRUE)) {
 				if (cmethod->is_inflated && mono_method_get_context (cmethod)->method_inst) {
 					mono_class_vtable (cfg->domain, cmethod->klass);
 					CHECK_TYPELOAD (cmethod->klass);
@@ -8922,7 +8927,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					addr = emit_get_rgctx_gsharedvt_call (cfg, context_used, fsig, cmethod, MONO_RGCTX_INFO_METHOD_GSHAREDVT_OUT_TRAMPOLINE);
 					mono_emit_calli (cfg, fsig, sp, addr, NULL, vtable_arg);
 				} else if (context_used &&
-						(!mono_method_is_generic_sharable_impl (cmethod, TRUE) ||
+						(!mono_method_is_generic_sharable (cmethod, TRUE) ||
 							!mono_class_generic_sharing_enabled (cmethod->klass))) {
 					MonoInst *cmethod_addr;
 

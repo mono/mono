@@ -156,6 +156,7 @@ mono_realloc_native_code (MonoCompile *cfg)
 
 	/* Save the old alignment offset so we can re-align after the realloc. */
 	old_padding = (guint)(cfg->native_code - cfg->native_code_alloc);
+	cfg->code_size = NACL_BUNDLE_ALIGN_UP (cfg->code_size);
 
 	cfg->native_code_alloc = g_realloc ( cfg->native_code_alloc,
 										 cfg->code_size + kNaClAlignment );
@@ -243,12 +244,14 @@ guint8 *mono_nacl_align(guint8 *code) {
 
 void mono_nacl_fix_patches(const guint8 *code, MonoJumpInfo *ji)
 {
+#ifndef USE_JUMP_TABLES
   MonoJumpInfo *patch_info;
   for (patch_info = ji; patch_info; patch_info = patch_info->next) {
     unsigned char *ip = patch_info->ip.i + code;
     ip = mono_arch_nacl_skip_nops(ip);
     patch_info->ip.i = ip - code;
   }
+#endif
 }
 #endif  /* __native_client_codegen__ */
 
@@ -3133,25 +3136,33 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	case MONO_PATCH_INFO_METHOD_JUMP:
 		target = mono_create_jump_trampoline (domain, patch_info->data.method, FALSE);
 #if defined(__native_client__) && defined(__native_client_codegen__)
-#if defined(TARGET_AMD64)
+# if defined(TARGET_AMD64)
 		/* This target is an absolute address, not relative to the */
 		/* current code being emitted on AMD64. */
 		target = nacl_inverse_modify_patch_target(target);
-#endif
+# endif
 #endif
 		break;
 	case MONO_PATCH_INFO_METHOD:
+#if defined(__native_client_codegen__) && defined(USE_JUMP_TABLES)
+		/*
+		 * If we use jumptables, for recursive calls we cannot
+		 * avoid trampoline, as we not yet know where we will
+		 * be installed.
+		 */
+		target = mono_create_jit_trampoline_in_domain (domain, patch_info->data.method);
+#else
 		if (patch_info->data.method == method) {
 			target = code;
 		} else {
 			/* get the trampoline to the method from the domain */
 			target = mono_create_jit_trampoline_in_domain (domain, patch_info->data.method);
 		}
+#endif
 		break;
 	case MONO_PATCH_INFO_SWITCH: {
 		gpointer *jump_table;
 		int i;
-
 #if defined(__native_client__) && defined(__native_client_codegen__)
 		/* This memory will leak, but we don't care if we're */
 		/* not deleting JIT'd methods anyway                 */
@@ -3844,6 +3855,9 @@ mono_codegen (MonoCompile *cfg)
 
 	/* we always allocate code in cfg->domain->code_mp to increase locality */
 	cfg->code_size = cfg->code_len + max_epilog_size;
+#ifdef __native_client_codegen__
+	cfg->code_size = NACL_BUNDLE_ALIGN_UP (cfg->code_size);
+#endif
 	/* fixme: align to MONO_ARCH_CODE_ALIGNMENT */
 
 	if (cfg->method->dynamic) {
@@ -4387,6 +4401,21 @@ is_gsharedvt_method (MonoMethod *method)
 }
 
 static gboolean
+is_open_method (MonoMethod *method)
+{
+	MonoGenericContext *context;
+
+	if (!method->is_inflated)
+		return FALSE;
+	context = mono_method_get_context (method);
+	if (context->class_inst && context->class_inst->is_open)
+		return TRUE;
+	if (context->method_inst && context->method_inst->is_open)
+		return TRUE;
+	return FALSE;
+}
+
+static gboolean
 has_ref_constraint (MonoGenericParamInfo *info)
 {
 	MonoClass **constraints;
@@ -4463,12 +4492,14 @@ mini_get_shared_method_full (MonoMethod *method, gboolean all_vt, gboolean is_gs
 		shared_context = declaring_method->klass->generic_container->context;
 
 	/* Handle gsharedvt/partial sharing */
-	if ((method != declaring_method && method->is_inflated && !mono_method_is_generic_sharable_impl_full (method, FALSE, FALSE, TRUE)) ||
+	if ((method != declaring_method && method->is_inflated && !mono_method_is_generic_sharable_full (method, FALSE, FALSE, TRUE)) ||
 		is_gsharedvt || mini_is_gsharedvt_sharable_method (method)) {
 		MonoGenericContext *context = mono_method_get_context (method);
 		MonoGenericInst *inst;
 
-		gsharedvt = is_gsharedvt || mini_is_gsharedvt_sharable_method (method);
+		partial = mono_method_is_generic_sharable_full (method, FALSE, TRUE, FALSE);
+
+		gsharedvt = is_gsharedvt || (!partial && mini_is_gsharedvt_sharable_method (method));
 
 		class_container = declaring_method->klass->generic_container;
 		method_container = mono_method_get_generic_container (declaring_method);
@@ -4477,7 +4508,6 @@ mini_get_shared_method_full (MonoMethod *method, gboolean all_vt, gboolean is_gs
 		 * Create the shared context by replacing the ref type arguments with
 		 * type parameters, and keeping the rest.
 		 */
-		partial = TRUE;
 		if (context)
 			inst = context->class_inst;
 		else
@@ -4491,6 +4521,8 @@ mini_get_shared_method_full (MonoMethod *method, gboolean all_vt, gboolean is_gs
 			inst = shared_context.method_inst;
 		if (inst)
 			shared_context.method_inst = get_shared_inst (inst, shared_context.method_inst, method_container, all_vt, gsharedvt);
+
+		partial = TRUE;
 	}
 
     res = mono_class_inflate_generic_method (declaring_method, &shared_context);
@@ -4579,10 +4611,10 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		 * FIXME: Remove the method->klass->generic_class limitation.
 		 */
 		try_generic_shared = mono_class_generic_sharing_enabled (method->klass) &&
-			(opts & MONO_OPT_GSHARED) && ((method->is_generic || method->klass->generic_container) || (!method->klass->generic_class && mono_method_is_generic_sharable_impl_full (method, TRUE, FALSE, FALSE)));
+			(opts & MONO_OPT_GSHARED) && ((method->is_generic || method->klass->generic_container) || (!method->klass->generic_class && mono_method_is_generic_sharable_full (method, TRUE, FALSE, FALSE)));
 	else
 		try_generic_shared = mono_class_generic_sharing_enabled (method->klass) &&
-			(opts & MONO_OPT_GSHARED) && mono_method_is_generic_sharable_impl_full (method, FALSE, FALSE, TRUE);
+			(opts & MONO_OPT_GSHARED) && mono_method_is_generic_sharable (method, FALSE);
 
 	if (opts & MONO_OPT_GSHARED) {
 		if (try_generic_shared)
@@ -4598,7 +4630,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 			try_generic_shared = FALSE;
 	}
 
-	if (is_gsharedvt_method (method)) {
+	if (is_gsharedvt_method (method) || (compile_aot && is_open_method (method))) {
 		/* We are AOTing a gshared method directly */
 		method_is_gshared = TRUE;
 		g_assert (compile_aot);
@@ -5450,7 +5482,7 @@ lookup_method_inner (MonoDomain *domain, MonoMethod *method)
 	if (ji)
 		return ji;
 
-	if (!mono_method_is_generic_sharable_impl_full (method, FALSE, FALSE, TRUE))
+	if (!mono_method_is_generic_sharable (method, FALSE))
 		return NULL;
 	return mono_domain_lookup_shared_generic (domain, method);
 }
@@ -5767,7 +5799,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 		mono_domain_jit_code_hash_unlock (target_domain);
 		code = cfg->native_code;
 
-		if (cfg->generic_sharing_context && mono_method_is_generic_sharable_impl_full (method, FALSE, FALSE, TRUE))
+		if (cfg->generic_sharing_context && mono_method_is_generic_sharable (method, FALSE))
 			mono_stats.generics_shared_methods++;
 		if (cfg->gsharedvt)
 			mono_stats.gsharedvt_methods++;
@@ -6155,7 +6187,7 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 				}
 			}
 
-			info->compiled_method = mini_add_method_trampoline (NULL, method, info->compiled_method, mono_method_needs_static_rgctx_invoke (method, FALSE));
+			info->compiled_method = mini_add_method_trampoline (NULL, method, info->compiled_method, mono_method_needs_static_rgctx_invoke (method, FALSE), FALSE);
 		}
 
 		/*
@@ -7133,6 +7165,8 @@ mini_init (const char *filename, const char *runtime_version)
 	register_icall (mono_resume_unwind, "mono_resume_unwind", "void", TRUE);
 	register_icall (mono_object_tostring_gsharedvt, "mono_object_tostring_gsharedvt", "object ptr ptr ptr", TRUE);
 	register_icall (mono_object_gethashcode_gsharedvt, "mono_object_gethashcode_gsharedvt", "int ptr ptr ptr", TRUE);
+	register_icall (mono_object_equals_gsharedvt, "mono_object_equals_gsharedvt", "int ptr ptr ptr object", TRUE);
+	register_icall (mono_gsharedvt_value_copy, "mono_gsharedvt_value_copy", "void ptr ptr ptr", TRUE);
 
 	register_icall (mono_gc_wbarrier_value_copy_bitmap, "mono_gc_wbarrier_value_copy_bitmap", "void ptr ptr int int", FALSE);
 

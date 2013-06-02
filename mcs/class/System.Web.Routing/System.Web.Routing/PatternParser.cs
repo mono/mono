@@ -32,8 +32,11 @@ using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Util;
+using System.Diagnostics;
+using System.Globalization;
 
 namespace System.Web.Routing
 {
@@ -207,6 +210,61 @@ namespace System.Web.Routing
 			return dict;
 		}
 
+		static bool ParametersAreEqual (object a, object b)
+		{
+			if (a is string && b is string) {
+				return String.Equals (a as string, b as string, StringComparison.OrdinalIgnoreCase);
+			} else {
+				// Parameter may be a boxed value type, need to use .Equals() for comparison
+				return object.Equals (a, b);
+			}
+		}
+
+		static bool ParameterIsNonEmpty (object param)
+		{
+			if (param is string)
+				return !string.IsNullOrEmpty (param as string);
+
+			return param != null;
+		}
+
+		bool IsParameterRequired (string parameterName, RouteValueDictionary defaultValues, out object defaultValue)
+		{
+			foreach (var token in tokens) {
+				if (token == null)
+					continue;
+
+				if (string.Equals (token.Name, parameterName, StringComparison.OrdinalIgnoreCase)) {
+					if (token.Type == PatternTokenType.CatchAll) {
+						defaultValue = null;
+						return false;
+					}
+				}
+			}
+
+			if (defaultValues == null)
+				throw new ArgumentNullException ("defaultValues is null?!");
+
+			return !defaultValues.TryGetValue (parameterName, out defaultValue);
+		}
+
+		static string EscapeReservedCharacters (Match m)
+		{
+			if (m == null)
+				throw new ArgumentNullException("m");
+
+			return Uri.HexEscape (m.Value[0]);
+		}
+
+		static string UriEncode (string str)
+		{
+			if (string.IsNullOrEmpty (str))
+				return str;
+
+			string escape = Uri.EscapeUriString (str);
+			return Regex.Replace (escape, "([#?])", new MatchEvaluator (EscapeReservedCharacters));
+		}
+
 		bool MatchSegment (int segIndex, int argsCount, string[] argSegs, List <PatternToken> tokens, RouteValueDictionary ret)
 		{
 			string pathSegment = argSegs [segIndex];
@@ -373,180 +431,290 @@ namespace System.Web.Routing
 				return null;
 
 			RouteData routeData = requestContext.RouteData;
-			RouteValueDictionary defaultValues = route != null ? route.Defaults : null;
-			RouteValueDictionary ambientValues = routeData.Values;
+			var currentValues = routeData.Values ?? new RouteValueDictionary ();
+			var values = userValues ?? new RouteValueDictionary ();
+			var defaultValues = (route != null ? route.Defaults : null) ?? new RouteValueDictionary ();
 
-			if (defaultValues != null && defaultValues.Count == 0)
-				defaultValues = null;
-			if (ambientValues != null && ambientValues.Count == 0)
-				ambientValues = null;
-			if (userValues != null && userValues.Count == 0)
-				userValues = null;
+			// The set of values we should be using when generating the URL in this route
+			var acceptedValues = new RouteValueDictionary ();
 
-			// Check URL parameters
-			// It is allowed to take ambient values for required parameters if:
-			//
-			//   - there are no default values provided
-			//   - the default values dictionary contains at least one required
-			//     parameter value
-			//
-			bool canTakeFromAmbient;
-			if (defaultValues == null)
-				canTakeFromAmbient = true;
-			else {
-				canTakeFromAmbient = false;
-				foreach (KeyValuePair <string, bool> de in parameterNames) {
-					if (defaultValues.ContainsKey (de.Key)) {
-						canTakeFromAmbient = true;
+			// Keep track of which new values have been used
+			HashSet<string> unusedNewValues = new HashSet<string> (values.Keys, StringComparer.OrdinalIgnoreCase);
+
+			// This route building logic is based on System.Web.Http's Routing code (which is Apache Licensed by MS)
+			// and which can be found at mono's external/aspnetwebstack/src/System.Web.Http/Routing/HttpParsedRoute.cs
+			// Hopefully this will ensure a much higher compatiblity with MS.NET's System.Web.Routing logic. (pruiz)
+
+			#region Step 1: Get the list of values we're going to use to match and generate this URL
+			// Find out which entries in the URL are valid for the URL we want to generate.
+			// If the URL had ordered parameters a="1", b="2", c="3" and the new values
+			// specified that b="9", then we need to invalidate everything after it. The new
+			// values should then be a="1", b="9", c=<no value>.
+			foreach (var item in parameterNames) {
+				var parameterName = item.Key;
+
+				object newParameterValue;
+				bool hasNewParameterValue = values.TryGetValue (parameterName, out newParameterValue);
+				if (hasNewParameterValue) {
+					unusedNewValues.Remove(parameterName);
+				}
+
+				object currentParameterValue;
+				bool hasCurrentParameterValue = currentValues.TryGetValue (parameterName, out currentParameterValue);
+
+				if (hasNewParameterValue && hasCurrentParameterValue) {
+					if (!ParametersAreEqual (currentParameterValue, newParameterValue)) {
+						// Stop copying current values when we find one that doesn't match
 						break;
 					}
 				}
-			}
-			
-			bool allMustBeInUserValues = false;
-			foreach (KeyValuePair <string, bool> de in parameterNames) {
-				string parameterName = de.Key;
-				// Is the parameter required?
-				if (defaultValues == null || !defaultValues.ContainsKey (parameterName)) {
-					// Yes, it is required (no value in defaults)
-					// Has the user provided value for it?
-					if (userValues == null || !userValues.ContainsKey (parameterName)) {
-						if (allMustBeInUserValues)
-							return null; // partial override => no match
-						
-						if (!canTakeFromAmbient || ambientValues == null || !ambientValues.ContainsKey (parameterName))
-							return null; // no value provided => no match
-					} else if (canTakeFromAmbient)
-						allMustBeInUserValues = true;
+
+				// If the parameter is a match, add it to the list of values we will use for URL generation
+				if (hasNewParameterValue) {
+					if (ParameterIsNonEmpty (newParameterValue)) {
+						acceptedValues.Add (parameterName, newParameterValue);
+					}
 				}
-			}
-
-			// Check for non-url parameters
-			if (defaultValues != null) {
-				foreach (var de in defaultValues) {
-					string parameterName = de.Key;
-					
-					if (parameterNames.ContainsKey (parameterName))
-						continue;
-
-					object parameterValue = null;
-					// Has the user specified value for this parameter and, if
-					// yes, is it the same as the one in defaults?
-					if (userValues != null && userValues.TryGetValue (parameterName, out parameterValue)) {
-						object defaultValue = de.Value;
-						if (defaultValue is string && parameterValue is string) {
-							if (String.Compare ((string)defaultValue, (string)parameterValue, StringComparison.OrdinalIgnoreCase) != 0)
-								return null; // different value => no match
-						// Parameter may be a boxed value type, need to use .Equals() for comparison
-						} else if (!object.Equals (parameterValue, defaultValue))
-							return null; // different value => no match
+				else {
+					if (hasCurrentParameterValue) {
+						acceptedValues.Add (parameterName, currentParameterValue);
 					}
 				}
 			}
 
-			// We're a match, generate the URL
-			var ret = new StringBuilder ();
-			usedValues = new RouteValueDictionary ();
-			bool canTrim = true;
-			
-			// Going in reverse order, so that we can trim without much ado
-			int tokensCount = tokens.Length - 1;
-			for (int i = tokensCount; i >= 0; i--) {
-				PatternToken token = tokens [i];
-				if (token == null) {
-					if (i < tokensCount && ret.Length > 0 && ret [0] != '/')
-						ret.Insert (0, '/');
-					continue;
+			// Add all remaining new values to the list of values we will use for URL generation
+			foreach (var newValue in values) {
+				if (ParameterIsNonEmpty (newValue.Value) && !acceptedValues.ContainsKey (newValue.Key)) {
+					acceptedValues.Add (newValue.Key, newValue.Value);
 				}
-				
-				if (token.Type == PatternTokenType.Literal) {
-					ret.Insert (0, token.Name);
-					continue;
+			}
+
+			// Add all current values that aren't in the URL at all
+			foreach (var currentValue in currentValues) {
+				if (!acceptedValues.ContainsKey (currentValue.Key) && !parameterNames.ContainsKey (currentValue.Key)) {
+					acceptedValues.Add (currentValue.Key, currentValue.Value);
 				}
+			}
 
-				string parameterName = token.Name;
-				object tokenValue;
+			// Add all remaining default values from the route to the list of values we will use for URL generation
+			foreach (var item in parameterNames) {
+				object defaultValue;
+				if (!acceptedValues.ContainsKey (item.Key) && !IsParameterRequired (item.Key, defaultValues, out defaultValue)) {
+					// Add the default value only if there isn't already a new value for it and
+					// only if it actually has a default value, which we determine based on whether
+					// the parameter value is required.
+					acceptedValues.Add (item.Key, defaultValue);
+				}
+			}
 
-#if SYSTEMCORE_DEP
-				if (userValues.GetValue (parameterName, out tokenValue)) {
-					if (tokenValue != null)
-						usedValues.Add (parameterName, tokenValue.ToString ());
+			// All required parameters in this URL must have values from somewhere (i.e. the accepted values)
+			foreach (var item in parameterNames) {
+				object defaultValue;
+				if (IsParameterRequired (item.Key, defaultValues, out defaultValue) && !acceptedValues.ContainsKey (item.Key)) {
+					// If the route parameter value is required that means there's
+					// no default value, so if there wasn't a new value for it
+					// either, this route won't match.
+					return null;
+				}
+			}
 
-					if (!defaultValues.Has (parameterName, tokenValue)) {
-						canTrim = false;
-						if (tokenValue != null)
-							ret.Insert (0, tokenValue.ToString ());
-						continue;
+			// All other default values must match if they are explicitly defined in the new values
+			var otherDefaultValues = new RouteValueDictionary (defaultValues);
+			foreach (var item in parameterNames) {
+				otherDefaultValues.Remove (item.Key);
+			}
+
+			foreach (var defaultValue in otherDefaultValues) {
+				object value;
+				if (values.TryGetValue (defaultValue.Key, out value)) {
+					unusedNewValues.Remove (defaultValue.Key);
+					if (!ParametersAreEqual (value, defaultValue.Value)) {
+						// If there is a non-parameterized value in the route and there is a
+						// new value for it and it doesn't match, this route won't match.
+						return null;
 					}
-
-					if (!canTrim && tokenValue != null)
-						ret.Insert (0, tokenValue.ToString ());
-
-					continue;
 				}
+			}
+			#endregion
 
-				if (defaultValues.GetValue (parameterName, out tokenValue)) {
-					object ambientTokenValue;
-					if (ambientValues.GetValue (parameterName, out ambientTokenValue))
-						tokenValue = ambientTokenValue;
+			#region Step 2: If the route is a match generate the appropriate URL
 
-					if (!canTrim && tokenValue != null)
-						ret.Insert (0, tokenValue.ToString ());
+			var uri = new StringBuilder ();
+			var pendingParts = new StringBuilder ();
+			var pendingPartsAreAllSafe = false;
+			bool blockAllUriAppends = false;
+			var allSegments = new List<PatternSegment?> ();
 
-					usedValues.Add (parameterName, tokenValue.ToString ());
-					continue;
-				}
+			// Build a list of segments plus separators we can use as template.
+			foreach (var segment in segments) {
+				if (allSegments.Count > 0)
+					allSegments.Add (null); // separator exposed as null.
+				allSegments.Add (segment);
+			}
 
-				canTrim = false;
-				if (ambientValues.GetValue (parameterName, out tokenValue)) {
-					if (tokenValue != null)
-					{
-						ret.Insert (0, tokenValue.ToString ());
-						usedValues.Add (parameterName, tokenValue.ToString ());
+			// Finally loop thru al segment-templates building the actual uri.
+			foreach (var item in allSegments) {
+				var segment = item.GetValueOrDefault ();
+
+				// If segment is a separator..
+				if (item == null) {
+					if (pendingPartsAreAllSafe) {
+						// Accept
+						if (pendingParts.Length > 0) {
+							if (blockAllUriAppends)
+								return null;
+
+							// Append any pending literals to the URL
+							uri.Append (pendingParts.ToString ());
+							pendingParts.Length = 0;
+						}
 					}
-					continue;
-				}
+					pendingPartsAreAllSafe = false;
+
+					// Guard against appending multiple separators for empty segments
+					if (pendingParts.Length > 0 && pendingParts[pendingParts.Length - 1] == '/') {
+						// Dev10 676725: Route should not be matched if that causes mismatched tokens
+						// Dev11 86819: We will allow empty matches if all subsequent segments are null
+						if (blockAllUriAppends)
+							return null;
+
+						// Append any pending literals to the URI (without the trailing slash) and prevent any future appends
+						uri.Append(pendingParts.ToString (0, pendingParts.Length - 1));
+						pendingParts.Length = 0;
+					} else {
+						pendingParts.Append ("/");
+					}
+#if false
+				} else if (segment.AllLiteral) {
+					// Spezial (optimized) case: all elements of segment are literals.
+					pendingPartsAreAllSafe = true;
+					foreach (var tk in segment.Tokens)
+						pendingParts.Append (tk.Name);
 #endif
-			}
+				} else {
+					// Segments are treated as all-or-none. We should never output a partial segment.
+					// If we add any subsegment of this segment to the generated URL, we have to add
+					// the complete match. For example, if the subsegment is "{p1}-{p2}.xml" and we
+					// used a value for {p1}, we have to output the entire segment up to the next "/".
+					// Otherwise we could end up with the partial segment "v1" instead of the entire
+					// segment "v1-v2.xml".
+					bool addedAnySubsegments = false;
 
-			// All the values specified in userValues that aren't part of the original
-			// URL, the constraints or defaults collections are treated as overflow
-			// values - they are appended as query parameters to the URL
-			if (userValues != null) {
-				bool first = true;
-				foreach (var de in userValues) {
-					string parameterName = de.Key;
+					foreach (var token in segment.Tokens) {
+						if (token.Type == PatternTokenType.Literal) {
+							// If it's a literal we hold on to it until we are sure we need to add it
+							pendingPartsAreAllSafe = true;
+							pendingParts.Append (token.Name);
+						} else {
+							if (token.Type == PatternTokenType.Standard) {
+								if (pendingPartsAreAllSafe) {
+									// Accept
+									if (pendingParts.Length > 0) {
+										if (blockAllUriAppends)
+											return null;
 
-#if SYSTEMCORE_DEP
-					if (parameterNames.ContainsKey (parameterName) || defaultValues.Has (parameterName) || constraints.Has (parameterName))
-						continue;
-#endif
+										// Append any pending literals to the URL
+										uri.Append (pendingParts.ToString ());
+										pendingParts.Length = 0;
 
-					object parameterValue = de.Value;
-					if (parameterValue == null)
-						continue;
+										addedAnySubsegments = true;
+									}
+								}
+								pendingPartsAreAllSafe = false;
 
-					var parameterValueAsString = parameterValue as string;
-					if (parameterValueAsString != null && parameterValueAsString.Length == 0)
-						continue;
-					
-					if (first) {
-						ret.Append ('?');
-						first = false;
-					} else
-						ret.Append ('&');
+								// If it's a parameter, get its value
+								object acceptedParameterValue;
+								bool hasAcceptedParameterValue = acceptedValues.TryGetValue (token.Name, out acceptedParameterValue);
+								if (hasAcceptedParameterValue)
+									unusedNewValues.Remove (token.Name);
 
-					
-					ret.Append (Uri.EscapeDataString (parameterName));
-					ret.Append ('=');
-					if (parameterValue != null)
-						ret.Append (Uri.EscapeDataString (de.Value.ToString ()));
+								object defaultParameterValue;
+								defaultValues.TryGetValue (token.Name, out defaultParameterValue);
 
-					usedValues.Add (parameterName, de.Value.ToString ());
+								if (ParametersAreEqual (acceptedParameterValue, defaultParameterValue)) {
+									// If the accepted value is the same as the default value, mark it as pending since
+									// we won't necessarily add it to the URL we generate.
+									pendingParts.Append (Convert.ToString (acceptedParameterValue, CultureInfo.InvariantCulture));
+								} else {
+									if (blockAllUriAppends)
+										return null;
+
+									// Add the new part to the URL as well as any pending parts
+									if (pendingParts.Length > 0) {
+										// Append any pending literals to the URL
+										uri.Append (pendingParts.ToString ());
+										pendingParts.Length = 0;
+									}
+									uri.Append (Convert.ToString (acceptedParameterValue, CultureInfo.InvariantCulture));
+
+									addedAnySubsegments = true;
+								}
+							} else {
+								Debug.Fail ("Invalid path subsegment type");
+							}
+						}
+					}
+
+					if (addedAnySubsegments) {
+						// See comment above about why we add the pending parts
+						if (pendingParts.Length > 0) {
+							if (blockAllUriAppends)
+								return null;
+
+							// Append any pending literals to the URL
+							uri.Append (pendingParts.ToString ());
+							pendingParts.Length = 0;
+						}
+					}
 				}
 			}
-			
-			return ret.ToString ();
+
+			if (pendingPartsAreAllSafe) {
+				// Accept
+				if (pendingParts.Length > 0) {
+					if (blockAllUriAppends)
+						return null;
+
+					// Append any pending literals to the URI
+					uri.Append (pendingParts.ToString ());
+				}
+			}
+
+			// Process constraints keys
+			if (constraints != null) {
+				// If there are any constraints, mark all the keys as being used so that we don't
+				// generate query string items for custom constraints that don't appear as parameters
+				// in the URI format.
+				foreach (var constraintsItem in constraints) {
+					unusedNewValues.Remove (constraintsItem.Key);
+				}
+			}
+
+			// Encode the URI before we append the query string, otherwise we would double encode the query string
+			var encodedUri = new StringBuilder ();
+			encodedUri.Append (UriEncode (uri.ToString ()));
+			uri = encodedUri;
+
+			// Add remaining new values as query string parameters to the URI
+			if (unusedNewValues.Count > 0) {
+				// Generate the query string
+				bool firstParam = true;
+				foreach (string unusedNewValue in unusedNewValues) {
+					object value;
+					if (acceptedValues.TryGetValue (unusedNewValue, out value)) {
+						uri.Append (firstParam ? '?' : '&');
+						firstParam = false;
+						uri.Append (Uri.EscapeDataString (unusedNewValue));
+						uri.Append ('=');
+						uri.Append (Uri.EscapeDataString (Convert.ToString (value, CultureInfo.InvariantCulture)));
+					}
+				}
+			}
+
+			#endregion
+
+			usedValues = acceptedValues;
+			return uri.ToString();
 		}
 	}
 }

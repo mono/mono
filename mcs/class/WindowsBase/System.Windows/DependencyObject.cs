@@ -83,7 +83,7 @@ namespace System.Windows {
 		
 		public object GetValue(DependencyProperty dp)
 		{
-			object val = properties[dp];
+			object val = properties.ContainsKey (dp) ? properties [dp] : null;
 			return val == null ? dp.DefaultMetadata.DefaultValue : val;
 		}
 		
@@ -102,7 +102,7 @@ namespace System.Windows {
 		
 		public object ReadLocalValue(DependencyProperty dp)
 		{
-			object val = properties[dp];
+			object val = properties.ContainsKey (dp) ? properties [dp] : null;
 			return val == null ? DependencyProperty.UnsetValue : val;
 		}
 		

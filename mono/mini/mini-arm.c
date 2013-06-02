@@ -22,8 +22,12 @@
 #include "ir-emit.h"
 #include "debugger-agent.h"
 #include "mini-gc.h"
-#include "mono/arch/arm/arm-fpa-codegen.h"
 #include "mono/arch/arm/arm-vfp-codegen.h"
+
+/* Sanity check: This makes no sense */
+#if defined(ARM_FPU_NONE) && (defined(ARM_FPU_VFP) || defined(ARM_FPU_VFP_HARD))
+#error "ARM_FPU_NONE is defined while one of ARM_FPU_VFP/ARM_FPU_VFP_HARD is defined"
+#endif
 
 #if defined(__ARM_EABI__) && defined(__linux__) && !defined(PLATFORM_ANDROID) && !defined(__native_client__)
 #define HAVE_AEABI_READ_TP 1
@@ -31,12 +35,6 @@
 
 #ifdef ARM_FPU_VFP_HARD
 #define ARM_FPU_VFP 1
-#endif
-
-#ifdef ARM_FPU_FPA
-#define IS_FPA 1
-#else
-#define IS_FPA 0
 #endif
 
 #ifdef ARM_FPU_VFP
@@ -153,7 +151,7 @@ typedef struct {
  * 3) VFP: the new and actually sensible and useful FP support. Implemented
  *    in HW or kernel-emulated, requires new tools. I think this is what symbian uses.
  *
- * The plan is to write the FPA support first. softfloat can be tested in a chroot.
+ * We do not care about FPA. We will support soft float and VFP.
  */
 int mono_exc_esp_offset = 0;
 
@@ -375,10 +373,7 @@ emit_move_return_value (MonoCompile *cfg, MonoInst *ins, guint8 *code)
 	case OP_FCALL:
 	case OP_FCALL_REG:
 	case OP_FCALL_MEMBASE:
-		if (IS_FPA) {
-			if (ins->dreg != ARM_FPA_F0)
-				ARM_FPA_MVFD (code, ins->dreg, ARM_FPA_F0);
-		} else if (IS_VFP) {
+		if (IS_VFP) {
 			if (((MonoCallInst*)ins)->signature->ret->type == MONO_TYPE_R4) {
 				ARM_FMSR (code, ins->dreg, ARMREG_R0);
 				ARM_CVTS (code, ins->dreg, ins->dreg);
@@ -807,9 +802,7 @@ mono_arch_init (void)
 	mono_aot_register_jit_icall ("mono_arm_start_gsharedvt_call", mono_arm_start_gsharedvt_call);
 #endif
 
-#ifdef ARM_FPU_FPA
-	arm_fpu = MONO_ARM_FPU_FPA;
-#elif defined(ARM_FPU_VFP_HARD)
+#if defined(ARM_FPU_VFP_HARD)
 	arm_fpu = MONO_ARM_FPU_VFP_HARD;
 #elif defined(ARM_FPU_VFP)
 	arm_fpu = MONO_ARM_FPU_VFP;
@@ -903,7 +896,7 @@ mono_arch_cpu_enumerate_simd_versions (void)
 gboolean
 mono_arch_opcode_needs_emulation (MonoCompile *cfg, int opcode)
 {
-	if (COMPILE_LLVM (cfg) && v7s_supported && thumb2_supported) {
+	if (v7s_supported) {
 		switch (opcode) {
 		case OP_IDIV:
 		case OP_IREM:
@@ -2195,12 +2188,6 @@ mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 				return;
 			}
 			break;
-		case MONO_ARM_FPU_FPA:
-			if (ret->type == MONO_TYPE_R4 || ret->type == MONO_TYPE_R8) {
-				MONO_EMIT_NEW_UNALU (cfg, OP_FMOVE, cfg->ret->dreg, val->dreg);
-				return;
-			}
-			break;
 		default:
 			g_assert_not_reached ();
 		}
@@ -2245,9 +2232,7 @@ dyn_call_supported (CallInfo *cinfo, MonoMethodSignature *sig)
 	case RegTypeStructByAddr:
 		break;
 	case RegTypeFP:
-		if (IS_FPA)
-			return FALSE;
-		else if (IS_VFP)
+		if (IS_VFP)
 			break;
 		else
 			return FALSE;
@@ -2967,6 +2952,16 @@ loop_start:
 				/* ARM sets the C flag to 1 if there was _no_ overflow */
 				ins->next->opcode = OP_COND_EXC_NC;
 			break;
+		case OP_IDIV_IMM:
+		case OP_IDIV_UN_IMM:
+		case OP_IREM_IMM:
+		case OP_IREM_UN_IMM:
+			ADD_NEW_INS (cfg, temp, OP_ICONST);
+			temp->inst_c0 = ins->inst_imm;
+			temp->dreg = mono_alloc_ireg (cfg);
+			ins->sreg2 = temp->dreg;
+			ins->opcode = mono_op_imm_to_op (ins->opcode);
+			break;
 		case OP_LOCALLOC_IMM:
 			ADD_NEW_INS (cfg, temp, OP_ICONST);
 			temp->inst_c0 = ins->inst_imm;
@@ -3152,9 +3147,7 @@ static guchar*
 emit_float_to_int (MonoCompile *cfg, guchar *code, int dreg, int sreg, int size, gboolean is_signed)
 {
 	/* sreg is a float, dreg is an integer reg  */
-	if (IS_FPA)
-		ARM_FPA_FIXZ (code, dreg, sreg);
-	else if (IS_VFP) {
+	if (IS_VFP) {
 		if (is_signed)
 			ARM_TOSIZD (code, ARM_VFP_F0, sreg);
 		else
@@ -3990,15 +3983,19 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				ARM_LDR_IMM (code, dreg, info_var->inst_basereg, info_var->inst_offset);
 				/* Add the offset */
 				val = ((offset / 4) * sizeof (guint8*)) + G_STRUCT_OFFSET (SeqPointInfo, bp_addrs);
-				ARM_ADD_REG_IMM (code, dreg, dreg, (val & 0xFF), 0);
-				if (val & 0xFF00)
-					ARM_ADD_REG_IMM (code, dreg, dreg, (val & 0xFF00) >> 8, 24);
-				if (val & 0xFF0000)
-					ARM_ADD_REG_IMM (code, dreg, dreg, (val & 0xFF0000) >> 16, 16);
-				g_assert (!(val & 0xFF000000));
 				/* Load the info->bp_addrs [offset], which is either 0 or the address of a trigger page */
-				ARM_LDR_IMM (code, dreg, dreg, 0);
+				if (arm_is_imm12 ((int)val)) {
+					ARM_LDR_IMM (code, dreg, dreg, val);
+				} else {
+					ARM_ADD_REG_IMM (code, dreg, dreg, (val & 0xFF), 0);
+					if (val & 0xFF00)
+						ARM_ADD_REG_IMM (code, dreg, dreg, (val & 0xFF00) >> 8, 24);
+					if (val & 0xFF0000)
+						ARM_ADD_REG_IMM (code, dreg, dreg, (val & 0xFF0000) >> 16, 16);
+					g_assert (!(val & 0xFF000000));
 
+					ARM_LDR_IMM (code, dreg, dreg, 0);
+				}
 				/* What is faster, a branch or a load ? */
 				ARM_CMP_REG_IMM (code, dreg, 0, 0);
 				/* The breakpoint instruction */
@@ -4121,12 +4118,25 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ARM_AND_REG_IMM (code, ins->dreg, ins->sreg1, imm8, rot_amount);
 			break;
 		case OP_IDIV:
+			g_assert (v7s_supported);
+			ARM_SDIV (code, ins->dreg, ins->sreg1, ins->sreg2);
+			break;
 		case OP_IDIV_UN:
-		case OP_DIV_IMM:
+			g_assert (v7s_supported);
+			ARM_UDIV (code, ins->dreg, ins->sreg1, ins->sreg2);
+			break;
 		case OP_IREM:
+			g_assert (v7s_supported);
+			ARM_SDIV (code, ARMREG_IP, ins->sreg1, ins->sreg2);
+			ARM_MLS (code, ins->dreg, ARMREG_IP, ins->sreg2, ins->sreg1);
+			break;
 		case OP_IREM_UN:
+			g_assert (v7s_supported);
+			ARM_UDIV (code, ARMREG_IP, ins->sreg1, ins->sreg2);
+			ARM_MLS (code, ins->dreg, ARMREG_IP, ins->sreg2, ins->sreg1);
+			break;
+		case OP_DIV_IMM:
 		case OP_REM_IMM:
-			/* crappy ARM arch doesn't have a DIV instruction */
 			g_assert_not_reached ();
 		case OP_IOR:
 			ARM_ORR_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
@@ -4233,15 +4243,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		}
 		case OP_FMOVE:
-			if (IS_FPA)
-				ARM_FPA_MVFD (code, ins->dreg, ins->sreg1);
-			else if (IS_VFP)
+			if (IS_VFP)
 				ARM_CPYD (code, ins->dreg, ins->sreg1);
 			break;
 		case OP_FCONV_TO_R4:
-			if (IS_FPA)
-				ARM_FPA_MVFS (code, ins->dreg, ins->sreg1);
-			else if (IS_VFP) {
+			if (IS_VFP) {
 				ARM_CVTD (code, ins->dreg, ins->sreg1);
 				ARM_CVTS (code, ins->dreg, ins->dreg);
 			}
@@ -4645,113 +4651,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 
 		/* floating point opcodes */
-#ifdef ARM_FPU_FPA
-		case OP_R8CONST:
-			if (cfg->compile_aot) {
-				ARM_FPA_LDFD (code, ins->dreg, ARMREG_PC, 0);
-				ARM_B (code, 1);
-				*(guint32*)code = ((guint32*)(ins->inst_p0))[0];
-				code += 4;
-				*(guint32*)code = ((guint32*)(ins->inst_p0))[1];
-				code += 4;
-			} else {
-				/* FIXME: we can optimize the imm load by dealing with part of 
-				 * the displacement in LDFD (aligning to 512).
-				 */
-				code = mono_arm_emit_load_imm (code, ARMREG_LR, (guint32)ins->inst_p0);
-				ARM_FPA_LDFD (code, ins->dreg, ARMREG_LR, 0);
-			}
-			break;
-		case OP_R4CONST:
-			if (cfg->compile_aot) {
-				ARM_FPA_LDFS (code, ins->dreg, ARMREG_PC, 0);
-				ARM_B (code, 0);
-				*(guint32*)code = ((guint32*)(ins->inst_p0))[0];
-				code += 4;
-			} else {
-				code = mono_arm_emit_load_imm (code, ARMREG_LR, (guint32)ins->inst_p0);
-				ARM_FPA_LDFS (code, ins->dreg, ARMREG_LR, 0);
-			}
-			break;
-		case OP_STORER8_MEMBASE_REG:
-			/* This is generated by the local regalloc pass which runs after the lowering pass */
-			if (!arm_is_fpimm8 (ins->inst_offset)) {
-				code = mono_arm_emit_load_imm (code, ARMREG_LR, ins->inst_offset);
-				ARM_ADD_REG_REG (code, ARMREG_LR, ARMREG_LR, ins->inst_destbasereg);
-				ARM_FPA_STFD (code, ins->sreg1, ARMREG_LR, 0);
-			} else {
-				ARM_FPA_STFD (code, ins->sreg1, ins->inst_destbasereg, ins->inst_offset);
-			}
-			break;
-		case OP_LOADR8_MEMBASE:
-			/* This is generated by the local regalloc pass which runs after the lowering pass */
-			if (!arm_is_fpimm8 (ins->inst_offset)) {
-				code = mono_arm_emit_load_imm (code, ARMREG_LR, ins->inst_offset);
-				ARM_ADD_REG_REG (code, ARMREG_LR, ARMREG_LR, ins->inst_basereg);
-				ARM_FPA_LDFD (code, ins->dreg, ARMREG_LR, 0);
-			} else {
-				ARM_FPA_LDFD (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
-			}
-			break;
-		case OP_STORER4_MEMBASE_REG:
-			g_assert (arm_is_fpimm8 (ins->inst_offset));
-			ARM_FPA_STFS (code, ins->sreg1, ins->inst_destbasereg, ins->inst_offset);
-			break;
-		case OP_LOADR4_MEMBASE:
-			g_assert (arm_is_fpimm8 (ins->inst_offset));
-			ARM_FPA_LDFS (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
-			break;
-		case OP_ICONV_TO_R_UN: {
-			int tmpreg;
-#ifdef USE_JUMP_TABLES
-			gpointer *jte = mono_jumptable_add_entries (2);
-#define SKIP_INSTRUCTIONS 5
-#else
-#define SKIP_INSTRUCTIONS 8
-#endif
-			tmpreg = ins->dreg == 0? 1: 0;
-			ARM_CMP_REG_IMM8 (code, ins->sreg1, 0);
-			ARM_FPA_FLTD (code, ins->dreg, ins->sreg1);
-			ARM_B_COND (code, ARMCOND_GE, SKIP_INSTRUCTIONS);
-			/* save the temp register */
-			ARM_SUB_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, 8);
-			ARM_FPA_STFD (code, tmpreg, ARMREG_SP, 0);
-#ifdef USE_JUMP_TABLES
-			code = mono_arm_load_jumptable_entry_addr (code, jte, ARMREG_IP);
-			ARM_FPA_LDFD (code, tmpreg, ARMREG_IP, 0);
-#else
-			ARM_FPA_LDFD (code, tmpreg, ARMREG_PC, 12);
-#endif
-			ARM_FPA_ADFD (code, ins->dreg, ins->dreg, tmpreg);
-			ARM_FPA_LDFD (code, tmpreg, ARMREG_SP, 0);
-			ARM_ADD_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, 8);
-#ifdef USE_JUMP_TABLES
-			jte [0] = GUINT_TO_POINTER (0x41f00000);
-			jte [1] = GUINT_TO_POINTER (0);
-#else
-			/* skip the constant pool */
-			ARM_B (code, 8);
-			code += 4;
-			*(int*)code = 0x41f00000;
-			code += 4;
-			*(int*)code = 0;
-			code += 4;
-			/* FIXME: adjust:
-			 * ldfltd  ftemp, [pc, #8] 0x41f00000 0x00000000
-			 * adfltd  fdest, fdest, ftemp
-			 */
-#endif
-#undef SKIP_INSTRUCTIONS
-			break;
-		}
-		case OP_ICONV_TO_R4:
-			ARM_FPA_FLTS (code, ins->dreg, ins->sreg1);
-			break;
-		case OP_ICONV_TO_R8:
-			ARM_FPA_FLTD (code, ins->dreg, ins->sreg1);
-			break;
-
-#elif defined(ARM_FPU_VFP)
+#if defined(ARM_FPU_VFP)
 
 		case OP_R8CONST:
 			if (cfg->compile_aot) {
@@ -4898,23 +4798,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				ARM_MOV_REG_REG (code, ins->dreg, ins->sreg1);
 			break;
 		}
-#ifdef ARM_FPU_FPA
-		case OP_FADD:
-			ARM_FPA_ADFD (code, ins->dreg, ins->sreg1, ins->sreg2);
-			break;
-		case OP_FSUB:
-			ARM_FPA_SUFD (code, ins->dreg, ins->sreg1, ins->sreg2);
-			break;		
-		case OP_FMUL:
-			ARM_FPA_MUFD (code, ins->dreg, ins->sreg1, ins->sreg2);
-			break;		
-		case OP_FDIV:
-			ARM_FPA_DVFD (code, ins->dreg, ins->sreg1, ins->sreg2);
-			break;		
-		case OP_FNEG:
-			ARM_FPA_MNFD (code, ins->dreg, ins->sreg1);
-			break;
-#elif defined(ARM_FPU_VFP)
+#if defined(ARM_FPU_VFP)
 		case OP_FADD:
 			ARM_VFP_ADDD (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
@@ -4936,17 +4820,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert_not_reached ();
 			break;
 		case OP_FCOMPARE:
-			if (IS_FPA) {
-				ARM_FPA_FCMP (code, ARM_FPA_CMF, ins->sreg1, ins->sreg2);
-			} else if (IS_VFP) {
+			if (IS_VFP) {
 				ARM_CMPD (code, ins->sreg1, ins->sreg2);
 				ARM_FMSTAT (code);
 			}
 			break;
 		case OP_FCEQ:
-			if (IS_FPA) {
-				ARM_FPA_FCMP (code, ARM_FPA_CMF, ins->sreg1, ins->sreg2);
-			} else if (IS_VFP) {
+			if (IS_VFP) {
 				ARM_CMPD (code, ins->sreg1, ins->sreg2);
 				ARM_FMSTAT (code);
 			}
@@ -4954,9 +4834,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ARM_MOV_REG_IMM8_COND (code, ins->dreg, 1, ARMCOND_EQ);
 			break;
 		case OP_FCLT:
-			if (IS_FPA) {
-				ARM_FPA_FCMP (code, ARM_FPA_CMF, ins->sreg1, ins->sreg2);
-			} else {
+			if (IS_VFP) {
 				ARM_CMPD (code, ins->sreg1, ins->sreg2);
 				ARM_FMSTAT (code);
 			}
@@ -4964,9 +4842,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ARM_MOV_REG_IMM8_COND (code, ins->dreg, 1, ARMCOND_MI);
 			break;
 		case OP_FCLT_UN:
-			if (IS_FPA) {
-				ARM_FPA_FCMP (code, ARM_FPA_CMF, ins->sreg1, ins->sreg2);
-			} else if (IS_VFP) {
+			if (IS_VFP) {
 				ARM_CMPD (code, ins->sreg1, ins->sreg2);
 				ARM_FMSTAT (code);
 			}
@@ -4975,10 +4851,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ARM_MOV_REG_IMM8_COND (code, ins->dreg, 1, ARMCOND_VS);
 			break;
 		case OP_FCGT:
-			/* swapped */
-			if (IS_FPA) {
-				ARM_FPA_FCMP (code, ARM_FPA_CMF, ins->sreg2, ins->sreg1);
-			} else if (IS_VFP) {
+			if (IS_VFP) {
 				ARM_CMPD (code, ins->sreg2, ins->sreg1);
 				ARM_FMSTAT (code);
 			}
@@ -4986,10 +4859,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ARM_MOV_REG_IMM8_COND (code, ins->dreg, 1, ARMCOND_MI);
 			break;
 		case OP_FCGT_UN:
-			/* swapped */
-			if (IS_FPA) {
-				ARM_FPA_FCMP (code, ARM_FPA_CMF, ins->sreg2, ins->sreg1);
-			} else if (IS_VFP) {
+			if (IS_VFP) {
 				ARM_CMPD (code, ins->sreg2, ins->sreg1);
 				ARM_FMSTAT (code);
 			}
@@ -5037,10 +4907,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 
 		case OP_CKFINITE: {
-			if (IS_FPA) {
-				if (ins->dreg != ins->sreg1)
-					ARM_FPA_MVFD (code, ins->dreg, ins->sreg1);
-			} else if (IS_VFP) {
+			if (IS_VFP) {
 #ifdef USE_JUMP_TABLES
 				{
 					gpointer *jte = mono_jumptable_add_entries (2);
@@ -6646,6 +6513,9 @@ mono_arch_set_target (char *mtriple)
 	}
 	if (strstr (mtriple, "armv6")) {
 		v6_supported = TRUE;
+	}
+	if (strstr (mtriple, "armv7s")) {
+		v7s_supported = TRUE;
 	}
 	if (strstr (mtriple, "thumbv7s")) {
 		v7s_supported = TRUE;

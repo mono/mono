@@ -34,6 +34,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml;
 using Microsoft.Build.Construction;
 using Microsoft.Build.Internal;
 using Microsoft.Build.Execution;
@@ -48,6 +49,27 @@ namespace Microsoft.Build.Evaluation
                          +"{data.Items.Count} #Targets={data.Targets.Count}")]
         public class Project
         {
+		public Project (XmlReader xml)
+			: this (ProjectRootElement.Create (xml))
+		{
+		}
+                public Project (XmlReader xml, IDictionary<string, string> globalProperties,
+                                string toolsVersion)
+			: this (ProjectRootElement.Create (xml), globalProperties, toolsVersion)
+		{
+		}
+                public Project (XmlReader xml, IDictionary<string, string> globalProperties,
+                                string toolsVersion, ProjectCollection projectCollection)
+			: this (ProjectRootElement.Create (xml), globalProperties, toolsVersion, projectCollection)
+		{
+		}
+                public Project (XmlReader xml, IDictionary<string, string> globalProperties,
+                                string toolsVersion, ProjectCollection projectCollection,
+                                ProjectLoadSettings loadSettings)
+			: this (ProjectRootElement.Create (xml), globalProperties, toolsVersion, projectCollection, loadSettings)
+		{
+		}
+
                 public Project (ProjectRootElement xml) : this(xml, null, null)
                 {
                 }

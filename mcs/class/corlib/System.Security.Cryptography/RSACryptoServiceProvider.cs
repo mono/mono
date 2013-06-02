@@ -52,6 +52,7 @@ namespace System.Security.Cryptography {
 		private RSAManaged rsa;
 	
 		public RSACryptoServiceProvider ()
+			: this (1024)
 		{
 			// Here it's not clear if we need to generate a keypair
 			// (note: MS implementation generates a keypair in this case).
@@ -61,29 +62,31 @@ namespace System.Security.Cryptography {
 			// So we'll generate the keypair only when (and if) it's being
 			// used (or exported). This should save us a lot of time (at 
 			// least in the unit tests).
-			Common (1024, null);
 		}
 	
 		public RSACryptoServiceProvider (CspParameters parameters) 
+			: this (1024, parameters)
 		{
-			Common (1024, parameters);
 			// no keypair generation done at this stage
 		}
 	
 		public RSACryptoServiceProvider (int dwKeySize) 
 		{
 			// Here it's clear that we need to generate a new keypair
-			Common (dwKeySize, null);
+			Common (dwKeySize, false);
 			// no keypair generation done at this stage
 		}
 	
 		public RSACryptoServiceProvider (int dwKeySize, CspParameters parameters) 
 		{
-			Common (dwKeySize, parameters);
+			bool has_parameters = parameters != null;
+			Common (dwKeySize, has_parameters);
+			if (has_parameters)
+				Common (parameters);
 			// no keypair generation done at this stage
 		}
 	
-		private void Common (int dwKeySize, CspParameters p) 
+		void Common (int dwKeySize, bool parameters) 
 		{
 			// Microsoft RSA CSP can do between 384 and 16384 bits keypair
 			LegalKeySizesValue = new KeySizes [1];
@@ -93,26 +96,29 @@ namespace System.Security.Cryptography {
 			rsa = new RSAManaged (KeySize);
 			rsa.KeyGenerated += new RSAManaged.KeyGeneratedEventHandler (OnKeyGenerated);
 
-			persistKey = (p != null);
-			if (p == null) {
-				p = new CspParameters (PROV_RSA_FULL);
-				if (useMachineKeyStore)
-					p.Flags |= CspProviderFlags.UseMachineKeyStore;
-				store = new KeyPairPersistence (p);
-				// no need to load - it cannot exists
-			}
-			else {
-				store = new KeyPairPersistence (p);
-				bool exists = store.Load ();
-				bool required = (p.Flags & CspProviderFlags.UseExistingKey) != 0;
+			persistKey = parameters;
+			if (parameters)
+				return;
 
-				if (required && !exists)
-					throw new CryptographicException ("Keyset does not exist");
+			// no need to load - it cannot exists
+			var p = new CspParameters (PROV_RSA_FULL);
+			if (useMachineKeyStore)
+				p.Flags |= CspProviderFlags.UseMachineKeyStore;
+			store = new KeyPairPersistence (p);
+		}
 
-				if (store.KeyValue != null) {
-					persisted = true;
-					this.FromXmlString (store.KeyValue);
-				}
+		void Common (CspParameters p)
+		{
+			store = new KeyPairPersistence (p);
+			bool exists = store.Load ();
+			bool required = (p.Flags & CspProviderFlags.UseExistingKey) != 0;
+
+			if (required && !exists)
+				throw new CryptographicException ("Keyset does not exist");
+
+			if (store.KeyValue != null) {
+				persisted = true;
+				FromXmlString (store.KeyValue);
 			}
 		}
 

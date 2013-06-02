@@ -42,7 +42,8 @@
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.NotImplementedException">To be added; from: <see cref="M:System.Array.AsReadOnly``1(``0[])" /></exception>
+        <exception cref="T:System.NotImplementedException">To be added; from:
+          <see cref="M:System.Array.AsReadOnly``1(``0[])" /></exception>
       </Docs>
     </Member>
     <Member MemberName="ConvertAll&lt;TInput,TOutput&gt;">
@@ -68,7 +69,8 @@
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.InvalidOperationException">To be added; from: <see cref="M:System.Array.ConvertAll``2(``0[],System.Converter{``0,``1})" /></exception>
+        <exception cref="T:System.InvalidOperationException">To be added; from:
+          <see cref="M:System.Array.ConvertAll``2(``0[],System.Converter{``0,``1})" /></exception>
       </Docs>
     </Member>
     <Member MemberName="Resize&lt;T&gt;">
@@ -91,7 +93,8 @@
         <param name="newSize">To be added.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.Exception">To be added; from: <see cref="M:System.Array.Resize``1(``0[]@,System.Int32)" /></exception>
+        <exception cref="T:System.Exception">To be added; from:
+          <see cref="M:System.Array.Resize``1(``0[]@,System.Int32)" /></exception>
       </Docs>
     </Member>
   </Members>

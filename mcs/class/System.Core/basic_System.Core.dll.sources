@@ -3,8 +3,8 @@
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
-../corlib/Mono.Security.Cryptography/CryptoTools.cs
-../corlib/Mono.Security.Cryptography/SymmetricTransform.cs
+../Mono.Security/Mono.Security.Cryptography/CryptoTools.cs
+../Mono.Security/Mono.Security.Cryptography/SymmetricTransform.cs
 ../corlib/System.Threading/AtomicBoolean.cs
 ../corlib/System.Collections.Generic/CollectionDebuggerView.cs
 ../corlib/System.Collections/HashPrimeNumbers.cs

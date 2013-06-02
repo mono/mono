@@ -275,4 +275,5 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.CompilerServices.IteratorStateMachineAttribute))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.CompilerServices.ReferenceAssemblyAttribute))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.ExceptionServices.ExceptionDispatchInfo))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(string))]
 

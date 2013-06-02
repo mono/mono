@@ -45,16 +45,16 @@ namespace Mono.Security.Cryptography {
 	internal abstract class SymmetricTransform : ICryptoTransform {
 		protected SymmetricAlgorithm algo;
 		protected bool encrypt;
-		private int BlockSizeByte;
-		private byte[] temp;
-		private byte[] temp2;
+		protected int BlockSizeByte;
+		protected byte[] temp;
+		protected byte[] temp2;
 		private byte[] workBuff;
 		private byte[] workout;
+		protected PaddingMode padmode;
 		// Silverlight 2.0 does not support any feedback mode
-		private int FeedBackByte;
-		private int FeedBackIter;
+		protected int FeedBackByte;
 		private bool m_disposed = false;
-		private bool lastBlock;
+		protected bool lastBlock;
 
 		public SymmetricTransform (SymmetricAlgorithm symmAlgo, bool encryption, byte[] rgbIV) 
 		{
@@ -73,14 +73,12 @@ namespace Mono.Security.Cryptography {
 					rgbIV.Length, BlockSizeByte);
 				throw new CryptographicException (msg);
 			}
-
+			padmode = algo.Padding;
 			// mode buffers
 			temp = new byte [BlockSizeByte];
 			Buffer.BlockCopy (rgbIV, 0, temp, 0, System.Math.Min (BlockSizeByte, rgbIV.Length));
 			temp2 = new byte [BlockSizeByte];
 			FeedBackByte = (algo.FeedbackSize >> 3);
-			if (FeedBackByte != 0)
-				FeedBackIter = (int) BlockSizeByte / FeedBackByte;
 			// transform buffers
 			workBuff = new byte [BlockSizeByte];
 			workout =  new byte [BlockSizeByte];
@@ -176,31 +174,31 @@ namespace Mono.Security.Cryptography {
 		}
 
 		// Cipher-FeedBack (CFB)
+		// this is how *CryptoServiceProvider implements CFB
+		// only AesCryptoServiceProvider support CFB > 8
+		// RijndaelManaged is incompatible with this implementation (and overrides it in it's own transform)
 		protected virtual void CFB (byte[] input, byte[] output) 
 		{
 			if (encrypt) {
-				for (int x = 0; x < FeedBackIter; x++) {
+				for (int x = 0; x < BlockSizeByte; x++) {
 					// temp is first initialized with the IV
 					ECB (temp, temp2);
-
-					for (int i = 0; i < FeedBackByte; i++)
-						output[i + x] = (byte)(temp2[i] ^ input[i + x]);
-					Buffer.BlockCopy (temp, FeedBackByte, temp, 0, BlockSizeByte - FeedBackByte);
-					Buffer.BlockCopy (output, x, temp, BlockSizeByte - FeedBackByte, FeedBackByte);
+					output [x] = (byte) (temp2 [0] ^ input [x]);
+					Buffer.BlockCopy (temp, 1, temp, 0, BlockSizeByte - 1);
+					Buffer.BlockCopy (output, x, temp, BlockSizeByte - 1, 1);
 				}
 			}
 			else {
-				for (int x = 0; x < FeedBackIter; x++) {
+				for (int x = 0; x < BlockSizeByte; x++) {
 					// we do not really decrypt this data!
 					encrypt = true;
 					// temp is first initialized with the IV
 					ECB (temp, temp2);
 					encrypt = false;
 
-					Buffer.BlockCopy (temp, FeedBackByte, temp, 0, BlockSizeByte - FeedBackByte);
-					Buffer.BlockCopy (input, x, temp, BlockSizeByte - FeedBackByte, FeedBackByte);
-					for (int i = 0; i < FeedBackByte; i++)
-						output[i + x] = (byte)(temp2[i] ^ input[i + x]);
+					Buffer.BlockCopy (temp, 1, temp, 0, BlockSizeByte - 1);
+					Buffer.BlockCopy (input, x, temp, BlockSizeByte - 1, 1);
+					output [x] = (byte) (temp2 [0] ^ input [x]);
 				}
 			}
 		}
@@ -244,7 +242,7 @@ namespace Mono.Security.Cryptography {
 
 			// ordered to avoid possible integer overflow
 			int len = outputBuffer.Length - inputCount - outputOffset;
-			if (!encrypt && (0 > len) && ((algo.Padding == PaddingMode.None) || (algo.Padding == PaddingMode.Zeros))) {
+			if (!encrypt && (0 > len) && ((padmode == PaddingMode.None) || (padmode == PaddingMode.Zeros))) {
 				throw new CryptographicException ("outputBuffer", Locale.GetText ("Overflow"));
 			} else if (KeepLastBlock) {
 				if (0 > len + BlockSizeByte) {
@@ -264,7 +262,7 @@ namespace Mono.Security.Cryptography {
 
 		private bool KeepLastBlock {
 			get {
-				return ((!encrypt) && (algo.Padding != PaddingMode.None) && (algo.Padding != PaddingMode.Zeros));
+				return ((!encrypt) && (padmode != PaddingMode.None) && (padmode != PaddingMode.Zeros));
 			}
 		}
 
@@ -336,14 +334,14 @@ namespace Mono.Security.Cryptography {
 			throw new CryptographicException (msg);
 		}
 
-		private byte[] FinalEncrypt (byte[] inputBuffer, int inputOffset, int inputCount) 
+		protected virtual byte[] FinalEncrypt (byte[] inputBuffer, int inputOffset, int inputCount) 
 		{
 			// are there still full block to process ?
 			int full = (inputCount / BlockSizeByte) * BlockSizeByte;
 			int rem = inputCount - full;
 			int total = full;
 
-			switch (algo.Padding) {
+			switch (padmode) {
 			case PaddingMode.ANSIX923:
 			case PaddingMode.ISO10126:
 			case PaddingMode.PKCS7:
@@ -354,7 +352,7 @@ namespace Mono.Security.Cryptography {
 				if (inputCount == 0)
 					return new byte [0];
 				if (rem != 0) {
-					if (algo.Padding == PaddingMode.None)
+					if (padmode == PaddingMode.None)
 						throw new CryptographicException ("invalid block length");
 					// zero padding the input (by adding a block for the partial data)
 					byte[] paddedInput = new byte [full + BlockSizeByte];
@@ -380,7 +378,7 @@ namespace Mono.Security.Cryptography {
 
 			// now we only have a single last block to encrypt
 			byte padding = (byte) (BlockSizeByte - rem);
-			switch (algo.Padding) {
+			switch (padmode) {
 			case PaddingMode.ANSIX923:
 				// XX 00 00 00 00 00 00 07 (zero + padding length)
 				res [res.Length - 1] = padding;
@@ -411,11 +409,9 @@ namespace Mono.Security.Cryptography {
 			return res;
 		}
 
-		private byte[] FinalDecrypt (byte[] inputBuffer, int inputOffset, int inputCount) 
+		protected virtual byte[] FinalDecrypt (byte[] inputBuffer, int inputOffset, int inputCount) 
 		{
-			if ((inputCount % BlockSizeByte) > 0)
-				throw new CryptographicException ("Invalid input block size.");
-
+			int full = inputCount;
 			int total = inputCount;
 			if (lastBlock)
 				total += BlockSizeByte;
@@ -423,11 +419,11 @@ namespace Mono.Security.Cryptography {
 			byte[] res = new byte [total];
 			int outputOffset = 0;
 
-			while (inputCount > 0) {
+			while (full > 0) {
 				int len = InternalTransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, outputOffset);
 				inputOffset += BlockSizeByte;
 				outputOffset += len;
-				inputCount -= BlockSizeByte;
+				full -= BlockSizeByte;
 			}
 
 			if (lastBlock) {
@@ -439,27 +435,27 @@ namespace Mono.Security.Cryptography {
 
 			// total may be 0 (e.g. PaddingMode.None)
 			byte padding = ((total > 0) ? res [total - 1] : (byte) 0);
-			switch (algo.Padding) {
+			switch (padmode) {
 			case PaddingMode.ANSIX923:
 				if ((padding == 0) || (padding > BlockSizeByte))
-					ThrowBadPaddingException (algo.Padding, padding, -1);
+					ThrowBadPaddingException (padmode, padding, -1);
 				for (int i = padding - 1; i > 0; i--) {
 					if (res [total - 1 - i] != 0x00)
-						ThrowBadPaddingException (algo.Padding, -1, i);
+						ThrowBadPaddingException (padmode, -1, i);
 				}
 				total -= padding;
 				break;
 			case PaddingMode.ISO10126:
 				if ((padding == 0) || (padding > BlockSizeByte))
-					ThrowBadPaddingException (algo.Padding, padding, -1);
+					ThrowBadPaddingException (padmode, padding, -1);
 				total -= padding;
 				break;
 			case PaddingMode.PKCS7:
 				if ((padding == 0) || (padding > BlockSizeByte))
-					ThrowBadPaddingException (algo.Padding, padding, -1);
+					ThrowBadPaddingException (padmode, padding, -1);
 				for (int i = padding - 1; i > 0; i--) {
 					if (res [total - 1 - i] != padding)
-						ThrowBadPaddingException (algo.Padding, -1, i);
+						ThrowBadPaddingException (padmode, -1, i);
 				}
 				total -= padding;
 				break;

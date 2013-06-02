@@ -22,6 +22,9 @@ namespace Monodoc
 		[Obsolete ("Use RawGenerator directly")]
 		public XmlDocument GetHelpXml (string id)
 		{
+			var rendered = RenderUrl (id, rawGenerator);
+			if (rendered == null)
+				return null;
 			var doc = new XmlDocument ();
 			doc.LoadXml (RenderUrl (id, rawGenerator));
 			return doc;

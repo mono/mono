@@ -2951,18 +2951,21 @@ add_method (MonoAotCompile *acfg, MonoMethod *method)
 }
 
 static void
-add_extra_method (MonoAotCompile *acfg, MonoMethod *method)
-{
-	add_method_full (acfg, method, TRUE, 0);
-}
-
-static void
 add_extra_method_with_depth (MonoAotCompile *acfg, MonoMethod *method, int depth)
 {
+	if (mono_method_is_generic_sharable_full (method, FALSE, TRUE, FALSE))
+		method = mini_get_shared_method (method);
+
 	if (acfg->aot_opts.log_generics)
 		printf ("%*sAdding method %s.\n", depth, "", mono_method_full_name (method, TRUE));
 
 	add_method_full (acfg, method, TRUE, depth);
+}
+
+static void
+add_extra_method (MonoAotCompile *acfg, MonoMethod *method)
+{
+	add_extra_method_with_depth (acfg, method, 0);
 }
 
 static void
@@ -3612,6 +3615,19 @@ has_type_vars (MonoClass *klass)
 }
 
 static gboolean
+is_vt_inst (MonoGenericInst *inst)
+{
+	int i;
+
+	for (i = 0; i < inst->type_argc; ++i) {
+		MonoType *t = inst->type_argv [i];
+		if (t->type == MONO_TYPE_VALUETYPE)
+			return TRUE;
+	}
+	return FALSE;
+}
+
+static gboolean
 method_has_type_vars (MonoMethod *method)
 {
 	if (has_type_vars (method->klass))
@@ -3681,6 +3697,7 @@ add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth,
 	MonoMethod *method;
 	MonoClassField *field;
 	gpointer iter;
+	gboolean use_gsharedvt = FALSE;
 
 	if (!acfg->ginst_hash)
 		acfg->ginst_hash = g_hash_table_new (NULL, NULL);
@@ -3713,9 +3730,16 @@ add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth,
 
 	g_hash_table_insert (acfg->ginst_hash, klass, klass);
 
+	/*
+	 * Use gsharedvt for generic collections with vtype arguments to avoid code blowup.
+	 * Enable this only for some classes since gsharedvt might not support all methods.
+	 */
+	if ((acfg->opts & MONO_OPT_GSHAREDVT) && klass->image == mono_defaults.corlib && klass->generic_class && klass->generic_class->context.class_inst && is_vt_inst (klass->generic_class->context.class_inst) && (!strcmp (klass->name, "Dictionary`2") || !strcmp (klass->name, "List`1")))
+		use_gsharedvt = TRUE;
+
 	iter = NULL;
 	while ((method = mono_class_get_methods (klass, &iter))) {
-		if (mono_method_is_generic_sharable_impl_full (method, FALSE, FALSE, FALSE))
+		if (mono_method_is_generic_sharable_full (method, FALSE, FALSE, use_gsharedvt))
 			/* Already added */
 			continue;
 
@@ -3989,7 +4013,7 @@ add_generic_instances (MonoAotCompile *acfg)
 		 * If the method is fully sharable, it was already added in place of its
 		 * generic definition.
 		 */
-		if (mono_method_is_generic_sharable_impl_full (method, FALSE, FALSE, FALSE))
+		if (mono_method_is_generic_sharable_full (method, FALSE, FALSE, FALSE))
 			continue;
 
 		/*
@@ -4144,6 +4168,10 @@ is_direct_callable (MonoAotCompile *acfg, MonoMethod *method, MonoJumpInfo *patc
 				 */
 				direct_callable = FALSE;
 			}
+
+			if (callee_cfg->method->wrapper_type == MONO_WRAPPER_ALLOC)
+				/* sgen does some initialization when the allocator method is created */
+				direct_callable = FALSE;
 
 			if (direct_callable)
 				return TRUE;
@@ -6147,7 +6175,7 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 				MonoMethod *m = patch_info->data.method;
 				if (m->is_inflated) {
 					if (!(mono_class_generic_sharing_enabled (m->klass) &&
-						  mono_method_is_generic_sharable_impl_full (m, FALSE, FALSE, FALSE)) &&
+						  mono_method_is_generic_sharable_full (m, FALSE, FALSE, FALSE)) &&
 						!method_has_type_vars (m)) {
 						if (m->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) {
 							if (acfg->aot_opts.full_aot)
@@ -6653,6 +6681,8 @@ emit_code (MonoAotCompile *acfg)
 	emit_section_change (acfg, ".text", 0);
 	emit_alignment (acfg, 8);
 	emit_label (acfg, symbol);
+	/* To distinguish it from the next symbol */
+	emit_int32 (acfg, 0);
 
 	/* 
 	 * Add .no_dead_strip directives for all LLVM methods to prevent the OSX linker
@@ -6673,24 +6703,39 @@ emit_code (MonoAotCompile *acfg)
 	if (acfg->direct_method_addresses) {
 		acfg->flags |= MONO_AOT_FILE_FLAG_DIRECT_METHOD_ADDRESSES;
 
+		/*
+		 * To work around linker issues, we emit a table of branches, and disassemble them at runtime.
+		 * This is PIE code, and the linker can update it if needed.
+		 */
 		sprintf (symbol, "method_addresses");
 		emit_section_change (acfg, RODATA_SECT, 1);
 		emit_alignment (acfg, 8);
 		emit_label (acfg, symbol);
+		emit_local_symbol (acfg, symbol, "method_addresses_end", TRUE);
+		img_writer_emit_unset_mode (acfg->w);
+		if (acfg->need_no_dead_strip)
+			fprintf (acfg->fp, "	.no_dead_strip %s\n", symbol);
 
 		for (i = 0; i < acfg->nmethods; ++i) {
 			if (acfg->cfgs [i]) {
-				emit_pointer (acfg, acfg->cfgs [i]->asm_symbol);
+				if (acfg->thumb_mixed && acfg->cfgs [i]->compile_llvm)
+					fprintf (acfg->fp, "\tblx %s\n", acfg->cfgs [i]->asm_symbol);
+				else
+					fprintf (acfg->fp, "\tbl %s\n", acfg->cfgs [i]->asm_symbol);
 			} else {
-				emit_pointer (acfg, NULL);
+				fprintf (acfg->fp, "\tbl method_addresses\n");
 			}
 		}
+
+		sprintf (symbol, "method_addresses_end");
+		emit_label (acfg, symbol);
 
 		/* Empty */
 		sprintf (symbol, "code_offsets");
 		emit_section_change (acfg, RODATA_SECT, 1);
 		emit_alignment (acfg, 8);
 		emit_label (acfg, symbol);
+		emit_int32 (acfg, 0);
 	} else {
 		sprintf (symbol, "code_offsets");
 		emit_section_change (acfg, RODATA_SECT, 1);
@@ -6751,10 +6796,15 @@ emit_code (MonoAotCompile *acfg)
 			sprintf (symbol, "ut_%d", index);
 
 			emit_int32 (acfg, index);
-			if (acfg->direct_method_addresses)
-				emit_pointer (acfg, symbol);
-			else
+			if (acfg->direct_method_addresses) {
+				img_writer_emit_unset_mode (acfg->w);
+				if (acfg->thumb_mixed && cfg->compile_llvm)
+					fprintf (acfg->fp, "\n\tblx %s\n", symbol);
+				else
+					fprintf (acfg->fp, "\n\tbl %s\n", symbol);
+			} else {
 				emit_symbol_diff (acfg, symbol, end_symbol, 0);
+			}
 			/* Make sure the table is sorted by index */
 			g_assert (index > prev_index);
 			prev_index = index;
@@ -8117,6 +8167,10 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 	TV_DECLARE (atv);
 	TV_DECLARE (btv);
 
+#ifndef MONO_ARCH_GSHAREDVT_SUPPORTED
+	opts &= ~MONO_OPT_GSHAREDVT;
+#endif
+
 	printf ("Mono Ahead of Time compiler - compiling assembly %s\n", image->name);
 
 	acfg = acfg_create (ass, opts);
@@ -8217,6 +8271,9 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 	}
 
 	acfg->method_index = 1;
+
+	if (acfg->aot_opts.full_aot)
+		mono_set_partial_sharing_supported (TRUE);
 
 	collect_methods (acfg);
 

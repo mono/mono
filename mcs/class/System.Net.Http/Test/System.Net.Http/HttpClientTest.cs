@@ -685,6 +685,16 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")] // Missing encoding
+		public void GetString_Many ()
+		{
+			var client = new HttpClient ();
+			var t1 = client.GetStringAsync ("http://www.google.com");
+			var t2 = client.GetStringAsync ("http://www.google.com");
+			Assert.IsTrue (Task.WaitAll (new [] { t1, t2 }, WaitTimeout));		
+		}
+
+		[Test]
 		public void GetByteArray_ServerError ()
 		{
 			var listener = CreateListener (l => {

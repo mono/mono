@@ -98,10 +98,10 @@ namespace Mono.Security.Cryptography {
 #endif
 	class KeyPairPersistence {
 	
-		private static bool _userPathExists = false; // check at 1st use
+		private static bool _userPathExists; // check at 1st use
 		private static string _userPath;
 		
-		private static bool _machinePathExists = false; // check at 1st use
+		private static bool _machinePathExists; // check at 1st use
 		private static string _machinePath;
 
 		private CspParameters _params;

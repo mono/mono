@@ -15,8 +15,8 @@
 
 #include "mini.h"
 
-//#define ALLOW_PARTIAL_SHARING TRUE
-#define ALLOW_PARTIAL_SHARING FALSE
+#define ALLOW_PARTIAL_SHARING TRUE
+//#define ALLOW_PARTIAL_SHARING FALSE
  
 #if 0
 #define DEBUG(...) __VA_ARGS__
@@ -29,6 +29,19 @@ mono_class_unregister_image_generic_subclasses (MonoImage *image, gpointer user_
 
 static MonoType*
 mini_get_gsharedvt_alloc_type_gsctx (MonoGenericSharingContext *gsctx, MonoType *t);
+
+static gboolean partial_supported;
+
+static inline gboolean
+partial_sharing_supported (void)
+{
+	if (!ALLOW_PARTIAL_SHARING)
+		return FALSE;
+	/* Enable this only when AOT compiling or running in full-aot mode */
+	if (partial_supported || mono_aot_only)
+		return TRUE;
+	return FALSE;
+}
 
 static int
 type_check_context_used (MonoType *type, gboolean recursive)
@@ -658,12 +671,15 @@ generic_inst_is_sharable (MonoGenericInst *inst, gboolean allow_type_vars,
 						  gboolean allow_partial)
 {
 	int i;
+	gboolean has_ref = FALSE;
 
 	for (i = 0; i < inst->type_argc; ++i) {
 		MonoType *type = inst->type_argv [i];
 
-		if (MONO_TYPE_IS_REFERENCE (type) || (allow_type_vars && (type->type == MONO_TYPE_VAR || type->type == MONO_TYPE_MVAR)))
+		if (MONO_TYPE_IS_REFERENCE (type) || (allow_type_vars && (type->type == MONO_TYPE_VAR || type->type == MONO_TYPE_MVAR))) {
+			has_ref = TRUE;
 			continue;
+		}
  
 		/*
 		 * Allow non ref arguments, if there is at least one ref argument
@@ -676,7 +692,10 @@ generic_inst_is_sharable (MonoGenericInst *inst, gboolean allow_type_vars,
 		return FALSE;
 	}
 
-	return TRUE;
+	if (allow_partial)
+		return has_ref;
+	else
+		return TRUE;
 }
 
 /*
@@ -704,9 +723,6 @@ mono_is_partially_sharable_inst (MonoGenericInst *inst)
  * get_shared_class:
  *
  *   Return the class used to store information when using generic sharing.
- * For fully shared classes, it is the generic definition, for partially shared
- * classes, it is an instance with all ref type arguments replaced by the type parameters
- * of its generic definition.
  */
 static MonoClass*
 get_shared_class (MonoClass *class)
@@ -718,9 +734,11 @@ get_shared_class (MonoClass *class)
 	 */
 	//g_assert_not_reached ();
 
+#if 0
 	/* The gsharedvt changes break this */
 	if (ALLOW_PARTIAL_SHARING)
 		g_assert_not_reached ();
+#endif
 
 #if 0
 	if (class->is_inflated) {
@@ -754,6 +772,7 @@ get_shared_class (MonoClass *class)
 	}
 #endif
 
+	// FIXME: Use this in all cases can be problematic wrt domain/assembly unloading
 	return class_uninstantiated (class);
 }
 
@@ -1100,7 +1119,7 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 		gpointer addr;
 
 		addr = mono_compile_method (data);
-		return mini_add_method_trampoline (NULL, data, addr, mono_method_needs_static_rgctx_invoke (data, FALSE));
+		return mini_add_method_trampoline (NULL, data, addr, mono_method_needs_static_rgctx_invoke (data, FALSE), FALSE);
 	}
 #ifndef DISABLE_REMOTING
 	case MONO_RGCTX_INFO_REMOTING_INVOKE_WITH_CHECK:
@@ -1825,7 +1844,7 @@ mono_generic_context_is_sharable_full (MonoGenericContext *context,
 gboolean
 mono_generic_context_is_sharable (MonoGenericContext *context, gboolean allow_type_vars)
 {
-	return mono_generic_context_is_sharable_full (context, allow_type_vars, ALLOW_PARTIAL_SHARING);
+	return mono_generic_context_is_sharable_full (context, allow_type_vars, partial_sharing_supported ());
 }
 
 /*
@@ -1894,7 +1913,7 @@ is_async_state_machine_class (MonoClass *klass)
 		iclass_set = TRUE;
 	}
 
-	if (iclass && klass->valuetype && strstr (klass->name, "c__async") && mono_class_is_assignable_from (iclass, klass))
+	if (iclass && klass->valuetype && mono_class_is_assignable_from (iclass, klass))
 		return TRUE;
 	return FALSE;
 }
@@ -1931,7 +1950,7 @@ is_async_method (MonoMethod *method)
 }
 
 /*
- * mono_method_is_generic_sharable_impl_full:
+ * mono_method_is_generic_sharable_full:
  * @method: a method
  * @allow_type_vars: whether to regard type variables as reference types
  * @allow_partial: whether to allow partial sharing
@@ -1942,11 +1961,14 @@ is_async_method (MonoMethod *method)
  * type parameters.  Otherwise returns FALSE.
  */
 gboolean
-mono_method_is_generic_sharable_impl_full (MonoMethod *method, gboolean allow_type_vars,
+mono_method_is_generic_sharable_full (MonoMethod *method, gboolean allow_type_vars,
 										   gboolean allow_partial, gboolean allow_gsharedvt)
 {
 	if (!mono_method_is_generic_impl (method))
 		return FALSE;
+
+	if (!partial_sharing_supported ())
+		allow_partial = FALSE;
 
 	/*
 	 * Generic async methods have an associated state machine class which is a generic struct. This struct
@@ -2003,9 +2025,9 @@ mono_method_is_generic_sharable_impl_full (MonoMethod *method, gboolean allow_ty
 }
 
 gboolean
-mono_method_is_generic_sharable_impl (MonoMethod *method, gboolean allow_type_vars)
+mono_method_is_generic_sharable (MonoMethod *method, gboolean allow_type_vars)
 {
-	return mono_method_is_generic_sharable_impl_full (method, allow_type_vars, ALLOW_PARTIAL_SHARING, TRUE);
+	return mono_method_is_generic_sharable_full (method, allow_type_vars, partial_sharing_supported (), TRUE);
 }
 
 gboolean
@@ -2014,7 +2036,7 @@ mono_method_needs_static_rgctx_invoke (MonoMethod *method, gboolean allow_type_v
 	if (!mono_class_generic_sharing_enabled (method->klass))
 		return FALSE;
 
-	if (!mono_method_is_generic_sharable_impl (method, allow_type_vars))
+	if (!mono_method_is_generic_sharable (method, allow_type_vars))
 		return FALSE;
 
 	if (method->is_inflated && mono_method_get_context (method)->method_inst)
@@ -2086,6 +2108,12 @@ void
 mono_set_generic_sharing_vt_supported (gboolean supported)
 {
 	gsharedvt_supported = supported;
+}
+
+void
+mono_set_partial_sharing_supported (gboolean supported)
+{
+	partial_supported = supported;
 }
 
 /*

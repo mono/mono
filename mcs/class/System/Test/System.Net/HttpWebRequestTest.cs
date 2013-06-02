@@ -1482,7 +1482,7 @@ namespace MonoTests.System.Net
 
 			if (timeoutWorker.End == null) {
 				thread.Abort ();
-				Assert.Fail ("Thread did not finish after double the timout specified passed");
+				Assert.Fail ("Thread finished after triple the timeout specified has passed");
 			}
 
 			if (!String.IsNullOrEmpty (timeoutWorker.Body)) {
@@ -1502,7 +1502,8 @@ namespace MonoTests.System.Net
 			Assert.AreEqual (webEx.Status, WebExceptionStatus.Timeout,
 			                 "WebException was thrown, but with a wrong status (should be timeout): " + webEx.Status);
 
-			Assert.IsFalse (timeoutWorker.End > (timeoutWorker.Start + TimeSpan.FromMilliseconds (three_seconds_in_milliseconds + 500)));
+			Assert.IsFalse (timeoutWorker.End > (timeoutWorker.Start + TimeSpan.FromMilliseconds (three_seconds_in_milliseconds + 500)),
+			                "Timeout exception should have been thrown shortly after timeout is reached, however it was at least half-second late");
 		}
 
 		[Test] // 1st possible case of https://bugzilla.novell.com/show_bug.cgi?id=MONO74177

@@ -406,6 +406,7 @@ System.Threading/InterlockedTest.cs
 System.Threading/LazyInitializerTest.cs
 System.Threading/WaitHandleTest.cs
 System.Threading/VolatileTest.cs
+System.Threading/ThreadPoolTest.cs
 System/TimeSpanTest.cs
 System/TimeZoneTest.cs
 System/TypeTest.cs

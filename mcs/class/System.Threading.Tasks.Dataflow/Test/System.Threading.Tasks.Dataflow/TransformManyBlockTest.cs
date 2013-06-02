@@ -85,11 +85,11 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			var action = new ActionBlock<int> (i => received = true);
 			transformMany.LinkTo (action);
 
-			Assert.IsTrue (transformMany.Post (1));
+			Assert.IsTrue (transformMany.Post (1), "#1");
 
 			transformMany.Complete ();
-			Assert.IsTrue (transformMany.Completion.Wait (100));
-			Assert.IsFalse (received);
+			Assert.IsTrue (transformMany.Completion.Wait (100), "#2");
+			Assert.IsFalse (received, "#3");
 		}
 
 		[Test]

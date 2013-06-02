@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Xml;
 using System.Collections.Specialized;
 using System.Security.Cryptography;
@@ -63,5 +62,3 @@ namespace System.Configuration
 	}
 
 }
-
-#endif

@@ -284,14 +284,9 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		public void StaticCreation () 
 		{
 			X509Chain c = X509Chain.Create ();
-#if MOBILE
-			Assert.IsNull (c);
-#else
 			CheckDefaultChain (c);
-#endif
 		}
 
-#if !MOBILE
 		[Test]
 		public void CreateViaCryptoConfig ()
 		{
@@ -299,7 +294,6 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			Assert.AreEqual (typeof (X509Chain), CryptoConfig.CreateFromName ("X509Chain").GetType (), "X509Chain");
 			Assert.IsNull (CryptoConfig.CreateFromName ("System.Security.Cryptography.X509Certificates.X509Chain"), "System.Security.Cryptography.X509Certificates.X509Chain");
 		}
-#endif
 	}
 }
 

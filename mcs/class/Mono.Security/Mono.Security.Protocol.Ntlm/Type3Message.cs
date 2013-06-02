@@ -39,7 +39,12 @@ using System.Text;
 
 namespace Mono.Security.Protocol.Ntlm {
 
-	public class Type3Message : MessageBase {
+#if INSIDE_SYSTEM
+	internal
+#else
+	public
+#endif
+	class Type3Message : MessageBase {
 
 		private NtlmAuthLevel _level;
 		private byte[] _challenge;

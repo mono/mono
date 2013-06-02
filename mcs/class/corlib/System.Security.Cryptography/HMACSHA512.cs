@@ -2,10 +2,11 @@
 // HMACSHA512.cs: HMAC implementation using SHA512
 //
 // Author:
-//	Sebastien Pouliot  <sebastien@ximian.com>
+//	Sebastien Pouliot  <sebastien@xamarin.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2004-2005, 2007 Novell, Inc (http://www.novell.com)
+// Copyright 2013 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,24 +37,31 @@ namespace System.Security.Cryptography {
 	[ComVisible (true)]
 	public class HMACSHA512 : HMAC {
 
-		static bool legacy_mode;
 		private bool legacy;
+
+#if !FULL_AOT_RUNTIME
+		static bool legacy_mode;
 
 		static HMACSHA512 ()
 		{
 			legacy_mode = (Environment.GetEnvironmentVariable ("legacyHMACMode") == "1");
 		}
+#endif
 
 		public HMACSHA512 ()
 			: this (KeyBuilder.Key (8))
 		{
-			ProduceLegacyHmacValues = legacy_mode;
 		}
 
 		public HMACSHA512 (byte[] key)
 		{
+#if FULL_AOT_RUNTIME
+			BlockSizeValue = 128;
+			SetHash ("SHA512", new SHA512Managed ());
+#else
 			ProduceLegacyHmacValues = legacy_mode;
 			HashName = "SHA512";
+#endif
 			HashSizeValue = 512;
 			Key = key;
 		}

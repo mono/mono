@@ -1197,3 +1197,37 @@ mono_object_gethashcode_gsharedvt (gpointer mp, MonoMethod *cmethod, MonoClass *
 	return *(int*)p;
 }
 
+gboolean
+mono_object_equals_gsharedvt (gpointer mp, MonoMethod *cmethod, MonoClass *klass, MonoObject *arg)
+{
+	MonoMethod *m;
+	int vt_slot;
+	gpointer this_arg;
+	MonoObject *res;
+	gpointer p;
+	void **args;
+
+	/* Lookup the virtual method */
+	mono_class_setup_vtable (klass);
+	g_assert (klass->vtable);
+	vt_slot = mono_method_get_vtable_slot (cmethod);
+	m = klass->vtable [vt_slot];
+	if (klass->valuetype)
+		this_arg = mp;
+	else
+		this_arg = *(gpointer*)mp;
+	// FIXME: This boxes the result
+	args = (void**)&arg;
+	res = mono_runtime_invoke (m, this_arg, args, NULL);
+	p = mono_object_unbox (res);
+	return *(gboolean*)p;
+}
+
+void
+mono_gsharedvt_value_copy (gpointer dest, gpointer src, MonoClass *klass)
+{
+	if (klass->valuetype)
+		mono_value_copy (dest, src, klass);
+	else
+        mono_gc_wbarrier_generic_store (dest, *(MonoObject**)src);
+}
