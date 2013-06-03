@@ -36,7 +36,7 @@ if ($ENV{UNITY_THISISABUILDMACHINE}) {
 	$ENV{'C_INCLUDE_PATH'}="$external_MONO_PREFIX/include:$external_GNOME_PREFIX/include";
 	$ENV{'ACLOCAL_PATH'}="$external_MONO_PREFIX/share/aclocal";
 	$ENV{'PKG_CONFIG_PATH'}="$external_MONO_PREFIX/lib/pkgconfig:$external_GNOME_PREFIX/lib/pkgconfig";
-	$ENV{'PATH'}="$external_MONO_PREFIX/bin:$ENV{'PATH'}";
+	$ENV{'PATH'}="$external_MONO_PREFIX/bin:/usr/local/bin:$ENV{'PATH'}";
 } else {
 	print "not rmtree-ing $root/builds, as we're not on a buildmachine\n";
 }
