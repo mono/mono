@@ -439,7 +439,7 @@ namespace System
 		{
 			result = TimeSpan.Zero;
 
-			if (formats == null || formats.Length == 0)
+			if (input == null || formats == null || formats.Length == 0)
 				return false;
 
 			Parser p = new Parser (input, formatProvider);
