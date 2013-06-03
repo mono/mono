@@ -86,14 +86,14 @@ if (not $skipbuild)
 		
 		chdir("$root/eglib") eq 1 or die("failed to chdir 3");
 		print(">>>Calling autoreconf in eglib\n");
-		system("autoreconf -i") eq 0 or die ("failed autoreconfing eglib");
+		system("autoreconf -i");
 		chdir("$root") eq 1 or die("failed to chdir4");
 		print(">>>Calling autoreconf in mono\n");
-		system("autoreconf -i") eq 0 or die("failed to autoreconf mono");
+		system("autoreconf -i");
 		print(">>>Calling configure in mono\n");
 		system("./configure","--prefix=$monoprefix","--with-monotouch=$withMonotouch","-with-unity=$withUnity", "--with-glib=embedded","--with-mcs-docs=no","--with-macversion=10.5", "--disable-nls") eq 0 or die ("failing autogenning mono");
 		print("calling make clean in mono\n");
-		system("make","clean") eq 0 or die ("failed to make clean");
+		system("make","clean");
 	}
 	system("make") eq 0 or die ("Failed running make");
 	system("make install") eq 0 or die ("Failed running make install");
