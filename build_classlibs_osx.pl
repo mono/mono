@@ -14,6 +14,9 @@ my $monodistro = "$root/builds/monodistribution";
 my $lib = "$monodistro/lib";
 my $libmono = "$lib/mono";
 my $monoprefix = "$root/tmp/monoprefix";
+my $xcodePath = '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform';
+my $macversion = '10.5';
+my $sdkversion = '10.6';
 
 my $dependencyBranchToUse = "unity3.0";
 
@@ -61,9 +64,13 @@ if (-d $libmono)
 
 if (not $skipbuild)
 {
-	$ENV{CFLAGS}  = "$ENV{CFLAGS} -arch i386";
-	$ENV{CXXFLAGS}  = "$ENV{CXXFLAGS} -arch i386";
+	$ENV{CFLAGS}  = "$ENV{CFLAGS} -arch i386 -D_XOPEN_SOURCE";
+	$ENV{CXXFLAGS}  = "$ENV{CXXFLAGS} $ENV{CFLAGS}";
 	$ENV{LDFLAGS}  = "$ENV{LDFLAGS} -arch i386";
+	if ($^O eq 'darwin')
+	{
+		$ENV{'MACSDKOPTIONS'} = "-mmacosx-version-min=$macversion -isysroot $xcodePath/Developer/SDKs/MacOSX$sdkversion.sdk";
+	}
 
 	if ($cleanbuild)
 	{
