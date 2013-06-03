@@ -1322,6 +1322,8 @@ public class TimeSpanTest {
 		TryParseExactHelper ("10:12", new string [0], true, "dontcare");
 		TryParseExactHelper ("10:12", new string [] { String.Empty }, true, "dontcare");
 		TryParseExactHelper ("10:12", new string [] { null }, true, "dontcare");
+
+		TryParseExactHelper (null, new string [] { null }, true, "dontcare");
 	}
 
 	void TryParseExactHelper (string input, string [] formats, bool error, string expected, IFormatProvider formatProvider = null,
