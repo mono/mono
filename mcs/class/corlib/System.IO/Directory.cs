@@ -537,7 +537,6 @@ namespace System.IO
 			IntPtr handle;
 			MonoIOError error;
 			FileAttributes rattr;
-			
 			string s = MonoIO.FindFirst (path, path_with_pattern, out rattr, out error, out handle);
 			try {
 				while (s != null) {
@@ -545,7 +544,7 @@ namespace System.IO
 					if (((rattr & FileAttributes.Directory) == 0) && rattr != 0)
 						rattr |= FileAttributes.Normal;
 
-					if ((rattr & FileAttributes.ReparsePoint) == 0 && (rattr & kind) != 0)
+					if ((rattr & kind) != 0)
 						yield return s;
 
 					s = MonoIO.FindNext (handle, out rattr, out error);
@@ -563,7 +562,7 @@ namespace System.IO
 
 				try {
 					while (s != null) {
-						if ((rattr & FileAttributes.Directory) != 0)
+						if ((rattr & FileAttributes.Directory) != 0 && (rattr & FileAttributes.ReparsePoint) == 0)
 							foreach (string child in EnumerateKind (s, searchPattern, searchOption, kind))
 								yield return child;
 						s = MonoIO.FindNext (handle, out rattr, out error);
