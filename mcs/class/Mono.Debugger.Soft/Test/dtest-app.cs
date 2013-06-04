@@ -1151,6 +1151,10 @@ public class Tests : TestsBase
 		set_gc_suspend_field ();
 		gc_suspend_1 ();
 	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void generic_method<T> () where T : class {
+	}
 }
 
 class TypeLoadClass {
