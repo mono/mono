@@ -98,12 +98,13 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-#if MOBILE
-		[Category ("NotWorking")] // String:Intern () is linked away
-#endif
 		[ExpectedException (typeof (ArgumentException))]
 		public void InstanceTypeDoesntMatchMethodDeclaringType ()
 		{
+#if MOBILE
+			// ensure that String.Intern won't be removed by the linker
+			string s = String.Intern (String.Empty);
+#endif
 			Expression.Call (Expression.Constant (1), typeof (string).GetMethod ("Intern"));
 		}
 
