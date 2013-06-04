@@ -37,11 +37,13 @@ SILVERLIGHT_DIR = $(mono_libdir)/mono/xbuild/Microsoft/Silverlight
 PORTABLE_DIR = $(mono_libdir)/mono/xbuild/Microsoft/Portable
 EXTRAS_DIR = $(mono_libdir)/mono/$(INSTALL_FRAMEWORK_VERSION)
 install-extras: 
-	$(MKINSTALLDIRS) $(DESTDIR)$(EXTRAS_DIR) $(DESTDIR)$(REDISTLIST_DIR) $(DESTDIR)$(XBUILD_FRAMEWORKS_DIR)/v3.0/RedistList $(DESTDIR)$(XBUILD_FRAMEWORKS_DIR)/v4.0/RedistList
+	$(MKINSTALLDIRS) $(DESTDIR)$(EXTRAS_DIR) $(DESTDIR)$(REDISTLIST_DIR) $(DESTDIR)$(XBUILD_FRAMEWORKS_DIR)/v3.0/RedistList $(DESTDIR)$(XBUILD_FRAMEWORKS_DIR)/v4.0/RedistList $(DESTDIR)$(mono_libdir)/mono/3.5 $(DESTDIR)$(mono_libdir)/mono/4.0
 	$(INSTALL_DATA) xbuild/xbuild.rsp $(DESTDIR)$(mono_libdir)/mono/$(FRAMEWORK_VERSION)
-	$(INSTALL_DATA) xbuild/$(FRAMEWORK_VERSION)/Microsoft.Common.tasks $(DESTDIR)$(EXTRAS_DIR)
+	$(INSTALL_DATA) xbuild/$(INSTALL_FRAMEWORK_VERSION)/Microsoft.Common.tasks $(DESTDIR)$(EXTRAS_DIR)
+	$(INSTALL_DATA) xbuild/$(INSTALL_FRAMEWORK_VERSION)/Microsoft.Common.targets $(DESTDIR)$(EXTRAS_DIR)
 	$(INSTALL_DATA) xbuild/Microsoft.Build.xsd $(DESTDIR)$(EXTRAS_DIR)
-	$(INSTALL_DATA) xbuild/$(FRAMEWORK_VERSION)/Microsoft.Common.targets $(DESTDIR)$(EXTRAS_DIR)
+	$(INSTALL_DATA) xbuild/2.0/Microsoft.Common.targets $(DESTDIR)$(mono_libdir)/mono/2.0
+	$(INSTALL_DATA) xbuild/3.5/Microsoft.Common.targets $(DESTDIR)$(mono_libdir)/mono/3.5
 	$(INSTALL_DATA) xbuild/Microsoft.CSharp.targets $(DESTDIR)$(EXTRAS_DIR)
 	$(INSTALL_DATA) xbuild/Microsoft.VisualBasic.targets $(DESTDIR)$(EXTRAS_DIR)
 	$(INSTALL_DATA) xbuild/$(FRAMEWORK_VERSION)/FrameworkList.xml $(DESTDIR)$(REDISTLIST_DIR)
@@ -62,18 +64,21 @@ install-extras:
 	sed -e 's/@SILVERLIGHT_VERSION@/2.0/g' xbuild/Microsoft.Silverlight.Common.targets > $(DESTDIR)$(SILVERLIGHT_DIR)/v2.0/Microsoft.Silverlight.Common.targets
 	sed -e 's/@SILVERLIGHT_VERSION@/3.0/g' xbuild/Microsoft.Silverlight.Common.targets > $(DESTDIR)$(SILVERLIGHT_DIR)/v3.0/Microsoft.Silverlight.Common.targets
 	$(MKINSTALLDIRS) $(DESTDIR)$(PORTABLE_DIR)/v4.0
-	$(INSTALL_DATA) xbuild/Microsoft.Portable.CSharp.targets $(DESTDIR)$(PORTABLE_DIR)/v4.0
+	$(MKINSTALLDIRS) $(DESTDIR)$(PORTABLE_DIR)/v4.5
+	$(INSTALL_DATA) xbuild/4.0/Microsoft.Portable.CSharp.targets $(DESTDIR)$(PORTABLE_DIR)/v4.0
+	$(INSTALL_DATA) xbuild/4.5/Microsoft.Portable.CSharp.targets $(DESTDIR)$(PORTABLE_DIR)/v4.5
+	$(INSTALL_DATA) xbuild/Microsoft.Portable.CSharp.targets $(DESTDIR)$(mono_libdir)/mono/4.0
 
 EXTRA_DISTFILES = \
 	xbuild/xbuild.rsp \
 	xbuild/2.0/Microsoft.Common.tasks \
 	xbuild/3.5/Microsoft.Common.tasks \
 	xbuild/4.0/Microsoft.Common.tasks \
-	xbuild/4.5/Microsoft.Common.tasks \
 	xbuild/2.0/Microsoft.Common.targets \
 	xbuild/3.5/Microsoft.Common.targets \
 	xbuild/4.0/Microsoft.Common.targets \
-	xbuild/4.5/Microsoft.Common.targets \
+	xbuild/4.0/Microsoft.Portable.CSharp.targets \
+	xbuild/4.5/Microsoft.Portable.CSharp.targets \
 	xbuild/2.0/FrameworkList.xml \
 	xbuild/3.5/FrameworkList.xml \
 	xbuild/4.0/FrameworkList.xml \

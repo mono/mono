@@ -2,9 +2,10 @@
 // MD4.cs - Message Digest 4 Abstract class
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@xamarin.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright 2013 Xamarin Inc. (http://www.xamarin.com)
 //
 
 //
@@ -33,7 +34,10 @@ using System.Security.Cryptography;
 
 namespace Mono.Security.Cryptography {
 
-	public abstract class MD4 : HashAlgorithm {
+#if !INSIDE_CORLIB
+	public
+#endif
+	abstract class MD4 : HashAlgorithm {
 
 		protected MD4 () 
 		{
@@ -43,8 +47,12 @@ namespace Mono.Security.Cryptography {
 
 		public static new MD4 Create () 
 		{
+#if FULL_AOT_RUNTIME
+			return new MD4Managed ();
+#else
 			// for this to work we must register ourself with CryptoConfig
 			return Create ("MD4");
+#endif
 		}
 
 		public static new MD4 Create (string hashName) 

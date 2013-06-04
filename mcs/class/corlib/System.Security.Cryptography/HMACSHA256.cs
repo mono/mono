@@ -2,10 +2,11 @@
 // HMACSHA256.cs: HMAC implementation using SHA256
 //
 // Author:
-//	Sebastien Pouliot  <sebastien@ximian.com>
+//	Sebastien Pouliot  <sebastien@xamarin.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright 2013 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -43,7 +44,11 @@ namespace System.Security.Cryptography {
 
 		public HMACSHA256 (byte[] key) : base () 
 		{
+#if FULL_AOT_RUNTIME
+			SetHash ("SHA256", new SHA256Managed ());
+#else
 			HashName = "SHA256";
+#endif
 			HashSizeValue = 256;
 			Key = key;
 		}

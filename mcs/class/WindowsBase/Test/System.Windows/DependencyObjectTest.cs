@@ -59,6 +59,10 @@ namespace MonoTests.System.Windows {
 	class Y : DependencyObject {
 	}
 
+	class DefaultValueTest : DependencyObject {
+		public static readonly DependencyProperty AProperty = DependencyProperty.Register("A", typeof(string), typeof(DefaultValueTest), new PropertyMetadata("defaultValueTest"));
+	}
+
 	[TestFixture]
 	public class DependencyObjectTest {
 		[Test]
@@ -103,6 +107,13 @@ namespace MonoTests.System.Windows {
 			}
 
 			Assert.AreEqual(2, count);
+		}
+
+		[Test]
+		public void TestDefaultValue()
+		{
+			DefaultValueTest obj = new DefaultValueTest ();
+			Assert.AreEqual (obj.GetValue(DefaultValueTest.AProperty), "defaultValueTest");
 		}
 
 	}

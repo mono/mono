@@ -182,42 +182,50 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			return true;
 		}
 
-		
-		static private void VerifyOSX (X509CertificateCollection certificates)
-		{
-			
-		}
-		
 		private void validateCertificates(X509CertificateCollection certificates)
 		{
 			ClientContext		context			= (ClientContext)this.Context;
 			AlertDescription	description		= AlertDescription.BadCertificate;
 
-#if NET_2_0
-			if (context.SslStream.HaveRemoteValidation2Callback) {
-				ValidationResult res = context.SslStream.RaiseServerCertificateValidation2 (certificates);
-				if (res.Trusted)
-					return;
-
-				long error = res.ErrorCode;
-				switch (error) {
-				case 0x800B0101:
-					description = AlertDescription.CertificateExpired;
-					break;
-				case 0x800B010A:
-					description = AlertDescription.UnknownCA;
-					break;
-				case 0x800B0109:
-					description = AlertDescription.UnknownCA;
-					break;
-				default:
-					description = AlertDescription.CertificateUnknown;
-					break;
-				}
-				string err = String.Format ("0x{0:x}", error);
-				throw new TlsException (description, "Invalid certificate received from server. Error code: " + err);
-			}
+#if INSIDE_SYSTEM
+			// This helps the linker to remove a lot of validation code that will never be used since 
+			// System.dll will, for OSX and iOS, uses the operating system X.509 certificate validations
+			RemoteValidation (context, description);
+#else
+			if (context.SslStream.HaveRemoteValidation2Callback)
+				RemoteValidation (context, description);
+			else 
+				LocalValidation (context, description);
 #endif
+		}
+
+		void RemoteValidation (ClientContext context, AlertDescription description)
+		{
+			ValidationResult res = context.SslStream.RaiseServerCertificateValidation2 (certificates);
+			if (res.Trusted)
+				return;
+
+			long error = res.ErrorCode;
+			switch (error) {
+			case 0x800B0101:
+				description = AlertDescription.CertificateExpired;
+				break;
+			case 0x800B010A:
+				description = AlertDescription.UnknownCA;
+				break;
+			case 0x800B0109:
+				description = AlertDescription.UnknownCA;
+				break;
+			default:
+				description = AlertDescription.CertificateUnknown;
+				break;
+			}
+			string err = String.Format ("Invalid certificate received from server. Error code: 0x{0:x}", error);
+			throw new TlsException (description, err);
+		}
+
+		void LocalValidation (ClientContext context, AlertDescription description)
+		{
 			// the leaf is the web server certificate
 			X509Certificate leaf = certificates [0];
 			X509Cert.X509Certificate cert = new X509Cert.X509Certificate (leaf.RawData);

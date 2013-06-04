@@ -63,7 +63,7 @@ namespace System.Security.Cryptography {
 		// least in the unit tests).
 
 		public DSACryptoServiceProvider ()
-			: this (1024, null)
+			: this (1024)
 		{
 		}
 
@@ -73,11 +73,19 @@ namespace System.Security.Cryptography {
 		}
 
 		public DSACryptoServiceProvider (int dwKeySize)
-			: this (dwKeySize, null)
 		{
+			Common (dwKeySize, false);
 		}
 
 		public DSACryptoServiceProvider (int dwKeySize, CspParameters parameters)
+		{
+			bool has_parameters = parameters != null;
+			Common (dwKeySize, has_parameters);
+			if (has_parameters)
+				Common (parameters);
+		}
+
+		void Common (int dwKeySize, bool parameters) 
 		{
 			LegalKeySizesValue = new KeySizes [1];
 			LegalKeySizesValue [0] = new KeySizes (512, 1024, 64);
@@ -87,21 +95,24 @@ namespace System.Security.Cryptography {
 			dsa = new DSAManaged (dwKeySize);
 			dsa.KeyGenerated += new DSAManaged.KeyGeneratedEventHandler (OnKeyGenerated);
 
-			persistKey = (parameters != null);
-			if (parameters == null) {
-				parameters = new CspParameters (PROV_DSS_DH);
-				if (useMachineKeyStore)
-					parameters.Flags |= CspProviderFlags.UseMachineKeyStore;
-				store = new KeyPairPersistence (parameters);
-				// no need to load - it cannot exists
-			}
-			else {
-				store = new KeyPairPersistence (parameters);
-				store.Load ();
-				if (store.KeyValue != null) {
-					persisted = true;
-					this.FromXmlString (store.KeyValue);
-				}
+			persistKey = parameters;
+			if (parameters)
+				return;
+
+			var p = new CspParameters (PROV_DSS_DH);
+			if (useMachineKeyStore)
+				p.Flags |= CspProviderFlags.UseMachineKeyStore;
+			store = new KeyPairPersistence (p);
+			// no need to load - it cannot exists
+		}
+
+		void Common (CspParameters parameters)
+		{
+			store = new KeyPairPersistence (parameters);
+			store.Load ();
+			if (store.KeyValue != null) {
+				persisted = true;
+				this.FromXmlString (store.KeyValue);
 			}
 		}
 

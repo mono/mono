@@ -165,7 +165,21 @@ namespace System.Security.Cryptography {
 			case "tripledes":
 			case "3des":
 				return new TripleDESCryptoServiceProvider ();
-			default:
+			case "x509chain":
+				name = "System.Security.Cryptography.X509Certificates.X509Chain, System";
+				break;
+			case "aes":
+				name = "System.Security.Cryptography.AesManaged, System.Core";
+				break;
+			}
+
+			try {
+				// last resort, the request type might be available (if care is taken for the type not to be linked 
+				// away) and that can allow some 3rd party code to work (e.g. extra algorithms) and make a few more
+				// unit tests happy
+				return Activator.CreateInstance (Type.GetType (name));
+			}
+			catch {
 				// method doesn't throw any exception
 				return null;
 			}

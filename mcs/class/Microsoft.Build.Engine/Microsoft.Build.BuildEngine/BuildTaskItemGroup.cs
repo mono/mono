@@ -30,34 +30,25 @@ using System.Xml;
 
 namespace Microsoft.Build.BuildEngine {
 
-	internal class BuildTaskItemGroup : BuildItemGroup, IBuildTask {
+	internal class BuildTaskItemGroup : BuildItemGroup {
 
-		public bool ContinueOnError {
-			get; set;
-		}
+		List<IBuildTask> items = new List<IBuildTask> ();
 
 		internal BuildTaskItemGroup (XmlElement element, Target target)
 			: base (element, target.Project, null, false, true)
 		{
 		}
-		
-		public bool Execute ()
+
+		internal override BuildItem CreateItem (Project project, XmlElement xe)
 		{
-			Evaluate ();
-			return true;
+			var item = new BuildTaskItem (project, xe, this);
+			items.Add (item);
+			return item;
 		}
 
-		public IEnumerable<string> GetAttributes ()
-		{
-			foreach (XmlAttribute attrib in XmlElement.Attributes)
-				yield return attrib.Value;
-
-			foreach (BuildItem item in this) {
-				foreach (XmlAttribute attrib in item.XmlElement.Attributes)
-					yield return attrib.Value;
-			}
+		public List<IBuildTask> Items {
+			get { return items; }
 		}
-
 	}
 }
 

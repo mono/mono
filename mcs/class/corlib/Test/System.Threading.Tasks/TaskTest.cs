@@ -1043,6 +1043,14 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.IsTrue (r2);
 		}
 
+		[Test]
+		public void AsyncWaitHandleSet ()
+		{
+			var task = new TaskFactory ().StartNew (() => { });
+			var ar = (IAsyncResult)task;
+			ar.AsyncWaitHandle.WaitOne ();
+		}
+
 #if NET_4_5
 		[Test]
 		public void Delay_Invalid ()

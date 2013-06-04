@@ -6,6 +6,7 @@
 //
 // (C) 2004 Novell (http://www.novell.com)
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright 2013 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,6 +32,81 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
+
+	static class Base64Helper {
+
+		private const int inputBlockSize = 3;
+		private const int outputBlockSize = 4;
+
+		internal static void TransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
+		{
+			byte[] lookup = Base64Constants.EncodeTable;
+			
+			int b1 = inputBuffer [inputOffset];
+			int b2 = inputBuffer [inputOffset + 1];
+			int b3 = inputBuffer [inputOffset + 2];
+			
+			outputBuffer [outputOffset] = lookup [b1 >> 2];
+			outputBuffer [outputOffset+1] = lookup [((b1 << 4) & 0x30) | (b2 >> 4)];
+			outputBuffer [outputOffset+2] = lookup [((b2 << 2) & 0x3c) | (b3 >> 6)];
+			outputBuffer [outputOffset+3] = lookup [b3 & 0x3f];
+		}
+
+		// Mono System.Convert depends on the ability to process multiple blocks		
+		internal static byte[] TransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount)
+		{
+			int blockLen = inputBlockSize;
+			int outLen = outputBlockSize;
+			int fullBlocks = inputCount / blockLen;
+			int tail = inputCount % blockLen;
+			
+			byte[] res = new byte [(inputCount != 0)
+			                       ? ((inputCount + 2) / blockLen) * outLen
+			                       : 0];
+			
+			int outputOffset = 0;
+			
+			for (int i = 0; i < fullBlocks; i++) {
+				TransformBlock (inputBuffer, inputOffset, blockLen, res, outputOffset);
+				inputOffset += blockLen;
+				outputOffset += outLen;
+			}
+			
+			byte[] lookup = Base64Constants.EncodeTable;
+			int b1,b2;
+			
+			// When fewer than 24 input bits are available
+			// in an input group, zero bits are added
+			// (on the right) to form an integral number of
+			// 6-bit groups.
+			switch (tail) {
+			case 0:
+				break;
+			case 1:
+				b1 = inputBuffer [inputOffset];
+				res [outputOffset] = lookup [b1 >> 2];
+				res [outputOffset+1] = lookup [(b1 << 4) & 0x30];
+				
+				// padding
+				res [outputOffset+2] = (byte)'=';
+				res [outputOffset+3] = (byte)'=';
+				break;
+				
+			case 2:
+				b1 = inputBuffer [inputOffset];
+				b2 = inputBuffer [inputOffset + 1];
+				res [outputOffset] = lookup [b1 >> 2];
+				res [outputOffset+1] = lookup [((b1 << 4) & 0x30) | (b2 >> 4)];
+				res [outputOffset+2] = lookup [(b2 << 2) & 0x3c];
+				
+				// one-byte padding
+				res [outputOffset+3] = (byte)'=';
+				break;
+			}
+			
+			return res;
+		}
+	}
 
 	[ComVisible (true)]
 	public class ToBase64Transform : ICryptoTransform {
@@ -119,22 +195,8 @@ namespace System.Security.Cryptography {
 //			if (inputCount != this.InputBlockSize)
 //				throw new CryptographicException (Locale.GetText ("Invalid input length"));
 
-			InternalTransformBlock (inputBuffer, inputOffset, inputCount, outputBuffer, outputOffset);
+			Base64Helper.TransformBlock (inputBuffer, inputOffset, inputCount, outputBuffer, outputOffset);
 			return this.OutputBlockSize;
-		}
-
-		internal static void InternalTransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
-		{
-			byte[] lookup = Base64Constants.EncodeTable;
-
-			int b1 = inputBuffer [inputOffset];
-			int b2 = inputBuffer [inputOffset + 1];
-			int b3 = inputBuffer [inputOffset + 2];
-
-			outputBuffer [outputOffset] = lookup [b1 >> 2];
-			outputBuffer [outputOffset+1] = lookup [((b1 << 4) & 0x30) | (b2 >> 4)];
-			outputBuffer [outputOffset+2] = lookup [((b2 << 2) & 0x3c) | (b3 >> 6)];
-			outputBuffer [outputOffset+3] = lookup [b3 & 0x3f];
 		}
 
 		public byte[] TransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount)
@@ -150,62 +212,7 @@ namespace System.Security.Cryptography {
 			if (inputCount > this.InputBlockSize)
 				throw new ArgumentOutOfRangeException (Locale.GetText ("Invalid input length"));
 			
-			return InternalTransformFinalBlock (inputBuffer, inputOffset, inputCount);
-		}
-		
-		// Mono System.Convert depends on the ability to process multiple blocks		
-		internal static byte[] InternalTransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount)
-		{
-			int blockLen = inputBlockSize;
-			int outLen = outputBlockSize;
-			int fullBlocks = inputCount / blockLen;
-			int tail = inputCount % blockLen;
-
-			byte[] res = new byte [(inputCount != 0)
-			                        ? ((inputCount + 2) / blockLen) * outLen
-			                        : 0];
-
-			int outputOffset = 0;
-
-			for (int i = 0; i < fullBlocks; i++) {
-				InternalTransformBlock (inputBuffer, inputOffset, blockLen, res, outputOffset);
-				inputOffset += blockLen;
-				outputOffset += outLen;
-			}
-
-			byte[] lookup = Base64Constants.EncodeTable;
-			int b1,b2;
-
-			// When fewer than 24 input bits are available
-			// in an input group, zero bits are added
-			// (on the right) to form an integral number of
-			// 6-bit groups.
-			switch (tail) {
-			case 0:
-				break;
-			case 1:
-				b1 = inputBuffer [inputOffset];
-				res [outputOffset] = lookup [b1 >> 2];
-				res [outputOffset+1] = lookup [(b1 << 4) & 0x30];
-
-				// padding
-				res [outputOffset+2] = (byte)'=';
-				res [outputOffset+3] = (byte)'=';
-				break;
-
-			case 2:
-				b1 = inputBuffer [inputOffset];
-				b2 = inputBuffer [inputOffset + 1];
-				res [outputOffset] = lookup [b1 >> 2];
-				res [outputOffset+1] = lookup [((b1 << 4) & 0x30) | (b2 >> 4)];
-				res [outputOffset+2] = lookup [(b2 << 2) & 0x3c];
-
-				// one-byte padding
-				res [outputOffset+3] = (byte)'=';
-				break;
-			}
-
-			return res;
+			return Base64Helper.TransformFinalBlock (inputBuffer, inputOffset, inputCount);
 		}
 	}
 }

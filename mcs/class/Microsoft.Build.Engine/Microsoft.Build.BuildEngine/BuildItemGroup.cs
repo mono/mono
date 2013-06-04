@@ -78,13 +78,18 @@ namespace Microsoft.Build.BuildEngine {
 					continue;
 					
 				XmlElement xe = (XmlElement) xn;
-				BuildItem bi = new BuildItem (xe, this);
+				BuildItem bi = CreateItem (project, xe);
 				buildItems.Add (bi);
 				project.LastItemGroupContaining [bi.Name] = this;
 			}
 
 			DefinedInFileName = importedProject != null ? importedProject.FullFileName :
 						project != null ? project.FullFileName : null;
+		}
+
+		internal virtual BuildItem CreateItem (Project project, XmlElement xe)
+		{
+			return new BuildItem (xe, this);
 		}
 
 		public BuildItem AddNewItem (string itemName,

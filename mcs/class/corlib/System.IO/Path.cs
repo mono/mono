@@ -462,6 +462,10 @@ namespace System.IO {
 					if (ex.hresult != MonoIO.FileAlreadyExistsHResult || count ++ > 65536)
 						throw;
 				}
+				catch (UnauthorizedAccessException ex) {
+					if (count ++ > 65536)
+						throw new IOException (ex.Message, ex);
+				}
 			} while (f == null);
 			
 			f.Close();

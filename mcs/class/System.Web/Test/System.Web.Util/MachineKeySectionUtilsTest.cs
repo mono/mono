@@ -57,7 +57,17 @@ namespace MonoTests.System.Web.Util {
 			// changing last byte (padding)
 			byte be = encdata [encdata.Length - 1];
 			encdata [encdata.Length - 1] = ChangeByte (be);
-			Assert.IsNull (MachineKeySectionUtils.Decrypt (section, encdata), "bad padding");
+			byte[] result = MachineKeySectionUtils.Decrypt (section, encdata);
+			// this will return null if a bad padding is detected - OTOH since we're using a random key and we
+			// encrypt a random IV it's possible the decrypted stuff will randomly have a "valid" padding (there's
+			// only so much possible values and the bots runs those tests pretty often and give false positive)
+			// To avoid this we fallback to ensure the data is invalid (if should be empty)
+			int total = 0;
+			if (result != null) {
+				for (int i=0; i < result.Length; i++)
+					total += result [i];
+			}
+			Assert.IsTrue (result == null || total != 0, "bad padding");
 		}
 
 		[Test]

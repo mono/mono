@@ -29,7 +29,6 @@
 // Copyright (c) 2012 Xamarin Inc. (http://www.xamarin.com)
 //
 
-#if NET_2_0
 using System.Collections;
 using System.Xml;
 using System.IO;
@@ -284,4 +283,4 @@ namespace System.Configuration
 		}
 	}
 }
-#endif
+

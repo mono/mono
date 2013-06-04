@@ -4503,7 +4503,7 @@ static void
 merge_stacks (VerifyContext *ctx, ILCodeDesc *from, ILCodeDesc *to, gboolean start, gboolean external) 
 {
 	MonoError error;
-	int i, j, k;
+	int i, j;
 	stack_init (ctx, to);
 
 	if (start) {
@@ -4591,15 +4591,6 @@ merge_stacks (VerifyContext *ctx, ILCodeDesc *from, ILCodeDesc *to, gboolean sta
 				CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Cannot merge stacks due to a TypeLoadException %s at 0x%04x", mono_error_get_message (&error), ctx->ip_offset));
 				mono_error_cleanup (&error);
 				goto end_verify;
-			}
-
-			for (j = 0; j < old_class->interface_count; ++j) {
-				for (k = 0; k < new_class->interface_count; ++k) {
-					if (mono_metadata_type_equal (&old_class->interfaces [j]->byval_arg, &new_class->interfaces [k]->byval_arg)) {
-						match_class = old_class->interfaces [j];
-						goto match_found;
-					}
-				}
 			}
 
 			/* if old class is an interface that new class implements */

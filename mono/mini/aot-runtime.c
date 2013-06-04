@@ -1491,6 +1491,28 @@ check_usable (MonoAssembly *assembly, MonoAotFileInfo *info, char **out_msg)
 	return usable;
 }
 
+/* This returns an interop address */
+static void*
+get_arm_bl_target (guint32 *ins_addr)
+{
+#ifdef TARGET_ARM
+	guint32 ins = *ins_addr;
+	gint32 offset;
+
+	if ((ins >> ARMCOND_SHIFT) == ARMCOND_NV) {
+		/* blx */
+		offset = (((int)(((ins & 0xffffff) << 1) | ((ins >> 24) & 0x1))) << 7) >> 7;
+		return (char*)ins_addr + (offset * 2) + 8 + 1;
+	} else {
+		offset = (((int)ins & 0xffffff) << 8) >> 8;
+		return (char*)ins_addr + (offset * 4) + 8;
+	}
+#else
+	g_assert_not_reached ();
+	return NULL;
+#endif
+}
+
 static void
 load_aot_module (MonoAssembly *assembly, gpointer user_data)
 {
@@ -1691,10 +1713,13 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 		/* Compute code_offsets from the method addresses */
 		amodule->code_offsets = g_malloc0 (amodule->info.nmethods * sizeof (gint32));
 		for (i = 0; i < amodule->info.nmethods; ++i) {
-			if (!amodule->method_addresses [i])
+			/* method_addresses () contains a table of branches, since the ios linker can update those correctly */
+			void *addr = get_arm_bl_target ((guint32*)(amodule->method_addresses + i));
+
+			if (addr == amodule->method_addresses)
 				amodule->code_offsets [i] = 0xffffffff;
 			else
-				amodule->code_offsets [i] = (char*)amodule->method_addresses [i] - (char*)amodule->code;
+				amodule->code_offsets [i] = (char*)addr - (char*)amodule->code;
 		}
 	}
 #endif
@@ -3418,7 +3443,7 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method)
 	g_assert (klass->inited);
 
 	/* Find method index */
-	if (method->is_inflated && !method->wrapper_type && mono_method_is_generic_sharable_impl_full (method, FALSE, FALSE, FALSE)) {
+	if (method->is_inflated && !method->wrapper_type && mono_method_is_generic_sharable_full (method, FALSE, FALSE, FALSE)) {
 		/* 
 		 * For generic methods, we store the fully shared instance in place of the
 		 * original method.
@@ -3522,7 +3547,17 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method)
 				return code;
 		}
 
-		if (method_index == 0xffffff && method->is_inflated && mono_method_is_generic_sharable_impl_full (method, FALSE, FALSE, TRUE)) {
+		if (method_index == 0xffffff && method->is_inflated && mono_method_is_generic_sharable_full (method, FALSE, TRUE, FALSE)) {
+			/* Partial sharing */
+			MonoMethod *shared;
+
+			shared = mini_get_shared_method (method);
+			method_index = find_extra_method (shared, &amodule);
+			if (method_index != 0xffffff)
+				method = shared;
+		}
+
+		if (method_index == 0xffffff && method->is_inflated && mono_method_is_generic_sharable_full (method, FALSE, FALSE, TRUE)) {
 			/* gsharedvt */
 			/* Use the all-vt shared method since this is what was AOTed */
 			method_index = find_extra_method (mini_get_shared_method_full (method, TRUE, TRUE), &amodule);
@@ -4347,9 +4382,9 @@ mono_aot_get_unbox_trampoline (MonoMethod *method)
 	guint32 *ut, *ut_end, *entry;
 	int low, high, entry_index;
 
-	if (method->is_inflated && !mono_method_is_generic_sharable_impl_full (method, FALSE, FALSE, FALSE)) {
+	if (method->is_inflated && !mono_method_is_generic_sharable_full (method, FALSE, FALSE, FALSE)) {
 		method_index = find_extra_method (method, &amodule);
-		if (method_index == 0xffffff && mono_method_is_generic_sharable_impl_full (method, FALSE, FALSE, TRUE)) {
+		if (method_index == 0xffffff && mono_method_is_generic_sharable_full (method, FALSE, FALSE, TRUE)) {
 			MonoMethod *shared = mini_get_shared_method_full (method, TRUE, TRUE);
 			method_index = find_extra_method (shared, &amodule);
 		}
@@ -4375,7 +4410,7 @@ mono_aot_get_unbox_trampoline (MonoMethod *method)
 			high = entry_index;
 		} else {
 			if (amodule->info.flags & MONO_AOT_FILE_FLAG_DIRECT_METHOD_ADDRESSES)
-				code = (gpointer)(gsize)entry [1];
+				code = get_arm_bl_target (entry + 1);
 			else
 				code = amodule->code + entry [1];
 			break;

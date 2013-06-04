@@ -33,7 +33,12 @@ using System.Threading;
 
 namespace Mono.Security.Protocol.Tls
 {
-	public abstract class SslStreamBase: Stream, IDisposable
+#if INSIDE_SYSTEM
+	internal
+#else
+	public
+#endif
+	abstract class SslStreamBase: Stream, IDisposable
 	{
 		private delegate void AsyncHandshakeDelegate(InternalAsyncResult asyncResult, bool fromWrite);
 		

@@ -53,7 +53,7 @@ visit.cs
 ../class/Mono.CompilerServices.SymbolWriter/MonoSymbolFile.cs
 ../class/Mono.CompilerServices.SymbolWriter/MonoSymbolTable.cs
 ../class/Mono.CompilerServices.SymbolWriter/SourceMethodBuilder.cs
-../class/corlib/Mono.Security.Cryptography/CryptoConvert.cs
+../class/Mono.Security/Mono.Security.Cryptography/CryptoConvert.cs
 ../build/common/Consts.cs
 ../tools/monop/outline.cs
 

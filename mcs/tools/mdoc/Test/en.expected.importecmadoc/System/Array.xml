@@ -131,7 +131,8 @@ and the second dimension indexed by 1, 2, and 3. </para>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.NotImplementedException">To be added; from: <see cref="M:System.Array.AsReadOnly``1(``0[])" /></exception>
+        <exception cref="T:System.NotImplementedException">To be added; from:
+          <see cref="M:System.Array.AsReadOnly``1(``0[])" /></exception>
       </Docs>
     </Member>
     <Member MemberName="ConvertAll&lt;T,U&gt;">
@@ -168,7 +169,8 @@ and the second dimension indexed by 1, 2, and 3. </para>
         <remarks>
           <para>The <see cref="T:System.Converter&lt;T,U&gt;" /> is a delegate that converts an array element to the target type.  The elements of  <paramref name="array" /> are individually passed to this converter, and the converted elements are saved in the new array. The source array remains unchanged.</para>
         </remarks>
-        <exception cref="T:System.InvalidOperationException">To be added; from: <see cref="M:System.Array.ConvertAll``2(``0[],System.Converter{``0,``1})" /></exception>
+        <exception cref="T:System.InvalidOperationException">To be added; from:
+          <see cref="M:System.Array.ConvertAll``2(``0[],System.Converter{``0,``1})" /></exception>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" /> is <see langword="null" /> or <paramref name="converter" /> is <see langword="null" />.</exception>
       </Docs>
@@ -196,7 +198,8 @@ and the second dimension indexed by 1, 2, and 3. </para>
         <param name="newSize">To be added.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.Exception">To be added; from: <see cref="M:System.Array.Resize``1(``0[]@,System.Int32)" /></exception>
+        <exception cref="T:System.Exception">To be added; from:
+          <see cref="M:System.Array.Resize``1(``0[]@,System.Int32)" /></exception>
       </Docs>
     </Member>
   </Members>

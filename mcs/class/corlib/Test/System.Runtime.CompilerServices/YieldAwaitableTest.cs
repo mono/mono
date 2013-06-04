@@ -91,11 +91,19 @@ namespace MonoTests.System.Runtime.CompilerServices
 		}
 
 		YieldAwaitable.YieldAwaiter a;
+		SynchronizationContext sc;
 
 		[SetUp]
 		public void Setup ()
 		{
+			sc = SynchronizationContext.Current;
 			a = new YieldAwaitable ().GetAwaiter ();
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			SynchronizationContext.SetSynchronizationContext (sc);
 		}
 
 		[Test]
@@ -120,6 +128,8 @@ namespace MonoTests.System.Runtime.CompilerServices
 		public void OnCompleted_2 ()
 		{
 			TaskScheduler scheduler = null;
+			SynchronizationContext.SetSynchronizationContext (null);
+
 			var mre = new ManualResetEvent (false);
 
 			a.OnCompleted (() => {
@@ -136,6 +146,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 		{
 			var scheduler = new MyScheduler ();
 			TaskScheduler ran_scheduler = null;
+			SynchronizationContext.SetSynchronizationContext (null);			
 
 			var t = Task.Factory.StartNew (() => {
 				var mre = new ManualResetEvent (false);
@@ -160,20 +171,13 @@ namespace MonoTests.System.Runtime.CompilerServices
 			var mre = new ManualResetEvent (false);
 
 			var context = new MyContext ();
-			var old = SynchronizationContext.Current;			
-			try {
-				SynchronizationContext.SetSynchronizationContext (context);
-				a.OnCompleted (() => {
-					context_ran = SynchronizationContext.Current;
-					mre.Set ();
-				});
+			SynchronizationContext.SetSynchronizationContext (context);
+			a.OnCompleted (() => {
+				context_ran = SynchronizationContext.Current;
+				mre.Set ();
+			});
 
-				Assert.IsTrue (mre.WaitOne (1000), "#1");
-
-			} finally {
-				SynchronizationContext.SetSynchronizationContext (old);
-			}
-
+			Assert.IsTrue (mre.WaitOne (1000), "#1");
 			Assert.IsNull (context_ran, "#2");
 		}
 	}

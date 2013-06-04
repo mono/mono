@@ -35,7 +35,10 @@ namespace Mono.Security.Cryptography {
 	// a.     RFC1320: The MD4 Message-Digest Algorithm
 	//        http://www.ietf.org/rfc/rfc1320.txt
 
-	public class MD4Managed : MD4 {
+#if !INSIDE_CORLIB
+	public
+#endif
+	class MD4Managed : MD4 {
 
 		private uint[] state;
 		private byte[] buffer;

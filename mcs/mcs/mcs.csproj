@@ -58,7 +58,7 @@
   <ItemGroup>
     <Compile Include="..\build\common\Consts.cs">
     </Compile>
-    <Compile Include="..\class\corlib\Mono.Security.Cryptography\CryptoConvert.cs">
+    <Compile Include="..\class\Mono.Security\Mono.Security.Cryptography\CryptoConvert.cs">
       <Link>CryptoConvert.cs</Link>
     </Compile>
     <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs">

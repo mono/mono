@@ -38,7 +38,7 @@ namespace System.Net.Http
 		static readonly TimeSpan TimeoutDefault = TimeSpan.FromSeconds (100);
 
 		Uri base_address;
-		CancellationTokenSource cancellation_token;
+		CancellationTokenSource cts;
 		bool disposed;
 		HttpRequestHeaders headers;
 		long buffer_size;
@@ -59,6 +59,7 @@ namespace System.Net.Http
 		{
 			buffer_size = int.MaxValue;
 			timeout = TimeoutDefault;
+			cts = new CancellationTokenSource ();
 		}
 
 		public Uri BaseAddress {
@@ -102,10 +103,9 @@ namespace System.Net.Http
 
 		public void CancelPendingRequests ()
 		{
-			if (cancellation_token != null)
-				cancellation_token.Cancel ();
-
-			cancellation_token = new CancellationTokenSource ();
+			// Cancel only any already running requests not any new request after this cancellation
+			using (var c = Interlocked.Exchange (ref cts, new CancellationTokenSource ()))
+				c.Cancel ();
 		}
 
 		protected override void Dispose (bool disposing)
@@ -113,8 +113,7 @@ namespace System.Net.Http
 			if (disposing && !disposed) {
 				disposed = true;
 
-				if (cancellation_token != null)
-					cancellation_token.Dispose ();
+				cts.Dispose ();
 			}
 			
 			base.Dispose (disposing);
@@ -264,33 +263,25 @@ namespace System.Net.Http
 
 		async Task<HttpResponseMessage> SendAsyncWorker (HttpRequestMessage request, HttpCompletionOption completionOption, CancellationToken cancellationToken)
 		{
-			try {
-				if (cancellation_token == null)
-					cancellation_token = new CancellationTokenSource ();
+			using (var lcts = CancellationTokenSource.CreateLinkedTokenSource (cts.Token, cancellationToken)) {
+				lcts.CancelAfter (timeout);
 
-				using (var cts = CancellationTokenSource.CreateLinkedTokenSource (cancellation_token.Token, cancellationToken)) {
-					cts.CancelAfter (timeout);
-
-					var task = base.SendAsync (request, cts.Token);
-					if (task == null)
-						throw new InvalidOperationException ("Handler failed to return a value");
+				var task = base.SendAsync (request, lcts.Token);
+				if (task == null)
+					throw new InvalidOperationException ("Handler failed to return a value");
 					
-					var response = await task.ConfigureAwait (false);
-					if (response == null)
-						throw new InvalidOperationException ("Handler failed to return a response");
+				var response = await task.ConfigureAwait (false);
+				if (response == null)
+					throw new InvalidOperationException ("Handler failed to return a response");
 
-					//
-					// Read the content when default HttpCompletionOption.ResponseContentRead is set
-					//
-					if (response.Content != null && (completionOption & HttpCompletionOption.ResponseHeadersRead) == 0) {
-						await response.Content.LoadIntoBufferAsync (MaxResponseContentBufferSize).ConfigureAwait (false);
-					}
-					
-					return response;
+				//
+				// Read the content when default HttpCompletionOption.ResponseContentRead is set
+				//
+				if (response.Content != null && (completionOption & HttpCompletionOption.ResponseHeadersRead) == 0) {
+					await response.Content.LoadIntoBufferAsync (MaxResponseContentBufferSize).ConfigureAwait (false);
 				}
-			} finally {
-				cancellation_token.Dispose ();
-				cancellation_token = null;
+					
+				return response;
 			}
 		}
 

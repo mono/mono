@@ -6,7 +6,7 @@
 //    Jérémie Laval <jeremie dot laval at xamarin dot com>
 //
 // Copyright (c) 2008 Jérémie "Garuma" Laval
-// Copyright 2011 Xamarin Inc (http://www.xamarin.com).
+// Copyright 2011-2013 Xamarin Inc (http://www.xamarin.com).
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -65,6 +65,7 @@ namespace System.Threading.Tasks
 		internal TaskScheduler       scheduler;
 
 		TaskExceptionSlot exSlot;
+		ManualResetEvent wait_handle;
 
 		TaskStatus          status;
 
@@ -536,6 +537,9 @@ namespace System.Threading.Tasks
 					Status = TaskStatus.WaitingForChildrenToComplete;
 			}
 
+			if (wait_handle != null)
+				wait_handle.Set ();
+
 			// Tell parent that we are finished
 			if (parent != null && HasFlag (creationOptions, TaskCreationOptions.AttachedToParent) &&
 #if NET_4_5
@@ -592,6 +596,10 @@ namespace System.Threading.Tasks
 		internal void CancelReal ()
 		{
 			Status = TaskStatus.Canceled;
+
+			if (wait_handle != null)
+				wait_handle.Set ();
+
 			ProcessCompleteDelegates ();
 		}
 
@@ -605,6 +613,10 @@ namespace System.Threading.Tasks
 			ExceptionSlot.Exception = e;
 			Thread.MemoryBarrier ();
 			Status = TaskStatus.Faulted;
+
+			if (wait_handle != null)
+				wait_handle.Set ();
+
 			ProcessCompleteDelegates ();
 		}
 
@@ -821,7 +833,7 @@ namespace System.Threading.Tasks
 		#region Dispose
 		public void Dispose ()
 		{
-			Dispose (true);
+			Dispose (true);			
 		}
 		
 		protected virtual void Dispose (bool disposing)
@@ -836,6 +848,8 @@ namespace System.Threading.Tasks
 				state = null;
 				if (cancellationRegistration != null)
 					cancellationRegistration.Value.Dispose ();
+				if (wait_handle != null)
+					wait_handle.Dispose ();
 			}
 		}
 		#endregion
@@ -1285,7 +1299,13 @@ namespace System.Threading.Tasks
 
 		WaitHandle IAsyncResult.AsyncWaitHandle {
 			get {
-				return null;
+				if (invoker == null)
+					throw new ObjectDisposedException (GetType ().ToString ());
+
+				if (wait_handle == null)
+					Interlocked.CompareExchange (ref wait_handle, new ManualResetEvent (IsCompleted), null);
+
+				return wait_handle;
 			}
 		}
 		

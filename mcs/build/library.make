@@ -53,7 +53,11 @@ else
 lib_dir = lib
 endif
 
+ifdef LIBRARY_SUBDIR
+the_libdir = $(topdir)/class/$(lib_dir)/$(PROFILE)/$(LIBRARY_SUBDIR)/
+else
 the_libdir = $(topdir)/class/$(lib_dir)/$(PROFILE)/
+endif
 ifdef LIBRARY_NEEDS_POSTPROCESSING
 build_libdir = fixup/$(PROFILE)/
 else

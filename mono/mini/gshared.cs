@@ -897,11 +897,17 @@ public class Tests
 		return t.ToString ();
 	}
 
+	enum AnEnum {
+		One
+	};
+
 	public static int test_0_constrained_tostring () {
 		if (to_string<int, int> (1, 1) != "1")
 			return 1;
-		if (to_string<string, int> ("A", 1) != "A")
+		if (to_string<AnEnum, int> (AnEnum.One, 1) != "One")
 			return 2;
+		if (to_string<string, int> ("A", 1) != "A")
+			return 3;
 		return 0;
 	}
 
@@ -915,8 +921,27 @@ public class Tests
 			return 1;
 		if (get_hash<double, int> (1.0, 1) != 1.0.GetHashCode ())
 			return 2;
-		if (get_hash<string, int> ("A", 1) != "A".GetHashCode ())
+		if (get_hash<AnEnum, int> (AnEnum.One, 1) != AnEnum.One.GetHashCode ())
 			return 3;
+		if (get_hash<string, int> ("A", 1) != "A".GetHashCode ())
+			return 4;
+		return 0;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static bool equals<T, T2>(T t, T2 t2) {
+		return t.Equals (t);
+	}
+
+	public static int test_0_constrained_equals () {
+		if (equals<int, int> (1, 1) != true)
+			return 1;
+		if (equals<double, int> (1.0, 1) != true)
+			return 2;
+		if (equals<AnEnum, int> (AnEnum.One, 1) != true)
+			return 3;
+		if (equals<string, int> ("A", 1) != true)
+			return 4;
 		return 0;
 	}
 

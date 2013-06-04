@@ -105,14 +105,16 @@ namespace System
 				T value;
 				GetGenericValueImpl (i, out value);
 				if (item == null){
-					if (value == null)
+					if (value == null) {
 						return true;
+					}
 
 					continue;
 				}
-				
-				if (item.Equals (value))
+
+				if (item.Equals (value)) {
 					return true;
+				}
 			}
 
 			return false;

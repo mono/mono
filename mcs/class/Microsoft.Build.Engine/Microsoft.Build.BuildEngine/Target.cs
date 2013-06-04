@@ -79,7 +79,8 @@ namespace Microsoft.Build.BuildEngine {
 							"The element <OnError> must be last under element <Target>. Found element <Error> instead.");
 #if NET_3_5
 					else if (xe.Name == "ItemGroup") {
-						buildTasks.Add (new BuildTaskItemGroup (xe, this));
+						var group = new BuildTaskItemGroup (xe, this);
+						buildTasks.AddRange (group.Items);
 						continue;
 					} else if (xe.Name == "PropertyGroup") {
 						buildTasks.Add (new BuildTaskPropertyGroup (xe, this));

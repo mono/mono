@@ -3090,7 +3090,7 @@ public class DebuggerTests
 
 	[Test]
 	public void UnhandledException () {
-		vm.Detach ();
+		vm.Exit (0);
 
 		Start (new string [] { "dtest-app.exe", "unhandled-exception" });
 
@@ -3102,6 +3102,29 @@ public class DebuggerTests
 
 		var e2 = GetNextEvent ();
 		Assert.IsTrue (e2 is ExceptionEvent);
+
+		vm.Exit (0);
+		vm = null;
+	}
+
+	[Test]
+	public void UnhandledException_2 () {
+		vm.Exit (0);
+
+		Start (new string [] { "dtest-app.exe", "unhandled-exception-endinvoke" });
+
+		var req = vm.CreateExceptionRequest (null, false, true);
+		req.Enable ();
+
+		MethodMirror m = entry_point.DeclaringType.GetMethod ("unhandled_exception_endinvoke_2");
+		Assert.IsNotNull (m);
+		vm.SetBreakpoint (m, m.ILOffsets [0]);
+
+		var e = run_until ("unhandled_exception_endinvoke");
+		vm.Resume ();
+
+		var e2 = GetNextEvent ();
+		Assert.IsFalse (e2 is ExceptionEvent);
 
 		vm.Exit (0);
 		vm = null;
@@ -3150,6 +3173,36 @@ public class DebuggerTests
 
 		var o2 = entry_point.DeclaringType.GetValue (entry_point.DeclaringType.GetField ("gc_suspend_field")) as ObjectMirror;
 		Assert.IsNull (o2);
+	}
+
+	[Test]
+	public void MakeGenericMethod () {
+		Event e = run_until ("bp1");
+
+		var intm = vm.RootDomain.GetCorrespondingType (typeof (int));
+		var stringm = vm.RootDomain.GetCorrespondingType (typeof (string));
+		var gm = entry_point.DeclaringType.GetMethod ("generic_method");
+		var res = gm.MakeGenericMethod (new TypeMirror [] { stringm });
+		var args = res.GetGenericArguments ();
+		Assert.AreEqual (1, args.Length);
+		Assert.AreEqual (stringm, args [0]);
+
+		// Error checking
+		AssertThrows<ArgumentNullException> (delegate {
+				gm.MakeGenericMethod (null);
+			});
+		AssertThrows<ArgumentNullException> (delegate {
+				gm.MakeGenericMethod (new TypeMirror [] { null });
+			});
+		AssertThrows<ArgumentException> (delegate {
+				gm.MakeGenericMethod (new TypeMirror [] { stringm, stringm });
+			});
+		AssertThrows<InvalidOperationException> (delegate {
+				gm.MakeGenericMethod (new TypeMirror [] { intm });
+			});
+		AssertThrows<InvalidOperationException> (delegate {
+				entry_point.DeclaringType.GetMethod ("Main").MakeGenericMethod (new TypeMirror [] { intm });
+			});
 	}
 }
 

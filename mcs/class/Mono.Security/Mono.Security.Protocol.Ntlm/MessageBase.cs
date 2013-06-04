@@ -39,7 +39,12 @@ using System.Globalization;
 
 namespace Mono.Security.Protocol.Ntlm {
 
-	public abstract class MessageBase {
+#if INSIDE_SYSTEM
+	internal
+#else
+	public
+#endif
+	abstract class MessageBase {
 
 		static private byte[] header = { 0x4e, 0x54, 0x4c, 0x4d, 0x53, 0x53, 0x50, 0x00 };
 		

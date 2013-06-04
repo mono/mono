@@ -26,8 +26,13 @@ using System;
 
 namespace Mono.Security.Protocol.Tls
 {
+#if INSIDE_SYSTEM
+	internal
+#else
 	[Serializable]
-	public enum ExchangeAlgorithmType
+	public
+#endif
+	enum ExchangeAlgorithmType
 	{
 		DiffieHellman,
 		Fortezza,
