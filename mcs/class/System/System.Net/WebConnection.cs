@@ -98,14 +98,8 @@ namespace System.Net
 		static PropertyInfo piTrustFailure;
 
 #if MONOTOUCH
-                static MethodInfo start_wwan;
-
-                static WebConnection ()
-                {
-                        Type type = Type.GetType ("MonoTouch.ObjCRuntime.Runtime, monotouch");
-			if (type != null)
-	                        start_wwan = type.GetMethod ("StartWWAN", new Type [] { typeof (System.Uri) });
-                }
+		[System.Runtime.InteropServices.DllImport ("__Internal")]
+		static extern void monotouch_start_wwan (string uri);
 #endif
 
 		public WebConnection (WebConnectionGroup group, ServicePoint sPoint)
@@ -165,10 +159,8 @@ namespace System.Net
 
 				if (hostEntry == null) {
 #if MONOTOUCH
-					if (start_wwan != null) {
-						start_wwan.Invoke (null, new object [1] { sPoint.Address });
-						hostEntry = sPoint.HostEntry;
-					}
+					monotouch_start_wwan (sPoint.Address.ToString ());
+					hostEntry = sPoint.HostEntry;
 					if (hostEntry == null) {
 #endif
 						status = sPoint.UsesProxy ? WebExceptionStatus.ProxyNameResolutionFailure :
