@@ -14,6 +14,9 @@ my $monodistro = "$root/builds/monodistribution";
 my $lib = "$monodistro/lib";
 my $libmono = "$lib/mono";
 my $monoprefix = "$root/tmp/monoprefix";
+my $xcodePath = '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform';
+my $macversion = '10.5';
+my $sdkversion = '10.6';
 
 my $dependencyBranchToUse = "unity3.0";
 
@@ -33,7 +36,7 @@ if ($ENV{UNITY_THISISABUILDMACHINE}) {
 	$ENV{'C_INCLUDE_PATH'}="$external_MONO_PREFIX/include:$external_GNOME_PREFIX/include";
 	$ENV{'ACLOCAL_PATH'}="$external_MONO_PREFIX/share/aclocal";
 	$ENV{'PKG_CONFIG_PATH'}="$external_MONO_PREFIX/lib/pkgconfig:$external_GNOME_PREFIX/lib/pkgconfig";
-	$ENV{'PATH'}="$external_MONO_PREFIX/bin:$ENV{'PATH'}";
+	$ENV{'PATH'}="$external_MONO_PREFIX/bin:/usr/local/bin:$ENV{'PATH'}";
 } else {
 	print "not rmtree-ing $root/builds, as we're not on a buildmachine\n";
 }
@@ -61,9 +64,13 @@ if (-d $libmono)
 
 if (not $skipbuild)
 {
-	$ENV{CFLAGS}  = "$ENV{CFLAGS} -arch i386";
-	$ENV{CXXFLAGS}  = "$ENV{CXXFLAGS} -arch i386";
+	$ENV{CFLAGS}  = "$ENV{CFLAGS} -arch i386 -D_XOPEN_SOURCE";
+	$ENV{CXXFLAGS}  = "$ENV{CXXFLAGS} $ENV{CFLAGS}";
 	$ENV{LDFLAGS}  = "$ENV{LDFLAGS} -arch i386";
+	if ($^O eq 'darwin')
+	{
+		$ENV{'MACSDKOPTIONS'} = "-mmacosx-version-min=$macversion -isysroot $xcodePath/Developer/SDKs/MacOSX$sdkversion.sdk";
+	}
 
 	if ($cleanbuild)
 	{
@@ -79,14 +86,14 @@ if (not $skipbuild)
 		
 		chdir("$root/eglib") eq 1 or die("failed to chdir 3");
 		print(">>>Calling autoreconf in eglib\n");
-		system("autoreconf -i") eq 0 or die ("failed autoreconfing eglib");
+		system("autoreconf -i");
 		chdir("$root") eq 1 or die("failed to chdir4");
 		print(">>>Calling autoreconf in mono\n");
-		system("autoreconf -i") eq 0 or die("failed to autoreconf mono");
+		system("autoreconf -i");
 		print(">>>Calling configure in mono\n");
 		system("./configure","--prefix=$monoprefix","--with-monotouch=$withMonotouch","-with-unity=$withUnity", "--with-glib=embedded","--with-mcs-docs=no","--with-macversion=10.5", "--disable-nls") eq 0 or die ("failing autogenning mono");
 		print("calling make clean in mono\n");
-		system("make","clean") eq 0 or die ("failed to make clean");
+		system("make","clean");
 	}
 	system("make") eq 0 or die ("Failed running make");
 	system("make install") eq 0 or die ("Failed running make install");

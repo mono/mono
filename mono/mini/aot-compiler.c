@@ -4346,8 +4346,14 @@ emit_code (MonoAotCompile *acfg)
 			emit_method_code (acfg, acfg->cfgs [i]);
 	}
 
+	sprintf (symbol, "methods_end");
+	emit_section_change (acfg, ".text", 0);
+	emit_global (acfg, symbol, FALSE);
+	emit_alignment (acfg, 8);
+	emit_label (acfg, symbol);
+
 	sprintf (symbol, "method_addresses");
-	emit_section_change (acfg, ".text", 1);
+	emit_section_change (acfg, ".data", 1);
 	emit_global (acfg, symbol, FALSE);
 	emit_alignment (acfg, 8);
 	emit_label (acfg, symbol);
@@ -4364,12 +4370,6 @@ emit_code (MonoAotCompile *acfg)
 			emit_pointer (acfg, NULL);
 		}
 	}
-
-	sprintf (symbol, "methods_end");
-	emit_section_change (acfg, ".text", 0);
-	emit_global (acfg, symbol, FALSE);
-	emit_alignment (acfg, 8);
-	emit_label (acfg, symbol);
 
 	sprintf (symbol, "method_offsets");
 	emit_section_change (acfg, ".text", 1);
