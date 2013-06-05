@@ -165,6 +165,10 @@ namespace MonoTests.Monodoc
 			var nsChildUrl = hs.Tree.RootNode.ChildNodes.First ().PublicUrl;
 			Assert.IsNotNull (nsChildUrl);
 			StringAssert.StartsWith ("N:", nsChildUrl);
+			// Verify GetNodeTypeParent
+			var typeNode = hs.Tree.RootNode.ChildNodes.First ().ChildNodes.First ();
+			var metaNode = typeNode.ChildNodes.First (cn => cn.Element == "M");
+			StringAssert.StartsWith (typeNode.PublicUrl, metaNode.PublicUrl);
 		}
 
 		/*

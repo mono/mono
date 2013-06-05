@@ -274,7 +274,8 @@ namespace Monodoc.Providers
 		Node GetNodeTypeParent (Node node)
 		{
 			// Type nodes are always at level 2 so we just need to get there
-			while (node != null && node.Parent != null && !node.Parent.Parent.Element.StartsWith ("root:/", StringComparison.OrdinalIgnoreCase))
+			while (node != null && node.Parent != null
+			       && !node.Parent.Parent.Element.StartsWith ("root:/", StringComparison.OrdinalIgnoreCase) && node.Parent.Parent.Parent != null)
 				node = node.Parent;
 			return node;
 		}
