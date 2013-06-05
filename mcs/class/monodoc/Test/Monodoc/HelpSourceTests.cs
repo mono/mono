@@ -7,6 +7,7 @@ using NUnit.Framework;
 
 using Monodoc;
 using Monodoc.Generators;
+using Monodoc.Providers;
 
 // Used by ReachabilityWithCrefsTest
 // using HtmlAgilityPack;
@@ -151,6 +152,19 @@ namespace MonoTests.Monodoc
 			Assert.IsTrue (rootTree.RenderUrl ("T:System.Func{T1,T2,T3,TResult}", generator, out result), "#4");
 			Assert.IsTrue (rootTree.RenderUrl ("T:System.Collections.Generic.Dictionary{TKey,TValue}+ValueCollection", generator, out result), "#5");
 			Assert.IsTrue (rootTree.RenderUrl ("T:System.IComparable{T}", generator, out result), "#6");
+		}
+
+		[Test]
+		public void PublicUrlOnUnattachedHelpSourceRoot ()
+		{
+			// Unattached help source have no root:/ URL attributed
+			var hs = new EcmaHelpSource (Path.Combine (BaseDir, "sources", "netdocs"), false);
+			var rootTree = RootTree.LoadTree (Path.GetFullPath (BaseDir), false);
+			hs.RootTree = rootTree;
+			Assert.IsNull (hs.Tree.RootNode.PublicUrl);
+			var nsChildUrl = hs.Tree.RootNode.ChildNodes.First ().PublicUrl;
+			Assert.IsNotNull (nsChildUrl);
+			StringAssert.StartsWith ("N:", nsChildUrl);
 		}
 
 		/*

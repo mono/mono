@@ -426,8 +426,11 @@ namespace Monodoc.Providers
 		public static int GetNodeLevel (Node node)
 		{
 			int i = 0;
-			for (; !node.Element.StartsWith ("root:/", StringComparison.OrdinalIgnoreCase); i++)
+			for (; !node.Element.StartsWith ("root:/", StringComparison.OrdinalIgnoreCase); i++) {
 				node = node.Parent;
+				if (node == null)
+					return i - 1;
+			}
 			return i - 1;
 		}
 
