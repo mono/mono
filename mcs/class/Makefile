@@ -152,6 +152,7 @@ mobile_dirs := \
 	System.IO.Compression.FileSystem \
 	System.ComponentModel.DataAnnotations \
 	System.ComponentModel.Composition.4.5 \
+	System.Net \
 	Facades
 
 monodroid_dirs := \
