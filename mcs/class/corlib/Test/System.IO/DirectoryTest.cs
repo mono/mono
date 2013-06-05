@@ -68,11 +68,13 @@ public class DirectoryTest
 		Assert.AreEqual (afile, files0 [0], "#2");
 		Assert.AreEqual (bfile, files0 [1], "#3");
 
+#if NET_4_0
 		var files1 = new List<string> (Directory.EnumerateFiles (TempFolder, "*.src")).ToArray ();
 		Array.Sort (files1);
 		Assert.AreEqual (2, files1.Length, "#1.b");
 		Assert.AreEqual (afile, files1 [0], "#2.b");
 		Assert.AreEqual (bfile, files1 [1], "#3.b");
+#endif
 
 		var files2 = Directory.GetFileSystemEntries (TempFolder, "*.src");
 		Array.Sort (files2);
@@ -81,13 +83,14 @@ public class DirectoryTest
 		Assert.AreEqual (bfile, files2 [1], "#3.c");
 		Assert.AreEqual (cdir, files2 [2], "#4.c");
 
+#if NET_4_0
 		var files3 = new List<string> (Directory.EnumerateFileSystemEntries (TempFolder, "*.src")).ToArray ();
 		Array.Sort (files3);
 		Assert.AreEqual (3, files3.Length, "#1.d");
 		Assert.AreEqual (afile, files3 [0], "#2.d");
 		Assert.AreEqual (bfile, files3 [1], "#3.d");
 		Assert.AreEqual (cdir, files3 [2], "#4.d");
-
+#endif
 	}
 
 	[Test]
