@@ -14,11 +14,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.IO;
 using System.Text;
 using System.Threading;
 
+#if !MONOTOUCH
 using Mono.Unix;
+#endif
 using NUnit.Framework;
 
 namespace MonoTests.System.IO
@@ -46,7 +47,7 @@ public class DirectoryTest
 		if (Directory.Exists (TempFolder))
 			Directory.Delete (TempFolder, true);
 	}
-
+#if !MONOTOUCH
 	[Test] //BXC #12461
 	public void EnumerateFilesListSymlinks ()
 	{
@@ -92,7 +93,7 @@ public class DirectoryTest
 		Assert.AreEqual (cdir, files3 [2], "#4.d");
 #endif
 	}
-
+#endif
 	[Test]
 	public void CreateDirectory ()
 	{
