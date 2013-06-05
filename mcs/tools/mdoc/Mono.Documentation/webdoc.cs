@@ -203,8 +203,7 @@ namespace Mono.Documentation
 					continue;
 				var file = XmlDocUtils.GetCachedFileName (outDir, url);
 				using (var o = File.AppendText (file)) {
-					Node _;
-					string contents = docRoot.RenderUrl (url, generator, out _);
+					string contents = docRoot.RenderUrl (url, generator, hs);
 					o.Write (contents);
 				}
 			}
