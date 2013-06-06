@@ -1044,10 +1044,10 @@ namespace Mono.CSharp {
 						return false;
 					
 					if (p_mod == Parameter.Modifier.NONE)
-						ec.Report.Error (1677, loc, "Parameter `{0}' should not be declared with the `{1}' keyword",
-							      (i + 1).ToString (), Parameter.GetModifierSignature (Parameters.FixedParameters [i].ModFlags));
+						ec.Report.Error (1677, Parameters[i].Location, "Parameter `{0}' should not be declared with the `{1}' keyword",
+							      (i + 1).ToString (), Parameter.GetModifierSignature (Parameters [i].ModFlags));
 					else
-						ec.Report.Error (1676, loc, "Parameter `{0}' must be declared with the `{1}' keyword",
+						ec.Report.Error (1676, Parameters[i].Location, "Parameter `{0}' must be declared with the `{1}' keyword",
 							      (i+1).ToString (), Parameter.GetModifierSignature (p_mod));
 					error = true;
 				}
@@ -1057,18 +1057,17 @@ namespace Mono.CSharp {
 
 				TypeSpec type = invoke_pd.Types [i];
 				
-				// We assume that generic parameters are always inflated
-				if (TypeManager.IsGenericParameter (type))
-					continue;
-				
-				if (TypeManager.HasElementType (type) && TypeManager.IsGenericParameter (TypeManager.GetElementType (type)))
+				//
+				// Assumes that generic mvar parameters are always inflated
+				//
+				if (ImplicitDelegateCreation.ContainsMethodTypeParameter (type))
 					continue;
 				
 				if (!TypeSpecComparer.IsEqual (invoke_pd.Types [i], Parameters.Types [i])) {
 					if (ignore_errors)
 						return false;
 					
-					ec.Report.Error (1678, loc, "Parameter `{0}' is declared as type `{1}' but should be `{2}'",
+					ec.Report.Error (1678, Parameters [i].Location, "Parameter `{0}' is declared as type `{1}' but should be `{2}'",
 						      (i+1).ToString (),
 						      Parameters.Types [i].GetSignatureForError (),
 						      invoke_pd.Types [i].GetSignatureForError ());
