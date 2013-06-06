@@ -1661,18 +1661,25 @@ namespace Mono.CSharp {
 					if (src_block.HasCapturedThis) {
 						//
 						// Remove hoisted 'this' request when simple instance method is
-						// enough (no hoisted variables only 'this')
+						// enough. No hoisted variables only 'this' and don't need to
+						// propagate this to value type state machine.
 						//
-						if (src_block.ParametersBlock.StateMachine == null)
-							top_block.RemoveThisReferenceFromChildrenBlock (src_block);
+						StateMachine sm_parent = null;
+						var pb = src_block.ParametersBlock;
+						do {
+							sm_parent = pb.StateMachine;
+							pb = pb.Parent == null ? null : pb.Parent.ParametersBlock;
+						} while (sm_parent == null && pb != null);
 
-						//
-						// Special case where parent class is used to emit instance method
-						// because currect storey is of value type (async host). We cannot
-						// use ldftn on non-boxed instances either to share mutated state
-						//
-						if (sm != null && sm.Kind == MemberKind.Struct) {
-							parent = sm.Parent.PartialContainer;
+						if (sm_parent == null) {
+							top_block.RemoveThisReferenceFromChildrenBlock (src_block);
+						} else if (sm_parent.Kind == MemberKind.Struct) {
+							//
+							// Special case where parent class is used to emit instance method
+							// because currect storey is of value type (async host). We cannot
+							// use ldftn on non-boxed instances either to share mutated state
+							//
+							parent = sm_parent.Parent.PartialContainer;
 						}
 					}
 

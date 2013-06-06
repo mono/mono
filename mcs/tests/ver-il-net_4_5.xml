@@ -58088,6 +58088,55 @@
       </method>
     </type>
   </test>
+  <test name="test-async-47.cs">
+    <type name="C">
+      <method name="Void Main()" attrs="150">
+        <size>12</size>
+      </method>
+      <method name="Void Test()" attrs="129">
+        <size>32</size>
+      </method>
+      <method name="Void &lt;Test&gt;m__0(System.Object, System.EventArgs)" attrs="129">
+        <size>35</size>
+      </method>
+      <method name="Void &lt;Test&gt;m__1()" attrs="129">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="View">
+      <method name="Void add_Click(System.EventHandler)" attrs="2182">
+        <size>42</size>
+      </method>
+      <method name="Void remove_Click(System.EventHandler)" attrs="2182">
+        <size>42</size>
+      </method>
+      <method name="Void Run()" attrs="134">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Builder">
+      <method name="Void SetButton(System.Action)" attrs="134">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>61</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void add_Disposed(Delegate)" attrs="2182">
