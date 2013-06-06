@@ -65,8 +65,12 @@ namespace System.Runtime.Caching
 			}
 
 			if (heapCount >= heapSize) {
-				heapSize <<= 1;
-				Array.Resize <MemoryCacheEntry> (ref heap, heapSize);
+				checked {
+					heapSize <<= 1;
+				}
+
+				if (heapSize <= Int32.MaxValue)
+					Array.Resize <MemoryCacheEntry> (ref heap, heapSize);
 			}
 
 			return heap;
@@ -78,10 +82,14 @@ namespace System.Runtime.Caching
 				return null;
 
 			if (heapSize > HEAP_RESIZE_THRESHOLD) {
-				int halfTheSize = heapSize >> 1;
+				int halfTheSize, newSize;
+				checked {
+					halfTheSize = heapSize >> 1;
+					newSize = halfTheSize + (heapCount / 3);
+				}
 
-				if (heapCount < halfTheSize)
-					Array.Resize <MemoryCacheEntry> (ref heap, halfTheSize + (heapCount / 3));
+				if ((heapCount < halfTheSize) && newSize > -1)
+					Array.Resize <MemoryCacheEntry> (ref heap, newSize);
 			}
 			
 			return heap;
@@ -99,7 +107,7 @@ namespace System.Runtime.Caching
 				queueLock.EnterWriteLock ();
 				locked = true;
 				heap = GetHeapWithGrow ();
-				heap [heapCount++] = item;
+				heap [checked(heapCount++)] = item;
 				BubbleUp (heap);
 			} finally {
 				if (locked)
@@ -122,7 +130,7 @@ namespace System.Runtime.Caching
 					return null;
 
 				ret = heap [0];
-				index = --heapCount;
+				index = checked(--heapCount);
 				heap [0] = heap [index];
 				heap [index] = null;
 				
@@ -164,7 +172,7 @@ namespace System.Runtime.Caching
 			while (selected < heapCount && heap [selected].ExpiresAt < item.ExpiresAt) {
 				heap [index] = heap [selected];
 				index = selected;
-				left = (index << 1) + 1;
+				left = checked((index << 1) + 1);
 				right = left + 1;
 				selected = right < heapCount && heap [right].ExpiresAt < heap [left].ExpiresAt ? right : left;
 			}
@@ -179,8 +187,8 @@ namespace System.Runtime.Caching
 			if (heapCount <= 1)
 				return;
 			
-			index = heapCount - 1;
-			parentIndex = (index - 1) >> 1;
+			index = checked(heapCount - 1);
+			parentIndex = checked((index - 1) >> 1);
 
 			item = heap [index];
 			while (index > 0) {
