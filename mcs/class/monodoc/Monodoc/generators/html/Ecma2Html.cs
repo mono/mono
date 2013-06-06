@@ -113,6 +113,7 @@ namespace Monodoc.Generators.Html
 		public class ExtensionObject
 		{
 			bool quiet = true;
+			Dictionary<string, System.Reflection.Assembly> assemblyCache = new Dictionary<string, System.Reflection.Assembly> ();
 
 			public string Colorize(string code, string lang)
 			{
@@ -216,7 +217,11 @@ namespace Monodoc.Generators.Html
 					System.Reflection.Assembly assembly = null;
 				
 					try {
-						assembly = System.Reflection.Assembly.LoadWithPartialName(assemblyname);
+						if (!assemblyCache.TryGetValue (assemblyname, out assembly)) {
+							assembly = System.Reflection.Assembly.LoadWithPartialName(assemblyname);
+							if (assembly != null)
+								assemblyCache[assemblyname] = assembly;
+						}
 					} catch (Exception) {
 						// nothing.
 					}
@@ -272,7 +277,13 @@ namespace Monodoc.Generators.Html
 					if (assemblyname == string.Empty)
 						return string.Empty;
 
-					var assembly = System.Reflection.Assembly.LoadWithPartialName(assemblyname);
+					System.Reflection.Assembly assembly;
+					if (!assemblyCache.TryGetValue (assemblyname, out assembly)) {
+						assembly = System.Reflection.Assembly.LoadWithPartialName(assemblyname);
+						if (assembly != null)
+							assemblyCache[assemblyname] = assembly;
+					}
+
 					if (assembly == null)
 						return string.Empty;
 
