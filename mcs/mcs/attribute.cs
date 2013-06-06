@@ -1988,7 +1988,7 @@ namespace Mono.CSharp {
 			if (ac != null) {
 				element = GetTransformationFlags (ac.Element);
 				if (element == null)
-					return null;
+					return new bool[] { false, false };
 
 				bool[] res = new bool[element.Length + 1];
 				res[0] = false;
