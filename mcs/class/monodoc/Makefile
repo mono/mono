@@ -117,6 +117,8 @@ LIB_MCS_FLAGS = \
 	/r:System.Xml.Linq.dll                                            \
 	/r:System.Configuration.dll
 
+CLEAN_FILES += $(the_lib).config
+
 TEST_MCS_FLAGS = /r:System.dll /r:System.Core.dll /r:System.Xml.dll
 
 DOC_SOURCE_DIRS = \
@@ -147,6 +149,3 @@ parser.exe: Monodoc.Ecma/EcmaUrlParser.cs Monodoc.Ecma/EcmaUrlTokenizer.cs Monod
 setup-doc-sources: $(DOC_SOURCES)
 	mkdir -p ./Test/monodoc_test/sources/
 	cp $(DOC_SOURCES) ./Test/monodoc_test/sources/
-
-clean-local:
-	rm -f $(the_lib).config
