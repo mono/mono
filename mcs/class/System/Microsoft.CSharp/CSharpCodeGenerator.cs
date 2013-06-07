@@ -1597,9 +1597,13 @@ namespace Mono.CSharp
 
 		static void FillKeywordTable ()
 		{
-			keywordsTable = new Hashtable ();
-			foreach (string keyword in keywords) {
-				keywordsTable.Add (keyword, keyword);
+			lock (keywords) {
+				if (keywordsTable == null) {
+					keywordsTable = new Hashtable ();
+					foreach (string keyword in keywords) {
+						keywordsTable.Add (keyword, keyword);
+					}
+				}
 			}
 		}
 
