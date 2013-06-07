@@ -33645,9 +33645,15 @@
     </type>
   </test>
   <test name="test-285.cs">
-    <type name="T">
-      <method name="Int32 Main()" attrs="150">
-        <size>11</size>
+    <type name="Test">
+      <method name="Int32 test1()" attrs="145">
+        <size>73</size>
+      </method>
+      <method name="Int32 test2()" attrs="145">
+        <size>73</size>
+      </method>
+      <method name="Int32 Main()" attrs="145">
+        <size>46</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -38962,7 +38968,7 @@
   <test name="test-510.cs">
     <type name="Foo">
       <method name="Void test39(Int32 ByRef)" attrs="145">
-        <size>37</size>
+        <size>41</size>
       </method>
       <method name="Void Main()" attrs="150">
         <size>29</size>

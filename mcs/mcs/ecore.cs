@@ -511,6 +511,23 @@ namespace Mono.CSharp {
 			return e;
 		}
 
+		public Constant ResolveLabelConstant (ResolveContext rc)
+		{
+			var expr = Resolve (rc);
+			if (expr == null)
+				return null;
+
+			Constant c = expr as Constant;
+			if (c == null) {
+				if (c.type != InternalType.ErrorType)
+					rc.Report.Error (150, StartLocation, "A constant value is expected");
+
+				return null;
+			}
+
+			return c;
+		}
+
 		public virtual void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			rc.Module.Compiler.Report.Error (182, loc,
