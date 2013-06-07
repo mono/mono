@@ -32,6 +32,7 @@ namespace System.ComponentModel.Composition
                 {
                     if(!metadataViewType.IsAttributeDefined<MetadataViewImplementationAttribute>())
                     {
+#if !MONOTOUCH
                         try
                         {
                             proxyType = MetadataViewGenerator.GenerateView(metadataViewType);
@@ -40,6 +41,9 @@ namespace System.ComponentModel.Composition
                         {
                             throw new NotSupportedException(string.Format(CultureInfo.CurrentCulture, Strings.NotSupportedInterfaceMetadataView, metadataViewType.FullName), ex);
                         }
+#else
+			throw new NotSupportedException(string.Format(CultureInfo.CurrentCulture, Strings.NotSupportedInterfaceMetadataView, metadataViewType.FullName));
+#endif
                     }
                     else
                     {
@@ -83,6 +87,7 @@ namespace System.ComponentModel.Composition
                 }
                 catch (TargetInvocationException ex)
                 {
+#if !MONOTOUCH
                     //Unwrap known failures that we want to present as CompositionContractMismatchException
                     if(metadataViewType.IsInterface)
                     {
@@ -107,6 +112,7 @@ namespace System.ComponentModel.Composition
                                 ex.InnerException.Data[MetadataViewGenerator.MetadataItemTargetType]), ex);
                         }
                     }
+#endif
                     throw;
                 }
             }
