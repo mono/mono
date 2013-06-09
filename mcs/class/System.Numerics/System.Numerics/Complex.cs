@@ -338,12 +338,12 @@ namespace System.Numerics {
 
 		public string ToString (string format)
 		{
-			return string.Format ("({0}, {1})", string.Format (format, real), string.Format (format, imaginary));
+			return string.Format ("({0}, {1})", real.ToString (format), imaginary.ToString (format));
 		}
 
 		public string ToString (string format, IFormatProvider provider)
 		{
-			return string.Format ("({0}, {1})", string.Format (provider, format, real), string.Format (provider, format, imaginary));
+			return string.Format ("({0}, {1})", real.ToString (format, provider), imaginary.ToString (format, provider));
 		}
 	}
 }
