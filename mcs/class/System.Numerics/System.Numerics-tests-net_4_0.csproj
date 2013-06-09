@@ -44,7 +44,8 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="Test\System.Numerics\BigIntegerTest.cs" />  </ItemGroup>
+    <Compile Include="Test\System.Numerics\BigIntegerTest.cs" />
+    <Compile Include="Test\System.Numerics\ComplexTest.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
