@@ -1551,6 +1551,37 @@ public class DebuggerTests
 			});
 
 		req.Disable ();
+
+		// gsharedvt
+		be = run_until ("locals7");
+
+		req = vm.CreateStepRequest (be.Thread);
+		req.Enable ();
+		step_req = req;
+
+		// Skip nop
+		e = step_once ();
+
+		// Test that locals are initialized
+		frame = e.Thread.GetFrames () [0];
+		val = frame.GetValue (frame.Method.GetLocal ("t"));
+		AssertValue (0, val);
+
+		// Execute t = arg
+		e = step_once ();
+		Assert.AreEqual ("locals7", (e as StepEvent).Method.Name);
+
+		// Execute t2 = t
+		e = step_once ();
+		Assert.AreEqual ("locals7", (e as StepEvent).Method.Name);
+
+		frame = e.Thread.GetFrames () [0];
+		val = frame.GetValue (frame.Method.GetParameters ()[0]);
+		AssertValue (22, val);
+		val = frame.GetValue (frame.Method.GetLocal ("t"));
+		AssertValue (22, val);
+		val = frame.GetValue (frame.Method.GetLocal ("t2"));
+		AssertValue (22, val);
 	}
 
 	[Test]

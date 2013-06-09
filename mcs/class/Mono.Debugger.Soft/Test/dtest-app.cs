@@ -523,6 +523,7 @@ public class Tests : TestsBase
 		locals2<string> (null, 5, "ABC", ref s);
 		locals3 ();
 		locals6 ();
+		locals7<int> (22);
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -636,6 +637,12 @@ public class Tests : TestsBase
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void locals6_6 (int arg) {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void locals7<T> (T arg) {
+		T t = arg;
+		T t2 = t;
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
