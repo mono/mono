@@ -1033,11 +1033,18 @@ namespace System.Numerics {
 			int bit_shift = shift & 0x1F;
 			int carry_shift = 32 - bit_shift;
 
-			for (int i = 0; i < data.Length; ++i) {
-				uint word = data [i];
-				res [i + idx_shift] |= word << bit_shift;
-				if (i + idx_shift + 1 < res.Length)
-					res [i + idx_shift + 1] = word >> carry_shift;
+			if (carry_shift == 32) {
+				for (int i = 0; i < data.Length; ++i) {
+					uint word = data [i];
+					res [i + idx_shift] |= word << bit_shift;
+				}
+			} else {
+				for (int i = 0; i < data.Length; ++i) {
+					uint word = data [i];
+					res [i + idx_shift] |= word << bit_shift;
+					if (i + idx_shift + 1 < res.Length)
+						res [i + idx_shift + 1] = word >> carry_shift;
+				}
 			}
 
 			return new BigInteger ((short)sign, res);
@@ -1071,13 +1078,23 @@ namespace System.Numerics {
 			uint[] res = new uint [size];
 			int carry_shift = 32 - bit_shift;
 
-			for (int i = data.Length - 1; i >= idx_shift; --i) {
-				uint word = data [i];
+			if (carry_shift == 32) {
+				for (int i = data.Length - 1; i >= idx_shift; --i) {
+					uint word = data [i];
 
-				if (i - idx_shift < res.Length)
-					res [i - idx_shift] |= word >> bit_shift;
-				if (i - idx_shift - 1 >= 0)
-					res [i - idx_shift - 1] = word << carry_shift;
+					if (i - idx_shift < res.Length)
+						res [i - idx_shift] |= word >> bit_shift;
+				}
+			} else {
+				for (int i = data.Length - 1; i >= idx_shift; --i) {
+					uint word = data [i];
+
+					if (i - idx_shift < res.Length)
+						res [i - idx_shift] |= word >> bit_shift;
+					if (i - idx_shift - 1 >= 0)
+						res [i - idx_shift - 1] = word << carry_shift;
+				}
+
 			}
 
 			//Round down instead of toward zero
