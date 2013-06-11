@@ -162,6 +162,7 @@ namespace System
 				clone = clone.prev;
 			}
 
+			clone.SetMulticastInvoke ();
 			clone.prev = (MulticastDelegate)this.Clone ();
 
 			for (clone = clone.prev, orig = this.prev; orig != null; orig = orig.prev) {
