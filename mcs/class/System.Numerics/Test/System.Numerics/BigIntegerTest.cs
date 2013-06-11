@@ -1093,5 +1093,52 @@ namespace MonoTests.System.Numerics
 			Assert.AreEqual ("1339673755198158349044581307228491536", ((b << 32) / p).ToString (), "#2");
 			Assert.AreEqual ("1339673755198158349044581307228491536", (b * p >> 32).ToString (), "#3");
 		}
+
+		[Test]
+		public void DefaultCtorWorks ()
+		{
+			var a = new BigInteger ();
+			Assert.AreEqual (BigInteger.One, ++a, "#1");
+
+			a = new BigInteger ();
+			Assert.AreEqual (BigInteger.MinusOne, --a, "#2");
+
+			a = new BigInteger ();
+			Assert.AreEqual (BigInteger.MinusOne, ~a, "#3");
+
+			a = new BigInteger ();
+			Assert.AreEqual ("0", a.ToString (), "#4");
+
+			a = new BigInteger ();
+			Assert.AreEqual (true, a == a, "#5");
+
+			a = new BigInteger ();
+			Assert.AreEqual (false, a < a, "#6");
+
+			a = new BigInteger ();
+			Assert.AreEqual (true, a < 10l, "#7");
+
+			a = new BigInteger ();
+			Assert.AreEqual (true, a.IsEven, "#8");
+
+			a = new BigInteger ();
+			Assert.AreEqual (0, (int)a, "#9");
+
+			a = new BigInteger ();
+			Assert.AreEqual (0, (uint)a, "#10");
+
+			a = new BigInteger ();
+			Assert.AreEqual (0, (ulong)a, "#11");
+
+			a = new BigInteger ();
+			Assert.AreEqual (true, a.Equals (a), "#12");
+
+			a = new BigInteger ();
+			Assert.AreEqual (a, BigInteger.Min (a, a), "#13");
+
+			a = new BigInteger ();
+			Assert.AreEqual (a, BigInteger.GreatestCommonDivisor (a, a), "#14");
+
+		}
 	}
 }
