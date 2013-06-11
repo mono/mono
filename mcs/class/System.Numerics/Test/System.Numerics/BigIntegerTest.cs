@@ -1139,6 +1139,8 @@ namespace MonoTests.System.Numerics
 			a = new BigInteger ();
 			Assert.AreEqual (a, BigInteger.GreatestCommonDivisor (a, a), "#14");
 
+			a = new BigInteger ();
+			Assert.AreEqual (BigInteger.Zero.GetHashCode (), a.GetHashCode (), "#15");
 		}
 	}
 }

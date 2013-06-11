@@ -1834,8 +1834,9 @@ namespace System.Numerics {
 		public override int GetHashCode ()
 		{
 			uint hash = (uint)(sign * 0x01010101u);
+			int len = data != null ? data.Length : 0;
 
-			for (int i = 0; i < data.Length; ++i)
+			for (int i = 0; i < len; ++i)
 				hash ^=	data [i];
 			return (int)hash;
 		}
