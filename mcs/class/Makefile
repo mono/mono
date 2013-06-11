@@ -153,6 +153,8 @@ mobile_dirs := \
 	System.ComponentModel.DataAnnotations \
 	System.ComponentModel.Composition.4.5 \
 	System.Net \
+	System.Windows \
+	System.Xml.Serialization \
 	Facades
 
 monodroid_dirs := \
@@ -246,6 +248,8 @@ net_4_5_dirs := \
 	Mono.CodeContracts \
 	System.IO.Compression \
 	System.IO.Compression.FileSystem \
+	System.Windows \
+	System.Xml.Serialization \
 	Facades
 	
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) aot-compiler

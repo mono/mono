@@ -28,17 +28,17 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle ("System.Xml.Serialization.dll")]
-[assembly: AssemblyDescription ("System.Xml.Serialization.dll")]
-[assembly: AssemblyDefaultAlias ("System.Xml.Serialization.dll")]
+[assembly: AssemblyTitle ("System.Windows.dll")]
+[assembly: AssemblyDescription ("System.Windows.dll")]
+[assembly: AssemblyDefaultAlias ("System.Windows.dll")]
 
 [assembly: AssemblyCompany (Consts.MonoCompany)]
 [assembly: AssemblyProduct (Consts.MonoProduct)]
 [assembly: AssemblyCopyright (Consts.MonoCopyright)]
-[assembly: AssemblyVersion ("4.0.0.0")]
-[assembly: AssemblyInformationalVersion ("4.0.0.0")]
-[assembly: AssemblyFileVersion ("4.0.0.0")]
+[assembly: AssemblyVersion (Consts.FxVersion)]
+[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../../msfinal.pub")]
+[assembly: AssemblyKeyFile ("../msfinal.pub")]
 
 [assembly: ReferenceAssembly]
