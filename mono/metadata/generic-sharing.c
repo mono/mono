@@ -399,7 +399,11 @@ rgctx_template_set_other_slot (MonoImage *image, MonoRuntimeGenericContextTempla
 		++i;
 	}
 
-	g_assert (!(*oti)->data);
+	// see fogbugz case #542749
+	if ((*oti)->data)
+		return;
+	//g_assert (!(*oti)->data);
+
 	(*oti)->data = data;
 	(*oti)->info_type = info_type;
 
