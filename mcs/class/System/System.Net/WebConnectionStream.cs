@@ -285,7 +285,7 @@ namespace System.Net
 			cnc.NextRead ();
 		}
 
-		void WriteCallbackWrapper (IAsyncResult r)
+	   	void WriteCallbackWrapper (IAsyncResult r)
 		{
 			WebAsyncResult result = r as WebAsyncResult;
 			if (result != null && result.AsyncWriteAll)
@@ -303,7 +303,7 @@ namespace System.Net
 			}
 		}
 
-		void ReadCallbackWrapper (IAsyncResult r)
+	   	void ReadCallbackWrapper (IAsyncResult r)
 		{
 			WebAsyncResult result;
 			if (r.AsyncState != null) {
@@ -442,7 +442,7 @@ namespace System.Net
 			return (nb >= 0) ? nb : 0;
 		}
 
-		void WriteRequestAsyncCB (IAsyncResult r)
+	   	void WriteRequestAsyncCB (IAsyncResult r)
 		{
 			WebAsyncResult result = (WebAsyncResult) r.AsyncState;
 			try {
@@ -643,8 +643,8 @@ namespace System.Net
 			bool no_writestream = (method == "GET" || method == "CONNECT" || method == "HEAD" ||
 						method == "TRACE");
 			bool webdav = (method == "PROPFIND" || method == "PROPPATCH" || method == "MKCOL" ||
-						   method == "COPY" || method == "MOVE" || method == "LOCK" ||
-						   method == "UNLOCK");
+			               method == "COPY" || method == "MOVE" || method == "LOCK" ||
+			               method == "UNLOCK");
 			if (sendChunked || cl > -1 || no_writestream || webdav) {
 				WriteHeaders ();
 				if (!initRead) {
