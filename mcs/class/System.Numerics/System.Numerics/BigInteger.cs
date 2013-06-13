@@ -1725,9 +1725,9 @@ namespace System.Numerics {
 			if (right.sign != 0 && right.data.Length == 1 && right.data [0] == 1)
 				return new BigInteger (1, ONE);
 			if (left.IsZero)
-				return right;
+				return Abs(right);
 			if (right.IsZero)
-				return left;
+				return Abs(left);
 
 			BigInteger x = new BigInteger (1, left.data);
 			BigInteger y = new BigInteger (1, right.data);
