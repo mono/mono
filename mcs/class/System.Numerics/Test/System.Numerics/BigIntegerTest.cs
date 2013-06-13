@@ -150,6 +150,9 @@ namespace MonoTests.System.Numerics
 			Assert.AreEqual (2, (int)BigInteger.GreatestCommonDivisor (-12345678, -8765432), "#14");
 
 			Assert.AreEqual (40, (int)BigInteger.GreatestCommonDivisor (5581 * 40, 6671 * 40), "#15");
+
+			Assert.AreEqual (5, (int)BigInteger.GreatestCommonDivisor (-5, 0), "#16");
+			Assert.AreEqual (5, (int)BigInteger.GreatestCommonDivisor (0, -5), "#17");
 		}
 
 		[Test]
