@@ -150,6 +150,9 @@ namespace MonoTests.System.Numerics
 			Assert.AreEqual (2, (int)BigInteger.GreatestCommonDivisor (-12345678, -8765432), "#14");
 
 			Assert.AreEqual (40, (int)BigInteger.GreatestCommonDivisor (5581 * 40, 6671 * 40), "#15");
+
+			Assert.AreEqual (5, (int)BigInteger.GreatestCommonDivisor (-5, 0), "#16");
+			Assert.AreEqual (5, (int)BigInteger.GreatestCommonDivisor (0, -5), "#17");
 		}
 
 		[Test]
@@ -924,6 +927,223 @@ namespace MonoTests.System.Numerics
 			Assert.AreEqual (1, a.CompareTo (-2000));
 			Assert.AreEqual (-1, b.CompareTo (2000));
 			Assert.AreEqual (-1, b.CompareTo (-2000));
+		}
+
+		[Test]
+		public void LeftShitByInt ()
+		{
+			var v = BigInteger.Parse("230794411440927908251127453634");
+
+			Assert.AreEqual ("230794411440927908251127453634", (v << 0).ToString (), "#0");
+			Assert.AreEqual ("461588822881855816502254907268", (v << 1).ToString (), "#1");
+			Assert.AreEqual ("923177645763711633004509814536", (v << 2).ToString (), "#2");
+			Assert.AreEqual ("1846355291527423266009019629072", (v << 3).ToString (), "#3");
+			Assert.AreEqual ("3692710583054846532018039258144", (v << 4).ToString (), "#4");
+			Assert.AreEqual ("7385421166109693064036078516288", (v << 5).ToString (), "#5");
+			Assert.AreEqual ("14770842332219386128072157032576", (v << 6).ToString (), "#6");
+			Assert.AreEqual ("29541684664438772256144314065152", (v << 7).ToString (), "#7");
+			Assert.AreEqual ("59083369328877544512288628130304", (v << 8).ToString (), "#8");
+			Assert.AreEqual ("118166738657755089024577256260608", (v << 9).ToString (), "#9");
+			Assert.AreEqual ("236333477315510178049154512521216", (v << 10).ToString (), "#10");
+			Assert.AreEqual ("472666954631020356098309025042432", (v << 11).ToString (), "#11");
+			Assert.AreEqual ("945333909262040712196618050084864", (v << 12).ToString (), "#12");
+			Assert.AreEqual ("1890667818524081424393236100169728", (v << 13).ToString (), "#13");
+			Assert.AreEqual ("3781335637048162848786472200339456", (v << 14).ToString (), "#14");
+			Assert.AreEqual ("7562671274096325697572944400678912", (v << 15).ToString (), "#15");
+			Assert.AreEqual ("15125342548192651395145888801357824", (v << 16).ToString (), "#16");
+			Assert.AreEqual ("30250685096385302790291777602715648", (v << 17).ToString (), "#17");
+			Assert.AreEqual ("60501370192770605580583555205431296", (v << 18).ToString (), "#18");
+			Assert.AreEqual ("121002740385541211161167110410862592", (v << 19).ToString (), "#19");
+			Assert.AreEqual ("242005480771082422322334220821725184", (v << 20).ToString (), "#20");
+			Assert.AreEqual ("484010961542164844644668441643450368", (v << 21).ToString (), "#21");
+			Assert.AreEqual ("968021923084329689289336883286900736", (v << 22).ToString (), "#22");
+			Assert.AreEqual ("1936043846168659378578673766573801472", (v << 23).ToString (), "#23");
+			Assert.AreEqual ("3872087692337318757157347533147602944", (v << 24).ToString (), "#24");
+			Assert.AreEqual ("7744175384674637514314695066295205888", (v << 25).ToString (), "#25");
+			Assert.AreEqual ("15488350769349275028629390132590411776", (v << 26).ToString (), "#26");
+			Assert.AreEqual ("30976701538698550057258780265180823552", (v << 27).ToString (), "#27");
+			Assert.AreEqual ("61953403077397100114517560530361647104", (v << 28).ToString (), "#28");
+			Assert.AreEqual ("123906806154794200229035121060723294208", (v << 29).ToString (), "#29");
+			Assert.AreEqual ("247813612309588400458070242121446588416", (v << 30).ToString (), "#30");
+			Assert.AreEqual ("495627224619176800916140484242893176832", (v << 31).ToString (), "#31");
+			Assert.AreEqual ("991254449238353601832280968485786353664", (v << 32).ToString (), "#32");
+			Assert.AreEqual ("1982508898476707203664561936971572707328", (v << 33).ToString (), "#33");
+			Assert.AreEqual ("3965017796953414407329123873943145414656", (v << 34).ToString (), "#34");
+			Assert.AreEqual ("7930035593906828814658247747886290829312", (v << 35).ToString (), "#35");
+			Assert.AreEqual ("15860071187813657629316495495772581658624", (v << 36).ToString (), "#36");
+			Assert.AreEqual ("31720142375627315258632990991545163317248", (v << 37).ToString (), "#37");
+			Assert.AreEqual ("63440284751254630517265981983090326634496", (v << 38).ToString (), "#38");
+			Assert.AreEqual ("126880569502509261034531963966180653268992", (v << 39).ToString (), "#39");
+			Assert.AreEqual ("253761139005018522069063927932361306537984", (v << 40).ToString (), "#40");
+			Assert.AreEqual ("507522278010037044138127855864722613075968", (v << 41).ToString (), "#41");
+			Assert.AreEqual ("1015044556020074088276255711729445226151936", (v << 42).ToString (), "#42");
+			Assert.AreEqual ("2030089112040148176552511423458890452303872", (v << 43).ToString (), "#43");
+			Assert.AreEqual ("4060178224080296353105022846917780904607744", (v << 44).ToString (), "#44");
+			Assert.AreEqual ("8120356448160592706210045693835561809215488", (v << 45).ToString (), "#45");
+			Assert.AreEqual ("16240712896321185412420091387671123618430976", (v << 46).ToString (), "#46");
+			Assert.AreEqual ("32481425792642370824840182775342247236861952", (v << 47).ToString (), "#47");
+			Assert.AreEqual ("64962851585284741649680365550684494473723904", (v << 48).ToString (), "#48");
+			Assert.AreEqual ("129925703170569483299360731101368988947447808", (v << 49).ToString (), "#49");
+			Assert.AreEqual ("259851406341138966598721462202737977894895616", (v << 50).ToString (), "#50");
+			Assert.AreEqual ("519702812682277933197442924405475955789791232", (v << 51).ToString (), "#51");
+			Assert.AreEqual ("1039405625364555866394885848810951911579582464", (v << 52).ToString (), "#52");
+			Assert.AreEqual ("2078811250729111732789771697621903823159164928", (v << 53).ToString (), "#53");
+			Assert.AreEqual ("4157622501458223465579543395243807646318329856", (v << 54).ToString (), "#54");
+			Assert.AreEqual ("8315245002916446931159086790487615292636659712", (v << 55).ToString (), "#55");
+			Assert.AreEqual ("16630490005832893862318173580975230585273319424", (v << 56).ToString (), "#56");
+			Assert.AreEqual ("33260980011665787724636347161950461170546638848", (v << 57).ToString (), "#57");
+			Assert.AreEqual ("66521960023331575449272694323900922341093277696", (v << 58).ToString (), "#58");
+			Assert.AreEqual ("133043920046663150898545388647801844682186555392", (v << 59).ToString (), "#59");
+			Assert.AreEqual ("266087840093326301797090777295603689364373110784", (v << 60).ToString (), "#60");
+			Assert.AreEqual ("532175680186652603594181554591207378728746221568", (v << 61).ToString (), "#61");
+			Assert.AreEqual ("1064351360373305207188363109182414757457492443136", (v << 62).ToString (), "#62");
+			Assert.AreEqual ("2128702720746610414376726218364829514914984886272", (v << 63).ToString (), "#63");
+			Assert.AreEqual ("4257405441493220828753452436729659029829969772544", (v << 64).ToString (), "#64");
+			Assert.AreEqual ("8514810882986441657506904873459318059659939545088", (v << 65).ToString (), "#65");
+			Assert.AreEqual ("17029621765972883315013809746918636119319879090176", (v << 66).ToString (), "#66");
+			Assert.AreEqual ("34059243531945766630027619493837272238639758180352", (v << 67).ToString (), "#67");
+			Assert.AreEqual ("68118487063891533260055238987674544477279516360704", (v << 68).ToString (), "#68");
+			Assert.AreEqual ("136236974127783066520110477975349088954559032721408", (v << 69).ToString (), "#69");
+		}
+
+
+		[Test]
+		public void RightShitByInt ()
+		{
+			var v = BigInteger.Parse("230794411440927908251127453634");
+			v = v * BigInteger.Pow (2, 70);
+
+			Assert.AreEqual ("272473948255566133040220955950698177909118065442816", (v >> 0).ToString (), "#0");
+			Assert.AreEqual ("136236974127783066520110477975349088954559032721408", (v >> 1).ToString (), "#1");
+			Assert.AreEqual ("68118487063891533260055238987674544477279516360704", (v >> 2).ToString (), "#2");
+			Assert.AreEqual ("34059243531945766630027619493837272238639758180352", (v >> 3).ToString (), "#3");
+			Assert.AreEqual ("17029621765972883315013809746918636119319879090176", (v >> 4).ToString (), "#4");
+			Assert.AreEqual ("8514810882986441657506904873459318059659939545088", (v >> 5).ToString (), "#5");
+			Assert.AreEqual ("4257405441493220828753452436729659029829969772544", (v >> 6).ToString (), "#6");
+			Assert.AreEqual ("2128702720746610414376726218364829514914984886272", (v >> 7).ToString (), "#7");
+			Assert.AreEqual ("1064351360373305207188363109182414757457492443136", (v >> 8).ToString (), "#8");
+			Assert.AreEqual ("532175680186652603594181554591207378728746221568", (v >> 9).ToString (), "#9");
+			Assert.AreEqual ("266087840093326301797090777295603689364373110784", (v >> 10).ToString (), "#10");
+			Assert.AreEqual ("133043920046663150898545388647801844682186555392", (v >> 11).ToString (), "#11");
+			Assert.AreEqual ("66521960023331575449272694323900922341093277696", (v >> 12).ToString (), "#12");
+			Assert.AreEqual ("33260980011665787724636347161950461170546638848", (v >> 13).ToString (), "#13");
+			Assert.AreEqual ("16630490005832893862318173580975230585273319424", (v >> 14).ToString (), "#14");
+			Assert.AreEqual ("8315245002916446931159086790487615292636659712", (v >> 15).ToString (), "#15");
+			Assert.AreEqual ("4157622501458223465579543395243807646318329856", (v >> 16).ToString (), "#16");
+			Assert.AreEqual ("2078811250729111732789771697621903823159164928", (v >> 17).ToString (), "#17");
+			Assert.AreEqual ("1039405625364555866394885848810951911579582464", (v >> 18).ToString (), "#18");
+			Assert.AreEqual ("519702812682277933197442924405475955789791232", (v >> 19).ToString (), "#19");
+			Assert.AreEqual ("259851406341138966598721462202737977894895616", (v >> 20).ToString (), "#20");
+			Assert.AreEqual ("129925703170569483299360731101368988947447808", (v >> 21).ToString (), "#21");
+			Assert.AreEqual ("64962851585284741649680365550684494473723904", (v >> 22).ToString (), "#22");
+			Assert.AreEqual ("32481425792642370824840182775342247236861952", (v >> 23).ToString (), "#23");
+			Assert.AreEqual ("16240712896321185412420091387671123618430976", (v >> 24).ToString (), "#24");
+			Assert.AreEqual ("8120356448160592706210045693835561809215488", (v >> 25).ToString (), "#25");
+			Assert.AreEqual ("4060178224080296353105022846917780904607744", (v >> 26).ToString (), "#26");
+			Assert.AreEqual ("2030089112040148176552511423458890452303872", (v >> 27).ToString (), "#27");
+			Assert.AreEqual ("1015044556020074088276255711729445226151936", (v >> 28).ToString (), "#28");
+			Assert.AreEqual ("507522278010037044138127855864722613075968", (v >> 29).ToString (), "#29");
+			Assert.AreEqual ("253761139005018522069063927932361306537984", (v >> 30).ToString (), "#30");
+			Assert.AreEqual ("126880569502509261034531963966180653268992", (v >> 31).ToString (), "#31");
+			Assert.AreEqual ("63440284751254630517265981983090326634496", (v >> 32).ToString (), "#32");
+			Assert.AreEqual ("31720142375627315258632990991545163317248", (v >> 33).ToString (), "#33");
+			Assert.AreEqual ("15860071187813657629316495495772581658624", (v >> 34).ToString (), "#34");
+			Assert.AreEqual ("7930035593906828814658247747886290829312", (v >> 35).ToString (), "#35");
+			Assert.AreEqual ("3965017796953414407329123873943145414656", (v >> 36).ToString (), "#36");
+			Assert.AreEqual ("1982508898476707203664561936971572707328", (v >> 37).ToString (), "#37");
+			Assert.AreEqual ("991254449238353601832280968485786353664", (v >> 38).ToString (), "#38");
+			Assert.AreEqual ("495627224619176800916140484242893176832", (v >> 39).ToString (), "#39");
+			Assert.AreEqual ("247813612309588400458070242121446588416", (v >> 40).ToString (), "#40");
+			Assert.AreEqual ("123906806154794200229035121060723294208", (v >> 41).ToString (), "#41");
+			Assert.AreEqual ("61953403077397100114517560530361647104", (v >> 42).ToString (), "#42");
+			Assert.AreEqual ("30976701538698550057258780265180823552", (v >> 43).ToString (), "#43");
+			Assert.AreEqual ("15488350769349275028629390132590411776", (v >> 44).ToString (), "#44");
+			Assert.AreEqual ("7744175384674637514314695066295205888", (v >> 45).ToString (), "#45");
+			Assert.AreEqual ("3872087692337318757157347533147602944", (v >> 46).ToString (), "#46");
+			Assert.AreEqual ("1936043846168659378578673766573801472", (v >> 47).ToString (), "#47");
+			Assert.AreEqual ("968021923084329689289336883286900736", (v >> 48).ToString (), "#48");
+			Assert.AreEqual ("484010961542164844644668441643450368", (v >> 49).ToString (), "#49");
+			Assert.AreEqual ("242005480771082422322334220821725184", (v >> 50).ToString (), "#50");
+			Assert.AreEqual ("121002740385541211161167110410862592", (v >> 51).ToString (), "#51");
+			Assert.AreEqual ("60501370192770605580583555205431296", (v >> 52).ToString (), "#52");
+			Assert.AreEqual ("30250685096385302790291777602715648", (v >> 53).ToString (), "#53");
+			Assert.AreEqual ("15125342548192651395145888801357824", (v >> 54).ToString (), "#54");
+			Assert.AreEqual ("7562671274096325697572944400678912", (v >> 55).ToString (), "#55");
+			Assert.AreEqual ("3781335637048162848786472200339456", (v >> 56).ToString (), "#56");
+			Assert.AreEqual ("1890667818524081424393236100169728", (v >> 57).ToString (), "#57");
+			Assert.AreEqual ("945333909262040712196618050084864", (v >> 58).ToString (), "#58");
+			Assert.AreEqual ("472666954631020356098309025042432", (v >> 59).ToString (), "#59");
+			Assert.AreEqual ("236333477315510178049154512521216", (v >> 60).ToString (), "#60");
+			Assert.AreEqual ("118166738657755089024577256260608", (v >> 61).ToString (), "#61");
+			Assert.AreEqual ("59083369328877544512288628130304", (v >> 62).ToString (), "#62");
+			Assert.AreEqual ("29541684664438772256144314065152", (v >> 63).ToString (), "#63");
+			Assert.AreEqual ("14770842332219386128072157032576", (v >> 64).ToString (), "#64");
+			Assert.AreEqual ("7385421166109693064036078516288", (v >> 65).ToString (), "#65");
+			Assert.AreEqual ("3692710583054846532018039258144", (v >> 66).ToString (), "#66");
+			Assert.AreEqual ("1846355291527423266009019629072", (v >> 67).ToString (), "#67");
+			Assert.AreEqual ("923177645763711633004509814536", (v >> 68).ToString (), "#68");
+			Assert.AreEqual ("461588822881855816502254907268", (v >> 69).ToString (), "#69");
+		}
+
+		[Test]
+		public void Bug10887 ()
+		{
+			BigInteger b = 0;
+			for(int i = 1; i <= 16; i++)
+				b = b * 256 + i;
+			BigInteger p = BigInteger.Pow (2, 32);
+			Assert.AreEqual ("1339673755198158349044581307228491536", b.ToString (), "#1");
+			Assert.AreEqual ("1339673755198158349044581307228491536", ((b << 32) / p).ToString (), "#2");
+			Assert.AreEqual ("1339673755198158349044581307228491536", (b * p >> 32).ToString (), "#3");
+		}
+
+		[Test]
+		public void DefaultCtorWorks ()
+		{
+			var a = new BigInteger ();
+			Assert.AreEqual (BigInteger.One, ++a, "#1");
+
+			a = new BigInteger ();
+			Assert.AreEqual (BigInteger.MinusOne, --a, "#2");
+
+			a = new BigInteger ();
+			Assert.AreEqual (BigInteger.MinusOne, ~a, "#3");
+
+			a = new BigInteger ();
+			Assert.AreEqual ("0", a.ToString (), "#4");
+
+			a = new BigInteger ();
+			Assert.AreEqual (true, a == a, "#5");
+
+			a = new BigInteger ();
+			Assert.AreEqual (false, a < a, "#6");
+
+			a = new BigInteger ();
+			Assert.AreEqual (true, a < 10l, "#7");
+
+			a = new BigInteger ();
+			Assert.AreEqual (true, a.IsEven, "#8");
+
+			a = new BigInteger ();
+			Assert.AreEqual (0, (int)a, "#9");
+
+			a = new BigInteger ();
+			Assert.AreEqual (0, (uint)a, "#10");
+
+			a = new BigInteger ();
+			Assert.AreEqual (0, (ulong)a, "#11");
+
+			a = new BigInteger ();
+			Assert.AreEqual (true, a.Equals (a), "#12");
+
+			a = new BigInteger ();
+			Assert.AreEqual (a, BigInteger.Min (a, a), "#13");
+
+			a = new BigInteger ();
+			Assert.AreEqual (a, BigInteger.GreatestCommonDivisor (a, a), "#14");
+
+			a = new BigInteger ();
+			Assert.AreEqual (BigInteger.Zero.GetHashCode (), a.GetHashCode (), "#15");
 		}
 	}
 }

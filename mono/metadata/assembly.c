@@ -645,6 +645,7 @@ mono_set_rootdir (void)
 		gchar buf[4096];
  		guint buf_size = sizeof (buf);
  
+		name = NULL;
  		if (_NSGetExecutablePath (buf, &buf_size) == 0)
  			name = g_strdup (buf);
  
@@ -852,6 +853,8 @@ static KeyRemapEntry key_remap_table[] = {
 	{ "System.ComponentModel.Composition", WINFX_KEY, ECMA_KEY },
 	{ "System.ComponentModel.DataAnnotations", "ddd0da4d3e678217", WINFX_KEY },
 	{ "System.Core", SILVERLIGHT_KEY, ECMA_KEY },
+	// FIXME: MS uses MSFINAL_KEY for .NET 4.5
+	{ "System.Net", SILVERLIGHT_KEY, ECMA_KEY },
 	{ "System.Numerics", WINFX_KEY, ECMA_KEY },
 	{ "System.Runtime.Serialization", SILVERLIGHT_KEY, ECMA_KEY },
 	{ "System.ServiceModel", WINFX_KEY, ECMA_KEY },

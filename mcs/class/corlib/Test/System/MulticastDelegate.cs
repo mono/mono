@@ -98,5 +98,35 @@ public class MulticastDelegateTest {
 		res = del1( ref val );
 		Assert.AreEqual("abbcbbd", val , "#A05");
 	}
+
+	[Test] //Bug #12536
+	public void TestCombineBothDirections ()
+	{
+		MyDelegate dela = new MyDelegate( MethodA );
+		MyDelegate delb = new MyDelegate( MethodB );
+		MyDelegate delc = new MyDelegate( MethodC );
+		MyDelegate deld = new MyDelegate( MethodD );
+
+		string val;
+		char res;
+
+		MyDelegate a = dela + delb;
+		val = "";
+		res = a (ref val);
+		Assert.AreEqual ("ab", val, "#1");
+		Assert.AreEqual ('b', res, "#2");
+
+		MyDelegate b = delc + deld;
+		val = "";
+		res = b (ref val);
+		Assert.AreEqual ("cd", val, "#3");
+		Assert.AreEqual ('d', res, "#4");
+
+		MyDelegate c = a + b;
+		val = "";
+		res = c (ref val);
+		Assert.AreEqual ("abcd", val, "#5");
+		Assert.AreEqual ('d', res, "#6");
+	}
 }
 }

@@ -531,7 +531,12 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 	case MONO_RGCTX_INFO_CAST_CACHE:
 	case MONO_RGCTX_INFO_ARRAY_ELEMENT_SIZE:
 	case MONO_RGCTX_INFO_VALUE_SIZE:
-	case MONO_RGCTX_INFO_CLASS_IS_REF: {
+	case MONO_RGCTX_INFO_CLASS_BOX_TYPE:
+	case MONO_RGCTX_INFO_MEMCPY:
+	case MONO_RGCTX_INFO_BZERO:
+	case MONO_RGCTX_INFO_LOCAL_OFFSET:
+	case MONO_RGCTX_INFO_NULLABLE_CLASS_BOX:
+	case MONO_RGCTX_INFO_NULLABLE_CLASS_UNBOX: {
 		gpointer result = mono_class_inflate_generic_type_with_mempool (temporary ? NULL : class->image,
 			data, context, &error);
 		g_assert (mono_error_ok (&error)); /*FIXME proper error handling*/
@@ -573,11 +578,21 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 
 		// FIXME:
 		res = g_new0 (MonoGSharedVtMethodInfo, 1);
+		/*
 		res->nlocals = info->nlocals;
 		res->locals_types = g_new0 (MonoType*, info->nlocals);
 		for (i = 0; i < info->nlocals; ++i)
 			res->locals_types [i] = mono_class_inflate_generic_type (info->locals_types [i], context);
+		*/
+		res->entries = g_ptr_array_new ();
+		for (i = 0; i < info->entries->len; ++i) {
+			MonoRuntimeGenericContextInfoTemplate *otemplate = g_ptr_array_index (info->entries, i);
+			MonoRuntimeGenericContextInfoTemplate *template = g_new0 (MonoRuntimeGenericContextInfoTemplate, 1);
 
+			memcpy (template, otemplate, sizeof (MonoRuntimeGenericContextInfoTemplate));
+			template->data = inflate_info (template, context, class, FALSE);
+			g_ptr_array_add (res->entries, template);
+		}
 		return res;
 	}
 	case MONO_RGCTX_INFO_METHOD_GSHAREDVT_OUT_TRAMPOLINE:
@@ -934,11 +949,118 @@ class_type_info (MonoDomain *domain, MonoClass *class, MonoRgctxInfoType info_ty
 			return GUINT_TO_POINTER (sizeof (gpointer));
 		else
 			return GUINT_TO_POINTER (mono_class_value_size (class, NULL));
-	case MONO_RGCTX_INFO_CLASS_IS_REF:
+	case MONO_RGCTX_INFO_CLASS_BOX_TYPE:
 		if (MONO_TYPE_IS_REFERENCE (&class->byval_arg))
 			return GUINT_TO_POINTER (1);
+		else if (mono_class_is_nullable (class))
+			return GUINT_TO_POINTER (2);
 		else
 			return GUINT_TO_POINTER (0);
+	case MONO_RGCTX_INFO_MEMCPY:
+	case MONO_RGCTX_INFO_BZERO: {
+		static MonoMethod *memcpy_method [17];
+		static MonoMethod *bzero_method [17];
+		MonoJitDomainInfo *domain_info;
+		int size;
+		guint32 align;
+
+		domain_info = domain_jit_info (domain);
+
+		if (MONO_TYPE_IS_REFERENCE (&class->byval_arg)) {
+			size = sizeof (gpointer);
+			align = sizeof (gpointer);
+		} else {
+			size = mono_class_value_size (class, &align);
+		}
+
+		if (size != 1 && size != 2 && size != 4 && size != 8)
+			size = 0;
+		if (align < size)
+			size = 0;
+
+		if (info_type == MONO_RGCTX_INFO_MEMCPY) {
+			if (!memcpy_method [size]) {
+				MonoMethod *m;
+				char name [32];
+
+				if (size == 0)
+					sprintf (name, "memcpy");
+				else
+					sprintf (name, "memcpy_aligned_%d", size);
+				m = mono_class_get_method_from_name (mono_defaults.string_class, name, 3);
+				g_assert (m);
+				mono_memory_barrier ();
+				memcpy_method [size] = m;
+			}
+			if (!domain_info->memcpy_addr [size]) {
+				gpointer addr = mono_compile_method (memcpy_method [size]);
+				mono_memory_barrier ();
+				domain_info->memcpy_addr [size] = addr;
+			}
+			return domain_info->memcpy_addr [size];
+		} else {
+			if (!bzero_method [size]) {
+				MonoMethod *m;
+				char name [32];
+
+				if (size == 0)
+					sprintf (name, "bzero");
+				else
+					sprintf (name, "bzero_aligned_%d", size);
+				m = mono_class_get_method_from_name (mono_defaults.string_class, name, 2);
+				g_assert (m);
+				mono_memory_barrier ();
+				bzero_method [size] = m;
+			}
+			if (!domain_info->bzero_addr [size]) {
+				gpointer addr = mono_compile_method (bzero_method [size]);
+				mono_memory_barrier ();
+				domain_info->bzero_addr [size] = addr;
+			}
+			return domain_info->bzero_addr [size];
+		}
+	}
+	case MONO_RGCTX_INFO_NULLABLE_CLASS_BOX:
+	case MONO_RGCTX_INFO_NULLABLE_CLASS_UNBOX: {
+		MonoMethod *method;
+		gpointer addr;
+		MonoJitInfo *ji;
+		MonoGenericContext *ctx;
+
+		if (!mono_class_is_nullable (class))
+			/* This can happen since all the entries in MonoGSharedVtMethodInfo are inflated, even those which are not used */
+			return NULL;
+
+		if (info_type == MONO_RGCTX_INFO_NULLABLE_CLASS_BOX)
+			method = mono_class_get_method_from_name (class, "Box", 1);
+		else
+			method = mono_class_get_method_from_name (class, "Unbox", 1);
+
+		addr = mono_compile_method (method);
+		// The caller uses the gsharedvt call signature
+		ji = mini_jit_info_table_find (mono_domain_get (), mono_get_addr_from_ftnptr (addr), NULL);
+		g_assert (ji);
+		if (mini_jit_info_is_gsharedvt (ji))
+			return mono_create_static_rgctx_trampoline (method, addr);
+		else {
+			MonoGenericSharingContext gsctx;
+			MonoMethodSignature *sig, *gsig;
+			MonoMethod *gmethod;
+
+			/* Need to add an out wrapper */
+
+			/* FIXME: We have no access to the gsharedvt signature/gsctx used by the caller, so have to construct it ourselves */
+			gmethod = mini_get_shared_method (method);
+			sig = mono_method_signature (method);
+			gsig = mono_method_signature (gmethod);
+			ctx = mono_method_get_context (gmethod);
+			mini_init_gsctx (ctx, &gsctx);
+
+			addr = mini_get_gsharedvt_wrapper (FALSE, addr, sig, gsig, &gsctx, -1, FALSE);
+			addr = mono_create_static_rgctx_trampoline (method, addr);
+			return addr;
+		}
+	}
 	default:
 		g_assert_not_reached ();
 	}
@@ -1106,7 +1228,11 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 	case MONO_RGCTX_INFO_CAST_CACHE:
 	case MONO_RGCTX_INFO_ARRAY_ELEMENT_SIZE:
 	case MONO_RGCTX_INFO_VALUE_SIZE:
-	case MONO_RGCTX_INFO_CLASS_IS_REF: {
+	case MONO_RGCTX_INFO_CLASS_BOX_TYPE:
+	case MONO_RGCTX_INFO_MEMCPY:
+	case MONO_RGCTX_INFO_BZERO:
+	case MONO_RGCTX_INFO_NULLABLE_CLASS_BOX:
+	case MONO_RGCTX_INFO_NULLABLE_CLASS_UNBOX: {
 		MonoClass *arg_class = mono_class_from_mono_type (data);
 
 		free_inflated_info (oti->info_type, data);
@@ -1187,7 +1313,7 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 		gji = mono_jit_info_get_generic_jit_info (caller_ji);
 		g_assert (gji);
 
-		addr = mini_get_gsharedvt_wrapper (FALSE, addr, sig, gsig, gji->generic_sharing_context, -1, TRUE);
+		addr = mini_get_gsharedvt_wrapper (FALSE, NULL, sig, gsig, gji->generic_sharing_context, -1, TRUE);
 
 		return addr;
 	}
@@ -1320,24 +1446,33 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 		int i, offset, align, size;
 
 		// FIXME:
-		res = g_malloc0 (sizeof (MonoGSharedVtMethodRuntimeInfo) + (info->nlocals * sizeof (int)));
+		res = g_malloc0 (sizeof (MonoGSharedVtMethodRuntimeInfo) + (info->entries->len * sizeof (gpointer)));
 
 		offset = 0;
-		for (i = 0; i < info->nlocals; ++i) {
-			t = info->locals_types [i];
+		for (i = 0; i < info->entries->len; ++i) {
+			MonoRuntimeGenericContextInfoTemplate *template = g_ptr_array_index (info->entries, i);
 
-			size = mono_type_size (t, &align);
+			switch (template->info_type) {
+			case MONO_RGCTX_INFO_LOCAL_OFFSET:
+				t = template->data;
 
-			if (align < sizeof (gpointer))
-				align = sizeof (gpointer);
-			if (MONO_TYPE_ISSTRUCT (t) && align < 2 * sizeof (gpointer))
-				align = 2 * sizeof (gpointer);
+				size = mono_type_size (t, &align);
+
+				if (align < sizeof (gpointer))
+					align = sizeof (gpointer);
+				if (MONO_TYPE_ISSTRUCT (t) && align < 2 * sizeof (gpointer))
+					align = 2 * sizeof (gpointer);
 			
-			// FIXME: Do the same things as alloc_stack_slots
-			offset += align - 1;
-			offset &= ~(align - 1);
-			res->locals_offsets [i] = offset;
-			offset += size;
+				// FIXME: Do the same things as alloc_stack_slots
+				offset += align - 1;
+				offset &= ~(align - 1);
+				res->entries [i] = GINT_TO_POINTER (offset);
+				offset += size;
+				break;
+			default:
+				res->entries [i] = instantiate_info (domain, template, context, class, NULL);
+				break;
+			}
 		}
 		res->locals_size = offset;
 
@@ -1402,11 +1537,15 @@ mono_rgctx_info_type_to_str (MonoRgctxInfoType type)
 	case MONO_RGCTX_INFO_CAST_CACHE: return "CAST_CACHE";
 	case MONO_RGCTX_INFO_ARRAY_ELEMENT_SIZE: return "ARRAY_ELEMENT_SIZE";
 	case MONO_RGCTX_INFO_VALUE_SIZE: return "VALUE_SIZE";
-	case MONO_RGCTX_INFO_CLASS_IS_REF: return "CLASS_IS_REF";
+	case MONO_RGCTX_INFO_CLASS_BOX_TYPE: return "CLASS_BOX_TYPE";
 	case MONO_RGCTX_INFO_FIELD_OFFSET: return "FIELD_OFFSET";
 	case MONO_RGCTX_INFO_METHOD_GSHAREDVT_OUT_TRAMPOLINE: return "METHOD_GSHAREDVT_OUT_TRAMPOLINE";
 	case MONO_RGCTX_INFO_METHOD_GSHAREDVT_OUT_TRAMPOLINE_VIRT: return "METHOD_GSHAREDVT_OUT_TRAMPOLINE_VIRT";
 	case MONO_RGCTX_INFO_SIG_GSHAREDVT_OUT_TRAMPOLINE_CALLI: return "SIG_GSHAREDVT_OUT_TRAMPOLINE_CALLI";
+	case MONO_RGCTX_INFO_MEMCPY: return "MEMCPY";
+	case MONO_RGCTX_INFO_BZERO: return "BZERO";
+	case MONO_RGCTX_INFO_NULLABLE_CLASS_BOX: return "NULLABLE_CLASS_BOX";
+	case MONO_RGCTX_INFO_NULLABLE_CLASS_UNBOX: return "NULLABLE_CLASS_UNBOX";
 	default:
 		return "<UNKNOWN RGCTX INFO TYPE>";
 	}
@@ -1482,7 +1621,11 @@ info_equal (gpointer data1, gpointer data2, MonoRgctxInfoType info_type)
 	case MONO_RGCTX_INFO_CAST_CACHE:
 	case MONO_RGCTX_INFO_ARRAY_ELEMENT_SIZE:
 	case MONO_RGCTX_INFO_VALUE_SIZE:
-	case MONO_RGCTX_INFO_CLASS_IS_REF:
+	case MONO_RGCTX_INFO_CLASS_BOX_TYPE:
+	case MONO_RGCTX_INFO_MEMCPY:
+	case MONO_RGCTX_INFO_BZERO:
+	case MONO_RGCTX_INFO_NULLABLE_CLASS_BOX:
+	case MONO_RGCTX_INFO_NULLABLE_CLASS_UNBOX:
 		return mono_class_from_mono_type (data1) == mono_class_from_mono_type (data2);
 	case MONO_RGCTX_INFO_METHOD:
 	case MONO_RGCTX_INFO_METHOD_GSHAREDVT_INFO:
@@ -1502,6 +1645,38 @@ info_equal (gpointer data1, gpointer data2, MonoRgctxInfoType info_type)
 	}
 	/* never reached */
 	return FALSE;
+}
+
+/*
+ * mini_rgctx_info_type_to_patch_info_type:
+ *
+ *   Return the type of the runtime object referred to by INFO_TYPE.
+ */
+MonoJumpInfoType
+mini_rgctx_info_type_to_patch_info_type (MonoRgctxInfoType info_type)
+{
+	switch (info_type) {
+	case MONO_RGCTX_INFO_STATIC_DATA:
+	case MONO_RGCTX_INFO_KLASS:
+	case MONO_RGCTX_INFO_VTABLE:
+	case MONO_RGCTX_INFO_TYPE:
+	case MONO_RGCTX_INFO_REFLECTION_TYPE:
+	case MONO_RGCTX_INFO_CAST_CACHE:
+	case MONO_RGCTX_INFO_ARRAY_ELEMENT_SIZE:
+	case MONO_RGCTX_INFO_VALUE_SIZE:
+	case MONO_RGCTX_INFO_CLASS_BOX_TYPE:
+	case MONO_RGCTX_INFO_MEMCPY:
+	case MONO_RGCTX_INFO_BZERO:
+	case MONO_RGCTX_INFO_NULLABLE_CLASS_BOX:
+	case MONO_RGCTX_INFO_NULLABLE_CLASS_UNBOX:
+	case MONO_RGCTX_INFO_LOCAL_OFFSET:
+		return MONO_PATCH_INFO_CLASS;
+	case MONO_RGCTX_INFO_FIELD_OFFSET:
+		return MONO_PATCH_INFO_FIELD;
+	default:
+		g_assert_not_reached ();
+		return -1;
+	}
 }
 
 static int

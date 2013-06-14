@@ -1527,6 +1527,7 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 	int i, version;
 	guint8 *blob;
 	gboolean do_load_image = TRUE;
+	int align_double, align_int64;
 
 	if (mono_compile_aot)
 		return;
@@ -1617,9 +1618,28 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 		return;
 	}
 
+#if defined (TARGET_ARM) && defined (TARGET_MACH)
+	{
+		MonoType t;
+		int align = 0;
+
+		memset (&t, 0, sizeof (MonoType));
+		t.type = MONO_TYPE_R8;
+		mono_type_size (&t, &align);
+		align_double = align;
+
+		memset (&t, 0, sizeof (MonoType));
+		t.type = MONO_TYPE_I8;
+		align_int64 = align;
+	}
+#else
+	align_double = __alignof__ (double);
+	align_int64 = __alignof__ (gint64);
+#endif
+
 	/* Sanity check */
-	g_assert (info->double_align == __alignof__ (double));
-	g_assert (info->long_align == __alignof__ (gint64));
+	g_assert (info->double_align == align_double);
+	g_assert (info->long_align == align_int64);
 
 	blob = info->blob;
 
@@ -2995,14 +3015,36 @@ decode_patch (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guin
 	}
 	case MONO_PATCH_INFO_GSHAREDVT_METHOD: {
 		MonoGSharedVtMethodInfo *info = g_new0 (MonoGSharedVtMethodInfo, 1);
-		int i;
+		int i, nentries;
 		
 		info->method = decode_resolve_method_ref (aot_module, p, &p);
 		g_assert (info->method);
-		info->nlocals = decode_value (p, &p);
-		info->locals_types = g_new0 (MonoType*, info->nlocals);
-		for (i = 0; i < info->nlocals; ++i)
-			info->locals_types [i] = decode_type (aot_module, p, &p);
+		nentries = decode_value (p, &p);
+		info->entries = g_ptr_array_new ();
+		for (i = 0; i < nentries; ++i) {
+			MonoRuntimeGenericContextInfoTemplate *template = g_new0 (MonoRuntimeGenericContextInfoTemplate, 1);
+
+			template->info_type = decode_value (p, &p);
+			switch (mini_rgctx_info_type_to_patch_info_type (template->info_type)) {
+			case MONO_PATCH_INFO_CLASS: {
+				MonoClass *klass = decode_klass_ref (aot_module, p, &p);
+				if (!klass)
+					goto cleanup;
+				template->data = &klass->byval_arg;
+				break;
+			}
+			case MONO_PATCH_INFO_FIELD:
+				template->data = decode_field_info (aot_module, p, &p);
+				if (!template->data)
+					goto cleanup;
+				break;
+			default:
+				g_assert_not_reached ();
+				break;
+			}
+
+			g_ptr_array_add (info->entries, template);
+		}
 		ji->data.target = info;
 		break;
 	}

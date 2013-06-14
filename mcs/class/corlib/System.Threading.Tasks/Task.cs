@@ -46,8 +46,6 @@ namespace System.Threading.Tasks
 		// and for Parent property.
 		[System.ThreadStatic]
 		static Task current;
-		[System.ThreadStatic]
-		static Action<Task> childWorkAdder;
 		
 		// parent is the outer task in which this task is created
 		readonly Task parent;
@@ -371,18 +369,7 @@ namespace System.Threading.Tasks
 		internal void Schedule ()
 		{
 			Status = TaskStatus.WaitingToRun;
-			
-			// If worker is null it means it is a local one, revert to the old behavior
-			// If TaskScheduler.Current is not being used, the scheduler was explicitly provided, so we must use that
-			if (scheduler != TaskScheduler.Current || childWorkAdder == null || HasFlag (creationOptions, TaskCreationOptions.PreferFairness)) {
-				scheduler.QueueTask (this);
-			} else {
-				/* Like the semantic of the ABP paper describe it, we add ourselves to the bottom 
-				 * of our Parent Task's ThreadWorker deque. It's ok to do that since we are in
-				 * the correct Thread during the creation
-				 */
-				childWorkAdder (this);
-			}
+			scheduler.QueueTask (this);
 		}
 		
 		void ThreadStart ()

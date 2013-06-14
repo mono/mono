@@ -4644,7 +4644,7 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 		}
 
 		encode_value (offset, p, &p);
-		g_assert (entry->info_type < 256);
+		g_assert ((int)entry->info_type < 256);
 		g_assert (entry->data->type < 256);
 		encode_value ((entry->in_mrgctx ? 1 : 0) | (entry->info_type << 1) | (entry->data->type << 9), p, &p);
 		encode_patch (acfg, entry->data, p, &p);
@@ -4671,10 +4671,22 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 		int i;
 
 		encode_method_ref (acfg, info->method, p, &p);
-		encode_value (info->nlocals, p, &p);
-		// FIXME: Improve the encoding
-		for (i = 0; i < info->nlocals; ++i) {
-			encode_type (acfg, info->locals_types [i], p, &p);
+		encode_value (info->entries->len, p, &p);
+		for (i = 0; i < info->entries->len; ++i) {
+			MonoRuntimeGenericContextInfoTemplate *template = g_ptr_array_index (info->entries, i);
+
+			encode_value (template->info_type, p, &p);
+			switch (mini_rgctx_info_type_to_patch_info_type (template->info_type)) {
+			case MONO_PATCH_INFO_CLASS:
+				encode_klass_ref (acfg, mono_class_from_mono_type (template->data), p, &p);
+				break;
+			case MONO_PATCH_INFO_FIELD:
+				encode_field_info (acfg, template->data, p, &p);
+				break;
+			default:
+				g_assert_not_reached ();
+				break;
+			}
 		}
 		break;
 	}
@@ -7732,7 +7744,6 @@ emit_file_info (MonoAotCompile *acfg)
 		memset (&t, 0, sizeof (MonoType));
 		t.type = MONO_TYPE_R8;
 		mono_type_size (&t, &align);
-
 		emit_int32 (acfg, align);
 
 		memset (&t, 0, sizeof (MonoType));

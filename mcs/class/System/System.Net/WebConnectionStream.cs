@@ -68,24 +68,24 @@ namespace System.Net
 		AsyncCallback cb_wrapper; // Calls to ReadCallbackWrapper or WriteCallbacWrapper
 		internal bool IgnoreIOErrors;
 
-		public WebConnectionStream (WebConnection cnc)
-		{
-			if (cnc.Data == null)
-				throw new InvalidOperationException ("cnc.Data was not initialized");
-			if (cnc.Data.Headers == null)
-				throw new InvalidOperationException ("cnc.Data.Headers was not initialized");
-			if (cnc.Data.request == null)
-				throw new InvalidOperationException ("cnc.Data.request was not initialized");
+		public WebConnectionStream (WebConnection cnc, WebConnectionData data)
+		{          
+			if (data == null)
+				throw new InvalidOperationException ("data was not initialized");
+			if (data.Headers == null)
+				throw new InvalidOperationException ("data.Headers was not initialized");
+			if (data.request == null)
+				throw new InvalidOperationException ("data.request was not initialized");
 			isRead = true;
 			cb_wrapper = new AsyncCallback (ReadCallbackWrapper);
 			pending = new ManualResetEvent (true);
-			this.request = cnc.Data.request;
+			this.request = data.request;
 			read_timeout = request.ReadWriteTimeout;
 			write_timeout = read_timeout;
 			this.cnc = cnc;
-			string contentType = cnc.Data.Headers ["Transfer-Encoding"];
+			string contentType = data.Headers ["Transfer-Encoding"];
 			bool chunkedRead = (contentType != null && contentType.IndexOf ("chunked", StringComparison.OrdinalIgnoreCase) != -1);
-			string clength = cnc.Data.Headers ["Content-Length"];
+			string clength = data.Headers ["Content-Length"];
 			if (!chunkedRead && clength != null && clength != "") {
 				try {
 					contentLength = Int32.Parse (clength);
