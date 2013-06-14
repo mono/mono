@@ -418,7 +418,7 @@ get_generic_info_from_stack_frame (MonoJitInfo *ji, MonoContext *ctx)
 		/* Avoid returning a managed object */
 		MonoObject *this_obj = info;
 
-		return this_obj->vtable->klass;
+		return this_obj? this_obj->vtable->klass: NULL;
 	}
 }
 
@@ -428,7 +428,8 @@ get_generic_context_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
 	MonoGenericContext context = { NULL, NULL };
 	MonoClass *class, *method_container_class;
 
-	g_assert (generic_info);
+	if (!generic_info)
+		return context;
 
 	g_assert (ji->method->is_inflated);
 	if (mono_method_get_context (ji->method)->method_inst) {
