@@ -2519,17 +2519,16 @@ info_major_minor_in_range (MonoAssemblyBindingInfo *info, MonoAssemblyName *anam
 	if (!info->has_old_version_bottom)
 		return FALSE;
 
-	if (info->old_version_bottom.major > aname->major || info->old_version_bottom.minor > aname->minor)
-		return FALSE;
+	if (info->has_old_version_top) {
+		if (aname->major >= info->old_version_bottom.major && aname->major <= info->old_version_top.major)
+			return TRUE;
 
-	if (info->has_old_version_top && (info->old_version_top.major < aname->major || info->old_version_top.minor < aname->minor))
-		return FALSE;
+		if (aname->minor >= info->old_version_bottom.minor && aname->minor <= info->old_version_top.minor)
+			return TRUE;
+	} else if (aname->major == info->old_version_bottom.major && aname->minor == info->old_version_bottom.minor)
+		return TRUE;
 
-	/* This is not the nicest way to do it, but it's a by-product of the way parsing is done */
-	info->major = aname->major;
-	info->minor = aname->minor;
-
-	return TRUE;
+	return FALSE;
 }
 
 /* LOCKING: Assumes that we are already locked - both loader and domain locks */
@@ -2546,7 +2545,12 @@ get_per_domain_assembly_binding_info (MonoDomain *domain, MonoAssemblyName *anam
 	for (list = domain->assembly_bindings; list; list = list->next) {
 		info = list->data;
 		if (info && !strcmp (aname->name, info->name) && info_major_minor_in_range (info, aname))
+		{
+			/* This is not the nicest way to do it, but it's a by-product of the way parsing is done */
+			info->major = aname->major;
+			info->minor = aname->minor;
 			break;
+		}
 		info = NULL;
 	}
 
