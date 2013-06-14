@@ -183,6 +183,8 @@ namespace Mono.Unix.Native {
 			return '-';
 		}
 
+		public static readonly DateTime UnixEpoch =
+			new DateTime (year:1970, month:1, day:1, hour:0, minute:0, second:0, kind:DateTimeKind.Utc);
 		public static readonly DateTime LocalUnixEpoch = 
 			new DateTime (1970, 1, 1);
 		public static readonly TimeSpan LocalUtcOffset = 
@@ -200,15 +202,18 @@ namespace Mono.Unix.Native {
 
 		public static DateTime FromTimeT (long time)
 		{
-			DateTime r = LocalUnixEpoch.AddSeconds ((double) time + 
-					LocalUtcOffset.TotalSeconds);
-			return r;
+			return UnixEpoch.AddSeconds (time).ToLocalTime ();
 		}
 
 		public static long ToTimeT (DateTime time)
 		{
-			TimeSpan unixTime = time.Subtract (LocalUnixEpoch) - LocalUtcOffset;
-			return (long) unixTime.TotalSeconds;
+			if (time.Kind == DateTimeKind.Unspecified)
+				throw new ArgumentException ("DateTimeKind.Unspecified is not supported. Use Local or Utc times.", "time");
+
+			if (time.Kind == DateTimeKind.Local)
+				time = time.ToUniversalTime ();
+
+			return (long) (time - UnixEpoch).TotalSeconds;
 		}
 
 		public static OpenFlags ToOpenFlags (FileMode mode, FileAccess access)
