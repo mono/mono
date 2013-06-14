@@ -405,7 +405,6 @@ get_generic_info_from_stack_frame (MonoJitInfo *ji, MonoContext *ctx)
 	if (!gi->has_this)
 		return NULL;
 
-
 	if (gi->this_in_reg)
 		info = mono_arch_context_get_int_reg (ctx, gi->this_reg);
 	else
@@ -413,7 +412,7 @@ get_generic_info_from_stack_frame (MonoJitInfo *ji, MonoContext *ctx)
 									  gi->this_offset);
 	if (mono_method_get_context (ji->method)->method_inst) {
 		return info;
-	} else if ((ji->method->flags & METHOD_ATTRIBUTE_STATIC) || ji->method->klass->valuetype || !info) {
+	} else if ((ji->method->flags & METHOD_ATTRIBUTE_STATIC) || ji->method->klass->valuetype) {
 		return info;
 	} else {
 		/* Avoid returning a managed object */
@@ -1252,12 +1251,9 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gpointer origina
 				 * overflow.
 				 */
 				if (!initial_trace_ips && (frame_count < 1000)) {
-					gpointer info = get_generic_info_from_stack_frame (ji, ctx);
-					if (info) {
-						trace_ips = g_list_prepend (trace_ips, MONO_CONTEXT_GET_IP (ctx));
-						trace_ips = g_list_prepend (trace_ips,
-							info);
-					}
+					trace_ips = g_list_prepend (trace_ips, MONO_CONTEXT_GET_IP (ctx));
+					trace_ips = g_list_prepend (trace_ips,
+						get_generic_info_from_stack_frame (ji, ctx));
 				}
 			}
 
