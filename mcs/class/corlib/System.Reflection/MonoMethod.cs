@@ -464,6 +464,7 @@ namespace System.Reflection {
 #endif
 	}
 	
+	[Serializable()]
 	[StructLayout (LayoutKind.Sequential)]
 	internal class MonoCMethod : ConstructorInfo, ISerializable
 	{
