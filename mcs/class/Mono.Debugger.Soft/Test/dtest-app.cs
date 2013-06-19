@@ -223,6 +223,12 @@ public class Tests : TestsBase
 		}
 	}
 
+	public static void wait_one ()
+	{
+		ManualResetEvent evt = new ManualResetEvent (false);
+		evt.WaitOne ();
+	}
+
 	public static int Main (String[] args) {
 		tls_i = 42;
 
@@ -239,6 +245,10 @@ public class Tests : TestsBase
 		}
 		if (args.Length >0 && args [0] == "unhandled-exception-user") {
 			unhandled_exception_user ();
+			return 0;
+		}
+		if (args.Length >0 && args [0] == "wait-one") {
+			wait_one ();
 			return 0;
 		}
 		breakpoints ();

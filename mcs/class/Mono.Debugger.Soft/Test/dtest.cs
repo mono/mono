@@ -24,6 +24,7 @@ public class DebuggerTests
 	VirtualMachine vm;
 	MethodMirror entry_point;
 	StepEventRequest step_req;
+	bool forceExit;
 
 	void AssertThrows<ExType> (Action del) where ExType : Exception {
 		bool thrown = false;
@@ -47,7 +48,13 @@ public class DebuggerTests
 		return es [0];
 	}
 
-	void Start (string[] args) {
+	void Start (params string[] args) {
+		Start (false, args);
+	}
+
+	void Start (bool forceExit, params string[] args) {
+		this.forceExit = forceExit;
+
 		if (!listening) {
 			var pi = new Diag.ProcessStartInfo ();
 
@@ -155,6 +162,7 @@ public class DebuggerTests
 
 	[SetUp]
 	public void SetUp () {
+		ThreadMirror.NativeTransitions = false;
 		Start (new string [] { "dtest-app.exe" });
 	}
 
@@ -167,6 +175,9 @@ public class DebuggerTests
 			step_req.Disable ();
 
 		vm.Resume ();
+		if (forceExit)
+			vm.Exit (0);
+
 		while (true) {
 			Event e = GetNextEvent ();
 
@@ -175,6 +186,7 @@ public class DebuggerTests
 
 			vm.Resume ();
 		}
+		vm = null;
 	}
 
 	[Test]
@@ -3234,6 +3246,62 @@ public class DebuggerTests
 		AssertThrows<InvalidOperationException> (delegate {
 				entry_point.DeclaringType.GetMethod ("Main").MakeGenericMethod (new TypeMirror [] { intm });
 			});
+	}
+
+	[Test]
+	public void InspectThreadSuspenedOnWaitOne () {
+		TearDown ();
+		Start (true, "dtest-app.exe", "wait-one" );
+
+		ThreadMirror.NativeTransitions = true;
+
+		var evt = run_until ("wait_one");
+		Assert.IsNotNull (evt, "#1");
+
+		var thread = evt.Thread;
+		Assert.AreEqual (ThreadState.Running, thread.ThreadState, "#1.1");
+
+		var frames = thread.GetFrames ();
+		Assert.IsNotNull (frames, "#2");
+		Assert.AreEqual (2, frames.Length, "#3");
+		Assert.AreEqual ("wait_one", frames [0].Method.Name, "#4");
+		Assert.AreEqual ("Main", frames [1].Method.Name, "#5");
+
+		vm.Resume ();
+
+		Thread.Sleep (500); //FIXME this is racy, maybe single step? or something?
+
+		vm.Suspend ();
+		Assert.AreEqual (ThreadState.WaitSleepJoin, thread.ThreadState, "#6");
+
+		frames = thread.GetFrames ();
+		Assert.AreEqual (4, frames.Length, "#7");
+		Assert.AreEqual ("WaitOne_internal", frames [0].Method.Name, "#8");
+		Assert.AreEqual ("WaitOne", frames [1].Method.Name, "#8.1");
+		Assert.AreEqual ("wait_one", frames [2].Method.Name, "#9");
+		Assert.AreEqual ("Main", frames [3].Method.Name, "#10");
+
+
+		var frame = frames [0];
+		Assert.IsTrue (frame.IsNativeTransition, "#11.1");
+		try {
+			frame.GetThis ();
+			Assert.Fail ("Known limitation - can't get info from m2n frames");
+		} catch (AbsentInformationException) {}
+
+		frame = frames [1];
+		Assert.IsFalse (frame.IsNativeTransition, "#12.1");
+		var wait_one_this = frame.GetThis ();
+		Assert.IsNotNull (wait_one_this, "#12.2");
+
+		frame = frames [2];
+		var locals = frame.GetVisibleVariables ();
+		Assert.AreEqual (1, locals.Count, "#13.1");
+
+		var local_0 = frame.GetValue (locals [0]);
+		Assert.IsNotNull (local_0, "#13.2");
+
+		Assert.AreEqual (wait_one_this, local_0, "#14.2");
 	}
 }
 
