@@ -58,7 +58,7 @@ namespace Cairo
 		[Obsolete ("Use Dispose()")]
 		public void Destroy ()
 		{
-			NativeMethods.cairo_font_options_destroy (handle);
+			Dispose ();
 		}
 
 		public void Dispose ()

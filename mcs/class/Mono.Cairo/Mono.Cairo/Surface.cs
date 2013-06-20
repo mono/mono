@@ -190,9 +190,10 @@ namespace Cairo {
 			}
 		}
 
+		[Obsolete ("Use Dispose()")]
 		public void Destroy()
 		{
-			Dispose (true);
+			Dispose ();
 		}
 
 		public void SetFallbackResolution (double x, double y)

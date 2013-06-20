@@ -109,7 +109,7 @@ namespace Cairo {
 		[Obsolete ("Use Dispose()")]
 		public void Destroy ()
 		{
-			NativeMethods.cairo_pattern_destroy (pattern);
+			Dispose ();
 		}
 
 		public Status Status
