@@ -1032,7 +1032,7 @@ namespace MonoTests.System.Net.Sockets {
 			
 			client.BeginReceive (BRCallback, client);
 
-			IPEndPoint ep = new IPEndPoint (Dns.GetHostEntry (string.Empty).AddressList[0], 1237);
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 1237);
 			byte[] send_bytes = new byte[] {10, 11, 12, 13};
 			client.Send (send_bytes, send_bytes.Length, ep);
 
@@ -1052,7 +1052,7 @@ namespace MonoTests.System.Net.Sockets {
 		public void Available ()
 		{
 			UdpClient client = new UdpClient (1238);
-			IPEndPoint ep = new IPEndPoint (Dns.GetHostEntry (string.Empty).AddressList[0], 1238);
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 1238);
 			byte[] bytes = new byte[] {10, 11, 12, 13};
 			
 			client.Send (bytes, bytes.Length, ep);
