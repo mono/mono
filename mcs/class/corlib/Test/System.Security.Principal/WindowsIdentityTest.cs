@@ -213,6 +213,9 @@ namespace MonoTests.System.Security.Principal {
 		}
 
 		[Test]
+#if __IOS__
+		[Ignore ("https://bugzilla.xamarin.com/show_bug.cgi?id=12789")]
+#endif
 		public void SerializeRoundTrip () 
 		{
 			WindowsIdentity wi = WindowsIdentity.GetCurrent ();
