@@ -32,14 +32,18 @@ namespace Cairo {
 	{
 		protected IntPtr handle = IntPtr.Zero;
 
-		internal ScaledFont (IntPtr handle)
+		internal ScaledFont (IntPtr handle, bool owner)
 		{
 			this.handle = handle;
+			if (!owner)
+				NativeMethods.cairo_scaled_font_reference (handle);
+			if (CairoDebug.Enabled)
+				CairoDebug.OnAllocated (handle);
 		}
 
 		public ScaledFont (FontFace fontFace, Matrix matrix, Matrix ctm, FontOptions options)
+			: this (NativeMethods.cairo_scaled_font_create (fontFace.Handle, matrix, ctm, options.Handle), true)
 		{
-			handle = NativeMethods.cairo_scaled_font_create (fontFace.Handle, matrix, ctm, options.Handle);
 		}
 
 		~ScaledFont ()
@@ -47,19 +51,19 @@ namespace Cairo {
 			Dispose (false);
 		}
 
-                public IntPtr Handle {
-                        get {
-                                return handle;
-                        }
-                }
+		public IntPtr Handle {
+			get {
+				return handle;
+			}
+		}
 
 		public FontExtents FontExtents {
-                        get {
-                                FontExtents extents;
-                                NativeMethods.cairo_scaled_font_extents (handle, out extents);
-                                return extents;
-                        }
-                }
+			get {
+				FontExtents extents;
+				NativeMethods.cairo_scaled_font_extents (handle, out extents);
+				return extents;
+			}
+		}
 
 		public Matrix FontMatrix {
 			get {
@@ -99,16 +103,21 @@ namespace Cairo {
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (disposing) {
-				NativeMethods.cairo_scaled_font_destroy (handle);
-				handle = IntPtr.Zero;
-			}
+			if (!disposing || CairoDebug.Enabled)
+				CairoDebug.OnDisposed<ScaledFont> (handle, disposing);
+
+			if (!disposing|| handle == IntPtr.Zero)
+				return;
+
+			NativeMethods.cairo_scaled_font_destroy (handle);
+			handle = IntPtr.Zero;
 		}
-		
-                protected void Reference ()
-                {
-                        NativeMethods.cairo_scaled_font_reference (handle);
-                }
+
+		[Obsolete]
+		protected void Reference ()
+		{
+			NativeMethods.cairo_scaled_font_reference (handle);
+		}
 	}
 }
 

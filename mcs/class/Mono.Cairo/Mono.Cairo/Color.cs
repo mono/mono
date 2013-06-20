@@ -1,9 +1,16 @@
 //
-// Mono.Cairo.Gradient.cs
+// Mono.Cairo.Context.cs
 //
-// Author: Jordi Mas (jordi@ximian.com)
-//         Hisham Mardam Bey (hisham.mardambey@gmail.com)
-// (C) Ximian Inc, 2004.
+// Author:
+//   Duncan Mak (duncan@ximian.com)
+//   Miguel de Icaza (miguel@novell.com)
+//   Hisham Mardam Bey (hisham.mardambey@gmail.com)
+//   Alp Toker (alp@atoker.com)
+//
+// (C) Ximian Inc, 2003.
+// (C) Novell Inc, 2003.
+//
+// This is an OO wrapper API for the Cairo API.
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -27,40 +34,42 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
 namespace Cairo {
 
-	public class Gradient : Pattern
+	public struct Color
 	{
-		protected Gradient (IntPtr handle, bool owned) : base (handle, owned)
+		public Color(double r, double g, double b) : this (r, g, b, 1.0)
 		{
 		}
 
-		[Obsolete]
-		protected Gradient ()
+		public Color(double r, double g, double b, double a)
 		{
+			this.r = r;
+			this.g = g;
+			this.b = b;
+			this.a = a;
 		}
 
-		public int ColorStopCount {
-			get {
-				int cnt;
-				NativeMethods.cairo_pattern_get_color_stop_count (Handle, out cnt);
-				return cnt;
-			}
+		double r, g, b, a;
+
+		public double R {
+			get { return r; }
+			set { r = value; }
 		}
 
-		public Status AddColorStop (double offset, Color c)
-		{
-			NativeMethods.cairo_pattern_add_color_stop_rgba (Handle, offset, c.R, c.G, c.B, c.A);
-			return Status;
+		public double G {
+			get { return g; }
+			set { g = value; }
 		}
 
-		public Status AddColorStopRgb (double offset, Color c)
-		{
-			NativeMethods.cairo_pattern_add_color_stop_rgb (Handle, offset, c.R, c.G, c.B);
-			return Status;
+		public double B {
+			get { return b; }
+			set { b = value; }
+		}
+
+		public double A {
+			get { return a; }
+			set { a = value; }
 		}
 	}
 }
-
