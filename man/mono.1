@@ -906,6 +906,11 @@ evictions start happening. If evictions are too frequent this could impose
 unnecessary overhead, which could be avoided by using this environment variable
 to set up a higher cache size (or to lower memory requirements by decreasing it).
 .TP
+\fBMONO_CAIRO_DEBUG_DISPOSE\fR
+If set, causes Mono.Cairo to collect stack traces when objects are allocated,
+so that the finalization/Dispose warnings include information about the
+instance's origin.
+.TP
 \fBMONO_CFG_DIR\fR
 If set, this variable overrides the default system configuration directory
 ($PREFIX/etc). It's used to locate machine.config file.
