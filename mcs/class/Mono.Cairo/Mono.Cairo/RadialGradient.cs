@@ -1,4 +1,4 @@
-//                                                   
+//
 // Mono.Cairo.Pattern.cs
 //
 // Author: Jordi Mas (jordi@ximian.com)
@@ -14,10 +14,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -30,16 +30,16 @@
 using System;
 
 namespace Cairo {
-   
+
 	public class RadialGradient : Gradient
 	{
-		internal RadialGradient (IntPtr handle) : base (handle)
+		internal RadialGradient (IntPtr handle, bool owned) : base (handle, owned)
 		{
 		}
 
 		public RadialGradient (double cx0, double cy0, double radius0, double cx1, double cy1, double radius1)
+			: base (NativeMethods.cairo_pattern_create_radial (cx0, cy0, radius0, cx1, cy1, radius1), true)
 		{
-			pattern = NativeMethods.cairo_pattern_create_radial (cx0, cy0, radius0, cx1, cy1, radius1);
 		}
 	}
 }
