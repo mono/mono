@@ -72,10 +72,12 @@ namespace System.Net
 	public class ServicePointManager {
 		class SPKey {
 			Uri uri; // schema/host/port
+			Uri proxy;
 			bool use_connect;
 
-			public SPKey (Uri uri, bool use_connect) {
+			public SPKey (Uri uri, Uri proxy, bool use_connect) {
 				this.uri = uri;
+				this.proxy = proxy;
 				this.use_connect = use_connect;
 			}
 
@@ -87,8 +89,16 @@ namespace System.Net
 				get { return use_connect; }
 			}
 
+			public bool UsesProxy {
+				get { return proxy != null; }
+			}
+
 			public override int GetHashCode () {
-				return uri.GetHashCode () + ((use_connect) ? 1 : 0);
+				int hash = 23;
+				hash = hash * 31 + ((use_connect) ? 1 : 0);
+				hash = hash * 31 + uri.GetHashCode ();
+				hash = hash * 31 + (proxy != null ? proxy.GetHashCode () : 0);
+				return hash;
 			}
 
 			public override bool Equals (object obj) {
@@ -97,7 +107,13 @@ namespace System.Net
 					return false;
 				}
 
-				return (uri.Equals (other.uri) && other.use_connect == use_connect);
+				if (!uri.Equals (other.uri))
+					return false;
+				if (use_connect != other.use_connect || UsesProxy != other.UsesProxy)
+					return false;
+				if (UsesProxy && !proxy.Equals (other.proxy))
+					return false;
+				return true;
 			}
 		}
 
@@ -325,7 +341,7 @@ namespace System.Net
 			
 			ServicePoint sp = null;
 			lock (servicePoints) {
-				SPKey key = new SPKey (origAddress, useConnect);
+				SPKey key = new SPKey (origAddress, usesProxy ? address : null, useConnect);
 				sp = servicePoints [key] as ServicePoint;
 				if (sp != null)
 					return sp;
