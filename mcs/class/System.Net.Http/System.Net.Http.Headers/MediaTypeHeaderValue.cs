@@ -85,7 +85,8 @@ namespace System.Net.Http.Headers
 					throw new ArgumentNullException ("MediaType");
 
 				string temp;
-				if (TryParseMediaType (new Lexer (value), out temp) != Token.Type.End)
+				var token = TryParseMediaType (new Lexer (value), out temp);
+				if (token == null || token.Value.Kind != Token.Type.End)
 					throw new FormatException ();
 
 				media_type = temp;
