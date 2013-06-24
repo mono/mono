@@ -234,6 +234,7 @@ net_4_5_dirs := \
 	System.Threading.Tasks.Dataflow \
 	System.ComponentModel.Composition.4.5 \
 	System.Net.Http	\
+	System.Net.Http.WebRequest \
 	System.Web.Razor \
 	System.Web.WebPages.Deployment \
 	System.Web.WebPages \

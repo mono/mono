@@ -58,7 +58,7 @@ namespace System.Net.Http
 			useProxy = true;
 		}
 
-		void EnsureModifiability ()
+		internal void EnsureModifiability ()
 		{
 			if (sentRequest)
 				throw new InvalidOperationException (
@@ -219,7 +219,7 @@ namespace System.Net.Http
 			base.Dispose (disposing);
 		}
 
-		HttpWebRequest CreateWebRequest (HttpRequestMessage request)
+		internal virtual HttpWebRequest CreateWebRequest (HttpRequestMessage request)
 		{
 			var wr = new HttpWebRequest (request.RequestUri);
 			wr.ThrowOnError = false;
