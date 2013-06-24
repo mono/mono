@@ -1876,5 +1876,17 @@ namespace MonoTests.System
 			string escaped = uri.GetComponents (UriComponents.Fragment, UriFormat.UriEscaped);
 			Assert.AreEqual ("id=1%262&sort=asc", escaped, "UriEscaped");
 		}
+
+		[Test]
+		// Bug #12631
+		public void LocalPathWithBaseUrl ()
+		{
+			var mainUri = new Uri ("http://www.imdb.com");
+			var uriPath = "/title/tt0106521";
+
+			Uri result;
+			Assert.IsTrue (Uri.TryCreate (mainUri, uriPath, out result), "#1");
+			Assert.AreEqual ("http://www.imdb.com/title/tt0106521", result.ToString (), "#2");
+		}
 	}
 }
