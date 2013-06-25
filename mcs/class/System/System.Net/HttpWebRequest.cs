@@ -421,6 +421,10 @@ namespace System.Net
 			if (idx >= 0)
 				return false;
 
+			IPAddress ipaddr;
+			if (IPAddress.TryParse (val, out ipaddr))
+				return true;
+
 			string u = scheme + "://" + val + "/";
 			return Uri.IsWellFormedUriString (u, UriKind.Absolute);
 		}
