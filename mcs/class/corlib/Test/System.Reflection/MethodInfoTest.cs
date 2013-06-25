@@ -771,6 +771,18 @@ namespace MonoTests.System.Reflection
 		}
 #endif
 
+
+		public int? Bug12856 ()
+		{
+			return null;
+		}
+
+		[Test] //Bug #12856
+		public void MethodToStringShouldPrintFullNameOfGenericStructs ()
+		{
+			var m = GetType ().GetMethod ("Bug12856");
+			Assert.AreEqual ("System.Nullable`1[System.Int32] Bug12856()", m.ToString (), "#1");
+		}
 	}
 	
 #if NET_2_0
