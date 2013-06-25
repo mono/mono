@@ -1,11 +1,12 @@
 // CS0464: The result of comparing type `int?' with null is always `false'
-// Line: 9
+// Line: 10
 // Compiler options: -warnaserror -warn:2
 
-public class X
+class C
 {
-	public static bool Compute (int x)
+	public static void Main ()
 	{
-		return x < null;
+		int? k = 1;
+		var x = k > null;
 	}
 }

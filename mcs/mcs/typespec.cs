@@ -653,6 +653,20 @@ namespace Mono.CSharp
 			}
 		}
 
+		public static bool IsNonNullableValueType (TypeSpec t)
+		{
+			switch (t.Kind) {
+			case MemberKind.TypeParameter:
+				return ((TypeParameterSpec) t).IsValueType;
+			case MemberKind.Struct:
+				return !t.IsNullableType;
+			case MemberKind.Enum:
+				return true;
+			default:
+				return false;
+			}
+		}
+
 		public static bool IsValueType (TypeSpec t)
 		{
 			switch (t.Kind) {

@@ -1103,7 +1103,7 @@ namespace Mono.CSharp {
 				if (implicitOnly && !TypeSpec.IsReferenceType (target_type) && !target_type.IsNullableType) {
 					source_type_expr = source;
 				} else {
-					source_type_expr = Nullable.Unwrap.Create (source);
+					source_type_expr = Nullable.Unwrap.CreateUnwrapped (source);
 					source_type = source_type_expr.Type;
 				}
 			} else {

@@ -1254,12 +1254,6 @@
       <method name="System.Object System.Collections.IEnumerator.get_Current()" attrs="2529">
         <size>14</size>
       </method>
-      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
-        <size>14</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;string&gt;.GetEnumerator()" attrs="481">
-        <size>26</size>
-      </method>
       <method name="Boolean MoveNext()" attrs="486">
         <size>154</size>
       </method>
@@ -1268,6 +1262,12 @@
       </method>
       <method name="Void Reset()" attrs="486">
         <size>6</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
+        <size>14</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;string&gt;.GetEnumerator()" attrs="481">
+        <size>26</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -6869,7 +6869,7 @@
   <test name="gtest-130.cs">
     <type name="MyTest">
       <method name="Void Main(System.String[])" attrs="150">
-        <size>938</size>
+        <size>908</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -6879,7 +6879,7 @@
   <test name="gtest-131.cs">
     <type name="MyTest">
       <method name="Void Main(System.String[])" attrs="150">
-        <size>1332</size>
+        <size>1300</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -6977,7 +6977,7 @@
   <test name="gtest-137.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="150">
-        <size>158</size>
+        <size>240</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -6987,7 +6987,7 @@
   <test name="gtest-138.cs">
     <type name="X">
       <method name="Void Main()" attrs="150">
-        <size>62</size>
+        <size>102</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -7070,7 +7070,7 @@
     </type>
     <type name="X">
       <method name="Int32 Main()" attrs="150">
-        <size>2253</size>
+        <size>2163</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -7089,7 +7089,7 @@
         <size>9</size>
       </method>
       <method name="Int32 Test()" attrs="145">
-        <size>1157</size>
+        <size>1276</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>38</size>
@@ -13306,7 +13306,7 @@
   <test name="gtest-377.cs">
     <type name="D">
       <method name="Void Main()" attrs="150">
-        <size>92</size>
+        <size>68</size>
       </method>
       <method name="Void .cctor()" attrs="6289">
         <size>26</size>
@@ -13500,7 +13500,7 @@
     </type>
     <type name="C">
       <method name="Int32 Main()" attrs="150">
-        <size>279</size>
+        <size>298</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -13622,7 +13622,7 @@
   <test name="gtest-389.cs">
     <type name="C">
       <method name="Int32 Main()" attrs="150">
-        <size>261</size>
+        <size>253</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -13994,7 +13994,7 @@
     </type>
     <type name="NullableColorTests">
       <method name="Int32 Main()" attrs="150">
-        <size>117</size>
+        <size>120</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -14647,7 +14647,7 @@
   <test name="gtest-435.cs">
     <type name="testcase.Program">
       <method name="Int32 Main()" attrs="150">
-        <size>293</size>
+        <size>371</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -16927,7 +16927,7 @@
   <test name="gtest-540.cs">
     <type name="C">
       <method name="Int32 Main()" attrs="150">
-        <size>964</size>
+        <size>762</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -17081,7 +17081,7 @@
         <size>10</size>
       </method>
       <method name="Int32 Main()" attrs="150">
-        <size>128</size>
+        <size>353</size>
       </method>
     </type>
   </test>
@@ -17965,6 +17965,104 @@
     <type name="Test">
       <method name="Void Main()" attrs="150">
         <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-584.cs">
+    <type name="S">
+      <method name="Boolean op_Equality(S, S)" attrs="2198">
+        <size>7</size>
+      </method>
+      <method name="Boolean op_Inequality(S, S)" attrs="2198">
+        <size>7</size>
+      </method>
+      <method name="Nullable`1 op_Implicit(S)" attrs="2198">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Main()" attrs="150">
+        <size>531</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-585.cs">
+    <type name="S">
+      <method name="Int32 op_Implicit(S)" attrs="2198">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="S2">
+      <method name="Nullable`1 op_Implicit(S2)" attrs="2198">
+        <size>19</size>
+      </method>
+    </type>
+    <type name="S3">
+      <method name="System.String op_Implicit(S3)" attrs="2198">
+        <size>26</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Main()" attrs="150">
+        <size>436</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-586.cs">
+    <type name="S">
+      <method name="Boolean op_Equality(S, S)" attrs="2198">
+        <size>7</size>
+      </method>
+      <method name="Boolean op_Inequality(S, S)" attrs="2198">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="S2">
+      <method name="Boolean op_Equality(S2, S2)" attrs="2198">
+        <size>22</size>
+      </method>
+      <method name="Boolean op_Inequality(S2, S2)" attrs="2198">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="S3">
+      <method name="Nullable`1 op_Implicit(S3)" attrs="2198">
+        <size>30</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Main()" attrs="150">
+        <size>661</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-587.cs">
+    <type name="S">
+      <method name="System.String op_Implicit(S)" attrs="2198">
+        <size>14</size>
+      </method>
+      <method name="Nullable`1 op_Implicit(S)" attrs="2198">
+        <size>15</size>
+      </method>
+      <method name="E op_Implicit(S)" attrs="2198">
+        <size>10</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Main()" attrs="150">
+        <size>139</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -19181,7 +19279,7 @@
         <size>239</size>
       </method>
       <method name="Void ConvertTest_7()" attrs="129">
-        <size>123</size>
+        <size>108</size>
       </method>
       <method name="Void ConvertTest_8()" attrs="129">
         <size>119</size>
@@ -19274,7 +19372,7 @@
         <size>170</size>
       </method>
       <method name="Void EqualTest_11()" attrs="129">
-        <size>133</size>
+        <size>148</size>
       </method>
       <method name="Void EqualTest_12()" attrs="129">
         <size>128</size>
@@ -19283,7 +19381,7 @@
         <size>125</size>
       </method>
       <method name="Void EqualTest_14()" attrs="129">
-        <size>102</size>
+        <size>132</size>
       </method>
       <method name="Void EqualTest_15()" attrs="129">
         <size>160</size>
@@ -19319,7 +19417,7 @@
         <size>198</size>
       </method>
       <method name="Void ExclusiveOrTest_8()" attrs="129">
-        <size>164</size>
+        <size>179</size>
       </method>
       <method name="Void GreaterThanTest()" attrs="129">
         <size>100</size>
@@ -19706,7 +19804,7 @@
         <size>170</size>
       </method>
       <method name="Void NotEqualTest_11()" attrs="129">
-        <size>133</size>
+        <size>148</size>
       </method>
       <method name="Void OrTest()" attrs="129">
         <size>142</size>
@@ -19996,7 +20094,7 @@
     </type>
     <type name="Tester">
       <method name="Void LessThanTest_9()" attrs="129">
-        <size>199</size>
+        <size>184</size>
       </method>
     </type>
   </test>
@@ -20024,7 +20122,7 @@
   <test name="gtest-etree-03.cs">
     <type name="S`1[T]">
       <method name="Int32 Test()" attrs="150">
-        <size>164</size>
+        <size>139</size>
       </method>
     </type>
     <type name="C">
@@ -20053,7 +20151,7 @@
     </type>
     <type name="C">
       <method name="Int32 Main()" attrs="150">
-        <size>394</size>
+        <size>495</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -20061,6 +20159,11 @@
     </type>
     <type name="C+&lt;Main&gt;c__AnonStorey0">
       <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Foo">
+      <method name="Foo op_Addition(Foo, Foo)" attrs="2198">
         <size>7</size>
       </method>
     </type>
@@ -41355,10 +41458,10 @@
   <test name="test-618.cs">
     <type name="C">
       <method name="Void ZeroBasedReductions()" attrs="150">
-        <size>16</size>
+        <size>22</size>
       </method>
       <method name="Void ZeroBasedReductionsWithConversion()" attrs="150">
-        <size>16</size>
+        <size>18</size>
       </method>
       <method name="Int32 Main()" attrs="150">
         <size>41</size>
@@ -41929,7 +42032,7 @@
   <test name="test-640.cs">
     <type name="C">
       <method name="Int32 Main()" attrs="150">
-        <size>128</size>
+        <size>125</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -45290,7 +45393,7 @@
     </type>
     <type name="Program">
       <method name="Int32 Main()" attrs="150">
-        <size>438</size>
+        <size>410</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -55590,7 +55693,7 @@
     </type>
     <type name="Tester+&lt;ArrayAccessTest_7&gt;c__async6">
       <method name="Void MoveNext()" attrs="486">
-        <size>385</size>
+        <size>426</size>
       </method>
       <method name="Int32 &lt;&gt;m__14()" attrs="145">
         <size>9</size>
@@ -55598,7 +55701,7 @@
     </type>
     <type name="Tester+&lt;ArrayAccessTest_8&gt;c__async7">
       <method name="Void MoveNext()" attrs="486">
-        <size>670</size>
+        <size>792</size>
       </method>
       <method name="Int32 &lt;&gt;m__15()" attrs="145">
         <size>9</size>
@@ -55681,7 +55784,7 @@
     </type>
     <type name="Tester+&lt;BinaryTest_3&gt;c__asyncE">
       <method name="Void MoveNext()" attrs="486">
-        <size>1082</size>
+        <size>1137</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__28()" attrs="145">
         <size>14</size>
@@ -55704,7 +55807,7 @@
     </type>
     <type name="Tester+&lt;BinaryTest_4&gt;c__asyncF">
       <method name="Void MoveNext()" attrs="486">
-        <size>809</size>
+        <size>872</size>
       </method>
       <method name="Nullable`1 &lt;&gt;m__2E()" attrs="145">
         <size>14</size>
@@ -56359,7 +56462,7 @@
     </type>
     <type name="Tester+&lt;UnaryTest_2&gt;c__async3C">
       <method name="Void MoveNext()" attrs="486">
-        <size>354</size>
+        <size>339</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
@@ -56367,7 +56470,7 @@
     </type>
     <type name="Tester+&lt;UnaryTest_3&gt;c__async3D">
       <method name="Void MoveNext()" attrs="486">
-        <size>369</size>
+        <size>372</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>

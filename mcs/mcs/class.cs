@@ -1178,7 +1178,7 @@ namespace Mono.CSharp
 				}
 
 				bool pair_found = false;
-				for (int ii = i + 1; ii < members.Count; ++ii) {
+				for (int ii = 0; ii < members.Count; ++ii) {
 					var o_b = members[ii] as Operator;
 					if (o_b == null || o_b.OperatorType != matching_type)
 						continue;
