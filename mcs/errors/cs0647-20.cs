@@ -3,10 +3,10 @@
 
 using System.Runtime.CompilerServices;
 
-class Test
+class Program
 {
-	[MethodImplAttribute(444)]
-	public void test ()
+	[MethodImpl((MethodImplOptions)255)]
+	void Foo()
 	{
 	}
 }

@@ -1025,10 +1025,17 @@ namespace Mono.CSharp {
 									if (string.IsNullOrEmpty (value))
 										Error_AttributeEmitError ("DllName cannot be empty or null");
 								}
-							} else if (Type == predefined.MethodImpl && pt.BuiltinType == BuiltinTypeSpec.Type.Short &&
-								!System.Enum.IsDefined (typeof (MethodImplOptions), ((Constant) arg_expr).GetValue ().ToString ())) {
-								Error_AttributeEmitError ("Incorrect argument value.");
-								return;
+							} else if (Type == predefined.MethodImpl) {
+								if (pos_args.Count == 1) {
+									var value = (int) ((Constant) arg_expr).GetValueAsLong ();
+
+									//
+									// Explicit 256 check is here to allow AggressiveInlining with pre 4.5 mscorlibs
+									//
+									if (value != 256 && !System.Enum.IsDefined (typeof (MethodImplOptions), value)) {
+										Error_AttributeEmitError ("Incorrect argument value");
+									}
+								}
 							}
 						}
 

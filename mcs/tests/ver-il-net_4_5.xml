@@ -30854,10 +30854,16 @@
         <size>2</size>
       </method>
       <method name="Int32 Main()" attrs="150">
-        <size>51</size>
+        <size>136</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+      <method name="Void test2()" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void test3()" attrs="134">
+        <size>2</size>
       </method>
     </type>
   </test>
