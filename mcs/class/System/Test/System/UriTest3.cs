@@ -181,6 +181,9 @@ namespace MonoTests.System
 			uri = new Uri ("http://dummy.com");
 			Assert.IsTrue (Uri.TryCreate (relative, UriKind.Relative, out uri), "relative-Relative");
 			Assert.AreEqual (relative, uri.OriginalString, "relative-RelativeOrAbsolute-OriginalString");
+
+			Assert.IsTrue (Uri.TryCreate ("http://mono-project.com/☕", UriKind.Absolute, out uri), "highunicode-Absolute");
+			Assert.AreEqual("http://mono-project.com/%E2%98%95", uri.AbsoluteUri, "highunicode-Absolute-AbsoluteUri");
 		}
 
 		[Test] // TryCreate (String, UriKind, Uri)

@@ -209,6 +209,9 @@ namespace System {
 					success = false;
 					break;
 				}
+
+				if (success && isAbsoluteUri && (path.Length > 0))
+					path = EscapeString (path);
 			}
 		}
 
