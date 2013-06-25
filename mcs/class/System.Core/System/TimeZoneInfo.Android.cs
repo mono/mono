@@ -185,7 +185,7 @@ namespace System {
 
 				start = length = 0;
 
-				int i = Array.BinarySearch (names, name);
+				int i = Array.BinarySearch (names, name, StringComparer.Ordinal);
 				if (i < 0)
 					return null;
 
@@ -291,6 +291,40 @@ namespace System {
 					return buf.ToString ();
 				return null;
 			}
+
+#if SELF_TEST
+			/*
+			 * Compile:
+			 *    mcs  /out:tzi.exe "/d:INSIDE_CORLIB;MONODROID;NET_4_0;LIBC;SELF_TEST" System/TimeZone*.cs ../../build/common/Consts.cs
+			 * Prep:
+			 *    mkdir -p usr/share/zoneinfo
+			 *    android_root=`adb shell echo '$ANDROID_ROOT' | tr -d "\r"`
+			 *    adb pull $android_root/usr/share/zoneinfo usr/share/zoneinfo
+			 * Run:
+			 *    ANDROID_ROOT=`pwd` mono tzi.exe
+			 */
+			static void Main (string[] args)
+			{
+				Console.WriteLine ("Version: {0}", version);
+				for (int i = 0; i < names.Length; ++i) {
+					Console.Write ("{0,3}\tname={1,-40} start={2,-10} length={3,-4} offset=0x{4,8}",
+							i, names [i], starts [i], lengths [i], offsets [i].ToString ("x8"));
+					try {
+						TimeZoneInfo zone = _GetTimeZone (names [i]);
+						if (zone != null)
+							Console.Write (" {0}", zone);
+						else {
+							Console.Write (" ERROR:null Index? {0}",
+									Array.BinarySearch (names, names [i], StringComparer.Ordinal));
+						}
+					} catch (Exception e) {
+						Console.WriteLine ();
+						Console.Write ("ERROR: {0}", e);
+					}
+					Console.WriteLine ();
+				}
+			}
+#endif
 		}
 	}
 }
