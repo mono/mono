@@ -385,6 +385,19 @@ namespace Mono.CSharp {
 			return HasSecurityAttribute && IsSecurityActionValid ();
 		}
 
+		static bool IsValidMethodImplOption (int value)
+		{
+			//
+			// Allow to use AggressiveInlining on any runtime/corlib
+			//
+			MethodImplOptions all = (MethodImplOptions) 256;
+			foreach (MethodImplOptions v in System.Enum.GetValues (typeof (MethodImplOptions))) {
+				all |= v;
+			}
+
+			return ((MethodImplOptions) value | all) == all;
+		}
+
 		static bool IsValidArgumentType (TypeSpec t)
 		{
 			if (t.IsArray) {
@@ -1029,10 +1042,7 @@ namespace Mono.CSharp {
 								if (pos_args.Count == 1) {
 									var value = (int) ((Constant) arg_expr).GetValueAsLong ();
 
-									//
-									// Explicit 256 check is here to allow AggressiveInlining with pre 4.5 mscorlibs
-									//
-									if (value != 256 && !System.Enum.IsDefined (typeof (MethodImplOptions), value)) {
+									if (!IsValidMethodImplOption (value)) {
 										Error_AttributeEmitError ("Incorrect argument value");
 									}
 								}

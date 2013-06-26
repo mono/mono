@@ -19,8 +19,13 @@ class Test
 	{
 	}
 
-	[MethodImplAttribute((byte)32)]
+	[MethodImplAttribute((short)32)]
 	public void test3 ()
+	{
+	}
+
+	[MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
+	public void test4 ()
 	{
 	}
 
@@ -38,6 +43,10 @@ class Test
 		iflags = typeof (Test).GetMethod ("test3").GetMethodImplementationFlags ();
 		if ((iflags & MethodImplAttributes.Synchronized) == 0)
 			return 3;
+
+		iflags = typeof (Test).GetMethod ("test3").GetMethodImplementationFlags ();
+		if ((iflags & MethodImplAttributes.Synchronized) == 0)
+			return 4;
 
 		return 0;
 	}
