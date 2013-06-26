@@ -335,6 +335,9 @@ namespace System.Net
 						}
 						f.Write (buffer, 0, nread);
 					}
+
+					if (cLength > 0 && notify_total < cLength)
+						throw new WebException ("Download aborted prematurely.", WebExceptionStatus.ReceiveFailure);
 				} catch (ThreadInterruptedException){
 					if (request != null)
 						request.Abort ();
