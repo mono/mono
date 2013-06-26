@@ -258,6 +258,9 @@ namespace Mono.CSharp
 
 		public void BeginCatchBlock (TypeSpec type)
 		{
+			if (IsAnonymousStoreyMutateRequired)
+				type = CurrentAnonymousMethod.Storey.Mutator.Mutate (type);
+
 			ig.BeginCatchBlock (type.GetMetaInfo ());
 		}
 
