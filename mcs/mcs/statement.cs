@@ -2243,6 +2243,11 @@ namespace Mono.CSharp {
 				scope_initializers.Add (s);
 			}
 		}
+
+		public void InsertStatement (int index, Statement s)
+		{
+			statements.Insert (index, s);
+		}
 		
 		public void AddStatement (Statement s)
 		{
@@ -4185,10 +4190,10 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// Needed to emit anonymous storey initialization before
+			// Anonymous storey initialization has to happen before
 			// any generated switch dispatch
 			//
-			block.AddScopeStatement (new DispatchStatement (this));
+			block.InsertStatement (0, new DispatchStatement (this));
 
 			return true;
 		}
@@ -4415,12 +4420,6 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			//
-			// Mark sequence point explicitly to switch
-			//
-			ec.Mark (block.StartLocation);
-			block.IsCompilerGenerated = true;
-
 			if (string_dictionary != null) {
 				DoEmitStringSwitch (ec);
 			} else if (case_labels.Count < 4 || string_labels != null) {
@@ -4456,6 +4455,14 @@ namespace Mono.CSharp {
 				} else if (new_expr != value) {
 					value.EmitAssign (ec, new_expr, false, false);
 				}
+
+
+				//
+				// Next statement is compiler generated we don't need extra
+				// nop when we can use the statement for sequence point
+				//
+				ec.Mark (block.StartLocation);
+				block.IsCompilerGenerated = true;
 			}
 
 			block.Emit (ec);
