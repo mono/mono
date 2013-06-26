@@ -2480,8 +2480,6 @@ namespace MonoTests.System.Net
 
 			Assert.AreEqual (null, req.Headers.Get ("Date"));
 		}
-#endif
-
 		
 		[Test]
 		// Bug #12393
@@ -2513,6 +2511,8 @@ namespace MonoTests.System.Net
 				;
 			}
 		}
+#endif
+
 
 		class ListenerScope : IDisposable {
 			EventWaitHandle completed;
