@@ -19,7 +19,7 @@ class Test
 	{
 	}
 
-	[MethodImplAttribute((short)32)]
+	[MethodImplAttribute((byte)32)]
 	public void test3 ()
 	{
 	}
