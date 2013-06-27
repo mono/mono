@@ -1085,6 +1085,10 @@ if test x$target_win32 = xno; then
 		AC_MSG_RESULT(no)
 	])
 
+	dnl *****************************
+	dnl *** Checks for libsocket  ***
+	dnl *****************************
+	AC_CHECK_LIB(socket, socket, LIBS="$LIBS -lsocket")
 
 	dnl ******************************************************************
 	dnl *** Check for large file support                               ***
@@ -1132,11 +1136,6 @@ if test x$target_win32 = xno; then
 		AC_MSG_WARN([No 64 bit file size support available])
 	fi
 	
-	dnl *****************************
-	dnl *** Checks for libsocket  ***
-	dnl *****************************
-	AC_CHECK_LIB(socket, socket, LIBS="$LIBS -lsocket")
-
 	dnl *******************************
 	dnl *** Checks for MSG_NOSIGNAL ***
 	dnl *******************************
