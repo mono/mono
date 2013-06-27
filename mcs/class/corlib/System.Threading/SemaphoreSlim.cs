@@ -54,7 +54,7 @@ namespace System.Threading
 
 			this.maxCount = maxCount;
 			this.currCount = initialCount;
-			this.handle = new ManualResetEvent (initialCount == 0);
+			this.handle = new ManualResetEvent (initialCount > 0);
 		}
 
 		public void Dispose ()
