@@ -667,7 +667,7 @@ attribute_sections
 		var sect = (List<Attribute>) $2;
 		if (attrs == null)
 			attrs = new Attributes (sect);
-		else
+		else if (sect != null)
 			attrs.AddAttributes (sect);
 		$$ = attrs;
 	  }
@@ -736,7 +736,7 @@ attribute_section_cont
 	  }
 	| error
 	  {
- 		$$ = CheckAttributeTarget (GetTokenName (yyToken), GetLocation ($1)); 
+ 		CheckAttributeTarget (GetTokenName (yyToken), GetLocation ($1)); 
  		$$ = null;
 	  }
 	;	
