@@ -326,13 +326,11 @@ namespace System.Net
 					
 					int nread = 0;
 					long notify_total = 0;
-					while ((nread = st.Read (buffer, 0, length)) != 0){
-						if (async){
-							notify_total += nread;
+					while ((nread = st.Read (buffer, 0, length)) != 0) {
+						notify_total += nread;
+						if (async)
 							OnDownloadProgressChanged (
 								new DownloadProgressChangedEventArgs (notify_total, response.ContentLength, userToken));
-												      
-						}
 						f.Write (buffer, 0, nread);
 					}
 
