@@ -89,21 +89,6 @@ namespace MonoTests.System.Runtime.CompilerServices
 		}
 
 		[Test]
-		public void GetResultNotCompleted ()
-		{
-			TaskAwaiter<int> awaiter;
-
-			task = new Task<int> (() => 1);
-			awaiter = task.GetAwaiter ();
-
-			try {
-				awaiter.GetResult ();
-				Assert.Fail ();
-			} catch (InvalidOperationException) {
-			}
-		}
-
-		[Test]
 		public void GetResultCanceled ()
 		{
 			TaskAwaiter<int> awaiter;

@@ -52,10 +52,12 @@ namespace System.Runtime.CompilerServices
 
 		public void GetResult ()
 		{
-			if (task.Status != TaskStatus.RanToCompletion) {
+			if (!task.IsCompleted)
+				task.WaitCore (Timeout.Infinite, CancellationToken.None);
+
+			if (task.Status != TaskStatus.RanToCompletion)
 				// Merge current and dispatched stack traces if there is any
 				ExceptionDispatchInfo.Capture (HandleUnexpectedTaskResult (task)).Throw ();
-			}
 		}
 
 		internal static Exception HandleUnexpectedTaskResult (Task task)
@@ -66,7 +68,7 @@ namespace System.Runtime.CompilerServices
 			case TaskStatus.Faulted:
 				return task.Exception.InnerException;
 			default:
-				return new InvalidOperationException ("The task has not finished yet");
+				throw new ArgumentException ("Should never be reached");
 			}
 		}
 
