@@ -289,6 +289,30 @@ namespace System.IO {
 			return fullpath;
 		}
 
+		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+		// http://msdn.microsoft.com/en-us/library/windows/desktop/aa364963%28v=vs.85%29.aspx
+		// http://www.codeproject.com/Tips/223321/Win32-API-GetFullPathName
+		private static extern int GetFullPathName(string path, int numBufferChars, StringBuilder buffer, ref IntPtr lpFilePartOrNull); 
+
+		internal static string GetFullPathName(string path)
+		{
+			const int MAX_PATH = 260;
+			StringBuilder buffer = new StringBuilder(MAX_PATH);
+			IntPtr ptr = IntPtr.Zero;
+			int length = GetFullPathName(path, MAX_PATH, buffer, ref ptr);
+			if (length == 0)
+			{
+				int error = Marshal.GetLastWin32Error();
+				throw new IOException("Windows API call to GetFullPathName failed, Windows error code: " + error);
+			}
+			else if (length > MAX_PATH)
+			{
+				buffer = new StringBuilder(length);
+				GetFullPathName(path, length, buffer, ref ptr);
+			}
+			return buffer.ToString();
+		}
+
 		internal static string WindowsDriveAdjustment (string path)
 		{
 			// two special cases to consider when a drive is specified
@@ -304,7 +328,7 @@ namespace System.IO {
 				if (current [0] == path [0])
 					path = current; // we return it
 				else
-					path += '\\';
+					path = GetFullPathName(path); // we have to use the GetFullPathName Windows API
 			} else if ((path [2] != Path.DirectorySeparatorChar) && (path [2] != Path.AltDirectorySeparatorChar)) {
 				// second, the drive + a directory is specified *without* a separator between them (e.g. C:dir).
 				// If the current directory is on the specified drive...
@@ -312,8 +336,8 @@ namespace System.IO {
 					// then specified directory is appended to the current drive directory
 					path = Path.Combine (current, path.Substring (2, path.Length - 2));
 				} else {
-					// if not, then just pretend there was a separator (Path.Combine won't work in this case)
-					path = String.Concat (path.Substring (0, 2), DirectorySeparatorStr, path.Substring (2, path.Length - 2));
+					// we have to use the GetFullPathName Windows API
+					path = GetFullPathName(path);
 				}
 			}
 			return path;
