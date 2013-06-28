@@ -5806,6 +5806,11 @@ throw_statement
 		$$ = new Throw ((Expression) $2, GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($3));
 	  }
+	| THROW expression error
+	  {
+		Error_SyntaxError (yyToken);
+		$$ = new Throw ((Expression) $2, GetLocation ($1));
+	  }
 	| THROW error
 	  {
 		Error_SyntaxError (yyToken);
