@@ -401,12 +401,12 @@ namespace Mono.CSharp.Nullable
 	//
 	// Generic lifting expression, supports all S/S? -> T/T? cases
 	//
-	public class Lifted : Expression, IMemoryLocation
+	public class LiftedConversion : Expression, IMemoryLocation
 	{
 		Expression expr, null_value;
 		Unwrap unwrap;
 
-		public Lifted (Expression expr, Unwrap unwrap, TypeSpec type)
+		public LiftedConversion (Expression expr, Unwrap unwrap, TypeSpec type)
 		{
 			this.expr = expr;
 			this.unwrap = unwrap;
@@ -414,7 +414,7 @@ namespace Mono.CSharp.Nullable
 			this.type = type;
 		}
 
-		public Lifted (Expression expr, Expression unwrap, TypeSpec type)
+		public LiftedConversion (Expression expr, Expression unwrap, TypeSpec type)
 			: this (expr, unwrap as Unwrap, type)
 		{
 		}
@@ -445,9 +445,11 @@ namespace Mono.CSharp.Nullable
 
 			// Wrap target for T?
 			if (type.IsNullableType) {
-				expr = Wrap.Create (expr, type);
-				if (expr == null)
-					return null;
+				if (!expr.Type.IsNullableType) {
+					expr = Wrap.Create (expr, type);
+					if (expr == null)
+						return null;
+				}
 
 				null_value = LiftedNull.Create (type, loc);
 			} else if (TypeSpec.IsValueType (type)) {
@@ -474,6 +476,7 @@ namespace Mono.CSharp.Nullable
 			ec.MarkLabel (is_null_label);
 
 			null_value.Emit (ec);
+
 			ec.MarkLabel (end_label);
 		}
 

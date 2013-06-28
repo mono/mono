@@ -10944,11 +10944,18 @@
       </method>
     </type>
     <type name="X">
-      <method name="Void Main()" attrs="150">
-        <size>448</size>
-      </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+    </type>
+    <type name="S">
+      <method name="System.Nullable`1[System.Boolean] op_Implicit(S)" attrs="2198">
+        <size>12</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Int32 Main()" attrs="150">
+        <size>612</size>
       </method>
     </type>
   </test>
@@ -18318,6 +18325,24 @@
     <type name="S">
       <method name="System.Nullable`1[System.Int16] op_Implicit(S)" attrs="2198">
         <size>15</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-588.cs">
+    <type name="S">
+      <method name="System.Nullable`1[System.Int16] op_Implicit(S)" attrs="2198">
+        <size>15</size>
+      </method>
+      <method name="Int16 op_Implicit(S)" attrs="2198">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Int32 Main()" attrs="150">
+        <size>246</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>
