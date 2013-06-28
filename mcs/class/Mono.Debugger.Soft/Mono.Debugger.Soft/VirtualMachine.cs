@@ -124,7 +124,7 @@ namespace Mono.Debugger.Soft
 				conn.VM_Resume ();
 			} catch (CommandException ex) {
 				if (ex.ErrorCode == ErrorCode.NOT_SUSPENDED)
-					throw new InvalidOperationException ("The vm is not suspended.");
+					throw new VMNotSuspendedException ();
 				else
 					throw;
 			}
@@ -290,7 +290,7 @@ namespace Mono.Debugger.Soft
 			case ErrorCode.INVALID_FRAMEID:
 				throw new InvalidStackFrameException ();
 			case ErrorCode.NOT_SUSPENDED:
-				throw new InvalidOperationException ("The vm is not suspended.");
+				throw new VMNotSuspendedException ();
 			case ErrorCode.NOT_IMPLEMENTED:
 				throw new NotSupportedException ("This request is not supported by the protocol version implemented by the debuggee.");
 			case ErrorCode.ABSENT_INFORMATION:
@@ -689,6 +689,13 @@ namespace Mono.Debugger.Soft
 
 		public ErrorCode ErrorCode {
 			get; set;
+		}
+	}
+
+	public class VMNotSuspendedException : InvalidOperationException
+	{
+		public VMNotSuspendedException () : base ("The vm is not suspended.")
+		{
 		}
 	}
 }
