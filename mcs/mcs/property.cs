@@ -253,7 +253,7 @@ namespace Mono.CSharp
 					return;
 				}
 
-				base.ApplyAttributeBuilder (a, ctor, cdata, pa);
+				base.ApplyToExtraTarget (a, ctor, cdata, pa);
 			}
 
 			public override ParametersCompiled ParameterInfo {
@@ -1171,7 +1171,7 @@ namespace Mono.CSharp
 					return;
 				}
 
-				base.ApplyAttributeBuilder (a, ctor, cdata, pa);
+				base.ApplyToExtraTarget (a, ctor, cdata, pa);
 			}
 
 			public override AttributeTargets AttributeTargets {
