@@ -58,6 +58,9 @@ namespace Cairo {
 			if (disposing && !Enabled)
 				throw new InvalidOperationException ();
 
+			if (Environment.HasShutdownStarted)
+				return;
+
 			if (!disposing) {
 				Console.Error.WriteLine ("{0} is leaking, programmer is missing a call to Dispose", typeof(T).FullName);
 				if (Enabled) {
