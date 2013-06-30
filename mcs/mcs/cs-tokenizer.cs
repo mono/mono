@@ -1809,18 +1809,25 @@ namespace Mono.CSharp
 				x = reader.Read ();
 			}
 			
-			if (x == '\r') {
-				if (peek_char () == '\n') {
-					putback_char = -1;
-				}
+			if (x <= 13) {
+				if (x == '\r') {
+					if (peek_char () == '\n') {
+						putback_char = -1;
+					}
 
-				x = '\n';
-				advance_line ();
-			} else if (x == '\n' || x == UnicodeLS || x == UnicodePS) {
+					x = '\n';
+					advance_line ();
+				} else if (x == '\n') {
+					advance_line ();
+				} else {
+					col++;
+				}
+			} else if (x >= UnicodeLS && x <= UnicodePS) {
 				advance_line ();
 			} else {
 				col++;
 			}
+
 			return x;
 		}
 
@@ -1852,7 +1859,7 @@ namespace Mono.CSharp
 				throw new InternalErrorException (string.Format ("Secondary putback [{0}] putting back [{1}] is not allowed", (char)putback_char, (char) c), Location);
 			}
 
-			if (c == '\n' || c == UnicodeLS || c == UnicodePS || col == 0) {
+			if (c == '\n' || col == 0 || (c >= UnicodeLS && c <= UnicodePS)) {
 				// It won't happen though.
 				line--;
 				ref_line--;
