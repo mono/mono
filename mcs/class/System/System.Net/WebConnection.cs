@@ -30,9 +30,13 @@
 
 #if SECURITY_DEP
 
+#if MONOTOUCH
+using Mono.Security.Protocol.Tls;
+#else
 extern alias MonoSecurity;
-
 using MonoSecurity::Mono.Security.Protocol.Tls;
+#endif
+
 #endif
 
 using System.IO;
@@ -93,9 +97,11 @@ namespace System.Net
 		Exception connect_exception;
 		static object classLock = new object ();
 		static Type sslStream;
+#if !MONOTOUCH
 		static PropertyInfo piClient;
 		static PropertyInfo piServer;
 		static PropertyInfo piTrustFailure;
+#endif
 
 #if MONOTOUCH
 		[System.Runtime.InteropServices.DllImport ("__Internal")]
@@ -236,18 +242,21 @@ namespace System.Net
 #else
 				// HttpsClientStream is an internal glue class in Mono.Security.dll
 				sslStream = Type.GetType ("Mono.Security.Protocol.Tls.HttpsClientStream, " +
-							Consts.AssemblyMono_Security, false);
+							Consts.AssemblySystem, false);
 
 				if (sslStream == null) {
 					string msg = "Missing Mono.Security.dll assembly. " +
 							"Support for SSL/TLS is unavailable.";
 
+					Console.WriteLine (msg);
 					throw new NotSupportedException (msg);
 				}
 #endif
+#if !MONOTOUCH
 				piClient = sslStream.GetProperty ("SelectedClientCertificate");
 				piServer = sslStream.GetProperty ("ServerCertificate");
 				piTrustFailure = sslStream.GetProperty ("TrustFailure");
+#endif
 			}
 		}
 
@@ -426,14 +435,17 @@ namespace System.Net
 							if (!ok)
 								return false;
 						}
-
-						object[] args = new object [4] { serverStream,
-										request.ClientCertificates,
-										request, buffer};
-						nstream = (Stream) Activator.CreateInstance (sslStream, args);
 #if SECURITY_DEP
+#if MONOTOUCH
+						nstream = new HttpsClientStream (serverStream, request.ClientCertificates, request, buffer);
+#else
+						object[] args = new object [4] { serverStream,
+							request.ClientCertificates,
+							request, buffer};
+						nstream = (Stream) Activator.CreateInstance (sslStream, args);
+#endif
 						SslClientStream scs = (SslClientStream) nstream;
-						var helper = new ServicePointManager.ChainValidationHelper (request);
+						var helper = new ServicePointManager.ChainValidationHelper (request, request.Address.Host);
 						scs.ServerCertValidation2 += new CertificateValidationCallback2 (helper.ValidateChain);
 #endif
 						certsAvailable = false;
@@ -605,8 +617,14 @@ namespace System.Net
 		internal void GetCertificates () 
 		{
 			// here the SSL negotiation have been done
+#if SECURITY_DEP && MONOTOUCH
+			HttpsClientStream s = (nstream as HttpsClientStream);
+			X509Certificate client = s.SelectedClientCertificate;
+			X509Certificate server = s.ServerCertificate;
+#else
 			X509Certificate client = (X509Certificate) piClient.GetValue (nstream, null);
 			X509Certificate server = (X509Certificate) piServer.GetValue (nstream, null);
+#endif
 			sPoint.SetCertificates (client, server);
 			certsAvailable = (server != null);
 		}
@@ -1145,9 +1163,16 @@ namespace System.Net
 				}
 
 				// if SSL is in use then check for TrustFailure
-				if (ssl && (bool) piTrustFailure.GetValue (nstream, null)) {
-					wes = WebExceptionStatus.TrustFailure;
-					msg = "Trust failure";
+				if (ssl) {
+#if SECURITY_DEP && MONOTOUCH
+					HttpsClientStream https = (nstream as HttpsClientStream);
+					if (https.TrustFailure) {
+#else
+					if ((bool) piTrustFailure.GetValue (nstream, null)) {
+#endif
+						wes = WebExceptionStatus.TrustFailure;
+						msg = "Trust failure";
+					}
 				}
 
 				HandleError (wes, e, msg);
