@@ -66,6 +66,7 @@ namespace Mono.CSharp {
 		public bool EnhancedWarnings;
 		public bool LoadDefaultReferences;
 		public string SdkVersion;
+		public string CompilerHooksAssembly;
 
 		public string StrongNameKeyFile;
 		public string StrongNameKeyContainer;
@@ -1180,6 +1181,14 @@ namespace Mono.CSharp {
 				}
 				return ParseResult.Success;
 
+			case "/compilerhooks":
+				if (value.Length == 0) {
+					Error_RequiresFileName (option);
+					return ParseResult.Error;
+				}
+				settings.CompilerHooksAssembly = value;
+				return ParseResult.Success;
+
 			default:
 				return ParseResult.UnknownOption;
 			}
@@ -1543,6 +1552,7 @@ namespace Mono.CSharp {
 				"   -warnaserror[+|-]:W1[,Wn] Treats one or more compiler warnings as errors\n" +
 				"   -warn:0-4            Sets warning level, the default is 4 (short -w:)\n" +
 				"   -helpinternal        Shows internal and advanced compiler options\n" +
+				"   -compilerhooks:ASSEMBLY Load a compiler hooks assembly\n" +
 				"\n" +
 				"Resources:\n" +
 				"   -linkresource:FILE[,ID] Links FILE as a resource (short: -linkres)\n" +

@@ -248,6 +248,16 @@ namespace Mono.CSharp
 		{
 			var settings = ctx.Settings;
 
+			if (settings.CompilerHooksAssembly != null) {
+				var hooks_assembly = Assembly.LoadFile (settings.CompilerHooksAssembly);
+				var hooks_factory = hooks_assembly.GetType ("CompilerHooksEntry", true);
+				var hooks_factory_create = hooks_factory.GetMethod ("ContextCreated");
+				hooks_factory_create.Invoke (null, new [] { ctx });
+			}
+
+			if (ctx.Hooks.DriverEnter != null && !ctx.Hooks.DriverEnter ())
+				return false;
+
 			//
 			// If we are an exe, require a source file for the entry point or
 			// if there is nothing to put in the assembly, and we are not a library
@@ -268,12 +278,25 @@ namespace Mono.CSharp
 			ctx.TimeReporter = tr;
 			tr.StartTotal ();
 
+			if (ctx.Hooks.BeforeModuleLoaded != null && !ctx.Hooks.BeforeModuleLoaded ())
+				return false;
+
 			var module = new ModuleContainer (ctx);
+
+			if (ctx.Hooks.AfterModuleLoaded != null && !ctx.Hooks.AfterModuleLoaded (module))
+				return false;
+
 			RootContext.ToplevelTypes = module;
+
+			if (ctx.Hooks.BeforeParsed != null && !ctx.Hooks.BeforeParsed ())
+				return false;
 
 			tr.Start (TimeReporter.TimerType.ParseTotal);
 			Parse (module);
 			tr.Stop (TimeReporter.TimerType.ParseTotal);
+
+			if (ctx.Hooks.AfterParsed != null && !ctx.Hooks.AfterParsed ())
+				return false;
 
 			if (Report.Errors > 0)
 				return false;
@@ -311,6 +334,9 @@ namespace Mono.CSharp
 					return false;
 				}
 			}
+
+			if (ctx.Hooks.BeforeTypesResolved != null && !ctx.Hooks.BeforeTypesResolved ())
+				return false;
 
 #if STATIC
 			var importer = new StaticImporter (module);
@@ -375,37 +401,66 @@ namespace Mono.CSharp
 
 			assembly.Resolve ();
 			
+			if (ctx.Hooks.AfterTypesResolved != null && !ctx.Hooks.AfterTypesResolved (assembly))
+				return false;
+
 			if (Report.Errors > 0)
 				return false;
 
+			if (ctx.Hooks.BeforeAssemblyEmitted != null && !ctx.Hooks.BeforeAssemblyEmitted ())
+				return false;
 
 			tr.Start (TimeReporter.TimerType.EmitTotal);
 			assembly.Emit ();
 			tr.Stop (TimeReporter.TimerType.EmitTotal);
 
+			if (ctx.Hooks.AfterAssemblyEmitted != null && !ctx.Hooks.AfterAssemblyEmitted ())
+				return false;
+
 			if (Report.Errors > 0){
 				return false;
 			}
 
+			if (ctx.Hooks.BeforeModuleClosed != null && !ctx.Hooks.BeforeModuleClosed ())
+				return false;
+
 			tr.Start (TimeReporter.TimerType.CloseTypes);
 			module.CloseContainer ();
 			tr.Stop (TimeReporter.TimerType.CloseTypes);
+
+			if (ctx.Hooks.AfterModuleClosed != null && !ctx.Hooks.AfterModuleClosed ())
+				return false;
+
+			if (ctx.Hooks.BeforeEmbedResources != null && !ctx.Hooks.BeforeEmbedResources ())
+				return false;
 
 			tr.Start (TimeReporter.TimerType.Resouces);
 			if (!settings.WriteMetadataOnly)
 				assembly.EmbedResources ();
 			tr.Stop (TimeReporter.TimerType.Resouces);
 
+			if (ctx.Hooks.AfterEmbedResources != null && !ctx.Hooks.AfterEmbedResources ())
+				return false;
+
 			if (Report.Errors > 0)
 				return false;
 
+			if (ctx.Hooks.BeforeAssemblySaved != null && !ctx.Hooks.BeforeAssemblySaved ())
+				return false;
+
 			assembly.Save ();
+
+			if (ctx.Hooks.AfterAssemblySaved != null && !ctx.Hooks.AfterAssemblySaved ())
+				return false;
 
 #if STATIC
 			references_loader.Dispose ();
 #endif
 			tr.StopTotal ();
 			tr.ShowStats ();
+
+			if (ctx.Hooks.DriverExit != null && !ctx.Hooks.DriverExit ())
+				return false;
 
 			return Report.Errors == 0;
 		}

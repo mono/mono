@@ -667,6 +667,34 @@ namespace Mono.CSharp
 
 		#endregion
 
+		#region Hooks
+
+		CompilerHooks hooks = new CompilerHooks ();
+		public CompilerHooks Hooks {
+			get { return hooks; }
+		}
+
+		public class CompilerHooks {
+			public Func<bool> DriverEnter { get; set; }
+			public Func<bool> DriverExit { get; set; }
+			public Func<bool> BeforeModuleLoaded { get; set; }
+			public Func<ModuleContainer, bool> AfterModuleLoaded { get; set; }
+			public Func<bool> BeforeParsed { get; set; }
+			public Func<bool> AfterParsed { get; set; }
+			public Func<bool> BeforeTypesResolved { get; set; }
+			public Func<AssemblyDefinition, bool> AfterTypesResolved { get; set; }
+			public Func<bool> BeforeAssemblyEmitted { get; set; }
+			public Func<bool> AfterAssemblyEmitted { get; set; }
+			public Func<bool> BeforeModuleClosed { get; set; }
+			public Func<bool> AfterModuleClosed { get; set; }
+			public Func<bool> BeforeEmbedResources { get; set; }
+			public Func<bool> AfterEmbedResources { get; set; }
+			public Func<bool> BeforeAssemblySaved { get; set; }
+			public Func<bool> AfterAssemblySaved { get; set; }
+		}
+
+		#endregion
+
 		//
 		// This is used when we encounter a #line preprocessing directive during parsing
 		// to register additional source file names

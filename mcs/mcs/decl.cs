@@ -221,6 +221,8 @@ namespace Mono.CSharp {
 	[System.Diagnostics.DebuggerDisplay ("{GetSignatureForError()}")]
 	public abstract class MemberCore : Attributable, IMemberContext, IMemberDefinition
 	{
+		public object Tag { get; set; }
+
 		string IMemberDefinition.Name {
 			get {
 				return member_name.Name;
