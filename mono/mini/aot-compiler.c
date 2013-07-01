@@ -6808,7 +6808,7 @@ compile_asm (MonoAotCompile *acfg)
 	} else {
 		objfile = g_strdup_printf ("%s.o", acfg->tmpfname);
 	}
-	command = g_strdup_printf ("%s%s %s %s -o %s %s", tool_prefix, AS_NAME, AS_OPTIONS, acfg->as_args ? acfg->as_args->str : "", objfile, acfg->tmpfname);
+	command = g_strdup_printf ("%s%s %s %s -o '%s' '%s'", tool_prefix, AS_NAME, AS_OPTIONS, acfg->as_args ? acfg->as_args->str : "", objfile, acfg->tmpfname);
 	printf ("Executing the native assembler: %s\n", command);
 	if (system (command) != 0) {
 		g_free (command);
@@ -6833,15 +6833,15 @@ compile_asm (MonoAotCompile *acfg)
 	tmp_outfile_name = g_strdup_printf ("%s.tmp", outfile_name);
 
 #if defined(sparc)
-	command = g_strdup_printf ("ld -shared -G -o %s %s.o", tmp_outfile_name, acfg->tmpfname);
+	command = g_strdup_printf ("ld -shared -G -o '%s' '%s.o'", tmp_outfile_name, acfg->tmpfname);
 #elif defined(__ppc__) && defined(__APPLE__)
-	command = g_strdup_printf ("gcc -dynamiclib -o %s %s.o", tmp_outfile_name, acfg->tmpfname);
+	command = g_strdup_printf ("gcc -dynamiclib -o '%s' '%s.o'", tmp_outfile_name, acfg->tmpfname);
 #elif defined(HOST_WIN32)
-	command = g_strdup_printf ("gcc -shared --dll -mno-cygwin -o %s %s.o", tmp_outfile_name, acfg->tmpfname);
+	command = g_strdup_printf ("gcc -shared --dll -mno-cygwin -o '%s' '%s.o'", tmp_outfile_name, acfg->tmpfname);
 #elif defined(TARGET_X86) && defined(__APPLE__) && !defined(__native_client_codegen__)
-	command = g_strdup_printf ("gcc -m32 -dynamiclib -o %s %s.o", tmp_outfile_name, acfg->tmpfname);
+	command = g_strdup_printf ("gcc -m32 -dynamiclib -o '%s' '%s.o'", tmp_outfile_name, acfg->tmpfname);
 #else
-	command = g_strdup_printf ("%sld %s %s -shared -o %s %s.o", tool_prefix, EH_LD_OPTIONS, LD_OPTIONS, tmp_outfile_name, acfg->tmpfname);
+	command = g_strdup_printf ("%sld %s %s -shared -o '%s' '%s.o'", tool_prefix, EH_LD_OPTIONS, LD_OPTIONS, tmp_outfile_name, acfg->tmpfname);
 #endif
 	printf ("Executing the native linker: %s\n", command);
 	if (system (command) != 0) {
@@ -6854,7 +6854,7 @@ compile_asm (MonoAotCompile *acfg)
 
 	g_free (command);
 	unlink (objfile);
-	/*com = g_strdup_printf ("strip --strip-unneeded %s%s", acfg->image->name, SHARED_EXT);
+	/*com = g_strdup_printf ("strip --strip-unneeded '%s%s'", acfg->image->name, SHARED_EXT);
 	printf ("Stripping the binary: %s\n", com);
 	system (com);
 	g_free (com);*/
@@ -6864,7 +6864,7 @@ compile_asm (MonoAotCompile *acfg)
 	 * gas generates 'mapping symbols' each time code and data is mixed, which 
 	 * happens a lot in emit_and_reloc_code (), so we need to get rid of them.
 	 */
-	command = g_strdup_printf ("%sstrip --strip-symbol=\\$a --strip-symbol=\\$d %s", tool_prefix, tmp_outfile_name);
+	command = g_strdup_printf ("%sstrip --strip-symbol=\\$a --strip-symbol=\\$d '%s'", tool_prefix, tmp_outfile_name);
 	printf ("Stripping the binary: %s\n", command);
 	if (system (command) != 0) {
 		g_free (tmp_outfile_name);
