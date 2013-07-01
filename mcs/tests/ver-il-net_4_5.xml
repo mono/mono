@@ -58668,6 +58668,52 @@
       </method>
     </type>
   </test>
+  <test name="test-async-42.cs">
+    <type name="A">
+      <method name="System.Threading.Tasks.Task`1[System.Int32] OpenAsync()" attrs="134">
+        <size>15</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="A get_Connection()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>26</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] Foo()" attrs="129">
+        <size>41</size>
+      </method>
+      <method name="T Test[T](System.Func`1[T])" attrs="129">
+        <size>15</size>
+      </method>
+      <method name="System.Threading.Tasks.Task &lt;Foo&gt;m__0()" attrs="129">
+        <size>41</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Foo&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>189</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="C+&lt;Foo&gt;c__async3">
+      <method name="Void MoveNext()" attrs="486">
+        <size>169</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
   <test name="test-async-43.cs">
     <type name="A">
       <method name="System.Threading.Tasks.Task`1[System.Int32] GetValue(Int32)" attrs="134">
@@ -58858,6 +58904,43 @@
     <type name="C+&lt;Test&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
         <size>61</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-48.cs">
+    <type name="App">
+      <method name="System.Threading.Tasks.Task Test()" attrs="134">
+        <size>41</size>
+      </method>
+      <method name="System.Threading.Tasks.Task &lt;Test&gt;m__0()" attrs="129">
+        <size>41</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>18</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>19</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="App+&lt;Test&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>173</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="App+&lt;Test&gt;c__async1">
+      <method name="Void MoveNext()" attrs="486">
+        <size>51</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>

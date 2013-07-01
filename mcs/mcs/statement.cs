@@ -2626,6 +2626,24 @@ namespace Mono.CSharp {
 								if (pb.StateMachine == storey)
 									break;
 
+								//
+								// If we are state machine with no parent we can hook into we don't
+ 								// add reference but capture this directly
+								//
+								ExplicitBlock parent_storey_block = pb;
+								while (parent_storey_block.Parent != null) {
+									parent_storey_block = parent_storey_block.Parent.Explicit;
+									if (parent_storey_block.AnonymousMethodStorey != null) {
+										break;
+									}
+								}
+
+								if (parent_storey_block.AnonymousMethodStorey == null) {
+									pb.StateMachine.AddCapturedThisField (ec);
+									b.HasCapturedThis = true;
+									continue;
+								}
+
 								pb.StateMachine.AddParentStoreyReference (ec, storey);
 							}
 							
