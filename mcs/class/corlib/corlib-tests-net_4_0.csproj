@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{18B35F26-A922-43A2-9583-8B807D01751E}</ProjectGuid>
+    <ProjectGuid>{3AA3802F-6784-454B-BD51-4FCE18CA90D2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>612,618,1699,168,219,618,672</NoWarn>
     <OutputPath>bin\Debug\corlib-tests-net_4_0</OutputPath>
@@ -44,7 +44,6 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="Mono\DataConverter.cs" />
     <Compile Include="Test\Microsoft.Win32\RegistryKeyTest.cs" />
     <Compile Include="Test\Mono\DataConvertTest.cs" />
@@ -454,6 +453,7 @@
     <Compile Include="Test\System.Threading\SpinLockTests.cs" />
     <Compile Include="Test\System.Threading\ThreadCas.cs" />
     <Compile Include="Test\System.Threading\ThreadLocalTests.cs" />
+    <Compile Include="Test\System.Threading\ThreadPoolTest.cs" />
     <Compile Include="Test\System.Threading\ThreadTest.cs" />
     <Compile Include="Test\System.Threading\TimerTest.cs" />
     <Compile Include="Test\System.Threading\VolatileTest.cs" />
@@ -554,19 +554,24 @@
   <ItemGroup>
     <Reference Include="..\lib\net_4_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
+      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Posix\Mono.Posix-net_2_0.csproj">
-      <Project>{BFC160FF-5B62-41D2-B039-52C469077AE0}</Project>
+      <Project>{F83F663F-89F7-481C-941E-E4FE67867254}</Project>
       <Name>Mono.Posix\Mono.Posix-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_2_0.csproj">
-      <Project>{F684BA24-FC9A-4BAB-8CF3-ACC489E6B88E}</Project>
+      <Project>{B91370A1-A33A-4F7A-BDF2-1E194AFA0869}</Project>
       <Name>System.Core\System.Core-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Test/resources/Resources.resources">
+      <LogicalName>Resources.resources</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

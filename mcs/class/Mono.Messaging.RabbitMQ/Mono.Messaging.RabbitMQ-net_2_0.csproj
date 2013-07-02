@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{8BBA58A9-6639-453E-B83F-D8B6DA6F58A2}</ProjectGuid>
+    <ProjectGuid>{74D6BCAB-F3E7-463C-8D99-601FE69F67A6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618</NoWarn>
     <OutputPath>bin\Debug\Mono.Messaging.RabbitMQ-net_2_0</OutputPath>
@@ -72,23 +72,23 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
+      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Messaging\System.Messaging-net_2_0.csproj">
-      <Project>{02BA7387-C09A-40FB-BE80-39588B822A29}</Project>
+      <Project>{858BC3D5-8B2D-4B24-8BD9-BDC36A1DAFE4}</Project>
       <Name>System.Messaging\System.Messaging-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Messaging\Mono.Messaging-net_2_0.csproj">
-      <Project>{6D5EFF77-937D-4425-9DDC-B88F7A4AB456}</Project>
+      <Project>{A516A3FA-33AA-46AB-9542-49952ED25A0F}</Project>
       <Name>Mono.Messaging\Mono.Messaging-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\RabbitMQ.Client\src\client\RabbitMQ.Client-net_2_0.csproj">
-      <Project>{85F98B4E-9323-4D5C-A65F-5B30EA4E7424}</Project>
+      <Project>{8AD2E2D6-9C65-4DE7-AD7A-6AAA07754C9C}</Project>
       <Name>client\RabbitMQ.Client-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>

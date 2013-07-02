@@ -5,17 +5,17 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{F7B47B0F-E690-4BFD-BBD2-5305157D99F8}</ProjectGuid>
+    <ProjectGuid>{0D85D5CB-96C9-47D3-9738-DF3D729063F4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>bin\Debug\System.Web.Routing-tests-net_2_0</OutputPath>
+    <OutputPath>bin\Debug\System.Json-net_2_0</OutputPath>
     <NoStdLib>True</NoStdLib>
-    <NoConfig>False</NoConfig>
+    <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>
     </RootNamespace>
-    <AssemblyName>System.Web.Routing_test_net_2_0</AssemblyName>
+    <AssemblyName>System.Json</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -24,7 +24,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_5;SYSTEMCORE_DEP</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -32,7 +32,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_5;SYSTEMCORE_DEP</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -44,21 +44,14 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="Test\System.Web.Routing\AssertExtensions.cs" />
-    <Compile Include="Test\System.Web.Routing\FakeHttpWorkerRequest.cs" />
-    <Compile Include="Test\System.Web.Routing\HttpMethodConstraintTest.cs" />
-    <Compile Include="Test\System.Web.Routing\KnownResponseHeader.cs" />
-    <Compile Include="Test\System.Web.Routing\RequestContext.cs" />
-    <Compile Include="Test\System.Web.Routing\RouteCollectionTest.cs" />
-    <Compile Include="Test\System.Web.Routing\RouteDataTest.cs" />
-    <Compile Include="Test\System.Web.Routing\RouteTest.cs" />
-    <Compile Include="Test\System.Web.Routing\RouteValueDictionaryTest.cs" />
-    <Compile Include="Test\System.Web.Routing\StopRoutingHandlerTest.cs" />
-    <Compile Include="Test\System.Web.Routing\TestStubTypes.cs" />
-    <Compile Include="Test\System.Web.Routing\UnknownResponseHeader.cs" />
-    <Compile Include="Test\System.Web.Routing\UrlRoutingHandlerTest.cs" />
-    <Compile Include="Test\System.Web.Routing\UrlRoutingModuleTest.cs" />
-    <Compile Include="Test\System.Web.Routing\VirtualPathDataTest.cs" />  </ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\System.ServiceModel.Web\System.Runtime.Serialization.Json\JavaScriptReader.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="System.Json\JsonArray.cs" />
+    <Compile Include="System.Json\JsonObject.cs" />
+    <Compile Include="System.Json\JsonPrimitive.cs" />
+    <Compile Include="System.Json\JsonType.cs" />
+    <Compile Include="System.Json\JsonValue.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -75,30 +68,25 @@
   </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
       <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
       <Name>corlib\corlib-net_2_0</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\System.Web.Routing\System.Web.Routing-net_2_0.csproj">
-      <Project>{20D4E13A-7CC1-431F-BE4F-BB4BABB657E9}</Project>
-      <Name>System.Web.Routing\System.Web.Routing-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
       <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
+      <Project>{D9776E38-7673-45F6-BF19-7B77830DF9CA}</Project>
+      <Name>System.XML\System.Xml-net_2_0-1</Name>
+    </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_2_0.csproj">
       <Project>{B91370A1-A33A-4F7A-BDF2-1E194AFA0869}</Project>
       <Name>System.Core\System.Core-net_2_0</Name>
     </ProjectReference>
-    <ProjectReference Include="..\System.Web\System.Web-net_2_0-2.csproj">
-      <Project>{4F179720-1E19-46E8-A55E-010C20701EFF}</Project>
-      <Name>System.Web\System.Web-net_2_0-2</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\System.Web.Abstractions\System.Web.Abstractions-net_2_0.csproj">
-      <Project>{34AE4A66-1C6E-41EB-BCD7-7541A021FA19}</Project>
-      <Name>System.Web.Abstractions\System.Web.Abstractions-net_2_0</Name>
+    <ProjectReference Include="..\System.ServiceModel.Web\System.ServiceModel.Web-net_2_0.csproj">
+      <Project>{C1E98610-9EA1-4973-A48B-E7CE2E790F40}</Project>
+      <Name>System.ServiceModel.Web\System.ServiceModel.Web-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

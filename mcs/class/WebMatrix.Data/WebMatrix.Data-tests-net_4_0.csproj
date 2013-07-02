@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{92D24812-C6DC-411F-9AD8-B2E9EFBD9138}</ProjectGuid>
+    <ProjectGuid>{AD5F22B4-1F90-4549-9284-331B941F6F4A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\WebMatrix.Data-tests-net_4_0</OutputPath>
@@ -66,31 +66,31 @@
   <ItemGroup>
     <Reference Include="..\lib\net_4_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
+      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\WebMatrix.Data\WebMatrix.Data-net_4_0.csproj">
-      <Project>{320524F1-AA91-4BC3-B88C-8E0AECEE1CCC}</Project>
+      <Project>{5AEB6A6A-C5EF-433B-B668-2066172D2D80}</Project>
       <Name>WebMatrix.Data\WebMatrix.Data-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0-2.csproj">
-      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
+      <Project>{8260E24F-1471-4320-AB5B-7CC7B68521E3}</Project>
       <Name>System\System-net_4_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_0.csproj">
-      <Project>{2590BECB-2660-49C6-93B1-B9E7D0796214}</Project>
+      <Project>{D121EB80-19C6-4313-9BBE-6F66556CE8B7}</Project>
       <Name>System.Core\System.Core-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data\System.Data-net_4_0.csproj">
-      <Project>{6865A6A5-DF93-45C7-BE83-F06907EC81F8}</Project>
+      <Project>{BC1890C0-51E5-48D0-8DBA-B1DD23468F9C}</Project>
       <Name>System.Data\System.Data-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Data.Sqlite\Mono.Data.Sqlite-net_4_0.csproj">
-      <Project>{BB9B46F0-18EB-4FCF-9C63-461E5FAF205B}</Project>
+      <Project>{F26434C1-BA3D-41FB-B560-C009CB72B1B6}</Project>
       <Name>Mono.Data.Sqlite\Mono.Data.Sqlite-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.CSharp\Microsoft.CSharp-net_4_0.csproj">
-      <Project>{56A7FA9E-7F2B-4BCB-8523-FD4EEE876BE0}</Project>
+      <Project>{342E1BD0-A935-4D49-B71E-ECDF0B42F90F}</Project>
       <Name>Microsoft.CSharp\Microsoft.CSharp-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>

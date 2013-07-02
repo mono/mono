@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{9C3BBC65-D0E9-4E9D-96B9-9ECB51E1C329}</ProjectGuid>
+    <ProjectGuid>{41B3B369-328C-45B8-9F14-224641427A35}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618,612,809</NoWarn>
     <OutputPath>bin\Debug\System.Windows.Forms-net_4_0</OutputPath>
@@ -970,43 +970,43 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
+      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0-2.csproj">
-      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
+      <Project>{8260E24F-1471-4320-AB5B-7CC7B68521E3}</Project>
       <Name>System\System-net_4_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_0-1.csproj">
-      <Project>{F9E777F8-E3F2-4E19-8DC9-2D1BB6B380A6}</Project>
+      <Project>{51720A26-B4D9-4B84-8CB5-9CBA57477FBB}</Project>
       <Name>System.XML\System.Xml-net_4_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Drawing\System.Drawing-net_4_0.csproj">
-      <Project>{0005126E-C0D0-4DA3-A2E2-E49592D3E164}</Project>
+      <Project>{DE98E72C-2727-4737-AAFC-CC1228F4812C}</Project>
       <Name>System.Drawing\System.Drawing-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Accessibility\Accessibility-net_4_0.csproj">
-      <Project>{B710DF58-F63B-4C6B-AA01-9C2DEEBCEB92}</Project>
+      <Project>{3C0E9135-1458-47F6-9076-17FFB1E3E32F}</Project>
       <Name>Accessibility\Accessibility-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data\System.Data-net_4_0.csproj">
-      <Project>{6865A6A5-DF93-45C7-BE83-F06907EC81F8}</Project>
+      <Project>{BC1890C0-51E5-48D0-8DBA-B1DD23468F9C}</Project>
       <Name>System.Data\System.Data-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Posix\Mono.Posix-net_4_0.csproj">
-      <Project>{97C3D4C4-2B27-40C2-94ED-9C0119AB785C}</Project>
+      <Project>{7ADB0D4D-F0ED-4C82-BEE3-D261699A390B}</Project>
       <Name>Mono.Posix\Mono.Posix-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.WebBrowser\Mono.WebBrowser-net_4_0.csproj">
-      <Project>{48C35A26-B26A-4084-9A9A-7729D345B3B5}</Project>
+      <Project>{A0DF2D35-BA97-4CAB-90C6-1C4463186C3E}</Project>
       <Name>Mono.WebBrowser\Mono.WebBrowser-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration\System.Configuration-net_4_0.csproj">
-      <Project>{610C7C77-5851-4B95-A3FE-B04E1B011E6A}</Project>
+      <Project>{CA49630B-FD24-411F-9651-B15CA72CE5B8}</Project>
       <Name>System.Configuration\System.Configuration-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Runtime.Serialization.Formatters.Soap\System.Runtime.Serialization.Formatters.Soap-net_4_0.csproj">
-      <Project>{E81B377C-E5E0-4C5A-BC4D-43CB5E5E0C78}</Project>
+      <Project>{562FC450-E53A-4CF5-AE5A-91973EBE5A28}</Project>
       <Name>System.Runtime.Serialization.Formatters.Soap\System.Runtime.Serialization.Formatters.Soap-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>

@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</ProjectGuid>
+    <ProjectGuid>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>612,618,1699</NoWarn>
     <OutputPath>bin\Debug\corlib-net_4_5</OutputPath>
@@ -47,6 +47,48 @@
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\Locale.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="..\Mono.Security\Mono.Math.Prime.Generator\NextPrimeFinder.cs" />
+    <Compile Include="..\Mono.Security\Mono.Math.Prime.Generator\PrimeGeneratorBase.cs" />
+    <Compile Include="..\Mono.Security\Mono.Math.Prime.Generator\SequentialSearchPrimeGeneratorBase.cs" />
+    <Compile Include="..\Mono.Security\Mono.Math.Prime\ConfidenceFactor.cs" />
+    <Compile Include="..\Mono.Security\Mono.Math.Prime\PrimalityTests.cs" />
+    <Compile Include="..\Mono.Security\Mono.Math\BigInteger.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.Authenticode\AuthenticodeBase.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.Authenticode\AuthenticodeDeformatter.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.Cryptography\CryptoConvert.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.Cryptography\CryptoTools.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.Cryptography\KeyPairPersistence.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD4.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD4Managed.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.Cryptography\PKCS1.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.Cryptography\PKCS8.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.Cryptography\RC4.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.Cryptography\RSAManaged.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.Cryptography\SymmetricTransform.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.X509.Extensions\BasicConstraintsExtension.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.X509.Extensions\KeyUsageExtension.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.X509.Extensions\SubjectKeyIdentifierExtension.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.X509\PKCS12.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.X509\X501Name.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.X509\X509Certificate.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.X509\X509CertificateCollection.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.X509\X509Chain.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.X509\X509ChainStatusFlags.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.X509\X509CRL.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.X509\X509Extension.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.X509\X509Extensions.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.X509\X509Store.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.X509\X509StoreManager.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.X509\X509Stores.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security.X509\X520Attributes.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security\ASN1.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security\ASN1Convert.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security\BitConverterLE.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security\PKCS7.cs" />
+    <Compile Include="..\Mono.Security\Mono.Security\StrongName.cs" />
     <Compile Include="..\System.Core\System.Security.Cryptography\Aes.cs" />
     <Compile Include="..\System.Core\System\TimeZoneInfo.AdjustmentRule.cs" />
     <Compile Include="..\System.Core\System\TimeZoneInfo.Android.cs" />
@@ -85,45 +127,9 @@
     <Compile Include="Mono.Interop\ComInteropProxy.cs" />
     <Compile Include="Mono.Interop\IDispatch.cs" />
     <Compile Include="Mono.Interop\IUnknown.cs" />
-    <Compile Include="Mono.Math.Prime.Generator\NextPrimeFinder.cs" />
-    <Compile Include="Mono.Math.Prime.Generator\PrimeGeneratorBase.cs" />
-    <Compile Include="Mono.Math.Prime.Generator\SequentialSearchPrimeGeneratorBase.cs" />
-    <Compile Include="Mono.Math.Prime\ConfidenceFactor.cs" />
-    <Compile Include="Mono.Math.Prime\PrimalityTests.cs" />
-    <Compile Include="Mono.Math\BigInteger.cs" />
-    <Compile Include="Mono.Security.Authenticode\AuthenticodeBase.cs" />
-    <Compile Include="Mono.Security.Authenticode\AuthenticodeDeformatter.cs" />
-    <Compile Include="Mono.Security.Cryptography\CryptoConvert.cs" />
-    <Compile Include="Mono.Security.Cryptography\CryptoTools.cs" />
     <Compile Include="Mono.Security.Cryptography\DSAManaged.cs" />
     <Compile Include="Mono.Security.Cryptography\HMACAlgorithm.cs" />
-    <Compile Include="Mono.Security.Cryptography\KeyPairPersistence.cs" />
     <Compile Include="Mono.Security.Cryptography\MACAlgorithm.cs" />
-    <Compile Include="Mono.Security.Cryptography\PKCS1.cs" />
-    <Compile Include="Mono.Security.Cryptography\PKCS8.cs" />
-    <Compile Include="Mono.Security.Cryptography\RSAManaged.cs" />
-    <Compile Include="Mono.Security.Cryptography\SymmetricTransform.cs" />
-    <Compile Include="Mono.Security.X509.Extensions\BasicConstraintsExtension.cs" />
-    <Compile Include="Mono.Security.X509.Extensions\KeyUsageExtension.cs" />
-    <Compile Include="Mono.Security.X509.Extensions\SubjectKeyIdentifierExtension.cs" />
-    <Compile Include="Mono.Security.X509\PKCS12.cs" />
-    <Compile Include="Mono.Security.X509\X501Name.cs" />
-    <Compile Include="Mono.Security.X509\X509Certificate.cs" />
-    <Compile Include="Mono.Security.X509\X509CertificateCollection.cs" />
-    <Compile Include="Mono.Security.X509\X509Chain.cs" />
-    <Compile Include="Mono.Security.X509\X509ChainStatusFlags.cs" />
-    <Compile Include="Mono.Security.X509\X509CRL.cs" />
-    <Compile Include="Mono.Security.X509\X509Extension.cs" />
-    <Compile Include="Mono.Security.X509\X509Extensions.cs" />
-    <Compile Include="Mono.Security.X509\X509Store.cs" />
-    <Compile Include="Mono.Security.X509\X509StoreManager.cs" />
-    <Compile Include="Mono.Security.X509\X509Stores.cs" />
-    <Compile Include="Mono.Security.X509\X520Attributes.cs" />
-    <Compile Include="Mono.Security\ASN1.cs" />
-    <Compile Include="Mono.Security\ASN1Convert.cs" />
-    <Compile Include="Mono.Security\BitConverterLE.cs" />
-    <Compile Include="Mono.Security\PKCS7.cs" />
-    <Compile Include="Mono.Security\StrongName.cs" />
     <Compile Include="Mono.Security\StrongNameManager.cs" />
     <Compile Include="Mono.Security\Uri.cs" />
     <Compile Include="Mono.Xml\SecurityParser.cs" />
@@ -137,6 +143,7 @@
     <Compile Include="System.Collections.Concurrent\ConcurrentOrderedList.cs" />
     <Compile Include="System.Collections.Concurrent\ConcurrentQueue.cs" />
     <Compile Include="System.Collections.Concurrent\ConcurrentStack.cs" />
+    <Compile Include="System.Collections.Concurrent\EnumerablePartitionerOptions.cs" />
     <Compile Include="System.Collections.Concurrent\IProducerConsumerCollection.cs" />
     <Compile Include="System.Collections.Concurrent\OrderablePartitioner.cs" />
     <Compile Include="System.Collections.Concurrent\Partitioner.cs" />
@@ -161,6 +168,7 @@
     <Compile Include="System.Collections.ObjectModel\Collection.cs" />
     <Compile Include="System.Collections.ObjectModel\KeyedCollection.cs" />
     <Compile Include="System.Collections.ObjectModel\ReadOnlyCollection.cs" />
+    <Compile Include="System.Collections.ObjectModel\ReadOnlyDictionary.cs" />
     <Compile Include="System.Collections\ArrayList.cs" />
     <Compile Include="System.Collections\BitArray.cs" />
     <Compile Include="System.Collections\CaseInsensitiveComparer.cs" />
@@ -170,6 +178,7 @@
     <Compile Include="System.Collections\Comparer.cs" />
     <Compile Include="System.Collections\DictionaryBase.cs" />
     <Compile Include="System.Collections\DictionaryEntry.cs" />
+    <Compile Include="System.Collections\HashPrimeNumbers.cs" />
     <Compile Include="System.Collections\Hashtable.cs" />
     <Compile Include="System.Collections\ICollection.cs" />
     <Compile Include="System.Collections\IComparer.cs" />
@@ -204,6 +213,7 @@
     <Compile Include="System.Diagnostics.Contracts\ContractFailedEventArgs.cs" />
     <Compile Include="System.Diagnostics.Contracts\ContractFailureKind.cs" />
     <Compile Include="System.Diagnostics.Contracts\ContractInvariantMethodAttribute.cs" />
+    <Compile Include="System.Diagnostics.Contracts\ContractOptionAttribute.cs" />
     <Compile Include="System.Diagnostics.Contracts\ContractPublicPropertyNameAttribute.cs" />
     <Compile Include="System.Diagnostics.Contracts\ContractReferenceAssemblyAttribute.cs" />
     <Compile Include="System.Diagnostics.Contracts\ContractRuntimeIgnoredAttribute.cs" />
@@ -384,6 +394,7 @@
     <Compile Include="System.Reflection\AssemblyAlgorithmIdAttribute.cs" />
     <Compile Include="System.Reflection\AssemblyCompanyAttribute.cs" />
     <Compile Include="System.Reflection\AssemblyConfigurationAttribute.cs" />
+    <Compile Include="System.Reflection\AssemblyContentType.cs" />
     <Compile Include="System.Reflection\AssemblyCopyrightAttribute.cs" />
     <Compile Include="System.Reflection\AssemblyCultureAttribute.cs" />
     <Compile Include="System.Reflection\AssemblyDefaultAliasAttribute.cs" />
@@ -463,6 +474,7 @@
     <Compile Include="System.Reflection\ReflectionTypeLoadException.cs" />
     <Compile Include="System.Reflection\ResourceAttributes.cs" />
     <Compile Include="System.Reflection\ResourceLocation.cs" />
+    <Compile Include="System.Reflection\RuntimeReflectionExtensions.cs" />
     <Compile Include="System.Reflection\StrongNameKeyPair.cs" />
     <Compile Include="System.Reflection\TargetException.cs" />
     <Compile Include="System.Reflection\TargetInvocationException.cs" />
@@ -1427,6 +1439,7 @@
     <Compile Include="System.Threading\ManualResetEventSlim.cs" />
     <Compile Include="System.Threading\Monitor.cs" />
     <Compile Include="System.Threading\Mutex.cs" />
+    <Compile Include="System.Threading\NamedDataSlot.cs" />
     <Compile Include="System.Threading\NativeEventCalls.cs" />
     <Compile Include="System.Threading\NativeOverlapped.cs" />
     <Compile Include="System.Threading\Overlapped.cs" />
@@ -1500,6 +1513,7 @@
     <Compile Include="System\CLSCompliantAttribute.cs" />
     <Compile Include="System\Comparison.cs" />
     <Compile Include="System\Console.cs" />
+    <Compile Include="System\Console.iOS.cs" />
     <Compile Include="System\ConsoleCancelEventArgs.cs" />
     <Compile Include="System\ConsoleCancelEventHandler.cs" />
     <Compile Include="System\ConsoleColor.cs" />
@@ -1617,6 +1631,7 @@
     <Compile Include="System\PlatformID.cs" />
     <Compile Include="System\PlatformNotSupportedException.cs" />
     <Compile Include="System\Predicate.cs" />
+    <Compile Include="System\Progress.cs" />
     <Compile Include="System\Random.cs" />
     <Compile Include="System\RankException.cs" />
     <Compile Include="System\ResolveEventArgs.cs" />
@@ -1668,6 +1683,7 @@
     <Compile Include="System\Version.cs" />
     <Compile Include="System\Void.cs" />
     <Compile Include="System\WeakReference.cs" />
+    <Compile Include="System\WeakReference_T.cs" />
     <Compile Include="System\WindowsConsoleDriver.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

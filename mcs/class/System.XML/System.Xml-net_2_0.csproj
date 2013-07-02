@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{67A04408-CBEF-4B63-B975-29D827B0DBED}</ProjectGuid>
+    <ProjectGuid>{2EB99669-03DF-4DF7-9B20-0B6E6C9DBFEF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618,612,642</NoWarn>
     <OutputPath>bin\Debug\System.Xml-net_2_0</OutputPath>
@@ -458,11 +458,11 @@ type $(ProjectDir)\System.Xml.XPath\Tokenizer.cs >> $(ProjectDir)\Mono.Xml.Xsl\P
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0.csproj">
-      <Project>{0F9C68C1-0695-4DC0-8064-B0749F54DF34}</Project>
+      <Project>{245C754C-D6DE-4434-BA78-37A93E196236}</Project>
       <Name>System\System-net_2_0</Name>
     </ProjectReference>
     <Reference Include="System.Configuration.dll">
