@@ -242,13 +242,12 @@ namespace System.Net
 #else
 				// HttpsClientStream is an internal glue class in Mono.Security.dll
 				sslStream = Type.GetType ("Mono.Security.Protocol.Tls.HttpsClientStream, " +
-							Consts.AssemblySystem, false);
+							Consts.AssemblyMono_Security, false);
 
 				if (sslStream == null) {
 					string msg = "Missing Mono.Security.dll assembly. " +
 							"Support for SSL/TLS is unavailable.";
 
-					Console.WriteLine (msg);
 					throw new NotSupportedException (msg);
 				}
 #endif
