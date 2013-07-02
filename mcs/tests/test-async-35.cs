@@ -4,32 +4,35 @@ using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
 using System.Linq;
 
-class C
+namespace N.M
 {
-	public static async Task<int> AsyncMethod ()
+	class C
 	{
-		await Task.Delay (1);
-		return 0;
-	}
+		public static async Task<int> AsyncMethod ()
+		{
+			await Task.Delay (1);
+			return 0;
+		}
 
-	static int Main ()
-	{
-		var m = typeof (C).GetMethod ("AsyncMethod");
-		var attr = m.GetCustomAttribute<AsyncStateMachineAttribute> ();
-		if (attr == null)
-			return 1;
+		public static int Main ()
+		{
+			var m = typeof (C).GetMethod ("AsyncMethod");
+			var attr = m.GetCustomAttribute<AsyncStateMachineAttribute> ();
+			if (attr == null)
+				return 1;
 
-		if (attr.StateMachineType == null)
-			return 2;
+			if (attr.StateMachineType == null)
+				return 2;
 
-		Func<Task<int>> a = async () => await AsyncMethod ();
+			Func<Task<int>> a = async () => await AsyncMethod ();
 
-		var c = typeof (C).GetMethods (BindingFlags.NonPublic | BindingFlags.Static).Where (l =>
-			l.IsDefined (typeof (AsyncStateMachineAttribute))).Count ();
+			var c = typeof (C).GetMethods (BindingFlags.NonPublic | BindingFlags.Static).Where (l =>
+				l.IsDefined (typeof (AsyncStateMachineAttribute))).Count ();
 
-		if (c != 1)
-			return 3;
+			if (c != 1)
+				return 3;
 
-		return 0;
+			return 0;
+		}
 	}
 }

@@ -1333,7 +1333,7 @@ namespace System.Linq.Expressions {
 				throw new ArgumentNullException ("addMethod");
 			if (arguments == null)
 				throw new ArgumentNullException ("arguments");
-			if (addMethod.Name.ToLower (CultureInfo.InvariantCulture) != "add")
+			if (addMethod.Name.ToLowerInvariant () != "add")
 				throw new ArgumentException ("addMethod");
 			if (addMethod.IsStatic)
 				throw new ArgumentException ("addMethod must be an instance method", "addMethod");
@@ -1713,7 +1713,7 @@ namespace System.Linq.Expressions {
 			var inits = CheckListInit (newExpression, initializers);
 
 			if (addMethod != null) {
-				if (addMethod.Name.ToLower (CultureInfo.InvariantCulture) != "add")
+				if (addMethod.Name.ToLowerInvariant () != "add")
 					throw new ArgumentException ("addMethod");
 
 				var parameters = addMethod.GetParameters ();
@@ -2268,9 +2268,11 @@ namespace System.Linq.Expressions {
 		// This method must be overwritten by derived classes to
 		// compile the expression
 		//
+#if !FULL_AOT_RUNTIME
 		internal virtual void Emit (EmitContext ec)
 		{
 			throw new NotImplementedException (String.Format ("Emit method is not implemented in expression type {0}", GetType ()));
 		}
+#endif
 	}
 }

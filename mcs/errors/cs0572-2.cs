@@ -1,4 +1,4 @@
-// CS0572: `meth': cannot reference a type through an expression; try `test.meth' instead
+// CS0572: `meth': cannot reference a type through an expression. Consider using `test.meth' instead
 // Line: 8
 
 class test2 : test {

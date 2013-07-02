@@ -35,9 +35,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Text;
-#if !MOONLIGHT
 using System.Xml.XPath;
-#endif
 #if NET_4_5
 using System.Threading;
 using System.Threading.Tasks;
@@ -191,7 +189,7 @@ namespace System.Xml
 			Close ();
 		}
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		public void Dispose ()
 #else
 		void IDisposable.Dispose() 
@@ -210,10 +208,6 @@ namespace System.Xml
 				return;
 
 			WriteStartAttribute (reader.Prefix, reader.LocalName, reader.NamespaceURI);
-#if MOONLIGHT
-			// no ReadAttributeValue() in 2.1 profile.
-			WriteString (reader.Value);
-#else
 			while (reader.ReadAttributeValue ()) {
 				switch (reader.NodeType) {
 				case XmlNodeType.Text:
@@ -224,7 +218,6 @@ namespace System.Xml
 					break;
 				}
 			}
-#endif
 			WriteEndAttribute ();
 		}
 
@@ -401,7 +394,6 @@ namespace System.Xml
 				WriteString (localName);
 		}
 
-#if !MOONLIGHT
 		public virtual void WriteNode (XPathNavigator navigator, bool defattr)
 		{
 			if (navigator == null)
@@ -471,7 +463,6 @@ namespace System.Xml
 				throw new NotSupportedException ();
 			}
 		}
-#endif
 
 		public virtual void WriteNode (XmlReader reader, bool defattr)
 		{

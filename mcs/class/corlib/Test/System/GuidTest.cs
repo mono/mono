@@ -140,6 +140,15 @@ namespace MonoTests.System {
 			Assert.IsFalse (g1 == g2);
 		}
 
+		[Test]
+		public void NewGuid_Stressed ()
+		{
+			for (int i = 0; i < 256; i++) {
+				Guid g = Guid.NewGuid ();
+				Assert.AreNotEqual (0, g.CompareTo (Guid.Empty), i.ToString ());
+			}
+		}
+
 #pragma warning disable 1718
 		[Test]
 		public void EqualityOp ()

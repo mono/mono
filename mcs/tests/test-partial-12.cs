@@ -15,7 +15,7 @@ namespace Test1
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		foreach (string s in Test1.Foo.E())
 		{

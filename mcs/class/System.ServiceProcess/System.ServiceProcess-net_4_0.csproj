@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{5BA1F558-FD7C-4F85-9BB2-8568EDBC0353}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618</NoWarn>
-    <OutputPath>./../../class/lib/net_4_0</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\System.ServiceProcess-net_4_0</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>System.ServiceProcess</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699,618</NoWarn>
@@ -28,50 +27,51 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,618</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="Assembly\AssemblyInfo.cs" />
-   <Compile Include="..\..\build\common\Consts.cs" />
-   <Compile Include="..\..\build\common\Locale.cs" />
-   <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-   <Compile Include="System.ServiceProcess\PowerBroadcastStatus.cs" />
-   <Compile Include="System.ServiceProcess\ServiceAccount.cs" />
-   <Compile Include="System.ServiceProcess\ServiceController.cs" />
-   <Compile Include="System.ServiceProcess\ServiceControllerImpl.cs" />
-   <Compile Include="System.ServiceProcess\ServiceControllerPermissionAccess.cs" />
-   <Compile Include="System.ServiceProcess\ServiceControllerStatus.cs" />
-   <Compile Include="System.ServiceProcess\ServiceInstaller.cs" />
-   <Compile Include="System.ServiceProcess\ServiceProcessInstaller.cs" />
-   <Compile Include="System.ServiceProcess\ServiceStartMode.cs" />
-   <Compile Include="System.ServiceProcess\ServiceType.cs" />
-   <Compile Include="System.ServiceProcess\ServiceBase.cs" />
-   <Compile Include="System.ServiceProcess\TimeoutException.cs" />
-   <Compile Include="System.ServiceProcess\ServiceProcessDescriptionAttribute.cs" />
-   <Compile Include="System.ServiceProcess\ServiceControllerPermission.cs" />
-   <Compile Include="System.ServiceProcess\ServiceControllerPermissionAttribute.cs" />
-   <Compile Include="System.ServiceProcess\ServiceControllerPermissionEntry.cs" />
-   <Compile Include="System.ServiceProcess\ServiceControllerPermissionEntryCollection.cs" />
-   <Compile Include="System.ServiceProcess\SessionChangeDescription.cs" />
-   <Compile Include="System.ServiceProcess\SessionChangeReason.cs" />
-   <Compile Include="System.ServiceProcess\UnixServiceController.cs" />
-   <Compile Include="System.ServiceProcess\Win32ServiceController.cs" />
-   <Compile Include="System.ServiceProcess.Design\ServiceInstallerDialog.cs" />
-   <Compile Include="System.ServiceProcess.Design\ServiceInstallerDialogResult.cs" />
-   <Compile Include="System.ServiceProcess.Design\ServiceNameConverter.cs" />
-
-  </ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\..\build\common\Locale.cs" />
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="System.ServiceProcess.Design\ServiceInstallerDialog.cs" />
+    <Compile Include="System.ServiceProcess.Design\ServiceInstallerDialogResult.cs" />
+    <Compile Include="System.ServiceProcess.Design\ServiceNameConverter.cs" />
+    <Compile Include="System.ServiceProcess\PowerBroadcastStatus.cs" />
+    <Compile Include="System.ServiceProcess\ServiceAccount.cs" />
+    <Compile Include="System.ServiceProcess\ServiceBase.cs" />
+    <Compile Include="System.ServiceProcess\ServiceController.cs" />
+    <Compile Include="System.ServiceProcess\ServiceControllerImpl.cs" />
+    <Compile Include="System.ServiceProcess\ServiceControllerPermission.cs" />
+    <Compile Include="System.ServiceProcess\ServiceControllerPermissionAccess.cs" />
+    <Compile Include="System.ServiceProcess\ServiceControllerPermissionAttribute.cs" />
+    <Compile Include="System.ServiceProcess\ServiceControllerPermissionEntry.cs" />
+    <Compile Include="System.ServiceProcess\ServiceControllerPermissionEntryCollection.cs" />
+    <Compile Include="System.ServiceProcess\ServiceControllerStatus.cs" />
+    <Compile Include="System.ServiceProcess\ServiceInstaller.cs" />
+    <Compile Include="System.ServiceProcess\ServiceProcessDescriptionAttribute.cs" />
+    <Compile Include="System.ServiceProcess\ServiceProcessInstaller.cs" />
+    <Compile Include="System.ServiceProcess\ServiceStartMode.cs" />
+    <Compile Include="System.ServiceProcess\ServiceType.cs" />
+    <Compile Include="System.ServiceProcess\SessionChangeDescription.cs" />
+    <Compile Include="System.ServiceProcess\SessionChangeReason.cs" />
+    <Compile Include="System.ServiceProcess\TimeoutException.cs" />
+    <Compile Include="System.ServiceProcess\UnixServiceController.cs" />
+    <Compile Include="System.ServiceProcess\Win32ServiceController.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -80,30 +80,32 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_0\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Configuration.Install.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Configuration.Install.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Windows.Forms.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Windows.Forms.dll</HintPath>
-    </Reference>
-
+    <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
+      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
+      <Name>corlib\corlib-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_0-2.csproj">
+      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
+      <Name>System\System-net_4_0-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Configuration.Install\System.Configuration.Install-net_4_0.csproj">
+      <Project>{878F802D-3249-41E8-8322-A32C406383C6}</Project>
+      <Name>System.Configuration.Install\System.Configuration.Install-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Managed.Windows.Forms\System.Windows.Forms-net_4_0.csproj">
+      <Project>{9C3BBC65-D0E9-4E9D-96B9-9ECB51E1C329}</Project>
+      <Name>Managed.Windows.Forms\System.Windows.Forms-net_4_0</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
-

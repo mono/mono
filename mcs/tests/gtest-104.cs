@@ -10,7 +10,7 @@ class MainClass
         {
         }
 
-        static void Main ()
+        public static void Main ()
         {
 		object o = new Der ();
                 Gen<int> b = (Gen<int>) o;

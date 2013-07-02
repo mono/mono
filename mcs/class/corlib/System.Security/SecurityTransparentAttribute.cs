@@ -28,9 +28,7 @@
 
 namespace System.Security {
 
-#if MOONLIGHT
 	[MonoTODO ("Only supported by the runtime when CoreCLR is enabled")]
-#endif
 	[AttributeUsage (AttributeTargets.Assembly, AllowMultiple=false, Inherited=false)]
 	public sealed class SecurityTransparentAttribute : Attribute {
 

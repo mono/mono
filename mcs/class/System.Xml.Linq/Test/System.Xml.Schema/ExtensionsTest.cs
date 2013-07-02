@@ -9,6 +9,8 @@
 // (C) Stefan Prutianu
 // 
 
+#if !MOBILE
+
 using NUnit.Framework;
 using System;
 using System.Xml;
@@ -467,3 +469,5 @@ namespace MonoTests.System.Xml.Schema
 
 	}
 }
+
+#endif

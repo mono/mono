@@ -135,7 +135,7 @@ class Class1
 		return new Result (result);
 	}
 
-	static int Main (string[] args)
+	public static int Main (string[] args)
 	{
 		int result = AddABunchOfInts (__arglist ( 2, 3, 4 ));
 		Console.WriteLine ("Answer: {0}", result);

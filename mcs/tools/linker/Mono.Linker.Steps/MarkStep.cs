@@ -86,9 +86,12 @@ namespace Mono.Linker.Steps {
 			if (type.HasMethods)
 				InitializeMethods (type.Methods);
 
-			if (type.HasNestedTypes)
-				foreach (var nested in type.NestedTypes)
-					InitializeType (nested);
+			if (type.HasNestedTypes) {
+				foreach (var nested in type.NestedTypes) {
+					if (Annotations.IsMarked (nested))
+						InitializeType (nested);
+				}
+			}
 		}
 
 		void InitializeFields (TypeDefinition type)
@@ -203,6 +206,9 @@ namespace Mono.Linker.Steps {
 
 		void MarkCustomAttributeProperties (CustomAttribute ca, TypeDefinition attribute)
 		{
+			if (!ca.HasProperties)
+				return;
+
 			foreach (var named_argument in ca.Properties) {
 				PropertyDefinition property = GetProperty (attribute, named_argument.Name);
 				if (property != null)
@@ -227,6 +233,9 @@ namespace Mono.Linker.Steps {
 
 		void MarkCustomAttributeFields (CustomAttribute ca, TypeDefinition attribute)
 		{
+			if (!ca.HasFields)
+				return;
+
 			foreach (var named_argument in ca.Fields) {
 				FieldDefinition field = GetField (attribute, named_argument.Name);
 				if (field != null)
@@ -251,6 +260,9 @@ namespace Mono.Linker.Steps {
 
 		void MarkCustomAttributeArguments (CustomAttribute ca)
 		{
+			if (!ca.HasConstructorArguments)
+				return;
+
 			foreach (var argument in ca.ConstructorArguments)
 				MarkIfType (argument);
 		}
@@ -332,15 +344,24 @@ namespace Mono.Linker.Steps {
 			Annotations.Mark (provider);
 		}
 
-		protected virtual void MarkType (TypeReference reference)
+		protected virtual void MarkSerializable (TypeDefinition type)
+		{
+			if (!type.HasMethods)
+				return;
+
+			MarkMethodsIf (type.Methods, IsDefaultConstructorPredicate);
+			MarkMethodsIf (type.Methods, IsSpecialSerializationConstructorPredicate);
+		}
+
+		protected virtual TypeDefinition MarkType (TypeReference reference)
 		{
 			if (reference == null)
-				return;
+				return null;
 
 			reference = GetOriginalType (reference);
 
 			if (reference is GenericParameter)
-				return;
+				return null;
 
 //			if (IgnoreScope (reference.Scope))
 //				return;
@@ -351,7 +372,7 @@ namespace Mono.Linker.Steps {
 				throw new ResolutionException (reference);
 
 			if (CheckProcessed (type))
-				return;
+				return null;
 
 			MarkScope (type.Scope);
 			MarkType (type.BaseType);
@@ -362,16 +383,15 @@ namespace Mono.Linker.Steps {
 				MarkMethodCollection (type.Methods);
 			}
 
-			if (IsSerializable (type) && type.HasMethods) {
-				MarkMethodsIf (type.Methods, IsDefaultConstructorPredicate);
-				MarkMethodsIf (type.Methods, IsSpecialSerializationConstructorPredicate);
-			}
+			if (IsSerializable (type))
+				MarkSerializable (type);
 
 			MarkTypeSpecialCustomAttributes (type);
 
 			MarkGenericParameterProvider (type);
 
-			if (type.IsValueType)
+			// keep fields for value-types and for classes with LayoutKind.Sequential or Explicit
+			if (type.IsValueType || !type.IsAutoLayout)
 				MarkFields (type, type.IsEnum);
 
 			if (type.HasInterfaces) {
@@ -387,6 +407,8 @@ namespace Mono.Linker.Steps {
 			Annotations.Mark (type);
 
 			ApplyPreserveInfo (type);
+
+			return type;
 		}
 
 		void MarkTypeSpecialCustomAttributes (TypeDefinition type)
@@ -552,7 +574,7 @@ namespace Mono.Linker.Steps {
 
 		static bool IsDefaultConstructor (MethodDefinition method)
 		{
-			return IsConstructor (method) && method.Parameters.Count == 0;
+			return IsConstructor (method) && !method.HasParameters;
 		}
 
 		static bool IsConstructor (MethodDefinition method)
@@ -708,7 +730,7 @@ namespace Mono.Linker.Steps {
 			}
 		}
 
-		protected void MarkMethods (TypeDefinition type)
+		protected virtual void MarkMethods (TypeDefinition type)
 		{
 			if (type.HasMethods)
 				MarkMethodCollection (type.Methods);
@@ -720,12 +742,12 @@ namespace Mono.Linker.Steps {
 				MarkMethod (method);
 		}
 
-		void MarkMethod (MethodReference reference)
+		protected virtual MethodDefinition MarkMethod (MethodReference reference)
 		{
 			reference = GetOriginalMethod (reference);
 
 			if (reference.DeclaringType is ArrayType)
-				return;
+				return null;
 
 			if (reference.DeclaringType is GenericInstanceType)
 				MarkType (reference.DeclaringType);
@@ -742,6 +764,7 @@ namespace Mono.Linker.Steps {
 				Annotations.SetAction (method, MethodAction.Parse);
 
 			EnqueueMethod (method);
+			return method;
 		}
 
 		AssemblyDefinition ResolveAssembly (IMetadataScope scope)
@@ -751,7 +774,7 @@ namespace Mono.Linker.Steps {
 			return assembly;
 		}
 
-		MethodReference GetOriginalMethod (MethodReference method)
+		protected MethodReference GetOriginalMethod (MethodReference method)
 		{
 			while (method is MethodSpecification) {
 				GenericInstanceMethod gim = method as GenericInstanceMethod;
@@ -827,6 +850,9 @@ namespace Mono.Linker.Steps {
 				return;
 
 			foreach (MethodDefinition base_method in base_methods) {
+				if (base_method.DeclaringType.IsInterface && !method.DeclaringType.IsInterface)
+					continue;
+
 				MarkMethod (base_method);
 				MarkBaseMethods (base_method);
 			}
@@ -896,7 +922,7 @@ namespace Mono.Linker.Steps {
 			MarkMethod (method);
 		}
 
-		void MarkMethodBody (MethodBody body)
+		protected virtual void MarkMethodBody (MethodBody body)
 		{
 			foreach (VariableDefinition var in body.Variables)
 				MarkType (var.VariableType);

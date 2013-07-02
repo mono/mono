@@ -10,12 +10,16 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading;
 
+#if !MONOTOUCH
+using Mono.Unix;
+#endif
 using NUnit.Framework;
 
 namespace MonoTests.System.IO
@@ -43,7 +47,53 @@ public class DirectoryTest
 		if (Directory.Exists (TempFolder))
 			Directory.Delete (TempFolder, true);
 	}
+#if !MONOTOUCH
+	[Test] //BXC #12461
+	public void EnumerateFilesListSymlinks ()
+	{
+		if (!RunningOnUnix)
+			return;
 
+		var afile = Path.Combine (TempFolder, "afile.src");
+		var bfile = Path.Combine (TempFolder, "bfile.src");
+		var cdir = Path.Combine (TempFolder, "cdir.src");
+
+		File.AppendAllText (afile, "hello");
+		var info = new UnixFileInfo (afile);
+		info.CreateSymbolicLink (bfile);
+		Directory.CreateDirectory (cdir);
+
+		var files0 = Directory.GetFiles (TempFolder, "*.src");
+		Array.Sort (files0);
+		Assert.AreEqual (2, files0.Length, "#1");
+		Assert.AreEqual (afile, files0 [0], "#2");
+		Assert.AreEqual (bfile, files0 [1], "#3");
+
+#if NET_4_0
+		var files1 = new List<string> (Directory.EnumerateFiles (TempFolder, "*.src")).ToArray ();
+		Array.Sort (files1);
+		Assert.AreEqual (2, files1.Length, "#1.b");
+		Assert.AreEqual (afile, files1 [0], "#2.b");
+		Assert.AreEqual (bfile, files1 [1], "#3.b");
+#endif
+
+		var files2 = Directory.GetFileSystemEntries (TempFolder, "*.src");
+		Array.Sort (files2);
+		Assert.AreEqual (3, files2.Length, "#1.c");
+		Assert.AreEqual (afile, files2 [0], "#2.c");
+		Assert.AreEqual (bfile, files2 [1], "#3.c");
+		Assert.AreEqual (cdir, files2 [2], "#4.c");
+
+#if NET_4_0
+		var files3 = new List<string> (Directory.EnumerateFileSystemEntries (TempFolder, "*.src")).ToArray ();
+		Array.Sort (files3);
+		Assert.AreEqual (3, files3.Length, "#1.d");
+		Assert.AreEqual (afile, files3 [0], "#2.d");
+		Assert.AreEqual (bfile, files3 [1], "#3.d");
+		Assert.AreEqual (cdir, files3 [2], "#4.d");
+#endif
+	}
+#endif
 	[Test]
 	public void CreateDirectory ()
 	{
@@ -314,7 +364,7 @@ public class DirectoryTest
 		Assert.IsFalse (Directory.Exists (null as string));
 	}
 
-#if !TARGET_JVM // We don't support yet the Process class.
+#if !TARGET_JVM && !MOBILE // We don't support yet the Process class.
 	[Test] // bug #78239
 	public void ExistsAccessDenied ()
 	{

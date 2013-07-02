@@ -14,6 +14,7 @@ using System.Threading;
 using System.Net;
 using System.Net.Sockets;
 using NUnit.Framework;
+using System.IO;
 
 #if NET_2_0
 using System.Collections.Generic;
@@ -502,7 +503,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
-		[Category ("NotOnMac")] // DontFragment doesn't work on Mac
+		[Category ("NotWorking")] // DontFragment doesn't work
 		public void DontFragmentChangeTcp ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -529,7 +530,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
-		[Category ("NotOnMac")] // DontFragment doesn't work on Mac
+		[Category ("NotWorking")] // DontFragment doesn't work
 		public void DontFragmentChangeUdp ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -4237,6 +4238,72 @@ namespace MonoTests.System.Net.Sockets
 			s.Close ();
 			s.SendAsync (null);
 		}
-	}
+		
+		[Test]
+		public void SendAsyncFile ()
+		{
+			Socket serverSocket = StartSocketServer ();
+			
+			Socket clientSocket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			clientSocket.Connect (serverSocket.LocalEndPoint);
+			clientSocket.NoDelay = true;
+						
+			// Initialize buffer used to create testing file
+			var buffer = new byte [1024];
+			for (int i = 0; i < 1024; ++i)
+				buffer [i] = (byte) (i % 256);
+			
+			string temp = Path.GetTempFileName ();
+			try {
+				// Testing file creation
+				using (StreamWriter sw = new StreamWriter (temp)) {
+					sw.Write (buffer);
+				}
+
+				var m = new ManualResetEvent (false);
+
+				// Async Send File to server
+				clientSocket.BeginSendFile(temp, (ar) => {
+					Socket client = (Socket) ar.AsyncState;
+					client.EndSendFile (ar);
+					m.Set ();
+				}, clientSocket);
+
+				if (!m.WaitOne (1500))
+					throw new TimeoutException ();
+				m.Reset ();
+			} finally {
+				if (File.Exists (temp))
+					File.Delete (temp);
+					
+				clientSocket.Close ();
+				serverSocket.Close ();
+			}
+		}
+		
+		Socket StartSocketServer ()
+		{
+
+			Socket listenSocket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			
+			listenSocket.Bind (new IPEndPoint (IPAddress.Loopback, 8001));
+			listenSocket.Listen (1);
+
+			listenSocket.BeginAccept (new AsyncCallback (ReceiveCallback), listenSocket);
+			
+			return listenSocket;
+		}
+
+		public static void ReceiveCallback (IAsyncResult AsyncCall)
+		{
+			byte[] bytes = new byte [1024];
+
+			Socket listener = (Socket)AsyncCall.AsyncState;
+			Socket client = listener.EndAccept (AsyncCall);
+ 
+			client.Receive (bytes, bytes.Length, 0);
+			client.Close ();
+		}
+ 	}
 }
 

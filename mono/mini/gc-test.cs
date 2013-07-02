@@ -542,15 +542,42 @@ class Tests {
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
-	public static void liveness_12_inner (int a, int b, int c, int d, int e, int f, object o) {
+	public static void liveness_12_inner (int a, int b, int c, int d, int e, int f, object o, ref string s) {
 		GC.Collect (1);
 		o.GetHashCode ();
+		s.GetHashCode ();
+	}
+
+	class FooClass {
+		public string s;
 	}
 
 	// Liveness for param area
 	public static int test_0_liveness_12 () {
+		var f = new FooClass () { s = "A" };
 		// The ref argument should be passed on the stack
-		liveness_12_inner (1, 2, 3, 4, 5, 6, new object ());
+		liveness_12_inner (1, 2, 3, 4, 5, 6, new object (), ref f.s);
+		return 0;
+	}
+	
+	interface IFace {
+		int foo ();
+	}
+
+	struct BarStruct : IFace {
+		int i;
+
+		public int foo () {
+			GC.Collect ();
+			return i;
+		}
+	}
+		
+	public static int test_0_liveness_unbox_trampoline () {
+		var s = new BarStruct ();
+		
+		IFace iface = s;
+		iface.foo ();
 		return 0;
 	}
 
@@ -582,5 +609,23 @@ class Tests {
 			return 0;
 		else
 			return 1;
+	}
+
+	struct LargeBitmap {
+		public object o1, o2, o3;
+		public int i;
+		public object o4, o5, o6, o7, o9, o10, o11, o12, o13, o14, o15, o16, o17, o18, o19, o20, o21, o22, o23, o24, o25, o26, o27, o28, o29, o30, o31, o32;
+	}
+
+	public static int test_12_large_bitmap () {
+		LargeBitmap lb = new LargeBitmap ();
+		lb.o1 = 1;
+		lb.o2 = 2;
+		lb.o3 = 3;
+		lb.o32 = 6;
+
+		GC.Collect (0);
+
+		return (int)lb.o1 + (int)lb.o2 + (int)lb.o3 + (int)lb.o32;
 	}
 }

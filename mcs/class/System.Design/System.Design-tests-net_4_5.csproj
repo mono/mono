@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{00CB1FAE-7834-4589-94D0-40166739993E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>.\</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\System.Design-tests-net_4_5</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>False</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>System.Design_test_net_4_5</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
@@ -28,27 +27,35 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="Test\System.ComponentModel.Design\DesignerActionListsChangedEventArgsTest.cs" />
-   <Compile Include="Test\System.ComponentModel.Design\DesignerActionMethodItemTest.cs" />
-   <Compile Include="Test\System.ComponentModel.Design\DesignerActionPropertyItemTest.cs" />
-   <Compile Include="Test\System.Diagnostics.Design\StringValueConverterTest.cs" />
-   <Compile Include="Test\System.Windows.Forms.Design\MenuCommandsTest.cs" />
-
-  </ItemGroup>
+    <Compile Include="Test\System.ComponentModel.Design\DesignerActionListsChangedEventArgsTest.cs" />
+    <Compile Include="Test\System.ComponentModel.Design\DesignerActionMethodItemTest.cs" />
+    <Compile Include="Test\System.ComponentModel.Design\DesignerActionPropertyItemTest.cs" />
+    <Compile Include="Test\System.Diagnostics.Design\StringValueConverterTest.cs" />
+    <Compile Include="Test\System.Resources.Tools\StronglyTypedResourceBuilderBaseNameTests.cs" />
+    <Compile Include="Test\System.Resources.Tools\StronglyTypedResourceBuilderCodeDomTest.cs" />
+    <Compile Include="Test\System.Resources.Tools\StronglyTypedResourceBuilderNamespaceTests.cs" />
+    <Compile Include="Test\System.Resources.Tools\StronglyTypedResourceBuilderOtherTests.cs" />
+    <Compile Include="Test\System.Resources.Tools\StronglyTypedResourceBuilderResourceNameTests.cs" />
+    <Compile Include="Test\System.Resources.Tools\StronglyTypedResourceBuilderResxFileTests.cs" />
+    <Compile Include="Test\System.Resources.Tools\StronglyTypedResourceBuilderVerifyResourceNameTests.cs" />
+    <Compile Include="Test\System.Windows.Forms.Design\MenuCommandsTest.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -57,27 +64,37 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="./../../class/lib/net_4_5/System.Design.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../class/lib/net_4_5/System.Design.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework" />
-
+    <Reference Include="..\lib\net_4_5\nunit.framework.dll" />
+    <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
+      <Project>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</Project>
+      <Name>corlib\corlib-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Design\System.Design-net_4_5-1.csproj">
+      <Project>{2414C54A-9454-4B25-932C-0724CF003A6D}</Project>
+      <Name>System.Design\System.Design-net_4_5-1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_5-2.csproj">
+      <Project>{34966210-D64D-419C-94A4-9A6093CE5882}</Project>
+      <Name>System\System-net_4_5-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Drawing\System.Drawing-net_4_5.csproj">
+      <Project>{4F2AADB3-6D4D-41C3-AC38-6AC970F97703}</Project>
+      <Name>System.Drawing\System.Drawing-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Managed.Windows.Forms\System.Windows.Forms-net_4_5.csproj">
+      <Project>{ABF6A466-1744-4C43-8B68-C89EA10FBB67}</Project>
+      <Name>Managed.Windows.Forms\System.Windows.Forms-net_4_5</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
-

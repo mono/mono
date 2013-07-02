@@ -3,7 +3,8 @@
 //
 // Authors:
 //	Duncan Mak (duncan@ximian.com)
-//  Lluis Sanchez Gual (lluis@novell.com)
+//	Lluis Sanchez Gual (lluis@novell.com)
+//	Martin Baulig <martin.baulig@xamarin.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,9 +26,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (c) 2012 Xamarin Inc. (http://www.xamarin.com)
 //
 
-#if NET_2_0
 using System.Collections;
 using System.Xml;
 using System.IO;
@@ -134,6 +135,7 @@ namespace System.Configuration
 		{
 			ConfigurationElement elem = (ConfigurationElement) Activator.CreateInstance (t);
 			elem.Init ();
+			elem.Configuration = Configuration;
 			if (IsReadOnly ())
 				elem.SetReadOnly ();
 			return elem;
@@ -220,7 +222,7 @@ namespace System.Configuration
 			SectionInformation.SetRawXml (RawXml);
 			DeserializeElement (new ConfigXmlTextReader (new StringReader (RawXml), path), false);
 		}
-		
+
 		protected internal virtual string SerializeSection (ConfigurationElement parentElement, string name, ConfigurationSaveMode saveMode)
 		{
 			externalDataXml = null;
@@ -231,12 +233,28 @@ namespace System.Configuration
 			}
 			else
 				elem = this;
-			
+
+			/*
+			 * FIXME: LAMESPEC
+			 * 
+			 * Cache the current values of 'parentElement' and 'saveMode' for later use in
+			 * ConfigurationElement.SerializeToXmlElement().
+			 * 
+			 */
+			elem.PrepareSave (parentElement, saveMode);
+			bool hasValues = elem.HasValues (parentElement, saveMode);
+
 			string ret;			
 			using (StringWriter sw = new StringWriter ()) {
 				using (XmlTextWriter tw = new XmlTextWriter (sw)) {
 					tw.Formatting = Formatting.Indented;
-					elem.SerializeToXmlElement (tw, name);
+					if (hasValues)
+						elem.SerializeToXmlElement (tw, name);
+					else if ((saveMode == ConfigurationSaveMode.Modified) && elem.IsModified ()) {
+						// MS emits an empty section element.
+						tw.WriteStartElement (name);
+						tw.WriteEndElement ();
+					}
 					tw.Close ();
 				}
 				
@@ -265,4 +283,4 @@ namespace System.Configuration
 		}
 	}
 }
-#endif
+

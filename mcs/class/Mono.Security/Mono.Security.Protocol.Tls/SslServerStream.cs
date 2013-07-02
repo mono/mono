@@ -34,7 +34,12 @@ using Mono.Security.Protocol.Tls.Handshake;
 
 namespace Mono.Security.Protocol.Tls
 {
-	public class SslServerStream : SslStreamBase
+#if INSIDE_SYSTEM
+	internal
+#else
+	public
+#endif
+	class SslServerStream : SslStreamBase
 	{
 		#region Internal Events
 		

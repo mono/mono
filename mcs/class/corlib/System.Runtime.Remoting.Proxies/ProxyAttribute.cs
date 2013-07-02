@@ -49,12 +49,8 @@ namespace System.Runtime.Remoting.Proxies {
 
 		public virtual MarshalByRefObject CreateInstance (Type serverType)
 		{
-#if MOONLIGHT
-			throw new NotImplementedException ();
-#else
 			RemotingProxy proxy = new RemotingProxy (serverType, ChannelServices.CrossContextUrl, null);
 			return (MarshalByRefObject) proxy.GetTransparentProxy();
-#endif
 		}
 
 		public virtual RealProxy CreateProxy (ObjRef objRef, Type serverType, object serverObject, Context serverContext)

@@ -38,6 +38,9 @@
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
+#if FULL_AOT_RUNTIME
+using Crimson.CommonCrypto;
+#endif
 
 namespace System {
 
@@ -45,7 +48,7 @@ namespace System {
 	[StructLayout (LayoutKind.Sequential)]
 	[ComVisible (true)]
 	public struct Guid : IFormattable, IComparable, IComparable<Guid>, IEquatable<Guid> {
-#if MONOTOUCH
+#if FULL_AOT_RUNTIME
 		static Guid () {
 			if (MonoTouchAOTHelper.FalseFlag) {
 				var comparer = new System.Collections.Generic.GenericComparer <Guid> ();
@@ -463,21 +466,26 @@ namespace System {
 			return (char)((b<0xA)?('0' + b):('a' + b - 0xA));
 		}
 
+#if !FULL_AOT_RUNTIME
 		private static object _rngAccess = new object ();
 		private static RandomNumberGenerator _rng;
 		private static RandomNumberGenerator _fastRng;
+#endif
 
 		// generated as per section 3.4 of the specification
 		public static Guid NewGuid ()
 		{
 			byte[] b = new byte [16];
-
+#if !FULL_AOT_RUNTIME
 			// thread-safe access to the prng
 			lock (_rngAccess) {
 				if (_rng == null)
 					_rng = RandomNumberGenerator.Create ();
 				_rng.GetBytes (b);
 			}
+#else
+			Cryptor.GetRandom (b);
+#endif
 
 			Guid res = new Guid (b);
 			// Mask in Variant 1-0 in Bit[7..6]
@@ -488,6 +496,7 @@ namespace System {
 			return res;
 		}
 
+#if !FULL_AOT_RUNTIME
 		// used in ModuleBuilder so mcs doesn't need to invoke 
 		// CryptoConfig for simple assemblies.
 		internal static byte[] FastNewGuidArray ()
@@ -512,7 +521,7 @@ namespace System {
 
 			return guid;
 		}
-
+#endif
 		public byte[] ToByteArray ()
 		{
 			byte[] res = new byte[16];
@@ -690,7 +699,7 @@ namespace System {
 			return !( a.Equals (b) );
 		}
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 		public static Guid Parse (string input)
 		{
 			if (input == null)
@@ -758,7 +767,7 @@ namespace System {
 			case 'P':
 			case 'p':
 				return Format.P;
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 			case 'X':
 			case 'x':
 				return Format.X;
@@ -766,7 +775,7 @@ namespace System {
 			}
 
 			throw new FormatException (
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 				"Format String can be only one of \"D\", \"d\", \"N\", \"n\", \"P\", \"p\", \"B\", \"b\", \"X\" or \"x\""
 #else
 				"Format String can be only one of \"D\", \"d\", \"N\", \"n\", \"P\", \"p\", \"B\" or \"b\""

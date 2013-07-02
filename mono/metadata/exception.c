@@ -574,14 +574,16 @@ mono_get_exception_type_initialization (const gchar *type_name, MonoException *i
 
 	mono_class_init (klass);
 
-	/* TypeInitializationException only has 1 ctor with 2 args */
 	iter = NULL;
 	while ((method = mono_class_get_methods (klass, &iter))) {
-		if (!strcmp (".ctor", mono_method_get_name (method)) && mono_method_signature (method)->param_count == 2)
-			break;
+		if (!strcmp (".ctor", mono_method_get_name (method))) {
+			MonoMethodSignature *sig = mono_method_signature (method);
+
+			if (sig->param_count == 2 && sig->params [0]->type == MONO_TYPE_STRING && mono_class_from_mono_type (sig->params [1]) == mono_defaults.exception_class)
+				break;
+		}
 		method = NULL;
 	}
-
 	g_assert (method);
 
 	args [0] = mono_string_new (mono_domain_get (), type_name);
@@ -738,12 +740,23 @@ mono_get_exception_reflection_type_load (MonoArray *types, MonoArray *exceptions
 	gpointer args [2];
 	MonoObject *exc;
 	MonoMethod *method;
+	gpointer iter;
 
 	klass = mono_class_from_name (mono_get_corlib (), "System.Reflection", "ReflectionTypeLoadException");
 	g_assert (klass);
 	mono_class_init (klass);
 
-	method = mono_class_get_method_from_name (klass, ".ctor", 2);
+	/* Find the Type[], Exception[] ctor */
+	iter = NULL;
+	while ((method = mono_class_get_methods (klass, &iter))) {
+		if (!strcmp (".ctor", mono_method_get_name (method))) {
+			MonoMethodSignature *sig = mono_method_signature (method);
+
+			if (sig->param_count == 2 && sig->params [0]->type == MONO_TYPE_SZARRAY && sig->params [1]->type == MONO_TYPE_SZARRAY)
+				break;
+		}
+		method = NULL;
+	}
 	g_assert (method);
 
 	args [0] = types;
@@ -765,6 +778,36 @@ mono_get_exception_runtime_wrapped (MonoObject *wrapped_exception)
    MONO_OBJECT_SETREF (ex, wrapped_exception, wrapped_exception);
    return (MonoException*)ex;
 }	
+
+static gboolean
+append_frame_and_continue (MonoMethod *method, gpointer ip, size_t native_offset, gboolean managed, gpointer user_data)
+{
+	MonoDomain *domain = mono_domain_get ();
+	GString *text = (GString*)user_data;
+
+	if (method) {
+		char *msg = mono_debug_print_stack_frame (method, native_offset, domain);
+		g_string_append_printf (text, "%s\n", msg);
+		g_free (msg);
+	} else {
+		g_string_append_printf (text, "<unknown native frame 0x%x>\n", ip);
+	}
+
+	return FALSE;
+}
+
+char *
+mono_exception_get_managed_backtrace (MonoException *exc)
+{
+	GString *text;
+
+	text = g_string_new_len (NULL, 20);
+
+	if (!mono_get_eh_callbacks ()->mono_exception_walk_trace (exc, append_frame_and_continue, text))
+		g_string_append (text, "managed backtrace not available\n");
+
+	return g_string_free (text, FALSE);
+}
 
 char *
 mono_exception_get_native_backtrace (MonoException *exc)

@@ -2,6 +2,7 @@
 // Icon class testing unit
 //
 // Authors:
+//	Gary Barnett <gary.barnett.mono@gmail.com>
 // 	Sanjay Gupta <gsanjay@novell.com>
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
@@ -142,6 +143,48 @@ namespace MonoTests.System.Drawing {
 			Icon non_square = new Icon (icon, 32, 16);
 			Assert.AreEqual (32, non_square.Height, "Height");
 			Assert.AreEqual (32, non_square.Width, "Width");
+		}
+
+		[Test]
+		public void Constructor_Icon_GetNormalSizeFromIconWith256 ()
+		{
+			string filepath = TestBitmap.getInFile ("bitmaps/323511.ico");
+
+			Icon orig = new Icon (filepath);
+			Assert.AreEqual (32,orig.Height);
+			Assert.AreEqual (32,orig.Width);
+
+			Icon ret = new Icon (orig, 48, 48);
+			Assert.AreEqual (48, ret.Height);
+			Assert.AreEqual (48, ret.Width);
+		}
+
+		[Test]
+		public void Constructor_Icon_DoesntReturn256Passing0 ()
+		{
+			string filepath = TestBitmap.getInFile ("bitmaps/323511.ico");
+			
+			Icon orig = new Icon (filepath);
+			Assert.AreEqual (32,orig.Height);
+			Assert.AreEqual (32,orig.Width);
+			
+			Icon ret = new Icon (orig, 0, 0);
+			Assert.AreNotEqual (0, ret.Height);
+			Assert.AreNotEqual (0, ret.Width);
+		}
+
+		[Test]
+		public void Constructor_Icon_DoesntReturn256Passing1 ()
+		{
+			string filepath = TestBitmap.getInFile ("bitmaps/323511.ico");
+			
+			Icon orig = new Icon (filepath);
+			Assert.AreEqual (32,orig.Height);
+			Assert.AreEqual (32,orig.Width);
+			
+			Icon ret = new Icon (orig, 1, 1);
+			Assert.AreNotEqual (0, ret.Height);
+			Assert.AreNotEqual (0, ret.Width);
 		}
 
 		[Test]
@@ -361,22 +404,19 @@ namespace MonoTests.System.Drawing {
 		[Test] // bug #410608
 		public void Save_256 ()
 		{
-			if (RunningOnUnix)
-				Assert.Ignore ("Depends on bug #323511");
+			string filepath = TestBitmap.getInFile ("bitmaps/323511.ico");
 
-			using (Icon icon = new Icon (TestBitmap.getInFile ("bitmaps/323511.ico"))) {
-				// FIXME: use this instead after bug #415809 is fixed
-				//SaveAndCompare ("256", icon, true);
-
-				MemoryStream ms = new MemoryStream ();
-				icon.Save (ms);
-				ms.Position = 0;
-
-				using (Icon loaded = new Icon (ms)) {
-					Assert.AreEqual (icon.Height, loaded.Height, "Loaded.Height");
-					Assert.AreEqual (icon.Width, loaded.Width, "Loaded.Width");
-				}
+			using (Icon icon = new Icon (filepath)) {
+				// bug #415809 fixed
+				SaveAndCompare ("256", icon, true);
 			}
+
+			// binary comparison
+			var orig = new MemoryStream (File.ReadAllBytes (filepath));
+			var saved = new MemoryStream ();
+			using (Icon icon = new Icon (filepath))
+				icon.Save (saved);
+			FileAssert.AreEqual (orig, saved, "binary comparison");
 		}
 
 		[Test]
@@ -480,9 +520,6 @@ namespace MonoTests.System.Drawing {
 #endif
 		public void Icon256ToBitmap ()
 		{
-			if (RunningOnUnix)
-				Assert.Ignore ("Depends on bug #323511");
-
 			using (FileStream fs = File.OpenRead (TestBitmap.getInFile ("bitmaps/415581.ico"))) {
 				Icon icon = new Icon (fs, 48, 48);
 				using (Bitmap b = icon.ToBitmap ()) {
@@ -506,6 +543,31 @@ namespace MonoTests.System.Drawing {
 				}
 			}
 		}
+
+		[Test]
+		public void Icon256ToBitmap_Request0 ()
+		{
+			// 415581.ico has 2 images, the 256 and 48
+			using (FileStream fs = File.OpenRead (TestBitmap.getInFile ("bitmaps/415581.ico"))) {
+				Icon icon = new Icon (fs, 0, 0);
+				using (Bitmap b = icon.ToBitmap ()) {
+					Assert.AreEqual (0, b.Palette.Entries.Length, "#B1");
+					Assert.AreEqual (48, b.Height, "#B2");
+					Assert.AreEqual (48, b.Width, "#B3");
+					Assert.IsTrue (b.RawFormat.Equals (ImageFormat.MemoryBmp), "#B4");
+					Assert.AreEqual (2, b.Flags, "#B5");
+				}
+			}
+		}
+
+		[Test, ExpectedException ()] //ToDo: System.ComponentModel.Win32Exception
+		public void Only256InFile ()
+		{
+			using (FileStream fs = File.OpenRead (TestBitmap.getInFile ("bitmaps/only256.ico"))) {
+				Icon icon = new Icon (fs, 0, 0);
+			}
+		}
+
 
 #if NET_2_0
 		[Test]

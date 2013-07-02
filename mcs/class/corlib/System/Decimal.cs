@@ -756,7 +756,7 @@ namespace System
 			bool hasCurrency = false;
 			if ((style & NumberStyles.AllowCurrencySymbol) != 0)
 			{
-				int index = s.IndexOf (nfi.CurrencySymbol);
+				int index = s.IndexOfOrdinalUnchecked (nfi.CurrencySymbol);
 				if (index >= 0) 
 				{
 					s = s.Remove (index, nfi.CurrencySymbol.Length);
@@ -799,7 +799,7 @@ namespace System
 				else if (allowedLeadingSign && !string.IsNullOrEmpty (negativeSign) && ch == negativeSign[0] && !hasSign)
 				{
 					int slen = negativeSign.Length;
-					if (slen == 1 || s.IndexOf (negativeSign, pos, slen) == pos)
+					if (slen == 1 || s.IndexOfOrdinalUnchecked (negativeSign, pos, slen) == pos)
 					{
 						hasSign = true;
 						isNegative = true;
@@ -809,7 +809,7 @@ namespace System
 				else if (allowedLeadingSign && !string.IsNullOrEmpty (positiveSign) && ch == positiveSign[0] && !hasSign)
 				{
 					int slen = positiveSign.Length;
-					if (slen == 1 || s.IndexOf (positiveSign, pos, slen) == pos)
+					if (slen == 1 || s.IndexOfOrdinalUnchecked (positiveSign, pos, slen) == pos)
 					{
 						hasSign = true;
 						pos += slen;
@@ -818,7 +818,7 @@ namespace System
 				else if (allowedDecimalPoint && ch == decimalSep[0])
 				{
 					int slen = decimalSep.Length;
-					if (slen != 1 && s.IndexOf (decimalSep, pos, slen) != pos) 
+					if (slen != 1 && s.IndexOfOrdinalUnchecked (decimalSep, pos, slen) != pos) 
 					{
 						if (throwex)
 							ThrowAtPos (pos);
@@ -855,7 +855,7 @@ namespace System
 				else if (allowedThousands && ch == groupSep[0] && ch != decimalSep [0]) 
 				{
 					int slen = groupSep.Length;
-					if (slen != 1 && s.IndexOf(groupSep, pos, slen) != pos) 
+					if (slen != 1 && s.IndexOfOrdinalUnchecked(groupSep, pos, slen) != pos) 
 					{
 						if (throwex)
 							ThrowAtPos (pos);
@@ -867,7 +867,7 @@ namespace System
 				else if (allowedDecimalPoint && ch == decimalSep[0] && !hasDecimalPoint)
 				{
 					int slen = decimalSep.Length;
-					if (slen == 1 || s.IndexOf(decimalSep, pos, slen) == pos) 
+					if (slen == 1 || s.IndexOfOrdinalUnchecked(decimalSep, pos, slen) == pos) 
 					{
 						decPos = sb.Length;
 						hasDecimalPoint = true;
@@ -899,7 +899,7 @@ namespace System
 					if (!string.IsNullOrEmpty (positiveSign) && ch == positiveSign[0])
 					{
 						int slen = positiveSign.Length;
-						if (slen == 1 || s.IndexOf (positiveSign, pos, slen) == pos)
+						if (slen == 1 || s.IndexOfOrdinalUnchecked (positiveSign, pos, slen) == pos)
 						{
 							pos += slen;
 							if (pos >= len) {
@@ -913,7 +913,7 @@ namespace System
 					else if (!string.IsNullOrEmpty (negativeSign) && ch == negativeSign[0])
 					{
 						int slen = negativeSign.Length;
-						if (slen == 1 || s.IndexOf (negativeSign, pos, slen) == pos)
+						if (slen == 1 || s.IndexOfOrdinalUnchecked (negativeSign, pos, slen) == pos)
 						{
 							pos += slen;
 							if (pos >= len) {
@@ -961,7 +961,7 @@ namespace System
 				else if (allowedTrailingSign && !string.IsNullOrWhiteSpace (negativeSign) && ch == negativeSign[0] && !hasSign)
 				{
 					int slen = negativeSign.Length;
-					if (slen == 1 || s.IndexOf(negativeSign, pos, slen) == pos)
+					if (slen == 1 || s.IndexOfOrdinalUnchecked(negativeSign, pos, slen) == pos)
 					{
 						hasSign = true;
 						isNegative = true;
@@ -971,7 +971,7 @@ namespace System
 				else if (allowedTrailingSign && !string.IsNullOrWhiteSpace (positiveSign) && ch == positiveSign[0] && !hasSign)
 				{
 					int slen = positiveSign.Length;
-					if (slen == 1 || s.IndexOf (positiveSign, pos, slen) == pos)
+					if (slen == 1 || s.IndexOfOrdinalUnchecked (positiveSign, pos, slen) == pos)
 					{
 						hasSign = true;
 						pos += slen;
@@ -1073,8 +1073,7 @@ namespace System
 			len = s.Length;
 			if (len >= max + 1) {
 				// number lower than MaxValue (base-less) can have better precision
-				if (String.Compare (s, 0, "79228162514264337593543950335", 0, max + 1,
-					false, CultureInfo.InvariantCulture) <= 0) {
+				if (String.CompareOrdinal (s, 0, "79228162514264337593543950335", 0, max + 1) <= 0) {
 					max++;
 				}
 			}

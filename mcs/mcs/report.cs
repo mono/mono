@@ -550,6 +550,8 @@ namespace Mono.CSharp {
 	//
 	public abstract class ReportPrinter
 	{
+		protected HashSet<ITypeDefinition> reported_missing_definitions;
+
 		#region Properties
 
 		public int ErrorsCount { get; protected set; }
@@ -605,6 +607,22 @@ namespace Mono.CSharp {
 			}
 		}
 
+		//
+		// Tracks reported missing types. It needs to be session specific 
+		// because we can run in probing mode
+		//
+		public bool MissingTypeReported (ITypeDefinition typeDefinition)
+		{
+			if (reported_missing_definitions == null)
+				reported_missing_definitions = new HashSet<ITypeDefinition> ();
+
+			if (reported_missing_definitions.Contains (typeDefinition))
+				return true;
+
+			reported_missing_definitions.Add (typeDefinition);
+			return false;
+		}
+
 		public void Reset ()
 		{
 			// HACK: Temporary hack for broken repl flow
@@ -649,7 +667,7 @@ namespace Mono.CSharp {
 			//
 			// This line is useful when debugging recorded messages
 			//
-			// Console.WriteLine ("RECORDING: {0}", msg.ToString ());
+			// Console.WriteLine ("RECORDING: {0}", msg.Text);
 
 			if (session_messages == null)
 				session_messages = new List<AbstractMessage> ();
@@ -733,6 +751,11 @@ namespace Mono.CSharp {
 			foreach (AbstractMessage msg in messages_to_print) {
 				dest.Print (msg, showFullPaths);
 				error_msg |= !msg.IsWarning;
+			}
+
+			if (reported_missing_definitions != null) {
+				foreach (var missing in reported_missing_definitions)
+					dest.MissingTypeReported (missing);
 			}
 
 			return error_msg;

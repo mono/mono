@@ -82,9 +82,6 @@ namespace System.Threading {
 			if (callBack == null)
 				throw new ArgumentNullException ("callBack");
 
-#if MOONLIGHT
-			callBack = MoonlightHandler (callBack);
-#endif
 			if (callBack.IsTransparentProxy ()) {
 				IAsyncResult ar = callBack.BeginInvoke (state, null, null);
 				if (ar == null)
@@ -118,6 +115,12 @@ namespace System.Threading {
 										long millisecondsTimeOutInterval,
 										bool executeOnlyOnce)
 		{
+			if (waitObject == null)
+				throw new ArgumentNullException ("waitObject");
+
+			if (callBack == null)
+				throw new ArgumentNullException ("callBack");
+			
 			if (millisecondsTimeOutInterval < -1)
 				throw new ArgumentOutOfRangeException ("timeout", "timeout < -1");
 
@@ -224,20 +227,6 @@ namespace System.Threading {
 			throw new NotImplementedException ();
 		}
 
-#endif
-
-#if MOONLIGHT
-		static WaitCallback MoonlightHandler (WaitCallback callback)
-		{
-			return delegate (object o) {
-				try {
-					callback (o);
-				} 
-				catch (Exception ex) {
-					Thread.MoonlightUnhandledException (ex);
-				} 
-			};
-		}
 #endif
 	}
 }

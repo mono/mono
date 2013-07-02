@@ -34,6 +34,13 @@
 #endif
 #include <errno.h>
 
+#ifdef _MSC_VER
+#define FORCE_INLINE(RET_TYPE) __forceinline RET_TYPE
+#else
+#define FORCE_INLINE(RET_TYPE) inline RET_TYPE __attribute__((always_inline))
+#endif
+
+
 #define UNROLL_DECODE_UTF8 0
 #define UNROLL_ENCODE_UTF8 0
 
@@ -61,7 +68,7 @@ static int encode_utf16be (gunichar c, char *outbuf, size_t outleft);
 static int decode_utf16le (char *inbuf, size_t inleft, gunichar *outchar);
 static int encode_utf16le (gunichar c, char *outbuf, size_t outleft);
 
-static int decode_utf8 (char *inbuf, size_t inleft, gunichar *outchar);
+static FORCE_INLINE (int) decode_utf8 (char *inbuf, size_t inleft, gunichar *outchar);
 static int encode_utf8 (gunichar c, char *outbuf, size_t outleft);
 
 static int decode_latin1 (char *inbuf, size_t inleft, gunichar *outchar);
@@ -480,7 +487,7 @@ encode_utf16le (gunichar c, char *outbuf, size_t outleft)
 	}
 }
 
-static int
+static FORCE_INLINE (int)
 decode_utf8 (char *inbuf, size_t inleft, gunichar *outchar)
 {
 	unsigned char *inptr = (unsigned char *) inbuf;
@@ -828,7 +835,7 @@ g_unichar_to_utf8 (gunichar c, gchar *outbuf)
 	return n;
 }
 
-static int
+static FORCE_INLINE (int)
 g_unichar_to_utf16 (gunichar c, gunichar2 *outbuf)
 {
 	gunichar c2;
@@ -886,8 +893,8 @@ g_utf8_to_ucs4_fast (const gchar *str, glong len, glong *items_written)
 	return outbuf;
 }
 
-gunichar2 *
-g_utf8_to_utf16 (const gchar *str, glong len, glong *items_read, glong *items_written, GError **err)
+static gunichar2 *
+eg_utf8_to_utf16_general (const gchar *str, glong len, glong *items_read, glong *items_written, gboolean include_nuls, GError **err)
 {
 	gunichar2 *outbuf, *outptr;
 	size_t outlen = 0;
@@ -898,8 +905,13 @@ g_utf8_to_utf16 (const gchar *str, glong len, glong *items_read, glong *items_wr
 	
 	g_return_val_if_fail (str != NULL, NULL);
 	
-	if (len < 0)
+	if (len < 0) {
+		if (include_nuls) {
+			g_set_error (err, G_CONVERT_ERROR, G_CONVERT_ERROR_FAILED, "Conversions with embedded nulls must pass the string length");
+			return NULL;
+		}
 		len = strlen (str);
+	}
 	
 	inptr = (char *) str;
 	inleft = len;
@@ -924,7 +936,7 @@ g_utf8_to_utf16 (const gchar *str, glong len, glong *items_read, glong *items_wr
 				*items_written = 0;
 			
 			return NULL;
-		} else if (c == 0)
+		} else if (c == 0 && !include_nuls)
 			break;
 		
 		outlen += g_unichar_to_utf16 (c, NULL);
@@ -945,7 +957,7 @@ g_utf8_to_utf16 (const gchar *str, glong len, glong *items_read, glong *items_wr
 	while (inleft > 0) {
 		if ((n = decode_utf8 (inptr, inleft, &c)) < 0)
 			break;
-		else if (c == 0)
+		else if (c == 0 && !include_nuls)
 			break;
 		
 		outptr += g_unichar_to_utf16 (c, outptr);
@@ -956,6 +968,18 @@ g_utf8_to_utf16 (const gchar *str, glong len, glong *items_read, glong *items_wr
 	*outptr = '\0';
 	
 	return outbuf;
+}
+
+gunichar2 *
+g_utf8_to_utf16 (const gchar *str, glong len, glong *items_read, glong *items_written, GError **err)
+{
+	return eg_utf8_to_utf16_general (str, len, items_read, items_written, FALSE, err);
+}
+
+gunichar2 *
+eg_utf8_to_utf16_with_nuls (const gchar *str, glong len, glong *items_read, glong *items_written, GError **err)
+{
+	return eg_utf8_to_utf16_general (str, len, items_read, items_written, TRUE, err);
 }
 
 gunichar *

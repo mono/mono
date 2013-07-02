@@ -23,6 +23,7 @@
 //
 
 using System;
+using System.Net;
 using System.Security.Cryptography;
 
 namespace Mono.Security.Protocol.Tls.Handshake.Client
@@ -64,14 +65,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		protected override void ProcessAsSsl3()
 		{
-			this.ProcessAsTls1();
-		}
-
-		protected override void ProcessAsTls1()
-		{
 			// Client Version
 			this.Write(this.Context.Protocol);
-								
+
 			// Random bytes - Unix time + Radom bytes [28]
 			TlsStream clientRandom = new TlsStream();
 			clientRandom.Write(this.Context.GetUnixTime());
@@ -111,6 +107,31 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			
 			// Compression methods ( 0 = none )
 			this.Write((byte)this.Context.CompressionMethod);
+		}
+
+		protected override void ProcessAsTls1()
+		{
+			ProcessAsSsl3 ();
+
+			// If applicable add the "server_name" extension to the hello message
+			// http://www.ietf.org/rfc/rfc3546.txt
+			string host = Context.ClientSettings.TargetHost;
+			// Our TargetHost might be an address (not a host *name*) - see bug #8553
+			// RFC3546 -> Literal IPv4 and IPv6 addresses are not permitted in "HostName".
+			IPAddress addr;
+			if (IPAddress.TryParse (host, out addr))
+				return;
+
+			TlsStream extensions = new TlsStream ();
+			byte[] server_name = System.Text.Encoding.UTF8.GetBytes (host);
+			extensions.Write ((short) 0x0000);			// ExtensionType: server_name (0)
+			extensions.Write ((short) (server_name.Length + 5));	// ServerNameList (length)
+			extensions.Write ((short) (server_name.Length + 3));	// ServerName (length)
+			extensions.Write ((byte) 0x00);				// NameType: host_name (0)
+			extensions.Write ((short) server_name.Length);		// HostName (length)
+			extensions.Write (server_name);				// HostName (UTF8)
+			this.Write ((short) extensions.Length);
+			this.Write (extensions.ToArray ());
 		}
 
 		#endregion

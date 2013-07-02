@@ -33,11 +33,14 @@
 
 using System.Diagnostics;
 using System.Reflection;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Globalization;
 
 namespace System {
@@ -47,8 +50,12 @@ namespace System {
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_Type))]
 	[StructLayout (LayoutKind.Sequential)]
+#if MOBILE
+	public abstract class Type : MemberInfo, IReflect {
+#else
 	public abstract class Type : MemberInfo, IReflect, _Type {
-		
+#endif
+
 		internal RuntimeTypeHandle _impl;
 
 		public static readonly char Delimiter = '.';
@@ -67,11 +74,11 @@ namespace System {
 			string name = (string) filterCriteria;
 			if (name == null || name.Length == 0 )
 				return false; // because m.Name cannot be null or empty
-				
-			if (name [name.Length-1] == '*')
-				return string.CompareOrdinal (name, 0, m.Name, 0, name.Length-1) == 0;
-
-           	return name.Equals (m.Name);            	
+			
+			if (name [name.Length - 1] == '*')
+				return m.Name.StartsWithOrdinalUnchecked (name.Substring (0, name.Length - 1));
+			
+			return m.Name == name;
 		}
 
 		static bool FilterNameIgnoreCase_impl (MemberInfo m, object filterCriteria)
@@ -80,15 +87,18 @@ namespace System {
 			if (name == null || name.Length == 0 )
 				return false; // because m.Name cannot be null or empty
 				
-			if (name [name.Length-1] == '*')
-				return string.Compare (name, 0, m.Name, 0, name.Length-1, StringComparison.OrdinalIgnoreCase) == 0;
-
-			return string.Equals (name, m.Name, StringComparison.OrdinalIgnoreCase);
+			if (name [name.Length - 1] == '*')
+				return m.Name.StartsWithOrdinalCaseInsensitiveUnchecked (name.Substring (0, name.Length - 1));
+			
+			return string.CompareOrdinalCaseInsensitiveUnchecked (m.Name, name) == 0;
 		}
 
 		static bool FilterAttribute_impl (MemberInfo m, object filterCriteria)
 		{
-			int flags = ((IConvertible)filterCriteria).ToInt32 (null);
+			if (!(filterCriteria is int))
+				throw new InvalidFilterCriteriaException ("Int32 value is expected for filter criteria");
+
+			int flags = (int) filterCriteria;
 			if (m is MethodInfo)
 				return ((int)((MethodInfo)m).Attributes & flags) != 0;
 			if (m is FieldInfo)
@@ -708,8 +718,10 @@ namespace System {
 			Type type = this;
 			if (type is MonoType)
 				return GetTypeCodeInternal (type);
+#if !FULL_AOT_RUNTIME
 			if (type is TypeBuilder)
 				return ((TypeBuilder)type).GetTypeCodeInternal ();
+#endif
 
 			type = type.UnderlyingSystemType;
 
@@ -726,28 +738,82 @@ namespace System {
 			return type.GetTypeCodeImpl ();
 		}
 
-		[MonoTODO("This operation is currently not supported by Mono")]
+#if !FULL_AOT_RUNTIME
+		private static Dictionary<Guid, Type> clsid_types;
+		private static AssemblyBuilder clsid_assemblybuilder;
+#endif
+
+		[MonoTODO("COM servers only work on Windows")]
 		public static Type GetTypeFromCLSID (Guid clsid)
 		{
-			throw new NotImplementedException ();
+			return GetTypeFromCLSID (clsid, null, true);
 		}
 
-		[MonoTODO("This operation is currently not supported by Mono")]
+		[MonoTODO("COM servers only work on Windows")]
 		public static Type GetTypeFromCLSID (Guid clsid, bool throwOnError)
 		{
-			throw new NotImplementedException ();
+			return GetTypeFromCLSID (clsid, null, throwOnError);
 		}
 
-		[MonoTODO("This operation is currently not supported by Mono")]
+		[MonoTODO("COM servers only work on Windows")]
 		public static Type GetTypeFromCLSID (Guid clsid, string server)
 		{
-			throw new NotImplementedException ();
+			return GetTypeFromCLSID (clsid, server, true);
 		}
 
-		[MonoTODO("This operation is currently not supported by Mono")]
+		[MonoTODO("COM servers only work on Windows")]
 		public static Type GetTypeFromCLSID (Guid clsid, string server, bool throwOnError)
 		{
+#if !FULL_AOT_RUNTIME
+			Type result;
+
+			if (clsid_types == null)
+			{
+				Dictionary<Guid, Type> new_clsid_types = new Dictionary<Guid, Type> ();
+				Interlocked.CompareExchange<Dictionary<Guid, Type>>(
+					ref clsid_types, new_clsid_types, null);
+			}
+
+			lock (clsid_types) {
+				if (clsid_types.TryGetValue(clsid, out result))
+					return result;
+
+				if (clsid_assemblybuilder == null)
+				{
+					AssemblyName assemblyname = new AssemblyName ();
+					assemblyname.Name = "GetTypeFromCLSIDDummyAssembly";
+					clsid_assemblybuilder = AppDomain.CurrentDomain.DefineDynamicAssembly (
+						assemblyname, AssemblyBuilderAccess.Run);
+				}
+				ModuleBuilder modulebuilder = clsid_assemblybuilder.DefineDynamicModule (
+					clsid.ToString ());
+
+				TypeBuilder typebuilder = modulebuilder.DefineType ("System.__ComObject",
+					TypeAttributes.Public | TypeAttributes.Class, typeof(System.__ComObject));
+
+				Type[] guidattrtypes = new Type[] { typeof(string) };
+
+				CustomAttributeBuilder customattr = new CustomAttributeBuilder (
+					typeof(GuidAttribute).GetConstructor (guidattrtypes),
+					new object[] { clsid.ToString () });
+
+				typebuilder.SetCustomAttribute (customattr);
+
+				customattr = new CustomAttributeBuilder (
+					typeof(ComImportAttribute).GetConstructor (EmptyTypes),
+					new object[0] {});
+
+				typebuilder.SetCustomAttribute (customattr);
+
+				result = typebuilder.CreateType ();
+
+				clsid_types.Add(clsid, result);
+
+				return result;
+			}
+#else
 			throw new NotImplementedException ();
+#endif
 		}
 
 		public static Type GetTypeFromHandle (RuntimeTypeHandle handle)
@@ -876,8 +942,10 @@ namespace System {
 			if (Equals (c))
 				return true;
 
+#if !FULL_AOT_RUNTIME
 			if (c is TypeBuilder)
 				return ((TypeBuilder)c).IsAssignableTo (this);
+#endif
 
 			/* Handle user defined type classes */
 			if (!IsSystemType) {
@@ -1225,10 +1293,10 @@ namespace System {
 		{
 			object [] att = GetCustomAttributes (typeof (DefaultMemberAttribute), true);
 			if (att.Length == 0)
-				return new MemberInfo [0];
+				return EmptyArray<MemberInfo>.Value;
 
 			MemberInfo [] member = GetMember (((DefaultMemberAttribute) att [0]).MemberName);
-			return (member != null) ? member : new MemberInfo [0];
+			return (member != null) ? member : EmptyArray<MemberInfo>.Value;
 		}
 
 		public virtual MemberInfo[] FindMembers (MemberTypes memberType, BindingFlags bindingAttr,
@@ -1437,7 +1505,11 @@ namespace System {
 			}
 
 			if (hasUserType) {
+#if FULL_AOT_RUNTIME
+				throw new NotSupportedException ("User types are not supported under full aot");
+#else
 				return new MonoGenericClass (this, typeArguments);
+#endif
 			}
 
 			Type res = MakeGenericType (this, systemTypes);
@@ -1663,6 +1735,7 @@ namespace System {
 			}
 		}
 
+#if !MOBILE
 		void _Type.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -1682,5 +1755,6 @@ namespace System {
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 	}
 }

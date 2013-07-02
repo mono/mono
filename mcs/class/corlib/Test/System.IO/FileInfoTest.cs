@@ -139,7 +139,7 @@ namespace MonoTests.System.IO
 			}
 		}
 
-#if NET_2_0
+#if !MOBILE
 		[Test]
 		[Category ("NotWorking")]
 		public void IsReadOnly ()
@@ -853,7 +853,7 @@ namespace MonoTests.System.IO
 			}
 		}
 
-#if NET_2_0
+#if !MOBILE
 		[Test]
 		public void Replace1 ()
 		{
@@ -1270,7 +1270,7 @@ namespace MonoTests.System.IO
 				Assert.IsNotNull (ex.Message, "#4");
 			}
 		}
-			
+#if !MOBILE			
 		[Test]
 		public void Serialization ()
 		{
@@ -1308,8 +1308,10 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (info.Name, clone.Name, "#1");
 			Assert.AreEqual (info.FullName, clone.FullName, "#2");
 		}
+#endif
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void ToStringVariety ()
 		{
 			Assert.AreEqual ("foo", new FileInfo ("foo").ToString ());

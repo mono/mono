@@ -7,6 +7,8 @@
  * Copyright (C) 2004-2006 Jonathan Pryor
  */
 
+#include <config.h>
+
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif /* ndef _GNU_SOURCE */
@@ -146,6 +148,19 @@ Mono_Posix_Syscall_readlink (const char *path, char *buf, mph_size_t len)
 		buf [r] = '\0';
 	return r;
 }
+
+#ifdef HAVE_READLINKAT
+gint32
+Mono_Posix_Syscall_readlinkat (int dirfd, const char *path, char *buf, mph_size_t len)
+{
+	int r;
+	mph_return_if_size_t_overflow (len);
+	r = readlinkat (dirfd, path, buf, (size_t) len);
+	if (r >= 0 && r < len)
+		buf [r] = '\0';
+	return r;
+}
+#endif /* def HAVE_READLINKAT */
 
 #if HAVE_GETLOGIN_R
 gint32

@@ -30,7 +30,10 @@ using System.ServiceModel.Description;
 
 namespace System.ServiceModel.Channels
 {
-	public sealed class ReliableSessionBindingElement : BindingElement, IPolicyExportExtension
+	public sealed class ReliableSessionBindingElement : BindingElement
+#if !MOBILE
+		, IPolicyExportExtension
+#endif
 	{
 		public ReliableSessionBindingElement ()
 		{
@@ -65,7 +68,8 @@ namespace System.ServiceModel.Channels
 		{
 			throw new NotImplementedException ();
 		}
-
+		
+#if !NET_2_1
 		[MonoTODO]
 		public override IChannelListener<TChannel> BuildChannelListener<TChannel> (BindingContext context)
 		{
@@ -73,13 +77,14 @@ namespace System.ServiceModel.Channels
 		}
 
 		[MonoTODO]
-		public override bool CanBuildChannelFactory<TChannel> (BindingContext context)
+		public override bool CanBuildChannelListener<TChannel> (BindingContext context)
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		[MonoTODO]
-		public override bool CanBuildChannelListener<TChannel> (BindingContext context)
+		public override bool CanBuildChannelFactory<TChannel> (BindingContext context)
 		{
 			throw new NotImplementedException ();
 		}
@@ -93,10 +98,12 @@ namespace System.ServiceModel.Channels
 		{
 			throw new NotImplementedException ();
 		}
-
+		
+#if !MOBILE
 		void IPolicyExportExtension.ExportPolicy (MetadataExporter exporter, PolicyConversionContext context)
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 	}
 }

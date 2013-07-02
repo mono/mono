@@ -9,7 +9,7 @@ using System.IO;
 class X {
 	#if Blah
 	#else
-	static int Main ()
+	public static int Main ()
 	{
 	#endif
 		string s = @"Hola\";

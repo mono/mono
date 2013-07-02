@@ -14,7 +14,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+#if !MONOTOUCH
 using System.Reflection.Emit;
+#endif
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Globalization;
@@ -232,12 +234,12 @@ namespace MonoTests.System
 		}
 	}
 
-
 	[TestFixture]
 	public class TypeTest
 	{
-		private AssemblyBuilder assembly;
+#if !MONOTOUCH
 		private ModuleBuilder module;
+#endif
 		const string ASSEMBLY_NAME = "MonoTests.System.TypeTest";
 		static int typeIndexer = 0;
 
@@ -246,9 +248,11 @@ namespace MonoTests.System
 		{
 			AssemblyName assemblyName = new AssemblyName ();
 			assemblyName.Name = ASSEMBLY_NAME;
-			assembly = AppDomain.CurrentDomain.DefineDynamicAssembly (
+#if !MONOTOUCH
+			var assembly = AppDomain.CurrentDomain.DefineDynamicAssembly (
 					assemblyName, AssemblyBuilderAccess.RunAndSave, Path.GetTempPath ());
 			module = assembly.DefineDynamicModule ("module1");
+#endif
 		}
 
 		private string genTypeName ()
@@ -1623,7 +1627,7 @@ namespace MonoTests.System
 			Type [] typeArgs = typeof (List<>).GetGenericArguments ();
 			Assert.IsFalse (typeArgs [0].IsAbstract, "#7");
 		}
-
+#if !MOBILE
 		[Test]
 		public void IsCOMObject ()
 		{
@@ -1650,7 +1654,7 @@ namespace MonoTests.System
 			type = tb.CreateType ();
 			Assert.IsTrue (type.IsImport, "#3");
 		}
-
+#endif
 		[Test]
 		public void IsInterface ()
 		{
@@ -1696,6 +1700,45 @@ PublicKeyToken=b77a5c561934e089"));
 		{
 			Type t = Type.GetType ("System.String[*]");
 			Assert.AreEqual ("System.String[*]", t.ToString ());
+		}
+
+#if MONOTOUCH
+		// feature not available when compiled under FULL_AOT_RUNTIME
+		[ExpectedException (typeof (NotImplementedException))]
+#endif
+		[Test]
+		public void TypeFromCLSID ()
+		{
+			Guid CLSID_ShellDesktop = new Guid("00021400-0000-0000-c000-000000000046");
+			Guid CLSID_Bogus = new Guid("1ea9d7a9-f7ab-443b-b486-30d285b21f1b");
+
+			Type t1 = Type.GetTypeFromCLSID (CLSID_ShellDesktop);
+
+			Type t2 = Type.GetTypeFromCLSID (CLSID_Bogus);
+
+			Assert.AreEqual (t1.FullName, "System.__ComObject");
+
+			if (Environment.OSVersion.Platform == PlatformID.Win32Windows ||
+				Environment.OSVersion.Platform == PlatformID.Win32NT)
+				Activator.CreateInstance(t1);
+
+			Assert.AreEqual (t2.FullName, "System.__ComObject");
+
+			Assert.AreNotEqual (t1, t2);
+		}
+
+		[Test]
+		[Category("NotWorking")] // Mono throws TargetInvokationException
+		[ExpectedException("System.Runtime.InteropServices.COMException")]
+		public void TypeFromCLSIDBogus ()
+		{
+			Guid CLSID_Bogus = new Guid("1ea9d7a9-f7ab-443b-b486-30d285b21f1b");
+			Type t = Type.GetTypeFromCLSID (CLSID_Bogus);
+			if (Environment.OSVersion.Platform == PlatformID.Win32Windows ||
+				Environment.OSVersion.Platform == PlatformID.Win32NT)
+				Activator.CreateInstance(t);
+			else
+				throw new COMException ();
 		}
 		
 		[Test]
@@ -1754,6 +1797,13 @@ PublicKeyToken=b77a5c561934e089"));
 				BindingFlags.Instance | BindingFlags.DeclaredOnly,
 				Type.FilterNameIgnoreCase, "NonExistingMethod");
 			Assert.AreEqual (0, mi.Length);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidFilterCriteriaException))]
+		public void FilterAttribute_Invalid ()
+		{
+			Type.FilterAttribute (MethodBase.GetCurrentMethod (), (byte) 1);
 		}
 
 		[Test]
@@ -2683,7 +2733,7 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.IsNull (i);
 		}
 
-#if !TARGET_JVM // Reflection.Emit is not supported for TARGET_JVM
+#if !TARGET_JVM && !MOBILE // Reflection.Emit is not supported for TARGET_JVM
 		[Test]
 		public void EqualsUnderlyingType ()
 		{
@@ -2926,7 +2976,10 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual ("System.Int32", t.FullName);
 		}
 
-		[Test] //bug #331199
+		[Test]
+#if MONOTOUCH
+		[ExpectedException (typeof (NotSupportedException))]
+#endif
 		public void MakeGenericType_UserDefinedType ()
 		{
 			Type ut = new UserType (typeof (int));
@@ -2967,6 +3020,9 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 		
 		[Test]
+#if MONOTOUCH
+		[ExpectedException (typeof (NotSupportedException))]
+#endif
 		public void MakeGenericType_BadUserType ()
 		{
 			Type ut = new UserType (null);
@@ -3100,7 +3156,7 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual (t1, t2);
 		}
 
-
+#if !MONOTOUCH
 		[Test]
 		public void Bug506757 ()
 		{
@@ -3145,7 +3201,7 @@ PublicKeyToken=b77a5c561934e089"));
 			foreach (var m in t2.GetMethods (BindingFlags.Instance | BindingFlags.NonPublic))
 				Assert.IsTrue (m.DeclaringType == typeof (object), String.Format ("{0}::{1}", m.DeclaringType, m.Name));
 		}
-
+#endif
 		[Test]
 		public void MakeArrayTypeOfOneDimension ()
 		{

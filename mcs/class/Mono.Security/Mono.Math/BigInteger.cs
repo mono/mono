@@ -208,6 +208,8 @@ namespace Mono.Math {
 		
 		public BigInteger (byte [] inData)
 		{
+			if (inData.Length == 0)
+				inData = new byte [1];
 			length = (uint)inData.Length >> 2;
 			int leftOver = inData.Length & 0x3;
 
@@ -239,6 +241,8 @@ namespace Mono.Math {
 #endif 
 		public BigInteger (uint [] inData)
 		{
+			if (inData.Length == 0)
+				inData = new uint [1];
 			length = (uint)inData.Length;
 
 			data = new uint [length];
@@ -1054,7 +1058,7 @@ namespace Mono.Math {
 				if (b > mod)
 					b %= mod;
 
-				BigInteger ret = new BigInteger (a * b);
+				BigInteger ret = a * b;
 				BarrettReduction (ret);
 
 				return ret;

@@ -104,13 +104,7 @@ namespace System.IO
 			this.access = access;
 			this.owner = ownsHandle;
 			this.async = isAsync;
-#if MOONLIGHT
-			// default the browser to 'all' anonymous files and let other usage (like smcs) with 'normal'
-			// (i.e. non-anonymous except for isolated storage) files and paths
-			this.anonymous = SecurityManager.SecurityEnabled;
-#else
 			this.anonymous = false;
-#endif
 			if (canseek) {
 				buf_start = MonoIO.Seek (handle, 0, SeekOrigin.Current, out error);
 				if (error != MonoIOError.ERROR_SUCCESS) {
@@ -224,20 +218,10 @@ namespace System.IO
 			}
 
 			if (access < FileAccess.Read || access > FileAccess.ReadWrite) {
-#if MOONLIGHT
-				if (anonymous)
-					throw new IsolatedStorageException ("Enum value for FileAccess was out of legal range.");
-				else
-#endif
 				throw new ArgumentOutOfRangeException ("access", "Enum value was out of legal range.");
 			}
 
 			if (share < FileShare.None || share > (FileShare.ReadWrite | FileShare.Delete)) {
-#if MOONLIGHT
-				if (anonymous)
-					throw new IsolatedStorageException ("Enum value for FileShare was out of legal range.");
-				else
-#endif
 				throw new ArgumentOutOfRangeException ("share", "Enum value was out of legal range.");
 			}
 
@@ -279,12 +263,7 @@ namespace System.IO
 					// don't leak the path information for isolated storage
 					string msg = Locale.GetText ("Could not find a part of the path \"{0}\".");
 					string fname = (anonymous) ? dname : Path.GetFullPath (path);
-#if MOONLIGHT
-					// don't use GetSecureFileName for the directory name
-					throw new IsolatedStorageException (String.Format (msg, fname));
-#else
 					throw new DirectoryNotFoundException (String.Format (msg, fname));
-#endif
 				}
 			}
 
@@ -293,11 +272,7 @@ namespace System.IO
 				// don't leak the path information for isolated storage
 				string msg = Locale.GetText ("Could not find file \"{0}\".");
 				string fname = GetSecureFileName (path);
-#if MOONLIGHT
-				throw new IsolatedStorageException (String.Format (msg, fname));
-#else
 				throw new FileNotFoundException (String.Format (msg, fname), fname);
-#endif
 			}
 
 			// IsolatedStorage needs to keep the Name property to the default "[Unknown]"
@@ -376,11 +351,7 @@ namespace System.IO
 
 		public string Name {
 			get {
-#if MOONLIGHT
-				return SecurityManager.CheckElevatedPermissions () ? name : "[Unknown]";
-#else
 				return name;
-#endif
 			}
 		}
 
@@ -433,13 +404,6 @@ namespace System.IO
 				return(buf_start + buf_offset);
 			}
 			set {
-				if (handle == MonoIO.InvalidHandle)
-					throw new ObjectDisposedException ("Stream has been closed");
-
-				if(CanSeek == false) {
-					throw new NotSupportedException("The stream does not support seeking");
-				}
-
 				if(value < 0) {
 					throw new ArgumentOutOfRangeException("Attempt to set the position to a negative value");
 				}
@@ -859,7 +823,7 @@ namespace System.IO
 			FlushBuffer ();
 		}
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 		public virtual void Flush (bool flushToDisk)
 		{
 			FlushBuffer ();

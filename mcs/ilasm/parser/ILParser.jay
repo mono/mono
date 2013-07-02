@@ -10,6 +10,7 @@ using PEAPI;
 using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using System.Security;
@@ -32,6 +33,7 @@ namespace Mono.ILASM {
                 private PEAPI.PInvokeAttr pinvoke_attr;
                 private ILTokenizer tokenizer;
 		static int yacc_verbose_flag;
+		KeyValuePair<string, TypeAttr> current_extern;
 
                 class NameValuePair {
                         public string Name;
@@ -476,6 +478,7 @@ namespace Mono.ILASM {
 %token K_IS
 %token K_ON
 %token K_OFF
+%token K_FORWARDER
 %token K_CHARMAPERROR
 
 /* end generated */
@@ -2460,7 +2463,6 @@ instr			: INSTR_NONE
                                         case MiscInstr.ldc_r8:
 						fpdata = (byte []) $2;
 						if (!BitConverter.IsLittleEndian) {
-							// FIXME: handle the stupid ARM FPA format
 							System.Array.Reverse (fpdata, 0, 8);
 						}
                                                 double d = BitConverter.ToDouble (fpdata, 0);
@@ -3201,17 +3203,21 @@ exptype_all		: exptype_head OPEN_BRACE exptype_decls CLOSE_BRACE
 			;
 
 exptype_head		: D_CLASS K_EXTERN expt_attr comp_name
+					{
+						current_extern = new KeyValuePair<string, TypeAttr> ((string) $4, (TypeAttr) $3);
+					}
 			;
 
 expt_attr 		: /* EMPTY */
-			| expt_attr K_PRIVATE
-			| expt_attr K_PUBLIC 
-			| expt_attr K_NESTED K_PUBLIC
-			| expt_attr K_NESTED K_PRIVATE
-			| expt_attr K_NESTED K_FAMILY
-			| expt_attr K_NESTED K_ASSEMBLY
-			| expt_attr K_NESTED K_FAMANDASSEM
-			| expt_attr K_NESTED K_FAMORASSEM
+			| expt_attr K_PRIVATE                   { $$ = (TypeAttr)$1 | TypeAttr.Private; }
+			| expt_attr K_PUBLIC                    { $$ = (TypeAttr)$1 | TypeAttr.Public; }
+			| expt_attr K_NESTED K_PUBLIC           { $$ = (TypeAttr)$1 | TypeAttr.NestedPublic; }
+			| expt_attr K_NESTED K_PRIVATE          { $$ = (TypeAttr)$1 | TypeAttr.NestedPrivate; }
+			| expt_attr K_NESTED K_FAMILY           { $$ = (TypeAttr)$1 | TypeAttr.NestedFamily; }
+			| expt_attr K_NESTED K_ASSEMBLY         { $$ = (TypeAttr)$1 | TypeAttr.NestedAssembly;}
+			| expt_attr K_NESTED K_FAMANDASSEM      { $$ = (TypeAttr)$1 | TypeAttr.NestedFamAndAssem; }
+			| expt_attr K_NESTED K_FAMORASSEM       { $$ = (TypeAttr)$1 | TypeAttr.NestedFamOrAssem; }
+			| K_FORWARDER                           { $$ = TypeAttr.Forwarder; }
 			;
 
 exptype_decls		: /* EMPTY */
@@ -3220,8 +3226,11 @@ exptype_decls		: /* EMPTY */
 
 exptype_decl		: D_FILE comp_name
 			| D_CLASS K_EXTERN comp_name
-			| D_CLASS int32
 			| customattr_decl
+			| D_ASSEMBLY K_EXTERN comp_name
+			  {
+			  	codegen.ExternTable.AddClass (current_extern.Key, current_extern.Value, (string) $3);
+			  }
 			;
 
 manifestres_all		: manifestres_head OPEN_BRACE manifestres_decls CLOSE_BRACE

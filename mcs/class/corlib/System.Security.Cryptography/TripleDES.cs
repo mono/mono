@@ -121,7 +121,11 @@ public abstract class TripleDES : SymmetricAlgorithm {
 
 	public static new TripleDES Create ()
 	{
+#if FULL_AOT_RUNTIME
+		return new System.Security.Cryptography.TripleDESCryptoServiceProvider ();
+#else
 		return Create ("System.Security.Cryptography.TripleDES");
+#endif
 	}
 
 	public static new TripleDES Create (string str)

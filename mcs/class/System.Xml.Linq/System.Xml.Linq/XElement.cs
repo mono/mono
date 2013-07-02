@@ -407,12 +407,7 @@ namespace System.Xml.Linq
 
 		static void DefineDefaultSettings (XmlReaderSettings settings, LoadOptions options)
 		{
-#if MOONLIGHT
-			// 2.1 has a DtdProcessing property which defaults to DtdProcessing.Prohibit
-			settings.DtdProcessing = DtdProcessing.Parse;
-#else
 			settings.ProhibitDtd = false;
-#endif
 
 			settings.IgnoreWhitespace = (options & LoadOptions.PreserveWhitespace) == 0;
 		}
@@ -467,7 +462,7 @@ namespace System.Xml.Linq
 			}
 		}
 
-#if MOONLIGHT || MOBILE || NET_4_0
+#if NET_4_0
 		public static XElement Load (Stream stream)
 		{
 			return Load (stream, LoadOptions.None);
@@ -549,7 +544,7 @@ namespace System.Xml.Linq
 
 			if ((options & SaveOptions.DisableFormatting) == SaveOptions.None)
 				s.Indent = true;
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 			if ((options & SaveOptions.OmitDuplicateNamespaces) == SaveOptions.OmitDuplicateNamespaces)
 				s.NamespaceHandling |= NamespaceHandling.OmitDuplicates;
 #endif
@@ -569,7 +564,7 @@ namespace System.Xml.Linq
 			
 			if ((options & SaveOptions.DisableFormatting) == SaveOptions.None)
 				s.Indent = true;
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 			if ((options & SaveOptions.OmitDuplicateNamespaces) == SaveOptions.OmitDuplicateNamespaces)
 				s.NamespaceHandling |= NamespaceHandling.OmitDuplicates;
 #endif
@@ -583,7 +578,7 @@ namespace System.Xml.Linq
 			WriteTo (writer);
 		}
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 		public void Save (Stream stream)
 		{
 			Save (stream, SaveOptions.None);

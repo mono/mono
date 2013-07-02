@@ -115,7 +115,7 @@ namespace System.Collections
 			object currentElement;
 			int index;
 			int version;
-			static object endFlag = new object ();
+			static readonly object endFlag = new object ();
 							
 			public SimpleEnumerator (ArrayList list)
 			{
@@ -2510,8 +2510,6 @@ namespace System.Collections
 		/// </summary>
 		private int _version;
 
-		private static readonly object [] EmptyArray = new object [0]; 
-
 		#endregion
 		
 		#region Constructors
@@ -2522,7 +2520,7 @@ namespace System.Collections
 		/// </summary>
 		public ArrayList()
 		{
-			_items = EmptyArray;
+			_items = EmptyArray<object>.Value;
 		}		
 
 		/// <summary>

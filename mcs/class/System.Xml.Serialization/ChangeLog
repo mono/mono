@@ -1,6 +1,0 @@
-2010-03-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
-
-	* Makefile: 
-	* System.Xml.Serialization.dll.sources:
-	* moonlight_raw_System.Xml.Serialization.dll.sources: Added.
-

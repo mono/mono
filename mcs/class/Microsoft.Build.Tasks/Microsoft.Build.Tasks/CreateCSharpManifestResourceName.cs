@@ -41,7 +41,7 @@ namespace Microsoft.Build.Tasks {
 
 		protected override bool	IsSourceFile (string fileName)
 		{
-			return Path.GetExtension (fileName).ToLower () == ".cs";
+			return string.Equals (Path.GetExtension (fileName), ".cs", StringComparison.OrdinalIgnoreCase);
 		}
 		
 		protected override string CreateManifestName (string fileName,

@@ -27,7 +27,7 @@
 //
 //
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 
 using System.Collections.Generic;
 
@@ -104,7 +104,7 @@ namespace System.Threading.Tasks
 				return;
 
 			if ((continuationOptions & TaskContinuationOptions.ExecuteSynchronously) != 0)
-				task.RunSynchronously (task.scheduler);
+				task.RunSynchronouslyCore (task.scheduler);
 			else
 				task.Schedule ();
 		}
@@ -256,12 +256,13 @@ namespace System.Threading.Tasks
 	{
 		readonly Task<T> owner;
 		readonly IList<T> tasks;
-		AtomicBooleanValue executed = new AtomicBooleanValue ();
+		AtomicBooleanValue executed;
 
 		public WhenAnyContinuation (Task<T> owner, IList<T> tasks)
 		{
 			this.owner = owner;
 			this.tasks = tasks;
+			executed = new AtomicBooleanValue ();
 		}
 
 		public void Execute ()
@@ -269,13 +270,19 @@ namespace System.Threading.Tasks
 			if (!executed.TryRelaxedSet ())
 				return;
 
+			bool owner_notified = false;
 			for (int i = 0; i < tasks.Count; ++i) {
 				var task = tasks[i];
-				if (!task.IsCompleted)
+				if (!task.IsCompleted) {
+					task.RemoveContinuation (this);
+					continue;
+				}
+
+				if (owner_notified)
 					continue;
 
 				owner.TrySetResult (task);
-				return;
+				owner_notified = true;
 			}
 		}
 	}
@@ -302,35 +309,6 @@ namespace System.Threading.Tasks
 
 		public void Execute ()
 		{
-			evt.Set ();
-		}
-	}
-
-	sealed class DelayContinuation : IContinuation, IDisposable
-	{
-		readonly ManualResetEventSlim evt;
-
-		public DelayContinuation ()
-		{
-			this.evt = new ManualResetEventSlim ();
-		}
-
-		public ManualResetEventSlim Event
-		{
-			get
-			{
-				return evt;
-			}
-		}
-
-		public void Dispose ()
-		{
-			evt.Dispose ();
-		}
-
-		public void Execute ()
-		{
-			Console.WriteLine ("execute");
 			evt.Set ();
 		}
 	}

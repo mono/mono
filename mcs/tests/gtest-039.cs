@@ -49,7 +49,7 @@ class Zoo<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Zoo<string> zoo = new Zoo<string> ("Boston");
 		IMonkey<float> monkey = zoo.GetTheMonkey<float> (3.14F);

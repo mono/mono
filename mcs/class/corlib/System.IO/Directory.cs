@@ -44,10 +44,7 @@ using System.Security;
 using System.Security.Permissions;
 using System.Text;
 using System.Runtime.InteropServices;
-
-#if !MOONLIGHT
 using System.Security.AccessControl;
-#endif
 
 namespace System.IO
 {
@@ -83,13 +80,11 @@ namespace System.IO
 			return CreateDirectoriesInternal (path);
 		}
 
-#if !MOONLIGHT
 		[MonoLimitation ("DirectorySecurity not implemented")]
 		public static DirectoryInfo CreateDirectory (string path, DirectorySecurity directorySecurity)
 		{
 			return(CreateDirectory (path));
 		}
-#endif
 
 		static DirectoryInfo CreateDirectoriesInternal (string path)
 		{
@@ -268,7 +263,6 @@ namespace System.IO
 			return GetFileSystemEntries (path, searchPattern, FileAttributes.Directory, FileAttributes.Directory);
 		}
 		
-#if !MOONLIGHT
 		public static string [] GetDirectories (string path, string searchPattern, SearchOption searchOption)
 		{
 			if (searchOption == SearchOption.TopDirectoryOnly)
@@ -284,7 +278,6 @@ namespace System.IO
 			foreach (string dir in GetDirectories (path))
 				GetDirectoriesRecurse (dir, searchPattern, all);
 		}
-#endif
 
 		public static string GetDirectoryRoot (string path)
 		{
@@ -305,7 +298,6 @@ namespace System.IO
 			return GetFileSystemEntries (path, searchPattern, FileAttributes.Directory, 0);
 		}
 
-#if !MOONLIGHT
 		public static string[] GetFiles (string path, string searchPattern, SearchOption searchOption)
 		{
 			if (searchOption == SearchOption.TopDirectoryOnly)
@@ -321,7 +313,6 @@ namespace System.IO
 			foreach (string dir in GetDirectories (path))
 				GetFilesRecurse (dir, searchPattern, all);
 		}
-#endif
 
 		public static string [] GetFileSystemEntries (string path)
 		{
@@ -397,7 +388,6 @@ namespace System.IO
 				throw MonoIO.GetException (error);
 		}
 
-#if !MOONLIGHT
 		public static void SetAccessControl (string path, DirectorySecurity directorySecurity)
 		{
 			if (null == directorySecurity)
@@ -405,7 +395,6 @@ namespace System.IO
 				
 			directorySecurity.PersistModifications (path);
 		}
-#endif
 
 		public static void SetCreationTime (string path, DateTime creationTime)
 		{
@@ -511,7 +500,7 @@ namespace System.IO
 			return result;
 		}
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 		public static string[] GetFileSystemEntries (string path, string searchPattern, SearchOption searchOption)
 		{
 			// Take the simple way home:
@@ -544,48 +533,47 @@ namespace System.IO
 				yield return path_with_pattern;
 				yield break;
 			}
-			
+
 			IntPtr handle;
 			MonoIOError error;
 			FileAttributes rattr;
-			bool subdirs = searchOption == SearchOption.AllDirectories;
-			
 			string s = MonoIO.FindFirst (path, path_with_pattern, out rattr, out error, out handle);
-			if (s == null)
-				yield break;
-			if (error != 0)
-				throw MonoIO.GetException (Path.GetDirectoryName (Path.Combine (path, searchPattern)), (MonoIOError) error);
-
 			try {
-				//
-				// Convert any file specific flag to FileAttributes.Normal which is used as include files flag
-				//
-				if (((rattr & FileAttributes.Directory) == 0) && rattr != 0)
-					rattr |= FileAttributes.Normal;
-
-				bool first = true;
-				if (((rattr & FileAttributes.ReparsePoint) == 0) && ((rattr & kind) != 0))
-					yield return s;
-				
-				do {
-					if (((rattr & FileAttributes.Directory) != 0) && subdirs) {
-						foreach (string child in EnumerateKind (s, searchPattern, searchOption, kind))
-							yield return child;
-					}
-
-					if (first) {
-						first = false;
-						continue;
-					}
-					
-					if ((rattr & FileAttributes.ReparsePoint) != 0)
-						continue;
+				while (s != null) {
+					// Convert any file specific flag to FileAttributes.Normal which is used as include files flag
+					if (((rattr & FileAttributes.Directory) == 0) && rattr != 0)
+						rattr |= FileAttributes.Normal;
 
 					if ((rattr & kind) != 0)
 						yield return s;
-				} while ((s = MonoIO.FindNext (handle, out rattr, out error)) != null);
+
+					s = MonoIO.FindNext (handle, out rattr, out error);
+				}
+
+				if (error != 0)
+					throw MonoIO.GetException (Path.GetDirectoryName (Path.Combine (path, searchPattern)), (MonoIOError) error);
 			} finally {
-				MonoIO.FindClose (handle);
+				if (handle != IntPtr.Zero)
+					MonoIO.FindClose (handle);
+			}
+
+			if (searchOption == SearchOption.AllDirectories) {
+				s = MonoIO.FindFirst (path, Path.Combine (path, "*"), out rattr, out error, out handle);
+
+				try {
+					while (s != null) {
+						if ((rattr & FileAttributes.Directory) != 0 && (rattr & FileAttributes.ReparsePoint) == 0)
+							foreach (string child in EnumerateKind (s, searchPattern, searchOption, kind))
+								yield return child;
+						s = MonoIO.FindNext (handle, out rattr, out error);
+					}
+
+					if (error != 0)
+						throw MonoIO.GetException (path, (MonoIOError) error);
+				} finally {
+					if (handle != IntPtr.Zero)
+						MonoIO.FindClose (handle);
+				}
 			}
 		}
 
@@ -648,7 +636,6 @@ namespace System.IO
 		
 #endif
 
-#if !MOONLIGHT
 		public static DirectorySecurity GetAccessControl (string path, AccessControlSections includeSections)
 		{
 			return new DirectorySecurity (path, includeSections);
@@ -662,6 +649,5 @@ namespace System.IO
 						 AccessControlSections.Group |
 						 AccessControlSections.Access);
 		}
-#endif
 	}
 }

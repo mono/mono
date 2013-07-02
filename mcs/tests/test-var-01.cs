@@ -4,7 +4,7 @@ using System;
 
 public class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		var i = 5;
 		var b = true;

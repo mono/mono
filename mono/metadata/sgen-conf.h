@@ -1,26 +1,23 @@
 /*
+ * sgen-conf.h: Tunable parameters and debugging switches.
+ *
  * Copyright 2001-2003 Ximian, Inc
  * Copyright 2003-2010 Novell, Inc.
  * Copyright 2011 Xamarin Inc (http://www.xamarin.com)
- * 
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- * 
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * Copyright (C) 2012 Xamarin Inc
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License 2.0 as published by the Free Software Foundation;
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License 2.0 along with this library; if not, write to the Free
+ * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 #ifndef __MONO_SGENCONF_H__
 #define __MONO_SGENCONF_H__
@@ -40,7 +37,7 @@ typedef guint64 mword;
  * Turning on heavy statistics will turn off the managed allocator and
  * the managed write barrier.
  */
-//#define HEAVY_STATISTICS
+// #define HEAVY_STATISTICS
 
 /*
  * Define this to allow the user to change the nursery size by
@@ -66,10 +63,39 @@ typedef guint64 mword;
 //#define SGEN_BINARY_PROTOCOL
 
 /*
+ * This enables checks whenever objects are enqueued in gray queues.
+ * Right now the only check done is that we never enqueue nursery
+ * pointers in the concurrent collector.
+ */
+//#define SGEN_CHECK_GRAY_OBJECT_ENQUEUE
+
+/*
+ * This keeps track of where a gray object queue section is and
+ * whether it is where it should be.
+ */
+//#define SGEN_CHECK_GRAY_OBJECT_SECTIONS
+
+/*
  * Define this and use the "xdomain-checks" MONO_GC_DEBUG option to
  * have cross-domain checks in the write barrier.
  */
 //#define XDOMAIN_CHECKS_IN_WBARRIER
+
+/*
+ * Define this to get number of objects marked information in the
+ * concurrent GC DTrace probes.  Has a small performance impact, so
+ * it's disabled by default.
+ */
+//#define SGEN_COUNT_NUMBER_OF_MAJOR_OBJECTS_MARKED
+
+/*
+ * Object layout statistics gather a histogram of reference locations
+ * over all scanned objects.  We use this information to improve GC
+ * descriptors to speed up scanning.  This does not provide any
+ * troubleshooting assistance (unless you are troubled in highly
+ * unusual ways) and makes scanning slower.
+ */
+//#define SGEN_OBJECT_LAYOUT_STATISTICS
 
 #ifndef SGEN_BINARY_PROTOCOL
 #ifndef HEAVY_STATISTICS
@@ -82,10 +108,16 @@ typedef guint64 mword;
 
 /*
  * Maximum level of debug to enable on this build.
- * Making this a static variable enables us to put logging in a lot of places.
- * FIXME decouple logging from assertions
+ * Making this a constant enables us to put logging in a lot of places and
+ * not pay its cost on release builds.
  */
 #define SGEN_MAX_DEBUG_LEVEL 2
+
+/*
+ * Maximum level of asserts to enable on this build.
+ * FIXME replace all magic numbers with defines.
+ */
+#define SGEN_MAX_ASSERT_LEVEL 5
 
 
 #define GC_BITS_PER_WORD (sizeof (mword) * 8)
@@ -127,22 +159,6 @@ typedef guint64 mword;
 #define SGEN_MAX_NURSERY_WASTE 512
 
 
-/* This is also the MAJOR_SECTION_SIZE for the copying major
-   collector */
-#define SGEN_PINNED_CHUNK_SIZE	(128 * 1024)
-
-/*
- * Number of entries of a sequential store buffer.
- * This number represents how frequently we'll have to alloc
- * a new buffer, so it's a tradeoff of potential wasted space and
- * increased performance.
- * 
- * The current value of 1024 was probably selected because it fits a x86 page.
- * There's no history on the why's of this value besides this.
- */
-#define DEFAULT_REMSET_SIZE 1024
-
-
 /*
  * Minimum allowance for nursery allocations, as a multiple of the size of nursery.
  *
@@ -171,5 +187,20 @@ typedef guint64 mword;
 
 #define SGEN_MIN_SAVE_TARGET_RATIO 0.1
 #define SGEN_MAX_SAVE_TARGET_RATIO 2.0
+
+/*
+ * Configurable cementing parameters.
+ *
+ * The hash table size should be a prime.  If there are too many
+ * pinned nursery objects with many references from the major heap,
+ * this number must be increased.
+ *
+ * The threshold is the number of references from the major heap to a
+ * pinned nursery object which triggers cementing: if there are more
+ * than that number of references, the pinned object is cemented until
+ * the next major collection.
+ */
+#define SGEN_CEMENT_HASH_SIZE	61
+#define SGEN_CEMENT_THRESHOLD	1000
 
 #endif

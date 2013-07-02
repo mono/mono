@@ -48,7 +48,8 @@ TEST_EXTRA_FILES = \
 	Test/XmlFiles/* \
 	Test/System.ServiceModel.Channels/soap-fault*.xml \
 	Test/System.ServiceModel.Channels/binary-message.raw \
-	Test/System.ServiceModel.Description/dump.xml
+	Test/System.ServiceModel.Description/dump.xml \
+	Test/MetadataTests/Resources/*
 
 EXTRA_DISTFILES = $(RESOURCE_FILES) $(TEST_EXTRA_FILES)
 

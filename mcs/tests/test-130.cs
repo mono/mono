@@ -22,7 +22,7 @@ class X {
 
 	public const short s2 = (short) c;
 	public IntPtr p = (IntPtr) null;
-	static int Main ()
+	public static int Main ()
 	{
 		return 0;
 	}

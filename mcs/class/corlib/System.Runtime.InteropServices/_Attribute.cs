@@ -33,7 +33,9 @@ namespace System.Runtime.InteropServices {
 	[CLSCompliant (false)]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("917B14D0-2D9E-38B8-92A9-381ACF52F7C0")]
+#if !FULL_AOT_RUNTIME
 	[TypeLibImportClass (typeof (Attribute))]
+#endif
 	public interface _Attribute {
 
 		void GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);

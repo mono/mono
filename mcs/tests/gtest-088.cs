@@ -11,7 +11,7 @@ public struct KeyValuePair<K,V>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		new KeyValuePair<int,long> ();
 	}

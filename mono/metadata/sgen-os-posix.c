@@ -1,5 +1,5 @@
 /*
- * sgen-os-posix.c: Simple generational GC.
+ * sgen-os-posix.c: Posix support.
  *
  * Author:
  *	Paolo Molaro (lupus@ximian.com)
@@ -7,25 +7,20 @@
  * 	Geoff Norton (gnorton@novell.com)
  *
  * Copyright 2010 Novell, Inc (http://www.novell.com)
+ * Copyright (C) 2012 Xamarin Inc
  *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- * 
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License 2.0 as published by the Free Software Foundation;
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License 2.0 along with this library; if not, write to the Free
+ * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
 #include "config.h"
@@ -57,9 +52,7 @@ static void
 suspend_thread (SgenThreadInfo *info, void *context)
 {
 	int stop_count;
-#ifdef USE_MONO_CTX
-	MonoContext monoctx;
-#else
+#ifndef USE_MONO_CTX
 	gpointer regs [ARCH_NUM_REGS];
 #endif
 	gpointer stack_start;
@@ -73,8 +66,6 @@ suspend_thread (SgenThreadInfo *info, void *context)
 	if (0 && info->stop_count == stop_count)
 		return;
 
-	sgen_fill_thread_info_for_suspend (info);
-
 	stack_start = context ? (char*) ARCH_SIGCTX_SP (context) - REDZONE_SIZE : NULL;
 	/* If stack_start is not within the limits, then don't set it
 	   in info and we will be restarted. */
@@ -83,17 +74,16 @@ suspend_thread (SgenThreadInfo *info, void *context)
 
 #ifdef USE_MONO_CTX
 		if (context) {
-			mono_sigctx_to_monoctx (context, &monoctx);
-			info->monoctx = &monoctx;
+			mono_sigctx_to_monoctx (context, &info->ctx);
 		} else {
-			info->monoctx = NULL;
+			memset (&info->ctx, 0, sizeof (MonoContext));
 		}
 #else
 		if (context) {
 			ARCH_COPY_SIGCTX_REGS (regs, context);
-			info->stopped_regs = regs;
+			memcpy (&info->regs, regs, sizeof (info->regs));
 		} else {
-			info->stopped_regs = NULL;
+			memset (&info->regs, 0, sizeof (info->regs));
 		}
 #endif
 	} else {
@@ -102,9 +92,9 @@ suspend_thread (SgenThreadInfo *info, void *context)
 
 	/* Notify the JIT */
 	if (mono_gc_get_gc_callbacks ()->thread_suspend_func)
-		mono_gc_get_gc_callbacks ()->thread_suspend_func (info->runtime_data, context);
+		mono_gc_get_gc_callbacks ()->thread_suspend_func (info->runtime_data, context, NULL);
 
-	DEBUG (4, fprintf (gc_debug_file, "Posting suspend_ack_semaphore for suspend from %p %p\n", info, (gpointer)mono_native_thread_id_get ()));
+	SGEN_LOG (4, "Posting suspend_ack_semaphore for suspend from %p %p", info, (gpointer)mono_native_thread_id_get ());
 
 	/*
 	Block the restart signal. 
@@ -126,7 +116,7 @@ suspend_thread (SgenThreadInfo *info, void *context)
 	/* Unblock the restart signal. */
 	pthread_sigmask (SIG_UNBLOCK, &suspend_ack_signal_mask, NULL);
 
-	DEBUG (4, fprintf (gc_debug_file, "Posting suspend_ack_semaphore for resume from %p %p\n", info, (gpointer)mono_native_thread_id_get ()));
+	SGEN_LOG (4, "Posting suspend_ack_semaphore for resume from %p %p\n", info, (gpointer)mono_native_thread_id_get ());
 	/* notify the waiting thread */
 	MONO_SEM_POST (suspend_ack_semaphore_ptr);
 }
@@ -173,7 +163,7 @@ restart_handler (int sig)
 	 */
 	if (info) {
 		info->signal = restart_signal_num;
-		DEBUG (4, fprintf (gc_debug_file, "Restart handler in %p %p\n", info, (gpointer)mono_native_thread_id_get ()));
+		SGEN_LOG (4, "Restart handler in %p %p", info, (gpointer)mono_native_thread_id_get ());
 	}
 	errno = old_errno;
 }
@@ -242,7 +232,7 @@ sgen_thread_handshake (BOOL suspend)
 			g_assert (info->doing_handshake);
 			info->doing_handshake = FALSE;
 		}
-		result = pthread_kill (mono_thread_info_get_tid (info), signum);
+		result = mono_threads_pthread_kill (info, signum);
 		if (result == 0) {
 			count++;
 		} else {

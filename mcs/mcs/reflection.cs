@@ -83,7 +83,7 @@ namespace Mono.CSharp
 		{
 			// It can be used more than once when importing same assembly
 			// into 2 or more global aliases
-			var definition = GetAssemblyDefinition (assembly);
+		GetAssemblyDefinition (assembly);
 
 			//
 			// This part tries to simulate loading of top-level
@@ -98,7 +98,7 @@ namespace Mono.CSharp
 				all_types = e.Types;
 			}
 
-			ImportTypes (all_types, targetNamespace, definition.HasExtensionMethod);
+			ImportTypes (all_types, targetNamespace, true);
 		}
 
 		public ImportedModuleDefinition ImportModule (Module module, RootNamespace targetNamespace)

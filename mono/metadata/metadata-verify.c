@@ -138,7 +138,7 @@ const static unsigned char coded_index_desc[] = {
 	5, /*tables*/
 	MONO_TABLE_TYPEDEF,
 	MONO_TABLE_TYPEREF,
-	MONO_TABLE_MODULE,
+	MONO_TABLE_MODULEREF,
 	MONO_TABLE_METHOD,
 	MONO_TABLE_TYPESPEC,
 
@@ -1096,7 +1096,7 @@ string_cmp (VerifyContext *ctx, const char *str, guint offset)
 static gboolean
 mono_verifier_is_corlib (MonoImage *image)
 {
-	gboolean trusted_location = (mono_security_get_mode () != MONO_SECURITY_MODE_CORE_CLR) ? 
+	gboolean trusted_location = !mono_security_core_clr_enabled () ?
 			TRUE : mono_security_core_clr_is_platform_image (image);
 
 	return trusted_location && image->module_name && !strcmp ("mscorlib.dll", image->module_name);

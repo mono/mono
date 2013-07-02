@@ -37,7 +37,6 @@ namespace System.Security.Cryptography.X509Certificates {
 	enum X509ContentType {
 		Unknown,
 		Cert,
-#if !MOONLIGHT
 		// not supported by Silverlight 2.0 (NET_2_1)
 		SerializedCert,
 		Pfx,
@@ -45,6 +44,5 @@ namespace System.Security.Cryptography.X509Certificates {
 		Pkcs7,
 		Authenticode,
 		Pkcs12 = Pfx
-#endif
 	}
 }

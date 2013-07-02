@@ -25,7 +25,7 @@ class Hello<T> : IHello<T>, Foo
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Hello<int> hello = new Hello<int> ();
 		hello.Print (5);

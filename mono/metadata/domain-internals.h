@@ -91,11 +91,16 @@ typedef struct {
 } MonoJitExceptionInfo;
 
 /*
- * Will contain information on the generic type arguments in the
- * future.  For now, all arguments are always reference types.
+ * Contains information about the type arguments for generic shared methods.
  */
 typedef struct {
-	int dummy;
+	/*
+	 * If not NULL, determines whenever the class type arguments of the gshared method are references or vtypes.
+	 * The array length is equal to class_inst->type_argv.
+	 */
+	gboolean *var_is_vt;
+	/* Same for method type parameters */
+	gboolean *mvar_is_vt;
 } MonoGenericSharingContext;
 
 /* Simplified DWARF location list entry */
@@ -327,12 +332,6 @@ struct _MonoDomain {
 	 */
 	GHashTable         *finalizable_objects_hash;
 
-	/* These two are boehm only */
-	/* Maps MonoObjects to a GSList of WeakTrackResurrection GCHandles pointing to them */
-	GHashTable         *track_resurrection_objects_hash;
-	/* Maps WeakTrackResurrection GCHandles to the MonoObjects they point to */
-	GHashTable         *track_resurrection_handles_hash;
-
 	/* Protects the three hashes above */
 	CRITICAL_SECTION   finalizable_objects_hash_lock;
 	/* Used when accessing 'domain_assemblies' */
@@ -373,7 +372,6 @@ struct _MonoDomain {
 
 	/* Used by threadpool.c */
 	MonoImage *system_image;
-	MonoImage *system_net_dll;
 	MonoClass *corlib_asyncresult_class;
 	MonoClass *socket_class;
 	MonoClass *ad_unloaded_ex_class;
@@ -394,7 +392,7 @@ typedef struct  {
 typedef struct  {
 	const char runtime_version [12];
 	const char framework_version [4];
-	const AssemblyVersionSet version_sets [3];
+	const AssemblyVersionSet version_sets [4];
 } MonoRuntimeInfo;
 
 #define mono_domain_lock(domain) mono_locks_acquire(&(domain)->lock, DomainLock)

@@ -74,7 +74,8 @@ class Example {
             <remarks>
                 <c>C:Mono.DocTest.DocAttribute(System.String)</c>
             </remarks>
-            <exception cref="T:System.ArgumentNullException">To be added; from: <see cref="M:Mono.DocTest.DocAttribute.#ctor(System.String)" /></exception>
+            <exception cref="T:System.ArgumentNullException">To be added; from:
+          <see cref="M:Mono.DocTest.DocAttribute.#ctor(System.String)" /></exception>
         </member>
         <member name="F:Mono.DocTest.DocAttribute.Field">
             <summary>To be added.</summary>
@@ -111,8 +112,10 @@ class Example {
             <summary>To be added.</summary>
             <remarks>
                 <see cref="M:Mono.DocTest.DocValueType.M(System.Int32)" />.</remarks>
-            <exception cref="T:System.ApplicationException">To be added; from: <see cref="M:Mono.DocTest.DocValueType.M(System.Int32)" /></exception>
-            <exception cref="T:System.SystemException">To be added; from: <see cref="M:Mono.DocTest.DocValueType.M(System.Int32)" /></exception>
+            <exception cref="T:System.ApplicationException">To be added; from:
+          <see cref="M:Mono.DocTest.DocValueType.M(System.Int32)" /></exception>
+            <exception cref="T:System.SystemException">To be added; from:
+          <see cref="M:Mono.DocTest.DocValueType.M(System.Int32)" /></exception>
         </member>
         <member name="F:Mono.DocTest.DocValueType.total">
             <summary>To be added.</summary>
@@ -157,15 +160,21 @@ class Example {
                     <see cref="M:System.Collections.Generic.List{System.Int32}.Remove(`0)" />
                 </para>
             </remarks>
-            <exception cref="T:System.Exception">To be added; from: <see cref="M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Int32})" /></exception>
+            <exception cref="T:System.Exception">To be added; from:
+          <see cref="M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Int32})" /></exception>
         </member>
         <member name="M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Predicate{System.Int32}})">
             <param name="list">A <see cref="T:Mono.DocTest.Generic.MyList{System.Predicate{System.Int32}}" />.</param>
             <summary>To be added.</summary>
             <remarks>
                 <c>M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Predicate{System.Int32}})</c>.</remarks>
-            <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" />, <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" />, <see cref="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})" /></exception>
-            <exception cref="T:System.ArgumentNullException">To be added; from: <see cref="M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Predicate{System.Int32}})" />, <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" />, <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" />, <see cref="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})" /></exception>
+            <exception cref="T:System.ArgumentException">To be added; from:
+          <see cref="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})" />,
+          <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" /></exception>
+            <exception cref="T:System.ArgumentNullException">To be added; from:
+          <see cref="M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Predicate{System.Int32}})" />,
+          <see cref="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})" />,
+          <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" /></exception>
         </member>
         <member name="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})">
             <typeparam name="T">Something Else</typeparam>
@@ -173,8 +182,10 @@ class Example {
             <summary>To be added.</summary>
             <remarks>
                 <c>M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})</c>.</remarks>
-            <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})" /></exception>
-            <exception cref="T:System.ArgumentNullException">To be added; from: <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" />, <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" /></exception>
+            <exception cref="T:System.ArgumentException">To be added; from:
+          <see cref="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})" /></exception>
+            <exception cref="T:System.ArgumentNullException">To be added; from:
+          <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" /></exception>
         </member>
         <member name="M:Mono.DocTest.UseLists.UseHelper``3(Mono.DocTest.Generic.MyList{``0}+Helper{``1,``2})">
             <typeparam name="T">
@@ -240,8 +251,73 @@ class Example {
             <summary>To be added.</summary>
             <remarks>
                 <c>E:Mono.DocTest.Widget.AnotherEvent</c>.</remarks>
-            <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />, <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" /></exception>
-            <exception cref="T:System.MulticastNotSupportedException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
+            <exception cref="T:System.ArgumentException">To be added; from:
+          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
+          <see cref="M:System.String.get_Chars(System.Int32)" />,
+          <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
+          <see cref="M:System.String.ParseFormatSpecifier(System.String,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.String@)" />,
+          <see cref="M:System.String.Substring(System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.InternalEnsureCapacity(System.Int32)" /></exception>
+            <exception cref="T:System.ArgumentNullException">To be added; from:
+          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
+          <see cref="M:System.String.get_Chars(System.Int32)" />,
+          <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
+          <see cref="M:System.String.ParseFormatSpecifier(System.String,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.String@)" />,
+          <see cref="M:System.String.Substring(System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.InternalEnsureCapacity(System.Int32)" /></exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">To be added; from:
+          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
+          <see cref="M:System.String.get_Chars(System.Int32)" />,
+          <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
+          <see cref="M:System.String.ParseFormatSpecifier(System.String,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.String@)" />,
+          <see cref="M:System.String.Substring(System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.InternalEnsureCapacity(System.Int32)" /></exception>
+            <exception cref="T:System.FormatException">To be added; from:
+          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
+          <see cref="M:System.String.get_Chars(System.Int32)" />,
+          <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
+          <see cref="M:System.String.ParseFormatSpecifier(System.String,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.String@)" />,
+          <see cref="M:System.String.Substring(System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.InternalEnsureCapacity(System.Int32)" /></exception>
+            <exception cref="T:System.IndexOutOfRangeException">To be added; from:
+          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
+          <see cref="M:System.String.get_Chars(System.Int32)" />,
+          <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
+          <see cref="M:System.String.ParseFormatSpecifier(System.String,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.String@)" />,
+          <see cref="M:System.String.Substring(System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.InternalEnsureCapacity(System.Int32)" /></exception>
+            <exception cref="T:System.MulticastNotSupportedException">To be added; from:
+          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
+          <see cref="M:System.String.get_Chars(System.Int32)" />,
+          <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
+          <see cref="M:System.String.ParseFormatSpecifier(System.String,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.String@)" />,
+          <see cref="M:System.String.Substring(System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.InternalEnsureCapacity(System.Int32)" /></exception>
         </member>
         <member name="F:Mono.DocTest.Widget.array1">
             <summary>To be added.</summary>
@@ -285,7 +361,8 @@ class Example {
             <summary>To be added.</summary>
             <returns>To be added.</returns>
             <remarks>To be added.</remarks>
-            <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Linq.Expressions.Error.TypeMustBeDerivedFromSystemDelegate" /></exception>
+            <exception cref="T:System.ArgumentException">To be added; from:
+          <see cref="M:System.Linq.Expressions.Error.TypeMustBeDerivedFromSystemDelegate" /></exception>
         </member>
         <member name="M:Mono.DocTest.Widget.Dynamic1(System.Collections.Generic.Dictionary{System.Object,System.String})">
             <param name="value">To be added.</param>
@@ -310,8 +387,73 @@ class Example {
             <remarks>
                 <c>E:Mono.DocTest.Widget.DynamicE1</c>
             </remarks>
-            <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />, <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" /></exception>
-            <exception cref="T:System.MulticastNotSupportedException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
+            <exception cref="T:System.ArgumentException">To be added; from:
+          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
+          <see cref="M:System.String.get_Chars(System.Int32)" />,
+          <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
+          <see cref="M:System.String.ParseFormatSpecifier(System.String,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.String@)" />,
+          <see cref="M:System.String.Substring(System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.InternalEnsureCapacity(System.Int32)" /></exception>
+            <exception cref="T:System.ArgumentNullException">To be added; from:
+          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
+          <see cref="M:System.String.get_Chars(System.Int32)" />,
+          <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
+          <see cref="M:System.String.ParseFormatSpecifier(System.String,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.String@)" />,
+          <see cref="M:System.String.Substring(System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.InternalEnsureCapacity(System.Int32)" /></exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">To be added; from:
+          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
+          <see cref="M:System.String.get_Chars(System.Int32)" />,
+          <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
+          <see cref="M:System.String.ParseFormatSpecifier(System.String,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.String@)" />,
+          <see cref="M:System.String.Substring(System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.InternalEnsureCapacity(System.Int32)" /></exception>
+            <exception cref="T:System.FormatException">To be added; from:
+          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
+          <see cref="M:System.String.get_Chars(System.Int32)" />,
+          <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
+          <see cref="M:System.String.ParseFormatSpecifier(System.String,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.String@)" />,
+          <see cref="M:System.String.Substring(System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.InternalEnsureCapacity(System.Int32)" /></exception>
+            <exception cref="T:System.IndexOutOfRangeException">To be added; from:
+          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
+          <see cref="M:System.String.get_Chars(System.Int32)" />,
+          <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
+          <see cref="M:System.String.ParseFormatSpecifier(System.String,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.String@)" />,
+          <see cref="M:System.String.Substring(System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.InternalEnsureCapacity(System.Int32)" /></exception>
+            <exception cref="T:System.MulticastNotSupportedException">To be added; from:
+          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
+          <see cref="M:System.String.get_Chars(System.Int32)" />,
+          <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
+          <see cref="M:System.String.ParseFormatSpecifier(System.String,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.String@)" />,
+          <see cref="M:System.String.Substring(System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.InternalEnsureCapacity(System.Int32)" /></exception>
         </member>
         <member name="E:Mono.DocTest.Widget.DynamicE2">
             <summary>To be added.</summary>
@@ -691,14 +833,144 @@ class Example {
         <member name="E:Mono.DocTest.Generic.GenericBase`1.ItemChanged">
             <summary>To be added.</summary>
             <remarks>E:Mono.DocTest.Generic.GenericBase`1.ItemChanged</remarks>
-            <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />, <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" /></exception>
-            <exception cref="T:System.MulticastNotSupportedException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
+            <exception cref="T:System.ArgumentException">To be added; from:
+          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
+          <see cref="M:System.String.get_Chars(System.Int32)" />,
+          <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
+          <see cref="M:System.String.ParseFormatSpecifier(System.String,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.String@)" />,
+          <see cref="M:System.String.Substring(System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.InternalEnsureCapacity(System.Int32)" /></exception>
+            <exception cref="T:System.ArgumentNullException">To be added; from:
+          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
+          <see cref="M:System.String.get_Chars(System.Int32)" />,
+          <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
+          <see cref="M:System.String.ParseFormatSpecifier(System.String,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.String@)" />,
+          <see cref="M:System.String.Substring(System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.InternalEnsureCapacity(System.Int32)" /></exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">To be added; from:
+          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
+          <see cref="M:System.String.get_Chars(System.Int32)" />,
+          <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
+          <see cref="M:System.String.ParseFormatSpecifier(System.String,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.String@)" />,
+          <see cref="M:System.String.Substring(System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.InternalEnsureCapacity(System.Int32)" /></exception>
+            <exception cref="T:System.FormatException">To be added; from:
+          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
+          <see cref="M:System.String.get_Chars(System.Int32)" />,
+          <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
+          <see cref="M:System.String.ParseFormatSpecifier(System.String,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.String@)" />,
+          <see cref="M:System.String.Substring(System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.InternalEnsureCapacity(System.Int32)" /></exception>
+            <exception cref="T:System.IndexOutOfRangeException">To be added; from:
+          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
+          <see cref="M:System.String.get_Chars(System.Int32)" />,
+          <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
+          <see cref="M:System.String.ParseFormatSpecifier(System.String,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.String@)" />,
+          <see cref="M:System.String.Substring(System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.InternalEnsureCapacity(System.Int32)" /></exception>
+            <exception cref="T:System.MulticastNotSupportedException">To be added; from:
+          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
+          <see cref="M:System.String.get_Chars(System.Int32)" />,
+          <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
+          <see cref="M:System.String.ParseFormatSpecifier(System.String,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.String@)" />,
+          <see cref="M:System.String.Substring(System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.InternalEnsureCapacity(System.Int32)" /></exception>
         </member>
         <member name="E:Mono.DocTest.Generic.GenericBase`1.MyEvent">
             <summary>To be added.</summary>
             <remarks>E:Mono.DocTest.Generic.GenericBase`1.MyEvent</remarks>
-            <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />, <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" /></exception>
-            <exception cref="T:System.MulticastNotSupportedException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
+            <exception cref="T:System.ArgumentException">To be added; from:
+          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
+          <see cref="M:System.String.get_Chars(System.Int32)" />,
+          <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
+          <see cref="M:System.String.ParseFormatSpecifier(System.String,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.String@)" />,
+          <see cref="M:System.String.Substring(System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.InternalEnsureCapacity(System.Int32)" /></exception>
+            <exception cref="T:System.ArgumentNullException">To be added; from:
+          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
+          <see cref="M:System.String.get_Chars(System.Int32)" />,
+          <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
+          <see cref="M:System.String.ParseFormatSpecifier(System.String,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.String@)" />,
+          <see cref="M:System.String.Substring(System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.InternalEnsureCapacity(System.Int32)" /></exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">To be added; from:
+          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
+          <see cref="M:System.String.get_Chars(System.Int32)" />,
+          <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
+          <see cref="M:System.String.ParseFormatSpecifier(System.String,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.String@)" />,
+          <see cref="M:System.String.Substring(System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.InternalEnsureCapacity(System.Int32)" /></exception>
+            <exception cref="T:System.FormatException">To be added; from:
+          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
+          <see cref="M:System.String.get_Chars(System.Int32)" />,
+          <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
+          <see cref="M:System.String.ParseFormatSpecifier(System.String,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.String@)" />,
+          <see cref="M:System.String.Substring(System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.InternalEnsureCapacity(System.Int32)" /></exception>
+            <exception cref="T:System.IndexOutOfRangeException">To be added; from:
+          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
+          <see cref="M:System.String.get_Chars(System.Int32)" />,
+          <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
+          <see cref="M:System.String.ParseFormatSpecifier(System.String,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.String@)" />,
+          <see cref="M:System.String.Substring(System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.InternalEnsureCapacity(System.Int32)" /></exception>
+            <exception cref="T:System.MulticastNotSupportedException">To be added; from:
+          <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
+          <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
+          <see cref="M:System.String.get_Chars(System.Int32)" />,
+          <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
+          <see cref="M:System.String.ParseFormatSpecifier(System.String,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.String@)" />,
+          <see cref="M:System.String.Substring(System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.Char,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.Append(System.String,System.Int32,System.Int32)" />,
+          <see cref="M:System.Text.StringBuilder.InternalEnsureCapacity(System.Int32)" /></exception>
         </member>
         <member name="M:Mono.DocTest.Generic.GenericBase`1.op_Explicit(`0Mono`0.`0DocTest`0.`0Generic`0.`0GenericBase`0{`0U`0})~`0U`0">
             <param name="list">Insert description here</param>
@@ -972,7 +1244,8 @@ class Example {
             <summary>To be added.</summary>
             <returns>To be added.</returns>
             <remarks>To be added.</remarks>
-            <exception cref="T:System.NotImplementedException">To be added; from: <see cref="M:System.Array.AsReadOnly``1(``0[])" /></exception>
+            <exception cref="T:System.NotImplementedException">To be added; from:
+          <see cref="M:System.Array.AsReadOnly``1(``0[])" /></exception>
         </member>
         <member name="M:System.Array.ConvertAll``2(``0[],System.Converter{``0,``1})">
             <typeparam name="TInput">To be added.</typeparam>
@@ -982,7 +1255,8 @@ class Example {
             <summary>To be added.</summary>
             <returns>To be added.</returns>
             <remarks>To be added.</remarks>
-            <exception cref="T:System.InvalidOperationException">To be added; from: <see cref="M:System.Array.ConvertAll``2(``0[],System.Converter{``0,``1})" /></exception>
+            <exception cref="T:System.InvalidOperationException">To be added; from:
+          <see cref="M:System.Array.ConvertAll``2(``0[],System.Converter{``0,``1})" /></exception>
         </member>
         <member name="M:System.Array.Resize``1(``0[]@,System.Int32)">
             <typeparam name="T">To be added.</typeparam>
@@ -990,7 +1264,8 @@ class Example {
             <param name="newSize">To be added.</param>
             <summary>To be added.</summary>
             <remarks>To be added.</remarks>
-            <exception cref="T:System.Exception">To be added; from: <see cref="M:System.Array.Resize``1(``0[]@,System.Int32)" /></exception>
+            <exception cref="T:System.Exception">To be added; from:
+          <see cref="M:System.Array.Resize``1(``0[]@,System.Int32)" /></exception>
         </member>
         <member name="T:System.AsyncCallback">
             <param name="ar">To be added.</param>
@@ -1012,7 +1287,8 @@ class Example {
             <remarks>
                 <c>M:System.Environment.GetFolderPath(System.Environment+SpecialFolder)</c>
             </remarks>
-            <exception cref="T:System.NotSupportedException">To be added; from: <see cref="M:System.Environment.GetFolderPath(System.Environment.SpecialFolder)" /></exception>
+            <exception cref="T:System.NotSupportedException">To be added; from:
+          <see cref="M:System.Environment.GetFolderPath(System.Environment.SpecialFolder)" /></exception>
         </member>
         <member name="T:System.Environment+SpecialFolder">
             <summary>To be added.</summary>

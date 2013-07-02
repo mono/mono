@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{39A2AE3E-240E-4D9E-9FAA-74EC871B8B90}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,1030,169,219,618,672</NoWarn>
-    <OutputPath>.\</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\Mono.Security-tests-net_4_0</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>False</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>Mono.Security_test_net_4_0</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699,1030,169,219,618,672</NoWarn>
@@ -28,65 +27,66 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,1030,169,219,618,672</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="Test\Mono.Math\ArithmeticBigTest.cs" />
-   <Compile Include="Test\Mono.Math\BigIntegerTest.cs" />
-   <Compile Include="Test\Mono.Math\BigIntegerSetTest.cs" />
-   <Compile Include="Test\Mono.Math\BitwiseTest.cs" />
-   <Compile Include="Test\Mono.Math\GcdBigTest.cs" />
-   <Compile Include="Test\Mono.Math\ModInverseBigTest.cs" />
-   <Compile Include="Test\Mono.Math\ModRingTest.cs" />
-   <Compile Include="Test\Mono.Math\PrimeGenerationTest.cs" />
-   <Compile Include="Test\Mono.Math\PrimeTestingTest.cs" />
-   <Compile Include="Test\Mono.Math\SearchGeneratorTest.cs" />
-   <Compile Include="Test\Mono.Security\ASN1ConvertTest.cs" />
-   <Compile Include="Test\Mono.Security\PKCS7Test.cs" />
-   <Compile Include="Test\Mono.Security\StrongNameTest.cs" />
-   <Compile Include="Test\Mono.Security.Authenticode\AuthenticodeDeformatterTest.cs" />
-   <Compile Include="Test\Mono.Security.Authenticode\PrivateKeyTest.cs" />
-   <Compile Include="Test\Mono.Security.Authenticode\SoftwarePublisherCertificateTest.cs" />
-   <Compile Include="Test\Mono.Security.Cryptography\ARC4ManagedTest.cs" />
-   <Compile Include="Test\Mono.Security.Cryptography\CryptoConvertTest.cs" />
-   <Compile Include="Test\Mono.Security.Cryptography\DiffieHellmanManagedTest.cs" />
-   <Compile Include="Test\Mono.Security.Cryptography\KeyPairPersistenceTest.cs" />
-   <Compile Include="Test\Mono.Security.Cryptography\MD2ManagedTest.cs" />
-   <Compile Include="Test\Mono.Security.Cryptography\MD2Test.cs" />
-   <Compile Include="Test\Mono.Security.Cryptography\MD4ManagedTest.cs" />
-   <Compile Include="Test\Mono.Security.Cryptography\MD4Test.cs" />
-   <Compile Include="Test\Mono.Security.Cryptography\PKCS1Test.cs" />
-   <Compile Include="Test\Mono.Security.Cryptography\PKCS8Test.cs" />
-   <Compile Include="Test\Mono.Security.Cryptography\RSAManagedTest.cs" />
-   <Compile Include="Test\Mono.Security.Cryptography\SHA224ManagedTest.cs" />
-   <Compile Include="Test\Mono.Security.Cryptography\SHA224Test.cs" />
-   <Compile Include="Test\Mono.Security.Protocol.Ntlm\ChallengeResponseTest.cs" />
-   <Compile Include="Test\Mono.Security.Protocol.Ntlm\MessageBaseTest.cs" />
-   <Compile Include="Test\Mono.Security.Protocol.Ntlm\Type1MessageTest.cs" />
-   <Compile Include="Test\Mono.Security.Protocol.Ntlm\Type2MessageTest.cs" />
-   <Compile Include="Test\Mono.Security.Protocol.Ntlm\Type3MessageTest.cs" />
-   <Compile Include="Test\Mono.Security.X509\PKCS12Test.cs" />
-   <Compile Include="Test\Mono.Security.X509\X501NameTest.cs" />
-   <Compile Include="Test\Mono.Security.X509\X509CertificateTest.cs" />
-   <Compile Include="Test\Mono.Security.X509\X509CrlTest.cs" />
-   <Compile Include="Test\Mono.Security.X509\X520AttributesTest.cs" />
-   <Compile Include="Test\Mono.Security.X509.Extensions\KeyUsageExtensionTest.cs" />
-   <Compile Include="Test\Mono.Security.X509.Extensions\ExtendedKeyUsageExtensionTest.cs" />
-   <Compile Include="Test\Mono.Security.X509.Extensions\BasicConstraintsExtensionTest.cs" />
-   <Compile Include="Test\Mono.Security.X509.Extensions\SubjectAltNameExtensionTest.cs" />
-
-  </ItemGroup>
+    <Compile Include="Test\Mono.Math\ArithmeticBigTest.cs" />
+    <Compile Include="Test\Mono.Math\BigIntegerSetTest.cs" />
+    <Compile Include="Test\Mono.Math\BigIntegerTest.cs" />
+    <Compile Include="Test\Mono.Math\BitwiseTest.cs" />
+    <Compile Include="Test\Mono.Math\GcdBigTest.cs" />
+    <Compile Include="Test\Mono.Math\ModInverseBigTest.cs" />
+    <Compile Include="Test\Mono.Math\ModRingTest.cs" />
+    <Compile Include="Test\Mono.Math\PrimeGenerationTest.cs" />
+    <Compile Include="Test\Mono.Math\PrimeTestingTest.cs" />
+    <Compile Include="Test\Mono.Math\SearchGeneratorTest.cs" />
+    <Compile Include="Test\Mono.Security.Authenticode\AuthenticodeDeformatterTest.cs" />
+    <Compile Include="Test\Mono.Security.Authenticode\PrivateKeyTest.cs" />
+    <Compile Include="Test\Mono.Security.Authenticode\SoftwarePublisherCertificateTest.cs" />
+    <Compile Include="Test\Mono.Security.Cryptography\ARC4ManagedTest.cs" />
+    <Compile Include="Test\Mono.Security.Cryptography\CryptoConvertTest.cs" />
+    <Compile Include="Test\Mono.Security.Cryptography\DiffieHellmanManagedTest.cs" />
+    <Compile Include="Test\Mono.Security.Cryptography\KeyPairPersistenceTest.cs" />
+    <Compile Include="Test\Mono.Security.Cryptography\MD2ManagedTest.cs" />
+    <Compile Include="Test\Mono.Security.Cryptography\MD2Test.cs" />
+    <Compile Include="Test\Mono.Security.Cryptography\MD4ManagedTest.cs" />
+    <Compile Include="Test\Mono.Security.Cryptography\MD4Test.cs" />
+    <Compile Include="Test\Mono.Security.Cryptography\PKCS1Test.cs" />
+    <Compile Include="Test\Mono.Security.Cryptography\PKCS8Test.cs" />
+    <Compile Include="Test\Mono.Security.Cryptography\RSAManagedTest.cs" />
+    <Compile Include="Test\Mono.Security.Cryptography\SHA224ManagedTest.cs" />
+    <Compile Include="Test\Mono.Security.Cryptography\SHA224Test.cs" />
+    <Compile Include="Test\Mono.Security.Protocol.Ntlm\ChallengeResponseTest.cs" />
+    <Compile Include="Test\Mono.Security.Protocol.Ntlm\MessageBaseTest.cs" />
+    <Compile Include="Test\Mono.Security.Protocol.Ntlm\Type1MessageTest.cs" />
+    <Compile Include="Test\Mono.Security.Protocol.Ntlm\Type2MessageTest.cs" />
+    <Compile Include="Test\Mono.Security.Protocol.Ntlm\Type3MessageTest.cs" />
+    <Compile Include="Test\Mono.Security.X509.Extensions\BasicConstraintsExtensionTest.cs" />
+    <Compile Include="Test\Mono.Security.X509.Extensions\ExtendedKeyUsageExtensionTest.cs" />
+    <Compile Include="Test\Mono.Security.X509.Extensions\KeyUsageExtensionTest.cs" />
+    <Compile Include="Test\Mono.Security.X509.Extensions\SubjectAltNameExtensionTest.cs" />
+    <Compile Include="Test\Mono.Security.X509\PKCS12Test.cs" />
+    <Compile Include="Test\Mono.Security.X509\X501NameTest.cs" />
+    <Compile Include="Test\Mono.Security.X509\X509CertificateTest.cs" />
+    <Compile Include="Test\Mono.Security.X509\X509CrlTest.cs" />
+    <Compile Include="Test\Mono.Security.X509\X520AttributesTest.cs" />
+    <Compile Include="Test\Mono.Security\ASN1ConvertTest.cs" />
+    <Compile Include="Test\Mono.Security\PKCS7Test.cs" />
+    <Compile Include="Test\Mono.Security\StrongNameTest.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -95,27 +95,29 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_0\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="./../../class/lib/net_4_0/Mono.Security.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../class/lib/net_4_0/Mono.Security.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework" />
-
+    <Reference Include="..\lib\net_4_0\nunit.framework.dll" />
+    <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
+      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
+      <Name>corlib\corlib-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mono.Security\Mono.Security-net_4_0.csproj">
+      <Project>{A2DAEB75-C366-4B5F-8BDD-9B3234A1ABFA}</Project>
+      <Name>Mono.Security\Mono.Security-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_0.csproj">
+      <Project>{A8B97A8D-D9F3-4BE5-926D-CE7E7C57FE6D}</Project>
+      <Name>System\System-net_4_0</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
-

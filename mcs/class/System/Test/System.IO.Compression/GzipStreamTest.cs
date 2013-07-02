@@ -122,6 +122,7 @@ namespace MonoTests.System.IO.Compression
 			decompressing.Read (dummy, 10, 20);
 		}
 
+#if !MOBILE
 		[Test]
 		[Category("NotWorking")]
 		public void CheckInvalidDataRead ()
@@ -136,6 +137,7 @@ namespace MonoTests.System.IO.Compression
 			} catch (InvalidDataException) {
 			}
 		}
+#endif
 
 		[Test]
 		public void CheckClosedRead ()

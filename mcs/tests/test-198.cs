@@ -84,7 +84,7 @@ namespace P1
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		// Compilation-only test.
 		return 0;

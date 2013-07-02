@@ -28,11 +28,7 @@
 
 namespace System.Net {
 
-#if MOONLIGHT
-	internal interface ICredentialPolicy {
-#else
 	public interface ICredentialPolicy {
-#endif
 		bool ShouldSendCredential (Uri challengeUri,
 			WebRequest request,
 			NetworkCredential credential,

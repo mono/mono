@@ -17,7 +17,7 @@ namespace NS
 
 public class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		if (NS.MyClass.GetInt () != 1)
 			return 1;

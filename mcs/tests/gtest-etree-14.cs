@@ -10,7 +10,7 @@ class Person
 
 class Repro
 {
-	static int Main ()
+	public static int Main ()
 	{
 		var persons = GetPersons (new [] { new Person { Age = 25 }, new Person { Age = 21 } }, 25);
 		return persons.Count () - 1;

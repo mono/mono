@@ -14,7 +14,7 @@ public class Test
 {
 	delegate void D ();
 	
-	static int Main ()
+	public static int Main ()
 	{
 		MyClass mc = null;
 		

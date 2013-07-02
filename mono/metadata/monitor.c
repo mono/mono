@@ -26,6 +26,7 @@
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/profiler-private.h>
 #include <mono/utils/mono-time.h>
+#include <mono/utils/atomic.h>
 
 /*
  * Pull the list of opcodes
@@ -242,7 +243,9 @@ mon_finalize (MonoThreadsSync *mon)
 
 	mon->data = monitor_freelist;
 	monitor_freelist = mon;
+#ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->gc_sync_blocks--;
+#endif
 }
 
 /* LOCKING: this is called with monitor_mutex held */
@@ -268,7 +271,7 @@ mon_new (gsize id)
 							new->wait_list = g_slist_remove (new->wait_list, new->wait_list->data);
 						}
 					}
-					mono_gc_weak_link_remove (&new->data);
+					mono_gc_weak_link_remove (&new->data, FALSE);
 					new->data = monitor_freelist;
 					monitor_freelist = new;
 				}
@@ -309,8 +312,11 @@ mon_new (gsize id)
 
 	new->owner = id;
 	new->nest = 1;
+	new->data = NULL;
 	
+#ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->gc_sync_blocks++;
+#endif
 	return new;
 }
 
@@ -536,7 +542,9 @@ retry:
 	}
 
 	/* The object must be locked by someone else... */
+#ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->thread_contentions++;
+#endif
 
 	/* If ms is 0 we don't block, but just fail straight away */
 	if (ms == 0) {
@@ -612,8 +620,10 @@ retry_contended:
 	
 	InterlockedIncrement (&mon->entry_count);
 
+#ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->thread_queue_len++;
 	mono_perfcounters->thread_queue_max++;
+#endif
 	thread = mono_thread_internal_current ();
 
 	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
@@ -627,7 +637,9 @@ retry_contended:
 	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
 	
 	InterlockedDecrement (&mon->entry_count);
+#ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->thread_queue_len--;
+#endif
 
 	if (ms != INFINITE) {
 		now = mono_msec_ticks ();
@@ -773,6 +785,8 @@ mono_monitor_get_object_monitor_weak_link (MonoObject *object)
 	return NULL;
 }
 
+#ifndef DISABLE_JIT
+
 static void
 emit_obj_syncp_check (MonoMethodBuilder *mb, int syncp_loc, int *obj_null_branch, int *true_locktaken_branch, int *syncp_true_false_branch,
 	int *thin_hash_branch, gboolean branch_on_true)
@@ -836,6 +850,8 @@ emit_obj_syncp_check (MonoMethodBuilder *mb, int syncp_loc, int *obj_null_branch
 	mono_mb_emit_ldloc (mb, syncp_loc);
 	*syncp_true_false_branch = mono_mb_emit_short_branch (mb, branch_on_true ? CEE_BRTRUE_S : CEE_BRFALSE_S);
 }
+
+#endif
 
 static MonoMethod* monitor_il_fastpaths[3];
 
@@ -907,6 +923,7 @@ mono_monitor_get_fast_enter_method (MonoMethod *monitor_enter_method)
 	mb->method->flags = METHOD_ATTRIBUTE_PUBLIC | METHOD_ATTRIBUTE_STATIC |
 		METHOD_ATTRIBUTE_HIDE_BY_SIG | METHOD_ATTRIBUTE_FINAL;
 
+#ifndef DISABLE_JIT
 	tid_loc = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 	syncp_loc = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 	owner_loc = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
@@ -1026,6 +1043,7 @@ mono_monitor_get_fast_enter_method (MonoMethod *monitor_enter_method)
 		mono_mb_emit_byte (mb, CEE_LDARG_1);
 	mono_mb_emit_managed_call (mb, monitor_enter_method, NULL);
 	mono_mb_emit_byte (mb, CEE_RET);
+#endif
 
 	res = register_fastpath (mono_mb_create_method (mb, mono_signature_no_pinvoke (monitor_enter_method), 5), fast_path_idx);
 
@@ -1060,6 +1078,7 @@ mono_monitor_get_fast_exit_method (MonoMethod *monitor_exit_method)
 	mb->method->flags = METHOD_ATTRIBUTE_PUBLIC | METHOD_ATTRIBUTE_STATIC |
 		METHOD_ATTRIBUTE_HIDE_BY_SIG | METHOD_ATTRIBUTE_FINAL;
 
+#ifndef DISABLE_JIT
 	syncp_loc = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
 
 	emit_obj_syncp_check (mb, syncp_loc, &obj_null_branch, NULL, &has_syncp_branch, &thin_hash_branch, TRUE);
@@ -1186,6 +1205,7 @@ mono_monitor_get_fast_exit_method (MonoMethod *monitor_exit_method)
 	mono_mb_emit_byte (mb, CEE_LDARG_0);
 	mono_mb_emit_managed_call (mb, monitor_exit_method, NULL);
 	mono_mb_emit_byte (mb, CEE_RET);
+#endif
 
 	res = register_fastpath (mono_mb_create_method (mb, mono_signature_no_pinvoke (monitor_exit_method), 5), FASTPATH_EXIT);
 	mono_mb_free (mb);

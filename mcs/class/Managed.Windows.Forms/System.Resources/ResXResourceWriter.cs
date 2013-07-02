@@ -23,9 +23,8 @@
 //	Duncan Mak		duncan@ximian.com
 //	Gonzalo Paniagua Javier	gonzalo@ximian.com
 //	Peter Bartok		pbartok@novell.com
-//
-
-// COMPLETE
+//	Gary Barnett		gary.barnett.mono@gmail.com
+//	includes code by Mike Krüger and Lluis Sanchez
 
 using System.ComponentModel;
 using System.IO;
@@ -98,7 +97,7 @@ namespace System.Resources
 		void InitWriter ()
 		{
 			if (filename != null)
-				stream = File.OpenWrite (filename);
+				stream = File.Open (filename, FileMode.Create);
 			if (textwriter == null)
 				textwriter = new StreamWriter (stream, Encoding.UTF8);
 
@@ -179,9 +178,9 @@ namespace System.Resources
 			writer.WriteEndElement ();
 		}
 
-		void WriteBytes (string name, Type type, byte [] value)
+		void WriteBytes (string name, Type type, byte [] value, string comment)
 		{
-			WriteBytes (name, type, value, 0, value.Length);
+			WriteBytes (name, type, value, 0, value.Length, comment);
 		}
 
 		void WriteString (string name, string value)
@@ -224,7 +223,7 @@ namespace System.Resources
 			if (writer == null)
 				InitWriter ();
 
-			WriteBytes (name, value.GetType (), value);
+			WriteBytes (name, value.GetType (), value, null);
 		}
 
 		public void AddResource (string name, object value)
@@ -239,18 +238,10 @@ namespace System.Resources
 				return;
 			}
 
-			if (value is byte[]) {
-				AddResource (name, (byte[]) value);
-				return;
-			}
-
 			if (name == null)
 				throw new ArgumentNullException ("name");
 
-			if (value == null)
-				throw new ArgumentNullException ("value");
-
-			if (!value.GetType ().IsSerializable)
+			if (value != null && !value.GetType ().IsSerializable)
 					throw new InvalidOperationException (String.Format ("The element '{0}' of type '{1}' is not serializable.", name, value.GetType ().Name));
 
 			if (written)
@@ -259,16 +250,34 @@ namespace System.Resources
 			if (writer == null)
 				InitWriter ();
 
+			if (value is byte[]) {
+				WriteBytes (name, value.GetType (), (byte []) value, comment);
+				return;
+			}
+
+			if (value == null) {
+				// nulls written as ResXNullRef
+				WriteString (name, "", typeof (ResXNullRef), comment);
+				return;
+			}
+
 			TypeConverter converter = TypeDescriptor.GetConverter (value);
+			if (value is ResXFileRef) {
+				ResXFileRef fileRef = ProcessFileRefBasePath ((ResXFileRef) value);	
+				string str = (string) converter.ConvertToInvariantString (fileRef);
+				WriteString (name, str, value.GetType (), comment);
+				return;
+			}
+
 			if (converter != null && converter.CanConvertTo (typeof (string)) && converter.CanConvertFrom (typeof (string))) {
 				string str = (string) converter.ConvertToInvariantString (value);
-				WriteString (name, str, value.GetType ());
+				WriteString (name, str, value.GetType (), comment);
 				return;
 			}
 			
 			if (converter != null && converter.CanConvertTo (typeof (byte[])) && converter.CanConvertFrom (typeof (byte[]))) {
 				byte[] b = (byte[]) converter.ConvertTo (value, typeof (byte[]));
-				WriteBytes (name, value.GetType (), b);
+				WriteBytes (name, value.GetType (), b, comment);
 				return;
 			}
 			
@@ -315,9 +324,130 @@ namespace System.Resources
 		
 		public void AddResource (ResXDataNode node)
 		{
-			AddResource (node.Name, node.Value, node.Comment);
+			if (node == null)
+				throw new ArgumentNullException ("node");
+
+			if (writer == null)
+				InitWriter ();
+
+			if (node.IsWritable)
+				WriteWritableNode (node);
+			else if (node.FileRef != null)
+				AddResource (node.Name, node.FileRef, node.Comment);
+			else 
+				AddResource (node.Name, node.GetValue ((AssemblyName []) null), node.Comment);
 		}
-		
+
+		ResXFileRef ProcessFileRefBasePath (ResXFileRef fileRef)
+		{
+			if (String.IsNullOrEmpty (BasePath))
+				return fileRef;
+
+			string newPath = AbsoluteToRelativePath (BasePath, fileRef.FileName);
+			return new ResXFileRef (newPath, fileRef.TypeName, fileRef.TextFileEncoding);
+		}
+
+		static bool IsSeparator (char ch)
+		{
+			return ch == Path.DirectorySeparatorChar || ch == Path.AltDirectorySeparatorChar || ch == Path.VolumeSeparatorChar;
+		}
+		//adapted from MonoDevelop.Core
+		unsafe static string AbsoluteToRelativePath (string baseDirectoryPath, string absPath)
+		{
+			if (string.IsNullOrEmpty (baseDirectoryPath))
+				return absPath;
+
+			baseDirectoryPath = baseDirectoryPath.TrimEnd (Path.DirectorySeparatorChar);
+
+			fixed (char* bPtr = baseDirectoryPath, aPtr = absPath) {
+				var bEnd = bPtr + baseDirectoryPath.Length;
+				var aEnd = aPtr + absPath.Length;
+				char* lastStartA = aEnd;
+				char* lastStartB = bEnd;
+				
+				int indx = 0;
+				// search common base path
+				var a = aPtr;
+				var b = bPtr;
+				while (a < aEnd) {
+					if (*a != *b)
+						break;
+					if (IsSeparator (*a)) {
+						indx++;
+						lastStartA = a + 1;
+						lastStartB = b; 
+					}
+					a++;
+					b++;
+					if (b >= bEnd) {
+						if (a >= aEnd || IsSeparator (*a)) {
+							indx++;
+							lastStartA = a + 1;
+							lastStartB = b;
+						}
+						break;
+					}
+				}
+				if (indx == 0) 
+					return absPath;
+				
+				if (lastStartA >= aEnd)
+					return ".";
+				
+				// handle case a: some/path b: some/path/deeper...
+				if (a >= aEnd) {
+					if (IsSeparator (*b)) {
+						lastStartA = a + 1;
+						lastStartB = b;
+					}
+				}
+				
+				// look how many levels to go up into the base path
+				int goUpCount = 0;
+				while (lastStartB < bEnd) {
+					if (IsSeparator (*lastStartB))
+						goUpCount++;
+					lastStartB++;
+				}
+				var size = goUpCount * 2 + goUpCount + aEnd - lastStartA;
+				var result = new char [size];
+				fixed (char* rPtr = result) {
+					// go paths up
+					var r = rPtr;
+					for (int i = 0; i < goUpCount; i++) {
+						*(r++) = '.';
+						*(r++) = '.';
+						*(r++) = Path.DirectorySeparatorChar;
+					}
+					// copy the remaining absulute path
+					while (lastStartA < aEnd)
+						*(r++) = *(lastStartA++);
+				}
+				return new string (result);
+			}
+		}
+
+		// avoids instantiating objects
+		void WriteWritableNode (ResXDataNode node)
+		{
+			writer.WriteStartElement ("data");
+			writer.WriteAttributeString ("name", node.Name);
+			if (!(node.Type == null || node.Type.Equals (String.Empty)))
+				writer.WriteAttributeString ("type", node.Type);
+			if (!(node.MimeType == null || node.MimeType.Equals (String.Empty)))
+				writer.WriteAttributeString ("mimetype", node.MimeType);
+			writer.WriteStartElement ("value");
+			writer.WriteString (node.DataString);
+			writer.WriteEndElement ();
+			if (!(node.Comment == null || node.Comment.Equals (String.Empty))) {
+				writer.WriteStartElement ("comment");
+				writer.WriteString (node.Comment);
+				writer.WriteEndElement ();
+			}
+			writer.WriteEndElement ();
+			writer.WriteWhitespace ("\n  ");
+		}		
+
 		public void AddMetadata (string name, string value)
 		{
 			if (name == null)

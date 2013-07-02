@@ -28,6 +28,7 @@ using System.Threading;
 using System.Linq;
 using System.Collections.Concurrent;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 
 namespace MonoTests.System.Collections.Concurrent
 {
@@ -219,7 +220,7 @@ namespace MonoTests.System.Collections.Concurrent
 		{
 			int[] values = new int[3];
 			Assert.AreEqual (3, stack.TryPopRange (values));
-			CollectionAssert.AreEquivalent (new int[] { 9, 8, 7 }, values);
+			Assert.That (values, new CollectionEquivalentConstraint (new int[] { 9, 8, 7 }));
 			Assert.AreEqual (10 - values.Length, stack.Count);
 			for (int i = 9 - values.Length; i >= 0; i--) {
 				int outValue;
@@ -233,7 +234,7 @@ namespace MonoTests.System.Collections.Concurrent
 		{
 			int[] values = new int[1];
 			Assert.AreEqual (1, stack.TryPopRange (values));
-			CollectionAssert.AreEquivalent (new int[] { 9 }, values);
+			Assert.That (values, new CollectionEquivalentConstraint (new int[] { 9 }));
 			Assert.AreEqual (10 - values.Length, stack.Count);
 			for (int i = 9 - values.Length; i >= 0; i--) {
 				int outValue;
@@ -247,7 +248,7 @@ namespace MonoTests.System.Collections.Concurrent
 		{
 			int[] values = new int[10];
 			Assert.AreEqual (10, stack.TryPopRange (values));
-			CollectionAssert.AreEquivalent (Enumerable.Range (0, 10).Reverse ().ToArray (), values);
+			Assert.That (values, new CollectionEquivalentConstraint (Enumerable.Range (0, 10).Reverse ()));
 			Assert.AreEqual (0, stack.Count);
 		}
 
@@ -256,7 +257,7 @@ namespace MonoTests.System.Collections.Concurrent
 		{
 			int[] values = new int[5];
 			Assert.AreEqual (2, stack.TryPopRange (values, 3, 2));
-			CollectionAssert.AreEquivalent (new int[] { 0, 0, 0, 9, 8 }, values);
+			Assert.That (values, new CollectionEquivalentConstraint (new int[] { 0, 0, 0, 9, 8 }));
 			Assert.AreEqual (8, stack.Count);
 		}
 

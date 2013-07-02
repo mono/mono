@@ -262,6 +262,14 @@ static JITGCStats stats;
 
 static FILE *logfile;
 
+static gboolean enable_gc_maps_for_aot;
+
+void
+mini_gc_enable_gc_maps_for_aot (void)
+{
+	enable_gc_maps_for_aot = TRUE;
+}
+
 // FIXME: Move these to a shared place
 
 static inline void
@@ -576,7 +584,7 @@ thread_detach_func (gpointer user_data)
 }
 
 static void
-thread_suspend_func (gpointer user_data, void *sigctx)
+thread_suspend_func (gpointer user_data, void *sigctx, MonoContext *ctx)
 {
 	TlsData *tls = user_data;
 
@@ -595,7 +603,14 @@ thread_suspend_func (gpointer user_data, void *sigctx)
 	} else {
 		tls->unwind_state.unwind_data [MONO_UNWIND_DATA_LMF] = mono_get_lmf ();
 		if (sigctx) {
+#ifdef MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX
 			mono_arch_sigctx_to_monoctx (sigctx, &tls->unwind_state.ctx);
+			tls->unwind_state.valid = TRUE;
+#else
+			tls->unwind_state.valid = FALSE;
+#endif
+		} else if (ctx) {
+			memcpy (&tls->unwind_state.ctx, ctx, sizeof (MonoContext));
 			tls->unwind_state.valid = TRUE;
 		} else {
 			tls->unwind_state.valid = FALSE;
@@ -770,6 +785,8 @@ conservative_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
 
 		ji = frame.ji;
 
+		// FIXME: For skipped frames, scan the param area of the parent frame conservatively ?
+
 		if (frame.type == FRAME_TYPE_MANAGED_TO_NATIVE) {
 			/*
 			 * These frames are problematic for several reasons:
@@ -798,6 +815,23 @@ conservative_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
 			}
 			DEBUG (fprintf (logfile, "\t <Last frame>\n"));
 			last = FALSE;
+			/*
+			 * new_reg_locations is not precise when a method is interrupted during its epilog, so clear it.
+			 */
+			for (i = 0; i < MONO_MAX_IREGS; ++i) {
+				if (reg_locations [i]) {
+					DEBUG (fprintf (logfile, "\tscan saved reg %s location %p.\n", mono_arch_regname (i), reg_locations [i]));
+					mono_gc_conservatively_scan_area (reg_locations [i], (char*)reg_locations [i] + SIZEOF_SLOT);
+					scanned_registers += SIZEOF_SLOT;
+				}
+				if (new_reg_locations [i]) {
+					DEBUG (fprintf (logfile, "\tscan saved reg %s location %p.\n", mono_arch_regname (i), new_reg_locations [i]));
+					mono_gc_conservatively_scan_area (new_reg_locations [i], (char*)new_reg_locations [i] + SIZEOF_SLOT);
+					scanned_registers += SIZEOF_SLOT;
+				}
+				reg_locations [i] = NULL;
+				new_reg_locations [i] = NULL;
+			}
 			continue;
 		}
 
@@ -1001,7 +1035,7 @@ conservative_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
 		}
 
 		/*
-		 * Clear locations of precisely stacked registers.
+		 * Clear locations of precisely tracked registers.
 		 */
 		if (precise_regmask) {
 			for (i = 0; i < NREGS; ++i) {
@@ -1181,6 +1215,8 @@ thread_mark_func (gpointer user_data, guint8 *stack_start, guint8 *stack_end, gb
 		precise_pass (tls, stack_start, stack_end);
 }
 
+#ifndef DISABLE_JIT
+
 static void
 mini_gc_init_gc_map (MonoCompile *cfg)
 {
@@ -1190,7 +1226,10 @@ mini_gc_init_gc_map (MonoCompile *cfg)
 	if (!mono_gc_is_moving ())
 		return;
 
-	if (!cfg->compile_aot && !mono_gc_precise_stack_mark_enabled ())
+	if (cfg->compile_aot) {
+		if (!enable_gc_maps_for_aot)
+			return;
+	} else if (!mono_gc_precise_stack_mark_enabled ())
 		return;
 
 #if 1
@@ -1273,30 +1312,50 @@ slot_to_fp_offset (MonoCompile *cfg, int slot)
 	return (slot * SIZEOF_SLOT) + gcfg->min_offset;
 }
 
-static inline void
+static inline MONO_ALWAYS_INLINE void
 set_slot (MonoCompileGC *gcfg, int slot, int callsite_index, GCSlotType type)
 {
 	g_assert (slot >= 0 && slot < gcfg->nslots);
 
 	if (type == SLOT_PIN) {
-		clear_bit (gcfg->stack_ref_bitmap, gcfg->stack_bitmap_width, callsite_index, slot);
-		set_bit (gcfg->stack_pin_bitmap, gcfg->stack_bitmap_width, callsite_index, slot);
+		clear_bit (gcfg->stack_ref_bitmap, gcfg->stack_bitmap_width, slot, callsite_index);
+		set_bit (gcfg->stack_pin_bitmap, gcfg->stack_bitmap_width, slot, callsite_index);
 	} else if (type == SLOT_REF) {
-		set_bit (gcfg->stack_ref_bitmap, gcfg->stack_bitmap_width, callsite_index, slot);
-		clear_bit (gcfg->stack_pin_bitmap, gcfg->stack_bitmap_width, callsite_index, slot);
+		set_bit (gcfg->stack_ref_bitmap, gcfg->stack_bitmap_width, slot, callsite_index);
+		clear_bit (gcfg->stack_pin_bitmap, gcfg->stack_bitmap_width, slot, callsite_index);
 	} else if (type == SLOT_NOREF) {
-		clear_bit (gcfg->stack_ref_bitmap, gcfg->stack_bitmap_width, callsite_index, slot);
-		clear_bit (gcfg->stack_pin_bitmap, gcfg->stack_bitmap_width, callsite_index, slot);
+		clear_bit (gcfg->stack_ref_bitmap, gcfg->stack_bitmap_width, slot, callsite_index);
+		clear_bit (gcfg->stack_pin_bitmap, gcfg->stack_bitmap_width, slot, callsite_index);
 	}
 }
 
 static inline void
 set_slot_everywhere (MonoCompileGC *gcfg, int slot, GCSlotType type)
 {
+	int width, pos;
+	guint8 *ref_bitmap, *pin_bitmap;
+
+	/*
 	int cindex;
 
 	for (cindex = 0; cindex < gcfg->ncallsites; ++cindex)
 		set_slot (gcfg, slot, cindex, type);
+	*/
+	ref_bitmap = gcfg->stack_ref_bitmap;
+	pin_bitmap = gcfg->stack_pin_bitmap;
+	width = gcfg->stack_bitmap_width;
+	pos = width * slot;
+
+	if (type == SLOT_PIN) {
+		memset (ref_bitmap + pos, 0, width);
+		memset (pin_bitmap + pos, 0xff, width);
+	} else if (type == SLOT_REF) {
+		memset (ref_bitmap + pos, 0xff, width);
+		memset (pin_bitmap + pos, 0, width);
+	} else if (type == SLOT_NOREF) {
+		memset (ref_bitmap + pos, 0, width);
+		memset (pin_bitmap + pos, 0, width);
+	}
 }
 
 static inline void
@@ -1317,14 +1376,14 @@ set_reg_slot (MonoCompileGC *gcfg, int slot, int callsite_index, GCSlotType type
 	g_assert (slot >= 0 && slot < gcfg->nregs);
 
 	if (type == SLOT_PIN) {
-		clear_bit (gcfg->reg_ref_bitmap, gcfg->reg_bitmap_width, callsite_index, slot);
-		set_bit (gcfg->reg_pin_bitmap, gcfg->reg_bitmap_width, callsite_index, slot);
+		clear_bit (gcfg->reg_ref_bitmap, gcfg->reg_bitmap_width, slot, callsite_index);
+		set_bit (gcfg->reg_pin_bitmap, gcfg->reg_bitmap_width, slot, callsite_index);
 	} else if (type == SLOT_REF) {
-		set_bit (gcfg->reg_ref_bitmap, gcfg->reg_bitmap_width, callsite_index, slot);
-		clear_bit (gcfg->reg_pin_bitmap, gcfg->reg_bitmap_width, callsite_index, slot);
+		set_bit (gcfg->reg_ref_bitmap, gcfg->reg_bitmap_width, slot, callsite_index);
+		clear_bit (gcfg->reg_pin_bitmap, gcfg->reg_bitmap_width, slot, callsite_index);
 	} else if (type == SLOT_NOREF) {
-		clear_bit (gcfg->reg_ref_bitmap, gcfg->reg_bitmap_width, callsite_index, slot);
-		clear_bit (gcfg->reg_pin_bitmap, gcfg->reg_bitmap_width, callsite_index, slot);
+		clear_bit (gcfg->reg_ref_bitmap, gcfg->reg_bitmap_width, slot, callsite_index);
+		clear_bit (gcfg->reg_pin_bitmap, gcfg->reg_bitmap_width, slot, callsite_index);
 	}
 }
 
@@ -1617,10 +1676,6 @@ process_variables (MonoCompile *cfg)
 		if (ins->inst_offset % SIZEOF_SLOT != 0)
 			continue;
 
-		if (is_arg && ins->inst_offset >= gcfg->max_offset)
-			/* In parent frame */
-			continue;
-
 		pos = fp_offset_to_slot (cfg, ins->inst_offset);
 
 		if (is_arg && ins->flags & MONO_INST_IS_DEAD) {
@@ -1667,11 +1722,13 @@ process_variables (MonoCompile *cfg)
 			 * before the liveness pass. We emit OP_GC_LIVENESS_DEF instructions for
 			 * them during VZERO decomposition.
 			 */
-			if (!pc_offsets [vmv->vreg])
-				pin = TRUE;
+			if (!is_arg) {
+				if (!pc_offsets [vmv->vreg])
+					pin = TRUE;
 
-			if (ins->backend.is_pinvoke)
-				pin = TRUE;
+				if (ins->backend.is_pinvoke)
+					pin = TRUE;
+			}
 
 			if (bitmap) {
 				for (cindex = 0; cindex < gcfg->ncallsites; ++cindex) {
@@ -1741,7 +1798,7 @@ process_variables (MonoCompile *cfg)
 		if (!mini_type_is_reference (cfg, t)) {
 			set_slot_everywhere (gcfg, pos, SLOT_NOREF);
 			if (cfg->verbose_level > 1)
-				printf ("\tnoref at %s0x%x(fp) (R%d, slot = %d): %s\n", ins->inst_offset < 0 ? "-" : "", (ins->inst_offset < 0) ? -(int)ins->inst_offset : (int)ins->inst_offset, vmv->vreg, pos, mono_type_full_name (ins->inst_vtype));
+				printf ("\tnoref%s at %s0x%x(fp) (R%d, slot = %d): %s\n", (is_arg ? " arg" : ""), ins->inst_offset < 0 ? "-" : "", (ins->inst_offset < 0) ? -(int)ins->inst_offset : (int)ins->inst_offset, vmv->vreg, pos, mono_type_full_name (ins->inst_vtype));
 			if (!t->byref && sizeof (mgreg_t) == 4 && (t->type == MONO_TYPE_I8 || t->type == MONO_TYPE_U8 || t->type == MONO_TYPE_R8)) {
 				set_slot_everywhere (gcfg, pos + 1, SLOT_NOREF);
 				if (cfg->verbose_level > 1)
@@ -1779,7 +1836,7 @@ process_variables (MonoCompile *cfg)
 		}
 
 		if (cfg->verbose_level > 1) {
-			printf ("\tref at %s0x%x(fp) (R%d, slot = %d): %s\n", ins->inst_offset < 0 ? "-" : "", (ins->inst_offset < 0) ? -(int)ins->inst_offset : (int)ins->inst_offset, vmv->vreg, pos, mono_type_full_name (ins->inst_vtype));
+			printf ("\tref%s at %s0x%x(fp) (R%d, slot = %d): %s\n", (is_arg ? " arg" : ""), ins->inst_offset < 0 ? "-" : "", (ins->inst_offset < 0) ? -(int)ins->inst_offset : (int)ins->inst_offset, vmv->vreg, pos, mono_type_full_name (ins->inst_vtype));
 		}
 	}
 
@@ -1805,28 +1862,6 @@ sp_offset_to_fp_offset (MonoCompile *cfg, int sp_offset)
 	NOT_IMPLEMENTED;
 	return -1;
 #endif
-}
-
-static GCSlotType
-type_to_gc_slot_type (MonoCompile *cfg, MonoType *t)
-{
-	if (t->byref)
-		return SLOT_PIN;
-	t = mini_type_get_underlying_type (NULL, t);
-	if (mini_type_is_reference (cfg, t))
-		return SLOT_REF;
-	else {
-		if (MONO_TYPE_ISSTRUCT (t)) {
-			MonoClass *klass = mono_class_from_mono_type (t);
-			if (!klass->has_references) {
-				return SLOT_NOREF;
-			} else {
-				// FIXME:
-				return SLOT_PIN;
-			}
-		}
-		return SLOT_NOREF;
-	}
 }
 
 static void
@@ -1878,54 +1913,10 @@ process_param_area_slots (MonoCompile *cfg)
 			set_slot_everywhere (gcfg, i, SLOT_NOREF);
 	}
 
-	for (cindex = 0; cindex < gcfg->ncallsites; ++cindex) {
-		GCCallSite *callsite = gcfg->callsites [cindex];
-		GSList *l;
-
-		for (l = callsite->param_slots; l; l = l->next) {
-			MonoInst *def = l->data;
-			MonoType *t = def->inst_vtype;
-			int sp_offset = def->inst_offset;
-			int fp_offset = sp_offset_to_fp_offset (cfg, sp_offset);
-			int slot = fp_offset_to_slot (cfg, fp_offset);
-			GCSlotType type = type_to_gc_slot_type (cfg, t);
-
-			if (MONO_TYPE_ISSTRUCT (t)) {
-				guint32 align;
-				guint32 size;
-				int size_in_slots;
-				gsize *bitmap;
-				int j, numbits;
-
-				size = mini_type_stack_size_full (cfg->generic_sharing_context, t, &align, FALSE);
-				size_in_slots = ALIGN_TO (size, SIZEOF_SLOT) / SIZEOF_SLOT;
-
-				bitmap = get_vtype_bitmap (t, &numbits);
-				if (type == SLOT_NOREF || !bitmap) {
-					for (i = 0; i < size_in_slots; ++i) {
-						set_slot_in_range (gcfg, slot + i, def->backend.pc_offset, callsite->pc_offset + 1, type);
-					}
-					if (cfg->verbose_level > 1)
-						printf ("\t%s param area slots at %s0x%x(fp)=0x%x(sp) (slot = %d-%d) [0x%x-0x%x]\n", slot_type_to_string (type), get_offset_sign (fp_offset), get_offset_val (fp_offset), sp_offset, slot, slot + (size / (int)sizeof (mgreg_t)), def->backend.pc_offset, callsite->pc_offset + 1);
-				} else {
-					for (j = 0; j < numbits; ++j) {
-						if (bitmap [j / GC_BITS_PER_WORD] & ((gsize)1 << (j % GC_BITS_PER_WORD))) {
-							/* The descriptor is for the boxed object */
-							set_slot (gcfg, (slot + j - (sizeof (MonoObject) / SIZEOF_SLOT)), cindex, SLOT_REF);
-						}
-					}
-					if (cfg->verbose_level > 1)
-						printf ("\tvtype param area slots at %s0x%x(fp)=0x%x(sp) (slot = %d-%d) [0x%x-0x%x]\n", get_offset_sign (fp_offset), get_offset_val (fp_offset), sp_offset, slot, slot + (size / (int)sizeof (mgreg_t)), def->backend.pc_offset, callsite->pc_offset + 1);
-				}
-				g_free (bitmap);
-			} else {
-				/* The slot is live between the def instruction and the call */
-				set_slot_in_range (gcfg, slot, def->backend.pc_offset, callsite->pc_offset + 1, type);
-				if (cfg->verbose_level > 1)
-					printf ("\t%s param area slot at %s0x%x(fp)=0x%x(sp) (slot = %d) [0x%x-0x%x]\n", slot_type_to_string (type), get_offset_sign (fp_offset), get_offset_val (fp_offset), sp_offset, slot, def->backend.pc_offset, callsite->pc_offset + 1);
-			}
-		}
-	}
+	/*
+	 * We treat param area slots as being part of the callee's frame, to be able to handle tail calls which overwrite
+	 * the argument area of the caller.
+	 */
 }
 
 static void
@@ -2016,8 +2007,14 @@ compute_frame_size (MonoCompile *cfg)
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
 		MonoInst *ins = cfg->args [i];
 
-		if (ins->opcode == OP_REGOFFSET)
+		if (ins->opcode == OP_REGOFFSET) {
+			int size, size_in_slots;
+			size = mini_type_stack_size_full (cfg->generic_sharing_context, ins->inst_vtype, NULL, ins->backend.is_pinvoke);
+			size_in_slots = ALIGN_TO (size, SIZEOF_SLOT) / SIZEOF_SLOT;
+
 			min_offset = MIN (min_offset, ins->inst_offset);
+			max_offset = MAX ((int)max_offset, (int)(ins->inst_offset + (size_in_slots * SIZEOF_SLOT)));
+		}
 	}
 
 	/* Cfa slots */
@@ -2112,15 +2109,15 @@ init_gcfg (MonoCompile *cfg)
 	gcfg->nregs = nregs;
 	gcfg->callsites = callsites;
 	gcfg->ncallsites = ncallsites;
-	gcfg->stack_bitmap_width = ALIGN_TO (nslots, 8) / 8;
-	gcfg->reg_bitmap_width = ALIGN_TO (nregs, 8) / 8;
-	gcfg->stack_ref_bitmap = mono_mempool_alloc0 (cfg->mempool, gcfg->stack_bitmap_width * ncallsites);
-	gcfg->stack_pin_bitmap = mono_mempool_alloc0 (cfg->mempool, gcfg->stack_bitmap_width * ncallsites);
-	gcfg->reg_ref_bitmap = mono_mempool_alloc0 (cfg->mempool, gcfg->reg_bitmap_width * ncallsites);
-	gcfg->reg_pin_bitmap = mono_mempool_alloc0 (cfg->mempool, gcfg->reg_bitmap_width * ncallsites);
+	gcfg->stack_bitmap_width = ALIGN_TO (ncallsites, 8) / 8;
+	gcfg->reg_bitmap_width = ALIGN_TO (ncallsites, 8) / 8;
+	gcfg->stack_ref_bitmap = mono_mempool_alloc0 (cfg->mempool, gcfg->stack_bitmap_width * nslots);
+	gcfg->stack_pin_bitmap = mono_mempool_alloc0 (cfg->mempool, gcfg->stack_bitmap_width * nslots);
+	gcfg->reg_ref_bitmap = mono_mempool_alloc0 (cfg->mempool, gcfg->reg_bitmap_width * nregs);
+	gcfg->reg_pin_bitmap = mono_mempool_alloc0 (cfg->mempool, gcfg->reg_bitmap_width * nregs);
 
 	/* All slots start out as PIN */
-	memset (gcfg->stack_pin_bitmap, 0xff, gcfg->stack_bitmap_width * ncallsites);
+	memset (gcfg->stack_pin_bitmap, 0xff, gcfg->stack_bitmap_width * nregs);
 	for (i = 0; i < nregs; ++i) {
 		/*
 		 * By default, registers are NOREF.
@@ -2130,6 +2127,19 @@ init_gcfg (MonoCompile *cfg)
 		if ((cfg->used_int_regs & (1 << i)))
 			set_reg_slot_everywhere (gcfg, i, SLOT_NOREF);
 	}
+}
+
+static inline gboolean
+has_bit_set (guint8 *bitmap, int width, int slot)
+{
+	int i;
+	int pos = width * slot;
+
+	for (i = 0; i < width; ++i) {
+		if (bitmap [pos + i])
+			break;
+	}
+	return i < width;
 }
 
 static void
@@ -2166,12 +2176,10 @@ create_map (MonoCompile *cfg)
 		gboolean has_ref = FALSE;
 		gboolean has_pin = FALSE;
 
-		for (j = 0; j < ncallsites; ++j) {
-			if (get_bit (gcfg->stack_pin_bitmap, gcfg->stack_bitmap_width, j, i))
-				has_pin = TRUE;
-			if (get_bit (gcfg->stack_ref_bitmap, gcfg->stack_bitmap_width, j, i))
-				has_ref = TRUE;
-		}
+		if (has_bit_set (gcfg->stack_pin_bitmap, gcfg->stack_bitmap_width, i))
+			has_pin = TRUE;
+		if (has_bit_set (gcfg->stack_ref_bitmap, gcfg->stack_bitmap_width, i))
+			has_ref = TRUE;
 
 		if (has_ref)
 			has_ref_slots = TRUE;
@@ -2211,18 +2219,10 @@ create_map (MonoCompile *cfg)
 		if (!(cfg->used_int_regs & (1 << i)))
 			continue;
 
-		for (j = 0; j < ncallsites; ++j) {
-			if (get_bit (gcfg->reg_ref_bitmap, gcfg->reg_bitmap_width, j, i)) {
-				has_ref = TRUE;
-				break;
-			}
-		}
-		for (j = 0; j < ncallsites; ++j) {
-			if (get_bit (gcfg->reg_pin_bitmap, gcfg->reg_bitmap_width, j, i)) {
-				has_pin = TRUE;
-				break;
-			}
-		}
+		if (has_bit_set (gcfg->reg_pin_bitmap, gcfg->reg_bitmap_width, i))
+			has_pin = TRUE;
+		if (has_bit_set (gcfg->reg_ref_bitmap, gcfg->reg_bitmap_width, i))
+			has_ref = TRUE;
 
 		if (has_ref) {
 			reg_ref_mask |= (1 << i);
@@ -2241,6 +2241,7 @@ create_map (MonoCompile *cfg)
 
 	/* Create the GC Map */
 
+	/* The work bitmaps have one row for each slot, since this is how we access them during construction */
 	stack_bitmap_width = ALIGN_TO (end - start, 8) / 8;
 	stack_bitmap_size = stack_bitmap_width * ncallsites;
 	reg_ref_bitmap_width = ALIGN_TO (nref_regs, 8) / 8;
@@ -2277,7 +2278,7 @@ create_map (MonoCompile *cfg)
 		bitmap = &bitmaps [map->stack_ref_bitmap_offset];
 		for (i = 0; i < nslots; ++i) {
 			for (j = 0; j < ncallsites; ++j) {
-				if (get_bit (gcfg->stack_ref_bitmap, gcfg->stack_bitmap_width, j, i))
+				if (get_bit (gcfg->stack_ref_bitmap, gcfg->stack_bitmap_width, i, j))
 					set_bit (bitmap, stack_bitmap_width, j, i - start);
 			}
 		}
@@ -2289,7 +2290,7 @@ create_map (MonoCompile *cfg)
 		bitmap = &bitmaps [map->stack_pin_bitmap_offset];
 		for (i = 0; i < nslots; ++i) {
 			for (j = 0; j < ncallsites; ++j) {
-				if (get_bit (gcfg->stack_pin_bitmap, gcfg->stack_bitmap_width, j, i))
+				if (get_bit (gcfg->stack_pin_bitmap, gcfg->stack_bitmap_width, i, j))
 					set_bit (bitmap, stack_bitmap_width, j, i - start);
 			}
 		}
@@ -2303,7 +2304,7 @@ create_map (MonoCompile *cfg)
 		for (i = 0; i < nregs; ++i) {
 			if (reg_ref_mask & (1 << i)) {
 				for (j = 0; j < ncallsites; ++j) {
-					if (get_bit (gcfg->reg_ref_bitmap, gcfg->reg_bitmap_width, j, i))
+					if (get_bit (gcfg->reg_ref_bitmap, gcfg->reg_bitmap_width, i, j))
 						set_bit (bitmap, reg_ref_bitmap_width, j, bindex);
 				}
 				bindex ++;
@@ -2319,7 +2320,7 @@ create_map (MonoCompile *cfg)
 		for (i = 0; i < nregs; ++i) {
 			if (reg_pin_mask & (1 << i)) {
 				for (j = 0; j < ncallsites; ++j) {
-					if (get_bit (gcfg->reg_pin_bitmap, gcfg->reg_bitmap_width, j, i))
+					if (get_bit (gcfg->reg_pin_bitmap, gcfg->reg_bitmap_width, i, j))
 						set_bit (bitmap, reg_pin_bitmap_width, j, bindex);
 				}
 				bindex ++;
@@ -2433,6 +2434,8 @@ mini_gc_create_gc_map (MonoCompile *cfg)
 	create_map (cfg);
 }
 
+#endif /* DISABLE_JIT */
+
 static void
 parse_debug_options (void)
 {
@@ -2515,9 +2518,16 @@ mini_gc_init (void)
 #else
 
 void
+mini_gc_enable_gc_maps_for_aot (void)
+{
+}
+
+void
 mini_gc_init (void)
 {
 }
+
+#ifndef DISABLE_JIT
 
 static void
 mini_gc_init_gc_map (MonoCompile *cfg)
@@ -2539,7 +2549,11 @@ mini_gc_set_slot_type_from_cfa (MonoCompile *cfg, int slot_offset, GCSlotType ty
 {
 }
 
+#endif /* DISABLE_JIT */
+
 #endif
+
+#ifndef DISABLE_JIT
 
 /*
  * mini_gc_init_cfg:
@@ -2556,6 +2570,8 @@ mini_gc_init_cfg (MonoCompile *cfg)
 
 	mini_gc_init_gc_map (cfg);
 }
+
+#endif /* DISABLE_JIT */
 
 /*
  * Problems with the current code:

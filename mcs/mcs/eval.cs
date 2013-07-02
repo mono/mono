@@ -226,9 +226,16 @@ namespace Mono.CSharp
 
 				bool partial_input;
 				CSharpParser parser = ParseString (ParseMode.Silent, input, out partial_input);
+
+				// Terse mode, try to provide the trailing semicolon automatically.
 				if (parser == null && Terse && partial_input){
 					bool ignore;
-					parser = ParseString (ParseMode.Silent, input + ";", out ignore);
+
+					// check if the source would compile with a block, if so, we should not
+					// add the semicolon.
+					var needs_block = ParseString (ParseMode.Silent, input + "{}", out ignore) != null;
+					if (!needs_block)
+						parser = ParseString (ParseMode.Silent, input + ";", out ignore);
 				}
 				if (parser == null){
 					compiled = null;
@@ -448,6 +455,9 @@ namespace Mono.CSharp
 		{
 			Tokenizer tokenizer = new Tokenizer (seekable, source_file, new ParserSession ());
 			
+			// Prefer contextual block keywords over identifiers
+			tokenizer.parsing_block++;
+
 			int t = tokenizer.token ();
 			switch (t){
 			case Token.EOF:
@@ -579,6 +589,7 @@ namespace Mono.CSharp
 
 			if (kind == InputKind.StatementOrExpression){
 				parser.Lexer.putback_char = Tokenizer.EvalStatementParserCharacter;
+				parser.Lexer.parsing_block++;
 				ctx.Settings.StatementMode = true;
 			} else {
 				parser.Lexer.putback_char = Tokenizer.EvalCompilationUnitParserCharacter;
@@ -644,7 +655,7 @@ namespace Mono.CSharp
 					new TypeExpression (base_class_imported, host.Location)
 				};
 
-				host.AddBasesForPart (baseclass_list);
+				host.SetBaseTypes (baseclass_list);
 
 				host.CreateContainer ();
 				host.DefineContainer ();
@@ -671,6 +682,7 @@ namespace Mono.CSharp
 			}
 
 			if (host != null){
+				host.PrepareEmit ();
 				host.EmitContainer ();
 			}
 			

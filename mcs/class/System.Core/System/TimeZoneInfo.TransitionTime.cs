@@ -24,7 +24,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#if (INSIDE_CORLIB && (NET_4_0 || MOONLIGHT || MOBILE)) || (!INSIDE_CORLIB && (NET_3_5 && !NET_4_0 && !MOBILE))
+#if (INSIDE_CORLIB && NET_4_0) || (!INSIDE_CORLIB && (NET_3_5 && !NET_4_0 && !MOBILE))
 
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -34,10 +34,10 @@ namespace System
 	public sealed partial class TimeZoneInfo 
 	{
 		[SerializableAttribute]
-#if NET_4_0
-		[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
-#elif MOONLIGHT || MOBILE
-		[TypeForwardedFrom (Consts.AssemblySystem_Core)]
+#if MOBILE
+	[TypeForwardedFrom (Consts.AssemblySystem_Core)]
+#elif NET_4_0
+	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
 #endif
 		public struct TransitionTime : IEquatable<TimeZoneInfo.TransitionTime>, ISerializable, IDeserializationCallback
 		{

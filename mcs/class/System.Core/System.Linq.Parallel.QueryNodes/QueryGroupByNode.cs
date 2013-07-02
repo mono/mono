@@ -69,7 +69,7 @@ namespace System.Linq.Parallel.QueryNodes
 
 		internal IEnumerable<IGrouping<TKey, TElement>> GetGroupedElements ()
 		{
-			return GetStore ().Select (e => (IGrouping<TKey,TElement>)new ConcurrentGrouping<TKey, TElement> (e.Key, e.Value));
+			return (IEnumerable<System.Linq.IGrouping<TKey,TElement>>)GetStore ().Select (e => (IGrouping<TKey,TElement>)new ConcurrentGrouping<TKey, TElement> (e.Key, e.Value));
 		}
 
 		internal ConcurrentDictionary<TKey, ConcurrentQueue<TElement>> GetStore ()

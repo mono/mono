@@ -36,7 +36,7 @@ public class Extensible<V> : IExtensible<V>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Extensible<int> ext = new Extensible<int> ();
 		ExtensibleTester<Extensible<int>> tester = new ExtensibleTester<Extensible<int>> (ext);

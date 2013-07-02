@@ -126,11 +126,9 @@ namespace System.Xml
 			get { return Current.HasAttributes; }
 		}
 
-#if !MOONLIGHT
 		public override bool HasValue {
 			get { return Current.HasValue; }
 		}
-#endif
 
 		public override bool IsDefault {
 			get { return Current.IsDefault; }
@@ -433,7 +431,6 @@ namespace System.Xml
 			return base.ReadString ();
 		}
 
-#if !MOONLIGHT
 		public override void ResolveEntity ()
 		{
 			if (entity != null)
@@ -444,7 +441,6 @@ namespace System.Xml
 				entity = new XmlNodeReader (source, insideAttribute);
 			}
 		}
-#endif
 
 		public override void Skip ()
 		{

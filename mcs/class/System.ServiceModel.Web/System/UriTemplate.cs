@@ -108,7 +108,6 @@ namespace System
 
 		// Bind
 
-#if !MOONLIGHT
 		public Uri BindByName (Uri baseAddress, NameValueCollection parameters)
 		{
 			return BindByName (baseAddress, parameters, false);
@@ -118,7 +117,6 @@ namespace System
 		{
 			return BindByNameCommon (baseAddress, parameters, null, omitDefaults);
 		}
-#endif
 
 		public Uri BindByName (Uri baseAddress, IDictionary<string,string> parameters)
 		{

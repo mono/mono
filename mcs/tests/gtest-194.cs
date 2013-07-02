@@ -24,6 +24,6 @@ public class OrderedMultiDictionary<T,U>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

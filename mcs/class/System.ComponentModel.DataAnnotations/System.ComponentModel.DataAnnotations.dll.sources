@@ -6,6 +6,7 @@ System.ComponentModel.DataAnnotations/AssociatedMetadataTypePropertyDescriptor.c
 System.ComponentModel.DataAnnotations/AssociatedMetadataTypeTypeDescriptor.cs
 System.ComponentModel.DataAnnotations/AssociatedMetadataTypeTypeDescriptionProvider.cs
 System.ComponentModel.DataAnnotations/AssociationAttribute.cs
+System.ComponentModel.DataAnnotations/ControlParameters.cs
 System.ComponentModel.DataAnnotations/ConcurrencyCheckAttribute.cs
 System.ComponentModel.DataAnnotations/CustomValidationAttribute.cs
 System.ComponentModel.DataAnnotations/DataType.cs

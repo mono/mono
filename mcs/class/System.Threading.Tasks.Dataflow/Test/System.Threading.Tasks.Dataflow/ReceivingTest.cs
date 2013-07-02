@@ -230,10 +230,17 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			scheduler.ExecuteAll ();
 			Assert.IsTrue (target.HasPostponed);
 
-			((IDataflowBlock)source).Fault (new Exception ());
+			var exception = new Exception ();
+			((IDataflowBlock)source).Fault (exception);
 
 			scheduler.ExecuteAll ();
-			Thread.Sleep (100);
+
+			try {
+				source.Completion.Wait (1000);
+				Assert.Fail ("Task must be faulted");
+			} catch (AggregateException ex) {
+				Assert.AreEqual (exception, ex.InnerException, "#9");
+			}
 
 			Assert.IsTrue (source.Completion.IsFaulted);
 			int value;
@@ -254,27 +261,33 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 			var target = new TestTargetBlock<int> { Postpone = true };
 			Assert.IsNotNull (source.LinkTo (target));
 
-			Assert.IsTrue (source.Post (1));
-			Assert.IsTrue (source.Post (2));
-			Assert.IsTrue (source.Post (3));
-			Thread.Sleep (500);
-			Assert.IsTrue (target.HasPostponed);
+			Assert.IsTrue (source.Post (1), "#1");
+			Assert.IsTrue (source.Post (2), "#2");
+			Assert.IsTrue (source.Post (3), "#3");
+			target.PostponedEvent.Wait (1000);
+			Assert.IsTrue (target.HasPostponed, "#4");
 
-			((IDataflowBlock)source).Fault (new Exception ());
+			var exception = new Exception ();
+			((IDataflowBlock)source).Fault (exception);
 
-			Thread.Sleep (100);
+			source.Completion.Wait (1000);
 
-			Assert.IsFalse (source.Completion.IsFaulted);
+			Assert.IsFalse (source.Completion.IsFaulted, "#5");
 			int value;
-			Assert.IsTrue (target.RetryPostponed (out value));
-			Assert.AreEqual (1, value);
+			Assert.IsTrue (target.RetryPostponed (out value), "#6");
+			Assert.AreEqual (1, value, "#7");
 
 			evt.Set ();
 
-			Thread.Sleep (100);
+			try {
+				source.Completion.Wait (1000);
+				Assert.Fail ("Task must be faulted");
+			} catch (AggregateException ex) {
+				Assert.AreEqual (exception, ex.InnerException, "#9");
+			}
 
-			Assert.IsTrue (source.Completion.IsFaulted);
-			Assert.IsFalse (target.RetryPostponed (out value));
+			Assert.IsTrue (source.Completion.IsFaulted, "#10");
+			Assert.IsFalse (target.RetryPostponed (out value), "#11");
 		}
 
 		[Test]
@@ -382,6 +395,8 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 		public T DirectlyAccepted { get; private set; }
 
+		public ManualResetEventSlim PostponedEvent = new ManualResetEventSlim ();
+
 		public DataflowMessageStatus OfferMessage (
 			DataflowMessageHeader messageHeader, T messageValue, ISourceBlock<T> source,
 			bool consumeToAccept)
@@ -391,6 +406,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow {
 
 			if (Postpone) {
 				postponed = Tuple.Create (source, messageHeader);
+				PostponedEvent.Set ();
 				return DataflowMessageStatus.Postponed;
 			}
 

@@ -101,19 +101,30 @@ namespace System.Windows.Forms {
 		
 		#region AxHost.InvalidActiveXStateException  Class
 		public class InvalidActiveXStateException : Exception {
+			private string mName;
+			private ActiveXInvokeKind mKind;
+
 			public InvalidActiveXStateException ()
 			{
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+
 			}
 
 			public InvalidActiveXStateException (string name, ActiveXInvokeKind kind)
 			{
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				mName = name;
+				mKind = kind;
 			}
 
 			public override string ToString ()
 			{
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				if(mKind == ActiveXInvokeKind.MethodInvoke)
+					return "Invoke:" + mName;
+				else if(mKind == ActiveXInvokeKind.PropertyGet)
+					return "PropertyGet:" + mName;
+				else if(mKind == ActiveXInvokeKind.PropertySet)
+					return "PropertySet:" + mName;
+
+				return base.ToString();
 			}
 		}
 		#endregion	// AxHost.InvalidActiveXStateException  Class
@@ -185,22 +196,27 @@ namespace System.Windows.Forms {
 		#endregion	// AxHost Subclasses
 
 		//private int flags;
-		//private Guid clsid;
+		private Guid clsid;
+		private object instance;
 		private AboutBoxDelegate aboutDelegate = null;
+		private AxHost.State ocxState = null;
+		static bool runningOnWindows;
 
 		#region Protected Constructors
 
-		[MonoTODO]
 		protected AxHost (string clsid) : this(clsid, 0)
 		{
 
 		}
 
-		[MonoTODO]
 		protected AxHost (string clsid, int flags)
 		{
-			//this.clsid = new Guid(clsid);
+			this.clsid = new Guid(clsid);
 			//this.flags = flags;
+			this.instance = null;
+
+			PlatformID pid = Environment.OSVersion.Platform;
+			runningOnWindows = ((int) pid != 128 && (int) pid != 4 && (int) pid != 6);
 		}
 		#endregion	// Public Instance Properties
 
@@ -351,11 +367,15 @@ namespace System.Windows.Forms {
 		[RefreshProperties (RefreshProperties.All)]
 		public AxHost.State OcxState {
 			get {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				return ocxState;
 			}
 
 			set {
-				throw new NotImplementedException("COM/ActiveX support is not implemented");
+				if (ocxState == value || value == null)
+				{
+					return;
+				}
+				this.ocxState = value;
 			}
 		}
 		
@@ -502,7 +522,7 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public object GetOcx ()
 		{
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
+			return instance;
 		}
 		
 		public bool HasPropertyPages ()
@@ -547,18 +567,35 @@ namespace System.Windows.Forms {
 		#region Protected Instance Methods
 		protected virtual void AttachInterfaces ()
 		{
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
+
 		}
 		
 		protected override void CreateHandle ()
 		{
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
+			if(IsRunningOnWindows && !base.IsHandleCreated) {
+				GetActiveXInstance ();
+				AttachInterfaces ();
+
+				base.CreateHandle ();
+			} else {
+				throw new NotSupportedException ();
+			}
+		}
+
+		private void GetActiveXInstance()
+		{
+			if (this.instance == null) {
+				object obj;
+				CoCreateInstance (ref clsid, null, 1, ref IID_IUnknown, out obj);
+				this.instance = obj;
+			}
 		}
 
 		protected virtual object CreateInstanceCore (Guid clsid)
 		{
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
+
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void CreateSink ()
@@ -568,7 +605,7 @@ namespace System.Windows.Forms {
 		
 		protected override void DestroyHandle ()
 		{
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
+			base.DestroyHandle();
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -579,7 +616,12 @@ namespace System.Windows.Forms {
 
 		protected override void Dispose (bool disposing)
 		{
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
+			if(disposing) {
+				if(this.instance != null)
+					Marshal.ReleaseComObject (this.instance);
+				this.instance = null;
+			}
+			base.Dispose(disposing);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -717,7 +759,7 @@ namespace System.Windows.Forms {
 		
 		protected override void WndProc (ref Message m)
 		{
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
+			this.DefWndProc(ref m);
 		}
 		#endregion	// Protected Instance Methods
 
@@ -1066,5 +1108,20 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 		#endregion	// Interfaces
+
+		internal static bool IsRunningOnWindows {
+                        get { return runningOnWindows; }
+                }
+
+		static Guid IID_IUnknown = new Guid("00000000-0000-0000-C000-000000000046");
+
+		[DllImport("ole32.dll")]
+		static extern int CoCreateInstance (
+			[In] ref Guid rclsid,
+			[In, MarshalAs (UnmanagedType.IUnknown)] object pUnkOuter,
+			[In] uint dwClsContext,
+			[In] ref Guid riid,
+			[Out, MarshalAs (UnmanagedType.Interface)] out object ppv);
+
 	}
 }

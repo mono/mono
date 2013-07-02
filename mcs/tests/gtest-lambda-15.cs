@@ -34,7 +34,7 @@ static class Enumerable
 class Repro
 {
 
-	static int Main ()
+	public static int Main ()
 	{
 		var sum = new [] { "1", "2", "3", "4", "5", "6", "7" }.Sum ((s) => int.Parse (s));
 		if (sum != 28)

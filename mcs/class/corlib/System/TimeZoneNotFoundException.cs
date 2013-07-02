@@ -24,17 +24,17 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 
 using System.Runtime.CompilerServices;
 
 namespace System
 {
 	[Serializable]
-#if NET_4_0
-	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
-#elif MOONLIGHT || MOBILE
+#if MOBILE
 	[TypeForwardedFrom (Consts.AssemblySystem_Core)]
+#elif NET_4_0
+	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
 #endif
 	public class TimeZoneNotFoundException : Exception
 	{

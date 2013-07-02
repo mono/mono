@@ -16,7 +16,7 @@ struct D
 
 class T
 {
-	static int Main ()
+	public static int Main ()
 	{
 		ConstructorInfo mi = typeof(D).GetConstructors (BindingFlags.Instance | BindingFlags.Public)[0];
         MethodBody mb = mi.GetMethodBody();

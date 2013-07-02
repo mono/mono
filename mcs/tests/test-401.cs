@@ -6,7 +6,7 @@
 //
 using System;
 unsafe class X {
-	static int Main ()
+	public static int Main ()
 	{
 		char *ptr = stackalloc char [10];
 	        char *cptr = ptr;

@@ -189,7 +189,7 @@ namespace System.Threading
 			}
 		}
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static void try_enter_with_atomic_var (object obj, int millisecondsTimeout, ref bool lockTaken);
 
@@ -224,6 +224,14 @@ namespace System.Threading
 			try_enter_with_atomic_var (obj, millisecondsTimeout, ref lockTaken);
 		}		
 
+#endif
+
+#if NET_4_5
+		[MonoTODO]
+		public static bool IsEntered (object obj)
+		{
+			throw new NotImplementedException ();
+		}
 #endif
 	}
 }

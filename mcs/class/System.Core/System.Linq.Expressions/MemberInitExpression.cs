@@ -52,11 +52,13 @@ namespace System.Linq.Expressions {
 			this.bindings = bindings;
 		}
 
+#if !FULL_AOT_RUNTIME
 		internal override void Emit (EmitContext ec)
 		{
 			var local = ec.EmitStored (new_expression);
 			ec.EmitCollection (bindings, local);
 			ec.EmitLoad (local);
 		}
+#endif
 	}
 }

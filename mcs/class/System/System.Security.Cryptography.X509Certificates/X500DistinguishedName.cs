@@ -26,13 +26,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP || MOONLIGHT
+#if SECURITY_DEP
+
+extern alias MonoSecurity;
 
 using System.Collections;
 using System.Text;
 
-using Mono.Security;
-using MX = Mono.Security.X509;
+using MonoSecurity::Mono.Security;
+using MX = MonoSecurity::Mono.Security.X509;
 
 namespace System.Security.Cryptography.X509Certificates {
 
@@ -91,7 +93,7 @@ namespace System.Security.Cryptography.X509Certificates {
 				RawData = new byte [2] { 0x30, 0x00 };
 				DecodeRawData ();
 			} else {
-				ASN1 dn = MX.X501.FromString (distinguishedName);
+				var dn = MX.X501.FromString (distinguishedName);
 				if ((flag & X500DistinguishedNameFlags.Reversed) != 0) {
 					ASN1 rdn = new ASN1 (0x30);
 					for (int i = dn.Count - 1; i >= 0; i--)	

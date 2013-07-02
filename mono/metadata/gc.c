@@ -34,6 +34,9 @@
 #include <mono/utils/mono-semaphore.h>
 #include <mono/utils/mono-memory-model.h>
 #include <mono/utils/mono-counters.h>
+#include <mono/utils/dtrace.h>
+#include <mono/utils/mono-threads.h>
+#include <mono/utils/atomic.h>
 
 #ifndef HOST_WIN32
 #include <pthread.h>
@@ -106,7 +109,6 @@ mono_gc_run_finalize (void *obj, void *data)
 	MonoDomain *caller_domain = mono_domain_get ();
 	MonoDomain *domain;
 	RuntimeInvokeFunction runtime_invoke;
-	GSList *l, *refs = NULL;
 
 	o = (MonoObject*)((char*)obj + GPOINTER_TO_UINT (data));
 
@@ -120,8 +122,6 @@ mono_gc_run_finalize (void *obj, void *data)
 
 	o2 = g_hash_table_lookup (domain->finalizable_objects_hash, o);
 
-	refs = mono_gc_remove_weak_track_object (domain, o);
-
 	mono_domain_finalizers_unlock (domain);
 
 	if (!o2)
@@ -129,23 +129,6 @@ mono_gc_run_finalize (void *obj, void *data)
 		return;
 #endif
 
-	if (refs) {
-		/*
-		 * Support for GCHandles of type WeakTrackResurrection:
-		 *
-		 *   Its not exactly clear how these are supposed to work, or how their
-		 * semantics can be implemented. We only implement one crucial thing:
-		 * these handles are only cleared after the finalizer has ran.
-		 */
-		for (l = refs; l; l = l->next) {
-			guint32 gchandle = GPOINTER_TO_UINT (l->data);
-
-			mono_gchandle_set_target (gchandle, o);
-		}
-
-		g_slist_free (refs);
-	}
-		
 	/* make sure the finalizer is not called again if the object is resurrected */
 	object_register_finalizer (obj, NULL);
 
@@ -227,6 +210,11 @@ mono_gc_run_finalize (void *obj, void *data)
 
 	mono_runtime_class_init (o->vtable);
 
+	if (G_UNLIKELY (MONO_GC_FINALIZE_INVOKE_ENABLED ())) {
+		MONO_GC_FINALIZE_INVOKE ((unsigned long)o, mono_object_get_size (o),
+				o->vtable->klass->name_space, o->vtable->klass->name);
+	}
+
 	runtime_invoke (o, NULL, &exc, NULL);
 
 	if (exc)
@@ -275,20 +263,14 @@ mono_gc_out_of_memory (size_t size)
 static void
 object_register_finalizer (MonoObject *obj, void (*callback)(void *, void*))
 {
-#if HAVE_BOEHM_GC
-	guint offset = 0;
 	MonoDomain *domain;
 
 	if (obj == NULL)
 		mono_raise_exception (mono_get_exception_argument_null ("obj"));
-	
+
 	domain = obj->vtable->domain;
 
-#ifndef GC_DEBUG
-	/* This assertion is not valid when GC_DEBUG is defined */
-	g_assert (GC_base (obj) == (char*)obj - offset);
-#endif
-
+#if HAVE_BOEHM_GC
 	if (mono_domain_is_unloading (domain) && (callback != NULL))
 		/*
 		 * Can't register finalizers in a dying appdomain, since they
@@ -305,17 +287,14 @@ object_register_finalizer (MonoObject *obj, void (*callback)(void *, void*))
 
 	mono_domain_finalizers_unlock (domain);
 
-	GC_REGISTER_FINALIZER_NO_ORDER ((char*)obj - offset, callback, GUINT_TO_POINTER (offset), NULL, NULL);
+	mono_gc_register_for_finalization (obj, callback);
 #elif defined(HAVE_SGEN_GC)
-	if (obj == NULL)
-		mono_raise_exception (mono_get_exception_argument_null ("obj"));
-
 	/*
 	 * If we register finalizers for domains that are unloading we might
 	 * end up running them while or after the domain is being cleared, so
 	 * the objects will not be valid anymore.
 	 */
-	if (!mono_domain_is_unloading (obj->vtable->domain))
+	if (!mono_domain_is_unloading (domain))
 		mono_gc_register_for_finalization (obj, callback);
 #endif
 }
@@ -353,6 +332,10 @@ mono_domain_finalize (MonoDomain *domain, guint32 timeout)
 	guint32 res;
 	HANDLE done_event;
 	MonoInternalThread *thread = mono_thread_internal_current ();
+
+#if defined(__native_client__)
+	return FALSE;
+#endif
 
 	if (mono_thread_internal_current () == gc_thread)
 		/* We are called from inside a finalizer, not much we can do here */
@@ -595,6 +578,12 @@ ves_icall_System_GCHandle_GetAddrOfPinnedObject (guint32 handle)
 	return NULL;
 }
 
+MonoBoolean
+ves_icall_Mono_Runtime_SetGCAllowSynchronousMajor (MonoBoolean flag)
+{
+	return mono_gc_set_allow_synchronous_major (flag);
+}
+
 typedef struct {
 	guint32  *bitmap;
 	gpointer *entries;
@@ -695,26 +684,21 @@ alloc_handle (HandleData *handles, MonoObject *obj, gboolean track)
 			gpointer *entries;
 			guint16 *domain_ids;
 			domain_ids = g_malloc0 (sizeof (guint16) * new_size);
-			entries = g_malloc (sizeof (gpointer) * new_size);
-			/* we disable GC because we could lose some disappearing link updates */
-			mono_gc_disable ();
-			mono_gc_memmove (entries, handles->entries, sizeof (gpointer) * handles->size);
-			mono_gc_bzero (entries + handles->size, sizeof (gpointer) * handles->size);
+			entries = g_malloc0 (sizeof (gpointer) * new_size);
 			memcpy (domain_ids, handles->domain_ids, sizeof (guint16) * handles->size);
 			for (i = 0; i < handles->size; ++i) {
 				MonoObject *obj = mono_gc_weak_link_get (&(handles->entries [i]));
-				if (handles->entries [i])
-					mono_gc_weak_link_remove (&(handles->entries [i]));
-				/*g_print ("reg/unreg entry %d of type %d at %p to object %p (%p), was: %p\n", i, handles->type, &(entries [i]), obj, entries [i], handles->entries [i]);*/
 				if (obj) {
 					mono_gc_weak_link_add (&(entries [i]), obj, track);
+					mono_gc_weak_link_remove (&(handles->entries [i]), track);
+				} else {
+					g_assert (!handles->entries [i]);
 				}
 			}
 			g_free (handles->entries);
 			g_free (handles->domain_ids);
 			handles->entries = entries;
 			handles->domain_ids = domain_ids;
-			mono_gc_enable ();
 		}
 
 		/* set i and slot to the next free position */
@@ -725,15 +709,19 @@ alloc_handle (HandleData *handles, MonoObject *obj, gboolean track)
 	}
 	handles->bitmap [slot] |= 1 << i;
 	slot = slot * 32 + i;
-	handles->entries [slot] = obj;
+	handles->entries [slot] = NULL;
 	if (handles->type <= HANDLE_WEAK_TRACK) {
 		/*FIXME, what to use when obj == null?*/
 		handles->domain_ids [slot] = (obj ? mono_object_get_domain (obj) : mono_domain_get ())->domain_id;
 		if (obj)
 			mono_gc_weak_link_add (&(handles->entries [slot]), obj, track);
+	} else {
+		handles->entries [slot] = obj;
 	}
 
+#ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->gc_num_handles++;
+#endif
 	unlock_handles (handles);
 	/*g_print ("allocated entry %d of type %d to object %p (in slot: %p)\n", slot, handles->type, obj, handles->entries [slot]);*/
 	res = (slot << 3) | (handles->type + 1);
@@ -787,11 +775,6 @@ guint32
 mono_gchandle_new_weakref (MonoObject *obj, gboolean track_resurrection)
 {
 	guint32 handle = alloc_handle (&gc_handles [track_resurrection? HANDLE_WEAK_TRACK: HANDLE_WEAK], obj, track_resurrection);
-
-#ifndef HAVE_SGEN_GC
-	if (track_resurrection)
-		mono_gc_add_weak_track_handle (obj, handle);
-#endif
 
 	return handle;
 }
@@ -853,7 +836,7 @@ mono_gchandle_set_target (guint32 gchandle, MonoObject *obj)
 		if (handles->type <= HANDLE_WEAK_TRACK) {
 			old_obj = handles->entries [slot];
 			if (handles->entries [slot])
-				mono_gc_weak_link_remove (&handles->entries [slot]);
+				mono_gc_weak_link_remove (&handles->entries [slot], handles->type == HANDLE_WEAK_TRACK);
 			if (obj)
 				mono_gc_weak_link_add (&handles->entries [slot], obj, handles->type == HANDLE_WEAK_TRACK);
 			/*FIXME, what to use when obj == null?*/
@@ -866,11 +849,6 @@ mono_gchandle_set_target (guint32 gchandle, MonoObject *obj)
 	}
 	/*g_print ("changed entry %d of type %d to object %p (in slot: %p)\n", slot, handles->type, obj, handles->entries [slot]);*/
 	unlock_handles (handles);
-
-#ifndef HAVE_SGEN_GC
-	if (type == HANDLE_WEAK_TRACK)
-		mono_gc_change_weak_track_handle (old_obj, obj, gchandle);
-#endif
 }
 
 /**
@@ -924,16 +902,12 @@ mono_gchandle_free (guint32 gchandle)
 	HandleData *handles = &gc_handles [type];
 	if (type > 3)
 		return;
-#ifndef HAVE_SGEN_GC
-	if (type == HANDLE_WEAK_TRACK)
-		mono_gc_remove_weak_track_handle (gchandle);
-#endif
 
 	lock_handles (handles);
 	if (slot < handles->size && (handles->bitmap [slot / 32] & (1 << (slot % 32)))) {
 		if (handles->type <= HANDLE_WEAK_TRACK) {
 			if (handles->entries [slot])
-				mono_gc_weak_link_remove (&handles->entries [slot]);
+				mono_gc_weak_link_remove (&handles->entries [slot], handles->type == HANDLE_WEAK_TRACK);
 		} else {
 			handles->entries [slot] = NULL;
 		}
@@ -941,7 +915,9 @@ mono_gchandle_free (guint32 gchandle)
 	} else {
 		/* print a warning? */
 	}
+#ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->gc_num_handles--;
+#endif
 	/*g_print ("freed entry %d of type %d\n", slot, handles->type);*/
 	unlock_handles (handles);
 	mono_profiler_gc_handle (MONO_PROFILER_GC_HANDLE_DESTROYED, handles->type, gchandle, NULL);
@@ -970,7 +946,7 @@ mono_gchandle_free_domain (MonoDomain *domain)
 				if (domain->domain_id == handles->domain_ids [slot]) {
 					handles->bitmap [slot / 32] &= ~(1 << (slot % 32));
 					if (handles->entries [slot])
-						mono_gc_weak_link_remove (&handles->entries [slot]);
+						mono_gc_weak_link_remove (&handles->entries [slot], handles->type == HANDLE_WEAK_TRACK);
 				}
 			} else {
 				if (handles->entries [slot] && mono_object_domain (handles->entries [slot]) == domain) {
@@ -1134,6 +1110,16 @@ finalizer_thread (gpointer unused)
 	return 0;
 }
 
+#ifndef LAZY_GC_THREAD_CREATION
+static
+#endif
+void
+mono_gc_init_finalizer_thread (void)
+{
+	gc_thread = mono_thread_create_internal (mono_domain_get (), finalizer_thread, NULL, FALSE, TRUE, 0);
+	ves_icall_System_Threading_Thread_SetName_internal (gc_thread, mono_string_new (mono_domain_get (), "Finalizer"));
+}
+
 void
 mono_gc_init (void)
 {
@@ -1146,6 +1132,7 @@ mono_gc_init (void)
 	MONO_GC_REGISTER_ROOT_FIXED (gc_handles [HANDLE_NORMAL].entries);
 	MONO_GC_REGISTER_ROOT_FIXED (gc_handles [HANDLE_PINNED].entries);
 
+	mono_counters_register ("Created object count", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &mono_stats.new_object_count);
 	mono_counters_register ("Minor GC collections", MONO_COUNTER_GC | MONO_COUNTER_INT, &gc_stats.minor_gc_count);
 	mono_counters_register ("Major GC collections", MONO_COUNTER_GC | MONO_COUNTER_INT, &gc_stats.major_gc_count);
 	mono_counters_register ("Minor GC time", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &gc_stats.minor_gc_time_usecs);
@@ -1168,8 +1155,9 @@ mono_gc_init (void)
 	MONO_SEM_INIT (&finalizer_sem, 0);
 #endif
 
-	gc_thread = mono_thread_create_internal (mono_domain_get (), finalizer_thread, NULL, FALSE, 0);
-	ves_icall_System_Threading_Thread_SetName_internal (gc_thread, mono_string_new (mono_domain_get (), "Finalizer"));
+#ifndef LAZY_GC_THREAD_CREATION
+	mono_gc_init_finalizer_thread ();
+#endif
 }
 
 void
@@ -1212,7 +1200,21 @@ mono_gc_cleanup (void)
 					 */
 					Sleep (100);
 				}
+			} else {
+				int ret;
 
+				/* Wait for the thread to actually exit */
+				ret = WaitForSingleObjectEx (gc_thread->handle, INFINITE, TRUE);
+				g_assert (ret == WAIT_OBJECT_0);
+
+#ifndef HOST_WIN32
+				/*
+				 * The above wait only waits for the exited event to be signalled, the thread might still be running. To fix this race, we
+				 * create the finalizer thread without calling pthread_detach () on it, so we can wait for it manually.
+				 */
+				ret = pthread_join ((MonoNativeThreadId)(gpointer)(gsize)gc_thread->tid, NULL);
+				g_assert (ret == 0);
+#endif
 			}
 		}
 		gc_thread = NULL;
@@ -1396,7 +1398,7 @@ reference_queue_proccess (MonoReferenceQueue *queue)
 	while ((entry = *iter)) {
 #ifdef HAVE_SGEN_GC
 		if (queue->should_be_deleted || !mono_gc_weak_link_get (&entry->dis_link)) {
-			mono_gc_weak_link_remove (&entry->dis_link);
+			mono_gc_weak_link_remove (&entry->dis_link, TRUE);
 #else
 		if (queue->should_be_deleted || !mono_gchandle_get_target (entry->gchandle)) {
 			mono_gchandle_free ((guint32)entry->gchandle);
@@ -1454,14 +1456,10 @@ reference_queue_clear_for_domain (MonoDomain *domain)
 		RefQueueEntry **iter = &queue->queue;
 		RefQueueEntry *entry;
 		while ((entry = *iter)) {
-			MonoObject *obj;
+			if (entry->domain == domain) {
 #ifdef HAVE_SGEN_GC
-			obj = mono_gc_weak_link_get (&entry->dis_link);
-			if (obj && mono_object_domain (obj) == domain) {
-				mono_gc_weak_link_remove (&entry->dis_link);
+				mono_gc_weak_link_remove (&entry->dis_link, TRUE);
 #else
-			obj = mono_gchandle_get_target (entry->gchandle);
-			if (obj && mono_object_domain (obj) == domain) {
 				mono_gchandle_free ((guint32)entry->gchandle);
 #endif
 				ref_list_remove_element (iter, entry);
@@ -1521,6 +1519,7 @@ mono_gc_reference_queue_add (MonoReferenceQueue *queue, MonoObject *obj, void *u
 
 	entry = g_new0 (RefQueueEntry, 1);
 	entry->user_data = user_data;
+	entry->domain = mono_object_domain (obj);
 
 #ifdef HAVE_SGEN_GC
 	mono_gc_weak_link_add (&entry->dis_link, obj, TRUE);
@@ -1555,6 +1554,12 @@ mono_gc_reference_queue_free (MonoReferenceQueue *queue)
 #define align_down(ptr) ((void*)(_toi(ptr) & ~ptr_mask))
 #define align_up(ptr) ((void*) ((_toi(ptr) + ptr_mask) & ~ptr_mask))
 
+#define BZERO_WORDS(dest,words) do {	\
+	int __i;	\
+	for (__i = 0; __i < (words); ++__i)	\
+		((void **)(dest))[__i] = 0;	\
+} while (0)
+
 /**
  * mono_gc_bzero:
  * @dest: address to start to clear
@@ -1569,24 +1574,53 @@ mono_gc_reference_queue_free (MonoReferenceQueue *queue)
 void
 mono_gc_bzero (void *dest, size_t size)
 {
-	char *p = (char*)dest;
-	char *end = p + size;
-	char *align_end = align_up (p);
-	char *word_end;
+	char *d = (char*)dest;
+	size_t tail_bytes, word_bytes;
 
-	while (p < align_end)
-		*p++ = 0;
+	/*
+	If we're copying less than a word, just use memset.
 
-	word_end = align_down (end);
-	while (p < word_end) {
-		*((void**)p) = NULL;
-		p += sizeof (void*);
+	We cannot bail out early if both are aligned because some implementations
+	use byte copying for sizes smaller than 16. OSX, on this case.
+	*/
+	if (size < sizeof(void*)) {
+		memset (dest, 0, size);
+		return;
 	}
 
-	while (p < end)
-		*p++ = 0;
-}
+	/*align to word boundary */
+	while (unaligned_bytes (d) && size) {
+		*d++ = 0;
+		--size;
+	}
 
+	/* copy all words with memmove */
+	word_bytes = (size_t)align_down (size);
+	switch (word_bytes) {
+	case sizeof (void*) * 1:
+		BZERO_WORDS (d, 1);
+		break;
+	case sizeof (void*) * 2:
+		BZERO_WORDS (d, 2);
+		break;
+	case sizeof (void*) * 3:
+		BZERO_WORDS (d, 3);
+		break;
+	case sizeof (void*) * 4:
+		BZERO_WORDS (d, 4);
+		break;
+	default:
+		memset (d, 0, word_bytes);
+	}
+
+	tail_bytes = unaligned_bytes (size);
+	if (tail_bytes) {
+		d += word_bytes;
+		do {
+			*d++ = 0;
+		} while (--tail_bytes);
+	}
+}
 
 /**
  * mono_gc_memmove:
@@ -1597,18 +1631,19 @@ mono_gc_bzero (void *dest, size_t size)
  * Move @size bytes from @src to @dest.
  * size MUST be a multiple of sizeof (gpointer)
  *
- * FIXME borrow faster code from some BSD libc or bionic
  */
 void
 mono_gc_memmove (void *dest, const void *src, size_t size)
 {
 	/*
-	 * If dest and src are differently aligned with respect to
-	 * pointer size then it makes no sense to do aligned copying.
-	 * In fact, we would end up with unaligned loads which is
-	 * incorrect on some architectures.
-	 */
-	if ((char*)dest - (char*)align_down (dest) != (char*)src - (char*)align_down (src)) {
+	If we're copying less than a word we don't need to worry about word tearing
+	so we bailout to memmove early.
+
+	If both dest is aligned and size is a multiple of word size, we can go straigh
+	to memmove.
+
+	*/
+	if (size < sizeof(void*) || !((_toi (dest) | (size)) & sizeof (void*))) {
 		memmove (dest, src, size);
 		return;
 	}
@@ -1617,45 +1652,51 @@ mono_gc_memmove (void *dest, const void *src, size_t size)
 	 * A bit of explanation on why we align only dest before doing word copies.
 	 * Pointers to managed objects must always be stored in word aligned addresses, so
 	 * even if dest is misaligned, src will be by the same amount - this ensure proper atomicity of reads.
+	 *
+	 * We don't need to case when source and destination have different alignments since we only do word stores
+	 * using memmove, which must handle it.
 	 */
-	if (dest > src && ((size_t)((char*)dest - (char*)src) < size)) {
+	if (dest > src && ((size_t)((char*)dest - (char*)src) < size)) { /*backward copy*/
 		char *p = (char*)dest + size;
-		char *s = (char*)src + size;
-		char *start = (char*)dest;
-		char *align_end = MAX((char*)dest, (char*)align_down (p));
-		char *word_start;
+			char *s = (char*)src + size;
+			char *start = (char*)dest;
+			char *align_end = MAX((char*)dest, (char*)align_down (p));
+			char *word_start;
+			size_t bytes_to_memmove;
 
-		while (p > align_end)
-			*--p = *--s;
+			while (p > align_end)
+				*--p = *--s;
 
-		word_start = align_up (start);
-		while (p > word_start) {
-			p -= sizeof (void*);
-			s -= sizeof (void*);
-			*((void**)p) = *((void**)s);
-		}
+			word_start = align_up (start);
+			bytes_to_memmove = p - word_start;
+			p -= bytes_to_memmove;
+			s -= bytes_to_memmove;
+			memmove (p, s, bytes_to_memmove);
 
-		while (p > start)
-			*--p = *--s;
+			while (p > start)
+				*--p = *--s;
 	} else {
-		char *p = (char*)dest;
-		char *s = (char*)src;
-		char *end = p + size;
-		char *align_end = MIN ((char*)end, (char*)align_up (p));
-		char *word_end;
+		char *d = (char*)dest;
+		const char *s = (const char*)src;
+		size_t tail_bytes;
 
-		while (p < align_end)
-			*p++ = *s++;
-
-		word_end = align_down (end);
-		while (p < word_end) {
-			*((void**)p) = *((void**)s);
-			p += sizeof (void*);
-			s += sizeof (void*);
+		/*align to word boundary */
+		while (unaligned_bytes (d)) {
+			*d++ = *s++;
+			--size;
 		}
 
-		while (p < end)
-			*p++ = *s++;
+		/* copy all words with memmove */
+		memmove (d, s, (size_t)align_down (size));
+
+		tail_bytes = unaligned_bytes (size);
+		if (tail_bytes) {
+			d += (size_t)align_down (size);
+			s += (size_t)align_down (size);
+			do {
+				*d++ = *s++;
+			} while (--tail_bytes);
+		}
 	}
 }
 

@@ -44,13 +44,9 @@ using System.Text;
     
 namespace System.Net 
 {
-#if MOONLIGHT
-	internal class WebHeaderCollection : NameValueCollection, ISerializable {
-#else
 	[Serializable]
 	[ComVisible(true)]
 	public class WebHeaderCollection : NameValueCollection, ISerializable {
-#endif
 		[Flags]
 		internal enum HeaderInfo
 		{
@@ -190,7 +186,7 @@ namespace System.Net
 			base.Add (headerName, headerValue);			
 		}
 
-		public override string [] GetValues (string header)
+		internal string [] GetValues_internal (string header, bool split)
 		{
 			if (header == null)
 				throw new ArgumentNullException ("header");
@@ -199,7 +195,7 @@ namespace System.Net
 			if (values == null || values.Length == 0)
 				return null;
 
-			if (IsMultiValue (header)) {
+			if (split && IsMultiValue (header)) {
 				List<string> separated = null;
 				foreach (var value in values) {
 					if (value.IndexOf (',') < 0)
@@ -230,6 +226,11 @@ namespace System.Net
 			}
 
 			return values;
+		}
+
+		public override string [] GetValues (string header)
+		{
+			return GetValues_internal (header, true);
 		}
 
 		public override string[] GetValues (int index)

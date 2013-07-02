@@ -7,8 +7,6 @@
 // (C) 2006 Novell, Inc.
 // 
 
-#if NET_2_0
-
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -19,6 +17,7 @@ using System.Text;
 namespace MonoTests.System.Text
 {
 	[TestFixture]
+	[Category ("MobileNotWorking")]
 	public class EncodingInfoTest
 	{
 		[Test]
@@ -70,5 +69,3 @@ namespace MonoTests.System.Text
 		}
 	}
 }
-
-#endif

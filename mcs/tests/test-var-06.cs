@@ -5,7 +5,7 @@ using System;
 
 public class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		for (var i = 0; i < 1; ++i)
 			if (i.GetType() != typeof (int))

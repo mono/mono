@@ -5,7 +5,7 @@ using System.Collections.Specialized;
 
 class Program
 {
-	static void Main(string[] args)
+	public static void Main(string[] args)
 	{
 		var chat = new ChatClient();
 		var lines = new StringCollection() { "a", "b", "c" };

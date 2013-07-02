@@ -21,6 +21,7 @@ Microsoft.Build.Framework/ExternalProjectFinishedEventArgs.cs
 Microsoft.Build.Framework/ExternalProjectStartedEventArgs.cs
 Microsoft.Build.Framework/IBuildEngine.cs
 Microsoft.Build.Framework/IBuildEngine2.cs
+Microsoft.Build.Framework/ICancelableTask.cs
 Microsoft.Build.Framework/IEventSource.cs
 Microsoft.Build.Framework/ILogger.cs
 Microsoft.Build.Framework/INodeLogger.cs

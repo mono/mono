@@ -124,42 +124,6 @@ namespace System.Security.Cryptography {
 			}
 			return num;
 		}
-#if MOONLIGHT
-		// we need SHA1 support to verify the codecs binary integrity
-		public static string MapNameToOID (string name)
-		{
-			if ((name != null) && name.Contains ("SHA1"))
-				return "1.3.14.3.2.26";
-			return String.Empty;
-		}
-
-		private const string AES = "System.Security.Cryptography.AesManaged, System.Core, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
-
-		// non-configurable (versus machine.config) mappings for Moonlight (to avoid loading custom code)
-		public static object CreateFromName (string name)
-		{
-			switch (name) {
-			case "System.Security.Cryptography.HashAlgorithm":
-			case "System.Security.Cryptography.SHA1":
-			case "SHA1":
-				return new SHA1Managed ();
-			case "SHA256":
-				return new SHA256Managed ();
-			case "System.Security.Cryptography.MD5":
-			case "MD5":
-				return new MD5CryptoServiceProvider ();
-			case "System.Security.Cryptography.RandomNumberGenerator":
-				return new RNGCryptoServiceProvider ();
-			case "System.Security.Cryptography.RSA":
-				return new Mono.Security.Cryptography.RSAManaged ();
-			case "AES":
-			case AES:
-				return (Aes) Activator.CreateInstance (Type.GetType (AES), null);
-			default:
-				throw new NotImplementedException (name);
-			}
-		}
-#endif
 	}
 }
 

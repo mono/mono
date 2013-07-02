@@ -31,6 +31,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+#if !FULL_AOT_RUNTIME
 using System;
 using System.Reflection;
 using System.Collections;
@@ -104,16 +105,12 @@ namespace System.Reflection.Emit {
 			}
 
 			if (emitSymbolInfo) {
-#if MOONLIGHT
-				symbolWriter = new Mono.CompilerServices.SymbolWriter.SymbolWriterImpl (this);
-#else
 				Assembly asm = Assembly.LoadWithPartialName ("Mono.CompilerServices.SymbolWriter");
 				if (asm == null)
 					throw new TypeLoadException ("The assembly for default symbol writer cannot be loaded");
 
 				Type t = asm.GetType ("Mono.CompilerServices.SymbolWriter.SymbolWriterImpl", true);
 				symbolWriter = (ISymbolWriter) Activator.CreateInstance (t, new object[] { this });
-#endif
 				string fileName = fqname;
 				if (assemblyb.AssemblyDir != null)
 					fileName = Path.Combine (assemblyb.AssemblyDir, fileName);
@@ -825,7 +822,7 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 		public override	Assembly Assembly {
 			get { return assemblyb; }
 		}
@@ -994,3 +991,4 @@ namespace System.Reflection.Emit {
 	}
 }
 
+#endif

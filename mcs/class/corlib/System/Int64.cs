@@ -293,31 +293,32 @@ namespace System {
 			
 			long number = 0;
 			int nDigits = 0;
-			bool decimalPointFound = false;
+			int decimalPointPos = -1;
 			int digitValue;
 			char hexDigit;
-			int exponent = 0;
 				
 			// Number stuff
-			do {
+			while (pos < s.Length) {
 
 				if (!Int32.ValidDigit (s [pos], AllowHexSpecifier)) {
 					if (AllowThousands &&
 					    (Int32.FindOther (ref pos, s, nfi.NumberGroupSeparator)
 						|| Int32.FindOther (ref pos, s, nfi.CurrencyGroupSeparator)))
 					    continue;
-					else
-					if (!decimalPointFound && AllowDecimalPoint &&
+
+					if (AllowDecimalPoint && decimalPointPos < 0 &&
 					    (Int32.FindOther (ref pos, s, nfi.NumberDecimalSeparator)
 						|| Int32.FindOther (ref pos, s, nfi.CurrencyDecimalSeparator))) {
-					    decimalPointFound = true;
+					    decimalPointPos = nDigits;
 					    continue;
 					}
 
 					break;
 				}
+
+				nDigits++;
+
 				if (AllowHexSpecifier) {
-					nDigits++;
 					hexDigit = s [pos++];
 					if (Char.IsDigit (hexDigit))
 						digitValue = (int) (hexDigit - '0');
@@ -336,36 +337,20 @@ namespace System {
 							exc = e;
 						return false;
 					}
-				}
-				else if (decimalPointFound) {
-					nDigits++;
-					// Allows decimal point as long as it's only 
-					// followed by zeroes.
-					if (s [pos++] != '0') {
-						if (!tryParse)
-							exc = new OverflowException ("Value too large or too " +
-									"small.");
-						return false;
-					}
-				}
-				else {
-					nDigits++;
 
-					try {
-						// Calculations done as negative
-						// (abs (MinValue) > abs (MaxValue))
-						number = checked (
-							number * 10 - 
-							(long) (s [pos++] - '0')
-							);
-					} catch (OverflowException) {
-						if (!tryParse)
-							exc = new OverflowException ("Value too large or too " +
-									"small.");
-						return false;
-					}
+					continue;
 				}
-			} while (pos < s.Length);
+
+				try {
+					// Calculations done as negative
+					// (abs (MinValue) > abs (MaxValue))
+					number = checked (number * 10 - (long) (s [pos++] - '0'));
+				} catch (OverflowException) {
+					if (!tryParse)
+						exc = new OverflowException ("Value too large or too small.");
+					return false;
+				}				
+			}
 
 			// Post number stuff
 			if (nDigits == 0) {
@@ -374,6 +359,7 @@ namespace System {
 				return false;
 			}
 
+			int exponent = 0;
 			if (AllowExponent)
 				if (Int32.FindExponent (ref pos, s, ref exponent, tryParse, ref exc) && exc != null)
 					return false;
@@ -431,17 +417,34 @@ namespace System {
 				}
 			}
 
-			// result *= 10^exponent
-			if (exponent > 0) {
+			if (decimalPointPos >= 0)
+				exponent = exponent - nDigits + decimalPointPos;
+			
+			if (exponent < 0) {
+				//
+				// Any non-zero values after decimal point are not allowed
+				//
+				long remainder;
+				number = Math.DivRem (number, (long) Math.Pow (10, -exponent), out remainder);
+				if (remainder != 0) {
+					if (!tryParse)
+						exc = new OverflowException ("Value too large or too small.");
+					return false;
+				}
+			} else if (exponent > 0) {
+				//
+				// result *= 10^exponent
+				//
 				// Reduce the risk of throwing an overflow exc
+				//
 				double res = checked (Math.Pow (10, exponent) * number);
-				if (res < Int32.MinValue || res > Int32.MaxValue) {
+				if (res < MinValue || res > MaxValue) {
 					if (!tryParse)
 						exc = new OverflowException ("Value too large or too small.");
 					return false;
 				}
 
-				number = (long) res;
+				number = (long)res;
 			}
 
 			result = number;

@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{EA478331-ECA5-450D-9D53-DCBE3B722037}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>./../../class/lib/net_2_0</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\Npgsql-net_2_0</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>Npgsql</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
@@ -28,78 +27,79 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="Npgsql\AssemblyInfo.cs" />
-   <Compile Include="..\..\build\common\Consts.cs" />
-   <Compile Include="Npgsql\HashAlgorithm.cs" />
-   <Compile Include="Npgsql\MD5.cs" />
-   <Compile Include="Npgsql\MD5CryptoServiceProvider.cs" />
-   <Compile Include="Npgsql\NpgsqlAsciiRow.cs" />
-   <Compile Include="Npgsql\NpgsqlBackEndKeyData.cs" />
-   <Compile Include="Npgsql\NpgsqlBind.cs" />
-   <Compile Include="Npgsql\NpgsqlBinaryRow.cs" />
-   <Compile Include="Npgsql\NpgsqlCancelRequest.cs" />
-   <Compile Include="Npgsql\NpgsqlClosedState.cs" />
-   <Compile Include="Npgsql\NpgsqlCommand.cs" />
-   <Compile Include="Npgsql\NpgsqlCommandBuilder.cs" />
-   <Compile Include="Npgsql\NpgsqlConnectedState.cs" />
-   <Compile Include="Npgsql\NpgsqlConnection.cs" />
-   <Compile Include="Npgsql\NpgsqlConnectionString.cs" />
-   <Compile Include="Npgsql\NpgsqlConnectionStringBuilder.cs" />
-   <Compile Include="Npgsql\NpgsqlConnector.cs" />
-   <Compile Include="Npgsql\NpgsqlConnectorPool.cs" />
-   <Compile Include="Npgsql\NpgsqlDataAdapter.cs" />
-   <Compile Include="Npgsql\NpgsqlDataReader.cs" />
-   <Compile Include="Npgsql\NpgsqlDescribe.cs" />
-   <Compile Include="Npgsql\NpgsqlError.cs" />
-   <Compile Include="Npgsql\NpgsqlEventLog.cs" />
-   <Compile Include="Npgsql\NpgsqlException.cs" />
-   <Compile Include="Npgsql\NpgsqlExecute.cs" />
-   <Compile Include="Npgsql\NpgsqlFactory.cs" />
-   <Compile Include="Npgsql\NpgsqlFlush.cs" />
-   <Compile Include="Npgsql\NpgsqlMediator.cs" />
-   <Compile Include="Npgsql\NpgsqlMessageTypes.cs" />
-   <Compile Include="Npgsql\NpgsqlNotificationEventArgs.cs" />
-   <Compile Include="Npgsql\NpgsqlParameter.cs" />
-   <Compile Include="Npgsql\NpgsqlParameterCollection.cs" />
-   <Compile Include="Npgsql\NpgsqlParameterStatus.cs" />
-   <Compile Include="Npgsql\NpgsqlParse.cs" />
-   <Compile Include="Npgsql\NpgsqlPasswordPacket.cs" />
-   <Compile Include="Npgsql\NpgsqlQuery.cs" />
-   <Compile Include="Npgsql\NpgsqlReadyState.cs" />
-   <Compile Include="Npgsql\NpgsqlResultSet.cs" />
-   <Compile Include="Npgsql\NpgsqlRow.cs" />
-   <Compile Include="Npgsql\NpgsqlRowDescription.cs" />
-   <Compile Include="Npgsql\NpgsqlSchema.cs" />
-   <Compile Include="Npgsql\NpgsqlStartupPacket.cs" />
-   <Compile Include="Npgsql\NpgsqlStartupState.cs" />
-   <Compile Include="Npgsql\NpgsqlState.cs" />
-   <Compile Include="Npgsql\NpgsqlSync.cs" />
-   <Compile Include="Npgsql\NpgsqlTransaction.cs" />
-   <Compile Include="Npgsql\PGUtil.cs" />
-   <Compile Include="NpgsqlTypes\LargeObjectManager.cs" />
-   <Compile Include="NpgsqlTypes\NpgsqlDbType.cs" />
-   <Compile Include="NpgsqlTypes\FastPath.cs" />
-   <Compile Include="NpgsqlTypes\NpgsqlTypeConverters.cs" />
-   <Compile Include="NpgsqlTypes\FastPathArg.cs" />
-   <Compile Include="NpgsqlTypes\NpgsqlTypes.cs" />
-   <Compile Include="NpgsqlTypes\LargeObject.cs" />
-   <Compile Include="NpgsqlTypes\NpgsqlTypesHelper.cs" />
-
-  </ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="Npgsql\AssemblyInfo.cs" />
+    <Compile Include="Npgsql\HashAlgorithm.cs" />
+    <Compile Include="Npgsql\MD5.cs" />
+    <Compile Include="Npgsql\MD5CryptoServiceProvider.cs" />
+    <Compile Include="Npgsql\NpgsqlAsciiRow.cs" />
+    <Compile Include="Npgsql\NpgsqlBackEndKeyData.cs" />
+    <Compile Include="Npgsql\NpgsqlBinaryRow.cs" />
+    <Compile Include="Npgsql\NpgsqlBind.cs" />
+    <Compile Include="Npgsql\NpgsqlCancelRequest.cs" />
+    <Compile Include="Npgsql\NpgsqlClosedState.cs" />
+    <Compile Include="Npgsql\NpgsqlCommand.cs" />
+    <Compile Include="Npgsql\NpgsqlCommandBuilder.cs" />
+    <Compile Include="Npgsql\NpgsqlConnectedState.cs" />
+    <Compile Include="Npgsql\NpgsqlConnection.cs" />
+    <Compile Include="Npgsql\NpgsqlConnectionString.cs" />
+    <Compile Include="Npgsql\NpgsqlConnectionStringBuilder.cs" />
+    <Compile Include="Npgsql\NpgsqlConnector.cs" />
+    <Compile Include="Npgsql\NpgsqlConnectorPool.cs" />
+    <Compile Include="Npgsql\NpgsqlDataAdapter.cs" />
+    <Compile Include="Npgsql\NpgsqlDataReader.cs" />
+    <Compile Include="Npgsql\NpgsqlDescribe.cs" />
+    <Compile Include="Npgsql\NpgsqlError.cs" />
+    <Compile Include="Npgsql\NpgsqlEventLog.cs" />
+    <Compile Include="Npgsql\NpgsqlException.cs" />
+    <Compile Include="Npgsql\NpgsqlExecute.cs" />
+    <Compile Include="Npgsql\NpgsqlFactory.cs" />
+    <Compile Include="Npgsql\NpgsqlFlush.cs" />
+    <Compile Include="Npgsql\NpgsqlMediator.cs" />
+    <Compile Include="Npgsql\NpgsqlMessageTypes.cs" />
+    <Compile Include="Npgsql\NpgsqlNotificationEventArgs.cs" />
+    <Compile Include="Npgsql\NpgsqlParameter.cs" />
+    <Compile Include="Npgsql\NpgsqlParameterCollection.cs" />
+    <Compile Include="Npgsql\NpgsqlParameterStatus.cs" />
+    <Compile Include="Npgsql\NpgsqlParse.cs" />
+    <Compile Include="Npgsql\NpgsqlPasswordPacket.cs" />
+    <Compile Include="Npgsql\NpgsqlQuery.cs" />
+    <Compile Include="Npgsql\NpgsqlReadyState.cs" />
+    <Compile Include="Npgsql\NpgsqlResultSet.cs" />
+    <Compile Include="Npgsql\NpgsqlRow.cs" />
+    <Compile Include="Npgsql\NpgsqlRowDescription.cs" />
+    <Compile Include="Npgsql\NpgsqlSchema.cs" />
+    <Compile Include="Npgsql\NpgsqlStartupPacket.cs" />
+    <Compile Include="Npgsql\NpgsqlStartupState.cs" />
+    <Compile Include="Npgsql\NpgsqlState.cs" />
+    <Compile Include="Npgsql\NpgsqlSync.cs" />
+    <Compile Include="Npgsql\NpgsqlTransaction.cs" />
+    <Compile Include="Npgsql\PGUtil.cs" />
+    <Compile Include="NpgsqlTypes\FastPath.cs" />
+    <Compile Include="NpgsqlTypes\FastPathArg.cs" />
+    <Compile Include="NpgsqlTypes\LargeObject.cs" />
+    <Compile Include="NpgsqlTypes\LargeObjectManager.cs" />
+    <Compile Include="NpgsqlTypes\NpgsqlDbType.cs" />
+    <Compile Include="NpgsqlTypes\NpgsqlTypeConverters.cs" />
+    <Compile Include="NpgsqlTypes\NpgsqlTypes.cs" />
+    <Compile Include="NpgsqlTypes\NpgsqlTypesHelper.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -108,85 +108,83 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Security.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Mono.Security.dll</HintPath>
-    </Reference>
-
+    <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
+      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Name>corlib\corlib-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_2_0-2.csproj">
+      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
+      <Name>System\System-net_2_0-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
+      <Project>{205A8E90-88CC-4B46-8151-87FA90B666A5}</Project>
+      <Name>System.XML\System.Xml-net_2_0-1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Data\System.Data-net_2_0.csproj">
+      <Project>{B8CA1780-FF35-49B9-B385-C24BD0558109}</Project>
+      <Name>System.Data\System.Data-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mono.Security\Mono.Security-net_2_0.csproj">
+      <Project>{83A0F0D3-5813-4805-8AC5-8E8B0DC55B9D}</Project>
+      <Name>Mono.Security\Mono.Security-net_2_0</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-    <ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="Npgsql/NpgsqlState.resources">
-       <LogicalName>Npgsql.NpgsqlState.resources</LogicalName>
+      <LogicalName>Npgsql.NpgsqlState.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Npgsql/NpgsqlClosedState.resources">
-       <LogicalName>Npgsql.NpgsqlClosedState.resources</LogicalName>
+      <LogicalName>Npgsql.NpgsqlClosedState.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Npgsql/NpgsqlParameterCollection.resources">
-       <LogicalName>Npgsql.NpgsqlParameterCollection.resources</LogicalName>
+      <LogicalName>Npgsql.NpgsqlParameterCollection.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Npgsql/NpgsqlParameter.resources">
-       <LogicalName>Npgsql.NpgsqlParameter.resources</LogicalName>
+      <LogicalName>Npgsql.NpgsqlParameter.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Npgsql/NpgsqlCommand.resources">
-       <LogicalName>Npgsql.NpgsqlCommand.resources</LogicalName>
+      <LogicalName>Npgsql.NpgsqlCommand.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Npgsql/NpgsqlCommandBuilder.resources">
-       <LogicalName>Npgsql.NpgsqlCommandBuilder.resources</LogicalName>
+      <LogicalName>Npgsql.NpgsqlCommandBuilder.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Npgsql/NpgsqlConnectedState.resources">
-       <LogicalName>Npgsql.NpgsqlConnectedState.resources</LogicalName>
+      <LogicalName>Npgsql.NpgsqlConnectedState.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Npgsql/NpgsqlConnection.resources">
-       <LogicalName>Npgsql.NpgsqlConnection.resources</LogicalName>
+      <LogicalName>Npgsql.NpgsqlConnection.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Npgsql/NpgsqlReadyState.resources">
-       <LogicalName>Npgsql.NpgsqlReadyState.resources</LogicalName>
+      <LogicalName>Npgsql.NpgsqlReadyState.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Npgsql/NpgsqlTransaction.resources">
-       <LogicalName>Npgsql.NpgsqlTransaction.resources</LogicalName>
+      <LogicalName>Npgsql.NpgsqlTransaction.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Npgsql/NpgsqlEventLog.resources">
-       <LogicalName>Npgsql.NpgsqlEventLog.resources</LogicalName>
+      <LogicalName>Npgsql.NpgsqlEventLog.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Npgsql/NpgsqlException.resources">
-       <LogicalName>Npgsql.NpgsqlException.resources</LogicalName>
+      <LogicalName>Npgsql.NpgsqlException.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Npgsql/PGUtil.resources">
-       <LogicalName>Npgsql.PGUtil.resources</LogicalName>
+      <LogicalName>Npgsql.PGUtil.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Npgsql/NpgsqlConnectionString.resources">
-       <LogicalName>Npgsql.NpgsqlConnectionString.resources</LogicalName>
+      <LogicalName>Npgsql.NpgsqlConnectionString.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="NpgsqlTypes/NpgsqlTypesHelper.resources">
-       <LogicalName>NpgsqlTypes.NpgsqlTypesHelper.resources</LogicalName>
+      <LogicalName>NpgsqlTypes.NpgsqlTypesHelper.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
-
 </Project>
-

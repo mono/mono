@@ -26,7 +26,7 @@ typedef struct {
 #define mono_domain_finalizers_unlock(domain) LeaveCriticalSection (&(domain)->finalizable_objects_hash_lock);
 
 /* Register a memory area as a conservatively scanned GC root */
-#define MONO_GC_REGISTER_ROOT(x) mono_gc_register_root ((char*)&(x), sizeof(x), NULL)
+#define MONO_GC_REGISTER_ROOT_PINNING(x) mono_gc_register_root ((char*)&(x), sizeof(x), NULL)
 
 #define MONO_GC_UNREGISTER_ROOT(x) mono_gc_deregister_root ((char*)&(x))
 
@@ -37,7 +37,7 @@ typedef struct {
 /* The result of alloc_fixed () is not GC tracked memory */
 #define MONO_GC_REGISTER_ROOT_FIXED(x) do { \
 	if (!mono_gc_is_moving ())				\
-		MONO_GC_REGISTER_ROOT ((x)); \
+		MONO_GC_REGISTER_ROOT_PINNING ((x)); \
 	} while (0)
 
 /*
@@ -68,11 +68,7 @@ typedef struct {
 } while (0)
 
 /* useful until we keep track of gc-references in corlib etc. */
-#ifdef HAVE_SGEN_GC
-#define IS_GC_REFERENCE(t) FALSE
-#else
-#define IS_GC_REFERENCE(t) ((t)->type == MONO_TYPE_U && class->image == mono_defaults.corlib)
-#endif
+#define IS_GC_REFERENCE(t) (mono_gc_is_moving () ? FALSE : ((t)->type == MONO_TYPE_U && class->image == mono_defaults.corlib))
 
 extern GCStats gc_stats MONO_INTERNAL;
 
@@ -91,11 +87,11 @@ gpointer    ves_icall_System_GCHandle_GetAddrOfPinnedObject (guint32 handle) MON
 void        ves_icall_System_GC_register_ephemeron_array (MonoObject *array) MONO_INTERNAL;
 MonoObject  *ves_icall_System_GC_get_ephemeron_tombstone (void) MONO_INTERNAL;
 
+MonoBoolean ves_icall_Mono_Runtime_SetGCAllowSynchronousMajor (MonoBoolean flag) MONO_INTERNAL;
+
 extern void mono_gc_init (void) MONO_INTERNAL;
 extern void mono_gc_base_init (void) MONO_INTERNAL;
 extern void mono_gc_cleanup (void) MONO_INTERNAL;
-extern void mono_gc_enable (void) MONO_INTERNAL;
-extern void mono_gc_disable (void) MONO_INTERNAL;
 
 /*
  * Return whenever the current thread is registered with the GC (i.e. started
@@ -123,19 +119,14 @@ extern void     mono_gc_enable_events (void);
 
 /* disappearing link functionality */
 void        mono_gc_weak_link_add    (void **link_addr, MonoObject *obj, gboolean track) MONO_INTERNAL;
-void        mono_gc_weak_link_remove (void **link_addr) MONO_INTERNAL;
+void        mono_gc_weak_link_remove (void **link_addr, gboolean track) MONO_INTERNAL;
 MonoObject *mono_gc_weak_link_get    (void **link_addr) MONO_INTERNAL;
-
-#ifndef HAVE_SGEN_GC
-void    mono_gc_add_weak_track_handle    (MonoObject *obj, guint32 gchandle) MONO_INTERNAL;
-void    mono_gc_change_weak_track_handle (MonoObject *old_obj, MonoObject *obj, guint32 gchandle) MONO_INTERNAL;
-void    mono_gc_remove_weak_track_handle (guint32 gchandle) MONO_INTERNAL;
-GSList* mono_gc_remove_weak_track_object (MonoDomain *domain, MonoObject *obj) MONO_INTERNAL;
-#endif
 
 /*Ephemeron functionality. Sgen only*/
 gboolean    mono_gc_ephemeron_array_add (MonoObject *obj) MONO_INTERNAL;
 
+/* To disable synchronous, evacuating collections - concurrent SGen only */
+gboolean    mono_gc_set_allow_synchronous_major (gboolean flag) MONO_INTERNAL;
 
 MonoBoolean
 GCHandle_CheckCurrentDomain (guint32 gchandle) MONO_INTERNAL;
@@ -229,7 +220,7 @@ typedef struct {
 } AllocatorWrapperInfo;
 
 MonoMethod* mono_gc_get_managed_allocator (MonoVTable *vtable, gboolean for_box) MONO_INTERNAL;
-MonoMethod* mono_gc_get_managed_array_allocator (MonoVTable *vtable, int rank) MONO_INTERNAL;
+MonoMethod* mono_gc_get_managed_array_allocator (MonoClass *klass) MONO_INTERNAL;
 MonoMethod *mono_gc_get_managed_allocator_by_type (int atype) MONO_INTERNAL;
 
 guint32 mono_gc_get_managed_allocator_types (void) MONO_INTERNAL;
@@ -267,7 +258,7 @@ typedef struct {
 	 * by attach_func. This might called with GC locks held and the word stopped,
 	 * so it shouldn't do any synchronization etc.
 	 */
-	void (*thread_suspend_func) (gpointer user_data, void *sigcontext);
+	void (*thread_suspend_func) (gpointer user_data, void *sigcontext, MonoContext *ctx);
 	/* 
 	 * Function called to mark from thread stacks. user_data is the data returned 
 	 * by attach_func. This is called twice, with the word stopped:
@@ -320,6 +311,7 @@ void* mono_gc_invoke_with_gc_lock (MonoGCLockedCallbackFunc func, void *data) MO
 int mono_gc_get_los_limit (void) MONO_INTERNAL;
 
 guint8* mono_gc_get_card_table (int *shift_bits, gpointer *card_mask) MONO_INTERNAL;
+gboolean mono_gc_card_table_nursery_check (void) MONO_INTERNAL;
 
 void* mono_gc_get_nursery (int *shift_bits, size_t *size) MONO_INTERNAL;
 
@@ -349,11 +341,9 @@ typedef struct _MonoReferenceQueue MonoReferenceQueue;
 typedef struct _RefQueueEntry RefQueueEntry;
 
 struct _RefQueueEntry {
-#ifdef HAVE_SGEN_GC
 	void *dis_link;
-#else
 	guint32 gchandle;
-#endif
+	MonoDomain *domain;
 	void *user_data;
 	RefQueueEntry *next;
 };
@@ -373,6 +363,10 @@ gboolean mono_gc_reference_queue_add (MonoReferenceQueue *queue, MonoObject *obj
 BOOL APIENTRY mono_gc_dllmain (HMODULE module_handle, DWORD reason, LPVOID reserved) MONO_INTERNAL;
 #endif
 
+/*
+Those functions must be used when it's possible that either destination is not
+word aligned or size is not a multiple of word size.
+*/
 void mono_gc_bzero (void *dest, size_t size) MONO_INTERNAL;
 void mono_gc_memmove (void *dest, const void *src, size_t size) MONO_INTERNAL;
 

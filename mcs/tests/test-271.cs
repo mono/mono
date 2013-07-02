@@ -14,7 +14,7 @@ class T {
 		return new C ();
 	}
 	
-	static void Main ()
+	public static void Main ()
 	{
 		foreach (object o in X ())
 			;

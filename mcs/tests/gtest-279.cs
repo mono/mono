@@ -23,7 +23,7 @@ class Foo : IFoo
 
 class BugReport
 {
-	static void Main(string[] args)
+	public static void Main(string[] args)
 	{
 		Foo f = new Foo();
 		f.Bar();

@@ -113,6 +113,7 @@ namespace Mono.CSharp
 		readonly Dictionary<TypeSpec, PointerContainer> pointer_types;
 		readonly Dictionary<TypeSpec, ReferenceContainer> reference_types;
 		readonly Dictionary<TypeSpec, MethodSpec> attrs_cache;
+		readonly Dictionary<TypeSpec, AwaiterDefinition> awaiters;
 
 		AssemblyDefinition assembly;
 		readonly CompilerContext context;
@@ -144,6 +145,7 @@ namespace Mono.CSharp
 			pointer_types = new Dictionary<TypeSpec, PointerContainer> ();
 			reference_types = new Dictionary<TypeSpec, ReferenceContainer> ();
 			attrs_cache = new Dictionary<TypeSpec, MethodSpec> ();
+			awaiters = new Dictionary<TypeSpec, AwaiterDefinition> ();
 		}
 
 		#region Properties
@@ -398,6 +400,8 @@ namespace Mono.CSharp
 		{
 			DefineContainer ();
 
+			ExpandBaseInterfaces ();
+
 			base.Define ();
 
 			HasTypesFullyDefined = true;
@@ -422,7 +426,7 @@ namespace Mono.CSharp
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 
-			if (Compiler.Settings.Unsafe) {
+			if (Compiler.Settings.Unsafe && !assembly.IsSatelliteAssembly) {
 				var pa = PredefinedAttributes.UnverifiableCode;
 				if (pa.IsDefined)
 					pa.EmitAttribute (builder);
@@ -468,6 +472,43 @@ namespace Mono.CSharp
 			}
 
 			return null;
+		}
+
+		//
+		// Return container with awaiter definition. It never returns null
+		// but all container member can be null for easier error reporting
+		//
+		public AwaiterDefinition GetAwaiter (TypeSpec type)
+		{
+			AwaiterDefinition awaiter;
+			if (awaiters.TryGetValue (type, out awaiter))
+				return awaiter;
+
+			awaiter = new AwaiterDefinition ();
+
+			//
+			// Predefined: bool IsCompleted { get; } 
+			//
+			awaiter.IsCompleted = MemberCache.FindMember (type, MemberFilter.Property ("IsCompleted", Compiler.BuiltinTypes.Bool),
+				BindingRestriction.InstanceOnly) as PropertySpec;
+
+			//
+			// Predefined: GetResult ()
+			//
+			// The method return type is also result type of await expression
+			//
+			awaiter.GetResult = MemberCache.FindMember (type, MemberFilter.Method ("GetResult", 0,
+				ParametersCompiled.EmptyReadOnlyParameters, null),
+				BindingRestriction.InstanceOnly) as MethodSpec;
+
+			//
+			// Predefined: INotifyCompletion.OnCompleted (System.Action)
+			//
+			var nc = PredefinedTypes.INotifyCompletion;
+			awaiter.INotifyCompletion = !nc.Define () || type.ImplementsInterface (nc.TypeSpec, false);
+
+			awaiters.Add (type, awaiter);
+			return awaiter;
 		}
 
 		public override void GetCompletionStartingWith (string prefix, List<string> results)

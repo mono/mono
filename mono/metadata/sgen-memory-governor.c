@@ -1,33 +1,27 @@
 /*
- * sgen-cardtable.c: Card table implementation for sgen
+ * sgen-memory-governor.c: When to schedule collections based on
+ * memory usage.
  *
  * Author:
  * 	Rodrigo Kumpera (rkumpera@novell.com)
  *
- * SGen is licensed under the terms of the MIT X11 license
- *
  * Copyright 2001-2003 Ximian, Inc
  * Copyright 2003-2010 Novell, Inc.
  * Copyright 2011 Xamarin Inc (http://www.xamarin.com)
- * 
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- * 
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * Copyright (C) 2012 Xamarin Inc
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License 2.0 as published by the Free Software Foundation;
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License 2.0 along with this library; if not, write to the Free
+ * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
 #include "config.h"
@@ -40,6 +34,7 @@
 #include "utils/mono-counters.h"
 #include "utils/mono-mmap.h"
 #include "utils/mono-logger-internal.h"
+#include "utils/dtrace.h"
 
 #define MIN_MINOR_COLLECTION_ALLOWANCE	((mword)(DEFAULT_NURSERY_SIZE * default_allowance_nursery_size_ratio))
 
@@ -144,11 +139,11 @@ sgen_memgov_try_calculate_minor_collection_allowance (gboolean overwrite)
 	if (debug_print_allowance) {
 		mword old_major = last_collection_old_num_major_sections * major_collector.section_size;
 
-		fprintf (gc_debug_file, "Before collection: %td bytes (%td major, %td LOS)\n",
+		SGEN_LOG (1, "Before collection: %td bytes (%td major, %td LOS)",
 				old_major + last_collection_old_los_memory_usage, old_major, last_collection_old_los_memory_usage);
-		fprintf (gc_debug_file, "After collection: %td bytes (%td major, %td LOS)\n",
+		SGEN_LOG (1, "After collection: %td bytes (%td major, %td LOS)",
 				new_heap_size, new_major, last_collection_los_memory_usage);
-		fprintf (gc_debug_file, "Allowance: %td bytes\n", minor_collection_allowance);
+		SGEN_LOG (1, "Allowance: %td bytes", minor_collection_allowance);
 	}
 
 	if (major_collector.have_computed_minor_collection_allowance)
@@ -161,7 +156,10 @@ sgen_memgov_try_calculate_minor_collection_allowance (gboolean overwrite)
 gboolean
 sgen_need_major_collection (mword space_needed)
 {
-	mword los_alloced = los_memory_usage - MIN (last_collection_los_memory_usage, los_memory_usage);
+	mword los_alloced;
+	if (sgen_concurrent_collection_in_progress ())
+		return FALSE;
+	los_alloced = los_memory_usage - MIN (last_collection_los_memory_usage, los_memory_usage);
 	return (space_needed > sgen_memgov_available_free_space ()) ||
 		minor_collection_sections_alloced * major_collector.section_size + los_alloced > minor_collection_allowance;
 }
@@ -221,7 +219,7 @@ log_timming (GGTimingInfo *info)
 	if (info->generation == GENERATION_OLD)
 	        mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MAJOR%s: (%s) pause %.2fms, %s major %dK/%dK los %dK/%dK",
 	                info->is_overflow ? "_OVERFLOW" : "",
-	                info->reason,
+	                info->reason ? info->reason : "",
 	                (int)info->total_time / 1000.0f,
 	                full_timing_buff,
 	                major_collector.section_size * num_major_sections / 1024,
@@ -231,7 +229,7 @@ log_timming (GGTimingInfo *info)
 	else
 	        mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MINOR%s: (%s) pause %.2fms, %s promoted %dK major %dK los %dK",
 	        		info->is_overflow ? "_OVERFLOW" : "",
-	                info->reason,
+	                info->reason ? info->reason : "",
 	                (int)info->total_time / 1000.0f,
 	                full_timing_buff,
 	                (num_major_sections - last_major_num_sections) * major_collector.section_size / 1024,
@@ -244,7 +242,7 @@ sgen_memgov_collection_end (int generation, GGTimingInfo* info, int info_count)
 {
 	int i;
 	for (i = 0; i < info_count; ++i) {
-		if (info->generation != -1)
+		if (info[i].generation != -1)
 			log_timming (&info [i]);
 	}
 }
@@ -288,11 +286,11 @@ prot_flags_for_activate (int activate)
 }
 
 void
-sgen_assert_memory_alloc (void *ptr, const char *assert_description)
+sgen_assert_memory_alloc (void *ptr, size_t requested_size, const char *assert_description)
 {
 	if (ptr || !assert_description)
 		return;
-	fprintf (stderr, "Error: Garbage collector could not allocate memory for %s.\n", assert_description);
+	fprintf (stderr, "Error: Garbage collector could not allocate %zu bytes of memory for %s.\n", requested_size, assert_description);
 	exit (1);
 }
 
@@ -301,23 +299,37 @@ sgen_assert_memory_alloc (void *ptr, const char *assert_description)
  * This must not require any lock.
  */
 void*
-sgen_alloc_os_memory (size_t size, int activate, const char *assert_description)
+sgen_alloc_os_memory (size_t size, SgenAllocFlags flags, const char *assert_description)
 {
-	void *ptr = mono_valloc (0, size, prot_flags_for_activate (activate));
-	sgen_assert_memory_alloc (ptr, assert_description);
-	if (ptr)
+	void *ptr;
+
+	g_assert (!(flags & ~(SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE)));
+
+	ptr = mono_valloc (0, size, prot_flags_for_activate (flags & SGEN_ALLOC_ACTIVATE));
+	sgen_assert_memory_alloc (ptr, size, assert_description);
+	if (ptr) {
 		SGEN_ATOMIC_ADD_P (total_alloc, size);
+		if (flags & SGEN_ALLOC_HEAP)
+			MONO_GC_HEAP_ALLOC ((mword)ptr, size);
+	}
 	return ptr;
 }
 
 /* size must be a power of 2 */
 void*
-sgen_alloc_os_memory_aligned (size_t size, mword alignment, gboolean activate, const char *assert_description)
+sgen_alloc_os_memory_aligned (size_t size, mword alignment, SgenAllocFlags flags, const char *assert_description)
 {
-	void *ptr = mono_valloc_aligned (size, alignment, prot_flags_for_activate (activate));
-	sgen_assert_memory_alloc (ptr, assert_description);
-	if (ptr)
+	void *ptr;
+
+	g_assert (!(flags & ~(SGEN_ALLOC_HEAP | SGEN_ALLOC_ACTIVATE)));
+
+	ptr = mono_valloc_aligned (size, alignment, prot_flags_for_activate (flags & SGEN_ALLOC_ACTIVATE));
+	sgen_assert_memory_alloc (ptr, size, assert_description);
+	if (ptr) {
 		SGEN_ATOMIC_ADD_P (total_alloc, size);
+		if (flags & SGEN_ALLOC_HEAP)
+			MONO_GC_HEAP_ALLOC ((mword)ptr, size);
+	}
 	return ptr;
 }
 
@@ -325,10 +337,14 @@ sgen_alloc_os_memory_aligned (size_t size, mword alignment, gboolean activate, c
  * Free the memory returned by sgen_alloc_os_memory (), returning it to the OS.
  */
 void
-sgen_free_os_memory (void *addr, size_t size)
+sgen_free_os_memory (void *addr, size_t size, SgenAllocFlags flags)
 {
+	g_assert (!(flags & ~SGEN_ALLOC_HEAP));
+
 	mono_vfree (addr, size);
 	SGEN_ATOMIC_ADD_P (total_alloc, -size);
+	if (flags & SGEN_ALLOC_HEAP)
+		MONO_GC_HEAP_FREE ((mword)addr, size);
 }
 
 int64_t
@@ -379,13 +395,13 @@ sgen_memgov_init (glong max_heap, glong soft_limit, gboolean debug_allowance, do
 		return;
 
 	if (max_heap < soft_limit) {
-		fprintf (stderr, "max-heap-size must be at least as large as soft-heap-limit.\n");
-		exit (1);
+		sgen_env_var_error (MONO_GC_PARAMS_NAME, "Setting to minimum.", "`max-heap-size` must be at least as large as `soft-heap-limit`.");
+		max_heap = soft_limit;
 	}
 
 	if (max_heap < sgen_nursery_size * 4) {
-		fprintf (stderr, "max-heap-size must be at least 4 times larger than nursery size.\n");
-		exit (1);
+		sgen_env_var_error (MONO_GC_PARAMS_NAME, "Setting to minimum.", "`max-heap-size` must be at least 4 times as large as `nursery size`.");
+		max_heap = sgen_nursery_size * 4;
 	}
 	max_heap_size = max_heap - sgen_nursery_size;
 

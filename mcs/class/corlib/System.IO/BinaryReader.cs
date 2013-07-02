@@ -117,7 +117,7 @@ namespace System.IO {
 			charBuffer = null;
 		}
 
-#if NET_4_0 || NET_2_1
+#if NET_4_0
 		public void Dispose ()
 #else
 		void IDisposable.Dispose() 
@@ -368,26 +368,36 @@ namespace System.IO {
 			return((char)ch);
 		}
 
-		public virtual char[] ReadChars(int count) {
+		public virtual char[] ReadChars (int count)
+		{
 			if (count < 0) {
 				throw new ArgumentOutOfRangeException("count is less than 0");
 			}
 
+			if (m_stream == null) {
+				if (m_disposed)
+					throw new ObjectDisposedException ("BinaryReader", "Cannot read from a closed BinaryReader.");
+
+				throw new IOException("Stream is invalid");
+			}
+
 			if (count == 0)
-				return new char [0];
+				return EmptyArray<char>.Value;
 					
 			char[] full = new char[count];
-			int chars = Read(full, 0, count);
+			int bytes_read;
+			int chars = ReadCharBytes (full, 0, count, out bytes_read);			
 			
-			if (chars == 0) {
+			if (chars == 0)
 				throw new EndOfStreamException();
-			} else if (chars != full.Length) {
-				char[] ret = new char[chars];
-				Array.Copy(full, 0, ret, 0, chars);
-				return ret;
-			} else {
-				return full;
+
+			if (chars != count) {
+				var new_buffer = new char[chars];
+				Buffer.BlockCopyInternal (full, 0, new_buffer, 0, 2 * chars);
+				return new_buffer;
 			}
+
+			return full;
 		}
 
 		unsafe public virtual decimal ReadDecimal() {

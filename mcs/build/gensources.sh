@@ -3,6 +3,7 @@
 outfile=$1
 incfile=$2
 excfile=$3
+extfile=$4
 
 process_includes_1() {
     sed -e '/^[ \t]*$/d' -e '/^[ \t]*#/d' $1 > $2
@@ -30,6 +31,10 @@ process_includes() {
 rm -f $outfile.makefrag
 
 process_includes $incfile $outfile.inc
+
+if test x$extfile != x -a -f "$extfile"; then
+	cat $extfile >> $outfile.inc
+fi
 
 sort -u $outfile.inc > $outfile.inc_s
 rm -f $outfile.inc

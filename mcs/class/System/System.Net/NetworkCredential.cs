@@ -33,9 +33,7 @@ using System.Security;
 namespace System.Net
 {
 	public class NetworkCredential : ICredentials
-#if !MOONLIGHT
 					, ICredentialsByHost
-#endif
 	{
 		// Fields
 		string userName;
@@ -99,11 +97,9 @@ namespace System.Net
 			return this;
 		}
 
-#if !MOONLIGHT
 		public NetworkCredential GetCredential (string host, int port, string authenticationType)
 		{
 			return this;
 		}
-#endif
 	}
 }

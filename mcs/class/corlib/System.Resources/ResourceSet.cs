@@ -41,9 +41,7 @@ namespace System.Resources
 	[ComVisible (true)]
 	public class ResourceSet : IDisposable, IEnumerable
 	{
-#if !MOONLIGHT
 		[NonSerialized]
-#endif
 		protected IResourceReader Reader;
 		protected Hashtable Table;
 		bool resources_read;

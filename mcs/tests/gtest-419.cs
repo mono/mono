@@ -2,7 +2,7 @@ using System;
 
 class Program
 {
-	static int Main ()
+	public static int Main ()
 	{
 		int? i = ((int?) -4);
 		int? i2 = (int?) +4;

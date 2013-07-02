@@ -21,7 +21,7 @@ struct RVA {
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		RVA a = 10;
 		RVA b = 20;

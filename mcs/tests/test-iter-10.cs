@@ -26,7 +26,7 @@ class X {
 	    }
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		IEnumerator e = GetIt;
 		int total = 0;

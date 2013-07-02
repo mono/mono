@@ -525,7 +525,7 @@ namespace MonoTests.System.Net.Http
 					client.SendAsync (request, HttpCompletionOption.ResponseContentRead).Wait (WaitTimeout);
 					Assert.Fail ("#2");
 				} catch (AggregateException e) {
-					Assert.IsInstanceOfType (typeof (HttpRequestException), e.InnerException, "#3");
+					Assert.IsTrue (e.InnerException is HttpRequestException, "#3");
 				}
 
 			} finally {
@@ -685,6 +685,16 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")] // Missing encoding
+		public void GetString_Many ()
+		{
+			var client = new HttpClient ();
+			var t1 = client.GetStringAsync ("http://www.google.com");
+			var t2 = client.GetStringAsync ("http://www.google.com");
+			Assert.IsTrue (Task.WaitAll (new [] { t1, t2 }, WaitTimeout));		
+		}
+
+		[Test]
 		public void GetByteArray_ServerError ()
 		{
 			var listener = CreateListener (l => {
@@ -699,7 +709,7 @@ namespace MonoTests.System.Net.Http
 					client.GetByteArrayAsync (LocalServer).Wait (WaitTimeout);
 					Assert.Fail ("#1");
 				} catch (AggregateException e) {
-					Assert.IsInstanceOfType (typeof (HttpRequestException), e.InnerException, "#2");
+					Assert.IsTrue (e.InnerException is HttpRequestException , "#2");
 				}
 			} finally {
 				listener.Close ();
@@ -726,7 +736,7 @@ namespace MonoTests.System.Net.Http
 					client.GetStringAsync (LocalServer).Wait (WaitTimeout);
 					Assert.Fail ("#1");
 				} catch (AggregateException e) {
-					Assert.IsInstanceOfType (typeof (HttpRequestException), e.InnerException, "#2");
+					Assert.IsTrue (e.InnerException is HttpRequestException, "#2");
 				}
 			} finally {
 				listener.Abort ();

@@ -17,6 +17,6 @@ public static class ConvertHelper
 		yield return (T) s;
 	}
 
-	static void Main ()
+	public static void Main ()
 	{ }
 }

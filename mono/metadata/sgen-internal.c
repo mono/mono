@@ -1,24 +1,20 @@
 /*
- * sgen-internal.c
+ * sgen-internal.c: Internal lock-free memory allocator.
  *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- * 
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * Copyright (C) 2012 Xamarin Inc
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License 2.0 as published by the Free Software Foundation;
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License 2.0 along with this library; if not, write to the Free
+ * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
 #include "config.h"
@@ -99,16 +95,21 @@ description_for_type (int type)
 	case INTERNAL_MEM_STATISTICS: return "statistics";
 	case INTERNAL_MEM_STAT_PINNED_CLASS: return "pinned-class";
 	case INTERNAL_MEM_STAT_REMSET_CLASS: return "remset-class";
-	case INTERNAL_MEM_REMSET: return "remset";
 	case INTERNAL_MEM_GRAY_QUEUE: return "gray-queue";
-	case INTERNAL_MEM_STORE_REMSET: return "store-remset";
 	case INTERNAL_MEM_MS_TABLES: return "marksweep-tables";
 	case INTERNAL_MEM_MS_BLOCK_INFO: return "marksweep-block-info";
+	case INTERNAL_MEM_MS_BLOCK_INFO_SORT: return "marksweep-block-info-sort";
 	case INTERNAL_MEM_EPHEMERON_LINK: return "ephemeron-link";
 	case INTERNAL_MEM_WORKER_DATA: return "worker-data";
+	case INTERNAL_MEM_WORKER_JOB_DATA: return "worker-job-data";
 	case INTERNAL_MEM_BRIDGE_DATA: return "bridge-data";
+	case INTERNAL_MEM_BRIDGE_HASH_TABLE: return "bridge-hash-table";
+	case INTERNAL_MEM_BRIDGE_HASH_TABLE_ENTRY: return "bridge-hash-table-entry";
+	case INTERNAL_MEM_BRIDGE_ALIVE_HASH_TABLE: return "bridge-alive-hash-table";
+	case INTERNAL_MEM_BRIDGE_ALIVE_HASH_TABLE_ENTRY: return "bridge-alive-hash-table-entry";
 	case INTERNAL_MEM_JOB_QUEUE_ENTRY: return "job-queue-entry";
 	case INTERNAL_MEM_TOGGLEREF_DATA: return "toggleref-data";
+	case INTERNAL_MEM_CARDTABLE_MOD_UNION: return "cardtable-mod-union";
 	default:
 		g_assert_not_reached ();
 	}
@@ -121,45 +122,48 @@ sgen_alloc_internal_dynamic (size_t size, int type, gboolean assert_on_failure)
 	void *p;
 
 	if (size > allocator_sizes [NUM_ALLOCATORS - 1]) {
-		p = sgen_alloc_os_memory (size, TRUE, NULL);
+		p = sgen_alloc_os_memory (size, SGEN_ALLOC_INTERNAL | SGEN_ALLOC_ACTIVATE, NULL);
 		if (!p)
-			sgen_assert_memory_alloc (NULL, description_for_type (type));
-		return p;
+			sgen_assert_memory_alloc (NULL, size, description_for_type (type));
+	} else {
+		index = index_for_size (size);
+
+		p = mono_lock_free_alloc (&allocators [index]);
+		if (!p)
+			sgen_assert_memory_alloc (NULL, size, description_for_type (type));
+		memset (p, 0, size);
 	}
 
-	index = index_for_size (size);
-
-	p = mono_lock_free_alloc (&allocators [index]);
-	if (!p)
-		sgen_assert_memory_alloc (NULL, description_for_type (type));
-	memset (p, 0, size);
+	MONO_GC_INTERNAL_ALLOC ((mword)p, size, type);
 	return p;
 }
 
 void
 sgen_free_internal_dynamic (void *addr, size_t size, int type)
 {
-	int index;
-
 	if (!addr)
 		return;
 
 	if (size > allocator_sizes [NUM_ALLOCATORS - 1])
-		return sgen_free_os_memory (addr, size);
+		sgen_free_os_memory (addr, size, SGEN_ALLOC_INTERNAL);
+	else
+		mono_lock_free_free (addr);
 
-	index = index_for_size (size);
-
-	mono_lock_free_free (addr);
+	MONO_GC_INTERNAL_DEALLOC ((mword)addr, size, type);
 }
 
 void*
 sgen_alloc_internal (int type)
 {
 	int index = fixed_type_allocator_indexes [type];
+	int size = allocator_sizes [index];
 	void *p;
 	g_assert (index >= 0 && index < NUM_ALLOCATORS);
 	p = mono_lock_free_alloc (&allocators [index]);
-	memset (p, 0, allocator_sizes [index]);
+	memset (p, 0, size);
+
+	MONO_GC_INTERNAL_ALLOC ((mword)p, size, type);
+
 	return p;
 }
 
@@ -175,6 +179,11 @@ sgen_free_internal (void *addr, int type)
 	g_assert (index >= 0 && index < NUM_ALLOCATORS);
 
 	mono_lock_free_free (addr);
+
+	if (MONO_GC_INTERNAL_DEALLOC_ENABLED ()) {
+		int size G_GNUC_UNUSED = allocator_sizes [index];
+		MONO_GC_INTERNAL_DEALLOC ((mword)addr, size, type);
+	}
 }
 
 void

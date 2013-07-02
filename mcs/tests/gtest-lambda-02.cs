@@ -20,7 +20,7 @@ class X {
 		Console.WriteLine (res);
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		Foo (x => x + "dingus");
 	}

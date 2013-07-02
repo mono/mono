@@ -30,7 +30,7 @@ class X
 		}
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		foreach (int a in Test (5))
 			Console.WriteLine (a);

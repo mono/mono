@@ -39,7 +39,7 @@ namespace System.Configuration
 		}
 
 		public SettingsAttributeDictionary (SettingsAttributeDictionary attributes)
-			: base (attributes)
+			: base ((IDictionary) attributes)
 		{
 		}
 

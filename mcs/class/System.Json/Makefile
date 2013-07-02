@@ -2,24 +2,24 @@ thisdir = class/System.Json
 SUBDIRS = 
 include ../../build/rules.make
 
-System.Json.Properties.Resources.resources: ../../../external/aspnetwebstack/src/System.Json/Properties/Resources.resx
-	$(RESGEN) "$<" "$@"
-
 LIBRARY = System.Json.dll
-LIB_MCS_FLAGS = /d:ASPNETMVC -keyfile:../winfx.pub -delaysign \
+LIB_MCS_FLAGS = \
 	        /r:System.dll \
 	        /r:System.Xml.dll \
 	        /r:System.Core.dll \
-		/r:System.Runtime.Serialization.dll \
-		/r:System.ServiceModel.Web.dll \
-		/resource:System.Json.Properties.Resources.resources
-
-ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
-LIB_MCS_FLAGS += /r:Microsoft.CSharp.dll
-endif
+		/r:System.ServiceModel.Web.dll
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
-include ../../build/library.make
+EXTRA_DISTFILES =
 
-$(the_lib): System.Json.Properties.Resources.resources
+VALID_PROFILE := $(filter 2 4, $(FRAMEWORK_VERSION_MAJOR))
+
+ifndef VALID_PROFILE
+LIBRARY_NAME = dummy-System.Json.dll
+NO_INSTALL = yes
+NO_SIGN_ASSEMBLY = yes
+NO_TEST = yes
+endif
+
+include ../../build/library.make

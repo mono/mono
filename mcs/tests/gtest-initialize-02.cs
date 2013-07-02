@@ -42,7 +42,7 @@ public class Test
 		public Thing Thing1;
 		public Thing Thing2;
 	}
-	static int Main ()
+	public static int Main ()
 	{
 		Thing thing1 = new Thing() { Number = 1, Name = "Bob" };
 		

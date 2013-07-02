@@ -31,7 +31,9 @@ using System;
 using System.Text;
 using System.Collections;
 using System.Reflection;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 using System.Runtime.Serialization;
 
 using RegularExpression = System.Text.RegularExpressions.Syntax.RegularExpression;
@@ -45,7 +47,7 @@ namespace System.Text.RegularExpressions {
 	[Serializable]
 	public partial class Regex : ISerializable {
 
-#if !TARGET_JVM
+#if !TARGET_JVM && !FULL_AOT_RUNTIME
 		[MonoTODO]
 		public static void CompileToAssembly (RegexCompilationInfo [] regexes, AssemblyName aname)
 		{
@@ -212,6 +214,65 @@ namespace System.Text.RegularExpressions {
 			this.roptions = options;
 			Init ();
 		}
+		
+#if NET_4_5
+		[MonoTODO ("Timeouts are ignored.")]
+		public Regex (string pattern, RegexOptions options, TimeSpan matchTimeout)
+			: this (pattern, options)
+		{
+			MatchTimeout = matchTimeout;
+		}
+		
+		[MonoTODO ("Timeouts are ignored.")]
+		public TimeSpan MatchTimeout {
+			get;
+			private set;
+		}
+		
+		[MonoTODO ("Timeouts are ignored.")]
+		public static bool IsMatch (
+			string input, string pattern, RegexOptions options, TimeSpan matchTimeout)
+		{
+			return IsMatch (input, pattern, options);
+		}
+		
+		[MonoTODO ("Timeouts are ignored.")]
+		public static Match Match (
+			string input, string pattern, RegexOptions options, TimeSpan matchTimeout)
+		{
+			return Match (input, pattern, options);
+		}
+		
+		[MonoTODO ("Timeouts are ignored.")]
+		public static MatchCollection Matches (
+			string input, string pattern, RegexOptions options, TimeSpan matchTimeout)
+		{
+			return Matches (input, pattern, options, matchTimeout);
+		}
+		
+		[MonoTODO ("Timeouts are ignored.")]
+		public static string Replace (
+			string input, string pattern, string replacement, RegexOptions options,
+			TimeSpan matchTimeout)
+		{
+			return Replace (input, pattern, replacement, options);
+		}
+		
+		[MonoTODO ("Timeouts are ignored.")]
+		public static string Replace (
+			string input, string pattern, MatchEvaluator evaluator, RegexOptions options,
+			TimeSpan matchTimeout)
+		{
+			return Replace (input, pattern, evaluator, options);
+		}
+		
+		[MonoTODO ("Timeouts are ignored.")]
+		public static string[] Split (
+			string input, string pattern, RegexOptions options, TimeSpan matchTimeout)
+		{
+			return Split (input, pattern, options);
+		}
+#endif
 
 		static void validate_options (RegexOptions options)
 		{

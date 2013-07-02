@@ -7,7 +7,7 @@ lib_LTLIBRARIES = 				\
 	libMonoPosixHelper.la			\
 	$(SUPPORT)
 
-INCLUDES =					\
+AM_CPPFLAGS =					\
 	$(GLIB_CFLAGS)				\
 	-I$(top_srcdir)
 
@@ -32,6 +32,7 @@ MPH_UNIX_SOURCE =				\
 	fstab.c					\
 	grp.c					\
 	macros.c				\
+	mac-reachability.c			\
 	nl.c					\
 	nl.h					\
 	old-map.c				\
@@ -43,6 +44,7 @@ MPH_UNIX_SOURCE =				\
 	sys-stat.c				\
 	sys-statvfs.c				\
 	sys-time.c				\
+	sys-uio.c				\
 	sys-utsname.c   \
 	sys-wait.c				\
 	sys-xattr.c				\
@@ -114,6 +116,10 @@ libMonoPosixHelper_la_LIBADD =			\
 libMonoPosixHelper_la_LDFLAGS = -no-undefined -avoid-version
 libMonoSupportW_la_LDFLAGS = -no-undefined -avoid-version
 
+if PLATFORM_DARWIN
+libMonoPosixHelper_la_LDFLAGS += -framework CoreFoundation -framework SystemConfiguration
+endif
+
 libMonoSupportW_la_SOURCES =			\
 		supportw.c			\
 		support-heap.c			\
@@ -141,6 +147,7 @@ refresh:
 	--autoconf-header="<sys/statvfs.h>"                   \
 	--autoconf-header="<sys/xattr.h>"                     \
 	--autoconf-header="<sys/mman.h>"                      \
+	--autoconf-header="<sys/uio.h>"                       \
 	--autoconf-header="<unistd.h>"                        \
 	--impl-header="<fcntl.h>"                             \
 	--impl-header="<signal.h>"                            \

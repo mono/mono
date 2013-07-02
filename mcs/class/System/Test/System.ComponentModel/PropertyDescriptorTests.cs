@@ -13,11 +13,12 @@ using System.Collections;
 using System.ComponentModel;
 using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
 using System.ComponentModel.Design;
-using System.Drawing.Design;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
-
+#if !MOBILE
+using System.Drawing.Design;
+#endif
 using NUnit.Framework;
 
 namespace MonoTests.System.ComponentModel
@@ -399,7 +400,13 @@ namespace MonoTests.System.ComponentModel
 				get { return null; }
 			}
 
-			[TypeConverter("System.ComponentModel.CharConverter, " + Consts.AssemblySystem)]
+#if MOBILE
+			[TypeConverter("System.ComponentModel.CharConverter, System, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
+#elif NET_4_0
+			[TypeConverter("System.ComponentModel.CharConverter, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
+#else
+			[TypeConverter("System.ComponentModel.CharConverter, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
+#endif
 			public virtual Version WithConverterNamedAssmQuald {
 				get { return null; }
 			}
@@ -791,21 +798,6 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
-		public void GetEditorTest ()
-		{
-			PropertyDescriptorCollection col;
-			PropertyDescriptor pd;
-			UITypeEditor ed;
-
-			col = TypeDescriptor.GetProperties (typeof (GetEditor_test));
-			pd = col [0];
-			ed = pd.GetEditor (typeof (UITypeEditor)) as UITypeEditor;
-
-			Assert.IsNotNull (ed, "#01");
-			Assert.AreEqual (ed.GetType ().Name, "UIEditor", "#02");
-		}
-
-		[Test]
 		public void AddValueChanged ()
 		{
 			MockPropertyDescriptor pd = new MockPropertyDescriptor (
@@ -1075,7 +1067,7 @@ namespace MonoTests.System.ComponentModel
 					return attr;
 			return null;
 		}
-
+#if !MOBILE
 		class GetEditor_test 
 		{
 			[Editor (typeof (UIEditor), typeof (UITypeEditor))]
@@ -1086,9 +1078,24 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		class UIEditor : UITypeEditor
-		{
-			
+		{		
 		}
+
+		[Test]
+		public void GetEditorTest ()
+		{
+			PropertyDescriptorCollection col;
+			PropertyDescriptor pd;
+			UITypeEditor ed;
+			
+			col = TypeDescriptor.GetProperties (typeof (GetEditor_test));
+			pd = col [0];
+			ed = pd.GetEditor (typeof (UITypeEditor)) as UITypeEditor;
+			
+			Assert.IsNotNull (ed, "#01");
+			Assert.AreEqual (ed.GetType ().Name, "UIEditor", "#02");
+		}
+#endif
 
 		class MockPropertyDescriptor : PropertyDescriptor
 		{

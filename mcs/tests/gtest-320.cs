@@ -14,6 +14,6 @@ partial class B : Foo<B.C>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

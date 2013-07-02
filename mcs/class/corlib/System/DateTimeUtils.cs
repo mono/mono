@@ -184,13 +184,6 @@ namespace System {
 			// Add + 10 for cases like mmmm dddd
 			StringBuilder result = new StringBuilder (format.Length + 10);
 
-			// For some cases, the output should not use culture dependent calendar
-			DateTimeFormatInfo inv = DateTimeFormatInfo.InvariantInfo;
-			if (format == inv.RFC1123Pattern)
-				dfi = inv;
-			else if (format == inv.UniversalSortableDateTimePattern)
-				dfi = inv;
-
 			int i = 0;
 			bool saw_day_specifier = false;
 

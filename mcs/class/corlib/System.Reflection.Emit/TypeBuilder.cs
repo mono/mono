@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !FULL_AOT_RUNTIME
 using System;
 using System.Text;
 using System.Reflection;
@@ -1458,7 +1459,7 @@ namespace System.Reflection.Emit
 					throw new Exception ("Error in customattr");
 				}
 				
-				var ctor_type = customBuilder.Ctor is ConstructorBuilder ? ((ConstructorBuilder)customBuilder.Ctor).parameters[0] : customBuilder.Ctor.GetParameters()[0].ParameterType;
+				var ctor_type = customBuilder.Ctor is ConstructorBuilder ? ((ConstructorBuilder)customBuilder.Ctor).parameters[0] : customBuilder.Ctor.GetParametersInternal()[0].ParameterType;
 				int pos = 6;
 				if (ctor_type.FullName == "System.Int16")
 					pos = 4;
@@ -1928,3 +1929,4 @@ namespace System.Reflection.Emit
 		}
 	}
 }
+#endif

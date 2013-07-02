@@ -268,15 +268,6 @@ namespace System.IO.Packaging.Tests {
         }
 
         [Test]
-        [ExpectedException (typeof (FileFormatException))]
-        public void ReadableSeekableFullStream ()
-        {
-            stream = new FakeStream (true, false, true);
-            stream.Write (new byte [10], 0, 10);
-            package = Package.Open (stream);
-        }
-
-        [Test]
         [ExpectedException (typeof (ArgumentException))]
         public void ReadOnlyAccess ()
         {

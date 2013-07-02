@@ -132,7 +132,7 @@ namespace System {
 				throw new ArgumentNullException ("s");
 
 			if (s.Length == 0) {
-				return new byte[0];
+				return EmptyArray<byte>.Value;
 			}
 
 			return InternalFromBase64String (s, true);
@@ -168,7 +168,7 @@ namespace System {
 				throw new ArgumentOutOfRangeException ("offsetIn + length > array.Length");
 
 			// note: normally ToBase64Transform doesn't support multiple block processing
-			byte[] outArr = ToBase64Transform.InternalTransformFinalBlock (inArray, offsetIn, length);
+			byte[] outArr = Base64Helper.TransformFinalBlock (inArray, offsetIn, length);
 			
 			char[] cOutArr = new ASCIIEncoding ().GetChars (outArr);
 			
@@ -200,7 +200,7 @@ namespace System {
 				throw new ArgumentOutOfRangeException ("offset + length > array.Length");
 			
 			// note: normally ToBase64Transform doesn't support multiple block processing
-			byte[] outArr = ToBase64Transform.InternalTransformFinalBlock (inArray, offset, length);
+			byte[] outArr = Base64Helper.TransformFinalBlock (inArray, offset, length);
 			
 			return (new ASCIIEncoding ().GetString (outArr));
 		}
@@ -230,7 +230,7 @@ namespace System {
 			if (options == Base64FormattingOptions.InsertLineBreaks)
 				return ToBase64StringBuilderWithLine (inArray, offset, length).ToString ();
 			else
-				return Encoding.ASCII.GetString (ToBase64Transform.InternalTransformFinalBlock (inArray, offset, length));
+				return Encoding.ASCII.GetString (Base64Helper.TransformFinalBlock (inArray, offset, length));
 		}
 
 		[ComVisible (false)]
@@ -256,7 +256,7 @@ namespace System {
 				sb.CopyTo (0, outArray, offsetOut, sb.Length);
 				return sb.Length;
 			} else {
-				byte[] outArr = ToBase64Transform.InternalTransformFinalBlock (inArray, offsetIn, length);
+				byte[] outArr = Base64Helper.TransformFinalBlock (inArray, offsetIn, length);
 			
 				char[] cOutArr = Encoding.ASCII.GetChars (outArr);
 			
@@ -278,7 +278,7 @@ namespace System {
 			int remainder;
 			int full = Math.DivRem (length, MaxBytesPerLine, out remainder);
 			for (int i = 0; i < full; i ++) {
-				byte[] data = ToBase64Transform.InternalTransformFinalBlock (inArray, offset, MaxBytesPerLine);
+				byte[] data = Base64Helper.TransformFinalBlock (inArray, offset, MaxBytesPerLine);
 				sb.AppendLine (Encoding.ASCII.GetString (data));
 				offset += MaxBytesPerLine;
 			}
@@ -287,7 +287,7 @@ namespace System {
 				int nll = Environment.NewLine.Length;
 				sb.Remove (sb.Length - nll, nll);
 			} else {
-				byte[] data = ToBase64Transform.InternalTransformFinalBlock (inArray, offset, remainder);
+				byte[] data = Base64Helper.TransformFinalBlock (inArray, offset, remainder);
 				sb.Append (Encoding.ASCII.GetString (data));
 			}
 			return sb;

@@ -27,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Data;
 using System.Data.Common;
 using System.Data.Sql;
@@ -105,4 +104,3 @@ namespace System.Data.SqlClient
 		#endregion // public overrides
 	}
 }
-#endif // NET_2_0

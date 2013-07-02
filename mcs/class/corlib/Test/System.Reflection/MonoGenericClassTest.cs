@@ -7,6 +7,8 @@
 // Copyright 2011 Xamarin Inc (http://www.xamarin.com).
 //
 
+#if !MONOTOUCH
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -204,3 +206,5 @@ namespace MonoTests.System.Reflection.Emit
 		}
 	}
 }
+
+#endif

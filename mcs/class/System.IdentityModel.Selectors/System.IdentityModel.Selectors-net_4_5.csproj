@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{C4CA97AC-04DA-4651-ACD5-B619AEB4A6E1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>./../../class/lib/net_4_5</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\System.IdentityModel.Selectors-net_4_5</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>System.IdentityModel.Selectors</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
@@ -28,37 +27,38 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;NET_3_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;NET_3_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="..\..\build\common\Consts.cs" />
-   <Compile Include="..\..\build\common\Locale.cs" />
-   <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-   <Compile Include="Assembly\AssemblyInfo.cs" />
-   <Compile Include="System.IdentityModel.Selectors\CardSpaceException.cs" />
-   <Compile Include="System.IdentityModel.Selectors\CardSpacePolicyElement.cs" />
-   <Compile Include="System.IdentityModel.Selectors\CardSpaceSelector.cs" />
-   <Compile Include="System.IdentityModel.Selectors\IdentityValidationException.cs" />
-   <Compile Include="System.IdentityModel.Selectors\PolicyValidationException.cs" />
-   <Compile Include="System.IdentityModel.Selectors\ServiceBusyException.cs" />
-   <Compile Include="System.IdentityModel.Selectors\ServiceNotStartedException.cs" />
-   <Compile Include="System.IdentityModel.Selectors\StsCommunicationException.cs" />
-   <Compile Include="System.IdentityModel.Selectors\UnsupportedPolicyOptionsException.cs" />
-   <Compile Include="System.IdentityModel.Selectors\UntrustedRecipientException.cs" />
-   <Compile Include="System.IdentityModel.Selectors\UserCancellationException.cs" />
-
-  </ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\..\build\common\Locale.cs" />
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="System.IdentityModel.Selectors\CardSpaceException.cs" />
+    <Compile Include="System.IdentityModel.Selectors\CardSpacePolicyElement.cs" />
+    <Compile Include="System.IdentityModel.Selectors\CardSpaceSelector.cs" />
+    <Compile Include="System.IdentityModel.Selectors\IdentityValidationException.cs" />
+    <Compile Include="System.IdentityModel.Selectors\PolicyValidationException.cs" />
+    <Compile Include="System.IdentityModel.Selectors\ServiceBusyException.cs" />
+    <Compile Include="System.IdentityModel.Selectors\ServiceNotStartedException.cs" />
+    <Compile Include="System.IdentityModel.Selectors\StsCommunicationException.cs" />
+    <Compile Include="System.IdentityModel.Selectors\UnsupportedPolicyOptionsException.cs" />
+    <Compile Include="System.IdentityModel.Selectors\UntrustedRecipientException.cs" />
+    <Compile Include="System.IdentityModel.Selectors\UserCancellationException.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -67,38 +67,40 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Security.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Security.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.Serialization.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Runtime.Serialization.dll</HintPath>
-    </Reference>
-    <Reference Include="System.IdentityModel.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.IdentityModel.dll</HintPath>
-    </Reference>
-
+    <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
+      <Project>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</Project>
+      <Name>corlib\corlib-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_5-2.csproj">
+      <Project>{34966210-D64D-419C-94A4-9A6093CE5882}</Project>
+      <Name>System\System-net_4_5-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
+      <Project>{6374B2FC-93C6-4FD0-8CF0-8EB12F5AC71D}</Project>
+      <Name>System.XML\System.Xml-net_4_5-1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Security\System.Security-net_4_5.csproj">
+      <Project>{70AD32F9-8D9F-4EFB-A6DB-254203565D0A}</Project>
+      <Name>System.Security\System.Security-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Runtime.Serialization\System.Runtime.Serialization-net_4_5.csproj">
+      <Project>{088AB4AB-1904-4365-A74B-F7557A034945}</Project>
+      <Name>System.Runtime.Serialization\System.Runtime.Serialization-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.IdentityModel\System.IdentityModel-net_4_5.csproj">
+      <Project>{1B9AFE07-4230-4DE0-8A9F-C277179098FF}</Project>
+      <Name>System.IdentityModel\System.IdentityModel-net_4_5</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
-

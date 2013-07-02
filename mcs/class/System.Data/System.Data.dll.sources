@@ -176,6 +176,7 @@ System.Data.Common/SchemaInfo.cs
 System.Data.Common/SchemaTableColumn.cs
 System.Data.Common/SchemaTableOptionalColumn.cs
 System.Data.Common/SupportedJoinOperators.cs
+System.Data.Common/TaskHelper.cs
 System.Data.OleDb/libgda.cs
 System.Data.OleDb/OleDbParameterConverter.cs
 System.Data.OleDb/OleDbCommand.cs

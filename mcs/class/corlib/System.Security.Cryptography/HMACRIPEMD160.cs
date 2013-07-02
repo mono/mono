@@ -2,10 +2,11 @@
 // HMACRIPEMD160.cs: HMAC implementation using RIPEMD160
 //
 // Author:
-//	Sebastien Pouliot  <sebastien@ximian.com>
+//	Sebastien Pouliot  <sebastien@xamarin.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright 2013 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !MOONLIGHT
-
 using System.Runtime.InteropServices;
 
 using Mono.Security.Cryptography;
@@ -45,11 +44,13 @@ namespace System.Security.Cryptography {
 
 		public HMACRIPEMD160 (byte[] key) : base () 
 		{
+#if FULL_AOT_RUNTIME
+			SetHash ("RIPEMD160", new RIPEMD160Managed ());
+#else
 			HashName = "RIPEMD160";
+#endif
 			HashSizeValue = 160;
 			Key = key;
 		}
 	}
 }
-
-#endif

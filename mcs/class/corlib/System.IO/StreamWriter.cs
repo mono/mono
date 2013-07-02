@@ -8,7 +8,7 @@
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
-// Copyright 2011 Xamarin Inc.
+// Copyright 2011, 2013 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -56,12 +56,11 @@ namespace System.IO {
 		private int decode_pos;
 
 		private bool iflush;
-		private bool DisposedAlready;
 		private bool preamble_done;
 
 #if NET_4_5
 		readonly bool leave_open;
-		Task async_task;
+		IDecoupledTask async_task;
 #endif
 
 		public new static readonly StreamWriter Null = new StreamWriter (Stream.Null, Encoding.UTF8Unmarked, 1);
@@ -172,34 +171,33 @@ namespace System.IO {
 
 		protected override void Dispose (bool disposing) 
 		{
-			Exception exc = null;
-			if (!DisposedAlready && disposing && internalStream != null && !leave_open) {
-				try {
-					Flush();
-				} catch (Exception e) {
-					exc = e;
-				}
-				DisposedAlready = true;
-				try {
-					internalStream.Close ();
-				} catch (Exception e) {
-					if (exc == null)
-						exc = e;
-				}
-			}
+			if (byte_buf == null || !disposing)
+				return;
 
-			internalStream = null;
-			byte_buf = null;
-			internalEncoding = null;
-			decode_buf = null;
-			if (exc != null)
-				throw exc;
+			try {
+				Flush ();
+			} finally {
+				byte_buf = null;
+				internalEncoding = null;
+				decode_buf = null;
+
+				if (!leave_open) {
+					internalStream.Close ();
+				}
+
+				internalStream = null;
+			}
 		}
 
 		public override void Flush ()
 		{
 			CheckState ();
+			FlushCore ();
+		}
 
+		// Keep in sync with FlushCoreAsync
+		void FlushCore ()
+		{
 			Decode ();
 			if (byte_pos > 0) {
 				FlushBytes ();
@@ -224,7 +222,7 @@ namespace System.IO {
 			internalStream.Write (byte_buf, 0, byte_pos);
 			byte_pos = 0;
 		}
-		
+
 		void Decode () 
 		{
 			if (byte_pos > 0)
@@ -235,26 +233,7 @@ namespace System.IO {
 				decode_pos = 0;
 			}
 		}
-		
-		public override void Write (char[] buffer, int index, int count) 
-		{
-			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
-			if (index < 0)
-				throw new ArgumentOutOfRangeException ("index", "< 0");
-			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count", "< 0");
-			// re-ordered to avoid possible integer overflow
-			if (index > buffer.Length - count)
-				throw new ArgumentException ("index + count > buffer.Length");
 
-			CheckState ();
-
-			LowLevelWrite (buffer, index, count);
-			if (iflush)
-				Flush();
-		}
-		
 		void LowLevelWrite (char[] buffer, int index, int count)
 		{
 			while (count > 0) {
@@ -292,8 +271,102 @@ namespace System.IO {
 				index += todo;
 				decode_pos += todo;
 			}
+		}		
+
+#if NET_4_5
+		async Task FlushCoreAsync ()
+		{
+			await DecodeAsync ().ConfigureAwait (false);
+			if (byte_pos > 0) {
+				await FlushBytesAsync ().ConfigureAwait (false);
+				await internalStream.FlushAsync ().ConfigureAwait (false);
+			}
 		}
 
+		async Task FlushBytesAsync ()
+		{
+			// write the encoding preamble only at the start of the stream
+			if (!preamble_done && byte_pos > 0) {
+				byte[] preamble = internalEncoding.GetPreamble ();
+				if (preamble.Length > 0)
+					await internalStream.WriteAsync (preamble, 0, preamble.Length).ConfigureAwait (false);
+				preamble_done = true;
+			}
+
+			await internalStream.WriteAsync (byte_buf, 0, byte_pos).ConfigureAwait (false);
+			byte_pos = 0;
+		}
+
+		async Task DecodeAsync () 
+		{
+			if (byte_pos > 0)
+				await FlushBytesAsync ().ConfigureAwait (false);
+			if (decode_pos > 0) {
+				int len = internalEncoding.GetBytes (decode_buf, 0, decode_pos, byte_buf, byte_pos);
+				byte_pos += len;
+				decode_pos = 0;
+			}
+		}		
+
+		async Task LowLevelWriteAsync (char[] buffer, int index, int count)
+		{
+			while (count > 0) {
+				int todo = decode_buf.Length - decode_pos;
+				if (todo == 0) {
+					await DecodeAsync ().ConfigureAwait (false);
+					todo = decode_buf.Length;
+				}
+				if (todo > count)
+					todo = count;
+				Buffer.BlockCopy (buffer, index * 2, decode_buf, decode_pos * 2, todo * 2);
+				count -= todo;
+				index += todo;
+				decode_pos += todo;
+			}
+		}
+		
+		async Task LowLevelWriteAsync (string s)
+		{
+			int count = s.Length;
+			int index = 0;
+			while (count > 0) {
+				int todo = decode_buf.Length - decode_pos;
+				if (todo == 0) {
+					await DecodeAsync ().ConfigureAwait (false);
+					todo = decode_buf.Length;
+				}
+				if (todo > count)
+					todo = count;
+				
+				for (int i = 0; i < todo; i ++)
+					decode_buf [i + decode_pos] = s [i + index];
+				
+				count -= todo;
+				index += todo;
+				decode_pos += todo;
+			}
+		}	
+#endif
+
+		public override void Write (char[] buffer, int index, int count) 
+		{
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("index", "< 0");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count", "< 0");
+			// re-ordered to avoid possible integer overflow
+			if (index > buffer.Length - count)
+				throw new ArgumentException ("index + count > buffer.Length");
+
+			CheckState ();
+
+			LowLevelWrite (buffer, index, count);
+			if (iflush)
+				FlushCore ();
+		}
+		
 		public override void Write (char value)
 		{
 			CheckState ();
@@ -304,7 +377,7 @@ namespace System.IO {
 				Decode ();
 			decode_buf [decode_pos++] = value;
 			if (iflush)
-				Flush ();
+				FlushCore ();
 		}
 
 		public override void Write (char[] buffer)
@@ -314,18 +387,20 @@ namespace System.IO {
 			if (buffer != null)
 				LowLevelWrite (buffer, 0, buffer.Length);
 			if (iflush)
-				Flush ();
+				FlushCore ();
 		}
 
 		public override void Write (string value) 
 		{
 			CheckState ();
 
-			if (value != null)
-				LowLevelWrite (value);
+			if (value == null)
+				return;
+			
+			LowLevelWrite (value);
 			
 			if (iflush)
-				Flush ();
+				FlushCore ();
 		}
 
 		public override void Close()
@@ -333,18 +408,13 @@ namespace System.IO {
 			Dispose (true);
 		}
 
-		~StreamWriter ()
-		{
-			Dispose(false);
-		}
-
 		void CheckState ()
 		{
-			if (DisposedAlready)
+			if (byte_buf == null)
 				throw new ObjectDisposedException ("StreamWriter");
 
 #if NET_4_5
-			if (async_task != null && async_task.IsCompleted)
+			if (async_task != null && !async_task.IsCompleted)
 				throw new InvalidOperationException ();
 #endif
 		}
@@ -353,49 +423,141 @@ namespace System.IO {
 		public override Task FlushAsync ()
 		{
 			CheckState ();
-			return async_task = base.FlushAsync ();
+			DecoupledTask res;
+			async_task = res = new DecoupledTask (FlushCoreAsync ());
+			return res.Task;
 		}
 
 		public override Task WriteAsync (char value)
 		{
 			CheckState ();
-			return async_task = base.WriteAsync (value);
+
+			DecoupledTask res;
+			async_task = res = new DecoupledTask (WriteAsyncCore (value));
+			return res.Task;
+		}
+
+		async Task WriteAsyncCore (char value)
+		{
+			// the size of decode_buf is always > 0 and
+			// we check for overflow right away
+			if (decode_pos >= decode_buf.Length)
+				await DecodeAsync ().ConfigureAwait (false);
+			decode_buf [decode_pos++] = value;
+
+			if (iflush)
+				await FlushCoreAsync ().ConfigureAwait (false);
 		}
 
 		public override Task WriteAsync (char[] buffer, int index, int count)
 		{
 			CheckState ();
-			return async_task = base.WriteAsync (buffer, index, count);
+			if (buffer == null)
+				return TaskConstants.Finished;
+
+			DecoupledTask res;
+			async_task = res = new DecoupledTask (WriteAsyncCore (buffer, index, count));
+			return res.Task;
+		}
+
+		async Task WriteAsyncCore (char[] buffer, int index, int count)
+		{
+			// Debug.Assert (buffer == null);
+
+			await LowLevelWriteAsync (buffer, index, count).ConfigureAwait (false);
+
+			if (iflush)
+				await FlushCoreAsync ().ConfigureAwait (false);
 		}
 
 		public override Task WriteAsync (string value)
 		{
 			CheckState ();
-			return async_task = base.WriteAsync (value);
+
+			if (value == null)
+				return TaskConstants.Finished;
+
+			DecoupledTask res;			
+			async_task = res = new DecoupledTask (WriteAsyncCore (value, false));
+			return res.Task;
 		}
+
+		async Task WriteAsyncCore (string value, bool appendNewLine)
+		{
+			// Debug.Assert (value == null);
+
+			await LowLevelWriteAsync (value).ConfigureAwait (false);
+			if (appendNewLine)
+				await LowLevelWriteAsync (CoreNewLine, 0, CoreNewLine.Length).ConfigureAwait (false);
+			
+			if (iflush)
+				await FlushCoreAsync ().ConfigureAwait (false);
+		}		
 
 		public override Task WriteLineAsync ()
 		{
 			CheckState ();
-			return async_task = base.WriteLineAsync ();
+
+			DecoupledTask res;
+			async_task = res = new DecoupledTask (WriteAsyncCore (CoreNewLine, 0, CoreNewLine.Length));
+			return res.Task;
 		}
 
 		public override Task WriteLineAsync (char value)
 		{
 			CheckState ();
-			return async_task = base.WriteLineAsync (value);
+			DecoupledTask res;
+			async_task = res = new DecoupledTask (WriteLineAsyncCore (value));
+			return res.Task;
 		}
+
+		async Task WriteLineAsyncCore (char value)
+		{
+			await WriteAsyncCore (value).ConfigureAwait (false);
+			await LowLevelWriteAsync (CoreNewLine, 0, CoreNewLine.Length).ConfigureAwait (false);
+			
+			if (iflush)
+				await FlushCoreAsync ().ConfigureAwait (false);
+		}		
 
 		public override Task WriteLineAsync (char[] buffer, int index, int count)
 		{
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("index", "< 0");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count", "< 0");
+			// re-ordered to avoid possible integer overflow
+			if (index > buffer.Length - count)
+				throw new ArgumentException ("index + count > buffer.Length");
+
 			CheckState ();
-			return async_task = base.WriteLineAsync (buffer, index, count);
+			DecoupledTask res;
+			async_task = res = new DecoupledTask (WriteLineAsyncCore (buffer, index, count));
+			return res.Task;
 		}
+
+		async Task WriteLineAsyncCore (char[] buffer, int index, int count)
+		{
+			// Debug.Assert (buffer == null);
+
+			await LowLevelWriteAsync (buffer, index, count).ConfigureAwait (false);
+			await LowLevelWriteAsync (CoreNewLine, 0, CoreNewLine.Length).ConfigureAwait (false);
+			
+			if (iflush)
+				await FlushCoreAsync ().ConfigureAwait (false);
+		}		
 
 		public override Task WriteLineAsync (string value)
 		{
+			if (value == null)
+				return WriteLineAsync ();
+
 			CheckState ();
-			return async_task = base.WriteLineAsync (value);
+			DecoupledTask res;			
+			async_task = res = new DecoupledTask (WriteAsyncCore (value, true));
+			return res.Task;
 		}
 #endif
 	}

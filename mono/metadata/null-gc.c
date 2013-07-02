@@ -11,6 +11,7 @@
 #include <mono/metadata/mono-gc.h>
 #include <mono/metadata/gc-internal.h>
 #include <mono/metadata/runtime.h>
+#include <mono/utils/mono-threads.h>
 
 #ifdef HAVE_NULL_GC
 
@@ -22,6 +23,8 @@ mono_gc_base_init (void)
 	memset (&cb, 0, sizeof (cb));
 	cb.mono_method_is_critical = mono_runtime_is_critical_method;
 	cb.mono_gc_pthread_create = (gpointer)mono_gc_pthread_create;
+
+	mono_threads_init (&cb, sizeof (MonoThreadInfo));
 }
 
 void
@@ -63,16 +66,6 @@ int64_t
 mono_gc_get_heap_size (void)
 {
 	return 2*1024*1024;
-}
-
-void
-mono_gc_disable (void)
-{
-}
-
-void
-mono_gc_enable (void)
-{
 }
 
 gboolean
@@ -122,7 +115,7 @@ mono_gc_weak_link_add (void **link_addr, MonoObject *obj, gboolean track)
 }
 
 void
-mono_gc_weak_link_remove (void **link_addr)
+mono_gc_weak_link_remove (void **link_addr, gboolean track)
 {
 	*link_addr = NULL;
 }
@@ -231,7 +224,7 @@ mono_gc_get_managed_allocator (MonoVTable *vtable, gboolean for_box)
 }
 
 MonoMethod*
-mono_gc_get_managed_array_allocator (MonoVTable *vtable, int rank)
+mono_gc_get_managed_array_allocator (MonoClass *klass)
 {
 	return NULL;
 }
@@ -333,6 +326,13 @@ mono_gc_get_card_table (int *shift_bits, gpointer *card_mask)
 {
 	g_assert_not_reached ();
 	return NULL;
+}
+
+gboolean
+mono_gc_card_table_nursery_check (void)
+{
+	g_assert_not_reached ();
+	return TRUE;
 }
 
 void*
@@ -454,6 +454,12 @@ mono_gc_get_vtable_bits (MonoClass *class)
 void
 mono_gc_register_altstack (gpointer stack, gint32 stack_size, gpointer altstack, gint32 altstack_size)
 {
+}
+
+gboolean
+mono_gc_set_allow_synchronous_major (gboolean flag)
+{
+	return TRUE;
 }
 
 #endif

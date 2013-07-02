@@ -74,7 +74,7 @@ mono_gc_base_init (void)
 	 * we used to do this only when running on valgrind,
 	 * but it happens also in other setups.
 	 */
-#if defined(HAVE_PTHREAD_GETATTR_NP) && defined(HAVE_PTHREAD_ATTR_GETSTACK)
+#if defined(HAVE_PTHREAD_GETATTR_NP) && defined(HAVE_PTHREAD_ATTR_GETSTACK) && !defined(__native_client__)
 	{
 		size_t size;
 		void *sstart;
@@ -206,18 +206,10 @@ mono_gc_base_init (void)
 void
 mono_gc_collect (int generation)
 {
-	MONO_PROBE_GC_BEGIN (generation);
-
+#ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->gc_induced++;
-	GC_gcollect ();
-	
-	MONO_PROBE_GC_END (generation);
-#if defined(ENABLE_DTRACE) && defined(__sun__)
-	/* This works around a dtrace -G problem on Solaris.
-	   Limit its actual use to when the probe is enabled. */
-	if (MONO_PROBE_GC_END_ENABLED ())
-		sleep(0);
 #endif
+	GC_gcollect ();
 }
 
 /**
@@ -307,26 +299,6 @@ mono_gc_get_heap_size (void)
 	return GC_get_heap_size ();
 }
 
-void
-mono_gc_disable (void)
-{
-#ifdef HAVE_GC_ENABLE
-	GC_disable ();
-#else
-	g_assert_not_reached ();
-#endif
-}
-
-void
-mono_gc_enable (void)
-{
-#ifdef HAVE_GC_ENABLE
-	GC_enable ();
-#else
-	g_assert_not_reached ();
-#endif
-}
-
 gboolean
 mono_gc_is_gc_thread (void)
 {
@@ -404,17 +376,45 @@ on_gc_notification (GCEventType event)
 {
 	MonoGCEvent e = (MonoGCEvent)event;
 
-	if (e == MONO_GC_EVENT_PRE_STOP_WORLD) 
+	switch (e) {
+	case MONO_GC_EVENT_PRE_STOP_WORLD:
+		MONO_GC_WORLD_STOP_BEGIN ();
 		mono_thread_info_suspend_lock ();
-	else if (e == MONO_GC_EVENT_POST_START_WORLD)
+		break;
+
+	case MONO_GC_EVENT_POST_STOP_WORLD:
+		MONO_GC_WORLD_STOP_END ();
+		break;
+
+	case MONO_GC_EVENT_PRE_START_WORLD:
+		MONO_GC_WORLD_RESTART_BEGIN (1);
+		break;
+
+	case MONO_GC_EVENT_POST_START_WORLD:
+		MONO_GC_WORLD_RESTART_END (1);
 		mono_thread_info_suspend_unlock ();
-	
-	if (e == MONO_GC_EVENT_START) {
+		break;
+
+	case MONO_GC_EVENT_START:
+		MONO_GC_BEGIN (1);
+#ifndef DISABLE_PERFCOUNTERS
 		if (mono_perfcounters)
 			mono_perfcounters->gc_collections0++;
+#endif
 		gc_stats.major_gc_count ++;
 		gc_start_time = mono_100ns_ticks ();
-	} else if (e == MONO_GC_EVENT_END) {
+		break;
+
+	case MONO_GC_EVENT_END:
+		MONO_GC_END (1);
+#if defined(ENABLE_DTRACE) && defined(__sun__)
+		/* This works around a dtrace -G problem on Solaris.
+		   Limit its actual use to when the probe is enabled. */
+		if (MONO_GC_END_ENABLED ())
+			sleep(0);
+#endif
+
+#ifndef DISABLE_PERFCOUNTERS
 		if (mono_perfcounters) {
 			guint64 heap_size = GC_get_heap_size ();
 			guint64 used_size = heap_size - GC_get_free_bytes ();
@@ -423,9 +423,12 @@ on_gc_notification (GCEventType event)
 			mono_perfcounters->gc_reserved_bytes = heap_size;
 			mono_perfcounters->gc_gen0size = heap_size;
 		}
+#endif
 		gc_stats.major_gc_time_usecs += (mono_100ns_ticks () - gc_start_time) / 10;
 		mono_trace_message (MONO_TRACE_GC, "gc took %d usecs", (mono_100ns_ticks () - gc_start_time) / 10);
+		break;
 	}
+
 	mono_profiler_gc_event (e, 0);
 }
  
@@ -433,11 +436,13 @@ static void
 on_gc_heap_resize (size_t new_size)
 {
 	guint64 heap_size = GC_get_heap_size ();
+#ifndef DISABLE_PERFCOUNTERS
 	if (mono_perfcounters) {
 		mono_perfcounters->gc_committed_bytes = heap_size;
 		mono_perfcounters->gc_reserved_bytes = heap_size;
 		mono_perfcounters->gc_gen0size = heap_size;
 	}
+#endif
 	mono_profiler_gc_heap_resize (new_size);
 }
 
@@ -481,13 +486,19 @@ mono_gc_weak_link_add (void **link_addr, MonoObject *obj, gboolean track)
 {
 	/* libgc requires that we use HIDE_POINTER... */
 	*link_addr = (void*)HIDE_POINTER (obj);
-	GC_GENERAL_REGISTER_DISAPPEARING_LINK (link_addr, obj);
+	if (track)
+		GC_REGISTER_LONG_LINK (link_addr, obj);
+	else
+		GC_GENERAL_REGISTER_DISAPPEARING_LINK (link_addr, obj);
 }
 
 void
-mono_gc_weak_link_remove (void **link_addr)
+mono_gc_weak_link_remove (void **link_addr, gboolean track)
 {
-	GC_unregister_disappearing_link (link_addr);
+	if (track)
+		GC_unregister_long_link (link_addr);
+	else
+		GC_unregister_disappearing_link (link_addr);
 	*link_addr = NULL;
 }
 
@@ -587,112 +598,6 @@ gboolean
 mono_gc_pending_finalizers (void)
 {
 	return GC_should_invoke_finalizers ();
-}
-
-/*
- * LOCKING: Assumes the domain_finalizers lock is held.
- */
-static void
-add_weak_track_handle_internal (MonoDomain *domain, MonoObject *obj, guint32 gchandle)
-{
-	GSList *refs;
-
-	if (!domain->track_resurrection_objects_hash)
-		domain->track_resurrection_objects_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
-
-	refs = g_hash_table_lookup (domain->track_resurrection_objects_hash, obj);
-	refs = g_slist_prepend (refs, GUINT_TO_POINTER (gchandle));
-	g_hash_table_insert (domain->track_resurrection_objects_hash, obj, refs);
-}
-
-void
-mono_gc_add_weak_track_handle (MonoObject *obj, guint32 handle)
-{
-	MonoDomain *domain;
-
-	if (!obj)
-		return;
-
-	domain = mono_object_get_domain (obj);
-
-	mono_domain_finalizers_lock (domain);
-
-	add_weak_track_handle_internal (domain, obj, handle);
-
-	g_hash_table_insert (domain->track_resurrection_handles_hash, GUINT_TO_POINTER (handle), obj);
-
-	mono_domain_finalizers_unlock (domain);
-}
-
-/*
- * LOCKING: Assumes the domain_finalizers lock is held.
- */
-static void
-remove_weak_track_handle_internal (MonoDomain *domain, MonoObject *obj, guint32 gchandle)
-{
-	GSList *refs;
-
-	if (!domain->track_resurrection_objects_hash)
-		return;
-
-	refs = g_hash_table_lookup (domain->track_resurrection_objects_hash, obj);
-	refs = g_slist_remove (refs, GUINT_TO_POINTER (gchandle));
-	g_hash_table_insert (domain->track_resurrection_objects_hash, obj, refs);
-}
-
-void
-mono_gc_change_weak_track_handle (MonoObject *old_obj, MonoObject *obj, guint32 gchandle)
-{
-	MonoDomain *domain = mono_domain_get ();
-
-	mono_domain_finalizers_lock (domain);
-
-	if (old_obj)
-		remove_weak_track_handle_internal (domain, old_obj, gchandle);
-	if (obj)
-		add_weak_track_handle_internal (domain, obj, gchandle);
-
-	mono_domain_finalizers_unlock (domain);
-}
-
-void
-mono_gc_remove_weak_track_handle (guint32 gchandle)
-{
-	MonoDomain *domain = mono_domain_get ();
-	MonoObject *obj;
-
-	/* Clean our entries in the two hashes in MonoDomain */
-
-	mono_domain_finalizers_lock (domain);
-
-	/* Get the original object this handle pointed to */
-	obj = g_hash_table_lookup (domain->track_resurrection_handles_hash, GUINT_TO_POINTER (gchandle));
-	if (obj) {
-		g_hash_table_remove (domain->track_resurrection_handles_hash, GUINT_TO_POINTER (gchandle));
-
-		remove_weak_track_handle_internal (domain, obj, gchandle);
-	}
-
-	mono_domain_finalizers_unlock (domain);
-}
-
-GSList*
-mono_gc_remove_weak_track_object (MonoDomain *domain, MonoObject *obj)
-{
-	GSList *refs = NULL;
-
-	if (domain->track_resurrection_objects_hash) {
-		refs = g_hash_table_lookup (domain->track_resurrection_objects_hash, obj);
-
-		if (refs)
-			/*
-			 * Since we don't run finalizers again for resurrected objects,
-			 * no need to keep these around.
-			 */
-			g_hash_table_remove (domain->track_resurrection_objects_hash, obj);
-	}
-
-	return refs;
 }
 
 void
@@ -1018,7 +923,7 @@ mono_gc_get_managed_allocator (MonoVTable *vtable, gboolean for_box)
 		return NULL;
 	if (!SMALL_ENOUGH (klass->instance_size))
 		return NULL;
-	if (mono_class_has_finalizer (klass) || klass->marshalbyref || (mono_profiler_get_events () & MONO_PROFILE_ALLOCATIONS))
+	if (mono_class_has_finalizer (klass) || mono_class_is_marshalbyref (klass) || (mono_profiler_get_events () & MONO_PROFILE_ALLOCATIONS))
 		return NULL;
 	if (klass->rank)
 		return NULL;
@@ -1044,7 +949,7 @@ mono_gc_get_managed_allocator (MonoVTable *vtable, gboolean for_box)
 }
 
 MonoMethod*
-mono_gc_get_managed_array_allocator (MonoVTable *vtable, int rank)
+mono_gc_get_managed_array_allocator (MonoClass *klass)
 {
 	return NULL;
 }
@@ -1097,7 +1002,7 @@ mono_gc_get_managed_allocator (MonoVTable *vtable, gboolean for_box)
 }
 
 MonoMethod*
-mono_gc_get_managed_array_allocator (MonoVTable *vtable, int rank)
+mono_gc_get_managed_array_allocator (MonoClass *klass)
 {
 	return NULL;
 }
@@ -1176,6 +1081,13 @@ mono_gc_get_card_table (int *shift_bits, gpointer *card_mask)
 	return NULL;
 }
 
+gboolean
+mono_gc_card_table_nursery_check (void)
+{
+	g_assert_not_reached ();
+	return TRUE;
+}
+
 void*
 mono_gc_get_nursery (int *shift_bits, size_t *size)
 {
@@ -1231,6 +1143,19 @@ mono_gc_set_stack_end (void *stack_end)
 
 void mono_gc_set_skip_thread (gboolean value)
 {
+}
+
+void
+mono_gc_register_for_finalization (MonoObject *obj, void *user_data)
+{
+	guint offset = 0;
+
+#ifndef GC_DEBUG
+	/* This assertion is not valid when GC_DEBUG is defined */
+	g_assert (GC_base (obj) == (char*)obj - offset);
+#endif
+
+	GC_REGISTER_FINALIZER_NO_ORDER ((char*)obj - offset, user_data, GUINT_TO_POINTER (offset), NULL, NULL);
 }
 
 /*
@@ -1313,6 +1238,12 @@ mono_gc_make_root_descr_user (MonoGCRootMarkFunc marker)
 {
 	g_assert_not_reached ();
 	return NULL;
+}
+
+gboolean
+mono_gc_set_allow_synchronous_major (gboolean flag)
+{
+	return flag;
 }
 
 #endif /* no Boehm GC */

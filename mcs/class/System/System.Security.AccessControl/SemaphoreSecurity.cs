@@ -133,7 +133,7 @@ namespace System.Security.AccessControl
 			SetAuditRule((AuditRule)rule);
 		}
 		
-		internal void PersistModifications (SafeHandle handle)
+		internal new void PersistModifications (SafeHandle handle)
 		{
 			WriteLock();
 			try {

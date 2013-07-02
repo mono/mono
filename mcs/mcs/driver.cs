@@ -80,7 +80,7 @@ namespace Mono.CSharp
 
 			var session = new ParserSession () {
 				UseJayGlobalArrays = true,
-				LocatedTokens = new Tokenizer.LocatedToken[15000]
+				LocatedTokens = new LocatedToken[15000]
 			};
 
 			for (int i = 0; i < sources.Count; ++i) {

@@ -1,5 +1,5 @@
 thisdir = class/System.ComponentModel.DataAnnotations
-SUBDIRS = Test
+SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.ComponentModel.DataAnnotations.dll
@@ -18,7 +18,7 @@ endif
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 # This is a .NET 3.5+ assembly
-VALID_PROFILE := $(filter net_2_0 net_4_0 net_4_5, $(PROFILE))
+VALID_PROFILE := $(filter net_2_0 net_4_0 net_4_5 monotouch monodroid, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.ComponentModel.DataAnnotations.dll
 NO_INSTALL = yes

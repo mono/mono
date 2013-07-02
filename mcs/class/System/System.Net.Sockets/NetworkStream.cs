@@ -32,7 +32,7 @@
 
 using System.IO;
 using System.Runtime.InteropServices;
-#if !NET_2_1
+#if !NET_2_1 || MOBILE
 using System.Timers;
 using System.Threading;
 #endif
@@ -142,7 +142,7 @@ namespace System.Net.Sockets
 			}
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MOBILE
 #if TARGET_JVM
 		[MonoNotSupported ("Not supported since Socket.ReceiveTimeout is not supported")]
 #endif
@@ -178,7 +178,7 @@ namespace System.Net.Sockets
 			}
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MOBILE
 #if TARGET_JVM
 		[MonoNotSupported ("Not supported since Socket.SendTimeout is not supported")]
 #endif
@@ -267,7 +267,7 @@ namespace System.Net.Sockets
 		}
 		
 
-#if !NET_2_1
+#if !NET_2_1 || MOBILE
 		public void Close (int timeout)
 		{
 			if (timeout < -1) {

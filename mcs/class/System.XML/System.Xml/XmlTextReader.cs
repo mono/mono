@@ -117,11 +117,7 @@ namespace Mono.Xml2
 		internal XmlTextReader (bool dummy, XmlResolver resolver, string url, XmlNodeType fragType, XmlParserContext context)
 		{
 			if (resolver == null) {
-#if MOONLIGHT
-				resolver = new XmlXapResolver ();
-#else
 				resolver = new XmlUrlResolver ();
-#endif
 			}
 			this.XmlResolver = resolver;
 			string uriString;
@@ -170,7 +166,7 @@ namespace Mono.Xml2
 
 		Uri ResolveUri (string url)
 		{
-			return resolver.ResolveUri (null, url);
+			return resolver == null ? null : resolver.ResolveUri (null, url);
 		}
 
 		Stream GetStreamFromUrl (string url, out string absoluteUriString)
@@ -183,7 +179,7 @@ namespace Mono.Xml2
 #endif
 			Uri uri = ResolveUri (url);
 			absoluteUriString = uri != null ? uri.ToString () : String.Empty;
-			return resolver.GetEntity (uri, null, typeof (Stream)) as Stream;
+			return resolver == null ? null : resolver.GetEntity (uri, null, typeof (Stream)) as Stream;
 		}
 
 		#endregion
@@ -915,11 +911,7 @@ namespace Mono.Xml2
 		// These values are never re-initialized.
 		private bool namespaces = true;
 		private WhitespaceHandling whitespaceHandling = WhitespaceHandling.All;
-#if MOONLIGHT
-		private XmlResolver resolver = new XmlXapResolver ();
-#else
 		private XmlResolver resolver = new XmlUrlResolver ();
-#endif
 		private bool normalization = false;
 
 		private bool checkCharacters;
@@ -1191,7 +1183,10 @@ namespace Mono.Xml2
 				Uri uri = reader_uri;
 				reader_uri = null;
 				string uriString;
-				reader = new XmlStreamReader (GetStreamFromUrl (uri.ToString (), out uriString));
+				Stream stream = GetStreamFromUrl (uri.ToString (), out uriString);
+				if (stream == null)
+					return false;
+				reader = new XmlStreamReader (stream);
 			}
 			if (peekCharsLength < 0) {	// initialized buffer
 				peekCharsLength = reader.Read (peekChars, 0, peekChars.Length);

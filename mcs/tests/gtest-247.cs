@@ -65,6 +65,6 @@ public class HashSet<T> : CollectionValueBase<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

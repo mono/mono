@@ -25,8 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
 using System.Runtime.InteropServices;
 using System.Collections;
@@ -151,7 +149,7 @@ namespace Microsoft.Build.BuildEngine {
 
 		bool TryParseConsoleColor (string color_str, ref ConsoleColor color)
 		{
-			switch (color_str.ToLower ()) {
+			switch (color_str.ToLowerInvariant ()) {
 			case "black": color = ConsoleColor.Black; break;
 
 			case "blue": color = ConsoleColor.DarkBlue; break;
@@ -904,5 +902,3 @@ namespace Microsoft.Build.BuildEngine {
 		public int NumberOfCalls;
 	}
 }
-
-#endif

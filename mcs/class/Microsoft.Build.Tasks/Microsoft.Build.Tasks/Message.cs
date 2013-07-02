@@ -27,6 +27,7 @@
 
 #if NET_2_0
 
+using System;
 using Microsoft.Build.Framework; 
 using Microsoft.Build.Tasks;
 
@@ -49,11 +50,11 @@ namespace Microsoft.Build.Tasks {
 			
 			if (importance == null)
 				messageImportance = MessageImportance.Normal;
-			else if (importance.ToLower () == "low")
+			else if (string.Equals ("low", importance, StringComparison.OrdinalIgnoreCase))
 				messageImportance = MessageImportance.Low;
-			else if (importance.ToLower () == "normal")
+			else if (string.Equals ("normal", importance, StringComparison.OrdinalIgnoreCase))
 				messageImportance = MessageImportance.Normal;
-			else if (importance.ToLower () == "high")
+			else if (string.Equals ("high", importance, StringComparison.OrdinalIgnoreCase))
 				messageImportance = MessageImportance.High;
 			else {
 				return false;

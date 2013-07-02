@@ -28,8 +28,6 @@
 
 using System.Collections;
 
-#if !MOONLIGHT
-
 namespace System.IO.IsolatedStorage {
 
 	internal class IsolatedStorageFileEnumerator : IEnumerator {
@@ -69,4 +67,3 @@ namespace System.IO.IsolatedStorage {
 		}
 	}
 }
-#endif

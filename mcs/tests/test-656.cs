@@ -4,7 +4,7 @@
 
 class Goo
 {
-	static void Main ()
+	public static void Main ()
 	{
 		string s = new Foo () ["foo"];
 	}

@@ -5,7 +5,7 @@ using System.Collections;
 
 public class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		var v = new { Foo = "Bar", Baz = 42 };
 		

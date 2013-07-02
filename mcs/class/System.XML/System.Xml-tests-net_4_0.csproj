@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{511A45CE-918A-45B7-8D92-B64BDD8CE89E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618,612,642,618,219,169</NoWarn>
-    <OutputPath>.\</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\System.Xml-tests-net_4_0</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>False</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>System.Xml_test_net_4_0</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699,618,612,642,618,219,169</NoWarn>
@@ -28,138 +27,139 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,618,612,642,618,219,169</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="Test\System.Xml\NameTableTests.cs" />
-   <Compile Include="Test\System.Xml\XmlAssert.cs" />
-   <Compile Include="Test\System.Xml\XmlAttributeCollectionTests.cs" />
-   <Compile Include="Test\System.Xml\XmlAttributeTests.cs" />
-   <Compile Include="Test\System.Xml\XmlCDataSectionTests.cs" />
-   <Compile Include="Test\System.Xml\XmlCharacterDataTests.cs" />
-   <Compile Include="Test\System.Xml\XmlCommentTests.cs" />
-   <Compile Include="Test\System.Xml\XmlConvertTests.cs" />
-   <Compile Include="Test\System.Xml\XmlDeclarationTests.cs" />
-   <Compile Include="Test\System.Xml\XmlDefaultReader.cs" />
-   <Compile Include="Test\System.Xml\XmlDocumentEventTests.cs" />
-   <Compile Include="Test\System.Xml\XmlDocumentFragmentTests.cs" />
-   <Compile Include="Test\System.Xml\XmlDocumentTests.cs" />
-   <Compile Include="Test\System.Xml\XmlDocumentTypeTests.cs" />
-   <Compile Include="Test\System.Xml\XmlElementTests.cs" />
-   <Compile Include="Test\System.Xml\XmlEntityTests.cs" />
-   <Compile Include="Test\System.Xml\XmlEntityReferenceTests.cs" />
-   <Compile Include="Test\System.Xml\XmlNamespaceManagerTests.cs" />
-   <Compile Include="Test\System.Xml\XmlNodeListTests.cs" />
-   <Compile Include="Test\System.Xml\XmlNodeReaderTests.cs" />
-   <Compile Include="Test\System.Xml\XmlNodeTests.cs" />
-   <Compile Include="Test\System.Xml\XmlProcessingInstructionTests.cs" />
-   <Compile Include="Test\System.Xml\XmlSecureResolverTests.cs" />
-   <Compile Include="Test\System.Xml\XmlSignificantWhitespaceTests.cs" />
-   <Compile Include="Test\System.Xml\XmlReaderCommonTests.cs" />
-   <Compile Include="Test\System.Xml\XmlReaderSettingsTests.cs" />
-   <Compile Include="Test\System.Xml\XmlResolverTest.cs" />
-   <Compile Include="Test\System.Xml\XmlParserContextTests.cs" />
-   <Compile Include="Test\System.Xml\XmlTextReaderTests.cs" />
-   <Compile Include="Test\System.Xml\XmlTextTests.cs" />
-   <Compile Include="Test\System.Xml\XmlTextWriterTests.cs" />
-   <Compile Include="Test\System.Xml\XmlUrlResolverTests.cs" />
-   <Compile Include="Test\System.Xml\XmlValidatingReaderTests.cs" />
-   <Compile Include="Test\System.Xml\XmlWriterSettingsTests.cs" />
-   <Compile Include="Test\System.Xml\XmlWhiteSpaceTests.cs" />
-   <Compile Include="Test\System.Xml\XmlWriterTests.cs" />
-   <Compile Include="Test\System.Xml\XsdParticleValidationTests.cs" />
-   <Compile Include="Test\System.Xml\XsdValidatingReaderTests.cs" />
-   <Compile Include="Test\System.Xml\nist_dom\ITest.cs" />
-   <Compile Include="Test\System.Xml\nist_dom\util.cs" />
-   <Compile Include="Test\System.Xml\nist_dom\fundamental\Attr\Attr.cs" />
-   <Compile Include="Test\System.Xml\nist_dom\fundamental\CharacterData\CharacterData.cs" />
-   <Compile Include="Test\System.Xml\nist_dom\fundamental\Comment\Comment.cs" />
-   <Compile Include="Test\System.Xml\nist_dom\fundamental\Document\Document.cs" />
-   <Compile Include="Test\System.Xml\nist_dom\fundamental\DOMImplementation\DOMImplementation.cs" />
-   <Compile Include="Test\System.Xml\nist_dom\fundamental\Element\Element.cs" />
-   <Compile Include="Test\System.Xml\nist_dom\fundamental\NamedNodeMap\NamedNodeMap.cs" />
-   <Compile Include="Test\System.Xml\nist_dom\fundamental\NodeList\NodeList.cs" />
-   <Compile Include="Test\System.Xml\nist_dom\fundamental\Node\Node.cs" />
-   <Compile Include="Test\System.Xml\nist_dom\fundamental\Text\Text.cs" />
-   <Compile Include="Test\System.Xml.Schema\XmlSchemaAssertion.cs" />
-   <Compile Include="Test\System.Xml.Schema\XmlSchemaBuiltInDatatypeTests.cs" />
-   <Compile Include="Test\System.Xml.Schema\XmlSchemaCollectionTests.cs" />
-   <Compile Include="Test\System.Xml.Schema\XmlSchemaDatatypeTests.cs" />
-   <Compile Include="Test\System.Xml.Schema\XmlSchemaLengthFacetTests.cs" />
-   <Compile Include="Test\System.Xml.Schema\XmlSchemaTests.cs" />
-   <Compile Include="Test\System.Xml.Schema\XmlSchemaTypeTests.cs" />
-   <Compile Include="Test\System.Xml.Schema\XmlSchemaSetTests.cs" />
-   <Compile Include="Test\System.Xml.Schema\XmlSchemaValidatorTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\CodeIdentifiersTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\ComplexDataStructure.cs" />
-   <Compile Include="Test\System.Xml.Serialization\DeserializeTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\SoapAttributeAttributeTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\SoapAttributesTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\SoapElementAttributeTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\SoapEnumAttributeTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\SoapIncludeAttributeTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\SoapSchemaExporterTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\SoapReflectionImporterTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\SoapSchemaMemberTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\SoapTypeAttributeTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\XmlAnyElementAttributeTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\XmlArrayAttributeTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\XmlArrayItemAttributeTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\XmlAttributeAttributeTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\XmlAttributesTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\XmlChoiceIdentifierAttributeTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\XmlCodeExporterTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\XmlElementAttributeTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\XmlEnumAttributeTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\XmlIncludeAttributeTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\XmlReflectionImporterTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\XmlRootAttributeTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\XmlSchemaExporterTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\XmlSchemaImporterTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\XmlSchemasTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\XmlSerializationReaderTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\XmlSerializationWriterTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\XmlTextAttributeTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\XmlTypeAttributeTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\XmlSerializerImplementationTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\XmlSerializerTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization\XmlSerializerTestClasses.cs" />
-   <Compile Include="Test\System.Xml.Serialization.Advanced\SchemaImporterExtensionTests.cs" />
-   <Compile Include="Test\System.Xml.Serialization.Advanced\SchemaImporterExtensionCollectionTests.cs" />
-   <Compile Include="Test\System.Xml.XPath\SelectNodesTests.cs" />
-   <Compile Include="Test\System.Xml.XPath\XPathEditableNavigatorTests.cs" />
-   <Compile Include="Test\System.Xml.XPath\XPathNavigatorEvaluateTests.cs" />
-   <Compile Include="Test\System.Xml.XPath\XPathNavigatorMatchesTests.cs" />
-   <Compile Include="Test\System.Xml.XPath\XPathNavigatorReaderTests.cs" />
-   <Compile Include="Test\System.Xml.XPath\XPathNavigatorTests.cs" />
-   <Compile Include="Test\System.Xml.XPath\XPathNavigatorCommonTests.cs" />
-   <Compile Include="Test\System.Xml.Xsl\XslTransformTests.cs" />
-   <Compile Include="Test\System.Xml.Xsl\MsxslScriptTests.cs" />
-   <Compile Include="Test\System.Xml\XmlExceptionCas.cs" />
-   <Compile Include="Test\System.Xml\XmlSecureResolverCas.cs" />
-   <Compile Include="Test\System.Xml.Schema\XmlSchemaExceptionCas.cs" />
-   <Compile Include="Test\System.Xml.Xsl\XsltArgumentListCas.cs" />
-   <Compile Include="Test\System.Xml.Xsl\XsltCompileExceptionCas.cs" />
-   <Compile Include="Test\System.Xml.Xsl\XsltCompileExceptionTests.cs" />
-   <Compile Include="Test\System.Xml.Xsl\XsltExceptionCas.cs" />
-   <Compile Include="Test\System.Xml.Xsl\XsltExceptionTests.cs" />
-   <Compile Include="Test\System.Xml.XPath\XPathExceptionCas.cs" />
-   <Compile Include="System.Xml.XPath\Parser.cs" />
-   <Compile Include="Mono.Xml.Xsl\PatternParser.cs" />
-   <Compile Include="Mono.Xml.Xsl\PatternTokenizer.cs" />
-
-  </ItemGroup>
+    <Compile Include="Test\System.Xml.Schema\XmlSchemaAssertion.cs" />
+    <Compile Include="Test\System.Xml.Schema\XmlSchemaBuiltInDatatypeTests.cs" />
+    <Compile Include="Test\System.Xml.Schema\XmlSchemaCollectionTests.cs" />
+    <Compile Include="Test\System.Xml.Schema\XmlSchemaDatatypeTests.cs" />
+    <Compile Include="Test\System.Xml.Schema\XmlSchemaExceptionCas.cs" />
+    <Compile Include="Test\System.Xml.Schema\XmlSchemaLengthFacetTests.cs" />
+    <Compile Include="Test\System.Xml.Schema\XmlSchemaSetTests.cs" />
+    <Compile Include="Test\System.Xml.Schema\XmlSchemaTests.cs" />
+    <Compile Include="Test\System.Xml.Schema\XmlSchemaTypeTests.cs" />
+    <Compile Include="Test\System.Xml.Schema\XmlSchemaValidatorTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization.Advanced\SchemaImporterExtensionCollectionTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization.Advanced\SchemaImporterExtensionTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\CodeIdentifiersTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\ComplexDataStructure.cs" />
+    <Compile Include="Test\System.Xml.Serialization\DeserializeTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\SoapAttributeAttributeTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\SoapAttributesTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\SoapElementAttributeTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\SoapEnumAttributeTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\SoapIncludeAttributeTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\SoapReflectionImporterTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\SoapSchemaExporterTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\SoapSchemaMemberTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\SoapTypeAttributeTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\XmlAnyElementAttributeTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\XmlArrayAttributeTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\XmlArrayItemAttributeTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\XmlAttributeAttributeTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\XmlAttributesTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\XmlChoiceIdentifierAttributeTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\XmlCodeExporterTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\XmlElementAttributeTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\XmlEnumAttributeTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\XmlIncludeAttributeTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\XmlReflectionImporterTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\XmlRootAttributeTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\XmlSchemaExporterTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\XmlSchemaImporterTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\XmlSchemasTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\XmlSerializationReaderTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\XmlSerializationWriterTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\XmlSerializerImplementationTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\XmlSerializerTestClasses.cs" />
+    <Compile Include="Test\System.Xml.Serialization\XmlSerializerTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\XmlTextAttributeTests.cs" />
+    <Compile Include="Test\System.Xml.Serialization\XmlTypeAttributeTests.cs" />
+    <Compile Include="Test\System.Xml.XPath\SelectNodesTests.cs" />
+    <Compile Include="Test\System.Xml.XPath\XPathEditableNavigatorTests.cs" />
+    <Compile Include="Test\System.Xml.XPath\XPathExceptionCas.cs" />
+    <Compile Include="Test\System.Xml.XPath\XPathNavigatorCommonTests.cs" />
+    <Compile Include="Test\System.Xml.XPath\XPathNavigatorEvaluateTests.cs" />
+    <Compile Include="Test\System.Xml.XPath\XPathNavigatorMatchesTests.cs" />
+    <Compile Include="Test\System.Xml.XPath\XPathNavigatorReaderTests.cs" />
+    <Compile Include="Test\System.Xml.XPath\XPathNavigatorTests.cs" />
+    <Compile Include="Test\System.Xml.Xsl\MsxslScriptTests.cs" />
+    <Compile Include="Test\System.Xml.Xsl\XsltArgumentListCas.cs" />
+    <Compile Include="Test\System.Xml.Xsl\XsltCompileExceptionCas.cs" />
+    <Compile Include="Test\System.Xml.Xsl\XsltCompileExceptionTests.cs" />
+    <Compile Include="Test\System.Xml.Xsl\XsltExceptionCas.cs" />
+    <Compile Include="Test\System.Xml.Xsl\XsltExceptionTests.cs" />
+    <Compile Include="Test\System.Xml.Xsl\XslTransformTests.cs" />
+    <Compile Include="Test\System.Xml\NameTableTests.cs" />
+    <Compile Include="Test\System.Xml\nist_dom\fundamental\Attr\Attr.cs" />
+    <Compile Include="Test\System.Xml\nist_dom\fundamental\CharacterData\CharacterData.cs" />
+    <Compile Include="Test\System.Xml\nist_dom\fundamental\Comment\Comment.cs" />
+    <Compile Include="Test\System.Xml\nist_dom\fundamental\Document\Document.cs" />
+    <Compile Include="Test\System.Xml\nist_dom\fundamental\DOMImplementation\DOMImplementation.cs" />
+    <Compile Include="Test\System.Xml\nist_dom\fundamental\Element\Element.cs" />
+    <Compile Include="Test\System.Xml\nist_dom\fundamental\NamedNodeMap\NamedNodeMap.cs" />
+    <Compile Include="Test\System.Xml\nist_dom\fundamental\Node\Node.cs" />
+    <Compile Include="Test\System.Xml\nist_dom\fundamental\NodeList\NodeList.cs" />
+    <Compile Include="Test\System.Xml\nist_dom\fundamental\Text\Text.cs" />
+    <Compile Include="Test\System.Xml\nist_dom\ITest.cs" />
+    <Compile Include="Test\System.Xml\nist_dom\util.cs" />
+    <Compile Include="Test\System.Xml\XmlAssert.cs" />
+    <Compile Include="Test\System.Xml\XmlAttributeCollectionTests.cs" />
+    <Compile Include="Test\System.Xml\XmlAttributeTests.cs" />
+    <Compile Include="Test\System.Xml\XmlCDataSectionTests.cs" />
+    <Compile Include="Test\System.Xml\XmlCharacterDataTests.cs" />
+    <Compile Include="Test\System.Xml\XmlCommentTests.cs" />
+    <Compile Include="Test\System.Xml\XmlConvertTests.cs" />
+    <Compile Include="Test\System.Xml\XmlDeclarationTests.cs" />
+    <Compile Include="Test\System.Xml\XmlDefaultReader.cs" />
+    <Compile Include="Test\System.Xml\XmlDocumentEventTests.cs" />
+    <Compile Include="Test\System.Xml\XmlDocumentFragmentTests.cs" />
+    <Compile Include="Test\System.Xml\XmlDocumentTests.cs" />
+    <Compile Include="Test\System.Xml\XmlDocumentTypeTests.cs" />
+    <Compile Include="Test\System.Xml\XmlElementTests.cs" />
+    <Compile Include="Test\System.Xml\XmlEntityReferenceTests.cs" />
+    <Compile Include="Test\System.Xml\XmlEntityTests.cs" />
+    <Compile Include="Test\System.Xml\XmlExceptionCas.cs" />
+    <Compile Include="Test\System.Xml\XmlNamespaceManagerTests.cs" />
+    <Compile Include="Test\System.Xml\XmlNodeListTests.cs" />
+    <Compile Include="Test\System.Xml\XmlNodeReaderTests.cs" />
+    <Compile Include="Test\System.Xml\XmlNodeTests.cs" />
+    <Compile Include="Test\System.Xml\XmlParserContextTests.cs" />
+    <Compile Include="Test\System.Xml\XmlProcessingInstructionTests.cs" />
+    <Compile Include="Test\System.Xml\XmlReaderCommonTests.cs" />
+    <Compile Include="Test\System.Xml\XmlReaderSettingsTests.cs" />
+    <Compile Include="Test\System.Xml\XmlResolverTest.cs" />
+    <Compile Include="Test\System.Xml\XmlSecureResolverCas.cs" />
+    <Compile Include="Test\System.Xml\XmlSecureResolverTests.cs" />
+    <Compile Include="Test\System.Xml\XmlSignificantWhitespaceTests.cs" />
+    <Compile Include="Test\System.Xml\XmlTextReaderTests.cs" />
+    <Compile Include="Test\System.Xml\XmlTextTests.cs" />
+    <Compile Include="Test\System.Xml\XmlTextWriterTests.cs" />
+    <Compile Include="Test\System.Xml\XmlUrlResolverTests.cs" />
+    <Compile Include="Test\System.Xml\XmlValidatingReaderTests.cs" />
+    <Compile Include="Test\System.Xml\XmlWhiteSpaceTests.cs" />
+    <Compile Include="Test\System.Xml\XmlWriterSettingsTests.cs" />
+    <Compile Include="Test\System.Xml\XmlWriterTests.cs" />
+    <Compile Include="Test\System.Xml\XsdParticleValidationTests.cs" />
+    <Compile Include="Test\System.Xml\XsdValidatingReaderTests.cs" />
+    <Compile Include="Mono.Xml.Xsl\PatternParser.cs" />
+    <Compile Include="Mono.Xml.Xsl\PatternTokenizer.cs" />
+    <Compile Include="System.Xml.XPath\Parser.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -168,45 +168,43 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent>$(ProjectDir)\..\..\..\mono\msvc\scripts\prepare.exe $(ProjectDir)..\.. xml
+    <PreBuildEvent>
+$(ProjectDir)\..\..\..\mono\msvc\scripts\prepare.exe $(ProjectDir)..\.. xml
 $(ProjectDir)\..\..\jay\jay.exe -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(ProjectDir)\System.Xml.XPath\Parser.jay > $(ProjectDir)\System.Xml.XPath\Parser.cs
 echo #define XSLT_PATTERN > $(ProjectDir)\Mono.Xml.Xsl\PatternParser.cs
 $(ProjectDir)\..\..\jay\jay.exe -ct &lt; $(ProjectDir)\..\..\jay\skeleton.cs $(ProjectDir)\Mono.Xml.Xsl\PatternParser.jay >> $(ProjectDir)\Mono.Xml.Xsl\PatternParser.cs
 echo #define XSLT_PATTERN > $(ProjectDir)\Mono.Xml.Xsl\PatternTokenizer.cs
 type $(ProjectDir)\System.Xml.XPath\Tokenizer.cs >> $(ProjectDir)\Mono.Xml.Xsl\PatternTokenizer.cs
-</PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_0\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="./../../class/lib/net_4_0/System.Xml.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../class/lib/net_4_0/System.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Core.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework" />
-
+    <Reference Include="..\lib\net_4_0\nunit.framework.dll" />
+    <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
+      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
+      <Name>corlib\corlib-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_4_0-1.csproj">
+      <Project>{F9E777F8-E3F2-4E19-8DC9-2D1BB6B380A6}</Project>
+      <Name>System.XML\System.Xml-net_4_0-1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_0-2.csproj">
+      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
+      <Name>System\System-net_4_0-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Data\System.Data-net_2_0.csproj">
+      <Project>{B8CA1780-FF35-49B9-B385-C24BD0558109}</Project>
+      <Name>System.Data\System.Data-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Core\System.Core-net_4_0.csproj">
+      <Project>{2590BECB-2660-49C6-93B1-B9E7D0796214}</Project>
+      <Name>System.Core\System.Core-net_4_0</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
-

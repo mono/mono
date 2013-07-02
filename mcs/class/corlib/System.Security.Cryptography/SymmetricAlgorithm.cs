@@ -42,16 +42,9 @@ namespace System.Security.Cryptography {
 		protected byte[] KeyValue; 
 		protected KeySizes[] LegalBlockSizesValue; 
 		protected KeySizes[] LegalKeySizesValue; 
-#if MOONLIGHT
-		// Silverlight 2.0 only supports CBC
-		internal int FeedbackSizeValue;
-		internal CipherMode ModeValue;
-		internal PaddingMode PaddingValue;
-#else
 		protected int FeedbackSizeValue;
 		protected CipherMode ModeValue;
 		protected PaddingMode PaddingValue;
-#endif
 		private bool m_disposed;
 
 		protected SymmetricAlgorithm ()
@@ -113,6 +106,10 @@ namespace System.Security.Cryptography {
 				if ((value <= 0) || (value > this.BlockSizeValue)) {
 					throw new CryptographicException (
 						Locale.GetText ("feedback size larger than block size"));
+				}
+				if ((value & 3) != 0) {
+					throw new CryptographicException (
+						Locale.GetText ("feedback size must be a multiple of 8 (bits)"));
 				}
 				this.FeedbackSizeValue = value;
 			}
@@ -229,7 +226,11 @@ namespace System.Security.Cryptography {
 		// LAMESPEC: Default is Rijndael - not TripleDES
 		public static SymmetricAlgorithm Create () 
 		{
+#if FULL_AOT_RUNTIME
+			return new System.Security.Cryptography.RijndaelManaged ();
+#else
 			return Create ("System.Security.Cryptography.SymmetricAlgorithm");
+#endif
 		}
 
 		public static SymmetricAlgorithm Create (string algName) 

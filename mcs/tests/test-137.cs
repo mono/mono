@@ -19,7 +19,7 @@ class C : A, B {
 		var++;
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		C c = new C ();
 

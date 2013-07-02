@@ -17,11 +17,17 @@ PROFILE_excludes = $(wildcard $(PROFILE)_$(LIBRARY).exclude.sources)
 sourcefile = $(depsdir)/$(PROFILE)_$(LIBRARY).sources
 library_CLEAN_FILES += $(sourcefile)
 
+ifdef EXTENSION_MODULE
+EXTENSION_include = $(wildcard $(topdir)/../../mono-extensions/mcs/$(thisdir)/$(PROFILE)_$(LIBRARY).sources)
+else
+EXTENSION_include = $(wildcard $(PROFILE)_opt_$(LIBRARY).sources)
+endif
+
 # Note, gensources.sh can create a $(sourcefile).makefrag if it sees any '#include's
 # We don't include it in the dependencies since it isn't always created
-$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(topdir)/build/gensources.sh
+$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(topdir)/build/gensources.sh $(EXTENSION_include)
 	@echo Creating the per profile list $@ ...
-	$(SHELL) $(topdir)/build/gensources.sh $@ $(PROFILE_sources) $(PROFILE_excludes)
+	$(SHELL) $(topdir)/build/gensources.sh $@ '$(PROFILE_sources)' '$(PROFILE_excludes)' '$(EXTENSION_include)'
 endif
 
 PLATFORM_excludes := $(wildcard $(LIBRARY).$(PLATFORM)-excludes)
@@ -47,7 +53,11 @@ else
 lib_dir = lib
 endif
 
+ifdef LIBRARY_SUBDIR
+the_libdir = $(topdir)/class/$(lib_dir)/$(PROFILE)/$(LIBRARY_SUBDIR)/
+else
 the_libdir = $(topdir)/class/$(lib_dir)/$(PROFILE)/
+endif
 ifdef LIBRARY_NEEDS_POSTPROCESSING
 build_libdir = fixup/$(PROFILE)/
 else
@@ -68,8 +78,7 @@ SN = :
 else
 ifeq ("$(SN)","")
 sn = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/sn.exe
-SN = $(Q) MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(sn)
-SNFLAGS = -q
+SN = MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(sn) -q
 endif
 endif
 
@@ -94,16 +103,19 @@ endif
 
 csproj-local: csproj-library csproj-test
 
+# to overcome the issues with circular dependencies, we'll create csprojs with a counter increment. 
+# This is more amenable for use in VS solutions to reference projects rather than transient dll files in the build process.
 csproj-library:
 	config_file=`basename $(LIBRARY) .dll`-$(PROFILE).input; \
+ 	for counter in 1 2 3 4 5 ; do if test -f $(topdir)/../msvc/scripts/inputs/$$config_file ; then config_file=`basename $(LIBRARY) .dll`-$(PROFILE)-$$counter.input; fi ; done ;\
 	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
 	(echo $(is_boot); \
-	echo $(MCS);	\
 	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS); \
 	echo $(LIBRARY_NAME); \
 	echo $(BUILT_SOURCES_cmdline); \
 	echo $(build_lib); \
 	echo $(FRAMEWORK_VERSION); \
+	echo $(PROFILE); \
 	echo $(response)) > $(topdir)/../msvc/scripts/inputs/$$config_file
 
 csproj-test:
@@ -189,12 +201,12 @@ csproj-test:
 	config_file=`basename $(LIBRARY) .dll`-tests-$(PROFILE).input; \
 	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
 	(echo false; \
-	echo $(MCS);	\
 	echo $(USE_MCS_FLAGS) -r:$(the_assembly) $(TEST_MCS_FLAGS); \
 	echo $(test_lib); \
 	echo $(BUILT_SOURCES_cmdline); \
 	echo $(test_lib); \
 	echo $(FRAMEWORK_VERSION); \
+	echo $(PROFILE); \
 	echo $(test_response)) > $(topdir)/../msvc/scripts/inputs/$$config_file
 
 endif
@@ -242,12 +254,12 @@ $(the_lib): $(the_libdir)/.stamp
 
 $(build_lib): $(response) $(sn) $(BUILT_SOURCES) $(build_libdir:=/.stamp)
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
-	$(SN) $(SNFLAGS) -R $@ $(LIBRARY_SNK)
+	$(Q) $(SN) -R $@ $(LIBRARY_SNK)
 
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
 $(the_lib): $(build_lib)
 	$(Q) cp $(build_lib) $@
-	$(SN) $(SNFLAGS) -v $@
+	$(Q) $(SN) -v $@
 	$(Q) test ! -f $(build_lib).mdb || mv $(build_lib).mdb $@.mdb
 	$(Q) test ! -f $(build_lib:.dll=.pdb) || mv $(build_lib:.dll=.pdb) $(the_lib:.dll=.pdb)
 endif
@@ -255,7 +267,7 @@ endif
 library_CLEAN_FILES += $(PROFILE)_aot.log
 
 ifdef PLATFORM_AOT_SUFFIX
-Q_AOT=$(if $(V),,@echo "AOT [$(PROFILE)] $(notdir $(@))";)
+Q_AOT=$(if $(V),,@echo "AOT     [$(PROFILE)] $(notdir $(@))";)
 $(the_lib)$(PLATFORM_AOT_SUFFIX): $(the_lib)
 	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version --debug $(the_lib)
 endif
@@ -311,7 +323,7 @@ $(makefrag) $(test_response) $(test_makefrag) $(btest_response) $(btest_makefrag
 Q_MDOC_UP=$(if $(V),,@echo "MDOC-UP [$(PROFILE)] $(notdir $(@))";)
 # net_2_0 is needed because monodoc is only compiled in that profile
 MDOC_UP  =$(Q_MDOC_UP) \
-		MONO_PATH="$(topdir)/class/lib/$(DEFAULT_PROFILE)$(PLATFORM_PATH_SEPARATOR)$(topdir)/class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(topdir)/tools/mdoc/mdoc.exe \
+		MONO_PATH="$(topdir)/class/lib/$(DEFAULT_PROFILE)$(PLATFORM_PATH_SEPARATOR)$(topdir)/class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(topdir)/class/lib/$(DEFAULT_PROFILE)/mdoc.exe \
 		update --delete -o Documentation/en $(the_lib)
 
 doc-update-local: $(the_libdir)/.doc-stamp

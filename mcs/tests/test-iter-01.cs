@@ -18,7 +18,7 @@ class X {
 		yield return 3;
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		IEnumerator e = GetIt ();
 		int total = 0;

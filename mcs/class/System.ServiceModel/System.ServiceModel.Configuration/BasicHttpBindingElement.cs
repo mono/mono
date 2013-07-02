@@ -1,6 +1,11 @@
 //
 // BasicHttpBindingElement.cs
 //
+// See BasicHttpBindingElement_4_5.cs and HttpBindingBaseElement.cs
+// for the .NET 4.5 version of this class, where most of the code has
+// been moved into the new abstract HttpBindingBaseElement class.
+//
+//
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
@@ -26,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !NET_4_5
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -150,7 +156,7 @@ namespace System.ServiceModel.Configuration
 					_properties.Add (new ConfigurationProperty ("proxyAddress", typeof (Uri), null, new UriTypeConverter (), null, ConfigurationPropertyOptions.None));
 					_properties.Add (new ConfigurationProperty ("readerQuotas", typeof (XmlDictionaryReaderQuotasElement), null, null, null, ConfigurationPropertyOptions.None));
 					_properties.Add (new ConfigurationProperty ("security", typeof (BasicHttpSecurityElement), null, null, null, ConfigurationPropertyOptions.None));
-					_properties.Add (new ConfigurationProperty ("textEncoding", typeof (Encoding), "utf-8", EncodingConverter.Instance, null, ConfigurationPropertyOptions.None));
+					_properties.Add (new ConfigurationProperty ("textEncoding", typeof (Encoding), BasicHttpBinding.DefaultTextEncoding, EncodingConverter.Instance, null, ConfigurationPropertyOptions.None));
 					_properties.Add (new ConfigurationProperty ("transferMode", typeof (TransferMode), "Buffered", null, null, ConfigurationPropertyOptions.None));
 					_properties.Add (new ConfigurationProperty ("useDefaultWebProxy", typeof (bool), "true", new BooleanConverter (), null, ConfigurationPropertyOptions.None));
 				}
@@ -250,3 +256,4 @@ namespace System.ServiceModel.Configuration
 	}
 
 }
+#endif

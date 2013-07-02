@@ -280,6 +280,8 @@ namespace MonoTests.System.IO
 				Assert.AreEqual (@"C:\dir", Path.GetDirectoryName (@"C:\dir\"), "#B5");
 				Assert.AreEqual (@"C:\dir", Path.GetDirectoryName (@"C:\dir\dir"), "#B6");
 				Assert.AreEqual (@"C:\dir\dir", Path.GetDirectoryName (@"C:\dir\dir\"), "#B7");
+				Assert.AreEqual (@"C:", Path.GetDirectoryName (@"C:foo.txt"), "#B8");
+				Assert.AreEqual (@"C:dir", Path.GetDirectoryName (@"C:dir\"), "#B9");
 
 				Assert.AreEqual ("\\foo\\bar", Path.GetDirectoryName ("/foo//bar/dingus"), "#C1");
 				Assert.AreEqual ("foo\\bar", Path.GetDirectoryName ("foo/bar/"), "#C2");
@@ -1014,7 +1016,7 @@ namespace MonoTests.System.IO
 			string parent = Path.GetFullPath ("..");
 			Assert.IsTrue (!current.EndsWith (".."), "TestCanonicalizeDotst #02");
 		}
-
+#if !MOBILE
 		[Test]
 		public void WindowsSystem32_76191 ()
 		{
@@ -1065,7 +1067,7 @@ namespace MonoTests.System.IO
 				Directory.SetCurrentDirectory (curdir);
 			}
 		}
-
+#endif
 		[Test]
 #if TARGET_JVM
 		[Ignore("Java full (canonical) path always returns windows dir in caps")]

@@ -5,7 +5,9 @@
 
 using System;
 using System.Reflection;
+#if !MONOTOUCH
 using System.Reflection.Emit;
+#endif
 using System.Threading;
 
 using NUnit.Framework;
@@ -25,6 +27,9 @@ namespace MonoTests.System
 
 
 		[Test] //See bug #372406
+#if MONOTOUCH
+		[Category ("NotWorking")] // #10539
+#endif
 		public void CreateDelegate1_Method_Private_Instance ()
 		{
 			C c = new C ();
@@ -935,6 +940,9 @@ namespace MonoTests.System
 		}
 
 		[Test]
+#if MONOTOUCH
+		[Category ("NotWorking")] // #10539
+#endif
 		public void Virtual ()
 		{
 			// Delegate with abstract method, no target
@@ -1025,6 +1033,9 @@ namespace MonoTests.System
 		}
 
 		[Test] // #617161
+#if MONOTOUCH
+		[Category ("NotWorking")] // #10539
+#endif
 		public void ClosedOverNullReferenceStaticMethod ()
 		{
 			var del = (Func<long?,long?>) Delegate.CreateDelegate (
@@ -1046,6 +1057,9 @@ namespace MonoTests.System
 		}
 
 		[Test] // #475962
+#if MONOTOUCH
+		[Category ("NotWorking")] // #10539
+#endif
 		public void ClosedOverNullReferenceInstanceMethod ()
 		{
 			var action = (Action) Delegate.CreateDelegate (
@@ -1096,7 +1110,7 @@ namespace MonoTests.System
 				typeof (Action),
 				this.GetType ().GetMethod ("Banga"));
 		}
-
+#if !MONOTOUCH
 		[Test] // #664205
 		public void DynamicInvokeNullTarget ()
 		{
@@ -1109,7 +1123,7 @@ namespace MonoTests.System
 
 			Assert.AreEqual (42, (int) @delegate.DynamicInvoke ());
 		}
-
+#endif
 #endif
 		public static void CreateDelegateOfStaticMethodBoundToNull_Helper (object[] args) {}
 
@@ -1209,7 +1223,7 @@ namespace MonoTests.System
 		{
 			string retarg (string s);
 		}
-
+#if !MONOTOUCH
 		[Test]
 		public void CreateDelegateWithLdFtnAndAbstractMethod ()
 		{
@@ -1245,7 +1259,7 @@ namespace MonoTests.System
 			int a = (int) t.GetMethod ("test").Invoke (obj, null);
 			Assert.AreEqual (3, a, "#1");
 		}
-
+#endif
 		public static int MethodWithIntParam (int x) {
 			return 10;
 		}

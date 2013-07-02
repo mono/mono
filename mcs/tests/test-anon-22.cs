@@ -6,7 +6,7 @@ delegate void D ();
 class X {
 	static D r;
 	
-	static void Main ()
+	public static void Main ()
 	{
 		D d = T ();
 

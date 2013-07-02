@@ -14,7 +14,7 @@ public class Foo
 		return ushort.MaxValue;
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

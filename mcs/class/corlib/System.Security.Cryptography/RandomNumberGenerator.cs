@@ -46,8 +46,12 @@ namespace System.Security.Cryptography {
 
 		public static RandomNumberGenerator Create () 
 	        {
+#if FULL_AOT_RUNTIME
+			return new System.Security.Cryptography.RNGCryptoServiceProvider ();
+#else
 			// create the default random number generator
 			return Create ("System.Security.Cryptography.RandomNumberGenerator");
+#endif
 		}
 
 		public static RandomNumberGenerator Create (string rngName) 
@@ -67,7 +71,7 @@ namespace System.Security.Cryptography {
 #endif
 		
 		
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0
 		public void Dispose ()
 		{
 			Dispose (true);

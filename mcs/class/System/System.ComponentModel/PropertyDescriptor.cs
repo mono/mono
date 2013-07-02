@@ -39,11 +39,6 @@ using System.Runtime.InteropServices;
 
 namespace System.ComponentModel
 {
-#if MOONLIGHT
-	public abstract class PropertyDescriptor
-	{
-	}
-#else
 	[ComVisible (true)]
 	public abstract class PropertyDescriptor : MemberDescriptor
 	{
@@ -306,5 +301,4 @@ namespace System.ComponentModel
 			return type;
 		}
 	}
-#endif
 }

@@ -33,6 +33,7 @@
 //
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Proxies;
@@ -66,7 +67,7 @@ namespace System.Runtime.Remoting.Contexts {
 		IMessageSink client_context_sink_chain = null;
 
 		object[] datastore;
-		ArrayList context_properties;
+		List<IContextProperty> context_properties;
 //		bool frozen;
 		
 		static int global_count;
@@ -106,8 +107,10 @@ namespace System.Runtime.Remoting.Contexts {
 		{
 			get 
 			{
-				if (context_properties == null) return new IContextProperty[0];
-				else return (IContextProperty[]) context_properties.ToArray (typeof(IContextProperty[]));
+				if (context_properties == null)
+					return new IContextProperty[0];
+				
+				return context_properties.ToArray ();
 			}
 		}
 		
@@ -219,7 +222,7 @@ namespace System.Runtime.Remoting.Contexts {
 //				throw new InvalidOperationException ("Context is Frozen");
 			
 			if (context_properties == null)
-				context_properties = new ArrayList ();
+				context_properties = new List<IContextProperty> ();
 
 			context_properties.Add (prop);
 		}
@@ -353,7 +356,6 @@ namespace System.Runtime.Remoting.Contexts {
 			callback_object.DoCallBack (deleg);
 		}
 		
-#if !MOONLIGHT
 		public static LocalDataStoreSlot AllocateDataSlot ()
 		{
 			return new LocalDataStoreSlot (false);
@@ -414,7 +416,6 @@ namespace System.Runtime.Remoting.Contexts {
 				ctx.datastore [slot.slot] = data;
 			}
 		}
-#endif
 	}
 
 	class DynamicPropertyCollection

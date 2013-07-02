@@ -58,6 +58,7 @@ namespace System.ServiceModel.Configuration
 		 : ConfigurationSection
 	{
 		ConfigurationPropertyCollection _properties;
+		List<BindingCollectionElement> _collections;
 
 		// Properties
 
@@ -67,9 +68,26 @@ namespace System.ServiceModel.Configuration
 			get { return (BasicHttpBindingCollectionElement) this ["basicHttpBinding"]; }
 		}
 
-		[MonoTODO ("Not Implemented")]
+#if NET_4_5
+		[ConfigurationProperty ("basicHttpsBinding",
+		                        Options = ConfigurationPropertyOptions.None)]
+		public BasicHttpsBindingCollectionElement BasicHttpsBinding {
+			get { return (BasicHttpsBindingCollectionElement) this ["basicHttpsBinding"]; }
+		}
+#endif
+
 		public List<BindingCollectionElement> BindingCollections {
-			get { throw new NotImplementedException (); }
+			get {
+				if (_collections != null)
+					return _collections;
+				_collections = new List<BindingCollectionElement> ();
+				foreach (PropertyInformation prop in ElementInformation.Properties) {
+					var element = prop.Value as BindingCollectionElement;
+					if (element != null)
+						_collections.Add (element);
+				}
+				return _collections;
+			}
 		}
 
 		[ConfigurationProperty ("customBinding",

@@ -151,6 +151,130 @@ namespace TestRunner {
 		}
 	}
 
+	class NUnitChecker : PositiveChecker
+	{
+		class TestCaseEntry
+		{
+			string name;
+			string referenceFile;
+			string executedMethod;
+			bool has_return;
+
+			public TestCaseEntry (string name, string referenceFile, MethodInfo executedMethod)
+			{
+				this.name = name.Replace ('-', '_');
+				this.referenceFile = referenceFile;
+				this.executedMethod = ConvertMethodInfoToText (executedMethod, out has_return);
+			}
+
+			public string Name
+			{
+				get
+				{
+					return name;
+				}
+			}
+
+			public string ReferenceFile {
+				get {
+					return referenceFile;
+				}
+			}
+
+			static string ConvertMethodInfoToText (MethodInfo mi, out bool hasReturn)
+			{
+				hasReturn = mi.ReturnType != typeof (void);
+				string declaring = mi.DeclaringType.FullName.Replace ('+', '.');
+				var param = mi.GetParameters ();
+				if (param.Length == 0)
+					return declaring + "." + mi.Name + " ()";
+
+				return declaring + "." + mi.Name + " (new string[0])";
+			}
+
+			public string GetTestFixture ()
+			{
+				var call = name + "::" + executedMethod;
+				if (!has_return)
+					return call;
+
+				return string.Format ("Assert.AreEqual (0, {0})", call); 
+			}
+		}
+
+		List<TestCaseEntry> entries = new List<TestCaseEntry> ();
+
+		public NUnitChecker (ITester tester)
+			: base (tester, null)
+		{
+		}
+
+		public override void CleanUp ()
+		{
+			base.CleanUp ();
+
+			StringBuilder aliases = new StringBuilder ();
+			var src_dir = Path.Combine ("projects", "MonoTouch");
+			string src_file = Path.Combine (src_dir, "tests.cs");
+
+			using (var file = new StreamWriter (src_file, false)) {
+				foreach (var e in entries) {
+					file.WriteLine ("extern alias {0};", e.Name);
+					aliases.AppendFormat ("    <Reference Include=\"{0}\">", Path.GetFileNameWithoutExtension (e.ReferenceFile));
+					aliases.Append (Environment.NewLine);
+					aliases.AppendFormat ("      <Aliases>{0}</Aliases>", e.Name);
+					aliases.Append (Environment.NewLine);
+					aliases.AppendFormat ("      <HintPath>..\\..\\{0}</HintPath>", Path.GetFileName (e.ReferenceFile));
+					aliases.Append (Environment.NewLine);
+					aliases.AppendLine ("    </Reference>");
+				}
+
+				file.WriteLine ();
+				file.WriteLine ("using NUnit.Framework;");
+				file.WriteLine ();
+				file.WriteLine ("[TestFixture]");
+				file.WriteLine ("public class Tests {");
+
+				foreach (var e in entries) {
+					file.WriteLine ("\t[Test]");
+					file.WriteLine ("\tpublic void TestFile_{0} ()", e.Name);
+					file.WriteLine ("\t{");
+					file.WriteLine ("\t\t{0};", e.GetTestFixture ());
+					file.WriteLine ("\t}");
+					file.WriteLine ();
+				}
+
+				file.WriteLine ("}");
+			}
+
+			var input = File.ReadAllText (Path.Combine (src_dir, "MonoTouch.csproj.template"));
+			input = input.Replace ("@GENERATED_REFERENCES", aliases.ToString ());
+			input = input.Replace ("@TEST_SOURCEFILE", Path.GetFileName (src_file));
+
+			File.WriteAllText (Path.Combine (src_dir, "MonoTouch.csproj"), input);
+			return;
+		}
+
+		protected override bool ExecuteTestFile (TestCase test, string binaryFileName)
+		{
+			Assembly assembly = Assembly.LoadFile (binaryFileName);
+			var ep = assembly.EntryPoint;
+			if (!ep.IsPublic) {
+				HandleFailure (test.FileName, TestResult.LoadError, "Entry method is private");
+				return false;
+			}
+
+			if (ep.DeclaringType.IsNestedPrivate || ep.DeclaringType.IsNestedFamily) {
+				HandleFailure (test.FileName, TestResult.LoadError, "Entry method in hidden nested type");
+				return false;
+			}
+
+			entries.Add (new TestCaseEntry (Path.GetFileNameWithoutExtension (test.FileName), binaryFileName, ep));
+			HandleFailure (test.FileName, TestResult.Success, null);
+			return true;
+		}
+	}
+
 	class PositiveTestCase : TestCase
 	{
 		public class VerificationData : MarshalByRefObject
@@ -315,6 +439,7 @@ namespace TestRunner {
 		protected ArrayList know_issues = new ArrayList ();
 		protected ArrayList ignore_list = new ArrayList ();
 		protected ArrayList no_error_list = new ArrayList ();
+		ArrayList skip = new ArrayList ();
 		
 		protected bool verbose;
 		protected bool safe_execution;
@@ -414,6 +539,10 @@ namespace TestRunner {
 			if (verbose)
 				Log (filename + "...\t");
 
+			if (skip.Contains (filename)) {
+				return false;
+			}
+
 			if (ignore_list.Contains (filename)) {
 				++ignored;
 				LogFileLine (filename, "NOT TESTED");
@@ -460,13 +589,14 @@ namespace TestRunner {
 			string[] test_args;
 
 			if (test.CompilerOptions != null) {
-				test_args = new string [2 + test.CompilerOptions.Length];
+				test_args = new string[2 + test.CompilerOptions.Length];
 				test.CompilerOptions.CopyTo (test_args, 0);
 			} else {
-				test_args = new string [2];
+				test_args = new string[2];
 			}
-			test_args [test_args.Length - 2] = test.FileName;
-			test_args [test_args.Length - 1] = "-debug";
+			test_args[test_args.Length - 2] = test_args[0];
+			test_args[test_args.Length - 1] = "-debug";
+			test_args[0] = test.FileName;
 
 			return tester.Invoke (test_args);
 		}
@@ -480,6 +610,7 @@ namespace TestRunner {
 		{
 			const string ignored = "IGNORE";
 			const string no_error = "NO ERROR";
+			const string skip_tag = "SKIP";
 
 			using (StreamReader sr = new StreamReader (file)) {
 				string line;
@@ -493,6 +624,8 @@ namespace TestRunner {
 						active_cont = ignore_list;
 					else if (line.IndexOf (no_error) > 0)
 						active_cont = no_error_list;
+					else if (line.Contains (skip_tag))
+						active_cont = skip;
 
 					string file_name = line.Split (' ')[0];
 					if (file_name.Length == 0)
@@ -827,6 +960,13 @@ namespace TestRunner {
 				return true;
 			}
 
+			return ExecuteTestFile (test, file);
+		}
+
+		protected virtual bool ExecuteTestFile (TestCase test, string binaryFileName)
+		{
+			string filename = test.FileName;
+
 			AppDomain domain = null;
 #if !NET_2_1
 			if (safe_execution) {
@@ -834,7 +974,7 @@ namespace TestRunner {
 				AppDomainSetup setupInfo = new AppDomainSetup ();
 				setupInfo.ApplicationBase = AppDomain.CurrentDomain.BaseDirectory;
 				setupInfo.LoaderOptimization = LoaderOptimization.SingleDomain;
-				domain = AppDomain.CreateDomain (Path.GetFileNameWithoutExtension (file), null, setupInfo);
+				domain = AppDomain.CreateDomain (Path.GetFileNameWithoutExtension (binaryFileName), null, setupInfo);
 			}
 #endif
 			try {
@@ -847,7 +987,7 @@ namespace TestRunner {
 #endif
 						tester = new DomainTester ();
 
-					if (!tester.Test (file))
+					if (!tester.Test (binaryFileName))
 						return false;
 
 				} catch (ApplicationException e) {
@@ -873,12 +1013,12 @@ namespace TestRunner {
 						PositiveTestCase pt = (PositiveTestCase) test;
 						pt.VerificationProvider = (PositiveTestCase.VerificationData) verif_data[filename];
 
-						if (!tester.CheckILSize (pt, this, file))
+						if (!tester.CheckILSize (pt, this, binaryFileName))
 							return false;
 					}
 
 					if (filename.StartsWith ("test-debug", StringComparison.OrdinalIgnoreCase)) {
-						var mdb_file_name = file + ".mdb";
+						var mdb_file_name = binaryFileName + ".mdb";
 						MonoSymbolFile mdb_file = MonoSymbolFile.ReadSymbolFile (mdb_file_name);
 						var mdb_xml_file = mdb_file_name + ".xml";
 						ConvertSymbolFileToXml (mdb_file, mdb_xml_file);
@@ -1038,7 +1178,11 @@ namespace TestRunner {
 					break;
 
 				case TestResult.LoadError:
-					LogFileLine (file, "REGRESSION (SUCCESS -> LOAD ERROR)");
+					if (extra != null)
+						extra = ": " + extra;
+
+					LogFileLine (file, "REGRESSION (SUCCESS -> LOAD ERROR)" + extra);
+					extra = null;
 					break;
 
 				case TestResult.MethodAttributesError:
@@ -1276,7 +1420,7 @@ namespace TestRunner {
 							}
 
 							string msg = line.Substring (second + 1).TrimEnd ('.').Trim ();
-							if (msg != expected_message && msg != expected_message.Replace ('`', '\'')) {
+							if (msg != expected_message && !TryToMatchErrorMessage (msg, expected_message)) {
 								error_message = msg;
 								return CompilerError.WrongMessage;
 							}
@@ -1294,6 +1438,24 @@ namespace TestRunner {
 			}
 			
 			return result;
+		}
+
+		static bool TryToMatchErrorMessage (string actual, string expected)
+		{
+			var path_mask_start = expected.IndexOf ("*PATH*");
+			if (path_mask_start > 0 && actual.Length > path_mask_start) {
+				var path_mask_continue = expected.Substring (path_mask_start + 6);
+				var expected_continue = actual.IndexOf (path_mask_continue, path_mask_start);
+				if (expected_continue > 0) {
+					var path = actual.Substring (path_mask_start, expected_continue - path_mask_start);
+					if (actual == expected.Replace ("*PATH*", path))
+						return true;
+
+					throw new ApplicationException (expected.Replace ("*PATH*", path));
+				}
+			}
+
+			return false;
 		}
 
 		bool HandleFailure (string file, CompilerError status)
@@ -1451,6 +1613,10 @@ namespace TestRunner {
 						((PositiveChecker) checker).UpdateVerificationDataFile = true;
 					}
 
+					break;
+				case "nunit":
+					positive = true;
+					checker = new NUnitChecker (tester);
 					break;
 				default:
 					Console.Error.WriteLine ("Invalid -mode argument");

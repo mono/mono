@@ -12,7 +12,7 @@ namespace n3 {
 		{
 			Attribute ();
 		}
-		static void Main () {
+		public static void Main () {
 			new A ().X ();
 		}
 	}

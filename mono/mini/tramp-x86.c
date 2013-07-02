@@ -40,16 +40,16 @@ gpointer
 mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 {
 	guint8 *code, *start;
-	int this_pos = 4;
+	int this_pos = 4, size = NACL_SIZE(16, 32);
 	MonoDomain *domain = mono_domain_get ();
 
-	start = code = mono_domain_code_reserve (domain, 16);
+	start = code = mono_domain_code_reserve (domain, size);
 
 	x86_alu_membase_imm (code, X86_ADD, X86_ESP, this_pos, sizeof (MonoObject));
 	x86_jump_code (code, addr);
-	g_assert ((code - start) < 16);
+	g_assert ((code - start) < size);
 
-	nacl_domain_code_validate (domain, &start, 16, &code);
+	nacl_domain_code_validate (domain, &start, size, &code);
 
 	return start;
 }
@@ -62,7 +62,7 @@ mono_arch_get_static_rgctx_trampoline (MonoMethod *m, MonoMethodRuntimeGenericCo
 
 	MonoDomain *domain = mono_domain_get ();
 
-	buf_len = 10;
+	buf_len = NACL_SIZE (10, 32);
 
 	start = code = mono_domain_code_reserve (domain, buf_len);
 
@@ -125,7 +125,7 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *orig_code, guint8 *addr)
 	 */
 	code -= 6;
 	orig_code -= 6;
-	if ((code [1] == 0xe8)) {
+	if (code [1] == 0xe8) {
 		if (can_write) {
 			InterlockedExchange ((gint32*)(orig_code + 2), (guint)addr - ((guint)orig_code + 1) - 5);
 
@@ -688,6 +688,48 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 	return buf;
 }
 
+/*
+ * mono_arch_create_general_rgctx_lazy_fetch_trampoline:
+ *
+ *   This is a general variant of the rgctx fetch trampolines. It receives a pointer to gpointer[2] in the rgctx reg. The first entry contains the slot, the second
+ * the trampoline to call if the slot is not filled.
+ */
+gpointer
+mono_arch_create_general_rgctx_lazy_fetch_trampoline (MonoTrampInfo **info, gboolean aot)
+{
+	guint8 *code, *buf;
+	int tramp_size;
+	MonoJumpInfo *ji = NULL;
+	GSList *unwind_ops = NULL;
+
+	g_assert (aot);
+
+	unwind_ops = mono_arch_get_cie_program ();
+
+	tramp_size = 64;
+
+	code = buf = mono_global_codeman_reserve (tramp_size);
+
+	// FIXME: Currently, we always go to the slow path.
+	
+	/* Load trampoline addr */
+	x86_mov_reg_membase (code, X86_EAX, MONO_ARCH_RGCTX_REG, 4, 4);
+	/* Load mrgctx/vtable */
+	x86_mov_reg_membase (code, MONO_ARCH_VTABLE_REG, X86_ESP, 4, 4);
+
+	x86_jump_reg (code, X86_EAX);
+
+	nacl_global_codeman_validate (&buf, tramp_size, &code);
+	mono_arch_flush_icache (buf, code - buf);
+
+	g_assert (code - buf <= tramp_size);
+
+	if (info)
+		*info = mono_tramp_info_create ("rgctx_fetch_trampoline_general", buf, code - buf, ji, unwind_ops);
+
+	return buf;
+}
+
 gpointer
 mono_arch_create_generic_class_init_trampoline (MonoTrampInfo **info, gboolean aot)
 {
@@ -1101,3 +1143,44 @@ mono_arch_get_plt_info_offset (guint8 *plt_entry, mgreg_t *regs, guint8 *code)
 {
 	return *(guint32*)(plt_entry + NACL_SIZE (6, 12));
 }
+
+/*
+ * mono_arch_get_gsharedvt_arg_trampoline:
+ *
+ *   Return a trampoline which passes ARG to the gsharedvt in/out trampoline ADDR.
+ */
+gpointer
+mono_arch_get_gsharedvt_arg_trampoline (MonoDomain *domain, gpointer arg, gpointer addr)
+{
+	guint8 *code, *start;
+	int buf_len;
+
+	buf_len = 10;
+
+	start = code = mono_domain_code_reserve (domain, buf_len);
+
+	x86_mov_reg_imm (code, X86_EAX, arg);
+	x86_jump_code (code, addr);
+	g_assert ((code - start) <= buf_len);
+
+	nacl_domain_code_validate (domain, &start, buf_len, &code);
+	mono_arch_flush_icache (start, code - start);
+
+	return start;
+}
+
+#if defined(MONOTOUCH) || defined(MONO_EXTENSIONS)
+
+#include "../../../mono-extensions/mono/mini/tramp-x86-gsharedvt.c"
+
+#else
+
+gpointer
+mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
+{
+	if (info)
+		*info = NULL;
+	return NULL;
+}
+
+#endif /* !MONOTOUCH */

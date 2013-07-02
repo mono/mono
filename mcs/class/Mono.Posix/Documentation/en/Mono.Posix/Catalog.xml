@@ -1,14 +1,21 @@
 <Type Name="Catalog" FullName="Mono.Posix.Catalog">
   <TypeSignature Language="C#" Value="public class Catalog" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Catalog extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Obsolete("Use Mono.Unix.Catalog")</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>To be added.</summary>
     <remarks>
@@ -20,20 +27,28 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Catalog ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters />
       <Docs>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetPluralString">
       <MemberSignature Language="C#" Value="public static string GetPluralString (string s, string p, int n);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetPluralString(string s, string p, int32 n) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -52,14 +67,16 @@
 				<see cref="M:Mono.Unix.Catalog.GetPluralString" /> instead.</remarks>
         <altmember cref="M:Mono.Unix.Catalog.GetPluralString" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetString">
       <MemberSignature Language="C#" Value="public static string GetString (string s);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetString(string s) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -74,14 +91,16 @@
 				<see cref="M:Mono.Unix.Catalog.GetString" /> instead.</remarks>
         <altmember cref="M:Mono.Unix.Catalog.GetString" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Init">
       <MemberSignature Language="C#" Value="public static void Init (string package, string localedir);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Init(string package, string localedir) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -97,15 +116,6 @@
 				<see cref="M:Mono.Unix.Catalog.Init" /> instead.</remarks>
         <altmember cref="M:Mono.Unix.Catalog.Init" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Obsolete("Use Mono.Unix.Catalog")</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

@@ -30,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !MOONLIGHT
+#if !FULL_AOT_RUNTIME
 
 using System.Collections;
 using System.Collections.Generic;

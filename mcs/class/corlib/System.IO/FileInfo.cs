@@ -49,11 +49,6 @@ namespace System.IO {
 	{
 		private bool exists;
 
-#if MOONLIGHT
-		internal FileInfo ()
-		{
-		}
-#endif
 		public FileInfo (string fileName)
 		{
 			if (fileName == null)

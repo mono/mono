@@ -29,8 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !MOONLIGHT
-
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -211,6 +209,3 @@ public sealed class Hash :
 }
 
 }
-
-#endif
-

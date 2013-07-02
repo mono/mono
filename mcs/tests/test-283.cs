@@ -21,7 +21,7 @@ class Y : X {
 		return 0;
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		if (new Y ().GetIt () () == 1 && new Y ().GetIt2 () () == 1) {
 			System.Console.WriteLine ("good");

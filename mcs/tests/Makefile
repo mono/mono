@@ -6,7 +6,7 @@ thisdir = tests
 SUBDIRS =
 include ../build/rules.make
 
-DISTFILES = $(wildcard dlls/**/*.cs)
+DISTFILES = $(wildcard dlls/**/*.cs) $(wildcard dlls/*.cs) $(wildcard dlls/*.inc)
 DISTFILES += $(wildcard *.cs) $(wildcard *.il) $(wildcard *.xml) $(wildcard *.inc) $(wildcard known-issues-*) $(wildcard *.snk)
 
 with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
@@ -65,6 +65,9 @@ qcheck: build-compiler-lib qcheck2
 qcheck2:
 	$(TESTER) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(PROFILE) -log:$(PROFILE).log -il:ver-il-$(PROFILE).xml $(DEFINES) $(TOPTIONS)
 
+gen-mt-tests:
+	$(TESTER) -mode:nunit -files:'v2' -compiler:$(COMPILER) -issues:known-issues-mt -compiler-options:"-lib:$(topdir)/class/lib/monotouch projects/MonoTouch/ivt.cs"
+
 test-local:
 	@:
 
@@ -91,9 +94,5 @@ csproj-local:
 	$(ILASM) /dll /out:$@ $<
 
 setup:
-	$(ILASM) /dll property-il.il
-	$(CSCOMPILE) /r:property-il.dll property-main.cs /out:property-main.exe
-	$(TEST_RUNTIME) property-main.exe
-
 	$(CSCOMPILE) -t:library dlls/test-679-2/test-679-lib-2.cs
 	$(CSCOMPILE) -t:library dlls/test-679-1/test-679-lib.cs -r:dlls/test-679-2/test-679-lib-2.dll

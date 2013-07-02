@@ -889,14 +889,6 @@ namespace System.Xml.Schema
 			return true;
 		}
 
-		internal override void CheckRecursion (int depth, ValidationEventHandler h, XmlSchema schema)
-		{
-			XmlSchemaComplexType ct = this.ElementType as XmlSchemaComplexType;
-			if (ct == null || ct.Particle == null)
-				return;
-			ct.Particle.CheckRecursion (depth + 1, h, schema);
-		}
-
 		internal override void ValidateUniqueParticleAttribution (XmlSchemaObjectTable qnames, ArrayList nsNames,
 			ValidationEventHandler h, XmlSchema schema)
 		{

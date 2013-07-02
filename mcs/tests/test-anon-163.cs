@@ -9,6 +9,11 @@ class A
 	protected virtual void Foo2<T> ()
 	{
 	}
+
+	public virtual T Foo4<T> ()
+	{
+		return default (T);
+	}
 }
 
 class B : A
@@ -40,6 +45,12 @@ class B : A
 		};
 
 		a ();
+	}
+
+	public T Test4<T> ()
+	{
+		Func<T> a4 = () => base.Foo4<T> ();
+		return a4 ();
 	}
 }
 

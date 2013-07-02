@@ -1,5 +1,6 @@
+#if !FULL_AOT_RUNTIME
 namespace System.Reflection.Emit {
-	internal class OpCodeNames {
+	static class OpCodeNames {
 		internal static readonly string [] names = {
 			"nop",
 			"break",
@@ -308,3 +309,4 @@ namespace System.Reflection.Emit {
 		};
 	}
 }
+#endif

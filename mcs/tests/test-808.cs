@@ -4,7 +4,7 @@ using System;
 
 unsafe class Program
 {
-	unsafe static int Main ()
+	unsafe public static int Main ()
 	{
 		float* to = stackalloc float[2];
 		to[0] = to[1] = float.MaxValue;

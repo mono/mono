@@ -30,7 +30,7 @@ public class D2 : T
 
 public class Z
 {
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

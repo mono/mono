@@ -29,7 +29,7 @@
 //
 
 
-#if NET_2_0
+#if !MOBILE
 
 using NUnit.Framework;
 using System;
@@ -51,6 +51,13 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConstructorEmpty ()
+		{
+			new TraceSource ("");
+		}
+		
+		[Test]
 		public void DefaultValues ()
 		{
 			TraceSource ts = new TraceSource ("foo");
@@ -69,6 +76,20 @@ namespace MonoTests.System.Diagnostics
 		{
 			TraceSource ts = new TraceSource ("foo");
 			ts.Switch = null;
+		}
+		
+		[Test]
+		public void SwitchLevel ()
+		{
+			TraceSource s = new TraceSource ("Source1");
+			Assert.AreEqual (SourceLevels.Off, s.Switch.Level, "#1");
+
+			s = new TraceSource("Source2", SourceLevels.All);
+			Assert.AreEqual (SourceLevels.All, s.Switch.Level, "#2");
+
+			s = new TraceSource("Source3");
+			s.Switch.Level = SourceLevels.All;
+			Assert.AreEqual (SourceLevels.All, s.Switch.Level, "#3");
 		}
 	}
 }

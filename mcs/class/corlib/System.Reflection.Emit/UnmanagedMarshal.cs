@@ -31,6 +31,7 @@
 // (C) 2001-2002 Ximian, Inc.  http://www.ximian.com
 //
 
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System;
@@ -126,22 +127,6 @@ namespace System.Reflection.Emit {
 
 			return res;
 		}
-
-		internal MarshalAsAttribute ToMarshalAsAttribute () {
-			MarshalAsAttribute attr = new MarshalAsAttribute (t);
-			attr.ArraySubType = tbase;
-			attr.MarshalCookie = mcookie;
-			attr.MarshalType = marshaltype;
-			attr.MarshalTypeRef = marshaltyperef;
-			if (count == -1)
-				attr.SizeConst = 0;
-			else
-				attr.SizeConst = count;
-			if (param_num == -1)
-				attr.SizeParamIndex = 0;
-			else
-				attr.SizeParamIndex = (short)param_num;
-			return attr;
-		}
 	}
 }
+#endif

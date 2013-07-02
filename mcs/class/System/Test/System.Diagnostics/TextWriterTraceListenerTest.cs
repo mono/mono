@@ -6,6 +6,8 @@
 //
 // (C) 2001
 
+#if !MOBILE
+
 using System;
 using System.IO;
 using System.Text;
@@ -56,3 +58,5 @@ namespace MonoTests.System.Diagnostics
 		}
 	}
 }
+
+#endif

@@ -40,7 +40,7 @@
 //
 //    Rewrite ToUniversalTime to use a similar setup to that
 //
-using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -72,7 +72,7 @@ namespace System
 				TimeZone tz;
 				
 				lock (tz_lock) {
-					if (currentTimeZone == null || (now - timezone_check) > TimeSpan.TicksPerMinute) {
+					if (currentTimeZone == null || Math.Abs (now - timezone_check) > TimeSpan.TicksPerMinute) {
 						currentTimeZone = new CurrentSystemTimeZone (now);
 						timezone_check = now;
 					}
@@ -241,7 +241,7 @@ namespace System
 		private string m_daylightName;
 
 		// A yearwise cache of DaylightTime.
-		private Hashtable m_CachedDaylightChanges = new Hashtable (1);
+		private Dictionary<int, DaylightTime> m_CachedDaylightChanges = new Dictionary<int, DaylightTime> (1);
 
 		// the offset when daylightsaving is not on (in ticks)
 		private long m_ticksOffset;
@@ -337,8 +337,8 @@ namespace System
 				return this_year_dlt;
 			
 			lock (m_CachedDaylightChanges) {
-				DaylightTime dlt = (DaylightTime) m_CachedDaylightChanges [year];
-				if (dlt == null) {
+				DaylightTime dlt;
+				if (!m_CachedDaylightChanges.TryGetValue (year, out dlt)) {
 					Int64[] data;
 					string[] names;
 

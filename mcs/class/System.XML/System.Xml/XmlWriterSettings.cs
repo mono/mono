@@ -162,7 +162,7 @@ namespace System.Xml
 			//set { outputMethod = value; }
 		}
 
-#if MOONLIGHT || MOBILE || NET_4_0
+#if NET_4_0
 		public
 #else
 		internal
@@ -191,6 +191,12 @@ namespace System.Xml
 				EnsureWritability ();
 				isAsync = value;
 			}
+		}
+		
+		[MonoTODO]
+		public bool WriteEndDocumentOnClose {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 #endif
 

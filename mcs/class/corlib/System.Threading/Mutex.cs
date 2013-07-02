@@ -34,9 +34,7 @@ using System.Security.Permissions;
 using System.Runtime.ConstrainedExecution;
 using System.IO;
 using System.Runtime.InteropServices;
-#if !NET_2_1
 using System.Security.AccessControl;
-#endif
 
 namespace System.Threading
 {
@@ -44,24 +42,22 @@ namespace System.Threading
 	public sealed class Mutex : WaitHandle 
 	{
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern bool ReleaseMutex_internal(IntPtr handle);
+		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern IntPtr  CreateMutex_internal(
 		                                         bool initiallyOwned,
 		                                         string name,
 							 out bool created);
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern bool ReleaseMutex_internal(IntPtr handle);
-
-#if !NET_2_1
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern IntPtr OpenMutex_internal (string name, MutexRights rights, out MonoIOError error);
-		
+
 		private Mutex (IntPtr handle)
 		{
 			Handle = handle;
 		}
-#endif
-		
+
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public Mutex() {
 			bool created;
@@ -77,6 +73,7 @@ namespace System.Threading
 						    out created);
 		}
 
+#if !MOBILE
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		public Mutex (bool initiallyOwned, string name)
@@ -92,7 +89,6 @@ namespace System.Threading
 			Handle = CreateMutex_internal (initiallyOwned, name, out createdNew);
 		}
 
-#if !NET_2_1
 		[MonoTODO ("Use MutexSecurity in CreateMutex_internal")]
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public Mutex (bool initiallyOwned, string name, out bool createdNew, MutexSecurity mutexSecurity)
@@ -139,6 +135,66 @@ namespace System.Threading
 			}
 			
 			return(new Mutex (handle));
+		}
+
+		public static bool TryOpenExisting (string name, out Mutex result)
+		{
+			return TryOpenExisting (name, MutexRights.Synchronize | MutexRights.Modify, out result);
+		}
+
+		public static bool TryOpenExisting (string name, MutexRights rights, out Mutex result)
+		{
+			if (name == null) {
+				throw new ArgumentNullException ("name");
+			}
+			if ((name.Length == 0) || (name.Length > 260)) {
+				throw new ArgumentException ("name", Locale.GetText ("Invalid length [1-260]."));
+			}
+			
+			MonoIOError error;
+			IntPtr handle = OpenMutex_internal (name, rights, out error);
+			if (handle == (IntPtr)null) {
+				result = null;
+				return false;
+			}
+
+			result = new Mutex (handle);
+			return true;
+		}
+#else
+		public Mutex (bool initiallyOwned, string name)
+		{
+			throw new NotSupportedException ();
+		}
+		
+		public Mutex (bool initiallyOwned, string name, out bool createdNew)
+		{
+			throw new NotSupportedException ();
+		}
+		
+		public Mutex (bool initiallyOwned, string name, out bool createdNew, MutexSecurity mutexSecurity)
+		{
+			throw new NotSupportedException ();
+		}
+
+		public static Mutex OpenExisting (string name)
+		{
+			throw new NotSupportedException ();
+		}
+
+		public static Mutex OpenExisting (string name, MutexRights rights)
+		{
+			throw new NotSupportedException ();
+		}
+
+		public static bool TryOpenExisting (string name, out Mutex result)
+		{
+			throw new NotSupportedException ();
+		}
+
+		public static bool TryOpenExisting (string name, MutexRights rights, out Mutex result)
+		{
+			throw new NotSupportedException ();
 		}
 #endif
 

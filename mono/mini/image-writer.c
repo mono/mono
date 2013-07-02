@@ -53,7 +53,7 @@
  * TARGET_ASM_GAS == GNU assembler
  */
 #if !defined(TARGET_ASM_APPLE) && !defined(TARGET_ASM_GAS)
-#if defined(__MACH__) && !defined(__native_client_codegen__)
+#if defined(TARGET_MACH) && !defined(__native_client_codegen__)
 #define TARGET_ASM_APPLE
 #else
 #define TARGET_ASM_GAS
@@ -63,7 +63,7 @@
 /*
  * Defines for the directives used by different assemblers
  */
-#if defined(TARGET_POWERPC) || defined(__MACH__)
+#if defined(TARGET_POWERPC) || defined(TARGET_MACH)
 #define AS_STRING_DIRECTIVE ".asciz"
 #else
 #define AS_STRING_DIRECTIVE ".string"
@@ -108,7 +108,7 @@
 #define ALIGN_PTR_TO(ptr,align) (gpointer)((((gssize)(ptr)) + (align - 1)) & (~(align - 1)))
 #define ROUND_DOWN(VALUE,SIZE)	((VALUE) & ~((SIZE) - 1))
 
-#if defined(TARGET_AMD64) && !defined(HOST_WIN32)
+#if defined(TARGET_AMD64) && !defined(HOST_WIN32) && !defined(__APPLE__)
 #define USE_ELF_WRITER 1
 #define USE_ELF_RELA 1
 #endif
@@ -117,7 +117,7 @@
 #define USE_ELF_WRITER 1
 #endif
 
-#if defined(TARGET_ARM) && !defined(__MACH__)
+#if defined(TARGET_ARM) && !defined(TARGET_MACH)
 #define USE_ELF_WRITER 1
 #endif
 
@@ -1585,12 +1585,8 @@ static void
 asm_writer_emit_global (MonoImageWriter *acfg, const char *name, gboolean func)
 {
 	asm_writer_emit_unset_mode (acfg);
-#if  ((defined(__ppc__) || defined(TARGET_X86)) && defined(TARGET_ASM_APPLE)) || (defined(HOST_WIN32) && !defined(MONO_CROSS_COMPILE))
-    // mach-o always uses a '_' prefix.
-	fprintf (acfg->fp, "\t.globl _%s\n", name);
-#else
+
 	fprintf (acfg->fp, "\t.globl %s\n", name);
-#endif
 
 	asm_writer_emit_symbol_type (acfg, name, func);
 }
@@ -1621,22 +1617,7 @@ static void
 asm_writer_emit_label (MonoImageWriter *acfg, const char *name)
 {
 	asm_writer_emit_unset_mode (acfg);
-#if (defined(TARGET_X86) && defined(TARGET_ASM_APPLE))
-        name = get_label(name);
-        fprintf (acfg->fp, "%s:\n", name);
-        if (name[0] != 'L')
-            fprintf (acfg->fp, "_%s:\n", name);
-
-#elif (defined(HOST_WIN32) && (defined(TARGET_X86) || defined(TARGET_AMD64))) || (defined(TARGET_X86) && defined(TARGET_ASM_APPLE))
-	fprintf (acfg->fp, "_%s:\n", name);
-#if defined(HOST_WIN32)
-	/* Emit a normal label too */
-	fprintf (acfg->fp, "%s:\n", name);
-#endif
-#else
 	fprintf (acfg->fp, "%s:\n", get_label (name));
-#endif
-
 }
 
 static void
@@ -1789,7 +1770,7 @@ asm_writer_emit_symbol_diff (MonoImageWriter *acfg, const char *end, const char*
 
 	if (offset == 0 && strcmp (start, ".") != 0) {
 		char symbol [128];
-		sprintf (symbol, ".LDIFF_SYM%d", acfg->label_gen);
+		sprintf (symbol, "%sDIFF_SYM%d", AS_TEMP_LABEL_PREFIX, acfg->label_gen);
 		acfg->label_gen ++;
 		fprintf (acfg->fp, "\n%s=%s - %s", symbol, end, start);
 		fprintf (acfg->fp, "\n\t%s ", AS_INT32_DIRECTIVE);

@@ -216,9 +216,17 @@ public class ASCIIEncoding : Encoding
 			else {
 				if (buffer == null)
 					buffer = DecoderFallback.CreateFallbackBuffer ();
-				buffer.Fallback (bytes, byteIndex);
-				while (buffer.Remaining > 0)
-					chars [charIndex++] = buffer.GetNextChar ();
+				var thisByte = new byte[] { bytes [byteIndex-1] };
+				buffer.Fallback (thisByte, 0);
+				while (buffer.Remaining > 0) {
+					if (charIndex < chars.Length) {
+						chars [charIndex++] = buffer.GetNextChar ();
+						continue;
+					}
+					throw new ArgumentException (
+							"The output char buffer is too small to contain the " +
+							"decoded characters.");
+				}
 			}
 		}
 		return byteCount;

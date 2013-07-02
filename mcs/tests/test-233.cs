@@ -3,7 +3,7 @@ using System.Reflection;
 
 class Tests {
 
-	static int Main () {
+	public static int Main () {
 		return TestDriver.RunTests (typeof (Tests));
 	}
 	

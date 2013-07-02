@@ -27,7 +27,7 @@ class Program
 		get { return "a"; }
 	}
 	
-	static void Main (string [] args)
+	public static void Main (string [] args)
 	{
 		Program p = new Program ();
 		p [0].Extension ();

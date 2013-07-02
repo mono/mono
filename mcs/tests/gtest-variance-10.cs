@@ -22,7 +22,7 @@ public class Test : I<string>, I<Foo>
 
 public static class Program
 {
-	static int Main ()
+	public static int Main ()
 	{
 		var col = new Test();
 

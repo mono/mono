@@ -101,7 +101,7 @@ namespace Microsoft.Build.Tasks {
 
 		protected override bool	IsSourceFile (string fileName)
 		{
-			return Path.GetExtension (fileName).ToLower () == ".vb";
+			return string.Equals (Path.GetExtension (fileName), ".vb", StringComparison.OrdinalIgnoreCase);
 		}
 
 		/* Special parser for VB.NET files

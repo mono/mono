@@ -627,7 +627,7 @@ get_throw_trampoline (const char *name, gboolean rethrow, gboolean llvm, gboolea
 		code = mono_arch_emit_load_aotconst (start, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, corlib ? "mono_x86_throw_corlib_exception" : "mono_x86_throw_exception");
 		x86_call_reg (code, X86_EAX);
 	} else {
-		x86_call_code (code, resume_unwind ? (mono_x86_resume_unwind) : (corlib ? (gpointer)mono_x86_throw_corlib_exception : (gpointer)mono_x86_throw_exception));
+		x86_call_code (code, resume_unwind ? (gpointer)(mono_x86_resume_unwind) : (corlib ? (gpointer)mono_x86_throw_corlib_exception : (gpointer)mono_x86_throw_exception));
 	}
 	x86_breakpoint (code);
 
@@ -867,6 +867,7 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 			/* Pop arguments off the stack */
 			/* FIXME: Handle the delegate case too ((*lmf)->method == NULL) */
 			/* FIXME: Handle the IMT/vtable case too */
+#if 0
 #ifndef ENABLE_LLVM
 			if ((*lmf)->method) {
 				MonoMethod *method = (*lmf)->method;
@@ -875,6 +876,7 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 				guint32 stack_to_pop = mono_arch_get_argument_info (NULL, mono_method_signature (method), mono_method_signature (method)->param_count, arg_info);
 				new_ctx->esp += stack_to_pop;
 			}
+#endif
 #endif
 		}
 		else

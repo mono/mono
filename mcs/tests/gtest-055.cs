@@ -18,7 +18,7 @@ namespace N2
 
 	class X
 	{
-		static void Main ()
+		public static void Main ()
 		{
 			Y y = new Y ();
 			Y.B b = new Y.B ();

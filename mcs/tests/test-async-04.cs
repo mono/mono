@@ -15,7 +15,7 @@ class C
 			mre_task.Set ();
 			mre.WaitOne (3000);
 			return 5;
-		});
+		}).ConfigureAwait (false);;
 
 		return 1;
 	}

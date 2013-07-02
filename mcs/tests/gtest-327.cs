@@ -27,7 +27,7 @@ struct Value : ITest
 
 class C
 {
-	static void Main ()
+	public static void Main ()
 	{
 		new Tester<Reference> ().Do ();
 		new Tester<Value> ().Do ();

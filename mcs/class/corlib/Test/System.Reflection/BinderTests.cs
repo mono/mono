@@ -101,6 +101,80 @@ namespace MonoTests.System.Reflection
 		}
 	}
 
+	class MethodInfoWrapper : MethodInfo
+	{
+		private readonly MethodInfo method;
+		
+		public MethodInfoWrapper (MethodInfo method)
+		{
+			this.method = method;
+		}
+		
+		public override object[] GetCustomAttributes (bool inherit)
+		{
+			return method.GetCustomAttributes (inherit);
+		}
+		
+		public override bool IsDefined (Type attributeType, bool inherit)
+		{
+			return method.IsDefined (attributeType, inherit);
+		}
+		
+		public override ParameterInfo[] GetParameters ()
+		{
+			return method.GetParameters ();
+		}
+		
+		public override MethodImplAttributes GetMethodImplementationFlags ()
+		{
+			return method.GetMethodImplementationFlags ();
+		}
+		
+		public override object Invoke (object obj, BindingFlags invokeAttr, Binder binder, object[] parameters, CultureInfo culture)
+		{
+			return method.Invoke (obj, invokeAttr, binder, parameters, culture);
+		}
+		
+		public override MethodInfo GetBaseDefinition ()
+		{
+			return method.GetBaseDefinition ();
+		}
+		
+		public override ICustomAttributeProvider ReturnTypeCustomAttributes {
+			get { return method.ReturnTypeCustomAttributes; }
+		}
+		
+		public override string Name {
+			get { return method.Name; }
+		}
+		
+		public override Type ReturnType {
+			get { return method.ReturnType; }
+		}
+		
+		public override Type DeclaringType {
+			get { return method.DeclaringType; }
+		}
+		
+		public override Type ReflectedType {
+			get { return method.ReflectedType; }
+		}
+		
+		public override RuntimeMethodHandle MethodHandle {
+			get { return method.MethodHandle; }
+		}
+		
+		public override MethodAttributes Attributes {
+			get { return method.Attributes; }
+		}
+		
+		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
+		{
+			return method.GetCustomAttributes (attributeType, inherit);
+		}
+	}
+
+
 	[TestFixture]
 	public class BinderTest
 	{
@@ -128,6 +202,13 @@ namespace MonoTests.System.Reflection
 		{
 			// The second argument is the one
 			binder.SelectProperty (0, new PropertyInfo [] {}, null, null, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ChangeTypeOnDefaultBinder ()
+		{
+			binder.ChangeType (null, null, null);
 		}
 
 		[Test]
@@ -980,19 +1061,16 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
-		public void TestParamsAttribute2_Mono ()
+		public void TestParamsAttribute_1 ()
 		{
-			MethodInfo mi = typeof (BinderTest).GetMethod ("params_method1", BindingFlags.Static|BindingFlags.Public, null, new Type [] { typeof (object), typeof (object), typeof (object) }, null);
-			Assert.IsNotNull (mi, "#1");
-			Assert.AreEqual (typeof (object []), mi.GetParameters () [1].ParameterType, "#2");
+			MethodInfo mi = typeof (BinderTest).GetMethod ("params_method1", BindingFlags.Static | BindingFlags.Public, null, new Type [] { typeof (object), typeof (object), typeof (object) }, null);
+			Assert.IsNull (mi, "#1");
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		public void TestParamsAttribute2_MS ()
+		public void TestParamsAttribute_2 ()
 		{
-			MethodInfo mi = typeof (BinderTest).GetMethod ("params_method1", BindingFlags.Static | BindingFlags.Public, null, new Type [] { typeof (object), typeof (object), typeof (object) }, null);
+			MethodInfo mi = typeof (BinderTest).GetMethod ("params_method2", BindingFlags.Static | BindingFlags.Public, null, Type.EmptyTypes, null);
 			Assert.IsNull (mi, "#1");
 		}
 
@@ -1007,6 +1085,10 @@ namespace MonoTests.System.Reflection
 		public static void params_method1 (object o, object o2)
 		{
 		}
+
+		public static void params_method2 (params string[] args)
+		{
+		}	
 
 		public static double DoubleMethod (double d) {
 			return d;
@@ -1393,6 +1475,19 @@ namespace MonoTests.System.Reflection
 				null, // binder
 				null, // target
 				new object [] { CultureInfo.CurrentCulture, "foo{0}{1}", "bar", "baz" }));
+		}
+
+		public static void CustomMethodType_Helper ()
+		{
+		}
+
+		[Test]
+		public void CustomMethodType ()
+		{
+			var method = new MethodInfoWrapper (GetType ().GetMethod ("CustomMethodType_Helper"));
+
+			var res = Type.DefaultBinder.SelectMethod (BindingFlags.Static | BindingFlags.Public, new[] { method }, Type.EmptyTypes, new ParameterModifier[0]);
+			Assert.AreSame (method, res);
 		}
 	}
 }

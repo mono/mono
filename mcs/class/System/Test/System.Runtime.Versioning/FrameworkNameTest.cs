@@ -25,13 +25,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+#if NET_4_0 && !MOBILE
+
 using System;
 using System.Runtime.Versioning;
 using System.Text;
 
 using NUnit.Framework;
 
-#if NET_4_0
 namespace MonoTests.System.Runtime.Versioning
 {
 	[TestFixture]

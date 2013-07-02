@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 class Program
 {
-	static void Main (string[] args)
+	public static void Main (string[] args)
 	{
 		MyClass<int> list = new MyClass<int>();
 

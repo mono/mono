@@ -13,7 +13,7 @@ namespace Outer.Inner
 			list.AddRange(new Test[0]);
 		}
 		
-		static void Main()
+		public static void Main()
 		{
 		}
 	}

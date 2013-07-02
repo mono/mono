@@ -99,6 +99,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void ConstructorString ()
 		{
 			if (!File.Exists (m_ResourceFile)) {
@@ -125,6 +126,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void ConstructorStream_Closed ()
 		{
 			Stream stream = new FileStream (m_ResourceFile, FileMode.Open);
@@ -143,6 +145,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void Stream ()
 		{
 			Stream stream = new FileStream (m_ResourceFile, FileMode.Open);
@@ -152,6 +155,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void Close ()
 		{
 			Stream stream = new FileStream (m_ResourceFile, FileMode.Open);
@@ -164,6 +168,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void Enumerator ()
 		{
 			Stream stream = new FileStream (m_ResourceFile, FileMode.Open);
@@ -239,8 +244,8 @@ namespace MonoTests.System.Resources
 			}
 		}
 
-#if NET_2_0
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void GetResourceDataNullName ()
 		{
 			ResourceReader r = new ResourceReader ("Test/resources/StreamTest.resources");
@@ -262,6 +267,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void GetResourceData ()
 		{
 			byte [] t1 = new byte [] {0x16, 0x00, 0x00, 0x00, 0x76, 0x65, 0x72, 0x69, 0x74, 0x61, 0x73, 0x20, 0x76, 0x6F, 0x73, 0x20, 0x6C, 0x69, 0x62, 0x65, 0x72, 0x61, 0x62, 0x69, 0x74, 0x0A};
@@ -293,6 +299,7 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void GetResourceData2 ()
 		{
 			byte [] expected = new byte [] {
@@ -350,6 +357,5 @@ namespace MonoTests.System.Resources
 			0x00, 0x72, 0x00, 0x72, 0x00, 0x61, 0x00, 0x79, 0x00, 0x54, 0x00,
 			0x65, 0x00, 0x73, 0x00, 0x74, 0x00, 0x00, 0x00, 0x00, 0x00, 0x20,
 			0x06, 0x00, 0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06 };
-#endif
 	}
 }

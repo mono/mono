@@ -28,6 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !MOBILE
+
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -138,3 +140,4 @@ bulldog Transfer: 0 : hoge, relatedActivityId=00000000-0000-0000-0000-0000000000
 	}
 }
 
+#endif

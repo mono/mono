@@ -15,7 +15,7 @@ public class B {
 
   public void Add (object x) { }
 
-  static void Main () {
+  public static void Main () {
     int A = 4;
     int goo1 = 3;
     foo (goo <A, A, A, A, A> (1));

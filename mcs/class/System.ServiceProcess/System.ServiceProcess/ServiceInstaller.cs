@@ -49,10 +49,27 @@ namespace System.ServiceProcess
 		private string service_name;
 		private string[] services_depended_on;
 		private ServiceStartMode start_type;
-
 #if NET_2_0
 		private string description;
+#endif
+#if NET_4_0
+		private bool delayedAutoStart;
+#endif
 
+#if NET_4_0
+		[DefaultValue(false)]
+		[ServiceProcessDescription("Indicates that the service's start should be delayed after other automatically started services have started.")]
+		public bool DelayedAutoStart {
+			get {
+				return delayedAutoStart;
+			}
+			set {
+				delayedAutoStart = value;
+			}
+		}
+#endif
+
+#if NET_2_0
 		[ComVisible (false)]
 		[DefaultValue ("")]
 		[ServiceProcessDescription ("Indicates the service's description (a brief comment that explains the purpose of the service). ")]

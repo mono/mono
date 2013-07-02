@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{7E650C81-1CCE-4A49-9DC8-011DBBCECD02}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>./../../class/lib/net_4_0</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\System.ServiceModel.Discovery-net_4_0</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>System.ServiceModel.Discovery</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
@@ -28,120 +27,121 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_3_5;NET_3_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_3_5;NET_3_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="Assembly\AssemblyInfo.cs" />
-   <Compile Include="System.ServiceModel.Channels\DiscoveryChannelBase.cs" />
-   <Compile Include="System.ServiceModel.Channels\RequestChannelBase.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Configuration\AnnouncementChannelEndpointElementCollection.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Configuration\AnnouncementEndpointCollectionElement.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Configuration\AnnouncementEndpointElement.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Configuration\ContractTypeNameElement.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Configuration\ContractTypeNameElementCollection.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Configuration\DiscoveryClientElement.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Configuration\DiscoveryClientSettingsElement.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Configuration\DiscoveryEndpointCollectionElement.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Configuration\DiscoveryEndpointElement.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Configuration\DiscoveryVersionConverter.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Configuration\DynamicEndpointCollectionElement.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Configuration\DynamicEndpointElement.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Configuration\EndpointDiscoveryElement.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Configuration\FindCriteriaElement.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Configuration\ScopeElement.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Configuration\ScopeElementCollection.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Configuration\ServiceDiscoveryElement.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Configuration\UdpAnnouncementEndpointCollectionElement.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Configuration\UdpAnnouncementEndpointElement.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Configuration\UdpDiscoveryEndpointCollectionElement.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Configuration\UdpDiscoveryEndpointElement.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Configuration\UdpTransportSettingsElement.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Udp\UdpChannelFactory.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Udp\UdpChannelListener.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Udp\UdpDuplexChannel.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Udp\UdpTransportBindingElement.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Version11\AnnouncementClient11.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Version11\DiscoveryMessageSequence11.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Version11\DiscoveryProxyClient11.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Version11\DiscoveryTargetClient11.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Version11\EndpointDiscoveryMetadata11.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Version11\FindCriteria11.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Version11\IAnnouncementContract11.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Version11\IDiscoveryProxyContract11.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Version11\IDiscoveryTargetContract11.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Version11\MessageContracts11.cs" />
-   <Compile Include="System.ServiceModel.Discovery.Version11\ResolveCriteria11.cs" />
-   <Compile Include="System.ServiceModel.Discovery.VersionApril2005\AnnouncementClientApril2005.cs" />
-   <Compile Include="System.ServiceModel.Discovery.VersionApril2005\DiscoveryMessageSequenceApril2005.cs" />
-   <Compile Include="System.ServiceModel.Discovery.VersionApril2005\DiscoveryProxyClientApril2005.cs" />
-   <Compile Include="System.ServiceModel.Discovery.VersionApril2005\DiscoveryTargetClientApril2005.cs" />
-   <Compile Include="System.ServiceModel.Discovery.VersionApril2005\EndpointDiscoveryMetadataApril2005.cs" />
-   <Compile Include="System.ServiceModel.Discovery.VersionApril2005\FindCriteriaApril2005.cs" />
-   <Compile Include="System.ServiceModel.Discovery.VersionApril2005\IAnnouncementContractApril2005.cs" />
-   <Compile Include="System.ServiceModel.Discovery.VersionApril2005\IDiscoveryProxyContractApril2005.cs" />
-   <Compile Include="System.ServiceModel.Discovery.VersionApril2005\IDiscoveryTargetContractApril2005.cs" />
-   <Compile Include="System.ServiceModel.Discovery.VersionApril2005\MessageContractsApril2005.cs" />
-   <Compile Include="System.ServiceModel.Discovery.VersionApril2005\ResolveCriteriaApril2005.cs" />
-   <Compile Include="System.ServiceModel.Discovery.VersionCD1\AnnouncementClientCD1.cs" />
-   <Compile Include="System.ServiceModel.Discovery.VersionCD1\DiscoveryMessageSequenceCD1.cs" />
-   <Compile Include="System.ServiceModel.Discovery.VersionCD1\DiscoveryProxyClientCD1.cs" />
-   <Compile Include="System.ServiceModel.Discovery.VersionCD1\DiscoveryTargetClientCD1.cs" />
-   <Compile Include="System.ServiceModel.Discovery.VersionCD1\EndpointDiscoveryMetadataCD1.cs" />
-   <Compile Include="System.ServiceModel.Discovery.VersionCD1\FindCriteriaCD1.cs" />
-   <Compile Include="System.ServiceModel.Discovery.VersionCD1\IAnnouncementContractCD1.cs" />
-   <Compile Include="System.ServiceModel.Discovery.VersionCD1\IDiscoveryProxyContractCD1.cs" />
-   <Compile Include="System.ServiceModel.Discovery.VersionCD1\IDiscoveryTargetContractCD1.cs" />
-   <Compile Include="System.ServiceModel.Discovery.VersionCD1\MessageContractsCD1.cs" />
-   <Compile Include="System.ServiceModel.Discovery.VersionCD1\ResolveCriteriaCD1.cs" />
-   <Compile Include="System.ServiceModel.Discovery\AnnouncementClient.cs" />
-   <Compile Include="System.ServiceModel.Discovery\AnnouncementEndpoint.cs" />
-   <Compile Include="System.ServiceModel.Discovery\AnnouncementEventArgs.cs" />
-   <Compile Include="System.ServiceModel.Discovery\AnnouncementService.cs" />
-   <Compile Include="System.ServiceModel.Discovery\DiscoveryChannelDispatcher.cs" />
-   <Compile Include="System.ServiceModel.Discovery\DiscoveryChannelFactory.cs" />
-   <Compile Include="System.ServiceModel.Discovery\DiscoveryClient.cs" />
-   <Compile Include="System.ServiceModel.Discovery\DiscoveryClientBindingElement.cs" />
-   <Compile Include="System.ServiceModel.Discovery\DiscoveryEndpoint.cs" />
-   <Compile Include="System.ServiceModel.Discovery\DiscoveryEndpointProvider.cs" />
-   <Compile Include="System.ServiceModel.Discovery\DiscoveryEndpointPublisherBehavior.cs" />
-   <Compile Include="System.ServiceModel.Discovery\DiscoveryMessageSequence.cs" />
-   <Compile Include="System.ServiceModel.Discovery\DiscoveryMessageSequenceGenerator.cs" />
-   <Compile Include="System.ServiceModel.Discovery\DiscoveryOperationContextExtension.cs" />
-   <Compile Include="System.ServiceModel.Discovery\DiscoveryProxy.cs" />
-   <Compile Include="System.ServiceModel.Discovery\DiscoveryRequestChannel.cs" />
-   <Compile Include="System.ServiceModel.Discovery\DiscoveryService.cs" />
-   <Compile Include="System.ServiceModel.Discovery\DiscoveryServiceExtension.cs" />
-   <Compile Include="System.ServiceModel.Discovery\DiscoveryVersion.cs" />
-   <Compile Include="System.ServiceModel.Discovery\DiscoveryViaUriBehavior.cs" />
-   <Compile Include="System.ServiceModel.Discovery\DynamicEndpoint.cs" />
-   <Compile Include="System.ServiceModel.Discovery\EndpointDiscoveryBehavior.cs" />
-   <Compile Include="System.ServiceModel.Discovery\EndpointDiscoveryMetadata.cs" />
-   <Compile Include="System.ServiceModel.Discovery\FindCompletedEventArgs.cs" />
-   <Compile Include="System.ServiceModel.Discovery\FindCriteria.cs" />
-   <Compile Include="System.ServiceModel.Discovery\FindProgressChangedEventArgs.cs" />
-   <Compile Include="System.ServiceModel.Discovery\FindRequestContext.cs" />
-   <Compile Include="System.ServiceModel.Discovery\FindResponse.cs" />
-   <Compile Include="System.ServiceModel.Discovery\ResolveCompletedEventArgs.cs" />
-   <Compile Include="System.ServiceModel.Discovery\ResolveCriteria.cs" />
-   <Compile Include="System.ServiceModel.Discovery\ResolveResponse.cs" />
-   <Compile Include="System.ServiceModel.Discovery\ServiceDiscoveryBehavior.cs" />
-   <Compile Include="System.ServiceModel.Discovery\ServiceDiscoveryMode.cs" />
-   <Compile Include="System.ServiceModel.Discovery\UdpAnnouncementEndpoint.cs" />
-   <Compile Include="System.ServiceModel.Discovery\UdpDiscoveryEndpoint.cs" />
-   <Compile Include="System.ServiceModel.Discovery\UdpTransportSettings.cs" />
-
-  </ItemGroup>
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="System.ServiceModel.Channels\DiscoveryChannelBase.cs" />
+    <Compile Include="System.ServiceModel.Channels\RequestChannelBase.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Configuration\AnnouncementChannelEndpointElementCollection.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Configuration\AnnouncementEndpointCollectionElement.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Configuration\AnnouncementEndpointElement.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Configuration\ContractTypeNameElement.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Configuration\ContractTypeNameElementCollection.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Configuration\DiscoveryClientElement.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Configuration\DiscoveryClientSettingsElement.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Configuration\DiscoveryEndpointCollectionElement.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Configuration\DiscoveryEndpointElement.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Configuration\DiscoveryVersionConverter.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Configuration\DynamicEndpointCollectionElement.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Configuration\DynamicEndpointElement.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Configuration\EndpointDiscoveryElement.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Configuration\FindCriteriaElement.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Configuration\ScopeElement.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Configuration\ScopeElementCollection.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Configuration\ServiceDiscoveryElement.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Configuration\UdpAnnouncementEndpointCollectionElement.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Configuration\UdpAnnouncementEndpointElement.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Configuration\UdpDiscoveryEndpointCollectionElement.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Configuration\UdpDiscoveryEndpointElement.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Configuration\UdpTransportSettingsElement.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Udp\UdpChannelFactory.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Udp\UdpChannelListener.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Udp\UdpDuplexChannel.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Udp\UdpTransportBindingElement.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Version11\AnnouncementClient11.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Version11\DiscoveryMessageSequence11.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Version11\DiscoveryProxyClient11.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Version11\DiscoveryTargetClient11.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Version11\EndpointDiscoveryMetadata11.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Version11\FindCriteria11.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Version11\IAnnouncementContract11.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Version11\IDiscoveryProxyContract11.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Version11\IDiscoveryTargetContract11.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Version11\MessageContracts11.cs" />
+    <Compile Include="System.ServiceModel.Discovery.Version11\ResolveCriteria11.cs" />
+    <Compile Include="System.ServiceModel.Discovery.VersionApril2005\AnnouncementClientApril2005.cs" />
+    <Compile Include="System.ServiceModel.Discovery.VersionApril2005\DiscoveryMessageSequenceApril2005.cs" />
+    <Compile Include="System.ServiceModel.Discovery.VersionApril2005\DiscoveryProxyClientApril2005.cs" />
+    <Compile Include="System.ServiceModel.Discovery.VersionApril2005\DiscoveryTargetClientApril2005.cs" />
+    <Compile Include="System.ServiceModel.Discovery.VersionApril2005\EndpointDiscoveryMetadataApril2005.cs" />
+    <Compile Include="System.ServiceModel.Discovery.VersionApril2005\FindCriteriaApril2005.cs" />
+    <Compile Include="System.ServiceModel.Discovery.VersionApril2005\IAnnouncementContractApril2005.cs" />
+    <Compile Include="System.ServiceModel.Discovery.VersionApril2005\IDiscoveryProxyContractApril2005.cs" />
+    <Compile Include="System.ServiceModel.Discovery.VersionApril2005\IDiscoveryTargetContractApril2005.cs" />
+    <Compile Include="System.ServiceModel.Discovery.VersionApril2005\MessageContractsApril2005.cs" />
+    <Compile Include="System.ServiceModel.Discovery.VersionApril2005\ResolveCriteriaApril2005.cs" />
+    <Compile Include="System.ServiceModel.Discovery.VersionCD1\AnnouncementClientCD1.cs" />
+    <Compile Include="System.ServiceModel.Discovery.VersionCD1\DiscoveryMessageSequenceCD1.cs" />
+    <Compile Include="System.ServiceModel.Discovery.VersionCD1\DiscoveryProxyClientCD1.cs" />
+    <Compile Include="System.ServiceModel.Discovery.VersionCD1\DiscoveryTargetClientCD1.cs" />
+    <Compile Include="System.ServiceModel.Discovery.VersionCD1\EndpointDiscoveryMetadataCD1.cs" />
+    <Compile Include="System.ServiceModel.Discovery.VersionCD1\FindCriteriaCD1.cs" />
+    <Compile Include="System.ServiceModel.Discovery.VersionCD1\IAnnouncementContractCD1.cs" />
+    <Compile Include="System.ServiceModel.Discovery.VersionCD1\IDiscoveryProxyContractCD1.cs" />
+    <Compile Include="System.ServiceModel.Discovery.VersionCD1\IDiscoveryTargetContractCD1.cs" />
+    <Compile Include="System.ServiceModel.Discovery.VersionCD1\MessageContractsCD1.cs" />
+    <Compile Include="System.ServiceModel.Discovery.VersionCD1\ResolveCriteriaCD1.cs" />
+    <Compile Include="System.ServiceModel.Discovery\AnnouncementClient.cs" />
+    <Compile Include="System.ServiceModel.Discovery\AnnouncementEndpoint.cs" />
+    <Compile Include="System.ServiceModel.Discovery\AnnouncementEventArgs.cs" />
+    <Compile Include="System.ServiceModel.Discovery\AnnouncementService.cs" />
+    <Compile Include="System.ServiceModel.Discovery\DiscoveryChannelDispatcher.cs" />
+    <Compile Include="System.ServiceModel.Discovery\DiscoveryChannelFactory.cs" />
+    <Compile Include="System.ServiceModel.Discovery\DiscoveryClient.cs" />
+    <Compile Include="System.ServiceModel.Discovery\DiscoveryClientBindingElement.cs" />
+    <Compile Include="System.ServiceModel.Discovery\DiscoveryEndpoint.cs" />
+    <Compile Include="System.ServiceModel.Discovery\DiscoveryEndpointProvider.cs" />
+    <Compile Include="System.ServiceModel.Discovery\DiscoveryEndpointPublisherBehavior.cs" />
+    <Compile Include="System.ServiceModel.Discovery\DiscoveryMessageSequence.cs" />
+    <Compile Include="System.ServiceModel.Discovery\DiscoveryMessageSequenceGenerator.cs" />
+    <Compile Include="System.ServiceModel.Discovery\DiscoveryOperationContextExtension.cs" />
+    <Compile Include="System.ServiceModel.Discovery\DiscoveryProxy.cs" />
+    <Compile Include="System.ServiceModel.Discovery\DiscoveryRequestChannel.cs" />
+    <Compile Include="System.ServiceModel.Discovery\DiscoveryService.cs" />
+    <Compile Include="System.ServiceModel.Discovery\DiscoveryServiceExtension.cs" />
+    <Compile Include="System.ServiceModel.Discovery\DiscoveryVersion.cs" />
+    <Compile Include="System.ServiceModel.Discovery\DiscoveryViaUriBehavior.cs" />
+    <Compile Include="System.ServiceModel.Discovery\DynamicEndpoint.cs" />
+    <Compile Include="System.ServiceModel.Discovery\EndpointDiscoveryBehavior.cs" />
+    <Compile Include="System.ServiceModel.Discovery\EndpointDiscoveryMetadata.cs" />
+    <Compile Include="System.ServiceModel.Discovery\FindCompletedEventArgs.cs" />
+    <Compile Include="System.ServiceModel.Discovery\FindCriteria.cs" />
+    <Compile Include="System.ServiceModel.Discovery\FindProgressChangedEventArgs.cs" />
+    <Compile Include="System.ServiceModel.Discovery\FindRequestContext.cs" />
+    <Compile Include="System.ServiceModel.Discovery\FindResponse.cs" />
+    <Compile Include="System.ServiceModel.Discovery\ResolveCompletedEventArgs.cs" />
+    <Compile Include="System.ServiceModel.Discovery\ResolveCriteria.cs" />
+    <Compile Include="System.ServiceModel.Discovery\ResolveResponse.cs" />
+    <Compile Include="System.ServiceModel.Discovery\ServiceDiscoveryBehavior.cs" />
+    <Compile Include="System.ServiceModel.Discovery\ServiceDiscoveryMode.cs" />
+    <Compile Include="System.ServiceModel.Discovery\UdpAnnouncementEndpoint.cs" />
+    <Compile Include="System.ServiceModel.Discovery\UdpDiscoveryEndpoint.cs" />
+    <Compile Include="System.ServiceModel.Discovery\UdpTransportSettings.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -150,46 +150,48 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_0\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.Serialization.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Runtime.Serialization.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ServiceModel.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.ServiceModel.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Core.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.Linq.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Xml.Linq.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Configuration.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Configuration.dll</HintPath>
-    </Reference>
-
+    <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
+      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
+      <Name>corlib\corlib-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_0-2.csproj">
+      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
+      <Name>System\System-net_4_0-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_4_0-1.csproj">
+      <Project>{F9E777F8-E3F2-4E19-8DC9-2D1BB6B380A6}</Project>
+      <Name>System.XML\System.Xml-net_4_0-1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Runtime.Serialization\System.Runtime.Serialization-net_4_0.csproj">
+      <Project>{B3C699B6-74B4-4B41-901E-32E57D0909AC}</Project>
+      <Name>System.Runtime.Serialization\System.Runtime.Serialization-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.ServiceModel\System.ServiceModel-net_4_0.csproj">
+      <Project>{93532CB9-2FFB-4458-820F-BA280A6E6796}</Project>
+      <Name>System.ServiceModel\System.ServiceModel-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Core\System.Core-net_4_0.csproj">
+      <Project>{2590BECB-2660-49C6-93B1-B9E7D0796214}</Project>
+      <Name>System.Core\System.Core-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Xml.Linq\System.Xml.Linq-net_4_0.csproj">
+      <Project>{802B1060-BD79-4648-A24E-D38F34AE29A0}</Project>
+      <Name>System.Xml.Linq\System.Xml.Linq-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Configuration\System.Configuration-net_4_0.csproj">
+      <Project>{610C7C77-5851-4B95-A3FE-B04E1B011E6A}</Project>
+      <Name>System.Configuration\System.Configuration-net_4_0</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
-

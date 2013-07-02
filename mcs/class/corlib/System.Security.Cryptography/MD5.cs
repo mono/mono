@@ -44,7 +44,11 @@ namespace System.Security.Cryptography {
 	
 		public static new MD5 Create () 
 		{
+#if FULL_AOT_RUNTIME
+			return new System.Security.Cryptography.MD5CryptoServiceProvider ();
+#else
 			return Create ("System.Security.Cryptography.MD5");
+#endif
 		}
 
 		public static new MD5 Create (string algName) 

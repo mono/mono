@@ -40,11 +40,11 @@ using System.Diagnostics;
 
 namespace System.Collections.Generic {
 
-	[Serializable, HostProtection (SecurityAction.LinkDemand, MayLeakOnAbort = true)]
+	[Serializable]
 	[DebuggerDisplay ("Count={Count}")]
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView<,>))]
 	public class HashSet<T> : ICollection<T>, ISerializable, IDeserializationCallback
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 							, ISet<T>
 #endif
 	{
@@ -201,7 +201,7 @@ namespace System.Collections.Generic {
 
 		void Resize ()
 		{
-			int newSize = PrimeHelper.ToPrime ((table.Length << 1) | 1);
+			int newSize = HashPrimeNumbers.ToPrime ((table.Length << 1) | 1);
 
 			// allocate new hash table and link slots array
 			var newTable = new int [newSize];
@@ -534,42 +534,9 @@ namespace System.Collections.Generic {
 			return CheckIsSupersetOf (other_set);
 		}
 
-		class HashSetEqualityComparer : IEqualityComparer<HashSet<T>>
-		{
-			public bool Equals (HashSet<T> lhs, HashSet<T> rhs)
-			{
-				if (lhs == rhs)
-					return true;
-
-				if (lhs == null || rhs == null || lhs.Count != rhs.Count)
-					return false;
-
-				foreach (var item in lhs)
-					if (!rhs.Contains (item))
-						return false;
-
-				return true;
-			}
-
-			public int GetHashCode (HashSet<T> hashset)
-			{
-				if (hashset == null)
-					return 0;
-
-				IEqualityComparer<T> comparer = EqualityComparer<T>.Default;
-				int hash = 0;
-				foreach (var item in hashset)
-					hash ^= comparer.GetHashCode (item);
-
-				return hash;
-			}
-		}
-
-		static readonly HashSetEqualityComparer setComparer = new HashSetEqualityComparer ();
-
 		public static IEqualityComparer<HashSet<T>> CreateSetComparer ()
 		{
-			return setComparer;
+			return HashSetEqualityComparer<T>.Instance;
 		}
 
 		[SecurityPermission (SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
@@ -582,7 +549,7 @@ namespace System.Collections.Generic {
 			info.AddValue("Comparer", comparer, typeof(IEqualityComparer<T>));
 			info.AddValue("Capacity", (table == null) ? 0 : table.Length);
 			if (table != null) {
-				T[] tableArray = new T[table.Length];
+				T[] tableArray = new T[count];
 				CopyTo(tableArray);
 				info.AddValue("Elements", tableArray, typeof(T[]));
 			}
@@ -708,81 +675,38 @@ namespace System.Collections.Generic {
 					throw new InvalidOperationException ("HashSet have been modified while it was iterated over");
 			}
 		}
+	}
+	
+	sealed class HashSetEqualityComparer<T> : IEqualityComparer<HashSet<T>>
+	{
+		public static readonly HashSetEqualityComparer<T> Instance = new HashSetEqualityComparer<T> ();
+			
+		public bool Equals (HashSet<T> lhs, HashSet<T> rhs)
+		{
+			if (lhs == rhs)
+				return true;
 
-		// borrowed from System.Collections.HashTable
-		static class PrimeHelper {
+			if (lhs == null || rhs == null || lhs.Count != rhs.Count)
+				return false;
 
-			static readonly int [] primes_table = {
-				11,
-				19,
-				37,
-				73,
-				109,
-				163,
-				251,
-				367,
-				557,
-				823,
-				1237,
-				1861,
-				2777,
-				4177,
-				6247,
-				9371,
-				14057,
-				21089,
-				31627,
-				47431,
-				71143,
-				106721,
-				160073,
-				240101,
-				360163,
-				540217,
-				810343,
-				1215497,
-				1823231,
-				2734867,
-				4102283,
-				6153409,
-				9230113,
-				13845163
-			};
+			foreach (var item in lhs)
+				if (!rhs.Contains (item))
+					return false;
 
-			static bool TestPrime (int x)
-			{
-				if ((x & 1) != 0) {
-					int top = (int) Math.Sqrt (x);
+			return true;
+		}
 
-					for (int n = 3; n < top; n += 2) {
-						if ((x % n) == 0)
-							return false;
-					}
+		public int GetHashCode (HashSet<T> hashset)
+		{
+			if (hashset == null)
+				return 0;
 
-					return true;
-				}
+			IEqualityComparer<T> comparer = EqualityComparer<T>.Default;
+			int hash = 0;
+			foreach (var item in hashset)
+				hash ^= comparer.GetHashCode (item);
 
-				// There is only one even prime - 2.
-				return x == 2;
-			}
-
-			static int CalcPrime (int x)
-			{
-				for (int i = (x & (~1)) - 1; i < Int32.MaxValue; i += 2)
-					if (TestPrime (i))
-						return i;
-
-				return x;
-			}
-
-			public static int ToPrime (int x)
-			{
-				for (int i = 0; i < primes_table.Length; i++)
-					if (x <= primes_table [i])
-						return primes_table [i];
-
-				return CalcPrime (x);
-			}
+			return hash;
 		}
 	}
 }

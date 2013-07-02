@@ -11,7 +11,7 @@ class A
 	[DllImport ("Dingus")]
 	extern static void Do2<T> ();
 
-	static void Main ()
+	public static void Main ()
 	{
 
 	}

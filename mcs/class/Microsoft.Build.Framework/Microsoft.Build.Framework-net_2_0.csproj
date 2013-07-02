@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{BFA79A16-152D-42DA-98E3-D494F9C4CC3E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>./../../class/lib/net_2_0</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\Microsoft.Build.Framework-net_2_0</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>Microsoft.Build.Framework</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
@@ -28,71 +27,72 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="..\..\build\common\Consts.cs" />
-   <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-   <Compile Include="Assembly\AssemblyInfo.cs" />
-   <Compile Include="Microsoft.Build.Framework\AnyEventHandler.cs" />
-   <Compile Include="Microsoft.Build.Framework\BuildErrorEventArgs.cs" />
-   <Compile Include="Microsoft.Build.Framework\BuildErrorEventHandler.cs" />
-   <Compile Include="Microsoft.Build.Framework\BuildEventArgs.cs" />
-   <Compile Include="Microsoft.Build.Framework\BuildFinishedEventArgs.cs" />
-   <Compile Include="Microsoft.Build.Framework\BuildFinishedEventHandler.cs" />
-   <Compile Include="Microsoft.Build.Framework\BuildMessageEventArgs.cs" />
-   <Compile Include="Microsoft.Build.Framework\BuildMessageEventHandler.cs" />
-   <Compile Include="Microsoft.Build.Framework\BuildStartedEventArgs.cs" />
-   <Compile Include="Microsoft.Build.Framework\BuildStartedEventHandler.cs" />
-   <Compile Include="Microsoft.Build.Framework\BuildStatusEventArgs.cs" />
-   <Compile Include="Microsoft.Build.Framework\BuildStatusEventHandler.cs" />
-   <Compile Include="Microsoft.Build.Framework\BuildWarningEventArgs.cs" />
-   <Compile Include="Microsoft.Build.Framework\BuildWarningEventHandler.cs" />
-   <Compile Include="Microsoft.Build.Framework\CustomBuildEventArgs.cs" />
-   <Compile Include="Microsoft.Build.Framework\CustomBuildEventHandler.cs" />
-   <Compile Include="Microsoft.Build.Framework\ExternalProjectFinishedEventArgs.cs" />
-   <Compile Include="Microsoft.Build.Framework\ExternalProjectStartedEventArgs.cs" />
-   <Compile Include="Microsoft.Build.Framework\IBuildEngine.cs" />
-   <Compile Include="Microsoft.Build.Framework\IBuildEngine2.cs" />
-   <Compile Include="Microsoft.Build.Framework\IEventSource.cs" />
-   <Compile Include="Microsoft.Build.Framework\ILogger.cs" />
-   <Compile Include="Microsoft.Build.Framework\INodeLogger.cs" />
-   <Compile Include="Microsoft.Build.Framework\ITask.cs" />
-   <Compile Include="Microsoft.Build.Framework\ITaskHost.cs" />
-   <Compile Include="Microsoft.Build.Framework\ITaskItem.cs" />
-   <Compile Include="Microsoft.Build.Framework\ITaskItem2.cs" />
-   <Compile Include="Microsoft.Build.Framework\LoadInSeparateAppDomainAttribute.cs" />
-   <Compile Include="Microsoft.Build.Framework\LoggerException.cs" />
-   <Compile Include="Microsoft.Build.Framework\LoggerVerbosity.cs" />
-   <Compile Include="Microsoft.Build.Framework\MessageImportance.cs" />
-   <Compile Include="Microsoft.Build.Framework\OutputAttribute.cs" />
-   <Compile Include="Microsoft.Build.Framework\ProjectFinishedEventArgs.cs" />
-   <Compile Include="Microsoft.Build.Framework\ProjectFinishedEventHandler.cs" />
-   <Compile Include="Microsoft.Build.Framework\ProjectStartedEventArgs.cs" />
-   <Compile Include="Microsoft.Build.Framework\ProjectStartedEventHandler.cs" />
-   <Compile Include="Microsoft.Build.Framework\RequiredAttribute.cs" />
-   <Compile Include="Microsoft.Build.Framework\TargetFinishedEventArgs.cs" />
-   <Compile Include="Microsoft.Build.Framework\TargetFinishedEventHandler.cs" />
-   <Compile Include="Microsoft.Build.Framework\TargetStartedEventArgs.cs" />
-   <Compile Include="Microsoft.Build.Framework\TargetStartedEventHandler.cs" />
-   <Compile Include="Microsoft.Build.Framework\TaskCommandLineEventArgs.cs" />
-   <Compile Include="Microsoft.Build.Framework\TaskFinishedEventArgs.cs" />
-   <Compile Include="Microsoft.Build.Framework\TaskFinishedEventHandler.cs" />
-   <Compile Include="Microsoft.Build.Framework\TaskStartedEventArgs.cs" />
-   <Compile Include="Microsoft.Build.Framework\TaskStartedEventHandler.cs" />
-
-  </ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="Microsoft.Build.Framework\AnyEventHandler.cs" />
+    <Compile Include="Microsoft.Build.Framework\BuildErrorEventArgs.cs" />
+    <Compile Include="Microsoft.Build.Framework\BuildErrorEventHandler.cs" />
+    <Compile Include="Microsoft.Build.Framework\BuildEventArgs.cs" />
+    <Compile Include="Microsoft.Build.Framework\BuildFinishedEventArgs.cs" />
+    <Compile Include="Microsoft.Build.Framework\BuildFinishedEventHandler.cs" />
+    <Compile Include="Microsoft.Build.Framework\BuildMessageEventArgs.cs" />
+    <Compile Include="Microsoft.Build.Framework\BuildMessageEventHandler.cs" />
+    <Compile Include="Microsoft.Build.Framework\BuildStartedEventArgs.cs" />
+    <Compile Include="Microsoft.Build.Framework\BuildStartedEventHandler.cs" />
+    <Compile Include="Microsoft.Build.Framework\BuildStatusEventArgs.cs" />
+    <Compile Include="Microsoft.Build.Framework\BuildStatusEventHandler.cs" />
+    <Compile Include="Microsoft.Build.Framework\BuildWarningEventArgs.cs" />
+    <Compile Include="Microsoft.Build.Framework\BuildWarningEventHandler.cs" />
+    <Compile Include="Microsoft.Build.Framework\CustomBuildEventArgs.cs" />
+    <Compile Include="Microsoft.Build.Framework\CustomBuildEventHandler.cs" />
+    <Compile Include="Microsoft.Build.Framework\ExternalProjectFinishedEventArgs.cs" />
+    <Compile Include="Microsoft.Build.Framework\ExternalProjectStartedEventArgs.cs" />
+    <Compile Include="Microsoft.Build.Framework\IBuildEngine.cs" />
+    <Compile Include="Microsoft.Build.Framework\IBuildEngine2.cs" />
+    <Compile Include="Microsoft.Build.Framework\IEventSource.cs" />
+    <Compile Include="Microsoft.Build.Framework\ILogger.cs" />
+    <Compile Include="Microsoft.Build.Framework\INodeLogger.cs" />
+    <Compile Include="Microsoft.Build.Framework\ITask.cs" />
+    <Compile Include="Microsoft.Build.Framework\ITaskHost.cs" />
+    <Compile Include="Microsoft.Build.Framework\ITaskItem.cs" />
+    <Compile Include="Microsoft.Build.Framework\ITaskItem2.cs" />
+    <Compile Include="Microsoft.Build.Framework\LoadInSeparateAppDomainAttribute.cs" />
+    <Compile Include="Microsoft.Build.Framework\LoggerException.cs" />
+    <Compile Include="Microsoft.Build.Framework\LoggerVerbosity.cs" />
+    <Compile Include="Microsoft.Build.Framework\MessageImportance.cs" />
+    <Compile Include="Microsoft.Build.Framework\OutputAttribute.cs" />
+    <Compile Include="Microsoft.Build.Framework\ProjectFinishedEventArgs.cs" />
+    <Compile Include="Microsoft.Build.Framework\ProjectFinishedEventHandler.cs" />
+    <Compile Include="Microsoft.Build.Framework\ProjectStartedEventArgs.cs" />
+    <Compile Include="Microsoft.Build.Framework\ProjectStartedEventHandler.cs" />
+    <Compile Include="Microsoft.Build.Framework\RequiredAttribute.cs" />
+    <Compile Include="Microsoft.Build.Framework\TargetFinishedEventArgs.cs" />
+    <Compile Include="Microsoft.Build.Framework\TargetFinishedEventHandler.cs" />
+    <Compile Include="Microsoft.Build.Framework\TargetStartedEventArgs.cs" />
+    <Compile Include="Microsoft.Build.Framework\TargetStartedEventHandler.cs" />
+    <Compile Include="Microsoft.Build.Framework\TaskCommandLineEventArgs.cs" />
+    <Compile Include="Microsoft.Build.Framework\TaskFinishedEventArgs.cs" />
+    <Compile Include="Microsoft.Build.Framework\TaskFinishedEventHandler.cs" />
+    <Compile Include="Microsoft.Build.Framework\TaskStartedEventArgs.cs" />
+    <Compile Include="Microsoft.Build.Framework\TaskStartedEventHandler.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -101,26 +101,24 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-
+    <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
+      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Name>corlib\corlib-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_2_0-2.csproj">
+      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
+      <Name>System\System-net_2_0-2</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
-

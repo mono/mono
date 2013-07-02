@@ -48,9 +48,6 @@ using System.Text;
 using System.Net.Configuration;
 using System.Net.NetworkInformation;
 #endif
-#if MOONLIGHT && !INSIDE_SYSTEM
-using System.Net.Policy;
-#endif
 
 namespace System.Net.Sockets {
 
@@ -174,11 +171,7 @@ namespace System.Net.Sockets {
 			{
 				if (callback == null)
 					return;
-#if MOONLIGHT
-				ThreadPool.QueueUserWorkItem (_ => { callback (this); }, null);
-#else
 				ThreadPool.UnsafeQueueUserWorkItem (_ => { callback (this); }, null);
-#endif
 			}
 
 			public void Dispose ()
@@ -226,11 +219,7 @@ namespace System.Net.Sockets {
 					Worker worker = (Worker) pending [i];
 					SocketAsyncResult ares = worker.result;
 					cb = new WaitCallback (ares.CompleteDisposed);
-#if MOONLIGHT
-					ThreadPool.QueueUserWorkItem (cb, null);
-#else
 					ThreadPool.UnsafeQueueUserWorkItem (cb, null);
-#endif
 				}
 			}
 
@@ -424,15 +413,12 @@ namespace System.Net.Sockets {
 				else if (op == Socket.SocketOperation.Send || op == Socket.SocketOperation.SendGeneric ||
 					op == Socket.SocketOperation.SendJustCallback)
 					sar.Worker.Send ();
-#if !MOONLIGHT
 				else if (op == Socket.SocketOperation.ReceiveFrom)
 					sar.Worker.ReceiveFrom ();
 				else if (op == Socket.SocketOperation.SendTo)
 					sar.Worker.SendTo ();
-#endif
 				else if (op == Socket.SocketOperation.Connect)
 					sar.Worker.Connect ();
-#if !MOONLIGHT
 				else if (op == Socket.SocketOperation.Accept)
 					sar.Worker.Accept ();
 				else if (op == Socket.SocketOperation.AcceptReceive)
@@ -447,7 +433,6 @@ namespace System.Net.Sockets {
 				else if (op == Socket.SocketOperation.SendPackets)
 					async_op = SocketAsyncOperation.SendPackets;
 				*/
-#endif
 				else
 					throw new NotImplementedException (String.Format ("Operation {0} is not implemented", op));
 			}
@@ -464,32 +449,26 @@ namespace System.Net.Sockets {
 				//	-SendPackets and ReceiveMessageFrom are not implemented yet
 				if (op == Socket.SocketOperation.Connect)
 					async_op = SocketAsyncOperation.Connect;
-#if !MOONLIGHT
 				else if (op == Socket.SocketOperation.Accept)
 					async_op = SocketAsyncOperation.Accept;
 				else if (op == Socket.SocketOperation.Disconnect)
 					async_op = SocketAsyncOperation.Disconnect;
-#endif
 				else if (op == Socket.SocketOperation.Receive || op == Socket.SocketOperation.ReceiveGeneric)
 					async_op = SocketAsyncOperation.Receive;
-#if !MOONLIGHT
 				else if (op == Socket.SocketOperation.ReceiveFrom)
 					async_op = SocketAsyncOperation.ReceiveFrom;
-#endif
 				/*
 				else if (op == Socket.SocketOperation.ReceiveMessageFrom)
 					async_op = SocketAsyncOperation.ReceiveMessageFrom;
 				*/
 				else if (op == Socket.SocketOperation.Send || op == Socket.SocketOperation.SendGeneric)
 					async_op = SocketAsyncOperation.Send;
-#if !MOONLIGHT
 				/*
 				else if (op == Socket.SocketOperation.SendPackets)
 					async_op = SocketAsyncOperation.SendPackets;
 				*/
 				else if (op == Socket.SocketOperation.SendTo)
 					async_op = SocketAsyncOperation.SendTo;
-#endif
 				else
 					throw new NotImplementedException (String.Format ("Operation {0} is not implemented", op));
 
@@ -500,7 +479,6 @@ namespace System.Net.Sockets {
 
 			public void Accept ()
 			{
-#if !MOONLIGHT
 				Socket acc_socket = null;
 				try {
 					if (args != null && args.AcceptSocket != null) {
@@ -517,7 +495,6 @@ namespace System.Net.Sockets {
 				}
 
 				result.Complete (acc_socket);
-#endif
 			}
 
 			/* only used in 2.0 profile and newer, but
@@ -526,7 +503,6 @@ namespace System.Net.Sockets {
 			 */
 			public void AcceptReceive ()
 			{
-#if !MOONLIGHT
 				Socket acc_socket = null;
 				try {
 					if (result.AcceptSocket == null) {
@@ -564,7 +540,6 @@ namespace System.Net.Sockets {
 				}
 
 				result.Complete (acc_socket, total);
-#endif
 			}
 
 			public void Connect ()
@@ -575,16 +550,7 @@ namespace System.Net.Sockets {
 				}
 
 				SocketAsyncResult mconnect = result.AsyncState as SocketAsyncResult;
-#if !MOONLIGHT
 				bool is_mconnect = (mconnect != null && mconnect.Addresses != null);
-#else
-				if (result.ErrorCode == SocketError.AccessDenied) {
-					result.Complete ();
-					result.DoMConnectCallback ();
-					return;
-				}
-				bool is_mconnect = false;
-#endif
 				try {
 					int error_code;
 					EndPoint ep = result.EndPoint;
@@ -630,7 +596,6 @@ namespace System.Net.Sockets {
 			/* Also only used in 2.0 profile and newer */
 			public void Disconnect ()
 			{
-#if !MOONLIGHT
 				try {
 					if (args != null)
 						result.ReuseSocket = args.DisconnectReuseSocket;
@@ -640,7 +605,6 @@ namespace System.Net.Sockets {
 					return;
 				}
 				result.Complete ();
-#endif
 			}
 
 			public void Receive ()
@@ -655,7 +619,6 @@ namespace System.Net.Sockets {
 
 			public void ReceiveFrom ()
 			{
-#if !MOONLIGHT
 				int total = 0;
 				try {
 					total = result.Sock.ReceiveFrom_nochecks (result.Buffer,
@@ -669,7 +632,6 @@ namespace System.Net.Sockets {
 				}
 
 				result.Complete (total);
-#endif
 			}
 
 			public void ReceiveGeneric ()
@@ -721,7 +683,6 @@ namespace System.Net.Sockets {
 
 			public void SendTo ()
 			{
-#if !MOONLIGHT
 				int total = 0;
 				try {
 					total = result.Sock.SendTo_nochecks (result.Buffer,
@@ -744,7 +705,6 @@ namespace System.Net.Sockets {
 				}
 
 				result.Complete ();
-#endif
 			}
 
 			public void SendGeneric ()
@@ -1131,10 +1091,6 @@ namespace System.Net.Sockets {
 				if (disposed && closed)
 					throw new ObjectDisposedException (GetType ().ToString ());
 				
-#if MOONLIGHT
-				if (!connected)
-					return seed_endpoint;
-#else
 				/*
 				 * If the seed EndPoint is null, Connect, Bind,
 				 * etc has not yet been called. MS returns null
@@ -1142,7 +1098,6 @@ namespace System.Net.Sockets {
 				 */
 				if (!connected || seed_endpoint == null)
 					return null;
-#endif			
 				SocketAddress sa;
 				int error;
 				
@@ -1212,7 +1167,7 @@ namespace System.Net.Sockets {
 			}
 		}
 
-#if NET_2_1 || NET_4_0
+#if NET_4_0
 		public void Dispose ()
 #else
 		void IDisposable.Dispose ()
@@ -1255,21 +1210,12 @@ namespace System.Net.Sockets {
 				throw new ArgumentNullException ("remoteEP");
 
 			IPEndPoint ep = remoteEP as IPEndPoint;
-#if !MOONLIGHT
 			if (ep != null && socket_type != SocketType.Dgram) /* Dgram uses Any to 'disconnect' */
-#else
-			if (ep != null)
-#endif
 				if (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any))
 					throw new SocketException ((int) SocketError.AddressNotAvailable);
 
-#if MOONLIGHT
-			if (protocol_type != ProtocolType.Tcp)
-				throw new SocketException ((int) SocketError.AccessDenied);
-#else
 			if (islistening)
 				throw new InvalidOperationException ();
-#endif
 			serial = remoteEP.Serialize ();
 
 			int error = 0;
@@ -1290,14 +1236,10 @@ namespace System.Net.Sockets {
 				throw new SocketException (error);
 			}
 
-#if !MOONLIGHT
 			if (socket_type == SocketType.Dgram && (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any)))
 				connected = false;
 			else
 				connected = true;
-#else
-			connected = true;
-#endif
 			isbound = true;
 		}
 
@@ -1502,9 +1444,7 @@ namespace System.Net.Sockets {
 #endif
 		}
 
-#if !MOONLIGHT
 		public
-#endif
 		IAsyncResult BeginConnect(EndPoint end_point, AsyncCallback callback, object state)
 		{
 			if (disposed && closed)
@@ -1567,11 +1507,7 @@ namespace System.Net.Sockets {
 			return req;
 		}
 
-#if !MOONLIGHT
 		public
-#else
-		internal
-#endif
 		IAsyncResult BeginConnect (IPAddress[] addresses, int port, AsyncCallback callback, object state)
 
 		{
@@ -1590,10 +1526,8 @@ namespace System.Net.Sockets {
 
 			if (port <= 0 || port > 65535)
 				throw new ArgumentOutOfRangeException ("port", "Must be > 0 and < 65536");
-#if !MOONLIGHT
 			if (islistening)
 				throw new InvalidOperationException ();
-#endif
 
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.Connect);
 			req.Addresses = addresses;
@@ -1634,40 +1568,16 @@ namespace System.Net.Sockets {
 		bool GetCheckedIPs (SocketAsyncEventArgs e, out IPAddress [] addresses)
 		{
 			addresses = null;
-#if MOONLIGHT || NET_4_0
+#if NET_4_0
 			// Connect to the first address that match the host name, like:
 			// http://blogs.msdn.com/ncl/archive/2009/07/20/new-ncl-features-in-net-4-0-beta-2.aspx
 			// while skipping entries that do not match the address family
 			DnsEndPoint dep = (e.RemoteEndPoint as DnsEndPoint);
 			if (dep != null) {
 				addresses = Dns.GetHostAddresses (dep.Host);
-#if MOONLIGHT && !INSIDE_SYSTEM
-				if (!e.PolicyRestricted && !SecurityManager.HasElevatedPermissions) {
-					List<IPAddress> valid = new List<IPAddress> ();
-					foreach (IPAddress a in addresses) {
-						// if we're not downloading a socket policy then check the policy
-						// and if we're not running with elevated permissions (SL4 OoB option)
-						endpoint = new IPEndPoint (a, dep.Port);
-						if (!CrossDomainPolicyManager.CheckEndPoint (endpoint, e.SocketClientAccessPolicyProtocol))
-							continue;
-						valid.Add (a);
-					}
-					if (valid.Count == 0)
-		 				e.SocketError = SocketError.AccessDenied;
-					addresses = valid.ToArray ();
-				}
-#endif
 				return true;
 			} else {
 				e.ConnectByNameError = null;
-#if MOONLIGHT && !INSIDE_SYSTEM
-				if (!e.PolicyRestricted && !SecurityManager.HasElevatedPermissions) {
-					if (CrossDomainPolicyManager.CheckEndPoint (e.RemoteEndPoint, e.SocketClientAccessPolicyProtocol))
-						return false;
-		 			else
-						e.SocketError = SocketError.AccessDenied;
-				} else
-#endif
 					return false;
 			}
 #else
@@ -1678,35 +1588,21 @@ namespace System.Net.Sockets {
 		bool ConnectAsyncReal (SocketAsyncEventArgs e)
 		{			
 			bool use_remoteep = true;
-#if MOONLIGHT || NET_4_0
+#if NET_4_0
 			IPAddress [] addresses = null;
 			use_remoteep = !GetCheckedIPs (e, out addresses);
-#endif
-#if MOONLIGHT
-			bool policy_failed = (e.SocketError == SocketError.AccessDenied);
 #endif
 			e.curSocket = this;
 			Worker w = e.Worker;
 			w.Init (this, e, SocketOperation.Connect);
 			SocketAsyncResult result = w.result;
-#if MOONLIGHT
-			if (policy_failed) {
-				// SocketAsyncEventArgs.Completed must be called
-				connected = false;
-				result.EndPoint = e.RemoteEndPoint;
-				result.error = (int) SocketError.AccessDenied;
-				result.Complete ();
-				socket_pool_queue (Worker.Dispatcher, result);
-				return true;
-			}
-#endif
 			IAsyncResult ares = null;
 			try {
 				if (use_remoteep) {
 					result.EndPoint = e.RemoteEndPoint;
 					ares = BeginConnect (e.RemoteEndPoint, SocketAsyncEventArgs.Dispatcher, e);
 				}
-#if MOONLIGHT || NET_4_0
+#if NET_4_0
 				else {
 
 					DnsEndPoint dep = (e.RemoteEndPoint as DnsEndPoint);
@@ -1727,7 +1623,6 @@ namespace System.Net.Sockets {
 			return true;
 		}
 
-#if !MOONLIGHT
 		public bool ConnectAsync (SocketAsyncEventArgs e)
 		{
 			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
@@ -1740,66 +1635,10 @@ namespace System.Net.Sockets {
 
 			return ConnectAsyncReal (e);
 		}
-#endif
-#if MOONLIGHT
-		static void CheckConnect (SocketAsyncEventArgs e)
-		{
-			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
 
-			if (e.RemoteEndPoint == null)
-				throw new ArgumentNullException ("remoteEP");
-			if (e.BufferList != null)
-				throw new ArgumentException ("Multiple buffers cannot be used with this method.");
-		}
-
-		public bool ConnectAsync (SocketAsyncEventArgs e)
-		{
-			if (disposed && closed)
-				throw new ObjectDisposedException (GetType ().ToString ());
-
-			CheckConnect (e);
-			// if an address family is specified then they must match
-			AddressFamily raf = e.RemoteEndPoint.AddressFamily;
-			if ((raf != AddressFamily.Unspecified) && (raf != AddressFamily))
-				throw new NotSupportedException ("AddressFamily mismatch between socket and endpoint");
-
-			// connected, not yet connected or even policy denied, the Socket.RemoteEndPoint is always 
-			// available after the ConnectAsync call
-			seed_endpoint = e.RemoteEndPoint;
-			return ConnectAsyncReal (e);
-		}
-
-		public static bool ConnectAsync (SocketType socketType, ProtocolType protocolType, SocketAsyncEventArgs e)
-		{
-			// exception ordering requires to check before creating the socket (good thing resource wise too)
-			CheckConnect (e);
-
-			// create socket based on the endpoint address family (if specified), otherwise default fo IPv4
-			AddressFamily raf = e.RemoteEndPoint.AddressFamily;
-			if (raf == AddressFamily.Unspecified)
-				raf = AddressFamily.InterNetwork;
-			Socket s = new Socket (raf, socketType, protocolType);
-			return s.ConnectAsyncReal (e);
-		}
-
-		public static void CancelConnectAsync (SocketAsyncEventArgs e)
-		{
-			if (e == null)
-				throw new ArgumentNullException ("e");
-
-			// FIXME: this is canceling a synchronous connect, not an async one
-			Socket s = e.ConnectSocket;
-			if (s != null)
-				s.AbortRegisteredThreads ();
-		}
-#endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static int Receive_internal (IntPtr sock, WSABUF[] bufarray, SocketFlags flags, out int error);
-#if !MOONLIGHT
 		public
-#else
-		internal
-#endif
 		int Receive (IList<ArraySegment<byte>> buffers)
 		{
 			int ret;
@@ -1812,11 +1651,7 @@ namespace System.Net.Sockets {
 		}
 
 		[CLSCompliant (false)]
-#if !MOONLIGHT
 		public
-#else
-		internal
-#endif
 		int Receive (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags)
 		{
 			int ret;
@@ -1829,11 +1664,7 @@ namespace System.Net.Sockets {
 		}
 
 		[CLSCompliant (false)]
-#if !MOONLIGHT
 		public
-#else
-		internal
-#endif
 		int Receive (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, out SocketError errorCode)
 		{
 			if (disposed && closed)
@@ -1887,11 +1718,7 @@ namespace System.Net.Sockets {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static int Send_internal (IntPtr sock, WSABUF[] bufarray, SocketFlags flags, out int error);
-#if !MOONLIGHT
 		public
-#else
-		internal
-#endif
 		int Send (IList<ArraySegment<byte>> buffers)
 		{
 			int ret;
@@ -1903,11 +1730,7 @@ namespace System.Net.Sockets {
 			return(ret);
 		}
 
-#if !MOONLIGHT
 		public
-#else
-		internal
-#endif
 		int Send (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags)
 		{
 			int ret;
@@ -1920,11 +1743,7 @@ namespace System.Net.Sockets {
 		}
 
 		[CLSCompliant (false)]
-#if !MOONLIGHT
 		public
-#else
-		internal
-#endif
 		int Send (IList<ArraySegment<byte>> buffers, SocketFlags socketFlags, out SocketError errorCode)
 		{
 			if (disposed && closed)
@@ -1969,11 +1788,7 @@ namespace System.Net.Sockets {
 			return new InvalidOperationException (method + " can only be called once per asynchronous operation");
 		}
 
-#if !MOONLIGHT
 		public
-#else
-		internal
-#endif
 		int EndReceive (IAsyncResult result)
 		{
 			SocketError error;
@@ -1986,11 +1801,7 @@ namespace System.Net.Sockets {
 			return bytesReceived;
 		}
 
-#if !MOONLIGHT
 		public
-#else
-		internal
-#endif
 		int EndReceive (IAsyncResult asyncResult, out SocketError errorCode)
 		{
 			if (disposed && closed)
@@ -2017,11 +1828,7 @@ namespace System.Net.Sockets {
 			return(req.Total);
 		}
 
-#if !MOONLIGHT
 		public
-#else
-		internal
-#endif
 		int EndSend (IAsyncResult result)
 		{
 			SocketError error;
@@ -2034,11 +1841,7 @@ namespace System.Net.Sockets {
 			return bytesSent;
 		}
 
-#if !MOONLIGHT
 		public
-#else
-		internal
-#endif
 		int EndSend (IAsyncResult asyncResult, out SocketError errorCode)
 		{
 			if (disposed && closed)
@@ -2065,11 +1868,7 @@ namespace System.Net.Sockets {
 		}
 
 		// Used by Udpclient
-#if !MOONLIGHT
 		public
-#else
-		internal
-#endif
 		int EndReceiveFrom(IAsyncResult result, ref EndPoint end_point)
 		{
 			if (disposed && closed)

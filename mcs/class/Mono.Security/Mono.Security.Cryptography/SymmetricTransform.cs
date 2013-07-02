@@ -45,18 +45,16 @@ namespace Mono.Security.Cryptography {
 	internal abstract class SymmetricTransform : ICryptoTransform {
 		protected SymmetricAlgorithm algo;
 		protected bool encrypt;
-		private int BlockSizeByte;
-		private byte[] temp;
-		private byte[] temp2;
+		protected int BlockSizeByte;
+		protected byte[] temp;
+		protected byte[] temp2;
 		private byte[] workBuff;
 		private byte[] workout;
-#if !MOONLIGHT
+		protected PaddingMode padmode;
 		// Silverlight 2.0 does not support any feedback mode
-		private int FeedBackByte;
-		private int FeedBackIter;
-#endif
+		protected int FeedBackByte;
 		private bool m_disposed = false;
-		private bool lastBlock;
+		protected bool lastBlock;
 
 		public SymmetricTransform (SymmetricAlgorithm symmAlgo, bool encryption, byte[] rgbIV) 
 		{
@@ -75,16 +73,12 @@ namespace Mono.Security.Cryptography {
 					rgbIV.Length, BlockSizeByte);
 				throw new CryptographicException (msg);
 			}
-
+			padmode = algo.Padding;
 			// mode buffers
 			temp = new byte [BlockSizeByte];
 			Buffer.BlockCopy (rgbIV, 0, temp, 0, System.Math.Min (BlockSizeByte, rgbIV.Length));
 			temp2 = new byte [BlockSizeByte];
-#if !MOONLIGHT
 			FeedBackByte = (algo.FeedbackSize >> 3);
-			if (FeedBackByte != 0)
-				FeedBackIter = (int) BlockSizeByte / FeedBackByte;
-#endif
 			// transform buffers
 			workBuff = new byte [BlockSizeByte];
 			workout =  new byte [BlockSizeByte];
@@ -137,10 +131,6 @@ namespace Mono.Security.Cryptography {
 		// i.e. Any padding must be done before calling this method
 		protected virtual void Transform (byte[] input, byte[] output) 
 		{
-#if MOONLIGHT
-			// Silverlight 2.0 only supports CBC
-			CBC (input, output);
-#else
 			switch (algo.Mode) {
 			case CipherMode.ECB:
 				ECB (input, output);
@@ -160,7 +150,6 @@ namespace Mono.Security.Cryptography {
 			default:
 				throw new NotImplementedException ("Unkown CipherMode" + algo.Mode.ToString ());
 			}
-#endif
 		}
 
 		// Electronic Code Book (ECB)
@@ -184,33 +173,32 @@ namespace Mono.Security.Cryptography {
 			}
 		}
 
-#if !MOONLIGHT
 		// Cipher-FeedBack (CFB)
+		// this is how *CryptoServiceProvider implements CFB
+		// only AesCryptoServiceProvider support CFB > 8
+		// RijndaelManaged is incompatible with this implementation (and overrides it in it's own transform)
 		protected virtual void CFB (byte[] input, byte[] output) 
 		{
 			if (encrypt) {
-				for (int x = 0; x < FeedBackIter; x++) {
+				for (int x = 0; x < BlockSizeByte; x++) {
 					// temp is first initialized with the IV
 					ECB (temp, temp2);
-
-					for (int i = 0; i < FeedBackByte; i++)
-						output[i + x] = (byte)(temp2[i] ^ input[i + x]);
-					Buffer.BlockCopy (temp, FeedBackByte, temp, 0, BlockSizeByte - FeedBackByte);
-					Buffer.BlockCopy (output, x, temp, BlockSizeByte - FeedBackByte, FeedBackByte);
+					output [x] = (byte) (temp2 [0] ^ input [x]);
+					Buffer.BlockCopy (temp, 1, temp, 0, BlockSizeByte - 1);
+					Buffer.BlockCopy (output, x, temp, BlockSizeByte - 1, 1);
 				}
 			}
 			else {
-				for (int x = 0; x < FeedBackIter; x++) {
+				for (int x = 0; x < BlockSizeByte; x++) {
 					// we do not really decrypt this data!
 					encrypt = true;
 					// temp is first initialized with the IV
 					ECB (temp, temp2);
 					encrypt = false;
 
-					Buffer.BlockCopy (temp, FeedBackByte, temp, 0, BlockSizeByte - FeedBackByte);
-					Buffer.BlockCopy (input, x, temp, BlockSizeByte - FeedBackByte, FeedBackByte);
-					for (int i = 0; i < FeedBackByte; i++)
-						output[i + x] = (byte)(temp2[i] ^ input[i + x]);
+					Buffer.BlockCopy (temp, 1, temp, 0, BlockSizeByte - 1);
+					Buffer.BlockCopy (input, x, temp, BlockSizeByte - 1, 1);
+					output [x] = (byte) (temp2 [0] ^ input [x]);
 				}
 			}
 		}
@@ -226,7 +214,6 @@ namespace Mono.Security.Cryptography {
 		{
 			throw new CryptographicException ("CTS isn't supported by the framework");
 		}
-#endif
 
 		private void CheckInput (byte[] inputBuffer, int inputOffset, int inputCount)
 		{
@@ -255,14 +242,9 @@ namespace Mono.Security.Cryptography {
 
 			// ordered to avoid possible integer overflow
 			int len = outputBuffer.Length - inputCount - outputOffset;
-#if MOONLIGHT
-			// only PKCS7 is supported Silverlight 2.0
-			if (KeepLastBlock) {
-#else
-			if (!encrypt && (0 > len) && ((algo.Padding == PaddingMode.None) || (algo.Padding == PaddingMode.Zeros))) {
+			if (!encrypt && (0 > len) && ((padmode == PaddingMode.None) || (padmode == PaddingMode.Zeros))) {
 				throw new CryptographicException ("outputBuffer", Locale.GetText ("Overflow"));
 			} else if (KeepLastBlock) {
-#endif
 				if (0 > len + BlockSizeByte) {
 					throw new CryptographicException ("outputBuffer", Locale.GetText ("Overflow"));
 				}
@@ -280,12 +262,7 @@ namespace Mono.Security.Cryptography {
 
 		private bool KeepLastBlock {
 			get {
-#if MOONLIGHT
-				// only PKCS7 is supported Silverlight 2.0
-				return !encrypt;
-#else
-				return ((!encrypt) && (algo.Padding != PaddingMode.None) && (algo.Padding != PaddingMode.Zeros));
-#endif
+				return ((!encrypt) && (padmode != PaddingMode.None) && (padmode != PaddingMode.Zeros));
 			}
 		}
 
@@ -335,7 +312,6 @@ namespace Mono.Security.Cryptography {
 			return total;
 		}
 
-#if !MOONLIGHT
 		RandomNumberGenerator _rng;
 
 		private void Random (byte[] buffer, int start, int length)
@@ -357,20 +333,15 @@ namespace Mono.Security.Cryptography {
 				msg += String.Format (Locale.GetText (" Error found at position {0}."), position);
 			throw new CryptographicException (msg);
 		}
-#endif
 
-		private byte[] FinalEncrypt (byte[] inputBuffer, int inputOffset, int inputCount) 
+		protected virtual byte[] FinalEncrypt (byte[] inputBuffer, int inputOffset, int inputCount) 
 		{
 			// are there still full block to process ?
 			int full = (inputCount / BlockSizeByte) * BlockSizeByte;
 			int rem = inputCount - full;
 			int total = full;
 
-#if MOONLIGHT
-			// only PKCS7 is supported Silverlight 2.0
-			total += BlockSizeByte;
-#else
-			switch (algo.Padding) {
+			switch (padmode) {
 			case PaddingMode.ANSIX923:
 			case PaddingMode.ISO10126:
 			case PaddingMode.PKCS7:
@@ -381,7 +352,7 @@ namespace Mono.Security.Cryptography {
 				if (inputCount == 0)
 					return new byte [0];
 				if (rem != 0) {
-					if (algo.Padding == PaddingMode.None)
+					if (padmode == PaddingMode.None)
 						throw new CryptographicException ("invalid block length");
 					// zero padding the input (by adding a block for the partial data)
 					byte[] paddedInput = new byte [full + BlockSizeByte];
@@ -393,7 +364,6 @@ namespace Mono.Security.Cryptography {
 				}
 				break;
 			}
-#endif // NET_2_1
 
 			byte[] res = new byte [total];
 			int outputOffset = 0;
@@ -408,14 +378,7 @@ namespace Mono.Security.Cryptography {
 
 			// now we only have a single last block to encrypt
 			byte padding = (byte) (BlockSizeByte - rem);
-#if MOONLIGHT
-			// only PKCS7 is supported Silverlight 2.0
-			for (int i = res.Length; --i >= (res.Length - padding);) 
-				res [i] = padding;
-			Buffer.BlockCopy (inputBuffer, inputOffset, res, full, rem);
-			InternalTransformBlock (res, full, BlockSizeByte, res, full);
-#else
-			switch (algo.Padding) {
+			switch (padmode) {
 			case PaddingMode.ANSIX923:
 				// XX 00 00 00 00 00 00 07 (zero + padding length)
 				res [res.Length - 1] = padding;
@@ -443,15 +406,12 @@ namespace Mono.Security.Cryptography {
 				InternalTransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, outputOffset);
 				break;
 			}
-#endif // NET_2_1
 			return res;
 		}
 
-		private byte[] FinalDecrypt (byte[] inputBuffer, int inputOffset, int inputCount) 
+		protected virtual byte[] FinalDecrypt (byte[] inputBuffer, int inputOffset, int inputCount) 
 		{
-			if ((inputCount % BlockSizeByte) > 0)
-				throw new CryptographicException ("Invalid input block size.");
-
+			int full = inputCount;
 			int total = inputCount;
 			if (lastBlock)
 				total += BlockSizeByte;
@@ -459,11 +419,11 @@ namespace Mono.Security.Cryptography {
 			byte[] res = new byte [total];
 			int outputOffset = 0;
 
-			while (inputCount > 0) {
+			while (full > 0) {
 				int len = InternalTransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, outputOffset);
 				inputOffset += BlockSizeByte;
 				outputOffset += len;
-				inputCount -= BlockSizeByte;
+				full -= BlockSizeByte;
 			}
 
 			if (lastBlock) {
@@ -475,37 +435,27 @@ namespace Mono.Security.Cryptography {
 
 			// total may be 0 (e.g. PaddingMode.None)
 			byte padding = ((total > 0) ? res [total - 1] : (byte) 0);
-#if MOONLIGHT
-			// only PKCS7 is supported Silverlight 2.0
-			if ((padding == 0) || (padding > BlockSizeByte))
-				throw new CryptographicException (Locale.GetText ("Bad padding length."));
-			for (int i = padding - 1; i > 0; i--) {
-				if (res [total - 1 - i] != padding)
-					throw new CryptographicException (Locale.GetText ("Bad padding at position {0}.", i));
-			}
-			total -= padding;
-#else
-			switch (algo.Padding) {
+			switch (padmode) {
 			case PaddingMode.ANSIX923:
 				if ((padding == 0) || (padding > BlockSizeByte))
-					ThrowBadPaddingException (algo.Padding, padding, -1);
+					ThrowBadPaddingException (padmode, padding, -1);
 				for (int i = padding - 1; i > 0; i--) {
 					if (res [total - 1 - i] != 0x00)
-						ThrowBadPaddingException (algo.Padding, -1, i);
+						ThrowBadPaddingException (padmode, -1, i);
 				}
 				total -= padding;
 				break;
 			case PaddingMode.ISO10126:
 				if ((padding == 0) || (padding > BlockSizeByte))
-					ThrowBadPaddingException (algo.Padding, padding, -1);
+					ThrowBadPaddingException (padmode, padding, -1);
 				total -= padding;
 				break;
 			case PaddingMode.PKCS7:
 				if ((padding == 0) || (padding > BlockSizeByte))
-					ThrowBadPaddingException (algo.Padding, padding, -1);
+					ThrowBadPaddingException (padmode, padding, -1);
 				for (int i = padding - 1; i > 0; i--) {
 					if (res [total - 1 - i] != padding)
-						ThrowBadPaddingException (algo.Padding, -1, i);
+						ThrowBadPaddingException (padmode, -1, i);
 				}
 				total -= padding;
 				break;
@@ -513,7 +463,6 @@ namespace Mono.Security.Cryptography {
 			case PaddingMode.Zeros:	// nothing to do - user must unpad himself
 				break;
 			}
-#endif // NET_2_1
 
 			// return output without padding
 			if (total > 0) {

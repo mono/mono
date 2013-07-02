@@ -2118,6 +2118,9 @@ verifier_class_is_assignable_from (MonoClass *target, MonoClass *candidate)
 
 	if (mono_class_has_variant_generic_params (target)) {
 		if (MONO_CLASS_IS_INTERFACE (target)) {
+			if (MONO_CLASS_IS_INTERFACE (candidate) && mono_class_is_variant_compatible (target, candidate, TRUE))
+				return TRUE;
+
 			if (candidate->rank == 1) {
 				if (verifier_inflate_and_check_compat (target, mono_defaults.generic_ilist_class, candidate->element_class))
 					return TRUE;
@@ -4500,7 +4503,7 @@ static void
 merge_stacks (VerifyContext *ctx, ILCodeDesc *from, ILCodeDesc *to, gboolean start, gboolean external) 
 {
 	MonoError error;
-	int i, j, k;
+	int i, j;
 	stack_init (ctx, to);
 
 	if (start) {
@@ -4544,6 +4547,14 @@ merge_stacks (VerifyContext *ctx, ILCodeDesc *from, ILCodeDesc *to, gboolean sta
 			continue;
 		}
 
+		/*Both slots are the same boxed valuetype. Simply copy it.*/
+		if (stack_slot_is_boxed_value (old_slot) && 
+			stack_slot_is_boxed_value (new_slot) &&
+			mono_metadata_type_equal (old_type, new_type)) {
+			copy_stack_value (new_slot, old_slot);
+			continue;
+		}
+
 		if (mono_type_is_generic_argument (old_type) || mono_type_is_generic_argument (new_type)) {
 			char *old_name = stack_slot_full_name (old_slot); 
 			char *new_name = stack_slot_full_name (new_slot);
@@ -4580,15 +4591,6 @@ merge_stacks (VerifyContext *ctx, ILCodeDesc *from, ILCodeDesc *to, gboolean sta
 				CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Cannot merge stacks due to a TypeLoadException %s at 0x%04x", mono_error_get_message (&error), ctx->ip_offset));
 				mono_error_cleanup (&error);
 				goto end_verify;
-			}
-
-			for (j = 0; j < old_class->interface_count; ++j) {
-				for (k = 0; k < new_class->interface_count; ++k) {
-					if (mono_metadata_type_equal (&old_class->interfaces [j]->byval_arg, &new_class->interfaces [k]->byval_arg)) {
-						match_class = old_class->interfaces [j];
-						goto match_found;
-					}
-				}
 			}
 
 			/* if old class is an interface that new class implements */
@@ -6004,7 +6006,7 @@ gboolean
 mono_verifier_is_class_full_trust (MonoClass *klass)
 {
 	/* under CoreCLR code is trusted if it is part of the "platform" otherwise all code inside the GAC is trusted */
-	gboolean trusted_location = (mono_security_get_mode () != MONO_SECURITY_MODE_CORE_CLR) ? 
+	gboolean trusted_location = !mono_security_core_clr_enabled () ?
 		(klass->image->assembly && klass->image->assembly->in_gac) : mono_security_core_clr_is_platform_image (klass->image);
 
 	if (verify_all && verifier_mode == MONO_VERIFIER_MODE_OFF)
@@ -6212,6 +6214,9 @@ verify_generic_parameters (MonoClass *class)
 		for (constraints = param_info->constraints; *constraints; ++constraints) {
 			MonoClass *ctr = *constraints;
 			MonoType *constraint_type = &ctr->byval_arg;
+
+			if (!mono_class_can_access_class (class, ctr))
+				goto fail;
 
 			if (!mono_type_is_valid_type_in_context (constraint_type, &gc->context))
 				goto fail;

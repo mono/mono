@@ -62,10 +62,16 @@ mono_error_set_not_verifiable (MonoError *oerror, MonoMethod *method, const char
 void
 mono_error_set_generic_error (MonoError *error, const char * name_space, const char *name, const char *msg_format, ...) MONO_INTERNAL;
 
+void
+mono_error_set_from_loader_error (MonoError *error) MONO_INTERNAL;
+
 MonoException*
 mono_error_prepare_exception (MonoError *error, MonoError *error_out) MONO_INTERNAL;
 
 void
 mono_error_raise_exception (MonoError *error) MONO_INTERNAL;
+
+void
+mono_loader_set_error_from_mono_error (MonoError *oerror) MONO_INTERNAL;
 
 #endif

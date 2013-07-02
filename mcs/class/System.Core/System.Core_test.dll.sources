@@ -68,6 +68,8 @@ System.Threading/ReaderWriterLockSlimTest.cs
 ../../corlib/Test/System.Security.Cryptography/SHA256Test.cs
 ../../corlib/Test/System.Security.Cryptography/SHA384Test.cs
 ../../corlib/Test/System.Security.Cryptography/SHA512Test.cs
+System.Security.Cryptography/AesCryptoServiceProviderTest.cs
+System.Security.Cryptography/AesManagedTest.cs
 System.Security.Cryptography/CngAlgorithmTest.cs
 System.Security.Cryptography/CngAlgorithmGroupTest.cs
 System.Security.Cryptography/MD5CngTest.cs

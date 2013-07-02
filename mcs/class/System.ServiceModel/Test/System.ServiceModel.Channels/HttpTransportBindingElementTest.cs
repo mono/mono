@@ -506,6 +506,80 @@ namespace MonoTests.System.ServiceModel.Channels
 			return null;
 		}
 
+		XmlNode FindAssertionByLocalName (PolicyAssertionCollection assertionCollection, string name)
+		{
+			foreach (XmlNode node in assertionCollection)
+				if (node.LocalName == name)
+					return node;
+			
+			return null;
+		}
+
+		class MyMessageEncodingElement : MessageEncodingBindingElement {
+			MessageVersion version;
+			
+			public MyMessageEncodingElement (MessageVersion version)
+			{
+				this.version = version;
+			}
+			
+			public override BindingElement Clone ()
+			{
+				return new MyMessageEncodingElement (version);
+			}
+			public override MessageEncoderFactory CreateMessageEncoderFactory ()
+			{
+				throw new NotImplementedException ();
+			}
+			public override MessageVersion MessageVersion {
+				get {
+					return version;
+				}
+				set {
+					throw new NotImplementedException ();
+				}
+			}
+		}
+		
+		[Test]
+		public void ExportPolicy_CustomEncoding_Soap12 ()
+		{
+			HttpTransportBindingElement binding_element = new HttpTransportBindingElement ();
+			IPolicyExportExtension export_extension = binding_element as IPolicyExportExtension;
+			PolicyConversionContext conversion_context = new CustomPolicyConversionContext ();
+			conversion_context.BindingElements.Add (new MyMessageEncodingElement (MessageVersion.Soap12));
+			export_extension.ExportPolicy (new WsdlExporter (), conversion_context);
+			
+			PolicyAssertionCollection binding_assertions = conversion_context.GetBindingAssertions ();
+			BindingElementCollection binding_elements = conversion_context.BindingElements;
+			Assert.AreEqual (0, binding_assertions.Count, "#A0");
+			Assert.AreEqual (1, binding_elements.Count, "#A1");
+		}
+		
+		[Test]
+		public void ExportPolicy_CustomEncoding_Soap12August2004 ()
+		{
+			HttpTransportBindingElement binding_element = new HttpTransportBindingElement ();
+			IPolicyExportExtension export_extension = binding_element as IPolicyExportExtension;
+			PolicyConversionContext conversion_context = new CustomPolicyConversionContext ();
+			conversion_context.BindingElements.Add (new MyMessageEncodingElement (MessageVersion.Soap12WSAddressingAugust2004));
+			export_extension.ExportPolicy (new WsdlExporter (), conversion_context);
+			
+			PolicyAssertionCollection binding_assertions = conversion_context.GetBindingAssertions ();
+			BindingElementCollection binding_elements = conversion_context.BindingElements;
+			Assert.AreEqual (1, binding_assertions.Count, "#A0");
+			Assert.AreEqual (1, binding_elements.Count, "#A1");
+			
+			// UsingAddressing
+			XmlNode using_addressing_node = FindAssertionByLocalName (binding_assertions, "UsingAddressing");
+			Assert.AreEqual (true, using_addressing_node != null, "#B0");
+			Assert.AreEqual ("UsingAddressing", using_addressing_node.LocalName, "#B1");
+			Assert.AreEqual ("http://schemas.xmlsoap.org/ws/2004/08/addressing/policy", using_addressing_node.NamespaceURI, "#B2");
+			Assert.AreEqual (String.Empty, using_addressing_node.InnerText, "#B3");
+			Assert.AreEqual (0, using_addressing_node.Attributes.Count, "#B4");
+			Assert.AreEqual (0, using_addressing_node.ChildNodes.Count, "#B5");
+		}
+
 		#endregion
     }
 }

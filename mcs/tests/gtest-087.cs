@@ -29,6 +29,6 @@ namespace C5
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

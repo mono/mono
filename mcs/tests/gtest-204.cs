@@ -26,7 +26,7 @@ public class LocalContext
 }
 
 class M {
-  static void Main () {
+  public static void Main () {
      LocalContext x = new LocalContext ();
      x.Fold ("a" );
   }

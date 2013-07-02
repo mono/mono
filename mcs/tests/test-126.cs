@@ -11,7 +11,7 @@ class X : Iface {
 
 	void Iface.Method () {} 
 	
-	static int Main ()
+	public static int Main ()
 	{
 		X x = new X ();
 		Iface f = x;

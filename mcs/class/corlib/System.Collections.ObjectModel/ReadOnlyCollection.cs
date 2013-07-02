@@ -150,14 +150,14 @@ namespace System.Collections.ObjectModel
 
 		bool IList.Contains (object value)
 		{
-			if (Collection <T>.IsValidItem (value))
+			if (CollectionHelpers.IsValidItem<T> (value))
 				return list.Contains ((T) value);
 			return false;
 		}
 		
 		int IList.IndexOf (object value)
 		{
-			if (Collection <T>.IsValidItem (value))
+			if (CollectionHelpers.IsValidItem<T> (value))
 				return list.IndexOf ((T) value);
 			return -1;
 		}

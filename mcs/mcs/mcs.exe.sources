@@ -53,14 +53,14 @@ visit.cs
 ../class/Mono.CompilerServices.SymbolWriter/MonoSymbolFile.cs
 ../class/Mono.CompilerServices.SymbolWriter/MonoSymbolTable.cs
 ../class/Mono.CompilerServices.SymbolWriter/SourceMethodBuilder.cs
-../class/corlib/Mono.Security.Cryptography/CryptoConvert.cs
+../class/Mono.Security/Mono.Security.Cryptography/CryptoConvert.cs
 ../build/common/Consts.cs
 ../tools/monop/outline.cs
 
-../class/IKVM.Reflection/*.cs
-../class/IKVM.Reflection/Emit/*.cs
-../class/IKVM.Reflection/Metadata/*.cs
-../class/IKVM.Reflection/Reader/*.cs
-../class/IKVM.Reflection/Writer/*.cs
-../class/IKVM.Reflection/Impl/ITypeOwner.cs
-../class/IKVM.Reflection/Impl/SymbolSupport.cs
+../../external/ikvm/reflect/*.cs
+../../external/ikvm/reflect/Emit/*.cs
+../../external/ikvm/reflect/Metadata/*.cs
+../../external/ikvm/reflect/Reader/*.cs
+../../external/ikvm/reflect/Writer/*.cs
+../../external/ikvm/reflect/Impl/ITypeOwner.cs
+../../external/ikvm/reflect/Impl/SymbolSupport.cs

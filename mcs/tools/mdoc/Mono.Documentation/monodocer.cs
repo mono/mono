@@ -60,6 +60,8 @@ class MDocUpdater : MDocCommand
 
 	MyXmlNodeList extensionMethods = new MyXmlNodeList ();
 
+	HashSet<string> forwardedTypes = new HashSet<string> ();
+
 	public override void Run (IEnumerable<string> args)
 	{
 		show_exceptions = DebugOutput;
@@ -142,6 +144,9 @@ class MDocUpdater : MDocCommand
 		
 		this.assemblies = assemblies.Select (a => LoadAssembly (a)).ToList ();
 
+		// Store types that have been forwarded to avoid duplicate generation
+		GatherForwardedTypes ();
+
 		docEnum = docEnum ?? new DocumentationEnumerator ();
 		
 		// PERFORM THE UPDATES
@@ -186,6 +191,13 @@ class MDocUpdater : MDocCommand
 			Environment.ExitCode = 1;
 			Error ("Could not load XML file: {0}.", e.Message);
 		}
+	}
+
+	void GatherForwardedTypes ()
+	{
+		foreach (var asm in assemblies)
+			foreach (var type in asm.MainModule.ExportedTypes.Where (t => t.IsForwarder).Select (t => t.FullName))
+				forwardedTypes.Add (type);
 	}
 
 	static ExceptionLocations ParseExceptionLocations (string s)
@@ -641,7 +653,7 @@ class MDocUpdater : MDocCommand
 	{
 		foreach (TypeDefinition type in docEnum.GetDocumentationTypes (assembly, null)) {
 			string typename = GetTypeFileName(type);
-			if (!IsPublic (type) || typename.IndexOfAny (InvalidFilenameChars) >= 0)
+			if (!IsPublic (type) || typename.IndexOfAny (InvalidFilenameChars) >= 0 || forwardedTypes.Contains (type.FullName))
 				continue;
 
 			string reltypepath = DoUpdateType (type, source, dest);
@@ -773,7 +785,7 @@ class MDocUpdater : MDocCommand
 					XmlDocument doc = new XmlDocument ();
 					doc.Load (typefile.FullName);
 					XmlElement e = doc.SelectSingleNode("/Type") as XmlElement;
-					if (!no_assembly_versions && UpdateAssemblyVersions(e, GetAssemblyVersions(), false)) {
+					if (e != null && !no_assembly_versions && UpdateAssemblyVersions(e, GetAssemblyVersions(), false)) {
 						using (TextWriter writer = OpenWrite (typefile.FullName, FileMode.Truncate))
 							WriteXml(doc.DocumentElement, writer);
 						goodfiles.Add (relTypeFile);
@@ -1801,6 +1813,7 @@ class MDocUpdater : MDocCommand
 	
 	private void UpdateExceptions (XmlNode docs, MemberReference member)
 	{
+		string indent = new string (' ', 10);
 		foreach (var source in new ExceptionLookup (exceptions.Value)[member]) {
 			string cref = slashdocFormatter.GetDeclaration (source.Exception);
 			var node = docs.SelectSingleNode ("exception[@cref='" + cref + "']");
@@ -1808,10 +1821,10 @@ class MDocUpdater : MDocCommand
 				continue;
 			XmlElement e = docs.OwnerDocument.CreateElement ("exception");
 			e.SetAttribute ("cref", cref);
-			e.InnerXml = "To be added; from: <see cref=\"" + 
-				string.Join ("\" />, <see cref=\"", 
+			e.InnerXml = "To be added; from:\n" + indent + "<see cref=\"" +
+				string.Join ("\" />,\n" + indent + "<see cref=\"",
 						source.Sources.Select (m => slashdocFormatter.GetDeclaration (m))
-						.ToArray ()) +
+						.OrderBy (s => s)) +
 				"\" />";
 			docs.AppendChild (e);
 		}
@@ -1947,7 +1960,7 @@ class MDocUpdater : MDocCommand
 					(from i in values.Keys
 					 where (c & i) != 0
 					 select typename + "." + values [i])
-					.ToArray ());
+					.DefaultIfEmpty (v.ToString ()).ToArray ());
 		}
 		return "(" + GetDocTypeFullName (valueType) + ") " + v.ToString ();
 	}

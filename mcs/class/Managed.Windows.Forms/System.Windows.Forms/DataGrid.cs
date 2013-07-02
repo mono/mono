@@ -2063,7 +2063,7 @@ namespace System.Windows.Forms
 		{
 			if ((Msg) m.Msg == Msg.WM_KEYDOWN) {
 				Keys key = (Keys) m.WParam.ToInt32 ();
-				KeyEventArgs ke = new KeyEventArgs (key);
+				KeyEventArgs ke = new KeyEventArgs (key | XplatUI.State.ModifierKeys);
 				if (ProcessGridKey (ke))
 					return true;
 

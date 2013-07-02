@@ -86,6 +86,7 @@ namespace MonoTests.System.Threading
 	}
 
 	[TestFixture]
+	[Category("MobileNotWorking")] // Abort #10240
 	public class ThreadTest
 	{
 		TimeSpan Infinite = new TimeSpan (-10000);	// -10000 ticks == -1 ms
@@ -945,7 +946,7 @@ namespace MonoTests.System.Threading
 			public string ad_b2;
 			public string message;
 		}
-
+#if !MOBILE
 		[Test]
 		public void ManagedThreadId_AppDomains ()
 		{
@@ -986,7 +987,7 @@ namespace MonoTests.System.Threading
 			Assert.AreNotEqual (mbro.ad_b1, AppDomain.CurrentDomain.FriendlyName, "Name #5");
 			Assert.AreNotEqual (mbro.ad_b2, AppDomain.CurrentDomain.FriendlyName, "Name #6");
 		}
-
+#endif
 		void A1 ()
 		{
 			mbro.id_a1 = Thread.CurrentThread.ManagedThreadId;
@@ -1131,6 +1132,43 @@ namespace MonoTests.System.Threading
 			Thread.VolatileWrite (ref v4, float.MaxValue);
 			Assert.AreEqual (v4, float.MaxValue);
 		}
+
+		[Test]
+		public void Culture ()
+		{
+			Assert.IsNotNull (Thread.CurrentThread.CurrentCulture, "CurrentCulture");
+			Assert.IsNotNull (Thread.CurrentThread.CurrentUICulture, "CurrentUICulture");
+		}
+
+		[Test]
+		public void ThreadStartSimple ()
+		{
+			int i = 0;
+			Thread t = new Thread (delegate () {
+				// ensure the NSAutoreleasePool works
+				i++;
+			});
+			t.Start ();
+			t.Join ();
+			Assert.AreEqual (1, i, "ThreadStart");
+		}
+
+		[Test]
+		public void ParametrizedThreadStart ()
+		{
+			int i = 0;
+			object arg = null;
+			Thread t = new Thread (delegate (object obj) {
+				// ensure the NSAutoreleasePool works
+				i++;
+				arg = obj;
+			});
+			t.Start (this);
+			t.Join ();
+
+			Assert.AreEqual (1, i, "ParametrizedThreadStart");
+			Assert.AreEqual (this, arg, "obj");	
+		}		
 
 		[Test]
 		public void SetNameTpThread () {

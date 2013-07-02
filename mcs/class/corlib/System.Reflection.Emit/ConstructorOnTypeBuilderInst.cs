@@ -27,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !FULL_AOT_RUNTIME
 using System;
 using System.Globalization;
 using System.Reflection;
@@ -103,6 +104,11 @@ namespace System.Reflection.Emit
 			if (!instantiation.IsCreated)
 				throw new NotSupportedException ();
 
+			return GetParametersInternal ();
+		}
+
+		internal override ParameterInfo[] GetParametersInternal ()
+		{
 			ParameterInfo [] res;
 			if (cb is ConstructorBuilder) {
 				ConstructorBuilder cbuilder = (ConstructorBuilder)cb;
@@ -128,9 +134,9 @@ namespace System.Reflection.Emit
 			}
 		}
 
-		internal override int GetParameterCount ()
+		internal override int GetParametersCount ()
 		{
-			return cb.GetParameterCount ();
+			return cb.GetParametersCount ();
 		}
 
 		public override Object Invoke (Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
@@ -192,3 +198,4 @@ namespace System.Reflection.Emit
 	}
 }
 
+#endif

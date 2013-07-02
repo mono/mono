@@ -12,5 +12,5 @@ public enum X {
 }
 
 class xX {
-       static void Main () {}
+       public static void Main () {}
 }

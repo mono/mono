@@ -55,7 +55,7 @@ public static class Assert
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		bool? a = null, b = false, c = true;
 		bool? d = null, e = false, f = true;

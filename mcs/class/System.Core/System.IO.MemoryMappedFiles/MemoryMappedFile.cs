@@ -26,7 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 
 using System;
 using System.IO;
@@ -199,7 +199,7 @@ namespace System.IO.MemoryMappedFiles
 		}
 
 
-		[DllImport("kernel32.dll", SetLastError = true)]
+		[DllImport("kernel32", SetLastError = true)]
 		static extern bool SetHandleInformation (IntPtr hObject, int dwMask, int dwFlags);
 		static void ConfigureWindowsFD (IntPtr handle, HandleInheritability h)
 		{

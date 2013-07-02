@@ -53,7 +53,7 @@
 
 #include <mono/utils/mono-membar.h>
 #include <mono/utils/hazard-pointer.h>
-#include <mono/io-layer/io-layer.h>
+#include <mono/utils/atomic.h>
 
 #include <mono/utils/lock-free-queue.h>
 
@@ -286,7 +286,7 @@ mono_lock_free_queue_dequeue (MonoLockFreeQueue *q)
 		g_assert (q->has_dummy);
 		q->has_dummy = 0;
 		mono_memory_write_barrier ();
-		mono_thread_hazardous_free_or_queue (head, free_dummy);
+		mono_thread_hazardous_free_or_queue (head, free_dummy, FALSE, TRUE);
 		if (try_reenqueue_dummy (q))
 			goto retry;
 		return NULL;

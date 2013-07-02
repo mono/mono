@@ -24,7 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 
 using System;
 using System.Collections.Generic;
@@ -98,6 +98,15 @@ namespace System.Collections.Concurrent
 
 			return new UserLongRangePartitioner (fromInclusive, toExclusive, rangeSize);
 		}
+		
+#if NET_4_5
+		[MonoTODO]
+		public static OrderablePartitioner<TSource> Create<TSource> (IEnumerable<TSource> source,
+									     EnumerablePartitionerOptions partitionerOptions)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 	
 	public abstract class Partitioner<TSource>

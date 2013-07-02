@@ -1,4 +1,4 @@
-// CS0534: `C' does not implement inherited abstract member `A.Foo(string)'
+// CS0534: `C' does not implement inherited abstract member `B.Foo(string)'
 // Line: 13
 
 public abstract class A

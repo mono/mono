@@ -7,7 +7,7 @@ class T {
 			throw new System.Exception ("...");
 		}
 	}
-	static void Main ()
+	public static void Main ()
 	{
 		try {
 			i = f ();

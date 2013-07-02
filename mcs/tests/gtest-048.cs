@@ -22,7 +22,7 @@ struct Foo
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Foo foo = new Foo ();
 		Stack<Foo> stack = new Stack<Foo> ();

@@ -50,6 +50,7 @@
 #include <mono/metadata/threadpool-internals.h>
 #include <mono/metadata/domain-internals.h>
 #include <mono/utils/mono-threads.h>
+#include <mono/utils/mono-memory-model.h>
 
 #include <time.h>
 #ifdef HAVE_SYS_TIME_H
@@ -664,43 +665,22 @@ static gint32 convert_sockopt_level_and_name(MonoSocketOptionLevel mono_level,
 
 static MonoImage *get_socket_assembly (void)
 {
-	static const char *version = NULL;
-	static gboolean moonlight;
 	MonoDomain *domain = mono_domain_get ();
-	
-	if (version == NULL) {
-		version = mono_get_runtime_info ()->framework_version;
-		moonlight = !strcmp (version, "2.1");
-	}
 	
 	if (domain->socket_assembly == NULL) {
 		MonoImage *socket_assembly;
 
-		if (moonlight) {
-			socket_assembly = mono_image_loaded ("System.Net");
-			if (!socket_assembly) {
-				MonoAssembly *sa = mono_assembly_open ("System.Net.dll", NULL);
-			
-				if (!sa) {
-					g_assert_not_reached ();
-				} else {
-					socket_assembly = mono_assembly_get_image (sa);
-				}
-			}
-		} else {
-			socket_assembly = mono_image_loaded ("System");
-			if (!socket_assembly) {
-				MonoAssembly *sa = mono_assembly_open ("System.dll", NULL);
-			
-				if (!sa) {
-					g_assert_not_reached ();
-				} else {
-					socket_assembly = mono_assembly_get_image (sa);
-				}
+		socket_assembly = mono_image_loaded ("System");
+		if (!socket_assembly) {
+			MonoAssembly *sa = mono_assembly_open ("System.dll", NULL);
+		
+			if (!sa) {
+				g_assert_not_reached ();
+			} else {
+				socket_assembly = mono_assembly_get_image (sa);
 			}
 		}
-
-		domain->socket_assembly = socket_assembly;
+		mono_atomic_store_release (&domain->socket_assembly, socket_assembly);
 	}
 	
 	return domain->socket_assembly;
@@ -950,20 +930,11 @@ static MonoObject *create_object_from_sockaddr(struct sockaddr *saddr,
 		g_assert (domain->sockaddr_data_field);
 	}
 
-	/* Make sure there is space for the family and size bytes */
-#ifdef HAVE_SYS_UN_H
-	if (saddr->sa_family == AF_UNIX) {
-		/* sa_len includes the entire sockaddr size, so we don't need the
-		 * N bytes (sizeof (unsigned short)) of the family. */
-		data=mono_array_new_cached(domain, mono_get_byte_class (), sa_size);
-	} else
-#endif
-	{
-		/* May be the +2 here is too conservative, as sa_len returns
-		 * the length of the entire sockaddr_in/in6, including
-		 * sizeof (unsigned short) of the family */
-		data=mono_array_new_cached(domain, mono_get_byte_class (), sa_size+2);
-	}
+	/* May be the +2 here is too conservative, as sa_len returns
+	 * the length of the entire sockaddr_in/in6, including
+	 * sizeof (unsigned short) of the family */
+	/* We can't really avoid the +2 as all code below depends on this size - INCLUDING unix domain sockets.*/
+	data=mono_array_new_cached(domain, mono_get_byte_class (), sa_size+2);
 
 	/* The data buffer is laid out as follows:
 	 * bytes 0 and 1 are the address family
@@ -2074,6 +2045,8 @@ static struct in6_addr ipaddress_to_struct_in6_addr(MonoObject *ipaddr)
 #endif /* AF_INET6 */
 #endif
 
+#if defined(__APPLE__)
+
 #if defined(HAVE_GETIFADDRS) && defined(HAVE_IF_NAMETOINDEX)
 static int
 get_local_interface_id (int family)
@@ -2109,6 +2082,8 @@ get_local_interface_id (int family)
 	return 0;
 }
 #endif
+
+#endif /* __APPLE__ */
 
 void ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal(SOCKET sock, gint32 level, gint32 name, MonoObject *obj_val, MonoArray *byte_val, gint32 int_val, gint32 *error)
 {

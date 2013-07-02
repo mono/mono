@@ -49,7 +49,7 @@ class Bx : Ax {
 	}
 }
 class Test {
-	static int Main ()
+	public static int Main ()
 	{
 		B b = new B ();
 

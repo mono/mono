@@ -14,7 +14,7 @@ namespace UnusedFieldWarningTest2
 			Console.Write (a.FirstOrDefault ());
 		}
 
-		static void Main ()
+		public static void Main ()
 		{
 		}
 	}

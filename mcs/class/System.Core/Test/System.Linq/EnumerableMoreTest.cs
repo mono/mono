@@ -608,15 +608,27 @@ namespace MonoTests.System.Linq {
 			AssertException<ArgumentNullException> (delegate () { ((IEnumerable<string>) null).Contains ("2", (IEqualityComparer<string>) EqualityComparer<string>.Default); });
 		}
 
+		static void IsFalse(bool b, int[] data) {
+			if (b) {
+				Console.WriteLine (data.Contains (0));
+				object o = null;
+				o.ToString ();
+				Assert.IsFalse (true);
+			}
+			//Console.WriteLine ("HIT!");
+		}
+
 		[Test]
 		public void ContainsTest ()
 		{
 			int [] data = { 5, 2, 3, 1, 6 };
-
+			ICollection<int> icoll = data;
 
 			// Contains<TSource> (TSource)
 			Assert.IsTrue (data.Contains (2));
-			Assert.IsFalse (data.Contains (0));
+			for (int i = 0; i < 50; ++i)
+				Console.WriteLine (icoll.Contains (0));//Console.WriteLine (data.Contains (0));
+			IsFalse (data.Contains (0), data);
 
 			// Contains<TSource> (TSource, IEqualityComparer<TSource>)
 			Assert.IsTrue (data.Contains (2, EqualityComparer<int>.Default));

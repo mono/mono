@@ -7,6 +7,8 @@
 // Copyright (C) 2007 Novell, Inc.
 //
 
+#if !MOBILE
+
 using NUnit.Framework;
 
 using System;
@@ -20,7 +22,6 @@ namespace MonoTests.System.Web.Services.Description
 	[TestFixture]
 	public class ServiceDescriptionImporterTest
 	{
-#if NET_2_0
 		CodeNamespace GenerateCodeFromWsdl (ServiceDescription sd)
 		{
 			ServiceDescriptionImporter imp =
@@ -118,6 +119,7 @@ Console.WriteLine ("***" + cd.Name);
 			}
 			Assert.IsTrue (verified, "verified");
 		}
-#endif
 	}
 }
+
+#endif

@@ -8,7 +8,7 @@ class D <U> : C<U> where U : struct
 
 class X
 {
-	static void Main ()
+	public static void Main ()
         {
         }
 }

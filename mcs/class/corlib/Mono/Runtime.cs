@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -31,12 +31,15 @@ using System.Runtime.CompilerServices;
 
 namespace Mono {
 
-	internal class Runtime
+#if MOBILE
+	public
+#endif
+	static class Runtime
 	{
-		
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern void mono_runtime_install_handlers ();
-		
+
 		static internal void InstallSignalHandlers ()
 		{
 			mono_runtime_install_handlers ();
@@ -46,11 +49,17 @@ namespace Mono {
 		// Safe to be called using reflection
 		// Format is undefined only for use as a string for reporting
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern string GetDisplayName ();
+#if MOBILE
+		public
+#else
+		internal
+#endif
+		static extern string GetDisplayName ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public static extern string GetNativeStackTrace (Exception exception);
+		static extern string GetNativeStackTrace (Exception exception);
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public static extern bool SetGCAllowSynchronousMajor (bool flag);
 	}
-	
 }

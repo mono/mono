@@ -26,7 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 
 namespace System.Runtime.CompilerServices
 {

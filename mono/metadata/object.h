@@ -212,6 +212,12 @@ mono_runtime_invoke	    (MonoMethod *method, void *obj, void **params,
 MonoMethod *
 mono_get_delegate_invoke    (MonoClass *klass);
 
+MonoMethod *
+mono_get_delegate_begin_invoke (MonoClass *klass);
+
+MonoMethod *
+mono_get_delegate_end_invoke (MonoClass *klass);
+
 MonoObject*
 mono_runtime_delegate_invoke (MonoObject *delegate, void **params, 
 			      MonoObject **exc);
@@ -239,6 +245,8 @@ int
 mono_runtime_exec_main	    (MonoMethod *method, MonoArray *args,
 			     MonoObject **exc);
 
+/* The following functions won't be available with mono was configured with remoting disabled. */
+/*#ifndef DISABLE_REMOTING */
 void*
 mono_load_remote_field (MonoObject *this_obj, MonoClass *klass, MonoClassField *field, void **res);
 
@@ -250,6 +258,8 @@ mono_store_remote_field (MonoObject *this_obj, MonoClass *klass, MonoClassField 
 
 void
 mono_store_remote_field_new (MonoObject *this_obj, MonoClass *klass, MonoClassField *field, MonoObject *arg);
+
+/* #endif */
 
 void
 mono_unhandled_exception    (MonoObject *exc);

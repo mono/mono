@@ -13,7 +13,7 @@ class C
 		return 2;
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		dynamic d = 1;
 		if (Test (1, d) != 1)

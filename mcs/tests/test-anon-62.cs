@@ -10,7 +10,7 @@ public class X
 		this.a = a;
 	}
 
-	static void Main()
+	public static void Main()
 	{
 	}
 }

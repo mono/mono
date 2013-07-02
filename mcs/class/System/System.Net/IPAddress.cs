@@ -211,11 +211,7 @@ namespace System.Net {
 					string lastNet = nets [nets.Length - 1];
 					if (lastNet.Length == 0)
 						return null;
-#if NET_2_1 //workaround for smcs, as it generate code that can't access string.GetEnumerator ()
-					foreach (char c in lastNet.ToCharArray ())
-#else
 					foreach (char c in lastNet)
-#endif
 						if (!Uri.IsHexDigit (c))
 							return null;
 				}
@@ -385,11 +381,6 @@ namespace System.Net {
 		/// <returns></returns>
 		public static bool IsLoopback (IPAddress address)
 		{
-#if MOONLIGHT
-			// even 4.0 throws an NRE
-			if (address == null)
-				throw new ArgumentNullException ("address");
-#endif
 			if(address.m_Family == AddressFamily.InterNetwork)
 				return (address.m_Address & 0xFF) == 127;
 			else {

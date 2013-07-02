@@ -87,6 +87,22 @@ namespace System.IO.Compression {
 			this.mode = mode;
 			this.leaveOpen = leaveOpen;
 		}
+		
+#if NET_4_5
+		[MonoTODO]
+		public DeflateStream (Stream stream, CompressionLevel compressionLevel)
+			: this (stream, CompressionMode.Compress)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public DeflateStream (Stream stream, CompressionLevel compressionLevel, bool leaveOpen)
+			: this (stream, CompressionMode.Compress, leaveOpen)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		protected override void Dispose (bool disposing)
 		{

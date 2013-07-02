@@ -3,7 +3,7 @@
 
 unsafe class X {
 	static int x = 0;
-	static void Main () {
+	public static void Main () {
 		fixed (void* p = &x) {}
 		fixed (void* p = &x) {}
 	}

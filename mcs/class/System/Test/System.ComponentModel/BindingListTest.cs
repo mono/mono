@@ -585,6 +585,50 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (0, list_changed_index, "4");
 			Assert.AreEqual (1, poker.Count, "5");
 		}
+
+		private class Item : INotifyPropertyChanged {
+
+			public event PropertyChangedEventHandler PropertyChanged;
+
+			string _name;
+
+			public string Name {
+				get { return _name; }
+				set {
+					if (_name != value) {
+						_name = value;
+						OnPropertyChanged ("Name");
+					}
+				}
+			}
+
+			void OnPropertyChanged (string name)
+			{
+				var fn = PropertyChanged;
+				if (fn != null)
+					fn (this, new PropertyChangedEventArgs (name));
+			}
+		}
+
+		[Test] // https://bugzilla.xamarin.com/show_bug.cgi?id=8366
+		public void Bug8366 ()
+		{
+			bool added = false;
+			bool changed = false;
+			var list = new BindingList<Item> ();
+			list.ListChanged += (object sender, ListChangedEventArgs e) => {
+				added |= e.ListChangedType == ListChangedType.ItemAdded;
+				changed |= e.ListChangedType == ListChangedType.ItemChanged;
+			};
+
+			var item = new Item () { Name = "1" };
+			list.Add (item);
+
+			item.Name = "2";
+
+			Assert.IsTrue (added, "ItemAdded");
+			Assert.IsTrue (changed, "ItemChanged");
+		}
 	}
 }
 

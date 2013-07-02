@@ -45,7 +45,9 @@
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/profiler.h>
 #include <mono/metadata/mono-endian.h>
+#include <mono/metadata/environment.h>
 #include <mono/utils/mono-mmap.h>
+#include <mono/utils/mono-logger-internal.h>
 
 #include "mini.h"
 #include "debug-mini.h"
@@ -62,6 +64,9 @@ static gpointer throw_corlib_exception_func;
 
 static gpointer try_more_restore_tramp = NULL;
 static gpointer restore_stack_protection_tramp = NULL;
+
+static MonoUnhandledExceptionFunc unhandled_exception_hook = NULL;
+static gpointer unhandled_exception_hook_data = NULL;
 
 static void try_more_restore (void);
 static void restore_stack_protection (void);
@@ -114,6 +119,7 @@ mono_exceptions_init (void)
 	cbs.mono_walk_stack_with_state = mono_walk_stack_with_state;
 	cbs.mono_raise_exception = mono_get_throw_exception ();
 	cbs.mono_raise_exception_with_ctx = mono_raise_exception_with_ctx;
+	cbs.mono_exception_walk_trace = mono_exception_walk_trace;
 	cbs.mono_install_handler_block_guard = mono_install_handler_block_guard;
 	mono_install_eh_callbacks (&cbs);
 }
@@ -350,7 +356,7 @@ mono_find_jit_info_ext (MonoDomain *domain, MonoJitTlsData *jit_tls,
 	gboolean err;
 	gpointer ip = MONO_CONTEXT_GET_IP (ctx);
 	MonoJitInfo *ji;
-	MonoDomain *target_domain;
+	MonoDomain *target_domain = domain;
 
 	if (trace)
 		*trace = NULL;
@@ -535,6 +541,47 @@ get_method_from_stack_frame (MonoJitInfo *ji, gpointer generic_info)
 	method = mono_class_inflate_generic_method (method, &context);
 
 	return method;
+}
+
+/**
+ * mono_exception_walk_native_trace:
+ * @ex: The exception object whose frames should be walked
+ * @func: callback to call for each stack frame
+ * @user_data: data passed to the callback
+ *
+ * This function walks the stacktrace of an exception. For
+ * each frame the callback function is called with the relevant info.
+ * The walk ends when no more stack frames are found or when the callback
+ * returns a TRUE value.
+ */
+ 
+gboolean
+mono_exception_walk_trace (MonoException *ex, MonoExceptionFrameWalk func, gpointer user_data)
+{
+	MonoDomain *domain = mono_domain_get ();
+	MonoArray *ta = ex->trace_ips;
+	int len, i;
+
+	if (ta == NULL)
+		return FALSE;
+
+	len = mono_array_length (ta) >> 1;
+	for (i = 0; i < len; i++) {
+		gpointer ip = mono_array_get (ta, gpointer, i * 2 + 0);
+		gpointer generic_info = mono_array_get (ta, gpointer, i * 2 + 1);
+		MonoJitInfo *ji = mono_jit_info_table_find (domain, ip);
+
+		if (ji == NULL) {
+			if (func (NULL, ip, 0, FALSE, user_data))
+				return TRUE;
+		} else {
+			MonoMethod *method = get_method_from_stack_frame (ji, generic_info);
+			if (func (method, ji->code_start, (char *) ip - (char *) ji->code_start, TRUE, user_data))
+				return TRUE;
+		}
+	}
+	
+	return len > 0;
 }
 
 MonoString *
@@ -851,15 +898,9 @@ ves_icall_get_frame_info (gint32 skip, MonoBoolean need_file_info,
 		ji = frame.ji;
 		*native_offset = frame.native_offset;
 
-		/* skip all wrappers ??*/
-		if (ji->method->wrapper_type == MONO_WRAPPER_RUNTIME_INVOKE ||
-		    ji->method->wrapper_type == MONO_WRAPPER_XDOMAIN_INVOKE ||
-		    ji->method->wrapper_type == MONO_WRAPPER_XDOMAIN_DISPATCH ||
-		    ji->method->wrapper_type == MONO_WRAPPER_REMOTING_INVOKE_WITH_CHECK ||
-		    ji->method->wrapper_type == MONO_WRAPPER_REMOTING_INVOKE ||
-			ji->method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED)
+		/* The skip count passed by the caller depends on us not filtering out MANAGED_TO_NATIVE */
+		if (ji->method->wrapper_type != MONO_WRAPPER_NONE && ji->method->wrapper_type != MONO_WRAPPER_DYNAMIC_METHOD && ji->method->wrapper_type != MONO_WRAPPER_MANAGED_TO_NATIVE)
 			continue;
-
 		skip--;
 	} while (skip >= 0);
 
@@ -1239,10 +1280,10 @@ build_native_trace (void)
  * OUT_FILTER_IDX. Return TRUE if the exception is caught, FALSE otherwise.
  */
 static gboolean
-mono_handle_exception_internal_first_pass (MonoContext *ctx, gpointer obj, gint32 *out_filter_idx, MonoJitInfo **out_ji, MonoObject *non_exception)
+mono_handle_exception_internal_first_pass (MonoContext *ctx, gpointer obj, gint32 *out_filter_idx, MonoJitInfo **out_ji, MonoJitInfo **out_prev_ji, MonoObject *non_exception)
 {
 	MonoDomain *domain = mono_domain_get ();
-	MonoJitInfo *ji;
+	MonoJitInfo *ji = NULL;
 	static int (*call_filter) (MonoContext *, gpointer) = NULL;
 	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
 	MonoLMF *lmf = mono_get_lmf ();
@@ -1282,6 +1323,8 @@ mono_handle_exception_internal_first_pass (MonoContext *ctx, gpointer obj, gint3
 		*out_filter_idx = -1;
 	if (out_ji)
 		*out_ji = NULL;
+	if (out_prev_ji)
+		*out_prev_ji = NULL;
 	filter_idx = 0;
 	initial_ctx = *ctx;
 
@@ -1292,6 +1335,9 @@ mono_handle_exception_internal_first_pass (MonoContext *ctx, gpointer obj, gint3
 		gboolean unwind_res = TRUE;
 		
 		StackFrameInfo frame;
+
+		if (out_prev_ji)
+			*out_prev_ji = ji;
 
 		unwind_res = mono_find_jit_info_ext (domain, jit_tls, NULL, ctx, &new_ctx, NULL, &lmf, NULL, &frame);
 		if (unwind_res) {
@@ -1368,7 +1414,9 @@ mono_handle_exception_internal_first_pass (MonoContext *ctx, gpointer obj, gint3
 
 				if (ei->flags == MONO_EXCEPTION_CLAUSE_FILTER) {
 					gboolean is_user_frame = ji->method->wrapper_type == MONO_WRAPPER_NONE || ji->method->wrapper_type == MONO_WRAPPER_DYNAMIC_METHOD;
+#ifndef DISABLE_PERFCOUNTERS
 					mono_perfcounters->exceptions_filters++;
+#endif
 					mono_debugger_call_exception_handler (ei->data.filter, MONO_CONTEXT_GET_SP (ctx), ex_obj);
 
 					/*
@@ -1438,7 +1486,7 @@ static gboolean
 mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gboolean resume, MonoJitInfo **out_ji)
 {
 	MonoDomain *domain = mono_domain_get ();
-	MonoJitInfo *ji;
+	MonoJitInfo *ji, *prev_ji;
 	static int (*call_filter) (MonoContext *, gpointer) = NULL;
 	static void (*restore_context) (void *);
 	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
@@ -1554,7 +1602,7 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gboolean resume,
 		mono_profiler_exception_thrown (obj);
 		jit_tls->orig_ex_ctx_set = FALSE;
 
-		res = mono_handle_exception_internal_first_pass (&ctx_cp, obj, &first_filter_idx, &ji, non_exception);
+		res = mono_handle_exception_internal_first_pass (&ctx_cp, obj, &first_filter_idx, &ji, &prev_ji, non_exception);
 
 		if (!res) {
 			if (mini_get_debug_options ()->break_on_exc)
@@ -1562,7 +1610,7 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gboolean resume,
 			mono_debugger_agent_handle_exception (obj, ctx, NULL);
 
 			if (mini_get_debug_options ()->suspend_on_unhandled) {
-				fprintf (stderr, "Unhandled exception, suspending...");
+				mono_runtime_printf_err ("Unhandled exception, suspending...");
 				while (1)
 					;
 			}
@@ -1571,11 +1619,22 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gboolean resume,
 			// we are handling a stack overflow
 			mono_unhandled_exception (obj);
 		} else {
-			//
-			// Treat exceptions that are "handled" by mono_runtime_invoke() as unhandled.
-			// See bug #669836.
-			//
-			if (ji && ji->method->wrapper_type == MONO_WRAPPER_RUNTIME_INVOKE)
+			gboolean unhandled = FALSE;
+
+			/*
+			 * The exceptions caught by the mono_runtime_invoke () calls in mono_async_invoke () needs to be treated as
+			 * unhandled (#669836).
+			 * FIXME: The check below is hackish, but its hard to distinguish these runtime invoke calls from others
+			 * in the runtime.
+			 */
+			if (ji && ji->method->wrapper_type == MONO_WRAPPER_RUNTIME_INVOKE) {
+				if (prev_ji) {
+					MonoInternalThread *thread = mono_thread_internal_current ();
+					if (prev_ji->method == thread->async_invoke_method)
+						unhandled = TRUE;
+				}
+			}
+			if (unhandled)
 				mono_debugger_agent_handle_exception (obj, ctx, NULL);
 			else
 				mono_debugger_agent_handle_exception (obj, ctx, &ctx_cp);
@@ -1725,7 +1784,9 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gboolean resume,
 					mono_debugger_call_exception_handler (ei->handler_start, MONO_CONTEXT_GET_SP (ctx), ex_obj);
 					MONO_CONTEXT_SET_IP (ctx, ei->handler_start);
 					*(mono_get_lmf_addr ()) = lmf;
+#ifndef DISABLE_PERFCOUNTERS
 					mono_perfcounters->exceptions_depth += frame_count;
+#endif
 					if (obj == domain->stack_overflow_ex)
 						jit_tls->handling_stack_ovf = FALSE;
 
@@ -1749,7 +1810,9 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gboolean resume,
 					mono_profiler_exception_clause_handler (ji->method, ei->flags, i);
 					jit_tls->orig_ex_ctx_set = FALSE;
 					mono_debugger_call_exception_handler (ei->handler_start, MONO_CONTEXT_GET_SP (ctx), ex_obj);
+#ifndef DISABLE_PERFCOUNTERS
 					mono_perfcounters->exceptions_finallys++;
+#endif
 					*(mono_get_lmf_addr ()) = lmf;
 					if (ji->from_llvm) {
 						/* 
@@ -1828,7 +1891,7 @@ mono_debugger_handle_exception (MonoContext *ctx, MonoObject *obj)
 		 * The debugger wants us to stop only if this exception is user-unhandled.
 		 */
 
-		ret = mono_handle_exception_internal_first_pass (&ctx_cp, obj, NULL, &ji, NULL);
+		ret = mono_handle_exception_internal_first_pass (&ctx_cp, obj, NULL, &ji, NULL, NULL);
 		if (ret && (ji != NULL) && (ji->method->wrapper_type == MONO_WRAPPER_RUNTIME_INVOKE)) {
 			/*
 			 * The exception is handled in a runtime-invoke wrapper, that means that it's unhandled
@@ -1902,7 +1965,9 @@ mono_debugger_run_finally (MonoContext *start_ctx)
 gboolean
 mono_handle_exception (MonoContext *ctx, gpointer obj)
 {
+#ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->exceptions_thrown++;
+#endif
 
 	return mono_handle_exception_internal (ctx, obj, FALSE, NULL);
 }
@@ -1954,11 +2019,7 @@ mono_setup_altstack (MonoJitTlsData *tls)
 
 	sa.ss_sp = tls->signal_stack;
 	sa.ss_size = MONO_ARCH_SIGNAL_STACK_SIZE;
-#if __APPLE__
 	sa.ss_flags = 0;
-#else
-	sa.ss_flags = SS_ONSTACK;
-#endif
 	g_assert (sigaltstack (&sa, NULL) == 0);
 
 	mono_gc_register_altstack ((char*)tls->stack_ovf_guard_base + tls->stack_ovf_guard_size, (char*)staddr + stsize - ((char*)tls->stack_ovf_guard_base + tls->stack_ovf_guard_size), tls->signal_stack, tls->signal_stack_size);
@@ -2086,7 +2147,7 @@ mono_handle_soft_stack_ovf (MonoJitTlsData *jit_tls, MonoJitInfo *ji, void *ctx,
 			/* We print a message: after this even managed stack overflows
 			 * may crash the runtime
 			 */
-			fprintf (stderr, "Stack overflow in unmanaged: IP: %p, fault addr: %p\n", mono_arch_ip_from_context (ctx), fault_addr);
+			mono_runtime_printf_err ("Stack overflow in unmanaged: IP: %p, fault addr: %p", mono_arch_ip_from_context (ctx), fault_addr);
 			if (!jit_tls->handling_stack_ovf) {
 				jit_tls->restore_stack_prot = restore_stack_protection_tramp;
 				jit_tls->handling_stack_ovf = 1;
@@ -2100,7 +2161,6 @@ mono_handle_soft_stack_ovf (MonoJitTlsData *jit_tls, MonoJitInfo *ji, void *ctx,
 }
 
 typedef struct {
-	FILE *stream;
 	MonoMethod *omethod;
 	int count;
 } PrintOverflowUserData;
@@ -2110,7 +2170,6 @@ print_overflow_stack_frame (StackFrameInfo *frame, MonoContext *ctx, gpointer da
 {
 	MonoMethod *method = NULL;
 	PrintOverflowUserData *user_data = data;
-	FILE *stream = user_data->stream;
 	gchar *location;
 
 	if (frame->ji)
@@ -2128,11 +2187,11 @@ print_overflow_stack_frame (StackFrameInfo *frame, MonoContext *ctx, gpointer da
 			return FALSE;
 
 		location = mono_debug_print_stack_frame (method, frame->native_offset, mono_domain_get ());
-		fprintf (stream, "  %s\n", location);
+		mono_runtime_printf_err ("  %s", location);
 		g_free (location);
 
 		if (user_data->count == 1) {
-			fprintf (stream, "  <...>\n");
+			mono_runtime_printf_err ("  <...>");
 			user_data->omethod = method;
 		} else {
 			user_data->omethod = NULL;
@@ -2140,7 +2199,7 @@ print_overflow_stack_frame (StackFrameInfo *frame, MonoContext *ctx, gpointer da
 
 		user_data->count ++;
 	} else
-		fprintf (stream, "  at <unknown> <0x%05x>\n", frame->native_offset);
+		mono_runtime_printf_err ("  at <unknown> <0x%05x>", frame->native_offset);
 
 	return FALSE;
 }
@@ -2152,41 +2211,39 @@ mono_handle_hard_stack_ovf (MonoJitTlsData *jit_tls, MonoJitInfo *ji, void *ctx,
 	MonoContext mctx;
 
 	/* we don't do much now, but we can warn the user with a useful message */
-	fprintf (stderr, "Stack overflow: IP: %p, fault addr: %p\n", mono_arch_ip_from_context (ctx), fault_addr);
+	mono_runtime_printf_err ("Stack overflow: IP: %p, fault addr: %p", mono_arch_ip_from_context (ctx), fault_addr);
 
 #ifdef MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX
 	mono_arch_sigctx_to_monoctx (ctx, &mctx);
 			
-	fprintf (stderr, "Stacktrace:\n");
+	mono_runtime_printf_err ("Stacktrace:");
 
 	memset (&ud, 0, sizeof (ud));
-	ud.stream = stderr;
 
 	mono_walk_stack_with_ctx (print_overflow_stack_frame, &mctx, MONO_UNWIND_LOOKUP_ACTUAL_METHOD, &ud);
 #else
 	if (ji && ji->method)
-		fprintf (stderr, "At %s\n", mono_method_full_name (ji->method, TRUE));
+		mono_runtime_printf_err ("At %s", mono_method_full_name (ji->method, TRUE));
 	else
-		fprintf (stderr, "At <unmanaged>.\n");
+		mono_runtime_printf_err ("At <unmanaged>.");
 #endif
 
 	_exit (1);
 }
 
 static gboolean
-print_stack_frame (StackFrameInfo *frame, MonoContext *ctx, gpointer data)
+print_stack_frame_to_stderr (StackFrameInfo *frame, MonoContext *ctx, gpointer data)
 {
-	FILE *stream = (FILE*)data;
 	MonoMethod *method = NULL;
 	if (frame->ji)
 		method = frame->ji->method;
 
 	if (method) {
 		gchar *location = mono_debug_print_stack_frame (method, frame->native_offset, mono_domain_get ());
-		fprintf (stream, "  %s\n", location);
+		mono_runtime_printf_err ("  %s", location);
 		g_free (location);
 	} else
-		fprintf (stream, "  at <unknown> <0x%05x>\n", frame->native_offset);
+		mono_runtime_printf_err ("  at <unknown> <0x%05x>", frame->native_offset);
 
 	return FALSE;
 }
@@ -2224,12 +2281,13 @@ mono_handle_native_sigsegv (int signal, void *ctx)
 	struct sigaction sa;
 #endif
 	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
+	const char *signal_str = (signal == SIGSEGV) ? "SIGSEGV" : "SIGABRT";
 
 	if (handling_sigsegv)
 		return;
 
 	if (mini_get_debug_options ()->suspend_on_sigsegv) {
-		fprintf (stderr, "Received SIGSEGV, suspending...");
+		mono_runtime_printf_err ("Received SIGSEGV, suspending...");
 		while (1)
 			;
 	}
@@ -2239,11 +2297,9 @@ mono_handle_native_sigsegv (int signal, void *ctx)
 
 	/* !jit_tls means the thread was not registered with the runtime */
 	if (jit_tls && mono_thread_internal_current ()) {
-		fprintf (stderr, "Stacktrace:\n\n");
+		mono_runtime_printf_err ("Stacktrace:\n");
 
-		mono_walk_stack (print_stack_frame, TRUE, stderr);
-
-		fflush (stderr);
+		mono_walk_stack (print_stack_frame_to_stderr, TRUE, NULL);
 	}
 
 #ifdef HAVE_BACKTRACE_SYMBOLS
@@ -2251,18 +2307,15 @@ mono_handle_native_sigsegv (int signal, void *ctx)
 	void *array [256];
 	char **names;
 	int i, size;
-	const char *signal_str = (signal == SIGSEGV) ? "SIGSEGV" : "SIGABRT";
 
-	fprintf (stderr, "\nNative stacktrace:\n\n");
+	mono_runtime_printf_err ("\nNative stacktrace:\n");
 
 	size = backtrace (array, 256);
 	names = backtrace_symbols (array, size);
 	for (i =0; i < size; ++i) {
-		fprintf (stderr, "\t%s\n", names [i]);
+		mono_runtime_printf_err ("\t%s", names [i]);
 	}
 	free (names);
-
-	fflush (stderr);
 
 	/* Try to get more meaningful information using gdb */
 
@@ -2287,26 +2340,27 @@ mono_handle_native_sigsegv (int signal, void *ctx)
 			exit (1);
 		}
 
-		fprintf (stderr, "\nDebug info from gdb:\n\n");
+		mono_runtime_printf_err ("\nDebug info from gdb:\n");
 		waitpid (pid, &status, 0);
 	}
 #endif
+ }
+#endif
+
 	/*
 	 * A SIGSEGV indicates something went very wrong so we can no longer depend
 	 * on anything working. So try to print out lots of diagnostics, starting 
 	 * with ones which have a greater chance of working.
 	 */
-	fprintf (stderr,
+	mono_runtime_printf_err (
 			 "\n"
 			 "=================================================================\n"
 			 "Got a %s while executing native code. This usually indicates\n"
 			 "a fatal error in the mono runtime or one of the native libraries \n"
 			 "used by your application.\n"
-			 "=================================================================\n"
-			 "\n", signal_str);
+			 "=================================================================\n",
+			signal_str);
 
- }
-#endif
 
 #ifdef MONO_ARCH_USE_SIGACTION
 
@@ -2319,7 +2373,12 @@ mono_handle_native_sigsegv (int signal, void *ctx)
 
 #endif
 
+	/*Android abort is a fluke, it doesn't abort, it triggers another segv. */
+#if defined (PLATFORM_ANDROID)
+	exit (-1);
+#else
 	abort ();
+#endif
 }
 
 static void
@@ -2360,17 +2419,17 @@ mono_print_thread_dump_internal (void *sigctx, MonoContext *start_ctx)
 
 	mono_walk_stack_with_ctx (print_stack_frame_to_string, &ctx, MONO_UNWIND_LOOKUP_ALL, text);
 #else
-	printf ("\t<Stack traces in thread dumps not supported on this platform>\n");
+	mono_runtime_printf ("\t<Stack traces in thread dumps not supported on this platform>");
 #endif
 
-	fprintf (stdout, "%s", text->str);
+	mono_runtime_printf ("%s", text->str);
 
 #if PLATFORM_WIN32 && TARGET_WIN32 && _DEBUG
 	OutputDebugStringA(text->str);
 #endif
 
 	g_string_free (text, TRUE);
-	fflush (stdout);
+	mono_runtime_stdout_fflush ();
 }
 
 /*
@@ -2641,4 +2700,47 @@ mono_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), gpoint
 #else
 	g_error ("This target doesn't support mono_arch_setup_async_callback");
 #endif
+}
+
+void
+mono_install_unhandled_exception_hook (MonoUnhandledExceptionFunc func, gpointer user_data)
+{
+	unhandled_exception_hook = func;
+	unhandled_exception_hook_data = user_data;
+}
+
+void
+mono_invoke_unhandled_exception_hook (MonoObject *exc)
+{
+	if (unhandled_exception_hook) {
+		unhandled_exception_hook (exc, unhandled_exception_hook_data);
+	} else {
+		MonoObject *other = NULL;
+		MonoString *str = mono_object_to_string (exc, &other);
+		char *msg = NULL;
+		
+		if (str)
+			msg = mono_string_to_utf8 (str);
+		else if (other) {
+			char *original_backtrace = mono_exception_get_managed_backtrace ((MonoException*)exc);
+			char *nested_backtrace = mono_exception_get_managed_backtrace ((MonoException*)other);
+
+			msg = g_strdup_printf ("Nested exception detected.\nOriginal Exception: %s\nNested exception:%s\n",
+				original_backtrace, nested_backtrace);
+
+			g_free (original_backtrace);
+			g_free (nested_backtrace);
+		} else {
+			msg = g_strdup ("Nested exception trying to figure out what went wrong");
+		}
+		mono_runtime_printf_err ("[ERROR] FATAL UNHANDLED EXCEPTION: %s", msg);
+		g_free (msg);
+#if defined(__APPLE__) && defined(__arm__)
+		g_assertion_message ("Terminating runtime due to unhandled exception");
+#else
+		exit (mono_environment_exitcode_get ());
+#endif
+	}
+
+	g_assert_not_reached ();
 }

@@ -32,7 +32,7 @@ struct Foo
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Foo foo = new Foo (3);
 		foreach (Foo bar in foo.Test (new Foo (8)))

@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System.Runtime.Remoting.Messaging;
 
 #if NET_2_0
 
@@ -46,6 +47,15 @@ namespace MonoTests.System.Threading {
 			success = (bool)o;
 		}
 
+		public class CallContextValue : ILogicalThreadAffinative {
+			public object Value { get; set; }
+
+			public CallContextValue (object value)
+			{
+				this.Value = value;
+			}
+		}
+
 		[SetUp]
 		public void SetUp ()
 		{
@@ -57,6 +67,28 @@ namespace MonoTests.System.Threading {
 		{
 			if (ExecutionContext.IsFlowSuppressed ())
 				ExecutionContext.RestoreFlow ();
+		}
+
+		[Test]
+		[Category ("MobileNotWorking")]
+		public void CaptureCallContext ()
+		{
+			var value = new CallContextValue (true);
+			object capturedValue = null;
+
+			CallContext.SetData ("testlc", value);
+
+			ExecutionContext ec = ExecutionContext.Capture ();
+			Assert.IsNotNull (ec, "Capture");
+			Assert.AreEqual (value, CallContext.GetData ("testlc")); 
+			CallContext.SetData ("testlc", null);
+
+			ExecutionContext.Run (ec, new ContextCallback (new Action<object> ((data) => {
+				capturedValue = CallContext.GetData ("testlc");
+			})), null);
+
+			Assert.AreEqual (value, capturedValue); 
+			Assert.AreNotEqual (value, CallContext.GetData ("testlc"));
 		}
 
 		[Test]

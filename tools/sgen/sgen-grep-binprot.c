@@ -19,28 +19,41 @@ read_entry (FILE *in, void **data)
 	if (fread (&type, 1, 1, in) != 1)
 		return SGEN_PROTOCOL_EOF;
 	switch (type) {
-	case SGEN_PROTOCOL_COLLECTION: size = sizeof (SGenProtocolCollection); break;
+	case SGEN_PROTOCOL_COLLECTION_FORCE: size = sizeof (SGenProtocolCollectionForce); break;
+	case SGEN_PROTOCOL_COLLECTION_BEGIN: size = sizeof (SGenProtocolCollection); break;
+	case SGEN_PROTOCOL_COLLECTION_END: size = sizeof (SGenProtocolCollection); break;
 	case SGEN_PROTOCOL_ALLOC: size = sizeof (SGenProtocolAlloc); break;
 	case SGEN_PROTOCOL_ALLOC_PINNED: size = sizeof (SGenProtocolAlloc); break;
 	case SGEN_PROTOCOL_ALLOC_DEGRADED: size = sizeof (SGenProtocolAlloc); break;
 	case SGEN_PROTOCOL_COPY: size = sizeof (SGenProtocolCopy); break;
 	case SGEN_PROTOCOL_PIN: size = sizeof (SGenProtocolPin); break;
 	case SGEN_PROTOCOL_MARK: size = sizeof (SGenProtocolMark); break;
+	case SGEN_PROTOCOL_SCAN_BEGIN: size = sizeof (SGenProtocolScanBegin); break;
+	case SGEN_PROTOCOL_SCAN_VTYPE_BEGIN: size = sizeof (SGenProtocolScanVTypeBegin); break;
 	case SGEN_PROTOCOL_WBARRIER: size = sizeof (SGenProtocolWBarrier); break;
 	case SGEN_PROTOCOL_GLOBAL_REMSET: size = sizeof (SGenProtocolGlobalRemset); break;
 	case SGEN_PROTOCOL_PTR_UPDATE: size = sizeof (SGenProtocolPtrUpdate); break;
 	case SGEN_PROTOCOL_CLEANUP: size = sizeof (SGenProtocolCleanup); break;
 	case SGEN_PROTOCOL_EMPTY: size = sizeof (SGenProtocolEmpty); break;
+	case SGEN_PROTOCOL_THREAD_SUSPEND: size = sizeof (SGenProtocolThreadSuspend); break;
 	case SGEN_PROTOCOL_THREAD_RESTART: size = sizeof (SGenProtocolThreadRestart); break;
 	case SGEN_PROTOCOL_THREAD_REGISTER: size = sizeof (SGenProtocolThreadRegister); break;
 	case SGEN_PROTOCOL_THREAD_UNREGISTER: size = sizeof (SGenProtocolThreadUnregister); break;
 	case SGEN_PROTOCOL_MISSING_REMSET: size = sizeof (SGenProtocolMissingRemset); break;
+	case SGEN_PROTOCOL_CARD_SCAN: size = sizeof (SGenProtocolCardScan); break;
+	case SGEN_PROTOCOL_CEMENT: size = sizeof (SGenProtocolCement); break;
+	case SGEN_PROTOCOL_CEMENT_RESET: size = 0; break;
+	case SGEN_PROTOCOL_DISLINK_UPDATE: size = sizeof (SGenProtocolDislinkUpdate); break;
 	default: assert (0);
 	}
 
-	*data = malloc (size);
-	if (fread (*data, size, 1, in) != 1)
-		assert (0);
+	if (size) {
+		*data = malloc (size);
+		if (fread (*data, size, 1, in) != 1)
+			assert (0);
+	} else {
+		*data = NULL;
+	}
 
 	return (int)type;
 }
@@ -49,9 +62,19 @@ static void
 print_entry (int type, void *data)
 {
 	switch (type) {
-	case SGEN_PROTOCOL_COLLECTION: {
+	case SGEN_PROTOCOL_COLLECTION_FORCE: {
+		SGenProtocolCollectionForce *entry = data;
+		printf ("collection force generation %d\n", entry->generation);
+		break;
+	}
+	case SGEN_PROTOCOL_COLLECTION_BEGIN: {
 		SGenProtocolCollection *entry = data;
-		printf ("collection generation %d\n", entry->generation);
+		printf ("collection begin %d generation %d\n", entry->index, entry->generation);
+		break;
+	}
+	case SGEN_PROTOCOL_COLLECTION_END: {
+		SGenProtocolCollection *entry = data;
+		printf ("collection end %d generation %d\n", entry->index, entry->generation);
 		break;
 	}
 	case SGEN_PROTOCOL_ALLOC: {
@@ -84,6 +107,16 @@ print_entry (int type, void *data)
 		printf ("mark obj %p vtable %p size %d\n", entry->obj, entry->vtable, entry->size);
 		break;
 	}
+	case SGEN_PROTOCOL_SCAN_BEGIN: {
+		SGenProtocolScanBegin *entry = data;
+		printf ("scan_begin obj %p vtable %p size %d\n", entry->obj, entry->vtable, entry->size);
+		break;
+	}
+	case SGEN_PROTOCOL_SCAN_VTYPE_BEGIN: {
+		SGenProtocolScanVTypeBegin *entry = data;
+		printf ("scan_vtype_begin obj %p size %d\n", entry->obj, entry->size);
+		break;
+	}
 	case SGEN_PROTOCOL_WBARRIER: {
 		SGenProtocolWBarrier *entry = data;
 		printf ("wbarrier ptr %p value %p value_vtable %p\n", entry->ptr, entry->value, entry->value_vtable);
@@ -110,6 +143,11 @@ print_entry (int type, void *data)
 		printf ("empty start %p size %d\n", entry->start, entry->size);
 		break;
 	}
+	case SGEN_PROTOCOL_THREAD_SUSPEND: {
+		SGenProtocolThreadSuspend *entry = data;
+		printf ("thread_suspend thread %p ip %p\n", entry->thread, entry->stopped_ip);
+		break;
+	}
 	case SGEN_PROTOCOL_THREAD_RESTART: {
 		SGenProtocolThreadRestart *entry = data;
 		printf ("thread_restart thread %p\n", entry->thread);
@@ -131,6 +169,29 @@ print_entry (int type, void *data)
 				entry->obj, entry->obj_vtable, entry->offset, entry->value, entry->value_vtable, entry->value_pinned);
 		break;
 	}
+	case SGEN_PROTOCOL_CARD_SCAN: {
+		SGenProtocolCardScan *entry = data;
+		printf ("card_scan start %p size %d\n", entry->start, entry->size);
+		break;
+	}
+	case SGEN_PROTOCOL_CEMENT: {
+		SGenProtocolCement *entry = data;
+		printf ("cement obj %p vtable %p size %d\n", entry->obj, entry->vtable, entry->size);
+		break;
+	}
+	case SGEN_PROTOCOL_CEMENT_RESET: {
+		printf ("cement_reset\n");
+		break;
+	}
+	case SGEN_PROTOCOL_DISLINK_UPDATE: {
+		SGenProtocolDislinkUpdate *entry = data;
+		printf ("dislink_update link %p obj %p", entry->link, entry->obj);
+		if (entry->obj)
+			printf (" track %d\n", entry->track);
+		else
+			printf ("\n");
+		break;
+	}
 	default:
 		assert (0);
 	}
@@ -146,10 +207,14 @@ static gboolean
 is_match (gpointer ptr, int type, void *data)
 {
 	switch (type) {
-	case SGEN_PROTOCOL_COLLECTION:
+	case SGEN_PROTOCOL_COLLECTION_FORCE:
+	case SGEN_PROTOCOL_COLLECTION_BEGIN:
+	case SGEN_PROTOCOL_COLLECTION_END:
+	case SGEN_PROTOCOL_THREAD_SUSPEND:
 	case SGEN_PROTOCOL_THREAD_RESTART:
 	case SGEN_PROTOCOL_THREAD_REGISTER:
 	case SGEN_PROTOCOL_THREAD_UNREGISTER:
+	case SGEN_PROTOCOL_CEMENT_RESET:
 		return TRUE;
 	case SGEN_PROTOCOL_ALLOC:
 	case SGEN_PROTOCOL_ALLOC_PINNED:
@@ -167,6 +232,14 @@ is_match (gpointer ptr, int type, void *data)
 	}
 	case SGEN_PROTOCOL_MARK: {
 		SGenProtocolMark *entry = data;
+		return matches_interval (ptr, entry->obj, entry->size);
+	}
+	case SGEN_PROTOCOL_SCAN_BEGIN: {
+		SGenProtocolScanBegin *entry = data;
+		return matches_interval (ptr, entry->obj, entry->size);
+	}
+	case SGEN_PROTOCOL_SCAN_VTYPE_BEGIN: {
+		SGenProtocolScanVTypeBegin *entry = data;
 		return matches_interval (ptr, entry->obj, entry->size);
 	}
 	case SGEN_PROTOCOL_WBARRIER: {
@@ -195,22 +268,43 @@ is_match (gpointer ptr, int type, void *data)
 		SGenProtocolMissingRemset *entry = data;
 		return ptr == entry->obj || ptr == entry->value || ptr == (char*)entry->obj + entry->offset;
 	}
+	case SGEN_PROTOCOL_CARD_SCAN: {
+		SGenProtocolCardScan *entry = data;
+		return matches_interval (ptr, entry->start, entry->size);
+	}
+	case SGEN_PROTOCOL_CEMENT: {
+		SGenProtocolCement *entry = data;
+		return matches_interval (ptr, entry->obj, entry->size);
+	}
+	case SGEN_PROTOCOL_DISLINK_UPDATE: {
+		SGenProtocolDislinkUpdate *entry = data;
+		return ptr == entry->obj || ptr == entry->link;
+	}
 	default:
 		assert (0);
 	}
 }
+
+static gboolean dump_all = FALSE;
 
 int
 main (int argc, char *argv[])
 {
 	int type;
 	void *data;
-	int num_nums = argc - 1;
+	int num_args = argc - 1;
+	int num_nums = 0;
 	int i;
-	long nums [num_nums];
+	long nums [num_args];
 
-	for (i = 0; i < num_nums; ++i)
-		nums [i] = strtoul (argv [i + 1], NULL, 16);
+	for (i = 0; i < num_args; ++i) {
+		char *arg = argv [i + 1];
+		if (!strcmp (arg, "--all")) {
+			dump_all = TRUE;
+		} else {
+			nums [num_nums++] = strtoul (arg, NULL, 16);
+		}
+	}
 
 	while ((type = read_entry (stdin, &data)) != SGEN_PROTOCOL_EOF) {
 		gboolean match = FALSE;
@@ -220,7 +314,9 @@ main (int argc, char *argv[])
 				break;
 			}
 		}
-		if (match)
+		if (dump_all)
+			printf (match ? "* " : "  ");
+		if (match || dump_all)
 			print_entry (type, data);
 		free (data);
 	}

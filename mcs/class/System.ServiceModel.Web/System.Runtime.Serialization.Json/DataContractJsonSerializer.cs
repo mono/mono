@@ -91,7 +91,6 @@ namespace System.Runtime.Serialization.Json
 			always_emit_type = alwaysEmitTypeInformation;
 		}
 
-#if !MOONLIGHT
 		public DataContractJsonSerializer (Type type, IEnumerable<Type> knownTypes, int maxItemsInObjectGraph, bool ignoreExtensionDataObject, IDataContractSurrogate dataContractSurrogate, bool alwaysEmitTypeInformation)
             : this (type, default_root_name, knownTypes, maxItemsInObjectGraph, ignoreExtensionDataObject, alwaysEmitTypeInformation)
 		{
@@ -107,6 +106,13 @@ namespace System.Runtime.Serialization.Json
 			: this (type, rootName != null ? rootName.Value : default_root_name, knownTypes, maxItemsInObjectGraph, ignoreExtensionDataObject, dataContractSurrogate, alwaysEmitTypeInformation)
 		{
 		}
+
+#if NET_4_5
+		public DataContractJsonSerializer (Type type, DataContractJsonSerializerSettings settings)
+			: this (type, settings.RootName, settings.KnownTypes, settings.MaxItemsInObjectGraph, settings.IgnoreExtensionDataObject,
+			        settings.DataContractSurrogate, false)
+		{
+		}
 #endif
 
         #endregion
@@ -117,14 +123,12 @@ namespace System.Runtime.Serialization.Json
 		int max_items;
 		bool ignore_extension;
 		bool always_emit_type;
-#if !MOONLIGHT
 		IDataContractSurrogate surrogate;
 
 		[MonoTODO]
 		public IDataContractSurrogate DataContractSurrogate {
 			get { return surrogate; }
 		}
-#endif
 
 		[MonoTODO]
 		public bool IgnoreExtensionDataObject {
@@ -254,5 +258,28 @@ namespace System.Runtime.Serialization.Json
 				throw new ArgumentNullException ("writer");
 			writer.WriteEndElement ();
 		}
+
+#if NET_4_5
+		[MonoTODO]
+		public DateTimeFormat DateTimeFormat {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public EmitTypeInformation EmitTypeInformation {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public bool SerializeReadOnlyTypes {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public bool UseSimpleDictionaryFormat {
+			get { throw new NotImplementedException (); }
+		}
+#endif
+
 	}
 }

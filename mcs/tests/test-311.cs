@@ -55,7 +55,7 @@ public class Program {
 	
 	[SecurityPermission (SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlEvidence, UnmanagedCode=true)]
 	[SecurityPermission (SecurityAction.Demand, Flags = SecurityPermissionFlag.AllFlags, UnmanagedCode=true)]
-	static public int Main (string[] args)
+	public static int Main (string[] args)
 	{
 		// TODO: this will not be working for .NET 2.0 as attributes are decoded back
 		Type program = typeof (Program);

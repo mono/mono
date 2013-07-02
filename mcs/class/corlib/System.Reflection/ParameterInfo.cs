@@ -25,7 +25,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
@@ -37,7 +39,11 @@ namespace System.Reflection
 	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
+#if MOBILE
+	public class ParameterInfo : ICustomAttributeProvider {
+#else
 	public class ParameterInfo : ICustomAttributeProvider, _ParameterInfo {
+#endif
 
 		protected Type ClassImpl;
 		protected object DefaultValueImpl;
@@ -45,12 +51,12 @@ namespace System.Reflection
 		protected string NameImpl;
 		protected int PositionImpl;
 		protected ParameterAttributes AttrsImpl;
-		private UnmanagedMarshal marshalAs;
-		//ParameterInfo parent;
+		private MarshalAsAttribute marshalAs;
 
 		protected ParameterInfo () {
 		}
 
+#if !FULL_AOT_RUNTIME
 		internal ParameterInfo (ParameterBuilder pb, Type type, MemberInfo member, int position) {
 			this.ClassImpl = type;
 			this.MemberImpl = member;
@@ -64,6 +70,7 @@ namespace System.Reflection
 				this.AttrsImpl = ParameterAttributes.None;
 			}
 		}
+#endif
 
 		/*FIXME this constructor looks very broken in the position parameter*/
 		internal ParameterInfo (ParameterInfo pinfo, Type type, MemberInfo member, int position) {
@@ -90,7 +97,7 @@ namespace System.Reflection
 		}
 
 		/* to build a ParameterInfo for the return type of a method */
-		internal ParameterInfo (Type type, MemberInfo member, UnmanagedMarshal marshalAs) {
+		internal ParameterInfo (Type type, MemberInfo member, MarshalAsAttribute marshalAs) {
 			this.ClassImpl = type;
 			this.MemberImpl = member;
 			this.NameImpl = "";
@@ -186,7 +193,7 @@ namespace System.Reflection
 		extern int GetMetadataToken ();
 
 		public
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0
 		virtual
 #endif
 		int MetadataToken {
@@ -196,8 +203,8 @@ namespace System.Reflection
 					MethodInfo mi = prop.GetGetMethod (true);
 					if (mi == null)
 						mi = prop.GetSetMethod (true);
-					/*TODO expose and use a GetParametersNoCopy()*/
-					return mi.GetParameters () [PositionImpl].MetadataToken;
+
+					return mi.GetParametersInternal () [PositionImpl].MetadataToken;
 				} else if (MemberImpl is MethodBase) {
 					return GetMetadataToken ();
 				}
@@ -244,7 +251,7 @@ namespace System.Reflection
 				attrs [count ++] = new OutAttribute ();
 
 			if (marshalAs != null)
-				attrs [count ++] = marshalAs.ToMarshalAsAttribute ();
+				attrs [count ++] = marshalAs.Copy ();
 
 			return attrs;
 		}			
@@ -279,6 +286,17 @@ namespace System.Reflection
 		}
 #endif
 
+#if NET_4_5
+		public virtual IEnumerable<CustomAttributeData> CustomAttributes {
+			get { return GetCustomAttributesData (); }
+		}
+
+		public virtual bool HasDefaultValue {
+			get { throw new NotImplementedException (); }
+		}
+#endif
+
+#if !MOBILE
 		void _ParameterInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -299,5 +317,7 @@ namespace System.Reflection
 		{
 			throw new NotImplementedException ();
 		}
+#endif
+
 	}
 }

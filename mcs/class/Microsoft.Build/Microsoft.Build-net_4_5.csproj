@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{47E4681E-7A08-482D-8D5E-4AA5A3E1E96B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>./../../class/lib/net_4_5</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\Microsoft.Build-net_4_5</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>Microsoft.Build</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
@@ -28,88 +27,91 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="Assembly\AssemblyInfo.cs" />
-   <Compile Include="..\..\build\common\Consts.cs" />
-   <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-   <Compile Include="Microsoft.Build.Construction\ProjectChooseElement.cs" />
-   <Compile Include="Microsoft.Build.Construction\ProjectCommentElement.cs" />
-   <Compile Include="Microsoft.Build.Construction\ProjectElementContainer.cs" />
-   <Compile Include="Microsoft.Build.Construction\ProjectElement.cs" />
-   <Compile Include="Microsoft.Build.Construction\ProjectExtensionsElement.cs" />
-   <Compile Include="Microsoft.Build.Construction\ProjectImportElement.cs" />
-   <Compile Include="Microsoft.Build.Construction\ProjectImportGroupElement.cs" />
-   <Compile Include="Microsoft.Build.Construction\ProjectItemDefinitionElement.cs" />
-   <Compile Include="Microsoft.Build.Construction\ProjectItemDefinitionGroupElement.cs" />
-   <Compile Include="Microsoft.Build.Construction\ProjectItemElement.cs" />
-   <Compile Include="Microsoft.Build.Construction\ProjectItemGroupElement.cs" />
-   <Compile Include="Microsoft.Build.Construction\ProjectMetadataElement.cs" />
-   <Compile Include="Microsoft.Build.Construction\ProjectOnErrorElement.cs" />
-   <Compile Include="Microsoft.Build.Construction\ProjectOtherwiseElement.cs" />
-   <Compile Include="Microsoft.Build.Construction\ProjectOutputElement.cs" />
-   <Compile Include="Microsoft.Build.Construction\ProjectPropertyElement.cs" />
-   <Compile Include="Microsoft.Build.Construction\ProjectPropertyGroupElement.cs" />
-   <Compile Include="Microsoft.Build.Construction\ProjectRootElement.cs" />
-   <Compile Include="Microsoft.Build.Construction\ProjectTargetElement.cs" />
-   <Compile Include="Microsoft.Build.Construction\ProjectTaskElement.cs" />
-   <Compile Include="Microsoft.Build.Construction\ProjectUsingTaskBodyElement.cs" />
-   <Compile Include="Microsoft.Build.Construction\ProjectUsingTaskElement.cs" />
-   <Compile Include="Microsoft.Build.Construction\ProjectUsingTaskParameterElement.cs" />
-   <Compile Include="Microsoft.Build.Construction\ProjectWhenElement.cs" />
-   <Compile Include="Microsoft.Build.Construction\UsingTaskParameterGroupElement.cs" />
-   <Compile Include="Microsoft.Build.Evaluation\Project.cs" />
-   <Compile Include="Microsoft.Build.Evaluation\ProjectCollection.cs" />
-   <Compile Include="Microsoft.Build.Evaluation\ProjectItem.cs" />
-   <Compile Include="Microsoft.Build.Evaluation\ProjectItemDefinition.cs" />
-   <Compile Include="Microsoft.Build.Evaluation\ProjectLoadSettings.cs" />
-   <Compile Include="Microsoft.Build.Evaluation\ProjectMetadata.cs" />
-   <Compile Include="Microsoft.Build.Evaluation\ProjectProperty.cs" />
-   <Compile Include="Microsoft.Build.Evaluation\ResolvedImport.cs" />
-   <Compile Include="Microsoft.Build.Evaluation\Toolset.cs" />
-   <Compile Include="Microsoft.Build.Evaluation\ToolsetDefinitionLocations.cs" />
-   <Compile Include="Microsoft.Build.Exceptions\InvalidProjectFileException.cs" />
-   <Compile Include="Microsoft.Build.Execution\BuildManager.cs" />
-   <Compile Include="Microsoft.Build.Execution\BuildParameters.cs" />
-   <Compile Include="Microsoft.Build.Execution\BuildRequestData.cs" />
-   <Compile Include="Microsoft.Build.Execution\BuildRequestDataFlags.cs" />
-   <Compile Include="Microsoft.Build.Execution\BuildResult.cs" />
-   <Compile Include="Microsoft.Build.Execution\BuildResultCode.cs" />
-   <Compile Include="Microsoft.Build.Execution\BuildSubmission.cs" />
-   <Compile Include="Microsoft.Build.Execution\HostServices.cs" />
-   <Compile Include="Microsoft.Build.Execution\ITargetResult.cs" />
-   <Compile Include="Microsoft.Build.Execution\NodeAffinity.cs" />
-   <Compile Include="Microsoft.Build.Execution\ProjectInstance.cs" />
-   <Compile Include="Microsoft.Build.Execution\ProjectItemInstance.cs" />
-   <Compile Include="Microsoft.Build.Execution\ProjectMetadataInstance.cs" />
-   <Compile Include="Microsoft.Build.Execution\ProjectPropertyInstance.cs" />
-   <Compile Include="Microsoft.Build.Execution\ProjectTargetInstance.cs" />
-   <Compile Include="Microsoft.Build.Execution\TargetResult.cs" />
-   <Compile Include="Microsoft.Build.Execution\TargetResultCode.cs" />
-   <Compile Include="Microsoft.Build.Internal\CollectionFromEnumerable.cs" />
-   <Compile Include="Microsoft.Build.Internal\FilteredEnumerable.cs" />
-   <Compile Include="Microsoft.Build.Internal\ReverseEnumerable.cs" />
-   <Compile Include="Microsoft.Build.Logging\ColorResetter.cs" />
-   <Compile Include="Microsoft.Build.Logging\ColorSetter.cs" />
-   <Compile Include="Microsoft.Build.Logging\ConsoleLogger.cs" />
-   <Compile Include="Microsoft.Build.Logging\FileLogger.cs" />
-   <Compile Include="Microsoft.Build.Logging\ForwardingLoggerRecord.cs" />
-   <Compile Include="Microsoft.Build.Logging\LoggerDescription.cs" />
-   <Compile Include="Microsoft.Build.Logging\WriteHandler.cs" />
-
-  </ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="Microsoft.Build.Construction\ElementLocation.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectChooseElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectCommentElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectElementContainer.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectExtensionsElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectImportElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectImportGroupElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectItemDefinitionElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectItemDefinitionGroupElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectItemElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectItemGroupElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectMetadataElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectOnErrorElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectOtherwiseElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectOutputElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectPropertyElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectPropertyGroupElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectRootElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectTargetElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectTaskElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectUsingTaskBodyElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectUsingTaskElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectUsingTaskParameterElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\ProjectWhenElement.cs" />
+    <Compile Include="Microsoft.Build.Construction\UsingTaskParameterGroupElement.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\Project.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\ProjectCollection.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\ProjectItem.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\ProjectItemDefinition.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\ProjectLoadSettings.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\ProjectMetadata.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\ProjectProperty.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\ResolvedImport.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\Toolset.cs" />
+    <Compile Include="Microsoft.Build.Evaluation\ToolsetDefinitionLocations.cs" />
+    <Compile Include="Microsoft.Build.Exceptions\InvalidProjectFileException.cs" />
+    <Compile Include="Microsoft.Build.Execution\BuildManager.cs" />
+    <Compile Include="Microsoft.Build.Execution\BuildParameters.cs" />
+    <Compile Include="Microsoft.Build.Execution\BuildRequestData.cs" />
+    <Compile Include="Microsoft.Build.Execution\BuildRequestDataFlags.cs" />
+    <Compile Include="Microsoft.Build.Execution\BuildResult.cs" />
+    <Compile Include="Microsoft.Build.Execution\BuildResultCode.cs" />
+    <Compile Include="Microsoft.Build.Execution\BuildSubmission.cs" />
+    <Compile Include="Microsoft.Build.Execution\HostServices.cs" />
+    <Compile Include="Microsoft.Build.Execution\ITargetResult.cs" />
+    <Compile Include="Microsoft.Build.Execution\NodeAffinity.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectInstance.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectItemDefinitionInstance.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectItemInstance.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectMetadataInstance.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectPropertyInstance.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectTargetInstance.cs" />
+    <Compile Include="Microsoft.Build.Execution\TargetResult.cs" />
+    <Compile Include="Microsoft.Build.Execution\TargetResultCode.cs" />
+    <Compile Include="Microsoft.Build.Internal\CollectionFromEnumerable.cs" />
+    <Compile Include="Microsoft.Build.Internal\FilteredEnumerable.cs" />
+    <Compile Include="Microsoft.Build.Internal\ReverseEnumerable.cs" />
+    <Compile Include="Microsoft.Build.Logging\ColorResetter.cs" />
+    <Compile Include="Microsoft.Build.Logging\ColorSetter.cs" />
+    <Compile Include="Microsoft.Build.Logging\ConsoleLogger.cs" />
+    <Compile Include="Microsoft.Build.Logging\FileLogger.cs" />
+    <Compile Include="Microsoft.Build.Logging\ForwardingLoggerRecord.cs" />
+    <Compile Include="Microsoft.Build.Logging\LoggerDescription.cs" />
+    <Compile Include="Microsoft.Build.Logging\WriteHandler.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -118,42 +120,40 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Core.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Build.Engine.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Microsoft.Build.Engine.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Build.Framework.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Microsoft.Build.Framework.dll</HintPath>
-    </Reference>
-
+    <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
+      <Project>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</Project>
+      <Name>corlib\corlib-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_5-2.csproj">
+      <Project>{34966210-D64D-419C-94A4-9A6093CE5882}</Project>
+      <Name>System\System-net_4_5-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
+      <Project>{E77D8877-AEAD-4FDF-8A44-36AAA0B20653}</Project>
+      <Name>System.Core\System.Core-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
+      <Project>{6374B2FC-93C6-4FD0-8CF0-8EB12F5AC71D}</Project>
+      <Name>System.XML\System.Xml-net_4_5-1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Microsoft.Build.Engine\Microsoft.Build.Engine-net_4_5.csproj">
+      <Project>{7B2ECE3C-F8E5-4C63-8FD5-AB490EF63872}</Project>
+      <Name>Microsoft.Build.Engine\Microsoft.Build.Engine-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Microsoft.Build.Framework\Microsoft.Build.Framework-net_4_5.csproj">
+      <Project>{58CD6625-5643-4A3F-84E6-5568E8573A49}</Project>
+      <Name>Microsoft.Build.Framework\Microsoft.Build.Framework-net_4_5</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
-

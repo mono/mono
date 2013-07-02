@@ -52,6 +52,7 @@ namespace System.Linq.Expressions {
 			this.member = member;
 		}
 
+#if !FULL_AOT_RUNTIME
 		internal override void Emit (EmitContext ec)
 		{
 			member.OnFieldOrProperty (
@@ -76,5 +77,6 @@ namespace System.Linq.Expressions {
 			} else
 				ec.ig.Emit (OpCodes.Ldsfld, field);
 		}
+#endif
 	}
 }

@@ -14,7 +14,9 @@ namespace System.Runtime.InteropServices
 	[CLSCompliant (false)]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("FFCC1B5D-ECB8-38DD-9B01-3DC8ABC2AA5F")]
+#if !FULL_AOT_RUNTIME
 	[TypeLibImportClass (typeof (MethodInfo))]
+#endif
 	[ComVisible (true)]
 	public interface _MethodInfo
 	{

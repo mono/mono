@@ -386,6 +386,8 @@ namespace Tests.Mono.Options
 		{
 			var p = new OptionSet () {
 				"\n:Category 1:",
+				{ "hidden",             "hidden option, invisible in help",     v => {}, true },
+				{ "hidden2=",           "hidden option, invisible in help",     (k, v) => {}, true },
 				{ "p|indicator-style=", "append / indicator to directories",    v => {} },
 				{ "color:",             "controls color info",                  v => {} },
 				{ "color2:",            "set {color}",                          v => {} },

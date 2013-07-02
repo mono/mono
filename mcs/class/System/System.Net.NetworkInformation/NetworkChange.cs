@@ -1,10 +1,12 @@
 //
 // System.Net.NetworkInformation.NetworkChange
 //
-// Author:
+// Authors:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
+//  Aaron Bockover (abock@xamarin.com)
 //
 // Copyright (c) 2006,2011 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2013 Xamarin, Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,39 +33,161 @@ using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace System.Net.NetworkInformation {
+	internal interface INetworkChange {
+		event NetworkAddressChangedEventHandler NetworkAddressChanged;
+		event NetworkAvailabilityChangedEventHandler NetworkAvailabilityChanged;
+	}
+
 	public sealed class NetworkChange {
+		static INetworkChange networkChange;
+
+		static NetworkChange ()
+		{
+			if (MacNetworkChange.IsEnabled) {
+				networkChange = new MacNetworkChange ();
+			} else {
+				networkChange = new LinuxNetworkChange ();
+			}
+		}
+
+		public static event NetworkAddressChangedEventHandler NetworkAddressChanged {
+			add { networkChange.NetworkAddressChanged += value; }
+			remove { networkChange.NetworkAddressChanged -= value; }
+		}
+
+		public static event NetworkAvailabilityChangedEventHandler NetworkAvailabilityChanged {
+			add { networkChange.NetworkAvailabilityChanged += value; }
+			remove { networkChange.NetworkAvailabilityChanged -= value; }
+		}
+	}
+
+	internal sealed class MacNetworkChange : INetworkChange {
+		public static bool IsEnabled {
+			get { return mono_sc_reachability_enabled () != 0; }
+		}
+
+		event NetworkAddressChangedEventHandler networkAddressChanged;
+		event NetworkAvailabilityChangedEventHandler networkAvailabilityChanged;
+
+		public event NetworkAddressChangedEventHandler NetworkAddressChanged {
+			add {
+				if (value != null) {
+					MaybeInitialize ();
+					networkAddressChanged += value;
+					value (null, EventArgs.Empty);
+				}
+			}
+
+			remove {
+				networkAddressChanged -= value;
+				MaybeDispose ();
+			}
+		}
+
+		public event NetworkAvailabilityChangedEventHandler NetworkAvailabilityChanged {
+			add {
+				if (value != null) {
+					MaybeInitialize ();
+					networkAvailabilityChanged += value;
+					var available = handle != IntPtr.Zero && mono_sc_reachability_is_available (handle) != 0;
+					value (null, new NetworkAvailabilityEventArgs (available));
+				}
+			}
+
+			remove {
+				networkAvailabilityChanged -= value;
+				MaybeDispose ();
+			}
+		}
+
+		IntPtr handle;
+		MonoSCReachabilityCallback callback;
+
+		void Callback (int available)
+		{
+			var addressChanged = networkAddressChanged;
+			if (addressChanged != null) {
+				addressChanged (null, EventArgs.Empty);
+			}
+
+			var availabilityChanged = networkAvailabilityChanged;
+			if (availabilityChanged != null) {
+				availabilityChanged (null, new NetworkAvailabilityEventArgs (available != 0));
+			}
+		}
+
+		void MaybeInitialize ()
+		{
+			lock (this) {
+				if (handle == IntPtr.Zero) {
+					callback = new MonoSCReachabilityCallback (Callback);
+					handle = mono_sc_reachability_new (callback);
+				}
+			}
+		}
+
+		void MaybeDispose ()
+		{
+			lock (this) {
+				var addressChanged = networkAddressChanged;
+				var availabilityChanged = networkAvailabilityChanged;
+				if (handle != IntPtr.Zero && addressChanged == null && availabilityChanged == null) {
+					mono_sc_reachability_free (handle);
+					handle = IntPtr.Zero;
+				}
+			}
+		}
+
+#if MONOTOUCH || MONODROID
+		const string LIBNAME = "__Internal";
+#else
+		const string LIBNAME = "MonoPosixHelper";
+#endif
+
+		delegate void MonoSCReachabilityCallback (int available);
+
+		[DllImport (LIBNAME)]
+		static extern int mono_sc_reachability_enabled ();
+
+		[DllImport (LIBNAME)]
+		static extern IntPtr mono_sc_reachability_new (MonoSCReachabilityCallback callback);
+
+		[DllImport (LIBNAME)]
+		static extern void mono_sc_reachability_free (IntPtr handle);
+
+		[DllImport (LIBNAME)]
+		static extern int mono_sc_reachability_is_available (IntPtr handle);
+	}
+
+	internal sealed class LinuxNetworkChange : INetworkChange {
 		[Flags]
 		enum EventType {
 			Availability = 1 << 0,
 			Address = 1 << 1,
 		}
 
-		static object _lock = new object ();
-		static Socket nl_sock;
-		static SocketAsyncEventArgs nl_args;
-		static EventType pending_events;
-		static Timer timer;
+		object _lock = new object ();
+		Socket nl_sock;
+		SocketAsyncEventArgs nl_args;
+		EventType pending_events;
+		Timer timer;
 
-		static NetworkAddressChangedEventHandler AddressChanged;
-		static NetworkAvailabilityChangedEventHandler AvailabilityChanged;
+		NetworkAddressChangedEventHandler AddressChanged;
+		NetworkAvailabilityChangedEventHandler AvailabilityChanged;
 
-		private NetworkChange ()
-		{
-		}
-
-		public static event NetworkAddressChangedEventHandler NetworkAddressChanged {
+		public event NetworkAddressChangedEventHandler NetworkAddressChanged {
 			add { Register (value); }
 			remove { Unregister (value); }
 		}
 
-		public static event NetworkAvailabilityChangedEventHandler NetworkAvailabilityChanged {
+		public event NetworkAvailabilityChangedEventHandler NetworkAvailabilityChanged {
 			add { Register (value); }
 			remove { Unregister (value); }
 		}
 
 		//internal Socket (AddressFamily family, SocketType type, ProtocolType proto, IntPtr sock)
 
-		static bool EnsureSocket ()
+		bool EnsureSocket ()
 		{
 			lock (_lock) {
 				if (nl_sock != null)
@@ -82,7 +206,7 @@ namespace System.Net.NetworkInformation {
 		}
 
 		// _lock is held by the caller
-		static void MaybeCloseSocket ()
+		void MaybeCloseSocket ()
 		{
 			if (nl_sock == null || AvailabilityChanged != null || AddressChanged != null)
 				return;
@@ -93,7 +217,7 @@ namespace System.Net.NetworkInformation {
 			nl_args = null;
 		}
 
-		static bool GetAvailability ()
+		bool GetAvailability ()
 		{
 			NetworkInterface [] adapters = NetworkInterface.GetAllNetworkInterfaces ();
 			foreach (NetworkInterface n in adapters) {
@@ -106,19 +230,19 @@ namespace System.Net.NetworkInformation {
 			return false;
 		}
 
-		static void OnAvailabilityChanged (object unused)
+		void OnAvailabilityChanged (object unused)
 		{
 			NetworkAvailabilityChangedEventHandler d = AvailabilityChanged;
 			d (null, new NetworkAvailabilityEventArgs (GetAvailability ()));
 		}
 
-		static void OnAddressChanged (object unused)
+		void OnAddressChanged (object unused)
 		{
 			NetworkAddressChangedEventHandler d = AddressChanged;
 			d (null, EventArgs.Empty);
 		}
 
-		static void OnEventDue (object unused)
+		void OnEventDue (object unused)
 		{
 			EventType evts;
 			lock (_lock) {
@@ -132,7 +256,7 @@ namespace System.Net.NetworkInformation {
 				ThreadPool.QueueUserWorkItem (OnAddressChanged);
 		}
 
-		static void QueueEvent (EventType type)
+		void QueueEvent (EventType type)
 		{
 			lock (_lock) {
 				if (timer == null)
@@ -143,7 +267,7 @@ namespace System.Net.NetworkInformation {
 			}
 		}
 
-		unsafe static void OnDataAvailable (object sender, SocketAsyncEventArgs args)
+		unsafe void OnDataAvailable (object sender, SocketAsyncEventArgs args)
 		{
 			EventType type;
 			fixed (byte *ptr = args.Buffer) {	
@@ -154,19 +278,19 @@ namespace System.Net.NetworkInformation {
 				QueueEvent (type);
 		}
 
-		static void Register (NetworkAddressChangedEventHandler d)
+		void Register (NetworkAddressChangedEventHandler d)
 		{
 			EnsureSocket ();
 			AddressChanged += d;
 		}
 
-		static void Register (NetworkAvailabilityChangedEventHandler d)
+		void Register (NetworkAvailabilityChangedEventHandler d)
 		{
 			EnsureSocket ();
 			AvailabilityChanged += d;
 		}
 
-		static void Unregister (NetworkAddressChangedEventHandler d)
+		void Unregister (NetworkAddressChangedEventHandler d)
 		{
 			lock (_lock) {
 				AddressChanged -= d;
@@ -174,7 +298,7 @@ namespace System.Net.NetworkInformation {
 			}
 		}
 
-		static void Unregister (NetworkAvailabilityChangedEventHandler d)
+		void Unregister (NetworkAvailabilityChangedEventHandler d)
 		{
 			lock (_lock) {
 				AvailabilityChanged -= d;

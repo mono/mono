@@ -14,7 +14,7 @@ namespace ConsoleApplication1
 	{
 		static Strct* ptr = null;
 		
-		static int Main ()
+		public static int Main ()
 		{
 			Strct* values = ptr;
 			values++;

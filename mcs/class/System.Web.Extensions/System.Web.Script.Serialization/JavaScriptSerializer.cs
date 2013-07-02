@@ -265,6 +265,9 @@ namespace System.Web.Script.Serialization
 				EvaluateList (col);
 				return list;
 			}
+			
+			if (elementType == null)
+				elementType = typeof (object);
 
 			foreach (object value in col)
 				list.Add (ConvertToType (value, elementType));

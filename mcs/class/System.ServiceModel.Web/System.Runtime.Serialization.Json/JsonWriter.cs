@@ -71,11 +71,7 @@ namespace System.Runtime.Serialization.Json
 			output = stream;
 			this.encoding = encoding;
 			close_output = ownsStream;
-#if MOONLIGHT
-			is_ascii_single = encoding is UTF8Encoding;
-#else
 			is_ascii_single = encoding is UTF8Encoding || encoding.IsSingleByte;
-#endif
 		}
 
 		void CheckState ()
@@ -474,11 +470,7 @@ namespace System.Runtime.Serialization.Json
 
 		public override void WriteRaw (string text)
 		{
-#if MOONLIGHT
-			OutputString (text);
-#else
 			WriteString (text);
-#endif
 		}
 
 		public override void WriteRaw (char [] chars, int start, int length)

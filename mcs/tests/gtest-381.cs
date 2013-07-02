@@ -4,7 +4,7 @@ class TestGoto
 {
   static int x = 2;
 
-  static void Main(string[] args)
+  public static void Main(string[] args)
     {
       foreach (bool b in test())
 	;

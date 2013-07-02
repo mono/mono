@@ -6,7 +6,7 @@ using System;
 delegate void D ();
 
 class X {
-	static int Main ()
+	public static int Main ()
 	{
 		int a = 0;
 		D d1 = delegate {

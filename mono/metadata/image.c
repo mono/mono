@@ -31,6 +31,7 @@
 #include <mono/utils/mono-path.h>
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/mono-io-portability.h>
+#include <mono/utils/atomic.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/object-internals.h>
@@ -1543,10 +1544,7 @@ mono_image_close_except_pools (MonoImage *image)
 	 * MonoImage might outlive its associated MonoAssembly.
 	 */
 	if (image->references && !image->dynamic) {
-		MonoTableInfo *t = &image->tables [MONO_TABLE_ASSEMBLYREF];
-		int i;
-
-		for (i = 0; i < t->rows; i++) {
+		for (i = 0; i < image->nreferences; i++) {
 			if (image->references [i] && image->references [i] != REFERENCE_MISSING) {
 				if (!mono_assembly_close_except_image_pools (image->references [i]))
 					image->references [i] = NULL;
@@ -1629,6 +1627,9 @@ mono_image_close_except_pools (MonoImage *image)
 	free_hash (image->delegate_invoke_cache);
 	free_hash (image->delegate_abstract_invoke_cache);
 	free_hash (image->delegate_bound_static_invoke_cache);
+	free_hash (image->delegate_invoke_generic_cache);
+	free_hash (image->delegate_begin_invoke_generic_cache);
+	free_hash (image->delegate_end_invoke_generic_cache);
 	free_hash (image->remoting_invoke_cache);
 	free_hash (image->runtime_invoke_cache);
 	free_hash (image->runtime_invoke_direct_cache);
@@ -1718,10 +1719,7 @@ mono_image_close_finish (MonoImage *image)
 	image->reflection_info_unregister_classes = NULL;
 
 	if (image->references && !image->dynamic) {
-		MonoTableInfo *t = &image->tables [MONO_TABLE_ASSEMBLYREF];
-		int i;
-
-		for (i = 0; i < t->rows; i++) {
+		for (i = 0; i < image->nreferences; i++) {
 			if (image->references [i] && image->references [i] != REFERENCE_MISSING)
 				mono_assembly_close_finish (image->references [i]);
 		}
@@ -1737,7 +1735,9 @@ mono_image_close_finish (MonoImage *image)
 	if (image->modules)
 		g_free (image->modules);
 
+#ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->loader_bytes -= mono_mempool_get_allocated (image->mempool);
+#endif
 
 	if (!image->dynamic) {
 		if (debug_assembly_unload)
@@ -2233,7 +2233,9 @@ mono_image_alloc (MonoImage *image, guint size)
 {
 	gpointer res;
 
+#ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->loader_bytes += size;
+#endif
 	mono_image_lock (image);
 	res = mono_mempool_alloc (image->mempool, size);
 	mono_image_unlock (image);
@@ -2246,7 +2248,9 @@ mono_image_alloc0 (MonoImage *image, guint size)
 {
 	gpointer res;
 
+#ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->loader_bytes += size;
+#endif
 	mono_image_lock (image);
 	res = mono_mempool_alloc0 (image->mempool, size);
 	mono_image_unlock (image);
@@ -2259,7 +2263,9 @@ mono_image_strdup (MonoImage *image, const char *s)
 {
 	char *res;
 
+#ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->loader_bytes += strlen (s);
+#endif
 	mono_image_lock (image);
 	res = mono_mempool_strdup (image->mempool, s);
 	mono_image_unlock (image);

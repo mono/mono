@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{24117801-22A1-4986-8BBE-4CD289586F90}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618</NoWarn>
-    <OutputPath>.\</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\System.Data.OracleClient-tests-net_4_0</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>False</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>System.Data.OracleClient_test_net_4_0</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699,618</NoWarn>
@@ -28,143 +27,144 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,618</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="Test\System.Data.OracleClient\OraclePermissionAttributeTest.cs" />
-   <Compile Include="Test\System.Data.OracleClient\OracleCommandTest.cs" />
-   <Compile Include="Test\System.Data.OracleClient\OracleConnectionTest.cs" />
-   <Compile Include="Test\System.Data.OracleClient\OracleDataAdapterTest.cs" />
-   <Compile Include="Test\System.Data.OracleClient\OracleParameterTest.cs" />
-   <Compile Include="Test\System.Data.OracleClient\OracleLobTest.cs" />
-   <Compile Include="Test\System.Data.OracleClient\OracleParameterCollectionTest.cs" />
-   <Compile Include="Test\System.Data.OracleClient\OracleTimeSpanTest.cs" />
-   <Compile Include="Test\System.Data.OracleClient.Oci\OciDefineHandleTest.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\MonoTests.System.Data.Utils\ADONetTesterClass.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\MonoTests.System.Data.Utils\ConnectedDataProvider.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\MonoTests.System.Data.Utils\DbTypeParameter.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\MonoTests.System.Data.Utils\DbTypeParametersCollection.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\MonoTests.System.Data.Utils\GHTBase.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommand\OracleCommand_CommandText.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommand\OracleCommand_CommandTimeout.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommand\OracleCommand_CommandType.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommand\OracleCommand_Connection.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommand\OracleCommand_Dispose.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommand\OracleCommand_ExecuteNonQuery.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommand\OracleCommand_ExecuteReader.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommand\OracleCommand_ExecuteScalar.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommand\OracleCommand_New.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommand\OracleCommand_Parameters.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommand\OracleCommand_Prepare.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommand\OracleCommand_Transaction.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommandBuilder\OracleCommandBuilder_DeriveParameters_O.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\IDBConnection_For_Oracle.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_BeginTransaction.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_ChangeDatabase.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_Close.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_ConnectionString.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_ConnectionTimeout.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_CreateCommand.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_Database.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_DataSource.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_Equals.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_InfoMessage.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_New.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_State.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_StateChange.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_AcceptChangesDuringFill.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_ContinueUpdateOnError.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_ctor.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_ctor_O.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_ctor_SO.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_ctor_SS.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_DeleteCommand.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_Dispose.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_Fill_1.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_Fill_2.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_Fill_3.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_Fill_Ds.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_Fill_Ds_Int_Int_Str.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_Fill_DsStr.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_Fill_Dt.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_FillError.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_FillSchema_DS.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_FillSchema_DSS.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_FillSchema_DsSt.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_FillSchema_DtSch.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_GetFillParameters.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_InsertCommand.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_MissingMappingAction.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_MissingSchemaAction.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_RowUpdated.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_RowUpdating.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_SelectCommand.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_TableMappings.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_ToString.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_Update_Dr.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_Update_Ds.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_Update_DsStr.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_Update_Dt.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_UpdateCommand.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_Close.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_ctor.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_Depth.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetBoolean.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetByte_I.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetBytes_IIBII.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetChars.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetDataTypeName.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetDateTime.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetDecimal_I.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetDouble_I.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetFieldType.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetFloat_I.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetGuiid_I.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetInt16.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetInt32_I.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetInt64.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetName_I.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetOrdinal.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetSchemaTable.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetString_I.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetTimeSpan_I.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetValue.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetValues.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_HasRows.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_IsDBNull.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_Item.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_NextResult.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_Read.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_RecordsAffected.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleParameter\OracleParameter_ctor.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleParameter\OracleParameter_ctor_SO.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleParameter\OracleParameter_ctor_SOIPBBBSDO.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleParameter\OracleParameter_ctor_SOtype.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleParameter\OracleParameter_ctor_SOtype_IS.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleParameter\OracleParameter_ctor_SOtypeI.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleParameterCollection\OracleParameterCollection_Add.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleParameterCollection\OracleParameterCollection_Contains.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleParameterCollection\OracleParameterCollection_Count.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleTransaction\OracleTransaction_Begin.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleTransaction\OracleTransaction_Commit.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleTransaction\OracleTransaction_Connection.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleTransaction\OracleTransaction_ctor.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleTransaction\OracleTransaction_IsolationLevel.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleTransaction\OracleTransaction_Rollback.cs" />
-   <Compile Include="Test\System.Data.OracleClient.jvm\OracleType\OracleType_Date.cs" />
-
-  </ItemGroup>
+    <Compile Include="Test\System.Data.OracleClient.jvm\MonoTests.System.Data.Utils\ADONetTesterClass.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\MonoTests.System.Data.Utils\ConnectedDataProvider.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\MonoTests.System.Data.Utils\DbTypeParameter.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\MonoTests.System.Data.Utils\DbTypeParametersCollection.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\MonoTests.System.Data.Utils\GHTBase.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommand\OracleCommand_CommandText.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommand\OracleCommand_CommandTimeout.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommand\OracleCommand_CommandType.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommand\OracleCommand_Connection.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommand\OracleCommand_Dispose.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommand\OracleCommand_ExecuteNonQuery.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommand\OracleCommand_ExecuteReader.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommand\OracleCommand_ExecuteScalar.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommand\OracleCommand_New.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommand\OracleCommand_Parameters.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommand\OracleCommand_Prepare.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommand\OracleCommand_Transaction.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleCommandBuilder\OracleCommandBuilder_DeriveParameters_O.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\IDBConnection_For_Oracle.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_BeginTransaction.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_ChangeDatabase.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_Close.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_ConnectionString.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_ConnectionTimeout.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_CreateCommand.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_Database.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_DataSource.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_Equals.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_InfoMessage.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_New.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_State.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleConnection\OracleConnection_StateChange.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_AcceptChangesDuringFill.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_ContinueUpdateOnError.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_ctor.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_ctor_O.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_ctor_SO.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_ctor_SS.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_DeleteCommand.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_Dispose.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_Fill_1.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_Fill_2.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_Fill_3.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_Fill_Ds.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_Fill_Ds_Int_Int_Str.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_Fill_DsStr.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_Fill_Dt.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_FillError.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_FillSchema_DS.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_FillSchema_DSS.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_FillSchema_DsSt.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_FillSchema_DtSch.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_GetFillParameters.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_InsertCommand.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_MissingMappingAction.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_MissingSchemaAction.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_RowUpdated.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_RowUpdating.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_SelectCommand.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_TableMappings.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_ToString.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_Update_Dr.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_Update_Ds.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_Update_DsStr.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_Update_Dt.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataAdapter\OracleDataAdapter_UpdateCommand.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_Close.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_ctor.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_Depth.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetBoolean.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetByte_I.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetBytes_IIBII.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetChars.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetDataTypeName.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetDateTime.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetDecimal_I.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetDouble_I.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetFieldType.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetFloat_I.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetGuiid_I.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetInt16.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetInt32_I.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetInt64.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetName_I.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetOrdinal.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetSchemaTable.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetString_I.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetTimeSpan_I.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetValue.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_GetValues.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_HasRows.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_IsDBNull.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_Item.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_NextResult.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_Read.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleDataReader\OracleDataReader_RecordsAffected.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleParameter\OracleParameter_ctor.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleParameter\OracleParameter_ctor_SO.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleParameter\OracleParameter_ctor_SOIPBBBSDO.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleParameter\OracleParameter_ctor_SOtype.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleParameter\OracleParameter_ctor_SOtype_IS.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleParameter\OracleParameter_ctor_SOtypeI.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleParameterCollection\OracleParameterCollection_Add.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleParameterCollection\OracleParameterCollection_Contains.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleParameterCollection\OracleParameterCollection_Count.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleTransaction\OracleTransaction_Begin.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleTransaction\OracleTransaction_Commit.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleTransaction\OracleTransaction_Connection.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleTransaction\OracleTransaction_ctor.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleTransaction\OracleTransaction_IsolationLevel.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleTransaction\OracleTransaction_Rollback.cs" />
+    <Compile Include="Test\System.Data.OracleClient.jvm\OracleType\OracleType_Date.cs" />
+    <Compile Include="Test\System.Data.OracleClient.Oci\OciDefineHandleTest.cs" />
+    <Compile Include="Test\System.Data.OracleClient\OracleCommandTest.cs" />
+    <Compile Include="Test\System.Data.OracleClient\OracleConnectionTest.cs" />
+    <Compile Include="Test\System.Data.OracleClient\OracleDataAdapterTest.cs" />
+    <Compile Include="Test\System.Data.OracleClient\OracleLobTest.cs" />
+    <Compile Include="Test\System.Data.OracleClient\OracleParameterCollectionTest.cs" />
+    <Compile Include="Test\System.Data.OracleClient\OracleParameterTest.cs" />
+    <Compile Include="Test\System.Data.OracleClient\OraclePermissionAttributeTest.cs" />
+    <Compile Include="Test\System.Data.OracleClient\OracleTimeSpanTest.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -173,47 +173,45 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_0\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="./../../class/lib/net_4_0/System.Data.OracleClient.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../class/lib/net_4_0/System.Data.OracleClient.dll</HintPath>
-    </Reference>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="System.EnterpriseServices.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.EnterpriseServices.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Drawing.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Drawing.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework" />
-
+    <Reference Include="..\lib\net_4_0\nunit.framework.dll" />
+    <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
+      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
+      <Name>corlib\corlib-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Data.OracleClient\System.Data.OracleClient-net_4_0.csproj">
+      <Project>{2837229A-230B-4279-B293-1B033C65DA8A}</Project>
+      <Name>System.Data.OracleClient\System.Data.OracleClient-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_0-2.csproj">
+      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
+      <Name>System\System-net_4_0-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_4_0-1.csproj">
+      <Project>{F9E777F8-E3F2-4E19-8DC9-2D1BB6B380A6}</Project>
+      <Name>System.XML\System.Xml-net_4_0-1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Data\System.Data-net_4_0.csproj">
+      <Project>{6865A6A5-DF93-45C7-BE83-F06907EC81F8}</Project>
+      <Name>System.Data\System.Data-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.EnterpriseServices\System.EnterpriseServices-net_4_0.csproj">
+      <Project>{801DF65A-F6B4-4D66-B415-9E8832E66F48}</Project>
+      <Name>System.EnterpriseServices\System.EnterpriseServices-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Drawing\System.Drawing-net_4_0.csproj">
+      <Project>{0005126E-C0D0-4DA3-A2E2-E49592D3E164}</Project>
+      <Name>System.Drawing\System.Drawing-net_4_0</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
-

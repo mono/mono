@@ -10,7 +10,7 @@ class X {
 		return null;
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		int a = 5;
 		object o;

@@ -30,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -237,12 +237,6 @@ namespace System.Globalization
 
 		public virtual string Name {
 			get {
-#if MOONLIGHT
-				if (m_name == "zh-CHS")
-					return "zh-Hans";
-				if (m_name == "zh-CHT")
-					return "zh-Hant";
-#endif
 				return(m_name);
 			}
 		}
@@ -285,8 +279,15 @@ namespace System.Globalization
 				if (parent_culture == null) {
 					if (!constructed)
 						Construct ();
-					if (parent_lcid == cultureID)
+					if (parent_lcid == cultureID) {
+						//
+						// Parent lcid is same but culture info is not for legacy zh culture
+						//
+						if (parent_lcid == 0x7C04 && EnglishName.EndsWith (" Legacy", StringComparison.Ordinal))
+							return parent_culture = new CultureInfo ("zh-Hant");
+
 						return null;
+					}
 					
 					if (parent_lcid == InvariantCultureId)
 						parent_culture = InvariantCulture;
@@ -372,7 +373,6 @@ namespace System.Globalization
 			return false;
 		}
 
-#if !MOONLIGHT
 		public static CultureInfo[] GetCultures(CultureTypes types)
 		{
 			bool neutral=((types & CultureTypes.NeutralCultures)!=0);
@@ -389,7 +389,6 @@ namespace System.Globalization
 
 			return infos;
 		}
-#endif
 
 		public override int GetHashCode ()
 		{
@@ -452,7 +451,7 @@ namespace System.Globalization
 
 		internal void CheckNeutral ()
 		{
-#if !MOONLIGHT && !NET_4_0
+#if !NET_4_0
 			if (IsNeutralCulture) {
 				throw new NotSupportedException ("Culture \"" + m_name + "\" is " +
 						"a neutral culture. It can not be used in formatting " +
@@ -693,13 +692,14 @@ namespace System.Globalization
 		// current locale so we can initialize the object without
 		// doing any member initialization
 		private CultureInfo () { constructed = true; }
-		static Hashtable shared_by_number, shared_by_name;
+		static Dictionary<int, CultureInfo> shared_by_number;
+		static Dictionary<string, CultureInfo> shared_by_name;
 		
 		static void insert_into_shared_tables (CultureInfo c)
 		{
 			if (shared_by_number == null){
-				shared_by_number = new Hashtable ();
-				shared_by_name = new Hashtable ();
+				shared_by_number = new Dictionary<int, CultureInfo> ();
+				shared_by_name = new Dictionary<string, CultureInfo> ();
 			}
 			shared_by_number [c.cultureID] = c;
 			shared_by_name [c.m_name] = c;
@@ -710,12 +710,11 @@ namespace System.Globalization
 			CultureInfo c;
 			
 			lock (shared_table_lock){
-				if (shared_by_number != null){
-					c = shared_by_number [culture] as CultureInfo;
-
-					if (c != null)
-						return (CultureInfo) c;
+				if (shared_by_number != null) {
+					if (shared_by_number.TryGetValue (culture, out c))
+						return c;
 				}
+
 				c = new CultureInfo (culture, false, true);
 				insert_into_shared_tables (c);
 				return c;
@@ -730,10 +729,8 @@ namespace System.Globalization
 			CultureInfo c;
 			lock (shared_table_lock){
 				if (shared_by_name != null){
-					c = shared_by_name [name] as CultureInfo;
-
-					if (c != null)
-						return (CultureInfo) c;
+					if (shared_by_name.TryGetValue (name, out c))
+						return c;
 				}
 				c = new CultureInfo (name, false, true);
 				insert_into_shared_tables (c);
@@ -986,20 +983,51 @@ namespace System.Globalization
 
 		static Calendar CreateCalendar (int calendarType)
 		{
+			string name = null;
 			switch (calendarType >> CalendarTypeBits) {
 			case 1:
 				GregorianCalendarTypes greg_type;
 				greg_type = (GregorianCalendarTypes) (calendarType & 0xFF);
 				return new GregorianCalendar (greg_type);
 			case 2:
-				return new ThaiBuddhistCalendar ();
+				name = "System.Globalization.ThaiBuddhistCalendar";
+				break;
 			case 3:
-				return new UmAlQuraCalendar ();
+				name = "System.Globalization.UmAlQuraCalendar";
+				break;
 			case 4:
-				return new HijriCalendar ();
+				name = "System.Globalization.HijriCalendar";
+				break;
 			default:
 				throw new NotImplementedException ("Unknown calendar type: " + calendarType);
 			}
+
+			Type type = Type.GetType (name, false);
+			if (type == null)
+				throw new NotSupportedException ("Calendar not found, if the linker is enabled make sure to preserve this type: " + name);
+			return (Calendar) Activator.CreateInstance (type);
 		}
+		
+#if NET_4_5
+		[MonoTODO]
+		public static CultureInfo DefaultThreadCurrentCulture {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		[MonoTODO]
+		public static CultureInfo DefaultThreadCurrentUICulture {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 	}
 }

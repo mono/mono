@@ -925,7 +925,7 @@ namespace System.Xml {
 
 #endif
 
-#if NET_4_0 || NET_2_1
+#if NET_4_0
 		public static bool IsNCNameChar (char ch)
 		{
 			throw new NotImplementedException ();

@@ -198,11 +198,11 @@ namespace Mono.Security.Authenticode {
 			HashAlgorithm ha = null; 
 			switch (signedHash.Length) {
 				case 16:
-					ha = HashAlgorithm.Create ("MD5"); 
+					ha = MD5.Create (); 
 					hash = GetHash (ha);
 					break;
 				case 20:
-					ha = HashAlgorithm.Create ("SHA1");
+					ha = SHA1.Create ();
 					hash = GetHash (ha);
 					break;
 				default:
@@ -351,7 +351,7 @@ namespace Mono.Security.Authenticode {
 		{
 			// SEQUENCE {
 			//   INTEGER 1
-			if (cs.Version != 1)
+			if (cs.Version > 1)
 				return false;
 			//   SEQUENCE {
 			//      SEQUENCE {

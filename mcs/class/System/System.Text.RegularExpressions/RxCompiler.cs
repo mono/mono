@@ -635,13 +635,6 @@ namespace System.Text.RegularExpressions {
 			EmitLink (next);
 		}
 
-		public void EmitJumpTest (LinkRef target,LinkRef ElseTarget)
-		{
-			//for evaluating ALTERNATIVES ("or" or "|")
-			EmitJump (target);//not implemented for RxCompiler
-			// see compiler.cs for implementation guideline
-		}
-
 		public void EmitJump (LinkRef target)
 		{
 			BeginLink (target);

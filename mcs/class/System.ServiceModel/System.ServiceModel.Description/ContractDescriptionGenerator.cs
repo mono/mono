@@ -186,14 +186,30 @@ namespace System.ServiceModel.Description
 			if (sca.HasProtectionLevel)
 				cd.ProtectionLevel = sca.ProtectionLevel;
 
-			foreach (var icd in cd.GetInheritedContracts ()) {
-				FillOperationsForInterface (icd, icd.ContractType, givenServiceType, false);
+			/*
+			 * Calling `FillOperationsForInterface(cd, X, null, false)' followed by
+			 * `FillOperationsForInterface(cd, X, Y, false)' would attempt to populate
+			 * the behavior list for 'X' twice (bug #6187).
+			 * 
+			 * Therefor, we manually iterate over the list of interfaces here instead of
+			 * using ContractDescription.GetInheritedContracts().
+			 * 
+			 */
+
+			var inherited = new Collection<ContractDescription> ();
+			foreach (var it in cd.ContractType.GetInterfaces ()) {
+				var icd = GetContractInternal (it, givenServiceType, null);
+				if (icd != null)
+					inherited.Add (icd);
+			}
+
+			foreach (var icd in inherited) {
 				foreach (var od in icd.Operations)
 					if (!cd.Operations.Any(o => o.Name == od.Name && o.SyncMethod == od.SyncMethod && 
 							       o.BeginMethod == od.BeginMethod && o.InCallbackContract == od.InCallbackContract))
 						cd.Operations.Add (od);
 			}
-			
+
 			FillOperationsForInterface (cd, cd.ContractType, givenServiceType, false);
 			
 			if (cd.CallbackContractType != null)
@@ -286,11 +302,9 @@ namespace System.ServiceModel.Description
 				if (HasInvalidMessageContract (mi, oca.AsyncPattern))
 					throw new InvalidOperationException (String.Format ("The operation {0} contains more than one parameters and one or more of them are marked with MessageContractAttribute, but the attribute must be used within an operation that has only one parameter.", od.Name));
 
-#if !MOONLIGHT
 				var xfa = serviceMethod.GetCustomAttribute<XmlSerializerFormatAttribute> (false);
 				if (xfa != null)
 					od.Behaviors.Add (new XmlSerializerOperationBehavior (od, xfa));
-#endif
 				var dfa = serviceMethod.GetCustomAttribute<DataContractFormatAttribute> (false);
 				if (dfa != null)
 					od.Behaviors.Add (new DataContractSerializerOperationBehavior (od, dfa));

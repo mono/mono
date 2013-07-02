@@ -1,5 +1,6 @@
 #include net_4_0_System.ComponentModel.DataAnnotations.dll.sources
 
+System.ComponentModel.DataAnnotations/MinLengthAttribute.cs
 System.ComponentModel.DataAnnotations/MaxLengthAttribute.cs
 System.ComponentModel.DataAnnotations.Schema/ColumnAttribute.cs
 System.ComponentModel.DataAnnotations.Schema/ComplexTypeAttribute.cs

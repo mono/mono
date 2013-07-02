@@ -373,6 +373,30 @@ namespace MonoTests.System.Xml
 		{
 			Validate (File.ReadAllText ("Test/XmlFiles/676993.xml"), File.ReadAllText ("Test/XmlFiles/676993.xsd"));
 		}
+		
+		[Test]
+		public void Bug10245 ()
+		{
+			string xsd = @"
+	<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' targetNamespace='urn:foo'>
+	  <xs:element name='root'>
+		<xs:complexType>
+		  <xs:attribute name='d' default='v' use='optional' />
+		</xs:complexType>
+	  </xs:element>
+	</xs:schema>";
+			string xml = "<root xmlns='urn:foo' />";
+			var xrs = new XmlReaderSettings () { ValidationType = ValidationType.Schema };
+			xrs.Schemas.Add (XmlSchema.Read (new StringReader (xsd), null));
+			var xr = XmlReader.Create (new StringReader (xml), xrs);
+			xr.Read ();
+			bool more;
+			Assert.AreEqual (2, xr.AttributeCount, "#1");
+			int i = 0;
+			for (more = xr.MoveToFirstAttribute (); more; more = xr.MoveToNextAttribute ())
+				i++;
+			Assert.AreEqual (2, i, "#2");
+		}
 	}
 }
 

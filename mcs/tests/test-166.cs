@@ -44,7 +44,7 @@ class D : IInferior
 		return inferior.TargetIntegerSize;
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		D d = new D ();
 

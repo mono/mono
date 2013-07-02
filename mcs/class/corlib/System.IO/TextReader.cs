@@ -110,7 +110,7 @@ namespace System.IO {
 		public virtual int ReadBlock ([In, Out] char [] buffer, int index, int count)
 		{
 			int total_read_count = 0;
-			int current_read_count = 0;
+			int current_read_count;
 
 			do {
 				current_read_count = Read (buffer, index, count);

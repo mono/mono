@@ -136,12 +136,12 @@ namespace Mono.CSharp
 			return null;
 		}
 		
-		public virtual object Visit (BlockVariableDeclaration blockVariableDeclaration)
+		public virtual object Visit (BlockVariable blockVariableDeclaration)
 		{
 			return null;
 		}
 		
-		public virtual object Visit (BlockConstantDeclaration blockConstantDeclaration)
+		public virtual object Visit (BlockConstant blockConstantDeclaration)
 		{
 			return null;
 		}
@@ -208,6 +208,11 @@ namespace Mono.CSharp
 		}
 
 		public virtual object Visit (LabeledStatement labeledStatement)
+		{
+			return null;
+		}
+
+		public virtual object Visit (SwitchLabel switchLabel)
 		{
 			return null;
 		}

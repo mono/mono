@@ -7,7 +7,7 @@
 //
 // Copyright 2001, 2002, 2003 Ximian, Inc.
 // Copyright 2004-2011 Novell, Inc.
-// Copyright 2011 Xamarin Inc
+// Copyright 2011-2013 Xamarin Inc
 //
 
 
@@ -36,7 +36,6 @@ namespace Mono.CSharp
 	public interface IAssemblyDefinition
 	{
 		string FullName { get; }
-		bool HasExtensionMethod { get; }
 		bool IsCLSCompliant { get; }
 		bool IsMissing { get; }
 		string Name { get; }
@@ -74,6 +73,9 @@ namespace Mono.CSharp
 		SecurityType declarative_security;
 		Dictionary<ITypeDefinition, Attribute> emitted_forwarders;
 		AssemblyAttributesPlaceholder module_target_attrs;
+
+		// Win32 version info values
+		string vi_product, vi_product_version, vi_company, vi_copyright, vi_trademark;
 
 		protected AssemblyDefinition (ModuleContainer module, string name)
 		{
@@ -132,12 +134,6 @@ namespace Mono.CSharp
 			}
 		}
 
-		public bool HasExtensionMethod {
-			get {
-				return module.HasExtensionMethod;
-			}
-		}
-
 		public bool HasCLSCompliantAttribute {
 			get {
 				return cls_attribute != null;
@@ -160,6 +156,8 @@ namespace Mono.CSharp
 				return false;
 			}
 		}
+
+		public bool IsSatelliteAssembly { get; private set; }
 
 		public string Name {
 			get {
@@ -221,6 +219,7 @@ namespace Mono.CSharp
 					builder_extra.SetCulture (value, a.Location);
 				}
 
+				IsSatelliteAssembly = true;
 				return;
 			}
 
@@ -292,7 +291,7 @@ namespace Mono.CSharp
 				} else if (emitted_forwarders.ContainsKey (t.MemberDefinition)) {
 					Report.SymbolRelatedToPreviousError (emitted_forwarders[t.MemberDefinition].Location, null);
 					Report.Error (739, a.Location, "A duplicate type forward of type `{0}'",
-						TypeManager.CSharpName (t));
+						t.GetSignatureForError ());
 					return;
 				}
 
@@ -301,13 +300,13 @@ namespace Mono.CSharp
 				if (t.MemberDefinition.DeclaringAssembly == this) {
 					Report.SymbolRelatedToPreviousError (t);
 					Report.Error (729, a.Location, "Cannot forward type `{0}' because it is defined in this assembly",
-						TypeManager.CSharpName (t));
+						t.GetSignatureForError ());
 					return;
 				}
 
 				if (t.IsNested) {
 					Report.Error (730, a.Location, "Cannot forward type `{0}' because it is a nested type",
-						TypeManager.CSharpName (t));
+						t.GetSignatureForError ());
 					return;
 				}
 
@@ -351,14 +350,23 @@ namespace Mono.CSharp
 			} else if (a.Type == pa.RuntimeCompatibility) {
 				wrap_non_exception_throws_custom = true;
 			} else if (a.Type == pa.AssemblyFileVersion) {
-				string value = a.GetString ();
-				if (string.IsNullOrEmpty (value) || IsValidAssemblyVersion (value, false) == null) {
+				vi_product_version = a.GetString ();
+				if (string.IsNullOrEmpty (vi_product_version) || IsValidAssemblyVersion (vi_product_version, false) == null) {
 					Report.Warning (1607, 1, a.Location, "The version number `{0}' specified for `{1}' is invalid",
-						value, a.Name);
+						vi_product_version, a.Name);
 					return;
 				}
+			} else if (a.Type == pa.AssemblyProduct) {
+				vi_product = a.GetString ();
+			} else if (a.Type == pa.AssemblyCompany) {
+				vi_company = a.GetString ();
+			} else if (a.Type == pa.AssemblyDescription) {
+				// TODO: Needs extra api
+			} else if (a.Type == pa.AssemblyCopyright) {
+				vi_copyright = a.GetString ();
+			} else if (a.Type == pa.AssemblyTrademark) {
+				vi_trademark = a.GetString ();
 			}
-
 
 			SetCustomAttribute (ctor, cdata);
 		}
@@ -374,7 +382,7 @@ namespace Mono.CSharp
 			// no working SRE API
 			foreach (var entry in Importer.Assemblies) {
 				var a = entry as ImportedAssemblyDefinition;
-				if (a == null)
+				if (a == null || a.IsMissing)
 					continue;
 
 				if (public_key != null && !a.HasStrongName) {
@@ -464,26 +472,28 @@ namespace Mono.CSharp
 				}
 			}
 
-			if (!wrap_non_exception_throws_custom) {
-				PredefinedAttribute pa = module.PredefinedAttributes.RuntimeCompatibility;
-				if (pa.IsDefined && pa.ResolveBuilder ()) {
-					var prop = module.PredefinedMembers.RuntimeCompatibilityWrapNonExceptionThrows.Get ();
-					if (prop != null) {
-						AttributeEncoder encoder = new AttributeEncoder ();
-						encoder.EncodeNamedPropertyArgument (prop, new BoolLiteral (Compiler.BuiltinTypes, true, Location.Null));
-						SetCustomAttribute (pa.Constructor, encoder.ToArray ());
+			if (!IsSatelliteAssembly) {
+				if (!wrap_non_exception_throws_custom) {
+					PredefinedAttribute pa = module.PredefinedAttributes.RuntimeCompatibility;
+					if (pa.IsDefined && pa.ResolveBuilder ()) {
+						var prop = module.PredefinedMembers.RuntimeCompatibilityWrapNonExceptionThrows.Get ();
+						if (prop != null) {
+							AttributeEncoder encoder = new AttributeEncoder ();
+							encoder.EncodeNamedPropertyArgument (prop, new BoolLiteral (Compiler.BuiltinTypes, true, Location.Null));
+							SetCustomAttribute (pa.Constructor, encoder.ToArray ());
+						}
 					}
 				}
-			}
 
-			if (declarative_security != null) {
+				if (declarative_security != null) {
 #if STATIC
-				foreach (var entry in declarative_security) {
-					Builder.__AddDeclarativeSecurity (entry);
-				}
+					foreach (var entry in declarative_security) {
+						Builder.__AddDeclarativeSecurity (entry);
+					}
 #else
-				throw new NotSupportedException ("Assembly-level security");
+					throw new NotSupportedException ("Assembly-level security");
 #endif
+				}
 			}
 
 			CheckReferencesPublicToken ();
@@ -751,7 +761,7 @@ namespace Mono.CSharp
 			if (Compiler.Settings.Win32ResourceFile != null) {
 				Builder.DefineUnmanagedResource (Compiler.Settings.Win32ResourceFile);
 			} else {
-				Builder.DefineVersionInfoResource ();
+				Builder.DefineVersionInfoResource (vi_product, vi_product_version, vi_company, vi_copyright, vi_trademark);
 			}
 
 			if (Compiler.Settings.Win32IconFile != null) {
@@ -1111,8 +1121,8 @@ namespace Mono.CSharp
 			this.compiler = compiler;
 
 			paths = new List<string> ();
-			paths.AddRange (compiler.Settings.ReferencesLookupPaths);
 			paths.Add (Directory.GetCurrentDirectory ());
+			paths.AddRange (compiler.Settings.ReferencesLookupPaths);
 		}
 
 		public abstract bool HasObjectType (T assembly);

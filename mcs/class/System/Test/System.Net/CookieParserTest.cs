@@ -37,7 +37,10 @@ namespace MonoTests.System.Net
 		void AssertCookie (Cookie cookie, string name, string value, long ticks)
 		{
 			AssertCookie (cookie, name, value);
-			Assert.AreEqual (ticks, cookie.Expires.ToUniversalTime ().Ticks);
+			if (ticks == 0)
+				Assert.AreEqual (0, cookie.Expires.Ticks);
+			else
+				Assert.AreEqual (ticks, cookie.Expires.ToUniversalTime ().Ticks);
 		}
 
 		void AssertCookie (Cookie cookie, string name, string value)

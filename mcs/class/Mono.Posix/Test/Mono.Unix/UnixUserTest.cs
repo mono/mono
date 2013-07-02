@@ -79,6 +79,7 @@ namespace MonoTests.Mono.Unix {
 		}
 
 		[Test]
+		[Category ("NotOnMac")]
 		public void NonReentrantSyscalls ()
 		{
 			ArrayList user_ids = new ArrayList (4);

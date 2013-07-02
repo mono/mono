@@ -117,7 +117,7 @@ namespace Mono.CSharp
 		// </summary>
 		public readonly Location Location;
 
-		static int next_id = 0;
+		static int next_id;
 		int id;
 
 		// <summary>
@@ -163,7 +163,7 @@ namespace Mono.CSharp
 			MyBitVector locals;
 			bool is_unreachable;
 
-			static int next_id = 0;
+			static int next_id;
 			int id;
 
 			//
@@ -394,7 +394,7 @@ namespace Mono.CSharp
 		// <summary>
 		//   Creates a sibling of the current usage vector.
 		// </summary>
-		public virtual void CreateSibling (Block block, SiblingType type)
+		public void CreateSibling (Block block, SiblingType type)
 		{
 			UsageVector vector = new UsageVector (
 				type, Parent.CurrentUsageVector, block, Location);

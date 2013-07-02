@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{0A4E586A-047A-4C04-9821-265465A334F8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>./../../class/lib/net_4_5</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\IBM.Data.DB2-net_4_5</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>IBM.Data.DB2</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
@@ -28,47 +27,48 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include=".\Assembly\AssemblyInfo.cs" />
-   <Compile Include=".\IBM.Data.DB2\DB2ClientUtils.cs" />
-   <Compile Include=".\IBM.Data.DB2\DB2CLIWrapper.cs" />
-   <Compile Include=".\IBM.Data.DB2\DB2Command.cs" />
-   <Compile Include=".\IBM.Data.DB2\DB2CommandBuilder.cs" />
-   <Compile Include=".\IBM.Data.DB2\DB2OpenConnection.cs" />
-   <Compile Include=".\IBM.Data.DB2\DB2Connection.cs" />
-   <Compile Include=".\IBM.Data.DB2\DB2ConnectionPool.cs" />
-   <Compile Include=".\IBM.Data.DB2\DB2ConnectionSettings.cs" />
-   <Compile Include=".\IBM.Data.DB2\DB2Constants.cs" />
-   <Compile Include=".\IBM.Data.DB2\DB2DataAdapter.cs" />
-   <Compile Include=".\IBM.Data.DB2\DB2DataReader.cs" />
-   <Compile Include=".\IBM.Data.DB2\DB2Environment.cs" />
-   <Compile Include=".\IBM.Data.DB2\DB2Error.cs" />
-   <Compile Include=".\IBM.Data.DB2\DB2ErrorCollection.cs" />
-   <Compile Include=".\IBM.Data.DB2\DB2Exception.cs" />
-   <Compile Include=".\IBM.Data.DB2\DB2InfoMessageEventHandler.cs" />
-   <Compile Include=".\IBM.Data.DB2\DB2Parameter.cs" />
-   <Compile Include=".\IBM.Data.DB2\DB2ParameterCollection.cs" />
-   <Compile Include=".\IBM.Data.DB2\DB2RowUpdatedEventArgs.cs" />
-   <Compile Include=".\IBM.Data.DB2\DB2RowUpdatedEventHandler.cs" />
-   <Compile Include=".\IBM.Data.DB2\DB2RowUpdatingEventArgs.cs" />
-   <Compile Include=".\IBM.Data.DB2\DB2RowUpdatingEventHandler.cs" />
-   <Compile Include=".\IBM.Data.DB2\DB2Transaction.cs" />
-   <Compile Include=".\IBM.Data.DB2\DB2Type.cs" />
-
-  </ItemGroup>
+    <Compile Include=".\Assembly\AssemblyInfo.cs" />
+    <Compile Include=".\IBM.Data.DB2\DB2ClientUtils.cs" />
+    <Compile Include=".\IBM.Data.DB2\DB2CLIWrapper.cs" />
+    <Compile Include=".\IBM.Data.DB2\DB2Command.cs" />
+    <Compile Include=".\IBM.Data.DB2\DB2CommandBuilder.cs" />
+    <Compile Include=".\IBM.Data.DB2\DB2Connection.cs" />
+    <Compile Include=".\IBM.Data.DB2\DB2ConnectionPool.cs" />
+    <Compile Include=".\IBM.Data.DB2\DB2ConnectionSettings.cs" />
+    <Compile Include=".\IBM.Data.DB2\DB2Constants.cs" />
+    <Compile Include=".\IBM.Data.DB2\DB2DataAdapter.cs" />
+    <Compile Include=".\IBM.Data.DB2\DB2DataReader.cs" />
+    <Compile Include=".\IBM.Data.DB2\DB2Environment.cs" />
+    <Compile Include=".\IBM.Data.DB2\DB2Error.cs" />
+    <Compile Include=".\IBM.Data.DB2\DB2ErrorCollection.cs" />
+    <Compile Include=".\IBM.Data.DB2\DB2Exception.cs" />
+    <Compile Include=".\IBM.Data.DB2\DB2InfoMessageEventHandler.cs" />
+    <Compile Include=".\IBM.Data.DB2\DB2OpenConnection.cs" />
+    <Compile Include=".\IBM.Data.DB2\DB2Parameter.cs" />
+    <Compile Include=".\IBM.Data.DB2\DB2ParameterCollection.cs" />
+    <Compile Include=".\IBM.Data.DB2\DB2RowUpdatedEventArgs.cs" />
+    <Compile Include=".\IBM.Data.DB2\DB2RowUpdatedEventHandler.cs" />
+    <Compile Include=".\IBM.Data.DB2\DB2RowUpdatingEventArgs.cs" />
+    <Compile Include=".\IBM.Data.DB2\DB2RowUpdatingEventHandler.cs" />
+    <Compile Include=".\IBM.Data.DB2\DB2Transaction.cs" />
+    <Compile Include=".\IBM.Data.DB2\DB2Type.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -77,34 +77,32 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Data.dll</HintPath>
-    </Reference>
-
+    <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
+      <Project>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</Project>
+      <Name>corlib\corlib-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_5-2.csproj">
+      <Project>{34966210-D64D-419C-94A4-9A6093CE5882}</Project>
+      <Name>System\System-net_4_5-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
+      <Project>{6374B2FC-93C6-4FD0-8CF0-8EB12F5AC71D}</Project>
+      <Name>System.XML\System.Xml-net_4_5-1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Data\System.Data-net_4_5.csproj">
+      <Project>{5CAB0F19-4A6F-4B4B-96DA-5677F88E2EF6}</Project>
+      <Name>System.Data\System.Data-net_4_5</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
-

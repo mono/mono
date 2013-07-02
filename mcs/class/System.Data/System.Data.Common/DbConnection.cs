@@ -718,12 +718,10 @@ namespace System.Data.Common {
 			return dataTable;
 		}
 
-		protected virtual DbProviderFactory DbProviderFactory {
-#if MOBILE
-			get {throw new NotImplementedException();}
-#else
-			get { return DbProviderFactories.GetFactory (this.GetType (). ToString ()); }
-#endif
+		protected internal virtual DbProviderFactory DbProviderFactory {
+			get {
+				return null;
+			}
 		}
 #endif
 
@@ -756,10 +754,18 @@ namespace System.Data.Common {
 			return OpenAsync (CancellationToken.None);
 		}
 		
-		[MonoTODO]
 		public virtual Task OpenAsync (CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			if (cancellationToken.IsCancellationRequested) {
+				return TaskHelper.CreateCanceledTask ();
+			}
+			
+			try {
+				Open ();
+				return TaskHelper.CreateVoidTask ();
+			} catch (Exception e) {
+				return TaskHelper.CreateExceptionTask (e);
+			}
 		}
 #endif
 

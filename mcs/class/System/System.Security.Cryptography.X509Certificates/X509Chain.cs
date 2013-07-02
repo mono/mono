@@ -28,12 +28,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP || MOONLIGHT
+#if SECURITY_DEP
+
+extern alias MonoSecurity;
 
 using System.Collections;
 using System.Text;
 
-using MX = Mono.Security.X509;
+using MX = MonoSecurity::Mono.Security.X509;
 
 namespace System.Security.Cryptography.X509Certificates {
 
@@ -233,7 +235,11 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public static X509Chain Create ()
 		{
+#if FULL_AOT_RUNTIME
+			return new X509Chain ();
+#else
 			return (X509Chain) CryptoConfig.CreateFromName ("X509Chain");
+#endif
 		}
 
 		// private stuff
@@ -876,8 +882,12 @@ namespace System.Security.Cryptography.X509Certificates {
 			return X509ChainStatusFlags.NoError;
 		}
 
-		static MX.X509Crl CheckCrls (string subject, string ski, ArrayList crls)
+		static MX.X509Crl CheckCrls (string subject, string ski, MX.X509Store store)
 		{
+			if (store == null)
+				return null;
+
+			var crls = store.Crls;
 			foreach (MX.X509Crl crl in crls) {
 				if (crl.IssuerName == subject && (ski.Length == 0 || ski == GetAuthorityKeyIdentifier (crl)))
 					return crl;
@@ -891,21 +901,21 @@ namespace System.Security.Cryptography.X509Certificates {
 			string ski = GetSubjectKeyIdentifier (caCertificate);
 
 			// consider that the LocalMachine directories could not exists... and cannot be created by the user
-			MX.X509Crl result = (LMCAStore.Store == null) ? null : CheckCrls (subject, ski, LMCAStore.Store.Crls);
+			MX.X509Crl result = CheckCrls (subject, ski, LMCAStore.Store);
 			if (result != null)
 				return result;
 			if (location == StoreLocation.CurrentUser) {
-				result = CheckCrls (subject, ski, UserCAStore.Store.Crls);
+				result = CheckCrls (subject, ski, UserCAStore.Store);
 				if (result != null)
 					return result;
 			}
 
 			// consider that the LocalMachine directories could not exists... and cannot be created by the user
-			result = (LMRootStore.Store == null) ? null : CheckCrls (subject, ski, LMRootStore.Store.Crls);
+			result = CheckCrls (subject, ski, LMRootStore.Store);
 			if (result != null)
 				return result;
 			if (location == StoreLocation.CurrentUser) {
-				result = CheckCrls (subject, ski, UserRootStore.Store.Crls);
+				result = CheckCrls (subject, ski, UserRootStore.Store);
 				if (result != null)
 					return result;
 			}

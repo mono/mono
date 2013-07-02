@@ -7,10 +7,15 @@ System.Runtime.Serialization/Bug695203Test.cs
 System.Runtime.Serialization/DataContractResolverTest.cs
 System.Runtime.Serialization/DataContractSerializerTest_DuplicateQName.cs
 System.Runtime.Serialization/DataContractSerializerTest_NullableWithDictionary.cs
+System.Runtime.Serialization/DataContractSerializerTest_InvalidCharacters.cs
 System.Runtime.Serialization/KnownTypeAttributeTest.cs
 System.Runtime.Serialization/XmlObjectSerializerTest.cs
 System.Runtime.Serialization/XsdDataContractExporterTest.cs
 System.Runtime.Serialization/XsdDataContractImporterTest.cs
+System.Runtime.Serialization/CollectionSerialization.cs
+System.Runtime.Serialization/WsdlHelper.cs
+System.Runtime.Serialization/XsdDataContractImporterTest2.cs
+System.Runtime.Serialization/XsdDataContractExporterTest2.cs
 System.Xml/UniqueIdTest.cs
 System.Xml/XmlBinaryDictionaryReaderTest.cs
 System.Xml/XmlBinaryDictionaryWriterTest.cs

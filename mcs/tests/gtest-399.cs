@@ -13,7 +13,7 @@ namespace TestIssue
 
 	class Program
 	{
-		static int Main ()
+		public static int Main ()
 		{
 			try {
 				IEnumerable<Derived> e1 = (IEnumerable<Derived>) (new Base [] { });

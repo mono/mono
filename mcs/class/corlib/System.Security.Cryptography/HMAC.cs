@@ -2,10 +2,11 @@
 // HMAC.cs: Generic HMAC inplementation
 //
 // Author:
-//	Sebastien Pouliot  <sebastien@ximian.com>
+//	Sebastien Pouliot  <sebastien@xamarin.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2004-2005, 2007 Novell, Inc (http://www.novell.com)
+// Copyright 2013 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -167,11 +168,24 @@ namespace System.Security.Cryptography {
 			Array.Clear (buf, 0, buf.Length);
 		}
 
+#if FULL_AOT_RUNTIME
+		// Allow using HMAC without bringing (most of) the whole crypto stack (using CryptoConfig)
+		// or even without bringing all the hash algorithms (using a common switch)
+		internal void SetHash (string name, HashAlgorithm instance)
+		{
+			_hashName = name; 
+			_algo = instance;
+		}
+#endif
 		// static methods
 
 		public static new HMAC Create () 
 		{
+#if FULL_AOT_RUNTIME
+			return new System.Security.Cryptography.HMACSHA1 ();
+#else
 			return Create ("System.Security.Cryptography.HMAC");
+#endif
 		}
 
 		public static new HMAC Create (string algorithmName) 

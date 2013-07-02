@@ -15,7 +15,7 @@ namespace IntPtr_Conv
 
 	class Class1 {
 		
-		static int Main(string[] args)
+		public static int Main(string[] args)
 		{
 			IntPtr p = IntPtr.Zero;
 

@@ -25,13 +25,13 @@
 #include <mono/io-layer/wapi-private.h>
 #include <mono/io-layer/handles-private.h>
 #include <mono/io-layer/misc-private.h>
-#include <mono/io-layer/mono-mutex.h>
 #include <mono/io-layer/thread-private.h>
 #include <mono/io-layer/mutex-private.h>
-#include <mono/io-layer/atomic.h>
 
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/gc_wrapper.h>
+#include <mono/utils/atomic.h>
+#include <mono/utils/mono-mutex.h>
 
 #ifdef HAVE_VALGRIND_MEMCHECK_H
 #include <valgrind/memcheck.h>
@@ -198,8 +198,14 @@ void _wapi_thread_signal_self (guint32 exitstatus)
  * by ExitThread()
 */
 static void thread_exit (guint32 exitstatus, gpointer handle) G_GNUC_NORETURN;
+#if defined(__native_client__)
+void nacl_shutdown_gc_thread(void);
+#endif
 static void thread_exit (guint32 exitstatus, gpointer handle)
 {
+#if defined(__native_client__)
+	nacl_shutdown_gc_thread();
+#endif
 	_wapi_thread_set_termination_details (handle, exitstatus);
 	
 	/* Call pthread_exit() to call destructors and really exit the
@@ -247,9 +253,11 @@ static void *thread_start_routine (gpointer args)
 {
 	struct _WapiHandle_thread *thread = (struct _WapiHandle_thread *)args;
 	int thr_ret;
-	
-	thr_ret = mono_gc_pthread_detach (pthread_self ());
-	g_assert (thr_ret == 0);
+
+	if (!(thread->create_flags & CREATE_NO_DETACH)) {
+		thr_ret = mono_gc_pthread_detach (pthread_self ());
+		g_assert (thr_ret == 0);
+	}
 
 	thr_ret = pthread_setspecific (thread_hash_key,
 				       (void *)thread->handle);
@@ -927,7 +935,7 @@ guint32 QueueUserAPC (WapiApcProc apc_callback, gpointer handle,
 		return (0);
 	}
 
-	g_assert (thread_handle->id == GetCurrentThreadId ());
+	g_assert (thread_handle->id == (pthread_t)GetCurrentThreadId ());
 	/* No locking/memory barriers are needed here */
 	thread_handle->has_apc = TRUE;
 	return(1);
@@ -978,7 +986,7 @@ void wapi_interrupt_thread (gpointer thread_handle)
 		/* Try again */
 	}
 
-	WAIT_DEBUG (printf ("%p: state -> INTERRUPTED.\n", thread_handle->id););
+	WAIT_DEBUG (printf ("%p: state -> INTERRUPTED.\n", thread->id););
 
 	if (!wait_handle)
 		/* Not waiting */
@@ -1032,7 +1040,7 @@ gpointer wapi_prepare_interrupt_thread (gpointer thread_handle)
 		/* Try again */
 	}
 
-	WAIT_DEBUG (printf ("%p: state -> INTERRUPTED.\n", thread_handle->id););
+	WAIT_DEBUG (printf ("%p: state -> INTERRUPTED.\n", thread->id););
 
 	return wait_handle;
 }

@@ -20,7 +20,7 @@ class Program {
 		}
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		object[] o = typeof (ImplementingExplicitInterfacesMembers).GetMethods (BindingFlags.NonPublic | BindingFlags.Instance);
 		foreach (MethodInfo mi in o) {

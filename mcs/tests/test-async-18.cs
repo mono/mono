@@ -11,7 +11,7 @@ class Tester
 		{
 			int a = 8;
 			Func<int> f = () => a;
-			res = await Task.Factory.StartNew (f);
+			res = await Task.Factory.StartNew (f).ConfigureAwait (false);
 			res += f ();
 		}
 		
@@ -24,7 +24,7 @@ class Tester
 		{
 			int a = 8;
 			Func<int> f = () => a + res;
-			res = await Task.Factory.StartNew (f);
+			res = await Task.Factory.StartNew (f).ConfigureAwait (false);
 			res += f ();
 		}
 		
@@ -37,7 +37,7 @@ class Tester
 		{
 			int a = 8;
 			Func<int> f = () => a;
-			res = await Task.Factory.StartNew (f);
+			res = await Task.Factory.StartNew (f).ConfigureAwait (false);
 			res += f ();
 		}
 		

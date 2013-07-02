@@ -43,12 +43,8 @@ using System.Text;
 
 namespace System.Net 
 {
-#if MOONLIGHT
-	internal class HttpWebResponse : WebResponse, ISerializable, IDisposable {
-#else
 	[Serializable]
 	public class HttpWebResponse : WebResponse, ISerializable, IDisposable {
-#endif
 		Uri uri;
 		WebHeaderCollection webHeaders;
 		CookieCollection cookieCollection;
@@ -159,6 +155,9 @@ namespace System.Net
 			}
 		}
 		
+#if NET_4_5
+		virtual
+#endif
 		public CookieCollection Cookies {
 			get {
 				CheckDisposed ();
@@ -203,6 +202,9 @@ namespace System.Net
 			}
 		}
 		
+#if NET_4_5
+		virtual
+#endif
 		public string Method {
 			get {
 				CheckDisposed ();
@@ -231,12 +233,18 @@ namespace System.Net
 			}
 		}
 		
+#if NET_4_5
+		virtual
+#endif
 		public HttpStatusCode StatusCode {
 			get {
 				return statusCode; 
 			}
 		}
 		
+#if NET_4_5
+		virtual
+#endif
 		public string StatusDescription {
 			get {
 				CheckDisposed ();
@@ -313,13 +321,21 @@ namespace System.Net
 			Dispose (true);
 			GC.SuppressFinalize (this);  
 		}
-
+		
+#if NET_4_0
+		protected override void Dispose (bool disposing)
+		{
+			this.disposed = true;
+			base.Dispose (true);
+		}
+#else
 		void Dispose (bool disposing) 
 		{
 			this.disposed = true;
 			if (disposing)
 				Close ();
 		}
+#endif
 		
 		private void CheckDisposed () 
 		{
@@ -350,8 +366,14 @@ namespace System.Net
 
 			var parser = new CookieParser (header);
 			foreach (var cookie in parser.Parse ()) {
-				if (cookie.Domain == "")
+				if (cookie.Domain == "") {
 					cookie.Domain = uri.Host;
+					cookie.HasDomain = false;
+				}
+
+				if (cookie.HasDomain &&
+				    !CookieContainer.CheckSameOrigin (uri, cookie.Domain))
+					continue;
 
 				cookieCollection.Add (cookie);
 				if (cookie_container != null)

@@ -25,9 +25,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -52,6 +51,9 @@ namespace Microsoft.Build.BuildEngine {
 		//string		recursiveDir;
 		IDictionary	evaluatedMetadata;
 		IDictionary	unevaluatedMetadata;
+		bool		isDynamic;
+		bool		keepDuplicates = true;
+		string		removeMetadata, keepMetadata;
 
 		BuildItem ()
 		{
@@ -92,11 +94,49 @@ namespace Microsoft.Build.BuildEngine {
 			this.parent_item_group = parentItemGroup;
 			
 			this.itemElement = itemElement;
-			
-			if (Include == String.Empty)
-				throw new InvalidProjectFileException (String.Format ("The required attribute \"Include\" is missing from element <{0}>.", Name));
+			isDynamic = parentItemGroup.IsDynamic;
+
+			if (IsDynamic) {
+				if (!string.IsNullOrEmpty (Remove)) {
+					if (!string.IsNullOrEmpty (Include) || !string.IsNullOrEmpty (Exclude))
+						throw new InvalidProjectFileException (string.Format ("The attribute \"Remove\" in element <{0}> is unrecognized.", Name));
+					if (itemElement.HasChildNodes)
+						throw new InvalidProjectFileException ("Children are not allowed below an item remove element.");
+				}
+				if (string.IsNullOrEmpty (Include) && !string.IsNullOrEmpty (Exclude))
+					throw new InvalidProjectFileException (string.Format ("The attribute \"Exclude\" in element <{0}> is unrecognized.", Name));
+			} else {
+				if (string.IsNullOrEmpty (Include))
+					throw new InvalidProjectFileException (string.Format ("The required attribute \"Include\" is missing from element <{0}>.", Name));
+				if (!string.IsNullOrEmpty (Remove))
+					throw new InvalidProjectFileException (string.Format ("The attribute \"Remove\" in element <{0}> is unrecognized.", Name));
+			}
+
+			foreach (XmlAttribute attr in itemElement.Attributes) {
+				if (attr.Name == "Include" || attr.Name == "Exclude" || attr.Name == "Condition")
+					continue;
+				if (!IsDynamic)
+					throw new InvalidProjectFileException (string.Format ("The attribute \"{0}\" in element <{1}> is unrecognized.", attr.Name, Name));
+
+				switch (attr.Name) {
+				case "Remove":
+					Remove = attr.Value;
+					break;
+				case "KeepDuplicates":
+					KeepDuplicates = bool.Parse (attr.Value);
+					break;
+				case "RemoveMetadata":
+					removeMetadata = attr.Value;
+					break;
+				case "KeepMetadata":
+					keepMetadata = attr.Value;
+					break;
+				default:
+					throw new InvalidProjectFileException (string.Format ("The attribute \"{0}\" in element <{1}> is unrecognized.", attr.Name, Name));
+				}
+			}
 		}
-		
+
 		BuildItem (BuildItem parent)
 		{
 			isImported = parent.isImported;
@@ -127,7 +167,9 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (ReservedNameUtils.IsReservedMetadataName (metadataName)) {
 				string metadata = ReservedNameUtils.GetReservedMetadata (FinalItemSpec, metadataName, evaluatedMetadata);
-				return (metadataName.ToLower () == "fullpath") ? MSBuildUtils.Escape (metadata) : metadata;
+				return string.Equals (metadataName, "fullpath", StringComparison.OrdinalIgnoreCase)
+						? MSBuildUtils.Escape (metadata)
+						: metadata;
 			}
 
 			if (evaluatedMetadata.Contains (metadataName))
@@ -140,7 +182,9 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (ReservedNameUtils.IsReservedMetadataName (metadataName)) {
 				string metadata = ReservedNameUtils.GetReservedMetadata (FinalItemSpec, metadataName, unevaluatedMetadata);
-				return (metadataName.ToLower () == "fullpath") ? MSBuildUtils.Escape (metadata) : metadata;
+				return string.Equals (metadataName, "fullpath", StringComparison.OrdinalIgnoreCase)
+					? MSBuildUtils.Escape (metadata)
+					: metadata;
 			} else if (unevaluatedMetadata.Contains (metadataName))
 				return (string) unevaluatedMetadata [metadataName];
 			else
@@ -252,21 +296,39 @@ namespace Microsoft.Build.BuildEngine {
 				this.finalItemSpec = MSBuildUtils.Unescape (Include);
 				return;
 			}
-			
+
 			foreach (XmlNode xn in itemElement.ChildNodes) {
 				XmlElement xe = xn as XmlElement;
 				if (xe != null && ConditionParser.ParseAndEvaluate (xe.GetAttribute ("Condition"), project))
 					AddMetadata (xe.Name, xe.InnerText);
 			}
 
+			if (IsDynamic) {
+				if (!evaluatedTo)
+					return;
+
+				if (!string.IsNullOrEmpty (Remove)) {
+					RemoveItems (project);
+					return;
+				}
+
+				if (string.IsNullOrEmpty (Include)) {
+					UpdateMetadata (project);
+					return;
+				}
+			}
+			
 			DirectoryScanner directoryScanner;
 			Expression includeExpr, excludeExpr;
 			ITaskItem[] includes, excludes;
 
+			var options = IsDynamic ?
+				ParseOptions.AllowItemsMetadataAndSplit : ParseOptions.AllowItemsNoMetadataAndSplit;
+
 			includeExpr = new Expression ();
-			includeExpr.Parse (Include, ParseOptions.AllowItemsNoMetadataAndSplit);
+			includeExpr.Parse (Include, options);
 			excludeExpr = new Expression ();
-			excludeExpr.Parse (Exclude, ParseOptions.AllowItemsNoMetadataAndSplit);
+			excludeExpr.Parse (Exclude, options);
 			
 			includes = (ITaskItem[]) includeExpr.ConvertTo (project, typeof (ITaskItem[]),
 								ExpressionOptions.ExpandItemRefs);
@@ -291,9 +353,123 @@ namespace Microsoft.Build.BuildEngine {
 			foreach (ITaskItem matchedItem in directoryScanner.MatchedItems)
 				AddEvaluatedItem (project, evaluatedTo, matchedItem);
 		}
-		
+
+		bool CheckCondition (Project project)
+		{
+			if (parent_item_group != null && !ConditionParser.ParseAndEvaluate (parent_item_group.Condition, project))
+				return false;
+			if (parent_item != null && !parent_item.CheckCondition (project))
+				return false;
+			return ConditionParser.ParseAndEvaluate (Condition, project);
+		}
+
+		void UpdateMetadata (Project project)
+		{
+			BuildItemGroup group;
+			if (!project.TryGetEvaluatedItemByNameBatched (Name, out group))
+				return;
+
+			foreach (BuildItem item in group) {
+				if (!item.CheckCondition (project))
+					continue;
+				
+				foreach (string name in evaluatedMetadata.Keys) {
+					item.SetMetadata (name, (string)evaluatedMetadata [name]);
+				}
+
+				AddAndRemoveMetadata (project, item);
+			}
+		}
+
+		void AddAndRemoveMetadata (Project project, BuildItem item)
+		{
+			if (!string.IsNullOrEmpty (removeMetadata)) {
+				var removeExpr = new Expression ();
+				removeExpr.Parse (removeMetadata, ParseOptions.AllowItemsNoMetadataAndSplit);
+
+				var removeSpec = (string[]) removeExpr.ConvertTo (
+					project, typeof (string[]), ExpressionOptions.ExpandItemRefs);
+
+				foreach (var remove in removeSpec) {
+					item.DeleteMetadata (remove);
+				}
+			}
+
+			if (!string.IsNullOrEmpty (keepMetadata)) {
+				var keepExpr = new Expression ();
+				keepExpr.Parse (keepMetadata, ParseOptions.AllowItemsNoMetadataAndSplit);
+
+				var keepSpec = (string[]) keepExpr.ConvertTo (
+					project, typeof (string[]), ExpressionOptions.ExpandItemRefs);
+
+				var metadataNames = new string [item.evaluatedMetadata.Count];
+				item.evaluatedMetadata.Keys.CopyTo (metadataNames, 0);
+
+				foreach (string name in metadataNames) {
+					if (!keepSpec.Contains (name))
+						item.DeleteMetadata (name);
+				}
+			}
+		}
+
+		void RemoveItems (Project project)
+		{
+			BuildItemGroup group;
+			if (!project.TryGetEvaluatedItemByNameBatched (Name, out group))
+				return;
+
+			var removeExpr = new Expression ();
+			removeExpr.Parse (Remove, ParseOptions.AllowItemsNoMetadataAndSplit);
+
+			var removes = (ITaskItem[]) removeExpr.ConvertTo (
+				project, typeof (ITaskItem[]), ExpressionOptions.ExpandItemRefs);
+
+			var directoryScanner = new DirectoryScanner ();
+			
+			directoryScanner.Includes = removes;
+
+			if (project.FullFileName != String.Empty)
+				directoryScanner.BaseDirectory = new DirectoryInfo (Path.GetDirectoryName (project.FullFileName));
+			else
+				directoryScanner.BaseDirectory = new DirectoryInfo (Directory.GetCurrentDirectory ());
+			
+			directoryScanner.Scan ();
+
+			foreach (ITaskItem matchedItem in directoryScanner.MatchedItems) {
+				group.RemoveItem (matchedItem);
+			}
+		}
+
+		bool ContainsItem (Project project, ITaskItem taskItem)
+		{
+			BuildItemGroup group;
+			if (!project.TryGetEvaluatedItemByNameBatched (Name, out group))
+				return false;
+
+			var item = group.FindItem (taskItem);
+			if (item == null)
+				return false;
+
+			foreach (string metadataName in evaluatedMetadata.Keys) {
+				string metadataValue = (string)evaluatedMetadata [metadataName];
+				if (!metadataValue.Equals (item.evaluatedMetadata [metadataName]))
+					return false;
+			}
+			
+			foreach (string metadataName in item.evaluatedMetadata.Keys) {
+				string metadataValue = (string)item.evaluatedMetadata [metadataName];
+				if (!metadataValue.Equals (evaluatedMetadata [metadataName]))
+					return false;
+			}
+
+			return true;
+		}
+
 		void AddEvaluatedItem (Project project, bool evaluatedTo, ITaskItem taskitem)
 		{
+			if (IsDynamic && evaluatedTo && !KeepDuplicates && ContainsItem (project, taskitem))
+				return;
+
 			BuildItemGroup big;			
 			BuildItem bi = new BuildItem (this);
 			bi.finalItemSpec = taskitem.ItemSpec;
@@ -326,6 +502,9 @@ namespace Microsoft.Build.BuildEngine {
 			}
 
 			big.AddItem (bi);
+
+			if (IsDynamic)
+				AddAndRemoveMetadata (project, bi);
 		}
 		
 		// during item's eval phase, any item refs in this item, have either
@@ -486,6 +665,20 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
+		internal bool IsDynamic {
+			get { return isDynamic; }
+		}
+
+		internal string Remove {
+			get;
+			private set;
+		}
+
+		internal bool KeepDuplicates {
+			get { return keepDuplicates; }
+			private set { keepDuplicates = value; }
+		}
+
 		public bool IsImported {
 			get { return isImported; }
 		}
@@ -520,6 +713,10 @@ namespace Microsoft.Build.BuildEngine {
 		internal bool FromXml {
 			get { return itemElement != null; }
 		}
+
+		internal XmlElement XmlElement {
+			get { return itemElement; }
+		}
 		
 		internal bool HasParentItem {
 			get { return parent_item != null; }
@@ -535,5 +732,3 @@ namespace Microsoft.Build.BuildEngine {
 		}
 	}
 }
-
-#endif

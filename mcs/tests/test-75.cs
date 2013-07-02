@@ -20,7 +20,7 @@ class Z : Y {
 
 class driver {
 
-	static int Main ()
+	public static int Main ()
 	{
 		Z a = new Z ();
 		Z b = new Z ();

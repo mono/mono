@@ -5,7 +5,7 @@ public class SomeClass<T> where T : new() {
 }
 
 class Foo {
-	static void Main ()
+	public static void Main ()
 	{
 		SomeClass<object> x = new SomeClass<object> ();
 		x.Foo ();

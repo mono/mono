@@ -107,10 +107,11 @@ namespace System.Globalization {
 		bool validForParseAsCurrency; // Unused, but MS.NET serializes this.
 #pragma warning restore 169
 		
+#if !MOBILE
 		string[] nativeDigits = invariantNativeDigits;
 		int digitSubstitution = 1; // DigitShapes.None.
-
 		static readonly string [] invariantNativeDigits = new string [] {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+#endif
 
 		internal NumberFormatInfo (int lcid, bool read_only)
 		{
@@ -420,7 +421,7 @@ namespace System.Globalization {
 					("The current instance is read-only and a set operation was attempted");
 				
 				if (value.Length == 0) {
-					currencyGroupSizes = new int [0];
+					currencyGroupSizes = EmptyArray<int>.Value;
 					return;
 				}
 				
@@ -683,7 +684,7 @@ namespace System.Globalization {
 					("The current instance is read-only and a set operation was attempted");
 				
 				if (value.Length == 0) {
-					numberGroupSizes = new int [0];
+					numberGroupSizes = EmptyArray<int>.Value;
 					return;
 				}
 				// All elements except last need to be in range 1 - 9, last can be 0.
@@ -806,7 +807,7 @@ namespace System.Globalization {
 					throw new Exception ("HERE the value was modified");
 				
 				if (value.Length == 0) {
-					percentGroupSizes = new int [0];
+					percentGroupSizes = EmptyArray<int>.Value;
 					return;
 				}
 

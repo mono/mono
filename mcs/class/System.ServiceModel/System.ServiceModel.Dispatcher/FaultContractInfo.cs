@@ -44,14 +44,6 @@ namespace System.ServiceModel.Dispatcher
 			Detail = detail;
 		}
 
-#if MOONLIGHT
-		// introduced for silverlight sdk compatibility
-		internal FaultContractInfo (string action, Type detail, XmlName elementName, string ns, IList<Type> knownTypes)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
-
 		DataContractSerializer serializer;
 
 		public string Action { get; private set; }

@@ -30,7 +30,7 @@ class Program
 		return Foo (str => str.ToLower ());
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		var str = Foo (s => s);
 		Console.WriteLine (str);

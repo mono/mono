@@ -358,7 +358,6 @@ namespace Mono.CSharp
 		public readonly PredefinedMember<MethodSpec> IEnumerableGetEnumerator;
 		public readonly PredefinedMember<MethodSpec> InterlockedCompareExchange;
 		public readonly PredefinedMember<MethodSpec> InterlockedCompareExchange_T;
-		public readonly PredefinedMember<MethodSpec> IteratorStateMachineAttributeCtor;
 		public readonly PredefinedMember<MethodSpec> FixedBufferAttributeCtor;
 		public readonly PredefinedMember<MethodSpec> MethodInfoGetMethodFromHandle;
 		public readonly PredefinedMember<MethodSpec> MethodInfoGetMethodFromHandle2;
@@ -631,10 +630,6 @@ namespace Mono.CSharp
 							}, false),
 					null));
 
-			IteratorStateMachineAttributeCtor = new PredefinedMember<MethodSpec> (module, atypes.IteratorStateMachine,
-				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (
-					btypes.Type)));
-
 			MethodInfoGetMethodFromHandle = new PredefinedMember<MethodSpec> (module, types.MethodBase,
 				"GetMethodFromHandle", MemberKind.Method, types.RuntimeMethodHandle);
 
@@ -696,6 +691,7 @@ namespace Mono.CSharp
 		readonly MemberKind kind;
 		protected readonly ModuleContainer module;
 		protected TypeSpec type;
+		bool defined;
 
 		public PredefinedType (ModuleContainer module, MemberKind kind, string ns, string name, int arity)
 			: this (module, kind, ns, name)
@@ -758,7 +754,11 @@ namespace Mono.CSharp
 			if (type != null)
 				return true;
 
-			type = Resolve (module, kind, ns, name, arity, false, false);
+			if (!defined) {
+				defined = true;
+				type = Resolve (module, kind, ns, name, arity, false, false);
+			}
+
 			return type != null;
 		}
 
@@ -776,12 +776,13 @@ namespace Mono.CSharp
 			// fake namespaces when type is optional and does not exist (e.g. System.Linq).
 			//
 			Namespace type_ns = module.GlobalRootNamespace.GetNamespace (ns, required);
+
 			IList<TypeSpec> found = null;
 			if (type_ns != null)
 				found = type_ns.GetAllTypes (name);
 
 			if (found == null) {
-				if (reportErrors )
+				if (reportErrors)
 					module.Compiler.Report.Error (518, "The predefined type `{0}.{1}' is not defined or imported", ns, name);
 
 				return null;
@@ -974,17 +975,22 @@ namespace Mono.CSharp
 		}
 	}
 
-	partial class TypeManager {
-
-	/// <summary>
-	///   Returns the C# name of a type if possible, or the full type name otherwise
-	/// </summary>
-	static public string CSharpName (TypeSpec t)
+	public class AwaiterDefinition
 	{
-		return t.GetSignatureForError ();
+		public PropertySpec IsCompleted { get; set; }
+		public MethodSpec GetResult { get; set; }
+		public bool INotifyCompletion { get; set; }
+
+		public bool IsValidPattern {
+			get {
+				return IsCompleted != null && GetResult != null && IsCompleted.HasGet;
+			}
+		}
 	}
 
-	static public string CSharpName (IList<TypeSpec> types)
+	partial class TypeManager {
+
+	static public string CSharpName(IList<TypeSpec> types)
 	{
 		if (types.Count == 0)
 			return string.Empty;
@@ -994,7 +1000,7 @@ namespace Mono.CSharp
 			if (i > 0)
 				sb.Append (",");
 
-			sb.Append (CSharpName (types [i]));
+			sb.Append (types [i].GetSignatureForError ());
 		}
 		return sb.ToString ();
 	}
@@ -1082,7 +1088,7 @@ namespace Mono.CSharp
 		rc.Compiler.Report.SymbolRelatedToPreviousError (t);
 		rc.Compiler.Report.Error (208, loc,
 			"Cannot take the address of, get the size of, or declare a pointer to a managed type `{0}'",
-			CSharpName (t));
+			t.GetSignatureForError ());
 
 		return false;	
 	}

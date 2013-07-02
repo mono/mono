@@ -6,7 +6,7 @@ using System;
 
 public class Test
 {
-	static void Main ()
+	public static void Main ()
 	{
 		MyAssembly01::GlobalClass.JustForFirst ();
 		MyAssembly02::GlobalClass.JustForSecond ();

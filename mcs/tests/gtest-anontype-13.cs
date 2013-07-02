@@ -11,7 +11,7 @@ static class Test
 		}
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		Type type = typeof (int);
 		IEnumerable<string> properties = new[] { "x" };

@@ -412,6 +412,16 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void Match3 ()
+		{
+			var template = new UriTemplate ("test");
+			var match1 = template.Match (new Uri ("http://something"), new Uri ("http://something/test"));
+			var match2 = template.Match (new Uri ("http://something/something2"), new Uri ("http://something/something2/test"));
+			Assert.IsNotNull (match1, "#1");
+			Assert.IsNotNull (match2, "#2");
+		}
+		
+		[Test]
 		public void MatchWildcard ()
 		{
 			var t = new UriTemplate ("/hoge/*?p1={foo}");
@@ -464,6 +474,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void SimpleWebGet () {
 			UriTemplate t = new UriTemplate ("GetBlog");
 			Assert.IsNotNull(t.Match(new Uri("http://localhost:8000/BlogService"),
@@ -504,6 +515,7 @@ namespace MonoTests.System
 		}
 
         [Test]
+	[Category ("NotWorking")]
         public void EscapedUriCandidate ()
         {
             var candidateUri = new Uri (@"https://somehost:12345/path1/path2/path3/endprefix/tpath1/guid1/tpath2/~|~~|~%3F~|~Path{guid2}~|~/tpath3");

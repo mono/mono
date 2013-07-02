@@ -27,8 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !MOONLIGHT
-
 using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
@@ -42,7 +40,11 @@ namespace System.Security.Cryptography {
 
 		public static new Rijndael Create () 
 		{
+#if FULL_AOT_RUNTIME
+			return new System.Security.Cryptography.RijndaelManaged ();
+#else
 			return Create ("System.Security.Cryptography.Rijndael");
+#endif
 		}
 
 		public static new Rijndael Create (string algName) 
@@ -64,5 +66,3 @@ namespace System.Security.Cryptography {
 		}
 	}
 }
-#endif
-

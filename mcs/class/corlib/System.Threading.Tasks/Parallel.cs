@@ -22,7 +22,7 @@
 //
 //
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
@@ -33,12 +33,6 @@ namespace System.Threading.Tasks
 {
 	public static class Parallel
 	{
-#if MOONLIGHT || MOBILE
-		static readonly bool sixtyfour = IntPtr.Size == 8;
-#else
-		static readonly bool sixtyfour = Environment.Is64BitProcess;
-#endif
-
 		internal static int GetBestWorkerNumber ()
 		{
 			return GetBestWorkerNumber (TaskScheduler.Current);
@@ -46,14 +40,14 @@ namespace System.Threading.Tasks
 
 		internal static int GetBestWorkerNumber (TaskScheduler scheduler)
 		{
-			return scheduler.MaximumConcurrencyLevel;
+			return Math.Min (Environment.ProcessorCount, (scheduler ?? TaskScheduler.Current).MaximumConcurrencyLevel);
 		}
 
 		static int GetBestWorkerNumber (int from, int to, ParallelOptions options, out int step)
 		{
 			int num = GetBestWorkerNumber(options.TaskScheduler);
 			if (options != null && options.MaxDegreeOfParallelism != -1)
-				num = options.MaxDegreeOfParallelism;
+				num = Math.Min (options.MaxDegreeOfParallelism, num);
 			// Integer range that each task process
 			if ((step = (to - from) / num) < 5) {
 				step = 5;
@@ -193,6 +187,8 @@ namespace System.Threading.Tasks
 						range.V64.Actual = ++i;
 					}
 
+					 bool sixtyfour = Environment.Is64BitProcess;
+					
 					// Try toExclusive steal fromInclusive our right neighbor (cyclic)
 					int len = num + localWorker;
 					for (int sIndex = localWorker + 1; sIndex < len; ++sIndex) {
@@ -343,7 +339,7 @@ namespace System.Threading.Tasks
 			if (destruct == null)
 				throw new ArgumentNullException ("destruct");
 
-			int num = Math.Min (GetBestWorkerNumber (),
+			int num = Math.Min (GetBestWorkerNumber (options.TaskScheduler),
 			                    options != null && options.MaxDegreeOfParallelism != -1 ? options.MaxDegreeOfParallelism : int.MaxValue);
 
 			Task[] tasks = new Task[num];

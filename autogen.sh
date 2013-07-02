@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # Run this to generate all the initial makefiles, etc.
 # Ripped off from GNOME macros version
 
@@ -102,8 +102,29 @@ if grep "^AM_PROG_LIBTOOL" configure.in >/dev/null; then
   fi
 fi
 
+
+#
+# Plug in the extension module
+#
+has_ext_mod=false
+for PARAM; do
+    if test "$PARAM" = "--enable-extension-module" ; then
+		has_ext_mod=true
+	fi
+done
+
+if test x$has_ext_mod = xtrue; then
+	pushd ../mono-extensions/scripts
+	sh ./prepare-repo.sh || exit 1
+	popd
+else
+	cat mono/mini/Makefile.am.in > mono/mini/Makefile.am
+	cat mono/metadata/Makefile.am.in > mono/metadata/Makefile.am
+fi
+
+
 echo "Running aclocal -I m4 -I . $ACLOCAL_FLAGS ..."
-aclocal -I m4 -I . $ACLOCAL_FLAGS || {
+aclocal -Wnone -I m4 -I . $ACLOCAL_FLAGS || {
   echo
   echo "**Error**: aclocal failed. This may mean that you have not"
   echo "installed all of the packages you need, or you may need to"
@@ -113,13 +134,13 @@ aclocal -I m4 -I . $ACLOCAL_FLAGS || {
   exit 1
 }
 
-if grep "^AM_CONFIG_HEADER" configure.in >/dev/null; then
+if grep "^AC_CONFIG_HEADERS" configure.in >/dev/null; then
   echo "Running autoheader..."
   autoheader || { echo "**Error**: autoheader failed."; exit 1; }
 fi
 
 echo "Running automake --gnu $am_opt ..."
-automake --add-missing --gnu -Wno-portability $am_opt ||
+automake --add-missing --gnu -Wno-portability -Wno-obsolete $am_opt ||
   { echo "**Error**: automake failed."; exit 1; }
 echo "Running autoconf ..."
 autoconf || { echo "**Error**: autoconf failed."; exit 1; }

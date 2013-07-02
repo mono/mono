@@ -8,7 +8,7 @@ delegate void D ();
 class X {
 	static D GlobalStoreDelegate;
 	
-	static void Main ()
+	public static void Main ()
 	{
 		D d = MainHost ();
 

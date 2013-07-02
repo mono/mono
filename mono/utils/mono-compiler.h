@@ -206,7 +206,7 @@
 
 #endif /* _MSC_VER */
 
-#if !defined(_MSC_VER) && !defined(PLATFORM_SOLARIS) && !defined(_WIN32) && !defined(__CYGWIN__) && HAVE_VISIBILITY_HIDDEN
+#if !defined(_MSC_VER) && !defined(PLATFORM_SOLARIS) && !defined(_WIN32) && !defined(__CYGWIN__) && !defined(MONOTOUCH) && HAVE_VISIBILITY_HIDDEN
 #define MONO_INTERNAL __attribute__ ((visibility ("hidden")))
 #if MONO_LLVM_LOADED
 #define MONO_LLVM_INTERNAL 
@@ -222,6 +222,12 @@
 #define MONO_DEPRECATED __attribute__ ((deprecated))
 #else
 #define MONO_DEPRECATED 
+#endif
+
+#ifdef __GNUC__
+#define MONO_ALWAYS_INLINE __attribute__((always_inline))
+#else
+#define MONO_ALWAYS_INLINE
 #endif
 
 #endif /* __UTILS_MONO_COMPILER_H__*/

@@ -40,7 +40,7 @@ public class Y {
 
 	const EX myconst = EX.a;
 
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

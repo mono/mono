@@ -354,6 +354,7 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void Assembly_NoPermissionRequestEvidence ()
 		{
 			// PermissionRequestEvidence is only used druing policy resolution

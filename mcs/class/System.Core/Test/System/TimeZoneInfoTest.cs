@@ -384,6 +384,15 @@ namespace MonoTests.System
 				Assert.AreEqual (utc, back);
 		
 			}
+
+			[Test]
+			public void ConvertToTimeZone ()
+			{
+				if (Environment.OSVersion.Platform != PlatformID.Unix)
+					return;
+
+				TimeZoneInfo.ConvertTime (DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Pacific/Auckland"));
+			}
 		}
 		
 		[TestFixture]

@@ -57,6 +57,7 @@ namespace System.Linq.Expressions {
 			this.if_false = if_false;
 		}
 
+#if !FULL_AOT_RUNTIME
 		internal override void Emit (EmitContext ec)
 		{
 			var ig = ec.ig;
@@ -74,5 +75,6 @@ namespace System.Linq.Expressions {
 
 			ig.MarkLabel (end_target);
 		}
+#endif
 	}
 }

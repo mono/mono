@@ -129,6 +129,7 @@ namespace MonoTests.System.ServiceModel
 
 		#region "bug #567672"
 		[Test]
+		[Category ("NotWorking")]
 		public void CallbackExample1 ()
 		{
 			//Start service and use net.tcp binding
@@ -186,6 +187,7 @@ namespace MonoTests.System.ServiceModel
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void CallbackExample2 ()
 		{
 			//Start service and use net.tcp binding

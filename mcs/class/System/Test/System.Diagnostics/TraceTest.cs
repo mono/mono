@@ -9,6 +9,8 @@
 // (C) 2003 Martin Willemoes Hansen
 // 
 
+#if !MOBILE
+
 // We want tracing enabled, so...
 #define TRACE
 
@@ -231,3 +233,4 @@ namespace MonoTests.System.Diagnostics {
 	}
 }
 
+#endif

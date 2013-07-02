@@ -967,27 +967,6 @@ COND:   ldloc.0
 		ret
 	}
 
-#if !defined(__ppc__) && !defined(__powerpc__) && !defined(__arm__) && !defined(__sparc__) && !defined(__mips__)
-    	// PPC handles overflow by clipping, but this test assumes
-	// no overflow handling.  According to ECMA the result of
-	// float->int conversion is undefined if overflow occurs, so
-	// both behaviours are valid.
-	.method public static int32 test_0_fconv_to_i () cil managed {
-		.maxstack 16
-
-		ldc.r8 2147483648.0
-		conv.i
-		ldc.i8 2147483648
-		conv.i
-		beq L1
-		ldc.i4.1
-		ret
-	L1:
-		ldc.i4.0
-		ret
-	}
-#endif
-
 	.method public static int32 test_0_get_type_from_handle_on_bblock_boundary () cil managed 
 	{
 		.maxstack 16
@@ -2619,6 +2598,13 @@ END:
 	.method public static default int32 test_1_sizeof_gshared () cil managed {
 	    call   int32 Tests::SizeOfT<int8>()
 		ldc.i4.1
+		ceq
+		ret
+	}
+
+	.method public static default int32 test_1_sizeof_ref () cil managed {
+	    call   int32 Tests::SizeOfT<object>()
+		sizeof [mscorlib]System.IntPtr
 		ceq
 		ret
 	}

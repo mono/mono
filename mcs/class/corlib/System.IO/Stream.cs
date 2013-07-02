@@ -240,7 +240,7 @@ namespace System.IO
 			}
 		}
 
-#if MOONLIGHT || NET_4_0 || MOBILE
+#if NET_4_0
 		public void CopyTo (Stream destination)
 		{
 			CopyTo (destination, 16*1024);

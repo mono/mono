@@ -14,6 +14,8 @@ void*            mono_code_manager_reserve_align (MonoCodeManager *cman, int siz
 void*            mono_code_manager_reserve (MonoCodeManager *cman, int size);
 void             mono_code_manager_commit  (MonoCodeManager *cman, void *data, int size, int newsize);
 int              mono_code_manager_size    (MonoCodeManager *cman, int *used_size);
+void             mono_code_manager_init (void);
+void             mono_code_manager_cleanup (void);
 
 /* find the extra block allocated to resolve branches close to code */
 typedef int    (*MonoCodeManagerFunc)      (void *data, int csize, int size, void *user_data);
@@ -21,12 +23,18 @@ void            mono_code_manager_foreach  (MonoCodeManager *cman, MonoCodeManag
 
 #if defined( __native_client_codegen__ ) && defined( __native_client__ )
 
+#ifdef __arm__
+#define kNaClBundleSize 16
+#else
 #define kNaClBundleSize 32
+#endif
 #define kNaClBundleMask (kNaClBundleSize-1)
 
+#ifndef USE_JUMP_TABLES
 extern __thread unsigned char **patch_source_base;
 extern __thread unsigned char **patch_dest_base;
 extern __thread int patch_current_depth;
+#endif
 
 int              nacl_is_code_address             (void *target);
 void*            nacl_code_manager_get_code_dest  (MonoCodeManager *cman, void *data);

@@ -26,7 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0 || NET_2_1
+#if NET_4_0
 
 using System;
 using System.Text;
@@ -40,23 +40,6 @@ namespace System.Diagnostics.Contracts.Internal
 #endif
 	public static class ContractHelper
 	{
-#if MOONLIGHT
-		const string SystemWindowsBrowser = ", System.Windows.Browser, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e";
-		const string HtmlPage = "System.Windows.Browser.HtmlPage" + SystemWindowsBrowser;
-		const string HtmlWindow = "System.Windows.Browser.HtmlWindow" + SystemWindowsBrowser;
-		static MethodInfo alert;
-		static object window;
-
-		static ContractHelper ()
-		{
-			Type htmlpage = Type.GetType (HtmlPage);
-			MethodInfo get_window = htmlpage.GetMethod ("get_Window", BindingFlags.Static | BindingFlags.Public);
-			window = get_window.Invoke (null, null);
-			Type htmlwindow = Type.GetType (HtmlWindow);
-			alert = htmlwindow.GetMethod ("Alert", BindingFlags.Instance | BindingFlags.Public);
-		}
-#endif
-
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		[DebuggerNonUserCode]
 		public static string RaiseContractFailedEvent (ContractFailureKind failureKind, string userMessage, string conditionText, Exception innerException)
@@ -141,12 +124,6 @@ namespace System.Diagnostics.Contracts.Internal
 			if (displayMessage != null) {
 				msg.Append (displayMessage);
 			}
-#if MOONLIGHT
-			// Silverlight shows a dialog that let you Abort (kill process/browser), Retry or Ignore
-			// Moonlight will simply warn and ignore (at least until FailFast is implemented)
-			// using reflection into System.Windows.Browser to popup an browser alert
-			alert.Invoke (window, new object [] { msg.ToString () });
-#else
 			if (Environment.UserInteractive) {
 				// FIXME: This should trigger an assertion.
 				// But code will never get here at the moment, as Environment.UserInteractive currently
@@ -156,7 +133,6 @@ namespace System.Diagnostics.Contracts.Internal
 				// Note that FailFast() currently throws a NotImplementedException()
 				Environment.FailFast(msg.ToString()/*, new ExecutionEngineException()*/);
 			}
-#endif
 		}
 
 	}

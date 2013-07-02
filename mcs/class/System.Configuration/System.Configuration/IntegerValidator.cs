@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
+//	Andres G. Aragoneses ( andres@7digital.com )
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,7 +27,6 @@
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 using System;
 using System.IO;
 
@@ -35,13 +35,15 @@ namespace System.Configuration {
 	{
 		bool rangeIsExclusive;
 		int minValue;
-		int maxValue;
+		int maxValue = int.MaxValue;
 		int resolution;
 
 		public IntegerValidator (int minValue, int maxValue, bool rangeIsExclusive, int resolution)
 		{
-			this.minValue = minValue;
-			this.maxValue = maxValue;
+			if (minValue != default (int))
+				this.minValue = minValue;
+			if (maxValue != default (int))
+				this.maxValue = maxValue;
 			this.rangeIsExclusive = rangeIsExclusive;
 			this.resolution = resolution;
 		}
@@ -78,4 +80,3 @@ namespace System.Configuration {
 	}
 }
 
-#endif

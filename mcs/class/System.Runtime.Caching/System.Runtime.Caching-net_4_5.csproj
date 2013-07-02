@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{8645A982-AA1E-48CB-B996-7FCC4F8703CE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>./../../class/lib/net_4_5</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\System.Runtime.Caching-net_4_5</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>System.Runtime.Caching</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
@@ -28,60 +27,61 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="..\..\build\common\Consts.cs" />
-   <Compile Include="..\..\build\common\Locale.cs" />
-   <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-   <Compile Include="..\System.Web\System.Web.Configuration_2.0\NullableStringValidator.cs" />
-   <Compile Include="Assembly\AssemblyInfo.cs" />
-   <Compile Include="System.Runtime.Caching\CacheEntryChangeMonitor.cs" />
-   <Compile Include="System.Runtime.Caching\CacheEntryRemovedArguments.cs" />
-   <Compile Include="System.Runtime.Caching\CacheEntryRemovedCallback.cs" />
-   <Compile Include="System.Runtime.Caching\CacheEntryRemovedReason.cs" />
-   <Compile Include="System.Runtime.Caching\CacheEntryUpdateArguments.cs" />
-   <Compile Include="System.Runtime.Caching\CacheEntryUpdateCallback.cs" />
-   <Compile Include="System.Runtime.Caching\CacheItem.cs" />
-   <Compile Include="System.Runtime.Caching\CacheItemPolicy.cs" />
-   <Compile Include="System.Runtime.Caching\CacheItemPriority.cs" />
-   <Compile Include="System.Runtime.Caching\ChangeMonitor.cs" />
-   <Compile Include="System.Runtime.Caching\DefaultCacheCapabilities.cs" />
-   <Compile Include="System.Runtime.Caching\FileChangeMonitor.cs" />
-   <Compile Include="System.Runtime.Caching\FileChangeNotificationSystem.cs" />
-   <Compile Include="System.Runtime.Caching\FileChangeNotificationSystemEntry.cs" />
-   <Compile Include="System.Runtime.Caching\Helpers.cs" />
-   <Compile Include="System.Runtime.Caching\HostFileChangeMonitor.cs" />
-   <Compile Include="System.Runtime.Caching\MemoryCache.cs" />
-   <Compile Include="System.Runtime.Caching\MemoryCacheContainer.cs" />
-   <Compile Include="System.Runtime.Caching\MemoryCacheEntry.cs" />
-   <Compile Include="System.Runtime.Caching\MemoryCacheEntryChangeMonitor.cs" />
-   <Compile Include="System.Runtime.Caching\MemoryCacheLRU.cs" />
-   <Compile Include="System.Runtime.Caching\MemoryCachePerformanceCounters.cs" />
-   <Compile Include="System.Runtime.Caching\MemoryCacheEntryPriorityQueue.cs" />
-   <Compile Include="System.Runtime.Caching\ObjectCache.cs" />
-   <Compile Include="System.Runtime.Caching\OnChangedCallback.cs" />
-   <Compile Include="System.Runtime.Caching\SqlChangeMonitor.cs" />
-   <Compile Include="System.Runtime.Caching.Configuration\CachingSectionGroup.cs" />
-   <Compile Include="System.Runtime.Caching.Configuration\MemoryCacheSection.cs" />
-   <Compile Include="System.Runtime.Caching.Configuration\MemoryCacheSettingsCollection.cs" />
-   <Compile Include="System.Runtime.Caching.Configuration\MemoryCacheElement.cs" />
-   <Compile Include="System.Runtime.Caching.Hosting\IApplicationIdentifier.cs" />
-   <Compile Include="System.Runtime.Caching.Hosting\IFileChangeNotificationSystem.cs" />
-   <Compile Include="System.Runtime.Caching.Hosting\IMemoryCacheManager.cs" />
-
-  </ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\..\build\common\Locale.cs" />
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="..\System.Web\System.Web.Configuration_2.0\NullableStringValidator.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="System.Runtime.Caching.Configuration\CachingSectionGroup.cs" />
+    <Compile Include="System.Runtime.Caching.Configuration\MemoryCacheElement.cs" />
+    <Compile Include="System.Runtime.Caching.Configuration\MemoryCacheSection.cs" />
+    <Compile Include="System.Runtime.Caching.Configuration\MemoryCacheSettingsCollection.cs" />
+    <Compile Include="System.Runtime.Caching.Hosting\IApplicationIdentifier.cs" />
+    <Compile Include="System.Runtime.Caching.Hosting\IFileChangeNotificationSystem.cs" />
+    <Compile Include="System.Runtime.Caching.Hosting\IMemoryCacheManager.cs" />
+    <Compile Include="System.Runtime.Caching\CacheEntryChangeMonitor.cs" />
+    <Compile Include="System.Runtime.Caching\CacheEntryRemovedArguments.cs" />
+    <Compile Include="System.Runtime.Caching\CacheEntryRemovedCallback.cs" />
+    <Compile Include="System.Runtime.Caching\CacheEntryRemovedReason.cs" />
+    <Compile Include="System.Runtime.Caching\CacheEntryUpdateArguments.cs" />
+    <Compile Include="System.Runtime.Caching\CacheEntryUpdateCallback.cs" />
+    <Compile Include="System.Runtime.Caching\CacheItem.cs" />
+    <Compile Include="System.Runtime.Caching\CacheItemPolicy.cs" />
+    <Compile Include="System.Runtime.Caching\CacheItemPriority.cs" />
+    <Compile Include="System.Runtime.Caching\ChangeMonitor.cs" />
+    <Compile Include="System.Runtime.Caching\DefaultCacheCapabilities.cs" />
+    <Compile Include="System.Runtime.Caching\FileChangeMonitor.cs" />
+    <Compile Include="System.Runtime.Caching\FileChangeNotificationSystem.cs" />
+    <Compile Include="System.Runtime.Caching\FileChangeNotificationSystemEntry.cs" />
+    <Compile Include="System.Runtime.Caching\Helpers.cs" />
+    <Compile Include="System.Runtime.Caching\HostFileChangeMonitor.cs" />
+    <Compile Include="System.Runtime.Caching\MemoryCache.cs" />
+    <Compile Include="System.Runtime.Caching\MemoryCacheContainer.cs" />
+    <Compile Include="System.Runtime.Caching\MemoryCacheEntry.cs" />
+    <Compile Include="System.Runtime.Caching\MemoryCacheEntryChangeMonitor.cs" />
+    <Compile Include="System.Runtime.Caching\MemoryCacheEntryPriorityQueue.cs" />
+    <Compile Include="System.Runtime.Caching\MemoryCacheLRU.cs" />
+    <Compile Include="System.Runtime.Caching\MemoryCachePerformanceCounters.cs" />
+    <Compile Include="System.Runtime.Caching\ObjectCache.cs" />
+    <Compile Include="System.Runtime.Caching\OnChangedCallback.cs" />
+    <Compile Include="System.Runtime.Caching\SqlChangeMonitor.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -90,34 +90,36 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Configuration.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Core.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Core.dll</HintPath>
-    </Reference>
-
+    <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
+      <Project>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</Project>
+      <Name>corlib\corlib-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_5-2.csproj">
+      <Project>{34966210-D64D-419C-94A4-9A6093CE5882}</Project>
+      <Name>System\System-net_4_5-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Data\System.Data-net_4_5.csproj">
+      <Project>{5CAB0F19-4A6F-4B4B-96DA-5677F88E2EF6}</Project>
+      <Name>System.Data\System.Data-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Configuration\System.Configuration-net_4_5.csproj">
+      <Project>{847BF7E9-DEFB-43C9-8410-CA775ADC0E8A}</Project>
+      <Name>System.Configuration\System.Configuration-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
+      <Project>{E77D8877-AEAD-4FDF-8A44-36AAA0B20653}</Project>
+      <Name>System.Core\System.Core-net_4_5</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
-

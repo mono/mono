@@ -27,8 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -392,7 +390,7 @@ namespace Microsoft.Build.BuildEngine {
 		internal string GetKeyForTarget (string target_name, bool include_global_properties)
 		{
 			// target name is case insensitive
-			return fullFileName + ":" + target_name.ToLower () +
+			return fullFileName + ":" + target_name.ToLowerInvariant () +
 					(include_global_properties ? (":" + GlobalPropertiesToString (GlobalProperties))
 					 			   : String.Empty);
 		}
@@ -1560,7 +1558,7 @@ namespace Microsoft.Build.BuildEngine {
 				return xmlDocument != null && xmlDocument.DocumentElement.HasAttribute ("ToolsVersion");
 			}
 		}
-		
+
 		public string ToolsVersion {
 			get; internal set;
 		}
@@ -1569,6 +1567,11 @@ namespace Microsoft.Build.BuildEngine {
 			get { return last_item_group_containing; }
 		}
 		
+		internal ProjectLoadSettings ProjectLoadSettings {
+			get { return project_load_settings; }
+			set { project_load_settings = value; }
+		}
+
 		internal static XmlNamespaceManager XmlNamespaceManager {
 			get {
 				if (manager == null) {
@@ -1609,5 +1612,3 @@ namespace Microsoft.Build.BuildEngine {
 
 	}
 }
-
-#endif

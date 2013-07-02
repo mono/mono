@@ -616,7 +616,7 @@ namespace System.IO
 			throw new NotSupportedException (Locale.GetText ("File encryption isn't supported on any file system."));
 		}
 
-#if MOONLIGHT || NET_4_0 || MOBILE
+#if NET_4_0
 		public static IEnumerable<string> ReadLines (string path)
 		{
 			return ReadLines (File.OpenText (path));

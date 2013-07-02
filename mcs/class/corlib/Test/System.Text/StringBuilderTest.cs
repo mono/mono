@@ -535,7 +535,7 @@ namespace MonoTests.System.Text {
 	}
 
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 	[Test]
 	public void ClearMethod () {
 		StringBuilder sb = new StringBuilder ("Text");

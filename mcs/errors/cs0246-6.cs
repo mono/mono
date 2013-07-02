@@ -1,4 +1,4 @@
-// CS0246: The type or namespace name `XmlDocument' could not be found. Are you missing `System.Xml' using directive?
+// CS0246: The type or namespace name `XmlDocument' could not be found. Consider using fully qualified name `System.Xml.XmlDocument'
 // Line: 6
 
 using System;

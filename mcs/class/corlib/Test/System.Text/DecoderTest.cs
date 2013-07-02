@@ -98,5 +98,22 @@ namespace MonoTests.System.Text
 			}
 		}
 #endif
+
+		[Test]
+		public void Bug10789 ()
+		{
+			byte[] bytes = new byte[100];
+			char[] chars = new char[100];  
+
+			Decoder conv = Encoding.UTF8.GetDecoder ();
+			int charsUsed, bytesUsed;
+			bool completed;
+			
+			conv.Convert (bytes, 0, 0, chars, 100, 0, false, out bytesUsed, out charsUsed, out completed);
+
+			Assert.IsTrue (completed, "#1");
+			Assert.AreEqual (0, charsUsed, "#2");
+			Assert.AreEqual (0, bytesUsed, "#3");
+		}
 	}
 }

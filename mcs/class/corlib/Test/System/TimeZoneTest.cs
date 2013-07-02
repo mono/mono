@@ -21,23 +21,6 @@ namespace MonoTests.System {
 [TestFixture]
 public class TimeZoneTest {
 
-	private CultureInfo oldcult;
-
-	public TimeZoneTest() {}
-
-	[SetUp]
-	protected void SetUp ()
-	{
-		oldcult = Thread.CurrentThread.CurrentCulture;
-		Thread.CurrentThread.CurrentCulture = new CultureInfo ("");
-	}
-
-	[TearDown]
-	protected void TearDown ()
-	{
-		Thread.CurrentThread.CurrentCulture = oldcult;
-	}
-
 	private void CET (TimeZone t1) 
 	{
 		Assert.AreEqual("CET", t1.StandardName, "A01");
@@ -140,6 +123,7 @@ public class TimeZoneTest {
 	}
 
 	[Test]
+	[Culture ("")]
 	public void TestCtors ()
 	{
 		TimeZone t1 = TimeZone.CurrentTimeZone;
@@ -266,6 +250,50 @@ public class TimeZoneTest {
 		Assert.IsTrue (tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (0, 59, 0))) < tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (1, 0, 0))), "0:3:59 < 0:4:00");
 		Assert.IsTrue (tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (1, 0, 0))) < tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (1, 1, 0))), "0:4:00 < 0:4:01");
 	}
-}
 
+		[Test]
+		public void StaticProperties ()
+		{
+			Assert.IsNotNull (TimeZoneInfo.Local, "Local");
+			Assert.IsNotNull (TimeZoneInfo.Utc, "Utc");
+		}
+		
+		[Test]
+		public void FindSystemTimeZoneById ()
+		{
+			TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById ("Canada/Eastern");
+			Assert.AreEqual ("EDT", tzi.DaylightName, "DaylightName");
+			Assert.AreEqual ("EST", tzi.StandardName, "StandardName");
+			Assert.IsTrue (tzi.SupportsDaylightSavingTime, "SupportsDaylightSavingTime");
+		}
+
+#if MOBILE
+		// On device we cannot read the OS file system to look for /etc/localtime
+		// and /usr/share/zoneinfo - so we must initialize the BCL TimeZoneInfo
+		// from NSTimeZoneInfo. The tests here check the code paths between the
+		// two types - if they break then TimeZoneInfo work work at all
+		// ref: http://bugzilla.xamarin.com/show_bug.cgi?id=1790
+		
+		bool incomplete_data_on_simulator_only_bug;
+
+		[Test]
+		public void GetSystemTimeZones ()
+		{
+			// if test is executed a second time then it report less than 400 (about 127) items available
+			if (incomplete_data_on_simulator_only_bug)
+				Assert.Ignore ("known to fail on some iOS simulator versions - see source comments");
+			
+			try {
+				Assert.That (TimeZoneInfo.GetSystemTimeZones ().Count, Is.GreaterThan (400), "GetSystemTimeZones");
+			} catch (NullReferenceException) {
+				// that's a weird one. It failed on iOS 5.1 *beta* simulator (on Lion) but it worked on *final*
+				// now it fails on Snow Leopard the same way (incomplete data) with iOS5 simulator (OS update ?)
+				// but it *never*ever* failed on devices
+				incomplete_data_on_simulator_only_bug = true;
+				if (MonoTouch.ObjCRuntime.Runtime.Arch == MonoTouch.ObjCRuntime.Arch.SIMULATOR)
+					Assert.Ignore ("known to fail on some iOS simulator versions - see source comments");
+			}
+		}
+#endif
+	}
 }

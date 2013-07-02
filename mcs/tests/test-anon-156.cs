@@ -14,7 +14,7 @@ class C
 		df = delegate { foo (g.def ()); };
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		cf<int> ();
 		df ();

@@ -37,7 +37,7 @@ class B : A
 
 class Program
 {
-	static int Main()
+	public static int Main()
 	{
 		var b = new B ();
 		if (b.Foo (3).Result != 4)

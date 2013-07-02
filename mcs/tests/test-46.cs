@@ -17,7 +17,7 @@ class X {
 	static double cast_double (object o) { return (double) o; }
 	static bool cast_bool (object o) { return (bool) o; }
 
-	static int Main ()
+	public static int Main ()
 	{
 		if (cast_int ((object) -1) != -1)
 			return 1;

@@ -19,6 +19,6 @@ public class MyClass<T> where T: IExtended, new()
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

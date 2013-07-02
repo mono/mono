@@ -966,11 +966,7 @@ namespace Mono.Xml
 			}
 		}
 
-#if MOONLIGHT
-		internal
-#else
 		public
-#endif
 		override bool ReadAttributeValue ()
 		{
 			if (consumedAttribute)
@@ -988,11 +984,7 @@ namespace Mono.Xml
 				return reader.ReadAttributeValue ();
 		}
 
-#if MOONLIGHT
-		internal
-#else
 		public
-#endif
 		override void ResolveEntity ()
 		{
 			reader.ResolveEntity ();
@@ -1031,11 +1023,7 @@ namespace Mono.Xml
 			get { return reader.EOF; }
 		}
 
-#if MOONLIGHT
-		internal
-#else
 		public
-#endif
 		override bool HasValue {
 			get {
 				return currentAttribute >= 0 ? true :

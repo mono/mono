@@ -8,7 +8,7 @@ System.Data.Entity.SqlServer.Properties.Resources.SqlServer.resources: ../../../
 	$(RESGEN) "$<" "$@"
 
 
-RESOURCES = ../../../external/entityframework/src/EntityFramework/Resources/System/Data/System.Data.Resources.DbProviderServices.ConceptualSchemaDefinition.csdl \
+RESOURCES = \
 	../../../external/entityframework/src/EntityFramework.SqlServer/Resources/System/Data/SqlClient/System.Data.Resources.SqlClient.SqlProviderServices.ProviderManifest.xml \
 	../../../external/entityframework/src/EntityFramework.SqlServer/Resources/System/Data/SqlClient/System.Data.Resources.SqlClient.SqlProviderServices.StoreSchemaDefinition.ssdl \
 	../../../external/entityframework/src/EntityFramework.SqlServer/Resources/System/Data/SqlClient/System.Data.Resources.SqlClient.SqlProviderServices.StoreSchemaDefinition_Sql8.ssdl \

@@ -41,6 +41,24 @@ namespace MonoTests.System.IO
 			Thread.CurrentThread.CurrentCulture = old_culture;
 		}
 
+		string path;
+		string testfile;
+
+		[TestFixtureSetUp]
+		public void FixtureSetUp ()
+		{
+			path = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
+			testfile = Path.Combine (path, "FileStreamTest.dat");
+			File.WriteAllText (testfile, "1");
+		}
+
+		[TestFixtureTearDown]
+		public void FixtureTearDown ()
+		{
+			if (File.Exists (testfile))
+				File.Delete (testfile);			
+		}
+
 		[Test]
 		public void TestExists ()
 		{
@@ -2586,6 +2604,74 @@ namespace MonoTests.System.IO
 			DeleteFile (fn);
 		}
 
+			void Position (long value)
+		{
+			using (FileStream fs = File.OpenRead (testfile)) {
+				fs.Position = value;
+				Assert.AreEqual (value, fs.Position, "Position");
+				Assert.AreEqual (1, fs.Length, "Length");
+			}
+		}
+		
+		[Test]
+		public void Position_Small ()
+		{
+			Position (Int32.MaxValue);
+		}
+
+		[Test]
+		public void Position_Large ()
+		{
+			// fails if HAVE_LARGE_FILE_SUPPORT is not enabled in device builds
+			Position ((long) Int32.MaxValue + 1);
+		}
+		
+		void Seek (long value)
+		{
+			using (FileStream fs = File.OpenRead (testfile)) {
+				fs.Seek (value, SeekOrigin.Begin);
+				Assert.AreEqual (value, fs.Position, "Position");
+				Assert.AreEqual (1, fs.Length, "Length");
+			}
+		}
+		
+		[Test]
+		public void Seek_Small ()
+		{
+			Seek (Int32.MaxValue);
+		}
+
+		[Test]
+		public void Seek_Large ()
+		{
+			// fails if HAVE_LARGE_FILE_SUPPORT is not enabled in device builds
+			Seek ((long) Int32.MaxValue + 1);
+		}
+		
+		void LockUnlock (long value)
+		{
+			using (FileStream fs = new FileStream (testfile, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite)) {
+				fs.Lock (value - 1, 1);
+				fs.Unlock (value - 1, 1);
+				
+				fs.Lock (0, value);
+				fs.Unlock (0, value);
+			}
+		}
+		
+		[Test]
+		public void Lock_Small ()
+		{
+			LockUnlock ((long) Int32.MaxValue);
+		}
+
+		[Test]
+		public void Lock_Large ()
+		{
+			// note: already worked without HAVE_LARGE_FILE_SUPPORT
+			LockUnlock ((long) Int32.MaxValue + 1);
+		}
+	
 #if NET_2_0
 		[Test]
 		public void ReadWriteAllText ()

@@ -22,6 +22,9 @@
 #  ifdef USE_MACH_SEMA
 #    define TIMESPEC mach_timespec_t
 #    define WAIT_BLOCK(a,b) semaphore_timedwait (*(a), *(b))
+#  elif defined(__native_client__) && defined(USE_NEWLIB)
+#    define TIMESPEC struct timespec
+#    define WAIT_BLOCK(a, b) sem_trywait(a)
 #  elif defined(__OpenBSD__)
 #    define TIMESPEC struct timespec
 #    define WAIT_BLOCK(a) sem_trywait(a)
@@ -112,7 +115,7 @@ mono_sem_wait (MonoSemType *sem, gboolean alertable)
 #ifndef USE_MACH_SEMA
 	while ((res = sem_wait (sem)) == -1 && errno == EINTR)
 #else
-	while ((res = semaphore_wait (*sem)) == -1 && errno == EINTR)
+	while ((res = semaphore_wait (*sem)) == KERN_ABORTED)
 #endif
 	{
 		if (alertable)
@@ -131,9 +134,9 @@ mono_sem_post (MonoSemType *sem)
 #ifndef USE_MACH_SEMA
 	while ((res = sem_post (sem)) == -1 && errno == EINTR);
 #else
-	while ((res = semaphore_signal (*sem)) == -1 && errno == EINTR);
+	res = semaphore_signal (*sem);
 	/* OSX might return > 0 for error */
-	if (res != 0)
+	if (res != KERN_SUCCESS)
 		res = -1;
 #endif
 	return res;

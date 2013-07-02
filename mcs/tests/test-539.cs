@@ -3,7 +3,7 @@ using System;
 
 class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		//switching to a constant fixes the problem
 		double thisIsCausingTheProblem = 5.0;

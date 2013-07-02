@@ -1,8 +1,9 @@
 //
 // HttpListenerRequestTest.cs - Unit tests for System.Net.HttpListenerRequest
 //
-// Author:
+// Authors:
 //	Gert Driesen (drieseng@users.sourceforge.net)
+//	David Straw
 //
 // Copyright (C) 2007 Gert Driesen
 //
@@ -171,6 +172,19 @@ namespace MonoTests.System.Net
 			String response = HttpListener2Test.Receive (ns, 512);
 			Assert.IsTrue (response.Contains ("WWW-Authenticate: Basic realm"), "#A");
 			ns.Close ();
+			listener.Close ();
+		}
+
+		[Test]
+		public void HttpRequestUriIsNotDecoded ()
+		{
+			HttpListener listener = HttpListener2Test.CreateAndStartListener (
+				"http://127.0.0.1:9000/RequestUriDecodeTest/");
+			NetworkStream ns = HttpListener2Test.CreateNS (9000);
+			HttpListener2Test.Send (ns, "GET /RequestUriDecodeTest/?a=b&c=d%26e HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n");
+			HttpListenerContext ctx = listener.GetContext ();
+			HttpListenerRequest request = ctx.Request;
+			Assert.AreEqual ("/RequestUriDecodeTest/?a=b&c=d%26e", request.Url.PathAndQuery);
 			listener.Close ();
 		}
 	}

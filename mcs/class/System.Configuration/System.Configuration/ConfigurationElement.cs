@@ -4,6 +4,7 @@
 // Authors:
 //	Duncan Mak (duncan@ximian.com)
 // 	Lluis Sanchez Gual (lluis@novell.com)
+// 	Martin Baulig <martin.baulig@xamarin.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,9 +26,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (c) 2012 Xamarin Inc. (http://www.xamarin.com)
 //
 
-#if NET_2_0
 using System.Collections;
 using System.Xml;
 using System.Reflection;
@@ -94,12 +95,12 @@ namespace System.Configuration
 			}
 		}
 
-		[MonoTODO]
 		protected ContextInformation EvaluationContext {
 			get {
 				if (Configuration != null)
 					return Configuration.EvaluationContext;
-				throw new NotImplementedException ();
+				throw new ConfigurationErrorsException (
+					"This element is not currently associated with any context.");
 			}
 		}
 
@@ -277,15 +278,6 @@ namespace System.Configuration
 			return code;
 		}
 
-		internal virtual bool HasValues ()
-		{
-			foreach (PropertyInformation pi in ElementInformation.Properties)
-				if (pi.ValueOrigin != PropertyValueOrigin.Default)
-					return true;
-			
-			return false;
-		}
-
 		internal virtual bool HasLocalModifications ()
 		{
 			foreach (PropertyInformation pi in ElementInformation.Properties)
@@ -447,6 +439,20 @@ namespace System.Configuration
 
 		protected internal virtual bool IsModified ()
 		{
+			if (modified)
+				return true;
+
+			foreach (PropertyInformation prop in ElementInformation.Properties) {
+				if (!prop.IsElement)
+					continue;
+				var element = prop.Value as ConfigurationElement;
+				if ((element == null) || !element.IsModified ())
+					continue;
+
+				modified = true;
+				break;
+			}
+
 			return modified;
 		}
 		
@@ -463,7 +469,7 @@ namespace System.Configuration
 		protected internal virtual void Reset (ConfigurationElement parentElement)
 		{
 			elementPresent = false;
-			
+
 			if (parentElement != null)
 				ElementInformation.Reset (parentElement.ElementInformation);
 			else
@@ -473,8 +479,14 @@ namespace System.Configuration
 		protected internal virtual void ResetModified ()
 		{
 			modified = false;
-			foreach (PropertyInformation p in ElementInformation.Properties)
+
+			foreach (PropertyInformation p in ElementInformation.Properties) {
 				p.IsModified = false;
+
+				var element = p.Value as ConfigurationElement;
+				if (element != null)
+					element.ResetModified ();
+			}
 		}
 
 		protected internal virtual bool SerializeElement (XmlWriter writer, bool serializeCollectionKey)
@@ -492,13 +504,16 @@ namespace System.Configuration
 			
 			foreach (PropertyInformation prop in ElementInformation.Properties)
 			{
-				if (prop.IsElement || prop.ValueOrigin == PropertyValueOrigin.Default)
+				if (prop.IsElement)
 					continue;
-				
-				if (!object.Equals (prop.Value, prop.DefaultValue)) {
-					writer.WriteAttributeString (prop.Name, prop.GetStringValue ());
-					wroteData = true;
-				}
+
+				if (saveContext == null)
+					throw new InvalidOperationException ();
+				if (!saveContext.HasValue (prop))
+					continue;
+
+				writer.WriteAttributeString (prop.Name, prop.GetStringValue ());
+				wroteData = true;
 			}
 			
 			foreach (PropertyInformation prop in ElementInformation.Properties)
@@ -512,11 +527,13 @@ namespace System.Configuration
 			}
 			return wroteData;
 		}
-				
+
 		protected internal virtual bool SerializeToXmlElement (
 				XmlWriter writer, string elementName)
 		{
-			if (!HasValues ())
+			if (saveContext == null)
+				throw new InvalidOperationException ();
+			if (!saveContext.HasValues ())
 				return false;
 
 			if (elementName != null && elementName != "")
@@ -533,7 +550,10 @@ namespace System.Configuration
 		{
 			if (parent != null && source.GetType() != parent.GetType())
 				throw new ConfigurationErrorsException ("Can't unmerge two elements of different type");
-			
+
+			bool isMinimalOrModified = updateMode == ConfigurationSaveMode.Minimal ||
+				updateMode == ConfigurationSaveMode.Modified;
+
 			foreach (PropertyInformation prop in source.ElementInformation.Properties)
 			{
 				if (prop.ValueOrigin == PropertyValueOrigin.Default)
@@ -542,27 +562,34 @@ namespace System.Configuration
 				PropertyInformation unmergedProp = ElementInformation.Properties [prop.Name];
 				
 				object sourceValue = prop.Value;
-				if 	(parent == null || !parent.HasValue (prop.Name)) {
+				if (parent == null || !parent.HasValue (prop.Name)) {
 					unmergedProp.Value = sourceValue;
 					continue;
 				}
-				else if (sourceValue != null) {
-					object parentValue = parent [prop.Name];
-					if (prop.IsElement) {
-						if (parentValue != null) {
-							ConfigurationElement copy = (ConfigurationElement) unmergedProp.Value;
-							copy.Unmerge ((ConfigurationElement) sourceValue, (ConfigurationElement) parentValue, updateMode);
-						}
-						else
-							unmergedProp.Value = sourceValue;
-					}
-					else {
-						if (!object.Equals (sourceValue, parentValue) || 
-							(updateMode == ConfigurationSaveMode.Full) ||
-							(updateMode == ConfigurationSaveMode.Modified && prop.ValueOrigin == PropertyValueOrigin.SetHere))
-							unmergedProp.Value = sourceValue;
-					}
+
+				if (sourceValue == null)
+					continue;
+
+				object parentValue = parent [prop.Name];
+				if (!prop.IsElement) {
+					if (!object.Equals (sourceValue, parentValue) || 
+					    (updateMode == ConfigurationSaveMode.Full) ||
+					    (updateMode == ConfigurationSaveMode.Modified && prop.ValueOrigin == PropertyValueOrigin.SetHere))
+						unmergedProp.Value = sourceValue;
+					continue;
 				}
+
+				var sourceElement = (ConfigurationElement) sourceValue;
+				if (isMinimalOrModified && !sourceElement.IsModified ())
+					continue;
+				if (parentValue == null) {
+					unmergedProp.Value = sourceValue;
+					continue;
+				}
+
+				var parentElement = (ConfigurationElement) parentValue;
+				ConfigurationElement copy = (ConfigurationElement) unmergedProp.Value;
+				copy.Unmerge (sourceElement, parentElement, updateMode);
 			}
 		}
 		
@@ -593,6 +620,150 @@ namespace System.Configuration
 				throw new ConfigurationErrorsException (
 					String.Format ("Validator does not support type {0}", p.Type));
 			validator.Validate (p.ConvertFromString (value));
+		}
+
+		/*
+		 * FIXME: LAMESPEC
+		 * 
+		 * SerializeElement() and SerializeToXmlElement() need to emit different output
+		 * based on the ConfigurationSaveMode that's being used.  Unfortunately, neither
+		 * of these methods take it as an argument and there seems to be no documented way
+		 * how to get it.
+		 * 
+		 * The parent element is needed because the element could be set to a different
+		 * than the default value in a parent configuration file, then set locally to that
+		 * same value.  This makes the element appear locally modified (so it's included
+		 * with ConfigurationSaveMode.Modified), but it should not be emitted with
+		 * ConfigurationSaveMode.Minimal.
+		 * 
+		 * In theory, we could save it into some private field in Unmerge(), but the
+		 * problem is that Unmerge() is kinda expensive and we also need a way of
+		 * determining whether or not the configuration has changed in Configuration.Save(),
+		 * prior to opening the output file for writing.
+		 * 
+		 * There are two places from where HasValues() is called:
+		 * a) From Configuration.Save() / SaveAs() to check whether the configuration needs
+		 *    to be saved.  This check is done prior to opening the file for writing.
+		 * b) From SerializeToXmlElement() to check whether to emit the element, using the
+		 *    parent and mode values from the cached 'SaveContext'.
+		 * 
+		 */
+
+		/*
+		 * Check whether property 'prop' should be included in the serialized XML
+		 * based on the current ConfigurationSaveMode.
+		 */
+		internal bool HasValue (ConfigurationElement parent, PropertyInformation prop,
+		                        ConfigurationSaveMode mode)
+		{
+			if (prop.ValueOrigin == PropertyValueOrigin.Default)
+				return false;
+			
+			if (mode == ConfigurationSaveMode.Modified &&
+			    prop.ValueOrigin == PropertyValueOrigin.SetHere && prop.IsModified) {
+				// Value has been modified locally, so we always emit it
+				// with ConfigurationSaveMode.Modified.
+				return true;
+			}
+
+			/*
+			 * Ok, now we have to check whether we're different from the inherited
+			 * value - which could either be a value that's set in a parent
+			 * configuration file or the default value.
+			 */
+			
+			var hasParentValue = parent != null && parent.HasValue (prop.Name);
+			var parentOrDefault = hasParentValue ? parent [prop.Name] : prop.DefaultValue;
+
+			if (!prop.IsElement)
+				return !object.Equals (prop.Value, parentOrDefault);
+
+			/*
+			 * Ok, it's an element that has been set in a parent configuration file.			 * 
+			 * Recursively call HasValues() to check whether it's been locally modified.
+			 */
+			var element = (ConfigurationElement) prop.Value;
+			var parentElement = (ConfigurationElement) parentOrDefault;
+			
+			return element.HasValues (parentElement, mode);
+		}
+
+		/*
+		 * Check whether this element should be included in the serialized XML
+		 * based on the current ConfigurationSaveMode.
+		 * 
+		 * The 'parent' value is needed to determine whether the element currently
+		 * has a different value from what's been set in the parent configuration
+		 * hierarchy.
+		 */
+		internal virtual bool HasValues (ConfigurationElement parent, ConfigurationSaveMode mode)
+		{
+			if (mode == ConfigurationSaveMode.Full)
+				return true;
+			if (modified && (mode == ConfigurationSaveMode.Modified))
+				return true;
+			
+			foreach (PropertyInformation prop in ElementInformation.Properties) {
+				if (HasValue (parent, prop, mode))
+					return true;
+			}
+			
+			return false;
+		}
+
+		/*
+		 * Cache the current 'parent' and 'mode' values for later use in SerializeToXmlElement()
+		 * and SerializeElement().
+		 * 
+		 * Make sure to call base when overriding this in a derived class.
+		 */
+		internal virtual void PrepareSave (ConfigurationElement parent, ConfigurationSaveMode mode)
+		{
+			saveContext = new SaveContext (this, parent, mode);
+
+			foreach (PropertyInformation prop in ElementInformation.Properties)
+			{
+				if (!prop.IsElement)
+					continue;
+
+				var elem = (ConfigurationElement)prop.Value;
+				if (parent == null || !parent.HasValue (prop.Name))
+					elem.PrepareSave (null, mode);
+				else {
+					var parentValue = (ConfigurationElement)parent [prop.Name];
+					elem.PrepareSave (parentValue, mode);
+				}
+			}
+		}
+
+		SaveContext saveContext;
+
+		class SaveContext {
+			public readonly ConfigurationElement Element;
+			public readonly ConfigurationElement Parent;
+			public readonly ConfigurationSaveMode Mode;
+
+			public SaveContext (ConfigurationElement element, ConfigurationElement parent,
+			                    ConfigurationSaveMode mode)
+			{
+				this.Element = element;
+				this.Parent = parent;
+				this.Mode = mode;
+			}
+
+			public bool HasValues ()
+			{
+				if (Mode == ConfigurationSaveMode.Full)
+					return true;
+				return Element.HasValues (Parent, Mode);
+			}
+
+			public bool HasValue (PropertyInformation prop)
+			{
+				if (Mode == ConfigurationSaveMode.Full)
+					return true;
+				return Element.HasValue (Parent, prop, Mode);
+			}
 		}
 	}
 	
@@ -677,4 +848,3 @@ namespace System.Configuration
 	}
 }
 
-#endif

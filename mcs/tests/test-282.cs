@@ -35,7 +35,7 @@ class X
 		throw new InvalidOperationException ();
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		integer i = new integer (3);
 		double d = 4.0;

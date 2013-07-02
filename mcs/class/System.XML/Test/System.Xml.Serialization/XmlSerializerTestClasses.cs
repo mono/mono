@@ -1053,5 +1053,55 @@ namespace MonoTests.System.Xml.TestClasses
 		[XmlElementAttribute (DataType = "date")]
 		public DateTime SomeDate;
 	}
+
+	public class Bug8468BaseClass
+	{
+		public string Base;
+	}
+
+	public class Bug8468MidClass: Bug8468BaseClass
+	{
+		public string Mid;
+	}
+
+	[XmlRoot("Test", Namespace="http://test-namespace")]
+	public class Bug8468Subclass: Bug8468MidClass
+	{
+	}
+
+	[XmlRoot("Test")]
+	public class Bug8468SubclassNoNamespace: Bug8468MidClass
+	{
+	}
+
+	[XmlRoot("Test", Namespace="")]
+	public class Bug8468BaseClassV2
+	{
+		public string Base;
+	}
+
+	public class Bug8468MidClassV2: Bug8468BaseClassV2
+	{
+		public string Mid;
+	}
+
+	[XmlRoot("Test", Namespace="http://test-namespace")]
+	public class Bug8468SubclassV2: Bug8468MidClassV2
+	{
+	}
+
+	[XmlRoot("Test")]
+	public class Bug8468SubclassNoNamespaceV2: Bug8468MidClassV2
+	{
+	}
+	
+	[XmlRoot("Test")]
+	public class Bug9193Class
+	{
+		[XmlElement ("Data", Order=0)]
+		public string[] Data;
+		[XmlElement ("Extra", Order=1)]
+		public string[] Extra;
+	}
 }
 

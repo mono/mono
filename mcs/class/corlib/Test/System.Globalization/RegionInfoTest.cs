@@ -61,6 +61,14 @@ namespace MonoTests.System.Globalization
 		}
 		
 		[Test]
+		// This can fail on systems where CultureInfo.CurrentCulture==null
+		[Category ("NotWorking")]
+		public void CurrentRegion ()
+		{
+			Assert.IsNotNull (RegionInfo.CurrentRegion, "CurrentRegion");
+		}
+		
+		[Test]
 		public void HongKong ()
 		{
 			// https://bugzilla.xamarin.com/show_bug.cgi?id=3476

@@ -41,12 +41,10 @@ namespace System.ServiceModel.Channels {
 			Soap11 = new MessageVersion (EnvelopeVersion.Soap11, AddressingVersion.None);
 			Soap12WSAddressing10 = new MessageVersion  (EnvelopeVersion.Soap12, AddressingVersion.WSAddressing10);
 
-#if !MOONLIGHT
 			Soap12 = new MessageVersion (EnvelopeVersion.Soap12, AddressingVersion.None);
 			Soap11WSAddressing10 = new MessageVersion (EnvelopeVersion.Soap11, AddressingVersion.WSAddressing10);
 			Soap11WSAddressingAugust2004 = new MessageVersion (EnvelopeVersion.Soap11, AddressingVersion.WSAddressingAugust2004);
 			Soap12WSAddressingAugust2004 = new MessageVersion (EnvelopeVersion.Soap12, AddressingVersion.WSAddressingAugust2004);
-#endif
 		}
 
 		MessageVersion (EnvelopeVersion envelope, AddressingVersion addressing)
@@ -71,7 +69,6 @@ namespace System.ServiceModel.Channels {
 			if (envelope_version == EnvelopeVersion.Soap12 && addressing_version == AddressingVersion.WSAddressing10)
 				return Soap12WSAddressing10;
 
-#if !MOONLIGHT
 			if (envelope_version == EnvelopeVersion.Soap12 && addressing_version == AddressingVersion.None)
 				return Soap12;
 			if (envelope_version == EnvelopeVersion.Soap11 && addressing_version == AddressingVersion.WSAddressing10)
@@ -80,7 +77,6 @@ namespace System.ServiceModel.Channels {
 				return Soap11WSAddressingAugust2004;
 			if (envelope_version == EnvelopeVersion.Soap12 && addressing_version == AddressingVersion.WSAddressingAugust2004)
 				return Soap12WSAddressingAugust2004;
-#endif
 			throw new ArgumentException (string.Format ("EnvelopeVersion {0} cannot be used with AddressingVersion {1}", envelope_version, addressing_version));
 		}
 
@@ -128,7 +124,6 @@ namespace System.ServiceModel.Channels {
 			get; private set;
 		}
 
-#if !MOONLIGHT
 		public static MessageVersion Soap12 {
 			get; private set;
 		}
@@ -144,6 +139,5 @@ namespace System.ServiceModel.Channels {
 		public static MessageVersion Soap12WSAddressingAugust2004 {
 			get; private set;
 		}
-#endif
 	}
 }

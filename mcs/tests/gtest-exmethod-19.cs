@@ -18,7 +18,7 @@ public class Test
 {
 	delegate string D ();
 
-	static int Main ()
+	public static int Main ()
 	{
 		string s = "jaj";
 

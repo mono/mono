@@ -18,7 +18,7 @@ public class World<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		World<X> world = new World<X> ();
 		world.Test (new X ());

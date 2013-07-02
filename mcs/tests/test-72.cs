@@ -11,7 +11,7 @@ public class outer {
                 }
         }
 	
-	static int Main ()
+	public static int Main ()
 	{
 		// We only test that this compiles.
 		

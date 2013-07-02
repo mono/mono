@@ -115,14 +115,9 @@ namespace Mono.Security.Cryptography
 			this.Initialize();
 		}
 
-		public HMAC(string hashName, byte[] rgbKey)
+		public HMAC (HashAlgorithm ha, byte[] rgbKey)
 		{
-			// Create the hash
-			if (hashName == null || hashName.Length == 0)
-			{
-				hashName = "MD5";
-			}
-			hash = HashAlgorithm.Create(hashName);
+			hash = ha;
 			// Set HashSizeValue
 			HashSizeValue = hash.HashSize;
 

@@ -23,7 +23,7 @@ namespace MonoTests.System.Data {
     [global::System.ComponentModel.ToolboxItem(true)]
     [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedDataSetSchema")]
     [global::System.Xml.Serialization.XmlRootAttribute("DataSet1")]
-    [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.DataSet")]
+//    [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.DataSet")]
     public partial class DataSet1 : global::System.Data.DataSet {
         
         private DataTable1DataTable tableDataTable1;

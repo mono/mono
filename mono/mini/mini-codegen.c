@@ -411,38 +411,22 @@ typedef struct {
 
 #ifndef DISABLE_LOGGING
 
-static const char*
-info_type_to_str (MonoRgctxInfoType type)
-{
-	switch (type) {
-	case MONO_RGCTX_INFO_STATIC_DATA: return "STATIC_DATA";
-	case MONO_RGCTX_INFO_KLASS: return "KLASS";
-	case MONO_RGCTX_INFO_VTABLE: return "VTABLE";
-	case MONO_RGCTX_INFO_TYPE: return "TYPE";
-	case MONO_RGCTX_INFO_REFLECTION_TYPE: return "REFLECTION_TYPE";
-	case MONO_RGCTX_INFO_METHOD: return "METHOD";
-	case MONO_RGCTX_INFO_GENERIC_METHOD_CODE: return "GENERIC_METHOD_CODE";
-	case MONO_RGCTX_INFO_CLASS_FIELD: return "CLASS_FIELD";
-	case MONO_RGCTX_INFO_METHOD_RGCTX: return "METHOD_RGCTX";
-	case MONO_RGCTX_INFO_METHOD_CONTEXT: return "METHOD_CONTEXT";
-	case MONO_RGCTX_INFO_REMOTING_INVOKE_WITH_CHECK: return "REMOTING_INVOKE_WITH_CHECK";
-	case MONO_RGCTX_INFO_METHOD_DELEGATE_CODE: return "METHOD_DELEGATE_CODE";
-	case MONO_RGCTX_INFO_CAST_CACHE: return "CAST_CACHE";
-	default:
-		return "<UNKNOWN RGCTX INFO TYPE>";
-	}
-}
+static const char* const patch_info_str[] = {
+#define PATCH_INFO(a,b) "" #a,
+#include "patch-info.h"
+#undef PATCH_INFO
+};
 
-static void
-print_ji (MonoJumpInfo *ji)
+void
+mono_print_ji (const MonoJumpInfo *ji)
 {
 	switch (ji->type) {
 	case MONO_PATCH_INFO_RGCTX_FETCH: {
 		MonoJumpInfoRgctxEntry *entry = ji->data.rgctx_entry;
 
 		printf ("[RGCTX_FETCH ");
-		print_ji (entry->data);
-		printf (" - %s]", info_type_to_str (entry->info_type));
+		mono_print_ji (entry->data);
+		printf (" - %s]", mono_rgctx_info_type_to_str (entry->info_type));
 		break;
 	}
 	case MONO_PATCH_INFO_METHODCONST: {
@@ -452,7 +436,7 @@ print_ji (MonoJumpInfo *ji)
 		break;
 	}
 	default:
-		printf ("[%d]", ji->type);
+		printf ("[%s]", patch_info_str [ji->type]);
 		break;
 	}
 }
@@ -514,6 +498,7 @@ mono_print_ins_index (int i, MonoInst *ins)
 			printf (" R%d", ((MonoInst*)ins->inst_p0)->dreg);
 			break;
 		case OP_REGOFFSET:
+		case OP_GSHAREDVT_ARG_REGOFFSET:
 			printf (" + 0x%lx", (long)ins->inst_offset);
 			break;
 		default:
@@ -633,7 +618,7 @@ mono_print_ins_index (int i, MonoInst *ins)
 			MonoJumpInfo *ji = (MonoJumpInfo*)call->fptr;
 
 			printf (" ");
-			print_ji (ji);
+			mono_print_ji (ji);
 		} else if (call->fptr) {
 			MonoJitICallInfo *info = mono_find_jit_icall_by_addr (call->fptr);
 			if (info)
@@ -721,6 +706,12 @@ print_regtrack (RegTrack *t, int num)
 	}
 }
 #else
+
+void
+mono_print_ji (const MonoJumpInfo *ji)
+{
+}
+
 void
 mono_print_ins_index (int i, MonoInst *ins)
 {
@@ -830,7 +821,7 @@ get_register_spilling (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, Mo
 
 	g_assert (bank < MONO_NUM_REGBANKS);
 
-	DEBUG (printf ("\tstart regmask to assign R%d: 0x%08" G_GUINT64_FORMAT " (R%d <- R%d R%d R%d)\n", reg, (guint64)regmask, ins->dreg, ins->sreg1, ins->sreg2, ins->sreg3));
+	DEBUG (printf ("\tstart regmask to assign R%d: 0x%08llu (R%d <- R%d R%d R%d)\n", reg, (unsigned long long)regmask, ins->dreg, ins->sreg1, ins->sreg2, ins->sreg3));
 	/* exclude the registers in the current instruction */
 	num_sregs = mono_inst_get_src_registers (ins, sregs);
 	for (i = 0; i < num_sregs; ++i) {
@@ -847,7 +838,7 @@ get_register_spilling (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, Mo
 		DEBUG (printf ("\t\texcluding dreg %s\n", mono_regname_full (ins->dreg, bank)));
 	}
 
-	DEBUG (printf ("\t\tavailable regmask: 0x%08" G_GUINT64_FORMAT "\n", (guint64)regmask));
+	DEBUG (printf ("\t\tavailable regmask: 0x%08llu\n", (unsigned long long)regmask));
 	g_assert (regmask); /* need at least a register we can free */
 	sel = 0;
 	/* we should track prev_use and spill the register that's farther */

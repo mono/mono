@@ -165,17 +165,16 @@ namespace System.Xml.Schema
 		}
 
 
-		internal override void CheckRecursion (int depth, ValidationEventHandler h, XmlSchema schema)
+		internal override void CheckRecursion (Stack stack, ValidationEventHandler h, XmlSchema schema)
 		{
 			if (TargetGroup == null)
 				return;
 
-			if (this.recursionDepth == -1) {
-				recursionDepth = depth;
-				TargetGroup.Particle.CheckRecursion (depth, h, schema);
-				recursionDepth = -2;
-			} else if (depth == recursionDepth)
+			if (stack.Contains (this))
 				throw new XmlSchemaException ("Circular group reference was found.", this, null);
+			stack.Push (this);
+			TargetGroup.Particle.CheckRecursion (stack, h, schema);
+			stack.Pop ();
 		}
 
 		internal override void ValidateUniqueParticleAttribution (XmlSchemaObjectTable qnames, ArrayList nsNames,

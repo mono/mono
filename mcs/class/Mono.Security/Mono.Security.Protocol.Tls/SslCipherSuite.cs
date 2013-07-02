@@ -74,7 +74,7 @@ namespace Mono.Security.Protocol.Tls
 
 		public override byte[] ComputeServerRecordMAC(ContentType contentType, byte[] fragment)
 		{
-			HashAlgorithm	hash	= HashAlgorithm.Create(this.HashAlgorithmName);
+			HashAlgorithm hash = CreateHashAlgorithm ();
 
 			byte[] smac = this.Context.Read.ServerWriteMAC;
 			hash.TransformBlock (smac, 0, smac.Length, smac, 0);
@@ -107,7 +107,7 @@ namespace Mono.Security.Protocol.Tls
 
 		public override byte[] ComputeClientRecordMAC(ContentType contentType, byte[] fragment)
 		{
-			HashAlgorithm	hash	= HashAlgorithm.Create(this.HashAlgorithmName);
+			HashAlgorithm hash = CreateHashAlgorithm ();
 
 			byte[] cmac = this.Context.Current.ClientWriteMAC;
 			hash.TransformBlock (cmac, 0, cmac.Length, cmac, 0);

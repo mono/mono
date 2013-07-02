@@ -1,1 +1,14 @@
 #include net_4_0_System.ServiceModel.dll.sources
+System.ServiceModel/HttpBindingBase.cs
+System.ServiceModel/BasicHttpBinding_4_5.cs
+System.ServiceModel/BasicHttpsBinding.cs
+System.ServiceModel/BasicHttpsSecurity.cs
+System.ServiceModel/NetHttpBinding.cs
+System.ServiceModel/NetHttpMessageEncoding.cs
+System.ServiceModel.Channels/WebSocketTransportSettings.cs
+System.ServiceModel.Channels/WebSocketTransportUsage.cs
+System.ServiceModel.Configuration/BasicHttpBindingElement_4_5.cs
+System.ServiceModel.Configuration/HttpBindingBaseElement.cs
+System.ServiceModel.Configuration/BasicHttpsBindingElement.cs
+System.ServiceModel.Configuration/BasicHttpsSecurityElement.cs
+System.ServiceModel.Configuration/BasicHttpsBindingCollectionElement.cs

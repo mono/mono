@@ -68,10 +68,10 @@ namespace Mono.Security.X509.Extensions {
 	 */
 
 	// TODO: Directories not supported
-#if MOONLIGHT
+#if INSIDE_SYSTEM
 	internal
 #else
-	public 
+	public
 #endif
 	class SubjectAltNameExtension : X509Extension {
 

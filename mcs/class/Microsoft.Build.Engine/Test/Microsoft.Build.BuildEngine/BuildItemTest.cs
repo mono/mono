@@ -95,6 +95,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 		// Parameter "itemInclude" cannot have zero length.
 		[Test]
+		[Category ("NotDotNet")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void TestCtor6 ()
 		{

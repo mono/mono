@@ -115,6 +115,18 @@ namespace Mono.Security.Protocol.Tls
 			}
 		}
 
+		internal HashAlgorithm CreateHashAlgorithm ()
+		{
+			switch (hashAlgorithmType) {
+			case HashAlgorithmType.Md5:
+				return MD5.Create ();
+			case HashAlgorithmType.Sha1:
+				return SHA1.Create ();
+			default:
+				return null;
+			}
+		}
+
 		public HashAlgorithmType HashAlgorithmType
 		{
 			get { return this.hashAlgorithmType; }
@@ -389,10 +401,10 @@ namespace Mono.Security.Protocol.Tls
 			Buffer.BlockCopy(secret, (secret.Length - secretLen), secret2, 0, secretLen);
 
 			// Secret 1 processing
-			byte[] p_md5 = Expand("MD5", secret1, seed, length);
+			byte[] p_md5 = Expand (MD5.Create (), secret1, seed, length);
 
 			// Secret 2 processing
-			byte[] p_sha = Expand("SHA1", secret2, seed, length);
+			byte[] p_sha = Expand (SHA1.Create (), secret2, seed, length);
 
 			// Perfor XOR of both results
 			byte[] masterSecret = new byte[length];
@@ -404,16 +416,16 @@ namespace Mono.Security.Protocol.Tls
 			return masterSecret;
 		}
 		
-		public byte[] Expand(string hashName, byte[] secret, byte[] seed, int length)
+		public byte[] Expand (HashAlgorithm hash, byte[] secret, byte[] seed, int length)
 		{
-			int hashLength	= hashName == "MD5" ? 16 : 20;
+			int hashLength	= hash.HashSize / 8;
 			int	iterations	= (int)(length / hashLength);
 			if ((length % hashLength) > 0)
 			{
 				iterations++;
 			}
 			
-			M.HMAC		hmac	= new M.HMAC(hashName, secret);
+			M.HMAC		hmac	= new M.HMAC (hash, secret);
 			TlsStream	resMacs	= new TlsStream();
 			
 			byte[][] hmacs = new byte[iterations + 1][];
@@ -465,7 +477,8 @@ namespace Mono.Security.Protocol.Tls
 					break;
 
 				case CipherAlgorithmType.Rijndael:
-#if MOONLIGHT
+#if MOBILE || NET_4_0
+					// only AES is really used - and we can use CommonCrypto for iOS and OSX this way
 					this.encryptionAlgorithm = Aes.Create();
 #else
 					this.encryptionAlgorithm = Rijndael.Create();
@@ -502,13 +515,13 @@ namespace Mono.Security.Protocol.Tls
 			if (this.context is ClientContext)
 			{
 				this.clientHMAC = new M.HMAC(
-					this.HashAlgorithmName,
+					CreateHashAlgorithm (),
 					this.context.Negotiating.ClientWriteMAC);
 			}
 			else
 			{
 				this.serverHMAC = new M.HMAC(
-					this.HashAlgorithmName,
+					CreateHashAlgorithm (),
 					this.context.Negotiating.ServerWriteMAC);
 			}
 		}
@@ -535,7 +548,8 @@ namespace Mono.Security.Protocol.Tls
 					break;
 
 				case CipherAlgorithmType.Rijndael:
-#if MOONLIGHT
+#if MOBILE || NET_4_0
+					// only AES is really used - and we can use CommonCrypto for iOS and OSX this way
 					this.decryptionAlgorithm = Aes.Create();
 #else
 					this.decryptionAlgorithm = Rijndael.Create();
@@ -572,13 +586,13 @@ namespace Mono.Security.Protocol.Tls
 			if (this.context is ClientContext)
 			{
 				this.serverHMAC = new M.HMAC(
-					this.HashAlgorithmName,
+					CreateHashAlgorithm (),
 					this.context.Negotiating.ServerWriteMAC);
 			}
 			else
 			{
 				this.clientHMAC = new M.HMAC(
-					this.HashAlgorithmName,
+					CreateHashAlgorithm (),
 					this.context.Negotiating.ClientWriteMAC);
 			}
 		}

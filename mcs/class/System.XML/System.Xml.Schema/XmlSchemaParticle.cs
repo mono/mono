@@ -257,8 +257,7 @@ namespace System.Xml.Schema
 		{
 		}
 
-		// See http://www.thaiopensource.com/relaxng/simplify.html
-		internal virtual void CheckRecursion (int depth, ValidationEventHandler h, XmlSchema schema)
+		internal virtual void CheckRecursion (Stack stack, ValidationEventHandler h, XmlSchema schema)
 		{
 		}
 
@@ -290,7 +289,7 @@ namespace System.Xml.Schema
 				return true;
 			}
 
-			internal override void CheckRecursion (int depth, 
+			internal override void CheckRecursion (Stack stack, 
 				ValidationEventHandler h, XmlSchema schema)
 			{
 				// do nothing

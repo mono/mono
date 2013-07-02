@@ -3,10 +3,10 @@ SUBDIRS =
 include ../../build/rules.make
 
 MDOC_COMMON_FLAGS = \
-	/resource:../monodoc/Resources/mdoc-html-format.xsl,mdoc-html-format.xsl    \
-	/resource:../monodoc/Resources/mdoc-html-utils.xsl,mdoc-html-utils.xsl      \
-	/resource:../monodoc/Resources/mdoc-sections-css.xsl,mdoc-sections-css.xsl  \
-	/resource:../monodoc/Resources/mono-ecma-css.xsl,mono-ecma-css.xsl          \
+	/resource:../../class/monodoc/Resources/mdoc-html-format.xsl,mdoc-html-format.xsl    \
+	/resource:../../class/monodoc/Resources/mdoc-html-utils.xsl,mdoc-html-utils.xsl      \
+	/resource:../../class/monodoc/Resources/mdoc-sections-css.xsl,mdoc-sections-css.xsl  \
+	/resource:../../class/monodoc/Resources/mono-ecma-css.xsl,mono-ecma-css.xsl          \
 	/resource:Resources/defaulttemplate.xsl,defaulttemplate.xsl                 \
 	/resource:Resources/monodoc-ecma.xsd,monodoc-ecma.xsd                       \
 	/resource:Resources/msitomsx.xsl,msitomsx.xsl                               \
@@ -35,9 +35,9 @@ copy-with-deps:
 endif
 
 MONODOC_RESOURCES = \
-	../monodoc/Resources/mdoc-html-utils.xsl    \
-	../monodoc/Resources/mdoc-sections-css.xsl  \
-	../monodoc/Resources/mono-ecma-css.xsl
+	../../class/monodoc/Resources/mdoc-html-utils.xsl    \
+	../../class/monodoc/Resources/mdoc-sections-css.xsl  \
+	../../class/monodoc/Resources/mono-ecma-css.xsl
 
 MDOC_RESOURCES = \
 	Resources/defaulttemplate.xsl     \
@@ -60,6 +60,8 @@ EXTRA_DISTFILES = \
 	$(MDOC_TEST_FILES)
 
 $(PROGRAM) : $(MDOC_RESOURCES) $(MONODOC_RESOURCES) $(PROGRAM_DEPS)
+
+PROGRAM_COMPILE = $(CSCOMPILE) -platform:x86
 
 include ../../build/executable.make
 

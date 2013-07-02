@@ -66,10 +66,6 @@ namespace System.Runtime.Serialization.Json
 			if (IsPrimitiveType (type))
 				return null;
 
-#if MOONLIGHT
-			if (ExternalTypeMap.HasType (type))
-				return new ExternalTypeMap (type);
-#endif
 			return CreateDefaultTypeMap (type);
 		}
 
@@ -174,14 +170,23 @@ namespace System.Runtime.Serialization.Json
 					OnDeserializing = mi;
 				else if (mi.GetCustomAttributes (typeof (OnDeserializedAttribute), false).Length > 0)
 					OnDeserialized = mi;
+				else if (mi.GetCustomAttributes (typeof (OnSerializingAttribute), false).Length > 0)
+					OnSerializing = mi;
+				else if (mi.GetCustomAttributes (typeof (OnSerializedAttribute), false).Length > 0)
+					OnSerialized = mi;
 			}
 		}
 
 		public MethodInfo OnDeserializing { get; set; }
 		public MethodInfo OnDeserialized { get; set; }
+		public MethodInfo OnSerializing { get; set; }
+		public MethodInfo OnSerialized { get; set; }
 
 		public virtual void Serialize (JsonSerializationWriter outputter, object graph, string type)
 		{
+			if (OnSerializing != null)
+				OnSerializing.Invoke (graph, new object [] {new StreamingContext (StreamingContextStates.All)});
+
 			outputter.Writer.WriteAttributeString ("type", type);
 			foreach (TypeMapMember member in members) {
 				object memberObj = member.GetMemberOf (graph);
@@ -190,6 +195,9 @@ namespace System.Runtime.Serialization.Json
 				outputter.WriteObjectContent (memberObj, false, false);
 				outputter.Writer.WriteEndElement ();
 			}
+
+			if (OnSerialized != null)
+				OnSerialized.Invoke (graph, new object [] {new StreamingContext (StreamingContextStates.All)});
 		}
 
 		internal static object CreateInstance (Type type)

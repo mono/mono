@@ -8,7 +8,7 @@ public class Class2
 		}
 	}
 
-	static void Main ()
+	public static void Main ()
 	{ }
 }
 

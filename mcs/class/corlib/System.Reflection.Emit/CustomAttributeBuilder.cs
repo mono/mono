@@ -31,6 +31,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+#if !FULL_AOT_RUNTIME
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -147,7 +148,7 @@ namespace System.Reflection.Emit {
 				throw new ArgumentNullException ("namedFields");
 			if (fieldValues == null)
 				throw new ArgumentNullException ("fieldValues");
-			if (con.GetParameterCount () != constructorArgs.Length)
+			if (con.GetParametersCount () != constructorArgs.Length)
 				throw new ArgumentException ("Parameter count does not match " +
 						"passed in argument value count.");
 			if (namedProperties.Length != propertyValues.Length)
@@ -531,7 +532,9 @@ namespace System.Reflection.Emit {
 			ConstructorBuilder cb = ctor as ConstructorBuilder;
 			if (cb != null)
 				return cb.GetParametersInternal ();
-			return ctor.GetParameters ();
+				
+			return ctor.GetParametersInternal ();
 		}
 	}
 }
+#endif

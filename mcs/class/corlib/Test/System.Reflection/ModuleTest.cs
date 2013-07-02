@@ -10,7 +10,9 @@
 using System;
 using System.Threading;
 using System.Reflection;
+#if !MONOTOUCH
 using System.Reflection.Emit;
+#endif
 using System.Runtime.Serialization;
 using System.IO;
 using System.Collections;
@@ -91,7 +93,7 @@ public class ModuleTest
 	}
 
 	// Some of these tests overlap with the tests for ModuleBuilder
-
+#if !MONOTOUCH
 	[Test]
 	[Category("NotDotNet")] // path length can cause suprious failures
 	public void TestGlobalData () {
@@ -151,6 +153,7 @@ public class ModuleTest
 		Assert.IsNull (m2.GetField ("DATA"), "#B3");
 		Assert.IsNull (m2.GetField ("DATA", BindingFlags.Public), "#B4");
 	}
+#endif
 
 #if NET_2_0
 	[Test]
@@ -327,7 +330,7 @@ public class ModuleTest
 		Module m = typeof (ModuleTest).Module;
 		m.GetObjectData (null, new StreamingContext (StreamingContextStates.All));
 	}
-
+#if !MONOTOUCH
 	[Test]
 	public void GetTypes ()
 	{
@@ -353,7 +356,7 @@ public class ModuleTest
 		Assert.AreEqual (1, types.Count);
 		Assert.AreEqual ("Foo", ((Type)(types [0])).Name);
 	}
-
+#endif
 	class FindTypesTestFirstClass {
 	}
 

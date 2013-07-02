@@ -1,14 +1,5 @@
 Assembly/AssemblyInfo.cs
-System.Runtime.Serialization.Json/DataContractJsonSerializer.cs
-System.Runtime.Serialization.Json/IXmlJsonReaderInitializer.cs
-System.Runtime.Serialization.Json/IXmlJsonWriterInitializer.cs
-System.Runtime.Serialization.Json/JavaScriptReader.cs
-System.Runtime.Serialization.Json/JsonReader.cs
-System.Runtime.Serialization.Json/JsonReaderWriterFactory.cs
-System.Runtime.Serialization.Json/JsonSerializationReader.cs
-System.Runtime.Serialization.Json/JsonSerializationWriter.cs
-System.Runtime.Serialization.Json/JsonWriter.cs
-System.Runtime.Serialization.Json/TypeMap.cs
+Assembly/TypeForwarders.cs
 System.ServiceModel.Channels/WebBodyFormatMessageProperty.cs
 System.ServiceModel.Channels/WebContentFormat.cs
 System.ServiceModel.Channels/WebContentTypeMapper.cs

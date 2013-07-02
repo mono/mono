@@ -28,6 +28,7 @@
 //
 // (C) 2002 Ximian, Inc.
 
+#if !FULL_AOT_RUNTIME
 namespace System.Runtime.InteropServices
 {
 	[Obsolete]
@@ -51,3 +52,4 @@ namespace System.Runtime.InteropServices
 	}
 }
 
+#endif

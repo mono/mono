@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{5CFB60F3-DD25-4621-A530-DE5ACD9FEEDB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618</NoWarn>
-    <OutputPath>.\</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\System.Configuration-tests-net_2_0</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>False</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>System.Configuration_test_net_2_0</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699,618</NoWarn>
@@ -28,56 +27,60 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,618</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="Test\System.Configuration\CallbackValidatorTest.cs" />
-   <Compile Include="Test\System.Configuration\CommaDelimitedStringCollectionConverterTest.cs" />
-   <Compile Include="Test\System.Configuration\CommaDelimitedStringCollectionTest.cs" />
-   <Compile Include="Test\System.Configuration\ConfigurationElementTest.cs" />
-   <Compile Include="Test\System.Configuration\ConfigurationErrorsExceptionTest.cs" />
-   <Compile Include="Test\System.Configuration\ConfigurationLockCollectionTest.cs" />
-   <Compile Include="Test\System.Configuration\ConfigurationPermissionTest.cs" />
-   <Compile Include="Test\System.Configuration\ConfigurationPropertyTest.cs" />
-   <Compile Include="Test\System.Configuration\ConfigurationManagerTest.cs" />
-   <Compile Include="Test\System.Configuration\ConfigurationSectionGroupTest.cs" />
-   <Compile Include="Test\System.Configuration\ConfigurationSectionTest.cs" />
-   <Compile Include="Test\System.Configuration\ConnectionStringSettingsTest.cs" />
-   <Compile Include="Test\System.Configuration\DefaultValidatorTest.cs" />
-   <Compile Include="Test\System.Configuration\ExeConfigurationFileMapTest.cs" />
-   <Compile Include="Test\System.Configuration\GenericEnumConverterTest.cs" />
-   <Compile Include="Test\System.Configuration\InfiniteIntConverterTest.cs" />
-   <Compile Include="Test\System.Configuration\InfiniteTimeSpanConverterTest.cs" />
-   <Compile Include="Test\System.Configuration\IntegerValidatorTest.cs" />
-   <Compile Include="Test\System.Configuration\KeyValueConfigurationCollectionTest.cs" />
-   <Compile Include="Test\System.Configuration\KeyValueConfigurationElementTest.cs" />
-   <Compile Include="Test\System.Configuration\LongValidatorTest.cs" />
-   <Compile Include="Test\System.Configuration\PositiveTimeSpanValidatorTest.cs" />
-   <Compile Include="Test\System.Configuration\RegexStringValidatorTest.cs" />
-   <Compile Include="Test\System.Configuration\StringValidatorTest.cs" />
-   <Compile Include="Test\System.Configuration\SubclassTypeValidatorTest.cs" />
-   <Compile Include="Test\System.Configuration\TimeSpanMinutesConverterTest.cs" />
-   <Compile Include="Test\System.Configuration\TimeSpanMinutesOrInfiniteConverterTest.cs" />
-   <Compile Include="Test\System.Configuration\TimeSpanSecondsConverterTest.cs" />
-   <Compile Include="Test\System.Configuration\TimeSpanSecondsOrInfiniteConverterTest.cs" />
-   <Compile Include="Test\System.Configuration\TimeSpanValidatorTest.cs" />
-   <Compile Include="Test\System.Configuration\TypeNameConverterTest.cs" />
-   <Compile Include="Test\System.Configuration\WhiteSpaceTrimStringConverterTest.cs" />
-   <Compile Include="Test\System.Configuration.Provider\ProviderBaseTest.cs" />
-   <Compile Include="Test\System.Configuration.Provider\ProviderCollectionTest.cs" />
-
-  </ItemGroup>
+    <Compile Include="Test\System.Configuration.Provider\ProviderBaseTest.cs" />
+    <Compile Include="Test\System.Configuration.Provider\ProviderCollectionTest.cs" />
+    <Compile Include="Test\System.Configuration\CallbackValidatorTest.cs" />
+    <Compile Include="Test\System.Configuration\CommaDelimitedStringCollectionConverterTest.cs" />
+    <Compile Include="Test\System.Configuration\CommaDelimitedStringCollectionTest.cs" />
+    <Compile Include="Test\System.Configuration\ConfigurationElementTest.cs" />
+    <Compile Include="Test\System.Configuration\ConfigurationErrorsExceptionTest.cs" />
+    <Compile Include="Test\System.Configuration\ConfigurationLockCollectionTest.cs" />
+    <Compile Include="Test\System.Configuration\ConfigurationManagerTest.cs" />
+    <Compile Include="Test\System.Configuration\ConfigurationPermissionTest.cs" />
+    <Compile Include="Test\System.Configuration\ConfigurationPropertyTest.cs" />
+    <Compile Include="Test\System.Configuration\ConfigurationSaveTest.cs" />
+    <Compile Include="Test\System.Configuration\ConfigurationSectionGroupTest.cs" />
+    <Compile Include="Test\System.Configuration\ConfigurationSectionTest.cs" />
+    <Compile Include="Test\System.Configuration\ConnectionStringSettingsTest.cs" />
+    <Compile Include="Test\System.Configuration\DefaultValidatorTest.cs" />
+    <Compile Include="Test\System.Configuration\ExeConfigurationFileMapTest.cs" />
+    <Compile Include="Test\System.Configuration\GenericEnumConverterTest.cs" />
+    <Compile Include="Test\System.Configuration\InfiniteIntConverterTest.cs" />
+    <Compile Include="Test\System.Configuration\InfiniteTimeSpanConverterTest.cs" />
+    <Compile Include="Test\System.Configuration\IntegerValidatorTest.cs" />
+    <Compile Include="Test\System.Configuration\KeyValueConfigurationCollectionTest.cs" />
+    <Compile Include="Test\System.Configuration\KeyValueConfigurationElementTest.cs" />
+    <Compile Include="Test\System.Configuration\LongValidatorTest.cs" />
+    <Compile Include="Test\System.Configuration\PositiveTimeSpanValidatorTest.cs" />
+    <Compile Include="Test\System.Configuration\RegexStringValidatorTest.cs" />
+    <Compile Include="Test\System.Configuration\StringValidatorTest.cs" />
+    <Compile Include="Test\System.Configuration\SubclassTypeValidatorTest.cs" />
+    <Compile Include="Test\System.Configuration\TimeSpanMinutesConverterTest.cs" />
+    <Compile Include="Test\System.Configuration\TimeSpanMinutesOrInfiniteConverterTest.cs" />
+    <Compile Include="Test\System.Configuration\TimeSpanSecondsConverterTest.cs" />
+    <Compile Include="Test\System.Configuration\TimeSpanSecondsOrInfiniteConverterTest.cs" />
+    <Compile Include="Test\System.Configuration\TimeSpanValidatorTest.cs" />
+    <Compile Include="Test\System.Configuration\TypeNameConverterTest.cs" />
+    <Compile Include="Test\System.Configuration\WhiteSpaceTrimStringConverterTest.cs" />
+    <Compile Include="Test\Util\TestLabel.cs" />
+    <Compile Include="Test\Util\TestUtil.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -86,39 +89,37 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="./../../class/lib/net_2_0/System.Configuration.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../class/lib/net_2_0/System.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Security.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Security.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework" />
-
+    <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
+    <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
+      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Name>corlib\corlib-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Configuration\System.Configuration-net_2_0.csproj">
+      <Project>{725170B0-51F0-46E2-A74D-F764B68553D6}</Project>
+      <Name>System.Configuration\System.Configuration-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_2_0-1.csproj">
+      <Project>{980C299E-664F-4905-B01C-19599BBE78FF}</Project>
+      <Name>System\System-net_2_0-1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_2_0.csproj">
+      <Project>{67A04408-CBEF-4B63-B975-29D827B0DBED}</Project>
+      <Name>System.XML\System.Xml-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Security\System.Security-net_2_0.csproj">
+      <Project>{C596FD9E-2AC3-48E2-9661-F6F40C84F044}</Project>
+      <Name>System.Security\System.Security-net_2_0</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
-

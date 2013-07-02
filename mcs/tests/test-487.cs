@@ -17,7 +17,7 @@ struct X {
 		
 		pass = (n == 2);
 	}
-	static int Main ()
+	public static int Main ()
 	{
 		new X (null);
 		return pass ? 0 : 1;

@@ -16,7 +16,7 @@ class Y {
 
 class X {
 
-	static int Main ()
+	public static int Main ()
 	{
 		if ("Hello" != A.Hello.ToString ())
 			return 1;

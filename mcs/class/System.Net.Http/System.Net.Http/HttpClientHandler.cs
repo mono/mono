@@ -307,9 +307,9 @@ namespace System.Net.Http
 						headers.AddValue (header.Key, value);
 					}
 				}
-				
-				var stream = wrequest.GetRequestStream ();
-				await request.Content.CopyToAsync (stream);
+
+				var stream = await wrequest.GetRequestStreamAsync ().ConfigureAwait (false);
+				await request.Content.CopyToAsync (stream).ConfigureAwait (false);
 			}
 
 			// FIXME: GetResponseAsync does not accept cancellationToken

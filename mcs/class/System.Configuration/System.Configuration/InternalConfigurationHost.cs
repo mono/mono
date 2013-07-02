@@ -26,8 +26,6 @@
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
-
 using System;
 using System.IO;
 using System.Security;
@@ -207,7 +205,7 @@ namespace System.Configuration
 		public virtual Stream OpenStreamForWrite (string streamName, string templateStreamName, ref object writeContext)
 		{
 			string dir = Path.GetDirectoryName (streamName);
-			if (!Directory.Exists (dir))
+			if (!String.IsNullOrEmpty (dir) && !Directory.Exists (dir))
 				Directory.CreateDirectory (dir);
 			return new FileStream (streamName, FileMode.Create, FileAccess.Write);
 		}
@@ -282,6 +280,28 @@ namespace System.Configuration
 		{
 			map = (ExeConfigurationFileMap) hostInitParams [0];
 			level = (ConfigurationUserLevel) hostInitParams [1];
+			CheckFileMap (level, map);
+		}
+
+		static void CheckFileMap (ConfigurationUserLevel level, ExeConfigurationFileMap map)
+		{
+			switch (level) {
+			case ConfigurationUserLevel.None:
+				if (string.IsNullOrEmpty (map.ExeConfigFilename))
+					throw new ArgumentException (
+						"The 'ExeConfigFilename' argument cannot be null.");
+				break;
+			case ConfigurationUserLevel.PerUserRoamingAndLocal:
+				if (string.IsNullOrEmpty (map.LocalUserConfigFilename))
+					throw new ArgumentException (
+						"The 'LocalUserConfigFilename' argument cannot be null.");
+				goto case ConfigurationUserLevel.PerUserRoaming;
+			case ConfigurationUserLevel.PerUserRoaming:
+				if (string.IsNullOrEmpty (map.RoamingUserConfigFilename))
+					throw new ArgumentException (
+						"The 'RoamingUserConfigFilename' argument cannot be null.");
+				goto case ConfigurationUserLevel.None;
+			}
 		}
 		
 		public override string GetStreamName (string configPath)
@@ -312,6 +332,9 @@ namespace System.Configuration
 			if (hostInitConfigurationParams.Length > 1 && 
 			    hostInitConfigurationParams [1] is ConfigurationUserLevel)
 				level = (ConfigurationUserLevel) hostInitConfigurationParams [1];
+
+			CheckFileMap (level, map);
+
 			if (locationSubPath == null)
 				switch (level) {
 				case ConfigurationUserLevel.PerUserRoaming:
@@ -333,7 +356,7 @@ namespace System.Configuration
 
 			if (locationSubPath == "exe" || locationSubPath == null && map.ExeConfigFilename != null) {
 				configPath = "exe";
-				next = "local";
+				next = "machine";
 				locationConfigPath = map.ExeConfigFilename;
 			}
 			
@@ -345,7 +368,7 @@ namespace System.Configuration
 			
 			if (locationSubPath == "roaming" && map.RoamingUserConfigFilename != null) {
 				configPath = "roaming";
-				next = "machine";
+				next = "exe";
 				locationConfigPath = map.RoamingUserConfigFilename;
 			}
 			
@@ -386,4 +409,3 @@ namespace System.Configuration
 	}
 }
 
-#endif

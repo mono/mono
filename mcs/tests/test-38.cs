@@ -70,7 +70,7 @@ class Y {
 
 class Test {
 
-	static int Main ()
+	public static int Main ()
 	{
 		X x = new X ();
 		Y y = new Y ();

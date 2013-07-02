@@ -374,7 +374,7 @@ namespace System.Collections.Generic {
 			//	 Hashtable is automatically increased
 			//	 to the smallest prime number that is larger
 			//	 than twice the current number of Hashtable buckets
-			int newSize = Hashtable.ToPrime ((table.Length << 1) | 1);
+			int newSize = HashPrimeNumbers.ToPrime ((table.Length << 1) | 1);
 
 			// allocate new hash table and link slots array
 			int [] newTable = new int [newSize];

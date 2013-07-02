@@ -30,6 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !FULL_AOT_RUNTIME
 using System;
 using System.Reflection;
 using System.Resources;
@@ -264,13 +265,6 @@ namespace System.Reflection.Emit
 			/* This is obsolete now, as mcs doesn't use SRE any more */
 			if ((access & COMPILER_ACCESS) != 0)
 				throw new NotImplementedException ("COMPILER_ACCESS is no longer supperted, use a newer mcs.");
-
-#if MOONLIGHT
-			// only "Run" is supported by Silverlight
-			// however SMCS requires more than this but runs outside the CoreCLR sandbox
-			if (SecurityManager.SecurityEnabled && (access != AssemblyBuilderAccess.Run))
-				throw new ArgumentException ("access");
-#endif
 
 			if (!Enum.IsDefined (typeof (AssemblyBuilderAccess), access))
 				throw new ArgumentException (string.Format (CultureInfo.InvariantCulture,
@@ -865,7 +859,7 @@ namespace System.Reflection.Emit
 			 */
 			if ((entry_point != null) && entry_point.DeclaringType.Module != mainModule) {
 				Type[] paramTypes;
-				if (entry_point.GetParameters ().Length == 1)
+				if (entry_point.GetParametersCount () == 1)
 					paramTypes = new Type [] { typeof (string) };
 				else
 					paramTypes = Type.EmptyTypes;
@@ -1074,7 +1068,7 @@ namespace System.Reflection.Emit
 			throw new NotImplementedException ();
 		}
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 		public override Type GetType (string name, bool throwOnError, bool ignoreCase)
 		{
 			if (name == null)
@@ -1197,3 +1191,4 @@ namespace System.Reflection.Emit
 #endif
 	}
 }
+#endif

@@ -3,7 +3,7 @@ using System;
 class Foo {
 	static int t_count = 0, f_count = 0;
 
-	static int Main ()
+	public static int Main ()
 	{
 		Console.WriteLine (t && f);
 		if (t_count != 1)

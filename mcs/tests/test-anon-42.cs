@@ -22,7 +22,7 @@ class X
 		simple ();
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		X x = new X ();
 		X.Test (3);

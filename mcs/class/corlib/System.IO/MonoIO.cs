@@ -41,10 +41,10 @@ using System.IO.IsolatedStorage;
 
 namespace System.IO
 {
-	unsafe internal sealed class MonoIO {
-		internal static int FileAlreadyExistsHResult = unchecked ((int) 0x80070000) | (int)MonoIOError.ERROR_FILE_EXISTS;
+	unsafe static class MonoIO {
+		public const int FileAlreadyExistsHResult = unchecked ((int) 0x80070000) | (int)MonoIOError.ERROR_FILE_EXISTS;
 
-		public static readonly FileAttributes
+		public const FileAttributes
 			InvalidFileAttributes = (FileAttributes)(-1);
 
 		public static readonly IntPtr
@@ -85,22 +85,14 @@ namespace System.IO
 			// FIXME: add more exception mappings here
 			case MonoIOError.ERROR_FILE_NOT_FOUND:
 				message = String.Format ("Could not find file \"{0}\"", path);
-#if MOONLIGHT
-				return new IsolatedStorageException (message);
-#else
 				return new FileNotFoundException (message, path);
-#endif
 
 			case MonoIOError.ERROR_TOO_MANY_OPEN_FILES:
 				return new IOException ("Too many open files", unchecked((int)0x80070000) | (int)error);
 				
 			case MonoIOError.ERROR_PATH_NOT_FOUND:
 				message = String.Format ("Could not find a part of the path \"{0}\"", path);
-#if MOONLIGHT
-				return new IsolatedStorageException (message);
-#else
 				return new DirectoryNotFoundException (message);
-#endif
 
 			case MonoIOError.ERROR_ACCESS_DENIED:
 				message = String.Format ("Access to the path \"{0}\" is denied.", path);

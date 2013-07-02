@@ -44,7 +44,7 @@ namespace X
 
 class Y
 {
-	static int Main ()
+	public static int Main ()
 	{
 		if (X.Test.FooWorld () != 8)
 			return 1;

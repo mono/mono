@@ -9,6 +9,9 @@
 using System;
 using System.IO;
 using System.Text;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 using NUnit.Framework;
 
@@ -726,12 +729,10 @@ public class StreamReaderTest
 			Assert.Fail ("Failed to detect UTF16LE encoded string");
 		if (!CheckEncodingDetected(Encoding.BigEndianUnicode))
 			Assert.Fail ("Failed to detect UTF16BE encoded string");
-#if NET_2_0
 		if (!CheckEncodingDetected(Encoding.UTF32))
 			Assert.Fail ("Failed to detect UTF32LE encoded string");
 		if (!CheckEncodingDetected(new UTF32Encoding(true, true)))
 			Assert.Fail ("Failed to detect UTF32BE encoded string");
-#endif
 	}
 
 	// This is a special case, where the StreamReader has less than 4 bytes at 
@@ -772,7 +773,8 @@ public class StreamReaderTest
 		return decodedString == TestString;
 	}
     
-    	[Test] // Bug445326
+    [Test] // Bug445326
+	[Category ("MobileNotWorking")]
 	public void EndOfBufferIsCR ()
 	{
 		using (StreamReader reader = new StreamReader ("Test/resources/Fergie.GED")) {
@@ -809,9 +811,7 @@ public class StreamReaderTest
 	{
 		StreamReader reader = new StreamReader (new MyStream ());
 		int c = reader.Read ();
-#if NET_2_0
 		Assert.IsFalse (reader.EndOfStream);
-#endif
 		string str = reader.ReadToEnd ();
 		Assert.AreEqual ("bc", str);
 	}
@@ -837,6 +837,29 @@ public class StreamReaderTest
 			}
 		}
 	}
+
+#if NET_4_5
+	[Test]
+	public void ReadLineAsync ()
+	{
+		MemoryStream ms = new MemoryStream ();
+		StreamWriter sw = new StreamWriter (ms, Encoding.UTF8);
+		sw.WriteLine ("a");
+		sw.WriteLine ("b");
+		sw.Flush ();
+		ms.Seek (0, SeekOrigin.Begin);
+
+		Func<Task<string>> res = async () => {
+			using (StreamReader reader = new StreamReader (ms)) {
+				return await reader.ReadLineAsync () + await reader.ReadToEndAsync () + await reader.ReadToEndAsync ();
+			}
+		};
+
+		var result = res ();
+		Assert.IsTrue (result.Wait (3000), "#1");
+		Assert.AreEqual ("ab" + Environment.NewLine, result.Result);
+	}
+#endif
 }
 
 class MyStream : Stream {

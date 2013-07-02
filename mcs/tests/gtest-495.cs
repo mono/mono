@@ -7,7 +7,7 @@ class Repro
 			public static T[] Values;
 		}
 	}
-	static void Main ()
+	public static void Main ()
 	{
 		Outer.Inner<string>.Values = new string[0];
 	}

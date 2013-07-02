@@ -48,6 +48,7 @@ namespace System.Linq.Expressions {
 			this.expressions = expressions;
 		}
 
+#if !FULL_AOT_RUNTIME
 		void EmitNewArrayInit (EmitContext ec, Type type)
 		{
 			var size = expressions.Count;
@@ -107,5 +108,6 @@ namespace System.Linq.Expressions {
 				throw new NotSupportedException ();
 			}
 		}
+#endif
 	}
 }

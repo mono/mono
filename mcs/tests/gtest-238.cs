@@ -2,7 +2,7 @@
 // Dependencies: gtest-238-lib.cs
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		Foo<long> foo = new Foo<long> ();
 		if (foo.Test (3) != 1)

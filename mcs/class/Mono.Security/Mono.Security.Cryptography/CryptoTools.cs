@@ -48,13 +48,8 @@ namespace Mono.Security.Cryptography {
 
 		static RandomNumberGenerator Rng {
 			get {
-#if MOONLIGHT
-				if (rng == null)
-					rng = new RNGCryptoServiceProvider ();
-#else
 				if (rng == null)
 					rng = RandomNumberGenerator.Create ();
-#endif
 				return rng;
 			}
 		}

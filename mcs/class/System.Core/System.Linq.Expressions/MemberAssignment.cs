@@ -47,6 +47,7 @@ namespace System.Linq.Expressions {
 			this.expression = expression;
 		}
 
+#if !FULL_AOT_RUNTIME
 		internal override void Emit (EmitContext ec, LocalBuilder local)
 		{
 			this.Member.OnFieldOrProperty (
@@ -71,5 +72,6 @@ namespace System.Linq.Expressions {
 			expression.Emit (ec);
 			ec.EmitCall (setter);
 		}
+#endif
 	}
 }

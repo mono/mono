@@ -23,6 +23,6 @@ public class MyClass: IMyInterface<string>, IMyInterface<int>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

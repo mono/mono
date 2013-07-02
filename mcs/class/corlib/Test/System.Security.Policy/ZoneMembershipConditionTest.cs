@@ -305,6 +305,9 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
+#if MOBILE
+		[ExpectedException (typeof (NotSupportedException))]
+#endif
 		public void FromXml_PolicyLevel ()
 		{
 			ZoneMembershipCondition zmc = new ZoneMembershipCondition (SecurityZone.MyComputer);
@@ -330,6 +333,9 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
+#if MOBILE
+		[ExpectedException (typeof (NotSupportedException))]
+#endif
 		public void ToXml_PolicyLevel ()
 		{
 			ZoneMembershipCondition zmc = new ZoneMembershipCondition (SecurityZone.MyComputer);

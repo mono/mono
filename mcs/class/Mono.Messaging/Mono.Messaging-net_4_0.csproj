@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{7D27EF3B-540A-4BBD-873C-878ABC927401}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>./../../class/lib/net_4_0</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\Mono.Messaging-net_4_0</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>Mono.Messaging</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
@@ -28,50 +27,51 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include=".\Assembly\AssemblyInfo.cs" />
-   <Compile Include="..\..\build\common\Consts.cs" />
-   <Compile Include="..\..\build\common\Locale.cs" />
-   <Compile Include=".\Mono.Messaging\AcknowledgeTypes.cs" />
-   <Compile Include=".\Mono.Messaging\Acknowledgment.cs" />
-   <Compile Include=".\Mono.Messaging\CompletedEventArgs.cs" />
-   <Compile Include=".\Mono.Messaging\CompletedEventHandler.cs" />
-   <Compile Include=".\Mono.Messaging\ConcurrentLinkedQueue.cs" />
-   <Compile Include=".\Mono.Messaging\ConnectionException.cs" />
-   <Compile Include=".\Mono.Messaging\CryptographicProviderType.cs" />
-   <Compile Include=".\Mono.Messaging\EncryptionAlgorithm.cs" />
-   <Compile Include=".\Mono.Messaging\EncryptionRequired.cs" />
-   <Compile Include=".\Mono.Messaging\HashAlgorithm.cs" />
-   <Compile Include=".\Mono.Messaging\IMessagingProvider.cs" />
-   <Compile Include=".\Mono.Messaging\IMessageEnumerator.cs" />
-   <Compile Include=".\Mono.Messaging\IMessageQueueTransaction.cs" />
-   <Compile Include=".\Mono.Messaging\IMessageQueue.cs" />
-   <Compile Include=".\Mono.Messaging\IMessage.cs" />
-   <Compile Include=".\Mono.Messaging\MessageBase.cs" />
-   <Compile Include=".\Mono.Messaging\MessagePriority.cs" />
-   <Compile Include=".\Mono.Messaging\MessageQueueBase.cs" />
-   <Compile Include=".\Mono.Messaging\MessageQueueTransactionStatus.cs" />
-   <Compile Include=".\Mono.Messaging\MessageQueueTransactionType.cs" />
-   <Compile Include=".\Mono.Messaging\MessageType.cs" />
-   <Compile Include=".\Mono.Messaging\MessageUnavailableException.cs" />
-   <Compile Include=".\Mono.Messaging\MessagingProviderLocator.cs" />
-   <Compile Include=".\Mono.Messaging\MonoMessagingException.cs" />
-   <Compile Include=".\Mono.Messaging\QueueReference.cs" />
-
-  </ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\..\build\common\Locale.cs" />
+    <Compile Include=".\Assembly\AssemblyInfo.cs" />
+    <Compile Include=".\Mono.Messaging\AcknowledgeTypes.cs" />
+    <Compile Include=".\Mono.Messaging\Acknowledgment.cs" />
+    <Compile Include=".\Mono.Messaging\CompletedEventArgs.cs" />
+    <Compile Include=".\Mono.Messaging\CompletedEventHandler.cs" />
+    <Compile Include=".\Mono.Messaging\ConcurrentLinkedQueue.cs" />
+    <Compile Include=".\Mono.Messaging\ConnectionException.cs" />
+    <Compile Include=".\Mono.Messaging\CryptographicProviderType.cs" />
+    <Compile Include=".\Mono.Messaging\EncryptionAlgorithm.cs" />
+    <Compile Include=".\Mono.Messaging\EncryptionRequired.cs" />
+    <Compile Include=".\Mono.Messaging\HashAlgorithm.cs" />
+    <Compile Include=".\Mono.Messaging\IMessage.cs" />
+    <Compile Include=".\Mono.Messaging\IMessageEnumerator.cs" />
+    <Compile Include=".\Mono.Messaging\IMessageQueue.cs" />
+    <Compile Include=".\Mono.Messaging\IMessageQueueTransaction.cs" />
+    <Compile Include=".\Mono.Messaging\IMessagingProvider.cs" />
+    <Compile Include=".\Mono.Messaging\MessageBase.cs" />
+    <Compile Include=".\Mono.Messaging\MessagePriority.cs" />
+    <Compile Include=".\Mono.Messaging\MessageQueueBase.cs" />
+    <Compile Include=".\Mono.Messaging\MessageQueueTransactionStatus.cs" />
+    <Compile Include=".\Mono.Messaging\MessageQueueTransactionType.cs" />
+    <Compile Include=".\Mono.Messaging\MessageType.cs" />
+    <Compile Include=".\Mono.Messaging\MessageUnavailableException.cs" />
+    <Compile Include=".\Mono.Messaging\MessagingProviderLocator.cs" />
+    <Compile Include=".\Mono.Messaging\MonoMessagingException.cs" />
+    <Compile Include=".\Mono.Messaging\QueueReference.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -80,26 +80,28 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_0\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Configuration">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Configuration</HintPath>
-    </Reference>
-
+    <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
+      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
+      <Name>corlib\corlib-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_0-2.csproj">
+      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
+      <Name>System\System-net_4_0-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Configuration\System.Configuration-net_4_0.csproj">
+      <Project>{610C7C77-5851-4B95-A3FE-B04E1B011E6A}</Project>
+      <Name>System.Configuration\System.Configuration-net_4_0</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
-

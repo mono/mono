@@ -61,7 +61,7 @@ namespace Mono.Debugger.Soft
 			get {
 				return Location.SourceFile;
 			}
-	    }
+		}
 
 		public int ILOffset {
 			get {
@@ -73,7 +73,13 @@ namespace Mono.Debugger.Soft
 			get {
 				return Location.LineNumber;
 			}
-	    }
+		}
+
+		public int ColumnNumber {
+			get {
+				return Location.ColumnNumber;
+			}
+		}
 
 		public bool IsDebuggerInvoke {
 			get {

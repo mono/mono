@@ -26,7 +26,7 @@ namespace Bar
 	class Program
 	{
 
-		static void Main ()
+		public static void Main ()
 		{
 			Console.WriteLine (Pan (new byte[0]));
 		}

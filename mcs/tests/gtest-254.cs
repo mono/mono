@@ -22,7 +22,7 @@ public class HashedLinkedList<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		HashedLinkedList<int>.Test (5);
 		HashedLinkedList<long> list = new HashedLinkedList<long> ();

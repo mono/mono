@@ -177,8 +177,10 @@ namespace MonoTests.System
 			}
 		}
 
-#if NET_2_0
 		[Test]
+#if MOBILE
+		[Category ("NotWorking")]
+#endif
 		public void AppDomainInitializer1 ()
 		{
 			AppDomainSetup s = new AppDomainSetup ();
@@ -206,13 +208,16 @@ namespace MonoTests.System
 		}
 
 		[Test]
+#if MOBILE
+		[Category ("NotWorking")]
+#else
 		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void AppDomainInitializerNonStaticMethod ()
 		{
 			AppDomainSetup s = new AppDomainSetup ();
 			s.AppDomainInitializer = InstanceInitializer;
 			AppDomain.CreateDomain ("MyDomain", null, s);
 		}
-#endif
 	}
 }

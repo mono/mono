@@ -4,6 +4,7 @@
  *
  * Copyright (c) 2002  Southern Storm Software, Pty Ltd
  * Copyright (c) 2006  Bruno Haible
+ * Copyright (c) 2013  Mikko Korkalo
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the "Software"),
@@ -406,6 +407,9 @@ static void printHeader(void)
 	printf("/*\n * CP%d.cs - %s code page.\n", codePage, name);
 	fputs(COPYRIGHT_MSG, stdout);
 	printf("// Generated from \"%s\".\n\n", filename);
+	printf("// WARNING: Modifying this file directly might be a bad idea.\n");
+	printf("// You should edit the code generator tools/ucm2cp.c instead for your changes\n");
+	printf("// to appear in all relevant classes.\n");
 	printf("namespace I18N.%s\n{\n\n", region);
 	printf("using System;\n");
 	printf("using System.Text;\n");
@@ -599,12 +603,8 @@ static void printConvertSwitch(int forString)
 			printf("\t\t\t\tdefault: ch = 0x3F; break;\n");
 		else {
 			printf("\t\t\t\tdefault:\n");
-			printf("#if NET_2_0\n");
 			printf("\t\t\t\t\tHandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);\n");
-			printf("#else\n");
-			printf("\t\t\t\t\t\tch = 0x3F;\n");
-			printf("#endif\n");
-			printf("\t\t\t\t\tbreak;\n");
+			printf("\t\t\t\t\tcontinue;\n");
 		}
 	}
 	else
@@ -612,17 +612,18 @@ static void printConvertSwitch(int forString)
 		printf("\t\t\t\tdefault:\n");
 		printf("\t\t\t\t{\n");
 		printf("\t\t\t\t\tif(ch >= 0xFF01 && ch <= 0xFF5E)\n");
+		printf("\t\t\t\t\t{\n");
 		printf("\t\t\t\t\t\tch -= 0xFEE0;\n");
+		printf("\t\t\t\t\t}\n");
 		printf("\t\t\t\t\telse\n");
+		printf("\t\t\t\t\t{\n");
 		if(forString) /* this is basically meaningless, just to make diff for unused code minimum */
 			printf("\t\t\t\t\t\tch = 0x3F;\n");
 		else {
-			printf("#if NET_2_0\n");
 			printf("\t\t\t\t\t\tHandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);\n");
-			printf("#else\n");
-			printf("\t\t\t\t\t\tch = 0x3F;\n");
-			printf("#endif\n");
+			printf("\t\t\t\t\t\tcontinue;\n");
 		}
+		printf("\t\t\t\t\t}\n");
 		printf("\t\t\t\t}\n");
 		printf("\t\t\t\tbreak;\n");
 	}
@@ -634,9 +635,58 @@ static void printConvertSwitch(int forString)
  */
 static void printCharToByte(void)
 {
-	/* Print the conversion method for character buffers */
+	printf("\t// Get the number of bytes needed to encode a character buffer.\n");
+	printf("\tpublic unsafe override int GetByteCountImpl (char* chars, int count)\n");
+	printf("\t{\n");
+	printf("\t\tif (this.EncoderFallback != null)");
+	printf("\t\t{\n");
+	printf("\t\t\t//Calculate byte count by actually doing encoding and discarding the data.\n");
+	printf("\t\t\treturn GetBytesImpl(chars, count, null, 0);\n");
+	printf("\t\t}\n");
+	printf("\t\telse\n");
+	printf("\t\t\n");
+	printf("\t\t{\n");
+	printf("\t\t\treturn count;\n");
+	printf("\t\t}\n");
+	printf("\t}\n");
+	printf("\t\n");
+	printf("\t// Get the number of bytes needed to encode a character buffer.\n");
+	printf("\tpublic override int GetByteCount (String s)\n");
+	printf("\t{\n");
+	printf("\t\tif (this.EncoderFallback != null)\n");
+	printf("\t\t{\n");
+	printf("\t\t\t//Calculate byte count by actually doing encoding and discarding the data.\n");
+	printf("\t\t\tunsafe\n");
+	printf("\t\t\t{\n");
+	printf("\t\t\t\tfixed (char *s_ptr = s)\n");
+	printf("\t\t\t\t{\n");
+	printf("\t\t\t\t\treturn GetBytesImpl(s_ptr, s.Length, null, 0);\n");
+	printf("\t\t\t\t}\n");
+	printf("\t\t\t}\n");
+	printf("\t\t}\n");
+	printf("\t\telse\n");
+	printf("\t\t{\n");
+	printf("\t\t\t//byte count equals character count because no EncoderFallback set\n");
+	printf("\t\t\treturn s.Length;\n");
+	printf("\t\t}\n");
+	printf("\t}\n");
+	printf("\t\n");
+	printf("\t//ToBytes is just an alias for GetBytesImpl, but doesn't return byte count\n");
 	printf("\tprotected unsafe override void ToBytes(char* chars, int charCount,\n");
 	printf("\t                                byte* bytes, int byteCount)\n");
+	printf("\t{\n");
+	printf("\t\t//Calling ToBytes with null destination buffer doesn't make any sense\n");
+	printf("\t\tif (bytes == null)\n");
+	printf("\t\t\tthrow new ArgumentNullException(\"bytes\");\n");
+	printf("\t\tGetBytesImpl(chars, charCount, bytes, byteCount);\n");
+	printf("\t}\n");
+	printf("\t\n");
+
+	/* Print the conversion method for character buffers */
+	//printf("\tprotected unsafe override void ToBytes(char* chars, int charCount,\n");
+	//printf("\t                                byte* bytes, int byteCount)\n");
+	printf("\tpublic unsafe override int GetBytesImpl (char* chars, int charCount,\n");
+	printf("\t                                         byte* bytes, int byteCount)\n");
 	printf("\t{\n");
 	printf("\t\tint ch;\n");
 	printf("\t\tint charIndex = 0;\n");
@@ -644,14 +694,19 @@ static void printCharToByte(void)
 	printf("#if NET_2_0\n");
 	printf("\t\tEncoderFallbackBuffer buffer = null;\n");
 	printf("#endif\n");
-	printf("\t\twhile(charCount > 0)\n");
+	printf("\t\twhile (charCount > 0)\n");
 	printf("\t\t{\n");
-	printf("\t\t\tch = (int)(chars[charIndex++]);\n");
+	printf("\t\t\tch = (int)(chars[charIndex]);\n");
+	printf("\t\t\tcharIndex++;\n");
+	printf("\t\t\tcharCount--;\n");
 	printConvertSwitch(0);
-	printf("\t\t\tbytes[byteIndex++] = (byte)ch;\n");
-	printf("\t\t\t--charCount;\n");
-	printf("\t\t\t--byteCount;\n");
+	printf("\t\t\t//Write encoded byte to buffer, if buffer is defined and fallback was not used\n");
+	printf("\t\t\tif (bytes != null)\n");
+	printf("\t\t\t\tbytes[byteIndex] = (byte)ch;\n");
+	printf("\t\t\tbyteIndex++;\n");
+	printf("\t\t\tbyteCount--;\n");
 	printf("\t\t}\n");
+	printf("\t\treturn byteIndex;\n");
 	printf("\t}\n\n");
 
 	/* Print the conversion method for string buffers */

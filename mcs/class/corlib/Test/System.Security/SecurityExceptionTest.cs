@@ -76,14 +76,14 @@ namespace MonoTests.System.Security {
 		public void Constructor_MessageTypeState () 
 		{
 			SecurityException se = new SecurityException ("message", typeof (EnvironmentPermission), "mono");
-#if ! NET_1_0
 			Assert.IsNull (se.GrantedSet, "GrantedSet");
 			Assert.IsNull (se.RefusedSet, "RefusedSet");
-#endif
 			Assert.AreEqual ("mono", se.PermissionState, "PermissionState");
 			Assert.AreEqual (typeof (EnvironmentPermission), se.PermissionType, "PermissionType");
 
+#if !MOBILE
 			Assert.IsTrue ((se.ToString ().IndexOf ("mono") > 0), "ToString().Include(mono)");
+#endif
 			// note: can't check for PermissionType as it's not shown with MS class lib
 		}
 	}

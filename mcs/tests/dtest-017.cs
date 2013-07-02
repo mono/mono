@@ -29,7 +29,7 @@ class DynamicAssignments
 	{
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		dynamic d1 = null;
 		dynamic d2 = null;

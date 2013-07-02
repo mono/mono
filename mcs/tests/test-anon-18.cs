@@ -3,7 +3,7 @@ using System;
 delegate void A ();
 
 class DelegateTest {
-	static void Main (string[] argv)
+	public static void Main (string[] argv)
 	{
 		Console.WriteLine ("Test");
 

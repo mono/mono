@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{2D329C5C-24DA-4D80-B594-C996334758B6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>./../../class/lib/net_4_5</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\Mono.CSharp-net_4_5</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>Mono.CSharp</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
@@ -28,80 +27,81 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="..\..\mcs\anonymous.cs" />
-   <Compile Include="..\..\mcs\argument.cs" />
-   <Compile Include="..\..\mcs\assign.cs" />
-   <Compile Include="..\..\mcs\assembly.cs" />
-   <Compile Include="..\..\mcs\async.cs" />
-   <Compile Include="..\..\mcs\attribute.cs" />
-   <Compile Include="..\..\mcs\cs-tokenizer.cs" />
-   <Compile Include="..\..\mcs\cfold.cs" />
-   <Compile Include="..\..\mcs\class.cs" />
-   <Compile Include="..\..\mcs\codegen.cs" />
-   <Compile Include="..\..\mcs\complete.cs" />
-   <Compile Include="..\..\mcs\const.cs" />
-   <Compile Include="..\..\mcs\constant.cs" />
-   <Compile Include="..\..\mcs\convert.cs" />
-   <Compile Include="..\..\mcs\context.cs" />
-   <Compile Include="..\..\mcs\decl.cs" />
-   <Compile Include="..\..\mcs\delegate.cs" />
-   <Compile Include="..\..\mcs\doc.cs" />
-   <Compile Include="..\..\mcs\driver.cs" />
-   <Compile Include="..\..\mcs\dynamic.cs" />
-   <Compile Include="..\..\mcs\ecore.cs" />
-   <Compile Include="..\..\mcs\enum.cs" />
-   <Compile Include="..\..\mcs\eval.cs" />
-   <Compile Include="..\..\mcs\expression.cs" />
-   <Compile Include="..\..\mcs\field.cs" />
-   <Compile Include="..\..\mcs\flowanalysis.cs" />
-   <Compile Include="..\..\mcs\generic.cs" />
-   <Compile Include="..\..\mcs\import.cs" />
-   <Compile Include="..\..\mcs\iterators.cs" />
-   <Compile Include="..\..\mcs\lambda.cs" />
-   <Compile Include="..\..\mcs\linq.cs" />
-   <Compile Include="..\..\mcs\literal.cs" />
-   <Compile Include="..\..\mcs\location.cs" />
-   <Compile Include="..\..\mcs\membercache.cs" />
-   <Compile Include="..\..\mcs\method.cs" />
-   <Compile Include="..\..\mcs\modifiers.cs" />
-   <Compile Include="..\..\mcs\namespace.cs" />
-   <Compile Include="..\..\mcs\nullable.cs" />
-   <Compile Include="..\..\mcs\parameter.cs" />
-   <Compile Include="..\..\mcs\pending.cs" />
-   <Compile Include="..\..\mcs\property.cs" />
-   <Compile Include="..\..\mcs\reflection.cs" />
-   <Compile Include="..\..\mcs\report.cs" />
-   <Compile Include="..\..\mcs\settings.cs" />
-   <Compile Include="..\..\mcs\module.cs" />
-   <Compile Include="..\..\mcs\statement.cs" />
-   <Compile Include="..\..\mcs\support.cs" />
-   <Compile Include="..\..\mcs\typemanager.cs" />
-   <Compile Include="..\..\mcs\typespec.cs" />
-   <Compile Include="..\..\mcs\visit.cs" />
-   <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs" />
-   <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolTable.cs" />
-   <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\SourceMethodBuilder.cs" />
-   <Compile Include="..\..\class\corlib\Mono.Security.Cryptography\CryptoConvert.cs" />
-   <Compile Include="..\..\build\common\Consts.cs" />
-   <Compile Include="..\..\tools\monop\outline.cs" />
-   <Compile Include="..\..\mcs\cs-parser.cs" />
-   <Compile Include="Assembly\AssemblyInfo.cs" />
-
-  </ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\..\class\corlib\Mono.Security.Cryptography\CryptoConvert.cs" />
+    <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs" />
+    <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolTable.cs" />
+    <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\SourceMethodBuilder.cs" />
+    <Compile Include="..\..\mcs\anonymous.cs" />
+    <Compile Include="..\..\mcs\argument.cs" />
+    <Compile Include="..\..\mcs\assembly.cs" />
+    <Compile Include="..\..\mcs\assign.cs" />
+    <Compile Include="..\..\mcs\async.cs" />
+    <Compile Include="..\..\mcs\attribute.cs" />
+    <Compile Include="..\..\mcs\cfold.cs" />
+    <Compile Include="..\..\mcs\class.cs" />
+    <Compile Include="..\..\mcs\codegen.cs" />
+    <Compile Include="..\..\mcs\complete.cs" />
+    <Compile Include="..\..\mcs\const.cs" />
+    <Compile Include="..\..\mcs\constant.cs" />
+    <Compile Include="..\..\mcs\context.cs" />
+    <Compile Include="..\..\mcs\convert.cs" />
+    <Compile Include="..\..\mcs\cs-parser.cs" />
+    <Compile Include="..\..\mcs\cs-tokenizer.cs" />
+    <Compile Include="..\..\mcs\decl.cs" />
+    <Compile Include="..\..\mcs\delegate.cs" />
+    <Compile Include="..\..\mcs\doc.cs" />
+    <Compile Include="..\..\mcs\driver.cs" />
+    <Compile Include="..\..\mcs\dynamic.cs" />
+    <Compile Include="..\..\mcs\ecore.cs" />
+    <Compile Include="..\..\mcs\enum.cs" />
+    <Compile Include="..\..\mcs\eval.cs" />
+    <Compile Include="..\..\mcs\expression.cs" />
+    <Compile Include="..\..\mcs\field.cs" />
+    <Compile Include="..\..\mcs\flowanalysis.cs" />
+    <Compile Include="..\..\mcs\generic.cs" />
+    <Compile Include="..\..\mcs\import.cs" />
+    <Compile Include="..\..\mcs\iterators.cs" />
+    <Compile Include="..\..\mcs\lambda.cs" />
+    <Compile Include="..\..\mcs\linq.cs" />
+    <Compile Include="..\..\mcs\literal.cs" />
+    <Compile Include="..\..\mcs\location.cs" />
+    <Compile Include="..\..\mcs\membercache.cs" />
+    <Compile Include="..\..\mcs\method.cs" />
+    <Compile Include="..\..\mcs\modifiers.cs" />
+    <Compile Include="..\..\mcs\module.cs" />
+    <Compile Include="..\..\mcs\namespace.cs" />
+    <Compile Include="..\..\mcs\nullable.cs" />
+    <Compile Include="..\..\mcs\parameter.cs" />
+    <Compile Include="..\..\mcs\pending.cs" />
+    <Compile Include="..\..\mcs\property.cs" />
+    <Compile Include="..\..\mcs\reflection.cs" />
+    <Compile Include="..\..\mcs\report.cs" />
+    <Compile Include="..\..\mcs\settings.cs" />
+    <Compile Include="..\..\mcs\statement.cs" />
+    <Compile Include="..\..\mcs\support.cs" />
+    <Compile Include="..\..\mcs\typemanager.cs" />
+    <Compile Include="..\..\mcs\typespec.cs" />
+    <Compile Include="..\..\mcs\visit.cs" />
+    <Compile Include="..\..\tools\monop\outline.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -110,30 +110,32 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Core.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-
+    <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
+      <Project>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</Project>
+      <Name>corlib\corlib-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
+      <Project>{E77D8877-AEAD-4FDF-8A44-36AAA0B20653}</Project>
+      <Name>System.Core\System.Core-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
+      <Project>{6374B2FC-93C6-4FD0-8CF0-8EB12F5AC71D}</Project>
+      <Name>System.XML\System.Xml-net_4_5-1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_5-2.csproj">
+      <Project>{34966210-D64D-419C-94A4-9A6093CE5882}</Project>
+      <Name>System\System-net_4_5-2</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
-

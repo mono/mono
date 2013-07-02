@@ -1236,9 +1236,13 @@ namespace MonoTests.System.ComponentModel
 
 			// Test from bug #76686
 			Assert.AreEqual  (typeof (Int32Converter), TypeDescriptor.GetConverter ((int?) 1).GetType (), "#28");
+#if MOBILE
+			Assert.IsFalse (TypeDescriptor.GetConverter (typeof (Component)) is ComponentConverter, "#29");
+			Assert.IsFalse (TypeDescriptor.GetConverter (new Component()) is ComponentConverter, "#30");
+#else
 			Assert.IsTrue (TypeDescriptor.GetConverter (typeof (Component)) is ComponentConverter, "#29");
 			Assert.IsTrue (TypeDescriptor.GetConverter (new Component()) is ComponentConverter, "#30");
-
+#endif
 			Assert.AreEqual (typeof (NullableConverter), TypeDescriptor.GetConverter (typeof (int?)).GetType (), "#31");
 		}
 		
@@ -1461,6 +1465,10 @@ namespace MonoTests.System.ComponentModel
 		[Test]
 		public void GetProperties_Order ()
 		{
+#if MOBILE
+			// Component.Container will be be linked out (when using Link SDK) if unused
+			Assert.Null (new Component ().Container, "pre-test");
+#endif
 			MyComponent com = new MyComponent (new MyContainer ());
 
 			PropertyDescriptorCollection col = TypeDescriptor.GetProperties (com);

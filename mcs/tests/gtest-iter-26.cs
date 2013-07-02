@@ -10,11 +10,8 @@ namespace Test
 		{
 			var m = typeof (Program).GetMethod ("Test");
 			var attr = m.GetCustomAttribute<IteratorStateMachineAttribute> ();
-			if (attr == null)
+			if (attr != null)
 				return 1;
-
-			if (attr.StateMachineType == null)
-				return 2;
 
 			return 0;
 		}

@@ -395,7 +395,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 22;
+		internal const int MINOR_VERSION = 24;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -519,7 +519,8 @@ namespace Mono.Debugger.Soft
 			GET_INFO = 6,
 			GET_BODY = 7,
 			RESOLVE_TOKEN = 8,
-			GET_CATTRS = 9
+			GET_CATTRS = 9,
+			MAKE_GENERIC_METHOD = 10
 		}
 
 		enum CmdType {
@@ -541,7 +542,8 @@ namespace Mono.Debugger.Soft
 			GET_VALUES_2 = 14,
 			CMD_TYPE_GET_METHODS_BY_NAME_FLAGS = 15,
 			GET_INTERFACES = 16,
-			GET_INTERFACE_MAP = 17
+			GET_INTERFACE_MAP = 17,
+			IS_INITIALIZED = 18
 		}
 
 		enum BindingFlagsExtensions {
@@ -1075,6 +1077,8 @@ namespace Mono.Debugger.Soft
 			TransportSend (buf, 0, buf.Length);
 
 			receiver_thread = new Thread (new ThreadStart (receiver_thread_main));
+			receiver_thread.Name = "SDB Receiver";
+			receiver_thread.IsBackground = true;
 			receiver_thread.Start ();
 
 			Version = VM_GetVersion ();
@@ -1872,6 +1876,11 @@ namespace Mono.Debugger.Soft
 			return ReadCattrs (r);
 		}
 
+		internal long Method_MakeGenericMethod (long id, long[] args) {
+			PacketReader r = SendReceive (CommandSet.METHOD, (int)CmdMethod.MAKE_GENERIC_METHOD, new PacketWriter ().WriteId (id).WriteInt (args.Length).WriteIds (args));
+			return r.ReadId ();
+		}
+
 		/*
 		 * THREAD
 		 */
@@ -2121,6 +2130,11 @@ namespace Mono.Debugger.Soft
 			return res;
 		}
 
+		internal bool Type_IsInitialized (long id) {
+			PacketReader r = SendReceive (CommandSet.TYPE, (int)CmdType.IS_INITIALIZED, new PacketWriter ().WriteId (id));
+			return r.ReadInt () == 1;
+		}
+
 		/*
 		 * EVENTS
 		 */
@@ -2313,6 +2327,8 @@ namespace Mono.Debugger.Soft
 
 		public void ForceDisconnect ()
 		{
+			closed = true;
+			disconnected = true;
 			TransportClose ();
 		}
 	}

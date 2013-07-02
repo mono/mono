@@ -1,6 +1,3 @@
-# hack to prevent 'check' from depending on 'all'
-AUTOMAKE_OPTIONS = cygnus
-
 tmpinst = _tmpinst
 
 noinst_SCRIPTS = mono-wrapper monodis-wrapper
@@ -34,6 +31,9 @@ moon-do-basic-clean:
 	cd $(mcs_topdir)/ && $(MAKE) NO_DIR_CHECK=1 PROFILE=moonlight_raw clean
 endif
 
+if ONLY_MONOTOUCH
+build_profiles = monotouch
+else
 if ONLY_MOONLIGHT
 build_profiles = moonlight_raw
 test_profiles = moonlight_raw
@@ -75,23 +75,22 @@ build_profiles += monodroid
 endif
 
 if INSTALL_MONOTOUCH
-build_profiles += monotouch
-endif
-
-if INSTALL_MOBILE
-build_profiles += mobile
+build_profiles += monotouch monotouch_runtime
 endif
 
 test_profiles = $(build_profiles)
 
 endif
+endif
 
 if BUILD_MCS
+
+MAKE_FLAGS=$(if $(V),,--no-print-directory -s)
 
 # The write check is to foil 'make distcheck'
 all-local: $(SUPPORT_FILES) $(TEST_SUPPORT_FILES)
 	if test -w $(mcs_topdir); then :; else chmod -R +w $(mcs_topdir); fi
-	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(build_profiles)' CC='$(CC)' all-profiles
+	cd $(mcs_topdir) && $(MAKE) $(MAKE_FLAGS) NO_DIR_CHECK=1 PROFILES='$(build_profiles)' CC='$(CC)' all-profiles
 
 # override automake
 install: install-exec install-data
@@ -163,15 +162,22 @@ mcs-compileall: mono-wrapper etc/mono/config
 		if [ ! -f $$i ] ; then \
 			continue ; \
 		fi ;  \
-	    if ./mono-wrapper --compile-all --verify-all --security=validil $$i; then \
+	    if ./mono-wrapper --compile-all --verify-all --security=verifiable $$i; then \
 	      echo $$i verified OK; \
 	    else \
 	      echo $$i verification failed; ok=false; \
 	    fi; done; done; \
 	$$ok
 
+if NACL_CODEGEN
+check-local:
+else
 check-local: mcs-compileall mcs-do-test-profiles
 	$(MAKE) $(test_select) mcs-do-run-test-profiles
+endif
+
+# Compile all mcs tests
+test: mcs-do-test-profiles
 
 CLEANFILES = etc/mono/config
 

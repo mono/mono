@@ -13,7 +13,8 @@ my_inflate (const Byte *compr, uLong compr_len, Byte *uncompr, uLong uncompr_len
 	memset (&stream, 0, sizeof (z_stream));
 	stream.next_in = (Byte *) compr;
 	stream.avail_in = (uInt) compr_len;
-	err = inflateInit (&stream);
+	/* To decompress gzip format: http://stackoverflow.com/a/1838702/83444 */
+	err = inflateInit2 (&stream, 16+MAX_WBITS);
 	if (err != Z_OK)
 		return 1;
 
@@ -66,7 +67,7 @@ void mono_mkbundle_init ()
 		buffer = (Bytef *) malloc (real_size);
 		result = my_inflate ((*ptr)->assembly.data, zsize, buffer, real_size);
 		if (result != 0) {
-			fprintf (stderr, "Error %d decompresing data for %s\n", result, (*ptr)->assembly.name);
+			fprintf (stderr, "mkbundle: Error %d decompressing data for %s\n", result, (*ptr)->assembly.name);
 			exit (1);
 		}
 		(*ptr)->assembly.data = buffer;

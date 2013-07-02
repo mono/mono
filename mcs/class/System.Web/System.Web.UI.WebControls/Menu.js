@@ -1,4 +1,3 @@
-
 function Menu_OverItem (menuId, itemId, parentId) {
 	var menu = getMenu (menuId);
 	if (menu == null)
@@ -177,8 +176,8 @@ function Menu_Resize (subm, menuId, itemId)
 	 */
 	var newWidth = box.offsetWidth;
 	
-	if (bottom > parent.clientHeight /* && parent.scrollHeight > parent.clientHeight*/) {
-		var overflow = bottom - parent.clientHeight;
+	if (bottom > window.innerHeight) {
+		var overflow = bottom - window.innerHeight;
 		var freeTop = subm.offsetTop - parent.scrollTop;
 		if (overflow <= freeTop) {
 			subm.style.top = (subm.offsetTop - overflow) + "px";
@@ -186,7 +185,7 @@ function Menu_Resize (subm, menuId, itemId)
 			box.style.height = subm.initialContentHeight + "px";
 		} else {
 			subm.style.top = (subm.offsetTop - freeTop) + "px";
-			var bh = (parent.clientHeight - subm.offsetTop + parent.scrollTop) - subm.scrollButtonsHeight;
+			var bh = (window.innerHeight - subm.offsetTop + parent.scrollTop) - subm.scrollButtonsHeight;
 			box.style.overflow = "hidden";
 			box.style.height = bh + "px";
 			displayScroll = "block";

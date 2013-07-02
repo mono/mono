@@ -30,7 +30,7 @@ class Y : X {
 }
 
 class Z {
-	static int Main ()
+	public static int Main ()
 	{
 		Y y = new Y ();
 		X x = new X ();

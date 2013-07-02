@@ -4,12 +4,13 @@
 // Authors:
 //	Mark Crichton (crichton@gimp.org)
 //	Andrew Birkett (andy@nobugs.org)
-//	Sebastien Pouliot (sebastien@ximian.com)
+//	Sebastien Pouliot (sebastien@xamarin.com)
 //	Kazuki Oikawa (kazuki@panicode.com)
 //
 // (C) 2002
 // Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2004-2005,2008 Novell, Inc (http://www.novell.com)
+// Copyright 2013 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -86,22 +87,31 @@ namespace System.Security.Cryptography {
 			get { return base.KeySize; }
 			set { base.KeySize = value; }
 		}
-#if false
+
 		public override int FeedbackSize {
 			get { return base.FeedbackSize; }
 			set { base.FeedbackSize = value; }
 		}
 
 		public override CipherMode Mode {
-			get { return base.CipherMode; }
-			set { base.CipherMode = value; }
+			get { return base.Mode; }
+			set {
+				switch (value) {
+				case CipherMode.CBC:
+				case CipherMode.ECB:
+					base.Mode = value;
+					break;
+				default:
+					throw new CryptographicException ("CipherMode is not supported");
+				}
+			}
 		}
 
 		public override PaddingMode Padding {
-			get { return base.PaddingMode; }
-			set { base.PaddingMode = value; }
+			get { return base.Padding; }
+			set { base.Padding = value; }
 		}
-#endif
+
 		public override ICryptoTransform CreateDecryptor () 
 		{
 			return CreateDecryptor (Key, IV);

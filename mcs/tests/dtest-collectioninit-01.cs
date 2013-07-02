@@ -15,7 +15,7 @@ public class Test
 		}
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		var a = new Wrap () {
 			Numbers =  { 3, 9 }

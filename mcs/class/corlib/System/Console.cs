@@ -7,7 +7,7 @@
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 // (C) 2004,2005 Novell, Inc. (http://www.novell.com)
-//
+// Copyright 2013 Xamarin Inc. (http://www.xamarin.com)
 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -39,7 +39,7 @@ using System.Text;
 
 namespace System
 {
-	public static class Console
+	public static partial class Console
 	{
 #if !NET_2_1
 		private class WindowsConsole
@@ -94,7 +94,7 @@ namespace System
 		private static TextWriter stderr;
 		private static TextReader stdin;
 
-#if NET_4_5
+#if NET_4_5 && !MOBILE
 		static TextWriter console_stdout;
 		static TextWriter console_stderr;
 		static TextReader console_stdin;
@@ -158,12 +158,23 @@ namespace System
 				stdin = new CStreamReader (OpenStandardInput (0), inputEncoding);
 			} else {
 #endif
+// FULL_AOT_RUNTIME is used (instead of MONOTOUCH) since we only want this code when running on 
+// iOS (simulator or devices) and *not* when running tools (e.g. btouch #12179) that needs to use 
+// the mscorlib.dll shipped with Xamarin.iOS
+#if FULL_AOT_RUNTIME
+				stdout = new NSLogWriter ();
+#else
 				stdout = new UnexceptionalStreamWriter (OpenStandardOutput (0), outputEncoding);
 				((StreamWriter)stdout).AutoFlush = true;
+#endif
 				stdout = TextWriter.Synchronized (stdout, true);
 
+#if FULL_AOT_RUNTIME
+				stderr = new NSLogWriter ();
+#else
 				stderr = new UnexceptionalStreamWriter (OpenStandardError (0), outputEncoding); 
 				((StreamWriter)stderr).AutoFlush = true;
+#endif
 				stderr = TextWriter.Synchronized (stderr, true);
 
 				stdin = new UnexceptionalStreamReader (OpenStandardInput (0), inputEncoding);
@@ -172,7 +183,7 @@ namespace System
 			}
 #endif
 
-#if NET_4_5
+#if NET_4_5 && !MOBILE
 			console_stderr = stderr;
 			console_stdout = stdout;
 			console_stdin = stdin;
@@ -208,32 +219,8 @@ namespace System
 			}
 		}
 
-#if NET_4_5
-		public static bool IsErrorRedirected {
-			get {
-				return stderr != console_stderr || ConsoleDriver.IsErrorRedirected;
-			}
-		}
-
-		public static bool IsOutputRedirected {
-			get {
-				return stdout != console_stdout || ConsoleDriver.IsOutputRedirected;
-			}
-		}
-
-		public static bool IsInputRedirected {
-			get {
-				return stdin != console_stdin || ConsoleDriver.IsInputRedirected;
-			}
-		}
-#endif
-
 		private static Stream Open (IntPtr handle, FileAccess access, int bufferSize)
 		{
-#if MOONLIGHT
-			if (SecurityManager.SecurityEnabled && !Debugger.IsAttached && Environment.GetEnvironmentVariable ("MOONLIGHT_ENABLE_CONSOLE") == null)
-				return new NullStream ();
-#endif
 			try {
 				return new FileStream (handle, access, false, bufferSize, false, bufferSize == 0);
 			} catch (IOException) {
@@ -685,6 +672,26 @@ namespace System
 			get { return ConsoleDriver.WindowWidth; }
 			set { ConsoleDriver.WindowWidth = value; }
 		}
+
+#if NET_4_5
+		public static bool IsErrorRedirected {
+			get {
+				return stderr != console_stderr || ConsoleDriver.IsErrorRedirected;
+			}
+		}
+
+		public static bool IsOutputRedirected {
+			get {
+				return stdout != console_stdout || ConsoleDriver.IsOutputRedirected;
+			}
+		}
+
+		public static bool IsInputRedirected {
+			get {
+				return stdin != console_stdin || ConsoleDriver.IsInputRedirected;
+			}
+		}
+#endif
 
 		public static void Beep ()
 		{

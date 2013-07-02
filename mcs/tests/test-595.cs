@@ -25,7 +25,7 @@ class Program
 		return dict [name] = value;
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		SetDictionaryValue (null, new SymbolId (), 1);
 	}

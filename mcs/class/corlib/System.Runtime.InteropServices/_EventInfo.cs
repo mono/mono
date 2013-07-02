@@ -13,7 +13,9 @@ namespace System.Runtime.InteropServices
 	[CLSCompliant (false)]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("9DE59C64-D889-35A1-B897-587D74469E5B")]
+#if !FULL_AOT_RUNTIME
 	[TypeLibImportClass (typeof (EventInfo))]
+#endif
 	[ComVisible (true)]
 	public interface _EventInfo
 	{

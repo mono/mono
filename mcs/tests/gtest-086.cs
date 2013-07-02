@@ -22,6 +22,6 @@ public class ArrayList<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

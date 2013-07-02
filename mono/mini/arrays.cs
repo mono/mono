@@ -23,11 +23,18 @@ using System.Reflection;
  * the IL code looks.
  */
 
-class Tests {
+#if MOBILE
+class ArrayTests
+#else
+class Tests
+#endif
+{
 
-	static int Main () {
-		return TestDriver.RunTests (typeof (Tests));
+#if !MOBILE
+	public static int Main (string[] args) {
+		return TestDriver.RunTests (typeof (Tests), args);
 	}
+#endif
 	
 	public static int test_10_create () {
 		int[] a = new int [10];
@@ -101,30 +108,31 @@ class Tests {
 		return 0;
 	}
 
-	private Int32[] m_array = new int [10];
+	class BitClass {
+		private Int32[] m_array = new int [10];
+
+		public void setBit (int bitIndex, bool value) {
+			int index = bitIndex/32;
+			int shift = bitIndex%32;
+
+			Int32 theBit = 1 << shift;
+			if (value)
+				m_array[index] |= theBit;
+			else
+				m_array[index] &= ~theBit;
+		}
 	
-	void setBit (int bitIndex, bool value) {
-		int index = bitIndex/32;
-		int shift = bitIndex%32;
+		public bool getBit (int bitIndex) {
+			int index = bitIndex/32;
+			int shift = bitIndex%32;
 
-		Int32 theBit = 1 << shift;
-		if (value)
-			m_array[index] |= theBit;
-		else
-			m_array[index] &= ~theBit;
-	}
-	
-	bool getBit (int bitIndex) {
-		int index = bitIndex/32;
-		int shift = bitIndex%32;
-
-		Int32 theBit = m_array[index] & (1 << shift);
-		return (theBit == 0) ? false : true;
-
+			Int32 theBit = m_array[index] & (1 << shift);
+			return (theBit == 0) ? false : true;
+		}
 	}
 	
 	public static int test_1_bit_index () {
-		Tests t = new Tests ();
+		var t = new BitClass ();
 		t.setBit (0, true);
 		t.setBit (3, true);
 		if (t.getBit (1))
@@ -452,6 +460,13 @@ class Tests {
 		return test [1, 1, 1];
 	}
 
+	public static int test_100_4_dimensional_arrays () {
+        int[,,,] test = new int[10, 10, 10, 10];
+
+		test [1, 1, 1, 1] = 100;
+		return test [1, 1, 1, 1];
+	}
+
 	public static int test_0_bug_71454 () {
 		int[,] a = new int[4,4];
 		int[,] b = new int[4,4];
@@ -492,10 +507,13 @@ class Tests {
 		return y;
 	}
 
-	public static int test_0_stelem_ref_null_opt () {
-		object[] arr = new Tests [1];
+	class RefClass {
+	}
 
-		arr [0] = new Tests ();
+	public static int test_0_stelem_ref_null_opt () {
+		object[] arr = new RefClass [1];
+
+		arr [0] = new RefClass ();
 		arr [0] = null;
 
 		return arr [0] == null ? 0 : 1;
@@ -727,7 +745,7 @@ class Tests {
 		return 0;
 	}
 
-	public static int long_indices () {
+	public static int test_0_long_indices () {
 		int[] arr = new int [10];
 		int[,] arr2 = new int [10, 10];
 		long index = 1;
@@ -739,6 +757,16 @@ class Tests {
 			return 2;
 		return 0;
 	}
+
+	// #7438
+	public static int test_0_ldelema_2_64bit () {
+        bool[,] test = new bool[201,201];
+        int x,y;
+        for(x=-100;x<100;x++) for(y=-100;y<100;y++){
+            test[x+100,y+100] = true;
+        }
+		return 0;
+	}		
 }
 
 

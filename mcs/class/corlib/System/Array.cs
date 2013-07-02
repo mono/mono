@@ -40,7 +40,9 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.ConstrainedExecution;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 
 namespace System
 {
@@ -48,7 +50,7 @@ namespace System
 	[ComVisible (true)]
 	// FIXME: We are doing way to many double/triple exception checks for the overloaded functions"
 	public abstract class Array : ICloneable, ICollection, IList, IEnumerable
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 		, IStructuralComparable, IStructuralEquatable
 #endif
 	{
@@ -103,14 +105,16 @@ namespace System
 				T value;
 				GetGenericValueImpl (i, out value);
 				if (item == null){
-					if (value == null)
+					if (value == null) {
 						return true;
+					}
 
 					continue;
 				}
-				
-				if (item.Equals (value))
+
+				if (item.Equals (value)) {
 					return true;
+				}
 			}
 
 			return false;
@@ -137,6 +141,23 @@ namespace System
 
 			Copy (this, this.GetLowerBound (0), array, index, this.GetLength (0));
 		}
+
+#if NET_4_5
+		internal T InternalArray__IReadOnlyList_get_Item<T> (int index)
+		{
+			if (unchecked ((uint) index) >= unchecked ((uint) Length))
+				throw new ArgumentOutOfRangeException ("index");
+
+			T value;
+			GetGenericValueImpl (index, out value);
+			return value;
+		}
+
+		internal int InternalArray__IReadOnlyCollection_get_Count ()
+		{
+			return Length;
+		}
+#endif
 
 		internal void InternalArray__Insert<T> (int index, T item)
 		{
@@ -434,7 +455,7 @@ namespace System
 			return new SimpleEnumerator (this);
 		}
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 		int IStructuralComparable.CompareTo (object other, IComparer comparer)
 		{
 			if (other == null)
@@ -490,7 +511,7 @@ namespace System
 
 			int hash = 0;
 			for (int i = 0; i < Length; i++)
-				hash = ((hash << 7) + hash) ^ GetValue (i).GetHashCode ();
+				hash = ((hash << 7) + hash) ^ comparer.GetHashCode (GetValueImpl (i));
 			return hash;
 		}
 #endif
@@ -673,8 +694,10 @@ namespace System
 				throw new NotSupportedException ("Array type can not be void");
 			if (elementType.ContainsGenericParameters)
 				throw new NotSupportedException ("Array type can not be an open generic type");
+#if !FULL_AOT_RUNTIME
 			if ((elementType is TypeBuilder) && !(elementType as TypeBuilder).IsCreated ())
 				throw new NotSupportedException ("Can't create an array of the unfinished type '" + elementType + "'.");
+#endif
 			
 			return CreateInstanceImpl (elementType, lengths, bounds);
 		}
@@ -1134,28 +1157,13 @@ namespace System
 			return lb - 1;
 		}
 
-		/* delegate used to swap array elements */
-		delegate void Swapper (int i, int j);
-
-		static Swapper get_swapper (Array array)
-		{
-			if (array is int[])
-				return new Swapper (array.int_swapper);
-			if (array is double[])
-				return new Swapper (array.double_swapper);
-			if (array is object[]) {
-				return new Swapper (array.obj_swapper);
-			}
-			return new Swapper (array.slow_swapper);
-		}
-
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Reverse (Array array)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
 
-			Reverse (array, array.GetLowerBound (0), array.GetLength (0));
+			Reverse (array, array.GetLowerBound (0), array.Length);
 		}
 
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
@@ -1175,45 +1183,119 @@ namespace System
 				throw new ArgumentException ();
 
 			int end = index + length - 1;
-			object[] oarray = array as object[];
-			if (oarray != null) {
+			var et = array.GetType ().GetElementType ();
+			switch (Type.GetTypeCode (et)) {
+			case TypeCode.Boolean:
 				while (index < end) {
-					object tmp = oarray [index];
-					oarray [index] = oarray [end];
-					oarray [end] = tmp;
+					bool a, b;
+
+					array.GetGenericValueImpl (index, out a);
+					array.GetGenericValueImpl (end, out b);
+					array.SetGenericValueImpl (index, ref b);
+					array.SetGenericValueImpl (end, ref a);
 					++index;
 					--end;
 				}
 				return;
-			}
-			int[] iarray = array as int[];
-			if (iarray != null) {
+
+			case TypeCode.Byte:
+			case TypeCode.SByte:
 				while (index < end) {
-					int tmp = iarray [index];
-					iarray [index] = iarray [end];
-					iarray [end] = tmp;
+					byte a, b;
+
+					array.GetGenericValueImpl (index, out a);
+					array.GetGenericValueImpl (end, out b);
+					array.SetGenericValueImpl (index, ref b);
+					array.SetGenericValueImpl (end, ref a);
 					++index;
 					--end;
 				}
 				return;
-			}
-			double[] darray = array as double[];
-			if (darray != null) {
+
+			case TypeCode.Int16:
+			case TypeCode.UInt16:
+			case TypeCode.Char:
 				while (index < end) {
-					double tmp = darray [index];
-					darray [index] = darray [end];
-					darray [end] = tmp;
+					short a, b;
+
+					array.GetGenericValueImpl (index, out a);
+					array.GetGenericValueImpl (end, out b);
+					array.SetGenericValueImpl (index, ref b);
+					array.SetGenericValueImpl (end, ref a);
 					++index;
 					--end;
 				}
 				return;
-			}
-			// fallback
-			Swapper swapper = get_swapper (array);
-			while (index < end) {
-				swapper (index, end);
-				++index;
-				--end;
+
+			case TypeCode.Int32:
+			case TypeCode.UInt32:
+			case TypeCode.Single:
+				while (index < end) {
+					int a, b;
+
+					array.GetGenericValueImpl (index, out a);
+					array.GetGenericValueImpl (end, out b);
+					array.SetGenericValueImpl (index, ref b);
+					array.SetGenericValueImpl (end, ref a);
+					++index;
+					--end;
+				}
+				return;
+
+			case TypeCode.Int64:
+			case TypeCode.UInt64:
+			case TypeCode.Double:
+				while (index < end) {
+					long a, b;
+
+					array.GetGenericValueImpl (index, out a);
+					array.GetGenericValueImpl (end, out b);
+					array.SetGenericValueImpl (index, ref b);
+					array.SetGenericValueImpl (end, ref a);
+					++index;
+					--end;
+				}
+				return;
+
+			case TypeCode.Decimal:
+				while (index < end) {
+					decimal a, b;
+
+					array.GetGenericValueImpl (index, out a);
+					array.GetGenericValueImpl (end, out b);
+					array.SetGenericValueImpl (index, ref b);
+					array.SetGenericValueImpl (end, ref a);
+					++index;
+					--end;
+				}
+				return;
+
+			case TypeCode.String:
+				while (index < end) {
+					object a, b;
+
+					array.GetGenericValueImpl (index, out a);
+					array.GetGenericValueImpl (end, out b);
+					array.SetGenericValueImpl (index, ref b);
+					array.SetGenericValueImpl (end, ref a);
+					++index;
+					--end;
+				}
+				return;
+			default:
+				if (array is object[])
+					goto case TypeCode.String;
+
+				// Very slow fallback
+				while (index < end) {
+					object val = array.GetValueImpl (index);
+					array.SetValueImpl (array.GetValueImpl (end), index);
+					array.SetValueImpl (val, end);
+					++index;
+					--end;
+				}
+
+				return;
 			}
 		}
 
@@ -1387,34 +1469,6 @@ namespace System
 			} catch (Exception e) {
 				throw new InvalidOperationException (Locale.GetText ("The comparer threw an exception."), e);
 			}
-		}
-
-		/* note, these are instance methods */
-		void int_swapper (int i, int j) {
-			int[] array = this as int[];
-			int val = array [i];
-			array [i] = array [j];
-			array [j] = val;
-		}
-
-		void obj_swapper (int i, int j) {
-			object[] array = this as object[];
-			object val = array [i];
-			array [i] = array [j];
-			array [j] = val;
-		}
-
-		void slow_swapper (int i, int j) {
-			object val = GetValueImpl (i);
-			SetValueImpl (GetValue (j), i);
-			SetValueImpl (val, j);
-		}
-
-		void double_swapper (int i, int j) {
-			double[] array = this as double[];
-			double val = array [i];
-			array [i] = array [j];
-			array [j] = val;
 		}
 		
 		struct QSortStack {
@@ -1679,7 +1733,7 @@ namespace System
 			if (index + length > array.Length)
 				throw new ArgumentException ();
 				
-			SortImpl<T, T> (array, null, index, length, comparer);
+			SortImpl<T> (array, index, length, comparer);
 		}
 
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
@@ -1717,6 +1771,8 @@ namespace System
 			// Check for value types which can be sorted without Compare () method
 			//
 			if (comparer == null) {
+				/* Avoid this when using full-aot to prevent the generation of many unused qsort<K,T> instantiations */
+#if FULL_AOT_RUNTIME
 #if !BOOTSTRAP_BASIC
 				switch (Type.GetTypeCode (typeof (TKey))) {
 				case TypeCode.Int32:
@@ -1759,6 +1815,7 @@ namespace System
 					qsort (keys as UInt64[], items, low, high);
 					return;
 				}
+#endif
 #endif
 				// Using Comparer<TKey> adds a small overload, but with value types it
 				// helps us to not box them.
@@ -2628,6 +2685,7 @@ namespace System
 			}
 		}
 
+		[MethodImpl ((MethodImplOptions)256)]
 		private static void swap<K, V> (K [] keys, V [] items, int i, int j)
 		{
 			K tmp;
@@ -2644,6 +2702,7 @@ namespace System
 			}
 		}
 
+		[MethodImpl ((MethodImplOptions)256)]
 		private static void swap<T> (T [] array, int i, int j)
 		{
 			T tmp = array [i];
@@ -2738,20 +2797,27 @@ namespace System
 		public static void Resize<T> (ref T [] array, int newSize)
 		{
 			if (newSize < 0)
-				throw new ArgumentOutOfRangeException ();
+				throw new ArgumentOutOfRangeException ("newSize");
 			
 			if (array == null) {
 				array = new T [newSize];
 				return;
 			}
 
-			int length = array.Length;
+			var arr = array;
+			int length = arr.Length;
 			if (length == newSize)
 				return;
 			
 			T [] a = new T [newSize];
-			if (length != 0)
-				FastCopy (array, 0, a, 0, Math.Min (newSize, length));
+			int tocopy = Math.Min (newSize, length);
+
+			if (tocopy < 9) {
+				for (int i = 0; i < tocopy; ++i)
+					UnsafeStore (a, i, UnsafeLoad (arr, i));
+			} else {
+				FastCopy (arr, 0, a, 0, tocopy);
+			}
 			array = a;
 		}
 		
@@ -3076,6 +3142,14 @@ namespace System
 		public static void ConstrainedCopy (Array sourceArray, int sourceIndex, Array destinationArray, int destinationIndex, int length)
 		{
 			Copy (sourceArray, sourceIndex, destinationArray, destinationIndex, length);
+		}
+
+		internal static T UnsafeLoad<T> (T[] array, int index) {
+			return array [index];
+		}
+
+		internal static void UnsafeStore<T> (T[] array, int index, T value) {
+			array [index] = value;
 		}
 	}
 }

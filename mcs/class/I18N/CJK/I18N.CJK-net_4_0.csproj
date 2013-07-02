@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{87ED1DAB-BC3F-455F-96A3-2044E4977877}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>./../../../class/lib/net_4_0/tmp</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\I18N.CJK-net_4_0</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>I18N.CJK</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
@@ -28,36 +27,37 @@
     <DefineConstants>DEBUG;TRACE;DISABLE_UNSAFE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../../class/lib/net_4_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>DISABLE_UNSAFE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="..\Assembly\AssemblyInfo.cs" />
-   <Compile Include="..\..\..\build\common\Consts.cs" />
-   <Compile Include="CP932.cs" />
-   <Compile Include="ISO2022JP.cs" />
-   <Compile Include="CP51932.cs" />
-   <Compile Include="CP936.cs" />
-   <Compile Include="CP949.cs" />
-   <Compile Include="CP950.cs" />
-   <Compile Include="CodeTable.cs" />
-   <Compile Include="DbcsEncoding.cs" />
-   <Compile Include="DbcsConvert.cs" />
-   <Compile Include="GB18030Encoding.cs" />
-   <Compile Include="GB18030Source.cs" />
-   <Compile Include="JISConvert.cs" />
-
-  </ItemGroup>
+    <Compile Include="..\..\..\build\common\Consts.cs" />
+    <Compile Include="..\Assembly\AssemblyInfo.cs" />
+    <Compile Include="CodeTable.cs" />
+    <Compile Include="CP51932.cs" />
+    <Compile Include="CP932.cs" />
+    <Compile Include="CP936.cs" />
+    <Compile Include="CP949.cs" />
+    <Compile Include="CP950.cs" />
+    <Compile Include="DbcsConvert.cs" />
+    <Compile Include="DbcsEncoding.cs" />
+    <Compile Include="GB18030Encoding.cs" />
+    <Compile Include="GB18030Source.cs" />
+    <Compile Include="ISO2022JP.cs" />
+    <Compile Include="JISConvert.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -66,43 +66,41 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_0\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="I18N.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>I18N.dll</HintPath>
-    </Reference>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-
+    <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
+      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
+      <Name>corlib\corlib-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\I18N\Common\I18N-net_4_0.csproj">
+      <Project>{748C52F1-090B-42F0-BB42-37BE181E4545}</Project>
+      <Name>Common\I18N-net_4_0</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-    <ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="big5.table">
-       <LogicalName>big5.table</LogicalName>
+      <LogicalName>big5.table</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="gb2312.table">
-       <LogicalName>gb2312.table</LogicalName>
+      <LogicalName>gb2312.table</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="jis.table">
-       <LogicalName>jis.table</LogicalName>
+      <LogicalName>jis.table</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="ks.table">
-       <LogicalName>ks.table</LogicalName>
+      <LogicalName>ks.table</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="gb18030.table">
-       <LogicalName>gb18030.table</LogicalName>
+      <LogicalName>gb18030.table</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
-
 </Project>
-

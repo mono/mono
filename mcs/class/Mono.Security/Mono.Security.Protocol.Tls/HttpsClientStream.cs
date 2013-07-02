@@ -37,27 +37,26 @@ using SNCX = System.Security.Cryptography.X509Certificates;
 
 namespace Mono.Security.Protocol.Tls {
 
-        // Note: DO NOT REUSE this class - instead use SslClientStream
+	// Note: DO NOT REUSE this class - instead use SslClientStream
 
-        internal class HttpsClientStream : SslClientStream {
+	internal class HttpsClientStream : SslClientStream {
 
-                private HttpWebRequest _request;
+		private HttpWebRequest _request;
 		private int _status;
 
-                public HttpsClientStream (Stream stream, X509CertificateCollection clientCertificates,
+		public HttpsClientStream (Stream stream, X509CertificateCollection clientCertificates,
 					HttpWebRequest request, byte [] buffer)
-                        : base (stream, request.Address.Host, false, (Mono.Security.Protocol.Tls.SecurityProtocolType)
+			: base (stream, request.Address.Host, false, (Mono.Security.Protocol.Tls.SecurityProtocolType)
 				ServicePointManager.SecurityProtocol, clientCertificates)
-                {
-                        // this constructor permit access to the WebRequest to call
-                        // ICertificatePolicy.CheckValidationResult
-                        _request = request;
+		{
+			// this constructor permit access to the WebRequest to call
+			// ICertificatePolicy.CheckValidationResult
+			 _request = request;
 			_status = 0;
 			if (buffer != null)
 				InputBuffer.Write (buffer, 0, buffer.Length);
-#if !MOONLIGHT
-                        // also saved from reflection
-                        base.CheckCertRevocationStatus = ServicePointManager.CheckCertificateRevocationList;
+			// also saved from reflection
+			base.CheckCertRevocationStatus = ServicePointManager.CheckCertificateRevocationList;
 
 			ClientCertSelection += delegate (X509CertificateCollection clientCerts, X509Certificate serverCertificate,
 				string targetHost, X509CertificateCollection serverRequestedCertificates) {
@@ -67,8 +66,7 @@ namespace Mono.Security.Protocol.Tls {
 				X509Certificate2 cert = (certificate as X509Certificate2);
 				return (cert == null) ? null : cert.PrivateKey;
 			};
-#endif
-               }
+		}
 
 		public bool TrustFailure {
 			get { 
@@ -82,14 +80,8 @@ namespace Mono.Security.Protocol.Tls {
 			}
 		}
 
-#if MOONLIGHT
-                internal override bool RaiseServerCertificateValidation (X509Certificate certificate, int[] certificateErrors)
+		internal override bool RaiseServerCertificateValidation (X509Certificate certificate, int[] certificateErrors)
 		{
-			return true;
-		}
-#else
-                internal override bool RaiseServerCertificateValidation (X509Certificate certificate, int[] certificateErrors)
-                {
 			bool failed = (certificateErrors.Length > 0);
 			// only one problem can be reported by this interface
 			_status = ((failed) ? certificateErrors [0] : 0);
@@ -125,6 +117,5 @@ namespace Mono.Security.Protocol.Tls {
 			}
 			return failed;
 		}
-#endif
-        }
+	}
 }

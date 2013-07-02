@@ -23,7 +23,7 @@
 //
 //
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 
 using System;
 using System.Collections.Concurrent;
@@ -57,7 +57,7 @@ namespace System.Threading
 		int threadWhoTookLock;
 		readonly bool isThreadOwnerTrackingEnabled;
 
-		static Watch sw = Watch.StartNew ();
+		static readonly Watch sw = Watch.StartNew ();
 
 		ConcurrentOrderedList<int> stallTickets;
 

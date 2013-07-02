@@ -57,6 +57,7 @@ namespace System.Linq.Expressions {
 			return ExpressionPrinter.ToString (this);
 		}
 
+#if !FULL_AOT_RUNTIME
 		void EmitPopIfNeeded (EmitContext ec)
 		{
 			if (add_method.ReturnType == typeof (void))
@@ -70,5 +71,6 @@ namespace System.Linq.Expressions {
 			ec.EmitCall (local, arguments, add_method);
 			EmitPopIfNeeded (ec);
 		}
+#endif
 	}
 }

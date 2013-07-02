@@ -65,6 +65,7 @@ namespace System.Linq.Expressions {
 			this.members = members;
 		}
 
+#if !FULL_AOT_RUNTIME
 		internal override void Emit (EmitContext ec)
 		{
 			var ig = ec.ig;
@@ -90,6 +91,7 @@ namespace System.Linq.Expressions {
 			} else
 				ig.Emit (OpCodes.Newobj, constructor ?? GetDefaultConstructor (type));
 		}
+#endif
 
 		static ConstructorInfo GetDefaultConstructor (Type type)
 		{

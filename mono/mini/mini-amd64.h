@@ -15,7 +15,15 @@
 /* image-writer.c doesn't happen                       */
 #define kNaClLengthOfCallImm kNaClAlignmentAMD64
 
-int is_nacl_call_reg_sequence(guint8* code);
+int is_nacl_call_reg_sequence (guint8* code);
+void amd64_nacl_clear_legacy_prefix_tag ();
+void amd64_nacl_tag_legacy_prefix (guint8* code);
+void amd64_nacl_tag_rex (guint8* code);
+guint8* amd64_nacl_get_legacy_prefix_tag ();
+guint8* amd64_nacl_get_rex_tag ();
+void amd64_nacl_instruction_pre ();
+void amd64_nacl_instruction_post (guint8 **start, guint8 **end);
+void amd64_nacl_membase_handler (guint8** code, gint8 basereg, gint32 offset, gint8 dreg);
 #endif
 
 #ifdef HOST_WIN32
@@ -88,8 +96,6 @@ struct sigcontext {
       unsigned long filler[5];
 };
 #endif  // sun, Solaris x86
-
-#define MONO_ARCH_SUPPORT_SIMD_INTRINSICS 1
 
 #ifndef DISABLE_SIMD
 #define MONO_ARCH_SIMD_INTRINSICS 1
@@ -389,6 +395,7 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_GC_MAPS_SUPPORTED 1
 #define MONO_ARCH_HAVE_CONTEXT_SET_INT_REG 1
 #define MONO_ARCH_HAVE_SETUP_ASYNC_CALLBACK 1
+#define MONO_ARCH_HAVE_CREATE_LLVM_NATIVE_THUNK 1
 
 gboolean
 mono_amd64_tail_call_supported (MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig) MONO_INTERNAL;

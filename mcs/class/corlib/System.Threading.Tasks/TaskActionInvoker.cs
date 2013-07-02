@@ -26,7 +26,7 @@
 //
 //
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 
 using System.Threading;
 
@@ -132,6 +132,7 @@ namespace System.Threading.Tasks
 
 			public override void Invoke (Task owner, object state, Task context)
 			{
+				owner.TrySetExceptionObserved ();
 				action (tasks);
 			}
 		}
@@ -281,6 +282,7 @@ namespace System.Threading.Tasks
 
 			public override void Invoke (Task owner, object state, Task context)
 			{
+				owner.TrySetExceptionObserved ();
 				((Task<TResult>) context).Result = action (tasks);
 			}
 		}
@@ -469,6 +471,8 @@ namespace System.Threading.Tasks
 			return new FuncTaskObjectInvoke<TResult, TNewResult> (action);
 		}
 
+		#region Used by ContinueWhenAll
+
 		public static TaskActionInvoker Create (Action<Task[]> action, Task[] tasks)
 		{
 			return new ActionTasksInvoke (action, tasks);
@@ -479,7 +483,9 @@ namespace System.Threading.Tasks
 			return new FuncTasksInvoke<TResult> (action, tasks);
 		}
 
-		#region Used by WhenAny
+		#endregion
+
+		#region Used by ContinueWhenAny
 
 		public static TaskActionInvoker CreateSelected (Action<Task> action)
 		{

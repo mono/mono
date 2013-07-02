@@ -57,7 +57,11 @@ public abstract class DES : SymmetricAlgorithm {
 
 	public static new DES Create () 
 	{
+#if FULL_AOT_RUNTIME
+		return new System.Security.Cryptography.DESCryptoServiceProvider ();
+#else
 		return Create ("System.Security.Cryptography.DES");
+#endif
 	}
 
 	public static new DES Create (string algName) 

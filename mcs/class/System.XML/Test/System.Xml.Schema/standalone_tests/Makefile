@@ -1,17 +1,11 @@
-PROFILE = net_1_1
+PROFILE = net_4_5
 RUNTIME = MONO_PATH=../../../../lib/$(PROFILE) mono --debug
-ifeq ($(PROFILE), net_2_0)
-	MCS = gmcs
-else
-	MCS = mcs
-endif
+MCS = mcs
 TESTS = xsd-test-suite/suntest/SunTestsAll/xsiType1.xsd
 MASTERS = xsd-test-suite/suntest/tests-all.xml
 TEST_ARCHIVE = XSTC-20020116.tar.gz
 MASTER_ARCHIVE = test-masters.tar.gz
-ifeq ($(PROFILE), net_2_0)
-	MCS_OPTS += -d:NET_2_0
-endif
+MCS_OPTS += -d:NET_2_0
 TEST_RUNNER = xsdtest_$(PROFILE).exe
 
 $(TEST_RUNNER) : xsdtest.cs $(TESTS)

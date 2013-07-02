@@ -33,7 +33,7 @@ namespace MonoTests.System.Runtime.Remoting
 	}
 	
 	[TestFixture]
-	public class ContextText
+	public class ContextTest
 	{
 		TestCbo cbo = new TestCbo ();
 		Context otherCtx;

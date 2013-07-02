@@ -157,6 +157,18 @@ public abstract class ByteEncoding : MonoEncoding
 		// (this is the ideal solution)
 		if (charCount == 0 || bytes.Length == byteIndex)
 			return;
+		if (charIndex < 0 || charIndex > chars.Length) {
+			throw new ArgumentOutOfRangeException
+				("charIndex", Strings.GetString("ArgRange_Array"));
+		}
+		if (byteIndex < 0 || byteIndex > bytes.Length) {
+			throw new ArgumentOutOfRangeException
+				("byteIndex", Strings.GetString("ArgRange_Array"));
+		}
+		if (charCount < 0 || charIndex + charCount > chars.Length || byteIndex + charCount > bytes.Length) {
+			throw new ArgumentOutOfRangeException
+				("charCount", Strings.GetString("ArgRange_Array"));
+		}
 		fixed (char* cptr = chars) {
 			fixed (byte* bptr = bytes) {
 				ToBytes (cptr + charIndex, charCount,

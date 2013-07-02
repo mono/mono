@@ -25,7 +25,7 @@
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
-#if NET_2_0
+
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -37,6 +37,7 @@ namespace System.Configuration
 {
 	internal class SectionGroupInfo: ConfigInfo
 	{
+		bool modified;
 		ConfigInfoCollection sections;
 		ConfigInfoCollection groups;
 		static ConfigInfoCollection emptyList = new ConfigInfoCollection ();
@@ -54,6 +55,7 @@ namespace System.Configuration
 		
 		public void AddChild (ConfigInfo data)
 		{
+			modified = true;
 			data.Parent = this;
 			if (data is SectionInfo) {
 				if (sections == null) sections = new ConfigInfoCollection ();
@@ -67,6 +69,7 @@ namespace System.Configuration
 		
 		public void Clear ()
 		{
+			modified = true;
 			if (sections != null) sections.Clear ();
 			if (groups != null) groups.Clear ();
 		}
@@ -79,6 +82,7 @@ namespace System.Configuration
 		
 		public void RemoveChild (string name)
 		{
+			modified = true;
 			if (sections != null)
 				sections.Remove (name);
 			if (groups != null)
@@ -396,6 +400,33 @@ namespace System.Configuration
 				}
 			}
 		}
+
+		internal override bool HasValues (Configuration config, ConfigurationSaveMode mode)
+		{
+			if (modified && (mode == ConfigurationSaveMode.Modified))
+				return true;
+
+			foreach (ConfigInfoCollection col in new object[] { Sections, Groups}) {
+				foreach (string key in col) {
+					ConfigInfo cinfo = col [key];
+					if (cinfo.HasValues (config, mode))
+						return true;
+				}
+			}
+
+			return false;
+		}
+
+		internal override void ResetModified (Configuration config)
+		{
+			modified = false;
+			foreach (ConfigInfoCollection col in new object[] { Sections, Groups}) {
+				foreach (string key in col) {
+					ConfigInfo cinfo = col [key];
+					cinfo.ResetModified (config);
+				}
+			}
+		}
 	}
 	
 	internal class ConfigInfoCollection : NameObjectCollectionBase
@@ -449,4 +480,3 @@ namespace System.Configuration
 	}
 }
 
-#endif

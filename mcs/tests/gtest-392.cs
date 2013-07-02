@@ -16,7 +16,7 @@ public class DieSubrangeType
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		DieSubrangeType subrange = new DieSubrangeType ();
 		Console.WriteLine (subrange.UpperBound != null);

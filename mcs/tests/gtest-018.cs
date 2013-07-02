@@ -14,7 +14,7 @@ public class X
 		stack.Hello<string> ("Hello World");
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		Stack stack = new Stack ();
 		Foo (stack);

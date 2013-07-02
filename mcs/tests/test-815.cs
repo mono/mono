@@ -18,7 +18,7 @@ class D : IS
 
 static class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		IS a = new D ();
 		int r = a[1];

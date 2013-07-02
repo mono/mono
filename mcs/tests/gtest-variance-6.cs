@@ -24,7 +24,7 @@ interface ITest_2<in T>
 
 class Program
 {
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

@@ -26,7 +26,7 @@
 //	Marek Safar (marek.safar@gmail.com)
 //
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -39,8 +39,8 @@ namespace System.Collections.ObjectModel
 	[TypeForwardedFrom (Consts.WindowsBase_3_0)]
 #endif
 	public class ObservableCollection<T> : Collection<T>, INotifyCollectionChanged, INotifyPropertyChanged {
-		
-		private class Reentrant : IDisposable {
+		[Serializable]
+		sealed class Reentrant : IDisposable {
 			private int count = 0;
 
 			public Reentrant()

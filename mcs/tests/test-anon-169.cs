@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 static class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		var fs = new List<Func<int>> ();
 

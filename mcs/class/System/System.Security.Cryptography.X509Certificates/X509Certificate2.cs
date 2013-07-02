@@ -27,24 +27,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if SECURITY_DEP
+
+extern alias MonoSecurity;
+
+using MonoSecurity::Mono.Security;
+using MonoSecurity::Mono.Security.Cryptography;
+using MX = MonoSecurity::Mono.Security.X509;
+#endif
+
 using System.IO;
 using System.Text;
-#if SECURITY_DEP || MOONLIGHT
-using Mono.Security;
-using Mono.Security.Cryptography;
-using MX = Mono.Security.X509;
-#endif
 
 namespace System.Security.Cryptography.X509Certificates {
 
 	public class X509Certificate2 : X509Certificate {
-#if !SECURITY_DEP && !MOONLIGHT
+#if !SECURITY_DEP
 		// Used in Mono.Security HttpsClientStream
 		public X509Certificate2 (byte[] rawData)
 		{
 		}
 #endif
-#if SECURITY_DEP || MOONLIGHT
+#if SECURITY_DEP
 		private bool _archived;
 		private X509ExtensionCollection _extensions;
 		private string _name = String.Empty;
@@ -74,7 +78,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 			Import (rawData, password, X509KeyStorageFlags.DefaultKeySet);
 		}
-#if !MOONLIGHT
+
 		public X509Certificate2 (byte[] rawData, SecureString password)
 		{
 			Import (rawData, password, X509KeyStorageFlags.DefaultKeySet);
@@ -114,7 +118,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 			Import (fileName, password, keyStorageFlags);
 		}
-#endif
+
 		public X509Certificate2 (IntPtr handle) : base (handle) 
 		{
 			_cert = new MX.X509Certificate (base.GetRawCertData ());
@@ -201,11 +205,10 @@ namespace System.Security.Cryptography.X509Certificates {
 					throw new CryptographicException (empty_error);
 				try {
 					if (_cert.RSA != null) {
-#if !MOONLIGHT
 						RSACryptoServiceProvider rcsp = _cert.RSA as RSACryptoServiceProvider;
 						if (rcsp != null)
 							return rcsp.PublicOnly ? null : rcsp;
-#endif
+
 						RSAManaged rsam = _cert.RSA as RSAManaged;
 						if (rsam != null)
 							return rsam.PublicOnly ? null : rsam;
@@ -213,11 +216,10 @@ namespace System.Security.Cryptography.X509Certificates {
 						_cert.RSA.ExportParameters (true);
 						return _cert.RSA;
 					} else if (_cert.DSA != null) {
-#if !MOONLIGHT
 						DSACryptoServiceProvider dcsp = _cert.DSA as DSACryptoServiceProvider;
 						if (dcsp != null)
 							return dcsp.PublicOnly ? null : dcsp;
-#endif	
+
 						_cert.DSA.ExportParameters (true);
 						return _cert.DSA;
 					}
@@ -439,7 +441,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			base.Import (rawData, password, keyStorageFlags);
 			if (password == null) {
 				try {
-					_cert = new Mono.Security.X509.X509Certificate (rawData);
+					_cert = new MX.X509Certificate (rawData);
 				}
 				catch (Exception e) {
 					try {
@@ -459,12 +461,11 @@ namespace System.Security.Cryptography.X509Certificates {
 				catch {
 					// it's possible to supply a (unrequired/unusued) password
 					// fix bug #79028
-					_cert = new Mono.Security.X509.X509Certificate (rawData);
+					_cert = new MX.X509Certificate (rawData);
 				}
 			}
 		}
 
-#if !MOONLIGHT
 		[MonoTODO ("SecureString is incomplete")]
 		public override void Import (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
@@ -490,7 +491,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			byte[] rawData = Load (fileName);
 			Import (rawData, (string)null, keyStorageFlags);
 		}
-#endif
+
 		private static byte[] Load (string fileName)
 		{
 			byte[] data = null;
@@ -579,7 +580,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (_cert == null)
 				throw new CryptographicException (empty_error);
 
-			X509Chain chain = (X509Chain) CryptoConfig.CreateFromName ("X509Chain");
+			X509Chain chain = X509Chain.Create ();
 			if (!chain.Build (this))
 				return false;
 			// TODO - check chain and other stuff ???
@@ -614,22 +615,18 @@ namespace System.Security.Cryptography.X509Certificates {
 						if ((data [1].Tag == 0x30) && (data [2].Tag == 0x03))
 							type = X509ContentType.Cert;
 						break;
-#if !MOONLIGHT
 					case 0x02:
 						// INTEGER / SEQUENCE / SEQUENCE
 						if ((data [1].Tag == 0x30) && (data [2].Tag == 0x30))
 							type = X509ContentType.Pkcs12;
 						// note: Pfx == Pkcs12
 						break;
-#endif
 					}
 				}
-#if !MOONLIGHT
 				// check for PKCS#7 (count unknown but greater than 0)
 				// SEQUENCE / OID (signedData)
 				if ((data [0].Tag == 0x06) && data [0].CompareValue (signedData))
 					type = X509ContentType.Pkcs7;
-#endif
 			}
 			catch (Exception e) {
 				string msg = Locale.GetText ("Unable to decode certificate.");

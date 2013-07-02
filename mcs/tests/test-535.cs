@@ -17,7 +17,7 @@
 	
 using System;
 class X {
-	static void Main ()
+	public static void Main ()
 	{
 		UIntPtr a = (UIntPtr) 1;
 

@@ -18,6 +18,9 @@ Microsoft.Build.BuildEngine/BuildPropertyGroupCollection.cs
 Microsoft.Build.BuildEngine/BuildPropertyGroup.cs
 Microsoft.Build.BuildEngine/BuildSettings.cs
 Microsoft.Build.BuildEngine/BuildTask.cs
+Microsoft.Build.BuildEngine/BuildTaskItem.cs
+Microsoft.Build.BuildEngine/BuildTaskItemGroup.cs
+Microsoft.Build.BuildEngine/BuildTaskPropertyGroup.cs
 Microsoft.Build.BuildEngine/BuildWhen.cs
 Microsoft.Build.BuildEngine/ChangeType.cs
 Microsoft.Build.BuildEngine/ColorResetter.cs
@@ -46,6 +49,7 @@ Microsoft.Build.BuildEngine/ImportCollection.cs
 Microsoft.Build.BuildEngine/ImportedProject.cs
 Microsoft.Build.BuildEngine/InternalLoggerException.cs
 Microsoft.Build.BuildEngine/InvalidProjectFileException.cs
+Microsoft.Build.BuildEngine/IBuildTask.cs
 Microsoft.Build.BuildEngine/IReference.cs
 Microsoft.Build.BuildEngine/ItemReference.cs
 Microsoft.Build.BuildEngine/LogExtensions.cs

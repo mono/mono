@@ -222,6 +222,8 @@ namespace System.IO {
 
 				if (l >= 2 && DirectorySeparatorChar == '\\' && ret [l - 1] == VolumeSeparatorChar)
 					return ret + DirectorySeparatorChar;
+				else if (l == 1 && DirectorySeparatorChar == '\\' && path.Length >= 2 && path [nLast] == VolumeSeparatorChar)
+					return ret + VolumeSeparatorChar;
 				else {
 					//
 					// Important: do not use CanonicalizePath here, use
@@ -367,7 +369,7 @@ namespace System.IO {
 					if (current [1] == VolumeSeparatorChar)
 						path = current.Substring (0, 2) + path;
 					else
-						path = current.Substring (0, current.IndexOf ('\\', current.IndexOf ("\\\\") + 1));
+						path = current.Substring (0, current.IndexOf ('\\', current.IndexOfOrdinalUnchecked ("\\\\") + 1));
 				}
 			}
 			
@@ -459,6 +461,10 @@ namespace System.IO {
 				catch (IOException ex){
 					if (ex.hresult != MonoIO.FileAlreadyExistsHResult || count ++ > 65536)
 						throw;
+				}
+				catch (UnauthorizedAccessException ex) {
+					if (count ++ > 65536)
+						throw new IOException (ex.Message, ex);
 				}
 			} while (f == null);
 			
@@ -741,7 +747,7 @@ namespace System.IO {
 			return String.Compare (subset, slast, path, slast, subset.Length - slast) == 0;
 		}
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 		public
 #else
                 internal
@@ -781,7 +787,7 @@ namespace System.IO {
 			return ret.ToString ();
 		}
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 		public
 #else
                 internal
@@ -800,7 +806,7 @@ namespace System.IO {
 			return Combine (new string [] { path1, path2, path3 });
 		}
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 		public
 #else
                 internal
@@ -840,11 +846,6 @@ namespace System.IO {
 				if (idx >= 0 && idx != 1)
 					throw new ArgumentException (parameterName);
 			}
-#if MOONLIGHT
-			// On Moonlight (SL4+) there are some limitations in "Elevated Trust"
-			if (SecurityManager.HasElevatedPermissions) {
-			}
-#endif
 		}
 	}
 }

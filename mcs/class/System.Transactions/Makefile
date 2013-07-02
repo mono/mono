@@ -13,14 +13,4 @@ endif
 
 TEST_MCS_FLAGS = /nowarn:1595 $(LIB_MCS_FLAGS)
 
-# This is a .NET 2.0+ only assembly
-VALID_PROFILE := $(filter net_2_0 net_4_0 net_4_5 monotouch monodroid mobile, $(PROFILE))
-ifndef VALID_PROFILE
-LIBRARY_NAME = dummy-System.Transactions.dll
-NO_INSTALL = yes
-NO_SIGN_ASSEMBLY = yes
-NO_TEST = yes
-endif
-
-
 include ../../build/library.make

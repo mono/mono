@@ -220,6 +220,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestGetEnumerator1 ()
 		{
 			BuildPropertyGroup bpg = new BuildPropertyGroup ();

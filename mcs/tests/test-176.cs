@@ -6,7 +6,7 @@ using System;
 class X {
 	const byte b = 0x0f;
 	
-	static int Main ()
+	public static int Main ()
 	{
 		int x = ~b;
 		byte bb = 0xf;

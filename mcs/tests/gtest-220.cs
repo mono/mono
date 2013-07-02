@@ -15,7 +15,7 @@ public class A<T1>
 
 class PopQuiz
 {
-	static int Main()
+	public static int Main()
 	{
 		A<int>.B<char>.C<bool> o = new A<int>.B<char>.C<bool>();
 		string s = o.a.GetType().FullName;

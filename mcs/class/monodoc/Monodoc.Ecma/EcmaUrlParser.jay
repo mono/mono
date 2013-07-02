@@ -1,0 +1,263 @@
+%{
+using System.Text;
+using System.IO;
+using System;
+using System.Linq;
+using System.Collections.Generic;
+
+namespace Monodoc.Ecma
+{
+	public class EcmaUrlParser
+	{
+        int yacc_verbose_flag = 0;
+
+        public void IsValid (string input)
+        {
+			var lexer = new EcmaUrlTokenizer (input);
+			this.yyparse (lexer);
+        }
+
+        public EcmaDesc Parse (string input)
+        {
+			var lexer = new EcmaUrlTokenizer (input);
+			return (EcmaDesc)this.yyparse (lexer);
+        }
+
+        public bool TryParse (string input, out EcmaDesc desc)
+        {
+            desc = null;
+            try {
+                desc = Parse (input);
+            } catch {
+                return false;
+            }
+            return true;
+        }
+
+        EcmaDesc SetEcmaDescType (object result, EcmaDesc.Kind kind)
+        {
+            var desc = result as EcmaDesc;
+            desc.DescKind = kind;
+            return desc;
+        }
+
+        List<T> SafeReverse<T> (List<T> input)
+        {
+            if (input == null)
+               return null;
+            input.Reverse ();
+            return input;
+        }
+%}
+
+%token ERROR
+%token IDENTIFIER
+%token DIGIT
+%token DOT
+%token COMMA
+%token COLON
+%token INNER_TYPE_SEPARATOR
+%token OP_GENERICS_LT
+%token OP_GENERICS_GT
+%token OP_GENERICS_BACKTICK
+%token OP_OPEN_PAREN
+%token OP_CLOSE_PAREN
+%token OP_ARRAY_OPEN
+%token OP_ARRAY_CLOSE
+%token SLASH_SEPARATOR
+%token STAR
+%token REF_ARG
+%token OUT_ARG
+%token EXPLICIT_IMPL_SEP
+
+%start expression
+
+%%
+
+expression
+        : 'T' COLON type_expression { $$ = SetEcmaDescType ($3, EcmaDesc.Kind.Type); }
+        | 'N' COLON namespace_expression { $$ = SetEcmaDescType ($3, EcmaDesc.Kind.Namespace); }
+        | 'M' COLON method_expression { $$ = SetEcmaDescType ($3, EcmaDesc.Kind.Method); }
+        | 'F' COLON simple_member_expression { $$ = SetEcmaDescType ($3, EcmaDesc.Kind.Field); }
+        | 'C' COLON constructor_expression { $$ = SetEcmaDescType ($3, EcmaDesc.Kind.Constructor); }
+        | 'P' COLON property_expression { $$ = SetEcmaDescType ($3, EcmaDesc.Kind.Property); }
+        | 'E' COLON simple_member_expression { $$ = SetEcmaDescType ($3, EcmaDesc.Kind.Event); }
+        | 'O' COLON operator_expression { $$ = SetEcmaDescType ($3, EcmaDesc.Kind.Operator); }
+
+/* i.e. id.id.id or id */
+dot_expression
+        : IDENTIFIER { $$ = new List<string> { (string)$1 }; }
+        | IDENTIFIER DOT dot_expression { ((ICollection<string>)$3).Add ((string)$1); $$ = $3; }
+
+namespace_expression
+        : dot_expression { $$ = new EcmaDesc { Namespace = string.Join (".", ((IEnumerable<string>)$1).Reverse ()) }; }
+
+type_expression
+        : dot_expression type_expression_suffix {
+                         var dotExpr = ((List<string>)$1);
+                         dotExpr.Reverse ();
+                         var desc = $2 as EcmaDesc;
+                         desc.DescKind = EcmaDesc.Kind.Type;
+                         desc.Namespace = string.Join (".", dotExpr.Take (dotExpr.Count - 1));
+                         desc.TypeName = dotExpr.Last ();
+                         $$ = desc;
+                     }
+
+/* To be used in types with no namespaces attached to them like an inner type*/
+reduced_type_expression
+        : IDENTIFIER type_expression_suffix {
+                         var desc = $2 as EcmaDesc;
+                         desc.DescKind = EcmaDesc.Kind.Type;
+                         desc.TypeName = $1 as string;
+                         $$ = desc;
+                     }
+
+type_expression_suffix
+        : opt_generic_type_suffix opt_inner_type_description opt_array_definition opt_etc {
+                         bool nestedDescHasEtc = $2 != null && ((EcmaDesc)$2).IsEtc;
+                         EcmaDesc nestedType = (EcmaDesc)$2;
+                         $$ = new EcmaDesc {
+                            GenericTypeArguments = $1 as List<EcmaDesc>,
+                            NestedType = nestedType,
+                            ArrayDimensions = SafeReverse ($3 as List<int>),
+                            Etc = $4 != null ? ((Tuple<char, string>)$4).Item1 : nestedDescHasEtc ? nestedType.Etc : (char)0,
+                            EtcFilter = $4 != null ? ((Tuple<char, string>)$4).Item2 : nestedDescHasEtc ? nestedType.EtcFilter : null
+                         };
+                         if (nestedDescHasEtc) {
+                            nestedType.Etc = (char)0;
+                            nestedType.EtcFilter = null;
+                         }
+                     }
+
+opt_inner_type_description
+        : /* empty */ { $$ = null; }
+        | INNER_TYPE_SEPARATOR reduced_type_expression { $$ = $2; }
+
+opt_generic_type_suffix
+        : /* empty */ { $$ = null; }
+        | OP_GENERICS_BACKTICK DIGIT { $$ = Enumerable.Repeat<EcmaDesc> (null, (int)$2).ToList (); }
+        | OP_GENERICS_LT generic_type_arg_list OP_GENERICS_GT { $$ = $2; }
+
+generic_type_arg_list
+        : type_expression { $$ = new List<EcmaDesc> () { (EcmaDesc)$1 }; }
+        | generic_type_arg_list COMMA type_expression { ((List<EcmaDesc>)$1).Add ((EcmaDesc)$3); $$ = $1; }
+
+opt_array_definition
+        : /* empty */ { $$ = null; }
+        | OP_ARRAY_OPEN opt_array_definition_list OP_ARRAY_CLOSE opt_array_definition {
+                      var dims = ((IList<int>)$4) ?? new List<int> (2);
+                      dims.Add ((int)$2);
+                      $$ = dims;
+                }
+
+opt_array_definition_list
+        : /* empty */ { $$ = 1; }
+        | COMMA opt_array_definition_list { $$ = ((int)$2) + 1; }
+
+opt_etc
+        : /* empty */ { $$ = null; }
+        | SLASH_SEPARATOR etc_identifier { $$ = Tuple.Create<char, string> (((string)$2)[0], null); }
+        | SLASH_SEPARATOR etc_identifier SLASH_SEPARATOR reduced_member_expression { $$ = Tuple.Create<char, string> (((string)$2)[0], (string)$4); }
+/*        | SLASH_SEPARATOR etc_identifier SLASH_SEPARATOR IDENTIFIER opt_generic_type_suffix { $$ = Tuple.Create<char, string> (((string)$2)[0], (string)$4 + ($5 == null ? string.Empty : "<" + string.Join (",", ((IEnumerable<EcmaDesc>)$5).Select (t => t.ToCompleteTypeName ())) + ">")); } */
+
+etc_identifier
+        : STAR { $$ = "*"; }
+        | IDENTIFIER { $$ = $1; }
+
+method_expression
+        : type_expression DOT IDENTIFIER opt_generic_type_suffix opt_arg_list_suffix {
+                      var desc = $1 as EcmaDesc;
+                      desc.MemberName = $3 as string;
+                      desc.GenericMemberArguments = $4 as List<EcmaDesc>;
+                      desc.MemberArguments = SafeReverse ($5 as List<EcmaDesc>);
+                      $$ = desc;
+                }
+        | dot_expression opt_generic_type_suffix opt_arg_list_suffix {
+                      var dotExpr = ((List<string>)$1);
+                      $$ = new EcmaDesc {
+                           Namespace = string.Join (".", dotExpr.Skip (2).DefaultIfEmpty (string.Empty).Reverse ()),
+                           TypeName = dotExpr.Skip (1).First (),
+                           MemberName = dotExpr.First (),
+                           GenericMemberArguments = $2 as List<EcmaDesc>,
+                           MemberArguments = SafeReverse ($3 as List<EcmaDesc>)
+                      };
+                }
+        | type_expression EXPLICIT_IMPL_SEP method_expression {
+                      var desc = $1 as EcmaDesc;
+                      desc.ExplicitImplMember = $3 as EcmaDesc;
+                      $$ = desc;
+                }
+
+/* To be used with members that may have no type/namespace attached */
+reduced_member_expression
+        : IDENTIFIER opt_generic_type_suffix { $$ = (string)$1 + ($2 == null ? string.Empty : "<" + string.Join (",", ((IEnumerable<EcmaDesc>)$2).Select (t => t.ToCompleteTypeName ())) + ">"); }
+        | IDENTIFIER opt_generic_type_suffix DOT reduced_member_expression {
+                      var existing = $4 as string;
+                      var expr = (string)$1 + ($2 == null ? string.Empty : "<" + string.Join (",", ((IEnumerable<EcmaDesc>)$2).Select (t => t.ToCompleteTypeName ())) + ">");
+                      $$ = expr + "." + existing;
+                }
+
+arg_type_expression
+        : type_expression opt_arg_type_suffix { var desc = (EcmaDesc)$1; desc.DescModifier = (EcmaDesc.Mod)$2; $$ = desc; }
+
+opt_arg_type_suffix
+        : /* empty */ { $$ = EcmaDesc.Mod.Normal; }
+        | STAR { $$ = EcmaDesc.Mod.Pointer; }
+        | REF_ARG { $$ = EcmaDesc.Mod.Ref; }
+        | OUT_ARG { $$ = EcmaDesc.Mod.Out; }
+
+type_expression_list
+        : /* empty */ { $$ = null; }
+        | arg_type_expression { $$ = new List<EcmaDesc> () { (EcmaDesc)$1 }; }
+        | arg_type_expression COMMA type_expression_list { ((List<EcmaDesc>)$3).Add ((EcmaDesc)$1); $$ = $3; }
+
+simple_member_expression
+        : dot_expression {
+                 var dotExpr = ((List<string>)$1);
+                 dotExpr.Reverse ();
+
+                 $$ = new EcmaDesc {
+                      Namespace = dotExpr.Count > 2 ? string.Join (".", dotExpr.Take (dotExpr.Count - 2)) : string.Empty,
+                      TypeName = dotExpr.Count > 1 ?  dotExpr[dotExpr.Count - 2] : string.Empty,
+                      MemberName = dotExpr[dotExpr.Count - 1]
+                 };
+             }
+        | type_expression DOT IDENTIFIER {
+                 var desc = $1 as EcmaDesc;
+                 desc.MemberName = $3 as string;
+                 $$ = desc;
+             }
+        | type_expression EXPLICIT_IMPL_SEP simple_member_expression {
+                 var desc = $1 as EcmaDesc;
+                 desc.ExplicitImplMember = $3 as EcmaDesc;
+                 $$ = desc;
+             }
+
+constructor_expression
+        : method_expression { $$ = $1; }
+
+operator_expression
+        : method_expression { $$ = $1; }
+
+property_expression
+        : simple_member_expression opt_property_indexer {
+                 var desc = $1 as EcmaDesc;
+                 (desc.ExplicitImplMember ?? desc).MemberArguments = SafeReverse ($2 as List<EcmaDesc>);
+                 $$ = desc;
+             }
+
+opt_property_indexer
+        : opt_arg_list_suffix { $$ = $1; }
+
+/*simple_member_expression opt_arg_list_suffix { $$ = CopyFromEcmaDesc (new EcmaDesc {
+                           MemberArguments = SafeReverse ($2 as List<EcmaDesc>)
+                      }, (EcmaDesc)$1);
+                }*/
+
+opt_arg_list_suffix
+        : /* empty */ { $$ = null; }
+        | OP_OPEN_PAREN type_expression_list OP_CLOSE_PAREN { $$ = $2; }
+
+%%
+
+}

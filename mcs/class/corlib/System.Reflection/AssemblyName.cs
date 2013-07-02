@@ -54,8 +54,11 @@ namespace System.Reflection {
 	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
+#if MOBILE
+	public sealed class AssemblyName  : ICloneable, ISerializable, IDeserializationCallback {
+#else
 	public sealed class AssemblyName  : ICloneable, ISerializable, IDeserializationCallback, _AssemblyName {
-
+#endif
 #pragma warning disable 169
 		#region Synch with object-internals.h
 		string name;
@@ -232,18 +235,17 @@ namespace System.Reflection {
 		{
 			if (keyToken != null)
 				return keyToken;
-			else if (publicKey == null)
+			if (publicKey == null)
 				return null;
-			else {
+
 				if (publicKey.Length == 0)
-					return new byte [0];
+					return EmptyArray<byte>.Value;
 
 				if (!IsPublicKeyValid)
 					throw new  SecurityException ("The public key is not valid.");
 
 				keyToken = ComputePublicKeyToken ();
 				return keyToken;
-			}
 		}
 
 		private bool IsPublicKeyValid {
@@ -261,21 +263,29 @@ namespace System.Reflection {
 				switch (publicKey [0]) {
 				case 0x00: // public key inside a header
 					if (publicKey.Length > 12 && publicKey [12] == 0x06) {
+#if MOBILE
+						return true;
+#else
 						try {
 							CryptoConvert.FromCapiPublicKeyBlob (
 								publicKey, 12);
 							return true;
 						} catch (CryptographicException) {
 						}
+#endif
 					}
 					break;
 				case 0x06: // public key
+#if MOBILE
+					return true;
+#else
 					try {
 						CryptoConvert.FromCapiPublicKeyBlob (publicKey);
 						return true;
 					} catch (CryptographicException) {
 					}
-					break;
+					break;					
+#endif
 				case 0x07: // private key
 					break;
 				}
@@ -293,7 +303,7 @@ namespace System.Reflection {
 				return null;
 
 			if (publicKey.Length == 0)
-				return new byte [0];
+				return EmptyArray<byte>.Value;
 
 			if (!IsPublicKeyValid)
 				throw new  SecurityException ("The public key is not valid.");
@@ -301,14 +311,15 @@ namespace System.Reflection {
 			return ComputePublicKeyToken ();
 		}
 
-		private byte [] ComputePublicKeyToken ()
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern unsafe static void get_public_token (byte* token, byte* pubkey, int len);
+
+		private unsafe byte [] ComputePublicKeyToken ()
 		{
-			HashAlgorithm ha = SHA1.Create ();
-			byte [] hash = ha.ComputeHash (publicKey);
-			// we need the last 8 bytes in reverse order
 			byte [] token = new byte [8];
-			Array.Copy (hash, (hash.Length - 8), token, 0, 8);
-			Array.Reverse (token, 0, 8);
+			fixed (byte* pkt = token)
+			fixed (byte *pk = publicKey)
+				get_public_token (pkt, pk, publicKey.Length);
 			return token;
 		}
 
@@ -393,6 +404,7 @@ namespace System.Reflection {
 			return aname;
 		}
 
+#if !MOBILE
 		void _AssemblyName.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -413,5 +425,28 @@ namespace System.Reflection {
 		{
 			throw new NotImplementedException ();
 		}
+#endif
+
+#if NET_4_5
+		public string CultureName {
+			get {
+				if (cultureinfo == null)
+					return string.Empty;
+				else if (cultureinfo.LCID == CultureInfo.InvariantCulture.LCID)
+					return "neutral";
+				else
+					return cultureinfo.Name;
+			}
+		}
+
+		[ComVisibleAttribute(false)]
+		public AssemblyContentType ContentType {
+			get { return AssemblyContentType.Default; }
+			set {
+				if (value != AssemblyContentType.Default)
+					throw new InvalidOperationException ();
+			}
+		}
+#endif
 	}
 }

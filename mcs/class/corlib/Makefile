@@ -40,7 +40,8 @@ LOCAL_MCS_FLAGS = -unsafe -nostdlib -nowarn:612,618 -d:INSIDE_CORLIB -d:LIBC
 DEFAULT_REFERENCES =
 
 # System.IO/DirectoryInfoTest.cs needs Mono.Posix
-TEST_MCS_FLAGS = -debug+ -debug:full -nowarn:168,219,618,672 -unsafe -r:Mono.Posix.dll -r:System.Core.dll -define:MONO_DATACONVERTER_STATIC_METHODS
+TEST_MCS_FLAGS = -debug -nowarn:168,219,618,672 -unsafe -r:Mono.Posix.dll -r:System.Core.dll \
+				 -define:MONO_DATACONVERTER_STATIC_METHODS $(TEST_RESX_RESOURCES:%=-resource:%)
 
 EXTRA_DISTFILES = \
 	Test/resources/MyResources.resources	\
@@ -52,7 +53,18 @@ EXTRA_DISTFILES = \
 	Test/resources/bug81759.resources	\
 	Test/resources/415628.bin		\
 	Test/resources/Fergie.GED		\
-	$(RESOURCE_FILES)
+	Test/resources/culture-*.cs		\
+	$(RESOURCE_FILES) \
+	$(TEST_RESOURCES:.resources=.resx)
+
+TEST_RESX_RESOURCES = \
+	Test/resources/Resources.resources
+
+TEST_RESX_RESOURCES_SATELITE = \
+	Test/resources/Resources.es-ES.resources \
+	Test/resources/Resources.nn-NO.resources \
+
+CLEAN_FILES += $(TEST_RESX_RESOURCES)
 
 include $(topdir)/build/library.make
 
@@ -88,6 +100,19 @@ $(cmp_makefrag): $(cmp_response)
 
 $(cmp_response) $(cmp_makefrag): Makefile $(depsdir)/.stamp
 endif
+
+$(TEST_RESX_RESOURCES) $(TEST_RESX_RESOURCES_SATELITE): %.resources: %.resx
+	$(RESGEN) $< || cp $@.prebuilt $@
+
+TEST_RESOURCES = $(TEST_RESX_RESOURCES) $(TEST_RESX_RESOURCES_SATELITE)
+
+$(test_lib): $(TEST_RESOURCES) satellite-assemblies
+
+satellite-assemblies:
+	@mkdir -p es-ES
+	$(CSCOMPILE) -target:library -r:$(corlib) Test/resources/culture-es-ES.cs -resource:Test/resources/Resources.es-ES.resources -out:es-ES/$(patsubst %.dll,%.Resources.dll,$(test_lib))
+	@mkdir -p nn-NO
+	$(CSCOMPILE) -target:library -r:$(corlib) Test/resources/culture-nn-NO.cs -resource:Test/resources/Resources.nn-NO.resources -out:nn-NO/$(patsubst %.dll,%.Resources.dll,$(test_lib))
 
 vtsdir = Test/System.Runtime.Serialization.Formatters.Binary/VersionTolerantSerialization
 vtslibs = \

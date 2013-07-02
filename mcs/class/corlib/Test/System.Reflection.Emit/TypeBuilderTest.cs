@@ -10983,5 +10983,96 @@ namespace MonoTests.System.Reflection.Emit
 
 	        Assert.AreEqual (42, res[0]);
 	    }
+
+
+		[Test]
+		public void Ldfld_Regress_9531 () {
+			Build<Example<int>> ();
+		}
+
+		void Build<T> () {
+            var base_class = typeof(T);
+
+            var builder = module.DefineType(genTypeName (),
+                TypeAttributes.Class | TypeAttributes.Sealed | TypeAttributes.Public,
+                base_class);
+
+            var field = builder.BaseType.GetField("Field", BindingFlags.Instance | BindingFlags.Public);
+            
+            var cb = builder.DefineConstructor(
+                MethodAttributes.Public | MethodAttributes.SpecialName,
+                CallingConventions.HasThis,
+                new[] { typeof(string) });
+            
+            var il = cb.GetILGenerator();
+            
+            if (field == null)
+            {
+                throw new InvalidOperationException("wtf");
+            }
+            
+            il.Emit(OpCodes.Ldarg_0);
+            il.Emit(OpCodes.Ldarg_1);
+            il.Emit(OpCodes.Stfld, field);
+            il.Emit(OpCodes.Ret);
+            
+            builder.CreateType();
+		}
+
+		public class Example<T> {
+			public string Field;
+			public T Field2;
+		}
+
+		[Test]
+		public void Ldfld_Encoding_10122 () {
+			Build2<Example<int>> ();
+		}
+
+		void Build2<T> () {
+			var base_class = typeof(T);
+
+	        string AssemblyName = genTypeName ();
+	        string AssemblyFileName = AssemblyName + ".dll";
+
+			var assemblyBuilderAccess = AssemblyBuilderAccess.Save;
+			var assemblyName = new AssemblyName(AssemblyName);
+			var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, assemblyBuilderAccess);
+			var moduleBuilder = assemblyBuilder.DefineDynamicModule(AssemblyName, AssemblyFileName);
+
+
+			var builder = moduleBuilder.DefineType("Wrapped",
+                TypeAttributes.Class | TypeAttributes.Sealed | TypeAttributes.Public,
+                base_class);
+
+            var field = builder.BaseType.GetField("Field", BindingFlags.Instance | BindingFlags.Public);
+            
+            var cb = builder.DefineConstructor(
+                MethodAttributes.Public | MethodAttributes.SpecialName,
+                CallingConventions.HasThis,
+                new[] { typeof(string) });
+            
+            var il = cb.GetILGenerator();
+            
+            if (field == null)
+            {
+                throw new InvalidOperationException("wtf");
+            }
+            
+            il.Emit(OpCodes.Ldarg_0);
+            il.Emit(OpCodes.Ldarg_1);
+            il.Emit(OpCodes.Stfld, field);
+            il.Emit(OpCodes.Ret);
+            
+            builder.CreateType();
+
+			assemblyBuilder.Save (AssemblyFileName);
+
+			var fromDisk = Assembly.Load (AssemblyName);
+			Console.WriteLine (fromDisk);
+			var t = fromDisk.GetType ("Wrapped");
+			Activator.CreateInstance (t, new object[] { "string"});
+		}
+
 	}
 }

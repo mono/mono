@@ -42,7 +42,7 @@ class D {
         }
 
 	
-	static int Main ()
+	public static int Main ()
 	{
 		return 0;
 	}

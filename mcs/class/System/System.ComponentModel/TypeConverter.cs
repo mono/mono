@@ -48,11 +48,7 @@ namespace System.ComponentModel
 
 		public virtual bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 		{
-			if (sourceType == typeof (InstanceDescriptor)) {
-				return true;
-			}
-
-			return false;
+			return sourceType == typeof (InstanceDescriptor);
 		}
 
 		public bool CanConvertTo (Type destinationType)
@@ -263,7 +259,18 @@ namespace System.ComponentModel
 
 		public virtual bool IsValid (ITypeDescriptorContext context, object value)
 		{
-			return true;
+			if (value == null)
+				return false;
+
+      		if (!this.CanConvertFrom(context, value.GetType()))
+        		return false;
+        
+      		try {
+        		this.ConvertFrom(context, CultureInfo.InvariantCulture, value);
+        		return true;
+      		} catch {
+        		return false;
+      		}
 		}
 
 		protected PropertyDescriptorCollection SortProperties (PropertyDescriptorCollection props, string[] names)

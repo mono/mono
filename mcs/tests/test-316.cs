@@ -69,7 +69,7 @@ class C
 		ie.Dispose ();
 	}
 
-	static int Main()
+	public static int Main()
 	{
 		D d = new D();
 		E e = new E();

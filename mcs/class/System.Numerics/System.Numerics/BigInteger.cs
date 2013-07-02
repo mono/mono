@@ -324,7 +324,7 @@ namespace System.Numerics {
 		}
 
 		public bool IsEven {
-			get { return (data [0] & 0x1) == 0; }
+			get { return sign == 0 || (data [0] & 0x1) == 0; }
 		}		
 
 		public bool IsOne {
@@ -384,6 +384,8 @@ namespace System.Numerics {
 
 		public static explicit operator int (BigInteger value)
 		{
+			if (value.sign == 0)
+				return 0;
 			if (value.data.Length > 1)
 				throw new OverflowException ();
 			uint data = value.data [0];
@@ -404,6 +406,8 @@ namespace System.Numerics {
 		[CLSCompliantAttribute (false)]
 		public static explicit operator uint (BigInteger value)
 		{
+			if (value.sign == 0)
+				return 0;
 			if (value.data.Length > 1 || value.sign == -1)
 				throw new OverflowException ();
 			return value.data [0];
@@ -478,6 +482,8 @@ namespace System.Numerics {
 		[CLSCompliantAttribute (false)]
 		public static explicit operator ulong (BigInteger value)
 		{
+			if (value.sign == 0)
+				return 0;
 			if (value.data.Length > 2 || value.sign == -1)
 				throw new OverflowException ();
 
@@ -741,6 +747,9 @@ namespace System.Numerics {
 
 		public static BigInteger operator++ (BigInteger value)
 		{
+			if (value.sign == 0)
+				return One;
+
 			short sign = value.sign;
 			uint[] data = value.data;
 			if (data.Length == 1) {
@@ -760,6 +769,9 @@ namespace System.Numerics {
 
 		public static BigInteger operator-- (BigInteger value)
 		{
+			if (value.sign == 0)
+				return MinusOne;
+
 			short sign = value.sign;
 			uint[] data = value.data;
 			if (data.Length == 1) {
@@ -1033,11 +1045,18 @@ namespace System.Numerics {
 			int bit_shift = shift & 0x1F;
 			int carry_shift = 32 - bit_shift;
 
-			for (int i = 0; i < data.Length; ++i) {
-				uint word = data [i];
-				res [i + idx_shift] |= word << bit_shift;
-				if (i + idx_shift + 1 < res.Length)
-					res [i + idx_shift + 1] = word >> carry_shift;
+			if (carry_shift == 32) {
+				for (int i = 0; i < data.Length; ++i) {
+					uint word = data [i];
+					res [i + idx_shift] |= word << bit_shift;
+				}
+			} else {
+				for (int i = 0; i < data.Length; ++i) {
+					uint word = data [i];
+					res [i + idx_shift] |= word << bit_shift;
+					if (i + idx_shift + 1 < res.Length)
+						res [i + idx_shift + 1] = word >> carry_shift;
+				}
 			}
 
 			return new BigInteger ((short)sign, res);
@@ -1071,13 +1090,23 @@ namespace System.Numerics {
 			uint[] res = new uint [size];
 			int carry_shift = 32 - bit_shift;
 
-			for (int i = data.Length - 1; i >= idx_shift; --i) {
-				uint word = data [i];
+			if (carry_shift == 32) {
+				for (int i = data.Length - 1; i >= idx_shift; --i) {
+					uint word = data [i];
 
-				if (i - idx_shift < res.Length)
-					res [i - idx_shift] |= word >> bit_shift;
-				if (i - idx_shift - 1 >= 0)
-					res [i - idx_shift - 1] = word << carry_shift;
+					if (i - idx_shift < res.Length)
+						res [i - idx_shift] |= word >> bit_shift;
+				}
+			} else {
+				for (int i = data.Length - 1; i >= idx_shift; --i) {
+					uint word = data [i];
+
+					if (i - idx_shift < res.Length)
+						res [i - idx_shift] |= word >> bit_shift;
+					if (i - idx_shift - 1 >= 0)
+						res [i - idx_shift - 1] = word << carry_shift;
+				}
+
 			}
 
 			//Round down instead of toward zero
@@ -1273,9 +1302,13 @@ namespace System.Numerics {
 		{
 			if (sign != other.sign)
 				return false;
-			if (data.Length != other.data.Length)
+
+			int alen = data != null ? data.Length : 0;
+			int blen = other.data != null ? other.data.Length : 0;
+
+			if (alen != blen)
 				return false;
-			for (int i = 0; i < data.Length; ++i) {
+			for (int i = 0; i < alen; ++i) {
 				if (data [i] != other.data [i])
 					return false;
 			}
@@ -1428,13 +1461,42 @@ namespace System.Numerics {
 				throw ex;
 			return result;
 		}
-
-
+		
 		public static bool TryParse (string value, out BigInteger result)
 		{
 			Exception ex;
 			return Parse (value, true, out result, out ex);
 		}
+		
+#if NET_4_0
+		[MonoTODO]
+		public static BigInteger Parse (string value, NumberStyles style)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static BigInteger Parse (string value, IFormatProvider provider)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static BigInteger Parse (
+			string value, NumberStyles style, IFormatProvider provider)
+		{
+			throw new InvalidOperationException ();
+		}
+		
+		[MonoTODO]
+		public static bool TryParse (
+			string value, NumberStyles style, IFormatProvider provider,
+			out BigInteger result)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+		
 
 		static Exception GetFormatException ()
 		{
@@ -1658,14 +1720,14 @@ namespace System.Numerics {
 
 		public static BigInteger GreatestCommonDivisor (BigInteger left, BigInteger right)
 		{
-			if (left.data.Length == 1 && left.data [0] == 1)
+			if (left.sign != 0 && left.data.Length == 1 && left.data [0] == 1)
 				return new BigInteger (1, ONE);
-			if (right.data.Length == 1 && right.data [0] == 1)
+			if (right.sign != 0 && right.data.Length == 1 && right.data [0] == 1)
 				return new BigInteger (1, ONE);
 			if (left.IsZero)
-				return right;
+				return Abs(right);
 			if (right.IsZero)
-				return left;
+				return Abs(left);
 
 			BigInteger x = new BigInteger (1, left.data);
 			BigInteger y = new BigInteger (1, right.data);
@@ -1772,8 +1834,9 @@ namespace System.Numerics {
 		public override int GetHashCode ()
 		{
 			uint hash = (uint)(sign * 0x01010101u);
+			int len = data != null ? data.Length : 0;
 
-			for (int i = 0; i < data.Length; ++i)
+			for (int i = 0; i < len; ++i)
 				hash ^=	data [i];
 			return (int)hash;
 		}
@@ -2139,8 +2202,8 @@ namespace System.Numerics {
 
 		static int CoreCompare (uint[] a, uint[] b)
 		{
-			int	al = a.Length;
-			int bl = b.Length;
+			int al = a != null ? a.Length : 0;
+			int bl = b != null ? b.Length : 0;
 
 			if (al > bl)
 				return 1;

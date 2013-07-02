@@ -27,6 +27,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !MOBILE
+
 using NUnit.Framework;
 using System;
 using System.Collections;
@@ -1832,7 +1834,7 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (MissingMethodException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsTrue (ex.Message.IndexOf (Consts.AssemblyCorlib) != -1, "#5");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (object).Assembly.FullName) != -1, "#5");
 			}
 		}
 
@@ -1848,7 +1850,7 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (MissingMethodException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsTrue (ex.Message.IndexOf (Consts.AssemblyCorlib) != -1, "#5");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (object).Assembly.FullName) != -1, "#5");
 			}
 		}
 
@@ -1865,7 +1867,7 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (MissingMethodException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsTrue (ex.Message.IndexOf (Consts.AssemblyCorlib) != -1, "#5");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (object).Assembly.FullName) != -1, "#5");
 			}
 		}
 
@@ -1883,7 +1885,7 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (MissingMethodException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsTrue (ex.Message.IndexOf (Consts.AssemblyCorlib) != -1, "#5");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (object).Assembly.FullName) != -1, "#5");
 			}
 		}
 #endif
@@ -3259,6 +3261,74 @@ namespace MonoTests.System
 		}
 #endif
 
+		public class StuffToPick
+		{
+			public StuffToPick () {}
+			public void Method () {}
+			public int Property { get; set; }
+			public event Action Event;
+			public int Field;
+			public void GenericMethod<T> () {}
+		}
+
+		public class StuffToPick<T>
+		{
+			public StuffToPick () {}
+			public void Method () {}
+			public int Property { get; set; }
+			public event Action Event;
+			public int Field;
+			public void GenericMethod<T> () {}
+		}
+
+		static void TestSerialization (CrossDomainTester tester, object o)
+		{
+			Assert.AreSame (o, tester.ReturnArg0 (o), "serializing_type_" + o.GetType ());
+		}
+
+		[Test] //BXC #12611
+		public void ReflectionObjectsAreSerializableTest ()
+		{
+			ad = CreateTestDomain (tempDir, true);
+			CrossDomainTester tester = CreateCrossDomainTester (ad);
+
+			TestSerialization (tester, typeof (StuffToPick));
+			TestSerialization (tester, typeof (StuffToPick).GetConstructor(new Type [0]));
+			TestSerialization (tester, typeof (StuffToPick).GetMethod ("Method"));
+			TestSerialization (tester, typeof (StuffToPick).GetProperty ("Property"));
+			TestSerialization (tester, typeof (StuffToPick).GetEvent ("Event"));
+			TestSerialization (tester, typeof (StuffToPick).GetField ("Field"));
+			TestSerialization (tester, typeof (StuffToPick).GetMethod ("GenericMethod"));
+
+			TestSerialization (tester, typeof (StuffToPick<>));
+			TestSerialization (tester, typeof (StuffToPick<>).GetConstructor(new Type [0]));
+			TestSerialization (tester, typeof (StuffToPick<>).GetMethod ("Method"));
+			TestSerialization (tester, typeof (StuffToPick<>).GetProperty ("Property"));
+			TestSerialization (tester, typeof (StuffToPick<>).GetEvent ("Event"));
+			TestSerialization (tester, typeof (StuffToPick<>).GetField ("Field"));
+			TestSerialization (tester, typeof (StuffToPick<>).GetMethod ("GenericMethod"));
+
+			TestSerialization (tester, typeof (StuffToPick<int>));
+			TestSerialization (tester, typeof (StuffToPick<int>).GetConstructor(new Type [0]));
+			TestSerialization (tester, typeof (StuffToPick<int>).GetMethod ("Method"));
+			TestSerialization (tester, typeof (StuffToPick<int>).GetProperty ("Property"));
+			TestSerialization (tester, typeof (StuffToPick<int>).GetEvent ("Event"));
+			TestSerialization (tester, typeof (StuffToPick<int>).GetField ("Field"));
+			TestSerialization (tester, typeof (StuffToPick<int>).GetMethod ("GenericMethod"));
+		}
+
+		[Test] //BXC #12611
+		[Category ("NotWorking")] // Serialization can't handle generic methods
+		public void GenericReflectionObjectsAreSerializableTest ()
+		{
+			ad = CreateTestDomain (tempDir, true);
+			CrossDomainTester tester = CreateCrossDomainTester (ad);
+
+			TestSerialization (tester, typeof (StuffToPick).GetMethod ("GenericMethod").MakeGenericMethod (typeof (int)));
+			TestSerialization (tester, typeof (StuffToPick<>).GetMethod ("GenericMethod").MakeGenericMethod (typeof (int)));
+			TestSerialization (tester, typeof (StuffToPick<int>).GetMethod ("GenericMethod").MakeGenericMethod (typeof (int)));
+		}
+
 		private static AppDomain CreateTestDomain (string baseDirectory, bool assemblyResolver)
 		{
 			AppDomainSetup setup = new AppDomainSetup ();
@@ -3392,6 +3462,11 @@ namespace MonoTests.System
 				} catch (FileNotFoundException) {
 					return true;
 				}
+			}
+
+			public object ReturnArg0 (object obj)
+			{
+				return obj;
 			}
 		}
 
@@ -3553,3 +3628,5 @@ namespace MonoTests.System
 		static byte [] pk_token = { 0xce, 0x52, 0x76, 0xd8, 0x68, 0x7e, 0Xc6, 0xdc };
 	}
 }
+
+#endif

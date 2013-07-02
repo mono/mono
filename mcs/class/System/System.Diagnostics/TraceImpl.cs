@@ -163,7 +163,6 @@ namespace System.Diagnostics {
 		}
 
 		static bool use_global_lock;
-#if !MOBILE
 		static CorrelationManager correlation_manager = new CorrelationManager ();
 
 		public static CorrelationManager CorrelationManager {
@@ -172,7 +171,6 @@ namespace System.Diagnostics {
 		 		return correlation_manager;
 			}
 		}
-#endif
 
 		[MonoLimitation ("the property exists but it does nothing.")]
 		public static bool UseGlobalLock {

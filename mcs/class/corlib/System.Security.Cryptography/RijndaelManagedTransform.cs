@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if  !MOONLIGHT
-
 using Mono.Security.Cryptography;
 using System.Runtime.InteropServices;
 
@@ -35,8 +33,7 @@ namespace System.Security.Cryptography {
 
 	// Notes: This class is "publicly" new in Fx 2.0 but was already 
 	// existing in Fx 1.0. So this new class is only calling the old
-	// (and more general) one (RijndaelTransform) located in 
-	// RijndaelManaged.cs.
+	// (and more general) one (RijndaelTransform)
 
 	[ComVisible (true)]
 	public sealed class RijndaelManagedTransform: ICryptoTransform, IDisposable {
@@ -100,13 +97,13 @@ namespace System.Security.Cryptography {
 		}
 	}
 
-	internal class RijndaelTransform : SymmetricTransform
-	{
+	class RijndaelTransform : SymmetricTransform {
 		private uint[] expandedKey;
-	
+
 		private int Nb;
 		private int Nk;
 		private int Nr;
+		private int ts;
 	
 		public RijndaelTransform (Rijndael algo, bool encryption, byte[] key, byte[] iv) : base (algo, encryption, iv)
 		{
@@ -126,6 +123,13 @@ namespace System.Security.Cryptography {
 			}
 			keySize <<= 3; // bytes -> bits
 			int blockSize = algo.BlockSize;
+			if (algo.Mode == CipherMode.CFB) {
+				if (algo.Padding == PaddingMode.None)
+					padmode = PaddingMode.Zeros;
+				ts = algo.FeedbackSize >> 3;
+			} else {
+				ts = blockSize >> 3;
+			}
 
 			this.Nb = (blockSize >> 5); // div 32
 			this.Nk = (keySize >> 5); // div 32
@@ -181,6 +185,14 @@ namespace System.Security.Cryptography {
 			expandedKey = exKey;
 		}
 
+		public override int InputBlockSize {
+			get { return ts; }
+		}
+		
+		public override int OutputBlockSize {
+			get { return ts; }
+		}
+
 		public void Clear () 
 		{
 			Dispose (true);
@@ -215,6 +227,82 @@ namespace System.Security.Cryptography {
 						return;
 				}
 			}
+		}
+
+		// RijndaelManaged does not implement CFB like any *CryptoServiceProvider does
+		// not even AesCryptoServiceProvider, while AesManaged does not support CFB at all
+		protected override void CFB (byte[] input, byte[] output) 
+		{
+			bool last = lastBlock && padmode == PaddingMode.Zeros;
+			int outer = last ? FeedBackByte : BlockSizeByte / FeedBackByte;
+			int inner = last ? Nb : FeedBackByte;
+			if (encrypt) {
+				for (int x = 0; x < outer; x++) {
+					// temp is first initialized with the IV
+					ECB (temp, temp2);
+					
+					for (int i = 0; i < inner; i++)
+						output[i + x] = (byte)(temp2[i] ^ input[i + x]);
+					Buffer.BlockCopy (temp, inner, temp, 0, BlockSizeByte - inner);
+					Buffer.BlockCopy (output, x, temp, BlockSizeByte - inner, inner);
+				}
+			}
+			else {
+				for (int x = 0; x < outer; x++) {
+					// we do not really decrypt this data!
+					encrypt = true;
+					// temp is first initialized with the IV
+					ECB (temp, temp2);
+					encrypt = false;
+					
+					Buffer.BlockCopy (temp, inner, temp, 0, BlockSizeByte - inner);
+					Buffer.BlockCopy (input, x, temp, BlockSizeByte - inner, inner);
+					for (int i = 0; i < inner; i++)
+						output[i + x] = (byte)(temp2[i] ^ input[i + x]);
+				}
+			}
+		}
+
+		protected override byte[] FinalEncrypt (byte[] inputBuffer, int inputOffset, int inputCount)
+		{
+			var result = base.FinalEncrypt (inputBuffer, inputOffset, inputCount);
+			if (algo.Mode != CipherMode.CFB)
+				return result;
+
+			switch (algo.Padding) {
+			// RijdaelManaged treats both Zeros and None identically
+			case PaddingMode.None:
+			case PaddingMode.Zeros:
+				if (inputCount != result.Length) {
+					byte[] part = new byte [inputCount];
+					Buffer.BlockCopy (result, 0, part, 0, inputCount);
+					return part;
+				}
+				break;
+			}
+			return result;
+		}
+
+		protected override byte[] FinalDecrypt (byte[] inputBuffer, int inputOffset, int inputCount) 
+		{
+			int full = (inputCount / BlockSizeByte) * BlockSizeByte;
+			int rem = inputCount - full;
+			if (rem == 0)
+				return base.FinalDecrypt (inputBuffer, inputOffset, inputCount);
+
+			if (algo.Mode != CipherMode.CFB)
+				throw new CryptographicException ("Invalid input block size.");
+
+			byte[] final = new byte [inputCount];
+			full += BlockSizeByte;
+			byte[] paddedInput = new byte [full];
+			Buffer.BlockCopy (inputBuffer, 0, paddedInput, 0, inputCount);
+			inputBuffer = paddedInput;
+			inputOffset = 0;
+			inputCount = full;
+			var result = base.FinalDecrypt (inputBuffer, inputOffset, inputCount);
+			Buffer.BlockCopy (result, 0, final, 0, final.Length);
+			return final;
 		}
 
 		private UInt32 SubByte (UInt32 a)
@@ -1479,5 +1567,3 @@ namespace System.Security.Cryptography {
 		#endregion
 	}
 }
-
-#endif

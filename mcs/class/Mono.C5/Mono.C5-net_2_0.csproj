@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{59B4B82A-3EBA-4BFB-991B-4A0171AFDCCE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,169,219,414,1030,3001,3005,3006</NoWarn>
-    <OutputPath>./../../class/lib/net_2_0</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\Mono.C5-net_2_0</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>Mono.C5</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699,169,219,414,1030,3001,3005,3006</NoWarn>
@@ -28,55 +27,56 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,169,219,414,1030,3001,3005,3006</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="C5\hashing\HashTable.cs" />
-   <Compile Include="C5\hashing\HashBag.cs" />
-   <Compile Include="C5\hashing\HashDictionary.cs" />
-   <Compile Include="C5\trees\RedBlackTreeBag.cs" />
-   <Compile Include="C5\trees\RedBlackTreeDictionary.cs" />
-   <Compile Include="C5\trees\RedBlackTreeSet.cs" />
-   <Compile Include="C5\linkedlists\HashedLinkedList.cs" />
-   <Compile Include="C5\linkedlists\LinkedList.cs" />
-   <Compile Include="C5\heaps\IntervalHeap.cs" />
-   <Compile Include="C5\arrays\HashedArrayList.cs" />
-   <Compile Include="C5\arrays\SortedArray.cs" />
-   <Compile Include="C5\arrays\CircularQueue.cs" />
-   <Compile Include="C5\arrays\ArrayList.cs" />
-   <Compile Include="C5\MappedEnumerators.cs" />
-   <Compile Include="C5\Dictionaries.cs" />
-   <Compile Include="C5\Collections.cs" />
-   <Compile Include="C5\Random.cs" />
-   <Compile Include="C5\Exceptions.cs" />
-   <Compile Include="C5\Interfaces.cs" />
-   <Compile Include="C5\Sorting.cs" />
-   <Compile Include="C5\Attributes.cs" />
-   <Compile Include="C5\Enums.cs" />
-   <Compile Include="C5\AssemblyInfo.cs" />
-   <Compile Include="C5\Hashers.cs" />
-   <Compile Include="C5\Delegates.cs" />
-   <Compile Include="C5\Records.cs" />
-   <Compile Include="C5\WrappedArray.cs" />
-   <Compile Include="C5\Wrappers.cs" />
-   <Compile Include="C5\Events.cs" />
-   <Compile Include="C5\Builtin.cs" />
-   <Compile Include="C5\ViewSupport.cs" />
-   <Compile Include="C5\Comparer.cs" />
-   <Compile Include="C5\Formatting.cs" />
-
-  </ItemGroup>
+    <Compile Include="C5\arrays\ArrayList.cs" />
+    <Compile Include="C5\arrays\CircularQueue.cs" />
+    <Compile Include="C5\arrays\HashedArrayList.cs" />
+    <Compile Include="C5\arrays\SortedArray.cs" />
+    <Compile Include="C5\AssemblyInfo.cs" />
+    <Compile Include="C5\Attributes.cs" />
+    <Compile Include="C5\Builtin.cs" />
+    <Compile Include="C5\Collections.cs" />
+    <Compile Include="C5\Comparer.cs" />
+    <Compile Include="C5\Delegates.cs" />
+    <Compile Include="C5\Dictionaries.cs" />
+    <Compile Include="C5\Enums.cs" />
+    <Compile Include="C5\Events.cs" />
+    <Compile Include="C5\Exceptions.cs" />
+    <Compile Include="C5\Formatting.cs" />
+    <Compile Include="C5\Hashers.cs" />
+    <Compile Include="C5\hashing\HashBag.cs" />
+    <Compile Include="C5\hashing\HashDictionary.cs" />
+    <Compile Include="C5\hashing\HashTable.cs" />
+    <Compile Include="C5\heaps\IntervalHeap.cs" />
+    <Compile Include="C5\Interfaces.cs" />
+    <Compile Include="C5\linkedlists\HashedLinkedList.cs" />
+    <Compile Include="C5\linkedlists\LinkedList.cs" />
+    <Compile Include="C5\MappedEnumerators.cs" />
+    <Compile Include="C5\Random.cs" />
+    <Compile Include="C5\Records.cs" />
+    <Compile Include="C5\Sorting.cs" />
+    <Compile Include="C5\trees\RedBlackTreeBag.cs" />
+    <Compile Include="C5\trees\RedBlackTreeDictionary.cs" />
+    <Compile Include="C5\trees\RedBlackTreeSet.cs" />
+    <Compile Include="C5\ViewSupport.cs" />
+    <Compile Include="C5\WrappedArray.cs" />
+    <Compile Include="C5\Wrappers.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -85,26 +85,24 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-
+    <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
+      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Name>corlib\corlib-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_2_0-2.csproj">
+      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
+      <Name>System\System-net_2_0-2</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
-

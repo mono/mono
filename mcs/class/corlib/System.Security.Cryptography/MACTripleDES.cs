@@ -2,10 +2,11 @@
 // MACTripleDES.cs: Handles MAC with TripleDES
 //
 // Author:
-//	Sebastien Pouliot (sebastien@ximian.com)
+//	Sebastien Pouliot  <sebastien@xamarin.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright 2013 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,8 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-#if !MOONLIGHT
 
 using System.Runtime.InteropServices;
 
@@ -50,14 +49,14 @@ namespace System.Security.Cryptography {
 	
 		public MACTripleDES ()
 		{
-			Setup ("TripleDES", null);
+			Setup (null, null);
 		}
 	
 		public MACTripleDES (byte[] rgbKey)
 		{
 			if (rgbKey == null)
 				throw new ArgumentNullException ("rgbKey");
-			Setup ("TripleDES", rgbKey);
+			Setup (null, rgbKey);
 		}
 	
 		public MACTripleDES (string strTripleDES, byte[] rgbKey) 
@@ -65,14 +64,14 @@ namespace System.Security.Cryptography {
 			if (rgbKey == null)
 				throw new ArgumentNullException ("rgbKey");
 			if (strTripleDES == null)
-				Setup ("TripleDES", rgbKey);
+				Setup (null, rgbKey);
 			else
-				Setup (strTripleDES, rgbKey);
+				Setup (TripleDES.Create (strTripleDES), rgbKey);
 		}
 	
-		private void Setup (string strTripleDES, byte[] rgbKey) 
+		private void Setup (TripleDES tripleDES, byte[] rgbKey) 
 		{
-			tdes = TripleDES.Create (strTripleDES);
+			tdes = tripleDES ?? TripleDES.Create ();
 			// default padding (as using in Fx 1.0 and 1.1)
 			tdes.Padding = PaddingMode.Zeros;
 			// if rgbKey is null we keep the randomly generated key
@@ -146,6 +145,3 @@ namespace System.Security.Cryptography {
 		}
 	}
 }
-
-#endif
-

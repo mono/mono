@@ -15,7 +15,7 @@ public class C
 		return false;
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		var x = new int [] { 'a', 'b', 'c' };
 		

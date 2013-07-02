@@ -106,6 +106,28 @@ public class ConditionalParsing
 		return 1;
 	}
 
+	void Test_13 (object param)
+	{
+		if (param as bool? ?? false) {} else {}
+	}
+
+	int? Test_14 ()
+	{
+		bool a = false, b = false;
+		object c = null;
+
+		return a ? (b ? c as int? : null) : null;
+	}
+
+	Action<int> Test_15 (Action<int> arg)
+	{
+		return arg ?? (Helper<int>);
+	}
+
+	static void Helper<T> (T arg)
+	{		
+	}
+
 	public static void Main ()
 	{
 	}

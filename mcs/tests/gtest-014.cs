@@ -9,7 +9,7 @@ public class Stack<S>
 
 public class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Stack<int> s1 = new Stack<int> (3);
 		s1.Push (4);

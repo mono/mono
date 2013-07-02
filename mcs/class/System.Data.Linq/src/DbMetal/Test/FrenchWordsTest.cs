@@ -28,6 +28,9 @@ using DbMetal.Language;
 using System.Collections.Generic;
 using NUnit.Framework;
 
+// These don't build in tools/sqlmetal
+#if FALSE
+
 namespace DbLinqTest
 {
 
@@ -110,3 +113,5 @@ namespace DbLinqTest
         }
     }
 }
+
+#endif

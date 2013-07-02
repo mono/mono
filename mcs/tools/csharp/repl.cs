@@ -41,9 +41,14 @@ namespace Mono {
 			var cmd = new CommandLineParser (Console.Out);
 			cmd.UnknownOptionHandler += HandleExtraArguments;
 
-			var settings = cmd.ParseArguments (args);
-			if (settings == null)
+			// Enable unsafe code by default
+			var settings = new CompilerSettings () {
+				Unsafe = true
+			};
+
+			if (!cmd.ParseArguments (settings, args))
 				return 1;
+
 			var startup_files = new string [settings.SourceFiles.Count];
 			int i = 0;
 			foreach (var source in settings.SourceFiles)
@@ -314,7 +319,7 @@ namespace Mono {
 				expr = expr == null ? input : expr + "\n" + input;
 				
 				expr = Evaluate (expr);
-			} 
+			}
 		}
 
 		public int ReadEvalPrintLoop ()
@@ -326,17 +331,24 @@ namespace Mono {
 
 			LoadStartupFiles ();
 
-			if (startup_files != null && startup_files.Length != 0)
+			if (startup_files != null && startup_files.Length != 0) {
 				ExecuteSources (startup_files, false);
-			else if (Driver.StartupEvalExpression != null){
-				ReadEvalPrintLoopWith (p => {
-					var ret = Driver.StartupEvalExpression;
-					Driver.StartupEvalExpression = null;
-					return ret;
-					});
-			} else
-				ReadEvalPrintLoopWith (GetLine);
+			} else {
+				if (Driver.StartupEvalExpression != null){
+					ReadEvalPrintLoopWith (p => {
+						var ret = Driver.StartupEvalExpression;
+						Driver.StartupEvalExpression = null;
+						return ret;
+						});
+				} else {
+					ReadEvalPrintLoopWith (GetLine);
+				}
+				
+				editor.SaveHistory ();
+			}
 
+			Console.CancelKeyPress -= ConsoleInterrupt;
+			
 			return 0;
 		}
 

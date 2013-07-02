@@ -10,7 +10,7 @@ class Program
 
 	static int pos;
 
-	static int Main ()
+	public static int Main ()
 	{
 		pos = 0;
 		TestAsync ();
@@ -35,7 +35,7 @@ class Program
 	{
 		pos = 1;
 
-		await RunAsync ();
+		await RunAsync ().ConfigureAwait (false);
 
 		if (pos != 3)
 			throw new ApplicationException (pos.ToString ());

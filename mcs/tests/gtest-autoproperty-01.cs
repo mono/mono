@@ -17,7 +17,7 @@ public class Test
 		Answer = 42;
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		Test t = new Test ();
 		t.Foo = "Bar";

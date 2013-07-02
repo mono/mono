@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Reflection;
 using C = Mono.Cecil;
@@ -240,13 +241,13 @@ namespace Mono.Debugger.Soft
 
 		public LocalVariable[] GetLocals () {
 			if (locals == null) {
-
 				LocalsInfo li = new LocalsInfo ();
 				try {
 					li = vm.conn.Method_GetLocalsInfo (id);
 				} catch (CommandException) {
-					throw new ArgumentException ("Method doesn't have a body.");
+					throw new AbsentInformationException ();
 				}
+
 				// Add the arguments as well
 				var pi = vm.conn.Method_GetParamInfo (id);
 
@@ -304,6 +305,30 @@ namespace Mono.Debugger.Soft
 			if (type_args == null)
 				type_args = vm.GetTypes (GetInfo ().type_args);
 			return type_args;
+		}
+
+		// Since protocol version 2.24
+		public MethodMirror MakeGenericMethod (TypeMirror[] args) {
+			if (args == null)
+				throw new ArgumentNullException ("args");
+			foreach (var a in args)
+				if (a == null)
+					throw new ArgumentNullException ("args");
+
+			if (!IsGenericMethodDefinition)
+				throw new InvalidOperationException ("not a generic method definition");
+
+			if (GetGenericArguments ().Length != args.Length)
+				throw new ArgumentException ("Incorrect length");
+
+			vm.CheckProtocolVersion (2, 24);
+			long id = -1;
+			try {
+				id = vm.conn.Method_MakeGenericMethod (Id, args.Select (t => t.Id).ToArray ());
+			} catch (CommandException) {
+				throw new InvalidOperationException ();
+			}
+			return vm.GetMethod (id);
 		}
 
 		public IList<int> ILOffsets {

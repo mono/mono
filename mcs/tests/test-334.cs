@@ -3,7 +3,7 @@ namespace Test {
 	namespace Foo {
 		namespace Index {
 			public class CompoundFileReader : Bar {
-				static void Main () { }
+				public static void Main () { }
 			}
 		}
 	}

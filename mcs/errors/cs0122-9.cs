@@ -1,4 +1,4 @@
-// CS0122: `X.a' is inaccessible due to its protection level
+// CS0122: `X.a.get' is inaccessible due to its protection level
 // Line: 16
 
 public class X {

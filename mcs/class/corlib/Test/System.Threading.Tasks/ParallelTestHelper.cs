@@ -31,7 +31,11 @@ namespace MonoTests.System.Threading.Tasks
 {
 	static class ParallelTestHelper
 	{
+#if MOBILE
+		const int NumRun = 5;
+#else
 		const int NumRun = 500;
+#endif
 		
 		public static void Repeat (Action action)
 		{

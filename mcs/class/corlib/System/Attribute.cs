@@ -40,7 +40,11 @@ namespace System
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_Attribute))]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+#if MOBILE
+	public abstract class Attribute {
+#else
 	public abstract class Attribute : _Attribute {
+#endif
 		protected Attribute ()
 		{
 		}
@@ -346,7 +350,7 @@ namespace System
 			var method = ((MethodInfo) member).GetBaseMethod ();
 
 			while (true) {
-				var param = method.GetParameters () [parameter.Position];
+				var param = method.GetParametersInternal () [parameter.Position];
 				if (param.IsDefined (attributeType, false))
 					return true;
 
@@ -377,7 +381,7 @@ namespace System
 			var custom_attributes = new List<Attribute> ();
 
 			while (true) {
-				var param = method.GetParameters () [parameter.Position];
+				var param = method.GetParametersInternal () [parameter.Position];
 				var param_attributes = (Attribute []) param.GetCustomAttributes (attributeType, false);
 				foreach (var param_attribute in param_attributes) {
 					var param_type = param_attribute.GetType ();
@@ -420,6 +424,7 @@ namespace System
 			return ValueType.DefaultEquals (this, obj);
 		}
 
+#if !MOBILE
 		void _Attribute.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -440,5 +445,6 @@ namespace System
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 	}
 }

@@ -97,6 +97,7 @@ typedef enum {
 	WRAPPER_SUBTYPE_CASTCLASS_WITH_CACHE,
 	WRAPPER_SUBTYPE_ISINST_WITH_CACHE,
 	/* Subtypes of MONO_WRAPPER_RUNTIME_INVOKE */
+	WRAPPER_SUBTYPE_RUNTIME_INVOKE_NORMAL,
 	WRAPPER_SUBTYPE_RUNTIME_INVOKE_DYNAMIC,
 	WRAPPER_SUBTYPE_RUNTIME_INVOKE_DIRECT,
 	WRAPPER_SUBTYPE_RUNTIME_INVOKE_VIRTUAL,
@@ -105,6 +106,8 @@ typedef enum {
 	WRAPPER_SUBTYPE_NATIVE_FUNC_AOT,
 	/* Subtypes of MONO_WRAPPER_UNKNOWN */
 	WRAPPER_SUBTYPE_SYNCHRONIZED_INNER,
+	WRAPPER_SUBTYPE_GSHAREDVT_IN,
+	WRAPPER_SUBTYPE_GSHAREDVT_OUT,
 	/* Subtypes of MONO_WRAPPER_MANAGED_TO_MANAGED */
 	WRAPPER_SUBTYPE_GENERIC_ARRAY_HELPER
 } WrapperSubtype;
@@ -128,6 +131,8 @@ typedef struct {
 
 typedef struct {
 	MonoMethod *method;
+	/* For WRAPPER_SUBTYPE_RUNTIME_INVOKE_NORMAL */
+	MonoMethodSignature *sig;
 } RuntimeInvokeWrapperInfo;
 
 typedef struct {
@@ -141,6 +146,10 @@ typedef struct {
 typedef struct {
 	MonoMethod *method;
 } GenericArrayHelperWrapperInfo;
+
+typedef struct {
+	gpointer func;
+} ICallWrapperInfo;
 
 /*
  * This structure contains additional information to uniquely identify a given wrapper
@@ -166,6 +175,8 @@ typedef struct {
 		SynchronizedInnerWrapperInfo synchronized_inner;
 		/* GENERIC_ARRAY_HELPER */
 		GenericArrayHelperWrapperInfo generic_array_helper;
+		/* ICALL_WRAPPER */
+		ICallWrapperInfo icall;
 	} d;
 } WrapperInfo;
 
@@ -180,6 +191,9 @@ typedef void (*RuntimeInvokeDynamicFunction) (void *args, MonoObject **exc, void
 
 void
 mono_marshal_init (void) MONO_INTERNAL;
+
+void
+mono_marshal_init_tls (void) MONO_INTERNAL;
 
 void
 mono_marshal_cleanup (void) MONO_INTERNAL;
@@ -265,18 +279,6 @@ gpointer
 mono_marshal_get_wrapper_info (MonoMethod *wrapper) MONO_INTERNAL;
 
 MonoMethod *
-mono_marshal_get_remoting_invoke (MonoMethod *method) MONO_INTERNAL;
-
-MonoMethod *
-mono_marshal_get_xappdomain_invoke (MonoMethod *method) MONO_INTERNAL;
-
-MonoMethod *
-mono_marshal_get_remoting_invoke_for_target (MonoMethod *method, MonoRemotingTarget target_type) MONO_INTERNAL;
-
-MonoMethod *
-mono_marshal_get_remoting_invoke_with_check (MonoMethod *method) MONO_INTERNAL;
-
-MonoMethod *
 mono_marshal_get_delegate_begin_invoke (MonoMethod *method) MONO_INTERNAL;
 
 MonoMethod *
@@ -319,21 +321,6 @@ MonoMethod *
 mono_marshal_get_ptr_to_struct (MonoClass *klass) MONO_INTERNAL;
 
 MonoMethod *
-mono_marshal_get_stfld_wrapper (MonoType *type) MONO_INTERNAL;
-
-MonoMethod *
-mono_marshal_get_ldfld_wrapper (MonoType *type) MONO_INTERNAL;
-
-MonoMethod *
-mono_marshal_get_ldflda_wrapper (MonoType *type) MONO_INTERNAL;
-
-MonoMethod *
-mono_marshal_get_ldfld_remote_wrapper (MonoClass *klass) MONO_INTERNAL;
-
-MonoMethod *
-mono_marshal_get_stfld_remote_wrapper (MonoClass *klass) MONO_INTERNAL;
-
-MonoMethod *
 mono_marshal_get_synchronized_wrapper (MonoMethod *method) MONO_INTERNAL;
 
 MonoMethod *
@@ -355,13 +342,13 @@ MonoMethod *
 mono_marshal_get_castclass (MonoClass *klass) MONO_INTERNAL;
 
 MonoMethod *
-mono_marshal_get_proxy_cancast (MonoClass *klass) MONO_INTERNAL;
-
-MonoMethod *
 mono_marshal_get_stelemref (void) MONO_INTERNAL;
 
 MonoMethod*
 mono_marshal_get_virtual_stelemref (MonoClass *array_class) MONO_INTERNAL;
+
+MonoMethod**
+mono_marshal_get_virtual_stelemref_wrappers (int *nwrappers) MONO_INTERNAL;
 
 MonoMethod*
 mono_marshal_get_array_address (int rank, int elem_size) MONO_INTERNAL;
@@ -372,6 +359,12 @@ mono_marshal_get_generic_array_helper (MonoClass *class, MonoClass *iface,
 
 MonoMethod *
 mono_marshal_get_thunk_invoke_wrapper (MonoMethod *method) MONO_INTERNAL;
+
+MonoMethod*
+mono_marshal_get_gsharedvt_in_wrapper (void) MONO_INTERNAL;
+
+MonoMethod*
+mono_marshal_get_gsharedvt_out_wrapper (void) MONO_INTERNAL;
 
 void
 mono_marshal_free_dynamic_wrappers (MonoMethod *method) MONO_INTERNAL;
@@ -393,9 +386,6 @@ mono_marshal_free_array (gpointer *ptr, int size) MONO_INTERNAL;
 gboolean 
 mono_marshal_free_ccw (MonoObject* obj) MONO_INTERNAL;
 
-MonoObject *
-mono_marshal_xdomain_copy_value (MonoObject *val) MONO_INTERNAL;
-
 void
 cominterop_release_all_rcws (void) MONO_INTERNAL; 
 
@@ -406,36 +396,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_copy_to_unmanaged (MonoArray *s
 void
 ves_icall_System_Runtime_InteropServices_Marshal_copy_from_unmanaged (gpointer src, gint32 start_index,
 								      MonoArray *dest, gint32 length) MONO_INTERNAL;
-
-gpointer
-ves_icall_System_Runtime_InteropServices_Marshal_ReadIntPtr (gpointer ptr, gint32 offset) MONO_INTERNAL;
-
-unsigned char
-ves_icall_System_Runtime_InteropServices_Marshal_ReadByte (gpointer ptr, gint32 offset) MONO_INTERNAL;
-
-gint16
-ves_icall_System_Runtime_InteropServices_Marshal_ReadInt16 (gpointer ptr, gint32 offset) MONO_INTERNAL;
-
-gint32
-ves_icall_System_Runtime_InteropServices_Marshal_ReadInt32 (gpointer ptr, gint32 offset) MONO_INTERNAL;
-
-gint64
-ves_icall_System_Runtime_InteropServices_Marshal_ReadInt64 (gpointer ptr, gint32 offset) MONO_INTERNAL;
-
-void
-ves_icall_System_Runtime_InteropServices_Marshal_WriteByte (gpointer ptr, gint32 offset, unsigned char val) MONO_INTERNAL;
-
-void
-ves_icall_System_Runtime_InteropServices_Marshal_WriteIntPtr (gpointer ptr, gint32 offset, gpointer val) MONO_INTERNAL;
-
-void
-ves_icall_System_Runtime_InteropServices_Marshal_WriteInt16 (gpointer ptr, gint32 offset, gint16 val) MONO_INTERNAL;
-
-void
-ves_icall_System_Runtime_InteropServices_Marshal_WriteInt32 (gpointer ptr, gint32 offset, gint32 val) MONO_INTERNAL;
-
-void
-ves_icall_System_Runtime_InteropServices_Marshal_WriteInt64 (gpointer ptr, gint32 offset, gint64 val) MONO_INTERNAL;
 
 MonoString *
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi (char *ptr) MONO_INTERNAL;
@@ -595,6 +555,44 @@ mono_marshal_emit_thread_interrupt_checkpoint (MonoMethodBuilder *mb) MONO_INTER
 
 void
 mono_marshal_use_aot_wrappers (gboolean use) MONO_INTERNAL;
+
+MonoObject *
+mono_marshal_xdomain_copy_value (MonoObject *val) MONO_INTERNAL;
+
+
+#ifndef DISABLE_REMOTING
+
+MonoMethod *
+mono_marshal_get_remoting_invoke (MonoMethod *method) MONO_INTERNAL;
+
+MonoMethod *
+mono_marshal_get_xappdomain_invoke (MonoMethod *method) MONO_INTERNAL;
+
+MonoMethod *
+mono_marshal_get_remoting_invoke_for_target (MonoMethod *method, MonoRemotingTarget target_type) MONO_INTERNAL;
+
+MonoMethod *
+mono_marshal_get_remoting_invoke_with_check (MonoMethod *method) MONO_INTERNAL;
+
+MonoMethod *
+mono_marshal_get_stfld_wrapper (MonoType *type) MONO_INTERNAL;
+
+MonoMethod *
+mono_marshal_get_ldfld_wrapper (MonoType *type) MONO_INTERNAL;
+
+MonoMethod *
+mono_marshal_get_ldflda_wrapper (MonoType *type) MONO_INTERNAL;
+
+MonoMethod *
+mono_marshal_get_ldfld_remote_wrapper (MonoClass *klass) MONO_INTERNAL;
+
+MonoMethod *
+mono_marshal_get_stfld_remote_wrapper (MonoClass *klass) MONO_INTERNAL;
+
+MonoMethod *
+mono_marshal_get_proxy_cancast (MonoClass *klass) MONO_INTERNAL;
+
+#endif
 
 G_END_DECLS
 

@@ -202,8 +202,14 @@ namespace Microsoft.Build.Tasks {
 			if (overwriteReadOnlyFiles)
 				ClearReadOnlyAttribute (dest);
 			Log.LogMessage ("Copying file from '{0}' to '{1}'", source, dest);
-			if (String.Compare (source, dest) != 0)
+			if (String.Compare (source, dest) != 0) {
+				// Ensure that we delete the destination file first so that if the file is already
+				// opened via mmap we do not screw up the data for the process which has the file open
+				// Fixes https://bugzilla.xamarin.com/show_bug.cgi?id=9146
+				if (!HasReadOnlyAttribute (dest))
+					File.Delete (dest);
 				File.Copy (source, dest, true);
+			}
 			ClearReadOnlyAttribute (dest);
 		}
 
@@ -211,6 +217,11 @@ namespace Microsoft.Build.Tasks {
 		{
 			if (File.Exists (name) && ((File.GetAttributes (name) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly))
 				File.SetAttributes (name, FileAttributes.Normal);
+		}
+
+		bool HasReadOnlyAttribute (string name)
+		{
+			return File.Exists (name) && (File.GetAttributes (name) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly;
 		}
 
 		bool HasFileChanged (string source, string dest)

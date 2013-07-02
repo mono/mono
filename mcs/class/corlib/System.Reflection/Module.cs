@@ -48,13 +48,15 @@ namespace System.Reflection {
 	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if MOBILE
+	public abstract class Module : ISerializable, ICustomAttributeProvider {
+#elif NET_4_0
 	public abstract class Module : ISerializable, ICustomAttributeProvider, _Module {
 #else
 	public partial class Module : ISerializable, ICustomAttributeProvider, _Module {
 #endif
-		public static readonly TypeFilter FilterTypeName;
-		public static readonly TypeFilter FilterTypeNameIgnoreCase;
+		public static readonly TypeFilter FilterTypeName = new TypeFilter (filter_by_type_name);
+		public static readonly TypeFilter FilterTypeNameIgnoreCase = new TypeFilter (filter_by_type_name_ignore_case);
 	
 #pragma warning disable 649	
 		internal IntPtr _impl; /* a pointer to a MonoImage */
@@ -68,14 +70,8 @@ namespace System.Reflection {
 	
 		const BindingFlags defaultBindingFlags = 
 			BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
-		
-		static Module () {
-			FilterTypeName = new TypeFilter (filter_by_type_name);
-			FilterTypeNameIgnoreCase = new TypeFilter (filter_by_type_name_ignore_case);
-		}
 
-
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 		protected
 #else
 		internal
@@ -225,18 +221,18 @@ namespace System.Reflection {
 
 		private static bool filter_by_type_name (Type m, object filterCriteria) {
 			string s = (string)filterCriteria;
-			if (s.EndsWith ("*"))
-				return m.Name.StartsWith (s.Substring (0, s.Length - 1));
-			else
-				return m.Name == s;
+			if (s.Length > 0 && s [s.Length - 1] == '*')
+				return m.Name.StartsWithOrdinalUnchecked (s.Substring (0, s.Length - 1));
+			
+			return m.Name == s;
 		}
 
 		private static bool filter_by_type_name_ignore_case (Type m, object filterCriteria) {
 			string s = (string)filterCriteria;
-			if (s.EndsWith ("*"))
-				return m.Name.ToLower ().StartsWith (s.Substring (0, s.Length - 1).ToLower ());
-			else
-				return String.Compare (m.Name, s, true) == 0;
+			if (s.Length > 0 && s [s.Length - 1] == '*')
+				return m.Name.StartsWithOrdinalCaseInsensitiveUnchecked (s.Substring (0, s.Length - 1));
+			
+			return string.CompareOrdinalCaseInsensitiveUnchecked (m.Name, s) == 0;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -269,6 +265,7 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern void GetPEKind (IntPtr module, out PortableExecutableKinds peKind, out ImageFileMachine machine);
 
+#if !MOBILE
 		void _Module.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -289,6 +286,7 @@ namespace System.Reflection {
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 #if NET_4_0
 		public override bool Equals (object o)
@@ -321,7 +319,7 @@ namespace System.Reflection {
 
 #endif
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 
 		public virtual Assembly Assembly {
 			get { throw CreateNIE (); }
@@ -458,5 +456,10 @@ namespace System.Reflection {
 		}
 #endif
 
+#if NET_4_5
+		public virtual IEnumerable<CustomAttributeData> CustomAttributes {
+			get { return GetCustomAttributesData (); }
+		}
+#endif
 	}
 }

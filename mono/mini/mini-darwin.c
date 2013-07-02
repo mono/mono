@@ -69,7 +69,7 @@
 #include <dlfcn.h>
 #include <AvailabilityMacros.h>
 
-#if (MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_5) && !defined (TARGET_ARM)
+#if defined (TARGET_OSX) && (MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_5)
 #define NEEDS_EXCEPTION_THREAD
 #endif
 
@@ -246,32 +246,46 @@ void
 mono_gdb_render_native_backtraces (pid_t crashed_pid)
 {
 	const char *argv [5];
-	char gdb_template [] = "/tmp/mono-gdb-commands.XXXXXX";
+	char template [] = "/tmp/mono-gdb-commands.XXXXXX";
+	FILE *commands;
+	gboolean using_lldb = FALSE;
 
 	argv [0] = g_find_program_in_path ("gdb");
-	if (argv [0] == NULL) {
-		return;
+	if (!argv [0]) {
+		argv [0] = g_find_program_in_path ("lldb");
+		using_lldb = TRUE;
 	}
 
-	if (mkstemp (gdb_template) != -1) {
-		FILE *gdb_commands = fopen (gdb_template, "w");
+	if (argv [0] == NULL)
+		return;
 
-		fprintf (gdb_commands, "attach %ld\n", (long) crashed_pid);
-		fprintf (gdb_commands, "info threads\n");
-		fprintf (gdb_commands, "thread apply all bt\n");
+	if (mkstemp (template) == -1)
+		return;
 
-		fflush (gdb_commands);
-		fclose (gdb_commands);
-
+	commands = fopen (template, "w");
+	if (using_lldb) {
+		fprintf (commands, "process attach --pid %ld\n", (long) crashed_pid);
+		fprintf (commands, "script lldb.debugger.HandleCommand (\"thread list\")\n");
+		fprintf (commands, "script lldb.debugger.HandleCommand (\"thread backtrace all\")\n");
+		fprintf (commands, "quit\n");
+		argv [1] = "--source";
+		argv [2] = template;
+		argv [3] = 0;
+		
+	} else {
+		fprintf (commands, "attach %ld\n", (long) crashed_pid);
+		fprintf (commands, "info threads\n");
+		fprintf (commands, "thread apply all bt\n");
 		argv [1] = "-batch";
 		argv [2] = "-x";
-		argv [3] = gdb_template;
+		argv [3] = template;
 		argv [4] = 0;
-
-		execv (argv [0], (char**)argv);
-
-		unlink (gdb_template);
 	}
+	fflush (commands);
+	fclose (commands);
+
+	execv (argv [0], (char**)argv);
+	unlink (template);
 }
 
 gboolean
@@ -307,16 +321,15 @@ mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoNativeThrea
 
 	mono_sigctx_to_monoctx (&ctx, &tctx->ctx);
 
-	domain_key = mono_domain_get_tls_offset ();
+	domain_key = mono_domain_get_tls_key ();
 	jit_key = mono_get_jit_tls_key ();
 
 	jit_tls = mono_mach_arch_get_tls_value_from_thread (thread_id, jit_key);
 	domain = mono_mach_arch_get_tls_value_from_thread (thread_id, domain_key);
 
 	/*Thread already started to cleanup, can no longer capture unwind state*/
-	if (!jit_tls)
+	if (!jit_tls || !domain)
 		return FALSE;
-	g_assert (domain);
 
 #if defined (MONO_ARCH_ENABLE_MONO_LMF_VAR)
 	lmf_key =  mono_get_lmf_tls_offset ();

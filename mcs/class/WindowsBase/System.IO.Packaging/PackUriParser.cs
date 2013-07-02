@@ -64,35 +64,37 @@ namespace System.IO.Packaging
                     builder.Length == 0)
                     start++;
 
-                builder.Append(s, start, end - start);
+                if (start > 0) builder.Append(s, start, end - start);
             }
 
             if ((components & UriComponents.Query) == UriComponents.Query)
             {
                 int index = s.IndexOf('?');
-                if (index == -1)
-                    return null;
 
-                if ((components & UriComponents.KeepDelimiter) != UriComponents.KeepDelimiter &&
-                    builder.Length == 0)
-                    index++;
+                if (index != -1)
+                {
+                        if ((components & UriComponents.KeepDelimiter) != UriComponents.KeepDelimiter &&
+                            builder.Length == 0)
+                                index++;
 
-                int fragIndex = s.IndexOf('#');
-                int end = fragIndex == -1 ? s.Length : fragIndex;
-                builder.Append(s, index, end - index);
+                        int fragIndex = s.IndexOf('#');
+                        int end = fragIndex == -1 ? s.Length : fragIndex;
+                        builder.Append(s, index, end - index);
+                }
             }
 
             if ((components & UriComponents.Fragment) == UriComponents.Fragment)
             {
                 int index = s.IndexOf('#');
-                if (index == -1)
-                    return null;
 
-                if ((components & UriComponents.KeepDelimiter) != UriComponents.KeepDelimiter &&
-                    builder.Length == 0)
-                    index++;
+                if (index != -1)
+                {
+                        if ((components & UriComponents.KeepDelimiter) != UriComponents.KeepDelimiter &&
+                            builder.Length == 0)
+                                index++;
 
-                builder.Append(s, index, s.Length - index);
+                        builder.Append(s, index, s.Length - index);
+                }
             }
 
             return builder.ToString();

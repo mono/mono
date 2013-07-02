@@ -138,7 +138,7 @@ extern char *nacl_mono_path;
 	MONO_OPT_SIMD |	\
 	MONO_OPT_AOT)
 
-#define EXCLUDED_FROM_ALL (MONO_OPT_SHARED | MONO_OPT_PRECOMP | MONO_OPT_UNSAFE)
+#define EXCLUDED_FROM_ALL (MONO_OPT_SHARED | MONO_OPT_PRECOMP | MONO_OPT_UNSAFE | MONO_OPT_GSHAREDVT)
 
 static guint32
 parse_optimizations (const char* p)
@@ -1147,8 +1147,10 @@ mini_usage (void)
 		"    --runtime=VERSION      Use the VERSION runtime, instead of autodetecting\n"
 		"    --optimize=OPT         Turns on or off a specific optimization\n"
 		"                           Use --list-opt to get a list of optimizations\n"
+#ifndef DISABLE_SECURITY
 		"    --security[=mode]      Turns on the unsupported security manager (off by default)\n"
 		"                           mode is one of cas, core-clr, verifiable or validil\n"
+#endif
 		"    --attach=OPTIONS       Pass OPTIONS to the attach agent in the runtime.\n"
 		"                           Currently the only supported option is 'disable'.\n"
 		"    --llvm, --nollvm       Controls whenever the runtime uses LLVM to compile code.\n"
@@ -1268,9 +1270,6 @@ BOOL APIENTRY DllMain (HMODULE module_handle, DWORD reason, LPVOID reserved)
 	case DLL_PROCESS_DETACH:
 		if (coree_module_handle)
 			FreeLibrary (coree_module_handle);
-		break;
-	case DLL_THREAD_ATTACH:
-		mono_thread_info_attach (&dummy);
 		break;
 	case DLL_THREAD_DETACH:
 		mono_thread_info_dettach ();
@@ -1422,6 +1421,9 @@ mono_main (int argc, char* argv[])
 #endif
 #ifdef HOST_WIN32
 	int mixed_mode = FALSE;
+#endif
+#ifdef __native_client__
+	gboolean nacl_null_checks_off = FALSE;
 #endif
 
 #ifdef MOONLIGHT
@@ -1663,28 +1665,51 @@ mono_main (int argc, char* argv[])
 			opt->mdb_optimizations = TRUE;
 			enable_debugging = TRUE;
 		} else if (strcmp (argv [i], "--security") == 0) {
+#ifndef DISABLE_SECURITY
 			mono_verifier_set_mode (MONO_VERIFIER_MODE_VERIFIABLE);
 			mono_security_set_mode (MONO_SECURITY_MODE_CAS);
 			mono_activate_security_manager ();
+#else
+			fprintf (stderr, "error: --security: not compiled with security manager support");
+			return 1;
+#endif
 		} else if (strncmp (argv [i], "--security=", 11) == 0) {
+			/* Note: temporary-smcs-hack, validil, and verifiable need to be
+			   accepted even if DISABLE_SECURITY is defined. */
+
 			if (strcmp (argv [i] + 11, "temporary-smcs-hack") == 0) {
 				mono_security_set_mode (MONO_SECURITY_MODE_SMCS_HACK);
 			} else if (strcmp (argv [i] + 11, "core-clr") == 0) {
+#ifndef DISABLE_SECURITY
 				mono_verifier_set_mode (MONO_VERIFIER_MODE_VERIFIABLE);
 				mono_security_set_mode (MONO_SECURITY_MODE_CORE_CLR);
+#else
+				fprintf (stderr, "error: --security: not compiled with CoreCLR support");
+				return 1;
+#endif
 			} else if (strcmp (argv [i] + 11, "core-clr-test") == 0) {
+#ifndef DISABLE_SECURITY
 				/* fixme should we enable verifiable code here?*/
 				mono_security_set_mode (MONO_SECURITY_MODE_CORE_CLR);
 				mono_security_core_clr_test = TRUE;
-			} else if (strcmp (argv [i] + 11, "cas") == 0){
+#else
+				fprintf (stderr, "error: --security: not compiled with CoreCLR support");
+				return 1;
+#endif
+			} else if (strcmp (argv [i] + 11, "cas") == 0) {
+#ifndef DISABLE_SECURITY
 				mono_verifier_set_mode (MONO_VERIFIER_MODE_VERIFIABLE);
 				mono_security_set_mode (MONO_SECURITY_MODE_CAS);
 				mono_activate_security_manager ();
-			} else  if (strcmp (argv [i] + 11, "validil") == 0) {
+#else
+				fprintf (stderr, "error: --security: not compiled with CAS support");
+				return 1;
+#endif
+			} else if (strcmp (argv [i] + 11, "validil") == 0) {
 				mono_verifier_set_mode (MONO_VERIFIER_MODE_VALID);
-			} else  if (strcmp (argv [i] + 11, "verifiable") == 0) {
+			} else if (strcmp (argv [i] + 11, "verifiable") == 0) {
 				mono_verifier_set_mode (MONO_VERIFIER_MODE_VERIFIABLE);
-			} else  {
+			} else {
 				fprintf (stderr, "error: --security= option has invalid argument (cas, core-clr, verifiable or validil)\n");
 				return 1;
 			}
@@ -1727,6 +1752,8 @@ mono_main (int argc, char* argv[])
 #ifdef __native_client__
 		} else if (strcmp (argv [i], "--nacl-mono-path") == 0){
 			nacl_mono_path = g_strdup(argv[++i]);
+		} else if (strcmp (argv [i], "--nacl-null-checks-off") == 0){
+			nacl_null_checks_off = TRUE;
 #endif
 		} else {
 			fprintf (stderr, "Unknown command line option: '%s'\n", argv [i]);
@@ -1738,6 +1765,10 @@ mono_main (int argc, char* argv[])
 	if (getenv ("MONO_NACL_ALIGN_MASK_OFF"))
 	{
 		nacl_align_byte = -1; /* 0xff */
+	}
+	if (!nacl_null_checks_off) {
+		MonoDebugOptions *opt = mini_get_debug_options ();
+		opt->explicit_null_checks = TRUE;
 	}
 #endif
 
@@ -1950,7 +1981,7 @@ mono_main (int argc, char* argv[])
 	 * This used to be an amd64 only crash, but it looks like now most glibc targets do unwinding
 	 * that requires reading the target code.
 	 */
-#ifdef __linux__
+#if defined( __linux__ ) || defined( __native_client__ )
 		mono_dont_free_global_codeman = TRUE;
 #endif
 

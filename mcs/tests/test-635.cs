@@ -7,7 +7,7 @@ class ShortCircuitFold {
   static void a (bool e, bool v) { if (e != v) throw new Exception ("unexpected value"); }
   static void c (int e) { if (e != calls) throw new Exception ("call count mismatch: expected " + e + " but got " + calls); }
   static bool f () { throw new Exception ("not short circuited out"); }
-  static void Main ()
+  public static void Main ()
   {
     // short circuit out f ()
     a (false, false && f ());

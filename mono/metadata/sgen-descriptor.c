@@ -1,26 +1,23 @@
 /*
+ * sgen-descriptor.c: GC descriptors describe object layout.
+ *
  * Copyright 2001-2003 Ximian, Inc
  * Copyright 2003-2010 Novell, Inc.
  * Copyright 2011 Xamarin Inc (http://www.xamarin.com)
- * 
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- * 
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * Copyright (C) 2012 Xamarin Inc
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License 2.0 as published by the Free Software Foundation;
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License 2.0 along with this library; if not, write to the Free
+ * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 #include "config.h"
 #ifdef HAVE_SGEN_GC
@@ -97,12 +94,12 @@ alloc_complex_descriptor (gsize *bitmap, int numbits)
 		complex_descriptors = g_realloc (complex_descriptors, new_size * sizeof (gsize));
 		complex_descriptors_size = new_size;
 	}
-	DEBUG (6, fprintf (gc_debug_file, "Complex descriptor %d, size: %d (total desc memory: %d)\n", res, nwords, complex_descriptors_size));
+	SGEN_LOG (6, "Complex descriptor %d, size: %d (total desc memory: %d)", res, nwords, complex_descriptors_size);
 	complex_descriptors_next += nwords;
 	complex_descriptors [res] = nwords;
 	for (i = 0; i < nwords - 1; ++i) {
 		complex_descriptors [res + 1 + i] = bitmap [i];
-		DEBUG (6, fprintf (gc_debug_file, "\tvalue: %p\n", (void*)complex_descriptors [res + 1 + i]));
+		SGEN_LOG (6, "\tvalue: %p", (void*)complex_descriptors [res + 1 + i]);
 	}
 	sgen_gc_unlock ();
 	return res;
@@ -143,7 +140,7 @@ mono_gc_make_descr_for_object (gsize *bitmap, int numbits, size_t obj_size)
 	}
 
 	if (first_set < 0) {
-		DEBUG (6, fprintf (gc_debug_file, "Ptrfree descriptor %p, size: %zd\n", (void*)desc, stored_size));
+		SGEN_LOG (6, "Ptrfree descriptor %p, size: %zd", (void*)desc, stored_size);
 		if (stored_size <= MAX_RUNLEN_OBJECT_SIZE)
 			return (void*)(DESC_TYPE_RUN_LENGTH | stored_size);
 		return (void*)DESC_TYPE_COMPLEX_PTRFREE;
@@ -158,22 +155,22 @@ mono_gc_make_descr_for_object (gsize *bitmap, int numbits, size_t obj_size)
 		 */
 		if (first_set < 256 && num_set < 256 && (first_set + num_set == last_set + 1)) {
 			desc = DESC_TYPE_RUN_LENGTH | stored_size | (first_set << 16) | (num_set << 24);
-			DEBUG (6, fprintf (gc_debug_file, "Runlen descriptor %p, size: %zd, first set: %d, num set: %d\n", (void*)desc, stored_size, first_set, num_set));
+			SGEN_LOG (6, "Runlen descriptor %p, size: %zd, first set: %d, num set: %d", (void*)desc, stored_size, first_set, num_set);
 			return (void*) desc;
 		}
 	}
 
 	/* we know the 2-word header is ptr-free */
-	if (last_set < SMALL_BITMAP_SIZE + OBJECT_HEADER_WORDS) {
+	if (last_set < SMALL_BITMAP_SIZE + OBJECT_HEADER_WORDS && stored_size < (1 << SMALL_BITMAP_SHIFT)) {
 		desc = DESC_TYPE_SMALL_BITMAP | stored_size | ((*bitmap >> OBJECT_HEADER_WORDS) << SMALL_BITMAP_SHIFT);
-		DEBUG (6, fprintf (gc_debug_file, "Smallbitmap descriptor %p, size: %zd, last set: %d\n", (void*)desc, stored_size, last_set));
+		SGEN_LOG (6, "Smallbitmap descriptor %p, size: %zd, last set: %d", (void*)desc, stored_size, last_set);
 		return (void*) desc;
 	}
 
 	/* we know the 2-word header is ptr-free */
 	if (last_set < LARGE_BITMAP_SIZE + OBJECT_HEADER_WORDS) {
 		desc = DESC_TYPE_LARGE_BITMAP | ((*bitmap >> OBJECT_HEADER_WORDS) << LOW_TYPE_BITS);
-		DEBUG (6, fprintf (gc_debug_file, "Largebitmap descriptor %p, size: %zd, last set: %d\n", (void*)desc, stored_size, last_set));
+		SGEN_LOG (6, "Largebitmap descriptor %p, size: %zd, last set: %d", (void*)desc, stored_size, last_set);
 		return (void*) desc;
 	}
 	/* it's a complex object ... */
@@ -213,7 +210,7 @@ mono_gc_make_descr_for_array (int vector, gsize *elem_bitmap, int numbits, size_
 		}
 		/* FIXME: try run-len first */
 		/* Note: we can't skip the object header here, because it's not present */
-		if (last_set <= SMALL_BITMAP_SIZE) {
+		if (last_set < SMALL_BITMAP_SIZE) {
 			return (void*)(desc | VECTOR_SUBTYPE_BITMAP | (*elem_bitmap << 16));
 		}
 	}
@@ -266,6 +263,22 @@ mono_gc_get_bitmap_for_descr (void *descr, int *numbits)
 		}
 		return bitmap;
 	}
+
+	case DESC_TYPE_COMPLEX: {
+		gsize *bitmap_data = sgen_get_complex_descriptor (d);
+		int bwords = (*bitmap_data) - 1;
+		int i;
+
+		bitmap = g_new0 (gsize, bwords);
+		*numbits = bwords * GC_BITS_PER_WORD;
+
+		for (i = 0; i < bwords; ++i) {
+			bitmap [i] = bitmap_data [i + 1];
+		}
+
+		return bitmap;
+	}
+
 	default:
 		g_assert_not_reached ();
 	}

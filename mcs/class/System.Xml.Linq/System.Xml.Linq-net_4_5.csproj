@@ -5,22 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{50961B0B-5BEC-4058-9246-5CEEE888CEC8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,1720</NoWarn>
-    <OutputPath>./../../class/lib/net_4_5</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\System.Xml.Linq-net_4_5</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>System.Xml.Linq</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <!-- Filter out System.Core added by: Microsoft.NETFramework.props  -->
-    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <NoWarn>1699,1720</NoWarn>
@@ -28,56 +27,57 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;NET_3_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>  
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699,1720</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;NET_3_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="..\..\build\common\Consts.cs" />
-   <Compile Include="..\..\build\common\Locale.cs" />
-   <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-   <Compile Include="Assembly\AssemblyInfo.cs" />
-   <Compile Include="System.Xml.Linq\Extensions.cs" />
-   <Compile Include="System.Xml.Linq\LoadOptions.cs" />
-   <Compile Include="System.Xml.Linq\ReaderOptions.cs" />
-   <Compile Include="System.Xml.Linq\SaveOptions.cs" />
-   <Compile Include="System.Xml.Linq\XAttribute.cs" />
-   <Compile Include="System.Xml.Linq\XCData.cs" />
-   <Compile Include="System.Xml.Linq\XComment.cs" />
-   <Compile Include="System.Xml.Linq\XContainer.cs" />
-   <Compile Include="System.Xml.Linq\XDeclaration.cs" />
-   <Compile Include="System.Xml.Linq\XDocument.cs" />
-   <Compile Include="System.Xml.Linq\XDocumentType.cs" />
-   <Compile Include="System.Xml.Linq\XElement.cs" />
-   <Compile Include="System.Xml.Linq\XIterators.cs" />
-   <Compile Include="System.Xml.Linq\XName.cs" />
-   <Compile Include="System.Xml.Linq\XNamespace.cs" />
-   <Compile Include="System.Xml.Linq\XNode.cs" />
-   <Compile Include="System.Xml.Linq\XNodeDocumentOrderComparer.cs" />
-   <Compile Include="System.Xml.Linq\XNodeEqualityComparer.cs" />
-   <Compile Include="System.Xml.Linq\XNodeNavigator.cs" />
-   <Compile Include="System.Xml.Linq\XNodeReader.cs" />
-   <Compile Include="System.Xml.Linq\XNodeWriter.cs" />
-   <Compile Include="System.Xml.Linq\XObject.cs" />
-   <Compile Include="System.Xml.Linq\XObjectChange.cs" />
-   <Compile Include="System.Xml.Linq\XObjectChangeEventArgs.cs" />
-   <Compile Include="System.Xml.Linq\XProcessingInstruction.cs" />
-   <Compile Include="System.Xml.Linq\XStreamingElement.cs" />
-   <Compile Include="System.Xml.Linq\XText.cs" />
-   <Compile Include="System.Xml.Linq\XUtil.cs" />
-   <Compile Include="System.Xml.Schema\Extensions.cs" />
-   <Compile Include="System.Xml.XPath\Extensions.cs" />
-
-  </ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\..\build\common\Locale.cs" />
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="System.Xml.Linq\Extensions.cs" />
+    <Compile Include="System.Xml.Linq\LoadOptions.cs" />
+    <Compile Include="System.Xml.Linq\ReaderOptions.cs" />
+    <Compile Include="System.Xml.Linq\SaveOptions.cs" />
+    <Compile Include="System.Xml.Linq\XAttribute.cs" />
+    <Compile Include="System.Xml.Linq\XCData.cs" />
+    <Compile Include="System.Xml.Linq\XComment.cs" />
+    <Compile Include="System.Xml.Linq\XContainer.cs" />
+    <Compile Include="System.Xml.Linq\XDeclaration.cs" />
+    <Compile Include="System.Xml.Linq\XDocument.cs" />
+    <Compile Include="System.Xml.Linq\XDocumentType.cs" />
+    <Compile Include="System.Xml.Linq\XElement.cs" />
+    <Compile Include="System.Xml.Linq\XIterators.cs" />
+    <Compile Include="System.Xml.Linq\XName.cs" />
+    <Compile Include="System.Xml.Linq\XNamespace.cs" />
+    <Compile Include="System.Xml.Linq\XNode.cs" />
+    <Compile Include="System.Xml.Linq\XNodeDocumentOrderComparer.cs" />
+    <Compile Include="System.Xml.Linq\XNodeEqualityComparer.cs" />
+    <Compile Include="System.Xml.Linq\XNodeNavigator.cs" />
+    <Compile Include="System.Xml.Linq\XNodeReader.cs" />
+    <Compile Include="System.Xml.Linq\XNodeWriter.cs" />
+    <Compile Include="System.Xml.Linq\XObject.cs" />
+    <Compile Include="System.Xml.Linq\XObjectChange.cs" />
+    <Compile Include="System.Xml.Linq\XObjectChangeEventArgs.cs" />
+    <Compile Include="System.Xml.Linq\XProcessingInstruction.cs" />
+    <Compile Include="System.Xml.Linq\XStreamingElement.cs" />
+    <Compile Include="System.Xml.Linq\XText.cs" />
+    <Compile Include="System.Xml.Linq\XUtil.cs" />
+    <Compile Include="System.Xml.Schema\Extensions.cs" />
+    <Compile Include="System.Xml.XPath\Extensions.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -86,30 +86,32 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Core.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Xml.dll</HintPath>
-    </Reference>
-
+    <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
+      <Project>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</Project>
+      <Name>corlib\corlib-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_5-2.csproj">
+      <Project>{34966210-D64D-419C-94A4-9A6093CE5882}</Project>
+      <Name>System\System-net_4_5-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
+      <Project>{E77D8877-AEAD-4FDF-8A44-36AAA0B20653}</Project>
+      <Name>System.Core\System.Core-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
+      <Project>{6374B2FC-93C6-4FD0-8CF0-8EB12F5AC71D}</Project>
+      <Name>System.XML\System.Xml-net_4_5-1</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
-

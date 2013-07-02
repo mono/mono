@@ -719,3 +719,9 @@
 		ret
 	}
 }
+
+.class public auto ansi beforefieldinit FieldWithMissingType
+{
+	.field  public [t]Missing BrokenField
+    .field  public static int32 WorkingField
+}

@@ -82,9 +82,9 @@ namespace System.Reflection {
 			ResolveArgumentsInternal (ctorInfo, lazyData.assembly, lazyData.data, lazyData.data_length, out ctor_args, out named_args);
 
 			this.ctorArgs = Array.AsReadOnly<CustomAttributeTypedArgument>
-				(ctor_args != null ? UnboxValues<CustomAttributeTypedArgument> (ctor_args) : new CustomAttributeTypedArgument [0]);
+				(ctor_args != null ? UnboxValues<CustomAttributeTypedArgument> (ctor_args) : EmptyArray<CustomAttributeTypedArgument>.Value);
 			this.namedArgs = Array.AsReadOnly<CustomAttributeNamedArgument> 
-				(named_args != null ? UnboxValues<CustomAttributeNamedArgument> (named_args) : new CustomAttributeNamedArgument [0]);
+				(named_args != null ? UnboxValues<CustomAttributeNamedArgument> (named_args) : EmptyArray<CustomAttributeNamedArgument>.Value);
 			
 			lazyData = null;
 		}
@@ -138,6 +138,12 @@ namespace System.Reflection {
 		public static IList<CustomAttributeData> GetCustomAttributes (ParameterInfo target) {
 			return MonoCustomAttrs.GetCustomAttributesData (target);
 		}
+
+#if NET_4_5
+		public Type AttributeType {
+			get { return ctorInfo.DeclaringType; }
+		}
+#endif
 
 		public override string ToString ()
 		{

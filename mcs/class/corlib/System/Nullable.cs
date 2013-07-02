@@ -140,7 +140,7 @@ namespace System
 
 		public T GetValueOrDefault ()
 		{
-			return has_value ? value : default (T);
+			return value;
 		}
 
 		public T GetValueOrDefault (T defaultValue)

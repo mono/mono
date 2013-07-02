@@ -19,7 +19,7 @@ class Number : INumber {
 		System.Console.WriteLine ("IInteger.Add (int d)");
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		INumber n = new Number ();
 		n.Add(1);               

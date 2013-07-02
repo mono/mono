@@ -27,8 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !MOONLIGHT
-
 using System.Runtime.InteropServices;
 using SSCX = System.Security.Cryptography.X509Certificates;
 
@@ -92,6 +90,3 @@ namespace System.Security.Permissions {
 		}
 	}
 }
-
-#endif
-

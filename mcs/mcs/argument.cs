@@ -47,9 +47,6 @@ namespace Mono.CSharp
 
 		public Argument (Expression expr)
 		{
-			if (expr == null)
-				throw new ArgumentNullException ();
-
 			this.Expr = expr;
 		}
 
@@ -135,7 +132,7 @@ namespace Mono.CSharp
 			if (Expr.eclass == ExprClass.MethodGroup)
 				return Expr.ExprClassName;
 
-			return TypeManager.CSharpName (Expr.Type);
+			return Expr.Type.GetSignatureForError ();
 		}
 
 		public bool ResolveMethodGroup (ResolveContext ec)
@@ -350,7 +347,7 @@ namespace Mono.CSharp
 					} else if (arg_type.Kind == MemberKind.Void || arg_type == InternalType.Arglist || arg_type.IsPointer) {
 						rc.Report.Error (1978, a.Expr.Location,
 							"An expression of type `{0}' cannot be used as an argument of dynamic operation",
-							TypeManager.CSharpName (arg_type));
+							arg_type.GetSignatureForError ());
 					}
 
 					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,

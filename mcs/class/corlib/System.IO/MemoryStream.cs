@@ -376,9 +376,6 @@ namespace System.IO
 
 		public override void Write (byte [] buffer, int offset, int count)
 		{
-			if (!canWrite)
-				throw new NotSupportedException ("Cannot write to this stream.");
-
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 			
@@ -390,6 +387,9 @@ namespace System.IO
 							     "The size of the buffer is less than offset + count.");
 
 			CheckIfClosedThrowDisposed ();
+
+			if (!CanWrite)
+				throw new NotSupportedException ("Cannot write to this stream.");
 
 			// reordered to avoid possible integer overflow
 			if (position > length - count)
@@ -436,33 +436,64 @@ namespace System.IO
 		public override Task FlushAsync (CancellationToken cancellationToken)
 		{
 			if (cancellationToken.IsCancellationRequested)
-				return TaskConstants<int>.Canceled;
+				return TaskConstants.Canceled;
 
-			Flush ();
-			return TaskConstants.Finished;
+			try {
+				Flush ();
+				return TaskConstants.Finished;
+			} catch (Exception ex) {
+				return Task<object>.FromException (ex);
+			}
 		}
 
 		public override Task<int> ReadAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+
+			if (offset < 0 || count < 0)
+				throw new ArgumentOutOfRangeException ("offset or count less than zero.");
+
+			if (buffer.Length - offset < count )
+				throw new ArgumentException ("offset+count",
+				                             "The size of the buffer is less than offset + count.");
 			if (cancellationToken.IsCancellationRequested)
 				return TaskConstants<int>.Canceled;
 
-			count = Read (buffer, offset, count);
+			try {
+				count = Read (buffer, offset, count);
 
-			// Try not to allocate a new task for every buffer read
-			if (read_task == null || read_task.Result != count)
-				read_task = Task<int>.FromResult (count);
+				// Try not to allocate a new task for every buffer read
+				if (read_task == null || read_task.Result != count)
+					read_task = Task<int>.FromResult (count);
 
-			return read_task;
+				return read_task;
+			} catch (Exception ex) {
+				return Task<int>.FromException (ex);
+			}
 		}
 
 		public override Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
-			if (cancellationToken.IsCancellationRequested)
-				return TaskConstants<int>.Canceled;
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+			
+			if (offset < 0 || count < 0)
+				throw new ArgumentOutOfRangeException ();
 
-			Write (buffer, offset, count);
-			return TaskConstants.Finished;
+			if (buffer.Length - offset < count)
+				throw new ArgumentException ("offset+count",
+				                             "The size of the buffer is less than offset + count.");
+
+			if (cancellationToken.IsCancellationRequested)
+				return TaskConstants.Canceled;
+
+			try {
+				Write (buffer, offset, count);
+				return TaskConstants.Finished;
+			} catch (Exception ex) {
+				return Task<object>.FromException (ex);
+			}
 		}
 #endif
 	}               

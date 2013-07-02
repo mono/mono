@@ -511,61 +511,6 @@ namespace MonoTests.System.Text.RegularExpressions
 			Assert.AreEqual ("888", Regex.Match("888", "^*8.*").Value);
 		}
 
-		[Test]
-		public void XamarinBug2663 () 
-		{
-			var r = new Regex("^(S|SW)?$");
-			Match m = r.Match("SW");
-			Assert.AreEqual(true, m.Success, "#Bug2663-a");
-			m = r.Match("S");
-			Assert.AreEqual(true, m.Success, "#Bug2663-b");
-			m = r.Match("SWT");
-			Assert.AreEqual(false, m.Success, "#Bug2663-c");
-			m = r.Match("SA");
-			Assert.AreEqual(false, m.Success, "#Bug2663-d");
-				
-			r=new Regex("^([0-9]{4})(N|E|W|S|NE|NW|SE|SW|NDV)?$");
-
-			m = r.Match("2663N");
-			Assert.AreEqual(true, m.Success, "#Bug2663-e");
-			m = r.Match("2663E");
-			Assert.AreEqual(true, m.Success, "#Bug2663-f");
-			m = r.Match("2663W");
-			Assert.AreEqual(true, m.Success, "#Bug2663-g");
-			m = r.Match("2663S");
-			Assert.AreEqual(true, m.Success, "#Bug2663-h");
-			m = r.Match("2663NE");
-			Assert.AreEqual(true, m.Success, "#Bug2663-i");
-			m = r.Match("2663NW");
-			Assert.AreEqual(true, m.Success, "#Bug2663-j");
-			m = r.Match("2663SE");
-			Assert.AreEqual(true, m.Success, "#Bug2663-k");
-			m = r.Match("2663SW");
-			Assert.AreEqual(true, m.Success, "#Bug2663-l");
-			m = r.Match("2663NDV");
-			Assert.AreEqual(true, m.Success, "#Bug2663-m");
-
-			m = r.Match("2663NF");
-			Assert.AreEqual(false, m.Success, "#Bug2663-n");
-			m = r.Match("2663EF");
-			Assert.AreEqual(false, m.Success, "#Bug2663-o");
-			m = r.Match("2663WF");
-			Assert.AreEqual(false, m.Success, "#Bug2663-p");
-			m = r.Match("2663SF");
-			Assert.AreEqual(false, m.Success, "#Bug2663-q");
-			m = r.Match("2663NEF");
-			Assert.AreEqual(false, m.Success, "#Bug2663-r");
-			m = r.Match("2663NWF");
-			Assert.AreEqual(false, m.Success, "#Bug2663-s");
-			m = r.Match("2663SEF");
-			Assert.AreEqual(false, m.Success, "#Bug2663-t");
-			m = r.Match("2663SWF");
-			Assert.AreEqual(false, m.Success, "#Bug2663-u");
-			m = r.Match("2663NDVF");
-			Assert.AreEqual(false, m.Success, "#Bug2663-v");
-
-		}
-
 		void Kill65535_1 (int length)
 		{
 			StringBuilder sb = new StringBuilder ("x");

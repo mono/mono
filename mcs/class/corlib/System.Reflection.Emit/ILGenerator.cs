@@ -31,6 +31,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+#if !FULL_AOT_RUNTIME
 using System;
 using System.Collections;
 using System.Diagnostics.SymbolStore;
@@ -207,7 +208,6 @@ namespace System.Reflection.Emit {
 			public int maxStack; 
 		}
 		
-		static readonly Type void_type = typeof (void);
 		#region Sync with reflection.h
 		private byte[] code;
 		private int code_len;
@@ -525,7 +525,7 @@ namespace System.Reflection.Emit {
 			emit_int (token);
 			
 			if (opcode.StackBehaviourPop == StackBehaviour.Varpop)
-				cur_stack -= con.GetParameterCount ();
+				cur_stack -= con.GetParametersCount ();
 		}
 		
 		public virtual void Emit (OpCode opcode, double arg)
@@ -740,11 +740,11 @@ namespace System.Reflection.Emit {
 					add_token_fixup (meth);
 			}
 			emit_int (token);
-			if (meth.ReturnType != void_type)
+			if (meth.ReturnType != typeof (void))
 				cur_stack ++;
 
 			if (opcode.StackBehaviourPop == StackBehaviour.Varpop)
-				cur_stack -= meth.GetParameterCount ();
+				cur_stack -= meth.GetParametersCount ();
 		}
 
 		private void Emit (OpCode opcode, MethodInfo method, int token)
@@ -758,11 +758,11 @@ namespace System.Reflection.Emit {
 					add_token_fixup (method);
 			}
 			emit_int (token);
-			if (method.ReturnType != void_type)
+			if (method.ReturnType != typeof (void))
 				cur_stack ++;
 
 			if (opcode.StackBehaviourPop == StackBehaviour.Varpop)
-				cur_stack -= method.GetParameterCount ();
+				cur_stack -= method.GetParametersCount ();
 		}
 
 		[CLSCompliant(false)]
@@ -1038,7 +1038,7 @@ namespace System.Reflection.Emit {
 			return ig.code_len;
 		}	
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		public
 #else
 		internal
@@ -1157,3 +1157,4 @@ namespace System.Reflection.Emit {
 		public int EndCol;
 	}
 }
+#endif

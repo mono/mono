@@ -37,11 +37,21 @@ namespace Mono.Security.Protocol.Tls
 {
 	#region Delegates
 
-	public delegate bool CertificateValidationCallback(
+#if INSIDE_SYSTEM
+	internal
+#else
+	public
+#endif
+	delegate bool CertificateValidationCallback(
 		X509Certificate certificate, 
 		int[]			certificateErrors);
 
-	public class ValidationResult {
+#if INSIDE_SYSTEM
+	internal
+#else
+	public
+#endif
+	class ValidationResult {
 		bool trusted;
 		bool user_denied;
 		int error_code;
@@ -66,26 +76,41 @@ namespace Mono.Security.Protocol.Tls
 		}
 	}
 
-#if MOONLIGHT
+#if INSIDE_SYSTEM
 	internal
 #else
 	public
 #endif
 	delegate ValidationResult CertificateValidationCallback2 (Mono.Security.X509.X509CertificateCollection collection);
 
-	public delegate X509Certificate CertificateSelectionCallback(
+#if INSIDE_SYSTEM
+	internal
+#else
+	public
+#endif
+	delegate X509Certificate CertificateSelectionCallback(
 		X509CertificateCollection	clientCertificates, 
 		X509Certificate				serverCertificate, 
 		string						targetHost, 
 		X509CertificateCollection	serverRequestedCertificates);
 
-	public delegate AsymmetricAlgorithm PrivateKeySelectionCallback(
+#if INSIDE_SYSTEM
+	internal
+#else
+	public
+#endif
+	delegate AsymmetricAlgorithm PrivateKeySelectionCallback(
 		X509Certificate	certificate, 
 		string			targetHost);
 
 	#endregion
 
-	public class SslClientStream : SslStreamBase
+#if INSIDE_SYSTEM
+	internal
+#else
+	public
+#endif
+	class SslClientStream : SslStreamBase
 	{
 		#region Internal Events
 		
@@ -137,11 +162,7 @@ namespace Mono.Security.Protocol.Tls
 		
 		#endregion
 
-#if MOONLIGHT
-		internal event CertificateValidationCallback2 ServerCertValidation2;
-#else
 		public event CertificateValidationCallback2 ServerCertValidation2;
-#endif
 
 		#region Constructors
 		
@@ -291,10 +312,10 @@ namespace Mono.Security.Protocol.Tls
 			}
 		}
 
-		private void SafeReceiveRecord (Stream s)
+		private void SafeReceiveRecord (Stream s, bool ignoreEmpty = false)
 		{
 			byte[] record = this.protocol.ReceiveRecord (s);
-			if ((record == null) || (record.Length == 0)) {
+			if (!ignoreEmpty && ((record == null) || (record.Length == 0))) {
 				throw new TlsException (
 					AlertDescription.HandshakeFailiure,
 					"The server stopped the handshake.");
@@ -308,8 +329,8 @@ namespace Mono.Security.Protocol.Tls
 			// Read server response
 			while (this.context.LastHandshakeMsg != HandshakeType.ServerHelloDone) 
 			{
-				// Read next record
-				SafeReceiveRecord (this.innerStream);
+				// Read next record (skip empty, e.g. warnings alerts)
+				SafeReceiveRecord (this.innerStream, true);
 
 				// special case for abbreviated handshake where no ServerHelloDone is sent from the server
 				if (this.context.AbbreviatedHandshake && (this.context.LastHandshakeMsg == HandshakeType.ServerHello))

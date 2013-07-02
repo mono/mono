@@ -29,7 +29,6 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 
@@ -79,50 +78,8 @@ namespace System.Text.RegularExpressions {
 			ResetGroups ();
 			fast = repeat = null;
 		}
-	
-		private class JumpTestEntry {
-			public int pc;	
-			public int ptr;
-		}
 
-		private bool Eval (Mode mode, ref int ref_ptr, int pc, 
-			List<JumpTestEntry> JumpTestList = null, 
-			List<List<JumpTestEntry>> TriedCombos = null, 
-			bool BypassJumpTest = false) 
-		{
-			if (TriedCombos == null) {
-				TriedCombos = new List<List<JumpTestEntry>> ();
-			}
-			if (JumpTestList == null) {
-				JumpTestList = new List<JumpTestEntry> ();
-			} else {
-				return Eval_Real (mode, ref ref_ptr, pc, 
-					JumpTestList,TriedCombos,
-					BypassJumpTest);
-			}
-			bool OutOfOptions = false;
-			bool retval = false;
-			while (!OutOfOptions) {
-				retval = Eval_Real(mode, ref ref_ptr, pc, 
-					JumpTestList,TriedCombos,false);
-				if (retval == true) {
-					OutOfOptions = false;
-					return true;
-				}
-				//else
-				if (JumpTestList.Count == 0) {
-					OutOfOptions = true;
-					return false;
-				} else {
-					TriedCombos.Add(JumpTestList);
-					JumpTestList = new 
-						List<JumpTestEntry> ();
-				}
-
-			}
-			return retval;
-		}
-		private bool Eval_Real (Mode mode, ref int ref_ptr, int pc, List<JumpTestEntry> JumpTestList, List<List<JumpTestEntry>> TriedCombos,bool BypassJumpTest) {
+		private bool Eval (Mode mode, ref int ref_ptr, int pc) {
 			int ptr = ref_ptr;
 		Begin:
 			for (;;) {
@@ -159,7 +116,7 @@ namespace System.Text.RegularExpressions {
 							if (anch_reverse || anch_offset == 0) {
 								if (anch_reverse)
 									ptr = anch_offset;
-								if (TryMatch (ref ptr, pc + skip, JumpTestList ,TriedCombos, BypassJumpTest))
+								if (TryMatch (ref ptr, pc + skip))
 									goto Pass;
 							}
 							break;
@@ -167,7 +124,7 @@ namespace System.Text.RegularExpressions {
 						case Position.StartOfLine:
 							 if (anch_ptr == 0) {
 								ptr = 0;
-								if (TryMatch (ref ptr, pc + skip, JumpTestList, TriedCombos, BypassJumpTest))
+								if (TryMatch (ref ptr, pc + skip))
 									goto Pass;
 								
 								++ anch_ptr;
@@ -179,7 +136,7 @@ namespace System.Text.RegularExpressions {
 										ptr = anch_ptr == anch_end ? anch_ptr : anch_ptr + anch_offset;
 									else
 										ptr = anch_ptr == 0 ? anch_ptr : anch_ptr - anch_offset;
-									if (TryMatch (ref ptr, pc + skip, JumpTestList, TriedCombos, BypassJumpTest))
+									if (TryMatch (ref ptr, pc + skip))
 										goto Pass;
 								}
 							
@@ -193,7 +150,7 @@ namespace System.Text.RegularExpressions {
 						case Position.StartOfScan:
 							if (anch_ptr == scan_ptr) {							
 								ptr = anch_reverse ? scan_ptr + anch_offset : scan_ptr - anch_offset;
-								if (TryMatch (ref ptr, pc + skip, JumpTestList, TriedCombos, BypassJumpTest))
+								if (TryMatch (ref ptr, pc + skip))
 									goto Pass;
 							}
 							break;
@@ -232,7 +189,7 @@ namespace System.Text.RegularExpressions {
 								break;
 
 							ptr = reverse ? anch_ptr + anch_offset : anch_ptr - anch_offset;
-							if (TryMatch (ref ptr, pc + skip, JumpTestList, TriedCombos, BypassJumpTest))
+							if (TryMatch (ref ptr, pc + skip))
 								goto Pass;
 
 							if (reverse)
@@ -250,7 +207,7 @@ namespace System.Text.RegularExpressions {
 						       || (!anch_reverse && anch_ptr <= anch_end)) {
 
 							ptr = anch_ptr;
-							if (TryMatch (ref ptr, pc + skip, JumpTestList, TriedCombos, BypassJumpTest))
+							if (TryMatch (ref ptr, pc + skip))
 								goto Pass;
 							if (anch_reverse)
 								-- anch_ptr;
@@ -267,11 +224,11 @@ namespace System.Text.RegularExpressions {
 						       || (!anch_reverse && anch_ptr <= anch_end)) {
 
 							ptr = anch_ptr;
-							if (Eval (Mode.Match, ref ptr, pc + 3, JumpTestList, TriedCombos, BypassJumpTest)) {
+							if (Eval (Mode.Match, ref ptr, pc + 3)) {
 								// anchor expression passed: try real expression at the correct offset
 
 								ptr = anch_reverse ? anch_ptr + anch_offset : anch_ptr - anch_offset;
-								if (TryMatch (ref ptr, pc + skip, JumpTestList, TriedCombos, BypassJumpTest))
+								if (TryMatch (ref ptr, pc + skip))
 									goto Pass;
 							}
 
@@ -398,7 +355,7 @@ namespace System.Text.RegularExpressions {
 
 					int start = ptr; //point before the balancing group
 					
-					if (!Eval (Mode.Match, ref ptr, pc + 5, JumpTestList, TriedCombos, BypassJumpTest))
+					if (!Eval (Mode.Match, ref ptr, pc + 5))
 						goto Fail;
 					
 					
@@ -426,7 +383,7 @@ namespace System.Text.RegularExpressions {
 				}
 
 				case OpCode.Sub: {
-					if (!Eval (Mode.Match, ref ptr, pc + 2, JumpTestList, TriedCombos, BypassJumpTest))
+					if (!Eval (Mode.Match, ref ptr, pc + 2))
 						goto Fail;
 
 					pc += program[pc + 1];
@@ -436,7 +393,7 @@ namespace System.Text.RegularExpressions {
 				case OpCode.Test: {
 					int cp = Checkpoint ();
 					int test_ptr = ptr;
-					if (Eval (Mode.Match, ref test_ptr, pc + 3, JumpTestList, TriedCombos, true))
+					if (Eval (Mode.Match, ref test_ptr, pc + 3))
 						pc += program[pc + 1];
 					else {
 						Backtrack (cp);
@@ -449,7 +406,7 @@ namespace System.Text.RegularExpressions {
 					OpCode branch_op;
 					do {
 						int cp = Checkpoint ();
-						if (Eval (Mode.Match, ref ptr, pc + 2, JumpTestList, TriedCombos, BypassJumpTest))
+						if (Eval (Mode.Match, ref ptr, pc + 2))
 							goto Pass;
 						
 						Backtrack (cp);
@@ -459,32 +416,6 @@ namespace System.Text.RegularExpressions {
 					} while (branch_op != OpCode.False);
 
 					goto Fail;
-				}
-				case OpCode.JumpTest: {
-					/*This reached when we have a "|" (or)
-					 *condition and we don't want to short
-					 *circuit every time - i.e. after a
-					 *full trip through, if we fail tr
-					 *another path  */
-
-					if (!BypassJumpTest) {
-						JumpTestEntry jte = new JumpTestEntry();
-						jte.ptr = ptr;
-						jte.pc = pc;
-						bool Match = false;	
-						Match = CheckComboMatch (TriedCombos, JumpTestList, pc, ptr);
-						if (!Match) {
-							JumpTestList.Add(jte);
-							pc += program[pc + 1];
-						} else {	
-							//else
-							pc += program[pc + 2];//pc+2 before
-						}
-						break;					
-					} else {
-						pc += program[pc + 1];
-						break;
-					}
 				}
 
 				case OpCode.Jump: {
@@ -501,7 +432,7 @@ namespace System.Text.RegularExpressions {
 						pc + 6				// subexpression
 					);
 
-					if (Eval (Mode.Match, ref ptr, pc + program[pc + 1], JumpTestList, TriedCombos, BypassJumpTest))
+					if (Eval (Mode.Match, ref ptr, pc + program[pc + 1]))
 						goto Pass;
 					else {
 						this.repeat = this.repeat.Previous;
@@ -532,7 +463,7 @@ namespace System.Text.RegularExpressions {
 						++ current.Count;
 						current.Start = ptr;
 						deep = current;
-						if (!Eval (Mode.Match, ref ptr, current.Expression, JumpTestList, TriedCombos, BypassJumpTest)) {
+						if (!Eval (Mode.Match, ref ptr, current.Expression)) {
 							current.Start = start;
 							current.Count = start_count;
 							goto Fail;
@@ -545,7 +476,7 @@ namespace System.Text.RegularExpressions {
 						// degenerate match ... match tail or fail
 						this.repeat = current.Previous;
 						deep = null;
-						if (Eval (Mode.Match, ref ptr, pc + 1, JumpTestList, TriedCombos, BypassJumpTest))
+						if (Eval (Mode.Match, ref ptr, pc + 1))
 							goto Pass;
 					
 						this.repeat = current;
@@ -558,7 +489,7 @@ namespace System.Text.RegularExpressions {
 							this.repeat = current.Previous;
 							deep = null;
 							int cp = Checkpoint ();
-							if (Eval (Mode.Match, ref ptr, pc + 1, JumpTestList, TriedCombos, BypassJumpTest))
+							if (Eval (Mode.Match, ref ptr, pc + 1))
 								goto Pass;
 
 							Backtrack (cp);
@@ -570,7 +501,7 @@ namespace System.Text.RegularExpressions {
 							++ current.Count;
 							current.Start = ptr;
 							deep = current;
-							if (!Eval (Mode.Match, ref ptr, current.Expression, JumpTestList, TriedCombos, BypassJumpTest)) {
+							if (!Eval (Mode.Match, ref ptr, current.Expression)) {
 								current.Start = start;
 								current.Count = start_count;
 								goto Fail;
@@ -594,7 +525,7 @@ namespace System.Text.RegularExpressions {
 							++ current.Count;
 							current.Start = ptr;
 							deep = current;
-							if (!Eval (Mode.Match, ref ptr, current.Expression, JumpTestList, TriedCombos, BypassJumpTest)) {
+							if (!Eval (Mode.Match, ref ptr, current.Expression)) {
 								-- current.Count;
 								current.Start = old_start;
 								Backtrack (cp);
@@ -617,7 +548,7 @@ namespace System.Text.RegularExpressions {
 						this.repeat = current.Previous;
 						for (;;) {
 							deep = null;
-							if (Eval (Mode.Match, ref ptr, pc + 1, JumpTestList, TriedCombos, BypassJumpTest)) {
+							if (Eval (Mode.Match, ref ptr, pc + 1)) {
 								stack.Count = stack_size;
 								goto Pass;
 							}
@@ -687,7 +618,8 @@ namespace System.Text.RegularExpressions {
 
 				skip:
 					if (fast.IsLazy) {
-						if (!fast.IsMinimum && !Eval (Mode.Count, ref ptr, fast.Expression, JumpTestList, TriedCombos, BypassJumpTest)) {
+						if (!fast.IsMinimum && !Eval (Mode.Count, ref ptr, fast.Expression)) {
+							//Console.WriteLine ("lazy fast: failed mininum.");
 							fast = fast.Previous;
 							goto Fail;
 						}
@@ -696,17 +628,19 @@ namespace System.Text.RegularExpressions {
 							int p = ptr + coff;
 							if (c1 < 0 || (p >= 0 && p < text_end && (c1 == text[p] || c2 == text[p]))) {
 								deep = null;
-								if (Eval (Mode.Match, ref ptr, pc, JumpTestList, TriedCombos, BypassJumpTest))
+								if (Eval (Mode.Match, ref ptr, pc))
 									break;
 							}
 
 							if (fast.IsMaximum) {
+								//Console.WriteLine ("lazy fast: failed with maximum.");
 								fast = fast.Previous;
 								goto Fail;
 							}
 
 							Backtrack (cp);
-							if (!Eval (Mode.Count, ref ptr, fast.Expression, JumpTestList, TriedCombos, BypassJumpTest)) {
+							if (!Eval (Mode.Count, ref ptr, fast.Expression)) {
+								//Console.WriteLine ("lazy fast: no more.");
 								fast = fast.Previous;
 								goto Fail;
 							}
@@ -715,7 +649,7 @@ namespace System.Text.RegularExpressions {
 						goto Pass;
 					}
 					else {
-						if (!Eval (Mode.Count, ref ptr, fast.Expression, JumpTestList, TriedCombos, BypassJumpTest)) {
+						if (!Eval (Mode.Count, ref ptr, fast.Expression)) {
 							fast = fast.Previous;
 							goto Fail;
 						}
@@ -730,7 +664,7 @@ namespace System.Text.RegularExpressions {
 							int p = ptr + coff;
 							if (c1 < 0 || (p >= 0 && p < text_end && (c1 == text[p] || c2 == text[p]))) {
 								deep = null;
-								if (Eval (Mode.Match, ref ptr, pc, JumpTestList, TriedCombos, BypassJumpTest))
+								if (Eval (Mode.Match, ref ptr, pc))
 									break;
 							}
 
@@ -886,70 +820,12 @@ namespace System.Text.RegularExpressions {
 			return negate;
 		}
 
-		private bool CheckComboMatch (List<List<JumpTestEntry>> TriedCombos, List<JumpTestEntry> JumpTestList, int pc, int ptr)
-		{
-			bool Match = false;
-			if (TriedCombos != null && TriedCombos.Count > 0)
-			{
-				for (int i = 0;i < TriedCombos.Count;i++)
-				{
-					if ((TriedCombos[i] != null) && 
-					    (TriedCombos[i].Count > 0))
-					{
-						int j = TriedCombos[i].Count - 1;
-						if ((TriedCombos[i][j].pc == pc) && (TriedCombos[i][j].ptr == ptr)) 
-						{
-							if (CheckSubCmb( TriedCombos, JumpTestList,
-							      i,j,ref Match))
-							{
-								return true;
-							}
-						}
-					}
-				}
-			}
-			return Match;
-		}
-
-
-		private bool CheckSubCmb(List<List<JumpTestEntry>> TriedCombos,
-		    List<JumpTestEntry> JumpTestList,int i,int j,ref bool Match)
-		{
-			if ((JumpTestList.Count <= TriedCombos[i].Count-1))	
-			{
-				Match=false;
-				if (TriedCombos[i].Count > 1)
-				{
-					for (j = 0;j < JumpTestList.Count;j++)	
-					{
-						if ((TriedCombos[i][j].pc == JumpTestList[j].pc) && 
-						   (TriedCombos[i][j].ptr == JumpTestList[j].ptr)) 	
-						{
-							Match = true; 	
-						}else{
-							Match = false;
-							break;
-						}
-					}
-					if (Match == true) {
-						//must shortcircuit
-						return Match;	
-					
-					}
-				} else {
-					Match = true;
-					//must shortcircuit
-					return Match;
-				}
-			}
-			return Match;
-		}
-		private bool TryMatch (ref int ref_ptr, int pc, List<JumpTestEntry> JumpTestList,List<List<JumpTestEntry>> TriedCombos, bool BypassJumpTest) {
+		private bool TryMatch (ref int ref_ptr, int pc) {
 			Reset ();
 			
 			int ptr = ref_ptr;
 			marks [groups [0]].Start = ptr;
-			if (Eval (Mode.Match, ref ptr, pc, JumpTestList, TriedCombos, BypassJumpTest)) {
+			if (Eval (Mode.Match, ref ptr, pc)) {
 				marks [groups [0]].End = ptr;
 				ref_ptr = ptr;
 				return true;

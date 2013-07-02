@@ -469,11 +469,13 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		
 		TypeMetadata CreateMemberTypeMetadata (Type type)
 		{
+#if !FULL_AOT_RUNTIME
 			if (!BinaryCommon.UseReflectionSerialization) {
 				Type metaType = CodeGenerator.GenerateMetadataType (type, _context);
 				return (TypeMetadata) Activator.CreateInstance (metaType);
 			}
 			else
+#endif
 				return new MemberTypeMetadata (type, _context);
 		}
 
@@ -507,7 +509,8 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 			// Registers and writes the assembly of the array element type if needed
 
-			if (!elementType.IsArray)
+			var tag = GetTypeTag (elementType);
+			if ((tag != TypeTag.ArrayOfObject) && (tag != TypeTag.ArrayOfString) && (tag != TypeTag.ArrayOfPrimitiveType))
 				WriteAssembly (writer, elementType.Assembly);
 
 			// Writes the array

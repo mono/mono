@@ -42,12 +42,13 @@ namespace MonoTests.System.IO
 				Directory.Delete (TempFolder, true);
 
 			Directory.CreateDirectory (TempFolder);
-			
+#if !MOBILE			
 			// from XplatUI.cs
 			IntPtr buf = Marshal.AllocHGlobal (8192);
 			if (uname (buf) == 0)
 				MacOSX = Marshal.PtrToStringAnsi (buf) == "Darwin";
 			Marshal.FreeHGlobal (buf);
+#endif
 		}
 
 		public void TestCtr ()
@@ -1604,6 +1605,7 @@ namespace MonoTests.System.IO
 			
 		}
 
+#if !MOBILE
 		[Test]
 		public void WriteWithExposedHandle ()
 		{
@@ -1637,5 +1639,6 @@ namespace MonoTests.System.IO
 				DeleteFile (path);
 			}
 		}
+#endif
 	}
 }

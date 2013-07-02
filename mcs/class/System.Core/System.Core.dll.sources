@@ -1,8 +1,4 @@
 ../../build/common/Consts.cs
-../../build/common/Locale.cs
-../../build/common/MonoTODOAttribute.cs
-../corlib/Mono.Security.Cryptography/CryptoTools.cs
-../corlib/Mono.Security.Cryptography/SymmetricTransform.cs
 Assembly/AssemblyInfo.cs
 System/Actions.cs
 System/Funcs.cs
@@ -66,7 +62,6 @@ System.Linq.Expressions/ParameterExpression.cs
 System.Linq.Expressions/TypeBinaryExpression.cs
 System.Linq.Expressions/UnaryExpression.cs
 System.Collections.Generic/HashSet.cs
-../corlib/System.Collections.Generic/CollectionDebuggerView.cs
 System.Security.Cryptography/Aes.cs
 System.Security.Cryptography/AesManaged.cs
 System.Security.Cryptography/AesCryptoServiceProvider.cs
@@ -84,7 +79,6 @@ System.Security.Cryptography/SHA512CryptoServiceProvider.cs
 System.Threading/LockRecursionException.cs
 System.Threading/LockRecursionPolicy.cs
 System.Threading/ReaderWriterLockSlim.cs
-../corlib/System.Threading/AtomicBoolean.cs
 System.Threading/ThreadLockState.cs
 System.Threading/ReaderWriterLockSlimExtensions.cs
 Microsoft.Win32.SafeHandles/SafePipeHandle.cs

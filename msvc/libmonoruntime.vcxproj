@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug_SGen|Win32">
@@ -96,19 +96,20 @@
     <ClCompile Include="..\mono\metadata\sgen-hash-table.c" />
     <ClCompile Include="..\mono\metadata\sgen-internal.c" />
     <ClCompile Include="..\mono\metadata\sgen-los.c" />
-    <ClCompile Include="..\mono\metadata\sgen-major-copying.c" />
     <ClCompile Include="..\mono\metadata\sgen-marksweep-fixed-par.c" />
     <ClCompile Include="..\mono\metadata\sgen-marksweep-fixed.c" />
     <ClCompile Include="..\mono\metadata\sgen-marksweep-par.c" />
     <ClCompile Include="..\mono\metadata\sgen-marksweep.c" />
+    <ClCompile Include="..\mono\metadata\sgen-memory-governor.c" />
     <ClCompile Include="..\mono\metadata\sgen-nursery-allocator.c" />
     <ClCompile Include="..\mono\metadata\sgen-os-mach.c" />
     <ClCompile Include="..\mono\metadata\sgen-os-posix.c" />
     <ClCompile Include="..\mono\metadata\sgen-os-win32.c" />
-    <ClCompile Include="..\mono\metadata\sgen-pinned-allocator.c" />
     <ClCompile Include="..\mono\metadata\sgen-pinning-stats.c" />
     <ClCompile Include="..\mono\metadata\sgen-pinning.c" />
     <ClCompile Include="..\mono\metadata\sgen-protocol.c" />
+    <ClCompile Include="..\mono\metadata\sgen-simple-nursery.c" />
+    <ClCompile Include="..\mono\metadata\sgen-split-nursery.c" />
     <ClCompile Include="..\mono\metadata\sgen-toggleref.c" />
     <ClCompile Include="..\mono\metadata\sgen-workers.c" />
     <ClCompile Include="..\mono\metadata\socket-io.c" />
@@ -182,11 +183,15 @@
     <ClInclude Include="..\mono\metadata\sgen-bridge.h" />
     <ClInclude Include="..\mono\metadata\sgen-cardtable.h" />
     <ClInclude Include="..\mono\metadata\sgen-conf.h" />
+    <ClInclude Include="..\mono\metadata\sgen-copy-object.h" />
     <ClInclude Include="..\mono\metadata\sgen-descriptor.h" />
     <ClInclude Include="..\mono\metadata\sgen-gc.h" />
     <ClInclude Include="..\mono\metadata\sgen-gray.h" />
     <ClInclude Include="..\mono\metadata\sgen-major-copy-object.h" />
     <ClInclude Include="..\mono\metadata\sgen-major-scan-object.h" />
+    <ClInclude Include="..\mono\metadata\sgen-memory-governor.h" />
+    <ClInclude Include="..\mono\metadata\sgen-minor-copy-object.h" />
+    <ClInclude Include="..\mono\metadata\sgen-minor-scan-object.h" />
     <ClInclude Include="..\mono\metadata\sgen-pinning.h" />
     <ClInclude Include="..\mono\metadata\sgen-protocol.h" />
     <ClInclude Include="..\mono\metadata\sgen-scan-object.h" />

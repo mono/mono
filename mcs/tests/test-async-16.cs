@@ -21,7 +21,7 @@ class Tester : Base
 {
 	async Task<int> SwitchTest_1 ()
 	{
-		switch (await Task.Factory.StartNew (() => "X")) {
+		switch (await Task.Factory.StartNew (() => "X").ConfigureAwait (false)) {
 		case "A":
 			return 1;
 		case "B":
@@ -39,10 +39,10 @@ class Tester : Base
 
 	async Task<int> Using_1 ()
 	{
-		using (Base a = await Task.Factory.StartNew (() => new Base ()),
-				b = await Task.Factory.StartNew (() => new Tester ()),
-				c = await Task.Factory.StartNew (() => new Base ()),
-				d = await Task.Factory.StartNew (() => new Base ())) {
+		using (Base a = await Task.Factory.StartNew (() => new Base ()).ConfigureAwait (false),
+				b = await Task.Factory.StartNew (() => new Tester ()).ConfigureAwait (false),
+				c = await Task.Factory.StartNew (() => new Base ()).ConfigureAwait (false),
+				d = await Task.Factory.StartNew (() => new Base ()).ConfigureAwait (false)) {
 		}
 
 		if (dispose_counter != 4)
@@ -54,7 +54,7 @@ class Tester : Base
 	async Task<int> Foreach_1 ()
 	{
 		int total = 0;
-		foreach (var e in await Task.Factory.StartNew (() => new List<int> () { 1, 2, 3 })) {
+		foreach (var e in await Task.Factory.StartNew (() => new List<int> () { 1, 2, 3 }).ConfigureAwait (false)) {
 			total += e;
 		}
 

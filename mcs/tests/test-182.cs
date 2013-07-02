@@ -16,7 +16,7 @@ struct DT {
 }
 
 class T {
-	static int Main () {
+	public static int Main () {
 		DT t = new DT ();
 		if (t.Ticks != 1)
 			return 1;

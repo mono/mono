@@ -25,7 +25,7 @@ public class X
 		}
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		IComparer<Test> cmp = new NaturalComparer<Test> ();
 		Test a = new Test ();

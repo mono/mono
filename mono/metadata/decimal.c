@@ -552,11 +552,15 @@ DECINLINE static void rshift192(guint64* pclo, guint64* pcmi, guint64* pchi)
     *pchi >>= 1;
 }
 
+#if defined(__native_client__) && (defined(__i386__) || defined(__x86_64))
+#define USE_X86_32BIT_INSTRUCTIONS 1
+#endif
+
 static inline gint
 my_g_bit_nth_msf (gsize mask)
 {
 	/* Mask is expected to be != 0 */
-#if defined(__i386__) && defined(__GNUC__)
+#if (defined(__i386__) && defined(__GNUC__)) || defined(USE_X86_32BIT_INSTRUCTIONS)
 	int r;
 
 	__asm__("bsrl %1,%0\n\t"
@@ -1477,17 +1481,6 @@ DECINLINE static void buildIEEE754Double(double* pd, int sign, int texp, guint64
 
     PRECONDITION(sign == 0 || sign == 1);
     *p = (((guint64)sign) << 63) | (((guint64)((1023+texp)&0x7ff)) << 52) | mantisse;
-#ifdef ARM_FPU_FPA
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-    {
-	    guint32 temp;
-	    guint32 *t = (guint32*)p;
-	    temp = t [0];
-	    t [0] = t [1];
-	    t [1] = temp;
-    }
-#endif
-#endif
 }
 
 double mono_decimal2double(/*[In]*/decimal_repr* pA)
@@ -1580,4 +1573,3 @@ gint32 mono_decimalSetExponent(/*[In, Out]*/decimal_repr* pA, gint32 texp)
 }
 
 #endif /* DISABLE_DECIMAL */
-

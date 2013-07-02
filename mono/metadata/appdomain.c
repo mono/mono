@@ -60,6 +60,8 @@
 #include <mono/utils/mono-stdlib.h>
 #include <mono/utils/mono-io-portability.h>
 #include <mono/utils/mono-error-internals.h>
+#include <mono/utils/atomic.h>
+#include <mono/utils/mono-memory-model.h>
 #ifdef HOST_WIN32
 #include <direct.h>
 #endif
@@ -75,7 +77,7 @@
  * Changes which are already detected at runtime, like the addition
  * of icalls, do not require an increment.
  */
-#define MONO_CORLIB_VERSION 105
+#define MONO_CORLIB_VERSION 110
 
 typedef struct
 {
@@ -91,8 +93,6 @@ CRITICAL_SECTION mono_strtod_mutex;
 
 static gunichar2 process_guid [36];
 static gboolean process_guid_set = FALSE;
-
-static gboolean shutting_down = FALSE;
 
 static gboolean no_exec = FALSE;
 
@@ -347,8 +347,6 @@ mono_context_init (MonoDomain *domain)
 void
 mono_runtime_cleanup (MonoDomain *domain)
 {
-	shutting_down = TRUE;
-
 	mono_attach_cleanup ();
 
 	/* This ends up calling any pending pending (for at most 2 seconds) */
@@ -379,33 +377,6 @@ mono_runtime_quit ()
 {
 	if (quit_function != NULL)
 		quit_function (mono_get_root_domain (), NULL);
-}
-
-/** 
- * mono_runtime_set_shutting_down:
- *
- * Invoked by System.Environment.Exit to flag that the runtime
- * is shutting down.
- */
-void
-mono_runtime_set_shutting_down (void)
-{
-	shutting_down = TRUE;
-}
-
-/**
- * mono_runtime_is_shutting_down:
- *
- * Returns whether the runtime has been flagged for shutdown.
- *
- * This is consumed by the P:System.Environment.HasShutdownStarted
- * property.
- *
- */
-gboolean
-mono_runtime_is_shutting_down (void)
-{
-	return shutting_down;
 }
 
 /**
@@ -864,12 +835,17 @@ mono_set_private_bin_path_from_config (MonoDomain *domain)
 MonoAppDomain *
 ves_icall_System_AppDomain_createDomain (MonoString *friendly_name, MonoAppDomainSetup *setup)
 {
+#ifdef DISABLE_APPDOMAINS
+	mono_raise_exception (mono_get_exception_not_supported ("AppDomain creation is not supported on this runtime."));
+	return NULL;
+#else
 	char *fname = mono_string_to_utf8 (friendly_name);
 	MonoAppDomain *ad = mono_domain_create_appdomain_internal (fname, setup);
 	
 	g_free (fname);
 
 	return ad;
+#endif
 }
 
 MonoArray *
@@ -997,7 +973,7 @@ add_assemblies_to_domain (MonoDomain *domain, MonoAssembly *ass, GHashTable *ht)
 	if (!g_hash_table_lookup (ht, ass)) {
 		mono_assembly_addref (ass);
 		g_hash_table_insert (ht, ass, ass);
-		domain->domain_assemblies = g_slist_prepend (domain->domain_assemblies, ass);
+		domain->domain_assemblies = g_slist_append (domain->domain_assemblies, ass);
 		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Assembly %s[%p] added to domain %s, ref_count=%d", ass->aname.name, ass, domain->friendly_name, ass->ref_count);
 	}
 
@@ -2006,6 +1982,9 @@ ves_icall_System_AppDomain_InternalUnload (gint32 domain_id)
 	 */
 	if (g_getenv ("MONO_NO_UNLOAD"))
 		return;
+#ifdef __native_client__
+	return;
+#endif
 
 	mono_domain_unload (domain);
 }
@@ -2191,9 +2170,25 @@ zero_static_data (MonoVTable *vtable)
 }
 
 typedef struct unload_data {
+	gboolean done;
 	MonoDomain *domain;
 	char *failure_reason;
+	gint32 refcount;
 } unload_data;
+
+static void
+unload_data_unref (unload_data *data)
+{
+	gint32 count;
+	do {
+		count = mono_atomic_load_acquire (&data->refcount);
+		g_assert (count >= 1 && count <= 2);
+		if (count == 1) {
+			g_free (data);
+			return;
+		}
+	} while (InterlockedCompareExchange (&data->refcount, count, count - 1) != count);
+}
 
 static void
 deregister_reflection_info_roots_nspace_table (gpointer key, gpointer value, gpointer image)
@@ -2268,7 +2263,8 @@ unload_thread_main (void *arg)
 	int i;
 
 	/* Have to attach to the runtime so shutdown can wait for this thread */
-	thread = mono_thread_attach (mono_get_root_domain ());
+	/* Force it to be attached to avoid racing during shutdown. */
+	thread = mono_thread_attach_full (mono_get_root_domain (), TRUE);
 
 	/* 
 	 * FIXME: Abort our parent thread last, so we can return a failure 
@@ -2276,18 +2272,18 @@ unload_thread_main (void *arg)
 	 */
 	if (!mono_threads_abort_appdomain_threads (domain, -1)) {
 		data->failure_reason = g_strdup_printf ("Aborting of threads in domain %s timed out.", domain->friendly_name);
-		return 1;
+		goto failure;
 	}
 
 	if (!mono_thread_pool_remove_domain_jobs (domain, -1)) {
 		data->failure_reason = g_strdup_printf ("Cleanup of threadpool jobs of domain %s timed out.", domain->friendly_name);
-		return 1;
+		goto failure;
 	}
 
 	/* Finalize all finalizable objects in the doomed appdomain */
 	if (!mono_domain_finalize (domain, -1)) {
 		data->failure_reason = g_strdup_printf ("Finalization of domain %s timed out.", domain->friendly_name);
-		return 1;
+		goto failure;
 	}
 
 	/* Clear references to our vtables in class->runtime_info.
@@ -2333,9 +2329,16 @@ unload_thread_main (void *arg)
 
 	mono_gc_collect (mono_gc_max_generation ());
 
+	mono_atomic_store_release (&data->done, TRUE);
+	unload_data_unref (data);
 	mono_thread_detach (thread);
-
 	return 0;
+
+failure:
+	mono_atomic_store_release (&data->done, TRUE);
+	unload_data_unref (data);
+	mono_thread_detach (thread);
+	return 1;
 }
 
 /*
@@ -2378,10 +2381,9 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 {
 	HANDLE thread_handle;
 	gsize tid;
-	guint32 res;
 	MonoAppDomainState prev_state;
 	MonoMethod *method;
-	unload_data thread_data;
+	unload_data *thread_data;
 	MonoDomain *caller_domain = mono_domain_get ();
 
 	/* printf ("UNLOAD STARTING FOR %s (%p) IN THREAD 0x%x.\n", domain->friendly_name, domain, GetCurrentThreadId ()); */
@@ -2421,8 +2423,11 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 	}
 	mono_domain_set (caller_domain, FALSE);
 
-	thread_data.domain = domain;
-	thread_data.failure_reason = NULL;
+	thread_data = g_new0 (unload_data, 1);
+	thread_data->domain = domain;
+	thread_data->failure_reason = NULL;
+	thread_data->done = FALSE;
+	thread_data->refcount = 2; /*Must be 2: unload thread + initiator */
 
 	/*The managed callback finished successfully, now we start tearing down the appdomain*/
 	domain->state = MONO_APPDOMAIN_UNLOADING;
@@ -2438,7 +2443,7 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 #if 0
 	thread_handle = mono_create_thread (NULL, 0, unload_thread_main, &thread_data, 0, &tid);
 #else
-	thread_handle = mono_create_thread (NULL, 0, (LPTHREAD_START_ROUTINE)unload_thread_main, &thread_data, CREATE_SUSPENDED, &tid);
+	thread_handle = mono_create_thread (NULL, 0, (LPTHREAD_START_ROUTINE)unload_thread_main, thread_data, CREATE_SUSPENDED, &tid);
 	if (thread_handle == NULL) {
 		return;
 	}
@@ -2446,25 +2451,28 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 #endif
 
 	/* Wait for the thread */	
-	while ((res = WaitForSingleObjectEx (thread_handle, INFINITE, TRUE) == WAIT_IO_COMPLETION)) {
+	while (!thread_data->done && WaitForSingleObjectEx (thread_handle, INFINITE, TRUE) == WAIT_IO_COMPLETION) {
 		if (mono_thread_internal_has_appdomain_ref (mono_thread_internal_current (), domain) && (mono_thread_interruption_requested ())) {
 			/* The unload thread tries to abort us */
 			/* The icall wrapper will execute the abort */
 			CloseHandle (thread_handle);
+			unload_data_unref (thread_data);
 			return;
 		}
 	}
 	CloseHandle (thread_handle);
 
-	if (thread_data.failure_reason) {
+	if (thread_data->failure_reason) {
 		/* Roll back the state change */
 		domain->state = MONO_APPDOMAIN_CREATED;
 
-		g_warning ("%s", thread_data.failure_reason);
+		g_warning ("%s", thread_data->failure_reason);
 
-		*exc = (MonoObject *) mono_get_exception_cannot_unload_appdomain (thread_data.failure_reason);
+		*exc = (MonoObject *) mono_get_exception_cannot_unload_appdomain (thread_data->failure_reason);
 
-		g_free (thread_data.failure_reason);
-		thread_data.failure_reason = NULL;
+		g_free (thread_data->failure_reason);
+		thread_data->failure_reason = NULL;
 	}
+
+	unload_data_unref (thread_data);
 }

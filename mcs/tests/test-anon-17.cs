@@ -18,7 +18,7 @@ class Button {
 class X {
 	static bool called = false;
 	
-	static int Main ()
+	public static int Main ()
 	{
 		Button b = new Button ();
 				       

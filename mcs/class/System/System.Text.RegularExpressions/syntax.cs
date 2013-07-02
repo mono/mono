@@ -674,7 +674,7 @@ namespace System.Text.RegularExpressions.Syntax {
 				LinkRef next = cmp.NewLink ();
 				cmp.EmitBranch (next);
 				e.Compile (cmp, reverse);
-				cmp.EmitJumpTest (tail, next);
+				cmp.EmitJump (tail);
 				cmp.ResolveLink (next);
 				cmp.EmitBranchEnd();
 			}

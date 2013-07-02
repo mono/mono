@@ -30,8 +30,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !MOONLIGHT
-
 using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
@@ -439,5 +437,3 @@ namespace System.Security.Cryptography {
 		private const int BLOCK_SIZE_BYTES =  64;
 	}
 }
-
-#endif

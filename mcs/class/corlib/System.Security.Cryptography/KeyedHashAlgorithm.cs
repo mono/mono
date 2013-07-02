@@ -79,7 +79,11 @@ public abstract class KeyedHashAlgorithm : HashAlgorithm {
 
 	public static new KeyedHashAlgorithm Create ()
 	{
+#if FULL_AOT_RUNTIME
+		return new System.Security.Cryptography.HMACSHA1 ();
+#else
 		return Create ("System.Security.Cryptography.KeyedHashAlgorithm");
+#endif
 	}
 
 	public static new KeyedHashAlgorithm Create (string algName)

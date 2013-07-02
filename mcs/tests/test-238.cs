@@ -8,7 +8,7 @@ class TestClass {
             Environment.Exit (1);
         }
     
-        static int Main()
+        public static int Main()
         {
             ConditionalMethod ();
             Console.WriteLine ("Succeeded");

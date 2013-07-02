@@ -49,7 +49,7 @@ class Concrete_2 : BaseGeneric_1<bool>
 
 class Program
 {
-    static void Main ()
+    public static void Main ()
     {
 		new Concrete_B.InnerDerived ("abc");
 		new Concrete_A.InnerDerived (11);

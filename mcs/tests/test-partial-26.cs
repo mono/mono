@@ -32,7 +32,7 @@ namespace ConsoleApplication1
 
 	class Program
 	{
-		static int Main ()
+		public static int Main ()
 		{
 			var x = typeof (X).GetMethod ("Foo", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetCustomAttributes (true);
 			Console.WriteLine (x.Length);

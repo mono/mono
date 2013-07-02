@@ -167,7 +167,7 @@ class X
 		return 0;
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		int result = Test ();
 		Console.WriteLine ("RESULT: {0}", result);

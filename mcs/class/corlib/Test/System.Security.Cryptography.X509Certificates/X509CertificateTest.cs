@@ -24,18 +24,24 @@ public class X509CertificateTest {
 
 private CultureInfo oldcult;
 
+	string temp_certificate_filename;
 [SetUp]
-protected void SetUp () {
+public void SetUp () {
 	// the current culture determines the result of formatting
 	oldcult = Thread.CurrentThread.CurrentCulture;
 	Thread.CurrentThread.CurrentCulture = new CultureInfo ("");
+
+	temp_certificate_filename = Path.Combine (Path.GetTempPath (), "temp.cer");
 }
 
 [TearDown]
-protected void TearDown () {
+public void TearDown () {
 	Thread.CurrentThread.CurrentCulture = oldcult;
-	File.Delete("temp.cer");
 	File.Delete("temp.b64");
+	try {
+		File.Delete (temp_certificate_filename);
+	} catch {
+	}
 }
 
 public void AssertEquals (string msg, byte[] array1, byte[] array2)
@@ -108,11 +114,11 @@ public void Certificate1 ()
 	Assert.IsTrue (x509.Equals (clone), "Equals");
 	Assert.IsTrue (clone.Equals (x509), "Equals");
 
-	FileStream fs = File.OpenWrite ("temp.cer");
+	FileStream fs = File.OpenWrite (temp_certificate_filename);
 	fs.Write (cert, 0, cert.Length);
 	fs.Close ();
 
-	X509Certificate disk = X509Certificate.CreateFromCertFile ("temp.cer");
+	X509Certificate disk = X509Certificate.CreateFromCertFile (temp_certificate_filename);
 	Assert.IsTrue (disk.Equals (clone), "Equals");
 	Assert.IsTrue (disk.Equals (x509), "Equals");
 	byte[] hash = { 0xD6,0x2F,0x48,0xD0,0x13,0xEE,0x7F,0xB5,0x8B,0x79,0x07,0x45,0x12,0x67,0x0D,0x9C,0x5B,0x3A,0x5D,0xA9 };
@@ -181,11 +187,11 @@ public void Certificate2 ()
 	Assert.IsTrue (x509.Equals (clone), "Equals");
 	Assert.IsTrue (clone.Equals (x509), "Equals");
 
-	FileStream fs = File.OpenWrite ("temp.cer");
+	FileStream fs = File.OpenWrite (temp_certificate_filename);
 	fs.Write (cert, 0, cert.Length);
 	fs.Close ();
 
-	X509Certificate disk = X509Certificate.CreateFromCertFile ("temp.cer");
+	X509Certificate disk = X509Certificate.CreateFromCertFile (temp_certificate_filename);
 	Assert.IsTrue (disk.Equals (clone), "Equals");
 	Assert.IsTrue (disk.Equals (x509), "Equals");
 	byte[] hash = { 0x9E,0x87,0x80,0x3E,0xC5,0x68,0x9A,0xEF,0xE7,0x7F,0x92,0xF9,0x1A,0xBF,0xA7,0x46,0x7C,0x76,0xED,0x02 };
@@ -257,11 +263,11 @@ public void Certificate3 ()
 	Assert.IsTrue (x509.Equals (clone), "Equals");
 	Assert.IsTrue (clone.Equals (x509), "Equals");
 
-	FileStream fs = File.OpenWrite ("temp.cer");
+	FileStream fs = File.OpenWrite (temp_certificate_filename);
 	fs.Write (cert, 0, cert.Length);
 	fs.Close ();
 
-	X509Certificate disk = X509Certificate.CreateFromCertFile ("temp.cer");
+	X509Certificate disk = X509Certificate.CreateFromCertFile (temp_certificate_filename);
 	Assert.IsTrue (disk.Equals (clone), "Equals");
 	Assert.IsTrue (disk.Equals (x509), "Equals");
 	byte[] hash = { 0x39,0x5F,0xBB,0xFC,0x14,0x89,0x33,0x27,0x76,0x89,0xB7,0x59,0x3A,0x7D,0x1C,0xFF,0xF1,0x56,0xF1,0x62 };
@@ -331,11 +337,11 @@ public void Certificate4 ()
 	Assert.IsTrue (x509.Equals (clone), "Equals");
 	Assert.IsTrue (clone.Equals (x509), "Equals");
 
-	FileStream fs = File.OpenWrite ("temp.cer");
+	FileStream fs = File.OpenWrite (temp_certificate_filename);
 	fs.Write (cert, 0, cert.Length);
 	fs.Close ();
 
-	X509Certificate disk = X509Certificate.CreateFromCertFile ("temp.cer");
+	X509Certificate disk = X509Certificate.CreateFromCertFile (temp_certificate_filename);
 	Assert.IsTrue (disk.Equals (clone), "Equals");
 	Assert.IsTrue (disk.Equals (x509), "Equals");
 	byte[] hash = { 0x0D,0x97,0x44,0x61,0x70,0x37,0x13,0xCB,0x74,0x93,0x2D,0x2A,0x75,0xAC,0xBC,0x71,0x4B,0x28,0x12,0x66 };
@@ -415,11 +421,11 @@ public void Certificate5 ()
 	Assert.IsTrue (x509.Equals (clone), "Equals");
 	Assert.IsTrue (clone.Equals (x509), "Equals");
 
-	FileStream fs = File.OpenWrite ("temp.cer");
+	FileStream fs = File.OpenWrite (temp_certificate_filename);
 	fs.Write (cert, 0, cert.Length);
 	fs.Close ();
 
-	X509Certificate disk = X509Certificate.CreateFromCertFile ("temp.cer");
+	X509Certificate disk = X509Certificate.CreateFromCertFile (temp_certificate_filename);
 	Assert.IsTrue (disk.Equals (clone), "Equals");
 	Assert.IsTrue (disk.Equals (x509), "Equals");
 	byte[] hash = { 0x63,0xDB,0x7A,0x42,0x67,0x39,0x75,0x39,0x2A,0xC6,0xA4,0xFA,0xE3,0xD7,0x84,0x46,0xB4,0x67,0xC3,0x26 };
@@ -490,11 +496,11 @@ public void Certificate6 ()
 	Assert.IsTrue (x509.Equals (clone), "Equals");
 	Assert.IsTrue (clone.Equals (x509), "Equals");
 
-	FileStream fs = File.OpenWrite ("temp.cer");
+	FileStream fs = File.OpenWrite (temp_certificate_filename);
 	fs.Write (cert, 0, cert.Length);
 	fs.Close ();
 
-	X509Certificate disk = X509Certificate.CreateFromCertFile ("temp.cer");
+	X509Certificate disk = X509Certificate.CreateFromCertFile (temp_certificate_filename);
 	Assert.IsTrue (disk.Equals (clone), "Equals");
 	Assert.IsTrue (disk.Equals (x509), "Equals");
 	byte[] hash = { 0x95,0xD4,0xE2,0xEA,0x34,0x0B,0xBF,0x33,0x27,0x1C,0x1F,0xBA,0x8B,0x52,0x9F,0x17,0x72,0x1F,0x8A,0x99 };
@@ -597,11 +603,11 @@ public void Certificate8 ()
 	Assert.IsTrue (x509.Equals (clone), "Equals");
 	Assert.IsTrue (clone.Equals (x509), "Equals");
 
-	FileStream fs = File.OpenWrite ("temp.cer");
+	FileStream fs = File.OpenWrite (temp_certificate_filename);
 	fs.Write (cert, 0, cert.Length);
 	fs.Close ();
 
-	X509Certificate disk = X509Certificate.CreateFromCertFile ("temp.cer");
+	X509Certificate disk = X509Certificate.CreateFromCertFile (temp_certificate_filename);
 	Assert.IsTrue (disk.Equals (clone), "Equals");
 	Assert.IsTrue (disk.Equals (x509), "Equals");
 	byte[] hash = { 0xA3,0x0A,0x06,0xB1,0xB0,0xD4,0xF8,0x71,0x67,0x8A,0x60,0xC5,0x4E,0xE4,0xD8,0x66,0x36,0x06,0xCC,0xE6 };
@@ -698,11 +704,11 @@ public void Certificate9 ()
 	Assert.IsTrue (x509.Equals (clone), "Equals");
 	Assert.IsTrue (clone.Equals (x509), "Equals");
 
-	FileStream fs = File.OpenWrite ("temp.cer");
+	FileStream fs = File.OpenWrite (temp_certificate_filename);
 	fs.Write (cert, 0, cert.Length);
 	fs.Close ();
 
-	X509Certificate disk = X509Certificate.CreateFromCertFile ("temp.cer");
+	X509Certificate disk = X509Certificate.CreateFromCertFile (temp_certificate_filename);
 	Assert.IsTrue (disk.Equals (clone), "Equals");
 	Assert.IsTrue (disk.Equals (x509), "Equals");
 	byte[] hash = { 0x52,0xD1,0x84,0x8F,0x6A,0x16,0x1B,0xA5,0xC6,0xC1,0x90,0x07,0xF8,0x16,0x46,0x68,0xF5,0xA3,0xB2,0xCF };
@@ -773,11 +779,11 @@ public void Certificate10 ()
 	Assert.IsTrue (x509.Equals (clone), "Equals");
 	Assert.IsTrue (clone.Equals (x509), "Equals");
 
-	FileStream fs = File.OpenWrite ("temp.cer");
+	FileStream fs = File.OpenWrite (temp_certificate_filename);
 	fs.Write (cert, 0, cert.Length);
 	fs.Close ();
 
-	X509Certificate disk = X509Certificate.CreateFromCertFile ("temp.cer");
+	X509Certificate disk = X509Certificate.CreateFromCertFile (temp_certificate_filename);
 	Assert.IsTrue (disk.Equals (clone), "Equals");
 	Assert.IsTrue (disk.Equals (x509), "Equals");
 	byte[] hash = { 0xE0,0xA0,0x0A,0xBE,0xB2,0xCC,0xA8,0x45,0x40,0xC2,0x1A,0x75,0xE0,0xB3,0xA4,0x06,0xF9,0xA6,0x24,0xAC };
@@ -848,11 +854,11 @@ public void Certificate11 ()
 	Assert.IsTrue (x509.Equals (clone), "Equals");
 	Assert.IsTrue (clone.Equals (x509), "Equals");
 
-	FileStream fs = File.OpenWrite ("temp.cer");
+	FileStream fs = File.OpenWrite (temp_certificate_filename);
 	fs.Write (cert, 0, cert.Length);
 	fs.Close ();
 
-	X509Certificate disk = X509Certificate.CreateFromCertFile ("temp.cer");
+	X509Certificate disk = X509Certificate.CreateFromCertFile (temp_certificate_filename);
 	Assert.IsTrue (disk.Equals (clone), "Equals");
 	Assert.IsTrue (disk.Equals (x509), "Equals");
 	byte[] hash = { 0xA2,0x75,0xE0,0x26,0xAC,0xD8,0x54,0x79,0x4A,0x4A,0xA2,0xCB,0x53,0xF6,0x62,0x33,0x12,0x9C,0x55,0xB6 };
@@ -927,11 +933,11 @@ public void Certificate12 ()
 	Assert.IsTrue (x509.Equals (clone), "Equals");
 	Assert.IsTrue (clone.Equals (x509), "Equals");
 
-	FileStream fs = File.OpenWrite ("temp.cer");
+	FileStream fs = File.OpenWrite (temp_certificate_filename);
 	fs.Write (cert, 0, cert.Length);
 	fs.Close ();
 
-	X509Certificate disk = X509Certificate.CreateFromCertFile ("temp.cer");
+	X509Certificate disk = X509Certificate.CreateFromCertFile (temp_certificate_filename);
 	Assert.IsTrue (disk.Equals (clone), "Equals");
 	Assert.IsTrue (disk.Equals (x509), "Equals");
 	byte[] hash = { 0x28,0x2D,0x98,0x06,0xC3,0xDF,0x73,0x45,0x92,0x9F,0x64,0xF5,0x89,0x5E,0xF2,0xEA,0x4A,0xC2,0x93,0x02 };
@@ -1011,11 +1017,11 @@ public void Certificate13 ()
 //	Assert.IsTrue (x509.Equals (clone), "Equals");
 //	Assert.IsTrue (clone.Equals (x509), "Equals");
 
-	FileStream fs = File.OpenWrite ("temp.cer");
+	FileStream fs = File.OpenWrite (temp_certificate_filename);
 	fs.Write (cert, 0, cert.Length);
 	fs.Close ();
 
-	X509Certificate disk = X509Certificate.CreateFromCertFile ("temp.cer");
+	X509Certificate disk = X509Certificate.CreateFromCertFile (temp_certificate_filename);
 //	Assert.IsTrue (disk.Equals (clone), "Equals");
 	Assert.IsTrue (disk.Equals (x509), "Equals");
 	byte[] hash = { 0x0E,0x29,0xCD,0xDC,0xA5,0xE7,0x32,0xA2,0x0D,0xCE,0xD8,0x7B,0x3D,0x00,0x24,0x46,0x85,0x3E,0xBB,0xD1 };

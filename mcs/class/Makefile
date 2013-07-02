@@ -47,6 +47,7 @@ common_dirs := \
 	System.Data			\
 	Accessibility			\
 	Mono.WebBrowser			\
+	System.Runtime.Serialization.Formatters.Soap \
 	Managed.Windows.Forms		\
 	Mono.Data.Sqlite		\
 	System.Web.ApplicationServices	\
@@ -54,7 +55,6 @@ common_dirs := \
 	Mono.Web			\
 	System.Web.Services		\
 	System.Web			\
-	System.Runtime.Serialization.Formatters.Soap \
 	System.Runtime.Remoting		\
 	System.Configuration.Install 	\
 	System.Management		\
@@ -115,7 +115,8 @@ net_2_0_dirs := \
 	System.Dynamic			\
 	Mono.CSharp			\
 	Moonlight.Build.Tasks		\
-	System.Net
+	System.Net				\
+	System.Json
 
 net_2_0_only_dirs := \
 	System.Web.Extensions_1.0	\
@@ -125,19 +126,6 @@ net_2_0_only_dirs := \
 	System.Data.Services.Client	\
 	System.Data.Services		\
 	System.Web.Mvc			
-
-moonlight_raw_dirs := \
-	corlib			\
-	System			\
-	Mono.CompilerServices.SymbolWriter \
-	System.Core		\
-	System.XML		\
-	System.Net		\
-	System.Xml.Linq	\
-	System.Runtime.Serialization	\
-	System.ServiceModel	\
-	System.ServiceModel.Web	\
-	System.Xml.Serialization
 
 mobile_dirs := \
 	corlib	\
@@ -159,12 +147,50 @@ mobile_dirs := \
 	Mono.Cairo	\
 	Mono.Data.Sqlite	\
 	System.Numerics	\
-	System.Data.Services.Client
+	System.Data.Services.Client \
+	System.IO.Compression \
+	System.IO.Compression.FileSystem \
+	System.ComponentModel.DataAnnotations \
+	System.ComponentModel.Composition.4.5 \
+	System.Net \
+	System.Windows \
+	System.Xml.Serialization \
+	Facades
 
 monodroid_dirs := \
 	Mono.CompilerServices.SymbolWriter	\
 	Mono.CSharp	\
-	Microsoft.CSharp
+	Microsoft.CSharp \
+	System.Net.Http
+
+monotouch_runtime_dirs := \
+	corlib \
+	System \
+	System.XML	\
+	Mono.Posix \
+	System.Core \
+	Mono.Security			\
+	System \
+	System.Security			\
+	System.Configuration		\
+	System				\
+	System.XML			\
+	$(resgen_dir)			\
+	System.Drawing			\
+	System.Transactions		\
+	System.EnterpriseServices	\
+	Mono.Data.Tds			\
+	System.Data			\
+	Accessibility			\
+	Mono.WebBrowser			\
+	System.Runtime.Serialization.Formatters.Soap \
+	Managed.Windows.Forms		\
+	Mono.Data.Sqlite		\
+	System.Web.ApplicationServices	\
+	System.Web \
+	Mono.Web \
+	System.Web.Services \
+	System.Web
 
 net_3_5_only_dirs := \
 	Microsoft.Build.Framework	\
@@ -184,11 +210,22 @@ net_4_0_dirs := \
 	System.Runtime.Caching \
 	System.Runtime.DurableInstancing \
 	Mono.Parallel \
+	System.Reactive.Interfaces \
+	System.Reactive.Core \
+	System.Reactive.Linq \
+	System.Reactive.PlatformServices \
+	System.Reactive.Providers \
+	System.Reactive.Runtime.Remoting \
+	System.Reactive.Windows.Forms \
+	System.Reactive.Windows.Threading \
+	System.Reactive.Experimental \
+	System.Reactive.Debugger \
 	Microsoft.Web.Infrastructure \
 	WebMatrix.Data \
 	System.Data.Services.Client	\
-	System.Data.Services	\
-	System.Json
+	System.Data.Services \
+	System.Json.Microsoft \
+	monodoc
 	
 net_4_0_only_dirs := \
 	System.ComponentModel.Composition
@@ -205,14 +242,20 @@ net_4_5_dirs := \
 	System.Net.Http.Formatting \
 	System.Web.Http \
 	System.Web.Http.SelfHost \
+	System.Web.Http.WebHost \
 	EntityFramework	\
 	EntityFramework.SqlServer	\
-	Mono.CodeContracts
-
+	Mono.CodeContracts \
+	System.IO.Compression \
+	System.IO.Compression.FileSystem \
+	System.Windows \
+	System.Xml.Serialization \
+	Facades
+	
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) aot-compiler
-moonlight_raw_SUBDIRS := $(moonlight_raw_dirs)
 monodroid_SUBDIRS := $(mobile_dirs) $(monodroid_dirs)
 monotouch_SUBDIRS := $(mobile_dirs)
+monotouch_runtime_SUBDIRS := $(monotouch_runtime_dirs)
 mobile_SUBDIRS := $(mobile_dirs)
 net_3_5_SUBDIRS := $(net_3_5_only_dirs)
 net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs)
@@ -220,9 +263,9 @@ net_4_5_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_5_dirs
 
 include ../build/rules.make
 
-SUBDIRS = $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(net_3_5_only_dirs) $(moonlight_raw_dirs) $(mobile_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs) $(net_4_5_dirs)
+SUBDIRS = $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(net_3_5_only_dirs) $(mobile_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs) $(net_4_5_dirs)
 
-DIST_ONLY_SUBDIRS = dlr IKVM.Reflection aot-compiler
+DIST_ONLY_SUBDIRS = dlr aot-compiler
 
 # No new makefiles for: System.Messaging, System.Web.Mobile,
 # System.ServiceProcess
@@ -234,6 +277,7 @@ DISTFILES = \
 	mono.pub		\
 	msfinal.pub		\
 	silverlight.pub		\
+	reactive.pub		\
 	mono.snk		\
 	LICENSE 		\
 	README			\

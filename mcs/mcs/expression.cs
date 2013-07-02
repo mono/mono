@@ -95,10 +95,10 @@ namespace Mono.CSharp
 
 	public class ParenthesizedExpression : ShimExpression
 	{
-		public ParenthesizedExpression (Expression expr)
+		public ParenthesizedExpression (Expression expr, Location loc)
 			: base (expr)
 		{
-			loc = expr.Location;
+			this.loc = loc;
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
@@ -824,6 +824,12 @@ namespace Mono.CSharp
 			get { return true; }
 		}
 
+		public override Location StartLocation {
+			get {
+				return expr.StartLocation;
+			}
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			Indirection target = (Indirection) t;
@@ -1040,6 +1046,12 @@ namespace Mono.CSharp
 		public Expression Expr {
 			get {
 				return expr;
+			}
+		}
+
+		public override Location StartLocation {
+			get {
+				return (mode & Mode.IsPost) != 0 ? expr.Location : loc;
 			}
 		}
 
@@ -1425,10 +1437,10 @@ namespace Mono.CSharp
 		{
 			if (result)
 				ec.Report.Warning (183, 1, loc, "The given expression is always of the provided (`{0}') type",
-					TypeManager.CSharpName (probe_type_expr));
+					probe_type_expr.GetSignatureForError ());
 			else
 				ec.Report.Warning (184, 1, loc, "The given expression is never of the provided (`{0}') type",
-					TypeManager.CSharpName (probe_type_expr));
+					probe_type_expr.GetSignatureForError ());
 
 			return ReducedExpression.Create (new BoolConstant (ec.BuiltinTypes, result, loc), this);
 		}
@@ -1618,7 +1630,7 @@ namespace Mono.CSharp
 				} else {
 					ec.Report.Error (77, loc,
 						"The `as' operator cannot be used with a non-nullable value type `{0}'",
-						TypeManager.CSharpName (type));
+						type.GetSignatureForError ());
 				}
 				return null;
 			}
@@ -1651,7 +1663,7 @@ namespace Mono.CSharp
 			}
 
 			ec.Report.Error (39, loc, "Cannot convert type `{0}' to `{1}' via a built-in conversion",
-				TypeManager.CSharpName (etype), TypeManager.CSharpName (type));
+				etype.GetSignatureForError (), type.GetSignatureForError ());
 
 			return null;
 		}
@@ -1690,7 +1702,7 @@ namespace Mono.CSharp
 				return null;
 
 			if (type.IsStatic) {
-				ec.Report.Error (716, loc, "Cannot convert to static type `{0}'", TypeManager.CSharpName (type));
+				ec.Report.Error (716, loc, "Cannot convert to static type `{0}'", type.GetSignatureForError ());
 				return null;
 			}
 
@@ -1702,7 +1714,7 @@ namespace Mono.CSharp
 			
 			Constant c = expr as Constant;
 			if (c != null) {
-				c = c.TryReduce (ec, type);
+				c = c.Reduce (ec, type);
 				if (c != null)
 					return c;
 			}
@@ -2243,6 +2255,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		public override Location StartLocation {
+			get {
+				return left.StartLocation;
+			}
+		}
+
 		#endregion
 
 		/// <summary>
@@ -2328,8 +2346,8 @@ namespace Mono.CSharp
 				return;
 
 			string l, r;
-			l = TypeManager.CSharpName (left.Type);
-			r = TypeManager.CSharpName (right.Type);
+			l = left.Type.GetSignatureForError ();
+			r = right.Type.GetSignatureForError ();
 
 			ec.Report.Error (19, loc, "Operator `{0}' cannot be applied to operands of type `{1}' and `{2}'",
 				oper, l, r);
@@ -2661,7 +2679,7 @@ namespace Mono.CSharp
 					return left;
 				
 				if (left.IsZeroInteger)
-					return left.TryReduce (ec, right.Type);
+					return left.Reduce (ec, right.Type);
 				
 				break;
 				
@@ -2704,9 +2722,10 @@ namespace Mono.CSharp
 
 			// FIXME: consider constants
 
+			var ltype = lcast != null ? lcast.UnderlyingType : rcast.UnderlyingType;
 			ec.Report.Warning (675, 3, loc,
 				"The operator `|' used on the sign-extended type `{0}'. Consider casting to a smaller unsigned type first",
-				TypeManager.CSharpName (lcast != null ? lcast.UnderlyingType : rcast.UnderlyingType));
+				ltype.GetSignatureForError ());
 		}
 
 		public static PredefinedOperator[] CreatePointerOperatorsTable (BuiltinTypes types)
@@ -2919,7 +2938,7 @@ namespace Mono.CSharp
 				// FIXME: resolve right expression as unreachable
 				// right.Resolve (ec);
 
-				ec.Report.Warning (429, 4, loc, "Unreachable expression code detected");
+				ec.Report.Warning (429, 4, right.StartLocation, "Unreachable expression code detected");
 				return left;
 			}
 
@@ -3545,7 +3564,7 @@ namespace Mono.CSharp
 
 				if (best_operator == null) {
 					ec.Report.Error (34, loc, "Operator `{0}' is ambiguous on operands of type `{1}' and `{2}'",
-						OperName (oper), TypeManager.CSharpName (l), TypeManager.CSharpName (r));
+						OperName (oper), l.GetSignatureForError (), r.GetSignatureForError ());
 
 					best_operator = po;
 					break;
@@ -3701,7 +3720,7 @@ namespace Mono.CSharp
 				} catch (OverflowException) {
 					ec.Report.Warning (652, 2, loc,
 						"A comparison between a constant and a variable is useless. The constant is out of the range of the variable type `{0}'",
-						TypeManager.CSharpName (type));
+						type.GetSignatureForError ());
 				}
 			}
 		}
@@ -4205,6 +4224,12 @@ namespace Mono.CSharp
 
 		public override void Emit (EmitContext ec)
 		{
+			// Optimize by removing any extra null arguments, they are no-op
+			for (int i = 0; i < arguments.Count; ++i) {
+				if (arguments[i].Expr is NullConstant)
+					arguments.RemoveAt (i--);
+			}
+
 			var members = GetConcatMethodCandidates ();
 			var res = new OverloadResolver (members, OverloadResolver.Restrictions.NoBaseMembers, loc);
 			var method = res.ResolveMember<MethodSpec> (new ResolveContext (ec.MemberContext), ref arguments);
@@ -4255,7 +4280,7 @@ namespace Mono.CSharp
 			if (op_true == null || op_false == null) {
 				ec.Report.Error (218, loc,
 					"The type `{0}' must have operator `true' and operator `false' defined when `{1}' is used as a short circuit operator",
-					TypeManager.CSharpName (type), oper.GetSignatureForError ());
+					type.GetSignatureForError (), oper.GetSignatureForError ());
 				return null;
 			}
 
@@ -4643,7 +4668,7 @@ namespace Mono.CSharp
 						// ambiguous because 1 literal can be converted to short.
 						//
 						if (conv_false_expr != null) {
-							if (conv_false_expr is IntConstant && conv is Constant) {
+							if (conv_false_expr.Type.BuiltinType == BuiltinTypeSpec.Type.Int && conv is Constant) {
 								type = true_type;
 								conv_false_expr = null;
 							} else if (type.BuiltinType == BuiltinTypeSpec.Type.Int && conv_false_expr is Constant) {
@@ -4659,12 +4684,14 @@ namespace Mono.CSharp
 					}
 
 					true_expr = conv;
+					if (true_expr.Type != type)
+						true_expr = EmptyCast.Create (true_expr, type);
 				} else if ((conv = Convert.ImplicitConversion (ec, false_expr, true_type, loc)) != null) {
 					false_expr = conv;
 				} else {
 					ec.Report.Error (173, true_expr.Location,
 						"Type of conditional expression cannot be determined because there is no implicit conversion between `{0}' and `{1}'",
-						TypeManager.CSharpName (true_type), TypeManager.CSharpName (false_type));
+						true_type.GetSignatureForError (), false_type.GetSignatureForError ());
 					return null;
 				}
 			}			
@@ -4695,6 +4722,18 @@ namespace Mono.CSharp
 
 			expr.EmitBranchable (ec, false_target, false);
 			true_expr.Emit (ec);
+
+			//
+			// Verifier doesn't support interface merging. When there are two types on
+			// the stack without common type hint and the common type is an interface.
+			// Use temporary local to give verifier hint on what type to unify the stack
+			//
+			if (type.IsInterface && true_expr is EmptyCast && false_expr is EmptyCast) {
+				var temp = ec.GetTemporaryLocal (type);
+				ec.Emit (OpCodes.Stloc, temp);
+				ec.Emit (OpCodes.Ldloc, temp);
+				ec.FreeTemporaryLocal (temp, type);
+			}
 
 			ec.Emit (OpCodes.Br, end_target);
 			ec.MarkLabel (false_target);
@@ -5152,6 +5191,9 @@ namespace Mono.CSharp
 
 		void SetAssigned (ResolveContext ec)
 		{
+			if (Parameter.HoistedVariant != null)
+				Parameter.HoistedVariant.IsAssigned = true;
+
 			if (HasOutModifier && ec.DoFlowAnalysis)
 				ec.CurrentBranching.SetAssigned (VariableInfo);
 		}
@@ -5272,8 +5314,7 @@ namespace Mono.CSharp
 			this.expr = expr;		
 			this.arguments = arguments;
 			if (expr != null) {
-				var ma = expr as MemberAccess;
-				loc = ma != null ? ma.GetLeftExpressionLocation () : expr.Location;
+				loc = expr.Location;
 			}
 		}
 
@@ -5295,7 +5336,48 @@ namespace Mono.CSharp
 				return mg;
 			}
 		}
+
+		public override Location StartLocation {
+			get {
+				return expr.StartLocation;
+			}
+		}
+
 		#endregion
+
+		public override MethodGroupExpr CanReduceLambda (AnonymousMethodBody body)
+		{
+			if (MethodGroup == null)
+				return null;
+
+			var candidate = MethodGroup.BestCandidate;
+			if (candidate == null || !(candidate.IsStatic || Exp is This))
+				return null;
+
+			var args_count = arguments == null ? 0 : arguments.Count;
+			if (args_count != body.Parameters.Count)
+				return null;
+
+			var lambda_parameters = body.Block.Parameters.FixedParameters;
+			for (int i = 0; i < args_count; ++i) {
+				var pr = arguments[i].Expr as ParameterReference;
+				if (pr == null)
+					return null;
+
+				if (lambda_parameters[i] != pr.Parameter)
+					return null;
+
+				if ((lambda_parameters[i].ModFlags & Parameter.Modifier.RefOutMask) != (pr.Parameter.ModFlags & Parameter.Modifier.RefOutMask))
+					return null;
+			}
+
+			var emg = MethodGroup as ExtensionMethodGroupExpr;
+			if (emg != null) {
+				return MethodGroupExpr.CreatePredefined (candidate, candidate.DeclaringType, MethodGroup.Location);
+			}
+
+			return MethodGroup;
+		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
@@ -5685,7 +5767,7 @@ namespace Mono.CSharp
 
 			if (type.IsPointer) {
 				ec.Report.Error (1919, loc, "Unsafe type `{0}' cannot be used in an object creation expression",
-					TypeManager.CSharpName (type));
+					type.GetSignatureForError ());
 				return null;
 			}
 
@@ -5708,13 +5790,13 @@ namespace Mono.CSharp
 				if ((tparam.SpecialConstraint & (SpecialConstraint.Struct | SpecialConstraint.Constructor)) == 0 && !TypeSpec.IsValueType (tparam)) {
 					ec.Report.Error (304, loc,
 						"Cannot create an instance of the variable type `{0}' because it does not have the new() constraint",
-						TypeManager.CSharpName (type));
+						type.GetSignatureForError ());
 				}
 
 				if ((arguments != null) && (arguments.Count != 0)) {
 					ec.Report.Error (417, loc,
 						"`{0}': cannot provide arguments when creating an instance of a variable type",
-						TypeManager.CSharpName (type));
+						type.GetSignatureForError ());
 				}
 
 				return this;
@@ -5722,7 +5804,7 @@ namespace Mono.CSharp
 
 			if (type.IsStatic) {
 				ec.Report.SymbolRelatedToPreviousError (type);
-				ec.Report.Error (712, loc, "Cannot create an instance of the static class `{0}'", TypeManager.CSharpName (type));
+				ec.Report.Error (712, loc, "Cannot create an instance of the static class `{0}'", type.GetSignatureForError ());
 				return null;
 			}
 
@@ -5734,7 +5816,7 @@ namespace Mono.CSharp
 				}
 				
 				ec.Report.SymbolRelatedToPreviousError (type);
-				ec.Report.Error (144, loc, "Cannot create an instance of the abstract class or interface `{0}'", TypeManager.CSharpName (type));
+				ec.Report.Error (144, loc, "Cannot create an instance of the abstract class or interface `{0}'", type.GetSignatureForError ());
 				return null;
 			}
 
@@ -5956,7 +6038,7 @@ namespace Mono.CSharp
 	public class ArrayInitializer : Expression
 	{
 		List<Expression> elements;
-		BlockVariableDeclaration variable;
+		BlockVariable variable;
 
 		public ArrayInitializer (List<Expression> init, Location loc)
 		{
@@ -5992,7 +6074,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		public BlockVariableDeclaration VariableDeclaration {
+		public BlockVariable VariableDeclaration {
 			get {
 				return variable;
 			}
@@ -6157,7 +6239,7 @@ namespace Mono.CSharp
 				// We use this to store all the data values in the order in which we
 				// will need to store them in the byte blob later
 				//
-				array_data = new List<Expression> ();
+				array_data = new List<Expression> (probe.Count);
 				bounds = new Dictionary<int, int> ();
 			}
 
@@ -6463,12 +6545,12 @@ namespace Mono.CSharp
 					}
 					break;
 				case BuiltinTypeSpec.Type.Float:
-					element = BitConverter.GetBytes ((float) v);
+					var fval = SingleConverter.SingleToInt32Bits((float) v);
 
-					for (int j = 0; j < factor; ++j)
-						data[idx + j] = element[j];
-					if (!BitConverter.IsLittleEndian)
-						System.Array.Reverse (data, idx, 4);
+					data[idx] = (byte) (fval & 0xff);
+					data[idx + 1] = (byte) ((fval >> 8) & 0xff);
+					data[idx + 2] = (byte) ((fval >> 16) & 0xff);
+					data[idx + 3] = (byte) (fval >> 24);
 					break;
 				case BuiltinTypeSpec.Type.Double:
 					element = BitConverter.GetBytes ((double) v);
@@ -6795,38 +6877,7 @@ namespace Mono.CSharp
 	//
 	class ImplicitlyTypedArrayCreation : ArrayCreation
 	{
-		sealed class InferenceContext : TypeInferenceContext
-		{
-			class ExpressionBoundInfo : BoundInfo
-			{
-				readonly Expression expr;
-
-				public ExpressionBoundInfo (Expression expr)
-					: base (expr.Type, BoundKind.Lower)
-				{
-					this.expr = expr;
-				}
-
-				public override bool Equals (BoundInfo other)
-				{
-					// We are using expression not type for conversion check
-					// no optimization based on types is possible
-					return false;
-				}
-
-				public override Expression GetTypeExpression ()
-				{
-					return expr;
-				}
-			}
-
-			public void AddExpression (Expression expr)
-			{
-				AddToBounds (new ExpressionBoundInfo (expr), 0);
-			}
-		}
-
-		InferenceContext best_type_inference;
+		TypeInferenceContext best_type_inference;
 
 		public ImplicitlyTypedArrayCreation (ComposedTypeSpecifier rank, ArrayInitializer initializers, Location loc)
 			: base (null, rank, initializers, loc)
@@ -6845,7 +6896,7 @@ namespace Mono.CSharp
 
 			dimensions = rank.Dimension;
 
-			best_type_inference = new InferenceContext ();
+			best_type_inference = new TypeInferenceContext ();
 
 			if (!ResolveInitializers (ec))
 				return null;
@@ -6890,7 +6941,7 @@ namespace Mono.CSharp
 		{
 			element = element.Resolve (ec);
 			if (element != null)
-				best_type_inference.AddExpression (element);
+				best_type_inference.AddCommonTypeBound (element.Type);
 
 			return element;
 		}
@@ -7264,7 +7315,7 @@ namespace Mono.CSharp
 		}
 	}
 
-	public class RefValueExpr : ShimExpression
+	public class RefValueExpr : ShimExpression, IAssignMethod
 	{
 		FullNamedExpression texpr;
 
@@ -7298,13 +7349,44 @@ namespace Mono.CSharp
 			return this;
 		}
 
+		public override Expression DoResolveLValue (ResolveContext rc, Expression right_side)
+		{
+			return DoResolve (rc);
+		}
+
 		public override void Emit (EmitContext ec)
 		{
 			expr.Emit (ec);
 			ec.Emit (OpCodes.Refanyval, type);
 			ec.EmitLoadFromPtr (type);
 		}
-		
+
+		public void Emit (EmitContext ec, bool leave_copy)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool isCompound)
+		{
+			expr.Emit (ec);
+			ec.Emit (OpCodes.Refanyval, type);
+			source.Emit (ec);
+
+			LocalTemporary temporary = null;
+			if (leave_copy) {
+				ec.Emit (OpCodes.Dup);
+				temporary = new LocalTemporary (source.Type);
+				temporary.Store (ec);
+			}
+
+			ec.EmitStoreFromPtr (type);
+
+			if (temporary != null) {
+				temporary.Emit (ec);
+				temporary.Release (ec);
+			}
+		}
+
 		public override object Accept (StructuralVisitor visitor)
 		{
 			return visitor.Visit (this);
@@ -7722,7 +7804,7 @@ namespace Mono.CSharp
 			if (!ec.IsUnsafe) {
 				ec.Report.Error (233, loc,
 					"`{0}' does not have a predefined size, therefore sizeof can only be used in an unsafe context (consider using System.Runtime.InteropServices.Marshal.SizeOf)",
-					TypeManager.CSharpName (type_queried));
+					type_queried.GetSignatureForError ());
 			}
 			
 			type = ec.BuiltinTypes.Int;
@@ -7871,6 +7953,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		public override Location StartLocation {
+			get {
+				return expr == null ? loc : expr.StartLocation;
+			}
+		}
+
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			var e = DoResolveName (rc, null);
@@ -7926,18 +8014,6 @@ namespace Mono.CSharp
 				rc.Report.Error (Report.RuntimeErrorId, loc, "Cannot perform member binding on `null' value");
 			else
 				expr.Error_OperatorCannotBeApplied (rc, loc, ".", type);
-		}
-
-		public Location GetLeftExpressionLocation ()
-		{
-			Expression expr = LeftExpression;
-			MemberAccess ma = expr as MemberAccess;
-			while (ma != null && ma.LeftExpression != null) {
-				expr = ma.LeftExpression;
-				ma = expr as MemberAccess;
-			}
-
-			return expr == null ? Location : expr.Location;
 		}
 
 		public static bool IsValidDotExpression (TypeSpec type)
@@ -8076,7 +8152,7 @@ namespace Mono.CSharp
 						return null;
 					}
 
-					if (member_lookup is MethodGroupExpr) {
+					if (member_lookup is MethodGroupExpr || member_lookup is PropertyExpr) {
 						// Leave it to overload resolution to report correct error
 					} else if (!(member_lookup is TypeExpr)) {
 						// TODO: rc.SymbolRelatedToPreviousError
@@ -8095,13 +8171,9 @@ namespace Mono.CSharp
 
 			TypeExpr texpr = member_lookup as TypeExpr;
 			if (texpr != null) {
-				if (!(expr is TypeExpr)) {
-					me = expr as MemberExpr;
-					if (me == null || me.ProbeIdenticalTypeName (rc, expr, sn) == expr) {
-						rc.Report.Error (572, loc, "`{0}': cannot reference a type through an expression; try `{1}' instead",
-							Name, member_lookup.GetSignatureForError ());
-						return null;
-					}
+				if (!(expr is TypeExpr) && (sn == null || expr.ProbeIdenticalTypeName (rc, expr, sn) == expr)) {
+					rc.Report.Error (572, loc, "`{0}': cannot reference a type through an expression. Consider using `{1}' instead",
+						Name, texpr.GetSignatureForError ());
 				}
 
 				if (!texpr.Type.IsAccessible (rc)) {
@@ -8254,6 +8326,11 @@ namespace Mono.CSharp
 
 			rc.Module.Compiler.Report.Error (426, loc, "The nested type `{0}' does not exist in the type `{1}'",
 				Name, expr_type.GetSignatureForError ());
+		}
+
+		protected override void Error_InvalidExpressionStatement (Report report, Location loc)
+		{
+			base.Error_InvalidExpressionStatement (report, LeftExpression.Location);
 		}
 
 		protected override void Error_TypeDoesNotContainDefinition (ResolveContext ec, TypeSpec type, string name)
@@ -8450,6 +8527,12 @@ namespace Mono.CSharp
 			Expr = e;
 			this.loc = loc;
 			this.Arguments = args;
+		}
+
+		public override Location StartLocation {
+			get {
+				return Expr.StartLocation;
+			}
 		}
 
 		public override bool ContainsEmitWithAwait ()
@@ -9910,9 +9993,11 @@ namespace Mono.CSharp
 	{
 		IList<Expression> initializers;
 		bool is_collection_initialization;
-		
-		public static readonly CollectionOrObjectInitializers Empty = 
-			new CollectionOrObjectInitializers (Array.AsReadOnly (new Expression [0]), Location.Null);
+
+		public CollectionOrObjectInitializers (Location loc)
+			: this (new Expression[0], loc)
+		{
+		}
 
 		public CollectionOrObjectInitializers (IList<Expression> initializers, Location loc)
 		{
@@ -9998,8 +10083,8 @@ namespace Mono.CSharp
 							ec.Report.Error (1922, loc, "A field or property `{0}' cannot be initialized with a collection " +
 								"object initializer because type `{1}' does not implement `{2}' interface",
 								ec.CurrentInitializerVariable.GetSignatureForError (),
-								TypeManager.CSharpName (ec.CurrentInitializerVariable.Type),
-								TypeManager.CSharpName (ec.BuiltinTypes.IEnumerable));
+								ec.CurrentInitializerVariable.Type.GetSignatureForError (),
+								ec.BuiltinTypes.IEnumerable.GetSignatureForError ());
 							return null;
 						}
 						is_collection_initialization = true;
@@ -10033,7 +10118,7 @@ namespace Mono.CSharp
 			if (is_collection_initialization) {
 				if (TypeManager.HasElementType (type)) {
 					ec.Report.Error (1925, loc, "Cannot initialize object of type `{0}' with a collection initializer",
-						TypeManager.CSharpName (type));
+						type.GetSignatureForError ());
 				}
 			}
 
@@ -10122,6 +10207,7 @@ namespace Mono.CSharp
 
 		CollectionOrObjectInitializers initializers;
 		IMemoryLocation instance;
+		DynamicExpressionStatement dynamic;
 
 		public NewInitialize (FullNamedExpression requested_type, Arguments arguments, CollectionOrObjectInitializers initializers, Location l)
 			: base (requested_type, arguments, l)
@@ -10166,16 +10252,32 @@ namespace Mono.CSharp
 			if (type == null)
 				return null;
 
+			if (type.IsDelegate) {
+				ec.Report.Error (1958, Initializers.Location,
+					"Object and collection initializers cannot be used to instantiate a delegate");
+			}
+
 			Expression previous = ec.CurrentInitializerVariable;
 			ec.CurrentInitializerVariable = new InitializerTargetExpression (this);
 			initializers.Resolve (ec);
 			ec.CurrentInitializerVariable = previous;
+
+			dynamic = e as DynamicExpressionStatement;
+			if (dynamic != null)
+				return this;
+
 			return e;
 		}
 
 		public override bool Emit (EmitContext ec, IMemoryLocation target)
 		{
-			bool left_on_stack = base.Emit (ec, target);
+			bool left_on_stack;
+			if (dynamic != null) {
+				dynamic.Emit (ec);
+				left_on_stack = true;
+			} else {
+				left_on_stack = base.Emit (ec, target);
+			}
 
 			if (initializers.IsEmpty)
 				return left_on_stack;

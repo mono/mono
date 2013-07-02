@@ -1,3 +1,4 @@
+#if !MONOTOUCH
 // -----------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // -----------------------------------------------------------------------
@@ -331,3 +332,4 @@ namespace Microsoft.Internal
         }
     }
 }
+#endif

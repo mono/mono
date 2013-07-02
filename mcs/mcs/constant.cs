@@ -64,7 +64,7 @@ namespace Mono.CSharp {
 				BuiltinTypeSpec.IsPrimitiveTypeOrDecimal (target) &&
 				BuiltinTypeSpec.IsPrimitiveTypeOrDecimal (type)) {
 				ec.Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
-					GetValueAsLiteral (), TypeManager.CSharpName (target));
+					GetValueAsLiteral (), target.GetSignatureForError ());
 			} else {
 				base.Error_ValueCannotBeConverted (ec, target, expl);
 			}
@@ -100,20 +100,15 @@ namespace Mono.CSharp {
 				// reached, by calling Convert.ImplicitStandardConversionExists
 				//
 				throw new InternalErrorException ("Missing constant conversion between `{0}' and `{1}'",
-				  TypeManager.CSharpName (Type), TypeManager.CSharpName (type));
+				 Type.GetSignatureForError (), type.GetSignatureForError ());
 			}
 
-			return CreateConstant (type, constant_value, loc);
+			return CreateConstantFromValue (type, constant_value, loc);
 		}
 
 		//
 		//  Returns a constant instance based on Type
 		//
-		public static Constant CreateConstant (TypeSpec t, object v, Location loc)
-		{
-			return CreateConstantFromValue (t, v, loc);
-		}
-
 		public static Constant CreateConstantFromValue (TypeSpec t, object v, Location loc)
 		{
 			switch (t.BuiltinType) {
@@ -251,10 +246,12 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		/// <summary>
-		///   Attempts to do a compile-time folding of a constant cast.
-		/// </summary>
-		public Constant TryReduce (ResolveContext ec, TypeSpec target_type)
+		//
+		// Attempts to do a compile-time folding of a constant cast and handles
+		// error reporting for constant overlows only, on normal conversion
+		// errors returns null
+		// 
+		public Constant Reduce (ResolveContext ec, TypeSpec target_type)
 		{
 			try {
 				return TryReduceConstant (ec, target_type);
@@ -268,6 +265,15 @@ namespace Mono.CSharp {
 				}
 
 				return New.Constantify (target_type, loc);
+			}
+		}
+
+		public Constant TryReduce (ResolveContext rc, TypeSpec targetType)
+		{
+			try {
+				return TryReduceConstant (rc, targetType);
+			} catch (OverflowException) {
+				return null;
 			}
 		}
 
@@ -390,7 +396,7 @@ namespace Mono.CSharp {
 			catch
 			{
 				ec.Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
-					GetValue ().ToString (), TypeManager.CSharpName (target));
+					GetValue ().ToString (), target.GetSignatureForError ());
 			}
 		}
 

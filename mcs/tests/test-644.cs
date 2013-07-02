@@ -32,7 +32,7 @@ class Program
 		return d == _value;
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		Program p = new Program ();
 		if (p.Test_2 ())

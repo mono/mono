@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using Microsoft.Build.Construction;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Logging;
 
@@ -95,6 +96,29 @@ namespace Microsoft.Build.Evaluation
                 }
 
                 public ToolsetDefinitionLocations ToolsetLocations {
+                        get { throw new NotImplementedException (); }
+                }
+
+		public ICollection<Toolset> Toolsets {
+                        get { throw new NotImplementedException (); }
+                }
+
+		public void UnloadAllProjects ()
+		{
+                        throw new NotImplementedException ();
+		}
+
+		public void UnloadProject (Project project)
+		{
+                        throw new NotImplementedException ();
+		}
+
+		public void UnloadProject (ProjectRootElement projectRootElement)
+		{
+                        throw new NotImplementedException ();
+		}
+
+		public static Version Version {
                         get { throw new NotImplementedException (); }
                 }
         }

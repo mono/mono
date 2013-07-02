@@ -13,7 +13,7 @@ using System;
 using System.Configuration.Assemblies;
 using System.IO;
 using System.Reflection;
-#if !TARGET_JVM
+#if !TARGET_JVM && !MOBILE
 using System.Reflection.Emit;
 #endif
 using System.Runtime.Serialization;
@@ -429,7 +429,16 @@ public class AssemblyNameTest {
 	{
 		an = typeof(int).Assembly.GetName ();
 		Assert.IsNotNull (an.FullName, "#1");
-		Assert.AreEqual (Consts.AssemblyCorlib, an.FullName, "#2");
+
+		string AssemblyCorlib;
+#if MOBILE
+		AssemblyCorlib = "mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e";
+#elif NET_4_0
+		AssemblyCorlib = "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+#else
+		AssemblyCorlib = "mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+#endif
+		Assert.AreEqual (AssemblyCorlib, an.FullName, "#2");
 	}
 
 	[Test]
@@ -889,7 +898,7 @@ public class AssemblyNameTest {
 		return assemblyName;
 	}
 
-#if !TARGET_JVM // Reflection.Emit is not supported for TARGET_JVM.
+#if !TARGET_JVM && !MOBILE // Reflection.Emit is not supported for TARGET_JVM.
 	private Assembly GenerateAssembly (AssemblyName name) 
 	{
 		AssemblyBuilder ab = domain.DefineDynamicAssembly (
