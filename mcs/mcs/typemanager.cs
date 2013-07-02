@@ -835,15 +835,22 @@ namespace Mono.CSharp
 			}
 
 			if (best_match == null && reportErrors) {
-				Location loc;
-				if (found[0].MemberDefinition is MemberCore) {
-					loc = ((MemberCore) found[0].MemberDefinition).Location;
-				} else {
-					loc = Location.Null;
-					module.Compiler.Report.SymbolRelatedToPreviousError (found[0]);
-				}
+				var found_member = found[0];
 
-				module.Compiler.Report.Error (520, loc, "The predefined type `{0}.{1}' is not declared correctly", ns, name);
+				if (found_member.Kind == MemberKind.MissingType) {
+					// CSC: should be different error number
+					module.Compiler.Report.Error (518, "The predefined type `{0}.{1}' is defined in an assembly that is not referenced.", ns, name);
+				} else {
+					Location loc;
+					if (found_member.MemberDefinition is MemberCore) {
+						loc = ((MemberCore) found_member.MemberDefinition).Location;
+					} else {
+						loc = Location.Null;
+						module.Compiler.Report.SymbolRelatedToPreviousError (found_member);
+					}
+
+					module.Compiler.Report.Error (520, loc, "The predefined type `{0}.{1}' is not declared correctly", ns, name);
+				}
 			}
 
 			return best_match;

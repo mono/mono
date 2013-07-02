@@ -1179,13 +1179,25 @@ namespace Mono.CSharp
 				if (loaded.Contains (key))
 					continue;
 
-				// A corlib assembly is the first assembly which contains System.Object
-				if (corlib_assembly == null && HasObjectType (a)) {
-					corlib_assembly = a;
-					continue;
-				}
-
 				loaded.Add (key);
+			}
+
+			if (corlib_assembly == null) {
+				//
+				// Requires second pass because HasObjectType can trigger assembly load event
+				//
+				for (int i = 0; i < loaded.Count; ++i) {
+					var assembly = loaded [i];
+
+					//
+					// corlib assembly is the first referenced assembly which contains System.Object
+					//
+					if (HasObjectType (assembly.Item2)) {
+						corlib_assembly = assembly.Item2;
+						loaded.RemoveAt (i);
+						break;
+					}
+				}
 			}
 
 			foreach (var entry in module.Compiler.Settings.AssemblyReferencesAliases) {
