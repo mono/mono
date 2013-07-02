@@ -292,7 +292,7 @@
 	</Target>
 
 	<Target
-		Name="AssignProjectConfigurations"
+		Name="AssignProjectConfiguration"
 		Condition="'@(ProjectReference)' != ''">
 
 		<!-- assign configs if building a solution file -->
@@ -316,7 +316,7 @@
 		ProjectReferenceWithConfigurationNonExistent: Projects non-existent on disk -->
 
 	<Target Name="SplitProjectReferencesByExistent"
-		DependsOnTargets="AssignProjectConfigurations">
+		DependsOnTargets="AssignProjectConfiguration">
 
 		<CreateItem Include="@(ProjectReferenceWithConfiguration)" Condition="'@(ProjectReferenceWithConfiguration)' != ''">
 			<Output TaskParameter="Include" ItemName="ProjectReferenceWithConfigurationExistent"
@@ -843,7 +843,7 @@
 	</Target>
 
 	<Target Name="CleanReferencedProjects"
-		DependsOnTargets="AssignProjectConfigurations">
+		DependsOnTargets="AssignProjectConfiguration">
 
 		<!-- If building from .sln.proj or from IDE, clean will get handled by them,
 		     else we are building a project directly, from the command line, so
