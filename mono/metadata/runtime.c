@@ -137,3 +137,14 @@ mono_runtime_init_tls (void)
 	mono_thread_pool_init_tls ();
 	mono_thread_init_tls ();
 }
+
+#ifdef HOST_WIN32
+BOOL
+mini_dllmain (HMODULE module_handle, DWORD reason, LPVOID reserved);
+
+BOOL
+APIENTRY DllMain (HMODULE module_handle, DWORD reason, LPVOID reserved)
+{
+	return mini_dllmain(module_handle, reason, reserved);
+}
+#endif
