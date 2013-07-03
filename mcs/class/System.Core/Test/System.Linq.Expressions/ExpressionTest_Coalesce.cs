@@ -163,6 +163,8 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+		// #12987
+		[Category ("MobileNotWorking")]
 		public void CoalesceNullableSlotIntoInteger ()
 		{
 			var s = Expression.Parameter (typeof (Slot?), "s");
