@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{1698631C-4038-416B-8402-F149E4CA8390}</ProjectGuid>
+    <ProjectGuid>{21A45B26-5A14-478D-B412-90985F127F78}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\Novell.Directory.Ldap-tests-net_2_0</OutputPath>
@@ -63,11 +63,11 @@
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Novell.Directory.Ldap\Novell.Directory.Ldap-net_2_0.csproj">
-      <Project>{EE7F7F21-5B86-4D33-A935-858260FD774D}</Project>
+      <Project>{FCCE71BD-4C5C-4616-8B3E-ED306528BE16}</Project>
       <Name>Novell.Directory.Ldap\Novell.Directory.Ldap-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>

@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{1F86EC48-A47E-4334-A761-93C0FADABD52}</ProjectGuid>
+    <ProjectGuid>{964A007A-4614-4FD0-A8AF-82E40B0ABCC7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\Mono.Cairo-net_2_0</OutputPath>
@@ -49,9 +49,12 @@
     <Compile Include=".\Assembly\AssemblyInfo.cs" />
     <Compile Include=".\Mono.Cairo\Antialias.cs" />
     <Compile Include=".\Mono.Cairo\Cairo.cs" />
+    <Compile Include=".\Mono.Cairo\CairoDebug.cs" />
+    <Compile Include=".\Mono.Cairo\Color.cs" />
     <Compile Include=".\Mono.Cairo\Content.cs" />
     <Compile Include=".\Mono.Cairo\Context.cs" />
     <Compile Include=".\Mono.Cairo\DirectFBSurface.cs" />
+    <Compile Include=".\Mono.Cairo\Distance.cs" />
     <Compile Include=".\Mono.Cairo\Extend.cs" />
     <Compile Include=".\Mono.Cairo\FillRule.cs" />
     <Compile Include=".\Mono.Cairo\Filter.cs" />
@@ -78,9 +81,12 @@
     <Compile Include=".\Mono.Cairo\Pattern.cs" />
     <Compile Include=".\Mono.Cairo\PatternType.cs" />
     <Compile Include=".\Mono.Cairo\PdfSurface.cs" />
+    <Compile Include=".\Mono.Cairo\Point.cs" />
+    <Compile Include=".\Mono.Cairo\PointD.cs" />
     <Compile Include=".\Mono.Cairo\PSSurface.cs" />
     <Compile Include=".\Mono.Cairo\RadialGradient.cs" />
     <Compile Include=".\Mono.Cairo\Rectangle.cs" />
+    <Compile Include=".\Mono.Cairo\Region.cs" />
     <Compile Include=".\Mono.Cairo\ScaledFont.cs" />
     <Compile Include=".\Mono.Cairo\SolidPattern.cs" />
     <Compile Include=".\Mono.Cairo\Status.cs" />
@@ -111,7 +117,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>

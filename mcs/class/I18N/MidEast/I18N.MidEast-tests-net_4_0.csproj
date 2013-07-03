@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{6DF1B8DB-E22C-4B94-882C-306E5674BCAE}</ProjectGuid>
+    <ProjectGuid>{F0C37D52-B70E-4A1D-BF13-6E1DBF338F26}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\I18N.MidEast-tests-net_4_0</OutputPath>
@@ -63,15 +63,15 @@
   <ItemGroup>
     <Reference Include="..\lib\net_4_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
+      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\I18N\Common\I18N-net_4_0.csproj">
-      <Project>{748C52F1-090B-42F0-BB42-37BE181E4545}</Project>
+      <Project>{AD318520-607B-4D7A-ABE4-AC064BF21343}</Project>
       <Name>Common\I18N-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\I18N\MidEast\I18N.MidEast-net_4_0.csproj">
-      <Project>{B1FE8BCF-C511-4452-A745-8E58030008F5}</Project>
+      <Project>{27BAE37E-41FE-4E31-8A83-F23847E19C86}</Project>
       <Name>MidEast\I18N.MidEast-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>

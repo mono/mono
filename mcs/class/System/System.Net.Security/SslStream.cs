@@ -34,19 +34,22 @@
 
 #if SECURITY_DEP
 
+#if MONOTOUCH
+using Mono.Security.Protocol.Tls;
+
+using CipherAlgorithmType = System.Security.Authentication.CipherAlgorithmType;
+using HashAlgorithmType = System.Security.Authentication.HashAlgorithmType;
+using ExchangeAlgorithmType = System.Security.Authentication.ExchangeAlgorithmType;
+
+using MonoCipherAlgorithmType = Mono.Security.Protocol.Tls.CipherAlgorithmType;
+using MonoHashAlgorithmType = Mono.Security.Protocol.Tls.HashAlgorithmType;
+using MonoExchangeAlgorithmType = Mono.Security.Protocol.Tls.ExchangeAlgorithmType;
+using MonoSecurityProtocolType = Mono.Security.Protocol.Tls.SecurityProtocolType;
+#else
 extern alias PrebuiltSystem;
 extern alias MonoSecurity;
 
 using X509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
-
-using System;
-using System.IO;
-using System.Net;
-using System.Security.Authentication;
-using System.Security.Cryptography.X509Certificates;
-using System.Security.Principal;
-using System.Security.Cryptography;
-using MonoSecurity::Mono.Security.Protocol.Tls;
 
 using CipherAlgorithmType = System.Security.Authentication.CipherAlgorithmType;
 using HashAlgorithmType = System.Security.Authentication.HashAlgorithmType;
@@ -56,6 +59,17 @@ using MonoCipherAlgorithmType = MonoSecurity::Mono.Security.Protocol.Tls.CipherA
 using MonoHashAlgorithmType = MonoSecurity::Mono.Security.Protocol.Tls.HashAlgorithmType;
 using MonoExchangeAlgorithmType = MonoSecurity::Mono.Security.Protocol.Tls.ExchangeAlgorithmType;
 using MonoSecurityProtocolType = MonoSecurity::Mono.Security.Protocol.Tls.SecurityProtocolType;
+
+using MonoSecurity::Mono.Security.Protocol.Tls;
+#endif
+
+using System;
+using System.IO;
+using System.Net;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Principal;
+using System.Security.Cryptography;
 
 #if NET_4_5
 using System.Threading.Tasks;
@@ -353,7 +367,12 @@ namespace System.Net.Security
 				return null;
 			};
 
-			if (validation_callback != null)
+			if (validation_callback != null) {
+#if MONOTOUCH
+				var helper = new ServicePointManager.ChainValidationHelper (this, targetHost);
+				helper.ServerCertificateValidationCallback = validation_callback;
+				s.ServerCertValidation2 += new CertificateValidationCallback2 (helper.ValidateChain);
+#else
 				s.ServerCertValidationDelegate = delegate (X509Certificate cert, int [] certErrors) {
 					X509Chain chain = new X509Chain ();
 					X509Certificate2 x2 = (cert as X509Certificate2);
@@ -393,6 +412,8 @@ namespace System.Net.Security
 
 					return validation_callback (this, cert, chain, errors);
 				};
+#endif
+			}
 			if (selection_callback != null)
 				s.ClientCertSelectionDelegate = OnCertificateSelection;
 

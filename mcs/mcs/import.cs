@@ -774,24 +774,34 @@ namespace Mono.CSharp
 
 					for (int i = nested_hierarchy.Count; i != 0; --i) {
 						var t = nested_hierarchy [i - 1];
-						spec = MemberCache.FindNestedType (spec, t.Name, t.Arity);
+						if (t.Kind == MemberKind.MissingType)
+							spec = t;
+						else
+							spec = MemberCache.FindNestedType (spec, t.Name, t.Arity);
+
 						if (t.Arity > 0) {
 							spec = spec.MakeGenericType (module, targs.Skip (targs_pos).Take (spec.Arity).ToArray ());
 							targs_pos += t.Arity;
 						}
 					}
 
-					string name = type.Name;
-					int index = name.IndexOf ('`');
-					if (index > 0)
-						name = name.Substring (0, index);
+					if (spec.Kind == MemberKind.MissingType) {
+						spec = new TypeSpec (MemberKind.MissingType, spec, new ImportedTypeDefinition (type_def, this), type_def, Modifiers.PUBLIC);
+						spec.MemberCache = MemberCache.Empty;
+					} else {
+						if ((type_def.Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedPrivate && IgnorePrivateMembers)
+							return null;
 
-					spec = MemberCache.FindNestedType (spec, name, targs.Length - targs_pos);
-					if (spec == null)
-						return null;
+						string name = type.Name;
+						int index = name.IndexOf ('`');
+						if (index > 0)
+							name = name.Substring (0, index);
 
-					if (spec.Arity > 0) {
-						spec = spec.MakeGenericType (module, targs.Skip (targs_pos).ToArray ());
+						spec = MemberCache.FindNestedType (spec, name, targs.Length - targs_pos);
+
+						if (spec.Arity > 0) {
+							spec = spec.MakeGenericType (module, targs.Skip (targs_pos).ToArray ());
+						}
 					}
 				}
 

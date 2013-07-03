@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{4C775D7D-F2B3-4A1F-B74B-CEFDB72959A5}</ProjectGuid>
+    <ProjectGuid>{3ED0B5B2-9897-4427-9510-BBC309B60C35}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\System.Web.Abstractions-net_4_0</OutputPath>
@@ -64,19 +64,19 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
+      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0-2.csproj">
-      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
+      <Project>{8260E24F-1471-4320-AB5B-7CC7B68521E3}</Project>
       <Name>System\System-net_4_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_0.csproj">
-      <Project>{2590BECB-2660-49C6-93B1-B9E7D0796214}</Project>
+      <Project>{D121EB80-19C6-4313-9BBE-6F66556CE8B7}</Project>
       <Name>System.Core\System.Core-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Web\System.Web-net_4_0-2.csproj">
-      <Project>{909BD42B-05C0-4147-BC2A-0F79A0A2B9DA}</Project>
+      <Project>{C410B7A1-AC09-4CBB-9F20-AC9473811B40}</Project>
       <Name>System.Web\System.Web-net_4_0-2</Name>
     </ProjectReference>
   </ItemGroup>

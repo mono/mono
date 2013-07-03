@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{59B4B82A-3EBA-4BFB-991B-4A0171AFDCCE}</ProjectGuid>
+    <ProjectGuid>{DF667FE8-014C-45ED-8C22-0313404100AC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,169,219,414,1030,3001,3005,3006</NoWarn>
     <OutputPath>bin\Debug\Mono.C5-net_2_0</OutputPath>
@@ -94,11 +94,11 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
+      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
   </ItemGroup>

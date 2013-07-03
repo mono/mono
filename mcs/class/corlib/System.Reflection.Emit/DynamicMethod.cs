@@ -138,7 +138,7 @@ namespace System.Reflection.Emit {
 				if (ilgen == null || ilgen.ILOffset == 0)
 					throw new InvalidOperationException ("Method '" + name + "' does not have a method body.");
 
-				ilgen.label_fixup ();
+				ilgen.label_fixup (this);
 
 				// Have to create all DynamicMethods referenced by this one
 				try {

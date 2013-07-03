@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{7FC476D7-BD8A-4AB5-969E-58A8D56D063C}</ProjectGuid>
+    <ProjectGuid>{A7538AE3-4C91-4482-B564-468B8753FD20}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618,612,642,618,219,169</NoWarn>
     <OutputPath>bin\Debug\System.Xml-tests-net_4_5</OutputPath>
@@ -184,23 +184,23 @@ type $(ProjectDir)\System.Xml.XPath\Tokenizer.cs >> $(ProjectDir)\Mono.Xml.Xsl\P
   <ItemGroup>
     <Reference Include="..\lib\net_4_5\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</Project>
+      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
-      <Project>{6374B2FC-93C6-4FD0-8CF0-8EB12F5AC71D}</Project>
+      <Project>{4ED6CCE8-8E8A-4D82-8BCA-3EA4D4203AA4}</Project>
       <Name>System.XML\System.Xml-net_4_5-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_5-2.csproj">
-      <Project>{34966210-D64D-419C-94A4-9A6093CE5882}</Project>
+      <Project>{38FCD731-0E11-46F7-A31B-DCBE853AD8D7}</Project>
       <Name>System\System-net_4_5-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data\System.Data-net_4_0.csproj">
-      <Project>{6865A6A5-DF93-45C7-BE83-F06907EC81F8}</Project>
+      <Project>{BC1890C0-51E5-48D0-8DBA-B1DD23468F9C}</Project>
       <Name>System.Data\System.Data-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
-      <Project>{E77D8877-AEAD-4FDF-8A44-36AAA0B20653}</Project>
+      <Project>{D8260595-C32F-4AC3-9C01-2CD2528CFA1D}</Project>
       <Name>System.Core\System.Core-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>

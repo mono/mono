@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{7B2ECE3C-F8E5-4C63-8FD5-AB490EF63872}</ProjectGuid>
+    <ProjectGuid>{0DA63190-E6E1-41C5-B683-A54FADBE61CB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\Microsoft.Build.Engine-net_4_5</OutputPath>
@@ -62,6 +62,9 @@
     <Compile Include="Microsoft.Build.BuildEngine\BuildPropertyGroupCollection.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\BuildSettings.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\BuildTask.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildTaskItem.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildTaskItemGroup.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildTaskPropertyGroup.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\BuildWhen.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\ChangeType.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\ColorResetter.cs" />
@@ -85,6 +88,7 @@
     <Compile Include="Microsoft.Build.BuildEngine\ExpressionParseException.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\FileLogger.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\GroupingCollection.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\IBuildTask.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\Import.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\ImportCollection.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\ImportedProject.cs" />
@@ -130,27 +134,27 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</Project>
+      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_5-2.csproj">
-      <Project>{34966210-D64D-419C-94A4-9A6093CE5882}</Project>
+      <Project>{38FCD731-0E11-46F7-A31B-DCBE853AD8D7}</Project>
       <Name>System\System-net_4_5-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
-      <Project>{E77D8877-AEAD-4FDF-8A44-36AAA0B20653}</Project>
+      <Project>{D8260595-C32F-4AC3-9C01-2CD2528CFA1D}</Project>
       <Name>System.Core\System.Core-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
-      <Project>{6374B2FC-93C6-4FD0-8CF0-8EB12F5AC71D}</Project>
+      <Project>{4ED6CCE8-8E8A-4D82-8BCA-3EA4D4203AA4}</Project>
       <Name>System.XML\System.Xml-net_4_5-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Framework\Microsoft.Build.Framework-net_4_5.csproj">
-      <Project>{58CD6625-5643-4A3F-84E6-5568E8573A49}</Project>
+      <Project>{2BAFB878-D329-46A5-93AF-5A4ECD403A13}</Project>
       <Name>Microsoft.Build.Framework\Microsoft.Build.Framework-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_4_5.csproj">
-      <Project>{B20027FF-D5D8-4AD3-8F5F-535556916D36}</Project>
+      <Project>{5CD66EA1-51EB-48EE-8C1C-DDFD23E22C38}</Project>
       <Name>Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>

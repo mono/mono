@@ -174,9 +174,8 @@ case "$host" in
 		AC_DEFINE(PTHREAD_POINTER_ID, 1, [pthread is a pointer])
 		libdl=
 		libgc_threads=pthreads
-		# This doesn't seem to work as of 7.0 on amd64
-		with_sigaltstack=no
 		use_sigposix=yes
+		has_dtrace=yes
 		;;
 	*-*-*openbsd*)
 		host_win32=no
@@ -2960,11 +2959,6 @@ if test "x$icall_tables" = "xno"; then
    AC_DEFINE(DISABLE_ICALL_TABLES, 1, [Icall tables disabled])
 fi
 
-if test "x$mono_cv_clang" = "xyes"; then
-   # FIXME: This causes many compilation errors
-   with_tls=pthread
-fi
-
 if test "x$with_tls" = "x__thread"; then
 	AC_DEFINE(HAVE_KW_THREAD, 1, [Have __thread keyword])
 	# Pass the information to libgc
@@ -2973,10 +2967,7 @@ if test "x$with_tls" = "x__thread"; then
 	AC_TRY_COMPILE([static __thread int foo __attribute__((tls_model("initial-exec")));], [
 		], [
 			AC_MSG_RESULT(yes)
-			# CLANG doesn't support this yet, and it prints warnings about it
-			if test "x$mono_cv_clang" = "xno"; then
-				AC_DEFINE(HAVE_TLS_MODEL_ATTR, 1, [tld_model available])
-			fi
+			AC_DEFINE(HAVE_TLS_MODEL_ATTR, 1, [tls_model available])
 		], [
 			AC_MSG_RESULT(no)
 	])

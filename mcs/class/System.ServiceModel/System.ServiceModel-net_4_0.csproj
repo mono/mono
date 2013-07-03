@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{93532CB9-2FFB-4458-820F-BA280A6E6796}</ProjectGuid>
+    <ProjectGuid>{3353D8EA-FB17-4A46-B7B6-82D55B12BD5D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,414,169,67,3005,436,219,618</NoWarn>
     <OutputPath>bin\Debug\System.ServiceModel-net_4_0</OutputPath>
@@ -287,6 +287,7 @@
     <Compile Include="System.ServiceModel.Channels\HostedTransportConfiguration.cs" />
     <Compile Include="System.ServiceModel.Channels\HtmlizedException.cs" />
     <Compile Include="System.ServiceModel.Channels\HttpChannelFactory.cs" />
+    <Compile Include="System.ServiceModel.Channels\HttpCookieContainerBindingElement.cs" />
     <Compile Include="System.ServiceModel.Channels\HttpRequestChannel.cs" />
     <Compile Include="System.ServiceModel.Channels\HttpRequestMessageProperty.cs" />
     <Compile Include="System.ServiceModel.Channels\HttpResponseMessageProperty.cs" />
@@ -301,6 +302,7 @@
     <Compile Include="System.ServiceModel.Channels\IDuplexChannel.cs" />
     <Compile Include="System.ServiceModel.Channels\IDuplexSession.cs" />
     <Compile Include="System.ServiceModel.Channels\IDuplexSessionChannel.cs" />
+    <Compile Include="System.ServiceModel.Channels\IHttpCookieContainer.cs" />
     <Compile Include="System.ServiceModel.Channels\IInputChannel.cs" />
     <Compile Include="System.ServiceModel.Channels\IInputSession.cs" />
     <Compile Include="System.ServiceModel.Channels\IInputSessionChannel.cs" />
@@ -1058,67 +1060,67 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
+      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0-2.csproj">
-      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
+      <Project>{8260E24F-1471-4320-AB5B-7CC7B68521E3}</Project>
       <Name>System\System-net_4_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_0-1.csproj">
-      <Project>{F9E777F8-E3F2-4E19-8DC9-2D1BB6B380A6}</Project>
+      <Project>{51720A26-B4D9-4B84-8CB5-9CBA57477FBB}</Project>
       <Name>System.XML\System.Xml-net_4_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_0.csproj">
-      <Project>{2590BECB-2660-49C6-93B1-B9E7D0796214}</Project>
+      <Project>{D121EB80-19C6-4313-9BBE-6F66556CE8B7}</Project>
       <Name>System.Core\System.Core-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Runtime.Serialization\System.Runtime.Serialization-net_4_0.csproj">
-      <Project>{B3C699B6-74B4-4B41-901E-32E57D0909AC}</Project>
+      <Project>{4F614C6C-A83E-4C3C-859B-0548391F519E}</Project>
       <Name>System.Runtime.Serialization\System.Runtime.Serialization-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration\System.Configuration-net_4_0.csproj">
-      <Project>{610C7C77-5851-4B95-A3FE-B04E1B011E6A}</Project>
+      <Project>{CA49630B-FD24-411F-9651-B15CA72CE5B8}</Project>
       <Name>System.Configuration\System.Configuration-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data\System.Data-net_4_0.csproj">
-      <Project>{6865A6A5-DF93-45C7-BE83-F06907EC81F8}</Project>
+      <Project>{BC1890C0-51E5-48D0-8DBA-B1DD23468F9C}</Project>
       <Name>System.Data\System.Data-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Security\System.Security-net_4_0.csproj">
-      <Project>{BC281223-A7A5-415D-B4AA-59417DBFFBBB}</Project>
+      <Project>{DE980ED1-84A5-4B5B-A707-8D1BB4E2BDD5}</Project>
       <Name>System.Security\System.Security-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.IdentityModel\System.IdentityModel-net_4_0.csproj">
-      <Project>{4326E85E-00B2-47F8-9A54-A8E15021CBA3}</Project>
+      <Project>{F3D909C0-D548-4FBC-BA04-BC8A445954EA}</Project>
       <Name>System.IdentityModel\System.IdentityModel-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.IdentityModel.Selectors\System.IdentityModel.Selectors-net_4_0.csproj">
-      <Project>{DF2AB58D-92EE-4B36-BCBC-5B78135CDC95}</Project>
+      <Project>{45FB5242-B51C-43BC-A7B5-75E5E17C4E95}</Project>
       <Name>System.IdentityModel.Selectors\System.IdentityModel.Selectors-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Transactions\System.Transactions-net_4_0.csproj">
-      <Project>{46371E88-F274-4BE7-8587-444F4E6F7247}</Project>
+      <Project>{91AF1828-5F39-42D2-AAAB-EAEF2DCFBA4B}</Project>
       <Name>System.Transactions\System.Transactions-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Messaging\System.Messaging-net_4_0.csproj">
-      <Project>{2651037E-FD2B-4BBC-B655-CC3F0B0E4BD0}</Project>
+      <Project>{443D0D78-0A65-4288-80C2-B58011E3A5D1}</Project>
       <Name>System.Messaging\System.Messaging-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Web\System.Web-net_4_0-2.csproj">
-      <Project>{909BD42B-05C0-4147-BC2A-0F79A0A2B9DA}</Project>
+      <Project>{C410B7A1-AC09-4CBB-9F20-AC9473811B40}</Project>
       <Name>System.Web\System.Web-net_4_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Web.Services\System.Web.Services-net_4_0.csproj">
-      <Project>{C2B09EC6-61CB-4CF0-A6D8-A094C2EDF8A0}</Project>
+      <Project>{32FF1A9B-A989-43C0-BFBB-3808C7B2509F}</Project>
       <Name>System.Web.Services\System.Web.Services-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Security\Mono.Security-net_4_0.csproj">
-      <Project>{A2DAEB75-C366-4B5F-8BDD-9B3234A1ABFA}</Project>
+      <Project>{5E680987-7C43-48A0-9BF1-86124ACA78BD}</Project>
       <Name>Mono.Security\Mono.Security-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Web.ApplicationServices\System.Web.ApplicationServices-net_4_0.csproj">
-      <Project>{5D580843-B172-4BF3-AABD-116A64020C1C}</Project>
+      <Project>{8EF189A4-B862-4825-9938-00658C43B534}</Project>
       <Name>System.Web.ApplicationServices\System.Web.ApplicationServices-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>

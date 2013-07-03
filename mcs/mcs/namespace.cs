@@ -754,6 +754,11 @@ namespace Mono.CSharp {
 
 			return Compiler.Settings.IsConditionalSymbolDefined (value);
 		}
+
+		public override void Accept (StructuralVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
 	}
 
 
@@ -1324,6 +1329,11 @@ namespace Mono.CSharp {
 			}
 
 			return false;
+		}
+
+		public override void Accept (StructuralVisitor visitor)
+		{
+			visitor.Visit (this);
 		}
 	}
 

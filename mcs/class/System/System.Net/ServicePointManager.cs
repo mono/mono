@@ -31,12 +31,18 @@
 
 #if SECURITY_DEP
 
+#if MONOTOUCH
+using Mono.Security.Protocol.Tls;
+using MSX = Mono.Security.X509;
+using Mono.Security.X509.Extensions;
+#else
 extern alias MonoSecurity;
-
-using System.Text.RegularExpressions;
 using MonoSecurity::Mono.Security.X509.Extensions;
 using MonoSecurity::Mono.Security.Protocol.Tls;
 using MSX = MonoSecurity::Mono.Security.X509;
+#endif
+
+using System.Text.RegularExpressions;
 #endif
 
 using System;
@@ -408,6 +414,7 @@ namespace System.Net
 		internal class ChainValidationHelper {
 			object sender;
 			string host;
+			RemoteCertificateValidationCallback cb;
 
 #if !MONOTOUCH
 			static bool is_macosx = System.IO.File.Exists (OSX509Certificates.SecurityLibrary);
@@ -426,19 +433,19 @@ namespace System.Net
 			}
 #endif
 
-			public ChainValidationHelper (object sender)
+			public ChainValidationHelper (object sender, string hostName)
 			{
 				this.sender = sender;
+				host = hostName;
 			}
 
-			public string Host {
+			public RemoteCertificateValidationCallback ServerCertificateValidationCallback {
 				get {
-					if (host == null && sender is HttpWebRequest)
-						host = ((HttpWebRequest) sender).Address.Host;
-					return host;
+					if (cb == null)
+						cb = ServicePointManager.ServerCertificateValidationCallback;
+					return cb;
 				}
-
-				set { host = value; }
+				set { cb = value; }
 			}
 
 			// Used when the obsolete ICertificatePolicy is set to DefaultCertificatePolicy
@@ -451,7 +458,6 @@ namespace System.Net
 					return null;
 
 				ICertificatePolicy policy = ServicePointManager.CertificatePolicy;
-				RemoteCertificateValidationCallback cb = ServicePointManager.ServerCertificateValidationCallback;
 
 				X509Certificate2 leaf = new X509Certificate2 (certs [0].RawData);
 				int status11 = 0; // Error code passed to the obsolete ICertificatePolicy callback
@@ -464,7 +470,7 @@ namespace System.Net
 				// the certificates that the server provided (which generally does not include the root) so, only  
 				// if there's a user callback, we'll create the X509Chain but won't build it
 				// ref: https://bugzilla.xamarin.com/show_bug.cgi?id=7245
-				if (cb != null) {
+				if (ServerCertificateValidationCallback != null) {
 #endif
 				chain = new X509Chain ();
 				chain.ChainPolicy = new X509ChainPolicy ();
@@ -494,7 +500,7 @@ namespace System.Net
 						status11 = -2146762490; //CERT_E_PURPOSE 0x800B0106
 					}
 
-					if (!CheckServerIdentity (certs [0], Host)) {
+					if (!CheckServerIdentity (certs [0], host)) {
 						errors |= SslPolicyErrors.RemoteCertificateNameMismatch;
 						status11 = -2146762481; // CERT_E_CN_NO_MATCH 0x800B010F
 					}
@@ -504,7 +510,7 @@ namespace System.Net
 					// Ideally we should return the SecTrustResult
 					OSX509Certificates.SecTrustResult trustResult = OSX509Certificates.SecTrustResult.Deny;
 					try {
-						trustResult = OSX509Certificates.TrustEvaluateSsl (certs, Host);
+						trustResult = OSX509Certificates.TrustEvaluateSsl (certs, host);
 						// We could use the other values of trustResult to pass this extra information
 						// to the .NET 2 callback for values like SecTrustResult.Confirm
 						result = (trustResult == OSX509Certificates.SecTrustResult.Proceed ||
@@ -550,8 +556,8 @@ namespace System.Net
 					user_denied = !result && !(policy is DefaultCertificatePolicy);
 				}
 				// If there's a 2.0 callback, it takes precedence
-				if (cb != null) {
-					result = cb (sender, leaf, chain, errors);
+				if (ServerCertificateValidationCallback != null) {
+					result = ServerCertificateValidationCallback (sender, leaf, chain, errors);
 					user_denied = !result;
 				}
 				return new ValidationResult (result, user_denied, status11);

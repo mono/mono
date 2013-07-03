@@ -106,6 +106,11 @@ namespace Mono.CSharp {
 					"The type `{0}' cannot be declared const", t.GetSignatureForError ());
 			}
 		}
+
+		public override void Accept (StructuralVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
 	}
 
 	public class ConstSpec : FieldSpec

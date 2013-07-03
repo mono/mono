@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{22EE988C-2F34-4538-873F-35DA98075332}</ProjectGuid>
+    <ProjectGuid>{6067C2B4-C6BA-4D06-93A6-42365C0DB6EE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\System.Numerics-tests-net_4_0</OutputPath>
@@ -64,15 +64,15 @@
   <ItemGroup>
     <Reference Include="..\lib\net_4_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
+      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Numerics\System.Numerics-net_4_0.csproj">
-      <Project>{D1AE499F-8B3D-44A2-9EB4-A9D336A2866C}</Project>
+      <Project>{9BE7809F-583C-4F8C-B9BB-7BE45B78CC93}</Project>
       <Name>System.Numerics\System.Numerics-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0-2.csproj">
-      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
+      <Project>{8260E24F-1471-4320-AB5B-7CC7B68521E3}</Project>
       <Name>System\System-net_4_0-2</Name>
     </ProjectReference>
   </ItemGroup>

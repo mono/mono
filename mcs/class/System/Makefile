@@ -27,7 +27,7 @@ ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS = -nowarn:618 -d:CONFIGURATION_2_0 -unsafe $(RESOURCE_FILES:%=-resource:%)
 TEST_MCS_FLAGS += -r:System.Configuration
 PROFILE_ANY_MOBILE := $(filter monotouch monodroid, $(PROFILE))
-NOT_SL := $(filter net_2_0 net_4_0 net_4_5 monotouch monotouch_runtime monodroid mobile, $(PROFILE))
+NOT_SL := $(filter net_2_0 net_4_0 net_4_5 monotouch_runtime monodroid mobile, $(PROFILE))
 endif
 ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:INSIDE_SYSTEM
@@ -36,7 +36,7 @@ LIB_MCS_FLAGS += -d:SECURITY_DEP
 endif
 endif
 ifeq (monotouch, $(PROFILE))
-LIB_MCS_FLAGS += -d:FULL_AOT_RUNTIME
+LIB_MCS_FLAGS += -d:FULL_AOT_RUNTIME -d:SECURITY_DEP
 endif
 
 EXTRA_DISTFILES = \

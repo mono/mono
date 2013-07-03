@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{AB071CEE-330F-4AA3-B73C-9154150914C1}</ProjectGuid>
+    <ProjectGuid>{A12A96AC-3AAD-417A-90FB-B40573189AC4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\System.Reactive.Windows.Forms-net_4_5</OutputPath>
@@ -24,7 +24,7 @@
     <DebugType>full</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;HAS_EDI;PREFERASYNC;PREFER_ASYNC;SIGNED</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;HAS_EDI;PREFERASYNC;PREFER_ASYNC;HAS_AWAIT;SIGNED</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -32,7 +32,7 @@
     <DebugType>pdbonly</DebugType>
     <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;HAS_EDI;PREFERASYNC;PREFER_ASYNC;SIGNED</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;HAS_EDI;PREFERASYNC;PREFER_ASYNC;HAS_AWAIT;SIGNED</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -47,7 +47,8 @@
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Windows.Forms\GlobalSuppressions.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Windows.Forms\Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Windows.Forms\Reactive\Concurrency\ControlScheduler.cs" />
-    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Windows.Forms\Reactive\Linq\ControlObservable.cs" />  </ItemGroup>
+    <Compile Include="..\..\..\external\rx\Rx\NET\Source\System.Reactive.Windows.Forms\Reactive\Linq\ControlObservable.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -65,31 +66,31 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</Project>
+      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_5-2.csproj">
-      <Project>{34966210-D64D-419C-94A4-9A6093CE5882}</Project>
+      <Project>{38FCD731-0E11-46F7-A31B-DCBE853AD8D7}</Project>
       <Name>System\System-net_4_5-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
-      <Project>{E77D8877-AEAD-4FDF-8A44-36AAA0B20653}</Project>
+      <Project>{D8260595-C32F-4AC3-9C01-2CD2528CFA1D}</Project>
       <Name>System.Core\System.Core-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Reactive.Interfaces\System.Reactive.Interfaces-net_4_5.csproj">
-      <Project>{1CA793F9-A71D-4534-B684-D77AF04AB96F}</Project>
+      <Project>{D80FD091-3F53-4879-B0BB-08897139CF97}</Project>
       <Name>System.Reactive.Interfaces\System.Reactive.Interfaces-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Reactive.Core\System.Reactive.Core-net_4_5.csproj">
-      <Project>{422D6DBA-72EE-4876-9EC3-78DEE759CAA9}</Project>
+      <Project>{CC4B4666-F6F2-4E54-8AF9-656A76A3F0DF}</Project>
       <Name>System.Reactive.Core\System.Reactive.Core-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Reactive.Linq\System.Reactive.Linq-net_4_5.csproj">
-      <Project>{924F9DA0-6AEB-4250-AE3C-DFF80FF3C231}</Project>
+      <Project>{83E7D015-CA2B-4B3D-A764-DB8C3A9B3EEE}</Project>
       <Name>System.Reactive.Linq\System.Reactive.Linq-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Managed.Windows.Forms\System.Windows.Forms-net_4_5.csproj">
-      <Project>{ABF6A466-1744-4C43-8B68-C89EA10FBB67}</Project>
+      <Project>{409FF748-B765-4AB3-BCB1-72199B9E341C}</Project>
       <Name>Managed.Windows.Forms\System.Windows.Forms-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>

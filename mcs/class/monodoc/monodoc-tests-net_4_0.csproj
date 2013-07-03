@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{09121C6C-4740-4706-AFF2-6EA0E3DFA132}</ProjectGuid>
+    <ProjectGuid>{1AD08CB1-E56F-4E1F-B040-32A3731A9E87}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>618,612,672,809,1699</NoWarn>
     <OutputPath>bin\Debug\monodoc-tests-net_4_0</OutputPath>
@@ -45,8 +45,12 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="Test\Monodoc.Ecma\EcmaUrlTests.cs" />
+    <Compile Include="Test\Monodoc.Generators\AvoidCDataTextReaderTests.cs" />
     <Compile Include="Test\Monodoc.Generators\RawGeneratorTests.cs" />
+    <Compile Include="Test\Monodoc\EcmaDocTests.cs" />
     <Compile Include="Test\Monodoc\HelpSourceTests.cs" />
+    <Compile Include="Test\Monodoc\NodeTest.cs" />
+    <Compile Include="Test\Monodoc\RootTreeTest.cs" />
     <Compile Include="Test\Monodoc\SettingsTest.cs" />
     <Compile Include="Test\Monodoc\TreeTest.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -67,19 +71,23 @@
   <ItemGroup>
     <Reference Include="..\lib\net_4_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
+      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\monodoc\monodoc-net_4_0.csproj">
-      <Project>{F6C1C101-6969-4BB5-BC74-4EE2CBFEA29E}</Project>
+      <Project>{2A219013-33EF-412C-ACA4-180E3B423624}</Project>
       <Name>monodoc\monodoc-net_4_0</Name>
     </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_0-2.csproj">
+      <Project>{8260E24F-1471-4320-AB5B-7CC7B68521E3}</Project>
+      <Name>System\System-net_4_0-2</Name>
+    </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_0.csproj">
-      <Project>{2590BECB-2660-49C6-93B1-B9E7D0796214}</Project>
+      <Project>{D121EB80-19C6-4313-9BBE-6F66556CE8B7}</Project>
       <Name>System.Core\System.Core-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_0-1.csproj">
-      <Project>{F9E777F8-E3F2-4E19-8DC9-2D1BB6B380A6}</Project>
+      <Project>{51720A26-B4D9-4B84-8CB5-9CBA57477FBB}</Project>
       <Name>System.XML\System.Xml-net_4_0-1</Name>
     </ProjectReference>
   </ItemGroup>
