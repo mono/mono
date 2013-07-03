@@ -356,7 +356,6 @@ namespace Mono.CSharp
 
 		public string GetSignatureForMetadata ()
 		{
-#if STATIC
 			if (Parent is TypeDefinition) {
 				return Parent.GetSignatureForMetadata () + "+" + TypeNameParser.Escape (MemberName.Basename);
 			}
@@ -364,9 +363,6 @@ namespace Mono.CSharp
 			var sb = new StringBuilder ();
 			CreateMetadataName (sb);
 			return sb.ToString ();
-#else
-			throw new NotImplementedException ();
-#endif
 		}
 
 		public virtual void RemoveContainer (TypeContainer cont)

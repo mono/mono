@@ -132,6 +132,12 @@ namespace Mono.CSharp
 		}
 
 		/// <summary>
+		/// When set evaluator will automatically wait on Task of async methods. When not
+		/// set it's called responsibility to handle Task execution
+		/// </summary>
+		public bool WaitOnTask { get; set; }
+
+		/// <summary>
 		///   If true, turns type expressions into valid expressions
 		///   and calls the describe method on it
 		/// </summary>
@@ -429,7 +435,7 @@ namespace Mono.CSharp
 				throw new ArgumentException ("Syntax error on input: partial input");
 			
 			if (result_set == false)
-				throw new ArgumentException ("The expression did not set a result");
+				throw new ArgumentException ("The expression failed to resolve");
 
 			return result;
 		}
@@ -657,11 +663,47 @@ namespace Mono.CSharp
 
 				host.SetBaseTypes (baseclass_list);
 
-				host.CreateContainer ();
-				host.DefineContainer ();
-				host.Define ();
-
 				expression_method = (Method) host.Members[0];
+
+				if ((expression_method.ModFlags & Modifiers.ASYNC) != 0) {
+					//
+					// Host method is async. When WaitOnTask is set we wrap it with wait
+					//
+					// void AsyncWait (ref object $retval) {
+					//	$retval = Host();
+					//	((Task)$retval).Wait();  // When WaitOnTask is set
+					// }
+					//
+					var p = new ParametersCompiled (
+						new Parameter (new TypeExpression (module.Compiler.BuiltinTypes.Object, Location.Null), "$retval", Parameter.Modifier.REF, null, Location.Null)
+					);
+
+					var method = new Method(host, new TypeExpression(module.Compiler.BuiltinTypes.Void, Location.Null),
+						Modifiers.PUBLIC | Modifiers.STATIC, new MemberName("AsyncWait"), p, null);
+
+					method.Block = new ToplevelBlock(method.Compiler, p, Location.Null);
+					method.Block.AddStatement(new StatementExpression (new SimpleAssign(
+						new SimpleName(p [0].Name, Location.Null),
+						new Invocation(new SimpleName(expression_method.MemberName.Name, Location.Null), new Arguments(0)),
+						Location.Null), Location.Null));
+
+					if (WaitOnTask) {
+						var task = new Cast (expression_method.TypeExpression, new SimpleName (p [0].Name, Location.Null), Location.Null);
+
+						method.Block.AddStatement (new StatementExpression (new Invocation (
+								new MemberAccess (task, "Wait", Location.Null),
+							new Arguments (0)), Location.Null));
+					}
+
+					host.AddMember(method);
+
+					expression_method = method;
+				}
+
+				host.CreateContainer();
+				host.DefineContainer();
+				host.Define();
+
 			} else {
 				expression_method = null;
 			}
@@ -1056,6 +1098,27 @@ namespace Mono.CSharp
 #endif
 	}
 
+	class InteractiveMethod : Method
+	{
+		public InteractiveMethod(TypeDefinition parent, FullNamedExpression returnType, Modifiers mod, ParametersCompiled parameters)
+			: base(parent, returnType, mod, new MemberName("Host"), parameters, null)
+		{
+		}
+
+		public void ChangeToAsync ()
+		{
+			ModFlags |= Modifiers.ASYNC;
+			ModFlags &= ~Modifiers.UNSAFE;
+			type_expr = new TypeExpression(Module.PredefinedTypes.Task.TypeSpec, Location);
+			parameters = ParametersCompiled.EmptyReadOnlyParameters;
+		}
+
+		public override string GetSignatureForError()
+		{
+			return "InteractiveHost";
+		}
+	}
+
 	class HoistedEvaluatorVariable : HoistedVariable
 	{
 		public HoistedEvaluatorVariable (Field field)
@@ -1076,9 +1139,15 @@ namespace Mono.CSharp
 	///    the return value for an invocation.
 	/// </summary>
 	class OptionalAssign : SimpleAssign {
-		public OptionalAssign (Expression t, Expression s, Location loc)
-			: base (t, s, loc)
+		public OptionalAssign (Expression s, Location loc)
+			: base (null, s, loc)
 		{
+		}
+
+		public override Location StartLocation {
+			get {
+				return Location.Null;
+			}
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
@@ -1093,7 +1162,7 @@ namespace Mono.CSharp
 			// A useful feature for the REPL: if we can resolve the expression
 			// as a type, Describe the type;
 			//
-			if (ec.Module.Evaluator.DescribeTypeExpressions){
+			if (ec.Module.Evaluator.DescribeTypeExpressions && !(ec.CurrentAnonymousMethod is AsyncInitializer)) {
 				var old_printer = ec.Report.SetPrinter (new SessionReportPrinter ());
 				Expression tclone;
 				try {
@@ -1119,7 +1188,28 @@ namespace Mono.CSharp
 			}
 
 			source = clone;
+
+			var host = (Method) ec.MemberContext.CurrentMemberDefinition;
+
+			if (host.ParameterInfo.IsEmpty) {
+				eclass = ExprClass.Value;
+				type = InternalType.FakeInternalType;
+				return this;
+			}
+
+			target = new SimpleName (host.ParameterInfo[0].Name, Location);
+
 			return base.DoResolve (ec);
+		}
+
+		public override void EmitStatement(EmitContext ec)
+		{
+			if (target == null) {
+				source.Emit (ec);
+				return;
+			}
+
+			base.EmitStatement(ec);
 		}
 	}
 

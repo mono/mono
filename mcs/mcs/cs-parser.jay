@@ -116,6 +116,8 @@ namespace Mono.CSharp
 		// Keeps track of global data changes to undo on parser error
 		//
 		public Undo undo;
+
+		bool? interactive_async;
 		
 		Stack<Linq.QueryBlock> linq_clause_blocks;
 
@@ -3926,6 +3928,9 @@ unary_expression
 			} else if (current_anonymous_method is AnonymousMethodExpression) {
 				report.Error (4035, GetLocation ($1),
 					"The `await' operator can only be used when its containing anonymous method is marked with the `async' modifier");
+			} else if (interactive_async != null) {
+				current_block.Explicit.RegisterAsyncAwait ();
+				interactive_async = true;
 			} else {
 				report.Error (4033, GetLocation ($1),
 					"The `await' operator can only be used when its containing method is marked with the `async' modifier");
@@ -5377,10 +5382,7 @@ interactive_statement_expression
 	: expression
 	  {
 		Expression expr = (Expression) $1;
-		ExpressionStatement s;
-
-	        s = new OptionalAssign (new SimpleName ("$retval", lexer.Location), expr, lexer.Location);
-		$$ = new StatementExpression (s);
+		$$ = new StatementExpression (new OptionalAssign (expr, lexer.Location));
 	  }
 	| error
 	  {
@@ -6653,26 +6655,29 @@ interactive_parsing
 			mods |= Modifiers.UNSAFE;
 
 		current_local_parameters = pars;
-		Method method = new Method (
+		var method = new InteractiveMethod (
 			current_type,
 			new TypeExpression (compiler.BuiltinTypes.Void, Location.Null),
 			mods,
-			new MemberName ("Host"),
-			pars,
-			null /* attributes */);
+			pars);
 			
 		current_type.AddMember (method);			
-
 		oob_stack.Push (method);
+
+		interactive_async = false;
+
 		++lexer.parsing_block;
 		start_block (lexer.Location);
 	  }		
 	  interactive_statement_list opt_COMPLETE_COMPLETION
 	  {
 		--lexer.parsing_block;
-		Method method = (Method) oob_stack.Pop ();
-
+		var method = (InteractiveMethod) oob_stack.Pop ();
 		method.Block = (ToplevelBlock) end_block(lexer.Location);
+
+		if (interactive_async == true) {
+			method.ChangeToAsync ();
+		}
 
 		InteractiveResult = (Class) pop_current_class ();
 		current_local_parameters = null;

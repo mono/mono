@@ -800,7 +800,7 @@ namespace Mono.CSharp
 		}
 	}
 
-	public  class FlowBranchingAsync : FlowBranchingBlock
+	public class FlowBranchingAsync : FlowBranchingBlock
 	{
 		readonly AsyncInitializer async_init;
 
