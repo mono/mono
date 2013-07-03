@@ -60,6 +60,8 @@ namespace Microsoft.Build.Tasks
 				Log.LogWarning ("Unable to find framework corresponding to the target framework moniker '{0}'. " +
 						"Framework assembly references will be resolved from the GAC, which might not be " +
 						"the intended behavior.", TargetFrameworkMoniker);
+				if (moniker.Identifier.Equals (".NETPortable"))
+					return CheckPclReferenceAssemblies (moniker);
 				return true;
 			}
 
@@ -67,6 +69,17 @@ namespace Microsoft.Build.Tasks
 			TargetFrameworkMonikerDisplayName = framework.DisplayName;
 
 			return true;
+		}
+
+		bool CheckPclReferenceAssemblies (FrameworkMoniker moniker)
+		{
+			// Check for a supported profile
+			var check = new FrameworkMoniker (".NETPortable", "v4.0", "Profile24");
+			if (GetFrameworkDirectoriesForMoniker (check) != null)
+				Log.LogError ("Unsupported PCL Profile '{0}'.", moniker);
+			else
+				Log.LogError ("PCL Reference Assemblies not installed.");
+			return false;
 		}
 
 		Framework GetFrameworkDirectoriesForMoniker (FrameworkMoniker moniker)
