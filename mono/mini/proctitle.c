@@ -21,14 +21,14 @@
 #include "mini.h"
 #include "proctitle.h"
 
-#if defined(PLATFORM_MACOSX) || defined(PLATFORM_LINUX)
+#if defined(PLATFORM_MACOSX) || defined(__linux__)
 
-static void* args_mem;
+static void* args_mem = NULL;
 
 static struct {
   char* str;
   size_t len;
-} mono_process_title;
+} mono_process_title = { NULL, 0 };
 
 char** mono_proctitle_start (int argc, char** argv) {
   char** new_argv;
