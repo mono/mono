@@ -54,6 +54,7 @@
 #include <ctype.h>
 #include <locale.h>
 #include "version.h"
+#include "proctitle.h"
 #include "debugger-agent.h"
 
 static FILE *mini_stats_fd = NULL;
@@ -1158,6 +1159,8 @@ mini_usage (void)
 #ifdef HOST_WIN32
 	        "    --mixed-mode           Enable mixed-mode image support.\n"
 #endif
+        "    --process-title=NAME   Sets the process title to NAME. Currently supported on\n"
+		"                           Linux and Mac OSX platforms.\n"
 	  );
 }
 
@@ -1528,6 +1531,8 @@ mono_main (int argc, char* argv[])
 			mini_stats_fd = fopen (argv [++i], "w+");
 		} else if (strncmp (argv [i], "--optimize=", 11) == 0) {
 			opt = parse_optimizations (argv [i] + 11);
+		} else if (strncmp (argv [i], "--process-title=", 16) == 0) {
+			mono_proctitle_set (argv [i] + 16);
 		} else if (strncmp (argv [i], "-O=", 3) == 0) {
 			opt = parse_optimizations (argv [i] + 3);
 		} else if (strcmp (argv [i], "--gc=sgen") == 0) {
