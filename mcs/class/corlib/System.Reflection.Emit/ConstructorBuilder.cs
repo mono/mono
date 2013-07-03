@@ -351,7 +351,7 @@ namespace System.Reflection.Emit {
 				throw new InvalidOperationException ("Method '" + Name + "' does not have a method body.");
 			}
 			if (ilgen != null)
-				ilgen.label_fixup ();
+				ilgen.label_fixup (this);
 		}
 		
 		internal void GenerateDebugInfo (ISymbolWriter symbolWriter)

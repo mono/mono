@@ -354,7 +354,7 @@ namespace System.Reflection.Emit
 											    DeclaringType.FullName, Name));
 			}
 			if (ilgen != null)
-				ilgen.label_fixup ();
+				ilgen.label_fixup (this);
 		}
 		
 		internal void GenerateDebugInfo (ISymbolWriter symbolWriter)
