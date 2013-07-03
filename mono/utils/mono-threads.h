@@ -108,7 +108,6 @@ typedef struct {
 
 	/* only needed by the posix backend */ 
 #if (defined(_POSIX_VERSION) || defined(__native_client__)) && !defined (__MACH__)
-	MonoSemType suspend_semaphore;
 	gboolean syscall_break_signal;
 	gboolean suspend_can_continue;
 #endif
