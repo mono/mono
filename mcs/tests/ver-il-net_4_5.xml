@@ -18346,6 +18346,38 @@
       </method>
     </type>
   </test>
+  <test name="gtest-589.cs">
+    <type name="Z">
+      <method name="Z Start()" attrs="134">
+        <size>10</size>
+      </method>
+      <method name="Z IGenericInterface&lt;Z&gt;.Start()" attrs="481">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A`1[T]">
+      <method name="Void SomeOperation(T)" attrs="134">
+        <size>16</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 IGenericInterface&lt;int&gt;.Start()" attrs="481">
+        <size>7</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>17</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
