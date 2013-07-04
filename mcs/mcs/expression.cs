@@ -6015,7 +6015,7 @@ namespace Mono.CSharp
 				if (member_expr != null)
 					member_expr = member_expr.Resolve (ec);
 			} else {
-				member_expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
+				member_expr = expr.Resolve (ec);
 			}
 
 			if (member_expr == null)
@@ -8598,7 +8598,7 @@ namespace Mono.CSharp
 
 				e = e.ResolveLValue (rc, right_side);
 			} else {
-				e = e.Resolve (rc, ResolveFlags.VariableOrValue | ResolveFlags.Type);
+				e = e.Resolve (rc, ResolveFlags.VariableOrValue | ResolveFlags.Type | ResolveFlags.MethodGroup);
 			}
 
 			return e;

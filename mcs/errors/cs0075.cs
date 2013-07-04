@@ -17,7 +17,7 @@ class X
 	public static void Main ()
 	{
 		int a = 4, b = 5;
-		X x = (X) -a;
+X x = (X) -a;
 		System.Console.WriteLine (x.i);
 	}
 }

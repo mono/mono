@@ -1,10 +1,12 @@
 // CS0119: Expression denotes a `type', where a `variable', `value' or `method group' was expected
-// Line: 8
+// Line: 10
 
-class C
+class A
 {
+	delegate string Test (string t);
+
 	public static void Main ()
 	{
-		int i = (C) +1;
+		Test ("t");
 	}
 }

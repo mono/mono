@@ -435,8 +435,14 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public Expression Resolve (ResolveContext ec, ResolveFlags flags)
 		{
-			if (eclass != ExprClass.Unresolved)
+			if (eclass != ExprClass.Unresolved) {
+				if ((flags & ExprClassToResolveFlags) == 0) {
+					Error_UnexpectedKind (ec, flags, loc);
+					return null;
+				}
+
 				return this;
+			}
 			
 			Expression e;
 			try {
@@ -2452,7 +2458,7 @@ namespace Mono.CSharp {
 
 		protected override Expression DoResolve (ResolveContext rc)
 		{
-			var e = SimpleNameResolve (rc, null, false);
+			var e = SimpleNameResolve (rc, null);
 
 			var fe = e as FieldExpr;
 			if (fe != null) {
@@ -2464,7 +2470,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
-			return SimpleNameResolve (ec, right_side, false);
+			return SimpleNameResolve (ec, right_side);
 		}
 
 		protected virtual void Error_TypeOrNamespaceNotFound (IMemberContext ctx)
@@ -2730,7 +2736,10 @@ namespace Mono.CSharp {
 							}
 
 							if (e is TypeExpr) {
-								e.Error_UnexpectedKind (rc, e, "variable", e.ExprClassName, loc);
+								// TypeExpression does not have correct location
+								if (e is TypeExpression)
+									e = new TypeExpression (e.Type, loc);
+
 								return e;
 							}
 						}
@@ -2752,19 +2761,19 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		Expression SimpleNameResolve (ResolveContext ec, Expression right_side, bool intermediate)
+		Expression SimpleNameResolve (ResolveContext ec, Expression right_side)
 		{
 			Expression e = LookupNameExpression (ec, right_side == null ? MemberLookupRestrictions.ReadAccess : MemberLookupRestrictions.None);
 
 			if (e == null)
 				return null;
 
-			if (right_side != null) {
-				if (e is FullNamedExpression && e.eclass != ExprClass.Unresolved) {
-					e.Error_UnexpectedKind (ec, e, "variable", e.ExprClassName, loc);
-				    return null;
-				}
+			if (e is FullNamedExpression && e.eclass != ExprClass.Unresolved) {
+				e.Error_UnexpectedKind (ec, e, "variable", e.ExprClassName, loc);
+				return e;
+			}
 
+			if (right_side != null) {
 				e = e.ResolveLValue (ec, right_side);
 			} else {
 				e = e.Resolve (ec);
@@ -3660,7 +3669,7 @@ namespace Mono.CSharp {
 							InstanceExpression = ProbeIdenticalTypeName (ec, InstanceExpression, simple_name);
 						}
 
-						InstanceExpression.Resolve (ec);
+						InstanceExpression.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup | ResolveFlags.Type);
 					}
 				}
 
@@ -3734,7 +3743,7 @@ namespace Mono.CSharp {
 		//
 		public virtual MethodGroupExpr LookupExtensionMethod (ResolveContext rc)
 		{
-			if (InstanceExpression == null)
+			if (InstanceExpression == null || InstanceExpression.eclass == ExprClass.Type)
 				return null;
 
 			InstanceExpression = InstanceExpression.Resolve (rc);
