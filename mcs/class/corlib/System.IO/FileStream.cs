@@ -699,11 +699,14 @@ namespace System.IO
 				MemoryStream ms = new MemoryStream ();
 				FlushBuffer (ms);
 				ms.Write (array, offset, numBytes);
+
+				// Set arguments to new compounded buffer 
 				offset = 0;
-				numBytes = (int) ms.Length;
+				array = ms.ToArray ();
+				numBytes = array.Length;
 			}
 
-			WriteDelegate w = new WriteDelegate (WriteInternal);
+			WriteDelegate w = WriteInternal;
 			return w.BeginInvoke (array, offset, numBytes, userCallback, stateObject);			
 		}
 		
