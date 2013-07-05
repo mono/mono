@@ -60352,6 +60352,48 @@
       </method>
     </type>
   </test>
+  <test name="test-debug-27.cs">
+    <type name="S">
+      <method name="Int32 op_Implicit(S)" attrs="2198">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor(Int32)" attrs="6278">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 A()" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="Int32 B(C)" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="C Test()" attrs="150">
+        <size>14</size>
+      </method>
+      <method name="System.String Foo()" attrs="134">
+        <size>10</size>
+      </method>
+      <method name="Void Test_1()" attrs="129">
+        <size>46</size>
+      </method>
+      <method name="Void Test_2()" attrs="129">
+        <size>10</size>
+      </method>
+      <method name="Void Test_3()" attrs="129">
+        <size>32</size>
+      </method>
+      <method name="Void Test_4()" attrs="129">
+        <size>13</size>
+      </method>
+      <method name="Int32 Main()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-externalias-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">

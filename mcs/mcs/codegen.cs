@@ -248,6 +248,21 @@ namespace Mono.CSharp
 			return true;
 		}
 
+		public void MarkCallEntry (Location loc)
+		{
+			if (!EmitAccurateDebugInfo)
+				return;
+
+			//
+			// TODO: This should emit different kind of sequence point to make
+			// step-over work for statement over multiple lines
+			//
+			// Debugging experience for Foo (A () + B ()) where A and B are
+			// on separate lines is not great
+			//
+			Mark (loc);
+		}
+
 		public void DefineLocalVariable (string name, LocalBuilder builder)
 		{
 			if ((flags & Options.OmitDebugInfo) != 0)
@@ -1014,11 +1029,7 @@ namespace Mono.CSharp
 				// Emit explicit sequence point for expressions like Foo.Bar () to help debugger to
 				// break at right place when LHS expression can be stepped-into
 				//
-				// TODO: The list is probably not comprehensive, need to do more testing
-				//
-				if (InstanceExpression is PropertyExpr || InstanceExpression is Invocation || InstanceExpression is IndexerExpr ||
-					InstanceExpression is New || InstanceExpression is DelegateInvocation)
-					ec.Mark (loc.Value);
+				ec.MarkCallEntry (loc.Value);
 			}
 
 			//
