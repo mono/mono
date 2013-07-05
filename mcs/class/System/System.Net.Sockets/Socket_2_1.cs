@@ -787,38 +787,21 @@ namespace System.Net.Sockets {
 		[ObsoleteAttribute ("Use OSSupportsIPv6 instead")]
 		public static bool SupportsIPv6 {
 			get {
-				CheckProtocolSupport();
 				return ipv6Supported == 1;
 			}
 		}
-#if NET_2_1
+
 		public static bool OSSupportsIPv4 {
 			get {
-				CheckProtocolSupport();
 				return ipv4Supported == 1;
 			}
 		}
-#endif
-#if NET_2_1
+
 		public static bool OSSupportsIPv6 {
 			get {
-				CheckProtocolSupport();
 				return ipv6Supported == 1;
 			}
 		}
-#else
-		public static bool OSSupportsIPv6 {
-			get {
-				NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces ();
-				
-				foreach (NetworkInterface adapter in nics) {
-					if (adapter.Supports (NetworkInterfaceComponent.IPv6))
-						return true;
-				}
-				return false;
-			}
-		}
-#endif
 
 		/* the field "socket" is looked up by name by the runtime */
 		private IntPtr socket;
