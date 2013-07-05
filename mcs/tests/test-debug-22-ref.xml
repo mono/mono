@@ -31,7 +31,7 @@
     <method token="0x6000005">
       <sequencepoints>
         <entry il="0x0" row="20" col="2" file_ref="1" hidden="false" />
-        <entry il="0x1" row="21" col="3" file_ref="1" hidden="false" />
+        <entry il="0x1" row="21" col="9" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
       <scopes />
@@ -68,6 +68,7 @@
       <sequencepoints>
         <entry il="0x21" row="15" col="2" file_ref="1" hidden="false" />
         <entry il="0x22" row="16" col="3" file_ref="1" hidden="false" />
+        <entry il="0x29" row="16" col="21" file_ref="1" hidden="false" />
         <entry il="0x47" row="17" col="2" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals />
