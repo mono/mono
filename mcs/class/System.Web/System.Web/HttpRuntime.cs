@@ -331,8 +331,11 @@ namespace System.Web
 		public static bool UsingIntegratedPipeline { get { return false; } }
 
 #if NET_4_5
-		public static IISVersion {
-			get { return null; } // Null means not hosted by IIS
+		public static Version IISVersion {
+			get {
+				// Null means not hosted by IIS
+				return null;
+			}
 		}
 #endif
 		
