@@ -337,6 +337,12 @@ namespace System.Web
 				return null;
 			}
 		}
+		
+		public static Version TargetFramework {
+			get {
+				return runtime_section.TargetFramework;
+			}
+		}
 #endif
 		
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
