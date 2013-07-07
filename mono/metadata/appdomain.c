@@ -2181,7 +2181,13 @@ unload_data_unref (unload_data *data)
 {
 	gint32 count;
 	do {
+#ifndef _MSC_VER
 		count = mono_atomic_load_acquire (&data->refcount);
+#else
+	    guint32 __tmp = *(&data->refcount);
+	    LOAD_ACQUIRE_FENCE;
+	    count = __tmp;
+#endif
 		g_assert (count >= 1 && count <= 2);
 		if (count == 1) {
 			g_free (data);

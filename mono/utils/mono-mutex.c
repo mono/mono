@@ -16,12 +16,13 @@
 #include <string.h>
 #include <errno.h>
 #include <assert.h>
-#include <sys/time.h>
 #include <mono/utils/mono-memory-model.h>
 
 #include "mono-mutex.h"
 
 #ifndef HOST_WIN32
+
+#include <sys/time.h>
 
 #if defined(__APPLE__)
 #define _DARWIN_C_SOURCE

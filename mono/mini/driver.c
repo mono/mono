@@ -1256,7 +1256,8 @@ static const char info[] =
 #endif
 
 #ifdef HOST_WIN32
-BOOL APIENTRY DllMain (HMODULE module_handle, DWORD reason, LPVOID reserved)
+BOOL
+mini_dllmain (HMODULE module_handle, DWORD reason, LPVOID reserved)
 {
 	int dummy;
 	if (!mono_gc_dllmain (module_handle, reason, reserved))
