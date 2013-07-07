@@ -94,12 +94,6 @@ namespace System
 		private static TextWriter stderr;
 		private static TextReader stdin;
 
-#if NET_4_5 && !MOBILE
-		static TextWriter console_stdout;
-		static TextWriter console_stderr;
-		static TextReader console_stdin;
-#endif
-
 		static Console ()
 		{
 #if NET_2_1
@@ -181,12 +175,6 @@ namespace System
 				stdin = TextReader.Synchronized (stdin);
 #if !NET_2_1
 			}
-#endif
-
-#if NET_4_5 && !MOBILE
-			console_stderr = stderr;
-			console_stdout = stdout;
-			console_stdin = stdin;
 #endif
 
 #if MONODROID
@@ -676,19 +664,19 @@ namespace System
 #if NET_4_5
 		public static bool IsErrorRedirected {
 			get {
-				return stderr != console_stderr || ConsoleDriver.IsErrorRedirected;
+				return ConsoleDriver.IsErrorRedirected;
 			}
 		}
 
 		public static bool IsOutputRedirected {
 			get {
-				return stdout != console_stdout || ConsoleDriver.IsOutputRedirected;
+				return ConsoleDriver.IsOutputRedirected;
 			}
 		}
 
 		public static bool IsInputRedirected {
 			get {
-				return stdin != console_stdin || ConsoleDriver.IsInputRedirected;
+				return ConsoleDriver.IsInputRedirected;
 			}
 		}
 #endif
