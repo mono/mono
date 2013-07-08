@@ -38,8 +38,7 @@ namespace Mono.CSharp
 		VOLATILE  = 0x1000,
 		UNSAFE    = 0x2000,
 		ASYNC     = 0x4000,
-		DYNAMIC   = 0x8000, // Playscript only
-		TOP       = 0x10000,
+		TOP       = 0x8000,
 
 		//
 		// Compiler specific flags
@@ -112,8 +111,6 @@ namespace Mono.CSharp
 				s = "unsafe"; break;
 			case Modifiers.ASYNC:
 				s = "async"; break;
-			case Modifiers.DYNAMIC:
-				s = "dynamic"; break;
 			}
 
 			return s;

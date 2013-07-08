@@ -166,13 +166,8 @@ namespace Mono.CSharp
 			var file = new CompilationSourceFile (module, sourceFile);
 			module.AddTypeContainer (file);
 
-			if (sourceFile.IsPlayScript) {
-				var parser = new PlayScript.PlayScriptParser (reader, file, report, session);
-				parser.parse ();
-			} else {
-				var parser = new CSharpParser (reader, file, report, session);
-				parser.parse ();
-			}
+			CSharpParser parser = new CSharpParser (reader, file, report, session);
+			parser.parse ();
 		}
 		
 		public static int Main (string[] args)

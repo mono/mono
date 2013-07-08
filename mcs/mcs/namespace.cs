@@ -427,24 +427,6 @@ namespace Mono.CSharp {
 			return texpr;
 		}
 
-		// TODO: REMOVE me
-		public ATypeNameExpression MakeTypeNameExpression (Location loc)
-		{
-			string[] names = Name.Split (new[] { '.' });
-
-			ATypeNameExpression exp = null;
-			for (var i = 0; i < names.Length; i++) {
-				var name = names[i];
-				if (exp == null) {
-					exp = new SimpleName (name, loc);
-				} else {
-					exp = new MemberAccess (exp, name, loc);
-				}
-			}
-
-			return exp;
-		}
-
 		//
 		// Completes types with the given `prefix'
 		//
@@ -839,9 +821,6 @@ namespace Mono.CSharp {
 			get {
 				return clauses;
 			}
-			protected set {
-				clauses = value;
-			}
 		}
 
 		public override string[] ValidAttributeTargets {
@@ -852,7 +831,7 @@ namespace Mono.CSharp {
 
 		#endregion
 
-		public void AddUsing (UsingNamespace un, bool forceAppend = false) // TODO: remove the change
+		public void AddUsing (UsingNamespace un)
 		{
 			if (DeclarationFound){
 				Compiler.Report.Error (1529, un.Location, "A using clause must precede all other namespace elements except extern alias declarations");
@@ -901,10 +880,6 @@ namespace Mono.CSharp {
 		public override void AddTypeContainer (TypeContainer tc)
 		{
 			string name = tc.Basename;
-			if (name == null) {
-				containers.Add (tc);
-				return;
-			}
 
 			var mn = tc.MemberName;
 			while (mn.Left != null) {

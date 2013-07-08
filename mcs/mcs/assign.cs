@@ -392,9 +392,9 @@ namespace Mono.CSharp {
 			return System.Linq.Expressions.Expression.Assign (target_object, source_object);
 		}
 #endif
-		protected virtual Expression ResolveConversions (ResolveContext rc)
+		protected virtual Expression ResolveConversions (ResolveContext ec)
 		{
-			source = Convert.ImplicitConversionRequiredEnhanced (rc, source, target.Type, source.Location);
+			source = Convert.ImplicitConversionRequired (ec, source, target.Type, source.Location);
 			if (source == null)
 				return null;
 
@@ -565,16 +565,11 @@ namespace Mono.CSharp {
 				return null;
 
 			if (resolved == null) {
-				resolved = ResolveInitializer (ec);
+				var ctx = new FieldInitializerContext (mc, ec);
+				resolved = base.DoResolve (ctx) as ExpressionStatement;
 			}
 
 			return resolved;
-		}
-
-		protected virtual ExpressionStatement ResolveInitializer (ResolveContext rc)
-		{
-			var ctx = new FieldInitializerContext (mc, rc);
-			return base.DoResolve (ctx) as ExpressionStatement;
 		}
 
 		public override void EmitStatement (EmitContext ec)

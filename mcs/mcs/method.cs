@@ -47,9 +47,9 @@ namespace Mono.CSharp {
 		protected ToplevelBlock block;
 		protected MethodSpec spec;
 
-		public MethodCore (TypeDefinition parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, Modifiers defaultModifiers,
+		public MethodCore (TypeDefinition parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod,
 			MemberName name, Attributes attrs, ParametersCompiled parameters)
-			: base (parent, type, mod, allowed_mod, defaultModifiers, name, attrs)
+			: base (parent, type, mod, allowed_mod, name, attrs)
 		{
 			this.parameters = parameters;
 		}
@@ -535,7 +535,7 @@ namespace Mono.CSharp {
 
 		protected MethodOrOperator (TypeDefinition parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, MemberName name,
 				Attributes attrs, ParametersCompiled parameters)
-			: base (parent, type, mod, allowed_mod, Modifiers.PRIVATE, name, attrs, parameters)
+			: base (parent, type, mod, allowed_mod, name, attrs, parameters)
 		{
 		}
 
@@ -1522,7 +1522,7 @@ namespace Mono.CSharp {
 	public class Constructor : MethodCore, IMethodData, IMethodDefinition
 	{
 		public ConstructorBuilder ConstructorBuilder;
-		public ExpressionStatement Initializer;
+		public ConstructorInitializer Initializer;
 		SecurityType declarative_security;
 		bool has_compliant_args;
 		SourceMethodBuilder debug_builder;
@@ -1545,12 +1545,7 @@ namespace Mono.CSharp {
 		public static readonly string TypeConstructorName = ".cctor";
 
 		public Constructor (TypeDefinition parent, string name, Modifiers mod, Attributes attrs, ParametersCompiled args, Location loc)
-			: this (parent, name, mod, Modifiers.PRIVATE, attrs, args, loc)
-		{
-		}
-
-		public Constructor (TypeDefinition parent, string name, Modifiers mod, Modifiers defaultModifiers, Attributes attrs, ParametersCompiled args, Location loc)
-			: base (parent, null, mod, AllowedModifiers, defaultModifiers, new MemberName (name, loc), attrs, args)
+			: base (parent, null, mod, AllowedModifiers, new MemberName (name, loc), attrs, args)
 		{
 		}
 
@@ -1587,11 +1582,9 @@ namespace Mono.CSharp {
 			if ((ModFlags & Modifiers.STATIC) != 0)
 				return parameters.IsEmpty;
 
-			if (!parameters.IsEmpty)
-				return false;
-			
-			var init = Initializer as ConstructorBaseInitializer;
-			return init != null && init.Arguments == null;
+			return parameters.IsEmpty &&
+					(Initializer is ConstructorBaseInitializer) &&
+					(Initializer.Arguments == null);
 		}
 
 		public override void Accept (StructuralVisitor visitor)

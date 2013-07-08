@@ -457,12 +457,6 @@ namespace Mono.CSharp
 			}
 		}
 
-		public bool IsPlayScriptType {
-			get {
-				return CurrentType.MemberDefinition.IsPlayScriptType;
-			}
-		}
-
 		public bool IsStatic {
 			get {
 				return MemberContext.IsStatic;

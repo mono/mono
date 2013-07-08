@@ -28,7 +28,7 @@ PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/4.5
 
 PROGRAM_COMPILE = $(BOOT_COMPILE)
 
-BUILT_SOURCES = cs-parser.cs ps-parser.cs
+BUILT_SOURCES = cs-parser.cs
 
 CLEAN_FILES += y.output
 
