@@ -6,7 +6,7 @@
 // Dual licensed under the terms of the MIT X11 or GNU GPL
 //
 // Copyright 2009-2011 Novell, Inc
-// Copyright 2011-2013 Xamarin, Inc (http://www.xamarin.com)
+// Copyright 2011-2012 Xamarin, Inc (http://www.xamarin.com)
 //
 
 using System;
@@ -123,7 +123,6 @@ namespace Mono.CSharp
 		protected readonly ModuleContainer module;
 
 		public static readonly string CompilerServicesNamespace = "System.Runtime.CompilerServices";
-		public static readonly string PlayScriptCompilerNamespace = "PlayScript.Runtime.CompilerServices";
 
 		protected MetadataImporter (ModuleContainer module)
 		{
@@ -203,16 +202,6 @@ namespace Mono.CSharp
 					var dc = ReadDecimalConstant (CustomAttributeData.GetCustomAttributes (fi));
 					if (dc != null)
 						return new ConstSpec (declaringType, definition, field_type, fi, mod, dc);
-				}
-
-				if (field_type == module.PlayscriptTypes.Namespace.TypeSpec) {
-					var attributes = CustomAttributeData.GetCustomAttributes (fi);
-
-					var data = FindAttribute (attributes, "NamespaceFieldAttribute", PlayScriptCompilerNamespace);
-					if (data != null) {
-						string value = data.ConstructorArguments[0].Value as string;
-						return new PlayScript.NamespaceFieldSpec (declaringType, definition, field_type, fi, mod, value);
-					}
 				}
 
 				mod |= Modifiers.READONLY;
@@ -509,14 +498,9 @@ namespace Mono.CSharp
 				} else {
 					types[i] = ImportType (p.ParameterType, new DynamicTypeReader (p));
 
-					if (i >= pi.Length - 2) {
-						var ti = types[i];
-
-						if (ti is ArrayContainer && HasAttribute (CustomAttributeData.GetCustomAttributes (p), "ParamArrayAttribute", "System")) {
+					if (i >= pi.Length - 2 && types[i] is ArrayContainer) {
+						if (HasAttribute (CustomAttributeData.GetCustomAttributes (p), "ParamArrayAttribute", "System")) {
 							mod = Parameter.Modifier.PARAMS;
-							is_params = true;
-						} else if (ti == module.PlayscriptTypes.Array.TypeSpec && HasAttribute (CustomAttributeData.GetCustomAttributes (p), "RestArrayParameterAttribute", PlayScriptCompilerNamespace)) {
-							mod = Parameter.Modifier.RestArray;
 							is_params = true;
 						}
 					}
@@ -650,24 +634,7 @@ namespace Mono.CSharp
 			}
 
 			PropertySpec spec = null;
-			ImportedMemberDefinition imd = new ImportedMemberDefinition (pi, type, this);
-
-			if (param.IsEmpty) {
-				if (get != null && set == null && declaringType.MemberDefinition.IsPlayScriptType) {
-					var attributes = CustomAttributeData.GetCustomAttributes (pi);
-
-					var data = FindAttribute (attributes, "ConstantFieldAttribute", PlayScriptCompilerNamespace);
-					if (data != null) {
-						var pc = new PlayScript.ImportedPropertyConstant (pi, type, this);
-						if (data.ConstructorArguments.Count == 1) {
-							pc.Initializer = Constant.CreateConstantFromValue (type,
-								data.ConstructorArguments[0].Value, Location.Null);
-						}
-
-						imd = pc;
-					}
-				}
-			} else {
+			if (!param.IsEmpty) {
 				if (is_valid_property) {
 					var index_name = declaringType.MemberDefinition.GetAttributeDefaultMember ();
 					if (index_name == null) {
@@ -706,7 +673,7 @@ namespace Mono.CSharp
 			}
 
 			if (spec == null)
-				spec = new PropertySpec (MemberKind.Property, declaringType, imd, type, pi, mod);
+				spec = new PropertySpec (MemberKind.Property, declaringType, new ImportedMemberDefinition (pi, type, this), type, pi, mod);
 
 			if (!is_valid_property) {
 				spec.IsNotCSharpCompatible = true;
@@ -932,21 +899,8 @@ namespace Mono.CSharp
 					bts.SetDefinition (definition, type, mod);
 			}
 
-			if (spec == null) {
-				if (kind == MemberKind.Class && declaringType == null) {
-					var attributes = CustomAttributeData.GetCustomAttributes (type);
-					// TODO: Add assembly level attribute to speed this up?
-
-					if (HasAttribute (attributes, "DynamicClassAttribute", PlayScriptCompilerNamespace)) {
-						definition.IsPlayScriptType = true;
-						mod |= Modifiers.DYNAMIC;
-					} else if (HasAttribute (attributes, "PlayScriptAttribute", PlayScriptCompilerNamespace)) {
-						definition.IsPlayScriptType = true;
-					}
-				}
-
+			if (spec == null)
 				spec = new TypeSpec (kind, declaringType, definition, type, mod);
-			}
 
 			import_cache.Add (type, spec);
 
@@ -1036,21 +990,16 @@ namespace Mono.CSharp
 		//
 		public static bool HasAttribute (IList<CustomAttributeData> attributesData, string attrName, string attrNamespace)
 		{
-			return FindAttribute (attributesData, attrName, attrNamespace) != null;
-		}
-
-		static CustomAttributeData FindAttribute (IList<CustomAttributeData> attributesData, string attrName, string attrNamespace)
-		{
 			if (attributesData.Count == 0)
-				return null;
+				return false;
 
 			foreach (var attr in attributesData) {
 				var dt = attr.Constructor.DeclaringType;
 				if (dt.Name == attrName && dt.Namespace == attrNamespace)
-					return attr;
+					return true;
 			}
 
-			return null;
+			return false;
 		}
 
 		void ImportTypeBase (TypeSpec spec, MetaType type)
@@ -1063,9 +1012,6 @@ namespace Mono.CSharp
 					base_type = CreateType (type.BaseType, new DynamicTypeReader (type), true);
 				else
 					base_type = CreateType (type.BaseType);
-
-				if (base_type == null && spec.MemberDefinition.IsPlayScriptType)
-					base_type = module.PlayscriptTypes.Object;
 
 				spec.BaseType = base_type;
 			}
@@ -1852,8 +1798,6 @@ namespace Mono.CSharp
 			}
 		}
 
-		public bool IsPlayScriptType { get; set; }
-
 		public override string Name {
 			get {
 				if (name == null) {
@@ -2272,12 +2216,6 @@ namespace Mono.CSharp
 		}
 
 		bool ITypeDefinition.IsTypeForwarder {
-			get {
-				return false;
-			}
-		}
-
-		bool ITypeDefinition.IsPlayScriptType {
 			get {
 				return false;
 			}

@@ -55,7 +55,4 @@
 ../../build/common/Consts.cs
 ../../tools/monop/outline.cs
 ../../mcs/cs-parser.cs
-../../mcs/ps-parser.cs
-../../mcs/ps-tokenizer.cs
-../../mcs/playscript.cs
 Assembly/AssemblyInfo.cs

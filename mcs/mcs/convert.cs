@@ -336,9 +336,9 @@ namespace Mono.CSharp {
 				// from the null literal to any reference-type.
 				//
 				if (expr_type == InternalType.NullLiteral) {
-					// Exclude internal compiler types
+					// Exlude internal compiler types
 					if (target_type.Kind == MemberKind.InternalCompilerType)
-						return target_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic || target_type.BuiltinType == BuiltinTypeSpec.Type.Object;
+						return target_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic;
 
 					return TypeSpec.IsReferenceType (target_type);
 				}
@@ -362,9 +362,6 @@ namespace Mono.CSharp {
 
 					return false;
 				}
-
-				if (expr_type.BuiltinType == BuiltinTypeSpec.Type.Object)
-					return target_type.BuiltinType == BuiltinTypeSpec.Type.Object || target_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic;
 
 				break;
 			}
@@ -1471,22 +1468,6 @@ namespace Mono.CSharp {
 				return e;
 
 			source.Error_ValueCannotBeConverted (ec, target_type, false);
-			return null;
-		}
-
-		public static Expression ImplicitConversionRequiredEnhanced (ResolveContext rc, Expression source, TypeSpec targetType, Location loc)
-		{
-			Expression e = ImplicitConversion (rc, source, targetType, loc);
-			if (e != null)
-				return e;
-
-			if (rc.IsPlayScriptType) {
-				e = PlayScript.Convert.ImplicitConversion (source, targetType);
-				if (e != null)
-					return e;
-			}
-
-			source.Error_ValueCannotBeConverted (rc, targetType, false);
 			return null;
 		}
 

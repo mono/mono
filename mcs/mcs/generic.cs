@@ -428,12 +428,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		bool ITypeDefinition.IsPlayScriptType {
-			get {
-				return false;
-			}
-		}
-
 		public bool IsMethodTypeParameter {
 			get {
 				return spec.IsMethodOwned;
