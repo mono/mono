@@ -1,0 +1,48 @@
+package
+{
+	public class TestClass extends BaseClass
+	{
+		internal var local:Number = 4.5;
+		
+		public function TestClass(a:uint, b:String):*
+		{
+			var b_ui:uint = ui;
+			var b_s:* = s;
+			var b_local:Number = local;
+				
+			super (a, b + "X");
+			
+			if (b_ui != 0)
+				throw new ArgumentError ("1");
+
+			if (b_local != 4.5)
+				throw new ArgumentError ("2");
+				
+			if (b_s != null)
+				throw new ArgumentError ("3");
+			
+			if (ui != a)
+				throw new ArgumentError ("4");
+				
+			if (s != b + "X")
+				throw new ArgumentError ("5");
+		}
+		
+		public static function Main ():void
+		{
+			new TestClass (1, null);
+		}
+	}
+	
+	public class BaseClass 
+	{		
+		public var ui:uint = 9;
+		public var s:String;
+		
+		public function BaseClass(a:uint, b:String) 
+		{
+			ui = a;
+			s = b;
+		}
+	}
+}

@@ -1,0 +1,24 @@
+package
+{
+	public class BasicTypes 
+	{
+		var f_obj:Object = null;
+		var f_str:String = "string";
+		var f_n:Number = 9.3;
+		var f_i:int = -3;
+		var f_ui:uint = 44;
+		var f_b:Boolean = true;
+		var f_any:* = 9;
+
+		public static function Main():void
+		{
+			var obj:Object = null;
+			var str1:String = "string";
+			var n:Number = 9.3;
+			var i:int = -3;
+			var ui:uint = 44;
+			var b:Boolean = true;
+			var any:* = null;
+		}
+	}
+}

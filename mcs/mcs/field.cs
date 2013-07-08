@@ -255,7 +255,8 @@ namespace Mono.CSharp
 				Report.Error (625, Location, "`{0}': Instance field types marked with StructLayout(LayoutKind.Explicit) must have a FieldOffset attribute", GetSignatureForError ());
 			}
 
-			ConstraintChecker.Check (this, member_type, type_expr.Location);
+			if (type_expr != null)
+				ConstraintChecker.Check (this, member_type, type_expr.Location);
 
 			base.Emit ();
 		}
@@ -285,7 +286,7 @@ namespace Mono.CSharp
 	//
 	public class FieldSpec : MemberSpec, IInterfaceMemberSpec
 	{
-		FieldInfo metaInfo;
+		protected FieldInfo metaInfo;
 		TypeSpec memberType;
 
 		public FieldSpec (TypeSpec declaringType, IMemberDefinition definition, TypeSpec memberType, FieldInfo info, Modifiers modifiers)
@@ -331,6 +332,14 @@ namespace Mono.CSharp
 			}
 
 			return metaInfo;
+		}
+
+		public void SetMetaInfo (FieldInfo info)
+		{
+			if (this.metaInfo != null)
+				throw new InternalErrorException ("MetaInfo reset");
+
+			this.metaInfo = info;
 		}
 
 		public override MemberSpec InflateMember (TypeParameterInflator inflator)
@@ -627,7 +636,7 @@ namespace Mono.CSharp
 			}
 
 			FieldBuilder = Parent.TypeBuilder.DefineField (
-				Name, member_type.GetMetaInfo (), required_modifier, null, ModifiersExtensions.FieldAttr (ModFlags));
+				GetFullName (MemberName), member_type.GetMetaInfo (), required_modifier, null, ModifiersExtensions.FieldAttr (ModFlags));
 
 			spec = new FieldSpec (Parent.Definition, this, MemberType, FieldBuilder, ModFlags);
 

@@ -1,0 +1,93 @@
+//
+// Array.play
+//
+// Authors:
+//	Marek Safar  <marek.safar@gmail.com>
+//
+// Copyright (C) 2013 Xamarin, Inc (http://www.xamarin.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
+package {
+	public dynamic class Array
+	{
+		public static const CASEINSENSITIVE:uint = 1;
+		public static const DESCENDING:uint = 2;
+		public static const UNIQUESORT:uint = 4;
+		public static const RETURNINDEXEDARRAY:uint = 8;
+		public static const NUMERIC:uint = 16;
+
+		private static const DELETED:Object = new Object ();
+		
+		var vector:Vector.<Object>;
+
+		public function Array (numElements:int = 0)
+		{
+			vector = new Vector.<Object> (numElements);
+		}
+
+		public function Array (...rest)
+		{
+			vector = new Vector.<Object> (rest);
+		}
+
+		public function get length ():uint
+		{
+			return vector.length;
+		}
+
+		public function set length (value:uint):void
+		{
+			vector.length = value;
+		}
+		
+		// TODO:
+		//public function push (...rest):uint
+		//{
+		//	throw new System.NotImplementedException ();
+		//	// TODO: return vector.push (rest);
+		//}
+		
+
+		public function splice (startIndex:int = 0, deleteCount:uint = 4294967295 /*uint.MAX_VALUE*/, ...values):Array
+		{
+			throw new System.NotImplementedException ();
+		}
+
+		//
+		// Extensions to AS3
+		//
+		public function push (value:Object):uint
+		{
+			return vector.push (value);
+		}
+
+		internal function setValue (index:uint, value:Object):void
+		{
+			vector.setValue (index, value);
+		}
+
+		internal function deleteValue (index:uint):void
+		{
+			vector.setValue (index, DELETED);
+		}
+	}
+}

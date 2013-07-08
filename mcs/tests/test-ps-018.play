@@ -1,0 +1,81 @@
+package
+{
+	public const cg1:Object = new Object ();
+	internal const cg2:int = -9;
+
+	public class ConstantFields
+	{
+		public static const cs1:Object = new Object ();
+	//	public static const cs2:* = undefined;
+		internal static const cs3:Object = 8;
+		public static const cs4:Array = [1, 2, 3];
+		public static const cs5:int = 2, cs6:uint = 7;
+		public static const cs8:int = vs8;
+		private static const cs9:String;
+		
+		static var vs8:int = 8;
+
+		public const c1:Object = cs1;
+	//	public const c2:* = undefined;
+		public const c3:Object = null;
+		public const c4:Array = [5];
+		public const c5:int = 20, c6:uint = 70;
+		public const c8:int = v8;
+		private const c9:String;
+		
+		static var v8:int = 8;
+		
+		public static function Main ():int
+		{
+			if (cg1 == null)
+				return 1;
+			if (cg2 != -9)
+				return 2;
+				
+			if (cs1 == null)
+				return 10;
+			if (cs3 != 8)
+				return 11;
+			if (cs4.length != 3)
+				return 12;
+			if (cs5 != 2)
+				return 13;
+			if (cs6 != 7)
+				return 14;
+
+			vs8 = 80;
+			if (cs8 != 80)
+				return 15;
+			if (cs9 != null)
+				return 16;
+			
+			var c = new ConstantFields ();
+			if (c.c1 == null)
+				return 20;
+			if (c.c3 != null)
+				return 21;
+			if (c.c4.length != 1)
+				return 22;
+			if (c.c5 != 20)
+				return 23;
+			if (c.c6 != 70)
+				return 24;
+			if (c.c8 != 8)
+				return 25;
+			if (c.c9 != null)
+				return 25;
+				
+			if (c.MM () != 40)
+				return 30;
+
+			trace ("ok");
+							
+			return 0;
+		}
+
+		function MM (arg1:int = cs5, arg2:int = c5):int
+		{
+			return arg1 * arg2;
+		}
+	}
+}

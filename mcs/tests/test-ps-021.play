@@ -1,0 +1,77 @@
+package
+{
+	public class DeleteOperator
+	{
+		static var s:int;
+
+		public static function Main ():int
+		{
+			var account:Object = new Object(); 
+
+			if (!(delete account.name))
+				return 1;
+			
+			account.name = "Jon"; 
+			
+			if (!(delete account.name))
+				return 2;
+				
+//			if (account.name != undefined)
+//				return 3;
+				
+			var tc:TestClass = new TestClass ();
+			
+			if (delete tc.PropI)
+				return 10;
+
+			if (!delete Foo ())
+				return 11;
+
+			if (s != 1)
+				return 12;
+
+			delete 5;	
+
+			var my_array:Array = new Array(); 
+			my_array[0] = "a";
+			my_array["1"] = "b";
+			my_array[2] = "c";
+
+			if (!(delete my_array[2]))
+				return 20;
+
+			if (my_array.length != 3)
+				return 21;
+
+			if (!(delete my_array[2]))
+				return 22;
+
+			if (!(delete my_array[-2]))
+				return 23;
+
+			if (my_array.length != 3)
+				return 24;
+
+			trace ("ok");
+			return 0;
+		}
+
+		private static function Foo ():void
+		{
+			s++;
+		}
+	}
+
+	public dynamic class TestClass
+	{
+		public static function set PropS(value:Number):void {
+		}		
+
+		protected static function set PropS2(value:Number):void {
+		}		
+		
+		public function get PropI():Number {
+			return 4;
+		}			
+	}	
+}

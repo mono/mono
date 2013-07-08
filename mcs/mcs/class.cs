@@ -19,6 +19,7 @@ using System.Security;
 using System.Security.Permissions;
 using System.Text;
 using System.Diagnostics;
+using System.Linq;
 using Mono.CompilerServices.SymbolWriter;
 
 #if NET_2_1
@@ -348,8 +349,13 @@ namespace Mono.CSharp
 
 		public override string GetSignatureForError ()
 		{
-			if (Parent != null && Parent.MemberName != null) 
-				return Parent.GetSignatureForError () + "." + MemberName.GetSignatureForError ();
+			if (Parent != null && Parent.MemberName != null) {
+				var parent = Parent.GetSignatureForError ();
+				if (string.IsNullOrEmpty (parent))
+					return MemberName.GetSignatureForError ();
+
+				return parent + "." + MemberName.GetSignatureForError ();
+			}
 
 			return MemberName.GetSignatureForError ();
 		}
@@ -674,6 +680,8 @@ namespace Mono.CSharp
 				return (ModFlags & Modifiers.PARTIAL) != 0;
 			}
 		}
+
+		public bool IsPlayScriptType { get; set; }
 
 		bool ITypeDefinition.IsTypeForwarder {
 			get {
@@ -1067,6 +1075,24 @@ namespace Mono.CSharp
 			type_bases = baseTypes;
 		}
 
+		public void AddBaseType (FullNamedExpression baseType)
+		{
+			if (type_bases == null)
+				type_bases = new List<FullNamedExpression> ();
+
+			type_bases.Add (baseType);
+		}
+
+		public virtual void AddBaseTypes (List<FullNamedExpression> baseTypes)
+		{
+			if (type_bases == null) {
+				type_bases = baseTypes;
+				return;
+			}
+
+			type_bases.AddRange (baseTypes);
+		}
+
 		/// <summary>
 		///   This function computes the Base class and also the
 		///   list of interfaces that the class or struct @c implements.
@@ -1227,6 +1253,11 @@ namespace Mono.CSharp
 			// Sets .size to 1 for structs with no instance fields
 			//
 			int type_size = Kind == MemberKind.Struct && first_nonstatic_field == null && !(this is StateMachine) ? 1 : 0;
+
+			if (IsPlayScriptType && Parent is CompilationSourceFile) {
+				// TODO: Package in this file could be missing
+				Parent = Parent.Containers.First (l => l is PlayScript.Package).Containers[0];
+			}
 
 			var parent_def = Parent as TypeDefinition;
 			if (parent_def == null) {
@@ -2549,22 +2580,28 @@ namespace Mono.CSharp
 
 	public sealed class Class : ClassOrStruct
 	{
-		const Modifiers AllowedModifiers =
-			Modifiers.NEW |
-			Modifiers.PUBLIC |
-			Modifiers.PROTECTED |
-			Modifiers.INTERNAL |
-			Modifiers.PRIVATE |
-			Modifiers.ABSTRACT |
-			Modifiers.SEALED |
-			Modifiers.STATIC |
-			Modifiers.UNSAFE;
-
-		public Class (TypeContainer parent, MemberName name, Modifiers mod, Attributes attrs)
+		public Class (TypeContainer parent, MemberName name, Modifiers mod, Attributes attrs, bool playScriptType = false)
 			: base (parent, name, attrs, MemberKind.Class)
 		{
+			var allowed =
+				Modifiers.NEW |
+				Modifiers.PUBLIC |
+				Modifiers.PROTECTED |
+				Modifiers.INTERNAL |
+				Modifiers.PRIVATE |
+				Modifiers.ABSTRACT |
+				Modifiers.SEALED |
+				Modifiers.STATIC |
+				Modifiers.UNSAFE;
+
 			var accmods = IsTopLevel ? Modifiers.INTERNAL : Modifiers.PRIVATE;
-			this.ModFlags = ModifiersExtensions.Check (AllowedModifiers, mod, accmods, Location, Report);
+			if (playScriptType) {
+				IsPlayScriptType = true;
+				allowed &= Modifiers.AccessibilityMask;
+				allowed |= Modifiers.DYNAMIC | Modifiers.SEALED;
+			}
+
+			ModFlags = ModifiersExtensions.Check (allowed, mod, accmods, Location, Report);
 			spec = new TypeSpec (Kind, null, this, null, ModFlags);
 		}
 
@@ -2670,7 +2707,13 @@ namespace Mono.CSharp
 			if ((ModFlags & Modifiers.METHOD_EXTENSION) != 0)
 				Module.PredefinedAttributes.Extension.EmitAttribute (TypeBuilder);
 
-			if (base_type != null && base_type.HasDynamicElement) {
+			if (IsPlayScriptType) {
+				if ((ModFlags & Modifiers.DYNAMIC) != 0) {
+					Module.PlayscriptAttributes.DynamicClass.EmitAttribute (TypeBuilder);
+				} else {
+					Module.PlayscriptAttributes.PlayScript.EmitAttribute (TypeBuilder);
+				}
+			} else if (base_type != null && base_type.HasDynamicElement) {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (TypeBuilder, base_type, Location);
 			}
 		}
@@ -3086,8 +3129,8 @@ namespace Mono.CSharp
 		readonly Modifiers explicit_mod_flags;
 		public MethodAttributes flags;
 
-		public InterfaceMemberBase (TypeDefinition parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, MemberName name, Attributes attrs)
-			: base (parent, type, mod, allowed_mod, Modifiers.PRIVATE, name, attrs)
+		public InterfaceMemberBase (TypeDefinition parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, Modifiers defaultModifiers, MemberName name, Attributes attrs)
+			: base (parent, type, mod, allowed_mod, defaultModifiers, name, attrs)
 		{
 			IsInterface = parent.Kind == MemberKind.Interface;
 			IsExplicitImpl = (MemberName.ExplicitInterface != null);
@@ -3455,9 +3498,9 @@ namespace Mono.CSharp
 		//
 		// Returns full metadata method name
 		//
-		public string GetFullName (MemberName name)
+		public override string GetFullName (MemberName name)
 		{
-			return GetFullName (name.Name);
+			return GetFullName (base.GetFullName (name));
 		}
 
 		public string GetFullName (string name)
@@ -3623,6 +3666,20 @@ namespace Mono.CSharp
 			CheckProtectedModifier ();
 
 			return true;
+		}
+
+		//
+		// Returns full metadata method name
+		//
+		public virtual string GetFullName (MemberName name)
+		{
+			if (name.Left != null) {
+				StringBuilder sb = new StringBuilder ();
+				name.CreateMetadataName (sb);
+				return sb.ToString ();
+			}
+
+			return name.Name;
 		}
 
 		public override string GetSignatureForDocumentation ()

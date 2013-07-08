@@ -6,6 +6,7 @@ assembly.cs
 async.cs
 attribute.cs
 cs-tokenizer.cs
+ps-tokenizer.cs
 cfold.cs
 class.cs
 codegen.cs
@@ -40,6 +41,7 @@ namespace.cs
 nullable.cs
 parameter.cs
 pending.cs
+playscript.cs
 property.cs
 reflection.cs
 report.cs

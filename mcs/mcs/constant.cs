@@ -376,6 +376,11 @@ namespace Mono.CSharp {
 			// It exists only as hint not to call Resolve on constants
 			return true;
 		}
+
+		public override Constant ResolveAsPlayScriptConstant (ResolveContext rc)
+		{
+			return this;
+		}
 	}
 
 	public abstract class IntegralConstant : Constant
@@ -2094,7 +2099,7 @@ namespace Mono.CSharp {
 			}
 
 			// Exlude internal compiler types
-			if (targetType.Kind == MemberKind.InternalCompilerType && targetType.BuiltinType != BuiltinTypeSpec.Type.Dynamic)
+			if (targetType.Kind == MemberKind.InternalCompilerType && targetType.BuiltinType != BuiltinTypeSpec.Type.Dynamic && targetType.BuiltinType != BuiltinTypeSpec.Type.Object)
 				return null;
 
 			if (!IsLiteral && !Convert.ImplicitStandardConversionExists (this, targetType))

@@ -1,0 +1,32 @@
+package
+{
+	public class UseNamespaceTest
+	{
+		private namespace Test;
+		private namespace Test2;
+		
+		Test static function Foo ():int
+		{
+			trace (1);
+			return 1;
+		}
+
+		Test2 static function Foo ():int
+		{
+			trace (2);
+			return 2;
+		}
+		
+		public static function Main():int
+		{
+			if (Test::Foo () != 1)
+				return 1;
+
+			if (Test2::Foo () != 2)
+				return 2;
+				
+			return 0;
+		}
+	}
+}
+

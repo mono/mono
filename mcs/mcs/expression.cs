@@ -2279,20 +2279,24 @@ namespace Mono.CSharp
 
 			LeftShift	= 5 | ShiftMask,
 			RightShift	= 6 | ShiftMask,
+			UnsignedRightShift	= 7 | ShiftMask,  // PlayScript Unsigned Right Shift
 
-			LessThan	= 7 | ComparisonMask | RelationalMask,
-			GreaterThan	= 8 | ComparisonMask | RelationalMask,
-			LessThanOrEqual		= 9 | ComparisonMask | RelationalMask,
-			GreaterThanOrEqual	= 10 | ComparisonMask | RelationalMask,
-			Equality	= 11 | ComparisonMask | EqualityMask,
-			Inequality	= 12 | ComparisonMask | EqualityMask,
+			LessThan	= 8 | ComparisonMask | RelationalMask,
+			GreaterThan	= 9 | ComparisonMask | RelationalMask,
+			LessThanOrEqual		= 10 | ComparisonMask | RelationalMask,
+			GreaterThanOrEqual	= 11 | ComparisonMask | RelationalMask,
+			Equality	= 12 | ComparisonMask | EqualityMask,
+			Inequality	= 13 | ComparisonMask | EqualityMask,
+			ReferenceEquality	= 14 | ComparisonMask | EqualityMask,  // PlayScript Reference Equality
+			ReferenceInequality	= 15 | ComparisonMask | EqualityMask,  // PlayScript Reference Inequality
 
-			BitwiseAnd	= 13 | BitwiseMask,
-			ExclusiveOr	= 14 | BitwiseMask,
-			BitwiseOr	= 15 | BitwiseMask,
 
-			LogicalAnd	= 16 | LogicalMask,
-			LogicalOr	= 17 | LogicalMask,
+			BitwiseAnd	= 16 | BitwiseMask,
+			ExclusiveOr	= 17 | BitwiseMask,
+			BitwiseOr	= 18 | BitwiseMask,
+
+			LogicalAnd	= 19 | LogicalMask,
+			LogicalOr	= 20 | LogicalMask,
 
 			//
 			// Operator masks
@@ -2400,6 +2404,9 @@ namespace Mono.CSharp
 			case Operator.RightShift:
 				s = ">>";
 				break;
+			case Operator.UnsignedRightShift:
+				s = ">>>";
+				break;
 			case Operator.LessThan:
 				s = "<";
 				break;
@@ -2415,8 +2422,14 @@ namespace Mono.CSharp
 			case Operator.Equality:
 				s = "==";
 				break;
+			case Operator.ReferenceEquality:
+				s = "===";
+				break;
 			case Operator.Inequality:
 				s = "!=";
+				break;
+			case Operator.ReferenceInequality:
+				s = "!==";
 				break;
 			case Operator.BitwiseAnd:
 				s = "&";
@@ -3332,8 +3345,15 @@ namespace Mono.CSharp
 		Expression DoResolveCore (ResolveContext ec, Expression left_orig, Expression right_orig)
 		{
 			Expression expr = ResolveOperator (ec);
-			if (expr == null)
+			if (expr == null) {
+				if (ec.IsPlayScriptType) {
+					expr = PlayScript.BinaryOperators.ResolveOperator (ec, this, left_orig, right_orig);
+					if (expr != null)
+						return expr;
+				}
+
 				Error_OperatorCannotBeApplied (ec, left_orig, right_orig);
+			}
 
 			if (left == null || right == null)
 				throw new InternalErrorException ("Invalid conversion");
@@ -3791,7 +3811,7 @@ namespace Mono.CSharp
 					if (TypeSpec.IsReferenceType (r))
 						return this;
 
-					if (r.Kind == MemberKind.InternalCompilerType)
+					if (r.Kind == MemberKind.InternalCompilerType && r.BuiltinType != BuiltinTypeSpec.Type.Object)
 						return null;
 				}
 
@@ -3813,7 +3833,7 @@ namespace Mono.CSharp
 					if (TypeSpec.IsReferenceType (l))
 						return this;
 
-					if (l.Kind == MemberKind.InternalCompilerType)
+					if (l.Kind == MemberKind.InternalCompilerType && l.BuiltinType != BuiltinTypeSpec.Type.Object)
 						return null;
 				}
 
@@ -6540,7 +6560,7 @@ namespace Mono.CSharp
 			}
 			
 			if (type is TypeParameterSpec)
-				return DoEmitTypeParameter (ec);
+				return DoEmitTypeParameter (ec);			
 
 			ec.MarkCallEntry (loc);
 			ec.Emit (OpCodes.Newobj, method);
@@ -8619,7 +8639,7 @@ namespace Mono.CSharp
 			const MemberKind dot_kinds = MemberKind.Class | MemberKind.Struct | MemberKind.Delegate | MemberKind.Enum |
 				MemberKind.Interface | MemberKind.TypeParameter | MemberKind.ArrayType;
 
-			return (type.Kind & dot_kinds) != 0 || type.BuiltinType == BuiltinTypeSpec.Type.Dynamic;
+			return (type.Kind & dot_kinds) != 0 || type.BuiltinType == BuiltinTypeSpec.Type.Dynamic || type.BuiltinType == BuiltinTypeSpec.Type.Object;
 		}
 
 		public override Expression LookupNameExpression (ResolveContext rc, MemberLookupRestrictions restrictions)
@@ -8635,7 +8655,7 @@ namespace Mono.CSharp
 			//
 			using (rc.Set (ResolveContext.Options.OmitStructFlowAnalysis)) {
 				if (sn != null) {
-					expr = sn.LookupNameExpression (rc, MemberLookupRestrictions.ReadAccess | MemberLookupRestrictions.ExactArity);
+					expr = sn.LookupNameExpression (rc, MemberLookupRestrictions.ReadAccess | MemberLookupRestrictions.ExactArity | MemberLookupRestrictions.PlayScriptConversion);
 
 					//
 					// Resolve expression which does have type set as we need expression type
@@ -8761,6 +8781,27 @@ namespace Mono.CSharp
 
 				if (member_lookup != null)
 					break;
+
+				if (expr_type.IsDynamicClass && !rc.IsRuntimeBinder) {
+					me = expr as MemberExpr;
+					if (me != null)
+						me.ResolveInstanceExpression (rc, null);
+
+					//
+					// Run defined assigned checks on expressions resolved with
+					// disabled flow-analysis
+					//
+/*
+					if (sn != null) {
+						var vr = expr as VariableReference;
+						if (vr != null)
+							vr.VerifyAssigned (rc);
+					}
+*/
+					Arguments args = new Arguments (1);
+					args.Add (new Argument (new StringLiteral (rc.BuiltinTypes, Name, loc)));
+					return new PlayScript.DynamicClassMemberAccess (expr, args, loc);
+				}
 
 				lookup_arity = 0;
 				restrictions &= ~MemberLookupRestrictions.InvocableOnly;
@@ -9161,6 +9202,10 @@ namespace Mono.CSharp
 			var indexers = MemberCache.FindMembers (type, MemberCache.IndexerNameAlias, false);
 			if (indexers != null || type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 				return new IndexerExpr (indexers, type, this);
+			}
+
+			if (type.IsDynamicClass) {
+				return new PlayScript.DynamicClassMemberAccess (this);
 			}
 
 			if (type != InternalType.ErrorType) {
@@ -10460,6 +10505,13 @@ namespace Mono.CSharp
 						ErrorIsInaccesible (ec, member.GetSignatureForError (), loc);
 						return null;
 					}
+
+					if (t.IsDynamicClass) {
+						Arguments args = new Arguments (1);
+						args.Add (new Argument (new StringLiteral (ec.BuiltinTypes, Name, loc)));
+						target = new PlayScript.DynamicClassMemberAccess (ec.CurrentInitializerVariable, args, loc);
+						return base.DoResolve (ec);
+					}
 				}
 
 				if (member == null) {
@@ -10697,6 +10749,11 @@ namespace Mono.CSharp
 
 					if (!is_collection_initialization) {
 						if (element_names.Contains (element_initializer.Name)) {
+							if (ec.IsPlayScriptType) {
+								initializers.RemoveAt (i--);
+								continue;
+							}
+
 							ec.Report.Error (1912, element_initializer.Location,
 								"An object initializer includes more than one member `{0}' initialization",
 								element_initializer.Name);

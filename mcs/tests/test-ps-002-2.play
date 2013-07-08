@@ -1,0 +1,6 @@
+package {
+	public function testFunction (obj:*, cl:Class):Boolean
+	{
+		return false;
+	}
+}

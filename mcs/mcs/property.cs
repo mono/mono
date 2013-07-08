@@ -36,7 +36,7 @@ namespace Mono.CSharp
 	public abstract class PropertyBasedMember : InterfaceMemberBase
 	{
 		public PropertyBasedMember (TypeDefinition parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, MemberName name, Attributes attrs)
-			: base (parent, type, mod, allowed_mod, name, attrs)
+			: base (parent, type, mod, allowed_mod, Modifiers.PRIVATE, name, attrs)
 		{
 		}
 
@@ -406,7 +406,7 @@ namespace Mono.CSharp
 		}
 
 		PropertyMethod get, set, first;
-		PropertyBuilder PropertyBuilder;
+		protected PropertyBuilder PropertyBuilder;
 
 		public PropertyBase (TypeDefinition parent, FullNamedExpression type, Modifiers mod_flags, Modifiers allowed_mod, MemberName name, Attributes attrs)
 			: base (parent, type, mod_flags, allowed_mod, name, attrs)

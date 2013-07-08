@@ -1,0 +1,33 @@
+package
+{
+	public static function Main():int
+	{
+		var a:BaseClass = new TestClass ();
+		if (a.p != 15)
+			return 1;
+			
+		a = new BaseClass ();
+		if (a.p != 3)
+			return 2;
+		
+		return 0;
+	}
+}
+
+class BaseClass
+{
+	public var p:int;
+	
+	function BaseClass ()
+	{
+		p = 3;
+	}
+}
+
+class TestClass extends BaseClass
+{
+	function TestClass ()
+	{
+		p *= 5;
+	}
+}

@@ -1,0 +1,14 @@
+package
+{
+	public class base 
+	{
+		protected function base() 
+		{
+		}
+		
+		public virtual function F1 () : String
+		{
+			return "a";
+		}
+	}
+}
