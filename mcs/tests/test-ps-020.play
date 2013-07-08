@@ -1,0 +1,60 @@
+package
+{
+	public class InOperator
+	{
+		public static function Main ():int
+		{
+			if (!("PI" in Math))
+				return 1;
+
+			var o:Object = "PI";
+			if (!(o in Math))
+				return 2;
+
+			o = Math;
+			if (!("PI" in o))
+				return 21;
+
+			if ("test" in Main)
+				return 3;
+
+			if ("PropI" in TestClass)
+				return 4;
+				
+			if (!("PropI" in new TestClass ()))
+				return 5;
+
+			if ("PropS" in new TestClass ())
+				return 6;
+				
+			if (!("PropS" in TestClass))
+				return 7;
+
+			if ("PropS2" in TestClass)
+				return 8;
+
+			var a_i:Object = [1, 4];
+			var o_i:Object = -0;
+			if (!(o_i in a_i))
+				return 20;
+				
+			if (3 in a_i)
+				return 21;
+				
+			trace ("ok");
+			return 0;
+		}
+	}
+
+	public class TestClass
+	{
+		public static function set PropS(value:Number):void {
+		}		
+
+		protected static function set PropS2(value:Number):void {
+		}		
+		
+		public function set PropI(value:Number):void {
+		}			
+	}	
+}

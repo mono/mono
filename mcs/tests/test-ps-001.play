@@ -1,0 +1,10 @@
+package
+{
+	public class HelloWorld 
+	{
+		public static function Main():void
+		{
+			trace ("Hello World!");
+		}
+	}
+}

@@ -1,0 +1,49 @@
+// Copyright 2013 Zynga Inc.
+//	
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//		
+//      Unless required by applicable law or agreed to in writing, software
+//      distributed under the License is distributed on an "AS IS" BASIS,
+//      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//      See the License for the specific language governing permissions and
+//      limitations under the License.
+
+package {
+
+	public class QName {
+	
+		//
+		// Properties
+		//
+		
+		public property localName : String { get { return mLocalName; } }
+
+ 	 	public property uri : String { get { return mUri; } }
+
+		//
+		// Methods 
+		//
+		
+		public function QName(uri:String, localName:String) {
+			mUri = uri;
+			mLocalName = localName;
+		}
+ 	 	
+		public function toString():String {
+			throw new System.NotImplementedException();
+		}
+ 	 	
+		public function valueOf():Object {
+			throw new System.NotImplementedException();
+		}
+
+		private var mUri:String;
+		private var mLocalName:String;
+	
+	}
+
+}

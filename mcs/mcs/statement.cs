@@ -969,7 +969,7 @@ namespace Mono.CSharp {
 				return false;
 
 			if (expr.Type != block_return_type && expr.Type != InternalType.ErrorType) {
-				expr = Convert.ImplicitConversionRequired (ec, expr, block_return_type, loc);
+				expr = Convert.ImplicitConversionRequiredEnhanced (ec, expr, block_return_type, loc);
 
 				if (expr == null) {
 					if (am != null && block_return_type == ec.ReturnType) {

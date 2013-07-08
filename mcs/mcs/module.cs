@@ -127,6 +127,9 @@ namespace Mono.CSharp
 		PredefinedAttributes predefined_attributes;
 		PredefinedTypes predefined_types;
 		PredefinedMembers predefined_members;
+		PlayScript.PredefinedAttributes playscript_attributes;
+		PlayScript.PredefinedTypes playscript_types;
+		PlayScript.PredefinedMembers playscript_members;
 
 		public Binary.PredefinedOperator[] OperatorsBinaryEqualityLifted;
 		public Binary.PredefinedOperator[] OperatorsBinaryLifted;
@@ -266,6 +269,24 @@ namespace Mono.CSharp
 		internal PredefinedTypes PredefinedTypes {
 			get {
 				return predefined_types;
+			}
+		}
+
+		internal PlayScript.PredefinedAttributes PlayscriptAttributes {
+			get {
+				return playscript_attributes;
+			}
+		}
+
+		internal PlayScript.PredefinedTypes PlayscriptTypes {
+			get {
+				return playscript_types;
+			}
+		}
+
+		internal PlayScript.PredefinedMembers PlayScriptMembers {
+			get {
+				return playscript_members;
 			}
 		}
 
@@ -563,6 +584,10 @@ namespace Mono.CSharp
 
 			OperatorsBinaryEqualityLifted = Binary.CreateEqualityLiftedOperatorsTable (this);
 			OperatorsBinaryLifted = Binary.CreateStandardLiftedOperatorsTable (this);
+
+			playscript_attributes = new PlayScript.PredefinedAttributes (this);
+			playscript_types = new PlayScript.PredefinedTypes (this);
+			playscript_members = new PlayScript.PredefinedMembers (this);
 		}
 
 		public override bool IsClsComplianceRequired ()

@@ -191,6 +191,15 @@ namespace Mono.CSharp
 		}
 
 		//
+		// Only used by PlayScript dynamic classes
+		//
+		public bool IsDynamicClass {
+			get {
+				return (Modifiers & Modifiers.DYNAMIC) != 0;
+			}
+		}
+
+		//
 		// Returns true for instances of Expression<T>
 		//
 		public virtual bool IsExpressionTreeType {
@@ -647,7 +656,7 @@ namespace Mono.CSharp
 				//
 				// Null is considered to be a reference type
 				//			
-				return t == InternalType.NullLiteral || t.BuiltinType == BuiltinTypeSpec.Type.Dynamic;
+				return t == InternalType.NullLiteral || t.BuiltinType == BuiltinTypeSpec.Type.Dynamic || t.BuiltinType == BuiltinTypeSpec.Type.Object;
 			default:
 				return true;
 			}
@@ -920,7 +929,7 @@ namespace Mono.CSharp
 			case "String": return "string";
 			case "Boolean": return "bool";
 			case "Void": return "void";
-			case "Object": return "object";
+			case "Object": return ns.Length == 0 ? name : "object";
 			case "UInt32": return "uint";
 			case "Int16": return "short";
 			case "UInt16": return "ushort";
@@ -1388,6 +1397,7 @@ namespace Mono.CSharp
 		bool IsPartial { get; }
 		bool IsComImport { get; }
 		bool IsTypeForwarder { get; }
+		bool IsPlayScriptType { get; }
 		int TypeParametersCount { get; }
 		TypeParameterSpec[] TypeParameters { get; }
 
@@ -1448,6 +1458,12 @@ namespace Mono.CSharp
 		}
 
 		bool ITypeDefinition.IsPartial {
+			get {
+				return false;
+			}
+		}
+
+		bool ITypeDefinition.IsPlayScriptType {
 			get {
 				return false;
 			}
@@ -1584,6 +1600,12 @@ namespace Mono.CSharp
 		}
 
 		bool ITypeDefinition.IsTypeForwarder {
+			get {
+				return false;
+			}
+		}
+
+		bool ITypeDefinition.IsPlayScriptType {
 			get {
 				return false;
 			}

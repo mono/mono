@@ -1,0 +1,19 @@
+package
+{
+	public class conversions
+	{
+		public static function Main():int
+		{
+			var i:int = -1;
+			var u:uint = i;
+			if (u != 4294967295)
+				return 1;
+				
+			i = u - 1;
+			if (i != -2)
+				return 2;
+				
+			return 0;
+		}
+	}
+}

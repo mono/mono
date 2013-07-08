@@ -9,6 +9,8 @@
 // Copyright 2003-2008 Novell, Inc.
 //
 
+using System;
+
 #if STATIC
 using IKVM.Reflection;
 #else
@@ -120,6 +122,9 @@ namespace Mono.CSharp {
 		public ConstSpec (TypeSpec declaringType, IMemberDefinition definition, TypeSpec memberType, FieldInfo fi, Modifiers mod, Expression value)
 			: base (declaringType, definition, memberType, fi, mod)
 		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+
 			this.value = value;
 		}
 

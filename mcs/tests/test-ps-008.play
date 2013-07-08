@@ -1,0 +1,59 @@
+package
+{
+	public dynamic class test
+	{
+		public static function Main():int
+		{
+			var res:int;
+			res = Local ();
+			if (res != 0)
+				return res + 10;
+				
+			res = Imported ();
+			if (res != 0)
+				return res + 20;
+				
+			return 0;
+		}
+		
+		static function Local ():int
+		{
+			var m:test = new test ();
+			m["Prop"] = 500;
+			if (m.Prop != 500)
+				return 1;
+
+			if (m["Prop"] != 500)
+				return 2;
+
+			if (m.Prop != 500)
+				return 3;
+
+			m.Prop = 300;
+			if (m.Prop != 300)
+				return 4;
+			
+			return 0;
+		}
+		
+		static function Imported ():int
+		{
+			var m:Array = new Array ();
+			m["Prop"] = 500;
+			if (m.Prop != 500)
+				return 1;
+				
+			if (m["Prop"] != 500)
+				return 2;
+
+			if (m.Prop != 500)
+				return 3;
+
+			m.Prop = 300;
+			if (m.Prop != 300)
+				return 4;
+				
+			return 0;
+		}
+	}
+}

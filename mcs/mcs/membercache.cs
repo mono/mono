@@ -280,7 +280,7 @@ namespace Mono.CSharp {
 		{
 			// Explicit names cannot be looked-up but can be used for
 			// collision checking (no name mangling needed)
-			if (imb.IsExplicitImpl)
+			if (imb.IsExplicitImpl || imb.MemberName.Left != null)
 				AddMember (exlicitName, ms, false);
 			else
 				AddMember (ms);
@@ -901,7 +901,7 @@ namespace Mono.CSharp {
 			if (mc is Constructor)
 				return mc.IsStatic ? Constructor.TypeConstructorName : Constructor.ConstructorName;
 
-			return mc.MemberName.Name;
+			return mc.MemberName.LookupName;
 		}
 
 		//
