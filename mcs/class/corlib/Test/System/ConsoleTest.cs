@@ -331,6 +331,16 @@ public class ConsoleTest
 	}
 
 #if !MOBILE
+
+#if NET_4_5
+	[Test]
+	public void Foo ()
+	{
+		Console.SetError (TextWriter.Null);
+		Assert.IsFalse (Console.IsErrorRedirected);
+	}
+#endif
+
 	// Bug 678357
 	[Test]
 	public void EncodingTest ()
