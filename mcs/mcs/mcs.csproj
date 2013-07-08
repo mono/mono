@@ -139,7 +139,10 @@
     </Compile>
     <Compile Include="parameter.cs" />
     <Compile Include="pending.cs" />
+    <Compile Include="playscript.cs" />
     <Compile Include="property.cs" />
+    <Compile Include="ps-parser.cs" />
+    <Compile Include="ps-tokenizer.cs" />
     <Compile Include="reflection.cs" />
     <Compile Include="report.cs" />
     <Compile Include="settings.cs">

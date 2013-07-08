@@ -112,6 +112,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public virtual string LookupName {
+			get {
+				return Name;
+			}
+		}
+
 		public void CreateMetadataName (StringBuilder sb)
 		{
 			if (Left != null)
@@ -137,7 +143,7 @@ namespace Mono.CSharp {
 			return Left.GetSignatureForDocumentation () + "." + s;
 		}
 
-		public string GetSignatureForError ()
+		public virtual string GetSignatureForError ()
 		{
 			string s = TypeParameters == null ? null : "<" + TypeParameters.GetSignatureForError () + ">";
 			s = Name + s;
@@ -1288,5 +1294,55 @@ namespace Mono.CSharp {
 	public interface IInterfaceMemberSpec
 	{
 		TypeSpec MemberType { get; }
+	}
+
+	class AliasMemberDefinition : IMemberDefinition
+	{
+		readonly string name;
+		readonly IMemberDefinition original;
+
+		public AliasMemberDefinition (string name, IMemberDefinition original)
+		{
+			this.name = name;
+			this.original = original;
+		}
+
+		public bool? CLSAttributeValue {
+			get {
+				return original.CLSAttributeValue;
+			}
+		}
+
+		public string Name {
+			get {
+				return name;
+			}
+		}
+
+		public bool IsImported {
+			get {
+				return original.IsImported;
+			}
+		}
+
+		public string[] ConditionalConditions ()
+		{
+			return original.ConditionalConditions ();
+		}
+
+		public ObsoleteAttribute GetAttributeObsolete ()
+		{
+			return original.GetAttributeObsolete ();
+		}
+
+		public void SetIsAssigned ()
+		{
+			original.SetIsAssigned ();
+		}
+
+		public void SetIsUsed ()
+		{
+			original.SetIsUsed ();
+		}
 	}
 }

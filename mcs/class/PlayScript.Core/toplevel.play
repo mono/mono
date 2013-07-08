@@ -1,0 +1,119 @@
+//
+// toplevel.play
+//
+// Authors:
+//	Marek Safar  <marek.safar@gmail.com>
+//
+// Copyright 2013 Zynga Inc.
+// Copyright (C) 2013 Xamarin, Inc (http://www.xamarin.com)
+//	
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//		
+//      Unless required by applicable law or agreed to in writing, software
+//      distributed under the License is distributed on an "AS IS" BASIS,
+//      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//      See the License for the specific language governing permissions and
+//      limitations under the License.
+
+package {
+
+	public function isA(obj:*, cl:Class):Boolean {
+		throw new System.NotImplementedException();	
+	}
+
+	public function decodeURI(uri:String):String {
+		throw new System.NotImplementedException();	
+	}
+ 	 	
+	public function decodeURIComponent(uri:String):String {
+		throw new System.NotImplementedException();	
+	}
+ 	 	
+	public function encodeURI(uri:String):String {
+		throw new System.NotImplementedException();	
+	}
+ 	 	
+	public function encodeURIComponent(uri:String):String {
+		throw new System.NotImplementedException();	
+	}
+ 	 	
+	public function escape(str:String):String {
+		throw new System.NotImplementedException();	
+	}
+ 	 	
+	public function isFinite(num:Number):Boolean {
+		throw new System.NotImplementedException();	
+	}
+ 	 	
+	public function isNaN(num:Number):Boolean {
+		return System.Double.IsNaN(num);
+	}
+	 	 	
+	public function isXMLName(str:String):Boolean {
+		throw new System.NotImplementedException();	
+	}
+ 	 	
+	public function parseFloat(str:String):Number {
+		if (!System.String.IsNullOrEmpty(str))
+		{
+			return System.Double.Parse(str);
+		} else {
+			return System.Double.NaN;
+		}
+	}
+
+	public static function trace(o:System.Object):void {
+//		System.Diagnostics.Debug.WriteLine(o);
+		System.Console.WriteLine(o);
+	}
+		
+	public static function trace(o1:System.Object, o2:System.Object):void {
+//		System.Diagnostics.Debug.WriteLine("{0}{1}", o1, o2);
+		System.Console.WriteLine("{0} {1}", o1, o2);
+	}
+
+	public static function trace(o1:System.Object, o2:System.Object, o3:System.Object):void {
+//		System.Diagnostics.Debug.WriteLine("{0}{1}{2}", o1, o2, o3);
+		System.Console.WriteLine("{0} {1} {2}", o1, o2, o3);
+	}
+
+	public static function trace(o1:System.Object, o2:System.Object, o3:System.Object, ...args):void {
+		var argsStr = System.String.Concat(args);
+//		System.Diagnostics.Debug.WriteLine("{0}{1}{2}{3}", o1, o2, o3, argsStr);
+		System.Console.WriteLine("{0} {1} {2} {3}", o1, o2, o3, argsStr);
+	}
+ 	 	
+	public function parseInt(str:String, radix:uint = 0):int {
+		if (radix != 0 && radix != 10) 
+			throw new System.NotImplementedException();
+			
+		return System.Int32.Parse(str);	
+	}
+ 	 	
+	public function unescape(str:String):String {
+		throw new System.NotImplementedException();
+	}
+
+	// Constants
+	public const undefined : * = PlayScript.Runtime.Undefined.Value;
+	public const Infinity : Number = System.Double.PositiveInfinity;
+	public const NaN : Number = System.Double.NaN;
+
+/*	
+	public function loadEmbed(baseObject:Object, fieldName:String):Object
+	{
+		// pass this off to C# code
+		return PlayScript.Player.LoadEmbed(baseObject, fieldName);
+	}
+
+	public function invokeStaticMethod(type:Class, methodName:String, args:Array):Object
+	{
+		// pass this off to C# code
+		return PlayScript.Player.InvokeStaticMethod(type, methodName, args);
+	}
+*/
+}

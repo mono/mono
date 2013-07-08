@@ -1,0 +1,282 @@
+// Copyright 2013 Zynga Inc.
+//	
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//		
+//      Unless required by applicable law or agreed to in writing, software
+//      distributed under the License is distributed on an "AS IS" BASIS,
+//      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//      See the License for the specific language governing permissions and
+//      limitations under the License.
+
+package {
+	import System.*;
+	import System.Xml.*;
+
+	public class XML {
+	
+		var mElement:XmlElement;
+
+		//
+		// Properties
+		//
+		
+		public static property ignoreComments : Boolean {
+			get { throw new System.NotImplementedException(); }
+			set { throw new System.NotImplementedException(); }
+		}
+
+ 	 	public static property ignoreProcessingInstructions : Boolean {
+ 	 		get { throw new System.NotImplementedException(); } 
+ 	 		set { throw new System.NotImplementedException(); } 
+ 	 	}
+
+ 	 	public static property ignoreWhitespace : Boolean { 
+ 	 		get { throw new System.NotImplementedException(); } 
+ 	 		set { throw new System.NotImplementedException(); } 
+ 	 	}
+
+ 	 	public static property prettyIndent : int { 
+ 	 		get { throw new System.NotImplementedException(); } 
+ 	 		set { throw new System.NotImplementedException(); } 
+ 	 	}
+
+ 	 	public static property prettyPrinting : Boolean { 
+ 	 		get { throw new System.NotImplementedException(); } 
+ 	 		set { throw new System.NotImplementedException(); } 
+ 		}
+
+ 	 	//
+ 	 	// Methods
+ 	 	// 
+ 	 	
+ 	 	public function XML(value:Object) {
+/* 	 	
+			if (value is XmlElement) 
+			{
+				mElement = value as XmlElement;
+			} else if (value is flash.utils.ByteArray) 
+			{
+				var ba:flash.utils.ByteArray = value as flash.utils.ByteArray;
+
+				// read string from byte array
+				ba.position = 0;
+				var xmlString:String = ba.readAllUTF();
+
+				// parse xml document from string
+				var doc:XmlDocument = new XmlDocument();
+				doc.LoadXml(xmlString);
+				mElement = doc.DocumentElement;
+			} else if (value is String)
+			{
+				// parse xml document from string
+				var doc:XmlDocument = new XmlDocument();
+				doc.LoadXml(value as String);
+				mElement = doc.DocumentElement;
+			}
+			else
+			{
+				throw new System.NotImplementedException();
+			}
+*/
+ 	 	}
+
+ 	 	internal function XML(value:XmlNode)
+ 	 	{
+ 	 		// TODO: mElement = value;
+ 	 	}
+ 	 	
+		public function addNamespace(ns:Object):XML {
+			throw new System.NotImplementedException();
+		}
+ 	 	
+		public function appendChild(child:Object):XML {
+			throw new System.NotImplementedException();
+		}
+ 	 	
+		/*
+		public function attribute(attributeName:String):XMLList {
+			throw new System.NotImplementedException();
+		}*/
+
+		public function attribute(attributeName:String):String {
+			return mElement.HasAttribute(attributeName) ? mElement.GetAttribute(attributeName) : null;
+		}
+
+		public function attributes():XMLList {
+			throw new System.NotImplementedException();
+		}
+ 	 	
+		public function child(propertyName:Object):XMLList {
+			throw new System.NotImplementedException();
+		}
+ 	 	
+		public function childIndex():int {
+			throw new System.NotImplementedException();
+		}
+ 	 	
+		public function children():XMLList {
+			throw new System.NotImplementedException();
+		}
+ 	 	
+		public function comments():XMLList {
+			throw new System.NotImplementedException();
+		}
+ 	 	
+		public function contains(value:XML):Boolean {
+			throw new System.NotImplementedException();
+		}
+ 	 	
+		public function copy():XML {
+			throw new System.NotImplementedException();
+		}
+ 	 	
+		public static function defaultSettings():Object {
+			throw new System.NotImplementedException();
+		}
+		
+		public function descendants():XMLList {
+			throw new System.NotImplementedException();
+		}		
+		
+		public function descendants(name:Object):XMLList {
+			throw new System.NotImplementedException();
+		}
+		
+		public function elements():XMLList {
+			return new XMLList(mElement.GetElementsByTagName("*"));
+		}		
+		
+		public function elements(name:String):XMLList {
+			return new XMLList(mElement.GetElementsByTagName(name));
+		}
+		
+		public function hasComplexContent():Boolean {
+			throw new System.NotImplementedException();
+		}
+		
+		public function hasOwnProperty(p:String):Boolean {
+			throw new System.NotImplementedException();
+		}
+		
+		public function hasSimpleContent():Boolean {
+			throw new System.NotImplementedException();
+		}
+		
+		public function inScopeNamespaces():Array {
+			throw new System.NotImplementedException();
+		}
+		
+		public function insertChildAfter(child1:Object, child2:Object):* {
+			throw new System.NotImplementedException();
+		}
+		
+		public function insertChildBefore(child1:Object, child2:Object):* {
+			throw new System.NotImplementedException();
+		}
+		
+		public function length():int {
+			throw new System.NotImplementedException();
+		}
+		
+		public function localName():String {
+			return mElement.LocalName;
+		}
+		
+		public function name():QName {
+			return new QName(mElement.NamespaceURI, mElement.Name);
+		}
+		
+		public function @namespace(prefix:String = null):* {
+			throw new System.NotImplementedException();
+		}
+		
+		public function namespaceDeclarations():Array {
+			throw new System.NotImplementedException();
+		}
+		
+		public function nodeKind():String {
+			throw new System.NotImplementedException();
+		}
+		
+		public function normalize():XML {
+			throw new System.NotImplementedException();
+		}
+		
+		public function parent():* {
+			throw new System.NotImplementedException();
+		}
+		
+		public function prependChild(value:Object):XML {
+			throw new System.NotImplementedException();
+		}
+		
+		public function processingInstructions(name:String):XMLList {
+			throw new System.NotImplementedException();
+		}
+		
+		public function propertyIsEnumerable(p:String):Boolean {
+			throw new System.NotImplementedException();
+		}
+		
+		public function removeNamespace(ns:Namespace):XML {
+			throw new System.NotImplementedException();
+		}
+		
+		public function replace(propertyName:Object, value:XML):XML {
+			throw new System.NotImplementedException();
+		}
+		
+		public function setChildren(value:Object):XML {
+			throw new System.NotImplementedException();
+		}
+		
+		public function setLocalName(name:String):void {
+			throw new System.NotImplementedException();		
+		}
+		
+		public function setName(name:String):void {
+			throw new System.NotImplementedException();
+		}
+		
+		public function setNamespace(ns:Namespace):void {
+			throw new System.NotImplementedException();
+		}
+		
+		public function setSettings(... rest):void {
+			throw new System.NotImplementedException();
+		}
+		
+		public function settings():Object {
+			throw new System.NotImplementedException();
+		}
+		
+		public function text():XMLList {
+			throw new System.NotImplementedException();
+		}
+		
+		public function toJSON(k:String):* {
+			throw new System.NotImplementedException();
+		}
+		
+		public function toString():String {
+            throw new System.NotImplementedException();
+		}
+		
+		public function toXMLString():String {
+			throw new System.NotImplementedException();
+		}
+		
+		public function valueOf():Object {
+			throw new System.NotImplementedException();
+		}
+	
+		public static implicit operator String (xml:XML) {
+			throw new System.NotImplementedException();
+		}	
+	}
+
+}

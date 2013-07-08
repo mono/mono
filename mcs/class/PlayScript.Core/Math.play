@@ -1,0 +1,127 @@
+// Copyright 2013 Zynga Inc.
+//	
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//		
+//      Unless required by applicable law or agreed to in writing, software
+//      distributed under the License is distributed on an "AS IS" BASIS,
+//      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//      See the License for the specific language governing permissions and
+//      limitations under the License.
+
+package {
+
+	public class Math {
+		
+		//
+		// Constants
+		//
+
+ 	 	public static const E : Number = 2.71828182845905;
+
+ 	 	public static const LN10 : Number = 2.302585092994046;
+ 	 	
+ 	 	public static const LN2 : Number = 0.6931471805599453;
+
+		public static const LOG10E : Number = 0.4342944819032518;
+
+		public static const LOG2E : Number = 1.442695040888963387;
+
+		public static const PI : Number = 3.141592653589793;
+
+		public static const SQRT1_2 : Number = 0.7071067811865476;
+
+		public static const SQRT2 : Number = 1.4142135623730951;
+	
+		//
+		// Methods
+		//
+	
+		public static function abs(val:Number):Number {
+			return System.Math.Abs(val);
+		}
+		
+		public static function acos(val:Number):Number {
+			return System.Math.Acos(val);
+		}
+		
+		public static function asin(val:Number):Number {
+			return System.Math.Asin(val);
+		}
+		
+		public static function atan(val:Number):Number {
+			return System.Math.Atan(val);
+		}
+		
+		public static function atan2(y:Number, x:Number):Number {
+			return System.Math.Atan2(y, x);
+		}
+		
+		public static function ceil(val:Number):Number {
+			return System.Math.Ceiling(val);
+		}
+		
+		public static function cos(angleRadians:Number):Number {
+			return System.Math.Cos(angleRadians);
+		}
+		
+		public static function exp(val:Number):Number {
+			return System.Math.Exp(val);
+		}
+		
+		public static function floor(val:Number):Number {
+			return System.Math.Floor(val);
+		}
+		
+		public static function log(val:Number):Number {
+			return System.Math.Log(val);
+		}
+
+		public static function max(val1:Number, val2:Number):Number {
+			return System.Math.Max(val1, val2);
+		}
+				
+		public static function max(val1:Number, val2:Number, ... rest):Number {
+			throw new System.NotImplementedException();
+		}
+
+		public static function min(val1:Number, val2:Number):Number {
+			return System.Math.Min(val1, val2);
+		}
+				
+		public static function min(val1:Number, val2:Number, ... rest):Number {
+			throw new System.NotImplementedException();
+		}
+		
+		public static function pow(base:Number, pow:Number):Number {
+			return System.Math.Pow(base, pow);
+		}
+
+		private static var sRandom:System.Random = new System.Random();
+
+		public static function random():Number {
+			return sRandom.NextDouble();
+		}
+		
+		public static function round(val:Number):Number {
+			return System.Math.Round(val);
+		}
+		
+		public static function sin(angleRadians:Number):Number {
+			return System.Math.Sin(angleRadians);
+		}
+		
+		public static function sqrt(val:Number):Number {
+			return System.Math.Sqrt(val);
+		}
+		
+		public static function tan(angleRadians:Number):Number {
+			return System.Math.Tan(angleRadians);
+		}
+	
+	}
+
+}

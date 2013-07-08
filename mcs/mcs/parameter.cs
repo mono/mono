@@ -216,10 +216,12 @@ namespace Mono.CSharp {
 			CallerMemberName = 1 << 4,
 			CallerLineNumber = 1 << 5,
 			CallerFilePath = 1 << 6,
+			RestArray = 1 << 7,
 
 			RefOutMask = REF | OUT,
-			ModifierMask = PARAMS | REF | OUT | This,
-			CallerMask = CallerMemberName | CallerLineNumber | CallerFilePath
+			ModifierMask = PARAMS | REF | OUT | This | RestArray,
+			CallerMask = CallerMemberName | CallerLineNumber | CallerFilePath,
+			VariableArgumentsMask = PARAMS | RestArray
 		}
 
 		static readonly string[] attribute_targets = new string[] { "param" };
@@ -302,6 +304,9 @@ namespace Mono.CSharp {
 		public FullNamedExpression TypeExpression  {
 			get {
 				return texpr;
+			}
+			protected set {
+				texpr = value;
 			}
 		}
 
@@ -604,6 +609,8 @@ namespace Mono.CSharp {
 				return "ref";
 			case Modifier.This:
 				return "this";
+			case Modifier.RestArray:
+				return "...";
 			default:
 				return "";
 			}
@@ -1058,7 +1065,7 @@ namespace Mono.CSharp {
 			int count = parameters.Length;
 
 			for (int i = 0; i < count; i++){
-				has_params |= (parameters [i].ModFlags & Parameter.Modifier.PARAMS) != 0;
+				has_params |= (parameters [i].ModFlags & Parameter.Modifier.VariableArgumentsMask) != 0;
 			}
 		}
 
@@ -1320,35 +1327,49 @@ namespace Mono.CSharp {
 	//
 	public class DefaultParameterValueExpression : CompositeExpression
 	{
+		bool resolved;
+
 		public DefaultParameterValueExpression (Expression expr)
 			: base (expr)
 		{
 		}
 
-		protected override Expression DoResolve (ResolveContext rc)
-		{
-			return base.DoResolve (rc);
-		}
-
 		public void Resolve (ResolveContext rc, Parameter p)
 		{
+			if (resolved)
+				return;
+
+			resolved = true;
+
 			var expr = Resolve (rc);
 			if (expr == null)
 				return;
 
 			expr = Child;
 
-			if (!(expr is Constant || expr is DefaultValueExpression || (expr is New && ((New) expr).IsDefaultStruct))) {
-				rc.Report.Error (1736, Location,
-					"The expression being assigned to optional parameter `{0}' must be a constant or default value",
-					p.Name);
+			if (!(expr is Constant || (expr is New && ((New) expr).IsDefaultStruct))) {
+				if (rc.IsPlayScriptType) {
+					expr = expr.ResolveAsPlayScriptConstant (rc);
+					if (expr == null) {
+						rc.Report.ErrorPlayScript (1047, Location,
+							"Parameter initializer is not a compile-time constant.");
 
-				return;
+						return;
+					}
+				} else if (!(expr is DefaultValueExpression)) {
+					rc.Report.Error (1736, Location,
+						"The expression being assigned to optional parameter `{0}' must be a constant or default value",
+						p.Name);
+
+					return;
+				}
 			}
 
 			var parameter_type = p.Type;
-			if (type == parameter_type)
+			if (type == parameter_type) {
+				this.expr = expr;
 				return;
+			}
 
 			var res = Convert.ImplicitConversionStandard (rc, expr, parameter_type, Location);
 			if (res != null) {

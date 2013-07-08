@@ -1,0 +1,19 @@
+package
+{
+	public class ObjectInitializer
+	{
+		public static function Main ():int
+		{
+			var o:Object = { type:"Flat Panel", resolution:"1600x1200", value:3, value:5 };
+			if (o.value != 3)
+				return 1;
+
+			if (o.type != "Flat Panel")
+				return 2;
+
+			var o2:* = { };
+
+			return 0;
+		}
+	}
+}

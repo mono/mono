@@ -68,6 +68,9 @@ qcheck2:
 gen-mt-tests:
 	$(TESTER) -mode:nunit -files:'v2' -compiler:$(COMPILER) -issues:known-issues-mt -compiler-options:"-lib:$(topdir)/class/lib/monotouch projects/MonoTouch/ivt.cs"
 
+playscript:
+	$(TESTER) -mode:pos -files:'*-???.play' -compiler:$(COMPILER) -issues:known-issues-$(PROFILE) -log:$(PROFILE).log -il:ver-il-$(PROFILE).xml $(DEFINES) $(TOPTIONS)
+
 test-local:
 	@:
 

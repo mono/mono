@@ -238,6 +238,11 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		public virtual Constant ResolveAsPlayScriptConstant (ResolveContext rc)
+		{
+			return null;
+		}
+
 		public static void ErrorIsInaccesible (IMemberContext rc, string member, Location loc)
 		{
 			rc.Module.Compiler.Report.Error (122, loc, "`{0}' is inaccessible due to its protection level", member);
@@ -732,7 +737,8 @@ namespace Mono.CSharp {
 			None = 0,
 			InvocableOnly = 1,
 			ExactArity = 1 << 2,
-			ReadAccess = 1 << 3
+			ReadAccess = 1 << 3,
+			PlayScriptConversion = 1 << 4
 		}
 
 		//
@@ -3210,7 +3216,7 @@ namespace Mono.CSharp {
 				}
 
 				InstanceExpression = new This (loc);
-				if (this is FieldExpr && rc.CurrentBlock.ParametersBlock.TopBlock.ThisVariable != null) {
+				if (this is FieldExpr && rc.CurrentBlock != null && rc.CurrentBlock.ParametersBlock.TopBlock.ThisVariable != null) {
 					using (rc.Set (ResolveContext.Options.OmitStructFlowAnalysis)) {
 						InstanceExpression = InstanceExpression.Resolve (rc);
 					}
@@ -4624,12 +4630,19 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				if (p_mod != Parameter.Modifier.PARAMS) {
-					p_mod = (pd.FixedParameters[i].ModFlags & ~Parameter.Modifier.PARAMS) | (cpd.FixedParameters[i].ModFlags & Parameter.Modifier.PARAMS);
+				if ((p_mod & Parameter.Modifier.VariableArgumentsMask) == 0) {
+					p_mod = (pd.FixedParameters[i].ModFlags & ~Parameter.Modifier.VariableArgumentsMask) |
+						(cpd.FixedParameters[i].ModFlags & Parameter.Modifier.VariableArgumentsMask);
 					pt = ptypes [i];
 				} else if (!params_expanded_form) {
 					params_expanded_form = true;
-					pt = ((ElementTypeSpec) pt).Element;
+
+					var array = pt as ArrayContainer;
+					if (array != null)
+						pt = array.Element;
+					else
+						pt = ec.Module.PlayscriptTypes.Object;
+
 					i -= 2;
 					continue;
 				}
@@ -4660,9 +4673,12 @@ namespace Mono.CSharp {
 				//
 				// It can be applicable in expanded form (when not doing exact match like for delegates)
 				//
-				if (score != 0 && (p_mod & Parameter.Modifier.PARAMS) != 0 && (restrictions & Restrictions.CovariantDelegate) == 0) {
+				if (score != 0 && (p_mod & Parameter.Modifier.VariableArgumentsMask) != 0 && (restrictions & Restrictions.CovariantDelegate) == 0) {
 					if (!params_expanded_form) {
-						pt = ((ElementTypeSpec) pt).Element;
+						if (p_mod == Parameter.Modifier.PARAMS)
+							pt = ((ArrayContainer) pt).Element;
+						else
+							pt = ec.Module.PlayscriptTypes.Object;
 					}
 
 					if (score > 0)
@@ -4686,8 +4702,13 @@ namespace Mono.CSharp {
 			//
 			// When params parameter has no argument it will be provided later if the method is the best candidate
 			//
-			if (arg_count + 1 == pd.Count && (cpd.FixedParameters [arg_count].ModFlags & Parameter.Modifier.PARAMS) != 0)
+			// ActionScript has different logic for params style arguments when argument count matches. It still
+			// created an Array with 1 element even if argument type is convertible to array
+			//
+			if ((arg_count + 1 == pd.Count && cpd.HasParams) ||
+				(arg_count > 0 && arg_count == param_count && pd.FixedParameters[param_count - 1].ModFlags == Parameter.Modifier.RestArray))
 				params_expanded_form = true;
+
 
 			//
 			// Restore original arguments for dynamic binder to keep the intention of original source code
@@ -5270,18 +5291,22 @@ namespace Mono.CSharp {
 			ArrayInitializer params_initializers = null;
 			bool has_unsafe_arg = pm.MemberType.IsPointer;
 			int arg_count = args == null ? 0 : args.Count;
+			bool playscript_params = false;
 
 			for (; a_idx < arg_count; a_idx++, ++a_pos) {
 				a = args[a_idx];
-				if (p_mod != Parameter.Modifier.PARAMS) {
+				if ((p_mod & Parameter.Modifier.VariableArgumentsMask) == 0) {
 					p_mod = pd.FixedParameters[a_idx].ModFlags;
 					pt = ptypes[a_idx];
 					has_unsafe_arg |= pt.IsPointer;
 
-					if (p_mod == Parameter.Modifier.PARAMS) {
-						if (chose_params_expanded) {
-							params_initializers = new ArrayInitializer (arg_count - a_idx, a.Expr.Location);
-							pt = TypeManager.GetElementType (pt);
+					if (chose_params_expanded && (p_mod & Parameter.Modifier.VariableArgumentsMask) != 0) {
+						params_initializers = new ArrayInitializer (arg_count - a_idx, a.Expr.Location);
+						if (p_mod == Parameter.Modifier.PARAMS) {
+							pt = ((ArrayContainer) pt).Element;
+						} else {
+							playscript_params = true;
+							pt = ec.Module.PlayscriptTypes.Object;
 						}
 					}
 				}
@@ -5379,8 +5404,14 @@ namespace Mono.CSharp {
 					args = new Arguments (1);
 
 				pt = ptypes[pd.Count - 1];
-				pt = TypeManager.GetElementType (pt);
-				has_unsafe_arg |= pt.IsPointer;
+				var array = pt as ArrayContainer;
+				if (array != null) {
+					pt = array.Element;
+					has_unsafe_arg |= pt.IsPointer;
+				} else {
+					playscript_params = true;
+				}
+
 				params_initializers = new ArrayInitializer (0, loc);
 			}
 
@@ -5388,8 +5419,13 @@ namespace Mono.CSharp {
 			// Append an array argument with all params arguments
 			//
 			if (params_initializers != null) {
-				args.Add (new Argument (
-					new ArrayCreation (new TypeExpression (pt, loc), params_initializers, loc).Resolve (ec)));
+				Expression array_init;
+				if (playscript_params)
+					array_init = new PlayScript.ArrayCreation (params_initializers);
+				else
+					array_init = new ArrayCreation (new TypeExpression (pt, loc), params_initializers, loc);
+
+				args.Add (new Argument (array_init.Resolve (ec)));
 				arg_count++;
 			}
 
@@ -6008,7 +6044,6 @@ namespace Mono.CSharp {
 			Error_TypeArgumentsCannotBeUsed (ec, "field", GetSignatureForError (), loc);
 		}
 	}
-
 	
 	//
 	// Expression that evaluates to a Property.
@@ -6016,7 +6051,7 @@ namespace Mono.CSharp {
 	// This is not an LValue because we need to re-write the expression. We
 	// can not take data from the stack and store it.
 	//
-	sealed class PropertyExpr : PropertyOrIndexerExpr<PropertySpec>
+	public sealed class PropertyExpr : PropertyOrIndexerExpr<PropertySpec>
 	{
 		Arguments arguments;
 
@@ -6275,13 +6310,22 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		public override Constant ResolveAsPlayScriptConstant (ResolveContext rc)
+		{
+			var prop = best_candidate.MemberDefinition as PlayScript.IConstantProperty;
+			if (prop != null)
+				return prop.Initializer.ResolveAsPlayScriptConstant (rc);
+
+			return null;
+		}
+
 		public override void SetTypeArguments (ResolveContext ec, TypeArguments ta)
 		{
 			Error_TypeArgumentsCannotBeUsed (ec, "property", GetSignatureForError (), loc);
 		}
 	}
 
-	abstract class PropertyOrIndexerExpr<T> : MemberExpr, IDynamicAssign where T : PropertySpec
+	public abstract class PropertyOrIndexerExpr<T> : MemberExpr, IDynamicAssign where T : PropertySpec
 	{
 		// getter and setter can be different for base calls
 		MethodSpec getter, setter;

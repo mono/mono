@@ -231,6 +231,22 @@ namespace Mono.CSharp {
 			printer.Print (msg, settings.ShowFullPaths);
 		}
 
+		public void WarningPlayScript (int code, Location loc, string format, string arg)
+		{
+			WarningPlayScript (code, loc, string.Format (format, arg));
+		}
+
+		public void WarningPlayScript (int code, Location loc, string error)
+		{
+			if (reporting_disabled > 0)
+				return;
+
+			var msg = new PlayScript.WarningMessage (code, loc, error, extra_information);
+			extra_information.Clear ();
+
+			printer.Print (msg, settings.ShowFullPaths);
+		}
+
 		public void Warning (int code, int level, Location loc, string format, string arg)
 		{
 			Warning (code, level, loc, String.Format (format, arg));
@@ -278,9 +294,30 @@ namespace Mono.CSharp {
 			if (reporting_disabled > 0)
 				return;
 
-			ErrorMessage msg = new ErrorMessage (code, loc, error, extra_information);
+			var msg = new ErrorMessage (code, loc, error, extra_information);
 			extra_information.Clear ();
 
+			ProcessErrorMessage (msg);
+		}
+
+		public void ErrorPlayScript (int code, Location loc, string format, string arg)
+		{
+			ErrorPlayScript (code, loc, string.Format (format, arg));
+		}
+
+		public void ErrorPlayScript (int code, Location loc, string error)
+		{
+			if (reporting_disabled > 0)
+				return;
+
+			var msg = new PlayScript.ErrorMessage (code, loc, error, extra_information);
+			extra_information.Clear ();
+
+			ProcessErrorMessage (msg);
+		}
+
+		void ProcessErrorMessage (AbstractMessage msg)
+		{
 			printer.Print (msg, settings.ShowFullPaths);
 
 			if (settings.Stacktrace)
@@ -489,6 +526,12 @@ namespace Mono.CSharp {
 
 		public abstract bool IsWarning { get; }
 
+		public virtual string LanguagePrefix {
+			get {
+				return "CS";
+			}
+		}
+
 		public Location Location {
 			get { return location; }
 		}
@@ -594,7 +637,7 @@ namespace Mono.CSharp {
 				txt.Append (" ");
 			}
 
-			txt.AppendFormat ("{0} CS{1:0000}: {2}", msg.MessageType, msg.Code, msg.Text);
+			txt.AppendFormat ("{0} {3}{1:0000}: {2}", msg.MessageType, msg.Code, msg.Text, msg.LanguagePrefix);
 
 			if (!msg.IsWarning)
 				output.WriteLine (FormatText (txt.ToString ()));
