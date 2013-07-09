@@ -1204,7 +1204,7 @@ namespace MonoTests.System.Text
 		}
 
 		// DecoderFallbackExceptionTest
-		//   This struct describes a DecoderFallbackExceptions test. It
+		//   This struct describes a DecoderFallbackExceptions' test. It
 		//   contains the expected indexes (eindex) and bad-bytes lengths
 		//   (elen) delivered by the first and subsequent
 		//   DecoderFallbackException throwed when the utf8 conversion routines
@@ -1309,7 +1309,7 @@ namespace MonoTests.System.Text
 						out bytesUsed, out charsUsed,
 						out completed);
 					c += bytesUsed;
-				} catch(DecoderFallbackException ex) {
+				} catch (DecoderFallbackException ex) {
 					Assert.IsTrue (
 						t.eindex.Length > ce,
 						String.Format (
@@ -1340,16 +1340,15 @@ namespace MonoTests.System.Text
 								ex.BytesUnknown[i],
 								ex.Index + i));
 					c += ex.BytesUnknown.Length + ex.Index;
-					ce++;
 					dec.Reset ();
-					continue;
+					ce++;
 				}
 			}
 			Assert.IsTrue (
-				t.eindex.Length <= ce,
+				ce == t.eindex.Length,
 				String.Format (
-					"test#{0}-2-{1}: UNEXPECTED SUCCESS",
-					testno, block_size));
+					"test#{0}-2-{1}: UNEXPECTED SUCCESS (expected {2} exceptions, but happened {3})",
+					testno, block_size, t.eindex.Length, ce));
 		}
 
 		[Test]
@@ -1941,11 +1940,220 @@ namespace MonoTests.System.Text
 				chars = new char [utf8.GetMaxCharCount (tests[t].bytes.Length)];
 
 				// #1 complete conversion
-				DecoderFallbackExceptions_GetChars (chars, t, dec, tests[t]);
+				DecoderFallbackExceptions_GetChars (chars, t+1, dec, tests[t]);
 
 				// #2 convert with several block_sizes
-				for (int bs = 1; bs < tests[t].bytes.Length; bs++)
-					DecoderFallbackExceptions_Convert (chars, t, dec, tests[t], bs);
+				for (int bs = 1; bs <= tests[t].bytes.Length; bs++)
+					DecoderFallbackExceptions_Convert (chars, t+1, dec, tests[t], bs);
+			}
+		}
+
+		// EncoderFallbackExceptionTest
+		//   This struct describes a EncoderFallbackExceptions' test.
+		//   It contains an array (index_fail) which is void if it is a
+		//   valid UTF16 string.
+		//   If it is an invalid string this array contains indexes
+		//   (in 'index_fail') which point to the invalid chars in
+		//   'str'.
+		//   This array is hardcoded in each tests and it contains the
+		//   absolute positions found in a sequence of
+		//   EncoderFallbackException exceptions thrown if you convert
+		//   this strings on a MS.NET platform.
+		struct EncoderFallbackExceptionTest
+		{
+			public string str;
+			public int [] eindex;
+			public EncoderFallbackExceptionTest (
+					string str,
+					int [] eindex)
+			{
+				this.str = str;
+				this.eindex = eindex;
+			}
+		}
+
+		// try to encode some bytes at once with GetBytes
+		private void EncoderFallbackExceptions_GetBytes (
+			byte [] bytes,
+			int testno,
+			Encoder enc,
+			EncoderFallbackExceptionTest t)
+		{
+			try {
+				enc.GetBytes (
+					t.str.ToCharArray (), 0, t.str.Length,
+					bytes, 0, true);
+				Assert.IsTrue (
+					t.eindex.Length == 0,
+					String.Format (
+						"test#{0}-1: UNEXPECTED SUCCESS",
+						testno));
+			} catch(EncoderFallbackException ex) {
+				Assert.IsTrue (
+					t.eindex.Length > 0,
+					String.Format (
+						"test#{0}-1: UNEXPECTED FAIL",
+						testno));
+				Assert.IsTrue (
+					ex.Index == t.eindex[0],
+					String.Format (
+						"test#{0}-1: Expected exception at {1} not {2}.",
+						testno, t.eindex[0], ex.Index));
+				Assert.IsTrue (
+					!ex.IsUnknownSurrogate (),
+					String.Format (
+						"test#{0}-1: Expected false not {1} in IsUnknownSurrogate().",
+						testno,
+						ex.IsUnknownSurrogate ()));
+				// NOTE: I know that in the previous check we
+				// have asserted that ex.IsUnknownSurrogate()
+				// is always false, but this does not mean that
+				// we don't have to take in consideration its
+				// real value for the next check.
+				if (ex.IsUnknownSurrogate ())
+					Assert.IsTrue (
+						ex.CharUnknownHigh == t.str[ex.Index]
+						&& ex.CharUnknownLow == t.str[ex.Index + 1],
+						String.Format (
+							"test#{0}-1: expected ({1:X}, {2:X}) not ({3:X}, {4:X}).",
+							testno,
+							t.str[ex.Index],
+							t.str[ex.Index + 1],
+							ex.CharUnknownHigh,
+							ex.CharUnknownLow));
+				else
+					Assert.IsTrue (
+						ex.CharUnknown == t.str[ex.Index],
+						String.Format (
+							"test#{0}-1: expected ({1:X}) not ({2:X}).",
+							testno,
+							t.str[ex.Index],
+							ex.CharUnknown));
+				enc.Reset ();
+			}
+		}
+
+		private void EncoderFallbackExceptions_Convert (
+			byte [] bytes,
+			int testno,
+			Encoder enc,
+			EncoderFallbackExceptionTest t,
+			int block_size)
+		{
+			int charsUsed, bytesUsed;
+			bool completed;
+
+			int ce = 0; // current exception
+
+			for (int c = 0; c < t.str.Length; ) {
+				//Console.WriteLine ("test#{0}-2-{1}: c={2}", testno, block_size, c);
+				try {
+					int bu = c + block_size > t.str.Length
+							? t.str.Length - c
+							: block_size;
+					enc.Convert (
+						t.str.ToCharArray (), c, bu,
+						bytes, 0, bytes.Length,
+						c + bu >= t.str.Length,
+						out charsUsed, out bytesUsed,
+						out completed);
+					c += charsUsed;
+				} catch (EncoderFallbackException ex) {
+					//Console.WriteLine (
+					//	"test#{0}-2-{1}#{2}: Exception (Index={3}, UnknownSurrogate={4})",
+					//	testno, block_size, ce,
+					//	ex.Index, ex.IsUnknownSurrogate ());
+					Assert.IsTrue (
+						ce < t.eindex.Length,
+						String.Format (
+							"test#{0}-2-{1}#{2}: UNEXPECTED EXCEPTION (Index={3}, UnknownSurrogate={4})",
+							testno, block_size, ce,
+							ex.Index,
+							ex.IsUnknownSurrogate ()));
+					Assert.IsTrue (
+						ex.Index + c == t.eindex[ce],
+						String.Format (
+							"test#{0}-2-{1}#{2}: Expected exception at {3} not {4}.",
+							testno, block_size, ce,
+							t.eindex[ce],
+							ex.Index + c));
+					Assert.IsTrue (
+						!ex.IsUnknownSurrogate (),
+						String.Format (
+							"test#{0}-2-{1}#{2}: Expected false not {3} in IsUnknownSurrogate().",
+							testno, block_size, ce,
+							ex.IsUnknownSurrogate ()));
+					if (ex.IsUnknownSurrogate ()) {
+						Assert.IsTrue (
+							ex.CharUnknownHigh == t.str[ex.Index + c]
+							&& ex.CharUnknownLow == t.str[ex.Index + c + 1],
+							String.Format (
+								"test#{0}-2-{1}#{2}: expected ({3:X}, {4:X}) not ({5:X}, {6:X}).",
+								testno, block_size, ce,
+								t.str[ex.Index + c], t.str[ex.Index + c + 1],
+								ex.CharUnknownHigh, ex.CharUnknownLow));
+						c += ex.Index + 2;
+					} else {
+						Assert.IsTrue (
+							ex.CharUnknown == t.str[ex.Index + c],
+							String.Format (
+								"test#{0}-2-{1}#{2}: expected ({3:X}) not ({4:X}).",
+								testno, block_size, ce,
+								t.str[ex.Index + c],
+								ex.CharUnknown));
+						c += ex.Index + 1;
+					}
+					enc.Reset ();
+					ce++;
+				}
+			}
+			Assert.IsTrue (
+				ce == t.eindex.Length,
+				String.Format (
+					"test#{0}-2-{1}: UNEXPECTED SUCCESS (expected {2} exceptions, but happened {3})",
+					testno, block_size, t.eindex.Length, ce));
+		}
+
+		[Test]
+		public void EncoderFallbackExceptions ()
+		{
+
+			EncoderFallbackExceptionTest [] tests = new EncoderFallbackExceptionTest []
+			{
+				/* #1  */ new EncoderFallbackExceptionTest ( "Zero \u0000.",                                   new int [] { }),
+				/* #2  */ new EncoderFallbackExceptionTest ( "Last before leads \uD7FF.",                      new int [] { }),
+				/* #3  */ new EncoderFallbackExceptionTest ( "Using lead \uD800 without a surrogate.",         new int [] { 11 }),
+				/* #4  */ new EncoderFallbackExceptionTest ( "Using lead \uD877 without a surrogate.",         new int [] { 11 }),
+				/* #5  */ new EncoderFallbackExceptionTest ( "Using lead \uDBFF without a surrogate.",         new int [] { 11 }),
+				/* #6  */ new EncoderFallbackExceptionTest ( "Using trail \uDC00 without a lead.",             new int [] { 12 }),
+				/* #7  */ new EncoderFallbackExceptionTest ( "Using trail \uDBFF without a lead.",             new int [] { 12 }),
+				/* #8  */ new EncoderFallbackExceptionTest ( "First-plane 2nd block \uE000.",                  new int [] { }),
+				/* #9  */ new EncoderFallbackExceptionTest ( "First-plane 2nd block \uFFFF.",                  new int [] { }),
+				/* #10 */ new EncoderFallbackExceptionTest ( "Playing with first surrogate \uD800\uDC00.",     new int [] { }),
+				/* #11 */ new EncoderFallbackExceptionTest ( "Playing before first surrogate \uD800\uDBFF.",   new int [] { 31, 32 }),
+				/* #12 */ new EncoderFallbackExceptionTest ( "Playing with last of first plane \uD800\uDFFF.", new int [] { }),
+				/* #13 */ new EncoderFallbackExceptionTest ( "Playing with first of last plane \uDBFF\uDC00.", new int [] { }),
+				/* #14 */ new EncoderFallbackExceptionTest ( "Playing with last surrogate \uDBFF\uDFFF.",      new int [] { }),
+				/* #15 */ new EncoderFallbackExceptionTest ( "Playing after last surrogate \uDBFF\uE000.",     new int [] { 29 }),
+				/* #16 */ new EncoderFallbackExceptionTest ( "Incomplete string \uD800",                       new int [] { 18 }),
+				/* #17 */ new EncoderFallbackExceptionTest ( "Horrible thing \uD800\uD800.",                   new int [] { 15, 16 }),
+			};
+			Encoding utf8 = Encoding.GetEncoding (
+						"utf-8",
+						new EncoderExceptionFallback(),
+						new DecoderExceptionFallback());
+			Encoder enc = utf8.GetEncoder ();
+			byte [] bytes;
+
+			for(int t = 0; t < tests.Length; t++) {
+				bytes = new byte [utf8.GetMaxByteCount (tests[t].str.Length)];
+
+				// #1 complete conversion
+				EncoderFallbackExceptions_GetBytes (bytes, t+1, enc, tests[t]);
+
+				// #2 convert in two rounds
+				for (int bs = 1; bs <= tests[t].str.Length; bs++)
+					EncoderFallbackExceptions_Convert (bytes, t+1, enc, tests[t], bs);
 			}
 		}
 	}
