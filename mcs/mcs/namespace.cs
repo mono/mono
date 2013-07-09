@@ -1062,6 +1062,9 @@ namespace Mono.CSharp {
 
 		public override void GetCompletionStartingWith (string prefix, List<string> results)
 		{
+			if (Usings == null)
+				return;
+
 			foreach (var un in Usings) {
 				if (un.Alias != null)
 					continue;
