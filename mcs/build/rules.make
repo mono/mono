@@ -80,9 +80,12 @@ include $(topdir)/build/config-default.make
 # Default PLATFORM and PROFILE if they're not already defined.
 
 ifndef PLATFORM
+$(info *** PLATFORM is not defined.)
 ifeq ($(OS),Windows_NT)
+$(info *** Assuming PLATFORM is 'win32'.)
 PLATFORM = win32
 else
+$(info *** Assuming PLATFORM is 'linux'.)
 PLATFORM = linux
 endif
 endif
