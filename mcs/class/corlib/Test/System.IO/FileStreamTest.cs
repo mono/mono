@@ -1521,6 +1521,11 @@ namespace MonoTests.System.IO
 			return stream.BeginWrite (RandomBuffer, 0, RandomBuffer.Length, ar => {
 				stream.EndWrite (ar);
 
+				// we don't supply an ManualResetEvent so this will throw an NRE on the second run
+				// which nunit-console will ignore (but other test runners don't like that)
+				if (mre == null)
+					return;
+
 				DoBeginWrite (stream, null, RandomBuffer).AsyncWaitHandle.WaitOne ();
 				mre.Set ();
 			}, null);
