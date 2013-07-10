@@ -1,0 +1,39 @@
+package
+{
+	public class ForStatementTest
+	{
+		public static function Main():int
+		{
+			var my_array:Array = new Array (); 
+			for (var i:int = 0; i < 5; i++) { 
+				my_array[i] = (i + 5) * 10;  
+			}
+
+			if (my_array [4] != 90)
+				return 1;
+
+			for (var i:Number = 0, i2:uint; i < 2; i++) { 
+				trace (i2);
+			}
+			
+			var mn:Number;
+			for (mn = -3; mn < 5; mn++) {
+				trace (mn);
+			}
+			
+			if (mn != 5)
+				return 2;
+
+			for (1 + 1; false; ) {
+			}
+
+			for (var i, j, k; i < 2; i++) { 
+				trace (i, j, k);
+				throw new Error ("Should not be reached");
+			}
+
+			return 0;
+		}
+	}
+}
+

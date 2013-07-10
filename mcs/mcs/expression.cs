@@ -5616,7 +5616,12 @@ namespace Mono.CSharp
 			if (variable_info.IsAssigned (rc))
 				return;
 
-			rc.Report.Error (165, loc, "Use of unassigned local variable `{0}'", Name);
+			//
+			// No flow-analysis for local variables in PS
+			//
+			if (!rc.IsPlayScriptType)
+				rc.Report.Error (165, loc, "Use of unassigned local variable `{0}'", Name);
+
 			variable_info.SetAssigned (rc);
 		}
 

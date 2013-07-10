@@ -83,7 +83,7 @@ namespace _root
 
 		public int lastIndexOf (T searchElement, int fromIndex = 0x7fffffff)
 		{
-			return list.LastIndexOf (searchElement, fromIndex);			
+			return list.LastIndexOf (searchElement, fromIndex);
 		}
 		
 		public uint push (T value)
@@ -105,16 +105,19 @@ namespace _root
 
 		internal void setValue (uint index, T value)
 		{
-			if (index < length) {
-				list [(int) index] = value;
-				return;
-			}
+			if (index < 0 || index >= length)
+				throw RangeError.CreateIndexError (index, length);
 
-//			while (length < index - 1)
-//				list.Add (default (T)); // TODO: Need better "invisible" value, perhaps DELETED?
+			list [(int) index] = value;
+		}
+		
+		internal T getValue (uint index)
+		{
+			if (index < 0 || index >= length)
+				throw RangeError.CreateIndexError (index, length);
 
-			list.Add (value);
-		}		
+			return list [(int) index];
+		}
 	}
 }
 

@@ -47,6 +47,9 @@ package
 			if (typeof null != "object")
 				return 12;
 				
+			if (typeof Infinity != "number")
+				return 14;
+				
 			trace ("ok");
 			return 0;
 		}

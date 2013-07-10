@@ -1,0 +1,44 @@
+package
+{
+	public class ForInStatementTest
+	{
+		public static function Main():int
+		{
+			var myObject:Object = { 
+				firstName:"Tara",
+				age:27,
+				city:"San Francisco"
+			};
+			
+			var counter:int = 0;
+			for (var prop in myObject) {
+				counter++;
+			}	
+
+			if (counter != 3)
+				return 1;
+			
+			var s:String;
+			var k2:Array = [ 1, 2, 3 ];
+			for (var p in k2) {
+				s += p;
+			}
+			
+			if (s != "012")
+				return 2;
+				
+			var local:Object;
+			for (local in myObject) {
+			}
+			
+			if (local == null)
+				return 3;
+			
+			for (var prop2 = null in myObject) { 
+			}
+
+			return 0;
+		}
+	}
+}
+

@@ -5896,7 +5896,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class Foreach : Statement
 	{
-		abstract class IteratorStatement : Statement
+		protected abstract class IteratorStatement : Statement
 		{
 			protected readonly Foreach for_each;
 
@@ -6065,7 +6065,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		sealed class CollectionForeach : IteratorStatement, OverloadResolver.IErrorHandler
+		protected sealed class CollectionForeach : IteratorStatement, OverloadResolver.IErrorHandler
 		{
 			class RuntimeDispose : Using.VariableDeclaration
 			{
@@ -6107,6 +6107,7 @@ namespace Mono.CSharp {
 			}
 
 			LocalVariable variable;
+			Expression variable_ref;
 			Expression expr;
 			Statement statement;
 			ExpressionStatement init;
@@ -6117,6 +6118,13 @@ namespace Mono.CSharp {
 				: base (@foreach)
 			{
 				this.variable = var;
+				this.expr = expr;
+			}
+
+			public CollectionForeach (Foreach @foreach, LocalVariableReference variableReference, Expression expr)
+				: base (@foreach)
+			{
+				this.variable_ref = variableReference;
 				this.expr = expr;
 			}
 
@@ -6250,7 +6258,7 @@ namespace Mono.CSharp {
 				}
 
 				var get_enumerator = get_enumerator_mg.BestCandidate;
-				enumerator_variable = TemporaryVariableReference.Create (get_enumerator.ReturnType, variable.Block, loc);
+				enumerator_variable = TemporaryVariableReference.Create (get_enumerator.ReturnType, for_each.body, loc);
 				enumerator_variable.Resolve (ec);
 
 				// Prepare bool MoveNext ()
@@ -6271,37 +6279,39 @@ namespace Mono.CSharp {
 				if (current_pe == null)
 					return false;
 
-				VarExpr ve = for_each.type as VarExpr;
+				if (variable != null) {
+					VarExpr ve = for_each.type as VarExpr;
 
-				if (ve != null) {
-					if (is_dynamic) {
-						// Source type is dynamic, set element type to dynamic too
-						variable.Type = ec.BuiltinTypes.Dynamic;
+					if (ve != null) {
+						if (is_dynamic) {
+							// Source type is dynamic, set element type to dynamic too
+							variable.Type = ec.BuiltinTypes.Dynamic;
+						} else {
+							// Infer implicitly typed local variable from foreach enumerable type
+							variable.Type = current_pe.Type;
+						}
 					} else {
-						// Infer implicitly typed local variable from foreach enumerable type
-						variable.Type = current_pe.Type;
+						if (is_dynamic) {
+							// Explicit cast of dynamic collection elements has to be done at runtime
+							current_pe = EmptyCast.Create (current_pe, ec.BuiltinTypes.Dynamic);
+						}
+
+						variable.Type = for_each.type.ResolveAsType (ec);
+
+						if (variable.Type == null)
+							return false;
+
+						current_pe = Convert.ExplicitConversion (ec, current_pe, variable.Type, loc);
+						if (current_pe == null)
+							return false;
 					}
-				} else {
-					if (is_dynamic) {
-						// Explicit cast of dynamic collection elements has to be done at runtime
-						current_pe = EmptyCast.Create (current_pe, ec.BuiltinTypes.Dynamic);
-					}
 
-					variable.Type = for_each.type.ResolveAsType (ec);
-
-					if (variable.Type == null)
-						return false;
-
-					current_pe = Convert.ExplicitConversion (ec, current_pe, variable.Type, loc);
-					if (current_pe == null)
+					variable_ref = new LocalVariableReference (variable, loc).Resolve (ec);
+					if (variable_ref == null)
 						return false;
 				}
 
-				var variable_ref = new LocalVariableReference (variable, loc).Resolve (ec);
-				if (variable_ref == null)
-					return false;
-
-				for_each.body.AddScopeStatement (new StatementExpression (new CompilerAssign (variable_ref, current_pe, Location.Null), for_each.type.Location));
+				for_each.body.AddScopeStatement (new StatementExpression (new CompilerAssign (variable_ref, current_pe, Location.Null), Location.Null));
 
 				var init = new Invocation (get_enumerator_mg, null);
 
@@ -6382,11 +6392,11 @@ namespace Mono.CSharp {
 			#endregion
 		}
 
-		Expression type;
-		LocalVariable variable;
-		Expression expr;
-		Statement statement;
-		Block body;
+		protected Expression type;
+		protected LocalVariable variable;
+		protected Expression expr;
+		protected Statement statement;
+		protected Block body;
 
 		public Foreach (Expression type, LocalVariable var, Expression expr, Statement stmt, Block body, Location l)
 		{
@@ -6446,7 +6456,8 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			variable.CreateBuilder (ec);
+			if (variable != null)
+				variable.CreateBuilder (ec);
 
 			Label old_begin = ec.LoopBegin, old_end = ec.LoopEnd;
 			ec.LoopBegin = ec.DefineLabel ();

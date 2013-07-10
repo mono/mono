@@ -5889,41 +5889,49 @@ stmnt_end_semicolon
 	;
 
 block_variable_declaration
+	: variable_declaration stmnt_end_semicolon
+	| block_constant_declaration stmnt_end_semicolon
+	;
+
+variable_declaration
 	: VAR identifier_inside_body COLON type 
 	  {
 		var lt = (LocatedToken) $2;
 		var li = GetOrCreateLocalVariable (current_block, lt.Value, 0, (FullNamedExpression) $4, lt.Location);
 		current_variable = new BlockVariable ((FullNamedExpression) $4, li);
 	  }
-	  opt_local_variable_initializer opt_variable_declarators stmnt_end_semicolon
+	  opt_local_variable_initializer opt_variable_declarators
 	  {
 		$$ = current_variable;
 		current_variable = null;
-		lbag.AddLocation ($$, GetLocation ($6));
 	  }
 	| VAR identifier_inside_body 
 	  {
 		var lt = (LocatedToken) $2;
 		var li = GetOrCreateLocalVariable (current_block, lt.Value, 0, null, lt.Location);
-		current_variable = new BlockVariable (new VarExpr (GetLocation($1)), li);
+		current_variable = new UntypedBlockVariable (li);
+
+		report.WarningPlayScript (1009, lt.Location, "Variable `{0}' has no type declaration", lt.Value);
 	  }
-	  opt_local_variable_initializer opt_variable_declarators stmnt_end_semicolon
+	  opt_local_variable_initializer opt_variable_declarators
 	  {
 		$$ = current_variable;
 		current_variable = null;
-		lbag.AddLocation ($$, GetLocation ($4));
 	  }
-	| CONST identifier_inside_body COLON type 
+	;
+
+block_constant_declaration
+	: CONST identifier_inside_body COLON type 
 	  {
 		var lt = (LocatedToken) $2;
 		var li = GetOrCreateLocalVariable (current_block, lt.Value, LocalVariable.Flags.Constant, null, lt.Location);
 		current_variable = new BlockConstant ((FullNamedExpression) $4, li);
 	  }
-	  const_variable_initializer opt_const_declarators stmnt_end_semicolon
+	  const_variable_initializer opt_const_declarators
 	  {
 		$$ = current_variable;
 		current_variable = null;
-		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($7));
+		lbag.AddLocation ($$, GetLocation ($1));
 	  }
 	;
 
@@ -6081,7 +6089,18 @@ interactive_expression_statement
 statement_expression
 	: expression
 	  {
-		$$ = ConvertExpressionToStatement((Expression)$1);
+		ExpressionStatement s = $1 as ExpressionStatement;
+		if (s == null) {
+			var expr = $1 as Expression;
+			if (expr == null) {
+				$$ = new StatementErrorExpression (expr);
+			} else {
+				// Expressions as statements are allowed
+				$$ = new StatementFromExpression (expr);
+			}
+		} else {
+			$$ = new StatementExpression (s);
+		}
 	  }
 	;
 
@@ -6305,7 +6324,6 @@ for_statement
 	  }
 	  for_statement_cont
 	  {
-		lexer.ForInParsing = false;	  
 		$$ = $4;
 	  }
 	;
@@ -6321,36 +6339,16 @@ for_statement_cont
 		if ($6 is EmptyStatement && lexer.peek_token () == Token.OPEN_BRACE)
 			Warning_EmptyStatement (GetLocation ($6));
 
-		var blockVar = $1 as BlockVariable;
-		if (blockVar != null) {
-			if (blockVar == null || blockVar.Initializer != null || blockVar.Declarators != null) {
-				report.Error (7036, GetLocation ($4), "Invalid for each initializer");	
-				$$ = end_block (current_block.StartLocation);
-			} else {
-				var locations = (Tuple<Location,Location>) $0;
-				
-				Foreach f = new Foreach (blockVar.TypeExpression, blockVar.Variable, (Expression) $4, (Statement) $6, current_block, AsForEachType.ForEachKey, locations.Item1);
-				lbag.AddStatement (f, locations.Item2, GetLocation ($2), GetLocation ($5));
-				
-				end_block (GetLocation ($5));
-				$$ = f;
-			}
-		} else {
-			var expList = $1 as List<Expression>;
-			var varRef = ($1 as FullNamedExpression) ?? ((expList != null && expList.Count == 1) ? (expList[0] as FullNamedExpression) : null);
-			if (varRef == null) {
-				report.Error (7041, GetLocation ($1), "Invalid iterator initializer");		
-				$$ = end_block (current_block.StartLocation);
-			} else {
-				var locations = (Tuple<Location,Location>) $0;
-				
-				Foreach f = new Foreach (varRef, (Expression) $4, (Statement) $6, current_block, AsForEachType.ForEachKey, locations.Item1);
-				lbag.AddStatement (f, locations.Item2, GetLocation ($2), GetLocation ($5));
-				
-				end_block (GetLocation ($5));
-				$$ = f;
-			}
+		var locations = (Tuple<Location,Location>) $0;
+
+		if ($1 is StatementList) {
+			report.ErrorPlayScript (1200, GetLocation ($1), "Invalid for-in initializer, only 1 expression expected");
 		}
+
+		$$ = new ForIn ((Statement) $1, (Expression) $4, (Statement) $6, current_block, locations.Item1);
+		lbag.AddStatement ($$, locations.Item2, GetLocation ($2), GetLocation ($5));
+				
+		end_block (GetLocation ($5));
 	  }	
 	| opt_for_initializer SEMICOLON
 	  {
@@ -6361,11 +6359,7 @@ for_statement_cont
 		For f = new For (locations.Item1);
 		current_block.AddStatement (f);
 		
-		var expList = $1 as List<Expression>;
-		if (expList != null) 
-			f.Initializer = ExpressionListToStatementList (expList);
-		else
-			f.Initializer = (Statement) $1;
+		f.Initializer = (Statement) $1;
 
 		// Pass the "For" object to the iterator_part4
 		oob_stack.Push (f);
@@ -6388,6 +6382,7 @@ for_statement_cont
 	  }
 	| error
 	  {
+		lexer.ForInParsing = false;	  
 		Lexer.AutoSemiInsertion = true;
 		Error_SyntaxError (yyToken);
 		$$ = end_block (current_block.StartLocation);
@@ -6441,22 +6436,8 @@ opt_for_initializer
 	;
 
 for_initializer
-	: VAR identifier_inside_body COLON type
-	  {
-		var lt = (LocatedToken) $2;
-		var type = (FullNamedExpression) $4;
-		var li = GetOrCreateLocalVariable (current_block, lt.Value, 0, type, lt.Location);
-		current_variable = new BlockVariable (type, li);
-	  }
-	  opt_local_variable_initializer opt_variable_declarators
-	  {
-		$$ = current_variable;
-		current_variable = null;
-	  }
-	| expression_list
-	  {
-		
-	  }
+	: variable_declaration
+	| statement_expression_list
 	;
 
 opt_for_condition
@@ -8052,37 +8033,6 @@ object ConvertAsType(SimpleName sn, object e)
 		return e;
 }
 */
-Statement ExpressionListToStatementList(List<Expression> list)
-{
-	if (list.Count == 1) {
-		return ConvertExpressionToStatement(list[0]);
-	} else if (list.Count > 1) {
-		var sl = new StatementList(ConvertExpressionToStatement(list[0]), ConvertExpressionToStatement(list[1]));
-		for (var i = 2; i < list.Count; i++) {
-			sl.Add(ConvertExpressionToStatement(list[i]));
-		}
-		return sl;
-	}
-	
-	return new StatementErrorExpression (EmptyExpression.MissingValue);
-}
-
-Statement ConvertExpressionToStatement(Expression ex)
-{
-	Statement ret;
-	ExpressionStatement s = ex as ExpressionStatement;
-	if (s == null) {
-		if (Lexer.ParsingPlayScript) {
-			ex.Error_InvalidExpressionStatement (report);
-			ret = new StatementErrorExpression (ex);
-		} else {
-			ret = new AsNonAssignStatementExpression (ex);
-		}
-	} else {
-		ret = new StatementExpression (s);
-	}
-	return ret;
-}
 
 Expression MakeMonoSimdType(string typeName, Location loc)
 {

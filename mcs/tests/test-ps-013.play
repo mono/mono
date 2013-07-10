@@ -1,6 +1,6 @@
 package
 {
-	public class TestClass
+	public class TestVector
 	{
 		public static function Main ():int
 		{

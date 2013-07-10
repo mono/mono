@@ -1089,7 +1089,7 @@ namespace Mono.CSharp
 				if (t.MemberType == MemberTypes.NestedType)
 					continue;
 
-				if (t.Name[0] == '<')
+				if (t.Name[0] == '<' && (t.Attributes & TypeAttributes.Public) == 0)
 					continue;
 
 				var it = CreateType (t, null, new DynamicTypeReader (t), true);

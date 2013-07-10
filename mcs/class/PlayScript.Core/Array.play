@@ -82,12 +82,34 @@ package {
 
 		internal function setValue (index:uint, value:Object):void
 		{
+			if (index < 0)
+				throw new System.NotImplementedException (); // TODO: Allowed but how to handle
+
+			//
+			// Assigning out of array range
+			//
+			if (index >= vector.length) {
+//				while (length < index - 1)
+//					list.Add (default (T)); // TODO: Need better "invisible" value, perhaps DELETED would work ?
+
+				vector.push (value);
+				return;
+			}
+
 			vector.setValue (index, value);
 		}
 
+		internal function getValue (index:uint):*
+		{
+			if (index < 0 || index > vector.length)
+				return undefined;
+
+			return vector.getValue (index);
+		}
+		
 		internal function deleteValue (index:uint):void
 		{
-			vector.setValue (index, DELETED);
+			setValue (index, DELETED);
 		}
 	}
 }

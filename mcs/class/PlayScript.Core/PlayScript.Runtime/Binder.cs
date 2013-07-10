@@ -31,18 +31,30 @@ using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using Microsoft.CSharp.RuntimeBinder;
+using System.Globalization;
 
 namespace PlayScript.Runtime
 {
 	public static class Binder
 	{
 		static readonly ConditionalWeakTable<object, ConcurrentDictionary<string, object>> dynamic_classes = new ConditionalWeakTable<object, ConcurrentDictionary<string, object>> ();
-		
+
 		public static dynamic GetMember (object instance, Type context, object name)
 		{
 			if (instance == null)
 				throw GetNullObjectReferenceException ();
-			
+
+			//
+			// Use index getter when name can be converted to number on array instances 
+			//
+			var array = instance as _root.Array;
+			if (array != null) {
+				var index = GetArrayIndex (name);
+				if (index != null) {
+					return array.getValue (index.Value);
+				}
+			}
+
 			var sname = GetName (name);
 
 			ConcurrentDictionary<string, object> members;
@@ -56,9 +68,9 @@ namespace PlayScript.Runtime
 			var callsite = CallSite<Func<CallSite, object, object>>.Create (binder);
 
 			// TODO: Add caching to avoid expensive Resolve
-    		return callsite.Target (callsite, instance);
+			return callsite.Target (callsite, instance);
 		}
-		
+
 		public static void SetMember (object instance, Type context, object name, object value)
 		{
 			if (instance == null)
@@ -74,7 +86,7 @@ namespace PlayScript.Runtime
 					array.setValue (index.Value, value);
 					return;
 				}
-			}				
+			}
 
 			var sname = GetName (name);
 
@@ -85,13 +97,46 @@ namespace PlayScript.Runtime
 			// TODO: Better handling
 			try {
 				// TODO: Add caching to avoid expensive Resolve
-    			callsite.Target (callsite, instance, value);
-    		} catch (RuntimeBinderException) { 	
+				callsite.Target (callsite, instance, value);
+			} catch (RuntimeBinderException) {
 				var members = dynamic_classes.GetOrCreateValue (instance);
-							
+
 				// TODO: Not thread safe
-				members [sname] = value;
+				members[sname] = value;
 			}
+		}
+
+		public static IEnumerable<string> GetMembers (object instance)
+		{
+			if (instance == null)
+				return new string [0];
+
+			//
+			// Array's are different
+			//
+			var array = instance as _root.Array;
+			if (array != null) {
+				return CreateArrayIterator (array.length);
+			}
+
+			ConcurrentDictionary<string, object> members;
+			if (dynamic_classes.TryGetValue (instance, out members)) {
+				return CreateMembersIterator (members.Keys);
+			}
+
+			return new string [0];
+		}
+
+		static IEnumerable<string> CreateArrayIterator (uint length)
+		{
+			for (uint i = 0; i < length; ++i)
+				yield return i.ToString (CultureInfo.InvariantCulture);
+		}
+
+		static IEnumerable<string> CreateMembersIterator (ICollection<string> members)
+		{
+			foreach (var member in members)
+				yield return member;
 		}
 
 		public static bool HasProperty (object instance, Type context, object property)
@@ -130,16 +175,16 @@ namespace PlayScript.Runtime
 				static_only = true;
 			}
 
-			var binder = new IsPropertyBinder (sname, context, static_only);	
-			
+			var binder = new IsPropertyBinder (sname, context, static_only);
+
 			var callsite = CallSite<Func<CallSite, Type, bool>>.Create (binder);
 
 			// TODO: Better handling
 			try {
 				// TODO: Add caching to avoid expensive Resolve
-    			return callsite.Target (callsite, type);
-    		} catch (RuntimeBinderException) {
-    			throw;
+				return callsite.Target (callsite, type);
+			} catch (RuntimeBinderException) {
+				throw;
 			}
 		}
 
@@ -175,7 +220,7 @@ namespace PlayScript.Runtime
 				return Convert.ToUInt32 (value);
 			} catch {
 				return null;
-			}			
+			}
 		}
 
 		static string GetName (object name)
@@ -183,13 +228,13 @@ namespace PlayScript.Runtime
 			// TODO: Will be special token for null key enough?
 			if (name == null)
 				throw new NotImplementedException ("null name");
-			
+
 			return name.ToString ();
 		}
 
 		static Exception GetNullObjectReferenceException ()
 		{
-			return new _root.Error ("Cannot access a property or method of a null object reference.", 1009);			
+			return new _root.Error ("Cannot access a property or method of a null object reference.", 1009);
 		}
 	}
 }

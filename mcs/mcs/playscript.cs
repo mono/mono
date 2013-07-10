@@ -242,6 +242,35 @@ namespace Mono.PlayScript
 		}
 	}
 
+	public class UntypedBlockVariable : BlockVariable
+	{
+		public UntypedBlockVariable (LocalVariable li)
+			: base (li)
+		{
+		}
+
+		public new FullNamedExpression TypeExpression {
+			get {
+				return type_expr;
+			}
+			set {
+				type_expr = value;
+			}
+		}
+
+		public override bool Resolve (BlockContext bc)
+		{
+			if (type_expr == null) {
+				if (Initializer == null)
+					type_expr = new UntypedTypeExpression (loc);
+				else
+					type_expr = new VarExpr (loc);
+			}
+
+			return base.Resolve (bc);
+		}
+	}
+
 	public class ObjectInitializer : PlayScriptExpression
 	{
 		public ObjectInitializer (List<Expression> initializer, Location loc)
@@ -761,57 +790,38 @@ namespace Mono.PlayScript
 		}
 	}
 
-	public class AsNonAssignStatementExpression : Statement
+	public class StatementFromExpression : Statement
 	{
-		public Expression expr;
-		
-		public AsNonAssignStatementExpression (Expression expr)
+		public StatementFromExpression (Expression expr)
 		{
-			this.expr = expr;
+			this.Expr = expr;
 		}
-		
-		public Expression Expr {
-			get {
-				return expr;
-			}
-		}
+
+		public Expression Expr { get; private set; }
 
 		public override bool Resolve (BlockContext bc)
 		{
-			if (!base.Resolve (bc))
-				return false;
-
-			expr = expr.Resolve (bc);
-
-			return expr != null;
+			//
+			// Any expression can act as a statement in PS, we need to wrap it to make
+			// the inheritance chain clean
+			//
+			Expr = Expr.Resolve (bc);
+			return Expr != null;
 		}
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			if (!expr.IsSideEffectFree) {
-				expr.EmitSideEffect (ec);
-			}
+			if (Expr.IsSideEffectFree)
+				return;
+
+			Expr.Emit (ec);
+			ec.Emit (OpCodes.Pop);
 		}
-/*
-		protected override void DoEmitJs (JsEmitContext jec) 
-		{
-			expr.EmitJs (jec);
-		}
-		
-		public override void EmitJs (JsEmitContext jec)
-		{
-			DoEmitJs (jec);
-		}
-*/
+
 		protected override void CloneTo (CloneContext clonectx, Statement target)
 		{
-			var t = target as AsNonAssignStatementExpression;
-			t.expr = expr.Clone (clonectx);
-		}
-		
-		public override object Accept (StructuralVisitor visitor)
-		{
-			return visitor.Visit (this);
+			var t = target as StatementFromExpression;
+			t.Expr = Expr.Clone (clonectx);
 		}
 	}
 
@@ -1554,6 +1564,79 @@ namespace Mono.PlayScript
 		}
 	}
 
+	public class ForIn : CSharp.Foreach
+	{
+		public ForIn (Statement variableIterant, Expression expr, Statement stmt, Block body, Location loc)
+			: base (null, null, expr, stmt, body, loc)
+		{
+			this.Iterant = variableIterant;
+		}
+
+		public Statement Iterant { get; private set; }
+
+		public override bool Resolve (BlockContext bc)
+		{
+			expr = expr.Resolve (bc);
+			if (expr == null)
+				return false;
+
+			body.AddStatement (Statement);
+
+			// TODO: ?
+			//if (expr.eclass == ExprClass.MethodGroup || expr is AnonymousMethodExpression) {
+			//	ec.Report.Error (446, expr.Location, "Foreach statement cannot operate on a `{0}'",
+			//		expr.ExprClassName);
+			//	return false;
+			//}
+
+			var ms = bc.Module.PlayScriptMembers.BinderGetMembers.Resolve (loc);
+			if (ms == null)
+				return false;
+
+			var mg = MethodGroupExpr.CreatePredefined (ms, ms.DeclaringType, loc);
+			var call_args = new Arguments (1);
+			call_args.Add (new Argument (Expr));
+
+			expr = new Invocation (mg, call_args).Resolve (bc);
+			if (expr == null)
+				return false;
+
+			var untyped = Iterant as UntypedBlockVariable;
+			if (untyped != null) {
+				untyped.TypeExpression = new TypeExpression (bc.BuiltinTypes.String, loc);
+			}
+
+			if (!Iterant.Resolve (bc))
+				return false;
+
+			var var = Iterant as BlockVariable;
+			if (var != null) {
+				type = var.TypeExpression;
+				variable = var.Variable;
+
+				statement = new CollectionForeach (this, variable, Expr);
+			} else {
+				LocalVariableReference lvr = null;
+				var sfe = Iterant as StatementFromExpression;
+				if (sfe != null) {
+					if (!sfe.Resolve (bc))
+						return false;
+
+					lvr = sfe.Expr as LocalVariableReference;
+				}
+
+				if (lvr == null) {
+					bc.Report.ErrorPlayScript (1105, Iterant.loc, "Target of assignment must be a reference value");
+					return false;
+				}
+
+				statement = new CollectionForeach (this, lvr, Expr);
+			}
+
+			return statement.Resolve (bc);
+		}
+	}
+
 	public class UsingType : UsingNamespace
 	{
 		protected TypeSpec resolvedType;
@@ -1754,7 +1837,7 @@ namespace Mono.PlayScript
 			Binder = new PredefinedType (module, MemberKind.Class, "PlayScript.Runtime", "Binder");
 			Operations = new PredefinedType (module, MemberKind.Class, "PlayScript.Runtime", "Operations");
 
-			// Define types which also used for comparisons early
+			// Define types which are used for early comparisons
 			Array.Define ();
 		}
 	}
@@ -1764,6 +1847,7 @@ namespace Mono.PlayScript
 		public readonly PredefinedMember<MethodSpec> ArrayPush;
 		public readonly PredefinedMember<MethodSpec> VectorPush;
 		public readonly PredefinedMember<MethodSpec> BinderGetMember;
+		public readonly PredefinedMember<MethodSpec> BinderGetMembers;
 		public readonly PredefinedMember<MethodSpec> BinderSetMember;
 		public readonly PredefinedMember<MethodSpec> BinderHasProperty;
 		public readonly PredefinedMember<MethodSpec> BinderDeleteProperty;
@@ -1780,6 +1864,7 @@ namespace Mono.PlayScript
 			ArrayPush = new PredefinedMember<MethodSpec> (module, ptypes.Array, "push", btypes.Object);
 			VectorPush = new PredefinedMember<MethodSpec> (module, ptypes.Vector, "push", new TypeParameterSpec (0, tp, SpecialConstraint.None, Variance.None, null));
 			BinderGetMember = new PredefinedMember<MethodSpec> (module, ptypes.Binder, "GetMember", btypes.Object, btypes.Type, btypes.Object);
+			BinderGetMembers = new PredefinedMember<MethodSpec> (module, ptypes.Binder, "GetMembers", btypes.Object);
 			BinderSetMember = new PredefinedMember<MethodSpec> (module, ptypes.Binder, "SetMember", btypes.Object, btypes.Type, btypes.Object, btypes.Object);
 			BinderDeleteProperty = new PredefinedMember<MethodSpec> (module, ptypes.Binder, "DeleteProperty", btypes.Object, btypes.Object);
 			BinderHasProperty = new PredefinedMember<MethodSpec> (module, ptypes.Binder, "HasProperty", btypes.Object, btypes.Type, btypes.Object);
