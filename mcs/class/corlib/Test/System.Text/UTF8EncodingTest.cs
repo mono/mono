@@ -1083,7 +1083,7 @@ namespace MonoTests.System.Text
 				Assert.Fail ("ArgumentException is expected: char[]");
 #endif
 			} catch (ArgumentException ae) {
-#if ! NET_2_0
+#if NET_2_0
 				throw ae;
 #endif
 			}
@@ -1097,7 +1097,7 @@ namespace MonoTests.System.Text
 				Assert.Fail ("ArgumentException is expected: string");
 #endif
 			} catch (ArgumentException ae) {
-#if ! NET_2_0
+#if NET_2_0
 				throw ae;
 #endif
 			}
