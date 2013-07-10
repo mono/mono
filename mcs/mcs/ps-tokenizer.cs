@@ -262,11 +262,6 @@ namespace Mono.PlayScript
 			set { handle_get_set = value; }
 		}
 
-		public bool EventParsing {
-			get { return handle_remove_add; }
-			set { handle_remove_add = value; }
-		}
-
 		public bool ConstraintsParsing {
 			get { return handle_where; }
 			set { handle_where = value; }
@@ -555,7 +550,6 @@ namespace Mono.PlayScript
 
 			AddKeyword ("abstract", Token.ABSTRACT);
 			AddKeyword ("as", Token.AS);
-			AddKeyword ("add", Token.ADD);
 			AddKeyword ("bool", Token.BOOL);
 			AddKeyword ("boolean", Token.BOOLEAN);
 			AddKeyword ("break", Token.BREAK);
@@ -563,13 +557,11 @@ namespace Mono.PlayScript
 			AddKeyword ("case", Token.CASE);
 			AddKeyword ("catch", Token.CATCH);
 			AddKeyword ("char", Token.CHAR);
-			AddKeyword ("checked", Token.CHECKED);
 			AddKeyword ("class", Token.CLASS);
 			AddKeyword ("const", Token.CONST);
 			AddKeyword ("continue", Token.CONTINUE);
 			AddKeyword ("decimal", Token.DECIMAL);
 			AddKeyword ("default", Token.DEFAULT);
-			AddKeyword ("delegate", Token.DELEGATE);
 			AddKeyword ("delete", Token.DELETE);
 			AddKeyword ("do", Token.DO);
 			AddKeyword ("double", Token.DOUBLE);
@@ -579,8 +571,6 @@ namespace Mono.PlayScript
 			AddKeyword ("dynamic", Token.DYNAMIC);
 			AddKeyword ("each", Token.EACH);
 			AddKeyword ("else", Token.ELSE);
-			AddKeyword ("enum", Token.ENUM);
-			AddKeyword ("event", Token.EVENT);
 			AddKeyword ("explicit", Token.EXPLICIT);
 			AddKeyword ("extends", Token.EXTENDS);
 			AddKeyword ("extern", Token.EXTERN);
@@ -607,7 +597,6 @@ namespace Mono.PlayScript
 			AddKeyword ("interface", Token.INTERFACE);
 			AddKeyword ("internal", Token.INTERNAL);
 			AddKeyword ("is", Token.IS);
-			AddKeyword ("lock", Token.LOCK);
 			AddKeyword ("long", Token.LONG);
 			AddKeyword ("namespace", Token.NAMESPACE);
 			AddKeyword ("native", Token.NATIVE);
@@ -619,20 +608,16 @@ namespace Mono.PlayScript
 			AddKeyword ("override", Token.OVERRIDE);
 			AddKeyword ("overload", Token.OVERLOAD);
 			AddKeyword ("package", Token.PACKAGE);
-			AddKeyword ("params", Token.PARAMS);
 			AddKeyword ("property", Token.PROPERTY);
 			AddKeyword ("private", Token.PRIVATE);
 			AddKeyword ("protected", Token.PROTECTED);
 			AddKeyword ("public", Token.PUBLIC);
 			AddKeyword ("readonly", Token.READONLY);
 			AddKeyword ("ref", Token.REF);
-			AddKeyword ("remove", Token.REMOVE);
 			AddKeyword ("return", Token.RETURN);
 			AddKeyword ("sbyte", Token.SBYTE);
 			AddKeyword ("set", Token.SET);
 			AddKeyword ("short", Token.SHORT);
-			AddKeyword ("sizeof", Token.SIZEOF);
-			AddKeyword ("stackalloc", Token.STACKALLOC);
 			AddKeyword ("static", Token.STATIC);
 			AddKeyword ("string", Token.STRING);
 			AddKeyword ("struct", Token.STRUCT);
@@ -645,7 +630,6 @@ namespace Mono.PlayScript
 			AddKeyword ("typeof", Token.TYPEOF);
 			AddKeyword ("uint", Token.UINT);
 			AddKeyword ("ulong", Token.ULONG);
-			AddKeyword ("unchecked", Token.UNCHECKED);
 			AddKeyword ("unsafe", Token.UNSAFE);
 			AddKeyword ("use", Token.USE);
 			AddKeyword ("ushort", Token.USHORT);
@@ -732,7 +716,6 @@ namespace Mono.PlayScript
 			});
 
 			AddDisallowedNextAutoSemiTokens(new int [] {
-				Token.ADD,
 				Token.MINUS,
 				Token.DIV,
 				Token.PERCENT,
@@ -879,11 +862,6 @@ namespace Mono.PlayScript
 				if (!handle_each)
 					res = -1;
 				break;
-			case Token.REMOVE:
-			case Token.ADD:
-				if (!handle_remove_add || !parsing_playscript)
-					res = -1;
-				break;
 			case Token.EXTERN:
 				if (parsing_declaration != 0 || !parsing_playscript)
 					res = -1;
@@ -1025,7 +1003,6 @@ namespace Mono.PlayScript
 					}
 				} else if (parsing_block > 0) {
 					switch (peek_token ()) {
-					case Token.DELEGATE:
 					case Token.OPEN_PARENS_LAMBDA:
 						// async is keyword
 						break;
@@ -1083,16 +1060,12 @@ namespace Mono.PlayScript
 				break;
 
 				// PLAYSCRIPT Extension keywords
-			case Token.CHECKED:
 			case Token.EXPLICIT:
 			case Token.IMPLICIT:
 			case Token.OVERLOAD:
-			case Token.LOCK:
 			case Token.OUT:
-			case Token.PARAMS:
 			case Token.READONLY:
 			case Token.REF:
-			case Token.UNCHECKED:
 			case Token.UNSAFE:
 			case Token.FIXED:
 			case Token.GOTO:
@@ -1101,7 +1074,6 @@ namespace Mono.PlayScript
 
 				break;
 
-			case Token.EVENT:
 			case Token.INDEXER:
 			case Token.OPERATOR:
 			case Token.PROPERTY:
@@ -1113,8 +1085,6 @@ namespace Mono.PlayScript
 				break;
 
 			case Token.STRUCT:
-			case Token.DELEGATE:
-			case Token.ENUM:
 				if (!parsing_playscript)
 					res = -1;
 				else
@@ -3627,7 +3597,6 @@ namespace Mono.PlayScript
 						case Token.WHILE:
 						case Token.USING:
 						case Token.DEFAULT:
-						case Token.DELEGATE:
 						case Token.OP_GENERICS_GT:
 							return Token.OPEN_PARENS;
 						}

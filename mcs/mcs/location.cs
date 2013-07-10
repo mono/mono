@@ -76,7 +76,7 @@ namespace Mono.CSharp
 			this.Name = name;
 			this.FullPathName = path;
 
-			if (name.EndsWith (".play", StringComparison.Ordinal) || name.EndsWith (".asx", StringComparison.Ordinal))
+			if (name.EndsWith (".play", StringComparison.Ordinal) || name.EndsWith (".as", StringComparison.Ordinal))
 				FileType = SourceFileType.PlayScript;
 		}
 
