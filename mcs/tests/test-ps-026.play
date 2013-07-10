@@ -1,0 +1,53 @@
+package
+{
+	public class ForeEachTest
+	{
+		public static function Main():int
+		{
+			var myObject:Object = { 
+				firstName:"Tara",
+				age:27,
+				city:"San Francisco"
+			};
+			
+			var counter:int = 0;
+			for each (var prop in myObject) {
+				if (prop is Number) {
+					if (prop != 27)
+						return 1;
+				}
+				
+				counter++;
+			}	
+
+			if (counter != 3)
+				return 2;
+			
+			var s:int = 0;
+			var k2:Array = [ 1, 2, 3 ];
+			for each (var p in k2) {
+				s += p;
+			}
+			
+			if (s != 6)
+				return 3;
+				
+			var each:Object;
+			for each (each in myObject) {
+			}
+			
+			if (each == null)
+				return 4;
+			
+			for
+			each (var prop2 = null in myObject) { 
+			}
+
+			for each (each in 2) {
+			}
+
+			return 0;
+		}
+	}
+}
+

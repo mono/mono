@@ -37,6 +37,9 @@ package
 			for (var prop2 = null in myObject) { 
 			}
 
+			for (local in 1) {
+			}
+
 			return 0;
 		}
 	}

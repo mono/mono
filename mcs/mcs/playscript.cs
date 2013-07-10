@@ -1533,46 +1533,54 @@ namespace Mono.PlayScript
 		}
 	}
 
-	public enum AsForEachType
-	{
-		/// <summary>
-		/// Generate a normal cs foreach statement.
-		/// </summary>
-//		CSharpForEach,
-		/// <summary>
-		/// Generate an PlayScript for (var a in collection) statement.  Yields keys.
-		/// </summary>
-		ForEachKey,
-		/// <summary>
-		/// Generate an PlayScript for each (var a in collection) statement.  Yields values.
-		/// </summary>
-		ForEachValue
-	}
-
-	public class Foreach : CSharp.Foreach
-	{
-		public Foreach (Expression type, LocalVariable var, Expression expr, Statement stmt, Block body, AsForEachType asType, Location l)
-			: base (type, var, expr, stmt, body, l)
-		{
-//			asForEachType = asType;
-		}
-
-		public Foreach (FullNamedExpression varRef, Expression expr, Statement stmt, Block body, AsForEachType asType, Location l)
-			: base (null, null, expr, stmt, body, l)
-		{
-//			this.varRef = varRef;
-		}
-	}
-
-	public class ForIn : CSharp.Foreach
+	public class ForIn : ForIterator
 	{
 		public ForIn (Statement variableIterant, Expression expr, Statement stmt, Block body, Location loc)
+			: base (variableIterant, expr, stmt, body, loc)
+		{
+		}
+
+		protected override PredefinedMember<MethodSpec> GetValuesMethod (BlockContext bc)
+		{
+			return bc.Module.PlayScriptMembers.BinderGetKeys;
+		}
+
+		protected override TypeSpec GetUntypedIterantType (BlockContext bc)
+		{
+			return bc.BuiltinTypes.String;
+		}
+	}
+
+	public class ForEach : ForIterator
+	{
+		public ForEach (Statement variableIterant, Expression expr, Statement stmt, Block body, Location loc)
+			: base (variableIterant, expr, stmt, body, loc)
+		{
+		}
+
+		protected override PredefinedMember<MethodSpec> GetValuesMethod (BlockContext bc)
+		{
+			return bc.Module.PlayScriptMembers.BinderGetValues;
+		}
+
+		protected override TypeSpec GetUntypedIterantType (BlockContext bc)
+		{
+			return bc.BuiltinTypes.Dynamic;
+		}
+	}
+
+	public abstract class ForIterator : CSharp.Foreach
+	{
+		public ForIterator (Statement variableIterant, Expression expr, Statement stmt, Block body, Location loc)
 			: base (null, null, expr, stmt, body, loc)
 		{
 			this.Iterant = variableIterant;
 		}
 
 		public Statement Iterant { get; private set; }
+
+		protected abstract PredefinedMember<MethodSpec> GetValuesMethod (BlockContext bc);
+		protected abstract TypeSpec GetUntypedIterantType (BlockContext bc);
 
 		public override bool Resolve (BlockContext bc)
 		{
@@ -1589,7 +1597,7 @@ namespace Mono.PlayScript
 			//	return false;
 			//}
 
-			var ms = bc.Module.PlayScriptMembers.BinderGetMembers.Resolve (loc);
+			var ms = GetValuesMethod (bc).Resolve (loc);
 			if (ms == null)
 				return false;
 
@@ -1603,7 +1611,7 @@ namespace Mono.PlayScript
 
 			var untyped = Iterant as UntypedBlockVariable;
 			if (untyped != null) {
-				untyped.TypeExpression = new TypeExpression (bc.BuiltinTypes.String, loc);
+				untyped.TypeExpression = new TypeExpression (GetUntypedIterantType (bc), loc);
 			}
 
 			if (!Iterant.Resolve (bc))
@@ -1847,7 +1855,8 @@ namespace Mono.PlayScript
 		public readonly PredefinedMember<MethodSpec> ArrayPush;
 		public readonly PredefinedMember<MethodSpec> VectorPush;
 		public readonly PredefinedMember<MethodSpec> BinderGetMember;
-		public readonly PredefinedMember<MethodSpec> BinderGetMembers;
+		public readonly PredefinedMember<MethodSpec> BinderGetKeys;
+		public readonly PredefinedMember<MethodSpec> BinderGetValues;
 		public readonly PredefinedMember<MethodSpec> BinderSetMember;
 		public readonly PredefinedMember<MethodSpec> BinderHasProperty;
 		public readonly PredefinedMember<MethodSpec> BinderDeleteProperty;
@@ -1864,7 +1873,8 @@ namespace Mono.PlayScript
 			ArrayPush = new PredefinedMember<MethodSpec> (module, ptypes.Array, "push", btypes.Object);
 			VectorPush = new PredefinedMember<MethodSpec> (module, ptypes.Vector, "push", new TypeParameterSpec (0, tp, SpecialConstraint.None, Variance.None, null));
 			BinderGetMember = new PredefinedMember<MethodSpec> (module, ptypes.Binder, "GetMember", btypes.Object, btypes.Type, btypes.Object);
-			BinderGetMembers = new PredefinedMember<MethodSpec> (module, ptypes.Binder, "GetMembers", btypes.Object);
+			BinderGetKeys = new PredefinedMember<MethodSpec> (module, ptypes.Binder, "GetKeys", btypes.Object);
+			BinderGetValues = new PredefinedMember<MethodSpec> (module, ptypes.Binder, "GetValues", btypes.Object);
 			BinderSetMember = new PredefinedMember<MethodSpec> (module, ptypes.Binder, "SetMember", btypes.Object, btypes.Type, btypes.Object, btypes.Object);
 			BinderDeleteProperty = new PredefinedMember<MethodSpec> (module, ptypes.Binder, "DeleteProperty", btypes.Object, btypes.Object);
 			BinderHasProperty = new PredefinedMember<MethodSpec> (module, ptypes.Binder, "HasProperty", btypes.Object, btypes.Type, btypes.Object);

@@ -106,7 +106,7 @@ namespace PlayScript.Runtime
 			}
 		}
 
-		public static IEnumerable<string> GetMembers (object instance)
+		public static IEnumerable<string> GetKeys (object instance)
 		{
 			if (instance == null)
 				return new string [0];
@@ -116,28 +116,61 @@ namespace PlayScript.Runtime
 			//
 			var array = instance as _root.Array;
 			if (array != null) {
-				return CreateArrayIterator (array.length);
+				return CreateArrayKeysIterator (array.length);
 			}
 
 			ConcurrentDictionary<string, object> members;
 			if (dynamic_classes.TryGetValue (instance, out members)) {
-				return CreateMembersIterator (members.Keys);
+				return CreateMemberKeysIterator (members.Keys);
 			}
 
 			return new string [0];
 		}
 
-		static IEnumerable<string> CreateArrayIterator (uint length)
+		static IEnumerable<string> CreateArrayKeysIterator (uint length)
 		{
 			for (uint i = 0; i < length; ++i)
 				yield return i.ToString (CultureInfo.InvariantCulture);
 		}
 
-		static IEnumerable<string> CreateMembersIterator (ICollection<string> members)
+		static IEnumerable<string> CreateMemberKeysIterator (ICollection<string> keys)
 		{
-			foreach (var member in members)
-				yield return member;
+			foreach (var key in keys)
+				yield return key;
 		}
+
+		public static IEnumerable<dynamic> GetValues (object instance)
+		{
+			if (instance == null)
+				return new dynamic [0];
+
+			//
+			// Array's are different
+			//
+			var array = instance as _root.Array;
+			if (array != null) {
+				return CreateArrayValuesIterator (array);
+			}
+
+			ConcurrentDictionary<string, object> members;
+			if (dynamic_classes.TryGetValue (instance, out members)) {
+				return CreateMemberValuesIterator (members.Values);
+			}
+
+			return new dynamic [0];
+		}
+
+		static IEnumerable<object> CreateArrayValuesIterator (_root.Array array)
+		{
+			for (uint i = 0; i < array.length; ++i)
+				yield return array [i];
+		}
+
+		static IEnumerable<object> CreateMemberValuesIterator (ICollection<object> values)
+		{
+			foreach (var value in values)
+				yield return value;
+		}		
 
 		public static bool HasProperty (object instance, Type context, object property)
 		{

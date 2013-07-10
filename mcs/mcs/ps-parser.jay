@@ -6490,32 +6490,13 @@ foreach_statement
 		if ($10 is EmptyStatement && lexer.peek_token () == Token.OPEN_BRACE)
 			Warning_EmptyStatement (GetLocation ($10));
 
-		var blockVar = $4 as BlockVariable;
-		if (blockVar != null) {
-			if (blockVar == null || blockVar.Initializer != null || blockVar.Declarators != null) {
-				report.Error (7036, GetLocation ($4), "Invalid for each initializer");	
-				$$ = end_block (current_block.StartLocation);
-			} else {
-				Foreach f = new Foreach (blockVar.TypeExpression, blockVar.Variable, (Expression) $7, (Statement) $10, current_block, AsForEachType.ForEachValue, GetLocation ($1));
-				lbag.AddStatement (f, GetLocation ($3), GetLocation ($5), GetLocation ($8));
-				
-				end_block (GetLocation ($5));
-				$$ = f;
-			}
-		} else {
-			var expList = $4 as List<Expression>;
-			var varRef = ($4 as FullNamedExpression) ?? ((expList != null && expList.Count == 1) ? (expList[0] as FullNamedExpression) : null);
-			if (varRef == null) {
-				report.Error (7041, GetLocation ($4), "Invalid iterator initializer");		
-				$$ = end_block (current_block.StartLocation);
-			} else {
-				Foreach f = new Foreach (varRef, (Expression) $7, (Statement) $10, current_block, AsForEachType.ForEachValue, GetLocation ($1));
-				lbag.AddStatement (f, GetLocation ($3), GetLocation ($5), GetLocation ($8));
-				
-				end_block (GetLocation ($5));
-				$$ = f;
-			}
+		if ($4 is StatementList) {
+			report.ErrorPlayScript (1200, GetLocation ($4), "Invalid for-in initializer, only 1 expression expected");
 		}
+
+		$$ = new ForEach ((Statement) $4, (Expression) $7, (Statement) $10, current_block, GetLocation ($1));
+				
+		end_block (GetLocation ($5));
 	  }
 	;
 
