@@ -44,6 +44,8 @@ read_entry (FILE *in, void **data)
 	case SGEN_PROTOCOL_CEMENT: size = sizeof (SGenProtocolCement); break;
 	case SGEN_PROTOCOL_CEMENT_RESET: size = 0; break;
 	case SGEN_PROTOCOL_DISLINK_UPDATE: size = sizeof (SGenProtocolDislinkUpdate); break;
+	case SGEN_PROTOCOL_DISLINK_UPDATE_STAGED: size = sizeof (SGenProtocolDislinkUpdateStaged); break;
+	case SGEN_PROTOCOL_DISLINK_PROCESS_STAGED: size = sizeof (SGenProtocolDislinkProcessStaged); break;
 	default: assert (0);
 	}
 
@@ -185,11 +187,25 @@ print_entry (int type, void *data)
 	}
 	case SGEN_PROTOCOL_DISLINK_UPDATE: {
 		SGenProtocolDislinkUpdate *entry = data;
-		printf ("dislink_update link %p obj %p", entry->link, entry->obj);
+		printf ("dislink_update link %p obj %p staged %d", entry->link, entry->obj, entry->staged);
 		if (entry->obj)
 			printf (" track %d\n", entry->track);
 		else
 			printf ("\n");
+		break;
+	}
+	case SGEN_PROTOCOL_DISLINK_UPDATE_STAGED: {
+		SGenProtocolDislinkUpdateStaged *entry = data;
+		printf ("dislink_update_staged link %p obj %p index %d", entry->link, entry->obj, entry->index);
+		if (entry->obj)
+			printf (" track %d\n", entry->track);
+		else
+			printf ("\n");
+		break;
+	}
+	case SGEN_PROTOCOL_DISLINK_PROCESS_STAGED: {
+		SGenProtocolDislinkProcessStaged *entry = data;
+		printf ("dislink_process_staged link %p obj %p index %d\n", entry->link, entry->obj, entry->index);
 		break;
 	}
 	default:
@@ -278,6 +294,14 @@ is_match (gpointer ptr, int type, void *data)
 	}
 	case SGEN_PROTOCOL_DISLINK_UPDATE: {
 		SGenProtocolDislinkUpdate *entry = data;
+		return ptr == entry->obj || ptr == entry->link;
+	}
+	case SGEN_PROTOCOL_DISLINK_UPDATE_STAGED: {
+		SGenProtocolDislinkUpdateStaged *entry = data;
+		return ptr == entry->obj || ptr == entry->link;
+	}
+	case SGEN_PROTOCOL_DISLINK_PROCESS_STAGED: {
+		SGenProtocolDislinkProcessStaged *entry = data;
 		return ptr == entry->obj || ptr == entry->link;
 	}
 	default:
