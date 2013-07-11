@@ -207,10 +207,7 @@ public class UTF8Encoding : Encoding
 
 	// This function is called when we want to flush the decoder state
 	// (i.e. in case of invalid UTF-8 characters or interrupted sequences)
-	// TODO: if we run out of output space during fallback replacement an
-	//       ArgumentException is thrown -- maybe this is not the correct
-	//       behaviour
-	internal unsafe static void InternalGetCharsFlush (
+	internal unsafe static DecoderStatus InternalGetCharsFlush (
 		char* chars, int charCount,
 		DecoderFallbackBuffer fallbackBuffer,
 		DecoderStatus s,
@@ -219,7 +216,7 @@ public class UTF8Encoding : Encoding
 	{
 		// if there is nothing to flush, then exit silently
 		if(procBytes == 0)
-			return;
+			return DecoderStatus.Ok;
 		// now we build a 'bytesUnknown' array with the
 		// stored bytes in 'procBytes'.
 		int extra = 0;
@@ -236,7 +233,7 @@ public class UTF8Encoding : Encoding
 		if (chars != null) {
 			while (fallbackBuffer.Remaining > 0) {
 				if (charsProcessed >= charCount)
-					throw new ArgumentException ("Insufficient Space", "chars/fallback");
+					return DecoderStatus.InsufficientSpace;
 				chars [charsProcessed++] = fallbackBuffer.GetNextChar ();
 			}
 		} else
@@ -245,6 +242,8 @@ public class UTF8Encoding : Encoding
 
 		// recovery was succesful, flush decoder state
 		leftBits = leftBytes = procBytes = 0;
+
+		return DecoderStatus.Ok;
 	}
 
 	// InternalGetChars processor. Can decode or count space needed for
@@ -316,33 +315,35 @@ public class UTF8Encoding : Encoding
 			case DecoderStatus.InvalidStart:
 			case DecoderStatus.InvalidChar:
 			case DecoderStatus.SurrogateFound:
-				InternalGetCharsFlush (
+				s = InternalGetCharsFlush (
 					chars, charCount,
 					fallbackBuffer,
 					s,
 					bytesProcessed, ref charsProcessed,
 					ref leftBytes, ref leftBits, ref procBytes);
+				if (s != DecoderStatus.Ok)
+					return s;
 				break;
 
 			case DecoderStatus.InputRunOut:
-				if (flush)
-					InternalGetCharsFlush (
+				return flush
+					? InternalGetCharsFlush (
 						chars, charCount,
 						fallbackBuffer,
 						s,
 						bytesProcessed, ref charsProcessed,
-						ref leftBytes, ref leftBits, ref procBytes);
-				return DecoderStatus.InputRunOut;
+						ref leftBytes, ref leftBits, ref procBytes)
+					: DecoderStatus.InputRunOut;
 			}
 		}
-		if (flush)
-			InternalGetCharsFlush (
+		return flush
+			? InternalGetCharsFlush (
 				chars, charCount,
 				fallbackBuffer,
 				DecoderStatus.Ok,
 				bytesProcessed, ref charsProcessed,
-				ref leftBytes, ref leftBits, ref procBytes);
-		return DecoderStatus.Ok;
+				ref leftBytes, ref leftBits, ref procBytes)
+			: DecoderStatus.Ok;
 	}
 
 	internal unsafe static DecoderStatus InternalGetCharsDecode (
@@ -556,10 +557,7 @@ again:
 
 	// This function is called when we want to flush the decoder state
 	// (i.e. in case of invalid UTF-16 characters or dangling surrogates)
-	// TODO: if we run out of output space during fallback replacement an
-	//       ArgumentException is thrown -- maybe this is not the correct
-	//       behaviour
-	internal unsafe static void InternalGetBytesFlush (
+	internal unsafe static EncoderStatus InternalGetBytesFlush (
 		byte* bytes, int byteCount,
 		EncoderFallbackBuffer fallbackBuffer,
 		int charsProcessed, ref int bytesProcessed,
@@ -571,11 +569,11 @@ again:
 		// when we have called InternalGetBytes from this function
 		// (for avoiding infinite recursive calls)
 		if (fallbackBuffer == null)
-			return;
+			return EncoderStatus.Ok;
 
 		// if there is nothing to flush, then return silently
 		if(leftChar == 0)
-			return;
+			return EncoderStatus.Ok;
 
 		// invalid UTF-16 or invalid surrogate
 		fallbackBuffer.Fallback ((char) leftChar, charsProcessed - 1);
@@ -606,7 +604,7 @@ again:
 				bytesProcessed += t_bytesProcessed;
 				break;
 			case EncoderStatus.InsufficientSpace:
-				throw new ArgumentException ("Insufficient Space", "fallback buffer bytes");
+				return EncoderStatus.InsufficientSpace;
 			case EncoderStatus.InputRunOut:
 			case EncoderStatus.InvalidChar:
 			case EncoderStatus.InvalidSurrogate:
@@ -615,6 +613,7 @@ again:
 		}
 		// flush encoder state
 		leftChar = 0;
+		return EncoderStatus.Ok;
 	}
 
 	// InternalGetBytes processor. Can encode or count space needed for
@@ -679,31 +678,33 @@ again:
 				break;	// everything OK :D
 
 			case EncoderStatus.InputRunOut:
-				if (flush)
-					InternalGetBytesFlush (
+				return flush
+					? InternalGetBytesFlush (
 						bytes, byteCount,
 						fallbackBuffer,
 						charsProcessed, ref bytesProcessed,
-						ref leftChar);
-				return EncoderStatus.InputRunOut;
+						ref leftChar)
+					: EncoderStatus.InputRunOut;
 
 			case EncoderStatus.InvalidChar:
 			case EncoderStatus.InvalidSurrogate:
-				InternalGetBytesFlush (
+				s = InternalGetBytesFlush (
 					bytes, byteCount,
 					fallbackBuffer,
 					charsProcessed, ref bytesProcessed,
 					ref leftChar);
+				if (s != EncoderStatus.Ok)
+					return s;
 				break;
 			}
 		}
-		if (flush)
-			InternalGetBytesFlush (
+		return flush
+			? InternalGetBytesFlush (
 				bytes, byteCount,
 				fallbackBuffer,
 				charsProcessed, ref bytesProcessed,
-				ref leftChar);
-		return EncoderStatus.Ok;
+				ref leftChar)
+			: EncoderStatus.Ok;
 	}
 
 	internal unsafe static EncoderStatus InternalGetBytesEncode (
