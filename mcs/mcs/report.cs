@@ -300,6 +300,11 @@ namespace Mono.CSharp {
 			ProcessErrorMessage (msg);
 		}
 
+		public void ErrorPlayScript (int code, Location loc, string format, params string[] args)
+		{
+			ErrorPlayScript (code, loc, string.Format (format, args));
+		}
+
 		public void ErrorPlayScript (int code, Location loc, string format, string arg)
 		{
 			ErrorPlayScript (code, loc, string.Format (format, arg));

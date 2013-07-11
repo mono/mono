@@ -3160,27 +3160,7 @@ namespace Mono.CSharp
 
 			if ((ModFlags & Modifiers.OVERRIDE) != 0) {
 				if (base_member == null) {
-					if (candidate == null) {
-						if (this is Method && ((Method)this).ParameterInfo.IsEmpty && MemberName.Name == Destructor.MetadataName && MemberName.Arity == 0) {
-							Report.Error (249, Location, "Do not override `{0}'. Use destructor syntax instead",
-								"object.Finalize()");
-						} else {
-							Report.Error (115, Location, "`{0}' is marked as an override but no suitable {1} found to override",
-								GetSignatureForError (), SimpleName.GetMemberType (this));
-						}
-					} else {
-						Report.SymbolRelatedToPreviousError (candidate);
-						if (this is Event)
-							Report.Error (72, Location, "`{0}': cannot override because `{1}' is not an event",
-								GetSignatureForError (), TypeManager.GetFullNameSignature (candidate));
-						else if (this is PropertyBase)
-							Report.Error (544, Location, "`{0}': cannot override because `{1}' is not a property",
-								GetSignatureForError (), TypeManager.GetFullNameSignature (candidate));
-						else
-							Report.Error (505, Location, "`{0}': cannot override because `{1}' is not a method",
-								GetSignatureForError (), TypeManager.GetFullNameSignature (candidate));
-					}
-
+					Error_OverrideWithoutBase (candidate);
 					return false;
 				}
 
@@ -3470,6 +3450,30 @@ namespace Mono.CSharp
 				member.GetSignatureForError (),
 				ModifiersExtensions.AccessibilityName (base_modifiers),
 				base_member.GetSignatureForError ());
+		}
+
+		protected virtual void Error_OverrideWithoutBase (MemberSpec candidate)
+		{
+			if (candidate == null) {
+				if (this is Method && ((Method) this).ParameterInfo.IsEmpty && MemberName.Name == Destructor.MetadataName && MemberName.Arity == 0) {
+					Report.Error (249, Location, "Do not override `{0}'. Use destructor syntax instead",
+						"object.Finalize()");
+				} else {
+					Report.Error (115, Location, "`{0}' is marked as an override but no suitable {1} found to override",
+						GetSignatureForError (), SimpleName.GetMemberType (this));
+				}
+			} else {
+				Report.SymbolRelatedToPreviousError (candidate);
+				if (this is Event)
+					Report.Error (72, Location, "`{0}': cannot override because `{1}' is not an event",
+						GetSignatureForError (), TypeManager.GetFullNameSignature (candidate));
+				else if (this is PropertyBase)
+					Report.Error (544, Location, "`{0}': cannot override because `{1}' is not a property",
+						GetSignatureForError (), TypeManager.GetFullNameSignature (candidate));
+				else
+					Report.Error (505, Location, "`{0}': cannot override because `{1}' is not a method",
+						GetSignatureForError (), TypeManager.GetFullNameSignature (candidate));
+			}
 		}
 
 		protected void Error_StaticReturnType ()

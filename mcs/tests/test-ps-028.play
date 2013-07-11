@@ -1,0 +1,42 @@
+package
+{
+	public class OverrideTest extends BaseClass
+	{
+		public override function run():String
+		{
+			return super.run () + "-Main";
+		}
+		
+		public override function get Prop():int
+		{
+			return super.Prop + 40;
+		}
+		
+		public static function Main():int
+		{
+			var v = new OverrideTest ();
+			if (v.run () != "Base-Main")
+				return 1;
+				
+			if (v.Prop != 44)
+				return 2;
+			
+			trace ("ok");
+			return 0;
+		}
+	}
+	
+	public class BaseClass
+	{
+		public function run():String
+		{
+			return "Base";
+		}
+		
+		public function get Prop():int
+		{
+			return 4;
+		}
+	}
+}
+

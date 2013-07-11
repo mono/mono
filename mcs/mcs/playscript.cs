@@ -235,10 +235,10 @@ namespace Mono.PlayScript
 			//
 			// An untyped variable is not the same as a variable of type Object.
 			// The key difference is that untyped variables can hold the special value
-			// undefined, while a variable of type Object cannot hold that value.
-			// Also any conversion is done at runtime.
+			// undefined, while a variable of type Object cannot hold that value,
+			// any conversion is done at runtime.
 			//
-			return mc.Module.Compiler.BuiltinTypes.Dynamic;
+			return mc.Module.PlayscriptTypes.UndefinedType;
 		}
 	}
 
@@ -1432,6 +1432,80 @@ namespace Mono.PlayScript
 		public FullNamedExpression TypeExpression { get; private set; }
 	}
 
+	public class Method : CSharp.Method
+	{
+		const Modifiers AllowedModifiers =
+			Modifiers.STATIC |
+			Modifiers.PUBLIC |
+			Modifiers.PROTECTED |
+			Modifiers.INTERNAL |
+			Modifiers.PRIVATE |
+			Modifiers.OVERRIDE |
+			Modifiers.VIRTUAL | // virtual should be no-op but we extend AS here to have better metadata
+			Modifiers.SEALED; // TODO: FINAL
+
+		private Method (TypeDefinition parent, FullNamedExpression return_type, Modifiers mod,
+					MemberName name, ParametersCompiled parameters, Attributes attrs)
+			: base (parent, return_type, mod, AllowedModifiers, name, parameters, attrs)
+		{
+		}
+
+		public bool HasNoReturnType { get; set; }
+
+		public static new Method Create (TypeDefinition parent, FullNamedExpression returnType, Modifiers mod,
+				   MemberName name, ParametersCompiled parameters, Attributes attrs)
+		{
+			var rt = returnType ?? new UntypedTypeExpression (name.Location);
+
+			var m = new Method (parent, rt, mod, name, parameters, attrs);
+
+			if (returnType == null) {
+				m.HasNoReturnType = true;
+				m.Report.WarningPlayScript (1009, m.Location, "Method `{0}' return type has no type declaration", m.GetSignatureForError ());
+			}
+
+			return m;
+		}
+
+		protected override bool CheckOverrideAgainstBase (MemberSpec base_member)
+		{
+			bool ok = true;
+
+			if ((base_member.Modifiers & (Modifiers.ABSTRACT | Modifiers.VIRTUAL | Modifiers.OVERRIDE)) == 0) {
+				ModFlags &= ~Modifiers.OVERRIDE;
+				ModFlags |= Modifiers.VIRTUAL;
+			}
+
+			if ((base_member.Modifiers & Modifiers.SEALED) != 0) {
+				Report.SymbolRelatedToPreviousError (base_member);
+				Report.ErrorPlayScript (1025, Location, "`{0}': Cannot redefine a final method", GetSignatureForError ());
+				ok = false;
+			}
+
+			var base_member_type = ((IInterfaceMemberSpec) base_member).MemberType;
+			if (!TypeSpecComparer.Override.IsEqual (MemberType, base_member_type)) {
+				Report.SymbolRelatedToPreviousError (base_member);
+
+				// TODO: Add all not matching incompatibilites as PS1023
+				Report.ErrorPlayScript (1023, Location, "`{0}': Incompatible override: Return type must be `{1}' to match overridden member `{2}'",
+					GetSignatureForError (), base_member_type.GetSignatureForError (), base_member.GetSignatureForError ());
+				ok = false;
+			}
+
+			return ok;
+		}
+
+		protected override void Error_OverrideWithoutBase (MemberSpec candidate)
+		{
+			if (candidate == null) {
+				Report.ErrorPlayScript (1020, Location, "`{0}': Method marked override must override another method", GetSignatureForError ());
+				return;
+			}
+
+			base.Error_OverrideWithoutBase (candidate);
+		}
+	}
+
 	public class E4XIndexer : PlayScriptExpression
 	{
 		public enum Operator
@@ -1822,6 +1896,12 @@ namespace Mono.PlayScript
 		public readonly PredefinedType Binder;
 		public readonly PredefinedType Operations;
 
+
+		//
+		// Internal type used for undefined type comparisons
+		//
+		public readonly BuiltinTypeSpec UndefinedType;
+
 		//
 		// The namespace used for the root package.
 		//
@@ -1833,6 +1913,9 @@ namespace Mono.PlayScript
 			Object.SetDefinition (module.Compiler.BuiltinTypes.Object);
 			Object.Modifiers |= Modifiers.DYNAMIC;
 			// TODO: Add toString to MemberCache which will map to ToString
+
+			// For now use same instance
+			UndefinedType = module.Compiler.BuiltinTypes.Dynamic;
 
 			Array = new PredefinedType (module, MemberKind.Class, RootNamespace, "Array");
 			Vector = new PredefinedType (module, MemberKind.Class, RootNamespace, "Vector", 1);

@@ -1,0 +1,52 @@
+package
+{
+	public class UntypedReturnTypeTest
+	{
+		public static function F1 ()
+		{
+		}
+		
+		public static function F2 (arg:int)
+		{
+			if (arg > 0)
+				return 1;
+				
+			return;
+		}
+		
+		public static function F3 (arg:int)
+		{
+			if (arg > 0)
+				return 1;
+		}
+		
+		public static function F4 (arg:int):*
+		{
+			if (arg > 0)
+				return 1;
+		}
+		
+		public static function Main():int
+		{
+			F1 ();
+			if (F2 (0) != undefined)
+				return 1;
+			if (F2 (1) != 1)
+				return 2;
+				
+			if (F3 (0) != undefined)
+				return 3;
+			if (F3 (1) != 1)
+				return 4;
+			
+			if (F4 (0) != undefined)
+				return 5;
+			if (F4 (1) != 1)
+				return 6;
+				
+			trace ("ok");
+			return 0;
+		}
+	}
+}
+

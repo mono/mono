@@ -862,6 +862,11 @@ namespace Mono.CSharp {
 				if (ec.CurrentIterator != null) {
 					Error_ReturnFromIterator (ec);
 				} else if (ec.ReturnType != InternalType.ErrorType) {
+					if (ec.ReturnType == ec.Module.PlayscriptTypes.UndefinedType) {
+						expr = new PlayScript.SimpleName ("undefined", loc).Resolve (ec);
+						return true;
+					}
+
 					ec.Report.Error (126, loc,
 						"An object of a type convertible to `{0}' is required for the return statement",
 						ec.ReturnType.GetSignatureForError ());
@@ -3094,6 +3099,14 @@ namespace Mono.CSharp {
 					if (md is StateMachineMethod) {
 						unreachable = true;
 					} else {
+
+						if (rc.ReturnType == rc.Module.PlayscriptTypes.UndefinedType) {
+							var ret = new Return (null, EndLocation);
+							ret.Resolve (rc);
+							statements.Add (ret);
+							return true;
+						}
+
 						rc.Report.Error (161, md.Location, "`{0}': not all code paths return a value", md.GetSignatureForError ());
 						return false;
 					}
