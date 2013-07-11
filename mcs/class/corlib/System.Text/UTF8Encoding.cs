@@ -217,6 +217,9 @@ public class UTF8Encoding : Encoding
 		int bytesProcessed, ref int charsProcessed,
 		ref uint leftBytes, ref uint leftBits, ref uint procBytes)
 	{
+		// if there is nothing to flush, then exit silently
+		if(procBytes == 0)
+			return;
 		// now we build a 'bytesUnknown' array with the
 		// stored bytes in 'procBytes'.
 		int extra = 0;
@@ -244,7 +247,7 @@ public class UTF8Encoding : Encoding
 		leftBits = leftBytes = procBytes = 0;
 	}
 
-	// InternalGetBytes processor. Can decode or count space needed for
+	// InternalGetChars processor. Can decode or count space needed for
 	// decoding, depending on the enabled mode:
 	//   - decoder
 	//       enabled when charCount >= 0 (but chars may be null)
@@ -332,6 +335,13 @@ public class UTF8Encoding : Encoding
 				return DecoderStatus.InputRunOut;
 			}
 		}
+		if (flush)
+			InternalGetCharsFlush (
+				chars, charCount,
+				fallbackBuffer,
+				DecoderStatus.Ok,
+				bytesProcessed, ref charsProcessed,
+				ref leftBytes, ref leftBits, ref procBytes);
 		return DecoderStatus.Ok;
 	}
 
@@ -563,6 +573,10 @@ again:
 		if (fallbackBuffer == null)
 			return;
 
+		// if there is nothing to flush, then return silently
+		if(leftChar == 0)
+			return;
+
 		// invalid UTF-16 or invalid surrogate
 		fallbackBuffer.Fallback ((char) leftChar, charsProcessed - 1);
 		// if we've arrived here we are working in replacement mode:
@@ -683,6 +697,12 @@ again:
 				break;
 			}
 		}
+		if (flush)
+			InternalGetBytesFlush (
+				bytes, byteCount,
+				fallbackBuffer,
+				charsProcessed, ref bytesProcessed,
+				ref leftChar);
 		return EncoderStatus.Ok;
 	}
 
