@@ -231,7 +231,7 @@
 #          define NACL_ALIGN()
 #       endif
         inline static int GC_test_and_set(volatile unsigned int *addr) {
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
+#if defined(__native_client__) || defined(HAVE_ARMV6)
           int ret, tmp;
           __asm__ __volatile__ (
                                  "1:\n"
@@ -264,7 +264,7 @@
       inline static void GC_clear(volatile unsigned int *addr) {
 #ifdef HAVE_ARMV6
 		  /* Memory barrier */
-#ifdef __native_client__
+#if defined(__native_client__) || defined(HAVE_ARMV7)
 		  /* NaCl requires ARMv7 CPUs. */
 		  __asm__ __volatile__("dsb" : : : "memory");
 #else
