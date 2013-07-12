@@ -1174,9 +1174,7 @@ namespace Mono.CSharp {
 			// At this point its the first time we know the return type that is 
 			// needed for the anonymous method.  We create the method here.
 			//
-
-			var invoke_mb = Delegate.GetInvokeMethod (delegate_type);
-			TypeSpec return_type = invoke_mb.ReturnType;
+			TypeSpec return_type = ResolveReturnType (ec, delegate_type);
 
 			//
 			// Second: the return type of the delegate must be compatible with 
@@ -1299,6 +1297,12 @@ namespace Mono.CSharp {
 			return Parameters;
 		}
 
+		protected virtual TypeSpec ResolveReturnType (ResolveContext rc, TypeSpec delegateType)
+		{
+			var invoke_mb = Delegate.GetInvokeMethod (delegateType);
+			return invoke_mb.ReturnType;
+		}
+
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			if (ec.HasSet (ResolveContext.Options.ConstantScope)) {
@@ -1374,10 +1378,10 @@ namespace Mono.CSharp {
 				b = b.ConvertToAsyncTask (ec, ec.CurrentMemberDefinition.Parent.PartialContainer, p, return_type, delegate_type, loc);
 			}
 
-			return CompatibleMethodFactory (return_type ?? InternalType.ErrorType, delegate_type, p, b);
+			return CompatibleMethodFactory (ec, return_type ?? InternalType.ErrorType, delegate_type, p, b);
 		}
 
-		protected virtual AnonymousMethodBody CompatibleMethodFactory (TypeSpec return_type, TypeSpec delegate_type, ParametersCompiled p, ParametersBlock b)
+		protected virtual AnonymousMethodBody CompatibleMethodFactory (ResolveContext rc, TypeSpec return_type, TypeSpec delegate_type, ParametersCompiled p, ParametersBlock b)
 		{
 			return new AnonymousMethodBody (p, b, return_type, delegate_type, loc);
 		}

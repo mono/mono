@@ -263,6 +263,8 @@ namespace Mono.PlayScript
 			if (type_expr == null) {
 				if (Initializer == null)
 					type_expr = new UntypedTypeExpression (loc);
+				else if (Initializer is LocalFunction)
+					type_expr = new TypeExpression (bc.Module.PlayscriptTypes.Function, loc);
 				else
 					type_expr = new VarExpr (loc);
 			}
@@ -691,59 +693,87 @@ namespace Mono.PlayScript
 		}
 	}
 
-	public class AsLocalFunction : Statement {
+	public class LocalFunction : AnonymousMethodExpression
+	{
+		TypeSpec return_type;
+
+		public LocalFunction (FullNamedExpression returnType, Location loc)
+			: base (loc)
+		{
+			ReturnType = returnType;
+		}
+
+		public FullNamedExpression ReturnType { get; private set; }
+
+		protected override AnonymousMethodBody CompatibleMethodFactory (ResolveContext rc, TypeSpec return_type, TypeSpec delegate_type, ParametersCompiled p, ParametersBlock b)
+		{
+			string d_name;
+			int arity = p.Count;
+			TypeSpec[] targs;
+
+			if (return_type.Kind == MemberKind.Void) {
+				d_name = "Action";
+				targs = p.Types;
+			} else {
+				d_name = "Func";
+				++arity;
+
+				targs = new TypeSpec [arity];
+				Array.Copy (p.Types, targs, p.Types.Length);
+				targs [arity - 1] = return_type;
+			}
+
+			TypeExpr te = null;
+			Namespace type_ns = rc.Module.GlobalRootNamespace.GetNamespace ("System", true);
+			if (type_ns != null) {
+				te = type_ns.LookupType (rc, d_name, arity, LookupMode.Normal, loc);
+				if (te != null) {
+					delegate_type = te.Type.MakeGenericType (rc, targs);
+				}
+			}
+
+			return base.CompatibleMethodFactory (rc, return_type, delegate_type, p, b);
+		}
 		
-		public string Name;
-		public AnonymousMethodExpression MethodExpr;
-		public BlockVariable VarDecl;
-
-		public AsLocalFunction (Location loc, string name, AnonymousMethodExpression methodExpr, BlockVariable varDecl)
+		protected override TypeSpec ResolveReturnType (ResolveContext rc, TypeSpec delegateType)
 		{
-			this.loc = loc;
-			this.Name = name;
-			this.MethodExpr = methodExpr;
-			this.VarDecl = varDecl;
+			if (return_type == null) {
+				return_type = ReturnType.ResolveAsType (rc);
+			}
+
+			return return_type;
 		}
 
-		public override bool Resolve (BlockContext bc)
+		protected override ParametersCompiled ResolveParameters (ResolveContext rc, TypeInferenceContext tic, TypeSpec delegate_type)
 		{
-			return true;
+			return Parameters;
+		}
+	}
+
+	public class LocalFunctionDeclaration : Statement
+	{
+		public LocalFunctionDeclaration (LocalFunction function, string name)
+		{
+			Function = function;
+			Name = name;
 		}
 
-		protected override void CloneTo (CloneContext clonectx, Statement t)
-		{
-			var target = (AsLocalFunction) t;
-
-			target.Name = Name;
-			target.MethodExpr = MethodExpr.Clone (clonectx) as AnonymousMethodExpression;
-			target.VarDecl = VarDecl.Clone (clonectx) as BlockVariable;
-		}
+		public LocalFunction Function { get; private set; }
+		public string Name { get; private set; }
 
 		protected override void DoEmit (EmitContext ec)
 		{
+			//
+			// This is only AST declaration there is nothing to emit. The initialization
+			// has been moved to block initializer because the function needs to be available
+			// anywhere in the block.
+			//
 		}
 
-//		public override void EmitJs (JsEmitContext jec)
-//		{
-//			jec.Buf.Write ("delete ", Location);
-//			Expr.EmitJs (jec);
-//		}
-//		
-//		public override void EmitStatementJs (JsEmitContext jec)
-//		{
-//			jec.Buf.Write ("\t", Location);
-//			EmitJs (jec);
-//			jec.Buf.Write (";\n");
-//		}
-		
-		public override Expression CreateExpressionTree (ResolveContext ec)
+		protected override void CloneTo (CloneContext clonectx, Statement target)
 		{
-			throw new System.NotSupportedException ();
-		}
-		
-		public override object Accept (StructuralVisitor visitor)
-		{
-			return visitor.Visit (this);
+			var t = target as LocalFunctionDeclaration;
+			t.Function = (LocalFunction) Function.Clone (clonectx);
 		}
 	}
 
@@ -1024,8 +1054,8 @@ namespace Mono.PlayScript
 				return new TypeExpression (types.Double, loc);
 			case "String":
 				return new TypeExpression (types.String, loc);
-			case "Function":
-				return new TypeExpression (types.Delegate, loc);
+//			case "Function":
+//				return new TypeExpression (types.Delegate, loc);
 			case "Class":
 				return new TypeExpression (types.Type, loc);
 			default:
@@ -1884,11 +1914,11 @@ namespace Mono.PlayScript
 	class PredefinedTypes
 	{
 		public readonly BuiltinTypeSpec Object;
+		public readonly BuiltinTypeSpec Function;
 
 		public readonly PredefinedType Vector;
 		public readonly PredefinedType Array;
 		public readonly PredefinedType Error;
-		public readonly PredefinedType Function;
 		public readonly PredefinedType RegExp;
 		public readonly PredefinedType Xml;
 		public readonly PredefinedType Namespace;
@@ -1917,10 +1947,15 @@ namespace Mono.PlayScript
 			// For now use same instance
 			UndefinedType = module.Compiler.BuiltinTypes.Dynamic;
 
+			// Setup type aliases
+			Function = new BuiltinTypeSpec (MemberKind.Delegate, null, "Function", BuiltinTypeSpec.Type.Delegate);
+			Function.SetDefinition (module.Compiler.BuiltinTypes.Delegate);
+			module.GlobalRootNamespace.AddType (module, Function);
+
+			// Known predefined types
 			Array = new PredefinedType (module, MemberKind.Class, RootNamespace, "Array");
 			Vector = new PredefinedType (module, MemberKind.Class, RootNamespace, "Vector", 1);
 			Error = new PredefinedType (module, MemberKind.Class, RootNamespace, "Error");
-			Function = new PredefinedType (module, MemberKind.Class, RootNamespace, "Function");
 			RegExp = new PredefinedType (module, MemberKind.Class, RootNamespace, "RegExp");
 			Xml = new PredefinedType (module, MemberKind.Class, RootNamespace, "XML");
 			Namespace = new PredefinedType (module, MemberKind.Class, RootNamespace, "Namespace");
@@ -1943,6 +1978,7 @@ namespace Mono.PlayScript
 		public readonly PredefinedMember<MethodSpec> BinderSetMember;
 		public readonly PredefinedMember<MethodSpec> BinderHasProperty;
 		public readonly PredefinedMember<MethodSpec> BinderDeleteProperty;
+		public readonly PredefinedMember<MethodSpec> BinderDelegateInvoke;
 		public readonly PredefinedMember<MethodSpec> OperationsTypeof;
 
 		public PredefinedMembers (ModuleContainer module)
@@ -1960,6 +1996,7 @@ namespace Mono.PlayScript
 			BinderGetValues = new PredefinedMember<MethodSpec> (module, ptypes.Binder, "GetValues", btypes.Object);
 			BinderSetMember = new PredefinedMember<MethodSpec> (module, ptypes.Binder, "SetMember", btypes.Object, btypes.Type, btypes.Object, btypes.Object);
 			BinderDeleteProperty = new PredefinedMember<MethodSpec> (module, ptypes.Binder, "DeleteProperty", btypes.Object, btypes.Object);
+			BinderDelegateInvoke = new PredefinedMember<MethodSpec> (module, ptypes.Binder, "DelegateInvoke", btypes.Delegate, ArrayContainer.MakeType (module, btypes.Object));
 			BinderHasProperty = new PredefinedMember<MethodSpec> (module, ptypes.Binder, "HasProperty", btypes.Object, btypes.Type, btypes.Object);
 			OperationsTypeof = new PredefinedMember<MethodSpec> (module, ptypes.Operations, "Typeof", btypes.Object);
 		}

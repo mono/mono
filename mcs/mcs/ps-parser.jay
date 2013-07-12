@@ -1226,43 +1226,6 @@ field_declaration
 		$$ = current_field;
 		current_field = null;
 	  }
-/*
-	| opt_attributes
-	  opt_modifiers
-	  FIXED IDENTIFIER COLON simple_type 
-	  { 
-		if (lang_version < LanguageVersion.ISO_2)
-			FeatureIsNotAvailable (GetLocation ($6), "fixed size buffers");
-
-		var lt = (LocatedToken) $4;
-		current_field = new FixedField (current_type, (FullNamedExpression) $6, (Modifiers) $2,
-			new MemberName (lt.Value, lt.Location), (Attributes) $1);
-			
-		if (is_config_enabled) {
-			current_type.AddField (current_field);
-		}
-		is_config_enabled = true;
-	  }
-	  fixed_field_size opt_fixed_field_declarators SEMICOLON
-	  {
-		if (doc_support) {
-			current_field.DocComment = Lexer.consume_doc_comment ();
-			Lexer.doc_state = XmlCommentState.Allowed;
-	    }
-
-		current_field.Initializer = (ConstInitializer) $8;	    
-		lbag.AddMember (current_field, mod_locations, GetLocation ($10));
-		$$ = current_field;
-	    current_field = null;
-	  }
-	| opt_attributes
-	  opt_modifiers
-	  FIXED IDENTIFIER COLON simple_type error
-	  SEMICOLON
-	  {
-		report.Error (1641, GetLocation ($8), "A fixed size buffer field must have the array size specifier after the field name");
-	  }
-*/
 	;
 	
 opt_field_initializer
@@ -3516,93 +3479,75 @@ qualified_identifier
 anonymous_method_expression
 	: FUNCTION OPEN_PARENS
 	  {
-	  	valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out;
+	  	valid_param_mod = 0;
 	  }
-	  opt_formal_parameter_list CLOSE_PARENS COLON member_type
+	  opt_formal_parameter_list CLOSE_PARENS opt_anomymous_method_type
 	  {
 		valid_param_mod = 0;
-		start_anonymous (false, (ParametersCompiled) $4, (TypeExpr) $7, false, GetLocation ($1));
+		start_anonymous ((ParametersCompiled) $4, (FullNamedExpression) $6, GetLocation ($1));
 	  }
 	  block
 	  {
-		$$ = end_anonymous ((ParametersBlock) $9);
-	  }
-	| ASYNC FUNCTION OPEN_PARENS
-	  {
-	  	valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out;
-	  }
-	  opt_formal_parameter_list CLOSE_PARENS COLON member_type
-	  {
-		valid_param_mod = 0;
-		start_anonymous (false, (ParametersCompiled) $5, (FullNamedExpression) $8, true, GetLocation ($1));
-	  }
-	  block
-	  {
-		$$ = end_anonymous ((ParametersBlock) $10);
+		$$ = end_anonymous ((ParametersBlock) $8);
 	  }
 	;
-	
+
+opt_anomymous_method_type
+	:
+	  {
+		Warning_NoTypeDeclaration (lexer.Location, "Anonymous function");
+	  	$$ = new UntypedTypeExpression (lexer.Location);
+	  }
+	| COLON member_type
+	  {
+	  	$$ = $2;
+	  }
+	;
+
 local_function_statement
 	: FUNCTION IDENTIFIER OPEN_PARENS
 	  {
-	  	valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out;
+	  	valid_param_mod = 0;
 	  }
-	  opt_formal_parameter_list CLOSE_PARENS COLON member_type
+	  opt_formal_parameter_list CLOSE_PARENS opt_local_function_type
 	  {
 		valid_param_mod = 0;
-		start_anonymous (false, (ParametersCompiled) $5, (FullNamedExpression) $8, false, GetLocation ($1));
+		if ($7 == null) {
+			var lt = (LocatedToken) $2;
+			Warning_NoTypeDeclaration (lt.Location, string.Format ("Local function `{0}'", lt.Value));
+	  		$7 = new UntypedTypeExpression (lexer.Location);
+	  	}
+
+		start_anonymous ((ParametersCompiled) $5, (FullNamedExpression) $7, GetLocation ($1));
 	  }
 	  block
 	  {
 		var lt = (LocatedToken) $2;
-		var anonMethod = end_anonymous ((ParametersBlock) $10);
-		var li = new LocalVariable (current_block.ParametersBlock.TopBlock, lt.Value, lt.Location);
+		var function = (LocalFunction) end_anonymous ((ParametersBlock) $9);
+		var li = new LocalVariable (current_block, lt.Value, 0, lt.Location);
 
-/* TODO
-		var type = Delegate.CreateDelegateTypeExpression(compiler.BuiltinTypes, anonMethod.AsParameters, anonMethod.AsReturnType, GetLocation($1));
-		var decl = new BlockVariable(type, li);
-		decl.Initializer = anonMethod;
-		current_block.AddLocalName (li);
-		current_block.ParametersBlock.TopBlock.AddScopeStatement (decl);	
-		$$ = new AsLocalFunction(GetLocation($1), lt.Value, anonMethod, decl);
-*/
-	  }
-	| ASYNC FUNCTION IDENTIFIER OPEN_PARENS
-	  {
-	  	valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out;
-	  }
-	  opt_formal_parameter_list CLOSE_PARENS COLON member_type
-	  {
-		valid_param_mod = 0;
-		start_anonymous (false, (ParametersCompiled) $6, (FullNamedExpression) $9, true, GetLocation ($1));
-	  }
-	  block
-	  {
-	    var lt = (LocatedToken) $3;
-		var anonMethod = end_anonymous ((ParametersBlock) $11);
-		var li = new LocalVariable (current_block.ParametersBlock.TopBlock, lt.Value, lt.Location);
-/* TODO
-		var type = Delegate.CreateDelegateTypeExpression(compiler.BuiltinTypes, anonMethod.AsParameters, anonMethod.AsReturnType, GetLocation($1));
-		var decl = new BlockVariable(type, li);
-		decl.Initializer = anonMethod;
-		current_block.AddLocalName (li);
-		current_block.ParametersBlock.TopBlock.AddScopeStatement (decl);	
-		$$ = new AsLocalFunction(GetLocation($1), lt.Value, anonMethod, decl);
-*/
-	  }
-	;	
+		INamedBlockVariable existing = null;
+		if (current_block.ParametersBlock.TopBlock.GetLocalName (lt.Value, current_block, ref existing)) {
+			report.ErrorPlayScript (1021, lt.Location, "Duplicate function `{0}' definition", lt.Value);
+		} else {
+			current_block.AddLocalName (li);
+		}
 
-//anonymous_method_signature
-//	: OPEN_PARENS
-//	  {
-//	  	valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out;
-//	  }
-//	  opt_formal_parameter_list CLOSE_PARENS opt_method_return_type
-//	  {
-//		valid_param_mod = 0;
-//	  	$$ = $3;
-//	  }
-//	;
+		current_block.AddScopeStatement (new UntypedBlockVariable (li) {
+			Initializer = function
+		});
+	
+		$$ = new LocalFunctionDeclaration (function, lt.Value);
+	  }
+	;
+
+opt_local_function_type
+	: /* empty */
+	| COLON member_type
+	  {
+	  	$$ = $2;
+	  }
+	;
 
 default_value_expression
 	: DEFAULT open_parens_any type CLOSE_PARENS
@@ -4178,159 +4123,12 @@ assignment_expression
 	  }
 	;
 
-lambda_parameter_list
-	: lambda_parameter
-	  {
-		var pars = new List<Parameter> (4);
-		pars.Add ((Parameter) $1);
-
-		$$ = pars;
-	  }
-	| lambda_parameter_list COMMA lambda_parameter
-	  {
-		var pars = (List<Parameter>) $1;
-		Parameter p = (Parameter)$3;
-		if (pars[0].GetType () != p.GetType ()) {
-			report.Error (748, p.Location, "All lambda parameters must be typed either explicitly or implicitly");
-		}
-		
-		pars.Add (p);
-		$$ = pars;
-	  }
-	;
-
-lambda_parameter
-	: parameter_modifier parameter_type identifier_inside_body
-	  {
-		var lt = (LocatedToken) $3;
-
-		$$ = new Parameter ((FullNamedExpression) $2, lt.Value, (Parameter.Modifier) $1, null, lt.Location);
-	  }
-	| parameter_type identifier_inside_body
-	  {
-		var lt = (LocatedToken) $2;
-
-		$$ = new Parameter ((FullNamedExpression) $1, lt.Value, Parameter.Modifier.NONE, null, lt.Location);
-	  }
-	| IDENTIFIER
-	  {
-	  	var lt = (LocatedToken) $1;
-		$$ = new ImplicitLambdaParameter (lt.Value, lt.Location);
-	  }
-	| AWAIT
-	  {
-	  	var lt = (LocatedToken) Error_AwaitAsIdentifier ($1);
-		$$ = new ImplicitLambdaParameter (lt.Value, lt.Location);
-	  }
-	;
-
-opt_lambda_parameter_list
-	: /* empty */			{ $$ = ParametersCompiled.EmptyReadOnlyParameters; }
-	| lambda_parameter_list		{ 
-		var pars_list = (List<Parameter>) $1;
-		$$ = new ParametersCompiled (pars_list.ToArray ());
-	  }
-	;
-
-lambda_expression_body
-	: {
-		start_block (Location.Null);
-	  }
-	  expression	// All expressions must handle error or current block won't be restored and breaking ast completely
-	  {
-		Block b = end_block (Location.Null);
-		b.IsCompilerGenerated = true;
-		b.AddStatement (new ContextualReturn ((Expression) $2));
-		$$ = b;
-	  } 
-	| block
-	| error
-	  {
-	  	// Handles only cases like foo = x.FirstOrDefault (l => );
-	  	// where we must restore current_variable
-		Block b = end_block (Location.Null);
-		b.IsCompilerGenerated = true;
-
-		Error_SyntaxError (yyToken);
-		$$ = null;
-	  }
-	;
-
 expression_or_error
 	: expression
 	| error
 	  {
 		Error_SyntaxError (yyToken);
 		$$ = null;
-	  }
-	;
-	
-lambda_expression
-	: IDENTIFIER ARROW 
-	  {
-		var lt = (LocatedToken) $1;	
-		Parameter p = new ImplicitLambdaParameter (lt.Value, lt.Location);
-		start_anonymous (true, new ParametersCompiled (p), null, false, lt.Location);
-	  }
-	  lambda_expression_body
-	  {
-		CheckIsPlayScript("lambda", GetLocation($1)); 	  
-		$$ = end_anonymous ((ParametersBlock) $4);
-		lbag.AddLocation ($$, GetLocation ($2));
-	  }
-	| AWAIT ARROW
-	  {
-		var lt = (LocatedToken) Error_AwaitAsIdentifier ($1);
-		Parameter p = new ImplicitLambdaParameter (lt.Value, lt.Location);
-		start_anonymous (true, new ParametersCompiled (p), null, false, lt.Location);
-	  }
-	  lambda_expression_body
-	  {
-		CheckIsPlayScript("lambda", GetLocation($1)); 	  
-		$$ = end_anonymous ((ParametersBlock) $4);
-		lbag.AddLocation ($$, GetLocation ($2));
-	  }
-	| ASYNC identifier_inside_body ARROW
-	  {
-		var lt = (LocatedToken) $2;
-		Parameter p = new ImplicitLambdaParameter (lt.Value, lt.Location);
-		start_anonymous (true, new ParametersCompiled (p), null, true, lt.Location);
-	  }
-	  lambda_expression_body
-	  {
-		CheckIsPlayScript("lambda", GetLocation($1)); 	  
-		$$ = end_anonymous ((ParametersBlock) $5);
-		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($3));
-	  }
-	| OPEN_PARENS_LAMBDA
-	  {
-	  	valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out;
-	  }
-	  opt_lambda_parameter_list CLOSE_PARENS ARROW 
-	  {
-	  	valid_param_mod = 0;
-		start_anonymous (true, (ParametersCompiled) $3, null, false, GetLocation ($1));
-	  }
-	  lambda_expression_body
-	  {
-		CheckIsPlayScript("lambda", GetLocation($1)); 	  
-		$$ = end_anonymous ((ParametersBlock) $7);
-		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($4), GetLocation ($5));
-	  }
-	| ASYNC OPEN_PARENS_LAMBDA
-	  {
-	  	valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out;	  
-	  }
-	  opt_lambda_parameter_list CLOSE_PARENS ARROW 
-	  {
-	  	valid_param_mod = 0;
-		start_anonymous (true, (ParametersCompiled) $4, null, true, GetLocation ($1));
-	  }
-	  lambda_expression_body
-	  {
-		CheckIsPlayScript("lambda", GetLocation($1)); 	  
-		$$ = end_anonymous ((ParametersBlock) $8);
-		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($2), GetLocation ($5), GetLocation ($6));
 	  }
 	;
 
@@ -4341,7 +4139,6 @@ expression
 	
 non_assignment_expression
 	: conditional_expression
-	| lambda_expression
 	| query_expression
 	;
 
@@ -5068,7 +4865,7 @@ variable_declaration
 		var li = GetOrCreateLocalVariable (current_block, lt.Value, 0, null, lt.Location);
 		current_variable = new UntypedBlockVariable (li);
 
-		report.WarningPlayScript (1009, lt.Location, "Variable `{0}' has no type declaration", lt.Value);
+		Warning_NoTypeDeclaration (lt.Location, string.Format ("Variable `{0}'", lt.Value));
 	  }
 	  opt_local_variable_initializer opt_variable_declarators
 	  {
@@ -6648,6 +6445,11 @@ void Warning_EmptyStatement (Location loc)
 	report.Warning (642, 3, loc, "Possible mistaken empty statement");
 }
 
+void Warning_NoTypeDeclaration  (Location loc, string member)
+{
+	report.WarningPlayScript (1009, loc, "{0} has no type declaration", member);
+}
+
 void Error_NamedArgumentExpected (NamedArgument a)
 {
 	report.Error (1738, a.Location, "Named arguments must appear after the positional arguments");
@@ -6885,28 +6687,16 @@ end_block (Location loc)
 	return retval;
 }
 
-void start_anonymous (bool isLambda, ParametersCompiled parameters, FullNamedExpression retType, bool isAsync, Location loc)
+void start_anonymous (ParametersCompiled parameters, FullNamedExpression returnType, Location loc)
 {
 	oob_stack.Push (current_anonymous_method);
 	oob_stack.Push (current_local_parameters);
 	oob_stack.Push (current_variable);
-	oob_stack.Push (async_block);
 	oob_stack.Push (Lexer.AutoSemiInsertion);
 
 	current_local_parameters = parameters;
-	if (isLambda) {
-		if (lang_version <= LanguageVersion.ISO_2)
-			FeatureIsNotAvailable (loc, "lambda expressions");
+	current_anonymous_method = new LocalFunction (returnType, loc);
 
-		current_anonymous_method = new LambdaExpression (loc);
-	} else {
-		if (lang_version == LanguageVersion.ISO_1)
-			FeatureIsNotAvailable (loc, "anonymous methods");
-			
-		current_anonymous_method = new AnonymousMethodExpression (loc); // TODO: they are just explicit parameters , parameters, retType);
-	}
-
-	async_block = isAsync;
 	// Force the next block to be created as a ToplevelBlock
 	parsing_anonymous_method = true;
 }
@@ -6919,14 +6709,10 @@ AnonymousMethodExpression end_anonymous (ParametersBlock anon_block)
 {
 	AnonymousMethodExpression retval;
 
-	if (async_block)
-		anon_block.IsAsync = true;
-
 	current_anonymous_method.Block = anon_block;
 	retval = current_anonymous_method;
 
 	Lexer.AutoSemiInsertion = (bool) oob_stack.Pop ();
-	async_block = (bool) oob_stack.Pop ();
 	current_variable = (BlockVariable) oob_stack.Pop ();
 	current_local_parameters = (ParametersCompiled) oob_stack.Pop ();
 	current_anonymous_method = (AnonymousMethodExpression) oob_stack.Pop ();

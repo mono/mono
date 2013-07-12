@@ -247,6 +247,14 @@ namespace PlayScript.Runtime
 			return true;
 		}
 
+		public static dynamic DelegateInvoke (Delegate instance, params object[] args)
+		{
+			if (instance == null)
+				throw new NotImplementedException ();
+
+			return instance.DynamicInvoke (args);
+		}
+
 		static uint? GetArrayIndex (object value)
 		{
 			try {

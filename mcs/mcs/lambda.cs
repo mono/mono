@@ -103,7 +103,7 @@ namespace Mono.CSharp {
 			return Parameters;
 		}
 
-		protected override AnonymousMethodBody CompatibleMethodFactory (TypeSpec returnType, TypeSpec delegateType, ParametersCompiled p, ParametersBlock b)
+		protected override AnonymousMethodBody CompatibleMethodFactory (ResolveContext rc, TypeSpec returnType, TypeSpec delegateType, ParametersCompiled p, ParametersBlock b)
 		{
 			return new LambdaMethod (p, b, returnType, delegateType, loc);
 		}

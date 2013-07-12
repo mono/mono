@@ -804,7 +804,7 @@ namespace Mono.CSharp {
 	//
 	class DelegateInvocation : ExpressionStatement
 	{
-		readonly Expression InstanceExpr;
+		Expression InstanceExpr;
 		Arguments arguments;
 		MethodSpec method;
 		
@@ -834,11 +834,19 @@ namespace Mono.CSharp {
 			if (del_type == null)
 				return null;
 
+
+			if (del_type == ec.Module.PlayscriptTypes.Function) {
+				arguments.Insert (0, new Argument (InstanceExpr));
+				InstanceExpr = null;
+				method = ec.Module.PlayScriptMembers.BinderDelegateInvoke.Resolve (loc);
+			} else {
+				method = Delegate.GetInvokeMethod (del_type);
+			}
+
 			//
 			// Do only core overload resolution the rest of the checks has been
 			// done on primary expression
 			//
-			method = Delegate.GetInvokeMethod (del_type);
 			var res = new OverloadResolver (new MemberSpec[] { method }, OverloadResolver.Restrictions.DelegateInvoke, loc);
 			var valid = res.ResolveMember<MethodSpec> (ec, ref arguments);
 			if (valid == null && !res.BestCandidateIsDynamic)

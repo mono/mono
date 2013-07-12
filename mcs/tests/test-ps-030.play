@@ -1,0 +1,81 @@
+package
+{
+	public class LocalFunctionTest
+	{
+		public static function F1 ():int
+		{
+			var n:Number = sqr (3); 
+			if (n != 9)
+				return 1;
+				
+			function sqr (xNum:Number):Number { 
+				return Math.pow(xNum, 2);
+			};
+
+			return 0;
+		}	
+
+		public static function F2 ():int
+		{
+			var sqr:Function = function(xNum:Number):Number { 
+				return Math.pow (xNum, 2);
+			};
+			
+			if (sqr (4) != 16)
+				return 1;
+				
+			if (sqr.call (null, 4) != 16)
+				return 2;
+
+			var sqr2 = function(xNum:Number) { 
+				return xNum + 3;
+			};
+
+			if (sqr2 (2) != 5)
+				return 3;
+			
+			var lstr:String;
+			var sfunc:Function = function(str:String):void { 
+				lstr = str;
+			};
+			
+			sfunc ("test");
+			if (lstr != "test")
+				return 4;
+
+			return 0;
+		}
+
+		public static function F3 ():int
+		{
+			var f:Function = function (xNum:Number):Number { 
+				return Math.pow(xNum, 2);
+			};
+			
+			f = function (s:String, b:Boolean):int {
+				return 5;
+			};
+			
+			if (f (null, false) != 5)
+				return 1;
+			
+			return 0;
+		}
+		
+		public static function Main():int
+		{
+			if (F1 () != 0)
+				return 2;
+
+			if (F2 () != 0)
+				return 2;
+
+			if (F3 () != 0)
+				return 2;
+				
+			trace ("ok");
+			return 0;
+		}
+	}
+}
+
