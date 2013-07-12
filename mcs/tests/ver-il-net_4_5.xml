@@ -47544,6 +47544,30 @@
       </method>
     </type>
   </test>
+  <test name="test-869.cs">
+    <type name="C">
+      <method name="C op_BitwiseAnd(C, E)" attrs="2198">
+        <size>14</size>
+      </method>
+      <method name="E op_Implicit(C)" attrs="2198">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()" attrs="6289">
+        <size>11</size>
+      </method>
+    </type>
+    <type name="FooClass">
+      <method name="Int32 Main()" attrs="150">
+        <size>70</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-87.cs">
     <type name="Top">
       <method name="Int32 Main()" attrs="150">
