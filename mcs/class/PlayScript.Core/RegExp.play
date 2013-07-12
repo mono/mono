@@ -21,7 +21,7 @@ package {
 		//
 		// Properties
 		//
-		
+/*		
 		public property dotall : Boolean { 
  	 		get { return mDoTail;} 
  	 	}
@@ -44,7 +44,7 @@ package {
  	 	public property source : String { 
  	 		get { return mSource;} 
  	 	}
-
+*/
  	 	//
  	 	// Methods
  	 	//

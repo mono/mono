@@ -23,7 +23,7 @@ package {
 		//
 		// Properties
 		//
-		
+/*		
 		public static property ignoreComments : Boolean {
 			get { throw new System.NotImplementedException(); }
 			set { throw new System.NotImplementedException(); }
@@ -48,7 +48,7 @@ package {
  	 		get { throw new System.NotImplementedException(); } 
  	 		set { throw new System.NotImplementedException(); } 
  		}
-
+*/
  	 	//
  	 	// Methods
  	 	// 
