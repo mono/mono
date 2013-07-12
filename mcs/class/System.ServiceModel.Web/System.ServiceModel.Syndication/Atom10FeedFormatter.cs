@@ -419,6 +419,9 @@ namespace System.ServiceModel.Syndication
 			// atom:feed elements MUST contain exactly one atom:title element.
 			(Feed.Title ?? new TextSyndicationContent (String.Empty)).WriteTo (writer, "title", AtomNamespace);
 
+			if (Feed.Description != null)
+				Feed.Description.WriteTo (writer, "subtitle", AtomNamespace);
+
 			// atom:feed elements MUST contain exactly one atom:id element.
 			writer.WriteElementString ("id", AtomNamespace, Feed.Id ?? new UniqueId ().ToString ());
 
@@ -434,6 +437,9 @@ namespace System.ServiceModel.Syndication
 			foreach (SyndicationCategory category in Feed.Categories)
 				if (category != null)
 					WriteCategory (category, writer);
+
+			if (Feed.ImageUrl != null)
+				writer.WriteElementString ("logo", AtomNamespace, Feed.ImageUrl.ToString ());
 
 			foreach (SyndicationPerson author in Feed.Authors)
 				if (author != null) {
@@ -458,6 +464,9 @@ namespace System.ServiceModel.Syndication
 				}
 			}
 
+			if (Feed.Generator != null)
+				writer.WriteElementString ("generator", AtomNamespace, Feed.Generator);
+
 			foreach (SyndicationLink link in Feed.Links)
 				if (link != null) {
 					writer.WriteStartElement ("link");
@@ -474,15 +483,6 @@ namespace System.ServiceModel.Syndication
 					WriteElementExtensions (writer, link, Version);
 					writer.WriteEndElement ();
 				}
-
-			if (Feed.Description != null)
-				Feed.Description.WriteTo (writer, "subtitle", AtomNamespace);
-
-			if (Feed.ImageUrl != null)
-				writer.WriteElementString ("logo", AtomNamespace, Feed.ImageUrl.ToString ());
-
-			if (Feed.Generator != null)
-				writer.WriteElementString ("generator", AtomNamespace, Feed.Generator);
 
 			WriteItems (writer, Feed.Items, Feed.BaseUri);
 
