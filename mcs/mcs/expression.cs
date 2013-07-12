@@ -2752,6 +2752,12 @@ namespace Mono.CSharp
 				if (l.IsPointer || r.IsPointer)
 					return ResolveOperatorPointer (rc, l, r);
 
+				// User operators
+				expr = ResolveUserOperator (rc, left, right);
+				if (expr != null)
+					return expr;
+
+
 				bool lenum = l.IsEnum;
 				bool renum = r.IsEnum;
 				if ((oper & (Operator.ComparisonMask | Operator.BitwiseMask)) != 0) {
@@ -2805,11 +2811,6 @@ namespace Mono.CSharp
 							return expr;
 					}
 				}
-
-				// User operators
-				expr = ResolveUserOperator (rc, left, right);
-				if (expr != null)
-					return expr;
 			}
 			
 			//
