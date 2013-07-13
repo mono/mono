@@ -52,8 +52,8 @@ namespace MonoTests.System.Text
 				      out charsUsed, out bytesUsed, out done);
 
 			Assert.IsFalse (done, "#1");
-			Assert.AreEqual (1000, charsUsed, "#2");
-			Assert.AreEqual (1000, bytesUsed, "#3");
+			Assert.AreEqual (625, charsUsed, "#2");
+			Assert.AreEqual (625, bytesUsed, "#3");
 		}
 
 

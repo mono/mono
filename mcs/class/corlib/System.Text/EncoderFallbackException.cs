@@ -52,7 +52,6 @@ namespace System.Text
 			: base (null)
 		{
 			char_unknown = charUnknown;
-			surrogate = false;
 			this.index = index;
 		}
 
@@ -62,12 +61,10 @@ namespace System.Text
 		{
 			char_unknown_high = charUnknownHigh;
 			char_unknown_low = charUnknownLow;
-			surrogate = true;
 			this.index = index;
 		}
 
 		char char_unknown, char_unknown_high, char_unknown_low;
-		bool surrogate;
 		int index = - 1;
 
 		public char CharUnknown {
@@ -87,9 +84,10 @@ namespace System.Text
 			get { return index; }
 		}
 
+		[MonoTODO]
 		public bool IsUnknownSurrogate ()
 		{
-			return surrogate;
+			throw new NotImplementedException ();
 		}
 	}
 }

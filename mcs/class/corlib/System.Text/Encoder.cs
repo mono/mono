@@ -124,7 +124,7 @@ public abstract class Encoder
 	}
 
 	[ComVisible (false)]
-	public virtual unsafe void Convert (
+	public virtual void Convert (
 		char [] chars, int charIndex, int charCount,
 		byte [] bytes, int byteIndex, int byteCount, bool flush,
 		out int charsUsed, out int bytesUsed, out bool completed)
@@ -142,16 +142,16 @@ public abstract class Encoder
 		if (byteCount < 0 || bytes.Length < byteIndex + byteCount)
 			throw new ArgumentOutOfRangeException ("byteCount");
 
-		// refactorize passing control to byte* version
-		fixed (char* cptr = chars) {
-			fixed (byte* bptr = bytes) {
-				Convert(cptr + charIndex, charCount,
-				        bptr + byteIndex, byteCount,
-					flush,
-					out charsUsed, out bytesUsed,
-					out completed);
-			}
+		charsUsed = charCount;
+		while (true) {
+			bytesUsed = GetByteCount (chars, charIndex, charsUsed, flush);
+			if (bytesUsed <= byteCount)
+				break;
+			flush = false;
+			charsUsed >>= 1;
 		}
+		completed = charsUsed == charCount;
+		bytesUsed = GetBytes (chars, charIndex, charsUsed, bytes, byteIndex, flush);
 	}
 
 	unsafe void CheckArguments (char* chars, int charCount, byte* bytes, int byteCount)
