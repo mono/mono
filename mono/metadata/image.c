@@ -1098,6 +1098,7 @@ mono_image_open_from_data_with_name (char *data, guint32 data_len, gboolean need
 	iinfo = g_new0 (MonoCLIImageInfo, 1);
 	image->image_info = iinfo;
 	image->ref_only = refonly;
+	image->ref_count = 1;
 
 	image = do_mono_image_load (image, status, TRUE, TRUE);
 	if (image == NULL)
