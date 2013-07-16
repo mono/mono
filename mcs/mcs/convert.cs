@@ -1481,7 +1481,7 @@ namespace Mono.CSharp {
 				return e;
 
 			if (rc.IsPlayScriptType) {
-				e = PlayScript.Convert.ImplicitConversion (source, targetType);
+				e = PlayScript.Convert.ImplicitConversion (rc, source, targetType);
 				if (e != null)
 					return e;
 			}

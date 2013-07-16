@@ -1,0 +1,42 @@
+package
+{
+	public class ExpressionConstructorTest
+	{
+		public static function Main():int
+		{
+			var classToConstruct:Class;
+			var classToConstructObject:Object;
+			var classInstance:Object;
+
+			classToConstruct = ClassA;
+			classInstance = new classToConstruct (6);
+			if (!(classInstance is ClassA))
+				return 1;
+
+			classToConstruct = ClassB;
+			classInstance = new classToConstruct ();
+			if (!(classInstance is ClassB))
+				return 2;
+
+			classToConstructObject = classToConstruct;
+			classInstance = new classToConstructObject ();
+			if (!(classInstance is ClassB))
+				return 3;
+			
+			return 0;
+		}
+	}
+
+	public class ClassA
+	{
+		public function ClassA (arg:int):void
+		{
+
+		}
+	}
+	
+	public class ClassB
+	{
+	}
+}
+

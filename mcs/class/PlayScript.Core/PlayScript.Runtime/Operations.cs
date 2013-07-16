@@ -92,9 +92,18 @@ namespace PlayScript.Runtime
 			// TODO: uint, string, double, etc
 
 			return false;
-		}	
+		}
 
-		public static string Typeof (object instance)
+		public static Type ClassOf (object instance)
+		{
+			var type = instance as Type;
+			if (type == null)
+				throw new _root.TypeError (_root.Error.getErrorMessage (1007), 1007);
+
+			return type;
+		}
+
+		public static string TypeOf (object instance)
 		{
 			if (instance == null)
 				return "object";

@@ -174,6 +174,57 @@ namespace Mono.PlayScript
 		}
 	}
 
+	public class New : CSharp.New
+	{
+		public New (Expression requestedType, Arguments arguments, Location loc)
+			: base (requestedType, arguments, loc)
+		{
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			var expr = RequestedType.Resolve (rc, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup | ResolveFlags.Type);
+			if (expr == null)
+				return null;
+
+			if (expr.eclass == ExprClass.Type) {
+				RequestedType = expr;
+				return base.DoResolve (rc);
+			}
+
+			//
+			// SimpleName does auto-conversion to TypeOf expression for expressions used like type.
+			//
+			if (expr is CSharp.TypeOf) {
+				// TODO: Maybe using probing version of ResolveAsType would be better
+				return base.DoResolve (rc);
+			}
+
+			if (expr.Type != rc.Module.PlayscriptTypes.Class && expr.Type != rc.Module.PlayscriptTypes.Object) {
+				rc.Report.ErrorPlayScript (1180, RequestedType.Location, "Call to a possibly undefined method `{0}'", expr.GetSignatureForError ());
+				return null;
+			}
+
+			if (arguments == null) {
+				arguments = new Arguments (1);
+			} else {
+				bool dynamic;
+				arguments.Resolve (rc, out dynamic);
+			}
+
+			var ms = rc.Module.PlayScriptMembers.OperationsClassOf.Resolve (loc);
+			if (ms == null)
+				return null;
+
+			var mg = MethodGroupExpr.CreatePredefined (ms, ms.DeclaringType, loc);
+			var call_args = new Arguments (1);
+			call_args.Add (new Argument (expr));
+
+			arguments.Insert (0, new Argument (new Invocation (mg, call_args).Resolve (rc), Argument.AType.DynamicTypeName));
+			return new DynamicConstructorBinder (type, arguments, loc).Resolve (rc);
+		}
+	}
+
 	public class NewVector : CollectionInitialization
 	{
 		FullNamedExpression elementType;
@@ -288,7 +339,7 @@ namespace Mono.PlayScript
 			var type = new TypeExpression (rc.Module.PlayscriptTypes.Object, loc);
 
 			var expr = Initializer == null ?
-				new New (type, null, loc) :
+				new CSharp.New (type, null, loc) :
 				new NewInitialize (type, null, new CollectionOrObjectInitializers (Initializer, loc), loc);
 			
 			return expr.Resolve (rc);
@@ -413,7 +464,7 @@ namespace Mono.PlayScript
 			if (expr == null)
 				return null;
 
-			var ms = rc.Module.PlayScriptMembers.OperationsTypeof.Resolve (loc);
+			var ms = rc.Module.PlayScriptMembers.OperationsTypeOf.Resolve (loc);
 			if (ms == null)
 				return null;
 
@@ -1046,8 +1097,8 @@ namespace Mono.PlayScript
 		{
 			var types = mc.Module.Compiler.BuiltinTypes;
 			switch (Name) {
-			case "Object":
-				return new TypeExpression (mc.Module.PlayscriptTypes.Object, loc);
+//			case "Object":
+//				return new TypeExpression (mc.Module.PlayscriptTypes.Object, loc);
 			case "Boolean":
 				return new TypeExpression (types.Bool, loc);
 			case "Number":
@@ -1056,8 +1107,8 @@ namespace Mono.PlayScript
 				return new TypeExpression (types.String, loc);
 //			case "Function":
 //				return new TypeExpression (types.Delegate, loc);
-			case "Class":
-				return new TypeExpression (types.Type, loc);
+//			case "Class":
+//				return new TypeExpression (types.Type, loc);
 			default:
 				return null;
 			}
@@ -1915,6 +1966,7 @@ namespace Mono.PlayScript
 	{
 		public readonly BuiltinTypeSpec Object;
 		public readonly BuiltinTypeSpec Function;
+		public readonly BuiltinTypeSpec Class;
 
 		public readonly PredefinedType Vector;
 		public readonly PredefinedType Array;
@@ -1939,18 +1991,28 @@ namespace Mono.PlayScript
 
 		public PredefinedTypes (ModuleContainer module)
 		{
+			var root_ns = module.GlobalRootNamespace.GetNamespace (RootNamespace, true);
+
+			// Setup type aliases
+
 			Object = new BuiltinTypeSpec ("Object", BuiltinTypeSpec.Type.Object);
 			Object.SetDefinition (module.Compiler.BuiltinTypes.Object);
 			Object.Modifiers |= Modifiers.DYNAMIC;
 			// TODO: Add toString to MemberCache which will map to ToString
+			root_ns.AddType (module, Object);
+
+			Function = new BuiltinTypeSpec (MemberKind.Delegate, RootNamespace, "Function", BuiltinTypeSpec.Type.Delegate);
+			Function.SetDefinition (module.Compiler.BuiltinTypes.Delegate);
+			Function.Modifiers |= Modifiers.SEALED;
+			root_ns.AddType (module, Function);
+
+			Class = new BuiltinTypeSpec (MemberKind.Class, RootNamespace, "Class", BuiltinTypeSpec.Type.Type);
+			Class.SetDefinition (module.Compiler.BuiltinTypes.Type);
+			Class.Modifiers |= Modifiers.DYNAMIC;
+			root_ns.AddType (module, Class);
 
 			// For now use same instance
 			UndefinedType = module.Compiler.BuiltinTypes.Dynamic;
-
-			// Setup type aliases
-			Function = new BuiltinTypeSpec (MemberKind.Delegate, null, "Function", BuiltinTypeSpec.Type.Delegate);
-			Function.SetDefinition (module.Compiler.BuiltinTypes.Delegate);
-			module.GlobalRootNamespace.AddType (module, Function);
 
 			// Known predefined types
 			Array = new PredefinedType (module, MemberKind.Class, RootNamespace, "Array");
@@ -1979,7 +2041,8 @@ namespace Mono.PlayScript
 		public readonly PredefinedMember<MethodSpec> BinderHasProperty;
 		public readonly PredefinedMember<MethodSpec> BinderDeleteProperty;
 		public readonly PredefinedMember<MethodSpec> BinderDelegateInvoke;
-		public readonly PredefinedMember<MethodSpec> OperationsTypeof;
+		public readonly PredefinedMember<MethodSpec> OperationsTypeOf;
+		public readonly PredefinedMember<MethodSpec> OperationsClassOf;
 
 		public PredefinedMembers (ModuleContainer module)
 		{
@@ -1998,7 +2061,8 @@ namespace Mono.PlayScript
 			BinderDeleteProperty = new PredefinedMember<MethodSpec> (module, ptypes.Binder, "DeleteProperty", btypes.Object, btypes.Object);
 			BinderDelegateInvoke = new PredefinedMember<MethodSpec> (module, ptypes.Binder, "DelegateInvoke", btypes.Delegate, ArrayContainer.MakeType (module, btypes.Object));
 			BinderHasProperty = new PredefinedMember<MethodSpec> (module, ptypes.Binder, "HasProperty", btypes.Object, btypes.Type, btypes.Object);
-			OperationsTypeof = new PredefinedMember<MethodSpec> (module, ptypes.Operations, "Typeof", btypes.Object);
+			OperationsTypeOf = new PredefinedMember<MethodSpec> (module, ptypes.Operations, "TypeOf", btypes.Object);
+			OperationsClassOf = new PredefinedMember<MethodSpec> (module, ptypes.Operations, "ClassOf", btypes.Object); 
 		}
 	}
 
@@ -2086,13 +2150,28 @@ namespace Mono.PlayScript
 
 	static class Convert
 	{
-		public static Expression ImplicitConversion (Expression expr, TypeSpec target)
+		public static Expression ImplicitConversion (ResolveContext rc, Expression expr, TypeSpec target)
 		{
 			Expression e;
+
+			e = ImplicitReferenceConversion (rc, expr, expr.Type, target);
+			if (e != null)
+				return e;
 
 			e = ImplicitNumericConversion (expr, expr.Type, target);
 			if (e != null)
 				return e;
+
+			return null;
+		}
+
+		static Expression ImplicitReferenceConversion (ResolveContext rc, Expression expr, TypeSpec exprType, TypeSpec targetType)
+		{
+			if (targetType == rc.Module.PlayscriptTypes.Class && exprType == rc.BuiltinTypes.Type)
+				return expr;
+
+			if (exprType.BuiltinType == BuiltinTypeSpec.Type.Dynamic && targetType == rc.Module.PlayscriptTypes.Object)
+				return expr;
 
 			return null;
 		}

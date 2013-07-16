@@ -306,6 +306,13 @@ namespace Mono.CSharp {
 				return;
 			}
 
+			if (ec.IsPlayScriptType) {
+				ec.Report.ErrorPlayScript (1067, loc, "Implicit coercion of a value of type `{0}' to an unrelated type `{1}'.",
+					from_type, to_type);
+				return;
+			}
+
+
 			ec.Report.DisableReporting ();
 			bool expl_exists = Convert.ExplicitConversion (ec, this, target, Location.Null) != null;
 			ec.Report.EnableReporting ();
