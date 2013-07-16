@@ -225,7 +225,7 @@ namespace System.Threading.Tasks
 			}
 
 			Status = saveStatus;
-			Start (scheduler);
+			Schedule ();
 			Wait ();
 		}
 		#endregion
