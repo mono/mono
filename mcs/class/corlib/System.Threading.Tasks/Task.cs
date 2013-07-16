@@ -214,7 +214,6 @@ namespace System.Threading.Tasks
 		internal void RunSynchronouslyCore (TaskScheduler scheduler)
 		{
 			SetupScheduler (scheduler);
-			var saveStatus = status;
 			Status = TaskStatus.WaitingToRun;
 
 			try {
@@ -224,7 +223,6 @@ namespace System.Threading.Tasks
 				throw new TaskSchedulerException (inner);
 			}
 
-			Status = saveStatus;
 			Schedule ();
 			Wait ();
 		}
