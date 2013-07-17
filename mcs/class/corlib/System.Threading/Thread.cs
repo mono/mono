@@ -910,7 +910,8 @@ namespace System.Threading {
 			    (ThreadState & ThreadState.Unstarted) == 0)
 				throw new ThreadStateException ("Thread was in an invalid state for the operation being executed.");
 
-			if ((ApartmentState)Internal.apartment_state != ApartmentState.Unknown)
+			if ((ApartmentState)Internal.apartment_state != ApartmentState.Unknown && 
+			    (ApartmentState)Internal.apartment_state != state)
 				return false;
 
 			Internal.apartment_state = (byte)state;
