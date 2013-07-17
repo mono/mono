@@ -16,8 +16,10 @@ our @ISA = qw(Exporter);
 our @EXPORT_OK=qw(GetSTVNDK);
 
 our $NDK_ROOT_ENV = "STV_NDK_ROOT";
+our $NDK_VERSION_ENV = "STV_NDK_VERSION";
 
 our $BASE_URL_NDK = "https://rhodecode.unity3d.com/unity-extra/stv-sdk";
+#our $BASE_URL_NDK = "~/stv-sdk";
 our $BASE_URL_NDK_MIRROR = "http://mercurial-mirror.hq.unity3d.com/unity-extra/stv-sdk";
 
 our $FOLDER_PREFIX = "stv-ndk";
@@ -70,6 +72,13 @@ else
 
 	my ($ndk, $setenv) = @_;
 
+	# Allow version override via env var
+	if ($ENV{$NDK_VERSION_ENV})
+	{
+		print("Overrideing SDK version from $ndk to" . $ENV{$NDK_VERSION_ENV} . "\n");
+		$ndk = $ENV{$NDK_VERSION_ENV};
+	}
+
 	if ($ndk)
 	{
 		print "Installing NDK '$ndk':\n";
@@ -119,7 +128,6 @@ sub DownloadAndUnpackArchive
 	my ($branch,$notUsed2,$suffix) = fileparse($compressed_file,qr/\.\D.*/);
 	my $temporary_download_path = catfile($TMP, $base);
 	my $temporary_download_file = catfile($temporary_download_path, $compressed_file);
-	my $temporary_download_env = catfile($temporary_download_path, $FOLDER_PREFIX . "-env.sh");
 	my $temporary_unpack_path = catfile($TMP, $base . "_unpack");
 
 	print "\t\tURL: " . $url . "\n";
@@ -130,7 +138,6 @@ sub DownloadAndUnpackArchive
 	print "\t\tSuffix: " . $suffix . "\n";
 	print "\t\tTmp DL: " . $temporary_download_path . "\n";
 	print "\t\tTmp DL File: " . $temporary_download_file . "\n";
-	print "\t\tTmp DL env: " . $temporary_download_env . "\n";
 	print "\t\tTmp unpack: " . $temporary_unpack_path . "\n";
 	print "\t\tDest path: " . $dest_path . "\n";
 	print "\t\tDest name: " . $dest_name . "\n";
@@ -174,7 +181,12 @@ sub DownloadAndUnpackArchive
 	my $unpacked_subdir = catfile($temporary_unpack_path, $dirs[0]);
 
 	move($unpacked_subdir, $output);
-	move($temporary_download_env, $output);
+	unlink($temporary_download_file);
+	for my $f (glob catfile($temporary_download_path, '*'))
+	{
+		print ("move $f -> $output/$f\n");
+		move($f, $output);
+	}
 
 	# clean up
 	rmtree($temporary_download_path);

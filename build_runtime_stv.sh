@@ -4,7 +4,7 @@ PREFIX=`pwd`/builds/stv
 
 OUTDIR=builds/embedruntimes/stv
 
-perl PrepareSTVNDK.pl -ndk=r01 -env=envsetup.sh && source envsetup.sh && source ${STV_NDK_ROOT}/stv-ndk-env.sh
+perl PrepareSTVNDK.pl -ndk=r03 -env=envsetup.sh && source envsetup.sh && source ${STV_NDK_ROOT}/stv-ndk-env.sh
 
 CXXFLAGS="-DARM_FPU_VFP=1 -D__ARM_EABI__ -mno-thumb -march=armv7-a -mfpu=vfpv3 -mtune=cortex-a9 -fPIC";
 CC="${STV_GCC_PREFIX}gcc"
