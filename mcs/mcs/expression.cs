@@ -3866,9 +3866,15 @@ namespace Mono.CSharp
 				//
 				// Now try lifted version of predefined operators
 				//
-				result = ResolveOperatorPredefined (ec, ec.Module.OperatorsBinaryEqualityLifted, no_arg_conv);
-				if (result != null)
-					return result;
+				if (no_arg_conv && !l.IsNullableType) {
+					//
+					// Optimizes cases which won't match
+					//
+				} else {
+					result = ResolveOperatorPredefined (ec, ec.Module.OperatorsBinaryEqualityLifted, no_arg_conv);
+					if (result != null)
+						return result;
+				}
 
 				//
 				// The == and != operators permit one operand to be a value of a nullable
