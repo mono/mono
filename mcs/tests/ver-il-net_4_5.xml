@@ -28041,6 +28041,89 @@
       </method>
     </type>
   </test>
+  <test name="gtest-partial-07.cs">
+    <type name="A`1[T]">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A`1+B[T]">
+      <method name="Void Test()" attrs="134">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X`1[U]">
+      <method name="Void Foo(U)" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="M">
+      <method name="Void Main()" attrs="150">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-partial-08.cs">
+    <type name="N.A`2[T1,T2]">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="N.A`2+D[T1,T2]">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="N.A`2+D+C[T1,T2]">
+      <method name="Void Test()" attrs="134">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="N.A`2+D2`1[T1,T2,U]">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="N.A`2+D2`1+C2[T1,T2,U]">
+      <method name="Void Test()" attrs="134">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="N.X2`1[W]">
+      <method name="Void Foo(W)" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="N.X">
+      <method name="Void Foo()" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>22</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-var-04.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
@@ -47544,6 +47627,30 @@
       </method>
     </type>
   </test>
+  <test name="test-869.cs">
+    <type name="C">
+      <method name="C op_BitwiseAnd(C, E)" attrs="2198">
+        <size>14</size>
+      </method>
+      <method name="E op_Implicit(C)" attrs="2198">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()" attrs="6289">
+        <size>11</size>
+      </method>
+    </type>
+    <type name="FooClass">
+      <method name="Int32 Main()" attrs="150">
+        <size>70</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-87.cs">
     <type name="Top">
       <method name="Int32 Main()" attrs="150">
@@ -57827,14 +57934,9 @@
         <size>0</size>
       </method>
     </type>
-    <type name="A+&lt;async&gt;c__async0">
-      <method name="Void MoveNext()" attrs="486">
-        <size>38</size>
-      </method>
-    </type>
     <type name="A+&lt;async&gt;c__async1">
       <method name="Void MoveNext()" attrs="486">
-        <size>37</size>
+        <size>38</size>
       </method>
     </type>
     <type name="A">
@@ -57842,22 +57944,7 @@
         <size>35</size>
       </method>
     </type>
-    <type name="A+&lt;CastTest&gt;c__async2">
-      <method name="Void MoveNext()" attrs="486">
-        <size>285</size>
-      </method>
-    </type>
-    <type name="A+&lt;async&gt;c__async0">
-      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
-        <size>13</size>
-      </method>
-    </type>
     <type name="A+&lt;async&gt;c__async1">
-      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
-        <size>13</size>
-      </method>
-    </type>
-    <type name="A+&lt;CastTest&gt;c__async2">
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>
@@ -57972,6 +58059,35 @@
       </method>
       <method name="Void .ctor(&lt;await&gt;__T)" attrs="6278">
         <size>14</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Void Iasync.async()" attrs="481">
+        <size>27</size>
+      </method>
+    </type>
+    <type name="A+&lt;async&gt;c__async2">
+      <method name="Void MoveNext()" attrs="486">
+        <size>37</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="A+&lt;CastTest&gt;c__async3">
+      <method name="Void MoveNext()" attrs="486">
+        <size>285</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="A+async&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>31</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
       </method>
     </type>
   </test>

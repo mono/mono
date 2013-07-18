@@ -106,13 +106,18 @@ $(TEST_RESX_RESOURCES) $(TEST_RESX_RESOURCES_SATELITE): %.resources: %.resx
 
 TEST_RESOURCES = $(TEST_RESX_RESOURCES) $(TEST_RESX_RESOURCES_SATELITE)
 
-$(test_lib): $(TEST_RESOURCES) satellite-assemblies
+satellite_assembly1 = es-ES/$(patsubst %.dll,%.Resources.dll,$(test_lib))
+satellite_assembly2 = nn-NO/$(patsubst %.dll,%.Resources.dll,$(test_lib))
 
-satellite-assemblies:
+$(test_lib): $(TEST_RESOURCES) $(satellite_assembly1) $(satellite_assembly2) 
+
+$(satellite_assembly1): Test/resources/culture-es-ES.cs Test/resources/Resources.es-ES.resources
 	@mkdir -p es-ES
-	$(CSCOMPILE) -target:library -r:$(corlib) Test/resources/culture-es-ES.cs -resource:Test/resources/Resources.es-ES.resources -out:es-ES/$(patsubst %.dll,%.Resources.dll,$(test_lib))
+	$(CSCOMPILE) -target:library -r:$(corlib) Test/resources/culture-es-ES.cs -resource:Test/resources/Resources.es-ES.resources -out:$@
+
+$(satellite_assembly2): Test/resources/culture-nn-NO.cs Test/resources/Resources.nn-NO.resources
 	@mkdir -p nn-NO
-	$(CSCOMPILE) -target:library -r:$(corlib) Test/resources/culture-nn-NO.cs -resource:Test/resources/Resources.nn-NO.resources -out:nn-NO/$(patsubst %.dll,%.Resources.dll,$(test_lib))
+	$(CSCOMPILE) -target:library -r:$(corlib) Test/resources/culture-nn-NO.cs -resource:Test/resources/Resources.nn-NO.resources -out:$@
 
 vtsdir = Test/System.Runtime.Serialization.Formatters.Binary/VersionTolerantSerialization
 vtslibs = \

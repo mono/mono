@@ -56,6 +56,7 @@
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/mono-path.h>
 #include <mono/utils/mono-tls.h>
+#include <mono/utils/mono-hwcap.h>
 #include <mono/utils/dtrace.h>
 
 #include "mini.h"
@@ -3758,7 +3759,7 @@ mono_save_seq_point_info (MonoCompile *cfg)
 	if (!cfg->seq_points)
 		return;
 
-	info = g_malloc0 (sizeof (MonoSeqPointInfo) + (cfg->seq_points->len - MONO_ZERO_LEN_ARRAY) * sizeof (SeqPoint));
+	info = g_malloc0 (sizeof (MonoSeqPointInfo) + (cfg->seq_points->len * sizeof (SeqPoint)));
 	info->len = cfg->seq_points->len;
 	for (i = 0; i < cfg->seq_points->len; ++i) {
 		SeqPoint *sp = &info->seq_points [i];
@@ -3799,7 +3800,7 @@ mono_save_seq_point_info (MonoCompile *cfg)
 			last = ins;
 		}
 
-		if (bb->last_ins && bb->last_ins->opcode == OP_ENDFINALLY) {
+		if (bb->last_ins && bb->last_ins->opcode == OP_ENDFINALLY && bb->seq_points) {
 			MonoBasicBlock *bb2;
 			MonoInst *endfinally_seq_point = NULL;
 
@@ -6921,6 +6922,9 @@ mini_init (const char *filename, const char *runtime_version)
 
 	mono_code_manager_init ();
 
+	if (!mono_aot_only)
+		mono_hwcap_init ();
+
 	mono_arch_cpu_init ();
 
 	mono_arch_init ();
@@ -7249,6 +7253,7 @@ mini_init (const char *filename, const char *runtime_version)
 	register_icall (mono_object_tostring_gsharedvt, "mono_object_tostring_gsharedvt", "object ptr ptr ptr", TRUE);
 	register_icall (mono_object_gethashcode_gsharedvt, "mono_object_gethashcode_gsharedvt", "int ptr ptr ptr", TRUE);
 	register_icall (mono_object_equals_gsharedvt, "mono_object_equals_gsharedvt", "int ptr ptr ptr object", TRUE);
+	register_icall (mono_gsharedvt_constrained_call, "mono_gsharedvt_constrained_call", "void ptr ptr ptr ptr", TRUE);
 	register_icall (mono_gsharedvt_value_copy, "mono_gsharedvt_value_copy", "void ptr ptr ptr", TRUE);
 
 	register_icall (mono_gc_wbarrier_value_copy_bitmap, "mono_gc_wbarrier_value_copy_bitmap", "void ptr ptr int int", FALSE);

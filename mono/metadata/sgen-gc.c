@@ -1048,6 +1048,8 @@ mono_gc_clear_domain (MonoDomain * domain)
 
 	LOCK_GC;
 
+	binary_protocol_domain_unload_begin (domain);
+
 	sgen_stop_world (0);
 
 	if (concurrent_collection_in_progress)
@@ -1115,6 +1117,8 @@ mono_gc_clear_domain (MonoDomain * domain)
 	}
 
 	sgen_restart_world (0, NULL);
+
+	binary_protocol_domain_unload_end (domain);
 
 	UNLOCK_GC;
 }
@@ -3386,6 +3390,9 @@ sgen_ensure_free_space (size_t size)
 	sgen_perform_collection (size, generation_to_collect, reason, FALSE);
 }
 
+/*
+ * LOCKING: Assumes the GC lock is held.
+ */
 void
 sgen_perform_collection (size_t requested_size, int generation_to_collect, const char *reason, gboolean wait_to_finish)
 {
@@ -4869,6 +4876,7 @@ mono_gc_base_init (void)
 	init_stats ();
 	sgen_init_internal_allocator ();
 	sgen_init_nursery_allocator ();
+	sgen_init_fin_weak_hash ();
 
 	sgen_register_fixed_internal_mem_type (INTERNAL_MEM_SECTION, SGEN_SIZEOF_GC_MEM_SECTION);
 	sgen_register_fixed_internal_mem_type (INTERNAL_MEM_FINALIZE_READY_ENTRY, sizeof (FinalizeReadyEntry));

@@ -99,9 +99,9 @@ namespace Mono.CSharp
 			get; set;
 		}
 
-		public virtual void AddCompilerGeneratedClass (CompilerGeneratedContainer c)
+		public void AddCompilerGeneratedClass (CompilerGeneratedContainer c)
 		{
-			containers.Add (c);
+			AddTypeContainerMember (c);
 		}
 
 		public virtual void AddPartial (TypeDefinition next_part)
@@ -188,15 +188,12 @@ namespace Mono.CSharp
 
 			next_part.PartialContainer = existing;
 
-			if (containers == null)
-				containers = new List<TypeContainer> ();
-
-			containers.Add (next_part);
+			AddTypeContainerMember (next_part);
 		}
 
 		public virtual void AddTypeContainer (TypeContainer tc)
 		{
-			containers.Add (tc);
+			AddTypeContainerMember (tc);
 
 			var tparams = tc.MemberName.TypeParameters;
 			if (tparams != null && tc.PartialContainer != null) {
@@ -209,6 +206,11 @@ namespace Mono.CSharp
 					td.AddNameToContainer (tp, tp.Name);
 				}
 			}
+		}
+
+		protected virtual void AddTypeContainerMember (TypeContainer tc)
+		{
+			containers.Add (tc);
 		}
 
 		public virtual void CloseContainer ()
@@ -757,21 +759,17 @@ namespace Mono.CSharp
 		{
 			AddNameToContainer (tc, tc.Basename);
 
-			if (containers == null)
-				containers = new List<TypeContainer> ();
-
-			members.Add (tc);
 			base.AddTypeContainer (tc);
 		}
 
-		public override void AddCompilerGeneratedClass (CompilerGeneratedContainer c)
+		protected override void AddTypeContainerMember (TypeContainer tc)
 		{
-			members.Add (c);
+			members.Add (tc);
 
 			if (containers == null)
 				containers = new List<TypeContainer> ();
 
-			base.AddCompilerGeneratedClass (c);
+			base.AddTypeContainerMember (tc);
 		}
 
 		//
@@ -1548,17 +1546,29 @@ namespace Mono.CSharp
 			}
 
 			if (set_base_type) {
-				if (base_type != null) {
-					spec.BaseType = base_type;
-
-					// Set base type after type creation
-					TypeBuilder.SetParent (base_type.GetMetaInfo ());
-				} else {
-					TypeBuilder.SetParent (null);
-				}
+				SetBaseType ();
 			}
 
 			return true;
+		}
+
+		void SetBaseType ()
+		{
+			if (base_type == null) {
+				TypeBuilder.SetParent (null);
+				return;
+			}
+
+			if (spec.BaseType == base_type)
+				return;
+
+			spec.BaseType = base_type;
+
+			if (IsPartialPart)
+				spec.UpdateInflatedInstancesBaseType ();
+
+			// Set base type after type creation
+			TypeBuilder.SetParent (base_type.GetMetaInfo ());
 		}
 
 		public override void ExpandBaseInterfaces ()
@@ -2112,8 +2122,13 @@ namespace Mono.CSharp
 
 			base.Emit ();
 
-			for (int i = 0; i < members.Count; i++)
-				members[i].Emit ();
+			for (int i = 0; i < members.Count; i++) {
+				var m = members[i];
+				if ((m.caching_flags & Flags.CloseTypeCreated) != 0)
+					continue;
+
+				m.Emit ();
+			}
 
 			EmitIndexerName ();
 			CheckAttributeClsCompliance ();
@@ -3353,7 +3368,11 @@ namespace Mono.CSharp
 					Parent.PartialContainer.VerifyImplements (this);
 				}
 
-				ModifiersExtensions.Check (Modifiers.AllowedExplicitImplFlags, explicit_mod_flags, 0, Location, Report);
+				Modifiers allowed_explicit = Modifiers.AllowedExplicitImplFlags;
+				if (this is Method)
+					allowed_explicit |= Modifiers.ASYNC;
+
+				ModifiersExtensions.Check (allowed_explicit, explicit_mod_flags, 0, Location, Report);
 			}
 
 			return base.Define ();
