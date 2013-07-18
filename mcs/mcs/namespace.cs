@@ -892,7 +892,7 @@ namespace Mono.CSharp {
 			MemberCore mc;
 			if (names_container.DefinedNames.TryGetValue (name, out mc)) {
 				if (tc is NamespaceContainer && mc is NamespaceContainer) {
-					containers.Add (tc);
+					AddTypeContainerMember (tc);
 					return;
 				}
 

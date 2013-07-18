@@ -98,9 +98,9 @@ namespace Mono.CSharp
 			get; set;
 		}
 
-		public virtual void AddCompilerGeneratedClass (CompilerGeneratedContainer c)
+		public void AddCompilerGeneratedClass (CompilerGeneratedContainer c)
 		{
-			containers.Add (c);
+			AddTypeContainerMember (c);
 		}
 
 		public virtual void AddPartial (TypeDefinition next_part)
@@ -187,15 +187,12 @@ namespace Mono.CSharp
 
 			next_part.PartialContainer = existing;
 
-			if (containers == null)
-				containers = new List<TypeContainer> ();
-
-			containers.Add (next_part);
+			AddTypeContainerMember (next_part);
 		}
 
 		public virtual void AddTypeContainer (TypeContainer tc)
 		{
-			containers.Add (tc);
+			AddTypeContainerMember (tc);
 
 			var tparams = tc.MemberName.TypeParameters;
 			if (tparams != null && tc.PartialContainer != null) {
@@ -208,6 +205,11 @@ namespace Mono.CSharp
 					td.AddNameToContainer (tp, tp.Name);
 				}
 			}
+		}
+
+		protected virtual void AddTypeContainerMember (TypeContainer tc)
+		{
+			containers.Add (tc);
 		}
 
 		public virtual void CloseContainer ()
@@ -749,21 +751,17 @@ namespace Mono.CSharp
 		{
 			AddNameToContainer (tc, tc.Basename);
 
-			if (containers == null)
-				containers = new List<TypeContainer> ();
-
-			members.Add (tc);
 			base.AddTypeContainer (tc);
 		}
 
-		public override void AddCompilerGeneratedClass (CompilerGeneratedContainer c)
+		protected override void AddTypeContainerMember (TypeContainer tc)
 		{
-			members.Add (c);
+			members.Add (tc);
 
 			if (containers == null)
 				containers = new List<TypeContainer> ();
 
-			base.AddCompilerGeneratedClass (c);
+			base.AddTypeContainerMember (tc);
 		}
 
 		//
@@ -2093,8 +2091,13 @@ namespace Mono.CSharp
 
 			base.Emit ();
 
-			for (int i = 0; i < members.Count; i++)
-				members[i].Emit ();
+			for (int i = 0; i < members.Count; i++) {
+				var m = members[i];
+				if ((m.caching_flags & Flags.CloseTypeCreated) != 0)
+					continue;
+
+				m.Emit ();
+			}
 
 			EmitIndexerName ();
 			CheckAttributeClsCompliance ();
