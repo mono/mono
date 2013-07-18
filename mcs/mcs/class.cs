@@ -1517,17 +1517,29 @@ namespace Mono.CSharp
 			}
 
 			if (set_base_type) {
-				if (base_type != null) {
-					spec.BaseType = base_type;
-
-					// Set base type after type creation
-					TypeBuilder.SetParent (base_type.GetMetaInfo ());
-				} else {
-					TypeBuilder.SetParent (null);
-				}
+				SetBaseType ();
 			}
 
 			return true;
+		}
+
+		void SetBaseType ()
+		{
+			if (base_type == null) {
+				TypeBuilder.SetParent (null);
+				return;
+			}
+
+			if (spec.BaseType == base_type)
+				return;
+
+			spec.BaseType = base_type;
+
+			if (IsPartialPart)
+				spec.UpdateInflatedInstancesBaseType ();
+
+			// Set base type after type creation
+			TypeBuilder.SetParent (base_type.GetMetaInfo ());
 		}
 
 		public override void ExpandBaseInterfaces ()
