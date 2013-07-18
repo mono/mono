@@ -261,7 +261,8 @@ namespace Mono.PlayScript
 %token VOID	
 %token VOLATILE
 %token WHERE
-%token WHILE	
+%token WHILE
+%token WITH
 %token PARTIAL
 %token ARROW
 %token FROM
@@ -1302,7 +1303,7 @@ method_declaration
 		if (m != null) {
 			async_block = (m.ModFlags & Modifiers.ASYNC) != 0;
 			if (is_config_enabled) {
-				current_type.AddMember (m);
+				GetTypeDefinition (current_container).AddMember (m);
 			}
 			is_config_enabled = true;
 		}
@@ -1377,11 +1378,7 @@ method_declaration
 		current_property = null;
 		current_constructor = null;
 		
-		// If this was a package function, pop the container xxxxx_fn class.
-		if (is_package_function) {
-			pop_current_class();
-			is_package_function = false;
-		}
+		is_package_function = false;
 	
 		if (doc_support)
 			Lexer.doc_state = XmlCommentState.Allowed;
@@ -1396,13 +1393,7 @@ method_header
 	  {
 		valid_param_mod = ParameterModifierType.All;
 		
-		// If package level function, create a new package function class with 
-		// the name of the function plus "_fn".
-		if (current_container is NamespaceContainer) {
-			MemberName methodName = (MemberName) $4;
-			MemberName className = new MemberName(methodName.Name + "_fn", GetLocation($4));
-			var fnClassModifiers = (Modifiers) $2 | Modifiers.PARTIAL | Modifiers.STATIC; // Allows overloads..
-			push_current_container(new Class (current_container, className, fnClassModifiers, (Attributes) $1), GetLocation($3));
+		if (current_container is Package) {
 			is_package_function = true;
 		}
 		
@@ -1419,9 +1410,6 @@ method_header
 		current_local_parameters = (ParametersCompiled) $7;
 
 		var modifiers = (Modifiers) $2;
-		if (is_package_function) {
-			modifiers |= Modifiers.STATIC;
-		}
 		
 		if (current_type != null && name.Name == current_type.MemberName.Name) {
 
@@ -1448,7 +1436,7 @@ method_header
 			$$ = c;
 		
 		} else {
-			var method = Method.Create (current_type, (FullNamedExpression) $9, modifiers,
+			var method = Method.Create (GetTypeDefinition (current_container), (FullNamedExpression) $9, modifiers,
 					     name, current_local_parameters, (Attributes) $1);
 
 			if ($11 != null)
@@ -1643,7 +1631,7 @@ method_header
 		report.Error (1585, name.Location, 
 			"Member modifier `{0}' must precede the member type and name", ModifiersExtensions.Name ((Modifiers) $4));
 
-		var method = Method.Create (current_type, (FullNamedExpression) $1,
+		var method = Method.Create (GetTypeDefinition (current_container), (FullNamedExpression) $1,
 					    0, name, (ParametersCompiled) $7, (Attributes) $1);
 
 		current_local_parameters = (ParametersCompiled) $7;
@@ -1662,7 +1650,7 @@ method_header
 		current_local_parameters = ParametersCompiled.Undefined;
 
 		MemberName name = (MemberName) $4;
-		var method = Method.Create (current_type, new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($4)), (Modifiers) $2,
+		var method = Method.Create (GetTypeDefinition (current_container), new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($4)), (Modifiers) $2,
 									name, current_local_parameters, (Attributes) $1);
 
 		if (doc_support)
@@ -3549,6 +3537,13 @@ opt_local_function_type
 	  }
 	;
 
+with_statement
+	: WITH open_parens_any expression CLOSE_PARENS block
+	  {
+	  	$$ = new With ((Expression) $3, (Block) $5, GetLocation ($1));
+	  }
+	;
+
 default_value_expression
 	: DEFAULT open_parens_any type CLOSE_PARENS
 	  {
@@ -4661,6 +4656,7 @@ valid_declaration_statement
 	| jump_statement		  
 	| try_statement
 	| local_function_statement
+	| with_statement
 	;
 
 interactive_valid_declaration_statement

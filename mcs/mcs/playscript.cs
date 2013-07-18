@@ -281,6 +281,11 @@ namespace Mono.PlayScript
 			this.loc = loc;
 		}
 
+		public override string GetSignatureForError ()
+		{
+			return "*";
+		}
+
 		public override TypeSpec ResolveAsType (IMemberContext mc)
 		{
 			//
@@ -911,6 +916,31 @@ namespace Mono.PlayScript
 		}
 	}
 
+	public class With : Statement
+	{
+		public With (Expression expr, Block block, Location loc)
+		{
+			this.Expr = expr;
+			this.Block = block;
+			this.loc = loc;
+		}
+
+		public Block Block { get; private set; }
+		public Expression Expr { get; private set; }
+
+		protected override void CloneTo (CloneContext clonectx, Statement target)
+		{
+			var t = target as With;
+			t.Expr = Expr.Clone (clonectx);
+			t.Block = clonectx.LookupBlock (Block);
+		}
+
+		protected override void DoEmit (EmitContext ec)
+		{
+			Block.Emit (ec);
+		}
+	}
+
 	/// <summary>
 	///   Implementation of the ActionScript E4X xml query.
 	/// </summary>
@@ -1058,7 +1088,7 @@ namespace Mono.PlayScript
 				}
 
 			// Stage 3: Global names lookup
-			e = LookupGlobalName (rc, Name + "_fn", restrictions) ?? LookupGlobalName (rc, "<Globals>", restrictions);
+			e = LookupGlobalName (rc, Name, restrictions);
 			if (e != null)
 				return e;
 
@@ -1121,32 +1151,37 @@ namespace Mono.PlayScript
 
 		Expression LookupGlobalName (ResolveContext rc, string name, MemberLookupRestrictions restrictions)
 		{
-			bool errorMode = false;
-
-			FullNamedExpression fne = rc.LookupNamespaceOrType (name, 0, LookupMode.Normal, loc);
-			if (fne == null || fne is Namespace) {
-				return null;
-			}
-
-			TypeSpec member_type = fne.ResolveAsType (rc);
-			if (member_type == null) {
-				return null;
-			}
-
-			Expression e = MemberLookup (rc, errorMode, member_type, Name, Arity, restrictions, loc);
-			if (e == null)
+			var ns = rc.Module.GlobalRootNamespace.GetNamespace (PredefinedTypes.RootNamespace, false);
+			if (ns == null)
 				return null;
 
-			var me = e as MemberExpr;
-			me = me.ResolveMemberAccess (rc, null, null);
-/*
-			if (Arity > 0) {
-				targs.Resolve (rc);
-				me.SetTypeArguments (rc, targs);
-			}
-*/
+			MemberExpr me = null;
+			foreach (var type in ns.GetAllTypes (PackageGlobalContainer.Name)) {
+				var e = MemberLookup (rc, false, type, name, 0, restrictions, loc) as MemberExpr;
+				if (e == null)
+					continue;
 
-			return me;
+				//
+				// Compiled names have always priority over imported names
+				//
+				if (!type.MemberDefinition.IsImported) {
+					me = e;
+					break;
+				}
+
+				if (me == null) {
+					me = e;
+					continue;
+				}
+
+				// TODO: Figure out how to handle
+				throw new NotImplementedException ("Imported package name collision");
+			}
+
+			if (me == null)
+				return null;
+
+			return me.ResolveMemberAccess (rc, null, null);
 		}
 	}
 
@@ -1987,8 +2022,10 @@ namespace Mono.PlayScript
 
 	class PackageGlobalContainer : CompilerGeneratedContainer
 	{
+		public const string Name = "<Globals>";
+
 		public PackageGlobalContainer (TypeContainer parent)
-			: base (parent, new MemberName ("<Globals>"), Modifiers.PUBLIC | Modifiers.STATIC)
+			: base (parent, new MemberName (Name), Modifiers.PUBLIC | Modifiers.STATIC)
 		{
 		}
 	}
