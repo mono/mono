@@ -66,22 +66,22 @@ package {
 		}
 	}
 
-	public static function trace(o:System.Object):void {
+	public function trace(o:System.Object):void {
 //		System.Diagnostics.Debug.WriteLine(o);
 		System.Console.WriteLine(o);
 	}
 		
-	public static function trace(o1:System.Object, o2:System.Object):void {
+	public function trace(o1:System.Object, o2:System.Object):void {
 //		System.Diagnostics.Debug.WriteLine("{0}{1}", o1, o2);
 		System.Console.WriteLine("{0} {1}", o1, o2);
 	}
 
-	public static function trace(o1:System.Object, o2:System.Object, o3:System.Object):void {
+	public function trace(o1:System.Object, o2:System.Object, o3:System.Object):void {
 //		System.Diagnostics.Debug.WriteLine("{0}{1}{2}", o1, o2, o3);
 		System.Console.WriteLine("{0} {1} {2}", o1, o2, o3);
 	}
 
-	public static function trace(o1:System.Object, o2:System.Object, o3:System.Object, ...args):void {
+	public function trace(o1:System.Object, o2:System.Object, o3:System.Object, ...args):void {
 		var argsStr = System.String.Concat(args);
 //		System.Diagnostics.Debug.WriteLine("{0}{1}{2}{3}", o1, o2, o3, argsStr);
 		System.Console.WriteLine("{0} {1} {2} {3}", o1, o2, o3, argsStr);

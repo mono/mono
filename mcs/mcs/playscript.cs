@@ -495,6 +495,18 @@ namespace Mono.PlayScript
 		{
 		}
 
+		public override void ApplyAttributes (MethodBuilder mb, ConstructorBuilder cb, int index, CSharp.PredefinedAttributes pa)
+		{
+			base.ApplyAttributes (mb, cb, index, pa);
+
+			attr.EmitAttribute (builder);
+		}
+
+		public override string GetSignatureForError ()
+		{
+			return GetModifierSignature (ModFlags);
+		}
+
 		public override TypeSpec Resolve (IMemberContext rc, int index)
 		{
 			TypeExpression = new TypeExpression (rc.Module.PlayscriptTypes.Array.Resolve (), Location);
@@ -502,13 +514,6 @@ namespace Mono.PlayScript
 			attr.Define ();
 
 			return base.Resolve (rc, index);
-		}
-
-		public override void ApplyAttributes (MethodBuilder mb, ConstructorBuilder cb, int index, CSharp.PredefinedAttributes pa)
-		{
-			base.ApplyAttributes (mb, cb, index, pa);
-
-			attr.EmitAttribute (builder);
 		}
 	}
 
@@ -1545,6 +1550,23 @@ namespace Mono.PlayScript
 				m.Report.WarningPlayScript (1009, m.Location, "Method `{0}' return type has no type declaration", m.GetSignatureForError ());
 			}
 
+			if (parent is PackageGlobalContainer) {
+				if ((mod & Modifiers.OVERRIDE) != 0) {
+					m.Report.ErrorPlayScript (1010, m.Location, "`{0}': The override attribute may be used only on definitions inside a class",
+						m.GetSignatureForError ());
+				}
+
+				if ((mod & Modifiers.VIRTUAL) != 0) {
+					m.Report.ErrorPlayScript (1011, m.Location, "`{0}': The override attribute may be used only on definitions inside a class",
+						m.GetSignatureForError ());
+				}
+
+				if ((mod & Modifiers.STATIC) != 0) {
+					m.Report.ErrorPlayScript (1012, m.Location, "`{0}': The static attribute may be used only on definitions inside a class",
+						m.GetSignatureForError ());
+				}
+			}
+
 			return m;
 		}
 
@@ -1574,6 +1596,15 @@ namespace Mono.PlayScript
 			}
 
 			return ok;
+		}
+
+		public override bool Define ()
+		{
+			if (Parent is PackageGlobalContainer) {
+				ModFlags |= Modifiers.STATIC;
+			}
+
+			return base.Define ();
 		}
 
 		protected override void Error_OverrideWithoutBase (MemberSpec candidate)

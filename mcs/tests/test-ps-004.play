@@ -1,6 +1,6 @@
 package
 {
-	public static function Main():int
+	public function Main():int
 	{
 		var a:BaseClass = new TestClass ();
 		if (a.p != 15)
