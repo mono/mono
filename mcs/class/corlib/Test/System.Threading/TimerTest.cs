@@ -197,9 +197,13 @@ namespace MonoTests.System.Threading {
 			
 		}
 
+#if !MONOTOUCH
 		[Test]
 		public void TestDisposeOnCallback ()
 		{
+			// this test is bad, as the provided `state` (t1) is null and will throw an NRE inside the callback
+			// that was ignored before 238785a3e3d510528228fc551625975bc508c2f3 and most unit test runner won't
+			// report it since the NRE will not happen on the main thread (but Touch.Unit will)
 			Timer t1 = null;
 			t1 = new Timer (new TimerCallback (CallbackTestDisposeOnCallback), t1, 0, 10);
 			Thread.Sleep (200);
@@ -211,7 +215,8 @@ namespace MonoTests.System.Threading {
 		{
 			((Timer) foo).Dispose ();
 		}
-		
+#endif
+
 		private void Callback (object foo)
 		{
 			Bucket b = foo as Bucket;
