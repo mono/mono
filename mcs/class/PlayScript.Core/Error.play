@@ -86,6 +86,9 @@ package {
 			case 1007:
 				msg = "Instantiation attempted on a non-constructor.";
 				break;
+			case 1009:
+				msg = "Cannot access a property or method of a null object reference.";
+				break;
 			}
 
 			if (msg == null)

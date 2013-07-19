@@ -31,6 +31,30 @@ namespace Mono.PlayScript
 		}
 	}
 
+	static class ExpressionExtension
+	{
+		public static TypeSpec TryToResolveAsType (this Expression expr, IMemberContext mc)
+		{
+			//
+			// TODO: Don't have probing type resolver yet
+			//
+			var errors_printer = new SessionReportPrinter ();
+			var old = mc.Module.Compiler.Report.SetPrinter (errors_printer);
+			TypeSpec t;
+
+			try {
+				t = expr.ResolveAsType (mc);
+			} finally {
+				mc.Module.Compiler.Report.SetPrinter (old);
+			}
+
+			if (t != null && errors_printer.ErrorsCount == 0)
+				return t;
+
+			return null;
+		}
+	}
+
 	public abstract class CollectionInitialization : PlayScriptExpression
 	{
 		protected Expression ctor;
@@ -183,22 +207,14 @@ namespace Mono.PlayScript
 
 		protected override Expression DoResolve (ResolveContext rc)
 		{
-			var expr = RequestedType.Resolve (rc, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup | ResolveFlags.Type);
+			var te = RequestedType.TryToResolveAsType (rc);
+			if (te != null) {
+				return base.DoResolve (rc);
+			}
+
+			var expr = RequestedType.Resolve (rc);
 			if (expr == null)
 				return null;
-
-			if (expr.eclass == ExprClass.Type) {
-				RequestedType = expr;
-				return base.DoResolve (rc);
-			}
-
-			//
-			// SimpleName does auto-conversion to TypeOf expression for expressions used like type.
-			//
-			if (expr is CSharp.TypeOf) {
-				// TODO: Maybe using probing version of ResolveAsType would be better
-				return base.DoResolve (rc);
-			}
 
 			if (expr.Type != rc.Module.PlayscriptTypes.Class && expr.Type != rc.Module.PlayscriptTypes.Object) {
 				rc.Report.ErrorPlayScript (1180, RequestedType.Location, "Call to a possibly undefined method `{0}'", expr.GetSignatureForError ());
@@ -754,6 +770,20 @@ namespace Mono.PlayScript
 		}
 	}
 
+	class ImplicitTypeOf : CSharp.TypeOf
+	{
+		public ImplicitTypeOf (TypeExpression expr, Location loc)
+			: base (expr, loc)
+		{
+		}
+
+		public new TypeExpression TypeExpression {
+			get {
+				return (TypeExpression) base.TypeExpression;
+			}
+		}
+	}
+
 	public class LocalFunction : AnonymousMethodExpression
 	{
 		TypeSpec return_type;
@@ -916,8 +946,145 @@ namespace Mono.PlayScript
 		}
 	}
 
+	public class WithContext
+	{
+		Stack<Expression> object_context;
+		Assign initialization;
+
+		public WithContext ()
+		{
+		}
+
+		public WithContext (Stack<Expression> context)
+		{
+			this.object_context = context;
+		}
+
+		public bool IsInitialized {
+			get {
+				return initialization != null;
+			}
+		}
+
+		public Stack<Expression> ObjectContext {
+			get {
+				return object_context;
+			}
+		}
+
+		public MethodGroupExpr RegisterMethod { get; private set; }
+		public MethodGroupExpr UnregisterMethod { get; private set; }
+
+		public TemporaryVariableReference Variable { get; private set; }
+
+		public Assign Initialize (BlockContext bc, Location loc)
+		{
+			var doc = bc.Module.PlayscriptTypes.DefaultObjectContext.Resolve ();
+			if (doc == null)
+				return null;
+
+			Variable = TemporaryVariableReference.Create (doc, bc.CurrentBlock, loc);
+			if (Variable.Resolve (bc) == null)
+				return null;
+
+			var ms = bc.Module.PlayScriptMembers.DefaultObjectContextCreate.Resolve (loc);
+			if (ms == null)
+				return null;
+
+			var mg = MethodGroupExpr.CreatePredefined (ms, doc, loc);
+			var inv = new Invocation (mg, new Arguments (0)).Resolve (bc);
+			initialization = new CompilerAssign (Variable, inv, loc);
+			initialization.Resolve (bc);
+
+			ms = bc.Module.PlayScriptMembers.DefaultObjectContextRegister.Resolve (loc);
+			if (ms == null)
+				return null;
+
+			RegisterMethod = MethodGroupExpr.CreatePredefined (ms, doc, loc);
+			RegisterMethod.InstanceExpression = Variable;
+
+			ms = bc.Module.PlayScriptMembers.DefaultObjectContextUnregister.Resolve (loc);
+			if (ms == null)
+				return null;
+
+			UnregisterMethod = MethodGroupExpr.CreatePredefined (ms, doc, loc);
+			UnregisterMethod.InstanceExpression = Variable;
+
+			return initialization;
+		}
+
+		public void SetObjectContext (Expression expr)
+		{
+			if (object_context == null)
+				object_context = new Stack<Expression> ();
+
+			object_context.Push (expr);
+		}
+	}
+
+	public class ObjectContextRuntimeExpression : PlayScriptExpression
+	{
+		public ObjectContextRuntimeExpression (TypeSpec type)
+		{
+			this.eclass = ExprClass.Variable;
+			this.type = type;
+			this.loc = Location.Null;
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new NotSupportedException ();
+		}
+	}
+
+	class ObjectContextMemberBinder : DynamicMemberAssignable
+	{
+		readonly string name;
+		readonly Expression context;
+
+		public ObjectContextMemberBinder (string name, Expression context, Location loc)
+			: base (CreateFakeArgument (context), loc)
+		{
+			this.name = name;
+			this.context = context;
+		}
+
+		static Arguments CreateFakeArgument (Expression context)
+		{
+			Arguments args = new Arguments (1);
+			args.Add (new Argument (context));
+			return args;
+		}
+
+		protected override Expression CreateCallSiteBinder (ResolveContext rc, Arguments args, bool isSet)
+		{
+			Arguments binder_args = new Arguments (3);
+
+			binder_args.Add (new Argument (new StringLiteral (rc.BuiltinTypes, name, loc)));
+			binder_args.Add (new Argument (new CSharp.TypeOf (rc.CurrentType, loc)));
+			binder_args.Add (new Argument (context));
+
+			isSet |= (flags & CSharpBinderFlags.ValueFromCompoundAssignment) != 0;
+			return new Invocation (GetPlayScriptBinder (rc, isSet ? "SetMember" : "GetMember", loc), binder_args);
+		}
+
+		protected MemberAccess GetPlayScriptBinder (ResolveContext rc, string name, Location loc)
+		{
+			var binder_type = rc.Module.PlayscriptTypes.Binder.Resolve ();
+			return new MemberAccess (new TypeExpression (binder_type, loc), name, loc);
+		}
+	}
+
 	public class With : Statement
 	{
+		Assign initialization;
+		MethodGroupExpr register, unregister;
+
 		public With (Expression expr, Block block, Location loc)
 		{
 			this.Expr = expr;
@@ -937,7 +1104,65 @@ namespace Mono.PlayScript
 
 		protected override void DoEmit (EmitContext ec)
 		{
+			if (initialization != null)
+				initialization.EmitStatement (ec);
+
+			if (register != null) {
+				// TODO: Should be inside try-finally but need to check which
+				// expressions then won't be allowed
+
+				var args = new Arguments (1);
+				args.Add (new Argument (Expr));
+				register.EmitCall (ec, args);
+			}
+
 			Block.Emit (ec);
+
+			if (unregister != null)
+				unregister.EmitCall (ec, new Arguments (0));
+		}
+
+		public override bool Resolve (BlockContext bc)
+		{
+			Expression expr;
+
+			var t = Expr.TryToResolveAsType (bc);
+			if (t != null) {
+				expr = new TypeExpression (t, loc);
+			} else {
+				expr = Expr.Resolve (bc);
+				if (expr == null)
+					return false;
+
+				Expr = expr;
+			}
+
+			var ctx = bc.DefaultObjectContext;
+			if (ctx == null) {
+				bc.DefaultObjectContext = ctx = new WithContext ();
+			}
+
+			if (expr.eclass == ExprClass.Type || expr.Type.IsSealed) {
+				// 
+				// All member lookups can be done during compilation
+				//
+				ctx.SetObjectContext (expr);
+			} else {
+				if (!ctx.IsInitialized) {
+					initialization = ctx.Initialize (bc, loc);
+					if (initialization == null)
+						return false;
+				}
+
+				ctx.SetObjectContext (ctx.Variable);
+				register = ctx.RegisterMethod;
+				unregister = ctx.UnregisterMethod;
+			}
+
+			Block.Resolve (bc);
+
+			ctx.ObjectContext.Pop ();
+			return true;
 		}
 	}
 
@@ -1026,6 +1251,12 @@ namespace Mono.PlayScript
 			INamedBlockVariable variable = null;
 			bool variable_found = false;
 
+			if (rc.DefaultObjectContext != null) {
+				e = LookupObjectContext (rc, Name, restrictions);
+				if (e != null)
+					return e;
+			}
+
 			//
 			// Stage 1: binding to local variables or parameters
 			//
@@ -1104,7 +1335,9 @@ namespace Mono.PlayScript
 
 					var fne = ResolveAsTypeOrNamespace (rc);
 					if (fne != null && (restrictions & MemberLookupRestrictions.PlayScriptConversion) == 0) {
-						return new CSharp.TypeOf (fne, loc);
+						var te = fne as TypeExpression;
+						if (te != null)
+							return new ImplicitTypeOf (te, loc);
 					}
 
 					return fne;
@@ -1147,6 +1380,56 @@ namespace Mono.PlayScript
 			default:
 				return null;
 			}
+		}
+
+		Expression LookupObjectContext (ResolveContext rc, string name, MemberLookupRestrictions restrictions)
+		{
+			var ctx = rc.DefaultObjectContext;
+			foreach (var expr in ctx.ObjectContext) {
+				if (expr == ctx.Variable) {
+					return new ObjectContextMemberBinder (name, expr, loc).Resolve (rc);
+				}
+
+				var type = expr.Type;
+
+				var me = MemberLookup (rc, false, type, name, 0, restrictions, loc) as MemberExpr;
+				if (me == null) {
+					//
+					// Try to look for extension method when member lookup failed
+					//
+					if (MethodGroupExpr.IsExtensionMethodArgument (expr)) {
+						var methods = rc.LookupExtensionMethod (type, Name, 0);
+						if (methods != null) {
+							var emg = new ExtensionMethodGroupExpr (methods, expr, loc);
+							//if (HasTypeArguments) {
+							//	if (!targs.Resolve (rc))
+							//		return null;
+							//
+							//	emg.SetTypeArguments (rc, targs);
+							//}
+
+							//
+							// Run defined assigned checks on expressions resolved with
+							// disabled flow-analysis
+							//
+							//if (sn != null && !errorMode) {
+							//	var vr = expr as VariableReference;
+							//	if (vr != null)
+							//		vr.VerifyAssigned (rc);
+							//}
+
+							// TODO: it should really skip the checks bellow
+							return emg.Resolve (rc);
+						}
+					}
+
+					continue;
+				}
+
+				return me.ResolveMemberAccess (rc, null, null);
+			}
+
+			return null;
 		}
 
 		Expression LookupGlobalName (ResolveContext rc, string name, MemberLookupRestrictions restrictions)
@@ -2045,6 +2328,7 @@ namespace Mono.PlayScript
 
 		public readonly PredefinedType Binder;
 		public readonly PredefinedType Operations;
+		public readonly PredefinedType DefaultObjectContext;
 
 
 		//
@@ -2092,6 +2376,7 @@ namespace Mono.PlayScript
 
 			Binder = new PredefinedType (module, MemberKind.Class, "PlayScript.Runtime", "Binder");
 			Operations = new PredefinedType (module, MemberKind.Class, "PlayScript.Runtime", "Operations");
+			DefaultObjectContext = new PredefinedType (module, MemberKind.Class, "PlayScript.Runtime", "DefaultObjectContext");
 
 			// Define types which are used for early comparisons
 			Array.Define ();
@@ -2111,6 +2396,9 @@ namespace Mono.PlayScript
 		public readonly PredefinedMember<MethodSpec> BinderDelegateInvoke;
 		public readonly PredefinedMember<MethodSpec> OperationsTypeOf;
 		public readonly PredefinedMember<MethodSpec> OperationsClassOf;
+		public readonly PredefinedMember<MethodSpec> DefaultObjectContextCreate;
+		public readonly PredefinedMember<MethodSpec> DefaultObjectContextRegister;
+		public readonly PredefinedMember<MethodSpec> DefaultObjectContextUnregister;
 
 		public PredefinedMembers (ModuleContainer module)
 		{
@@ -2130,7 +2418,10 @@ namespace Mono.PlayScript
 			BinderDelegateInvoke = new PredefinedMember<MethodSpec> (module, ptypes.Binder, "DelegateInvoke", btypes.Delegate, ArrayContainer.MakeType (module, btypes.Object));
 			BinderHasProperty = new PredefinedMember<MethodSpec> (module, ptypes.Binder, "HasProperty", btypes.Object, btypes.Type, btypes.Object);
 			OperationsTypeOf = new PredefinedMember<MethodSpec> (module, ptypes.Operations, "TypeOf", btypes.Object);
-			OperationsClassOf = new PredefinedMember<MethodSpec> (module, ptypes.Operations, "ClassOf", btypes.Object); 
+			OperationsClassOf = new PredefinedMember<MethodSpec> (module, ptypes.Operations, "ClassOf", btypes.Object);
+			DefaultObjectContextCreate = new PredefinedMember<MethodSpec> (module, ptypes.DefaultObjectContext, "Create");
+			DefaultObjectContextRegister = new PredefinedMember<MethodSpec> (module, ptypes.DefaultObjectContext, "Register", btypes.Object);
+			DefaultObjectContextUnregister = new PredefinedMember<MethodSpec> (module, ptypes.DefaultObjectContext, "Unregister");
 		}
 	}
 

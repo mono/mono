@@ -639,6 +639,7 @@ namespace Mono.PlayScript
 			AddKeyword ("void", Token.VOID);
 			AddKeyword ("volatile", Token.VOLATILE);
 			AddKeyword ("while", Token.WHILE);
+			AddKeyword ("with", Token.WITH);
 			AddKeyword ("partial", Token.PARTIAL);
 			AddKeyword ("where", Token.WHERE);
 

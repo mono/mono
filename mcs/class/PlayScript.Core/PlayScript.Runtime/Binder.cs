@@ -70,6 +70,11 @@ namespace PlayScript.Runtime
 			// TODO: Add caching to avoid expensive Resolve
 			return callsite.Target (callsite, instance);
 		}
+		
+		public static CallSiteBinder GetMember (string name, Type context, DefaultObjectContext objectContext)
+		{
+			return new PlayScriptGetMemberBinder (name, context, objectContext);
+		}
 
 		public static void SetMember (object instance, Type context, object name, object value)
 		{

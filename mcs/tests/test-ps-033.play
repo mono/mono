@@ -1,0 +1,46 @@
+package
+{
+	public class WithStatementTest
+	{
+		public static function cos ():int
+		{
+			return 0;
+		}
+
+		public static function Main():int
+		{
+			var r:Number = 0.3;
+			var a:Number, x:Number; 
+			var PI:Number = 99;
+			with (Math) {
+				a = PI;
+				x = r * cos(PI); 
+			}
+			
+			if (a != 3.141592653589793)
+				return 1;
+
+			if (PI != 99)
+				return 2;
+
+			if (x != -0.3)
+				return 3;
+				
+			with ("abcd") {
+				if (charAt (2) != 'c')
+					return 4;
+			}
+
+			var o:Object = "XyZ";
+			var res:Object;
+			with (o) {
+				// TODO: Extension methods lookup in runtime context
+				//if (toLowerCase () != "xyz")
+				//	return 5;
+			}
+
+			return 0;
+		}
+	}
+}
+

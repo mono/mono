@@ -440,6 +440,8 @@ namespace Mono.CSharp
 			get { return (flags & Options.ConstantCheckState) != 0; }
 		}
 
+		public PlayScript.WithContext DefaultObjectContext { get; set; }
+
 		public bool DoFlowAnalysis {
 			get { return (flags & Options.DoFlowAnalysis) != 0; }
 		}

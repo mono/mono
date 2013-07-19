@@ -67,10 +67,13 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 		public DynamicMetaObject Bind (DynamicContext ctx, Type callingType)
 		{
+			return Bind (new Compiler.ResolveContext (new RuntimeBinderContext (ctx, callingType), ResolveOptions));
+		}
+		
+		public DynamicMetaObject Bind (Compiler.ResolveContext rc)
+		{
 			Expression res;
 			try {
-				var rc = new Compiler.ResolveContext (new RuntimeBinderContext (ctx, callingType), ResolveOptions);
-
 				// Static typemanager and internal caches are not thread-safe
 				lock (resolver) {
 					expr = expr.Resolve (rc, Compiler.ResolveFlags.VariableOrValue);
