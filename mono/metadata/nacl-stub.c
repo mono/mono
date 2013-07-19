@@ -66,11 +66,6 @@ size_t getpagesize(void)
 #endif
 }
 
-int sem_trywait(sem_t *sem) {
-	g_assert_not_reached ();
-	return -1;
-}
-
 int sem_timedwait(sem_t *sem, const struct timespec *abs_timeout) {
 	g_assert_not_reached ();
 	return -1;
