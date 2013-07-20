@@ -28124,6 +28124,36 @@
       </method>
     </type>
   </test>
+  <test name="gtest-partial-09.cs">
+    <type name="A.B`1[T]">
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A.B`1+C[T]">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A.B`1+C+A[T]">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A.Bar">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A.Test">
+      <method name="Void Main()" attrs="150">
+        <size>20</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-var-04.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">

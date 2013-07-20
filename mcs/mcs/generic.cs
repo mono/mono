@@ -511,7 +511,7 @@ namespace Mono.CSharp {
 
 			// Copy constraint from resolved part to partial container
 			spec.SpecialConstraint = tp.spec.SpecialConstraint;
-			spec.Interfaces = tp.spec.Interfaces;
+			spec.InterfacesDefined = tp.spec.InterfacesDefined;
 			spec.TypeArguments = tp.spec.TypeArguments;
 			spec.BaseType = tp.spec.BaseType;
 			
@@ -2494,8 +2494,8 @@ namespace Mono.CSharp {
 			//
 			// Check the interfaces constraints
 			//
-			if (tparam.Interfaces != null) {
-				foreach (TypeSpec iface in tparam.Interfaces) {
+			if (tparam.InterfacesDefined != null) {
+				foreach (TypeSpec iface in tparam.InterfacesDefined) {
 					if (!CheckConversion (mc, context, atype, tparam, iface, loc)) {
 						if (mc == null)
 							return false;
