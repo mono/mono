@@ -1141,8 +1141,7 @@ namespace MonoTests.System.Threading
 			t1.SetApartmentState (ApartmentState.STA);
 			Assert.AreEqual (ApartmentState.STA, t1.ApartmentState, "Thread1 Set Once");
 
-			t1.SetApartmentState (ApartmentState.STA);
-			Assert.AreEqual (ApartmentState.STA, t1.ApartmentState, "Thread1 Set twice");
+			t1.SetApartmentState (ApartmentState.MTA);
 		}
 
 		[Test]
@@ -1153,10 +1152,10 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual (ApartmentState.STA, t1.ApartmentState, "#1");
 
 			bool result = t1.TrySetApartmentState (ApartmentState.MTA);
-			Assert.IsTrue (result, "#2");
+			Assert.IsFalse (result, "#2");
 
 			result = t1.TrySetApartmentState (ApartmentState.STA);
-			Assert.IsFalse (result, "#3");
+			Assert.IsTrue (result, "#3");
 		}
 
 		[Test]
@@ -1168,13 +1167,11 @@ namespace MonoTests.System.Threading
 
 			t1.Start ();
 
-			bool exception_occured = false;
 			try {
 				t1.TrySetApartmentState (ApartmentState.STA);
-			} catch (Exception) {
-				exception_occured = true;
+				Assert.Fail ();
+			} catch (ThreadStateException) {
 			}
-			Assert.IsFalse (exception_occured, "Invalid Exception Occured");
 
 			t1.Join ();
 		}
