@@ -402,7 +402,7 @@ namespace MonoTests.System.Reflection
 			}
 		}
 #endif
-#if NET_2_0
+
 		public class A<T>
 		{
 			public string Property {
@@ -438,8 +438,13 @@ namespace MonoTests.System.Reflection
 			PropertyInfo property = type.GetProperty ("Property");
 			Assert.AreEqual (typeof (string).FullName, property.GetValue (instance, null));
 		}
-#endif
 
+		[Test]
+		public void ToStringTest ()
+		{
+			var pa = typeof (TestC).GetProperty ("Item");
+			Assert.AreEqual ("Int32 Item [System.Double[]]", pa.ToString ());
+		}
 
 		static bool HasAttribute (object [] attrs, Type attributeType)
 		{

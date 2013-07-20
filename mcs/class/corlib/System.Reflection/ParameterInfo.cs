@@ -1,9 +1,12 @@
 // System.Reflection.ParameterInfo
 //
-// Sean MacIsaac (macisaac@ximian.com)
+// Authors:
+//   Sean MacIsaac (macisaac@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2001 Ximian, Inc.
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright 2013 Xamarin, Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,6 +34,7 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.Text;
 
 namespace System.Reflection
 {
@@ -122,6 +126,27 @@ namespace System.Reflection
 				result += NameImpl;
 			}
 			return result;
+		}
+
+		internal static void FormatParameters (StringBuilder sb, ParameterInfo[] p)
+		{
+			for (int i = 0; i < p.Length; ++i) {
+				if (i > 0)
+					sb.Append (", ");
+
+				Type pt = p[i].ParameterType;
+				bool byref = pt.IsByRef;
+				if (byref)
+					pt = pt.GetElementType ();
+
+				if (Type.ShouldPrintFullName (pt))
+					sb.Append (pt.ToString ());
+				else
+					sb.Append (pt.Name);
+
+				if (byref)
+					sb.Append (" ByRef");
+			}
 		}
 
 		public virtual Type ParameterType {
