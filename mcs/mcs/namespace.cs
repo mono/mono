@@ -1140,7 +1140,7 @@ namespace Mono.CSharp {
 			if (aliases != null && arity == 0) {
 				UsingAliasNamespace uan;
 				if (aliases.TryGetValue (name, out uan)) {
-					if (fne != null) {
+					if (fne != null && mode != LookupMode.Probing) {
 						// TODO: Namespace has broken location
 						//Report.SymbolRelatedToPreviousError (fne.Location, null);
 						Compiler.Report.SymbolRelatedToPreviousError (uan.Location, null);
