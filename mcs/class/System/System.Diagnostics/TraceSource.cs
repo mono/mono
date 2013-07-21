@@ -55,6 +55,7 @@ namespace System.Diagnostics
 			Hashtable sources = DiagnosticsConfiguration.Settings ["sources"] as Hashtable;
 			TraceSourceInfo info = sources != null ? sources [name] as TraceSourceInfo : null;
 			source_switch = new SourceSwitch (name);
+			source_switch.Level = sourceLevels
 
 			if (info == null) {
 				listeners = new TraceListenerCollection ();
