@@ -97,6 +97,7 @@ namespace System.Reflection
 			this.NameImpl = pinfo.Name;
 			this.PositionImpl = pinfo.Position;
 			this.AttrsImpl = pinfo.Attributes;
+			this.DefaultValueImpl = pinfo.DefaultValueImpl;
 			//this.parent = pinfo;
 		}
 

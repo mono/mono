@@ -528,5 +528,23 @@ namespace MonoTests.System.Reflection
 				Assert.IsTrue (ex.InnerException is ObjectDisposedException);
 			}
 		}
+
+		public class DefaultValueTest
+		{
+			public string this[int val, string param = "test"]
+			{
+				get{ return val + param; }
+			}
+		}
+
+
+		[Test]
+		public void PropertyWithDefaultValue ()
+		{
+			var parameters = typeof (DefaultValueTest).GetProperty ("Item").GetIndexParameters ();
+			var defaultParam = parameters[parameters.Length - 1];
+			Assert.AreEqual ("param", defaultParam.Name, "#1");
+			Assert.AreEqual ("test", defaultParam.DefaultValue, "#2");
+		}
 	}
 }
