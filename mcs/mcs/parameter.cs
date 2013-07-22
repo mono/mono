@@ -394,7 +394,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			TypeManager.CheckTypeVariance (parameter_type,
+			VarianceDecl.CheckTypeVariance (parameter_type,
 				(modFlags & Parameter.Modifier.RefOutMask) != 0 ? Variance.None : Variance.Contravariant,
 				rc);
 

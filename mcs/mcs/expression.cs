@@ -10571,6 +10571,12 @@ namespace Mono.CSharp
 			this.loc = loc;
 		}
 
+		public CollectionElementInitializer (Location loc)
+			: base (null, null)
+		{
+			this.loc = loc;
+		}
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = new Arguments (2);

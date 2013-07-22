@@ -564,6 +564,7 @@ namespace_name
 	  {
 		var lt = (LocatedToken) $3;
 		$$ = new MemberName ((MemberName) $1, lt.Value, lt.Location);		
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| error
 	  {
@@ -972,7 +973,11 @@ struct_declaration
 	  }
 	  opt_semicolon
 	  {
-		lbag.AppendToMember (current_container, GetLocation ($11), GetLocation ($14), GetLocation ($16));
+		if ($16 == null) {
+			lbag.AppendToMember (current_container, GetLocation ($11), GetLocation ($14));
+		} else {
+			lbag.AppendToMember (current_container, GetLocation ($11), GetLocation ($14), GetLocation ($16));
+		}
 		$$ = pop_current_class ();
 	  }
 	| opt_attributes opt_modifiers opt_partial STRUCT error
@@ -1140,6 +1145,7 @@ opt_field_initializer
 	  {
 	  	--lexer.parsing_block;
 		current_field.Initializer = (Expression) $3;
+		lbag.AppendToMember (current_field, GetLocation ($1));
 		end_block (lexer.Location);
 		current_local_parameters = null;
 	  }
@@ -1940,7 +1946,11 @@ interface_declaration
 	  }
 	  opt_semicolon 
 	  {
-	    lbag.AppendToMember (current_container, GetLocation ($11), GetLocation ($13));
+		if ($15 == null) {
+			lbag.AppendToMember (current_container, GetLocation ($11), GetLocation ($13));
+		} else {
+			lbag.AppendToMember (current_container, GetLocation ($11), GetLocation ($13), GetLocation ($15));
+		}
 		$$ = pop_current_class ();
 	  }
 	| opt_attributes opt_modifiers opt_partial INTERFACE error
@@ -2923,7 +2933,7 @@ type_parameter
 	: opt_attributes opt_type_parameter_variance IDENTIFIER
 	  {
 		var lt = (LocatedToken)$3;
-		$$ = new TypeParameter (new MemberName (lt.Value, lt.Location), (Attributes)$1, (Variance) $2);
+		$$ = new TypeParameter (new MemberName (lt.Value, lt.Location), (Attributes)$1, (VarianceDecl) $2);
   	  }
   	| error
   	  {
@@ -2932,7 +2942,7 @@ type_parameter
 		else
 			Error_SyntaxError (yyToken);
 			
-  	  	$$ = new TypeParameter (MemberName.Null, null, Variance.None);
+  	  	$$ = new TypeParameter (MemberName.Null, null, null);
   	  }
  	;
 
@@ -3302,14 +3312,17 @@ member_initializer
 	| OPEN_BRACE expression_list CLOSE_BRACE
 	  {
 		if ($2 == null)
-			$$ = null;
+			$$ = new CollectionElementInitializer (GetLocation ($1));
 		else
 	  		$$ = new CollectionElementInitializer ((List<Expression>)$2, GetLocation ($1));
+
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| OPEN_BRACE CLOSE_BRACE
 	  {
 	  	report.Error (1920, GetLocation ($1), "An element initializer cannot be empty");
-		$$ = null;
+		$$ = new CollectionElementInitializer (GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	;
 
@@ -4652,7 +4665,11 @@ class_declaration
 	  }
 	  opt_semicolon 
 	  {
-		lbag.AppendToMember (current_container, GetLocation ($11), GetLocation ($13), GetLocation ($15));
+		if ($15 == null) {
+			lbag.AppendToMember (current_container, GetLocation ($11), GetLocation ($13));
+		} else {
+			lbag.AppendToMember (current_container, GetLocation ($11), GetLocation ($13), GetLocation ($15));
+		}
 		$$ = pop_current_class ();
 	  }
 	;	
@@ -4901,7 +4918,7 @@ type_parameter_constraint
 opt_type_parameter_variance
 	: /* empty */
 	  {
-		$$ = Variance.None;
+		$$ = null;
 	  }
 	| type_parameter_variance
 	  {
@@ -4915,11 +4932,11 @@ opt_type_parameter_variance
 type_parameter_variance
 	: OUT
 	  {
-		$$ = Variance.Covariant;
+		$$ = new VarianceDecl (Variance.Covariant, GetLocation ($1));
 	  }
 	| IN
 	  {
-		$$ = Variance.Contravariant;
+		$$ = new VarianceDecl (Variance.Contravariant, GetLocation ($1));
 	  }
 	;
 
@@ -6045,6 +6062,7 @@ fixed_statement
 	  
 		Fixed f = new Fixed ((Fixed.VariableDeclaration) $9, (Statement) $10, GetLocation ($1));
 		current_block.AddStatement (f);
+		lbag.AddStatement (f, GetLocation ($2), GetLocation ($8));
 		$$ = end_block (GetLocation ($8));
 	  }
 	;
@@ -6161,7 +6179,9 @@ first_from_clause
 	  
 		var lt = (LocatedToken) $2;
 		var rv = new Linq.RangeVariable (lt.Value, lt.Location);
-		$$ = new Linq.QueryExpression (new Linq.QueryStartClause ((Linq.QueryBlock)current_block, (Expression)$4, rv, GetLocation ($1)));
+		var clause = new Linq.QueryStartClause ((Linq.QueryBlock)current_block, (Expression)$4, rv, GetLocation ($1));
+		lbag.AddLocation (clause, GetLocation ($3));
+		$$ = new Linq.QueryExpression (clause);
 	  }
 	| FROM_FIRST type identifier_inside_body IN expression
 	  {
@@ -6169,11 +6189,11 @@ first_from_clause
 	  
 		var lt = (LocatedToken) $3;
 		var rv = new Linq.RangeVariable (lt.Value, lt.Location);
-		$$ = new Linq.QueryExpression (
-			new Linq.QueryStartClause ((Linq.QueryBlock)current_block, (Expression)$5, rv, GetLocation ($1)) {
+		var clause = new Linq.QueryStartClause ((Linq.QueryBlock)current_block, (Expression)$5, rv, GetLocation ($1)) {
 				IdentifierType = (FullNamedExpression)$2
-			}
-		);
+		};
+		lbag.AddLocation (clause, GetLocation ($4));
+		$$ = new Linq.QueryExpression (clause);
 	  }
 	;
 
@@ -6184,7 +6204,9 @@ nested_from_clause
 	  
 		var lt = (LocatedToken) $2;
 		var rv = new Linq.RangeVariable (lt.Value, lt.Location);
-		$$ = new Linq.QueryExpression (new Linq.QueryStartClause ((Linq.QueryBlock)current_block, (Expression)$4, rv, GetLocation ($1)));
+		var clause = new Linq.QueryStartClause ((Linq.QueryBlock)current_block, (Expression)$4, rv, GetLocation ($1));
+		lbag.AddLocation (clause, GetLocation ($3));
+		$$ = new Linq.QueryExpression (clause);
 	  }
 	| FROM type identifier_inside_body IN expression
 	  {
@@ -6192,11 +6214,11 @@ nested_from_clause
 	  
 		var lt = (LocatedToken) $3;
 		var rv = new Linq.RangeVariable (lt.Value, lt.Location);
-		$$ = new Linq.QueryExpression (
-			new Linq.QueryStartClause ((Linq.QueryBlock)current_block, (Expression)$5, rv, GetLocation ($1)) {
+		var clause = new Linq.QueryStartClause ((Linq.QueryBlock)current_block, (Expression)$5, rv, GetLocation ($1)) {
 				IdentifierType = (FullNamedExpression)$2
-			}
-		);
+		};
+		lbag.AddLocation (clause, GetLocation ($4));
+		$$ = new Linq.QueryExpression (clause);
 	  }
 	;
 	
@@ -6215,6 +6237,7 @@ from_clause
 		current_block = current_block.Parent;
 		
 		((Linq.QueryBlock)current_block).AddRangeVariable (sn);
+		lbag.AddLocation ($$, GetLocation ($3));
 	  }	  
 	| FROM type identifier_inside_body IN
 	  {
@@ -6233,6 +6256,8 @@ from_clause
 		current_block = current_block.Parent;
 		
 		((Linq.QueryBlock)current_block).AddRangeVariable (sn);
+		
+		lbag.AddLocation ($$, GetLocation ($4));
 	  }
 	;	
 
@@ -6482,6 +6507,7 @@ join_clause
 	  		$$ = new Linq.Join (block, sn, (Expression)$6, outer_selector, (Linq.QueryBlock) current_block, GetLocation ($1)) {
 	  			IdentifierType = (FullNamedExpression)$2
 	  		};
+			lbag.AddLocation ($$, GetLocation ($3), GetLocation ($6), GetLocation ($9));
 		} else {
 			//
 			// Set equals right side parent to beginning of linq query, it is not accessible therefore cannot cause name collisions

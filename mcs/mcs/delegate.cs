@@ -181,7 +181,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			TypeManager.CheckTypeVariance (ret_type, Variance.Covariant, this);
+			VarianceDecl.CheckTypeVariance (ret_type, Variance.Covariant, this);
 
 			var resolved_rt = new TypeExpression (ret_type, Location);
 			InvokeBuilder = new Method (this, resolved_rt, MethodModifiers, new MemberName (InvokeMethodName), p, null);
