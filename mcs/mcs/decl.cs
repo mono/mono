@@ -1161,7 +1161,7 @@ namespace Mono.CSharp {
 			var ctype = ctx.CurrentType;
 
 			if (ma == Modifiers.PRIVATE) {
-				if (ctype == null)
+				if (ctype == null || parentType == null)
 					return false;
 				//
 				// It's only accessible to the current class or children
