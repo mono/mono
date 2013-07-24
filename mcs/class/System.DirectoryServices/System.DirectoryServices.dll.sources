@@ -29,3 +29,4 @@ System.DirectoryServices.ActiveDirectory/DirectoryContextType.cs
 System.DirectoryServices.ActiveDirectory/HourOfDay.cs
 System.DirectoryServices.ActiveDirectory/MinuteOfHour.cs
 System.DirectoryServices.ActiveDirectory/NotificationStatus.cs
+System.DirectoryServices.ActiveDirectory/ReplicationOperationType.cs
