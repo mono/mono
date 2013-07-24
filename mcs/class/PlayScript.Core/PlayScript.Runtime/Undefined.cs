@@ -28,7 +28,7 @@
 
 namespace PlayScript.Runtime
 {
-	static class Undefined
+	public static class Undefined
 	{
 		public static readonly object Value = new object ();
 	}

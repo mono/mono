@@ -1,0 +1,254 @@
+package
+{
+	public class UninitializedValuesTest
+	{
+		static function Test1 ():int
+		{
+			var v1:Boolean;
+			if (v1 != false)
+				return 1;
+				
+			var v2:int;
+			if (v2 != 0)
+				return 2;
+				
+			var v3:Number;
+			if (!isNaN (v3))
+				return 3;
+
+			var v4:String;
+			if (v4 != null)
+				return 4;
+
+			var v5:*;
+			if (v5 != undefined)
+				return 5;
+
+			var v6;
+			if (v6 != undefined)
+				return 6;
+
+			return 0;
+		}
+
+		static function Test2 ():int
+		{
+			var v1:Boolean;
+			if (v1 != false)
+				return 1;
+
+			v1 = true;
+			if (v1 != true)
+				return 2;
+				
+			var v2:int;
+			if (v2 != 0)
+				return 3;
+				
+			v2 = 2;
+			if (v2 != 2)
+				return 4;
+
+			var v3:Number;
+			if (!isNaN (v3))
+				return 5;
+
+			v3 = 5;
+			if (v3 != 5)
+				return 6;
+
+			var v4:String;
+			if (v4 != null)
+				return 7;
+
+			v4 = "s";
+			if (v4 != "s")
+				return 8;
+
+			var v5:*;
+			if (v5 != undefined)
+				return 9;
+
+			v5 = null;
+			if (v5 != null)
+				return 10;
+
+			return 0;
+		}
+
+		static function Test3 ():int
+		{
+			if (v1 != false)
+				return 1;
+				
+			if (v2 != 0)
+				return 2;
+				
+			if (!isNaN (v3))
+				return 3;
+
+			if (v4 != null)
+				return 4;
+
+			if (v5 != undefined)
+				return 5;
+
+			var v1:Boolean = true;
+			var v2:int = 3;
+			var v3:Number = -9;
+			var v4:String = "--";
+			var v5:* = 3;
+
+			return 0;
+		}
+/*
+		static function TestConst3 ():int
+		{
+			if (v1 != false)
+				return 1;
+				
+			if (v2 != 0)
+				return 2;
+				
+			if (!isNaN (v3))
+				return 3;
+
+			if (v4 != null)
+				return 4;
+
+			// TODO: Some odd constant default
+			//if (v5 != namespace)
+			//	return 5;
+
+			if (v6 != undefined)
+				return 6;
+
+			const v1:Boolean = true;
+			const v2:int = 3;
+			const v3:Number = -9;
+			const v4:String = "--";
+			const v5:* = 3;
+			const v6;
+
+			return 0;
+		}
+*/
+		static function Test4 ():int
+		{
+			if (v11 != 0)
+				return 1;
+
+			if (v12 != null)
+				return 1;
+				
+			var v11:int = 4;
+			if (v11 != 4)
+				return 2;
+			
+			var v11:int = 5;
+			if (v11 != 5)
+				return 3;
+				
+			var v12:* = "4";
+			if (v12 != "4")
+				return 4;
+			
+			var v12:String = "s";
+			if (v12 != "s")
+				return 5;			
+
+			return 0;
+		}
+
+		static function Test5 ():int
+		{
+			if (!isNaN (v1))
+				return 1;
+			if (!isNaN (v2))
+				return 2;
+			if (!isNaN (v3))
+				return 3;
+				
+			var v1:Number,v2:Number = 4.3,v3:Number;
+
+			if (!isNaN (v1))
+				return 4;
+			if (isNaN (v2))
+				return 5;
+			if (!isNaN (v3))
+				return 6;
+
+			return 0;
+		}
+/*
+		static function TestConst5 ():int
+		{
+			if (!isNaN (v1))
+				return 1;
+			if (!isNaN (v2))
+				return 2;
+			if (!isNaN (v3))
+				return 3;
+				
+			const v1:Number,v2:Number = 4.3,v3:Number;
+
+			if (!isNaN (v1))
+				return 4;
+			if (isNaN (v2))
+				return 5;
+			if (!isNaN (v3))
+				return 6;
+
+			return 0;
+		}
+*/
+
+		static function Test6 (): int
+		{
+			var i1:String;
+			var i1:*;
+
+			var i2;
+			var i2:String;
+			return 0;
+		}
+
+		public static function Main():int
+		{
+			var r:int;
+			r = Test1 ();
+			if (r != 0)
+				return r;
+
+			r = Test2 ();
+			if (r != 0)
+				return r + 10;
+
+			r = Test3 ();
+			if (r != 0)
+				return r + 20;
+
+			r = Test4 ();
+			if (r != 0)
+				return r + 30;
+
+			r = Test5 ();
+			if (r != 0)
+				return r + 40;
+
+/*
+			r = TestConst3 ();
+			if (r != 0)
+				return r + 100;
+
+			r = TestConst5 ();
+			if (r != 0)
+				return r + 100;
+*/
+
+			trace ("ok");
+			return 0;
+		}
+	}
+}
+

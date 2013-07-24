@@ -1476,6 +1476,12 @@ namespace Mono.CSharp {
 
 			return t;
 		}
+
+		public virtual TypeSpec ResolveType (BlockContext bc, TypeSpec type)
+		{
+			Variable.Type = type;
+			return type;
+		}
 	}
 
 	public class BlockVariable : Statement
@@ -1493,9 +1499,10 @@ namespace Mono.CSharp {
 			this.loc = type_expr.Location;
 		}
 
-		protected BlockVariable (LocalVariable li)
+		protected BlockVariable (LocalVariable li, Location loc)
 		{
 			this.li = li;
+			this.loc = loc;
 		}
 
 		#region Properties
@@ -1607,13 +1614,14 @@ namespace Mono.CSharp {
 				}
 
 				if (type == null) {
-					type = type_expr.ResolveAsType (bc);
+					type = ResolveType (bc);
 					if (type == null)
 						return false;
+				}
 
-					if (li.IsConstant && !type.IsConstantCompatible) {
-						Const.Error_InvalidConstantType (type, loc, bc.Report);
-					}
+
+				if (li.IsConstant && !type.IsConstantCompatible) {
+					Const.Error_InvalidConstantType (type, loc, bc.Report);
 				}
 
 				if (type.IsStatic)
@@ -1636,7 +1644,8 @@ namespace Mono.CSharp {
 
 			if (declarators != null) {
 				foreach (var d in declarators) {
-					d.Variable.Type = li.Type;
+					d.ResolveType (bc, li.Type);
+
 					if (eval_global) {
 						CreateEvaluatorVariable (bc, d.Variable);
 					} else if (type != InternalType.ErrorType) {
@@ -1646,7 +1655,7 @@ namespace Mono.CSharp {
 					if (d.Initializer != null && resolveDeclaratorInitializers) {
 						d.Initializer = ResolveInitializer (bc, d.Variable, d.Initializer);
 						// d.Variable.DefinitelyAssigned 
-					} 
+					}
 				}
 			}
 
@@ -1657,6 +1666,16 @@ namespace Mono.CSharp {
 		{
 			var a = new SimpleAssign (li.CreateReferenceExpression (bc, li.Location), initializer, li.Location);
 			return a.ResolveStatement (bc);
+		}
+
+		public virtual TypeSpec ResolveType (BlockContext bc)
+		{
+			type = TypeExpression.ResolveAsType (bc);
+			if (type == null)
+				return null;
+
+			li.Type = type;
+			return type;
 		}
 
 		protected override void DoEmit (EmitContext ec)
@@ -1762,6 +1781,7 @@ namespace Mono.CSharp {
 			UsingVariable = 1 << 7,
 //			DefinitelyAssigned = 1 << 8,
 			IsLocked = 1 << 9,
+			GlobalScope = 1 << 10,
 
 			ReadonlyMask = ForeachVariable | FixedVariable | UsingVariable
 		}
@@ -1926,7 +1946,7 @@ namespace Mono.CSharp {
 				return;
 
 			if (builder != null) {
-				if ((flags & Flags.CompilerGenerated) != 0)
+				if ((flags & (Flags.CompilerGenerated | Flags.GlobalScope)) != 0)
 					return;
 
 				// To avoid Used warning duplicates
@@ -5649,15 +5669,13 @@ namespace Mono.CSharp {
 			}
 
 			public VariableDeclaration (LocalVariable li, Location loc)
-				: base (li)
+				: base (li, loc)
 			{
-				this.loc = loc;
 			}
 
 			public VariableDeclaration (Expression expr)
-				: base (null)
+				: base (null, expr.Location)
 			{
-				loc = expr.Location;
 				Initializer = expr;
 			}
 

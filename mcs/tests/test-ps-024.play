@@ -12,7 +12,7 @@ package
 			if (my_array [4] != 90)
 				return 1;
 
-			for (var i:Number = 0, i2:uint; i < 2; i++) { 
+			for (var i1:Number = 0, i2:uint; i1 < 2; i1++) { 
 				trace (i2);
 			}
 			

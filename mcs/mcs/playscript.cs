@@ -316,8 +316,8 @@ namespace Mono.PlayScript
 
 	public class UntypedBlockVariable : BlockVariable
 	{
-		public UntypedBlockVariable (LocalVariable li)
-			: base (li)
+		public UntypedBlockVariable (LocalVariable li, Location loc)
+			: base (li, loc)
 		{
 		}
 
@@ -330,18 +330,16 @@ namespace Mono.PlayScript
 			}
 		}
 
-		public override bool Resolve (BlockContext bc)
+		public override TypeSpec ResolveType (BlockContext bc)
 		{
 			if (type_expr == null) {
-				if (Initializer == null)
-					type_expr = new UntypedTypeExpression (loc);
-				else if (Initializer is LocalFunction)
+				if (Initializer is LocalFunction)
 					type_expr = new TypeExpression (bc.Module.PlayscriptTypes.Function, loc);
 				else
-					type_expr = new VarExpr (loc);
+					type_expr = new UntypedTypeExpression (loc);
 			}
 
-			return base.Resolve (bc);
+			return base.ResolveType (bc);
 		}
 	}
 
@@ -1438,8 +1436,12 @@ namespace Mono.PlayScript
 			if (ns == null)
 				return null;
 
+			var types = ns.GetAllTypes (PackageGlobalContainer.Name);
+			if (types == null)
+				return null;
+
 			MemberExpr me = null;
-			foreach (var type in ns.GetAllTypes (PackageGlobalContainer.Name)) {
+			foreach (var type in types) {
 				var e = MemberLookup (rc, false, type, name, 0, restrictions, loc) as MemberExpr;
 				if (e == null)
 					continue;
@@ -1757,7 +1759,7 @@ namespace Mono.PlayScript
 		public override bool Define ()
 		{
 			if (Initializer == null) {
-				Report.WarningPlayScript (1111, Location, "The constant was not initialized.");
+				Report.WarningPlayScript (1111, Location, "The constant was not initialized");
 			}
 
 			if (!base.Define ())
@@ -1822,18 +1824,149 @@ namespace Mono.PlayScript
 
 	public class BlockVariableDeclarator : CSharp.BlockVariableDeclarator
 	{
-		public BlockVariableDeclarator (LocalVariable li, Expression initializer, FullNamedExpression typeExpr)
+		TypeSpec type;
+
+		public BlockVariableDeclarator (LocalVariable li, Expression initializer, FullNamedExpression typeExpr, Location loc)
 			: base (li, initializer)
 		{
 			this.TypeExpression = typeExpr;
+			this.Location = loc;
 		}
 
-		public BlockVariableDeclarator (LocalVariable li, Expression initializer)
+		public BlockVariableDeclarator (LocalVariable li, Expression initializer, Location loc)
 			: base (li, initializer)
 		{
+			this.Location = loc;
 		}
 
+		public Location Location { get; private set; }
 		public FullNamedExpression TypeExpression { get; private set; }
+
+		public override TypeSpec ResolveType (BlockContext bc, TypeSpec unused)
+		{
+			if (type != null)
+				return type;
+
+			if (TypeExpression == null) {
+				if (Initializer is LocalFunction)
+					TypeExpression = new TypeExpression (bc.Module.PlayscriptTypes.Function, Location);
+				else
+					TypeExpression = new UntypedTypeExpression (Location);
+			}
+
+			type = TypeExpression.ResolveAsType (bc);
+			if (type == null)
+				return null;
+
+			Variable.Type = type;
+			return type;
+		}
+	}
+
+	//
+	// When variable is used before it's declared it has to be initialized
+	// to correct PS value which in some cases does not match CIL default
+	// values
+	//
+	public class ImplicitVariableInitializer : Statement
+	{
+		BlockVariable variable;
+
+		public ImplicitVariableInitializer (BlockVariable variable)
+		{
+			this.variable = variable;
+		}
+
+		public override bool Resolve (BlockContext bc)
+		{
+			var existing = variable.Variable.Type;
+
+			var type = variable.ResolveType (bc);
+			if (type == null)
+				return false;
+
+			if (existing != null) {
+				var undefined = bc.Module.PlayscriptTypes.UndefinedType;
+				if (type == undefined) {
+					variable.Variable.Type = existing;
+				} else if (existing == undefined) {
+					// Nothing to do
+				} else if (!TypeSpecComparer.IsEqual (existing, type)) {
+					Error_NameConflict (bc, variable.loc, variable.Variable.Name);
+				}
+			}
+
+			if (type == bc.Module.PlayscriptTypes.UndefinedType) {
+				bc.Module.PlayScriptMembers.UndefinedValue.Resolve (variable.loc);
+			}
+
+			if (variable.Declarators != null) {
+				foreach (BlockVariableDeclarator d in variable.Declarators) {
+					existing = d.Variable.Type;
+					type = d.ResolveType (bc, null);
+					if (type == null)
+						continue;
+
+					if (existing != null) {
+						var undefined = bc.Module.PlayscriptTypes.UndefinedType;
+						if (type == undefined) {
+							variable.Variable.Type = existing;
+						} else if (existing == undefined) {
+							// Nothing to do
+						} else if (!TypeSpecComparer.IsEqual (existing, type)) {
+							Error_NameConflict (bc, d.Location, d.Variable.Name);
+						}						
+					}
+
+					if (type == bc.Module.PlayscriptTypes.UndefinedType) {
+						bc.Module.PlayScriptMembers.UndefinedValue.Resolve (d.Variable.Location);
+					}
+				}
+			}
+
+			return true;
+		}
+
+		static void Error_NameConflict (BlockContext bc, Location loc, string name)
+		{
+			bc.Report.ErrorPlayScript (1151, loc, "A conflict exists with definition `{0}'", name);
+		}
+
+		protected override void DoEmit (EmitContext ec)
+		{
+			EmitVariableInitialization (ec, variable.Variable);
+
+			if (variable.Declarators != null) {
+				foreach (BlockVariableDeclarator d in variable.Declarators) {
+					EmitVariableInitialization (ec, d.Variable);
+				}
+			}
+		}
+
+		static void EmitVariableInitialization (EmitContext ec, LocalVariable li)
+		{
+			li.CreateBuilder (ec);
+
+			// TOOD: Optimize to initialize only when read before assignment
+			if (li.Type == ec.Module.PlayscriptTypes.Number) {
+				ec.Emit (OpCodes.Ldc_R8, double.NaN);
+				li.EmitAssign (ec);
+				return;
+			}
+
+			if (li.Type == ec.Module.PlayscriptTypes.UndefinedType) {
+				var spec = ec.Module.PlayScriptMembers.UndefinedValue.Get ();
+				var fe = new FieldExpr (spec, Location.Null);
+
+				fe.Emit (ec);
+				li.EmitAssign (ec);
+				return;
+			}
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement target)
+		{
+		}
 	}
 
 	public class Method : CSharp.Method
@@ -2318,6 +2451,7 @@ namespace Mono.PlayScript
 		public readonly BuiltinTypeSpec Object;
 		public readonly BuiltinTypeSpec Function;
 		public readonly BuiltinTypeSpec Class;
+		public readonly BuiltinTypeSpec Number;
 
 		public readonly PredefinedType Vector;
 		public readonly PredefinedType Array;
@@ -2329,6 +2463,7 @@ namespace Mono.PlayScript
 		public readonly PredefinedType Binder;
 		public readonly PredefinedType Operations;
 		public readonly PredefinedType DefaultObjectContext;
+		public readonly PredefinedType UndefinedValueType;
 
 
 		//
@@ -2365,6 +2500,7 @@ namespace Mono.PlayScript
 
 			// For now use same instance
 			UndefinedType = module.Compiler.BuiltinTypes.Dynamic;
+			Number = module.Compiler.BuiltinTypes.Double;
 
 			// Known predefined types
 			Array = new PredefinedType (module, MemberKind.Class, RootNamespace, "Array");
@@ -2377,6 +2513,7 @@ namespace Mono.PlayScript
 			Binder = new PredefinedType (module, MemberKind.Class, "PlayScript.Runtime", "Binder");
 			Operations = new PredefinedType (module, MemberKind.Class, "PlayScript.Runtime", "Operations");
 			DefaultObjectContext = new PredefinedType (module, MemberKind.Class, "PlayScript.Runtime", "DefaultObjectContext");
+			UndefinedValueType = new PredefinedType (module, MemberKind.Class, "PlayScript.Runtime", "Undefined");
 
 			// Define types which are used for early comparisons
 			Array.Define ();
@@ -2399,6 +2536,7 @@ namespace Mono.PlayScript
 		public readonly PredefinedMember<MethodSpec> DefaultObjectContextCreate;
 		public readonly PredefinedMember<MethodSpec> DefaultObjectContextRegister;
 		public readonly PredefinedMember<MethodSpec> DefaultObjectContextUnregister;
+		public readonly PredefinedMember<FieldSpec> UndefinedValue;
 
 		public PredefinedMembers (ModuleContainer module)
 		{
@@ -2422,6 +2560,7 @@ namespace Mono.PlayScript
 			DefaultObjectContextCreate = new PredefinedMember<MethodSpec> (module, ptypes.DefaultObjectContext, "Create");
 			DefaultObjectContextRegister = new PredefinedMember<MethodSpec> (module, ptypes.DefaultObjectContext, "Register", btypes.Object);
 			DefaultObjectContextUnregister = new PredefinedMember<MethodSpec> (module, ptypes.DefaultObjectContext, "Unregister");
+			UndefinedValue = new PredefinedMember<FieldSpec> (module, ptypes.UndefinedValueType, CSharp.MemberFilter.Field ("Value", btypes.Object));
 		}
 	}
 

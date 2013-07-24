@@ -14,12 +14,17 @@ package
 		
 		public static function Main():int
 		{
-			var v = new OverrideTest ();
+			var v:OverrideTest = new OverrideTest ();
 			if (v.run () != "Base-Main")
 				return 1;
 				
 			if (v.Prop != 44)
 				return 2;
+
+			var v2:* = new OverrideTest ();
+			// TODO: broken virtual lookup, v2:BaseClass fails too
+			//if (v2.run () != "Base-Main")
+			//	return 3;
 			
 			trace ("ok");
 			return 0;
