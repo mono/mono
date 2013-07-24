@@ -229,6 +229,9 @@ mono_runtime_invoke_array   (MonoMethod *method, void *obj, MonoArray *params,
 void*
 mono_method_get_unmanaged_thunk (MonoMethod *method);
 
+void
+mono_set_commandline_arguments (int argc, char* argv[], const char* basedir);
+
 MonoArray*
 mono_runtime_get_main_args  (void);
 

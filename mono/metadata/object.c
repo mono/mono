@@ -3575,6 +3575,70 @@ free_main_args (void)
 }
 
 /**
+ * mono_set_commandline_arguments:
+ * @argc: number of arguments from the command line
+ * @argv: array of strings from the command line
+ * @basedir: optional base path of assembly with entrypoint
+ *
+ * This method sets the command line argument value needed by System.Environment.
+ *
+ */
+
+void
+mono_set_commandline_arguments(int argc, char* argv[], const char* basedir)
+{
+	int i;
+	gchar *utf8_fullpath;
+	
+	g_assert (main_args == NULL);  //this function should only be called once.
+	main_args = g_new0 (char*, argc);
+	num_main_args = argc;
+	
+	if (!g_path_is_absolute (argv [0]) && basedir != NULL) {
+		gchar *basename = g_path_get_basename (argv [0]);
+		gchar *fullpath = g_build_filename (basedir, basename, NULL);
+		
+		utf8_fullpath = mono_utf8_from_external (fullpath);
+		if(utf8_fullpath == NULL) {
+			/* Printing the arg text will cause glib to
+			 * whinge about "Invalid UTF-8", but at least
+			 * its relevant, and shows the problem text
+			 * string.
+			 */
+			g_print ("\nCannot determine the text encoding for the assembly location: %s\n", fullpath);
+			g_print ("Please add the correct encoding to MONO_EXTERNAL_ENCODINGS and try again.\n");
+			exit (-1);
+		}
+		
+		g_free (fullpath);
+		g_free (basename);
+	} else {
+		utf8_fullpath = mono_utf8_from_external (argv[0]);
+		if(utf8_fullpath == NULL) {
+			g_print ("\nCannot determine the text encoding for the assembly location: %s\n", argv[0]);
+			g_print ("Please add the correct encoding to MONO_EXTERNAL_ENCODINGS and try again.\n");
+			exit (-1);
+		}
+	}
+	
+	main_args [0] = utf8_fullpath;
+	
+	for (i = 1; i < argc; ++i) {
+		gchar *utf8_arg;
+		
+		utf8_arg=mono_utf8_from_external (argv[i]);
+		if(utf8_arg==NULL) {
+			/* Ditto the comment about Invalid UTF-8 here */
+			g_print ("\nCannot determine the text encoding for argument %d (%s).\n", i, argv[i]);
+			g_print ("Please add the correct encoding to MONO_EXTERNAL_ENCODINGS and try again.\n");
+			exit (-1);
+		}
+		
+		main_args [i] = utf8_arg;
+	}
+}	
+
+/**
  * mono_runtime_run_main:
  * @method: the method to start the application with (usually Main)
  * @argc: number of arguments from the command line
@@ -3594,62 +3658,12 @@ mono_runtime_run_main (MonoMethod *method, int argc, char* argv[],
 	int i;
 	MonoArray *args = NULL;
 	MonoDomain *domain = mono_domain_get ();
-	gchar *utf8_fullpath;
+
 	MonoMethodSignature *sig;
 
 	g_assert (method != NULL);
 	
 	mono_thread_set_main (mono_thread_current ());
-
-	main_args = g_new0 (char*, argc);
-	num_main_args = argc;
-
-	if (!g_path_is_absolute (argv [0])) {
-		gchar *basename = g_path_get_basename (argv [0]);
-		gchar *fullpath = g_build_filename (method->klass->image->assembly->basedir,
-						    basename,
-						    NULL);
-
-		utf8_fullpath = mono_utf8_from_external (fullpath);
-		if(utf8_fullpath == NULL) {
-			/* Printing the arg text will cause glib to
-			 * whinge about "Invalid UTF-8", but at least
-			 * its relevant, and shows the problem text
-			 * string.
-			 */
-			g_print ("\nCannot determine the text encoding for the assembly location: %s\n", fullpath);
-			g_print ("Please add the correct encoding to MONO_EXTERNAL_ENCODINGS and try again.\n");
-			exit (-1);
-		}
-
-		g_free (fullpath);
-		g_free (basename);
-	} else {
-		utf8_fullpath = mono_utf8_from_external (argv[0]);
-		if(utf8_fullpath == NULL) {
-			g_print ("\nCannot determine the text encoding for the assembly location: %s\n", argv[0]);
-			g_print ("Please add the correct encoding to MONO_EXTERNAL_ENCODINGS and try again.\n");
-			exit (-1);
-		}
-	}
-
-	main_args [0] = utf8_fullpath;
-
-	for (i = 1; i < argc; ++i) {
-		gchar *utf8_arg;
-
-		utf8_arg=mono_utf8_from_external (argv[i]);
-		if(utf8_arg==NULL) {
-			/* Ditto the comment about Invalid UTF-8 here */
-			g_print ("\nCannot determine the text encoding for argument %d (%s).\n", i, argv[i]);
-			g_print ("Please add the correct encoding to MONO_EXTERNAL_ENCODINGS and try again.\n");
-			exit (-1);
-		}
-
-		main_args [i] = utf8_arg;
-	}
-	argc--;
-	argv++;
 
 	sig = mono_method_signature (method);
 	if (!sig) {
@@ -3657,6 +3671,11 @@ mono_runtime_run_main (MonoMethod *method, int argc, char* argv[],
 		exit (-1);
 	}
 
+	mono_set_commandline_arguments(argc, argv, method->klass->image->assembly->basedir);
+	
+	argc--;
+	argv++;
+	
 	if (sig->param_count) {
 		args = (MonoArray*)mono_array_new (domain, mono_defaults.string_class, argc);
 		for (i = 0; i < argc; ++i) {
