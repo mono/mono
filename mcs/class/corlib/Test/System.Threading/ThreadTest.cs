@@ -1169,7 +1169,7 @@ namespace MonoTests.System.Threading
 
 			try {
 				t1.TrySetApartmentState (ApartmentState.STA);
-				Assert.Fail ();
+				Assert.Fail ("#2");
 			} catch (ThreadStateException) {
 			}
 
