@@ -140,8 +140,7 @@ namespace System.Web.Compilation
 			AppResourceFileKind kind;
 			
 			foreach (FileInfo fi in infos) {
-				extension = fi.Extension;
-				if (Acceptable (extension, out kind))
+				if (Acceptable (fi, out kind))
 					arfi = new AppResourceFileInfo (fi, kind);
 				else
 					continue;
@@ -155,9 +154,15 @@ namespace System.Web.Compilation
 			files.Sort (lcFiles);
 		}
 
-		bool Acceptable (string extension, out AppResourceFileKind kind)
+		bool Acceptable (FileInfo fileInfo, out AppResourceFileKind kind)
 		{
-			switch (extension.ToLower (Helpers.InvariantCulture))
+			if ((fileInfo.Attributes & FileAttributes.Hidden) != 0)
+			{
+				kind = AppResourceFileKind.NotResource;
+				return false;
+			}
+			
+			switch (fileInfo.Extension.ToLower (Helpers.InvariantCulture))
 			{
 				default:
 					kind = AppResourceFileKind.NotResource;

@@ -59,9 +59,6 @@ namespace System.Drawing
 		public const int FACESIZE = 32;
 		public const int LANG_NEUTRAL = 0;
 		public static IntPtr Display = IntPtr.Zero;
-		public static bool UseX11Drawable = false;
-		public static bool UseCarbonDrawable = false;
-		public static bool UseCocoaDrawable = false;
 
 		#region gdiplus.dll functions
 
@@ -99,28 +96,6 @@ namespace System.Drawing
 
 		static GDIPlus ()
 		{
-			int platform = (int) Environment.OSVersion.Platform;
-			if ((platform == 4) || (platform == 6) || (platform == 128)) {
-				if (Environment.GetEnvironmentVariable ("not_supported_MONO_MWF_USE_NEW_X11_BACKEND") != null || Environment.GetEnvironmentVariable ("MONO_MWF_MAC_FORCE_X11") != null) {
-					UseX11Drawable = true;
-				} else {
-					IntPtr buf = Marshal.AllocHGlobal (8192);
-					// This is kind of a hack but gets us sysname from uname (struct utsname *name) on
-					// linux and darwin
-					if (uname (buf) != 0) {
-						// WTH: We couldn't detect the OS; lets default to X11
-						UseX11Drawable = true;
-					} else {
-						string os = Marshal.PtrToStringAnsi (buf);
-						if (os == "Darwin")
-							UseCarbonDrawable = true;
-						else
-							UseX11Drawable = true;
-					}
-					Marshal.FreeHGlobal (buf);
-				}
-			}
-
 			GdiplusStartupInput input = GdiplusStartupInput.MakeGdiplusStartupInput();
 			GdiplusStartupOutput output = GdiplusStartupOutput.MakeGdiplusStartupOutput();
 			try {
@@ -137,14 +112,52 @@ namespace System.Drawing
 			AppDomain.CurrentDomain.ProcessExit += new EventHandler (ProcessExit);
 		}
 
-		static public bool RunningOnWindows ()
+		// This is here because parts of this assembly (most notably KnownColors) need to query this information
+		// but do not need to run the full static constructor of GDIPlus which tryies to load libgdiplus.so
+		// it's simply not necessary for a web application and the runtime should not crash if it isn't present
+		public static class RuntimeInfo
 		{
-			return !UseX11Drawable && !UseCarbonDrawable && !UseCocoaDrawable;
-		}
+			public static bool UseX11Drawable = false;
+			public static bool UseCarbonDrawable = false;
+			public static bool UseCocoaDrawable = false;
 
-		static public bool RunningOnUnix ()
-		{
-			return UseX11Drawable || UseCarbonDrawable || UseCocoaDrawable;
+			static RuntimeInfo()
+			{
+				int platform = (int) Environment.OSVersion.Platform;
+				if ((platform == 4) || (platform == 6) || (platform == 128)) {
+					if (Environment.GetEnvironmentVariable ("not_supported_MONO_MWF_USE_NEW_X11_BACKEND") != null || Environment.GetEnvironmentVariable ("MONO_MWF_MAC_FORCE_X11") != null) {
+						UseX11Drawable = true;
+					} else {
+						IntPtr buf = Marshal.AllocHGlobal (8192);
+						// This is kind of a hack but gets us sysname from uname (struct utsname *name) on
+						// linux and darwin
+						if (uname (buf) != 0) {
+							// WTH: We couldn't detect the OS; lets default to X11
+							UseX11Drawable = true;
+						} else {
+							string os = Marshal.PtrToStringAnsi (buf);
+							if (os == "Darwin")
+								UseCarbonDrawable = true;
+							else
+								UseX11Drawable = true;
+						}
+						Marshal.FreeHGlobal (buf);
+					}
+				}
+			}
+
+			static public bool RunningOnWindows()
+			{
+				return !UseX11Drawable && !UseCarbonDrawable && !UseCocoaDrawable;
+			}
+
+			static public bool RunningOnUnix()
+			{
+				return UseX11Drawable || UseCarbonDrawable || UseCocoaDrawable;
+			}
+
+			[DllImport("libc")]
+			static extern int uname(IntPtr buf);
 		}
 		
 		// Copies a Ptr to an array of Points and releases the memory
@@ -1979,9 +1992,6 @@ namespace System.Drawing
 			StreamGetBytesDelegate getBytes, StreamPutBytesDelegate putBytes, StreamSeekDelegate doSeek, 
 			StreamCloseDelegate close, StreamSizeDelegate size, IntPtr hdc, EmfType type, ref Rectangle frameRect, 
 			MetafileFrameUnit frameUnit, [MarshalAs (UnmanagedType.LPWStr)] string description, out IntPtr metafile);
-
-		[DllImport ("libc")]
-		static extern int uname (IntPtr buf);
 #endregion
 	}
 }

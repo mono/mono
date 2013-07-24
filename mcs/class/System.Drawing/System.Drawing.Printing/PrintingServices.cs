@@ -86,7 +86,7 @@ namespace System.Drawing.Printing
 
 		static SysPrn ()
 		{
-			is_unix = GDIPlus.RunningOnUnix ();
+			is_unix = GDIPlus.RuntimeInfo.RunningOnUnix ();
 		}
 		
 		internal static PrintingServices CreatePrintingService () {

@@ -124,7 +124,7 @@ fi
 
 
 echo "Running aclocal -I m4 -I . $ACLOCAL_FLAGS ..."
-aclocal -Wnone -I m4 -I . $ACLOCAL_FLAGS || {
+aclocal -I m4 -I . $ACLOCAL_FLAGS || {
   echo
   echo "**Error**: aclocal failed. This may mean that you have not"
   echo "installed all of the packages you need, or you may need to"

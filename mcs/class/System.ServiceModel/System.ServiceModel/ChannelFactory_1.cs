@@ -156,12 +156,6 @@ namespace System.ServiceModel
 #else
 			var proxy = (IClientChannel) new ClientRealProxy (typeof (TChannel), new ClientRuntimeChannel (Endpoint, this, address ?? Endpoint.Address, via), false).GetTransparentProxy ();
 #endif
-			proxy.Opened += delegate {
-				OpenedChannels.Add (proxy);
-			};
-			proxy.Closing += delegate {
-				OpenedChannels.Remove (proxy);
-			};
 
 			return (TChannel) proxy;
 			} catch (TargetInvocationException ex) {

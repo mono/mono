@@ -128,8 +128,21 @@ namespace System.ServiceModel.Configuration
 				if (!ass.IsDynamic)
 #endif
 					cached_assemblies.Add (ass);
+					
+				Type[] assemblyTypes;
+				
+				try
+				{
+					assemblyTypes = ass.GetTypes();
+				}
+				catch (ReflectionTypeLoadException ex)
+				{
+					// this exception can (and does) occur for plenty of reasons we care
+					// nothing about, so just grab the types that can be enumerated
+					assemblyTypes = Array.FindAll(ex.Types, t => t != null);
+				}
 
-				foreach (var t in ass.GetTypes ()) {
+				foreach (var t in assemblyTypes) {
 					if (cached_named_config_types.Any (ct => ct.Type == t))
 						continue;
 

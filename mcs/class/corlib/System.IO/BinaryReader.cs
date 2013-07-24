@@ -515,15 +515,15 @@ namespace System.IO {
 			//
 			StringBuilder sb = null;
 			do {
-				int readLen = Math.Min (MaxBufferSize, len);
+				int tryReadLen = Math.Min (MaxBufferSize, len);
 				
-				int n = m_stream.Read (charByteBuffer, 0, readLen);
-				if (n == 0)
+				int actualReadLen = m_stream.Read (charByteBuffer, 0, tryReadLen);
+				if (actualReadLen == 0)
 					throw new EndOfStreamException();
 				
-				int cch = decoder.GetChars (charByteBuffer, 0, n, charBuffer, 0);
+				int cch = decoder.GetChars (charByteBuffer, 0, actualReadLen, charBuffer, 0);
 
-				if (sb == null && readLen == len) // ok, we got out the easy way, dont bother with the sb
+				if (sb == null && actualReadLen == len) // ok, we got out the easy way, dont bother with the sb
 					return new String (charBuffer, 0, cch);
 
 				if (sb == null)
@@ -532,7 +532,7 @@ namespace System.IO {
 					sb = new StringBuilder (len);
 				
 				sb.Append (charBuffer, 0, cch);
-				len -= readLen;
+				len -= actualReadLen;
 			} while (len > 0);
 
 			return sb.ToString();

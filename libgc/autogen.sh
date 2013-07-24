@@ -87,7 +87,7 @@ if grep "^AC_PROG_LIBTOOL" configure.in >/dev/null; then
   fi
 fi
 
-ACLOCAL_FLAGS="$ACLOCAL_FLAGS -Wnone"
+ACLOCAL_FLAGS="$ACLOCAL_FLAGS"
 echo "Running aclocal $ACLOCAL_FLAGS ..."
 aclocal $ACLOCAL_FLAGS || {
   echo

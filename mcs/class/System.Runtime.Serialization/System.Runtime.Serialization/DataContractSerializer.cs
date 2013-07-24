@@ -352,20 +352,12 @@ namespace System.Runtime.Serialization
 
 		public override object ReadObject (XmlDictionaryReader reader, bool verifyObjectName)
 		{
-			int startTypeCount = known_types.Count;
 			known_types.Add (type);
 
 			bool isEmpty = reader.IsEmptyElement;
 
-			object ret = XmlFormatterDeserializer.Deserialize (reader, type,
+			return XmlFormatterDeserializer.Deserialize (reader, type,
 				known_types, surrogate, DataContractResolver, default_resolver, root_name.Value, root_ns.Value, verifyObjectName);
-
-			// remove temporarily-added known types for
-			// rootType and object graph type.
-			while (known_types.Count > startTypeCount)
-				known_types.RemoveAt (startTypeCount);
-
-			return ret;
 		}
 
 #if NET_4_0
@@ -419,16 +411,9 @@ namespace System.Runtime.Serialization
 			if (graph == null)
 				return;
 
-			int startTypeCount = known_types.Count;
-
 			XmlFormatterSerializer.Serialize (writer, graph,
 				type, known_types,
 				ignore_ext, max_items, root_ns.Value, preserve_refs, DataContractResolver, default_resolver);
-
-			// remove temporarily-added known types for
-			// rootType and object graph type.
-			while (known_types.Count > startTypeCount)
-				known_types.RemoveAt (startTypeCount);
 		}
 
 		public override void WriteObjectContent (XmlWriter writer, object graph)
