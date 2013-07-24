@@ -2790,9 +2790,10 @@ mono_thread_start_cb (intptr_t tid, gpointer stack_start, gpointer func)
 	MonoInternalThread *thread;
 	void *jit_tls = setup_jit_tls_data (stack_start, mono_thread_abort);
 	thread = mono_thread_internal_current ();
-	mono_debugger_thread_created (tid, thread->root_domain_thread, jit_tls, func);
-	if (thread)
+	if (thread) {
+		mono_debugger_thread_created (tid, thread->root_domain_thread, jit_tls, func);
 		thread->jit_data = jit_tls;
+	}
 
 	mono_arch_cpu_init ();
 }
