@@ -1,2 +1,2 @@
 #!/bin/sh
-mcs -sdk:4 "$@"
+exec @bindir@/mcs -sdk:4 "$@"
