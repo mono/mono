@@ -32,3 +32,4 @@ System.DirectoryServices.ActiveDirectory/NotificationStatus.cs
 System.DirectoryServices.ActiveDirectory/ReplicationOperationType.cs
 System.DirectoryServices.ActiveDirectory/ReplicationSpan.cs
 System.DirectoryServices.ActiveDirectory/SyncFromAllServersErrorCategory.cs
+System.DirectoryServices.ActiveDirectory/SyncFromAllServersEvent.cs
