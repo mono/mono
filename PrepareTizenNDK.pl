@@ -11,7 +11,7 @@ if ($#ARGV + 1 == 0)
 {
 	print "Usage:\n";
 	print "\t" . basename(__FILE__) . " -ndk=<rX>\n";
-	print "\ti.e. \"" . basename(__FILE__) . " -ndk=2.1.0 -env=setupenv.sh && source setupenv.sh\"\n";
+	print "\ti.e. \"" . basename(__FILE__) . " -ndk=2.2.0 -env=setupenv.sh && source setupenv.sh\"\n";
 	print "\n";
 }
 
