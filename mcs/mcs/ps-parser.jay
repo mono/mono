@@ -1179,7 +1179,7 @@ constant_declaration
 				
 		$$ = current_field;
 	  }
-	  opt_field_initializer opt_field_declarators SEMICOLON
+	  opt_const_initializer opt_field_declarators SEMICOLON
 	  {
 		if (doc_support) {
 			current_field.DocComment = Lexer.consume_doc_comment ();
@@ -1188,6 +1188,30 @@ constant_declaration
 		
 		lbag.AddMember (current_field, mod_locations, GetLocation ($3), GetLocation ($10));
 		current_field = null;
+	  }
+	;
+
+opt_const_initializer
+	: {
+		Warning_UninitializedConstant (current_field.Location);
+		$$ = null;
+	  }
+	| field_initializer
+	;
+
+field_initializer
+	: ASSIGN
+	  {
+	  	++lexer.parsing_block;
+		current_local_parameters = ParametersCompiled.EmptyReadOnlyParameters;
+	  	start_block (GetLocation ($1));
+	  }
+	  variable_initializer
+	  {
+	  	--lexer.parsing_block;
+		current_field.Initializer = (Expression) $3;
+		end_block (lexer.Location);
+		current_local_parameters = null;
 	  }
 	;
 
@@ -1231,19 +1255,7 @@ field_declaration
 	
 opt_field_initializer
 	: /* empty */
-	| ASSIGN
-	  {
-	  	++lexer.parsing_block;
-		current_local_parameters = ParametersCompiled.EmptyReadOnlyParameters;
-	  	start_block (GetLocation ($1));
-	  }
-	  variable_initializer
-	  {
-	  	--lexer.parsing_block;
-		current_field.Initializer = (Expression) $3;
-		end_block (lexer.Location);
-		current_local_parameters = null;
-	  }
+	| field_initializer
 	;
 	
 opt_field_declarators
@@ -4880,7 +4892,7 @@ block_constant_declaration
 		current_variable = new BlockConstant ((FullNamedExpression) $4, li);
 		current_block.ParametersBlock.TopBlock.AddScopeStatement (new ImplicitVariableInitializer (current_variable));
 	  }
-	  const_variable_initializer opt_const_declarators
+	  opt_const_variable_initializer opt_const_declarators
 	  {
 		$$ = current_variable;
 		current_variable = null;
@@ -4895,7 +4907,7 @@ block_constant_declaration
 
 		Warning_NoTypeDeclaration (lt.Location, string.Format ("Constant `{0}'", lt.Value));
 	  }
-	  const_variable_initializer opt_const_declarators
+	  opt_const_variable_initializer opt_const_declarators
 	  {
 		$$ = current_variable;
 		current_variable = null;
@@ -4985,10 +4997,11 @@ variable_declarator
 	  }		  
 	;
 	
-const_variable_initializer
+opt_const_variable_initializer
 	: /* empty */
 	  {
-		report.Error (145, lexer.Location, "A const field requires a value to be provided");
+		Warning_UninitializedConstant (current_variable.Location);	  
+		$$ = null;
 	  }
 	| ASSIGN constant_initializer_expr 
 	  {
@@ -5007,13 +5020,48 @@ const_declarators
 	;
 	
 const_declarator
-	: COMMA identifier_inside_body ASSIGN constant_initializer_expr
+	: COMMA identifier_inside_body
 	  {
 		var lt = (LocatedToken) $2;	  
-		var li = RegisterLocalVariable (current_block, lt.Value, LocalVariable.Flags.Constant, lt.Location);
+		var li = RegisterLocalVariable (current_variable.Variable.Block, lt.Value, LocalVariable.Flags.Constant, lt.Location);
+		var d = new BlockVariableDeclarator (li, null, lt.Location);
+		current_variable.AddDeclarator (d);
+
+		Warning_NoTypeDeclaration (lt.Location, string.Format ("Constant `{0}'", lt.Value));
+		Warning_UninitializedConstant (lexer.Location);
+
+	  	lbag.AddLocation (d, GetLocation ($1));
+	  }
+	| COMMA identifier_inside_body ASSIGN constant_initializer_expr
+	  {
+		var lt = (LocatedToken) $2;	  
+		var li = RegisterLocalVariable (current_variable.Variable.Block, lt.Value, LocalVariable.Flags.Constant, lt.Location);
 		var d = new BlockVariableDeclarator (li, (Expression) $4, lt.Location);
 		current_variable.AddDeclarator (d);
+
+		Warning_NoTypeDeclaration (lt.Location, string.Format ("Constant `{0}'", lt.Value));
+
 	  	lbag.AddLocation (d, GetLocation ($1), GetLocation ($3));
+	  }
+	| COMMA identifier_inside_body COLON type
+	  {
+		var lt = (LocatedToken) $2;	  
+		var li = RegisterLocalVariable (current_variable.Variable.Block, lt.Value, LocalVariable.Flags.Constant, lt.Location);
+		var d = new BlockVariableDeclarator (li, null, (FullNamedExpression) $4, lt.Location);
+		current_variable.AddDeclarator (d);
+
+		Warning_UninitializedConstant (lexer.Location);
+
+	  	lbag.AddLocation (d, GetLocation ($1));
+	  }
+	| COMMA identifier_inside_body COLON type ASSIGN block_variable_initializer
+	  {
+		var lt = (LocatedToken) $2;	  
+		var li = RegisterLocalVariable (current_variable.Variable.Block, lt.Value, LocalVariable.Flags.Constant, lt.Location);
+		var d = new BlockVariableDeclarator (li, (Expression) $6, (FullNamedExpression) $4, lt.Location);
+		current_variable.AddDeclarator (d);
+
+	  	lbag.AddLocation (d, GetLocation ($1), GetLocation ($5));
 	  }
 	;
 	
@@ -6463,6 +6511,11 @@ void Warning_EmptyStatement (Location loc)
 void Warning_NoTypeDeclaration  (Location loc, string member)
 {
 	report.WarningPlayScript (1009, loc, "{0} has no type declaration", member);
+}
+
+void Warning_UninitializedConstant (Location loc)
+{
+	report.WarningPlayScript (1111, loc, "The constant was not initialized");
 }
 
 void Error_NamedArgumentExpected (NamedArgument a)

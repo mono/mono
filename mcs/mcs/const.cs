@@ -184,7 +184,7 @@ namespace Mono.CSharp {
 			return expr;
 		}
 
-		protected virtual Expression DoResolveInitializer (ResolveContext rc)
+		Expression DoResolveInitializer (ResolveContext rc)
 		{
 			if (in_transit) {
 				field.Compiler.Report.Error (110, expr.Location,

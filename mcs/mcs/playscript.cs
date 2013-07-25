@@ -1684,16 +1684,10 @@ namespace Mono.PlayScript
 
 			public override void Emit ()
 			{
-				var rc = new ResolveContext (this);
-				rc.CurrentBlock = Get.Block;
+				var init = Initializer.Resolve (null);
+				if (init == null)
+					return;
 
-				var init = Initializer.Resolve (rc);
-				if (init != null) {
-					init = CSharp.Convert.ImplicitConversionRequiredEnhanced (rc, init, member_type, Initializer.Location);
-					if (init == null)
-						return;
-				}
-					
 				var c = init as Constant;
 				if (c == null) {
 					var set_field = new Field (Parent, new TypeExpression (Compiler.BuiltinTypes.Bool, Location), Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED | (ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
@@ -1744,6 +1738,80 @@ namespace Mono.PlayScript
 			}
 		}
 
+		class ConstInitializer : PlayScriptExpression
+		{
+			bool in_transit;
+			readonly Property prop;
+			Expression expr;
+
+			public ConstInitializer (Property prop, Expression expr, Location loc)
+			{
+				this.loc = loc;
+				this.prop = prop;
+				this.expr = expr;
+			}
+
+			protected override Expression DoResolve (ResolveContext unused)
+			{
+				if (type != null)
+					return expr;
+
+				//
+				// Use a context in which the constant was declared and
+				// not the one in which is referenced
+				//
+				var bc = new BlockContext (prop, prop.Get.Block, prop.MemberType);
+				bc.Set (ResolveContext.Options.ConstantScope);
+
+				expr = DoResolveInitializer (bc);
+				type = expr.Type;
+
+				return expr;
+			}
+
+			public override Constant ResolveAsPlayScriptConstant (ResolveContext rc)
+			{
+				return DoResolve (rc) as Constant;
+			}
+
+			Expression DoResolveInitializer (ResolveContext rc)
+			{
+				if (in_transit) {
+					// PS seems to use default value but how to get the right order
+					throw new NotImplementedException ("Constant circular definition");
+				} else {
+					in_transit = true;
+					expr = expr.Resolve (rc);
+				}
+
+				in_transit = false;
+
+				if (expr != null) {
+					var res = CSharp.Convert.ImplicitConversion (rc, expr, prop.MemberType, expr.Location);
+					if (res == null) {
+						rc.Report.ErrorPlayScript (1184, expr.Location, "Incompatible default value of type `{0}' where `{1}' is expected",
+							expr.Type.GetSignatureForError (), prop.MemberType.GetSignatureForError ());
+					} else {
+						expr = res;
+					}
+				}
+
+				if (expr == null) {
+					expr = New.Constantify (prop.MemberType, Location);
+					if (expr == null)
+						expr = Constant.CreateConstantFromValue (prop.MemberType, null, Location);
+					expr = expr.Resolve (rc);
+				}
+
+				return expr;
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				throw new NotSupportedException ();
+			}
+		}
+
 		const Modifiers AllowedModifiers =
 			Modifiers.STATIC |
 			Modifiers.PUBLIC |
@@ -1758,10 +1826,6 @@ namespace Mono.PlayScript
 
 		public override bool Define ()
 		{
-			if (Initializer == null) {
-				Report.WarningPlayScript (1111, Location, "The constant was not initialized");
-			}
-
 			if (!base.Define ())
 				return false;
 
@@ -1772,7 +1836,7 @@ namespace Mono.PlayScript
 			var init = Initializer ?? new DefaultValueExpression (t, Location);
 
 			var prop = new Property (Parent, t, ModFlags, MemberName, attributes);
-			prop.Initializer = init;
+			prop.Initializer = new ConstInitializer (prop, init, init.Location);
 			prop.Get = new Property.GetMethod (prop, 0, null, prop.Location);
 			prop.Get.Block = new ToplevelBlock (Compiler, Location);
 
@@ -1787,7 +1851,7 @@ namespace Mono.PlayScript
 					init = d.Initializer ?? new DefaultValueExpression (t, Location);
 
 					prop = new Property (Parent, t, ModFlags, new MemberName (d.Name.Value, d.Name.Location), attributes);
-					prop.Initializer = init;
+					prop.Initializer = new ConstInitializer (prop, init, init.Location);
 
 					prop.Get = new Property.GetMethod (prop, 0, null, prop.Location);
 					prop.Get.Block = new ToplevelBlock (Compiler, Location); ;
@@ -1885,14 +1949,19 @@ namespace Mono.PlayScript
 			if (type == null)
 				return false;
 
+			bool constant = variable.Variable.IsConstant;
 			if (existing != null) {
-				var undefined = bc.Module.PlayscriptTypes.UndefinedType;
-				if (type == undefined) {
-					variable.Variable.Type = existing;
-				} else if (existing == undefined) {
-					// Nothing to do
-				} else if (!TypeSpecComparer.IsEqual (existing, type)) {
+				if (constant) {
 					Error_NameConflict (bc, variable.loc, variable.Variable.Name);
+				} else {
+					var undefined = bc.Module.PlayscriptTypes.UndefinedType;
+					if (type == undefined) {
+						variable.Variable.Type = existing;
+					} else if (existing == undefined) {
+						// Nothing to do
+					} else if (!TypeSpecComparer.IsEqual (existing, type)) {
+						Error_NameConflict (bc, variable.loc, variable.Variable.Name);
+					}
 				}
 			}
 
@@ -1908,14 +1977,18 @@ namespace Mono.PlayScript
 						continue;
 
 					if (existing != null) {
-						var undefined = bc.Module.PlayscriptTypes.UndefinedType;
-						if (type == undefined) {
-							variable.Variable.Type = existing;
-						} else if (existing == undefined) {
-							// Nothing to do
-						} else if (!TypeSpecComparer.IsEqual (existing, type)) {
+						if (constant) {
 							Error_NameConflict (bc, d.Location, d.Variable.Name);
-						}						
+						} else {
+							var undefined = bc.Module.PlayscriptTypes.UndefinedType;
+							if (type == undefined) {
+								variable.Variable.Type = existing;
+							} else if (existing == undefined) {
+								// Nothing to do
+							} else if (!TypeSpecComparer.IsEqual (existing, type)) {
+								Error_NameConflict (bc, d.Location, d.Variable.Name);
+							}
+						}
 					}
 
 					if (type == bc.Module.PlayscriptTypes.UndefinedType) {
@@ -1934,6 +2007,9 @@ namespace Mono.PlayScript
 
 		protected override void DoEmit (EmitContext ec)
 		{
+			if (variable.Variable.IsConstant)
+				return;
+
 			EmitVariableInitialization (ec, variable.Variable);
 
 			if (variable.Declarators != null) {
@@ -1962,6 +2038,16 @@ namespace Mono.PlayScript
 				li.EmitAssign (ec);
 				return;
 			}
+		}
+
+		public static Constant GetConstantValue (ResolveContext rc, LocalVariable lv, Location loc)
+		{
+			var type = lv.Type;
+			if (type == rc.Module.PlayscriptTypes.Number) {
+				return new DoubleConstant (type, double.NaN, loc);
+			}
+
+			return New.Constantify (type, loc);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement target)
@@ -2443,6 +2529,14 @@ namespace Mono.PlayScript
 		public PackageGlobalContainer (TypeContainer parent)
 			: base (parent, new MemberName (Name), Modifiers.PUBLIC | Modifiers.STATIC)
 		{
+			IsPlayScriptType = true;
+		}
+
+		public override void Emit ()
+		{
+			base.Emit ();
+
+			Module.PlayscriptAttributes.PlayScript.EmitAttribute (TypeBuilder);	
 		}
 	}
 

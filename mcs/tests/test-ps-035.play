@@ -1,0 +1,28 @@
+package
+{
+	public class ConstantComplexValueTest
+	{
+		public static function isNaN (num:Number = NaN2):Boolean
+		{
+			return System.Double.IsNaN (num);
+		}
+
+		public static const NaN2 : Number = System.Double.NaN;	
+		
+		public static function isNaN2 (num:Number = NaN):Boolean
+		{
+			return System.Double.IsNaN (num);
+		}
+	
+		public static function Main ():int
+		{
+			if (!isNaN ())
+				return 1;
+				
+			if (!isNaN2 ())
+				return 2;
+				
+			return 0;
+		}
+	}
+}

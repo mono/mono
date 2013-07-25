@@ -48,11 +48,12 @@ package {
 	public function isFinite(num:Number):Boolean {
 		throw new System.NotImplementedException();	
 	}
- 	 	
-	public function isNaN(num:Number):Boolean {
-		return System.Double.IsNaN(num);
+ 	
+	public function isNaN (num:Number = NaN):Boolean
+	{
+		return System.Double.IsNaN (num);
 	}
-	 	 	
+
 	public function isXMLName(str:String):Boolean {
 		throw new System.NotImplementedException();	
 	}
@@ -98,10 +99,13 @@ package {
 		throw new System.NotImplementedException();
 	}
 
+	//
 	// Constants
-	public const undefined : * = PlayScript.Runtime.Undefined.Value;
-	public const Infinity : Number = System.Double.PositiveInfinity;
-	public const NaN : Number = System.Double.NaN;
+	// Non-static in AS but why not make them static
+	//
+	public static const undefined : * = PlayScript.Runtime.Undefined.Value;
+	public static const Infinity : Number = System.Double.PositiveInfinity;
+	public static const NaN : Number = System.Double.NaN;
 
 /*	
 	public function loadEmbed(baseObject:Object, fieldName:String):Object

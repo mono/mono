@@ -5703,6 +5703,10 @@ namespace Mono.CSharp
 			if (eclass == ExprClass.Unresolved)
 				DoResolveBase (ec);
 
+			if (local_info.IsConstant) {
+				ec.Report.ErrorPlayScript (1049, loc, "Illegal assignment to a variable `{0}' specified as constant", Name);
+			}
+
 			return base.DoResolveLValue (ec, rhs);
 		}
 

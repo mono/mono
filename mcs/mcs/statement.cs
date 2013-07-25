@@ -1522,6 +1522,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public Location Location {
+			get {
+				return loc;
+			}
+		}
+
 		public FullNamedExpression TypeExpression {
 			get {
 				return type_expr;
@@ -1970,8 +1976,19 @@ namespace Mono.CSharp {
 
 		public Expression CreateReferenceExpression (ResolveContext rc, Location loc)
 		{
-			if (IsConstant && const_value != null)
-				return Constant.CreateConstantFromValue (Type, const_value.GetValue (), loc);
+			if (IsConstant) {
+				if (const_value != null)
+					return Constant.CreateConstantFromValue (Type, const_value.GetValue (), loc);
+
+				//
+				// Constant is still uninitializer need to get PS specific default value
+				//
+				if (rc.IsPlayScriptType) {
+					var expr = PlayScript.ImplicitVariableInitializer.GetConstantValue (rc, this, loc);
+					if (expr != null)
+						return expr;
+				}
+			}
 
 			return new LocalVariableReference (this, loc);
 		}
