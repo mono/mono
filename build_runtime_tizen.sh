@@ -5,7 +5,7 @@ PREFIX="$PWD/builds/tizen"
 BUILDDIR=/$PWD
 OUTDIR=builds/embedruntimes/tizen
 
-perl PrepareTizenNDK.pl -ndk=2.1.0 -env=envsetup.sh && source envsetup.sh && source ${TIZEN_NDK_ROOT}/tizen-ndk-env.sh
+perl PrepareTizenNDK.pl -ndk=2.2.0 -env=envsetup.sh && source envsetup.sh && source ${TIZEN_NDK_ROOT}/tizen-ndk-env.sh
 
 CXXFLAGS="-Os -DHAVE_ARMV6=1 -DARM_FPU_VFP=1 -D__ARM_EABI__ -mno-thumb -march=armv7-a -mfloat-abi=softfp -mfpu=neon -mtune=cortex-a9 -ffunction-sections -fdata-sections -fno-strict-aliasing -fPIC "
 CFLAGS="$CXXFLAGS"
