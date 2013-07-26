@@ -1662,8 +1662,10 @@ namespace Mono.CSharp
 				return this;
 			}
 
-			ec.Report.Error (39, loc, "Cannot convert type `{0}' to `{1}' via a built-in conversion",
-				etype.GetSignatureForError (), type.GetSignatureForError ());
+			if (etype != InternalType.ErrorType) {
+				ec.Report.Error (39, loc, "Cannot convert type `{0}' to `{1}' via a built-in conversion",
+					etype.GetSignatureForError (), type.GetSignatureForError ());
+			}
 
 			return null;
 		}
