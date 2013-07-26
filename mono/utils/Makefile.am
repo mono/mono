@@ -103,7 +103,9 @@ monoutils_sources = \
 	linux_magic.h	\
 	mono-memory-model.h	\
 	atomic.h	\
-	atomic.c
+	atomic.c	\
+	bsearch.h	\
+	bsearch.c
 
 arch_sources = 
 
