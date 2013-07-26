@@ -3719,10 +3719,15 @@ namespace Mono.CSharp
 						Nullable.NullableInfo.GetEnumUnderlyingType (rc.Module, left.Type) :
 						EnumSpec.GetUnderlyingType (left.Type);
 				}
-			} else if (IsEnumOrNullableEnum (left.Type)) {
-				result_type = left.Type;
 			} else {
-				result_type = right.Type;
+				if (IsEnumOrNullableEnum (left.Type)) {
+					result_type = left.Type;
+				} else {
+					result_type = right.Type;
+				}
+
+				if (expr is Nullable.LiftedBinaryOperator && !result_type.IsNullableType)
+					result_type = rc.Module.PredefinedTypes.Nullable.TypeSpec.MakeGenericType (rc.Module, new[] { result_type });
 			}
 
 			return EmptyCast.Create (expr, result_type);
