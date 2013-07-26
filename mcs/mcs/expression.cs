@@ -1930,8 +1930,8 @@ namespace Mono.CSharp
 
 					if (right_expr.IsNull) {
 						if ((b.oper & Operator.EqualityMask) != 0) {
-							if (!left_expr.Type.IsNullableType && left_expr.Type == left_unwrap)
-								return b.CreateLiftedValueTypeResult (rc, left_unwrap);
+							if (!left_expr.Type.IsNullableType && BuiltinTypeSpec.IsPrimitiveType (left_expr.Type))
+								return b.CreateLiftedValueTypeResult (rc, left_expr.Type);
 						} else if ((b.oper & Operator.BitwiseMask) != 0) {
 							if (left_unwrap.BuiltinType != BuiltinTypeSpec.Type.Bool)
 								return Nullable.LiftedNull.CreateFromExpression (rc, b);
@@ -1946,8 +1946,8 @@ namespace Mono.CSharp
 						}
 					} else if (left_expr.IsNull) {
 						if ((b.oper & Operator.EqualityMask) != 0) {
-							if (!right_expr.Type.IsNullableType && right_expr.Type == right_unwrap)
-								return b.CreateLiftedValueTypeResult (rc, right_unwrap);
+							if (!right_expr.Type.IsNullableType && BuiltinTypeSpec.IsPrimitiveType (right_expr.Type))
+								return b.CreateLiftedValueTypeResult (rc, right_expr.Type);
 						} else if ((b.oper & Operator.BitwiseMask) != 0) {
 							if (right_unwrap.BuiltinType != BuiltinTypeSpec.Type.Bool)
 								return Nullable.LiftedNull.CreateFromExpression (rc, b);
