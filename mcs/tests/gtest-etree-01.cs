@@ -2600,7 +2600,6 @@ class Tester
 		Assert (1, e9.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_1));
 	}
 
-	// CSC bug
 	void SubtractTest_10 ()
 	{
 		Expression<Func<MyEnum?, byte?, MyEnum?>> e10 = (a, b) => a - b;
