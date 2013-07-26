@@ -1917,7 +1917,7 @@ namespace Mono.CSharp
 
 				var caller = missing[i].Caller;
 				if (caller.Kind != MemberKind.MissingType)
-					report.SymbolRelatedToPreviousError (missing[i].Caller);
+					report.SymbolRelatedToPreviousError (caller);
 
 				if (t.MemberDefinition.DeclaringAssembly == ctx.Module.DeclaringAssembly) {
 					report.Error (1683, loc,
