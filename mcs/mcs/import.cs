@@ -1893,7 +1893,7 @@ namespace Mono.CSharp
 
 		}
 
-		public static void Error_MissingDependency (IMemberContext ctx, List<TypeSpec> types, Location loc)
+		public static void Error_MissingDependency (IMemberContext ctx, List<MissingTypeSpecReference> missing, Location loc)
 		{
 			// 
 			// Report details about missing type and most likely cause of the problem.
@@ -1904,8 +1904,8 @@ namespace Mono.CSharp
 
 			var report = ctx.Module.Compiler.Report;
 
-			for (int i = 0; i < types.Count; ++i) {
-				var t = types [i];
+			for (int i = 0; i < missing.Count; ++i) {
+				var t = missing [i].Type;
 
 				//
 				// Report missing types only once
@@ -1914,6 +1914,10 @@ namespace Mono.CSharp
 					continue;
 
 				string name = t.GetSignatureForError ();
+
+				var caller = missing[i].Caller;
+				if (caller.Kind != MemberKind.MissingType)
+					report.SymbolRelatedToPreviousError (missing[i].Caller);
 
 				if (t.MemberDefinition.DeclaringAssembly == ctx.Module.DeclaringAssembly) {
 					report.Error (1683, loc,
