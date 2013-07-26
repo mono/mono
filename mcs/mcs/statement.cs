@@ -702,7 +702,7 @@ namespace Mono.CSharp {
 
 	public class StatementErrorExpression : Statement
 	{
-		readonly Expression expr;
+		Expression expr;
 
 		public StatementErrorExpression (Expression expr)
 		{
@@ -729,7 +729,9 @@ namespace Mono.CSharp {
 
 		protected override void CloneTo (CloneContext clonectx, Statement target)
 		{
-			throw new NotImplementedException ();
+			var t = (StatementErrorExpression) target;
+
+			t.expr = expr.Clone (clonectx);
 		}
 		
 		public override object Accept (StructuralVisitor visitor)
