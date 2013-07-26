@@ -19,6 +19,7 @@
 #include "mono/metadata/object.h"
 #include "mono/metadata/tabledefs.h"
 #include "mono/io-layer/wapi.h"
+#include "mono/utils/bsearch.h"
 
 typedef struct {
 	const char *fname;
@@ -49,7 +50,7 @@ get_function (const char *name)
 {
 	FnPtr *ptr;
 
-	ptr = bsearch (name, functions, NFUNCTIONS, sizeof (FnPtr),
+	ptr = mono_binary_search (name, functions, NFUNCTIONS, sizeof (FnPtr),
 			compare_names);
 
 	if (ptr == NULL) {
@@ -67,7 +68,7 @@ supportw_register_delegate (const char *function_name, void *fnptr)
 
 	g_return_val_if_fail (function_name && fnptr, FALSE);
 
-	ptr = bsearch (function_name, functions, NFUNCTIONS, sizeof (FnPtr),
+	ptr = mono_binary_search (function_name, functions, NFUNCTIONS, sizeof (FnPtr),
 			compare_names);
 
 	if (ptr == NULL) {
