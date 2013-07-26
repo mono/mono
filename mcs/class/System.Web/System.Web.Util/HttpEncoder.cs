@@ -138,10 +138,9 @@ namespace System.Web.Util
 		static string EncodeHeaderString (string input)
 		{
 			StringBuilder sb = null;
-			char ch;
 			
 			for (int i = 0; i < input.Length; i++) {
-				ch = input [i];
+				char ch = input [i];
 
 				if ((ch < 32 && ch != 9) || ch == 127)
 					StringBuilderAppend (String.Format ("%{0:x2}", (int)ch), ref sb);
@@ -276,11 +275,11 @@ namespace System.Web.Util
 				return s;
 
 			StringBuilder output = new StringBuilder ();
-			char ch;
 			int len = s.Length;
 			
 			for (int i = 0; i < len; i++) {
-				switch (s [i]) {
+				char ch = s [i];
+				switch (ch) {
 					case '&' :
 						output.Append ("&amp;");
 						break;
@@ -307,7 +306,6 @@ namespace System.Web.Util
 						break;
 						
 					default:
-						ch = s [i];
 						if (ch > 159 && ch < 256) {
 							output.Append ("&#");
 							output.Append (((int) ch).ToString (Helpers.InvariantCulture));
@@ -351,27 +349,30 @@ namespace System.Web.Util
 
 			StringBuilder output = new StringBuilder ();
 			int len = s.Length;
-			for (int i = 0; i < len; i++)
-				switch (s [i]) {
-				case '&' : 
-					output.Append ("&amp;");
-					break;
-				case '"' :
-					output.Append ("&quot;");
-					break;
-				case '<':
-					output.Append ("&lt;");
-					break;
+
+			for (int i = 0; i < len; i++) {
+				char ch = s [i];
+				switch (ch) {
+					case '&' : 
+						output.Append ("&amp;");
+						break;
+					case '"' :
+						output.Append ("&quot;");
+						break;
+					case '<':
+						output.Append ("&lt;");
+						break;
 #if NET_4_0
-				case '\'':
-					output.Append ("&#39;");
-					break;
+					case '\'':
+						output.Append ("&#39;");
+						break;
 #endif
-				default:
-					output.Append (s [i]);
-					break;
+					default:
+						output.Append (ch);
+						break;
 				}
-	
+			}
+
 			return output.ToString();
 		}
 		
