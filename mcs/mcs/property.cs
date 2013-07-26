@@ -174,9 +174,9 @@ namespace Mono.CSharp
 			return ps;
 		}
 
-		public override List<TypeSpec> ResolveMissingDependencies ()
+		public override List<MissingTypeSpecReference> ResolveMissingDependencies (MemberSpec caller)
 		{
-			return memberType.ResolveMissingDependencies ();
+			return memberType.ResolveMissingDependencies (this);
 		}
 	}
 
@@ -1447,9 +1447,9 @@ namespace Mono.CSharp
 			return es;
 		}
 
-		public override List<TypeSpec> ResolveMissingDependencies ()
+		public override List<MissingTypeSpecReference> ResolveMissingDependencies (MemberSpec caller)
 		{
-			return MemberType.ResolveMissingDependencies ();
+			return MemberType.ResolveMissingDependencies (this);
 		}
 	}
  
@@ -1721,16 +1721,17 @@ namespace Mono.CSharp
 			return spec;
 		}
 
-		public override List<TypeSpec> ResolveMissingDependencies ()
+		public override List<MissingTypeSpecReference> ResolveMissingDependencies (MemberSpec caller)
 		{
-			var missing = base.ResolveMissingDependencies ();
+			var missing = base.ResolveMissingDependencies (caller);
+
 			foreach (var pt in parameters.Types) {
-				var m = pt.GetMissingDependencies ();
+				var m = pt.GetMissingDependencies (caller);
 				if (m == null)
 					continue;
 
 				if (missing == null)
-					missing = new List<TypeSpec> ();
+					missing = new List<MissingTypeSpecReference> ();
 
 				missing.AddRange (m);
 			}
