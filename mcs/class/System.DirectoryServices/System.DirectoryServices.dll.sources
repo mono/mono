@@ -39,3 +39,4 @@ System.DirectoryServices.ActiveDirectory/ReplicationSpan.cs
 System.DirectoryServices.ActiveDirectory/SyncFromAllServersErrorCategory.cs
 System.DirectoryServices.ActiveDirectory/SyncFromAllServersEvent.cs
 System.DirectoryServices.ActiveDirectory/SyncFromAllServersOptions.cs
+System.DirectoryServices.ActiveDirectory/TrustDirection.cs
