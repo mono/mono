@@ -39,6 +39,7 @@ System.DirectoryServices.ActiveDirectory/ReadOnlyStringCollection.cs
 System.DirectoryServices.ActiveDirectory/ReplicationNeighbor.cs
 System.DirectoryServices.ActiveDirectory/ReplicationOperationType.cs
 System.DirectoryServices.ActiveDirectory/ReplicationSpan.cs
+System.DirectoryServices.ActiveDirectory/SchemaClassType.cs
 System.DirectoryServices.ActiveDirectory/SyncFromAllServersErrorCategory.cs
 System.DirectoryServices.ActiveDirectory/SyncFromAllServersEvent.cs
 System.DirectoryServices.ActiveDirectory/SyncFromAllServersOptions.cs
