@@ -42,20 +42,7 @@ namespace Mono.Attach
 		}
 
 		public string GetWorkingDirectory () {
-			int len = 256;
-
-			while (true) {
-				StringBuilder sb = new StringBuilder (len);
-
-				int res = Syscall.readlink ("/proc/" + pid + "/cwd", sb);
-				if (res == -1)
-					throw new IOException ("Syscall.readlink () failed with error " + res + ".");
-				else if (res == len) {
-					len = len * 2;
-				} else {
-					return sb.ToString ();
-				}
-			}
+			return UnixPath.ReadLink ("/proc/" + pid + "/cwd");
 		}
 
 		/*
