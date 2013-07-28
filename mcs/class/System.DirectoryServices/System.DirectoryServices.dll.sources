@@ -28,6 +28,7 @@ System.DirectoryServices.ActiveDirectory/ActiveDirectoryRole.cs
 System.DirectoryServices.ActiveDirectory/ActiveDirectoryTransportType.cs
 System.DirectoryServices.ActiveDirectory/DirectoryContextType.cs
 System.DirectoryServices.ActiveDirectory/DomainMode.cs
+System.DirectoryServices.ActiveDirectory/ForestMode.cs
 System.DirectoryServices.ActiveDirectory/HourOfDay.cs
 System.DirectoryServices.ActiveDirectory/MinuteOfHour.cs
 System.DirectoryServices.ActiveDirectory/NotificationStatus.cs
