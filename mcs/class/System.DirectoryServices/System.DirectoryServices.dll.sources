@@ -33,6 +33,7 @@ System.DirectoryServices.ActiveDirectory/HourOfDay.cs
 System.DirectoryServices.ActiveDirectory/LocatorOptions.cs
 System.DirectoryServices.ActiveDirectory/MinuteOfHour.cs
 System.DirectoryServices.ActiveDirectory/NotificationStatus.cs
+System.DirectoryServices.ActiveDirectory/ReadOnlyStringCollection.cs
 System.DirectoryServices.ActiveDirectory/ReplicationNeighbor.cs
 System.DirectoryServices.ActiveDirectory/ReplicationOperationType.cs
 System.DirectoryServices.ActiveDirectory/ReplicationSpan.cs
@@ -40,3 +41,4 @@ System.DirectoryServices.ActiveDirectory/SyncFromAllServersErrorCategory.cs
 System.DirectoryServices.ActiveDirectory/SyncFromAllServersEvent.cs
 System.DirectoryServices.ActiveDirectory/SyncFromAllServersOptions.cs
 System.DirectoryServices.ActiveDirectory/TrustDirection.cs
+System.DirectoryServices.ActiveDirectory/TrustType.cs
