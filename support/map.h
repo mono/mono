@@ -1780,8 +1780,8 @@ gint64 Mono_Posix_Syscall_pwritev (int fd, struct Mono_Posix_Iovec* iov, int iov
 gint64 Mono_Posix_Syscall_read (int fd, void* buf, guint64 count);
 int Mono_Posix_Syscall_readdir (void* dir, struct Mono_Posix_Syscall__Dirent* dentry);
 int Mono_Posix_Syscall_readdir_r (void* dirp, struct Mono_Posix_Syscall__Dirent* entry, void** result);
-int Mono_Posix_Syscall_readlink (const char* path, char* buf, guint64 bufsiz);
-int Mono_Posix_Syscall_readlinkat (int dirfd, const char* pathname, char* buf, guint64 bufsiz);
+gint64 Mono_Posix_Syscall_readlink (const char* path, unsigned char* buf, guint64 bufsiz);
+gint64 Mono_Posix_Syscall_readlinkat (int dirfd, const char* pathname, unsigned char* buf, guint64 bufsiz);
 gint64 Mono_Posix_Syscall_readv (int fd, struct Mono_Posix_Iovec* iov, int iovcnt);
 int Mono_Posix_Syscall_remap_file_pages (void* start, guint64 size, int prot, gint64 pgoff, int flags);
 int Mono_Posix_Syscall_removexattr (const char* path, const char* name);
