@@ -1335,6 +1335,17 @@ public class DebuggerTests
 		Assert.AreEqual ("AStruct", s.Type.Name);
 		AssertValue (42, s ["i"]);
 
+		// Check round tripping of boxed struct fields (#12354)
+		obj = o.GetValue (o.Type.GetField ("boxed_struct_field"));
+		o.SetValue (o.Type.GetField ("boxed_struct_field"), obj);
+		obj = o.GetValue (o.Type.GetField ("boxed_struct_field"));
+		s = obj as StructMirror;
+		AssertValue (1, s ["key"]);
+		obj = s ["value"];
+		Assert.IsTrue (obj is StructMirror);
+		s = obj as StructMirror;
+		AssertValue (42, s ["m_value"]);
+
 		// vtypes as arguments
 		s = frame.GetArgument (0) as StructMirror;
 		AssertValue (44, s ["i"]);

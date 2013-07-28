@@ -193,6 +193,7 @@ public class Tests : TestsBase
 	public AStruct field_struct;
 	public object field_boxed_struct;
 	public GStruct<int> generic_field_struct;
+	public KeyValuePair<int, object> boxed_struct_field;
 	[ThreadStatic]
 	public static int tls_i;
 	public static bool is_attached = Debugger.IsAttached;
@@ -498,7 +499,7 @@ public class Tests : TestsBase
 	}
 
 	public static void vtypes () {
-		Tests t = new Tests () { field_struct = new AStruct () { i = 42, s = "S", k = 43 }, generic_field_struct = new GStruct<int> () { i = 42 }, field_boxed_struct = new AStruct () { i = 42 }};
+		Tests t = new Tests () { field_struct = new AStruct () { i = 42, s = "S", k = 43 }, generic_field_struct = new GStruct<int> () { i = 42 }, field_boxed_struct = new AStruct () { i = 42 }, boxed_struct_field = new KeyValuePair<int, object> (1, (long)42 ) };
 		AStruct s = new AStruct { i = 44, s = "T", k = 45 };
 		AStruct[] arr = new AStruct[] { 
 			new AStruct () { i = 1, s = "S1" },
