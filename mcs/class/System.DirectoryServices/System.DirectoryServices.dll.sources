@@ -26,6 +26,7 @@ System.DirectoryServices/SortOption.cs
 System.DirectoryServices.Design/DirectoryEntryConverter.cs
 System.DirectoryServices.ActiveDirectory/ActiveDirectoryRole.cs
 System.DirectoryServices.ActiveDirectory/ActiveDirectoryTransportType.cs
+System.DirectoryServices.ActiveDirectory/ActiveDirectorySiteOptions.cs
 System.DirectoryServices.ActiveDirectory/AttributeMetadata.cs
 System.DirectoryServices.ActiveDirectory/AttributeMetadataCollection.cs
 System.DirectoryServices.ActiveDirectory/DirectoryContextType.cs
