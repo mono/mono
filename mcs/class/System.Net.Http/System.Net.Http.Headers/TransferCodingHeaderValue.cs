@@ -125,7 +125,7 @@ namespace System.Net.Http.Headers
 
 			// Parameters parsing
 			if (t == Token.Type.SeparatorSemicolon) {
-				if (!NameValueHeaderValue.ParseParameters (lexer, out result.parameters))
+				if (!NameValueHeaderValue.TryParseParameters (lexer, out result.parameters))
 					return false;
 			} else if (t != Token.Type.End) {
 				return false;

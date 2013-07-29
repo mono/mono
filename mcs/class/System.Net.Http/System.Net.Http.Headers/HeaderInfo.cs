@@ -50,7 +50,12 @@ namespace System.Net.Http.Headers
 				Debug.Assert (AllowsMany);
 
 				var c = (HttpHeaderValueCollection<U>) collection;
-				c.Add ((U) value);
+
+				var list = value as List<U>;
+				if (list != null)
+					c.AddRange (list);
+				else
+					c.Add ((U) value);
 			}
 
 			protected override object CreateCollection (HttpHeaders headers, HeaderInfo headerInfo)
@@ -102,6 +107,13 @@ namespace System.Net.Http.Headers
 		public static HeaderInfo CreateMulti<T> (string name, TryParseDelegate<T> parser, HttpHeaderKind headerKind) where T : class
 		{
 			return new HeaderTypeInfo<T, T> (name, parser, headerKind) {
+				AllowsMany = true,
+			};
+		}
+
+		public static HeaderInfo CreateMultiList<T> (string name, TryParseDelegate<List<T>> parser, HttpHeaderKind headerKind) where T : class
+		{
+			return new HeaderTypeInfo<List<T>, T> (name, parser, headerKind) {
 				AllowsMany = true,
 			};
 		}
