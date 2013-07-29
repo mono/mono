@@ -231,7 +231,7 @@
 #          define NACL_ALIGN()
 #       endif
         inline static int GC_test_and_set(volatile unsigned int *addr) {
-		  __sync_lock_test_and_set (addr, 1);
+		  return (int) __sync_lock_test_and_set (addr, 1);
         }
 #       define GC_TEST_AND_SET_DEFINED
       inline static void GC_clear(volatile unsigned int *addr) {
