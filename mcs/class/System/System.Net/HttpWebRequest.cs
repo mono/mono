@@ -1163,7 +1163,9 @@ namespace System.Net
 			bool spoint10 = (proto_version == null || proto_version == HttpVersion.Version10);
 
 			if (keepAlive && (version == HttpVersion.Version10 || spoint10)) {
-				webHeaders.RemoveAndAdd (connectionHeader, "keep-alive");
+				if (webHeaders[connectionHeader] == null
+				    || webHeaders[connectionHeader].IndexOf ("keep-alive", StringComparison.OrdinalIgnoreCase) == -1)
+					webHeaders.RemoveAndAdd (connectionHeader, "keep-alive");
 			} else if (!keepAlive && version == HttpVersion.Version11) {
 				webHeaders.RemoveAndAdd (connectionHeader, "close");
 			}
