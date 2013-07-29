@@ -33,6 +33,7 @@ System.DirectoryServices.ActiveDirectory/AttributeMetadataCollection.cs
 System.DirectoryServices.ActiveDirectory/DirectoryContextType.cs
 System.DirectoryServices.ActiveDirectory/DomainMode.cs
 System.DirectoryServices.ActiveDirectory/ForestMode.cs
+System.DirectoryServices.ActiveDirectory/ForestTrustDomainStatus.cs
 System.DirectoryServices.ActiveDirectory/HourOfDay.cs
 System.DirectoryServices.ActiveDirectory/LocatorOptions.cs
 System.DirectoryServices.ActiveDirectory/MinuteOfHour.cs
