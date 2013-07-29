@@ -1607,6 +1607,13 @@ namespace System.Net
 
 			throw throwMe;
 		}
+
+		internal bool ReuseConnection {
+			get;
+			set;
+		}
+
+		internal WebConnection StoredConnection;
 	}
 }
 
