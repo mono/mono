@@ -4455,6 +4455,11 @@ namespace Mono.CSharp {
 								arg_moved = true;
 							}
 
+							if (arguments == orig_args) {
+								arguments = new Arguments (orig_args.Count);
+								arguments.AddRange (orig_args);
+							}
+
 							arguments[index] = arguments[i];
 							arguments[i] = temp;
 
