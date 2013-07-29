@@ -62153,6 +62153,25 @@
       </method>
     </type>
   </test>
+  <test name="test-named-08.cs">
+    <type name="C">
+      <method name="Int32 Foo(System.String, Int32)" attrs="145">
+        <size>18</size>
+      </method>
+      <method name="Int32 Foo(System.String, Int32, Boolean, Boolean)" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 Foo(Double, Boolean, Boolean, Boolean)" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>34</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-partial-01.cs">
     <type name="Foo.Hello">
       <method name="Void .ctor()" attrs="6278">
