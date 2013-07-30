@@ -58,6 +58,7 @@ System.DirectoryServices.ActiveDirectory/ReplicationFailureCollection.cs
 System.DirectoryServices.ActiveDirectory/ReplicationNeighbor.cs
 System.DirectoryServices.ActiveDirectory/ReplicationOperation.cs
 System.DirectoryServices.ActiveDirectory/ReplicationOperationCollection.cs
+System.DirectoryServices.ActiveDirectory/ReplicationOperationInformation.cs
 System.DirectoryServices.ActiveDirectory/ReplicationOperationType.cs
 System.DirectoryServices.ActiveDirectory/ReplicationSpan.cs
 System.DirectoryServices.ActiveDirectory/SchemaClassType.cs
