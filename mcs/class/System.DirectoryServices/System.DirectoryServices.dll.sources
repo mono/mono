@@ -39,6 +39,7 @@ System.DirectoryServices.ActiveDirectory/ActiveDirectorySiteOptions.cs
 System.DirectoryServices.ActiveDirectory/ActiveDirectorySyntax.cs
 System.DirectoryServices.ActiveDirectory/ActiveDirectoryTransportType.cs
 System.DirectoryServices.ActiveDirectory/ApplicationPartition.cs
+System.DirectoryServices.ActiveDirectory/ApplicationPartitionCollection.cs
 System.DirectoryServices.ActiveDirectory/AttributeMetadata.cs
 System.DirectoryServices.ActiveDirectory/AttributeMetadataCollection.cs
 System.DirectoryServices.ActiveDirectory/DirectoryContext.cs
