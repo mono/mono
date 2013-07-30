@@ -51,6 +51,7 @@ System.DirectoryServices.ActiveDirectory/NotificationStatus.cs
 System.DirectoryServices.ActiveDirectory/PropertyTypes.cs
 System.DirectoryServices.ActiveDirectory/ReadOnlyStringCollection.cs
 System.DirectoryServices.ActiveDirectory/ReplicationCursor.cs
+System.DirectoryServices.ActiveDirectory/ReplicationCursorCollection.cs
 System.DirectoryServices.ActiveDirectory/ReplicationFailure.cs
 System.DirectoryServices.ActiveDirectory/ReplicationFailureCollection.cs
 System.DirectoryServices.ActiveDirectory/ReplicationNeighbor.cs
