@@ -57,6 +57,7 @@ System.DirectoryServices.ActiveDirectory/SchemaClassType.cs
 System.DirectoryServices.ActiveDirectory/SyncFromAllServersErrorCategory.cs
 System.DirectoryServices.ActiveDirectory/SyncFromAllServersErrorInformation.cs
 System.DirectoryServices.ActiveDirectory/SyncFromAllServersEvent.cs
+System.DirectoryServices.ActiveDirectory/SyncFromAllServersOperationException.cs
 System.DirectoryServices.ActiveDirectory/SyncFromAllServersOptions.cs
 System.DirectoryServices.ActiveDirectory/TopLevelNameStatus.cs
 System.DirectoryServices.ActiveDirectory/TrustDirection.cs
