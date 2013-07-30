@@ -43,6 +43,7 @@ System.DirectoryServices.ActiveDirectory/AttributeMetadataCollection.cs
 System.DirectoryServices.ActiveDirectory/DirectoryContext.cs
 System.DirectoryServices.ActiveDirectory/DirectoryContextType.cs
 System.DirectoryServices.ActiveDirectory/DirectoryServer.cs
+System.DirectoryServices.ActiveDirectory/DirectoryServerCollection.cs
 System.DirectoryServices.ActiveDirectory/DomainMode.cs
 System.DirectoryServices.ActiveDirectory/ForestMode.cs
 System.DirectoryServices.ActiveDirectory/ForestTrustDomainStatus.cs
