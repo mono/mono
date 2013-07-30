@@ -74,6 +74,17 @@ namespace System
 				return new AdjustmentRule (dateStart, dateEnd, daylightDelta, daylightTransitionStart, daylightTransitionEnd);
 			}
 
+			private AdjustmentRule (SerializationInfo info, StreamingContext context)
+			{
+				if (info == null)
+					throw new ArgumentNullException ("info");
+				dateStart = (DateTime) info.GetValue ("DateStart", typeof (DateTime));
+				dateEnd = (DateTime) info.GetValue ("DateEnd", typeof (DateTime));
+				daylightDelta = (TimeSpan) info.GetValue ("DaylightDelta", typeof (TimeSpan));
+				daylightTransitionStart = (TimeZoneInfo.TransitionTime) info.GetValue ("DaylightTransitionStart", typeof (TimeZoneInfo.TransitionTime));
+				daylightTransitionEnd = (TimeZoneInfo.TransitionTime) info.GetValue ("DaylightTransitionEnd", typeof (TimeZoneInfo.TransitionTime));
+			}
+			
 			private AdjustmentRule (
 				DateTime dateStart,
 				DateTime dateEnd,
@@ -130,7 +141,13 @@ namespace System
 			public void GetObjectData (SerializationInfo info, StreamingContext context)
 #endif
 			{
-				throw new NotImplementedException ();
+				if (info == null)
+					throw new ArgumentNullException ("info");
+				info.AddValue ("DateStart", DateStart);
+				info.AddValue ("DateEnd", DateEnd);
+				info.AddValue ("DaylightDelta", DaylightDelta);
+				info.AddValue ("DaylightTransitionStart", DaylightTransitionStart);
+				info.AddValue ("DaylightTransitionEnd", DaylightTransitionEnd);
 			}
 #if NET_4_0
 			void IDeserializationCallback.OnDeserialization (object sender)
@@ -138,7 +155,38 @@ namespace System
 			public void OnDeserialization (object sender)
 #endif
 			{
-				throw new NotImplementedException ();
+				try {
+					TimeZoneInfo.AdjustmentRule.Validate (dateStart, dateEnd, daylightDelta, 
+					                                      daylightTransitionStart, daylightTransitionEnd);
+				} catch (ArgumentException ex) {
+					throw new SerializationException ("invalid serialization data", ex);
+				}
+			}
+
+			private static void Validate (
+				DateTime dateStart,
+				DateTime dateEnd,
+				TimeSpan daylightDelta,
+				TransitionTime daylightTransitionStart,
+				TransitionTime daylightTransitionEnd)
+			{
+				if (dateStart.Kind != DateTimeKind.Unspecified || dateEnd.Kind != DateTimeKind.Unspecified)
+					throw new ArgumentException ("the Kind property of dateStart or dateEnd parameter does not equal DateTimeKind.Unspecified");
+
+				if (daylightTransitionStart == daylightTransitionEnd)
+					throw new ArgumentException ("daylightTransitionStart parameter cannot equal daylightTransitionEnd parameter");
+
+				if (dateStart.Ticks % TimeSpan.TicksPerDay != 0 || dateEnd.Ticks % TimeSpan.TicksPerDay != 0)
+					throw new ArgumentException ("dateStart or dateEnd parameter includes a time of day value");
+
+				if (dateEnd < dateStart)
+					throw new ArgumentOutOfRangeException ("dateEnd is earlier than dateStart");
+
+				if (daylightDelta > new TimeSpan (14, 0, 0) || daylightDelta < new TimeSpan (-14, 0, 0))
+					throw new ArgumentOutOfRangeException ("daylightDelta is less than -14 or greater than 14 hours");
+
+				if (daylightDelta.Ticks % TimeSpan.TicksPerSecond != 0)
+					throw new ArgumentOutOfRangeException ("daylightDelta parameter does not represent a whole number of seconds");
 			}
 		}
 	}
