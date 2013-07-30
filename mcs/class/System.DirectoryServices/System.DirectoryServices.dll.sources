@@ -1,6 +1,7 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs.in
 ../../build/common/Locale.cs
+System.DirectoryServices/ActiveDirectorySecurityInheritance.cs
 System.DirectoryServices/AuthenticationTypes.cs
 System.DirectoryServices/DirectoryEntries.cs
 System.DirectoryServices/DirectoryEntry.cs
