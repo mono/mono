@@ -50,6 +50,7 @@ System.DirectoryServices.ActiveDirectory/MinuteOfHour.cs
 System.DirectoryServices.ActiveDirectory/NotificationStatus.cs
 System.DirectoryServices.ActiveDirectory/PropertyTypes.cs
 System.DirectoryServices.ActiveDirectory/ReadOnlyStringCollection.cs
+System.DirectoryServices.ActiveDirectory/ReplicationFailure.cs
 System.DirectoryServices.ActiveDirectory/ReplicationNeighbor.cs
 System.DirectoryServices.ActiveDirectory/ReplicationOperationType.cs
 System.DirectoryServices.ActiveDirectory/ReplicationSpan.cs
