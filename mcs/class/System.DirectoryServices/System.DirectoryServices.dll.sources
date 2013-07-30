@@ -64,4 +64,5 @@ System.DirectoryServices.ActiveDirectory/TopLevelName.cs
 System.DirectoryServices.ActiveDirectory/TopLevelNameCollection.cs
 System.DirectoryServices.ActiveDirectory/TopLevelNameStatus.cs
 System.DirectoryServices.ActiveDirectory/TrustDirection.cs
+System.DirectoryServices.ActiveDirectory/TrustRelationshipInformation.cs
 System.DirectoryServices.ActiveDirectory/TrustType.cs
