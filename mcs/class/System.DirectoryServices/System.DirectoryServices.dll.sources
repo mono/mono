@@ -40,6 +40,7 @@ System.DirectoryServices.ActiveDirectory/ActiveDirectorySyntax.cs
 System.DirectoryServices.ActiveDirectory/ActiveDirectoryTransportType.cs
 System.DirectoryServices.ActiveDirectory/AttributeMetadata.cs
 System.DirectoryServices.ActiveDirectory/AttributeMetadataCollection.cs
+System.DirectoryServices.ActiveDirectory/DirectoryContext.cs
 System.DirectoryServices.ActiveDirectory/DirectoryContextType.cs
 System.DirectoryServices.ActiveDirectory/DomainMode.cs
 System.DirectoryServices.ActiveDirectory/ForestMode.cs
