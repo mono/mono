@@ -35,6 +35,7 @@ System.DirectoryServices.ActiveDirectory/ActiveDirectoryReplicationMetadata.cs
 System.DirectoryServices.ActiveDirectory/ActiveDirectoryRoleCollection.cs
 System.DirectoryServices.ActiveDirectory/ActiveDirectorySchedule.cs
 System.DirectoryServices.ActiveDirectory/ActiveDirectorySchemaProperty.cs
+System.DirectoryServices.ActiveDirectory/ActiveDirectorySchemaPropertyCollection.cs
 System.DirectoryServices.ActiveDirectory/ActiveDirectorySecurity.cs
 System.DirectoryServices.ActiveDirectory/ActiveDirectorySiteOptions.cs
 System.DirectoryServices.ActiveDirectory/ActiveDirectorySyntax.cs
@@ -58,6 +59,7 @@ System.DirectoryServices.ActiveDirectory/LocatorOptions.cs
 System.DirectoryServices.ActiveDirectory/MinuteOfHour.cs
 System.DirectoryServices.ActiveDirectory/NotificationStatus.cs
 System.DirectoryServices.ActiveDirectory/PropertyTypes.cs
+System.DirectoryServices.ActiveDirectory/ReadOnlyActiveDirectorySchemaPropertyCollection.cs
 System.DirectoryServices.ActiveDirectory/ReadOnlyDirectoryServerCollection.cs
 System.DirectoryServices.ActiveDirectory/ReadOnlyStringCollection.cs
 System.DirectoryServices.ActiveDirectory/ReplicationConnection.cs
