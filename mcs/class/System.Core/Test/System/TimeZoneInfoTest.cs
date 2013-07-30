@@ -27,6 +27,8 @@
  */
 
 using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections;
 
 using NUnit.Framework;
@@ -655,6 +657,27 @@ namespace MonoTests.System
 				TimeZoneInfo utc = TimeZoneInfo.Utc;
 				TimeZoneInfo custom = TimeZoneInfo.CreateCustomTimeZone ("Custom", new TimeSpan (0), "Custom", "Custom");
 				Assert.IsTrue (utc.HasSameRules (custom));
+			}
+		}
+
+		[TestFixture]
+		public class SerializationTests
+		{
+			[Test]
+			public void Serialization_Deserialization ()
+			{
+				TimeZoneInfo.TransitionTime start = TimeZoneInfo.TransitionTime.CreateFloatingDateRule (new DateTime (1,1,1,1,0,0), 3, 5, DayOfWeek.Sunday);
+				TimeZoneInfo.TransitionTime end = TimeZoneInfo.TransitionTime.CreateFloatingDateRule (new DateTime (1,1,1,2,0,0), 10, 5, DayOfWeek.Sunday);
+				TimeZoneInfo.AdjustmentRule rule = TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule (DateTime.MinValue.Date, DateTime.MaxValue.Date, new TimeSpan (1,0,0), start, end);
+				TimeZoneInfo london = TimeZoneInfo.CreateCustomTimeZone ("Europe/London", new TimeSpan (0), "Europe/London", "British Standard Time", "British Summer Time", new TimeZoneInfo.AdjustmentRule [] {rule});
+				MemoryStream stream = new MemoryStream ();
+				BinaryFormatter formatter = new BinaryFormatter ();
+				formatter.Serialize (stream, london);
+				stream.Position = 0;
+				TimeZoneInfo deserialized = (TimeZoneInfo) formatter.Deserialize (stream);
+				stream.Close ();
+				stream.Dispose ();
+				Assert.AreEqual (london, deserialized);
 			}
 		}
 	}
