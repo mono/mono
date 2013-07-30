@@ -42,6 +42,7 @@ System.DirectoryServices.ActiveDirectory/AttributeMetadata.cs
 System.DirectoryServices.ActiveDirectory/AttributeMetadataCollection.cs
 System.DirectoryServices.ActiveDirectory/DirectoryContext.cs
 System.DirectoryServices.ActiveDirectory/DirectoryContextType.cs
+System.DirectoryServices.ActiveDirectory/DirectoryServer.cs
 System.DirectoryServices.ActiveDirectory/DomainMode.cs
 System.DirectoryServices.ActiveDirectory/ForestMode.cs
 System.DirectoryServices.ActiveDirectory/ForestTrustDomainStatus.cs
@@ -51,6 +52,8 @@ System.DirectoryServices.ActiveDirectory/MinuteOfHour.cs
 System.DirectoryServices.ActiveDirectory/NotificationStatus.cs
 System.DirectoryServices.ActiveDirectory/PropertyTypes.cs
 System.DirectoryServices.ActiveDirectory/ReadOnlyStringCollection.cs
+System.DirectoryServices.ActiveDirectory/ReplicationConnection.cs
+System.DirectoryServices.ActiveDirectory/ReplicationConnectionCollection.cs
 System.DirectoryServices.ActiveDirectory/ReplicationCursor.cs
 System.DirectoryServices.ActiveDirectory/ReplicationCursorCollection.cs
 System.DirectoryServices.ActiveDirectory/ReplicationFailure.cs
