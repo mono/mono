@@ -31,7 +31,10 @@ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Reflection;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
+
 
 namespace System.Linq.Expressions {
 
@@ -82,7 +85,7 @@ namespace System.Linq.Expressions {
 
 		public Delegate Compile ()
 		{
-#if TARGET_JVM || MONOTOUCH
+#if FULL_AOT_RUNTIME
 			return new System.Linq.jvm.Runner (this).CreateDelegate ();
 #else
 			var context = new CompilationContext ();
@@ -91,7 +94,7 @@ namespace System.Linq.Expressions {
 #endif
 		}
 
-#if TARGET_JVM || MONOTOUCH
+#if FULL_AOT_RUNTIME
 		internal Delegate Compile (System.Linq.jvm.ExpressionInterpreter interpreter)
 		{
 			return new System.Linq.jvm.Runner (this, interpreter).CreateDelegate ();

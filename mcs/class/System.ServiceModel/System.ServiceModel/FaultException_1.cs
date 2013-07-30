@@ -37,7 +37,7 @@ namespace System.ServiceModel
 	{
 		TDetail detail;
 
-#if MONOTOUCH
+#if FULL_AOT_RUNTIME
 		// WCF creates FaultExceptions using reflection, so unless we reference
 		// the corresponding ctor, it will not be possible to use FaultExceptions
 		// in MonoTouch. This ctor reference will work as long as TDetail
