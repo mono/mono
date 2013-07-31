@@ -1728,10 +1728,14 @@ namespace Mono.PlayScript
 					//
 					Get.Block.AddStatement (new Return (init, Location));
 
+					var expr = CSharp.Convert.ImplicitConversionStandard (null, c, Compiler.BuiltinTypes.Object, Location);
+					if (expr == null)
+						throw new NotImplementedException ();
+
 					//
 					// Store compile time constant to attribute for easier import
 					//
-					Module.PlayscriptAttributes.ConstantField.EmitAttribute (this, PropertyBuilder, c);
+					Module.PlayscriptAttributes.ConstantField.EmitAttribute (this, PropertyBuilder, expr);
 				}
 
 				base.Emit ();
@@ -1833,7 +1837,7 @@ namespace Mono.PlayScript
 				ModFlags |= Modifiers.STATIC;
 
 			var t = new TypeExpression (MemberType, TypeExpression.Location);
-			var init = Initializer ?? new DefaultValueExpression (t, Location);
+			var init = Initializer ?? ImplicitVariableInitializer.GetConstantValue (this, MemberType, Location);
 
 			var prop = new Property (Parent, t, ModFlags, MemberName, attributes);
 			prop.Initializer = new ConstInitializer (prop, init, init.Location);
@@ -2040,12 +2044,14 @@ namespace Mono.PlayScript
 			}
 		}
 
-		public static Constant GetConstantValue (ResolveContext rc, LocalVariable lv, Location loc)
+		public static Constant GetConstantValue (IMemberContext mc, TypeSpec type, Location loc)
 		{
-			var type = lv.Type;
-			if (type == rc.Module.PlayscriptTypes.Number) {
+			if (type == mc.Module.PlayscriptTypes.Number) {
 				return new DoubleConstant (type, double.NaN, loc);
 			}
+
+			if (TypeSpec.IsReferenceType (type))
+				return new NullConstant (type, loc);
 
 			return New.Constantify (type, loc);
 		}
@@ -2669,7 +2675,7 @@ namespace Mono.PlayScript
 			{
 			}
 
-			public void EmitAttribute (IMemberContext mc, PropertyBuilder builder, Constant constant)
+			public void EmitAttribute (IMemberContext mc, PropertyBuilder builder, Expression constant)
 			{
 				if (ctor_definition == null) {
 					if (!Define ())
@@ -2684,7 +2690,6 @@ namespace Mono.PlayScript
 					return;
 
 				AttributeEncoder encoder = new AttributeEncoder ();
-				encoder.Encode (constant.Type);
 				constant.EncodeAttributeValue (mc, encoder, ctor.Parameters.Types [0]);
 				encoder.EncodeEmptyNamedArguments ();
 

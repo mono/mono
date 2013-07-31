@@ -1986,7 +1986,7 @@ namespace Mono.CSharp {
 				// Constant is still uninitializer need to get PS specific default value
 				//
 				if (rc.IsPlayScriptType) {
-					var expr = PlayScript.ImplicitVariableInitializer.GetConstantValue (rc, this, loc);
+					var expr = PlayScript.ImplicitVariableInitializer.GetConstantValue (rc, type, loc);
 					if (expr != null)
 						return expr;
 				}
