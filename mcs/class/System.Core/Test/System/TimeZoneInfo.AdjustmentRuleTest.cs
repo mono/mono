@@ -109,7 +109,8 @@ namespace MonoTests.System
 				TimeZoneInfo.AdjustmentRule deserialized = (TimeZoneInfo.AdjustmentRule) formatter.Deserialize (stream);
 				stream.Close ();
 				stream.Dispose ();
-				Assert.AreEqual (rule, deserialized);
+
+				Assert.IsTrue (rule.Equals (deserialized));
 			}
 		}
 	}	
