@@ -20,7 +20,7 @@
 
 #include "mono/utils/mono-hwcap-ppc.h"
 
-#if defined(__linux__)
+#if defined(__linux__) && defined(HAVE_SYS_AUXV_H)
 #include <string.h>
 #include <sys/auxv.h>
 #endif
@@ -31,10 +31,16 @@ gboolean mono_hwcap_ppc_is_isa_64 = FALSE;
 gboolean mono_hwcap_ppc_has_move_fpr_gpr = FALSE;
 gboolean mono_hwcap_ppc_has_multiple_ls_units = FALSE;
 
+#if defined(MONO_CROSS_COMPILE)
 void
 mono_hwcap_arch_init (void)
 {
-#if defined(__linux__)
+}
+#else
+void
+mono_hwcap_arch_init (void)
+{
+#if defined(__linux__) && defined(HAVE_SYS_AUXV_H)
 	unsigned long hwcap;
 	unsigned long platform;
 
@@ -60,8 +66,19 @@ mono_hwcap_arch_init (void)
 	if ((platform = getauxval(AT_PLATFORM))) {
 		const char *str = (const char *) platform;
 
-		if (!strcmp (str, "ppc970") || (!strncmp (str, "power", 5) && arch [5] >= '4' && arch [5] <= '7'))
+		if (!strcmp (str, "ppc970") || (!strncmp (str, "power", 5) && str [5] >= '4' && str [5] <= '7'))
 			mono_hwcap_ppc_has_multiple_ls_units = TRUE;
 	}
 #endif
+}
+#endif
+
+void
+mono_hwcap_print (FILE* f)
+{
+	g_fprintf (f, "mono_hwcap_ppc_has_icache_snoop = %i\n", mono_hwcap_ppc_has_icache_snoop);
+	g_fprintf (f, "mono_hwcap_ppc_is_isa_2x = %i\n", mono_hwcap_ppc_is_isa_2x);
+	g_fprintf (f, "mono_hwcap_ppc_is_isa_64 = %i\n", mono_hwcap_ppc_is_isa_64);
+	g_fprintf (f, "mono_hwcap_ppc_has_move_fpr_gpr = %i\n", mono_hwcap_ppc_has_move_fpr_gpr);
+	g_fprintf (f, "mono_hwcap_ppc_has_multiple_ls_units = %i\n", mono_hwcap_ppc_has_multiple_ls_units);
 }

@@ -1,4 +1,4 @@
-
+#if !MOBILE
 using System;
 using System.ServiceModel.Configuration;
 using NUnit.Framework;
@@ -65,3 +65,4 @@ namespace MonoTests.System.ServiceModel.Configuration
 		}
 	}
 }
+#endif

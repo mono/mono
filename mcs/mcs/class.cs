@@ -1815,7 +1815,7 @@ namespace Mono.CSharp
 
 					if (iface_type.Arity > 0) {
 						// TODO: passing `this' is wrong, should be base type iface instead
-						TypeManager.CheckTypeVariance (iface_type, Variance.Covariant, this);
+						VarianceDecl.CheckTypeVariance (iface_type, Variance.Covariant, this);
 
 						if (((InflatedTypeSpec) iface_type).HasDynamicArgument () && !IsCompilerGenerated) {
 							Report.Error (1966, Location,
@@ -3416,7 +3416,7 @@ namespace Mono.CSharp
 		{
 			base.DoMemberTypeDependentChecks ();
 
-			TypeManager.CheckTypeVariance (MemberType, ExpectedMemberTypeVariance, this);
+			VarianceDecl.CheckTypeVariance (MemberType, ExpectedMemberTypeVariance, this);
 		}
 
 		public override void Emit()

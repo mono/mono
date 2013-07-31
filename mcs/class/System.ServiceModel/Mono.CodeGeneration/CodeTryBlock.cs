@@ -21,7 +21,7 @@
 // Copyright (C) 2009 Novell, Inc
 //
 
-#if !MONOTOUCH
+#if !FULL_AOT_RUNTIME
 using System;
 using System.Collections;
 #if NET_2_0

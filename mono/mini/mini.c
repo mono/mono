@@ -3808,17 +3808,18 @@ mono_save_seq_point_info (MonoCompile *cfg)
 			 * The ENDFINALLY branches are not represented in the cfg, so link it with all seq points starting bbs.
 			 */
 			l = g_slist_last (bb->seq_points);
-			g_assert (l);
-			endfinally_seq_point = l->data;
+			if (l) {
+				endfinally_seq_point = l->data;
 
-			for (bb2 = cfg->bb_entry; bb2; bb2 = bb2->next_bb) {
-				GSList *l = g_slist_last (bb2->seq_points);
+				for (bb2 = cfg->bb_entry; bb2; bb2 = bb2->next_bb) {
+					GSList *l = g_slist_last (bb2->seq_points);
 
-				if (l) {
-					MonoInst *ins = l->data;
+					if (l) {
+						MonoInst *ins = l->data;
 
-					if (!(ins->inst_imm == METHOD_ENTRY_IL_OFFSET || ins->inst_imm == METHOD_EXIT_IL_OFFSET) && ins != endfinally_seq_point)
-						next [endfinally_seq_point->backend.size] = g_slist_append (next [endfinally_seq_point->backend.size], GUINT_TO_POINTER (ins->backend.size));
+						if (!(ins->inst_imm == METHOD_ENTRY_IL_OFFSET || ins->inst_imm == METHOD_EXIT_IL_OFFSET) && ins != endfinally_seq_point)
+							next [endfinally_seq_point->backend.size] = g_slist_append (next [endfinally_seq_point->backend.size], GUINT_TO_POINTER (ins->backend.size));
+					}
 				}
 			}
 		}
@@ -6209,7 +6210,7 @@ typedef struct {
 static MonoObject*
 mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc)
 {
-	MonoMethod *invoke;
+	MonoMethod *invoke, *callee;
 	MonoObject *(*runtime_invoke) (MonoObject *this, void **params, MonoObject **exc, void* compiled_method);
 	MonoDomain *domain = mono_domain_get ();
 	MonoJitDomainInfo *domain_info;
@@ -6248,17 +6249,31 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 		info->vtable = mono_class_vtable_full (domain, method->klass, TRUE);
 		g_assert (info->vtable);
 
+		callee = method;
 		if (method->klass->rank && (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) &&
 			(method->iflags & METHOD_IMPL_ATTRIBUTE_NATIVE)) {
 			/* 
 			 * Array Get/Set/Address methods. The JIT implements them using inline code 
 			 * inside the runtime invoke wrappers, so no need to compile them.
 			 */
-			info->compiled_method = NULL;
-		} else {
+			if (mono_aot_only) {
+				/*
+				 * Call a wrapper, since the runtime invoke wrapper was not generated.
+				 */
+				MonoMethod *wrapper;
+
+				wrapper = mono_marshal_get_array_accessor_wrapper (method);
+				invoke = mono_marshal_get_runtime_invoke (wrapper, FALSE);
+				callee = wrapper;
+			} else {
+				callee = NULL;
+			}
+		}
+
+		if (callee) {
 			MonoException *jit_ex = NULL;
 
-			info->compiled_method = mono_jit_compile_method_with_opt (method, default_opt, &jit_ex);
+			info->compiled_method = mono_jit_compile_method_with_opt (callee, default_opt, &jit_ex);
 			if (!info->compiled_method) {
 				g_free (info);
 				g_assert (jit_ex);
@@ -6270,7 +6285,9 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 				}
 			}
 
-			info->compiled_method = mini_add_method_trampoline (NULL, method, info->compiled_method, mono_method_needs_static_rgctx_invoke (method, FALSE), FALSE);
+			info->compiled_method = mini_add_method_trampoline (NULL, callee, info->compiled_method, mono_method_needs_static_rgctx_invoke (callee, FALSE), FALSE);
+		} else {
+			info->compiled_method = NULL;
 		}
 
 		/*
@@ -6922,8 +6939,7 @@ mini_init (const char *filename, const char *runtime_version)
 
 	mono_code_manager_init ();
 
-	if (!mono_aot_only)
-		mono_hwcap_init ();
+	mono_hwcap_init ();
 
 	mono_arch_cpu_init ();
 
@@ -7250,10 +7266,7 @@ mini_init (const char *filename, const char *runtime_version)
 	register_icall (mono_array_new_4, "mono_array_new_4", "object ptr int int int int", FALSE);
 	register_icall (mono_get_native_calli_wrapper, "mono_get_native_calli_wrapper", "ptr ptr ptr ptr", FALSE);
 	register_icall (mono_resume_unwind, "mono_resume_unwind", "void", TRUE);
-	register_icall (mono_object_tostring_gsharedvt, "mono_object_tostring_gsharedvt", "object ptr ptr ptr", TRUE);
-	register_icall (mono_object_gethashcode_gsharedvt, "mono_object_gethashcode_gsharedvt", "int ptr ptr ptr", TRUE);
-	register_icall (mono_object_equals_gsharedvt, "mono_object_equals_gsharedvt", "int ptr ptr ptr object", TRUE);
-	register_icall (mono_gsharedvt_constrained_call, "mono_gsharedvt_constrained_call", "void ptr ptr ptr ptr", TRUE);
+	register_icall (mono_gsharedvt_constrained_call, "mono_gsharedvt_constrained_call", "object ptr ptr ptr ptr", TRUE);
 	register_icall (mono_gsharedvt_value_copy, "mono_gsharedvt_value_copy", "void ptr ptr ptr", TRUE);
 
 	register_icall (mono_gc_wbarrier_value_copy_bitmap, "mono_gc_wbarrier_value_copy_bitmap", "void ptr ptr int int", FALSE);
@@ -7395,7 +7408,9 @@ mini_cleanup (MonoDomain *domain)
 
 	mono_runtime_cleanup_handlers ();
 
+#ifndef MONO_CROSS_COMPILE
 	mono_domain_free (domain, TRUE);
+#endif
 
 	mono_debugger_cleanup ();
 

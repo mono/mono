@@ -30,7 +30,9 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 
 namespace System.Linq.Expressions {
 

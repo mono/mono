@@ -549,7 +549,12 @@ namespace System.Net
 				if (local_path [0] == '/')
 					local_path = local_path.Substring (1);
 
-				Uri initial = new Uri ("ftp://dummy-host" + initial_path);
+				UriBuilder initialBuilder = new UriBuilder () {
+					Scheme  = "ftp",
+					Host    = "dummy-host",
+					Path    = initial_path,
+				};
+				Uri initial = initialBuilder.Uri;
 				result = new Uri (initial, local_path).LocalPath;
 			}
 

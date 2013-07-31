@@ -24,6 +24,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#if NET_4_0
+
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.Cookie))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.CookieCollection))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.CookieContainer))]
@@ -45,3 +47,4 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.NetworkInformation.NetworkChange))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.NetworkInformation.NetworkInterface))]
 
+#endif

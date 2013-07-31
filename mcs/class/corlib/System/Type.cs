@@ -1431,6 +1431,12 @@ namespace System {
 			return FullName;
 		}
 
+		internal static bool ShouldPrintFullName (Type type)
+		{
+			return type.IsGenericType || (type.IsClass && (!type.IsPointer ||
+				(!type.GetElementType ().IsPrimitive && !type.GetElementType ().IsNested)));
+		}
+
 		internal virtual Type InternalResolve ()
 		{
 			return UnderlyingSystemType;

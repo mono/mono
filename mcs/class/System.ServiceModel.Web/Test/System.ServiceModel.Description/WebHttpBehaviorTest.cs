@@ -22,7 +22,7 @@ namespace MonoTests.System.ServiceModel.Description
 		{
 			return GetRequestClientFormatter (operationDescription, endpoint);
 		}
-
+#if !MOBILE
 		public IDispatchMessageFormatter DoGetReplyDispatchFormatter (OperationDescription operationDescription, ServiceEndpoint endpoint)
 		{
 			return GetReplyDispatchFormatter (operationDescription, endpoint);
@@ -32,7 +32,7 @@ namespace MonoTests.System.ServiceModel.Description
 		{
 			return GetRequestDispatchFormatter (operationDescription, endpoint);
 		}
-
+#endif
 		public event Action<ServiceEndpoint, ClientRuntime> ApplyClientBehaviorInvoked;
 
 		public override void ApplyClientBehavior (ServiceEndpoint endpoint, ClientRuntime client)
@@ -76,6 +76,7 @@ namespace MonoTests.System.ServiceModel.Description
 			Assert.AreEqual (0, pl.Count, "#1");
 		}
 
+#if !MOBILE
 		[Test]
 		public void ApplyDispatchBehavior ()
 		{
@@ -120,6 +121,7 @@ namespace MonoTests.System.ServiceModel.Description
 
 			Assert.AreEqual (0, ed.DispatchRuntime.Operations.Count, "#4-0"); // hmm... really?
 		}
+#endif
 
 		[Test]
 		public void GetMessageFormatters ()
@@ -129,8 +131,10 @@ namespace MonoTests.System.ServiceModel.Description
 			var b = new WebHttpBehaviorExt ();
 			Assert.IsNotNull (b.DoGetRequestClientFormatter (od, se), "#1");
 			Assert.IsNotNull (b.DoGetReplyClientFormatter (od, se), "#2");
+#if !MOBILE
 			Assert.IsNotNull (b.DoGetRequestDispatchFormatter (od, se), "#3");
 			Assert.IsNotNull (b.DoGetReplyDispatchFormatter (od, se), "#4");
+#endif
 		}
 
 		[Test]
@@ -153,6 +157,7 @@ namespace MonoTests.System.ServiceModel.Description
 			}
 		}
 
+#if !MOBILE
 		[Test]
 		public void RequestClientFormatter2 ()
 		{
@@ -174,6 +179,7 @@ namespace MonoTests.System.ServiceModel.Description
 
 			// TODO: test DeserializeReply too (it is supported unlike above).
 		}
+#endif
 
 		[ServiceContract]
 		public interface IMyService
@@ -189,7 +195,9 @@ namespace MonoTests.System.ServiceModel.Description
 
 		public class MyService: IMyService
 		{
+#if !MOBILE
 			[OperationBehavior]
+#endif
 			public string Echo (string input)
 			{
 				return input;
@@ -204,6 +212,7 @@ namespace MonoTests.System.ServiceModel.Description
 			Assert.IsTrue (od.Behaviors.Contains (typeof (WebGetAttribute)), "Operation is recognized as WebGet");
 		}
 
+#if !MOBILE
 		[Test]
 		public void MessageFormatterSupportsRaw ()
 		{
@@ -247,7 +256,7 @@ namespace MonoTests.System.ServiceModel.Description
 			formatter.DeserializeRequest (msg, pars);
 			Assert.IsTrue (pars [0] is Stream, "ret");
 		}
-
+#endif
 		[ServiceContract]
 		public interface IMultipleParametersGet
 		{

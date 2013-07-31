@@ -135,6 +135,16 @@ public class DebuggerTests
 		return e;
 	}
 
+	Event step_until (ThreadMirror t, string method_name) {
+		Event e;
+		while (true) {
+			e = single_step (t);
+			if ((e as StepEvent).Method.Name == method_name)
+				break;
+		}
+		return e;
+	}
+
 	void check_arg_val (StackFrame frame, int pos, Type type, object eval) {
 		object val = frame.GetArgument (pos);
 		Assert.IsTrue (val is PrimitiveValue);
@@ -1325,6 +1335,17 @@ public class DebuggerTests
 		Assert.AreEqual ("AStruct", s.Type.Name);
 		AssertValue (42, s ["i"]);
 
+		// Check round tripping of boxed struct fields (#12354)
+		obj = o.GetValue (o.Type.GetField ("boxed_struct_field"));
+		o.SetValue (o.Type.GetField ("boxed_struct_field"), obj);
+		obj = o.GetValue (o.Type.GetField ("boxed_struct_field"));
+		s = obj as StructMirror;
+		AssertValue (1, s ["key"]);
+		obj = s ["value"];
+		Assert.IsTrue (obj is StructMirror);
+		s = obj as StructMirror;
+		AssertValue (42, s ["m_value"]);
+
 		// vtypes as arguments
 		s = frame.GetArgument (0) as StructMirror;
 		AssertValue (44, s ["i"]);
@@ -1361,11 +1382,7 @@ public class DebuggerTests
 
 		// this on vtype methods
 		e = run_until ("vtypes2");
-		
-		// Skip nop
-		e = single_step (e.Thread);
-
-		e = single_step (e.Thread);
+		e = step_until (e.Thread, "foo");
 
 		frame = e.Thread.GetFrames () [0];
 
@@ -1380,11 +1397,7 @@ public class DebuggerTests
 
 		// this on static vtype methods
 		e = run_until ("vtypes3");
-
-		// Skip nop
-		e = single_step (e.Thread);
-
-		e = single_step (e.Thread);
+		e = step_until (e.Thread, "static_foo");
 
 		frame = e.Thread.GetFrames () [0];
 
@@ -1691,13 +1704,26 @@ public class DebuggerTests
 
 		Location l;
 		
-		vm.Resume ();
+		while (true) {
+			vm.Resume ();
 
+			e = GetNextEvent ();
+			Assert.IsTrue (e is StepEvent);
+			if (e.Thread.GetFrames ()[0].Method.Name == "ln1")
+				break;
+		}
+
+		// Do an additional step over so we are not on the beginning line of the method
+		step_req.Disable ();
+		step_req.Depth = StepDepth.Over;
+		step_req.Enable ();
+		vm.Resume ();
 		e = GetNextEvent ();
-		Assert.IsTrue (e is StepEvent);
+		Assert.IsTrue (e is StepEvent);		
 
 		l = e.Thread.GetFrames ()[0].Location;
 
+		Console.WriteLine (l);
 		Assert.AreEqual (3, l.ColumnNumber);
 
 		step_req.Disable ();

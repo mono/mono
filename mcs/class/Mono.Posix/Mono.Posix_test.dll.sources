@@ -1,3 +1,4 @@
+Mono.Unix/ReadlinkTest.cs
 Mono.Unix/StdioFileStreamTest.cs
 Mono.Unix/UnixEncodingTest.cs
 Mono.Unix/UnixGroupTest.cs

@@ -117,7 +117,7 @@ namespace System.Net.Http.Headers
 				HeaderInfo.CreateSingle<DateTimeOffset> ("Last-Modified", Parser.DateTime.TryParse, HttpHeaderKind.Content),
 				HeaderInfo.CreateSingle<Uri> ("Location", Parser.Uri.TryParse, HttpHeaderKind.Response),
 				HeaderInfo.CreateSingle<int> ("Max-Forwards", Parser.Int.TryParse, HttpHeaderKind.Request),
-				HeaderInfo.CreateMulti<NameValueHeaderValue> ("Pragma", NameValueHeaderValue.TryParse, HttpHeaderKind.Request | HttpHeaderKind.Response),
+				HeaderInfo.CreateMultiList<NameValueHeaderValue> ("Pragma", NameValueHeaderValue.TryParsePragma, HttpHeaderKind.Request | HttpHeaderKind.Response),
 				HeaderInfo.CreateMulti<AuthenticationHeaderValue> ("Proxy-Authenticate", AuthenticationHeaderValue.TryParse, HttpHeaderKind.Response),
 				HeaderInfo.CreateSingle<AuthenticationHeaderValue> ("Proxy-Authorization", AuthenticationHeaderValue.TryParse, HttpHeaderKind.Request),
 				HeaderInfo.CreateSingle<RangeHeaderValue> ("Range", RangeHeaderValue.TryParse, HttpHeaderKind.Request),

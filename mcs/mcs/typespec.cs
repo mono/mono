@@ -747,22 +747,22 @@ namespace Mono.CSharp
 			return this;
 		}
 
-		public override List<TypeSpec> ResolveMissingDependencies ()
+		public override List<MissingTypeSpecReference> ResolveMissingDependencies (MemberSpec caller)
 		{
-			List<TypeSpec> missing = null;
+			List<MissingTypeSpecReference> missing = null;
 
 			if (Kind == MemberKind.MissingType) {
-				missing = new List<TypeSpec> ();
-				missing.Add (this);
+				missing = new List<MissingTypeSpecReference> ();
+				missing.Add (new MissingTypeSpecReference (this, caller));
 				return missing;
 			}
 
 			foreach (var targ in TypeArguments) {
 				if (targ.Kind == MemberKind.MissingType) {
 					if (missing == null)
-						missing = new List<TypeSpec> ();
+						missing = new List<MissingTypeSpecReference> ();
 
-					missing.Add (targ);
+					missing.Add (new MissingTypeSpecReference (targ, caller));
 				}
 			}
 
@@ -770,19 +770,19 @@ namespace Mono.CSharp
 				foreach (var iface in Interfaces) {
 					if (iface.Kind == MemberKind.MissingType) {
 						if (missing == null)
-							missing = new List<TypeSpec> ();
+							missing = new List<MissingTypeSpecReference> ();
 
-						missing.Add (iface);
+						missing.Add (new MissingTypeSpecReference (iface, caller));
 					}
 				}
 			}
 
 			if (MemberDefinition.TypeParametersCount > 0) {
 				foreach (var tp in MemberDefinition.TypeParameters) {
-					var tp_missing = tp.GetMissingDependencies ();
+					var tp_missing = tp.GetMissingDependencies (this);
 					if (tp_missing != null) {
 						if (missing == null)
-							missing = new List<TypeSpec> ();
+							missing = new List<MissingTypeSpecReference> ();
 
 						missing.AddRange (tp_missing);
 					}
@@ -792,7 +792,7 @@ namespace Mono.CSharp
 			if (missing != null || BaseType == null)
 				return missing;
 
-			return BaseType.ResolveMissingDependencies ();
+			return BaseType.ResolveMissingDependencies (this);
 		}
 
 		public void SetMetaInfo (MetaType info)
@@ -1996,5 +1996,17 @@ namespace Mono.CSharp
 
 			return pc;
 		}
+	}
+
+	public class MissingTypeSpecReference
+	{
+		public MissingTypeSpecReference (TypeSpec type, MemberSpec caller)
+		{
+			Type = type;
+			Caller = caller;
+		}
+
+		public TypeSpec Type { get; private set; }
+		public MemberSpec Caller { get; private set; }
 	}
 }

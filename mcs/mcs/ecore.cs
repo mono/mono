@@ -473,7 +473,8 @@ namespace Mono.CSharp {
 
 				return e;
 			} catch (Exception ex) {
-				if (loc.IsNull || ec.Module.Compiler.Settings.DebugFlags > 0 || ex is CompletionResult || ec.Report.IsDisabled || ex is FatalException)
+				if (loc.IsNull || ec.Module.Compiler.Settings.DebugFlags > 0 || ex is CompletionResult || ec.Report.IsDisabled || ex is FatalException ||
+					ec.Report.Printer is NullReportPrinter)
 					throw;
 
 				ec.Report.Error (584, loc, "Internal compiler error: {0}", ex.Message);
@@ -4475,6 +4476,11 @@ namespace Mono.CSharp {
 							if (!arg_moved) {
 								arguments = arguments.MarkOrderedArgument (na);
 								arg_moved = true;
+							}
+
+							if (arguments == orig_args) {
+								arguments = new Arguments (orig_args.Count);
+								arguments.AddRange (orig_args);
 							}
 
 							arguments[index] = arguments[i];

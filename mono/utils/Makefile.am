@@ -105,7 +105,9 @@ monoutils_sources = \
 	atomic.h	\
 	atomic.c	\
 	mono-hwcap.h	\
-	mono-hwcap.c
+	mono-hwcap.c	\
+	bsearch.h	\
+	bsearch.c
 
 arch_sources = 
 
@@ -128,8 +130,6 @@ else
 arch_sources += mach-support-unknown.c
 
 endif
-
-if !CROSS_COMPILE
 
 if X86
 arch_sources += mono-hwcap-x86.c mono-hwcap-x86.h
@@ -169,12 +169,6 @@ endif
 
 if S390X
 arch_sources += mono-hwcap-s390x.c mono-hwcap-s390x.h
-endif
-
-else
-
-arch_sources += mono-hwcap-empty.c
-
 endif
 
 libmonoutils_la_SOURCES = $(monoutils_sources) $(arch_sources)

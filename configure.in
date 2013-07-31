@@ -1150,6 +1150,8 @@ if test x$target_win32 = xno; then
 
 	AC_CHECK_HEADERS(execinfo.h)
 
+	AC_CHECK_HEADERS(sys/auxv.h)
+
 	AC_CHECK_FUNCS(getgrgid_r)
 	AC_CHECK_FUNCS(getgrnam_r)
 	AC_CHECK_FUNCS(getpwnam_r)
@@ -2375,14 +2377,18 @@ if test "x$enable_llvm" = "xyes"; then
 		;;
    esac
 
-
    # The output of --cflags seems to include optimizations flags too
    LLVM_CFLAGS=`$LLVM_CONFIG --cflags | sed -e 's/-O2//g' | sed -e 's/-O0//g' | sed -e 's/-fomit-frame-pointer//g' | sed -e 's/-fPIC//g'`
    # LLVM is compiled with -fno-rtti, so we need this too, since our classes inherit
    # from LLVM classes.
    LLVM_CXXFLAGS="`$LLVM_CONFIG --cxxflags` -fno-rtti"
    LLVM_LDFLAGS=`$LLVM_CONFIG --ldflags`
-   LLVM_LIBS=`$LLVM_CONFIG --libs core bitwriter jit mcjit $llvm_codegen`
+   if test "x$host" != "x$target"; then
+      # No need for jit libs
+      LLVM_LIBS=`$LLVM_CONFIG --libs core bitwriter`
+   else
+      LLVM_LIBS=`$LLVM_CONFIG --libs core bitwriter jit mcjit $llvm_codegen`
+   fi
    LLVM_LIBS="$LLVM_LDFLAGS $LLVM_LIBS -lstdc++"
 
    # Should be something like '2.6' or '2.7svn'
@@ -2725,7 +2731,6 @@ if test "x$host" != "x$target"; then
 	esac
 fi
 
-# FIXME: Define the others as well
 case "$TARGET" in
 X86)
 	AC_DEFINE(TARGET_X86, 1, [...])
@@ -2759,6 +2764,15 @@ SPARC64)
 	AC_DEFINE(TARGET_SPARC64, 1, [...])
 	;;
 esac
+
+dnl Use GCC atomic ops if they work on the target.
+if test x$GCC = "xyes"; then
+	case $TARGET in
+	X86 | AMD64 | ARM | POWERPC | POWERPC64 | MIPS)
+		AC_DEFINE(USE_GCC_ATOMIC_OPS, 1, [...])
+		;;
+	esac
+fi
 
 if test "x$target_mach" = "xyes"; then
    if test "x$TARGET" = "xARM"; then

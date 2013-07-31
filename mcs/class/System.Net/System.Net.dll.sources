@@ -2,4 +2,5 @@ Assembly/AssemblyInfo.cs
 Assembly/TypeForwarders.cs
 ../../build/common/Consts.cs
 ../../build/common/MonoTODOAttribute.cs
+System.Net/DnsPermission.cs
 System.Net/IPEndPointCollection.cs

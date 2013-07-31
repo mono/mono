@@ -24,6 +24,12 @@
 
 gboolean mono_hwcap_s390x_has_ld = FALSE;
 
+#if defined(MONO_CROSS_COMPILE)
+void
+mono_hwcap_arch_init (void)
+{
+}
+#else
 static void
 catch_sigill (int sig_no, siginfo_t *info, gpointer act)
 {
@@ -47,7 +53,7 @@ mono_hwcap_arch_init (void)
 
 	sigaction (SIGILL, &sa, old_sa);
 
-	__asm__ (
+	__asm__ __volatile__ (
 		"LGHI\t0,1\n\t"
 		"LA\t1,%0\n\t"
 		".byte\t0xe3,0x00,0x10,0x00,0x00,0x50\n\t"
@@ -57,4 +63,11 @@ mono_hwcap_arch_init (void)
 	);
 
 	sigaction (SIGILL, old_sa, NULL);
+}
+#endif
+
+void
+mono_hwcap_print (FILE *f)
+{
+	g_fprintf (f, "mono_hwcap_s390x_has_ld = %i\n", mono_hwcap_s390x_has_ld);
 }

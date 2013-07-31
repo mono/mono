@@ -257,6 +257,7 @@ net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) aot-compi
 monodroid_SUBDIRS := $(mobile_dirs) $(monodroid_dirs)
 monotouch_SUBDIRS := $(mobile_dirs)
 monotouch_runtime_SUBDIRS := $(monotouch_runtime_dirs)
+mobile_static_SUBDIRS := $(mobile_dirs)
 mobile_SUBDIRS := $(mobile_dirs)
 net_3_5_SUBDIRS := $(net_3_5_only_dirs)
 net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs)

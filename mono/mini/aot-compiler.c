@@ -2596,6 +2596,8 @@ encode_method_ref (MonoAotCompile *acfg, MonoMethod *method, guint8 *buf, guint8
 				encode_klass_ref (acfg, method->klass, p, &p);
 			else if (info->subtype == WRAPPER_SUBTYPE_SYNCHRONIZED_INNER)
 				encode_method_ref (acfg, info->d.synchronized_inner.method, p, &p);
+			else if (info->subtype == WRAPPER_SUBTYPE_ARRAY_ACCESSOR)
+				encode_method_ref (acfg, info->d.array_accessor.method, p, &p);
 			break;
 		}
 		case MONO_WRAPPER_MANAGED_TO_NATIVE: {
@@ -3160,6 +3162,8 @@ create_gsharedvt_inst (MonoAotCompile *acfg, MonoMethod *method, MonoGenericCont
 	}
 }
 
+#define MONO_TYPE_IS_PRIMITIVE(t) ((!(t)->byref && ((((t)->type >= MONO_TYPE_BOOLEAN && (t)->type <= MONO_TYPE_R8) || ((t)->type >= MONO_TYPE_I && (t)->type <= MONO_TYPE_U)))))
+
 static void
 add_wrappers (MonoAotCompile *acfg)
 {
@@ -3476,6 +3480,37 @@ add_wrappers (MonoAotCompile *acfg)
 			gshared = mini_get_shared_method_full (m, FALSE, TRUE);
 			add_extra_method (acfg, gshared);
 
+		}
+	}
+
+	/* array access wrappers */
+	for (i = 0; i < acfg->image->tables [MONO_TABLE_TYPESPEC].rows; ++i) {
+		MonoClass *klass;
+		
+		token = MONO_TOKEN_TYPE_SPEC | (i + 1);
+		klass = mono_class_get (acfg->image, token);
+
+		if (!klass) {
+			mono_loader_clear_error ();
+			continue;
+		}
+
+		if (klass->rank && MONO_TYPE_IS_PRIMITIVE (&klass->element_class->byval_arg)) {
+			MonoMethod *m, *wrapper;
+
+			/* Add runtime-invoke wrappers too */
+
+			m = mono_class_get_method_from_name (klass, "Get", -1);
+			g_assert (m);
+			wrapper = mono_marshal_get_array_accessor_wrapper (m);
+			add_extra_method (acfg, wrapper);
+			add_extra_method (acfg, mono_marshal_get_runtime_invoke (wrapper, FALSE));
+
+			m = mono_class_get_method_from_name (klass, "Set", -1);
+			g_assert (m);
+			wrapper = mono_marshal_get_array_accessor_wrapper (m);
+			add_extra_method (acfg, wrapper);
+			add_extra_method (acfg, mono_marshal_get_runtime_invoke (wrapper, FALSE));
 		}
 	}
 
@@ -5731,6 +5766,14 @@ emit_trampolines (MonoAotCompile *acfg)
 		 */
 		for (tramp_type = 0; tramp_type < MONO_TRAMPOLINE_NUM; ++tramp_type) {
 			/* we overload the boolean here to indicate the slightly different trampoline needed, see mono_arch_create_generic_trampoline() */
+#ifdef DISABLE_REMOTING
+			if (tramp_type == MONO_TRAMPOLINE_GENERIC_VIRTUAL_REMOTING)
+				continue;
+#endif
+#ifndef MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD
+			if (tramp_type == MONO_TRAMPOLINE_HANDLER_BLOCK_GUARD)
+				continue;
+#endif
 			mono_arch_create_generic_trampoline (tramp_type, &info, acfg->aot_opts.use_trampolines_page? 2: TRUE);
 			emit_trampoline (acfg, acfg->got_offset, info);
 		}
@@ -6794,7 +6837,7 @@ emit_llvm_file (MonoAotCompile *acfg)
 	opts = g_strdup ("-instcombine -simplifycfg");
 	opts = g_strdup ("-simplifycfg -domtree -domfrontier -scalarrepl -instcombine -simplifycfg -domtree -domfrontier -scalarrepl -simplify-libcalls -instcombine -simplifycfg -instcombine -simplifycfg -reassociate -domtree -loops -loop-simplify -domfrontier -loop-simplify -lcssa -loop-rotate -licm -lcssa -loop-unswitch -instcombine -scalar-evolution -loop-simplify -lcssa -iv-users -indvars -loop-deletion -loop-simplify -lcssa -loop-unroll -instcombine -memdep -gvn -memdep -memcpyopt -sccp -instcombine -domtree -memdep -dse -adce -simplifycfg -preverify -domtree -verify");
 #if 1
-	command = g_strdup_printf ("%sopt -f %s -o %s.opt.bc %s.bc", acfg->aot_opts.llvm_path, opts, acfg->tmpfname, acfg->tmpfname);
+	command = g_strdup_printf ("%sopt -f %s -o \"%s.opt.bc\" \"%s.bc\"", acfg->aot_opts.llvm_path, opts, acfg->tmpfname, acfg->tmpfname);
 	printf ("Executing opt: %s\n", command);
 	if (system (command) != 0) {
 		exit (1);
@@ -6822,7 +6865,7 @@ emit_llvm_file (MonoAotCompile *acfg)
 #endif
 	unlink (acfg->tmpfname);
 
-	command = g_strdup_printf ("%sllc %s -disable-gnu-eh-frame -enable-mono-eh-frame -o %s %s.opt.bc", acfg->aot_opts.llvm_path, acfg->llc_args->str, acfg->tmpfname, acfg->tmpfname);
+	command = g_strdup_printf ("%sllc %s -disable-gnu-eh-frame -enable-mono-eh-frame -o \"%s\" \"%s.opt.bc\"", acfg->aot_opts.llvm_path, acfg->llc_args->str, acfg->tmpfname, acfg->tmpfname);
 
 	printf ("Executing llc: %s\n", command);
 
@@ -7985,6 +8028,7 @@ emit_file_info (MonoAotCompile *acfg)
 	emit_int32 (acfg, __alignof__ (double));
 	emit_int32 (acfg, __alignof__ (gint64));
 #endif
+	emit_int32 (acfg, MONO_TRAMPOLINE_NUM);
 
 	if (acfg->aot_opts.static_link) {
 		char *p;

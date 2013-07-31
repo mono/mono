@@ -219,6 +219,12 @@ namespace MonoTests.System.Net.Http
 			} catch (FormatException) {
 			}
 
+			try {
+				headers.Add ("pragma", "nocache,RequestID=1,g=");
+ 				Assert.Fail ("pragma");
+			} catch (FormatException) {				
+			}
+
 			headers.Add ("accept", "audio/y");
 			headers.Add ("accept-charset", "achs");
 			headers.Add ("accept-encoding", "aenc");
@@ -226,7 +232,6 @@ namespace MonoTests.System.Net.Http
 			headers.Add ("expect", "exp");
 			headers.Add ("if-match", "\"v\"");
 			headers.Add ("if-none-match", "\"v2\"");
-			headers.Add ("pragma", "p");
 			headers.Add ("TE", "0.8");
 			headers.Add ("trailer", "value2");
 			headers.Add ("transfer-encoding", "ttt");
@@ -234,6 +239,7 @@ namespace MonoTests.System.Net.Http
 			headers.Add ("user-agent", "uaua");
 			headers.Add ("via", "prot v");
 			headers.Add ("warning", "4 ww \"t\"");
+			headers.Add ("pragma", "nocache,R=1,g");
 
 			Assert.IsTrue (headers.Accept.SequenceEqual (
 				new[] {
@@ -296,7 +302,6 @@ namespace MonoTests.System.Net.Http
 			Assert.IsTrue (headers.IfNoneMatch.SequenceEqual (new EntityTagHeaderValue[] { new EntityTagHeaderValue ("\"tag2\"", true), new EntityTagHeaderValue ("\"v2\"", false) }));
 			Assert.AreEqual (new DateTimeOffset (DateTime.Today), headers.IfRange.Date);
 			Assert.AreEqual (headers.MaxForwards, 0x15b3);
-			Assert.IsTrue (headers.Pragma.SequenceEqual (new NameValueHeaderValue[] { new NameValueHeaderValue ("name", "value"), new NameValueHeaderValue ("p", null) }));
 			Assert.AreEqual ("p", headers.ProxyAuthorization.Parameter);
 			Assert.AreEqual ("s", headers.ProxyAuthorization.Scheme);
 			Assert.AreEqual (5, headers.Range.Ranges.First ().From);
@@ -345,6 +350,14 @@ namespace MonoTests.System.Net.Http
 				}
 			));
 
+			Assert.IsTrue (headers.Pragma.SequenceEqual (
+				new[] {
+					new NameValueHeaderValue ("name", "value"),
+					new NameValueHeaderValue ("nocache", null),
+					new NameValueHeaderValue ("R", "1"),
+					new NameValueHeaderValue ("g", null)
+				}
+			));			
 		}
 
 		[Test]

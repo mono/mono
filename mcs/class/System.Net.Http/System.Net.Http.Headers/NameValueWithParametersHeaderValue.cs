@@ -103,7 +103,7 @@ namespace System.Net.Http.Headers
 		public static bool TryParse (string input, out NameValueWithParametersHeaderValue parsedValue)
 		{
 			List<NameValueHeaderValue> values;
-			if (!ParseParameters (new Lexer (input), out values)) {
+			if (!TryParseParameters (new Lexer (input), out values)) {
 				parsedValue = null;
 				return false;
 			}

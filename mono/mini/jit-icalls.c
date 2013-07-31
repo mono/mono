@@ -1168,7 +1168,7 @@ constrained_gsharedvt_call_setup (gpointer mp, MonoMethod *cmethod, MonoClass *k
 		int iface_offset;
 
 		iface_offset = mono_class_interface_offset (klass, cmethod->klass);
-		g_assert (iface_offset);
+		g_assert (iface_offset != -1);
 		vt_slot += iface_offset;
 	}
 	m = klass->vtable [vt_slot];
@@ -1190,62 +1190,20 @@ constrained_gsharedvt_call_setup (gpointer mp, MonoMethod *cmethod, MonoClass *k
 	return m;
 }
 
-MonoObject*
-mono_object_tostring_gsharedvt (gpointer mp, MonoMethod *cmethod, MonoClass *klass)
-{
-	MonoMethod *m;
-	gpointer this_arg;
-
-	m = constrained_gsharedvt_call_setup (mp, cmethod, klass, &this_arg);
-	return mono_runtime_invoke (m, this_arg, NULL, NULL);
-}
-
-int
-mono_object_gethashcode_gsharedvt (gpointer mp, MonoMethod *cmethod, MonoClass *klass)
-{
-	MonoMethod *m;
-	gpointer this_arg;
-	MonoObject *res;
-	gpointer p;
-
-	m = constrained_gsharedvt_call_setup (mp, cmethod, klass, &this_arg);
-	// FIXME: This boxes the result
-	res = mono_runtime_invoke (m, this_arg, NULL, NULL);
-	p = mono_object_unbox (res);
-	return *(int*)p;
-}
-
-MonoBoolean
-mono_object_equals_gsharedvt (gpointer mp, MonoMethod *cmethod, MonoClass *klass, MonoObject *arg)
-{
-	MonoMethod *m;
-	gpointer this_arg;
-	MonoObject *res;
-	gpointer p;
-	void **args;
-
-	m = constrained_gsharedvt_call_setup (mp, cmethod, klass, &this_arg);
-	// FIXME: This boxes the result
-	args = (void**)&arg;
-	res = mono_runtime_invoke (m, this_arg, args, NULL);
-	p = mono_object_unbox (res);
-	return *(MonoBoolean*)p;
-}
-
 /*
  * mono_gsharedvt_constrained_call:
  *
  *   Make a call to CMETHOD using the receiver MP, which is assumed to be of type KLASS. ARGS contains
  * the arguments to the method in the format used by mono_runtime_invoke ().
  */
-void
+MonoObject*
 mono_gsharedvt_constrained_call (gpointer mp, MonoMethod *cmethod, MonoClass *klass, gpointer *args)
 {
 	MonoMethod *m;
 	gpointer this_arg;
 
 	m = constrained_gsharedvt_call_setup (mp, cmethod, klass, &this_arg);
-	mono_runtime_invoke (m, this_arg, args, NULL);
+	return mono_runtime_invoke (m, this_arg, args, NULL);
 }
 
 void

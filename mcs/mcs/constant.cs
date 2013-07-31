@@ -89,7 +89,7 @@ namespace Mono.CSharp {
 			if (this.type == type)
 				return this;
 
-			if (!Convert.ImplicitNumericConversionExists (this.type, type)) 
+			if (!Convert.ImplicitNumericConversionExists (this.type, type))
 				return null;
 
 			bool fail;			
@@ -2023,6 +2023,14 @@ namespace Mono.CSharp {
 		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
 			return null;
+		}
+
+		public override Constant ConvertImplicitly (TypeSpec type)
+		{
+			if (IsDefaultValue && type.BuiltinType == BuiltinTypeSpec.Type.Object)
+				return new NullConstant (type, loc);
+
+			return base.ConvertImplicitly (type);
 		}
 	}
 

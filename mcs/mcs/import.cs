@@ -335,10 +335,9 @@ namespace Mono.CSharp
 					//    IFoo<A<T>> foo;	// A<T> is definition in this case
 					// }
 					//
-					// TODO: Is full logic from CreateType needed here as well?
-					//
 					if (!IsMissingType (type) && type.IsGenericTypeDefinition) {
-						var targs = CreateGenericArguments (0, type.GetGenericArguments (), dtype);
+						var start_pos = spec.DeclaringType == null ? 0 : spec.DeclaringType.MemberDefinition.TypeParametersCount;
+						var targs = CreateGenericArguments (start_pos, type.GetGenericArguments (), dtype);
 						spec = spec.MakeGenericType (module, targs);
 					}
 				}
@@ -1949,7 +1948,7 @@ namespace Mono.CSharp
 
 		}
 
-		public static void Error_MissingDependency (IMemberContext ctx, List<TypeSpec> types, Location loc)
+		public static void Error_MissingDependency (IMemberContext ctx, List<MissingTypeSpecReference> missing, Location loc)
 		{
 			// 
 			// Report details about missing type and most likely cause of the problem.
@@ -1960,8 +1959,8 @@ namespace Mono.CSharp
 
 			var report = ctx.Module.Compiler.Report;
 
-			for (int i = 0; i < types.Count; ++i) {
-				var t = types [i];
+			for (int i = 0; i < missing.Count; ++i) {
+				var t = missing [i].Type;
 
 				//
 				// Report missing types only once
@@ -1970,6 +1969,10 @@ namespace Mono.CSharp
 					continue;
 
 				string name = t.GetSignatureForError ();
+
+				var caller = missing[i].Caller;
+				if (caller.Kind != MemberKind.MissingType)
+					report.SymbolRelatedToPreviousError (caller);
 
 				if (t.MemberDefinition.DeclaringAssembly == ctx.Module.DeclaringAssembly) {
 					report.Error (1683, loc,
