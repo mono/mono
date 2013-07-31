@@ -2493,13 +2493,13 @@ type_arguments
 type_declaration_name
 	: IDENTIFIER
 	  {
-		lexer.parsing_generic_declaration = true;
-	  }
-	  opt_type_parameter_list
-	  {
-		lexer.parsing_generic_declaration = false;
+//		lexer.parsing_generic_declaration = true;
+//	  }
+//	  opt_type_parameter_list
+//	  {
+//		lexer.parsing_generic_declaration = false;
 		var lt = (LocatedToken) $1;
-		$$ = CreateFullMemberName (lt, (TypeParameters)$3);
+		$$ = CreateFullMemberName (lt, null);
 	  }
 	;
 
@@ -2539,75 +2539,6 @@ indexer_declaration_name
 	  }
 */
 	;
-/*
-explicit_interface
-	: IDENTIFIER opt_type_argument_list DOT
-	  {
-		var lt = (LocatedToken) $1;
-		$$ = new CSharp.SimpleName (lt.Value, (TypeArguments) $2, lt.Location);
-		lbag.AddLocation ($$, GetLocation ($3));
-	  }
-//	| qualified_alias_member IDENTIFIER opt_type_argument_list DOT
-//	  {
-//		var lt1 = (LocatedToken) $1;
-//		var lt2 = (LocatedToken) $2;
-//
-//		$$ = new QualifiedAliasMember (lt1.Value, lt2.Value, (TypeArguments) $3, lt1.Location);
-//		lbag.AddLocation ($$, GetLocation ($4));
-//	  }
-	| explicit_interface IDENTIFIER opt_type_argument_list DOT
-	  {
-		var lt = (LocatedToken) $2;
-		$$ = new MemberAccess ((ATypeNameExpression) $1, lt.Value, (TypeArguments) $3, lt.Location);
-		lbag.AddLocation ($$, GetLocation ($4));
-	  }
-	;
-*/
-
-opt_type_parameter_list
-	: /* empty */
-	| OP_GENERICS_LT type_parameters OP_GENERICS_GT
-	  {
-		if (lang_version < LanguageVersion.ISO_2)
-			FeatureIsNotAvailable (GetLocation ($1), "generics");
-	  
-		$$ = $2;
-		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($3));
-	  }
-	;
-
-type_parameters
-	: type_parameter
-	  {
-		var tparams = new TypeParameters ();
-		tparams.Add ((TypeParameter)$1);
-		$$ = tparams;
-	  }
-	| type_parameters COMMA type_parameter
-	  {
-		var tparams = (TypeParameters) $1;
-		tparams.Add ((TypeParameter)$3);
-		$$ = tparams;
-		lbag.AddLocation ($3, GetLocation ($3));
-	  }	  
-	;
-
-type_parameter
-	: opt_attributes opt_type_parameter_variance IDENTIFIER
-	  {
-		var lt = (LocatedToken)$3;
-		$$ = new TypeParameter (new MemberName (lt.Value, lt.Location), (Attributes)$1, (Variance) $2);
-  	  }
-  	| error
-  	  {
-  	  	if (GetTokenName (yyToken) == "type")
-			report.Error (81, GetLocation ($1), "Type parameter declaration must be an identifier not a type");
-		else
-			Error_SyntaxError (yyToken);
-			
-  	  	$$ = new TypeParameter (MemberName.Null, null, Variance.None);
-  	  }
- 	;
 
 //
 // All types where void is allowed
@@ -4496,31 +4427,6 @@ type_parameter_constraint
 	| STRUCT
 	  {
 		$$ = new SpecialContraintExpr (SpecialConstraint.Struct, GetLocation ($1));
-	  }
-	;
-
-opt_type_parameter_variance
-	: /* empty */
-	  {
-		$$ = Variance.None;
-	  }
-	| type_parameter_variance
-	  {
-		if (lang_version <= LanguageVersion.V_3)
-			FeatureIsNotAvailable (lexer.Location, "generic type variance");
-		
-		$$ = $1;
-	  }
-	;
-
-type_parameter_variance
-	: OUT
-	  {
-		$$ = Variance.Covariant;
-	  }
-	| IN
-	  {
-		$$ = Variance.Contravariant;
 	  }
 	;
 
