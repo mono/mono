@@ -2062,8 +2062,10 @@ namespace Mono.CSharp {
 		{
 			switch (targetType.BuiltinType) {
 			case BuiltinTypeSpec.Type.Object:
-				// Type it as string cast
-				enc.Encode (rc.Module.Compiler.BuiltinTypes.String);
+				// Type null literal it as string cast
+				if (type.BuiltinType == BuiltinTypeSpec.Type.Object)
+					enc.Encode (rc.Module.Compiler.BuiltinTypes.String);
+
 				goto case BuiltinTypeSpec.Type.String;
 			case BuiltinTypeSpec.Type.String:
 			case BuiltinTypeSpec.Type.Type:
