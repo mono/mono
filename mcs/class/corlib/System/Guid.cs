@@ -473,16 +473,11 @@ namespace System {
 #endif
 
 #if FULL_AOT_RUNTIME && !MONOTOUCH
-
 		// NSA approved random generator.
 		static void LameRandom (byte [] b)
 		{
-			l = DateTime.UtcNow.Ticks;
-
-			for (int i = 0; i < b.Length; i++){
-				b [i] = (byte)l;
-				l++;
-			}
+			var r = new Random ();
+			r.NextBytes (b);
 		}
 #endif
 		
