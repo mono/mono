@@ -211,6 +211,12 @@ public class Tests
 		return 0;
 	}
 
+	public static int test_0_unbox_any_enum () {
+		IFaceUnbox iface = new ClassUnbox ();
+		AnEnum res = iface.Unbox<AnEnum, int> (AnEnum.One, 0, 1);
+		return res == AnEnum.Two ? 0 : 1;
+	}
+
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	static void ldfld_nongeneric<T> (GFoo<T>[] foo, int[] arr) {
 		arr [0] = foo [0].i;
@@ -913,7 +919,8 @@ public class Tests
 	}
 
 	enum AnEnum {
-		One
+		One,
+		Two
 	};
 
 	public static int test_0_constrained_tostring () {
