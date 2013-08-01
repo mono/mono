@@ -1,6 +1,7 @@
 ﻿//
 // Authors:
 // Jonathan Pobst (monkey@jpobst.com)
+// Francis Fisher (frankie@terrorise.me.uk)
 //
 // Copyright (C) 2009 Novell, Inc (http://www.novell.com) 
 //
@@ -33,6 +34,8 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		#region Constructors
 		public Axis (ChartArea chartArea, AxisName axisTypeName)
 		{
+			this.ChartArea = chartArea;
+			this.AxisName = axisTypeName;
 		}
 
 		public Axis ()
@@ -42,9 +45,9 @@ namespace System.Windows.Forms.DataVisualization.Charting
 
 		#region Public Properties
 		public AxisArrowStyle ArrowStyle { get; set; }
-		public virtual AxisName AxisName { get; }
+		public virtual AxisName AxisName { get; private set; }
 		public virtual double Crossing { get; set; }
-		public CustomLabelCollection CustomLabels { get; }
+		public CustomLabelCollection CustomLabels { get; private set; }
 		public AxisEnabled Enabled { get; set; }
 		public Color InterlacedColor { get; set; }
 		public double Interval { get; set; }
@@ -83,7 +86,7 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public virtual AxisScaleBreakStyle ScaleBreakStyle { get; set; }
 		public AxisScaleView ScaleView { get; set; }
 		public AxisScrollBar ScrollBar { get; set; }
-		public StripLinesCollection StripLines { get; }
+		public StripLinesCollection StripLines { get; private set; }
 		public TextOrientation TextOrientation { get; set; }
 		public string Title { get; set; }
 		public StringAlignment TitleAlignment { get; set; }
@@ -91,6 +94,8 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public Color TitleForeColor { get; set; }
 		public string ToolTip { get; set; }
 		#endregion
+
+		private ChartArea ChartArea; //FIXME what does this need to be used for?
 
 		#region Public Methods
 		public double GetPosition (double axisValue)

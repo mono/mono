@@ -29,5 +29,169 @@ namespace System.Windows.Forms.DataVisualization.Charting
 {
 	public class DataPointCollection : ChartElementCollection<DataPoint>
 	{
+		public DataPoint Add(
+			params double[] y
+			){
+			throw new NotImplementedException ();
+		}
+
+		public int AddXY(
+			double xValue,
+			double yValue
+			){
+			throw new NotImplementedException ();
+		}
+
+		public int AddXY(
+			Object xValue,
+			params Object[] yValue
+			){
+			throw new NotImplementedException ();
+		}
+
+		public int AddY(
+			double yValue
+			){
+			throw new NotImplementedException ();
+		}
+
+		public int AddY(
+			params Object[] yValue
+			){
+			throw new NotImplementedException ();
+		}
+
+		protected override void ClearItems(){
+			throw new NotImplementedException ();
+		}
+
+		public void DataBind(
+			System.Collections.IEnumerable dataSource,
+			string xField,
+			string yFields,
+			string otherFields
+			){
+			throw new NotImplementedException ();
+		}
+
+		public void DataBindXY(
+			System.Collections.IEnumerable xValue,
+			params System.Collections.IEnumerable[] yValues
+			){
+			throw new NotImplementedException ();
+		}
+
+		public void DataBindXY(
+			System.Collections.IEnumerable xValue,
+			string xField,
+			System.Collections.IEnumerable yValue,
+			string yFields
+			){
+			throw new NotImplementedException ();
+		}
+
+		public void DataBindY(
+			params System.Collections.IEnumerable[] yValue
+			){
+			throw new NotImplementedException ();
+		}
+
+		public void DataBindY(
+			System.Collections.IEnumerable yValue,
+			string yFields
+			){
+			throw new NotImplementedException ();
+		}
+
+		public System.Collections.Generic.IEnumerable<DataPoint> FindAllByValue(
+			double valueToFind
+			){
+			throw new NotImplementedException ();
+		}
+
+		public System.Collections.Generic.IEnumerable<DataPoint> FindAllByValue(
+			double valueToFind,
+			string useValue
+			){
+			throw new NotImplementedException ();
+		}
+
+		public System.Collections.Generic.IEnumerable<DataPoint> FindAllByValue(
+			double valueToFind,
+			string useValue,
+			int startIndex
+			){
+			throw new NotImplementedException ();
+		}
+
+		public DataPoint FindByValue(
+			double valueToFind
+			){
+			throw new NotImplementedException ();
+		}
+
+		public DataPoint FindByValue(
+			double valueToFind,
+			string useValue
+			){
+			return FindByValue( valueToFind, useValue, 0);
+		}
+
+		public DataPoint FindByValue(
+			double valueToFind,
+			string useValue,
+			int startIndex
+			){
+			throw new NotImplementedException ();
+		}
+
+		public DataPoint FindMaxByValue(){
+			throw new NotImplementedException ();
+		}
+
+		public DataPoint FindMaxByValue(
+			string useValue
+			){
+			return FindMaxByValue (useValue, 0);
+		}
+
+		public DataPoint FindMaxByValue(
+			string useValue,
+			int startIndex
+			){
+			throw new NotImplementedException ();
+		}
+
+		public DataPoint FindMinByValue(){
+			throw new NotImplementedException ();
+		}
+
+		public DataPoint FindMinByValue(
+			string useValue
+			){
+			return FindMinByValue (useValue, 0);
+		}
+
+		public DataPoint FindMinByValue(
+			string useValue,
+			int startIndex
+			){
+			throw new NotImplementedException ();
+		}
+
+		public void InsertXY(
+			int index,
+			Object xValue,
+			params Object[] yValue
+			){
+			throw new NotImplementedException ();
+		}
+
+		public void InsertY(
+			int index,
+			params Object[] yValue
+			){
+			throw new NotImplementedException ();
+		}
 	}
 }

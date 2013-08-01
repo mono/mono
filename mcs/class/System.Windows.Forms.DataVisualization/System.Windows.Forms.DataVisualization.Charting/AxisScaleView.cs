@@ -30,5 +30,54 @@ namespace System.Windows.Forms.DataVisualization.Charting
 {
 	public class AxisScaleView
 	{
+		public bool IsZoomed { get; private set;}
+		public double MinSize { get; set; }
+		public DateTimeIntervalType MinSizeType { get; set; }
+		public double Position { get; set; }
+		public double Size { get; set; }
+		public DateTimeIntervalType SizeType { get; set; }
+		public double SmallScrollMinSize { get; set; }
+		public DateTimeIntervalType SmallScrollMinSizeType { get; set; }
+		public double SmallScrollSize { get; set; }
+		public DateTimeIntervalType SmallScrollSizeType { get; set; }
+		public double ViewMaximum { get; private set; }
+		public double ViewMinimum { get; private set;}
+		public bool Zoomable { get; set; }
+
+
+		public void Scroll(DateTime newPosition){
+			throw new NotImplementedException();
+		}
+		public void Scroll(double newPosition){
+			throw new NotImplementedException();
+		}
+		public void Scroll(ScrollType scrollType){
+			throw new NotImplementedException();
+		}
+
+		public void Zoom(double viewStart,double viewEnd){
+			throw new NotImplementedException();
+		}
+		public void Zoom(
+			double viewPosition,
+			double viewSize,
+			DateTimeIntervalType viewSizeType){
+			throw new NotImplementedException();
+		}
+		public void Zoom(
+			double viewPosition,
+			double viewSize,
+			DateTimeIntervalType viewSizeType,
+			bool saveState){
+			throw new NotImplementedException();
+		}
+
+		public void ZoomReset(){
+			throw new NotImplementedException();
+		}
+
+		public void ZoomReset(int numberOfViews){
+			throw new NotImplementedException();
+		}
 	}
 }
