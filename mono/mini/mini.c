@@ -5157,6 +5157,7 @@ mini_get_addr_from_ftnptr (gpointer descr)
 }	
 
 static void runtime_invoke_info_free (gpointer value);
+static void seq_point_info_free (gpointer value);
  
 static void
 mini_create_jit_domain_info (MonoDomain *domain)
@@ -5169,7 +5170,7 @@ mini_create_jit_domain_info (MonoDomain *domain)
 	info->delegate_trampoline_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	info->llvm_vcall_trampoline_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	info->runtime_invoke_hash = g_hash_table_new_full (mono_aligned_addr_hash, NULL, NULL, runtime_invoke_info_free);
-	info->seq_points = g_hash_table_new (mono_aligned_addr_hash, NULL);
+	info->seq_points = g_hash_table_new_full (mono_aligned_addr_hash, NULL, NULL, seq_point_info_free);
 	info->arch_seq_points = g_hash_table_new (mono_aligned_addr_hash, NULL);
 
 	domain->runtime_info = info;
@@ -5198,6 +5199,19 @@ runtime_invoke_info_free (gpointer value)
 	if (info->dyn_call_info)
 		mono_arch_dyn_call_free (info->dyn_call_info);
 #endif
+	g_free (info);
+}
+
+static void seq_point_info_free (gpointer value)
+{
+	int i = 0;
+	MonoSeqPointInfo* info = (MonoSeqPointInfo*)value;
+	
+	for (i = 0; i < info->len; ++i) {
+		SeqPoint *sp = &info->seq_points [i];
+		g_free (sp->next);
+	}
+
 	g_free (info);
 }
 
