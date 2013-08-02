@@ -6,6 +6,8 @@
 #endif
 #endif
 
+#include "proctitle.h"
+
 /*
  * If the MONO_ENV_OPTIONS environment variable is set, it uses this as a
  * source of command line arguments that are passed to Mono before the
@@ -15,6 +17,11 @@ static int
 mono_main_with_options (int argc, char *argv [])
 {
 	const char *env_options = getenv ("MONO_ENV_OPTIONS");
+    int ret;
+
+    /* setup the arguments to support setting the process title */
+    argv = mono_proctitle_start(argc, argv);
+
 	if (env_options != NULL){
 		GPtrArray *array = g_ptr_array_new ();
 		GString *buffer = g_string_new ("");
@@ -88,7 +95,11 @@ mono_main_with_options (int argc, char *argv [])
 		g_ptr_array_free (array, TRUE);
 	}
 
-	return mono_main (argc, argv);
+	ret = mono_main (argc, argv);
+	
+	mono_proctitle_shutdown();
+	
+	return ret;
 }
 
 #ifdef HOST_WIN32
