@@ -1,5 +1,7 @@
 
 using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using NUnit.Framework;
 
 #if NET_2_0
@@ -105,6 +107,34 @@ namespace MonoTests.System
 				TimeZoneInfo.TransitionTime tt2 = TimeZoneInfo.TransitionTime.CreateFixedDateRule (dt, 2, 12);
 				Assert.IsFalse (tt2.Equals (tt1), "1!=2");
 				Assert.IsFalse (tt1.Equals (tt2), "2!=1");
+			}
+			
+			[Test]
+			public void Serialize_Deserialize_FloatingDateRule ()
+			{
+				TimeZoneInfo.TransitionTime floatingDateRule = TimeZoneInfo.TransitionTime.CreateFloatingDateRule(new DateTime(1, 1, 1, 1, 0, 0), 3, 5, DayOfWeek.Sunday);
+				MemoryStream stream = new MemoryStream ();
+				BinaryFormatter formatter = new BinaryFormatter ();
+				formatter.Serialize (stream, floatingDateRule);
+				stream.Position = 0;
+				TimeZoneInfo.TransitionTime deserialized = (TimeZoneInfo.TransitionTime) formatter.Deserialize (stream);
+				stream.Close ();
+				stream.Dispose ();
+				Assert.AreEqual (floatingDateRule, deserialized);
+			}
+
+			[Test]
+			public void Serialize_Deserialize_FixedDateRule ()
+			{
+				TimeZoneInfo.TransitionTime fixedDateRule = TimeZoneInfo.TransitionTime.CreateFixedDateRule(new DateTime(1, 1, 1, 1, 0, 0), 3, 12);
+				MemoryStream stream = new MemoryStream ();
+				BinaryFormatter formatter = new BinaryFormatter ();
+				formatter.Serialize (stream, fixedDateRule);
+				stream.Position = 0;
+				TimeZoneInfo.TransitionTime deserialized = (TimeZoneInfo.TransitionTime) formatter.Deserialize (stream);
+				stream.Close ();
+				stream.Dispose ();
+				Assert.AreEqual (fixedDateRule, deserialized);
 			}
 		}
 	}

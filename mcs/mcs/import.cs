@@ -2110,7 +2110,13 @@ namespace Mono.CSharp
 						if (get == null && set == null)
 							continue;
 
-						imported = importer.CreateProperty (p, declaringType, get, set);
+						try {
+							imported = importer.CreateProperty (p, declaringType, get, set);
+						} catch (Exception ex) {
+							throw new InternalErrorException (ex, "Could not import property `{0}' inside `{1}'",
+								p.Name, declaringType.GetSignatureForError ());
+						}
+
 						if (imported == null)
 							continue;
 

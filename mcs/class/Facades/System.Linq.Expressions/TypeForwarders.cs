@@ -54,7 +54,7 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Linq.Expressions.TypeBinaryExpression))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Linq.Expressions.UnaryExpression))]
 
-#if !MONOTOUCH
+#if !FULL_AOT_RUNTIME
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Linq.Expressions.BlockExpression))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Linq.Expressions.CatchBlock))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Linq.Expressions.DebugInfoExpression))]

@@ -241,6 +241,9 @@ namespace MonoTests.Mono.Unix
 		[Test]
 		public void readlinkat_char ()
 		{
+			if (!HaveReadlinkAt)
+				return;
+
 			foreach (string s in Targets) {
 				CreateLink (s);
 

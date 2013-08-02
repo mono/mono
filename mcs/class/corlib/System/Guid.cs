@@ -38,7 +38,7 @@
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
-#if FULL_AOT_RUNTIME
+#if MONOTOUCH
 using Crimson.CommonCrypto;
 #endif
 
@@ -48,7 +48,7 @@ namespace System {
 	[StructLayout (LayoutKind.Sequential)]
 	[ComVisible (true)]
 	public struct Guid : IFormattable, IComparable, IComparable<Guid>, IEquatable<Guid> {
-#if FULL_AOT_RUNTIME
+#if MONOTOUCH
 		static Guid () {
 			if (MonoTouchAOTHelper.FalseFlag) {
 				var comparer = new System.Collections.Generic.GenericComparer <Guid> ();
@@ -472,6 +472,15 @@ namespace System {
 		private static RandomNumberGenerator _fastRng;
 #endif
 
+#if FULL_AOT_RUNTIME && !MONOTOUCH
+		// NSA approved random generator.
+		static void LameRandom (byte [] b)
+		{
+			var r = new Random ();
+			r.NextBytes (b);
+		}
+#endif
+		
 		// generated as per section 3.4 of the specification
 		public static Guid NewGuid ()
 		{
@@ -483,8 +492,10 @@ namespace System {
 					_rng = RandomNumberGenerator.Create ();
 				_rng.GetBytes (b);
 			}
-#else
+#elif MONOTOUCH
 			Cryptor.GetRandom (b);
+#else
+			LameRandom (b);
 #endif
 
 			Guid res = new Guid (b);
