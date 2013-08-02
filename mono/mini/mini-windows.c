@@ -136,9 +136,58 @@ mono_runtime_shutdown_stat_profiler (void)
 }
 
 gboolean
-mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoNativeThreadId thread_id, MonoNativeThreadHandle thread_handle)
+mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo *thread_info)
 {
-	g_error ("Windows systems haven't been ported to support mono_thread_state_init_from_handle");
-	return FALSE;
+	MonoNativeThreadId thread_id;
+	MonoNativeThreadHandle thread_handle;
+	CONTEXT context;
+	HANDLE handle;
+	MonoJitTlsData *jit_tls;
+	
+	thread_id = mono_thread_info_get_tid(thread_info);
+	thread_handle = thread_info->native_handle;
+
+	g_assert (thread_id != GetCurrentThreadId ());
+	
+	handle = OpenThread (THREAD_ALL_ACCESS, FALSE, thread_id);
+	
+	tctx->valid = FALSE;
+	tctx->unwind_data [MONO_UNWIND_DATA_DOMAIN] = NULL;
+	tctx->unwind_data [MONO_UNWIND_DATA_LMF] = NULL;
+	tctx->unwind_data [MONO_UNWIND_DATA_JIT_TLS] = NULL;
+
+	context.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
+
+	if (!GetThreadContext (handle, &context)) {
+		g_assert_not_reached ();
+		CloseHandle(handle);
+		return FALSE;
+	}
+
+	CloseHandle(handle);
+
+	g_assert (context.ContextFlags & CONTEXT_INTEGER);
+	g_assert (context.ContextFlags & CONTEXT_CONTROL);
+
+	tctx->ctx.eax = context.Eax;
+	tctx->ctx.ebp = context.Ebp;
+	tctx->ctx.ebx = context.Ebx;
+	tctx->ctx.ecx = context.Ecx;
+	tctx->ctx.edi = context.Edi;
+	tctx->ctx.edx = context.Edx;
+	tctx->ctx.eip = context.Eip;
+	tctx->ctx.esi = context.Esi;
+	tctx->ctx.esp = context.Esp;
+
+	jit_tls = (MonoJitTlsData *)thread_info->current_jit_tls;
+
+	tctx->unwind_data [MONO_UNWIND_DATA_DOMAIN] = thread_info->current_domain;
+	tctx->unwind_data [MONO_UNWIND_DATA_JIT_TLS] = jit_tls;
+	tctx->unwind_data [MONO_UNWIND_DATA_LMF] = jit_tls ? jit_tls->lmf : NULL;
+	tctx->valid = TRUE;
+
+	mono_thread_info_current();
+
+	return TRUE;
 }
 

@@ -96,6 +96,12 @@ typedef struct {
 	MonoNativeThreadHandle native_handle; /* Valid on mach and android */
 	int thread_state;
 
+#ifdef TARGET_WIN32
+	/* used by mono_thread_state_init_from_handle, needs to be stored here as we can't access the TLS outside it's thread on windows */
+	MonoDomain *current_domain;
+	void *current_jit_tls;
+#endif
+
 	/*Tells if this thread was created by the runtime or not.*/
 	gboolean runtime_thread;
 
@@ -145,7 +151,7 @@ typedef struct {
 typedef struct {
 	void (*setup_async_callback) (MonoContext *ctx, void (*async_cb)(void *fun), gpointer user_data);
 	gboolean (*thread_state_init_from_sigctx) (MonoThreadUnwindState *state, void *sigctx);
-	gboolean (*thread_state_init_from_handle) (MonoThreadUnwindState *tctx, MonoNativeThreadId thread_id, MonoNativeThreadHandle thread_handle);
+	gboolean (*thread_state_init_from_handle) (MonoThreadUnwindState *tctx, MonoThreadInfo *thread_info);
 } MonoThreadInfoRuntimeCallbacks;
 
 /*

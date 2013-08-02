@@ -290,8 +290,10 @@ mono_gdb_render_native_backtraces (pid_t crashed_pid)
 }
 
 gboolean
-mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoNativeThreadId thread_id, MonoNativeThreadHandle thread_handle)
+mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo *thread_info)
 {
+	MonoNativeThreadId thread_id;
+	MonoNativeThreadHandle thread_handle;
 	kern_return_t ret;
 	mach_msg_type_number_t num_state;
 	thread_state_t state;
@@ -303,6 +305,9 @@ mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoNativeThrea
 #if defined (MONO_ARCH_ENABLE_MONO_LMF_VAR)
 	guint32 lmf_key;
 #endif
+	
+	thread_id = mono_thread_info_get_tid(thread_info);
+	thread_handle = thread_info->native_handle;
 
 	/*Zero enough state to make sure the caller doesn't confuse itself*/
 	tctx->valid = FALSE;
