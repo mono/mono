@@ -16,6 +16,7 @@ System.DirectoryServices/DirectoryServicesPermissionEntry.cs
 System.DirectoryServices/DirectoryServicesPermissionEntryCollection.cs
 System.DirectoryServices/DirectorySynchronization.cs
 System.DirectoryServices/DirectorySynchronizationOptions.cs
+System.DirectoryServices/DirectoryVirtualListViewContext.cs
 System.DirectoryServices/DSDescriptionAttribute.cs
 System.DirectoryServices/ExtendedDN.cs
 System.DirectoryServices/ExtendedRightAccessRule.cs
