@@ -101,7 +101,7 @@ package
 
 			return 0;
 		}
-/*
+
 		static function TestConst3 ():int
 		{
 			if (v1 != false)
@@ -120,19 +120,19 @@ package
 			//if (v5 != namespace)
 			//	return 5;
 
-			if (v6 != undefined)
-				return 6;
+//TODO:			if (v6 != undefined)
+//				return 6;
 
 			const v1:Boolean = true;
 			const v2:int = 3;
 			const v3:Number = -9;
 			const v4:String = "--";
-			const v5:* = 3;
-			const v6;
+// TODO:			const v5:* = 3;
+//			const v6;
 
 			return 0;
 		}
-*/
+
 		static function Test4 ():int
 		{
 			if (v11 != 0)
@@ -180,7 +180,7 @@ package
 
 			return 0;
 		}
-/*
+
 		static function TestConst5 ():int
 		{
 			if (!isNaN (v1))
@@ -201,7 +201,6 @@ package
 
 			return 0;
 		}
-*/
 
 		static function Test6 (): int
 		{
@@ -236,7 +235,6 @@ package
 			if (r != 0)
 				return r + 40;
 
-/*
 			r = TestConst3 ();
 			if (r != 0)
 				return r + 100;
@@ -244,7 +242,6 @@ package
 			r = TestConst5 ();
 			if (r != 0)
 				return r + 100;
-*/
 
 			trace ("ok");
 			return 0;

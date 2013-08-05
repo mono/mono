@@ -529,6 +529,7 @@ namespace Mono.CSharp {
 				: base (mc, Options.FieldInitializerScope | Options.ConstructorScope)
 			{
 				this.ctor_block = constructorContext.CurrentBlock.Explicit;
+				this.CurrentBlock = ctor_block;
 			}
 
 			public override ExplicitBlock ConstructorBlock {
