@@ -15,6 +15,7 @@ System.DirectoryServices/DirectoryServicesPermissionAttribute.cs
 System.DirectoryServices/DirectoryServicesPermissionEntry.cs
 System.DirectoryServices/DirectoryServicesPermissionEntryCollection.cs
 System.DirectoryServices/DSDescriptionAttribute.cs
+System.DirectoryServices/ListChildrenAccessRule.cs
 System.DirectoryServices/PasswordEncodingMethod.cs
 System.DirectoryServices/PropertyAccess.cs
 System.DirectoryServices/PropertyAccessRule.cs
