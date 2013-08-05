@@ -1378,6 +1378,8 @@ namespace Mono.CSharp {
 			rc.Report.Error (1750, Location,
 				"Optional parameter expression of type `{0}' cannot be converted to parameter type `{1}'",
 				type.GetSignatureForError (), parameter_type.GetSignatureForError ());
+
+			this.expr = ErrorExpression.Instance;
 		}
 		
 		public override object Accept (StructuralVisitor visitor)
