@@ -92,6 +92,7 @@ System.DirectoryServices.ActiveDirectory/ReplicationOperation.cs
 System.DirectoryServices.ActiveDirectory/ReplicationOperationCollection.cs
 System.DirectoryServices.ActiveDirectory/ReplicationOperationInformation.cs
 System.DirectoryServices.ActiveDirectory/ReplicationOperationType.cs
+System.DirectoryServices.ActiveDirectory/ReplicationSecurityLevel.cs
 System.DirectoryServices.ActiveDirectory/ReplicationSpan.cs
 System.DirectoryServices.ActiveDirectory/SchemaClassType.cs
 System.DirectoryServices.ActiveDirectory/SecurityMasks.cs
