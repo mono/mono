@@ -94,6 +94,7 @@ System.DirectoryServices.ActiveDirectory/ReplicationOperationInformation.cs
 System.DirectoryServices.ActiveDirectory/ReplicationOperationType.cs
 System.DirectoryServices.ActiveDirectory/ReplicationSpan.cs
 System.DirectoryServices.ActiveDirectory/SchemaClassType.cs
+System.DirectoryServices.ActiveDirectory/SecurityMasks.cs
 System.DirectoryServices.ActiveDirectory/SyncFromAllServersErrorCategory.cs
 System.DirectoryServices.ActiveDirectory/SyncFromAllServersErrorInformation.cs
 System.DirectoryServices.ActiveDirectory/SyncFromAllServersEvent.cs
