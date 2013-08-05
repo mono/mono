@@ -59,22 +59,22 @@ namespace System.Diagnostics
 		{
 			switch (eventType) {
 			case TraceEventType.Critical:
-				return (Level & SourceLevels.Critical) != 0;
+				return (Level & SourceLevels.Critical) == SourceLevels.Critical;
 			case TraceEventType.Error:
-				return (Level & SourceLevels.Error) != 0;
+				return (Level & SourceLevels.Error) == SourceLevels.Error;
 			case TraceEventType.Warning:
-				return (Level & SourceLevels.Warning) != 0;
+				return (Level & SourceLevels.Warning) == SourceLevels.Warning;
 			case TraceEventType.Information:
-				return (Level & SourceLevels.Information) != 0;
+				return (Level & SourceLevels.Information) == SourceLevels.Information;
 			case TraceEventType.Verbose:
-				return (Level & SourceLevels.Verbose) != 0;
+				return (Level & SourceLevels.Verbose) == SourceLevels.Verbose;
 			case TraceEventType.Start:
 			case TraceEventType.Stop:
 			case TraceEventType.Suspend:
 			case TraceEventType.Resume:
 			case TraceEventType.Transfer:
 			default:
-				return (Level & SourceLevels.ActivityTracing) != 0;
+				return (Level & SourceLevels.ActivityTracing) == SourceLevels.ActivityTracing;
 			}
 		}
 

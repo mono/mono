@@ -75,29 +75,25 @@ namespace System.Net {
 				throw new HttpListenerException (400, "Invalid path.");
 
 			// listens on all the interfaces if host name cannot be parsed by IPAddress.
-			EndPointListener epl = GetEPListener (lp.Host, lp.Port, listener, lp.Secure);
+			EndPointListener epl = GetEPListener (lp.Address ?? IPAddress.Any, lp.Port, listener, lp.Secure);
 			epl.AddPrefix (lp, listener);
 		}
 
-		static EndPointListener GetEPListener (string host, int port, HttpListener listener, bool secure)
+		static EndPointListener GetEPListener (IPAddress address, int port, HttpListener listener, bool secure)
 		{
-			IPAddress addr;
-			if (IPAddress.TryParse(host, out addr) == false)
-				addr = IPAddress.Any;
-
 			Hashtable p = null;  // Dictionary<int, EndPointListener>
-			if (ip_to_endpoints.ContainsKey (addr)) {
-				p = (Hashtable) ip_to_endpoints [addr];
+			if (ip_to_endpoints.ContainsKey (address)) {
+				p = (Hashtable) ip_to_endpoints [address];
 			} else {
 				p = new Hashtable ();
-				ip_to_endpoints [addr] = p;
+				ip_to_endpoints [address] = p;
 			}
 
 			EndPointListener epl = null;
 			if (p.ContainsKey (port)) {
 				epl = (EndPointListener) p [port];
 			} else {
-				epl = new EndPointListener (addr, port, secure);
+				epl = new EndPointListener (address, port, secure);
 				p [port] = epl;
 			}
 
@@ -143,7 +139,7 @@ namespace System.Net {
 			if (lp.Path.IndexOf ("//", StringComparison.Ordinal) != -1)
 				return;
 
-			EndPointListener epl = GetEPListener (lp.Host, lp.Port, listener, lp.Secure);
+			EndPointListener epl = GetEPListener (lp.Address ?? IPAddress.Any, lp.Port, listener, lp.Secure);
 			epl.RemovePrefix (lp, listener);
 		}
 	}

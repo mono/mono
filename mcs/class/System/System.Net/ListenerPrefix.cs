@@ -37,7 +37,7 @@ namespace System.Net {
 		ushort port;
 		string path;
 		bool secure;
-		IPAddress [] addresses;
+		IPAddress address;
 		public HttpListener Listener;
 
 		public ListenerPrefix (string prefix)
@@ -51,10 +51,10 @@ namespace System.Net {
 			return original;
 		}
 
-		public IPAddress [] Addresses {
-			get { return addresses; }
-			set { addresses = value; }
+		public IPAddress Address {
+			get { return address; }
 		}
+
 		public bool Secure {
 			get { return secure; }
 		}
@@ -111,6 +111,10 @@ namespace System.Net {
 				host = uri.Substring (start_host, root - start_host);
 				path = uri.Substring (root);
 			}
+
+			if (IPAddress.TryParse(host, out address))
+				host = "*"; // not sure if * or + is more appropriate to match with MS.NET, but both are better than host header filtering to IP
+
 			if (path.Length != 1)
 				path = path.Substring (0, path.Length - 1);
 		}
