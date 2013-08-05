@@ -66,6 +66,7 @@ System.DirectoryServices.ActiveDirectory/DomainCollection.cs
 System.DirectoryServices.ActiveDirectory/DomainController.cs
 System.DirectoryServices.ActiveDirectory/DomainControllerCollection.cs
 System.DirectoryServices.ActiveDirectory/DomainMode.cs
+System.DirectoryServices.ActiveDirectory/DomainCollisionOptions.cs
 System.DirectoryServices.ActiveDirectory/Forest.cs
 System.DirectoryServices.ActiveDirectory/ForestMode.cs
 System.DirectoryServices.ActiveDirectory/ForestTrustDomainInformation.cs
