@@ -9,6 +9,7 @@ System.DirectoryServices/AuthenticationTypes.cs
 System.DirectoryServices/DirectoryEntries.cs
 System.DirectoryServices/DirectoryEntry.cs
 System.DirectoryServices/DirectorySearcher.cs
+System.DirectoryServices/DirectoryServicesCOMException.cs
 System.DirectoryServices/DirectoryServicesPermission.cs
 System.DirectoryServices/DirectoryServicesPermissionAccess.cs
 System.DirectoryServices/DirectoryServicesPermissionAttribute.cs
