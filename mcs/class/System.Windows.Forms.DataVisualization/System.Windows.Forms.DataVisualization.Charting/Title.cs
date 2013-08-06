@@ -28,24 +28,23 @@ namespace System.Windows.Forms.DataVisualization.Charting
 {
 	public class Title : ChartNamedElement, IDisposable
 	{
-		public Title(){
+		public Title ()
+		{
+	       	}
+		public Title (string text)
+		{ 
+			this.Text = text; 
 		}
-		public Title(string text){
-			this.Text = text;
-		}
-		public Title(
-			string text,
-			Docking docking
-		){
+		public Title (string text, Docking docking)
+		{
 			this.Text = text;
 			this.Docking = docking;
 		}
-		public Title(
-			string text,
-			Docking docking,
-			Font font,
-			Color color
-			){
+		public Title (string text,
+				Docking docking,
+				Font font,
+				Color color)
+		{
 			this.Text = text;
 			this.Docking = docking;
 			this.Font = font;
@@ -80,7 +79,8 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public string ToolTip { get; set; }
 		public virtual bool Visible { get; set; }
 
-		protected override void Dispose(bool disposing){
+		protected override void Dispose (bool disposing)
+		{
 			throw new NotImplementedException ();
 		}
 	}

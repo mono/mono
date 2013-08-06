@@ -57,31 +57,38 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		protected virtual string NamePrefix { get; private set;}
 
 		
-		public virtual T FindByName(string name){
+		public virtual T FindByName (string name)
+		{
 			throw new NotImplementedException();
 		}
 
-		public int IndexOf(string name){
+		public int IndexOf (string name)
+		{
 			throw new NotImplementedException();
 		}
 
-		protected override void InsertItem(int index,T item){
+		protected override void InsertItem (int index,T item)
+		{
 			throw new NotImplementedException();
 		}
 
-		public virtual bool IsUniqueName(string name) {
+		public virtual bool IsUniqueName (string name)
+		{
 			throw new NotImplementedException();
 		}
 
-		public virtual string NextUniqueName(){
+		public virtual string NextUniqueName ()
+		{
 			throw new NotImplementedException();
 		}
 
-		protected override void RemoveItem(int index){
+		protected override void RemoveItem (int index)
+		{
 			throw new NotImplementedException();
 		}
 
-		protected override void SetItem(int index,T item){
+		protected override void SetItem (int index,T item)
+		{
 			throw new NotImplementedException();
 		}
 	}

@@ -39,12 +39,12 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public Color LineColor { get; set; }
 		public double Size { get; set; }
 
-		public void Dispose()
+		public void Dispose ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		protected virtual void Dispose(	bool disposing )
+		protected virtual void Dispose (bool disposing )
 		{
 			throw new NotImplementedException ();
 		}

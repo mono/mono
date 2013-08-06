@@ -29,7 +29,8 @@ namespace System.Windows.Forms.DataVisualization.Charting
 {
 	public class PolylineAnnotation : Annotation
 	{
-		public PolylineAnnotation(){
+		public PolylineAnnotation ()
+		{
 			GraphicsPathPoints = new AnnotationPathPointCollection ();
 		}
 		public override ContentAlignment Alignment { get; set; }

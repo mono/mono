@@ -29,7 +29,7 @@ namespace System.Windows.Forms.DataVisualization.Charting
 {
 	public abstract class Annotation : ChartNamedElement
 	{
-		protected Annotation()
+		protected Annotation ()
 		{
 		}
 

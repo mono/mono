@@ -28,8 +28,11 @@ namespace System.Windows.Forms.DataVisualization.Charting
 {
 	public class Legend : ChartNamedElement
 	{
-		public Legend(){}
-		public Legend(string name){
+		public Legend ()
+		{
+		}
+		public Legend (string name)
+		{
 			Name = name;
 		}
 

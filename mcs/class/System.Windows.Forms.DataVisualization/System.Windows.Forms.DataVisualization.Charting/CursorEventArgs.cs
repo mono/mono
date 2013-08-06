@@ -26,19 +26,14 @@ namespace System.Windows.Forms.DataVisualization.Charting
 {
 	public class CursorEventArgs : EventArgs
 	{
-		public CursorEventArgs(	ChartArea chartArea,
-		                       Axis axis,
-		                       double newPosition)
+		public CursorEventArgs(	ChartArea chartArea, Axis axis, double newPosition)
 		{
 			this.ChartArea = chartArea;
 			this.Axis = axis;
 			this.NewPosition = newPosition;
 		}
 
-		public CursorEventArgs(ChartArea chartArea,
-		                Axis axis,
-		                double newSelectionStart,
-		                double newSelectionEnd)
+		public CursorEventArgs(ChartArea chartArea, Axis axis, double newSelectionStart, double newSelectionEnd)
 		{
 			this.ChartArea = chartArea;
 			this.Axis = axis;

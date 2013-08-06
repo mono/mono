@@ -30,51 +30,39 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public bool IsStartFromFirst { get; set; }
 		public StatisticFormula Statistics { get; private set;}
 
-		public void CopySeriesValues(string inputSeries,string outputSeries){
+		public void CopySeriesValues (string inputSeries,string outputSeries)
+		{
 			throw new NotImplementedException();
 		}
 
-		public void FinancialFormula(FinancialFormula formulaName,string inputSeries){
+		public void FinancialFormula (FinancialFormula formulaName,string inputSeries)
+		{
 			throw new NotImplementedException();
 		}
 
-		public void FinancialFormula(FinancialFormula formulaName,Series inputSeries){
+		public void FinancialFormula (FinancialFormula formulaName,Series inputSeries)
+		{
 			throw new NotImplementedException();
 		}
 
-		public void FinancialFormula(
-			FinancialFormula formulaName,
-			string inputSeries,
-			string outputSeries
-			){
+		public void FinancialFormula (FinancialFormula formulaName, string inputSeries, string outputSeries) 
+		{
 			throw new NotImplementedException();
 		}
 
-		public void FinancialFormula(
-			FinancialFormula formulaName,
-			Series inputSeries,
-			Series outputSeries
-			){
+		public void FinancialFormula(FinancialFormula formulaName, Series inputSeries, Series outputSeries)
+		{
 			throw new NotImplementedException();
 		}
 
-		public void FinancialFormula(
-			FinancialFormula formulaName,
-			string parameters,
-			string inputSeries,
-			string outputSeries
-			){
+		public void FinancialFormula(FinancialFormula formulaName, string parameters, string inputSeries, string outputSeries)
+		{
 			throw new NotImplementedException();
 		}
 
-		public void FinancialFormula(
-			FinancialFormula formulaName,
-			string parameters,
-			Series inputSeries,
-			Series outputSeries
-			){
+		public void FinancialFormula(FinancialFormula formulaName, string parameters, Series inputSeries, Series outputSeries)
+		{
 			throw new NotImplementedException();
 		}
-
 	}
 }

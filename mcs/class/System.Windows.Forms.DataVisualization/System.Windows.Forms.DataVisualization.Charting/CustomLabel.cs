@@ -27,29 +27,19 @@ namespace System.Windows.Forms.DataVisualization.Charting
 {
 	public class CustomLabel : ChartNamedElement
 	{
-		public CustomLabel() {
+		public CustomLabel ()
+		{
 		}
-		public CustomLabel(
-			double fromPosition,
-			double toPosition,
-			string text,
-			int labelRow,
-			LabelMarkStyle markStyle
-			){
+		public CustomLabel (double fromPosition, double toPosition, string text, int labelRow, LabelMarkStyle markStyle)
+		{
 			FromPosition = fromPosition;
 			ToPosition = toPosition;
 			Text = text;
 			RowIndex = labelRow;
 			LabelMark = markStyle;
 		}
-		public CustomLabel(
-			double fromPosition,
-			double toPosition,
-			string text,
-			int labelRow,
-			LabelMarkStyle markStyle,
-			GridTickTypes gridTick
-			){
+		public CustomLabel (double fromPosition, double toPosition, string text, int labelRow, LabelMarkStyle markStyle, GridTickTypes gridTick)
+		{
 			FromPosition = fromPosition;
 			ToPosition = toPosition;
 			Text = text;
@@ -72,7 +62,8 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public string ToolTip { get; set; }
 		public double ToPosition { get; set; }
 
-		public CustomLabel Clone(){
+		public CustomLabel Clone ()
+		{
 			throw new NotImplementedException ();
 		}
 	}

@@ -135,143 +135,109 @@ namespace System.Windows.Forms.DataVisualization.Charting
 
 		#region Public Methods
 
-		public void AlignDataPointsByAxisLabel(){
+		public void AlignDataPointsByAxisLabel ()
+		{
 			throw new NotImplementedException ();
 		}
-		public void AlignDataPointsByAxisLabel(
-			PointSortOrder sortingOrder
-			){
+		public void AlignDataPointsByAxisLabel (PointSortOrder sortingOrder)
+		{
 			throw new NotImplementedException ();
 		}
-		public void AlignDataPointsByAxisLabel(
-			string series
-			){
+		public void AlignDataPointsByAxisLabel(string series)
+		{
 			throw new NotImplementedException ();
 		}
-		public void AlignDataPointsByAxisLabel(
-			string series,
-			PointSortOrder sortingOrder
-			){
+		public void AlignDataPointsByAxisLabel (string series, PointSortOrder sortingOrder)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public void ApplyPaletteColors(){
+		public void ApplyPaletteColors ()
+		{
 			throw new NotImplementedException ();
 		}
 
-		public void BeginInit(){
+		public void BeginInit ()
+		{
 			throw new NotImplementedException ();
 		}
 
-		public void DataBind(){
+		public void DataBind ()
+		{
 			throw new NotImplementedException ();
 		}
 
-		public void DataBindCrossTable(
-			System.Collections.IEnumerable dataSource,
-			string seriesGroupByField,
-			string xField,
-			string yFields,
-			string otherFields
-			){
+		public void DataBindCrossTable (System.Collections.IEnumerable dataSource, string seriesGroupByField, string xField, string yFields, string otherFields)
+		{
 			throw new NotImplementedException ();
 		}
-		public void DataBindCrossTable(
-			System.Collections.IEnumerable dataSource,
-			string seriesGroupByField,
-			string xField,
-			string yFields,
-			string otherFields,
-			PointSortOrder sortingOrder
-			){
+		public void DataBindCrossTable (System.Collections.IEnumerable dataSource, string seriesGroupByField, string xField, string yFields, string otherFields, PointSortOrder sortingOrder)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public void DataBindTable(
-			System.Collections.IEnumerable dataSource
-			){
+		public void DataBindTable (System.Collections.IEnumerable dataSource)
+		{
 			throw new NotImplementedException ();
 		}
-		public void DataBindTable(
-			System.Collections.IEnumerable dataSource,
-			string xField
-			){
+		public void DataBindTable (System.Collections.IEnumerable dataSource, string xField)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public void EndInit(){
+		public void EndInit ()
+		{
 			throw new NotImplementedException ();
 		}
 
-		public HitTestResult HitTest(
-			int x,
-			int y
-			){
+		public HitTestResult HitTest (int x, int y)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public HitTestResult HitTest(
-			int x,
-			int y,
-			bool ignoreTransparent
-			){
+		public HitTestResult HitTest (int x, int y, bool ignoreTransparent)
+		{
 			throw new NotImplementedException ();
 		}
-		public HitTestResult HitTest(
-			int x,
-			int y,
-			ChartElementType requestedElement
-			){
+		public HitTestResult HitTest (int x, int y, ChartElementType requestedElement)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public HitTestResult[] HitTest(
-			int x,
-			int y,
-			bool ignoreTransparent,
-			params ChartElementType[] requestedElement
-			){
+		public HitTestResult[] HitTest (int x, int y, bool ignoreTransparent, params ChartElementType[] requestedElement)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public void LoadTemplate(
-			Stream stream
-			){
+		public void LoadTemplate (Stream stream)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public void LoadTemplate(
-			string name
-			){
+		public void LoadTemplate (string name)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public void ResetAutoValues(){
+		public void ResetAutoValues ()
+		{
 			throw new NotImplementedException ();
 		}
 
-		public void SaveImage(
-			Stream imageStream,
-			ImageFormat format
-			){
+		public void SaveImage (Stream imageStream, ImageFormat format)
+		{
 			throw new NotImplementedException ();
 		}
-		public void SaveImage(
-			Stream imageStream,
-			ChartImageFormat format
-			){
+		public void SaveImage (Stream imageStream, ChartImageFormat format)
+		{
 			throw new NotImplementedException ();
 		}
-		public void SaveImage(
-			string imageFileName,
-			ImageFormat format
-			){
+		public void SaveImage (string imageFileName, ImageFormat format)
+		{
 			throw new NotImplementedException ();
 		}
-		public void SaveImage(
-			string imageFileName,
-			ChartImageFormat format
-			){
+		public void SaveImage (string imageFileName, ChartImageFormat format)
+		{
 			throw new NotImplementedException ();
 		}
 		#endregion
@@ -279,9 +245,8 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		#region Protected Methods
 
 
-		protected override void Dispose(
-			bool disposing
-			){
+		protected override void Dispose (bool disposing)
+		{
 		}
 
 

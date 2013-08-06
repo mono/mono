@@ -28,10 +28,12 @@ namespace System.Windows.Forms.DataVisualization.Charting
 {
 	public class LegendItem : ChartNamedElement
 	{
-		public LegendItem(){ 
+		public LegendItem ()
+		{
 			Cells = new LegendCellCollection ();
 		}
-		public LegendItem(string name,Color color,string image){
+		public LegendItem (string name,Color color,string image)
+		{
 			this.Name = name;
 			this.Color = color;
 			this.Image = image;

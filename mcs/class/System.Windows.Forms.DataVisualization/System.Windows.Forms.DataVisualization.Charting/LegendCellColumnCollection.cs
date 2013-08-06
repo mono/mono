@@ -29,7 +29,8 @@ namespace System.Windows.Forms.DataVisualization.Charting
 	public class LegendCellColumnCollection : ChartNamedElementCollection<LegendCellColumn>
 	{
 
-		protected override void Dispose(bool disposing){
+		protected override void Dispose (bool disposing)
+		{
 			throw new NotImplementedException();
 		}
 

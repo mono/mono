@@ -29,7 +29,9 @@ namespace System.Windows.Forms.DataVisualization.Charting
 {
 	public class AnnotationPositionChangingEventArgs : EventArgs
 	{
-		public AnnotationPositionChangingEventArgs() {}
+		public AnnotationPositionChangingEventArgs ()
+		{
+		}
 
 		public Annotation Annotation {get;set;}
 

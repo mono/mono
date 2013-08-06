@@ -28,7 +28,9 @@ namespace System.Windows.Forms.DataVisualization.Charting
 {
 	public class Cursor : IDisposable
 	{
-		public Cursor(){}
+		public Cursor ()
+		{
+		}
 
 		public bool AutoScroll { get; set; }
 		public AxisType AxisType { get; set; }
@@ -47,29 +49,28 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public double SelectionStart { get; set; }
 
 
-		public void Dispose(){
+		public void Dispose ()
+		{
 			throw new NotImplementedException ();
 		}
-		protected virtual void Dispose (bool disposing){
+		protected virtual void Dispose (bool disposing)
+		{
 			throw new NotImplementedException ();
 		}
-		public void SetCursorPixelPosition(PointF point,bool roundToBoundary){
+		public void SetCursorPixelPosition (PointF point,bool roundToBoundary)
+		{
 			throw new NotImplementedException ();
 		}
-		public void SetCursorPosition(double newPosition){
+		public void SetCursorPosition (double newPosition)
+		{
 			throw new NotImplementedException ();
 		}
-		public void SetSelectionPixelPosition(
-			PointF startPoint,
-			PointF endPoint,
-			bool roundToBoundary
-			){
+		public void SetSelectionPixelPosition (PointF startPoint, PointF endPoint, bool roundToBoundary)
+		{
 			throw new NotImplementedException ();
 		}
-		public void SetSelectionPosition(
-			double newStart,
-			double newEnd
-			){
+		public void SetSelectionPosition (double newStart, double newEnd)
+		{
 			throw new NotImplementedException ();
 		}
 	}

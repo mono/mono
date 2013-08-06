@@ -1,6 +1,7 @@
 ﻿//
 // Authors:
 // Jonathan Pobst (monkey@jpobst.com)
+// Francis Fisher (frankie@terrorise.me.uk)
 //
 // Copyright (C) 2009 Novell, Inc (http://www.novell.com) 
 //
@@ -45,38 +46,39 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public bool Zoomable { get; set; }
 
 
-		public void Scroll(DateTime newPosition){
+		public void Scroll (DateTime newPosition)
+		{
 			throw new NotImplementedException();
 		}
-		public void Scroll(double newPosition){
+		public void Scroll (double newPosition)
+		{
 			throw new NotImplementedException();
 		}
-		public void Scroll(ScrollType scrollType){
-			throw new NotImplementedException();
-		}
-
-		public void Zoom(double viewStart,double viewEnd){
-			throw new NotImplementedException();
-		}
-		public void Zoom(
-			double viewPosition,
-			double viewSize,
-			DateTimeIntervalType viewSizeType){
-			throw new NotImplementedException();
-		}
-		public void Zoom(
-			double viewPosition,
-			double viewSize,
-			DateTimeIntervalType viewSizeType,
-			bool saveState){
+		public void Scroll (ScrollType scrollType)
+		{
 			throw new NotImplementedException();
 		}
 
-		public void ZoomReset(){
+		public void Zoom (double viewStart,double viewEnd)
+		{
+			throw new NotImplementedException();
+		}
+		public void Zoom (double viewPosition, double viewSize, DateTimeIntervalType viewSizeType)
+		{
+			throw new NotImplementedException();
+		}
+		public void Zoom (double viewPosition, double viewSize, DateTimeIntervalType viewSizeType, bool saveState)
+		{
 			throw new NotImplementedException();
 		}
 
-		public void ZoomReset(int numberOfViews){
+		public void ZoomReset ()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void ZoomReset (int numberOfViews)
+		{
 			throw new NotImplementedException();
 		}
 	}

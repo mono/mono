@@ -27,7 +27,8 @@ namespace System.Windows.Forms.DataVisualization.Charting
 {
 	public class AnnotationGroup : Annotation
 	{
-		public AnnotationGroup(){
+		public AnnotationGroup ()
+		{
 			Annotations = new AnnotationCollection ();
 		}
 

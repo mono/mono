@@ -28,23 +28,17 @@ namespace System.Windows.Forms.DataVisualization.Charting
 {
 	public class LegendCell : ChartNamedElement
 	{
-		public LegendCell(){
+		public LegendCell ()
+		{
 		}
-
-		public LegendCell(
-			string text
-			){
+		public LegendCell (string text)
+		{
 		}
-		public LegendCell(
-			LegendCellType cellType,
-			string text
-			){
+		public LegendCell (LegendCellType cellType, string text)
+		{
 		}
-		public LegendCell(
-			LegendCellType cellType,
-			string text,
-			ContentAlignment alignment
-			){
+		public LegendCell (LegendCellType cellType, string text, ContentAlignment alignment)
+		{
 		}
 
 		public virtual ContentAlignment Alignment { get; set; }

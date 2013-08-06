@@ -67,20 +67,25 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public virtual bool Visible { get; set; }
 
 
-		protected override void Dispose(bool disposing){
+		protected override void Dispose (bool disposing)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public float GetSeriesDepth( Series series ){
+		public float GetSeriesDepth (Series series )
+		{
 			throw new NotImplementedException();
 		}
-		public float GetSeriesZPosition(Series series){
+		public float GetSeriesZPosition (Series series)
+		{
 			throw new NotImplementedException ();
 		}
-		public void RecalculateAxesScale(){
+		public void RecalculateAxesScale ()
+		{
 			throw new NotImplementedException();
 		}
-		public void TransformPoints(Point3D[] points){
+		public void TransformPoints (Point3D[] points)
+		{
 			throw new NotImplementedException ();
 		}
 	}

@@ -36,10 +36,12 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		{
 			Points = new DataPointCollection ();
 		}
-		public Series(string name){
+		public Series (string name)
+		{
 			Name = name;
 		}
-		public Series(string name,int yValues){
+		public Series (string name,int yValues)
+		{
 			Name = name;
 			YValuesPerPoint = yValues;
 		}
@@ -69,17 +71,21 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public int YValuesPerPoint { get; set; }
 
 
-		protected override void Dispose(bool disposing){
+		protected override void Dispose (bool disposing)
+		{
 			throw new NotImplementedException();
 		}
 
-		public void Sort(IComparer<DataPoint> comparer){
+		public void Sort (IComparer<DataPoint> comparer)
+		{
 			throw new NotImplementedException();
 		}
-		public void Sort(PointSortOrder pointSortOrder){
+		public void Sort (PointSortOrder pointSortOrder)
+		{
 			throw new NotImplementedException ();
 		}
-		public void Sort(PointSortOrder pointSortOrder,string sortBy){
+		public void Sort (PointSortOrder pointSortOrder,string sortBy)
+		{
 			throw new NotImplementedException();
 		}
 	}

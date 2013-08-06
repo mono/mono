@@ -89,25 +89,32 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public string ToolTip { get; set; }
 
 		#region Public methods
-		public virtual void DeleteCustomProperty(string name){
+		public virtual void DeleteCustomProperty (string name)
+		{
 			throw new NotImplementedException ();
 		}
-		public virtual string GetCustomProperty(string name){
+		public virtual string GetCustomProperty(string name)
+		{
 			throw new NotImplementedException ();
 		}
-		public virtual bool IsCustomPropertySet(string name){
+		public virtual bool IsCustomPropertySet(string name)
+		{
 			throw new NotImplementedException ();
 		}
-		public void ResetIsValueShownAsLabel(){
+		public void ResetIsValueShownAsLabel ()
+		{
 			throw new NotImplementedException ();
 		}
-		public void ResetIsVisibleInLegend(){
+		public void ResetIsVisibleInLegend ()
+		{
 			throw new NotImplementedException ();
 		}
-		public virtual void SetCustomProperty(string name,string propertyValue){
+		public virtual void SetCustomProperty (string name,string propertyValue)
+		{
 			throw new NotImplementedException ();
 		}
-		public virtual void SetDefault(bool clearAll){
+		public virtual void SetDefault (bool clearAll)
+		{
 			throw new NotImplementedException ();
 		}
 
