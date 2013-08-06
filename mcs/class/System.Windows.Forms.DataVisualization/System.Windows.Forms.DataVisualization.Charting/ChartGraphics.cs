@@ -41,5 +41,41 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		#region Public Properties
 		public Graphics Graphics { get; set; }
 		#endregion
+
+		protected override void Dispose(bool disposing){
+			throw new NotImplementedException ();
+		}
+
+		public PointF GetAbsolutePoint(PointF point){
+			throw new NotImplementedException ();
+		}
+
+		public RectangleF GetAbsoluteRectangle(RectangleF rectangle){
+			throw new NotImplementedException ();
+		}
+
+		public SizeF GetAbsoluteSize(SizeF size){
+			throw new NotImplementedException ();
+		}
+
+		public double GetPositionFromAxis(
+			string chartAreaName,
+			AxisName axis,
+			double axisValue
+			){
+			throw new NotImplementedException ();
+		}
+
+		public PointF GetRelativePoint(PointF point){
+			throw new NotImplementedException ();
+		}
+
+		public RectangleF GetRelativeRectangle(	RectangleF rectangle){
+			throw new NotImplementedException ();
+		}
+
+		public SizeF GetRelativeSize(SizeF size){
+			throw new NotImplementedException ();
+		}
 	}
 }
