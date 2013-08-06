@@ -6051,7 +6051,7 @@ void MONO_NOINLINE __jit_debug_register_code(void);
 
 void MONO_NOINLINE __jit_debug_register_code(void) { };
 
-#if defined(PLATFORM_ANDROID)
+#if defined(PLATFORM_ANDROID) || defined(TIZEN)
 /* Android GDB fails with "Unable to read JIT descriptor from remote memory!" */
 	#define __jit_debug_descriptor __jit_debug_descriptor_dummy
 #endif
