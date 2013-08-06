@@ -4170,7 +4170,7 @@ namespace Mono.CSharp {
 			var ok = block.Resolve (ec);
 
  			if (case_default == null)
-				ec.CurrentBranching.CurrentUsageVector.ResetBarrier ();
+				ec.CurrentBranching.CreateSibling (null, FlowBranching.SiblingType.SwitchSection);
 
 			ec.EndFlowBranching ();
 			ec.Switch = old_switch;
