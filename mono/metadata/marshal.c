@@ -98,7 +98,7 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 static void 
 mono_struct_delete_old (MonoClass *klass, char *ptr);
 
-void *
+MONO_API void *
 mono_marshal_string_to_utf16 (MonoString *s);
 
 static void *
@@ -150,7 +150,7 @@ mono_marshal_check_domain_image (gint32 domain_id, MonoImage *image);
 static MonoObject *
 mono_remoting_wrapper (MonoMethod *method, gpointer *params);
 
-void
+MONO_API void
 mono_upgrade_remote_class_wrapper (MonoReflectionType *rtype, MonoTransparentProxy *tproxy);
 
 #endif
@@ -4968,9 +4968,15 @@ mono_marshal_get_runtime_invoke (MonoMethod *method, gboolean virtual)
 
 		callsig = mono_marshal_get_runtime_invoke_sig (callsig);
 
-		cache = get_cache (&target_klass->image->runtime_invoke_cache, 
-						   (GHashFunc)mono_signature_hash, 
-						   (GCompareFunc)runtime_invoke_signature_equal);
+		if (method->klass->valuetype && mono_method_signature (method)->hasthis)
+			/* These have a different csig */
+			cache = get_cache (&target_klass->image->runtime_invoke_vtype_cache,
+							   (GHashFunc)mono_signature_hash,
+							   (GCompareFunc)runtime_invoke_signature_equal);
+		else
+			cache = get_cache (&target_klass->image->runtime_invoke_cache,
+							   (GHashFunc)mono_signature_hash,
+							   (GCompareFunc)runtime_invoke_signature_equal);
 
 		/* from mono_marshal_find_in_cache */
 		mono_marshal_lock ();
@@ -12951,6 +12957,8 @@ mono_marshal_free_inflated_wrappers (MonoMethod *method)
                g_hash_table_remove (method->klass->image->delegate_invoke_cache, sig);
        if (sig && method->klass->image->runtime_invoke_cache)
                g_hash_table_remove (method->klass->image->runtime_invoke_cache, sig);
+       if (sig && method->klass->image->runtime_invoke_vtype_cache)
+               g_hash_table_remove (method->klass->image->runtime_invoke_vtype_cache, sig);
 
         /*
          * indexed by SignatureMethodPair
