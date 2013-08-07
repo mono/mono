@@ -972,10 +972,18 @@ namespace Mono.CSharp {
 					if (inflated_types[i] == expr.Type)
 						continue;
 
-					if (expr is DefaultValueExpression)
+					var c = expr as Constant;
+					if (c != null) {
+						//
+						// It may fail we are inflating before type validation is done
+						//
+						c = Constant.ExtractConstantFromValue (inflated_types[i], c.GetValue (), expr.Location);
+						if (c == null)
+							expr = new DefaultValueExpression (new TypeExpression (inflated_types[i], expr.Location), expr.Location);
+						else
+							expr = c;
+					} else if (expr is DefaultValueExpression)
 						expr = new DefaultValueExpression (new TypeExpression (inflated_types[i], expr.Location), expr.Location);
-					else if (expr is Constant)
-						expr = Constant.CreateConstantFromValue (inflated_types[i], ((Constant) expr).GetValue (), expr.Location);
 
 					clone.FixedParameters[i] = new ParameterData (fp.Name, fp.ModFlags, expr);
 				}
