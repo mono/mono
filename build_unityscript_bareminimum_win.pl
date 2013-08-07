@@ -1,7 +1,7 @@
 use lib ('.', "perl_lib");
 use Cwd;
 use File::Path;
-use File::Find;
+
 use File::Copy::Recursive qw(dircopy);
 use Getopt::Long;
 use File::Basename;
@@ -11,8 +11,27 @@ my $root = getcwd();
 my $monodistro = "$root/builds/monodistribution";
 my $libmono = "$monodistro/lib/mono";
 
-
 sub AddDotNetFolderToPath() {
+
+	my @programFolders = (
+							$ENV{"PROGRAMFILES"}, 
+							$ENV{"PROGRAMFILES(x86)"});
+
+	foreach my $prfFiles (@programFolders) {
+		opendir my($dh), $prfFiles or die "Couldn't open dir '$dirname': $!";
+		my @files = readdir $dh;
+		closedir $dh;
+
+		print ("$prfFiles :\n");
+		foreach my $dirName (@files) {
+			print("$dirName\n");
+		}
+	}
+
+	#print "$_\n" foreach grep { -d "$ENV{PROGRAMFILES}/$_" && ! /^\.{1,2}$/ } readdir($dh);
+	exit;
+	
+	#my @array = File::Find::Rule->directory->in('$ENV{PROGRAM_FILES}');
 
 	my @netFrameworkLocations = (
 		$ENV{"SYSTEMROOT"}."/Microsoft.NET/Framework/v4.0.30319",
