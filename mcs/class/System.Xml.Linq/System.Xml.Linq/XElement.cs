@@ -785,8 +785,9 @@ namespace System.Xml.Linq
 		public void SetElementValue (XName name, object value)
 		{
 			var element = Element (name);
-			if (element == null && value != null) {
-				Add (new XElement (name, value));
+			if (element == null) {
+				if (value != null)
+					Add (new XElement (name, value));
 			} else if (element != null && value == null) {
 				element.Remove ();
 			} else
