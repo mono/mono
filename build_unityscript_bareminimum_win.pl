@@ -1,6 +1,7 @@
 use lib ('.', "perl_lib");
 use Cwd;
 use File::Path;
+use File::Find;
 use File::Copy::Recursive qw(dircopy);
 use Getopt::Long;
 use File::Basename;
@@ -10,7 +11,39 @@ my $root = getcwd();
 my $monodistro = "$root/builds/monodistribution";
 my $libmono = "$monodistro/lib/mono";
 
-#my $output = "$root/external/output/BareMinimum/Release";
+
+sub AddDotNetFolderToPath() {
+
+	my @netFrameworkLocations = (
+		$ENV{"SYSTEMROOT"}."/Microsoft.NET/Framework/v4.0.30319",
+		$ENV{"SYSTEMROOT"}."/Microsoft.NET/Framework/v3.5"
+	);
+
+	my $netFrameworkLocation = "";
+	my $checkedLocations = "";
+
+	find_framework:
+	foreach my $current (@netFrameworkLocations)
+	{		
+		if (-e $current) {
+			$netFrameworkLocation = $current;
+			last find_framework;
+		}
+
+		$checkedLocations = $checkedLocations . ", " . $current;
+	}
+
+	if ($netFrameworkLocation eq '') {
+    	print("Could not find dotnet framework folder. Checked: $checkedLocations");
+    	die;
+	}
+
+	print("Using .Net framework: $netFrameworkLocation");
+	$ENV{PATH} = "$ENV{PATH};$netFrameworkLocation";
+}
+
+AddDotNetFolderToPath();
+
 my $output = "$ENV{TEMP}/output/BareMinimum";
 
 my $lib = "$monodistro/lib";
