@@ -342,17 +342,17 @@ namespace System.Xml
 
 		public static string GMonthToString (DateTime value)
 		{
-			return XmlConvert.ToString (new TimeSpan (0, value.Month, 0));
+			return XmlConvert.ToString (new TimeSpan (0, value.Month, 1));
 		}
 
 		public static string GYearMonthToString (DateTime value)
 		{
-			return XmlConvert.ToString (new TimeSpan (value.Year, value.Month, 0));
+			return XmlConvert.ToString (new TimeSpan (value.Year, value.Month, 1));
 		}
 
 		public static string GYearToString (DateTime value)
 		{
-			return XmlConvert.ToString (new TimeSpan (new DateTime (value.Year, 0, 0).Ticks));
+			return XmlConvert.ToString (new TimeSpan (new DateTime (value.Year, 1, 1).Ticks));
 		}
 
 		public static string HexBinaryToString (byte [] data)
@@ -372,6 +372,11 @@ namespace System.Xml
 		}
 
 		public static decimal IntegerToDecimal (long value)
+		{
+			return (decimal) value;
+		}
+
+		public static decimal IntegerToDecimal (ulong value)
 		{
 			return (decimal) value;
 		}

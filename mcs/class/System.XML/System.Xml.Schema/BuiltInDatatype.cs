@@ -2263,7 +2263,8 @@ namespace Mono.Xml.Schema
 
 		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
-			return DateTime.ParseExact (Normalize(s), "--MM--", null);
+			DateTime ret;
+			return DateTime.TryParseExact (Normalize(s), "--MM", null, DateTimeStyles.RoundtripKind, out ret) ? ret : DateTime.ParseExact (Normalize(s), "--MM--", null);
 		}
 		
 		internal override XsdOrdering Compare(object x, object y) {

@@ -321,5 +321,144 @@ namespace MonoTests.System.Xml
 
 			datatype.ChangeType(300, typeof (int));
 		}
+		
+		[Test]
+		public void Bug12469 ()
+		{
+			Dictionary<string, string> validValues = new Dictionary<string, string> {
+				{"string", "abc"},
+
+				{"normalizedString", "abc"},
+				{"token", "abc"},
+				{"language", "en"},
+				{"Name", "abc"},
+				{"NCName", "abc"},
+				{"ID", "abc"},
+				{"ENTITY", "abc"},
+				{"NMTOKEN", "abc"},
+
+				{"boolean", "true"},
+				{"decimal", "1"},
+				{"integer", "1"},
+				{"nonPositiveInteger", "0"},
+				{"negativeInteger", "-1"},
+				{"long", "9223372036854775807"},
+				{"int", "2147483647"},
+				{"short", "32767"},
+				{"byte", "127"},
+				{"nonNegativeInteger", "0"},
+				{"unsignedLong", "18446744073709551615"},
+				{"unsignedInt", "4294967295"},
+				{"unsignedShort", "65535"},
+				{"unsignedByte", "255"},
+				{"positiveInteger", "1"},
+				{"float", "1.1"},
+				{"double", "1.1"},
+				{"time", "00:00:00"},
+				{"date", "1999-12-31"},
+				{"dateTime", "1999-12-31T00:00:00.000"},
+				{"duration", "P1Y2M3DT10H30M"},
+				{"gYearMonth", "1999-01"},
+				{"gYear", "1999"},
+				{"gMonthDay", "--12-31"},
+				{"gMonth", "--12"},
+				{"gDay", "---31"},
+
+				{"base64Binary", "AbCd eFgH IjKl 019+"},
+				{"hexBinary", "0123456789ABCDEF"},
+
+				{"anyURI", "https://www.server.com"},
+				{"QName", "xml:abc"},
+				};
+
+			// FIXME: implement validation
+			Dictionary<string, string> invalidValues = new Dictionary<string, string> {
+				{"Name", "***"},
+				{"NCName", "a::"},
+				{"ID", "123"},
+				{"ENTITY", "***"},
+				{"NMTOKEN", "***"},
+
+				{"boolean", "ABC"},
+				{"decimal", "1A"},
+				{"integer", "1.5"},
+				{"nonPositiveInteger", "5"},
+				{"negativeInteger", "10"},
+				{"long", "999999999999999999999999999999999999999"},
+				{"int", "999999999999999999999999999999999999999"},
+				{"short", "32768"},
+				{"byte", "128"},
+				{"nonNegativeInteger", "-1"},
+				{"unsignedLong", "-1"},
+				{"unsignedInt", "-1"},
+				{"unsignedShort", "-1"},
+				{"unsignedByte", "-1"},
+				{"positiveInteger", "0"},
+				{"float", "1.1x"},
+				{"double", "1.1x"},
+				{"time", "0"},
+				{"date", "1"},
+				{"dateTime", "2"},
+				{"duration", "P1"},
+				{"gYearMonth", "1999"},
+				{"gYear", "-1"},
+				{"gMonthDay", "-12-31"},
+				{"gMonth", "-12"},
+				{"gDay", "--31"},
+
+				{"base64Binary", "####"},
+				{"hexBinary", "G"},
+
+				// anyURI passes everything (as long as I observed)
+				{"QName", "::"},
+				};
+
+			const string schemaTemplate = @"
+				<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' elementFormDefault='qualified'> 
+					<xs:element name='EL'>
+						<xs:complexType>
+							<xs:attribute name='attr' type='xs:{0}' use='required' />
+						</xs:complexType>
+					</xs:element>
+				</xs:schema>";
+
+			const string documentTemplate = @"<EL attr='{0}' />";
+
+			foreach (var type in validValues.Keys) {
+				try {
+					var schema = string.Format (schemaTemplate, type);
+					var document = string.Format (documentTemplate, validValues[type]);
+
+					var schemaSet = new XmlSchemaSet ();
+					using (var reader = new StringReader (schema))
+						schemaSet.Add (XmlSchema.Read (reader, null));
+					schemaSet.Compile ();
+					var doc = new XmlDocument ();
+					using (var reader = new StringReader (document))
+						doc.Load (reader);
+					doc.Schemas = schemaSet;
+					doc.Validate (null);
+
+					// FIXME: implement validation
+					/*
+					if (!invalidValues.ContainsKey (type))
+						continue;
+					try {
+						doc = new XmlDocument ();
+						document = string.Format (documentTemplate, invalidValues [type]);
+						using (var reader = new StringReader (document))
+							doc.Load (reader);
+						doc.Schemas = schemaSet;
+						doc.Validate (null);
+						Assert.Fail (string.Format ("Failed to invalidate {0} for {1}", document, type));
+					} catch (XmlSchemaException) {
+					}
+					*/
+				} catch (Exception) {
+					Console.Error.WriteLine (type);
+					throw;
+				}
+			}
+		}
 	}
 }
