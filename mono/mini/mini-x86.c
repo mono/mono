@@ -244,6 +244,7 @@ static const guint32 *callconv_param_regs(MonoMethodSignature *sig)
 
 	switch (sig->call_convention) {
 	case MONO_CALL_THISCALL:
+	case MONO_CALL_GCCTHISCALL:
 		 return thiscall_param_regs;
 	default:
 		 return NULL;

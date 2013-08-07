@@ -8,6 +8,8 @@ using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Reflection.Emit;
 
+internal class MonoGccThisCallAttribute : Attribute { }
+
 public class Tests {
 
 	public int int_field;
@@ -1777,6 +1779,38 @@ public class Tests {
 
 		if (mono_test_native_thiscall (new TinyStruct(1288082683), -421187449, -1733670329) != -866775098)
 			return 6;
+
+		return 0;
+	}
+
+	[DllImport ("libtest")]
+	static extern int mono_test_has_gccthiscall ();
+
+	[MonoGccThisCallAttribute]
+	[DllImport ("libtest", EntryPoint = "_mono_test_native_gccthiscall1", CallingConvention=CallingConvention.FastCall)]
+	static extern int mono_test_native_gccthiscall (int a);
+
+	[MonoGccThisCallAttribute]
+	[DllImport ("libtest", EntryPoint = "_mono_test_native_gccthiscall2", CallingConvention=CallingConvention.FastCall)]
+	static extern int mono_test_native_gccthiscall (int a, int b);
+
+	[MonoGccThisCallAttribute]
+	[DllImport ("libtest", EntryPoint = "_mono_test_native_gccthiscall3", CallingConvention=CallingConvention.FastCall)]
+	static extern int mono_test_native_gccthiscall (int a, int b, int c);
+
+	public static int test_0_native_gccthiscall ()
+	{
+		if (mono_test_has_gccthiscall () == 0)
+			return 0;
+
+		if (mono_test_native_gccthiscall (1968329802) != 1968329802)
+			return 1;
+
+		if (mono_test_native_gccthiscall (268894549, 1212675791) != 1481570339)
+			return 2;
+
+		if (mono_test_native_gccthiscall (1288082683, -421187449, -1733670329) != -866775098)
+			return 3;
 
 		return 0;
 	}

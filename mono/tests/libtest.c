@@ -5378,3 +5378,47 @@ mono_test_has_thiscall (void)
 
 #endif
 
+
+#if !defined(TARGET_X86) || defined(__GNUC__)
+
+#if defined(__GNUC__) && defined(TARGET_X86)
+# define GCCTHISCALL __attribute__((thiscall))
+#else
+# define GCCTHISCALL
+#endif
+
+LIBTEST_API int STDCALL
+mono_test_has_gccthiscall (void)
+{
+	return 1;
+}
+
+LIBTEST_API int GCCTHISCALL
+_mono_test_native_gccthiscall1 (int arg)
+{
+	return arg;
+}
+
+LIBTEST_API int GCCTHISCALL
+_mono_test_native_gccthiscall2 (int arg, int arg2)
+{
+	return arg + (arg2^1);
+}
+
+LIBTEST_API int GCCTHISCALL
+_mono_test_native_gccthiscall3 (int arg, int arg2, int arg3)
+{
+	return arg + (arg2^1) + (arg3^2);
+}
+
+#else
+
+LIBTEST_API int STDCALL
+mono_test_has_gccthiscall (void)
+{
+	return 0;
+}
+
+#endif
+
+
