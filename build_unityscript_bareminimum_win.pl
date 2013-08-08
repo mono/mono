@@ -80,7 +80,7 @@ sub BuildUnityScriptForUnity
 		GitClone("git://github.com/Unity-Technologies/boo.git", $booCheckout);
 	}
 
-	Build("$booCheckout/src/booc/Booc.csproj", undef, "/property:DefineConstants=\"NO_SERIALIZATION_INFO,NO_SYSTEM_PROCESS,NO_ICLONEABLE,NO_SYSTEM_REFLECTION_EMIT,MSBUILD\" /property:OutputPath=$output");
+	Build("$booCheckout/src/booc/Booc.csproj", undef, "/property:TargetFrameworkVersion=4.0 /property:DefineConstants=\"NO_SERIALIZATION_INFO,NO_SYSTEM_PROCESS,NO_ICLONEABLE,NO_SYSTEM_REFLECTION_EMIT,MSBUILD\" /property:OutputPath=$output");
 	
 	if (!$ENV{UNITY_THISISABUILDMACHINE}) {
 		GitClone("git://github.com/Unity-Technologies/unityscript.git", $usCheckout);
@@ -92,8 +92,6 @@ sub BuildUnityScriptForUnity
 
 	my $UnityScriptLangDLL = "$output/UnityScript.Lang.dll";
 	UnityBooc("-out:$UnityScriptLangDLL -srcdir:$usCheckout/src/UnityScript.Lang -r:$output/Boo.Lang.Extensions.dll");
-
-	#cp("$output/* ")
 }
 
 sub Build
@@ -141,7 +139,8 @@ if ($unity)
 
 	BuildUnityScriptForUnity();
 
-	cp("$output/Boo.Lang.* $libmono/bare-minimum/Boo.Lang.*");
+	cp("$output/Boo.Lang.dll $libmono/bare-minimum/Boo.Lang.dll*");
+	cp("$output/Boo.Lang.pdb $libmono/bare-minimum/Boo.Lang.pdb*");
 	cp("$output/UnityScript.Lang.* $libmono/bare-minimum/UnityScript.Lang.*");
 	cp("$booCheckout/src/Boo.sn* $libmono/bare-minimum/Boo.sn*");
 }
