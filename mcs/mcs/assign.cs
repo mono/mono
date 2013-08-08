@@ -553,6 +553,14 @@ namespace Mono.CSharp {
 				((FieldExpr)target).InstanceExpression = new CompilerGeneratedThis (mc.CurrentType, expression.Location);
 		}
 
+		public bool InlineConstantInitialization { get; set; }
+
+		public FieldBase Field {
+			get {
+				return mc;
+			}
+		}
+
 		public override Location StartLocation {
 			get {
 				return loc;
@@ -594,10 +602,46 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (resolved != this)
+			if (resolved != this) {
 				resolved.EmitStatement (ec);
-			else
+			} else {
+				if (InlineConstantInitialization)
+					InlineInitialization ();
+
 				base.EmitStatement (ec);
+			}
+		}
+
+		//
+		// For PS only which has this weird behaviour where static
+		// initializer referencing another field is initialized not
+		// by reference but by value but only for 1st level dependency
+		//
+		void InlineInitialization ()
+		{
+			var fe = ((FieldInitializer) resolved).Source as FieldExpr;
+			if (fe == null)
+				return;
+
+			var fb = fe.Spec.MemberDefinition as FieldBase;
+			if (fb == null)
+				return;
+
+			// TODO: Handle imported constants?
+			var init = ((TypeDefinition) mc.Parent).GetFieldInitializer (fb);
+			if (init == null)
+				return;
+
+			var c = init.Source as Constant;
+			if (c == null)
+				return;
+
+			// TODO: Probably too restrictive
+			if (!TypeSpecComparer.IsEqual (Field.MemberType, fb.MemberType))
+				return;
+
+			source = c;
+			return;
 		}
 		
 		public bool IsDefaultInitializer {

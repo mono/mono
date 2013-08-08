@@ -946,6 +946,22 @@ namespace Mono.CSharp
 			}
 		}
 
+		public FieldInitializer GetFieldInitializer (MemberCore field)
+		{
+			List<FieldInitializer> initializer;
+			if ((field.ModFlags & Modifiers.STATIC) != 0) {
+				initializer = initialized_static_fields;
+			} else {
+				initializer = initialized_fields;
+			}
+
+			if (initializer == null)
+				return null;
+
+			return initializer.Find (l => l.Field == field);
+
+		}
+
 		public void ResolveFieldInitializers (BlockContext ec)
 		{
 			Debug.Assert (!IsPartialPart);

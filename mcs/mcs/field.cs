@@ -649,7 +649,15 @@ namespace Mono.CSharp
 			}
 
 			if (initializer != null) {
-				Parent.RegisterFieldForInitialization (this, new FieldInitializer (this, initializer, TypeExpression.Location));
+				Parent.RegisterFieldForInitialization (this,
+					new FieldInitializer (this, initializer, TypeExpression.Location) {
+						InlineConstantInitialization = Parent.IsPlayScriptType
+					});
+			} else {
+				if (Parent.IsPlayScriptType && MemberType == Module.PlayscriptTypes.Number) {
+					Parent.RegisterFieldForInitialization (this,
+						new FieldInitializer (this, new DoubleConstant (Compiler.BuiltinTypes, double.NaN, Location.Null), Location.Null));
+				}
 			}
 
 			if (declarators != null) {

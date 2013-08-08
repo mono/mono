@@ -1,0 +1,72 @@
+package
+{
+	public class Fields
+	{
+		public static var cs1:Object = new Object ();
+		public static var cs2:* = undefined;
+		internal static var cs3:Object = 8;
+		public static var cs4:Array = [1, 2, 3];
+		public static var cs5:int = 2, cs6:uint = 7;
+		public static var cs8:int = vs8;
+		private static var cs9:String;
+		public static var cs10:Number;
+		
+		static var vs8:int = 8;
+
+		public var c1:Object = cs1;
+		public var c2:* = undefined;
+		public var c3:Object = null;
+		public var c4:Array = [5];
+		public var c5:int = 20, c6:uint = 70;
+		public var c8:int = v8;
+		private var c9:String;
+		public var c10:Number;
+		
+		static var v8:int = 8;
+		
+		public static function Main ():int
+		{
+			if (cs1 == null)
+				return 10;
+			if (cs3 != 8)
+				return 11;
+			if (cs4.length != 3)
+				return 12;
+			if (cs5 != 2)
+				return 13;
+			if (cs6 != 7)
+				return 14;
+
+			vs8 = 80;
+			if (cs8 != 8) {
+				trace (cs8);
+				return 15;
+			}
+			if (cs9 != null)
+				return 16;
+			if (!isNaN (cs10))
+				return 17;
+			
+			var c:Fields = new Fields ();
+			if (c.c1 == null)
+				return 20;
+			if (c.c3 != null)
+				return 21;
+			if (c.c4.length != 1)
+				return 22;
+			if (c.c5 != 20)
+				return 23;
+			if (c.c6 != 70)
+				return 24;
+			if (c.c8 != 8)
+				return 25;
+			if (c.c9 != null)
+				return 25;
+			if (!isNaN (c.c10))
+				return 26;
+
+			trace ("ok");
+			return 0;
+		}
+	}
+}
