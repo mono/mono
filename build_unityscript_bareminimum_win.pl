@@ -13,26 +13,6 @@ my $libmono = "$monodistro/lib/mono";
 
 sub AddDotNetFolderToPath() {
 
-	my @programFolders = (
-							$ENV{"PROGRAMFILES"}, 
-							$ENV{"PROGRAMFILES(x86)"});
-
-	foreach my $prfFiles (@programFolders) {
-		opendir my($dh), $prfFiles or die "Couldn't open dir '$dirname': $!";
-		my @files = readdir $dh;
-		closedir $dh;
-
-		print ("$prfFiles :\n");
-		foreach my $dirName (@files) {
-			print("$dirName\n");
-		}
-	}
-
-	#print "$_\n" foreach grep { -d "$ENV{PROGRAMFILES}/$_" && ! /^\.{1,2}$/ } readdir($dh);
-	exit;
-	
-	#my @array = File::Find::Rule->directory->in('$ENV{PROGRAM_FILES}');
-
 	my @netFrameworkLocations = (
 		$ENV{"SYSTEMROOT"}."/Microsoft.NET/Framework/v4.0.30319",
 		$ENV{"SYSTEMROOT"}."/Microsoft.NET/Framework/v3.5"
@@ -65,8 +45,6 @@ AddDotNetFolderToPath();
 
 my $output = "$ENV{TEMP}/output/BareMinimum";
 
-my $lib = "$monodistro/lib";
-
 print "My Path: $ENV{PATH}\n";
 
 my $dependencyBranchToUse = "unity3.0";
@@ -88,10 +66,6 @@ GetOptions(
 
 my $monodistroLibMono = "$monodistro/lib/mono";
 my $monodistroUnity = "$monodistroLibMono/unity";
-
-if (!$ENV{UNITY_THISISABUILDMACHINE}) {
-	system("7z") eq 0 or die("set your path env variable to include 7-zip");
-}
 
 sub UnityBooc
 {
@@ -117,7 +91,9 @@ sub BuildUnityScriptForUnity
 	UnityBooc("-out:$output/Boo.Lang.PatternMatching.dll -srcdir:$booCheckout/src/Boo.Lang.PatternMatching");
 
 	my $UnityScriptLangDLL = "$output/UnityScript.Lang.dll";
-	UnityBooc("-out:$UnityScriptLangDLL -srcdir:$usCheckout/src/UnityScript.Lang -r:$output/Boo.Lang.Extensions.dll");	
+	UnityBooc("-out:$UnityScriptLangDLL -srcdir:$usCheckout/src/UnityScript.Lang -r:$output/Boo.Lang.Extensions.dll");
+
+	#cp("$output/* ")
 }
 
 sub Build
@@ -183,14 +159,4 @@ if($ENV{UNITY_THISISABUILDMACHINE})
 	for my $key (keys %checkouts) {
 		system("echo \"$key = $ENV{$checkouts{$key}}\" >> $root/builds/versions.txt");
 	}
-}
-
-#zip up the results for teamcity
-chdir("$root/builds");
-if ($ENV{UNITY_THISISABUILDMACHINE}) {
-	system("tar -hpczf ../UnityScriptLangBareMinimum.tar.gz *") eq 0 or die("Failed to zip up bare_minimum for teamcity (return code: $?)");	
-}
-else {
-	system("7z a -r -ttar $ENV{TEMP}/UnityScriptLangBareMinimum.tar *") eq 0 or die("Failed to tar up bare_minimum for teamcity (return code: $?)");	
-	system("7z a -tgzip ../UnityScriptLangBareMinimum.tar.gz $ENV{TEMP}/UnityScriptLangBareMinimum.tar") eq 0 or die("Failed to gz up bare_minimum for teamcity (return code: $?)");	
 }
