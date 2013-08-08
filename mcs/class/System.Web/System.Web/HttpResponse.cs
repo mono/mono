@@ -861,7 +861,8 @@ namespace System.Web
 				throw new ArgumentException ("Redirect URI cannot contain newline characters.", "url");
 			
 			is_request_being_redirected = true;
-			ClearHeaders ();
+			// previously calling ClearHeaders() here, but MS.NET does not
+			// and I don't believe it is correct behavior to clear headers, so don't
 			ClearContent ();
 			
 			StatusCode = code;
