@@ -1713,7 +1713,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override bool IsGenericIterateInterface {
+		public override bool IsArrayGenericInterface {
 			get {
 				return (open_type.state & StateFlags.GenericIterateInterface) != 0;
 			}
@@ -3363,7 +3363,7 @@ namespace Mono.CSharp {
 					return LowerBoundInference (u_ac.Element, v_ac.Element, inversed);
 				}
 
-				if (u_ac.Rank != 1 || !v.IsGenericIterateInterface)
+				if (u_ac.Rank != 1 || !v.IsArrayGenericInterface)
 					return 0;
 
 				var v_i = TypeManager.GetTypeArguments (v) [0];

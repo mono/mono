@@ -211,7 +211,7 @@ namespace Mono.CSharp
 		//
 		// Returns true for instances of IList<T>, IEnumerable<T>, ICollection<T>
 		//
-		public virtual bool IsGenericIterateInterface {
+		public virtual bool IsArrayGenericInterface {
 			get {
 				return false;
 			}
