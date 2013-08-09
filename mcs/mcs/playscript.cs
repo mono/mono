@@ -2485,6 +2485,7 @@ namespace Mono.PlayScript
 	{
 		static readonly MemberName DefaultPackageName = new MemberName (PredefinedTypes.RootNamespace, Location.Null);
 		TypeDefinition globals;
+		ToplevelBlock block;
 
 		private Package (MemberName name, NamespaceContainer parent)
 			: base (name, parent)
@@ -2509,6 +2510,14 @@ namespace Mono.PlayScript
 			}
 		}
 
+		public ToplevelBlock GetBlock ()
+		{
+			if (block == null)
+				block = new ToplevelBlock (Compiler, ParametersCompiled.EmptyReadOnlyParameters, Location);
+
+			return block;
+		}
+
 		public override string GetSignatureForError ()
 		{
 			if (IsTopLevel)
@@ -2525,6 +2534,25 @@ namespace Mono.PlayScript
 			}
 
 			return globals;
+		}
+
+		public override void EmitContainer ()
+		{
+			if (block != null) {
+				var bc = new BlockContext (this, block, Compiler.BuiltinTypes.Void);
+				bc.Set (ResolveContext.Options.ConstructorScope);
+
+				if (block.Resolve (null, bc, null)) {
+					var cb = Module.DefineModuleInitializer ();
+
+					EmitContext ec = new EmitContext (this, cb.GetILGenerator (), bc.ReturnType, null);
+					ec.With (EmitContext.Options.ConstructorScope, true);
+
+					block.Emit (ec);
+				}
+			}
+
+			base.EmitContainer ();
 		}
 	}
 

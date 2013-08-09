@@ -491,7 +491,7 @@ extern_alias_directive
  
 no_config_package_directive
 	: import_directive
-	| use_namespace_directive
+//	| use_namespace_directive
 	; 
  
 package_directive
@@ -536,9 +536,9 @@ use_namespace_directive
 	;
 
 use_namespace
-	: USE NAMESPACE IDENTIFIER SEMICOLON
+	: USE NAMESPACE IDENTIFIER stmnt_end_semicolon
 	;
- 
+
 import_directive
 	: import_package
 	  {
@@ -587,11 +587,6 @@ import_package
 			lbag.AddLocation (un, GetLocation ($3), GetLocation ($5));
 		}
 	  }
-	| IMPORT error
-	  {
-		Error_SyntaxError (yyToken);
-		$$ = null;
-	  }
 	;
 
 //
@@ -608,9 +603,6 @@ package_declaration
 	  {
 		Attributes attrs = (Attributes) $1;
 		var name = $4 as MemberName;
-//		if (name == null) {
-//			name = new MemberName(RootNs);
-//		}
 /*		
 		if (attrs != null) {
 			bool valid_global_attrs = true;
@@ -657,23 +649,14 @@ package_declaration
 			
 		Lexer.AutoSemiInsertion = true;
 	  }
-	  opt_package_statements_or_blocks CLOSE_BRACE opt_semicolon
+	  opt_package_body CLOSE_BRACE opt_semicolon
 	  {
 	  	lbag.AddLocation (current_container, GetLocation ($2), GetLocation ($6), GetLocation ($8));
-/*	  
-	  	if (current_namespace.Parent != null && current_namespace.Parent.Parent == null) { // Is this the top level package?
-			var ns = new NamespaceContainer (new MemberName("__" + file.FileName.Replace(".","_")), current_namespace);
-			prev_namespace = current_namespace;
-			current_container = private_namespace = current_namespace = ns;
-	    } else
-*/
-		{
-			current_container = current_namespace = current_namespace.Parent;
-		}
+		current_container = current_namespace = current_namespace.Parent;
 		
 		lexer.parsing_modifiers = false;
 	  }
-	  opt_package_statements_or_blocks
+	  opt_package_body
 	  {
 	    // Close the private package namespace (if it's active)
 	  	if (current_namespace == private_namespace) {
@@ -726,11 +709,6 @@ opt_comma
 	| COMMA
 	;
 
-opt_package_statements_or_blocks
-	: opt_extern_alias_directives opt_package_statements
-	| OPEN_BRACE opt_package_statements_or_blocks CLOSE_BRACE
-	;
-	
 opt_package_directives
 	: /* empty */
 	| package_directives
@@ -741,28 +719,17 @@ opt_extern_alias_directives
 	| extern_alias_directives
 	;
 
-opt_package_statements
+opt_package_body
 	: /* empty */
-	| package_statements
+	| package_body
 	;
 
-package_statements
+package_body
 	: package_statement
-	| package_statements package_statement
+	| package_body package_statement
 	;
 
 package_statement
-	: no_config_package_statement
-	| config_package_statement
-	| attribute_sections CLOSE_BRACE {
-		current_namespace.UnattachedAttributes = (Attributes) $1;
-		report.Error (1518, lexer.Location, "Attributes must be attached to class, delegate, enum, interface or struct");
-		lexer.putback ('}');
-		is_config_enabled = true;		
-	  }
-	;
-
-no_config_package_statement
 	: type_declaration
 	  {
 	    if (is_config_enabled) {
@@ -791,30 +758,12 @@ no_config_package_statement
 		}
 	  }
 	| constant_declaration
-	| no_config_package_directive	  
-	;
-
-config_package_statement
-	: IDENTIFIER_CONFIG 
+	| no_config_package_directive
+	| valid_declaration_statement
 	  {
-		var lt = (LocatedToken) $1;
-	    is_config_enabled = file.IsConditionalDefined (lt.Value.Replace("::","_"));	 	  
+	  	var package = (Package) current_container;
+	  	package.GetBlock ().AddStatement ((Statement) $1);
 	  }
-	  no_config_package_statement
-	  {
-	    is_config_enabled = true;
-	    $$ = $3;
-	  }
-	| IDENTIFIER_CONFIG 
-	  {
-		var lt = (LocatedToken) $1;
-	    is_config_enabled = file.IsConditionalDefined (lt.Value.Replace("::","_"));	  
-	  } 
-	  OPEN_BRACE opt_package_statements CLOSE_BRACE
-	  {
-	  	is_config_enabled = true;
-	  	$$ = $4;
-	  }	  
 	;
 
 type_declaration
@@ -6642,7 +6591,14 @@ Location GetLocation (object obj)
 void start_block (Location loc)
 {
 	if (current_block == null) {
-		current_block = new ToplevelBlock (compiler, current_local_parameters, loc);
+		var package = current_container as Package;
+		if (package != null && current_local_parameters == null) {
+			current_block = package.GetBlock ();
+			current_block = new ExplicitBlock (current_block, loc, Location.Null);
+		} else {
+			current_block = new ToplevelBlock (compiler, current_local_parameters, loc);
+		}
+
 		parsing_anonymous_method = false;
 	} else if (parsing_anonymous_method) {
 		current_block = new ParametersBlock (current_block, current_local_parameters, loc);

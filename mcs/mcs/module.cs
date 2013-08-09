@@ -121,6 +121,7 @@ namespace Mono.CSharp
 		readonly Dictionary<string, RootNamespace> alias_ns;
 
 		ModuleBuilder builder;
+		ConstructorBuilder initializer;
 
 		bool has_extenstion_method;
 
@@ -433,6 +434,14 @@ namespace Mono.CSharp
 			return true;
 		}
 
+		public ConstructorBuilder DefineModuleInitializer ()
+		{
+			if (initializer == null)
+				initializer = builder.__DefineModuleInitializer (MethodAttributes.Assembly);
+
+			return initializer;
+		}
+
 		public override bool DefineContainer ()
 		{
 			DefineNamespace ();
@@ -470,6 +479,9 @@ namespace Mono.CSharp
 					foreach (var at in atypes.Value)
 						at.EmitContainer ();
 			}
+
+			if (initializer != null)
+				builder.CreateGlobalFunctions ();
 		}
 
 		internal override void GenerateDocComment (DocumentationBuilder builder)

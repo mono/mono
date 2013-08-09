@@ -1,0 +1,28 @@
+package 
+{
+	trace ("start");
+	GlobalStatements.Test (5);
+	
+	public class GlobalStatements
+	{
+		private static var field:int;
+
+		public static function Main():int
+		{
+			if (field != 4)
+				return 1;
+
+			return 0;
+		}
+		
+		public static function Test (arg:int):void
+		{
+			field = arg;
+			trace ("called");
+		}
+	}
+
+	{
+		trace ("end");
+	}
+};
