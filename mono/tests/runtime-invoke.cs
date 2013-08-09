@@ -215,4 +215,38 @@ class Tests
 		var res = typeof (Tests).GetMethod ("pack_i1").Invoke (null, new object [] { (sbyte)-0x40 });
 		return (bool)res ? 0 : 1;
 	}
+
+	struct Point {
+		public int x, y;
+	}
+
+	struct Foo2 {
+		public Point Location {
+			get {
+				return new Point () { x = 10, y = 20 };
+			}
+		}
+	}
+
+	public static int test_0_vtype_method_vtype_ret () {
+		var f = new Foo2 ();
+		var p = (Point)typeof (Foo2).GetMethod ("get_Location").Invoke (f, null);
+		if (p.x != 10 || p.y != 20)
+			return 1;
+		return 0;
+	}
+
+	public static int test_0_array_get_set () {
+		int[,,] arr = new int [10, 10, 10];
+		arr [0, 1, 2] = 42;
+		var gm = arr.GetType ().GetMethod ("Get");
+		int i = (int) gm.Invoke (arr, new object [] { 0, 1, 2 });
+		if (i != 42)
+			return 1;
+		var sm = arr.GetType ().GetMethod ("Set");
+		sm.Invoke (arr, new object [] { 0, 1, 2, 33 });
+		if (arr [0, 1, 2] != 33)
+			return 2;
+		return 0;
+	}
 }

@@ -1,4 +1,4 @@
-//                                                   
+//
 // Mono.Cairo.Pattern.cs
 //
 // Author: Jordi Mas (jordi@ximian.com)
@@ -14,10 +14,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -30,26 +30,27 @@
 using System;
 
 namespace Cairo {
-   
+
 	public class SurfacePattern : Pattern
 	{
-		internal SurfacePattern (IntPtr handle) : base (handle)
+		internal SurfacePattern (IntPtr handle, bool owned) : base (handle, owned)
 		{
 		}
 
 		public SurfacePattern (Surface surface)
+			: base (NativeMethods.cairo_pattern_create_for_surface (surface.Handle), true)
 		{
-			pattern = NativeMethods.cairo_pattern_create_for_surface (surface.Handle);
 		}
 
-		public Extend Extend {
-			set { NativeMethods.cairo_pattern_set_extend (pattern, value); }
-			get { return NativeMethods.cairo_pattern_get_extend (pattern); }
+		//no idea why this is here, the base one is identical, but we can't remove it now
+		public new Extend Extend {
+			set { NativeMethods.cairo_pattern_set_extend (Handle, value); }
+			get { return NativeMethods.cairo_pattern_get_extend (Handle); }
 		}
 
 		public Filter Filter {
-			set { NativeMethods.cairo_pattern_set_filter (pattern, value); }
-			get { return NativeMethods.cairo_pattern_get_filter (pattern); }
+			set { NativeMethods.cairo_pattern_set_filter (Handle, value); }
+			get { return NativeMethods.cairo_pattern_get_filter (Handle); }
 		}
 	}
 }

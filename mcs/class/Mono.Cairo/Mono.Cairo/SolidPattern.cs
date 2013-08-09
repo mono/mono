@@ -1,4 +1,4 @@
-//                                                   
+//
 // Mono.Cairo.Pattern.cs
 //
 // Author: Jordi Mas (jordi@ximian.com)
@@ -14,10 +14,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -30,44 +30,43 @@
 using System;
 
 namespace Cairo {
-   
+
 	public class SolidPattern : Pattern
 	{
-		internal SolidPattern (IntPtr handle) : base (handle)
+		internal SolidPattern (IntPtr handle, bool owned) : base (handle, owned)
 		{
 		}
 
 		public SolidPattern (Color color)
+			: base (NativeMethods.cairo_pattern_create_rgba (color.R, color.G, color.B, color.A), true)
 		{
-			pattern = NativeMethods.cairo_pattern_create_rgba (color.R, color.G, color.B, color.A);
 		}
 
 		public SolidPattern (double r, double g, double b)
+			: base (NativeMethods.cairo_pattern_create_rgb (r, g, b), true)
 		{
-			pattern = NativeMethods.cairo_pattern_create_rgb (r, g, b);
 		}
 
 		public SolidPattern (double r, double g, double b, double a)
+			: base (NativeMethods.cairo_pattern_create_rgba (r, g, b, a), true)
 		{
-			NativeMethods.cairo_pattern_create_rgba (r, g, b, a);
 		}
 
 		public SolidPattern (Color color, bool solid)
+			: base (solid
+					? NativeMethods.cairo_pattern_create_rgb (color.R, color.G, color.B)
+					: NativeMethods.cairo_pattern_create_rgba (color.R, color.G, color.B, color.A),
+				true)
 		{
-			if (solid)
-				pattern = NativeMethods.cairo_pattern_create_rgb (color.R, color.G, color.B);
-			else
-				pattern = NativeMethods.cairo_pattern_create_rgba (color.R, color.G, color.B, color.A);
 		}
 
 		public Color Color {
-                        get {
+			get {
 				double red, green, blue, alpha;
-
-				NativeMethods.cairo_pattern_get_rgba  (pattern, out red, out green, out blue, out alpha);
+				NativeMethods.cairo_pattern_get_rgba  (Handle, out red, out green, out blue, out alpha);
 				return new Color (red, green, blue, alpha);
-                        }
-                }
+			}
+		}
 	}
 }
 

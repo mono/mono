@@ -429,7 +429,7 @@ mono_imul_ovf_un (guint32 a, guint32 b)
 }
 #endif
 
-#if defined(MONO_ARCH_EMULATE_MUL_DIV) || defined(MONO_ARCH_SOFT_FLOAT)
+#if defined(MONO_ARCH_EMULATE_MUL_DIV) || defined(MONO_ARCH_SOFT_FLOAT_FALLBACK)
 double
 mono_fdiv (double a, double b)
 {
@@ -439,7 +439,7 @@ mono_fdiv (double a, double b)
 }
 #endif
 
-#ifdef MONO_ARCH_SOFT_FLOAT
+#ifdef MONO_ARCH_SOFT_FLOAT_FALLBACK
 
 double
 mono_fsub (double a, double b)
@@ -915,7 +915,7 @@ mono_fconv_ovf_u8 (double v)
  * 
  * To work around this issue we test for value boundaries instead. 
  */
-#if defined(__arm__) && MONO_ARCH_SOFT_FLOAT 
+#if defined(__arm__) && defined(MONO_ARCH_SOFT_FLOAT_FALLBACK)
 	if (isnan (v) || !(v >= -0.5 && v <= ULLONG_MAX+0.5)) {
 		mono_raise_exception (mono_get_exception_overflow ());
 	}
@@ -1052,7 +1052,7 @@ mono_create_corlib_exception_2 (guint32 token, MonoString *arg1, MonoString *arg
 }
 
 MonoObject*
-mono_object_castclass (MonoObject *obj, MonoClass *klass)
+mono_object_castclass_unbox (MonoObject *obj, MonoClass *klass)
 {
 	MonoJitTlsData *jit_tls = NULL;
 
@@ -1064,8 +1064,12 @@ mono_object_castclass (MonoObject *obj, MonoClass *klass)
 	if (!obj)
 		return NULL;
 
-	if (mono_object_isinst (obj, klass))
+	if (klass->enumtype) {
+		if (obj->vtable->klass == klass->element_class)
+			return obj;
+	} else if (mono_object_isinst (obj, klass)) {
 		return obj;
+	}
 
 	if (mini_get_debug_options ()->better_cast_details) {
 		jit_tls->class_cast_from = obj->vtable->klass;
@@ -1160,60 +1164,58 @@ constrained_gsharedvt_call_setup (gpointer mp, MonoMethod *cmethod, MonoClass *k
 	MonoMethod *m;
 	int vt_slot;
 
+	if (klass->flags & TYPE_ATTRIBUTE_INTERFACE)
+		mono_raise_exception (mono_get_exception_execution_engine ("Not yet supported."));
+
 	/* Lookup the virtual method */
 	mono_class_setup_vtable (klass);
 	g_assert (klass->vtable);
 	vt_slot = mono_method_get_vtable_slot (cmethod);
+	if (cmethod->klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
+		int iface_offset;
+
+		iface_offset = mono_class_interface_offset (klass, cmethod->klass);
+		g_assert (iface_offset != -1);
+		vt_slot += iface_offset;
+	}
 	m = klass->vtable [vt_slot];
 	if (klass->valuetype && (m->klass == mono_defaults.object_class || m->klass == mono_defaults.enum_class->parent || m->klass == mono_defaults.enum_class))
+		/*
+		 * Calling a non-vtype method with a vtype receiver, has to box.
+		 */
 		*this_arg = mono_value_box (mono_domain_get (), klass, mp);
 	else if (klass->valuetype)
+		/*
+		 * Calling a vtype method with a vtype receiver
+		 */
 		*this_arg = mp;
 	else
+		/*
+		 * Calling a non-vtype method
+		 */
 		*this_arg = *(gpointer*)mp;
 	return m;
 }
 
+/*
+ * mono_gsharedvt_constrained_call:
+ *
+ *   Make a call to CMETHOD using the receiver MP, which is assumed to be of type KLASS. ARGS contains
+ * the arguments to the method in the format used by mono_runtime_invoke ().
+ */
 MonoObject*
-mono_object_tostring_gsharedvt (gpointer mp, MonoMethod *cmethod, MonoClass *klass)
+mono_gsharedvt_constrained_call (gpointer mp, MonoMethod *cmethod, MonoClass *klass, gboolean deref_arg, gpointer *args)
 {
 	MonoMethod *m;
 	gpointer this_arg;
+	gpointer new_args [16];
 
 	m = constrained_gsharedvt_call_setup (mp, cmethod, klass, &this_arg);
-	return mono_runtime_invoke (m, this_arg, NULL, NULL);
-}
-
-int
-mono_object_gethashcode_gsharedvt (gpointer mp, MonoMethod *cmethod, MonoClass *klass)
-{
-	MonoMethod *m;
-	gpointer this_arg;
-	MonoObject *res;
-	gpointer p;
-
-	m = constrained_gsharedvt_call_setup (mp, cmethod, klass, &this_arg);
-	// FIXME: This boxes the result
-	res = mono_runtime_invoke (m, this_arg, NULL, NULL);
-	p = mono_object_unbox (res);
-	return *(int*)p;
-}
-
-MonoBoolean
-mono_object_equals_gsharedvt (gpointer mp, MonoMethod *cmethod, MonoClass *klass, MonoObject *arg)
-{
-	MonoMethod *m;
-	gpointer this_arg;
-	MonoObject *res;
-	gpointer p;
-	void **args;
-
-	m = constrained_gsharedvt_call_setup (mp, cmethod, klass, &this_arg);
-	// FIXME: This boxes the result
-	args = (void**)&arg;
-	res = mono_runtime_invoke (m, this_arg, args, NULL);
-	p = mono_object_unbox (res);
-	return *(MonoBoolean*)p;
+	if (args && deref_arg) {
+		new_args [0] = *(gpointer*)args [0];
+		args = new_args;
+	}
+	return mono_runtime_invoke (m, this_arg, args, NULL);
 }
 
 void

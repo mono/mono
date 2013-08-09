@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 #AC_PREREQ([2.62])
 
-AC_INIT(mono, [3.0.12],
+AC_INIT(mono, [3.3.0],
         [http://bugzilla.xamarin.com/enter_bug.cgi?classification=Mono])
 
 AC_CONFIG_SRCDIR([README])
@@ -105,22 +105,6 @@ case "$host" in
 			if test "x$host" == "x$build" -a "x$host" == "x$target"; then
 				AC_DEFINE(TARGET_WIN32,1,[Target OS is Win32])
 			fi
-			#
-			# gcc-3/g++-3 are from the gcc-core/gcc-g++ cygwin packages.
-			# Other gcc packages will not work:
-			# - the gcc-4 packages no longer support -mno-cygwin
-			# - the mingw-gcc packages produce executables which depends on a libgcc<...>
-			# dll, which means we would have to distribute that file too.
-			#
-			if test "x$CC" != "x"; then
-				AC_ERROR(Don't set CC. mono can only be compiled with gcc-3 from the 'gcc-core' package)
-			fi
-			CC="gcc-3.exe -mno-cygwin -g"
-			CXX="g++-3.exe -mno-cygwin -g"
-			# So libgc configure gets -mno-cygwin
-			export CC
-			export CXX
-			CFLAGS_FOR_EGLIB="$CFLAGS_FOR_EGLIB -mno-cygwin"
 		else
 			target_win32=yes
 			AC_DEFINE(TARGET_WIN32,1,[Target OS is Win32/MinGW])
@@ -174,9 +158,8 @@ case "$host" in
 		AC_DEFINE(PTHREAD_POINTER_ID, 1, [pthread is a pointer])
 		libdl=
 		libgc_threads=pthreads
-		# This doesn't seem to work as of 7.0 on amd64
-		with_sigaltstack=no
 		use_sigposix=yes
+		has_dtrace=yes
 		;;
 	*-*-*openbsd*)
 		host_win32=no
@@ -492,12 +475,32 @@ AC_TRY_LINK([#include <math.h>], [
 	# We'll have to use signals
 	AC_MSG_RESULT(no)
 ])
+# mingw
+AC_CHECK_FUNCS(_finite, , AC_MSG_CHECKING(for _finite in math.h)
+	AC_TRY_LINK([#include <math.h>], 
+	[ _finite(0.0); ], 
+	AC_DEFINE(HAVE__FINITE, 1, [Have _finite in -lm]) AC_MSG_RESULT(yes),
+	AC_MSG_RESULT(no)))
 
 # for Linux statfs support
 AC_CHECK_HEADERS(linux/magic.h)
 
 # not 64 bit clean in cross-compile
 AC_CHECK_SIZEOF(void *, 4)
+
+AC_CACHE_CHECK([for clang],
+	mono_cv_clang,[
+	AC_TRY_COMPILE([], [
+		#ifdef __clang__
+		#else
+		#error "FAILED"
+		#endif
+		return 0;
+	],
+	[mono_cv_clang=yes],
+	[mono_cv_clang=no],
+	[])
+])
 
 WARN=''
 if test x"$GCC" = xyes; then
@@ -530,6 +533,12 @@ if test x"$GCC" = xyes; then
 		   AC_MSG_RESULT(no)
 		   CFLAGS=$ORIG_CFLAGS
 		])
+
+		if test "x$mono_cv_clang" = "xyes"; then
+	   	   # https://bugzilla.samba.org/show_bug.cgi?id=8118
+	   	   WARN="$WARN -Qunused-arguments"
+	   	   WARN="$WARN -Wno-unused-function -Wno-tautological-compare"
+		fi
 else
 	# The Sun Forte compiler complains about inline functions that access static variables
 	# so disable all inlining.
@@ -541,20 +550,6 @@ else
 fi
 CFLAGS="$CFLAGS -g $WARN"
 CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -g"
-
-AC_CACHE_CHECK([for clang],
-	mono_cv_clang,[
-	AC_TRY_COMPILE([], [
-		#ifdef __clang__
-		#else
-		#error "FAILED"
-		#endif
-		return 0;
-	],
-	[mono_cv_clang=yes],
-	[mono_cv_clang=no],
-	[])
-])
 
 # Where's the 'mcs' source tree?
 if test -d $srcdir/mcs; then
@@ -1144,6 +1139,8 @@ if test x$target_win32 = xno; then
 	AC_SUBST(ikvm_native_dir)
 
 	AC_CHECK_HEADERS(execinfo.h)
+
+	AC_CHECK_HEADERS(sys/auxv.h)
 
 	AC_CHECK_FUNCS(getgrgid_r)
 	AC_CHECK_FUNCS(getgrnam_r)
@@ -2370,14 +2367,18 @@ if test "x$enable_llvm" = "xyes"; then
 		;;
    esac
 
-
    # The output of --cflags seems to include optimizations flags too
    LLVM_CFLAGS=`$LLVM_CONFIG --cflags | sed -e 's/-O2//g' | sed -e 's/-O0//g' | sed -e 's/-fomit-frame-pointer//g' | sed -e 's/-fPIC//g'`
    # LLVM is compiled with -fno-rtti, so we need this too, since our classes inherit
    # from LLVM classes.
    LLVM_CXXFLAGS="`$LLVM_CONFIG --cxxflags` -fno-rtti"
    LLVM_LDFLAGS=`$LLVM_CONFIG --ldflags`
-   LLVM_LIBS=`$LLVM_CONFIG --libs core bitwriter jit mcjit $llvm_codegen`
+   if test "x$host" != "x$target"; then
+      # No need for jit libs
+      LLVM_LIBS=`$LLVM_CONFIG --libs core bitwriter`
+   else
+      LLVM_LIBS=`$LLVM_CONFIG --libs core bitwriter jit mcjit $llvm_codegen`
+   fi
    LLVM_LIBS="$LLVM_LDFLAGS $LLVM_LIBS -lstdc++"
 
    # Should be something like '2.6' or '2.7svn'
@@ -2481,7 +2482,7 @@ case "$host" in
 			have_visibility_hidden=no
 			sgen_supported=true
 			;;
-		  cygwin*)
+		  mingw*|cygwin*)
 			sgen_supported=true
 			have_visibility_hidden=no		  
 			;;
@@ -2587,9 +2588,9 @@ case "$host" in
 		arch_target=arm;
 		ACCESS_UNALIGNED="no"
 		JIT_SUPPORTED=yes
-		CPPFLAGS="$CPPFLAGS -D__ARM_EABI__ -DHAVE_ARMV6=1"
+		CPPFLAGS="$CPPFLAGS -D__ARM_EABI__"
 		# libgc's gc_locks.h depends on this
-	    CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DHAVE_ARMV6"
+	    CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC"
 		sgen_supported=true
 		;;
 	arm*-linux*)
@@ -2611,7 +2612,7 @@ case "$host" in
 #		AOT_SUPPORTED="no"
 #		;;
 	s390x-*-linux*)
-		TARGET=S390x;
+		TARGET=S390X;
 		arch_target=s390x;
 		ACCESS_UNALIGNED="yes"
 		JIT_SUPPORTED=yes
@@ -2631,7 +2632,7 @@ if test "x$host" != "x$target"; then
 		arch_target=arm;
 		ACCESS_UNALIGNED="no"
 		JIT_SUPPORTED=yes
-		CPPFLAGS="$CPPFLAGS -D__ARM_EABI__ -DHAVE_ARMV6=1"
+		CPPFLAGS="$CPPFLAGS -D__ARM_EABI__"
 		jit_wanted=true
 		# Can't use tls, since it depends on the runtime detection of tls offsets
 		# in mono-compiler.h
@@ -2720,7 +2721,6 @@ if test "x$host" != "x$target"; then
 	esac
 fi
 
-# FIXME: Define the others as well
 case "$TARGET" in
 X86)
 	AC_DEFINE(TARGET_X86, 1, [...])
@@ -2738,13 +2738,31 @@ POWERPC64)
 	AC_DEFINE(TARGET_POWERPC, 1, [...])
 	AC_DEFINE(TARGET_POWERPC64, 1, [...])
 	;;
-S390x)
+S390X)
 	AC_DEFINE(TARGET_S390X, 1, [...])
 	;;
 MIPS)
 	AC_DEFINE(TARGET_MIPS, 1, [...])
 	;;
+IA64)
+	AC_DEFINE(TARGET_IA64, 1, [...])
+	;;
+SPARC)
+	AC_DEFINE(TARGET_SPARC, 1, [...])
+	;;
+SPARC64)
+	AC_DEFINE(TARGET_SPARC64, 1, [...])
+	;;
 esac
+
+dnl Use GCC atomic ops if they work on the target.
+if test x$GCC = "xyes"; then
+	case $TARGET in
+	X86 | AMD64 | ARM | POWERPC | POWERPC64 | MIPS)
+		AC_DEFINE(USE_GCC_ATOMIC_OPS, 1, [...])
+		;;
+	esac
+fi
 
 if test "x$target_mach" = "xyes"; then
    if test "x$TARGET" = "xARM"; then
@@ -2954,11 +2972,6 @@ if test "x$icall_tables" = "xno"; then
    AC_DEFINE(DISABLE_ICALL_TABLES, 1, [Icall tables disabled])
 fi
 
-if test "x$mono_cv_clang" = "xyes"; then
-   # FIXME: This causes many compilation errors
-   with_tls=pthread
-fi
-
 if test "x$with_tls" = "x__thread"; then
 	AC_DEFINE(HAVE_KW_THREAD, 1, [Have __thread keyword])
 	# Pass the information to libgc
@@ -2967,10 +2980,7 @@ if test "x$with_tls" = "x__thread"; then
 	AC_TRY_COMPILE([static __thread int foo __attribute__((tls_model("initial-exec")));], [
 		], [
 			AC_MSG_RESULT(yes)
-			# CLANG doesn't support this yet, and it prints warnings about it
-			if test "x$mono_cv_clang" = "xno"; then
-				AC_DEFINE(HAVE_TLS_MODEL_ATTR, 1, [tld_model available])
-			fi
+			AC_DEFINE(HAVE_TLS_MODEL_ATTR, 1, [tls_model available])
 		], [
 			AC_MSG_RESULT(no)
 	])
@@ -3038,18 +3048,54 @@ if test ${TARGET} = ARM; then
 	CPPFLAGS="$CPPFLAGS -DARM_FPU_$fpu=1"
 	unset fpu
 
-	if test x$cross_compiling = xno; then
-		AC_MSG_CHECKING(for ARMV6)
-		AC_TRY_RUN([
-			int main () { __asm__ __volatile__ ("mcr p15, 0, %0, c7, c10, 5" : : "r" (0) : "memory"); return 0; }
-				], armv6=yes, armv6=no)
+	dnl *********************************************
+	dnl *** Check which ARM version(s) we can use ***
+	dnl *********************************************
+	AC_MSG_CHECKING(which ARM version to use)
 
-		AC_MSG_RESULT($armv6)
-		if test ${armv6} = yes; then
-		   AC_DEFINE(HAVE_ARMV6, 1, "Host supports ARMV6 instructions")
-		   # libgc's gc_locks.h depends on this
-		   CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DHAVE_ARMV6"
-		fi
+	AC_TRY_COMPILE([], [
+		#if !defined(__ARM_ARCH_5T__) && !defined(__ARM_ARCH_5TE__) && !defined(__ARM_ARCH_5TEJ__)
+		#error Not on ARM v5.
+		#endif
+		return 0;
+	], [
+		arm_v5=yes
+	], [])
+
+	AC_TRY_COMPILE([], [
+		#if !defined(__ARM_ARCH_6J__) && !defined(__ARM_ARCH_6ZK__) && !defined(__ARM_ARCH_6K__) && !defined(__ARM_ARCH_6T2__) && !defined(__ARM_ARCH_6M__)
+		#error Not on ARM v6.
+		#endif
+		return 0;
+	], [
+		arm_v5=yes
+		arm_v6=yes
+	], [])
+
+	AC_TRY_COMPILE([], [
+		#if !defined(__ARM_ARCH_7A__) && !defined(__ARM_ARCH_7R__) && !defined(__ARM_ARCH_7EM__) && !defined(__ARM_ARCH_7M__) && !defined(__ARM_ARCH_7S__)
+		#error Not on ARM v7.
+		#endif
+		return 0;
+	], [
+		arm_v5=yes
+		arm_v6=yes
+		arm_v7=yes
+	], [])
+
+	if test x$arm_v5 = xyes; then
+		AC_DEFINE(HAVE_ARMV5, 1, [ARM v5])
+		CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DHAVE_ARMV5=1"
+	fi
+
+	if test x$arm_v6 = xyes; then
+		AC_DEFINE(HAVE_ARMV6, 1, [ARM v6])
+		CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DHAVE_ARMV6=1"
+	fi
+
+	if test x$arm_v7 = xyes; then
+		AC_DEFINE(HAVE_ARMV7, 1, [ARM v7])
+		CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DHAVE_ARMV7=1"
 	fi
 fi
 
@@ -3167,7 +3213,7 @@ fi
 if test "x$enable_shared" = "xno" -a "x$enable_executables" = "xyes"; then
    LIBMONO_LA=libmini-static.la
 else
-   LIBMONO_LA=libmono-$API_VER.la
+   LIBMONO_LA=libmonosgen-$API_VER.la
 fi
 AC_SUBST(LIBMONO_LA)
 
@@ -3220,12 +3266,11 @@ AM_CONDITIONAL(SPARC64, test x$TARGET = xSPARC64)
 AM_CONDITIONAL(X86, test x$TARGET = xX86)
 AM_CONDITIONAL(AMD64, test x$TARGET = xAMD64)
 AM_CONDITIONAL(IA64, test x$TARGET = xIA64)
-AM_CONDITIONAL(M68K, test x$TARGET = xM68K)
 AM_CONDITIONAL(MIPS, test x$TARGET = xMIPS)
 AM_CONDITIONAL(POWERPC, test x$TARGET = xPOWERPC)
 AM_CONDITIONAL(POWERPC64, test x$TARGET = xPOWERPC64)
 AM_CONDITIONAL(ARM, test x$TARGET = xARM)
-AM_CONDITIONAL(S390x, test x$TARGET = xS390x)
+AM_CONDITIONAL(S390X, test x$TARGET = xS390X)
 AM_CONDITIONAL(HOST_X86, test x$HOST = xX86)
 AM_CONDITIONAL(HOST_AMD64, test x$HOST = xAMD64)
 AM_CONDITIONAL(HOST_ARM, test x$HOST = xARM)

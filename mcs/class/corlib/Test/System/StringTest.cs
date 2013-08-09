@@ -2274,7 +2274,25 @@ public class StringTest
 		Assert.IsTrue ("ABC".Contains ("ABC"));
 		Assert.IsTrue ("ABC".Contains ("AB"));
 		Assert.IsTrue (!"ABC".Contains ("AD"));
-		Assert.IsTrue (!"encyclop�dia".Contains("encyclopaedia"));
+		Assert.IsTrue (!"encyclopædia".Contains("encyclopaedia"));
+	}
+
+	[Test]
+	public void IndexOfIsCultureAwareWhileContainsIsNot ()
+	{
+		string a = "encyclopædia";
+		string b = "encyclopaedia";
+		Assert.IsFalse (a.Contains (b), "#1");
+		Assert.IsTrue (a.Contains ("æ"), "#1.1");
+		Assert.IsFalse (b.Contains ("æ"), "#1.2");
+		Assert.AreEqual (0, a.IndexOf (b), "#2");
+		Assert.AreEqual (8, a.IndexOf ('æ'), "#3");
+		Assert.AreEqual (-1, b.IndexOf ('æ'), "#4");
+		Assert.AreEqual (8, a.IndexOf ("æ"), "#5");
+		Assert.AreEqual (8, b.IndexOf ("æ"), "#6");
+
+		Assert.AreEqual (0, CultureInfo.CurrentCulture.CompareInfo.IndexOf (a, b, 0, a.Length, CompareOptions.None), "#7");
+		Assert.AreEqual (-1, CultureInfo.CurrentCulture.CompareInfo.IndexOf (a, b, 0, a.Length, CompareOptions.Ordinal), "#8");
 	}
 
 	[Test]

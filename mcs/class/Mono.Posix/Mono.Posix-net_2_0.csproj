@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{BFC160FF-5B62-41D2-B039-52C469077AE0}</ProjectGuid>
+    <ProjectGuid>{F83F663F-89F7-481C-941E-E4FE67867254}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618,612</NoWarn>
     <OutputPath>bin\Debug\Mono.Posix-net_2_0</OutputPath>
@@ -118,11 +118,11 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0.csproj">
-      <Project>{0F9C68C1-0695-4DC0-8064-B0749F54DF34}</Project>
+      <Project>{245C754C-D6DE-4434-BA78-37A93E196236}</Project>
       <Name>System\System-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>

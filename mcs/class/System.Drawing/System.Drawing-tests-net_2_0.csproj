@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{0EDFBC91-1A16-460C-857A-02FAA48FDD28}</ProjectGuid>
+    <ProjectGuid>{C94D612B-833E-4BF7-AA27-6F3420E5698B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618,219,169,1595</NoWarn>
     <OutputPath>bin\Debug\System.Drawing-tests-net_2_0</OutputPath>
@@ -151,19 +151,19 @@
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Drawing\System.Drawing-net_2_0.csproj">
-      <Project>{0877A48B-2DF5-40A2-8714-ABBF2BD48987}</Project>
+      <Project>{CA7E5301-90D2-4C07-87B7-851AA216D4C9}</Project>
       <Name>System.Drawing\System.Drawing-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
+      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Drawing\System.Drawing-net_2_0.csproj">
-      <Project>{0877A48B-2DF5-40A2-8714-ABBF2BD48987}</Project>
+      <Project>{CA7E5301-90D2-4C07-87B7-851AA216D4C9}</Project>
       <Name>System.Drawing\System.Drawing-net_2_0</Name>
     </ProjectReference>
     <Reference Include="System.Runtime.Serialization.Formatters.Soap.dll">
@@ -172,7 +172,7 @@
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
-      <Project>{205A8E90-88CC-4B46-8151-87FA90B666A5}</Project>
+      <Project>{D9776E38-7673-45F6-BF19-7B77830DF9CA}</Project>
       <Name>System.XML\System.Xml-net_2_0-1</Name>
     </ProjectReference>
   </ItemGroup>

@@ -1,17 +1,10 @@
-// CS0118: `Test.SomeDel' is a `type' but a `variable' was expected
-// Line: 14
+// CS0118: `C' is a `type' but a `variable' was expected
+// Line: 8
 
-using System;
-
-namespace Test
+class C
 {
-	public delegate void SomeDel (Action a);
-
-	public class TestClass
+	public static void Main ()
 	{
-		public void TestMethod ()
-		{
-			SomeDel (() => { });
-		}
+		int i = (C) +1;
 	}
 }

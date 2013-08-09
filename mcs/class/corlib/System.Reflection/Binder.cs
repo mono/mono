@@ -32,6 +32,7 @@
 
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace System.Reflection
 {
@@ -400,12 +401,12 @@ namespace System.Reflection
 						if (i < names.Length)
 							continue;
 
-						selected = SelectMethod (bindingAttr, new MethodBase [] { m }, newTypes, newModifiers, true, args);
+						selected = SelectMethod (bindingAttr, new MethodBase [] { m }, newTypes, newModifiers, true, ref args);
 						if (selected != null)
 							break;
 					}
 				} else {
-					selected = SelectMethod (bindingAttr, match, types, modifiers, true, args);
+					selected = SelectMethod (bindingAttr, match, types, modifiers, true, ref args);
 				}
 
 				state = null;
@@ -618,11 +619,11 @@ namespace System.Reflection
 
 			public override MethodBase SelectMethod (BindingFlags bindingAttr, MethodBase [] match, Type [] types, ParameterModifier [] modifiers)
 			{
-				return SelectMethod (bindingAttr, match, types, modifiers,
-					false, null);
+				object[] args = null;
+				return SelectMethod (bindingAttr, match, types, modifiers, false, ref args);
 			}
 
-			MethodBase SelectMethod (BindingFlags bindingAttr, MethodBase[] match, Type[] types, ParameterModifier[] modifiers, bool allowByRefMatch, object[] arguments)
+			MethodBase SelectMethod (BindingFlags bindingAttr, MethodBase[] match, Type[] types, ParameterModifier[] modifiers, bool allowByRefMatch, ref object[] arguments)
 			{
 				MethodBase m;
 				int i, j;
@@ -685,22 +686,57 @@ namespace System.Reflection
 					return null;
 
 				MethodBase result = null;
+				ParameterInfo[] result_pi = null;
 				for (i = 0; i < match.Length; ++i) {
 					m = match [i];
-					ParameterInfo[] args = m.GetParametersInternal ();
-					if (args.Length != types.Length)
-						continue;
-					if (!check_arguments (types, args, allowByRefMatch))
+					var pi = m.GetParametersInternal ();
+					var full_pi = pi;
+					if (pi.Length != types.Length) {
+						if ((bindingAttr & BindingFlags.OptionalParamBinding) == 0)
+							continue;
+
+						List<ParameterInfo> pi_reduced = null;
+						for (var ii = pi.Length - 1; ii >= 0; --ii) {
+							if ((pi [ii].Attributes & ParameterAttributes.HasDefault) == 0)
+								break;
+
+							if (pi_reduced == null) {
+								pi_reduced = new List<ParameterInfo> (pi);
+							}
+
+							pi_reduced.RemoveAt (ii);
+						}
+
+						if (pi_reduced == null || pi_reduced.Count != types.Length)
+							continue;
+
+						pi = pi_reduced.ToArray ();
+					}
+
+					if (!check_arguments (types, pi, allowByRefMatch))
 						continue;
 
-					if (result != null)
+					if (result != null) {
 						result = GetBetterMethod (result, m, types);
-					else
-						result = m;
+						if (result != m)
+							continue;
+					}
+
+					result = m;
+					result_pi = full_pi;
 				}
 
-				if (result != null || arguments == null || types.Length != arguments.Length)
+				if (result != null) {
+					i = arguments == null ? 0 : arguments.Length;
+					Array.Resize (ref arguments, result_pi.Length);
+					for (; i < arguments.Length; ++i)
+						arguments [i] = result_pi [i].DefaultValue;
+
 					return result;
+				}
+
+				if (arguments == null || types.Length != arguments.Length)
+					return null;
 
 				// Xamarin-5278: try with parameters that are COM objects
 				// REVIEW: do we also need to implement best method match?

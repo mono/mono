@@ -203,7 +203,11 @@ namespace MonoTests.System.Net
 		[Test]
 		public void DownloadFile1 ()
 		{
-			ServerDownload sp = new ServerDownload ();
+			DownloadFile (new ServerDownload ());
+		}
+
+		void DownloadFile (ServerDownload sp)
+		{
 			sp.Start ();
 			string uri = String.Format ("ftp://{0}:{1}/file.txt", sp.IPAddress, sp.Port);
 			try {
@@ -226,6 +230,14 @@ namespace MonoTests.System.Net
 			} finally {
 				sp.Stop ();
 			}
+		}
+
+		[Test]
+		public void DownloadFile2 ()
+		{
+			// Some embedded FTP servers in Industrial Automation Hardware report
+			// the PWD using backslashes, but allow forward slashes for CWD.
+			DownloadFile (new ServerDownload (@"\Users\someuser", "/Users/someuser/"));
 		}
 
 		[Test]
@@ -377,6 +389,20 @@ namespace MonoTests.System.Net
 		}
 
 		class ServerDownload : FtpServer {
+
+			string Pwd, Cwd;
+
+			public ServerDownload ()
+				: this (null, null)
+			{
+			}
+
+			public ServerDownload (string pwd, string cwd)
+			{
+				Pwd = pwd ?? "/home/someuser";
+				Cwd = cwd ?? "/home/someuser/";
+			}
+
 			protected override void Run ()
 			{
 				Socket client = control.Accept ();
@@ -388,7 +414,7 @@ namespace MonoTests.System.Net
 					return;
 				}
 
-				if (!DoInitialDialog (writer, reader, "/home/someuser", "/home/someuser/")) {
+				if (!DoInitialDialog (writer, reader, Pwd, Cwd)) {
 					client.Close ();
 					return;
 				}

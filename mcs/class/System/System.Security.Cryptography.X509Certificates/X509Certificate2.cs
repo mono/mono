@@ -29,6 +29,11 @@
 
 #if SECURITY_DEP
 
+#if MONOTOUCH
+using Mono.Security;
+using Mono.Security.Cryptography;
+using MX = Mono.Security.X509;
+#else
 extern alias MonoSecurity;
 
 using MonoSecurity::Mono.Security;
@@ -36,11 +41,16 @@ using MonoSecurity::Mono.Security.Cryptography;
 using MX = MonoSecurity::Mono.Security.X509;
 #endif
 
+#endif
+
 using System.IO;
 using System.Text;
 
 namespace System.Security.Cryptography.X509Certificates {
 
+#if NET_4_0
+	[Serializable]
+#endif
 	public class X509Certificate2 : X509Certificate {
 #if !SECURITY_DEP
 		// Used in Mono.Security HttpsClientStream

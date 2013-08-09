@@ -73,7 +73,7 @@ emit_line_number_info (MonoDwarfWriter *w, MonoMethod *method,
  * debug information.
  */
 MonoDwarfWriter*
-mono_dwarf_writer_create (MonoImageWriter *writer, FILE *il_file, int il_file_start_line, gboolean appending)
+mono_dwarf_writer_create (MonoImageWriter *writer, FILE *il_file, int il_file_start_line, gboolean appending, gboolean emit_line_numbers)
 {
 	MonoDwarfWriter *w = g_new0 (MonoDwarfWriter, 1);
 	
@@ -103,6 +103,11 @@ mono_dwarf_writer_create (MonoImageWriter *writer, FILE *il_file, int il_file_st
 	} else {
 		/* Collect line number info and emit it at once */
 		w->collect_line_info = TRUE;
+	}
+
+	if (!emit_line_numbers) {
+		w->emit_line = FALSE;
+		w->collect_line_info = FALSE;
 	}
 
 	w->fp = img_writer_get_fp (w->w);
@@ -737,14 +742,15 @@ emit_line_number_info_begin (MonoDwarfWriter *w)
 	emit_label (w, ".Ldebug_line_end");
 }
 
-static char *
-escape_path (char *name)
+char *
+mono_dwarf_escape_path (const char *name)
 {
 	if (strchr (name, '\\')) {
-		char *s = g_malloc (strlen (name) * 2);
+		char *s;
 		int len, i, j;
 
 		len = strlen (name);
+		s = g_malloc0 ((len + 1) * 2);
 		j = 0;
 		for (i = 0; i < len; ++i) {
 			if (name [i] == '\\') {
@@ -756,7 +762,7 @@ escape_path (char *name)
 		}
 		return s;
 	}
-	return name;
+	return g_strdup (name);
 }
 
 static void
@@ -847,7 +853,7 @@ emit_all_line_number_info (MonoDwarfWriter *w)
 	for (i = 0; i < w->line_number_dir_index; ++i) {
 		char *dir = g_hash_table_lookup (index_to_dir, GUINT_TO_POINTER (i + 1));
 
-		emit_string (w, escape_path (dir));
+		emit_string (w, mono_dwarf_escape_path (dir));
 	}
 	/* End of Includes */
 	emit_byte (w, 0);
@@ -868,7 +874,7 @@ emit_all_line_number_info (MonoDwarfWriter *w)
 		if (basename)
 			emit_string (w, basename);
 		else
-			emit_string (w, escape_path (name));
+			emit_string (w, mono_dwarf_escape_path (name));
 		emit_uleb128 (w, dir_index);
 		emit_byte (w, 0);
 		emit_byte (w, 0);
@@ -1732,6 +1738,7 @@ emit_line_number_info (MonoDwarfWriter *w, MonoMethod *method,
 			//printf ("FIRST: %d %d %d\n", prev_line, loc->row, il_offset);
 			emit_sleb128 (w, (gint32)loc->row - (gint32)prev_line);
 			prev_line = loc->row;
+			prev_native_offset = i;
 			first = FALSE;
 		}
 

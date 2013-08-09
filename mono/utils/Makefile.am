@@ -103,7 +103,11 @@ monoutils_sources = \
 	linux_magic.h	\
 	mono-memory-model.h	\
 	atomic.h	\
-	atomic.c
+	atomic.c	\
+	mono-hwcap.h	\
+	mono-hwcap.c	\
+	bsearch.h	\
+	bsearch.c
 
 arch_sources = 
 
@@ -125,6 +129,46 @@ else
 
 arch_sources += mach-support-unknown.c
 
+endif
+
+if X86
+arch_sources += mono-hwcap-x86.c mono-hwcap-x86.h
+endif
+
+if AMD64
+arch_sources += mono-hwcap-x86.c mono-hwcap-x86.h
+endif
+
+if ARM
+arch_sources += mono-hwcap-arm.c mono-hwcap-arm.h
+endif
+
+if MIPS
+arch_sources += mono-hwcap-mips.c mono-hwcap-mips.h
+endif
+
+if POWERPC
+arch_sources += mono-hwcap-ppc.c mono-hwcap-ppc.h
+endif
+
+if POWERPC64
+arch_sources += mono-hwcap-ppc.c mono-hwcap-ppc.h
+endif
+
+if SPARC
+arch_sources += mono-hwcap-sparc.c mono-hwcap-sparc.h
+endif
+
+if SPARC64
+arch_sources += mono-hwcap-sparc.c mono-hwcap-sparc.h
+endif
+
+if IA64
+arch_sources += mono-hwcap-ia64.c mono-hwcap-ia64.h
+endif
+
+if S390X
+arch_sources += mono-hwcap-s390x.c mono-hwcap-s390x.h
 endif
 
 libmonoutils_la_SOURCES = $(monoutils_sources) $(arch_sources)

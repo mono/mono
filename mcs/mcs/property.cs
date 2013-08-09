@@ -174,9 +174,9 @@ namespace Mono.CSharp
 			return ps;
 		}
 
-		public override List<TypeSpec> ResolveMissingDependencies ()
+		public override List<MissingTypeSpecReference> ResolveMissingDependencies (MemberSpec caller)
 		{
-			return memberType.ResolveMissingDependencies ();
+			return memberType.ResolveMissingDependencies (this);
 		}
 	}
 
@@ -253,7 +253,7 @@ namespace Mono.CSharp
 					return;
 				}
 
-				base.ApplyAttributeBuilder (a, ctor, cdata, pa);
+				base.ApplyToExtraTarget (a, ctor, cdata, pa);
 			}
 
 			public override ParametersCompiled ParameterInfo {
@@ -735,6 +735,10 @@ namespace Mono.CSharp
 			}
 		}
 
+		static readonly string[] attribute_target_auto = new string[] { "property", "field" };
+
+		Field backing_field;
+
 		public Property (TypeDefinition parent, FullNamedExpression type, Modifiers mod,
 				 MemberName name, Attributes attrs)
 			: base (parent, type, mod,
@@ -749,19 +753,28 @@ namespace Mono.CSharp
 		{
 			visitor.Visit (this);
 		}
-		
+
+		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
+		{
+			if (a.Target == AttributeTargets.Field) {
+				backing_field.ApplyAttributeBuilder (a, ctor, cdata, pa);
+				return;
+			}
+
+			base.ApplyAttributeBuilder (a, ctor, cdata, pa);
+		}
 
 		void CreateAutomaticProperty ()
 		{
 			// Create backing field
-			Field field = new BackingField (this);
-			if (!field.Define ())
+			backing_field = new BackingField (this);
+			if (!backing_field.Define ())
 				return;
 
-			Parent.PartialContainer.Members.Add (field);
+			Parent.PartialContainer.Members.Add (backing_field);
 
-			FieldExpr fe = new FieldExpr (field, Location);
-			if ((field.ModFlags & Modifiers.STATIC) == 0)
+			FieldExpr fe = new FieldExpr (backing_field, Location);
+			if ((backing_field.ModFlags & Modifiers.STATIC) == 0)
 				fe.InstanceExpression = new CompilerGeneratedThis (Parent.CurrentType, Location);
 
 			//
@@ -825,6 +838,13 @@ namespace Mono.CSharp
 			}
 
 			base.Emit ();
+		}
+
+		public override string[] ValidAttributeTargets {
+			get {
+				return Get != null && ((Get.ModFlags & Modifiers.COMPILER_GENERATED) != 0) ?
+					attribute_target_auto : base.ValidAttributeTargets;
+			}
 		}
 	}
 
@@ -1171,7 +1191,7 @@ namespace Mono.CSharp
 					return;
 				}
 
-				base.ApplyAttributeBuilder (a, ctor, cdata, pa);
+				base.ApplyToExtraTarget (a, ctor, cdata, pa);
 			}
 
 			public override AttributeTargets AttributeTargets {
@@ -1427,9 +1447,9 @@ namespace Mono.CSharp
 			return es;
 		}
 
-		public override List<TypeSpec> ResolveMissingDependencies ()
+		public override List<MissingTypeSpecReference> ResolveMissingDependencies (MemberSpec caller)
 		{
-			return MemberType.ResolveMissingDependencies ();
+			return MemberType.ResolveMissingDependencies (this);
 		}
 	}
  
@@ -1701,16 +1721,17 @@ namespace Mono.CSharp
 			return spec;
 		}
 
-		public override List<TypeSpec> ResolveMissingDependencies ()
+		public override List<MissingTypeSpecReference> ResolveMissingDependencies (MemberSpec caller)
 		{
-			var missing = base.ResolveMissingDependencies ();
+			var missing = base.ResolveMissingDependencies (caller);
+
 			foreach (var pt in parameters.Types) {
-				var m = pt.GetMissingDependencies ();
+				var m = pt.GetMissingDependencies (caller);
 				if (m == null)
 					continue;
 
 				if (missing == null)
-					missing = new List<TypeSpec> ();
+					missing = new List<MissingTypeSpecReference> ();
 
 				missing.AddRange (m);
 			}

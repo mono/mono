@@ -439,7 +439,7 @@ int mono_class_interface_match (const uint8_t *bitmap, int id) MONO_INTERNAL;
 #endif
 
 
-int mono_class_interface_offset (MonoClass *klass, MonoClass *itf);
+MONO_API int mono_class_interface_offset (MonoClass *klass, MonoClass *itf);
 int mono_class_interface_offset_with_variance (MonoClass *klass, MonoClass *itf, gboolean *non_exact_match) MONO_INTERNAL;
 
 typedef gpointer MonoRuntimeGenericContext;
@@ -835,7 +835,7 @@ typedef struct {
 
 extern MonoPerfCounters *mono_perfcounters MONO_INTERNAL;
 
-void mono_perfcounters_init (void);
+MONO_API void mono_perfcounters_init (void);
 
 /*
  * The definition of the first field in SafeHandle,
@@ -1001,7 +1001,7 @@ MonoGenericContext*
 mono_method_get_context (MonoMethod *method) MONO_INTERNAL;
 
 /* Used by monodis, thus cannot be MONO_INTERNAL */
-MonoGenericContainer*
+MONO_API MonoGenericContainer*
 mono_method_get_generic_container (MonoMethod *method);
 
 MonoGenericContext*
@@ -1022,7 +1022,7 @@ mono_class_inflate_generic_method_full_checked (MonoMethod *method, MonoClass *k
 MonoMethodInflated*
 mono_method_inflated_lookup (MonoMethodInflated* method, gboolean cache) MONO_INTERNAL;
 
-MonoMethodSignature *
+MONO_API MonoMethodSignature *
 mono_metadata_get_inflated_signature (MonoMethodSignature *sig, MonoGenericContext *context);
 
 MonoType*
@@ -1034,7 +1034,7 @@ mono_class_inflate_generic_class (MonoClass *gklass, MonoGenericContext *context
 MonoType*
 mono_class_inflate_generic_type_checked (MonoType *type, MonoGenericContext *context, MonoError *error) MONO_INTERNAL;
 
-void
+MONO_API void
 mono_metadata_free_inflated_signature (MonoMethodSignature *sig);
 
 MonoMethodSignature*
@@ -1097,13 +1097,6 @@ typedef struct {
 	MonoClass *internals_visible_class;
 	MonoClass *generic_ilist_class;
 	MonoClass *generic_nullable_class;
-#ifndef DISABLE_COM
-	MonoClass *variant_class;
-	MonoClass *com_object_class;
-	MonoClass *com_interop_proxy_class;
-	MonoClass *iunknown_class;
-	MonoClass *idispatch_class;
-#endif
 	MonoClass *safehandle_class;
 	MonoClass *handleref_class;
 	MonoClass *attribute_class;
@@ -1126,6 +1119,39 @@ mono_install_remoting_trampoline (MonoRemotingTrampoline func) MONO_INTERNAL;
 #define mono_class_is_transparent_proxy(klass) ((klass) == mono_defaults.transparent_proxy_class)
 #define mono_class_is_real_proxy(klass) ((klass) == mono_defaults.real_proxy_class)
 #define mono_object_is_transparent_proxy(object) (((MonoObject*)object)->vtable->klass == mono_defaults.transparent_proxy_class)
+#endif
+
+
+#define GENERATE_GET_CLASS_WITH_CACHE_DECL(shortname) \
+MonoClass* mono_class_get_##shortname##_class (void);
+
+#define GENERATE_GET_CLASS_WITH_CACHE(shortname,namespace,name) \
+MonoClass*	\
+mono_class_get_##shortname##_class (void)	\
+{	\
+	static MonoClass *tmp_class;	\
+	MonoClass *class = tmp_class;	\
+	if (!class) {	\
+		class = mono_class_from_name (mono_defaults.corlib, #namespace, #name);	\
+		g_assert (class);	\
+		mono_memory_barrier ();	\
+		tmp_class = class;	\
+	}	\
+	return class;	\
+}
+
+#define GENERATE_STATIC_GET_CLASS_WITH_CACHE(shortname,namespace,name) \
+static GENERATE_GET_CLASS_WITH_CACHE (shortname,namespace,name)
+
+
+#ifndef DISABLE_COM
+
+GENERATE_GET_CLASS_WITH_CACHE_DECL (interop_proxy)
+GENERATE_GET_CLASS_WITH_CACHE_DECL (idispatch)
+GENERATE_GET_CLASS_WITH_CACHE_DECL (iunknown)
+GENERATE_GET_CLASS_WITH_CACHE_DECL (com_object)
+GENERATE_GET_CLASS_WITH_CACHE_DECL (variant)
+
 #endif
 
 extern MonoDefaults mono_defaults MONO_INTERNAL;
@@ -1192,11 +1218,11 @@ mono_method_get_wrapper_data (MonoMethod *method, guint32 id) MONO_INTERNAL;
 gboolean
 mono_metadata_has_generic_params (MonoImage *image, guint32 token) MONO_INTERNAL;
 
-MonoGenericContainer *
+MONO_API MonoGenericContainer *
 mono_metadata_load_generic_params (MonoImage *image, guint32 token,
 				   MonoGenericContainer *parent_container);
 
-void
+MONO_API void
 mono_metadata_load_generic_param_constraints (MonoImage *image, guint32 token,
 					      MonoGenericContainer *container);
 
@@ -1246,23 +1272,23 @@ mono_type_get_full_name (MonoClass *class) MONO_INTERNAL;
 MonoArrayType *mono_dup_array_type (MonoImage *image, MonoArrayType *a) MONO_INTERNAL;
 MonoMethodSignature *mono_metadata_signature_deep_dup (MonoImage *image, MonoMethodSignature *sig) MONO_INTERNAL;
 
-void
+MONO_API void
 mono_image_init_name_cache (MonoImage *image);
 
 gboolean mono_class_is_nullable (MonoClass *klass) MONO_INTERNAL;
 MonoClass *mono_class_get_nullable_param (MonoClass *klass) MONO_INTERNAL;
 
 /* object debugging functions, for use inside gdb */
-void mono_object_describe        (MonoObject *obj);
-void mono_object_describe_fields (MonoObject *obj);
-void mono_value_describe_fields  (MonoClass* klass, const char* addr);
-void mono_class_describe_statics (MonoClass* klass);
+MONO_API void mono_object_describe        (MonoObject *obj);
+MONO_API void mono_object_describe_fields (MonoObject *obj);
+MONO_API void mono_value_describe_fields  (MonoClass* klass, const char* addr);
+MONO_API void mono_class_describe_statics (MonoClass* klass);
 
 /*Enum validation related functions*/
-gboolean
+MONO_API gboolean
 mono_type_is_valid_enum_basetype (MonoType * type);
 
-gboolean
+MONO_API gboolean
 mono_class_is_valid_enum (MonoClass *klass);
 
 MonoType *

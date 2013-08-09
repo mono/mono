@@ -525,7 +525,7 @@ common_call_trampoline (mgreg_t *regs, guint8 *code, MonoMethod *m, guint8* tram
 			actual_method = vt->klass->vtable [displacement];
 		}
 
-		if (method_inst) {
+		if (method_inst || m->wrapper_type) {
 			MonoGenericContext context = { NULL, NULL };
 
 			if (m->is_inflated)
@@ -998,7 +998,7 @@ mono_delegate_trampoline (mgreg_t *regs, guint8 *code, gpointer *tramp_data, gui
 #ifndef DISABLE_REMOTING
 		if (delegate->target && delegate->target->vtable->klass == mono_defaults.transparent_proxy_class) {
 #ifndef DISABLE_COM
-			if (((MonoTransparentProxy *)delegate->target)->remote_class->proxy_class != mono_defaults.com_object_class && 
+			if (((MonoTransparentProxy *)delegate->target)->remote_class->proxy_class != mono_class_get_com_object_class () &&
 			   !mono_class_is_com_object (((MonoTransparentProxy *)delegate->target)->remote_class->proxy_class))
 #endif
 				method = mono_marshal_get_remoting_invoke (method);
@@ -1675,15 +1675,11 @@ static const char*tramp_names [MONO_TRAMPOLINE_NUM] = {
 	"aot_plt",
 	"delegate",
 	"restore_stack_prot",
-#ifndef DISABLE_REMOTING
 	"generic_virtual_remoting",
-#endif
 	"monitor_enter",
 	"monitor_exit",
 	"vcall",
-#ifdef MONO_ARCH_HAVE_HANDLER_BLOCK_GUARD
 	"handler_block_guard"
-#endif
 };
 
 /*

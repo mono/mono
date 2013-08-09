@@ -86,7 +86,7 @@ namespace System
 			get { 
 				if (local == null) {
 #if MONODROID
-					local = ZoneInfoDB.Default;
+					local = AndroidTimeZones.Default;
 #elif MONOTOUCH
 					using (Stream stream = GetMonoTouchData (null)) {
 						local = BuildFromStream ("Local", stream);
@@ -394,7 +394,7 @@ namespace System
 			}
 #endif
 #if MONODROID
-			var timeZoneInfo = ZoneInfoDB.GetTimeZone (id);
+			var timeZoneInfo = AndroidTimeZones.GetTimeZone (id);
 			if (timeZoneInfo == null)
 				throw new TimeZoneNotFoundException ();
 			return timeZoneInfo;
@@ -598,7 +598,15 @@ namespace System
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
 #endif
 		{
-			throw new NotImplementedException ();
+			if (info == null)
+				throw new ArgumentNullException ("info");
+			info.AddValue ("Id", id);
+			info.AddValue ("DisplayName", displayName);
+			info.AddValue ("StandardName", standardDisplayName);
+			info.AddValue ("DaylightName", daylightDisplayName);
+			info.AddValue ("BaseUtcOffset", baseUtcOffset);
+			info.AddValue ("AdjustmentRules", adjustmentRules);
+			info.AddValue ("SupportsDaylightSavingTime", SupportsDaylightSavingTime);
 		}
 
 		//FIXME: change this to a generic Dictionary and allow caching for FindSystemTimeZoneById
@@ -619,8 +627,8 @@ namespace System
 				}
 #endif
 #if MONODROID
-			foreach (string id in ZoneInfoDB.GetAvailableIds ()) {
-				var tz = ZoneInfoDB.GetTimeZone (id);
+			foreach (string id in AndroidTimeZones.GetAvailableIds ()) {
+				var tz = AndroidTimeZones.GetTimeZone (id);
 				if (tz != null)
 					systemTimeZones.Add (tz);
 			}
@@ -786,7 +794,54 @@ namespace System
 		public void OnDeserialization (object sender)
 #endif
 		{
-			throw new NotImplementedException ();
+			try {
+					TimeZoneInfo.Validate (id, baseUtcOffset, adjustmentRules);
+				} catch (ArgumentException ex) {
+					throw new SerializationException ("invalid serialization data", ex);
+				}
+ 		}
+
+		private static void Validate (string id, TimeSpan baseUtcOffset, AdjustmentRule [] adjustmentRules)
+		{
+			if (id == null)
+				throw new ArgumentNullException ("id");
+
+			if (id == String.Empty)
+				throw new ArgumentException ("id parameter is an empty string");
+
+			if (baseUtcOffset.Ticks % TimeSpan.TicksPerMinute != 0)
+				throw new ArgumentException ("baseUtcOffset parameter does not represent a whole number of minutes");
+
+			if (baseUtcOffset > new TimeSpan (14, 0, 0) || baseUtcOffset < new TimeSpan (-14, 0, 0))
+				throw new ArgumentOutOfRangeException ("baseUtcOffset parameter is greater than 14 hours or less than -14 hours");
+
+#if STRICT
+			if (id.Length > 32)
+				throw new ArgumentException ("id parameter shouldn't be longer than 32 characters");
+#endif
+
+			if (adjustmentRules != null && adjustmentRules.Length != 0) {
+				AdjustmentRule prev = null;
+				foreach (AdjustmentRule current in adjustmentRules) {
+					if (current == null)
+						throw new InvalidTimeZoneException ("one or more elements in adjustmentRules are null");
+
+					if ((baseUtcOffset + current.DaylightDelta < new TimeSpan (-14, 0, 0)) ||
+							(baseUtcOffset + current.DaylightDelta > new TimeSpan (14, 0, 0)))
+						throw new InvalidTimeZoneException ("Sum of baseUtcOffset and DaylightDelta of one or more object in adjustmentRules array is greater than 14 or less than -14 hours;");
+
+					if (prev != null && prev.DateStart > current.DateStart)
+						throw new InvalidTimeZoneException ("adjustment rules specified in adjustmentRules parameter are not in chronological order");
+					
+					if (prev != null && prev.DateEnd > current.DateStart)
+						throw new InvalidTimeZoneException ("some adjustment rules in the adjustmentRules parameter overlap");
+
+					if (prev != null && prev.DateEnd == current.DateStart)
+						throw new InvalidTimeZoneException ("a date can have multiple adjustment rules applied to it");
+
+					prev = current;
+				}
+			}
 		}
 		
 		public string ToSerializedString ()
@@ -797,6 +852,19 @@ namespace System
 		public override string ToString ()
 		{
 			return DisplayName;
+		}
+
+		private TimeZoneInfo (SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+			id = (string) info.GetValue ("Id", typeof (string));
+			displayName = (string) info.GetValue ("DisplayName", typeof (string));
+			standardDisplayName = (string) info.GetValue ("StandardName", typeof (string));
+			daylightDisplayName = (string) info.GetValue ("DaylightName", typeof (string));
+			baseUtcOffset = (TimeSpan) info.GetValue ("BaseUtcOffset", typeof (TimeSpan));
+			adjustmentRules = (TimeZoneInfo.AdjustmentRule []) info.GetValue ("AdjustmentRules", typeof (TimeZoneInfo.AdjustmentRule []));
+			supportsDaylightSavingTime = (bool) info.GetValue ("SupportsDaylightSavingTime", typeof (bool));
 		}
 
 		private TimeZoneInfo (string id, TimeSpan baseUtcOffset, string displayName, string standardDisplayName, string daylightDisplayName, TimeZoneInfo.AdjustmentRule [] adjustmentRules, bool disableDaylightSavingTime)

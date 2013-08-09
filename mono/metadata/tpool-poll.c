@@ -19,7 +19,7 @@ struct _tp_poll_data {
 typedef struct _tp_poll_data tp_poll_data;
 
 static void tp_poll_shutdown (gpointer event_data);
-static void tp_poll_modify (gpointer event_data, int fd, int operation, int events, gboolean is_new);
+static void tp_poll_modify (gpointer p, int fd, int operation, int events, gboolean is_new);
 static void tp_poll_wait (gpointer p);
 
 static gpointer
@@ -74,12 +74,18 @@ tp_poll_init (SocketIOData *data)
 }
 
 static void
-tp_poll_modify (gpointer event_data, int fd, int operation, int events, gboolean is_new)
+tp_poll_modify (gpointer p, int fd, int operation, int events, gboolean is_new)
 {
-	tp_poll_data *data = event_data;
+	SocketIOData *socket_io_data;
+	tp_poll_data *data;
 	char msg [1];
 	int unused;
 
+	socket_io_data = p;
+	data = socket_io_data->event_data;
+
+	LeaveCriticalSection (&socket_io_data->io_lock);
+	
 	MONO_SEM_WAIT (&data->new_sem);
 	INIT_POLLFD (&data->newpfd, GPOINTER_TO_INT (fd), events);
 	*msg = (char) operation;
@@ -150,13 +156,10 @@ tp_poll_wait (gpointer p)
 	gint maxfd = 1;
 	gint allocated;
 	gint i;
-	MonoInternalThread *thread;
 	tp_poll_data *data;
 	SocketIOData *socket_io_data = p;
 	MonoPtrArray async_results;
 	gint nresults;
-
-	thread = mono_thread_internal_current ();
 
 	data = socket_io_data->event_data;
 	allocated = INITIAL_POLLFD_SIZE;
@@ -177,8 +180,7 @@ tp_poll_wait (gpointer p)
 
 		do {
 			if (nsock == -1) {
-				if (THREAD_WANTS_A_BREAK (thread))
-					mono_thread_interruption_checkpoint ();
+				check_for_interruption_critical ();
 			}
 
 			nsock = mono_poll (pfds, maxfd, -1);

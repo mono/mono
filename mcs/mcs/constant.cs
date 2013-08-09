@@ -3,11 +3,11 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
-//   Marek Safar (marek.safar@seznam.cz)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // Copyright 2001-2003 Ximian, Inc.
 // Copyright 2003-2008 Novell, Inc.
-// Copyright 2011 Xamarin Inc
+// Copyright 2011-2013 Xamarin Inc
 //
 
 using System;
@@ -89,7 +89,7 @@ namespace Mono.CSharp {
 			if (this.type == type)
 				return this;
 
-			if (Convert.ImplicitNumericConversion (this, type) == null) 
+			if (!Convert.ImplicitNumericConversionExists (this.type, type))
 				return null;
 
 			bool fail;			
@@ -161,6 +161,88 @@ namespace Mono.CSharp {
 			return null;
 #endif
 		}
+
+		//
+		// Returns a constant instance based on value and type. This is probing version of
+		// CreateConstantFromValue
+		//
+		public static Constant ExtractConstantFromValue (TypeSpec t, object v, Location loc)
+		{
+			switch (t.BuiltinType) {
+			case BuiltinTypeSpec.Type.Int:
+				if (v is int)
+					return new IntConstant (t, (int) v, loc);
+				break;
+			case BuiltinTypeSpec.Type.String:
+				if (v is string)
+					return new StringConstant (t, (string) v, loc);
+				break;
+			case BuiltinTypeSpec.Type.UInt:
+				if (v is uint)
+					return new UIntConstant (t, (uint) v, loc);
+				break;
+			case BuiltinTypeSpec.Type.Long:
+				if (v is long)
+					return new LongConstant (t, (long) v, loc);
+				break;
+			case BuiltinTypeSpec.Type.ULong:
+				if (v is ulong)
+					return new ULongConstant (t, (ulong) v, loc);
+				break;
+			case BuiltinTypeSpec.Type.Float:
+				if (v is float)
+					return new FloatConstant (t, (float) v, loc);
+				break;
+			case BuiltinTypeSpec.Type.Double:
+				if (v is double)
+					return new DoubleConstant (t, (double) v, loc);
+				break;
+			case BuiltinTypeSpec.Type.Short:
+				if (v is short)
+					return new ShortConstant (t, (short) v, loc);
+				break;
+			case BuiltinTypeSpec.Type.UShort:
+				if (v is ushort)
+					return new UShortConstant (t, (ushort) v, loc);
+				break;
+			case BuiltinTypeSpec.Type.SByte:
+				if (v is sbyte)
+					return new SByteConstant (t, (sbyte) v, loc);
+				break;
+			case BuiltinTypeSpec.Type.Byte:
+				if (v is byte)
+					return new ByteConstant (t, (byte) v, loc);
+				break;
+			case BuiltinTypeSpec.Type.Char:
+				if (v is char)
+					return new CharConstant (t, (char) v, loc);
+				break;
+			case BuiltinTypeSpec.Type.Bool:
+				if (v is bool)
+					return new BoolConstant (t, (bool) v, loc);
+				break;
+			case BuiltinTypeSpec.Type.Decimal:
+				if (v is decimal)
+					return new DecimalConstant (t, (decimal) v, loc);
+				break;
+			}
+
+			if (t.IsEnum) {
+				var real_type = EnumSpec.GetUnderlyingType (t);
+				return new EnumConstant (CreateConstantFromValue (real_type, v, loc), t);
+			}
+
+			if (v == null) {
+				if (t.IsNullableType)
+					return Nullable.LiftedNull.Create (t, loc);
+
+				if (TypeSpec.IsReferenceType (t))
+					return new NullConstant (t, loc);
+			}
+
+			return null;
+		}
+
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
@@ -2018,6 +2100,14 @@ namespace Mono.CSharp {
 		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
 			return null;
+		}
+
+		public override Constant ConvertImplicitly (TypeSpec type)
+		{
+			if (IsDefaultValue && type.BuiltinType == BuiltinTypeSpec.Type.Object)
+				return new NullConstant (type, loc);
+
+			return base.ConvertImplicitly (type);
 		}
 	}
 

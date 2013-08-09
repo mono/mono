@@ -174,6 +174,7 @@ rm -rf %buildroot
 %if %sgen == yes
 %_bindir/mono-sgen
 %endif
+%_bindir/mono-boehm
 %_bindir/mono-test-install
 %_bindir/mozroots
 %_bindir/peverify
@@ -297,6 +298,7 @@ rm -rf %buildroot
 %_prefix/lib/mono/4.5/System.Json.Microsoft.dll
 %_prefix/lib/mono/4.5/System.Net.dll
 %_prefix/lib/mono/4.5/System.Net.Http.dll
+%_prefix/lib/mono/4.5/System.Net.Http.WebRequest.dll
 %_prefix/lib/mono/4.5/System.Numerics.dll
 %_prefix/lib/mono/4.5/System.Security.dll
 %_prefix/lib/mono/4.5/System.Threading.Tasks.Dataflow.dll
@@ -305,8 +307,9 @@ rm -rf %buildroot
 %_prefix/lib/mono/4.5/System.dll
 %_prefix/lib/mono/4.5/cscompmgd.dll
 %_prefix/lib/mono/4.5/mscorlib.dll*
+%_prefix/lib/mono/4.5/System.Windows.dll
+%_prefix/lib/mono/4.5/System.Xml.Serialization.dll
 %_prefix/lib/mono/4.5/Facades/*.dll
-%_prefix/lib/mono/4.5/Facades/*.dll.mdb
 %_prefix/lib/mono/compat-2.0/ICSharpCode.SharpZipLib.dll
 %_prefix/lib/mono/gac/Commons.Xml.Relaxng
 %_prefix/lib/mono/gac/CustomMarshalers
@@ -337,6 +340,7 @@ rm -rf %buildroot
 %_prefix/lib/mono/gac/System.IO.Compression.FileSystem
 %_prefix/lib/mono/gac/System.Net
 %_prefix/lib/mono/gac/System.Net.Http
+%_prefix/lib/mono/gac/System.Net.Http.WebRequest
 %_prefix/lib/mono/gac/System.Numerics
 %_prefix/lib/mono/gac/System.Security
 %_prefix/lib/mono/gac/System.Threading.Tasks.Dataflow
@@ -344,6 +348,8 @@ rm -rf %buildroot
 %_prefix/lib/mono/gac/System.Xml.Linq
 %_prefix/lib/mono/gac/System.Json
 %_prefix/lib/mono/gac/System.Json.Microsoft
+%_prefix/lib/mono/gac/System.Windows
+%_prefix/lib/mono/gac/System.Xml.Serialization
 %_prefix/lib/mono/gac/cscompmgd
 %_prefix/lib/mono/mono-configuration-crypto
 
@@ -393,12 +399,12 @@ Development files for libmono.
 %_libdir/pkgconfig/mono-2.pc
 
 %if %sgen == yes
-%package -n libmonosgen-2_0-0
+%package -n libmonosgen-2_0-1
 License:        LGPL v2.1 only
 Summary:	A Library for embedding Mono in your Application (sgen version)
 Group:          Development/Libraries/C and C++
 
-%description -n libmonosgen-2_0-0
+%description -n libmonosgen-2_0-1
 The Mono Project is an open development initiative that is working to
 develop an open source, Unix version of the .NET development platform.
 Its objective is to enable Unix developers to build and deploy
@@ -407,13 +413,13 @@ technologies that have been submitted to the ECMA for standardization.
 
 A Library for embedding Mono in your Application (sgen version).
 
-%files -n libmonosgen-2_0-0
+%files -n libmonosgen-2_0-1
 %defattr(-, root, root)
-%_libdir/libmonosgen-2.0.so.0*
+%_libdir/libmonosgen-2.0.so.1*
 
-%post -n libmonosgen-2_0-0 -p /sbin/ldconfig
+%post -n libmonosgen-2_0-1 -p /sbin/ldconfig
 
-%postun -n libmonosgen-2_0-0 -p /sbin/ldconfig
+%postun -n libmonosgen-2_0-1 -p /sbin/ldconfig
 
 %package -n libmonosgen-2_0-devel
 License:        LGPL v2.1 only
@@ -438,6 +444,49 @@ Development files for libmonosgen.
 %_libdir/libmonosgen-2.0.so
 %_libdir/pkgconfig/monosgen-2.pc
 %endif
+
+%package -n libmonoboehm-2_0-1
+License:        LGPL v2.1 only
+Summary:	A Library for embedding Mono in your Application (boehm version)
+Group:          Development/Libraries/C and C++
+
+%description -n libmonoboehm-2_0-1
+The Mono Project is an open development initiative that is working to
+develop an open source, Unix version of the .NET development platform.
+Its objective is to enable Unix developers to build and deploy
+cross-platform .NET applications. The project will implement various
+technologies that have been submitted to the ECMA for standardization.
+
+A Library for embedding Mono in your Application (boehm version).
+
+%files -n libmonoboehm-2_0-1
+%defattr(-, root, root)
+%_libdir/libmonoboehm-2.0.so.1*
+
+%post -n libmonoboehm-2_0-1 -p /sbin/ldconfig
+
+%postun -n libmonoboehm-2_0-1 -p /sbin/ldconfig
+
+%package -n libmonoboehm-2_0-devel
+License:        LGPL v2.1 only
+Summary:	Development files for libmonosgen
+Group:          Development/Languages/Mono
+Requires:       mono-core == %version-%release
+Requires:       libmono-2_0-devel
+
+%description -n libmonoboehm-2_0-devel
+The Mono Project is an open development initiative that is working to
+develop an open source, Unix version of the .NET development platform.
+Its objective is to enable Unix developers to build and deploy
+cross-platform .NET applications. The project will implement various
+technologies that have been submitted to the ECMA for standardization.
+
+Development files for libmonoboehm.
+
+%files -n libmonoboehm-2_0-devel
+%defattr(-, root, root)
+%_libdir/libmonoboehm-2.0.a
+%_libdir/libmonoboehm-2.0.so
 
 %if %llvm == yes
 %package -n libmono-llvm0
@@ -1352,8 +1401,6 @@ Mono development tools.
 %_prefix/lib/mono/gac/Mono.Debugger.Soft
 %_prefix/lib/mono/gac/PEAPI
 %_prefix/lib/mono/xbuild
-%_prefix/lib/mono/xbuild/Microsoft/Portable/v4.0/Microsoft.Portable.CSharp.targets
-%_prefix/lib/mono/xbuild/Microsoft/Portable/v4.5/Microsoft.Portable.CSharp.targets
 %_prefix/lib/mono/xbuild-frameworks
 
 %package -n monodoc-core
@@ -1414,7 +1461,7 @@ Requires:       libmono-2_0-devel = %version-%release
 Requires:       libmono-llvm0 = %version-%release
 %endif
 %if %sgen == yes
-Requires:       libmonosgen-2_0-0 = %version-%release
+Requires:       libmonosgen-2_0-1 = %version-%release
 Requires:       libmonosgen-2_0-devel = %version-%release
 %endif
 Requires:       mono-data = %version-%release

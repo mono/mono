@@ -1278,11 +1278,11 @@ namespace System
 		{
 			if (value == null)
 				throw new ArgumentNullException ("value");
-			if (value.length == 0)
+			if (value.Length == 0)
 				return 0;
 			if (this.length == 0)
 				return -1;
-			return CultureInfo.CurrentCulture.CompareInfo.IndexOf (this, value, 0, length, CompareOptions.Ordinal);
+			return CultureInfo.CurrentCulture.CompareInfo.IndexOf (this, value, 0, length, CompareOptions.None);
 		}
 
 		public int IndexOf (String value, int startIndex)
@@ -1516,7 +1516,10 @@ namespace System
 
 		public bool Contains (String value)
 		{
-			return IndexOf (value) != -1;
+			if (value == null)
+				throw new ArgumentNullException ("value");
+
+			return IndexOfOrdinalUnchecked (value, 0, Length) != -1;
 		}
 
 		public static bool IsNullOrEmpty (String value)
@@ -1691,9 +1694,9 @@ namespace System
 			case StringComparison.InvariantCultureIgnoreCase:
 				return CultureInfo.InvariantCulture.CompareInfo.IsSuffix (this, value, CompareOptions.IgnoreCase);
 			case StringComparison.Ordinal:
-				return CultureInfo.CurrentCulture.CompareInfo.IsSuffix (this, value, CompareOptions.Ordinal);
+				return CultureInfo.InvariantCulture.CompareInfo.IsSuffix (this, value, CompareOptions.Ordinal);
 			case StringComparison.OrdinalIgnoreCase:
-				return CultureInfo.CurrentCulture.CompareInfo.IsSuffix (this, value, CompareOptions.OrdinalIgnoreCase);
+				return CultureInfo.InvariantCulture.CompareInfo.IsSuffix (this, value, CompareOptions.OrdinalIgnoreCase);
 			default:
 				string msg = Locale.GetText ("Invalid value '{0}' for StringComparison", comparisonType);
 				throw new ArgumentException (msg, "comparisonType");

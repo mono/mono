@@ -137,7 +137,7 @@ namespace System.ServiceModel
 
 		public virtual TChannel CreateChannel (EndpointAddress address, Uri via)
 		{
-#if MONOTOUCH
+#if FULL_AOT_RUNTIME
 			throw new InvalidOperationException ("MonoTouch does not support dynamic proxy code generation. Override this method or its caller to return specific client proxy instance");
 #else
 			var existing = Endpoint.Address;

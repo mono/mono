@@ -385,6 +385,19 @@ namespace Mono.CSharp {
 			return HasSecurityAttribute && IsSecurityActionValid ();
 		}
 
+		static bool IsValidMethodImplOption (int value)
+		{
+			//
+			// Allow to use AggressiveInlining on any runtime/corlib
+			//
+			MethodImplOptions all = (MethodImplOptions) 256;
+			foreach (MethodImplOptions v in System.Enum.GetValues (typeof (MethodImplOptions))) {
+				all |= v;
+			}
+
+			return ((MethodImplOptions) value | all) == all;
+		}
+
 		static bool IsValidArgumentType (TypeSpec t)
 		{
 			if (t.IsArray) {
@@ -1025,10 +1038,14 @@ namespace Mono.CSharp {
 									if (string.IsNullOrEmpty (value))
 										Error_AttributeEmitError ("DllName cannot be empty or null");
 								}
-							} else if (Type == predefined.MethodImpl && pt.BuiltinType == BuiltinTypeSpec.Type.Short &&
-								!System.Enum.IsDefined (typeof (MethodImplOptions), ((Constant) arg_expr).GetValue ().ToString ())) {
-								Error_AttributeEmitError ("Incorrect argument value.");
-								return;
+							} else if (Type == predefined.MethodImpl) {
+								if (pos_args.Count == 1) {
+									var value = (int) ((Constant) arg_expr).GetValueAsLong ();
+
+									if (!IsValidMethodImplOption (value)) {
+										Error_AttributeEmitError ("Incorrect argument value");
+									}
+								}
 							}
 						}
 

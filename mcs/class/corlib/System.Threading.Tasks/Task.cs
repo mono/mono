@@ -214,7 +214,6 @@ namespace System.Threading.Tasks
 		internal void RunSynchronouslyCore (TaskScheduler scheduler)
 		{
 			SetupScheduler (scheduler);
-			var saveStatus = status;
 			Status = TaskStatus.WaitingToRun;
 
 			try {
@@ -224,8 +223,7 @@ namespace System.Threading.Tasks
 				throw new TaskSchedulerException (inner);
 			}
 
-			Status = saveStatus;
-			Start (scheduler);
+			Schedule ();
 			Wait ();
 		}
 		#endregion
@@ -641,25 +639,7 @@ namespace System.Threading.Tasks
 			if (millisecondsTimeout < -1)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
 
-			bool result = true;
-
-			if (!IsCompleted) {
-				// If the task is ready to be run and we were supposed to wait on it indefinitely without cancellation, just run it
-				if (Status == TaskStatus.WaitingToRun && millisecondsTimeout == Timeout.Infinite && scheduler != null && !cancellationToken.CanBeCanceled)
-					scheduler.RunInline (this, true);
-
-				if (!IsCompleted) {
-					var continuation = new ManualResetContinuation ();
-					try {
-						ContinueWith (continuation);
-						result = continuation.Event.Wait (millisecondsTimeout, cancellationToken);
-					} finally {
-						if (!result)
-							RemoveContinuation (continuation);
-						continuation.Dispose ();
-					}
-				}
-			}
+			bool result = WaitCore (millisecondsTimeout, cancellationToken);
 
 			if (IsCanceled)
 				throw new AggregateException (new TaskCanceledException (this));
@@ -667,6 +647,32 @@ namespace System.Threading.Tasks
 			var exception = Exception;
 			if (exception != null)
 				throw exception;
+
+			return result;
+		}
+
+		internal bool WaitCore (int millisecondsTimeout, CancellationToken cancellationToken)
+		{
+			if (IsCompleted)
+				return true;
+
+			// If the task is ready to be run and we were supposed to wait on it indefinitely without cancellation, just run it
+			if (Status == TaskStatus.WaitingToRun && millisecondsTimeout == Timeout.Infinite && scheduler != null && !cancellationToken.CanBeCanceled)
+				scheduler.RunInline (this, true);
+
+			bool result = true;
+
+			if (!IsCompleted) {
+				var continuation = new ManualResetContinuation ();
+				try {
+					ContinueWith (continuation);
+					result = continuation.Event.Wait (millisecondsTimeout, cancellationToken);
+				} finally {
+					if (!result)
+						RemoveContinuation (continuation);
+					continuation.Dispose ();
+				}
+			}
 
 			return result;
 		}
@@ -952,7 +958,7 @@ namespace System.Threading.Tasks
 				throw new ArgumentOutOfRangeException ("millisecondsDelay");
 
 			var task = new Task (TaskActionInvoker.Delay, millisecondsDelay, cancellationToken, TaskCreationOptions.None, null, TaskConstants.Finished);
-			task.SetupScheduler (TaskScheduler.Current);
+			task.SetupScheduler (TaskScheduler.Default);
 			
 			if (millisecondsDelay != Timeout.Infinite)
 				task.scheduler.QueueTask (task);

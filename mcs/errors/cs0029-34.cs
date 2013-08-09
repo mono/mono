@@ -1,4 +1,4 @@
-// CS0019: Operator `+' cannot be applied to operands of type `null' and `MyTypeImplicitOnly?'
+// CS0029: Cannot implicitly convert type `string' to `MyTypeImplicitOnly?'
 // Line: 13
 
 struct MyTypeImplicitOnly

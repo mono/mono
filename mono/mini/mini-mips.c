@@ -18,6 +18,7 @@
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/utils/mono-mmap.h>
+#include <mono/utils/mono-hwcap-mips.h>
 
 #include <mono/arch/mips/mips-codegen.h>
 
@@ -31,7 +32,8 @@
 #define ALWAYS_SAVE_RA		1	/* call-handler & switch currently clobber ra */
 
 #define PROMOTE_R4_TO_R8	1	/* promote single values in registers to doubles */
-#define USE_MUL			1	/* use mul instead of mult/mflo for multiply */
+#define USE_MUL			0	/* use mul instead of mult/mflo for multiply
+							   remember to update cpu-mips.md if you change this */
 
 /* Emit a call sequence to 'v', using 'D' as a scratch register if necessary */
 #define mips_call(c,D,v) do {	\
@@ -596,13 +598,16 @@ mono_arch_get_delegate_invoke_impls (void)
 	guint8 *code;
 	guint32 code_len;
 	int i;
+	char *tramp_name;
 
 	code = get_delegate_invoke_impl (TRUE, 0, &code_len);
-	res = g_slist_prepend (res, mono_tramp_info_create (g_strdup ("delegate_invoke_impl_has_target"), code, code_len, NULL, NULL));
+	res = g_slist_prepend (res, mono_tramp_info_create ("delegate_invoke_impl_has_target", code, code_len, NULL, NULL));
 
 	for (i = 0; i <= MAX_ARCH_DELEGATE_PARAMS; ++i) {
 		code = get_delegate_invoke_impl (FALSE, i, &code_len);
-		res = g_slist_prepend (res, mono_tramp_info_create (g_strdup_printf ("delegate_invoke_impl_target_%d", i), code, code_len, NULL, NULL));
+		tramp_name = g_strdup_printf ("delegate_invoke_impl_target_%d", i);
+		res = g_slist_prepend (res, mono_tramp_info_create (tramp_name, code, code_len, NULL, NULL));
+		g_free (tramp_name);
 	}
 
 	return res;

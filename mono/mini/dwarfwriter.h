@@ -20,7 +20,7 @@
 
 typedef struct _MonoDwarfWriter MonoDwarfWriter;
 
-MonoDwarfWriter* mono_dwarf_writer_create (MonoImageWriter *writer, FILE *il_file, int il_file_start_line, gboolean appending) MONO_INTERNAL;
+MonoDwarfWriter* mono_dwarf_writer_create (MonoImageWriter *writer, FILE *il_file, int il_file_start_line, gboolean appending, gboolean emit_line_numbers) MONO_INTERNAL;
 
 void mono_dwarf_writer_destroy (MonoDwarfWriter *w) MONO_INTERNAL;
 
@@ -34,5 +34,8 @@ void mono_dwarf_writer_emit_trampoline (MonoDwarfWriter *w, const char *tramp_na
 
 void
 mono_dwarf_writer_emit_method (MonoDwarfWriter *w, MonoCompile *cfg, MonoMethod *method, char *start_symbol, char *end_symbol, guint8 *code, guint32 code_size, MonoInst **args, MonoInst **locals, GSList *unwind_info, MonoDebugMethodJitInfo *debug_info) MONO_INTERNAL;
+
+char *
+mono_dwarf_escape_path (const char *name);
 
 #endif

@@ -421,9 +421,6 @@ void
 mono_install_free_domain_hook (MonoFreeDomainFunc func) MONO_INTERNAL;
 
 void 
-mono_init_com_types (void) MONO_INTERNAL;
-
-void 
 mono_cleanup (void) MONO_INTERNAL;
 
 void
@@ -611,7 +608,7 @@ MonoImage *mono_assembly_open_from_bundle (const char *filename,
 					   MonoImageOpenStatus *status,
 					   gboolean refonly) MONO_INTERNAL;
 
-void
+MONO_API void
 mono_domain_add_class_static_data (MonoDomain *domain, MonoClass *klass, gpointer data, guint32 *bitmap);
 
 MonoReflectionAssembly *

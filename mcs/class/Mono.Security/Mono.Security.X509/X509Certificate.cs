@@ -289,8 +289,11 @@ namespace Mono.Security.X509 {
 				if (certhash == null) {
 					if ((decoder == null) || (decoder.Count < 1))
 						return null;
+					string algo = PKCS1.HashNameFromOid (m_signaturealgo, false);
+					if (algo == null)
+						return null;
 					byte[] toBeSigned = decoder [0].GetBytes ();
-					using (var hash = PKCS1.CreateFromOid (m_signaturealgo))
+					using (var hash = PKCS1.CreateFromName (algo))
 						certhash = hash.ComputeHash (toBeSigned, 0, toBeSigned.Length);
 				}
 				return (byte[]) certhash.Clone ();

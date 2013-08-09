@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{3327D147-BA8F-4844-A60B-AF7C5F1267EB}</ProjectGuid>
+    <ProjectGuid>{F83A320D-A0B2-4123-AC1D-0AD8B202FD6B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\System.Runtime.DurableInstancing-net_4_0</OutputPath>
@@ -80,27 +80,27 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
+      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0-2.csproj">
-      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
+      <Project>{8260E24F-1471-4320-AB5B-7CC7B68521E3}</Project>
       <Name>System\System-net_4_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_0-1.csproj">
-      <Project>{F9E777F8-E3F2-4E19-8DC9-2D1BB6B380A6}</Project>
+      <Project>{51720A26-B4D9-4B84-8CB5-9CBA57477FBB}</Project>
       <Name>System.XML\System.Xml-net_4_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Runtime.Serialization\System.Runtime.Serialization-net_4_0.csproj">
-      <Project>{B3C699B6-74B4-4B41-901E-32E57D0909AC}</Project>
+      <Project>{4F614C6C-A83E-4C3C-859B-0548391F519E}</Project>
       <Name>System.Runtime.Serialization\System.Runtime.Serialization-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_0.csproj">
-      <Project>{2590BECB-2660-49C6-93B1-B9E7D0796214}</Project>
+      <Project>{D121EB80-19C6-4313-9BBE-6F66556CE8B7}</Project>
       <Name>System.Core\System.Core-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Xml.Linq\System.Xml.Linq-net_4_0.csproj">
-      <Project>{802B1060-BD79-4648-A24E-D38F34AE29A0}</Project>
+      <Project>{1BD010C0-0588-4ACB-A9E7-483D138D29E9}</Project>
       <Name>System.Xml.Linq\System.Xml.Linq-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>

@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -160,6 +161,7 @@ namespace MonoTests.System.ServiceModel.Syndication
 			SyndicationFeed feed = new SyndicationFeed ();
 			feed.BaseUri = new Uri ("http://mono-project.com");
 			feed.Copyright = new TextSyndicationContent ("No rights reserved");
+			feed.Description = new TextSyndicationContent ("A sample feed for unit testing");
 			feed.Generator = "mono test generator";
 			// .NET bug: it ignores this value.
 			feed.Id = "urn:myid";
@@ -169,7 +171,7 @@ namespace MonoTests.System.ServiceModel.Syndication
 			StringWriter sw = new StringWriter ();
 			using (XmlWriter w = CreateWriter (sw))
 				new Atom10FeedFormatter (feed).WriteTo (w);
-			Assert.AreEqual ("<feed xml:base=\"http://mono-project.com/\" xmlns=\"http://www.w3.org/2005/Atom\"><title type=\"text\"></title><id>XXX</id><rights type=\"text\">No rights reserved</rights><updated>2008-01-01T00:00:00Z</updated><logo>http://mono-project.com/images/mono.png</logo><generator>mono test generator</generator></feed>", DummyId (sw.ToString ()));
+			Assert.AreEqual ("<feed xml:base=\"http://mono-project.com/\" xmlns=\"http://www.w3.org/2005/Atom\"><title type=\"text\"></title><id>XXX</id><rights type=\"text\">No rights reserved</rights><updated>2008-01-01T00:00:00Z</updated><subtitle type=\"text\">A sample feed for unit testing</subtitle><logo>http://mono-project.com/images/mono.png</logo><generator>mono test generator</generator></feed>", DummyId (sw.ToString ()));
 		}
 
 		[Test]
@@ -384,3 +386,4 @@ namespace MonoTests.System.ServiceModel.Syndication
 		}
 	}
 }
+#endif

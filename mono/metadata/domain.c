@@ -1608,13 +1608,6 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 		mono_defaults.corlib, "System.Reflection", "CustomAttributeData");
 
 	/* these are initialized lazily when COM features are used */
-#ifndef DISABLE_COM
-	mono_defaults.variant_class = NULL;
-	mono_defaults.com_object_class = NULL;
-	mono_defaults.com_interop_proxy_class = NULL;
-	mono_defaults.iunknown_class = NULL;
-	mono_defaults.idispatch_class = NULL;
-#endif
 
 	mono_class_init (mono_defaults.array_class);
 	mono_defaults.generic_nullable_class = mono_class_from_name (
@@ -1687,48 +1680,6 @@ mono_init_version (const char *domain_name, const char *version)
 {
 	return mono_init_internal (domain_name, NULL, version);
 }
-
-#ifndef DISABLE_COM
-/**
- * mono_init_com_types:
- *
- * Initializes all types needed for COM Interop in mono_defaults structure. 
- */
-void 
-mono_init_com_types (void)
-{
-	static gboolean initialized = FALSE;
-
-	if (initialized)
-		return;
-	
-	/* FIXME: do I need some threading protection here */
-
-	g_assert (mono_defaults.corlib);
-
-	mono_defaults.variant_class = mono_class_from_name (
-	        mono_defaults.corlib, "System", "Variant");
-	g_assert (mono_defaults.variant_class != 0);
-
-	mono_defaults.com_object_class = mono_class_from_name (
-	        mono_defaults.corlib, "System", "__ComObject");
-	g_assert (mono_defaults.com_object_class != 0);
-
-	mono_defaults.com_interop_proxy_class = mono_class_from_name (
-	        mono_defaults.corlib, "Mono.Interop", "ComInteropProxy");
-	g_assert (mono_defaults.com_interop_proxy_class != 0);
-
-	mono_defaults.iunknown_class = mono_class_from_name (
-	        mono_defaults.corlib, "Mono.Interop", "IUnknown");
-	g_assert (mono_defaults.iunknown_class != 0);
-
-	mono_defaults.idispatch_class = mono_class_from_name (
-	        mono_defaults.corlib, "Mono.Interop", "IDispatch");
-	g_assert (mono_defaults.idispatch_class != 0);
-
-	initialized = TRUE;
-}
-#endif /*DISABLE_COM*/
 
 /**
  * mono_cleanup:
@@ -1975,8 +1926,22 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	/* This needs to be done before closing assemblies */
 	mono_gc_clear_domain (domain);
 
+	/* Close dynamic assemblies first, since they have no ref count */
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
 		MonoAssembly *ass = tmp->data;
+		if (!ass->image || !ass->image->dynamic)
+			continue;
+		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Unloading domain %s[%p], assembly %s[%p], ref_count=%d", domain->friendly_name, domain, ass->aname.name, ass, ass->ref_count);
+		if (!mono_assembly_close_except_image_pools (ass))
+			tmp->data = NULL;
+	}
+
+	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
+		MonoAssembly *ass = tmp->data;
+		if (!ass)
+			continue;
+		if (!ass->image || ass->image->dynamic)
+			continue;
 		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Unloading domain %s[%p], assembly %s[%p], ref_count=%d", domain->friendly_name, domain, ass->aname.name, ass, ass->ref_count);
 		if (!mono_assembly_close_except_image_pools (ass))
 			tmp->data = NULL;

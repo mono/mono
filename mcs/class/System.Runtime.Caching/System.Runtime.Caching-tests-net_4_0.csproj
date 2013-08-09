@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{70ABD0A7-58E3-420D-97F3-24953E2F35AA}</ProjectGuid>
+    <ProjectGuid>{0618397F-59F6-4775-AE8F-F7BE2B619841}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\System.Runtime.Caching-tests-net_4_0</OutputPath>
@@ -71,27 +71,27 @@
   <ItemGroup>
     <Reference Include="..\lib\net_4_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
+      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Runtime.Caching\System.Runtime.Caching-net_4_0.csproj">
-      <Project>{89B24A2B-F179-4270-99AD-37AA03B77E09}</Project>
+      <Project>{B0813837-153F-4D87-8BDC-4224CE7413BA}</Project>
       <Name>System.Runtime.Caching\System.Runtime.Caching-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0-2.csproj">
-      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
+      <Project>{8260E24F-1471-4320-AB5B-7CC7B68521E3}</Project>
       <Name>System\System-net_4_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data\System.Data-net_4_0.csproj">
-      <Project>{6865A6A5-DF93-45C7-BE83-F06907EC81F8}</Project>
+      <Project>{BC1890C0-51E5-48D0-8DBA-B1DD23468F9C}</Project>
       <Name>System.Data\System.Data-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration\System.Configuration-net_4_0.csproj">
-      <Project>{610C7C77-5851-4B95-A3FE-B04E1B011E6A}</Project>
+      <Project>{CA49630B-FD24-411F-9651-B15CA72CE5B8}</Project>
       <Name>System.Configuration\System.Configuration-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_0.csproj">
-      <Project>{2590BECB-2660-49C6-93B1-B9E7D0796214}</Project>
+      <Project>{D121EB80-19C6-4313-9BBE-6F66556CE8B7}</Project>
       <Name>System.Core\System.Core-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>

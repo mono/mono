@@ -324,10 +324,9 @@ namespace Mono.CSharp
 					//    IFoo<A<T>> foo;	// A<T> is definition in this case
 					// }
 					//
-					// TODO: Is full logic from CreateType needed here as well?
-					//
 					if (!IsMissingType (type) && type.IsGenericTypeDefinition) {
-						var targs = CreateGenericArguments (0, type.GetGenericArguments (), dtype);
+						var start_pos = spec.DeclaringType == null ? 0 : spec.DeclaringType.MemberDefinition.TypeParametersCount;
+						var targs = CreateGenericArguments (start_pos, type.GetGenericArguments (), dtype);
 						spec = spec.MakeGenericType (module, targs);
 					}
 				}
@@ -774,24 +773,34 @@ namespace Mono.CSharp
 
 					for (int i = nested_hierarchy.Count; i != 0; --i) {
 						var t = nested_hierarchy [i - 1];
-						spec = MemberCache.FindNestedType (spec, t.Name, t.Arity);
+						if (t.Kind == MemberKind.MissingType)
+							spec = t;
+						else
+							spec = MemberCache.FindNestedType (spec, t.Name, t.Arity);
+
 						if (t.Arity > 0) {
 							spec = spec.MakeGenericType (module, targs.Skip (targs_pos).Take (spec.Arity).ToArray ());
 							targs_pos += t.Arity;
 						}
 					}
 
-					string name = type.Name;
-					int index = name.IndexOf ('`');
-					if (index > 0)
-						name = name.Substring (0, index);
+					if (spec.Kind == MemberKind.MissingType) {
+						spec = new TypeSpec (MemberKind.MissingType, spec, new ImportedTypeDefinition (type_def, this), type_def, Modifiers.PUBLIC);
+						spec.MemberCache = MemberCache.Empty;
+					} else {
+						if ((type_def.Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedPrivate && IgnorePrivateMembers)
+							return null;
 
-					spec = MemberCache.FindNestedType (spec, name, targs.Length - targs_pos);
-					if (spec == null)
-						return null;
+						string name = type.Name;
+						int index = name.IndexOf ('`');
+						if (index > 0)
+							name = name.Substring (0, index);
 
-					if (spec.Arity > 0) {
-						spec = spec.MakeGenericType (module, targs.Skip (targs_pos).ToArray ());
+						spec = MemberCache.FindNestedType (spec, name, targs.Length - targs_pos);
+
+						if (spec.Arity > 0) {
+							spec = spec.MakeGenericType (module, targs.Skip (targs_pos).ToArray ());
+						}
 					}
 				}
 
@@ -1883,7 +1892,7 @@ namespace Mono.CSharp
 
 		}
 
-		public static void Error_MissingDependency (IMemberContext ctx, List<TypeSpec> types, Location loc)
+		public static void Error_MissingDependency (IMemberContext ctx, List<MissingTypeSpecReference> missing, Location loc)
 		{
 			// 
 			// Report details about missing type and most likely cause of the problem.
@@ -1894,8 +1903,8 @@ namespace Mono.CSharp
 
 			var report = ctx.Module.Compiler.Report;
 
-			for (int i = 0; i < types.Count; ++i) {
-				var t = types [i];
+			for (int i = 0; i < missing.Count; ++i) {
+				var t = missing [i].Type;
 
 				//
 				// Report missing types only once
@@ -1904,6 +1913,10 @@ namespace Mono.CSharp
 					continue;
 
 				string name = t.GetSignatureForError ();
+
+				var caller = missing[i].Caller;
+				if (caller.Kind != MemberKind.MissingType)
+					report.SymbolRelatedToPreviousError (caller);
 
 				if (t.MemberDefinition.DeclaringAssembly == ctx.Module.DeclaringAssembly) {
 					report.Error (1683, loc,
@@ -2097,7 +2110,13 @@ namespace Mono.CSharp
 						if (get == null && set == null)
 							continue;
 
-						imported = importer.CreateProperty (p, declaringType, get, set);
+						try {
+							imported = importer.CreateProperty (p, declaringType, get, set);
+						} catch (Exception ex) {
+							throw new InternalErrorException (ex, "Could not import property `{0}' inside `{1}'",
+								p.Name, declaringType.GetSignatureForError ());
+						}
+
 						if (imported == null)
 							continue;
 

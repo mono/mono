@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{77DBD5F4-13EC-45EC-A6BD-3C5543D42B90}</ProjectGuid>
+    <ProjectGuid>{28B2271C-CC55-4812-B732-A67317405AA9}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,414,169,67,3005,436,219,618</NoWarn>
     <OutputPath>bin\Debug\System.ServiceModel-net_2_0</OutputPath>
@@ -1017,63 +1017,63 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
+      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
-      <Project>{205A8E90-88CC-4B46-8151-87FA90B666A5}</Project>
+      <Project>{D9776E38-7673-45F6-BF19-7B77830DF9CA}</Project>
       <Name>System.XML\System.Xml-net_2_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_2_0.csproj">
-      <Project>{F684BA24-FC9A-4BAB-8CF3-ACC489E6B88E}</Project>
+      <Project>{B91370A1-A33A-4F7A-BDF2-1E194AFA0869}</Project>
       <Name>System.Core\System.Core-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Runtime.Serialization\System.Runtime.Serialization-net_2_0.csproj">
-      <Project>{44AAFF44-CBA6-4B20-B883-5D2BA76E1386}</Project>
+      <Project>{FBE202BB-4389-49E8-A81F-155E92BF1B0B}</Project>
       <Name>System.Runtime.Serialization\System.Runtime.Serialization-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration\System.Configuration-net_2_0.csproj">
-      <Project>{725170B0-51F0-46E2-A74D-F764B68553D6}</Project>
+      <Project>{8131BE5D-BE64-4BA5-A62D-FAC4BE0A0B53}</Project>
       <Name>System.Configuration\System.Configuration-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data\System.Data-net_2_0.csproj">
-      <Project>{B8CA1780-FF35-49B9-B385-C24BD0558109}</Project>
+      <Project>{49220562-83E1-49A2-971F-5D31C4AB0258}</Project>
       <Name>System.Data\System.Data-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Security\System.Security-net_2_0.csproj">
-      <Project>{C596FD9E-2AC3-48E2-9661-F6F40C84F044}</Project>
+      <Project>{1A468E0B-8690-4595-BBD7-D9A5002DFF26}</Project>
       <Name>System.Security\System.Security-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.IdentityModel\System.IdentityModel-net_2_0.csproj">
-      <Project>{F2FA985C-3E81-483E-BB6E-E814706D57AE}</Project>
+      <Project>{FB6EBCB1-9EAF-4671-A9CB-505DC2FEC8A0}</Project>
       <Name>System.IdentityModel\System.IdentityModel-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.IdentityModel.Selectors\System.IdentityModel.Selectors-net_2_0.csproj">
-      <Project>{33F1FAD8-42DA-489B-BEEE-E7E4EFE3891F}</Project>
+      <Project>{5A185DDB-82E9-4241-8216-82988647755A}</Project>
       <Name>System.IdentityModel.Selectors\System.IdentityModel.Selectors-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Transactions\System.Transactions-net_2_0.csproj">
-      <Project>{A9F46CB3-7262-47D8-A9EB-9B789278F9EF}</Project>
+      <Project>{DD1B3195-5FEA-46A2-99B5-9839CA60485C}</Project>
       <Name>System.Transactions\System.Transactions-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Messaging\System.Messaging-net_2_0.csproj">
-      <Project>{02BA7387-C09A-40FB-BE80-39588B822A29}</Project>
+      <Project>{858BC3D5-8B2D-4B24-8BD9-BDC36A1DAFE4}</Project>
       <Name>System.Messaging\System.Messaging-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Web\System.Web-net_2_0-2.csproj">
-      <Project>{713A0503-B460-40C0-BD91-DE6CDBB45671}</Project>
+      <Project>{4F179720-1E19-46E8-A55E-010C20701EFF}</Project>
       <Name>System.Web\System.Web-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Web.Services\System.Web.Services-net_2_0.csproj">
-      <Project>{517B1616-9AF6-4C66-9BB9-73369E8A4222}</Project>
+      <Project>{71444193-6B64-4C1B-A87D-580CCB548952}</Project>
       <Name>System.Web.Services\System.Web.Services-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Security\Mono.Security-net_2_0.csproj">
-      <Project>{83A0F0D3-5813-4805-8AC5-8E8B0DC55B9D}</Project>
+      <Project>{6785B2B5-3B06-48F3-9E6C-99B23B9AAC4F}</Project>
       <Name>Mono.Security\Mono.Security-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>

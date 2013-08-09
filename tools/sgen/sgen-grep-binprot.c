@@ -44,6 +44,10 @@ read_entry (FILE *in, void **data)
 	case SGEN_PROTOCOL_CEMENT: size = sizeof (SGenProtocolCement); break;
 	case SGEN_PROTOCOL_CEMENT_RESET: size = 0; break;
 	case SGEN_PROTOCOL_DISLINK_UPDATE: size = sizeof (SGenProtocolDislinkUpdate); break;
+	case SGEN_PROTOCOL_DISLINK_UPDATE_STAGED: size = sizeof (SGenProtocolDislinkUpdateStaged); break;
+	case SGEN_PROTOCOL_DISLINK_PROCESS_STAGED: size = sizeof (SGenProtocolDislinkProcessStaged); break;
+	case SGEN_PROTOCOL_DOMAIN_UNLOAD_BEGIN: size = sizeof (SGenProtocolDomainUnload); break;
+	case SGEN_PROTOCOL_DOMAIN_UNLOAD_END: size = sizeof (SGenProtocolDomainUnload); break;
 	default: assert (0);
 	}
 
@@ -185,11 +189,35 @@ print_entry (int type, void *data)
 	}
 	case SGEN_PROTOCOL_DISLINK_UPDATE: {
 		SGenProtocolDislinkUpdate *entry = data;
-		printf ("dislink_update link %p obj %p", entry->link, entry->obj);
+		printf ("dislink_update link %p obj %p staged %d", entry->link, entry->obj, entry->staged);
 		if (entry->obj)
 			printf (" track %d\n", entry->track);
 		else
 			printf ("\n");
+		break;
+	}
+	case SGEN_PROTOCOL_DISLINK_UPDATE_STAGED: {
+		SGenProtocolDislinkUpdateStaged *entry = data;
+		printf ("dislink_update_staged link %p obj %p index %d", entry->link, entry->obj, entry->index);
+		if (entry->obj)
+			printf (" track %d\n", entry->track);
+		else
+			printf ("\n");
+		break;
+	}
+	case SGEN_PROTOCOL_DISLINK_PROCESS_STAGED: {
+		SGenProtocolDislinkProcessStaged *entry = data;
+		printf ("dislink_process_staged link %p obj %p index %d\n", entry->link, entry->obj, entry->index);
+		break;
+	}
+	case SGEN_PROTOCOL_DOMAIN_UNLOAD_BEGIN: {
+		SGenProtocolDomainUnload *entry = data;
+		printf ("dislink_unload_begin domain %p\n", entry->domain);
+		break;
+	}
+	case SGEN_PROTOCOL_DOMAIN_UNLOAD_END: {
+		SGenProtocolDomainUnload *entry = data;
+		printf ("dislink_unload_end domain %p\n", entry->domain);
 		break;
 	}
 	default:
@@ -215,6 +243,8 @@ is_match (gpointer ptr, int type, void *data)
 	case SGEN_PROTOCOL_THREAD_REGISTER:
 	case SGEN_PROTOCOL_THREAD_UNREGISTER:
 	case SGEN_PROTOCOL_CEMENT_RESET:
+	case SGEN_PROTOCOL_DOMAIN_UNLOAD_BEGIN:
+	case SGEN_PROTOCOL_DOMAIN_UNLOAD_END:
 		return TRUE;
 	case SGEN_PROTOCOL_ALLOC:
 	case SGEN_PROTOCOL_ALLOC_PINNED:
@@ -280,8 +310,67 @@ is_match (gpointer ptr, int type, void *data)
 		SGenProtocolDislinkUpdate *entry = data;
 		return ptr == entry->obj || ptr == entry->link;
 	}
+	case SGEN_PROTOCOL_DISLINK_UPDATE_STAGED: {
+		SGenProtocolDislinkUpdateStaged *entry = data;
+		return ptr == entry->obj || ptr == entry->link;
+	}
+	case SGEN_PROTOCOL_DISLINK_PROCESS_STAGED: {
+		SGenProtocolDislinkProcessStaged *entry = data;
+		return ptr == entry->obj || ptr == entry->link;
+	}
 	default:
 		assert (0);
+	}
+}
+
+static gboolean
+is_vtable_match (gpointer ptr, int type, void *data)
+{
+	switch (type) {
+	case SGEN_PROTOCOL_ALLOC:
+	case SGEN_PROTOCOL_ALLOC_PINNED:
+	case SGEN_PROTOCOL_ALLOC_DEGRADED: {
+		SGenProtocolAlloc *entry = data;
+		return ptr == entry->vtable;
+	}
+	case SGEN_PROTOCOL_COPY: {
+		SGenProtocolCopy *entry = data;
+		return ptr == entry->vtable;
+	}
+	case SGEN_PROTOCOL_PIN: {
+		SGenProtocolPin *entry = data;
+		return ptr == entry->vtable;
+	}
+	case SGEN_PROTOCOL_SCAN_BEGIN: {
+		SGenProtocolScanBegin *entry = data;
+		return ptr == entry->vtable;
+	}
+	case SGEN_PROTOCOL_WBARRIER: {
+		SGenProtocolWBarrier *entry = data;
+		return ptr == entry->value_vtable;
+	}
+	case SGEN_PROTOCOL_GLOBAL_REMSET: {
+		SGenProtocolGlobalRemset *entry = data;
+		return ptr == entry->value_vtable;
+	}
+	case SGEN_PROTOCOL_PTR_UPDATE: {
+		SGenProtocolPtrUpdate *entry = data;
+		return ptr == entry->vtable;
+	}
+	case SGEN_PROTOCOL_CLEANUP: {
+		SGenProtocolCleanup *entry = data;
+		return ptr == entry->vtable;
+	}
+	case SGEN_PROTOCOL_MISSING_REMSET: {
+		SGenProtocolMissingRemset *entry = data;
+		return ptr == entry->obj_vtable || ptr == entry->value_vtable;
+	}
+	case SGEN_PROTOCOL_CEMENT: {
+		SGenProtocolCement *entry = data;
+		return ptr == entry->vtable;
+	}
+	default:
+		return FALSE;
 	}
 }
 
@@ -294,13 +383,19 @@ main (int argc, char *argv[])
 	void *data;
 	int num_args = argc - 1;
 	int num_nums = 0;
+	int num_vtables = 0;
 	int i;
 	long nums [num_args];
+	long vtables [num_args];
 
 	for (i = 0; i < num_args; ++i) {
 		char *arg = argv [i + 1];
+		char *next_arg = argv [i + 2];
 		if (!strcmp (arg, "--all")) {
 			dump_all = TRUE;
+		} else if (!strcmp (arg, "-v") || !strcmp (arg, "--vtable")) {
+			vtables [num_vtables++] = strtoul (next_arg, NULL, 16);
+			++i;
 		} else {
 			nums [num_nums++] = strtoul (arg, NULL, 16);
 		}
@@ -312,6 +407,14 @@ main (int argc, char *argv[])
 			if (is_match ((gpointer) nums [i], type, data)) {
 				match = TRUE;
 				break;
+			}
+		}
+		if (!match) {
+			for (i = 0; i < num_vtables; ++i) {
+				if (is_vtable_match ((gpointer) vtables [i], type, data)) {
+					match = TRUE;
+					break;
+				}
 			}
 		}
 		if (dump_all)

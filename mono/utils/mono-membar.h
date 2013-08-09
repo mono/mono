@@ -14,45 +14,51 @@
 
 #include <glib.h>
 
-#if defined(__x86_64__) || defined(TARGET_AMD64)
-#ifndef _MSC_VER
-static inline void mono_memory_barrier (void)
-{
-	__asm__ __volatile__ ("mfence" : : : "memory");
-}
-
-static inline void mono_memory_read_barrier (void)
-{
-	__asm__ __volatile__ ("lfence" : : : "memory");
-}
-
-static inline void mono_memory_write_barrier (void)
-{
-	__asm__ __volatile__ ("sfence" : : : "memory");
-}
-#else
+#ifdef _MSC_VER
+#include <windows.h>
 #include <intrin.h>
 
 static inline void mono_memory_barrier (void)
 {
+	/* NOTE: _ReadWriteBarrier and friends only prevent the
+	   compiler from reordering loads and stores. To prevent
+	   the CPU from doing the same, we have to use the
+	   MemoryBarrier macro which expands to e.g. a serializing
+	   XCHG instruction on x86. Also note that the MemoryBarrier
+	   macro does *not* imply _ReadWriteBarrier, so that call
+	   cannot be eliminated. */
 	_ReadWriteBarrier ();
+	MemoryBarrier ();
 }
 
 static inline void mono_memory_read_barrier (void)
 {
 	_ReadBarrier ();
+	MemoryBarrier ();
 }
 
 static inline void mono_memory_write_barrier (void)
 {
 	_WriteBarrier ();
+	MemoryBarrier ();
 }
-#endif
-#elif defined(__i386__) || defined(TARGET_X86)
-#ifndef _MSC_VER
+#elif defined(__WIN32__) || defined(_WIN32)
+#include <windows.h>
+
+/* Since we only support GCC 3.x in Cygwin for
+   some arcane reason, we have to use inline
+   assembly to get fences (__sync_synchronize
+   is not available). */
+
 static inline void mono_memory_barrier (void)
 {
-	__asm__ __volatile__ ("lock; addl $0,0(%%esp)" : : : "memory");
+	__asm__ __volatile__ (
+		"lock\n\t"
+		"addl\t$0,0(%%esp)\n\t"
+		:
+		:
+		: "memory"
+	);
 }
 
 static inline void mono_memory_read_barrier (void)
@@ -64,24 +70,21 @@ static inline void mono_memory_write_barrier (void)
 {
 	mono_memory_barrier ();
 }
-#else
-#include <intrin.h>
-
+#elif defined(USE_GCC_ATOMIC_OPS)
 static inline void mono_memory_barrier (void)
 {
-	_ReadWriteBarrier ();
+	__sync_synchronize ();
 }
 
 static inline void mono_memory_read_barrier (void)
 {
-	_ReadBarrier ();
+	mono_memory_barrier ();
 }
 
 static inline void mono_memory_write_barrier (void)
 {
-	_WriteBarrier ();
+	mono_memory_barrier ();
 }
-#endif
 #elif defined(sparc) || defined(__sparc__)
 static inline void mono_memory_barrier (void)
 {
@@ -112,44 +115,6 @@ static inline void mono_memory_write_barrier (void)
 {
 	mono_memory_barrier ();
 }
-#elif defined(__ppc__) || defined(__powerpc__) || defined(__ppc64__)
-static inline void mono_memory_barrier (void)
-{
-	__asm__ __volatile__ ("sync" : : : "memory");
-}
-
-static inline void mono_memory_read_barrier (void)
-{
-	mono_memory_barrier ();
-}
-
-static inline void mono_memory_write_barrier (void)
-{
-	__asm__ __volatile__ ("eieio" : : : "memory");
-}
-
-#elif defined(__arm__)
-static inline void mono_memory_barrier (void)
-{
-#ifdef HAVE_ARMV6
-#ifdef __native_client__
-	/* NaCl requires ARMv7 CPUs. */
-	__asm__ __volatile__("dsb" : : : "memory");
-#else
-	__asm__ __volatile__ ("mcr p15, 0, %0, c7, c10, 5" : : "r" (0) : "memory");
-#endif
-#endif
-}
-
-static inline void mono_memory_read_barrier (void)
-{
-	mono_memory_barrier ();
-}
-
-static inline void mono_memory_write_barrier (void)
-{
-	mono_memory_barrier ();
-}
 #elif defined(__ia64__)
 static inline void mono_memory_barrier (void)
 {
@@ -164,21 +129,6 @@ static inline void mono_memory_read_barrier (void)
 static inline void mono_memory_write_barrier (void)
 {
 	mono_memory_barrier ();
-}
-#elif defined(__mips__)
-static inline void mono_memory_barrier (void)
-{
-        __asm__ __volatile__ ("" : : : "memory");
-}
-
-static inline void mono_memory_read_barrier (void)
-{
-        mono_memory_barrier ();
-}
-
-static inline void mono_memory_write_barrier (void)
-{
-        mono_memory_barrier ();
 }
 #elif defined(MONO_CROSS_COMPILE)
 static inline void mono_memory_barrier (void)

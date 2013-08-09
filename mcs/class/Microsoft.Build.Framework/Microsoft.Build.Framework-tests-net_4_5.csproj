@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{D35940CE-3A36-4AE4-850F-C022247AE9F2}</ProjectGuid>
+    <ProjectGuid>{DB6937A9-D27A-42AB-A044-1DB4B1F97414}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\Microsoft.Build.Framework-tests-net_4_5</OutputPath>
@@ -78,11 +78,11 @@
   <ItemGroup>
     <Reference Include="..\lib\net_4_5\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</Project>
+      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Framework\Microsoft.Build.Framework-net_4_5.csproj">
-      <Project>{58CD6625-5643-4A3F-84E6-5568E8573A49}</Project>
+      <Project>{2BAFB878-D329-46A5-93AF-5A4ECD403A13}</Project>
       <Name>Microsoft.Build.Framework\Microsoft.Build.Framework-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>

@@ -311,13 +311,10 @@ namespace System.Threading
 				return idx;
 			}
 
-			static WaitCallback TimerCaller = new WaitCallback (TimerCB);
 			static void TimerCB (object o)
 			{
 				Timer timer = (Timer) o;
-				try {
-					timer.callback (timer.state);
-				} catch {}
+				timer.callback (timer.state);
 			}
 
 			void SchedulerThread ()
@@ -340,7 +337,7 @@ namespace System.Threading
 							list.RemoveAt (i);
 							count--;
 							i--;
-							ThreadPool.UnsafeQueueUserWorkItem (TimerCaller, timer);
+							ThreadPool.UnsafeQueueUserWorkItem (TimerCB, timer);
 							long period = timer.period_ms;
 							long due_time = timer.due_time_ms;
 							bool no_more = (period == -1 || ((period == 0 || period == Timeout.Infinite) && due_time != Timeout.Infinite));

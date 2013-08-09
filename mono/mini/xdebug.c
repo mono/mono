@@ -105,9 +105,13 @@ struct jit_descriptor
 /* GDB puts a breakpoint in this function.  */
 void MONO_NOINLINE __jit_debug_register_code(void);
 
-/* Make sure to specify the version statically, because the
-   debugger may check the version before we can set it.  */
-struct jit_descriptor __jit_debug_descriptor = { 1, 0, 0, 0 };
+#if !defined(MONO_LLVM_LOADED) && defined(ENABLE_LLVM) && !defined(MONO_CROSS_COMPILE)
+
+/* LLVM already defines these */
+
+extern struct jit_descriptor __jit_debug_descriptor;
+
+#else
 
 /* gcc seems to inline/eliminate calls to noinline functions, thus the asm () */
 void MONO_NOINLINE __jit_debug_register_code(void) {
@@ -115,6 +119,12 @@ void MONO_NOINLINE __jit_debug_register_code(void) {
 	asm ("");
 #endif
 }
+
+/* Make sure to specify the version statically, because the
+   debugger may check the version before we can set it.  */
+struct jit_descriptor __jit_debug_descriptor = { 1, 0, 0, 0 };
+
+#endif
 
 static MonoImageWriter *xdebug_w;
 static MonoDwarfWriter *xdebug_writer;
@@ -157,7 +167,7 @@ mono_xdebug_init (char *options)
 
 	img_writer_emit_start (w);
 
-	xdebug_writer = mono_dwarf_writer_create (w, il_file, 0, TRUE);
+	xdebug_writer = mono_dwarf_writer_create (w, il_file, 0, TRUE, TRUE);
 
 	/* Emit something so the file has a text segment */
 	img_writer_emit_section_change (w, ".text", 0);
@@ -180,7 +190,7 @@ xdebug_begin_emit (MonoImageWriter **out_w, MonoDwarfWriter **out_dw)
 	if (!il_file)
 		il_file = fopen ("xdb.il", "w");
 
-	dw = mono_dwarf_writer_create (w, il_file, il_file_line_index, FALSE);
+	dw = mono_dwarf_writer_create (w, il_file, il_file_line_index, FALSE, TRUE);
 
 	mono_dwarf_writer_emit_base_info (dw, mono_unwind_get_cie_program ());
 

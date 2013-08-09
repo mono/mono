@@ -29,7 +29,7 @@
 
 #if defined(__native_client_codegen__) && defined(__native_client__)
 #include <malloc.h>
-#include <sys/nacl_syscalls.h>
+#include <nacl/nacl_dyncode.h>
 #endif
 
 #define IS_REX(inst) (((inst) >= 0x40) && ((inst) <= 0x4f))
@@ -412,6 +412,7 @@ stack_unaligned (MonoTrampolineType tramp_type)
 guchar*
 mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInfo **info, gboolean aot)
 {
+	char *tramp_name;
 	guint8 *buf, *code, *tramp, *br [2], *r11_save_code, *after_r11_save_code;
 	int i, lmf_offset, offset, res_offset, arg_offset, rax_offset, tramp_offset, saved_regs_offset;
 	int saved_fpregs_offset, rbp_offset, framesize, orig_rsp_to_rbp_offset, cfa_offset;
@@ -724,8 +725,11 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 		nullified_class_init_trampoline = mono_arch_get_nullified_class_init_trampoline (NULL);
 	}
 
-	if (info)
-		*info = mono_tramp_info_create (mono_get_generic_trampoline_name (tramp_type), buf, code - buf, ji, unwind_ops);
+	if (info) {
+		tramp_name = mono_get_generic_trampoline_name (tramp_type);
+		*info = mono_tramp_info_create (tramp_name, buf, code - buf, ji, unwind_ops);
+		g_free (tramp_name);
+	}
 
 	return buf;
 }
@@ -744,7 +748,7 @@ mono_arch_get_nullified_class_init_trampoline (MonoTrampInfo **info)
 	mono_arch_flush_icache (buf, code - buf);
 
 	if (info)
-		*info = mono_tramp_info_create (g_strdup_printf ("nullified_class_init_trampoline"), buf, code - buf, NULL, NULL);
+		*info = mono_tramp_info_create ("nullified_class_init_trampoline", buf, code - buf, NULL, NULL);
 
 	if (mono_jit_map_is_enabled ())
 		mono_emit_jit_tramp (buf, code - buf, "nullified_class_init_trampoline");
@@ -915,8 +919,11 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 
 	g_assert (code - buf <= tramp_size);
 
-	if (info)
-		*info = mono_tramp_info_create (mono_get_rgctx_fetch_trampoline_name (slot), buf, code - buf, ji, unwind_ops);
+	if (info) {
+		char *name = mono_get_rgctx_fetch_trampoline_name (slot);
+		*info = mono_tramp_info_create (name, buf, code - buf, ji, unwind_ops);
+		g_free (name);
+	}
 
 	return buf;
 }
@@ -965,7 +972,7 @@ mono_arch_create_generic_class_init_trampoline (MonoTrampInfo **info, gboolean a
 	g_assert (code - buf <= tramp_size);
 
 	if (info)
-		*info = mono_tramp_info_create (g_strdup_printf ("generic_class_init_trampoline"), buf, code - buf, ji, unwind_ops);
+		*info = mono_tramp_info_create ("generic_class_init_trampoline", buf, code - buf, ji, unwind_ops);
 
 	return buf;
 }
@@ -1089,7 +1096,7 @@ mono_arch_create_monitor_enter_trampoline (MonoTrampInfo **info, gboolean aot)
 	g_assert (code - buf <= tramp_size);
 
 	if (info)
-		*info = mono_tramp_info_create (g_strdup_printf ("monitor_enter_trampoline"), buf, code - buf, ji, unwind_ops);
+		*info = mono_tramp_info_create ("monitor_enter_trampoline", buf, code - buf, ji, unwind_ops);
 
 	return buf;
 }
@@ -1207,7 +1214,7 @@ mono_arch_create_monitor_exit_trampoline (MonoTrampInfo **info, gboolean aot)
 	g_assert (code - buf <= tramp_size);
 
 	if (info)
-		*info = mono_tramp_info_create (g_strdup_printf ("monitor_exit_trampoline"), buf, code - buf, ji, unwind_ops);
+		*info = mono_tramp_info_create ("monitor_exit_trampoline", buf, code - buf, ji, unwind_ops);
 
 	return buf;
 }

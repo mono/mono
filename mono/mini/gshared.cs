@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 struct Foo {
 	public int i, j, k, l, m, n;
@@ -209,6 +210,12 @@ public class Tests
 		if (s != "A")
 			return 1;
 		return 0;
+	}
+
+	public static int test_0_unbox_any_enum () {
+		IFaceUnbox iface = new ClassUnbox ();
+		AnEnum res = iface.Unbox<AnEnum, int> (AnEnum.One, 0, 1);
+		return res == AnEnum.Two ? 0 : 1;
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -913,7 +920,8 @@ public class Tests
 	}
 
 	enum AnEnum {
-		One
+		One,
+		Two
 	};
 
 	public static int test_0_constrained_tostring () {
@@ -1210,6 +1218,145 @@ public class Tests
 		if (j != null)
 			return 2;
 		return 0;
+	}
+
+	interface IConstrained {
+		void foo ();
+		void foo_ref_arg (string s);
+	}
+
+	interface IConstrained<T3> {
+		void foo_gsharedvt_arg (T3 s);
+	}
+
+	static object constrained_res;
+
+	struct ConsStruct : IConstrained {
+		public int i;
+
+		public void foo () {
+			constrained_res = i;
+		}
+
+		public void foo_ref_arg (string s) {
+			constrained_res = s == "A" ? 42 : 0;
+		}
+	}
+
+	class ConsClass : IConstrained {
+		public int i;
+
+		public void foo () {
+			constrained_res = i;
+		}
+
+		public void foo_ref_arg (string s) {
+			constrained_res = s == "A" ? 43 : 0;
+		}
+	}
+
+	struct ConsStruct<T> : IConstrained<T> {
+		public void foo_gsharedvt_arg (T s) {
+			constrained_res = s;
+		}
+	}
+
+	interface IFaceConstrained {
+		void constrained_void_iface_call<T, T2>(T t, T2 t2) where T2 : IConstrained;
+		void constrained_void_iface_call_ref_arg<T, T2>(T t, T2 t2) where T2 : IConstrained;
+		void constrained_void_iface_call_gsharedvt_arg<T, T2, T3>(T t, T2 t2, T3 t3) where T2 : IConstrained<T>;
+	}
+
+	class ClassConstrained : IFaceConstrained {
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public void constrained_void_iface_call<T, T2>(T t, T2 t2) where T2 : IConstrained {
+			t2.foo ();
+		}
+
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public void constrained_void_iface_call_ref_arg<T, T2>(T t, T2 t2) where T2 : IConstrained {
+			t2.foo_ref_arg ("A");
+		}
+
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public void constrained_void_iface_call_gsharedvt_arg<T, T2, T3>(T t, T2 t2, T3 t3) where T2 : IConstrained<T> {
+			t2.foo_gsharedvt_arg (t);
+		}
+	}
+
+	public static int test_0_constrained_void_iface_call () {
+		IFaceConstrained c = new ClassConstrained ();
+		var s = new ConsStruct () { i = 42 };
+		constrained_res = null;
+		c.constrained_void_iface_call<int, ConsStruct> (1, s);
+		if (!(constrained_res is int) || ((int)constrained_res) != 42)
+			return 1;
+		constrained_res = null;
+		c.constrained_void_iface_call_ref_arg<int, ConsStruct> (1, s);
+		if (!(constrained_res is int) || ((int)constrained_res) != 42)
+			return 2;
+		var s2 = new ConsClass () { i = 43 };
+		constrained_res = null;
+		c.constrained_void_iface_call<int, ConsClass> (1, s2);
+		if (!(constrained_res is int) || ((int)constrained_res) != 43)
+			return 3;
+		constrained_res = null;
+		c.constrained_void_iface_call_ref_arg<int, ConsClass> (1, s2);
+		if (!(constrained_res is int) || ((int)constrained_res) != 43)
+			return 4;
+		return 0;
+	}
+
+	public static int test_0_constraine_void_iface_call_gsharedvt_arg () {
+		// This tests constrained calls through interfaces with one gsharedvt arg, like IComparable<T>.CompareTo ()
+		IFaceConstrained c = new ClassConstrained ();
+
+		var s = new ConsStruct<int> ();
+		constrained_res = null;
+		c.constrained_void_iface_call_gsharedvt_arg<int, ConsStruct<int>, int> (42, s, 55);
+		if (!(constrained_res is int) || ((int)constrained_res) != 42)
+			return 1;
+
+		var s2 = new ConsStruct<string> ();
+		constrained_res = null;
+		c.constrained_void_iface_call_gsharedvt_arg<string, ConsStruct<string>, int> ("A", s2, 55);
+		if (!(constrained_res is string) || ((string)constrained_res) != "A")
+			return 2;
+
+		return 0;
+	}
+
+	public static async Task<T> FooAsync<T> (int i, int j) {
+		Task<int> t = new Task<int> (delegate () { return 42; });
+		var response = await t;
+		return default(T);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void call_async<T> (int i, int j) {
+		Task<T> t = FooAsync<T> (1, 2);
+		t.RunSynchronously ();
+	}
+
+	// In AOT mode, the async infrastructure depends on gsharedvt methods
+	public static int test_0_async_call_from_generic () {
+		call_async<string> (1, 2);
+		return 0;
+	}
+}
+
+// #13191
+public class MobileServiceCollection<TTable, TCol>
+{
+	public async Task<int> LoadMoreItemsAsync(int count = 0) {
+		await Task.Delay (1000);
+		int results = await ProcessQueryAsync ();
+		return results;
+	}
+
+	protected async virtual Task<int> ProcessQueryAsync() {
+		await Task.Delay (1000);
+		throw new Exception ();
 	}
 }
 

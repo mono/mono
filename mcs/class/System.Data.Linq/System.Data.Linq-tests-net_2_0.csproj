@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{5502AC97-CAE5-417B-9F53-7EFF385AC043}</ProjectGuid>
+    <ProjectGuid>{3FBFC2E2-4F2E-413D-9384-503983808EAA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,1720</NoWarn>
     <OutputPath>bin\Debug\System.Data.Linq-tests-net_2_0</OutputPath>
@@ -71,31 +71,31 @@
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data.Linq\System.Data.Linq-net_2_0.csproj">
-      <Project>{8D8EF41B-C5E7-4905-9D89-08EEA9DA7C05}</Project>
+      <Project>{CBDA8DA6-4A33-419C-9150-98EA5B3BE543}</Project>
       <Name>System.Data.Linq\System.Data.Linq-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
+      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_2_0.csproj">
-      <Project>{F684BA24-FC9A-4BAB-8CF3-ACC489E6B88E}</Project>
+      <Project>{B91370A1-A33A-4F7A-BDF2-1E194AFA0869}</Project>
       <Name>System.Core\System.Core-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
-      <Project>{205A8E90-88CC-4B46-8151-87FA90B666A5}</Project>
+      <Project>{D9776E38-7673-45F6-BF19-7B77830DF9CA}</Project>
       <Name>System.XML\System.Xml-net_2_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data\System.Data-net_2_0.csproj">
-      <Project>{B8CA1780-FF35-49B9-B385-C24BD0558109}</Project>
+      <Project>{49220562-83E1-49A2-971F-5D31C4AB0258}</Project>
       <Name>System.Data\System.Data-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Runtime.Serialization\System.Runtime.Serialization-net_2_0.csproj">
-      <Project>{44AAFF44-CBA6-4B20-B883-5D2BA76E1386}</Project>
+      <Project>{FBE202BB-4389-49E8-A81F-155E92BF1B0B}</Project>
       <Name>System.Runtime.Serialization\System.Runtime.Serialization-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>

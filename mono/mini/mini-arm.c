@@ -12,13 +12,10 @@
 #include "mini.h"
 #include <string.h>
 
-#if !defined(__APPLE__) && !defined(PLATFORM_ANDROID)
-#include <sys/auxv.h>
-#endif
-
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/utils/mono-mmap.h>
+#include <mono/utils/mono-hwcap-arm.h>
 
 #include "mini-arm.h"
 #include "cpu-arm.h"
@@ -33,24 +30,16 @@
 #error "ARM_FPU_NONE is defined while one of ARM_FPU_VFP/ARM_FPU_VFP_HARD is defined"
 #endif
 
+#if defined(MONO_ARCH_SOFT_FLOAT_FALLBACK)
+#define IS_SOFT_FLOAT (mono_arch_is_soft_float ())
+#define IS_VFP (!mono_arch_is_soft_float ())
+#else
+#define IS_SOFT_FLOAT (FALSE)
+#define IS_VFP (TRUE)
+#endif
+
 #if defined(__ARM_EABI__) && defined(__linux__) && !defined(PLATFORM_ANDROID) && !defined(__native_client__)
 #define HAVE_AEABI_READ_TP 1
-#endif
-
-#ifdef ARM_FPU_VFP_HARD
-#define ARM_FPU_VFP 1
-#endif
-
-#ifdef ARM_FPU_VFP
-#define IS_VFP 1
-#else
-#define IS_VFP 0
-#endif
-
-#ifdef MONO_ARCH_SOFT_FLOAT
-#define IS_SOFT_FLOAT 1
-#else
-#define IS_SOFT_FLOAT 0
 #endif
 
 #ifdef __native_client_codegen__
@@ -101,10 +90,6 @@ static gboolean thumb2_supported = FALSE;
  */
 static gboolean eabi_supported = FALSE;
 
-/*
- * Whenever we are on arm/darwin aka the iphone.
- */
-static gboolean darwin = FALSE;
 /* 
  * Whenever to use the iphone ABI extensions:
  * http://developer.apple.com/library/ios/documentation/Xcode/Conceptual/iPhoneOSABIReference/index.html
@@ -623,13 +608,16 @@ mono_arch_get_delegate_invoke_impls (void)
 	guint8 *code;
 	guint32 code_len;
 	int i;
+	char *tramp_name;
 
 	code = get_delegate_invoke_impl (TRUE, 0, &code_len);
-	res = g_slist_prepend (res, mono_tramp_info_create (g_strdup ("delegate_invoke_impl_has_target"), code, code_len, NULL, NULL));
+	res = g_slist_prepend (res, mono_tramp_info_create ("delegate_invoke_impl_has_target", code, code_len, NULL, NULL));
 
 	for (i = 0; i <= MAX_ARCH_DELEGATE_PARAMS; ++i) {
 		code = get_delegate_invoke_impl (FALSE, i, &code_len);
-		res = g_slist_prepend (res, mono_tramp_info_create (g_strdup_printf ("delegate_invoke_impl_target_%d", i), code, code_len, NULL, NULL));
+		tramp_name = g_strdup_printf ("delegate_invoke_impl_target_%d", i);
+		res = g_slist_prepend (res, mono_tramp_info_create (tramp_name, code, code_len, NULL, NULL));
+		g_free (tramp_name);
 	}
 
 	return res;
@@ -703,13 +691,10 @@ mono_arch_get_this_arg_from_call (mgreg_t *regs, guint8 *code)
 void
 mono_arch_cpu_init (void)
 {
-#if defined(__ARM_EABI__)
-	eabi_supported = TRUE;
-#endif
-#if defined(__APPLE__) && defined(MONO_CROSS_COMPILE)
-		i8_align = 4;
+#if defined(__APPLE__)
+	i8_align = 4;
 #else
-		i8_align = __alignof__ (gint64);
+	i8_align = __alignof__ (gint64);
 #endif
 }
 
@@ -785,6 +770,8 @@ create_function_wrapper (gpointer function)
 void
 mono_arch_init (void)
 {
+	const char *cpu_arch;
+
 	InitializeCriticalSection (&mini_arch_mutex);
 #ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
 	if (mini_get_debug_options ()->soft_breakpoints) {
@@ -806,13 +793,55 @@ mono_arch_init (void)
 	mono_aot_register_jit_icall ("mono_arm_start_gsharedvt_call", mono_arm_start_gsharedvt_call);
 #endif
 
+#if defined(__ARM_EABI__)
+	eabi_supported = TRUE;
+#endif
+
 #if defined(ARM_FPU_VFP_HARD)
 	arm_fpu = MONO_ARM_FPU_VFP_HARD;
-#elif defined(ARM_FPU_VFP)
-	arm_fpu = MONO_ARM_FPU_VFP;
 #else
-	arm_fpu = MONO_ARM_FPU_NONE;
+	arm_fpu = MONO_ARM_FPU_VFP;
+
+#if defined(ARM_FPU_NONE) && !defined(__APPLE__)
+	/* If we're compiling with a soft float fallback and it
+	   turns out that no VFP unit is available, we need to
+	   switch to soft float. We don't do this for iOS, since
+	   iOS devices always have a VFP unit. */
+	if (!mono_hwcap_arm_has_vfp)
+		arm_fpu = MONO_ARM_FPU_NONE;
 #endif
+#endif
+
+	v5_supported = mono_hwcap_arm_is_v5;
+	v6_supported = mono_hwcap_arm_is_v6;
+	v7_supported = mono_hwcap_arm_is_v7;
+	v7s_supported = mono_hwcap_arm_is_v7s;
+
+#if defined(__APPLE__)
+	/* iOS is special-cased here because we don't yet
+	   have a way to properly detect CPU features on it. */
+	thumb_supported = TRUE;
+	iphone_abi = TRUE;
+#else
+	thumb_supported = mono_hwcap_arm_has_thumb;
+	thumb2_supported = mono_hwcap_arm_has_thumb2;
+#endif
+
+	/* Format: armv(5|6|7[s])[-thumb[2]] */
+	cpu_arch = getenv ("MONO_CPU_ARCH");
+
+	/* Do this here so it overrides any detection. */
+	if (cpu_arch) {
+		if (strncmp (cpu_arch, "armv", 4) == 0) {
+			v5_supported = cpu_arch [4] >= '5';
+			v6_supported = cpu_arch [4] >= '6';
+			v7_supported = cpu_arch [4] >= '7';
+			v7s_supported = strncmp (cpu_arch, "armv7s", 6) == 0;
+		}
+
+		thumb_supported = strstr (cpu_arch, "thumb") != NULL;
+		thumb2_supported = strstr (cpu_arch, "thumb2") != NULL;
+	}
 }
 
 /*
@@ -829,115 +858,9 @@ mono_arch_cleanup (void)
 guint32
 mono_arch_cpu_optimizations (guint32 *exclude_mask)
 {
-	guint32 opts = 0;
-
-	/* Format: armv(5|6|7[s])[-thumb[2]] */
-	const char *cpu_arch = getenv ("MONO_CPU_ARCH");
-	if (cpu_arch != NULL) {
-		if (strncmp (cpu_arch, "armv", 4) == 0) {
-			v5_supported = cpu_arch [4] >= '5';
-			v6_supported = cpu_arch [4] >= '6';
-			v7_supported = cpu_arch [4] >= '7';
-			v7s_supported = strncmp (cpu_arch, "armv7s", 6) == 0;
-		}
-		thumb_supported = strstr (cpu_arch, "thumb") != NULL;
-		thumb2_supported = strstr (cpu_arch, "thumb2") != NULL;
-	} else {
-#if __APPLE__
-	thumb_supported = TRUE;
-	v5_supported = TRUE;
-	darwin = TRUE;
-	iphone_abi = TRUE;
-#elif defined(PLATFORM_ANDROID)
-	/* Android is awesome and doesn't make most of /proc (including
-	 * /proc/self/auxv) available to regular processes. So we use
-	 * /proc/cpuinfo instead.... */
-	char buf [512];
-	char *line;
-	FILE *file = fopen ("/proc/cpuinfo", "r");
-	if (file) {
-		while ((line = fgets (buf, 512, file))) {
-			if (strncmp (line, "Processor", 9) == 0) {
-				char *ver = strstr (line, "(v");
-				if (ver) {
-					if (ver [2] >= '5')
-						v5_supported = TRUE;
-					if (ver [2] >= '6')
-						v6_supported = TRUE;
-					if (ver [2] >= '7')
-						v7_supported = TRUE;
-					/* TODO: Find a way to detect v7s. */
-				}
-				continue;
-			}
-			if (strncmp (line, "Features", 8) == 0) {
-				/* TODO: Find a way to detect Thumb 2. */
-				char *th = strstr (line, "thumb");
-				if (th) {
-					thumb_supported = TRUE;
-					if (v5_supported)
-						break;
-				}
-				continue;
-			}
-		}
-
-		fclose (file);
-		/*printf ("features: v5: %d, thumb: %d\n", v5_supported, thumb_supported);*/
-	}
-#else
-	/* This solution is neat because it uses the dynamic linker
-	 * instead of the kernel. Thus, it works in QEMU chroots. */
-	unsigned long int hwcap;
-	unsigned long int platform;
-
-	if ((hwcap = getauxval(AT_HWCAP))) {
-		/* We use hardcoded values to avoid depending on a
-		 * specific version of the hwcap.h header. */
-
-		/* HWCAP_ARM_THUMB */
-		if ((hwcap & 4) != 0)
-			/* TODO: Find a way to detect Thumb 2. */
-			thumb_supported = TRUE;
-	}
-
-	if ((platform = getauxval(AT_PLATFORM))) {
-		/* Actually a pointer to the platform string. */
-		const char *str = (const char *) platform;
-
-		/* Possible CPU name values (from kernel sources):
-		 *
-		 * - v4
-		 * - v5
-		 * - v5t
-		 * - v6
-		 * - v7
-		 *
-		 * Value is suffixed with the endianness ('b' or 'l').
-		 * We only support little endian anyway.
-		*/
-
-		if (str [1] >= '5')
-			v5_supported = TRUE;
-
-		if (str [1] >= '6')
-			v6_supported = TRUE;
-
-		if (str [1] >= '7')
-			v7_supported = TRUE;
-
-		/* TODO: Find a way to detect v7s. */
-	}
-
-	/*printf ("hwcap = %i, platform = %s\n", (int) hwcap, (const char *) platform);
-	printf ("thumb = %i, thumb2 = %i, v5 = %i, v6 = %i, v7 = %i, v7s = %i\n",
-		thumb_supported, thumb2_supported, v5_supported, v6_supported, v7_supported, v7s_supported);*/
-#endif
-	}
-
 	/* no arm-specific optimizations yet */
 	*exclude_mask = 0;
-	return opts;
+	return 0;
 }
 
 /*
@@ -972,6 +895,14 @@ mono_arch_opcode_needs_emulation (MonoCompile *cfg, int opcode)
 	}
 	return TRUE;
 }
+
+#ifdef MONO_ARCH_SOFT_FLOAT_FALLBACK
+gboolean
+mono_arch_is_soft_float (void)
+{
+	return arm_fpu == MONO_ARM_FPU_NONE;
+}
+#endif
 
 static gboolean
 is_regsize_var (MonoGenericSharingContext *gsctx, MonoType *t) {
@@ -1052,7 +983,7 @@ mono_arch_get_global_int_regs (MonoCompile *cfg)
 	regs = g_list_prepend (regs, GUINT_TO_POINTER (ARMREG_V1));
 	regs = g_list_prepend (regs, GUINT_TO_POINTER (ARMREG_V2));
 	regs = g_list_prepend (regs, GUINT_TO_POINTER (ARMREG_V3));
-	if (darwin)
+	if (iphone_abi)
 		/* V4=R7 is used as a frame pointer, but V7=R10 is preserved */
 		regs = g_list_prepend (regs, GUINT_TO_POINTER (ARMREG_V7));
 	else
@@ -4256,13 +4187,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_IREM:
 			g_assert (v7s_supported);
-			ARM_SDIV (code, ARMREG_IP, ins->sreg1, ins->sreg2);
-			ARM_MLS (code, ins->dreg, ARMREG_IP, ins->sreg2, ins->sreg1);
+			ARM_SDIV (code, ARMREG_LR, ins->sreg1, ins->sreg2);
+			ARM_MLS (code, ins->dreg, ARMREG_LR, ins->sreg2, ins->sreg1);
 			break;
 		case OP_IREM_UN:
 			g_assert (v7s_supported);
-			ARM_UDIV (code, ARMREG_IP, ins->sreg1, ins->sreg2);
-			ARM_MLS (code, ins->dreg, ARMREG_IP, ins->sreg2, ins->sreg1);
+			ARM_UDIV (code, ARMREG_LR, ins->sreg1, ins->sreg2);
+			ARM_MLS (code, ins->dreg, ARMREG_LR, ins->sreg2, ins->sreg1);
 			break;
 		case OP_DIV_IMM:
 		case OP_REM_IMM:
@@ -4780,8 +4711,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 
 		/* floating point opcodes */
-#if defined(ARM_FPU_VFP)
-
 		case OP_R8CONST:
 			if (cfg->compile_aot) {
 				ARM_FLDD (code, ins->dreg, ARMREG_PC, 0);
@@ -4863,9 +4792,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				ARM_FMRRD (code, ARMREG_R0, ARMREG_R1, ins->sreg1);
 			}
 			break;
-
-#endif
-
 		case OP_FCONV_TO_I1:
 			code = emit_float_to_int (cfg, code, ins->dreg, ins->sreg1, 1, TRUE);
 			break;
@@ -4927,7 +4853,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				ARM_MOV_REG_REG (code, ins->dreg, ins->sreg1);
 			break;
 		}
-#if defined(ARM_FPU_VFP)
 		case OP_FADD:
 			ARM_VFP_ADDD (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
@@ -4943,7 +4868,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_FNEG:
 			ARM_NEGD (code, ins->dreg, ins->sreg1);
 			break;
-#endif
 		case OP_FREM:
 			/* emulated */
 			g_assert_not_reached ();
@@ -5247,25 +5171,26 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	pos = 0;
 	prev_sp_offset = 0;
 
+	if (iphone_abi) {
+		/* 
+		 * The iphone uses R7 as the frame pointer, and it points at the saved
+		 * r7+lr:
+		 *         <lr>
+		 * r7 ->   <r7>
+		 *         <rest of frame>
+		 * We can't use r7 as a frame pointer since it points into the middle of
+		 * the frame, so we keep using our own frame pointer.
+		 * FIXME: Optimize this.
+		 */
+		ARM_PUSH (code, (1 << ARMREG_R7) | (1 << ARMREG_LR));
+		ARM_MOV_REG_REG (code, ARMREG_R7, ARMREG_SP);
+		prev_sp_offset += 8; /* r7 and lr */
+		mono_emit_unwind_op_def_cfa_offset (cfg, code, prev_sp_offset);
+		mono_emit_unwind_op_offset (cfg, code, ARMREG_R7, (- prev_sp_offset) + 0);
+	}
+
 	if (!method->save_lmf) {
 		if (iphone_abi) {
-			/* 
-			 * The iphone uses R7 as the frame pointer, and it points at the saved
-			 * r7+lr:
-			 *         <lr>
-			 * r7 ->   <r7>
-			 *         <rest of frame>
-			 * We can't use r7 as a frame pointer since it points into the middle of
-			 * the frame, so we keep using our own frame pointer.
-			 * FIXME: Optimize this.
-			 */
-			g_assert (darwin);
-			ARM_PUSH (code, (1 << ARMREG_R7) | (1 << ARMREG_LR));
-			ARM_MOV_REG_REG (code, ARMREG_R7, ARMREG_SP);
-			prev_sp_offset += 8; /* r7 and lr */
-			mono_emit_unwind_op_def_cfa_offset (cfg, code, prev_sp_offset);
-			mono_emit_unwind_op_offset (cfg, code, ARMREG_R7, (- prev_sp_offset) + 0);
-
 			/* No need to push LR again */
 			if (cfg->used_int_regs)
 				ARM_PUSH (code, cfg->used_int_regs);
@@ -5301,11 +5226,14 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		reg_offset = 0;
 		for (i = 0; i < 16; ++i) {
 			if ((i > ARMREG_R3) && (i != ARMREG_SP) && (i != ARMREG_PC)) {
-				mono_emit_unwind_op_offset (cfg, code, i, (- prev_sp_offset) + reg_offset);
+				/* The original r7 is saved at the start */
+				if (!(iphone_abi && i == ARMREG_R7))
+					mono_emit_unwind_op_offset (cfg, code, i, (- prev_sp_offset) + reg_offset);
 				reg_offset += 4;
 			}
 		}
-		pos += sizeof (MonoLMF) - prev_sp_offset;
+		g_assert (reg_offset == 4 * 10);
+		pos += sizeof (MonoLMF) - (4 * 10);
 		lmf_offset = pos;
 	}
 	alloc_size += pos;
@@ -5716,10 +5644,19 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 			sp_adj += 4;
 			reg ++;
 		}
+		if (iphone_abi)
+			/* Restored later */
+			regmask &= ~(1 << ARMREG_PC);
 		/* point sp at the registers to restore: 10 is 14 -4, because we skip r0-r3 */
 		code = emit_big_add (code, ARMREG_SP, cfg->frame_reg, cfg->stack_usage - lmf_offset + sp_adj);
 		/* restore iregs */
 		ARM_POP (code, regmask); 
+		if (iphone_abi) {
+			/* Restore saved r7, restore LR to PC */
+			/* Skip lr from the lmf */
+			ARM_ADD_REG_IMM (code, ARMREG_SP, ARMREG_SP, sizeof (gpointer), 0);
+			ARM_POP (code, (1 << ARMREG_R7) | (1 << ARMREG_PC));
+		}
 	} else {
 		if ((i = mono_arm_is_rotated_imm8 (cfg->stack_usage, &rot_amount)) >= 0) {
 			ARM_ADD_REG_IMM (code, ARMREG_SP, cfg->frame_reg, i, rot_amount);
@@ -6637,23 +6574,29 @@ mono_arch_set_target (char *mtriple)
 {
 	/* The GNU target triple format is not very well documented */
 	if (strstr (mtriple, "armv7")) {
+		v5_supported = TRUE;
 		v6_supported = TRUE;
 		v7_supported = TRUE;
 	}
 	if (strstr (mtriple, "armv6")) {
+		v5_supported = TRUE;
 		v6_supported = TRUE;
 	}
 	if (strstr (mtriple, "armv7s")) {
 		v7s_supported = TRUE;
 	}
 	if (strstr (mtriple, "thumbv7s")) {
+		v5_supported = TRUE;
+		v6_supported = TRUE;
+		v7_supported = TRUE;
 		v7s_supported = TRUE;
+		thumb_supported = TRUE;
 		thumb2_supported = TRUE;
 	}
 	if (strstr (mtriple, "darwin") || strstr (mtriple, "ios")) {
 		v5_supported = TRUE;
+		v6_supported = TRUE;
 		thumb_supported = TRUE;
-		darwin = TRUE;
 		iphone_abi = TRUE;
 	}
 	if (strstr (mtriple, "gnueabi"))

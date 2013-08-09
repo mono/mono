@@ -397,6 +397,50 @@ namespace MonoTests.System.Xml
 				i++;
 			Assert.AreEqual (2, i, "#2");
 		}
+		
+		[Test]
+		public void Bug12035 ()
+		{
+			string xml = @"<UserSettings
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+  xmlns:xsd='http://www.w3.org/2001/XMLSchema'
+  xmlns='http://schema/test'><Enabled>false</Enabled><Time xsi:nil='true' /></UserSettings>";
+			string xsd = @"<?xml version='1.0' encoding='utf-8'?>
+<xs:schema
+  targetNamespace='http://schema/test'
+  xmlns='http://schema/test'
+  xmlns:xs='http://www.w3.org/2001/XMLSchema'
+  elementFormDefault='qualified'>
+  <xs:element name='UserSettings'>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name='Enabled' type='xs:boolean' />
+        <xs:element name='Time' type='CoarseTime' nillable='true' />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name='CoarseTime'>
+    <xs:sequence>
+      <xs:element name='Hours' type='xs:int' />
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>";
+			var schema = XmlSchema.Read (new StringReader (xsd), null);
+			var schemaSet = new XmlSchemaSet ();
+			schemaSet.Add (schema);
+			var xmlReaderSettings = new XmlReaderSettings { ValidationType = ValidationType.Schema };
+			xmlReaderSettings.ValidationFlags |= XmlSchemaValidationFlags.ReportValidationWarnings;
+			xmlReaderSettings.Schemas.Add (schemaSet);
+			
+			using (var configStream = new StringReader (xml)) {
+				using (var validatingReader = XmlReader.Create (configStream, xmlReaderSettings)) {
+					// Read the XML, throwing an exception if a validation error occurs
+					while (validatingReader.Read()) {
+					}
+				}
+			}
+		}
 	}
 }
 

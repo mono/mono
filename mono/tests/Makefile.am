@@ -442,7 +442,7 @@ if MIPS
 PLATFORM_DISABLED_TESTS=filter-stack.exe monitor.exe
 endif
 
-if S390x
+if S390X
 PLATFORM_DISABLED_TESTS=dynamic-method-resurrection.exe
 #PLATFORM_DISABLED_TESTS=dynamic-method-resurrection.exe exception17.exe
 endif
@@ -716,14 +716,14 @@ else
 if ARM
 test-sgen : sgen-tests
 else
-if S390x
+if S390X
 test-sgen : sgen-regular-tests
 endif
 endif
 endif
 endif
 
-test: assemblyresolve/test/asm.dll testjit test-generic-sharing test-type-load test_platform test_2_1 test-process-exit test-sgen test-messages rm-empty-logs
+test: assemblyresolve/test/asm.dll testjit test-generic-sharing test-type-load test_platform test_2_1 test-process-exit test-messages rm-empty-logs
 test-wrench: assemblyresolve/test/asm.dll testjit-wrench test-generic-sharing test-type-load test_platform test_2_1 test-process-exit test-sgen test-messages rm-empty-logs
 
 # Remove empty .stdout and .stderr files for wrench
@@ -875,8 +875,13 @@ test-type-load: TestDriver.dll
 	@echo "Testing load-exception.exe..."
 	@$(RUNTIME) load-exceptions.exe > load-exceptions.exe.stdout 2> load-exceptions.exe.stderr
 
+EXTRA_DIST += debug-casts.cs
+# This depends on TLS, so its not ran by default
+debug-casts:
+	@$(MCS) -r:TestDriver.dll $(srcdir)/debug-casts.cs
+	@$(RUNTIME) --debug=casts debug-casts.exe
 
-EXTRA_DIST += sgen-bridge.cs sgen-descriptors.cs sgen-gshared-vtype.cs sgen-bridge-major-fragmentation.cs sgen-domain-unload.cs sgen-weakref-stress.cs sgen-cementing-stress.cs sgen-case-23400.cs 	finalizer-wait.cs critical-finalizers.cs
+EXTRA_DIST += sgen-bridge.cs sgen-descriptors.cs sgen-gshared-vtype.cs sgen-bridge-major-fragmentation.cs sgen-domain-unload.cs sgen-weakref-stress.cs sgen-cementing-stress.cs sgen-case-23400.cs 	finalizer-wait.cs critical-finalizers.cs sgen-domain-unload-2.cs sgen-suspend.cs
 
 
 #those are actually configurations, eg plain_sgen-descriptors.exe

@@ -32,7 +32,7 @@ namespace System.ComponentModel.Composition
                 {
                     if(!metadataViewType.IsAttributeDefined<MetadataViewImplementationAttribute>())
                     {
-#if !MONOTOUCH
+#if !FULL_AOT_RUNTIME
                         try
                         {
                             proxyType = MetadataViewGenerator.GenerateView(metadataViewType);
@@ -87,7 +87,7 @@ namespace System.ComponentModel.Composition
                 }
                 catch (TargetInvocationException ex)
                 {
-#if !MONOTOUCH
+#if !FULL_AOT_RUNTIME
                     //Unwrap known failures that we want to present as CompositionContractMismatchException
                     if(metadataViewType.IsInterface)
                     {

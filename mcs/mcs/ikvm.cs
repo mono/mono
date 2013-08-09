@@ -96,12 +96,16 @@ namespace Mono.CSharp
 			// TODO: Should be just Add
 			GetAssemblyDefinition (assembly);
 
-			var all_types = assembly.GetTypes ();
-			ImportTypes (all_types, targetNamespace, true);
+			try {
+				var all_types = assembly.GetTypes ();
+				ImportTypes (all_types, targetNamespace, true);
 
-			all_types = assembly.ManifestModule.__GetExportedTypes ();
-			if (all_types.Length != 0)
-				ImportForwardedTypes (all_types, targetNamespace);
+				all_types = assembly.ManifestModule.__GetExportedTypes ();
+				if (all_types.Length != 0)
+					ImportForwardedTypes (all_types, targetNamespace);
+			} catch (Exception e) {
+				throw new InternalErrorException (e, "Failed to import assembly `{0}'", assembly.FullName);
+			}
 		}
 
 		public ImportedModuleDefinition ImportModule (Module module, RootNamespace targetNamespace)

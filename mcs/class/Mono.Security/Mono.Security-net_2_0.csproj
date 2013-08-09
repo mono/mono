@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{83A0F0D3-5813-4805-8AC5-8E8B0DC55B9D}</ProjectGuid>
+    <ProjectGuid>{6785B2B5-3B06-48F3-9E6C-99B23B9AAC4F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,1030</NoWarn>
     <OutputPath>bin\Debug\Mono.Security-net_2_0</OutputPath>
@@ -196,11 +196,11 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0.csproj">
-      <Project>{0F9C68C1-0695-4DC0-8064-B0749F54DF34}</Project>
+      <Project>{245C754C-D6DE-4434-BA78-37A93E196236}</Project>
       <Name>System\System-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>

@@ -36,7 +36,6 @@
 #include <llvm/ExecutionEngine/JITMemoryManager.h>
 #include <llvm/ExecutionEngine/JITEventListener.h>
 #include <llvm/Target/TargetOptions.h>
-#include <llvm/Target/TargetData.h>
 #include <llvm/Target/TargetRegisterInfo.h>
 #include <llvm/Analysis/Verifier.h>
 #include <llvm/Analysis/Passes.h>
@@ -48,6 +47,9 @@
 #include <llvm/CodeGen/MachineFunctionPass.h>
 #include <llvm/CodeGen/MachineFunction.h>
 #include <llvm/CodeGen/MachineFrameInfo.h>
+#include <llvm/IR/Function.h>
+#include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/Module.h>
 //#include <llvm/LinkAllPasses.h>
 
 #include "llvm-c/Core.h"
@@ -64,6 +66,8 @@
 // extern "C" void LLVMInitializeARMTargetMC ();
 
 using namespace llvm;
+
+#ifndef MONO_CROSS_COMPILE
 
 class MonoJITMemoryManager : public JITMemoryManager
 {
@@ -126,11 +130,16 @@ public:
 		return NULL;
 	}
 
-	virtual uint8_t *allocateDataSection(uintptr_t Size, unsigned Alignment,
-										 unsigned SectionID) {
+	virtual uint8_t* allocateDataSection(uintptr_t, unsigned int, unsigned int, bool) {
 		// FIXME:
 		assert(0);
 		return NULL;
+	}
+
+	virtual bool applyPermissions(std::string*) {
+		// FIXME:
+		assert(0);
+		return false;
 	}
 
 	virtual void* getPointerToNamedFunction(const std::string &Name, bool AbortOnFailure) {
@@ -227,6 +236,8 @@ MonoJITMemoryManager::endExceptionTable(const Function *F, unsigned char *TableS
 {
 }
 
+#endif /* !MONO_CROSS_COMPILE */
+
 class MonoJITEventListener : public JITEventListener {
 
 public:
@@ -266,7 +277,9 @@ public:
 	}
 };
 
+#ifndef MONO_CROSS_COMPILE
 static MonoJITMemoryManager *mono_mm;
+#endif
 static MonoJITEventListener *mono_event_listener;
 
 static FunctionPassManager *fpm;
@@ -441,7 +454,7 @@ force_pass_linking (void)
       (void) llvm::createLCSSAPass();
       (void) llvm::createLICMPass();
       (void) llvm::createLazyValueInfoPass();
-      (void) llvm::createLoopDependenceAnalysisPass();
+      //(void) llvm::createLoopDependenceAnalysisPass();
 	  /*
       (void) llvm::createLoopExtractorPass();
 	  */
@@ -511,6 +524,8 @@ force_pass_linking (void)
       (void) llvm::createSinkingPass();
 }
 
+#ifndef MONO_CROSS_COMPILE
+
 LLVMExecutionEngineRef
 mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, FunctionEmittedCb *emitted_cb, ExceptionTableCb *exception_cb, DlSymCb *dlsym_cb)
 {
@@ -567,7 +582,7 @@ mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, Func
 
   fpm = new FunctionPassManager (unwrap (MP));
 
-  fpm->add(new TargetData(*EE->getTargetData()));
+  fpm->add(new DataLayout(*EE->getDataLayout()));
 
   PassRegistry &Registry = *PassRegistry::getPassRegistry();
   initializeCore(Registry);
@@ -580,7 +595,7 @@ mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, Func
   //initializeInstrumentation(Registry);
   initializeTarget(Registry);
 
-  llvm::cl::ParseEnvironmentOptions("mono", "MONO_LLVM", "", false);
+  llvm::cl::ParseEnvironmentOptions("mono", "MONO_LLVM", "");
 
   if (PassList.size() > 0) {
 	  /* Use the passes specified by the env variable */
@@ -595,14 +610,14 @@ mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, Func
 	  }
   } else {
 	  /* Use the same passes used by 'opt' by default, without the ipo passes */
-	  const char *opts = "-simplifycfg -domtree -domfrontier -scalarrepl -instcombine -simplifycfg -basiccg -domtree -domfrontier -scalarrepl -simplify-libcalls -instcombine -simplifycfg -instcombine -simplifycfg -reassociate -domtree -loops -loop-simplify -domfrontier -loop-simplify -lcssa -loop-rotate -licm -lcssa -loop-unswitch -instcombine -scalar-evolution -loop-simplify -lcssa -iv-users -indvars -loop-deletion -loop-simplify -lcssa -loop-unroll -instcombine -memdep -gvn -memdep -memcpyopt -sccp -instcombine -domtree -memdep -dse -adce -gvn -simplifycfg -preverify -domtree -verify";
+	  const char *opts = "-simplifycfg -domtree -domfrontier -scalarrepl -instcombine -simplifycfg -domtree -domfrontier -scalarrepl -simplify-libcalls -instcombine -simplifycfg -instcombine -simplifycfg -reassociate -domtree -loops -loop-simplify -domfrontier -loop-simplify -lcssa -loop-rotate -licm -lcssa -loop-unswitch -instcombine -scalar-evolution -loop-simplify -lcssa -iv-users -indvars -loop-deletion -loop-simplify -lcssa -loop-unroll -instcombine -memdep -gvn -memdep -memcpyopt -sccp -instcombine -domtree -memdep -dse -adce -gvn -simplifycfg -preverify -domtree -verify";
 	  char **args;
 	  int i;
 
 	  args = g_strsplit (opts, " ", 1000);
 	  for (i = 0; args [i]; i++)
 		  ;
-	  llvm::cl::ParseCommandLineOptions (i, args, "", false);
+	  llvm::cl::ParseCommandLineOptions (i, args, "");
 	  g_strfreev (args);
 
 	  for (unsigned i = 0; i < PassList.size(); ++i) {
@@ -611,6 +626,7 @@ mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, Func
 
 		  if (PassInf->getNormalCtor())
 			  P = PassInf->getNormalCtor()();
+		  g_assert (P->getPassKind () == llvm::PT_Function || P->getPassKind () == llvm::PT_Loop);
 		  fpm->add (P);
 	  }
 
@@ -632,3 +648,35 @@ mono_llvm_dispose_ee (LLVMExecutionEngineRef ee)
 
 	delete fpm;
 }
+
+#else
+
+LLVMExecutionEngineRef
+mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, FunctionEmittedCb *emitted_cb, ExceptionTableCb *exception_cb, DlSymCb *dlsym_cb)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
+
+void
+mono_llvm_dispose_ee (LLVMExecutionEngineRef ee)
+{
+	g_assert_not_reached ();
+}
+
+/* Not linked in */
+void
+LLVMAddGlobalMapping(LLVMExecutionEngineRef EE, LLVMValueRef Global,
+					 void* Addr)
+{
+	g_assert_not_reached ();
+}
+
+void*
+LLVMGetPointerToGlobal(LLVMExecutionEngineRef EE, LLVMValueRef Global)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
+
+#endif /* !MONO_CROSS_COMPILE */

@@ -30,6 +30,7 @@
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/mono-memory-model.h>
 #include <mono/utils/mono-tls.h>
+#include <mono/utils/mono-hwcap-x86.h>
 
 #include "trace.h"
 #include "ir-emit.h"
@@ -1221,28 +1222,6 @@ mono_amd64_tail_call_supported (MonoMethodSignature *caller_sig, MonoMethodSigna
 	return res;
 }
 
-static int 
-cpuid (int id, int* p_eax, int* p_ebx, int* p_ecx, int* p_edx)
-{
-#if defined(MONO_CROSS_COMPILE)
-	return 0;
-#else
-#ifndef _MSC_VER
-	__asm__ __volatile__ ("cpuid"
-		: "=a" (*p_eax), "=b" (*p_ebx), "=c" (*p_ecx), "=d" (*p_edx)
-		: "a" (id));
-#else
-	int info[4];
-	__cpuid(info, id);
-	*p_eax = info[0];
-	*p_ebx = info[1];
-	*p_ecx = info[2];
-	*p_edx = info[3];
-#endif
-	return 1;
-#endif
-}
-
 /*
  * Initialize the cpu to execute managed code.
  */
@@ -1325,20 +1304,19 @@ mono_arch_cleanup (void)
 guint32
 mono_arch_cpu_optimizations (guint32 *exclude_mask)
 {
-	int eax, ebx, ecx, edx;
 	guint32 opts = 0;
 
 	*exclude_mask = 0;
-	/* Feature Flags function, flags returned in EDX. */
-	if (cpuid (1, &eax, &ebx, &ecx, &edx)) {
-		if (edx & (1 << 15)) {
-			opts |= MONO_OPT_CMOV;
-			if (edx & 1)
-				opts |= MONO_OPT_FCMOV;
-			else
-				*exclude_mask |= MONO_OPT_FCMOV;
-		} else
-			*exclude_mask |= MONO_OPT_CMOV;
+
+	if (mono_hwcap_x86_has_cmov) {
+		opts |= MONO_OPT_CMOV;
+
+		if (mono_hwcap_x86_has_fcmov)
+			opts |= MONO_OPT_FCMOV;
+		else
+			*exclude_mask |= MONO_OPT_FCMOV;
+	} else {
+		*exclude_mask |= MONO_OPT_CMOV;
 	}
 
 	return opts;
@@ -1353,37 +1331,30 @@ mono_arch_cpu_optimizations (guint32 *exclude_mask)
 guint32
 mono_arch_cpu_enumerate_simd_versions (void)
 {
-	int eax, ebx, ecx, edx;
 	guint32 sse_opts = 0;
 
-	if (cpuid (1, &eax, &ebx, &ecx, &edx)) {
-		if (edx & (1 << 25))
-			sse_opts |= SIMD_VERSION_SSE1;
-		if (edx & (1 << 26))
-			sse_opts |= SIMD_VERSION_SSE2;
-		if (ecx & (1 << 0))
-			sse_opts |= SIMD_VERSION_SSE3;
-		if (ecx & (1 << 9))
-			sse_opts |= SIMD_VERSION_SSSE3;
-		if (ecx & (1 << 19))
-			sse_opts |= SIMD_VERSION_SSE41;
-		if (ecx & (1 << 20))
-			sse_opts |= SIMD_VERSION_SSE42;
-	}
+	if (mono_hwcap_x86_has_sse1)
+		sse_opts |= SIMD_VERSION_SSE1;
 
-	/* Yes, all this needs to be done to check for sse4a.
-	   See: "Amd: CPUID Specification"
-	 */
-	if (cpuid (0x80000000, &eax, &ebx, &ecx, &edx)) {
-		/* eax greater or equal than 0x80000001, ebx = 'htuA', ecx = DMAc', edx = 'itne'*/
-		if ((((unsigned int) eax) >= 0x80000001) && (ebx == 0x68747541) && (ecx == 0x444D4163) && (edx == 0x69746E65)) {
-			cpuid (0x80000001, &eax, &ebx, &ecx, &edx);
-			if (ecx & (1 << 6))
-				sse_opts |= SIMD_VERSION_SSE4a;
-		}
-	}
+	if (mono_hwcap_x86_has_sse2)
+		sse_opts |= SIMD_VERSION_SSE2;
 
-	return sse_opts;	
+	if (mono_hwcap_x86_has_sse3)
+		sse_opts |= SIMD_VERSION_SSE3;
+
+	if (mono_hwcap_x86_has_ssse3)
+		sse_opts |= SIMD_VERSION_SSSE3;
+
+	if (mono_hwcap_x86_has_sse41)
+		sse_opts |= SIMD_VERSION_SSE41;
+
+	if (mono_hwcap_x86_has_sse42)
+		sse_opts |= SIMD_VERSION_SSE42;
+
+	if (mono_hwcap_x86_has_sse4a)
+		sse_opts |= SIMD_VERSION_SSE4a;
+
+	return sse_opts;
 }
 
 #ifndef DISABLE_JIT
@@ -4818,7 +4789,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 
 			offset = code - cfg->native_code;
-			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_METHOD_JUMP, ins->inst_p0);
+			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_METHOD_JUMP, call->method);
 			if (cfg->compile_aot)
 				amd64_mov_reg_membase (code, AMD64_R11, AMD64_RIP, 0, 8);
 			else
@@ -5592,6 +5563,20 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			code = mono_amd64_emit_tls_get (code, ins->dreg, ins->inst_offset);
 			break;
 		}
+		case OP_TLS_GET_REG:
+#ifdef TARGET_OSX
+			// FIXME: tls_gs_offset can change too, do these when calculating the tls offset
+			if (ins->dreg != ins->sreg1)
+				amd64_mov_reg_reg (code, ins->dreg, ins->sreg1, sizeof (gpointer));
+			amd64_shift_reg_imm (code, X86_SHL, ins->dreg, 3);
+			if (tls_gs_offset)
+				amd64_alu_reg_imm (code, X86_ADD, ins->dreg, tls_gs_offset);
+			x86_prefix (code, X86_GS_PREFIX);
+			amd64_mov_reg_membase (code, ins->dreg, ins->dreg, 0, sizeof (gpointer));
+#else
+			g_assert_not_reached ();
+#endif
+			break;
 		case OP_MEMORY_BARRIER: {
 			switch (ins->backend.memory_barrier_kind) {
 			case StoreLoadBarrier:
@@ -5728,7 +5713,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_CARD_TABLE_WBARRIER: {
 			int ptr = ins->sreg1;
 			int value = ins->sreg2;
-			guchar *br;
+			guchar *br = 0;
 			int nursery_shift, card_table_shift;
 			gpointer card_table_mask;
 			size_t nursery_size;
@@ -5793,6 +5778,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_alu_reg_membase (code, X86_ADD, AMD64_RDX, AMD64_RIP, 0);
 
 			amd64_mov_membase_imm (code, AMD64_RDX, 0, 1, 1);
+
 			if (mono_gc_card_table_nursery_check ())
 				x86_patch (br, code);
 			break;
@@ -7942,13 +7928,16 @@ mono_arch_get_delegate_invoke_impls (void)
 	guint8 *code;
 	guint32 code_len;
 	int i;
+	char *tramp_name;
 
 	code = get_delegate_invoke_impl (TRUE, 0, &code_len);
-	res = g_slist_prepend (res, mono_tramp_info_create (g_strdup ("delegate_invoke_impl_has_target"), code, code_len, NULL, NULL));
+	res = g_slist_prepend (res, mono_tramp_info_create ("delegate_invoke_impl_has_target", code, code_len, NULL, NULL));
 
 	for (i = 0; i < MAX_ARCH_DELEGATE_PARAMS; ++i) {
 		code = get_delegate_invoke_impl (FALSE, i, &code_len);
-		res = g_slist_prepend (res, mono_tramp_info_create (g_strdup_printf ("delegate_invoke_impl_target_%d", i), code, code_len, NULL, NULL));
+		tramp_name = g_strdup_printf ("delegate_invoke_impl_target_%d", i);
+		res = g_slist_prepend (res, mono_tramp_info_create (tramp_name, code, code_len, NULL, NULL));
+		g_free (tramp_name);
 	}
 
 	return res;

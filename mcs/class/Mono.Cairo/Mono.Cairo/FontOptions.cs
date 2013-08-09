@@ -33,11 +33,9 @@ namespace Cairo
 	public class FontOptions : IDisposable
 	{
 		IntPtr handle;
-		bool disposed;
 
-		public FontOptions ()
+		public FontOptions () : this (NativeMethods.cairo_font_options_create ())
 		{
-			handle = NativeMethods.cairo_font_options_create ();
 		}
 
 		~FontOptions ()
@@ -48,6 +46,8 @@ namespace Cairo
 		internal FontOptions (IntPtr handle)
 		{
 			this.handle = handle;
+			if (CairoDebug.Enabled)
+				CairoDebug.OnAllocated (handle);
 		}
 
 		public FontOptions Copy ()
@@ -55,9 +55,10 @@ namespace Cairo
 			return new FontOptions (NativeMethods.cairo_font_options_copy (handle));
 		}
 
+		[Obsolete ("Use Dispose()")]
 		public void Destroy ()
 		{
-			NativeMethods.cairo_font_options_destroy (handle);
+			Dispose ();
 		}
 
 		public void Dispose ()
@@ -66,13 +67,16 @@ namespace Cairo
 			GC.SuppressFinalize (this);
 		}
 
-		private void Dispose (bool disposing)
+		protected virtual void Dispose (bool disposing)
 		{
-			if (!disposed) {
-				Destroy ();
-				handle = IntPtr.Zero;
-			}
-			disposed = true;
+			if (!disposing || CairoDebug.Enabled)
+				CairoDebug.OnDisposed<FontOptions> (handle, disposing);
+
+			if (!disposing|| handle == IntPtr.Zero)
+				return;
+
+			NativeMethods.cairo_font_options_destroy (handle);
+			handle = IntPtr.Zero;
 		}
 
 		public static bool operator == (FontOptions options, FontOptions other)

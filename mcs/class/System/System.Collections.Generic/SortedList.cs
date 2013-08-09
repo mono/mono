@@ -629,7 +629,7 @@ namespace System.Collections.Generic
 			int right = len-1;
 
 			while (left <= right) {
-				int guess = (left + right) >> 1;
+				int guess = left + ((right - left) >> 1);
 
 				int cmp = Compare (table[guess].Key, key);
 				if (cmp == 0) return guess;

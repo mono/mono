@@ -26,7 +26,9 @@
 #include <errno.h>
 
 #include <sys/types.h>
-#ifndef HOST_WIN32 
+#ifdef HOST_WIN32
+#include <ws2tcpip.h>
+#else
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <netinet/in.h>
@@ -2326,7 +2328,7 @@ ves_icall_System_Net_Sockets_Socket_WSAIoctl (SOCKET sock, gint32 code,
 
 	*error = 0;
 	
-	if (code == FIONBIO) {
+	if ((guint32)code == FIONBIO) {
 		/* Invalid command. Must use Socket.Blocking */
 		return -1;
 	}
@@ -3137,7 +3139,7 @@ extern MonoBoolean ves_icall_System_Net_Dns_GetHostByAddr_internal(MonoString *a
 	struct sockaddr_in6 saddr6;
 	struct addrinfo *info = NULL, hints;
 	gint32 family;
-	char hostname[1024] = {0};
+	char hostname[NI_MAXHOST] = {0};
 	int flags = 0;
 #else
 	struct in_addr inaddr;

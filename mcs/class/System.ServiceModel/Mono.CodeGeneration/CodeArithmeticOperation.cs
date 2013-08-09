@@ -21,7 +21,7 @@
 // Copyright (C) Lluis Sanchez Gual, 2004
 //
 
-#if !MONOTOUCH
+#if !FULL_AOT_RUNTIME
 using System;
 using System.Reflection;
 using System.Reflection.Emit;

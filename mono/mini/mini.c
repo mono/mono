@@ -56,6 +56,7 @@
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/mono-path.h>
 #include <mono/utils/mono-tls.h>
+#include <mono/utils/mono-hwcap.h>
 #include <mono/utils/dtrace.h>
 
 #include "mini.h"
@@ -65,12 +66,20 @@
 #include <ctype.h>
 #include "trace.h"
 #include "version.h"
+#include "ir-emit.h"
 
 #include "jit-icalls.h"
 
 #include "debug-mini.h"
 #include "mini-gc.h"
 #include "debugger-agent.h"
+
+/* this macro is used for a runtime check done in mini_init () */
+#ifdef MONO_ARCH_EMULATE_MUL_DIV
+#define EMUL_MUL_DIV 1
+#else
+#define EMUL_MUL_DIV 0
+#endif
 
 static gpointer mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, MonoException **ex);
 
@@ -594,14 +603,14 @@ mono_jump_info_token_new (MonoMemPool *mp, MonoImage *image, guint32 token)
  * mono_tramp_info_create:
  *
  *   Create a MonoTrampInfo structure from the arguments. This function assumes ownership
- * of NAME, JI, and UNWIND_OPS.
+ * of JI, and UNWIND_OPS.
  */
 MonoTrampInfo*
 mono_tramp_info_create (const char *name, guint8 *code, guint32 code_size, MonoJumpInfo *ji, GSList *unwind_ops)
 {
 	MonoTrampInfo *info = g_new0 (MonoTrampInfo, 1);
 
-	info->name = (char*)name;
+	info->name = g_strdup ((char*)name);
 	info->code = code;
 	info->code_size = code_size;
 	info->ji = ji;
@@ -1201,11 +1210,11 @@ mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, 
 		set_vreg_to_inst (cfg, vreg, inst);
 
 #if SIZEOF_REGISTER == 4
-#ifdef MONO_ARCH_SOFT_FLOAT
-	regpair = mono_type_is_long (type) || mono_type_is_float (type);
-#else
-	regpair = mono_type_is_long (type);
-#endif
+	if (mono_arch_is_soft_float ()) {
+		regpair = mono_type_is_long (type) || mono_type_is_float (type);
+	} else {
+		regpair = mono_type_is_long (type);
+	}
 #else
 	regpair = FALSE;
 #endif
@@ -1226,12 +1235,10 @@ mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, 
 			printf ("  Create LVAR R%d (R%d, R%d)\n", inst->dreg, inst->dreg + 1, inst->dreg + 2);
 		}
 
-#ifdef MONO_ARCH_SOFT_FLOAT
-		if (cfg->opt & MONO_OPT_SSA) {
+		if (mono_arch_is_soft_float () && cfg->opt & MONO_OPT_SSA) {
 			if (mono_type_is_float (type))
 				inst->flags = MONO_INST_VOLATILE;
 		}
-#endif
 
 		/* Allocate a dummy MonoInst for the first vreg */
 		MONO_INST_NEW (cfg, tree, OP_LOCAL);
@@ -1271,10 +1278,8 @@ mono_compile_create_var (MonoCompile *cfg, MonoType *type, int opcode)
 
 	if (mono_type_is_long (type))
 		dreg = mono_alloc_dreg (cfg, STACK_I8);
-#ifdef MONO_ARCH_SOFT_FLOAT
-	else if (mono_type_is_float (type))
+	else if (mono_arch_is_soft_float () && mono_type_is_float (type))
 		dreg = mono_alloc_dreg (cfg, STACK_R8);
-#endif
 	else
 		/* All the others are unified */
 		dreg = mono_alloc_preg (cfg);
@@ -2847,47 +2852,91 @@ mini_thread_cleanup (MonoInternalThread *thread)
 	}
 }
 
-static MonoInst*
-mono_create_tls_get (MonoCompile *cfg, int offset)
+int
+mini_get_tls_offset (MonoJitTlsKey key)
 {
-#ifdef MONO_ARCH_HAVE_TLS_GET
-	if (MONO_ARCH_HAVE_TLS_GET) {
-		MonoInst* ins;
+	int offset;
 
-		if (offset == -1)
-			return NULL;
+	switch (key) {
+	case TLS_KEY_THREAD:
+		offset = mono_thread_get_tls_offset ();
+		break;
+	case TLS_KEY_JIT_TLS:
+		offset = mono_get_jit_tls_offset ();
+		break;
+	case TLS_KEY_DOMAIN:
+		offset = mono_domain_get_tls_offset ();
+		break;
+	case TLS_KEY_LMF:
+		offset = mono_get_lmf_tls_offset ();
+		break;
+	default:
+		g_assert_not_reached ();
+		offset = -1;
+		break;
+	}
+	return offset;
+}
 
-		MONO_INST_NEW (cfg, ins, OP_TLS_GET);
+static MonoInst*
+mono_create_tls_get_offset (MonoCompile *cfg, int offset)
+{
+	MonoInst* ins;
+
+	if (!MONO_ARCH_HAVE_TLS_GET)
+		return NULL;
+
+	if (offset == -1)
+		return NULL;
+
+	MONO_INST_NEW (cfg, ins, OP_TLS_GET);
+	ins->dreg = mono_alloc_preg (cfg);
+	ins->inst_offset = offset;
+	return ins;
+}
+
+static MonoInst*
+mono_create_tls_get (MonoCompile *cfg, MonoJitTlsKey key)
+{
+	/*
+	 * TLS offsets might be different at AOT time, so load them from a GOT slot and
+	 * use a different opcode.
+	 */
+	if (cfg->compile_aot && MONO_ARCH_HAVE_TLS_GET && ARCH_HAVE_TLS_GET_REG) {
+		MonoInst *ins, *c;
+
+		EMIT_NEW_TLS_OFFSETCONST (cfg, c, key);
+		MONO_INST_NEW (cfg, ins, OP_TLS_GET_REG);
 		ins->dreg = mono_alloc_preg (cfg);
-		ins->inst_offset = offset;
+		ins->sreg1 = c->dreg;
 		return ins;
 	}
-#endif
-	return NULL;
+
+	return mono_create_tls_get_offset (cfg, mini_get_tls_offset (key));
 }
 
 MonoInst*
 mono_get_jit_tls_intrinsic (MonoCompile *cfg)
 {
-	return mono_create_tls_get (cfg, mono_get_jit_tls_offset ());
+	return mono_create_tls_get (cfg, TLS_KEY_JIT_TLS);
 }
 
 MonoInst*
 mono_get_domain_intrinsic (MonoCompile* cfg)
 {
-	return mono_create_tls_get (cfg, mono_domain_get_tls_offset ());
+	return mono_create_tls_get (cfg, TLS_KEY_DOMAIN);
 }
 
 MonoInst*
 mono_get_thread_intrinsic (MonoCompile* cfg)
 {
-	return mono_create_tls_get (cfg, mono_thread_get_tls_offset ());
+	return mono_create_tls_get (cfg, TLS_KEY_THREAD);
 }
 
 MonoInst*
 mono_get_lmf_intrinsic (MonoCompile* cfg)
 {
-	return mono_create_tls_get (cfg, mono_get_lmf_tls_offset ());
+	return mono_create_tls_get (cfg, TLS_KEY_LMF);
 }
 
 void
@@ -3027,6 +3076,7 @@ mono_patch_info_hash (gconstpointer data)
 	case MONO_PATCH_INFO_METHOD_RGCTX:
 	case MONO_PATCH_INFO_DELEGATE_TRAMPOLINE:
 	case MONO_PATCH_INFO_SIGNATURE:
+	case MONO_PATCH_INFO_TLS_OFFSET:
 		return (ji->type << 8) | (gssize)ji->data.target;
 	case MONO_PATCH_INFO_GSHAREDVT_CALL:
 		return (ji->type << 8) | (gssize)ji->data.gsharedvt->method;
@@ -3042,6 +3092,7 @@ mono_patch_info_hash (gconstpointer data)
 	case MONO_PATCH_INFO_MONITOR_ENTER:
 	case MONO_PATCH_INFO_MONITOR_EXIT:
 	case MONO_PATCH_INFO_CASTCLASS_CACHE:
+	case MONO_PATCH_INFO_GOT_OFFSET:
 		return (ji->type << 8);
 	case MONO_PATCH_INFO_SWITCH:
 		return (ji->type << 8) | ji->data.table->table_size;
@@ -3459,6 +3510,9 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		target = (gpointer) (size_t) mono_jit_tls_id;
 		break;
 	}
+	case MONO_PATCH_INFO_TLS_OFFSET:
+		target = GINT_TO_POINTER (mini_get_tls_offset (GPOINTER_TO_INT (patch_info->data.target)));
+		break;
 	default:
 		g_assert_not_reached ();
 	}
@@ -3705,7 +3759,7 @@ mono_save_seq_point_info (MonoCompile *cfg)
 	if (!cfg->seq_points)
 		return;
 
-	info = g_malloc0 (sizeof (MonoSeqPointInfo) + (cfg->seq_points->len - MONO_ZERO_LEN_ARRAY) * sizeof (SeqPoint));
+	info = g_malloc0 (sizeof (MonoSeqPointInfo) + (cfg->seq_points->len * sizeof (SeqPoint)));
 	info->len = cfg->seq_points->len;
 	for (i = 0; i < cfg->seq_points->len; ++i) {
 		SeqPoint *sp = &info->seq_points [i];
@@ -3746,7 +3800,7 @@ mono_save_seq_point_info (MonoCompile *cfg)
 			last = ins;
 		}
 
-		if (bb->last_ins && bb->last_ins->opcode == OP_ENDFINALLY) {
+		if (bb->last_ins && bb->last_ins->opcode == OP_ENDFINALLY && bb->seq_points) {
 			MonoBasicBlock *bb2;
 			MonoInst *endfinally_seq_point = NULL;
 
@@ -3754,17 +3808,18 @@ mono_save_seq_point_info (MonoCompile *cfg)
 			 * The ENDFINALLY branches are not represented in the cfg, so link it with all seq points starting bbs.
 			 */
 			l = g_slist_last (bb->seq_points);
-			g_assert (l);
-			endfinally_seq_point = l->data;
+			if (l) {
+				endfinally_seq_point = l->data;
 
-			for (bb2 = cfg->bb_entry; bb2; bb2 = bb2->next_bb) {
-				GSList *l = g_slist_last (bb2->seq_points);
+				for (bb2 = cfg->bb_entry; bb2; bb2 = bb2->next_bb) {
+					GSList *l = g_slist_last (bb2->seq_points);
 
-				if (l) {
-					MonoInst *ins = l->data;
+					if (l) {
+						MonoInst *ins = l->data;
 
-					if (!(ins->inst_imm == METHOD_ENTRY_IL_OFFSET || ins->inst_imm == METHOD_EXIT_IL_OFFSET) && ins != endfinally_seq_point)
-						next [endfinally_seq_point->backend.size] = g_slist_append (next [endfinally_seq_point->backend.size], GUINT_TO_POINTER (ins->backend.size));
+						if (!(ins->inst_imm == METHOD_ENTRY_IL_OFFSET || ins->inst_imm == METHOD_EXIT_IL_OFFSET) && ins != endfinally_seq_point)
+							next [endfinally_seq_point->backend.size] = g_slist_append (next [endfinally_seq_point->backend.size], GUINT_TO_POINTER (ins->backend.size));
+					}
 				}
 			}
 		}
@@ -4461,26 +4516,6 @@ is_open_method (MonoMethod *method)
 	return FALSE;
 }
 
-static gboolean
-has_ref_constraint (MonoGenericParamInfo *info)
-{
-	MonoClass **constraints;
-
-	//return FALSE;
-
-	if (info && info->constraints) {
-		constraints = info->constraints;
-
-		while (*constraints) {
-			MonoClass *cklass = *constraints;
-			if (!(cklass == mono_defaults.object_class || (cklass->image == mono_defaults.corlib && !strcmp (cklass->name, "ValueType")) || MONO_CLASS_IS_INTERFACE (cklass)))
-				return TRUE;
-			constraints ++;
-		}
-	}
-	return FALSE;
-}
-
 static MonoGenericInst*
 get_shared_inst (MonoGenericInst *inst, MonoGenericInst *shared_inst, MonoGenericContainer *container, gboolean all_vt, gboolean gsharedvt)
 {
@@ -4493,10 +4528,7 @@ get_shared_inst (MonoGenericInst *inst, MonoGenericInst *shared_inst, MonoGeneri
 		if (!all_vt && (MONO_TYPE_IS_REFERENCE (inst->type_argv [i]) || inst->type_argv [i]->type == MONO_TYPE_VAR || inst->type_argv [i]->type == MONO_TYPE_MVAR)) {
 			type_argv [i] = shared_inst->type_argv [i];
 		} else if (all_vt) {
-			if (container && has_ref_constraint (&container->type_params [i].info))
-				type_argv [i] = shared_inst->type_argv [i];
-			else
-				type_argv [i] = get_gsharedvt_type (shared_inst->type_argv [i]);
+			type_argv [i] = get_gsharedvt_type (shared_inst->type_argv [i]);
 		} else if (gsharedvt) {
 			type_argv [i] = get_gsharedvt_type (shared_inst->type_argv [i]);
 		} else {
@@ -5234,8 +5266,8 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		return cfg;
 	}
 
-#ifdef MONO_ARCH_SOFT_FLOAT
-	if (!COMPILE_LLVM (cfg))
+#ifdef MONO_ARCH_SOFT_FLOAT_FALLBACK
+	if (COMPILE_SOFT_FLOAT (cfg))
 		mono_decompose_soft_float (cfg);
 #endif
 	if (!COMPILE_LLVM (cfg))
@@ -5973,8 +6005,14 @@ mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt, MonoException
 		WrapperInfo *info = mono_marshal_get_wrapper_info (method);
 
 		g_assert (info);
-		if (info->subtype == WRAPPER_SUBTYPE_SYNCHRONIZED_INNER)
+		if (info->subtype == WRAPPER_SUBTYPE_SYNCHRONIZED_INNER) {
+			MonoGenericContext *ctx = NULL;
+			if (method->is_inflated)
+				ctx = mono_method_get_context (method);
 			method = info->d.synchronized_inner.method;
+			if (ctx)
+				method = mono_class_inflate_generic_method (method, ctx);
+		}
 	}
 
 	info = lookup_method (target_domain, method);
@@ -6172,7 +6210,7 @@ typedef struct {
 static MonoObject*
 mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc)
 {
-	MonoMethod *invoke;
+	MonoMethod *invoke, *callee;
 	MonoObject *(*runtime_invoke) (MonoObject *this, void **params, MonoObject **exc, void* compiled_method);
 	MonoDomain *domain = mono_domain_get ();
 	MonoJitDomainInfo *domain_info;
@@ -6211,17 +6249,31 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 		info->vtable = mono_class_vtable_full (domain, method->klass, TRUE);
 		g_assert (info->vtable);
 
+		callee = method;
 		if (method->klass->rank && (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) &&
 			(method->iflags & METHOD_IMPL_ATTRIBUTE_NATIVE)) {
 			/* 
 			 * Array Get/Set/Address methods. The JIT implements them using inline code 
 			 * inside the runtime invoke wrappers, so no need to compile them.
 			 */
-			info->compiled_method = NULL;
-		} else {
+			if (mono_aot_only) {
+				/*
+				 * Call a wrapper, since the runtime invoke wrapper was not generated.
+				 */
+				MonoMethod *wrapper;
+
+				wrapper = mono_marshal_get_array_accessor_wrapper (method);
+				invoke = mono_marshal_get_runtime_invoke (wrapper, FALSE);
+				callee = wrapper;
+			} else {
+				callee = NULL;
+			}
+		}
+
+		if (callee) {
 			MonoException *jit_ex = NULL;
 
-			info->compiled_method = mono_jit_compile_method_with_opt (method, default_opt, &jit_ex);
+			info->compiled_method = mono_jit_compile_method_with_opt (callee, default_opt, &jit_ex);
 			if (!info->compiled_method) {
 				g_free (info);
 				g_assert (jit_ex);
@@ -6233,7 +6285,9 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 				}
 			}
 
-			info->compiled_method = mini_add_method_trampoline (NULL, method, info->compiled_method, mono_method_needs_static_rgctx_invoke (method, FALSE), FALSE);
+			info->compiled_method = mini_add_method_trampoline (NULL, callee, info->compiled_method, mono_method_needs_static_rgctx_invoke (callee, FALSE), FALSE);
+		} else {
+			info->compiled_method = NULL;
 		}
 
 		/*
@@ -6849,11 +6903,7 @@ mini_init (const char *filename, const char *runtime_version)
 #endif
 #endif
 
-#ifdef MONO_ARCH_HAVE_TLS_GET
 	mono_runtime_set_has_tls_get (MONO_ARCH_HAVE_TLS_GET);
-#else
-	mono_runtime_set_has_tls_get (FALSE);
-#endif
 
 	if (!global_codeman)
 		global_codeman = mono_code_manager_new ();
@@ -6888,6 +6938,8 @@ mini_init (const char *filename, const char *runtime_version)
 		mini_parse_debug_options ();
 
 	mono_code_manager_init ();
+
+	mono_hwcap_init ();
 
 	mono_arch_cpu_init ();
 
@@ -7095,8 +7147,10 @@ mini_init (const char *filename, const char *runtime_version)
 	register_opcode_emulation (OP_IMUL_OVF_UN, "__emul_op_imul_ovf_un", "int32 int32 int32", mono_imul_ovf_un, "mono_imul_ovf_un", FALSE);
 #endif
 
-#if defined(MONO_ARCH_EMULATE_MUL_DIV) || defined(MONO_ARCH_SOFT_FLOAT)
-	register_opcode_emulation (OP_FDIV, "__emul_fdiv", "double double double", mono_fdiv, "mono_fdiv", FALSE);
+#if defined(MONO_ARCH_EMULATE_MUL_DIV) || defined(MONO_ARCH_SOFT_FLOAT_FALLBACK)
+	if (EMUL_MUL_DIV || mono_arch_is_soft_float ()) {
+		register_opcode_emulation (OP_FDIV, "__emul_fdiv", "double double double", mono_fdiv, "mono_fdiv", FALSE);
+	}
 #endif
 
 	register_opcode_emulation (OP_FCONV_TO_U8, "__emul_fconv_to_u8", "ulong double", mono_fconv_u8, "mono_fconv_u8", FALSE);
@@ -7127,44 +7181,47 @@ mini_init (const char *filename, const char *runtime_version)
 #endif
 #endif
 
-#ifdef MONO_ARCH_SOFT_FLOAT
-	register_opcode_emulation (OP_FSUB, "__emul_fsub", "double double double", mono_fsub, "mono_fsub", FALSE);
-	register_opcode_emulation (OP_FADD, "__emul_fadd", "double double double", mono_fadd, "mono_fadd", FALSE);
-	register_opcode_emulation (OP_FMUL, "__emul_fmul", "double double double", mono_fmul, "mono_fmul", FALSE);
-	register_opcode_emulation (OP_FNEG, "__emul_fneg", "double double", mono_fneg, "mono_fneg", FALSE);
-	register_opcode_emulation (OP_ICONV_TO_R8, "__emul_iconv_to_r8", "double int32", mono_conv_to_r8, "mono_conv_to_r8", FALSE);
-	register_opcode_emulation (OP_ICONV_TO_R4, "__emul_iconv_to_r4", "double int32", mono_conv_to_r4, "mono_conv_to_r4", FALSE);
-	register_opcode_emulation (OP_FCONV_TO_R4, "__emul_fconv_to_r4", "double double", mono_fconv_r4, "mono_fconv_r4", FALSE);
-	register_opcode_emulation (OP_FCONV_TO_I1, "__emul_fconv_to_i1", "int8 double", mono_fconv_i1, "mono_fconv_i1", FALSE);
-	register_opcode_emulation (OP_FCONV_TO_I2, "__emul_fconv_to_i2", "int16 double", mono_fconv_i2, "mono_fconv_i2", FALSE);
-	register_opcode_emulation (OP_FCONV_TO_I4, "__emul_fconv_to_i4", "int32 double", mono_fconv_i4, "mono_fconv_i4", FALSE);
-	register_opcode_emulation (OP_FCONV_TO_U1, "__emul_fconv_to_u1", "uint8 double", mono_fconv_u1, "mono_fconv_u1", FALSE);
-	register_opcode_emulation (OP_FCONV_TO_U2, "__emul_fconv_to_u2", "uint16 double", mono_fconv_u2, "mono_fconv_u2", FALSE);
+#ifdef MONO_ARCH_SOFT_FLOAT_FALLBACK
+	if (mono_arch_is_soft_float ()) {
+		register_opcode_emulation (OP_FSUB, "__emul_fsub", "double double double", mono_fsub, "mono_fsub", FALSE);
+		register_opcode_emulation (OP_FADD, "__emul_fadd", "double double double", mono_fadd, "mono_fadd", FALSE);
+		register_opcode_emulation (OP_FMUL, "__emul_fmul", "double double double", mono_fmul, "mono_fmul", FALSE);
+		register_opcode_emulation (OP_FNEG, "__emul_fneg", "double double", mono_fneg, "mono_fneg", FALSE);
+		register_opcode_emulation (OP_ICONV_TO_R8, "__emul_iconv_to_r8", "double int32", mono_conv_to_r8, "mono_conv_to_r8", FALSE);
+		register_opcode_emulation (OP_ICONV_TO_R4, "__emul_iconv_to_r4", "double int32", mono_conv_to_r4, "mono_conv_to_r4", FALSE);
+		register_opcode_emulation (OP_FCONV_TO_R4, "__emul_fconv_to_r4", "double double", mono_fconv_r4, "mono_fconv_r4", FALSE);
+		register_opcode_emulation (OP_FCONV_TO_I1, "__emul_fconv_to_i1", "int8 double", mono_fconv_i1, "mono_fconv_i1", FALSE);
+		register_opcode_emulation (OP_FCONV_TO_I2, "__emul_fconv_to_i2", "int16 double", mono_fconv_i2, "mono_fconv_i2", FALSE);
+		register_opcode_emulation (OP_FCONV_TO_I4, "__emul_fconv_to_i4", "int32 double", mono_fconv_i4, "mono_fconv_i4", FALSE);
+		register_opcode_emulation (OP_FCONV_TO_U1, "__emul_fconv_to_u1", "uint8 double", mono_fconv_u1, "mono_fconv_u1", FALSE);
+		register_opcode_emulation (OP_FCONV_TO_U2, "__emul_fconv_to_u2", "uint16 double", mono_fconv_u2, "mono_fconv_u2", FALSE);
+
 #if SIZEOF_VOID_P == 4
-	register_opcode_emulation (OP_FCONV_TO_I, "__emul_fconv_to_i", "int32 double", mono_fconv_i4, "mono_fconv_i4", FALSE);
+		register_opcode_emulation (OP_FCONV_TO_I, "__emul_fconv_to_i", "int32 double", mono_fconv_i4, "mono_fconv_i4", FALSE);
 #endif
 
-	register_opcode_emulation (OP_FBEQ, "__emul_fcmp_eq", "uint32 double double", mono_fcmp_eq, "mono_fcmp_eq", FALSE);
-	register_opcode_emulation (OP_FBLT, "__emul_fcmp_lt", "uint32 double double", mono_fcmp_lt, "mono_fcmp_lt", FALSE);
-	register_opcode_emulation (OP_FBGT, "__emul_fcmp_gt", "uint32 double double", mono_fcmp_gt, "mono_fcmp_gt", FALSE);
-	register_opcode_emulation (OP_FBLE, "__emul_fcmp_le", "uint32 double double", mono_fcmp_le, "mono_fcmp_le", FALSE);
-	register_opcode_emulation (OP_FBGE, "__emul_fcmp_ge", "uint32 double double", mono_fcmp_ge, "mono_fcmp_ge", FALSE);
-	register_opcode_emulation (OP_FBNE_UN, "__emul_fcmp_ne_un", "uint32 double double", mono_fcmp_ne_un, "mono_fcmp_ne_un", FALSE);
-	register_opcode_emulation (OP_FBLT_UN, "__emul_fcmp_lt_un", "uint32 double double", mono_fcmp_lt_un, "mono_fcmp_lt_un", FALSE);
-	register_opcode_emulation (OP_FBGT_UN, "__emul_fcmp_gt_un", "uint32 double double", mono_fcmp_gt_un, "mono_fcmp_gt_un", FALSE);
-	register_opcode_emulation (OP_FBLE_UN, "__emul_fcmp_le_un", "uint32 double double", mono_fcmp_le_un, "mono_fcmp_le_un", FALSE);
-	register_opcode_emulation (OP_FBGE_UN, "__emul_fcmp_ge_un", "uint32 double double", mono_fcmp_ge_un, "mono_fcmp_ge_un", FALSE);
+		register_opcode_emulation (OP_FBEQ, "__emul_fcmp_eq", "uint32 double double", mono_fcmp_eq, "mono_fcmp_eq", FALSE);
+		register_opcode_emulation (OP_FBLT, "__emul_fcmp_lt", "uint32 double double", mono_fcmp_lt, "mono_fcmp_lt", FALSE);
+		register_opcode_emulation (OP_FBGT, "__emul_fcmp_gt", "uint32 double double", mono_fcmp_gt, "mono_fcmp_gt", FALSE);
+		register_opcode_emulation (OP_FBLE, "__emul_fcmp_le", "uint32 double double", mono_fcmp_le, "mono_fcmp_le", FALSE);
+		register_opcode_emulation (OP_FBGE, "__emul_fcmp_ge", "uint32 double double", mono_fcmp_ge, "mono_fcmp_ge", FALSE);
+		register_opcode_emulation (OP_FBNE_UN, "__emul_fcmp_ne_un", "uint32 double double", mono_fcmp_ne_un, "mono_fcmp_ne_un", FALSE);
+		register_opcode_emulation (OP_FBLT_UN, "__emul_fcmp_lt_un", "uint32 double double", mono_fcmp_lt_un, "mono_fcmp_lt_un", FALSE);
+		register_opcode_emulation (OP_FBGT_UN, "__emul_fcmp_gt_un", "uint32 double double", mono_fcmp_gt_un, "mono_fcmp_gt_un", FALSE);
+		register_opcode_emulation (OP_FBLE_UN, "__emul_fcmp_le_un", "uint32 double double", mono_fcmp_le_un, "mono_fcmp_le_un", FALSE);
+		register_opcode_emulation (OP_FBGE_UN, "__emul_fcmp_ge_un", "uint32 double double", mono_fcmp_ge_un, "mono_fcmp_ge_un", FALSE);
 
-	register_opcode_emulation (OP_FCEQ, "__emul_fcmp_ceq", "uint32 double double", mono_fceq, "mono_fceq", FALSE);
-	register_opcode_emulation (OP_FCGT, "__emul_fcmp_cgt", "uint32 double double", mono_fcgt, "mono_fcgt", FALSE);
-	register_opcode_emulation (OP_FCGT_UN, "__emul_fcmp_cgt_un", "uint32 double double", mono_fcgt_un, "mono_fcgt_un", FALSE);
-	register_opcode_emulation (OP_FCLT, "__emul_fcmp_clt", "uint32 double double", mono_fclt, "mono_fclt", FALSE);
-	register_opcode_emulation (OP_FCLT_UN, "__emul_fcmp_clt_un", "uint32 double double", mono_fclt_un, "mono_fclt_un", FALSE);
+		register_opcode_emulation (OP_FCEQ, "__emul_fcmp_ceq", "uint32 double double", mono_fceq, "mono_fceq", FALSE);
+		register_opcode_emulation (OP_FCGT, "__emul_fcmp_cgt", "uint32 double double", mono_fcgt, "mono_fcgt", FALSE);
+		register_opcode_emulation (OP_FCGT_UN, "__emul_fcmp_cgt_un", "uint32 double double", mono_fcgt_un, "mono_fcgt_un", FALSE);
+		register_opcode_emulation (OP_FCLT, "__emul_fcmp_clt", "uint32 double double", mono_fclt, "mono_fclt", FALSE);
+		register_opcode_emulation (OP_FCLT_UN, "__emul_fcmp_clt_un", "uint32 double double", mono_fclt_un, "mono_fclt_un", FALSE);
 
-	register_icall (mono_fload_r4, "mono_fload_r4", "double ptr", FALSE);
-	register_icall (mono_fstore_r4, "mono_fstore_r4", "void double ptr", FALSE);
-	register_icall (mono_fload_r4_arg, "mono_fload_r4_arg", "uint32 double", FALSE);
-	register_icall (mono_isfinite, "mono_isfinite", "uint32 double", FALSE);
+		register_icall (mono_fload_r4, "mono_fload_r4", "double ptr", FALSE);
+		register_icall (mono_fstore_r4, "mono_fstore_r4", "void double ptr", FALSE);
+		register_icall (mono_fload_r4_arg, "mono_fload_r4_arg", "uint32 double", FALSE);
+		register_icall (mono_isfinite, "mono_isfinite", "uint32 double", FALSE);
+	}
 #endif
 
 #ifdef COMPRESSED_INTERFACE_BITMAP
@@ -7198,7 +7255,7 @@ mini_init (const char *filename, const char *runtime_version)
 	register_icall (mono_helper_ldstr_mscorlib, "mono_helper_ldstr_mscorlib", "object int", FALSE);
 	register_icall (mono_helper_newobj_mscorlib, "mono_helper_newobj_mscorlib", "object int", FALSE);
 	register_icall (mono_value_copy, "mono_value_copy", "void ptr ptr ptr", FALSE);
-	register_icall (mono_object_castclass, "mono_object_castclass", "object object ptr", FALSE);
+	register_icall (mono_object_castclass_unbox, "mono_object_castclass_unbox", "object object ptr", FALSE);
 	register_icall (mono_break, "mono_break", NULL, TRUE);
 	register_icall (mono_create_corlib_exception_0, "mono_create_corlib_exception_0", "object int", TRUE);
 	register_icall (mono_create_corlib_exception_1, "mono_create_corlib_exception_1", "object int object", TRUE);
@@ -7209,9 +7266,7 @@ mini_init (const char *filename, const char *runtime_version)
 	register_icall (mono_array_new_4, "mono_array_new_4", "object ptr int int int int", FALSE);
 	register_icall (mono_get_native_calli_wrapper, "mono_get_native_calli_wrapper", "ptr ptr ptr ptr", FALSE);
 	register_icall (mono_resume_unwind, "mono_resume_unwind", "void", TRUE);
-	register_icall (mono_object_tostring_gsharedvt, "mono_object_tostring_gsharedvt", "object ptr ptr ptr", TRUE);
-	register_icall (mono_object_gethashcode_gsharedvt, "mono_object_gethashcode_gsharedvt", "int ptr ptr ptr", TRUE);
-	register_icall (mono_object_equals_gsharedvt, "mono_object_equals_gsharedvt", "int ptr ptr ptr object", TRUE);
+	register_icall (mono_gsharedvt_constrained_call, "mono_gsharedvt_constrained_call", "object ptr ptr ptr ptr ptr", TRUE);
 	register_icall (mono_gsharedvt_value_copy, "mono_gsharedvt_value_copy", "void ptr ptr ptr", TRUE);
 
 	register_icall (mono_gc_wbarrier_value_copy_bitmap, "mono_gc_wbarrier_value_copy_bitmap", "void ptr ptr int int", FALSE);
@@ -7353,7 +7408,9 @@ mini_cleanup (MonoDomain *domain)
 
 	mono_runtime_cleanup_handlers ();
 
+#ifndef MONO_CROSS_COMPILE
 	mono_domain_free (domain, TRUE);
+#endif
 
 	mono_debugger_cleanup ();
 

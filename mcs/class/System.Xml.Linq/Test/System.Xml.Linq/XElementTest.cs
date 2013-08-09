@@ -2050,5 +2050,27 @@ namespace MonoTests.System.Xml.Linq
 			XElement newElement = new XElement(ns + "geoloc");
 			Assert.AreEqual ("<geoloc xmlns=\"http://jabber.org/protocol/geoloc\" />", newElement.ToString (), "#1");
 		}
+		
+		[Test] // bug #10194
+		public void SetElementValueNullOnNonExistingElement ()
+		{
+			var xd = XDocument.Parse ("<foo />");
+			xd.Root.SetElementValue (XName.Get ("bar"), null);
+		}
+		
+		[Test] // bug #11298
+		public void ReplaceAttributesIteratesContentsFirstThenRemove ()
+		{
+			var xmlString = "<Class Id='1' Name='' Cluster='' xmlns='urn:x' />";
+			var e = XDocument.Parse (xmlString).Root;
+			var attrs = e.Attributes ()
+				.Where (a => !a.IsNamespaceDeclaration)
+				.Select (a => a.Name.Namespace != XNamespace.None ?
+						 new XAttribute (XName.Get(a.Name.LocalName), a.Value) : a);
+			e.ReplaceAttributes (attrs);
+			Assert.IsNotNull (e.Attribute ("Id"), "#1");
+			Assert.IsNotNull (e.Attribute ("Name"), "#2");
+			Assert.IsNotNull (e.Attribute ("Cluster"), "#3");
+		}
 	}
 }

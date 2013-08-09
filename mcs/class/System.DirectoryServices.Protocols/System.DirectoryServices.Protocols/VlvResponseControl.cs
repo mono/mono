@@ -27,7 +27,6 @@
 //
 
 using System;
-using System.Linq;
 
 namespace System.DirectoryServices.Protocols
 {
@@ -36,12 +35,12 @@ namespace System.DirectoryServices.Protocols
 		internal VlvResponseControl (int contentCount, byte [] contextId, ResultCode result, int targetPosition)
 			: base (null, null, false, true)
 		{
-			throw new NotImplementedException ("ctor-chain");
-
 			ContentCount = contentCount;
 			ContextId = contextId;
 			Result = result;
 			TargetPosition = targetPosition;
+
+			throw new NotImplementedException ("ctor-chain");
 		}
 
 		[MonoTODO]

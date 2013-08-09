@@ -93,6 +93,20 @@ class Test
 		};
 	}
 
+	static Func<T> Catch_2<T> (T t) where T : Exception
+	{
+		T l = t;
+		return () => {
+			try {
+				throw new NotSupportedException ();
+			} catch (T e) {
+				return l;
+			} catch {
+				throw new ApplicationException ("Should not be reached");
+			}
+		};
+	}
+
 	static Func<T> Finally<T> (T t)
 	{
 		T l = t;
@@ -198,6 +212,11 @@ class Test
 		var t5 = Catch (3);
 		if (t5 () != 3)
 			return 5;
+
+		var ex = new NotSupportedException ();
+		var t5_2 = Catch_2 (ex);
+		if (t5_2 () != ex)
+			return 52;
 
 		var t6 = Finally (5);
 		if (t6 () != 0)

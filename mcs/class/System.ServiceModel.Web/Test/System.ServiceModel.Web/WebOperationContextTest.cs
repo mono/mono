@@ -31,7 +31,9 @@ using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
+#if !MOBILE
 using System.ServiceModel.Syndication;
+#endif
 using System.ServiceModel.Web;
 using System.Xml;
 using NUnit.Framework;
@@ -46,21 +48,25 @@ namespace MonoTests.System.ServiceModel.Web
 		[Test]
 		public void Current ()
 		{
+#if !MOBILE
 			Assert.IsNull (WebOperationContext.Current, "#1");
+#endif
 			var binding = new WebHttpBinding ();
 			var address = new EndpointAddress ("http://localhost:37564");
 			var ch = (IContextChannel) WebChannelFactory<IHogeService>.CreateChannel (binding, address);
 			using (var ocs = new OperationContextScope (ch)) {
+#if !MOBILE
 				Assert.IsNotNull (WebOperationContext.Current, "#2");
 				Assert.IsNotNull (WebOperationContext.Current.OutgoingRequest, "#3");
 				Assert.IsNotNull (WebOperationContext.Current.IncomingRequest, "#4");
 				Assert.IsNotNull (WebOperationContext.Current.IncomingResponse, "#5");
 				Assert.IsNotNull (WebOperationContext.Current.OutgoingResponse, "#6"); // pointless though.
+#endif
 			}
 			ch.Close ();
 		}
 
-#if NET_4_0
+#if NET_4_0 && !MOBILE
 		[Test]
 		public void CreateAtom10Response ()
 		{
@@ -126,7 +132,7 @@ namespace MonoTests.System.ServiceModel.Web
 		string TestJson3 (string s1, string s2);
 	}
 
-#if NET_4_0
+#if NET_4_0 && !MOBILE
 	public class HogeService : IHogeService
 	{
 		static XmlWriterSettings settings = new XmlWriterSettings () { OmitXmlDeclaration = true };

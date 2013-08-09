@@ -47,6 +47,7 @@
 #include <mono/metadata/coree.h>
 #include <mono/metadata/attach.h>
 #include "mono/utils/mono-counters.h"
+#include "mono/utils/mono-hwcap.h"
 
 #include "mini.h"
 #include "jit.h"
@@ -148,6 +149,9 @@ parse_optimizations (const char* p)
 	guint32 exclude = 0;
 	const char *n;
 	int i, invert, len;
+
+	/* Initialize the hwcap module if necessary. */
+	mono_hwcap_init ();
 
 	/* call out to cpu detection code here that sets the defaults ... */
 	opt |= mono_arch_cpu_optimizations (&exclude);
@@ -351,6 +355,7 @@ mini_regression (MonoImage *image, int verbose, int *total_run)
 	MonoDomain *domain = mono_domain_get ();
 	guint32 exclude = 0;
 
+	/* Note: mono_hwcap_init () called in mono_init () before we get here. */
 	mono_arch_cpu_optimizations (&exclude);
 
 	if (mini_stats_fd) {
@@ -1383,7 +1388,33 @@ mono_set_use_smp (int use_smp)
 	}
 #endif
 }
-	
+
+static void
+switch_gc (char* argv[], const char* target_gc)
+{
+	GString *path;
+
+	if (!strcmp (mono_gc_get_gc_name (), target_gc)) {
+		return;
+	}
+
+	path = g_string_new (argv [0]);
+
+	/*Running mono without any argument*/
+	if (strstr (argv [0], "-sgen"))
+		g_string_truncate (path, path->len - 5);
+	else if (strstr (argv [0], "-boehm"))
+		g_string_truncate (path, path->len - 6);
+
+	g_string_append_c (path, '-');
+	g_string_append (path, target_gc);
+
+#ifdef HAVE_EXECVP
+	execvp (path->str, argv);
+#else
+	fprintf (stderr, "Error: --gc=<NAME> option not supported on this platform.\n");
+#endif
+}
 
 /**
  * mono_main:
@@ -1505,32 +1536,9 @@ mono_main (int argc, char* argv[])
 		} else if (strncmp (argv [i], "-O=", 3) == 0) {
 			opt = parse_optimizations (argv [i] + 3);
 		} else if (strcmp (argv [i], "--gc=sgen") == 0) {
-			if (!strcmp (mono_gc_get_gc_name (), "boehm")) {
-				GString *path = g_string_new (argv [0]);
-				g_string_append (path, "-sgen");
-				argv [0] = path->str;
-#ifdef HAVE_EXECVP
-				execvp (path->str, argv);
-#else
-				fprintf (stderr, "Error: --gc=<NAME> option not supported on this platform.\n");
-#endif
-			}
+			switch_gc (argv, "sgen");
 		} else if (strcmp (argv [i], "--gc=boehm") == 0) {
-			if (!strcmp (mono_gc_get_gc_name (), "sgen")) {
-				char *copy = g_strdup (argv [0]);
-				char *p = strstr (copy, "-sgen");
-				if (p == NULL){
-					fprintf (stderr, "Error, this process is not named mono-sgen and the command line option --boehm was passed");
-					exit (1);
-				}
-				*p = 0;
-				argv [0] = p;
-#ifdef HAVE_EXECVP
-				execvp (p, argv);
-#else
-				fprintf (stderr, "Error: --gc=<NAME> option not supported on this platform.\n");
-#endif
-			}
+			switch_gc (argv, "boehm");
 		} else if (strcmp (argv [i], "--config") == 0) {
 			if (i +1 >= argc){
 				fprintf (stderr, "error: --config requires a filename argument\n");

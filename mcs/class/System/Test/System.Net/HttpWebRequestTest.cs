@@ -2480,7 +2480,40 @@ namespace MonoTests.System.Net
 
 			Assert.AreEqual (null, req.Headers.Get ("Date"));
 		}
+		
+		[Test]
+		// Bug #12393
+		public void TestIPv6Host ()
+		{
+			var address = "2001:0000:0000:0001:0001:0001:0157:0000";
+			var address2 = '[' + address + ']';
+			var uri = new Uri (string.Format ("http://{0}/test.css", address2));
+			var hwr = (HttpWebRequest)WebRequest.Create (uri);
+
+			hwr.Host = address2;
+			Assert.AreEqual (address2, hwr.Host, "#1");
+		}
+
+		[Test]
+		// Bug #12393
+		[Category ("NotWorking")]
+		public void TestIPv6Host2 ()
+		{
+			var address = "2001:0000:0000:0001:0001:0001:0157:0000";
+			var address2 = '[' + address + ']';
+			var uri = new Uri (string.Format ("http://{0}/test.css", address2));
+			var hwr = (HttpWebRequest)WebRequest.Create (uri);
+
+			try {
+				hwr.Host = address;
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+				;
+			}
+		}
 #endif
+
+
 		class ListenerScope : IDisposable {
 			EventWaitHandle completed;
 			public HttpListener listener;

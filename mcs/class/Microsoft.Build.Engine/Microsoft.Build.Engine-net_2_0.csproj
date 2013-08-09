@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{13F89BAD-94E5-46B5-B8E1-0F1EDB272352}</ProjectGuid>
+    <ProjectGuid>{E8E948B8-6DCF-48F2-A6BC-04309AED8740}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\Microsoft.Build.Engine-net_2_0</OutputPath>
@@ -62,6 +62,9 @@
     <Compile Include="Microsoft.Build.BuildEngine\BuildPropertyGroupCollection.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\BuildSettings.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\BuildTask.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildTaskItem.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildTaskItemGroup.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildTaskPropertyGroup.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\BuildWhen.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\ChangeType.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\ColorResetter.cs" />
@@ -85,6 +88,7 @@
     <Compile Include="Microsoft.Build.BuildEngine\ExpressionParseException.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\FileLogger.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\GroupingCollection.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\IBuildTask.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\Import.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\ImportCollection.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\ImportedProject.cs" />
@@ -130,27 +134,27 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
+      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_2_0.csproj">
-      <Project>{F684BA24-FC9A-4BAB-8CF3-ACC489E6B88E}</Project>
+      <Project>{B91370A1-A33A-4F7A-BDF2-1E194AFA0869}</Project>
       <Name>System.Core\System.Core-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
-      <Project>{205A8E90-88CC-4B46-8151-87FA90B666A5}</Project>
+      <Project>{D9776E38-7673-45F6-BF19-7B77830DF9CA}</Project>
       <Name>System.XML\System.Xml-net_2_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Framework\Microsoft.Build.Framework-net_2_0.csproj">
-      <Project>{BFA79A16-152D-42DA-98E3-D494F9C4CC3E}</Project>
+      <Project>{AB5EDD8C-84A4-4F96-80EE-1B6F3A86785B}</Project>
       <Name>Microsoft.Build.Framework\Microsoft.Build.Framework-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_2_0.csproj">
-      <Project>{A77A0E38-0000-4E4D-BEA6-704BC3677151}</Project>
+      <Project>{4AC4EDEE-4895-4CF9-84DF-9419E6980F38}</Project>
       <Name>Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>

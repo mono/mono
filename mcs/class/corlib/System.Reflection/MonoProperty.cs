@@ -1,13 +1,14 @@
 //
-// System.Reflection/MonoProperty.cs
-// The class used to represent Properties from the mono runtime.
+// MonoProperty.cs: The class used to represent Properties from the mono runtime.
 //
-// Author:
+// Authors:
 //   Paolo Molaro (lupus@ximian.com)
 //   Patrik Torstensson (patrik.torstensson@labs2.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright 2013 Xamarin, Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,6 +36,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security;
+using System.Text;
 
 namespace System.Reflection {
 	
@@ -177,24 +179,25 @@ namespace System.Reflection {
 				return null;
 		}
 
-		public override ParameterInfo[] GetIndexParameters()
+		public override ParameterInfo[] GetIndexParameters ()
 		{
 			CachePropertyInfo (PInfo.GetMethod | PInfo.SetMethod);
-			ParameterInfo[] res;
+			ParameterInfo[] src;
+			int length;
 			if (info.get_method != null) {
-				res = info.get_method.GetParameters ();
+				src = info.get_method.GetParametersInternal ();
+				length = src.Length;
 			} else if (info.set_method != null) {
-				ParameterInfo[] src = info.set_method.GetParametersInternal ();
-				res = new ParameterInfo [src.Length - 1];
-				Array.Copy (src, res, res.Length);
+				src = info.set_method.GetParametersInternal ();
+				length = src.Length - 1;
 			} else
 				return EmptyArray<ParameterInfo>.Value;
 
-			for (int i = 0; i < res.Length; ++i) {
-				ParameterInfo pinfo = res [i];
-				res [i] = new ParameterInfo (pinfo, this);
+			var dest = new ParameterInfo [length];
+			for (int i = 0; i < length; ++i) {
+				dest [i] = new ParameterInfo (src [i], this);
 			}
-			return res;	
+			return dest;	
 		}
 		
 		public override MethodInfo GetSetMethod (bool nonPublic)
@@ -363,8 +366,27 @@ namespace System.Reflection {
 			method.Invoke (obj, invokeAttr, binder, parms, culture);
 		}
 
-		public override string ToString () {
-			return PropertyType.ToString () + " " + Name;
+		public override string ToString ()
+		{
+			var sb = new StringBuilder ();
+
+			Type retType = PropertyType;
+			if (Type.ShouldPrintFullName (retType))
+				sb.Append (retType.ToString ());
+			else
+				sb.Append (retType.Name);
+
+			sb.Append (" ");
+			sb.Append (Name);
+
+			var pi = GetIndexParameters ();
+			if (pi.Length > 0) {
+				sb.Append (" [");
+				ParameterInfo.FormatParameters (sb, pi);
+				sb.Append ("]");
+			}
+
+			return sb.ToString ();
 		}
 
 		public override Type[] GetOptionalCustomModifiers () {

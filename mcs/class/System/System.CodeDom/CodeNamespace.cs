@@ -80,6 +80,9 @@ namespace System.CodeDom
 				}
 				return imports;
 			}
+			internal set {
+				imports = value;
+			}
 		}
 
 		public string Name {

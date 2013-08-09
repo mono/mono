@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{0A4AB2F0-6CD6-48DD-9013-EE4402266656}</ProjectGuid>
+    <ProjectGuid>{296F67F1-CFC1-402A-9DEB-6FC9503410BE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\Mono.Debugger.Soft-tests-net_2_0</OutputPath>
@@ -63,23 +63,23 @@
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Debugger.Soft\Mono.Debugger.Soft-net_2_0.csproj">
-      <Project>{57346D30-7524-46BB-BF8D-E8D43FF040E4}</Project>
+      <Project>{5B419D3D-3435-4FCB-8C86-5645AE0250FA}</Project>
       <Name>Mono.Debugger.Soft\Mono.Debugger.Soft-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Cecil\Mono.Cecil-net_2_0.csproj">
-      <Project>{5B6E489A-FD73-4BF7-9B58-6FB1C2F1D3A7}</Project>
+      <Project>{2F1D61B7-0586-4587-8ECE-926A065F6276}</Project>
       <Name>Mono.Cecil\Mono.Cecil-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
+      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_2_0.csproj">
-      <Project>{F684BA24-FC9A-4BAB-8CF3-ACC489E6B88E}</Project>
+      <Project>{B91370A1-A33A-4F7A-BDF2-1E194AFA0869}</Project>
       <Name>System.Core\System.Core-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>

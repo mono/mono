@@ -368,10 +368,38 @@ binary_protocol_cement_reset (void)
 }
 
 void
-binary_protocol_dislink_update (gpointer link, gpointer obj, int track)
+binary_protocol_dislink_update (gpointer link, gpointer obj, int track, int staged)
 {
-	SGenProtocolDislinkUpdate entry = { link, obj, track };
+	SGenProtocolDislinkUpdate entry = { link, obj, track, staged };
 	protocol_entry (SGEN_PROTOCOL_DISLINK_UPDATE, &entry, sizeof (SGenProtocolDislinkUpdate));
+}
+
+void
+binary_protocol_dislink_update_staged (gpointer link, gpointer obj, int track, int index)
+{
+	SGenProtocolDislinkUpdateStaged entry = { link, obj, track, index };
+	protocol_entry (SGEN_PROTOCOL_DISLINK_UPDATE_STAGED, &entry, sizeof (SGenProtocolDislinkUpdateStaged));
+}
+
+void
+binary_protocol_dislink_process_staged (gpointer link, gpointer obj, int index)
+{
+	SGenProtocolDislinkProcessStaged entry = { link, obj, index };
+	protocol_entry (SGEN_PROTOCOL_DISLINK_PROCESS_STAGED, &entry, sizeof (SGenProtocolDislinkProcessStaged));
+}
+
+void
+binary_protocol_domain_unload_begin (gpointer domain)
+{
+	SGenProtocolDomainUnload entry = { domain };
+	protocol_entry (SGEN_PROTOCOL_DOMAIN_UNLOAD_BEGIN, &entry, sizeof (SGenProtocolDomainUnload));
+}
+
+void
+binary_protocol_domain_unload_end (gpointer domain)
+{
+	SGenProtocolDomainUnload entry = { domain };
+	protocol_entry (SGEN_PROTOCOL_DOMAIN_UNLOAD_END, &entry, sizeof (SGenProtocolDomainUnload));
 }
 
 #endif

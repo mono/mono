@@ -590,7 +590,6 @@ thread_suspend_func (gpointer user_data, void *sigctx, MonoContext *ctx)
 
 	if (!tls) {
 		/* Happens during startup */
-		tls->unwind_state.valid = FALSE;
 		return;
 	}
 
@@ -599,7 +598,11 @@ thread_suspend_func (gpointer user_data, void *sigctx, MonoContext *ctx)
 		gboolean res;
 
 		g_assert (tls->info);
+#ifdef TARGET_WIN32
+		return;
+#else
 		res = mono_thread_state_init_from_handle (&tls->unwind_state, (MonoNativeThreadId)tls->tid, tls->info->native_handle);
+#endif
 	} else {
 		tls->unwind_state.unwind_data [MONO_UNWIND_DATA_LMF] = mono_get_lmf ();
 		if (sigctx) {

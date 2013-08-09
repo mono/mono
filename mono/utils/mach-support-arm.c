@@ -16,13 +16,24 @@
 #include <glib.h>
 #include <pthread.h>
 #include "utils/mono-sigcontext.h"
+#include "utils/mono-compiler.h"
 #include "mach-support.h"
 
 /* Known offsets used for TLS storage*/
 
-/*Found on iOS 6 */
-#define TLS_VECTOR_OFFSET_0 0x48
-#define TLS_VECTOR_OFFSET_1 0xA8
+
+static const int known_tls_offsets[] = {
+	0x48, /*Found on iOS 6 */
+	0xA4,
+	0xA8,
+};
+
+#define TLS_PROBE_COUNT (sizeof (known_tls_offsets) / sizeof (int))
+
+/* This is 2 slots less than the known low */
+#define TLS_PROBE_LOW_WATERMARK 0x40
+/* This is 24 slots above the know high, which is the same diff as the knowns high-low*/
+#define TLS_PROBE_HIGH_WATERMARK 0x108
 
 static int tls_vector_offset;
 
@@ -113,6 +124,7 @@ mono_mach_arch_get_tls_value_from_thread (pthread_t thread, guint32 key)
 void
 mono_mach_init (pthread_key_t key)
 {
+	int i;
 	void *old_value = pthread_getspecific (key);
 	void *canary = (void*)0xDEADBEEFu;
 
@@ -122,13 +134,20 @@ mono_mach_init (pthread_key_t key)
 	pthread_setspecific (key, canary);
 
 	/*First we probe for cats*/
-	tls_vector_offset = TLS_VECTOR_OFFSET_0;
-	if (mono_mach_arch_get_tls_value_from_thread (pthread_self (), key) == canary)
-		goto ok;
+	for (i = 0; i < TLS_PROBE_COUNT; ++i) {
+		tls_vector_offset = known_tls_offsets [i];
+		if (mono_mach_arch_get_tls_value_from_thread (pthread_self (), key) == canary)
+			goto ok;
+	}
 
-	tls_vector_offset = TLS_VECTOR_OFFSET_1;
-	if (mono_mach_arch_get_tls_value_from_thread (pthread_self (), key) == canary)
-		goto ok;
+	/*Fallback to scanning a large range of offsets*/
+	for (i = TLS_PROBE_LOW_WATERMARK; i <= TLS_PROBE_HIGH_WATERMARK; i += 4) {
+		tls_vector_offset = i;
+		if (mono_mach_arch_get_tls_value_from_thread (pthread_self (), key) == canary) {
+			g_warning ("Found new TLS offset at %d", i);
+			goto ok;
+		}
+	}
 
 	g_error ("could not discover the mach TLS offset");
 ok:

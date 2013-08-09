@@ -702,7 +702,7 @@ namespace Mono.CSharp {
 
 	public class StatementErrorExpression : Statement
 	{
-		readonly Expression expr;
+		Expression expr;
 
 		public StatementErrorExpression (Expression expr)
 		{
@@ -729,7 +729,9 @@ namespace Mono.CSharp {
 
 		protected override void CloneTo (CloneContext clonectx, Statement target)
 		{
-			throw new NotImplementedException ();
+			var t = (StatementErrorExpression) target;
+
+			t.expr = expr.Clone (clonectx);
 		}
 		
 		public override object Accept (StructuralVisitor visitor)
@@ -2243,6 +2245,11 @@ namespace Mono.CSharp {
 				scope_initializers.Add (s);
 			}
 		}
+
+		public void InsertStatement (int index, Statement s)
+		{
+			statements.Insert (index, s);
+		}
 		
 		public void AddStatement (Statement s)
 		{
@@ -2620,6 +2627,24 @@ namespace Mono.CSharp {
 							if (pb != null && pb.StateMachine != null) {
 								if (pb.StateMachine == storey)
 									break;
+
+								//
+								// If we are state machine with no parent we can hook into we don't
+ 								// add reference but capture this directly
+								//
+								ExplicitBlock parent_storey_block = pb;
+								while (parent_storey_block.Parent != null) {
+									parent_storey_block = parent_storey_block.Parent.Explicit;
+									if (parent_storey_block.AnonymousMethodStorey != null) {
+										break;
+									}
+								}
+
+								if (parent_storey_block.AnonymousMethodStorey == null) {
+									pb.StateMachine.AddCapturedThisField (ec);
+									b.HasCapturedThis = true;
+									continue;
+								}
 
 								pb.StateMachine.AddParentStoreyReference (ec, storey);
 							}
@@ -3052,7 +3077,7 @@ namespace Mono.CSharp {
 					unreachable = top_level.End ();
 				}
 			} catch (Exception e) {
-				if (e is CompletionResult || rc.Report.IsDisabled || e is FatalException)
+				if (e is CompletionResult || rc.Report.IsDisabled || e is FatalException || rc.Report.Printer is NullReportPrinter)
 					throw;
 
 				if (rc.CurrentBlock != null) {
@@ -4145,7 +4170,7 @@ namespace Mono.CSharp {
 			var ok = block.Resolve (ec);
 
  			if (case_default == null)
-				ec.CurrentBranching.CurrentUsageVector.ResetBarrier ();
+				ec.CurrentBranching.CreateSibling (null, FlowBranching.SiblingType.SwitchSection);
 
 			ec.EndFlowBranching ();
 			ec.Switch = old_switch;
@@ -4185,10 +4210,10 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// Needed to emit anonymous storey initialization before
+			// Anonymous storey initialization has to happen before
 			// any generated switch dispatch
 			//
-			block.AddScopeStatement (new DispatchStatement (this));
+			block.InsertStatement (0, new DispatchStatement (this));
 
 			return true;
 		}
@@ -4415,12 +4440,6 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			//
-			// Mark sequence point explicitly to switch
-			//
-			ec.Mark (block.StartLocation);
-			block.IsCompilerGenerated = true;
-
 			if (string_dictionary != null) {
 				DoEmitStringSwitch (ec);
 			} else if (case_labels.Count < 4 || string_labels != null) {
@@ -4456,6 +4475,14 @@ namespace Mono.CSharp {
 				} else if (new_expr != value) {
 					value.EmitAssign (ec, new_expr, false, false);
 				}
+
+
+				//
+				// Next statement is compiler generated we don't need extra
+				// nop when we can use the statement for sequence point
+				//
+				ec.Mark (block.StartLocation);
+				block.IsCompilerGenerated = true;
 			}
 
 			block.Emit (ec);
@@ -6421,13 +6448,19 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			variable.CreateBuilder (ec);
-
 			Label old_begin = ec.LoopBegin, old_end = ec.LoopEnd;
 			ec.LoopBegin = ec.DefineLabel ();
 			ec.LoopEnd = ec.DefineLabel ();
 
+			if (!(statement is Block))
+				ec.BeginCompilerScope ();
+
+			variable.CreateBuilder (ec);
+
 			statement.Emit (ec);
+
+			if (!(statement is Block))
+				ec.EndScope ();
 
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;

@@ -61,6 +61,11 @@ namespace System.Net.Http.Headers
 			list.Add (item);
 		}
 
+		internal void AddRange (List<T> values)
+		{
+			list.AddRange (values);
+		}
+
 		public void Clear ()
 		{
 			list.Clear ();

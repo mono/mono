@@ -28,6 +28,50 @@ using System.Reflection.Emit;
 #endif
 
 namespace Mono.CSharp {
+	public class VarianceDecl
+	{
+		public VarianceDecl (Variance variance, Location loc)
+		{
+			this.Variance = variance;
+			this.Location = loc;
+		}
+
+		public Variance Variance { get; private set; }
+		public Location Location { get; private set; }
+
+		public static Variance CheckTypeVariance (TypeSpec t, Variance expected, IMemberContext member)
+		{
+			var tp = t as TypeParameterSpec;
+			if (tp != null) {
+				var v = tp.Variance;
+				if (expected == Variance.None && v != expected ||
+					expected == Variance.Covariant && v == Variance.Contravariant ||
+					expected == Variance.Contravariant && v == Variance.Covariant) {
+					((TypeParameter) tp.MemberDefinition).ErrorInvalidVariance (member, expected);
+				}
+
+				return expected;
+			}
+
+			if (t.TypeArguments.Length > 0) {
+				var targs_definition = t.MemberDefinition.TypeParameters;
+				TypeSpec[] targs = TypeManager.GetTypeArguments (t);
+				for (int i = 0; i < targs.Length; ++i) {
+					var v = targs_definition[i].Variance;
+					CheckTypeVariance (targs[i], (Variance) ((int) v * (int) expected), member);
+				}
+
+				return expected;
+			}
+
+			var ac = t as ArrayContainer;
+			if (ac != null)
+				return CheckTypeVariance (ac.Element, expected, member);
+
+			return Variance.None;
+		}
+	}
+
 	public enum Variance
 	{
 		//
@@ -235,7 +279,7 @@ namespace Mono.CSharp {
 					// is valid with respect to T
 					//
 					if (tp.IsMethodTypeParameter) {
-						TypeManager.CheckTypeVariance (type, Variance.Contravariant, context);
+						VarianceDecl.CheckTypeVariance (type, Variance.Contravariant, context);
 					}
 
 					var tp_def = constraint_tp.MemberDefinition as TypeParameter;
@@ -360,20 +404,22 @@ namespace Mono.CSharp {
 		GenericTypeParameterBuilder builder;
 		readonly TypeParameterSpec spec;
 
-		public TypeParameter (int index, MemberName name, Constraints constraints, Attributes attrs, Variance variance)
+		public TypeParameter (int index, MemberName name, Constraints constraints, Attributes attrs, Variance Variance)
 			: base (null, name, attrs)
 		{
 			this.constraints = constraints;
-			this.spec = new TypeParameterSpec (null, index, this, SpecialConstraint.None, variance, null);
+			this.spec = new TypeParameterSpec (null, index, this, SpecialConstraint.None, Variance, null);
 		}
 
 		//
 		// Used by parser
 		//
-		public TypeParameter (MemberName name, Attributes attrs, Variance variance)
+		public TypeParameter (MemberName name, Attributes attrs, VarianceDecl variance)
 			: base (null, name, attrs)
 		{
-			this.spec = new TypeParameterSpec (null, -1, this, SpecialConstraint.None, variance, null);
+			var var = variance == null ? Variance.None : variance.Variance;
+			this.spec = new TypeParameterSpec (null, -1, this, SpecialConstraint.None, var, null);
+			this.VarianceDecl = variance;
 		}
 		
 		public TypeParameter (TypeParameterSpec spec, TypeSpec parentSpec, MemberName name, Attributes attrs)
@@ -482,6 +528,8 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public VarianceDecl VarianceDecl { get; private set; }
+
 		#endregion
 
 		//
@@ -511,7 +559,7 @@ namespace Mono.CSharp {
 
 			// Copy constraint from resolved part to partial container
 			spec.SpecialConstraint = tp.spec.SpecialConstraint;
-			spec.Interfaces = tp.spec.Interfaces;
+			spec.InterfacesDefined = tp.spec.InterfacesDefined;
 			spec.TypeArguments = tp.spec.TypeArguments;
 			spec.BaseType = tp.spec.BaseType;
 			
@@ -1665,7 +1713,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override bool IsGenericIterateInterface {
+		public override bool IsArrayGenericInterface {
 			get {
 				return (open_type.state & StateFlags.GenericIterateInterface) != 0;
 			}
@@ -2494,8 +2542,8 @@ namespace Mono.CSharp {
 			//
 			// Check the interfaces constraints
 			//
-			if (tparam.Interfaces != null) {
-				foreach (TypeSpec iface in tparam.Interfaces) {
+			if (tparam.InterfacesDefined != null) {
+				foreach (TypeSpec iface in tparam.InterfacesDefined) {
 					if (!CheckConversion (mc, context, atype, tparam, iface, loc)) {
 						if (mc == null)
 							return false;
@@ -2635,40 +2683,6 @@ namespace Mono.CSharp {
 				BindingRestriction.DeclaredOnly | BindingRestriction.InstanceOnly);
 
 			return found != null && (found.Modifiers & Modifiers.PUBLIC) != 0;
-		}
-	}
-
-	public partial class TypeManager
-	{
-		public static Variance CheckTypeVariance (TypeSpec t, Variance expected, IMemberContext member)
-		{
-			var tp = t as TypeParameterSpec;
-			if (tp != null) {
-				Variance v = tp.Variance;
-				if (expected == Variance.None && v != expected ||
-					expected == Variance.Covariant && v == Variance.Contravariant ||
-					expected == Variance.Contravariant && v == Variance.Covariant) {
-					((TypeParameter)tp.MemberDefinition).ErrorInvalidVariance (member, expected);
-				}
-
-				return expected;
-			}
-
-			if (t.TypeArguments.Length > 0) {
-				var targs_definition = t.MemberDefinition.TypeParameters;
-				TypeSpec[] targs = GetTypeArguments (t);
-				for (int i = 0; i < targs.Length; ++i) {
-					Variance v = targs_definition[i].Variance;
-					CheckTypeVariance (targs[i], (Variance) ((int)v * (int)expected), member);
-				}
-
-				return expected;
-			}
-
-			if (t.IsArray)
-				return CheckTypeVariance (GetElementType (t), expected, member);
-
-			return Variance.None;
 		}
 	}
 
@@ -3349,7 +3363,7 @@ namespace Mono.CSharp {
 					return LowerBoundInference (u_ac.Element, v_ac.Element, inversed);
 				}
 
-				if (u_ac.Rank != 1 || !v.IsGenericIterateInterface)
+				if (u_ac.Rank != 1 || !v.IsArrayGenericInterface)
 					return 0;
 
 				var v_i = TypeManager.GetTypeArguments (v) [0];
