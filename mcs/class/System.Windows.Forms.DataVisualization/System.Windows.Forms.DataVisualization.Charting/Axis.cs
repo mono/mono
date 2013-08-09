@@ -95,34 +95,40 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public string ToolTip { get; set; }
 		#endregion
 
-		private ChartArea ChartArea; //FIXME what does this need to be used for?
+		private ChartArea ChartArea; 
 
 		#region Public Methods
+		[MonoTODO]
 		public double GetPosition (double axisValue)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public double PixelPositionToValue (double position)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public double PositionToValue (double position)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void RoundAxisValues ()
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public double ValueToPixelPosition (double axisValue)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public double ValueToPosition (double axisValue)
 		{
 			throw new NotImplementedException ();

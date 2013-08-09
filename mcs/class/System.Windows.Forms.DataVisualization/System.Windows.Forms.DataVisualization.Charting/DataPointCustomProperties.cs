@@ -49,6 +49,7 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public bool IsValueShownAsLabel { get; set; }
 		public bool IsVisibleInLegend { get; set; }
 		
+		[MonoTODO]
 		public string this[int idx] {
 			get{ 
 				throw new NotImplementedException ();
@@ -58,6 +59,7 @@ namespace System.Windows.Forms.DataVisualization.Charting
 				throw new NotImplementedException ();
 			}
 		}
+		[MonoTODO]
 		public string this[string propName] {
 			get{ 
 				throw new NotImplementedException ();
@@ -89,30 +91,37 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public string ToolTip { get; set; }
 
 		#region Public methods
+		[MonoTODO]
 		public virtual void DeleteCustomProperty (string name)
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public virtual string GetCustomProperty(string name)
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public virtual bool IsCustomPropertySet(string name)
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public void ResetIsValueShownAsLabel ()
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public void ResetIsVisibleInLegend ()
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public virtual void SetCustomProperty (string name,string propertyValue)
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public virtual void SetDefault (bool clearAll)
 		{
 			throw new NotImplementedException ();

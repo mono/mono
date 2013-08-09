@@ -71,19 +71,23 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public int YValuesPerPoint { get; set; }
 
 
+		[MonoTODO]
 		protected override void Dispose (bool disposing)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public void Sort (IComparer<DataPoint> comparer)
 		{
 			throw new NotImplementedException();
 		}
+		[MonoTODO]
 		public void Sort (PointSortOrder pointSortOrder)
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public void Sort (PointSortOrder pointSortOrder,string sortBy)
 		{
 			throw new NotImplementedException();

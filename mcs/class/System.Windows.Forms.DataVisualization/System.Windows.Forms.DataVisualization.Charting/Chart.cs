@@ -135,107 +135,130 @@ namespace System.Windows.Forms.DataVisualization.Charting
 
 		#region Public Methods
 
+		[MonoTODO]
 		public void AlignDataPointsByAxisLabel ()
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public void AlignDataPointsByAxisLabel (PointSortOrder sortingOrder)
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public void AlignDataPointsByAxisLabel(string series)
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public void AlignDataPointsByAxisLabel (string series, PointSortOrder sortingOrder)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void ApplyPaletteColors ()
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void BeginInit ()
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void DataBind ()
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void DataBindCrossTable (System.Collections.IEnumerable dataSource, string seriesGroupByField, string xField, string yFields, string otherFields)
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public void DataBindCrossTable (System.Collections.IEnumerable dataSource, string seriesGroupByField, string xField, string yFields, string otherFields, PointSortOrder sortingOrder)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void DataBindTable (System.Collections.IEnumerable dataSource)
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public void DataBindTable (System.Collections.IEnumerable dataSource, string xField)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void EndInit ()
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public HitTestResult HitTest (int x, int y)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public HitTestResult HitTest (int x, int y, bool ignoreTransparent)
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public HitTestResult HitTest (int x, int y, ChartElementType requestedElement)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public HitTestResult[] HitTest (int x, int y, bool ignoreTransparent, params ChartElementType[] requestedElement)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void LoadTemplate (Stream stream)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void LoadTemplate (string name)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void ResetAutoValues ()
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void SaveImage (Stream imageStream, ImageFormat format)
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public void SaveImage (Stream imageStream, ChartImageFormat format)
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public void SaveImage (string imageFileName, ImageFormat format)
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public void SaveImage (string imageFileName, ChartImageFormat format)
 		{
 			throw new NotImplementedException ();

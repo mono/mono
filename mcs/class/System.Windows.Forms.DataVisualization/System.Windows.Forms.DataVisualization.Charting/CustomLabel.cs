@@ -62,6 +62,7 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public string ToolTip { get; set; }
 		public double ToPosition { get; set; }
 
+		[MonoTODO]
 		public CustomLabel Clone ()
 		{
 			throw new NotImplementedException ();

@@ -46,37 +46,45 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public bool Zoomable { get; set; }
 
 
+		[MonoTODO]
 		public void Scroll (DateTime newPosition)
 		{
 			throw new NotImplementedException();
 		}
+		[MonoTODO]
 		public void Scroll (double newPosition)
 		{
 			throw new NotImplementedException();
 		}
+		[MonoTODO]
 		public void Scroll (ScrollType scrollType)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public void Zoom (double viewStart,double viewEnd)
 		{
 			throw new NotImplementedException();
 		}
+		[MonoTODO]
 		public void Zoom (double viewPosition, double viewSize, DateTimeIntervalType viewSizeType)
 		{
 			throw new NotImplementedException();
 		}
+		[MonoTODO]
 		public void Zoom (double viewPosition, double viewSize, DateTimeIntervalType viewSizeType, bool saveState)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public void ZoomReset ()
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public void ZoomReset (int numberOfViews)
 		{
 			throw new NotImplementedException();

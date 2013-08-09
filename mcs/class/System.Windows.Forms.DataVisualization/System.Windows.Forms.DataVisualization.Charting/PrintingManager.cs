@@ -31,26 +31,32 @@ namespace System.Windows.Forms.DataVisualization.Charting
 	{
 		public PrintDocument PrintDocument { get; set; }
 
+		[MonoTODO]
 		public void Dispose ()
 		{
 			throw new NotImplementedException();
 		}
+		[MonoTODO]
 		protected virtual void Dispose (bool disposing)
 		{
 			throw new NotImplementedException();
 		}
+		[MonoTODO]
 		public void PageSetup ()
 		{
 			throw new NotImplementedException();
 		}
+		[MonoTODO]
 		public void Print (bool showPrintDialog)
 		{
 			throw new NotImplementedException();
 		}
+		[MonoTODO]
 		public void PrintPaint (Graphics graphics,Rectangle position)
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public void PrintPreview ()
 		{
 			throw new NotImplementedException ();

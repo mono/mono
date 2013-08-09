@@ -38,50 +38,60 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public string SerializableContent { get; set; }
 
 
+		[MonoTODO]
 		protected string GetContentString (SerializationContents content, bool serializable)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void Load (Stream stream)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void Load (string fileName)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void Load (TextReader reader)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void Load (XmlReader reader)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void Reset ()
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void Save (Stream stream)
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public void Save (string fileName)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void Save (TextWriter writer)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void Save (XmlWriter writer)
 		{
 			throw new NotImplementedException ();

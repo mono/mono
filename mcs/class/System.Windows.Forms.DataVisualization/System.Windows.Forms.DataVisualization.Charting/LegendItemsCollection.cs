@@ -28,22 +28,27 @@ namespace System.Windows.Forms.DataVisualization.Charting
 {
 	public class LegendItemsCollection : ChartElementCollection<LegendItem>
 	{
+		[MonoTODO]
 		public int Add (Color color, string text)
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public int Add (string image, string text)
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public void Insert (int index, Color color, string text)
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public void Insert (int index, string image, string text)
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public void Reverse()
 		{
 			throw new NotImplementedException ();

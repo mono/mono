@@ -28,11 +28,13 @@ namespace System.Windows.Forms.DataVisualization.Charting
 {
 	public class LegendCellCollection : ChartNamedElementCollection<LegendCell>
 	{
+		[MonoTODO]
 		public int Add (LegendCellType cellType, string text, ContentAlignment alignment)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void Insert (int index, LegendCellType cellType, string text, ContentAlignment alignment)
 		{
 			throw new NotImplementedException ();

@@ -79,6 +79,7 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public string ToolTip { get; set; }
 		public virtual bool Visible { get; set; }
 
+		[MonoTODO]
 		protected override void Dispose (bool disposing)
 		{
 			throw new NotImplementedException ();

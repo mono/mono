@@ -49,26 +49,32 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public double SelectionStart { get; set; }
 
 
+		[MonoTODO]
 		public void Dispose ()
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		protected virtual void Dispose (bool disposing)
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public void SetCursorPixelPosition (PointF point,bool roundToBoundary)
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public void SetCursorPosition (double newPosition)
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public void SetSelectionPixelPosition (PointF startPoint, PointF endPoint, bool roundToBoundary)
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public void SetSelectionPosition (double newStart, double newEnd)
 		{
 			throw new NotImplementedException ();

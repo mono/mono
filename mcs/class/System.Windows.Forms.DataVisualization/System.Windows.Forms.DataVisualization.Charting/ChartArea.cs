@@ -67,23 +67,28 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public virtual bool Visible { get; set; }
 
 
+		[MonoTODO]
 		protected override void Dispose (bool disposing)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public float GetSeriesDepth (Series series )
 		{
 			throw new NotImplementedException();
 		}
+		[MonoTODO]
 		public float GetSeriesZPosition (Series series)
 		{
 			throw new NotImplementedException ();
 		}
+		[MonoTODO]
 		public void RecalculateAxesScale ()
 		{
 			throw new NotImplementedException();
 		}
+		[MonoTODO]
 		public void TransformPoints (Point3D[] points)
 		{
 			throw new NotImplementedException ();

@@ -57,36 +57,43 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		protected virtual string NamePrefix { get; private set;}
 
 		
+		[MonoTODO]
 		public virtual T FindByName (string name)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public int IndexOf (string name)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		protected override void InsertItem (int index,T item)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public virtual bool IsUniqueName (string name)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public virtual string NextUniqueName ()
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		protected override void RemoveItem (int index)
 		{
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		protected override void SetItem (int index,T item)
 		{
 			throw new NotImplementedException();

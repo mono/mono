@@ -84,6 +84,7 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public LegendSeparatorStyle TitleSeparator { get; set; }
 		public Color TitleSeparatorColor { get; set; }
 
+		[MonoTODO]
 		protected override void Dispose(bool disposing){
 			throw new NotImplementedException ();
 		}

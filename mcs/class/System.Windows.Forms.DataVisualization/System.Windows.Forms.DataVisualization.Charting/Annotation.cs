@@ -80,36 +80,44 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public virtual double Y { get; set; }
 		public virtual string YAxisName { get; set; }
 
-
-		public virtual void BeginPlacement(){
+		[MonoTODO]
+		public virtual void BeginPlacement ()
+		{
 			throw new NotImplementedException ();
 		}
-
-		public virtual void BringToFront(){
+		[MonoTODO]
+		public virtual void BringToFront ()
+		{
 			throw new NotImplementedException ();
 		}
-
-		protected override void Dispose(bool disposing){
+		[MonoTODO]
+		protected override void Dispose (bool disposing)
+		{
 			throw new NotImplementedException ();
 		}
-
-		public virtual void EndPlacement(){
+		[MonoTODO]
+		public virtual void EndPlacement ()
+		{
 			throw new NotImplementedException ();
 		}
-
-		public virtual void ResizeToContent(){
+		[MonoTODO]
+		public virtual void ResizeToContent ()
+		{
 			throw new NotImplementedException ();
 		}
-
-		public virtual void SendToBack(){
+		[MonoTODO]
+		public virtual void SendToBack ()
+		{
 			throw new NotImplementedException ();
 		}
-
-		public void SetAnchor(DataPoint dataPoint){
+		[MonoTODO]
+		public void SetAnchor (DataPoint dataPoint)
+		{
 			throw new NotImplementedException ();
 		}
-
-		public void SetAnchor(DataPoint dataPoint1,	DataPoint dataPoint2){
+		[MonoTODO]
+		public void SetAnchor (DataPoint dataPoint1, DataPoint dataPoint2)
+		{
 			throw new NotImplementedException ();
 		}
 	}
