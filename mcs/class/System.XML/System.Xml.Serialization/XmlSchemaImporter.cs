@@ -35,6 +35,7 @@ using System.CodeDom.Compiler;
 #endif
 using System.Xml.Schema;
 using System.Collections;
+using System.Collections.Generic;
 #if NET_2_0 && CONFIGURATION_DEP
 using System.Configuration;
 using System.Xml.Serialization.Configuration;
@@ -744,6 +745,25 @@ namespace System.Xml.Serialization
 				}
 			}
 		}
+		
+		IEnumerable<XmlSchemaAttribute> EnumerateAttributes (XmlSchemaObjectCollection col, List<XmlSchemaAttributeGroup> recurse)
+		{
+			foreach (var o in col) {
+				if (o is XmlSchemaAttributeGroupRef) {
+					var gr = (XmlSchemaAttributeGroupRef) o;
+					var g = FindRefAttributeGroup (gr.RefName);
+					if (recurse.Contains (g))
+						continue;
+					recurse.Add (g);
+					if (g == null)
+						throw new InvalidOperationException (string.Format ("Referenced AttributeGroup '{0}' was not found.", gr.RefName));
+					foreach (var a in EnumerateAttributes (g.Attributes, recurse))
+						yield return a;
+				}
+				else
+					yield return (XmlSchemaAttribute) o;
+			}
+		}
 
 		// Attributes might be redefined, so there is an existing attribute for the same name, skip it.
 		// FIXME: this is nothing more than just a hack.
@@ -753,7 +773,7 @@ namespace System.Xml.Serialization
 			XmlSchemaObjectCollection src, ClassMap map)
 		{
 			XmlSchemaObjectCollection atts = new XmlSchemaObjectCollection ();
-			foreach (XmlSchemaAttribute a in src)
+			foreach (var a in EnumerateAttributes (src, new List<XmlSchemaAttributeGroup> ()))
 				if (map.GetAttribute (a.QualifiedName.Name, a.QualifiedName.Namespace) == null)
 					atts.Add (a);
 			return atts;
