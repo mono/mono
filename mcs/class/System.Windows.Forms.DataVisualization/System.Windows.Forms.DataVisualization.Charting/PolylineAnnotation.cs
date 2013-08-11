@@ -1,8 +1,7 @@
-﻿//
 // Authors:
-// Jonathan Pobst (monkey@jpobst.com)
+// Francis Fisher (frankie@terrorise.me.uk)
 //
-// Copyright (C) 2009 Novell, Inc (http://www.novell.com) 
+// (C) Francis Fisher 2013
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -23,33 +22,30 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class AnnotationPathPoint : ChartElement
+	public class PolylineAnnotation : Annotation
 	{
-		#region Constructors
-		public AnnotationPathPoint () : this (0, 0)
+		public PolylineAnnotation ()
 		{
+			GraphicsPathPoints = new AnnotationPathPointCollection ();
 		}
-
-		public AnnotationPathPoint (float x, float y) : this (x, y, 0)
-		{
-		}
-
-		public AnnotationPathPoint (float x, float y, byte type)
-		{
-			X = x;
-			Y = y;
-		}
-		#endregion
-
-		#region Public Properties
-		public string Name { get; private set; }
-		public byte PointType { get; set; }
-		public float X { get; set; }
-		public float Y { get; set; }
-		#endregion
+		public override ContentAlignment Alignment { get; set; }
+		public override string AnnotationType { get { throw new NotImplementedException (); } } //FIXME - find out what MS implementation returns here
+		public override Color BackColor { get; set; }
+		public override GradientStyle BackGradientStyle { get; set; }
+		public override ChartHatchStyle BackHatchStyle { get; set; }
+		public override Color BackSecondaryColor { get; set; }
+		public virtual LineAnchorCapStyle EndCap { get; set; }
+		public override Font Font { get; set; }
+		public override Color ForeColor { get; set; }
+		public virtual GraphicsPath GraphicsPath { get; set; }
+		public AnnotationPathPointCollection GraphicsPathPoints { get; private set; }
+		public virtual bool IsFreeDrawPlacement { get; set; }
+		public virtual LineAnchorCapStyle StartCap { get; set; }
+		public override TextStyle TextStyle { get; set; }
 	}
 }

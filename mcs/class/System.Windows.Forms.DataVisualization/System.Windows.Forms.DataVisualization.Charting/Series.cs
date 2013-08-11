@@ -1,6 +1,7 @@
 ﻿//
 // Authors:
 // Jonathan Pobst (monkey@jpobst.com)
+// Francis Fisher (frankie@terrorise.me.uk)
 //
 // Copyright (C) 2009 Novell, Inc (http://www.novell.com) 
 //
@@ -24,6 +25,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Drawing;
+using System.Collections.Generic;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
@@ -33,9 +36,61 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		{
 			Points = new DataPointCollection ();
 		}
+		public Series (string name)
+		{
+			Name = name;
+		}
+		public Series (string name,int yValues)
+		{
+			Name = name;
+			YValuesPerPoint = yValues;
+		}
 
+		public override string AxisLabel { get; set; }
 		public string ChartArea { get; set; }
+		public SeriesChartType ChartType { get; set; }
+		public string ChartTypeName { get; set; }
+		public DataPointCustomProperties EmptyPointStyle { get; set; }
+		public bool Enabled { get; set; }
+		public bool IsXValueIndexed { get; set; }
+		public string Legend { get; set; }
+		public int MarkerStep { get; set; }
 		public override string Name { get; set; }
+		public ChartColorPalette Palette { get; set; }
 		public DataPointCollection Points { get; private set; }
+		public Color ShadowColor { get; set; }
+		public int ShadowOffset { get; set; }
+		public SmartLabelStyle SmartLabelStyle { get; set; }
+		public AxisType XAxisType { get; set; }
+		public string XValueMember { get; set; }
+		public ChartValueType XValueType { get; set; }
+		public AxisType YAxisType { get; set; }
+		public string YValueMembers { get; set; }
+		public ChartValueType YValueType { get; set; }
+
+		public int YValuesPerPoint { get; set; }
+
+
+		[MonoTODO]
+		protected override void Dispose (bool disposing)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public void Sort (IComparer<DataPoint> comparer)
+		{
+			throw new NotImplementedException();
+		}
+		[MonoTODO]
+		public void Sort (PointSortOrder pointSortOrder)
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		public void Sort (PointSortOrder pointSortOrder,string sortBy)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

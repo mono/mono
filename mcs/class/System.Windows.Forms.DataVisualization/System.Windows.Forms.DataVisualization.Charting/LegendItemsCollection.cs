@@ -1,8 +1,7 @@
-﻿//
 // Authors:
-// Jonathan Pobst (monkey@jpobst.com)
+// Francis Fisher (frankie@terrorise.me.uk)
 //
-// Copyright (C) 2009 Novell, Inc (http://www.novell.com) 
+// (C) Francis Fisher 2013
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -23,33 +22,36 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
+using System.Drawing;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class AnnotationPathPoint : ChartElement
+	public class LegendItemsCollection : ChartElementCollection<LegendItem>
 	{
-		#region Constructors
-		public AnnotationPathPoint () : this (0, 0)
+		[MonoTODO]
+		public int Add (Color color, string text)
 		{
+			throw new NotImplementedException ();
 		}
-
-		public AnnotationPathPoint (float x, float y) : this (x, y, 0)
+		[MonoTODO]
+		public int Add (string image, string text)
 		{
+			throw new NotImplementedException ();
 		}
-
-		public AnnotationPathPoint (float x, float y, byte type)
+		[MonoTODO]
+		public void Insert (int index, Color color, string text)
 		{
-			X = x;
-			Y = y;
+			throw new NotImplementedException ();
 		}
-		#endregion
-
-		#region Public Properties
-		public string Name { get; private set; }
-		public byte PointType { get; set; }
-		public float X { get; set; }
-		public float Y { get; set; }
-		#endregion
+		[MonoTODO]
+		public void Insert (int index, string image, string text)
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		public void Reverse()
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

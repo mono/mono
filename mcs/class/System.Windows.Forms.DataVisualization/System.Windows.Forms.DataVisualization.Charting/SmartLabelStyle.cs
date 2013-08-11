@@ -1,8 +1,7 @@
-﻿//
 // Authors:
-// Jonathan Pobst (monkey@jpobst.com)
+// Francis Fisher (frankie@terrorise.me.uk)
 //
-// Copyright (C) 2009 Novell, Inc (http://www.novell.com) 
+// (C) Francis Fisher 2013
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -23,33 +22,24 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
+using System.Drawing;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class AnnotationPathPoint : ChartElement
+	public class SmartLabelStyle
 	{
-		#region Constructors
-		public AnnotationPathPoint () : this (0, 0)
-		{
-		}
-
-		public AnnotationPathPoint (float x, float y) : this (x, y, 0)
-		{
-		}
-
-		public AnnotationPathPoint (float x, float y, byte type)
-		{
-			X = x;
-			Y = y;
-		}
-		#endregion
-
-		#region Public Properties
-		public string Name { get; private set; }
-		public byte PointType { get; set; }
-		public float X { get; set; }
-		public float Y { get; set; }
-		#endregion
+		public virtual LabelOutsidePlotAreaStyle AllowOutsidePlotArea { get; set; }
+		public virtual Color CalloutBackColor { get; set; }
+		public virtual LineAnchorCapStyle CalloutLineAnchorCapStyle { get; set; }
+		public virtual Color CalloutLineColor { get; set; }
+		public virtual ChartDashStyle CalloutLineDashStyle { get; set; }
+		public virtual int CalloutLineWidth { get; set; }
+		public virtual LabelCalloutStyle CalloutStyle { get; set; }
+		public virtual bool Enabled { get; set; }
+		public virtual bool IsMarkerOverlappingAllowed { get; set; }
+		public virtual bool IsOverlappedHidden { get; set; }
+		public virtual double MaxMovingDistance { get; set; }
+		public virtual double MinMovingDistance { get; set; }
+		public virtual LabelAlignmentStyles MovingDirection { get; set; }
 	}
 }

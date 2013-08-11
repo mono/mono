@@ -1,9 +1,7 @@
-﻿//
 // Authors:
-// Jonathan Pobst (monkey@jpobst.com)
 // Francis Fisher (frankie@terrorise.me.uk)
 //
-// Copyright (C) 2009 Novell, Inc (http://www.novell.com) 
+// (C) Francis Fisher 2013
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,158 +22,124 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
-
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class DataPointCollection : ChartElementCollection<DataPoint>
+	public class StatisticFormula
 	{
 		[MonoTODO]
-		public DataPoint Add (params double[] y)
+		public AnovaResult Anova (double probability, string inputSeriesNames)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public int AddXY (double xValue, double yValue)
+		public double BetaFunction (double m, double n)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public int AddXY (Object xValue, params Object[] yValue)
+		public double Correlation (string firstInputSeriesName, string secondInputSeriesName)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public int AddY (double yValue)
+		public double Covariance (string firstInputSeriesName, string secondInputSeriesName)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public int AddY (params Object[] yValue)
+		public double FDistribution (double value, int firstDegreeOfFreedom, int secondDegreeOfFreedom)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected override void ClearItems ()
+		public FTestResult FTest (double probability, string firstInputSeriesName, string secondInputSeriesName)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void DataBind (System.Collections.IEnumerable dataSource, string xField, string yFields, string otherFields)
+		public double GammaFunction (double value)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void DataBindXY (System.Collections.IEnumerable xValue, params System.Collections.IEnumerable[] yValues)
+		public double InverseFDistribution (double probability, int firstDegreeOfFreedom, int secondDegreeOfFreedom){
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public double InverseNormalDistribution (double probability)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public double InverseTDistribution (double probability, int degreeOfFreedom)
+		[MonoTODO]
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void DataBindXY (System.Collections.IEnumerable xValue, string xField, System.Collections.IEnumerable yValue, string yFields)
+		public double Mean (string inputSeriesName)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void DataBindY (params System.Collections.IEnumerable[] yValue)
+		public double Median (string inputSeriesName)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void DataBindY (System.Collections.IEnumerable yValue, string yFields)
+		public double NormalDistribution (double zValue)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public System.Collections.Generic.IEnumerable<DataPoint> FindAllByValue (double valueToFind)
+		public double TDistribution (double value, int degreeOfFreedom, bool oneTail)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public System.Collections.Generic.IEnumerable<DataPoint> FindAllByValue (double valueToFind, string useValue)
+		public TTestResult TTestEqualVariances (double hypothesizedMeanDifference, double probability, 
+								string firstInputSeriesName, string secondInputSeriesName)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public System.Collections.Generic.IEnumerable<DataPoint> FindAllByValue (double valueToFind, string useValue, int startIndex)
+		public TTestResult TTestPaired (double hypothesizedMeanDifference, double probability, 
+							string firstInputSeriesName, string secondInputSeriesName)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public DataPoint FindByValue (double valueToFind)
+		public TTestResult TTestUnequalVariances (double hypothesizedMeanDifference, double probability, 
+								string firstInputSeriesName, string secondInputSeriesName)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public DataPoint FindByValue (double valueToFind, string useValue)
-		{
-			return FindByValue( valueToFind, useValue, 0);
-		}
-
-		[MonoTODO]
-		public DataPoint FindByValue (double valueToFind, string useValue, int startIndex)
+		public double Variance (string inputSeriesName, bool sampleVariance)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public DataPoint FindMaxByValue () 
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public DataPoint FindMaxByValue (string useValue)
-		{
-			return FindMaxByValue (useValue, 0);
-		}
-
-		[MonoTODO]
-		public DataPoint FindMaxByValue (string useValue, int startIndex)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public DataPoint FindMinByValue ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public DataPoint FindMinByValue (string useValue)
-		{
-			return FindMinByValue (useValue, 0);
-		}
-
-		[MonoTODO]
-		public DataPoint FindMinByValue (string useValue, int startIndex)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void InsertXY (int index, Object xValue, params Object[] yValue)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void InsertY (int index, params Object[] yValue)
+		public ZTestResult ZTest (double hypothesizedMeanDifference, double varianceFirstGroup, 
+						double varianceSecondGroup, double probability, 
+						string firstInputSeriesName, string secondInputSeriesName)
 		{
 			throw new NotImplementedException ();
 		}
