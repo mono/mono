@@ -51,21 +51,19 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		
 		[MonoTODO]
 		public string this[int idx] {
-			get{ 
+			get { 
 				throw new NotImplementedException ();
 			}
-
-			set{
+			set {
 				throw new NotImplementedException ();
 			}
 		}
 		[MonoTODO]
 		public string this[string propName] {
-			get{ 
+			get { 
 				throw new NotImplementedException ();
 			}
-
-			set{
+			set {
 				throw new NotImplementedException ();
 			}
 		}
