@@ -10,19 +10,19 @@
 # To preserve compatibility with old Makefiles and tools we keep the
 # command names that had the suffix 2 (like wsdl2)
 #
-if USE_BATCH_FILES
-SCRIPT_IN=script.bat.in
-FILTER=sed -e 's,\.bat\.exe,\.exe,g' -e 's,/,\\,g'
-SCRIPT_SUFFIX=.bat
-else
+BATCH_IN=script.bat.in
+BATCH_FILTER=sed -e 's,\.bat\.exe,\.exe,g' -e 's,/,\\,g'
+BATCH_SUFFIX=.bat
 SCRIPT_IN=script.in
-FILTER=cat
+SCRIPT_FILTER=cat
 SCRIPT_SUFFIX=
-endif
 
 COMPAT_1_0_SUFFIX=1$(SCRIPT_SUFFIX)
 COMPAT_2_0_SUFFIX=2$(SCRIPT_SUFFIX)
 COMPAT_4_0_SUFFIX=4$(SCRIPT_SUFFIX)
+COMPAT_1_0_BATCH_SUFFIX=1$(BATCH_SUFFIX)
+COMPAT_2_0_BATCH_SUFFIX=2$(BATCH_SUFFIX)
+COMPAT_4_0_BATCH_SUFFIX=4$(BATCH_SUFFIX)
 
 bin_SCRIPTS = \
 	$(scripts_1_0)		\
@@ -37,6 +37,12 @@ bin_SCRIPTS = \
 	$(MDOC_COMPAT)		\
 	mod$(SCRIPT_SUFFIX)	\
 	mono-test-install
+
+bin_BATCHES = \
+	$(batches_defaults)	\
+	$(batches_2_0)		\
+	$(batches_service)	\
+	$(batches_nunit)	
 
 if INSTALL_4_0
 bin_SCRIPTS += $(scripts_4_0)
@@ -107,6 +113,32 @@ scripts_2_0 = \
 	svcutil$(SCRIPT_SUFFIX)			\
 	xbuild$(SCRIPT_SUFFIX)
 
+batches_2_0 = \
+	al2$(BATCH_SUFFIX)			\
+	csharp$(BATCH_SUFFIX)			\
+	gacutil2$(BATCH_SUFFIX)		\
+	gmcs$(BATCH_SUFFIX)			\
+	httpcfg$(BATCH_SUFFIX)			\
+	ilasm2$(BATCH_SUFFIX)			\
+	lc$(BATCH_SUFFIX)			\
+	mconfig$(BATCH_SUFFIX)			\
+	mkbundle2$(BATCH_SUFFIX)		\
+	mdoc$(BATCH_SUFFIX)                    \
+	monolinker$(BATCH_SUFFIX)		\
+	mono-api-info$(BATCH_SUFFIX) 		\
+	mono-shlib-cop$(BATCH_SUFFIX) 		\
+	monop2$(BATCH_SUFFIX) 			\
+	resgen2$(BATCH_SUFFIX)			\
+	pdb2mdb$(BATCH_SUFFIX)			\
+	wsdl2$(BATCH_SUFFIX)			\
+	xsd2$(BATCH_SUFFIX)			\
+	mono-xmltool$(BATCH_SUFFIX)		\
+	sgen$(BATCH_SUFFIX)			\
+	sqlmetal$(BATCH_SUFFIX)		\
+	sqlsharp$(BATCH_SUFFIX)		\
+	svcutil$(BATCH_SUFFIX)			\
+	xbuild$(BATCH_SUFFIX)
+
 scripts_4_0 = \
 	dmcs$(SCRIPT_SUFFIX)
 
@@ -140,11 +172,21 @@ scripts_defaults = 		\
 	resgen$(SCRIPT_SUFFIX)			\
 	wsdl$(SCRIPT_SUFFIX)
 
+batches_defaults = 		\
+	al$(BATCH_SUFFIX)			\
+	ilasm$(BATCH_SUFFIX)			\
+	gacutil$(BATCH_SUFFIX)			\
+	mkbundle$(BATCH_SUFFIX)		\
+	monop$(BATCH_SUFFIX)			\
+	resgen$(BATCH_SUFFIX)			\
+	wsdl$(BATCH_SUFFIX)
+
 scripts_service = mono-service mono-service2
 scripts_nunit = nunit-console$(SCRIPT_SUFFIX) nunit-console2$(SCRIPT_SUFFIX)
+batches_nunit = nunit-console$(BATCH_SUFFIX) nunit-console2$(BATCH_SUFFIX)
 scripts_rpmhelpers = mono-find-provides mono-find-requires
 
-CLEANFILES = $(scripts_1_0) $(scripts_1_0_umask) $(scripts_2_0) $(scripts_defaults) $(scripts_1_0_compat) $(scripts_4_0) mono-service mono-service2 nunit-console nunit-console2 mono-find-provides mono-find-requires mod $(MDOC_SUBCOMMANDS)
+CLEANFILES = $(scripts_1_0) $(scripts_1_0_umask) $(scripts_2_0) $(scripts_defaults) $(batches_2_0) $(batches_defaults) $(scripts_1_0_compat) $(scripts_4_0) mono-service mono-service2 nunit-console nunit-console2 mono-find-provides mono-find-requires mod $(MDOC_SUBCOMMANDS)
 DISTCLEANFILES = $(pkgconfig_DATA) $(scripts_rpmhelpers)
 
 EXTRA_DIST =			\
@@ -206,11 +248,19 @@ mono-service2: mono-service.in Makefile
 	mv $@.tmp $@
 
 nunit-console$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
-	$(REWRITE1_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
+	$(REWRITE1_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/$(SCRIPT_IN) | $(SCRIPT_FILTER) > $@.tmp
+	mv $@.tmp $@
+
+nunit-console$(BATCH_SUFFIX): $(BATCH_IN) Makefile
+	$(REWRITE1_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/$(BATCH_IN) | $(BATCH_FILTER) > $@.tmp
 	mv $@.tmp $@
 
 nunit-console2$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
-	$(REWRITE2_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
+	$(REWRITE2_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/$(SCRIPT_IN) | $(SCRIPT_FILTER) > $@.tmp
+	mv $@.tmp $@
+
+nunit-console2$(BATCH_SUFFIX): $(BATCH_IN) Makefile
+	$(REWRITE2_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/$(BATCH_IN) | $(BATCH_FILTER) > $@.tmp
 	mv $@.tmp $@
 
 #FIXME: this is not the correct rule for mod.bat.
@@ -219,7 +269,7 @@ mod$(SCRIPT_SUFFIX): mod.in Makefile
 	mv $@.tmp $@
 
 $(scripts_1_0): $(SCRIPT_IN) Makefile
-	$(REWRITE1) -e 's,@''exe_name@,$@,g' $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
+	$(REWRITE1) -e 's,@''exe_name@,$@,g' $(srcdir)/$(SCRIPT_IN) | $(SCRIPT_FILTER) > $@.tmp
 	mv $@.tmp $@
 
 #FIXME: this is not the correct rule for bat files.
@@ -228,21 +278,30 @@ $(scripts_1_0_umask): script_umask.in Makefile
 	mv $@.tmp $@
 
 $(scripts_1_0_compat): $(SCRIPT_IN) Makefile
-	t=`basename $@ $(COMPAT_1_0_SUFFIX)`; $(REWRITE1) -e "s,@exe_name@,$$t,g" $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
+	t=`basename $@ $(COMPAT_1_0_SUFFIX)`; $(REWRITE1) -e "s,@exe_name@,$$t,g" $(srcdir)/$(SCRIPT_IN) | $(SCRIPT_FILTER) > $@.tmp
 	mv $@.tmp $@
 
 $(scripts_defaults): $(SCRIPT_IN) Makefile
-	$(REWRITE2) -e "s,@exe_name@,$@,g" $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
+	$(REWRITE2) -e "s,@exe_name@,$@,g" $(srcdir)/$(SCRIPT_IN) | $(SCRIPT_FILTER) > $@.tmp
+	mv $@.tmp $@
+
+$(batches_defaults): $(BATCH_IN) Makefile
+	$(REWRITE2) -e "s,@exe_name@,$@,g" $(srcdir)/$(BATCH_IN) | $(BATCH_FILTER) > $@.tmp
 	mv $@.tmp $@
 
 $(scripts_2_0): $(SCRIPT_IN) Makefile
 	n=`echo $@ | sed 's,$(COMPAT_2_0_SUFFIX)$$,,'`; \
-	$(REWRITE2) -e "s,@""exe_name@,$$n,g" $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
+	$(REWRITE2) -e "s,@""exe_name@,$$n,g" $(srcdir)/$(SCRIPT_IN) | $(SCRIPT_FILTER) > $@.tmp
+	mv $@.tmp $@
+
+$(batches_2_0): $(BATCH_IN) Makefile
+	n=`echo $@ | sed 's,$(COMPAT_2_0_BATCH_SUFFIX)$$,,'`; \
+	$(REWRITE2) -e "s,@""exe_name@,$$n,g" $(srcdir)/$(BATCH_IN) | $(BATCH_FILTER) > $@.tmp
 	mv $@.tmp $@
 
 $(scripts_4_0): $(SCRIPT_IN) Makefile
 	n=`echo $@ | sed 's,$(COMPAT_4_0_SUFFIX)$$,,'`; \
-	$(REWRITE4) -e "s,@""exe_name@,$$n,g" $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
+	$(REWRITE4) -e "s,@""exe_name@,$$n,g" $(srcdir)/$(SCRIPT_IN) | $(SCRIPT_FILTER) > $@.tmp
 	mv $@.tmp $@
 
 $(MDOC_SUBCOMMANDS): Makefile
@@ -251,4 +310,6 @@ $(MDOC_SUBCOMMANDS): Makefile
 		echo "#!/bin/sh" > $$script ;                   \
 		echo "exec mdoc $$cmd \"\$$@\"" >> $$script;    \
 	done
+
+all: $(bin_SCRIPTS) $(bin_BATCHES)
 

@@ -336,7 +336,10 @@ AC_SUBST(HOST_CC)
 AC_SUBST(BUILD_EXEEXT)
 
 AM_CONDITIONAL(CROSS_COMPILING, [test x$cross_compiling = xyes])
-AM_CONDITIONAL(USE_BATCH_FILES, [test x$platform_win32 = xyes -a x$cross_compiling = xyes])
+
+# Always make .bat files when building classlibs
+AM_CONDITIONAL(USE_BATCH_FILES, [test x$enable_mcs_build != xno])
+# AM_CONDITIONAL(USE_BATCH_FILES, [test x$platform_win32 = xyes -a x$cross_compiling = xyes])
 
 # Set STDC_HEADERS
 AC_HEADER_STDC
