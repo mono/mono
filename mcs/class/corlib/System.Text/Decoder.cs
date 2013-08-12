@@ -112,6 +112,7 @@ public abstract class Decoder
 		Marshal.Copy ((IntPtr) bytes, barr, 0, byteCount);
 		int charsUsed = GetChars (barr, 0, byteCount, carr, 0, flush);
 		Marshal.Copy (carr, 0, (IntPtr) chars, charsUsed);
+		return charsUsed;
 	}
 
 	[ComVisible (false)]
