@@ -40,14 +40,16 @@ namespace System.Windows.Forms.DataVisualization.Charting
 			get { return this.NewAnchorLocation.X; } 
 			set { 
 				PointF nal = this.NewAnchorLocation; 
-				nal.X = (float)value; this.NewAnchorLocation = nal; 
+				nal.X = (float)value;
+				this.NewAnchorLocation = nal; 
 			} 
 		}
 		public double NewAnchorLocationY { 
 			get { return this.NewAnchorLocation.Y; } 
 			set { 
 				PointF nal = this.NewAnchorLocation; 
-				nal.Y = (float)value; this.NewAnchorLocation = nal; 
+				nal.Y = (float)value;
+				this.NewAnchorLocation = nal; 
 			} 
 		}
 
@@ -57,7 +59,8 @@ namespace System.Windows.Forms.DataVisualization.Charting
 			get { return this.NewPosition.X; } 
 			set { 
 				RectangleF np = this.NewPosition; 
-				np.X = (float)value; this.NewPosition = np;
+				np.X = (float)value;
+				this.NewPosition = np;
 			}
 		}
 		public double NewLocationY { 
