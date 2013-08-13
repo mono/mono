@@ -1,6 +1,7 @@
 ﻿//
 // Authors:
 // Jonathan Pobst (monkey@jpobst.com)
+// Francis Fisher (frankie@terrorise.me.uk)
 //
 // Copyright (C) 2009 Novell, Inc (http://www.novell.com) 
 //
@@ -24,10 +25,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Drawing;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class ArrowAnnotation
+	public class ArrowAnnotation : Annotation
 	{
 		private int arrow_size = 5;
 
@@ -38,6 +40,8 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		#endregion
 
 		#region Public Properties
+		public override ContentAlignment AnchorAlignment { get; set; }
+		public override string AnnotationType { get { throw new NotImplementedException (); } } //FIXME - find out what MS implementation returns here
 		public virtual int ArrowSize {
 			get { return arrow_size; }
 			set {

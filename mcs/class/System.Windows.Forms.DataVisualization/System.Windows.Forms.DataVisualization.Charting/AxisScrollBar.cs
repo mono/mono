@@ -1,8 +1,7 @@
-﻿//
 // Authors:
-// Jonathan Pobst (monkey@jpobst.com)
+// Francis Fisher (frankie@terrorise.me.uk)
 //
-// Copyright (C) 2009 Novell, Inc (http://www.novell.com) 
+// (C) Francis Fisher 2013
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -23,33 +22,34 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
+using System.Drawing;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class AnnotationPathPoint : ChartElement
+	public class AxisScrollBar : IDisposable
 	{
-		#region Constructors
-		public AnnotationPathPoint () : this (0, 0)
+		public Axis Axis { get; private set; }
+		public Color BackColor { get; set; }
+		public Color ButtonColor { get; set; }
+		public ScrollBarButtonStyles ButtonStyle { get; set; }
+		public ChartArea ChartArea { get; private set; } 
+		public bool Enabled { get; set; }
+		public bool IsPositionedInside { get; set; }
+		public bool IsVisible { get; private set; } 
+		public Color LineColor { get; set; }
+		public double Size { get; set; }
+
+		[MonoTODO]
+		public void Dispose ()
 		{
+			throw new NotImplementedException ();
 		}
 
-		public AnnotationPathPoint (float x, float y) : this (x, y, 0)
+		[MonoTODO]
+		protected virtual void Dispose (bool disposing )
 		{
+			throw new NotImplementedException ();
 		}
-
-		public AnnotationPathPoint (float x, float y, byte type)
-		{
-			X = x;
-			Y = y;
-		}
-		#endregion
-
-		#region Public Properties
-		public string Name { get; private set; }
-		public byte PointType { get; set; }
-		public float X { get; set; }
-		public float Y { get; set; }
-		#endregion
 	}
 }
+

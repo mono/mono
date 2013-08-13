@@ -1,9 +1,7 @@
-﻿//
 // Authors:
-// Jonathan Pobst (monkey@jpobst.com)
 // Francis Fisher (frankie@terrorise.me.uk)
 //
-// Copyright (C) 2009 Novell, Inc (http://www.novell.com) 
+// (C) Francis Fisher 2013
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,69 +22,77 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Drawing;
+using System.IO;
+using System.Xml;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class ChartGraphics : ChartElement, IDisposable
+	public class ChartSerializer
 	{
-		#region Constructors
-		internal ChartGraphics (Graphics graphics)
-		{
-			Graphics = graphics;
-		}
-		#endregion
+		public SerializationContents Content { get; set; }
+		public SerializationFormat Format { get; set; }
+		public bool IsResetWhenLoading { get; set; }
+		public bool IsTemplateMode { get; set; }
+		public bool IsUnknownAttributeIgnored { get; set; }
+		public string NonSerializableContent { get; set; }
+		public string SerializableContent { get; set; }
 
-		#region Public Properties
-		public Graphics Graphics { get; set; }
-		#endregion
 
 		[MonoTODO]
-		protected override void Dispose (bool disposing)
+		protected string GetContentString (SerializationContents content, bool serializable)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public PointF GetAbsolutePoint (PointF point)
+		public void Load (Stream stream)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public RectangleF GetAbsoluteRectangle (RectangleF rectangle)
+		public void Load (string fileName)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public SizeF GetAbsoluteSize (SizeF size)
+		public void Load (TextReader reader)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public double GetPositionFromAxis (string chartAreaName, AxisName axis, double axisValue)
+		public void Load (XmlReader reader)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public PointF GetRelativePoint (PointF point)
+		public void Reset ()
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public RectangleF GetRelativeRectangle (RectangleF rectangle)
+		public void Save (Stream stream)
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		public void Save (string fileName)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public SizeF GetRelativeSize (SizeF size)
+		public void Save (TextWriter writer)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void Save (XmlWriter writer)
 		{
 			throw new NotImplementedException ();
 		}

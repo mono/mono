@@ -1,9 +1,7 @@
-﻿//
 // Authors:
-// Jonathan Pobst (monkey@jpobst.com)
 // Francis Fisher (frankie@terrorise.me.uk)
 //
-// Copyright (C) 2009 Novell, Inc (http://www.novell.com) 
+// (C) Francis Fisher 2013
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,26 +22,50 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Drawing;
-
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class ToolTipEventArgs : EventArgs
+	public class CustomLabel : ChartNamedElement
 	{
-		#region Constructors
-		public ToolTipEventArgs (int x, int y, string text, HitTestResult result)
+		public CustomLabel ()
 		{
-			X = x;
-			Y = y;
-			Text = text;
-			HitTestResult = result;
 		}
-		#endregion
+		public CustomLabel (double fromPosition, double toPosition, string text, int labelRow, LabelMarkStyle markStyle)
+		{
+			FromPosition = fromPosition;
+			ToPosition = toPosition;
+			Text = text;
+			RowIndex = labelRow;
+			LabelMark = markStyle;
+		}
+		public CustomLabel (double fromPosition, double toPosition, string text, int labelRow, LabelMarkStyle markStyle, GridTickTypes gridTick)
+		{
+			FromPosition = fromPosition;
+			ToPosition = toPosition;
+			Text = text;
+			RowIndex = labelRow;
+			LabelMark = markStyle;
+			GridTicks = gridTick;
+		}
 
-		public HitTestResult HitTestResult { get; private set;}
+		public Axis Axis { get; private set; } 
+		public Color ForeColor { get; set; }
+		public double FromPosition { get; set; }
+		public GridTickTypes GridTicks { get; set; }
+		public string Image { get; set; }
+		public Color ImageTransparentColor { get; set; }
+		public LabelMarkStyle LabelMark { get; set; }
+		public Color MarkColor { get; set; }
+		public override string Name { get; set; }
+		public int RowIndex { get; set; }
 		public string Text { get; set; }
-		public int X { get; private set; }
-		public int Y { get; private set;}
+		public string ToolTip { get; set; }
+		public double ToPosition { get; set; }
+
+		[MonoTODO]
+		public CustomLabel Clone ()
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

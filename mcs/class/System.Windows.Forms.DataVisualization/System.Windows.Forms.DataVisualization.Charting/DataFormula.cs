@@ -1,9 +1,7 @@
-﻿//
 // Authors:
-// Jonathan Pobst (monkey@jpobst.com)
 // Francis Fisher (frankie@terrorise.me.uk)
 //
-// Copyright (C) 2009 Novell, Inc (http://www.novell.com) 
+// (C) Francis Fisher 2013
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,77 +22,52 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class ChartNamedElementCollection<T> : ChartElementCollection<T> where T : ChartNamedElement
+	public class DataFormula
 	{
-		public T this[string name] { //FIXME this should probably be indexed
-			get{ 
-				foreach (T el in this) {
-					if (el.Name == name) {
-						return el;
-					}
-				}
-				throw new KeyNotFoundException (); //FIXME check what actual behaviour is in MS implementation
-			}
+		public bool IsEmptyPointIgnored { get; set; }
+		public bool IsStartFromFirst { get; set; }
+		public StatisticFormula Statistics { get; private set;}
 
-			set{
-				for(int i = 0; i<this.Count; i++) 
-				{
-					T el = this[i];
-					if (el.Name == name) {
-						this.SetItem (i, value);
-						return;
-					}
-				}
-				throw new KeyNotFoundException (); //FIXME check what actual behaviour is in MS implementation
-			}
-		}
-
-		protected virtual string NamePrefix { get; private set;}
-
-		
 		[MonoTODO]
-		public virtual T FindByName (string name)
+		public void CopySeriesValues (string inputSeries,string outputSeries)
 		{
 			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
-		public int IndexOf (string name)
+		public void FinancialFormula (FinancialFormula formulaName,string inputSeries)
 		{
 			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
-		protected override void InsertItem (int index,T item)
+		public void FinancialFormula (FinancialFormula formulaName,Series inputSeries)
 		{
 			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
-		public virtual bool IsUniqueName (string name)
+		public void FinancialFormula (FinancialFormula formulaName, string inputSeries, string outputSeries) 
 		{
 			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
-		public virtual string NextUniqueName ()
+		public void FinancialFormula(FinancialFormula formulaName, Series inputSeries, Series outputSeries)
 		{
 			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
-		protected override void RemoveItem (int index)
+		public void FinancialFormula(FinancialFormula formulaName, string parameters, string inputSeries, string outputSeries)
 		{
 			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
-		protected override void SetItem (int index,T item)
+		public void FinancialFormula(FinancialFormula formulaName, string parameters, Series inputSeries, Series outputSeries)
 		{
 			throw new NotImplementedException();
 		}
