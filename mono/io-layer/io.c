@@ -240,6 +240,15 @@ static guint32 _wapi_stat_to_file_attributes (const gchar *pathname,
 	/* Sockets (0140000) != Directory (040000) + Regular file (0100000) */
 	if (S_ISSOCK (buf->st_mode))
 		buf->st_mode &= ~S_IFSOCK; /* don't consider socket protection */
+    
+    /* On Mac, the 'Locked' attribute on a file is reported via the user flags on the file rather than
+     * via the inode mode. It seems correct to report this as FILE_ATTRIBUTE_READONLY. It's not POSIX;
+     * some other OSes might support it too but this can be amended to add them when they're confirmed.
+     */
+#if defined(__APPLE__) && defined(__MACH__)
+    if ((buf->st_flags & UF_IMMUTABLE) || (buf->st_flags & SF_IMMUTABLE))
+        attrs |= FILE_ATTRIBUTE_READONLY;
+#endif
 
 	filename = _wapi_basename (pathname);
 
