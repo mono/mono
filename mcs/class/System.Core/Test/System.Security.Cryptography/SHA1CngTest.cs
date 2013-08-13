@@ -26,7 +26,7 @@ namespace MonoTests.System.Security.Cryptography {
 	public class SHA1CngTest : SHA1Test {
 
 		[SetUp]
-		protected override void SetUp ()
+		public override void SetUp ()
 		{
 			hash = new SHA1Cng ();
 		}
