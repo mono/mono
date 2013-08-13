@@ -45,8 +45,10 @@ namespace System.Xml.Schema
 		double doubleValue;
 		int intValue;
 		long longValue;
+		ulong ulongValue;
 		object objectValue;
 		float floatValue;
+		byte [] bytesValue;
 		string stringValue;
 		XmlSchemaType schemaType;
 		XmlTypeCode xmlTypeCode;
@@ -65,6 +67,20 @@ namespace System.Xml.Schema
 				throw new ArgumentNullException ("xmlType");
 			xmlTypeCode = XmlTypeCode.Boolean;
 			this.booleanValue = value;
+			schemaType = xmlType;
+		}
+
+		internal XmlAtomicValue (byte [] value, XmlSchemaType xmlType)
+		{
+			Init (value, xmlType);
+		}
+		
+		private void Init (byte [] value, XmlSchemaType xmlType)
+		{
+			if (xmlType == null)
+				throw new ArgumentNullException ("xmlType");
+			xmlTypeCode = XmlTypeCode.Base64Binary;
+			this.bytesValue = value;
 			schemaType = xmlType;
 		}
 
@@ -138,6 +154,20 @@ namespace System.Xml.Schema
 			schemaType = xmlType;
 		}
 
+		internal XmlAtomicValue (ulong value, XmlSchemaType xmlType)
+		{
+			Init (value, xmlType);
+		}
+		
+		private void Init (ulong value, XmlSchemaType xmlType)
+		{
+			if (xmlType == null)
+				throw new ArgumentNullException ("xmlType");
+			xmlTypeCode = XmlTypeCode.UnsignedLong;
+			this.ulongValue = value;
+			schemaType = xmlType;
+		}
+
 		internal XmlAtomicValue (float value, XmlSchemaType xmlType)
 		{
 			Init (value, xmlType);
@@ -182,6 +212,12 @@ namespace System.Xml.Schema
 				throw new ArgumentNullException ("xmlType");
 
 			switch (Type.GetTypeCode (value.GetType ())) {
+			case TypeCode.Byte:
+				Init ((byte) value, xmlType);
+				return;
+			case TypeCode.SByte:
+				Init ((sbyte) value, xmlType);
+				return;
 			case TypeCode.Int16:
 				Init ((short) value, xmlType);
 				return;
@@ -206,6 +242,9 @@ namespace System.Xml.Schema
 			case TypeCode.UInt32:
 				Init ((uint) value, xmlType);
 				return;
+			case TypeCode.UInt64:
+				Init ((ulong) value, xmlType);
+				return;
 			case TypeCode.String:
 				Init ((string) value, xmlType);
 				return;
@@ -214,6 +253,10 @@ namespace System.Xml.Schema
 				return;
 			case TypeCode.Boolean:
 				Init ((bool) value, xmlType);
+				return;
+			}
+			if (value is byte []) {
+				Init ((byte []) value, xmlType);
 				return;
 			}
 
@@ -253,6 +296,9 @@ namespace System.Xml.Schema
 					return;
 				case XmlTypeCode.Long:
 					Init (another.longValue, xmlType);
+					return;
+				case XmlTypeCode.UnsignedLong:
+					Init (another.ulongValue, xmlType);
 					return;
 				case XmlTypeCode.Float:
 					Init (another.floatValue, xmlType);
@@ -309,6 +355,11 @@ namespace System.Xml.Schema
 				return TypedValue;
 			case XmlTypeCode.QName:
 				return XmlQualifiedName.Parse (Value, nsResolver, true);
+			case XmlTypeCode.Base64Binary:
+			case XmlTypeCode.HexBinary:
+				if (bytesValue != null)
+					return bytesValue;
+				break;
 			}
 			throw new NotImplementedException ();
 		}
@@ -376,11 +427,31 @@ namespace System.Xml.Schema
 				case XmlTypeCode.DateTime:
 					stringValue = XQueryConvert.DateTimeToString (ValueAsDateTime);
 					break;
+				case XmlTypeCode.Duration:
+					stringValue = XQueryConvert.DayTimeDurationToString (TimeSpan.FromMilliseconds (doubleValue));
+					break;
+				case XmlTypeCode.GYear:
+					stringValue = XQueryConvert.GYearToString (ValueAsDateTime);
+					break;
+				case XmlTypeCode.GYearMonth:
+					stringValue = XQueryConvert.GYearMonthToString (ValueAsDateTime);
+					break;
+				case XmlTypeCode.GMonth:
+					stringValue = XQueryConvert.GMonthToString (ValueAsDateTime);
+					break;
+				case XmlTypeCode.GMonthDay:
+					stringValue = XQueryConvert.GMonthDayToString (ValueAsDateTime);
+					break;
+				case XmlTypeCode.GDay:
+					stringValue = XQueryConvert.GDayToString (ValueAsDateTime);
+					break;
 				case XmlTypeCode.Float:
 				case XmlTypeCode.Double:
 					stringValue = XQueryConvert.DoubleToString (ValueAsDouble);
 					break;
 				case XmlTypeCode.Integer:
+				case XmlTypeCode.UnsignedInt:
+				case XmlTypeCode.UnsignedLong:
 				case XmlTypeCode.Decimal:
 					stringValue = XQueryConvert.DecimalToString (ValueAsDecimal);
 					break;
@@ -388,18 +459,24 @@ namespace System.Xml.Schema
 				case XmlTypeCode.NonNegativeInteger:
 				case XmlTypeCode.NegativeInteger:
 				case XmlTypeCode.Long:
-				case XmlTypeCode.UnsignedLong:
 				case XmlTypeCode.PositiveInteger:
 					stringValue = XQueryConvert.IntegerToString (ValueAsLong);
 					break;
 				case XmlTypeCode.Int:
 				case XmlTypeCode.Short:
 				case XmlTypeCode.Byte:
-				case XmlTypeCode.UnsignedInt:
 				case XmlTypeCode.UnsignedShort:
 				case XmlTypeCode.UnsignedByte:
 					stringValue = XQueryConvert.IntToString (ValueAsInt);
 					break;
+				case XmlTypeCode.Base64Binary:
+					stringValue = XQueryConvert.Base64BinaryToString (bytesValue);
+					break;
+				case XmlTypeCode.HexBinary:
+					stringValue = XQueryConvert.HexBinaryToString (bytesValue);
+					break;
+				case XmlTypeCode.QName:
+				case XmlTypeCode.AnyUri:
 				case XmlTypeCode.String:
 					return stringValue;
 
@@ -418,6 +495,9 @@ namespace System.Xml.Schema
 						break;
 					case XmlTypeCode.DateTime:
 						stringValue = XQueryConvert.DateTimeToString ((DateTime) objectValue);
+						break;
+					case XmlTypeCode.Duration:
+						stringValue = XQueryConvert.DayTimeDurationToString (TimeSpan.FromMilliseconds ((double) objectValue));
 						break;
 					case XmlTypeCode.Boolean:
 						stringValue = XQueryConvert.BooleanToString ((bool) objectValue);
@@ -438,6 +518,12 @@ namespace System.Xml.Schema
 					case XmlTypeCode.Int:
 						stringValue = XQueryConvert.IntToString ((int) objectValue);
 						break;
+					case XmlTypeCode.Base64Binary:
+						stringValue = XQueryConvert.Base64BinaryToString ((byte []) objectValue);
+						break;
+					case XmlTypeCode.HexBinary:
+						stringValue = XQueryConvert.HexBinaryToString ((byte []) objectValue);
+						break;
 					}
 					break;
 				}
@@ -445,7 +531,7 @@ namespace System.Xml.Schema
 					return stringValue;
 
 				if (objectValue != null)
-					throw new InvalidCastException (String.Format ("Conversion from runtime type {0} to {1} is not supported", objectValue.GetType (), XmlTypeCode.String));
+					throw new InvalidCastException (String.Format ("Conversion from runtime type {0}, resolved as type code {1}, to {2} is not supported", objectValue.GetType (), ResolvedTypeCode, XmlTypeCode.String));
 				else
 					throw new InvalidCastException (String.Format ("Conversion from schema type {0} (type code {1}, resolved type code {2}) to {3} is not supported.", schemaType.QualifiedName, xmlTypeCode, ResolvedTypeCode, XmlTypeCode.String));
 			}
@@ -489,6 +575,16 @@ namespace System.Xml.Schema
 					return dateTimeValue;
 				case XmlTypeCode.String:
 					return XQueryConvert.StringToDateTime (stringValue);
+				case XmlTypeCode.GYear:
+					return XQueryConvert.StringToGYear (stringValue);
+				case XmlTypeCode.GYearMonth:
+					return XQueryConvert.StringToGYearMonth (stringValue);
+				case XmlTypeCode.GMonth:
+					return XQueryConvert.StringToGMonth (stringValue);
+				case XmlTypeCode.GMonthDay:
+					return XQueryConvert.StringToGMonthDay (stringValue);
+				case XmlTypeCode.GDay:
+					return XQueryConvert.StringToGDay (stringValue);
 				case XmlTypeCode.None:
 				case XmlTypeCode.Item:
 				case XmlTypeCode.AnyAtomicType:
@@ -515,6 +611,8 @@ namespace System.Xml.Schema
 					return XQueryConvert.DoubleToDecimal (doubleValue);
 				case XmlTypeCode.Long:
 					return XQueryConvert.IntegerToDecimal (longValue);
+				case XmlTypeCode.UnsignedLong:
+					return XQueryConvert.IntegerToDecimal (ulongValue);
 				case XmlTypeCode.Int:
 					return XQueryConvert.IntToDecimal (intValue);
 				case XmlTypeCode.Float:
@@ -660,6 +758,9 @@ namespace System.Xml.Schema
 				return typeof (DateTime);
 			case XmlTypeCode.Boolean:
 				return typeof (bool);
+			case XmlTypeCode.Base64Binary:
+			case XmlTypeCode.HexBinary:
+				return typeof (byte []);
 			case XmlTypeCode.Item:
 				return typeof (object);
 			}
@@ -692,7 +793,10 @@ namespace System.Xml.Schema
 			case TypeCode.Boolean:
 				return XmlTypeCode.Boolean;
 			case TypeCode.Object:
-				return XmlTypeCode.Item;
+				if (cliType == typeof (byte []))
+					return XmlTypeCode.Base64Binary;
+				else
+					return XmlTypeCode.Item;
 			}
 			if (raiseError)
 				throw new NotSupportedException (String.Format ("XQuery internal error: Cannot infer XmlTypeCode from Runtime Type {0}", cliType));

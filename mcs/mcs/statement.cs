@@ -4170,7 +4170,7 @@ namespace Mono.CSharp {
 			var ok = block.Resolve (ec);
 
  			if (case_default == null)
-				ec.CurrentBranching.CurrentUsageVector.ResetBarrier ();
+				ec.CurrentBranching.CreateSibling (null, FlowBranching.SiblingType.SwitchSection);
 
 			ec.EndFlowBranching ();
 			ec.Switch = old_switch;
@@ -6448,13 +6448,19 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			variable.CreateBuilder (ec);
-
 			Label old_begin = ec.LoopBegin, old_end = ec.LoopEnd;
 			ec.LoopBegin = ec.DefineLabel ();
 			ec.LoopEnd = ec.DefineLabel ();
 
+			if (!(statement is Block))
+				ec.BeginCompilerScope ();
+
+			variable.CreateBuilder (ec);
+
 			statement.Emit (ec);
+
+			if (!(statement is Block))
+				ec.EndScope ();
 
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;

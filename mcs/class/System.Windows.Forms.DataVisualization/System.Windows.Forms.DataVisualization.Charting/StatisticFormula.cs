@@ -79,8 +79,8 @@ namespace System.Windows.Forms.DataVisualization.Charting
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public double InverseTDistribution (double probability, int degreeOfFreedom)
+		[MonoTODO]
 		{
 			throw new NotImplementedException ();
 		}

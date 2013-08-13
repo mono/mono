@@ -38,7 +38,7 @@
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
-#if MONOTOUCH
+#if MONOTOUCH && FULL_AOT_RUNTIME
 using Crimson.CommonCrypto;
 #endif
 

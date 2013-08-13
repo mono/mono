@@ -86,7 +86,7 @@ namespace System
 			get { 
 				if (local == null) {
 #if MONODROID
-					local = ZoneInfoDB.Default;
+					local = AndroidTimeZones.Default;
 #elif MONOTOUCH
 					using (Stream stream = GetMonoTouchData (null)) {
 						local = BuildFromStream ("Local", stream);
@@ -394,7 +394,7 @@ namespace System
 			}
 #endif
 #if MONODROID
-			var timeZoneInfo = ZoneInfoDB.GetTimeZone (id);
+			var timeZoneInfo = AndroidTimeZones.GetTimeZone (id);
 			if (timeZoneInfo == null)
 				throw new TimeZoneNotFoundException ();
 			return timeZoneInfo;
@@ -627,8 +627,8 @@ namespace System
 				}
 #endif
 #if MONODROID
-			foreach (string id in ZoneInfoDB.GetAvailableIds ()) {
-				var tz = ZoneInfoDB.GetTimeZone (id);
+			foreach (string id in AndroidTimeZones.GetAvailableIds ()) {
+				var tz = AndroidTimeZones.GetTimeZone (id);
 				if (tz != null)
 					systemTimeZones.Add (tz);
 			}

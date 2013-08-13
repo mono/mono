@@ -174,6 +174,14 @@ namespace MonoTests.System.Reflection
 		}
 	}
 
+	class DefaultValues
+	{
+		public int Value;
+		public DefaultValues (int i = 5)
+		{
+			Value = i;
+		}
+	}
 
 	[TestFixture]
 	public class BinderTest
@@ -186,6 +194,16 @@ namespace MonoTests.System.Reflection
 			string[] test_args = { "one", "two", "three" };
 			var o = Activator.CreateInstance (typeof (ParamsArrayTest), new object[] { test_args });
 			Assert.IsNotNull (o, "#A1");
+		}
+
+		[Test]
+		public void DefaultParameter ()
+		{
+			var o = Activator.CreateInstance (typeof (DefaultValues),
+				BindingFlags.CreateInstance | BindingFlags.Public | BindingFlags.Instance | BindingFlags.OptionalParamBinding,
+				null, null, null);
+			var a = o as DefaultValues;
+			Assert.AreEqual (5, a.Value);
 		}
 		
 		[Test]

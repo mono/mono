@@ -235,7 +235,7 @@ namespace System.Security.Cryptography {
 
 			HashAlgorithm hash = null;
 			if (halg is String)
-				hash = HashAlgorithm.Create ((String)halg);
+				hash = GetHashFromString ((string) halg);
 			else if (halg is HashAlgorithm)
 				hash = (HashAlgorithm) halg;
 			else if (halg is Type)
@@ -243,7 +243,24 @@ namespace System.Security.Cryptography {
 			else
 				throw new ArgumentException ("halg");
 
+			if (hash == null)
+				throw new ArgumentException (
+						"Could not find provider for halg='" + halg + "'.",
+						"halg");
+
 			return hash;
+		}
+
+		private HashAlgorithm GetHashFromString (string name)
+		{
+			HashAlgorithm hash = HashAlgorithm.Create (name);
+			if (hash != null)
+				return hash;
+			try {
+				return HashAlgorithm.Create (GetHashNameFromOID (name));
+			} catch (CryptographicException e) {
+				throw new ArgumentException (e.Message, "halg", e);
+			}
 		}
 	
 		// NOTE: this method can work with ANY configured (OID in machine.config) 

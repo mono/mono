@@ -299,6 +299,16 @@ namespace Mono.CSharp
 #endif
 		}
 
+		public void BeginCompilerScope ()
+		{
+			if ((flags & Options.OmitDebugInfo) != 0)
+				return;
+
+#if NET_4_0
+			methodSymbols.StartBlock (CodeBlockEntry.Type.CompilerGenerated, ig.ILOffset);
+#endif
+		}
+
 		public void EndExceptionBlock ()
 		{
 			ig.EndExceptionBlock ();

@@ -1,0 +1,17 @@
+Assembly/AssemblyInfo.cs
+../../../external/rx/Ix/NET/System.Interactive.Async/AsyncEnumerable.Conversions.cs
+../../../external/rx/Ix/NET/System.Interactive.Async/AsyncEnumerable.Creation.cs
+../../../external/rx/Ix/NET/System.Interactive.Async/AsyncEnumerable.Exceptions.cs
+../../../external/rx/Ix/NET/System.Interactive.Async/AsyncEnumerable.Generated.cs
+../../../external/rx/Ix/NET/System.Interactive.Async/AsyncEnumerable.Single.cs
+../../../external/rx/Ix/NET/System.Interactive.Async/AsyncEnumerable.Multiple.cs
+../../../external/rx/Ix/NET/System.Interactive.Async/AsyncEnumerable.Aggregates.cs
+../../../external/rx/Ix/NET/System.Interactive.Async/AsyncEnumerator.cs
+../../../external/rx/Ix/NET/System.Interactive.Async/Disposables.cs
+../../../external/rx/Ix/NET/System.Interactive.Async/EnumerableGrouping.cs
+../../../external/rx/Ix/NET/System.Interactive.Async/IAsyncEnumerable.cs
+../../../external/rx/Ix/NET/System.Interactive.Async/IAsyncEnumerator.cs
+../../../external/rx/Ix/NET/System.Interactive.Async/IAsyncGrouping.cs
+../../../external/rx/Ix/NET/System.Interactive.Async/IOrderedAsyncEnumerable.cs
+../../../external/rx/Ix/NET/System.Interactive.Async/Properties/AssemblyInfo.cs
+../../../external/rx/Ix/NET/System.Interactive.Async/TaskExt.cs

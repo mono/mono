@@ -27979,6 +27979,31 @@
       </method>
     </type>
   </test>
+  <test name="gtest-optional-28.cs">
+    <type name="NoTypeOptionalParameters">
+      <method name="Void Lambda(Boolean, System.Func`2[System.String,System.Boolean][])" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void MethodGroup(Boolean, System.Func`2[System.String,System.Boolean][])" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Boolean Foo(System.String)" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Boolean FooInstance(System.String)" attrs="129">
+        <size>10</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>148</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__0(System.String)" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-partial-01.cs">
     <type name="B`1[U]">
       <method name="Void .ctor()" attrs="6278">
@@ -60588,6 +60613,19 @@
       </method>
     </type>
   </test>
+  <test name="test-debug-28.cs">
+    <type name="StatementsAsBlocks">
+      <method name="Void ForEach(System.String[])" attrs="145">
+        <size>64</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-externalias-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
@@ -62945,6 +62983,31 @@
       <method name="Void Main()" attrs="150">
         <size>12</size>
       </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-partial-32.cs">
+    <type name="A.C">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A.C+N">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X.C1">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X.C1+N1">
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>

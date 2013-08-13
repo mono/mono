@@ -236,8 +236,18 @@ namespace System.IO.MemoryMappedFiles
 		[DllImport ("libc", SetLastError=true)]
 		static extern int open (string path, int flags, int access);
 
+#if MONODROID
+		[DllImport ("__Internal")]
+		static extern int monodroid_getpagesize ();
+
+		static int getpagesize ()
+		{
+			return monodroid_getpagesize ();
+		}
+#else
 		[DllImport ("libc")]
 		static extern int getpagesize ();
+#endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern long mono_filesize_from_path (string str);
