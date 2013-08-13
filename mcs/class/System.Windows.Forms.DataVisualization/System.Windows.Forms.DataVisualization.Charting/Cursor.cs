@@ -1,9 +1,7 @@
-﻿//
 // Authors:
-// Jonathan Pobst (monkey@jpobst.com)
 // Francis Fisher (frankie@terrorise.me.uk)
 //
-// Copyright (C) 2009 Novell, Inc (http://www.novell.com) 
+// (C) Francis Fisher 2013
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,69 +22,60 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
-using System.Collections.Generic;
 using System.Drawing;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class ChartGraphics : ChartElement, IDisposable
+	public class Cursor : IDisposable
 	{
-		#region Constructors
-		internal ChartGraphics (Graphics graphics)
+		public Cursor ()
 		{
-			Graphics = graphics;
-		}
-		#endregion
-
-		#region Public Properties
-		public Graphics Graphics { get; set; }
-		#endregion
-
-		[MonoTODO]
-		protected override void Dispose (bool disposing)
-		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public PointF GetAbsolutePoint (PointF point)
-		{
-			throw new NotImplementedException ();
-		}
+		public bool AutoScroll { get; set; }
+		public AxisType AxisType { get; set; }
+		public double Interval { get; set; }
+		public double IntervalOffset { get; set; }
+		public DateTimeIntervalType IntervalOffsetType { get; set; }
+		public DateTimeIntervalType IntervalType { get; set; }
+		public bool IsUserEnabled { get; set; }
+		public bool IsUserSelectionEnabled { get; set; }
+		public Color LineColor { get; set; }
+		public ChartDashStyle LineDashStyle { get; set; }
+		public int LineWidth { get; set; }
+		public double Position { get; set; }
+		public Color SelectionColor { get; set; }
+		public double SelectionEnd { get; set; }
+		public double SelectionStart { get; set; }
+
 
 		[MonoTODO]
-		public RectangleF GetAbsoluteRectangle (RectangleF rectangle)
+		public void Dispose ()
 		{
 			throw new NotImplementedException ();
 		}
-
 		[MonoTODO]
-		public SizeF GetAbsoluteSize (SizeF size)
+		protected virtual void Dispose (bool disposing)
 		{
 			throw new NotImplementedException ();
 		}
-
 		[MonoTODO]
-		public double GetPositionFromAxis (string chartAreaName, AxisName axis, double axisValue)
+		public void SetCursorPixelPosition (PointF point,bool roundToBoundary)
 		{
 			throw new NotImplementedException ();
 		}
-
 		[MonoTODO]
-		public PointF GetRelativePoint (PointF point)
+		public void SetCursorPosition (double newPosition)
 		{
 			throw new NotImplementedException ();
 		}
-
 		[MonoTODO]
-		public RectangleF GetRelativeRectangle (RectangleF rectangle)
+		public void SetSelectionPixelPosition (PointF startPoint, PointF endPoint, bool roundToBoundary)
 		{
 			throw new NotImplementedException ();
 		}
-
 		[MonoTODO]
-		public SizeF GetRelativeSize (SizeF size)
+		public void SetSelectionPosition (double newStart, double newEnd)
 		{
 			throw new NotImplementedException ();
 		}

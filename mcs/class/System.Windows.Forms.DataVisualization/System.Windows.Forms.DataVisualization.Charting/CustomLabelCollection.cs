@@ -1,9 +1,7 @@
-﻿//
 // Authors:
-// Jonathan Pobst (monkey@jpobst.com)
 // Francis Fisher (frankie@terrorise.me.uk)
 //
-// Copyright (C) 2009 Novell, Inc (http://www.novell.com) 
+// (C) Francis Fisher 2013
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -23,70 +21,44 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-
+//
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class ChartGraphics : ChartElement, IDisposable
+	public class CustomLabelCollection : ChartElementCollection<CustomLabel>
 	{
-		#region Constructors
-		internal ChartGraphics (Graphics graphics)
-		{
-			Graphics = graphics;
-		}
-		#endregion
-
-		#region Public Properties
-		public Graphics Graphics { get; set; }
-		#endregion
-
 		[MonoTODO]
-		protected override void Dispose (bool disposing)
+		public void Add (double labelsStep, DateTimeIntervalType intervalType)
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		public CustomLabel Add (double fromPosition, double toPosition, string text)
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		public void Add (double labelsStep, DateTimeIntervalType intervalType, string format)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public PointF GetAbsolutePoint (PointF point)
+		public CustomLabel Add (double fromPosition, double toPosition, string text, int rowIndex, LabelMarkStyle markStyle)
 		{
 			throw new NotImplementedException ();
 		}
-
 		[MonoTODO]
-		public RectangleF GetAbsoluteRectangle (RectangleF rectangle)
+		public void Add (double labelsStep, DateTimeIntervalType intervalType, string format, int rowIndex, LabelMarkStyle markStyle)
 		{
 			throw new NotImplementedException ();
 		}
-
 		[MonoTODO]
-		public SizeF GetAbsoluteSize (SizeF size)
+		public CustomLabel Add (double fromPosition, double toPosition, string text, int rowIndex, LabelMarkStyle markStyle, GridTickTypes gridTick)
 		{
 			throw new NotImplementedException ();
 		}
-
 		[MonoTODO]
-		public double GetPositionFromAxis (string chartAreaName, AxisName axis, double axisValue)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public PointF GetRelativePoint (PointF point)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public RectangleF GetRelativeRectangle (RectangleF rectangle)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public SizeF GetRelativeSize (SizeF size)
+		public void Add ( double labelsStep, DateTimeIntervalType intervalType, double min, double max, string format, int rowIndex, LabelMarkStyle markStyle)
 		{
 			throw new NotImplementedException ();
 		}

@@ -1,9 +1,7 @@
-﻿//
 // Authors:
-// Jonathan Pobst (monkey@jpobst.com)
 // Francis Fisher (frankie@terrorise.me.uk)
 //
-// Copyright (C) 2009 Novell, Inc (http://www.novell.com) 
+// (C) Francis Fisher 2013
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,74 +22,51 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Drawing;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class ChartArea : ChartNamedElement
+	public class LegendItem : ChartNamedElement
 	{
-		public ChartArea() {}
-		public ChartArea( string name ){
-			Name = name;
+		public LegendItem ()
+		{
+			Cells = new LegendCellCollection ();
+		}
+		public LegendItem (string name,Color color,string image)
+		{
+			this.Name = name;
+			this.Color = color;
+			this.Image = image;
+			Cells = new LegendCellCollection ();
 		}
 
-		public AreaAlignmentOrientations AlignmentOrientation { get; set; }
-		public AreaAlignmentStyles AlignmentStyle { get; set; }
-		public string AlignWithChartArea { get; set; }
-		public ChartArea3DStyle Area3DStyle { get; set; }
-		public Axis[] Axes { get; set; }
-		public Axis AxisX { get; set; }
-		public Axis AxisX2 { get; set; }
-		public Axis AxisY { get; set; }
-		public Axis AxisY2 { get; set; }
-		public Color BackColor { get; set; }
 		public GradientStyle BackGradientStyle { get; set; }
 		public ChartHatchStyle BackHatchStyle { get; set; }
-		public string BackImage { get; set; }
-		public ChartImageAlignmentStyle BackImageAlignment { get; set; }
 		public Color BackImageTransparentColor { get; set; }
-		public ChartImageWrapMode BackImageWrapMode { get; set; }
 		public Color BackSecondaryColor { get; set; }
 		public Color BorderColor { get; set; }
 		public ChartDashStyle BorderDashStyle { get; set; }
 		public int BorderWidth { get; set; }
-		public Cursor CursorX { get; set; }
-		public Cursor CursorY { get; set; }
-		public ElementPosition InnerPlotPosition { get; set; }
-		public bool IsSameFontSizeForAllAxes { get; set; }
+		public LegendCellCollection Cells { get; private set; }
+		public Color Color { get; set; }
+		public bool Enabled { get; set; }
+		public string Image { get; set; }
+		public LegendImageStyle ImageStyle { get; set; }
+		public Legend Legend { get; private set;}
+		public Color MarkerBorderColor { get; set; }
+		public int MarkerBorderWidth { get; set; }
+		public Color MarkerColor { get; set; }
+		public string MarkerImage { get; set; }
+		public Color MarkerImageTransparentColor { get; set; }
+		public int MarkerSize { get; set; }
+		public MarkerStyle MarkerStyle { get; set; }
 		public override string Name { get; set; }
-		public ElementPosition Position { get; set; }
+		public Color SeparatorColor { get; set; }
+		public LegendSeparatorStyle SeparatorType { get; set; }
+		public string SeriesName { get; set; }
+		public int SeriesPointIndex { get; set; }
 		public Color ShadowColor { get; set; }
 		public int ShadowOffset { get; set; }
-		public virtual bool Visible { get; set; }
-
-
-		[MonoTODO]
-		protected override void Dispose (bool disposing)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public float GetSeriesDepth (Series series )
-		{
-			throw new NotImplementedException();
-		}
-		[MonoTODO]
-		public float GetSeriesZPosition (Series series)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void RecalculateAxesScale ()
-		{
-			throw new NotImplementedException();
-		}
-		[MonoTODO]
-		public void TransformPoints (Point3D[] points)
-		{
-			throw new NotImplementedException ();
-		}
+		public string ToolTip { get; set; }
 	}
 }

@@ -1,8 +1,7 @@
-﻿//
 // Authors:
-// Jonathan Pobst (monkey@jpobst.com)
+// Francis Fisher (frankie@terrorise.me.uk)
 //
-// Copyright (C) 2009 Novell, Inc (http://www.novell.com) 
+// (C) Francis Fisher 2013
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -23,33 +22,40 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
+using System.Drawing;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class AnnotationPathPoint : ChartElement
+	public class LegendCell : ChartNamedElement
 	{
-		#region Constructors
-		public AnnotationPathPoint () : this (0, 0)
+		public LegendCell ()
+		{
+		}
+		public LegendCell (string text)
+		{
+		}
+		public LegendCell (LegendCellType cellType, string text)
+		{
+		}
+		public LegendCell (LegendCellType cellType, string text, ContentAlignment alignment)
 		{
 		}
 
-		public AnnotationPathPoint (float x, float y) : this (x, y, 0)
-		{
-		}
-
-		public AnnotationPathPoint (float x, float y, byte type)
-		{
-			X = x;
-			Y = y;
-		}
-		#endregion
-
-		#region Public Properties
-		public string Name { get; private set; }
-		public byte PointType { get; set; }
-		public float X { get; set; }
-		public float Y { get; set; }
-		#endregion
+		public virtual ContentAlignment Alignment { get; set; }
+		public virtual Color BackColor { get; set; }
+		public virtual int CellSpan { get; set; }
+		public virtual LegendCellType CellType { get; set; }
+		public virtual Font Font { get; set; }
+		public virtual Color ForeColor { get; set; }
+		public virtual string Image { get; set; }
+		public virtual Size ImageSize { get; set; }
+		public virtual Color ImageTransparentColor { get; set; }
+		public virtual Legend Legend { get; private set;}
+		public virtual LegendItem LegendItem { get; private set;}
+		public virtual Margins Margins { get; set; }
+		public override string Name { get; set; }
+		public virtual Size SeriesSymbolSize { get; set; }
+		public virtual string Text { get; set; }
+		public virtual string ToolTip { get; set; }
 	}
 }

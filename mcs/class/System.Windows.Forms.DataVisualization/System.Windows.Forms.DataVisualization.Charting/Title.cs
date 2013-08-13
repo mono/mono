@@ -1,9 +1,7 @@
-﻿//
 // Authors:
-// Jonathan Pobst (monkey@jpobst.com)
 // Francis Fisher (frankie@terrorise.me.uk)
 //
-// Copyright (C) 2009 Novell, Inc (http://www.novell.com) 
+// (C) Francis Fisher 2013
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,27 +22,36 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Drawing;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class ChartArea : ChartNamedElement
+	public class Title : ChartNamedElement, IDisposable
 	{
-		public ChartArea() {}
-		public ChartArea( string name ){
-			Name = name;
+		public Title ()
+		{
+	       	}
+		public Title (string text)
+		{ 
+			this.Text = text; 
+		}
+		public Title (string text, Docking docking)
+		{
+			this.Text = text;
+			this.Docking = docking;
+		}
+		public Title (string text,
+				Docking docking,
+				Font font,
+				Color color)
+		{
+			this.Text = text;
+			this.Docking = docking;
+			this.Font = font;
+			this.ForeColor = color;
 		}
 
-		public AreaAlignmentOrientations AlignmentOrientation { get; set; }
-		public AreaAlignmentStyles AlignmentStyle { get; set; }
-		public string AlignWithChartArea { get; set; }
-		public ChartArea3DStyle Area3DStyle { get; set; }
-		public Axis[] Axes { get; set; }
-		public Axis AxisX { get; set; }
-		public Axis AxisX2 { get; set; }
-		public Axis AxisY { get; set; }
-		public Axis AxisY2 { get; set; }
+		public ContentAlignment Alignment { get; set; }
 		public Color BackColor { get; set; }
 		public GradientStyle BackGradientStyle { get; set; }
 		public ChartHatchStyle BackHatchStyle { get; set; }
@@ -56,40 +63,24 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public Color BorderColor { get; set; }
 		public ChartDashStyle BorderDashStyle { get; set; }
 		public int BorderWidth { get; set; }
-		public Cursor CursorX { get; set; }
-		public Cursor CursorY { get; set; }
-		public ElementPosition InnerPlotPosition { get; set; }
-		public bool IsSameFontSizeForAllAxes { get; set; }
+		public string DockedToChartArea { get; set; }
+		public Docking Docking { get; set; }
+		public int DockingOffset { get; set; }
+		public Font Font { get; set; }
+		public Color ForeColor { get; set; }
+		public bool IsDockedInsideChartArea { get; set; }
 		public override string Name { get; set; }
 		public ElementPosition Position { get; set; }
 		public Color ShadowColor { get; set; }
 		public int ShadowOffset { get; set; }
+		public string Text { get; set; }
+		public TextOrientation TextOrientation { get; set; }
+		public TextStyle TextStyle { get; set; }
+		public string ToolTip { get; set; }
 		public virtual bool Visible { get; set; }
-
 
 		[MonoTODO]
 		protected override void Dispose (bool disposing)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public float GetSeriesDepth (Series series )
-		{
-			throw new NotImplementedException();
-		}
-		[MonoTODO]
-		public float GetSeriesZPosition (Series series)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void RecalculateAxesScale ()
-		{
-			throw new NotImplementedException();
-		}
-		[MonoTODO]
-		public void TransformPoints (Point3D[] points)
 		{
 			throw new NotImplementedException ();
 		}

@@ -1,9 +1,7 @@
-﻿//
 // Authors:
-// Jonathan Pobst (monkey@jpobst.com)
 // Francis Fisher (frankie@terrorise.me.uk)
 //
-// Copyright (C) 2009 Novell, Inc (http://www.novell.com) 
+// (C) Francis Fisher 2013
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,27 +22,22 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Drawing;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	public class ChartArea : ChartNamedElement
+	public class Legend : ChartNamedElement
 	{
-		public ChartArea() {}
-		public ChartArea( string name ){
+		public Legend ()
+		{
+		}
+		public Legend (string name)
+		{
 			Name = name;
 		}
 
-		public AreaAlignmentOrientations AlignmentOrientation { get; set; }
-		public AreaAlignmentStyles AlignmentStyle { get; set; }
-		public string AlignWithChartArea { get; set; }
-		public ChartArea3DStyle Area3DStyle { get; set; }
-		public Axis[] Axes { get; set; }
-		public Axis AxisX { get; set; }
-		public Axis AxisX2 { get; set; }
-		public Axis AxisY { get; set; }
-		public Axis AxisY2 { get; set; }
+		public StringAlignment Alignment { get; set; }
+		public int AutoFitMinFontSize { get; set; }
 		public Color BackColor { get; set; }
 		public GradientStyle BackGradientStyle { get; set; }
 		public ChartHatchStyle BackHatchStyle { get; set; }
@@ -56,41 +49,43 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public Color BorderColor { get; set; }
 		public ChartDashStyle BorderDashStyle { get; set; }
 		public int BorderWidth { get; set; }
-		public Cursor CursorX { get; set; }
-		public Cursor CursorY { get; set; }
-		public ElementPosition InnerPlotPosition { get; set; }
-		public bool IsSameFontSizeForAllAxes { get; set; }
+		public LegendCellColumnCollection CellColumns { get; private set; }
+		public LegendItemsCollection CustomItems { get; private set; }
+		public string DockedToChartArea { get; set; }
+		public Docking Docking { get; set; }
+		public bool Enabled { get; set; }
+		public Font Font { get; set; }
+		public Color ForeColor { get; set; }
+		public LegendSeparatorStyle HeaderSeparator { get; set; }
+		public Color HeaderSeparatorColor { get; set; }
+		public string InsideChartArea { get; set; }
+		public bool InterlacedRows { get; set; }
+		public Color InterlacedRowsColor { get; set; }
+		public bool IsDockedInsideChartArea { get; set; }
+		public bool IsEquallySpacedItems { get; set; }
+		public bool IsTextAutoFit { get; set; }
+		public LegendSeparatorStyle ItemColumnSeparator { get; set; }
+		public Color ItemColumnSeparatorColor { get; set; }
+		public int ItemColumnSpacing { get; set; }
+		public LegendItemOrder LegendItemOrder { get; set; }
+		public LegendStyle LegendStyle { get; set; }
+		public float MaximumAutoSize { get; set; }
 		public override string Name { get; set; }
 		public ElementPosition Position { get; set; }
 		public Color ShadowColor { get; set; }
 		public int ShadowOffset { get; set; }
-		public virtual bool Visible { get; set; }
+		public LegendTableStyle TableStyle { get; set; }
+		public int TextWrapThreshold { get; set; }
+		public string Title { get; set; }
+		public StringAlignment TitleAlignment { get; set; }
+		public Color TitleBackColor { get; set; }
+		public Font TitleFont { get; set; }
+		public Color TitleForeColor { get; set; }
+		public LegendSeparatorStyle TitleSeparator { get; set; }
+		public Color TitleSeparatorColor { get; set; }
 
-
 		[MonoTODO]
-		protected override void Dispose (bool disposing)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public float GetSeriesDepth (Series series )
-		{
-			throw new NotImplementedException();
-		}
-		[MonoTODO]
-		public float GetSeriesZPosition (Series series)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public void RecalculateAxesScale ()
-		{
-			throw new NotImplementedException();
-		}
-		[MonoTODO]
-		public void TransformPoints (Point3D[] points)
-		{
+		protected override void Dispose(bool disposing){
 			throw new NotImplementedException ();
 		}
 	}
