@@ -117,6 +117,8 @@ namespace System.Net {
 					}
 				} else {
 					completed = true;
+                    this.synch = false;
+
 					if (handle != null)
 						handle.Set ();
 
