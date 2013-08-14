@@ -764,6 +764,7 @@ package_statement
 	  	var package = (Package) current_container;
 	  	package.GetBlock ().AddStatement ((Statement) $1);
 	  }
+	| namespace_declaration
 	;
 
 type_declaration
@@ -2372,6 +2373,7 @@ opt_nullable
 
 namespace_or_type_expr
 	: member_name
+/*	
 	| qualified_identifier IDENTIFIER opt_type_argument_list
 	  {
 		var lt1 = (LocatedToken) $1;
@@ -2380,6 +2382,7 @@ namespace_or_type_expr
 		$$ = new QualifiedMemberAccess (lt1.Value, lt2.Value, lt1.Location);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
+*/
 	;
 
 member_name
@@ -2697,7 +2700,7 @@ parenthesized_expression
 		$$ = new ParenthesizedExpression ((Expression) $2, GetLocation ($1));
 	  }
 	;
-	
+
 member_access
 	: primary_expression DOT identifier_inside_body opt_type_argument_list
 	  {
@@ -2717,14 +2720,22 @@ member_access
 		$$ = new MemberAccess (new BaseThis (GetLocation ($1)), lt.Value, (TypeArguments) $4, lt.Location);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
-	| qualified_identifier identifier_inside_body opt_type_argument_list
+	| IDENTIFIER DOUBLE_COLON identifier_inside_body
 	  {
 		var lt1 = (LocatedToken) $1;
-		var lt2 = (LocatedToken) $2;
+		var lt2 = (LocatedToken) $3;
 
-		$$ = new QualifiedMemberAccess (lt1.Value, lt2.Value, lt1.Location);
+		$$ = new QualifiedMemberAccess (null, lt1.Value, lt2.Value, lt1.Location);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
+	| primary_expression DOT identifier_inside_body DOUBLE_COLON identifier_inside_body
+	  {
+		var lt1 = (LocatedToken) $3;
+		var lt2 = (LocatedToken) $5;
+
+		$$ = new QualifiedMemberAccess ((Expression) $1, lt1.Value, lt2.Value, lt1.Location);
+		lbag.AddLocation ($$, GetLocation ($2));
+ 	  }
 	| primary_expression DOT GENERATE_COMPLETION {
 		$$ = new CompletionMemberAccess ((Expression) $1, null,GetLocation ($3));
 	  }
@@ -3348,14 +3359,14 @@ typeof_type_expression
 	 	$$ = null;
 	 }
 	;
-
+/*
 qualified_identifier
 	: IDENTIFIER DOUBLE_COLON
 	  {
 		$$ = $1;
 	  }
 	;
-
+*/
 anonymous_method_expression
 	: FUNCTION OPEN_PARENS
 	  {

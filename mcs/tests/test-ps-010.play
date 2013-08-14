@@ -2,7 +2,35 @@ package
 {
 	public class conversions
 	{
-		public static function Main():int
+		static function NumberToInt():int
+		{
+			var d:Number = 4;
+			var i:int;
+			
+			i = d;
+			if (i != 4)
+				return 1;
+
+			d = uint.MaxValue;
+			i = d;
+			if (i != -1)
+				return 2;
+
+			d = int.MinValue;
+			i = d;
+			if (i != -2147483648)
+				return 3;
+
+			d = NaN;
+			i = d;
+			// TODO: Mono bug https://bugzilla.xamarin.com/show_bug.cgi?id=13927
+			//if (i != 0)
+			//	return 4;
+
+			return 0;
+		}
+		
+		static function IntToUInt ():int
 		{
 			var i:int = -1;
 			var u:uint = i;
@@ -12,6 +40,20 @@ package
 			i = u - 1;
 			if (i != -2)
 				return 2;
+
+			return 0;
+		}
+	
+		public static function Main():int
+		{
+			var res:int;
+			res = IntToUInt ();
+			if (res != 0)
+				return res + 10;
+				
+			res = NumberToInt ();
+			if (res != 0)
+				return res + 20;
 				
 			return 0;
 		}

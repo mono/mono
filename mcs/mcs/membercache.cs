@@ -294,6 +294,11 @@ namespace Mono.CSharp {
 			AddMember (GetLookupName (ms), ms, false);
 		}
 
+		public void AddMember (MemberSpec member, string name)
+		{
+			AddMember (name, member, false);
+		}
+
 		void AddMember (string name, MemberSpec member, bool removeHiddenMembers)
 		{
 			if (member.Kind == MemberKind.Operator) {

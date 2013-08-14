@@ -1,9 +1,13 @@
 package
 {
+	namespace nsp;
+	
 	public class UseNamespaceTest
 	{
 		private namespace Test;
 		private namespace Test2;
+		
+		nsp var field:String = "namespace field";
 		
 		Test static function Foo ():int
 		{
@@ -24,6 +28,10 @@ package
 
 			if (Test2::Foo () != 2)
 				return 2;
+				
+			var unt:UseNamespaceTest = new UseNamespaceTest ();
+			if (unt.nsp::field != "namespace field")
+				return 3;
 				
 			return 0;
 		}

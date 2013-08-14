@@ -1472,8 +1472,8 @@ namespace Mono.PlayScript
 
 	public class QualifiedMemberAccess : MemberAccess
 	{
-		public QualifiedMemberAccess (string namespaceName, string identifier, Location l)
-			: base (null, identifier, l)
+		public QualifiedMemberAccess (Expression expr, string namespaceName, string identifier, Location l)
+			: base (expr, identifier, l)
 		{
 			this.Namespace = namespaceName;
 		}
@@ -1482,22 +1482,31 @@ namespace Mono.PlayScript
 
 		public override Expression LookupNameExpression (ResolveContext rc, MemberLookupRestrictions restrictions)
 		{
-/*
-			expr = rc.LookupNamespaceAlias (Namespace);
-			if (expr == null) {
-				// TODO: New error code
-				rc.Module.Compiler.Report.ErrorPlayScript (9999, loc, "Namespace `{0}' not found", Namespace);
-				return null;
+			TypeSpec expr_type;
+			var tne = expr as ATypeNameExpression;
+			if (tne == null) {
+				expr_type = rc.CurrentType;
+			} else {
+				var res = tne.LookupNameExpression (rc, MemberLookupRestrictions.None);
+				if (res == null)
+					return null;
+
+				res = res.Resolve (rc);
+				if (res == null)
+					return null;
+
+				expr_type = res.Type;
 			}
-*/
-			var expr_type = rc.CurrentType;
+
 			var name = Namespace + "." + Name;
 			var member_lookup = MemberLookup (rc, false, expr_type, name, 0, restrictions, loc);
-			if (member_lookup != null)
-				return member_lookup;
 
 			// TODO: Implement correct rules for out of context namespaces
-			throw new NotImplementedException ("Namespace global lookup");
+			if (member_lookup == null)
+				return null;
+
+			var me = (MemberExpr) member_lookup;
+			return me.ResolveMemberAccess (rc, expr, null);
 		}
 	}
 
@@ -2824,6 +2833,15 @@ namespace Mono.PlayScript
 					return new ConvCast (expr, target_type, ConvCast.Mode.U4_I4);
 				}
 
+				break;
+			case BuiltinTypeSpec.Type.Double:
+				//
+				// From double to int
+				//
+				switch (target_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.Int:
+					return new ConvCast (expr, target_type, ConvCast.Mode.R8_U4);
+				}
 				break;
 			}
 

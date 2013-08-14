@@ -635,8 +635,9 @@ namespace Mono.CSharp
 					required_modifier = new MetaType[] { mod.GetMetaInfo () };
 			}
 
+			var full_name = GetFullName (MemberName);
 			FieldBuilder = Parent.TypeBuilder.DefineField (
-				GetFullName (MemberName), member_type.GetMetaInfo (), required_modifier, null, ModifiersExtensions.FieldAttr (ModFlags));
+				full_name, member_type.GetMetaInfo (), required_modifier, null, ModifiersExtensions.FieldAttr (ModFlags));
 
 			spec = new FieldSpec (Parent.Definition, this, MemberType, FieldBuilder, ModFlags);
 
@@ -645,7 +646,7 @@ namespace Mono.CSharp
 			// need them for definitive assignment checks
 			//
 			if ((ModFlags & Modifiers.BACKING_FIELD) == 0 || Parent.Kind == MemberKind.Struct) {
-				Parent.MemberCache.AddMember (spec);
+				Parent.MemberCache.AddMember (spec, full_name);
 			}
 
 			if (initializer != null) {
