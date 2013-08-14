@@ -18398,6 +18398,44 @@
       </method>
     </type>
   </test>
+  <test name="gtest-593.cs">
+    <type name="Parser`2[D1,DR1]">
+      <method name="System.Tuple`2[D1,DR1] Invoke(D1)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(D1, System.AsyncCallback, System.Object)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="System.Tuple`2[D1,DR1] EndInvoke(IAsyncResult)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)" attrs="6278">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Combinator">
+      <method name="Parser`2[L1,LR1] Lazy[L1,LR1](System.Func`1[Parser`2[L1,LR1]])" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="Parser`2[C1,CR1] Choice[C1,CR1](Parser`2[C1,CR1])" attrs="150">
+        <size>41</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>37</size>
+      </method>
+      <method name="System.Tuple`2[System.Int32,System.Int32] &lt;Main&gt;m__1(Int32)" attrs="145">
+        <size>15</size>
+      </method>
+    </type>
+    <type name="Combinator+&lt;Choice&gt;c__AnonStorey0`2[C1,CR1]">
+      <method name="Parser`2[C1,CR1] &lt;&gt;m__0()" attrs="131">
+        <size>19</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">

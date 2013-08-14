@@ -3281,6 +3281,11 @@ namespace Mono.CSharp {
 		//
 		public bool IsReturnTypeNonDependent (ResolveContext ec, MethodSpec invoke, TypeSpec returnType)
 		{
+			AParametersCollection d_parameters = invoke.Parameters;
+
+			if (d_parameters.IsEmpty)
+				return true;
+
 			while (returnType.IsArray)
 				returnType = ((ArrayContainer) returnType).Element;
 
@@ -3288,11 +3293,6 @@ namespace Mono.CSharp {
 				if (IsFixed (returnType))
 				    return false;
 			} else if (TypeManager.IsGenericType (returnType)) {
-				if (returnType.IsDelegate) {
-					invoke = Delegate.GetInvokeMethod (returnType);
-					return IsReturnTypeNonDependent (ec, invoke, invoke.ReturnType);
-				}
-					
 				TypeSpec[] g_args = TypeManager.GetTypeArguments (returnType);
 				
 				// At least one unfixed return type has to exist 
@@ -3303,7 +3303,6 @@ namespace Mono.CSharp {
 			}
 
 			// All generic input arguments have to be fixed
-			AParametersCollection d_parameters = invoke.Parameters;
 			return AllTypesAreFixed (d_parameters.Types);
 		}
 
