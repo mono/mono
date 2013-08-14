@@ -519,8 +519,8 @@ namespace Mono.CSharp {
 
 			Constant c = expr as Constant;
 			if (c == null) {
-				if (c.type != InternalType.ErrorType)
-					rc.Report.Error (150, StartLocation, "A constant value is expected");
+				if (expr.type != InternalType.ErrorType)
+					rc.Report.Error (150, expr.StartLocation, "A constant value is expected");
 
 				return null;
 			}
