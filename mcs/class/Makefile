@@ -68,6 +68,7 @@ common_dirs := \
 	Novell.Directory.Ldap		\
 	Mono.Security.Win32		\
 	System.DirectoryServices	\
+	System.DirectoryServices.Protocols	\
 	RabbitMQ.Client			\
 	Mono.Messaging			\
 	System.Messaging	        \
@@ -164,33 +165,7 @@ monodroid_dirs := \
 	System.Net.Http
 
 monotouch_runtime_dirs := \
-	corlib \
-	System \
-	System.XML	\
-	Mono.Posix \
-	System.Core \
-	Mono.Security			\
-	System \
-	System.Security			\
-	System.Configuration		\
-	System				\
-	System.XML			\
-	$(resgen_dir)			\
-	System.Drawing			\
-	System.Transactions		\
-	System.EnterpriseServices	\
-	Mono.Data.Tds			\
-	System.Data			\
-	Accessibility			\
-	Mono.WebBrowser			\
-	System.Runtime.Serialization.Formatters.Soap \
-	Managed.Windows.Forms		\
-	Mono.Data.Sqlite		\
-	System.Web.ApplicationServices	\
-	System.Web \
-	Mono.Web \
-	System.Web.Services \
-	System.Web
+	corlib
 
 net_3_5_only_dirs := \
 	Microsoft.Build.Framework	\

@@ -188,6 +188,8 @@ namespace Mono.CSharp
 
 			next_part.PartialContainer = existing;
 
+			existing.AddPartialPart (next_part);
+
 			AddTypeContainerMember (next_part);
 		}
 
@@ -519,6 +521,9 @@ namespace Mono.CSharp
 		protected TypeSpec[] iface_exprs;
 
 		protected List<FullNamedExpression> type_bases;
+
+		// Partial parts for classes only
+		List<TypeDefinition> class_partial_parts;
 
 		TypeDefinition InTransit;
 
@@ -865,6 +870,17 @@ namespace Mono.CSharp
 		{
 			PartialContainer.HasOperators = true;
 			AddMember (op);
+		}
+
+		public void AddPartialPart (TypeDefinition part)
+		{
+			if (Kind != MemberKind.Class)
+				return;
+
+			if (class_partial_parts == null)
+				class_partial_parts = new List<TypeDefinition> ();
+
+			class_partial_parts.Add (part);
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
@@ -1474,6 +1490,14 @@ namespace Mono.CSharp
 
 		protected bool DefineBaseTypes ()
 		{
+			if (IsPartialPart && Kind == MemberKind.Class)
+				return true;
+
+			return DoDefineBaseType ();
+		}
+
+		bool DoDefineBaseType ()
+		{
 			iface_exprs = ResolveBaseTypes (out base_type_expr);
 			bool set_base_type;
 
@@ -1563,6 +1587,18 @@ namespace Mono.CSharp
 
 			if (set_base_type) {
 				SetBaseType ();
+			}
+
+			//
+			// Base type of partial container has to be resolved before we
+			// resolve any nested types of the container. We need to know
+			// partial parts because the base type can be specified in file
+			// defined after current container
+			//
+			if (class_partial_parts != null) {
+				foreach (var pp in class_partial_parts)
+					pp.DoDefineBaseType ();
+
 			}
 
 			return true;

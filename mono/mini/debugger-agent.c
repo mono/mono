@@ -2235,7 +2235,17 @@ decode_moduleid (guint8 *buf, guint8 **endbuf, guint8 *limit, MonoDomain **domai
 static inline MonoMethod*
 decode_methodid (guint8 *buf, guint8 **endbuf, guint8 *limit, MonoDomain **domain, int *err)
 {
-	return decode_ptr_id (buf, endbuf, limit, ID_METHOD, domain, err);
+	MonoMethod *m;
+
+	m = decode_ptr_id (buf, endbuf, limit, ID_METHOD, domain, err);
+	if (G_UNLIKELY (log_level >= 2) && m) {
+		char *s;
+
+		s = mono_method_full_name (m, TRUE);
+		DEBUG(2, fprintf (log_file, "[dbg]   recv method [%s]\n", s));
+		g_free (s);
+	}
+	return m;
 }
 
 static inline MonoClassField*
@@ -3484,6 +3494,7 @@ event_to_string (EventKind event)
 	case EVENT_KIND_USER_LOG: return "USER_LOG";
 	default:
 		g_assert_not_reached ();
+		return "";
 	}
 }
 
@@ -4433,7 +4444,10 @@ ss_update (SingleStepReq *req, MonoJitInfo *ji, SeqPoint *sp)
 
 	if (!loc || (loc && ji->method == ss_req->last_method && loc->row == ss_req->last_line)) {
 		/* Have to continue single stepping */
-		DEBUG(1, fprintf (log_file, "[%p] Same source line, continuing single stepping.\n", (gpointer)GetCurrentThreadId ()));
+		if (!loc)
+			DEBUG(1, fprintf (log_file, "[%p] No line number info for il offset %x, continuing single stepping.\n", (gpointer)GetCurrentThreadId (), sp->il_offset));
+		else
+			DEBUG(1, fprintf (log_file, "[%p] Same source line (%d), continuing single stepping.\n", (gpointer)GetCurrentThreadId (), loc->row));
 		hit = FALSE;
 	}
 				
@@ -8985,7 +8999,7 @@ cmd_to_string (CommandSet set, int command)
 		cmds_len = G_N_ELEMENTS (event_cmds_str);
 		break;
 	default:
-		break;
+		return NULL;
 	}
 	if (command > 0 && command <= cmds_len)
 		return cmds [command - 1];

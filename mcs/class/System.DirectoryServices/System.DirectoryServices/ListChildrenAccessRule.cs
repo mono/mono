@@ -20,53 +20,23 @@
 * SOFTWARE.
 *******************************************************************************/
 using System;
-using System.Runtime;
-using System.Security;
-using System.Security.Permissions;
+using System.Security.AccessControl;
+using System.Security.Principal;
 
-namespace System.Net
+namespace System.DirectoryServices
 {
-	[Serializable]
-	public sealed class DnsPermission : CodeAccessPermission, IUnrestrictedPermission
+	public sealed class ListChildrenAccessRule : ActiveDirectoryAccessRule
 	{
-		public DnsPermission (PermissionState state)
+		public ListChildrenAccessRule (IdentityReference identity, AccessControlType type) : base(identity, 4, type, Guid.Empty, false, InheritanceFlags.None, PropagationFlags.None, Guid.Empty)
 		{
-
 		}
 
-		public bool IsUnrestricted ()
+		public ListChildrenAccessRule (IdentityReference identity, AccessControlType type, ActiveDirectorySecurityInheritance inheritanceType) : base(identity, 4, type, Guid.Empty, false, InheritanceFlags.None, PropagationFlags.None, Guid.Empty)
 		{
-			throw new NotImplementedException ();
 		}
 
-		public override IPermission Copy ()
+		public ListChildrenAccessRule (IdentityReference identity, AccessControlType type, ActiveDirectorySecurityInheritance inheritanceType, Guid inheritedObjectType) : base(identity, 4, type, Guid.Empty, false, InheritanceFlags.None, PropagationFlags.None, inheritedObjectType)
 		{
-			throw new NotImplementedException ();
-		}
-
-		public override IPermission Union (IPermission target)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override IPermission Intersect (IPermission target)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override bool IsSubsetOf (IPermission target)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override void FromXml (SecurityElement securityElement)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override SecurityElement ToXml ()
-		{
-			throw new NotImplementedException ();
 		}
 	}
 }

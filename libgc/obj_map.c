@@ -22,7 +22,7 @@
 # include "private/gc_priv.h"
 
 map_entry_type * GC_invalid_map = 0;
-static max_valid_offset = 0;
+static word max_valid_offset = 0;
 
 /* Invalidate the object map associated with a block.	Free blocks	*/
 /* are identified by invalid maps.					*/

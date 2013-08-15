@@ -18398,6 +18398,67 @@
       </method>
     </type>
   </test>
+  <test name="gtest-593.cs">
+    <type name="Parser`2[D1,DR1]">
+      <method name="System.Tuple`2[D1,DR1] Invoke(D1)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(D1, System.AsyncCallback, System.Object)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="System.Tuple`2[D1,DR1] EndInvoke(IAsyncResult)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)" attrs="6278">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Combinator">
+      <method name="Parser`2[L1,LR1] Lazy[L1,LR1](System.Func`1[Parser`2[L1,LR1]])" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="Parser`2[C1,CR1] Choice[C1,CR1](Parser`2[C1,CR1])" attrs="150">
+        <size>41</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>37</size>
+      </method>
+      <method name="System.Tuple`2[System.Int32,System.Int32] &lt;Main&gt;m__1(Int32)" attrs="145">
+        <size>15</size>
+      </method>
+    </type>
+    <type name="Combinator+&lt;Choice&gt;c__AnonStorey0`2[C1,CR1]">
+      <method name="Parser`2[C1,CR1] &lt;&gt;m__0()" attrs="131">
+        <size>19</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-594.cs">
+    <type name="C">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Y">
+      <method name="Void Foo[T]()" attrs="486">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
@@ -27976,6 +28037,31 @@
     <type name="EnumWrapperCtor`1[T]">
       <method name="EnumWrapperCtor`1+Test[T] getValue()" attrs="134">
         <size>15</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-optional-28.cs">
+    <type name="NoTypeOptionalParameters">
+      <method name="Void Lambda(Boolean, System.Func`2[System.String,System.Boolean][])" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void MethodGroup(Boolean, System.Func`2[System.String,System.Boolean][])" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Boolean Foo(System.String)" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Boolean FooInstance(System.String)" attrs="129">
+        <size>10</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>148</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__0(System.String)" attrs="145">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -60588,6 +60674,19 @@
       </method>
     </type>
   </test>
+  <test name="test-debug-28.cs">
+    <type name="StatementsAsBlocks">
+      <method name="Void ForEach(System.String[])" attrs="145">
+        <size>64</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-externalias-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
@@ -62945,6 +63044,31 @@
       <method name="Void Main()" attrs="150">
         <size>12</size>
       </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-partial-32.cs">
+    <type name="A.C">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A.C+N">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X.C1">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X.C1+N1">
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>

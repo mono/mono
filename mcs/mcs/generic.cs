@@ -866,10 +866,7 @@ namespace Mono.CSharp {
 		public TypeSpec[] InterfacesDefined {
 			get {
 				if (ifaces_defined == null) {
-					if (ifaces == null)
-						return null;
-
-					ifaces_defined = ifaces.ToArray ();
+					ifaces_defined = ifaces == null ? TypeSpec.EmptyTypes : ifaces.ToArray ();
 				}
 
 				return ifaces_defined.Length == 0 ? null : ifaces_defined;
@@ -1243,6 +1240,8 @@ namespace Mono.CSharp {
 				tps.ifaces_defined = new TypeSpec[defined.Length];
 				for (int i = 0; i < defined.Length; ++i)
 					tps.ifaces_defined [i] = inflator.Inflate (defined[i]);
+			} else if (ifaces_defined == TypeSpec.EmptyTypes) {
+				tps.ifaces_defined = TypeSpec.EmptyTypes;
 			}
 
 			var ifaces = Interfaces;
@@ -1250,6 +1249,7 @@ namespace Mono.CSharp {
 				tps.ifaces = new List<TypeSpec> (ifaces.Count);
 				for (int i = 0; i < ifaces.Count; ++i)
 					tps.ifaces.Add (inflator.Inflate (ifaces[i]));
+				tps.state |= StateFlags.InterfacesExpanded;
 			}
 
 			if (targs != null) {
@@ -1262,6 +1262,10 @@ namespace Mono.CSharp {
 		public override MemberSpec InflateMember (TypeParameterInflator inflator)
 		{
 			var tps = (TypeParameterSpec) MemberwiseClone ();
+#if DEBUG
+			tps.ID += 1000000;
+#endif
+
 			InflateConstraints (inflator, tps);
 			return tps;
 		}
@@ -1719,7 +1723,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override bool IsGenericIterateInterface {
+		public override bool IsArrayGenericInterface {
 			get {
 				return (open_type.state & StateFlags.GenericIterateInterface) != 0;
 			}
@@ -3287,6 +3291,11 @@ namespace Mono.CSharp {
 		//
 		public bool IsReturnTypeNonDependent (ResolveContext ec, MethodSpec invoke, TypeSpec returnType)
 		{
+			AParametersCollection d_parameters = invoke.Parameters;
+
+			if (d_parameters.IsEmpty)
+				return true;
+
 			while (returnType.IsArray)
 				returnType = ((ArrayContainer) returnType).Element;
 
@@ -3294,11 +3303,6 @@ namespace Mono.CSharp {
 				if (IsFixed (returnType))
 				    return false;
 			} else if (TypeManager.IsGenericType (returnType)) {
-				if (returnType.IsDelegate) {
-					invoke = Delegate.GetInvokeMethod (returnType);
-					return IsReturnTypeNonDependent (ec, invoke, invoke.ReturnType);
-				}
-					
 				TypeSpec[] g_args = TypeManager.GetTypeArguments (returnType);
 				
 				// At least one unfixed return type has to exist 
@@ -3309,7 +3313,6 @@ namespace Mono.CSharp {
 			}
 
 			// All generic input arguments have to be fixed
-			AParametersCollection d_parameters = invoke.Parameters;
 			return AllTypesAreFixed (d_parameters.Types);
 		}
 
@@ -3369,7 +3372,7 @@ namespace Mono.CSharp {
 					return LowerBoundInference (u_ac.Element, v_ac.Element, inversed);
 				}
 
-				if (u_ac.Rank != 1 || !v.IsGenericIterateInterface)
+				if (u_ac.Rank != 1 || !v.IsArrayGenericInterface)
 					return 0;
 
 				var v_i = TypeManager.GetTypeArguments (v) [0];

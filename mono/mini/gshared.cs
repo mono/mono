@@ -212,6 +212,12 @@ public class Tests
 		return 0;
 	}
 
+	public static int test_0_unbox_any_enum () {
+		IFaceUnbox iface = new ClassUnbox ();
+		AnEnum res = iface.Unbox<AnEnum, int> (AnEnum.One, 0, 1);
+		return res == AnEnum.Two ? 0 : 1;
+	}
+
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	static void ldfld_nongeneric<T> (GFoo<T>[] foo, int[] arr) {
 		arr [0] = foo [0].i;
@@ -914,7 +920,8 @@ public class Tests
 	}
 
 	enum AnEnum {
-		One
+		One,
+		Two
 	};
 
 	public static int test_0_constrained_tostring () {
@@ -1218,6 +1225,10 @@ public class Tests
 		void foo_ref_arg (string s);
 	}
 
+	interface IConstrained<T3> {
+		void foo_gsharedvt_arg (T3 s);
+	}
+
 	static object constrained_res;
 
 	struct ConsStruct : IConstrained {
@@ -1244,9 +1255,16 @@ public class Tests
 		}
 	}
 
+	struct ConsStruct<T> : IConstrained<T> {
+		public void foo_gsharedvt_arg (T s) {
+			constrained_res = s;
+		}
+	}
+
 	interface IFaceConstrained {
 		void constrained_void_iface_call<T, T2>(T t, T2 t2) where T2 : IConstrained;
 		void constrained_void_iface_call_ref_arg<T, T2>(T t, T2 t2) where T2 : IConstrained;
+		void constrained_void_iface_call_gsharedvt_arg<T, T2, T3>(T t, T2 t2, T3 t3) where T2 : IConstrained<T>;
 	}
 
 	class ClassConstrained : IFaceConstrained {
@@ -1258,6 +1276,11 @@ public class Tests
 		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public void constrained_void_iface_call_ref_arg<T, T2>(T t, T2 t2) where T2 : IConstrained {
 			t2.foo_ref_arg ("A");
+		}
+
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public void constrained_void_iface_call_gsharedvt_arg<T, T2, T3>(T t, T2 t2, T3 t3) where T2 : IConstrained<T> {
+			t2.foo_gsharedvt_arg (t);
 		}
 	}
 
@@ -1284,6 +1307,25 @@ public class Tests
 		return 0;
 	}
 
+	public static int test_0_constraine_void_iface_call_gsharedvt_arg () {
+		// This tests constrained calls through interfaces with one gsharedvt arg, like IComparable<T>.CompareTo ()
+		IFaceConstrained c = new ClassConstrained ();
+
+		var s = new ConsStruct<int> ();
+		constrained_res = null;
+		c.constrained_void_iface_call_gsharedvt_arg<int, ConsStruct<int>, int> (42, s, 55);
+		if (!(constrained_res is int) || ((int)constrained_res) != 42)
+			return 1;
+
+		var s2 = new ConsStruct<string> ();
+		constrained_res = null;
+		c.constrained_void_iface_call_gsharedvt_arg<string, ConsStruct<string>, int> ("A", s2, 55);
+		if (!(constrained_res is string) || ((string)constrained_res) != "A")
+			return 2;
+
+		return 0;
+	}
+
 	public static async Task<T> FooAsync<T> (int i, int j) {
 		Task<int> t = new Task<int> (delegate () { return 42; });
 		var response = await t;
@@ -1300,6 +1342,21 @@ public class Tests
 	public static int test_0_async_call_from_generic () {
 		call_async<string> (1, 2);
 		return 0;
+	}
+}
+
+// #13191
+public class MobileServiceCollection<TTable, TCol>
+{
+	public async Task<int> LoadMoreItemsAsync(int count = 0) {
+		await Task.Delay (1000);
+		int results = await ProcessQueryAsync ();
+		return results;
+	}
+
+	protected async virtual Task<int> ProcessQueryAsync() {
+		await Task.Delay (1000);
+		throw new Exception ();
 	}
 }
 

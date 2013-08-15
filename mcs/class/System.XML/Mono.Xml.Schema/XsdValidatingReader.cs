@@ -473,7 +473,7 @@ namespace Mono.Xml.Schema
 
 		private void ValidateEndElementParticle ()
 		{
-			if (Context.State != null) {
+			if (xsiNilDepth < 0 && Context.State != null) {
 				if (!Context.EvaluateEndElement ()) {
 					HandleError ("Invalid end element: " + reader.Name);
 				}

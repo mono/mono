@@ -376,6 +376,8 @@ namespace Mono.Xml.Xsl {
 				return; // Already done.
 
 			c.PushInputDocument (included);
+			included.MoveToRoot ();
+			included.MoveToFirstChild ();
 
 			while (c.Input.NodeType != XPathNodeType.Element)
 				if (!c.Input.MoveToNext ())
@@ -387,6 +389,7 @@ namespace Mono.Xml.Xsl {
 				templates.Add (new XslTemplate (c));
 			}
 			else {
+				c.Input.MoveToFirstChild ();
 				do {
 					if (c.Input.NodeType != XPathNodeType.Element)
 						continue;

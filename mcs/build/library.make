@@ -23,11 +23,18 @@ else
 EXTENSION_include = $(wildcard $(PROFILE)_opt_$(LIBRARY).sources)
 endif
 
+
+ifdef EXTENSION_MODULE
+EXTENSION_exclude = $(wildcard $(topdir)/../../mono-extensions/mcs/$(thisdir)/$(PROFILE)_$(LIBRARY).exclude.sources)
+else
+EXTENSION_exclude = $(wildcard $(PROFILE)_opt_$(LIBRARY).exclude.sources)
+endif
+
 # Note, gensources.sh can create a $(sourcefile).makefrag if it sees any '#include's
 # We don't include it in the dependencies since it isn't always created
 $(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(topdir)/build/gensources.sh $(EXTENSION_include)
 	@echo Creating the per profile list $@ ...
-	$(SHELL) $(topdir)/build/gensources.sh $@ '$(PROFILE_sources)' '$(PROFILE_excludes)' '$(EXTENSION_include)'
+	$(SHELL) $(topdir)/build/gensources.sh $@ '$(PROFILE_sources)' '$(PROFILE_excludes)' '$(EXTENSION_include)' '$(EXTENSION_exclude)'
 endif
 
 PLATFORM_excludes := $(wildcard $(LIBRARY).$(PLATFORM)-excludes)

@@ -374,11 +374,12 @@
         <entry il="0x1e" row="243" col="2" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals>
-        <entry name="a" il_index="0" scope_ref="0" />
+        <entry name="a" il_index="0" scope_ref="1" />
       </locals>
       <scopes>
-        <entry index="0" start="0xf" end="0x11" />
-        <entry index="1" start="0x10" end="0x10" />
+        <entry index="0" start="0x1" end="0x1e" />
+        <entry index="1" start="0xf" end="0x11" />
+        <entry index="2" start="0x10" end="0x10" />
       </scopes>
     </method>
     <method token="0x6000019">
@@ -396,11 +397,12 @@
         <entry il="0x37" row="253" col="2" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals>
-        <entry name="a" il_index="0" scope_ref="0" />
+        <entry name="a" il_index="0" scope_ref="1" />
       </locals>
       <scopes>
-        <entry index="0" start="0x16" end="0x18" />
-        <entry index="1" start="0x17" end="0x17" />
+        <entry index="0" start="0x1" end="0x37" />
+        <entry index="1" start="0x16" end="0x18" />
+        <entry index="2" start="0x17" end="0x17" />
       </scopes>
     </method>
     <method token="0x600001a">
@@ -417,11 +419,12 @@
         <entry il="0x3c" row="263" col="2" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals>
-        <entry name="a" il_index="0" scope_ref="0" />
+        <entry name="a" il_index="0" scope_ref="1" />
       </locals>
       <scopes>
-        <entry index="0" start="0x16" end="0x18" />
-        <entry index="1" start="0x17" end="0x17" />
+        <entry index="0" start="0x1" end="0x3c" />
+        <entry index="1" start="0x16" end="0x18" />
+        <entry index="2" start="0x17" end="0x17" />
       </scopes>
     </method>
     <method token="0x600001b">
@@ -439,11 +442,12 @@
         <entry il="0x4d" row="272" col="2" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals>
-        <entry name="a" il_index="0" scope_ref="0" />
+        <entry name="a" il_index="0" scope_ref="1" />
       </locals>
       <scopes>
-        <entry index="0" start="0x2f" end="0x31" />
-        <entry index="1" start="0x30" end="0x30" />
+        <entry index="0" start="0x1" end="0x4d" />
+        <entry index="1" start="0x2f" end="0x31" />
+        <entry index="2" start="0x30" end="0x30" />
       </scopes>
     </method>
   </methods>

@@ -3263,6 +3263,9 @@ major_do_collection (const char *reason)
 	TV_DECLARE (all_btv);
 	int old_next_pin_slot;
 
+	if (disable_major_collections)
+		return FALSE;
+
 	if (major_collector.get_and_reset_num_major_objects_marked) {
 		long long num_marked = major_collector.get_and_reset_num_major_objects_marked ();
 		g_assert (!num_marked);
@@ -3284,13 +3287,15 @@ major_do_collection (const char *reason)
 	return bytes_pinned_from_failed_allocation > 0;
 }
 
-static gboolean major_do_collection (const char *reason);
-
 static void
 major_start_concurrent_collection (const char *reason)
 {
-	long long num_objects_marked = major_collector.get_and_reset_num_major_objects_marked ();
+	long long num_objects_marked;
 
+	if (disable_major_collections)
+		return;
+
+	num_objects_marked = major_collector.get_and_reset_num_major_objects_marked ();
 	g_assert (num_objects_marked == 0);
 
 	MONO_GC_CONCURRENT_START_BEGIN (GENERATION_OLD);
@@ -4162,7 +4167,15 @@ sgen_thread_unregister (SgenThreadInfo *p)
 	LOCK_GC;
 #else
 	while (!TRYLOCK_GC) {
-		if (!sgen_park_current_thread_if_doing_handshake (p))
+		SgenThreadInfo *current = mono_thread_info_current ();
+		if (current)
+			SGEN_ASSERT (0, current == p, "If there's a current thread info, it must be correct.");
+		/*
+		 * If we have a current thread info, the signal
+		 * handler will eventually suspend us.  If not, we
+		 * need to do it by hand.
+		 */
+		if (current || !sgen_park_current_thread_if_doing_handshake (p))
 			g_usleep (50);
 	}
 	MONO_GC_LOCKED ();

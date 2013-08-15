@@ -538,8 +538,8 @@ namespace Mono.CSharp {
 
 			Constant c = expr as Constant;
 			if (c == null) {
-				if (c.type != InternalType.ErrorType)
-					rc.Report.Error (150, StartLocation, "A constant value is expected");
+				if (expr.type != InternalType.ErrorType)
+					rc.Report.Error (150, expr.StartLocation, "A constant value is expected");
 
 				return null;
 			}
@@ -3534,6 +3534,13 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override bool IsSideEffectFree {
+			get {
+				return InstanceExpression != null ?
+					InstanceExpression.IsSideEffectFree : true;
+			}
+		}
+
 		public override bool IsStatic {
 			get {
 				if (best_candidate != null)
@@ -5397,6 +5404,7 @@ namespace Mono.CSharp {
 					params_initializers.Add (a.Expr);
 					args.RemoveAt (a_idx--);
 					--arg_count;
+					a.Expr = conv;
 					continue;
 				}
 

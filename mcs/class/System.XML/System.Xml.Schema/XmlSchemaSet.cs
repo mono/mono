@@ -130,14 +130,10 @@ namespace System.Xml.Schema
 
 		public XmlSchema Add (string targetNamespace, string schemaUri)
 		{
-			XmlTextReader r = null;
-			try {
-				r = new XmlTextReader (schemaUri, nameTable);
-				return Add (targetNamespace, r);
-			} finally {
-				if (r != null)
-					r.Close ();
-			}
+			var uri = xmlResolver.ResolveUri (null, schemaUri);
+			using (var stream = (Stream) xmlResolver.GetEntity (uri, null, typeof (Stream)))
+				using (var r = XmlReader.Create (stream, new XmlReaderSettings () { XmlResolver = xmlResolver, NameTable = nameTable}, uri.ToString ()))
+					return Add (targetNamespace, r);
 		}
 
 		public XmlSchema Add (string targetNamespace, XmlReader schemaDocument)

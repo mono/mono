@@ -98,11 +98,9 @@ namespace System.Threading
 		}
 #endif
 
-		[MonoTODO]
 		protected void SetWaitNotificationRequired ()
 		{
 			notification_required = true;
-			throw new NotImplementedException ();
 		}
 
 		[CLSCompliant (false)]

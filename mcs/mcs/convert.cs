@@ -34,7 +34,7 @@ namespace Mono.CSharp {
 		//
 		static bool ArrayToIList (ArrayContainer array, TypeSpec list, bool isExplicit)
 		{
-			if (array.Rank != 1 || !list.IsGenericIterateInterface)
+			if (array.Rank != 1 || !list.IsArrayGenericInterface)
 				return false;
 
 			var arg_type = list.TypeArguments[0];
@@ -55,7 +55,7 @@ namespace Mono.CSharp {
 		
 		static bool IList_To_Array(TypeSpec list, ArrayContainer array)
 		{
-			if (array.Rank != 1 || !list.IsGenericIterateInterface)
+			if (array.Rank != 1 || !list.IsArrayGenericInterface)
 				return false;
 
 			var arg_type = list.TypeArguments[0];

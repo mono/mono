@@ -351,7 +351,7 @@ add masterdoc support?
   <xs:element name="format">
     <xs:complexType>
       <xs:sequence>
-        <xs:any minOccurs="0" processContents="lax" />
+        <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax" />
       </xs:sequence>
       <xs:attribute ref="type" />
     </xs:complexType>

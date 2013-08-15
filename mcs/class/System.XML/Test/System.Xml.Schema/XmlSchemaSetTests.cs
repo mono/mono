@@ -11,6 +11,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using NUnit.Framework;
@@ -278,6 +279,40 @@ type=""xsd:string"" use=""required""/>
 			xss.Add (xs2);
 			xss.Compile ();
 			Assert.IsNotNull (xss.GlobalElements [new XmlQualifiedName ("GetSystemDateAndTimeResponse", "http://www.onvif.org/ver10/device/wsdl")], "#1");
+		}
+		
+		[Test] // bug #13716
+		public void ResolveSchemaUriUsingXmlResolver ()
+		{
+			var resolver = new Bug13716XmlResolver ();
+			string xml = "<people xmlns='testschema'><person name='Ian'><books><book>Clean Code</book></books></person></people>";
+			string ns = "testschema";
+			string xsdPath = "my.xsd";
+
+			var readerSettings = new XmlReaderSettings ();
+
+			//readerSettings.XmlResolver = resolver;
+			readerSettings.Schemas.XmlResolver = resolver;
+			readerSettings.Schemas.Add (ns, xsdPath);
+			readerSettings.ValidationType = ValidationType.Schema;
+
+			using (var xr = XmlReader.Create (new StringReader (xml), readerSettings))
+			{
+				while (!xr.EOF)
+					xr.Read ();
+			}
+		}
+		
+		public class Bug13716XmlResolver : XmlUrlResolver
+		{
+			public override object GetEntity(Uri absoluteUri, string role, Type typeOfObjectToReturn)
+			{
+				string xsd = @"
+		<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' targetNamespace='testschema'>
+		  <xs:element name='people' />
+		</xs:schema>";
+				return new MemoryStream (Encoding.UTF8.GetBytes (xsd));
+			}
 		}
 	}
 }

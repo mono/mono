@@ -165,7 +165,7 @@ MonoException *mono_create_corlib_exception_1 (guint32 token, MonoString *arg) M
 
 MonoException *mono_create_corlib_exception_2 (guint32 token, MonoString *arg1, MonoString *arg2) MONO_INTERNAL;
 
-MonoObject* mono_object_castclass (MonoObject *obj, MonoClass *klass) MONO_INTERNAL;
+MonoObject* mono_object_castclass_unbox (MonoObject *obj, MonoClass *klass) MONO_INTERNAL;
 
 gpointer mono_get_native_calli_wrapper (MonoImage *image, MonoMethodSignature *sig, gpointer func) MONO_INTERNAL;
 
@@ -176,7 +176,7 @@ MonoObject*
 mono_object_castclass_with_cache (MonoObject *obj, MonoClass *klass, gpointer *cache);
 
 MonoObject*
-mono_gsharedvt_constrained_call (gpointer mp, MonoMethod *cmethod, MonoClass *klass, gpointer *args) MONO_INTERNAL;
+mono_gsharedvt_constrained_call (gpointer mp, MonoMethod *cmethod, MonoClass *klass, gboolean deref_arg, gpointer *args) MONO_INTERNAL;
 
 void mono_gsharedvt_value_copy (gpointer dest, gpointer src, MonoClass *klass) MONO_INTERNAL;
 

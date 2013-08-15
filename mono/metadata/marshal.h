@@ -110,7 +110,10 @@ typedef enum {
 	WRAPPER_SUBTYPE_GSHAREDVT_OUT,
 	WRAPPER_SUBTYPE_ARRAY_ACCESSOR,
 	/* Subtypes of MONO_WRAPPER_MANAGED_TO_MANAGED */
-	WRAPPER_SUBTYPE_GENERIC_ARRAY_HELPER
+	WRAPPER_SUBTYPE_GENERIC_ARRAY_HELPER,
+	/* Subtypes of MONO_WRAPPER_DELEGATE_INVOKE */
+	WRAPPER_SUBTYPE_DELEGATE_INVOKE_VIRTUAL,
+	WRAPPER_SUBTYPE_DELEGATE_INVOKE_BOUND
 } WrapperSubtype;
 
 typedef struct {
@@ -524,16 +527,16 @@ ves_icall_Mono_Interop_ComInteropProxy_AddProxy (gpointer pUnk, MonoComInteropPr
 MonoComInteropProxy*
 ves_icall_Mono_Interop_ComInteropProxy_FindProxy (gpointer pUnk) MONO_INTERNAL;
 
-void
+MONO_API void
 mono_win32_compat_CopyMemory (gpointer dest, gconstpointer source, gsize length);
 
-void
+MONO_API void
 mono_win32_compat_FillMemory (gpointer dest, gsize length, guchar fill);
 
-void
+MONO_API void
 mono_win32_compat_MoveMemory (gpointer dest, gconstpointer source, gsize length);
 
-void
+MONO_API void
 mono_win32_compat_ZeroMemory (gpointer dest, gsize length);
 
 void
