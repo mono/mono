@@ -436,10 +436,14 @@ namespace Mono.CSharp
 
 		public ConstructorBuilder DefineModuleInitializer ()
 		{
+#if STATIC
 			if (initializer == null)
 				initializer = builder.__DefineModuleInitializer (MethodAttributes.Assembly);
 
 			return initializer;
+#else
+			throw new NotImplementedException ();
+#endif
 		}
 
 		public override bool DefineContainer ()
