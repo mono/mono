@@ -258,7 +258,7 @@ namespace System {
 					if (!strict)
 						return true;
 
-					return !(strict && (i + 1 != length));
+					return false; //!(strict && (i + 1 != length));
 				}
 
 				return true;
@@ -274,20 +274,28 @@ namespace System {
 
 			public bool Parse (out Guid guid)
 			{
-				if (TryParseNDBP (Format.N, out guid))
-					return true;
-
-				Reset ();
-				if (TryParseNDBP (Format.D, out guid))
-					return true;
-
-				Reset ();
-				if (TryParseNDBP (Format.B, out guid))
-					return true;
-
-				Reset ();
-				if (TryParseNDBP (Format.P, out guid))
-					return true;
+				switch (_length) {
+				case 32:
+					if (TryParseNDBP (Format.N, out guid))
+						return true;
+					break;
+				case 36:
+					if (TryParseNDBP (Format.D, out guid))
+						return true;
+					break;
+				case 38:
+					switch (_src [0]) {
+					case '{':
+						if (TryParseNDBP (Format.B, out guid))
+							return true;
+						break;
+					case '(':
+						if (TryParseNDBP (Format.P, out guid))
+							return true;
+						break;
+					}
+					break;
+				}
 
 				Reset ();
 				return TryParseX (out guid);
