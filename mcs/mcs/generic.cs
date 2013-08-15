@@ -860,10 +860,7 @@ namespace Mono.CSharp {
 		public TypeSpec[] InterfacesDefined {
 			get {
 				if (ifaces_defined == null) {
-					if (ifaces == null)
-						return null;
-
-					ifaces_defined = ifaces.ToArray ();
+					ifaces_defined = ifaces == null ? TypeSpec.EmptyTypes : ifaces.ToArray ();
 				}
 
 				return ifaces_defined.Length == 0 ? null : ifaces_defined;
@@ -1237,6 +1234,8 @@ namespace Mono.CSharp {
 				tps.ifaces_defined = new TypeSpec[defined.Length];
 				for (int i = 0; i < defined.Length; ++i)
 					tps.ifaces_defined [i] = inflator.Inflate (defined[i]);
+			} else if (ifaces_defined == TypeSpec.EmptyTypes) {
+				tps.ifaces_defined = TypeSpec.EmptyTypes;
 			}
 
 			var ifaces = Interfaces;
@@ -1244,6 +1243,7 @@ namespace Mono.CSharp {
 				tps.ifaces = new List<TypeSpec> (ifaces.Count);
 				for (int i = 0; i < ifaces.Count; ++i)
 					tps.ifaces.Add (inflator.Inflate (ifaces[i]));
+				tps.state |= StateFlags.InterfacesExpanded;
 			}
 
 			if (targs != null) {
@@ -1256,6 +1256,10 @@ namespace Mono.CSharp {
 		public override MemberSpec InflateMember (TypeParameterInflator inflator)
 		{
 			var tps = (TypeParameterSpec) MemberwiseClone ();
+#if DEBUG
+			tps.ID += 1000000;
+#endif
+
 			InflateConstraints (inflator, tps);
 			return tps;
 		}
