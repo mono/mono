@@ -152,7 +152,7 @@ namespace Mono.CSharp
 
 		public FieldSpec CreateField (FieldInfo fi, TypeSpec declaringType)
 		{
-			Modifiers mod = 0;
+			Modifiers mod;
 			var fa = fi.Attributes;
 			switch (fa & FieldAttributes.FieldAccessMask) {
 				case FieldAttributes.Public:

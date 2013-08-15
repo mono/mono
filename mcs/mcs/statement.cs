@@ -412,8 +412,9 @@ namespace Mono.CSharp {
 						return false;
 					empty = true;
 					return true;
-				} else
-					infinite = true;
+				}
+
+				infinite = true;
 			}
 
 			ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
@@ -548,8 +549,9 @@ namespace Mono.CSharp {
 							return false;
 						empty = true;
 						return true;
-					} else
-						infinite = true;
+					}
+
+					infinite = true;
 				}
 			} else
 				infinite = true;
@@ -2986,7 +2988,7 @@ namespace Mono.CSharp {
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			if (statements.Count == 1) {
-				Expression expr = ((Statement) statements[0]).CreateExpressionTree (ec);
+				Expression expr = statements[0].CreateExpressionTree (ec);
 				if (scope_initializers != null)
 					expr = new BlockScopeExpression (expr, this);
 
@@ -5497,7 +5499,7 @@ namespace Mono.CSharp {
 		{
 			TryFinally target = (TryFinally) t;
 
-			target.stmt = (Statement) stmt.Clone (clonectx);
+			target.stmt = stmt.Clone (clonectx);
 			if (fini != null)
 				target.fini = clonectx.LookupBlock (fini);
 		}

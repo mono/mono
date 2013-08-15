@@ -1072,7 +1072,7 @@ namespace Mono.CSharp {
 				cdata = encoder.ToArray ();
 			}
 
-			if (!ctor.DeclaringType.IsConditionallyExcluded (context, Location)) {
+			if (!ctor.DeclaringType.IsConditionallyExcluded (context)) {
 				try {
 					foreach (Attributable target in targets)
 						target.ApplyAttributeBuilder (this, ctor, cdata, predefined);

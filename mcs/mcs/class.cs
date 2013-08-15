@@ -2657,7 +2657,7 @@ namespace Mono.CSharp
 				return;
 			}
 
-			if (a.Type.IsConditionallyExcluded (this, Location))
+			if (a.Type.IsConditionallyExcluded (this))
 				return;
 
 			base.ApplyAttributeBuilder (a, ctor, cdata, pa);

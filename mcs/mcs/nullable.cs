@@ -394,7 +394,7 @@ namespace Mono.CSharp.Nullable
 				
 			value_target.AddressOf (ec, AddressOp.Store);
 			ec.Emit (OpCodes.Initobj, type);
-			((IMemoryLocation) value_target).AddressOf (ec, Mode);
+			value_target.AddressOf (ec, Mode);
 		}
 	}
 
