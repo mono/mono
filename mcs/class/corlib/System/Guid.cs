@@ -76,8 +76,8 @@ namespace System {
 			X, // {0x00000000,0x0000,0x0000,{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}}
 		}
 
-		class GuidParser {
-
+		struct GuidParser
+		{
 			private string _src;
 			private int _length;
 			private int _cur;
@@ -85,7 +85,8 @@ namespace System {
 			public GuidParser (string src)
 			{
 				_src = src;
-				Reset ();
+				_cur = 0;
+				_length = _src.Length;
 			}
 
 			void Reset ()
@@ -235,19 +236,29 @@ namespace System {
 					if (Eof)
 						return !(strict && (i + 1 != length));
 
-					char c = Char.ToLowerInvariant (_src[_cur]);
+					char c = _src [_cur];
 					if (Char.IsDigit (c)) {
 						res = res * 16 + c - '0';
 						_cur++;
-					} else if (c >= 'a' && c <= 'f') {
+						continue;
+					}
+
+					if (c >= 'a' && c <= 'f') {
 						res = res * 16 + c - 'a' + 10;
 						_cur++;
-					} else {
-						if (!strict)
-							return true;
-
-						return !(strict && (i + 1 != length));
+						continue;
 					}
+
+					if (c >= 'A' && c <= 'F') {
+						res = res * 16 + c - 'A' + 10;
+						_cur++;
+						continue;
+					}
+
+					if (!strict)
+						return true;
+
+					return !(strict && (i + 1 != length));
 				}
 
 				return true;
