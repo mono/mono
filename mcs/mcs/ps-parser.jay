@@ -1117,11 +1117,16 @@ opt_namespace_initializer
 constant_declaration
 	: opt_attributes 
 	  opt_modifiers
-	  CONST IDENTIFIER COLON type
+	  CONST IDENTIFIER opt_member_type
 	  {
 		var lt = (LocatedToken) $4;
 		var td = GetTypeDefinition (current_container);
-		current_field = new ConstantField (td, (FullNamedExpression) $6, (Modifiers) $2, CreateFullMemberName (lt), (Attributes) $1);
+		if ($5 == null) {
+			Warning_NoTypeDeclaration (GetLocation ($4), string.Format ("Constant `{0}'", lt.Value));
+			$5 = new UntypedTypeExpression (GetLocation ($2));
+		}
+
+		current_field = new ConstantField (td, (FullNamedExpression) $5, (Modifiers) $2, CreateFullMemberName (lt), (Attributes) $1);
 		if (is_config_enabled) {
 			td.AddMember (current_field);
 		}
@@ -1129,14 +1134,14 @@ constant_declaration
 				
 		$$ = current_field;
 	  }
-	  opt_const_initializer opt_field_declarators SEMICOLON
+	  opt_const_initializer opt_field_declarators opt_semicolon
 	  {
 		if (doc_support) {
 			current_field.DocComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
 		
-		lbag.AddMember (current_field, mod_locations, GetLocation ($3), GetLocation ($10));
+		lbag.AddMember (current_field, mod_locations, GetLocation ($3), GetLocation ($9));
 		current_field = null;
 	  }
 	;
@@ -1172,15 +1177,18 @@ constant_initializer_expr
 field_declaration
 	: opt_attributes
 	  opt_modifiers
-	  VAR IDENTIFIER COLON member_type
+	  VAR IDENTIFIER opt_member_type
 	  {
 	  	lexer.parsing_generic_declaration = false;
 
-		FullNamedExpression type = (FullNamedExpression) $6;
-		if (type.Type != null && type.Type.Kind == MemberKind.Void)
-			report.Error (670, GetLocation ($6), "Fields cannot have void type");
-			
 		var lt = (LocatedToken) $4;
+		FullNamedExpression type = (FullNamedExpression) $5;
+		if (type == null) {
+			Warning_NoTypeDeclaration (GetLocation ($4), string.Format ("Field `{0}'", lt.Value));
+			type = new UntypedTypeExpression (GetLocation ($4));
+		} else if (type.Type != null && type.Type.Kind == MemberKind.Void)
+			report.ErrorPlayScript (1135, GetLocation ($5), "Fields cannot have void type");
+			
 		current_field = new Field (current_type, type, (Modifiers) $2, CreateFullMemberName (lt), (Attributes) $1);
 		if (is_config_enabled) {
 			current_type.AddField (current_field);
@@ -1190,16 +1198,27 @@ field_declaration
 	  }
 	  opt_field_initializer
 	  opt_field_declarators
-	  SEMICOLON
+	  opt_semicolon
 	  { 
 		if (doc_support) {
 			current_field.DocComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
 			
-		lbag.AddMember (current_field, mod_locations, GetLocation ($10));
+		lbag.AddMember (current_field, mod_locations, GetLocation ($9));
 		$$ = current_field;
 		current_field = null;
+	  }
+	;
+
+opt_member_type
+	: /* empty */
+	  {
+	  	$$ = null;
+	  }
+	| COLON member_type
+	  {
+		$$ = $2;
 	  }
 	;
 	
@@ -1225,13 +1244,18 @@ field_declarators
 	;
 	
 field_declarator
-	: COMMA IDENTIFIER COLON member_type
+	: COMMA IDENTIFIER opt_member_type
 	  {
 		var lt = (LocatedToken) $2;
-	  	$$ = new FieldDeclarator (new SimpleMemberName (lt.Value, lt.Location), null, (FullNamedExpression) $4);
+		if ($3 == null) {
+			Warning_NoTypeDeclaration (GetLocation ($2), string.Format ("Field `{0}'", lt.Value));
+			$3 = new UntypedTypeExpression (GetLocation ($2));
+		}
+
+	  	$$ = new FieldDeclarator (new SimpleMemberName (lt.Value, lt.Location), null, (FullNamedExpression) $3);
 	  	lbag.AddLocation ($$, GetLocation ($1));
 	  }
-	| COMMA IDENTIFIER COLON member_type ASSIGN
+	| COMMA IDENTIFIER opt_member_type ASSIGN
 	  {
 		++lexer.parsing_block;
 	  }
@@ -1239,7 +1263,12 @@ field_declarator
 	  {
 		--lexer.parsing_block;
 		var lt = (LocatedToken) $2;	  
-	  	$$ = new FieldDeclarator (new SimpleMemberName (lt.Value, lt.Location), (Expression) $7, (FullNamedExpression) $4);
+		if ($3 == null) {
+			Warning_NoTypeDeclaration (GetLocation ($2), string.Format ("Field `{0}'", lt.Value));
+			$3 = new UntypedTypeExpression (GetLocation ($2));
+		}
+
+	  	$$ = new FieldDeclarator (new SimpleMemberName (lt.Value, lt.Location), (Expression) $6, (FullNamedExpression) $3);
 	  	lbag.AddLocation ($$, GetLocation ($1), GetLocation ($5));
 	  }
 	;	
@@ -3387,7 +3416,7 @@ opt_anomymous_method_type
 	:
 	  {
 		Warning_NoTypeDeclaration (lexer.Location, "Anonymous function");
-	  	$$ = new UntypedTypeExpression (lexer.Location);
+		$$ = new UntypedTypeExpression (lexer.Location);
 	  }
 	| COLON member_type
 	  {

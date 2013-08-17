@@ -1,0 +1,13 @@
+package 
+{
+	public class PrivateVirtual
+	{
+		private virtual function M1 ():void
+		{
+		}
+
+		public static function Main():void
+		{
+		}
+	}
+}

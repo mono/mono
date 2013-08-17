@@ -2,6 +2,7 @@
 ./Assembly/AssemblyInfo.cs
 ./Array.play
 ./Boolean.cs
+./Date.play
 ./DeprecatedAttribute.cs
 ./EmbedAttribute.cs
 ./EventAttribute.cs

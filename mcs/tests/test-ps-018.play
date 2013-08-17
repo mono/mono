@@ -13,6 +13,7 @@ package
 		public static const cs8:int = vs8;
 		private static const cs9:String;
 		public static const cs10:Number;
+		static const cs11;
 		
 		static var vs8:int = 8;
 
@@ -23,6 +24,7 @@ package
 		public const c5:int = 20, c6:uint = 70;
 		public const c8:int = v8;
 		private const c9:String;
+		const c11;
 		
 		static var v8:int = 8;
 		

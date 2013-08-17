@@ -1,0 +1,19 @@
+package 
+{
+	public class DefaultAccessModifiers
+	{
+		public static function Main():int
+		{
+			var t:Test = new Test ();
+			t.F1 ();
+			return 0;
+		}
+	}
+	
+	public class Test
+	{
+		function F1 ():void
+		{
+		}
+	}
+}

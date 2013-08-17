@@ -2084,7 +2084,7 @@ namespace Mono.PlayScript
 
 		private Method (TypeDefinition parent, FullNamedExpression return_type, Modifiers mod,
 					MemberName name, ParametersCompiled parameters, Attributes attrs)
-			: base (parent, return_type, mod, AllowedModifiers, name, parameters, attrs)
+			: base (parent, return_type, mod, AllowedModifiers, Modifiers.INTERNAL, name, parameters, attrs)
 		{
 		}
 
@@ -2117,6 +2117,11 @@ namespace Mono.PlayScript
 					m.Report.ErrorPlayScript (1012, m.Location, "`{0}': The static attribute may be used only on definitions inside a class",
 						m.GetSignatureForError ());
 				}
+			}
+
+			if ((mod & Modifiers.AccessibilityMask) == 0) {
+				m.Report.WarningPlayScript (1085, m.Location, "`{0}' will be scoped to the default namespace: internal",
+					m.GetSignatureForError ());
 			}
 
 			return m;
@@ -2155,6 +2160,12 @@ namespace Mono.PlayScript
 			if (Parent is PackageGlobalContainer) {
 				ModFlags |= Modifiers.STATIC;
 			}
+
+			//
+			// Allowed but makes no sense
+			//
+			if ((ModFlags & (Modifiers.VIRTUAL | Modifiers.PRIVATE)) == (Modifiers.VIRTUAL | Modifiers.PRIVATE))
+				ModFlags &= ~Modifiers.VIRTUAL;
 
 			return base.Define ();
 		}

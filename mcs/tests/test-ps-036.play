@@ -10,6 +10,7 @@ package
 		public static var cs8:int = vs8;
 		private static var cs9:String;
 		public static var cs10:Number;
+		static var cs11;
 		
 		static var vs8:int = 8;
 
@@ -21,6 +22,7 @@ package
 		public var c8:int = v8;
 		private var c9:String;
 		public var c10:Number;
+		internal var c11;
 		
 		static var v8:int = 8;
 		
@@ -46,6 +48,9 @@ package
 				return 16;
 			if (!isNaN (cs10))
 				return 17;
+			// TODO: undefined
+			//if (cs11 != undefined)
+			//	return 18;
 			
 			var c:Fields = new Fields ();
 			if (c.c1 == null)
@@ -64,6 +69,9 @@ package
 				return 25;
 			if (!isNaN (c.c10))
 				return 26;
+			// TODO: undefined
+			//if (c.c11 != undefined)
+			//	return 27;
 
 			trace ("ok");
 			return 0;

@@ -539,6 +539,12 @@ namespace Mono.CSharp {
 		{
 		}
 
+		protected MethodOrOperator (TypeDefinition parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, Modifiers defaultModifiers, MemberName name,
+				Attributes attrs, ParametersCompiled parameters)
+			: base (parent, type, mod, allowed_mod, defaultModifiers, name, attrs, parameters)
+		{
+		}
+
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Target == AttributeTargets.ReturnValue) {
@@ -848,9 +854,9 @@ namespace Mono.CSharp {
 		{
 		}
 
-		protected Method (TypeDefinition parent, FullNamedExpression return_type, Modifiers mod, Modifiers amod,
+		protected Method (TypeDefinition parent, FullNamedExpression return_type, Modifiers mod, Modifiers amod, Modifiers defaultModifiers,
 					MemberName name, ParametersCompiled parameters, Attributes attrs)
-			: base (parent, return_type, mod, amod, name, attrs, parameters)
+			: base (parent, return_type, mod, amod, defaultModifiers, name, attrs, parameters)
 		{
 		}
 

@@ -2,8 +2,11 @@ package
 {
 	public class OptionalSemicolonsTest
 	{
+		public var x:String
+		public const xg:int = 0
+		
 		public function get F2 (): int
-		{	
+		{
 			return 1;
 		};
 		
