@@ -26,5 +26,14 @@ namespace System.Windows.Forms.DataVisualization.Charting
 {
 	public class ZTestResult
 	{
+		public double FirstSeriesMean { get; private set; }
+		public double FirstSeriesVariance { get; private set; }
+		public double ProbabilityZOneTail { get; private set; }
+		public double ProbabilityZTwoTail { get; private set; }
+		public double SecondSeriesMean { get; private set; }
+		public double SecondSeriesVariance { get; private set; }
+		public double ZCriticalValueOneTail { get; private set; }
+		public double ZCriticalValueTwoTail { get; private set; }
+		public double ZValue { get; private set; }
 	}
 }
