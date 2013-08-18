@@ -449,7 +449,7 @@ namespace System.Reflection.Emit {
 			return m.AddRef (str);
 		}
 
-		public int GetToken (MethodInfo method, Type[] opt_param_types) {
+		public int GetToken (MethodBase method, Type[] opt_param_types) {
 			throw new InvalidOperationException ();
 		}
 

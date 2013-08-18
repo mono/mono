@@ -67,7 +67,7 @@ namespace System.Reflection.Emit {
 		}
 
 		public int GetTokenFor (RuntimeMethodHandle method) {
-			MethodInfo mi = (MethodInfo)MethodBase.GetMethodFromHandle (method);
+			MethodBase mi = MethodBase.GetMethodFromHandle (method);
 			return this.method.GetILGenerator ().TokenGenerator.GetToken (mi, false);
 		}
 
