@@ -454,7 +454,7 @@ namespace Mono.CSharp {
 			Arguments delegate_arguments = new Arguments (pd.Count);
 			for (int i = 0; i < pd.Count; ++i) {
 				Argument.AType atype_modifier;
-				switch (pd.FixedParameters [i].ModFlags) {
+				switch (pd.FixedParameters [i].ModFlags & Parameter.Modifier.RefOutMask) {
 				case Parameter.Modifier.REF:
 					atype_modifier = Argument.AType.Ref;
 					break;

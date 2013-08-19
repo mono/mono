@@ -55148,7 +55148,7 @@
   <test name="test-anon-94.cs">
     <type name="Program">
       <method name="Int32 Main()" attrs="150">
-        <size>75</size>
+        <size>97</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -55183,8 +55183,31 @@
       <method name="Void &lt;Print&gt;__BaseCallProxy0(Int32)" attrs="129">
         <size>8</size>
       </method>
-      <method name="Void &lt;Print&gt;m__1()" attrs="129">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+BaseClass">
+      <method name="Void TestOut(Int32 ByRef)" attrs="454">
+        <size>5</size>
+      </method>
+    </type>
+    <type name="Program+Derived">
+      <method name="Void TestOut(Int32 ByRef)" attrs="198">
+        <size>50</size>
+      </method>
+      <method name="Void &lt;TestOut&gt;__BaseCallProxy1(Int32 ByRef)" attrs="129">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="Program+DerivedLibrary">
+      <method name="Void &lt;Print&gt;m__2()" attrs="129">
         <size>9</size>
+      </method>
+    </type>
+    <type name="Program+Derived+&lt;TestOut&gt;c__AnonStorey0">
+      <method name="Void &lt;&gt;m__1()" attrs="131">
+        <size>30</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>

@@ -3427,8 +3427,23 @@ namespace Mono.CSharp {
 			int count = parameters.Count;
 			Arguments args = new Arguments (count);
 			for (int i = 0; i < count; ++i) {
-				var arg_expr = GetParameterReference (i, parameter_info[i].Location);
-				args.Add (new Argument (arg_expr));
+				var pi = parameter_info[i];
+				var arg_expr = GetParameterReference (i, pi.Location);
+
+				Argument.AType atype_modifier;
+				switch (pi.Parameter.ParameterModifier & Parameter.Modifier.RefOutMask) {
+				case Parameter.Modifier.REF:
+					atype_modifier = Argument.AType.Ref;
+					break;
+				case Parameter.Modifier.OUT:
+					atype_modifier = Argument.AType.Out;
+					break;
+				default:
+					atype_modifier = 0;
+					break;
+				}
+
+				args.Add (new Argument (arg_expr, atype_modifier));
 			}
 
 			return args;
