@@ -52,16 +52,9 @@ my $dependencyBranchToUse = "unity3.0";
 my $booCheckout = "$root/external/boo";
 my $usCheckout = "$root/external/unityscript";
 
-my $unity=1;
-my $monotouch=1;
-
 my $skipbuild=0;
-my $cleanbuild=1;
 GetOptions(
    "skipbuild=i"=>\$skipbuild,
-   "cleanbuild=i"=>\$cleanbuild,
-   "unity=i"=>\$unity,
-   "monotouch=i"=>\$monotouch,
 ) or die ("illegal cmdline options");
 
 my $monodistroLibMono = "$monodistro/lib/mono";
@@ -75,7 +68,7 @@ sub UnityBooc
 
 sub BuildUnityScriptForUnity
 {	
-	# TeamCity is handling this
+	# Build system is handling this
 	if (!$ENV{UNITY_THISISABUILDMACHINE}) {
 		GitClone("git://github.com/Unity-Technologies/boo.git", $booCheckout);
 	}
@@ -132,18 +125,15 @@ sub cp
 	print "Copied: $cmdLine\n";
 }
 
-if ($unity)
-{
-	rmtree("$root/builds");
-	rmtree("$output");
+rmtree("$root/builds");
+rmtree("$output");
 
-	BuildUnityScriptForUnity();
+BuildUnityScriptForUnity();
 
-	cp("$output/Boo.Lang.dll $libmono/bare-minimum/Boo.Lang.dll*");
-	cp("$output/Boo.Lang.pdb $libmono/bare-minimum/Boo.Lang.pdb*");
-	cp("$output/UnityScript.Lang.* $libmono/bare-minimum/UnityScript.Lang.*");
-	cp("$booCheckout/src/Boo.sn* $libmono/bare-minimum/Boo.sn*");
-}
+cp("$output/Boo.Lang.dll $libmono/bare-minimum/Boo.Lang.dll*");
+cp("$output/Boo.Lang.pdb $libmono/bare-minimum/Boo.Lang.pdb*");
+cp("$output/UnityScript.Lang.* $libmono/bare-minimum/UnityScript.Lang.*");
+cp("$booCheckout/src/Boo.sn* $libmono/bare-minimum/Boo.sn*");
 
 if($ENV{UNITY_THISISABUILDMACHINE})
 {
