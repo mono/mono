@@ -33,9 +33,8 @@ sub AddDotNetFolderToPath() {
 	}
 
 	if ($netFrameworkLocation eq '') {
-    	print("Could not find dotnet framework folder. Checked: $checkedLocations");
-    	die;
-	}
+    	die("Could not find dotnet framework folder. Checked: $checkedLocations");
+    }
 
 	print("Using .Net framework: $netFrameworkLocation");
 	$ENV{PATH} = "$ENV{PATH};$netFrameworkLocation";
@@ -45,7 +44,7 @@ AddDotNetFolderToPath();
 
 my $output = "$ENV{TEMP}/output/BareMinimum";
 
-print "My Path: $ENV{PATH}\n";
+print("Environment Path: $ENV{PATH}\n");
 
 my $dependencyBranchToUse = "unity3.0";
 
