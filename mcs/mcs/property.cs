@@ -915,6 +915,28 @@ namespace Mono.CSharp
 		}
 	}
 
+	public class EventDeclarator
+	{
+		public EventDeclarator (EventField field, SimpleMemberName name, Expression initializer)
+		{
+			this.Name = name;
+			this.Field = field;
+			this.Field.Initializer = Initializer;
+		}
+
+		#region Properties
+
+		public EventField Field { get; private set; }
+		public SimpleMemberName Name { get; private set; }
+		public Expression Initializer {
+			get {
+				return Field.Initializer;
+			}
+		}
+
+		#endregion
+	}
+
 	/// <summary>
 	/// Event is declared like field.
 	/// </summary>
@@ -1027,7 +1049,7 @@ namespace Mono.CSharp
 
 		Expression initializer;
 		Field backing_field;
-		List<FieldDeclarator> declarators;
+		List<EventDeclarator> declarators;
 
 		public EventField (TypeDefinition parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
 			: base (parent, type, mod_flags, name, attrs)
@@ -1038,7 +1060,7 @@ namespace Mono.CSharp
 
 		#region Properties
 
-		public List<FieldDeclarator> Declarators {
+		public List<EventDeclarator> Declarators {
 			get {
 				return this.declarators;
 			}
@@ -1073,10 +1095,10 @@ namespace Mono.CSharp
 			visitor.Visit (this);
 		}
 
-		public void AddDeclarator (FieldDeclarator declarator)
+		public void AddDeclarator (EventDeclarator declarator)
 		{
 			if (declarators == null)
-				declarators = new List<FieldDeclarator> (2);
+				declarators = new List<EventDeclarator> (2);
 
 			declarators.Add (declarator);
 
@@ -1114,10 +1136,8 @@ namespace Mono.CSharp
 
 				var t = new TypeExpression (MemberType, TypeExpression.Location);
 				foreach (var d in declarators) {
-					var ef = new EventField (Parent, t, mod_flags_src, new MemberName (d.Name.Value, d.Name.Location), OptAttributes);
-
-					if (d.Initializer != null)
-						ef.initializer = d.Initializer;
+					var ef = d.Field;
+					ef.member_type = member_type;
 
 					ef.Define ();
 					Parent.PartialContainer.Members.Add (ef);

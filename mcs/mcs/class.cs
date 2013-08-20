@@ -497,8 +497,9 @@ namespace Mono.CSharp
 		// Holds a list of fields that have initializers
 		protected List<FieldInitializer> initialized_fields;
 
-		// Holds a list of static fields that have initializers
-		protected List<FieldInitializer> initialized_static_fields;
+		// Holds a list of static initializers
+		// TODO: It's both Statement and ExpressionStatement
+		protected List<object> static_initializers;
 
 		Dictionary<MethodSpec, Method> hoisted_base_call_proxies;
 
@@ -944,16 +945,21 @@ namespace Mono.CSharp
 
 		public virtual void RegisterFieldForInitialization (MemberCore field, FieldInitializer expression)
 		{
+			RegisterFieldForInitialization (field, expression, (field.ModFlags & Modifiers.STATIC) != 0);
+		}
+
+		public void RegisterFieldForInitialization (MemberCore field, FieldInitializer expression, bool staticInitializer)
+		{
 			if (IsPartialPart)
 				PartialContainer.RegisterFieldForInitialization (field, expression);
 
-			if ((field.ModFlags & Modifiers.STATIC) != 0){
-				if (initialized_static_fields == null) {
-					HasStaticFieldInitializer = true;
-					initialized_static_fields = new List<FieldInitializer> (4);
+			if (staticInitializer) {
+				if (static_initializers == null) {
+					HasStaticInitializer = true;
+					static_initializers = new List<object> ();
 				}
 
-				initialized_static_fields.Add (expression);
+				static_initializers.Add (expression);
 			} else {
 				if (initialized_fields == null)
 					initialized_fields = new List<FieldInitializer> (4);
@@ -964,54 +970,89 @@ namespace Mono.CSharp
 
 		public FieldInitializer GetFieldInitializer (MemberCore field)
 		{
-			List<FieldInitializer> initializer;
 			if ((field.ModFlags & Modifiers.STATIC) != 0) {
-				initializer = initialized_static_fields;
-			} else {
-				initializer = initialized_fields;
+				if (static_initializers == null)
+					return null;
+
+				foreach (var stmt in static_initializers) {
+					var fi = stmt as FieldInitializer;
+					if (fi == null)
+						continue;
+
+					if (fi.Field == field)
+						return fi;
+				}
+
+				return null;
 			}
 
-			if (initializer == null)
+			if (initialized_fields == null)
 				return null;
 
-			return initializer.Find (l => l.Field == field);
+			return initialized_fields.Find (l => l.Field == field);
 
 		}
 
-		public void ResolveFieldInitializers (BlockContext ec)
+		public virtual void RegisterInitialization (Statement statement, bool firstIfPossible)
+		{
+			if (static_initializers == null)
+				static_initializers = new List<object> ();
+
+			HasStaticInitializer = true;
+			if (firstIfPossible)
+				static_initializers.Insert (0, statement);
+			else
+				static_initializers.Add (statement);
+		}
+
+		public void ResolveFieldInitializers (BlockContext bc)
 		{
 			Debug.Assert (!IsPartialPart);
 
-			if (ec.IsStatic) {
-				if (initialized_static_fields == null)
+			if (bc.IsStatic) {
+				if (static_initializers == null)
 					return;
 
-				bool has_complex_initializer = !ec.Module.Compiler.Settings.Optimize;
+				bool has_complex_initializer = !bc.Module.Compiler.Settings.Optimize;
 				int i;
-				ExpressionStatement [] init = new ExpressionStatement [initialized_static_fields.Count];
-				for (i = 0; i < initialized_static_fields.Count; ++i) {
-					FieldInitializer fi = initialized_static_fields [i];
-					ExpressionStatement s = fi.ResolveStatement (ec);
-					if (s == null) {
-						s = EmptyExpressionStatement.Instance;
-					} else if (!fi.IsSideEffectFree) {
-						has_complex_initializer |= true;
+				var init = new Statement [static_initializers.Count];
+				for (i = 0; i < static_initializers.Count; ++i) {
+					var s = static_initializers[i];
+					FieldInitializer fi = s as FieldInitializer;
+					Statement stmt;
+
+					if (fi != null) {
+						var se = fi.ResolveStatement (bc);
+						if (se == null) {
+							stmt = new EmptyStatement (fi.Location);
+						} else {
+							stmt = new StatementExpression (se);
+							if (!fi.IsSideEffectFree)
+								has_complex_initializer |= true;
+						}
+					} else {
+						// It's safe to use current context no partial types support in PS
+						stmt = (Statement) s;
+						if (!stmt.Resolve (bc))
+							stmt = new EmptyStatement (stmt.loc);
 					}
 
-					init [i] = s;
+					init [i] = stmt;
 				}
 
-				for (i = 0; i < initialized_static_fields.Count; ++i) {
-					FieldInitializer fi = initialized_static_fields [i];
-					//
-					// Need special check to not optimize code like this
-					// static int a = b = 5;
-					// static int b = 0;
-					//
-					if (!has_complex_initializer && fi.IsDefaultInitializer)
-						continue;
+				for (i = 0; i < static_initializers.Count; ++i) {
+					FieldInitializer fi = static_initializers[i] as FieldInitializer;
+					if (fi != null) {
+						//
+						// Need special check to not optimize code like this
+						// static int a = b = 5;
+						// static int b = 0;
+						//
+						if (!has_complex_initializer && fi.IsDefaultInitializer)
+							continue;
+					}
 
-					ec.CurrentBlock.AddScopeStatement (new StatementExpression (init [i]));
+					bc.CurrentBlock.AddScopeStatement (init [i]);
 				}
 
 				return;
@@ -1022,17 +1063,17 @@ namespace Mono.CSharp
 
 			for (int i = 0; i < initialized_fields.Count; ++i) {
 				FieldInitializer fi = initialized_fields [i];
-				ExpressionStatement s = fi.ResolveStatement (ec);
+				ExpressionStatement s = fi.ResolveStatement (bc);
 				if (s == null)
 					continue;
 
 				//
 				// Field is re-initialized to its default value => removed
 				//
-				if (fi.IsDefaultInitializer && ec.Module.Compiler.Settings.Optimize)
+				if (fi.IsDefaultInitializer && bc.Module.Compiler.Settings.Optimize)
 					continue;
 
-				ec.CurrentBlock.AddScopeStatement (new StatementExpression (s));
+				bc.CurrentBlock.AddScopeStatement (new StatementExpression (s));
 			}
 		}
 
@@ -2246,7 +2287,7 @@ namespace Mono.CSharp
 			
 			containers = null;
 			initialized_fields = null;
-			initialized_static_fields = null;
+			static_initializers = null;
 			type_bases = null;
 			OptAttributes = null;
 		}
@@ -2498,7 +2539,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		public bool HasStaticFieldInitializer {
+		public bool HasStaticInitializer {
 			get {
 				return (cached_method & CachedMethods.HasStaticFieldInitializer) != 0;
 			}
@@ -2625,7 +2666,7 @@ namespace Mono.CSharp
 
 		public override void Emit ()
 		{
-			if (!has_static_constructor && HasStaticFieldInitializer) {
+			if (!has_static_constructor && HasStaticInitializer) {
 				var c = DefineDefaultConstructor (true);
 				c.Define ();
 			}
@@ -3641,6 +3682,9 @@ namespace Mono.CSharp
 			get {
 				return member_type;
 			}
+			set {
+				member_type = value;
+			}
 		}
 
 		public FullNamedExpression TypeExpression {
@@ -3764,8 +3808,12 @@ namespace Mono.CSharp
 
 		protected virtual bool ResolveMemberType ()
 		{
-			if (member_type != null)
+			if (member_type != null) {
+				if (type_expr == null)
+					return true;
+
 				throw new InternalErrorException ("Multi-resolve");
+			}
 
 			member_type = type_expr.ResolveAsType (this);
 			return member_type != null;

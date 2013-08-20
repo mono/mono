@@ -1,9 +1,9 @@
 package 
 {
 	trace ("start");
-	GlobalStatements.Test (5);
+	PackageInitializers.Test (5);
 	
-	public class GlobalStatements
+	public class PackageInitializers
 	{
 		private static var field:int;
 

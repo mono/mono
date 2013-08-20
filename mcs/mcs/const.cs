@@ -59,6 +59,7 @@ namespace Mono.CSharp {
 
 			Parent.MemberCache.AddMember (spec);
 
+			// TODO: I think this is too late for registration. Constant can be referenced before it's initialized
 			if ((field_attr & FieldAttributes.InitOnly) != 0)
 				Parent.PartialContainer.RegisterFieldForInitialization (this,
 					new FieldInitializer (this, initializer, Location));
@@ -66,9 +67,11 @@ namespace Mono.CSharp {
 			if (declarators != null) {
 				var t = new TypeExpression (MemberType, TypeExpression.Location);
 				foreach (var d in declarators) {
-					var c = new Const (Parent, t, ModFlags & ~Modifiers.STATIC, new MemberName (d.Name.Value, d.Name.Location), OptAttributes);
-					c.initializer = d.Initializer;
-					((ConstInitializer) c.initializer).Name = d.Name.Value;
+					var c = d.Field;
+					if (c.TypeExpression == null)
+						c.MemberType = member_type;
+
+					((ConstInitializer) c.Initializer).Name = d.Name.Value;
 					c.Define ();
 					Parent.PartialContainer.Members.Add (c);
 				}

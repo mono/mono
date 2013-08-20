@@ -546,11 +546,9 @@ namespace Mono.CSharp {
 		FieldBase mc;
 
 		public FieldInitializer (FieldBase mc, Expression expression, Location loc)
-			: base (new FieldExpr (mc.Spec, expression.Location), expression, loc)
+			: base (null, expression, loc)
 		{
 			this.mc = mc;
-			if (!mc.IsStatic)
-				((FieldExpr)target).InstanceExpression = new CompilerGeneratedThis (mc.CurrentType, expression.Location);
 		}
 
 		public bool InlineConstantInitialization { get; set; }
@@ -574,6 +572,15 @@ namespace Mono.CSharp {
 				return null;
 
 			if (resolved == null) {
+				if (target == null) {
+					var fe = new FieldExpr (mc.Spec, source.Location);
+
+					if (!mc.IsStatic)
+						fe.InstanceExpression = new CompilerGeneratedThis (mc.CurrentType, source.Location);
+
+					target = fe;
+				}
+
 				resolved = ResolveInitializer (ec);
 			}
 

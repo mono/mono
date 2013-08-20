@@ -30,16 +30,22 @@ namespace Mono.CSharp
 {
 	public class FieldDeclarator
 	{
-		public FieldDeclarator (SimpleMemberName name, Expression initializer)
+		public FieldDeclarator (FieldBase field, SimpleMemberName name, Expression initializer)
 		{
 			this.Name = name;
-			this.Initializer = initializer;
+			this.Field = field;
+			this.Field.Initializer = initializer;
 		}
 
 		#region Properties
 
+		public FieldBase Field { get; private set; }
 		public SimpleMemberName Name { get; private set; }
-		public Expression Initializer { get; private set; }
+		public Expression Initializer {
+			get {
+				return Field.Initializer;
+			}
+		}
 
 		#endregion
 
@@ -423,9 +429,10 @@ namespace Mono.CSharp
 					GetSignatureForError ());
 			} else if (declarators != null) {
 				foreach (var d in declarators) {
-					var f = new FixedField (Parent, d.GetFieldTypeExpression (this), ModFlags, new MemberName (d.Name.Value, d.Name.Location), OptAttributes);
-					f.initializer = d.Initializer;
-					((ConstInitializer) f.initializer).Name = d.Name.Value;
+					var f = d.Field;
+					f.MemberType = member_type;
+
+ 					((ConstInitializer) f.Initializer).Name = d.Name.Value;
 					f.Define ();
 					Parent.PartialContainer.Members.Add (f);
 				}
@@ -649,23 +656,20 @@ namespace Mono.CSharp
 				Parent.MemberCache.AddMember (spec, full_name);
 			}
 
-			if (initializer != null) {
-				Parent.RegisterFieldForInitialization (this,
-					new FieldInitializer (this, initializer, TypeExpression.Location) {
-						InlineConstantInitialization = Parent.IsPlayScriptType
-					});
-			} else {
-				if (Parent.IsPlayScriptType && MemberType == Module.PlayscriptTypes.Number) {
-					Parent.RegisterFieldForInitialization (this,
-						new FieldInitializer (this, new DoubleConstant (Compiler.BuiltinTypes, double.NaN, Location.Null), Location.Null));
+			if (initializer == null && Parent.IsPlayScriptType && MemberType == Module.PlayscriptTypes.Number) {
+				var fi = new FieldInitializer (this, new DoubleConstant (Compiler.BuiltinTypes, double.NaN, Location.Null), Location.Null);
+				if (IsStatic) {
+					Parent.PartialContainer.RegisterInitialization (new StatementExpression (fi), true);
+				} else {
+					Parent.PartialContainer.RegisterFieldForInitialization (this, fi, false);
 				}
 			}
 
 			if (declarators != null) {
 				foreach (var d in declarators) {
-					var f = new Field (Parent, d.GetFieldTypeExpression (this), ModFlags, new MemberName (d.Name.Value, d.Name.Location), OptAttributes);
-					if (d.Initializer != null)
-						f.initializer = d.Initializer;
+					var f = d.Field;
+					if (f.TypeExpression == null)
+						f.MemberType = member_type;
 
 					f.Define ();
 					Parent.PartialContainer.Members.Add (f);

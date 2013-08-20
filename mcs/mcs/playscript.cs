@@ -1531,7 +1531,7 @@ namespace Mono.PlayScript
 
 	public class NamespaceField : FieldBase
 	{
-		class NamespaceInitializer : FieldInitializer
+		public class NamespaceInitializer : FieldInitializer
 		{
 			readonly NamespaceField field;
 
@@ -1606,10 +1606,6 @@ namespace Mono.PlayScript
 
 			spec = new NamespaceFieldSpec (Parent.Definition, this, MemberType, FieldBuilder, ModFlags);
 			Parent.MemberCache.AddMember (spec);
-
-			if (initializer != null) {
-				Parent.PartialContainer.RegisterFieldForInitialization (this,  new NamespaceInitializer (this, initializer, Location));
-			}
 
 			return true;
 		}
@@ -1880,14 +1876,14 @@ namespace Mono.PlayScript
 
 	public class FieldDeclarator : CSharp.FieldDeclarator
 	{
-		public FieldDeclarator (SimpleMemberName name, Expression initializer, FullNamedExpression typeExpr)
-			: base (name, initializer)
+		public FieldDeclarator (FieldBase field, SimpleMemberName name, Expression initializer, FullNamedExpression typeExpr)
+			: base (field, name, initializer)
 		{
 			this.TypeExpression = typeExpr;
 		}
 
-		public FieldDeclarator (SimpleMemberName name, Expression initializer)
-			: base (name, initializer)
+		public FieldDeclarator (FieldBase field, SimpleMemberName name, Expression initializer)
+			: base (field, name, initializer)
 		{
 		}
 
@@ -2120,7 +2116,7 @@ namespace Mono.PlayScript
 			}
 
 			if ((mod & Modifiers.AccessibilityMask) == 0) {
-				m.Report.WarningPlayScript (1085, m.Location, "`{0}' will be scoped to the default namespace: internal",
+				m.Report.WarningPlayScript (1085, m.Location, "`{0}': will be scoped to the default namespace `internal'",
 					m.GetSignatureForError ());
 			}
 

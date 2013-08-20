@@ -761,8 +761,8 @@ package_statement
 	| no_config_package_directive
 	| valid_declaration_statement
 	  {
-	  	var package = (Package) current_container;
-	  	package.GetBlock ().AddStatement ((Statement) $1);
+		var package = (Package) current_container;
+		package.GetBlock ().AddStatement ((Statement) $1);
 	  }
 	| namespace_declaration
 	;
@@ -1030,11 +1030,17 @@ class_member_declaration
 	| indexer_declaration
 	| operator_declaration
 	| type_declaration
-	| member_config_block
-	| config_member_declaration	
 	| attributes_without_members
 	| use_namespace_class_directive
 	| import_class_directive
+//	| valid_declaration_statement
+//	  {
+//	  	var stmt = (Statement) $1;
+//	  	if (!(current_type is Class) && stmt != null)
+//	  		report.ErrorPlayScript (-20, stmt.loc, "`{0}': Only class containers can contain type initializers");
+//
+//	  	current_type.RegisterInitialization (stmt);
+//	  }
 	| error
 	  {
 		report.Error (1519, lexer.Location, "Unexpected symbol `{0}' in class, struct, or interface member declaration",
@@ -1065,7 +1071,7 @@ import_class_directive
 	  	}
 	  }
 	;
-
+/*
 config_member_declaration
 	: IDENTIFIER_CONFIG
 	  {
@@ -1092,7 +1098,7 @@ member_config_block
 	  	$$ = $4;
 	  }
 	;	  
-
+*/
 namespace_declaration
 	: opt_attributes 
 	  opt_modifiers
@@ -1103,6 +1109,10 @@ namespace_declaration
 
 		var ns = new NamespaceField (td, (Modifiers) $2, CreateFullMemberName (lt), (Expression) $5, (Attributes) $1);
 		td.AddMember (ns);
+
+		if ($5 != null) {
+			td.RegisterFieldForInitialization (ns,  new NamespaceField.NamespaceInitializer (ns, (Expression) $5, GetLocation ($5)), true);
+		}
 	  }
 	;
 
@@ -1165,6 +1175,14 @@ field_initializer
 	  {
 	  	--lexer.parsing_block;
 		current_field.Initializer = (Expression) $3;
+
+		if (!(current_field is ConstantField)) {
+			current_type.RegisterFieldForInitialization (current_field,
+				new FieldInitializer (current_field, (Expression) $3, GetLocation ($1)) {
+					InlineConstantInitialization = true
+				});
+		}
+
 		end_block (lexer.Location);
 		current_local_parameters = null;
 	  }
@@ -1252,7 +1270,8 @@ field_declarator
 			$3 = new UntypedTypeExpression (GetLocation ($2));
 		}
 
-	  	$$ = new FieldDeclarator (new SimpleMemberName (lt.Value, lt.Location), null, (FullNamedExpression) $3);
+		var field = new Field (current_type, (TypeExpression) $3, current_field.ModFlags, new MemberName (lt.Value, lt.Location), current_field.OptAttributes);
+	  	$$ = new FieldDeclarator (field, new SimpleMemberName (lt.Value, lt.Location), null);
 	  	lbag.AddLocation ($$, GetLocation ($1));
 	  }
 	| COMMA IDENTIFIER opt_member_type ASSIGN
@@ -1268,7 +1287,15 @@ field_declarator
 			$3 = new UntypedTypeExpression (GetLocation ($2));
 		}
 
-	  	$$ = new FieldDeclarator (new SimpleMemberName (lt.Value, lt.Location), (Expression) $6, (FullNamedExpression) $3);
+		var field = new Field (current_type, (TypeExpression) $3, current_field.ModFlags, new MemberName (lt.Value, lt.Location), current_field.OptAttributes);
+	  	$$ = new FieldDeclarator (field, new SimpleMemberName (lt.Value, lt.Location), (Expression) $6);
+		if (!(current_field is ConstantField)) {
+			current_type.RegisterFieldForInitialization (field,
+				new FieldInitializer (field, (Expression) $6, GetLocation ($4)) {
+					InlineConstantInitialization = true
+			});
+		}
+
 	  	lbag.AddLocation ($$, GetLocation ($1), GetLocation ($5));
 	  }
 	;	
@@ -3388,14 +3415,7 @@ typeof_type_expression
 	 	$$ = null;
 	 }
 	;
-/*
-qualified_identifier
-	: IDENTIFIER DOUBLE_COLON
-	  {
-		$$ = $1;
-	  }
-	;
-*/
+
 anonymous_method_expression
 	: FUNCTION OPEN_PARENS
 	  {
@@ -4981,12 +5001,12 @@ expression_statement
 		lbag.AddStatement ($$, GetLocation ($2));
 	  }
 	| statement_expression COMPLETE_COMPLETION { $$ = $1; }
-	| statement_expression CLOSE_BRACE
-	  {
-		$$ = $1;
-		report.Error (1002, GetLocation ($2), "; expected");
-		lexer.putback ('}');
-	  }
+//	| statement_expression CLOSE_BRACE
+//	  {
+//		$$ = $1;
+//		report.Error (1002, GetLocation ($2), "; expected");
+//		lexer.putback ('}');
+//	  }
 	;
 
 interactive_expression_statement

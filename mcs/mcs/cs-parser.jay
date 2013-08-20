@@ -1043,7 +1043,9 @@ constant_declarator
 	: COMMA IDENTIFIER constant_initializer
 	  {
 		var lt = (LocatedToken) $2;
-	  	$$ = new FieldDeclarator (new SimpleMemberName (lt.Value, lt.Location), (ConstInitializer) $3);
+		var field = new Const (current_type, null, current_field.ModFlags, new MemberName (lt.Value, lt.Location), current_field.OptAttributes);
+
+	  	$$ = new FieldDeclarator (field, new SimpleMemberName (lt.Value, lt.Location), (ConstInitializer) $3);
 	  	lbag.AddLocation ($$, GetLocation ($1));
 	  }
 	;		
@@ -1145,6 +1147,9 @@ opt_field_initializer
 	  {
 	  	--lexer.parsing_block;
 		current_field.Initializer = (Expression) $3;
+		current_type.RegisterFieldForInitialization (current_field,
+			new FieldInitializer (current_field, (Expression) $3, GetLocation ($1)));
+
 		lbag.AppendToMember (current_field, GetLocation ($1));
 		end_block (lexer.Location);
 		current_local_parameters = null;
@@ -1171,7 +1176,9 @@ field_declarator
 	: COMMA IDENTIFIER
 	  {
 		var lt = (LocatedToken) $2;
-	  	$$ = new FieldDeclarator (new SimpleMemberName (lt.Value, lt.Location), null);
+		var field = new Field (current_type, null, current_field.ModFlags, new MemberName (lt.Value, lt.Location), current_field.OptAttributes);
+
+	  	$$ = new FieldDeclarator (field, new SimpleMemberName (lt.Value, lt.Location), null);
 	  	lbag.AddLocation ($$, GetLocation ($1));
 	  }
 	| COMMA IDENTIFIER ASSIGN
@@ -1181,9 +1188,14 @@ field_declarator
 	  variable_initializer
 	  {
 		--lexer.parsing_block;
-		var lt = (LocatedToken) $2;	  
-	  	$$ = new FieldDeclarator (new SimpleMemberName (lt.Value, lt.Location), (Expression) $5);
-	  	lbag.AddLocation ($$, GetLocation ($1), GetLocation ($3));
+		var lt = (LocatedToken) $2;
+		var field = new Field (current_type, null, current_field.ModFlags, new MemberName (lt.Value, lt.Location), current_field.OptAttributes);
+	  	var decl = new FieldDeclarator (field, new SimpleMemberName (lt.Value, lt.Location), (Expression) $5);
+		current_type.RegisterFieldForInitialization (field,
+			new FieldInitializer (field, (Expression) $5, GetLocation ($1)));
+
+	  	lbag.AddLocation (decl, GetLocation ($1), GetLocation ($3));
+	  	$$ = decl;
 	  }
 	;	
 
@@ -1206,8 +1218,10 @@ fixed_field_declarators
 fixed_field_declarator
 	: COMMA IDENTIFIER fixed_field_size
 	  {
-		var lt = (LocatedToken) $2;	  
-		$$ = new FieldDeclarator (new SimpleMemberName (lt.Value, lt.Location), (ConstInitializer) $3);
+		var lt = (LocatedToken) $2;
+		var field = new FixedField (current_type, null, current_field.ModFlags, new MemberName (lt.Value, lt.Location), current_field.OptAttributes);
+
+		$$ = new FieldDeclarator (field, new SimpleMemberName (lt.Value, lt.Location), (ConstInitializer) $3);
 		lbag.AddLocation ($$, GetLocation ($1));
 	  }
 	;
@@ -2421,11 +2435,11 @@ opt_event_declarators
 event_declarators
 	: event_declarator
 	  {
-		current_event_field.AddDeclarator ((FieldDeclarator) $1);
+		current_event_field.AddDeclarator ((EventDeclarator) $1);
 	  }
 	| event_declarators event_declarator
 	  {
-		current_event_field.AddDeclarator ((FieldDeclarator) $2);
+		current_event_field.AddDeclarator ((EventDeclarator) $2);
 	  }
 	;
 	
@@ -2433,7 +2447,9 @@ event_declarator
 	: COMMA IDENTIFIER
 	  {
 		var lt = (LocatedToken) $2;
-	  	$$ = new FieldDeclarator (new SimpleMemberName (lt.Value, lt.Location), null);
+		var field = new EventField (current_type, null, current_event_field.ModFlags, new MemberName (lt.Value, lt.Location), current_event_field.OptAttributes);
+
+	  	$$ = new EventDeclarator (field, new SimpleMemberName (lt.Value, lt.Location), null);
 	  	lbag.AddLocation ($$, GetLocation ($1));
 	  }
 	| COMMA IDENTIFIER ASSIGN
@@ -2444,7 +2460,9 @@ event_declarator
 	  {
 		--lexer.parsing_block;
 		var lt = (LocatedToken) $2;	  
-	  	$$ = new FieldDeclarator (new SimpleMemberName (lt.Value, lt.Location), (Expression) $5);
+		var field = new EventField (current_type, null, current_event_field.ModFlags, new MemberName (lt.Value, lt.Location), current_event_field.OptAttributes);
+
+	  	$$ = new EventDeclarator (field, new SimpleMemberName (lt.Value, lt.Location), (Expression) $5);
 	  	lbag.AddLocation ($$, GetLocation ($1), GetLocation ($3));
 	  }
 	;
