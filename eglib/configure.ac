@@ -36,6 +36,7 @@ fi
 
 AM_CONDITIONAL(CROSS_COMPILING, [test x$cross_compiling = xyes])
 AC_C_BIGENDIAN([ORDER=G_BIG_ENDIAN],[ORDER=G_LITTLE_ENDIAN])
+AC_CHECK_SIZEOF(void *)
 
 case $host in
 *-*-msdos* | *-*-go32* | *-*-mingw32* | *-*-cygwin* | *-*-windows*)
@@ -54,10 +55,11 @@ case $target in
 arm*-darwin*)
     CFLAGS="$CFLAGS -U_FORTIFY_SOURCE"
     ;;
-i*86-*-darwin*)
+i*86-*-darwin* | x86_64-*-darwin*)
     ORDER=G_LITTLE_ENDIAN
     if test "x$ac_cv_sizeof_void_p" = "x8"; then
         WANT_ICONV=0
+        WANT_STRLCPY=0
     fi
     ;;
 esac
@@ -77,11 +79,13 @@ AM_CONDITIONAL(PLATFORM_WIN32, test x$OS = xWIN32)
 AM_CONDITIONAL(NEEDS_LIBGCC, test x$needs_libgcc = xyes)
 
 AC_CHECK_SIZEOF(int)
-AC_CHECK_SIZEOF(void *)
-AC_CHECK_FUNCS(strndup strlcpy getpwent_r strtok_r rewinddir)
-AM_CONDITIONAL(NEED_VASPRINTF, test x$have_vasprintf = x )
+AC_CHECK_FUNCS(strndup getpwent_r strtok_r rewinddir vasprintf)
+AM_CONDITIONAL(NEED_VASPRINTF, test x$ac_cv_func_vasprintf = xno )
 if test "x$WANT_ICONV" = "x1"; then
     AC_CHECK_LIB(iconv, libiconv_open, LIBS="$LIBS -liconv")
+fi
+if ! test "x$WANT_STRLCPY" = "x0"; then
+    AC_CHECK_FUNCS(strlcpy)
 fi
 old_ldflags="${LDFLAGS}"
 LDFLAGS="${LDFLAGS} -Wl,-export-dynamic"
