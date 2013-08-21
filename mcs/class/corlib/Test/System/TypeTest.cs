@@ -2529,7 +2529,7 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 
 		[Bug13767("Demo", new[] { Bug13767Enum.Value1, Bug13767Enum.Value0 })]
-		public void Bug13767Method(string attributeName, MyEnum[]options)
+		public void Bug13767Method(string attributeName, Bug13767Enum[]options)
 		{
 
 		}
