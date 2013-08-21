@@ -823,7 +823,6 @@ namespace Mono.PlayScript
 				parsing_modifiers = false;
 				allow_auto_semi = false;
 				allow_auto_semi_after = 0;
-				bool is_get_set = false;
 				PushPosition();
 				var fn_token = token ();
 				if (fn_token == Token.IDENTIFIER)
@@ -835,10 +834,16 @@ namespace Mono.PlayScript
 							res = (get_set == "get") ? Token.FUNCTION_GET : Token.FUNCTION_SET;
 						}
 					}
+					PopPosition ();
+					if (res != Token.FUNCTION)
+						token ();
+				} else {
+					if (fn_token == Token.OPEN_PARENS)
+						res = Token.FUNCTION_BLOCK;
+
+					PopPosition ();
 				}
-				PopPosition ();
-				if (res != Token.FUNCTION) 
-					token ();
+
 				break;
 			case Token.GET:
 			case Token.SET:
@@ -3318,6 +3323,48 @@ namespace Mono.PlayScript
 
 			if (doc_state == XmlCommentState.Allowed)
 				doc_state = XmlCommentState.NotAllowed;
+
+			//
+			// Very bad grammar rule. Identifier can be start of declaration or block statement
+ 			// we don't know without checking next token(s) and this is on hot path
+			//
+			if (res == Token.IDENTIFIER) {
+				var start_line = ref_line;
+
+				PushPosition ();
+				var next_token = token ();
+				// Statement separators are optional
+				if (start_line != ref_line)
+					next_token = 0;
+
+				PopPosition ();
+
+				var pt = peek_token ();
+
+				switch (next_token) {
+				// Stop tokens
+				case Token.FUNCTION:
+				case Token.VAR:
+				case Token.CONST:
+				case Token.CLASS:
+				case Token.NAMESPACE:
+				case Token.INTERFACE:
+
+				// Modifiers tokens
+				case Token.PUBLIC:
+				case Token.PROPERTY:
+				case Token.INTERNAL:
+				case Token.PRIVATE:
+				case Token.ABSTRACT:
+				case Token.FINAL:
+				case Token.STATIC:
+				case Token.VIRTUAL:
+				case Token.OVERRIDE:
+				case Token.NATIVE:
+				case Token.IDENTIFIER_MODIFIER:
+					return Token.IDENTIFIER_MODIFIER;
+				}
+			}
 
 			return res;
 		}

@@ -1,0 +1,31 @@
+package 
+{
+	public class ClassInitializer
+	{
+		public static function Main():void
+		{
+			new ClassA ();
+			new ClassA ();
+		}
+	}
+
+	public class ClassA
+	{
+		public static var field:int = 4;
+
+		Go ();	
+		field -= 6;
+		
+		public function ClassA ()
+		{
+			if (field != -2)
+				throw new Error ("2");
+		}
+		
+		public static function Go ():void
+		{
+			if (field != 4)
+				throw new Error ("1");
+		}
+	}
+}

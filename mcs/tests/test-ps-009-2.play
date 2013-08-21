@@ -2,7 +2,7 @@ package
 {
 	public class base 
 	{
-		protected function base() 
+		public function base() 
 		{
 		}
 		

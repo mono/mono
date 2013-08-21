@@ -209,6 +209,7 @@ namespace Mono.PlayScript
 %token FUNCTION 
 %token FUNCTION_GET
 %token FUNCTION_SET
+%token FUNCTION_BLOCK
 %token GOTO	
 %token IF	
 %token IMPLICIT	
@@ -366,6 +367,7 @@ namespace Mono.PlayScript
 %token LITERAL
 
 %token IDENTIFIER
+%token IDENTIFIER_MODIFIER
 %token IDENTIFIER_CONFIG
 %token OPEN_PARENS_LAMBDA
 %token OPEN_PARENS_CAST
@@ -751,18 +753,15 @@ package_statement
 			current_namespace.DeclarationFound = true;
 		}
 	  }
-	| method_declaration
-	  {
-	  	if (is_config_enabled) {
-			current_namespace.DeclarationFound = true;
-		}
-	  }
 	| constant_declaration
 	| no_config_package_directive
 	| valid_declaration_statement
 	  {
-		var package = (Package) current_container;
-		package.GetBlock ().AddStatement ((Statement) $1);
+	  	var stmt = $1 as Statement;
+	  	if (stmt != null) {
+			var package = (Package) current_container;
+			package.GetBlock ().AddStatement (stmt);
+		}
 	  }
 	| namespace_declaration
 	;
@@ -1025,39 +1024,27 @@ class_member_declarations
 class_member_declaration
 	: constant_declaration
 	| field_declaration
-	| method_declaration
 	| namespace_declaration
 	| indexer_declaration
-	| operator_declaration
 	| type_declaration
 	| attributes_without_members
-	| use_namespace_class_directive
 	| import_class_directive
-//	| valid_declaration_statement
-//	  {
-//	  	var stmt = (Statement) $1;
-//	  	if (!(current_type is Class) && stmt != null)
-//	  		report.ErrorPlayScript (-20, stmt.loc, "`{0}': Only class containers can contain type initializers");
-//
-//	  	current_type.RegisterInitialization (stmt);
-//	  }
+	| valid_declaration_statement
+	  {
+	  	var stmt = $1 as Statement;
+	  	if (stmt != null) {
+			if (!(current_type is Class))
+				report.ErrorPlayScript (-20, stmt.loc, "`{0}': Only class containers can contain type initializers");
+
+		  	current_type.RegisterInitialization (stmt);
+		}
+	  }
 	| error
 	  {
 		report.Error (1519, lexer.Location, "Unexpected symbol `{0}' in class, struct, or interface member declaration",
 			GetSymbolName (yyToken));
 		$$ = null;
 		lexer.parsing_generic_declaration = false;
-	  }
-	;
-	
-use_namespace_class_directive
-	: opt_attributes
-	  opt_modifiers
-	  use_namespace_directive
-	  {
-	  	if ($1 != null || (Modifiers) $2 != 0) {
-			report.Error (7058, GetLocation($1 ?? $2), "Modifiers and attributes not allowed");
-	  	}
 	  }
 	;
 
@@ -1345,11 +1332,10 @@ method_declaration
 			lexer.DynamicParsing = true;
 	  
 	 	async_block = false;
+	 	var top_block = $3 as ToplevelBlock;
 
 		if ($1 is Method) {
-		
-			Method method = $1 as Method;
-			
+			var method = (Method) $1;
 			if ($3 == null) {
 				method.ParameterInfo.CheckParameters (method);
 	
@@ -1358,28 +1344,24 @@ method_declaration
 						method.GetSignatureForError ());
 				}
 			} else {
-				method.Block = (ToplevelBlock) $3;
+				method.Block = top_block;
 				
 				if (current_container.Kind == MemberKind.Interface) {
 					report.Error (531, method.Location, "`{0}': interface members cannot have a definition",
 						method.GetSignatureForError ());
 				}
-			}
-			
+			}		
 		} else if ($1 is Constructor) {
 		
-			Constructor c = $1 as Constructor;
-			
-			if ($3 != null) {		
-				c.Block = (ToplevelBlock) $3;
-			}
-			
+			Constructor c = (Constructor) $1;
+			c.Block = top_block;
+
 			if (doc_support)
 				c.DocComment = ConsumeStoredComment ();
 		
-		} else {
+		} else if ($1 is Property.PropertyMethod) {
 		
-			Property.PropertyMethod propMethod = $1 as Property.PropertyMethod;
+			Property.PropertyMethod propMethod = (Property.PropertyMethod) $1;
 			
 			if ($3 != null) {
 		  		propMethod.Block = (ToplevelBlock) $3;			
@@ -1388,8 +1370,26 @@ method_declaration
 					report.Error (531, propMethod.Block.StartLocation,
 						"`{0}': interface members cannot have a definition", propMethod.GetSignatureForError ());
 				}
+			}			
+		} else if ($1 is LocalFunctionDeclaration) {
+			var lfd = (LocalFunctionDeclaration) $1;
+
+			lfd.Function = (LocalFunction) end_anonymous ((ParametersBlock) $3);
+
+			var li = new LocalVariable (current_block, lfd.Name, 0, lfd.Location);
+
+			INamedBlockVariable existing = null;
+			if (current_block.ParametersBlock.TopBlock.GetLocalName (lfd.Name, current_block, ref existing)) {
+				report.ErrorPlayScript (1021, lfd.Location, "Duplicate function `{0}' definition", lfd.Name);
+			} else {
+				current_block.AddLocalName (li);
 			}
+
+			current_block.AddScopeStatement (new UntypedBlockVariable (li, lfd.Location) {
+				Initializer = lfd.Function
+			});
 			
+			$$ = lfd;
 		}
 
 		current_local_parameters = null;
@@ -1431,20 +1431,26 @@ method_header
 		
 		if (current_type != null && name.Name == current_type.MemberName.Name) {
 
+			if ((modifiers & Modifiers.STATIC) != 0) {
+				report.ErrorPlayScript (1026, GetLocation ($3), "Constructor functions must be instance methods");
+			}
+
+			if ($9 != null && !($9 is UntypedTypeExpression)) {
+				var rt = $9 as TypeExpression;
+				if (rt == null || rt.Type.Kind != MemberKind.Void)
+					report.ErrorPlayScript (1030, GetLocation ($3), "A constructor cannot specify a return type");
+			}
+
+			if ((modifiers & (Modifiers.AccessibilityMask & ~Modifiers.PUBLIC)) != 0) {
+				report.ErrorPlayScript (1153, GetLocation ($3), "A constructor can only be declared public");				
+			}
+
 			var c = new Constructor (current_type, name.Name, modifiers, Modifiers.PUBLIC, (Attributes) $1, current_local_parameters, name.Location);
 
 			if ($11 != null) {
 					report.Error (7011, c.Location,
 						"`{0}': constructor can not have type constraints.",
 						c.GetSignatureForError ());
-			}
-
-			if ((modifiers & Modifiers.STATIC) != 0) {
-				if ((modifiers & Modifiers.AccessibilityMask) != 0){
-					report.Error (515, c.Location,
-						"`{0}': static constructor cannot have an access modifier",
-						c.GetSignatureForError ());
-				}
 			}
 
 			if (doc_support)
@@ -1454,18 +1460,52 @@ method_header
 			$$ = c;
 		
 		} else {
-			var method = Method.Create (GetTypeDefinition (current_container), (FullNamedExpression) $9, modifiers,
-					     name, current_local_parameters, (Attributes) $1);
 
-			if ($11 != null)
-				method.SetConstraints ((List<Constraints>) $11);
-					     
-			if (doc_support)
-				method.DocComment = Lexer.consume_doc_comment ();
+			if ($9 == null) {
+				Warning_NoTypeDeclaration (GetLocation ($3), string.Format ("Function `{0}'", name.GetSignatureForError ()));
+				$9 = new UntypedTypeExpression (GetLocation ($3));
+			}
 
-			lbag.AddMember (method, mod_locations, GetLocation ($5), GetLocation ($8));
-			$$ = method;
-			
+			if (current_block != null) {
+				start_anonymous ((ParametersCompiled) $7, (FullNamedExpression) $9, GetLocation ($3));
+				$$ = new LocalFunctionDeclaration (name.Name, name.Location);
+
+				if ((modifiers & Modifiers.OVERRIDE) != 0) {
+					report.ErrorPlayScript (1010, GetLocation ($3), "The override attribute may be used only on class property definitions");
+				}
+
+				if ((modifiers & Modifiers.VIRTUAL) != 0) {
+					report.ErrorPlayScript (1011, GetLocation ($3), "The virtual attribute may be used only on class property definitions");
+				}
+
+				if ((modifiers & Modifiers.STATIC) != 0) {
+					report.ErrorPlayScript (1012, GetLocation ($3), "The static attribute may be used only on definitions inside a class");
+				}
+
+				if ((modifiers & Modifiers.PRIVATE) != 0) {
+					report.ErrorPlayScript (1013, GetLocation ($3), "The private attribute may be used only on class property definitions");
+				}
+
+				if ((modifiers & Modifiers.PUBLIC) != 0) {
+					report.ErrorPlayScript (1014, GetLocation ($3), "The public attribute may be used only on class or package definitions");
+				}
+
+				if ((modifiers & Modifiers.INTERNAL) != 0) {
+					report.ErrorPlayScript (1015, GetLocation ($3), "The internal attribute may be used only on class or package definitions");
+				}
+			} else {
+				var method = Method.Create (GetTypeDefinition (current_container), (FullNamedExpression) $9, modifiers,
+						     name, current_local_parameters, (Attributes) $1);
+
+				if ($11 != null)
+					method.SetConstraints ((List<Constraints>) $11);
+						     
+				if (doc_support)
+					method.DocComment = Lexer.consume_doc_comment ();
+
+				lbag.AddMember (method, mod_locations, GetLocation ($5), GetLocation ($8));
+				$$ = method;
+			}			
 		}
 	  }
 	| opt_attributes
@@ -2202,155 +2242,10 @@ interface_member_declaration
 	  }
 	| method_declaration
 	| indexer_declaration
-	| operator_declaration
-	  {
-	  	report.Error (567, GetLocation ($1), "Interfaces cannot contain operators");
-	  }
 	| type_declaration
 	  {
 	  	report.Error (524, GetLocation ($1), "Interfaces cannot declare classes, structs, interfaces, delegates, or enumerations");
 	  }
-	;
-
-operator_declaration
-	: opt_attributes opt_modifiers operator_declarator 
-	  {
-	  }
-	  operator_body
-	  {
-		OperatorDeclaration decl = (OperatorDeclaration) $3;
-		if (decl != null) {
-			var modifiers = (Modifiers) $2;
-			
-//			if (current_container.Kind == MemberKind.Class && 
-//				(modifiers & (Modifiers.NEW | Modifiers.SEALED | Modifiers.STATIC | Modifiers.PRIVATE | Modifiers.VIRTUAL | Modifiers.OVERRIDE)) == 0)
-//					modifiers |= Modifiers.VIRTUAL;			
-		
-			if (current_local_parameters.Count < 1) {
-			
-				report.Error (7037, GetLocation ($1), "Invalid number of parameters for operator.");			
-			
-			} else {
-			
-				Operator op = new Operator (
-					current_type, decl.optype, decl.ret_type, modifiers, 
-					current_local_parameters,
-					(ToplevelBlock) $5, (Attributes) $1, decl.location);
-				
-				if (op.Block == null)
-					op.ParameterInfo.CheckParameters (op);
-
-				if (doc_support) {
-					op.DocComment = tmpComment;
-					Lexer.doc_state = XmlCommentState.Allowed;
-				}
-
-				// Note again, checking is done in semantic analysis
-				if (is_config_enabled) {
-					current_type.AddOperator (op);
-				}
-				is_config_enabled = true;
-
-				lbag.AddMember (op, mod_locations, lbag.GetLocations (decl));
-			}
-		}
-		
-		current_local_parameters = null;
-	  }
-	;
-
-operator_body 
-	: block
-	| SEMICOLON { $$ = null; }
-	; 
-
-operator_type
-	: type_expression_or_array
-	| VOID
-	  {
-		report.Error (590, GetLocation ($1), "User-defined operators cannot return void");
-		$$ = new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($1));
-	  }
-	;
-
-operator_declarator
-	: OPERATOR overloadable_operator OPEN_PARENS
-	  {
-		valid_param_mod = ParameterModifierType.DefaultValue;
-	  }
-	  opt_formal_parameter_list CLOSE_PARENS COLON operator_type 
-	  {
-		CheckIsPlayScript("operator", GetLocation($1)); 	  
-	  
-		valid_param_mod = 0;
-
-		Location loc = GetLocation ($1);
-		Operator.OpType op = (Operator.OpType) $8;
-		current_local_parameters = (ParametersCompiled)$5;
-		
-		int p_count = current_local_parameters.Count;
-		if (p_count == 1) {
-			if (op == Operator.OpType.Addition)
-				op = Operator.OpType.UnaryPlus;
-			else if (op == Operator.OpType.Subtraction)
-				op = Operator.OpType.UnaryNegation;
-		}
-		
-		if (IsUnaryOperator (op)) {
-			if (p_count == 2) {
-				report.Error (1020, loc, "Overloadable binary operator expected");
-			} else if (p_count != 1) {
-				report.Error (1535, loc, "Overloaded unary operator `{0}' takes one parameter",
-					Operator.GetName (op));
-			}
-		} else {
-			if (p_count > 2) {
-				report.Error (1534, loc, "Overloaded binary operator `{0}' takes two parameters",
-					Operator.GetName (op));
-			} else if (p_count != 2) {
-				report.Error (1019, loc, "Overloadable unary operator expected");
-			}
-		}
-		
-		if (doc_support) {
-			tmpComment = Lexer.consume_doc_comment ();
-			Lexer.doc_state = XmlCommentState.NotAllowed;
-		}
-
-		$$ = new OperatorDeclaration (op, (FullNamedExpression) $8, loc);
-		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($2), GetLocation ($3), GetLocation ($6));
-	  }
-	| conversion_operator_declarator
-	;
-
-overloadable_operator
-// Unary operators:
-	: BANG   { $$ = Operator.OpType.LogicalNot; }
-        | TILDE  { $$ = Operator.OpType.OnesComplement; }  
-        | OP_INC { $$ = Operator.OpType.Increment; }
-        | OP_DEC { $$ = Operator.OpType.Decrement; }
-        | TRUE   { $$ = Operator.OpType.True; }
-        | FALSE  { $$ = Operator.OpType.False; }
-// Unary and binary:
-        | PLUS { $$ = Operator.OpType.Addition; }
-        | MINUS { $$ = Operator.OpType.Subtraction; }
-// Binary:
-        | STAR { $$ = Operator.OpType.Multiply; }
-        | DIV {  $$ = Operator.OpType.Division; }
-        | PERCENT { $$ = Operator.OpType.Modulus; }
-        | BITWISE_AND { $$ = Operator.OpType.BitwiseAnd; }
-        | BITWISE_OR { $$ = Operator.OpType.BitwiseOr; }
-        | CARRET { $$ = Operator.OpType.ExclusiveOr; }
-        | OP_SHIFT_LEFT { $$ = Operator.OpType.LeftShift; }
-        | OP_SHIFT_RIGHT { $$ = Operator.OpType.RightShift; }
-//TODO: really        | OP_USHIFT_RIGHT { $$ = Operator.OpType.AsURightShift; }
-        | OP_EQ { $$ = Operator.OpType.Equality; }
-        | OP_NE { $$ = Operator.OpType.Inequality; }
-        | OP_GT { $$ = Operator.OpType.GreaterThan; }
-        | OP_LT { $$ = Operator.OpType.LessThan; }
-        | OP_GE { $$ = Operator.OpType.GreaterThanOrEqual; }
-        | OP_LE { $$ = Operator.OpType.LessThanOrEqual; }
-//TODO:        | OP_IN { $$ = Operator.OpType.AsIn; }
 	;
 
 conversion_operator_declarator
@@ -2693,7 +2588,7 @@ primary_expression
 	| post_increment_expression
 	| post_decrement_expression
 	| new_expression
-	| anonymous_method_expression
+	| function_block
 	| array_creation
 	| object_initializer
 	| e4x_operators
@@ -3416,8 +3311,8 @@ typeof_type_expression
 	 }
 	;
 
-anonymous_method_expression
-	: FUNCTION OPEN_PARENS
+function_block
+	: FUNCTION_BLOCK OPEN_PARENS
 	  {
 	  	valid_param_mod = 0;
 	  }
@@ -3438,51 +3333,6 @@ opt_anomymous_method_type
 		Warning_NoTypeDeclaration (lexer.Location, "Anonymous function");
 		$$ = new UntypedTypeExpression (lexer.Location);
 	  }
-	| COLON member_type
-	  {
-	  	$$ = $2;
-	  }
-	;
-
-local_function_statement
-	: FUNCTION IDENTIFIER OPEN_PARENS
-	  {
-	  	valid_param_mod = 0;
-	  }
-	  opt_formal_parameter_list CLOSE_PARENS opt_local_function_type
-	  {
-		valid_param_mod = 0;
-		if ($7 == null) {
-			var lt = (LocatedToken) $2;
-			Warning_NoTypeDeclaration (lt.Location, string.Format ("Local function `{0}'", lt.Value));
-	  		$7 = new UntypedTypeExpression (lexer.Location);
-	  	}
-
-		start_anonymous ((ParametersCompiled) $5, (FullNamedExpression) $7, GetLocation ($1));
-	  }
-	  block
-	  {
-		var lt = (LocatedToken) $2;
-		var function = (LocalFunction) end_anonymous ((ParametersBlock) $9);
-		var li = new LocalVariable (current_block, lt.Value, 0, lt.Location);
-
-		INamedBlockVariable existing = null;
-		if (current_block.ParametersBlock.TopBlock.GetLocalName (lt.Value, current_block, ref existing)) {
-			report.ErrorPlayScript (1021, lt.Location, "Duplicate function `{0}' definition", lt.Value);
-		} else {
-			current_block.AddLocalName (li);
-		}
-
-		current_block.AddScopeStatement (new UntypedBlockVariable (li, lt.Location) {
-			Initializer = function
-		});
-	
-		$$ = new LocalFunctionDeclaration (function, lt.Value);
-	  }
-	;
-
-opt_local_function_type
-	: /* empty */
 	| COLON member_type
 	  {
 	  	$$ = $2;
@@ -4210,15 +4060,6 @@ modifiers
 	;
 
 modifier
-/*	: NEW
-	  {
-		$$ = Modifiers.NEW;
-		StoreModifierLocation ($$, GetLocation ($1));
-		
-		if (current_container.Kind == MemberKind.Namespace)
-			report.Error (1530, GetLocation ($1), "Keyword `new' is not allowed on namespace elements");
-	  }
-*/
 	: PUBLIC
 	  {
 		$$ = Modifiers.PUBLIC;
@@ -4254,11 +4095,6 @@ modifier
 		$$ = Modifiers.STATIC;
 		StoreModifierLocation ($$, GetLocation ($1));
 	  }
-//	| READONLY
-//	  {
-//		$$ = Modifiers.READONLY;
-//		StoreModifierLocation ($$, GetLocation ($1));
-//	  }
 	| VIRTUAL
 	  {
 		$$ = Modifiers.VIRTUAL;
@@ -4274,30 +4110,16 @@ modifier
 		$$ = Modifiers.EXTERN;
 		StoreModifierLocation ($$, GetLocation ($1));
 	  }
-	| VOLATILE
-	  {
-		$$ = Modifiers.VOLATILE;
-		StoreModifierLocation ($$, GetLocation ($1));
-	  }
-//	| UNSAFE
-//	  {
-//		$$ = Modifiers.UNSAFE;
-//		StoreModifierLocation ($$, GetLocation ($1));
-//		if (!settings.Unsafe)
-//			Error_UnsafeCodeNotAllowed (GetLocation ($1));
-//	  }
-	| ASYNC
-	  {
-		$$ = Modifiers.ASYNC;
-		StoreModifierLocation ($$, GetLocation ($1));
-	  }
 	| DYNAMIC
 	  {
 	    $$ = Modifiers.DYNAMIC;
 	    StoreModifierLocation ($$, GetLocation ($1));
 	  }
-	| IDENTIFIER
+	| IDENTIFIER_MODIFIER
 	  {
+		if (current_block != null)
+			report.ErrorPlayScript (1116, GetLocation ($1), "A user-defined namespace attribute can only be used at the top level of a class definition");
+
 		if (namespace_modifier != null)
 			report.ErrorPlayScript (1162, GetLocation ($1), "Only one namespace attribute can be used per definition");
 		else
@@ -4443,11 +4265,6 @@ type_parameter_constraint
 // Statements (8.2)
 //
 
-//
-// A block is "contained" on the following places:
-//	method_body
-//      operator_declaration
-//      
 block
 	: OPEN_BRACE  
 	  {
@@ -4460,39 +4277,6 @@ block
   		$$ = $4;
 	  }
 	;
-/*	
-//
-// An optional config block is "contained" on the following places:
-//	method_body
-//      
-config_block
-	: opt_block_config OPEN_BRACE  
-	  {
-		++lexer.parsing_block;
-		start_block (GetLocation ($2));
-	  } 
-	  opt_statement_list block_end
-	  {
-	    if (is_config_enabled) {
-	      // This block should be included
-  		  $$ = $5;
-  		} else {
-  		  // This block should not be included.. create an empty block
-  		  start_block (GetLocation ($2));
-  		  $$ = end_block (GetLocation ($5));
-  		}
-	  }
-	;
-*/
-//opt_block_config
-//	: /* empty */
-//	| IDENTIFIER DOUBLE_COLON IDENTIFIER
-//	  {
-//	    var lt1 = (LocatedToken) $1;
-//	    var lt2 = (LocatedToken) $3;
-//        is_config_enabled = file.IsConditionalDefined (lt1.Value + "_" + lt2.Value);
-//	  }
-//	;
 
 block_end 
 	: CLOSE_BRACE 
@@ -4582,7 +4366,7 @@ valid_declaration_statement
 	| iteration_statement
 	| jump_statement		  
 	| try_statement
-	| local_function_statement
+	| method_declaration
 	| with_statement
 	;
 
@@ -4594,7 +4378,6 @@ interactive_valid_declaration_statement
 	| iteration_statement
 	| jump_statement		  
 	| try_statement
-	| local_function_statement
 	;
 
 embedded_statement
@@ -6307,13 +6090,6 @@ doc_cref
 		module.DocumentationBuilder.ParsedOperator = Operator.OpType.Implicit;
 		$$ = null;
 	  }	  
-	| OPERATOR overloadable_operator opt_doc_method_sig
-	  {
-		var p = (List<DocumentationParameter>)$3 ?? new List<DocumentationParameter> (1);
-		module.DocumentationBuilder.ParsedParameters = p;
-		module.DocumentationBuilder.ParsedOperator = (Operator.OpType) $2;
-		$$ = null;
-	  }
 	;
 	
 doc_type_declaration_name
@@ -6687,7 +6463,7 @@ void start_anonymous (ParametersCompiled parameters, FullNamedExpression returnT
 	current_local_parameters = parameters;
 	current_anonymous_method = new LocalFunction (returnType, loc);
 
-	// Force the next block to be created as a ToplevelBlock
+	// Force the next block to be created as a ParametersBlock
 	parsing_anonymous_method = true;
 }
 

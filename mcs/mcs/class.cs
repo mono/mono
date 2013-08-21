@@ -993,7 +993,7 @@ namespace Mono.CSharp
 
 		}
 
-		public virtual void RegisterInitialization (Statement statement, bool firstIfPossible)
+		public virtual void RegisterInitialization (Statement statement, bool firstIfPossible = false)
 		{
 			if (static_initializers == null)
 				static_initializers = new List<object> ();

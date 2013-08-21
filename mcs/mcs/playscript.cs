@@ -841,13 +841,20 @@ namespace Mono.PlayScript
 
 	public class LocalFunctionDeclaration : Statement
 	{
-		public LocalFunctionDeclaration (LocalFunction function, string name)
+		public LocalFunctionDeclaration (string name, Location loc)
 		{
-			Function = function;
 			Name = name;
+			this.loc = loc;
 		}
 
-		public LocalFunction Function { get; private set; }
+		public LocalFunction Function { get; set; }
+		
+		public Location Location {
+			get {
+				return loc;
+			}
+		}
+
 		public string Name { get; private set; }
 
 		protected override void DoEmit (EmitContext ec)
@@ -2089,14 +2096,7 @@ namespace Mono.PlayScript
 		public static new Method Create (TypeDefinition parent, FullNamedExpression returnType, Modifiers mod,
 				   MemberName name, ParametersCompiled parameters, Attributes attrs)
 		{
-			var rt = returnType ?? new UntypedTypeExpression (name.Location);
-
-			var m = new Method (parent, rt, mod, name, parameters, attrs);
-
-			if (returnType == null) {
-				m.HasNoReturnType = true;
-				m.Report.WarningPlayScript (1009, m.Location, "Method `{0}' return type has no type declaration", m.GetSignatureForError ());
-			}
+			var m = new Method (parent, returnType, mod, name, parameters, attrs);
 
 			if (parent is PackageGlobalContainer) {
 				if ((mod & Modifiers.OVERRIDE) != 0) {
