@@ -5,6 +5,7 @@ use File::Path;
 use File::Copy::Recursive qw(dircopy);
 use Getopt::Long;
 use File::Basename;
+use Win32::API;
 
 my $root = getcwd();
 
@@ -40,11 +41,24 @@ sub AddDotNetFolderToPath() {
 	$ENV{PATH} = "$ENV{PATH};$netFrameworkLocation";
 }
 
+sub LongPathFor {
+	$GetLongPathName = new Win32::API('kernel32', 'GetLongPathName', "PPN", 'N');
+	if(not defined $GetLongPathName) {
+		die("Can't import API GetLongPathName: $!\n");
+	}
+
+	my $originalPath = shift;
+	my $tempBuffer = " " x 256;
+	my $length = $GetLongPathName->Call($originalPath, $tempBuffer, 256);
+
+	return substr($tempBuffer, 0, $length);
+}
+
 AddDotNetFolderToPath();
 
-my $output = "$ENV{TEMP}/output/BareMinimum";
+my $output = NormalizePath(LongPathFor("$ENV{TEMP}/output/BareMinimum"));
 
-print("Environment Path: $ENV{PATH}\n");
+print("\nEnvironment Path: $ENV{PATH}\n");
 
 my $dependencyBranchToUse = "unity3.0";
 
@@ -115,10 +129,17 @@ sub GitClone
 	system("git clone --branch $branch $repo $localFolder") eq 0 or die("git clone $repo $localFolder failed!");
 }
 
+sub NormalizePath {
+	my $path = shift;
+	$path =~ s/\//\\/g;
+
+	return $path;
+}
+
 sub cp
 {
 	my $cmdLine = shift;
-	$cmdLine =~ s/\//\\/g;
+	$cmdLine = NormalizePath($cmdLine);
 
 	system("xcopy $cmdLine /s /y") eq 0 or die("failed to copy '$cmdLine'");	
 	print "Copied: $cmdLine\n";
