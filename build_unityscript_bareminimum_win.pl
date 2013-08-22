@@ -46,8 +46,6 @@ my $output = NormalizePath(Win32::GetLongPathName("$ENV{TEMP}/output/BareMinimum
 
 print("\nEnvironment Path: $ENV{PATH}\n");
 
-my $dependencyBranchToUse = "unity3.0";
-
 my $booCheckout = "$root/external/boo";
 my $usCheckout = "$root/external/unityscript";
 
