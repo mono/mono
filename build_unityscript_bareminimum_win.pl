@@ -5,7 +5,6 @@ use File::Path;
 use File::Copy::Recursive qw(dircopy);
 use Getopt::Long;
 use File::Basename;
-use Win32::API;
 
 my $root = getcwd();
 
@@ -41,22 +40,9 @@ sub AddDotNetFolderToPath() {
 	$ENV{PATH} = "$ENV{PATH};$netFrameworkLocation";
 }
 
-sub LongPathFor {
-	$GetLongPathName = new Win32::API('kernel32', 'GetLongPathName', "PPN", 'N');
-	if(not defined $GetLongPathName) {
-		die("Can't import API GetLongPathName: $!\n");
-	}
-
-	my $originalPath = shift;
-	my $tempBuffer = " " x 256;
-	my $length = $GetLongPathName->Call($originalPath, $tempBuffer, 256);
-
-	return substr($tempBuffer, 0, $length);
-}
-
 AddDotNetFolderToPath();
 
-my $output = NormalizePath(LongPathFor("$ENV{TEMP}/output/BareMinimum"));
+my $output = NormalizePath(Win32::GetLongPathName("$ENV{TEMP}/output/BareMinimum"));
 
 print("\nEnvironment Path: $ENV{PATH}\n");
 
