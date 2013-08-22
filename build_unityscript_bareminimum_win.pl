@@ -42,11 +42,9 @@ sub AddDotNetFolderToPath() {
 
 AddDotNetFolderToPath();
 
-my $output = "$ENV{TEMP}/output/BareMinimum";
+my $output = Win32::GetLongPathName("$ENV{TEMP}/output/BareMinimum");
 
-print("Environment Path: $ENV{PATH}\n");
-
-my $dependencyBranchToUse = "unity3.0";
+print("\nEnvironment Path: $ENV{PATH}\n");
 
 my $booCheckout = "$root/external/boo";
 my $usCheckout = "$root/external/unityscript";
@@ -115,10 +113,17 @@ sub GitClone
 	system("git clone --branch $branch $repo $localFolder") eq 0 or die("git clone $repo $localFolder failed!");
 }
 
+sub NormalizePath {
+	my $path = shift;
+	$path =~ s/\//\\/g;
+
+	return $path;
+}
+
 sub cp
 {
 	my $cmdLine = shift;
-	$cmdLine =~ s/\//\\/g;
+	$cmdLine = NormalizePath($cmdLine);
 
 	system("xcopy $cmdLine /s /y") eq 0 or die("failed to copy '$cmdLine'");	
 	print "Copied: $cmdLine\n";
