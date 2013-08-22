@@ -42,7 +42,7 @@ sub AddDotNetFolderToPath() {
 
 AddDotNetFolderToPath();
 
-my $output = Win32::GetLongPathName("$ENV{TEMP}/output/BareMinimum");
+my $output = Win32::GetLongPathName("$ENV{TEMP}") . "/output/BareMinimum";
 
 print("\nEnvironment Path: $ENV{PATH}\n");
 
