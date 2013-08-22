@@ -18398,6 +18398,22 @@
       </method>
     </type>
   </test>
+  <test name="gtest-592.cs">
+    <type name="Tests">
+      <method name="Void A[T](System.Collections.Generic.IReadOnlyCollection`1[T])" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void B[T](System.Collections.Generic.IReadOnlyList`1[T])" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>51</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-593.cs">
     <type name="Parser`2[D1,DR1]">
       <method name="System.Tuple`2[D1,DR1] Invoke(D1)" attrs="454">
