@@ -1675,7 +1675,7 @@ namespace Mono.CSharp {
 						} else if (sm_parent.Kind == MemberKind.Struct) {
 							//
 							// Special case where parent class is used to emit instance method
-							// because currect storey is of value type (async host). We cannot
+							// because currect storey is of value type (async host) and we cannot
 							// use ldftn on non-boxed instances either to share mutated state
 							//
 							parent = sm_parent.Parent.PartialContainer;
