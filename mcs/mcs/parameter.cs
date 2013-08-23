@@ -558,6 +558,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public int PositionalIndex {
+			get {
+				return idx;
+			}
+		}
+
 		public Modifier ModFlags {
 			get { return modFlags & ~Modifier.This; }
 		}

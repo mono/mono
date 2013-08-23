@@ -5726,6 +5726,22 @@ namespace Mono.CSharp
 		}
 	}
 
+	class LocalVariableReferenceIndex : IntConstant
+	{
+		LocalVariable lvi;
+
+		public LocalVariableReferenceIndex (BuiltinTypes types, LocalVariable lvi, Location loc)
+			: base (types, -1, loc)
+		{
+			this.lvi = lvi;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			ec.EmitInt (lvi.LocalIndex);
+		}
+	}
+
 	/// <summary>
 	///   This represents a reference to a parameter in the intermediate
 	///   representation.
@@ -6089,10 +6105,22 @@ namespace Mono.CSharp
 					return null;
 			}
 
+			var method = mg.BestCandidate;
+			var pm = ec.Module.PredefinedMembers;
+			if (method == pm.AsmUserBinderBindParameter.Get ()) {
+				// TODO: reject dynamics
+				arguments[1] = new Argument (ConvertArgumentToBindParameter (ec, arguments[1].Expr));
+				mg.BestCandidate = pm.AsmRuntimeBinderBindParameter.Resolve (Location);
+			} else if (method == pm.AsmUserBinderBindVariable.Get ()) {
+				// TODO: reject dynamics
+				// TODO: reject method group binding
+				arguments[1] = new Argument (ConvertArgumentToBindVariable (ec, arguments[1].Expr));
+				mg.BestCandidate = pm.AsmRuntimeBinderBindVariable.Resolve (Location);
+			}
+
 			if (dynamic_arg)
 				return DoResolveDynamic (ec, member_expr);
 
-			var method = mg.BestCandidate;
 			type = mg.BestCandidateReturnType;
 		
 			if (arguments == null && method.DeclaringType.BuiltinType == BuiltinTypeSpec.Type.Object && method.Name == Destructor.MetadataName) {
@@ -6109,6 +6137,44 @@ namespace Mono.CSharp
 			return this;
 		}
 
+		Expression ConvertArgumentToBindParameter (ResolveContext rc, Expression expr)
+		{
+			var cast = expr as TypeCast;
+			if (cast != null)
+				return ConvertArgumentToBindParameter (rc, cast.Child);
+
+			var pr = expr as ParameterReference;
+			if (pr != null) {
+				// TODO: check for hoisted version
+				// TODO: reject out/ref parameters?
+				expr = new IntConstant (rc.BuiltinTypes, pr.Parameter.PositionalIndex, expr.Location);
+				expr.Resolve (rc);
+				return expr;
+			}
+
+			rc.Report.Error (-100, expr.Location, "Parameter binder argument must be parameter reference");
+			return ErrorExpression.Instance;
+		}
+
+		Expression ConvertArgumentToBindVariable (ResolveContext rc, Expression expr)
+		{
+			var cast = expr as TypeCast;
+			if (cast != null)
+				return ConvertArgumentToBindVariable (rc, cast.Child);
+
+			var vr = expr as LocalVariableReference;
+			if (vr != null) {
+				// TODO: check for hoisted version
+				// TODO: check for local constant?
+				// TODO: check for locked foreach/using variable
+				expr = new LocalVariableReferenceIndex (rc.BuiltinTypes, vr.local_info, expr.Location);
+				expr.Resolve (rc);
+				return expr;
+			}
+
+			rc.Report.Error (-100, expr.Location, "Parameter binder argument must be local variable");
+			return ErrorExpression.Instance;
+		}
 		protected virtual Expression DoResolveDynamic (ResolveContext ec, Expression memberExpr)
 		{
 			Arguments args;

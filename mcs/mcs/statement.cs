@@ -1890,6 +1890,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public int LocalIndex {
+			get {
+				return builder.LocalIndex;
+			}
+		}
+
 		public string Name {
 			get {
 				return name;

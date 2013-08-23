@@ -234,6 +234,12 @@ namespace Mono.CSharp
 		public readonly PredefinedType INotifyCompletion;
 		public readonly PredefinedType ICriticalNotifyCompletion;
 
+		//
+		// Mono extensions
+		//
+		public readonly PredefinedType AsmUserBinder;
+		public readonly PredefinedType AsmRuntimeBinder;
+
 		public PredefinedTypes (ModuleContainer module)
 		{
 			TypedReference = new PredefinedType (module, MemberKind.Struct, "System", "TypedReference");
@@ -287,6 +293,9 @@ namespace Mono.CSharp
 			INotifyCompletion = new PredefinedType (module, MemberKind.Interface, "System.Runtime.CompilerServices", "INotifyCompletion");
 			ICriticalNotifyCompletion = new PredefinedType (module, MemberKind.Interface, "System.Runtime.CompilerServices", "ICriticalNotifyCompletion");
 
+			AsmUserBinder = new PredefinedType (module, MemberKind.Class, "Mono.Runtime", "asm");
+			AsmRuntimeBinder = new PredefinedType (module, MemberKind.Class, "Mono.Runtime.CompilerServices", "AssemblerBinder");
+
 			//
 			// Define types which are used for comparison. It does not matter
 			// if they don't exist as no error report is needed
@@ -327,6 +336,10 @@ namespace Mono.CSharp
 	class PredefinedMembers
 	{
 		public readonly PredefinedMember<MethodSpec> ActivatorCreateInstance;
+		public readonly PredefinedMember<MethodSpec> AsmUserBinderBindParameter;
+		public readonly PredefinedMember<MethodSpec> AsmUserBinderBindVariable;
+		public readonly PredefinedMember<MethodSpec> AsmRuntimeBinderBindParameter;
+		public readonly PredefinedMember<MethodSpec> AsmRuntimeBinderBindVariable;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderCreate;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderStart;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderSetResult;
@@ -396,6 +409,18 @@ namespace Mono.CSharp
 
 			ActivatorCreateInstance = new PredefinedMember<MethodSpec> (module, types.Activator,
 				MemberFilter.Method ("CreateInstance", 1, ParametersCompiled.EmptyReadOnlyParameters, null));
+
+			AsmUserBinderBindParameter = new PredefinedMember<MethodSpec> (module, types.AsmUserBinder,
+				MemberFilter.Method ("BindParameter", 0, ParametersCompiled.CreateFullyResolved (btypes.Int, btypes.Object), btypes.Void));
+
+			AsmUserBinderBindVariable = new PredefinedMember<MethodSpec> (module, types.AsmUserBinder,
+				MemberFilter.Method ("BindVariable", 0, ParametersCompiled.CreateFullyResolved (btypes.Int, btypes.Object), btypes.Void));
+
+			AsmRuntimeBinderBindParameter = new PredefinedMember<MethodSpec> (module, types.AsmRuntimeBinder,
+				MemberFilter.Method ("BindParameter", 0, ParametersCompiled.CreateFullyResolved (btypes.Int, btypes.Int), btypes.Void));
+
+			AsmRuntimeBinderBindVariable = new PredefinedMember<MethodSpec> (module, types.AsmRuntimeBinder,
+				MemberFilter.Method ("BindVariable", 0, ParametersCompiled.CreateFullyResolved (btypes.Int, btypes.Int), btypes.Void));
 
 			AsyncTaskMethodBuilderCreate = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilder,
 				MemberFilter.Method ("Create", 0, ParametersCompiled.EmptyReadOnlyParameters, types.AsyncTaskMethodBuilder.TypeSpec));

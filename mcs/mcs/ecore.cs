@@ -3492,6 +3492,9 @@ namespace Mono.CSharp {
 			get {
 				return best_candidate;
 			}
+			set {
+				best_candidate = value;
+			}
 		}
 
 		public TypeSpec BestCandidateReturnType {
