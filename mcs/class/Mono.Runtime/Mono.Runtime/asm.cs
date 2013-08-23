@@ -36,8 +36,20 @@ namespace Mono.Runtime
 		{
 			throw CreateException ();
 		}
+
+		[CLSCompliant (false)]
+		public unsafe static void BindParameter (int register, void* parameter)
+		{
+			throw CreateException ();
+		}
 		
 		public static void BindVariable (int register, object variable)
+		{
+			throw CreateException ();
+		}
+
+		[CLSCompliant (false)]
+		public unsafe static void BindVariable (int register, void* variable)
 		{
 			throw CreateException ();
 		}

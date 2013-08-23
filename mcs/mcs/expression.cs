@@ -6107,11 +6107,11 @@ namespace Mono.CSharp
 
 			var method = mg.BestCandidate;
 			var pm = ec.Module.PredefinedMembers;
-			if (method == pm.AsmUserBinderBindParameter.Get ()) {
+			if (method == pm.AsmUserBinderBindParameter.Get () || method == pm.AsmUserBinderBindParameterUnsafe.Get ()) {
 				// TODO: reject dynamics
 				arguments[1] = new Argument (ConvertArgumentToBindParameter (ec, arguments[1].Expr));
 				mg.BestCandidate = pm.AsmRuntimeBinderBindParameter.Resolve (Location);
-			} else if (method == pm.AsmUserBinderBindVariable.Get ()) {
+			} else if (method == pm.AsmUserBinderBindVariable.Get () || method == pm.AsmUserBinderBindVariableUnsafe.Get ()) {
 				// TODO: reject dynamics
 				// TODO: reject method group binding
 				arguments[1] = new Argument (ConvertArgumentToBindVariable (ec, arguments[1].Expr));

@@ -337,7 +337,9 @@ namespace Mono.CSharp
 	{
 		public readonly PredefinedMember<MethodSpec> ActivatorCreateInstance;
 		public readonly PredefinedMember<MethodSpec> AsmUserBinderBindParameter;
+		public readonly PredefinedMember<MethodSpec> AsmUserBinderBindParameterUnsafe;
 		public readonly PredefinedMember<MethodSpec> AsmUserBinderBindVariable;
+		public readonly PredefinedMember<MethodSpec> AsmUserBinderBindVariableUnsafe;
 		public readonly PredefinedMember<MethodSpec> AsmRuntimeBinderBindParameter;
 		public readonly PredefinedMember<MethodSpec> AsmRuntimeBinderBindVariable;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderCreate;
@@ -404,6 +406,7 @@ namespace Mono.CSharp
 			var types = module.PredefinedTypes;
 			var atypes = module.PredefinedAttributes;
 			var btypes = module.Compiler.BuiltinTypes;
+			var void_star = PointerContainer.MakeType (module, btypes.Void);
 
 			var tp = new TypeParameter (0, new MemberName ("T"), null, null, Variance.None);
 
@@ -413,8 +416,14 @@ namespace Mono.CSharp
 			AsmUserBinderBindParameter = new PredefinedMember<MethodSpec> (module, types.AsmUserBinder,
 				MemberFilter.Method ("BindParameter", 0, ParametersCompiled.CreateFullyResolved (btypes.Int, btypes.Object), btypes.Void));
 
+			AsmUserBinderBindParameterUnsafe = new PredefinedMember<MethodSpec> (module, types.AsmUserBinder,
+				MemberFilter.Method ("BindParameter", 0, ParametersCompiled.CreateFullyResolved (btypes.Int, void_star), btypes.Void));
+
 			AsmUserBinderBindVariable = new PredefinedMember<MethodSpec> (module, types.AsmUserBinder,
 				MemberFilter.Method ("BindVariable", 0, ParametersCompiled.CreateFullyResolved (btypes.Int, btypes.Object), btypes.Void));
+
+			AsmUserBinderBindVariableUnsafe = new PredefinedMember<MethodSpec> (module, types.AsmUserBinder,
+				MemberFilter.Method ("BindVariableUnsafe", 0, ParametersCompiled.CreateFullyResolved (btypes.Int, void_star), btypes.Void));
 
 			AsmRuntimeBinderBindParameter = new PredefinedMember<MethodSpec> (module, types.AsmRuntimeBinder,
 				MemberFilter.Method ("BindParameter", 0, ParametersCompiled.CreateFullyResolved (btypes.Int, btypes.Int), btypes.Void));
