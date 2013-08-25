@@ -31,6 +31,7 @@
 using System;
 using System.ComponentModel;
 using System.Reflection;
+using System.Globalization;
 
 namespace System.ComponentModel.DataAnnotations
 {
@@ -69,7 +70,7 @@ namespace System.ComponentModel.DataAnnotations
 			if (String.IsNullOrEmpty (format))
 				return String.Empty;
 
-			return String.Format (ErrorMessageString, name);
+			return String.Format (CultureInfo.CurrentCulture, ErrorMessageString, name);
 		}
 #if NET_4_0
 		public string ErrorMessage {
@@ -129,6 +130,12 @@ namespace System.ComponentModel.DataAnnotations
 		protected string ErrorMessageString {
 			get { return GetStringFromResourceAccessor (); }
 		}
+
+#if NET_4_5
+		// See: http://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations.validationattribute.requiresvalidationcontext.aspx
+		public virtual bool RequiresValidationContext { get { return false; } }
+#endif
+
 #if NET_4_0
 		NotImplementedException NestedNIEX ()
 		{

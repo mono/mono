@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Globalization;
 using System.ComponentModel;
 
 namespace System.ComponentModel.DataAnnotations
@@ -97,7 +98,7 @@ namespace System.ComponentModel.DataAnnotations
 			if (comparer == null)
 				comparer = SetupComparer ();
 
-			return String.Format (ErrorMessageString, name, Minimum, Maximum);
+			return String.Format (CultureInfo.CurrentCulture, ErrorMessageString, name, Minimum, Maximum);
 		}
 
 		// LAMESPEC: does not throw ValidationException when value is out of range

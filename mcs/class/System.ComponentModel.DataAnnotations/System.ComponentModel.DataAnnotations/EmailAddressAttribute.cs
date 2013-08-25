@@ -1,5 +1,5 @@
 //
-// TimestampAttribute.cs
+// EmailAddressAttribute.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -28,15 +28,45 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0
+#if NET_4_5
 
 using System;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace System.ComponentModel.DataAnnotations
 {
 	[AttributeUsageAttribute (AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
-	public class TimestampAttribute : Attribute
+	public class EmailAddressAttribute : DataTypeAttribute
 	{
+		private const string DefaultErrorMessage = "The {0} field is not a valid e-mail address.";
+		// See: http://stackoverflow.com/questions/16167983/best-regular-expression-for-email-validation-in-c-sharp
+		// See: http://en.wikipedia.org/wiki/List_of_Internet_top-level_domains
+		private const string _emailRegexStr =   @"[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*" +
+						  	@"@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-z0-9])?\.)+(?:[A-Za-z]{2}|" +
+						    	@"com|org|net|edu|gov|cat|mil|biz|info|mobi|name|aero|asia|jobs|museum|coop|travel|post|pro|tel|int|xxx)\b";
+		private static Regex _emailRegex = new Regex (_emailRegexStr, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+		public EmailAddressAttribute ()
+			: base(DataType.EmailAddress)
+		{
+			// XXX: There is no .ctor accepting Func<string> on DataTypeAttribute.. :?
+			base.ErrorMessage = DefaultErrorMessage;
+		}
+
+		public override bool IsValid(object value)
+		{
+			if (value == null)
+				return true;
+
+			if (value is string)
+			{
+				var str = value as string;
+				return !string.IsNullOrEmpty(str) ? _emailRegex.IsMatch(str) : false;
+			}
+
+			return false;
+		}
 	}
 }
 
