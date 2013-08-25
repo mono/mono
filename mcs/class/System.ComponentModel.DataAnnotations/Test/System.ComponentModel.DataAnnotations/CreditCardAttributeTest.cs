@@ -2,9 +2,10 @@
 // CreditCardAttributeTest.cs
 //
 // Authors:
-//      Marek Habersack <mhabersack@novell.com>
+//      Pablo Ruiz García <pablo.ruiz@gmail.com>
 //
 // Copyright (C) 2010 Novell, Inc. (http://novell.com/)
+// Copyright (C) 2013 Pablo Ruiz García
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
