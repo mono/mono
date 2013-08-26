@@ -7,6 +7,8 @@
 	<Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\$(MSBuildThisFile)\ImportBefore\*"
 		Condition="'$(ImportByWildcardBeforeMicrosoftCommonTargets)' == 'true' and Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\$(MSBuildThisFile)\ImportBefore')"/>
 
+	<Import Project="$(MSBuildProjectFullPath).user" Condition="Exists('$(MSBuildProjectFullPath).user')"/>	
+	
 	<PropertyGroup>
 		<TargetExt Condition="'$(OutputType)' == 'Winexe'">.exe</TargetExt>
 		<TargetExt Condition="'$(OutputType)' == 'Exe'">.exe</TargetExt>
