@@ -1010,8 +1010,6 @@ namespace Mono.CSharp.Nullable
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
-			Console.WriteLine (":{0} x {1}", Left.GetType (), Right.GetType ());
-
 			return Binary.MakeExpression (ctx, Left, Right);
 		}
 	}
