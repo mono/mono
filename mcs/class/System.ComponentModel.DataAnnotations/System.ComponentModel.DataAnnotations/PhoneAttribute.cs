@@ -1,5 +1,5 @@
 //
-// TimestampAttribute.cs
+// PhoneAttribute.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -28,15 +28,41 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0
+#if NET_4_5
 
 using System;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace System.ComponentModel.DataAnnotations
 {
 	[AttributeUsageAttribute (AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
-	public class TimestampAttribute : Attribute
+	public class PhoneAttribute : DataTypeAttribute
 	{
+		private const string DefaultErrorMessage = "The {0} field is not a valid phone number.";
+		private const string _regexStr = @"^\+?(\d[\d-. ]+)?(\([\d-. ]+\))?[\d-. ]+\d$";
+		private static Regex _regex = new Regex (_regexStr, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+		public PhoneAttribute ()
+			: base(DataType.PhoneNumber)
+		{
+			// XXX: There is no .ctor accepting Func<string> on DataTypeAttribute.. :?
+			base.ErrorMessage = DefaultErrorMessage;
+		}
+
+		public override bool IsValid(object value)
+		{
+			if (value == null)
+				return true;
+
+			if (value is string)
+			{
+				var str = value as string;
+				return !string.IsNullOrEmpty(str) ? _regex.IsMatch(str) : false;
+			}
+
+			return false;
+		}
 	}
 }
 
