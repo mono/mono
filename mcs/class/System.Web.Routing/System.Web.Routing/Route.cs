@@ -32,6 +32,7 @@ using System.Runtime.CompilerServices;
 using System.Security.Permissions;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Globalization;
 
 namespace System.Web.Routing
 {
@@ -163,13 +164,15 @@ namespace System.Web.Routing
 
 			string s = constraint as string;
 			if (s != null) {
-				string v;
+				string v = null;
 				object o;
 
+				// NOTE: If constraint was not an IRouteConstraint, is is asumed
+				// to be an object 'convertible' to string, or at least this is how
+				// ASP.NET seems to work by the tests i've done latelly. (pruiz)
+
 				if (values != null && values.TryGetValue (parameterName, out o))
-					v = o as string;
-				else
-					v = null;
+					v = Convert.ToString (o, CultureInfo.InvariantCulture);
 
 				if (!String.IsNullOrEmpty (v))
 					return MatchConstraintRegex (v, s);
@@ -184,7 +187,7 @@ namespace System.Web.Routing
 					if (!rdValues.TryGetValue (parameterName, out o))
 						return false;
 
-					v = o as string;
+					v = Convert.ToString (o, CultureInfo.InvariantCulture);
 					if (String.IsNullOrEmpty (v))
 						return false;
 
