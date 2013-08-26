@@ -43,6 +43,17 @@ namespace System.Management
 		{
 		}
 
+		internal ManagementQuery (string query)
+		{
+			QueryString = query;
+		}
+
+		internal ManagementQuery (string language, string query)
+		{
+			QueryLanguage = language;
+			QueryString = query;
+		}
+
 		static ManagementQuery ()
 		{
 		}
