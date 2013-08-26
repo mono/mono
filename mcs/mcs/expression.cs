@@ -3355,8 +3355,6 @@ namespace Mono.CSharp
 
 		public SLE.Expression MakeExpression (BuilderContext ctx, Expression left, Expression right)
 		{
-			Console.WriteLine ("{0} x {1}", left.Type.GetSignatureForError (), right.Type.GetSignatureForError ());
-
 			var le = left.MakeExpression (ctx);
 			var re = right.MakeExpression (ctx);
 			bool is_checked = ctx.HasSet (BuilderContext.Options.CheckedScope);
