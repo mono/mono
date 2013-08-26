@@ -61,7 +61,7 @@ namespace System.ComponentModel.DataAnnotations
 		
 		public override string FormatErrorMessage (string name)
 		{
-			return string.Format (CultureInfo.CurrentCulture, ErrorMessageString, name, Pattern);
+			return string.Format (ErrorMessageString, name, Pattern);
 		}
 
 		// LAMESPEC: does not throw ValidationException when value does not match the regular expression

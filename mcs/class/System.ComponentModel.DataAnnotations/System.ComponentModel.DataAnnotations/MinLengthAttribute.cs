@@ -53,7 +53,7 @@ namespace System.ComponentModel.DataAnnotations
 
 		public override string FormatErrorMessage (string name)
 		{
-			return string.Format (CultureInfo.CurrentCulture, ErrorMessageString, name, Length);
+			return string.Format (ErrorMessageString, name, Length);
 		}
 
 		public override bool IsValid (object value)

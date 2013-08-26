@@ -98,7 +98,7 @@ namespace System.ComponentModel.DataAnnotations
 			if (comparer == null)
 				comparer = SetupComparer ();
 
-			return String.Format (CultureInfo.CurrentCulture, ErrorMessageString, name, Minimum, Maximum);
+			return String.Format (ErrorMessageString, name, Minimum, Maximum);
 		}
 
 		// LAMESPEC: does not throw ValidationException when value is out of range

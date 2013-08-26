@@ -93,7 +93,7 @@ namespace System.ComponentModel.DataAnnotations
 		public override string FormatErrorMessage (string name)
 		{
 			var oname = string.IsNullOrEmpty (_otherPropertyDisplayName) ? _otherProperty : _otherPropertyDisplayName;
-			return string.Format (CultureInfo.CurrentCulture, ErrorMessageString, name, oname);
+			return string.Format (ErrorMessageString, name, oname);
 		}
 
 		protected override ValidationResult IsValid(object value, ValidationContext context)

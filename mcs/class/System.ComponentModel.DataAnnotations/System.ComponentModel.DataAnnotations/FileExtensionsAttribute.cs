@@ -69,7 +69,7 @@ namespace System.ComponentModel.DataAnnotations
 		public override string FormatErrorMessage (string name)
 		{
 			var extensions = GetExtensionList().Aggregate ((cur, next) => cur + ", " + next);
-			return string.Format (CultureInfo.CurrentCulture, ErrorMessageString, name, extensions);
+			return string.Format (ErrorMessageString, name, extensions);
 		}
 
 		public override bool IsValid(object value)

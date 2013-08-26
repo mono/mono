@@ -70,7 +70,7 @@ namespace System.ComponentModel.DataAnnotations
 			if (String.IsNullOrEmpty (format))
 				return String.Empty;
 
-			return String.Format (CultureInfo.CurrentCulture, ErrorMessageString, name);
+			return String.Format (ErrorMessageString, name);
 		}
 #if NET_4_0
 		public string ErrorMessage {
