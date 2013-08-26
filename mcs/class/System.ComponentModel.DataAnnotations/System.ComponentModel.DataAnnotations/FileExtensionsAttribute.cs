@@ -1,11 +1,12 @@
 //
-// MinLengthAttribute.cs
+// FileExtensionAttribute.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
 //      Pablo Ruiz García <pablo.ruiz@gmail.com>
 //
 // Copyright (C) 2013 Xamarin Inc (http://www.xamarin.com)
+// Copyright (C) 2013 Pablo Ruiz García
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,51 +31,60 @@
 #if NET_4_5
 
 using System;
+using System.Linq;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace System.ComponentModel.DataAnnotations
 {
+	// See: http://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations.fileextensionsattribute.aspx
+
 	[AttributeUsageAttribute (AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
-	public class MinLengthAttribute : ValidationAttribute
+	public class FileExtensionsAttribute : DataTypeAttribute
 	{
-		private const string DefaultErrorMessage = "The field {0} must be a string or array type with a minimum length of '{1}'.";
-		private const string InvalidLengthErrorMessage = "MinLengthAttribute must have a Length value that is zero or greater.";
+		private const string DefaultErrorMessage = "The {0} field only accepts files with the following extensions: {1}.";
+		private const string DefaultExtensions = "png,jpg,jpeg,gif";
 
-		public MinLengthAttribute ()
+		public FileExtensionsAttribute ()
+			: base (DataType.Upload)
 		{
+			// XXX: There is no .ctor accepting Func<string> on DataTypeAttribute.. :?
+			base.ErrorMessage = DefaultErrorMessage;
+			this.Extensions = DefaultExtensions;
 		}
 
-		public MinLengthAttribute (int length)
+		public string Extensions { get; set; }
+
+		private string[] GetExtensionList ()
 		{
-			Length = length;
+			return (Extensions ?? "").Split (',');
 		}
 
-		public int Length { get; private set; }
+		private string GetExtension (string filename)
+		{
+			var parts = filename.Split ('.');
+			return parts.Length > 0 ? parts [parts.Length - 1] : "";
+		}
 
 		public override string FormatErrorMessage (string name)
 		{
-			return string.Format (ErrorMessageString, name, Length);
+			var extensions = GetExtensionList().Aggregate ((cur, next) => cur + ", " + next);
+			return string.Format (ErrorMessageString, name, extensions);
 		}
 
-		public override bool IsValid (object value)
+		public override bool IsValid(object value)
 		{
-			if (this.Length < 0)
-				throw new InvalidOperationException (InvalidLengthErrorMessage);
+			if (value == null)
+				return true;
 
-			if (value != null) {
-
-				if (value is string) {
-					return (value as string).Length >= this.Length;
-				}
-
-				if (value is Array) {
-					return (value as Array).Length >= this.Length;
-				}
-
-				// NOTE: from my tests, MS.NET does not support IEnumerable as value. :(
+			if (value is string)
+			{
+				var str = value as string;
+				var ext = GetExtension (str);
+				return GetExtensionList ().Any (x => string.Equals (x, ext, StringComparison.InvariantCultureIgnoreCase));
 			}
 
-			return true;
+			return false;
 		}
 	}
 }
