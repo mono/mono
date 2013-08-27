@@ -1158,7 +1158,7 @@ namespace Mono.CSharp {
 
 		public Attributes (List<Attribute> attrs)
 		{
-			Attrs = attrs;
+			Attrs = attrs ?? new List<Attribute> ();
 		}
 
 		public void AddAttribute (Attribute attr)
