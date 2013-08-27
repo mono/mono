@@ -84,7 +84,7 @@ package {
 */
  	 	}
 
- 	 	internal function XML(value:XmlNode)
+ 	 	public function XML(value:XmlNode)
  	 	{
  	 		// TODO: mElement = value;
  	 	}
@@ -273,10 +273,11 @@ package {
 		public function valueOf():Object {
 			throw new System.NotImplementedException();
 		}
-	
+/*	
 		public static implicit operator String (xml:XML) {
 			throw new System.NotImplementedException();
 		}	
+*/
 	}
 
 }
