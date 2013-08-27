@@ -36,7 +36,7 @@ namespace System {
 				get { return System.Text.Encoding.UTF8; }
 			}
 
-			static void poor_man_print (string s)
+			static void direct_write_to_stdout (string s)
 			{
 				byte [] b = Encoding.Default.GetBytes (s);
 				while (write (1, b, b.Length) == -1 && Marshal.GetLastWin32Error () == /* EINTR*/ 4)
@@ -51,8 +51,8 @@ namespace System {
 				}
 				catch (Exception) {
 					try {
-						poor_man_print (s);
-						poor_man_print (Environment.NewLine);
+						direct_write_to_stdout (s);
+						direct_write_to_stdout (Environment.NewLine);
 					} catch (Exception){}
 				}
 				sb.Length = 0;
