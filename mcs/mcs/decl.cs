@@ -1238,7 +1238,7 @@ namespace Mono.CSharp {
 			return (state & StateFlags.CLSCompliant) != 0;
 		}
 
-		public bool IsConditionallyExcluded (IMemberContext ctx, Location loc)
+		public bool IsConditionallyExcluded (IMemberContext ctx)
 		{
 			if ((Kind & (MemberKind.Class | MemberKind.Method)) == 0)
 				return false;

@@ -2318,6 +2318,7 @@ namespace Mono.CSharp
 			NullableMask	= 1 << 20,
 		}
 
+		[Flags]
 		enum State : byte
 		{
 			None = 0,
@@ -3374,8 +3375,6 @@ namespace Mono.CSharp
 
 		public SLE.Expression MakeExpression (BuilderContext ctx, Expression left, Expression right)
 		{
-			Console.WriteLine ("{0} x {1}", left.Type.GetSignatureForError (), right.Type.GetSignatureForError ());
-
 			var le = left.MakeExpression (ctx);
 			var re = right.MakeExpression (ctx);
 			bool is_checked = ctx.HasSet (BuilderContext.Options.CheckedScope);
@@ -8984,7 +8983,7 @@ namespace Mono.CSharp
 			var nested = MemberCache.FindNestedType (expr_type, Name, -System.Math.Max (1, Arity));
 
 			if (nested != null) {
-				Error_TypeArgumentsCannotBeUsed (rc, nested, Arity, expr.Location);
+				Error_TypeArgumentsCannotBeUsed (rc, nested, expr.Location);
 				return;
 			}
 

@@ -14,3 +14,8 @@ System.ComponentModel.DataAnnotations/ValidationContextTest.cs
 System.ComponentModel.DataAnnotations/ValidationResultTest.cs
 System.ComponentModel.DataAnnotations/ValidatorTest.cs
 System.ComponentModel.DataAnnotations/RegularExpressionAttributeTest.cs
+System.ComponentModel.DataAnnotations/EmailAddressAttributeTest.cs
+System.ComponentModel.DataAnnotations/PhoneAttributeTest.cs
+System.ComponentModel.DataAnnotations/CreditCardAttributeTest.cs
+System.ComponentModel.DataAnnotations/FileExtensionsAttributeTest.cs
+System.ComponentModel.DataAnnotations/CompareAttributeTest.cs

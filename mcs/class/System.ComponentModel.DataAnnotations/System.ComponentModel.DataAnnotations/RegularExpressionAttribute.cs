@@ -30,6 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Globalization;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 
@@ -60,7 +61,7 @@ namespace System.ComponentModel.DataAnnotations
 		
 		public override string FormatErrorMessage (string name)
 		{
-			return string.Format(ErrorMessageString, name, Pattern);
+			return string.Format (ErrorMessageString, name, Pattern);
 		}
 
 		// LAMESPEC: does not throw ValidationException when value does not match the regular expression

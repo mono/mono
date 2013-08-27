@@ -18398,6 +18398,22 @@
       </method>
     </type>
   </test>
+  <test name="gtest-592.cs">
+    <type name="Tests">
+      <method name="Void A[T](System.Collections.Generic.IReadOnlyCollection`1[T])" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void B[T](System.Collections.Generic.IReadOnlyList`1[T])" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>51</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-593.cs">
     <type name="Parser`2[D1,DR1]">
       <method name="System.Tuple`2[D1,DR1] Invoke(D1)" attrs="454">
@@ -55148,7 +55164,7 @@
   <test name="test-anon-94.cs">
     <type name="Program">
       <method name="Int32 Main()" attrs="150">
-        <size>75</size>
+        <size>97</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -55183,8 +55199,31 @@
       <method name="Void &lt;Print&gt;__BaseCallProxy0(Int32)" attrs="129">
         <size>8</size>
       </method>
-      <method name="Void &lt;Print&gt;m__1()" attrs="129">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+BaseClass">
+      <method name="Void TestOut(Int32 ByRef)" attrs="454">
+        <size>5</size>
+      </method>
+    </type>
+    <type name="Program+Derived">
+      <method name="Void TestOut(Int32 ByRef)" attrs="198">
+        <size>50</size>
+      </method>
+      <method name="Void &lt;TestOut&gt;__BaseCallProxy1(Int32 ByRef)" attrs="129">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="Program+DerivedLibrary">
+      <method name="Void &lt;Print&gt;m__2()" attrs="129">
         <size>9</size>
+      </method>
+    </type>
+    <type name="Program+Derived+&lt;TestOut&gt;c__AnonStorey0">
+      <method name="Void &lt;&gt;m__1()" attrs="131">
+        <size>30</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -59256,6 +59295,57 @@
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-49.cs">
+    <type name="TodoItem">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MobileServiceTable2`1[T]">
+      <method name="System.Threading.Tasks.Task`1[System.Collections.Generic.List`1[T]] ToListAsync()" attrs="134">
+        <size>36</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tests">
+      <method name="Int32 foo(System.Action)" attrs="129">
+        <size>16</size>
+      </method>
+      <method name="Void OnTap(TodoItem)" attrs="129">
+        <size>2</size>
+      </method>
+      <method name="System.Threading.Tasks.Task RefreshAsync()" attrs="129">
+        <size>41</size>
+      </method>
+      <method name="Void Main(System.String[])" attrs="150">
+        <size>19</size>
+      </method>
+      <method name="Int32 &lt;RefreshAsync&gt;m__0(TodoItem)" attrs="129">
+        <size>46</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tests+&lt;RefreshAsync&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>213</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Tests+&lt;RefreshAsync&gt;c__AnonStorey1">
+      <method name="Void &lt;&gt;m__1()" attrs="131">
+        <size>18</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>

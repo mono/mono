@@ -1832,7 +1832,7 @@ namespace Mono.CSharp {
 			return new TypeParameterInflator (context, this, tparams_full, targs_full);
 		}
 
-		MetaType CreateMetaInfo (TypeParameterMutator mutator)
+		MetaType CreateMetaInfo ()
 		{
 			//
 			// Converts nested type arguments into right order
@@ -1882,7 +1882,7 @@ namespace Mono.CSharp {
 		public override MetaType GetMetaInfo ()
 		{
 			if (info == null)
-				info = CreateMetaInfo (null);
+				info = CreateMetaInfo ();
 
 			return info;
 		}
@@ -2776,7 +2776,7 @@ namespace Mono.CSharp {
 				//
 				AnonymousMethodExpression am = a.Expr as AnonymousMethodExpression;
 				if (am != null) {
-					if (am.ExplicitTypeInference (ec, tic, method_parameter))
+					if (am.ExplicitTypeInference (tic, method_parameter))
 						--score; 
 					continue;
 				}

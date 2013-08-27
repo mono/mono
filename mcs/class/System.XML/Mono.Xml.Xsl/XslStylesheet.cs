@@ -391,7 +391,7 @@ namespace Mono.Xml.Xsl {
 			else {
 				c.Input.MoveToFirstChild ();
 				do {
-					if (c.Input.NodeType != XPathNodeType.Element)
+					if (c.Input.NodeType != XPathNodeType.Element || c.Input.LocalName == "import" && c.Input.NamespaceURI == XsltNamespace)
 						continue;
 					Debug.EnterNavigator (c);
 					HandleTopLevelElement (c);
@@ -420,6 +420,8 @@ namespace Mono.Xml.Xsl {
 			case XsltNamespace:
 				switch (n.LocalName)
 				{
+				case "import":
+					throw new XsltCompileException ("Invalid occurence of import element after other top-level content", null, c.Input);
 				case "include":
 					HandleInclude (c);
 					break;

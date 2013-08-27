@@ -33,6 +33,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
@@ -81,10 +82,11 @@ namespace System.Runtime.Serialization.Json
 		static TypeMap CreateDefaultTypeMap (Type type)
 		{
 			var l = new List<TypeMapMember> ();
-			foreach (var fi in type.GetFields (binding_flags))
-				l.Add (new TypeMapField (fi, null));
-			foreach (var pi in type.GetProperties (binding_flags))
-				if (pi.CanRead && pi.CanWrite && !pi.GetGetMethod ().IsStatic && pi.GetIndexParameters ().Length == 0)
+			foreach (var fi in type.GetFields ())
+				if (!fi.IsStatic)
+					l.Add (new TypeMapField (fi, null));
+			foreach (var pi in type.GetProperties ())
+				if (pi.CanRead && pi.CanWrite && !pi.GetGetMethod (true).IsStatic && pi.GetIndexParameters ().Length == 0)
 					l.Add (new TypeMapProperty (pi, null));
 			l.Sort ((x, y) => x.Order != y.Order ? x.Order - y.Order : String.Compare (x.Name, y.Name, StringComparison.Ordinal));
 			return new TypeMap (type, null, l.ToArray ());
@@ -116,6 +118,8 @@ namespace System.Runtime.Serialization.Json
 			List<TypeMapMember> members = new List<TypeMapMember> ();
 
 			foreach (FieldInfo fi in type.GetFields (binding_flags)) {
+				if (fi.GetCustomAttributes (typeof (CompilerGeneratedAttribute), false).Length > 0)
+					continue;
 				if (dca != null) {
 					object [] atts = fi.GetCustomAttributes (typeof (DataMemberAttribute), true);
 					if (atts.Length == 0)

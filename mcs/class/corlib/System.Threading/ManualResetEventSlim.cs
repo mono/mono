@@ -164,8 +164,6 @@ namespace System.Threading
 				SpinWait wait = new SpinWait ();
 
 				while (!IsSet) {
-					cancellationToken.ThrowIfCancellationRequested ();
-
 					if (wait.Count < spinCount) {
 						wait.SpinOnce ();
 						continue;
@@ -173,6 +171,8 @@ namespace System.Threading
 
 					break;
 				}
+
+				cancellationToken.ThrowIfCancellationRequested ();
 
 				if (IsSet)
 					return true;

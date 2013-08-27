@@ -78,11 +78,15 @@ public class AssemblyBuilderTest
 		return assemblyName;
 	}
 
-	private AssemblyBuilder genAssembly ()
+	private AssemblyBuilder genAssembly (AssemblyBuilderAccess access)
 	{
 		return domain.DefineDynamicAssembly (genAssemblyName (),
-						     AssemblyBuilderAccess.RunAndSave,
+						     access,
 						     tempDir);
+	}
+	private AssemblyBuilder genAssembly ()
+	{
+		return genAssembly (AssemblyBuilderAccess.RunAndSave);
 	}
 
 	private MethodInfo genEntryFunction (AssemblyBuilder assembly)
@@ -1929,5 +1933,25 @@ public class AssemblyBuilderTest
 			Assert.AreEqual (_assemblyName, assemblyName.ToString ());
 		}
 	}
+
+
+	[Test]//Bug #7126
+	public void CannotCreateInstanceOfSaveOnlyAssembly ()
+	{
+		var asm_builder = genAssembly (AssemblyBuilderAccess.Save);
+        var mod_builder = asm_builder.DefineDynamicModule("Foo", "Foo.dll");
+
+        var type_builder = mod_builder.DefineType("Foo",
+                TypeAttributes.Public | TypeAttributes.Sealed |
+                TypeAttributes.Class | TypeAttributes.BeforeFieldInit);
+
+        var type = type_builder.CreateType();
+
+		try {
+			Activator.CreateInstance(type);
+			Assert.Fail ("Cannot create instance of save only type");
+		} catch (NotSupportedException e) {
+		}
+     }
 }
 }

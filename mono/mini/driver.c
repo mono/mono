@@ -1468,7 +1468,7 @@ mono_main (int argc, char* argv[])
 
 	setlocale (LC_ALL, "");
 
-	if (getenv ("MONO_NO_SMP"))
+	if (g_getenv ("MONO_NO_SMP"))
 		mono_set_use_smp (FALSE);
 	
 	if (!g_thread_supported ())
@@ -1723,9 +1723,10 @@ mono_main (int argc, char* argv[])
 			}
 		} else if (strcmp (argv [i], "--desktop") == 0) {
 			mono_gc_set_desktop_mode ();
-			/* Put desktop-specific optimizations here */
+			/* Put more desktop-specific optimizations here */
 		} else if (strcmp (argv [i], "--server") == 0){
-			/* Put server-specific optimizations here */
+			mono_config_set_server_mode (TRUE);
+			/* Put more server-specific optimizations here */
 		} else if (strcmp (argv [i], "--inside-mdb") == 0) {
 			action = DO_DEBUGGER;
 		} else if (strncmp (argv [i], "--wapi=", 7) == 0) {
@@ -1770,7 +1771,7 @@ mono_main (int argc, char* argv[])
 	}
 
 #ifdef __native_client_codegen__
-	if (getenv ("MONO_NACL_ALIGN_MASK_OFF"))
+	if (g_getenv ("MONO_NACL_ALIGN_MASK_OFF"))
 	{
 		nacl_align_byte = -1; /* 0xff */
 	}
@@ -1785,7 +1786,7 @@ mono_main (int argc, char* argv[])
 		return 1;
 	}
 
-	if (getenv ("MONO_XDEBUG"))
+	if (g_getenv ("MONO_XDEBUG"))
 		enable_debugging = TRUE;
 
 #ifdef MONO_CROSS_COMPILE

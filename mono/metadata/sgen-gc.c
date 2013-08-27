@@ -4870,7 +4870,7 @@ mono_gc_base_init (void)
 
 	init_user_copy_or_mark_key ();
 
-	if ((env = getenv (MONO_GC_PARAMS_NAME))) {
+	if ((env = g_getenv (MONO_GC_PARAMS_NAME))) {
 		opts = g_strsplit (env, ",", -1);
 		for (ptr = opts; *ptr; ++ptr) {
 			char *opt = *ptr;
@@ -5096,6 +5096,10 @@ mono_gc_base_init (void)
 			}
 
 			if (!strcmp (opt, "cementing")) {
+				if (major_collector.is_parallel) {
+					sgen_env_var_error (MONO_GC_PARAMS_NAME, "Ignoring.", "`cementing` is not supported for the parallel major collector.");
+					continue;
+				}
 				cement_enabled = TRUE;
 				continue;
 			}
@@ -5140,10 +5144,12 @@ mono_gc_base_init (void)
 		g_strfreev (opts);
 	}
 
-	if (major_collector.is_parallel)
+	if (major_collector.is_parallel) {
+		cement_enabled = FALSE;
 		sgen_workers_init (num_workers);
-	else if (major_collector.is_concurrent)
+	} else if (major_collector.is_concurrent) {
 		sgen_workers_init (1);
+	}
 
 	if (major_collector_opt)
 		g_free (major_collector_opt);
@@ -5155,7 +5161,7 @@ mono_gc_base_init (void)
 
 	sgen_cement_init (cement_enabled);
 
-	if ((env = getenv (MONO_GC_DEBUG_NAME))) {
+	if ((env = g_getenv (MONO_GC_DEBUG_NAME))) {
 		gboolean usage_printed = FALSE;
 
 		opts = g_strsplit (env, ",", -1);

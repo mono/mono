@@ -476,7 +476,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 
 			string zlib = (compress ? "-lz" : "");
 			string debugging = "-g";
-			string cc = GetEnv ("CC", IsUnix ? "cc" : "gcc -mno-cygwin");
+			string cc = GetEnv ("CC", IsUnix ? "cc" : "i686-pc-mingw32-gcc");
 
 			if (style == "linux")
 				debugging = "-ggdb";

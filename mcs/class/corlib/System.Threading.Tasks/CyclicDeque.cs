@@ -57,7 +57,8 @@ namespace System.Threading.Tasks
 			var a = array;
 			
 			// Take care of growing
-			if (b - upperBound >= a.Size - 1) {
+			var size = b - top - upperBound;
+			if (size > a.Size) {
 				upperBound = Interlocked.Read (ref top);
 				a = a.Grow (b, upperBound);
 				array = a;
