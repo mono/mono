@@ -48,7 +48,6 @@ namespace System {
 				string s = sb.ToString ();
 				try {
 					monotouch_log (s);
-					sb.Length = 0;
 				}
 				catch (Exception) {
 					try {
@@ -56,6 +55,7 @@ namespace System {
 						poor_man_print (Environment.NewLine);
 					} catch (Exception){}
 				}
+				sb.Length = 0;
 			}
 			
 			// minimum to override - see http://msdn.microsoft.com/en-us/library/system.io.textwriter.aspx
