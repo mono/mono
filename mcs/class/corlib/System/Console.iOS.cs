@@ -19,9 +19,11 @@ namespace System {
 	public static partial class Console {
 
 		class NSLogWriter : TextWriter {
-			
 			[DllImport ("__Internal", CharSet=CharSet.Unicode)]
 			extern static void monotouch_log (string s);
+
+			[DllImport ("/usr/lib/libSystem.dylib")]
+			extern static int write (int fd, byte [] buffer, int n);
 			
 			StringBuilder sb;
 			
@@ -33,14 +35,26 @@ namespace System {
 			public override System.Text.Encoding Encoding {
 				get { return System.Text.Encoding.UTF8; }
 			}
+
+			static void poor_man_print (string s)
+			{
+				byte [] b = Encoding.Default.GetBytes (s);
+				while (write (1, b, b.Length) == -1 && Marshal.GetLastWin32Error () == /* EINTR*/ 4)
+					;
+			}
 			
 			public override void Flush ()
 			{
+				string s = sb.ToString ();
 				try {
-					monotouch_log (sb.ToString ());
+					monotouch_log (s);
 					sb.Length = 0;
 				}
 				catch (Exception) {
+					try {
+						poor_man_print (s);
+						poor_man_print (Environment.NewLine);
+					} catch (Exception){}
 				}
 			}
 			
