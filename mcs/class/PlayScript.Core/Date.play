@@ -29,7 +29,7 @@
 package {
 	public final dynamic class Date
 	{
-		public function Date (yearOrTimevalue:Object, month:Number, date:Number = 1, hour:Number = 0, minute:Number = 0, second:Number = 0, millisecond:Number = 0)
+		public function Date (yearOrTimevalue:Object = null, month:Number = 1, date:Number = 1, hour:Number = 0, minute:Number = 0, second:Number = 0, millisecond:Number = 0)
 		{
 		}
 		

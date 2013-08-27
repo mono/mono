@@ -5412,7 +5412,7 @@ namespace Mono.CSharp {
 		LocalVariable li;
 		FullNamedExpression type_expr;
 		CompilerAssign assign;
-		TypeSpec type;
+		protected TypeSpec type;
 		
 		public Catch (Block block, Location loc)
 		{
@@ -5434,7 +5434,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool IsGeneral {
+		public virtual bool IsGeneral {
 			get {
 				return type_expr == null;
 			}
@@ -5492,32 +5492,44 @@ namespace Mono.CSharp {
 		public override bool Resolve (BlockContext ec)
 		{
 			using (ec.With (ResolveContext.Options.CatchScope, true)) {
-				if (type_expr != null) {
-					type = type_expr.ResolveAsType (ec);
-					if (type == null)
-						return false;
+				if (!ResolveType (ec))
+					return false;
 
-					if (type.BuiltinType != BuiltinTypeSpec.Type.Exception && !TypeSpec.IsBaseClass (type, ec.BuiltinTypes.Exception, false)) {
-						ec.Report.Error (155, loc, "The type caught or thrown must be derived from System.Exception");
-					} else if (li != null) {
-						li.Type = type;
-						li.PrepareForFlowAnalysis (ec);
+				if (li != null) {
+					li.Type = type;
+					li.PrepareForFlowAnalysis (ec);
 
-						// source variable is at the top of the stack
-						Expression source = new EmptyExpression (li.Type);
-						if (li.Type.IsGenericParameter)
-							source = new UnboxCast (source, li.Type);
+					// source variable is at the top of the stack
+					Expression source = new EmptyExpression (li.Type);
+					if (li.Type.IsGenericParameter)
+						source = new UnboxCast (source, li.Type);
 
-						//
-						// Uses Location.Null to hide from symbol file
-						//
-						assign = new CompilerAssign (new LocalVariableReference (li, Location.Null), source, Location.Null);
-						Block.AddScopeStatement (new StatementExpression (assign, Location.Null));
-					}
-				}
+					//
+					// Uses Location.Null to hide from symbol file
+					//
+					assign = new CompilerAssign (new LocalVariableReference (li, Location.Null), source, Location.Null);
+					Block.AddScopeStatement (new StatementExpression (assign, Location.Null));
+				}				
 
 				return Block.Resolve (ec);
 			}
+		}
+
+		protected virtual bool ResolveType (BlockContext bc)
+		{
+			if (type_expr == null)
+				return true;
+
+			type = type_expr.ResolveAsType (bc);
+			if (type == null)
+				return false;
+
+			if (type.BuiltinType != BuiltinTypeSpec.Type.Exception && !TypeSpec.IsBaseClass (type, bc.BuiltinTypes.Exception, false)) {
+				bc.Report.Error (155, loc, "The type caught or thrown must be derived from System.Exception");
+				type = bc.Module.Compiler.BuiltinTypes.Exception;
+			}
+
+			return true;
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -5669,6 +5681,12 @@ namespace Mono.CSharp {
 						continue;
 
 					if (resolved_type == ct || TypeSpec.IsBaseClass (resolved_type, ct, true)) {
+						//
+						// All sort of weird things are allowed in PS
+						//
+						if (clauses[ii] is PlayScript.Catch)
+							continue;
+
 						ec.Report.Error (160, c.loc,
 							"A previous catch clause already catches all exceptions of this or a super type `{0}'",
 							ct.GetSignatureForError ());

@@ -80,6 +80,12 @@ namespace Mono.CSharp
 				Report.Error (681, Location, "The modifier 'abstract' is not valid on fields. Try using a property instead");
 		}
 
+		protected FieldBase (TypeDefinition parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, Modifiers defaultModifiers,
+			MemberName name, Attributes attrs)
+			: base (parent, type, mod, allowed_mod, defaultModifiers, name, attrs)
+		{
+		}
+
 		#region Properties
 
 		public override AttributeTargets AttributeTargets {
@@ -596,6 +602,12 @@ namespace Mono.CSharp
 
 		public Field (TypeDefinition parent, FullNamedExpression type, Modifiers mod, MemberName name, Attributes attrs)
 			: base (parent, type, mod, AllowedModifiers, name, attrs)
+		{
+		}
+
+		protected Field (TypeDefinition parent, FullNamedExpression type, Modifiers mod, Modifiers amod, Modifiers defaultModifiers,
+					MemberName name, Attributes attrs)
+			: base (parent, type, mod, amod, defaultModifiers, name, attrs)
 		{
 		}
 

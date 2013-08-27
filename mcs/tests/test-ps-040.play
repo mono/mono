@@ -22,6 +22,16 @@ package
 				throw new Error ("2");
 		}
 		
+		public static var j:Number=1;
+		public static var k:Number=0;
+		public static var l:Number=0;
+		public static var m:Number=0;
+		
+		// TODO: Flow-analysis
+//		for (j=1;j<2;j++) {
+//			k=j;
+//		}
+		
 		public static function Go ():void
 		{
 			if (field != 4)

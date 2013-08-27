@@ -1,0 +1,49 @@
+package 
+{
+	public class TryCatchTest
+	{
+		public static function Main():int
+		{
+			var c:int;
+	
+			try {
+				throw new Error ();
+				return 1;
+			} catch (e) {
+				trace (typeof (e));
+				trace (e);
+				c++;
+			}
+
+			if (c != 1)
+				return 2;
+			
+			try {
+				throw new ArgumentError ();
+			} catch (e:ArgumentError) {
+				++c;
+			} catch (e:ArgumentError) {
+				return 3;
+			}
+			
+			if (c != 2)
+				return 4;
+
+// TODO:
+/*
+			try {
+				throw new String ("aa");
+			} catch (e:String) {
+				++c;
+			} catch (e:Number) {
+				return 5;
+			}
+
+			if (c != 2)
+				return 6;
+*/
+
+			return 0;
+		}
+	}
+}

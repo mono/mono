@@ -554,7 +554,7 @@ import_package
 	  {
 	    Lexer.AllowAutoSemiAfterToken(Token.DOT_STAR, true);
 	  }
-	  DOT_STAR SEMICOLON 
+	  DOT_STAR opt_semicolon 
 	  {
 	    if (is_config_enabled) {
 			var un = new UsingNamespace ((ATypeNameExpression) $2, GetLocation ($1));
@@ -565,7 +565,7 @@ import_package
 		    Lexer.AllowAutoSemiAfterToken(Token.DOT_STAR, false);
 		}
 	  }	
-	| IMPORT typeof_type_expression SEMICOLON 
+	| IMPORT typeof_type_expression opt_semicolon
 	  {
 	    if (is_config_enabled) {
 			var ut = new UsingType ((ATypeNameExpression) $2, GetLocation ($1));
@@ -574,6 +574,7 @@ import_package
 			lbag.AddLocation (ut, GetLocation ($3));
 		}
 	  }
+/*	  
 	| IMPORT IDENTIFIER ASSIGN namespace_or_type_expr SEMICOLON
 	  {
 	    if (is_config_enabled) {
@@ -589,6 +590,7 @@ import_package
 			lbag.AddLocation (un, GetLocation ($3), GetLocation ($5));
 		}
 	  }
+*/
 	;
 
 //
@@ -754,6 +756,7 @@ package_statement
 		}
 	  }
 	| constant_declaration
+	| field_declaration
 	| no_config_package_directive
 	| valid_declaration_statement
 	  {
@@ -1164,7 +1167,8 @@ field_initializer
 		current_field.Initializer = (Expression) $3;
 
 		if (!(current_field is ConstantField)) {
-			current_type.RegisterFieldForInitialization (current_field,
+			var td = GetTypeDefinition (current_container);
+			td.RegisterFieldForInitialization (current_field,
 				new FieldInitializer (current_field, (Expression) $3, GetLocation ($1)) {
 					InlineConstantInitialization = true
 				});
@@ -1187,6 +1191,8 @@ field_declaration
 	  	lexer.parsing_generic_declaration = false;
 
 		var lt = (LocatedToken) $4;
+		var td = GetTypeDefinition (current_container);
+
 		FullNamedExpression type = (FullNamedExpression) $5;
 		if (type == null) {
 			Warning_NoTypeDeclaration (GetLocation ($4), string.Format ("Field `{0}'", lt.Value));
@@ -1194,9 +1200,9 @@ field_declaration
 		} else if (type.Type != null && type.Type.Kind == MemberKind.Void)
 			report.ErrorPlayScript (1135, GetLocation ($5), "Fields cannot have void type");
 			
-		current_field = new Field (current_type, type, (Modifiers) $2, CreateFullMemberName (lt), (Attributes) $1);
+		current_field = new Field (td, type, (Modifiers) $2, CreateFullMemberName (lt), (Attributes) $1);
 		if (is_config_enabled) {
-			current_type.AddField (current_field);
+			td.AddField (current_field);
 		}
 		is_config_enabled = true;
 		$$ = current_field;
@@ -1252,12 +1258,13 @@ field_declarator
 	: COMMA IDENTIFIER opt_member_type
 	  {
 		var lt = (LocatedToken) $2;
+		var td = GetTypeDefinition (current_container);		
 		if ($3 == null) {
 			Warning_NoTypeDeclaration (GetLocation ($2), string.Format ("Field `{0}'", lt.Value));
 			$3 = new UntypedTypeExpression (GetLocation ($2));
 		}
 
-		var field = new Field (current_type, (TypeExpression) $3, current_field.ModFlags, new MemberName (lt.Value, lt.Location), current_field.OptAttributes);
+		var field = new Field (td, (TypeExpression) $3, current_field.ModFlags, new MemberName (lt.Value, lt.Location), current_field.OptAttributes);
 	  	$$ = new FieldDeclarator (field, new SimpleMemberName (lt.Value, lt.Location), null);
 	  	lbag.AddLocation ($$, GetLocation ($1));
 	  }
@@ -1635,50 +1642,6 @@ method_header
 		lbag.AddMember (current_property, mod_locations, GetLocation ($10));
 		current_local_parameters = parameters;
 		$$ = current_property.Set;
-	  }
-	| opt_attributes
-	  opt_modifiers
-	  PARTIAL
-	  FUNCTION
-	  {
-		lexer.parsing_generic_declaration = true;
-	  }
-	  method_declaration_name
-	  OPEN_PARENS
-	  {
-		lexer.parsing_generic_declaration = false;
-	  	valid_param_mod = ParameterModifierType.All;
-	  }
-	  opt_formal_parameter_list CLOSE_PARENS COLON VOID
-	  {
-		lexer.ConstraintsParsing = true;
-	  }
-	  opt_type_parameter_constraints_clauses
-	  {
-		lexer.ConstraintsParsing = false;
-		valid_param_mod = 0;
-
-		MemberName name = (MemberName) $6;
-		current_local_parameters = (ParametersCompiled) $9;
-
-		var modifiers = (Modifiers) $2;
-		modifiers |= Modifiers.PARTIAL;
-
-		if (name.ExplicitInterface == null && (modifiers & (Modifiers.NEW | Modifiers.SEALED | Modifiers.STATIC | Modifiers.PRIVATE | Modifiers.VIRTUAL | Modifiers.OVERRIDE)) == 0)
-			modifiers |= Modifiers.VIRTUAL;
-			
-		var method = Method.Create (current_type, new TypeExpression (compiler.BuiltinTypes.Void, GetLocation ($12)),
-				     modifiers, name, current_local_parameters, (Attributes) $1);
-
-		if ($14 != null)
-			method.SetConstraints ((List<Constraints>) $14);
-
-		if (doc_support)
-			method.DocComment = Lexer.consume_doc_comment ();
-
-		StoreModifierLocation (Modifiers.PARTIAL, GetLocation ($3));
-		lbag.AddMember (method, mod_locations, GetLocation ($7), GetLocation ($10));
-		$$ = method;
 	  }
 	| opt_attributes
 	  opt_modifiers
@@ -5360,7 +5323,7 @@ opt_expression
 try_statement
 	: TRY block catch_clauses
 	  {
-		$$ = new TryCatch ((Block) $2, (List<Catch>) $3, GetLocation ($1), false);
+		$$ = new TryCatch ((Block) $2, (List<CSharp.Catch>) $3, GetLocation ($1), false);
 	  }
 	| TRY block FINALLY block
 	  {
@@ -5369,7 +5332,7 @@ try_statement
 	  }
 	| TRY block catch_clauses FINALLY block
 	  {
-		$$ = new TryFinally (new TryCatch ((Block) $2, (List<Catch>) $3, Location.Null, true), (Block) $5, GetLocation ($1));
+		$$ = new TryFinally (new TryCatch ((Block) $2, (List<CSharp.Catch>) $3, Location.Null, true), (Block) $5, GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($4));
 	  }
 	| TRY block error
@@ -5382,16 +5345,16 @@ try_statement
 catch_clauses
 	: catch_clause 
 	  {
-		var l = new List<Catch> (2);
+		var l = new List<CSharp.Catch> (2);
 
-		l.Add ((Catch) $1);
+		l.Add ((CSharp.Catch) $1);
 		$$ = l;
 	  }
 	| catch_clauses catch_clause
 	  {
-		var l = (List<Catch>) $1;
+		var l = (List<CSharp.Catch>) $1;
 		
-		Catch c = (Catch) $2;
+		var c = (CSharp.Catch) $2;
 		if (l [l.Count - 1].IsGeneral) {
 			report.Error (1017, c.loc, "Try statement already has an empty catch block");
 		}
@@ -5406,20 +5369,27 @@ opt_identifier
 	| identifier_inside_body
 	;
 
-catch_clause 
-	: CATCH block
+opt_catch_type
+	:
 	  {
-		$$ = new Catch ((Block) $2, GetLocation ($1));
+		Warning_NoTypeDeclaration (lexer.Location, "Catch variable");
+		$$ = new UntypedTypeExpression (lexer.Location);
 	  }
-	| CATCH open_parens_any IDENTIFIER COLON type CLOSE_PARENS
+	| COLON type
+	  {
+	  	$$ = $2;
+	  }
+	;
+
+catch_clause 
+	: CATCH open_parens_any IDENTIFIER COLON type CLOSE_PARENS
 	  {
 		start_block (GetLocation ($2));
 		var c = new Catch (current_block, GetLocation ($1));
-		c.TypeExpression = (FullNamedExpression) $5;
 
 		var lt = (LocatedToken) $3;
+		c.TypeExpression = (FullNamedExpression) $5;
 		c.Variable = new LocalVariable (current_block, lt.Value, lt.Location);
-//TODO:		c.Variable.TypeExpr = c.TypeExpression;
 		current_block.AddLocalName (c.Variable);
 		
 		lbag.AddLocation (c, GetLocation ($2), GetLocation ($6));
@@ -5428,6 +5398,24 @@ catch_clause
 	  block_prepared
 	  {
 		$$ = $7;
+	  }
+	| CATCH open_parens_any IDENTIFIER CLOSE_PARENS
+	  {
+		Warning_NoTypeDeclaration (GetLocation ($1), "Catch variable");
+
+		start_block (GetLocation ($2));
+		var c = new Catch (current_block, GetLocation ($1));
+
+		var lt = (LocatedToken) $3;
+		c.Variable = new LocalVariable (current_block, lt.Value, lt.Location);
+		current_block.AddLocalName (c.Variable);
+		
+		lbag.AddLocation (c, GetLocation ($2), GetLocation ($4));
+		$$ = c;
+	  }
+	  block_prepared
+	  {
+		$$ = $5;
 	  }
 	| CATCH open_parens_any error
 	  {
@@ -6432,7 +6420,7 @@ void start_block (Location loc)
 			current_block = package.GetBlock ();
 			current_block = new ExplicitBlock (current_block, loc, Location.Null);
 		} else {
-			current_block = new ToplevelBlock (compiler, current_local_parameters, loc);
+			current_block = new ToplevelBlock (compiler, current_local_parameters ?? ParametersCompiled.EmptyReadOnlyParameters, loc);
 		}
 
 		parsing_anonymous_method = false;
@@ -6849,6 +6837,7 @@ static string GetTokenName (int token)
 	case Token.FOR_EACH:
 		return "for each";
 	case Token.FUNCTION:
+	case Token.FUNCTION_BLOCK:
 		return "function";
 	case Token.FUNCTION_GET:
 		return "function get";
@@ -6892,6 +6881,8 @@ static string GetTokenName (int token)
 		return "override";
 	case Token.OVERLOAD:
 		return "overload";
+	case Token.PACKAGE:
+		return "package";
 	case Token.PRIVATE:
 		return "private";
 	case Token.PROPERTY:

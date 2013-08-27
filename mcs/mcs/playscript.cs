@@ -395,6 +395,40 @@ namespace Mono.PlayScript
 		}
 	}
 
+	public class Catch : CSharp.Catch
+	{
+		public Catch (Block block, Location loc)
+			: base (block, loc)
+		{
+		}
+
+		public override bool IsGeneral {
+			get {
+				return false;
+			}
+		}
+
+		protected override bool ResolveType (BlockContext bc)
+		{
+			if (TypeExpression == null) {
+				type = bc.Module.PlayscriptTypes.Error.Resolve ();
+				return true;
+			}
+
+			type = TypeExpression.ResolveAsType (bc);
+			if (type == null)
+				return false;
+
+			if (!TypeSpec.IsBaseClass (type, bc.BuiltinTypes.Exception, false)) {
+				// TODO: Somehow need to wrap user type to Exception
+
+				throw new NotImplementedException ();
+			}
+
+			return true;
+		}
+	}
+
 	public class Delete : ExpressionStatement
 	{
 		public Delete (Expression expr, Location l)
@@ -2073,6 +2107,29 @@ namespace Mono.PlayScript
 		}
 	}
 
+	public class Field : CSharp.Field
+	{
+		const Modifiers AllowedModifiers =
+			Modifiers.PUBLIC |
+			Modifiers.PROTECTED |
+			Modifiers.INTERNAL |
+			Modifiers.PRIVATE |
+			Modifiers.STATIC;
+
+		public Field (TypeDefinition parent, FullNamedExpression type, Modifiers mod, MemberName name, Attributes attrs)
+			: base (parent, type, mod, AllowedModifiers, Modifiers.INTERNAL, name, attrs)
+		{
+		}
+
+		public override bool Define ()
+		{
+			if (Parent is PackageGlobalContainer)
+				ModFlags |= Modifiers.STATIC;
+
+			return base.Define ();
+		}
+	}
+
 	public class Method : CSharp.Method
 	{
 		const Modifiers AllowedModifiers =
@@ -2518,6 +2575,12 @@ namespace Mono.PlayScript
 					new UsingNamespace (new SimpleName (PredefinedTypes.RootNamespace, name.Location), name.Location)
 				}
 			};
+		}
+
+		public override TypeSpec CurrentType {
+			get {
+				return globals.CurrentType;
+			}
 		}
 
 		public bool IsTopLevel {

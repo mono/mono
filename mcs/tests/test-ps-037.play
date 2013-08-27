@@ -1,6 +1,7 @@
 package 
 {
-	trace ("start");
+	var SECTION:String = "Class Prototype";
+	trace (SECTION);
 	PackageInitializers.Test (4);
 	
 	public class PackageInitializers
