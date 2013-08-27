@@ -23,9 +23,8 @@ package
 
 			d = NaN;
 			i = d;
-			// TODO: Mono bug https://bugzilla.xamarin.com/show_bug.cgi?id=13927
-			//if (i != 0)
-			//	return 4;
+			if (i != 0)
+				return 4;
 
 			return 0;
 		}
