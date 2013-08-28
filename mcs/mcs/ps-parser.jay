@@ -369,8 +369,7 @@ namespace Mono.PlayScript
 %token IDENTIFIER
 %token IDENTIFIER_MODIFIER
 %token IDENTIFIER_CONFIG
-%token OPEN_PARENS_LAMBDA
-%token OPEN_PARENS_CAST
+%token OPEN_PARENS_EXPR_LIST
 %token GENERIC_DIMENSION
 %token DEFAULT_COLON
 %token OPEN_BRACKET_EXPR
@@ -962,7 +961,7 @@ positional_or_named_argument
 	  {
 	  	$$ = new Argument ((Expression) $1);
 	  }
-	| named_argument
+//	| named_argument
 	;
 
 named_attribute_argument
@@ -979,6 +978,7 @@ named_attribute_argument
 	  }
 	;
 	
+/*
 named_argument
 	: identifier_inside_body COLON opt_named_modifier expression
 	  {
@@ -993,7 +993,8 @@ named_argument
 		lbag.AddLocation ($$, GetLocation($2));
 	  }
 	;
-	
+*/
+
 opt_named_modifier
 	: /* empty */   { $$ = null; }
 	| REF
@@ -2555,6 +2556,14 @@ primary_expression
 	| array_creation
 	| object_initializer
 	| e4x_operators
+	| expression_series
+	;
+
+expression_series
+	: OPEN_PARENS_EXPR_LIST expression_list CLOSE_PARENS
+	  {
+	  	$$ = new ExpressionSeries ((List<Expression>)$2, GetLocation ($1));
+	  }
 	;
 
 primary_expression_or_type
@@ -2590,7 +2599,7 @@ boolean_literal
 //
 open_parens_any
 	: OPEN_PARENS
-	| OPEN_PARENS_CAST
+//	| OPEN_PARENS_EXPR_LIST
 	;
 
 // 
@@ -2898,6 +2907,7 @@ argument_list
 		list.Add ((Argument) $3);
 		$$ = list;
 	  }
+/*	  
 	| argument_list COMMA named_argument
 	  {
 		Arguments list = (Arguments) $1;
@@ -2912,6 +2922,7 @@ argument_list
 		list.Add (a);
 		$$ = list;
 	  }
+*/
 	| argument_list COMMA error
 	  {
 	  	lexer.putback (')'); // TODO: Wrong but what can I do
@@ -2935,7 +2946,7 @@ argument
 
 argument_or_named_argument
 	: argument
-	| named_argument
+//	| named_argument
 	;
 
 non_simple_argument
@@ -2948,17 +2959,7 @@ non_simple_argument
 	  { 
 		$$ = new Argument ((Expression) $2, Argument.AType.Out);
 		lbag.AddLocation ($$, GetLocation ($1));
-	  }
-//	| ARGLIST OPEN_PARENS argument_list CLOSE_PARENS
-//	  {
-//		$$ = new Argument (new Arglist ((Arguments) $3, GetLocation ($1)));
-//		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));
-//	  }
-//	| ARGLIST OPEN_PARENS CLOSE_PARENS
-//	  {
-//		$$ = new Argument (new Arglist (GetLocation ($1)));
-//		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($3));
-//	  }	  
+	  }  
 	;
 
 variable_reference
@@ -3040,7 +3041,7 @@ expression_list_argument
 	  {
 	  	$$ = new Argument ((Expression) $1);
 	  }
-	| named_argument
+//	| named_argument
 	;
 
 this_access
@@ -3332,11 +3333,6 @@ unary_expression
 	  {
 		$$ = new Unary (Unary.Operator.OnesComplement, (Expression) $2, GetLocation ($1));
 	  }
-//	| OPEN_PARENS_CAST type CLOSE_PARENS prefixed_unary_expression
-//	  {
-//		$$ = new Cast ((FullNamedExpression) $2, (Expression) $4, GetLocation ($1));
-//		lbag.AddLocation ($$, GetLocation ($3));
-//	  }
 	| AWAIT prefixed_unary_expression
 	  {
 	  	CheckIsPlayScript("await", GetLocation($1));
@@ -6972,8 +6968,7 @@ static string GetTokenName (int token)
 		return "[";
 	case Token.CLOSE_BRACKET:
 		return "]";
-	case Token.OPEN_PARENS_CAST:
-	case Token.OPEN_PARENS_LAMBDA:
+	case Token.OPEN_PARENS_EXPR_LIST:
 	case Token.OPEN_PARENS:
 		return "(";
 	case Token.CLOSE_PARENS:

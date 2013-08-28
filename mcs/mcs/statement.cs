@@ -1950,6 +1950,8 @@ namespace Mono.CSharp {
 					ec.Report.Warning (219, 3, Location, "The variable `{0}' is assigned but its value is never used", Name);
 				else
 					ec.Report.Warning (168, 3, Location, "The variable `{0}' is declared but never used", Name);
+
+				flags |= Flags.Used;
 			}
 
 			if (HoistedVariant != null)

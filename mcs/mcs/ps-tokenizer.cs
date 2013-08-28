@@ -149,7 +149,7 @@ namespace Mono.PlayScript
 		bool handle_where = false;
 		bool handle_typeof = false;
 		bool handle_for_in = false;
-		bool lambda_arguments_parsing;
+//		bool lambda_arguments_parsing;
 		List<Location> escaped_identifiers;
 		int parsing_generic_less_than;
 		readonly bool doc_processing;
@@ -890,10 +890,10 @@ namespace Mono.PlayScript
 				if (!parsing_playscript) {
 					res = -1;
 				} else if (!query_parsing) {
-					if (lambda_arguments_parsing) {
-						res = -1;
-						break;
-					}
+//					if (lambda_arguments_parsing) {
+//						res = -1;
+//						break;
+//					}
 
 					PushPosition ();
 					// HACK: to disable generics micro-parser, because PushPosition does not
@@ -1009,9 +1009,9 @@ namespace Mono.PlayScript
 					}
 				} else if (parsing_block > 0) {
 					switch (peek_token ()) {
-					case Token.OPEN_PARENS_LAMBDA:
-						// async is keyword
-						break;
+//					case Token.OPEN_PARENS_LAMBDA:
+//						// async is keyword
+//						break;
 					case Token.IDENTIFIER:
 						PushPosition ();
 						xtoken ();
@@ -1175,7 +1175,7 @@ namespace Mono.PlayScript
 		}
 
 		//
-		// Open parens micro parser. Detects both lambda and cast ambiguity.
+		// Open parens micro parser. Detects both simple open parens and open parens for expression series
 		//	
 		int TokenizeOpenParens ()
 		{
@@ -1183,156 +1183,35 @@ namespace Mono.PlayScript
 			current_token = -1;
 			current_token_line = 0;
 
-			int bracket_level = 0;
-			bool is_type = false;
-			bool can_be_type = false;
+			int parens_level = 0;
 			
 			while (true) {
 				ptoken = current_token;
 				token ();
 
 				switch (current_token) {
+				case Token.OPEN_PARENS:
+					++parens_level;
+					continue;
+
 				case Token.CLOSE_PARENS:
-					token ();
-					
-					//
-					// Expression inside parens is lambda, (int i) => 
-					//
-					if (current_token == Token.ARROW)
-						return Token.OPEN_PARENS_LAMBDA;
-
-//					//
-//					// Expression inside parens is single type, (int[])
-//					//
-//					if (is_type)
-//						return Token.OPEN_PARENS_CAST;
-//
-//					//
-//					// Expression is possible cast, look at next token, (T)null
-//					//
-//					if (can_be_type) {
-//						switch (current_token) {
-//						case Token.OPEN_PARENS:
-//						case Token.BANG:
-//						case Token.TILDE:
-//						case Token.IDENTIFIER:
-//						case Token.LITERAL:
-//						case Token.SUPER:
-//						case Token.CHECKED:
-//						case Token.DELEGATE:
-//						case Token.FALSE:
-//						case Token.FIXED:
-//						case Token.NEW:
-//						case Token.NULL:
-//						case Token.SIZEOF:
-//						case Token.THIS:
-//						case Token.THROW:
-//						case Token.TRUE:
-//						case Token.TYPEOF:
-//						case Token.UNCHECKED:
-//						case Token.UNSAFE:
-//						case Token.DEFAULT:
-//						case Token.AWAIT:
-//
-//						//
-//						// These can be part of a member access
-//						//
-//						case Token.INT:
-//						case Token.UINT:
-//						case Token.SHORT:
-//						case Token.USHORT:
-//						case Token.LONG:
-//						case Token.ULONG:
-//						case Token.DOUBLE:
-//						case Token.FLOAT:
-//						case Token.CHAR:
-//						case Token.BYTE:
-//						case Token.DECIMAL:
-//						case Token.BOOL:
-//							return Token.OPEN_PARENS_CAST;
-//						}
-//					}
-					return Token.OPEN_PARENS;
-					
-				case Token.DOT:
-				case Token.DOUBLE_COLON:
-					if (ptoken != Token.IDENTIFIER && ptoken != Token.OP_GENERICS_GT)
-						goto default;
-
-					continue;
-
-				case Token.IDENTIFIER:
-					switch (ptoken) {
-					case Token.DOT:
-						if (bracket_level == 0) {
-							is_type = false;
-							can_be_type = true;
-						}
-
-						continue;
-					case Token.OP_GENERICS_LT:
-					case Token.COMMA:
-					case Token.DOUBLE_COLON:
-					case -1:
-						if (bracket_level == 0)
-							can_be_type = true;
-						continue;
-					default:
-						can_be_type = is_type = false;
+					if (parens_level > 0) {
+						--parens_level;
 						continue;
 					}
 
-				case Token.OBJECT:
-				case Token.STRING:
-				case Token.BOOL:
-				case Token.DECIMAL:
-				case Token.FLOAT:
-				case Token.DOUBLE:
-				case Token.SBYTE:
-				case Token.BYTE:
-				case Token.SHORT:
-				case Token.USHORT:
-				case Token.INT:
-				case Token.UINT:
-				case Token.LONG:
-				case Token.ULONG:
-				case Token.CHAR:
-				case Token.VOID:
-					if (bracket_level == 0)
-						is_type = true;
-					continue;
+					return Token.OPEN_PARENS;
 
+				case Token.COLON:
+					if (parens_level == 0)
+						return Token.OPEN_PARENS;
+
+					continue;
 				case Token.COMMA:
-					if (bracket_level == 0) {
-						bracket_level = 100;
-						can_be_type = is_type = false;
-					}
-					continue;
+					if (parens_level == 0)
+						return Token.OPEN_PARENS_EXPR_LIST;
 
-				case Token.OP_GENERICS_LT:
-				case Token.OPEN_BRACKET:
-					if (bracket_level++ == 0)
-						is_type = true;
 					continue;
-
-				case Token.OP_GENERICS_GT:
-				case Token.CLOSE_BRACKET:
-					--bracket_level;
-					continue;
-
-				case Token.INTERR_NULLABLE:
-				case Token.STAR:
-					if (bracket_level == 0)
-						is_type = true;
-					continue;
-
-				case Token.REF:
-				case Token.OUT:
-					can_be_type = is_type = false;
-					continue;
-
-				default:
-					return Token.OPEN_PARENS;
 				}
 			}
 		}
@@ -3598,7 +3477,7 @@ namespace Mono.PlayScript
 
 					parse_regex_xml = 2;  // regex literals may be included in array initializers.
 
-					if (parsing_block == 0 || lambda_arguments_parsing)
+					if (parsing_block == 0/* || lambda_arguments_parsing*/)
 						return Token.OPEN_BRACKET;
 
 					next = peek_char ();
@@ -3630,41 +3509,35 @@ namespace Mono.PlayScript
 					//
 					// An expression versions of parens can appear in block context only
 					//
-					if (parsing_block != 0 && !lambda_arguments_parsing) {
+					if (parsing_block != 0) { // && !lambda_arguments_parsing) {
 						
 						//
 						// Optmize most common case where we know that parens
 						// is not special
 						//
 						switch (current_token) {
+						case Token.NEW:
+						case Token.SUPER:
+						case Token.THIS:
 						case Token.IDENTIFIER:
+						case Token.FUNCTION_BLOCK:
+						case Token.FUNCTION:
 						case Token.IF:
+						case Token.WHILE:
+						case Token.DO:
 						case Token.FOR:
 						case Token.FOR_EACH:
-						case Token.TYPEOF:
-						case Token.WHILE:
-						case Token.USING:
-						case Token.DEFAULT:
-						case Token.OP_GENERICS_GT:
+						case Token.SWITCH:
+						case Token.CATCH:
+						case Token.WITH:
 							return Token.OPEN_PARENS;
 						}
 
-						// Optimize using peek
-						int xx = peek_char ();
-						switch (xx) {
-						case '(':
-						case '\'':
-						case '"':
-						case '0':
-						case '1':
-							return Token.OPEN_PARENS;
-						}
-
-						lambda_arguments_parsing = true;
+						//lambda_arguments_parsing = true;
 						PushPosition ();
 						d = TokenizeOpenParens ();
 						PopPosition ();
-						lambda_arguments_parsing = false;
+						//lambda_arguments_parsing = false;
 						return d;
 					}
 

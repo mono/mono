@@ -55,6 +55,51 @@ namespace Mono.PlayScript
 		}
 	}
 
+	public class ExpressionSeries : PlayScriptExpression
+	{
+		public ExpressionSeries (List<Expression> expressions, Location loc)
+		{
+			Expressions = expressions;
+			this.loc = loc;
+		}
+
+		public List<Expression> Expressions { get; private set; }
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			int i;
+			for (i = 0; i < Expressions.Count; ++i) {
+				Expressions[i] = Expressions[i].Resolve (rc);
+			}
+
+			--i;
+			type = Expressions[i].Type;
+			eclass = Expressions[i].eclass;
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			int i;
+			for (i = 0; i < Expressions.Count - 1; ++i) {
+				var expr = Expressions [i];
+				if (expr.IsSideEffectFree)
+					continue;
+
+				var expr_stmt = expr as ExpressionStatement;
+				if (expr_stmt != null) {
+					expr_stmt.EmitStatement (ec);
+					continue;
+				}
+
+				expr.Emit (ec);
+				ec.Emit (OpCodes.Pop);
+			}
+
+			Expressions[i].Emit (ec);
+		}
+	}
+
 	public abstract class CollectionInitialization : PlayScriptExpression
 	{
 		protected Expression ctor;
