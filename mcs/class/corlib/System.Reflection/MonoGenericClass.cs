@@ -50,7 +50,12 @@ namespace System.Reflection
 	 * depends on them.
 	 */
 	[StructLayout (LayoutKind.Sequential)]
-	internal class MonoGenericClass : Type
+	sealed class MonoGenericClass :
+#if NET_4_5
+		TypeInfo
+#else
+		Type
+#endif	
 	{
 		#region Keep in sync with object-internals.h
 #pragma warning disable 649

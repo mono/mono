@@ -1,10 +1,10 @@
 //
-// IntrospectionExtensions.cs
+// IntrospectionExtensionsTest.cs:
 //
 // Authors:
-//	Marek Safar  <marek.safar@gmail.com>
+//	Marek Safar (marek.safar@gmail.com)
 //
-// Copyright (C) 2013 Xamarin Inc (http://www.xamarin.com)
+// (C) 2013
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -28,18 +28,28 @@
 
 #if NET_4_5
 
-namespace System.Reflection
-{
-	public static class IntrospectionExtensions
-	{
-		public static TypeInfo GetTypeInfo (this Type type)
-		{
-			if (type == null)
-				throw new ArgumentNullException ("type");
+using System;
+using System.Reflection;
 
-			// This is odd but that's what .net does
-			var reflectable = (IReflectableType) type;
-			return reflectable.GetTypeInfo ();
+using NUnit.Framework;
+
+namespace MonoTests.System.Reflection
+{
+	[TestFixture]
+	public class IntrospectionExtensionsTest
+	{
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void GetTypeInfo_NullArgument ()
+		{
+			IntrospectionExtensions.GetTypeInfo (null);
+		}
+		
+		[Test]
+		public void GetTypeInfo_SystemType ()
+		{
+			var t = typeof (double);
+			Assert.AreSame (t, IntrospectionExtensions.GetTypeInfo (t));
 		}
 	}
 }
