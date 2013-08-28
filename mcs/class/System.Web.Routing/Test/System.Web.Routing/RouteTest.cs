@@ -991,7 +991,7 @@ namespace MonoTests.System.Web.Routing
 			Assert.AreEqual (0, rd.DataTokens.Count, "#3");
 			Assert.AreEqual (2, rd.Values.Count, "#4");
 			Assert.AreEqual ("a", rd.Values ["first"], "#4-1");
-			Assert.AreEqual (String.Empty, rd.Values ["rest"], "#4-2"
+			Assert.AreEqual (String.Empty, rd.Values ["rest"], "#4-2");
 		}
 
 		[Test]
