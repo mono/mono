@@ -37,6 +37,11 @@ namespace PlayScript.Runtime
 			if (right is int)
 				return Comparison (binaryOperator, left, (int) right);
 
+			if (right is string)
+				return Comparison (binaryOperator, left, (string) right);
+
+			// TODO: uint, string, double, etc
+
 			return false;
 		}
 
@@ -46,6 +51,7 @@ namespace PlayScript.Runtime
 				var l = (int) left;
 				switch (binaryOperator) {
 				case BinaryOperator.Equality:
+				case BinaryOperator.StrictEquality:
 					return l == right;
 				case BinaryOperator.Inequality:
 					return l != right;
@@ -62,6 +68,9 @@ namespace PlayScript.Runtime
 				}
 			}
 
+			if ((binaryOperator & BinaryOperator.StrictMask) != 0)
+				return binaryOperator == BinaryOperator.StrictInequality;
+
 			// TODO: uint, string, double, etc
 
 			return false;
@@ -73,8 +82,10 @@ namespace PlayScript.Runtime
 				var r = (int) right;
 				switch (binaryOperator) {
 				case BinaryOperator.Equality:
+				case BinaryOperator.StrictEquality:
 					return left == r;
 				case BinaryOperator.Inequality:
+				case BinaryOperator.StrictInequality:				
 					return left != r;
 				case BinaryOperator.GreaterThan:
 					return left > r;
@@ -88,6 +99,43 @@ namespace PlayScript.Runtime
 					throw new NotImplementedException (binaryOperator.ToString ());
 				}
 			}
+
+			if ((binaryOperator & BinaryOperator.StrictMask) != 0)
+				return binaryOperator == BinaryOperator.StrictInequality;
+
+			// TODO: uint, string, double, etc
+
+			return false;
+		}
+
+		public static bool Comparison (BinaryOperator binaryOperator, object left, string right)
+		{
+			if (right is string) {
+				var l = (string) left;
+				switch (binaryOperator) {
+				case BinaryOperator.Equality:
+				case BinaryOperator.StrictEquality:
+					return l == right;
+				case BinaryOperator.Inequality:
+				case BinaryOperator.StrictInequality:
+					return l != right;
+/* TODO: rules base on char comparison but how does it work with unicode
+				case BinaryOperator.GreaterThan:
+					return l > right;
+				case BinaryOperator.GreaterThanOrEqual:
+					return l >= right;
+				case BinaryOperator.LessThan:
+					return l < right;
+				case BinaryOperator.LessThanOrEqual:
+					return l <= right;
+				default:
+					throw new NotImplementedException (binaryOperator.ToString ());
+*/
+				}
+			}
+
+			if ((binaryOperator & BinaryOperator.StrictMask) != 0)
+				return binaryOperator == BinaryOperator.StrictInequality;
 
 			// TODO: uint, string, double, etc
 

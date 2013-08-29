@@ -2289,8 +2289,8 @@ namespace Mono.CSharp
 			GreaterThanOrEqual	= 11 | ComparisonMask | RelationalMask,
 			Equality	= 12 | ComparisonMask | EqualityMask,
 			Inequality	= 13 | ComparisonMask | EqualityMask,
-			ReferenceEquality	= 14 | ComparisonMask | EqualityMask,  // PlayScript Reference Equality
-			ReferenceInequality	= 15 | ComparisonMask | EqualityMask,  // PlayScript Reference Inequality
+			StrictEquality		= 14 | ComparisonMask | EqualityMask | NoUserVersion,  // PlayScript Strict Equality
+			StrictInequality	= 15 | ComparisonMask | EqualityMask | NoUserVersion,  // PlayScript Strict Inequality
 
 
 			BitwiseAnd	= 16 | BitwiseMask,
@@ -2316,6 +2316,7 @@ namespace Mono.CSharp
 
 			DecomposedMask	= 1 << 19,
 			NullableMask	= 1 << 20,
+			NoUserVersion	= 1 << 21
 		}
 
 		[Flags]
@@ -2425,13 +2426,13 @@ namespace Mono.CSharp
 			case Operator.Equality:
 				s = "==";
 				break;
-			case Operator.ReferenceEquality:
+			case Operator.StrictEquality:
 				s = "===";
 				break;
 			case Operator.Inequality:
 				s = "!=";
 				break;
-			case Operator.ReferenceInequality:
+			case Operator.StrictInequality:
 				s = "!==";
 				break;
 			case Operator.BitwiseAnd:
@@ -2655,10 +2656,12 @@ namespace Mono.CSharp
 				break;
 
 			case Operator.Equality:
+			case Operator.StrictEquality:
 				opcode = OpCodes.Ceq;
 				break;
 
 			case Operator.Inequality:
+			case Operator.StrictInequality:
 				ec.Emit (OpCodes.Ceq);
 				ec.EmitInt (0);
 				
@@ -2769,9 +2772,11 @@ namespace Mono.CSharp
 					return ResolveOperatorPointer (rc, l, r);
 
 				// User operators
-				expr = ResolveUserOperator (rc, left, right);
-				if (expr != null)
-					return expr;
+				if ((oper & Operator.NoUserVersion) == 0) {
+					expr = ResolveUserOperator (rc, left, right);
+					if (expr != null)
+						return expr;
+				}
 
 
 				bool lenum = l.IsEnum;
@@ -2833,7 +2838,14 @@ namespace Mono.CSharp
 			// Equality operators are more complicated
 			//
 			if ((oper & Operator.EqualityMask) != 0) {
-				return ResolveEquality (rc, l, r, primitives_only);
+				expr = ResolveEquality (rc, l, r, primitives_only);
+				if (primitives_only)
+					return expr;
+
+				if (oper == Operator.StrictEquality || oper == Operator.StrictInequality)
+					return PlayScript.BinaryOperators.ResolveOperator (rc, this, left, right);
+
+				return expr;
 			}
 
 			expr = ResolveOperatorPredefined (rc, rc.BuiltinTypes.OperatorsBinaryStandard, primitives_only);
@@ -4452,6 +4464,7 @@ namespace Mono.CSharp
 			
 			switch (oper){
 			case Operator.Equality:
+			case Operator.StrictEquality:
 				if (on_true)
 					ec.Emit (OpCodes.Beq, target);
 				else
@@ -4459,6 +4472,7 @@ namespace Mono.CSharp
 				break;
 
 			case Operator.Inequality:
+			case Operator.StrictInequality:
 				if (on_true)
 					ec.Emit (OpCodes.Bne_Un, target);
 				else

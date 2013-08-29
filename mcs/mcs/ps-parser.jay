@@ -3690,12 +3690,12 @@ equality_expression
 	  }
 	| equality_expression OP_REF_EQ relational_expression
 	  {
-		$$ = new Binary (Binary.Operator.ReferenceEquality, (Expression) $1, (Expression) $3);
+		$$ = new Binary (Binary.Operator.StrictEquality, (Expression) $1, (Expression) $3);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| equality_expression OP_REF_NE relational_expression
 	  {
-		$$ = new Binary (Binary.Operator.ReferenceInequality, (Expression) $1, (Expression) $3);
+		$$ = new Binary (Binary.Operator.StrictInequality, (Expression) $1, (Expression) $3);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	; 

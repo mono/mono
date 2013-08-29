@@ -193,31 +193,32 @@ namespace Mono.PlayScript
 	{
 		public static Expression ResolveOperator (ResolveContext rc, Binary op, Expression left, Expression right)
 		{
-			string method, oper;
+			string method = "Comparison";
+			string oper;
 			switch (op.Oper) {
 			case Binary.Operator.Equality:
 				oper = "Equality";
-				method = "Comparison";
 				break;
 			case Binary.Operator.Inequality:
 				oper = "Inequality";
-				method = "Comparison";
 				break;
 			case Binary.Operator.GreaterThan:
 				oper = "GreaterThan";
-				method = "Comparison";
 				break;
 			case Binary.Operator.GreaterThanOrEqual:
 				oper = "GreaterThanOrEqual";
-				method = "Comparison";
 				break;
 			case Binary.Operator.LessThan:
 				oper = "LessThan";
-				method = "Comparison";
 				break;
 			case Binary.Operator.LessThanOrEqual:
 				oper = "LessThanOrEqual";
-				method = "Comparison";
+				break;
+			case Binary.Operator.StrictEquality:
+				oper = "StrictEquality";
+				break;
+			case Binary.Operator.StrictInequality:
+				oper = "StrictInequality";
 				break;
 			default:
 				throw new NotImplementedException ();

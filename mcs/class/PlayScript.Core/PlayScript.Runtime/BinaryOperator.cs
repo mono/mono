@@ -52,6 +52,11 @@ namespace PlayScript.Runtime
 		BitwiseOr	= 32,
 
 		LogicalAnd	= 40,
-		LogicalOr	= 41
+		LogicalOr	= 41,
+		
+		StrictEquality		= 50 | StrictMask,
+		StrictInequality	= 51 | StrictMask,
+
+		StrictMask = 1 >> 16
 	}
 }

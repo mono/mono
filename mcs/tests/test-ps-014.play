@@ -2,7 +2,7 @@ package
 {
 	public class BinaryOperations
 	{
-		public static function Main ():int
+		static function MixedTypes ():int
 		{
 			var a:Object = 400;
 			if (a != 400)
@@ -10,6 +10,68 @@ package
 				
 			if (400 != a)
 				return 2;
+
+			return 0;		
+		}
+
+		static function StrictEquality ():int
+		{
+			var i:int = 4;
+			var i2:int = 4;
+			
+			if (!(i == i2))
+				return 1;
+			if (!(i === i2))
+				return 2;
+			
+			var s:String = "x";
+			var s2:String = "x";
+
+			if (!(s == s2))
+				return 3;
+			if (!(s === s2))
+				return 4;
+			
+			var d:Number = 2.0;
+			var di2:int = 2;
+			
+			if (!(d == di2))
+				return 5;
+			
+			var o:Object = new Object ();
+			var o2:Object = new Object ();
+			if (o == o2)
+				return 6;
+			if (o === o2)
+				return 7;
+
+			var o3:Object = 6;
+			var o4:Object = 6;
+			if (!(o3 == o4))
+				return 8;
+			if (!(o3 === o4))
+				return 9;
+			
+			var os:Object = "oo";
+			var os2:Object = "oo";
+			if (!(os == os2))
+				return 10;
+			if (!(os === os2))
+				return 11;
+
+			return 0;		
+		}
+
+		public static function Main ():int
+		{
+			var r:int;
+			r = MixedTypes ();
+			if (r != 0)
+				return r + 100;
+
+			r = StrictEquality ();
+			if (r != 0)
+				return r + 200;
 			
 			trace ("ok");
 			return 0;
