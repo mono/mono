@@ -555,7 +555,8 @@ namespace Microsoft.Build.BuildEngine {
 		public void Load (TextReader textReader, ProjectLoadSettings projectLoadSettings)
 		{
 			project_load_settings = projectLoadSettings;
-			fullFileName = String.Empty;
+			if (!string.IsNullOrEmpty (fullFileName))
+				PushThisFileProperty (fullFileName);
 			DoLoad (textReader);
 		}
 
@@ -567,7 +568,8 @@ namespace Microsoft.Build.BuildEngine {
 		public void LoadXml (string projectXml, ProjectLoadSettings projectLoadSettings)
 		{
 			project_load_settings = projectLoadSettings;
-			fullFileName = String.Empty;
+			if (!string.IsNullOrEmpty (fullFileName))
+				PushThisFileProperty (fullFileName);
 			DoLoad (new StringReader (projectXml));
 			MarkProjectAsDirty ();
 		}
