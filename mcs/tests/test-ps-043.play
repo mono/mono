@@ -1,0 +1,26 @@
+package 
+{
+	class UntypedParameter
+	{
+		public static function Test1 (str)
+		{
+// TODO:			trace (str);
+		}
+
+		public static function Test2 (str = null)
+		{
+// TODO:			trace (str);
+		}
+
+		public static function Main ():int
+		{
+			Test1 (1);
+			Test1 (null);
+			Test1 ("");
+
+			Test2 (2);
+			Test2 ();			
+			return 0;
+		}
+	}
+}

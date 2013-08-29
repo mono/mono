@@ -2624,7 +2624,7 @@ namespace Mono.PlayScript
 
 		public override TypeSpec CurrentType {
 			get {
-				return globals.CurrentType;
+				return globals == null ? null : globals.CurrentType;
 			}
 		}
 

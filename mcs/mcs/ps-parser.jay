@@ -1522,9 +1522,9 @@ method_header
 	  {
 		valid_param_mod = ParameterModifierType.All;
 	  }
-	  opt_formal_parameter_list CLOSE_PARENS method_colon member_type
+	  opt_formal_parameter_list CLOSE_PARENS opt_method_return_type
 	  {
-		var type = (FullNamedExpression) $10;
+		var type = (FullNamedExpression) $9;
 		var name = (MemberName) $4;
 		var modifiers = (Modifiers) $2;
 		var parameters = (ParametersCompiled) $7;		
@@ -1534,7 +1534,7 @@ method_header
 				modifiers |= Modifiers.VIRTUAL;
 
 		if (parameters != null && parameters.Count > 0)
-			report.Error (7016, GetLocation ($10), "Property getter functions may not have parameters");
+			report.Error (7016, GetLocation ($3), "Property getter functions may not have parameters");
 
 		current_property = null;		
 						
@@ -1564,7 +1564,7 @@ method_header
 		}
 		
 		if (type.Type != null && type.Type.Kind == MemberKind.Void)
-			report.Error (547, GetLocation ($10), "`{0}': property or indexer cannot have void type", current_property.GetSignatureForError ());					
+			report.Error (547, GetLocation ($3), "`{0}': property or indexer cannot have void type", current_property.GetSignatureForError ());					
 			
 		if (current_property.Get != null) {
 			report.Error (1007, GetLocation ($3), "Property accessor already defined");
@@ -1573,7 +1573,7 @@ method_header
 		current_property.Get = new Property.GetMethod (current_property,
 			modifiers & Modifiers.AccessibilityMask, (Attributes) $1, GetLocation ($3));
 	  
-		lbag.AddMember (current_property, mod_locations, GetLocation ($10));
+		lbag.AddMember (current_property, mod_locations, GetLocation ($9));
 		current_local_parameters = current_property.Get.ParameterInfo;
 		$$ = current_property.Get;
 	  }
@@ -1583,9 +1583,9 @@ method_header
 	  {
 		valid_param_mod = ParameterModifierType.All;
 	  }
-	  opt_formal_parameter_list CLOSE_PARENS method_colon member_type
+	  opt_formal_parameter_list CLOSE_PARENS opt_method_return_type
 	  {
-		var void_type = (FullNamedExpression) $10;
+		var void_type = (FullNamedExpression) $9;
 		var name = (MemberName) $4;
 		var modifiers = (Modifiers) $2;
 		var parameters = (ParametersCompiled) $7;
@@ -1595,7 +1595,7 @@ method_header
 				modifiers |= Modifiers.VIRTUAL;
 		
 		if (void_type.Type != null && void_type.Type.Kind != MemberKind.Void)
-			report.Error (7003, GetLocation ($10), "Property setter function must not be of type void");					
+			report.Error (7003, GetLocation ($3), "Property setter function must not be of type void");					
 
 		current_property = null;
 						
@@ -1640,14 +1640,14 @@ method_header
 		current_property.Set = new Property.SetMethod (current_property, 
 			modifiers & Modifiers.AccessibilityMask, (ParametersCompiled) $7, (Attributes) $1, GetLocation ($3));
 	  
-		lbag.AddMember (current_property, mod_locations, GetLocation ($10));
+		lbag.AddMember (current_property, mod_locations, GetLocation ($9));
 		current_local_parameters = parameters;
 		$$ = current_property.Set;
 	  }
 	| opt_attributes
 	  opt_modifiers
 	  FUNCTION
-	  modifiers method_declaration_name OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS method_colon member_type
+	  modifiers method_declaration_name OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS opt_method_return_type
 	  {
 		MemberName name = (MemberName) $5;
 		report.Error (1585, name.Location, 
@@ -1787,11 +1787,15 @@ fixed_parameter
 	: opt_attributes
 	  opt_parameter_modifier
 	  IDENTIFIER
-	  COLON
-	  parameter_type
+	  opt_parameter_type
 	  {
 		var lt = (LocatedToken) $3;
-		$$ = new Parameter ((FullNamedExpression) $5, lt.Value, (Parameter.Modifier) $2, (Attributes) $1, lt.Location);
+		if ($4 == null) {
+			Warning_NoTypeDeclaration (GetLocation ($3), string.Format ("Parameter `{0}'", lt.Value));
+			$4 = new UntypedTypeExpression (GetLocation ($3));
+		}
+
+		$$ = new Parameter ((FullNamedExpression) $4, lt.Value, (Parameter.Modifier) $2, (Attributes) $1, lt.Location);
 	  }
 	| attribute_sections error
 	  {
@@ -1813,8 +1817,7 @@ fixed_parameter
 	| opt_attributes
 	  opt_parameter_modifier
 	  IDENTIFIER
-	  COLON
-	  parameter_type
+	  opt_parameter_type
 	  ASSIGN
 	  {
 	  	++lexer.parsing_block;
@@ -1822,9 +1825,6 @@ fixed_parameter
 	  constant_expression
 	  {
 	  	--lexer.parsing_block;
-		if (lang_version <= LanguageVersion.V_3) {
-			FeatureIsNotAvailable (GetLocation ($6), "optional parameter");
-		}
 		
 		Parameter.Modifier mod = (Parameter.Modifier) $2;
 		if (mod != Parameter.Modifier.NONE) {
@@ -1850,11 +1850,16 @@ fixed_parameter
 			report.Error (1065, GetLocation ($6), "Optional parameter is not valid in this context");
 		
 		var lt = (LocatedToken) $3;
-		$$ = new Parameter ((FullNamedExpression) $5, lt.Value, mod, (Attributes) $1, lt.Location);
+		if ($4 == null) {
+			Warning_NoTypeDeclaration (GetLocation ($3), string.Format ("Parameter `{0}'", lt.Value));
+			$4 = new UntypedTypeExpression (GetLocation ($3));
+		}
+
+		$$ = new Parameter ((FullNamedExpression) $4, lt.Value, mod, (Attributes) $1, lt.Location);
 		lbag.AddLocation ($$, GetLocation ($6));
 		
-		if ($8 != null)
-			((Parameter) $$).DefaultValue = new DefaultParameterValueExpression ((Expression) $8);
+		if ($7 != null)
+			((Parameter) $$).DefaultValue = new DefaultParameterValueExpression ((Expression) $7);
 	  }
 	;
 
@@ -1928,6 +1933,14 @@ parameter_array
 	  {
 		Error_SyntaxError (yyToken);
 		$$ = null;
+	  }
+	;
+
+opt_parameter_type
+	: /* empty */
+	| COLON parameter_type
+	  {
+	  	$$ = $2;
 	  }
 	;
 
