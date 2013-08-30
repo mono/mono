@@ -1506,8 +1506,9 @@ namespace Mono.CSharp
 				if (Convert.ExplicitReferenceConversionExists (d, t))
 					return this;
 			} else {
-				if (TypeManager.IsGenericParameter (t))
-					return ResolveGenericParameter (ec, d, (TypeParameterSpec) t);
+				var tps = t as TypeParameterSpec;
+				if (tps != null)
+					return ResolveGenericParameter (ec, d, tps);
 
 				if (t.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 					ec.Report.Warning (1981, 3, loc,
@@ -1559,8 +1560,8 @@ namespace Mono.CSharp
 					return CreateConstantResult (ec, false);
 			}
 
-			if (TypeManager.IsGenericParameter (expr.Type)) {
-				if (expr.Type == d && TypeSpec.IsValueType (t))
+			if (expr.Type.IsGenericParameter) {
+				if (expr.Type == d && TypeSpec.IsValueType (t) && TypeSpec.IsValueType (d))
 					return CreateConstantResult (ec, true);
 
 				expr = new BoxedCast (expr, d);

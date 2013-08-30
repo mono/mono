@@ -18475,6 +18475,21 @@
       </method>
     </type>
   </test>
+  <test name="gtest-595.cs">
+    <type name="MainClass">
+      <method name="Int32 Main()" attrs="150">
+        <size>66</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MainClass+TypeConverter`2[TIn,TOut]">
+      <method name="Boolean Convert(TIn)" attrs="150">
+        <size>34</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
