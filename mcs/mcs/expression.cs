@@ -2527,7 +2527,7 @@ namespace Mono.CSharp
 			case Operator.Subtraction:
 				return IsCompound ? "SubtractAssign" : "Subtract";
 			default:
-				throw new NotImplementedException ("Unknown expression type operator " + oper.ToString ());
+				return null;
 			}
 		}
 
@@ -3428,6 +3428,10 @@ namespace Mono.CSharp
 				return SLE.Expression.RightShift (le, re);
 			case Operator.Subtraction:
 				return is_checked ? SLE.Expression.SubtractChecked (le, re) : SLE.Expression.Subtract (le, re);
+			case Operator.StrictEquality:
+				return PlayScript.Expressions.StrictEqual (le, re);
+			case Operator.StrictInequality:
+				return PlayScript.Expressions.StrictNotEqual (le, re);
 			default:
 				throw new NotImplementedException (oper.ToString ());
 			}
@@ -4639,9 +4643,6 @@ namespace Mono.CSharp
 		{
 			Arguments binder_args = new Arguments (4);
 
-			MemberAccess sle = new MemberAccess (new MemberAccess (
-				new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Linq", loc), "Expressions", loc);
-
 			CSharpBinderFlags flags = 0;
 			if (ec.HasSet (ResolveContext.Options.CheckedScope))
 				flags = CSharpBinderFlags.CheckedContext;
@@ -4650,11 +4651,29 @@ namespace Mono.CSharp
 				flags |= CSharpBinderFlags.BinaryOperationLogical;
 
 			binder_args.Add (new Argument (new EnumConstant (new IntLiteral (ec.BuiltinTypes, (int) flags, loc), ec.Module.PredefinedTypes.BinderFlags.Resolve ())));
-			binder_args.Add (new Argument (new MemberAccess (new MemberAccess (sle, "ExpressionType", loc), GetOperatorExpressionTypeName (), loc)));
+			binder_args.Add (new Argument (CreateExpressionType (ec)));
 			binder_args.Add (new Argument (new TypeOf (ec.CurrentType, loc)));									
 			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation (args.CreateDynamicBinderArguments (ec), loc)));
 
 			return new Invocation (new MemberAccess (new TypeExpression (ec.Module.PredefinedTypes.Binder.TypeSpec, loc), "BinaryOperation", loc), binder_args);
+		}
+
+		Expression CreateExpressionType (ResolveContext rc)
+		{
+			var et = rc.Module.PredefinedTypes.ExpressionType.Resolve ();
+			var tname = GetOperatorExpressionTypeName ();
+			if (tname == null) {
+				switch (oper) {
+				case Operator.StrictEquality:
+					return new EnumConstant (new IntConstant (rc.BuiltinTypes, 0x80000, loc), et);
+				case Operator.StrictInequality:
+					return new EnumConstant (new IntConstant (rc.BuiltinTypes, 0x80001, loc), et);
+				default:
+					throw new NotImplementedException ("Unknown expression type operator " + oper.ToString ());
+				}
+			}
+
+			return new MemberAccess (new TypeExpression (et, loc), GetOperatorExpressionTypeName (), loc);
 		}
 		
 		public override Expression CreateExpressionTree (ResolveContext ec)

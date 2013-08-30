@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using Mono.CSharp;
+using SLE = System.Linq.Expressions;
 
 #if STATIC
 using IKVM.Reflection;
@@ -3021,4 +3022,68 @@ namespace Mono.PlayScript
 			}
 		}
 	}
+
+#region SLE support
+
+	static class Expressions
+	{
+		public static SLE.Expression StrictEqual (SLE.Expression left, SLE.Expression right)
+		{
+			return new BinaryExpression (50 | 1 >> 16, left, right);
+		}
+		
+		public static SLE.Expression StrictNotEqual (SLE.Expression left, SLE.Expression right)
+		{
+			return new BinaryExpression (51 | 1 >> 16, left, right);
+		}
+	}
+
+	class BinaryExpression : SLE.Expression
+	{
+		readonly SLE.Expression left, right;
+		readonly int oper;
+
+		public BinaryExpression (int oper, SLE.Expression left, SLE.Expression right)
+		{
+			this.oper = oper;
+			this.left = left;
+			this.right = right;
+		}
+
+		public override bool CanReduce {
+			get {
+				return true;
+			}
+		}
+
+		public override SLE.ExpressionType NodeType {
+			get {
+				return SLE.ExpressionType.Extension;
+			}
+		}
+
+		public override System.Type Type {
+			get {
+				return typeof (bool);
+			}
+		}
+
+		public override SLE.Expression Reduce ()
+		{
+			// TODO: Do something about it
+			// Probably need to move the comparison code to avoid cyclic dependency
+			var asm = System.Reflection.Assembly.Load (new System.Reflection.AssemblyName ("PlayScript.Core"));
+			var t = asm.GetType ("PlayScript.Runtime.Operations", true);
+			var tt = asm.GetType ("PlayScript.Runtime.BinaryOperator", true);
+			var m = t.GetMethod ("Comparison", new [] { tt, typeof (object), typeof (object) });
+
+			return SLE.Expression.Call (m, SLE.Expression.Constant (System.Enum.ToObject (tt, oper)),
+				SLE.Expression.Convert (left, typeof (object)),
+				SLE.Expression.Convert (right, typeof (object)));
+		}
+	}
+
+
+#endregion
+
 }

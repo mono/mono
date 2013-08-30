@@ -41,9 +41,10 @@ namespace Microsoft.CSharp.RuntimeBinder
 		IList<CSharpArgumentInfo> argumentInfo;
 		readonly CSharpBinderFlags flags;
 		readonly Type context;
+		readonly ExpressionType operation;
 		
 		public CSharpBinaryOperationBinder (ExpressionType operation, CSharpBinderFlags flags, Type context, IEnumerable<CSharpArgumentInfo> argumentInfo)
-			: base (operation)
+			: base (GetOperation (operation))
 		{
 			this.argumentInfo = new ReadOnlyCollectionBuilder<CSharpArgumentInfo> (argumentInfo);
 			if (this.argumentInfo.Count != 2)
@@ -51,12 +52,24 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 			this.flags = flags;
 			this.context = context;
+			this.operation = operation;
+		}
+
+		static ExpressionType GetOperation (ExpressionType exprType)
+		{
+			switch (exprType) {
+			case (ExpressionType) 0x80000:
+			case (ExpressionType) 0x80001:
+				return ExpressionType.Extension;
+			default:
+				return exprType; 
+			}
 		}
 
 		Compiler.Binary.Operator GetOperator (out bool isCompound)
 		{
 			isCompound = false;
-			switch (Operation) {
+			switch (operation) {
 			case ExpressionType.Add:
 				return Compiler.Binary.Operator.Addition;
 			case ExpressionType.AddAssign:
@@ -123,6 +136,10 @@ namespace Microsoft.CSharp.RuntimeBinder
 			case ExpressionType.SubtractAssign:
 				isCompound = true;
 				return Compiler.Binary.Operator.Subtraction;
+			case (ExpressionType) 0x80000:
+				return Compiler.Binary.Operator.StrictEquality;
+			case (ExpressionType) 0x80001:
+				return Compiler.Binary.Operator.StrictInequality;
 			default:
 				throw new NotImplementedException (Operation.ToString ());
 			}

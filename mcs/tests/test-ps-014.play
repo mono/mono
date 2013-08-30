@@ -59,6 +59,15 @@ package
 			if (!(os === os2))
 				return 11;
 
+
+			// Untyped
+			var ou1 = 6;
+			var ou2:Object = 6;
+			if (!(ou1 == ou2))
+				return 20;
+			if (!(ou1 === ou2))
+				return 21;			
+
 			return 0;		
 		}
 

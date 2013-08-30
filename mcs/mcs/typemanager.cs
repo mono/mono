@@ -220,6 +220,7 @@ namespace Mono.CSharp
 		public readonly PredefinedType CallSite;
 		public readonly PredefinedType CallSiteGeneric;
 		public readonly PredefinedType BinderFlags;
+		public readonly PredefinedType ExpressionType;
 
 		//
 		// C# 5.0
@@ -276,6 +277,7 @@ namespace Mono.CSharp
 			CallSiteGeneric = new PredefinedType (module, MemberKind.Class, "System.Runtime.CompilerServices", "CallSite", 1);
 			Binder = new PredefinedType (module, MemberKind.Class, "Microsoft.CSharp.RuntimeBinder", "Binder");
 			BinderFlags = new PredefinedType (module, MemberKind.Enum, "Microsoft.CSharp.RuntimeBinder", "CSharpBinderFlags");
+			ExpressionType = new PredefinedType (module, MemberKind.Enum, "System.Linq.Expressions", "ExpressionType");
 
 			Action = new PredefinedType (module, MemberKind.Delegate, "System", "Action");
 			AsyncVoidMethodBuilder = new PredefinedType (module, MemberKind.Struct, "System.Runtime.CompilerServices", "AsyncVoidMethodBuilder");
@@ -317,6 +319,8 @@ namespace Mono.CSharp
 
 			if (ExpressionGeneric.Define ())
 				ExpressionGeneric.TypeSpec.IsExpressionTreeType = true;
+
+			ExpressionType.Define ();
 
 			Task.Define ();
 			if (TaskGeneric.Define ())
