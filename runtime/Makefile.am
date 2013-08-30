@@ -23,37 +23,10 @@ $(symlinks):
 
 SUPPORT_FILES = $(symlinks) mono-wrapper etc/mono/config
 
-if MOONLIGHT
-moon-do-basic: Makefile $(SUPPORT_FILES)
-	cd $(mcs_topdir)/ && $(MAKE) NO_DIR_CHECK=1 PROFILE=moonlight_raw
-
-moon-do-basic-clean:
-	cd $(mcs_topdir)/ && $(MAKE) NO_DIR_CHECK=1 PROFILE=moonlight_raw clean
-endif
-
 if ONLY_MONOTOUCH
 build_profiles = monotouch
 else
-if ONLY_MOONLIGHT
-build_profiles = moonlight_raw
-test_profiles = moonlight_raw
-else
-
 build_profiles = 
-
-if MOONLIGHT
-build_profiles += moonlight_raw
-
-moon-do-moonlight-raw: Makefile $(SUPPORT_FILES)
-	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='moonlight_raw' CC='$(CC)' all-profiles
-
-moon-do-moonlight-raw-clean:
-	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='moonlight_raw' CC='$(CC)' clean-profiles
-
-moon-do-build: moon-do-moonlight-raw moon-do-basic
-moon-do-clean: moon-do-moonlight-raw-clean moon-do-basic-clean
-
-endif
 
 if INSTALL_2_0
 build_profiles += net_2_0 net_3_5
@@ -80,7 +53,6 @@ endif
 
 test_profiles = $(build_profiles)
 
-endif
 endif
 
 if BUILD_MCS
