@@ -836,6 +836,9 @@ namespace Mono.CSharp {
 
 
 			if (del_type == ec.Module.PlayscriptTypes.Function) {
+				if (arguments == null)
+					arguments = new Arguments (1);
+
 				arguments.Insert (0, new Argument (InstanceExpr));
 				InstanceExpr = null;
 				method = ec.Module.PlayScriptMembers.BinderDelegateInvoke.Resolve (loc);
