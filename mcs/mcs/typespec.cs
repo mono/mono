@@ -321,6 +321,9 @@ namespace Mono.CSharp
 				if (Kind == MemberKind.Void)
 					return true;
 
+				if (Kind == MemberKind.TypeParameter)
+					return false;
+
 				if (IsNested && DeclaringType.IsGenericOrParentIsGeneric)
 					return false;
 
