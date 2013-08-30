@@ -466,6 +466,12 @@ namespace Mono.PlayScript
 			if (type == null)
 				return false;
 
+			// TODO: It's probably incorrect
+			if (type == bc.Module.PlayscriptTypes.UndefinedType) {
+				type = bc.Module.PlayscriptTypes.Error.Resolve ();
+				return true;
+			}
+
 			if (!TypeSpec.IsBaseClass (type, bc.BuiltinTypes.Exception, false)) {
 				// TODO: Somehow need to wrap user type to Exception
 

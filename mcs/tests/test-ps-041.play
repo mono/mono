@@ -28,6 +28,15 @@ package
 			
 			if (c != 2)
 				return 4;
+				
+			try {
+				throw new Error ();
+			} catch (e:*) {
+				++c;
+			}
+			
+			if (c != 3)
+				return 5;
 
 // TODO:
 /*
@@ -41,6 +50,15 @@ package
 
 			if (c != 2)
 				return 6;
+
+			try {
+				throw null; // TODO: Need to wrap it
+			} catch (e:*) {
+				++c;
+			}
+			
+			if (c != 3)
+				return 5;
 */
 
 			return 0;
