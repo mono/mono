@@ -1809,12 +1809,8 @@ namespace Mono.CSharp {
 				// Special case for value type storey where this is not lifted but
 				// droped off to parent class
 				//
-				for (var b = Block.Parent; b != null; b = b.Parent) {
-					if (b.ParametersBlock.StateMachine != null) {
-						ec.Emit (OpCodes.Ldfld, b.ParametersBlock.StateMachine.HoistedThis.Field.Spec);
-						break;
-					}
-				}
+				if (ec.CurrentAnonymousMethod != null && ec.AsyncTaskStorey != null)
+					ec.Emit (OpCodes.Ldfld, ec.AsyncTaskStorey.HoistedThis.Field.Spec);
 			}
 
 			var delegate_method = method.Spec;

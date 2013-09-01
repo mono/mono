@@ -59364,6 +59364,39 @@
       </method>
     </type>
   </test>
+  <test name="test-async-50.cs">
+    <type name="X">
+      <method name="Void Main()" attrs="145">
+        <size>19</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] AnimateAsync(System.Action)" attrs="129">
+        <size>21</size>
+      </method>
+      <method name="Void SecondLevel(System.Action)" attrs="129">
+        <size>8</size>
+      </method>
+      <method name="System.Threading.Tasks.Task Run()" attrs="129">
+        <size>41</size>
+      </method>
+      <method name="Void &lt;Run&gt;m__0()" attrs="129">
+        <size>20</size>
+      </method>
+      <method name="Void &lt;Run&gt;m__1()" attrs="129">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;Run&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>185</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void add_Disposed(Delegate)" attrs="2182">
