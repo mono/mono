@@ -329,5 +329,13 @@ namespace Mono.CSharp
 		{
 			return visitor.Visit (this);
 		}
+
+		public override Constant ConvertImplicitly (TypeSpec type)
+		{
+			if (this.type.BuiltinType == type.BuiltinType)
+				return this;
+
+			return base.ConvertImplicitly (type);
+		}
 	}
 }

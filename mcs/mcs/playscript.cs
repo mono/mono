@@ -1463,12 +1463,6 @@ namespace Mono.PlayScript
 				return new TypeExpression (types.Bool, loc);
 			case "Number":
 				return new TypeExpression (types.Double, loc);
-			case "String":
-				return new TypeExpression (types.String, loc);
-//			case "Function":
-//				return new TypeExpression (types.Delegate, loc);
-//			case "Class":
-//				return new TypeExpression (types.Type, loc);
 			default:
 				return null;
 			}
@@ -2712,6 +2706,7 @@ namespace Mono.PlayScript
 		public readonly BuiltinTypeSpec Function;
 		public readonly BuiltinTypeSpec Class;
 		public readonly BuiltinTypeSpec Number;
+		public readonly BuiltinTypeSpec String;
 
 		public readonly PredefinedType Vector;
 		public readonly PredefinedType Array;
@@ -2739,28 +2734,33 @@ namespace Mono.PlayScript
 		public PredefinedTypes (ModuleContainer module)
 		{
 			var root_ns = module.GlobalRootNamespace.GetNamespace (RootNamespace, true);
-
+			var builtin_types = module.Compiler.BuiltinTypes;
+	
 			// Setup type aliases
 
 			Object = new BuiltinTypeSpec ("Object", BuiltinTypeSpec.Type.Object);
-			Object.SetDefinition (module.Compiler.BuiltinTypes.Object);
+			Object.SetDefinition (builtin_types.Object);
 			Object.Modifiers |= Modifiers.DYNAMIC;
-			// TODO: Add toString to MemberCache which will map to ToString
 			root_ns.AddType (module, Object);
 
 			Function = new BuiltinTypeSpec (MemberKind.Delegate, RootNamespace, "Function", BuiltinTypeSpec.Type.Delegate);
-			Function.SetDefinition (module.Compiler.BuiltinTypes.Delegate);
+			Function.SetDefinition (builtin_types.Delegate);
 			Function.Modifiers |= Modifiers.SEALED;
 			root_ns.AddType (module, Function);
 
 			Class = new BuiltinTypeSpec (MemberKind.Class, RootNamespace, "Class", BuiltinTypeSpec.Type.Type);
-			Class.SetDefinition (module.Compiler.BuiltinTypes.Type);
+			Class.SetDefinition (builtin_types.Type);
 			Class.Modifiers |= Modifiers.DYNAMIC;
 			root_ns.AddType (module, Class);
 
+			String = new BuiltinTypeSpec (MemberKind.Class, RootNamespace, "String", BuiltinTypeSpec.Type.String);
+			String.SetDefinition (module.Compiler.BuiltinTypes.String);
+			String.Modifiers |= Modifiers.SEALED;
+			root_ns.AddType (module, String);
+
 			// For now use same instance
-			UndefinedType = module.Compiler.BuiltinTypes.Dynamic;
-			Number = module.Compiler.BuiltinTypes.Double;
+			UndefinedType = builtin_types.Dynamic;
+			Number = builtin_types.Double;
 
 			// Known predefined types
 			Array = new PredefinedType (module, MemberKind.Class, RootNamespace, "Array");
@@ -2777,6 +2777,41 @@ namespace Mono.PlayScript
 
 			// Define types which are used for early comparisons
 			Array.Define ();
+		}
+
+		public void PopulateImplicitMembers (ModuleContainer module)
+		{
+			var builtin_types = module.Compiler.BuiltinTypes;
+
+			Object.MemberCache = new MemberCache (builtin_types.Object.MemberCache, true);
+
+			var tostring_filter = CSharp.MemberFilter.Method ("ToString", 0, ParametersCompiled.EmptyReadOnlyParameters, null);
+			var tostring = MemberCache.FindMember (Object, tostring_filter, BindingRestriction.DeclaredOnly) as MethodSpec;
+			if (tostring != null) {
+				Object.MemberCache.AddMember (
+					new MethodSpec (MemberKind.Method, Object, tostring.MemberDefinition, tostring.ReturnType, tostring.Parameters, tostring.Modifiers),
+					"toString");
+			}
+
+			String.MemberCache = new MemberCache (builtin_types.String.MemberCache, true);
+
+			var length = MemberCache.FindMember (String, CSharp.MemberFilter.Property ("Length", null), BindingRestriction.DeclaredOnly) as PropertySpec;
+			if (length != null) {
+				String.MemberCache.AddMember (
+					new PropertySpec (MemberKind.Property, String, length.MemberDefinition, length.MemberType, length.MetaInfo, length.Modifiers) {
+						Get = length.Get
+					}, "length");
+			}
+
+			if (Error.Define ()) {
+				tostring = MemberCache.FindMember (Error.TypeSpec.BaseType, tostring_filter, BindingRestriction.DeclaredOnly) as MethodSpec;
+				if (tostring != null) {
+					Error.TypeSpec.MemberCache.AddMember (
+						new MethodSpec (MemberKind.Method, Error.TypeSpec, tostring.MemberDefinition, tostring.ReturnType, tostring.Parameters, tostring.Modifiers),
+						"toString");
+					Console.WriteLine ("aa");
+				}
+			}
 		}
 	}
 

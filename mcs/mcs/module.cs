@@ -603,6 +603,7 @@ namespace Mono.CSharp
 
 			playscript_attributes = new PlayScript.PredefinedAttributes (this);
 			playscript_types = new PlayScript.PredefinedTypes (this);
+			playscript_types.PopulateImplicitMembers (this);
 			playscript_members = new PlayScript.PredefinedMembers (this);
 		}
 

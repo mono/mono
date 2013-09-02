@@ -11,7 +11,7 @@
 ./functions.cs
 ./int.cs
 ./Number.cs
-./String.cs
+./StringExtensions.cs
 ./ArgumentError.play
 ./DefinitionError.play
 ./Error.play

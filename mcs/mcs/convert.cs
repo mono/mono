@@ -227,7 +227,11 @@ namespace Mono.CSharp {
 					//
 					// From any class-type S to any class-type T, provided S is derived from T
 					//
-					return TypeSpec.IsBaseClass (expr_type, target_type, true);
+					if (TypeSpec.IsBaseClass (expr_type, target_type, true))
+						return true;
+
+					// PS builtin types erasure
+					return target_type.BuiltinType == BuiltinTypeSpec.Type.String && expr_type.BuiltinType == BuiltinTypeSpec.Type.String;
 				}
 
 				//
@@ -1350,25 +1354,34 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (expr_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
-				switch (target_type.Kind) {
-				case MemberKind.ArrayType:
-				case MemberKind.Class:
-					if (target_type.BuiltinType == BuiltinTypeSpec.Type.Object)
-						return EmptyCast.Create (expr, target_type);
+			if (expr_type.BuiltinType != BuiltinTypeSpec.Type.None) {
+				switch (expr_type.BuiltinType) {
+				case BuiltinTypeSpec.Type.String:
+					if (expr_type.BuiltinType == target_type.BuiltinType)
+						return expr;
 
-					goto case MemberKind.Struct;
-				case MemberKind.Struct:
-				case MemberKind.Delegate:
-				case MemberKind.Enum:
-				case MemberKind.Interface:
-				case MemberKind.TypeParameter:
-					Arguments args = new Arguments (1);
-					args.Add (new Argument (expr));
-					return new DynamicConversion (target_type, explicit_cast ? CSharpBinderFlags.ConvertExplicit : 0, args, loc).Resolve (ec);
+					break;
+
+				case BuiltinTypeSpec.Type.Dynamic:
+					switch (target_type.Kind) {
+					case MemberKind.ArrayType:
+					case MemberKind.Class:
+						if (target_type.BuiltinType == BuiltinTypeSpec.Type.Object)
+							return EmptyCast.Create (expr, target_type);
+
+						goto case MemberKind.Struct;
+					case MemberKind.Struct:
+					case MemberKind.Delegate:
+					case MemberKind.Enum:
+					case MemberKind.Interface:
+					case MemberKind.TypeParameter:
+						Arguments args = new Arguments (1);
+						args.Add (new Argument (expr));
+						return new DynamicConversion (target_type, explicit_cast ? CSharpBinderFlags.ConvertExplicit : 0, args, loc).Resolve (ec);
+					}
+
+					return null;
 				}
-
-				return null;
 			}
 
 			if (target_type.IsNullableType)
@@ -1454,6 +1467,14 @@ namespace Mono.CSharp {
 			//
 			if (expr_type.IsStruct && TypeSpecComparer.IsEqual (expr_type, target_type))
 				return expr_type == target_type ? expr : EmptyCast.Create (expr, target_type);
+
+			//
+			// PS builtin types unification
+			//
+			if (expr_type.BuiltinType == BuiltinTypeSpec.Type.String) {
+				if (expr_type.BuiltinType == target_type.BuiltinType)
+					return expr;
+			}
 
 			return null;
 		}

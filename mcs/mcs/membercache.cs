@@ -187,9 +187,16 @@ namespace Mono.CSharp {
 			member_hash = new Dictionary<string, IList<MemberSpec>> (capacity);
 		}
 
-		public MemberCache (MemberCache cache)
-			: this (cache.member_hash.Count)
+		public MemberCache (MemberCache cache, bool copyMembers = false)
 		{
+			var mh = cache.member_hash;
+
+			if (copyMembers) {
+				member_hash = new Dictionary<string, IList<MemberSpec>> (mh);
+			} else {
+				member_hash = new Dictionary<string, IList<MemberSpec>> (mh.Count);
+			}
+
 			this.state = cache.state;
 		}
 

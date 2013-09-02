@@ -951,7 +951,7 @@ namespace Mono.CSharp
 			switch (Name) {
 			case "Int32": return "int";
 			case "Int64": return "long";
-			case "String": return "string";
+			case "String": return ns.Length == 0 ? name : "string";
 			case "Boolean": return "bool";
 			case "Void": return "void";
 			case "Object": return ns.Length == 0 ? name : "object";

@@ -353,7 +353,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (target_type != source_type) {
+			if (target_type != source_type && source_type != InternalType.ErrorType) {
 				Expression resolved = ResolveConversions (ec);
 
 				if (resolved != this)
