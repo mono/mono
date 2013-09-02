@@ -127,8 +127,14 @@ namespace System.Web
 			this.context = context;
 
 #if !TARGET_J2EE
-			if (worker_request != null)
-				use_chunked = (worker_request.GetHttpVersion () == "HTTP/1.1");
+			if (worker_request != null) {
+				if (worker_request.GetHttpVersion () == "HTTP/1.1") {
+					string gatewayIface = context.Request.ServerVariables ["GATEWAY_INTERFACE"];
+					use_chunked = (String.IsNullOrEmpty (gatewayIface) || !gatewayIface.StartsWith ("cgi", StringComparison.OrginalIgnoreCase));
+				} else {
+					use_chunked = false;
+				}
+			}
 #endif
 			writer = new HttpWriter (this);
 		}
