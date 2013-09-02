@@ -122,6 +122,13 @@ namespace System.ServiceModel.Description
 			get { return behaviors; }
 		}
 
+#if NET_4_5
+		[MonoTODO]
+		public KeyedCollection<Type,IContractBehavior> ContractBehaviors {
+			get { throw new NotImplementedException (); }
+		}
+#endif
+
 		public Type CallbackContractType {
 			get { return callback_contract_type; }
 			set { callback_contract_type = value; }
