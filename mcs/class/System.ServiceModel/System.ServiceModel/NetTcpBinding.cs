@@ -120,6 +120,9 @@ namespace System.ServiceModel
 
 		public NetTcpSecurity Security {
 			get { return security; }
+#if NET_4_0
+			set { security = value; }
+#endif
 		}
 
 		public EnvelopeVersion EnvelopeVersion {

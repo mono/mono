@@ -272,6 +272,8 @@ namespace System.Text.RegularExpressions {
 		{
 			return Split (input, pattern, options);
 		}
+
+		public static readonly TimeSpan InfiniteMatchTimeout = TimeSpan.FromMilliseconds (-1);
 #endif
 
 		static void validate_options (RegexOptions options)
