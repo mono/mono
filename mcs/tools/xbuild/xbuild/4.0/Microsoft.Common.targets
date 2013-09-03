@@ -486,14 +486,14 @@
 		Condition = "'@(NonResxWithCulture)' != '' or '@(NonResxWithNoCulture)' != '' or '@(ManifestNonResxWithCulture)' != '' or '@(ManifestNonResxWithNoCulture)' != ''">
 
 		<MakeDir Directories="$(IntermediateOutputPath)%(ManifestNonResxWithCulture.Culture)"/>
-		<Copy SourceFiles = "@(NonResxWithCulture)"
+		<Copy Condition = "'@(NonResxWithCulture)' != '' and '@(ManifestNonResxWithCulture)' != ''" SourceFiles = "@(NonResxWithCulture)"
 			DestinationFiles = "@(ManifestNonResxWithCulture->'$(IntermediateOutputPath)%(Identity)')"
 			SkipUnchangedFiles="$(SkipCopyUnchangedFiles)">
 			<Output TaskParameter = "DestinationFiles" ItemName = "ManifestNonResxWithCultureOnDisk"/>
 			<Output TaskParameter = "DestinationFiles" ItemName = "FileWrites"/>
 		</Copy>
 
-		<Copy SourceFiles = "@(NonResxWithNoCulture)"
+		<Copy Condition = "'@(NonResxWithNoCulture)' != '' and '@(ManifestNonResxWithNoCulture)' != ''" SourceFiles = "@(NonResxWithNoCulture)"
 			DestinationFiles = "@(ManifestNonResxWithNoCulture->'$(IntermediateOutputPath)%(Identity)')"
 			SkipUnchangedFiles="$(SkipCopyUnchangedFiles)">
 			<Output TaskParameter = "DestinationFiles" ItemName = "ManifestNonResxWithNoCultureOnDisk"/>
