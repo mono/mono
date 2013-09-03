@@ -37,14 +37,24 @@ namespace System.Collections.Concurrent
 	[ComVisible (false)]
 	[DebuggerDisplay ("Count={Count}")]
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView<>))]
+	[StructLayout (LayoutKind.Sequential, Pack = 8)]
 	public class BlockingCollection<T> : IEnumerable<T>, ICollection, IEnumerable, IDisposable
 	{
 		const int spinCount = 5;
 
 		readonly IProducerConsumerCollection<T> underlyingColl;
+
+		/* These events are used solely for the purpose of having an optimized sleep cycle when
+		 * the BlockingCollection have to wait on an external event (Add or Remove for instance)
+		 */
+		ManualResetEventSlim mreAdd = new ManualResetEventSlim (true);
+		ManualResetEventSlim mreRemove = new ManualResetEventSlim (true);
+		AtomicBoolean isComplete;
+
 		readonly int upperBound;
 
-		AtomicBoolean isComplete;
+		int manualPadding;
+
 		long completeId;
 
 		/* The whole idea of the collection is to use these two long values in a transactional
@@ -57,11 +67,6 @@ namespace System.Collections.Concurrent
 		long addId = long.MinValue;
 		long removeId = long.MinValue;
 
-		/* These events are used solely for the purpose of having an optimized sleep cycle when
-		 * the BlockingCollection have to wait on an external event (Add or Remove for instance)
-		 */
-		ManualResetEventSlim mreAdd = new ManualResetEventSlim (true);
-		ManualResetEventSlim mreRemove = new ManualResetEventSlim (true);
 
 		/* For time based operations, we share this instance of Stopwatch and base calculation
 		   on a time offset at each of these method call */
