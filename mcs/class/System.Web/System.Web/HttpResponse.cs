@@ -130,7 +130,7 @@ namespace System.Web
 			if (worker_request != null) {
 				if (worker_request.GetHttpVersion () == "HTTP/1.1") {
 					string gatewayIface = context.Request.ServerVariables ["GATEWAY_INTERFACE"];
-					use_chunked = (String.IsNullOrEmpty (gatewayIface) || !gatewayIface.StartsWith ("cgi", StringComparison.OrdinalIgnoreCase));
+					use_chunked = (String.IsNullOrEmpty (gatewayIface) || !gatewayIface.StartsWith ("cgi", StringComparison.OrginalIgnoreCase));
 				} else {
 					use_chunked = false;
 				}
