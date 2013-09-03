@@ -37,7 +37,6 @@ namespace System.Collections.Concurrent
 	[ComVisible (false)]
 	[DebuggerDisplay ("Count={Count}")]
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView<>))]
-	[StructLayout (LayoutKind.Sequential, Pack = 8)]
 	public class BlockingCollection<T> : IEnumerable<T>, ICollection, IEnumerable, IDisposable
 	{
 		const int spinCount = 5;
@@ -53,9 +52,7 @@ namespace System.Collections.Concurrent
 
 		readonly int upperBound;
 
-		int manualPadding;
-
-		long completeId;
+		int completeId;
 
 		/* The whole idea of the collection is to use these two long values in a transactional
 		 * way to track and manage the actual data inside the underlying lock-free collection
@@ -64,8 +61,8 @@ namespace System.Collections.Concurrent
 		 * They are manipulated with CAS and are guaranteed to increase over time and use
 		 * of the instance thus preventing ABA problems.
 		 */
-		long addId = long.MinValue;
-		long removeId = long.MinValue;
+		int addId = int.MinValue;
+		int removeId = int.MinValue;
 
 
 		/* For time based operations, we share this instance of Stopwatch and base calculation
@@ -123,11 +120,12 @@ namespace System.Collections.Concurrent
 			do {
 				cancellationToken.ThrowIfCancellationRequested ();
 
-				long cachedAddId = addId;
-				long cachedRemoveId = removeId;
+				int cachedAddId = addId;
+				int cachedRemoveId = removeId;
+				int itemsIn = cachedAddId - cachedRemoveId;
 
 				// If needed, we check and wait that the collection isn't full
-				if (upperBound != -1 && cachedAddId - cachedRemoveId > upperBound) {
+				if (upperBound != -1 && itemsIn > upperBound) {
 					if (millisecondsTimeout == 0)
 						return false;
 
@@ -212,8 +210,8 @@ namespace System.Collections.Concurrent
 			do {
 				cancellationToken.ThrowIfCancellationRequested ();
 
-				long cachedRemoveId = removeId;
-				long cachedAddId = addId;
+				int cachedRemoveId = removeId;
+				int cachedAddId = addId;
 
 				// Empty case
 				if (cachedRemoveId == cachedAddId) {
