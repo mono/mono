@@ -299,21 +299,25 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (0, p.GetCustomAttributes (typeof (FlagsAttribute), false).Length, "#3");
 			Assert.AreEqual (0, p.GetOptionalCustomModifiers ().Length, "#4");
 			Assert.AreEqual (0, p.GetRequiredCustomModifiers ().Length, "#5");
+#if NET_4_5
 			try {
 				var ign = p.HasDefaultValue;
 				Assert.Fail ("#6");
 			} catch (NotImplementedException) {
 			}
+#endif
 			Assert.IsFalse (p.IsIn, "#7");
 			Assert.IsFalse (p.IsLcid, "#8");
 			Assert.IsFalse (p.IsOptional, "#9");
 			Assert.IsFalse (p.IsOut, "#10");
 			Assert.IsFalse (p.IsRetval, "#10");
+#if NET_4_5
 			try {
 				var ign = p.CustomAttributes;
 				Assert.Fail ("#11");
 			} catch (NotImplementedException) {
 			}
+#endif
 			try {
 				p.GetCustomAttributesData ();
 				Assert.Fail ("#12");
@@ -395,7 +399,9 @@ namespace MonoTests.System.Reflection
 			Assert.IsFalse (p2.IsIn, "#1");
 			p2.MyAttrsImpl = ParameterAttributes.In;
 			Assert.IsTrue (p2.IsIn, "#2");
+#if NET_4_5
 			Assert.AreEqual (p2.myList, p2.CustomAttributes, "#3");
+#endif
 		}
 #endif
 	}
