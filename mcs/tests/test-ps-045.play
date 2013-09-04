@@ -1,0 +1,55 @@
+package 
+{
+	class ProbingIsOperator
+	{
+		public static function expectType1 (expectedType:*, actualObject:*):Boolean
+		{
+			var result:Boolean = (actualObject is expectedType);
+			return result;
+		}		
+
+		public static function expectType2 (expectedType:Class, actualObject:Object):Boolean
+		{
+			return actualObject is expectedType;
+		}
+		
+		public static function Main():int
+		{
+			if (!expectType1 (int, 1))
+				return 1;
+				
+			if (expectType1 (int, "1"))
+				return 2;
+
+			if (!expectType1 (String, "1"))
+				return 3;
+
+			if (!expectType1 (Object, "1"))
+				return 4;
+
+			if (!expectType1 (Object, 4.3))
+				return 5;
+				
+			if (expectType1 (Object, null))
+				return 6;
+
+			if (!expectType2 (int, 1))
+				return 10;
+				
+			if (expectType2 (int, "1"))
+				return 11;
+
+			if (!expectType2 (String, "1"))
+				return 12;
+
+			if (!expectType2 (Object, "1"))
+				return 13;
+
+			if (!expectType2 (Object, 4.3))
+				return 14;
+				
+			return 0;
+		}
+	}
+}
+

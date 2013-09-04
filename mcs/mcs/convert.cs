@@ -231,7 +231,13 @@ namespace Mono.CSharp {
 						return true;
 
 					// PS builtin types erasure
-					return target_type.BuiltinType == BuiltinTypeSpec.Type.String && expr_type.BuiltinType == BuiltinTypeSpec.Type.String;
+					switch (target_type.BuiltinType) {
+					case BuiltinTypeSpec.Type.String:
+					case BuiltinTypeSpec.Type.Type:
+						return target_type.BuiltinType == expr_type.BuiltinType;
+					default:
+						return false;
+					}
 				}
 
 				//
@@ -1357,6 +1363,7 @@ namespace Mono.CSharp {
 			if (expr_type.BuiltinType != BuiltinTypeSpec.Type.None) {
 				switch (expr_type.BuiltinType) {
 				case BuiltinTypeSpec.Type.String:
+				case BuiltinTypeSpec.Type.Type:
 					if (expr_type.BuiltinType == target_type.BuiltinType)
 						return expr;
 
@@ -1471,9 +1478,13 @@ namespace Mono.CSharp {
 			//
 			// PS builtin types unification
 			//
-			if (expr_type.BuiltinType == BuiltinTypeSpec.Type.String) {
+			switch (expr_type.BuiltinType) {
+			case BuiltinTypeSpec.Type.String:
+			case BuiltinTypeSpec.Type.Type:
 				if (expr_type.BuiltinType == target_type.BuiltinType)
 					return expr;
+
+				break;
 			}
 
 			return null;

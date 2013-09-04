@@ -1,0 +1,18 @@
+package 
+{
+	class ImplicitTypeConversion
+	{
+		public static function Test (expectedType:*):void
+		{
+		}
+		
+		public static function Main ():int
+		{
+			var v1:Class = int;
+			var c:Class = String;
+			Test (int);
+			
+			return 0;
+		}
+	}
+}

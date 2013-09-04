@@ -1339,27 +1339,32 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			probe_type_expr = ProbeType.ResolveAsType (ec);
-			if (probe_type_expr == null)
-				return null;
-
 			expr = expr.Resolve (ec);
 			if (expr == null)
 				return null;
 
+			return ResolveProbeType (ec);
+		}
+
+		protected virtual Expression ResolveProbeType (ResolveContext rc)
+		{
+			probe_type_expr = ProbeType.ResolveAsType (rc);
+			if (probe_type_expr == null)
+				return null;
+
 			if (probe_type_expr.IsStatic) {
-				ec.Report.Error (-244, loc, "The `{0}' operator cannot be applied to an operand of a static type",
+				rc.Report.Error (-244, loc, "The `{0}' operator cannot be applied to an operand of a static type",
 					OperatorName);
 			}
-			
+
 			if (expr.Type.IsPointer || probe_type_expr.IsPointer) {
-				ec.Report.Error (244, loc, "The `{0}' operator cannot be applied to an operand of pointer type",
+				rc.Report.Error (244, loc, "The `{0}' operator cannot be applied to an operand of pointer type",
 					OperatorName);
 				return null;
 			}
 
 			if (expr.Type == InternalType.AnonymousMethod) {
-				ec.Report.Error (837, loc, "The `{0}' operator cannot be applied to a lambda expression or anonymous method",
+				rc.Report.Error (837, loc, "The `{0}' operator cannot be applied to a lambda expression or anonymous method",
 					OperatorName);
 				return null;
 			}
@@ -1447,8 +1452,9 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			if (base.DoResolve (ec) == null)
-				return null;
+			var pexpr = base.DoResolve (ec);
+			if (pexpr != this)
+				return pexpr;
 
 			TypeSpec d = expr.Type;
 			bool d_is_nullable = false;

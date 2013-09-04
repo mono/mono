@@ -449,8 +449,7 @@ namespace Mono.CSharp {
 		{
 			if (eclass != ExprClass.Unresolved) {
 				if ((flags & ExprClassToResolveFlags) == 0) {
-					Error_UnexpectedKind (ec, flags, loc);
-					return null;
+					return ResolveUnexpectedKind (ec, flags);
 				}
 
 				return this;
@@ -464,8 +463,7 @@ namespace Mono.CSharp {
 					return null;
 
 				if ((flags & e.ExprClassToResolveFlags) == 0) {
-					e.Error_UnexpectedKind (ec, flags, loc);
-					return null;
+					return e.ResolveUnexpectedKind (ec, flags);
 				}
 
 				if (e.type == null)
@@ -545,6 +543,12 @@ namespace Mono.CSharp {
 			}
 
 			return c;
+		}
+
+		protected virtual Expression ResolveUnexpectedKind (ResolveContext rc, ResolveFlags flags)
+		{
+			Error_UnexpectedKind (rc, flags, loc);
+			return null;
 		}
 
 		public virtual void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
@@ -2921,6 +2925,14 @@ namespace Mono.CSharp {
 			Type = t;
 			eclass = ExprClass.Type;
 			loc = l;
+		}
+
+		protected override Expression ResolveUnexpectedKind (ResolveContext rc, ResolveFlags flags)
+		{
+			if (rc.IsPlayScriptType)
+				return new PlayScript.ImplicitTypeOf (this, loc).Resolve (rc);
+
+			return base.ResolveUnexpectedKind (rc, flags);
 		}
 
 		public sealed override TypeSpec ResolveAsType (IMemberContext ec)

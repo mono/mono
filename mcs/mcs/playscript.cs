@@ -855,6 +855,45 @@ namespace Mono.PlayScript
 		}
 	}
 
+	public class Is : CSharp.Is
+	{
+		public Is (Expression expr, Expression probeType, Location loc)
+			: base (expr, probeType, loc)
+		{
+		}
+
+		protected override Expression ResolveProbeType (ResolveContext rc)
+		{
+			probe_type_expr = ProbeType.TryToResolveAsType (rc);
+			if (probe_type_expr != null)
+				return this;
+
+			var probe_type = ProbeType.Resolve (rc);
+			if (probe_type == null)
+				return null;
+
+			probe_type = CSharp.Convert.ImplicitConversionRequired (rc, probe_type, rc.Module.PlayscriptTypes.Class, loc);
+			if (probe_type == null)
+				return null;
+
+			var ms = rc.Module.PlayScriptMembers.OperationsIsOfType.Resolve (loc);
+			if (ms == null)
+				return null;
+
+			var mg = MethodGroupExpr.CreatePredefined (ms, ms.DeclaringType, loc);
+			var targs = new TypeArguments (
+				new TypeExpression (expr.Type, loc));
+			targs.Resolve (rc);
+			mg.SetTypeArguments (rc, targs);
+
+			var call_args = new Arguments (1);
+			call_args.Add (new Argument (expr, Argument.AType.Ref));
+			call_args.Add (new Argument (probe_type));
+
+			return new Invocation (mg, call_args).Resolve (rc);
+		}
+	}
+
 	class ImplicitTypeOf : CSharp.TypeOf
 	{
 		public ImplicitTypeOf (TypeExpression expr, Location loc)
@@ -2698,6 +2737,11 @@ namespace Mono.PlayScript
 
 			Module.PlayscriptAttributes.PlayScript.EmitAttribute (TypeBuilder);	
 		}
+
+		public override string GetSignatureForError ()
+		{
+			return null;
+		}
 	}
 
 	class PredefinedTypes
@@ -2803,14 +2847,10 @@ namespace Mono.PlayScript
 					}, "length");
 			}
 
-			if (Error.Define ()) {
-				tostring = MemberCache.FindMember (Error.TypeSpec.BaseType, tostring_filter, BindingRestriction.DeclaredOnly) as MethodSpec;
-				if (tostring != null) {
-					Error.TypeSpec.MemberCache.AddMember (
-						new MethodSpec (MemberKind.Method, Error.TypeSpec, tostring.MemberDefinition, tostring.ReturnType, tostring.Parameters, tostring.Modifiers),
-						"toString");
-					Console.WriteLine ("aa");
-				}
+			if (Error.Define () && tostring != null) {
+				Error.TypeSpec.MemberCache.AddMember (
+					new MethodSpec (MemberKind.Method, Error.TypeSpec, tostring.MemberDefinition, tostring.ReturnType, tostring.Parameters, tostring.Modifiers),
+					"toString");
 			}
 		}
 	}
@@ -2828,6 +2868,7 @@ namespace Mono.PlayScript
 		public readonly PredefinedMember<MethodSpec> BinderDelegateInvoke;
 		public readonly PredefinedMember<MethodSpec> OperationsTypeOf;
 		public readonly PredefinedMember<MethodSpec> OperationsClassOf;
+		public readonly PredefinedMember<MethodSpec> OperationsIsOfType;
 		public readonly PredefinedMember<MethodSpec> DefaultObjectContextCreate;
 		public readonly PredefinedMember<MethodSpec> DefaultObjectContextRegister;
 		public readonly PredefinedMember<MethodSpec> DefaultObjectContextUnregister;
@@ -2852,6 +2893,7 @@ namespace Mono.PlayScript
 			BinderHasProperty = new PredefinedMember<MethodSpec> (module, ptypes.Binder, "HasProperty", btypes.Object, btypes.Type, btypes.Object);
 			OperationsTypeOf = new PredefinedMember<MethodSpec> (module, ptypes.Operations, "TypeOf", btypes.Object);
 			OperationsClassOf = new PredefinedMember<MethodSpec> (module, ptypes.Operations, "ClassOf", btypes.Object);
+			OperationsIsOfType = new PredefinedMember<MethodSpec> (module, ptypes.Operations, CSharp.MemberFilter.Method ("IsOfType", 1, null, null));
 			DefaultObjectContextCreate = new PredefinedMember<MethodSpec> (module, ptypes.DefaultObjectContext, "Create");
 			DefaultObjectContextRegister = new PredefinedMember<MethodSpec> (module, ptypes.DefaultObjectContext, "Register", btypes.Object);
 			DefaultObjectContextUnregister = new PredefinedMember<MethodSpec> (module, ptypes.DefaultObjectContext, "Unregister");

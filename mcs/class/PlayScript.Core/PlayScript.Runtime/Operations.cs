@@ -150,6 +150,17 @@ namespace PlayScript.Runtime
 
 			return type;
 		}
+		
+		public static bool IsOfType<T> (ref T instance, Type expectedType)
+		{
+			if (expectedType == null)
+				throw new _root.TypeError (_root.Error.getErrorMessage (1009), 1009);
+
+			if (instance == null)
+				return false;
+
+			return expectedType.IsAssignableFrom (instance.GetType ());
+		}
 
 		public static string TypeOf (object instance)
 		{
