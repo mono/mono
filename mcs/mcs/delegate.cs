@@ -686,7 +686,7 @@ namespace Mono.CSharp {
 		{
 			var expr = base.DoResolve (ec);
 			if (expr == null)
-				return null;
+				return ErrorExpression.Instance;
 
 			if (ec.IsInProbingMode)
 				return expr;
