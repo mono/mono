@@ -203,7 +203,7 @@ namespace System.Threading.Tasks
 								long old;
 								StealValue64 val = new StealValue64 ();
 
-								old = sixtyfour ? range.V64.Value : Interlocked.CompareExchange (ref range.V64.Value, 0, 0);
+								old = Thread.VolatileRead (ref range.V64.Value);
 								val.Value = old;
 
 								if (val.Actual >= stopIndex - val.Stolen - 2)
