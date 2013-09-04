@@ -18490,6 +18490,36 @@
       </method>
     </type>
   </test>
+  <test name="gtest-596.cs">
+    <type name="X">
+      <method name="Artist get_Artist()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_Artist(Artist)" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>36</size>
+      </method>
+      <method name="Void Test[T1,T2](System.Func`2[T1,T2])" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Test[T1,T2](System.Func`3[T1,System.Int32,T2])" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Artist">
+      <method name="Artist FromToken(System.String)" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
@@ -22103,6 +22133,43 @@
       </method>
       <method name="Boolean All[T](System.Collections.Generic.IEnumerable`1[T], ExtensionTest.Two.AxFunc`2[T,System.Boolean])" attrs="150">
         <size>10</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-exmethod-47.cs">
+    <type name="D">
+      <method name="Void Invoke()" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)" attrs="6278">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void Main()" attrs="145">
+        <size>21</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="S">
+      <method name="Void Foo(Int32)" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Extension">
+      <method name="Void Foo(S)" attrs="150">
+        <size>2</size>
       </method>
     </type>
   </test>
