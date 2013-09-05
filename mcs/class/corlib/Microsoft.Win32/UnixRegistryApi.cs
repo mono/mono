@@ -328,8 +328,9 @@ namespace Microsoft.Win32 {
 			try {
 				using (StreamWriter writer = new StreamWriter (path, false, Encoding.ASCII))
 					writer.WriteLine (btime.ToString ());
-			} catch (Exception e) {
-				Console.Error.WriteLine ("While saving registry data at {0}: {1}", path, e);
+			} catch (Exception) {
+				/* This can happen when a user process tries to write to MachineStore */
+				//Console.Error.WriteLine ("While saving registry data at {0}: {1}", path, e);
 			}
 		}
 			
