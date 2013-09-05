@@ -2016,6 +2016,23 @@ public class AssemblyNameTest {
 
 		Assert.AreEqual (fullName, an.FullName);
 	}
+
+	[Test]
+	public void ReferenceMatchesDefinition_Compares_Only_SimpleName ()
+	{
+		var an1 = new AssemblyName ("TestDll, Version=1.0.0.0, Culture=Neutral, PublicKeyToken=b77a5c561934e089");
+		var an2 = new AssemblyName ("TestDll, Version=2.0.0.2001, Culture=en-US, PublicKeyToken=ab7a5c561934e089");
+
+		var an3 = new AssemblyName ("TestDll");
+		var an4 = new AssemblyName ("tesTDlL");
+
+		var an5 = new AssemblyName ("TestDll");
+		var an6 = new AssemblyName ("TestDll2");
+		
+		Assert.IsTrue (AssemblyName.ReferenceMatchesDefinition (an1, an2));
+		Assert.IsTrue (AssemblyName.ReferenceMatchesDefinition (an3, an4));
+		Assert.IsFalse (AssemblyName.ReferenceMatchesDefinition (an5, an6));
+	}
 #endif
 }
 
