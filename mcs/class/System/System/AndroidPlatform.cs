@@ -31,6 +31,7 @@ extern alias MonoSecurity;
 
 #if MONODROID
 using System;
+using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 #if SECURITY_DEP
@@ -45,12 +46,13 @@ namespace System {
 		static readonly Converter<MSX.X509CertificateCollection, bool> trustEvaluateSsl;
 		static readonly Func<MSX.X509CertificateCollection, object, X509Certificate2, X509Chain, SslPolicyErrors, bool> trustEvaluateSsl2;
 #endif  // SECURITY_DEP
+		static readonly Func<IWebProxy> getDefaultProxy;
 
 
 		static AndroidPlatform ()
 		{
-#if SECURITY_DEP
 			var t = Type.GetType ("Android.Runtime.AndroidEnvironment, Mono.Android", throwOnError:true);
+#if SECURITY_DEP
 			trustEvaluateSsl2 = (Func<MSX.X509CertificateCollection, object, X509Certificate2, X509Chain, SslPolicyErrors, bool>)
 				Delegate.CreateDelegate (
 						typeof (Func<MSX.X509CertificateCollection, object, X509Certificate2, X509Chain, SslPolicyErrors, bool>),
@@ -66,6 +68,10 @@ namespace System {
 							ignoreCase:false,
 							throwOnBindFailure:true);
 #endif  // SECURITY_DEP
+			getDefaultProxy = (Func<IWebProxy>)Delegate.CreateDelegate (
+				typeof (Func<IWebProxy>), t, "GetDefaultProxy",
+				ignoreCase:false,
+				throwOnBindFailure:true);
 		}
 
 #if SECURITY_DEP
@@ -76,6 +82,11 @@ namespace System {
 			return trustEvaluateSsl (collection);
 		}
 #endif  // SECURITY_DEP
+
+		internal static IWebProxy GetDefaultProxy ()
+		{
+			return getDefaultProxy ();
+		}
 	}
 }
 #endif  // MONODROID

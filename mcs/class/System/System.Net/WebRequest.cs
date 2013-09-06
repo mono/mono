@@ -327,6 +327,12 @@ namespace System.Net
 #if MONOTOUCH
 			return CFNetwork.GetDefaultProxy ();
 #else
+#if MONODROID
+			// Return the system web proxy.  This only works for ICS+.
+			var androidProxy = AndroidPlatform.GetDefaultProxy ();
+			if (androidProxy != null)
+				return androidProxy;
+#endif
 #if !NET_2_1
 			if (IsWindows ()) {
 				int iProxyEnable = (int)Microsoft.Win32.Registry.GetValue ("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", "ProxyEnable", 0);
