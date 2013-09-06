@@ -361,6 +361,29 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		public void Headers_Complex ()
+		{
+			HttpRequestMessage message = new HttpRequestMessage ();
+			HttpRequestHeaders headers = message.Headers;
+
+			headers.Add ("user-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36");
+
+
+			Assert.AreEqual (6, headers.UserAgent.Count);
+
+			Assert.IsTrue (headers.UserAgent.SequenceEqual (
+				new[] {
+					new ProductInfoHeaderValue ("Mozilla", "5.0"),
+					new ProductInfoHeaderValue ("(Macintosh; Intel Mac OS X 10_8_4)"),
+					new ProductInfoHeaderValue ("AppleWebKit", "537.36"),
+					new ProductInfoHeaderValue ("(KHTML, like Gecko)"),
+					new ProductInfoHeaderValue ("Chrome", "29.0.1547.62"),
+					new ProductInfoHeaderValue ("Safari", "537.36")
+				}
+			));			
+		}
+
+		[Test]
 		public void Header_BaseImplementation ()
 		{
 			HttpRequestMessage message = new HttpRequestMessage ();
