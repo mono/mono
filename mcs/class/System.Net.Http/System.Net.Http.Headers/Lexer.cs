@@ -201,17 +201,26 @@ namespace System.Net.Http.Headers
 
 		public bool ScanCommentOptional (out string value)
 		{
-			var t = Scan ();
-			if (t != Token.Type.OpenParens) {
+			Token t;
+			if (ScanCommentOptional (out value, out t))
+				return true;
+
+			return t == Token.Type.End;
+		}
+
+		public bool ScanCommentOptional (out string value, out Token readToken)
+		{
+			readToken = Scan ();
+			if (readToken != Token.Type.OpenParens) {
 				value = null;
-				return t == Token.Type.End;
+				return false;
 			}
 
 			while (pos < s.Length) {
 				var ch = s[pos];
 				if (ch == ')') {
 					++pos;
-					var start = t.StartPosition;
+					var start = readToken.StartPosition;
 					value = s.Substring (start, pos - start);
 					return true;
 				}
