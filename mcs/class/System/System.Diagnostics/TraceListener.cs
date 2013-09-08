@@ -162,7 +162,7 @@ namespace System.Diagnostics {
 
 		public virtual void Fail (string message)
 		{
-			Fail (message, "");
+			Fail (message, null);
 		}
 
 		public virtual void Fail (string message, string detailMessage)
@@ -170,8 +170,11 @@ namespace System.Diagnostics {
 			WriteLine ("---- DEBUG ASSERTION FAILED ----");
 			WriteLine ("---- Assert Short Message ----");
 			WriteLine (message);
-			WriteLine ("---- Assert Long Message ----");
-			WriteLine (detailMessage);
+			if (detailMessage != null) {
+				WriteLine ("---- Assert Long Message ----");
+				WriteLine (detailMessage);
+			}
+
 			WriteLine ("");
 		}
 
