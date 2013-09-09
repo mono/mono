@@ -1761,13 +1761,13 @@ int mono_backtrace_from_context(void* context, void* array[], int count)
 	MonoContext mctx;
 	void*  ip = 0;
 	void** bp = 0;
+	int idx = 0;
 	
 	mono_arch_sigctx_to_monoctx(context, &mctx);
 
 	ip = (void*)MONO_CONTEXT_GET_IP(&mctx);
 	bp = (void**)MONO_CONTEXT_GET_BP(&mctx);
 
-	int idx = 0;
 	while(ip && bp)
 	{	
 		array[idx++] = ip;
