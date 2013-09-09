@@ -219,7 +219,7 @@ namespace System.Diagnostics {
 		public static void Assert (bool condition)
 		{
 			if (!condition)
-				Fail (new StackTrace(true).ToString());
+				Fail ("");
 		}
 
 		public static void Assert (bool condition, string message)
