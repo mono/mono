@@ -856,9 +856,10 @@ namespace Mono.CSharp
 
 				if (kind == MemberKind.Class) {
 					if ((ma & TypeAttributes.Sealed) != 0) {
-						mod |= Modifiers.SEALED;
 						if ((ma & TypeAttributes.Abstract) != 0)
 							mod |= Modifiers.STATIC;
+						else
+							mod |= Modifiers.SEALED;
 					} else if ((ma & TypeAttributes.Abstract) != 0) {
 						mod |= Modifiers.ABSTRACT;
 					}
