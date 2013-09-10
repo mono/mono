@@ -106,7 +106,6 @@ net_2_0_dirs := \
 	System.Web.Extensions.Design	\
 	System.ComponentModel.DataAnnotations	\
 	System.Web.DynamicData		\
-	System.ServiceModel.Web		\
 	System.Web.Mvc2			\
 	Mono.C5				\
 	Mono.Management			\
@@ -124,9 +123,10 @@ net_2_0_only_dirs := \
 	System.Web.Extensions.Design_1.0	\
 	Compat.ICSharpCode.SharpZipLib	\
 	WindowsBase			\
+	System.ServiceModel.Web \
 	System.Data.Services.Client	\
 	System.Data.Services		\
-	System.Web.Mvc			
+	System.Web.Mvc \
 
 mobile_dirs := \
 	corlib	\
@@ -180,6 +180,8 @@ net_4_0_dirs := \
 	System.Windows.Forms.DataVisualization	\
 	System.Xaml \
 	WindowsBase \
+	System.ServiceModel.Activation \
+	System.ServiceModel \
 	System.ServiceModel.Routing \
 	System.ServiceModel.Discovery \
 	System.Runtime.Caching \
@@ -197,6 +199,7 @@ net_4_0_dirs := \
 	System.Reactive.Debugger \
 	Microsoft.Web.Infrastructure \
 	WebMatrix.Data \
+	System.ServiceModel.Web \
 	System.Data.Services.Client	\
 	System.Data.Services \
 	System.Json.Microsoft \
