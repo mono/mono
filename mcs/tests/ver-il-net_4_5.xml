@@ -17307,7 +17307,23 @@
     </type>
     <type name="Program">
       <method name="Int32 Main()" attrs="150">
-        <size>64</size>
+        <size>78</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A3`1[T]">
+      <method name="Void Foo[U]()" attrs="1478">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B3">
+      <method name="Void Foo[Y]()" attrs="198">
+        <size>2</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>

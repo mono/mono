@@ -631,8 +631,21 @@ namespace Mono.CSharp {
 			if (spec.InterfacesDefined != null)
 				builder.SetInterfaceConstraints (spec.InterfacesDefined.Select (l => l.GetMetaInfo ()).ToArray ());
 
-			if (spec.TypeArguments != null)
-				builder.SetInterfaceConstraints (spec.TypeArguments.Select (l => l.GetMetaInfo ()).ToArray ());
+			if (spec.TypeArguments != null) {
+				var meta_constraints = new List<MetaType> (spec.TypeArguments.Length);
+				foreach (var c in spec.TypeArguments) {
+					//
+					// Inflated type parameters can collide with special constraint types, don't
+					// emit any such type parameter.
+					//
+					if (c.BuiltinType == BuiltinTypeSpec.Type.Object || c.BuiltinType == BuiltinTypeSpec.Type.ValueType)
+						continue;
+
+					meta_constraints.Add (c.GetMetaInfo ());
+				}
+
+				builder.SetInterfaceConstraints (meta_constraints.ToArray ());
+			}
 
 			builder.SetGenericParameterAttributes (attr);
 		}
