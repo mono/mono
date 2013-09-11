@@ -39,6 +39,6 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../msfinal.pub")]
+[assembly: AssemblyKeyFile ("../ecma.pub")]
 
 [assembly: ReferenceAssembly]
