@@ -1768,7 +1768,7 @@ int mono_backtrace_from_context(void* context, void* array[], int count)
 	ip = (void*)MONO_CONTEXT_GET_IP(&mctx);
 	bp = (void**)MONO_CONTEXT_GET_BP(&mctx);
 
-	while(ip && bp)
+	while(ip && bp && count-- > 0)
 	{	
 		array[idx++] = ip;
 
