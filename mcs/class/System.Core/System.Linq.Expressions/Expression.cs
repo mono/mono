@@ -52,11 +52,11 @@ namespace System.Linq.Expressions {
 		internal const BindingFlags AllStatic = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy;
 		internal const BindingFlags All = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
 
-		public ExpressionType NodeType {
+		public virtual ExpressionType NodeType {
 			get { return node_type; }
 		}
 
-		public Type Type {
+		public virtual Type Type {
 			get { return type; }
 		}
 
