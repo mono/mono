@@ -70,7 +70,7 @@ sub BuildUnityScriptForUnity
 		GitClone("git://github.com/Unity-Technologies/boo.git", $booCheckout);
 	}
 
-	Build("$booCheckout/src/booc/Booc.csproj", undef, "/property:TargetFrameworkVersion=4.0 /property:DefineConstants=\"NO_SERIALIZATION_INFO,NO_SYSTEM_PROCESS,NO_ICLONEABLE,NO_SYSTEM_REFLECTION_EMIT,MSBUILD,IGNOREKEYFILE\" /property:OutputPath=$output");
+	Build("$booCheckout/src/booc/Booc.csproj", undef, "/property:TargetFrameworkVersion=4.0 /property:DefineConstants=\"NO_SERIALIZATION_INFO,NO_SYSTEM_PROCESS,NO_ICLONEABLE,NO_SYSTEM_REFLECTION_EMIT,MSBUILD\" /property:OutputPath=$output");
 	
 	if (!$ENV{UNITY_THISISABUILDMACHINE}) {
 		GitClone("git://github.com/Unity-Technologies/unityscript.git", $usCheckout);
@@ -95,7 +95,7 @@ sub Build
 	my $customArguments = defined($optionalCustomArguments) ? $optionalCustomArguments : "";
 
 	my $target = "Rebuild";
-	my $commandLine = "MSBuild $projectFile /p:AssemblyOriginatorKeyFile= /p:SignAssembly=false /p:MonoTouch=True /t:$target /p:Configuration=$configuration $customArguments";
+	my $commandLine = "MSBuild $projectFile /p:MonoTouch=True /t:$target /p:Configuration=$configuration $customArguments";
 	
 	system($commandLine) eq 0 or die("Failed to xbuild '$projectFile' for unity");
 }
@@ -137,6 +137,7 @@ BuildUnityScriptForUnity();
 cp("$output/Boo.Lang.dll $libmono/bare-minimum/Boo.Lang.dll*");
 cp("$output/Boo.Lang.pdb $libmono/bare-minimum/Boo.Lang.pdb*");
 cp("$output/UnityScript.Lang.* $libmono/bare-minimum/UnityScript.Lang.*");
+cp("$booCheckout/src/Boo.sn* $libmono/bare-minimum/Boo.sn*");
 
 if($ENV{UNITY_THISISABUILDMACHINE})
 {
