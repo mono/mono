@@ -1051,16 +1051,21 @@ namespace MonoTests.System.Net.Sockets {
 		[Test]
 		public void Available ()
 		{
-			UdpClient client = new UdpClient (1238);
-			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 1238);
-			byte[] bytes = new byte[] {10, 11, 12, 13};
-			
-			client.Send (bytes, bytes.Length, ep);
-			int avail = client.Available;
-			
-			Assert.AreEqual (bytes.Length, avail, "Available #1");
+			using (UdpClient client = new UdpClient (1238)) {
+				IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 1238);
+				byte[] bytes = new byte[] {10, 11, 12, 13};
+				
+				int res = client.Send (bytes, bytes.Length, ep);
+				Assert.AreEqual (bytes.Length, res, "Send");
 
-			client.Close ();
+				// that might happen too quickly, data sent and not yet received/available
+				Thread.Sleep (100);
+				int avail = client.Available;
+				
+				Assert.AreEqual (bytes.Length, avail, "Available #1");
+
+				client.Close ();
+			}
 		}
 		
 		[Test]
