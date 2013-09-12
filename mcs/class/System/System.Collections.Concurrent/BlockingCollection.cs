@@ -370,13 +370,19 @@ namespace System.Collections.Concurrent
 		{
 			item = default (T);
 			CheckArray (collections);
-			int index = 0;
-			foreach (var coll in collections) {
-				try {
-					item = coll.Take ();
-					return index;
-				} catch {}
-				index++;
+			WaitHandle[] wait_table = null;
+			while (true) {
+				int index = 0;
+				for (int i = 0; i < collections.Length; ++i) {
+					if (collections [i].TryTake (out item))
+						return i;
+				}
+				if (wait_table == null) {
+					wait_table = new WaitHandle [collections.Length];
+					for (int i = 0; i < collections.Length; ++i)
+						wait_table [i] = collections [i].mreRemove.WaitHandle;
+				}
+				WaitHandle.WaitAny (wait_table);
 			}
 			return -1;
 		}
@@ -385,14 +391,24 @@ namespace System.Collections.Concurrent
 		{
 			item = default (T);
 			CheckArray (collections);
-			int index = 0;
-			foreach (var coll in collections) {
-				try {
-					item = coll.Take (cancellationToken);
-					return index;
-				} catch {}
-				index++;
+			WaitHandle[] wait_table = null;
+			while (true) {
+				int index = 0;
+				for (int i = 0; i < collections.Length; ++i) {
+					if (collections [i].TryTake (out item))
+						return i;
+				}
+				cancellationToken.ThrowIfCancellationRequested ();
+				if (wait_table == null) {
+					wait_table = new WaitHandle [collections.Length + 1];
+					for (int i = 0; i < collections.Length; ++i)
+						wait_table [i] = collections [i].mreRemove.WaitHandle;
+					wait_table [collections.Length] = cancellationToken.WaitHandle;
+				}
+				WaitHandle.WaitAny (wait_table);
+				cancellationToken.ThrowIfCancellationRequested ();
 			}
+
 			return -1;
 		}
 
