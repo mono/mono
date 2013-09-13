@@ -266,7 +266,6 @@ class MakeBundle {
 		try {
 			List<string> c_bundle_names = new List<string> ();
 			List<string[]> config_names = new List<string[]> ();
-			byte [] buffer = new byte [8192];
 
 			using (StreamWriter ts = new StreamWriter (File.Create (temp_s))) {
 			using (StreamWriter tc = new StreamWriter (File.Create (temp_c))) {
@@ -309,10 +308,11 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				long real_size = stream.Length;
 				int n;
 				if (compress) {
+					byte[] cbuffer = new byte [8192];
 					MemoryStream ms = new MemoryStream ();
 					GZipStream deflate = new GZipStream (ms, CompressionMode.Compress, leaveOpen:true);
-					while ((n = stream.Read (buffer, 0, buffer.Length)) != 0){
-						deflate.Write (buffer, 0, n);
+					while ((n = stream.Read (cbuffer, 0, cbuffer.Length)) != 0){
+						deflate.Write (cbuffer, 0, n);
 					}
 					stream.Close ();
 					deflate.Close ();
@@ -335,6 +335,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 #endif
 
 			// The non-parallel part
+			byte [] buffer = new byte [8192];
 			foreach (var url in files) {
 				string fname = new Uri (url).LocalPath;
 				string aname = Path.GetFileName (fname);
