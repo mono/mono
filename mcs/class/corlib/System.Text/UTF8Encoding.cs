@@ -852,7 +852,8 @@ fail_no_space:
 		if (charCount < 0) {
 			throw new ArgumentOutOfRangeException ("charCount", _("ArgRange_NonNegative"));
 		}
-		return charCount * 4;
+		var max = Math.Max (3, EncoderFallback.MaxCharCount);
+		return max * charCount + GetPreamble ().Length;
 	}
 
 	// Get the maximum number of characters needed to decode a
