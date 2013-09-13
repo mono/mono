@@ -59483,6 +59483,52 @@
       </method>
     </type>
   </test>
+  <test name="test-async-51.cs">
+    <type name="Program">
+      <method name="Void Main(System.String[])" attrs="150">
+        <size>19</size>
+      </method>
+      <method name="System.Threading.Tasks.Task LoadPlayers()" attrs="129">
+        <size>41</size>
+      </method>
+      <method name="System.Action`1[Program+Player] &lt;LoadPlayers&gt;m__1(System.Action`1[Program+Player])" attrs="129">
+        <size>20</size>
+      </method>
+      <method name="Void &lt;LoadPlayers&gt;m__2(Program+Player)" attrs="129">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>18</size>
+      </method>
+    </type>
+    <type name="Program+Model">
+      <method name="Program+Player get_SelectedPlayer()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_SelectedPlayer(Program+Player)" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+Player">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+&lt;LoadPlayers&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>87</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+      <method name="Void &lt;&gt;m__0(Program+Player)" attrs="145">
+        <size>2</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void add_Disposed(Delegate)" attrs="2182">
