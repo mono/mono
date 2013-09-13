@@ -3258,80 +3258,84 @@ namespace Mono.CSharp
 				CheckOutOfRangeComparison (ec, rc, left.Type);
 			}
 
-			if (left.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic || right.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
-				var lt = left.Type;
-				var rt = right.Type;
-				if (lt.Kind == MemberKind.Void || lt == InternalType.MethodGroup || lt == InternalType.AnonymousMethod ||
-					rt.Kind == MemberKind.Void || rt == InternalType.MethodGroup || rt == InternalType.AnonymousMethod) {
-					Error_OperatorCannotBeApplied (ec, left, right);
-					return null;
-				}
-
-				Arguments args;
-
-				//
-				// Special handling for logical boolean operators which require rhs not to be
-				// evaluated based on lhs value
-				//
-				if ((oper & Operator.LogicalMask) != 0) {
-					Expression cond_left, cond_right, expr;
-
-					args = new Arguments (2);
-
-					if (lt.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
-						LocalVariable temp = LocalVariable.CreateCompilerGenerated (lt, ec.CurrentBlock, loc);
-
-						var cond_args = new Arguments (1);
-						cond_args.Add (new Argument (new SimpleAssign (temp.CreateReferenceExpression (ec, loc), left).Resolve (ec)));
-
-						//
-						// dynamic && bool => IsFalse (temp = left) ? temp : temp && right;
-						// dynamic || bool => IsTrue (temp = left) ? temp : temp || right;
-						//
-						left = temp.CreateReferenceExpression (ec, loc);
-						if (oper == Operator.LogicalAnd) {
-							expr = DynamicUnaryConversion.CreateIsFalse (ec, cond_args, loc);
-							cond_left = left;
-						} else {
-							expr = DynamicUnaryConversion.CreateIsTrue (ec, cond_args, loc);
-							cond_left = left;
-						}
-
-						args.Add (new Argument (left));
-						args.Add (new Argument (right));
-						cond_right = new DynamicExpressionStatement (this, args, loc);
-					} else {
-						LocalVariable temp = LocalVariable.CreateCompilerGenerated (ec.BuiltinTypes.Bool, ec.CurrentBlock, loc);
-
-						args.Add (new Argument (temp.CreateReferenceExpression (ec, loc).Resolve (ec)));
-						args.Add (new Argument (right));
-						right = new DynamicExpressionStatement (this, args, loc);
-
-						//
-						// bool && dynamic => (temp = left) ? temp && right : temp;
-						// bool || dynamic => (temp = left) ? temp : temp || right;
-						//
-						if (oper == Operator.LogicalAnd) {
-							cond_left = right;
-							cond_right = temp.CreateReferenceExpression (ec, loc);
-						} else {
-							cond_left = temp.CreateReferenceExpression (ec, loc);
-							cond_right = right;
-						}
-
-						expr = new BooleanExpression (new SimpleAssign (temp.CreateReferenceExpression (ec, loc), left));
-					}
-
-					return new Conditional (expr, cond_left, cond_right, loc).Resolve (ec);
-				}
-
-				args = new Arguments (2);
-				args.Add (new Argument (left));
-				args.Add (new Argument (right));
-				return new DynamicExpressionStatement (this, args, loc).Resolve (ec);
-			}
+			if (left.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic || right.Type.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
+				return DoResolveDynamic (ec);
 
 			return DoResolveCore (ec, left, right);
+		}
+
+		Expression DoResolveDynamic (ResolveContext rc)
+		{
+			var lt = left.Type;
+			var rt = right.Type;
+			if (lt.Kind == MemberKind.Void || lt == InternalType.MethodGroup || lt == InternalType.AnonymousMethod ||
+				rt.Kind == MemberKind.Void || rt == InternalType.MethodGroup || rt == InternalType.AnonymousMethod) {
+				Error_OperatorCannotBeApplied (rc, left, right);
+				return null;
+			}
+
+			Arguments args;
+
+			//
+			// Special handling for logical boolean operators which require rhs not to be
+			// evaluated based on lhs value
+			//
+			if ((oper & Operator.LogicalMask) != 0) {
+				Expression cond_left, cond_right, expr;
+
+				args = new Arguments (2);
+
+				if (lt.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
+					LocalVariable temp = LocalVariable.CreateCompilerGenerated (lt, rc.CurrentBlock, loc);
+
+					var cond_args = new Arguments (1);
+					cond_args.Add (new Argument (new SimpleAssign (temp.CreateReferenceExpression (rc, loc), left).Resolve (rc)));
+
+					//
+					// dynamic && bool => IsFalse (temp = left) ? temp : temp && right;
+					// dynamic || bool => IsTrue (temp = left) ? temp : temp || right;
+					//
+					left = temp.CreateReferenceExpression (rc, loc);
+					if (oper == Operator.LogicalAnd) {
+						expr = DynamicUnaryConversion.CreateIsFalse (rc, cond_args, loc);
+						cond_left = left;
+					} else {
+						expr = DynamicUnaryConversion.CreateIsTrue (rc, cond_args, loc);
+						cond_left = left;
+					}
+
+					args.Add (new Argument (left));
+					args.Add (new Argument (right));
+					cond_right = new DynamicExpressionStatement (this, args, loc);
+				} else {
+					LocalVariable temp = LocalVariable.CreateCompilerGenerated (rc.BuiltinTypes.Bool, rc.CurrentBlock, loc);
+
+					args.Add (new Argument (temp.CreateReferenceExpression (rc, loc).Resolve (rc)));
+					args.Add (new Argument (right));
+					right = new DynamicExpressionStatement (this, args, loc);
+
+					//
+					// bool && dynamic => (temp = left) ? temp && right : temp;
+					// bool || dynamic => (temp = left) ? temp : temp || right;
+					//
+					if (oper == Operator.LogicalAnd) {
+						cond_left = right;
+						cond_right = temp.CreateReferenceExpression (rc, loc);
+					} else {
+						cond_left = temp.CreateReferenceExpression (rc, loc);
+						cond_right = right;
+					}
+
+					expr = new BooleanExpression (new SimpleAssign (temp.CreateReferenceExpression (rc, loc), left));
+				}
+
+				return new Conditional (expr, cond_left, cond_right, loc).Resolve (rc);
+			}
+
+			args = new Arguments (2);
+			args.Add (new Argument (left));
+			args.Add (new Argument (right));
+			return new DynamicExpressionStatement (this, args, loc).Resolve (rc);
 		}
 
 		Expression DoResolveCore (ResolveContext ec, Expression left_orig, Expression right_orig)
