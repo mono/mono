@@ -105,7 +105,7 @@ public class DebuggerTests
 		MethodMirror m = entry_point.DeclaringType.GetMethod (name);
 		Assert.IsNotNull (m);
 		//Console.WriteLine ("X: " + name + " " + m.ILOffsets.Count + " " + m.Locations.Count);
-		vm.SetBreakpoint (m, m.ILOffsets [0]);
+		var req = vm.SetBreakpoint (m, m.ILOffsets [0]);
 
 		Event e = null;
 
@@ -115,6 +115,8 @@ public class DebuggerTests
 			if (e is BreakpointEvent)
 				break;
 		}
+
+		req.Disable ();
 
 		Assert.IsInstanceOfType (typeof (BreakpointEvent), e);
 		Assert.AreEqual (m.Name, (e as BreakpointEvent).Method.Name);
@@ -534,6 +536,21 @@ public class DebuggerTests
 		e = step_once ();
 		assert_location (e, "ss7");
 		req.Disable ();
+
+		// Check that stepping stops between nested calls
+		e = run_until ("ss_nested_2");
+		e = step_out ();
+		assert_location (e, "ss_nested");
+		e = step_in ();
+		assert_location (e, "ss_nested_1");
+		e = step_out ();
+		Console.WriteLine ("A: " + e.Thread.GetFrames ()[0].Location);
+		assert_location (e, "ss_nested");
+		// Check that step over steps over nested calls
+		e = step_over ();
+		assert_location (e, "ss_nested");
+		e = step_in ();
+		assert_location (e, "ss_nested_3");
 	}
 
 	[Test]
@@ -1473,6 +1490,27 @@ public class DebuggerTests
 		var e = GetNextEvent ();
 		Assert.IsTrue (e is StepEvent);
 		return e;
+	}
+
+	Event step_in () {
+		step_req.Disable ();
+		step_req.Depth = StepDepth.Into;
+		step_req.Enable ();
+		return step_once ();
+	}
+
+	Event step_over () {
+		step_req.Disable ();
+		step_req.Depth = StepDepth.Over;
+		step_req.Enable ();
+		return step_once ();
+	}
+
+	Event step_out () {
+		step_req.Disable ();
+		step_req.Depth = StepDepth.Out;
+		step_req.Enable ();
+		return step_once ();
 	}
 
 	[Test]
