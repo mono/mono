@@ -54,7 +54,16 @@ namespace Monodoc.Providers
 						nsSummaries[nsName] = nsElements = new XElement ("elements",
 						                                                 new XElement ("summary"),
 						                                                 new XElement ("remarks"));
+			        //Add namespace summary and remarks data from file, if available
+					try {
+						var nsEl = XElement.Load (Path.Combine (asm, String.Format ("ns-{0}.xml", nsName)));
 
+						nsElements.Element ("summary").ReplaceWith (nsEl.Descendants ("summary").First ());
+						nsElements.Element ("remarks").ReplaceWith (nsEl.Descendants ("remarks").First ());
+					}catch (Exception x){
+						Console.WriteLine ("Error reading namespace XML for " + nsName);
+					}
+			       
 					foreach (var type in ns.Elements ("Type")) {
 						// Add the XML file corresponding to the type to our storage
 						var id = indexGenerator (type);
