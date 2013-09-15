@@ -101,7 +101,9 @@ namespace System.ServiceModel
 			ContractDescription cd = GetExistingContract (implementedContract);
 			if (cd == null) {
 				cd = ContractDescription.GetContract (implementedContract);
-				contracts.Add (cd.ContractType.FullName, cd);
+				if (!contracts.ContainsKey (cd.ContractType.FullName)) {
+					contracts.Add (cd.ContractType.FullName, cd);
+				}
 			}
 
 			return AddServiceEndpointCore (cd, binding, ea, listenUri);
@@ -121,7 +123,8 @@ namespace System.ServiceModel
 			contracts = new Dictionary<string,ContractDescription> ();
 			implementedContracts = contracts;
 			ServiceDescription sd;
-			foreach (ContractDescription cd in GetServiceContractDescriptions())
+			IEnumerable<ContractDescription>  contractDescriptions = GetServiceContractDescriptions ();
+			foreach (ContractDescription cd in contractDescriptions)
 				contracts.Add (cd.ContractType.FullName, cd);
 
 			if (SingletonInstance != null) {

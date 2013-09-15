@@ -157,6 +157,9 @@ namespace System.ServiceModel.Description
 					if (t.IsAssignableFrom(givenContractType)) {
 						if (t.IsAssignableFrom (exactContractType)) // exact = IDerived, t = IBase
 							continue;
+						if (exactContractType != null && exactContractType.IsAssignableFrom (givenContractType))
+							continue;
+					    // Parent <-A, B                                                                  t, 
 						if (sca != null && (exactContractType == null || !exactContractType.IsAssignableFrom (t))) // t = IDerived, exact = IBase
 							throw new InvalidOperationException ("The contract type of " + givenContractType + " is ambiguous: can be either " + exactContractType + " or " + t);
 						exactContractType = t;
@@ -197,7 +200,8 @@ namespace System.ServiceModel.Description
 			 */
 
 			var inherited = new Collection<ContractDescription> ();
-			foreach (var it in cd.ContractType.GetInterfaces ()) {
+		var interfaces = cd.ContractType.GetInterfaces ();
+			foreach (var it in interfaces ) {
 				var icd = GetContractInternal (it, givenServiceType, null);
 				if (icd != null)
 					inherited.Add (icd);
