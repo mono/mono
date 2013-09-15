@@ -225,9 +225,11 @@ namespace System.Collections.Generic {
 		{
 			CheckMatch(match);
 
-			foreach (var t in _items)
-				if (match (t))
+			for (int i = 0; i < _size; i++) {
+				var item = _items [i];
+				if (match (item))
 					return true;
+			}
 
 			return false;
 		}
