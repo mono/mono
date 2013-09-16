@@ -55,12 +55,13 @@ namespace Monodoc.Providers
 						                                                 new XElement ("summary"),
 						                                                 new XElement ("remarks"));
 			        //Add namespace summary and remarks data from file, if available
-					try {
-						var nsEl = XElement.Load (Path.Combine (asm, String.Format ("ns-{0}.xml", nsName)));
+					var nsFileName = Path.Combine(asm, String.Format("ns-{0}.xml", nsName));
+					if(File.Exists(nsFileName)){
+						var nsEl = XElement.Load (nsFileName);
 
 						nsElements.Element ("summary").ReplaceWith (nsEl.Descendants ("summary").First ());
 						nsElements.Element ("remarks").ReplaceWith (nsEl.Descendants ("remarks").First ());
-					}catch (Exception x){
+					}else{
 						Console.WriteLine ("Error reading namespace XML for " + nsName);
 					}
 			       
