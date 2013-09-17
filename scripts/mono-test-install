@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Does various checks for people that we can use to diagnose
 # an end user installation
