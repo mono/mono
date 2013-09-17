@@ -441,6 +441,16 @@ namespace MonoTests.System.Xml
 				}
 			}
 		}
+		
+		[Test]
+		public void IgnoresInvalidBaseUri ()
+		{
+			var source = new StringReader (@"<?xml version='1.0' encoding='utf-8'?><Test></Test>");
+			var readerSettings = new XmlReaderSettings { ValidationType = ValidationType.Schema };
+			var reader = XmlReader.Create (source, readerSettings, "invalidBaseUri");
+
+			Assert.IsNotNull (reader);
+		}
 	}
 }
 
