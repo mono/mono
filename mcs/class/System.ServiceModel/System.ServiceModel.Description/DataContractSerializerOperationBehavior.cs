@@ -70,22 +70,21 @@ namespace System.ServiceModel.Description
 #if !NET_2_1
 		public IDataContractSurrogate DataContractSurrogate { get; set; }
 #endif
-
 		public virtual XmlObjectSerializer CreateSerializer (Type type, string name, string ns, IList<Type> knownTypes)
 		{
 #if NET_2_1
-			return new DataContractSerializer (type, name, ns, knownTypes);
+			return new DataContractSerializer (type, name, ns, operation.KnownTypes);
 #else
-			return new DataContractSerializer (type, name, ns, knownTypes, MaxItemsInObjectGraph, IgnoreExtensionDataObject, false, DataContractSurrogate);
+			return new DataContractSerializer (type, name, ns, operation.KnownTypes, MaxItemsInObjectGraph, IgnoreExtensionDataObject, false, DataContractSurrogate);
 #endif
 		}
 
 		public virtual XmlObjectSerializer CreateSerializer (Type type, XmlDictionaryString name, XmlDictionaryString ns, IList<Type> knownTypes)
 		{
 #if NET_2_1
-			return new DataContractSerializer (type, name, ns, knownTypes);
+			return new DataContractSerializer (type, name, ns, operation.KnownTypes);
 #else
-			return new DataContractSerializer (type, name, ns, knownTypes, MaxItemsInObjectGraph, IgnoreExtensionDataObject, false, DataContractSurrogate);
+			return new DataContractSerializer (type, name, ns, operation.KnownTypes, MaxItemsInObjectGraph, IgnoreExtensionDataObject, false, DataContractSurrogate);
 #endif
 		}
 
