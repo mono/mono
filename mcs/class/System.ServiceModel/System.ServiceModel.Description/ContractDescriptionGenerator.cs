@@ -314,7 +314,7 @@ namespace System.ServiceModel.Description
 				{
 					var occa = serviceMethod.GetCustomAttribute<OperationContractAttribute>(false);
                     if (occa != null)
-                        od.Behaviors.Add(new DataContractSerializerOperationBehavior(od, occa));
+                        od.Behaviors.Add(new DataContractSerializerOperationBehavior(od));
 				}
 
 				od.Messages.Add (GetMessage (od, mi, oca, true, isCallback, null));
