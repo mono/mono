@@ -2169,6 +2169,24 @@ search_binding_loaded (MonoAssemblyName *aname)
 	return NULL;
 }
 
+/* LOCKING: Assumes that we are already locked */
+static void
+unload_binding (MonoAssemblyName *aname)
+{
+	GSList *tmp;
+
+	for (tmp = loaded_assembly_bindings; tmp; tmp = tmp->next) {
+		MonoAssemblyBindingInfo *info = tmp->data;
+		if (assembly_binding_maps_name (info, aname))
+		{
+			loaded_assembly_bindings = g_slist_remove (loaded_assembly_bindings, info);
+			mono_assembly_binding_info_free (info);
+			g_free (info);
+			return;
+		}
+	}
+}
+
 static MonoAssemblyName*
 mono_assembly_apply_binding (MonoAssemblyName *aname, MonoAssemblyName *dest_name)
 {
@@ -2506,6 +2524,7 @@ mono_assembly_close (MonoAssembly *assembly)
 
 	mono_assemblies_lock ();
 	loaded_assemblies = g_list_remove (loaded_assemblies, assembly);
+	unload_binding (&assembly->aname);
 	mono_assemblies_unlock ();
 
 	assembly->image->assembly = NULL;
