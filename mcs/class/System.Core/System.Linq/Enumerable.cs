@@ -635,7 +635,9 @@ namespace System.Linq
 			var collection = source as ICollection<TSource>;
 			if (collection != null)
 				return collection.Count;
-
+			var array = source as TSource[];
+			if (array != null)
+				return array.Length;
 			int counter = 0;
 			using (var enumerator = source.GetEnumerator ())
 				while (enumerator.MoveNext ())
@@ -743,7 +745,9 @@ namespace System.Linq
 			var list = source as IList<TSource>;
 			if (list != null)
 				return list [index];
-
+			var array = source as TSource[];
+			if (array != null)
+				return array[index];
 			return source.ElementAt (index, Fallback.Throw);
 		}
 
