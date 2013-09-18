@@ -1876,10 +1876,9 @@ ves_icall_System_AppDomain_LoadAssemblyRaw (MonoAppDomain *ad,
 		mono_debug_open_image_from_memory (image, mono_array_addr (raw_symbol_store, guint8, 0), mono_array_length (raw_symbol_store));
 
 	ass = mono_assembly_load_from_full (image, "", &status, refonly);
-
+	mono_image_close (image);
 
 	if (!ass) {
-		mono_image_close (image);
 		mono_raise_exception (mono_get_exception_bad_image_format (""));
 		return NULL; 
 	}
