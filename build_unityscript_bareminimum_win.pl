@@ -60,7 +60,7 @@ my $monodistroUnity = "$monodistroLibMono/unity";
 sub UnityBooc
 {
 	my $commandLine = shift;		
-	system("$output/booc -debug- $commandLine") eq 0 or die("booc failed to execute: $commandLine");
+	system("$output/wsa/booc -debug- $commandLine") eq 0 or die("booc failed to execute: $commandLine");
 }
 
 sub BuildUnityScriptForUnity
@@ -70,18 +70,21 @@ sub BuildUnityScriptForUnity
 		GitClone("git://github.com/Unity-Technologies/boo.git", $booCheckout);
 	}
 
-	Build("$booCheckout/src/booc/Booc.csproj", undef, "/property:TargetFrameworkVersion=4.0 /property:DefineConstants=\"NO_SERIALIZATION_INFO,NO_SYSTEM_PROCESS,NO_ICLONEABLE,NO_SYSTEM_REFLECTION_EMIT,MSBUILD,IGNOREKEYFILE\" /property:OutputPath=$output");
+	my $commonDefines = "NO_SERIALIZATION_INFO,NO_SYSTEM_PROCESS,NO_ICLONEABLE,MSBUILD,IGNOREKEYFILE";
+
+	Build("$booCheckout/src/booc/Booc.csproj", undef, "/property:TargetFrameworkVersion=4.0 /property:DefineConstants=\"" . $commonDefines . "\" /property:OutputPath=$output/wp8");
+	Build("$booCheckout/src/booc/Booc.csproj", undef, "/property:TargetFrameworkVersion=4.0 /property:DefineConstants=\"" . $commonDefines . ",NO_SYSTEM_REFLECTION_EMIT\" /property:OutputPath=$output/wsa");
 	
 	if (!$ENV{UNITY_THISISABUILDMACHINE}) {
 		GitClone("git://github.com/Unity-Technologies/unityscript.git", $usCheckout);
 	}
 	
-	UnityBooc("-out:$output/Boo.Lang.Extensions.dll -srcdir:$booCheckout/src/Boo.Lang.Extensions -r:$output/Boo.Lang.dll -r:$output/Boo.Lang.Compiler.dll");
-	UnityBooc("-out:$output/Boo.Lang.Useful.dll -srcdir:$booCheckout/src/Boo.Lang.Useful -r:$output/Boo.Lang.Parser");
-	UnityBooc("-out:$output/Boo.Lang.PatternMatching.dll -srcdir:$booCheckout/src/Boo.Lang.PatternMatching");
+	UnityBooc("-out:$output/wsa/Boo.Lang.Extensions.dll -srcdir:$booCheckout/src/Boo.Lang.Extensions -r:$output/wsa/Boo.Lang.dll -r:$output/wsa/Boo.Lang.Compiler.dll");
+	UnityBooc("-out:$output/wsa/Boo.Lang.Useful.dll -srcdir:$booCheckout/src/Boo.Lang.Useful -r:$output/wsa/Boo.Lang.Parser");
+	UnityBooc("-out:$output/wsa/Boo.Lang.PatternMatching.dll -srcdir:$booCheckout/src/Boo.Lang.PatternMatching");
 
 	my $UnityScriptLangDLL = "$output/UnityScript.Lang.dll";
-	UnityBooc("-out:$UnityScriptLangDLL -srcdir:$usCheckout/src/UnityScript.Lang -r:$output/Boo.Lang.Extensions.dll");
+	UnityBooc("-out:$UnityScriptLangDLL -srcdir:$usCheckout/src/UnityScript.Lang -r:$output/wsa/Boo.Lang.Extensions.dll");
 }
 
 sub Build
@@ -134,8 +137,10 @@ rmtree("$output");
 
 BuildUnityScriptForUnity();
 
-cp("$output/Boo.Lang.dll $libmono/bare-minimum/Boo.Lang.dll*");
-cp("$output/Boo.Lang.pdb $libmono/bare-minimum/Boo.Lang.pdb*");
+cp("$output/wsa/Boo.Lang.dll $libmono/bare-minimum/wsa/Boo.Lang.dll*");
+cp("$output/wsa/Boo.Lang.pdb $libmono/bare-minimum/wsa/Boo.Lang.pdb*");
+cp("$output/wp8/Boo.Lang.dll $libmono/bare-minimum/wp8/Boo.Lang.dll*");
+cp("$output/wp8/Boo.Lang.pdb $libmono/bare-minimum/wp8/Boo.Lang.pdb*");
 cp("$output/UnityScript.Lang.* $libmono/bare-minimum/UnityScript.Lang.*");
 
 if($ENV{UNITY_THISISABUILDMACHINE})
