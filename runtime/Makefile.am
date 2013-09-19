@@ -6,13 +6,15 @@ etctmp = etc
 symlinks = etc/mono/1.0/machine.config etc/mono/2.0/machine.config etc/mono/2.0/web.config etc/mono/browscap.ini etc/mono/2.0/Browsers/Compat.browser
 
 if INSTALL_4_0
-symlinks += etc/mono/4.0/machine.config etc/mono/4.0/web.config etc/mono/4.5/web.config etc/mono/4.5/machine.config
+symlinks += etc/mono/4.0/machine.config etc/mono/4.0/web.config etc/mono/4.5/web.config etc/mono/4.5/machine.config etc/mono/4.0/Browsers/Compat.browser etc/mono/4.5/Browsers/Compat.browser
 endif
 
 etc/mono/2.0/machine.config: $(top_srcdir)/data/net_2_0/machine.config
 etc/mono/2.0/web.config: $(top_srcdir)/data/net_2_0/web.config
 etc/mono/browscap.ini: $(top_srcdir)/data/browscap.ini
-etc/mono/2.0/Browsers/Compat.browser: $(top_srcdir)/data/net_2_0/Browsers/Compat.browser
+etc/mono/2.0/Browsers/Compat.browser: $(top_srcdir)/data/Browsers/Compat.browser
+etc/mono/4.0/Browsers/Compat.browser: $(top_srcdir)/data/Browsers/Compat.browser
+etc/mono/4.5/Browsers/Compat.browser: $(top_srcdir)/data/Browsers/Compat.browser
 etc/mono/4.0/machine.config: $(top_srcdir)/data/net_4_0/machine.config
 etc/mono/4.0/web.config: $(top_srcdir)/data/net_4_0/web.config
 etc/mono/4.5/machine.config: $(top_srcdir)/data/net_4_5/machine.config
