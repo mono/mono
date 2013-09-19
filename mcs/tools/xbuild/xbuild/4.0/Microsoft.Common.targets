@@ -250,6 +250,10 @@
 			ContinueOnError="true"
 			Condition="'@(Compile)' != '' and '$(TargetFrameworkMonikerAssemblyAttributeText)' != ''"
 		/>
+		
+		<ItemGroup Condition="'@(Compile)' != '' and '$(TargetFrameworkMonikerAssemblyAttributeText)' != ''">
+			<Compile Include="$(TargetFrameworkMonikerAssemblyAttributesPath)"/>
+		</ItemGroup>
 	</Target>
 
 	<Target Name="ResolveReferences" DependsOnTargets="$(ResolveReferencesDependsOn)"/>
