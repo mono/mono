@@ -54,7 +54,8 @@ namespace System.Collections.ObjectModel
 #endif
 	{
 		IList <T> items;
-		[field:NonSerializedAttribute()]
+		
+		[NonSerialized]
 		object syncRoot;
 		
 		public Collection ()
@@ -65,12 +66,12 @@ namespace System.Collections.ObjectModel
 			items = l;
 		}
 
-		public Collection (IList <T> items)
+		public Collection (IList <T> list)
 		{
-			if (items == null)
-				throw new ArgumentNullException ("items");
-			this.items = items;
-			ICollection l = items as ICollection;
+			if (list == null)
+				throw new ArgumentNullException ("list");
+			this.items = list;
+			ICollection l = list as ICollection;
 			syncRoot = (l != null) ? l.SyncRoot : new object ();
 		}
 

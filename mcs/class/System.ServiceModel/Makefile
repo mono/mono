@@ -7,6 +7,8 @@ RESOURCE_FILES = \
 	resources/ws-addr.xsd
 
 LIBRARY = System.ServiceModel.dll
+LIBRARY_USE_INTERMEDIATE_FILE = yes
+
 LIB_MCS_FLAGS = \
 		/nowarn:414,169,67,3005,436,219,618 \
 		/unsafe \
@@ -31,12 +33,31 @@ LIB_MCS_FLAGS += /d:NET_3_0 	\
 			/r:Mono.Security.dll
 endif
 
-ifeq (moonlight_raw, $(PROFILE))
-LIB_MCS_FLAGS += /r:System.Net
+ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
+
+ACTIVATION_DEP := System.ServiceModel.Activation.dll
+ACTIVATION_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(ACTIVATION_DEP))
+CYCLIC_DEPS += $(ACTIVATION_DEP)
+CYCLIC_DEP_FILES += $(ACTIVATION_DEP_FILE)
+
+ifdef ACTIVATION_DEP_FILE
+LIB_MCS_FLAGS += -define:HAS_ACTIVATION -r:$(ACTIVATION_DEP)
 endif
 
-ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS += /r:System.Web.ApplicationServices.dll
+
+ifneq ($(CYCLIC_DEPS:%=../lib/$(PROFILE)/%), $(CYCLIC_DEP_FILES))
+NO_SIGN_ASSEMBLY = yes
+NO_INSTALL = yes
+all-local: echo-warning
+.PHONY: echo-warning
+
+ifeq   (, $(strip $(CYCLIC_DEP_FILES)))
+echo-warning:
+	@echo "** Warning: System.ServiceModel.dll built without parts that depend on: $(CYCLIC_DEPS)"
+endif
+endif
+
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
@@ -64,6 +85,8 @@ NO_SIGN_ASSEMBLY = yes
 NO_TEST = yes
 endif
 
-
-
 include ../../build/library.make
+
+ifdef ACTIVATION_DEP_FILE
+$(build_lib): $(CYCLIC_DEP_FILES)
+endif

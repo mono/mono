@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Threading;
 using System.Collections.Generic;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
@@ -235,5 +236,13 @@ namespace System.ServiceModel
 		protected override void OnClose (TimeSpan timeout)
 		{
 		}
+
+#if NET_4_0
+		[MonoTODO]
+		public SynchronizationContext SynchronizationContext {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+#endif
 	}
 }

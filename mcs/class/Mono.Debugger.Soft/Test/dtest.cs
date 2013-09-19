@@ -1723,7 +1723,6 @@ public class DebuggerTests
 
 		l = e.Thread.GetFrames ()[0].Location;
 
-		Console.WriteLine (l);
 		Assert.AreEqual (3, l.ColumnNumber);
 
 		step_req.Disable ();
@@ -2029,6 +2028,12 @@ public class DebuggerTests
 		v = t.InvokeMethod (e.Thread, m, null);
 		Assert.IsInstanceOfType (typeof (ObjectMirror), v);
 		Assert.AreEqual ("Tests", (v as ObjectMirror).Type.Name);
+
+		// interface method
+		var cl1 = frame.Method.DeclaringType.Assembly.GetType ("ITest2");
+		m = cl1.GetMethod ("invoke_iface");
+		v = this_obj.InvokeMethod (e.Thread, m, null);
+		AssertValue (42, v);
 
 		// Argument checking
 		

@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 #AC_PREREQ([2.62])
 
-AC_INIT(mono, [3.3.0],
+AC_INIT(mono, [3.2.3],
         [http://bugzilla.xamarin.com/enter_bug.cgi?classification=Mono])
 
 AC_CONFIG_SRCDIR([README])
@@ -13,7 +13,7 @@ AC_CANONICAL_HOST
 # The extra brackets are to foil regex-based scans.
 m4_ifdef([_A][M_PROG_TAR],[_A][M_SET_OPTION([tar-ustar])])
 
-AM_INIT_AUTOMAKE([1.9 dist-bzip2 tar-ustar no-dist-gzip foreign])
+AM_INIT_AUTOMAKE([1.9 dist-bzip2 tar-ustar no-dist-gzip foreign subdir-objects])
 AC_CONFIG_HEADERS([config.h])
 AM_MAINTAINER_MODE
 
@@ -23,6 +23,12 @@ AC_SUBST(API_VER)
 AC_PROG_LN_S
 
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+
+case $host_os in
+*cygwin* )
+		 echo "Run configure using ./configure --host=i686-pc-mingw32"
+		 exit 1
+esac
 
 # In case of cygwin, override LN_S, irrespective of what it determines.
 # The build uses cygwin, but the actual runtime doesn't.
@@ -114,8 +120,8 @@ case "$host" in
 		# Windows 2000 is required that includes Internet Explorer 5.01
 		CPPFLAGS="$CPPFLAGS -DWINVER=0x0500 -D_WIN32_WINNT=0x0500 -D_WIN32_IE=0x0501 -D_UNICODE -DUNICODE -DWIN32_THREADS -DFD_SETSIZE=1024 -DGC_NOT_DLL"
 		LDFLAGS="$LDFLAGS -lmswsock -lws2_32 -lole32 -loleaut32 -lpsapi -lversion -ladvapi32 -lwinmm -lkernel32"
-		libmono_cflags="-mno-cygwin -mms-bitfields -mwindows"
-		libmono_ldflags="-mno-cygwin -mms-bitfields -mwindows"
+		libmono_cflags="-mms-bitfields -mwindows"
+		libmono_ldflags="-mms-bitfields -mwindows"
 		libdl=
 		libgc_threads=win32
 		gc_default=included
@@ -357,6 +363,7 @@ AC_PROG_CXX
 AM_PROG_AS
 AC_PROG_INSTALL
 AC_PROG_AWK
+AM_PROG_CC_C_O
 dnl We should use AM_PROG_AS, but it's not available on automake/aclocal 1.4
 : ${CCAS='$(CC)'}
 # Set ASFLAGS if not already set.
@@ -1575,6 +1582,10 @@ if test x$target_win32 = xno; then
 		AC_MSG_RESULT(disabled)
 	else
 		AC_TRY_RUN([
+			#if defined(__APPLE__) && defined(__clang__)
+			#error "__thread does not currently work with clang on Mac OS X"
+			#endif
+			
 			#include <pthread.h>
 			__thread int i;
 			static int res1, res2;
@@ -3176,20 +3187,6 @@ if test x$with_profile4 != xyes; then
 	DISABLE_MCS_DOCS=yes
 fi
 
-MOONLIGHT_DEFINES=
-AC_ARG_WITH(moonlight, [  --with-moonlight=yes|no|only         If you want to build Mono for Moonlight (defaults to no)],[
-	if test x$with_moonlight != xno; then
-        MOONLIGHT_DEFINES="-DMOONLIGHT -DDISABLE_ASSEMBLY_REMAPPING "
-	fi
-], [with_moonlight=no])
-AC_SUBST(MOONLIGHT_DEFINES)
-
-AC_ARG_WITH(moon_gc, [  --with-moon-gc=boehm,sgen		Select the gc to use with Moonlight (defaults to boehm)],[
-	if test "x$with_moon_gc" != "xsgen"; then
-		with_moon_gc=boehm
-	fi
-], [with_moon_gc=boehm])
-
 AC_ARG_WITH(lazy_gc_thread_creation, [  --with-lazy-gc-thread-creation=yes|no      Enable lazy runtime thread creation, embedding host must do it explicitly (defaults to no)],[
 	if test x$with_lazy_gc_thread_creation != xno ; then
 		AC_DEFINE(LAZY_GC_THREAD_CREATION,1,[Enable lazy gc thread creation by the embedding host.])
@@ -3213,7 +3210,11 @@ fi
 if test "x$enable_shared" = "xno" -a "x$enable_executables" = "xyes"; then
    LIBMONO_LA=libmini-static.la
 else
-   LIBMONO_LA=libmonosgen-$API_VER.la
+   if test x$buildsgen = xyes; then
+      LIBMONO_LA=libmonosgen-$API_VER.la
+   else
+      LIBMONO_LA=libmonoboehm-$API_VER.la
+   fi
 fi
 AC_SUBST(LIBMONO_LA)
 
@@ -3244,12 +3245,6 @@ AC_SUBST(OPROFILE_CFLAGS)
 AC_SUBST(OPROFILE_LIBS)
 
 libmono_ldflags="$libmono_ldflags $LIBS"
-
-AM_CONDITIONAL(MOONLIGHT, [test "x$with_moonlight" != "xno"])
-
-AM_CONDITIONAL(ONLY_MOONLIGHT, [test "x$with_moonlight" = "xonly"])
-AM_CONDITIONAL(MOONLIGHT_BOEHM, [test "x$with_moon_gc" = "xboehm"])
-AM_CONDITIONAL(MOONLIGHT_SGEN, [test "x$with_moon_gc" = "xsgen"])
 
 AM_CONDITIONAL(INSTALL_2_0, [test "x$with_profile2" = xyes])
 AM_CONDITIONAL(INSTALL_4_0, [test "x$with_profile4" = xyes])
@@ -3604,10 +3599,6 @@ fi
 
     if test x$DISABLE_MCS_DOCS = xyes; then
       echo "DISABLE_MCS_DOCS = yes" >> $mcs_topdir/build/config.make
-    fi
-
-    if test x$with_moonlight != xno; then
-      echo "MOONLIGHT = 1" >> $srcdir/$mcsdir/build/config.make
     fi
 
     if test x$has_extension_module != xno; then

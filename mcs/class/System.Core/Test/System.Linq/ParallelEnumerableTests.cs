@@ -682,7 +682,7 @@ namespace MonoTests.System.Linq
 		}
 		
 		[Test]
-		public void RangeTestCase ()
+		public void Range ()
 		{
 			ParallelTestHelper.Repeat (() => {
 				IEnumerable<int> sync  = Enumerable.Range(1, 1000);
@@ -691,7 +691,18 @@ namespace MonoTests.System.Linq
 				AreEquivalent (sync, async_res);
 			});
 		}
-		
+	
+		[Test]
+		public void Range_StartOffset ()
+		{
+			ParallelTestHelper.Repeat (() => {
+				IEnumerable<int> sync  = Enumerable.Range (30, 10);
+				IEnumerable<int> async_res = ParallelEnumerable.Range (30, 10);
+				
+				AreEquivalent (sync, async_res);
+			});
+		}
+
 		[Test]
 		public void RepeatTestCase ()
 		{

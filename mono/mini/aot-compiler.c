@@ -233,6 +233,9 @@ typedef struct MonoAotCompile {
 	GHashTable *dwarf_ln_filenames;
 	gboolean global_symbols;
 	gboolean direct_method_addresses;
+	int objc_selector_index, objc_selector_index_2;
+	GPtrArray *objc_selectors;
+	GHashTable *objc_selector_to_index;
 } MonoAotCompile;
 
 typedef struct {
@@ -833,6 +836,35 @@ arch_emit_got_access (MonoAotCompile *acfg, guint8 *code, int got_slot, int *cod
 }
 
 #endif
+
+/*
+ * arch_emit_objc_selector_ref:
+ *
+ *   Emit the implementation of OP_OBJC_GET_SELECTOR, which itself implements @selector(foo:) in objective-c.
+ */
+static void
+arch_emit_objc_selector_ref (MonoAotCompile *acfg, guint8 *code, int index, int *code_size)
+{
+#if defined(TARGET_ARM)
+	char symbol1 [256];
+	char symbol2 [256];
+	int lindex = acfg->objc_selector_index_2 ++;
+
+	/* Emit ldr.imm/b */
+	emit_bytes (acfg, code, 8);
+
+	sprintf (symbol1, "L_OBJC_SELECTOR_%d", lindex);
+	sprintf (symbol2, "L_OBJC_SELECTOR_REFERENCES_%d", index);
+
+	emit_label (acfg, symbol1);
+	img_writer_emit_unset_mode (acfg->w);
+	fprintf (acfg->fp, ".long %s-(%s+12)", symbol2, symbol1);
+
+	*code_size = 12;
+#else
+	g_assert_not_reached ();
+#endif
+}
 
 /*
  * arch_emit_plt_entry:
@@ -2668,8 +2700,11 @@ encode_method_ref (MonoAotCompile *acfg, MonoMethod *method, guint8 *buf, guint8
 				encode_klass_ref (acfg, method->klass, p, &p);
 			} else {
 				MonoMethodSignature *sig = mono_method_signature (method);
+				WrapperInfo *info = mono_marshal_get_wrapper_info (method);
 
 				encode_value (0, p, &p);
+				if (method->wrapper_type == MONO_WRAPPER_DELEGATE_INVOKE)
+					encode_value (info ? info->subtype : 0, p, &p);
 				encode_signature (acfg, sig, p, &p);
 			}
 			break;
@@ -3161,8 +3196,6 @@ create_gsharedvt_inst (MonoAotCompile *acfg, MonoMethod *method, MonoGenericCont
 		ctx->method_inst = mono_metadata_get_generic_inst (inst->type_argc, args);
 	}
 }
-
-#define MONO_TYPE_IS_PRIMITIVE(t) ((!(t)->byref && ((((t)->type >= MONO_TYPE_BOOLEAN && (t)->type <= MONO_TYPE_R8) || ((t)->type >= MONO_TYPE_I && (t)->type <= MONO_TYPE_U)))))
 
 static void
 add_wrappers (MonoAotCompile *acfg)
@@ -4003,6 +4036,8 @@ add_types_from_method_header (MonoAotCompile *acfg, MonoMethod *method)
 		for (j = 0; j < header->num_locals; ++j)
 			if (header->locals [j]->type == MONO_TYPE_GENERICINST)
 				add_generic_class_with_depth (acfg, mono_class_from_mono_type (header->locals [j]), depth + 1, "local");
+	} else {
+		mono_loader_clear_error ();
 	}
 }
 
@@ -4493,8 +4528,8 @@ emit_and_reloc_code (MonoAotCompile *acfg, MonoMethod *method, guint8 *code, gui
 			mono_debug_symfile_free_location (loc);
 		}
 
-#ifdef MONO_ARCH_AOT_SUPPORTED
 		skip = FALSE;
+#ifdef MONO_ARCH_AOT_SUPPORTED
 		if (patch_info && (patch_info->ip.i == i) && (pindex < patches->len)) {
 			start_index = pindex;
 
@@ -4505,6 +4540,30 @@ emit_and_reloc_code (MonoAotCompile *acfg, MonoMethod *method, guint8 *code, gui
 				int code_size;
  
 				arch_emit_got_offset (acfg, code + i, &code_size);
+				i += code_size - 1;
+				skip = TRUE;
+				patch_info->type = MONO_PATCH_INFO_NONE;
+				break;
+			}
+			case MONO_PATCH_INFO_OBJC_SELECTOR_REF: {
+				int code_size, index;
+				char *selector = (void*)patch_info->data.target;
+
+				if (!acfg->objc_selector_to_index)
+					acfg->objc_selector_to_index = g_hash_table_new (g_str_hash, g_str_equal);
+				if (!acfg->objc_selectors)
+					acfg->objc_selectors = g_ptr_array_new ();
+				index = GPOINTER_TO_UINT (g_hash_table_lookup (acfg->objc_selector_to_index, selector));
+				if (index)
+					index --;
+				else {
+					index = acfg->objc_selector_index;
+					g_ptr_array_add (acfg->objc_selectors, (void*)patch_info->data.target);
+					g_hash_table_insert (acfg->objc_selector_to_index, selector, GUINT_TO_POINTER (index + 1));
+					acfg->objc_selector_index ++;
+				}
+
+				arch_emit_objc_selector_ref (acfg, code + i, index, &code_size);
 				i += code_size - 1;
 				skip = TRUE;
 				patch_info->type = MONO_PATCH_INFO_NONE;
@@ -8057,6 +8116,7 @@ emit_file_info (MonoAotCompile *acfg)
 		}
 		acfg->static_linking_symbol = g_strdup (symbol);
 		emit_global_inner (acfg, symbol, FALSE);
+		emit_alignment (acfg, sizeof (gpointer));
 		emit_label (acfg, symbol);
 		emit_pointer_2 (acfg, acfg->user_symbol_prefix, "mono_aot_file_info");
 	}
@@ -8073,6 +8133,45 @@ emit_blob (MonoAotCompile *acfg)
 	emit_label (acfg, symbol);
 
 	emit_bytes (acfg, (guint8*)acfg->blob.data, acfg->blob.index);
+}
+
+static void
+emit_objc_selectors (MonoAotCompile *acfg)
+{
+	int i;
+
+	if (!acfg->objc_selectors || acfg->objc_selectors->len == 0)
+		return;
+
+	/*
+	 * From
+	 * cat > foo.m << EOF
+	 * void *ret ()
+	 * {
+	 * return @selector(print:);
+	 * }
+	 * EOF
+	 */
+
+	img_writer_emit_unset_mode (acfg->w);
+	g_assert (acfg->fp);
+	fprintf (acfg->fp, ".section	__DATA,__objc_selrefs,literal_pointers,no_dead_strip\n");
+	fprintf (acfg->fp, ".align	2\n");
+	for (i = 0; i < acfg->objc_selectors->len; ++i) {
+		fprintf (acfg->fp, "L_OBJC_SELECTOR_REFERENCES_%d:\n", i);
+		fprintf (acfg->fp, ".long	L_OBJC_METH_VAR_NAME_%d\n", i);
+	}
+	fprintf (acfg->fp, ".section	__TEXT,__cstring,cstring_literals\n");
+	for (i = 0; i < acfg->objc_selectors->len; ++i) {
+		fprintf (acfg->fp, "L_OBJC_METH_VAR_NAME_%d:\n", i);
+		fprintf (acfg->fp, ".asciz \"%s\"\n", (char*)g_ptr_array_index (acfg->objc_selectors, i));
+	}
+
+	fprintf (acfg->fp, ".section	__DATA,__objc_imageinfo,regular,no_dead_strip\n");
+	fprintf (acfg->fp, ".align	2\n");
+	fprintf (acfg->fp, "L_OBJC_IMAGE_INFO:\n");
+	fprintf (acfg->fp, ".long	0\n");
+	fprintf (acfg->fp, ".long	16\n");
 }
 
 static void
@@ -8324,7 +8423,7 @@ compile_asm (MonoAotCompile *acfg)
 #elif defined(TARGET_AMD64) && defined(TARGET_MACH)
 	command = g_strdup_printf ("gcc --shared -o %s %s.o", tmp_outfile_name, acfg->tmpfname);
 #elif defined(HOST_WIN32)
-	command = g_strdup_printf ("gcc -shared --dll -mno-cygwin -o %s %s.o", tmp_outfile_name, acfg->tmpfname);
+	command = g_strdup_printf ("gcc -shared --dll -o %s %s.o", tmp_outfile_name, acfg->tmpfname);
 #elif defined(TARGET_X86) && defined(TARGET_MACH) && !defined(__native_client_codegen__)
 	command = g_strdup_printf ("gcc -m32 -dynamiclib -o %s %s.o", tmp_outfile_name, acfg->tmpfname);
 #else
@@ -8481,7 +8580,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 	TV_DECLARE (atv);
 	TV_DECLARE (btv);
 
-#if !defined(MONO_ARCH_GSHAREDVT_SUPPORTED) || !defined(MONO_EXTENSIONS)
+#if !defined(MONO_ARCH_GSHAREDVT_SUPPORTED) || (!defined(MONO_EXTENSIONS) && !defined(MONOTOUCH))
 	if (opts & MONO_OPT_GSHAREDVT) {
 		fprintf (stderr, "-O=gsharedvt not supported on this platform.\n");
 		exit (1);
@@ -8786,6 +8885,8 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 	emit_file_info (acfg);
 
 	emit_blob (acfg);
+
+	emit_objc_selectors (acfg);
 
 	emit_globals (acfg);
 

@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
+//      Pablo Ruiz García <pablo.ruiz@gmail.com>
 //
 // Copyright (C) 2013 Xamarin Inc (http://www.xamarin.com)
 //
@@ -28,28 +29,52 @@
 
 #if NET_4_5
 
+using System;
+using System.Globalization;
+
 namespace System.ComponentModel.DataAnnotations
 {
 	[AttributeUsageAttribute (AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
 	public class MinLengthAttribute : ValidationAttribute
 	{
+		private const string DefaultErrorMessage = "The field {0} must be a string or array type with a minimum length of '{1}'.";
+		private const string InvalidLengthErrorMessage = "MinLengthAttribute must have a Length value that is zero or greater.";
+
+		public MinLengthAttribute ()
+		{
+		}
+
 		public MinLengthAttribute (int length)
 		{
 			Length = length;
 		}
 
-		[MonoTODO]
-		public override bool IsValid (object value)
-		{
-			return true;
-		}
-		
 		public int Length { get; private set; }
 
 		public override string FormatErrorMessage (string name)
 		{
-			// TODO:
-			return base.FormatErrorMessage (name);
+			return string.Format (ErrorMessageString, name, Length);
+		}
+
+		public override bool IsValid (object value)
+		{
+			if (this.Length < 0)
+				throw new InvalidOperationException (InvalidLengthErrorMessage);
+
+			if (value != null) {
+
+				if (value is string) {
+					return (value as string).Length >= this.Length;
+				}
+
+				if (value is Array) {
+					return (value as Array).Length >= this.Length;
+				}
+
+				// NOTE: from my tests, MS.NET does not support IEnumerable as value. :(
+			}
+
+			return true;
 		}
 	}
 }

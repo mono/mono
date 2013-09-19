@@ -820,14 +820,14 @@ mono_debugger_agent_parse_options (char *options)
 	char **args, **ptr;
 	char *host;
 	int port;
-	char *extra;
+	const char *extra;
 
 #ifndef MONO_ARCH_SOFT_DEBUG_SUPPORTED
 	fprintf (stderr, "--debugger-agent is not supported on this platform.\n");
 	exit (1);
 #endif
 
-	extra = getenv ("MONO_SDB_ENV_OPTIONS");
+	extra = g_getenv ("MONO_SDB_ENV_OPTIONS");
 	if (extra)
 		options = g_strdup_printf ("%s,%s", options, extra);
 
@@ -3494,6 +3494,7 @@ event_to_string (EventKind event)
 	case EVENT_KIND_USER_LOG: return "USER_LOG";
 	default:
 		g_assert_not_reached ();
+		return "";
 	}
 }
 
@@ -6191,6 +6192,14 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 	else
 		this = NULL;
 
+	if (MONO_CLASS_IS_INTERFACE (m->klass)) {
+		if (!this) {
+			DEBUG (1, fprintf (log_file, "[%p] Error: Interface method invoked without this argument.\n", (gpointer)GetCurrentThreadId ()));
+			return ERR_INVALID_ARGUMENT;
+		}
+		m = mono_object_get_virtual_method (this, m);
+	}
+
 	DEBUG (1, fprintf (log_file, "[%p] Invoking method '%s' on receiver '%s'.\n", (gpointer)GetCurrentThreadId (), mono_method_full_name (m, TRUE), this ? this->vtable->klass->name : "<null>"));
 
 	if (this && this->vtable->domain != domain)
@@ -7380,7 +7389,7 @@ buffer_add_cattrs (Buffer *buf, MonoDomain *domain, MonoImage *image, MonoClass 
 		if (!attr_klass || mono_class_has_parent (attr->ctor->klass, attr_klass)) {
 			MonoArray *typed_args, *named_args;
 			MonoType *t;
-			CattrNamedArg *arginfo;
+			CattrNamedArg *arginfo = NULL;
 			MonoError error;
 
 			mono_reflection_create_custom_attr_data_args (image, attr->ctor, attr->data, attr->data_size, &typed_args, &named_args, &arginfo, &error);
@@ -7424,6 +7433,7 @@ buffer_add_cattrs (Buffer *buf, MonoDomain *domain, MonoImage *image, MonoClass 
 			} else {
 				buffer_add_int (buf, 0);
 			}
+			g_free (arginfo);
 		}
 	}
 }

@@ -2124,13 +2124,11 @@ namespace Mono.CSharp {
 		{
 			DefineOverride (parent);
 
-			var mc = (IMemberContext) method;
-
-			method.ParameterInfo.ApplyAttributes (mc, MethodBuilder);
+			method.ParameterInfo.ApplyAttributes (method, MethodBuilder);
 
 			ToplevelBlock block = method.Block;
 			if (block != null) {
-				BlockContext bc = new BlockContext (mc, block, method.ReturnType);
+				BlockContext bc = new BlockContext (method, block, method.ReturnType);
 				if (block.Resolve (null, bc, method)) {
 					debug_builder = member.Parent.CreateMethodSymbolEntry ();
 					EmitContext ec = method.CreateEmitContext (MethodBuilder.GetILGenerator (), debug_builder);

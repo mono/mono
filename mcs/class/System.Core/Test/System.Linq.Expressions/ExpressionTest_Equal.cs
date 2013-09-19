@@ -458,5 +458,23 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (false, eq (Foo.Bar, null));
 			Assert.AreEqual (true, eq (null, null));
 		}
+
+		[Test]
+		public void NullableNullEqual ()
+		{
+			var param = Expression.Parameter (typeof (DateTime?), "x");
+
+			var node = Expression.Equal (param, Expression.Constant (null));
+
+			Assert.IsTrue (node.IsLifted);
+			Assert.IsFalse (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (bool), node.Type);
+			Assert.IsNull (node.Method);
+
+			var eq = Expression.Lambda<Func<DateTime?, bool>> (node, new [] { param }).Compile ();
+
+			Assert.AreEqual (true, eq (null));
+			Assert.AreEqual (false, eq (DateTime.Now));
+		}
 	}
 }

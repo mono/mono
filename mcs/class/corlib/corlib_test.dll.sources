@@ -133,6 +133,7 @@ System.Reflection/ConstructorInfoTest.cs
 System.Reflection/CustomAttributeDataTest.cs
 System.Reflection/EventInfoTest.cs
 System.Reflection/FieldInfoTest.cs
+System.Reflection/IntrospectionExtensionsTest.cs
 System.Reflection/MethodBaseTest.cs
 System.Reflection/MethodInfoTest.cs
 System.Reflection/MonoGenericClassTest.cs

@@ -58,7 +58,7 @@ static void
 update_current_thread_stack (void *start)
 {
 	int stack_guard = 0;
-#ifndef USE_MONO_CTX
+#if !defined(USE_MONO_CTX)
 	void *reg_ptr = cur_thread_regs;
 #endif
 	SgenThreadInfo *info = mono_thread_info_current ();
@@ -91,7 +91,13 @@ is_ip_in_managed_allocator (MonoDomain *domain, gpointer ip)
 		return FALSE;
 	if (!sgen_has_critical_method ())
 		return FALSE;
-	ji = mono_jit_info_table_find (domain, ip);
+
+	/*
+	 * mono_jit_info_table_find is not async safe since it calls into the AOT runtime to load information for
+	 * missing methods (#13951). To work around this, we disable the AOT fallback. For this to work, the JIT needs
+	 * to register the jit info for all GC critical methods after they are JITted/loaded.
+	 */
+	ji = mono_jit_info_table_find_internal (domain, ip, FALSE);
 	if (!ji)
 		return FALSE;
 

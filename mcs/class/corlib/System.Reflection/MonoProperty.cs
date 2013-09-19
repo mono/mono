@@ -195,7 +195,7 @@ namespace System.Reflection {
 
 			var dest = new ParameterInfo [length];
 			for (int i = 0; i < length; ++i) {
-				dest [i] = new ParameterInfo (src [i], this);
+				dest [i] = ParameterInfo.New (src [i], this);
 			}
 			return dest;	
 		}

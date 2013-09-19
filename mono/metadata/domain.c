@@ -331,8 +331,14 @@ jit_info_table_chunk_index (MonoJitInfoTableChunk *chunk, MonoThreadHazardPointe
 	return left;
 }
 
+/*
+ * mono_jit_info_table_find_internal:
+ *
+ * If TRY_AOT is FALSE, avoid loading information for missing methods from AOT images, which is currently not async safe.
+ * In this case, only those AOT methods will be found whose jit info is already loaded.
+ */
 MonoJitInfo*
-mono_jit_info_table_find (MonoDomain *domain, char *addr)
+mono_jit_info_table_find_internal (MonoDomain *domain, char *addr, gboolean try_aot)
 {
 	MonoJitInfoTable *table;
 	MonoJitInfo *ji;
@@ -402,11 +408,19 @@ mono_jit_info_table_find (MonoDomain *domain, char *addr)
 	ji = NULL;
 
 	/* Maybe its an AOT module */
-	image = mono_jit_info_find_aot_module ((guint8*)addr);
-	if (image)
-		ji = jit_info_find_in_aot_func (domain, image, addr);
+	if (try_aot) {
+		image = mono_jit_info_find_aot_module ((guint8*)addr);
+		if (image)
+			ji = jit_info_find_in_aot_func (domain, image, addr);
+	}
 	
 	return ji;
+}
+
+MonoJitInfo*
+mono_jit_info_table_find (MonoDomain *domain, char *addr)
+{
+	return mono_jit_info_table_find_internal (domain, addr, TRUE);
 }
 
 static G_GNUC_UNUSED void
@@ -1860,6 +1874,8 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 {
 	int code_size, code_alloc;
 	GSList *tmp;
+	gpointer *p;
+
 	if ((domain == mono_root_domain) && !force) {
 		g_warning ("cant unload root domain");
 		return;
@@ -1922,6 +1938,10 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 		MonoAssembly *ass = tmp->data;
 		mono_assembly_release_gc_roots (ass);
 	}
+
+	/* Have to zero out reference fields since they will be invalidated by the clear_domain () call below */
+	for (p = (gpointer*)&domain->MONO_DOMAIN_FIRST_OBJECT; p < (gpointer*)&domain->MONO_DOMAIN_FIRST_GC_TRACKED; ++p)
+		*p = NULL;
 
 	/* This needs to be done before closing assemblies */
 	mono_gc_clear_domain (domain);

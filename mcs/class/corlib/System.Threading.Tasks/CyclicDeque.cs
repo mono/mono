@@ -43,22 +43,20 @@ namespace System.Threading.Tasks
 	{
 		const int BaseSize = 11;
 		
-		long bottom;
-		long top;
-		long upperBound;
+		int bottom;
+		int top;
+		int upperBound;
 		CircularArray<T> array = new CircularArray<T> (BaseSize);
 		
 		public void PushBottom (T obj)
 		{
-			/* Read is implemented as a simple load operation on 64bits
-			 * so no need to make the distinction ourselves
-			 */
-			long b = Interlocked.Read (ref bottom);
+			int b = bottom;
 			var a = array;
 			
 			// Take care of growing
-			if (b - upperBound >= a.Size - 1) {
-				upperBound = Interlocked.Read (ref top);
+			var size = b - top - upperBound;
+			if (size > a.Size) {
+				upperBound = top;
 				a = a.Grow (b, upperBound);
 				array = a;
 			}
@@ -72,10 +70,10 @@ namespace System.Threading.Tasks
 		{
 			obj = default (T);
 			
-			long b = Interlocked.Decrement (ref bottom);
+			int b = Interlocked.Decrement (ref bottom);
 			var a = array;
-			long t = Interlocked.Read (ref top);
-			long size = b - t;
+			int t = top;
+			int size = b - t;
 			
 			if (size < 0) {
 				// Set bottom to t
@@ -98,10 +96,10 @@ namespace System.Threading.Tasks
 		{
 			obj = default (T);
 
-			long b = Interlocked.Decrement (ref bottom);
+			int b = Interlocked.Decrement (ref bottom);
 			var a = array;
-			long t = Interlocked.Read (ref top);
-			long size = b - t;
+			int t = top;
+			int size = b - t;
 
 			if (size < 0)
 				return false;
@@ -114,8 +112,8 @@ namespace System.Threading.Tasks
 		{
 			obj = default (T);
 			
-			long t = Interlocked.Read (ref top);
-			long b = Interlocked.Read (ref bottom);
+			int t = top;
+			int b = bottom;
 			
 			if (b - t <= 0)
 				return PopResult.Empty;
@@ -133,8 +131,8 @@ namespace System.Threading.Tasks
 		{
 			obj = default (T);
 
-			long t = Interlocked.Read (ref top);
-			long b = Interlocked.Read (ref bottom);
+			int t = top;
+			int b = bottom;
 
 			if (b - t <= 0)
 				return false;
@@ -153,8 +151,8 @@ namespace System.Threading.Tasks
 
 		public bool IsEmpty {
 			get {
-				long t = Interlocked.Read (ref top);
-				long b = Interlocked.Read (ref bottom);
+				int t = top;
+				int b = bottom;
 				return b - t <= 0;
 			}
 		}
@@ -173,13 +171,13 @@ namespace System.Threading.Tasks
 			this.segment = new T[size];
 		}
 		
-		public long Size {
+		public int Size {
 			get {
 				return size;
 			}
 		}
 		
-		public T this[long index] {
+		public T this[int index] {
 			get {
 				return segment[index % size];
 			}
@@ -188,32 +186,32 @@ namespace System.Threading.Tasks
 			}
 		}
 		
-		public CircularArray<T> Grow (long bottom, long top)
+		public CircularArray<T> Grow (int bottom, int top)
 		{
 			var grow = new CircularArray<T> (baseSize + 1);
 			
-			for (long i = top; i < bottom; i++) {
+			for (int i = top; i < bottom; i++) {
 				grow.segment[i] = segment[i % size];
 			}
 			
 			return grow;
 		}
 		
-		public IEnumerable<T> GetEnumerable (long bottom, ref long top)
+		public IEnumerable<T> GetEnumerable (int bottom, ref int top)
 		{
-			long instantTop = top;
+			int instantTop = top;
 			T[] slice = new T[bottom - instantTop];
 			int destIndex = -1;
-			for (long i = instantTop; i < bottom; i++)
+			for (int i = instantTop; i < bottom; i++)
 				slice[++destIndex] = segment[i % size];
 
 			return RealGetEnumerable (slice, bottom, top, instantTop);
 		}
 
-		IEnumerable<T> RealGetEnumerable (T[] slice, long bottom, long realTop, long initialTop)
+		IEnumerable<T> RealGetEnumerable (T[] slice, int bottom, int realTop, int initialTop)
 		{
 			int destIndex = (int)(realTop - initialTop - 1);
-			for (long i = realTop; i < bottom; ++i)
+			for (int i = realTop; i < bottom; ++i)
 				yield return slice[++destIndex];
 		}
 	}

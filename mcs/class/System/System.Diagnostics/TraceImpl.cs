@@ -53,7 +53,7 @@ namespace System.Diagnostics {
 	}
 #endif
 
-	internal class TraceImpl {
+	static class TraceImpl {
 
 #if !MOBILE
 		private static object initLock = new object ();
@@ -86,22 +86,20 @@ namespace System.Diagnostics {
 		}
 #else
 		[ThreadStatic]
-		private static int indentLevel = 0;
+		private static int indentLevel;
 
 		[ThreadStatic]
 		private static int indentSize;
 #endif
 
-		private TraceImpl ()
-		{
-		}
-
 #if MOBILE
-		static TraceImpl ()
-		{
-			listeners = new TraceListenerCollection (true);
-		}
+		static TraceListenerCollection listeners = new TraceListenerCollection (true);
+#else
+		static TraceListenerCollection listeners;
 #endif
+
+		static bool use_global_lock;
+		static CorrelationManager correlation_manager = new CorrelationManager ();
 
 		public static bool AutoFlush {
 			get {
@@ -146,8 +144,6 @@ namespace System.Diagnostics {
 			}
 		}
 
-		private static TraceListenerCollection listeners;
-
 		public static TraceListenerCollection Listeners {
 			get {
 				InitOnce ();
@@ -161,9 +157,6 @@ namespace System.Diagnostics {
 				return ((ICollection) Listeners).SyncRoot;
 			}
 		}
-
-		static bool use_global_lock;
-		static CorrelationManager correlation_manager = new CorrelationManager ();
 
 		public static CorrelationManager CorrelationManager {
 			get {
@@ -223,24 +216,18 @@ namespace System.Diagnostics {
 #endif
 		}
 
-		// FIXME: According to MSDN, this method should display a dialog box
-		[MonoTODO]
 		public static void Assert (bool condition)
 		{
 			if (!condition)
-				Fail (new StackTrace(true).ToString());
+				Fail ("");
 		}
 
-		// FIXME: According to MSDN, this method should display a dialog box
-		[MonoTODO]
 		public static void Assert (bool condition, string message)
 		{
 			if (!condition)
 				Fail (message);
 		}
 
-		// FIXME: According to MSDN, this method should display a dialog box
-		[MonoTODO]
 		public static void Assert (bool condition, string message, 
 			string detailMessage)
 		{

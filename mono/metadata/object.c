@@ -2639,7 +2639,7 @@ mono_remote_class_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mon
 		MonoClass *klass;
 		type = ((MonoReflectionType *)rp->class_to_proxy)->type;
 		klass = mono_class_from_mono_type (type);
-#ifndef DISABLE_COMf
+#ifndef DISABLE_COM
 		if ((mono_class_is_com_object (klass) || (mono_class_get_com_object_class () && klass == mono_class_get_com_object_class ())) && !mono_vtable_is_remote (mono_class_vtable (mono_domain_get (), klass)))
 			remote_class->default_vtable = mono_class_proxy_vtable (domain, remote_class, MONO_REMOTING_TARGET_COMINTEROP);
 		else
@@ -6069,6 +6069,7 @@ mono_object_to_string (MonoObject *obj, MonoObject **exc)
 {
 	static MonoMethod *to_string = NULL;
 	MonoMethod *method;
+	void *target = obj;
 
 	g_assert (obj);
 
@@ -6077,7 +6078,12 @@ mono_object_to_string (MonoObject *obj, MonoObject **exc)
 
 	method = mono_object_get_virtual_method (obj, to_string);
 
-	return (MonoString *) mono_runtime_invoke (method, obj, NULL, exc);
+	// Unbox value type if needed
+	if (mono_class_is_valuetype (mono_method_get_class (method))) {
+		target = mono_object_unbox (obj);
+	}
+
+	return (MonoString *) mono_runtime_invoke (method, target, NULL, exc);
 }
 
 /**

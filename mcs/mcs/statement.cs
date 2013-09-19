@@ -412,8 +412,9 @@ namespace Mono.CSharp {
 						return false;
 					empty = true;
 					return true;
-				} else
-					infinite = true;
+				}
+
+				infinite = true;
 			}
 
 			ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
@@ -548,8 +549,9 @@ namespace Mono.CSharp {
 							return false;
 						empty = true;
 						return true;
-					} else
-						infinite = true;
+					}
+
+					infinite = true;
 				}
 			} else
 				infinite = true;
@@ -2581,7 +2583,8 @@ namespace Mono.CSharp {
 					}
 
 					if (b.Explicit == b.Explicit.ParametersBlock && b.Explicit.ParametersBlock.StateMachine != null) {
-						storey.HoistedThis = b.Explicit.ParametersBlock.StateMachine.HoistedThis;
+						if (storey.HoistedThis == null)
+							storey.HoistedThis = b.Explicit.ParametersBlock.StateMachine.HoistedThis;
 
 						if (storey.HoistedThis != null)
 							break;
@@ -2610,7 +2613,27 @@ namespace Mono.CSharp {
 						}
 
 						for (ExplicitBlock b = ref_block; b.AnonymousMethodStorey != storey; b = b.Parent.Explicit) {
+							ParametersBlock pb;
+
 							if (b.AnonymousMethodStorey != null) {
+								//
+								// Don't add storey cross reference for `this' when the storey ends up not
+								// beeing attached to any parent
+								//
+								if (b.ParametersBlock.StateMachine == null) {
+									AnonymousMethodStorey s = null;
+									for (Block ab = b.AnonymousMethodStorey.OriginalSourceBlock.Parent; ab != null; ab = ab.Parent) {
+										s = ab.Explicit.AnonymousMethodStorey;
+										if (s != null)
+											break;
+									}
+
+									if (s == null) {
+										b.AnonymousMethodStorey.AddCapturedThisField (ec);
+										break;
+									}
+								}
+
 								b.AnonymousMethodStorey.AddParentStoreyReference (ec, storey);
 								b.AnonymousMethodStorey.HoistedThis = storey.HoistedThis;
 
@@ -2623,14 +2646,14 @@ namespace Mono.CSharp {
 								b = b.ParametersBlock;
 							}
 
-							var pb = b as ParametersBlock;
+							pb = b as ParametersBlock;
 							if (pb != null && pb.StateMachine != null) {
 								if (pb.StateMachine == storey)
 									break;
 
 								//
-								// If we are state machine with no parent we can hook into we don't
- 								// add reference but capture this directly
+								// If we are state machine with no parent. We can hook into parent without additional
+ 								// reference and capture this directly
 								//
 								ExplicitBlock parent_storey_block = pb;
 								while (parent_storey_block.Parent != null) {
@@ -2986,7 +3009,7 @@ namespace Mono.CSharp {
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			if (statements.Count == 1) {
-				Expression expr = ((Statement) statements[0]).CreateExpressionTree (ec);
+				Expression expr = statements[0].CreateExpressionTree (ec);
 				if (scope_initializers != null)
 					expr = new BlockScopeExpression (expr, this);
 
@@ -3425,8 +3448,23 @@ namespace Mono.CSharp {
 			int count = parameters.Count;
 			Arguments args = new Arguments (count);
 			for (int i = 0; i < count; ++i) {
-				var arg_expr = GetParameterReference (i, parameter_info[i].Location);
-				args.Add (new Argument (arg_expr));
+				var pi = parameter_info[i];
+				var arg_expr = GetParameterReference (i, pi.Location);
+
+				Argument.AType atype_modifier;
+				switch (pi.Parameter.ParameterModifier & Parameter.Modifier.RefOutMask) {
+				case Parameter.Modifier.REF:
+					atype_modifier = Argument.AType.Ref;
+					break;
+				case Parameter.Modifier.OUT:
+					atype_modifier = Argument.AType.Out;
+					break;
+				default:
+					atype_modifier = 0;
+					break;
+				}
+
+				args.Add (new Argument (arg_expr, atype_modifier));
 			}
 
 			return args;
@@ -5497,7 +5535,7 @@ namespace Mono.CSharp {
 		{
 			TryFinally target = (TryFinally) t;
 
-			target.stmt = (Statement) stmt.Clone (clonectx);
+			target.stmt = stmt.Clone (clonectx);
 			if (fini != null)
 				target.fini = clonectx.LookupBlock (fini);
 		}

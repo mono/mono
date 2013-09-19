@@ -1506,8 +1506,9 @@ namespace Mono.CSharp
 				if (Convert.ExplicitReferenceConversionExists (d, t))
 					return this;
 			} else {
-				if (TypeManager.IsGenericParameter (t))
-					return ResolveGenericParameter (ec, d, (TypeParameterSpec) t);
+				var tps = t as TypeParameterSpec;
+				if (tps != null)
+					return ResolveGenericParameter (ec, d, tps);
 
 				if (t.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 					ec.Report.Warning (1981, 3, loc,
@@ -1559,8 +1560,8 @@ namespace Mono.CSharp
 					return CreateConstantResult (ec, false);
 			}
 
-			if (TypeManager.IsGenericParameter (expr.Type)) {
-				if (expr.Type == d && TypeSpec.IsValueType (t))
+			if (expr.Type.IsGenericParameter) {
+				if (expr.Type == d && TypeSpec.IsValueType (t) && TypeSpec.IsValueType (d))
 					return CreateConstantResult (ec, true);
 
 				expr = new BoxedCast (expr, d);
@@ -2314,6 +2315,7 @@ namespace Mono.CSharp
 			NullableMask	= 1 << 20,
 		}
 
+		[Flags]
 		enum State : byte
 		{
 			None = 0,
@@ -3354,8 +3356,6 @@ namespace Mono.CSharp
 
 		public SLE.Expression MakeExpression (BuilderContext ctx, Expression left, Expression right)
 		{
-			Console.WriteLine ("{0} x {1}", left.Type.GetSignatureForError (), right.Type.GetSignatureForError ());
-
 			var le = left.MakeExpression (ctx);
 			var re = right.MakeExpression (ctx);
 			bool is_checked = ctx.HasSet (BuilderContext.Options.CheckedScope);
@@ -8934,7 +8934,7 @@ namespace Mono.CSharp
 			var nested = MemberCache.FindNestedType (expr_type, Name, -System.Math.Max (1, Arity));
 
 			if (nested != null) {
-				Error_TypeArgumentsCannotBeUsed (rc, nested, Arity, expr.Location);
+				Error_TypeArgumentsCannotBeUsed (rc, nested, expr.Location);
 				return;
 			}
 

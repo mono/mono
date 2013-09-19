@@ -46,7 +46,12 @@ namespace System.ComponentModel.DataAnnotations
 		Password,
 		Url,
 #if NET_4_0
-		ImageUrl
+		ImageUrl,
+#endif
+#if NET_4_5
+		CreditCard,
+		PostalCode,
+		Upload
 #endif
 	}
 }

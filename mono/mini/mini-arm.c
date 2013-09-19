@@ -828,7 +828,7 @@ mono_arch_init (void)
 #endif
 
 	/* Format: armv(5|6|7[s])[-thumb[2]] */
-	cpu_arch = getenv ("MONO_CPU_ARCH");
+	cpu_arch = g_getenv ("MONO_CPU_ARCH");
 
 	/* Do this here so it overrides any detection. */
 	if (cpu_arch) {
@@ -4282,6 +4282,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			*(gpointer*)code = NULL;
 			code += 4;
 			/* Load the value from the GOT */
+			ARM_LDR_REG_REG (code, ins->dreg, ARMREG_PC, ins->dreg);
+			break;
+		case OP_OBJC_GET_SELECTOR:
+			mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_OBJC_SELECTOR_REF, ins->inst_p0);
+			ARM_LDR_IMM (code, ins->dreg, ARMREG_PC, 0);
+			ARM_B (code, 0);
+			*(gpointer*)code = NULL;
+			code += 4;
 			ARM_LDR_REG_REG (code, ins->dreg, ARMREG_PC, ins->dreg);
 			break;
 		case OP_ICONV_TO_I4:

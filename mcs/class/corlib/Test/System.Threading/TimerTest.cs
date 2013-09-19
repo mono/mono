@@ -197,8 +197,8 @@ namespace MonoTests.System.Threading {
 			
 		}
 
-#if !MONOTOUCH
 		[Test]
+		[Ignore ()]
 		public void TestDisposeOnCallback ()
 		{
 			// this test is bad, as the provided `state` (t1) is null and will throw an NRE inside the callback
@@ -215,7 +215,6 @@ namespace MonoTests.System.Threading {
 		{
 			((Timer) foo).Dispose ();
 		}
-#endif
 
 		private void Callback (object foo)
 		{

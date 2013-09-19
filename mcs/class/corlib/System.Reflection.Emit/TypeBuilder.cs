@@ -50,7 +50,13 @@ namespace System.Reflection.Emit
 	[ComDefaultInterface (typeof (_TypeBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed class TypeBuilder : Type, _TypeBuilder
+	public sealed class TypeBuilder :
+#if NET_4_5
+		TypeInfo
+#else
+		Type
+#endif
+		, _TypeBuilder
 	{
 #pragma warning disable 169		
 		#region Sync with reflection.h
@@ -1927,6 +1933,17 @@ namespace System.Reflection.Emit
 				return false;
 			}
 		}
+
+#if NET_4_5
+		public override bool IsConstructedGenericType {
+			get { return false; }
+		}
+
+		public override bool IsAssignableFrom (TypeInfo typeInfo)
+		{
+			return base.IsAssignableFrom (typeInfo);
+		}
+#endif
 	}
 }
 #endif

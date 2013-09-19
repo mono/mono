@@ -2426,7 +2426,8 @@ NO
 		<foo />
 	</xsl:template>
 </xsl:stylesheet>";
-			StreamWriter includedWriter = new StreamWriter ("include.xsl");
+			string file = Path.Combine (Path.GetTempPath (), "include.xsl");
+			StreamWriter includedWriter = new StreamWriter (file);
 			includedWriter.WriteLine (includedXsl);
 			includedWriter.Close ();
 			XslCompiledTransform transform = new XslCompiledTransform ();
@@ -2436,7 +2437,7 @@ NO
 	<xsl:template match='/'>
 		<xsl:call-template name='foo' />
 	</xsl:template>
-</xsl:stylesheet>";
+</xsl:stylesheet>".Replace ("include.xsl", file);
 			XmlReader xslReader = XmlReader.Create (new StringReader (xsl));
 			transform.Load (xslReader);
 			XmlReader inputReader = XmlReader.Create (new StringReader ("<bar />"));

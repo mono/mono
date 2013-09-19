@@ -3,10 +3,10 @@
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
+//	Pablo Ruiz García <pablo.ruiz@gmail.com>
 //
 // Copyright (C) 2008 Novell Inc. http://novell.com
-//
-
+// Copyright (C) 2013 Pablo Ruiz García
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -50,6 +50,27 @@ namespace System.ComponentModel.DataAnnotations
 					displayFormat.ApplyFormatInEditMode = true;
 					displayFormat.ConvertEmptyStringToNull = true;
 					displayFormat.DataFormatString = "{0:t}";
+#if NET_4_0
+					displayFormat.HtmlEncode = true;
+#endif
+					break;
+				case DataType.Date:
+					displayFormat = new DisplayFormatAttribute ();
+					displayFormat.ApplyFormatInEditMode = true;
+					displayFormat.ConvertEmptyStringToNull = true;
+					displayFormat.DataFormatString = "{0:d}";
+#if NET_4_0
+					displayFormat.HtmlEncode = true;
+#endif
+					break;
+				case DataType.Currency:
+					displayFormat = new DisplayFormatAttribute ();
+					displayFormat.ApplyFormatInEditMode = false;
+					displayFormat.ConvertEmptyStringToNull = true;
+					displayFormat.DataFormatString = "{0:C}";
+#if NET_4_0
+					displayFormat.HtmlEncode = true;
+#endif
 					break;
 
 				default:

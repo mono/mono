@@ -35,6 +35,18 @@ class B2 : A2<System.ValueType>
 	}
 }
 
+abstract class A3<T>
+{
+	public abstract void Foo<U> () where U : class, T;
+}
+
+class B3 : A3<System.Object>
+{
+	public override void Foo<Y> ()
+	{
+	}
+}
+
 class Program
 {
 	public static int Main ()
@@ -47,6 +59,9 @@ class Program
 		
 		var b2 = new B2 ();
 		b2.Foo<byte> ();
+		
+		var b3 = new B3 ();
+		b3.Foo<string> ();
 		
 		return 1;
 	}

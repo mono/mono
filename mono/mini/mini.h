@@ -133,7 +133,7 @@
 #endif
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION 92
+#define MONO_AOT_FILE_VERSION 93
 
 //TODO: This is x86/amd64 specific.
 #define mono_simd_shuffle_mask(a,b,c,d) ((a) | ((b) << 2) | ((c) << 4) | ((d) << 6))
@@ -142,6 +142,8 @@
 #ifdef PLATFORM_ANDROID
 #define printf g_print
 #endif
+
+#define MONO_TYPE_IS_PRIMITIVE(t) ((!(t)->byref && ((((t)->type >= MONO_TYPE_BOOLEAN && (t)->type <= MONO_TYPE_R8) || ((t)->type >= MONO_TYPE_I && (t)->type <= MONO_TYPE_U)))))
 
 /* Constants used to encode different types of methods in AOT */
 enum {
@@ -2081,7 +2083,7 @@ MONO_API void     mono_aot_register_globals          (gpointer *globals);
 /* This too */
 MONO_API void     mono_aot_register_module           (gpointer *aot_info);
 
-void     mono_xdebug_init                   (char *xdebug_opts) MONO_INTERNAL;
+void     mono_xdebug_init                   (const char *xdebug_opts) MONO_INTERNAL;
 void     mono_save_xdebug_info              (MonoCompile *cfg) MONO_INTERNAL;
 void     mono_save_trampoline_xdebug_info   (MonoTrampInfo *info) MONO_INTERNAL;
 /* This is an exported function */

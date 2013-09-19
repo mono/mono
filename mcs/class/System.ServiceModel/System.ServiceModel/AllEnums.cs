@@ -241,6 +241,9 @@ namespace System.ServiceModel // used to be S.SM.Ch
 		Ntlm,
 		Windows,
 		Certificate,
+#if NET_4_5
+		InheritedFromHost
+#endif
 	}
 
 	public enum HttpProxyCredentialType

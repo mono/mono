@@ -488,7 +488,7 @@ namespace Mono.CSharp
 			if (mutator != null)
 				type = mutator.Mutate (type);
 
-			List<Field> existing_fields = null;
+			List<Field> existing_fields;
 			if (awaiter_fields.TryGetValue (type, out existing_fields)) {
 				foreach (var f in existing_fields) {
 					if (f.IsAvailableForReuse) {
