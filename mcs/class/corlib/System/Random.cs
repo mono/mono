@@ -4,13 +4,12 @@
 // Authors:
 //   Bob Smith (bob@thestuff.net)
 //   Ben Maurer (bmaurer@users.sourceforge.net)
+//   Sebastien Pouliot  <sebastien@xamarin.com>
 //
 // (C) 2001 Bob Smith.  http://www.thestuff.net
 // (C) 2003 Ben Maurer
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright 2013 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -39,12 +38,11 @@ namespace System
 	[ComVisible (true)]
 	public class Random
 	{
-		const int MBIG = int.MaxValue;
-		const int MSEED = 161803398;
+		uint x;
+		uint y;
+		uint z;
+		uint c;
 
-		int inext, inextp;
-		int [] SeedArray = new int [56];
-		
 		public Random ()
 			: this (Environment.TickCount)
 		{
@@ -52,75 +50,28 @@ namespace System
 
 		public Random (int Seed)
 		{
-			int ii;
-			int mj, mk;
-
-			// Numerical Recipes in C online @ http://www.library.cornell.edu/nr/bookcpdf/c7-1.pdf
-
-			// Math.Abs throws on Int32.MinValue, so we need to work around that case.
-			// Fixes: 605797
-			if (Seed == Int32.MinValue)
-				mj = MSEED - Math.Abs (Int32.MinValue + 1);
-			else
-				mj = MSEED - Math.Abs (Seed);
-			
-			SeedArray [55] = mj;
-			mk = 1;
-			for (int i = 1; i < 55; i++) {  //  [1, 55] is special (Knuth)
-				ii = (21 * i) % 55;
-				SeedArray [ii] = mk;
-				mk = mj - mk;
-				if (mk < 0)
-					mk += MBIG;
-				mj = SeedArray [ii];
-			}
-			for (int k = 1; k < 5; k++) {
-				for (int i = 1; i < 56; i++) {
-					SeedArray [i] -= SeedArray [1 + (i + 30) % 55];
-					if (SeedArray [i] < 0)
-						SeedArray [i] += MBIG;
-				}
-			}
-			inext = 0;
-			inextp = 31;
+			x = (uint) Seed;
+			y = (uint) 987654321;
+			z = (uint) 43219876;
+			c = (uint) 6543217;
 		}
 
-		protected virtual double Sample ()
+		uint JKiss ()
 		{
-			int retVal;
-
-			if (++inext  >= 56) inext  = 1;
-			if (++inextp >= 56) inextp = 1;
-
-			retVal = SeedArray [inext] - SeedArray [inextp];
-
-			if (retVal < 0)
-				retVal += MBIG;
-
-			SeedArray [inext] = retVal;
-
-			return retVal * (1.0 / MBIG);
-		}
-
-		public virtual int Next ()
-		{
-			return (int)(Sample () * int.MaxValue);
-		}
-
-		public virtual int Next (int maxValue)
-		{
-			if (maxValue < 0)
-				throw new ArgumentOutOfRangeException(Locale.GetText (
-					"Max value is less than min value."));
-
-			return (int)(Sample () * maxValue);
+			x = 314527869 * x + 1234567;
+			y ^= y << 5;
+			y ^= y >> 7;
+			y ^= y << 22;
+			ulong t = ((ulong) 4294584393 * z + c);
+			c = (uint) (t >> 32);
+			z = (uint) t;
+			return (x + y + z);
 		}
 
 		public virtual int Next (int minValue, int maxValue)
 		{
 			if (minValue > maxValue)
-				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"Min value is greater than max value."));
+				throw new ArgumentOutOfRangeException ("Maximum value is less than minimal value.");
 
 			// special case: a difference of one (or less) will always return the minimum
 			// e.g. -1,-1 or -1,0 will always return -1
@@ -128,7 +79,28 @@ namespace System
 			if (diff <= 1)
 				return minValue;
 
-			return (int)((uint)(Sample () * diff) + minValue);
+			return minValue + ((int) (JKiss () % diff));
+		}
+
+		public virtual int Next (int maxValue)
+		{
+			if (maxValue < 0)
+				throw new ArgumentOutOfRangeException ("Maximum value is less than minimal value.");
+
+			return (int) (JKiss () % maxValue);
+		}
+
+		public virtual int Next ()
+		{
+			// returns a non-negative, [0 - Int32.MacValue], random number
+			// but we want to avoid calls to Math.Abs (call cost and branching cost it requires)
+			// and the fact it would throw for Int32.MinValue (so roughly 1 time out of 2^32)
+			int random = (int) JKiss ();
+			while (random == Int32.MinValue)
+				random = (int) JKiss ();
+			int mask = random >> 31;
+			random ^= mask;
+			return random + (mask & 1);
 		}
 
 		public virtual void NextBytes (byte [] buffer)
@@ -136,14 +108,39 @@ namespace System
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 
-			for (int i = 0; i < buffer.Length; i++) {
-				buffer [i] = (byte)(Sample () * (byte.MaxValue + 1)); 
+			// each random `int` can fill 4 bytes
+			int p = 0;
+			uint random;
+			for (int i = 0; i < (buffer.Length >> 2); i++) {
+				random = JKiss ();
+				buffer [p++] = (byte) (random >> 24);
+				buffer [p++] = (byte) (random >> 16);
+				buffer [p++] = (byte) (random >> 8);
+				buffer [p++] = (byte) random;
+			}
+			if (p == buffer.Length)
+				return;
+
+			// complete the array
+			random = JKiss ();
+			while (p < buffer.Length) {
+				buffer [p++] = (byte) random;
+				random >>= 8;
 			}
 		}
 
 		public virtual double NextDouble ()
 		{
-			return this.Sample ();
+			// return a double value between [0,1]
+			return Sample ();
+		}
+
+		protected virtual double Sample ()
+		{
+			// a single 32 bits random value is not enough to create a random double value
+			uint a = JKiss () >> 6;	// Upper 26 bits
+			uint b = JKiss () >> 5;	// Upper 27 bits
+			return (a * 134217728.0 + b) / 9007199254740992.0;
 		}
 	}
 }
