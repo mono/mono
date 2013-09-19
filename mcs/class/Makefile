@@ -164,6 +164,9 @@ monodroid_dirs := \
 	Microsoft.CSharp \
 	System.Net.Http
 
+monotouch_dirs := \
+	System.Net.Http
+
 monotouch_runtime_dirs := \
 	corlib
 
@@ -233,7 +236,7 @@ net_4_5_dirs := \
 	
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) aot-compiler
 monodroid_SUBDIRS := $(mobile_dirs) $(monodroid_dirs)
-monotouch_SUBDIRS := $(mobile_dirs)
+monotouch_SUBDIRS := $(mobile_dirs) $(monotouch_dirs)
 monotouch_runtime_SUBDIRS := $(monotouch_runtime_dirs)
 mobile_static_SUBDIRS := $(mobile_dirs)
 mobile_SUBDIRS := $(mobile_dirs)
