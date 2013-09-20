@@ -1,4 +1,4 @@
-SUBDIRS =
+SUBDIRS = Browsers
 
 monodir = $(sysconfdir)/mono/4.0
 
