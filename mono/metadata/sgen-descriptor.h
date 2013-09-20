@@ -170,9 +170,11 @@ sgen_gc_descr_has_references (mword desc)
 		}	\
 	} while (0)
 
+/* Commented out because of a SIGSEGV found, see https://bugzilla.xamarin.com/show_bug.cgi?id=14834
+
 #ifdef __GNUC__
 #define OBJ_BITMAP_FOREACH_PTR(desc,obj)       do {    \
-		/* there are pointers */        \
+		// there are pointers           \
 		void **_objptr = (void**)(obj); \
 		gsize _bmap = (desc) >> 16;     \
 		_objptr += OBJECT_HEADER_WORDS; \
@@ -192,6 +194,8 @@ sgen_gc_descr_has_references (mword desc)
 		}										\
 	} while (0)
 #else
+
+*/
 #define OBJ_BITMAP_FOREACH_PTR(desc,obj)       do {    \
 		/* there are pointers */        \
 		void **_objptr = (void**)(obj); \
@@ -205,7 +209,6 @@ sgen_gc_descr_has_references (mword desc)
 			++_objptr;										   \
 		}													   \
 	} while (0)
-#endif
 
 /* a bitmap desc means that there are pointer references or we'd have
  * choosen run-length, instead: add an assert to check.
