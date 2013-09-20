@@ -106,6 +106,9 @@ namespace Mono.Linker.Steps {
 					// Copy means even if "unlinked" we still want that assembly to be saved back 
 					// to disk (OutputStep) without the (removed) reference
 					Annotations.SetAction (assembly, AssemblyAction.Save);
+					foreach (TypeReference tr in assembly.MainModule.GetTypeReferences ())
+						if (tr.Scope == reference)
+							tr.Scope = assembly.MainModule.Import (tr.Resolve ()).Scope;
 				}
 				return;
 			}
