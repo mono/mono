@@ -1081,7 +1081,6 @@ namespace MonoTests.System.ServiceModel.Description
 		[Test]
 		public void DualSpreadingInheritanceTest()
 		{
-			Console.WriteLine ("Hi");
 			var cd = ContractDescription.GetContract (typeof(S));
 			Assert.IsNotNull(cd);
 			Assert.IsTrue (cd.Name == "IS");
