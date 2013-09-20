@@ -240,10 +240,8 @@ namespace System.ServiceModel.Description
 					inherited.Add (icd);
 			}
 
-			foreach (var icd in inherited) 
-			{
-				foreach (var od in icd.Operations) 
-				{
+			foreach (var icd in inherited) {
+				foreach (var od in icd.Operations) {
 					if (!cd.Operations.Any (o => o.Name == od.Name && o.SyncMethod == od.SyncMethod && o.BeginMethod == od.BeginMethod && o.InCallbackContract == od.InCallbackContract))
 						cd.Operations.Add (od);
 				}
