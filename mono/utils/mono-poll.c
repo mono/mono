@@ -1,4 +1,5 @@
 #include "mono-poll.h"
+#include "mono/metadata/threads.h"
 #include <errno.h>
 
 #ifdef HAVE_POLL
@@ -17,14 +18,17 @@ mono_poll (mono_pollfd *ufds, unsigned int nfds, int timeout)
 	fd_set rfds, wfds, efds;
 	int nexc = 0;
 	int maxfd = 0;
+	int shouldrepeat = 0;
 
-	if (timeout < 0) {
-		tvptr = NULL;
-	} else {
-		tv.tv_sec = timeout / 1000;
-		tv.tv_usec = (timeout % 1000) * 1000;
-		tvptr = &tv;
+	if (timeout < 0)
+	{
+		timeout = 1000;
+		shouldrepeat = 1;
 	}
+
+	tv.tv_sec = timeout / 1000;
+	tv.tv_usec = (timeout % 1000) * 1000;
+	tvptr = &tv;
 
 	FD_ZERO (&rfds);
 	FD_ZERO (&wfds);
@@ -37,6 +41,7 @@ mono_poll (mono_pollfd *ufds, unsigned int nfds, int timeout)
 			continue;
 
 #ifdef PLATFORM_WIN32
+		// FIXME: nexc is always 0
 		if (nexc >= FD_SETSIZE) {
 			ufds [i].revents = MONO_POLLNVAL;
 			return 1;
@@ -80,6 +85,15 @@ mono_poll (mono_pollfd *ufds, unsigned int nfds, int timeout)
 		}
 #endif
 
+		return -1;
+	}
+
+	// If we timed out of the wait, 
+	// we want to signal the caller to yield to thread interruptions
+	if (affected == 0 && shouldrepeat)
+	{
+		mono_thread_interruption_checkpoint ();
+		errno = EINTR;
 		return -1;
 	}
 
