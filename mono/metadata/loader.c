@@ -2480,6 +2480,7 @@ mono_method_signature_checked (MonoMethod *m, MonoError *error)
 	else if (m->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) {
 		MonoCallConvention conv = 0;
 		MonoMethodPInvoke *piinfo = (MonoMethodPInvoke *)m;
+		MonoCustomAttrInfo *cattr;
 		signature->pinvoke = 1;
 
 		switch (piinfo->piflags & PINVOKE_ATTRIBUTE_CALL_CONV_MASK) {
@@ -2506,6 +2507,21 @@ mono_method_signature_checked (MonoMethod *m, MonoError *error)
 			mono_error_set_method_load (error, m->klass, m->name, "unsupported calling convention : 0x%04x for method 0x%08x from image %s", piinfo->piflags, idx, img->name);
 			return NULL;
 		}
+
+		cattr = mono_custom_attrs_from_method (m);
+
+		if (cattr) {
+			int i;
+			for (i = 0; i < cattr->num_attrs; i++)
+			{
+				if (cattr->attrs [i].ctor && !strcmp (cattr->attrs [i].ctor->klass->name, "MonoGccThisCallAttribute"))
+				{
+					conv = MONO_CALL_GCCTHISCALL;
+					break;
+				}
+			}
+		}
+
 		signature->call_convention = conv;
 	}
 

@@ -49,7 +49,8 @@ typedef enum {
 	MONO_CALL_STDCALL,
 	MONO_CALL_THISCALL,
 	MONO_CALL_FASTCALL,
-	MONO_CALL_VARARG
+	MONO_CALL_VARARG,
+	MONO_CALL_GCCTHISCALL = 0x10
 } MonoCallConvention;
 
 /* ECMA lamespec: the old spec had more info... */
