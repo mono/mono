@@ -69,12 +69,12 @@ continuation_mark_frame (MonoContinuation *cont)
 		ctx = new_ctx;
 		if (endloop)
 			break;
-		if (strcmp (ji->method->name, "Mark") == 0)
+		if (strcmp (jinfo_get_method (ji)->name, "Mark") == 0)
 			endloop = TRUE;
 	} while (1);
 
 	cont->top_sp = MONO_CONTEXT_GET_SP (&ctx);
-	/*g_print ("method: %s, sp: %p\n", ji->method->name, cont->top_sp);*/
+	/*g_print ("method: %s, sp: %p\n", jinfo_get_method (ji)->name, cont->top_sp);*/
 
 	return NULL;
 }

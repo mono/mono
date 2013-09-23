@@ -37,32 +37,6 @@ using Mono.Security;
 using Mono.Security.X509;
 
 namespace Mono.Security.X509.Extensions {	
-	// definition found @ http://groups.yahoo.com/group/ssl-talk/message/1964
-	//
-	// keyAttributes EXTENSION ::= {
-	//	SYNTAX KeyAttributes
-	//	IDENTIFIED BY { id-ce 2 } }
-	//
-	// KeyAttributes ::= SEQUENCE {
-	//	keyIdentifier KeyIdentifier OPTIONAL,
-	//	intendedKeyUsage KeyUsage OPTIONAL,
-	//	privateKeyUsagePeriod PrivateKeyValidity OPTIONAL 
-	// }
-	// KeyUsage ::= BIT STRING {
-	//	digitalSignature (0),
-	//	nonRepudiation (1),
-	//	keyEncipherment (2),
-	//	dataEncipherment (3),
-	//	keyAgreement (4),
-	//	keyCertSign (5),
-	//	offLineCRLSign (6) 
-	// }
-	// PrivateKeyValidity ::= SEQUENCE {
-	//	notBefore [0] GeneralizedTime OPTIONAL,
-	//	notAfter [1] GeneralizedTime OPTIONAL 
-	// }
-	// ( CONSTRAINED BY { -- at least one component shall be present -- })
-
 	public class KeyAttributesExtension : X509Extension {
 
 		private byte[] keyId;

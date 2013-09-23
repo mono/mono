@@ -3328,12 +3328,14 @@ emit_generic_class_init (MonoCompile *cfg, MonoClass *klass)
 }
 
 static void
-emit_seq_point (MonoCompile *cfg, MonoMethod *method, guint8* ip, gboolean intr_loc)
+emit_seq_point (MonoCompile *cfg, MonoMethod *method, guint8* ip, gboolean intr_loc, gboolean nonempty_stack)
 {
 	MonoInst *ins;
 
 	if (cfg->gen_seq_points && cfg->method == method) {
 		NEW_SEQ_POINT (cfg, ins, ip - cfg->header->code, intr_loc);
+		if (nonempty_stack)
+			ins->flags |= MONO_INST_NONEMPTY_STACK;
 		MONO_ADD_INS (cfg->cbb, ins);
 	}
 }
@@ -4517,18 +4519,21 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 }
 
 static gboolean
-mini_field_access_needs_cctor_run (MonoCompile *cfg, MonoMethod *method, MonoVTable *vtable)
+mini_field_access_needs_cctor_run (MonoCompile *cfg, MonoMethod *method, MonoClass *klass, MonoVTable *vtable)
 {
-	if (vtable->initialized && !cfg->compile_aot)
+	if (!cfg->compile_aot) {
+		g_assert (vtable);
+		if (vtable->initialized)
+			return FALSE;
+	}
+
+	if (klass->flags & TYPE_ATTRIBUTE_BEFORE_FIELD_INIT)
 		return FALSE;
 
-	if (vtable->klass->flags & TYPE_ATTRIBUTE_BEFORE_FIELD_INIT)
+	if (!mono_class_needs_cctor_run (klass, method))
 		return FALSE;
 
-	if (!mono_class_needs_cctor_run (vtable->klass, method))
-		return FALSE;
-
-	if (! (method->flags & METHOD_ATTRIBUTE_STATIC) && (vtable->klass == method->klass))
+	if (! (method->flags & METHOD_ATTRIBUTE_STATIC) && (klass == method->klass))
 		/* The initialization is already done before the method is called */
 		return FALSE;
 
@@ -7076,6 +7081,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			// FIXME: Enable this
 			//if (!(cfg->cbb->last_ins && cfg->cbb->last_ins->opcode == OP_SEQ_POINT)) {
 			NEW_SEQ_POINT (cfg, ins, ip - header->code, intr_loc);
+			if (sp != stack_start)
+				ins->flags |= MONO_INST_NONEMPTY_STACK;
 			MONO_ADD_INS (cfg->cbb, ins);
 
 			if (sym_seq_points)
@@ -7583,7 +7590,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 					if (fsig->pinvoke) {
 						MonoMethod *wrapper = mono_marshal_get_native_wrapper (cmethod,
-							check_for_pending_exc, FALSE);
+							check_for_pending_exc, cfg->compile_aot);
 						fsig = mono_method_signature (wrapper);
 					} else if (constrained_call) {
 						fsig = mono_method_signature (cmethod);
@@ -7594,7 +7601,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				mono_save_token_info (cfg, image, token, cil_method);
 
-				if (!MONO_TYPE_IS_VOID (fsig->ret) && !sym_seq_points) {
+				if (!MONO_TYPE_IS_VOID (fsig->ret)) {
 					/*
 					 * Need to emit an implicit seq point after every non-void call so single stepping through nested calls like
 					 * foo (bar (), baz ())
@@ -7605,7 +7612,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					 * int i = foo ();
 					 */
 					/* Special case a few common successor opcodes */
-					if (!(ip + 5 < end && ip [5] == CEE_POP))
+					if (!(ip + 5 < end && (ip [5] == CEE_POP || ip [5] == CEE_NOP)) && !(seq_point_locs && mono_bitset_test_fast (seq_point_locs, ip + 5 - header->code)))
 						need_seq_point = TRUE;
 				}
 
@@ -7648,6 +7655,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					 */
 					if ((cmethod->klass != mono_defaults.object_class) && constrained_call->valuetype && cmethod->klass->valuetype) {
 						/* The 'Own method' case below */
+					} else if (cmethod->klass->image != mono_defaults.corlib && !(cmethod->klass->flags & TYPE_ATTRIBUTE_INTERFACE) && !cmethod->klass->valuetype) {
+						/* 'The type parameter is instantiated as a reference type' case below. */
 					} else if (((cmethod->klass == mono_defaults.object_class) || (cmethod->klass->flags & TYPE_ATTRIBUTE_INTERFACE) || (!cmethod->klass->valuetype && cmethod->klass->image != mono_defaults.corlib)) &&
 							   (MONO_TYPE_IS_VOID (fsig->ret) || MONO_TYPE_IS_PRIMITIVE (fsig->ret) || MONO_TYPE_IS_REFERENCE (fsig->ret) || mini_is_gsharedvt_type (cfg, fsig->ret)) &&
 							   (fsig->param_count == 0 || (!fsig->hasthis && fsig->param_count == 1) || (fsig->param_count == 1 && (MONO_TYPE_IS_REFERENCE (fsig->params [0]) || mini_is_gsharedvt_type (cfg, fsig->params [0]))))) {
@@ -8325,7 +8334,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			ins_flag = 0;
 			constrained_call = NULL;
 			if (need_seq_point)
-				emit_seq_point (cfg, method, ip, FALSE);
+				emit_seq_point (cfg, method, ip, FALSE, TRUE);
 			break;
 		}
 		case CEE_RET:
@@ -9249,8 +9258,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					alloc = handle_alloc (cfg, cmethod->klass, FALSE, context_used);
 					*sp = alloc;
 				} else {
-					MonoVTable *vtable = mono_class_vtable (cfg->domain, cmethod->klass);
+					MonoVTable *vtable = NULL;
 
+					if (!cfg->compile_aot)
+						vtable = mono_class_vtable (cfg->domain, cmethod->klass);
 					CHECK_TYPELOAD (cmethod->klass);
 
 					/*
@@ -9258,11 +9269,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					 * call in mono_jit_runtime_invoke () can abort the finalizer thread.
 					 * As a workaround, we call class cctors before allocating objects.
 					 */
-					if (mini_field_access_needs_cctor_run (cfg, method, vtable) && !(g_slist_find (class_inits, vtable))) {
-						mono_emit_abs_call (cfg, MONO_PATCH_INFO_CLASS_INIT, vtable->klass, helper_sig_class_init_trampoline, NULL);
+					if (mini_field_access_needs_cctor_run (cfg, method, cmethod->klass, vtable) && !(g_slist_find (class_inits, cmethod->klass))) {
+						mono_emit_abs_call (cfg, MONO_PATCH_INFO_CLASS_INIT, cmethod->klass, helper_sig_class_init_trampoline, NULL);
 						if (cfg->verbose_level > 2)
 							printf ("class %s.%s needs init call for ctor\n", cmethod->klass->name_space, cmethod->klass->name);
-						class_inits = g_slist_prepend (class_inits, vtable);
+						class_inits = g_slist_prepend (class_inits, cmethod->klass);
 					}
 
 					alloc = handle_alloc (cfg, cmethod->klass, FALSE, 0);
@@ -10100,16 +10111,19 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				EMIT_NEW_FIELDCONST (cfg, iargs [1], field);
 				ins = mono_emit_jit_icall (cfg, mono_class_static_field_address, iargs);
 			} else {
-				MonoVTable *vtable = mono_class_vtable (cfg->domain, klass);
+				MonoVTable *vtable = NULL;
 
+				if (!cfg->compile_aot)
+					vtable = mono_class_vtable (cfg->domain, klass);
 				CHECK_TYPELOAD (klass);
+
 				if (!addr) {
-					if (mini_field_access_needs_cctor_run (cfg, method, vtable)) {
-						if (!(g_slist_find (class_inits, vtable))) {
-							mono_emit_abs_call (cfg, MONO_PATCH_INFO_CLASS_INIT, vtable->klass, helper_sig_class_init_trampoline, NULL);
+					if (mini_field_access_needs_cctor_run (cfg, method, klass, vtable)) {
+						if (!(g_slist_find (class_inits, klass))) {
+							mono_emit_abs_call (cfg, MONO_PATCH_INFO_CLASS_INIT, klass, helper_sig_class_init_trampoline, NULL);
 							if (cfg->verbose_level > 2)
 								printf ("class %s.%s needs init call for %s\n", klass->name_space, klass->name, mono_field_get_name (field));
-							class_inits = g_slist_prepend (class_inits, vtable);
+							class_inits = g_slist_prepend (class_inits, klass);
 						}
 					} else {
 						if (cfg->run_cctors) {
@@ -10117,6 +10131,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 							/* This makes so that inline cannot trigger */
 							/* .cctors: too many apps depend on them */
 							/* running with a specific order... */
+							g_assert (vtable);
 							if (! vtable->initialized)
 								INLINE_FAILURE ("class init");
 							ex = mono_runtime_class_init_full (vtable, FALSE);
@@ -10126,12 +10141,13 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 							}
 						}
 					}
-					addr = (char*)mono_vtable_get_static_field_data (vtable) + field->offset;
-
 					if (cfg->compile_aot)
 						EMIT_NEW_SFLDACONST (cfg, ins, field);
-					else
+					else {
+						g_assert (vtable);
+						addr = (char*)mono_vtable_get_static_field_data (vtable) + field->offset;
 						EMIT_NEW_PCONST (cfg, ins, addr);
+					}
 				} else {
 					MonoInst *iargs [1];
 					EMIT_NEW_ICONST (cfg, iargs [0], GPOINTER_TO_UINT (addr));
@@ -10769,7 +10785,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		case CEE_ENDFINALLY:
 			/* mono_save_seq_point_info () depends on this */
 			if (sp != stack_start)
-				emit_seq_point (cfg, method, ip, FALSE);
+				emit_seq_point (cfg, method, ip, FALSE, FALSE);
 			MONO_INST_NEW (cfg, ins, OP_ENDFINALLY);
 			MONO_ADD_INS (bblock, ins);
 			ip++;

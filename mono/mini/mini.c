@@ -326,9 +326,9 @@ get_method_from_ip (void *ip)
 		else
 			return NULL;
 	}
-	method = mono_method_full_name (ji->method, TRUE);
+	method = mono_method_full_name (jinfo_get_method (ji), TRUE);
 	/* FIXME: unused ? */
-	location = mono_debug_lookup_source_location (ji->method, (guint32)((guint8*)ip - (guint8*)ji->code_start), domain);
+	location = mono_debug_lookup_source_location (jinfo_get_method (ji), (guint32)((guint8*)ip - (guint8*)ji->code_start), domain);
 
 	res = g_strdup_printf (" %s + 0x%x (%p %p) [%p - %s]", method, (int)((char*)ip - (char*)ji->code_start), ji->code_start, (char*)ji->code_start + ji->code_size, domain, domain->friendly_name);
 
@@ -400,8 +400,8 @@ mono_print_method_from_ip (void *ip)
 		fflush (stdout);
 		return;
 	}
-	method = mono_method_full_name (ji->method, TRUE);
-	source = mono_debug_lookup_source_location (ji->method, (guint32)((guint8*)ip - (guint8*)ji->code_start), target_domain);
+	method = mono_method_full_name (jinfo_get_method (ji), TRUE);
+	source = mono_debug_lookup_source_location (jinfo_get_method (ji), (guint32)((guint8*)ip - (guint8*)ji->code_start), target_domain);
 
 	gsctx = mono_jit_info_get_generic_sharing_context (ji);
 	shared_type = "";
@@ -430,6 +430,8 @@ mono_print_method_from_ip (void *ip)
  */
 gboolean mono_method_same_domain (MonoJitInfo *caller, MonoJitInfo *callee)
 {
+	MonoMethod *cmethod;
+
 	if (!caller || !callee)
 		return FALSE;
 
@@ -440,8 +442,9 @@ gboolean mono_method_same_domain (MonoJitInfo *caller, MonoJitInfo *callee)
 	if (caller->domain_neutral && !callee->domain_neutral)
 		return FALSE;
 
-	if ((caller->method->klass == mono_defaults.appdomain_class) &&
-		(strstr (caller->method->name, "InvokeInDomain"))) {
+	cmethod = jinfo_get_method (caller);
+	if ((cmethod->klass == mono_defaults.appdomain_class) &&
+		(strstr (cmethod->name, "InvokeInDomain"))) {
 		 /* The InvokeInDomain methods change the current appdomain */
 		return FALSE;
 	}
@@ -2878,6 +2881,8 @@ mini_get_tls_offset (MonoJitTlsKey key)
 	return offset;
 }
 
+#ifndef DISABLE_JIT
+
 static MonoInst*
 mono_create_tls_get_offset (MonoCompile *cfg, int offset)
 {
@@ -2938,6 +2943,8 @@ mono_get_lmf_intrinsic (MonoCompile* cfg)
 {
 	return mono_create_tls_get (cfg, TLS_KEY_LMF);
 }
+
+#endif /* !DISABLE_JIT */
 
 void
 mono_add_patch_info (MonoCompile *cfg, int ip, MonoJumpInfoType type, gconstpointer target)
@@ -3774,6 +3781,8 @@ mono_save_seq_point_info (MonoCompile *cfg)
 
 		sp->il_offset = ins->inst_imm;
 		sp->native_offset = ins->inst_offset;
+		if (ins->flags & MONO_INST_NONEMPTY_STACK)
+			sp->flags |= MONO_SEQ_POINT_FLAG_NONEMPTY_STACK;
 
 		/* Used below */
 		ins->backend.size = i;
@@ -4129,7 +4138,7 @@ create_jit_info_for_trampoline (MonoMethod *wrapper, MonoTrampInfo *info)
 	}
 
 	jinfo = mono_domain_alloc0 (domain, MONO_SIZEOF_JIT_INFO);
-	jinfo->method = wrapper;
+	jinfo->d.method = wrapper;
 	jinfo->code_start = info->code;
 	jinfo->code_size = info->code_size;
 	jinfo->used_regs = mono_cache_unwind_info (uw_info, info_len);
@@ -4209,7 +4218,7 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 				generic_info_size + holes_size + arch_eh_info_size + cas_size);
 	}
 
-	jinfo->method = cfg->method_to_register;
+	jinfo->d.method = cfg->method_to_register;
 	jinfo->code_start = cfg->native_code;
 	jinfo->code_size = cfg->code_len;
 	jinfo->used_regs = cfg->used_int_regs;
@@ -5624,7 +5633,7 @@ void
 mono_emit_jit_map (MonoJitInfo *jinfo)
 {
 	if (perf_map_file) {
-		char *name = mono_method_full_name (jinfo->method, TRUE);
+		char *name = mono_method_full_name (jinfo_get_method (jinfo), TRUE);
 		mono_emit_jit_tramp (jinfo->code_start, jinfo->code_size, name);
 		g_free (name);
 	}
@@ -5893,7 +5902,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 	}
 	
 	if (code == NULL) {
-		mono_internal_hash_table_insert (&target_domain->jit_code_hash, cfg->jit_info->method, cfg->jit_info);
+		mono_internal_hash_table_insert (&target_domain->jit_code_hash, cfg->jit_info->d.method, cfg->jit_info);
 		mono_domain_jit_code_hash_unlock (target_domain);
 		code = cfg->native_code;
 

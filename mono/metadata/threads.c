@@ -2533,6 +2533,13 @@ ves_icall_System_Threading_Thread_VolatileRead8 (void *ptr)
 #if SIZEOF_VOID_P == 8
 	return *((volatile gint64 *) (ptr));
 #else
+	if ((size_t)ptr & 0x7) {
+		gint64 value;
+		mono_interlocked_lock ();
+		value = *(gint64 *)ptr;
+		mono_interlocked_unlock ();
+		return value;
+	}
 	return InterlockedCompareExchange64 (ptr, 0, 0); /*Must ensure atomicity of the operation. */
 #endif
 }
@@ -3247,7 +3254,7 @@ print_stack_frame_to_string (MonoStackFrameInfo *frame, MonoContext *ctx, gpoint
 	GString *p = (GString*)data;
 	MonoMethod *method = NULL;
 	if (frame->ji)
-		method = frame->ji->method;
+		method = mono_jit_info_get_method (frame->ji);
 
 	if (method) {
 		gchar *location = mono_debug_print_stack_frame (method, frame->native_offset, frame->domain);
@@ -4649,7 +4656,7 @@ abort_thread_internal (MonoInternalThread *thread, gboolean can_raise_exception,
 	InterlockedIncrement (&thread_interruption_requested);
 
 	ji = mono_thread_info_get_last_managed (info);
-	protected_wrapper = ji && mono_threads_is_critical_method (ji->method);
+	protected_wrapper = ji && mono_threads_is_critical_method (mono_jit_info_get_method (ji));
 	running_managed = mono_jit_info_match (ji, MONO_CONTEXT_GET_IP (&info->suspend_state.ctx));
 
 	if (!protected_wrapper && running_managed) {
@@ -4718,7 +4725,7 @@ suspend_thread_internal (MonoInternalThread *thread, gboolean interrupt)
 		}
 
 		ji = mono_thread_info_get_last_managed (info);
-		protected_wrapper = ji && mono_threads_is_critical_method (ji->method);
+		protected_wrapper = ji && mono_threads_is_critical_method (mono_jit_info_get_method (ji));
 		running_managed = mono_jit_info_match (ji, MONO_CONTEXT_GET_IP (&info->suspend_state.ctx));
 
 		if (running_managed && !protected_wrapper) {

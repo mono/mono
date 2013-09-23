@@ -27,6 +27,7 @@ using System;
 using System.Threading;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using NUnit.Framework;
 
@@ -191,6 +192,60 @@ namespace MonoTests.System.Collections.Concurrent
 			bool success = queue.TryTake (out o, 500);
 			Assert.IsNull (o);
 			Assert.IsFalse (success);
+		}
+
+		[Test]
+		public void TakeAnyFromSecondCollection ()
+		{
+			var a = new BlockingCollection<string> ();
+			var b = new BlockingCollection<string> ();
+			var arr = new [] { a, b };
+			string res = null;
+
+			Task<int> t = Task.Run (() => BlockingCollection<string>.TakeFromAny (arr, out res));
+			a.Add ("foo");
+			Assert.AreEqual (0, t.Result, "#1");
+			Assert.AreEqual ("foo", res, "#2");
+
+			t = Task.Run (() => BlockingCollection<string>.TakeFromAny (arr, out res));
+			b.Add ("bar");
+			Assert.AreEqual (1, t.Result, "#3");
+			Assert.AreEqual ("bar", res, "#4");
+		}
+
+		[Test]
+		public void TakeAnyCancellable ()
+		{
+			var a = new BlockingCollection<string> ();
+			var b = new BlockingCollection<string> ();
+			var arr = new [] { a, b };
+			var cts = new CancellationTokenSource ();
+			string res = null;
+
+			Task<int> t = Task.Run (() => BlockingCollection<string>.TakeFromAny (arr, out res, cts.Token));
+			Thread.Sleep (100);
+			a.Add ("foo");
+			Assert.AreEqual (0, t.Result, "#1");
+			Assert.AreEqual ("foo", res, "#2");
+
+			t = Task.Run (() => BlockingCollection<string>.TakeFromAny (arr, out res, cts.Token));
+			Thread.Sleep (100);
+			b.Add ("bar");
+			Assert.AreEqual (1, t.Result, "#3");
+			Assert.AreEqual ("bar", res, "#4");
+
+			t = Task.Run (() => {
+				try {
+					return BlockingCollection<string>.TakeFromAny (arr, out res, cts.Token);
+				} catch (OperationCanceledException WE_GOT_CANCELED) {
+					res = "canceled";
+					return -10;
+				}
+			});
+
+			cts.Cancel ();
+			Assert.AreEqual (-10, t.Result, "#5");
+			Assert.AreEqual ("canceled", res, "#6");
 		}
 	}
 }

@@ -4210,7 +4210,11 @@ namespace Mono.CSharp {
  			if (case_default == null)
 				ec.CurrentBranching.CreateSibling (null, FlowBranching.SiblingType.SwitchSection);
 
-			ec.EndFlowBranching ();
+			if (ec.IsUnreachable)
+				ec.KillFlowBranching ();
+			else
+				ec.EndFlowBranching ();
+
 			ec.Switch = old_switch;
 
 			//
@@ -4361,7 +4365,9 @@ namespace Mono.CSharp {
 
 				if (!unreachable_reported) {
 					unreachable_reported = true;
-					bc.Report.Warning (162, 2, s.loc, "Unreachable code detected");
+					if (!bc.IsUnreachable) {
+						bc.Report.Warning (162, 2, s.loc, "Unreachable code detected");
+					}
 				}
 
 				block.Statements[i] = new EmptyStatement (s.loc);

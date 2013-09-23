@@ -133,7 +133,7 @@
 #endif
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION 93
+#define MONO_AOT_FILE_VERSION 95
 
 //TODO: This is x86/amd64 specific.
 #define mono_simd_shuffle_mask(a,b,c,d) ((a) | ((b) << 2) | ((c) << 4) | ((d) << 6))
@@ -340,8 +340,10 @@ typedef struct {
  */
 typedef MonoStackFrameInfo StackFrameInfo;
 
+#define MONO_SEQ_POINT_FLAG_NONEMPTY_STACK 1
+
 typedef struct {
-	int il_offset, native_offset;
+	int il_offset, native_offset, flags;
 	/* Indexes of successor sequence points */
 	int *next;
 	/* Number of entries in next */
@@ -868,6 +870,7 @@ enum {
 	MONO_INST_TAILCALL   = 4,
 	MONO_INST_VOLATILE   = 4,
 	MONO_INST_NOTYPECHECK    = 4,
+	MONO_INST_NONEMPTY_STACK = 4, /* in SEQ_POINT */
 	MONO_INST_UNALIGNED  = 8,
     MONO_INST_CFOLD_TAKEN = 8, /* On branches */
     MONO_INST_CFOLD_NOT_TAKEN = 16, /* On branches */
@@ -2040,6 +2043,12 @@ void mono_nacl_gc(void);
 #else
 #define NACL_SIZE(a, b) (a)
 #endif
+
+static inline MonoMethod*
+jinfo_get_method (MonoJitInfo *ji)
+{
+	return mono_jit_info_get_method (ji);
+}
 
 /* AOT */
 void      mono_aot_init                     (void) MONO_INTERNAL;

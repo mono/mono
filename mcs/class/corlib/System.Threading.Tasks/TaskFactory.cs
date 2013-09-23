@@ -305,7 +305,7 @@ namespace System.Threading.Tasks
 		{
 			CheckContinueArguments (tasks, continuationFunction, continuationOptions, scheduler);
 
-			var cont = Task.WhenAnyCore (tasks).ContinueWith<TResult> (TaskActionInvoker.Create (continuationFunction, tasks), cancellationToken, continuationOptions, scheduler);
+			var cont = Task.WhenAnyCore (tasks).ContinueWith<TResult> (TaskActionInvoker.CreateSelected (continuationFunction), cancellationToken, continuationOptions, scheduler);
 
 			return cont;
 		}

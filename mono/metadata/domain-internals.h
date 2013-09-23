@@ -190,7 +190,11 @@ struct _MonoJitInfo {
 	   next_jit_code_hash) must be in the same order and at the
 	   same offset as in RuntimeMethod, because of the jit_code_hash
 	   internal hash table in MonoDomain. */
-	MonoMethod *method;
+	union {
+		MonoMethod *method;
+		MonoImage *image;
+		gpointer aot_info;
+	} d;
 	struct _MonoJitInfo *next_jit_code_hash;
 	gpointer    code_start;
 	/* This might contain an id for the unwind info instead of a register mask */
@@ -207,6 +211,8 @@ struct _MonoJitInfo {
 	gboolean    from_llvm:1;
 	gboolean    dbg_hidden_inited:1;
 	gboolean    dbg_hidden:1;
+	/* Whenever this jit info was loaded in async context */
+	gboolean    async:1;
 
 	/* FIXME: Embed this after the structure later*/
 	gpointer    gc_info; /* Currently only used by SGen */
@@ -225,6 +231,17 @@ struct _MonoAppContext {
 	gint32 context_id;
 	gpointer *static_data;
 };
+
+/* Lock-free allocator */
+typedef struct {
+	guint8 *mem;
+	gpointer prev;
+	int size, pos;
+} LockFreeMempoolChunk;
+
+typedef struct {
+	LockFreeMempoolChunk *current, *chunks;
+} LockFreeMempool;
 
 /*
  * We have two unloading states because the domain
@@ -315,10 +332,17 @@ struct _MonoDomain {
 	int		    num_jit_info_tables;
 	MonoJitInfoTable * 
 	  volatile          jit_info_table;
+	/*
+	 * Contains information about AOT loaded code.
+	 * Only used in the root domain.
+	 */
+	MonoJitInfoTable *
+	  volatile          aot_modules;
 	GSList		   *jit_info_free_queue;
 	/* Used when loading assemblies */
 	gchar **search_path;
 	gchar *private_bin_path;
+	LockFreeMempool *lock_free_mp;
 	
 	/* Used by remoting proxies */
 	MonoMethod         *create_proxy_for_type_method;
@@ -458,6 +482,9 @@ mono_domain_alloc  (MonoDomain *domain, guint size) MONO_INTERNAL;
 
 gpointer
 mono_domain_alloc0 (MonoDomain *domain, guint size) MONO_INTERNAL;
+
+gpointer
+mono_domain_alloc0_lock_free (MonoDomain *domain, guint size) MONO_INTERNAL;
 
 void*
 mono_domain_code_reserve (MonoDomain *domain, int size) MONO_LLVM_INTERNAL;

@@ -76,10 +76,10 @@ and reduce the number of casts drastically.
 #endif
 
 enum {
-	STATE_STARTING			= 0x01,
-	STATE_RUNNING			= 0x02,
-	STATE_SHUTTING_DOWN		= 0x03,
-	STATE_DEAD				= 0x04,
+	STATE_STARTING			= 0x00,
+	STATE_RUNNING			= 0x01,
+	STATE_SHUTTING_DOWN		= 0x02,
+	STATE_DEAD				= 0x03,
 	RUN_STATE_MASK			= 0x0F,
 
 	STATE_SUSPENDED			= 0x10,
@@ -87,8 +87,8 @@ enum {
 	SUSPEND_STATE_MASK		= 0xF0,
 };
 
-#define mono_thread_info_run_state(info) ((info)->thread_state & RUN_STATE_MASK)
-#define mono_thread_info_suspend_state(info) ((info)->thread_state & SUSPEND_STATE_MASK)
+#define mono_thread_info_run_state(info) (((MonoThreadInfo*)info)->thread_state & RUN_STATE_MASK)
+#define mono_thread_info_suspend_state(info) (((MonoThreadInfo*)info)->thread_state & SUSPEND_STATE_MASK)
 
 typedef struct {
 	MonoLinkedListSetNode node;
@@ -126,6 +126,12 @@ typedef struct {
 	and is ended when you call either mono_thread_info_resume or mono_thread_info_finish_suspend.
 	*/
 	gboolean inside_critical_region;
+
+	/*
+	 * If TRUE, the thread is in async context. Code can use this information to avoid async-unsafe
+	 * operations like locking without having to pass an 'async' parameter around.
+	 */
+	gboolean is_async_context;
 } MonoThreadInfo;
 
 typedef struct {
@@ -225,13 +231,16 @@ void
 mono_thread_info_suspend_unlock (void) MONO_INTERNAL;
 
 void
-mono_threads_unregister_current_thread (THREAD_INFO_TYPE *info) MONO_INTERNAL;
-
-void
 mono_thread_info_disable_new_interrupt (gboolean disable) MONO_INTERNAL;
 
 void
 mono_thread_info_abort_socket_syscall_for_close (MonoNativeThreadId tid) MONO_INTERNAL;
+
+void
+mono_thread_info_set_is_async_context (gboolean async_context) MONO_INTERNAL;
+
+gboolean
+mono_thread_info_is_async_context (void) MONO_INTERNAL;
 
 #if !defined(HOST_WIN32)
 
