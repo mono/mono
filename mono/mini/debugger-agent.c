@@ -2355,7 +2355,7 @@ suspend_current (void)
 
 	DEBUG(1, fprintf (log_file, "[%p] Suspended.\n", (gpointer)GetCurrentThreadId ()));
 
-	while (suspend_count - tls->resume_count > 0) {
+	while (suspend_count - (int)tls->resume_count > 0) {
 #ifdef HOST_WIN32
 		/* FIXME: https://bugzilla.novell.com/show_bug.cgi?id=587470 */
 		if (WAIT_TIMEOUT == WaitForSingleObject(suspend_cond, 0))
