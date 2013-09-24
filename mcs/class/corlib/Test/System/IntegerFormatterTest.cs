@@ -33,7 +33,7 @@ public class IntegerFormatterTest
 		// Make the test Culture insensitive
 		NumberFormatInfo nfi = new NumberFormatInfo ();
 		nfi.CurrencySymbol = "$";
-/*
+
 		StringReader sr = new StringReader (tutti);
 
 		string inputLine;
@@ -45,7 +45,6 @@ public class IntegerFormatterTest
 		}
 
 		sr.Close ();
-*/
 	}
 
 	private void ProcessLine (string testLine, NumberFormatInfo nfi)
