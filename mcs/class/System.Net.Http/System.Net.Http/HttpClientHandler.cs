@@ -247,7 +247,8 @@ namespace System.Net.Http
 			wr.PreAuthenticate = preAuthenticate;
 
 			if (useCookies) {
-				wr.CookieContainer = cookieContainer;
+				// It cannot be null or allowAutoRedirect won't work
+				wr.CookieContainer = CookieContainer;
 			}
 
 			if (useDefaultCredentials) {
