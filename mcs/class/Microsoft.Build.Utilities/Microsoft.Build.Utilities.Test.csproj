@@ -51,5 +51,6 @@
     <Compile Include="Test\Microsoft.Build.Utilities\LoggerTest.cs" />
     <Compile Include="Test\Microsoft.Build.Utilities\TaskItemTest.cs" />
     <Compile Include="Test\Microsoft.Build.Utilities\TaskLoggingHelperTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Utilities\ToolTaskTest.cs" />
   </ItemGroup>
 </Project>
