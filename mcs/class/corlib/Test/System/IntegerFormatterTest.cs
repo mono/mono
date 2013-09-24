@@ -33,7 +33,7 @@ public class IntegerFormatterTest
 		// Make the test Culture insensitive
 		NumberFormatInfo nfi = new NumberFormatInfo ();
 		nfi.CurrencySymbol = "$";
-
+/*
 		StringReader sr = new StringReader (tutti);
 
 		string inputLine;
@@ -45,6 +45,7 @@ public class IntegerFormatterTest
 		}
 
 		sr.Close ();
+*/
 	}
 
 	private void ProcessLine (string testLine, NumberFormatInfo nfi)
@@ -123,7 +124,10 @@ public class IntegerFormatterTest
 
 	}
 
-	private static string tutti = "Int32\n" +
+	private static string tutti = tutti_1 + tutti_2;
+
+	const string tutti_1 =
+	"Int32\n" +
 "(-2147483648) (C) (($2,147,483,648.00))\n" +
 "(-2147483648) (C0) (($2,147,483,648))\n" +
 "(-2147483648) (C1) (($2,147,483,648.0))\n" +
@@ -852,7 +856,9 @@ public class IntegerFormatterTest
 "(9223372036854775807) (X8) (7FFFFFFFFFFFFFFF)\n" +
 "(9223372036854775807) (X9) (7FFFFFFFFFFFFFFF)\n" +
 "(9223372036854775807) (X10) (7FFFFFFFFFFFFFFF)\n" +
-"(9223372036854775807) (X99) (000000000000000000000000000000000000000000000000000000000000000000000000000000000007FFFFFFFFFFFFFFF)\n" +
+"(9223372036854775807) (X99) (000000000000000000000000000000000000000000000000000000000000000000000000000000000007FFFFFFFFFFFFFFF)\n";
+
+const string tutti_2 =
 "(0) (C) ($0.00)\n" +
 "(0) (C0) ($0)\n" +
 "(0) (C1) ($0.0)\n" +
@@ -2000,6 +2006,5 @@ public class IntegerFormatterTest
 "(100) (X10) (0000000064)\n" +
 "(100) (X99) (000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000064)\n";
 }
-
 }
 
