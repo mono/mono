@@ -464,8 +464,7 @@ namespace Microsoft.Build.Utilities
 			}
 		}
 
-		// Snatched from our codedom code, with some changes to make it compatible with csc
-		// (the line+column group is optional is csc)
+		// Keep in sync with mcs/class/System/Microsoft.CSharp/CSharpCodeCompiler.cs
 		const string ErrorRegexPattern = @"
 			^
 			(\s*(?<file>[^\(]+)                         # filename (optional)
