@@ -6452,7 +6452,7 @@ namespace Mono.CSharp {
 						best_candidate.GetSignatureForError ());
 					return false;
 				}
-			} else if (!best_candidate.Get.IsAccessible (rc)) {
+			} else if (!best_candidate.Get.IsAccessible (rc) || !best_candidate.Get.DeclaringType.IsAccessible (rc)) {
 				if (best_candidate.HasDifferentAccessibility) {
 					rc.Report.SymbolRelatedToPreviousError (best_candidate.Get);
 					rc.Report.Error (271, loc, "The property or indexer `{0}' cannot be used in this context because the get accessor is inaccessible",
@@ -6479,7 +6479,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (!best_candidate.Set.IsAccessible (rc)) {
+			if (!best_candidate.Set.IsAccessible (rc) || !best_candidate.Set.DeclaringType.IsAccessible (rc)) {
 				if (best_candidate.HasDifferentAccessibility) {
 					rc.Report.SymbolRelatedToPreviousError (best_candidate.Set);
 					rc.Report.Error (272, loc, "The property or indexer `{0}' cannot be used in this context because the set accessor is inaccessible",

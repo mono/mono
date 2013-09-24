@@ -3063,10 +3063,21 @@
     </type>
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
-        <size>143</size>
+        <size>400</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+    </type>
+    <type name="A+N">
+      <method name="Int32 get_Property()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_Property(Int32)" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="System.String get_Item(Int32)" attrs="2177">
+        <size>14</size>
       </method>
     </type>
   </test>
