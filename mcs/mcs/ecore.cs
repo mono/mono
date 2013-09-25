@@ -5341,7 +5341,7 @@ namespace Mono.CSharp {
 								"The best overloaded method match for `{0}' does not contain a parameter named `{1}'",
 								TypeManager.CSharpSignature (member), na.Name);
 						}
-					} else if (args[name_index] != a) {
+					} else if (args[name_index] != a && args[name_index] != null) {
 						if (IsDelegateInvoke)
 							ec.Report.SymbolRelatedToPreviousError (DelegateType);
 						else
