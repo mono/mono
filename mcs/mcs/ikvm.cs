@@ -241,7 +241,7 @@ namespace Mono.CSharp
 			: base (compiler)
 		{
 			this.importer = importer;
-			domain = new Universe (UniverseOptions.MetadataOnly | UniverseOptions.ResolveMissingMembers);
+			domain = new Universe (UniverseOptions.MetadataOnly | UniverseOptions.ResolveMissingMembers | UniverseOptions.DisableFusion);
 			domain.AssemblyResolve += AssemblyReferenceResolver;
 			loaded_names = new List<Tuple<AssemblyName, string, Assembly>> ();
 
@@ -307,7 +307,7 @@ namespace Mono.CSharp
 
 			foreach (var assembly in domain.GetAssemblies ()) {
 				AssemblyComparisonResult result;
-				if (!Fusion.CompareAssemblyIdentityPure (refname, false, assembly.FullName, false, out result)) {
+				if (!domain.CompareAssemblyIdentity (refname, false, assembly.FullName, false, out result)) {
 					if ((result == AssemblyComparisonResult.NonEquivalentVersion || result == AssemblyComparisonResult.NonEquivalentPartialVersion) &&
 						(version_mismatch == null || version_mismatch.GetName ().Version < assembly.GetName ().Version) &&
 						!is_fx_assembly) {
