@@ -5297,6 +5297,9 @@ namespace Mono.CSharp {
 
 			for (; a_idx < arg_count; a_idx++, ++a_pos) {
 				a = args[a_idx];
+				if (a == null)
+					continue;
+
 				if (p_mod != Parameter.Modifier.PARAMS) {
 					p_mod = pd.FixedParameters[a_idx].ModFlags;
 					pt = ptypes[a_idx];
