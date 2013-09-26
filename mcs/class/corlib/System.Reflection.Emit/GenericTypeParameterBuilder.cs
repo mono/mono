@@ -42,7 +42,12 @@ namespace System.Reflection.Emit
 {
 	[ComVisible (true)]
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed class GenericTypeParameterBuilder : Type
+	public sealed class GenericTypeParameterBuilder : 
+#if NET_4_5
+		TypeInfo
+#else
+		Type
+#endif	
 	{
 	#region Sync with reflection.h
 		private TypeBuilder tbuilder;

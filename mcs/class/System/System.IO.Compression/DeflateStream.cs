@@ -98,6 +98,8 @@ namespace System.IO.Compression
 
 		protected override void Dispose (bool disposing)
 		{
+			native.Dispose (disposing);
+
 			if (disposing && !disposed) {
 				disposed = true;
 
@@ -108,8 +110,6 @@ namespace System.IO.Compression
 					base_stream = null;
 				}
 			}
-
-			native.Dispose (disposing);
 
 			base.Dispose (disposing);
 		}

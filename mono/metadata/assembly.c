@@ -844,6 +844,11 @@ mono_assembly_addref (MonoAssembly *assembly)
 	InterlockedIncrement (&assembly->ref_count);
 }
 
+/*
+ * CAUTION: This table must be kept in sync with
+ *          ivkm/reflect/Fusion.cs
+ */
+
 #define SILVERLIGHT_KEY "7cec85d7bea7798e"
 #define WINFX_KEY "31bf3856ad364e35"
 #define ECMA_KEY "b77a5c561934e089"
@@ -862,7 +867,7 @@ static KeyRemapEntry key_remap_table[] = {
 	{ "System.ComponentModel.DataAnnotations", "ddd0da4d3e678217", WINFX_KEY },
 	{ "System.Core", SILVERLIGHT_KEY, ECMA_KEY },
 	// FIXME: MS uses MSFINAL_KEY for .NET 4.5
-	{ "System.Net", SILVERLIGHT_KEY, ECMA_KEY },
+	{ "System.Net", SILVERLIGHT_KEY, MSFINAL_KEY },
 	{ "System.Numerics", WINFX_KEY, ECMA_KEY },
 	{ "System.Runtime.Serialization", SILVERLIGHT_KEY, ECMA_KEY },
 	{ "System.ServiceModel", WINFX_KEY, ECMA_KEY },
@@ -870,7 +875,7 @@ static KeyRemapEntry key_remap_table[] = {
 	{ "System.Windows", SILVERLIGHT_KEY, MSFINAL_KEY },
 	{ "System.Xml", SILVERLIGHT_KEY, ECMA_KEY },
 	{ "System.Xml.Linq", WINFX_KEY, ECMA_KEY },
-	{ "System.Xml.Serialization", WINFX_KEY, MSFINAL_KEY }
+	{ "System.Xml.Serialization", WINFX_KEY, ECMA_KEY }
 };
 
 static void

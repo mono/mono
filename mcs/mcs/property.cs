@@ -35,7 +35,7 @@ namespace Mono.CSharp
 	// This includes properties, indexers, and events
 	public abstract class PropertyBasedMember : InterfaceMemberBase
 	{
-		public PropertyBasedMember (TypeDefinition parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, MemberName name, Attributes attrs)
+		protected PropertyBasedMember (TypeDefinition parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, MemberName name, Attributes attrs)
 			: base (parent, type, mod, allowed_mod, name, attrs)
 		{
 		}

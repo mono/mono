@@ -1994,19 +1994,18 @@ ves_icall_System_Threading_Interlocked_CompareExchange_Double (gdouble *location
 gint64 
 ves_icall_System_Threading_Interlocked_CompareExchange_Long (gint64 *location, gint64 value, gint64 comparand)
 {
-#if SIZEOF_VOID_P == 8
-	return (gint64)InterlockedCompareExchangePointer((gpointer *) location, (gpointer)value, (gpointer)comparand);
-#else
-	gint64 old;
-
-	mono_interlocked_lock ();
-	old = *location;
-	if (old == comparand)
-		*location = value;
-	mono_interlocked_unlock ();
-	
-	return old;
+#if SIZEOF_VOID_P == 4
+	if ((size_t)location & 0x7) {
+		gint64 old;
+		mono_interlocked_lock ();
+		old = *location;
+		if (old == comparand)
+			*location = value;
+		mono_interlocked_unlock ();
+		return old;
+	}
 #endif
+	return InterlockedCompareExchange64 (location, value, comparand);
 }
 
 MonoObject*
@@ -2531,7 +2530,18 @@ ves_icall_System_Threading_Thread_VolatileRead4 (void *ptr)
 gint64
 ves_icall_System_Threading_Thread_VolatileRead8 (void *ptr)
 {
+#if SIZEOF_VOID_P == 8
 	return *((volatile gint64 *) (ptr));
+#else
+	if ((size_t)ptr & 0x7) {
+		gint64 value;
+		mono_interlocked_lock ();
+		value = *(gint64 *)ptr;
+		mono_interlocked_unlock ();
+		return value;
+	}
+	return InterlockedCompareExchange64 (ptr, 0, 0); /*Must ensure atomicity of the operation. */
+#endif
 }
 
 void *
@@ -3244,7 +3254,7 @@ print_stack_frame_to_string (MonoStackFrameInfo *frame, MonoContext *ctx, gpoint
 	GString *p = (GString*)data;
 	MonoMethod *method = NULL;
 	if (frame->ji)
-		method = frame->ji->method;
+		method = mono_jit_info_get_method (frame->ji);
 
 	if (method) {
 		gchar *location = mono_debug_print_stack_frame (method, frame->native_offset, frame->domain);
@@ -3722,12 +3732,22 @@ mono_free_static_data (gpointer* static_data, gboolean threadlocal)
 {
 	int i;
 	for (i = 1; i < NUM_STATIC_DATA_IDX; ++i) {
-		if (!static_data [i])
+		gpointer p = static_data [i];
+		if (!p)
 			continue;
+		/*
+		 * At this point, the static data pointer array is still registered with the
+		 * GC, so must ensure that mark_tls_slots() will not encounter any invalid
+		 * data.  Freeing the individual arrays without first nulling their slots
+		 * would make it possible for mark_tls_slots() to encounter a pointer to
+		 * such an already freed array.  See bug #13813.
+		 */
+		static_data [i] = NULL;
+		mono_memory_write_barrier ();
 		if (mono_gc_user_markers_supported () && threadlocal)
-			g_free (static_data [i]);
+			g_free (p);
 		else
-			mono_gc_free_fixed (static_data [i]);
+			mono_gc_free_fixed (p);
 	}
 	mono_gc_free_fixed (static_data);
 }
@@ -4636,7 +4656,7 @@ abort_thread_internal (MonoInternalThread *thread, gboolean can_raise_exception,
 	InterlockedIncrement (&thread_interruption_requested);
 
 	ji = mono_thread_info_get_last_managed (info);
-	protected_wrapper = ji && mono_threads_is_critical_method (ji->method);
+	protected_wrapper = ji && mono_threads_is_critical_method (mono_jit_info_get_method (ji));
 	running_managed = mono_jit_info_match (ji, MONO_CONTEXT_GET_IP (&info->suspend_state.ctx));
 
 	if (!protected_wrapper && running_managed) {
@@ -4705,7 +4725,7 @@ suspend_thread_internal (MonoInternalThread *thread, gboolean interrupt)
 		}
 
 		ji = mono_thread_info_get_last_managed (info);
-		protected_wrapper = ji && mono_threads_is_critical_method (ji->method);
+		protected_wrapper = ji && mono_threads_is_critical_method (mono_jit_info_get_method (ji));
 		running_managed = mono_jit_info_match (ji, MONO_CONTEXT_GET_IP (&info->suspend_state.ctx));
 
 		if (running_managed && !protected_wrapper) {

@@ -1699,6 +1699,30 @@ namespace MonoTests.System.Web.Routing
 			Assert.IsNull(vp, "#3");
 		}
 
+		[Test (Description="Xamarin Bug #13708")]
+		public void GetVirtualPath25()
+		{
+			var r = new MyRoute("{year}/{month}/{slug}", new MyRouteHandler())
+			{
+				Defaults = new RouteValueDictionary(new { controller = "Blog", action = "View" }),
+				Constraints = new RouteValueDictionary(new { year = @"\d{4}", month = @"\d{2}" }),
+			};
+			var hc = new HttpContextStub2("~/", String.Empty);
+			var values = new RouteValueDictionary()
+			{
+				{ "area", string.Empty },
+				{ "controller", "Blog" },
+				{ "action", "View" },
+				{ "year", 2013 }, // Year as an int, not a string
+				{ "month", "08" },
+				{ "slug", "hello-world" },
+			};
+			var vp = r.GetVirtualPath(new RequestContext(hc, new RouteData()), values);
+
+			Assert.IsNotNull(vp, "#1");
+			Assert.AreEqual("2013/08/hello-world", vp.VirtualPath, "#2");
+		}
+
 		// Bug #500739
 		[Test]
 		public void RouteGetRequiredStringWithDefaults ()

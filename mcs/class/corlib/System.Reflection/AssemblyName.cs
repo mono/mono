@@ -323,16 +323,16 @@ namespace System.Reflection {
 			return token;
 		}
 
-		[MonoTODO]
 		public static bool ReferenceMatchesDefinition (AssemblyName reference, AssemblyName definition)
 		{
 			if (reference == null)
 				throw new ArgumentNullException ("reference");
 			if (definition == null)
 				throw new ArgumentNullException ("definition");
-			if (reference.Name != definition.Name)
-				return false;
-			throw new NotImplementedException ();
+			
+			// we only compare the simple assembly name to be consistent with MS .NET,
+			// which is the result of a bug in their implementation (see https://connect.microsoft.com/VisualStudio/feedback/details/752902)
+			return string.Equals (reference.Name, definition.Name, StringComparison.OrdinalIgnoreCase);
 		}
 
 		public void SetPublicKey (byte[] publicKey) 

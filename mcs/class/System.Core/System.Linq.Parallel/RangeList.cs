@@ -62,10 +62,10 @@ namespace System.Linq.Parallel
 
 		public int this[int index] {
 			get {
-				if (start + index <= count)
+				if (index <= count)
 					return start + index;
-				else
-					return -1;
+
+				return -1;
 			}
 			set {
 				throw new NotImplementedException();

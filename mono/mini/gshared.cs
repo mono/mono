@@ -215,7 +215,12 @@ public class Tests
 	public static int test_0_unbox_any_enum () {
 		IFaceUnbox iface = new ClassUnbox ();
 		AnEnum res = iface.Unbox<AnEnum, int> (AnEnum.One, 0, 1);
-		return res == AnEnum.Two ? 0 : 1;
+		if (res != AnEnum.Two)
+			return 1;
+		res = iface.Unbox<AnEnum, int> (AnEnum.One, 0, AnEnum.Two);
+		if (res != AnEnum.Two)
+			return 2;
+		return 0;
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -968,6 +973,26 @@ public class Tests
 		return 0;
 	}
 
+	interface IGetType {
+		Type gettype<T, T2>(T t, T2 t2);
+	}
+
+	public class CGetType : IGetType {
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public Type gettype<T, T2>(T t, T2 t2) {
+			return t.GetType ();
+		}
+	}
+
+	public static int test_0_constrained_gettype () {
+		IGetType c = new CGetType ();
+		if (c.gettype<int, int> (1, 1) != typeof (int))
+			return 1;
+		if (c.gettype<string, int> ("A", 1) != typeof (string))
+			return 2;
+		return 0;
+	}
+
 	struct Pair<T1, T2> {
 		public T1 First;
 		public T2 Second;
@@ -1227,6 +1252,7 @@ public class Tests
 
 	interface IConstrained<T3> {
 		void foo_gsharedvt_arg (T3 s);
+		T3 foo_gsharedvt_ret (T3 s);
 	}
 
 	static object constrained_res;
@@ -1259,12 +1285,18 @@ public class Tests
 		public void foo_gsharedvt_arg (T s) {
 			constrained_res = s;
 		}
+
+		public T foo_gsharedvt_ret (T s) {
+			return s;
+		}
 	}
 
 	interface IFaceConstrained {
 		void constrained_void_iface_call<T, T2>(T t, T2 t2) where T2 : IConstrained;
 		void constrained_void_iface_call_ref_arg<T, T2>(T t, T2 t2) where T2 : IConstrained;
 		void constrained_void_iface_call_gsharedvt_arg<T, T2, T3>(T t, T2 t2, T3 t3) where T2 : IConstrained<T>;
+		T constrained_iface_call_gsharedvt_ret<T, T2, T3>(T t, T2 t2, T3 t3) where T2 : IConstrained<T>;
+		T2 constrained_normal_call<T, T2>(T t, T2 t2) where T2 : VClass;
 	}
 
 	class ClassConstrained : IFaceConstrained {
@@ -1281,6 +1313,23 @@ public class Tests
 		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public void constrained_void_iface_call_gsharedvt_arg<T, T2, T3>(T t, T2 t2, T3 t3) where T2 : IConstrained<T> {
 			t2.foo_gsharedvt_arg (t);
+		}
+
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public T constrained_iface_call_gsharedvt_ret<T, T2, T3>(T t, T2 t2, T3 t3) where T2 : IConstrained<T> {
+			return t2.foo_gsharedvt_ret (t);
+		}
+
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public T2 constrained_normal_call<T, T2>(T t, T2 t2) where T2 : VClass {
+			/* This becomes a constrained call even through 't2' is forced to be a reference type by the constraint */
+			return (T2)t2.foo (5);
+		}
+	}
+
+	class VClass {
+		public virtual VClass foo (int i) {
+			return this;
 		}
 	}
 
@@ -1307,7 +1356,7 @@ public class Tests
 		return 0;
 	}
 
-	public static int test_0_constraine_void_iface_call_gsharedvt_arg () {
+	public static int test_0_constrained_void_iface_call_gsharedvt_arg () {
 		// This tests constrained calls through interfaces with one gsharedvt arg, like IComparable<T>.CompareTo ()
 		IFaceConstrained c = new ClassConstrained ();
 
@@ -1324,6 +1373,30 @@ public class Tests
 			return 2;
 
 		return 0;
+	}
+
+	public static int test_0_constrained_iface_call_gsharedvt_ret () {
+		IFaceConstrained c = new ClassConstrained ();
+
+		var s = new ConsStruct<int> ();
+		int ires = c.constrained_iface_call_gsharedvt_ret<int, ConsStruct<int>, int> (42, s, 55);
+		if (ires != 42)
+			return 1;
+
+		var s2 = new ConsStruct<string> ();
+		string sres = c.constrained_iface_call_gsharedvt_ret<string, ConsStruct<string>, int> ("A", s2, 55);
+		if (sres != "A")
+			return 2;
+
+		return 0;
+	}
+
+	public static int test_0_constrained_normal_call () {
+		IFaceConstrained c = new ClassConstrained ();
+
+		var o = new VClass ();
+		var res = c.constrained_normal_call<int, VClass> (1, o);
+		return res == o ? 0 : 1;
 	}
 
 	public static async Task<T> FooAsync<T> (int i, int j) {

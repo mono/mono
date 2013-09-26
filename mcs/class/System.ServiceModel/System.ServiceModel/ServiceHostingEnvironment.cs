@@ -26,8 +26,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !HAS_ACTIVATION
+
 namespace System.ServiceModel {
 
+#if NET_4_0
+	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblySystemServiceModel_3_0)]
+#endif
 	public static class ServiceHostingEnvironment
 	{
 		internal static bool InAspNet { get; set; }
@@ -39,3 +44,5 @@ namespace System.ServiceModel {
 		}
 	}
 }
+
+#endif

@@ -254,7 +254,8 @@ static gchar *
 _wapi_shm_file (_wapi_shm_t type)
 {
 	static gchar file[_POSIX_PATH_MAX];
-	gchar *name = NULL, *filename, *wapi_dir;
+	gchar *name = NULL, *filename;
+	const gchar *wapi_dir;
 
 	name = _wapi_shm_base_name (type);
 
@@ -262,7 +263,7 @@ _wapi_shm_file (_wapi_shm_t type)
 	 * nfs mounts breaks, then there should be an option to set
 	 * the directory.
 	 */
-	wapi_dir = getenv ("MONO_SHARED_DIR");
+	wapi_dir = g_getenv ("MONO_SHARED_DIR");
 	if (wapi_dir == NULL) {
 		filename = g_build_filename (g_get_home_dir (), ".wapi", name,
 					     NULL);

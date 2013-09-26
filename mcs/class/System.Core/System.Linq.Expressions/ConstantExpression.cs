@@ -51,6 +51,12 @@ namespace System.Linq.Expressions {
 		{
 			this.value = value;
 		}
+		
+		internal static bool IsNull (Expression e)
+		{
+			var c = e as ConstantExpression;
+			return c != null && c.value == null;
+		}
 
 #if !FULL_AOT_RUNTIME
 		internal override void Emit (EmitContext ec)

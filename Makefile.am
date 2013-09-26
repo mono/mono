@@ -1,6 +1,5 @@
 ACLOCAL_AMFLAGS = -I m4
 
-MOONLIGHT_SUBDIRS = $(libgc_dir) eglib/src mono
 MONOTOUCH_SUBDIRS = $(libgc_dir) eglib/src mono
 
 if CROSS_COMPILING
@@ -12,14 +11,10 @@ else
 if ONLY_MONOTOUCH
 SUBDIRS = $(MONOTOUCH_SUBDIRS) runtime
 else
-if ONLY_MOONLIGHT
-SUBDIRS = $(MOONLIGHT_SUBDIRS) runtime
-else
 SUBDIRS = po $(libgc_dir) eglib mono $(ikvm_native_dir) support data runtime scripts man samples msvc $(docs_dir)
 # Keep in sync with SUBDIRS
 ## 'tools' is not normally built
 DIST_SUBDIRS = m4 po libgc eglib mono ikvm-native support data runtime scripts man samples tools msvc docs
-endif
 endif
 endif
 
@@ -92,31 +87,6 @@ mcs-do-compiler-tests:
 bootstrap-world: compiler-tests
 	$(MAKE) install
 
-if MOONLIGHT
-moon-do-build: config.h
-	@list='$(MOONLIGHT_SUBDIRS)'; for subdir in $$list; do \
-	  case "x$$subdir" in \
-		xmono ) target="moon-do-build";; \
-		* ) target="all";; \
-	  esac; \
-	  echo "Making $$target in $$subdir"; \
-	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$target); \
-        done;
-	(cd runtime && $(MAKE) $(AM_MAKEFLAGS) moon-do-build)
-
-moon-do-clean:
-	@list='$(MOONLIGHT_SUBDIRS)'; for subdir in $$list; do \
-	  case "x$$subdir" in \
-		xmono ) target="moon-do-clean";; \
-		* ) target="clean";; \
-	  esac; \
-	  echo "Making $$target in $$subdir"; \
-	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$target); \
-        done;
-	(cd runtime && $(MAKE) $(AM_MAKEFLAGS) moon-do-clean)
-
-endif
-
 if INSTALL_MONOTOUCH
 monotouch-do-build: config.h
 	@list='$(MONOTOUCH_SUBDIRS)'; for subdir in $$list; do \
@@ -184,4 +154,10 @@ package-inputs:
 		 echo "    </project>") >> msvc/scripts/order.xml; \
 	done
 	echo "</root>" >> msvc/scripts/order.xml
+
+# Update llvm version in configure.in to the output of $LLVM_DIR/bin/llvm-config --version
+update-llvm-version:
+	if test "x$$LLVM_DIR" = "x"; then echo "Set the make variable LLVM_DIR to the directory containing the LLVM installation."; exit 1; fi
+	REV=`$(LLVM_DIR)/bin/llvm-config --version` && sed -e "s,expected_llvm_version=.*,expected_llvm_version=\"$$REV\"," < configure.in > tmp && mv tmp configure.in && echo "Version set to $$REV."
+
 

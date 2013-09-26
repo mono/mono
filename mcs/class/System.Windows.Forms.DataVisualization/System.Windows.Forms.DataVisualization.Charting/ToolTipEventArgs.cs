@@ -1,6 +1,7 @@
 ﻿//
 // Authors:
 // Jonathan Pobst (monkey@jpobst.com)
+// Francis Fisher (frankie@terrorise.me.uk)
 //
 // Copyright (C) 2009 Novell, Inc (http://www.novell.com) 
 //
@@ -31,9 +32,18 @@ namespace System.Windows.Forms.DataVisualization.Charting
 	public class ToolTipEventArgs : EventArgs
 	{
 		#region Constructors
-		//public ToolTipEventArgs (int x, int y, string text, HitTestResult result)
-		//{
-		//}
+		public ToolTipEventArgs (int x, int y, string text, HitTestResult result)
+		{
+			X = x;
+			Y = y;
+			Text = text;
+			HitTestResult = result;
+		}
 		#endregion
+
+		public HitTestResult HitTestResult { get; private set;}
+		public string Text { get; set; }
+		public int X { get; private set; }
+		public int Y { get; private set;}
 	}
 }

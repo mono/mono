@@ -66,6 +66,10 @@ NurseryClearPolicy sgen_get_nursery_clear_policy (void) MONO_INTERNAL;
 #define SGEN_TV_ELAPSED(start,end) (int)((end-start) / 10)
 #define SGEN_TV_ELAPSED_MS(start,end) ((SGEN_TV_ELAPSED((start),(end)) + 500) / 1000)
 
+#if !defined(__MACH__) && !MONO_MACH_ARCH_SUPPORTED && defined(HAVE_PTHREAD_KILL)
+#define SGEN_POSIX_STW 1
+#endif
+
 /* eventually share with MonoThread? */
 /*
  * This structure extends the MonoThreadInfo structure.
@@ -78,32 +82,6 @@ struct _SgenThreadInfo {
 	*/
 	int skip;
 	volatile int in_critical_region;
-
-	/*
-	Since threads can be created concurrently during STW, it's possible to reach a stable
-	state where we find that the world is stopped but there are registered threads that have
-	not been suspended.
-
-	Our hope is that those threads are harmlesly blocked in the GC lock trying to finish registration.
-
-	To handle this scenario we set this field on each thread that have joined the current STW phase.
-	The GC should ignore unjoined threads.
-	*/
-	gboolean joined_stw;
-
-	/*
-	This is set to TRUE by STW when it initiates suspension of a thread.
-	It's used so async suspend can catch the case where a thread is in the middle of unregistering
-	and need to cooperatively suspend itself.
-	*/
-	gboolean doing_handshake;
-
-	/*
-	This is set to TRUE when a thread start to dettach.
-	This gives STW the oportunity to ignore a thread that started to
-	unregister.
-	*/
-	gboolean thread_is_dying;
 
 	/*
 	This is set the argument of mono_gc_set_skip_thread.
@@ -122,11 +100,12 @@ struct _SgenThreadInfo {
 	char **tlab_real_end_addr;
 	gpointer runtime_data;
 
-	/* Only used on POSIX platforms */
+#ifdef SGEN_POSIX_STW
+	/* This is -1 until the first suspend. */
 	int signal;
-	/* Ditto */
 	/* FIXME: kill this, we only use signals on systems that have rt-posix, which doesn't have issues with duplicates. */
 	unsigned int stop_count; /* to catch duplicate signals. */
+#endif
 
 	gpointer stopped_ip;	/* only valid if the thread is stopped */
 	MonoDomain *stopped_domain; /* dsto */
@@ -300,19 +279,19 @@ extern int sgen_nursery_bits MONO_INTERNAL;
 extern char *sgen_nursery_start MONO_INTERNAL;
 extern char *sgen_nursery_end MONO_INTERNAL;
 
-static inline gboolean
+static MONO_ALWAYS_INLINE gboolean
 sgen_ptr_in_nursery (void *p)
 {
 	return SGEN_PTR_IN_NURSERY ((p), DEFAULT_NURSERY_BITS, sgen_nursery_start, sgen_nursery_end);
 }
 
-static inline char*
+static MONO_ALWAYS_INLINE char*
 sgen_get_nursery_start (void)
 {
 	return sgen_nursery_start;
 }
 
-static inline char*
+static MONO_ALWAYS_INLINE char*
 sgen_get_nursery_end (void)
 {
 	return sgen_nursery_end;
@@ -413,7 +392,6 @@ int sgen_thread_handshake (BOOL suspend) MONO_INTERNAL;
 gboolean sgen_suspend_thread (SgenThreadInfo *info) MONO_INTERNAL;
 gboolean sgen_resume_thread (SgenThreadInfo *info) MONO_INTERNAL;
 void sgen_wait_for_suspend_ack (int count) MONO_INTERNAL;
-gboolean sgen_park_current_thread_if_doing_handshake (SgenThreadInfo *p) MONO_INTERNAL;
 void sgen_os_init (void) MONO_INTERNAL;
 
 gboolean sgen_is_worker_thread (MonoNativeThreadId thread) MONO_INTERNAL;
@@ -454,6 +432,7 @@ enum {
 	INTERNAL_MEM_JOB_QUEUE_ENTRY,
 	INTERNAL_MEM_TOGGLEREF_DATA,
 	INTERNAL_MEM_CARDTABLE_MOD_UNION,
+	INTERNAL_MEM_BINARY_PROTOCOL,
 	INTERNAL_MEM_MAX
 };
 

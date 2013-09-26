@@ -677,7 +677,7 @@ namespace MonoTests.System
 				TimeZoneInfo deserialized = (TimeZoneInfo) formatter.Deserialize (stream);
 				stream.Close ();
 				stream.Dispose ();
-				Assert.AreEqual (london, deserialized);
+				Assert.IsTrue (london.Equals (deserialized));
 			}
 		}
 	}

@@ -51,7 +51,13 @@ namespace System
 		
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
-	sealed class MonoType : Type, ISerializable
+	sealed class MonoType : 
+#if NET_4_5
+		TypeInfo
+#else
+		Type
+#endif
+		, ISerializable
 	{
 		[NonSerialized]
 		MonoTypeInfo type_info;

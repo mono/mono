@@ -277,7 +277,7 @@ namespace System.Net
 			CheckDisposed ();
 			if (stream == null)
 				return Stream.Null;  
-			if (0 == String.Compare (method, "HEAD", true)) // see par 4.3 & 9.4
+			if (string.Equals (method, "HEAD", StringComparison.OrdinalIgnoreCase))  // see par 4.3 & 9.4
 				return Stream.Null;  
 
 			return stream;
@@ -319,7 +319,6 @@ namespace System.Net
 		void IDisposable.Dispose ()
 		{
 			Dispose (true);
-			GC.SuppressFinalize (this);  
 		}
 		
 #if NET_4_0

@@ -130,7 +130,6 @@ System.Collections.Generic/SynchronizedKeyedCollection.cs
 System.Collections.Generic/SynchronizedReadOnlyCollection.cs
 System.IO/PipeException.cs
 System.ServiceModel.Activation/AspNetIntegrationRequirementsAttribute.cs
-System.ServiceModel.Activation/IServiceHostFactory.cs
 System.ServiceModel.Activation/ServiceHostFactory.cs
 System.ServiceModel.Activation/ServiceHostFactoryBase.cs
 System.ServiceModel.Activation/VirtualPathExtension.cs

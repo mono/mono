@@ -6,13 +6,15 @@ etctmp = etc
 symlinks = etc/mono/1.0/machine.config etc/mono/2.0/machine.config etc/mono/2.0/web.config etc/mono/browscap.ini etc/mono/2.0/Browsers/Compat.browser
 
 if INSTALL_4_0
-symlinks += etc/mono/4.0/machine.config etc/mono/4.0/web.config etc/mono/4.5/web.config etc/mono/4.5/machine.config
+symlinks += etc/mono/4.0/machine.config etc/mono/4.0/web.config etc/mono/4.5/web.config etc/mono/4.5/machine.config etc/mono/4.0/Browsers/Compat.browser etc/mono/4.5/Browsers/Compat.browser
 endif
 
 etc/mono/2.0/machine.config: $(top_srcdir)/data/net_2_0/machine.config
 etc/mono/2.0/web.config: $(top_srcdir)/data/net_2_0/web.config
 etc/mono/browscap.ini: $(top_srcdir)/data/browscap.ini
-etc/mono/2.0/Browsers/Compat.browser: $(top_srcdir)/data/net_2_0/Browsers/Compat.browser
+etc/mono/2.0/Browsers/Compat.browser: $(top_srcdir)/data/Browsers/Compat.browser
+etc/mono/4.0/Browsers/Compat.browser: $(top_srcdir)/data/Browsers/Compat.browser
+etc/mono/4.5/Browsers/Compat.browser: $(top_srcdir)/data/Browsers/Compat.browser
 etc/mono/4.0/machine.config: $(top_srcdir)/data/net_4_0/machine.config
 etc/mono/4.0/web.config: $(top_srcdir)/data/net_4_0/web.config
 etc/mono/4.5/machine.config: $(top_srcdir)/data/net_4_5/machine.config
@@ -23,37 +25,10 @@ $(symlinks):
 
 SUPPORT_FILES = $(symlinks) mono-wrapper etc/mono/config
 
-if MOONLIGHT
-moon-do-basic: Makefile $(SUPPORT_FILES)
-	cd $(mcs_topdir)/ && $(MAKE) NO_DIR_CHECK=1 PROFILE=moonlight_raw
-
-moon-do-basic-clean:
-	cd $(mcs_topdir)/ && $(MAKE) NO_DIR_CHECK=1 PROFILE=moonlight_raw clean
-endif
-
 if ONLY_MONOTOUCH
 build_profiles = monotouch
 else
-if ONLY_MOONLIGHT
-build_profiles = moonlight_raw
-test_profiles = moonlight_raw
-else
-
 build_profiles = 
-
-if MOONLIGHT
-build_profiles += moonlight_raw
-
-moon-do-moonlight-raw: Makefile $(SUPPORT_FILES)
-	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='moonlight_raw' CC='$(CC)' all-profiles
-
-moon-do-moonlight-raw-clean:
-	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='moonlight_raw' CC='$(CC)' clean-profiles
-
-moon-do-build: moon-do-moonlight-raw moon-do-basic
-moon-do-clean: moon-do-moonlight-raw-clean moon-do-basic-clean
-
-endif
 
 if INSTALL_2_0
 build_profiles += net_2_0 net_3_5
@@ -80,7 +55,6 @@ endif
 
 test_profiles = $(build_profiles)
 
-endif
 endif
 
 if BUILD_MCS

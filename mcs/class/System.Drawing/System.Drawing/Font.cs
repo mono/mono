@@ -176,7 +176,7 @@ namespace System.Drawing
 			}
 		}
 
-		internal void setProperties (FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
+		void setProperties (FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
 		{
 			_name = family.Name;
 			_fontFamily = family;			
@@ -548,10 +548,24 @@ namespace System.Drawing
 				return false;
 		}
 
+		private int _hashCode;
+
 		public override int GetHashCode ()
 		{
-			return _name.GetHashCode () ^ FontFamily.GetHashCode () ^ _size.GetHashCode () ^ _style.GetHashCode () ^
-				_gdiCharSet ^ _gdiVerticalFont.GetHashCode ();
+			if (_hashCode == 0) {
+				_hashCode = 17;
+				unchecked {
+					_hashCode = _hashCode * 23 + _name.GetHashCode();
+					_hashCode = _hashCode * 23 + FontFamily.GetHashCode();
+					_hashCode = _hashCode * 23 + _size.GetHashCode();
+					_hashCode = _hashCode * 23 + _unit.GetHashCode();
+					_hashCode = _hashCode * 23 + _style.GetHashCode();
+					_hashCode = _hashCode * 23 + _gdiCharSet;
+					_hashCode = _hashCode * 23 + _gdiVerticalFont.GetHashCode();
+				}
+			}
+
+			return _hashCode;
 		}
 
 		[MonoTODO ("The hdc parameter has no direct equivalent in libgdiplus.")]

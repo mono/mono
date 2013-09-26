@@ -105,7 +105,7 @@ namespace System.Reflection {
 
 		static internal ParameterInfo GetReturnParameterInfo (MonoMethod method)
 		{
-			return new ParameterInfo (GetReturnType (method.mhandle), method, get_retval_marshal (method.mhandle));
+			return ParameterInfo.New (GetReturnType (method.mhandle), method, get_retval_marshal (method.mhandle));
 		}
 	};
 	

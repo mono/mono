@@ -38,7 +38,7 @@ namespace System.Threading
 		ManualResetEvent handle;
 		internal AtomicBooleanValue disposed;
 		int used;
-		long state;
+		int state;
 
 		public ManualResetEventSlim ()
 			: this (false, 10)
@@ -89,10 +89,10 @@ namespace System.Threading
 
 		long UpdateStateWithOp (bool set)
 		{
-			long oldValue, newValue;
+			int oldValue, newValue;
 			do {
 				oldValue = state;
-				newValue = (long)(((oldValue >> 1) + 1) << 1) | (set ? 1u : 0u);
+				newValue = (int)(((oldValue >> 1) + 1) << 1) | (set ? 1 : 0);
 			} while (Interlocked.CompareExchange (ref state, newValue, oldValue) != oldValue);
 			return newValue;
 		}
@@ -119,7 +119,7 @@ namespace System.Threading
 				 * we have a mismatch between S and H at the end because the last operations done were
 				 * S3/H1. We thus need to repeat H3 to get to the desired final state.
 				 */
-				long currentState;
+				int currentState;
 				do {
 					currentState = state;
 					if (currentState != stamp && (stamp & 1) != (currentState & 1)) {
@@ -164,8 +164,6 @@ namespace System.Threading
 				SpinWait wait = new SpinWait ();
 
 				while (!IsSet) {
-					cancellationToken.ThrowIfCancellationRequested ();
-
 					if (wait.Count < spinCount) {
 						wait.SpinOnce ();
 						continue;
@@ -173,6 +171,8 @@ namespace System.Threading
 
 					break;
 				}
+
+				cancellationToken.ThrowIfCancellationRequested ();
 
 				if (IsSet)
 					return true;

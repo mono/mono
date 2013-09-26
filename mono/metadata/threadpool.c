@@ -19,6 +19,7 @@
 #include <mono/metadata/threadpool-internals.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/environment.h>
+#include <mono/metadata/mono-config.h>
 #include <mono/metadata/mono-mlist.h>
 #include <mono/metadata/mono-perfcounters.h>
 #include <mono/metadata/socket-io.h>
@@ -558,6 +559,7 @@ socket_io_add (MonoAsyncResult *ares, MonoSocketAsyncResult *state)
 
 	mono_g_hash_table_replace (data->sock_to_state, state->handle, list);
 	ievt = get_events_from_list (list);
+	/* The modify function leaves the io_lock critical section. */
 	data->modify (data, fd, state->operation, ievt, is_new);
 }
 
@@ -769,7 +771,7 @@ monitor_thread (gpointer unused)
 	thread = mono_thread_internal_current ();
 	ves_icall_System_Threading_Thread_SetName_internal (thread, mono_string_new (mono_domain_get (), "Threadpool monitor"));
 	while (1) {
-		ms = 500;
+		ms = 2000;
 		i = 10; //number of spurious awakes we tolerate before doing a round of rebalancing.
 		do {
 			guint32 ts;
@@ -1039,6 +1041,7 @@ pulse_on_new_job (ThreadPool *tp)
 {
 	if (tp->waiting)
 		MONO_SEM_POST (&tp->new_job);
+	threadpool_start_thread (tp);
 }
 
 void
@@ -1070,8 +1073,10 @@ threadpool_append_jobs (ThreadPool *tp, MonoObject **jobs, gint njobs)
 		}
 		/* Create on demand up to min_threads to avoid startup penalty for apps that don't use
 		 * the threadpool that much
-		* mono_thread_create_internal (mono_get_root_domain (), threadpool_start_idle_threads, tp, TRUE, FALSE, SMALL_STACK);
-		*/
+		 */
+		if (mono_config_is_server_mode ()) {
+			mono_thread_create_internal (mono_get_root_domain (), threadpool_start_idle_threads, tp, TRUE, FALSE, SMALL_STACK);
+		}
 	}
 
 	for (i = 0; i < njobs; i++) {
@@ -1092,7 +1097,7 @@ threadpool_append_jobs (ThreadPool *tp, MonoObject **jobs, gint njobs)
 		mono_cq_enqueue (tp->queue, ar);
 	}
 
-	for (i = 0; tp->waiting > 0 && i < MIN(njobs, tp->max_threads); i++)
+	for (i = 0; i < MIN(njobs, tp->max_threads); i++)
 		pulse_on_new_job (tp);
 }
 

@@ -94,6 +94,24 @@ namespace System.ServiceModel.Channels
 			Close ();
 		}
 
+#if NET_4_5
+		public T GetBody<T> ()
+		{
+			return OnGetBody<T> (GetReaderAtBodyContents ());
+		}
+
+		public T GetBody<T> (XmlObjectSerializer xmlFormatter)
+		{
+			// FIXME: Somehow use OnGetBody() here as well?
+			return (T)xmlFormatter.ReadObject (GetReaderAtBodyContents ());
+		}
+
+		protected virtual T OnGetBody<T> (XmlDictionaryReader reader)
+		{
+			var xmlFormatter = new DataContractSerializer (typeof (T));
+			return (T)xmlFormatter.ReadObject (reader);
+		}
+#else
 		public T GetBody<T> ()
 		{
 			return GetBody<T> (new DataContractSerializer (typeof (T)));
@@ -103,6 +121,7 @@ namespace System.ServiceModel.Channels
 		{
 			return (T) xmlFormatter.ReadObject (GetReaderAtBodyContents ());
 		}
+#endif
 
 		public string GetBodyAttribute (string localName, string ns)
 		{

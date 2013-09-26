@@ -1,2 +1,2 @@
 #!/bin/sh
-mcs -sdk:2 "$@"
+exec @bindir@/mono $MONO_OPTIONS @mono_instdir@/4.5/mcs.exe -sdk:2 "$@"

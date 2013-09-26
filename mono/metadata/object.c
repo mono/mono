@@ -2626,7 +2626,7 @@ mono_remote_class_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mon
 		MonoClass *klass;
 		type = ((MonoReflectionType *)rp->class_to_proxy)->type;
 		klass = mono_class_from_mono_type (type);
-#ifndef DISABLE_COMf
+#ifndef DISABLE_COM
 		if ((mono_class_is_com_object (klass) || (mono_class_get_com_object_class () && klass == mono_class_get_com_object_class ())) && !mono_vtable_is_remote (mono_class_vtable (mono_domain_get (), klass)))
 			remote_class->default_vtable = mono_class_proxy_vtable (domain, remote_class, MONO_REMOTING_TARGET_COMINTEROP);
 		else
@@ -4627,7 +4627,7 @@ mono_array_full_copy (MonoArray *src, MonoArray *dest)
 #ifdef HAVE_SGEN_GC
 	if (klass->element_class->valuetype) {
 		if (klass->element_class->has_references)
-			mono_value_copy_array (dest, 0, mono_array_addr_with_size (src, 0, 0), mono_array_length (src));
+			mono_value_copy_array (dest, 0, mono_array_addr_with_size_fast (src, 0, 0), mono_array_length (src));
 		else
 			mono_gc_memmove (&dest->vector, &src->vector, size);
 	} else {
@@ -4664,7 +4664,7 @@ mono_array_clone_in_domain (MonoDomain *domain, MonoArray *array)
 #ifdef HAVE_SGEN_GC
 		if (klass->element_class->valuetype) {
 			if (klass->element_class->has_references)
-				mono_value_copy_array (o, 0, mono_array_addr_with_size (array, 0, 0), mono_array_length (array));
+				mono_value_copy_array (o, 0, mono_array_addr_with_size_fast (array, 0, 0), mono_array_length (array));
 			else
 				mono_gc_memmove (&o->vector, &array->vector, size);
 		} else {
@@ -4687,7 +4687,7 @@ mono_array_clone_in_domain (MonoDomain *domain, MonoArray *array)
 #ifdef HAVE_SGEN_GC
 	if (klass->element_class->valuetype) {
 		if (klass->element_class->has_references)
-			mono_value_copy_array (o, 0, mono_array_addr_with_size (array, 0, 0), mono_array_length (array));
+			mono_value_copy_array (o, 0, mono_array_addr_with_size_fast (array, 0, 0), mono_array_length (array));
 		else
 			mono_gc_memmove (&o->vector, &array->vector, size);
 	} else {
@@ -5166,7 +5166,7 @@ void
 mono_value_copy_array (MonoArray *dest, int dest_idx, gpointer src, int count)
 {
 	int size = mono_array_element_size (dest->obj.vtable->klass);
-	char *d = mono_array_addr_with_size (dest, size, dest_idx);
+	char *d = mono_array_addr_with_size_fast (dest, size, dest_idx);
 	g_assert (size == mono_class_value_size (mono_object_class (dest)->element_class, NULL));
 	mono_gc_wbarrier_value_copy (d, src, count, mono_object_class (dest)->element_class);
 }
@@ -6050,6 +6050,7 @@ mono_object_to_string (MonoObject *obj, MonoObject **exc)
 {
 	static MonoMethod *to_string = NULL;
 	MonoMethod *method;
+	void *target = obj;
 
 	g_assert (obj);
 
@@ -6058,7 +6059,12 @@ mono_object_to_string (MonoObject *obj, MonoObject **exc)
 
 	method = mono_object_get_virtual_method (obj, to_string);
 
-	return (MonoString *) mono_runtime_invoke (method, obj, NULL, exc);
+	// Unbox value type if needed
+	if (mono_class_is_valuetype (mono_method_get_class (method))) {
+		target = mono_object_unbox (obj);
+	}
+
+	return (MonoString *) mono_runtime_invoke (method, target, NULL, exc);
 }
 
 /**
@@ -6183,7 +6189,7 @@ mono_delegate_ctor (MonoObject *this, MonoObject *target, gpointer addr)
 	if (!ji && domain != mono_get_root_domain ())
 		ji = mono_jit_info_table_find (mono_get_root_domain (), mono_get_addr_from_ftnptr (addr));
 	if (ji) {
-		method = ji->method;
+		method = mono_jit_info_get_method (ji);
 		g_assert (!method->klass->generic_container);
 	}
 

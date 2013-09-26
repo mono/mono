@@ -1004,7 +1004,7 @@ namespace System.Globalization
 
 			Type type = Type.GetType (name, false);
 			if (type == null)
-				throw new NotSupportedException ("Calendar not found, if the linker is enabled make sure to preserve this type: " + name);
+				return CreateCalendar (1 << CalendarTypeBits); // return invariant calandar if not found
 			return (Calendar) Activator.CreateInstance (type);
 		}
 		

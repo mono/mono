@@ -108,6 +108,17 @@ namespace MonoTests.System
 			}
 		}
 
+		[Test]
+		public void GetBaseWithInner ()
+		{
+			var ae = new AggregateException ("x", new [] { new ArgumentException (), new ArgumentNullException () });
+			Assert.AreEqual (ae, ae.GetBaseException (), "#1");
+
+			var expected = new ArgumentException ();
+			var ae2 = new AggregateException ("x", new AggregateException (expected, new Exception ()));
+			Assert.AreEqual (expected, ae2.GetBaseException ().InnerException, "#2");
+		}
+
 		static void Throws (Type t, Action action)
 		{
 			Exception e = null;

@@ -828,7 +828,7 @@ mono_arch_init (void)
 #endif
 
 	/* Format: armv(5|6|7[s])[-thumb[2]] */
-	cpu_arch = getenv ("MONO_CPU_ARCH");
+	cpu_arch = g_getenv ("MONO_CPU_ARCH");
 
 	/* Do this here so it overrides any detection. */
 	if (cpu_arch) {
@@ -4284,6 +4284,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			/* Load the value from the GOT */
 			ARM_LDR_REG_REG (code, ins->dreg, ARMREG_PC, ins->dreg);
 			break;
+		case OP_OBJC_GET_SELECTOR:
+			mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_OBJC_SELECTOR_REF, ins->inst_p0);
+			ARM_LDR_IMM (code, ins->dreg, ARMREG_PC, 0);
+			ARM_B (code, 0);
+			*(gpointer*)code = NULL;
+			code += 4;
+			ARM_LDR_REG_REG (code, ins->dreg, ARMREG_PC, ins->dreg);
+			break;
 		case OP_ICONV_TO_I4:
 		case OP_ICONV_TO_U4:
 		case OP_MOVE:
@@ -5070,7 +5078,6 @@ mono_arch_patch_code (MonoMethod *method, MonoDomain *domain, guint8 *code, Mono
 				jt [i] = code + (int)patch_info->data.table->table [i];
 			continue;
 		}
-		target = mono_resolve_patch_target (method, domain, code, patch_info, run_cctors);
 
 		if (compile_aot) {
 			switch (patch_info->type) {
@@ -5082,6 +5089,8 @@ mono_arch_patch_code (MonoMethod *method, MonoDomain *domain, guint8 *code, Mono
 				continue;
 			}
 		}
+
+		target = mono_resolve_patch_target (method, domain, code, patch_info, run_cctors);
 
 		switch (patch_info->type) {
 		case MONO_PATCH_INFO_IP:
@@ -5827,11 +5836,15 @@ mono_arch_print_tree (MonoInst *tree, int arity)
 	return 0;
 }
 
+#ifndef DISABLE_JIT
+
 MonoInst*
 mono_arch_get_domain_intrinsic (MonoCompile* cfg)
 {
 	return mono_get_domain_intrinsic (cfg);
 }
+
+#endif
 
 guint32
 mono_arch_get_patch_offset (guint8 *code)

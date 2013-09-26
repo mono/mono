@@ -247,7 +247,8 @@ namespace System.Net.Http
 			wr.PreAuthenticate = preAuthenticate;
 
 			if (useCookies) {
-				wr.CookieContainer = cookieContainer;
+				// It cannot be null or allowAutoRedirect won't work
+				wr.CookieContainer = CookieContainer;
 			}
 
 			if (useDefaultCredentials) {
@@ -271,12 +272,12 @@ namespace System.Net.Http
 			return wr;
 		}
 
-		HttpResponseMessage CreateResponseMessage (HttpWebResponse wr, HttpRequestMessage requestMessage)
+		HttpResponseMessage CreateResponseMessage (HttpWebResponse wr, HttpRequestMessage requestMessage, CancellationToken cancellationToken)
 		{
 			var response = new HttpResponseMessage (wr.StatusCode);
 			response.RequestMessage = requestMessage;
 			response.ReasonPhrase = wr.StatusDescription;
-			response.Content = new StreamContent (wr.GetResponseStream ());
+			response.Content = new StreamContent (wr.GetResponseStream (), cancellationToken);
 
 			var headers = wr.Headers;
 			for (int i = 0; i < headers.Count; ++i) {
@@ -328,7 +329,7 @@ namespace System.Net.Http
 				}
 			}
 			
-			return CreateResponseMessage (wresponse, request);
+			return CreateResponseMessage (wresponse, request, cancellationToken);
 		}
 	}
 }

@@ -134,7 +134,7 @@ static int il_file_line_index;
 static GHashTable *xdebug_syms;
 
 void
-mono_xdebug_init (char *options)
+mono_xdebug_init (const char *options)
 {
 	MonoImageWriter *w;
 	char **args, **ptr;
@@ -294,8 +294,8 @@ mono_save_xdebug_info (MonoCompile *cfg)
 
 		xdebug_method_count ++;
 
-		dmji = mono_debug_find_method (cfg->jit_info->method, mono_domain_get ());;
-		mono_dwarf_writer_emit_method (xdebug_writer, cfg, cfg->jit_info->method, NULL, NULL, cfg->jit_info->code_start, cfg->jit_info->code_size, cfg->args, cfg->locals, cfg->unwind_ops, dmji);
+		dmji = mono_debug_find_method (jinfo_get_method (cfg->jit_info), mono_domain_get ());;
+		mono_dwarf_writer_emit_method (xdebug_writer, cfg, jinfo_get_method (cfg->jit_info), NULL, NULL, cfg->jit_info->code_start, cfg->jit_info->code_size, cfg->args, cfg->locals, cfg->unwind_ops, dmji);
 		mono_debug_free_method_jit_info (dmji);
 
 #if 0
@@ -323,8 +323,8 @@ mono_save_xdebug_info (MonoCompile *cfg)
 			return;
 
 		mono_loader_lock ();
-		dmji = mono_debug_find_method (cfg->jit_info->method, mono_domain_get ());;
-		mono_dwarf_writer_emit_method (xdebug_writer, cfg, cfg->jit_info->method, NULL, NULL, cfg->jit_info->code_start, cfg->jit_info->code_size, cfg->args, cfg->locals, cfg->unwind_ops, dmji);
+		dmji = mono_debug_find_method (jinfo_get_method (cfg->jit_info), mono_domain_get ());
+		mono_dwarf_writer_emit_method (xdebug_writer, cfg, jinfo_get_method (cfg->jit_info), NULL, NULL, cfg->jit_info->code_start, cfg->jit_info->code_size, cfg->args, cfg->locals, cfg->unwind_ops, dmji);
 		mono_debug_free_method_jit_info (dmji);
 		fflush (xdebug_fp);
 		mono_loader_unlock ();
@@ -369,7 +369,7 @@ mono_save_trampoline_xdebug_info (MonoTrampInfo *info)
 #else /* !defined(DISABLE_AOT) && !defined(DISABLE_JIT) */
 
 void
-mono_xdebug_init (char *options)
+mono_xdebug_init (const char *options)
 {
 }
 

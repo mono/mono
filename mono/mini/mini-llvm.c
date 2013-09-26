@@ -217,7 +217,7 @@ get_vtype_size (MonoType *t)
 
 	size = mono_class_value_size (mono_class_from_mono_type (t), NULL);
 
-	while (size < sizeof (gpointer) && mono_is_power_of_two (size) == -1)
+	while (size < 2 * sizeof (gpointer) && mono_is_power_of_two (size) == -1)
 		size ++;
 
 	return size;
@@ -4241,13 +4241,13 @@ mono_llvm_emit_method (MonoCompile *cfg)
 		static int count = 0;
 		count ++;
 
-		if (getenv ("LLVM_COUNT")) {
-			if (count == atoi (getenv ("LLVM_COUNT"))) {
+		if (g_getenv ("LLVM_COUNT")) {
+			if (count == atoi (g_getenv ("LLVM_COUNT"))) {
 				printf ("LAST: %s\n", mono_method_full_name (cfg->method, TRUE));
 				fflush (stdout);
 				last = TRUE;
 			}
-			if (count > atoi (getenv ("LLVM_COUNT")))
+			if (count > atoi (g_getenv ("LLVM_COUNT")))
 				LLVM_FAILURE (ctx, "");
 		}
 	}

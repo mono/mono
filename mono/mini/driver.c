@@ -595,7 +595,7 @@ alloc_random_data (Region *region)
 	g_assert (d->start >= prev_end && d->start + d->length <= next_start);
 
 	d->ji = g_new0 (MonoJitInfo, 1);
-	d->ji->method = (MonoMethod*) 0xABadBabe;
+	d->ji->d.method = (MonoMethod*) 0xABadBabe;
 	d->ji->code_start = (gpointer)(gulong) d->start;
 	d->ji->code_size = d->length;
 	d->ji->cas_inited = 1;	/* marks an allocated jit info */
@@ -1351,6 +1351,8 @@ mono_jit_parse_options (int argc, char * argv[])
 		} else if (strcmp (argv [i], "--llvm") == 0) {
 #ifndef MONO_ARCH_LLVM_SUPPORTED
 			fprintf (stderr, "Mono Warning: --llvm not supported on this platform.\n");
+#elif !defined(ENABLE_LLVM)
+			fprintf (stderr, "Mono Warning: --llvm not enabled in this runtime.\n");
 #else
 			mono_use_llvm = TRUE;
 #endif
@@ -1468,7 +1470,7 @@ mono_main (int argc, char* argv[])
 
 	setlocale (LC_ALL, "");
 
-	if (getenv ("MONO_NO_SMP"))
+	if (g_getenv ("MONO_NO_SMP"))
 		mono_set_use_smp (FALSE);
 	
 	if (!g_thread_supported ())
@@ -1490,7 +1492,7 @@ mono_main (int argc, char* argv[])
 			char *build = mono_get_runtime_build_info ();
 			char *gc_descr;
 
-			g_print ("Mono JIT compiler version %s\nCopyright (C) 2002-2012 Novell, Inc, Xamarin Inc and Contributors. www.mono-project.com\n", build);
+			g_print ("Mono Runtime Engine version %s\nCopyright (C) 2002-2013 Novell, Inc, Xamarin Inc and Contributors. www.mono-project.com\n", build);
 			g_free (build);
 			g_print (info);
 			gc_descr = mono_gc_get_description ();
@@ -1723,9 +1725,10 @@ mono_main (int argc, char* argv[])
 			}
 		} else if (strcmp (argv [i], "--desktop") == 0) {
 			mono_gc_set_desktop_mode ();
-			/* Put desktop-specific optimizations here */
+			/* Put more desktop-specific optimizations here */
 		} else if (strcmp (argv [i], "--server") == 0){
-			/* Put server-specific optimizations here */
+			mono_config_set_server_mode (TRUE);
+			/* Put more server-specific optimizations here */
 		} else if (strcmp (argv [i], "--inside-mdb") == 0) {
 			action = DO_DEBUGGER;
 		} else if (strncmp (argv [i], "--wapi=", 7) == 0) {
@@ -1748,6 +1751,8 @@ mono_main (int argc, char* argv[])
 		} else if (strcmp (argv [i], "--llvm") == 0) {
 #ifndef MONO_ARCH_LLVM_SUPPORTED
 			fprintf (stderr, "Mono Warning: --llvm not supported on this platform.\n");
+#elif !defined(ENABLE_LLVM)
+			fprintf (stderr, "Mono Warning: --llvm not enabled in this runtime.\n");
 #else
 			mono_use_llvm = TRUE;
 #endif
@@ -1770,7 +1775,7 @@ mono_main (int argc, char* argv[])
 	}
 
 #ifdef __native_client_codegen__
-	if (getenv ("MONO_NACL_ALIGN_MASK_OFF"))
+	if (g_getenv ("MONO_NACL_ALIGN_MASK_OFF"))
 	{
 		nacl_align_byte = -1; /* 0xff */
 	}
@@ -1785,7 +1790,7 @@ mono_main (int argc, char* argv[])
 		return 1;
 	}
 
-	if (getenv ("MONO_XDEBUG"))
+	if (g_getenv ("MONO_XDEBUG"))
 		enable_debugging = TRUE;
 
 #ifdef MONO_CROSS_COMPILE

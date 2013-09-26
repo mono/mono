@@ -166,7 +166,12 @@ class TestIfaces<T> : ITest<T>
 	}
 }
 
-public class Tests : TestsBase
+public interface ITest2
+{
+	int invoke_iface ();
+}
+
+public class Tests : TestsBase, ITest2
 {
 #pragma warning disable 0414
 	int field_i;
@@ -344,6 +349,7 @@ public class Tests : TestsBase
 		} catch {
 		}
 		ss7 ();
+		ss_nested ();
 		ss_regress_654694 ();
 	}
 
@@ -416,6 +422,26 @@ public class Tests : TestsBase
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void ss7_3 () {
 		throw new Exception ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_nested () {
+		ss_nested_1 (ss_nested_2 ());
+		ss_nested_1 (ss_nested_2 ());
+		ss_nested_3 ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_nested_1 (int i) {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static int ss_nested_2 () {
+		return 0;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_nested_3 () {
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -554,7 +580,9 @@ public class Tests : TestsBase
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+#if NET_4_5
 	[StateMachine (typeof (int))]
+#endif
 	public static void locals2<T> (string[] args, int arg, T t, ref string rs) {
 		long i = 42;
 		string s = "AB";
@@ -567,6 +595,7 @@ public class Tests : TestsBase
 		}
 		rs = "A";
 	}
+
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void locals3 () {
@@ -808,6 +837,10 @@ public class Tests : TestsBase
 
 	public static void invoke_throws () {
 		throw new Exception ();
+	}
+
+	public int invoke_iface () {
+		return 42;
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
