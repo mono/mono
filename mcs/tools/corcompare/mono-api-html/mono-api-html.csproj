@@ -8,7 +8,7 @@
     <ProjectGuid>{D25986E2-7A41-4966-A26D-5614BAC7B8A7}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Xamarin.ApiDiff</RootNamespace>
-    <AssemblyName>diff2</AssemblyName>
+    <AssemblyName>mono-api-html</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

@@ -115,13 +115,15 @@ namespace Xamarin.ApiDiff {
 			Output.Write (target.GetAttribute ("name"));
 
 			var baseclass = target.GetAttribute ("base");
-			if (baseclass != null) {
-				if (baseclass == "System.Object") {
-					// while true we do not need to be reminded every time...
-					baseclass = null;
-				} else {
-					Output.Write (" : ");
-					Output.Write (baseclass);
+			if ((type != "enum") && (type != "struct")) {
+				if (baseclass != null) {
+					if (baseclass == "System.Object") {
+						// while true we do not need to be reminded every time...
+						baseclass = null;
+					} else {
+						Output.Write (" : ");
+						Output.Write (baseclass);
+					}
 				}
 			}
 

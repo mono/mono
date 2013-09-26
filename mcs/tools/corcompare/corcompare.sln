@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mono-api-info", "mono-api-info.csproj", "{6446D5E1-8F4E-4692-8EF3-B1D4CA290ECF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "diff", "diff\diff.csproj", "{39232C87-6450-41E4-A26D-FF6726B34039}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Cecil", "..\..\..\external\cecil\Mono.Cecil.csproj", "{D68133BD-1E63-496E-9EDE-4FBDBF77B486}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mono-api-html", "mono-api-html\mono-api-html.csproj", "{D25986E2-7A41-4966-A26D-5614BAC7B8A7}"
@@ -25,30 +23,6 @@ Global
 		winphone_Release|Any CPU = winphone_Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{39232C87-6450-41E4-A26D-FF6726B34039}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{39232C87-6450-41E4-A26D-FF6726B34039}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{39232C87-6450-41E4-A26D-FF6726B34039}.net_2_0_Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{39232C87-6450-41E4-A26D-FF6726B34039}.net_2_0_Debug|Any CPU.Build.0 = Debug|Any CPU
-		{39232C87-6450-41E4-A26D-FF6726B34039}.net_2_0_Release|Any CPU.ActiveCfg = Debug|Any CPU
-		{39232C87-6450-41E4-A26D-FF6726B34039}.net_2_0_Release|Any CPU.Build.0 = Debug|Any CPU
-		{39232C87-6450-41E4-A26D-FF6726B34039}.net_3_5_Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{39232C87-6450-41E4-A26D-FF6726B34039}.net_3_5_Debug|Any CPU.Build.0 = Debug|Any CPU
-		{39232C87-6450-41E4-A26D-FF6726B34039}.net_3_5_Release|Any CPU.ActiveCfg = Debug|Any CPU
-		{39232C87-6450-41E4-A26D-FF6726B34039}.net_3_5_Release|Any CPU.Build.0 = Debug|Any CPU
-		{39232C87-6450-41E4-A26D-FF6726B34039}.net_4_0_Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{39232C87-6450-41E4-A26D-FF6726B34039}.net_4_0_Debug|Any CPU.Build.0 = Debug|Any CPU
-		{39232C87-6450-41E4-A26D-FF6726B34039}.net_4_0_Release|Any CPU.ActiveCfg = Debug|Any CPU
-		{39232C87-6450-41E4-A26D-FF6726B34039}.net_4_0_Release|Any CPU.Build.0 = Debug|Any CPU
-		{39232C87-6450-41E4-A26D-FF6726B34039}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{39232C87-6450-41E4-A26D-FF6726B34039}.Release|Any CPU.Build.0 = Release|Any CPU
-		{39232C87-6450-41E4-A26D-FF6726B34039}.silverlight_Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{39232C87-6450-41E4-A26D-FF6726B34039}.silverlight_Debug|Any CPU.Build.0 = Debug|Any CPU
-		{39232C87-6450-41E4-A26D-FF6726B34039}.silverlight_Release|Any CPU.ActiveCfg = Debug|Any CPU
-		{39232C87-6450-41E4-A26D-FF6726B34039}.silverlight_Release|Any CPU.Build.0 = Debug|Any CPU
-		{39232C87-6450-41E4-A26D-FF6726B34039}.winphone_Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{39232C87-6450-41E4-A26D-FF6726B34039}.winphone_Debug|Any CPU.Build.0 = Debug|Any CPU
-		{39232C87-6450-41E4-A26D-FF6726B34039}.winphone_Release|Any CPU.ActiveCfg = Debug|Any CPU
-		{39232C87-6450-41E4-A26D-FF6726B34039}.winphone_Release|Any CPU.Build.0 = Debug|Any CPU
 		{6446D5E1-8F4E-4692-8EF3-B1D4CA290ECF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6446D5E1-8F4E-4692-8EF3-B1D4CA290ECF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6446D5E1-8F4E-4692-8EF3-B1D4CA290ECF}.net_2_0_Debug|Any CPU.ActiveCfg = Debug|Any CPU
