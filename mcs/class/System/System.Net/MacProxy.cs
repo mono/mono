@@ -612,7 +612,7 @@ namespace System.Net
 		
 		static CFArray CopyProxiesForAutoConfigurationScript (IntPtr proxyAutoConfigurationScript, CFUrl targetURL)
 		{
-			IntPtr err;
+			IntPtr err = IntPtr.Zero;
 			IntPtr native = CFNetworkCopyProxiesForAutoConfigurationScript (proxyAutoConfigurationScript, targetURL.Handle, out err);
 			
 			if (native == IntPtr.Zero)
