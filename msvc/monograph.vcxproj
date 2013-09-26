@@ -220,7 +220,7 @@
       <Optimization>MinSpace</Optimization>
       <AdditionalIncludeDirectories>..\;..\VSDependancies\include\glib-2.0;..\VSDependancies\include\glib-2.0\glib;..\VSDependancies\include;..\VSDependancies\lib\glib-2.0\include;..\mono\;..\mono\jit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -250,7 +250,7 @@
       <Optimization>MinSpace</Optimization>
       <AdditionalIncludeDirectories>..\;..\VSDependancies\include\glib-2.0;..\VSDependancies\include\glib-2.0\glib;..\VSDependancies\include;..\VSDependancies\lib\glib-2.0\include;..\mono\;..\mono\jit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -334,7 +334,7 @@
       <Optimization>MinSpace</Optimization>
       <AdditionalIncludeDirectories>..\;..\VSDependancies\include\glib-2.0;..\VSDependancies\include\glib-2.0\glib;..\VSDependancies\include;..\VSDependancies\lib\glib-2.0\include;..\mono\;..\mono\jit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -364,7 +364,7 @@
       <Optimization>MinSpace</Optimization>
       <AdditionalIncludeDirectories>..\;..\VSDependancies\include\glib-2.0;..\VSDependancies\include\glib-2.0\glib;..\VSDependancies\include;..\VSDependancies\lib\glib-2.0\include;..\mono\;..\mono\jit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -388,7 +388,7 @@
       <Optimization>MinSpace</Optimization>
       <AdditionalIncludeDirectories>..\;..\VSDependancies\include\glib-2.0;..\VSDependancies\include\glib-2.0\glib;..\VSDependancies\include;..\VSDependancies\lib\glib-2.0\include;..\mono\;..\mono\jit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -418,7 +418,7 @@
       <Optimization>MinSpace</Optimization>
       <AdditionalIncludeDirectories>..\;..\VSDependancies\include\glib-2.0;..\VSDependancies\include\glib-2.0\glib;..\VSDependancies\include;..\VSDependancies\lib\glib-2.0\include;..\mono\;..\mono\jit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <PrecompiledHeader>
       </PrecompiledHeader>
