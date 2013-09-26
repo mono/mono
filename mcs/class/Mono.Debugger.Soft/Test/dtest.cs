@@ -2267,8 +2267,13 @@ public class DebuggerTests
 		while (invoke_results.Count < 2) {
 			Thread.Sleep (100);
 		}
-		AssertValue ("ABC", invoke_results [0]);
-		AssertValue (42, invoke_results [1]);
+		if (invoke_results [0] is PrimitiveValue) {
+			AssertValue ("ABC", invoke_results [1]);
+			AssertValue (42, invoke_results [0]);
+		} else {
+			AssertValue ("ABC", invoke_results [0]);
+			AssertValue (42, invoke_results [1]);
+		}
 	}
 
 	void invoke_multiple_cb (IAsyncResult ar) {
