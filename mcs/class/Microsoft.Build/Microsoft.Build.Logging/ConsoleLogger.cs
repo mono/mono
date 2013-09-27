@@ -62,7 +62,7 @@ namespace Microsoft.Build.Logging
 
 		#region INodeLogger implementation
 
-		public void Initialize (IEventSource eventSource, int nodeCount)
+		public virtual void Initialize (IEventSource eventSource, int nodeCount)
 		{
 			throw new NotImplementedException ();
 		}
@@ -72,11 +72,6 @@ namespace Microsoft.Build.Logging
 		#region ILogger implementation
 
 		public virtual void Initialize (IEventSource eventSource)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		public virtual void Initialize (IEventSource eventSource, int nodeCount)
 		{
 			throw new NotImplementedException ();
 		}

@@ -26,6 +26,7 @@
 //
 
 using System;
+using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.Logging
 {
