@@ -29,6 +29,7 @@ Microsoft.Build.Framework/ITask.cs
 Microsoft.Build.Framework/ITaskHost.cs
 Microsoft.Build.Framework/ITaskItem.cs
 Microsoft.Build.Framework/ITaskItem2.cs
+Microsoft.Build.Framework/LazyFormattedBuildEventArgs.cs
 Microsoft.Build.Framework/LoadInSeparateAppDomainAttribute.cs
 Microsoft.Build.Framework/LoggerException.cs
 Microsoft.Build.Framework/LoggerVerbosity.cs

@@ -1,11 +1,10 @@
 //
-// BuildStatusEventArgs.cs: Provides data for the Microsoft.Build.Framework.
-// IEventSource.StatusEventRaised event.
+// LazyFormattedBuildEventArgs.cs
 //
 // Author:
-//   Marek Sieradzki (marek.sieradzki@gmail.com)
+//   Atsushi Enomoto <atsushi@xamarin.com>
 // 
-// (C) 2005 Marek Sieradzki
+// (C) 2013 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,43 +25,31 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
+using System.Threading;
 
 namespace Microsoft.Build.Framework
 {
-	[Serializable]
-	public abstract class BuildStatusEventArgs : LazyFormattedBuildEventArgs {
-	
-		protected BuildStatusEventArgs ()
+	[Serializable]		
+	public abstract class LazyFormattedBuildEventArgs : BuildEventArgs
+	{
+		
+		protected LazyFormattedBuildEventArgs ()
+			: this (null, null, null)
 		{
 		}
 
-		protected BuildStatusEventArgs (string message,
-						string helpKeyword,
-						string senderName)
-			: base (message, helpKeyword, senderName)
+		protected LazyFormattedBuildEventArgs (string message, string helpKeyword,
+					  string senderName)
+			: this (message, helpKeyword, senderName, DateTime.Now)
 		{
 		}
 
-		protected BuildStatusEventArgs (string message,
-						string helpKeyword,
-						string senderName,
-						DateTime eventTimestamp)
-			: base (message, helpKeyword, senderName, eventTimestamp)
-		{
-		}
-
-		protected BuildStatusEventArgs (string message,
-						string helpKeyword,
-						string senderName,
-						DateTime eventTimestamp,
-						params object [] messageArgs)
-			: base (message, helpKeyword, senderName, eventTimestamp, messageArgs)
+		protected LazyFormattedBuildEventArgs (string message, string helpKeyword,
+					  string senderName, DateTime eventTimestamp,
+					  params object [] messageArgs)
+			: base (string.Format (message, messageArgs), helpKeyword, senderName, eventTimestamp)
 		{
 		}
 	}
 }
-
-#endif
