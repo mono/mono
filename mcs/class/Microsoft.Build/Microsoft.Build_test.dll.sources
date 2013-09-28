@@ -1,2 +1,3 @@
 FunctionalTest.cs
 Microsoft.Build.Internal/CollectionFromEnumerableTest.cs
+Microsoft.Build.Logging/ConsoleLoggerTest.cs
