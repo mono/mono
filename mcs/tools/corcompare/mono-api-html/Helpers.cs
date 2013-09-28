@@ -104,6 +104,14 @@ namespace Xamarin.ApiDiff {
 				return "float";
 			case "System.Double":
 				return "double";
+			case "System.Byte":
+				return "byte";
+			case "System.SByte":
+				return "sbyte";
+			case "System.Int16":
+				return "short";
+			case "System.UInt16":
+				return "ushort";
 			default:
 				if (type.StartsWith (State.Namespace, StringComparison.Ordinal))
 					type = type.Substring (State.Namespace.Length + 1);

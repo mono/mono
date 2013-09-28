@@ -64,8 +64,8 @@ namespace Xamarin.ApiDiff {
 
 			foreach (var s in source) {
 				SetContext (s);
-				string sn = s.Attribute ("name").Value;
-				var t = target.SingleOrDefault (x => x.Attribute ("name").Value == sn);
+				string sn = s.GetAttribute ("name");
+				var t = target == null ? null : target.SingleOrDefault (x => x.GetAttribute ("name") == sn);
 				if (t == null) {
 					// not in target, it was removed
 					removed.Add (s);
@@ -85,9 +85,11 @@ namespace Xamarin.ApiDiff {
 				Removed (item);
 			}
 			// remaining == newly added in target
-			foreach (var item in target) {
-				SetContext (item);
-				Added (item);
+			if (target != null) {
+				foreach (var item in target) {
+					SetContext (item);
+					Added (item);
+				}
 			}
 		}
 	}
