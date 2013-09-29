@@ -937,6 +937,9 @@ namespace Microsoft.Build.BuildEngine {
 					case "Import":
 						AddImport (xe, ip, true);
 						break;
+					case "ImportGroup":
+						AddImportGroup (xe, ip, true);
+						break;
 					case "ItemGroup":
 						AddItemGroup (xe, ip);
 						break;
@@ -947,7 +950,7 @@ namespace Microsoft.Build.BuildEngine {
 						AddChoose (xe, ip);
 						break;
 					default:
-						throw new InvalidProjectFileException (String.Format ("Invalid element '{0}' in project file.", xe.Name));
+						throw new InvalidProjectFileException (String.Format ("Invalid element '{0}' in project file '{1}'.", xe.Name, ip.FullFileName));
 					}
 				}
 			}
@@ -1129,6 +1132,30 @@ namespace Microsoft.Build.BuildEngine {
 					(importPath, from_source_msg) => AddSingleImport (xmlElement, importPath, importingProject, from_source_msg));
 			} finally {
 				PopThisFileProperty ();
+			}
+		}
+
+		void AddImportGroup (XmlElement xmlElement, ImportedProject importedProject, bool evaluate_properties)
+		{
+			// eval all the properties etc till the import group
+			if (evaluate_properties) {
+				groupingCollection.Evaluate (EvaluationType.Property);
+				groupingCollection.Evaluate (EvaluationType.Choose);
+			}
+			string condition_attribute = xmlElement.GetAttribute ("Condition");
+			if (!ConditionParser.ParseAndEvaluate (condition_attribute, this))
+				return;
+			foreach (XmlNode xn in xmlElement.ChildNodes) {
+				if (xn is XmlElement) {
+					XmlElement xe = (XmlElement) xn;
+					switch (xe.Name) {
+					case "Import":
+						AddImport (xe, importedProject, evaluate_properties);
+						break;
+					default:
+						throw new InvalidProjectFileException(String.Format("Invalid element '{0}' inside ImportGroup in project file '{1}'.", xe.Name, importedProject.FullFileName));
+					}
+				}
 			}
 		}
 
