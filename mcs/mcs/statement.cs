@@ -2609,7 +2609,7 @@ namespace Mono.CSharp {
 							continue;
 
 						if (storey.HoistedThis == null) {
-							storey.AddCapturedThisField (ec);
+							storey.AddCapturedThisField (ec, null);
 						}
 
 						for (ExplicitBlock b = ref_block; b.AnonymousMethodStorey != storey; b = b.Parent.Explicit) {
@@ -2628,8 +2628,10 @@ namespace Mono.CSharp {
 											break;
 									}
 
+									// Needs to be in sync with AnonymousMethodBody::DoCreateMethodHost
 									if (s == null) {
-										b.AnonymousMethodStorey.AddCapturedThisField (ec);
+										var parent = storey == null || storey.Kind == MemberKind.Struct ? null : storey;
+										b.AnonymousMethodStorey.AddCapturedThisField (ec, parent);
 										break;
 									}
 								}
@@ -2664,7 +2666,7 @@ namespace Mono.CSharp {
 								}
 
 								if (parent_storey_block.AnonymousMethodStorey == null) {
-									pb.StateMachine.AddCapturedThisField (ec);
+									pb.StateMachine.AddCapturedThisField (ec, null);
 									b.HasCapturedThis = true;
 									continue;
 								}
