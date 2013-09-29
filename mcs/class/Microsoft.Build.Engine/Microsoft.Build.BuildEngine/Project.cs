@@ -1029,7 +1029,17 @@ namespace Microsoft.Build.BuildEngine {
 			SetExtensionsPathProperties (DefaultExtensionsPath);
 			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectDefaultTargets", DefaultTargets, PropertyType.Reserved));
 			evaluatedProperties.AddProperty (new BuildProperty ("OS", OS, PropertyType.Environment));
-
+#if NET_4_5	
+			// see http://msdn.microsoft.com/en-us/library/vstudio/hh162058(v=vs.120).aspx
+			if (effective_tools_version == "12.0") {
+				evaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsPath32", toolsPath, PropertyType.Reserved));
+				string frameworkToolsPath = parentEngine.Toolsets [effective_tools_version].FrameworkToolsPath;
+				if (frameworkToolsPath == null)
+					throw new Exception (String.Format ("Invalid tools version '{0}', no framework tools path set for this.", effective_tools_version));				
+				evaluatedProperties.AddProperty (new BuildProperty ("MSBuildFrameworkToolsPath", frameworkToolsPath, PropertyType.Reserved));
+				evaluatedProperties.AddProperty (new BuildProperty ("MSBuildFrameworkToolsPath32", frameworkToolsPath, PropertyType.Reserved));
+			}
+#endif
 			// FIXME: make some internal method that will work like GetDirectoryName but output String.Empty on null/String.Empty
 			string projectDir;
 			if (FullFileName == String.Empty)

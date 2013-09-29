@@ -48,6 +48,7 @@ namespace Microsoft.Build.Utilities
 			t2 = t1.Parent;
 
 			lib_mono_dir = t2.FullName;
+			var windowsPath = Environment.GetFolderPath (Environment.SpecialFolder.Windows);
 			if (Environment.GetEnvironmentVariable ("TESTING_MONO") != null) {
 				mono_dir = new string [] {
 					Path.Combine (lib_mono_dir, "net_1_0"),
@@ -57,6 +58,16 @@ namespace Microsoft.Build.Utilities
 					Path.Combine (lib_mono_dir, "net_4_0"),
 					Path.Combine (lib_mono_dir, "net_4_5")
 				};	
+			} else if (!string.IsNullOrEmpty (windowsPath) && lib_mono_dir.StartsWith (windowsPath)) {
+				//running in .NET, not Mono
+				mono_dir = new string [] {
+					Path.Combine (lib_mono_dir, "v1.0.3705"),
+					Path.Combine (lib_mono_dir, "v2.0.50727"),
+					Path.Combine (lib_mono_dir, "v2.0.50727"),
+					Path.Combine (lib_mono_dir, "v3.5"),
+					Path.Combine (lib_mono_dir, "v4.0.30319"),
+					Path.Combine (lib_mono_dir, "v4.0.30319")
+				};
 			} else {
 				mono_dir = new string [] {
 					Path.Combine (lib_mono_dir, "1.0"),
@@ -91,6 +102,13 @@ namespace Microsoft.Build.Utilities
 		public static string GetPathToDotNetFramework (TargetDotNetFrameworkVersion version)
 		{
 			return mono_dir [(int)version];
+		}
+
+		public static string GetMSBuildInstallPath (string version)
+		{
+			//see http://msdn.microsoft.com/en-us/library/vstudio/bb397428(v=vs.120).aspx
+			var programFiles = Environment.GetFolderPath (Environment.SpecialFolder.ProgramFilesX86);
+			return Path.Combine (programFiles, "MSBuild", version, "bin");
 		}
 
 		[MonoTODO]
