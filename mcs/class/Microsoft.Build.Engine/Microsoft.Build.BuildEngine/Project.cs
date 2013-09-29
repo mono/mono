@@ -1114,9 +1114,10 @@ namespace Microsoft.Build.BuildEngine {
 		void AddImport (XmlElement xmlElement, ImportedProject importingProject, bool evaluate_properties)
 		{
 			// eval all the properties etc till the import
-			if (evaluate_properties)
+			if (evaluate_properties) {
 				groupingCollection.Evaluate (EvaluationType.Property);
-
+				groupingCollection.Evaluate (EvaluationType.Choose);
+			}
 			try {
 				PushThisFileProperty (importingProject != null ? importingProject.FullFileName : FullFileName);
 
