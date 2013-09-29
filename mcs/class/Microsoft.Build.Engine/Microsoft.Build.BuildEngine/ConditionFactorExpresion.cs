@@ -109,6 +109,11 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (token.Type == TokenType.Number)
 				return true;
+			else if (token.Type == TokenType.String) {
+				var text = StringEvaluate (context);
+				Single number;
+				return Single.TryParse (text, out number);
+			}
 			else
 				return false;
 		}
