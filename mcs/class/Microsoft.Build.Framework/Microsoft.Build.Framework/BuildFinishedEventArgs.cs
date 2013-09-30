@@ -43,7 +43,25 @@ namespace Microsoft.Build.Framework {
 		public BuildFinishedEventArgs (string message,
 						  string helpKeyword,
 						  bool succeeded)
-			: base (message, helpKeyword, null)
+			: this (message, helpKeyword, succeeded, DateTime.Now)
+		{
+		}
+
+		public BuildFinishedEventArgs (string message,
+						  string helpKeyword,
+						  bool succeeded,
+						  DateTime eventTimestamp)
+			: base (message, helpKeyword, null, eventTimestamp)
+		{
+			this.succeeded = succeeded;
+		}
+
+		public BuildFinishedEventArgs (string message,
+						  string helpKeyword,
+						  bool succeeded,
+						  DateTime eventTimestamp,
+						  params object [] messageArgs)
+			: base (message, helpKeyword, null, eventTimestamp, messageArgs)
 		{
 			this.succeeded = succeeded;
 		}

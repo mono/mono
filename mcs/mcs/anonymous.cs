@@ -191,15 +191,32 @@ namespace Mono.CSharp {
 		sealed class ThisInitializer : Statement
 		{
 			readonly HoistedThis hoisted_this;
+			readonly AnonymousMethodStorey parent;
 
-			public ThisInitializer (HoistedThis hoisted_this)
+			public ThisInitializer (HoistedThis hoisted_this, AnonymousMethodStorey parent)
 			{
 				this.hoisted_this = hoisted_this;
+				this.parent = parent;
+			}
+
+			public override bool Resolve (BlockContext bc)
+			{
+				return base.Resolve (bc);
 			}
 
 			protected override void DoEmit (EmitContext ec)
 			{
-				hoisted_this.EmitAssign (ec, new CompilerGeneratedThis (ec.CurrentType, loc), false, false);
+				Expression source = EmptyExpression.Null;
+
+				if (parent == null)
+					source = new CompilerGeneratedThis (ec.CurrentType, loc);
+				else {
+					source = new FieldExpr (parent.HoistedThis.Field, Location.Null) {
+						InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, Location.Null)
+					};
+				}
+
+				hoisted_this.EmitAssign (ec, source, false, false);
 			}
 
 			protected override void CloneTo (CloneContext clonectx, Statement target)
@@ -229,6 +246,7 @@ namespace Mono.CSharp {
 		public Expression Instance;
 
 		bool initialize_hoisted_this;
+		AnonymousMethodStorey hoisted_this_parent;
 
 		public AnonymousMethodStorey (ExplicitBlock block, TypeDefinition parent, MemberBase host, TypeParameters tparams, string name, MemberKind kind)
 			: base (parent, MakeMemberName (host, name, parent.Module.CounterAnonymousContainers, tparams, block.StartLocation),
@@ -238,13 +256,14 @@ namespace Mono.CSharp {
 			ID = parent.Module.CounterAnonymousContainers++;
 		}
 
-		public void AddCapturedThisField (EmitContext ec)
+		public void AddCapturedThisField (EmitContext ec, AnonymousMethodStorey parent)
 		{
 			TypeExpr type_expr = new TypeExpression (ec.CurrentType, Location);
 			Field f = AddCompilerGeneratedField ("$this", type_expr);
 			hoisted_this = new HoistedThis (this, f);
 
 			initialize_hoisted_this = true;
+			hoisted_this_parent = parent;
 		}
 
 		public Field AddCapturedVariable (string name, TypeSpec type)
@@ -553,7 +572,7 @@ namespace Mono.CSharp {
 			// referenced indirectly
 			//
 			if (initialize_hoisted_this) {
-				rc.CurrentBlock.AddScopeStatement (new ThisInitializer (hoisted_this));
+				rc.CurrentBlock.AddScopeStatement (new ThisInitializer (hoisted_this, hoisted_this_parent));
 			}
 
 			//
@@ -1680,13 +1699,13 @@ namespace Mono.CSharp {
 							//
 							parent = sm_parent.Parent.PartialContainer;
 						}
+					} else {
+						//
+						// For iterators we can host everything in one class
+						//
+						if (sm is IteratorStorey)
+							parent = storey = sm;
 					}
-
-					//
-					// For iterators we can host everything in one class
-					//
-					if (sm is IteratorStorey)
-						parent = storey = sm;
 				}
 
 				modifiers = storey != null ? Modifiers.INTERNAL : Modifiers.PRIVATE;

@@ -1325,6 +1325,10 @@ public class DebuggerTests
 		Assert.AreEqual ("AStruct", s.Type.Name);
 		AssertValue (42, s ["i"]);
 
+		// Check decoding of nested structs (#14942)
+		obj = o.GetValue (o.Type.GetField ("nested_struct"));
+		o.SetValue (o.Type.GetField ("nested_struct"), obj);
+
 		// Check round tripping of boxed struct fields (#12354)
 		obj = o.GetValue (o.Type.GetField ("boxed_struct_field"));
 		o.SetValue (o.Type.GetField ("boxed_struct_field"), obj);
@@ -2267,8 +2271,13 @@ public class DebuggerTests
 		while (invoke_results.Count < 2) {
 			Thread.Sleep (100);
 		}
-		AssertValue ("ABC", invoke_results [0]);
-		AssertValue (42, invoke_results [1]);
+		if (invoke_results [0] is PrimitiveValue) {
+			AssertValue ("ABC", invoke_results [1]);
+			AssertValue (42, invoke_results [0]);
+		} else {
+			AssertValue ("ABC", invoke_results [0]);
+			AssertValue (42, invoke_results [1]);
+		}
 	}
 
 	void invoke_multiple_cb (IAsyncResult ar) {

@@ -642,7 +642,7 @@ namespace I18N.CJK
 						continue;
 					}
 					i++;
-					if (bytes [i] == 0x42)
+					if (bytes [i] == 0x42 || bytes [i] == 0x40)
 						m = wide ? ISO2022JPMode.JISX0208 : ISO2022JPMode.ASCII;
 					else if (bytes [i] == 0x4A) // obsoleted
 						m = ISO2022JPMode.ASCII;
@@ -730,7 +730,7 @@ namespace I18N.CJK
 						continue;
 					}
 					i++;
-					if (bytes [i] == 0x42)
+					if (bytes [i] == 0x42 || bytes [i] == 0x40)
 						m = wide ? ISO2022JPMode.JISX0208 : ISO2022JPMode.ASCII;
 					else if (bytes [i] == 0x4A) // obsoleted
 						m = ISO2022JPMode.ASCII;

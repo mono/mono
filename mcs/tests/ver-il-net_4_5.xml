@@ -3063,10 +3063,21 @@
     </type>
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
-        <size>143</size>
+        <size>400</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
+      </method>
+    </type>
+    <type name="A+N">
+      <method name="Int32 get_Property()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_Property(Int32)" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="System.String get_Item(Int32)" attrs="2177">
+        <size>14</size>
       </method>
     </type>
   </test>
@@ -24408,6 +24419,61 @@
     <type name="Test+&lt;Test2&gt;c__Iterator0">
       <method name="System.Collections.Generic.IEnumerator`1[System.Int32] System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()" attrs="481">
         <size>26</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-iter-30.cs">
+    <type name="Program">
+      <method name="Void Main()" attrs="150">
+        <size>68</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="M">
+      <method name="System.Collections.Generic.IEnumerable`1[System.Int32] Test()" attrs="134">
+        <size>30</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="M+&lt;Test&gt;c__Iterator0">
+      <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()" attrs="2529">
+        <size>14</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()" attrs="2529">
+        <size>19</size>
+      </method>
+      <method name="Boolean MoveNext()" attrs="486">
+        <size>101</size>
+      </method>
+      <method name="Void Dispose()" attrs="486">
+        <size>15</size>
+      </method>
+      <method name="Void Reset()" attrs="486">
+        <size>6</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
+        <size>14</size>
+      </method>
+      <method name="System.Collections.Generic.IEnumerator`1[System.Int32] System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()" attrs="481">
+        <size>40</size>
+      </method>
+      <method name="Void &lt;Test&gt;m__0()" attrs="129">
+        <size>52</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="M+&lt;Test&gt;c__AnonStorey1">
+      <method name="Void &lt;&gt;m__1()" attrs="131">
+        <size>24</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
       </method>
     </type>
   </test>

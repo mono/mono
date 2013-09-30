@@ -195,18 +195,6 @@ release_gc_locks (void)
 	UNLOCK_INTERRUPTION;
 }
 
-static void
-stw_bridge_process (void)
-{
-	sgen_bridge_processing_stw_step ();
-}
-
-static void
-bridge_process (int generation)
-{
-	sgen_bridge_processing_finish (generation);
-}
-
 static TV_DECLARE (stop_world_time);
 static unsigned long max_pause_usec = 0;
 
@@ -269,9 +257,6 @@ sgen_restart_world (int generation, GGTimingInfo *timing)
 #endif
 	} END_FOREACH_THREAD
 
-	stw_bridge_process ();
-	release_gc_locks ();
-
 	count = sgen_thread_handshake (FALSE);
 	TV_GETTIME (end_sw);
 	usec = TV_ELAPSED (stop_world_time, end_sw);
@@ -280,9 +265,21 @@ sgen_restart_world (int generation, GGTimingInfo *timing)
 	mono_profiler_gc_event (MONO_GC_EVENT_POST_START_WORLD, generation);
 	MONO_GC_WORLD_RESTART_END (generation);
 
+	/*
+	 * We must release the thread info suspend lock after doing
+	 * the thread handshake.  Otherwise, if the GC stops the world
+	 * and a thread is in the process of starting up, but has not
+	 * yet registered (it's not in the thread_list), it is
+	 * possible that the thread does register while the world is
+	 * stopped.  When restarting the GC will then try to restart
+	 * said thread, but since it never got the suspend signal, it
+	 * cannot answer the restart signal, so a deadlock results.
+	 */
+	release_gc_locks ();
+
 	mono_thread_hazardous_try_free_some ();
 
-	bridge_process (generation);
+	sgen_bridge_processing_finish (generation);
 
 	TV_GETTIME (end_bridge);
 	bridge_usec = TV_ELAPSED (end_sw, end_bridge);

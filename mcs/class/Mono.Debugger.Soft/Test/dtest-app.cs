@@ -132,6 +132,13 @@ public struct GStruct<T> {
 	}
 }
 
+public struct NestedStruct {
+	NestedInner nested1, nested2;
+}
+
+public struct NestedInner {
+}
+
 interface ITest
 {
 	void Foo ();
@@ -202,6 +209,7 @@ public class Tests : TestsBase, ITest2
 	[ThreadStatic]
 	public static int tls_i;
 	public static bool is_attached = Debugger.IsAttached;
+	public NestedStruct nested_struct;
 
 #pragma warning restore 0414
 

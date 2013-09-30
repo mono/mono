@@ -59,6 +59,7 @@ suspend_thread (SgenThreadInfo *info, void *context)
 
 	info->stopped_domain = mono_domain_get ();
 	info->stopped_ip = context ? (gpointer) ARCH_SIGCTX_IP (context) : NULL;
+	info->signal = 0;
 	stop_count = sgen_global_stop_count;
 	/* duplicate signal */
 	if (0 && info->stop_count == stop_count)
@@ -197,6 +198,8 @@ sgen_thread_handshake (BOOL suspend)
 	} END_FOREACH_THREAD_SAFE
 
 	sgen_wait_for_suspend_ack (count);
+
+	SGEN_LOG (4, "%s handshake for %d threads\n", suspend ? "suspend" : "resume", count);
 
 	return count;
 }
