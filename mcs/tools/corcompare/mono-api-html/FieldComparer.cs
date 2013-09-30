@@ -69,8 +69,8 @@ namespace Xamarin.ApiDiff {
 				sb.Append (ftype).Append (' ');
 				sb.Append (name);
 				if (ftype == "string")
-					sb.Append (" = \"").Append (e.Attribute ("value").Value);
-				sb.Append ("\";");
+					sb.Append (" = \"").Append (e.Attribute ("value").Value).Append ('"');
+				sb.Append (';');
 			}
 
 			if (obsolete)
