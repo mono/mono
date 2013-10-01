@@ -244,7 +244,7 @@ namespace System.Security.Principal {
 			else {
 				// validate token by getting name
 				_name = GetTokenName (_token);
-				if ((_name == String.Empty) || (_name == null))
+				if (_name == null)
 					throw new SerializationException ("Token doesn't match a user.");
 			}
 			_type = _info.GetString ("m_type");
