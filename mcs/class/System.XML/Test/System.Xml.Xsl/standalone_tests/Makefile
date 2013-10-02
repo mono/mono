@@ -12,25 +12,20 @@
 
 RUNTIME = mono
 
-ifeq ($(PROFILE), net_2_0)
-	nunit_MONO_PATH="../../../../../class/lib/net_2_0"
-	CSCOMPILE=MONO_PATH=../../../../../class/lib/net_2_0 ../../../../../../mono/runtime/mono-wrapper ../../../../../class/lib/net_2_0/gmcs.exe
-else
-	nunit_MONO_PATH="../../../../../class/lib/net_1_1"
-	CSCOMPILE=mcs
-endif
+nunit_MONO_PATH="../../../../../class/lib/net_4_5"
+CSCOMPILE=MONO_PATH=../../../../../class/lib/net_4_5 ../../../../../../runtime/mono-wrapper ../../../../../class/lib/build/mcs.exe
 
 TEST_ARCHIVE = xslt-testsuite-03.ZIP
 CATALOG = testsuite/TESTS/catalog.xml
 FIXED_CATALOG = testsuite/TESTS/catalog-fixed.xml
 
-mono_wrapper_PATH="../../../../../../mono/runtime/mono-wrapper"
-NUNIT_CONSOLE=$(mono_wrapper_PATH) --debug ./nunit-console.exe
+mono_wrapper_PATH="../../../../../../runtime/mono-wrapper"
+NUNIT_CONSOLE=$(mono_wrapper_PATH) --debug $(nunit_MONO_PATH)/nunit-console.exe
 
 FIXTURE=MonoTests.oasis_xslt.SuiteBuilder
-CLEAN_NUNIT_FLAGS=/fixture:$(FIXTURE) /xml=TestResult.xml /include=Clean
-FAILED_NUNIT_FLAGS=/fixture:$(FIXTURE) /xml=FailedTestResult.xml /include=KnownFailures
-ALL_NUNIT_FLAGS=/fixture:$(FIXTURE) /xml=AllTestResult.xml /out=AllTestResult.log /include=KnownFailures,Clean
+CLEAN_NUNIT_FLAGS=-fixture:$(FIXTURE) -xml=TestResult.xml -include=Clean
+FAILED_NUNIT_FLAGS=-fixture:$(FIXTURE) -xml=FailedTestResult.xml -include=KnownFailures
+ALL_NUNIT_FLAGS=-fixture:$(FIXTURE) -xml=AllTestResult.xml -out=AllTestResult.log -include=KnownFailures,Clean
 
 TEST_PROG=xslttest.dll
 GENERATE_EXE=generate.exe
@@ -41,7 +36,7 @@ else
 REFERENCE_RESULTS_NAME=results
 endif
 REFERENCE_RESULTS_ARCHIVE=xslt-reference-$(REFERENCE_RESULTS_NAME).tar.gz
-REFERENCE_RESULTS_URL=http://anonsvn.mono-project.com/source/trunk/release/test-ext/xslt-standalone/$(REFERENCE_RESULTS_ARCHIVE)
+REFERENCE_RESULTS_URL=https://github.com/mono/release/raw/master/test-ext/xslt-standalone/$(REFERENCE_RESULTS_ARCHIVE)
 REFERENCE_RESULTS=$(REFERENCE_RESULTS_NAME)/timestamp
 
 test : $(TEST_PROG) $(FIXED_CATALOG) $(REFERENCE_RESULTS)
@@ -92,7 +87,7 @@ $(GENERATE_EXE) : generate.cs XsltTestUtils.cs
 	# It somehow does not work fine unless nunit-console.exe is here ...
 	cp $(nunit_MONO_PATH)/nunit-console.exe .
 $(TEST_PROG) : xslttest.cs XsltTestUtils.cs
-	$(CSCOMPILE) xslttest.cs XsltTestUtils.cs XmlCompare.cs -r:nunit.core -r:nunit.framework -out:$@ -t:library
+	$(CSCOMPILE) xslttest.cs XsltTestUtils.cs XmlCompare.cs -r:nunit.core -r:nunit.core.interfaces -r:nunit.framework -out:$@ -t:library
 
 catalog-fixed : $(FIXED_CATALOG)
 
