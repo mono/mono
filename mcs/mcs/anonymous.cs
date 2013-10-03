@@ -199,14 +199,9 @@ namespace Mono.CSharp {
 				this.parent = parent;
 			}
 
-			public override bool Resolve (BlockContext bc)
-			{
-				return base.Resolve (bc);
-			}
-
 			protected override void DoEmit (EmitContext ec)
 			{
-				Expression source = EmptyExpression.Null;
+				Expression source;
 
 				if (parent == null)
 					source = new CompilerGeneratedThis (ec.CurrentType, loc);

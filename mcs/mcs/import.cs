@@ -56,10 +56,10 @@ namespace Mono.CSharp
 			//
 			// Returns true when object at local position has dynamic attribute flag
 			//
-			public bool IsDynamicObject (MetadataImporter importer)
+			public bool IsDynamicObject ()
 			{
 				if (provider != null)
-					ReadAttribute (importer);
+					ReadAttribute ();
 
 				return flags != null && Position < flags.Length && flags[Position];
 			}
@@ -67,15 +67,15 @@ namespace Mono.CSharp
 			//
 			// Returns true when DynamicAttribute exists
 			//
-			public bool HasDynamicAttribute (MetadataImporter importer)
+			public bool HasDynamicAttribute ()
 			{
 				if (provider != null)
-					ReadAttribute (importer);
+					ReadAttribute ();
 
 				return flags != null;
 			}
 
-			void ReadAttribute (MetadataImporter importer)
+			void ReadAttribute ()
 			{
 				IList<CustomAttributeData> cad;
 				if (provider is MemberInfo) {
@@ -713,7 +713,7 @@ namespace Mono.CSharp
 			TypeSpec spec;
 			if (import_cache.TryGetValue (type, out spec)) {
 				if (spec.BuiltinType == BuiltinTypeSpec.Type.Object) {
-					if (dtype.IsDynamicObject (this))
+					if (dtype.IsDynamicObject ())
 						return module.Compiler.BuiltinTypes.Dynamic;
 
 					return spec;
@@ -722,7 +722,7 @@ namespace Mono.CSharp
 				if (!spec.IsGeneric || type.IsGenericTypeDefinition)
 					return spec;
 
-				if (!dtype.HasDynamicAttribute (this))
+				if (!dtype.HasDynamicAttribute ())
 					return spec;
 
 				// We've found same object in the cache but this one has a dynamic custom attribute
@@ -1372,7 +1372,7 @@ namespace Mono.CSharp
 		protected AttributesBag cattrs;
 		protected readonly MetadataImporter importer;
 
-		public ImportedDefinition (MemberInfo provider, MetadataImporter importer)
+		protected ImportedDefinition (MemberInfo provider, MetadataImporter importer)
 		{
 			this.provider = provider;
 			this.importer = importer;

@@ -117,9 +117,9 @@ namespace Mono.CSharp {
 	//
 	public class Constraints
 	{
-		SimpleMemberName tparam;
-		List<FullNamedExpression> constraints;
-		Location loc;
+		readonly SimpleMemberName tparam;
+		readonly List<FullNamedExpression> constraints;
+		readonly Location loc;
 		bool resolved;
 		bool resolving;
 		
@@ -398,7 +398,7 @@ namespace Mono.CSharp {
 	//
 	public class TypeParameter : MemberCore, ITypeDefinition
 	{
-		static readonly string[] attribute_target = new string [] { "type parameter" };
+		static readonly string[] attribute_target = { "type parameter" };
 		
 		Constraints constraints;
 		GenericTypeParameterBuilder builder;
@@ -2849,7 +2849,7 @@ namespace Mono.CSharp {
 				var mi = Delegate.GetInvokeMethod (t_i);
 				TypeSpec rtype = mi.ReturnType;
 
-				if (tic.IsReturnTypeNonDependent (ec, mi, rtype)) {
+				if (tic.IsReturnTypeNonDependent (mi, rtype)) {
 					// It can be null for default arguments
 					if (arguments[i] == null)
 						continue;
@@ -3296,7 +3296,7 @@ namespace Mono.CSharp {
 		// Tests whether all delegate input arguments are fixed and generic output type
 		// requires output type inference 
 		//
-		public bool IsReturnTypeNonDependent (ResolveContext ec, MethodSpec invoke, TypeSpec returnType)
+		public bool IsReturnTypeNonDependent (MethodSpec invoke, TypeSpec returnType)
 		{
 			AParametersCollection d_parameters = invoke.Parameters;
 
@@ -3529,7 +3529,7 @@ namespace Mono.CSharp {
 				var invoke = Delegate.GetInvokeMethod (t);
 				TypeSpec rtype = invoke.ReturnType;
 
-				if (!IsReturnTypeNonDependent (ec, invoke, rtype))
+				if (!IsReturnTypeNonDependent (invoke, rtype))
 					return 0;
 
 				// LAMESPEC: Standard does not specify that all methodgroup arguments

@@ -325,7 +325,7 @@ namespace Mono.CSharp
 		// it's public so that we can use a struct at the callsite
 		public struct FlagsHandle : IDisposable
 		{
-			ResolveContext ec;
+			readonly ResolveContext ec;
 			readonly Options invmask, oldval;
 
 			public FlagsHandle (ResolveContext ec, Options flagsToSet)
@@ -730,7 +730,7 @@ namespace Mono.CSharp
 		// it's public so that we can use a struct at the callsite
 		public struct FlagsHandle : IDisposable
 		{
-			BuilderContext ec;
+			readonly BuilderContext ec;
 			readonly Options invmask, oldval;
 
 			public FlagsHandle (BuilderContext ec, Options flagsToSet)

@@ -1110,13 +1110,13 @@ namespace Mono.CSharp
 		}
 	}
 
-	abstract class AssemblyReferencesLoader<T>
+	abstract class AssemblyReferencesLoader<T> where T : class
 	{
 		protected readonly CompilerContext compiler;
 
 		protected readonly List<string> paths;
 
-		public AssemblyReferencesLoader (CompilerContext compiler)
+		protected AssemblyReferencesLoader (CompilerContext compiler)
 		{
 			this.compiler = compiler;
 

@@ -3938,7 +3938,7 @@ unary_expression
 			 if (current_anonymous_method is LambdaExpression) {
 				report.Error (4034, GetLocation ($1),
 					"The `await' operator can only be used when its containing lambda expression is marked with the `async' modifier");
-			} else if (current_anonymous_method is AnonymousMethodExpression) {
+			} else if (current_anonymous_method != null) {
 				report.Error (4035, GetLocation ($1),
 					"The `await' operator can only be used when its containing anonymous method is marked with the `async' modifier");
 			} else if (interactive_async != null) {

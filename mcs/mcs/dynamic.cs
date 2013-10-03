@@ -224,8 +224,8 @@ namespace Mono.CSharp
 		//
 		protected class BinderFlags : EnumConstant
 		{
-			DynamicExpressionStatement statement;
-			CSharpBinderFlags flags;
+			readonly DynamicExpressionStatement statement;
+			readonly CSharpBinderFlags flags;
 
 			public BinderFlags (CSharpBinderFlags flags, DynamicExpressionStatement statement)
 				: base (statement.loc)

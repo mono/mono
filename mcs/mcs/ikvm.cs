@@ -226,7 +226,7 @@ namespace Mono.CSharp
 		readonly StaticImporter importer;
 		readonly Universe domain;
 		Assembly corlib;
-		List<Tuple<AssemblyName, string, Assembly>> loaded_names;
+		readonly List<Tuple<AssemblyName, string, Assembly>> loaded_names;
 		static readonly Dictionary<string, string[]> sdk_directory;
 
 		static StaticLoader ()
