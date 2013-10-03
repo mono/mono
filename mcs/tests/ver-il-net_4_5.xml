@@ -24461,16 +24461,66 @@
       <method name="System.Collections.Generic.IEnumerator`1[System.Int32] System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()" attrs="481">
         <size>40</size>
       </method>
-      <method name="Void &lt;Test&gt;m__0()" attrs="129">
-        <size>52</size>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__0()" attrs="131">
+        <size>57</size>
+      </method>
+    </type>
+    <type name="M+&lt;Test&gt;c__Iterator0+&lt;Test&gt;c__AnonStorey1">
+      <method name="Void &lt;&gt;m__1()" attrs="131">
+        <size>24</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
     </type>
-    <type name="M+&lt;Test&gt;c__AnonStorey1">
-      <method name="Void &lt;&gt;m__1()" attrs="131">
-        <size>24</size>
+  </test>
+  <test name="gtest-iter-31.cs">
+    <type name="B">
+      <method name="System.Object Foo(System.Object)" attrs="134">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void Main()" attrs="150">
+        <size>62</size>
+      </method>
+      <method name="System.Collections.Generic.IEnumerable`1[System.UInt16] Test()" attrs="129">
+        <size>30</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>18</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test&gt;c__Iterator0">
+      <method name="UInt16 System.Collections.Generic.IEnumerator&lt;ushort&gt;.get_Current()" attrs="2529">
+        <size>14</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()" attrs="2529">
+        <size>19</size>
+      </method>
+      <method name="Boolean MoveNext()" attrs="486">
+        <size>81</size>
+      </method>
+      <method name="Void Dispose()" attrs="486">
+        <size>1</size>
+      </method>
+      <method name="Void Reset()" attrs="486">
+        <size>6</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()" attrs="481">
+        <size>14</size>
+      </method>
+      <method name="System.Collections.Generic.IEnumerator`1[System.UInt16] System.Collections.Generic.IEnumerable&lt;ushort&gt;.GetEnumerator()" attrs="481">
+        <size>40</size>
+      </method>
+      <method name="System.Object &lt;&gt;m__0(System.String)" attrs="131">
+        <size>25</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>

@@ -1698,13 +1698,12 @@ namespace Mono.CSharp {
 							// use ldftn on non-boxed instances either to share mutated state
 							//
 							parent = sm_parent.Parent.PartialContainer;
-						}
-					} else {
-						//
-						// For iterators we can host everything in one class
-						//
-						if (sm is IteratorStorey)
+						} else if (sm is IteratorStorey) {
+							//
+							// For iterators we can host everything in one class
+							//
 							parent = storey = sm;
+						}
 					}
 				}
 
