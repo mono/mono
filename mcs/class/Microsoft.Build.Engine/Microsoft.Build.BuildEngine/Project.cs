@@ -1033,8 +1033,6 @@ namespace Microsoft.Build.BuildEngine {
 			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectDefaultTargets", DefaultTargets, PropertyType.Reserved));
 			evaluatedProperties.AddProperty (new BuildProperty ("OS", OS, PropertyType.Environment));
 #if NET_4_5
-			// impersonate Visual Studio 2012. see http://blogs.msdn.com/b/webdev/archive/2012/08/22/visual-studio-project-compatability-and-visualstudioversion.aspx
-			evaluatedProperties.AddProperty (new BuildProperty ("VisualStudioVersion", "11.0", PropertyType.Reserved));
 			// see http://msdn.microsoft.com/en-us/library/vstudio/hh162058(v=vs.120).aspx
 			if (effective_tools_version == "12.0") {
 				evaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsPath32", toolsPath, PropertyType.Reserved));
