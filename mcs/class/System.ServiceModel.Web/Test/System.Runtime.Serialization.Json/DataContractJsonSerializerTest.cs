@@ -1467,6 +1467,25 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			result = entity.GetValue;
 			Assert.AreEqual ("ValueA", result, "#1");
 		}
+
+		[DataContract(Name = "UriTest")]
+		public class UriTest
+		{
+			[DataMember(Name = "members")]
+			public Uri MembersRelativeLink { get; set; }
+		}
+
+		[Test]
+		public void Bug15169 ()
+		{
+			const string json = "{\"members\":\"foo/bar/members\"}";
+			var serializer = new DataContractJsonSerializer (typeof (UriTest));
+			UriTest entity;
+			using (var stream = new MemoryStream (Encoding.UTF8.GetBytes (json)))
+				entity = (UriTest) serializer.ReadObject (stream);
+
+			Assert.AreEqual ("foo/bar/members", entity.MembersRelativeLink.ToString ());
+		}
 	}
 	
 	public class CharTest

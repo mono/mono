@@ -74,14 +74,20 @@ namespace Xamarin.ApiDiff {
 				return null;
 
 			// inner types
-			type = type.Replace ('+', '.');
+			return GetTypeName (type.Replace ('+', '.'));
+		}
 
+		static string GetTypeName (string type)
+		{
 			if (type.StartsWith ("System.Nullable`1[", StringComparison.Ordinal))
 				return type.Substring (18, type.Length - 19) + "?";
 
 			int pos = type.IndexOf ('`');
-			if (pos >= 0)
-				return type.Substring (0, pos) + "&lt;" + type.Substring (pos + 3).Replace ("]", "&gt;");
+			if (pos >= 0) {
+				int end = type.LastIndexOf (']');
+				string subtype = type.Substring (pos + 3, end - pos - 3);
+				return type.Substring (0, pos) + "&lt;" + GetTypeName (subtype) + "&gt;";
+			}
 
 			switch (type) {
 			case "System.String":

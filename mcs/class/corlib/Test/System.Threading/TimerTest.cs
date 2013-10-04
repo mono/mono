@@ -60,11 +60,11 @@ namespace MonoTests.System.Threading {
 			Timer t = new Timer (new TimerCallback (Callback), bucket, 10, 10);
 			Thread.Sleep (500);
 			int c = bucket.count;
-			Assert.IsTrue(c > 20, "#1");
+			Assert.IsTrue (c > 20, "#1 " + c.ToString ());
 			t.Change (100, 100);
 			c = bucket.count;
 			Thread.Sleep (500);
-			Assert.IsTrue(bucket.count <= c + 20, "#2");
+			Assert.IsTrue (bucket.count <= c + 20, "#2 " + c.ToString ());
 			t.Dispose ();
 		}
 
@@ -193,8 +193,7 @@ namespace MonoTests.System.Threading {
 			Thread.Sleep(100);
 			t.Change (int.MaxValue, Timeout.Infinite);
 			// since period is 0 the callback should happen once (bug #340212)
-			Assert.IsTrue(b.count == 1);
-			
+			Assert.AreEqual (1, b.count, "only once");
 		}
 
 		[Test]

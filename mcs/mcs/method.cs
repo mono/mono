@@ -685,6 +685,8 @@ namespace Mono.CSharp {
 				Module.PredefinedAttributes.CompilerGenerated.EmitAttribute (MethodBuilder);
 			if ((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0)
 				Module.PredefinedAttributes.DebuggerHidden.EmitAttribute (MethodBuilder);
+			if ((ModFlags & Modifiers.DEBUGGER_STEP_THROUGH) != 0)
+				Module.PredefinedAttributes.DebuggerStepThrough.EmitAttribute (MethodBuilder);
 
 			if (ReturnType.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 				return_attributes = new ReturnParameter (this, MethodBuilder, Location);
@@ -1232,7 +1234,7 @@ namespace Mono.CSharp {
 					}
 
 					block = (ToplevelBlock) block.ConvertToAsyncTask (this, Parent.PartialContainer, parameters, ReturnType, null, Location);
-					ModFlags |= Modifiers.DEBUGGER_HIDDEN;
+					ModFlags |= Modifiers.DEBUGGER_STEP_THROUGH;
 				}
 
 				if (Compiler.Settings.WriteMetadataOnly)
