@@ -40,11 +40,6 @@ namespace System.ComponentModel.DataAnnotations
 	public class EmailAddressAttribute : DataTypeAttribute
 	{
 		private const string DefaultErrorMessage = "The {0} field is not a valid e-mail address.";
-		// See: http://stackoverflow.com/questions/16167983/best-regular-expression-for-email-validation-in-c-sharp
-		// See: http://en.wikipedia.org/wiki/List_of_Internet_top-level_domains
-		private const string _emailRegexStr =   @"[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*" +
-						  	@"@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-z0-9])?\.)+(?:[A-Za-z]{2}|" +
-						    	@"com|org|net|edu|gov|cat|mil|biz|info|mobi|name|aero|asia|jobs|museum|coop|travel|post|pro|tel|int|xxx)\b";
 		private static Regex _emailRegex = new Regex (_emailRegexStr, RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
 		public EmailAddressAttribute ()
@@ -60,10 +55,7 @@ namespace System.ComponentModel.DataAnnotations
 				return true;
 
 			if (value is string)
-			{
-				var str = value as string;
-				return !string.IsNullOrEmpty(str) ? _emailRegex.IsMatch(str) : false;
-			}
+				return true;
 
 			return false;
 		}
