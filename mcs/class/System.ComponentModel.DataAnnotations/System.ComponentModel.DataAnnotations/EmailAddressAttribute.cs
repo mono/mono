@@ -40,7 +40,6 @@ namespace System.ComponentModel.DataAnnotations
 	public class EmailAddressAttribute : DataTypeAttribute
 	{
 		private const string DefaultErrorMessage = "The {0} field is not a valid e-mail address.";
-		private static Regex _emailRegex = new Regex (_emailRegexStr, RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
 		public EmailAddressAttribute ()
 			: base(DataType.EmailAddress)
