@@ -375,6 +375,8 @@ void mono_unity_liveness_calculation_from_statics(LivenessState* liveness_state)
 			field = &klass->fields[j];
 			if (!(field->type->attrs & FIELD_ATTRIBUTE_STATIC))
 				continue;
+			if (mono_class_field_is_special_static (field))
+				continue;
 			if(!mono_field_can_contain_references(field))
 				continue;
 
