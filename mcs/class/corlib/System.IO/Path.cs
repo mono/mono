@@ -289,9 +289,8 @@ namespace System.IO {
 			return fullpath;
 		}
 
-		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		// http://msdn.microsoft.com/en-us/library/windows/desktop/aa364963%28v=vs.85%29.aspx
-		// http://www.codeproject.com/Tips/223321/Win32-API-GetFullPathName
+		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		private static extern int GetFullPathName(string path, int numBufferChars, StringBuilder buffer, ref IntPtr lpFilePartOrNull); 
 
 		internal static string GetFullPathName(string path)
