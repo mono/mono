@@ -18547,6 +18547,32 @@
       </method>
     </type>
   </test>
+  <test name="gtest-597.cs">
+    <type name="Test.MainClass">
+      <method name="Int32 Main()" attrs="150">
+        <size>63</size>
+      </method>
+      <method name="Boolean Test_1[T](Test.Templated`1[T])" attrs="145">
+        <size>18</size>
+      </method>
+      <method name="Boolean Test_2[U](Test.IA`1[U])" attrs="145">
+        <size>18</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test.Templated`1[T]">
+      <method name="Void .ctor()" attrs="6276">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test.Derived">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">

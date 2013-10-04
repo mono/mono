@@ -1505,6 +1505,12 @@ namespace Mono.CSharp
 				//
 				if (Convert.ExplicitReferenceConversionExists (d, t))
 					return this;
+
+				//
+				// open generic type
+				//
+				if (d is InflatedTypeSpec && InflatedTypeSpec.ContainsTypeParameter (d))
+					return this;
 			} else {
 				var tps = t as TypeParameterSpec;
 				if (tps != null)
@@ -1544,9 +1550,14 @@ namespace Mono.CSharp
 							this).Resolve (ec);
 					}
 
-					if (Convert.ExplicitReferenceConversionExists (d, t)) {
+					if (Convert.ExplicitReferenceConversionExists (d, t))
 						return this;
-					}
+
+					//
+					// open generic type
+					//
+					if (d is InflatedTypeSpec && InflatedTypeSpec.ContainsTypeParameter (d))
+						return this;
 				}
 			}
 
