@@ -1574,20 +1574,30 @@ sweep_block (MSBlockInfo *block, gboolean during_major_collection)
 static inline int
 bitcount (mword d)
 {
+#if defined(__GNUC__) || defined(__clang__) || defined(__MINGW32__)
+	if (sizeof (mword) == sizeof (unsigned long long))
+		return __builtin_popcountll (d);
+	else if (sizeof (mword) == sizeof (unsigned long))
+		return __builtin_popcountl (d);
+	else
+		return __builtin_popcount (d);
+		
+#elif defined(_MSC_VER) && (_MSC_VER <= 1400)  // MSVC <= 2005, no intrinsic.
+	if (sizeof (mword) == 8)
+		return __popcnt64 (d);
+	else
+		return __popcnt32 (d);
+
+#else
 	int count = 0;
 
-#ifdef __GNUC__
-	if (sizeof (mword) == sizeof (unsigned long))
-		count += __builtin_popcountl (d);
-	else
-		count += __builtin_popcount (d);
-#else
 	while (d) {
 		count ++;
 		d &= (d - 1);
 	}
-#endif
+	
 	return count;
+#endif
 }
 
 static void
