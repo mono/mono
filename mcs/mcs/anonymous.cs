@@ -244,11 +244,11 @@ namespace Mono.CSharp {
 		AnonymousMethodStorey hoisted_this_parent;
 
 		public AnonymousMethodStorey (ExplicitBlock block, TypeDefinition parent, MemberBase host, TypeParameters tparams, string name, MemberKind kind)
-			: base (parent, MakeMemberName (host, name, parent.Module.CounterAnonymousContainers, tparams, block.StartLocation),
+			: base (parent, MakeMemberName (host, name, parent.PartialContainer.CounterAnonymousContainers, tparams, block.StartLocation),
 				tparams, 0, kind)
 		{
 			OriginalSourceBlock = block;
-			ID = parent.Module.CounterAnonymousContainers++;
+			ID = parent.PartialContainer.CounterAnonymousContainers++;
 		}
 
 		public void AddCapturedThisField (EmitContext ec, AnonymousMethodStorey parent)
@@ -1714,7 +1714,7 @@ namespace Mono.CSharp {
 				parent = ec.CurrentTypeDefinition.Parent.PartialContainer;
 
 			string name = CompilerGeneratedContainer.MakeName (parent != storey ? block_name : null,
-				"m", null, ec.Module.CounterAnonymousMethods++);
+				"m", null, parent.PartialContainer.CounterAnonymousMethods++);
 
 			MemberName member_name;
 			if (storey == null && ec.CurrentTypeParameters != null) {
@@ -1902,7 +1902,7 @@ namespace Mono.CSharp {
 
 		public static AnonymousTypeClass Create (TypeContainer parent, IList<AnonymousTypeParameter> parameters, Location loc)
 		{
-			string name = ClassNamePrefix + parent.Module.CounterAnonymousTypes++;
+			string name = ClassNamePrefix + parent.PartialContainer.CounterAnonymousTypes++;
 
 			ParametersCompiled all_parameters;
 			TypeParameters tparams = null;
