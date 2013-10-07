@@ -382,7 +382,8 @@ namespace System.Xml.Linq
 
 		public XAttribute Attribute (XName name)
 		{
-			foreach (XAttribute a in Attributes ())
+			XAttribute next;
+			for (XAttribute a = attr_first; a != null; a = a.NextAttribute)
 				if (a.Name == name)
 					return a;
 			return null;
