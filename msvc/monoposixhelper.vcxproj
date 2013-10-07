@@ -168,7 +168,7 @@
       <PreprocessorDefinitions>_DEBUG;__i386__;TARGET_X86;WIN32;_WIN32;__WIN32__;_WINDOWS;WINDOWS;PLATFORM_WIN32;TARGET_WIN32;_CRT_SECURE_NO_DEPRECATE;HAVE_CONFIG_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
@@ -198,7 +198,7 @@
       <PreprocessorDefinitions>_DEBUG;__x86_64__;WIN64;_WIN64;WIN32;_WIN32;__WIN32__;_WINDOWS;WINDOWS;PLATFORM_WIN32;TARGET_WIN32;_CRT_SECURE_NO_DEPRECATE;HAVE_CONFIG_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
@@ -219,7 +219,7 @@
       <Optimization>MinSpace</Optimization>
       <AdditionalIncludeDirectories>..\eglib\src;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;__i386__;TARGET_X86;i386;WIN32;_WIN32;__WIN32__;_WINDOWS;WINDOWS;PLATFORM_WIN32;TARGET_WIN32;_CRT_SECURE_NO_DEPRECATE;HAVE_CONFIG_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
@@ -249,7 +249,7 @@
       <Optimization>MinSpace</Optimization>
       <AdditionalIncludeDirectories>$(MONO_DEPENDENCIES_PREFIX)\include\glib-2.0;$(MONO_DEPENDENCIES_PREFIX)\include\glib-2.0\glib;$(MONO_DEPENDENCIES_PREFIX)\lib\glib-2.0\include;..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;__x86_64__;WIN64;_WIN64;WIN32;_WIN32;__WIN32__;_WINDOWS;WINDOWS;PLATFORM_WIN32;TARGET_WIN32;_CRT_SECURE_NO_DEPRECATE;HAVE_CONFIG_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
@@ -274,7 +274,7 @@
       <PreprocessorDefinitions>_DEBUG;__i386__;TARGET_X86;WIN32;_WIN32;__WIN32__;_WINDOWS;WINDOWS;PLATFORM_WIN32;TARGET_WIN32;_CRT_SECURE_NO_DEPRECATE;HAVE_CONFIG_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
@@ -304,7 +304,7 @@
       <PreprocessorDefinitions>_DEBUG;__x86_64__;WIN64;_WIN64;WIN32;_WIN32;__WIN32__;_WINDOWS;WINDOWS;PLATFORM_WIN32;TARGET_WIN32;_CRT_SECURE_NO_DEPRECATE;HAVE_CONFIG_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
@@ -326,7 +326,7 @@
       <Optimization>MinSpace</Optimization>
       <AdditionalIncludeDirectories>..\eglib\src;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;__i386__;TARGET_X86;i386;WIN32;_WIN32;__WIN32__;_WINDOWS;WINDOWS;PLATFORM_WIN32;TARGET_WIN32;_CRT_SECURE_NO_DEPRECATE;HAVE_CONFIG_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
@@ -356,7 +356,7 @@
       <Optimization>MinSpace</Optimization>
       <AdditionalIncludeDirectories>..\eglib\src;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;__x86_64__;WIN64;_WIN64;WIN32;_WIN32;__WIN32__;_WINDOWS;WINDOWS;PLATFORM_WIN32;TARGET_WIN32;_CRT_SECURE_NO_DEPRECATE;HAVE_CONFIG_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
@@ -380,7 +380,7 @@
       <Optimization>MinSpace</Optimization>
       <AdditionalIncludeDirectories>..\eglib\src;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;__i386__;TARGET_X86;i386;WIN32;_WIN32;__WIN32__;_WINDOWS;WINDOWS;PLATFORM_WIN32;TARGET_WIN32;_CRT_SECURE_NO_DEPRECATE;HAVE_CONFIG_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
@@ -410,7 +410,7 @@
       <Optimization>MinSpace</Optimization>
       <AdditionalIncludeDirectories>..\eglib\src;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;__x86_64__;WIN64;_WIN64;WIN32;_WIN32;__WIN32__;_WINDOWS;WINDOWS;PLATFORM_WIN32;TARGET_WIN32;_CRT_SECURE_NO_DEPRECATE;HAVE_CONFIG_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
