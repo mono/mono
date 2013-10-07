@@ -391,7 +391,7 @@ namespace Mono.CSharp
 			if (!has_ref_out_argument) {
 				string d_name = isStatement ? "Action" : "Func";
 
-				TypeExpr te = null;
+				TypeSpec te = null;
 				Namespace type_ns = module.GlobalRootNamespace.GetNamespace ("System", true);
 				if (type_ns != null) {
 					te = type_ns.LookupType (module, d_name, dyn_args_count + default_args, LookupMode.Normal, loc);
@@ -412,9 +412,9 @@ namespace Mono.CSharp
 						targs[targs.Length - 1] = new TypeExpression (t, loc);
 					}
 
-					del_type = new GenericTypeExpr (te.Type, new TypeArguments (targs), loc);
+					del_type = new GenericTypeExpr (te, new TypeArguments (targs), loc);
 					if (targs_for_instance != null)
-						del_type_instance_access = new GenericTypeExpr (te.Type, new TypeArguments (targs_for_instance), loc);
+						del_type_instance_access = new GenericTypeExpr (te, new TypeArguments (targs_for_instance), loc);
 					else
 						del_type_instance_access = del_type;
 				}

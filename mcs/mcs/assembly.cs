@@ -919,7 +919,7 @@ namespace Mono.CSharp
 						return;
 					}
 
-					var mtype = texpr.Type.MemberDefinition as ClassOrStruct;
+					var mtype = texpr.MemberDefinition as ClassOrStruct;
 					if (mtype == null) {
 						Report.Error (1556, "`{0}' specified for Main method must be a valid class or struct", main_class);
 						return;
