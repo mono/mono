@@ -29946,7 +29946,7 @@
         <size>10</size>
       </method>
       <method name="Int32 Main()" attrs="150">
-        <size>125</size>
+        <size>115</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -42222,7 +42222,7 @@
   <test name="test-609.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
-        <size>54</size>
+        <size>10</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
