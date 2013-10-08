@@ -1126,6 +1126,15 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		public void Delay_TimeManagement ()
+		{
+			var delay1 = Task.Delay(50);
+			var delay2 = Task.Delay(25);
+			Assert.IsTrue (Task.WhenAny(new[] { delay1, delay2 }).Wait (1000));
+			Assert.AreEqual (TaskStatus.RanToCompletion, delay2.Status);
+		}
+
+		[Test]
 		public void WaitAny_WithNull ()
 		{
 			var tasks = new [] {

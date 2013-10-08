@@ -957,11 +957,23 @@ namespace System.Threading.Tasks
 			if (millisecondsDelay < -1)
 				throw new ArgumentOutOfRangeException ("millisecondsDelay");
 
-			var task = new Task (TaskActionInvoker.Delay, millisecondsDelay, cancellationToken, TaskCreationOptions.None, null, TaskConstants.Finished);
+			if (cancellationToken.IsCancellationRequested)
+				return TaskConstants.Canceled;
+
+			var task = new Task (TaskActionInvoker.Empty, null, cancellationToken, TaskCreationOptions.None, null, null);
 			task.SetupScheduler (TaskScheduler.Default);
-			
-			if (millisecondsDelay != Timeout.Infinite)
-				task.scheduler.QueueTask (task);
+
+			if (millisecondsDelay != Timeout.Infinite) {
+				var timer = new Timer (delegate (object state) {
+					var t = (Task) state;
+					if (t.Status == TaskStatus.WaitingForActivation) {
+						t.Status = TaskStatus.Running;
+						t.Finish ();
+					}
+				}, task, millisecondsDelay, -1);
+
+				task.ContinueWith (new DisposeContinuation (timer));
+			}
 
 			return task;
 		}
