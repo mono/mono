@@ -26,15 +26,53 @@
 //
 
 using System;
+using System.Threading;
 
 namespace Microsoft.Build.Execution
 {
-        public class BuildSubmission
-        {
-                private BuildSubmission ()
-                {
-                        throw new NotImplementedException ();
-                }
-        }
+	public class BuildSubmission
+	{
+		static Random rnd = new Random ();
+
+		internal BuildSubmission (BuildManager build, BuildRequestData requestData)
+		{
+			BuildManager = build;
+			this.request = requestData;
+			SubmissionId = rnd.Next ();
+		}
+
+		BuildRequestData request;
+		BuildSubmissionCompleteCallback callback;
+		bool is_started, is_completed;
+
+		public object AsyncContext { get; private set; }
+		public BuildManager BuildManager { get; private set; }
+		public BuildResult BuildResult { get; set; }
+		public bool IsCompleted {
+			get { return is_completed; }
+		}
+		public int SubmissionId { get; private set; }
+		public WaitHandle WaitHandle {
+			get { throw new NotImplementedException (); }
+		}
+
+		public BuildResult Execute ()
+		{
+			ExecuteAsync (null, null);
+			WaitHandle.WaitOne ();
+			return BuildResult;
+		}
+
+		public void ExecuteAsync (BuildSubmissionCompleteCallback callback, object context)
+		{
+			if (is_started)
+				throw new InvalidOperationException ("Build has already started");
+			is_started = true;
+			this.AsyncContext = context;
+			this.callback = callback;
+
+			throw new NotImplementedException ();
+		}
+	}
 }
 

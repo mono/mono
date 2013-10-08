@@ -26,66 +26,80 @@
 //
 
 using Microsoft.Build.Evaluation;
-
 using System;
+using System.Collections.Generic;
 
 namespace Microsoft.Build.Execution
 {
-        public class BuildManager
-        {
-                public BuildManager ()
-                {
-                        throw new NotImplementedException ();
-                }
+	public class BuildManager
+	{
+		public BuildManager ()
+		{
+			throw new NotImplementedException ();
+		}
 
-                public BuildManager (string hostName)
-                {
-                        throw new NotImplementedException ();
-                }
+		public BuildManager (string hostName)
+		{
+			throw new NotImplementedException ();
+		}
 
-                public void BeginBuild (BuildParameters parameters)
-                {
-                        throw new NotImplementedException ();
-                }
+		~BuildManager ()
+		{
 
-                public BuildResult Build (BuildParameters parameters, BuildRequestData requestData)
-                {
-                        throw new NotImplementedException ();
-                }
+		}
 
-                public BuildResult BuildRequest (BuildRequestData requestData)
-                {
-                        throw new NotImplementedException ();
-                }
+		BuildParameters parameters;
+		BuildRequestData request_data;
 
-                public void CancelAllSubmissions ()
-                {
-                        throw new NotImplementedException ();
-                }
+		public void BeginBuild (BuildParameters parameters)
+		{
+			throw new NotImplementedException ();
+		}
 
-                public void EndBuild ()
-                {
-                        throw new NotImplementedException ();
-                }
+		public BuildResult Build (BuildParameters parameters, BuildRequestData requestData)
+		{
+			throw new NotImplementedException ();
+		}
 
-                public ProjectInstance GetProjectInstanceForBuild (Project project)
-                {
-                        throw new NotImplementedException ();
-                }
+		public BuildResult BuildRequest (BuildRequestData requestData)
+		{
+			throw new NotImplementedException ();
+		}
 
-                public BuildSubmission PendBuildRequest (BuildRequestData requestData)
-                {
-                        throw new NotImplementedException ();
-                }
+		public void CancelAllSubmissions ()
+		{
+			throw new NotImplementedException ();
+		}
 
-                public void ResetCaches ()
-                {
-                        throw new NotImplementedException ();
-                }
+		public void EndBuild ()
+		{
+			throw new NotImplementedException ();
+		}
 
-                public static BuildManager DefaultBuildManager {
-                        get { throw new NotImplementedException (); }
-                }
-        }
+		public ProjectInstance GetProjectInstanceForBuild (Project project)
+		{
+			throw new NotImplementedException ();
+		}
+
+		List<BuildSubmission> submissions = new List<BuildSubmission> ();
+
+		public BuildSubmission PendBuildRequest (BuildRequestData requestData)
+		{
+			var sub = new BuildSubmission (this, requestData);
+			submissions.Add (sub);
+			return sub;
+		}
+
+		public void ResetCaches ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		static BuildManager default_manager = new BuildManager ();
+
+		public static BuildManager DefaultBuildManager {
+			get { return default_manager; }
+		}
+	}
 }
 

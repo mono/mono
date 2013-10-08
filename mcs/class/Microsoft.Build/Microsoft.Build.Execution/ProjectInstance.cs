@@ -59,18 +59,19 @@ namespace Microsoft.Build.Execution
 		public ProjectInstance (ProjectRootElement xml, IDictionary<string, string> globalProperties,
 				string toolsVersion, ProjectCollection projectCollection)
 		{
+			projects = projectCollection;
+			global_properties = globalProperties ?? new Dictionary<string, string> ();
+			ToolsVersion = toolsVersion;
 			InitializeProperties ();
-			
-			throw new NotImplementedException ();
 		}
 
 		public ProjectInstance (string projectFile, IDictionary<string, string> globalProperties,
 				string toolsVersion, ProjectCollection projectCollection)
+			: this (ProjectRootElement.Create (projectFile), globalProperties, toolsVersion, projectCollection)
 		{
-			InitializeProperties ();
-			
-			throw new NotImplementedException ();
 		}
+
+		ProjectCollection projects;
 		
 		void InitializeProperties ()
 		{
@@ -78,7 +79,7 @@ namespace Microsoft.Build.Execution
 			InitialTargets = new List<string> ();
 		}
 		
-		Dictionary<string, string> global_properties = new Dictionary<string, string> ();
+		IDictionary<string, string> global_properties;
 		
 		public List<string> DefaultTargets { get; private set; }
 		
@@ -128,9 +129,7 @@ namespace Microsoft.Build.Execution
 			get { throw new NotImplementedException (); }
 		}
 		
-		public string ToolsVersion {
-			get { throw new NotImplementedException (); }
-		}
+		public string ToolsVersion { get; private set; }
 
 		public ProjectItemInstance AddItem (string itemType, string evaluatedInclude)
 		{
