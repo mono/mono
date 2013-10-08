@@ -45,6 +45,7 @@ Microsoft.Build.Execution/BuildRequestDataFlags.cs
 Microsoft.Build.Execution/BuildResult.cs
 Microsoft.Build.Execution/BuildResultCode.cs 
 Microsoft.Build.Execution/BuildSubmission.cs
+Microsoft.Build.Execution/BuildSubmissionCompleteCallback.cs
 Microsoft.Build.Execution/HostServices.cs
 Microsoft.Build.Execution/ITargetResult.cs
 Microsoft.Build.Execution/NodeAffinity.cs
