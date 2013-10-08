@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0DA63190-E6E1-41C5-B683-A54FADBE61CB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699</NoWarn>
+    <OutputPath>bin\Debug\Microsoft.Build.Engine-net_4_5</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <AssemblyName>Microsoft.Build.Engine</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>false</NoStdLib>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>false</NoStdLib>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="..\..\tools\xbuild\SolutionParser.cs" />
+    <Compile Include="..\Microsoft.Build.Framework\Mono.XBuild.Framework\AssemblyLoadInfo.cs" />
+    <Compile Include="..\Microsoft.Build.Utilities\Mono.XBuild.Utilities\MSBuildUtils.cs" />
+    <Compile Include="..\Microsoft.Build.Utilities\Mono.XBuild.Utilities\ReservedNameUtils.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BatchingImplBase.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildChoose.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildEngine.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildItem.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildItemGroup.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildItemGroupCollection.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildProperty.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildPropertyGroup.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildPropertyGroupCollection.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildSettings.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildTask.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildTaskItem.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildTaskItemGroup.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildTaskPropertyGroup.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildWhen.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ChangeType.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ColorResetter.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ColorSetter.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ConditionAndExpression.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ConditionExpression.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ConditionFactorExpresion.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ConditionFunctionExpression.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ConditionNotExpression.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ConditionOrExpression.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ConditionParser.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ConditionRelationalExpression.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ConditionTokenizer.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ConsoleLogger.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\DirectoryScanner.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\Engine.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\EventSource.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\Expression.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ExpressionCollection.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ExpressionEvaluationException.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ExpressionParseException.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\FileLogger.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\GroupingCollection.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\IBuildTask.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\Import.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ImportCollection.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ImportedProject.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\InternalLoggerException.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\InvalidProjectFileException.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\IReference.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ItemReference.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\LogExtensions.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\MetadataReference.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\Project.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ProjectLoadSettings.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\PropertyPosition.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\PropertyReference.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\Target.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\TargetBatchingImpl.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\TargetCollection.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\TaskBatchingImpl.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\TaskDatabase.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\TaskEngine.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\Token.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\Toolset.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ToolsetCollection.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ToolsetDefinitionLocations.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\UnknownToolsVersionException.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\UsingTask.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\UsingTaskCollection.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\Utilities.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\WriteHandler.cs" />
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.Build.Framework\Microsoft.Build.Framework-useful.csproj">
+      <Project>{2BAFB878-D329-46A5-93AF-5A4ECD403A13}</Project>
+      <Name>Microsoft.Build.Framework-useful</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Microsoft.Build.Utilities\Microsoft.Build.Utilities-useful.csproj">
+      <Project>{5CD66EA1-51EB-48EE-8C1C-DDFD23E22C38}</Project>
+      <Name>Microsoft.Build.Utilities-useful</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+</Project>
