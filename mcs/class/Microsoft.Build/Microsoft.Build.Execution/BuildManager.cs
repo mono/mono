@@ -50,6 +50,7 @@ namespace Microsoft.Build.Execution
 
 		BuildParameters parameters;
 		BuildRequestData request_data;
+		List<BuildSubmission> submissions = new List<BuildSubmission> ();
 
 		public void BeginBuild (BuildParameters parameters)
 		{
@@ -68,7 +69,9 @@ namespace Microsoft.Build.Execution
 
 		public void CancelAllSubmissions ()
 		{
-			throw new NotImplementedException ();
+			foreach (var sub in submissions)
+				sub.Cancel ();
+			submissions.Clear ();
 		}
 
 		public void EndBuild ()
@@ -80,8 +83,6 @@ namespace Microsoft.Build.Execution
 		{
 			throw new NotImplementedException ();
 		}
-
-		List<BuildSubmission> submissions = new List<BuildSubmission> ();
 
 		public BuildSubmission PendBuildRequest (BuildRequestData requestData)
 		{

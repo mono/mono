@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace Microsoft.Build.Execution
@@ -34,32 +35,34 @@ namespace Microsoft.Build.Execution
 	public class BuildRequestData
 	{
 		public BuildRequestData (ProjectInstance projectInstance, string[] targetsToBuild)
-                        : this (projectInstance, targetsToBuild, null, BuildRequestDataFlags.None)
+        	: this (projectInstance, targetsToBuild, null, BuildRequestDataFlags.None)
 		{
 		}
 
 		public BuildRequestData (ProjectInstance projectInstance, string[] targetsToBuild, HostServices hostServices)
-                        : this (projectInstance, targetsToBuild, hostServices, BuildRequestDataFlags.None)
+        	: this (projectInstance, targetsToBuild, hostServices, BuildRequestDataFlags.None)
 		{
 		}
 
 		public BuildRequestData (ProjectInstance projectInstance, string[] targetsToBuild, HostServices hostServices,
-		                                       BuildRequestDataFlags flags)
+				BuildRequestDataFlags flags)
 		{
-			throw new NotImplementedException ();
+			ProjectInstance = projectInstance;
+			TargetNames = targetsToBuild;
+			HostServices = hostServices;
+			Flags = flags;
 		}
 
 		public BuildRequestData (string projectFullPath, IDictionary<string, string> globalProperties,
-		                                       string toolsVersion, string[] targetsToBuild, HostServices hostServices)
-                        : this (projectFullPath, globalProperties, toolsVersion, targetsToBuild, hostServices, BuildRequestDataFlags.None)
+				string toolsVersion, string[] targetsToBuild, HostServices hostServices)
+			: this (projectFullPath, globalProperties, toolsVersion, targetsToBuild, hostServices, BuildRequestDataFlags.None)
 		{
 		}
 
 		public BuildRequestData (string projectFullPath, IDictionary<string, string> globalProperties,
-		                                       string toolsVersion, string[] targetsToBuild, HostServices hostServices, BuildRequestDataFlags flags)
-                        : this (new ProjectInstance (projectFullPath, globalProperties, toolsVersion), targetsToBuild, hostServices, BuildRequestDataFlags.None)
+				string toolsVersion, string[] targetsToBuild, HostServices hostServices, BuildRequestDataFlags flags)
+			: this (new ProjectInstance (projectFullPath, globalProperties, toolsVersion), targetsToBuild, hostServices, BuildRequestDataFlags.None)
 		{
-			throw new NotImplementedException ();
 		}
 
 		public string ExplicitlySpecifiedToolsVersion { get; private set; }
@@ -75,7 +78,7 @@ namespace Microsoft.Build.Execution
 		public ICollection<string> TargetNames { get; private set; }
 
 		ICollection<ProjectPropertyInstance> GlobalProperties {
-			get { throw new NotImplementedException (); }
+			get { return ProjectInstance.GlobalProperties.Select (prop => new ProjectPropertyInstance (prop.Key) { EvaluatedValue = prop.Value }).ToList (); }
 		}
 	}
 }

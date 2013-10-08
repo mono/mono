@@ -43,7 +43,7 @@ namespace Microsoft.Build.Execution
 
 		BuildRequestData request;
 		BuildSubmissionCompleteCallback callback;
-		bool is_started, is_completed;
+		bool is_started, is_completed, is_canceled;
 
 		public object AsyncContext { get; private set; }
 		public BuildManager BuildManager { get; private set; }
@@ -54,6 +54,13 @@ namespace Microsoft.Build.Execution
 		public int SubmissionId { get; private set; }
 		public WaitHandle WaitHandle {
 			get { throw new NotImplementedException (); }
+		}
+
+		internal void Cancel ()
+		{
+			if (is_canceled)
+				throw new InvalidOperationException ("Build has already canceled");
+			is_canceled = true;
 		}
 
 		public BuildResult Execute ()
@@ -67,6 +74,8 @@ namespace Microsoft.Build.Execution
 		{
 			if (is_started)
 				throw new InvalidOperationException ("Build has already started");
+			if (is_canceled)
+				throw new InvalidOperationException ("Build has already canceled");
 			is_started = true;
 			this.AsyncContext = context;
 			this.callback = callback;

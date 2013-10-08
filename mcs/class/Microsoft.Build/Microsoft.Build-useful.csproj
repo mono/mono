@@ -110,6 +110,15 @@
     <Compile Include="Microsoft.Build.Logging\LoggerDescription.cs" />
     <Compile Include="Microsoft.Build.Logging\WriteHandler.cs" />
     <Compile Include="Microsoft.Build.Execution\BuildSubmissionCompleteCallback.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectOnErrorInstance.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectTargetInstanceChild.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectTaskInstance.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectTaskInstanceChild.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectTaskOutputItemInstance.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectTaskOutputPropertyInstance.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectItemGroupTaskInstance.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectItemGroupTaskItemInstance.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectItemGroupTaskMetadataInstance.cs" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
