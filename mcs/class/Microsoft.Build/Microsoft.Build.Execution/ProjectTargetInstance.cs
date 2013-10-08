@@ -25,16 +25,43 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+
 using System;
+using Microsoft.Build.Construction;
+using System.Collections.Generic;
 
 namespace Microsoft.Build.Execution
 {
-        public sealed class ProjectTargetInstance
-        {
-                private ProjectTargetInstance ()
-                {
-                        throw new NotImplementedException ();
-                }
-        }
+#if NET_4_5
+	public
+#endif
+	sealed class ProjectTargetInstance
+	{
+		private ProjectTargetInstance ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public ElementLocation AfterTargetsLocation { get; private set; }
+		public ElementLocation BeforeTargetsLocation { get; private set; }
+		public IList<ProjectTargetInstanceChild> Children { get; private set; }
+		public string Condition { get; private set; }
+		public ElementLocation ConditionLocation { get; private set; }
+		public string DependsOnTargets { get; private set; }
+		public ElementLocation DependsOnTargetsLocation { get; private set; }
+		public string FullPath { get; private set; }
+		public string Inputs { get; private set; }
+		public ElementLocation InputsLocation { get; private set; }
+		public string KeepDuplicateOutputs { get; private set; }
+		public ElementLocation KeepDuplicateOutputsLocation { get; private set; }
+		public ElementLocation Location { get; private set; }
+		public string Name { get; private set; }
+		public IList<ProjectOnErrorInstance> OnErrorChildren { get; private set; }
+		public string Outputs { get; private set; }
+		public ElementLocation OutputsLocation { get; private set; }
+		public string Returns { get; private set; }
+		public ElementLocation ReturnsLocation { get; private set; }
+		public ICollection<ProjectTaskInstance> Tasks { get; private set; }
+	}
 }
 

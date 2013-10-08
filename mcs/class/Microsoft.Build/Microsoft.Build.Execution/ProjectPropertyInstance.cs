@@ -30,12 +30,28 @@ using System;
 
 namespace Microsoft.Build.Execution
 {
-        public class ProjectPropertyInstance
-        {
-                private ProjectPropertyInstance ()
-                {
-                        throw new NotImplementedException ();
-                }
-        }
+	public class ProjectPropertyInstance
+	{
+		internal ProjectPropertyInstance (string name)
+		{
+			Name = name;
+		}
+
+		string evaluated_value;
+		public string EvaluatedValue {
+			get { return evaluated_value; }
+			set {
+				if (IsImmutable)
+					throw new InvalidOperationException ();
+				evaluated_value = value;
+			}
+		}
+
+		public virtual bool IsImmutable {
+			get { return false; }
+		}
+
+		public string Name { get; private set; }
+	}
 }
 

@@ -34,26 +34,29 @@ namespace Microsoft.Build.Evaluation
 	// members are abstract and had been there since 4.0.
 	// I take this as doc bug, as non-abstract to abstract is a
 	// breaking change and I'd rather believe API designer's sanity.
-        public abstract class ProjectProperty
-        {
+	public abstract class ProjectProperty
+	{
 		internal ProjectProperty () // hide default ctor
 		{
 		}
 
-                public string EvaluatedValue {
-                        get {
-                                throw new NotImplementedException ();
-                        }
-                }
+		public string EvaluatedValue {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
 
 		public abstract bool IsEnvironmentProperty { get; }
+
 		public abstract bool IsGlobalProperty { get; }
+
 		public abstract bool IsImported { get; }
+
 		public abstract bool IsReservedProperty { get; }
 
 		public string Name {
 			get {
-                                throw new NotImplementedException ();
+				throw new NotImplementedException ();
 			}
 		}
 
@@ -61,12 +64,13 @@ namespace Microsoft.Build.Evaluation
 
 		public Project Project {
 			get {
-                                throw new NotImplementedException ();
+				throw new NotImplementedException ();
 			}
 		}
 
 		public abstract string UnevaluatedValue { get; set; }
+
 		public abstract ProjectPropertyElement Xml { get; }
-        }
+	}
 }
 
