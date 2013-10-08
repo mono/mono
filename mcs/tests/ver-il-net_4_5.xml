@@ -59671,6 +59671,55 @@
       </method>
     </type>
   </test>
+  <test name="test-async-52.cs">
+    <type name="ActualValueDelegate`1[T]">
+      <method name="T Invoke()" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="T EndInvoke(IAsyncResult)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)" attrs="6278">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>37</size>
+      </method>
+      <method name="Boolean Matches[T](ActualValueDelegate`1[T])" attrs="145">
+        <size>30</size>
+      </method>
+      <method name="System.Threading.Tasks.Task Throw()" attrs="145">
+        <size>33</size>
+      </method>
+      <method name="System.Threading.Tasks.Task &lt;Main&gt;m__0()" attrs="145">
+        <size>33</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;Throw&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>157</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="X+&lt;Main&gt;c__async3">
+      <method name="Void MoveNext()" attrs="486">
+        <size>160</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void add_Disposed(Delegate)" attrs="2182">

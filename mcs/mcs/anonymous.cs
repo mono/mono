@@ -1535,10 +1535,14 @@ namespace Mono.CSharp {
 
 				//
 				// If e is synchronous the inferred return type is T
-				// If e is asynchronous the inferred return type is Task<T>
+				// If e is asynchronous and the body of F is either an expression classified as nothing
+				// or a statement block where no return statements have expressions, the inferred return type is Task
+				// If e is async and has an inferred result type T, the inferred return type is Task<T>
 				//
 				if (block.IsAsync && ReturnType != null) {
-					ReturnType = ec.Module.PredefinedTypes.TaskGeneric.TypeSpec.MakeGenericType (ec, new [] { ReturnType });
+					ReturnType = ReturnType.Kind == MemberKind.Void ?
+						ec.Module.PredefinedTypes.Task.TypeSpec :
+						ec.Module.PredefinedTypes.TaskGeneric.TypeSpec.MakeGenericType (ec, new [] { ReturnType });
 				}
 			}
 

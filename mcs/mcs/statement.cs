@@ -902,7 +902,7 @@ namespace Mono.CSharp {
 						var async_type = storey.ReturnType;
 
 						if (async_type == null && async_block.ReturnTypeInference != null) {
-							async_block.ReturnTypeInference.AddCommonTypeBound (expr.Type);
+							async_block.ReturnTypeInference.AddCommonTypeBoundAsync (expr.Type);
 							return true;
 						}
 
