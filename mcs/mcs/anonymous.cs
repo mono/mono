@@ -1906,7 +1906,7 @@ namespace Mono.CSharp {
 
 		public static AnonymousTypeClass Create (TypeContainer parent, IList<AnonymousTypeParameter> parameters, Location loc)
 		{
-			string name = ClassNamePrefix + parent.PartialContainer.CounterAnonymousTypes++;
+			string name = ClassNamePrefix + parent.Module.CounterAnonymousTypes++;
 
 			ParametersCompiled all_parameters;
 			TypeParameters tparams = null;

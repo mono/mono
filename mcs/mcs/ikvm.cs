@@ -91,12 +91,12 @@ namespace Mono.CSharp
 
 		public void ImportAssembly (Assembly assembly, RootNamespace targetNamespace)
 		{
-			// It can be used more than once when importing same assembly
-			// into 2 or more global aliases
-			// TODO: Should be just Add
-			GetAssemblyDefinition (assembly);
-
 			try {
+				// It can be used more than once when importing same assembly
+				// into 2 or more global aliases
+				// TODO: Should be just Add
+				GetAssemblyDefinition (assembly);
+
 				var all_types = assembly.GetTypes ();
 				ImportTypes (all_types, targetNamespace, true);
 
