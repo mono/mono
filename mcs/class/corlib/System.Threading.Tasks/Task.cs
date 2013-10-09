@@ -49,8 +49,8 @@ namespace System.Threading.Tasks
 		
 		// parent is the outer task in which this task is created
 		readonly Task parent;
-		// contAncestor is the Task on which this continuation was setup
-		readonly Task contAncestor;
+		// A reference to a Task on which this continuation is attached to
+		Task contAncestor;
 		
 		static int          id = -1;
 		static readonly TaskFactory defaultFactory = new TaskFactory ();
@@ -500,7 +500,9 @@ namespace System.Threading.Tasks
 		void InnerInvoke ()
 		{
 			if (IsContinuation) {
-				invoker.Invoke (contAncestor, state, this);
+				var ancestor = contAncestor;
+				contAncestor = null;
+				invoker.Invoke (ancestor, state, this);
 			} else {
 				invoker.Invoke (this, state, this);
 			}
