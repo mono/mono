@@ -31,95 +31,94 @@
 using Microsoft.Build.Construction;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Logging;
-
 using System;
 using System.Collections.Generic;
 
 namespace Microsoft.Build.Evaluation
 {
-        public class ProjectCollection : IDisposable
-        {
-                public ProjectCollection ()
-                {
-                }
+	public class ProjectCollection : IDisposable
+	{
+		public ProjectCollection ()
+		{
+		}
 
-                public ProjectCollection (IDictionary<string, string> globalProperties)
-                        : this (globalProperties, null, ToolsetDefinitionLocations.Registry | ToolsetDefinitionLocations.ConfigurationFile)
-                {
-                }
+		public ProjectCollection (IDictionary<string, string> globalProperties)
+        	: this (globalProperties, null, ToolsetDefinitionLocations.Registry | ToolsetDefinitionLocations.ConfigurationFile)
+		{
+		}
 
-                public ProjectCollection (ToolsetDefinitionLocations toolsetDefinitionLocations)
-                        : this (null, null, toolsetDefinitionLocations)
-                {
-                }
+		public ProjectCollection (ToolsetDefinitionLocations toolsetDefinitionLocations)
+        	: this (null, null, toolsetDefinitionLocations)
+		{
+		}
 
-                public ProjectCollection (IDictionary<string, string> globalProperties, IEnumerable<ILogger> loggers,
-                                ToolsetDefinitionLocations toolsetDefinitionLocations)
-                        : this (globalProperties, loggers, null, toolsetDefinitionLocations, 1, false)
-                {
-                }
+		public ProjectCollection (IDictionary<string, string> globalProperties, IEnumerable<ILogger> loggers,
+				ToolsetDefinitionLocations toolsetDefinitionLocations)
+        	: this (globalProperties, loggers, null, toolsetDefinitionLocations, 1, false)
+		{
+		}
 
-                public ProjectCollection (IDictionary<string, string> globalProperties,
-                                IEnumerable<ILogger> loggers, IEnumerable<ForwardingLoggerRecord> remoteLoggers,
-                                ToolsetDefinitionLocations toolsetDefinitionLocations,
-                                int maxNodeCount, bool onlyLogCriticalEvents)
-                {
-                        throw new NotImplementedException ();
-                }
+		public ProjectCollection (IDictionary<string, string> globalProperties,
+				IEnumerable<ILogger> loggers, IEnumerable<ForwardingLoggerRecord> remoteLoggers,
+				ToolsetDefinitionLocations toolsetDefinitionLocations,
+				int maxNodeCount, bool onlyLogCriticalEvents)
+		{
+			throw new NotImplementedException ();
+		}
 
-                public static string Escape (string unescapedString)
-                {
-                        return unescapedString;
-                }
+		public static string Escape (string unescapedString)
+		{
+			return unescapedString;
+		}
 
-                public static ProjectCollection GlobalProjectCollection {
-                        get { return globalProjectCollection; }
-                }
+		public static ProjectCollection GlobalProjectCollection {
+			get { return globalProjectCollection; }
+		}
 
-                public void Dispose ()
-                {
-                        Dispose (true);
-                        GC.SuppressFinalize (this);
-                }
+		public void Dispose ()
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
+		}
 
-                protected virtual void Dispose (bool disposing)
-                {
-                        if (disposing) {
-                        }
-                }
+		protected virtual void Dispose (bool disposing)
+		{
+			if (disposing) {
+			}
+		}
 
-                static ProjectCollection globalProjectCollection = new ProjectCollection ();
+		static ProjectCollection globalProjectCollection = new ProjectCollection ();
 
-                public ICollection<Project> GetLoadedProjects (string fullPath)
-                {
-                        throw new NotImplementedException ();
-                }
+		public ICollection<Project> GetLoadedProjects (string fullPath)
+		{
+			throw new NotImplementedException ();
+		}
 
-                public ToolsetDefinitionLocations ToolsetLocations {
-                        get { throw new NotImplementedException (); }
-                }
+		public ToolsetDefinitionLocations ToolsetLocations {
+			get { throw new NotImplementedException (); }
+		}
 
 		public ICollection<Toolset> Toolsets {
-                        get { throw new NotImplementedException (); }
-                }
+			get { throw new NotImplementedException (); }
+		}
 
 		public void UnloadAllProjects ()
 		{
-                        throw new NotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public void UnloadProject (Project project)
 		{
-                        throw new NotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public void UnloadProject (ProjectRootElement projectRootElement)
 		{
-                        throw new NotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public static Version Version {
-                        get { throw new NotImplementedException (); }
-                }
-        }
+			get { throw new NotImplementedException (); }
+		}
+	}
 }

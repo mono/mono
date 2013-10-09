@@ -65,18 +65,25 @@ namespace Microsoft.Build.Execution
 		{
 		}
 
+		[MonoTODO]
 		public string ExplicitlySpecifiedToolsVersion { get; private set; }
 
+		[MonoTODO]
 		public BuildRequestDataFlags Flags { get; private set; }
 
+		[MonoTODO]
 		public HostServices HostServices { get; private set; }
 
+		[MonoTODO]
 		public string ProjectFullPath { get; private set; }
 
+		[MonoTODO]
 		public ProjectInstance ProjectInstance { get; private set; }
 
+		[MonoTODO]
 		public ICollection<string> TargetNames { get; private set; }
 
+		[MonoTODO]
 		ICollection<ProjectPropertyInstance> GlobalProperties {
 			get { return ProjectInstance.GlobalProperties.Select (prop => new ProjectPropertyInstance (prop.Key) { EvaluatedValue = prop.Value }).ToList (); }
 		}

@@ -26,15 +26,32 @@
 //
 
 using System;
+using System.Collections.Generic;
 
 namespace Microsoft.Build.Evaluation
 {
-        public class ProjectItemDefinition
-        {
-                private ProjectItemDefinition ()
-                {
-                        throw new NotImplementedException ();
-                }
-        }
+	public class ProjectItemDefinition
+	{
+		private ProjectItemDefinition ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public string ItemType {
+			get { throw new NotImplementedException (); }
+		}
+
+		public IEnumerable<ProjectMetadata> Metadata {
+			get { throw new NotImplementedException (); }
+		}
+
+		public int MetadataCount {
+			get { throw new NotImplementedException (); }
+		}
+
+		public Project Project {
+			get { throw new NotImplementedException (); }
+		}
+	}
 }
 

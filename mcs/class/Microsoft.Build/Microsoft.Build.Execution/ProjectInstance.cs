@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Microsoft.Build.Construction;
 using Microsoft.Build.Evaluation;
@@ -62,7 +63,7 @@ namespace Microsoft.Build.Execution
 			projects = projectCollection;
 			global_properties = globalProperties ?? new Dictionary<string, string> ();
 			ToolsVersion = toolsVersion;
-			InitializeProperties ();
+			InitializeProperties (xml);
 		}
 
 		public ProjectInstance (string projectFile, IDictionary<string, string> globalProperties,
@@ -72,15 +73,14 @@ namespace Microsoft.Build.Execution
 		}
 
 		ProjectCollection projects;
-		
-		void InitializeProperties ()
-		{
-			DefaultTargets = new List<string> ();
-			InitialTargets = new List<string> ();
-		}
-		
 		IDictionary<string, string> global_properties;
-		
+
+		void InitializeProperties (ProjectRootElement xml)
+		{
+			DefaultTargets = xml.DefaultTargets.Split (';').Select (s => s.Trim ()).ToList ();
+			InitialTargets = xml.InitialTargets.Split (';').Select (s => s.Trim ()).ToList ();
+		}
+
 		public List<string> DefaultTargets { get; private set; }
 		
 		public string Directory {
