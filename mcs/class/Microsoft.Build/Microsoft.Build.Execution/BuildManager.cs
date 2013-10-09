@@ -35,7 +35,6 @@ namespace Microsoft.Build.Execution
 	{
 		public BuildManager ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		public BuildManager (string hostName)
@@ -45,7 +44,7 @@ namespace Microsoft.Build.Execution
 
 		~BuildManager ()
 		{
-
+			// maybe HostServices related cleanup is expected.
 		}
 
 		BuildParameters parameters;
@@ -64,7 +63,9 @@ namespace Microsoft.Build.Execution
 
 		public BuildResult BuildRequest (BuildRequestData requestData)
 		{
-			throw new NotImplementedException ();
+			var sub = PendBuildRequest (requestData);
+			sub.Execute ();
+			return sub.BuildResult;
 		}
 
 		public void CancelAllSubmissions ()

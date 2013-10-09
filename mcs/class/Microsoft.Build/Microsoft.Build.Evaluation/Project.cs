@@ -99,6 +99,8 @@ namespace Microsoft.Build.Evaluation
 			this.ToolsVersion = toolsVersion;
 			this.ProjectCollection = projectCollection;
 			this.load_settings = loadSettings;
+
+			Initialize ();
 		}
 
 		public Project (string projectFile)
@@ -135,6 +137,25 @@ namespace Microsoft.Build.Evaluation
 
 		public ProjectRootElement Xml { get; private set; }
 
+		string dir_path, full_path;
+		Dictionary<string, ProjectItemDefinition> item_definitions;
+		List<ResolvedImport> raw_imports;
+		List<ProjectItem> raw_items;
+		List<string> item_types;
+		List<ProjectProperty> properties;
+		Dictionary<string, ProjectTargetInstance> targets;
+
+		void Initialize ()
+		{
+			ConditionedProperties = new Dictionary<string, List<string>> ();
+			dir_path = Directory.GetCurrentDirectory ();
+			raw_imports = new List<ResolvedImport> ();
+			item_definitions = new Dictionary<string, ProjectItemDefinition> ();
+			item_types = new List<string> ();
+			properties = new List<ProjectProperty> ();
+			targets = new Dictionary<string, ProjectTargetInstance> ();
+		}
+
 		public ICollection<ProjectItem> GetItemsIgnoringCondition (string itemType)
 		{
 			return new CollectionFromEnumerable<ProjectItem> (
@@ -154,20 +175,24 @@ namespace Microsoft.Build.Evaluation
 			}
 		}
 
+		static readonly Dictionary<string, string> empty_metadata = new Dictionary<string, string> ();
+
 		public IList<ProjectItem> AddItem (string itemType, string unevaluatedInclude)
 		{
-			throw new NotImplementedException ();
+			return AddItem (itemType, unevaluatedInclude, empty_metadata);
 		}
 
 		public IList<ProjectItem> AddItem (string itemType, string unevaluatedInclude,
-		                                                 IEnumerable<KeyValuePair<string, string>> metadata)
+				IEnumerable<KeyValuePair<string, string>> metadata)
 		{
-			throw new NotImplementedException ();
+			// FIXME: needs several check that AddItemFast() does not process (see MSDN for details).
+
+			return AddItemFast (itemType, unevaluatedInclude, metadata);
 		}
 
 		public IList<ProjectItem> AddItemFast (string itemType, string unevaluatedInclude)
 		{
-			throw new NotImplementedException ();
+			return AddItemFast (itemType, unevaluatedInclude, empty_metadata);
 		}
 
 		public IList<ProjectItem> AddItemFast (string itemType, string unevaluatedInclude,
@@ -178,42 +203,42 @@ namespace Microsoft.Build.Evaluation
 
 		public bool Build ()
 		{
-			throw new NotImplementedException ();
+			return Build (Xml.DefaultTargets.Split (';'));
 		}
 
 		public bool Build (IEnumerable<ILogger> loggers)
 		{
-			throw new NotImplementedException ();
+			return Build (Xml.DefaultTargets.Split (';'), loggers);
 		}
 
 		public bool Build (string target)
 		{
-			throw new NotImplementedException ();
+			return string.IsNullOrWhiteSpace (target) ? Build () : Build (new string [] {target});
 		}
 
 		public bool Build (string[] targets)
 		{
-			throw new NotImplementedException ();
+			return Build (targets, new ILogger [0]);
 		}
 
 		public bool Build (ILogger logger)
 		{
-			throw new NotImplementedException ();
+			return Build (Xml.DefaultTargets.Split (';'), new ILogger [] {logger});
 		}
 
 		public bool Build (string[] targets, IEnumerable<ILogger> loggers)
 		{
-			throw new NotImplementedException ();
+			return Build (targets, loggers, new ForwardingLoggerRecord [0]);
 		}
 
 		public bool Build (IEnumerable<ILogger> loggers, IEnumerable<ForwardingLoggerRecord> remoteLoggers)
 		{
-			throw new NotImplementedException ();
+			return Build (Xml.DefaultTargets.Split (';'), loggers, remoteLoggers);
 		}
 
 		public bool Build (string target, IEnumerable<ILogger> loggers)
 		{
-			throw new NotImplementedException ();
+			return Build (new string [] { target }, loggers);
 		}
 
 		public bool Build (string[] targets, IEnumerable<ILogger> loggers, IEnumerable<ForwardingLoggerRecord> remoteLoggers)
@@ -223,7 +248,7 @@ namespace Microsoft.Build.Evaluation
 
 		public bool Build (string target, IEnumerable<ILogger> loggers, IEnumerable<ForwardingLoggerRecord> remoteLoggers)
 		{
-			throw new NotImplementedException ();
+			return Build (new string [] { target }, loggers, remoteLoggers);
 		}
 
 		public ProjectInstance CreateProjectInstance ()
@@ -318,7 +343,8 @@ namespace Microsoft.Build.Evaluation
 
 		public void Save ()
 		{
-			throw new NotImplementedException ();
+			using (var writer = new StreamWriter (FullPath))
+				Save (writer);
 		}
 
 		public void Save (TextWriter writer)
@@ -328,17 +354,18 @@ namespace Microsoft.Build.Evaluation
 
 		public void Save (string path)
 		{
-			throw new NotImplementedException ();
+			Save (path, Encoding.Default);
 		}
 
 		public void Save (Encoding encoding)
 		{
-			throw new NotImplementedException ();
+			Save (FullPath, encoding);
 		}
 
 		public void Save (string path, Encoding encoding)
 		{
-			throw new NotImplementedException ();
+			using (var writer = new StreamWriter (path, false, encoding))
+				Save (writer);
 		}
 
 		public void SaveLogicalProject (TextWriter writer)
@@ -365,7 +392,7 @@ namespace Microsoft.Build.Evaluation
 		public IDictionary<string, List<string>> ConditionedProperties { get; private set; }
 
 		public string DirectoryPath {
-			get { throw new NotImplementedException (); }
+			get { return dir_path; }
 		}
 
 		public bool DisableMarkDirty { get; set; }
@@ -375,8 +402,11 @@ namespace Microsoft.Build.Evaluation
 		}
 
 		public string FullPath {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return full_path; }
+			set {
+				// FIXME: check validity? mark IsDirty?
+				full_path = value;
+			}
 		}
 
 		public IList<ResolvedImport> Imports {
@@ -384,7 +414,7 @@ namespace Microsoft.Build.Evaluation
 		}
 
 		public IList<ResolvedImport> ImportsIncludingDuplicates {
-			get { throw new NotImplementedException (); }
+			get { return raw_imports; }
 		}
 
 		public bool IsBuildEnabled {
@@ -396,7 +426,7 @@ namespace Microsoft.Build.Evaluation
 		}
 
 		public IDictionary<string, ProjectItemDefinition> ItemDefinitions {
-			get { throw new NotImplementedException (); }
+			get { return item_definitions; }
 		}
 
 		public ICollection<ProjectItem> Items {
@@ -404,21 +434,21 @@ namespace Microsoft.Build.Evaluation
 		}
 
 		public ICollection<ProjectItem> ItemsIgnoringCondition {
-			get { throw new NotImplementedException (); }
+			get { return raw_items; }
 		}
 
 		public ICollection<string> ItemTypes {
-			get { throw new NotImplementedException (); }
+			get { return item_types; }
 		}
 
 		public ICollection<ProjectProperty> Properties {
-			get { throw new NotImplementedException (); }
+			get { return properties; }
 		}
 
 		public bool SkipEvaluation { get; set; }
 
 		public IDictionary<string, ProjectTargetInstance> Targets {
-			get { throw new NotImplementedException (); }
+			get { return targets; }
 		}
 	}
 }
