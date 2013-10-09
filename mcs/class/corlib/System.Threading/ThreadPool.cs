@@ -96,6 +96,12 @@ namespace System.Threading {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern void pool_queue (AsyncResult ares);
 
+		// TODO: It should be interface interface only to avoid extra allocation
+		internal static void QueueWorkItem (WaitCallback callBack, object state)
+		{
+			pool_queue (new AsyncResult (callBack, state, false));
+		}
+
 		public static RegisteredWaitHandle RegisterWaitForSingleObject (WaitHandle waitObject,
 										WaitOrTimerCallback callBack,
 										object state,
