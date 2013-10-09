@@ -53,6 +53,11 @@ namespace Mono.CSharp
 
 		protected bool is_defined;
 
+		public int CounterAnonymousTypes { get; set; }
+		public int CounterAnonymousMethods { get; set; }
+		public int CounterAnonymousContainers { get; set; }
+		public int CounterSwitchTypes { get; set; }
+
 		protected TypeContainer (TypeContainer parent, MemberName name, Attributes attrs, MemberKind kind)
 			: base (parent, name, attrs)
 		{
