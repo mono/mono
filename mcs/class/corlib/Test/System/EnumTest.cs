@@ -849,9 +849,12 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		public void ConvertToStringType ()
+		public void IConvertible_Valid ()
 		{
-			Assert.AreEqual ("This", ((IConvertible) TestingEnum.This).ToType (typeof (string), null));
+			IConvertible ic = TestingEnum.This;
+			Assert.AreEqual ("This", ic.ToType (typeof (string), null), "#1");
+			Assert.AreEqual (TestingEnum.This, ic.ToType (typeof (TestingEnum), null), "#2");
+			Assert.AreEqual (TestingEnum.This, ic.ToType (typeof (Enum), null), "#3");
 		}
 
 		[Test]

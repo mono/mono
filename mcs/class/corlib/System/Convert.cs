@@ -2529,6 +2529,7 @@ namespace System {
 			typeof (DateTime), // 16 TypeCode.DateTime
 			null,		    // 17 null.
 			typeof (String),   // 18 TypeCode.String
+			typeof (Enum)
 		};
 
 		// Function to convert an object to another type and return
@@ -2619,6 +2620,9 @@ namespace System {
 				
 				if (conversionType == conversionTable[18]) // 18 TypeCode.String
 					return convertValue.ToString (provider);
+
+				if (conversionType == conversionTable[19] && value is Enum) // System.Enum
+					return value;
 
 				if (try_target_to_type)
 					return convertValue.ToType (conversionType, provider);
