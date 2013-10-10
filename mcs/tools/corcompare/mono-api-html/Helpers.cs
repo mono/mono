@@ -118,6 +118,8 @@ namespace Xamarin.ApiDiff {
 				return "short";
 			case "System.UInt16":
 				return "ushort";
+			case "System.Char":
+				return "char";
 			default:
 				if (type.StartsWith (State.Namespace, StringComparison.Ordinal))
 					type = type.Substring (State.Namespace.Length + 1);
