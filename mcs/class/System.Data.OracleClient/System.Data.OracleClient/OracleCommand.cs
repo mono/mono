@@ -269,7 +269,6 @@ namespace System.Data.OracleClient
 
 		private void BindParameters (OciStatementHandle statement)
 		{
-Console.Error.WriteLine("{0} - BindParameter",Thread.CurrentThread.ManagedThreadId);
 			for (int p = 0; p < Parameters.Count; p++)
 				Parameters[p].Bind (statement, Connection, (uint) p);
 		}
