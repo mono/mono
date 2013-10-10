@@ -243,7 +243,15 @@ namespace Microsoft.Build.Evaluation
 
 		public bool Build (string[] targets, IEnumerable<ILogger> loggers, IEnumerable<ForwardingLoggerRecord> remoteLoggers)
 		{
-			throw new NotImplementedException ();
+			var manager = new BuildManager ();
+			var pi = manager.GetProjectInstanceForBuild (this);
+			var parameters = new BuildParameters (this.ProjectCollection) {
+				ForwardingLoggers = remoteLoggers,
+				Loggers = loggers
+			};
+			var requestData = new BuildRequestData (pi, targets);
+			var result = manager.Build (parameters, requestData);
+			return result.OverallResult == BuildResultCode.Success;
 		}
 
 		public bool Build (string target, IEnumerable<ILogger> loggers, IEnumerable<ForwardingLoggerRecord> remoteLoggers)

@@ -29,15 +29,40 @@
 //
 
 using Microsoft.Build.Construction;
+using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Logging;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 
 namespace Microsoft.Build.Evaluation
 {
 	public class ProjectCollection : IDisposable
 	{
+		// static members
+
+		static readonly ProjectCollection global_project_collection;
+
+		static ProjectCollection ()
+		{
+			global_project_collection = new ProjectCollection ();
+			global_project_collection.global_properties = new ReadOnlyDictionary<string, string> (new Dictionary<string, string> ());
+		}
+
+		public static string Escape (string unescapedString)
+		{
+			return unescapedString;
+		}
+
+		public static ProjectCollection GlobalProjectCollection {
+			get { return global_project_collection; }
+		}
+
+		// semantic model part
+
 		public ProjectCollection ()
 		{
 		}
@@ -54,7 +79,7 @@ namespace Microsoft.Build.Evaluation
 
 		public ProjectCollection (IDictionary<string, string> globalProperties, IEnumerable<ILogger> loggers,
 				ToolsetDefinitionLocations toolsetDefinitionLocations)
-        	: this (globalProperties, loggers, null, toolsetDefinitionLocations, 1, false)
+			: this (globalProperties, loggers, null, toolsetDefinitionLocations, int.MaxValue, false)
 		{
 		}
 
@@ -63,16 +88,23 @@ namespace Microsoft.Build.Evaluation
 				ToolsetDefinitionLocations toolsetDefinitionLocations,
 				int maxNodeCount, bool onlyLogCriticalEvents)
 		{
-			throw new NotImplementedException ();
+			global_properties = globalProperties ?? new Dictionary<string, string> ();
+			this.loggers = loggers != null ? loggers.ToList () : new List<ILogger> ();
+			toolset_locations = toolsetDefinitionLocations;
+			max_node_count = maxNodeCount;
+			OnlyLogCriticalEvents = onlyLogCriticalEvents;
 		}
 
-		public static string Escape (string unescapedString)
-		{
-			return unescapedString;
+		int max_node_count;
+
+		[MonoTODO]
+		public int Count {
+			get { return loaded_projects.Count; }
 		}
 
-		public static ProjectCollection GlobalProjectCollection {
-			get { return globalProjectCollection; }
+		[MonoTODO]
+		public string DefaultToolsVersion {
+			get { throw new NotImplementedException (); }
 		}
 
 		public void Dispose ()
@@ -87,19 +119,47 @@ namespace Microsoft.Build.Evaluation
 			}
 		}
 
-		static ProjectCollection globalProjectCollection = new ProjectCollection ();
-
 		public ICollection<Project> GetLoadedProjects (string fullPath)
 		{
-			throw new NotImplementedException ();
+			return LoadedProjects.Where (p => Path.GetFullPath (p.FullPath) == Path.GetFullPath (fullPath)).ToList ();
 		}
 
+		IDictionary<string, string> global_properties;
+
+		public IDictionary<string, string> GlobalProperties {
+			get { return global_properties; }
+		}
+
+		List<Project> loaded_projects = new List<Project> ();
+
+		[MonoTODO]
+		public ICollection<Project> LoadedProjects {
+			get { return loaded_projects; }
+		}
+
+		List<ILogger> loggers = new List<ILogger> ();
+		[MonoTODO]
+		public ICollection<ILogger> Loggers {
+			get { return loggers; }
+		}
+
+		[MonoTODO]
+		public bool OnlyLogCriticalEvents { get; set; }
+
+		[MonoTODO]
+		public bool SkipEvaluation { get; set; }
+
+		ToolsetDefinitionLocations toolset_locations;
 		public ToolsetDefinitionLocations ToolsetLocations {
-			get { throw new NotImplementedException (); }
+			get { return toolset_locations; }
 		}
 
+		List<Toolset> toolsets = new List<Toolset> ();
+		[MonoTODO ("unused")]
+		// so what should we do without ToolLocationHelper in Microsoft.Build.Utilities.dll? There is no reference to it in this dll.
 		public ICollection<Toolset> Toolsets {
-			get { throw new NotImplementedException (); }
+			// For ConfigurationFile and None, they cannot be added externally.
+			get { return (ToolsetLocations & ToolsetDefinitionLocations.Registry) != 0 ? toolsets : toolsets.ToList (); }
 		}
 
 		public void UnloadAllProjects ()
@@ -120,5 +180,16 @@ namespace Microsoft.Build.Evaluation
 		public static Version Version {
 			get { throw new NotImplementedException (); }
 		}
+
+		// Execution part
+
+		[MonoTODO]
+		public bool DisableMarkDirty { get; set; }
+
+		[MonoTODO]
+		public HostServices HostServices { get; set; }
+
+		[MonoTODO]
+		public bool IsBuildEnabled { get; set; }
 	}
 }

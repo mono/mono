@@ -45,16 +45,24 @@ namespace Microsoft.Build.Execution
 
 		public BuildParameters (ProjectCollection projectCollection)
 		{
-			throw new NotImplementedException ();
+			if (projectCollection == null)
+				throw new ArgumentNullException ("projectCollection");
+			projects = projectCollection;
+
+			// these properties are copied, while some members (such as Loggers) are not.
+			this.DefaultToolsVersion = projectCollection.DefaultToolsVersion;
+			this.ToolsetDefinitionLocations = projectCollection.ToolsetLocations;
+			this.GlobalProperties = projectCollection.GlobalProperties;
 		}
+
+		readonly ProjectCollection projects;
 
 		public BuildParameters Clone ()
 		{
 			var ret = (BuildParameters) MemberwiseClone ();
 			ret.ForwardingLoggers = ret.ForwardingLoggers.ToArray ();
-			ret.GlobalProperties = new Dictionary<string, string> (ret.GlobalProperties.ToArray ());
-			ret.Loggers = ret.Loggers.ToArray ();
-			ret.Toolsets = ret.Toolsets.ToArray ();
+			ret.GlobalProperties = ret.GlobalProperties.ToDictionary (p => p.Key, p => p.Value);
+			ret.Loggers = ret.Loggers == null ? null : ret.Loggers.ToArray ();
 			return ret;
 		}
 
@@ -121,7 +129,7 @@ namespace Microsoft.Build.Execution
 
 		[MonoTODO]
 		public ICollection<Toolset> Toolsets {
-			get { throw new NotImplementedException (); }
+			get { return projects.Toolsets; }
 		}
 
 		[MonoTODO]
