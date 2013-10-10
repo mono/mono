@@ -17206,6 +17206,9 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
+      <method name="Void BrokenLiftedNull()" attrs="129">
+        <size>82</size>
+      </method>
     </type>
   </test>
   <test name="gtest-541.cs">
@@ -48192,6 +48195,19 @@
     <type name="Other">
       <method name="Void X()" attrs="134">
         <size>6</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-870.cs">
+    <type name="Test">
+      <method name="Void Foo(UInt16)" attrs="145">
+        <size>23</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>8</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>

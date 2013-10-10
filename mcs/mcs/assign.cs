@@ -807,7 +807,9 @@ namespace Mono.CSharp {
 			if (b == null) {
 				if (source is ReducedExpression)
 					b = ((ReducedExpression) source).OriginalExpression as Binary;
-				else if (source is Nullable.LiftedBinaryOperator) {
+				else if (source is ReducedExpression.ReducedConstantExpression) {
+					b = ((ReducedExpression.ReducedConstantExpression) source).OriginalExpression as Binary;
+				} else if (source is Nullable.LiftedBinaryOperator) {
 					var po = ((Nullable.LiftedBinaryOperator) source);
 					if (po.UserOperator == null)
 						b = po.Binary;
