@@ -42,16 +42,18 @@ namespace Xamarin.ApiDiff {
 			comparer =  new NamespaceComparer ();
 		}
 
+		public string SourceAssembly { get; private set; }
+		public string TargetAssembly { get; private set; }
+
 		public void Compare ()
 		{
 			Compare (source.Element ("assemblies").Elements ("assembly"), 
 			         target.Element ("assemblies").Elements ("assembly"));
-			Output.Flush ();
 		}
 
 		public override void SetContext (XElement current)
 		{
-			State.Assembly = current.Attribute ("name").Value;
+			State.Assembly = current.GetAttribute ("name");
 		}
 
 		public override void Added (XElement target)
@@ -61,7 +63,8 @@ namespace Xamarin.ApiDiff {
 
 		public override void Modified (XElement source, XElement target)
 		{
-			Output.WriteLine ("<h1>{0}.dll</h1>", source.Attribute ("name").Value);
+			SourceAssembly = source.GetAttribute ("name");
+			TargetAssembly = target.GetAttribute ("name");
 			// TODO: version
 			// ? custom attributes ?
 			comparer.Compare (source, target);
