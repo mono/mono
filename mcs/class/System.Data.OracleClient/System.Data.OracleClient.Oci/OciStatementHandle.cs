@@ -32,6 +32,7 @@ namespace System.Data.OracleClient.Oci {
 		bool moreResults;
 		OciServiceHandle serviceHandle;
 		ArrayList values;
+		ArrayList parm;
 		OracleCommand command;
 	
 		#endregion // Fields
@@ -82,12 +83,11 @@ namespace System.Data.OracleClient.Oci {
 				
 				if (disposing) {
 					if (values != null) {
-						foreach (OciDefineHandle h in values)
+						foreach (OciDefineHandle h in values) 
 							h.Dispose ();
 						values = null;
 					}
 				}
-				
 				base.Dispose (disposing);
 			}
 		}
@@ -110,6 +110,9 @@ namespace System.Data.OracleClient.Oci {
 
 			OciParameterDescriptor output = new OciParameterDescriptor (this, handle);
 			output.ErrorHandle = ErrorHandle;
+			if (parm == null)
+				parm = new ArrayList();
+			parm.Add(handle);
 			return output;
 		}
 
@@ -228,6 +231,8 @@ namespace System.Data.OracleClient.Oci {
 			switch (status) {
 			case OciGlue.OCI_NO_DATA:
 				moreResults = false;
+				foreach (IntPtr h in parm)
+					OciCalls.OCIDescriptorFree(h, OciHandleType.Parameter);
 				break;
 			case OciGlue.OCI_DEFAULT:
 				moreResults = true;
