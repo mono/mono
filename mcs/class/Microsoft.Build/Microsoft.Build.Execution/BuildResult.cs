@@ -30,64 +30,63 @@ using System.Collections.Generic;
 
 namespace Microsoft.Build.Execution
 {
-        public class BuildResult
-        {
-                public void AddResultsForTarget (string target, TargetResult result)
-                {
-                        throw new NotImplementedException ();
-                }
+	public class BuildResult
+	{
+		public void AddResultsForTarget (string target, TargetResult result)
+		{
+			throw new NotImplementedException ();
+		}
 
-                public bool HasResultsForTarget (string target)
-                {
-                        throw new NotImplementedException ();
-                }
+		public bool HasResultsForTarget (string target)
+		{
+			throw new NotImplementedException ();
+		}
 
-                public void MergeResults (BuildResult results)
-                {
-                        throw new NotImplementedException ();
-                }
+		public void MergeResults (BuildResult results)
+		{
+			throw new NotImplementedException ();
+		}
 
-                public bool CircularDependency {
-                        get { throw new NotImplementedException (); }
-                }
+		public bool CircularDependency {
+			get { throw new NotImplementedException (); }
+		}
 
-                public int ConfigurationId {
-                        get { throw new NotImplementedException (); }
-                }
+		public int ConfigurationId {
+			get { throw new NotImplementedException (); }
+		}
 
-                public Exception Exception {
-                        get { throw new NotImplementedException (); }
-                        set { throw new NotImplementedException (); }
-                }
+		public Exception Exception {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
 
-                public int GlobalRequestId {
-                        get { throw new NotImplementedException (); }
-                }
+		public int GlobalRequestId {
+			get { throw new NotImplementedException (); }
+		}
 
-                public ITargetResult this [string target] {
-                        get { throw new NotImplementedException (); }
-                }
+		public ITargetResult this [string target] {
+			get { throw new NotImplementedException (); }
+		}
 
-                public int NodeRequestId {
-                        get { throw new NotImplementedException (); }
-                }
+		public int NodeRequestId {
+			get { throw new NotImplementedException (); }
+		}
 
-                public BuildResultCode OverallResult {
-                        get { throw new NotImplementedException (); }
-                }
+		public BuildResultCode OverallResult {
+			get { throw new NotImplementedException (); }
+		}
 
-                public int ParentGlobalRequestId {
-                        get { throw new NotImplementedException (); }
-                }
+		public int ParentGlobalRequestId {
+			get { throw new NotImplementedException (); }
+		}
 
-                public IDictionary<string, TargetResult> ResultsByTarget {
-                        get { throw new NotImplementedException (); }
-                }
+		public IDictionary<string, TargetResult> ResultsByTarget {
+			get { throw new NotImplementedException (); }
+		}
 
-                public int SubmissionId {
-                        get { throw new NotImplementedException (); }
-                }
-
-        }
+		public int SubmissionId {
+			get { throw new NotImplementedException (); }
+		}
+	}
 }
 

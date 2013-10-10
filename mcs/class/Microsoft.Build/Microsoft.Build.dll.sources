@@ -53,8 +53,14 @@ Microsoft.Build.Execution/ProjectInstance.cs
 Microsoft.Build.Execution/ProjectItemDefinitionInstance.cs
 Microsoft.Build.Execution/ProjectItemInstance.cs
 Microsoft.Build.Execution/ProjectMetadataInstance.cs
+Microsoft.Build.Execution/ProjectOnErrorInstance.cs
 Microsoft.Build.Execution/ProjectPropertyInstance.cs
 Microsoft.Build.Execution/ProjectTargetInstance.cs
+Microsoft.Build.Execution/ProjectTaskInstance.cs
+Microsoft.Build.Execution/ProjectTaskInstanceChild.cs
+Microsoft.Build.Execution/ProjectTaskOutputItemInstance.cs
+Microsoft.Build.Execution/ProjectTaskOutputPropertyInstance.cs
+Microsoft.Build.Execution/ProjectTargetInstanceChild.cs
 Microsoft.Build.Execution/TargetResult.cs                           
 Microsoft.Build.Execution/TargetResultCode.cs
 Microsoft.Build.Internal/CollectionFromEnumerable.cs

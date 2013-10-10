@@ -61,23 +61,24 @@ namespace Microsoft.Build.Execution
 
 		public BuildRequestData (string projectFullPath, IDictionary<string, string> globalProperties,
 				string toolsVersion, string[] targetsToBuild, HostServices hostServices, BuildRequestDataFlags flags)
-			: this (new ProjectInstance (projectFullPath, globalProperties, toolsVersion), targetsToBuild, hostServices, BuildRequestDataFlags.None)
+			: this (new ProjectInstance (projectFullPath, globalProperties, toolsVersion), targetsToBuild, hostServices, flags)
 		{
+			ExplicitlySpecifiedToolsVersion = toolsVersion;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("unused")]
 		public string ExplicitlySpecifiedToolsVersion { get; private set; }
 
-		[MonoTODO]
+		[MonoTODO ("unused")]
 		public BuildRequestDataFlags Flags { get; private set; }
 
-		[MonoTODO]
+		[MonoTODO ("unused")]
 		public HostServices HostServices { get; private set; }
 
 		[MonoTODO]
 		public string ProjectFullPath { get; private set; }
 
-		[MonoTODO]
+		[MonoTODO ("unused")]
 		public ProjectInstance ProjectInstance { get; private set; }
 
 		[MonoTODO]
