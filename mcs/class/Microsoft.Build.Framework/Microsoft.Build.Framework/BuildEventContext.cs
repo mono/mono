@@ -59,7 +59,7 @@ namespace Microsoft.Build.Framework
 		public override bool Equals (object other)
 		{
 			var o = other as BuildEventContext;
-			return o != null &&
+			return (object) o != null &&
 				o.NodeId == NodeId &&
 				o.ProjectContextId == ProjectContextId &&
 				o.ProjectInstanceId == ProjectInstanceId &&
