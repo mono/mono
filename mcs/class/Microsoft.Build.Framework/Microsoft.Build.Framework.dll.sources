@@ -6,6 +6,7 @@ Microsoft.Build.Framework/BuildEngineResult.cs
 Microsoft.Build.Framework/BuildErrorEventArgs.cs
 Microsoft.Build.Framework/BuildErrorEventHandler.cs
 Microsoft.Build.Framework/BuildEventArgs.cs
+Microsoft.Build.Framework/BuildEventContext.cs
 Microsoft.Build.Framework/BuildFinishedEventArgs.cs
 Microsoft.Build.Framework/BuildFinishedEventHandler.cs
 Microsoft.Build.Framework/BuildMessageEventArgs.cs
