@@ -97,6 +97,9 @@ if (not $skipbuild)
 	}
 	system("make") eq 0 or die ("Failed running make");
 	system("make install") eq 0 or die ("Failed running make install");
+	# Couldn't get automake to Just Do The Right Thing
+	system('make', '-C', 'scripts');
+	system("cp -R scripts/*.bat $monoprefix/bin");
 	print(">>>Making micro lib\n");
 	chdir("$root/mcs/class/corlib") eq 1 or die("failed to chdir corlib");
 	system("make PROFILE=monotouch_bootstrap") eq 0 or die ("Failed making monotouch bootstrap");
