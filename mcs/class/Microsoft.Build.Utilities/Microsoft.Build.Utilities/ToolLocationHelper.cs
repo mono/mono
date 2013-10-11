@@ -30,7 +30,12 @@ using System.IO;
 
 namespace Microsoft.Build.Utilities
 {
-	public static class ToolLocationHelper
+	#if MICROSOFT_BUILD_DLL
+	internal
+	#else
+	public
+	#endif
+	static class ToolLocationHelper
 	{
 		static string lib_mono_dir;
 		static string [] mono_dir;
