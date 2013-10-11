@@ -41,6 +41,14 @@ namespace Xamarin.ApiDiff {
 			get { return "property"; }
 		}
 
+		public override bool Find (XElement e)
+		{
+			if (!base.Find (e))
+				return false;
+			// the same Item (indexer) property can have different parameters
+			return e.GetAttribute ("params") == Source.GetAttribute ("params");
+		}
+
 		public override string GetDescription (XElement e)
 		{
 			string name = e.Attribute ("name").Value;
