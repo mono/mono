@@ -57,6 +57,7 @@
     <Compile Include="Test\Microsoft.Build.Framework\TaskCommandLineEventArgsTest.cs" />
     <Compile Include="Test\Microsoft.Build.Framework\TaskFinishedEventArgsTest.cs" />
     <Compile Include="Test\Microsoft.Build.Framework\TaskStartedEventArgsTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Framework\BuildEventContextTest.cs" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
