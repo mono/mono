@@ -20,15 +20,14 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MICROSOFT_BUILD_DLL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>false</NoStdLib>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MICROSOFT_BUILD_DLL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>false</NoStdLib>
@@ -119,6 +118,13 @@
     <Compile Include="Microsoft.Build.Execution\ProjectItemGroupTaskMetadataInstance.cs" />
     <Compile Include="Microsoft.Build.Execution\ProjectItemGroupTaskInstance.cs" />
     <Compile Include="Microsoft.Build.Execution\ProjectTaskInstance.cs" />
+    <Compile Include="..\Microsoft.Build.Utilities\Microsoft.Build.Utilities\ToolLocationHelper.cs">
+      <Link>ToolLocationHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.Build.Utilities\Microsoft.Build.Utilities\TargetDotNetFrameworkVersion.cs">
+      <Link>TargetDotNetFrameworkVersion.cs</Link>
+    </Compile>
+    <Compile Include="Microsoft.Build.Evaluation\SubToolset.cs" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
