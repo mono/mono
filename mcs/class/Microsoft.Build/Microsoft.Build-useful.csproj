@@ -125,6 +125,9 @@
       <Link>TargetDotNetFrameworkVersion.cs</Link>
     </Compile>
     <Compile Include="Microsoft.Build.Evaluation\SubToolset.cs" />
+    <Compile Include="..\Microsoft.Build.Utilities\Mono.XBuild.Utilities\MSBuildUtils.cs">
+      <Link>MSBuildUtils.cs</Link>
+    </Compile>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
