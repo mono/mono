@@ -43,6 +43,8 @@
   <ItemGroup>
     <Compile Include="Test\FunctionalTest.cs" />
     <Compile Include="Test\Microsoft.Build.Internal\CollectionFromEnumerableTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Logging\ConsoleLoggerTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Logging\LoggerDescriptionTest.cs" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -63,8 +65,13 @@
       <Project>{D8A2B8F2-F52B-44D5-A868-C344682749E2}</Project>
       <Name>Microsoft.Build-useful</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Microsoft.Build.Framework\Microsoft.Build.Framework-useful.csproj">
+      <Project>{2BAFB878-D329-46A5-93AF-5A4ECD403A13}</Project>
+      <Name>Microsoft.Build.Framework-useful</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+    <Folder Include="Test\" />
   </ItemGroup>
 </Project>
