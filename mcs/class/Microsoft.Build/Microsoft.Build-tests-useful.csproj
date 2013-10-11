@@ -45,6 +45,7 @@
     <Compile Include="Test\Microsoft.Build.Internal\CollectionFromEnumerableTest.cs" />
     <Compile Include="Test\Microsoft.Build.Logging\ConsoleLoggerTest.cs" />
     <Compile Include="Test\Microsoft.Build.Logging\LoggerDescriptionTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Evaluation\ToolsetTest.cs" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
