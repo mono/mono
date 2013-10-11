@@ -56,9 +56,11 @@ namespace Microsoft.Build.Evaluation
 		{
 			ToolsVersion = toolsVersion;
 			ToolsPath = toolsPath;
-			Properties = buildProperties.Select (p => new ProjectPropertyInstance (p.Key) { EvaluatedValue = p.Value })
-				.ToDictionary (e => e.Name);
-			SubToolsets = subToolsets;
+			Properties = 
+				buildProperties == null ?
+				new Dictionary<string, ProjectPropertyInstance> () :
+				buildProperties.Select (p => new ProjectPropertyInstance (p.Key) { EvaluatedValue = p.Value }).ToDictionary (e => e.Name);
+			SubToolsets = subToolsets ?? new Dictionary<string, SubToolset> ();
 		}
 
 #if NET_4_5
