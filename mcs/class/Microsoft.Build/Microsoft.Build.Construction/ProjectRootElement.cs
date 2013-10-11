@@ -63,8 +63,8 @@ namespace Microsoft.Build.Construction
 
                 string directoryPath;
                 public string DirectoryPath {
-                        get { return directoryPath ?? String.Empty; }
-                        internal set { directoryPath = value; }
+                        get { return directoryPath ?? Directory.GetCurrentDirectory (); }
+                        set { directoryPath = value; }
                 }
 
                 public ICollection<ProjectPropertyElement> Properties {

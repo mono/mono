@@ -20,9 +20,7 @@ LIB_MCS_FLAGS = \
 	/r:Microsoft.Build.Framework.dll	\
 	/d:MICROSOFT_BUILD_DLL
 	
-TEST_MCS_FLAGS = /r:System.Core.dll		\
-	/r:Microsoft.Build.Engine.dll		\
-	/r:Microsoft.Build.Framework.dll
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES = \
 	Test/FunctionalTestReferenceProject.csproj	\
