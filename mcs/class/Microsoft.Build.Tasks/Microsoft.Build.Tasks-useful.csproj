@@ -167,13 +167,6 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
-  </PostBuildEvent>
-  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.Build.Engine\Microsoft.Build.Engine-useful.csproj">
       <Project>{0DA63190-E6E1-41C5-B683-A54FADBE61CB}</Project>
