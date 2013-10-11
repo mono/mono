@@ -32,6 +32,7 @@ using Microsoft.Build.Construction;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Logging;
+using Microsoft.Build.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -48,8 +49,7 @@ namespace Microsoft.Build.Evaluation
 
 		static ProjectCollection ()
 		{
-			global_project_collection = new ProjectCollection ();
-			global_project_collection.global_properties = new ReadOnlyDictionary<string, string> (new Dictionary<string, string> ());
+			global_project_collection = new ProjectCollection (new ReadOnlyDictionary<string, string> (new Dictionary<string, string> ()));
 		}
 
 		public static string Escape (string unescapedString)
@@ -64,6 +64,7 @@ namespace Microsoft.Build.Evaluation
 		// semantic model part
 
 		public ProjectCollection ()
+			: this (null)
 		{
 		}
 
@@ -93,9 +94,11 @@ namespace Microsoft.Build.Evaluation
 			toolset_locations = toolsetDefinitionLocations;
 			max_node_count = maxNodeCount;
 			OnlyLogCriticalEvents = onlyLogCriticalEvents;
+
+			LoadDefaultToolsets ();
 		}
 
-		int max_node_count;
+		readonly int max_node_count;
 
 		[MonoTODO]
 		public int Count {
@@ -124,20 +127,20 @@ namespace Microsoft.Build.Evaluation
 			return LoadedProjects.Where (p => Path.GetFullPath (p.FullPath) == Path.GetFullPath (fullPath)).ToList ();
 		}
 
-		IDictionary<string, string> global_properties;
+		readonly IDictionary<string, string> global_properties;
 
 		public IDictionary<string, string> GlobalProperties {
 			get { return global_properties; }
 		}
 
-		List<Project> loaded_projects = new List<Project> ();
+		readonly List<Project> loaded_projects = new List<Project> ();
 
 		[MonoTODO]
 		public ICollection<Project> LoadedProjects {
 			get { return loaded_projects; }
 		}
 
-		List<ILogger> loggers = new List<ILogger> ();
+		readonly List<ILogger> loggers = new List<ILogger> ();
 		[MonoTODO]
 		public ICollection<ILogger> Loggers {
 			get { return loggers; }
@@ -149,17 +152,36 @@ namespace Microsoft.Build.Evaluation
 		[MonoTODO]
 		public bool SkipEvaluation { get; set; }
 
-		ToolsetDefinitionLocations toolset_locations;
+		readonly ToolsetDefinitionLocations toolset_locations;
 		public ToolsetDefinitionLocations ToolsetLocations {
 			get { return toolset_locations; }
 		}
 
-		List<Toolset> toolsets = new List<Toolset> ();
+		readonly List<Toolset> toolsets = new List<Toolset> ();
 		[MonoTODO ("unused")]
 		// so what should we do without ToolLocationHelper in Microsoft.Build.Utilities.dll? There is no reference to it in this dll.
 		public ICollection<Toolset> Toolsets {
 			// For ConfigurationFile and None, they cannot be added externally.
 			get { return (ToolsetLocations & ToolsetDefinitionLocations.Registry) != 0 ? toolsets : toolsets.ToList (); }
+		}
+
+		//FIXME: should also support config file, depending on ToolsetLocations
+		void LoadDefaultToolsets ()
+		{
+			toolsets.Add (new Toolset ("2.0",
+				ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version20), this, null));
+			toolsets.Add (new Toolset ("3.0",
+				ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version30), this, null));
+			toolsets.Add (new Toolset ("3.5",
+				ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version35), this, null));
+#if NET_4_0
+			toolsets.Add (new Toolset ("4.0",
+				ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version40), this, null));
+#endif
+#if NET_4_5
+			toolsets.Add (new Toolset ("4.5",
+				ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version45), this, null));
+#endif
 		}
 
 		public void UnloadAllProjects ()
