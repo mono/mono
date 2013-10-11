@@ -37,6 +37,7 @@ Microsoft.Build.Evaluation/ProjectLoadSettings.cs
 Microsoft.Build.Evaluation/ProjectMetadata.cs
 Microsoft.Build.Evaluation/ProjectProperty.cs
 Microsoft.Build.Evaluation/ResolvedImport.cs
+Microsoft.Build.Evaluation/SubToolset.cs
 Microsoft.Build.Evaluation/Toolset.cs
 Microsoft.Build.Evaluation/ToolsetDefinitionLocations.cs
 Microsoft.Build.Exceptions/InvalidProjectFileException.cs
