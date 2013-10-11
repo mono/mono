@@ -60,7 +60,9 @@ namespace Microsoft.Build.Evaluation
 				buildProperties == null ?
 				new Dictionary<string, ProjectPropertyInstance> () :
 				buildProperties.Select (p => new ProjectPropertyInstance (p.Key) { EvaluatedValue = p.Value }).ToDictionary (e => e.Name);
+#if NET_4_5
 			SubToolsets = subToolsets ?? new Dictionary<string, SubToolset> ();
+#endif
 		}
 
 #if NET_4_5
