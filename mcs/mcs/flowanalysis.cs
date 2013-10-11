@@ -1317,14 +1317,16 @@ namespace Mono.CSharp
 		}
 	}
 
-	// <summary>
-	//   This is used by the flow analysis code to store information about a single local variable
-	//   or parameter.  Depending on the variable's type, we need to allocate one or more elements
-	//   in the BitVector - if it's a fundamental or reference type, we just need to know whether
-	//   it has been assigned or not, but for structs, we need this information for each of its fields.
-	// </summary>
-	public class VariableInfo {
+	//
+	// This is used by definite assignment analysis code to store information about a local variable
+	// or parameter.  Depending on the variable's type, we need to allocate one or more elements
+	// in the BitVector - if it's a fundamental or reference type, we just need to know whether
+	// it has been assigned or not, but for structs, we need this information for each of its fields.
+	//
+	public class VariableInfo
+	{
 		readonly string Name;
+
 		readonly TypeInfo TypeInfo;
 
 		// <summary>
@@ -1337,12 +1339,12 @@ namespace Mono.CSharp
 		//   The first bit always specifies whether the variable as such has been assigned while
 		//   the remaining bits contain this information for each of a struct's fields.
 		// </summary>
-		public readonly int Length;
+		readonly int Length;
 
 		// <summary>
 		//   If this is a parameter of local variable.
 		// </summary>
-		public readonly bool IsParameter;
+		public bool IsParameter;
 
 		VariableInfo[] sub_info;
 
@@ -1369,7 +1371,7 @@ namespace Mono.CSharp
 			Initialize ();
 		}
 
-		protected void Initialize ()
+		void Initialize ()
 		{
 			TypeInfo[] sub_fields = TypeInfo.SubStructInfo;
 			if (sub_fields != null) {
@@ -1382,16 +1384,21 @@ namespace Mono.CSharp
 				sub_info = new VariableInfo [0];
 		}
 
-		public VariableInfo (LocalVariable local_info, int offset)
-			: this (local_info.Name, local_info.Type, offset)
+		public static VariableInfo Create (BlockContext bc, LocalVariable variable)
 		{
-			this.IsParameter = false;
+			var info = new VariableInfo (variable.Name, variable.Type, bc.AssignmentInfoOffset);
+			bc.AssignmentInfoOffset += info.Length;
+			return info;
 		}
 
-		public VariableInfo (ParametersCompiled ip, int i, int offset)
-			: this (ip.FixedParameters [i].Name, ip.Types [i], offset)
+		public static VariableInfo Create (BlockContext bc, Parameter parameter)
 		{
-			this.IsParameter = true;
+			var info = new VariableInfo (parameter.Name, parameter.Type, bc.AssignmentInfoOffset) {
+				IsParameter = true
+			};
+
+			bc.AssignmentInfoOffset += info.Length;
+			return info;
 		}
 
 		public bool IsAssigned (ResolveContext ec)

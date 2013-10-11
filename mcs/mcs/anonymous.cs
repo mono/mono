@@ -1522,7 +1522,7 @@ namespace Mono.CSharp {
 
 			var bc = ec as BlockContext;
 			if (bc != null)
-				aec.FlowOffset = bc.FlowOffset;
+				aec.AssignmentInfoOffset = bc.AssignmentInfoOffset;
 
 			var errors = ec.Report.Errors;
 

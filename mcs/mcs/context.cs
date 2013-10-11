@@ -73,7 +73,10 @@ namespace Mono.CSharp
 
 		readonly TypeSpec return_type;
 
-		public int FlowOffset;
+		//
+		// Tracks the last offset used by VariableInfo
+		//
+		public int AssignmentInfoOffset;
 
 		public BlockContext (IMemberContext mc, ExplicitBlock block, TypeSpec returnType)
 			: base (mc)

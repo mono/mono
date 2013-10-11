@@ -1628,7 +1628,7 @@ namespace Mono.CSharp {
 			if (eval_global) {
 				CreateEvaluatorVariable (bc, li);
 			} else if (type != InternalType.ErrorType) {
-				li.PrepareForFlowAnalysis (bc);
+				li.PrepareAssignmentAnalysis (bc);
 			}
 
 			if (initializer != null) {
@@ -1642,7 +1642,7 @@ namespace Mono.CSharp {
 					if (eval_global) {
 						CreateEvaluatorVariable (bc, d.Variable);
 					} else if (type != InternalType.ErrorType) {
-						d.Variable.PrepareForFlowAnalysis (bc);
+						d.Variable.PrepareAssignmentAnalysis (bc);
 					}
 
 					if (d.Initializer != null && resolveDeclaratorInitializers) {
@@ -2020,16 +2020,15 @@ namespace Mono.CSharp {
 			return !ec.DoFlowAnalysis || ec.CurrentBranching.IsAssigned (VariableInfo);
 		}
 
-		public void PrepareForFlowAnalysis (BlockContext bc)
+		public void PrepareAssignmentAnalysis (BlockContext bc)
 		{
 			//
-			// No need for definitely assigned check for these guys
+			// No need to run assignment analysis for these guys
 			//
 			if ((flags & (Flags.Constant | Flags.ReadonlyMask | Flags.CompilerGenerated)) != 0)
 				return;
 
-			VariableInfo = new VariableInfo (this, bc.FlowOffset);
-			bc.FlowOffset += VariableInfo.Length;
+			VariableInfo = VariableInfo.Create (bc, this);
 		}
 
 		//
@@ -3094,7 +3093,7 @@ namespace Mono.CSharp {
 				flags |= Flags.IsExpressionTree;
 
 			try {
-				ResolveMeta (rc);
+				PrepareAssignmentAnalysis (rc);
 
 				using (rc.With (ResolveContext.Options.DoFlowAnalysis, true)) {
 					FlowBranchingToplevel top_level = rc.StartFlowBranching (this, parent);
@@ -3150,19 +3149,15 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		void ResolveMeta (BlockContext ec)
+		void PrepareAssignmentAnalysis (BlockContext bc)
 		{
-			int orig_count = parameters.Count;
+			for (int i = 0; i < parameters.Count; ++i) {
+				var par = parameters.FixedParameters[i];
 
-			for (int i = 0; i < orig_count; ++i) {
-				Parameter.Modifier mod = parameters.FixedParameters[i].ModFlags;
-
-				if ((mod & Parameter.Modifier.OUT) == 0)
+				if ((par.ModFlags & Parameter.Modifier.OUT) == 0)
 					continue;
 
-				VariableInfo vi = new VariableInfo (parameters, i, ec.FlowOffset);
-				parameter_info[i].VariableInfo = vi;
-				ec.FlowOffset += vi.Length;
+				parameter_info [i].VariableInfo = VariableInfo.Create (bc, (Parameter) par);
 			}
 		}
 
@@ -3576,7 +3571,7 @@ namespace Mono.CSharp {
 
 			this_variable = new LocalVariable (this, "this", LocalVariable.Flags.IsThis | LocalVariable.Flags.Used, StartLocation);
 			this_variable.Type = bc.CurrentType;
-			this_variable.PrepareForFlowAnalysis (bc);
+			this_variable.PrepareAssignmentAnalysis (bc);
 		}
 
 		public bool IsThisAssigned (BlockContext ec)
@@ -5462,7 +5457,7 @@ namespace Mono.CSharp {
 						ec.Report.Error (155, loc, "The type caught or thrown must be derived from System.Exception");
 					} else if (li != null) {
 						li.Type = type;
-						li.PrepareForFlowAnalysis (ec);
+						li.PrepareAssignmentAnalysis (ec);
 
 						// source variable is at the top of the stack
 						Expression source = new EmptyExpression (li.Type);
