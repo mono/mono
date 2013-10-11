@@ -92,6 +92,10 @@
     <Compile Include="Microsoft.Build.Framework\TaskStartedEventArgs.cs" />
     <Compile Include="Microsoft.Build.Framework\TaskStartedEventHandler.cs" />
     <Compile Include="Microsoft.Build.Framework\LazyFormattedBuildEventArgs.cs" />
+    <Compile Include="Microsoft.Build.Framework\IBuildEngine3.cs" />
+    <Compile Include="Microsoft.Build.Framework\BuildEngineResult.cs" />
+    <Compile Include="Microsoft.Build.Framework\IBuildEngine4.cs" />
+    <Compile Include="Microsoft.Build.Framework\RegisteredTaskObjectLifetime.cs" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
