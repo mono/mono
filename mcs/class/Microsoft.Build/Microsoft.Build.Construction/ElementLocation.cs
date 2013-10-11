@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_5
 
 using Microsoft.Build.Framework;
 using System;
@@ -35,7 +34,10 @@ using System.Collections.Generic;
 namespace Microsoft.Build.Construction
 {
 	[Serializable]
-	public abstract class ElementLocation
+#if NET_4_5
+	public
+#endif
+	abstract class ElementLocation
 	{
 		public abstract int Column { get; }
 		public abstract string File { get; }
@@ -46,5 +48,3 @@ namespace Microsoft.Build.Construction
 		}
 	}
 }
-
-#endif
