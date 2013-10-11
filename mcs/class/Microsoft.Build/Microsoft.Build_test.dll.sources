@@ -1,4 +1,5 @@
 FunctionalTest.cs
+Microsoft.Build.Evaluation/ToolsetTest.cs
 Microsoft.Build.Internal/CollectionFromEnumerableTest.cs
 Microsoft.Build.Logging/ConsoleLoggerTest.cs
 Microsoft.Build.Logging/LoggerDescriptionTest.cs
