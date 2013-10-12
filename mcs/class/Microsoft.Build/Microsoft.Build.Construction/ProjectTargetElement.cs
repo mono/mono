@@ -29,6 +29,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using Microsoft.Build.Internal;
 
 namespace Microsoft.Build.Construction
@@ -111,9 +112,9 @@ namespace Microsoft.Build.Construction
                         get { return "Target"; }
                 }
 
-                internal override ProjectElement LoadChildElement (string name)
+                internal override ProjectElement LoadChildElement (XmlReader reader)
                 {
-                        switch (name) {
+                        switch (reader.LocalName) {
                         case "OnError":
                                 var error = new ProjectOnErrorElement (ContainingProject);
                                 AppendChild (error);
@@ -123,7 +124,7 @@ namespace Microsoft.Build.Construction
                         case "ItemGroup":
                                 return AddItemGroup ();
                         default:
-                                return AddTask (name);
+                                return AddTask (reader.LocalName);
                         }
                 }
                 internal override void LoadAttribute (string name, string value)

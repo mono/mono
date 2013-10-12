@@ -50,10 +50,53 @@ namespace MonoTests.Microsoft.Build.Construction
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidProjectFileException))]
 		public void InvalidProject ()
 		{
-			ProjectRootElement.Create (XmlReader.Create (new StringReader ("<root/>")));
+			try {
+				ProjectRootElement.Create (XmlReader.Create (new StringReader (" <root/>")));
+				Assert.Fail ("should throw InvalidProjectFileException");
+			} catch (InvalidProjectFileException ex) {
+				#if NET_4_5
+				Assert.AreEqual (1, ex.LineNumber, "#1");
+				// it is very interesting, but unlike XmlReader.LinePosition it returns the position for '<'.
+				Assert.AreEqual (2, ex.ColumnNumber, "#2");
+				#endif
+			}
+		}
+
+		[Test]
+		public void CreateWithXmlLoads ()
+		{
+			string project_xml_1 = "<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'><ItemGroup><None Include='bar.txt' /></ItemGroup></Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml_1), null, "file://localhost/foo.xml");
+			var root = ProjectRootElement.Create (xml);
+			Assert.AreEqual (1, root.Items.Count, "#1");
+		}
+
+		[Test]
+		public void LoadUnknownChild ()
+		{
+			string project_xml_1 = "<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'><Unknown /></Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml_1), null, "file://localhost/foo.xml");
+			try {
+				ProjectRootElement.Create (xml);
+				Assert.Fail ("should throw InvalidProjectFileException");
+			} catch (InvalidProjectFileException ex) {
+				#if NET_4_5
+				Assert.AreEqual (1, ex.LineNumber, "#1");
+				// unlike unexpected element case which returned the position for '<', it does return the name start char...
+				Assert.AreEqual (70, ex.ColumnNumber, "#2");
+				#endif
+			}
+		}
+
+		[Test]
+		public void LoadUnregisteredItem ()
+		{
+			string project_xml_1 = "<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'><ItemGroup><UnregisteredItem Include='bar.txt' /></ItemGroup></Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml_1), null, "file://localhost/foo.xml");
+			var root = ProjectRootElement.Create (xml);
+			Assert.AreEqual (1, root.Items.Count, "#1");
 		}
 	}
 }

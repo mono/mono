@@ -46,5 +46,16 @@ namespace Microsoft.Build.Construction
 		public string LocationString {
 			get { return Line == 0 ? File : String.Format ("{0} ({1}{2})", File, Line, Column != 0 ? "," + Column : String.Empty); }
 		}
+
+		public override bool Equals (object other)
+		{
+			var o = other as ElementLocation;
+			return (object) o != null && o.File == File && o.Line == Line && o.Column == Column;
+		}
+
+		public override int GetHashCode ()
+		{
+			return (File.GetHashCode () << 16) + (Line << 8) + Column;
+		}
 	}
 }

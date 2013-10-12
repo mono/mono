@@ -216,8 +216,8 @@ namespace Microsoft.Build.Construction
 
                 public static ProjectRootElement Create (XmlReader xmlReader, ProjectCollection projectCollection)
                 {
-                        // yes, this should create en empty project
                         var result = Create (projectCollection);
+                        result.Load (xmlReader);
                         return result;
                 }
 
@@ -518,9 +518,9 @@ namespace Microsoft.Build.Construction
                         }
                 }
 
-                internal override ProjectElement LoadChildElement (string name)
+                internal override ProjectElement LoadChildElement (XmlReader reader)
                 {
-                        switch (name) {
+                        switch (reader.LocalName) {
                         case "PropertyGroup":
                                 var prop = CreatePropertyGroupElement ();
                                 AppendChild (prop);
@@ -548,8 +548,7 @@ namespace Microsoft.Build.Construction
                                 AppendChild (ext);
                                 return ext;
                         default:
-                                throw new InvalidProjectFileException (string.Format (
-                                        "Child \"{0}\" is not a known node type.", name));
+                                throw CreateError (reader, string.Format ("Child \"{0}\" is not a known node type.", reader.LocalName), -1);
                         }
                 }
 
@@ -573,7 +572,7 @@ namespace Microsoft.Build.Construction
 
                 internal override void Save (XmlWriter writer)
                 {
-                        writer.WriteStartElement (XmlName, "http://schemas.microsoft.com/developer/msbuild/2003");
+                        writer.WriteStartElement (XmlName, MSBuildNamespace);
                         SaveValue (writer);
                         writer.WriteEndElement ();
                 }

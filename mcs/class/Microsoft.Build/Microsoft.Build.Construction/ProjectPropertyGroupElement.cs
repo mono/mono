@@ -76,9 +76,9 @@ namespace Microsoft.Build.Construction
                         get { return "PropertyGroup"; }
                 }
 
-                internal override ProjectElement LoadChildElement (string name)
+                internal override ProjectElement LoadChildElement (XmlReader reader)
                 {
-                        return AddProperty (name, null);
+                        return AddProperty (reader.LocalName, null);
                 }
         }
 }
