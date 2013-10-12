@@ -94,9 +94,9 @@ namespace Microsoft.Build.Construction
                                 break;
                         }
                 }
-                internal override ProjectElement LoadChildElement (string name)
+                internal override ProjectElement LoadChildElement (XmlReader reader)
                 {
-                        var metadata = ContainingProject.CreateMetadataElement (name);
+                        var metadata = ContainingProject.CreateMetadataElement (reader.LocalName);
                         AppendChild (metadata);
                         return metadata;
                 }

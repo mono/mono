@@ -60,7 +60,16 @@ namespace Microsoft.Build.Exceptions
                 public InvalidProjectFileException (string projectFile, int lineNumber, int columnNumber,
                                                     int endLineNumber, int endColumnNumber, string message,
                                                     string errorSubcategory, string errorCode, string helpKeyword)
+                        : base(message)
                 {
+                        ProjectFile = projectFile;
+                        LineNumber = lineNumber;
+                        ColumnNumber = columnNumber;
+                        EndLineNumber = endLineNumber;
+                        EndColumnNumber = endColumnNumber;
+                        ErrorSubcategory = errorSubcategory;
+                        ErrorCode = errorCode;
+                        HelpKeyword = helpKeyword;
                 }
                 public override void GetObjectData (SerializationInfo info, StreamingContext context)
                 {

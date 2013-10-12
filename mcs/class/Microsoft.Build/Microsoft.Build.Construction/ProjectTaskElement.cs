@@ -109,16 +109,16 @@ namespace Microsoft.Build.Construction
                 internal override string XmlName {
                         get { return Name; }
                 }
-                internal override ProjectElement LoadChildElement (string name)
+                internal override ProjectElement LoadChildElement (XmlReader reader)
                 {
-                        switch (name) {
+                        switch (reader.LocalName) {
                         case "Output":
                                 var output = ContainingProject.CreateOutputElement (null, null, null);
                                 AppendChild (output);
                                 return output;
                         default:
                                 throw new InvalidProjectFileException (string.Format (
-                                        "Child \"{0}\" is not a known node type.", name));
+                                        "Child \"{0}\" is not a known node type.", reader.LocalName));
                         }
                 }
                 internal override void LoadAttribute (string name, string value)

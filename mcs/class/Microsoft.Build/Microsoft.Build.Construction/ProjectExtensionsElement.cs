@@ -71,6 +71,7 @@ namespace Microsoft.Build.Construction
                 {
                         while (reader.Read () && reader.NodeType != XmlNodeType.Element)
                                 ;
+                        FillLocation (reader);
                         using (XmlReader subReader = reader.ReadSubtree ()) {
                                 document = new XmlDocument ();
                                 document.Load (subReader);

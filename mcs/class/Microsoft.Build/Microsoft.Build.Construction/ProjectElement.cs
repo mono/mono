@@ -35,6 +35,8 @@ namespace Microsoft.Build.Construction
 {
         public abstract class ProjectElement
         {
+                internal const string MSBuildNamespace = "http://schemas.microsoft.com/developer/msbuild/2003";
+
                 internal ProjectElement ()
                 {
                         linkedListNode = new LinkedListNode<ProjectElement> (this);
@@ -67,6 +69,7 @@ namespace Microsoft.Build.Construction
                 internal virtual void Load (XmlReader reader)
                 {
                         reader.ReadToFollowing (XmlName);
+                        FillLocation (reader);
                         while (reader.MoveToNextAttribute ()) {
                                 LoadAttribute (reader.Name, reader.Value);
                         }
@@ -108,6 +111,51 @@ namespace Microsoft.Build.Construction
                 {
                         if (!string.IsNullOrWhiteSpace (attributeValue))
                                 writer.WriteAttributeString (attributeName, attributeValue);
+                }
+                
+#if NET_4_5
+                public ElementLocation Location { get; private set; }
+                public ElementLocation LabelLocation { get; private set; }
+                public ElementLocation ConditionLocation { get; private set; }
+#endif
+                
+                internal void FillLocation (XmlReader reader)
+                {
+#if NET_4_5
+                        var l = reader as IXmlLineInfo;
+                        if (l != null && l.HasLineInfo ())
+                                Location = new ProjectElementLocation (reader.BaseURI, l);
+                        if (reader.MoveToAttribute ("Condition") && l.HasLineInfo ())
+                                ConditionLocation = new ProjectElementLocation (reader.BaseURI, l);
+                        if (reader.MoveToAttribute ("Label") && l.HasLineInfo ())
+                                LabelLocation = new ProjectElementLocation (reader.BaseURI, l);
+                        reader.MoveToElement ();
+#endif
+                }
+                
+                class ProjectElementLocation : ElementLocation
+                {
+                        public ProjectElementLocation (string file, IXmlLineInfo li)
+                        {
+                                this.file = file;
+                                this.line = li.LineNumber;
+                                this.column = li.LinePosition;
+                        }
+
+                        string file;
+                        int line;
+                        int column;
+
+                        public override string File { get { return file; } }
+                        public override int Line { get { return line; } }
+                        public override int Column { get { return column; } }
+                }
+                
+                internal InvalidProjectFileException CreateError (XmlReader reader, string message, int columnOffset = 0)
+                {
+                        var li = reader as IXmlLineInfo;
+                        bool valid = li != null && li.HasLineInfo ();
+                        throw new InvalidProjectFileException (reader.BaseURI, valid ? li.LineNumber : 0, valid ? li.LinePosition + columnOffset : 0, 0, 0, message, null, null, null);
                 }
         }
 }
