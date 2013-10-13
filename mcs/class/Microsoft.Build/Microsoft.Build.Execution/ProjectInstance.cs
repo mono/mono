@@ -189,7 +189,15 @@ namespace Microsoft.Build.Execution
 
 		public bool Build (string[] targets, IEnumerable<ILogger> loggers, IEnumerable<ForwardingLoggerRecord> remoteLoggers, out IDictionary<string, TargetResult> targetOutputs)
 		{
-			throw new NotImplementedException ();
+			var manager = new BuildManager ();
+			var parameters = new BuildParameters (projects) {
+				ForwardingLoggers = remoteLoggers,
+				Loggers = loggers
+			};
+			var requestData = new BuildRequestData (this, targets);
+			var result = manager.Build (parameters, requestData);
+			targetOutputs = result.ResultsByTarget;
+			return result.OverallResult == BuildResultCode.Success;
 		}
 		
 		public ProjectInstance DeepCopy ()
