@@ -125,34 +125,36 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
 		public void TestMaxCharCount()
 		{
 			UTF8Encoding UTF8enc = new UTF8Encoding ();
-#if NET_2_0
-			// hmm, where is this extra 1 coming from?
+			Encoding UTF8encWithBOM = new UTF8Encoding(true);
 			Assert.AreEqual (51, UTF8enc.GetMaxCharCount(50), "UTF #1");
-#else
-			Assert.AreEqual (50, UTF8enc.GetMaxCharCount(50), "UTF #1");
-#endif
+			Assert.AreEqual (UTF8enc.GetMaxByteCount(50), UTF8encWithBOM.GetMaxByteCount(50), "UTF #2");
 		}
 
 		[Test]
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
+		public void TestMaxCharCountWithCustomFallback()
+		{
+			Encoding encoding = Encoding.GetEncoding("utf-8", new EncoderReplacementFallback("\u2047\u2047"), new DecoderReplacementFallback("\u2047\u2047"));
+			Assert.AreEqual (102, encoding.GetMaxCharCount(50), "UTF #1");
+		}
+
+		[Test]
 		public void TestMaxByteCount()
 		{
 			UTF8Encoding UTF8enc = new UTF8Encoding ();
-#if NET_2_0
-			// maybe under .NET 2.0 insufficient surrogate pair is
-			// just not handled, and 3 is Preamble size.
+			Encoding UTF8encWithBOM = new UTF8Encoding(true);
+
 			Assert.AreEqual (153, UTF8enc.GetMaxByteCount(50), "UTF #1");
-#else
-			Assert.AreEqual (200, UTF8enc.GetMaxByteCount(50), "UTF #1");
-#endif
+			Assert.AreEqual (UTF8enc.GetMaxByteCount(50), UTF8encWithBOM.GetMaxByteCount(50), "UTF #2");
+		}
+
+		[Test]
+		public void TestMaxByteCountWithCustomFallback()
+		{
+			Encoding encoding = Encoding.GetEncoding("utf-8", new EncoderReplacementFallback("\u2047\u2047"), new DecoderReplacementFallback("?"));
+			Assert.AreEqual (306, encoding.GetMaxByteCount(50), "UTF #1");
 		}
 
 		// regression for bug #59648
