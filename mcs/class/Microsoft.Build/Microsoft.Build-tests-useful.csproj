@@ -47,6 +47,9 @@
     <Compile Include="Test\Microsoft.Build.Logging\LoggerDescriptionTest.cs" />
     <Compile Include="Test\Microsoft.Build.Evaluation\ToolsetTest.cs" />
     <Compile Include="Test\Microsoft.Build.Construction\ProjectRootElementTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Execution\ProjectInstanceTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Evaluation\ProjectTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Execution\BuildManagerTest.cs" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -75,5 +78,6 @@
   <ItemGroup>
     <Folder Include="Properties\" />
     <Folder Include="Test\" />
+    <Folder Include="Test\Microsoft.Build.Execution\" />
   </ItemGroup>
 </Project>
