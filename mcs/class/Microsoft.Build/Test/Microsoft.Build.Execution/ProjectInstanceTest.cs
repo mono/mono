@@ -11,14 +11,10 @@ namespace MonoTests.Microsoft.Build.Execution
 	public class ProjectInstanceTest
 	{
 		[Test]
-		public void Constructor ()
+		public void BuildEmptyProject ()
 		{
-			string project_xml_2 = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
-  <Target Name='AfterBuild' Condition=""'$(MvcBuildViews)'=='true'"">
-    <AspNetCompiler VirtualPath='temp' PhysicalPath='$(ProjectDir)' />
-  </Target>
-</Project>";
-			var xml = XmlReader.Create (new StringReader (project_xml_2), null, "file://localhost/foo.xml");
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
+			var xml = XmlReader.Create (new StringReader (project_xml), null, "file://localhost/foo.xml");
 			var root = ProjectRootElement.Create (xml);
 			// This seems to do nothing and still returns true
 			Assert.IsTrue (new ProjectInstance (root).Build (), "#1");
