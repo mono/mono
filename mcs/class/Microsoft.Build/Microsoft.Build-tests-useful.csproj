@@ -51,6 +51,7 @@
     <Compile Include="Test\Microsoft.Build.Evaluation\ProjectTest.cs" />
     <Compile Include="Test\Microsoft.Build.Execution\BuildManagerTest.cs" />
     <Compile Include="Test\Microsoft.Build.Evaluation\ProjectCollectionTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Execution\BuildParametersTest.cs" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
