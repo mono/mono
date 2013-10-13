@@ -111,7 +111,7 @@ namespace Microsoft.Build.Evaluation
 
 		[MonoTODO]
 		public string DefaultToolsVersion {
-			get { throw new NotImplementedException (); }
+			get { return Toolsets.Any () ? Toolsets.First ().ToolsVersion : null; }
 		}
 
 		public void Dispose ()

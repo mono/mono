@@ -39,7 +39,7 @@ namespace Microsoft.Build.Execution
 	public class BuildParameters
 	{
 		public BuildParameters ()
-			: this (ProjectCollection.GlobalProjectCollection)
+			: this (new ProjectCollection ())
 		{
 		}
 
@@ -68,7 +68,8 @@ namespace Microsoft.Build.Execution
 
 		public Toolset GetToolset (string toolsVersion)
 		{
-			throw new NotImplementedException ();
+			// can return null.
+			return projects.Toolsets.FirstOrDefault (t => t.ToolsVersion == toolsVersion);
 		}
 
 		[MonoTODO]

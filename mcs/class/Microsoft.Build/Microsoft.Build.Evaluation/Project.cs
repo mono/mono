@@ -350,13 +350,12 @@ namespace Microsoft.Build.Evaluation
 
 		public void Save ()
 		{
-			using (var writer = new StreamWriter (FullPath))
-				Save (writer);
+			Xml.Save ();
 		}
 
 		public void Save (TextWriter writer)
 		{
-			throw new NotImplementedException ();
+			Xml.Save (writer);
 		}
 
 		public void Save (string path)

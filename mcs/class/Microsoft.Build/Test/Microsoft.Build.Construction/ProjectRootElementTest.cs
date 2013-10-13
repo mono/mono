@@ -3,6 +3,7 @@ using System.IO;
 using System.Xml;
 using Microsoft.Build.Construction;
 using NUnit.Framework;
+using Microsoft.Build.Evaluation;
 using Microsoft.Build.Exceptions;
 
 namespace MonoTests.Microsoft.Build.Construction
@@ -72,6 +73,24 @@ namespace MonoTests.Microsoft.Build.Construction
 			var root = ProjectRootElement.Create (xml);
 			Assert.AreEqual (1, root.Items.Count, "#1");
 		}
+		
+		[Test]
+		public void ToolsVersionDefault ()
+		{
+			var g = ProjectCollection.GlobalProjectCollection;
+			var root = ProjectRootElement.Create ();
+			// this will be wrong in the future version, but since .NET 4.5 still expects "4.0" we can't say for sure.
+			Assert.AreEqual ("4.0", root.ToolsVersion, "#1");
+		}
+		
+		[Test]
+		public void ToolsVersionIsEmptyWithXml ()
+		{
+			string project_xml_1 = "<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'><ItemGroup><None Include='bar.txt' /></ItemGroup></Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml_1), null, "file://localhost/foo.xml");
+			var root = ProjectRootElement.Create (xml);
+			Assert.AreEqual (string.Empty, root.ToolsVersion, "#1");
+		}
 
 		[Test]
 		public void LoadUnknownChild ()
@@ -113,6 +132,27 @@ namespace MonoTests.Microsoft.Build.Construction
 			var reader = XmlReader.Create (new StringReader (xml), null, path);
 			var root = ProjectRootElement.Create (reader);
 			Assert.AreEqual (2, root.Properties.Count, "#1");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void SaveWithoutFullPath ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
+			var xml = XmlReader.Create (new StringReader (project_xml), null, "file://localhost/foo.xml");
+			var root = ProjectRootElement.Create (xml);
+			root.Save ();
+		}
+		
+		[Test]
+		public void SaveToWriter ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
+			var xml = XmlReader.Create (new StringReader (project_xml), null, "file://localhost/foo.xml");
+			var root = ProjectRootElement.Create (xml);
+			var sw = new StringWriter ();
+			root.Save (sw);
+			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" + project_xml.Replace ('\'', '"'), sw.ToString (), "#1");
 		}
 	}
 }
