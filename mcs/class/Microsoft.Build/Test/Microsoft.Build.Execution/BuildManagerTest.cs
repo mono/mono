@@ -12,6 +12,33 @@ namespace MonoTests.Microsoft.Build.Execution
 	public class BuildManagerTest
 	{
 		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void GetProjectInstanceForBuildNullFullPath ()
+		{
+			string empty_project_xml = "<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
+			var path = "file://localhost/foo.xml";
+			var xml = XmlReader.Create (new StringReader (empty_project_xml), null, path);
+			var root = ProjectRootElement.Create (xml);
+			var proj = new Project (root);
+			var manager = new BuildManager ();
+			manager.GetProjectInstanceForBuild (proj);
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void GetProjectInstanceForBuildEmptyFullPath ()
+		{
+			string empty_project_xml = "<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
+			var path = "file://localhost/foo.xml";
+			var xml = XmlReader.Create (new StringReader (empty_project_xml), null, path);
+			var root = ProjectRootElement.Create (xml);
+			var proj = new Project (root);
+			proj.FullPath = "";
+			var manager = new BuildManager ();
+			manager.GetProjectInstanceForBuild (proj);
+		}
+		
+		[Test]
 		public void GetProjectInstanceForBuild ()
 		{
             string empty_project_xml = "<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";

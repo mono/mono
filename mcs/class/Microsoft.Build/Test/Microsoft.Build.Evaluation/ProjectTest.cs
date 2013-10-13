@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using Microsoft.Build.Construction;
 using Microsoft.Build.Evaluation;
@@ -11,14 +12,48 @@ namespace MonoTests.Microsoft.Build.Evaluation
 	public class ProjectTest
 	{
 		[Test]
-		public void Constructor ()
+		public void EscapeDoesWTF ()
 		{
-			string project_xml_2 = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
-  <Target Name='AfterBuild'>
-    <AspNetCompiler VirtualPath='temp' PhysicalPath='$(ProjectDir)' />
-  </Target>
-</Project>";
-			var xml = XmlReader.Create (new StringReader (project_xml_2), null, "file://localhost/foo.xml");
+			string value = "What are 'ESCAPE' &amp; \"EVALUATE\" ? $ # % ^";
+			string escaped_by_collection = "What are %27ESCAPE%27 & \"EVALUATE\" %3f %24 # %25 ^";
+			string xml = string.Format (@"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+	<PropertyGroup>
+		<Foo>{0}</Foo>
+		<Baz>$(FOO)</Baz>
+	</PropertyGroup>
+</Project>", value);
+			var path = "file://localhost/foo.xml";
+			var reader = XmlReader.Create (new StringReader (xml), null, path);
+			var root = ProjectRootElement.Create (xml);
+			var proj = new Project (root);
+			var prop = proj.Properties.First (p => p.Name == "Foo");
+			Assert.AreEqual (value, prop.UnevaluatedValue, "#1");
+			Assert.AreEqual (value, prop.EvaluatedValue, "#2");
+			Assert.AreEqual (value, Project.GetPropertyValueEscaped (prop), "#3");
+			prop = proj.Properties.First (p => p.Name == "Baz");
+			Assert.AreEqual ("$(FOO)", prop.UnevaluatedValue, "#4");
+			Assert.AreEqual (value, prop.EvaluatedValue, "#5");
+			Assert.AreEqual (value, Project.GetPropertyValueEscaped (prop), "#6");
+			Assert.AreEqual (escaped_by_collection, ProjectCollection.Escape (value), "#7");
+		}
+		
+		[Test]
+		public void FullPath ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
+			var xml = XmlReader.Create (new StringReader (project_xml), null, "file://localhost/foo.xml");
+			var root = ProjectRootElement.Create (xml);
+			var proj = new Project (root);
+			proj.FullPath = "ABC";
+			Assert.IsTrue (proj.FullPath.EndsWith (Path.DirectorySeparatorChar + "ABC"), "#1");
+			Assert.AreEqual (root.FullPath, proj.FullPath, "#2");
+		}
+		
+		[Test]
+		public void BuildEmptyProject ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
+			var xml = XmlReader.Create (new StringReader (project_xml), null, "file://localhost/foo.xml");
 			var root = ProjectRootElement.Create (xml);
             
 			// This seems to do nothing and still returns true

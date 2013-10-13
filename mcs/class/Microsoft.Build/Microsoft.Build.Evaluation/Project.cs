@@ -138,7 +138,7 @@ namespace Microsoft.Build.Evaluation
 
 		public ProjectRootElement Xml { get; private set; }
 
-		string dir_path, full_path;
+		string dir_path;
 		Dictionary<string, ProjectItemDefinition> item_definitions;
 		List<ResolvedImport> raw_imports;
 		List<ProjectItem> raw_items;
@@ -246,7 +246,7 @@ namespace Microsoft.Build.Evaluation
 		{
 			// unlike ProjectInstance.Build(), there is no place to fill outputs by targets, so ignore them
 			// (i.e. we don't use the overload with output).
-			return new BuildManager ().GetProjectInstanceForBuild (this).Build (targets, loggers, remoteLoggers);
+			return new BuildManager ().GetProjectInstanceForBuildInternal (this).Build (targets, loggers, remoteLoggers);
 		}
 
 		public bool Build (string target, IEnumerable<ILogger> loggers, IEnumerable<ForwardingLoggerRecord> remoteLoggers)
@@ -313,7 +313,7 @@ namespace Microsoft.Build.Evaluation
 
 		public static string GetPropertyValueEscaped (ProjectProperty property)
 		{
-			throw new NotImplementedException ();
+			return property.EvaluatedValue;
 		}
 
 		public ProjectProperty GetProperty (string name)
@@ -407,11 +407,8 @@ namespace Microsoft.Build.Evaluation
 		}
 
 		public string FullPath {
-			get { return full_path; }
-			set {
-				// FIXME: check validity? mark IsDirty?
-				full_path = value;
-			}
+			get { return Xml.FullPath; }
+			set { Xml.FullPath = value; }
 		}
 
 		public IList<ResolvedImport> Imports {

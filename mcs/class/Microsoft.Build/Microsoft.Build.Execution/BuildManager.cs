@@ -79,10 +79,28 @@ namespace Microsoft.Build.Execution
 		{
 			throw new NotImplementedException ();
 		}
+		
+		Dictionary<Project,ProjectInstance> instances = new Dictionary<Project, ProjectInstance> ();
 
 		public ProjectInstance GetProjectInstanceForBuild (Project project)
 		{
-			throw new NotImplementedException ();
+			if (project == null)
+				throw new ArgumentNullException ("project");
+			if (project.FullPath == null)
+				throw new ArgumentNullException ("project", "FullPath parameter in the project cannot be null.");
+			if (project.FullPath == string.Empty)
+				throw new ArgumentException ("FullPath parameter in the project cannot be empty.", "project");
+			// other than that, any invalid path character is accepted...
+			
+			return GetProjectInstanceForBuildInternal (project);
+		}
+			
+		public ProjectInstance GetProjectInstanceForBuildInternal (Project project)
+		{
+			ProjectInstance ret;
+			if (!instances.ContainsKey (project))
+				instances [project] = project.CreateProjectInstance ();
+			return instances [project];
 		}
 
 		public BuildSubmission PendBuildRequest (BuildRequestData requestData)
