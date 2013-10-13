@@ -98,6 +98,21 @@ namespace MonoTests.Microsoft.Build.Construction
 			var root = ProjectRootElement.Create (xml);
 			Assert.AreEqual (1, root.Items.Count, "#1");
 		}
+		
+		[Test]
+		public void LoadInvalidProjectForBadCondition ()
+		{
+			string xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <PropertyGroup>
+    <Foo>What are 'ESCAPE' &amp; ""EVALUATE"" ? $ # % ^</Foo>
+    <!-- Note that this contains invalid Condition expression. Project.ctor() fails to load. -->
+    <Baz Condition=""$(Void)=="">$(FOO)</Baz>
+  </PropertyGroup>
+</Project>";
+			var path = "file://localhost/foo.xml";
+			var reader = XmlReader.Create (new StringReader (xml), null, path);
+			var root = ProjectRootElement.Create (reader);
+			Assert.AreEqual (2, root.Properties.Count, "#1");
+		}
 	}
 }
-
