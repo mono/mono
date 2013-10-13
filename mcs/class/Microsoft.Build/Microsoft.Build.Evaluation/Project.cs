@@ -95,6 +95,7 @@ namespace Microsoft.Build.Evaluation
 		{
 			if (projectCollection == null)
 				throw new ArgumentNullException ("projectCollection");
+			this.Xml = xml;
 			this.GlobalProperties = globalProperties ?? new Dictionary<string, string> ();
 			this.ToolsVersion = toolsVersion;
 			this.ProjectCollection = projectCollection;
@@ -243,15 +244,9 @@ namespace Microsoft.Build.Evaluation
 
 		public bool Build (string[] targets, IEnumerable<ILogger> loggers, IEnumerable<ForwardingLoggerRecord> remoteLoggers)
 		{
-			var manager = new BuildManager ();
-			var pi = manager.GetProjectInstanceForBuild (this);
-			var parameters = new BuildParameters (this.ProjectCollection) {
-				ForwardingLoggers = remoteLoggers,
-				Loggers = loggers
-			};
-			var requestData = new BuildRequestData (pi, targets);
-			var result = manager.Build (parameters, requestData);
-			return result.OverallResult == BuildResultCode.Success;
+			// unlike ProjectInstance.Build(), there is no place to fill outputs by targets, so ignore them
+			// (i.e. we don't use the overload with output).
+			return new BuildManager ().GetProjectInstanceForBuild (this).Build (targets, loggers, remoteLoggers);
 		}
 
 		public bool Build (string target, IEnumerable<ILogger> loggers, IEnumerable<ForwardingLoggerRecord> remoteLoggers)
@@ -261,7 +256,9 @@ namespace Microsoft.Build.Evaluation
 
 		public ProjectInstance CreateProjectInstance ()
 		{
-			throw new NotImplementedException ();
+			var ret = new ProjectInstance (Xml, GlobalProperties, ToolsVersion, ProjectCollection);
+			// FIXME: maybe fill other properties to the result.
+			return ret;
 		}
 
 		public string ExpandString (string unexpandedValue)
