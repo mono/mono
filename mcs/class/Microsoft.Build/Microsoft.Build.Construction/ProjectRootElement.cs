@@ -170,7 +170,7 @@ namespace Microsoft.Build.Construction
 
                 string toolsVersion;
                 public string ToolsVersion {
-                        get { return toolsVersion ?? "4.0"; }
+                        get { return toolsVersion ?? string.Empty; }
                         set { toolsVersion = value; }
                 }
 
@@ -185,6 +185,7 @@ namespace Microsoft.Build.Construction
 
                 ProjectRootElement (ProjectCollection projectCollection)
                 {
+                        ToolsVersion = "4.0";
                 }
 
                 public static ProjectRootElement Create ()
@@ -217,6 +218,7 @@ namespace Microsoft.Build.Construction
                 public static ProjectRootElement Create (XmlReader xmlReader, ProjectCollection projectCollection)
                 {
                         var result = Create (projectCollection);
+                        result.ToolsVersion = null;
                         result.Load (xmlReader);
                         return result;
                 }
@@ -467,6 +469,8 @@ namespace Microsoft.Build.Construction
 
                 public void Save ()
                 {
+                        if (FullPath == null)
+                                throw new InvalidOperationException ("This project was not given the file path to write to.");
                         Save (Encoding);
                 }
 
