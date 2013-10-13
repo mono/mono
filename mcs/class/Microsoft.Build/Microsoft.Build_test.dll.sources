@@ -1,5 +1,6 @@
 FunctionalTest.cs
 Microsoft.Build.Construction/ProjectRootElementTest.cs
+Microsoft.Build.Evaluation/ProjectCollectionTest.cs
 Microsoft.Build.Evaluation/ProjectTest.cs
 Microsoft.Build.Evaluation/ToolsetTest.cs
 Microsoft.Build.Execution/BuildManagerTest.cs

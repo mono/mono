@@ -58,7 +58,7 @@ namespace Microsoft.Build.Evaluation
 
 		public static string Escape (string unescapedString)
 		{
-			return unescapedString;
+			return Mono.XBuild.Utilities.MSBuildUtils.Escape (unescapedString);
 		}
 
 		public static ProjectCollection GlobalProjectCollection {

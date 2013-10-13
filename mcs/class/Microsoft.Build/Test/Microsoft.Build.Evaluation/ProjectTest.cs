@@ -5,6 +5,7 @@ using System.Xml;
 using Microsoft.Build.Construction;
 using Microsoft.Build.Evaluation;
 using NUnit.Framework;
+using Microsoft.Build.Exceptions;
 
 namespace MonoTests.Microsoft.Build.Evaluation
 {
@@ -29,11 +30,15 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			var prop = proj.Properties.First (p => p.Name == "Foo");
 			Assert.AreEqual (value, prop.UnevaluatedValue, "#1");
 			Assert.AreEqual (value, prop.EvaluatedValue, "#2");
+			// eh?
 			Assert.AreEqual (value, Project.GetPropertyValueEscaped (prop), "#3");
 			prop = proj.Properties.First (p => p.Name == "Baz");
 			Assert.AreEqual ("$(FOO)", prop.UnevaluatedValue, "#4");
 			Assert.AreEqual (value, prop.EvaluatedValue, "#5");
+			// eh?
 			Assert.AreEqual (value, Project.GetPropertyValueEscaped (prop), "#6");
+			
+			// OK you are fine.
 			Assert.AreEqual (escaped_by_collection, ProjectCollection.Escape (value), "#7");
 		}
 		
@@ -66,6 +71,42 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			Assert.IsTrue (new Project (root).Build ((string []) null, null), "#4");
 			// matching seems to be blindly done, null string also results in true(!!)
 			Assert.IsTrue (new Project (root).Build ((string) null, null), "#5");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (InvalidProjectFileException))]
+		public void LoadInvalidProjectForBadCondition ()
+		{
+			string xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <PropertyGroup>
+    <Foo>What are 'ESCAPE' &amp; ""EVALUATE"" ? $ # % ^</Foo>
+    <!-- Note that this contains invalid Condition expression, yet ProjectElement.Create() does NOT fail. -->
+    <Baz Condition=""$(Void)=="">$(FOO)</Baz>
+  </PropertyGroup>
+</Project>";
+			var path = "file://localhost/foo.xml";
+			var reader = XmlReader.Create (new StringReader (xml), null, path);
+			var root = ProjectRootElement.Create (reader);
+			new Project (root);
+		}
+		
+		[Test]
+		public void ExpandString ()
+		{
+			string xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <PropertyGroup>
+    <Foo>What are 'ESCAPE' &amp; ""EVALUATE"" ? $ # % ^</Foo>
+    <Bar>y</Bar>
+    <Baz Condition=""$(Void)==''"">$(FOO)</Baz>
+  </PropertyGroup>
+</Project>";
+			var path = "file://localhost/foo.xml";
+			var reader = XmlReader.Create (new StringReader (xml), null, path);
+			var root = ProjectRootElement.Create (reader);
+			var proj = new Project (root);
+			Assert.AreEqual ("xyz", proj.ExpandString ("x$(BAR)z"), "#1");
+			Assert.AreEqual ("x$(BARz", proj.ExpandString ("x$(BARz"), "#2"); // incomplete
+			Assert.AreEqual ("xz", proj.ExpandString ("x@(BAR)z"), "#3"); // not an item
 		}
 	}
 }

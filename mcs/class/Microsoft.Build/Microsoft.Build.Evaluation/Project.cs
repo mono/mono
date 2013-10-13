@@ -148,7 +148,6 @@ namespace Microsoft.Build.Evaluation
 
 		void Initialize ()
 		{
-			ConditionedProperties = new Dictionary<string, List<string>> ();
 			dir_path = Directory.GetCurrentDirectory ();
 			raw_imports = new List<ResolvedImport> ();
 			item_definitions = new Dictionary<string, ProjectItemDefinition> ();
@@ -244,8 +243,10 @@ namespace Microsoft.Build.Evaluation
 
 		public bool Build (string[] targets, IEnumerable<ILogger> loggers, IEnumerable<ForwardingLoggerRecord> remoteLoggers)
 		{
-			// unlike ProjectInstance.Build(), there is no place to fill outputs by targets, so ignore them
+			// Unlike ProjectInstance.Build(), there is no place to fill outputs by targets, so ignore them
 			// (i.e. we don't use the overload with output).
+			//
+			// This does not check FullPath, so don't call GetProjectInstanceForBuild() directly.
 			return new BuildManager ().GetProjectInstanceForBuildInternal (this).Build (targets, loggers, remoteLoggers);
 		}
 
@@ -308,7 +309,8 @@ namespace Microsoft.Build.Evaluation
 
 		public string GetPropertyValue (string name)
 		{
-			throw new NotImplementedException ();
+			var prop = GetProperty (name);
+			return prop != null ? prop.EvaluatedValue : string.Empty;
 		}
 
 		public static string GetPropertyValueEscaped (ProjectProperty property)
@@ -394,7 +396,16 @@ namespace Microsoft.Build.Evaluation
 
 		public ICollection<ProjectProperty> AllEvaluatedProperties { get; private set; }
 
-		public IDictionary<string, List<string>> ConditionedProperties { get; private set; }
+		public IDictionary<string, List<string>> ConditionedProperties {
+			get {
+				// this property returns different instances every time.
+				var dic = new Dictionary<string, List<string>> ();
+				
+				// but I dunno HOW this evaluates
+				
+				throw new NotImplementedException ();
+			}
+		}
 
 		public string DirectoryPath {
 			get { return dir_path; }
