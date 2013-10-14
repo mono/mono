@@ -6,6 +6,8 @@ using Microsoft.Build.Construction;
 using Microsoft.Build.Evaluation;
 using NUnit.Framework;
 using Microsoft.Build.Exceptions;
+using Microsoft.Build.Logging;
+using Microsoft.Build.Framework;
 
 namespace MonoTests.Microsoft.Build.Evaluation
 {
@@ -13,6 +15,7 @@ namespace MonoTests.Microsoft.Build.Evaluation
 	public class ProjectTest
 	{
 		[Test]
+		[Category ("NotWorking")]
 		public void EscapeDoesWTF ()
 		{
 			string value = "What are 'ESCAPE' &amp; \"EVALUATE\" ? $ # % ^";
@@ -75,6 +78,7 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		
 		[Test]
 		[ExpectedException (typeof (InvalidProjectFileException))]
+		[Category ("NotWorking")]
 		public void LoadInvalidProjectForBadCondition ()
 		{
 			string xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
@@ -91,6 +95,7 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		}
 		
 		[Test]
+		[Category ("NotWorking")]
 		public void ExpandString ()
 		{
 			string xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
@@ -107,6 +112,34 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			Assert.AreEqual ("xyz", proj.ExpandString ("x$(BAR)z"), "#1");
 			Assert.AreEqual ("x$(BARz", proj.ExpandString ("x$(BARz"), "#2"); // incomplete
 			Assert.AreEqual ("xz", proj.ExpandString ("x@(BAR)z"), "#3"); // not an item
+		}
+		
+		[Test]
+		[Category ("NotWorking")]
+		public void BuildCSharpTargetGetFrameworkPaths ()
+		{
+            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <Import Project='$(MSBuildToolsPath)\Microsoft.CSharp.targets' />
+</Project>";
+            var path = "file://localhost/foo.xml";
+            var xml = XmlReader.Create (new StringReader (project_xml));
+            var root = ProjectRootElement.Create (xml);
+            var proj = new Project (root);
+			Assert.IsTrue (proj.Build ("GetFrameworkPaths", new ILogger [] {new ConsoleLogger ()}));
+		}
+		
+		[Test]
+		[Category ("NotWorking")]
+		public void BuildCSharpTargetBuild ()
+		{
+            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <Import Project='$(MSBuildToolsPath)\Microsoft.CSharp.targets' />
+</Project>";
+            var path = "file://localhost/foo.xml";
+            var xml = XmlReader.Create (new StringReader (project_xml));
+            var root = ProjectRootElement.Create (xml);
+            var proj = new Project (root);
+			Assert.IsFalse (proj.Build ("Build", new ILogger [] {new ConsoleLogger ()})); // missing mandatory properties
 		}
 	}
 }

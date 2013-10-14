@@ -39,6 +39,7 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		}
 		
 		[Test]
+		[Category ("NotWorking")]
 		public void BuildDoesNotIncreaseCollectionContent ()
 		{
             string empty_project_xml = "<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
