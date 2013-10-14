@@ -245,7 +245,7 @@ namespace System.CodeDom.Compiler {
 				File.Delete (tmpFile);
 				basepath = null;
 			}
-			if (allDeleted && ownTempDir != null) {
+			if (allDeleted && ownTempDir != null && filenames.Length > 0) {
 				Directory.Delete (ownTempDir, true);
 			}
 		}

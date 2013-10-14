@@ -359,7 +359,6 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.AreEqual (tempFile, tempFiles[0], "#5");
 		}
 
-
 		[Test]
 		public void CompileFromSource_InMemory_Twice ()
 		{
@@ -383,6 +382,24 @@ namespace MonoTests.Microsoft.CSharp
 			AssertCompileResults (results_2, true);
 
 			Assert.AreEqual (output_1, output_2, "#1");
+		}
+
+
+		[Test]
+		public void CompileFromSource_InMemory_With_Extra_Delete ()
+		{
+			CompilerParameters options = new CompilerParameters ();
+			options.GenerateExecutable = false;
+			options.GenerateInMemory = true;
+
+			ICodeCompiler compiler = _codeProvider.CreateCompiler ();
+
+			var src_1 = "class X { ";
+
+			compiler.CompileAssemblyFromSource (options, src_1);
+
+			options.TempFiles.Delete ();
+			options.TempFiles.Delete ();
 		}
 
 		[Test]
