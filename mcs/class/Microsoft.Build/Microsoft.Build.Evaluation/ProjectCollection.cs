@@ -4,9 +4,10 @@
 // Author:
 //   Leszek Ciesielski (skolima@gmail.com)
 //   Rolf Bjarne Kvinge (rolf@xamarin.com)
+//   Atsushi Enomoto (atsushi@xamarin.com)
 //
 // (C) 2011 Leszek Ciesielski
-// Copyright (C) 2011 Xamarin Inc.
+// Copyright (C) 2011,2013 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the

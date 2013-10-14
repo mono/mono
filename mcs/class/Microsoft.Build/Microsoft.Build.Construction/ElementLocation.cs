@@ -2,7 +2,7 @@
 // ElementLocation.cs
 //
 // Author:
-//   Atsushi Enomoto (atsushi@veritas-vos-liberabit.com)
+//   Atsushi Enomoto (atsushi@xamarin.com)
 //
 // Copyright (C) 2013 Xamarin Inc.
 //
