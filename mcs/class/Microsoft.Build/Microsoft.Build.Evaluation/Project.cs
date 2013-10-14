@@ -294,7 +294,7 @@ namespace Microsoft.Build.Evaluation
 
 		public static string GetEvaluatedItemIncludeEscaped (ProjectItem item)
 		{
-			throw new NotImplementedException ();
+			return ProjectCollection.Escape (item.EvaluatedInclude);
 		}
 
 		public static string GetEvaluatedItemIncludeEscaped (ProjectItemDefinition item)
@@ -304,12 +304,12 @@ namespace Microsoft.Build.Evaluation
 
 		public ICollection<ProjectItem> GetItems (string itemType)
 		{
-			throw new NotImplementedException ();
+			return new CollectionFromEnumerable<ProjectItem> (Items.Where (p => p.ItemType.Equals (itemType, StringComparison.OrdinalIgnoreCase)));
 		}
 
 		public ICollection<ProjectItem> GetItemsByEvaluatedInclude (string evaluatedInclude)
 		{
-			throw new NotImplementedException ();
+			return new CollectionFromEnumerable<ProjectItem> (Items.Where (p => p.EvaluatedInclude.Equals (evaluatedInclude, StringComparison.OrdinalIgnoreCase)));
 		}
 
 		public IEnumerable<ProjectElement> GetLogicalProject ()
@@ -319,17 +319,19 @@ namespace Microsoft.Build.Evaluation
 
 		public static string GetMetadataValueEscaped (ProjectMetadata metadatum)
 		{
-			throw new NotImplementedException ();
+			return ProjectCollection.Escape (metadatum.EvaluatedValue);
 		}
 
 		public static string GetMetadataValueEscaped (ProjectItem item, string name)
 		{
-			throw new NotImplementedException ();
+			var md = item.GetMetadata (name);
+			return md != null ? ProjectCollection.Escape (md.EvaluatedValue) : null;
 		}
 
 		public static string GetMetadataValueEscaped (ProjectItemDefinition item, string name)
 		{
-			throw new NotImplementedException ();
+			var md = item.Metadata.FirstOrDefault (m => m.Name == name);
+			return md != null ? ProjectCollection.Escape (md.EvaluatedValue) : null;
 		}
 
 		public string GetPropertyValue (string name)
@@ -420,11 +422,17 @@ namespace Microsoft.Build.Evaluation
 			return p;
 		}
 
-		public ICollection<ProjectMetadata> AllEvaluatedItemDefinitionMetadata { get; private set; }
+		public ICollection<ProjectMetadata> AllEvaluatedItemDefinitionMetadata {
+			get { throw new NotImplementedException (); }
+		}
 
-		public ICollection<ProjectItem> AllEvaluatedItems { get; private set; }
+		public ICollection<ProjectItem> AllEvaluatedItems {
+			get { throw new NotImplementedException (); }
+		}
 
-		public ICollection<ProjectProperty> AllEvaluatedProperties { get; private set; }
+		public ICollection<ProjectProperty> AllEvaluatedProperties {
+			get { throw new NotImplementedException (); }
+		}
 
 		public IDictionary<string, List<string>> ConditionedProperties {
 			get {
@@ -481,7 +489,7 @@ namespace Microsoft.Build.Evaluation
 		}
 
 		public ICollection<string> ItemTypes {
-			get { return item_types; }
+			get { return new CollectionFromEnumerable<string> (raw_items.Select (i => i.ItemType).Distinct ()); }
 		}
 
 		public ICollection<ProjectProperty> Properties {
