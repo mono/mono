@@ -76,16 +76,14 @@ namespace Microsoft.Build.Evaluation
 		Environment
 	}
 	
-	internal class XmlProjectProperty : ProjectProperty
+	internal abstract class BaseProjectProperty : ProjectProperty
 	{
-		public XmlProjectProperty (Project project, ProjectPropertyElement xml, PropertyType propertyType)
+		public BaseProjectProperty (Project project, PropertyType propertyType)
 			: base (project)
 		{
-			this.xml = xml;
 			property_type = propertyType;
 		}
 		
-		ProjectPropertyElement xml;
 		PropertyType property_type;
 		
 		public override bool IsEnvironmentProperty {
@@ -102,13 +100,25 @@ namespace Microsoft.Build.Evaluation
 		public override bool IsReservedProperty {
 			get { return property_type == PropertyType.Reserved; }
 		}
-		public override string Name {
-			get { return xml.Name; }
-		}
 		public override ProjectProperty Predecessor {
 			get {
 				throw new NotImplementedException ();
 			}
+		}
+	}
+	
+	internal class XmlProjectProperty : BaseProjectProperty
+	{
+		public XmlProjectProperty (Project project, ProjectPropertyElement xml, PropertyType propertyType)
+			: base (project, propertyType)
+		{
+			this.xml = xml;
+		}
+		
+		ProjectPropertyElement xml;
+		
+		public override string Name {
+			get { return xml.Name; }
 		}
 		public override string UnevaluatedValue {
 			get { return xml.Value; }
@@ -116,6 +126,52 @@ namespace Microsoft.Build.Evaluation
 		}
 		public override ProjectPropertyElement Xml {
 			get { return xml; }
+		}
+	}
+	
+	internal class EnvironmentProjectProperty : BaseProjectProperty
+	{
+		public EnvironmentProjectProperty (Project project, string name, string value)
+			: base (project, PropertyType.Environment)
+		{
+			this.name = name;
+			this.value = value;
+		}
+		
+		readonly string name, value;
+		
+		public override string Name {
+			get { return name; }
+		}
+		public override string UnevaluatedValue {
+			get { return value; }
+			set { throw new InvalidOperationException (string.Format ("You cannot change value of environment property '{0}'.", Name)); }
+		}
+		public override ProjectPropertyElement Xml {
+			get { return null; }
+		}
+	}
+	
+	internal class GlobalProjectProperty : BaseProjectProperty
+	{
+		public GlobalProjectProperty (Project project, string name, string value)
+			: base (project, PropertyType.Global)
+		{
+			this.name = name;
+			this.value = value;
+		}
+		
+		readonly string name, value;
+		
+		public override string Name {
+			get { return name; }
+		}
+		public override string UnevaluatedValue {
+			get { return value; }
+			set { throw new InvalidOperationException (string.Format ("You cannot change value of global property '{0}'.", Name)); }
+		}
+		public override ProjectPropertyElement Xml {
+			get { return null; }
 		}
 	}
 }

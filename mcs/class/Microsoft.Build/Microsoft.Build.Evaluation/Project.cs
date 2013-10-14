@@ -40,6 +40,7 @@ using Microsoft.Build.Internal;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Logging;
+using System.Collections;
 
 namespace Microsoft.Build.Evaluation
 {
@@ -160,6 +161,10 @@ namespace Microsoft.Build.Evaluation
 		
 		void ProcessXml ()
 		{
+			foreach (DictionaryEntry p in Environment.GetEnvironmentVariables ())
+				this.properties.Add (new EnvironmentProjectProperty (this, (string) p.Key, (string) p.Value));
+			foreach (var p in GlobalProperties)
+				this.properties.Add (new GlobalProjectProperty (this, p.Key, p.Value));
 			foreach (var child in Xml.Children) {
 				if (child is ProjectPropertyGroupElement)
 					foreach (var p in ((ProjectPropertyGroupElement) child).Properties)
