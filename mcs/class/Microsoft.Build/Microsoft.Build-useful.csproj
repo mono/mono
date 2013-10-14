@@ -128,9 +128,7 @@
     <Compile Include="..\Microsoft.Build.Utilities\Mono.XBuild.Utilities\MSBuildUtils.cs">
       <Link>MSBuildUtils.cs</Link>
     </Compile>
-    <Compile Include="Microsoft.Build.Evaluation\ProjectAddedEventHandler.cs" />
     <Compile Include="Microsoft.Build.Evaluation\ProjectCollectionChangedEventArgs.cs" />
-    <Compile Include="Microsoft.Build.Evaluation\ProjectAddedToProjectCollectionEventArgs.cs" />
     <Compile Include="Microsoft.Build.Evaluation\ProjectCollectionChangedState.cs" />
     <Compile Include="Microsoft.Build.Evaluation\ProjectChangedEventArgs.cs" />
     <Compile Include="Microsoft.Build.Evaluation\ProjectXmlChangedEventArgs.cs" />
