@@ -33,14 +33,16 @@ namespace Microsoft.Build.Evaluation
 	[System.Runtime.InteropServices.StructLayout (System.Runtime.InteropServices.LayoutKind.Sequential)]
 	public struct ResolvedImport
 	{
-		internal ResolvedImport (ProjectImportElement import, ProjectRootElement root)
+		internal ResolvedImport (ProjectImportElement import, ProjectRootElement root, bool isImported)
 		{
 			this.import = import;
 			this.root = root;
+			this.imported = isImported;
 		}
 
-		ProjectImportElement import;
-		ProjectRootElement root;
+		readonly ProjectImportElement import;
+		readonly ProjectRootElement root;
+		readonly bool imported;
 
 		public ProjectImportElement ImportingElement {
 			get { return import; }
@@ -48,6 +50,10 @@ namespace Microsoft.Build.Evaluation
 
 		public ProjectRootElement ImportedProject {
 			get { return root; }
+		}
+		
+		public bool IsImported {
+			get { return imported; }
 		}
 	}
 }

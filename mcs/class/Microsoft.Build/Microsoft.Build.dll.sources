@@ -31,8 +31,6 @@ Microsoft.Build.Construction/ProjectUsingTaskParameterElement.cs
 Microsoft.Build.Construction/ProjectWhenElement.cs
 Microsoft.Build.Construction/UsingTaskParameterGroupElement.cs
 Microsoft.Build.Evaluation/Project.cs
-Microsoft.Build.Evaluation/ProjectAddedEventHandler.cs
-Microsoft.Build.Evaluation/ProjectAddedToProjectCollectionEventArgs.cs
 Microsoft.Build.Evaluation/ProjectChangedEventArgs.cs
 Microsoft.Build.Evaluation/ProjectCollection.cs
 Microsoft.Build.Evaluation/ProjectCollectionChangedEventArgs.cs

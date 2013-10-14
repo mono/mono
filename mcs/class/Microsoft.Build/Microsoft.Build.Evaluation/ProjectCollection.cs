@@ -43,6 +43,20 @@ namespace Microsoft.Build.Evaluation
 {
 	public class ProjectCollection : IDisposable
 	{
+		public delegate void ProjectAddedEventHandler (object target, ProjectAddedToProjectCollectionEventArgs args);
+		
+		public class ProjectAddedToProjectCollectionEventArgs : EventArgs
+		{
+			public ProjectAddedToProjectCollectionEventArgs (ProjectRootElement project)
+			{
+				if (project == null)
+					throw new ArgumentNullException ("project");
+				ProjectRootElement = project;
+			}
+			
+			public ProjectRootElement ProjectRootElement { get; private set; }
+		}
+
 		// static members
 
 		static readonly ProjectCollection global_project_collection;
