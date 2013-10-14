@@ -154,6 +154,20 @@ namespace Microsoft.Build.Evaluation
 			item_types = new List<string> ();
 			properties = new List<ProjectProperty> ();
 			targets = new Dictionary<string, ProjectTargetInstance> ();
+			
+			ProcessXml ();
+		}
+		
+		void ProcessXml ()
+		{
+			foreach (var child in Xml.Children) {
+				if (child is ProjectPropertyGroupElement)
+					foreach (var p in ((ProjectPropertyGroupElement) child).Properties)
+						this.properties.Add (new XmlProjectProperty (this, p, PropertyType.Normal));
+				else if (child is ProjectItemGroupElement)
+					foreach (var p in ((ProjectItemGroupElement) child).Items)
+						this.raw_items.Add (new ProjectItem (p));
+			}
 		}
 
 		public ICollection<ProjectItem> GetItemsIgnoringCondition (string itemType)
