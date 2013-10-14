@@ -11,6 +11,7 @@ namespace MonoTests.Microsoft.Build.Execution
 	public class ProjectInstanceTest
 	{
 		[Test]
+		[Category ("NotWorking")]
 		public void BuildEmptyProject ()
 		{
 			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";

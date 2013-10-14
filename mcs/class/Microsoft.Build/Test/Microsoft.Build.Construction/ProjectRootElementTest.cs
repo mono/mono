@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using Microsoft.Build.Construction;
 using NUnit.Framework;
@@ -135,6 +136,57 @@ namespace MonoTests.Microsoft.Build.Construction
 		}
 		
 		[Test]
+		[ExpectedException (typeof (InvalidProjectFileException))]
+		public void LoadInvalidProjectGroupInProjectGroup ()
+		{
+            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <Import Project='$(MSBuildToolsPath)\Microsoft.CSharp.targets' />
+  <PropertyGroup>
+    <Foo>Bar</Foo>
+    <PropertyGroup>
+      <X>x</X>
+      <Y>y</Y>
+      <Z>z</Z>
+    </PropertyGroup>
+  </PropertyGroup>
+</Project>";
+            var xml = XmlReader.Create (new StringReader (project_xml));
+            ProjectRootElement.Create (xml);
+		}
+		
+		[Test]
+		[ExpectedException (typeof (InvalidProjectFileException))]
+		public void LoadInvalidItemGroupInProjectGroup ()
+		{
+            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <Import Project='$(MSBuildToolsPath)\Microsoft.CSharp.targets' />
+  <PropertyGroup>
+    <Foo>Bar</Foo>
+    <ItemGroup/>
+  </PropertyGroup>
+</Project>";
+            var xml = XmlReader.Create (new StringReader (project_xml));
+            ProjectRootElement.Create (xml);
+		}
+		
+		[Test]
+		public void ChildAndAllChildren ()
+		{
+            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <Import Project='$(MSBuildToolsPath)\Microsoft.CSharp.targets' />
+  <PropertyGroup>
+    <Foo>Bar</Foo>
+    <Item/>
+  </PropertyGroup>
+</Project>";
+            var xml = XmlReader.Create (new StringReader (project_xml));
+            var root = ProjectRootElement.Create (xml);
+			Assert.AreEqual (2, root.Children.Count, "#1");
+			// AllChildren expands descendants
+			Assert.AreEqual (4, root.AllChildren.Count (), "#2");
+		}
+		
+		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void SaveWithoutFullPath ()
 		{
@@ -152,6 +204,7 @@ namespace MonoTests.Microsoft.Build.Construction
 			var root = ProjectRootElement.Create (xml);
 			var sw = new StringWriter ();
 			root.Save (sw);
+			// CRLF? mmm, k...
 			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" + project_xml.Replace ('\'', '"'), sw.ToString (), "#1");
 		}
 	}
