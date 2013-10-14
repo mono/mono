@@ -61,6 +61,11 @@ namespace Microsoft.Build.Evaluation
 			return Mono.XBuild.Utilities.MSBuildUtils.Escape (unescapedString);
 		}
 
+		public static string Unescape (string scapedString)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public static ProjectCollection GlobalProjectCollection {
 			get { return global_project_collection; }
 		}
@@ -101,6 +106,15 @@ namespace Microsoft.Build.Evaluation
 
 			LoadDefaultToolsets ();
 		}
+		
+		[MonoTODO ("not fired yet")]
+		public event ProjectAddedEventHandler ProjectAdded;
+		[MonoTODO ("not fired yet")]
+		public event EventHandler<ProjectChangedEventArgs> ProjectChanged;
+		[MonoTODO ("not fired yet")]
+		public event EventHandler<ProjectCollectionChangedEventArgs> ProjectCollectionChanged;
+		[MonoTODO ("not fired yet")]
+		public event EventHandler<ProjectXmlChangedEventArgs> ProjectXmlChanged;
 
 		readonly int max_node_count;
 
@@ -172,20 +186,45 @@ namespace Microsoft.Build.Evaluation
 		//FIXME: should also support config file, depending on ToolsetLocations
 		void LoadDefaultToolsets ()
 		{
-			toolsets.Add (new Toolset ("2.0",
+			AddToolset (new Toolset ("2.0",
 				ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version20), this, null));
-			toolsets.Add (new Toolset ("3.0",
+			AddToolset (new Toolset ("3.0",
 				ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version30), this, null));
-			toolsets.Add (new Toolset ("3.5",
+			AddToolset (new Toolset ("3.5",
 				ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version35), this, null));
 #if NET_4_0
-			toolsets.Add (new Toolset ("4.0",
+			AddToolset (new Toolset ("4.0",
 				ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version40), this, null));
 #endif
 #if NET_4_5
-			toolsets.Add (new Toolset ("4.5",
+			AddToolset (new Toolset ("4.5",
 				ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version45), this, null));
 #endif
+		}
+		
+		[MonoTODO ("not verified at all")]
+		public void AddToolset (Toolset toolset)
+		{
+			toolsets.Add (toolset);
+		}
+		
+		[MonoTODO ("not verified at all")]
+		public void RemoveAllToolsets ()
+		{
+			toolsets.Clear ();
+		}
+		
+		[MonoTODO ("not verified at all")]
+		public void RegisterLogger (ILogger logger)
+		{
+			loggers.Add (logger);
+		}
+		
+		[MonoTODO ("not verified at all")]
+		public void RegisterLoggers (IEnumerable<ILogger> loggers)
+		{
+			foreach (var logger in loggers)
+				this.loggers.Add (logger);
 		}
 
 		public void UnloadAllProjects ()
