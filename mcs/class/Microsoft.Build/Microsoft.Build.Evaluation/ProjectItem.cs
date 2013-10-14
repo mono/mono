@@ -69,7 +69,7 @@ namespace Microsoft.Build.Evaluation
                         throw new NotImplementedException ();
                 }
 
-                public void SetMetadataValue (string name, string unevaluatedValue)
+                public ProjectMetadata SetMetadataValue (string name, string unevaluatedValue)
                 {
                         throw new NotImplementedException ();
                 }

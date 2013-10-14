@@ -26,49 +26,60 @@
 //
 
 using Microsoft.Build.Construction;
-
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Microsoft.Build.Evaluation
 {
-        public class ProjectMetadata
-        {
-                private ProjectMetadata ()
-                {
-                        throw new NotImplementedException ();
-                }
+	public class ProjectMetadata
+	{
+		internal ProjectMetadata (Project project, string itemType, IEnumerable<ProjectMetadata> existingMetadata, Action<ProjectMetadata> remover, ProjectMetadataElement xml)
+		{
+			this.xml = xml;
+			this.project = project;
+			item_type = itemType;
+			predecessor = existingMetadata.FirstOrDefault (m => m.Name == xml.Name);
+			if (predecessor != null)
+				remover (predecessor);
+		}
 
-                public string EvaluatedValue {
-                        get { throw new NotImplementedException (); }
-                }
+		Project project;
+		string item_type;
+		ProjectMetadataElement xml;
+		ProjectMetadata predecessor;
 
-                public bool IsImported {
-                        get { throw new NotImplementedException (); }
-                }
+		public string EvaluatedValue {
+			get { return project.ExpandString (xml.Value); }
+		}
 
-                public string ItemType {
-                        get { throw new NotImplementedException (); }
-                }
+		public bool IsImported {
+			get { throw new NotImplementedException (); }
+		}
 
-                public string Name {
-                        get { throw new NotImplementedException (); }
-                }
+		public string ItemType {
+			get { return item_type; }
+		}
 
-                public ProjectMetadata Predecessor {
-                        get { throw new NotImplementedException (); }
-                }
+		public string Name {
+			get { return xml.Name; }
+		}
 
-                public Project Project {
-                        get { throw new NotImplementedException (); }
-                }
+		public ProjectMetadata Predecessor {
+			get { return predecessor; }
+		}
 
-                public string UnevaluatedValue {
-                        get { throw new NotImplementedException (); }
-                }
+		public Project Project {
+			get { return project; }
+		}
 
-                public ProjectMetadataElement Xml {
-                        get { throw new NotImplementedException (); }
-                }
-        }
+		public string UnevaluatedValue {
+			get { return xml.Value; }
+		}
+
+		public ProjectMetadataElement Xml {
+			get { return xml; }
+		}
+	}
 }
 

@@ -172,5 +172,20 @@ namespace Microsoft.Build.Evaluation
 			get { return null; }
 		}
 	}
+	
+	internal class ManuallyAddedProjectProperty : BaseProjectProperty
+	{
+		public ManuallyAddedProjectProperty (Project project, string name, string value)
+			: base (project, PropertyType.Normal, name)
+		{
+			this.UnevaluatedValue = value;
+		}
+		
+		public override string UnevaluatedValue { get; set; }
+		
+		public override ProjectPropertyElement Xml {
+			get { return null; }
+		}
+	}
 }
 

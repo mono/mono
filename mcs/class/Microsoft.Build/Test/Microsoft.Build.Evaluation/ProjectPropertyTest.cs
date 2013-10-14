@@ -43,9 +43,8 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			// environment property could also be Predecessor (and removed...maybe.
 			// I could reproduce only NRE = .NET bug with environment property so far.)
 			prop = proj.Properties.First (p => p.Name == "PATH");
-			Assert.AreEqual ("2", prop.UnevaluatedValue, "#7");
-			Assert.IsNotNull (prop.Predecessor, "#5");
-			Assert.AreEqual ("1", prop.Predecessor.UnevaluatedValue, "#6");
+			Assert.AreEqual ("overriden", prop.UnevaluatedValue, "#7");
+			Assert.IsNotNull (prop.Predecessor, "#8");
 		}
 		
 		[Test]

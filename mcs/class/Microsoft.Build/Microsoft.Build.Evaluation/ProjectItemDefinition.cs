@@ -27,31 +27,41 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.Build.Construction;
 
 namespace Microsoft.Build.Evaluation
 {
 	public class ProjectItemDefinition
 	{
-		private ProjectItemDefinition ()
+		internal ProjectItemDefinition (Project project, string itemType)
 		{
-			throw new NotImplementedException ();
+			this.project = project;
 		}
 
+		Project project;
+		string item_type;
+		List<ProjectMetadata> metadata = new List<ProjectMetadata> ();
+
 		public string ItemType {
-			get { throw new NotImplementedException (); }
+			get { return item_type; }
 		}
 
 		public IEnumerable<ProjectMetadata> Metadata {
-			get { throw new NotImplementedException (); }
+			get { return metadata; }
 		}
 
 		public int MetadataCount {
-			get { throw new NotImplementedException (); }
+			get { return metadata.Count; }
 		}
 
 		public Project Project {
-			get { throw new NotImplementedException (); }
+			get { return project; }
+		}
+		
+		internal void AddItems (ProjectItemDefinitionElement xml)
+		{
+			foreach (var item in xml.Metadata)
+				metadata.Add (new ProjectMetadata (project, ItemType, metadata, m => metadata.Remove (m), item));
 		}
 	}
 }
-
