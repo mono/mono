@@ -36,8 +36,9 @@ namespace Microsoft.Build.Evaluation
 	// breaking change and I'd rather believe API designer's sanity.
 	public abstract class ProjectProperty
 	{
-		internal ProjectProperty () // hide default ctor
+		internal ProjectProperty (Project project) // hide default ctor
 		{
+			Project = project;
 		}
 
 		public string EvaluatedValue {
@@ -50,27 +51,72 @@ namespace Microsoft.Build.Evaluation
 
 		public abstract bool IsGlobalProperty { get; }
 
+		[MonoTODO]
 		public abstract bool IsImported { get; }
 
 		public abstract bool IsReservedProperty { get; }
 
-		public string Name {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
+		public abstract string Name { get; }
 
+		[MonoTODO]
 		public abstract ProjectProperty Predecessor { get; }
 
-		public Project Project {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
+		public Project Project { get; private set; }
 
 		public abstract string UnevaluatedValue { get; set; }
 
 		public abstract ProjectPropertyElement Xml { get; }
+	}
+
+	// copy from MS.Build.Engine/BuildProperty.cs
+	internal enum PropertyType {
+		Reserved,
+		Global,
+		Normal,
+		Environment
+	}
+	
+	internal class XmlProjectProperty : ProjectProperty
+	{
+		public XmlProjectProperty (Project project, ProjectPropertyElement xml, PropertyType propertyType)
+			: base (project)
+		{
+			this.xml = xml;
+			property_type = propertyType;
+		}
+		
+		ProjectPropertyElement xml;
+		PropertyType property_type;
+		
+		public override bool IsEnvironmentProperty {
+			get { return property_type == PropertyType.Environment; }
+		}
+		public override bool IsGlobalProperty {
+			get { return property_type == PropertyType.Global; }
+		}
+		public override bool IsImported {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+		public override bool IsReservedProperty {
+			get { return property_type == PropertyType.Reserved; }
+		}
+		public override string Name {
+			get { return xml.Name; }
+		}
+		public override ProjectProperty Predecessor {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+		public override string UnevaluatedValue {
+			get { return xml.Value; }
+			set { xml.Value = value; }
+		}
+		public override ProjectPropertyElement Xml {
+			get { return xml; }
+		}
 	}
 }
 
