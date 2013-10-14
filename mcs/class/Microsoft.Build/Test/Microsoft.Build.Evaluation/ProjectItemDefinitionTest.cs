@@ -34,8 +34,10 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			var proj = new Project (root);
 			Assert.AreEqual (1, proj.ItemDefinitions.Count, "#1"); // Foo
 			var def = proj.ItemDefinitions ["Foo"];
+			Assert.AreEqual ("Foo", def.ItemType, "#1x");
 			Assert.AreEqual (3, def.MetadataCount, "#2");
 			var md1 = def.Metadata.First (m => m.Name == "prop1");
+			Assert.AreEqual ("Foo", md1.ItemType, "#2x");
 			Assert.AreEqual ("valueX1", md1.UnevaluatedValue, "#3");
 			// FIXME: enable it once we implemented it.
 			//Assert.AreEqual ("valueX1", md1.EvaluatedValue, "#4");

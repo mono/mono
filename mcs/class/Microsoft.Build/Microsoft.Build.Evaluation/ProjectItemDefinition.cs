@@ -36,6 +36,7 @@ namespace Microsoft.Build.Evaluation
 		internal ProjectItemDefinition (Project project, string itemType)
 		{
 			this.project = project;
+			this.item_type = itemType;
 		}
 
 		Project project;
