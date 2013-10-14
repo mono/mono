@@ -162,7 +162,7 @@ namespace Microsoft.Build.Evaluation
 		void ProcessXml ()
 		{
 			foreach (DictionaryEntry p in Environment.GetEnvironmentVariables ())
-				this.properties.Add (new EnvironmentProjectProperty (this, (string) p.Key, (string) p.Value));
+				this.properties.Add (new EnvironmentProjectProperty (this, (string)p.Key, (string)p.Value));
 			foreach (var p in GlobalProperties)
 				this.properties.Add (new GlobalProjectProperty (this, p.Key, p.Value));
 			foreach (var child in Xml.Children) {
@@ -172,6 +172,13 @@ namespace Microsoft.Build.Evaluation
 				else if (child is ProjectItemGroupElement)
 					foreach (var p in ((ProjectItemGroupElement) child).Items)
 						this.raw_items.Add (new ProjectItem (p));
+				else if (child is ProjectItemDefinitionGroupElement)
+					foreach (var p in ((ProjectItemDefinitionGroupElement) child).ItemDefinitions) {
+						ProjectItemDefinition existing;
+						if (!item_definitions.TryGetValue (p.ItemType, out existing))
+							item_definitions.Add (p.ItemType, (existing = new ProjectItemDefinition (this, p.ItemType)));
+						existing.AddItems (p);
+					}
 			}
 		}
 
@@ -339,7 +346,7 @@ namespace Microsoft.Build.Evaluation
 
 		public ProjectProperty GetProperty (string name)
 		{
-			throw new NotImplementedException ();
+			return properties.FirstOrDefault (p => p.Name == name);
 		}
 
 		public void MarkDirty ()
@@ -409,7 +416,9 @@ namespace Microsoft.Build.Evaluation
 
 		public ProjectProperty SetProperty (string name, string unevaluatedValue)
 		{
-			throw new NotImplementedException ();
+			var p = new ManuallyAddedProjectProperty (this, name, unevaluatedValue);
+			properties.Add (p);
+			return p;
 		}
 
 		public ICollection<ProjectMetadata> AllEvaluatedItemDefinitionMetadata { get; private set; }
@@ -453,7 +462,7 @@ namespace Microsoft.Build.Evaluation
 		}
 
 		public bool IsBuildEnabled {
-			get { throw new NotImplementedException (); }
+			get { return ProjectCollection.IsBuildEnabled; }
 		}
 
 		public bool IsDirty {
