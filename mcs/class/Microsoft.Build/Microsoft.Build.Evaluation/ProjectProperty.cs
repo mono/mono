@@ -26,6 +26,7 @@
 //
 
 using System;
+using System.Linq;
 using Microsoft.Build.Construction;
 
 namespace Microsoft.Build.Evaluation
@@ -78,13 +79,22 @@ namespace Microsoft.Build.Evaluation
 	
 	internal abstract class BaseProjectProperty : ProjectProperty
 	{
-		public BaseProjectProperty (Project project, PropertyType propertyType)
+		public BaseProjectProperty (Project project, PropertyType propertyType, string name)
 			: base (project)
 		{
 			property_type = propertyType;
+			this.name = name;
+			predecessor = project.Properties.FirstOrDefault (p => p.Name == name);
+			if (predecessor != null)
+				project.RemoveProperty (predecessor);
 		}
 		
 		PropertyType property_type;
+		
+		readonly string name;
+		public override string Name {
+			get { return name; }
+		}
 		
 		public override bool IsEnvironmentProperty {
 			get { return property_type == PropertyType.Environment; }
@@ -100,26 +110,22 @@ namespace Microsoft.Build.Evaluation
 		public override bool IsReservedProperty {
 			get { return property_type == PropertyType.Reserved; }
 		}
+		readonly ProjectProperty predecessor; 
 		public override ProjectProperty Predecessor {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return predecessor; }
 		}
 	}
 	
 	internal class XmlProjectProperty : BaseProjectProperty
 	{
 		public XmlProjectProperty (Project project, ProjectPropertyElement xml, PropertyType propertyType)
-			: base (project, propertyType)
+			: base (project, propertyType, xml.Name)
 		{
 			this.xml = xml;
 		}
 		
 		ProjectPropertyElement xml;
 		
-		public override string Name {
-			get { return xml.Name; }
-		}
 		public override string UnevaluatedValue {
 			get { return xml.Value; }
 			set { xml.Value = value; }
@@ -132,17 +138,13 @@ namespace Microsoft.Build.Evaluation
 	internal class EnvironmentProjectProperty : BaseProjectProperty
 	{
 		public EnvironmentProjectProperty (Project project, string name, string value)
-			: base (project, PropertyType.Environment)
+			: base (project, PropertyType.Environment, name)
 		{
-			this.name = name;
 			this.value = value;
 		}
 		
-		readonly string name, value;
+		readonly string value;
 		
-		public override string Name {
-			get { return name; }
-		}
 		public override string UnevaluatedValue {
 			get { return value; }
 			set { throw new InvalidOperationException (string.Format ("You cannot change value of environment property '{0}'.", Name)); }
@@ -155,17 +157,13 @@ namespace Microsoft.Build.Evaluation
 	internal class GlobalProjectProperty : BaseProjectProperty
 	{
 		public GlobalProjectProperty (Project project, string name, string value)
-			: base (project, PropertyType.Global)
+			: base (project, PropertyType.Global, name)
 		{
-			this.name = name;
 			this.value = value;
 		}
 		
-		readonly string name, value;
+		readonly string value;
 		
-		public override string Name {
-			get { return name; }
-		}
 		public override string UnevaluatedValue {
 			get { return value; }
 			set { throw new InvalidOperationException (string.Format ("You cannot change value of global property '{0}'.", Name)); }

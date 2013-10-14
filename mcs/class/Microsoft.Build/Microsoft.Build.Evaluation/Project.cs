@@ -364,7 +364,11 @@ namespace Microsoft.Build.Evaluation
 
 		public bool RemoveProperty (ProjectProperty property)
 		{
-			throw new NotImplementedException ();
+			var removed = properties.FirstOrDefault (p => p.Name == property.Name);
+			if (removed == null)
+				return false;
+			properties.Remove (removed);
+			return true;
 		}
 
 		public void Save ()

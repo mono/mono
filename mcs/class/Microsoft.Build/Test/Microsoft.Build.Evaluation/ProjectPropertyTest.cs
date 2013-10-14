@@ -20,6 +20,9 @@ namespace MonoTests.Microsoft.Build.Evaluation
   <PropertyGroup>
     <Foo>Bar</Foo>
     <Item/>
+    <X>1</X>
+    <X>2</X>
+    <PATH>overriden</PATH>
   </PropertyGroup>
 </Project>";
 			var xml = XmlReader.Create (new StringReader (project_xml));
@@ -31,6 +34,18 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			Assert.AreEqual ("Bar", prop.UnevaluatedValue, "#2");
 			prop.UnevaluatedValue = "x";
 			Assert.AreEqual ("x", pe.Value, "#3");
+			
+			prop = proj.Properties.First (p => p.Name == "X");
+			Assert.AreEqual ("2", prop.UnevaluatedValue, "#4");
+			Assert.IsNotNull (prop.Predecessor, "#5");
+			Assert.AreEqual ("1", prop.Predecessor.UnevaluatedValue, "#6");
+			
+			// environment property could also be Predecessor (and removed...maybe.
+			// I could reproduce only NRE = .NET bug with environment property so far.)
+			prop = proj.Properties.First (p => p.Name == "PATH");
+			Assert.AreEqual ("2", prop.UnevaluatedValue, "#7");
+			Assert.IsNotNull (prop.Predecessor, "#5");
+			Assert.AreEqual ("1", prop.Predecessor.UnevaluatedValue, "#6");
 		}
 		
 		[Test]
