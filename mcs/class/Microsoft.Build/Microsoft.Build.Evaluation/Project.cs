@@ -4,9 +4,10 @@
 // Author:
 //   Leszek Ciesielski (skolima@gmail.com)
 //   Rolf Bjarne Kvinge (rolf@xamarin.com)
+//   Atsushi Enomoto (atsushi@xamarin.com)
 //
 // (C) 2011 Leszek Ciesielski
-// Copyright (C) 2011 Xamarin Inc. (http://www.xamarin.com)
+// Copyright (C) 2011,2013 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -155,6 +156,7 @@ namespace Microsoft.Build.Evaluation
 			item_types = new List<string> ();
 			properties = new List<ProjectProperty> ();
 			targets = new Dictionary<string, ProjectTargetInstance> ();
+			raw_items = new List<ProjectItem> ();
 			
 			ProcessXml ();
 		}
@@ -171,7 +173,7 @@ namespace Microsoft.Build.Evaluation
 						this.properties.Add (new XmlProjectProperty (this, p, PropertyType.Normal));
 				else if (child is ProjectItemGroupElement)
 					foreach (var p in ((ProjectItemGroupElement) child).Items)
-						this.raw_items.Add (new ProjectItem (p));
+						this.raw_items.Add (new ProjectItem (this, p));
 				else if (child is ProjectItemDefinitionGroupElement)
 					foreach (var p in ((ProjectItemDefinitionGroupElement) child).ItemDefinitions) {
 						ProjectItemDefinition existing;
@@ -184,10 +186,7 @@ namespace Microsoft.Build.Evaluation
 
 		public ICollection<ProjectItem> GetItemsIgnoringCondition (string itemType)
 		{
-			return new CollectionFromEnumerable<ProjectItem> (
-				new FilteredEnumerable<ProjectItemElement> (Xml.Items).
-                                Where (p => p.ItemType.Equals (itemType, StringComparison.OrdinalIgnoreCase)).
-                                Select (p => new ProjectItem (p)));
+			return new CollectionFromEnumerable<ProjectItem> (raw_items.Where (p => p.ItemType.Equals (itemType, StringComparison.OrdinalIgnoreCase)));
 		}
 
 		public void RemoveItems (IEnumerable<ProjectItem> items)
