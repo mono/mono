@@ -128,6 +128,8 @@ net_2_0_only_dirs := \
 	System.Data.Services		\
 	System.Web.Mvc \
 
+pcl_facade_dirs := Facades
+
 mobile_dirs := \
 	corlib	\
 	System	\
@@ -156,7 +158,7 @@ mobile_dirs := \
 	System.Net \
 	System.Windows \
 	System.Xml.Serialization \
-	Facades
+	$(pcl_facade_dirs)
 
 monodroid_dirs := \
 	Mono.CompilerServices.SymbolWriter	\
@@ -229,7 +231,7 @@ net_4_5_dirs := \
 	System.IO.Compression.FileSystem \
 	System.Windows \
 	System.Xml.Serialization \
-	Facades
+	$(pcl_facade_dirs)
 	
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) aot-compiler
 monodroid_SUBDIRS := $(mobile_dirs) $(monodroid_dirs)
