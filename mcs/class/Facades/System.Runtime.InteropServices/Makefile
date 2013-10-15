@@ -1,15 +1,22 @@
+MCS_BUILD_DIR = ../../../build
+
 thisdir = class/Facades/System.Runtime.InteropServices
 SUBDIRS = 
-include ../../../build/rules.make
+include $(MCS_BUILD_DIR)/rules.make
 
 LIBRARY_SUBDIR = Facades
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)/Facades
 
 LIBRARY = System.Runtime.InteropServices.dll
-LIB_MCS_FLAGS = /r:System
+
+KEY_FILE = ../../msfinal.pub
+SIGN_FLAGS = /delaysign /keyfile:$(KEY_FILE) /nowarn:1616,1699
+LIB_MCS_FLAGS = $(SIGN_FLAGS) /r:mscorlib /r:System /r:System.Core
 
 PLATFORM_DEBUG_FLAGS =
 
 NO_TEST = yes
 
-include ../../../build/library.make
+include $(MCS_BUILD_DIR)/library.make
+
+
