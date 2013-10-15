@@ -1,23 +1,15 @@
+MCS_BUILD_DIR = ../../build
+
 thisdir = class/Facades
 
-net_4_5_SUBDIRS = System.Runtime System.Linq System.Xml.XmlSerializer \
-	System.ServiceModel.Primitives System.Xml.ReaderWriter System.Diagnostics.Debug \
-	System.Runtime.Extensions System.Diagnostics.Tools System.Collections \
-	System.ComponentModel.EventBasedAsync System.ComponentModel System.ObjectModel \
-	System.Text.RegularExpressions System.Threading System.Runtime.InteropServices \
-	System.Reflection System.Globalization System.IO System.Reflection.Primitives \
-	System.Resources.ResourceManager System.Security.Principal System.Text.Encoding \
-	System.Text.Encoding.Extensions System.Linq.Queryable System.Linq.Expressions \
-	System.Net.Primitives System.Net.Requests System.Net.NetworkInformation \
-	System.Runtime.Serialization.Primitives System.Runtime.Serialization.Xml \
-	System.Runtime.Serialization.Json System.ServiceModel.Http \
-	System.Xml.XDocument System.Threading.Tasks System.Diagnostics.Contracts \
-	System.Dynamic.Runtime System.ComponentModel.Annotations System.Runtime.Numerics \
-	System.Linq.Parallel System.Collections.Concurrent System.Threading.Tasks.Parallel \
-	System.Reflection.Extensions
+monotouch_SUBDIRS = System.Collections.Concurrent System.Collections System.ComponentModel.Annotations System.ComponentModel.EventBasedAsync System.ComponentModel System.Diagnostics.Contracts System.Diagnostics.Debug System.Diagnostics.Tools System.Globalization System.IO System.Linq.Expressions System.Linq.Parallel System.Linq.Queryable System.Linq System.Net.NetworkInformation System.Net.Primitives System.Net.Requests System.ObjectModel System.Reflection.Extensions System.Reflection.Primitives System.Reflection System.Resources.ResourceManager System.Runtime.Extensions System.Runtime.InteropServices System.Runtime.Numerics System.Runtime.Serialization.Json System.Runtime.Serialization.Primitives System.Runtime.Serialization.Xml System.Runtime System.Security.Principal System.ServiceModel.Http System.ServiceModel.Primitives System.Text.Encoding.Extensions System.Text.Encoding System.Text.RegularExpressions System.Threading.Tasks.Parallel System.Threading.Tasks System.Threading System.Xml.ReaderWriter System.Xml.XDocument System.Xml.XmlSerializer
 
-SUBDIRS = $(net_4_5_SUBDIRS)
+net_4_5_SUBDIRS = $(monotouch_SUBDIRS) System.Dynamic.Runtime System.Reflection.Emit.ILGeneration System.Reflection.Emit.Lightweight System.Reflection.Emit
 
-include ../../build/rules.make
+monodroid_SUBDIRS = $(net_4_5_SUBDIRS)
+
+include $(MCS_BUILD_DIR)/rules.make
 
 dist-local: dist-default
+
+
