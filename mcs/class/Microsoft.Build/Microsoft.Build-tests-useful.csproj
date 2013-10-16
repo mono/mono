@@ -55,6 +55,7 @@
     <Compile Include="Test\Microsoft.Build.Evaluation\ProjectPropertyTest.cs" />
     <Compile Include="Test\Microsoft.Build.Evaluation\ProjectItemDefinitionTest.cs" />
     <Compile Include="Test\Microsoft.Build.Evaluation\ProjectItemTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Internal\ExpressionParserTest.cs" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

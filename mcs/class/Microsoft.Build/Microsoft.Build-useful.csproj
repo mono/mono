@@ -132,6 +132,11 @@
     <Compile Include="Microsoft.Build.Evaluation\ProjectCollectionChangedState.cs" />
     <Compile Include="Microsoft.Build.Evaluation\ProjectChangedEventArgs.cs" />
     <Compile Include="Microsoft.Build.Evaluation\ProjectXmlChangedEventArgs.cs" />
+    <Compile Include="Microsoft.Build.Internal\ExpressionParser.cs" />
+    <Compile Include="Microsoft.Build.Internal\ExpressionTokenizer.cs" />
+    <Compile Include="Microsoft.Build.Internal\ExpressionConstructs.cs" />
+    <Compile Include="Microsoft.Build.Internal\ExpressionEvaluator.cs" />
+    <Compile Include="Microsoft.Build.Internal\ExpressionParserManual.cs" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -157,5 +162,8 @@
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Microsoft.Build.Internal\ExpressionParser.jay" />
   </ItemGroup>
 </Project>
