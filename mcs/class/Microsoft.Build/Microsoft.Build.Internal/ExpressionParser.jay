@@ -1,0 +1,264 @@
+%{
+
+using System;
+using System.Text;
+using Microsoft.Build.Evaluation;
+using Microsoft.Build.Exceptions;
+using Microsoft.Build.Framework;
+
+/*
+
+Pseudo formal syntax for .NET 4.0 expression:
+
+Condition = Expression
+Include = Expression*
+
+ Expression
+	BooleanLiteral
+		TrueLiteral
+		FalseLiteral
+	BinaryExpression
+		Expression "==" Expression
+		Expression "!=" Expression
+		Expression ">" Expression
+		Expression ">=" Expression
+		Expression "<" Expression
+		Expression "<=" Expression
+		Expression "And" Expression
+		Expression "Or" Expression
+	UnaryExpression
+		"!" Expression
+	PropertyExpression
+		"$(" PropertyApplication ")"
+	ItemExpression
+		"@(" ItemApplication ")"
+	MetadataBatchingExpression
+		"%(" MetadataBatchingApplication ")"
+  StringLiteralOrFunction
+		StringLiteralOrFunctionName ( "(" FunctionArguments ")" )?
+
+.NET error messages are so detailed which is something like "you forgot '(' after '$' ?" - so
+it is likely that the MS tokenizer is hand-written.
+
+*/
+
+namespace Microsoft.Build.Internal
+{
+#if false
+	class ExpressionParser
+	{
+		public static string EvaluateExpression (string source, Project project, ITaskItem [] inputs)
+		{
+			var head = new StringBuilder ();
+			var tail = new StringBuilder ();
+			int start = 0;
+			int end = source.Length;
+			while (start < end) {
+				switch (source [start]) {
+				case '$':
+				case '@':
+					int last = source.LastIndexOf (')', end);
+					if (last < 0)
+						throw new InvalidProjectFileException (string.Format ("expression did not have matching ')' since index {0} in \"{1}\"", start, source));
+					if (start + 1 == end || source [start] != '(')
+						throw new InvalidProjectFileException (string.Format ("missing '(' after '{0}' at {1} in \"{2}\"", source [start], start, source));
+					tail.Insert (0, source.Substring (last + 1, end - last));
+					start += 2;
+					end = last - 1;
+					if (source [start] == '$')
+						head.Append (EvaluatePropertyExpression (source, project, inputs, start, end));
+					else
+						head.Append (EvaluateItemExpression (source, project, inputs, start, end));
+					break;
+				default:
+					head.Append (source.Substring (start, end - start));
+					start = end;
+					break;
+				}
+			}
+			return head.ToString () + tail.ToString ();
+		}
+		
+		public static string EvaluatePropertyExpression (string source, Project project, ITaskItem [] inputs, int start, int end)
+		{
+			int idx = source.IndexOf ("::", start, StringComparison.Ordinal);
+			if (idx >= 0) {
+				string type = source.Substring (start, idx - start);
+				if (type.Length < 2 || type [0] != '[' || type [type.Length - 1] != ']')
+					throw new InvalidProjectFileException (string.Format ("Static function call misses appropriate type name surrounded by '[' and ']' at {0} in \"{1}\"", start, source));
+				int start2 = idx + 2;
+				int idx2 = source.IndexOf ('(', idx + 2, end - start2);
+				if (idx2 < 0) {
+					// access to static property
+					string member = source.Substring (start2, end - start2);
+				} else {
+					// access to static method
+					string member = source.Substring (start2, idx2 - start2);
+				}
+			} // the result could be context for further property access...
+			
+			idx = source.IndexOf ('.', start);
+			if (idx > 0) {
+				string name = source.Substring (start, idx - start);
+				var prop = project.GetProperty (name);
+				if (prop == null)
+					throw new InvalidProjectFileException (string.Format ("Property \"{0}\" was not found", name));
+			}
+		}
+		
+		public static string EvaluateItemExpression (string source, Project project, ITaskItem [] inputs, int start, int end)
+		{
+			// using property as context and evaluate
+			int idx = source.IndexOf ("->", start, StringComparison.Ordinal);
+			if (idx > 0) {
+				string name = source.Substring (start, idx - start);
+			}
+			
+		}
+	}
+	
+	class ExpressionNode
+	{
+	}
+	
+	enum ExpressionNodeType
+	{
+		Item,
+		Property,
+		Transform,
+		Invocation
+	}
+
+#endif
+
+	class ExpressionParser
+	{
+		int yacc_verbose_flag = 1;
+%}
+
+%left TRUE_LITERAL
+%left FALSE_LITERAL
+%left EQ "=="
+%left NE "!="
+%left GT ">"
+%left GE ">="
+%left LT "<"
+%left LE "<="
+%left AND
+%left OR
+%left NOT "!"
+%left DOT "."
+%left COMMA ","
+%left PROP_OPEN "$("
+%left ITEM_OPEN "@("
+%left METADATA_OPEN "%("
+%left PAREN_OPEN "("
+%left PAREN_CLOSE ")"
+%left COLON2 "::"
+%left ARROW "->"
+%left NAME
+%left ERROR
+
+%start Expression
+
+%%
+
+ExpressionList
+	: Expression
+	  { $$ = new ExpressionList ((Expression) $1); }
+	| ExpressionList Expression
+	  { $$ = ((ExpressionList) $1).Append ((Expression) $2); }
+	;
+Expression
+	: BooleanLiteral
+	| BinaryExpression
+	| UnaryExpression
+	| PropertyAccessExpression
+	| ItemAccessExpression
+	| MetadataAccessExpression
+	| StringLiteralOrFunction
+	| ParenthesizedExpression
+	;
+
+BooleanLiteral
+	: TRUE_LITERAL
+	  { $$ = new BooleanLiteral () { Value = true, Location = (ILocation) $1 }; }
+	| FALSE_LITERAL
+	  { $$ = new BooleanLiteral () { Value = false, Location = (ILocation) $1 }; }
+	;
+
+BinaryExpression
+	: Expression EQ Expression
+	| Expression NE Expression
+	| Expression GT Expression
+	| Expression GE Expression
+	| Expression LT Expression
+	| Expression LE Expression
+	| Expression AND Expression
+	| Expression OR Expression
+	;
+
+UnaryExpression
+	: NOT Expression
+	  { $$ = new NotExpression () { Negated = (Expression) $2, Location = (ILocation) $1 }; }
+	;
+
+PropertyAccessExpression
+	: PROP_OPEN PropertyAccess PAREN_CLOSE
+	  { $$ = new PropertyAccessExpression () { Access = (PropertyAccess) $2, Location = (ILocation) $1 }; }
+	;
+
+PropertyAccess
+	: NAME
+	  { $$ = new PropertyAccess () { Name = (NameToken) $1, Location = (NameToken) $1 }; }
+	| Expression DOT NAME
+	  { $$ = new PropertyAccess () { Name = (NameToken) $3, Target = (Expression) $1, Location = (ILocation) $1 }; }
+	;
+
+ItemAccessExpression
+	: ITEM_OPEN ItemApplication PAREN_CLOSE
+	  { $$ = new ItemAccessExpression () { Application = (ItemApplication) $2, Location = (ILocation) $1 }; }
+	;
+
+// looking a bit messy, but gives different location
+ItemApplication
+	: NAME
+	| NAME ARROW ExpressionList
+	  { $$ = new ItemApplication () { Name = (NameToken) $1, Expressions = (ExpressionList) $3, Location = (ILocation) $1 }; }
+	;
+
+MetadataAccessExpression
+	: METADATA_OPEN MetadataAccess PAREN_CLOSE
+	  { $$ = new MetadataAccessExpression () { Access = (MetadataAccess) $2, Location = (ILocation) $1 }; }
+	;
+
+// looking a bit messy, but gives different location
+MetadataAccess
+	: NAME
+	  { $$ = new MetadataAccess () { Metadata = (NameToken) $1, Location = (ILocation) $1 }; }
+	| NAME DOT NAME
+	  { $$ = new MetadataAccess () { Item = (NameToken) $1, Metadata = (NameToken) $3, Location = (ILocation) $1 }; }
+	;
+
+StringLiteralOrFunction
+	: NAME
+	  { $$ = new StringLiteral () { Value = (NameToken) $1, Location = (ILocation) $1 }; }
+	| NAME PAREN_OPEN FunctionCallArguments PAREN_CLOSE
+	  { $$ = new FunctionCallExpression () { Name = (NameToken) $1, Arguments = (ExpressionList) $3, Location = (ILocation) $1 }; }
+	;
+
+FunctionCallArguments
+	: Expression
+	  { $$ = new ExpressionList ((Expression) $1); }
+	| FunctionCallArguments COMMA Expression
+	  { $$ = ((ExpressionList) $1).Append ((Expression) $3); }
+	;
+
+ParenthesizedExpression
+	: PAREN_OPEN Expression PAREN_CLOSE
+	  { $$ = (Expression) $2; }
+	;
+
+%%
+
+	}

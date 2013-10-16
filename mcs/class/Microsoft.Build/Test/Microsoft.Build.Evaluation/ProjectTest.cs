@@ -88,8 +88,7 @@ namespace MonoTests.Microsoft.Build.Evaluation
     <Baz Condition=""$(Void)=="">$(FOO)</Baz>
   </PropertyGroup>
 </Project>";
-			var path = "file://localhost/foo.xml";
-			var reader = XmlReader.Create (new StringReader (xml), null, path);
+			var reader = XmlReader.Create (new StringReader (xml));
 			var root = ProjectRootElement.Create (reader);
 			new Project (root);
 		}
@@ -105,8 +104,7 @@ namespace MonoTests.Microsoft.Build.Evaluation
     <Baz Condition=""$(Void)==''"">$(FOO)</Baz>
   </PropertyGroup>
 </Project>";
-			var path = "file://localhost/foo.xml";
-			var reader = XmlReader.Create (new StringReader (xml), null, path);
+			var reader = XmlReader.Create (new StringReader (xml));
 			var root = ProjectRootElement.Create (reader);
 			var proj = new Project (root);
 			Assert.AreEqual ("xyz", proj.ExpandString ("x$(BAR)z"), "#1");
@@ -121,7 +119,6 @@ namespace MonoTests.Microsoft.Build.Evaluation
             string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
   <Import Project='$(MSBuildToolsPath)\Microsoft.CSharp.targets' />
 </Project>";
-            var path = "file://localhost/foo.xml";
             var xml = XmlReader.Create (new StringReader (project_xml));
             var root = ProjectRootElement.Create (xml);
             var proj = new Project (root);
@@ -135,11 +132,27 @@ namespace MonoTests.Microsoft.Build.Evaluation
             string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
   <Import Project='$(MSBuildToolsPath)\Microsoft.CSharp.targets' />
 </Project>";
-            var path = "file://localhost/foo.xml";
             var xml = XmlReader.Create (new StringReader (project_xml));
             var root = ProjectRootElement.Create (xml);
             var proj = new Project (root);
 			Assert.IsFalse (proj.Build ("Build", new ILogger [] {new ConsoleLogger ()})); // missing mandatory properties
+		}
+		
+		[Test]
+		public void EvaluateIncludeAsEmptyThenIgnored ()
+		{
+            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <ItemGroup>
+    <Foo Include='' />
+    <Bar />
+  </ItemGroup>
+</Project>";
+            var xml = XmlReader.Create (new StringReader (project_xml));
+            var root = ProjectRootElement.Create (xml);
+            var proj = new Project (root);
+            // note that Foo is ignored.
+			Assert.AreEqual (1, proj.ItemsIgnoringCondition.Count, "#1");
+			Assert.IsNotNull ("Bar", proj.ItemsIgnoringCondition.First ().ItemType, "#2");
 		}
 	}
 }

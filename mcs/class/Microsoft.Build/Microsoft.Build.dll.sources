@@ -72,6 +72,8 @@ Microsoft.Build.Execution/ProjectTargetInstanceChild.cs
 Microsoft.Build.Execution/TargetResult.cs                           
 Microsoft.Build.Execution/TargetResultCode.cs
 Microsoft.Build.Internal/CollectionFromEnumerable.cs
+Microsoft.Build.Internal/ExpressionConstructs.cs
+Microsoft.Build.Internal/ExpressionTokenizer.cs
 Microsoft.Build.Internal/FilteredEnumerable.cs
 Microsoft.Build.Internal/ReverseEnumerable.cs
 Microsoft.Build.Logging/ColorResetter.cs

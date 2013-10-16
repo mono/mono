@@ -10,6 +10,7 @@ Microsoft.Build.Execution/BuildParametersTest.cs
 Microsoft.Build.Execution/BuildManagerTest.cs
 Microsoft.Build.Execution/ProjectInstanceTest.cs
 Microsoft.Build.Internal/CollectionFromEnumerableTest.cs
+Microsoft.Build.Internal/ExpressionParserTest.cs
 Microsoft.Build.Logging/ConsoleLoggerTest.cs
 Microsoft.Build.Logging/LoggerDescriptionTest.cs
 
