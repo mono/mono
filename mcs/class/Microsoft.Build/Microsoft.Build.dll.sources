@@ -73,6 +73,8 @@ Microsoft.Build.Execution/TargetResult.cs
 Microsoft.Build.Execution/TargetResultCode.cs
 Microsoft.Build.Internal/CollectionFromEnumerable.cs
 Microsoft.Build.Internal/ExpressionConstructs.cs
+Microsoft.Build.Internal/ExpressionEvaluator.cs
+Microsoft.Build.Internal/ExpressionParserManual.cs
 Microsoft.Build.Internal/ExpressionTokenizer.cs
 Microsoft.Build.Internal/FilteredEnumerable.cs
 Microsoft.Build.Internal/ReverseEnumerable.cs

@@ -10,22 +10,30 @@ namespace Microsoft.Build.Internal
 		public ILocation Location { get; set; }		
 	}
 	
-	class ExpressionList : ILocation, IEnumerable<Expression>
+	partial class ExpressionList : ILocation, IEnumerable<Expression>
 	{
+		public ExpressionList ()
+		{
+		}
+		
 		public ExpressionList (Expression entry)
 		{
-			Append (entry);
+			Add (entry);
 		}
 		
 		//public int Line {
-		//	get { return list [0].Line; }
+		//	get { return list.Count == 0 ? 0 : list [0].Line; }
 		//}
 		public int Column {
-			get { return list [0].Column; }
+			get { return list.Count == 0 ? 0 : list [0].Column; }
 		}
 		//public string File {
-		//	get { return list [0].File; }
+		//	get { return list.Count == 0 ? null : list [0].File; }
 		//}
+		public string ToLocationString ()
+		{
+			return list.Count == 0 ? null : list [0].Location.ToLocationString ();
+		}
 			
 		public IEnumerator<Expression> GetEnumerator ()
 		{
@@ -39,14 +47,20 @@ namespace Microsoft.Build.Internal
 		
 		List<Expression> list = new List<Expression> ();
 		
-		public ExpressionList Append (Expression expr)
+		public ExpressionList Add (Expression expr)
 		{
 			list.Add (expr);
 			return this;
 		}
+		
+		public ExpressionList Insert (int pos, Expression expr)
+		{
+			list.Insert (pos, expr);
+			return this;
+		}
 	}
 
-	class Expression : Locatable, ILocation
+	abstract partial class Expression : Locatable, ILocation
 	{
 		//public int Line {
 		//	get { return Location.Line; }
@@ -57,30 +71,41 @@ namespace Microsoft.Build.Internal
 		//public string File {
 		//	get { return Location.File; }
 		//}
+		public string ToLocationString ()
+		{
+			return Location.ToLocationString ();
+		}
 	}
 	
-	class BooleanLiteral : Expression
+	partial class BooleanLiteral : Expression
 	{
 		public bool Value { get; set; }
 	}
 
-	class NotExpression : Expression
+	partial class NotExpression : Expression
 	{
 		public Expression Negated { get; set; }
 	}
 
-	class PropertyAccessExpression : Expression
+	partial class PropertyAccessExpression : Expression
 	{
 		public PropertyAccess Access { get; set; }
+	}
+	
+	enum PropertyTargetType
+	{
+		Object,
+		Type,
 	}
 	
 	class PropertyAccess : Locatable
 	{
 		public NameToken Name { get; set; }
 		public Expression Target { get; set; }
+		public PropertyTargetType TargetType { get; set; }
 	}
 
-	class ItemAccessExpression : Expression
+	partial class ItemAccessExpression : Expression
 	{
 		public ItemApplication Application { get; set; }
 	}
@@ -91,7 +116,7 @@ namespace Microsoft.Build.Internal
 		public ExpressionList Expressions { get; set; }
 	}
 
-	class MetadataAccessExpression : Expression
+	partial class MetadataAccessExpression : Expression
 	{
 		public MetadataAccess Access { get; set; }
 	}
@@ -101,13 +126,18 @@ namespace Microsoft.Build.Internal
 		public NameToken Metadata { get; set; }
 		public NameToken Item { get; set; }
 	}
+	
+	partial class StringLiteralExpression : Expression
+	{
+		public ExpressionList Contents { get; set; }
+	}
 
-	class StringLiteral : Expression
+	partial class RawStringLiteral : Expression
 	{
 		public NameToken Value { get; set; }
 	}
 	
-	class FunctionCallExpression : Expression
+	partial class FunctionCallExpression : Expression
 	{
 		public NameToken Name { get; set; }
 		public ExpressionList Arguments { get; set; }

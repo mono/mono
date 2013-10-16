@@ -29,6 +29,7 @@
 using System;
 using System.Linq;
 using Microsoft.Build.Construction;
+using Microsoft.Build.Internal;
 
 namespace Microsoft.Build.Evaluation
 {
@@ -43,10 +44,9 @@ namespace Microsoft.Build.Evaluation
 			Project = project;
 		}
 
+		string evaluated_value; // see UpdateEvaluatedValue().
 		public string EvaluatedValue {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return evaluated_value; }
 		}
 
 		public abstract bool IsEnvironmentProperty { get; }
@@ -68,6 +68,11 @@ namespace Microsoft.Build.Evaluation
 		public abstract string UnevaluatedValue { get; set; }
 
 		public abstract ProjectPropertyElement Xml { get; }
+		
+		internal void UpdateEvaluatedValue ()
+		{
+			evaluated_value = Project.ExpandString (UnevaluatedValue);
+		}
 	}
 
 	// copy from MS.Build.Engine/BuildProperty.cs
@@ -123,6 +128,7 @@ namespace Microsoft.Build.Evaluation
 			: base (project, propertyType, xml.Name)
 		{
 			this.xml = xml;
+			UpdateEvaluatedValue ();
 		}
 		
 		ProjectPropertyElement xml;
@@ -142,6 +148,7 @@ namespace Microsoft.Build.Evaluation
 			: base (project, PropertyType.Environment, name)
 		{
 			this.value = value;
+			UpdateEvaluatedValue ();
 		}
 		
 		readonly string value;
@@ -161,6 +168,7 @@ namespace Microsoft.Build.Evaluation
 			: base (project, PropertyType.Global, name)
 		{
 			this.value = value;
+			UpdateEvaluatedValue ();
 		}
 		
 		readonly string value;
