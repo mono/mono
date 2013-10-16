@@ -76,9 +76,9 @@ namespace Microsoft.Build.Evaluation
 			return Mono.XBuild.Utilities.MSBuildUtils.Escape (unescapedString);
 		}
 
-		public static string Unescape (string scapedString)
+		public static string Unescape (string escapedString)
 		{
-			throw new NotImplementedException ();
+			return Mono.XBuild.Utilities.MSBuildUtils.Unescape (escapedString);
 		}
 
 		public static ProjectCollection GlobalProjectCollection {
