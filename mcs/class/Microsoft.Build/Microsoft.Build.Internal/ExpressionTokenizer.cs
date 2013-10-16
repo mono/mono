@@ -1,22 +1,43 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Build.Evaluation;
 
 namespace Microsoft.Build.Internal
 {
+	enum ExpressionValidationType
+	{
+		LaxString,
+		StrictBoolean,
+	}
+	
+	enum TokenizerMode
+	{
+		Default,
+		InsideItemOrProperty,
+	}
+	
 	class ExpressionTokenizer : yyParser.yyInput
 	{
-		public ExpressionTokenizer (string source)
+		public ExpressionTokenizer (string source, ExpressionValidationType validationType)
 		{
 			this.source = source;
 			current_token_position = -1;
+			validation_type = validationType;
+			modes.Push (TokenizerMode.Default);
 		}
 		
 		string source;
+		ExpressionValidationType validation_type;
 		
 		int current_token;
 		string error;
 		int pos, current_token_position;
 		object token_value;
+		Stack<TokenizerMode> modes = new Stack<TokenizerMode> ();
+
+		TokenizerMode CurrentTokenizerMode {
+			get { return modes.Peek (); }
+		}
 
 		public bool advance ()
 		{
@@ -29,106 +50,117 @@ namespace Microsoft.Build.Internal
 
 			switch (source [pos++]) {
 			case '.':
-				current_token = Token.DOT;
+				TokenForItemPropertyValue (".", Token.DOT);
 				break;
 			case ',':
-				current_token = Token.COMMA;
+				TokenForItemPropertyValue (",", Token.COMMA);
 				break;
 			case '(':
-				current_token = Token.PAREN_OPEN;
+				TokenForItemPropertyValue ("(", Token.PAREN_OPEN);
 				break;
 			case ')':
-				current_token = Token.PAREN_CLOSE;
-				break;
-			case '-':
-				if (pos < source.Length && source [pos] == '>') {
-					current_token = Token.ARROW;
-					pos++;
+				if (modes.Count > 0) {
+					modes.Pop ();
+					current_token = Token.PAREN_CLOSE;
 				} else {
-					current_token = Token.ERROR;
-					error = "'-' is not followed by '>'.";
-				}
-				break;
-			case '=':
-				if (pos < source.Length && source [pos] == '=') {
-					current_token = Token.EQ;
-					pos++;
-				} else {
-					current_token = Token.ERROR;
-					error = "'=' is not followed by '='.";
-				}
-				break;
-			case ':':
-				if (pos < source.Length && source [pos] == ':') {
-					current_token = Token.COLON2;
-					pos++;
-				} else {
-					current_token = Token.ERROR;
-					error = "':' is not followed by ':'.";
-				}
-				break;
-			case '!':
-				if (pos < source.Length && source [pos] == '=') {
-					pos++;
-					current_token = Token.NE;
-				}
-				else
-					current_token = Token.NOT;
-				break;
-			case '>':
-				if (pos < source.Length && source [pos] == '=') {
-					pos++;
-					current_token = Token.GE;
-				}
-				else
-					current_token = Token.GT;
-				break;
-			case '<':
-				if (pos < source.Length && source [pos] == '=') {
-					pos++;
-					current_token = Token.LE;
-				}
-				else
-					current_token = Token.LT;
-				break;
-			case '$':
-				if (pos < source.Length && source [pos] == '(') {
-					current_token = Token.PROP_OPEN;
-					pos++;
-				} else {
-					current_token = Token.ERROR;
-					error = "property reference '$' is not followed by '('.";
-				}
-				break;
-			case '@':
-				if (pos < source.Length && source [pos] == '(') {
-					current_token = Token.ITEM_OPEN;
-					pos++;
-				} else {
-					current_token = Token.ERROR;
-					error = "item reference '@' is not followed by '('.";
-				}
-				break;
-			case '%':
-				if (pos < source.Length && source [pos] == '(') {
-					current_token = Token.METADATA_OPEN;
-					pos++;
-				} else {
-					current_token = Token.ERROR;
-					error = "metadata reference '%' is not followed by '('.";
+					token_value = ")";
+					current_token = Token.NAME;
 				}
 				break;
 			case '"':
-				ReadStringLiteral (source, '"');
+				current_token = Token.QUOT;
 				break;
 			case '\'':
-				ReadStringLiteral (source, '\'');
+				current_token = Token.APOS;
+				break;
+			case '-':
+				if (CurrentTokenizerMode == TokenizerMode.InsideItemOrProperty && pos < source.Length && source [pos] == '>') {
+					current_token = Token.ARROW;
+					pos++;
+				} else
+					ErrorOnStrictBoolean ("-", "'-' is not followed by '>'.");
+				break;
+			case '=':
+				if (CurrentTokenizerMode == TokenizerMode.InsideItemOrProperty && pos < source.Length && source [pos] == '=') {
+					current_token = Token.EQ;
+					pos++;
+				} else
+					ErrorOnStrictBoolean ("=", "'=' is not followed by '='.");
+				break;
+			case ':':
+				if (CurrentTokenizerMode == TokenizerMode.InsideItemOrProperty && pos < source.Length && source [pos] == ':') {
+					current_token = Token.COLON2;
+					pos++;
+				} else
+					ErrorOnStrictBoolean (":", "':' is not followed by ':'.");
+				break;
+			case '!':
+				if (CurrentTokenizerMode == TokenizerMode.InsideItemOrProperty) {
+					if (pos < source.Length && source [pos] == '=') {
+						pos++;
+						current_token = Token.NE;
+					} else
+						TokenForItemPropertyValue ("!", Token.NOT);
+				}
+				else
+					TokenForItemPropertyValue ("!", Token.NOT);
+				break;
+			case '>':
+				if (CurrentTokenizerMode == TokenizerMode.InsideItemOrProperty) {
+					if (pos < source.Length && source [pos] == '=') {
+						pos++;
+						current_token = Token.GE;
+					}
+					else
+						current_token = Token.GT;
+				}
+				else
+					TokenForItemPropertyValue (">", Token.GT);
+				break;
+			case '<':
+				if (CurrentTokenizerMode == TokenizerMode.InsideItemOrProperty) {
+					if (pos < source.Length && source [pos] == '=') {
+						pos++;
+						current_token = Token.LE;
+					}
+					else
+						current_token = Token.LT;
+				}
+				else
+					TokenForItemPropertyValue ("<", Token.LT);
+				break;
+			case '$':
+				if (pos < source.Length && source [pos] == '(') {
+					modes.Push (TokenizerMode.InsideItemOrProperty);
+					current_token = Token.PROP_OPEN;
+					pos++;
+				}
+				else
+					ErrorOnStrictBoolean ("$", "property reference '$' is not followed by '('.");
+				break;
+			case '@':
+				if (pos < source.Length && source [pos] == '(') {
+					modes.Push (TokenizerMode.InsideItemOrProperty);
+					current_token = Token.ITEM_OPEN;
+					pos++;
+				}
+				else
+					ErrorOnStrictBoolean ("@", "item reference '@' is not followed by '('.");
+				break;
+			case '%':
+				if (pos < source.Length && source [pos] == '(') {
+					modes.Push (TokenizerMode.InsideItemOrProperty);
+					current_token = Token.METADATA_OPEN;
+					pos++;
+				}
+				else
+					ErrorOnStrictBoolean ("%", "metadata reference '%' is not followed by '('.");
 				break;
 			default:
 				pos = source.IndexOfAny (token_starter_chars, pos);
 				if (pos < 0)
 					pos = source.Length;
-				var val = source.Substring (current_token_position, pos - current_token_position - 1);
+				var val = source.Substring (current_token_position, pos - current_token_position);
 				if (val.Equals ("AND", StringComparison.OrdinalIgnoreCase))
 					current_token = Token.AND;
 				else if (val.Equals ("OR", StringComparison.OrdinalIgnoreCase))
@@ -144,8 +176,15 @@ namespace Microsoft.Build.Internal
 				}
 				break;
 			}
+			while (pos < source.Length) {
+				if (spaces.IndexOf (source [pos]) > 0)
+					pos++;
+				else
+					break;
+			}
 			return true;
 		}
+		string spaces = " \t\r\n";
 
 		static readonly char [] token_starter_chars = ".,)-=:!><$@%\"' ".ToCharArray ();
 		
@@ -153,13 +192,33 @@ namespace Microsoft.Build.Internal
 		{
 			while (pos < source.Length && source [pos] != c)
 				pos++;
-			if (source [pos - 1] != c) {
-				current_token = Token.ERROR;
-				error = string.Format ("missing string literal terminator [{0}]", c);
-			} else {
+			if (source [pos - 1] != c)
+				ErrorOnStrictBoolean (c.ToString (), string.Format ("missing string literal terminator [{0}]", c));
+			else {
 				current_token = Token.NAME;
 				token_value = source.Substring (current_token_position + 1, pos - current_token_position - 2);
 				token_value = ProjectCollection.Unescape ((string) token_value);
+			}
+		}
+		
+		void TokenForItemPropertyValue (string value, int token)
+		{
+			if (CurrentTokenizerMode == TokenizerMode.InsideItemOrProperty)
+				current_token = token;
+			else {
+				current_token = Token.NAME;
+				token_value = value;
+			}
+		}
+		
+		void ErrorOnStrictBoolean (string value, string message)
+		{
+			if (validation_type == ExpressionValidationType.StrictBoolean) {
+				current_token = Token.ERROR;
+				error = message;
+			} else {
+				current_token = Token.NAME;
+				token_value = value;
 			}
 		}
 		
@@ -194,6 +253,8 @@ namespace Microsoft.Build.Internal
 		//int Line { get; }
 		int Column { get; }
 		//string File { get; }
+		
+		string ToLocationString ();
 	}
 
 	class Location : ILocation
@@ -201,5 +262,10 @@ namespace Microsoft.Build.Internal
 		//public int Line { get; set; }
 		public int Column { get; set; }
 		//public string File { get; set; }
+		
+		public string ToLocationString ()
+		{
+			return "at " + Column;
+		}
 	}
 }

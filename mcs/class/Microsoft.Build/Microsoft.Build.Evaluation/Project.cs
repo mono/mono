@@ -144,6 +144,7 @@ namespace Microsoft.Build.Evaluation
 		Dictionary<string, ProjectItemDefinition> item_definitions;
 		List<ResolvedImport> raw_imports;
 		List<ProjectItem> raw_items;
+		List<ProjectItem> all_evaluated_items;
 		List<string> item_types;
 		List<ProjectProperty> properties;
 		Dictionary<string, ProjectTargetInstance> targets;
@@ -167,21 +168,35 @@ namespace Microsoft.Build.Evaluation
 				this.properties.Add (new EnvironmentProjectProperty (this, (string)p.Key, (string)p.Value));
 			foreach (var p in GlobalProperties)
 				this.properties.Add (new GlobalProjectProperty (this, p.Key, p.Value));
+
+			all_evaluated_items = new List<ProjectItem> ();
 			foreach (var child in Xml.Children) {
-				if (child is ProjectPropertyGroupElement)
-					foreach (var p in ((ProjectPropertyGroupElement) child).Properties)
+				var pge = child as ProjectPropertyGroupElement;
+				if (pge != null)
+					foreach (var p in pge.Properties)
 						this.properties.Add (new XmlProjectProperty (this, p, PropertyType.Normal));
-				else if (child is ProjectItemGroupElement)
-					foreach (var p in ((ProjectItemGroupElement) child).Items)
-						this.raw_items.Add (new ProjectItem (this, p));
-				else if (child is ProjectItemDefinitionGroupElement)
-					foreach (var p in ((ProjectItemDefinitionGroupElement) child).ItemDefinitions) {
-						ProjectItemDefinition existing;
-						if (!item_definitions.TryGetValue (p.ItemType, out existing))
-							item_definitions.Add (p.ItemType, (existing = new ProjectItemDefinition (this, p.ItemType)));
-						existing.AddItems (p);
+				var ige = child as ProjectItemGroupElement;
+				if (ige != null) {
+					foreach (var p in ige.Items) {
+						var item = new ProjectItem (this, p);
+						this.raw_items.Add (item);
+						if (ShouldInclude (ige.Condition))
+							all_evaluated_items.Add (item);
 					}
+				}
+				var def = child as ProjectItemDefinitionGroupElement;
+				if (def != null) {
+					foreach (var p in def.ItemDefinitions) {
+						if (ShouldInclude (p.Condition)) {
+							ProjectItemDefinition existing;
+							if (!item_definitions.TryGetValue (p.ItemType, out existing))
+								item_definitions.Add (p.ItemType, (existing = new ProjectItemDefinition (this, p.ItemType)));
+							existing.AddItems (p);
+						}
+					}
+				}
 			}
+			all_evaluated_items.Sort ((p1, p2) => string.Compare (p1.ItemType, p2.ItemType, StringComparison.OrdinalIgnoreCase));
 		}
 
 		public ICollection<ProjectItem> GetItemsIgnoringCondition (string itemType)
@@ -286,10 +301,15 @@ namespace Microsoft.Build.Evaluation
 			// FIXME: maybe fill other properties to the result.
 			return ret;
 		}
+		
+		bool ShouldInclude (string unexpandedValue)
+		{
+			return string.IsNullOrWhiteSpace (unexpandedValue) || new ExpressionEvaluator (this).EvaluateAsBoolean (unexpandedValue);
+		}
 
 		public string ExpandString (string unexpandedValue)
 		{
-			throw new NotImplementedException ();
+			return new ExpressionEvaluator (this).Evaluate (unexpandedValue);
 		}
 
 		public static string GetEvaluatedItemIncludeEscaped (ProjectItem item)
@@ -347,7 +367,7 @@ namespace Microsoft.Build.Evaluation
 
 		public ProjectProperty GetProperty (string name)
 		{
-			return properties.FirstOrDefault (p => p.Name == name);
+			return properties.FirstOrDefault (p => p.Name.Equals (name, StringComparison.OrdinalIgnoreCase));
 		}
 
 		public void MarkDirty ()
@@ -427,7 +447,7 @@ namespace Microsoft.Build.Evaluation
 		}
 
 		public ICollection<ProjectItem> AllEvaluatedItems {
-			get { throw new NotImplementedException (); }
+			get { return all_evaluated_items; }
 		}
 
 		public ICollection<ProjectProperty> AllEvaluatedProperties {
@@ -481,7 +501,20 @@ namespace Microsoft.Build.Evaluation
 		}
 
 		public ICollection<ProjectItem> Items {
-			get { throw new NotImplementedException (); }
+			get {
+				var ret = new List<ProjectItem> ();
+				foreach (var child in Xml.Children) {
+					var ige = child as ProjectItemGroupElement;
+					if (ige != null) {
+						foreach (var p in ige.Items) {
+							var item = new ProjectItem (this, p);
+							if (ShouldInclude (ige.Condition))
+								ret.Add (item);
+						}
+					}
+				}
+				return ret;
+			}
 		}
 
 		public ICollection<ProjectItem> ItemsIgnoringCondition {
