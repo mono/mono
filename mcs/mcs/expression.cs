@@ -2010,11 +2010,17 @@ namespace Mono.CSharp
 							b.left = Convert.ImplicitConversion (rc, b.left, left, b.left.Location);
 							return ReducedExpression.Create (b.left, b).Resolve (rc);
 						}
+
+						//
+						// Optimizes (value &/&& 0) to 0
+						//
+						if ((b.oper == Operator.BitwiseAnd || b.oper == Operator.LogicalAnd) && !IsLifted) {
+							Constant side_effect = new SideEffectConstant (c, b.left, c.Location);
+							return ReducedExpression.Create (side_effect, b);
+						}
 					} else {
 						//
-						// Optimizes
-						//
-						// (bool? & true) to bool?
+						// Optimizes (bool? & true) to bool?
 						//
 						if (IsLifted && left_unwrap.BuiltinType == BuiltinTypeSpec.Type.Bool && b.oper == Operator.BitwiseAnd) {
 							return ReducedExpression.Create (b.left, b).Resolve (rc);
@@ -2043,14 +2049,38 @@ namespace Mono.CSharp
 							b.right = Convert.ImplicitConversion (rc, b.right, right, b.right.Location);
 							return ReducedExpression.Create (b.right, b).Resolve (rc);
 						}
+
+						//
+						// Optimizes (false && expr) to false
+						//
+						if (b.oper == Operator.LogicalAnd && c.Type.BuiltinType == BuiltinTypeSpec.Type.Bool) {
+							// No rhs side-effects
+							Expression.Warning_UnreachableExpression (rc, b.right.StartLocation);
+							return ReducedExpression.Create (c, b);
+						}
+
+						//
+						// Optimizes (0 & value) to 0
+						//
+						if (b.oper == Operator.BitwiseAnd && !IsLifted) {
+							Constant side_effect = new SideEffectConstant (c, b.right, c.Location);
+							return ReducedExpression.Create (side_effect, b);
+						}
 					} else {
 						//
-						// Optimizes
-						//
-						// (true & bool?) to bool?
+						// Optimizes (true & bool?) to bool?
 						//
 						if (IsLifted && left_unwrap.BuiltinType == BuiltinTypeSpec.Type.Bool && b.oper == Operator.BitwiseAnd) {
 							return ReducedExpression.Create (b.right, b).Resolve (rc);
+						}
+
+						//
+						// Optimizes (true || expr) to true
+						//
+						if (b.oper == Operator.LogicalOr && c.Type.BuiltinType == BuiltinTypeSpec.Type.Bool) {
+							// No rhs side-effects
+							Expression.Warning_UnreachableExpression (rc, b.right.StartLocation);
+							return ReducedExpression.Create (c, b);
 						}
 					}
 
@@ -3233,23 +3263,11 @@ namespace Mono.CSharp
 			if (left == null)
 				return null;
 
-			Constant lc = left as Constant;
-
-			if (lc != null && lc.Type.BuiltinType == BuiltinTypeSpec.Type.Bool &&
-				((oper == Operator.LogicalAnd && lc.IsDefaultValue) ||
-				 (oper == Operator.LogicalOr && !lc.IsDefaultValue))) {
-
-				// FIXME: resolve right expression as unreachable
-				// right.Resolve (ec);
-
-				ec.Report.Warning (429, 4, right.StartLocation, "Unreachable expression code detected");
-				return left;
-			}
-
 			right = right.Resolve (ec);
 			if (right == null)
 				return null;
 
+			Constant lc = left as Constant;
 			Constant rc = right as Constant;
 
 			// The conversion rules are ignored in enum context but why
@@ -4029,17 +4047,11 @@ namespace Mono.CSharp
 			if (best_operator == null)
 				return null;
 
-			var expr = best_operator.ConvertResult (ec, this);
-
-			if ((oper == Operator.BitwiseAnd || oper == Operator.LogicalAnd) && !best_operator.IsLifted) {
-				expr = OptimizeAndOperation (expr);
-			}
-
-			return expr;
+			return best_operator.ConvertResult (ec, this);
 		}
 
 		//
-		// Optimize &/&& constant expressions with 0 value
+		// Optimize & constant expressions with 0 value
 		//
 		Expression OptimizeAndOperation (Expression expr)
 		{
@@ -5342,8 +5354,8 @@ namespace Mono.CSharp
 				// Don't issue the warning for constant expressions
 				//
 				if (!(is_false ? true_expr is Constant : false_expr is Constant)) {
-					ec.Report.Warning (429, 4, is_false ? true_expr.Location : false_expr.Location,
-						"Unreachable expression code detected");
+					// CSC: Missing warning
+					Warning_UnreachableExpression (ec, is_false ? true_expr.Location : false_expr.Location);
 				}
 
 				return ReducedExpression.Create (

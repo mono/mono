@@ -48214,6 +48214,28 @@
       </method>
     </type>
   </test>
+  <test name="test-871.cs">
+    <type name="D">
+      <method name="D op_BitwiseAnd(D, D)" attrs="2198">
+        <size>16</size>
+      </method>
+      <method name="Boolean op_False(D)" attrs="2198">
+        <size>10</size>
+      </method>
+      <method name="Boolean op_True(D)" attrs="2198">
+        <size>10</size>
+      </method>
+      <method name="D op_Implicit(Boolean)" attrs="2198">
+        <size>15</size>
+      </method>
+      <method name="Int32 Main()" attrs="145">
+        <size>80</size>
+      </method>
+      <method name="Void .ctor(Int32)" attrs="6278">
+        <size>15</size>
+      </method>
+    </type>
+  </test>
   <test name="test-88.cs">
     <type name="X">
       <method name="Void f(System.String)" attrs="145">

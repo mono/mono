@@ -373,6 +373,11 @@ namespace Mono.CSharp {
 			rc.Report.Error (242, loc, "The operation in question is undefined on void pointers");
 		}
 
+		public static void Warning_UnreachableExpression (ResolveContext rc, Location loc)
+		{
+			rc.Report.Warning (429, 4, loc, "Unreachable expression code detected");
+		}
+
 		public ResolveFlags ExprClassToResolveFlags {
 			get {
 				switch (eclass) {
