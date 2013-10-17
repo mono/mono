@@ -28,6 +28,7 @@
 
 using System;
 using System.Runtime.Serialization;
+using Microsoft.Build.Construction;
 
 namespace Microsoft.Build.Exceptions
 {
@@ -55,6 +56,16 @@ namespace Microsoft.Build.Exceptions
                 }
                 public InvalidProjectFileException (string message, Exception innerException)
                         : base(message, innerException)
+                {
+                }
+                internal InvalidProjectFileException (Microsoft.Build.Internal.ILocation start, string message,
+                                                      string errorSubcategory = null, string errorCode = null, string helpKeyword = null)
+                        : this (null, 0, start != null ? start.Column : 0, 0, 0, message, errorSubcategory, errorCode, helpKeyword)
+                {
+                }
+                internal InvalidProjectFileException (ElementLocation start, ElementLocation end, string message,
+                                                    string errorSubcategory = null, string errorCode = null, string helpKeyword = null)
+                        : this (start.File, start.Line, start.Column, end != null ? end.Line : 0, end != null ? end.Column : 0, message, errorSubcategory, errorCode, helpKeyword)
                 {
                 }
                 public InvalidProjectFileException (string projectFile, int lineNumber, int columnNumber,
