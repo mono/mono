@@ -51,6 +51,9 @@ namespace Microsoft.Build.Construction
                                 return metadata != null;
                         }
                 }
+                string condition;
+                // It is not part of public API, but this attribute affects behavior.
+                internal string Condition { get { return condition ?? string.Empty; } set { condition = value; } }
                 string include;
                 public string Include { get { return include ?? String.Empty; } set { include = value; } }
                 string itemType;
@@ -72,6 +75,7 @@ namespace Microsoft.Build.Construction
                 }
                 internal override void SaveValue (XmlWriter writer)
                 {
+                        SaveAttribute (writer, "Condition", Condition);
                         SaveAttribute (writer, "Include", Include);
                         SaveAttribute (writer, "Exclude", Exclude);
                         SaveAttribute (writer, "Remove", Remove);
@@ -80,6 +84,9 @@ namespace Microsoft.Build.Construction
                 internal override void LoadAttribute (string name, string value)
                 {
                         switch (name) {
+                        case "Condition":
+                                Condition = value;
+                                break;
                         case "Include":
                                 Include = value;
                                 break;

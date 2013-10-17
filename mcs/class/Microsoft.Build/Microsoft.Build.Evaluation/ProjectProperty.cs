@@ -60,7 +60,6 @@ namespace Microsoft.Build.Evaluation
 
 		public abstract string Name { get; }
 
-		[MonoTODO]
 		public abstract ProjectProperty Predecessor { get; }
 
 		public Project Project { get; private set; }
@@ -197,4 +196,3 @@ namespace Microsoft.Build.Evaluation
 		}
 	}
 }
-

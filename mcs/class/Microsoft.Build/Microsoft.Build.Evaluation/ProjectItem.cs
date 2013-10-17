@@ -40,7 +40,7 @@ namespace Microsoft.Build.Evaluation
 	[DebuggerDisplay ("{ItemType}={EvaluatedInclude} [{UnevaluatedInclude}] #DirectMetadata={DirectMetadataCount}")]
 	public class ProjectItem
 	{
-		internal ProjectItem (Project project, ProjectItemElement xml)
+		internal ProjectItem (Project project, ProjectItemElement xml, string evaluatedInclude)
 		{
 			this.project = project;
 			this.xml = xml;
@@ -49,11 +49,13 @@ namespace Microsoft.Build.Evaluation
 					metadata.Add (md);
 			foreach (var item in xml.Metadata)
 				metadata.Add (new ProjectMetadata (project, ItemType, metadata, m => metadata.Remove (m), item));
+			evaluated_include = evaluatedInclude;
 		}
 		
 		Project project;
 		ProjectItemElement xml;
 		List<ProjectMetadata> metadata = new List<ProjectMetadata> ();
+		string evaluated_include;
 
 		public ProjectMetadata GetMetadata (string name)
 		{
@@ -102,7 +104,7 @@ namespace Microsoft.Build.Evaluation
 		}
 
 		public string EvaluatedInclude {
-			get { return project.ExpandString (UnevaluatedInclude); }
+			get { return evaluated_include; }
 		}
 
 		public bool IsImported {
