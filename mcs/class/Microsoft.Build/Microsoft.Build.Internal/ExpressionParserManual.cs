@@ -22,35 +22,38 @@ namespace Microsoft.Build.Internal
 			var head = new List<Expression> ();
 			var tail = new List<Expression> ();
 			while (start < end) {
-				switch (source [start]) {
+				char token = source [start];
+				switch (token) {
 				case '$':
 				case '@':
 				case '%':
-					int last = source.LastIndexOf (')', end - 1, end - start);
-					if (last < 0) {
-						if (validationType == ExpressionValidationType.StrictBoolean)
-							throw new InvalidProjectFileException (string.Format ("expression did not have matching ')' since index {0} in \"{1}\"", start, source));
-						else
-							goto default; // treat as raw literal to the section end
-					}
-					if (start + 1 == end || source [start + 1] != '(') {
+					if (start == end || source [start + 1] != '(') {
 						if (validationType == ExpressionValidationType.StrictBoolean)
 							throw new InvalidProjectFileException (string.Format ("missing '(' after '{0}' at {1} in \"{2}\"", source [start], start, source));
 						else
 							goto default; // treat as raw literal to the section end
 					}
-					string tailValue = source.Substring (last + 1, end - last - 1);
-					if (tailValue.Length > 0)
-						tail.Add (new StringLiteralExpression () { Contents = new ExpressionList () { new RawStringLiteral () { Value = new NameToken () { Name = tailValue } } } });
-					start += 2;
-					end = last;
-					if (source [start - 2] == '$')
-						head.Add (EvaluatePropertyExpression (source, validationType, start, end));
-					else if (source [start - 2] == '%')
-						head.Add (EvaluateMetadataExpression (source, validationType, start, end));
+					start++;
+					goto case '(';
+				case '(':
+					int last = source.LastIndexOf (')', end - 1, end - start - 1);
+					if (last < 0) {
+						if (validationType == ExpressionValidationType.StrictBoolean)
+							throw new InvalidProjectFileException (string.Format ("expression did not have matching ')' since index {0} in \"{1}\"", start, source));
+						else {
+							if (token != '(')
+								start--;
+							goto default; // treat as raw literal to the section end
+						}
+					}
+					start++;
+					if (token == '$')
+						head.Add (EvaluatePropertyExpression (source, validationType, start, last));
+					else if (token == '%')
+						head.Add (EvaluateMetadataExpression (source, validationType, start, last));
 					else
-						head.Add (EvaluateItemExpression (source, validationType, start, end));
-					start = end;
+						head.Add (EvaluateItemExpression (source, validationType, start, last));
+					start = last + 1;
 					break;
 				default:
 					int idx = source.IndexOfAny (token_starters, start + 1);

@@ -94,7 +94,6 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		}
 		
 		[Test]
-		//[Category ("NotWorking")]
 		public void ExpandString ()
 		{
 			string xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>

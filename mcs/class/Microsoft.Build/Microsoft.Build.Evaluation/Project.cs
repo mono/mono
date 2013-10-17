@@ -162,6 +162,8 @@ namespace Microsoft.Build.Evaluation
 			ProcessXml ();
 		}
 		
+		static readonly char [] item_sep = {';'};
+		
 		void ProcessXml ()
 		{
 			foreach (DictionaryEntry p in Environment.GetEnvironmentVariables ())
@@ -178,10 +180,13 @@ namespace Microsoft.Build.Evaluation
 				var ige = child as ProjectItemGroupElement;
 				if (ige != null) {
 					foreach (var p in ige.Items) {
-						var item = new ProjectItem (this, p);
-						this.raw_items.Add (item);
-						if (ShouldInclude (ige.Condition))
-							all_evaluated_items.Add (item);
+						var inc = ExpandString (p.Include);
+						foreach (var each in inc.Split (item_sep, StringSplitOptions.RemoveEmptyEntries)) {
+							var item = new ProjectItem (this, p, each);
+							this.raw_items.Add (item);
+							if (ShouldInclude (ige.Condition) && ShouldInclude (p.Condition))
+								all_evaluated_items.Add (item);
+						}
 					}
 				}
 				var def = child as ProjectItemDefinitionGroupElement;
@@ -500,21 +505,9 @@ namespace Microsoft.Build.Evaluation
 			get { return item_definitions; }
 		}
 
+		[MonoTODO ("should be different from AllEvaluatedItems")]
 		public ICollection<ProjectItem> Items {
-			get {
-				var ret = new List<ProjectItem> ();
-				foreach (var child in Xml.Children) {
-					var ige = child as ProjectItemGroupElement;
-					if (ige != null) {
-						foreach (var p in ige.Items) {
-							var item = new ProjectItem (this, p);
-							if (ShouldInclude (ige.Condition))
-								ret.Add (item);
-						}
-					}
-				}
-				return ret;
-			}
+			get { return AllEvaluatedItems; }
 		}
 
 		public ICollection<ProjectItem> ItemsIgnoringCondition {

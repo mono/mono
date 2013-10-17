@@ -39,6 +39,7 @@ namespace MonoTests.Microsoft.Build.Internal
 				"'%24' == 0",
 				"true",
 				"fAlSe",
+				"(false)"
 			};
 			string [] depends = {
 				// valid only if evaluated to boolean
@@ -120,7 +121,58 @@ namespace MonoTests.Microsoft.Build.Internal
 					continue;
 				}
 			}
-		}		
+		}
+		
+		[Test]
+		public void SemicolonHandling ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <PropertyGroup>
+    <Foo Condition=""'A;B'=='A;B'"">'A;B'</Foo>
+  </PropertyGroup>
+  <ItemGroup>
+    <Bar Include='$(Foo)' />
+  </ItemGroup>
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			var proj = new Project (root); // at this state property is parsed without error i.e. Condition evaluates fine.
+			var prop = proj.GetProperty ("Foo");
+			Assert.AreEqual ("'A;B'", prop.EvaluatedValue, "#1");
+			var items = proj.GetItems ("Bar");
+			Assert.AreEqual ("'A", items.First ().EvaluatedInclude, "#2");
+			Assert.AreEqual ("$(Foo)", items.First ().UnevaluatedInclude, "#3");
+			Assert.AreEqual (2, items.Count, "#4");
+			Assert.AreEqual ("B'", items.Last ().EvaluatedInclude, "#5");
+			Assert.AreEqual ("$(Foo)", items.Last ().UnevaluatedInclude, "#6");
+			Assert.IsTrue (items.First ().Xml == items.Last ().Xml, "#7");
+		}
+		
+		// the same as above except that ItemGroup goes first (and yet evaluated the same).
+		[Test]
+		public void EvaluationOrderPropertiesPrecedesItems ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <ItemGroup>
+    <Bar Include='$(Foo)' />
+  </ItemGroup>
+  <PropertyGroup>
+    <Foo Condition=""'A;B'=='A;B'"">'A;B'</Foo>
+  </PropertyGroup>
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			var proj = new Project (root); // at this state property is parsed without error i.e. Condition evaluates fine.
+			var prop = proj.GetProperty ("Foo");
+			Assert.AreEqual ("'A;B'", prop.EvaluatedValue, "#1");
+			var items = proj.GetItems ("Bar");
+			Assert.AreEqual ("'A", items.First ().EvaluatedInclude, "#2");
+			Assert.AreEqual ("$(Foo)", items.First ().UnevaluatedInclude, "#3");
+			Assert.AreEqual (2, items.Count, "#4");
+			Assert.AreEqual ("B'", items.Last ().EvaluatedInclude, "#5");
+			Assert.AreEqual ("$(Foo)", items.Last ().UnevaluatedInclude, "#6");
+			Assert.IsTrue (items.First ().Xml == items.Last ().Xml, "#7");
+		}
 	}
 }
 
