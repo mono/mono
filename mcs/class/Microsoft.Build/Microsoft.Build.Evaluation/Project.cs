@@ -377,7 +377,8 @@ namespace Microsoft.Build.Evaluation
 
 		public void MarkDirty ()
 		{
-			throw new NotImplementedException ();
+			if (!DisableMarkDirty)
+				is_dirty = true;
 		}
 
 		public void ReevaluateIfNecessary ()
@@ -497,8 +498,9 @@ namespace Microsoft.Build.Evaluation
 			get { return ProjectCollection.IsBuildEnabled; }
 		}
 
+		bool is_dirty;
 		public bool IsDirty {
-			get { throw new NotImplementedException (); }
+			get { return is_dirty; }
 		}
 
 		public IDictionary<string, ProjectItemDefinition> ItemDefinitions {

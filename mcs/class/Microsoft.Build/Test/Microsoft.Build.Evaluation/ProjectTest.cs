@@ -138,20 +138,53 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		}
 		
 		[Test]
-		public void EvaluateIncludeAsEmptyThenIgnored ()
+		public void EvaluateItemConditionThenIgnored ()
 		{
             string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <PropertyGroup>
+    <P></P>
+  </PropertyGroup>
   <ItemGroup>
-    <Foo Include='' />
-    <Bar />
+    <Foo Condition='' Include='x' />
+    <Bar Include='$(P)' />
+    <Baz Include='z' />
   </ItemGroup>
 </Project>";
-            var xml = XmlReader.Create (new StringReader (project_xml));
-            var root = ProjectRootElement.Create (xml);
-            var proj = new Project (root);
-            // note that Foo is ignored.
-			Assert.AreEqual (1, proj.ItemsIgnoringCondition.Count, "#1");
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			var proj = new Project (root);
+			// note that Foo is ignored BUT Bar is NOT ignored.
+			Assert.AreEqual (2, proj.ItemsIgnoringCondition.Count, "#1");
 			Assert.IsNotNull ("Bar", proj.ItemsIgnoringCondition.First ().ItemType, "#2");
+			Assert.IsNotNull ("Baz", proj.ItemsIgnoringCondition.Last ().ItemType, "#3");
+		}
+		
+		[Test]
+		public void DirtyMarking ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			var proj = new Project (root);
+			Assert.IsFalse (proj.IsDirty, "#1");
+			proj.MarkDirty ();
+			Assert.IsTrue (proj.IsDirty, "#2");
+		}
+		
+		[Test]
+		public void DirtyMarking2 ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			var proj = new Project (root);
+			proj.DisableMarkDirty = true;
+			proj.MarkDirty ();
+			Assert.IsFalse (proj.IsDirty, "#1"); // not rejected, just ignored.
+			proj.DisableMarkDirty = false;
+			Assert.IsFalse (proj.IsDirty, "#2"); // not like status pending
+			proj.MarkDirty ();
+			Assert.IsTrue (proj.IsDirty, "#3");
 		}
 	}
 }
