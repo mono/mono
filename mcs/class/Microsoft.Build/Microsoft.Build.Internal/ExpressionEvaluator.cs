@@ -88,10 +88,12 @@ namespace Microsoft.Build.Internal
 		
 		public bool EvaluateStringAsBoolean (string ret)
 		{
-			if (ret.Equals ("TRUE", StringComparison.InvariantCultureIgnoreCase))
-				return true;
-			else if (ret.Equals ("FALSE", StringComparison.InvariantCultureIgnoreCase))
-				return false;
+			if (ret != null) {
+				if (ret.Equals ("TRUE", StringComparison.InvariantCultureIgnoreCase))
+					return true;
+				else if (ret.Equals ("FALSE", StringComparison.InvariantCultureIgnoreCase))
+					return false;
+			}
 			throw new InvalidProjectFileException (this.Location, null, string.Format ("String is evaluated as '{0}' and cannot be converted to boolean", ret));
 		}
 	}
@@ -137,7 +139,8 @@ namespace Microsoft.Build.Internal
 	{
 		public override bool EvaluateAsBoolean (EvaluationContext context)
 		{
-			throw new InvalidProjectFileException ("Project item access cannot be evaluated as boolean");
+			var ret = EvaluateAsString (context);
+			return EvaluateStringAsBoolean (ret);
 		}
 		
 		public override string EvaluateAsString (EvaluationContext context)
