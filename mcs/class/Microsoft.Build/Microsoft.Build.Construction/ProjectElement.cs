@@ -73,6 +73,7 @@ namespace Microsoft.Build.Construction
                         while (reader.MoveToNextAttribute ()) {
                                 LoadAttribute (reader.Name, reader.Value);
                         }
+                        reader.MoveToElement ();
                         LoadValue (reader);
                 }
                 internal virtual void LoadAttribute (string name, string value)
