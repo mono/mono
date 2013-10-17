@@ -27,7 +27,7 @@ namespace Microsoft.Build.Internal
 				case '$':
 				case '@':
 				case '%':
-					if (start == end || source [start + 1] != '(') {
+					if (start == end || start + 1 == source.Length || source [start + 1] != '(') {
 						if (validationType == ExpressionValidationType.StrictBoolean)
 							throw new InvalidProjectFileException (string.Format ("missing '(' after '{0}' at {1} in \"{2}\"", source [start], start, source));
 						else
