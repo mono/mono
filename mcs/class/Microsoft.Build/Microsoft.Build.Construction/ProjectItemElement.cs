@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Build.Internal;
 using System.Xml;
+using Microsoft.Build.Exceptions;
 
 namespace Microsoft.Build.Construction
 {
@@ -81,6 +82,7 @@ namespace Microsoft.Build.Construction
                         SaveAttribute (writer, "Remove", Remove);
                         base.SaveValue (writer);
                 }
+
                 internal override void LoadAttribute (string name, string value)
                 {
                         switch (name) {
@@ -100,6 +102,12 @@ namespace Microsoft.Build.Construction
                                 base.LoadAttribute (name, value);
                                 break;
                         }
+                }
+                internal override void LoadValue (XmlReader reader)
+                {
+                        if (string.IsNullOrWhiteSpace (Include))
+                                throw new InvalidProjectFileException (Location, null, string.Format ("Include attribute is null on '{0}' item", ItemType));
+                        base.LoadValue (reader);
                 }
                 internal override ProjectElement LoadChildElement (XmlReader reader)
                 {
