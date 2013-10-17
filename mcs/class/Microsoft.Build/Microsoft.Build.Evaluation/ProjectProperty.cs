@@ -30,6 +30,9 @@ using System;
 using System.Linq;
 using Microsoft.Build.Construction;
 using Microsoft.Build.Internal;
+using System.Collections.Generic;
+using System.Reflection;
+using System.IO;
 
 namespace Microsoft.Build.Evaluation
 {
@@ -57,6 +60,10 @@ namespace Microsoft.Build.Evaluation
 		public abstract bool IsImported { get; }
 
 		public abstract bool IsReservedProperty { get; }
+
+		internal virtual bool IsWellKnownProperty {
+			get { return false; }
+		}
 
 		public abstract string Name { get; }
 
@@ -143,14 +150,55 @@ namespace Microsoft.Build.Evaluation
 	
 	internal class EnvironmentProjectProperty : BaseProjectProperty
 	{
-		public EnvironmentProjectProperty (Project project, string name, string value)
+		public static IEnumerable<EnvironmentProjectProperty> GetWellKnownProperties (Project project)
+		{
+			Func<string,string,EnvironmentProjectProperty> create = (name, value) => new EnvironmentProjectProperty (project, name, value, true);
+			var ext = Environment.GetEnvironmentVariable ("MSBuildExtensionsPath") ?? DefaultExtensionsPath;
+			yield return create ("MSBuildExtensionsPath", ext);
+			var ext32 = Environment.GetEnvironmentVariable ("MSBuildExtensionsPath32") ?? DefaultExtensionsPath;
+			yield return create ("MSBuildExtensionsPath32", ext32);
+			var ext64 = Environment.GetEnvironmentVariable ("MSBuildExtensionsPath64") ?? DefaultExtensionsPath;
+			yield return create ("MSBuildExtensionsPath64", ext64);
+		}
+
+		static string extensions_path;
+		internal static string DefaultExtensionsPath {
+			get {
+				if (extensions_path == null) {
+					// NOTE: code from mcs/tools/gacutil/driver.cs
+					PropertyInfo gac = typeof (System.Environment).GetProperty (
+							"GacPath", BindingFlags.Static | BindingFlags.NonPublic);
+
+					if (gac != null) {
+						MethodInfo get_gac = gac.GetGetMethod (true);
+						string gac_path = (string) get_gac.Invoke (null, null);
+						extensions_path = Path.GetFullPath (Path.Combine (
+									gac_path, Path.Combine ("..", "xbuild")));
+					}
+				}
+				return extensions_path;
+			}
+		}
+		
+		public EnvironmentProjectProperty (Project project, string name, string value, bool wellknown = false)
 			: base (project, PropertyType.Environment, name)
 		{
 			this.value = value;
 			UpdateEvaluatedValue ();
+			this.wellknown = wellknown;
 		}
 		
 		readonly string value;
+		readonly bool wellknown;
+
+		internal override bool IsWellKnownProperty {
+			get { return wellknown; }
+		}
+
+		// It can override possible another environment vairable property BUT never gives Predecessor.
+		public override ProjectProperty Predecessor {
+			get { return null; }
+		}
 		
 		public override string UnevaluatedValue {
 			get { return value; }
@@ -190,6 +238,58 @@ namespace Microsoft.Build.Evaluation
 		}
 		
 		public override string UnevaluatedValue { get; set; }
+		
+		public override ProjectPropertyElement Xml {
+			get { return null; }
+		}
+	}
+	
+	internal class ReservedProjectProperty : BaseProjectProperty
+	{
+		// seealso http://msdn.microsoft.com/en-us/library/ms164309.aspx
+		public static IEnumerable<ReservedProjectProperty> GetReservedProperties (Toolset toolset, Project project)
+		{
+			Func<string,Func<string>,ReservedProjectProperty> create = (name, value) => new ReservedProjectProperty (project, name, value);
+			yield return create ("MSBuildBinPath", () => toolset.ToolsPath);
+			// FIXME: add MSBuildLastTaskResult
+			// FIXME: add MSBuildNodeCount
+			// FIXME: add MSBuildProgramFiles32
+			yield return create ("MSBuildProjectDefaultTargets", () => project.Xml.DefaultTargets);
+			yield return create ("MSBuildProjectDirectory", () => project.DirectoryPath + Path.DirectorySeparatorChar);
+			// FIXME: add MSBuildProjectDirectoryNoRoot
+			yield return create ("MSBuildProjectExtension", () => Path.GetExtension (project.FullPath));
+			yield return create ("MSBuildProjectFile", () => Path.GetFileName (project.FullPath));
+			yield return create ("MSBuildProjectFullPath", () => project.FullPath);
+			yield return create ("MSBuildProjectName", () => Path.GetFileNameWithoutExtension (project.FullPath));
+			// FIXME: add MSBuildStartupDirectory
+			yield return create ("MSBuildThisFile", () => Path.GetFileName (project.GetEvaluationTimeThisFile ()));
+			yield return create ("MSBuildThisFileFullPath", () => project.GetEvaluationTimeThisFile ());
+			yield return create ("MSBuildThisFileName", () => Path.GetFileNameWithoutExtension (project.GetEvaluationTimeThisFile ()));
+			yield return create ("MSBuildThisFileExtension", () => Path.GetExtension (project.GetEvaluationTimeThisFile ()));
+
+			yield return create ("MSBuildThisFileDirectory", () => Path.GetDirectoryName (project.GetEvaluationTimeThisFileDirectory ()));
+			yield return create ("MSBuildThisFileDirectoryNoRoot", () => {
+				string dir = project.GetEvaluationTimeThisFileDirectory () + Path.DirectorySeparatorChar;
+				return dir.Substring (Path.GetPathRoot (dir).Length);
+				});
+		}
+		
+		public ReservedProjectProperty (Project project, string name, Func<string> value)
+			: base (project, PropertyType.Reserved, name)
+		{
+			this.value = value;
+		}
+
+		// make sure it does not give access to any possible attempted overrrides.
+		public override ProjectProperty Predecessor {
+			get { return null; }
+		}
+
+		readonly Func<string> value;
+		public override string UnevaluatedValue {
+			get { return value (); }
+			set { throw new InvalidOperationException (string.Format ("You cannot change value of reserved property '{0}'.", Name)); }
+		}
 		
 		public override ProjectPropertyElement Xml {
 			get { return null; }

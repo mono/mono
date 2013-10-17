@@ -170,13 +170,25 @@ namespace Microsoft.Build.Evaluation
 				this.properties.Add (new EnvironmentProjectProperty (this, (string)p.Key, (string)p.Value));
 			foreach (var p in GlobalProperties)
 				this.properties.Add (new GlobalProjectProperty (this, p.Key, p.Value));
+			var tools = ProjectCollection.GetToolset (this.ToolsVersion) ?? ProjectCollection.GetToolset (this.ProjectCollection.DefaultToolsVersion);
+			foreach (var p in ReservedProjectProperty.GetReservedProperties (tools, this))
+				this.properties.Add (p);
+			foreach (var p in EnvironmentProjectProperty.GetWellKnownProperties (this))
+				this.properties.Add (p);
 
 			all_evaluated_items = new List<ProjectItem> ();
+			
+			// First step: evaluate Properties
 			foreach (var child in Xml.Children) {
 				var pge = child as ProjectPropertyGroupElement;
 				if (pge != null)
 					foreach (var p in pge.Properties)
-						this.properties.Add (new XmlProjectProperty (this, p, PropertyType.Normal));
+						// do not allow overwriting reserved or well-known properties by user
+						if (!this.properties.Any (_ => (_.IsReservedProperty || _.IsWellKnownProperty) && _.Name.Equals (p.Name, StringComparison.InvariantCultureIgnoreCase)))
+							this.properties.Add (new XmlProjectProperty (this, p, PropertyType.Normal));
+			}
+			
+			foreach (var child in Xml.Children) {
 				var ige = child as ProjectItemGroupElement;
 				if (ige != null) {
 					foreach (var p in ige.Items) {
@@ -533,6 +545,19 @@ namespace Microsoft.Build.Evaluation
 		#endif
 		IDictionary<string, ProjectTargetInstance> Targets {
 			get { return targets; }
+		}
+		
+		// These are required for reserved property, represents dynamically changing property values.
+		// This should resolve to either the project file path or that of the imported file.
+		Stack<string> files_in_process = new Stack<string> ();
+		internal string GetEvaluationTimeThisFileDirectory ()
+		{
+			return Path.GetDirectoryName (GetEvaluationTimeThisFile ()) + Path.DirectorySeparatorChar;
+		}
+
+		internal string GetEvaluationTimeThisFile ()
+		{
+			return files_in_process.Count > 0 ? files_in_process.Peek () : FullPath;
 		}
 	}
 }
