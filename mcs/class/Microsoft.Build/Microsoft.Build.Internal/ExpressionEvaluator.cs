@@ -199,7 +199,12 @@ namespace Microsoft.Build.Internal
 	{
 		public override bool EvaluateAsBoolean (EvaluationContext context)
 		{
-			throw new NotImplementedException ();
+			var ret = EvaluateAsString (context);
+			if (ret.Equals ("TRUE", StringComparison.InvariantCultureIgnoreCase))
+				return true;
+			else if (ret.Equals ("FALSE", StringComparison.InvariantCultureIgnoreCase))
+				return false;
+			throw new InvalidProjectFileException (Location, null, string.Format ("String is evaluated as '{0}' and cannot be converted to boolean", ret));
 		}
 		
 		public override string EvaluateAsString (EvaluationContext context)
