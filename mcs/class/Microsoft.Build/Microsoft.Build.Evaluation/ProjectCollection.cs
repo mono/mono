@@ -191,11 +191,15 @@ namespace Microsoft.Build.Evaluation
 		}
 
 		readonly List<Toolset> toolsets = new List<Toolset> ();
-		[MonoTODO ("unused")]
 		// so what should we do without ToolLocationHelper in Microsoft.Build.Utilities.dll? There is no reference to it in this dll.
 		public ICollection<Toolset> Toolsets {
 			// For ConfigurationFile and None, they cannot be added externally.
 			get { return (ToolsetLocations & ToolsetDefinitionLocations.Registry) != 0 ? toolsets : toolsets.ToList (); }
+		}
+		
+		public Toolset GetToolset (string toolsVersion)
+		{
+			return Toolsets.FirstOrDefault (t => t.ToolsVersion == toolsVersion);
 		}
 
 		//FIXME: should also support config file, depending on ToolsetLocations
