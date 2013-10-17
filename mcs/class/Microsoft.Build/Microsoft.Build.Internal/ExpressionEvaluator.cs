@@ -85,6 +85,15 @@ namespace Microsoft.Build.Internal
 		public abstract string EvaluateAsString (EvaluationContext context);
 		public abstract bool EvaluateAsBoolean (EvaluationContext context);
 		public abstract object EvaluateAsObject (EvaluationContext context);
+		
+		public bool EvaluateStringAsBoolean (string ret)
+		{
+			if (ret.Equals ("TRUE", StringComparison.InvariantCultureIgnoreCase))
+				return true;
+			else if (ret.Equals ("FALSE", StringComparison.InvariantCultureIgnoreCase))
+				return false;
+			throw new InvalidProjectFileException (this.Location, null, string.Format ("String is evaluated as '{0}' and cannot be converted to boolean", ret));
+		}
 	}
 	
 	partial class BooleanLiteral : Expression
@@ -160,7 +169,7 @@ namespace Microsoft.Build.Internal
 	{
 		public override bool EvaluateAsBoolean (EvaluationContext context)
 		{
-			throw new InvalidProjectFileException ("Project item access cannot be evaluated as boolean");
+			return EvaluateStringAsBoolean (EvaluateAsString (context));
 		}
 		
 		public override string EvaluateAsString (EvaluationContext context)
@@ -200,11 +209,7 @@ namespace Microsoft.Build.Internal
 		public override bool EvaluateAsBoolean (EvaluationContext context)
 		{
 			var ret = EvaluateAsString (context);
-			if (ret.Equals ("TRUE", StringComparison.InvariantCultureIgnoreCase))
-				return true;
-			else if (ret.Equals ("FALSE", StringComparison.InvariantCultureIgnoreCase))
-				return false;
-			throw new InvalidProjectFileException (Location, null, string.Format ("String is evaluated as '{0}' and cannot be converted to boolean", ret));
+			return EvaluateStringAsBoolean (ret);
 		}
 		
 		public override string EvaluateAsString (EvaluationContext context)
