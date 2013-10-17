@@ -53,7 +53,7 @@ namespace MonoTests.Microsoft.Build.Internal
 			foreach (var expr in invalid_as_boolean.Concat (valid)) {
 				string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
   <ItemGroup>
-    <Foo Condition=""{0}"" />
+    <Foo Condition=""{0}"" Include='x' />
   </ItemGroup>
 </Project>";
 				var xml = XmlReader.Create (new StringReader (string.Format (project_xml, expr)));
@@ -62,10 +62,12 @@ namespace MonoTests.Microsoft.Build.Internal
 					new Project (root);
 					if (invalid_as_boolean.Contains (expr))
 						Assert.Fail ("Parsing Condition '{0}' should fail", expr);
-				} catch (InvalidProjectFileException) {
+				} catch (Exception ex) {
 					if (valid.Contains (expr))
-						throw;
-					continue;
+						throw new Exception (string.Format ("failed to parse '{0}'", expr), ex);
+					else if (ex is InvalidProjectFileException)
+						continue;
+					throw new Exception (string.Format ("unexpected exception to parse '{0}'", expr), ex);
 				}
 			}
 		}
@@ -74,33 +76,50 @@ namespace MonoTests.Microsoft.Build.Internal
 		public void EvaluateAsString ()
 		{
 			foreach (var expr in invalid_as_boolean.Concat (valid)) {
-				string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
-  <ItemGroup>
-    <Foo Condition=""{0}"" />
-  </ItemGroup>
-</Project>";
-				var xml = XmlReader.Create (new StringReader (string.Format (project_xml, expr)));
-				var root = ProjectRootElement.Create (xml);
-				// everything should pass
-				new Project (root);
+				try {
+					string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+	  <ItemGroup>
+	    <Foo Include=""{0}"" />
+	  </ItemGroup>
+	</Project>";
+					var xml = XmlReader.Create (new StringReader (string.Format (project_xml, expr)));
+					var root = ProjectRootElement.Create (xml);
+					// everything should pass
+					new Project (root);
+				} catch (Exception ex) {
+					throw new Exception (string.Format ("failed to parse '{0}'", expr), ex);
+				}
 			}
 		}
 		
 		[Test]
-		public void EvaluateReferencesWithProperties ()
+		public void EvaluatePropertyReferencesWithProperties ()
 		{
-			foreach (var expr in depends) {
-				string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
   <ItemGroup>
-    <Foo Condition=""{0}"" />
+    <Foo Condition=""$(foo)"" Include='x' />
   </ItemGroup>
 </Project>";
-				var xml = XmlReader.Create (new StringReader (string.Format (project_xml, expr)));
-				var root = ProjectRootElement.Create (xml);
-				var props = new Dictionary<string,string> ();
-				props ["foo"] = "true";
-				new Project (root, props, null);
-			}
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			var props = new Dictionary<string,string> ();
+			props ["foo"] = "true";
+			new Project (root, props, null);
+		}
+		
+		[Test]
+		public void EvaluateItemReferences ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <ItemGroup>
+    <Foo Include='false' />
+    <!-- by the time Bar is evaluated, Foo is already evaluated and taken into consideration in expansion -->
+    <Bar Condition=""@(foo)"" Include='x' />
+  </ItemGroup>
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			new Project (root);
 		}
 		
 		[Test]
@@ -109,7 +128,7 @@ namespace MonoTests.Microsoft.Build.Internal
 			foreach (var expr in depends) {
 				string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
   <ItemGroup>
-    <Foo Condition=""{0}"" />
+    <Foo Condition=""{0}"" Include='x' />
   </ItemGroup>
 </Project>";
 				var xml = XmlReader.Create (new StringReader (string.Format (project_xml, expr)));
