@@ -212,7 +212,15 @@ namespace System.Windows.Forms
 
 				// Max width of messagebox must be 60% of screen width
 				int max_width = (int) (Screen.GetWorkingArea (this).Width * 0.6);
-
+				if (max_width > 500) {
+					float dx;
+					using (Graphics g = this.CreateGraphics ()) {
+						dx = g.DpiX;
+					}
+					int new_max_width = (int) (dx * 5.0);	// aim for text no wider than 5.0 inches
+					if (new_max_width < max_width)
+						max_width = new_max_width;
+				}
 				// First we have to know the size of text + image
 				Drawing.SizeF tsize = TextRenderer.MeasureText (msgbox_text, this.Font, new Size (max_width, int.MaxValue), TextFormatFlags.WordBreak);
 				text_rect = new RectangleF ();
