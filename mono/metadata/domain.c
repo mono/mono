@@ -22,6 +22,7 @@
 #include <mono/utils/mono-logger-internal.h>
 #include <mono/utils/mono-membar.h>
 #include <mono/utils/mono-counters.h>
+#include <mono/utils/mono-threads.h>
 #include <mono/utils/hazard-pointer.h>
 #include <mono/utils/mono-tls.h>
 #include <mono/utils/mono-mmap.h>
@@ -67,8 +68,11 @@ MONO_FAST_TLS_DECLARE(tls_appdomain);
 
 #define GET_APPDOMAIN() ((MonoDomain *)mono_native_tls_get_value (appdomain_thread_id))
 #define SET_APPDOMAIN(x) do {						\
+		MonoThreadInfo *mthreadnfo;					\
 		mono_native_tls_set_value (appdomain_thread_id, x);	\
 		mono_gc_set_current_thread_appdomain (x);		\
+		if (mthreadnfo = mono_thread_info_current())    \
+			mthreadnfo->current_domain = (x);           \
 	} while (FALSE)
 
 #endif

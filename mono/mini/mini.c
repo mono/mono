@@ -2686,11 +2686,16 @@ mono_set_lmf (MonoLMF *lmf)
 static void
 mono_set_jit_tls (MonoJitTlsData *jit_tls)
 {
+	MonoThreadInfo *mti;
+
 	mono_native_tls_set_value (mono_jit_tls_id, jit_tls);
 
 #ifdef MONO_HAVE_FAST_TLS
 	MONO_FAST_TLS_SET (mono_jit_tls, jit_tls);
 #endif
+
+	if (mti = mono_thread_info_current())
+		mti->current_jit_tls = jit_tls;
 }
 
 static void

@@ -594,15 +594,11 @@ thread_suspend_func (gpointer user_data, void *sigctx, MonoContext *ctx)
 	}
 
 	if (tls->tid != GetCurrentThreadId ()) {
-		/* Happens on osx because threads are not suspended using signals */
+		/* Happens on osx and windows because threads are not suspended using signals */
 		gboolean res;
 
 		g_assert (tls->info);
-#ifdef TARGET_WIN32
-		return;
-#else
-		res = mono_thread_state_init_from_handle (&tls->unwind_state, (MonoNativeThreadId)tls->tid, tls->info->native_handle);
-#endif
+		res = mono_thread_state_init_from_handle (&tls->unwind_state, tls->info);
 	} else {
 		tls->unwind_state.unwind_data [MONO_UNWIND_DATA_LMF] = mono_get_lmf ();
 		if (sigctx) {
