@@ -81,8 +81,7 @@ namespace Microsoft.Build.Internal
 					int idx = source.IndexOfAny (token_starters, start + 1);
 					string name = idx < 0 ? source.Substring (start, end - start) : source.Substring (start, idx - start);
 					var val = new NameToken () { Name = name };
-					var literal = new RawStringLiteral () { Value = val };
-					head.Add (new StringLiteralExpression () { Contents = new ExpressionList () { literal } });
+					head.Add (new StringLiteral () { Value = val });
 					if (idx >= 0)
 						start = idx;
 					else

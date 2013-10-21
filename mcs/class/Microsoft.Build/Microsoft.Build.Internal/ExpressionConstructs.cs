@@ -77,6 +77,25 @@ namespace Microsoft.Build.Internal
 		}
 	}
 	
+	enum Operator
+	{
+		EQ,
+		NE,
+		LT,
+		LE,
+		GT,
+		GE,
+		And,
+		Or
+	}
+	
+	partial class BinaryExpression : Expression
+	{
+		public Operator Operator { get; set; }
+		public Expression Left { get; set; }
+		public Expression Right { get; set; }
+	}
+	
 	partial class BooleanLiteral : Expression
 	{
 		public bool Value { get; set; }
@@ -127,9 +146,9 @@ namespace Microsoft.Build.Internal
 		public NameToken Item { get; set; }
 	}
 	
-	partial class StringLiteralExpression : Expression
+	partial class StringLiteral : Expression
 	{
-		public ExpressionList Contents { get; set; }
+		public NameToken Value { get; set; }
 	}
 
 	partial class RawStringLiteral : Expression

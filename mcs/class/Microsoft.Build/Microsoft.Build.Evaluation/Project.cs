@@ -322,7 +322,7 @@ namespace Microsoft.Build.Evaluation
 		
 		bool ShouldInclude (string unexpandedValue)
 		{
-			return string.IsNullOrWhiteSpace (unexpandedValue) || new ExpressionEvaluator (this).EvaluateAsBoolean (unexpandedValue);
+			return string.IsNullOrWhiteSpace (unexpandedValue) || new ExpressionEvaluator (this).EvaluateAsBoolean (ExpandString (unexpandedValue));
 		}
 
 		public string ExpandString (string unexpandedValue)
