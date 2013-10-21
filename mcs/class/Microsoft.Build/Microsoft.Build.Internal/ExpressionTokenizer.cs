@@ -46,11 +46,16 @@ namespace Microsoft.Build.Internal
 
 			error = null;
 			token_value = null;
-			current_token_position = pos;
 
-			SkipSpaces ();
+			while (pos < source.Length) {
+				if (spaces.IndexOf (source [pos]) >= 0)
+					pos++;
+				else
+					break;
+			}
 			if (pos == source.Length)
 				return false;
+			current_token_position = pos;
 
 			switch (source [pos++]) {
 			case '.':
@@ -171,16 +176,6 @@ namespace Microsoft.Build.Internal
 			return true;
 		}
 		string spaces = " \t\r\n";
-		
-		void SkipSpaces ()
-		{
-			while (current_token_position < source.Length) {
-				if (spaces.IndexOf (source [current_token_position]) > 0)
-					current_token_position++;
-				else
-					break;
-			}
-		}
 
 		static readonly char [] token_starter_chars = ".,)-=:!><$@%\"' ".ToCharArray ();
 		
