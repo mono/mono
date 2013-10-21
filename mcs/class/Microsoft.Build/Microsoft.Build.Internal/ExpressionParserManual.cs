@@ -30,75 +30,79 @@ namespace Microsoft.Build.Internal
 				return new ExpressionList ();
 
 			var head = new List<Expression> ();
-			var tail = new List<Expression> ();
 			while (start < end) {
-				char token = source [start];
-				switch (token) {
-				case '$':
-				case '@':
-				case '%':
-					if (start == end || start + 1 == source.Length || source [start + 1] != '(') {
-						if (validation_type == ExpressionValidationType.StrictBoolean)
-							throw new InvalidProjectFileException (string.Format ("missing '(' after '{0}' at {1} in \"{2}\"", source [start], start, source));
-						else
-							goto default; // treat as raw literal to the section end
-					}
-					start += 2;
-					int last = FindMatchingCloseParen (start, end);
-					if (last < 0) {
-						if (validation_type == ExpressionValidationType.StrictBoolean)
-							throw new InvalidProjectFileException (string.Format ("expression did not have matching ')' since index {0} in \"{1}\"", start, source));
-						else {
-							start -= 2;
-							goto default; // treat as raw literal to the section end
-						}
-					}
-					if (token == '$')
-						head.Add (EvaluatePropertyExpression (start, last));
-					else if (token == '%')
-						head.Add (EvaluateMetadataExpression (start, last));
-					else
-						head.Add (EvaluateItemExpression (start, last));
-					start = last + 1;
-					break;
-					
-				// Below (until default) are important only for Condition evaluation
-				case '(':
-					if (validation_type == ExpressionValidationType.LaxString)
-						goto default;
-					start++;
-					last = FindMatchingCloseParen (start, end);
-					if (last < 0)
-						if (validation_type == ExpressionValidationType.StrictBoolean)
-							throw new InvalidProjectFileException (string.Format ("expression did not have matching ')' since index {0} in \"{1}\"", start, source));
-						else {
-							start--;
-							goto default; // treat as raw literal to the section end
-						}
-					var contents = Parse (start, last).ToArray ();
-					if (contents.Length > 1)
-						throw new InvalidProjectFileException (string.Format ("unexpected continuous expression within (){0} in \"{1}\"", contents [1].Column > 0 ? " at " + contents [1].Column : null, source));
-					head.Add (contents.First ());
-					break;
-
-				default:
-					int idx = source.IndexOfAny (token_starters, start + 1);
-					string name = idx < 0 ? source.Substring (start, end - start) : source.Substring (start, idx - start);
-					var val = new NameToken () { Name = name };
-					head.Add (new StringLiteral () { Value = val });
-					if (idx >= 0)
-						start = idx;
-					else
-						start = end;
-
-					break;
-				}
+				head.Add (ParseSingle (ref start, ref end));
 				SkipSpaces (ref start);
 			}
 			var ret = new ExpressionList ();
-			foreach (var e in head.Concat (((IEnumerable<Expression>) tail).Reverse ()))
+			foreach (var e in head)
 				ret.Add (e);
 			return ret;
+		}
+		
+		Expression ParseSingle (ref int start, ref int end)
+		{
+			char token = source [start];
+			switch (token) {
+			case '$':
+			case '@':
+			case '%':
+				if (start == end || start + 1 == source.Length || source [start + 1] != '(') {
+					if (validation_type == ExpressionValidationType.StrictBoolean)
+						throw new InvalidProjectFileException (string.Format ("missing '(' after '{0}' at {1} in \"{2}\"", source [start], start, source));
+					else
+						goto default; // treat as raw literal to the section end
+				}
+				start += 2;
+				int last = FindMatchingCloseParen (start, end);
+				if (last < 0) {
+					if (validation_type == ExpressionValidationType.StrictBoolean)
+						throw new InvalidProjectFileException (string.Format ("expression did not have matching ')' since index {0} in \"{1}\"", start, source));
+					else {
+						start -= 2;
+						goto default; // treat as raw literal to the section end
+					}
+				}
+				Expression ret;
+				if (token == '$')
+					ret = EvaluatePropertyExpression (start, last);
+				else if (token == '%')
+					ret = EvaluateMetadataExpression (start, last);
+				else
+					ret = EvaluateItemExpression (start, last);
+				start = last + 1;
+				return ret;
+					
+			// Below (until default) are important only for Condition evaluation
+			case '(':
+				if (validation_type == ExpressionValidationType.LaxString)
+					goto default;
+				start++;
+				last = FindMatchingCloseParen (start, end);
+				if (last < 0)
+				if (validation_type == ExpressionValidationType.StrictBoolean)
+					throw new InvalidProjectFileException (string.Format ("expression did not have matching ')' since index {0} in \"{1}\"", start, source));
+				else {
+					start--;
+					goto default; // treat as raw literal to the section end
+				}
+				var contents = Parse (start, last).ToArray ();
+				if (contents.Length > 1)
+					throw new InvalidProjectFileException (string.Format ("unexpected continuous expression within (){0} in \"{1}\"", contents [1].Column > 0 ? " at " + contents [1].Column : null, source));
+				return contents.First ();
+
+			default:
+				int idx = source.IndexOfAny (token_starters, start + 1);
+				string name = idx < 0 ? source.Substring (start, end - start) : source.Substring (start, idx - start);
+				var val = new NameToken () { Name = name };
+				ret = new StringLiteral () { Value = val };
+				if (idx >= 0)
+					start = idx;
+				else
+					start = end;
+
+				return ret;
+			}
 		}
 		
 		int FindMatchingCloseParen (int start, int end)
@@ -140,19 +144,27 @@ namespace Microsoft.Build.Internal
 				// static type access
 				idx = source.IndexOf ("::", start, StringComparison.Ordinal);
 				if (idx >= 0) {
-					throw new NotImplementedException ();
-				
 					string type = source.Substring (start, idx - start);
 					if (type.Length < 2 || type [0] != '[' || type [type.Length - 1] != ']')
 						throw new InvalidProjectFileException (string.Format ("Static function call misses appropriate type name surrounded by '[' and ']' at {0} in \"{1}\"", start, source));
+					type = type.Substring (1, type.Length - 2);
 					int start2 = idx + 2;
 					int idx2 = source.IndexOf ('(', idx + 2, end - start2);
 					if (idx2 < 0) {
 						// access to static property
 						string member = source.Substring (start2, end - start2);
+						return new PropertyAccessExpression () {
+							Access = new PropertyAccess () {
+								Name = new NameToken () { Name = member },
+								TargetType = PropertyTargetType.Type,
+								Target = new StringLiteral () { Value = new NameToken () { Name = type } }
+								}
+							};
 					} else {
 						// access to static method
 						string member = source.Substring (start2, idx2 - start2);
+						
+						throw new NotImplementedException ();
 					}
 				} else {
 					// property access without member specification

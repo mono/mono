@@ -226,13 +226,23 @@ namespace Microsoft.Build.Internal
 					return null;
 				return context.EvaluateProperty (prop);
 			} else {
-				var obj = EvaluateAsObject (context);
-				if (obj == null)
-					return null;
-				var prop = obj.GetType ().GetProperty (Access.Name.Name);
-				if (prop == null)
-					throw new InvalidProjectFileException (string.Format ("access to undefined property '{0}' at {1}", Access.Name, Location));
-				return prop.GetValue (obj, null);
+				if (this.Access.TargetType == PropertyTargetType.Object) {
+					var obj = Access.Target.EvaluateAsObject (context);
+					if (obj == null)
+						return null;
+					var prop = obj.GetType ().GetProperty (Access.Name.Name);
+					if (prop == null)
+						throw new InvalidProjectFileException (Location, string.Format ("access to undefined property '{0}' of '{1}' at {2}", Access.Name.Name, Access.Target.EvaluateAsString (context), Location));
+					return prop.GetValue (obj, null);
+				} else {
+					var type = Type.GetType (Access.Target.EvaluateAsString (context));
+					if (type == null)
+						throw new InvalidProjectFileException (Location, string.Format ("specified type '{0}' was not found", Access.Target.EvaluateAsString (context)));
+					var prop = type.GetProperty (Access.Name.Name);
+					if (prop == null)
+						throw new InvalidProjectFileException (Location, string.Format ("access to undefined property '{0}' of '{1}' at {2}", Access.Name.Name, Access.Target.EvaluateAsString (context), Location));
+					return prop.GetValue (null, null);
+				}
 			}
 		}
 	}
