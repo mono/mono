@@ -322,12 +322,17 @@ namespace Microsoft.Build.Evaluation
 		
 		bool ShouldInclude (string unexpandedValue)
 		{
-			return string.IsNullOrWhiteSpace (unexpandedValue) || new ExpressionEvaluator (this).EvaluateAsBoolean (ExpandString (unexpandedValue));
+			return string.IsNullOrWhiteSpace (unexpandedValue) || new ExpressionEvaluator (this, null).EvaluateAsBoolean (ExpandString (unexpandedValue, "''"));
 		}
 
 		public string ExpandString (string unexpandedValue)
 		{
-			return new ExpressionEvaluator (this).Evaluate (unexpandedValue);
+			return ExpandString (unexpandedValue, null);
+		}
+		
+		string ExpandString (string unexpandedValue, string replacementForMissingStuff)
+		{
+			return new ExpressionEvaluator (this, replacementForMissingStuff).Evaluate (unexpandedValue);
 		}
 
 		public static string GetEvaluatedItemIncludeEscaped (ProjectItem item)

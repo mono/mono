@@ -48,6 +48,10 @@ namespace Microsoft.Build.Internal
 			token_value = null;
 			current_token_position = pos;
 
+			SkipSpaces ();
+			if (pos == source.Length)
+				return false;
+
 			switch (source [pos++]) {
 			case '.':
 				TokenForItemPropertyValue (".", Token.DOT);
@@ -162,17 +166,22 @@ namespace Microsoft.Build.Internal
 					token_value = ProjectCollection.Unescape (val);
 					break;
 				}
+				Console.Error.WriteLine ("@@@@@ [{0}]", val);
 				break;
-			}
-			while (pos < source.Length) {
-				if (spaces.IndexOf (source [pos]) > 0)
-					pos++;
-				else
-					break;
 			}
 			return true;
 		}
 		string spaces = " \t\r\n";
+		
+		void SkipSpaces ()
+		{
+			while (current_token_position < source.Length) {
+				if (spaces.IndexOf (source [current_token_position]) > 0)
+					current_token_position++;
+				else
+					break;
+			}
+		}
 
 		static readonly char [] token_starter_chars = ".,)-=:!><$@%\"' ".ToCharArray ();
 		
@@ -229,6 +238,11 @@ namespace Microsoft.Build.Internal
 	class NameToken : Location
 	{
 		public string Name { get; set; }
+		
+		public override string ToString ()
+		{
+			return string.Format ("[NameToken: Value={0}]", Name);
+		}
 	}
 
 	class ErrorToken : Location

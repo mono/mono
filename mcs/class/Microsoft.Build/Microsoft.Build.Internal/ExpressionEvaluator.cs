@@ -8,12 +8,15 @@ namespace Microsoft.Build.Internal
 {
 	class ExpressionEvaluator
 	{
-		public ExpressionEvaluator (Project project)
+		public ExpressionEvaluator (Project project, string replacementForMissingPropertyAndItem)
 		{
 			this.Project = project;
+			ReplacementForMissingPropertyAndItem = replacementForMissingPropertyAndItem;
 		}
 		
 		public Project Project { get; private set; }
+		
+		public string ReplacementForMissingPropertyAndItem { get; set; }
 		
 		public string Evaluate (string source)
 		{
@@ -206,7 +209,7 @@ namespace Microsoft.Build.Internal
 		public override string EvaluateAsString (EvaluationContext context)
 		{
 			var ret = EvaluateAsObject (context);
-			return ret == null ? null : ret.ToString ();
+			return ret == null ? context.Evaluator.ReplacementForMissingPropertyAndItem : ret.ToString ();
 		}
 		
 		public override object EvaluateAsObject (EvaluationContext context)
@@ -238,6 +241,8 @@ namespace Microsoft.Build.Internal
 		public override string EvaluateAsString (EvaluationContext context)
 		{
 			var items = context.Project.GetItems (Application.Name.Name);
+			if (!items.Any ())
+				return context.Evaluator.ReplacementForMissingPropertyAndItem;
 			if (Application.Expressions == null)
 				return string.Join (";", items.Select (item => context.EvaluateItem (item)).Select (inc => !string.IsNullOrWhiteSpace (inc)));
 			else

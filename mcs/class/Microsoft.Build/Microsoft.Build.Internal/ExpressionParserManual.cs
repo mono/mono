@@ -7,6 +7,7 @@ namespace Microsoft.Build.Internal
 {
 	class ExpressionParserManual
 	{
+		// FIXME: we are going to not need ExpressionValidationType for this; always LaxString.
 		public ExpressionParserManual (string source, ExpressionValidationType validationType)
 		{
 			this.source = source;

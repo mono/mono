@@ -78,7 +78,6 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		
 		[Test]
 		[ExpectedException (typeof (InvalidProjectFileException))]
-		[Category ("NotWorking")]
 		public void LoadInvalidProjectForBadCondition ()
 		{
 			string xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>

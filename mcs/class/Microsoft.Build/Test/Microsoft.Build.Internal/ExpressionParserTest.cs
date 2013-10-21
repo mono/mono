@@ -39,7 +39,13 @@ namespace MonoTests.Microsoft.Build.Internal
 				"'%24' == 0",
 				"true",
 				"fAlSe",
-				"(false)"
+				"(false)",
+				"A=A",
+				"A =A",
+				"A= A",
+				"A='A'",
+				"A=\tA",
+				"\tA= A",
 			};
 			string [] depends = {
 				// valid only if evaluated to boolean
@@ -207,6 +213,22 @@ namespace MonoTests.Microsoft.Build.Internal
 </Project>";
 			var xml = XmlReader.Create (new StringReader (project_xml));
 			var root = ProjectRootElement.Create (xml);
+			new Project (root);
+		}
+		
+		[Test]
+		[ExpectedException (typeof (InvalidProjectFileException))]
+		public void SequentialPropertyReferenceNotAllowed ()
+		{
+			string xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <PropertyGroup>
+    <A>x</A>
+    <B>y</B>
+    <C Condition=""$(A)$(B)==''"">z</C>
+  </PropertyGroup>
+</Project>";
+			var reader = XmlReader.Create (new StringReader (xml));
+			var root = ProjectRootElement.Create (reader);
 			new Project (root);
 		}
 	}
