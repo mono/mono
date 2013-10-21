@@ -15,20 +15,20 @@ namespace MonoTests.Microsoft.Build.Evaluation
 	public class ProjectTest
 	{
 		[Test]
-		[Category ("NotWorking")]
 		public void EscapeDoesWTF ()
 		{
-			string value = "What are 'ESCAPE' &amp; \"EVALUATE\" ? $ # % ^";
-			string escaped_by_collection = "What are %27ESCAPE%27 & \"EVALUATE\" %3f %24 # %25 ^";
+			string value_xml = "What are 'ESCAPE' &amp; \"EVALUATE\" ? $ # % ^";
+			string value = "What are 'ESCAPE' & \"EVALUATE\" ? $ # % ^";
+			string escaped = "What are %27ESCAPE%27 & \"EVALUATE\" %3f %24 # %25 ^";
 			string xml = string.Format (@"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
 	<PropertyGroup>
 		<Foo>{0}</Foo>
 		<Baz>$(FOO)</Baz>
 	</PropertyGroup>
-</Project>", value);
+</Project>", value_xml);
 			var path = "file://localhost/foo.xml";
 			var reader = XmlReader.Create (new StringReader (xml), null, path);
-			var root = ProjectRootElement.Create (xml);
+			var root = ProjectRootElement.Create (reader);
 			var proj = new Project (root);
 			var prop = proj.Properties.First (p => p.Name == "Foo");
 			Assert.AreEqual (value, prop.UnevaluatedValue, "#1");
@@ -42,7 +42,7 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			Assert.AreEqual (value, Project.GetPropertyValueEscaped (prop), "#6");
 			
 			// OK you are fine.
-			Assert.AreEqual (escaped_by_collection, ProjectCollection.Escape (value), "#7");
+			Assert.AreEqual (escaped, ProjectCollection.Escape (value), "#7");
 		}
 		
 		[Test]
