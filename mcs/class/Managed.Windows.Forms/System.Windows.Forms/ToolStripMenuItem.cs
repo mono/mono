@@ -315,12 +315,9 @@ namespace System.Windows.Forms
 		protected override void OnMouseUp (MouseEventArgs e)
 		{
 			if (this.close_on_mouse_release) {
-				this.DropDown.Dismiss (ToolStripDropDownCloseReason.ItemClicked);
+				this.Parent.Dismiss (ToolStripDropDownCloseReason.ItemClicked);
 				this.Invalidate ();
 				this.close_on_mouse_release = false;
-				
-				if (!this.IsOnDropDown && this.Parent is MenuStrip)
-					(this.Parent as MenuStrip).MenuDroppedDown = false;
 			}
 				
 			if (!this.HasDropDownItems && Enabled)
