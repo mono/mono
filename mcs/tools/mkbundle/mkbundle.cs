@@ -38,6 +38,8 @@ class MakeBundle {
 	static bool compress;
 	static bool nomain;
 	static bool? use_dos2unix = null;
+	static bool skip_scan;
+	static string ctor_func;
 	
 	static int Main (string [] args)
 	{
@@ -146,6 +148,16 @@ class MakeBundle {
 				}
 					
 				break;
+			case "--skip-scan":
+				skip_scan = true;
+				break;
+			case "--static-ctor":
+				if (i+1 == top) {
+					Help ();
+					return 1;
+				}
+				ctor_func = args [++i];
+				break;
 			default:
 				sources.Add (args [i]);
 				break;
@@ -163,10 +175,10 @@ class MakeBundle {
 			Environment.Exit (1);
 		}
 
-		List<Assembly> assemblies = LoadAssemblies (sources);
+		List<string> assemblies = LoadAssemblies (sources);
 		List<string> files = new List<string> ();
-		foreach (Assembly a in assemblies)
-			QueueAssembly (files, a.CodeBase);
+		foreach (string file in assemblies)
+			QueueAssembly (files, file);
 			
 		// Special casing mscorlib.dll: any specified mscorlib.dll cannot be loaded
 		// by Assembly.ReflectionFromLoadFrom(). Instead the fx assembly which runs
@@ -437,6 +449,12 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			tc.WriteLine ("\tNULL\n};\n");
 			tc.WriteLine ("static char *image_name = \"{0}\";", prog);
 
+			if (ctor_func != null) {
+				tc.WriteLine ("\nextern void {0} (void);", ctor_func);
+				tc.WriteLine ("\n__attribute__ ((constructor)) static void mono_mkbundle_ctor (void)");
+				tc.WriteLine ("{{\n\t{0} ();\n}}", ctor_func);
+			}
+
 			tc.WriteLine ("\nstatic void install_dll_config_files (void) {\n");
 			foreach (string[] ass in config_names){
 				tc.WriteLine ("\tmono_register_config_for_assembly (\"{0}\", assembly_config_{1});\n", ass [0], ass [1]);
@@ -518,20 +536,29 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		}
 	}
 	
-	static List<Assembly> LoadAssemblies (List<string> sources)
+	static List<string> LoadAssemblies (List<string> sources)
 	{
-		List<Assembly> assemblies = new List<Assembly> ();
+		List<string> assemblies = new List<string> ();
 		bool error = false;
 		
 		foreach (string name in sources){
-			Assembly a = LoadAssembly (name);
+			try {
+				Assembly a = LoadAssembly (name);
 
-			if (a == null){
-				error = true;
-				continue;
-			}
+				if (a == null){
+					error = true;
+					continue;
+				}
 			
-			assemblies.Add (a);
+				assemblies.Add (a.CodeBase);
+			} catch (Exception e) {
+				if (skip_scan) {
+					Console.WriteLine ("File will not be scanned: {0}", name);
+					assemblies.Add (new Uri (new FileInfo (name).FullName).ToString ());
+				} else {
+					throw;
+				}
+			}
 		}
 
 		if (error)
@@ -544,18 +571,23 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 	
 	static void QueueAssembly (List<string> files, string codebase)
 	{
+		// Console.WriteLine ("CODE BASE IS {0}", codebase);
 		if (files.Contains (codebase))
 			return;
 
 		files.Add (codebase);
-		Assembly a = universe.LoadFile (new Uri(codebase).LocalPath);
-
 		if (!autodeps)
 			return;
-		
-		foreach (AssemblyName an in a.GetReferencedAssemblies ()) {
-			a = universe.Load (an.Name);
-			QueueAssembly (files, a.CodeBase);
+		try {
+			Assembly a = universe.LoadFile (new Uri(codebase).LocalPath);
+
+			foreach (AssemblyName an in a.GetReferencedAssemblies ()) {
+				a = universe.Load (an.Name);
+				QueueAssembly (files, a.CodeBase);
+			}
+		} catch (Exception e) {
+			if (!skip_scan)
+				throw;
 		}
 	}
 
@@ -626,6 +658,8 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				   "    --static            Statically link to mono libs\n" +
 				   "    --nomain            Don't include a main() function, for libraries\n" +
 				   "    -z                  Compress the assemblies before embedding.\n" +
+				   "    --skip-scan         Skip scanning assemblies that could not be loaded (but still embed them).\n" +
+				   "    --static-ctor ctor  Add a constructor call to the supplied function.\n" +
 				   "                        You need zlib development headers and libraries.\n");
 	}
 
