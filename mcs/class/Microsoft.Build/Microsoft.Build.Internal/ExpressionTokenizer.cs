@@ -67,75 +67,54 @@ namespace Microsoft.Build.Internal
 					current_token = Token.NAME;
 				}
 				break;
-			case '"':
-				current_token = Token.QUOT;
-				break;
-			case '\'':
-				current_token = Token.APOS;
-				break;
 			case '-':
-				if (CurrentTokenizerMode == TokenizerMode.InsideItemOrProperty && pos < source.Length && source [pos] == '>') {
+				if (pos < source.Length && source [pos] == '>') {
 					current_token = Token.ARROW;
 					pos++;
 				} else
 					ErrorOnStrictBoolean ("-", "'-' is not followed by '>'.");
 				break;
 			case '=':
-				if (CurrentTokenizerMode == TokenizerMode.InsideItemOrProperty && pos < source.Length && source [pos] == '=') {
+				if (pos < source.Length && source [pos] == '=') {
 					current_token = Token.EQ;
 					pos++;
 				} else
 					ErrorOnStrictBoolean ("=", "'=' is not followed by '='.");
 				break;
 			case ':':
-				if (CurrentTokenizerMode == TokenizerMode.InsideItemOrProperty && pos < source.Length && source [pos] == ':') {
+				if (pos < source.Length && source [pos] == ':') {
 					current_token = Token.COLON2;
-					pos++;
 				} else
 					ErrorOnStrictBoolean (":", "':' is not followed by ':'.");
+				pos++;
 				break;
 			case '!':
-				if (CurrentTokenizerMode == TokenizerMode.InsideItemOrProperty) {
-					if (pos < source.Length && source [pos] == '=') {
-						pos++;
-						current_token = Token.NE;
-					} else
-						TokenForItemPropertyValue ("!", Token.NOT);
-				}
-				else
+				if (pos < source.Length && source [pos] == '=') {
+					pos++;
+					current_token = Token.NE;
+				} else
 					TokenForItemPropertyValue ("!", Token.NOT);
 				break;
 			case '>':
-				if (CurrentTokenizerMode == TokenizerMode.InsideItemOrProperty) {
-					if (pos < source.Length && source [pos] == '=') {
-						pos++;
-						current_token = Token.GE;
-					}
-					else
-						current_token = Token.GT;
-				}
-				else
-					TokenForItemPropertyValue (">", Token.GT);
+				if (pos < source.Length && source [pos] == '=') {
+					pos++;
+					current_token = Token.GE;
+				} else
+					current_token = Token.GT;
 				break;
 			case '<':
-				if (CurrentTokenizerMode == TokenizerMode.InsideItemOrProperty) {
-					if (pos < source.Length && source [pos] == '=') {
-						pos++;
-						current_token = Token.LE;
-					}
-					else
-						current_token = Token.LT;
-				}
-				else
-					TokenForItemPropertyValue ("<", Token.LT);
+				if (pos < source.Length && source [pos] == '=') {
+					pos++;
+					current_token = Token.LE;
+				} else
+					current_token = Token.LT;
 				break;
 			case '$':
 				if (pos < source.Length && source [pos] == '(') {
 					modes.Push (TokenizerMode.InsideItemOrProperty);
 					current_token = Token.PROP_OPEN;
 					pos++;
-				}
-				else
+				} else
 					ErrorOnStrictBoolean ("$", "property reference '$' is not followed by '('.");
 				break;
 			case '@':
@@ -143,8 +122,7 @@ namespace Microsoft.Build.Internal
 					modes.Push (TokenizerMode.InsideItemOrProperty);
 					current_token = Token.ITEM_OPEN;
 					pos++;
-				}
-				else
+				} else
 					ErrorOnStrictBoolean ("@", "item reference '@' is not followed by '('.");
 				break;
 			case '%':
@@ -152,9 +130,19 @@ namespace Microsoft.Build.Internal
 					modes.Push (TokenizerMode.InsideItemOrProperty);
 					current_token = Token.METADATA_OPEN;
 					pos++;
-				}
-				else
+				} else
 					ErrorOnStrictBoolean ("%", "metadata reference '%' is not followed by '('.");
+				break;
+			case '"':
+			case '\'':
+				pos = source.IndexOf (source [pos - 1], pos);
+				if (pos < 0) {
+					ErrorOnStrictBoolean ("'", "unterminated string literal");
+					pos = source.Length;
+				}
+				token_value = source.Substring (current_token_position + 1, pos - current_token_position - 1);
+				current_token = Token.STRING_LITERAL;
+				pos++;
 				break;
 			default:
 				pos = source.IndexOfAny (token_starter_chars, pos);
@@ -229,7 +217,7 @@ namespace Microsoft.Build.Internal
 		
 		public object value ()
 		{
-			if (current_token == Token.NAME)
+			if (current_token == Token.NAME || current_token == Token.STRING_LITERAL)
 				return new NameToken () { Name = (string) token_value, Column = current_token_position };
 			else if (error != null)
 				return new ErrorToken () { Message = error, Column = current_token_position };

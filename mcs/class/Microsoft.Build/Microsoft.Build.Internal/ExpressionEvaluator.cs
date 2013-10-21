@@ -29,10 +29,14 @@ namespace Microsoft.Build.Internal
 		
 		public bool EvaluateAsBoolean (string source)
 		{
-			var el = new ExpressionParserManual (source, ExpressionValidationType.StrictBoolean).Parse ();
-			if (el.Count () != 1)
-				throw new InvalidProjectFileException ("Unexpected number of tokens");
-			return el.First ().EvaluateAsBoolean (new EvaluationContext (this));
+			try {
+				var el = new ExpressionParser ().Parse (source, ExpressionValidationType.StrictBoolean);
+				if (el.Count () != 1)
+					throw new InvalidProjectFileException ("Unexpected number of tokens");
+				return el.First ().EvaluateAsBoolean (new EvaluationContext (this));
+			} catch (yyParser.yyException ex) {
+				throw new InvalidProjectFileException (string.Format ("failed to evaluate expression as boolean: '{0}'", source));
+			}
 		}
 	}
 	
@@ -94,6 +98,63 @@ namespace Microsoft.Build.Internal
 					return false;
 			}
 			throw new InvalidProjectFileException (this.Location, null, string.Format ("String is evaluated as '{0}' and cannot be converted to boolean", ret));
+		}
+	}
+	
+	partial class BinaryExpression : Expression
+	{
+		public override bool EvaluateAsBoolean (EvaluationContext context)
+		{
+			switch (Operator) {
+			case Operator.EQ:
+				return Left.EvaluateAsString (context).Equals (Right.EvaluateAsString (context));
+			case Operator.NE:
+				return !Left.EvaluateAsString (context).Equals (Right.EvaluateAsString (context));
+			case Operator.And:
+			case Operator.Or:
+				// evaluate first, to detect possible syntax error on right expr.
+				var lb = Left.EvaluateAsBoolean (context);
+				var rb = Right.EvaluateAsBoolean (context);
+				return Operator == Operator.And ? (lb && rb) : (lb || rb);
+			}
+			// comparison expressions - evaluate comparable first, then compare values.
+			var left = Left.EvaluateAsObject (context);
+			var right = Right.EvaluateAsObject (context);
+			if (!(left is IComparable && right is IComparable))
+				throw new InvalidProjectFileException ("expression cannot be evaluated as boolean");
+			var result = ((IComparable) left).CompareTo (right);
+			switch (Operator) {
+			case Operator.GE:
+				return result >= 0;
+			case Operator.GT:
+				return result > 0;
+			case Operator.LE:
+				return result <= 0;
+			case Operator.LT:
+				return result < 0;
+			}
+			throw new InvalidOperationException ();
+		}
+		
+		public override object EvaluateAsObject (EvaluationContext context)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		static readonly Dictionary<Operator,string> strings = new Dictionary<Operator, string> () {
+			{Operator.EQ, " == "},
+			{Operator.NE, " != "},
+			{Operator.LT, " < "},
+			{Operator.LE, " <= "},
+			{Operator.GT, " > "},
+			{Operator.GE, " >= "},
+			{Operator.And, " And "},
+			{Operator.Or, " Or "},
+		};
+		
+		public override string EvaluateAsString (EvaluationContext context)
+		{
+			return Left.EvaluateAsString (context) + strings [Operator] + Right.EvaluateAsString (context);
 		}
 	}
 	
@@ -206,7 +267,7 @@ namespace Microsoft.Build.Internal
 			throw new NotImplementedException ();
 		}
 	}
-	partial class StringLiteralExpression : Expression
+	partial class StringLiteral : Expression
 	{
 		public override bool EvaluateAsBoolean (EvaluationContext context)
 		{
@@ -216,7 +277,7 @@ namespace Microsoft.Build.Internal
 		
 		public override string EvaluateAsString (EvaluationContext context)
 		{
-			return string.Concat (Contents.Select (e => e.EvaluateAsString (context)));
+			return this.Value.Name;
 		}
 		
 		public override object EvaluateAsObject (EvaluationContext context)
