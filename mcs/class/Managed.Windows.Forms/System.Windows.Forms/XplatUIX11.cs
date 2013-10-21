@@ -1619,11 +1619,23 @@ namespace System.Windows.Forms {
 				if (hwnd.zombie)
 					return;
 
-				if ((windows & WindowType.Whole) != 0) {
-					XMapWindow(DisplayHandle, hwnd.whole_window);
-				}
-				if ((windows & WindowType.Client) != 0) {
-					XMapWindow(DisplayHandle, hwnd.client_window);
+				if (hwnd.topmost) {
+					// Most window managers will respect the _NET_WM_STATE property.
+					// If not, use XMapRaised to map the window at the top level as
+					// a last ditch effort.
+					if ((windows & WindowType.Whole) != 0) {
+						XMapRaised(DisplayHandle, hwnd.whole_window);
+					}
+					if ((windows & WindowType.Client) != 0) {
+						XMapRaised(DisplayHandle, hwnd.client_window);
+					}
+				} else {
+					if ((windows & WindowType.Whole) != 0) {
+						XMapWindow(DisplayHandle, hwnd.whole_window);
+					}
+					if ((windows & WindowType.Client) != 0) {
+						XMapWindow(DisplayHandle, hwnd.client_window);
+					}
 				}
 
 				hwnd.mapped = true;
@@ -2972,13 +2984,8 @@ namespace System.Windows.Forms {
 					XSelectInput(DisplayHandle, hwnd.client_window, new IntPtr ((int)(SelectInputMask | EventMask.StructureNotifyMask | Keyboard.KeyEventMask)));
 			}
 
-			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOPMOST)) {
-				atoms = new int[2];
-				atoms[0] = _NET_WM_WINDOW_TYPE_NORMAL.ToInt32();
-				XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_WINDOW_TYPE, (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
-
-				XSetTransientForHint (DisplayHandle, hwnd.whole_window, RootWindow);
-			}
+			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOPMOST))
+				SetTopmost(hwnd.whole_window, true);
 
 			SetWMStyles(hwnd, cp);
 			
@@ -5787,6 +5794,7 @@ namespace System.Windows.Forms {
 		{
 
 			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
+			hwnd.topmost = enabled;
 
 			if (enabled) {
 				lock (XlibLock) {
@@ -6404,6 +6412,13 @@ namespace System.Windows.Forms {
 		{
 			DebugHelper.TraceWriteLine ("XMapWindow");
 			return _XMapWindow(display, window);
+		}
+		[DllImport ("libX11", EntryPoint="XMapRaised")]
+		internal extern static int _XMapRaised(IntPtr display, IntPtr window);
+		internal static int XMapRaised(IntPtr display, IntPtr window)
+		{
+			DebugHelper.TraceWriteLine ("XMapRaised");
+			return _XMapRaised(display, window);
 		}
 		[DllImport ("libX11", EntryPoint="XUnmapWindow")]
 		internal extern static int _XUnmapWindow(IntPtr display, IntPtr window);
@@ -7254,6 +7269,9 @@ namespace System.Windows.Forms {
 		
 		[DllImport ("libX11", EntryPoint="XMapWindow")]
 		internal extern static int XMapWindow(IntPtr display, IntPtr window);
+		
+		[DllImport ("libX11", EntryPoint="XMapRaised")]
+		internal extern static int XMapRaised(IntPtr display, IntPtr window);
 		
 		[DllImport ("libX11", EntryPoint="XUnmapWindow")]
 		internal extern static int XUnmapWindow(IntPtr display, IntPtr window);

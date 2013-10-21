@@ -76,6 +76,7 @@ namespace System.Windows.Forms {
 		internal bool		whacky_wm;
 		internal bool		fixed_size;
 		internal bool		zombie; /* X11 only flag.  true if the X windows have been destroyed but we haven't been Disposed */
+		internal bool		topmost; /* X11 only. */
 		internal Region		user_clip;
 		internal XEventQueue	queue;
 		internal WindowExStyles	initial_ex_style;
@@ -122,6 +123,7 @@ namespace System.Windows.Forms {
 			children = new ArrayList ();
 			resizing_or_moving = false;
 			whacky_wm = false;
+			topmost = false;
 		}
 
 		public void Dispose() {
