@@ -33,6 +33,10 @@ namespace MonoTests.Microsoft.Build.Internal
 				"$(Foo) == And", // reserved keyword 'and'
 				"$(Foo) == Or", // reserved keyword 'or'
 				"$(Foo) == $(Bar) == $(Baz)", // unexpected '=='
+				"$(Foo..Bar)",
+				"$([DateTime.Now])", // fullname required
+				"$([System.DateTime.Now])", // member cannot be invoked with '.'
+				"$([System.DateTime]::Now)", // it is DateTime
 				"$([System.String]::Format('Tr'))$([System.String]::Format('ue'))", // only one expression is accepted
 			};
 			string [] valid = {
@@ -46,6 +50,7 @@ namespace MonoTests.Microsoft.Build.Internal
 				"A='A'",
 				"A=\tA",
 				"\tA= A",
+				"$([System.String]::Format('True'))",
 			};
 			string [] depends = {
 				// valid only if evaluated to boolean
