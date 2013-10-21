@@ -17,11 +17,10 @@ namespace Microsoft.Build.Internal
 		
 		public string Evaluate (string source)
 		{
-			return Evaluate (source, new ExpressionParserManual ().Parse (source, ExpressionValidationType.LaxString));
-			//return Evaluate (new ExpressionParser ().Parse (source, validationType));
+			return Evaluate (source, new ExpressionParserManual (source, ExpressionValidationType.LaxString).Parse ());
 		}
 		
-		public string Evaluate (string source, ExpressionList exprList)
+		string Evaluate (string source, ExpressionList exprList)
 		{
 			if (exprList == null)
 				throw new ArgumentNullException ("exprList");
@@ -30,7 +29,7 @@ namespace Microsoft.Build.Internal
 		
 		public bool EvaluateAsBoolean (string source)
 		{
-			var el = new ExpressionParserManual ().Parse (source, ExpressionValidationType.StrictBoolean);
+			var el = new ExpressionParserManual (source, ExpressionValidationType.StrictBoolean).Parse ();
 			if (el.Count () != 1)
 				throw new InvalidProjectFileException ("Unexpected number of tokens");
 			return el.First ().EvaluateAsBoolean (new EvaluationContext (this));

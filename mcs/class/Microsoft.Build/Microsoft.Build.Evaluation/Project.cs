@@ -185,7 +185,8 @@ namespace Microsoft.Build.Evaluation
 					foreach (var p in pge.Properties)
 						// do not allow overwriting reserved or well-known properties by user
 						if (!this.properties.Any (_ => (_.IsReservedProperty || _.IsWellKnownProperty) && _.Name.Equals (p.Name, StringComparison.InvariantCultureIgnoreCase)))
-							this.properties.Add (new XmlProjectProperty (this, p, PropertyType.Normal));
+							if (ShouldInclude (p.Condition))
+								this.properties.Add (new XmlProjectProperty (this, p, PropertyType.Normal));
 			}
 			
 			foreach (var child in Xml.Children) {
