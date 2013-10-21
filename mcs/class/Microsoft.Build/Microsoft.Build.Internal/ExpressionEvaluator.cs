@@ -18,6 +18,11 @@ namespace Microsoft.Build.Internal
 		
 		public string ReplacementForMissingPropertyAndItem { get; set; }
 		
+		// it is to prevent sequential property value expansion in boolean expression
+		public string Wrapper {
+			get { return ReplacementForMissingPropertyAndItem != null ? "'" : null; }
+		}
+		
 		public string Evaluate (string source)
 		{
 			return Evaluate (source, new ExpressionParserManual (source, ExpressionValidationType.LaxString).Parse ());
@@ -209,7 +214,8 @@ namespace Microsoft.Build.Internal
 		public override string EvaluateAsString (EvaluationContext context)
 		{
 			var ret = EvaluateAsObject (context);
-			return ret == null ? context.Evaluator.ReplacementForMissingPropertyAndItem : ret.ToString ();
+			// FIXME: this "wrapper" is kind of hack, to prevent sequential property references such as $(X)$(Y).
+			return ret == null ? context.Evaluator.ReplacementForMissingPropertyAndItem : context.Evaluator.Wrapper + ret.ToString () + context.Evaluator.Wrapper;
 		}
 		
 		public override object EvaluateAsObject (EvaluationContext context)

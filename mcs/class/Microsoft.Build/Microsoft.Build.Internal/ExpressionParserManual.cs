@@ -43,18 +43,16 @@ namespace Microsoft.Build.Internal
 						else
 							goto default; // treat as raw literal to the section end
 					}
-					start++;
-					int last = source.LastIndexOf (')', end - 1, end - start - 1);
+					start += 2;
+					int last = FindMatchingCloseParen (start, end);
 					if (last < 0) {
 						if (validation_type == ExpressionValidationType.StrictBoolean)
 							throw new InvalidProjectFileException (string.Format ("expression did not have matching ')' since index {0} in \"{1}\"", start, source));
 						else {
-							if (token != '(')
-								start--;
+							start -= 2;
 							goto default; // treat as raw literal to the section end
 						}
 					}
-					start++;
 					if (token == '$')
 						head.Add (EvaluatePropertyExpression (start, last));
 					else if (token == '%')
@@ -69,9 +67,14 @@ namespace Microsoft.Build.Internal
 					if (validation_type == ExpressionValidationType.LaxString)
 						goto default;
 					start++;
-					last = source.LastIndexOf (')', end - 1, end - start);
+					last = FindMatchingCloseParen (start, end);
 					if (last < 0)
-						throw new InvalidProjectFileException (string.Format ("expression did not have matching ')' since index {0} in \"{1}\"", start, source));
+						if (validation_type == ExpressionValidationType.StrictBoolean)
+							throw new InvalidProjectFileException (string.Format ("expression did not have matching ')' since index {0} in \"{1}\"", start, source));
+						else {
+							start--;
+							goto default; // treat as raw literal to the section end
+						}
 					var contents = Parse (start, last).ToArray ();
 					if (contents.Length > 1)
 						throw new InvalidProjectFileException (string.Format ("unexpected continuous expression within (){0} in \"{1}\"", contents [1].Column > 0 ? " at " + contents [1].Column : null, source));
@@ -96,6 +99,20 @@ namespace Microsoft.Build.Internal
 			foreach (var e in head.Concat (((IEnumerable<Expression>) tail).Reverse ()))
 				ret.Add (e);
 			return ret;
+		}
+		
+		int FindMatchingCloseParen (int start, int end)
+		{
+			int n = 0;
+			for (int i = start; i < end; i++) {
+				if (source [i] == '(')
+					n++;
+				else if (source [i] == ')') {
+					if (n-- == 0)
+						return i;
+				}
+			}
+			return -1; // invalid
 		}
 		
 		static readonly string spaces = " \t\r\n";
