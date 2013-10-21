@@ -160,7 +160,7 @@ etc/mono/config: ../data/config Makefile $(symlinks)
 	d=`cd ../support && pwd`; \
 	sed 's,target="libMonoPosixHelper[^"]*",target="'$$d/libMonoPosixHelper.la'",' ../data/config > $@t
 	if test -z "$(libgdiplus_loc)"; then :; else \
-	  sed 's,<configuration>,& <dllmap dll="gdiplus.dll" target="$(libgdiplus_loc)" />,' $@t > $@tt; \
+	  sed 's,<configuration>,& <dllmap dll="gdiplus.dll" target="$(libgdiplus_loc)" os="!windows"/>,' $@t > $@tt; \
 	  mv -f $@tt $@t; fi
 	mv -f $@t $@
 
