@@ -166,7 +166,6 @@ namespace Microsoft.Build.Internal
 					token_value = ProjectCollection.Unescape (val);
 					break;
 				}
-				Console.Error.WriteLine ("@@@@@ [{0}]", val);
 				break;
 			}
 			return true;
