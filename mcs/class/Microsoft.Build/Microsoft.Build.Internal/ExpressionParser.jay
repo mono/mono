@@ -103,21 +103,21 @@ Expression
 
 BinaryExpression
 	: PrimaryExpression
-	| BinaryExpression EQ BinaryExpression
+	| PrimaryExpression EQ PrimaryExpression
 	  { $$ = Binary (Operator.EQ, $1, $3); }
-	| BinaryExpression NE BinaryExpression
+	| PrimaryExpression NE PrimaryExpression
 	  { $$ = Binary (Operator.NE, $1, $3); }
-	| BinaryExpression GT BinaryExpression
+	| PrimaryExpression GT PrimaryExpression
 	  { $$ = Binary (Operator.GT, $1, $3); }
-	| BinaryExpression GE BinaryExpression
+	| PrimaryExpression GE PrimaryExpression
 	  { $$ = Binary (Operator.GE, $1, $3); }
-	| BinaryExpression LT BinaryExpression
+	| PrimaryExpression LT PrimaryExpression
 	  { $$ = Binary (Operator.LT, $1, $3); }
-	| BinaryExpression LE BinaryExpression
+	| PrimaryExpression LE PrimaryExpression
 	  { $$ = Binary (Operator.LE, $1, $3); }
-	| BinaryExpression AND BinaryExpression
+	| PrimaryExpression AND PrimaryExpression
 	  { $$ = Binary (Operator.And, $1, $3); }
-	| BinaryExpression OR BinaryExpression
+	| PrimaryExpression OR PrimaryExpression
 	  { $$ = Binary (Operator.Or, $1, $3); }
 	;
 
