@@ -192,6 +192,23 @@ namespace MonoTests.Microsoft.Build.Internal
 			Assert.AreEqual ("$(Foo)", items.Last ().UnevaluatedInclude, "#6");
 			Assert.IsTrue (items.First ().Xml == items.Last ().Xml, "#7");
 		}
+		
+		[Test]
+		[ExpectedException (typeof (InvalidProjectFileException))]
+		public void PropertyReferencesItem ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <ItemGroup>
+    <Bar Include='True' />
+  </ItemGroup>
+  <PropertyGroup>
+    <Foo Condition='@(Bar)'>X</Foo><!-- not allowed -->
+  </PropertyGroup>
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			new Project (root);
+		}
 	}
 }
 

@@ -7,14 +7,23 @@ namespace Microsoft.Build.Internal
 {
 	class ExpressionParserManual
 	{
-		public ExpressionList Parse (string source, ExpressionValidationType validationType)
+		public ExpressionParserManual (string source, ExpressionValidationType validationType)
 		{
-			return Parse (source, validationType, 0, source.Length);
+			this.source = source;
+			validation_type = validationType;
+		}
+		
+		string source;
+		ExpressionValidationType validation_type;
+		
+		public ExpressionList Parse ()
+		{
+			return Parse (0, source.Length);
 		}
 		
 		static readonly char [] token_starters = "$@%('\"".ToCharArray ();
 		
-		ExpressionList Parse (string source, ExpressionValidationType validationType, int start, int end)
+		ExpressionList Parse (int start, int end)
 		{
 			if (string.IsNullOrWhiteSpace (source))
 				return new ExpressionList ();
@@ -28,17 +37,15 @@ namespace Microsoft.Build.Internal
 				case '@':
 				case '%':
 					if (start == end || start + 1 == source.Length || source [start + 1] != '(') {
-						if (validationType == ExpressionValidationType.StrictBoolean)
+						if (validation_type == ExpressionValidationType.StrictBoolean)
 							throw new InvalidProjectFileException (string.Format ("missing '(' after '{0}' at {1} in \"{2}\"", source [start], start, source));
 						else
 							goto default; // treat as raw literal to the section end
 					}
 					start++;
-					goto case '(';
-				case '(':
 					int last = source.LastIndexOf (')', end - 1, end - start - 1);
 					if (last < 0) {
-						if (validationType == ExpressionValidationType.StrictBoolean)
+						if (validation_type == ExpressionValidationType.StrictBoolean)
 							throw new InvalidProjectFileException (string.Format ("expression did not have matching ')' since index {0} in \"{1}\"", start, source));
 						else {
 							if (token != '(')
@@ -48,13 +55,28 @@ namespace Microsoft.Build.Internal
 					}
 					start++;
 					if (token == '$')
-						head.Add (EvaluatePropertyExpression (source, validationType, start, last));
+						head.Add (EvaluatePropertyExpression (start, last));
 					else if (token == '%')
-						head.Add (EvaluateMetadataExpression (source, validationType, start, last));
+						head.Add (EvaluateMetadataExpression (start, last));
 					else
-						head.Add (EvaluateItemExpression (source, validationType, start, last));
+						head.Add (EvaluateItemExpression (start, last));
 					start = last + 1;
 					break;
+					
+				// Below (until default) are important only for Condition evaluation
+				case '(':
+					if (validation_type == ExpressionValidationType.LaxString)
+						goto default;
+					start++;
+					last = source.LastIndexOf (')', end - 1, end - start);
+					if (last < 0)
+						throw new InvalidProjectFileException (string.Format ("expression did not have matching ')' since index {0} in \"{1}\"", start, source));
+					var contents = Parse (start, last).ToArray ();
+					if (contents.Length > 1)
+						throw new InvalidProjectFileException (string.Format ("unexpected continuous expression within (){0} in \"{1}\"", contents [1].Column > 0 ? " at " + contents [1].Column : null, source));
+					head.Add (contents.First ());
+					break;
+
 				default:
 					int idx = source.IndexOfAny (token_starters, start + 1);
 					string name = idx < 0 ? source.Substring (start, end - start) : source.Substring (start, idx - start);
@@ -65,8 +87,10 @@ namespace Microsoft.Build.Internal
 						start = idx;
 					else
 						start = end;
+
 					break;
 				}
+				SkipSpaces (ref start);
 			}
 			var ret = new ExpressionList ();
 			foreach (var e in head.Concat (((IEnumerable<Expression>) tail).Reverse ()))
@@ -74,7 +98,15 @@ namespace Microsoft.Build.Internal
 			return ret;
 		}
 		
-		PropertyAccessExpression EvaluatePropertyExpression (string source, ExpressionValidationType validationType, int start, int end)
+		static readonly string spaces = " \t\r\n";
+		
+		void SkipSpaces (ref int start)
+		{
+			while (start < source.Length && spaces.Contains (source [start]))
+				start++;
+		}
+		
+		PropertyAccessExpression EvaluatePropertyExpression (int start, int end)
 		{
 			// member access
 			int idx = source.LastIndexOf ('.', start);
@@ -84,7 +116,7 @@ namespace Microsoft.Build.Internal
 					Access = new PropertyAccess () {
 						Name = new NameToken () { Name = name },
 						TargetType = PropertyTargetType.Object,
-						Target = idx < 0 ? null : Parse (source, validationType, start, idx).FirstOrDefault () 
+						Target = idx < 0 ? null : Parse (start, idx).FirstOrDefault () 
 						}
 					};
 			} else {
@@ -117,7 +149,7 @@ namespace Microsoft.Build.Internal
 			}
 		}
 		
-		ItemAccessExpression EvaluateItemExpression (string source, ExpressionValidationType validationType, int start, int end)
+		ItemAccessExpression EvaluateItemExpression (int start, int end)
 		{
 			// using property as context and evaluate
 			int idx = source.IndexOf ("->", start, StringComparison.Ordinal);
@@ -126,7 +158,7 @@ namespace Microsoft.Build.Internal
 				return new ItemAccessExpression () {
 					Application = new ItemApplication () {
 						Name = new NameToken () { Name = name },
-						Expressions = Parse (source, validationType, idx, end - idx)
+						Expressions = Parse (idx, end - idx)
 						}
 					};
 			} else {
@@ -139,7 +171,7 @@ namespace Microsoft.Build.Internal
 			throw new NotImplementedException ();
 		}
 		
-		MetadataAccessExpression EvaluateMetadataExpression (string source, ExpressionValidationType validatioType, int start, int end)
+		MetadataAccessExpression EvaluateMetadataExpression (int start, int end)
 		{
 			throw new NotImplementedException ();
 		}
