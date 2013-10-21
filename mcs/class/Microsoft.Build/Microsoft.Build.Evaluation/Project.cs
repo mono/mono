@@ -181,7 +181,7 @@ namespace Microsoft.Build.Evaluation
 			// First step: evaluate Properties
 			foreach (var child in Xml.Children) {
 				var pge = child as ProjectPropertyGroupElement;
-				if (pge != null)
+				if (pge != null && ShouldInclude (pge.Condition))
 					foreach (var p in pge.Properties)
 						// do not allow overwriting reserved or well-known properties by user
 						if (!this.properties.Any (_ => (_.IsReservedProperty || _.IsWellKnownProperty) && _.Name.Equals (p.Name, StringComparison.InvariantCultureIgnoreCase)))
@@ -380,6 +380,7 @@ namespace Microsoft.Build.Evaluation
 
 		public static string GetPropertyValueEscaped (ProjectProperty property)
 		{
+			// WTF happens here.
 			return property.EvaluatedValue;
 		}
 
