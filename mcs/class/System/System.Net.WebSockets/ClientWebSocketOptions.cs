@@ -33,11 +33,15 @@ using System.Net;
 using System.Security.Principal;
 using System.Security.Cryptography.X509Certificates;
 using System.Runtime.CompilerServices;
+using System.Collections.Generic;
 
 namespace System.Net.WebSockets
 {
 	public sealed class ClientWebSocketOptions
 	{
+		List<string> subprotocols = new List<string> ();
+		Dictionary<string, string> customRequestHeaders = new Dictionary<string, string> ();
+
 		public X509CertificateCollection ClientCertificates { get; set; }
 
 		public CookieContainer Cookies { get; set; }
@@ -50,28 +54,53 @@ namespace System.Net.WebSockets
 
 		public bool UseDefaultCredentials { get; set; }
 
-		[MonoTODO]
+		internal IList<string> SubProtocols {
+			get {
+				return subprotocols.AsReadOnly ();
+			}
+		}
+
+		internal Dictionary<string, string> CustomRequestHeaders {
+			get {
+				return customRequestHeaders;
+			}
+		}
+
+		internal int ReceiveBufferSize {
+			get;
+			private set;
+		}
+
+		internal ArraySegment<byte> CustomReceiveBuffer {
+			get;
+			private set;
+		}
+
+		internal int SendBufferSize {
+			get;
+			private set;
+		}
+
 		public void AddSubProtocol (string subProtocol)
 		{
-			throw new NotImplementedException ();
+			subprotocols.Add (subProtocol);
 		}
 
-		[MonoTODO]
 		public void SetBuffer (int receiveBufferSize, int sendBufferSize)
 		{
-			throw new NotImplementedException ();
+			SetBuffer (receiveBufferSize, sendBufferSize, new ArraySegment<byte> ());
 		}
 
-		[MonoTODO]
 		public void SetBuffer (int receiveBufferSize, int sendBufferSize, ArraySegment<byte> buffer)
 		{
-			throw new NotImplementedException ();
+			ReceiveBufferSize = receiveBufferSize;
+			SendBufferSize = sendBufferSize;
+			CustomReceiveBuffer = buffer;
 		}
 
-		[MonoTODO]
 		public void SetRequestHeader (string headerName, string headerValue)
 		{
-			throw new NotImplementedException ();
+			customRequestHeaders[headerName] = headerValue;
 		}
 	}
 }
