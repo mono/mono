@@ -408,7 +408,7 @@ namespace Microsoft.Build.Tasks {
 				return;
 
 			foreach (string ext in allowedRelatedFileExtensions) {
-				string rfile = filename + ext;
+				string rfile = Path.ChangeExtension (filename, ext);
 				if (File.Exists (rfile)) {
 					ITaskItem item = new TaskItem (rfile);
 					SetCopyLocal (item, parent_copy_local);
