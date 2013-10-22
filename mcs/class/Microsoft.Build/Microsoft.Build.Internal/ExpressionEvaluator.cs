@@ -44,7 +44,7 @@ namespace Microsoft.Build.Internal
 					throw new InvalidProjectFileException ("Unexpected number of tokens: " + el.Count ());
 				return el.First ().EvaluateAsBoolean (new EvaluationContext (this));
 			} catch (yyParser.yyException ex) {
-				throw new InvalidProjectFileException (string.Format ("failed to evaluate expression as boolean: '{0}'", source));
+				throw new InvalidProjectFileException (string.Format ("failed to evaluate expression as boolean: '{0}': {1}", source, ex.Message), ex);
 			}
 		}
 	}
