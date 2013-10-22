@@ -169,6 +169,7 @@ ItemAccessExpression
 // looking a bit messy, but gives different location
 ItemApplication
 	: NAME
+	  { $$ = new ItemApplication () { Name = (NameToken) $1, Location = (ILocation) $1 }; }
 	| NAME ARROW ExpressionList
 	  { $$ = new ItemApplication () { Name = (NameToken) $1, Expressions = (ExpressionList) $3, Location = (ILocation) $1 }; }
 	;
