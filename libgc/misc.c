@@ -86,6 +86,7 @@
 #else
 # define GC_REGISTER_MAIN_STATIC_DATA() TRUE
 #endif
+#define UNITY_CLEAR_LARGE_STACK 0
 
 GC_FAR struct _GC_arrays GC_arrays /* = { 0 } */;
 
@@ -337,6 +338,9 @@ ptr_t arg;
 	/* thus more junk remains accessible, thus the heap gets	*/
 	/* larger ...							*/
 # ifdef THREADS
+/* UNITY (levi): Sometimes our stack is too small and this crashes (FMOD). */
+/* Case 564033 */
+#if UNITY_CLEAR_LARGE_STACK
     if (++random_no % 13 == 0) {
 	limit = sp;
 	MAKE_HOTTER(limit, BIG_CLEAR_SIZE*sizeof(word));
@@ -344,9 +348,12 @@ ptr_t arg;
         		/* implementations of GC_clear_stack_inner.	*/
 	return GC_clear_stack_inner(arg, limit);
     } else {
+#endif
 	BZERO(dummy, SMALL_CLEAR_SIZE*sizeof(word));
 	return arg;
+#if UNITY_CLEAR_LARGE_STACK
     }
+#endif
 # else
     if (GC_gc_no > GC_stack_last_cleared) {
         /* Start things over, so we clear the entire stack again */
