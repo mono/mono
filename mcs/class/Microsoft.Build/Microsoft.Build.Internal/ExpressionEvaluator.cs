@@ -41,7 +41,7 @@ namespace Microsoft.Build.Internal
 			try {
 				var el = new ExpressionParser ().Parse (source, ExpressionValidationType.StrictBoolean);
 				if (el.Count () != 1)
-					throw new InvalidProjectFileException ("Unexpected number of tokens");
+					throw new InvalidProjectFileException ("Unexpected number of tokens: " + el.Count ());
 				return el.First ().EvaluateAsBoolean (new EvaluationContext (this));
 			} catch (yyParser.yyException ex) {
 				throw new InvalidProjectFileException (string.Format ("failed to evaluate expression as boolean: '{0}'", source));
@@ -116,9 +116,9 @@ namespace Microsoft.Build.Internal
 		{
 			switch (Operator) {
 			case Operator.EQ:
-				return Left.EvaluateAsString (context).Equals (Right.EvaluateAsString (context));
+				return Left.EvaluateAsString (context) == Right.EvaluateAsString (context);
 			case Operator.NE:
-				return !Left.EvaluateAsString (context).Equals (Right.EvaluateAsString (context));
+				return Left.EvaluateAsString (context) != Right.EvaluateAsString (context);
 			case Operator.And:
 			case Operator.Or:
 				// evaluate first, to detect possible syntax error on right expr.
