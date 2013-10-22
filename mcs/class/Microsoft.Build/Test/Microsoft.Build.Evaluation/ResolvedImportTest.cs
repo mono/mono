@@ -50,14 +50,14 @@ namespace MonoTests.Microsoft.Build.Evaluation
   <PropertyGroup>
     <A>X</A>
   </PropertyGroup>
-  <Import Condition=""{0}"" Project='imported.proj' />
+  <Import Condition=""{0}"" Project='test_imported.proj' />
   <PropertyGroup>
     <B>Y</B>
   </PropertyGroup>
 </Project>";
 			string import_overrides_test_imported = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
   <PropertyGroup>
-    <C Condition='$(A)==X'>c</C>
+    <C Condition='$(A)==x'>c</C>
     <A>a</A>
     <B>b</B>
   </PropertyGroup>
@@ -66,7 +66,7 @@ namespace MonoTests.Microsoft.Build.Evaluation
   </ItemGroup>
 </Project>";
 
-		void ImportAndPropertyOverrides (string label, string condition, string valueA, string valueB)
+		void ImportAndPropertyOverrides (string label, string condition, string valueA, string valueB, string valueAPredecessor, bool existsC)
 		{
 			using (var ts = File.CreateText ("test_imported.proj"))
 				ts.Write (import_overrides_test_imported);
@@ -78,12 +78,22 @@ namespace MonoTests.Microsoft.Build.Evaluation
 				var a = proj.GetProperty ("A");
 				Assert.IsNotNull (a, label + "#2");
 				Assert.AreEqual (valueA, a.EvaluatedValue, label + "#3");
+				if (valueAPredecessor == null)
+					Assert.IsNull (a.Predecessor, label + "#3.1");
+				else {
+					Assert.IsNotNull (a.Predecessor, label + "#3.2");
+					Assert.AreEqual (valueAPredecessor, a.Predecessor.EvaluatedValue, label + "#3.3");
+				}
 				var b = proj.GetProperty ("B");
 				Assert.IsNotNull (b, label + "#4");
 				Assert.AreEqual (valueB, b.EvaluatedValue, label + "#5");
-				var c = proj.GetProperty ("C");
-				Assert.IsNotNull (b, label + "#6");
-				Assert.AreEqual ("c", b.EvaluatedValue, label + "#7");
+				var c = proj.GetProperty ("C"); // yes it can be retrieved.
+				if (existsC) {
+					Assert.IsNotNull (c, label + "#6");
+					Assert.AreEqual ("c", c.EvaluatedValue, label + "#7");
+				}
+				else
+					Assert.IsNull (c, label + "#8");
 			} finally {
 				File.Delete ("test_imported.proj");
 			}
@@ -92,10 +102,10 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		[Test]
 		public void ImportAndPropertyOverrides ()
 		{
-			ImportAndPropertyOverrides ("[1]", "'True'", "a", "Y");
-			ImportAndPropertyOverrides ("[2]", "A=='X'", "a", "Y"); // evaluated as true
-			ImportAndPropertyOverrides ("[2]", "B=='Y'", "X", "Y"); // evaluated as false
-			ImportAndPropertyOverrides ("[2]", "B=='b'", "X", "Y"); // of course not evaluated with imported value
+			ImportAndPropertyOverrides ("[1]", "'True'", "a", "Y", "X", true);
+			ImportAndPropertyOverrides ("[2]", "$(A)=='X'", "a", "Y", "X", true); // evaluated as true
+			ImportAndPropertyOverrides ("[3]", "$(B)=='Y'", "X", "Y", null, false); // evaluated as false
+			ImportAndPropertyOverrides ("[4]", "$(B)=='b'", "X", "Y", null, false); // of course not evaluated with imported value
 		}
 	}
 }
