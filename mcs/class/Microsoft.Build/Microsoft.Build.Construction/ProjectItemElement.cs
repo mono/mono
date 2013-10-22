@@ -106,7 +106,7 @@ namespace Microsoft.Build.Construction
                 internal override void LoadValue (XmlReader reader)
                 {
                         if (string.IsNullOrWhiteSpace (Include))
-                                throw new InvalidProjectFileException (Location, null, string.Format ("Include attribute is null on '{0}' item", ItemType));
+                                throw new InvalidProjectFileException (Location, null, string.Format ("Include attribute is null or empty on '{0}' item", ItemType));
                         base.LoadValue (reader);
                 }
                 internal override ProjectElement LoadChildElement (XmlReader reader)
