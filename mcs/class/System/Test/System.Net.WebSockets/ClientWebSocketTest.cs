@@ -1,3 +1,4 @@
+#if NET_4_5
 using System;
 using System.Net;
 using System.Threading;
@@ -9,7 +10,6 @@ using System.Text;
 
 using NUnit.Framework;
 
-#if NET_4_5
 
 namespace MonoTests.System.Net.WebSockets
 {
