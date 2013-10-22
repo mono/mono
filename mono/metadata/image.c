@@ -153,15 +153,14 @@ mono_image_rva_map (MonoImage *image, guint32 addr)
 	int i;
 
 #ifdef HOST_WIN32
-	if (image->is_module_handle)
-	{
-	    if (addr)
-		    return image->raw_data + addr;
-	    else
-	        return NULL;
+	if (image->is_module_handle) {
+		if (addr && addr < image->raw_data_len)
+			return image->raw_data + addr;
+		else
+			return NULL;
 	}
 #endif
-	
+
 	for (i = 0; i < top; i++){
 		if ((addr >= tables->st_virtual_address) &&
 		    (addr < tables->st_virtual_address + tables->st_raw_data_size)){
