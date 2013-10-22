@@ -207,5 +207,16 @@ namespace MonoTests.Microsoft.Build.Construction
 			// CRLF? mmm, k...
 			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n" + project_xml.Replace ('\'', '"'), sw.ToString (), "#1");
 		}
+		
+		[Test]
+		[ExpectedException (typeof (InvalidProjectFileException))]
+		public void ImportsMissingProject ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <Import Project='' />
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			ProjectRootElement.Create (xml);
+		}
 	}
 }
