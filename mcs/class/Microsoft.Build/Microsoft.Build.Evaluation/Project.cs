@@ -109,7 +109,7 @@ namespace Microsoft.Build.Evaluation
 		
 		Project (ProjectRootElement imported, Project parent)
 		{
-			this.Xml = parent.Xml;
+			this.Xml = imported;
 			this.GlobalProperties = parent.GlobalProperties;
 			this.ToolsVersion = parent.ToolsVersion;
 			this.ProjectCollection = parent.ProjectCollection;
@@ -170,13 +170,7 @@ namespace Microsoft.Build.Evaluation
 			targets = new Dictionary<string, ProjectTargetInstance> ();
 			raw_items = new List<ProjectItem> ();
 			
-			ProcessXml (parent);
-		}
-		
-		static readonly char [] item_sep = {';'};
-		
-		void ProcessXml (Project parent)
-		{
+			// FIXME: this is likely hack. Test ImportedProject.Properties to see what exactly should happen.
 			if (parent != null) {
 				properties = parent.properties;
 			} else {
@@ -193,15 +187,24 @@ namespace Microsoft.Build.Evaluation
 					this.properties.Add (p);
 			}
 
+			ProcessXml (parent);
+		}
+		
+		static readonly char [] item_sep = {';'};
+		
+		void ProcessXml (Project parent)
+		{
+			// this needs to be initialized here (regardless of that items won't be evaluated at property evaluation;
+			// Conditions could incorrectly reference items and lack of this list causes NRE.
+			all_evaluated_items = new List<ProjectItem> ();
+
 			// property evaluation happens couple of times.
 			// At first step, all non-imported properties are evaluated TOO, WHILE those properties are being evaluated.
 			// This means, Include and IncludeGroup elements with Condition attribute MAY contain references to
 			// properties and they will be expanded.
-			var elements = EvaluatePropertiesAndImports (Xml.Children);
+			var elements = EvaluatePropertiesAndImports (Xml.Children).ToArray (); // ToArray(): to not lazily evaluate elements.
 			
 			// next, evaluate items
-			all_evaluated_items = new List<ProjectItem> ();
-
 			EvaluateItems (elements);
 		}
 		
