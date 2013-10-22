@@ -115,9 +115,7 @@ namespace Microsoft.Build.Evaluation
 			get { return property_type == PropertyType.Global; }
 		}
 		public override bool IsImported {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return false; }
 		}
 		public override bool IsReservedProperty {
 			get { return property_type == PropertyType.Reserved; }
@@ -130,19 +128,26 @@ namespace Microsoft.Build.Evaluation
 	
 	internal class XmlProjectProperty : BaseProjectProperty
 	{
-		public XmlProjectProperty (Project project, ProjectPropertyElement xml, PropertyType propertyType)
+		public XmlProjectProperty (Project project, ProjectPropertyElement xml, PropertyType propertyType, bool isImported)
 			: base (project, propertyType, xml.Name)
 		{
 			this.xml = xml;
+			this.is_imported = isImported;
 			UpdateEvaluatedValue ();
 		}
 		
-		ProjectPropertyElement xml;
+		readonly ProjectPropertyElement xml;
+		readonly bool is_imported;
+		
+		public override bool IsImported {
+			get { return is_imported; }
+		}
 		
 		public override string UnevaluatedValue {
 			get { return xml.Value; }
 			set { xml.Value = value; }
 		}
+		
 		public override ProjectPropertyElement Xml {
 			get { return xml; }
 		}

@@ -42,6 +42,7 @@ using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Logging;
 using System.Collections;
+using Microsoft.Build.Exceptions;
 
 namespace Microsoft.Build.Evaluation
 {
@@ -103,7 +104,18 @@ namespace Microsoft.Build.Evaluation
 			this.ProjectCollection = projectCollection;
 			this.load_settings = loadSettings;
 
-			Initialize ();
+			Initialize (null);
+		}
+		
+		Project (ProjectRootElement imported, Project parent)
+		{
+			this.Xml = parent.Xml;
+			this.GlobalProperties = parent.GlobalProperties;
+			this.ToolsVersion = parent.ToolsVersion;
+			this.ProjectCollection = parent.ProjectCollection;
+			this.load_settings = parent.load_settings;
+
+			Initialize (parent);
 		}
 
 		public Project (string projectFile)
@@ -149,47 +161,80 @@ namespace Microsoft.Build.Evaluation
 		List<ProjectProperty> properties;
 		Dictionary<string, ProjectTargetInstance> targets;
 
-		void Initialize ()
+		void Initialize (Project parent)
 		{
 			dir_path = Directory.GetCurrentDirectory ();
 			raw_imports = new List<ResolvedImport> ();
 			item_definitions = new Dictionary<string, ProjectItemDefinition> ();
 			item_types = new List<string> ();
-			properties = new List<ProjectProperty> ();
 			targets = new Dictionary<string, ProjectTargetInstance> ();
 			raw_items = new List<ProjectItem> ();
 			
-			ProcessXml ();
+			ProcessXml (parent);
 		}
 		
 		static readonly char [] item_sep = {';'};
 		
-		void ProcessXml ()
+		void ProcessXml (Project parent)
 		{
-			foreach (DictionaryEntry p in Environment.GetEnvironmentVariables ())
-				this.properties.Add (new EnvironmentProjectProperty (this, (string)p.Key, (string)p.Value));
-			foreach (var p in GlobalProperties)
-				this.properties.Add (new GlobalProjectProperty (this, p.Key, p.Value));
-			var tools = ProjectCollection.GetToolset (this.ToolsVersion) ?? ProjectCollection.GetToolset (this.ProjectCollection.DefaultToolsVersion);
-			foreach (var p in ReservedProjectProperty.GetReservedProperties (tools, this))
-				this.properties.Add (p);
-			foreach (var p in EnvironmentProjectProperty.GetWellKnownProperties (this))
-				this.properties.Add (p);
-
-			all_evaluated_items = new List<ProjectItem> ();
+			if (parent != null) {
+				properties = parent.properties;
+			} else {
+				properties = new List<ProjectProperty> ();
 			
+				foreach (DictionaryEntry p in Environment.GetEnvironmentVariables ())
+					this.properties.Add (new EnvironmentProjectProperty (this, (string)p.Key, (string)p.Value));
+				foreach (var p in GlobalProperties)
+					this.properties.Add (new GlobalProjectProperty (this, p.Key, p.Value));
+				var tools = ProjectCollection.GetToolset (this.ToolsVersion) ?? ProjectCollection.GetToolset (this.ProjectCollection.DefaultToolsVersion);
+				foreach (var p in ReservedProjectProperty.GetReservedProperties (tools, this))
+					this.properties.Add (p);
+				foreach (var p in EnvironmentProjectProperty.GetWellKnownProperties (this))
+					this.properties.Add (p);
+			}
+
+			// property evaluation happens couple of times.
+			// At first step, all non-imported properties are evaluated TOO, WHILE those properties are being evaluated.
+			// This means, Include and IncludeGroup elements with Condition attribute MAY contain references to
+			// properties and they will be expanded.
+			var elements = EvaluatePropertiesAndImports (Xml.Children);
+			
+			// next, evaluate items
+			all_evaluated_items = new List<ProjectItem> ();
+
+			EvaluateItems (elements);
+		}
+		
+		IEnumerable<ProjectElement> EvaluatePropertiesAndImports (IEnumerable<ProjectElement> elements)
+		{
 			// First step: evaluate Properties
-			foreach (var child in Xml.Children) {
+			foreach (var child in elements) {
+				yield return child;
 				var pge = child as ProjectPropertyGroupElement;
 				if (pge != null && ShouldInclude (pge.Condition))
 					foreach (var p in pge.Properties)
 						// do not allow overwriting reserved or well-known properties by user
 						if (!this.properties.Any (_ => (_.IsReservedProperty || _.IsWellKnownProperty) && _.Name.Equals (p.Name, StringComparison.InvariantCultureIgnoreCase)))
 							if (ShouldInclude (p.Condition))
-								this.properties.Add (new XmlProjectProperty (this, p, PropertyType.Normal));
+								this.properties.Add (new XmlProjectProperty (this, p, PropertyType.Normal, ProjectCollection.OngoingImports.Any ()));
+
+				var ige = child as ProjectImportGroupElement;
+				if (ige != null && ShouldInclude (ige.Condition)) {
+					foreach (var incc in ige.Imports) {
+						foreach (var e in Import (incc))
+							yield return e;
+					}
+				}
+				var inc = child as ProjectImportElement;
+				if (inc != null && ShouldInclude (inc.Condition))
+					foreach (var e in Import (inc))
+						yield return e;
 			}
-			
-			foreach (var child in Xml.Children) {
+		}
+
+		void EvaluateItems (IEnumerable<ProjectElement> elements)
+		{
+			foreach (var child in elements) {
 				var ige = child as ProjectItemGroupElement;
 				if (ige != null) {
 					foreach (var p in ige.Items) {
@@ -215,6 +260,29 @@ namespace Microsoft.Build.Evaluation
 				}
 			}
 			all_evaluated_items.Sort ((p1, p2) => string.Compare (p1.ItemType, p2.ItemType, StringComparison.OrdinalIgnoreCase));
+		}
+		
+		IEnumerable<ProjectElement> Import (ProjectImportElement import)
+		{
+			bool load = true;
+			string path = Path.IsPathRooted (import.Project) ? import.Project : this.DirectoryPath != null ? Path.Combine (DirectoryPath, import.Project) : Path.GetFullPath (import.Project);
+			if (ProjectCollection.OngoingImports.Contains (path)) {
+				switch (load_settings) {
+				case ProjectLoadSettings.RejectCircularImports:
+					throw new InvalidProjectFileException (import.Location, null, string.Format ("Circular imports was detected: {0} is already on \"importing\" stack", path));
+				}
+				yield break; // do not import circular references
+			}
+			ProjectCollection.OngoingImports.Push (path);
+			try {
+				var root = ProjectRootElement.Create (path, ProjectCollection);
+				raw_imports.Add (new ResolvedImport (import, root, true));
+				var imported = new Project (root, this);
+				foreach (var e in imported.EvaluatePropertiesAndImports (imported.Xml.AllChildren))
+					yield return e;
+			} finally {
+				ProjectCollection.OngoingImports.Pop ();
+			}
 		}
 
 		public ICollection<ProjectItem> GetItemsIgnoringCondition (string itemType)
@@ -476,7 +544,7 @@ namespace Microsoft.Build.Evaluation
 		}
 
 		public ICollection<ProjectProperty> AllEvaluatedProperties {
-			get { throw new NotImplementedException (); }
+			get { return properties; }
 		}
 
 		public IDictionary<string, List<string>> ConditionedProperties {
@@ -504,9 +572,23 @@ namespace Microsoft.Build.Evaluation
 			get { return Xml.FullPath; }
 			set { Xml.FullPath = value; }
 		}
+		
+		class ResolvedImportComparer : IEqualityComparer<ResolvedImport>
+		{
+			public static ResolvedImportComparer Instance = new ResolvedImportComparer ();
+			
+			public bool Equals (ResolvedImport x, ResolvedImport y)
+			{
+				return x.ImportedProject.FullPath.Equals (y.ImportedProject.FullPath);
+			}
+			public int GetHashCode (ResolvedImport obj)
+			{
+				return obj.ImportedProject.FullPath.GetHashCode ();
+			}
+		}
 
 		public IList<ResolvedImport> Imports {
-			get { throw new NotImplementedException (); }
+			get { return raw_imports.Distinct (ResolvedImportComparer.Instance).ToList (); }
 		}
 
 		public IList<ResolvedImport> ImportsIncludingDuplicates {
@@ -539,8 +621,9 @@ namespace Microsoft.Build.Evaluation
 			get { return new CollectionFromEnumerable<string> (raw_items.Select (i => i.ItemType).Distinct ()); }
 		}
 
+		[MonoTODO ("should be different from AllEvaluatedProperties")]
 		public ICollection<ProjectProperty> Properties {
-			get { return properties; }
+			get { return AllEvaluatedProperties; }
 		}
 
 		public bool SkipEvaluation { get; set; }
@@ -556,7 +639,6 @@ namespace Microsoft.Build.Evaluation
 		
 		// These are required for reserved property, represents dynamically changing property values.
 		// This should resolve to either the project file path or that of the imported file.
-		Stack<string> files_in_process = new Stack<string> ();
 		internal string GetEvaluationTimeThisFileDirectory ()
 		{
 			return Path.GetDirectoryName (GetEvaluationTimeThisFile ()) + Path.DirectorySeparatorChar;
@@ -564,7 +646,7 @@ namespace Microsoft.Build.Evaluation
 
 		internal string GetEvaluationTimeThisFile ()
 		{
-			return files_in_process.Count > 0 ? files_in_process.Peek () : FullPath;
+			return ProjectCollection.OngoingImports.Count > 0 ? ProjectCollection.OngoingImports.Peek () : FullPath;
 		}
 	}
 }
