@@ -71,7 +71,7 @@ namespace Microsoft.Build.Internal
 				throw new InvalidProjectFileException (string.Format ("Recursive reference to item '{0}' with include '{1}' was found", item.ItemType, item.UnevaluatedInclude));
 			try {
 				items.Add (item);
-				// FIXME: needs verification if string evaluation is appropriate.
+				// FIXME: needs verification on whether string evaluation is appropriate or not.
 				return Evaluator.Evaluate (item.UnevaluatedInclude);
 			} finally {
 				items.Remove (item);
@@ -84,7 +84,7 @@ namespace Microsoft.Build.Internal
 				throw new InvalidProjectFileException (string.Format ("Recursive reference to property '{0}' was found", prop.Name));
 			try {
 				props.Add (prop);
-				// FIXME: needs verification if string evaluation is appropriate.
+				// FIXME: needs verification on whether string evaluation is appropriate or not.
 				return Evaluator.Evaluate (prop.UnevaluatedValue);
 			} finally {
 				props.Remove (prop);
