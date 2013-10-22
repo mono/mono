@@ -44,12 +44,12 @@ namespace MonoTests.Microsoft.Build.Internal
 				"true",
 				"fAlSe",
 				"(false)",
-				"A=A",
-				"A =A",
-				"A= A",
-				"A='A'",
-				"A=\tA",
-				"\tA= A",
+				"A==A",
+				"A ==A",
+				"A== A",
+				"A=='A'",
+				"A==\tA",
+				"\tA== A",
 				"$([System.String]::Format('True'))",
 			};
 			string [] depends = {

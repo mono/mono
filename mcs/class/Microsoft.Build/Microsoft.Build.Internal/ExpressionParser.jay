@@ -81,6 +81,8 @@ namespace Microsoft.Build.Internal
 %token METADATA_OPEN // %(
 %token PAREN_OPEN // (
 %token PAREN_CLOSE // )
+%token BRACE_OPEN // [
+%token BRACE_CLOSE // ]
 %token COLON2 // ::
 %token ARROW // ->
 %token NAME
@@ -150,9 +152,13 @@ PropertyAccessExpression
 
 PropertyAccess
 	: NAME
-	  { $$ = new PropertyAccess () { Name = (NameToken) $1, Location = (NameToken) $1 }; }
+	  { $$ = new PropertyAccess () { Name = (NameToken) $1, TargetType = PropertyTargetType.Object, Location = (NameToken) $1 }; }
 	| Expression DOT NAME
-	  { $$ = new PropertyAccess () { Name = (NameToken) $3, Target = (Expression) $1, Location = (ILocation) $1 }; }
+	  { $$ = new PropertyAccess () { Name = (NameToken) $3, Target = (Expression) $1, TargetType = PropertyTargetType.Object, Location = (ILocation) $1 }; }
+	| BRACE_OPEN NAME BRACE_CLOSE COLON2 NAME
+	  { $$ = new PropertyAccess () { Name = (NameToken) $5, Target = (Expression) $2, TargetType = PropertyTargetType.Type, Location = (ILocation) $1 }; }
+	| BRACE_OPEN NAME BRACE_CLOSE COLON2 NAME PAREN_OPEN FunctionCallArguments PAREN_CLOSE
+	  { $$ = new PropertyAccess () { Name = (NameToken) $5, Target = (Expression) $2, TargetType = PropertyTargetType.Type, Arguments = (ExpressionList) $7, Location = (ILocation) $1 }; }
 	;
 
 ItemAccessExpression
