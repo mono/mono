@@ -651,7 +651,7 @@ namespace Microsoft.Build.Evaluation
 
 		internal string GetEvaluationTimeThisFile ()
 		{
-			return ProjectCollection.OngoingImports.Count > 0 ? ProjectCollection.OngoingImports.Peek () : FullPath;
+			return ProjectCollection.OngoingImports.Count > 0 ? ProjectCollection.OngoingImports.Peek () : FullPath ?? string.Empty;
 		}
 	}
 }

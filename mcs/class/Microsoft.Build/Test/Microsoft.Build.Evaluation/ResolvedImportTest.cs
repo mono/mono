@@ -13,6 +13,8 @@ namespace MonoTests.Microsoft.Build.Evaluation
 	[TestFixture]
 	public class ResolvedImportTest
 	{
+		const string temp_file_name = "test_imported.proj";
+		
 		[Test]
 		public void SimpleImportAndSemanticValues ()
 		{
@@ -28,12 +30,12 @@ namespace MonoTests.Microsoft.Build.Evaluation
     <X Include=""included.txt"" />
   </ItemGroup>
 </Project>";
-			using (var ts = File.CreateText ("test_imported.proj"))
+			using (var ts = File.CreateText (temp_file_name))
 				ts.Write (imported);
 			try {
 				var reader = XmlReader.Create (new StringReader (xml));
 				var root = ProjectRootElement.Create (reader);
-				Assert.AreEqual ("test_imported.proj", root.Imports.First ().Project, "#1");
+				Assert.AreEqual (temp_file_name, root.Imports.First ().Project, "#1");
 				var proj = new Project (root);
 				var prop = proj.GetProperty ("A");
 				Assert.IsNotNull (prop, "#2");
@@ -42,7 +44,7 @@ namespace MonoTests.Microsoft.Build.Evaluation
 				Assert.IsNotNull (item, "#4");
 				Assert.AreEqual ("included.txt", item.EvaluatedInclude, "#5");
 			} finally {
-				File.Delete ("imported.proj");
+				File.Delete (temp_file_name);
 			}
 		}
 
@@ -68,7 +70,7 @@ namespace MonoTests.Microsoft.Build.Evaluation
 
 		void ImportAndPropertyOverrides (string label, string condition, string valueA, string valueB, string valueAPredecessor, bool existsC)
 		{
-			using (var ts = File.CreateText ("test_imported.proj"))
+			using (var ts = File.CreateText (temp_file_name))
 				ts.Write (import_overrides_test_imported);
 			try {
 				string xml = string.Format (import_overrides_test_xml, condition);
@@ -95,7 +97,7 @@ namespace MonoTests.Microsoft.Build.Evaluation
 				else
 					Assert.IsNull (c, label + "#8");
 			} finally {
-				File.Delete ("test_imported.proj");
+				File.Delete (temp_file_name);
 			}
 		}
 
@@ -106,6 +108,39 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			ImportAndPropertyOverrides ("[2]", "$(A)=='X'", "a", "Y", "X", true); // evaluated as true
 			ImportAndPropertyOverrides ("[3]", "$(B)=='Y'", "X", "Y", null, false); // evaluated as false
 			ImportAndPropertyOverrides ("[4]", "$(B)=='b'", "X", "Y", null, false); // of course not evaluated with imported value
+		}
+
+		// FIXME:
+		// Looks like $(MSBuildThisFile) is available only within property value, not via .NET MSBuild API.
+		// Right now our variable is added as a Reserved property, but we will have to hide it.
+		//
+		[Test]
+		public void EvaluateMSBuildThisFileProperty ()
+		{
+			string xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <PropertyGroup>
+    <A>$(MSBuildThisFile)</A>
+  </PropertyGroup>
+  <Import Project='test_imported.proj' />
+</Project>";
+			string imported = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <PropertyGroup>
+    <B>$(MSBuildThisFile)</B>
+  </PropertyGroup>
+</Project>";
+			using (var ts = File.CreateText (temp_file_name))
+				ts.Write (imported);
+			try {
+				var reader = XmlReader.Create (new StringReader (xml));
+				var root = ProjectRootElement.Create (reader);
+				var proj = new Project (root);
+				var a = proj.GetProperty ("A");
+				Assert.AreEqual (string.Empty, a.EvaluatedValue, "#1");
+				var b = proj.GetProperty ("B");
+				Assert.AreEqual (temp_file_name, b.EvaluatedValue, "#2");
+			} finally {
+				File.Delete (temp_file_name);
+			}
 		}
 	}
 }
