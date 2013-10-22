@@ -267,22 +267,22 @@ namespace Microsoft.Build.Evaluation
 		
 		IEnumerable<ProjectElement> Import (ProjectImportElement import)
 		{
-			bool load = true;
-			string path = Path.IsPathRooted (import.Project) ? import.Project : this.DirectoryPath != null ? Path.Combine (DirectoryPath, import.Project) : Path.GetFullPath (import.Project);
+			string dir = GetEvaluationTimeThisFileDirectory ();
+			string path = Path.IsPathRooted (import.Project) ? import.Project : dir != null ? Path.Combine (dir, import.Project) : Path.GetFullPath (import.Project);
 			if (ProjectCollection.OngoingImports.Contains (path)) {
 				switch (load_settings) {
 				case ProjectLoadSettings.RejectCircularImports:
 					throw new InvalidProjectFileException (import.Location, null, string.Format ("Circular imports was detected: {0} is already on \"importing\" stack", path));
 				}
-				yield break; // do not import circular references
+				return new ProjectElement [0]; // do not import circular references
 			}
 			ProjectCollection.OngoingImports.Push (path);
 			try {
-				var root = ProjectRootElement.Create (path, ProjectCollection);
-				raw_imports.Add (new ResolvedImport (import, root, true));
-				var imported = new Project (root, this);
-				foreach (var e in imported.EvaluatePropertiesAndImports (imported.Xml.AllChildren))
-					yield return e;
+				using (var reader = XmlReader.Create (path)) {
+					var root = ProjectRootElement.Create (reader, ProjectCollection);
+					raw_imports.Add (new ResolvedImport (import, root, true));
+					return this.EvaluatePropertiesAndImports (root.Children).ToArray ();
+				}
 			} finally {
 				ProjectCollection.OngoingImports.Pop ();
 			}
@@ -644,7 +644,9 @@ namespace Microsoft.Build.Evaluation
 		// This should resolve to either the project file path or that of the imported file.
 		internal string GetEvaluationTimeThisFileDirectory ()
 		{
-			return Path.GetDirectoryName (GetEvaluationTimeThisFile ()) + Path.DirectorySeparatorChar;
+			var file = GetEvaluationTimeThisFile ();
+			var dir = Path.IsPathRooted (file) ? Path.GetDirectoryName (file) : Directory.GetCurrentDirectory ();
+			return dir + Path.DirectorySeparatorChar;
 		}
 
 		internal string GetEvaluationTimeThisFile ()
