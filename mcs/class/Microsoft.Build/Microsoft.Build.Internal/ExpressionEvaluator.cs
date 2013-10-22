@@ -116,9 +116,9 @@ namespace Microsoft.Build.Internal
 		{
 			switch (Operator) {
 			case Operator.EQ:
-				return Left.EvaluateAsString (context) == Right.EvaluateAsString (context);
+				return string.Equals (Left.EvaluateAsString (context), Right.EvaluateAsString (context), StringComparison.OrdinalIgnoreCase);
 			case Operator.NE:
-				return Left.EvaluateAsString (context) != Right.EvaluateAsString (context);
+				return !string.Equals (Left.EvaluateAsString (context), Right.EvaluateAsString (context), StringComparison.OrdinalIgnoreCase);
 			case Operator.And:
 			case Operator.Or:
 				// evaluate first, to detect possible syntax error on right expr.
