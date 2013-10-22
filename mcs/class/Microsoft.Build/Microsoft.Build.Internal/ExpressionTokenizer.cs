@@ -183,7 +183,7 @@ namespace Microsoft.Build.Internal
 		}
 		string spaces = " \t\r\n";
 
-		static readonly char [] token_starter_chars = ".,[])-=:!><$@%\"' ".ToCharArray ();
+		static readonly char [] token_starter_chars = ".,[]()-=:!><$@%\"' ".ToCharArray ();
 		
 		void ReadStringLiteral (string source, char c)
 		{
