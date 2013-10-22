@@ -27,18 +27,15 @@ namespace Microsoft.Build.Internal
 			if (string.IsNullOrWhiteSpace (source))
 				return new ExpressionList ();
 
-			var head = new List<Expression> ();
+			var ret = new ExpressionList ();
 			while (start < end) {
-				head.Add (ParseSingle (ref start, ref end));
+				ret.Add (ParseSingle (ref start, ref end));
 				SkipSpaces (ref start);
 			}
-			var ret = new ExpressionList ();
-			foreach (var e in head)
-				ret.Add (e);
 			return ret;
 		}
 		
-		static readonly char [] token_starters = "$@%(,".ToCharArray ();
+		static readonly char [] token_starters = "$@%(),".ToCharArray ();
 		
 		Expression ParseSingle (ref int start, ref int end)
 		{
@@ -195,11 +192,14 @@ namespace Microsoft.Build.Internal
 					throw new InvalidProjectFileException ("unterminated function call arguments.");
 				if (source [start] == ')')
 					break;
-				else if (source [start] != ',' && args.Any ())
-					throw new InvalidProjectFileException (string.Format ("invalid function call arguments specification. ',' is expected, got '{0}'", source [start]));
-				start++;
+				else if (args.Any ()) {
+					if (source [start] != ',')
+						throw new InvalidProjectFileException (string.Format ("invalid function call arguments specification. ',' is expected, got '{0}'", source [start]));
+					start++;
+				}
 				args.Add (ParseSingle (ref start, ref end));
 			} while (true);
+			start++;
 			return args;
 		}
 		
