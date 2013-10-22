@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Exceptions;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Microsoft.Build.Internal
 {
@@ -220,6 +221,15 @@ namespace Microsoft.Build.Internal
 		
 		public override object EvaluateAsObject (EvaluationContext context)
 		{
+			try {
+				return DoEvaluateAsObject (context);
+			} catch (TargetInvocationException ex) {
+				throw new InvalidProjectFileException ("Access to property caused an error", ex);
+			}
+		}
+		
+		object DoEvaluateAsObject (EvaluationContext context)
+		{
 			if (Access.Target == null) {
 				var prop = context.Project.GetProperty (Access.Name.Name);
 				if (prop == null)
@@ -230,20 +240,68 @@ namespace Microsoft.Build.Internal
 					var obj = Access.Target.EvaluateAsObject (context);
 					if (obj == null)
 						return null;
-					var prop = obj.GetType ().GetProperty (Access.Name.Name);
-					if (prop == null)
-						throw new InvalidProjectFileException (Location, string.Format ("access to undefined property '{0}' of '{1}' at {2}", Access.Name.Name, Access.Target.EvaluateAsString (context), Location));
-					return prop.GetValue (obj, null);
+					if (Access.Arguments != null) {
+						var args = Access.Arguments.Select (e => e.EvaluateAsObject (context)).ToArray ();
+						var method = FindMethod (obj.GetType (), Access.Name.Name, args);
+						if (method == null)
+							throw new InvalidProjectFileException (Location, string.Format ("access to undefined method '{0}' of '{1}' at {2}", Access.Name.Name, Access.Target.EvaluateAsString (context), Location));
+						return method.Invoke (obj, AdjustArgsForCall (method, args));
+					} else {
+						var prop = obj.GetType ().GetProperty (Access.Name.Name);
+						if (prop == null)
+							throw new InvalidProjectFileException (Location, string.Format ("access to undefined property '{0}' of '{1}' at {2}", Access.Name.Name, Access.Target.EvaluateAsString (context), Location));
+						return prop.GetValue (obj, null);
+					}
 				} else {
 					var type = Type.GetType (Access.Target.EvaluateAsString (context));
 					if (type == null)
 						throw new InvalidProjectFileException (Location, string.Format ("specified type '{0}' was not found", Access.Target.EvaluateAsString (context)));
-					var prop = type.GetProperty (Access.Name.Name);
-					if (prop == null)
-						throw new InvalidProjectFileException (Location, string.Format ("access to undefined property '{0}' of '{1}' at {2}", Access.Name.Name, Access.Target.EvaluateAsString (context), Location));
-					return prop.GetValue (null, null);
+					if (Access.Arguments != null) {
+						var args = Access.Arguments.Select (e => e.EvaluateAsObject (context)).ToArray ();
+						var method = FindMethod (type, Access.Name.Name, args);
+						if (method == null)
+							throw new InvalidProjectFileException (Location, string.Format ("access to undefined method '{0}' of '{1}' at {2}", Access.Name.Name, Access.Target.EvaluateAsString (context), Location));
+						return method.Invoke (null, AdjustArgsForCall (method, args));
+					} else {
+						var prop = type.GetProperty (Access.Name.Name);
+						if (prop == null)
+							throw new InvalidProjectFileException (Location, string.Format ("access to undefined property '{0}' of '{1}' at {2}", Access.Name.Name, Access.Target.EvaluateAsString (context), Location));
+						return prop.GetValue (null, null);
+					}
 				}
 			}
+		}
+	
+		MethodInfo FindMethod (Type type, string name, object [] args)
+		{
+			var methods = type.GetMethods ().Where (m => {
+				if (m.Name != name)
+					return false;
+				var pl = m.GetParameters ();
+				if (pl.Length == args.Length)
+					return true;
+				// calling String.Format() with either set of arguments is valid:
+				// - three strings (two for varargs)
+				// - two strings (happen to be exact match)
+				// - one string (no varargs)
+				if (pl.Length > 0 && pl.Length - 1 <= args.Length &&
+				    pl.Last ().CustomAttributes.Any (a => a.AttributeType == typeof (ParamArrayAttribute)))
+					return true;
+				return false;
+				});
+			if (methods.Count () == 1)
+				return methods.First ();
+			return args.Any (a => a == null) ? 
+				type.GetMethod (name) :
+				type.GetMethod (name, args.Select (o => o.GetType ()).ToArray ());
+		}
+		
+		object [] AdjustArgsForCall (MethodInfo m, object[] args)
+		{
+			if (m.GetParameters ().Length == args.Length + 1)
+				return args.Concat (new object[] {Array.CreateInstance (m.GetParameters ().Last ().ParameterType.GetElementType (), 0)}).ToArray ();
+			else
+				return args;
 		}
 	}
 
