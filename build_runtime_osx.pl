@@ -70,9 +70,15 @@ for my $arch (@arches)
 
 	if (not $skipbuild)
 	{
+		$stackrealign = '-mstackrealign';
+		if ($arch eq 'x86_64')
+		{
+			$stackrealign = '';
+		}
+
 		if ($debug)
 		{
-			$ENV{CFLAGS} = "-arch $arch -g -O0 -D_XOPEN_SOURCE=1 -DMONO_DISABLE_SHM=1 -DDISABLE_SHARED_HANDLES=1 -mstackrealign";
+			$ENV{CFLAGS} = "-arch $arch -g -O0 -D_XOPEN_SOURCE=1 -DMONO_DISABLE_SHM=1 -DDISABLE_SHARED_HANDLES=1 $stackrealign";
 			$ENV{CXXFLAGS} = $ENV{CFLAGS};
 			$ENV{LDFLAGS} = "-arch $arch";
 		}
@@ -82,7 +88,7 @@ for my $arch (@arches)
 			# Work around this for now by manually enabling -Os optimizations from the llvm doc
 			# Switch -fomit-frame-pointer to -fno-omit-frame-pointer as omitting frame pointer screws up stack traces
 			my $Os = '-fglobal-alloc-prefer-bytes -fno-omit-frame-pointer -fdefer-pop -fguess-branch-probability -fcprop-registers -fif-conversion -fif-conversion2 -ftree-ccp -ftree-dce -ftree-dominator-opts -ftree-dse -ftree-ter -ftree-lrs -ftree-sra -ftree-copyrename -ftree-fre -ftree-ch -funit-at-a-time -fmerge-constants -fthread-jumps -fcrossjumping -foptimize-sibling-calls -fcse-follow-jumps  -fcse-skip-blocks -fgcse  -fgcse-lm -fexpensive-optimizations -frerun-cse-after-loop -fcaller-saves -fpeephole2 -fschedule-insns  -fschedule-insns2 -fsched-interblock  -fsched-spec -fregmove -fstrict-aliasing -fstrict-overflow -fdelete-null-pointer-checks -freorder-functions -ftree-vrp -ftree-pre';
-			$ENV{CFLAGS} = "-arch $arch -O0 $Os -D_XOPEN_SOURCE=1 -DMONO_DISABLE_SHM=1 -DDISABLE_SHARED_HANDLES=1 -mstackrealign";  #optimize for size
+			$ENV{CFLAGS} = "-arch $arch -O0 $Os -D_XOPEN_SOURCE=1 -DMONO_DISABLE_SHM=1 -DDISABLE_SHARED_HANDLES=1 $stackrealign";  #optimize for size
 			$ENV{CXXFLAGS} = $ENV{CFLAGS};
 			$ENV{LDFLAGS} = "-arch $arch";
 		}
