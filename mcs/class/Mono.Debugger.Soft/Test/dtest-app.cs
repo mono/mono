@@ -869,6 +869,15 @@ public class Tests : TestsBase, ITest2
 			throw new OverflowException ();
 		} catch (Exception) {
 		}
+		// no subclasses
+		try {
+			throw new OverflowException ();
+		} catch (Exception) {
+		}
+		try {
+			throw new Exception ();
+		} catch (Exception) {
+		}
 
 		object o = null;
 		try {

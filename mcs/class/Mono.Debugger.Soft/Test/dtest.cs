@@ -2503,6 +2503,17 @@ public class DebuggerTests
 		Assert.AreEqual ("OverflowException", (e as ExceptionEvent).Exception.Type.Name);
 		req.Disable ();
 
+		// no subclasses
+		req.IncludeSubclasses = false;
+		req.Enable ();
+
+		vm.Resume ();
+
+		e = GetNextEvent ();
+		Assert.IsInstanceOfType (typeof (ExceptionEvent), e);
+		Assert.AreEqual ("Exception", (e as ExceptionEvent).Exception.Type.Name);
+		req.Disable ();
+
 		// Implicit exceptions
 		req = vm.CreateExceptionRequest (null);
 		req.Enable ();
