@@ -284,7 +284,9 @@ namespace MonoTests.System.Threading.Tasks
 		[Test]
 		public void ContinueWhenAny_WithResult ()
 		{
-			Task[] tasks = new[] { Task.FromResult (1) };
+			var tcs = new TaskCompletionSource<int>();
+			tcs.SetResult(1);
+			Task[] tasks = new[] { tcs.Task };
 			var res = Task.Factory.ContinueWhenAny (tasks, l => 4);
 			Assert.AreEqual (4, res.Result);
 		}
