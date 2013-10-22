@@ -275,5 +275,11 @@ namespace Microsoft.Build.Evaluation
 
 		[MonoTODO]
 		public bool IsBuildEnabled { get; set; }
+		
+		Stack<string> ongoing_imports = new Stack<string> ();
+		
+		internal Stack<string> OngoingImports {
+			get { return ongoing_imports; }
+		}
 	}
 }
