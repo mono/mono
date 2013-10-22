@@ -213,8 +213,10 @@ RawStringLiteralOrFunction
 	;
 
 FunctionCallArguments
-	: Expression
+	: /* empty */
 	  { $$ = new ExpressionList (); }
+	| Expression
+	  { $$ = new ExpressionList ().Add ((Expression) $1); }
 	| FunctionCallArguments COMMA Expression
 	  { $$ = ((ExpressionList) $1).Add ((Expression) $3); }
 	;
