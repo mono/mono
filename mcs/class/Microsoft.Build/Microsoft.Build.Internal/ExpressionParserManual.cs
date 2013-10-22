@@ -22,8 +22,6 @@ namespace Microsoft.Build.Internal
 			return Parse (0, source.Length);
 		}
 		
-		static readonly char [] token_starters = "$@%('\"".ToCharArray ();
-		
 		ExpressionList Parse (int start, int end)
 		{
 			if (string.IsNullOrWhiteSpace (source))
@@ -39,6 +37,8 @@ namespace Microsoft.Build.Internal
 				ret.Add (e);
 			return ret;
 		}
+		
+		static readonly char [] token_starters = "$@%(,".ToCharArray ();
 		
 		Expression ParseSingle (ref int start, ref int end)
 		{
@@ -130,52 +130,77 @@ namespace Microsoft.Build.Internal
 		PropertyAccessExpression EvaluatePropertyExpression (int start, int end)
 		{
 			// member access
-			int idx = source.LastIndexOf ('.', start);
-			if (idx >= 0) {
-				string name = (idx > 0) ? source.Substring (idx, end - idx) : source.Substring (start, end);
-				return new PropertyAccessExpression () {
-					Access = new PropertyAccess () {
-						Name = new NameToken () { Name = name },
-						TargetType = PropertyTargetType.Object,
-						Target = idx < 0 ? null : Parse (start, idx).FirstOrDefault () 
-						}
-					};
+			int dotAt = source.LastIndexOf ('.', start);
+			if (dotAt >= 0) {
+				// property access with member specification
+				int mstart = dotAt + 1;
+				int parenAt = source.IndexOf ('(', mstart, end - mstart);
+				string name = parenAt < 0 ? source.Substring (mstart, end - mstart) : source.Substring (mstart, parenAt - mstart);
+				var access = new PropertyAccess () {
+					Name = new NameToken () { Name = name },
+					TargetType = PropertyTargetType.Object,
+					Target = dotAt < 0 ? null : Parse (start, dotAt).FirstOrDefault () 
+				};
+				if (parenAt > 0) { // method arguments
+					start = parenAt + 1;
+					access.Arguments = ParseFunctionArguments (ref start, ref end);
+				}
+				return new PropertyAccessExpression () { Access = access };
 			} else {
 				// static type access
-				idx = source.IndexOf ("::", start, StringComparison.Ordinal);
-				if (idx >= 0) {
-					string type = source.Substring (start, idx - start);
+				int colonsAt = source.IndexOf ("::", start, StringComparison.Ordinal);
+				if (colonsAt >= 0) {
+					string type = source.Substring (start, colonsAt - start);
 					if (type.Length < 2 || type [0] != '[' || type [type.Length - 1] != ']')
 						throw new InvalidProjectFileException (string.Format ("Static function call misses appropriate type name surrounded by '[' and ']' at {0} in \"{1}\"", start, source));
 					type = type.Substring (1, type.Length - 2);
-					int start2 = idx + 2;
-					int idx2 = source.IndexOf ('(', idx + 2, end - start2);
-					if (idx2 < 0) {
-						// access to static property
-						string member = source.Substring (start2, end - start2);
-						return new PropertyAccessExpression () {
-							Access = new PropertyAccess () {
-								Name = new NameToken () { Name = member },
-								TargetType = PropertyTargetType.Type,
-								Target = new StringLiteral () { Value = new NameToken () { Name = type } }
-								}
-							};
-					} else {
-						// access to static method
-						string member = source.Substring (start2, idx2 - start2);
-						
-						throw new NotImplementedException ();
+					start = colonsAt + 2;
+					int parenAt = source.IndexOf ('(', colonsAt + 2, end - colonsAt - 2);
+					string member = parenAt < 0 ? source.Substring (start, end - start) : source.Substring (start, parenAt - start);
+					if (member.Length == 0)
+						throw new InvalidProjectFileException ("Static member name is missing");
+					var access = new PropertyAccess () {
+						Name = new NameToken () { Name = member },
+						TargetType = PropertyTargetType.Type,
+						Target = new StringLiteral () { Value = new NameToken () { Name = type } }
+					};
+					if (parenAt > 0) { // method arguments
+						start = parenAt + 1;
+						access.Arguments = ParseFunctionArguments (ref start, ref end);
 					}
+					return new PropertyAccessExpression () { Access = access };
 				} else {
 					// property access without member specification
-					return new PropertyAccessExpression () {
-						Access = new PropertyAccess () {
-							Name = new NameToken () { Name = source.Substring (start, end - start) },
-							TargetType = PropertyTargetType.Object
-							}
+					int parenAt = source.IndexOf ('(', start, end - start);
+					string name = parenAt < 0 ? source.Substring (start, end - start) : source.Substring (start, parenAt - start);
+					var access = new PropertyAccess () {
+						Name = new NameToken () { Name = name },
+						TargetType = PropertyTargetType.Object
 						};
+					if (parenAt > 0) { // method arguments
+						start = parenAt + 1;
+						access.Arguments = ParseFunctionArguments (ref start, ref end);
+					}
+					return new PropertyAccessExpression () { Access = access };
 				}
 			}
+		}
+		
+		ExpressionList ParseFunctionArguments (ref int start, ref int end)
+		{
+			var args = new ExpressionList ();
+			do {
+				SkipSpaces (ref start);
+				if (start == source.Length)
+					throw new InvalidProjectFileException ("unterminated function call arguments.");
+				if (source [start] == ')')
+					break;
+				else if (source [start] != ',' && args.Any ())
+					throw new InvalidProjectFileException (string.Format ("invalid function call arguments specification. ',' is expected, got '{0}'", source [start]));
+				start++;
+				args.Add (ParseSingle (ref start, ref end));
+			} while (true);
+			return args;
 		}
 		
 		ItemAccessExpression EvaluateItemExpression (int start, int end)

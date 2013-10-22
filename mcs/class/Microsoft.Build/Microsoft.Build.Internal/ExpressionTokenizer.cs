@@ -64,6 +64,12 @@ namespace Microsoft.Build.Internal
 			case ',':
 				TokenForItemPropertyValue (",", Token.COMMA);
 				break;
+			case '[':
+				TokenForItemPropertyValue ("[", Token.BRACE_OPEN);
+				break;
+			case ']':
+				TokenForItemPropertyValue ("]", Token.BRACE_CLOSE);
+				break;
 			case '(':
 				TokenForItemPropertyValue ("(", Token.PAREN_OPEN);
 				break;
@@ -177,7 +183,7 @@ namespace Microsoft.Build.Internal
 		}
 		string spaces = " \t\r\n";
 
-		static readonly char [] token_starter_chars = ".,)-=:!><$@%\"' ".ToCharArray ();
+		static readonly char [] token_starter_chars = ".,[])-=:!><$@%\"' ".ToCharArray ();
 		
 		void ReadStringLiteral (string source, char c)
 		{
@@ -194,7 +200,7 @@ namespace Microsoft.Build.Internal
 		
 		void TokenForItemPropertyValue (string value, int token)
 		{
-			if (CurrentTokenizerMode == TokenizerMode.InsideItemOrProperty)
+			if (true)//CurrentTokenizerMode == TokenizerMode.InsideItemOrProperty)
 				current_token = token;
 			else {
 				current_token = Token.NAME;

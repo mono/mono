@@ -122,6 +122,7 @@ namespace Microsoft.Build.Internal
 		public NameToken Name { get; set; }
 		public Expression Target { get; set; }
 		public PropertyTargetType TargetType { get; set; }
+		public ExpressionList Arguments { get; set; }
 	}
 
 	partial class ItemAccessExpression : Expression
