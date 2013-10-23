@@ -46,6 +46,32 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			// FIXME: enable it once we implemented it.
 			//Assert.AreEqual ("value1", md1.Predecessor.EvaluatedValue, "#7");
 		}
+		
+		[Test]
+		public void Condition ()
+		{
+			string xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <ItemDefinitionGroup>
+    <I Condition='{0}'>
+      <DefinedMetadata>X</DefinedMetadata>
+    </I>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+   <I Include='foo' />
+  </ItemGroup>
+</Project>";
+			var reader = XmlReader.Create (new StringReader (string.Format (xml, "True")));
+			var root = ProjectRootElement.Create (reader);
+			var proj = new Project (root);
+			var i = proj.GetItems ("I").First ();
+			Assert.AreEqual ("X", i.GetMetadataValue ("DefinedMetadata"), "#1");
+			
+			reader = XmlReader.Create (new StringReader (string.Format (xml, "False")));
+			root = ProjectRootElement.Create (reader);
+			proj = new Project (root);
+			i = proj.GetItems ("I").First ();
+			Assert.AreEqual (string.Empty, i.GetMetadataValue ("DefinedMetadata"), "#2");
+		}
 	}
 }
 
