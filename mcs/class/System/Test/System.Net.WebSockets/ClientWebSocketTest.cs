@@ -1,4 +1,4 @@
-#if NET_4_5
+#if NET_4_5 && !MOBILE
 using System;
 using System.Net;
 using System.Threading;
