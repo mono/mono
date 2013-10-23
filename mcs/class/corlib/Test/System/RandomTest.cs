@@ -58,6 +58,13 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		public void NextZero ()
+		{
+			Random r = new Random ();
+			Assert.AreEqual (0, r.Next (0),"Next(0) failed");
+		}
+
+		[Test]
 		public void NextMax()
 		{
 			Random r = new Random();
