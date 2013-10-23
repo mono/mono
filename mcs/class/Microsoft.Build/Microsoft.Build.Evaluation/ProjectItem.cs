@@ -65,7 +65,7 @@ namespace Microsoft.Build.Evaluation
 		public string GetMetadataValue (string name)
 		{
 			var m = GetMetadata (name);
-			return m != null ? m.EvaluatedValue : null;
+			return m != null ? m.EvaluatedValue : string.Empty;
 		}
 
 		public bool HasMetadata (string name)
