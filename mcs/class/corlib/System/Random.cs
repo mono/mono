@@ -87,7 +87,7 @@ namespace System
 			if (maxValue < 0)
 				throw new ArgumentOutOfRangeException ("Maximum value is less than minimal value.");
 
-			return (int) (JKiss () % maxValue);
+			return maxValue > 0 ? (int)(JKiss () % maxValue) : 0;
 		}
 
 		public virtual int Next ()
