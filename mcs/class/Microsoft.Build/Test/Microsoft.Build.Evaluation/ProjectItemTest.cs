@@ -58,7 +58,6 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			Assert.AreEqual (1, root.ItemGroups.Count, "#1");
 			var g = root.ItemGroups.First ();
 			Assert.AreEqual (1, g.Items.Count, "#2");
-			var xitem = g.Items.First ();
 			var proj = new Project (root);
 			var item = proj.ItemsIgnoringCondition.First ();
 			var meta = item.GetMetadata ("prop1");
