@@ -43,19 +43,21 @@ namespace Microsoft.Build.Evaluation
 			predecessor = existingMetadata.FirstOrDefault (m => m.Name == xml.Name);
 			if (predecessor != null)
 				remover (predecessor);
+			is_imported = Project.ProjectCollection.OngoingImports.Any ();
 		}
 
-		Project project;
-		string item_type;
-		ProjectMetadataElement xml;
-		ProjectMetadata predecessor;
+		readonly Project project;
+		readonly string item_type;
+		readonly ProjectMetadataElement xml;
+		readonly ProjectMetadata predecessor;
+		readonly bool is_imported;
 
 		public string EvaluatedValue {
 			get { return project.ExpandString (xml.Value); }
 		}
 
 		public bool IsImported {
-			get { throw new NotImplementedException (); }
+			get { return is_imported; }
 		}
 
 		public string ItemType {
