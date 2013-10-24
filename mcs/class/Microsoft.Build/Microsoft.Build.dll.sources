@@ -1,7 +1,10 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/MonoTODOAttribute.cs
+../Microsoft.Build.Engine/Microsoft.Build.BuildEngine/DirectoryScanner.cs
 ../Microsoft.Build.Utilities/Mono.XBuild.Utilities/MSBuildUtils.cs
+../Microsoft.Build.Utilities/Mono.XBuild.Utilities/ReservedNameUtils.cs
+../Microsoft.Build.Utilities/Microsoft.Build.Utilities/TaskItem.cs
 ../Microsoft.Build.Utilities/Microsoft.Build.Utilities/ToolLocationHelper.cs
 ../Microsoft.Build.Utilities/Microsoft.Build.Utilities/TargetDotNetFrameworkVersion.cs
 Microsoft.Build.Construction/ElementLocation.cs
@@ -77,6 +80,7 @@ Microsoft.Build.Internal/ExpressionEvaluator.cs
 Microsoft.Build.Internal/ExpressionParserManual.cs
 Microsoft.Build.Internal/ExpressionTokenizer.cs
 Microsoft.Build.Internal/FilteredEnumerable.cs
+Microsoft.Build.Internal/ProjectTaskItem.cs
 Microsoft.Build.Internal/ReverseEnumerable.cs
 Microsoft.Build.Logging/ColorResetter.cs
 Microsoft.Build.Logging/ColorSetter.cs
