@@ -137,6 +137,16 @@
     <Compile Include="Microsoft.Build.Internal\ExpressionConstructs.cs" />
     <Compile Include="Microsoft.Build.Internal\ExpressionEvaluator.cs" />
     <Compile Include="Microsoft.Build.Internal\ExpressionParserManual.cs" />
+    <Compile Include="..\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\DirectoryScanner.cs">
+      <Link>DirectoryScanner.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.Build.Utilities\Microsoft.Build.Utilities\TaskItem.cs">
+      <Link>TaskItem.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.Build.Utilities\Mono.XBuild.Utilities\ReservedNameUtils.cs">
+      <Link>ReservedNameUtils.cs</Link>
+    </Compile>
+    <Compile Include="Microsoft.Build.Internal\ProjectTaskItem.cs" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
