@@ -243,7 +243,8 @@ namespace Microsoft.Build.Evaluation
 					foreach (var p in ige.Items) {
 						var inc = ExpandString (p.Include);
 						foreach (var each in inc.Split (item_sep, StringSplitOptions.RemoveEmptyEntries)) {
-							var item = new ProjectItem (this, p, each);
+							// FIXME: this "each" path could still be wildcard that needs to be expanded.
+							var item = new ProjectItem (this, p, each, each);
 							this.raw_items.Add (item);
 							if (ShouldInclude (ige.Condition) && ShouldInclude (p.Condition))
 								all_evaluated_items.Add (item);
@@ -652,6 +653,13 @@ namespace Microsoft.Build.Evaluation
 		internal string GetEvaluationTimeThisFile ()
 		{
 			return ProjectCollection.OngoingImports.Count > 0 ? ProjectCollection.OngoingImports.Peek () : FullPath ?? string.Empty;
+		}
+		
+		internal string GetFullPath (string pathRelativeToProject)
+		{
+			if (Path.IsPathRooted (pathRelativeToProject))
+				return pathRelativeToProject;
+			return Path.GetFullPath (Path.Combine (DirectoryPath, pathRelativeToProject));
 		}
 	}
 }
