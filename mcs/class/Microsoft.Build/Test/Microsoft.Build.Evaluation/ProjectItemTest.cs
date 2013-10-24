@@ -65,6 +65,10 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			Assert.AreEqual ("valueX1", meta.UnevaluatedValue, "#4");
 			Assert.IsNotNull (meta.Predecessor, "#5");
 			Assert.AreEqual ("value1", meta.Predecessor.UnevaluatedValue, "#6");
+			
+			// Well-known metadata don't show up via GetMetadata(), but does show up via GetMetadataValue().
+			Assert.AreEqual (null, item.GetMetadata ("Filename"), "#7");
+			Assert.AreEqual ("bar.txt", item.GetMetadataValue ("Filename"), "#8");
 		}
 	}
 }
