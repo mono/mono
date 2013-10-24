@@ -36,7 +36,10 @@ using Mono.XBuild.Utilities;
 
 namespace Microsoft.Build.Utilities
 {
-	public sealed class TaskItem : MarshalByRefObject, ITaskItem
+#if !MICROSOFT_BUILD_DLL
+	public
+#endif
+	sealed class TaskItem : MarshalByRefObject, ITaskItem
 	{
 		IDictionary		metadata;
 		string			itemSpec;
