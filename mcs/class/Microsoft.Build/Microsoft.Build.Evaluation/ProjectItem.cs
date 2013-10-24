@@ -49,8 +49,8 @@ namespace Microsoft.Build.Evaluation
 			if (project.ItemDefinitions.ContainsKey (ItemType))
 				foreach (var md in project.ItemDefinitions [ItemType].Metadata)
 					metadata.Add (md);
-			foreach (var item in xml.Metadata)
-				metadata.Add (new ProjectMetadata (project, ItemType, metadata, m => metadata.Remove (m), item));
+			foreach (var md in xml.Metadata)
+				metadata.Add (new ProjectMetadata (project, ItemType, metadata, m => metadata.Remove (m), md));
 			this.evaluated_include = evaluatedInclude;
 			is_imported = project.ProjectCollection.OngoingImports.Any ();			
 		}
@@ -60,6 +60,8 @@ namespace Microsoft.Build.Evaluation
 		readonly List<ProjectMetadata> metadata = new List<ProjectMetadata> ();
 		readonly bool is_imported;
 		readonly string evaluated_include;
+		
+		internal string RecursiveDir { get; set; }
 
 		public ProjectMetadata GetMetadata (string name)
 		{
@@ -81,7 +83,7 @@ namespace Microsoft.Build.Evaluation
 					var fp = p.Project.GetFullPath (p.evaluated_include);
 					return Path.GetDirectoryName (fp).Substring (Path.GetPathRoot (fp).Length); }
 					},
-				// FIXME: implement RecursiveDir: Microsoft.Build.BuildEngine.DirectoryScanner would be reusable with some changes.
+				{"RecursiveDir", p => p.RecursiveDir },
 				{"Identity", p => p.EvaluatedInclude },
 				{"ModifiedTime", p => new FileInfo (p.Project.GetFullPath (p.evaluated_include)).LastWriteTime.ToString ("yyyy-MM-dd HH:mm:ss.fffffff") },
 				{"CreatedTime", p => new FileInfo (p.Project.GetFullPath (p.evaluated_include)).CreationTime.ToString ("yyyy-MM-dd HH:mm:ss.fffffff") },
@@ -117,6 +119,12 @@ namespace Microsoft.Build.Evaluation
 
 		public ProjectMetadata SetMetadataValue (string name, string unevaluatedValue)
 		{
+			// This has to do several tasks:
+			// - it cannot directly change Xml.Metadata because the ProjectItemElement might be shared
+			//   among multiple ProjectItems.
+			// - hence it has to create another ProjectItemElement instance and add it to the project
+			//   XML construction, with specific Include value that is assigned to this instance, and
+			//   metadata values that are assigned to this instance.
 			throw new NotImplementedException ();
 		}
 
