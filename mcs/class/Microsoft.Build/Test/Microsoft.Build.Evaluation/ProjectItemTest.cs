@@ -38,6 +38,81 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			Assert.AreEqual (inc2, item.UnevaluatedInclude, "#6");
 		}
 		
+		void SetupTemporaryDirectoriesAndFiles ()
+		{
+			Directory.CreateDirectory ("Test/ProjectItemTestTemporary");
+			Directory.CreateDirectory ("Test/ProjectItemTestTemporary/parent");
+			Directory.CreateDirectory ("Test/ProjectItemTestTemporary/parent/dir1");
+			Directory.CreateDirectory ("Test/ProjectItemTestTemporary/parent/dir2");
+			File.CreateText ("Test/ProjectItemTestTemporary/x.cs").Close ();
+			File.CreateText ("Test/ProjectItemTestTemporary/parent/dir1/a.cs").Close ();
+			File.CreateText ("Test/ProjectItemTestTemporary/parent/dir1/a1.cs").Close ();
+			File.CreateText ("Test/ProjectItemTestTemporary/parent/dir1/b.cs").Close ();
+			File.CreateText ("Test/ProjectItemTestTemporary/parent/dir2/a2.cs").Close ();
+			File.CreateText ("Test/ProjectItemTestTemporary/parent/dir2/a.cs").Close ();
+			File.CreateText ("Test/ProjectItemTestTemporary/parent/dir2/b.cs").Close ();
+		}
+		
+		void CleanupTemporaryDirectories ()
+		{
+			Directory.Delete ("Test/ProjectItemTestTemporary", true);
+		}
+		
+		[Test]
+		public void WildcardExpansion ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <ItemGroup>
+    <Foo Include='Test/ProjectItemTestTemporary/parent/dir*/a*.cs;Test/ProjectItemTestTemporary/x.cs' />
+  </ItemGroup>
+</Project>";
+			try {
+				SetupTemporaryDirectoriesAndFiles ();
+				WildcardExpansionCommon (project_xml);
+			} finally {
+				CleanupTemporaryDirectories ();
+			}
+		}
+		
+		[Test]
+		[Category ("NotWorking")] // it looks like DirectoryScanner bug.
+		public void WildcardExpansionRecursive ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <ItemGroup>
+    <Foo Include='Test/ProjectItemTestTemporary/parent/**/a*.cs;Test/ProjectItemTestTemporary/x.cs' />
+  </ItemGroup>
+</Project>";
+			try {
+				SetupTemporaryDirectoriesAndFiles ();
+				WildcardExpansionCommon (project_xml);
+			} finally {
+				CleanupTemporaryDirectories ();
+			}
+		}
+		
+		void WildcardExpansionCommon (string xmlString)
+		{
+			var xml = XmlReader.Create (new StringReader (xmlString));
+			var root = ProjectRootElement.Create (xml);
+			var proj = new Project (root);
+			var xitem = proj.Xml.Items.First ();
+			var items = proj.Items.ToArray ();
+			Assert.AreEqual (5, items.Length, "#1");
+			Assert.AreEqual (string.Format ("Test/ProjectItemTestTemporary/parent/dir1{0}a.cs", Path.DirectorySeparatorChar), items [0].EvaluatedInclude, "#2");
+			Assert.AreEqual ("a", items [0].GetMetadataValue ("Filename"), "#3");
+			Assert.AreEqual (string.Format ("Test/ProjectItemTestTemporary/parent/dir1{0}a1.cs", Path.DirectorySeparatorChar), items [1].EvaluatedInclude, "#4");
+			Assert.AreEqual ("a1", items [1].GetMetadataValue ("Filename"), "#5");
+			// note that Items are *sorted*
+			Assert.AreEqual (string.Format ("Test/ProjectItemTestTemporary/parent/dir2{0}a.cs", Path.DirectorySeparatorChar), items [2].EvaluatedInclude, "#6");
+			Assert.AreEqual ("a", items [2].GetMetadataValue ("Filename"), "#7");
+			Assert.AreEqual (string.Format ("Test/ProjectItemTestTemporary/parent/dir2{0}a2.cs", Path.DirectorySeparatorChar), items [3].EvaluatedInclude, "#8");
+			Assert.AreEqual ("a2", items [3].GetMetadataValue ("Filename"), "#9");
+			Assert.AreEqual ("Test/ProjectItemTestTemporary/x.cs", items [4].EvaluatedInclude, "#10");
+			for (int i = 0; i < items.Length; i++)
+				Assert.AreEqual (xitem, items [i].Xml, "#11:" + i);
+		}
+		
 		[Test]
 		public void Metadata ()
 		{
@@ -68,7 +143,7 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			
 			// Well-known metadata don't show up via GetMetadata(), but does show up via GetMetadataValue().
 			Assert.AreEqual (null, item.GetMetadata ("Filename"), "#7");
-			Assert.AreEqual ("bar.txt", item.GetMetadataValue ("Filename"), "#8");
+			Assert.AreEqual ("bar", item.GetMetadataValue ("Filename"), "#8");
 		}
 	}
 }

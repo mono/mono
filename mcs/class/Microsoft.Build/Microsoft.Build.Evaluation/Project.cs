@@ -37,12 +37,12 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using Microsoft.Build.Construction;
-using Microsoft.Build.Internal;
+using Microsoft.Build.Exceptions;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Internal;
 using Microsoft.Build.Logging;
 using System.Collections;
-using Microsoft.Build.Exceptions;
 
 namespace Microsoft.Build.Evaluation
 {
@@ -241,13 +241,31 @@ namespace Microsoft.Build.Evaluation
 				var ige = child as ProjectItemGroupElement;
 				if (ige != null) {
 					foreach (var p in ige.Items) {
-						var inc = ExpandString (p.Include);
-						foreach (var each in inc.Split (item_sep, StringSplitOptions.RemoveEmptyEntries)) {
-							// FIXME: this "each" path could still be wildcard that needs to be expanded.
-							var item = new ProjectItem (this, p, each, each);
+						if (!ShouldInclude (ige.Condition) || !ShouldInclude (p.Condition))
+							continue;
+						var includes = ExpandString (p.Include).Split (item_sep, StringSplitOptions.RemoveEmptyEntries);
+						var excludes = ExpandString (p.Exclude).Split (item_sep, StringSplitOptions.RemoveEmptyEntries);
+						
+						if (includes.Length == 0)
+							continue;						
+						if (includes.Length == 1 && includes [0].IndexOf ('*') < 0 && excludes.Length == 0) {
+							// for most case - shortcut.
+							var item = new ProjectItem (this, p, includes [0]);
 							this.raw_items.Add (item);
-							if (ShouldInclude (ige.Condition) && ShouldInclude (p.Condition))
+							all_evaluated_items.Add (item);
+						} else {
+							var ds = new Microsoft.Build.BuildEngine.DirectoryScanner () {
+								BaseDirectory = new DirectoryInfo (DirectoryPath),
+								Includes = includes.Select (i => new ProjectTaskItem (p, i)).ToArray (),
+								Excludes = excludes.Select (i => new ProjectTaskItem (p, i)).ToArray (),
+							};
+							ds.Scan ();
+							foreach (var taskItem in ds.MatchedItems) {
+								// FIXME: this "each" path could still be wildcard that needs to be expanded.
+								var item = new ProjectItem (this, p, taskItem.ItemSpec);
+								this.raw_items.Add (item);
 								all_evaluated_items.Add (item);
+							}
 						}
 					}
 				}

@@ -42,7 +42,7 @@ namespace Microsoft.Build.Evaluation
 	[DebuggerDisplay ("{ItemType}={EvaluatedInclude} [{UnevaluatedInclude}] #DirectMetadata={DirectMetadataCount}")]
 	public class ProjectItem
 	{
-		internal ProjectItem (Project project, ProjectItemElement xml, string evaluatedInclude, string filename)
+		internal ProjectItem (Project project, ProjectItemElement xml, string evaluatedInclude)
 		{
 			this.project = project;
 			this.xml = xml;
@@ -51,17 +51,15 @@ namespace Microsoft.Build.Evaluation
 					metadata.Add (md);
 			foreach (var item in xml.Metadata)
 				metadata.Add (new ProjectMetadata (project, ItemType, metadata, m => metadata.Remove (m), item));
-			evaluated_include = evaluatedInclude;
-			this.filename = filename;
+			this.evaluated_include = evaluatedInclude;
 			is_imported = project.ProjectCollection.OngoingImports.Any ();			
 		}
 		
 		readonly Project project;
 		readonly ProjectItemElement xml;
 		readonly List<ProjectMetadata> metadata = new List<ProjectMetadata> ();
-		readonly string evaluated_include;
 		readonly bool is_imported;
-		readonly string filename;
+		readonly string evaluated_include;
 
 		public ProjectMetadata GetMetadata (string name)
 		{
@@ -71,23 +69,23 @@ namespace Microsoft.Build.Evaluation
 		static readonly char [] path_sep = {Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar};
 		
 		static readonly Dictionary<string,Func<ProjectItem,string>> well_known_metadata = new Dictionary<string, Func<ProjectItem,string>> {
-				{"FullPath", p => Path.Combine (p.Project.GetFullPath (p.filename)) },
-				{"RootDir", p => Path.GetPathRoot (p.Project.GetFullPath (p.filename)) },
-				{"Filename", p => Path.GetFileName (p.filename) },
-				{"Extension", p => Path.GetExtension (p.filename) },
+				{"FullPath", p => Path.Combine (p.Project.GetFullPath (p.evaluated_include)) },
+				{"RootDir", p => Path.GetPathRoot (p.Project.GetFullPath (p.evaluated_include)) },
+				{"Filename", p => Path.GetFileNameWithoutExtension (p.evaluated_include) },
+				{"Extension", p => Path.GetExtension (p.evaluated_include) },
 				{"RelativeDir", p => {
-					var idx = p.filename.LastIndexOfAny (path_sep);
-					return idx < 0 ? string.Empty : p.filename.Substring (0, idx + 1); }
+					var idx = p.evaluated_include.LastIndexOfAny (path_sep);
+					return idx < 0 ? string.Empty : p.evaluated_include.Substring (0, idx + 1); }
 					},
 				{"Directory", p => {
-					var fp = p.Project.GetFullPath (p.filename);
+					var fp = p.Project.GetFullPath (p.evaluated_include);
 					return Path.GetDirectoryName (fp).Substring (Path.GetPathRoot (fp).Length); }
 					},
 				// FIXME: implement RecursiveDir: Microsoft.Build.BuildEngine.DirectoryScanner would be reusable with some changes.
 				{"Identity", p => p.EvaluatedInclude },
-				{"ModifiedTime", p => new FileInfo (p.Project.GetFullPath (p.filename)).LastWriteTime.ToString ("yyyy-MM-dd HH:mm:ss.fffffff") },
-				{"CreatedTime", p => new FileInfo (p.Project.GetFullPath (p.filename)).CreationTime.ToString ("yyyy-MM-dd HH:mm:ss.fffffff") },
-				{"AccessedTime", p => new FileInfo (p.Project.GetFullPath (p.filename)).LastAccessTime.ToString ("yyyy-MM-dd HH:mm:ss.fffffff") },
+				{"ModifiedTime", p => new FileInfo (p.Project.GetFullPath (p.evaluated_include)).LastWriteTime.ToString ("yyyy-MM-dd HH:mm:ss.fffffff") },
+				{"CreatedTime", p => new FileInfo (p.Project.GetFullPath (p.evaluated_include)).CreationTime.ToString ("yyyy-MM-dd HH:mm:ss.fffffff") },
+				{"AccessedTime", p => new FileInfo (p.Project.GetFullPath (p.evaluated_include)).LastAccessTime.ToString ("yyyy-MM-dd HH:mm:ss.fffffff") },
 				};
 
 		public string GetMetadataValue (string name)
