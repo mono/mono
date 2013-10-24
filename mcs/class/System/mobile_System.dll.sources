@@ -20,6 +20,8 @@ System.Collections.Specialized/HybridDictionary.cs
 System.Collections.Specialized/ListDictionary.cs
 System.Collections.Specialized/NameObjectCollectionBase.cs
 System.Collections.Specialized/NameValueCollection.cs
+System.Collections.Specialized/IOrderedDictionary.cs
+System.Collections.Specialized/OrderedDictionary.cs
 System.Collections.Specialized/ProcessStringDictionary.cs
 System.Collections.Specialized/StringCollection.cs
 System.Collections.Specialized/StringDictionary.cs
