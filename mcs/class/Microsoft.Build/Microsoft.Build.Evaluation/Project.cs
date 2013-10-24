@@ -157,7 +157,6 @@ namespace Microsoft.Build.Evaluation
 		List<ResolvedImport> raw_imports;
 		List<ProjectItem> raw_items;
 		List<ProjectItem> all_evaluated_items;
-		List<string> item_types;
 		List<ProjectProperty> properties;
 		Dictionary<string, ProjectTargetInstance> targets;
 
@@ -166,7 +165,6 @@ namespace Microsoft.Build.Evaluation
 			dir_path = Directory.GetCurrentDirectory ();
 			raw_imports = new List<ResolvedImport> ();
 			item_definitions = new Dictionary<string, ProjectItemDefinition> ();
-			item_types = new List<string> ();
 			targets = new Dictionary<string, ProjectTargetInstance> ();
 			raw_items = new List<ProjectItem> ();
 			
@@ -257,12 +255,16 @@ namespace Microsoft.Build.Evaluation
 							var ds = new Microsoft.Build.BuildEngine.DirectoryScanner () {
 								BaseDirectory = new DirectoryInfo (DirectoryPath),
 								Includes = includes.Select (i => new ProjectTaskItem (p, i)).ToArray (),
-								Excludes = excludes.Select (i => new ProjectTaskItem (p, i)).ToArray (),
+								Excludes = excludes.Select (e => new ProjectTaskItem (p, e)).ToArray (),
 							};
 							ds.Scan ();
 							foreach (var taskItem in ds.MatchedItems) {
-								// FIXME: this "each" path could still be wildcard that needs to be expanded.
+								if (all_evaluated_items.Any (i => i.EvaluatedInclude == taskItem.ItemSpec && i.ItemType == p.ItemType))
+									continue; // skip duplicate
 								var item = new ProjectItem (this, p, taskItem.ItemSpec);
+								string recurse = taskItem.GetMetadata ("RecursiveDir");
+								if (!string.IsNullOrEmpty (recurse))
+									item.RecursiveDir = recurse;
 								this.raw_items.Add (item);
 								all_evaluated_items.Add (item);
 							}
@@ -432,6 +434,7 @@ namespace Microsoft.Build.Evaluation
 
 		public static string GetEvaluatedItemIncludeEscaped (ProjectItemDefinition item)
 		{
+			// ?? ItemDefinition does not have Include attribute. What's the point here?
 			throw new NotImplementedException ();
 		}
 

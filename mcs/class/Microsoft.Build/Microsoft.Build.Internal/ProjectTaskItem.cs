@@ -29,7 +29,8 @@ namespace Microsoft.Build.Internal
 		}
 		string ITaskItem.GetMetadata (string metadataName)
 		{
-			throw new NotImplementedException ();
+			var mde = item.Metadata.FirstOrDefault (m => m.Name == metadataName);
+			return mde != null ? mde.Value : null;
 		}
 		void ITaskItem.RemoveMetadata (string metadataName)
 		{
