@@ -11,6 +11,7 @@ Microsoft.Build.Evaluation/ToolsetTest.cs
 Microsoft.Build.Execution/BuildParametersTest.cs
 Microsoft.Build.Execution/BuildManagerTest.cs
 Microsoft.Build.Execution/ProjectInstanceTest.cs
+Microsoft.Build.Execution/ProjectMetadataInstanceTest.cs
 Microsoft.Build.Internal/CollectionFromEnumerableTest.cs
 Microsoft.Build.Internal/ExpressionParserTest.cs
 Microsoft.Build.Logging/ConsoleLoggerTest.cs

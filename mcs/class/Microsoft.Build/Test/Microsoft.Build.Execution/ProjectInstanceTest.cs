@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using Microsoft.Build.Construction;
 using Microsoft.Build.Execution;
@@ -10,6 +11,32 @@ namespace MonoTests.Microsoft.Build.Execution
 	[TestFixture]
 	public class ProjectInstanceTest
 	{
+		[Test]
+		[Category ("NotWorking")]
+		public void ItemsAndProperties ()
+		{
+            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <ItemGroup>
+    <X Condition='false' Include='bar.txt' />
+    <X Include='foo.txt'>
+      <M>m</M>
+      <N>=</N>
+    </X>
+  </ItemGroup>
+  <PropertyGroup>
+    <P Condition='false'>void</P>
+    <P Condition='true'>valid</P>
+  </PropertyGroup>
+</Project>";
+            var xml = XmlReader.Create (new StringReader(project_xml));
+            var root = ProjectRootElement.Create (xml);
+            var proj = new ProjectInstance (root);
+            var item = proj.Items.First ();
+			Assert.AreEqual ("foo.txt", item.EvaluatedInclude, "#1");
+			var prop = proj.Properties.First ();
+			Assert.AreEqual ("valid", prop.EvaluatedValue, "#2");
+		}
+		
 		[Test]
 		[Category ("NotWorking")]
 		public void BuildEmptyProject ()
