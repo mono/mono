@@ -186,6 +186,8 @@ namespace Microsoft.Build.Evaluation
 			}
 
 			ProcessXml (parent);
+			
+			ProjectCollection.AddProject (this);
 		}
 		
 		static readonly char [] item_sep = {';'};

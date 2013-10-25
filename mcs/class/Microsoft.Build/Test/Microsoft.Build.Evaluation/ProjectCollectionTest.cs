@@ -51,6 +51,39 @@ namespace MonoTests.Microsoft.Build.Evaluation
             inst.Build ();
             Assert.AreEqual (0, coll.Count, "#2");
 		}
+		
+		[Test]
+		public void GetLoadedProjectsWithoutFullPath ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			string path = Path.GetFullPath ("foo.xml");
+			var pc = new ProjectCollection ();
+			
+			pc.LoadProject (XmlReader.Create (new StringReader (project_xml), null, path));
+			Assert.AreEqual (0, pc.GetLoadedProjects (path).Count, "#1"); // huh?
+			
+			new Project (root, null, null, pc);
+			Assert.AreEqual (0, pc.GetLoadedProjects (path).Count, "#2"); // huh?
+		}
+			
+		[Test]
+		public void GetLoadedProjectsSuccess ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			string path = Path.GetFullPath ("foo.xml");
+			var pc = new ProjectCollection ();
+			
+			var proj = new Project (root, null, null, pc);
+			// this order also matters for test; It sets FullPath after Project.ctor(), and should still work.
+			root.FullPath = "foo.xml";
+			
+			Assert.AreEqual (1, pc.GetLoadedProjects (path).Count, "#1"); // wow ok...
+			Assert.AreEqual (proj, pc.GetLoadedProjects (path).First (), "#2");
+		}
 	}
 }
 

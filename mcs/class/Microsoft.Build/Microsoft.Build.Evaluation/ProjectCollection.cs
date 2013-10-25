@@ -39,6 +39,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Xml;
 
 namespace Microsoft.Build.Evaluation
 {
@@ -133,6 +134,13 @@ namespace Microsoft.Build.Evaluation
 
 		readonly int max_node_count;
 
+		public void AddProject (Project project)
+		{
+			this.loaded_projects.Add (project);
+			if (ProjectAdded != null)
+				ProjectAdded (this, new ProjectAddedToProjectCollectionEventArgs (project.Xml));
+		}
+
 		[MonoTODO]
 		public int Count {
 			get { return loaded_projects.Count; }
@@ -157,7 +165,7 @@ namespace Microsoft.Build.Evaluation
 
 		public ICollection<Project> GetLoadedProjects (string fullPath)
 		{
-			return LoadedProjects.Where (p => Path.GetFullPath (p.FullPath) == Path.GetFullPath (fullPath)).ToList ();
+			return LoadedProjects.Where (p => p.FullPath != null && Path.GetFullPath (p.FullPath) == Path.GetFullPath (fullPath)).ToList ();
 		}
 
 		readonly IDictionary<string, string> global_properties;
@@ -167,7 +175,38 @@ namespace Microsoft.Build.Evaluation
 		}
 
 		readonly List<Project> loaded_projects = new List<Project> ();
-
+		
+		public Project LoadProject (string fileName)
+		{
+			return LoadProject (fileName, DefaultToolsVersion);
+		}
+		
+		public Project LoadProject (string fileName, string toolsVersion)
+		{
+			return LoadProject (fileName, toolsVersion);
+		}
+		
+		public Project LoadProject (string fileName, IDictionary<string,string> globalProperties, string toolsVersion)
+		{
+			return new Project (fileName, globalProperties, toolsVersion);
+		}
+		
+		// These methods somehow don't add the project to ProjectCollection...
+		public Project LoadProject (XmlReader xmlReader)
+		{
+			return LoadProject (xmlReader, DefaultToolsVersion);
+		}
+		
+		public Project LoadProject (XmlReader xmlReader, string toolsVersion)
+		{
+			return LoadProject (xmlReader, null, toolsVersion);
+		}
+		
+		public Project LoadProject (XmlReader xmlReader, IDictionary<string,string> globalProperties, string toolsVersion)
+		{
+			return new Project (xmlReader, globalProperties, toolsVersion);
+		}
+		
 		[MonoTODO]
 		public ICollection<Project> LoadedProjects {
 			get { return loaded_projects; }
