@@ -42,8 +42,12 @@ using Microsoft.Build.Logging;
 //
 // However, that inconsistency could happen even if you only use ProjectInstance and BuildParameters.
 // They both have constructors that take ProjectCollection and there is no guarantee that the arguments are the same.
-// BuildManager.Build() does not fail because of inconsistent ProjectCollection instance on .NET. So we can ignore that.
+// BuildManager.Build() does not fail because of inconsistent ProjectCollection instance on .NET.
 //
+// Anyhow, I'm not going to instantiate Project within ProjectInstance code for another reason:
+// ProjectCollection.GetLoadedProject() does not return any Project instnace for corresponding ProjectInstance
+// (or I should say, ProjectRootElement for both).
+
 
 namespace Microsoft.Build.Execution
 {
