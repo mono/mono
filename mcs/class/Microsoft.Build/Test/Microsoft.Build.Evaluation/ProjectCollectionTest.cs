@@ -63,6 +63,7 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			
 			pc.LoadProject (XmlReader.Create (new StringReader (project_xml), null, path));
 			Assert.AreEqual (0, pc.GetLoadedProjects (path).Count, "#1"); // huh?
+			Assert.AreEqual (0, pc.LoadedProjects.Count, "#1.1");
 			
 			new Project (root, null, null, pc);
 			Assert.AreEqual (0, pc.GetLoadedProjects (path).Count, "#2"); // huh?
@@ -83,6 +84,27 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			
 			Assert.AreEqual (1, pc.GetLoadedProjects (path).Count, "#1"); // wow ok...
 			Assert.AreEqual (proj, pc.GetLoadedProjects (path).First (), "#2");
+		}
+			
+		[Test]
+		[Category ("NotWorking")] // stackoverflow at some IO operation.
+		public void GetLoadedProjectsSuccess2 ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			string path = Path.GetFullPath ("GetLoadedProjectsSuccess2.xml");
+			var pc = new ProjectCollection ();
+			
+			using (var fs = File.CreateText (path))
+				fs.Write (project_xml);
+			try {
+				var proj = pc.LoadProject (path);
+				
+				Assert.AreEqual (1, pc.GetLoadedProjects (path).Count, "#1"); // ok... LoadProject (with filename) adds it to the collection.
+				Assert.AreEqual (proj, pc.GetLoadedProjects (path).First (), "#2");
+			} finally {
+				File.Delete (path);
+			}
 		}
 			
 		[Test]
