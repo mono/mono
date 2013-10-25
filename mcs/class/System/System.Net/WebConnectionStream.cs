@@ -44,7 +44,6 @@ namespace System.Net
 		byte [] readBuffer;
 		int readBufferOffset;
 		int readBufferSize;
-		int stream_length; // -1 when CL not present
 		int contentLength;
 		int totalRead;
 		internal long totalWritten;
@@ -98,10 +97,6 @@ namespace System.Net
 			} else {
 				contentLength = Int32.MaxValue;
 			}
-
-			// Negative numbers?
-			if (!Int32.TryParse (clength, out stream_length))
-				stream_length = -1;
 		}
 
 		public WebConnectionStream (WebConnection cnc, HttpWebRequest request)
@@ -810,11 +805,7 @@ namespace System.Net
 		}
 
 		public override long Length {
-			get {
-				if (!isRead)
-					throw new NotSupportedException ();
-				return stream_length;
-			}
+			get { throw new NotSupportedException (); }
 		}
 
 		public override long Position {
