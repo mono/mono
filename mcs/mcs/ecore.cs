@@ -3002,7 +3002,21 @@ namespace Mono.CSharp {
 				//
 				TypeSpec[] targs = null;
 				if (method.DeclaringType != InstanceExpression.Type) {
-					var base_override = MemberCache.FindMember (InstanceExpression.Type, new MemberFilter (method), BindingRestriction.InstanceOnly | BindingRestriction.OverrideOnly) as MethodSpec;
+					//
+					// Candidate can have inflated MVAR parameters and we need to find
+					// base match for original definition not inflated parameter types
+					//
+					var parameters = method.Parameters;
+					if (method.Arity > 0) {
+						parameters = ((IParametersMember) method.MemberDefinition).Parameters;
+						var inflated = method.DeclaringType as InflatedTypeSpec;
+						if (inflated != null) {
+							parameters = parameters.Inflate (inflated.CreateLocalInflator (rc));
+						}
+					}
+
+					var filter = new MemberFilter (method.Name, method.Arity, MemberKind.Method, parameters, null);
+					var base_override = MemberCache.FindMember (InstanceExpression.Type, filter, BindingRestriction.InstanceOnly | BindingRestriction.OverrideOnly) as MethodSpec;
 					if (base_override != null && base_override.DeclaringType != method.DeclaringType) {
 						if (base_override.IsGeneric)
 							targs = method.TypeArguments;
@@ -3046,6 +3060,7 @@ namespace Mono.CSharp {
 			// Only base will allow this invocation to happen.
 			//
 			if (method.IsAbstract) {
+				rc.Report.SymbolRelatedToPreviousError (method);
 				Error_CannotCallAbstractBase (rc, method.GetSignatureForError ());
 			}
 
