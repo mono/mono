@@ -35,6 +35,16 @@ using Microsoft.Build.Evaluation;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Logging;
 
+//
+// It is not always consistent to reuse Project and its evaluation stuff mostly because
+// both BuildParameters.ctor() and Project.ctor() takes arbitrary ProjectCollection, which are not very likely eqivalent
+// (as BuildParameters.ctor(), unlike Project.ctor(...), is known to create a new ProjectCollection instance).
+//
+// However, that inconsistency could happen even if you only use ProjectInstance and BuildParameters.
+// They both have constructors that take ProjectCollection and there is no guarantee that the arguments are the same.
+// BuildManager.Build() does not fail because of inconsistent ProjectCollection instance on .NET. So we can ignore that.
+//
+
 namespace Microsoft.Build.Execution
 {
 	public class ProjectInstance
