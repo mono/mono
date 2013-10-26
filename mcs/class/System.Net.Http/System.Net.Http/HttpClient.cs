@@ -263,26 +263,27 @@ namespace System.Net.Http
 
 		async Task<HttpResponseMessage> SendAsyncWorker (HttpRequestMessage request, HttpCompletionOption completionOption, CancellationToken cancellationToken)
 		{
-			using (var lcts = CancellationTokenSource.CreateLinkedTokenSource (cts.Token, cancellationToken)) {
-				lcts.CancelAfter (timeout);
+			// NB: This is intentionally not disposed, as the underlying HttpMessageHandler
+			// may hold onto the token to cancel the reading of the response body later.
+			var lcts = CancellationTokenSource.CreateLinkedTokenSource (cts.Token, cancellationToken);
+			lcts.CancelAfter (timeout);
 
-				var task = base.SendAsync (request, lcts.Token);
-				if (task == null)
-					throw new InvalidOperationException ("Handler failed to return a value");
+			var task = base.SendAsync (request, lcts.Token);
+			if (task == null)
+				throw new InvalidOperationException ("Handler failed to return a value");
 					
-				var response = await task.ConfigureAwait (false);
-				if (response == null)
-					throw new InvalidOperationException ("Handler failed to return a response");
+			var response = await task.ConfigureAwait (false);
+			if (response == null)
+				throw new InvalidOperationException ("Handler failed to return a response");
 
-				//
-				// Read the content when default HttpCompletionOption.ResponseContentRead is set
-				//
-				if (response.Content != null && (completionOption & HttpCompletionOption.ResponseHeadersRead) == 0) {
-					await response.Content.LoadIntoBufferAsync (MaxResponseContentBufferSize).ConfigureAwait (false);
-				}
-					
-				return response;
+			//
+			// Read the content when default HttpCompletionOption.ResponseContentRead is set
+			//
+			if (response.Content != null && (completionOption & HttpCompletionOption.ResponseHeadersRead) == 0) {
+				await response.Content.LoadIntoBufferAsync (MaxResponseContentBufferSize).ConfigureAwait (false);
 			}
+					
+			return response;
 		}
 
 		public async Task<byte[]> GetByteArrayAsync (string requestUri)
