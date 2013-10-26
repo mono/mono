@@ -45,6 +45,10 @@ namespace Mono {
 			mono_runtime_install_handlers ();
 		}
 
+		// see mono-config.c
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public static extern string GetArchitectureName ();
+
 		// Should not be removed intended for external use
 		// Safe to be called using reflection
 		// Format is undefined only for use as a string for reporting
@@ -58,6 +62,10 @@ namespace Mono {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern string GetNativeStackTrace (Exception exception);
+
+		// see mono-config.c
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public static extern string GetOperatingSystemName ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public static extern bool SetGCAllowSynchronousMajor (bool flag);

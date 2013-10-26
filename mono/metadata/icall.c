@@ -7579,6 +7579,18 @@ ves_icall_Mono_Runtime_GetDisplayName (void)
 }
 
 ICALL_EXPORT MonoString*
+ves_icall_Mono_Runtime_GetArchitectureName (void)
+{
+	return mono_string_new (mono_domain_get (), mono_config_get_cpu ());
+}
+
+ICALL_EXPORT MonoString*
+ves_icall_Mono_Runtime_GetOperatingSystemName (void)
+{
+	return mono_string_new (mono_domain_get (), mono_config_get_os ());
+}
+
+ICALL_EXPORT MonoString*
 ves_icall_System_ComponentModel_Win32Exception_W32ErrorMessage (guint32 code)
 {
 	MonoString *message;

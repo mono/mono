@@ -87,6 +87,16 @@
 #endif
 #endif
 
+const char *mono_config_get_cpu (void)
+{
+	return CONFIG_CPU;
+}
+
+const char *mono_config_get_os (void)
+{
+	return CONFIG_OS;
+}
+
 static void start_element (GMarkupParseContext *context, 
                            const gchar         *element_name,
 			   const gchar        **attribute_names,

@@ -135,6 +135,8 @@ mono_code_manager_set_read_only
 mono_code_manager_size
 mono_compile_method
 mono_config_for_assembly
+mono_config_get_cpu
+mono_config_get_os
 mono_config_parse
 mono_config_parse_memory
 mono_config_string_for_assembly_file
