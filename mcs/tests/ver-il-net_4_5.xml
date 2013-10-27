@@ -48228,7 +48228,7 @@
     </type>
     <type name="FooClass">
       <method name="Int32 Main()" attrs="150">
-        <size>70</size>
+        <size>77</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
