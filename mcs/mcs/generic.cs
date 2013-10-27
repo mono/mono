@@ -3142,87 +3142,100 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// Determines a unique type from which there is
-			// a standard implicit conversion to all the other
-			// candidate types.
+			// The set of candidate types Uj starts out as the set of
+			// all types in the set of bounds for Xi
 			//
-			TypeSpec best_candidate = null;
-			int cii;
-			int candidates_count = candidates.Count;
-			for (int ci = 0; ci < candidates_count; ++ci) {
-				BoundInfo bound = candidates [ci];
-				for (cii = 0; cii < candidates_count; ++cii) {
-					if (cii == ci)
-						continue;
+			var applicable = new bool [candidates.Count];
+			for (int ci = 0; ci < applicable.Length; ++ci)
+				applicable [ci] = true;
 
-					BoundInfo cbound = candidates[cii];
-					
-					// Same type parameters with different bounds
-					if (cbound.Type == bound.Type) {
-						if (bound.Kind != BoundKind.Exact)
-							bound = cbound;
+			for (int ci = 0; ci < applicable.Length; ++ci) {
+				var bound = candidates [ci];
+				int cii = 0;
 
-						continue;
-					}
-
-					if (bound.Kind == BoundKind.Exact || cbound.Kind == BoundKind.Exact) {
-						if (cbound.Kind == BoundKind.Lower) {
-							if (!Convert.ImplicitConversionExists (ec, cbound.GetTypeExpression (), bound.Type)) {
-								break;
-							}
-
+				switch (bound.Kind) {
+				case BoundKind.Exact:
+					for (; cii != applicable.Length; ++cii) {
+						if (ci == cii)
 							continue;
-						}
-						if (cbound.Kind == BoundKind.Upper) {
-							if (!Convert.ImplicitConversionExists (ec, bound.GetTypeExpression (), cbound.Type)) {
-								break;
-							}
 
-							continue;
-						}
-						
-						if (bound.Kind != BoundKind.Exact) {
-							if (!Convert.ImplicitConversionExists (ec, bound.GetTypeExpression (), cbound.Type)) {
-								break;
-							}
-
-							bound = cbound;
-							continue;
-						}
-						
-						break;
-					}
-
-					if (bound.Kind == BoundKind.Lower) {
-						if (cbound.Kind == BoundKind.Lower) {
-							if (!Convert.ImplicitConversionExists (ec, cbound.GetTypeExpression (), bound.Type)) {
-								break;
-							}
-						} else {
-							if (!Convert.ImplicitConversionExists (ec, bound.GetTypeExpression (), cbound.Type)) {
-								break;
-							}
-
-							bound = cbound;
-						}
-
-						continue;
-					}
-
-					if (bound.Kind == BoundKind.Upper) {
-						if (!Convert.ImplicitConversionExists (ec, bound.GetTypeExpression (), cbound.Type)) {
+						if (!applicable[cii])
 							break;
-						}
-					} else {
-						throw new NotImplementedException ("variance conversion");
+
+						//
+						// For each exact bound U of Xi all types Uj which are not identical
+						// to U are removed from the candidate set
+						//
+						if (candidates [cii].Type != bound.Type)
+							applicable[cii] = false;
 					}
+
+					break;
+				case BoundKind.Lower:
+					for (; cii != applicable.Length; ++cii) {
+						if (ci == cii)
+							continue;
+
+						if (!applicable[cii])
+							break;
+
+						//
+						// For each lower bound U of Xi all types Uj to which there is not an implicit conversion
+						// from U are removed from the candidate set
+						//
+						if (!Convert.ImplicitConversionExists (ec, bound.GetTypeExpression (), candidates [cii].Type)) {
+							applicable[cii] = false;
+						}
+					}
+
+					break;
+
+				case BoundKind.Upper:
+					for (; cii != applicable.Length; ++cii) {
+						if (ci == cii)
+							continue;
+
+						if (!applicable[cii])
+							break;
+
+						//
+						// For each upper bound U of Xi all types Uj from which there is not an implicit conversion
+						// to U are removed from the candidate set
+						//
+						if (!Convert.ImplicitConversionExists (ec, candidates[cii].GetTypeExpression (), bound.Type))
+							applicable[cii] = false;
+					}
+
+					break;
+				}
+			}
+
+			TypeSpec best_candidate = null;
+			for (int ci = 0; ci < applicable.Length; ++ci) {
+				if (!applicable[ci])
+					continue;
+
+				var bound = candidates [ci];
+				if (bound.Type == best_candidate)
+					continue;
+
+				int cii = 0;
+				for (; cii < applicable.Length; ++cii) {
+					if (ci == cii)
+						continue;
+
+					if (!applicable[cii])
+						continue;
+
+					if (!Convert.ImplicitConversionExists (ec, candidates[cii].GetTypeExpression (), bound.Type))
+						break;
 				}
 
-				if (cii != candidates_count)
+				if (cii != applicable.Length)
 					continue;
 
 				//
-				// We already have the best candidate, break if thet are different
+				// We already have the best candidate, break if it's different (non-unique)
 				//
 				// Dynamic is never ambiguous as we prefer dynamic over other best candidate types
 				//

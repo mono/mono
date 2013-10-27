@@ -28755,7 +28755,7 @@
   <test name="gtest-variance-11.cs">
     <type name="D">
       <method name="Int32 Main()" attrs="150">
-        <size>58</size>
+        <size>137</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -28764,6 +28764,15 @@
         <size>49</size>
       </method>
       <method name="Boolean Covariant[T](ICovariant`1[T], ICovariant`1[T])" attrs="150">
+        <size>49</size>
+      </method>
+      <method name="Boolean CovContCont[T](ICovariant`1[T], IContravariant`1[T], IContravariant`1[T])" attrs="150">
+        <size>49</size>
+      </method>
+      <method name="Boolean ContCovContCov[T](IContravariant`1[T], ICovariant`1[T], IContravariant`1[T], ICovariant`1[T])" attrs="150">
+        <size>49</size>
+      </method>
+      <method name="Boolean CovCovCont[T](ICovariant`1[T], ICovariant`1[T], IContravariant`1[T])" attrs="150">
         <size>49</size>
       </method>
     </type>
