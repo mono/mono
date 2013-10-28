@@ -1,4 +1,4 @@
-// CS0411: The type arguments for method `C.Foo<T>(T, System.Collections.Generic.Comparer<T>)' cannot be inferred from the usage. Try specifying the type arguments explicitly
+// CS1503: Argument `#2' cannot convert `method group' expression to type `System.Collections.Generic.Comparer<int>'
 // Line: 20
 
 using System;

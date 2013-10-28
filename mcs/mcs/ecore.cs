@@ -5266,7 +5266,7 @@ namespace Mono.CSharp {
 						if (ms.TypeArguments != null)
 							constr_ok = new ConstraintChecker (rc.MemberContext).CheckAll (ms.GetGenericMethodDefinition (), ms.TypeArguments, ms.Constraints, loc);
 
-						if (ta_count == 0) {
+						if (ta_count == 0 && ms.TypeArguments == null) {
 							if (custom_errors != null && custom_errors.TypeInferenceFailed (rc, best_candidate))
 								return;
 

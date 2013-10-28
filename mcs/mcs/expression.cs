@@ -6014,7 +6014,17 @@ namespace Mono.CSharp
 
 			var emg = MethodGroup as ExtensionMethodGroupExpr;
 			if (emg != null) {
-				return MethodGroupExpr.CreatePredefined (candidate, candidate.DeclaringType, MethodGroup.Location);
+				var mg = MethodGroupExpr.CreatePredefined (candidate, candidate.DeclaringType, MethodGroup.Location);
+				if (candidate.IsGeneric) {
+					var targs = new TypeExpression [candidate.Arity];
+					for (int i = 0; i < targs.Length; ++i) {
+						targs[i] = new TypeExpression (candidate.TypeArguments[i], MethodGroup.Location);
+					}
+
+					mg.SetTypeArguments (null, new TypeArguments (targs));
+				}
+
+				return mg;
 			}
 
 			return MethodGroup;

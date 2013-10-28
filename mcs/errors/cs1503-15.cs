@@ -1,5 +1,5 @@
-// CS0411: The type arguments for method `C.Foo<T>(IFoo<T>, IFoo<T>)' cannot be inferred from the usage. Try specifying the type arguments explicitly
-// Line: 17
+// CS1503: Argument `#2' cannot convert `IFoo<object>' expression to type `IFoo<int>'
+// Line: 18
 
 interface IFoo<in T>
 {
