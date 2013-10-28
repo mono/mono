@@ -98,7 +98,11 @@ namespace Mono.Cecil.Cil {
 
 		public static VariableDefinition GetVariable (MethodBody body, int index)
 		{
-			return body.Variables [index];
+			// bug 15727 - newer cecil does the same (in MethodDefinition.GetVariable)
+			var variables = body.Variables;
+			if (index < 0 || index >= variables.Count)
+				return null;
+			return variables [index];
 		}
 
 		void ReadCilBody (MethodBody body, BinaryReader br)
