@@ -1,6 +1,4 @@
 # hack to prevent 'check' from depending on 'all'
-AUTOMAKE_OPTIONS = cygnus
-
 tmpinst = _tmpinst
 
 noinst_SCRIPTS = mono-wrapper monodis-wrapper

@@ -2491,4 +2491,11 @@
 #endif
 #endif
 
+
+#if defined(DARWIN)
+#ifdef DYNAMIC_LOADING	// dynamic loading should not be needed anymore
+	#undef DYNAMIC_LOADING
+#endif
+#endif
+
 # endif /* GCCONFIG_H */
