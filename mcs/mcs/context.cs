@@ -516,10 +516,12 @@ namespace Mono.CSharp
 
 			//
 			// Capture only if this or any of child blocks contain await
-			// or it's a parameter
+			// or it's a parameter or we need to access variable from 
+			// different parameter block
 			//
 			if (CurrentAnonymousMethod is AsyncInitializer)
-				return local.IsParameter || local.Block.Explicit.HasAwait || CurrentBlock.Explicit.HasAwait;
+				return local.IsParameter || local.Block.Explicit.HasAwait || CurrentBlock.Explicit.HasAwait ||
+					local.Block.ParametersBlock != CurrentBlock.ParametersBlock.Original;
 
 			return local.Block.ParametersBlock != CurrentBlock.ParametersBlock.Original;
 		}

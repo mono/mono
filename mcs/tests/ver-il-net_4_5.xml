@@ -60244,6 +60244,46 @@
       </method>
     </type>
   </test>
+  <test name="test-async-53.cs">
+    <type name="Y">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void add_E(System.Action`2[System.Int32,System.String])" attrs="2182">
+        <size>42</size>
+      </method>
+      <method name="Void remove_E(System.Action`2[System.Int32,System.String])" attrs="2182">
+        <size>42</size>
+      </method>
+      <method name="Void Foo()" attrs="129">
+        <size>54</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;Foo&gt;c__AnonStorey1">
+      <method name="Void &lt;&gt;m__0(Int32, System.String)" attrs="131">
+        <size>35</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;Foo&gt;c__AnonStorey1+&lt;Foo&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>44</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void add_Disposed(Delegate)" attrs="2182">
