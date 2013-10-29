@@ -52,34 +52,39 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 	/// </summary>
 	public class PendingBuffer
 	{
-		/// <summary>Internal work buffer
+		#region Instance Fields
+		/// <summary>
+		/// Internal work buffer
 		/// </summary>
-		protected byte[] buf;
+		byte[] buffer_;
 		
 		int    start;
 		int    end;
 		
-		uint    bits;
+		uint   bits;
 		int    bitCount;
+		#endregion
 
+		#region Constructors
 		/// <summary>
 		/// construct instance using default buffer size of 4096
 		/// </summary>
 		public PendingBuffer() : this( 4096 )
 		{
-			
 		}
 		
 		/// <summary>
 		/// construct instance using specified buffer size
 		/// </summary>
-		/// <param name="bufsize">
+		/// <param name="bufferSize">
 		/// size to use for internal buffer
 		/// </param>
-		public PendingBuffer(int bufsize)
+		public PendingBuffer(int bufferSize)
 		{
-			buf = new byte[bufsize];
+			buffer_ = new byte[bufferSize];
 		}
+
+		#endregion
 
 		/// <summary>
 		/// Clear internal state/buffers
@@ -90,47 +95,56 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		}
 
 		/// <summary>
-		/// write a byte to buffer
+		/// Write a byte to buffer
 		/// </summary>
-		/// <param name="b">
-		/// value to write
+		/// <param name="value">
+		/// The value to write
 		/// </param>
-		public void WriteByte(int b)
+		public void WriteByte(int value)
 		{
-			if (DeflaterConstants.DEBUGGING && start != 0) {
-				throw new SharpZipBaseException();
+#if DebugDeflation
+			if (DeflaterConstants.DEBUGGING && (start != 0) )
+			{
+				throw new SharpZipBaseException("Debug check: start != 0");
 			}
-			buf[end++] = (byte) b;
+#endif
+			buffer_[end++] = unchecked((byte) value);
 		}
 
 		/// <summary>
 		/// Write a short value to buffer LSB first
 		/// </summary>
-		/// <param name="s">
-		/// value to write
+		/// <param name="value">
+		/// The value to write.
 		/// </param>
-		public void WriteShort(int s)
+		public void WriteShort(int value)
 		{
-			if (DeflaterConstants.DEBUGGING && start != 0) {
-				throw new SharpZipBaseException();
+#if DebugDeflation
+			if (DeflaterConstants.DEBUGGING && (start != 0) )
+			{
+				throw new SharpZipBaseException("Debug check: start != 0");
 			}
-			buf[end++] = (byte) s;
-			buf[end++] = (byte) (s >> 8);
+#endif
+			buffer_[end++] = unchecked((byte) value);
+			buffer_[end++] = unchecked((byte) (value >> 8));
 		}
 
 		/// <summary>
 		/// write an integer LSB first
 		/// </summary>
-		/// <param name="s">value to write</param>
-		public void WriteInt(int s)
+		/// <param name="value">The value to write.</param>
+		public void WriteInt(int value)
 		{
-			if (DeflaterConstants.DEBUGGING && start != 0) {
-				throw new SharpZipBaseException();
+#if DebugDeflation
+			if (DeflaterConstants.DEBUGGING && (start != 0) )
+			{
+				throw new SharpZipBaseException("Debug check: start != 0");
 			}
-			buf[end++] = (byte) s;
-			buf[end++] = (byte) (s >> 8);
-			buf[end++] = (byte) (s >> 16);
-			buf[end++] = (byte) (s >> 24);
+#endif
+			buffer_[end++] = unchecked((byte) value);
+			buffer_[end++] = unchecked((byte) (value >> 8));
+			buffer_[end++] = unchecked((byte) (value >> 16));
+			buffer_[end++] = unchecked((byte) (value >> 24));
 		}
 		
 		/// <summary>
@@ -138,14 +152,17 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// </summary>
 		/// <param name="block">data to write</param>
 		/// <param name="offset">offset of first byte to write</param>
-		/// <param name="len">number of bytes to write</param>
-		public void WriteBlock(byte[] block, int offset, int len)
+		/// <param name="length">number of bytes to write</param>
+		public void WriteBlock(byte[] block, int offset, int length)
 		{
-			if (DeflaterConstants.DEBUGGING && start != 0) {
-				throw new SharpZipBaseException();
+#if DebugDeflation
+			if (DeflaterConstants.DEBUGGING && (start != 0) )
+			{
+				throw new SharpZipBaseException("Debug check: start != 0");
 			}
-			System.Array.Copy(block, offset, buf, end, len);
-			end += len;
+#endif
+			System.Array.Copy(block, offset, buffer_, end, length);
+			end += length;
 		}
 
 		/// <summary>
@@ -162,13 +179,17 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// </summary>
 		public void AlignToByte() 
 		{
-			if (DeflaterConstants.DEBUGGING && start != 0) {
-				throw new SharpZipBaseException();
+#if DebugDeflation
+			if (DeflaterConstants.DEBUGGING && (start != 0) )
+			{
+				throw new SharpZipBaseException("Debug check: start != 0");
 			}
-			if (bitCount > 0) {
-				buf[end++] = (byte) bits;
+#endif
+			if (bitCount > 0)
+			{
+				buffer_[end++] = unchecked((byte) bits);
 				if (bitCount > 8) {
-					buf[end++] = (byte) (bits >> 8);
+					buffer_[end++] = unchecked((byte) (bits >> 8));
 				}
 			}
 			bits = 0;
@@ -182,17 +203,21 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// <param name="count">number of bits to write</param>
 		public void WriteBits(int b, int count)
 		{
-			if (DeflaterConstants.DEBUGGING && start != 0) {
-				throw new SharpZipBaseException();
+#if DebugDeflation
+			if (DeflaterConstants.DEBUGGING && (start != 0) )
+			{
+				throw new SharpZipBaseException("Debug check: start != 0");
 			}
+
 			//			if (DeflaterConstants.DEBUGGING) {
 			//				//Console.WriteLine("writeBits("+b+","+count+")");
 			//			}
+#endif
 			bits |= (uint)(b << bitCount);
 			bitCount += count;
 			if (bitCount >= 16) {
-				buf[end++] = (byte) bits;
-				buf[end++] = (byte) (bits >> 8);
+				buffer_[end++] = unchecked((byte) bits);
+				buffer_[end++] = unchecked((byte) (bits >> 8));
 				bits >>= 16;
 				bitCount -= 16;
 			}
@@ -204,11 +229,14 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// <param name="s">value to write</param>
 		public void WriteShortMSB(int s) 
 		{
-			if (DeflaterConstants.DEBUGGING && start != 0) {
-				throw new SharpZipBaseException();
+#if DebugDeflation
+			if (DeflaterConstants.DEBUGGING && (start != 0) )
+			{
+				throw new SharpZipBaseException("Debug check: start != 0");
 			}
-			buf[end++] = (byte) (s >> 8);
-			buf[end++] = (byte) s;
+#endif
+			buffer_[end++] = unchecked((byte) (s >> 8));
+			buffer_[end++] = unchecked((byte) s);
 		}
 		
 		/// <summary>
@@ -224,32 +252,25 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// Flushes the pending buffer into the given output array.  If the
 		/// output array is to small, only a partial flush is done.
 		/// </summary>
-		/// <param name="output">
-		/// the output array;
-		/// </param>
-		/// <param name="offset">
-		/// the offset into output array;
-		/// </param>
-		/// <param name="length">		
-		/// length the maximum number of bytes to store;
-		/// </param>
-		/// <exception name="ArgumentOutOfRangeException">
-		/// IndexOutOfBoundsException if offset or length are invalid.
-		/// </exception>
+		/// <param name="output">The output array.</param>
+		/// <param name="offset">The offset into output array.</param>
+		/// <param name="length">The maximum number of bytes to store.</param>
+		/// <returns>The number of bytes flushed.</returns>
 		public int Flush(byte[] output, int offset, int length) 
 		{
 			if (bitCount >= 8) {
-				buf[end++] = (byte) bits;
+				buffer_[end++] = unchecked((byte) bits);
 				bits >>= 8;
 				bitCount -= 8;
 			}
+
 			if (length > end - start) {
 				length = end - start;
-				System.Array.Copy(buf, start, output, offset, length);
+				System.Array.Copy(buffer_, start, output, offset, length);
 				start = 0;
 				end = 0;
 			} else {
-				System.Array.Copy(buf, start, output, offset, length);
+				System.Array.Copy(buffer_, start, output, offset, length);
 				start += length;
 			}
 			return length;
@@ -260,15 +281,15 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// Buffer is empty on completion
 		/// </summary>
 		/// <returns>
-		/// converted buffer contents contents
+		/// The internal buffer contents converted to a byte array.
 		/// </returns>
 		public byte[] ToByteArray()
 		{
-			byte[] ret = new byte[end - start];
-			System.Array.Copy(buf, start, ret, 0, ret.Length);
+			byte[] result = new byte[end - start];
+			System.Array.Copy(buffer_, start, result, 0, result.Length);
 			start = 0;
 			end = 0;
-			return ret;
+			return result;
 		}
 	}
 }	

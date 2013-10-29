@@ -48,3 +48,14 @@ ICSharpCode.SharpZipLib/Encryption/PkzipClassic.cs
 ICSharpCode.SharpZipLib/AssemblyInfo.cs
 ICSharpCode.SharpZipLib/Main.cs
 ICSharpCode.SharpZipLib/SharpZipBaseException.cs
+ICSharpCode.SharpZipLib/Zip/WindowsNameTransform.cs
+ICSharpCode.SharpZipLib/Zip/ZipHelperStream.cs
+ICSharpCode.SharpZipLib/Zip/ZipExtraData.cs
+ICSharpCode.SharpZipLib/Zip/ZipEntryFactory.cs
+ICSharpCode.SharpZipLib/Zip/IEntryFactory.cs
+ICSharpCode.SharpZipLib/Core/WindowsPathUtils.cs
+ICSharpCode.SharpZipLib/Encryption/ZipAESStream.cs
+ICSharpCode.SharpZipLib/Encryption/ZipAESTransform.cs
+ICSharpCode.SharpZipLib/Encryption/PkzipClassic.cs
+ICSharpCode.SharpZipLib/Core/IScanFilter.cs
+ICSharpCode.SharpZipLib/Core/StreamUtils.cs

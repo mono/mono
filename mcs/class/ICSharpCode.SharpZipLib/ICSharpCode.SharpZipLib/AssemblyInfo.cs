@@ -1,6 +1,7 @@
 // AssemblyInfo.cs
 //
 // Copyright (C) 2001 Mike Krueger
+// Copyright 2004 John Reilly
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -36,24 +37,55 @@
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
-[assembly: CLSCompliant(true)]
-
-[assembly: AssemblyTitle("ICSharpCode.SharpZipLibrary")]
-[assembly: AssemblyDescription("A free C# compression library")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("#ZipLibrary")]
-[assembly: AssemblyCopyright("Copyright 2001-2005 Mike Krueger")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-
-#if NET_2_0
-[assembly: AssemblyVersion("2.84.0.0")]
+#if (NET_1_0)
+[assembly: AssemblyTitle("SharpZipLib for .NET Framework 1.0")]
+#elif (NET_1_1)
+[assembly: AssemblyTitle("SharpZipLib for .NET Framework 1.1")]
+#elif (NET_2_0)
+[assembly: AssemblyTitle("SharpZipLib for .NET Framework 2.0")]
+#elif (NET_3_0)
+[assembly: AssemblyTitle("SharpZipLib for .NET Framework 3.0")]
+#elif (NET_3_5)
+[assembly: AssemblyTitle("SharpZipLib for .NET Framework 3.5")]
+#elif (NET_4_0)
+[assembly: AssemblyTitle("SharpZipLib for .NET Framework 4.0")]
+#elif (MONO_1_0)
+[assembly: AssemblyTitle("SharpZipLib for Mono 1.0")]
+#elif (MONO_2_0)
+[assembly: AssemblyTitle("SharpZipLib for Mono 2.0")]
 #else
-// not worrying about the NET_1_0 profile for now.
-[assembly: AssemblyVersion("0.84.0.0")]
+[assembly: AssemblyTitle("SharpZipLibrary unlabelled version")]
 #endif
 
+[assembly: AssemblyDescription("A free C# compression library")]
+[assembly: AssemblyProduct("#ZipLibrary")]
+[assembly: AssemblyDefaultAlias("SharpZipLib")]
+[assembly: AssemblyCulture("")]
+
+#if DEBUG
+[assembly: AssemblyConfiguration("Debug")]
+#else
+[assembly: AssemblyConfiguration("Release")]
+#endif
+
+[assembly: AssemblyCompany("ICSharpCode.net")]
+[assembly: AssemblyCopyright("Copyright 2001-2010 Mike Krueger, John Reilly")]
+[assembly: AssemblyTrademark("Copyright 2001-2010 Mike Krueger, John Reilly")]
+
+#if NET_4_0
+[assembly: AssemblyVersion("4.86.0.518")]
+[assembly: AssemblyInformationalVersionAttribute("4.86.0")]
+#elif NET_2_0
+[assembly: AssemblyVersion("2.86.0.518")]
+[assembly: AssemblyInformationalVersionAttribute("2.86.0")]
+#else
+[assembly: AssemblyVersion("0.86.0.518")]
+[assembly: AssemblyInformationalVersionAttribute("0.86.0")]
+#endif
+
+[assembly: CLSCompliant(true)]
+[assembly: ComVisible(false)]
 [assembly: AssemblyDelaySign(true)]
 [assembly: AssemblyKeyFile("SharpZipLib.pub")]

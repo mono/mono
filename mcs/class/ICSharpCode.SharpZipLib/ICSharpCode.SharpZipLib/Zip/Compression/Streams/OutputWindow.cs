@@ -38,6 +38,7 @@
 
 using System;
 
+
 namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams 
 {
 	
@@ -49,67 +50,71 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 	/// </summary>
 	public class OutputWindow
 	{
-		private static int WINDOW_SIZE = 1 << 15;
-		private static int WINDOW_MASK = WINDOW_SIZE - 1;
+		#region Constants
+		const int WindowSize = 1 << 15;
+		const int WindowMask = WindowSize - 1;
+		#endregion
 		
-		private byte[] window = new byte[WINDOW_SIZE]; //The window is 2^15 bytes
-		private int windowEnd  = 0;
-		private int windowFilled = 0;
+		#region Instance Fields
+		byte[] window = new byte[WindowSize]; //The window is 2^15 bytes
+		int windowEnd;
+		int windowFilled;
+		#endregion
 		
 		/// <summary>
 		/// Write a byte to this output window
 		/// </summary>
-		/// <param name="abyte">value to write</param>
+		/// <param name="value">value to write</param>
 		/// <exception cref="InvalidOperationException">
 		/// if window is full
 		/// </exception>
-		public void Write(int abyte)
+		public void Write(int value)
 		{
-			if (windowFilled++ == WINDOW_SIZE) {
+			if (windowFilled++ == WindowSize) {
 				throw new InvalidOperationException("Window full");
 			}
-			window[windowEnd++] = (byte) abyte;
-			windowEnd &= WINDOW_MASK;
+			window[windowEnd++] = (byte) value;
+			windowEnd &= WindowMask;
 		}
 		
 		
-		private void SlowRepeat(int repStart, int len, int dist)
+		private void SlowRepeat(int repStart, int length, int distance)
 		{
-			while (len-- > 0) {
+			while (length-- > 0) {
 				window[windowEnd++] = window[repStart++];
-				windowEnd &= WINDOW_MASK;
-				repStart &= WINDOW_MASK;
+				windowEnd &= WindowMask;
+				repStart &= WindowMask;
 			}
 		}
 		
 		/// <summary>
 		/// Append a byte pattern already in the window itself
 		/// </summary>
-		/// <param name="len">length of pattern to copy</param>
-		/// <param name="dist">distance from end of window pattern occurs</param>
+		/// <param name="length">length of pattern to copy</param>
+		/// <param name="distance">distance from end of window pattern occurs</param>
 		/// <exception cref="InvalidOperationException">
 		/// If the repeated data overflows the window
 		/// </exception>
-		public void Repeat(int len, int dist)
+		public void Repeat(int length, int distance)
 		{
-			if ((windowFilled += len) > WINDOW_SIZE) {
+			if ((windowFilled += length) > WindowSize) {
 				throw new InvalidOperationException("Window full");
 			}
 			
-			int rep_start = (windowEnd - dist) & WINDOW_MASK;
-			int border = WINDOW_SIZE - len;
-			if (rep_start <= border && windowEnd < border) {
-				if (len <= dist) {
-					System.Array.Copy(window, rep_start, window, windowEnd, len);
-					windowEnd += len;
+			int repStart = (windowEnd - distance) & WindowMask;
+			int border = WindowSize - length;
+			if ( (repStart <= border) && (windowEnd < border) ) {
+				if (length <= distance) {
+					System.Array.Copy(window, repStart, window, windowEnd, length);
+					windowEnd += length;
 				} else {
-					/* We have to copy manually, since the repeat pattern overlaps. */
-					while (len-- > 0) {
-						window[windowEnd++] = window[rep_start++];
+					// We have to copy manually, since the repeat pattern overlaps.
+					while (length-- > 0) {
+						window[windowEnd++] = window[repStart++];
 					}
 				}
 			} else {
-				SlowRepeat(rep_start, len, dist);
+				SlowRepeat(repStart, length, distance);
 			}
 		}
 		
@@ -117,24 +122,24 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		/// Copy from input manipulator to internal window
 		/// </summary>
 		/// <param name="input">source of data</param>
-		/// <param name="len">length of data to copy</param>
+		/// <param name="length">length of data to copy</param>
 		/// <returns>the number of bytes copied</returns>
-		public int CopyStored(StreamManipulator input, int len)
+		public int CopyStored(StreamManipulator input, int length)
 		{
-			len = Math.Min(Math.Min(len, WINDOW_SIZE - windowFilled), input.AvailableBytes);
+			length = Math.Min(Math.Min(length, WindowSize - windowFilled), input.AvailableBytes);
 			int copied;
 			
-			int tailLen = WINDOW_SIZE - windowEnd;
-			if (len > tailLen) {
+			int tailLen = WindowSize - windowEnd;
+			if (length > tailLen) {
 				copied = input.CopyBytes(window, windowEnd, tailLen);
 				if (copied == tailLen) {
-					copied += input.CopyBytes(window, 0, len - tailLen);
+					copied += input.CopyBytes(window, 0, length - tailLen);
 				}
 			} else {
-				copied = input.CopyBytes(window, windowEnd, len);
+				copied = input.CopyBytes(window, windowEnd, length);
 			}
 			
-			windowEnd = (windowEnd + copied) & WINDOW_MASK;
+			windowEnd = (windowEnd + copied) & WindowMask;
 			windowFilled += copied;
 			return copied;
 		}
@@ -142,24 +147,28 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		/// <summary>
 		/// Copy dictionary to window
 		/// </summary>
-		/// <param name="dict">source dictionary</param>
+		/// <param name="dictionary">source dictionary</param>
 		/// <param name="offset">offset of start in source dictionary</param>
-		/// <param name="len">length of dictionary</param>
+		/// <param name="length">length of dictionary</param>
 		/// <exception cref="InvalidOperationException">
 		/// If window isnt empty
 		/// </exception>
-		public void CopyDict(byte[] dict, int offset, int len)
+		public void CopyDict(byte[] dictionary, int offset, int length)
 		{
+			if ( dictionary == null ) {
+				throw new ArgumentNullException("dictionary");
+			}
+
 			if (windowFilled > 0) {
 				throw new InvalidOperationException();
 			}
 			
-			if (len > WINDOW_SIZE) {
-				offset += len - WINDOW_SIZE;
-				len = WINDOW_SIZE;
+			if (length > WindowSize) {
+				offset += length - WindowSize;
+				length = WindowSize;
 			}
-			System.Array.Copy(dict, offset, window, 0, len);
-			windowEnd = len & WINDOW_MASK;
+			System.Array.Copy(dictionary, offset, window, 0, length);
+			windowEnd = length & WindowMask;
 		}
 
 		/// <summary>
@@ -168,7 +177,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		/// <returns>Number of bytes left in window</returns>
 		public int GetFreeSpace()
 		{
-			return WINDOW_SIZE - windowFilled;
+			return WindowSize - windowFilled;
 		}
 		
 		/// <summary>
@@ -192,22 +201,22 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		/// </exception>
 		public int CopyOutput(byte[] output, int offset, int len)
 		{
-			int copy_end = windowEnd;
+			int copyEnd = windowEnd;
 			if (len > windowFilled) {
 				len = windowFilled;
 			} else {
-				copy_end = (windowEnd - windowFilled + len) & WINDOW_MASK;
+				copyEnd = (windowEnd - windowFilled + len) & WindowMask;
 			}
 			
 			int copied = len;
-			int tailLen = len - copy_end;
+			int tailLen = len - copyEnd;
 			
 			if (tailLen > 0) {
-				System.Array.Copy(window, WINDOW_SIZE - tailLen, output, offset, tailLen);
+				System.Array.Copy(window, WindowSize - tailLen, output, offset, tailLen);
 				offset += tailLen;
-				len = copy_end;
+				len = copyEnd;
 			}
-			System.Array.Copy(window, copy_end - len, output, offset, len);
+			System.Array.Copy(window, copyEnd - len, output, offset, len);
 			windowFilled -= copied;
 			if (windowFilled < 0) {
 				throw new InvalidOperationException();

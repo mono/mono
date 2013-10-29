@@ -1,6 +1,6 @@
 // BZip2.cs
 //
-// Copyright (C) 2001 Mike Krueger
+// Copyright (C) 2010 David Pierson
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,67 +33,73 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 
+// Suppress this in CF and 1.1, not needed. Static classes introduced in C# version 2.0
+#if !NETCF_2_0 && !NET_1_1
+
 using System;
 using System.IO;
 
-namespace ICSharpCode.SharpZipLib.BZip2
-{
+namespace ICSharpCode.SharpZipLib.BZip2 {
 	
 	/// <summary>
-	/// Does all the compress and decompress pre-operation stuff.
-	/// Sets up the streams and file header characters.
-	/// Uses multiply overloaded methods to call for the compress/decompress.
+	/// An example class to demonstrate compression and decompression of BZip2 streams.
 	/// </summary>
-	public sealed class BZip2
+	public static class BZip2
 	{
 		/// <summary>
-		/// Decompress <paramref name="instream">input</paramref> writing 
-		/// decompressed data to <paramref name="outstream">output stream</paramref>
+		/// Decompress the <paramref name="inStream">input</paramref> writing
+		/// uncompressed data to the <paramref name="outStream">output stream</paramref>
 		/// </summary>
-		public static void Decompress(Stream instream, Stream outstream) 
+		/// <param name="inStream">The readable stream containing data to decompress.</param>
+		/// <param name="outStream">The output stream to receive the decompressed data.</param>
+		/// <param name="isStreamOwner">Both streams are closed on completion if true.</param>
+		public static void Decompress(Stream inStream, Stream outStream, bool isStreamOwner)
 		{
-			System.IO.Stream bos = outstream;
-			System.IO.Stream bis = instream;
-			BZip2InputStream bzis = new BZip2InputStream(bis);
-			int ch = bzis.ReadByte();
-			while (ch != -1) {
-				bos.WriteByte((byte)ch);
-				ch = bzis.ReadByte();
+			if (inStream == null || outStream == null) {
+				throw new Exception("Null Stream");
 			}
-			bos.Flush();
+
+			try {
+				using (BZip2InputStream bzipInput = new BZip2InputStream(inStream)) {
+					bzipInput.IsStreamOwner = isStreamOwner;
+					Core.StreamUtils.Copy(bzipInput, outStream, new byte[4096]);
+				}
+			} finally {
+				if (isStreamOwner) {
+					// inStream is closed by the BZip2InputStream if stream owner
+					outStream.Close();
+				}
+			}
 		}
 		
 		/// <summary>
-		/// Compress <paramref name="instream">input stream</paramref> sending 
-		/// result to <paramref name="outputstream">output stream</paramref>
+		/// Compress the <paramref name="inStream">input stream</paramref> sending
+		/// result data to <paramref name="outStream">output stream</paramref>
 		/// </summary>
-		public static void Compress(Stream instream, Stream outstream, int blockSize) 
-		{			
-			System.IO.Stream bos = outstream;
-			System.IO.Stream bis = instream;
-			int ch = bis.ReadByte();
-			BZip2OutputStream bzos = new BZip2OutputStream(bos, blockSize);
-			while (ch != -1) {
-				bzos.WriteByte((byte)ch);
-				ch = bis.ReadByte();
+		/// <param name="inStream">The readable stream to compress.</param>
+		/// <param name="outStream">The output stream to receive the compressed data.</param>
+		/// <param name="isStreamOwner">Both streams are closed on completion if true.</param>
+		/// <param name="level">Block size acts as compression level (1 to 9) with 1 giving
+		/// the lowest compression and 9 the highest.</param>
+		public static void Compress(Stream inStream, Stream outStream, bool isStreamOwner, int level)
+		{
+			if (inStream == null || outStream == null) {
+				throw new Exception("Null Stream");
 			}
-			bis.Close();
-			bzos.Close();
+
+			try {
+				using (BZip2OutputStream bzipOutput = new BZip2OutputStream(outStream, level)) {
+					bzipOutput.IsStreamOwner = isStreamOwner;
+					Core.StreamUtils.Copy(inStream, bzipOutput, new byte[4096]);
+				}
+			} finally {
+				if (isStreamOwner) {
+					// outStream is closed by the BZip2OutputStream if stream owner
+					inStream.Close();
+				}
+			}
 		}
+
 	}
 }
-
-/* derived from a file which contained this license :
- * Copyright (c) 1999-2001 Keiron Liddle, Aftex Software
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
-*/
+#endif

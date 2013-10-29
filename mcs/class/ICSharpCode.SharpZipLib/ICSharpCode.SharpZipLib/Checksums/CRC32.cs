@@ -66,7 +66,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
 	/// </summary>
 	public sealed class Crc32 : IChecksum
 	{
-		readonly static uint CrcSeed = 0xFFFFFFFF;
+		const uint CrcSeed = 0xFFFFFFFF;
 		
 		readonly static uint[] CrcTable = new uint[] {
 			0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA, 0x076DC419,
@@ -123,15 +123,15 @@ namespace ICSharpCode.SharpZipLib.Checksums
 			0x2D02EF8D
 		};
 		
-		internal static uint ComputeCrc32(uint oldCrc, byte bval)
+		internal static uint ComputeCrc32(uint oldCrc, byte value)
 		{
-			return (uint)(Crc32.CrcTable[(oldCrc ^ bval) & 0xFF] ^ (oldCrc >> 8));
+			return (uint)(Crc32.CrcTable[(oldCrc ^ value) & 0xFF] ^ (oldCrc >> 8));
 		}
 		
 		/// <summary>
 		/// The crc data checksum so far.
 		/// </summary>
-		uint crc = 0;
+		uint crc;
 		
 		/// <summary>
 		/// Returns the CRC32 data checksum computed so far.
@@ -156,13 +156,13 @@ namespace ICSharpCode.SharpZipLib.Checksums
 		/// <summary>
 		/// Updates the checksum with the int bval.
 		/// </summary>
-		/// <param name = "bval">
-		/// the byte is taken as the lower 8 bits of bval
+		/// <param name = "value">
+		/// the byte is taken as the lower 8 bits of value
 		/// </param>
-		public void Update(int bval)
+		public void Update(int value)
 		{
 			crc ^= CrcSeed;
-			crc  = CrcTable[(crc ^ bval) & 0xFF] ^ (crc >> 8);
+			crc  = CrcTable[(crc ^ value) & 0xFF] ^ (crc >> 8);
 			crc ^= CrcSeed;
 		}
 		
@@ -174,35 +174,47 @@ namespace ICSharpCode.SharpZipLib.Checksums
 		/// </param>
 		public void Update(byte[] buffer)
 		{
+			if (buffer == null) {
+				throw new ArgumentNullException("buffer");
+			}
+
 			Update(buffer, 0, buffer.Length);
 		}
 		
 		/// <summary>
 		/// Adds the byte array to the data checksum.
 		/// </summary>
-		/// <param name = "buf">
-		/// the buffer which contains the data
+		/// <param name = "buffer">
+		/// The buffer which contains the data
 		/// </param>
-		/// <param name = "off">
-		/// the offset in the buffer where the data starts
+		/// <param name = "offset">
+		/// The offset in the buffer where the data starts
 		/// </param>
-		/// <param name = "len">
-		/// the length of the data
+		/// <param name = "count">
+		/// The number of data bytes to update the CRC with.
 		/// </param>
-		public void Update(byte[] buf, int off, int len)
+		public void Update(byte[] buffer, int offset, int count)
 		{
-			if (buf == null) {
-				throw new ArgumentNullException("buf");
+			if (buffer == null) {
+				throw new ArgumentNullException("buffer");
+			}
+
+			if ( count < 0 ) {
+#if NETCF_1_0
+				throw new ArgumentOutOfRangeException("count");
+#else
+				throw new ArgumentOutOfRangeException("count", "Count cannot be less than zero");
+#endif
 			}
 			
-			if (off < 0 || len < 0 || off + len > buf.Length) {
-				throw new ArgumentOutOfRangeException();
+			if (offset < 0 || offset + count > buffer.Length) {
+				throw new ArgumentOutOfRangeException("offset");
 			}
 			
 			crc ^= CrcSeed;
 			
-			while (--len >= 0) {
-				crc = CrcTable[(crc ^ buf[off++]) & 0xFF] ^ (crc >> 8);
+			while (--count >= 0) {
+				crc = CrcTable[(crc ^ buffer[offset++]) & 0xFF] ^ (crc >> 8);
 			}
 			
 			crc ^= CrcSeed;

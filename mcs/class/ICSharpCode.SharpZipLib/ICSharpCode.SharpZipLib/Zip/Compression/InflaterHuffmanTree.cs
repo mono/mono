@@ -45,11 +45,16 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 	/// <summary>
 	/// Huffman tree used for inflation
 	/// </summary>
-	public class InflaterHuffmanTree 
+	public class InflaterHuffmanTree
 	{
-		static int MAX_BITLEN = 15;
+		#region Constants
+		const int MAX_BITLEN = 15;
+		#endregion
+
+		#region Instance Fields
 		short[] tree;
-		
+		#endregion
+
 		/// <summary>
 		/// Literal length tree
 		/// </summary>
@@ -89,7 +94,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 				throw new SharpZipBaseException("InflaterHuffmanTree: static tree length illegal");
 			}
 		}
-		
+
+		#region Constructors
 		/// <summary>
 		/// Constructs a Huffman tree from the array of code lengths.
 		/// </summary>
@@ -100,7 +106,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		{
 			BuildTree(codeLengths);
 		}
-		
+		#endregion
+
 		void BuildTree(byte[] codeLengths)
 		{
 			int[] blCount  = new int[MAX_BITLEN + 1];
