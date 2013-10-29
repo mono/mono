@@ -2307,11 +2307,20 @@ namespace Mono.CSharp
 		/// </summary>
 		public bool VerifyImplements (InterfaceMemberBase mb)
 		{
-			var ifaces = spec.Interfaces;
+			var ifaces = PartialContainer.Interfaces;
 			if (ifaces != null) {
 				foreach (TypeSpec t in ifaces){
 					if (t == mb.InterfaceType)
 						return true;
+
+					var expanded_base = t.Interfaces;
+					if (expanded_base == null)
+						continue;
+
+					foreach (var bt in expanded_base) {
+						if (bt == mb.InterfaceType)
+							return true;
+					}
 				}
 			}
 			
@@ -3259,7 +3268,7 @@ namespace Mono.CSharp
 					}
 				}
 
-				if (!IsInterface && base_member.IsAbstract && !overrides) {
+				if (!IsInterface && base_member.IsAbstract && !overrides && !IsStatic) {
 					Report.SymbolRelatedToPreviousError (base_member);
 					Report.Error (533, Location, "`{0}' hides inherited abstract member `{1}'",
 						GetSignatureForError (), base_member.GetSignatureForError ());
