@@ -626,6 +626,8 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			Error ("Cannot find assembly `" + assembly + "'" );
 			Console.WriteLine ("Log: \n" + total_log);
 		} catch (IKVM.Reflection.BadImageFormatException f) {
+			if (skip_scan)
+				throw;
 			Error ("Cannot load assembly (bad file format) " + f.Message);
 		} catch (FileLoadException f){
 			Error ("Cannot load assembly " + f.Message);
