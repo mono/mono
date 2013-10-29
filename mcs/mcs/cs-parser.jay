@@ -7038,7 +7038,7 @@ public CSharpParser (SeekableStreamReader reader, CompilationSourceFile file, Re
 	lang_version = settings.Version;
 	yacc_verbose_flag = settings.VerboseParserFlag;
 	doc_support = settings.DocumentationFile != null;
-	lexer = new Tokenizer (reader, file, session);
+	lexer = new Tokenizer (reader, file, session, report);
 	oob_stack = new Stack<object> ();
 	lbag = session.LocationsBag;
 	use_global_stacks = session.UseJayGlobalArrays;
