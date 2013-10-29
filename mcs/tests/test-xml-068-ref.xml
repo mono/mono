@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>test-xml-068</name>
+    </assembly>
+    <members>
+        <member name="M:X.Test">
+            <summary>
+            Test summary
+            </summary>
+            <see cref="!:#sometext" />
+        </member>
+    </members>
+</doc>
