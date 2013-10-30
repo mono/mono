@@ -86,7 +86,7 @@ namespace Microsoft.Build.Execution
 
 		[MonoTODO]
 		ICollection<ProjectPropertyInstance> GlobalProperties {
-			get { return ProjectInstance.GlobalProperties.Select (prop => new ProjectPropertyInstance (prop.Key) { EvaluatedValue = prop.Value }).ToList (); }
+			get { return ProjectInstance.GlobalProperties.Select (prop => new ProjectPropertyInstance (prop.Key, true, prop.Value)).ToList (); }
 		}
 	}
 }

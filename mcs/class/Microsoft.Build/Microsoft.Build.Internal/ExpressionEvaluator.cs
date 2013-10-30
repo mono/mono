@@ -4,6 +4,8 @@ using Microsoft.Build.Evaluation;
 using Microsoft.Build.Exceptions;
 using System.Collections.Generic;
 using System.Reflection;
+using Microsoft.Build.Execution;
+using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.Internal
 {
@@ -11,11 +13,39 @@ namespace Microsoft.Build.Internal
 	{
 		public ExpressionEvaluator (Project project, string replacementForMissingPropertyAndItem)
 		{
-			this.Project = project;
 			ReplacementForMissingPropertyAndItem = replacementForMissingPropertyAndItem;
+			Project = project;
+			/*
+			GetItems = (name) => project.GetItems (name).Select (i => new KeyValuePair<string,string> (i.ItemType, i.EvaluatedInclude));
+			GetProperty = (name) => {
+				var prop = project.GetProperty (name);
+				return new KeyValuePair<string,string> (prop != null ? prop.Name : null, prop != null ? prop.EvaluatedValue : null);
+				};
+			*/
+		}
+		
+		public ExpressionEvaluator (ProjectInstance project, string replacementForMissingPropertyAndItem)
+		{
+			ReplacementForMissingPropertyAndItem = replacementForMissingPropertyAndItem;
+			ProjectInstance = project;
+			/*
+			GetItems = (name) => project.GetItems (name).Select (i => new KeyValuePair<string,string> (i.ItemType, i.EvaluatedInclude));
+			GetProperty = (name) => {
+				var prop = project.GetProperty (name);
+				return new KeyValuePair<string,string> (prop != null ? prop.Name : null, prop != null ? prop.EvaluatedValue : null);
+				};
+			*/
+		}
+		
+		EvaluationContext CreateContext ()
+		{
+			return new EvaluationContext (this);
 		}
 		
 		public Project Project { get; private set; }
+		public ProjectInstance ProjectInstance { get; set; }
+		//public Func<string,IEnumerable<KeyValuePair<string,string>>> GetItems { get; private set; }
+		//public Func<string,KeyValuePair<string,string>> GetProperty { get; private set; }
 		
 		public string ReplacementForMissingPropertyAndItem { get; set; }
 		
@@ -33,7 +63,7 @@ namespace Microsoft.Build.Internal
 		{
 			if (exprList == null)
 				throw new ArgumentNullException ("exprList");
-			return string.Concat (exprList.Select (e => e.EvaluateAsString (new EvaluationContext (this))));
+			return string.Concat (exprList.Select (e => e.EvaluateAsString (CreateContext ())));
 		}
 		
 		public bool EvaluateAsBoolean (string source)
@@ -42,7 +72,7 @@ namespace Microsoft.Build.Internal
 				var el = new ExpressionParser ().Parse (source, ExpressionValidationType.StrictBoolean);
 				if (el.Count () != 1)
 					throw new InvalidProjectFileException ("Unexpected number of tokens: " + el.Count ());
-				return el.First ().EvaluateAsBoolean (new EvaluationContext (this));
+				return el.First ().EvaluateAsBoolean (CreateContext ());
 			} catch (yyParser.yyException ex) {
 				throw new InvalidProjectFileException (string.Format ("failed to evaluate expression as boolean: '{0}': {1}", source, ex.Message), ex);
 			}
@@ -57,37 +87,61 @@ namespace Microsoft.Build.Internal
 		}
 		
 		public ExpressionEvaluator Evaluator { get; private set; }
-		public Project Project {
-			get { return Evaluator.Project; }
-		}
-		public ProjectItem ContextItem { get; set; }		
+		public object ContextItem { get; set; }
 		
-		List<ProjectItem> items = new List<ProjectItem> ();
-		List<ProjectProperty> props = new List<ProjectProperty> ();
+		Stack<object> evaluating_items = new Stack<object> ();
+		Stack<object> evaluating_props = new Stack<object> ();
 		
-		public string EvaluateItem (ProjectItem item)
+		public IEnumerable<object> GetItems (string name)
 		{
-			if (items.Contains (item))
-				throw new InvalidProjectFileException (string.Format ("Recursive reference to item '{0}' with include '{1}' was found", item.ItemType, item.UnevaluatedInclude));
+			if (Evaluator.Project != null)
+				return Evaluator.Project.GetItems (name);
+			else
+				return Evaluator.ProjectInstance.GetItems (name);
+		}
+		
+		public string EvaluateItem (string itemType, object item)
+		{
+			if (evaluating_items.Contains (item))
+				throw new InvalidProjectFileException (string.Format ("Recursive reference to item '{0}' was found", itemType));
 			try {
-				items.Add (item);
-				// FIXME: needs verification on whether string evaluation is appropriate or not.
-				return Evaluator.Evaluate (item.UnevaluatedInclude);
+				evaluating_items.Push (item);
+				var eval = item as ProjectItem;
+				if (eval != null)
+					return Evaluator.Evaluate (eval.EvaluatedInclude);
+				else
+					return Evaluator.Evaluate (((ProjectItemInstance) item).EvaluatedInclude);
 			} finally {
-				items.Remove (item);
+				evaluating_items.Pop ();
+			}
+		}
+				
+		public string EvaluateProperty (string name)
+		{
+			if (Evaluator.Project != null) {
+				var prop = Evaluator.Project.GetProperty (name);
+				if (prop == null)
+					return null;
+				// FIXME: the last argument should be prop.EvaluatedValue.
+				return EvaluateProperty (prop, prop.Name, prop.UnevaluatedValue);
+			} else {
+				var prop = Evaluator.ProjectInstance.GetProperty (name);
+				if (prop == null)
+					return null;
+				return EvaluateProperty (prop, prop.Name, prop.EvaluatedValue);
 			}
 		}
 		
-		public string EvaluateProperty (ProjectProperty prop)
+		public string EvaluateProperty (object prop, string name, string value)
 		{
-			if (props.Contains (prop))
-				throw new InvalidProjectFileException (string.Format ("Recursive reference to property '{0}' was found", prop.Name));
+			if (evaluating_props.Contains (prop))
+				throw new InvalidProjectFileException (string.Format ("Recursive reference to property '{0}' was found", name));
 			try {
-				props.Add (prop);
+				evaluating_props.Push (prop);
 				// FIXME: needs verification on whether string evaluation is appropriate or not.
-				return Evaluator.Evaluate (prop.UnevaluatedValue);
+				return Evaluator.Evaluate (value);
 			} finally {
-				props.Remove (prop);
+				evaluating_props.Pop ();
 			}
 		}
 	}
@@ -231,10 +285,7 @@ namespace Microsoft.Build.Internal
 		object DoEvaluateAsObject (EvaluationContext context)
 		{
 			if (Access.Target == null) {
-				var prop = context.Project.GetProperty (Access.Name.Name);
-				if (prop == null)
-					return null;
-				return context.EvaluateProperty (prop);
+				return context.EvaluateProperty (Access.Name.Name);
 			} else {
 				if (this.Access.TargetType == PropertyTargetType.Object) {
 					var obj = Access.Target.EvaluateAsObject (context);
@@ -314,13 +365,19 @@ namespace Microsoft.Build.Internal
 		
 		public override string EvaluateAsString (EvaluationContext context)
 		{
-			var items = context.Project.GetItems (Application.Name.Name);
+			string itemType = Application.Name.Name;
+			var items = context.GetItems (itemType);
 			if (!items.Any ())
 				return context.Evaluator.ReplacementForMissingPropertyAndItem;
 			if (Application.Expressions == null)
-				return string.Join (";", items.Select (item => context.EvaluateItem (item)).Select (inc => !string.IsNullOrWhiteSpace (inc)));
+				return string.Join (";", items.Select (item => context.EvaluateItem (itemType, item)));
 			else
-				return string.Join (";", items.Select (item => string.Concat (Application.Expressions.Select (e => e.EvaluateAsString (context)))).ToArray ());
+				return string.Join (";", items.Select (item => {
+					context.ContextItem = item;
+					var ret = string.Concat (Application.Expressions.Select (e => e.EvaluateAsString (context)));
+					context.ContextItem = null;
+					return ret;
+					}));
 		}
 		
 		public override object EvaluateAsObject (EvaluationContext context)

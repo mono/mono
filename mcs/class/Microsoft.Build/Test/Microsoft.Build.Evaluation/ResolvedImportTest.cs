@@ -7,6 +7,7 @@ using Microsoft.Build.Evaluation;
 using NUnit.Framework;
 using Microsoft.Build.Exceptions;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Execution;
 
 namespace MonoTests.Microsoft.Build.Evaluation
 {
@@ -138,6 +139,12 @@ namespace MonoTests.Microsoft.Build.Evaluation
 				Assert.AreEqual (string.Empty, a.EvaluatedValue, "#1");
 				var b = proj.GetProperty ("B");
 				Assert.AreEqual (temp_file_name, b.EvaluatedValue, "#2");
+
+				var pi  = new ProjectInstance (root);
+				var ai = pi.GetProperty ("A");
+				Assert.AreEqual (string.Empty, ai.EvaluatedValue, "#3");
+				var bi = pi.GetProperty ("B");
+				Assert.AreEqual (temp_file_name, bi.EvaluatedValue, "#4");
 			} finally {
 				File.Delete (temp_file_name);
 			}
