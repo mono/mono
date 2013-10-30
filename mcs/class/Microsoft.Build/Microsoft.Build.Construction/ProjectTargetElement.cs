@@ -112,6 +112,30 @@ namespace Microsoft.Build.Construction
                         get { return "Target"; }
                 }
 
+#if NET_4_5
+                 public ElementLocation AfterTargetsLocation { get; private set; }
+                 public ElementLocation BeforeTargetsLocation { get; private set; }
+                 public ElementLocation ConditionLocation { get; private set; }
+                 public ElementLocation DependsOnTargetsLocation { get; private set; }
+                 public ElementLocation InputsLocation { get; private set; }
+                 public ElementLocation KeepDuplicateOutputsLocation { get; private set; }
+                 public ElementLocation LabelLocation { get; private set; }
+                 public ElementLocation NameLocation { get; private set; }
+                 public ElementLocation OutputsLocation { get; private set; }
+                 public ElementLocation ReturnsLocation { get; private set; }
+#else
+                 ElementLocation AfterTargetsLocation { get; set; }
+                 ElementLocation BeforeTargetsLocation { get; set; }
+                 ElementLocation ConditionLocation { get; set; }
+                 ElementLocation DependsOnTargetsLocation { get; set; }
+                 ElementLocation InputsLocation { get; set; }
+                 ElementLocation KeepDuplicateOutputsLocation { get; set; }
+                 ElementLocation LabelLocation { get; set; }
+                 ElementLocation NameLocation { get; set; }
+                 ElementLocation OutputsLocation { get; set; }
+                 ElementLocation ReturnsLocation { get; set; }
+#endif
+
                 internal override ProjectElement LoadChildElement (XmlReader reader)
                 {
                         switch (reader.LocalName) {
@@ -127,6 +151,7 @@ namespace Microsoft.Build.Construction
                                 return AddTask (reader.LocalName);
                         }
                 }
+                // This seriously needs to change to become able to fill ElementLocation...
                 internal override void LoadAttribute (string name, string value)
                 {
                         switch (name) {

@@ -1,9 +1,11 @@
+//
 // ProjectTargetInstance.cs
 //
 // Author:
 //   Rolf Bjarne Kvinge (rolf@xamarin.com)
+//   Atsushi Enomoto (atsshi@xamarin.com)
 //
-// Copyright (C) 2011 Xamarin Inc.
+// Copyright (C) 2011,2013 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,6 +31,7 @@
 using System;
 using Microsoft.Build.Construction;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Microsoft.Build.Execution
 {
@@ -37,9 +40,38 @@ namespace Microsoft.Build.Execution
 #endif
 	sealed class ProjectTargetInstance
 	{
-		private ProjectTargetInstance ()
+		private ProjectTargetInstance (ProjectTargetElement xml)
 		{
-			throw new NotImplementedException ();
+			Children = xml.Children.Select<ProjectElement,ProjectTargetInstanceChild> (c => {
+				if (c is ProjectOnErrorElement)
+					return new ProjectOnErrorInstance ((ProjectOnErrorElement) c);
+				if (c is ProjectItemGroupElement)
+					return new ProjectItemGroupTaskInstance ((ProjectItemGroupElement) c);
+				if (c is ProjectTaskElement)
+					return new ProjectTaskInstance ((ProjectTaskElement) c);
+				throw new NotSupportedException ();
+			}).ToArray ();
+			Condition = xml.Condition;
+			DependsOnTargets = xml.DependsOnTargets;
+			//FullPath = fullPath;
+			Inputs = xml.Inputs;
+			KeepDuplicateOutputs = xml.KeepDuplicateOutputs;
+			Name = xml.Name;
+			OnErrorChildren = xml.OnErrors.Select (c => new ProjectOnErrorInstance (c)).ToArray ();
+			Outputs = xml.Outputs;
+			Returns = xml.Returns;
+			Tasks = xml.Tasks.Select (t => new ProjectTaskInstance (t)).ToArray ();
+			#if NET_4_5
+			AfterTargetsLocation = xml.AfterTargetsLocation;
+			BeforeTargetsLocation = xml.BeforeTargetsLocation;
+			ConditionLocation = xml.ConditionLocation;
+			DependsOnTargetsLocation = xml.DependsOnTargetsLocation;
+			InputsLocation = xml.InputsLocation;
+			KeepDuplicateOutputsLocation = xml.KeepDuplicateOutputsLocation;
+			Location = xml.Location;
+			OutputsLocation = xml.OutputsLocation;
+			ReturnsLocation = xml.ReturnsLocation;
+			#endif
 		}
 
 		public ElementLocation AfterTargetsLocation { get; private set; }
@@ -49,7 +81,9 @@ namespace Microsoft.Build.Execution
 		public ElementLocation ConditionLocation { get; private set; }
 		public string DependsOnTargets { get; private set; }
 		public ElementLocation DependsOnTargetsLocation { get; private set; }
-		public string FullPath { get; private set; }
+		public string FullPath {
+			get { throw new NotImplementedException (); }
+		}
 		public string Inputs { get; private set; }
 		public ElementLocation InputsLocation { get; private set; }
 		public string KeepDuplicateOutputs { get; private set; }

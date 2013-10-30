@@ -62,6 +62,9 @@ Microsoft.Build.Execution/ITargetResult.cs
 Microsoft.Build.Execution/NodeAffinity.cs
 Microsoft.Build.Execution/ProjectInstance.cs
 Microsoft.Build.Execution/ProjectItemDefinitionInstance.cs
+Microsoft.Build.Execution/ProjectItemGroupTaskInstance.cs
+Microsoft.Build.Execution/ProjectItemGroupTaskItemInstance.cs
+Microsoft.Build.Execution/ProjectItemGroupTaskMetadataInstance.cs
 Microsoft.Build.Execution/ProjectItemInstance.cs
 Microsoft.Build.Execution/ProjectMetadataInstance.cs
 Microsoft.Build.Execution/ProjectOnErrorInstance.cs

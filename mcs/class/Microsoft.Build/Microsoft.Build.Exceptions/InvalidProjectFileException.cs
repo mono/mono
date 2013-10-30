@@ -65,7 +65,9 @@ namespace Microsoft.Build.Exceptions
                 }
                 internal InvalidProjectFileException (ElementLocation start, ElementLocation end, string message,
                                                     string errorSubcategory = null, string errorCode = null, string helpKeyword = null)
-                        : this (start.File, start.Line, start.Column, end != null ? end.Line : 0, end != null ? end.Column : 0, message, errorSubcategory, errorCode, helpKeyword)
+                        : this (start != null ? start.File : null, start != null ? start.Line : 0, start != null ? start.Column : 0,
+                                end != null ? end.Line : 0, end != null ? end.Column : 0,
+                                message, errorSubcategory, errorCode, helpKeyword)
                 {
                 }
                 public InvalidProjectFileException (string projectFile, int lineNumber, int columnNumber,
