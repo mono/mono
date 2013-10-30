@@ -26,6 +26,7 @@ namespace Mono.Debugger.Soft
 		TypeMirror[] ifaces;
 		Dictionary<TypeMirror, InterfaceMappingMirror> iface_map;
 		TypeMirror[] type_args;
+		bool cached_base_type;
 		bool inited;
 
 		internal const BindingFlags DefaultBindingFlags =
@@ -78,9 +79,9 @@ namespace Mono.Debugger.Soft
 
 		public TypeMirror BaseType {
 			get {
-				// FIXME: base_type could be null for object/interfaces
-				if (base_type == null) {
+				if (!cached_base_type) {
 					base_type = vm.GetType (GetInfo ().base_type);
+					cached_base_type = true;
 				}
 				return base_type;
 			}
@@ -591,11 +592,11 @@ namespace Mono.Debugger.Soft
 
 		string[] source_files;
 		string[] source_files_full_path;
-		public string[] GetSourceFiles (bool return_full_paths) {
-			string[] res = return_full_paths ? source_files_full_path : source_files;
+		public string[] GetSourceFiles (bool returnFullPaths) {
+			string[] res = returnFullPaths ? source_files_full_path : source_files;
 			if (res == null) {
-				res = vm.conn.Type_GetSourceFiles (id, return_full_paths);
-				if (return_full_paths)
+				res = vm.conn.Type_GetSourceFiles (id, returnFullPaths);
+				if (returnFullPaths)
 					source_files_full_path = res;
 				else
 					source_files = res;
@@ -684,29 +685,38 @@ namespace Mono.Debugger.Soft
 		 * used by the reflection-only functionality on .net.
 		 */
 		public CustomAttributeDataMirror[] GetCustomAttributes (bool inherit) {
-			return GetCAttrs (null, inherit);
+			return GetCustomAttrs (null, inherit);
 		}
 
 		public CustomAttributeDataMirror[] GetCustomAttributes (TypeMirror attributeType, bool inherit) {
 			if (attributeType == null)
 				throw new ArgumentNullException ("attributeType");
-			return GetCAttrs (attributeType, inherit);
+			return GetCustomAttrs (attributeType, inherit);
 		}
 
-		CustomAttributeDataMirror[] GetCAttrs (TypeMirror type, bool inherit) {
+		void AppendCustomAttrs (IList<CustomAttributeDataMirror> attrs, TypeMirror type, bool inherit)
+		{
 			if (cattrs == null && Metadata != null && !Metadata.HasCustomAttributes)
 				cattrs = new CustomAttributeDataMirror [0];
 
-			// FIXME: Handle inherit
 			if (cattrs == null) {
 				CattrInfo[] info = vm.conn.Type_GetCustomAttributes (id, 0, false);
 				cattrs = CustomAttributeDataMirror.Create (vm, info);
 			}
-			var res = new List<CustomAttributeDataMirror> ();
-			foreach (var attr in cattrs)
+
+			foreach (var attr in cattrs) {
 				if (type == null || attr.Constructor.DeclaringType == type)
-					res.Add (attr);
-			return res.ToArray ();
+					attrs.Add (attr);
+			}
+
+			if (inherit && BaseType != null)
+				BaseType.AppendCustomAttrs (attrs, type, inherit);
+		}
+
+		CustomAttributeDataMirror[] GetCustomAttrs (TypeMirror type, bool inherit) {
+			var attrs = new List<CustomAttributeDataMirror> ();
+			AppendCustomAttrs (attrs, type, inherit);
+			return attrs.ToArray ();
 		}
 
 		public MethodMirror[] GetMethodsByNameFlags (string name, BindingFlags flags, bool ignoreCase) {
