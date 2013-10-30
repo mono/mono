@@ -3,8 +3,9 @@
 //
 // Author:
 //   Rolf Bjarne Kvinge (rolf@xamarin.com)
+//   Atsushi Enomoto (atsushi@xamarin.com)
 //
-// Copyright (C) 2011 Xamarin Inc.
+// Copyright (C) 2011,2013 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,6 +28,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -47,6 +49,10 @@ using Microsoft.Build.Logging;
 // Anyhow, I'm not going to instantiate Project within ProjectInstance code for another reason:
 // ProjectCollection.GetLoadedProject() does not return any Project instnace for corresponding ProjectInstance
 // (or I should say, ProjectRootElement for both).
+using Microsoft.Build.Internal;
+using System.Xml;
+using Microsoft.Build.Exceptions;
+using System.IO;
 
 
 namespace Microsoft.Build.Execution
@@ -76,8 +82,8 @@ namespace Microsoft.Build.Execution
 		{
 			projects = projectCollection;
 			global_properties = globalProperties ?? new Dictionary<string, string> ();
-			ToolsVersion = toolsVersion;
-			InitializeProperties (xml);
+			tools_version = toolsVersion ?? projects.DefaultToolsVersion;
+			InitializeProperties (xml, null);
 		}
 
 		public ProjectInstance (string projectFile, IDictionary<string, string> globalProperties,
@@ -88,21 +94,173 @@ namespace Microsoft.Build.Execution
 
 		ProjectCollection projects;
 		IDictionary<string, string> global_properties;
+		
+		string full_path, directory;
+		
+		Dictionary<string, ProjectItemDefinitionInstance> item_definitions;
+		List<ResolvedImport> raw_imports; // maybe we don't need this...
+		List<ProjectItemInstance> all_evaluated_items;
+		List<ProjectItemInstance> raw_items;
+		List<ProjectPropertyInstance> properties;
+		Dictionary<string, ProjectTargetInstance> targets;
+		string tools_version;
 
-		void InitializeProperties (ProjectRootElement xml)
+		void InitializeProperties (ProjectRootElement xml, ProjectInstance parent)
 		{
+			full_path = xml.FullPath;
+			directory = string.IsNullOrWhiteSpace (xml.DirectoryPath) ? System.IO.Directory.GetCurrentDirectory () : xml.DirectoryPath;
 			DefaultTargets = xml.DefaultTargets.Split (';').Select (s => s.Trim ()).ToList ();
 			InitialTargets = xml.InitialTargets.Split (';').Select (s => s.Trim ()).ToList ();
+
+			raw_imports = new List<ResolvedImport> ();
+			item_definitions = new Dictionary<string, ProjectItemDefinitionInstance> ();
+			targets = new Dictionary<string, ProjectTargetInstance> ();
+			raw_items = new List<ProjectItemInstance> ();
+			
+			// FIXME: this is likely hack. Test ImportedProject.Properties to see what exactly should happen.
+			if (parent != null) {
+				properties = parent.properties;
+			} else {
+				properties = new List<ProjectPropertyInstance> ();
+			
+				foreach (DictionaryEntry p in Environment.GetEnvironmentVariables ())
+					this.properties.Add (new ProjectPropertyInstance ((string) p.Key, false, (string) p.Value));
+				foreach (var p in global_properties)
+					this.properties.Add (new ProjectPropertyInstance (p.Key, false, p.Value));
+				var tools = projects.GetToolset (tools_version) ?? projects.GetToolset (projects.DefaultToolsVersion);
+				foreach (var p in projects.GetReservedProperties (tools, this, xml))
+					this.properties.Add (p);
+				foreach (var p in ProjectCollection.GetWellKnownProperties (this))
+					this.properties.Add (p);
+			}
+
+			ProcessXml (parent, xml);
+		}
+		
+		static readonly char [] item_sep = {';'};
+		
+		void ProcessXml (ProjectInstance parent, ProjectRootElement xml)
+		{
+			// this needs to be initialized here (regardless of that items won't be evaluated at property evaluation;
+			// Conditions could incorrectly reference items and lack of this list causes NRE.
+			all_evaluated_items = new List<ProjectItemInstance> ();
+
+			// property evaluation happens couple of times.
+			// At first step, all non-imported properties are evaluated TOO, WHILE those properties are being evaluated.
+			// This means, Include and IncludeGroup elements with Condition attribute MAY contain references to
+			// properties and they will be expanded.
+			var elements = EvaluatePropertiesAndImports (xml.Children).ToArray (); // ToArray(): to not lazily evaluate elements.
+			
+			// next, evaluate items
+			EvaluateItems (xml, elements);
+		}
+		
+		IEnumerable<ProjectElement> EvaluatePropertiesAndImports (IEnumerable<ProjectElement> elements)
+		{
+			// First step: evaluate Properties
+			foreach (var child in elements) {
+				yield return child;
+				var pge = child as ProjectPropertyGroupElement;
+				if (pge != null && EvaluateCondition (pge.Condition))
+					foreach (var p in pge.Properties)
+						// do not allow overwriting reserved or well-known properties by user
+						if (!this.properties.Any (_ => (_.IsImmutable) && _.Name.Equals (p.Name, StringComparison.InvariantCultureIgnoreCase)))
+							if (EvaluateCondition (p.Condition))
+								this.properties.Add (new ProjectPropertyInstance (p.Name, false, ExpandString (p.Value)));
+
+				var ige = child as ProjectImportGroupElement;
+				if (ige != null && EvaluateCondition (ige.Condition)) {
+					foreach (var incc in ige.Imports) {
+						foreach (var e in Import (incc))
+							yield return e;
+					}
+				}
+				var inc = child as ProjectImportElement;
+				if (inc != null && EvaluateCondition (inc.Condition))
+					foreach (var e in Import (inc))
+						yield return e;
+			}
+		}
+
+		void EvaluateItems (ProjectRootElement xml, IEnumerable<ProjectElement> elements)
+		{
+			foreach (var child in elements) {
+				var ige = child as ProjectItemGroupElement;
+				if (ige != null) {
+					foreach (var p in ige.Items) {
+						if (!EvaluateCondition (ige.Condition) || !EvaluateCondition (p.Condition))
+							continue;
+						var includes = ExpandString (p.Include).Split (item_sep, StringSplitOptions.RemoveEmptyEntries);
+						var excludes = ExpandString (p.Exclude).Split (item_sep, StringSplitOptions.RemoveEmptyEntries);
+						
+						if (includes.Length == 0)
+							continue;						
+						if (includes.Length == 1 && includes [0].IndexOf ('*') < 0 && excludes.Length == 0) {
+							// for most case - shortcut.
+							var item = new ProjectItemInstance (this, p, includes [0]);
+							this.raw_items.Add (item);
+							all_evaluated_items.Add (item);
+						} else {
+							var ds = new Microsoft.Build.BuildEngine.DirectoryScanner () {
+								BaseDirectory = new DirectoryInfo (Directory),
+								Includes = includes.Select (i => new ProjectTaskItem (p, i)).ToArray (),
+								Excludes = excludes.Select (e => new ProjectTaskItem (p, e)).ToArray (),
+							};
+							ds.Scan ();
+							foreach (var taskItem in ds.MatchedItems) {
+								if (all_evaluated_items.Any (i => i.EvaluatedInclude == taskItem.ItemSpec && i.ItemType == p.ItemType))
+									continue; // skip duplicate
+								var item = new ProjectItemInstance (this, p, taskItem.ItemSpec);
+								string recurse = taskItem.GetMetadata ("RecursiveDir");
+								if (!string.IsNullOrEmpty (recurse))
+									item.RecursiveDir = recurse;
+								this.raw_items.Add (item);
+								all_evaluated_items.Add (item);
+							}
+						}
+					}
+				}
+				var def = child as ProjectItemDefinitionGroupElement;
+				if (def != null) {
+					foreach (var p in def.ItemDefinitions) {
+						if (EvaluateCondition (p.Condition)) {
+							ProjectItemDefinitionInstance existing;
+							if (!item_definitions.TryGetValue (p.ItemType, out existing))
+								item_definitions.Add (p.ItemType, (existing = new ProjectItemDefinitionInstance (p)));
+							existing.AddItems (p);
+						}
+					}
+				}
+			}
+			all_evaluated_items.Sort ((p1, p2) => string.Compare (p1.ItemType, p2.ItemType, StringComparison.OrdinalIgnoreCase));
+		}
+		
+		IEnumerable<ProjectElement> Import (ProjectImportElement import)
+		{
+			string dir = projects.GetEvaluationTimeThisFileDirectory (() => FullPath);
+			string path = Path.IsPathRooted (import.Project) ? import.Project : dir != null ? Path.Combine (dir, import.Project) : Path.GetFullPath (import.Project);
+			if (projects.OngoingImports.Contains (path))
+				throw new InvalidProjectFileException (import.Location, null, string.Format ("Circular imports was detected: {0} is already on \"importing\" stack", path));
+			projects.OngoingImports.Push (path);
+			try {
+				using (var reader = XmlReader.Create (path)) {
+					var root = ProjectRootElement.Create (reader, projects);
+					raw_imports.Add (new ResolvedImport (import, root, true));
+					return this.EvaluatePropertiesAndImports (root.Children).ToArray ();
+				}
+			} finally {
+				projects.OngoingImports.Pop ();
+			}
 		}
 
 		public List<string> DefaultTargets { get; private set; }
 		
 		public string Directory {
-			get { throw new NotImplementedException (); }
+			get { return directory; }
 		}
 		
 		public string FullPath {
-			get { throw new NotImplementedException (); }
+			get { return full_path; }
 		}
 		
 		public IDictionary<string, string> GlobalProperties {
@@ -226,12 +384,17 @@ namespace Microsoft.Build.Execution
 		
 		public bool EvaluateCondition (string condition)
 		{
-			throw new NotImplementedException ();
+			return string.IsNullOrWhiteSpace (condition) || new ExpressionEvaluator (this, null).EvaluateAsBoolean (condition);
 		}
 
 		public string ExpandString (string unexpandedValue)
 		{
-			throw new NotImplementedException ();
+			return ExpandString (unexpandedValue, null);
+		}
+		
+		string ExpandString (string unexpandedValue, string replacementForMissingStuff)
+		{
+			return new ExpressionEvaluator (this, replacementForMissingStuff).Evaluate (unexpandedValue);
 		}
 
 		public ICollection<ProjectItemInstance> GetItems (string itemType)
@@ -246,7 +409,7 @@ namespace Microsoft.Build.Execution
 
 		public ProjectPropertyInstance GetProperty (string name)
 		{
-			throw new NotImplementedException ();
+			return properties.FirstOrDefault (p => p.Name.Equals (name, StringComparison.OrdinalIgnoreCase));
 		}
 		
 		public string GetPropertyValue (string name)

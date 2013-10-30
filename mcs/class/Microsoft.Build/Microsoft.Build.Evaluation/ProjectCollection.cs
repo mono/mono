@@ -142,12 +142,10 @@ namespace Microsoft.Build.Evaluation
 				ProjectAdded (this, new ProjectAddedToProjectCollectionEventArgs (project.Xml));
 		}
 
-		[MonoTODO]
 		public int Count {
 			get { return loaded_projects.Count; }
 		}
 
-		[MonoTODO]
 		public string DefaultToolsVersion {
 			get { return Toolsets.Any () ? Toolsets.First ().ToolsVersion : null; }
 		}
@@ -208,7 +206,6 @@ namespace Microsoft.Build.Evaluation
 			return new Project (xmlReader, globalProperties, toolsVersion);
 		}
 		
-		[MonoTODO]
 		public ICollection<Project> LoadedProjects {
 			get { return loaded_projects; }
 		}
@@ -329,13 +326,11 @@ namespace Microsoft.Build.Evaluation
 			return GetWellKnownProperties (create);
 		}
 		
-		/*
 		internal static IEnumerable<ProjectPropertyInstance> GetWellKnownProperties (ProjectInstance project)
 		{
 			Func<string,string,ProjectPropertyInstance> create = (name, value) => new ProjectPropertyInstance (name, true, value);
 			return GetWellKnownProperties (create);
 		}
-		*/
 		
 		static IEnumerable<T> GetWellKnownProperties<T> (Func<string,string,T> create)
 		{
@@ -372,13 +367,11 @@ namespace Microsoft.Build.Evaluation
 			return GetReservedProperties<ReservedProjectProperty> (toolset, project.Xml, create, () => project.FullPath);
 		}
 		
-		/*
 		internal IEnumerable<ProjectPropertyInstance> GetReservedProperties (Toolset toolset, ProjectInstance project, ProjectRootElement xml)
 		{
 			Func<string,Func<string>,ProjectPropertyInstance> create = (name, value) => new ProjectPropertyInstance (name, true, null, value);
 			return GetReservedProperties<ProjectPropertyInstance> (toolset, xml, create, () => project.FullPath);
 		}
-		*/
 		
 		// seealso http://msdn.microsoft.com/en-us/library/ms164309.aspx
 		IEnumerable<T> GetReservedProperties<T> (Toolset toolset, ProjectRootElement project, Func<string,Func<string>,T> create, Func<string> projectFullPath)

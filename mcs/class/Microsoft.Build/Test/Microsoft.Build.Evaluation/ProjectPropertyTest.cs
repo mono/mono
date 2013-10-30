@@ -46,9 +46,9 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			Assert.AreEqual ("overriden", prop.UnevaluatedValue, "#7");
 			Assert.IsNotNull (prop.Predecessor, "#8");
 		}
-		
+
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
+		[ExpectedException (typeof(InvalidOperationException))]
 		public void UpdateGlobalPropertyValue ()
 		{
 			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
@@ -60,7 +60,7 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			var pe = proj.Properties.First (p => p.IsGlobalProperty);
 			pe.UnevaluatedValue = "UPDATED";
 		}
-		
+
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void UpdateEnvironmentPropertyValue ()
@@ -71,6 +71,22 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			var proj = new Project (root);
 			var pe = proj.Properties.First (p => p.IsEnvironmentProperty);
 			pe.UnevaluatedValue = "UPDATED";
+		}
+
+		[Test]
+		public void DeepReferences ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <PropertyGroup>
+    <A>1</A>
+    <B>$(A)+1</B>
+    <C>$(B)+2</C>
+  </PropertyGroup>
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			Assert.AreEqual ("1+1+2", new Project (root).GetProperty ("C").EvaluatedValue, "#1");
+			Assert.AreEqual ("1+1+2", new ProjectInstance (root).GetProperty ("C").EvaluatedValue, "#1");
 		}
 	}
 }
