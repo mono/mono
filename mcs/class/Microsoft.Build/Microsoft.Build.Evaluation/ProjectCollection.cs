@@ -40,6 +40,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using System.Reflection;
 
 namespace Microsoft.Build.Evaluation
 {
@@ -319,6 +320,105 @@ namespace Microsoft.Build.Evaluation
 		
 		internal Stack<string> OngoingImports {
 			get { return ongoing_imports; }
+		}
+		
+		// common part
+		internal static IEnumerable<EnvironmentProjectProperty> GetWellKnownProperties (Project project)
+		{
+			Func<string,string,EnvironmentProjectProperty> create = (name, value) => new EnvironmentProjectProperty (project, name, value, true);
+			return GetWellKnownProperties (create);
+		}
+		
+		/*
+		internal static IEnumerable<ProjectPropertyInstance> GetWellKnownProperties (ProjectInstance project)
+		{
+			Func<string,string,ProjectPropertyInstance> create = (name, value) => new ProjectPropertyInstance (name, true, value);
+			return GetWellKnownProperties (create);
+		}
+		*/
+		
+		static IEnumerable<T> GetWellKnownProperties<T> (Func<string,string,T> create)
+		{
+			var ext = Environment.GetEnvironmentVariable ("MSBuildExtensionsPath") ?? DefaultExtensionsPath;
+			yield return create ("MSBuildExtensionsPath", ext);
+			var ext32 = Environment.GetEnvironmentVariable ("MSBuildExtensionsPath32") ?? DefaultExtensionsPath;
+			yield return create ("MSBuildExtensionsPath32", ext32);
+			var ext64 = Environment.GetEnvironmentVariable ("MSBuildExtensionsPath64") ?? DefaultExtensionsPath;
+			yield return create ("MSBuildExtensionsPath64", ext64);
+		}
+
+		static string extensions_path;
+		internal static string DefaultExtensionsPath {
+			get {
+				if (extensions_path == null) {
+					// NOTE: code from mcs/tools/gacutil/driver.cs
+					PropertyInfo gac = typeof (System.Environment).GetProperty (
+							"GacPath", BindingFlags.Static | BindingFlags.NonPublic);
+
+					if (gac != null) {
+						MethodInfo get_gac = gac.GetGetMethod (true);
+						string gac_path = (string) get_gac.Invoke (null, null);
+						extensions_path = Path.GetFullPath (Path.Combine (
+									gac_path, Path.Combine ("..", "xbuild")));
+					}
+				}
+				return extensions_path;
+			}
+		}
+		
+		internal IEnumerable<ReservedProjectProperty> GetReservedProperties (Toolset toolset, Project project)
+		{
+			Func<string,Func<string>,ReservedProjectProperty> create = (name, value) => new ReservedProjectProperty (project, name, value);
+			return GetReservedProperties<ReservedProjectProperty> (toolset, project.Xml, create, () => project.FullPath);
+		}
+		
+		/*
+		internal IEnumerable<ProjectPropertyInstance> GetReservedProperties (Toolset toolset, ProjectInstance project, ProjectRootElement xml)
+		{
+			Func<string,Func<string>,ProjectPropertyInstance> create = (name, value) => new ProjectPropertyInstance (name, true, null, value);
+			return GetReservedProperties<ProjectPropertyInstance> (toolset, xml, create, () => project.FullPath);
+		}
+		*/
+		
+		// seealso http://msdn.microsoft.com/en-us/library/ms164309.aspx
+		IEnumerable<T> GetReservedProperties<T> (Toolset toolset, ProjectRootElement project, Func<string,Func<string>,T> create, Func<string> projectFullPath)
+		{
+			yield return create ("MSBuildBinPath", () => toolset.ToolsPath);
+			// FIXME: add MSBuildLastTaskResult
+			// FIXME: add MSBuildNodeCount
+			// FIXME: add MSBuildProgramFiles32
+			yield return create ("MSBuildProjectDefaultTargets", () => project.DefaultTargets);
+			yield return create ("MSBuildProjectDirectory", () => project.DirectoryPath + Path.DirectorySeparatorChar);
+			// FIXME: add MSBuildProjectDirectoryNoRoot
+			yield return create ("MSBuildProjectExtension", () => Path.GetExtension (project.FullPath));
+			yield return create ("MSBuildProjectFile", () => Path.GetFileName (project.FullPath));
+			yield return create ("MSBuildProjectFullPath", () => project.FullPath);
+			yield return create ("MSBuildProjectName", () => Path.GetFileNameWithoutExtension (project.FullPath));
+			// FIXME: add MSBuildStartupDirectory
+			yield return create ("MSBuildThisFile", () => Path.GetFileName (GetEvaluationTimeThisFile (projectFullPath)));
+			yield return create ("MSBuildThisFileFullPath", () => GetEvaluationTimeThisFile (projectFullPath));
+			yield return create ("MSBuildThisFileName", () => Path.GetFileNameWithoutExtension (GetEvaluationTimeThisFile (projectFullPath)));
+			yield return create ("MSBuildThisFileExtension", () => Path.GetExtension (GetEvaluationTimeThisFile (projectFullPath)));
+
+			yield return create ("MSBuildThisFileDirectory", () => Path.GetDirectoryName (GetEvaluationTimeThisFileDirectory (projectFullPath)));
+			yield return create ("MSBuildThisFileDirectoryNoRoot", () => {
+				string dir = GetEvaluationTimeThisFileDirectory (projectFullPath) + Path.DirectorySeparatorChar;
+				return dir.Substring (Path.GetPathRoot (dir).Length);
+				});
+		}
+		
+		// These are required for reserved property, represents dynamically changing property values.
+		// This should resolve to either the project file path or that of the imported file.
+		internal string GetEvaluationTimeThisFileDirectory (Func<string> nonImportingTimeFullPath)
+		{
+			var file = GetEvaluationTimeThisFile (nonImportingTimeFullPath);
+			var dir = Path.IsPathRooted (file) ? Path.GetDirectoryName (file) : Directory.GetCurrentDirectory ();
+			return dir + Path.DirectorySeparatorChar;
+		}
+
+		internal string GetEvaluationTimeThisFile (Func<string> nonImportingTimeFullPath)
+		{
+			return OngoingImports.Count > 0 ? OngoingImports.Peek () : (nonImportingTimeFullPath () ?? string.Empty);
 		}
 	}
 }

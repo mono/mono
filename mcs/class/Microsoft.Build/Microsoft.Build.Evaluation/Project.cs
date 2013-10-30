@@ -179,9 +179,9 @@ namespace Microsoft.Build.Evaluation
 				foreach (var p in GlobalProperties)
 					this.properties.Add (new GlobalProjectProperty (this, p.Key, p.Value));
 				var tools = ProjectCollection.GetToolset (this.ToolsVersion) ?? ProjectCollection.GetToolset (this.ProjectCollection.DefaultToolsVersion);
-				foreach (var p in ReservedProjectProperty.GetReservedProperties (tools, this))
+				foreach (var p in ProjectCollection.GetReservedProperties (tools, this))
 					this.properties.Add (p);
-				foreach (var p in EnvironmentProjectProperty.GetWellKnownProperties (this))
+				foreach (var p in ProjectCollection.GetWellKnownProperties (this))
 					this.properties.Add (p);
 			}
 
@@ -214,22 +214,22 @@ namespace Microsoft.Build.Evaluation
 			foreach (var child in elements) {
 				yield return child;
 				var pge = child as ProjectPropertyGroupElement;
-				if (pge != null && ShouldInclude (pge.Condition))
+				if (pge != null && Evaluate (pge.Condition))
 					foreach (var p in pge.Properties)
 						// do not allow overwriting reserved or well-known properties by user
 						if (!this.properties.Any (_ => (_.IsReservedProperty || _.IsWellKnownProperty) && _.Name.Equals (p.Name, StringComparison.InvariantCultureIgnoreCase)))
-							if (ShouldInclude (p.Condition))
+							if (Evaluate (p.Condition))
 								this.properties.Add (new XmlProjectProperty (this, p, PropertyType.Normal, ProjectCollection.OngoingImports.Any ()));
 
 				var ige = child as ProjectImportGroupElement;
-				if (ige != null && ShouldInclude (ige.Condition)) {
+				if (ige != null && Evaluate (ige.Condition)) {
 					foreach (var incc in ige.Imports) {
 						foreach (var e in Import (incc))
 							yield return e;
 					}
 				}
 				var inc = child as ProjectImportElement;
-				if (inc != null && ShouldInclude (inc.Condition))
+				if (inc != null && Evaluate (inc.Condition))
 					foreach (var e in Import (inc))
 						yield return e;
 			}
@@ -241,7 +241,7 @@ namespace Microsoft.Build.Evaluation
 				var ige = child as ProjectItemGroupElement;
 				if (ige != null) {
 					foreach (var p in ige.Items) {
-						if (!ShouldInclude (ige.Condition) || !ShouldInclude (p.Condition))
+						if (!Evaluate (ige.Condition) || !Evaluate (p.Condition))
 							continue;
 						var includes = ExpandString (p.Include).Split (item_sep, StringSplitOptions.RemoveEmptyEntries);
 						var excludes = ExpandString (p.Exclude).Split (item_sep, StringSplitOptions.RemoveEmptyEntries);
@@ -276,7 +276,7 @@ namespace Microsoft.Build.Evaluation
 				var def = child as ProjectItemDefinitionGroupElement;
 				if (def != null) {
 					foreach (var p in def.ItemDefinitions) {
-						if (ShouldInclude (p.Condition)) {
+						if (Evaluate (p.Condition)) {
 							ProjectItemDefinition existing;
 							if (!item_definitions.TryGetValue (p.ItemType, out existing))
 								item_definitions.Add (p.ItemType, (existing = new ProjectItemDefinition (this, p.ItemType)));
@@ -290,7 +290,7 @@ namespace Microsoft.Build.Evaluation
 		
 		IEnumerable<ProjectElement> Import (ProjectImportElement import)
 		{
-			string dir = GetEvaluationTimeThisFileDirectory ();
+			string dir = ProjectCollection.GetEvaluationTimeThisFileDirectory (() => FullPath);
 			string path = Path.IsPathRooted (import.Project) ? import.Project : dir != null ? Path.Combine (dir, import.Project) : Path.GetFullPath (import.Project);
 			if (ProjectCollection.OngoingImports.Contains (path)) {
 				switch (load_settings) {
@@ -414,7 +414,7 @@ namespace Microsoft.Build.Evaluation
 			return ret;
 		}
 		
-		bool ShouldInclude (string unexpandedValue)
+		bool Evaluate (string unexpandedValue)
 		{
 			return string.IsNullOrWhiteSpace (unexpandedValue) || new ExpressionEvaluator (this, null).EvaluateAsBoolean (unexpandedValue);
 		}
@@ -512,7 +512,7 @@ namespace Microsoft.Build.Evaluation
 
 		public bool RemoveProperty (ProjectProperty property)
 		{
-			var removed = properties.FirstOrDefault (p => p.Name == property.Name);
+			var removed = properties.FirstOrDefault (p => p.Name.Equals (property.Name, StringComparison.OrdinalIgnoreCase));
 			if (removed == null)
 				return false;
 			properties.Remove (removed);
