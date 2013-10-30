@@ -8,6 +8,8 @@ net_4_5_SUBDIRS = $(monotouch_SUBDIRS) System.Dynamic.Runtime System.Reflection.
 
 monodroid_SUBDIRS = $(net_4_5_SUBDIRS)
 
+SUBDIRS = $(net_4_5_SUBDIRS)
+
 include $(MCS_BUILD_DIR)/rules.make
 
 dist-local: dist-default
