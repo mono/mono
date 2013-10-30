@@ -336,7 +336,7 @@ namespace Microsoft.Build.Internal
 				// - two strings (happen to be exact match)
 				// - one string (no varargs)
 				if (pl.Length > 0 && pl.Length - 1 <= args.Length &&
-				    pl.Last ().CustomAttributes.Any (a => a.AttributeType == typeof (ParamArrayAttribute)))
+				    pl.Last ().GetCustomAttributesData ().Any (a => a.Constructor.DeclaringType == typeof (ParamArrayAttribute)))
 					return true;
 				return false;
 				});

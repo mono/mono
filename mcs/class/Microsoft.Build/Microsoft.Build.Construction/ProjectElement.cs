@@ -118,6 +118,10 @@ namespace Microsoft.Build.Construction
                 public ElementLocation Location { get; private set; }
                 public ElementLocation LabelLocation { get; private set; }
                 public ElementLocation ConditionLocation { get; private set; }
+#else
+                internal ElementLocation Location { get; private set; }
+                internal ElementLocation LabelLocation { get; private set; }
+                internal ElementLocation ConditionLocation { get; private set; }
 #endif
                 
                 internal void FillLocation (XmlReader reader)
