@@ -1,607 +1,535 @@
-This is Mono.
+Mono is a software platform designed to allow developers to easily create cross platform applications.
+Mono is an open source implementation of Microsoft's .NET Framework based on the ECMA standards for C# and the Common Language Runtime.
 
-	1. Installation
-	2. Using Mono
-	3. Directory Roadmap
-	4. git submodules maintenance
-	5. Reporting bugs
+1. [Installation](#compilation-and-installation)
+2. [Using Mono](#using-mono)
+3. [Directory Roadmap](#directory-roadmap)
+4. [Git submodules maintenance](#git-submodules-maintenance)
+5. [Reporting bugs](#reporting-bugs)
 
-1. Compilation and Installation
-===============================
+Compilation and Installation
+============================
 
-   a. Build Requirements
-   ---------------------
+a. Build Requirements
+---------------------
 
-	On Itanium, you must obtain libunwind:
+* On Itanium, you must obtain libunwind: http://www.hpl.hp.com/research/linux/libunwind/download.php4
 
-		http://www.hpl.hp.com/research/linux/libunwind/download.php4
+* On Solaris
 
-	On Solaris, make sure that you used GNU tar to unpack this package, as
-	Solaris tar will not unpack this correctly, and you will get strange errors.
+ 1. Make sure that you used GNU tar to unpack this package, as
+ Solaris tar will not unpack this correctly, and you will get strange errors.
 
-	On Solaris, make sure that you use the GNU toolchain to build the software.
+ 2. Make sure that you use the GNU toolchain to build the software.
 
-	Optional dependencies:
+ 3. Optional dependencies
 
-		* libgdiplus
+  * libgdiplus - Required for System.Drawing. This library in turn requires glib and pkg-config
 
-		  If you want to get support for System.Drawing, you will need to get
-		  Libgdiplus.    This library in turn requires glib and pkg-config:
+  * pkg-config - Available at: http://www.freedesktop.org/Software/pkgconfig
 
-			* pkg-config
+  * glib 2.4 - Available at: http://www.gtk.org/
 
-		    	  Available from: http://www.freedesktop.org/Software/pkgconfig
+  * libzlib - This library and the development headers are required for compression
+file support in the 2.0 profile.
 
-		  	* glib 2.4
+b. Building the Software
+------------------------
 
-		    	  Available from: http://www.gtk.org/
+If you obtained this package as an officially released tarball,
+this is very simple, use configure and make:
 
-		* libzlib
+`./configure --prefix=/usr/local ; make ; make install`
 
-		  This library and the development headers are required for compression
-		  file support in the 2.0 profile.
+Mono supports a JIT engine on x86, SPARC, SPARCv9, S/390,
+S/390x, AMD64, ARM and PowerPC systems.   
 
-    b. Building the Software
-    ------------------------
-  	
-	If you obtained this package as an officially released tarball,
-	this is very simple, use configure and make:
+If you obtained this as a snapshot, you will need an existing
+Mono installation.  To upgrade your installation, unpack both
+mono and mcs:
 
-		./configure --prefix=/usr/local
-		make
-		make install
+	tar xzf mcs-XXXX.tar.gz
+	tar xzf mono-XXXX.tar.gz
+	mv mono-XXX mono
+	mv mcs-XXX mcs
+	cd mono
+	./autogen.sh --prefix=/usr/local
+	make
 
-	Mono supports a JIT engine on x86, SPARC, SPARCv9, S/390,
-	S/390x, AMD64, ARM and PowerPC systems.   
+The Mono build system is silent for most compilation commands.
+To enable a more verbose compile (for example, to pinpoint
+problems in your makefiles or your system) pass the V=1 flag to make, like this:
 
-	If you obtained this as a snapshot, you will need an existing
-	Mono installation.  To upgrade your installation, unpack both
-	mono and mcs:
+` make V=1`
 
-		tar xzf mcs-XXXX.tar.gz
-		tar xzf mono-XXXX.tar.gz
-		mv mono-XXX mono
-		mv mcs-XXX mcs
-		cd mono
-		./autogen.sh --prefix=/usr/local
-		make
 
-	The Mono build system is silent for most compilation commands.
-	To enable a more verbose compile (for example, to pinpoint
-	problems in your makefiles or your system) pass the V=1 flag to make, like this:
+c. Building the software from GIT
+---------------------------------
 
-		 make V=1
+If you are building the software from GIT, make sure that you
+have up-to-date mcs and mono sources:
 
+ * If you are an anonymous user: `git clone git://github.com/mono/mono.git`
 
-    c. Building the software from GIT
-    ---------------------------------
+ * If you are a Mono contributor with read/write privileges: `git clone git@github.com:mono/mono.git`
 
-	If you are building the software from GIT, make sure that you
-	have up-to-date mcs and mono sources:
+Then, go into the mono directory, and configure:
 
-	   If you are an anonymous user:
-		git clone git://github.com/mono/mono.git
+	cd mono
+	./autogen.sh --prefix=/usr/local
+	make
 
-           If you are a Mono contributors with read/write privileges:
-	        git clone git@github.com:mono/mono.git
+For people with non-standard installations of the auto* utils and of
+pkg-config (common on misconfigured OSX and windows boxes), you could get
+an error like this:
 
+`./configure: line 19176: syntax error near unexpected token 'PKG_CHECK_MODULES(BASE_DEPENDENCIES,' ...`
 
-	Then, go into the mono directory, and configure:
+This means that you need to set the ACLOCAL_FLAGS environment variable
+when invoking autogen.sh, like this: `ACLOCAL_FLAGS="-I $acprefix/share/aclocal" ./autogen.sh --prefix=/usr/local`
+where $acprefix is the prefix where aclocal has been installed.
+This will automatically go into the mcs/ tree and build the
+binaries there.
 
-		cd mono
-		./autogen.sh --prefix=/usr/local
-		make
+This assumes that you have a working mono installation, and that
+there's a C# compiler named 'mcs', and a corresponding IL
+runtime called 'mono'.  You can use two make variables
+EXTERNAL_MCS and EXTERNAL_RUNTIME to override these.  e.g., you
+can say:
 
-	For people with non-standard installations of the auto* utils and of
-	pkg-config (common on misconfigured OSX and windows boxes), you could get
-	an error like this:
+`make EXTERNAL_MCS=/foo/bar/mcs EXTERNAL_RUNTIME=/somewhere/else/mono`
 
-	./configure: line 19176: syntax error near unexpected token `PKG_CHECK_MODULES(BASE_DEPENDENCIES,' ...
+If you don't have a working Mono installation
+---------------------------------------------
 
-	This means that you need to set the ACLOCAL_FLAGS environment var
-	when invoking autogen.sh, like this:
+If you don't have a working Mono installation, an obvious choice
+is to install the latest released packages of 'mono' for your
+distribution and running `autogen.sh; make; make install` in the
+mono module directory.
 
-		ACLOCAL_FLAGS="-I $acprefix/share/aclocal" ./autogen.sh --prefix=/usr/loca
-	
-	where $acprefix is the prefix where aclocal has been installed.
+You can also try a slightly more risky approach: this may not work,
+so start from the released tarball as detailed above.
 
-	This will automatically go into the mcs/ tree and build the
-	binaries there.
+This works by first getting the latest version of the 'monolite'
+distribution, which contains just enough to run the 'mcs'
+compiler. You do this with:
 
-	This assumes that you have a working mono installation, and that
-	there's a C# compiler named 'mcs', and a corresponding IL
-	runtime called 'mono'.  You can use two make variables
-	EXTERNAL_MCS and EXTERNAL_RUNTIME to override these.  e.g., you
-	can say
+	# Run the following line after ./autogen.sh
+	make get-monolite-latest
 
-	  make EXTERNAL_MCS=/foo/bar/mcs EXTERNAL_RUNTIME=/somewhere/else/mono
-	
-	If you don't have a working Mono installation
-	---------------------------------------------
+This will download and automatically gunzip and untar the
+tarball, and place the files appropriately so that you can then
+just run: `make EXTERNAL_MCS=${PWD}/mcs/class/lib/monolite/gmcs.exe`
 
-	If you don't have a working Mono installation, an obvious choice
-	is to install the latest released packages of 'mono' for your
-	distribution and running autogen.sh; make; make install in the
-	mono module directory.
+That will use the files downloaded by 'make get-monolite-latest.
 
-	You can also try a slightly more risky approach: this may not work,
-	so start from the released tarball as detailed above.
+Testing and Installation
+------------------------
 
-	This works by first getting the latest version of the 'monolite'
-	distribution, which contains just enough to run the 'mcs'
-	compiler.  You do this with:
+You can run *(part of)* the mono and mcs test suites with the command: `make check`.
+All tests should pass.  
 
-		# Run the following line after ./autogen.sh
-		make get-monolite-latest
+If you want more *extensive* tests, including those that test the
+class libraries, you need to re-run 'configure' with the
+'--enable-nunit-tests' flag, and try: `make -k check`
 
-	This will download and automatically gunzip and untar the
-	tarball, and place the files appropriately so that you can then
-	just run:
+Expect to find a few test suite failures. As a sanity check, you
+can compare the failures you got with
 
-		make EXTERNAL_MCS=${PWD}/mcs/class/lib/monolite/gmcs.exe
+`https://wrench.mono-project.com/Wrench/`
 
-	And that will use the files downloaded by 'make get-monolite-latest.
+You can now install mono with: `make install`
 
-	Testing and Installation
-	------------------------
+You can verify your installation by using the mono-test-install
+script, it can diagnose some common problems with Mono's install.
+Failure to follow these steps may result in a broken installation. 
 
-	You can run (part of) the mono and mcs testsuites with the command:
+d. Configuration Options
+------------------------
 
-		make check
+The following are the configuration options that someone
+building Mono might want to use:
 
-	All tests should pass.  
+* `--with-sgen=yes,no` - Generational GC support: Used to enable or disable the
+compilation of a Mono runtime with the SGen garbage collector.
 
-	If you want more extensive tests, including those that test the
-	class libraries, you need to re-run 'configure' with the
-	'--enable-nunit-tests' flag, and try
+  * On platforms that support it, after building Mono, you
+will have both a mono binary and a mono-sgen binary.
+Mono uses Boehm, while mono-sgen uses the Simple
+Generational GC.
 
-		make -k check
+* `--with-gc=[boehm, included, sgen, none]` - Selects the default Boehm garbage
+collector engine to use.
 
-	Expect to find a few testsuite failures.  As a sanity check, you
-	can compare the failures you got with
+  * *included*: (*slighty modified Boehm GC*)
+This is the default value, and its
+the most feature complete, it will allow Mono
+to use typed allocations and support the
+debugger.
 
-		https://wrench.mono-project.com/Wrench/
+  * *boehm*:
+This is used to use a system-install Boehm GC,
+it is useful to test new features available in
+Boehm GC, but we do not recommend that people
+use this, as it disables a few features.
 
-	You can now install mono with:
+  * *none*:
+Disables the inclusion of a garbage collector.
 
-		make install
+  * This defaults to `included`.
 
-	You can verify your installation by using the mono-test-install
-	script, it can diagnose some common problems with Mono's install.
+* `--with-tls=__thread,pthread`
 
-	Failure to follow these steps may result in a broken installation. 
+  * Controls how Mono should access thread local storage,
+pthread forces Mono to use the pthread APIs, while
+__thread uses compiler-optimized access to it.
 
-    d. Configuration Options
-    ------------------------
+  * Although __thread is faster, it requires support from
+the compiler, kernel and libc. Old Linux systems do
+not support with __thread.
 
-	The following are the configuration options that someone
-	building Mono might want to use:
-	
-	--with-sgen=yes,no
+  * This value is typically pre-configured and there is no
+need to set it, unless you are trying to debug a problem.
 
-		Generational GC support: Used to enable or disable the
-		compilation of a Mono runtime with the SGen garbage collector.
+* `--with-sigaltstack=yes,no`
 
-		On platforms that support it, after building Mono, you
-		will have both a mono binary and a mono-sgen binary.
-		Mono uses Boehm, while mono-sgen uses the Simple
-		Generational GC.
+  * **Experimental**: Use at your own risk, it is known to
+cause problems with garbage collection and is hard to
+reproduce those bugs.
 
-	--with-gc=[boehm, included, sgen, none]
+  * This controls whether Mono will install a special
+signal handler to handle stack overflows. If set to
+`yes`, it will turn stack overflows into the
+StackOverflowException. Otherwise when a stack
+overflow happens, your program will receive a
+segmentation fault.
 
-		Selects the default Boehm garbage collector engine to
-	  	use, the default is the "included" value.
-	
-		included: 
-			This is the default value, and its
-	  		the most feature complete, it will allow Mono
-		  	to use typed allocations and support the
-		  	debugger.
+  * The configure script will try to detect if your
+operating system supports this. Some older Linux
+systems do not support this feature, or you might want
+to override the auto-detection.
 
-			It is essentially a slightly modified Boehm GC
+* `--with-static_mono=yes,no`
 
-		boehm:
-			This is used to use a system-install Boehm GC,
-			it is useful to test new features available in
-			Boehm GC, but we do not recommend that people
-			use this, as it disables a few features.
+  * This controls whether `mono` should link against a
+static library (libmono.a) or a shared library
+(libmono.so). 
 
-		none:
-			Disables the inclusion of a garbage
-		  	collector.  
+  * This defaults to `yes`, and will improve the performance
+of the `mono` program. 
 
-	--with-tls=__thread,pthread
+  * This only affects the `mono' binary, the shared
+library libmono.so will always be produced for
+developers that want to embed the runtime in their
+application.
 
-		Controls how Mono should access thread local storage,
-	  	pthread forces Mono to use the pthread APIs, while
-	  	__thread uses compiler-optimized access to it.
+* `--with-xen-opt=yes,no` - Optimize code for Xen virtualization.
 
-	  	Although __thread is faster, it requires support from
-	  	the compiler, kernel and libc.   Old Linux systems do
-	  	not support with __thread.
+  * It makes Mono generate code which might be slightly
+slower on average systems, but the resulting executable will run
+faster under the Xen virtualization system.
 
-		This value is typically pre-configured and there is no
-	  	need to set it, unless you are trying to debug a
-	  	problem.
+  * This defaults to `yes`.
 
-	--with-sigaltstack=yes,no
+* `--with-large-heap=yes,no` - Enable support for GC heaps larger than 3GB.
 
-		Experimental: Use at your own risk, it is known to
-		cause problems with garbage collection and is hard to
-	 	reproduce those bugs.
+  * This defaults to `no`.
 
-		This controls whether Mono will install a special
-	  	signal handler to handle stack overflows.   If set to
-	  	"yes", it will turn stack overflows into the
-	  	StackOverflowException.  Otherwise when a stack
-	  	overflow happens, your program will receive a
-	  	segmentation fault.
+* `--enable-small-config=yes,no` - Enable some tweaks to reduce memory usage
+and disk footprint at the expense of some capabilities.
 
-		The configure script will try to detect if your
-	  	operating system supports this.   Some older Linux
-	  	systems do not support this feature, or you might want
-	  	to override the auto-detection.
+  * Typically this means that the number of threads that can be created
+is limited (256), that the maximum heap size is also reduced (256 MB)
+and other such limitations that still make mono useful, but more suitable
+to embedded devices (like mobile phones).
 
-	--with-static_mono=yes,no
+  * This defaults to `no`.
 
-		This controls whether `mono' should link against a
-	  	static library (libmono.a) or a shared library
-	  	(libmono.so). 
+* `--with-ikvm-native=yes,no` - Controls whether the IKVM JNI interface library is
+built or not.
 
-		This defaults to yes, and will improve the performance
-	  	of the `mono' program. 
+  * This is used if you are planning on
+using the IKVM Java Virtual machine with Mono.
 
-		This only affects the `mono' binary, the shared
-	  	library libmono.so will always be produced for
-	  	developers that want to embed the runtime in their
-	  	application.
+  * This defaults to `yes`.
 
-	--with-xen-opt=yes,no
+* `--with-profile4=yes,no` - Whether you want to build the 4.x profile libraries
+and runtime.
 
-		The default value for this is `yes', and it makes Mono
-	  	generate code which might be slightly slower on
-	  	average systems, but the resulting executable will run
-	  	faster under the Xen virtualization system.
+  * This defaults to `yes`.
 
-	--with-large-heap=yes,no
+* `--with-moonlight=yes,no`
 
-		Enable support for GC heaps larger than 3GB.
+  * Whether you want to generate the Silverlight/Moonlight
+libraries and toolchain in addition to the default
+(1.1 and 2.0 APIs).
 
-		This value is set to `no' by default.
+  * This will produce the `smcs` compiler which will reference
+the Silverlight modified assemblies (mscorlib.dll,
+System.dll, System.Code.dll and System.Xml.Core.dll) and turn
+on the LINQ extensions for the compiler.
 
-	--enable-small-config=yes,no
+* `--with-moon-gc=boehm,sgen` - Select the GC to use for Moonlight.
 
-		Enable some tweaks to reduce memory usage and disk footprint at
-		the expense of some capabilities. Typically this means that the
-		number of threads that can be created is limited (256), that the
-		maxmimum heap size is also reduced (256 MB) and other such limitations
-		that still make mono useful, but more suitable to embedded devices
-		(like mobile phones).
+  * *boehm*:
+Selects the Boehm Garbage Collector, with the same flags
+as the regular Mono build. This is the default.
 
-		This value is set to `no' by default.
+  * *sgen*:
+Selects the new SGen Garbage Collector, which provides
+Generational GC support, using the same flags as the
+mono-sgen build.
 
-	--with-ikvm-native=yes,no
+  * This defaults to `boehm`.
 
-		Controls whether the IKVM JNI interface library is
-	  	built or not.  This is used if you are planning on
-	  	using the IKVM Java Virtual machine with Mono.
+* `--with-libgdiplus=installed,sibling,<path>` - Configure where Mono
+searches for libgdiplus when running System.Drawing tests.
 
-		This defaults to `yes'.
+  * It defaults to `installed`, which means that the
+library is available to Mono through the regular
+system setup.
 
-	--with-profile4=yes,no
+  * `sibling' can be used to specify that a libgdiplus
+that resides as a sibling of this directory (mono)
+should be used.
 
-		Whether you want to build the 4.x profile libraries
-		and runtime.
+ * Or you can specify a path to a libgdiplus.
 
-	  	It defaults to `yes'.
+* `--disable-shared-memory`
 
-	--with-moonlight=yes,no
+  * Use this option to disable the use of shared memory in
+Mono (this is equivalent to setting the MONO_DISABLE_SHM
+environment variable, although this removes the feature
+completely).
 
-		Whether you want to generate the Silverlight/Moonlight
-		libraries and toolchain in addition to the default
-		(1.1 and 2.0 APIs).
+  * Disabling the shared memory support will disable certain
+features like cross-process named mutexes.
 
-		This will produce the `smcs' compiler which will reference
-		the Silverlight modified assemblies (mscorlib.dll,
-		System.dll, System.Code.dll and System.Xml.Core.dll) and turn
-	  	on the LINQ extensions for the compiler.
+* `--enable-minimal=LIST`
 
-	--with-moon-gc=boehm,sgen
+  * Use this feature to specify optional runtime
+components that you might not want to include.  This
+is only useful for developers embedding Mono that
+require a subset of Mono functionality.
+  * The list is a comma-separated list of components that
+should be removed, these are:
 
-		Select the GC to use for Moonlight.
+    * `aot`:
+Disables support for the Ahead of Time compilation.
 
-		boehm:
-			Selects the Boehm Garbage Collector, with the same flags
-			as the regular Mono build. This is the default.
+    * `attach`:
+Support for the Mono.Management assembly and the
+VMAttach API (allowing code to be injected into
+a target VM)
 
-		sgen:
-			Selects the new SGen Garbage Collector, which provides
-			Generational GC support, using the same flags as the
-			mono-sgen build.
+    * `com`:
+Disables COM support.
 
-		This defaults to `boehm'.
+    * `debug`:
+Drop debugging support.
 
-	--with-libgdiplus=installed,sibling,<path>
+    * `decimal`:
+Disables support for System.Decimal.
 
-		This is used to configure where should Mono look for
-	  	libgdiplus when running the System.Drawing tests.
+    * `full_messages`:
+By default Mono comes with a full table
+of messages for error codes. This feature
+turns off uncommon error messages and reduces
+the runtime size.
 
-		It defaults to `installed', which means that the
-	  	library is available to Mono through the regular
-	  	system setup.
+    * `generics`:
+Generics support.  Disabling this will not
+allow Mono to run any 2.0 libraries or
+code that contains generics.
 
-		`sibling' can be used to specify that a libgdiplus
-	  	that resides as a sibling of this directory (mono)
-	  	should be used.
+    * `jit`:
+Removes the JIT engine from the build, this reduces
+the executable size, and requires that all code
+executed by the virtual machine be compiled with
+Full AOT before execution.
 
-		Or you can specify a path to a libgdiplus.
+    * `large_code`:
+Disables support for large assemblies.
 
-	--disable-shared-memory 
+    * `logging`:
+Disables support for debug logging.
 
-		Use this option to disable the use of shared memory in
-		Mono (this is equivalent to setting the MONO_DISABLE_SHM
-		environment variable, although this removes the feature
-		completely).
+    * `pinvoke`:
+Support for Platform Invocation services,
+disabling this will drop support for any
+libraries using DllImport.
 
-		Disabling the shared memory support will disable certain
-		features like cross-process named mutexes.
+    * `portability`:
+Removes support for MONO_IOMAP, the environment
+variables for simplifying porting applications that 
+are case-insensitive and that mix the Unix and Windows path separators.
 
-	--enable-minimal=LIST
+    * `profiler`:
+Disables support for the default profiler.
 
-		Use this feature to specify optional runtime
-	  	components that you might not want to include.  This
-	  	is only useful for developers embedding Mono that
-	  	require a subset of Mono functionality.
+    * `reflection_emit`:
+Drop System.Reflection.Emit support
 
-		The list is a comma-separated list of components that
-	  	should be removed, these are:
+    * `reflection_emit_save`:
+Drop support for saving dynamically created
+assemblies (AssemblyBuilderAccess.Save) in
+System.Reflection.Emit.
 
-		aot:
-			Disables support for the Ahead of Time
-	  		compilation.
+    * `shadow_copy`:
+Disables support for AppDomain's shadow copies
+(you can disable this if you do not plan on 
+using appdomains).
 
-		attach:
-			Support for the Mono.Management assembly and the
-			VMAttach API (allowing code to be injected into
-			a target VM)
+    * `simd`:
+Disables support for the Mono.SIMD intrinsics
+library.
 
-		com:
-			Disables COM support.
+    * `ssa`:
+Disables compilation for the SSA optimization
+framework, and the various SSA-based optimizations.
 
-		debug:
-			Drop debugging support.
+* `--enable-llvm`
+* `--enable-loadedllvm`
 
-	 	decimal:
-			Disables support for System.Decimal.
+  * This enables the use of LLVM as a code generation engine
+for Mono.  The LLVM code generator and optimizer will be 
+used instead of Mono's built-in code generator for both
+Just in Time and Ahead of Time compilations.
 
-		full_messages:
-			By default Mono comes with a full table
-			of messages for error codes.   This feature
-			turns off uncommon error messages and reduces
-			the runtime size.
+  * See the http://www.mono-project.com/Mono_LLVM for the 
+full details and up-to-date information on this feature.
 
-		generics:
-			Generics support.  Disabling this will not
-			allow Mono to run any 2.0 libraries or
-			code that contains generics.
+  * You will need to have an LLVM built that Mono can link
+against.
 
-		jit:
-			Removes the JIT engine from the build, this reduces
-			the executable size, and requires that all code
-			executed by the virtual machine be compiled with
-			Full AOT before execution.
+  * The --enable-loadedllvm variant will make the LLVM backend
+into a runtime-loadable module instead of linking it directly
+into the main mono binary.
 
-		large_code:
-			Disables support for large assemblies.
+* `--enable-big-arrays` - Enable use of arrays with indexes larger
+than Int32.MaxValue.
 
-		logging:
-	  		Disables support for debug logging.
+  * By default Mono has the same limitation as .NET on
+Win32 and Win64 and limits array indexes to 32-bit
+values (even on 64-bit systems).
 
-		pinvoke:
-			Support for Platform Invocation services,
-			disabling this will drop support for any
-			libraries using DllImport.
+  * In certain scenarios where large arrays are required,
+you can pass this flag and Mono will be built to
+support 64-bit arrays.
 
-		portability:
-			Removes support for MONO_IOMAP, the environment
-			variables for simplifying porting applications that 
-			are case-insensitive and that mix the Unix and Windows path separators.
+  * This is not the default as it breaks the C embedding
+ABI that we have exposed through the Mono development
+cycle.
 
-		profiler:
-			Disables support for the default profiler.
+* `--enable-parallel-mark`
 
-		reflection_emit:
-			Drop System.Reflection.Emit support
+  * Use this option to enable the garbage collector to use
+multiple CPUs to do its work.  This helps performance
+on multi-CPU machines as the work is divided across CPUS.
 
-		reflection_emit_save:
-			Drop support for saving dynamically created
-			assemblies (AssemblyBuilderAccess.Save) in
-			System.Reflection.Emit.
+  * This option is not currently the default as we have
+not done much testing with Mono.
 
-		shadow_copy:
-			Disables support for AppDomain's shadow copies
-			(you can disable this if you do not plan on 
-			using appdomains).
+* `--enable-dtrace`
 
-		simd:
-			Disables support for the Mono.SIMD intrinsics
-			library.
+  * On Solaris and MacOS X builds a version of the Mono
+runtime that contains DTrace probes and can
+participate in the system profiling using DTrace.
 
-		ssa:
-			Disables compilation for the SSA optimization
-			framework, and the various SSA-based
-		  	optimizations.
 
-	--enable-llvm
-	--enable-loadedllvm
+* `--disable-dev-random`
 
-		This enables the use of LLVM as a code generation engine
-		for Mono.  The LLVM code generator and optimizer will be 
-		used instead of Mono's built-in code generator for both
-		Just in Time and Ahead of Time compilations.
+  * Mono uses /dev/random to obtain good random data for
+any source that requires random numbers.   If your
+system does not support this, you might want to
+disable it.
 
-		See the http://www.mono-project.com/Mono_LLVM for the 
-		full details and up-to-date information on this feature.
+  * There are a number of runtime options to control this
+also, see the man page.
 
-		You will need to have an LLVM built that Mono can link
-		against,
+* `--enable-nacl`
 
-		The --enable-loadedllvm variant will make the llvm backend
-		into a runtime-loadable module instead of linking it directly
-		into the main mono binary.
+  * This configures the Mono compiler to generate code
+suitable to be used by Google's Native Client:
+http://code.google.com/p/nativeclient/
 
-	--enable-big-arrays
+  * Currently this is used with Mono's AOT engine as
+Native Client does not support JIT engines yet.
 
-		This enables the use arrays whose indexes are larger
-		than Int32.MaxValue.   
+Using Mono
+==========
 
-		By default Mono has the same limitation as .NET on
-		Win32 and Win64 and limits array indexes to 32-bit
-		values (even on 64-bit systems).
+Once you have installed the software, you can run a few programs:
 
-		In certain scenarios where large arrays are required,
-		you can pass this flag and Mono will be built to
-		support 64-bit arrays.
+* `mono program.exe` runtime engine
 
-		This is not the default as it breaks the C embedding
-		ABI that we have exposed through the Mono development
-		cycle.
+* `mcs program.cs` C# compiler 
 
-	--enable-parallel-mark
+* `monodis program.exe` CIL Disassembler
 
-		Use this option to enable the garbage collector to use
-		multiple CPUs to do its work.  This helps performance
-		on multi-CPU machines as the work is divided across CPUS.
+See the man pages for mono(1), mint(1), monodis(1) and mcs(2)
+for further details.
 
-		This option is not currently the default as we have
-		not done much testing with Mono.
+Directory Roadmap
+=================
 
-	--enable-dtrace
+* `docs/` - Technical documents about the Mono runtime.
 
-		On Solaris and MacOS X builds a version of the Mono
-		runtime that contains DTrace probes and can
-		participate in the system profiling using DTrace.
+* `data/` - Configuration files installed as part of the Mono runtime.
 
+* `mono/` - The core of the Mono Runtime.
 
-	--disable-dev-random
+  * `metadata/` - The object system and metadata reader.
 
-		Mono uses /dev/random to obtain good random data for
-	  	any source that requires random numbers.   If your
-	  	system does not support this, you might want to
-	  	disable it.
+  * `mini/` - The Just in Time Compiler.
 
-		There are a number of runtime options to control this
-	  	also, see the man page.
+  * `dis/` - CIL executable Disassembler
 
-	--enable-nacl
+  * `cli/` - Common code for the JIT and the interpreter.
 
-		This configures the Mono compiler to generate code
-		suitable to be used by Google's Native Client:
+  * `io-layer/` - The I/O layer and system abstraction for 
+emulating the .NET IO model.
 
-			 http://code.google.com/p/nativeclient/
+  * `cil/` - Common Intermediate Representation, XML
+definition of the CIL bytecodes.
 
-		Currently this is used with Mono's AOT engine as
-		Native Client does not support JIT engines yet.
+ * `interp/` - Interpreter for CLI executables (obsolete).
 
-2. Using Mono
-=============
+ * `arch/` - Architecture specific portions.
 
-	Once you have installed the software, you can run a few programs:
+* `man/` - Manual pages for the various Mono commands and programs.
 
-	* runtime engine
+* `samples/` -Some simple sample programs on uses of the Mono
+runtime as an embedded library.   
 
-		mono program.exe
+* `scripts/` - Scripts used to invoke Mono and the corresponding program.
 
-	* C# compiler
+* `runtime/` - A directory that contains the Makefiles that link the
+mono/ and mcs/ build systems.
 
-		mcs program.cs
+* `../olive/`
 
-	* CIL Disassembler
+  * If the directory ../olive is present (as an
+independent checkout) from the Mono module, that
+directory is automatically configured to share the
+same prefix than this module gets.
 
-		monodis program.exe
 
-	See the man pages for mono(1), mint(1), monodis(1) and mcs(2)
-	for further details.
-
-3. Directory Roadmap
-====================
-
-	docs/
-		Technical documents about the Mono runtime.
-
-	data/
-		Configuration files installed as part of the Mono runtime.
-
-	mono/
-		The core of the Mono Runtime.
-
-		metadata/
-			The object system and metadata reader.
-
-		mini/
-			The Just in Time Compiler.
-
-		dis/
-			CIL executable Disassembler
-
-		cli/
-			Common code for the JIT and the interpreter.
-
-		io-layer/
-			The I/O layer and system abstraction for 
-			emulating the .NET IO model.
-
-		cil/
-			Common Intermediate Representation, XML
-			definition of the CIL bytecodes.
-
-		interp/
-			Interpreter for CLI executables (obsolete).
-
-		arch/
-			Architecture specific portions.
-
-	man/
-
-		Manual pages for the various Mono commands and programs.
-
-	samples/
-
-		Some simple sample programs on uses of the Mono
-		runtime as an embedded library.   
-
-	scripts/
-
-		Scripts used to invoke Mono and the corresponding program.
-
-	runtime/
-
-		A directory that contains the Makefiles that link the
-		mono/ and mcs/ build systems.
-
-	../olive/
-
-		If the directory ../olive is present (as an
-		independent checkout) from the Mono module, that
-		directory is automatically configured to share the
-		same prefix than this module gets.
-
-
-4. Git submodules maintenance
-=============================
+Git submodules maintenance
+==========================
 
 Read documentation at http://mono-project.com/Git_Submodule_Maintenance
 
 
-5. Reporting bugs
-=================
+Reporting bugs
+==============
 
 To submit bug reports, please use Xamarin's Bugzilla:
 
-    https://bugzilla.xamarin.com/
+https://bugzilla.xamarin.com/
 
 Please use the search facility to ensure the same bug hasn't already
 been submitted and follow our guidelines on how to make a good bug
 report:
 
-    http://mono-project.com/Bugs#How_to_make_a_good_bug_report
+http://mono-project.com/Bugs#How_to_make_a_good_bug_report
