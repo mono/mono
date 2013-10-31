@@ -40,7 +40,7 @@ namespace Microsoft.Build.Execution
 #endif
 	sealed class ProjectTargetInstance
 	{
-		private ProjectTargetInstance (ProjectTargetElement xml)
+		internal ProjectTargetInstance (ProjectTargetElement xml)
 		{
 			Children = xml.Children.Select<ProjectElement,ProjectTargetInstanceChild> (c => {
 				if (c is ProjectOnErrorElement)

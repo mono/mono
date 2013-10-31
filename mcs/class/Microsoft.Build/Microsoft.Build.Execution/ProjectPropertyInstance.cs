@@ -3,8 +3,9 @@
 //
 // Author:
 //   Rolf Bjarne Kvinge (rolf@xamarin.com)
+//   Atsushi Enomoto (atsushi@xamarin.com)
 //
-// Copyright (C) 2011 Xamarin Inc.
+// Copyright (C) 2011,2013 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -52,5 +53,10 @@ namespace Microsoft.Build.Execution
 		public virtual bool IsImmutable { get; private set; }
 
 		public string Name { get; private set; }
+		
+		public override string ToString ()
+		{
+			return string.Format ("{0}={1}", Name, EvaluatedValue);
+		}
 	}
 }
