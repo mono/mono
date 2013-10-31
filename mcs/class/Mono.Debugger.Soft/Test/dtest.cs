@@ -1102,7 +1102,7 @@ public class DebuggerTests
 		// custom attributes
 		t = frame.Method.GetParameters ()[8].ParameterType;
 		Assert.AreEqual ("Tests2", t.Name);
-		var attrs = t.GetCustomAttributes (true);
+		var attrs = t.GetCustomAttributes (false);
 		Assert.AreEqual (3, attrs.Length);
 		foreach (var attr in attrs) {
 			if (attr.Constructor.DeclaringType.Name == "DebuggerDisplayAttribute") {
