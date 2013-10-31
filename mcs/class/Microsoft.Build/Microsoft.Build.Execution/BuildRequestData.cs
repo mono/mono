@@ -76,18 +76,21 @@ namespace Microsoft.Build.Execution
 		[MonoTODO ("unused")]
 		public HostServices HostServices { get; private set; }
 
-		[MonoTODO]
-		public string ProjectFullPath { get; private set; }
+		public string ProjectFullPath {
+			get { return ProjectInstance.FullPath; }
+		}
 
 		[MonoTODO ("unused")]
 		public ProjectInstance ProjectInstance { get; private set; }
+		
+		[MonoTODO]
+		public IEnumerable<string> PropertiesToTransfer { get; private set; }
 
 		[MonoTODO]
 		public ICollection<string> TargetNames { get; private set; }
 
-		[MonoTODO]
 		ICollection<ProjectPropertyInstance> GlobalProperties {
-			get { return ProjectInstance.GlobalProperties.Select (prop => new ProjectPropertyInstance (prop.Key, true, prop.Value)).ToList (); }
+			get { return ProjectInstance.Properties.Where (p => ProjectInstance.GlobalProperties.Any (i => i.Key == p.Name)).ToArray (); } // we can use == as it should be identical match there.
 		}
 	}
 }
