@@ -1102,8 +1102,8 @@ public class DebuggerTests
 		// custom attributes
 		t = frame.Method.GetParameters ()[8].ParameterType;
 		Assert.AreEqual ("Tests2", t.Name);
-		var attrs = t.GetCustomAttributes (false);
-		Assert.AreEqual (3, attrs.Length);
+		var attrs = t.GetCustomAttributes (true);
+		Assert.AreEqual (5, attrs.Length);
 		foreach (var attr in attrs) {
 			if (attr.Constructor.DeclaringType.Name == "DebuggerDisplayAttribute") {
 				Assert.AreEqual (1, attr.ConstructorArguments.Count);
@@ -1122,6 +1122,12 @@ public class DebuggerTests
 				Assert.AreEqual (2, attr.NamedArguments.Count);
 				Assert.AreEqual ("afield", attr.NamedArguments [0].Field.Name);
 				Assert.AreEqual ("bfield", attr.NamedArguments [1].Field.Name);
+			} else if (attr.Constructor.DeclaringType.Name == "ClassInterface") {
+				// inherited from System.Object
+				//} else if (attr.Constructor.DeclaringType.Name == "Serializable") {
+				// inherited from System.Object
+			} else if (attr.Constructor.DeclaringType.Name == "ComVisible") {
+				// inherited from System.Object
 			} else {
 				Assert.Fail (attr.Constructor.DeclaringType.Name);
 			}
