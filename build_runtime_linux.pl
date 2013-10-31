@@ -142,7 +142,7 @@ if ($ENV{"UNITY_THISISABUILDMACHINE"})
 {
 	system("strip $libtarget/libmono.so") eq 0 or die("failed to strip libmono (shared)");
 	system("strip $libtarget/libMonoPosixHelper.so") eq 0 or die("failed to strip libMonoPosixHelper (shared)");
-	system("echo \"mono-runtime-$platform = $ENV{'BUILD_VCS_NUMBER'}\" > $root/builds/versions.txt");
+	system("git log --pretty=format:'mono-runtime-$platform = %H %d %ad' --no-abbrev-commit --date=short -1 > $root/builds/versions.txt");
 }
 
 system("ln","-f","$root/mono/mini/mono","$bintarget/mono") eq 0 or die("failed symlinking mono executable");

@@ -180,7 +180,7 @@ for my $arch (@arches)
 		{
 		#	system("strip $libtarget/libmono.0.dylib") eq 0 or die("failed to strip libmono");
 		#	system("strip $libtarget/MonoBundleBinary") eq 0 or die ("failed to strip MonoBundleBinary");
-			system("echo \"mono-runtime-osx = $ENV{'BUILD_VCS_NUMBER'}\" > $root/builds/versions.txt");
+			system("git log --pretty=format:'mono-runtime-osx = %H %d %ad' --no-abbrev-commit --date=short -1 > $root/builds/versions.txt");
 		}
 
 		InstallNameTool("$libtarget/libmono.0.dylib", "\@executable_path/../Frameworks/MonoEmbedRuntime/osx/libmono.0.dylib");

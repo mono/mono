@@ -28,7 +28,7 @@ copy("$root/builds/embedruntimes/win32/mono.pdb","$root/builds/monodistribution/
 
 if ($ENV{UNITY_THISISABUILDMACHINE})
 {
-	system("echo mono-runtime-win32 = $ENV{'BUILD_VCS_NUMBER'} > $root\\builds\\versions.txt");
+	system("git log --pretty=format:'mono-runtime-win32 = %H %d %ad' --no-abbrev-commit --date=short -1 > $root\\builds\\versions.txt");
 }
 
 sub CompileVCProj
