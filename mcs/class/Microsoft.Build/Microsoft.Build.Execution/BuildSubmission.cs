@@ -27,6 +27,7 @@
 
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Microsoft.Build.Execution
 {
@@ -65,9 +66,7 @@ namespace Microsoft.Build.Execution
 
 		public BuildResult Execute ()
 		{
-			ExecuteAsync (null, null);
-			WaitHandle.WaitOne ();
-			return BuildResult;
+			throw new NotImplementedException ();
 		}
 
 		public void ExecuteAsync (BuildSubmissionCompleteCallback callback, object context)
@@ -79,8 +78,8 @@ namespace Microsoft.Build.Execution
 			is_started = true;
 			this.AsyncContext = context;
 			this.callback = callback;
-
-			throw new NotImplementedException ();
+			
+			BuildManager.TaskFactory.StartNew (Execute);
 		}
 	}
 }

@@ -28,6 +28,8 @@
 using Microsoft.Build.Evaluation;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Microsoft.Build.Execution
 {
@@ -41,24 +43,35 @@ namespace Microsoft.Build.Execution
 		{
 			throw new NotImplementedException ();
 		}
+		
+		public void Dispose ()
+		{
+		}
 
 		~BuildManager ()
 		{
 			// maybe HostServices related cleanup is expected.
 		}
 
-		BuildParameters parameters;
-		BuildRequestData request_data;
+		readonly TaskFactory<BuildResult> task_factory = new TaskFactory<BuildResult> ();
 		List<BuildSubmission> submissions = new List<BuildSubmission> ();
+		
+		BuildParameters ongoing_build_parameters;
+		BuildSubmission ongoing_build_submission;
 
 		public void BeginBuild (BuildParameters parameters)
 		{
-			throw new NotImplementedException ();
+			if (ongoing_build_parameters != null)
+				throw new InvalidOperationException ("There is already ongoing build");
+			ongoing_build_parameters = parameters;
+			
+			// FIXME: apply build parameters to this build manager instance.
 		}
 
 		public BuildResult Build (BuildParameters parameters, BuildRequestData requestData)
 		{
-			throw new NotImplementedException ();
+			BeginBuild (parameters);
+			return BuildRequest (requestData);
 		}
 
 		public BuildResult BuildRequest (BuildRequestData requestData)
@@ -67,7 +80,7 @@ namespace Microsoft.Build.Execution
 			sub.Execute ();
 			return sub.BuildResult;
 		}
-
+		
 		public void CancelAllSubmissions ()
 		{
 			foreach (var sub in submissions)
@@ -77,7 +90,18 @@ namespace Microsoft.Build.Execution
 
 		public void EndBuild ()
 		{
-			throw new NotImplementedException ();
+			if (ongoing_build_parameters == null)
+				throw new InvalidOperationException ("Build has not started");
+			// spin wait
+			for (int i = 0; ongoing_build_submission == null && i < 50; i++)
+				Thread.Sleep (20 * i);
+			// long wait...
+			while (ongoing_build_submission == null)
+				Thread.Sleep (500);
+			ongoing_build_submission.WaitHandle.WaitOne ();
+			
+			ongoing_build_submission = null;
+			ongoing_build_parameters = null;
 		}
 		
 		Dictionary<Project,ProjectInstance> instances = new Dictionary<Project, ProjectInstance> ();
@@ -95,7 +119,7 @@ namespace Microsoft.Build.Execution
 			return GetProjectInstanceForBuildInternal (project);
 		}
 			
-		public ProjectInstance GetProjectInstanceForBuildInternal (Project project)
+		internal ProjectInstance GetProjectInstanceForBuildInternal (Project project)
 		{
 			ProjectInstance ret;
 			if (!instances.ContainsKey (project))
@@ -115,6 +139,10 @@ namespace Microsoft.Build.Execution
 			throw new NotImplementedException ();
 		}
 
+		internal TaskFactory<BuildResult> TaskFactory {
+			get { return task_factory; }
+		}
+		
 		static BuildManager default_manager = new BuildManager ();
 
 		public static BuildManager DefaultBuildManager {
