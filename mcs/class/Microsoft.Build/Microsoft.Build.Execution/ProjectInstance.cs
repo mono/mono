@@ -96,6 +96,9 @@ namespace Microsoft.Build.Execution
 		IDictionary<string, string> global_properties;
 		
 		string full_path, directory;
+		#if NET_4_5
+		ElementLocation location;
+		#endif
 		
 		Dictionary<string, ProjectItemDefinitionInstance> item_definitions;
 		List<ResolvedImport> raw_imports; // maybe we don't need this...
@@ -107,6 +110,9 @@ namespace Microsoft.Build.Execution
 
 		void InitializeProperties (ProjectRootElement xml, ProjectInstance parent)
 		{
+			#if NET_4_5
+			location = xml.Location;
+			#endif
 			full_path = xml.FullPath;
 			directory = string.IsNullOrWhiteSpace (xml.DirectoryPath) ? System.IO.Directory.GetCurrentDirectory () : xml.DirectoryPath;
 			DefaultTargets = xml.DefaultTargets.Split (';').Select (s => s.Trim ()).ToList ();
@@ -153,6 +159,9 @@ namespace Microsoft.Build.Execution
 			
 			// next, evaluate items
 			EvaluateItems (xml, elements);
+			
+			// finally, evaluate targets and tasks
+			EvaluateTasks (elements);
 		}
 		
 		IEnumerable<ProjectElement> EvaluatePropertiesAndImports (IEnumerable<ProjectElement> elements)
@@ -235,6 +244,15 @@ namespace Microsoft.Build.Execution
 			all_evaluated_items.Sort ((p1, p2) => string.Compare (p1.ItemType, p2.ItemType, StringComparison.OrdinalIgnoreCase));
 		}
 		
+		void EvaluateTasks (IEnumerable<ProjectElement> elements)
+		{
+			foreach (var child in elements) {
+				var te = child as ProjectTargetElement;
+				if (te != null)
+					this.targets.Add (te.Name, new ProjectTargetInstance (te));
+			}
+		}
+		
 		IEnumerable<ProjectElement> Import (ProjectImportElement import)
 		{
 			string dir = projects.GetEvaluationTimeThisFileDirectory (() => FullPath);
@@ -276,25 +294,25 @@ namespace Microsoft.Build.Execution
 #endif
 		
 		public IDictionary<string, ProjectItemDefinitionInstance> ItemDefinitions {
-			get { throw new NotImplementedException (); }
+			get { return item_definitions; }
 		}
 		
 		public ICollection<ProjectItemInstance> Items {
-			get { throw new NotImplementedException (); }
+			get { return all_evaluated_items; }
 		}
 		
 		public ICollection<string> ItemTypes {
-			get { throw new NotImplementedException (); }
+			get { return all_evaluated_items.Select (i => i.ItemType).Distinct ().ToArray (); }
 		}
 
 #if NET_4_5		
 		public ElementLocation ProjectFileLocation {
-			get { throw new NotImplementedException (); }
+			get { return location; }
 		}
 #endif
 
 		public ICollection<ProjectPropertyInstance> Properties {
-			get { throw new NotImplementedException (); }
+			get { return properties; }
 		}
 		
 		#if NET_4_5
@@ -303,7 +321,7 @@ namespace Microsoft.Build.Execution
 		internal
 		#endif
 		IDictionary<string, ProjectTargetInstance> Targets {
-			get { throw new NotImplementedException (); }
+			get { return targets; }
 		}
 		
 		public string ToolsVersion { get; private set; }

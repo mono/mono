@@ -21,7 +21,6 @@ namespace MonoTests.Microsoft.Build.Execution
 </Project>";
 
 		[Test]
-		[Category ("NotWorking")]
 		public void PropertiesCopiesValues ()
 		{
 			var xml = XmlReader.Create (new StringReader (project_xml));
@@ -37,7 +36,6 @@ namespace MonoTests.Microsoft.Build.Execution
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void ToStringOverride ()
 		{
 			var xml = XmlReader.Create (new StringReader (project_xml));

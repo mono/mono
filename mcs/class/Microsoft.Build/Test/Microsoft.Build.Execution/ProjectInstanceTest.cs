@@ -12,7 +12,6 @@ namespace MonoTests.Microsoft.Build.Execution
 	public class ProjectInstanceTest
 	{
 		[Test]
-		[Category ("NotWorking")]
 		public void ItemsAndProperties ()
 		{
             string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
@@ -33,8 +32,9 @@ namespace MonoTests.Microsoft.Build.Execution
             var proj = new ProjectInstance (root);
             var item = proj.Items.First ();
 			Assert.AreEqual ("foo.txt", item.EvaluatedInclude, "#1");
-			var prop = proj.Properties.First ();
+			var prop = proj.Properties.First (p => p.Name=="P");
 			Assert.AreEqual ("valid", prop.EvaluatedValue, "#2");
+			Assert.IsNotNull (proj.GetProperty ("MSBuildProjectDirectory"), "#3");
 		}
 		
 		[Test]

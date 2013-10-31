@@ -5,7 +5,7 @@
 //   Rolf Bjarne Kvinge (rolf@xamarin.com)
 //   Atsushi Enomoto (atsushi@xamarin.com)
 //
-// Copyright (C) 2011 Xamarin Inc.
+// Copyright (C) 2011,2013 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -45,40 +45,51 @@ namespace Microsoft.Build.Execution
 			this.project = project;
 			this.evaluated_include = evaluatedInclude;
 			item_type = xml.ItemType;
+			metadata = xml.Metadata.Select (m => new ProjectMetadataInstance (m.Name, m.Value)).ToList ();
 		}
 		
-		ProjectInstance project;
-		string item_type;
+		readonly ProjectInstance project;
+		readonly string item_type;
 		string evaluated_include;
+		readonly List<ProjectMetadataInstance> metadata;
 		
 		public ProjectMetadataInstance GetMetadata (string name)
 		{
-			throw new NotImplementedException ();
+			return Metadata.FirstOrDefault (m => m.Name.Equals (name, StringComparison.OrdinalIgnoreCase));
 		}
 
 		public string GetMetadataValue (string name)
 		{
-			throw new NotImplementedException ();
+			var m = GetMetadata (name);
+			return m != null ? m.EvaluatedValue : null;
 		}
 
 		public bool HasMetadata (string name)
 		{
-			throw new NotImplementedException ();
+			return GetMetadata (name) != null;
 		}
 
 		public void RemoveMetadata (string metadataName)
 		{
-			throw new NotImplementedException ();
+			var m = GetMetadata (metadataName);
+			if (m != null)
+				metadata.Remove (m);
 		}
 
 		public void SetMetadata (IEnumerable<KeyValuePair<string, string>> metadataDictionary)
 		{
-			throw new NotImplementedException ();
+			foreach (var p in metadataDictionary)
+				SetMetadata (p.Key, p.Value);
 		}
 
 		public ProjectMetadataInstance SetMetadata (string name, string evaluatedValue)
 		{
-			throw new NotImplementedException ();
+			var m = metadata.FirstOrDefault (_ => _.Name.Equals (name, StringComparison.OrdinalIgnoreCase));
+			if (m != null)
+				metadata.Remove (m);
+			m = new ProjectMetadataInstance (name, evaluatedValue);
+			metadata.Add (m);
+			return m;
 		}
 
 		public int DirectMetadataCount {
@@ -99,15 +110,15 @@ namespace Microsoft.Build.Execution
 		}
 
 		public IEnumerable<ProjectMetadataInstance> Metadata {
-			get { throw new NotImplementedException (); }
+			get { return metadata; }
 		}
 
 		public int MetadataCount {
-			get { throw new NotImplementedException (); }
+			get { return metadata.Count; }
 		}
 
 		public ICollection<string> MetadataNames {
-			get { throw new NotImplementedException (); }
+			get { return metadata.Select (m => m.Name).ToArray (); }
 		}
 
 		public ProjectInstance Project {

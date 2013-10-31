@@ -206,6 +206,9 @@ namespace Microsoft.Build.Evaluation
 			
 			// next, evaluate items
 			EvaluateItems (elements);
+			
+			// finally, evaluate targets and tasks
+			EvaluateTasks (elements);
 		}
 		
 		IEnumerable<ProjectElement> EvaluatePropertiesAndImports (IEnumerable<ProjectElement> elements)
@@ -286,6 +289,15 @@ namespace Microsoft.Build.Evaluation
 				}
 			}
 			all_evaluated_items.Sort ((p1, p2) => string.Compare (p1.ItemType, p2.ItemType, StringComparison.OrdinalIgnoreCase));
+		}
+		
+		void EvaluateTasks (IEnumerable<ProjectElement> elements)
+		{
+			foreach (var child in elements) {
+				var te = child as ProjectTargetElement;
+				if (te != null)
+					this.targets.Add (te.Name, new ProjectTargetInstance (te));
+			}
 		}
 		
 		IEnumerable<ProjectElement> Import (ProjectImportElement import)
