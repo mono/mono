@@ -1,10 +1,10 @@
 //
-// ProjectItemDefinitionInstance.cs
+// ProjectPropertyGroupTaskInstance.cs
 //
 // Author:
-//   Atsushi Enomoto (atsushi@veritas-vos-liberabit.com)
+//    Atsushi Enomoto (atsushi@xamarin.com)
 //
-// Copyright (C) 2012,2013 Xamarin Inc.
+// (C) 2013 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -16,7 +16,7 @@
 // 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -25,47 +25,45 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-using Microsoft.Build.Framework;
 using System;
 using System.Collections.Generic;
-using Microsoft.Build.Construction;
 using System.Linq;
+using Microsoft.Build.Construction;
 
 namespace Microsoft.Build.Execution
 {
-	public class ProjectItemDefinitionInstance
+	public sealed class ProjectPropertyGroupTaskInstance : ProjectTargetInstanceChild
 	{
-		internal ProjectItemDefinitionInstance (ProjectItemDefinitionElement xml)
+		internal ProjectPropertyGroupTaskInstance (ProjectPropertyGroupElement xml)
 		{
-			ItemType = xml.ItemType;
-			AddItems (xml);
+			condition = xml.Condition;
+			condition_location = xml.ConditionLocation;
+			//this.FullPath = fullPath;
+			location = xml.Location;
+			
+			Properties = xml.Properties.Select (prop => new ProjectPropertyGroupTaskPropertyInstance (prop)).ToArray ();
 		}
 		
-		List<ProjectMetadataInstance> metadata = new List<ProjectMetadataInstance> ();
+		readonly string condition;
+		readonly ElementLocation condition_location, location;
 		
-		public string ItemType { get; private set; }
-		
-		public ICollection<ProjectMetadataInstance> Metadata {
-			get { return metadata; }
+		public override string Condition {
+			get { return condition; }
 		}
-		
-		public int MetadataCount {
-			get { return metadata.Count; }
+
+		#if NET_4_5
+		public override ElementLocation ConditionLocation {
+			get { return condition_location; }
 		}
-		
-		public IEnumerable<string> MetadataNames {
-			get { return metadata.Select (m => m.Name).ToArray (); }
+
+		public override ElementLocation Location {
+			get { return location; }
 		}
+
+		public ElementLocation ExecuteTargetsLocation { get; private set; }
+		#endif
 		
-		internal void AddItems (ProjectItemDefinitionElement xml)
-		{
-			foreach (var item in xml.Metadata) {
-				var existing = metadata.FirstOrDefault (i => i.Name == item.Name);
-				if (existing != null)
-					metadata.Remove (existing);
-				metadata.Add (new ProjectMetadataInstance (item.Name, item.Value));
-			}
-		}
+		public ICollection<ProjectPropertyGroupTaskPropertyInstance> Properties { get; private set; }
 	}
 }
+

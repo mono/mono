@@ -68,6 +68,8 @@ Microsoft.Build.Execution/ProjectItemGroupTaskMetadataInstance.cs
 Microsoft.Build.Execution/ProjectItemInstance.cs
 Microsoft.Build.Execution/ProjectMetadataInstance.cs
 Microsoft.Build.Execution/ProjectOnErrorInstance.cs
+Microsoft.Build.Execution/ProjectPropertyGroupTaskInstance.cs
+Microsoft.Build.Execution/ProjectPropertyGroupTaskPropertyInstance.cs
 Microsoft.Build.Execution/ProjectPropertyInstance.cs
 Microsoft.Build.Execution/ProjectTargetInstance.cs
 Microsoft.Build.Execution/ProjectTaskInstance.cs
