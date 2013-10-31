@@ -35,7 +35,12 @@ using System.Security;
 using System.Text;
 using Microsoft.Build.Framework;
 
-namespace Microsoft.Build.BuildEngine {
+#if MICROSOFT_BUILD_DLL
+namespace Microsoft.Build.Logging
+#else
+namespace Microsoft.Build.BuildEngine
+#endif
+{
 	public class ConsoleLogger : ILogger {
 	
 		string		parameters;
