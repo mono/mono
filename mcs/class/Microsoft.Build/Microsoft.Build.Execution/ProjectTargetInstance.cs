@@ -47,6 +47,8 @@ namespace Microsoft.Build.Execution
 					return new ProjectOnErrorInstance ((ProjectOnErrorElement) c);
 				if (c is ProjectItemGroupElement)
 					return new ProjectItemGroupTaskInstance ((ProjectItemGroupElement) c);
+				if (c is ProjectPropertyGroupElement)
+					return new ProjectPropertyGroupTaskInstance ((ProjectPropertyGroupElement) c);
 				if (c is ProjectTaskElement)
 					return new ProjectTaskInstance ((ProjectTaskElement) c);
 				throw new NotSupportedException ();
