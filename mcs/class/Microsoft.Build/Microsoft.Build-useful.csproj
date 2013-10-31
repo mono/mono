@@ -147,6 +147,8 @@
       <Link>ReservedNameUtils.cs</Link>
     </Compile>
     <Compile Include="Microsoft.Build.Internal\ProjectTaskItem.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectPropertyGroupTaskInstance.cs" />
+    <Compile Include="Microsoft.Build.Execution\ProjectPropertyGroupTaskPropertyInstance.cs" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
