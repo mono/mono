@@ -44,6 +44,32 @@ using Microsoft.Build.Internal;
 using Microsoft.Build.Logging;
 using System.Collections;
 
+// Basically there are two semantic Project object models and their relationship is not obvious
+// (apart from Microsoft.Build.Construction.ProjectRootElement which is a "construction rule").
+//
+// Microsoft.Build.Evaluation.Project holds some "editable" project model, and it supports
+// detailed loader API (such as Items and AllEvaluatedItems).
+// ProjectPoperty holds UnevaluatedValue and gives EvaluatedValue too.
+//
+// Microsoft.Build.Execution.ProjectInstance holds "snapshot" of a project, and it lacks
+// detailed loader API. It does not give us Unevaluated property value.
+// On the other hand, it supports Targets object model. What Microsoft.Build.Evaluation.Project
+// offers there is actually a list of Microsoft.Build.Execution.ProjectInstance objects.
+// It should be also noted that only ProjectInstance has Evaluate() method (Project doesn't).
+//
+// And both API holds different set of descendant types for each and cannot really share the
+// loader code. That is lame.
+//
+// So, can either of them be used to construct the other model? Both API models share the same
+// "governor", which is Microsoft.Build.Evaluation.ProjectCollection/ Project is added to
+// its LoadedProjects list, while ProjectInstance isn't. Project cannot be loaded to load
+// a ProjectInstance, at least within the same ProjectCollection.
+//
+// On the other hand, can ProjectInstance be used to load a Project? Maybe. Since Project and
+// its descendants need Microsoft.Build.Construction.ProjectElement family as its API model
+// is part of the public API. Then I still have to understand how those AllEvaluatedItems/
+// AllEvaluatedProperties members make sense. EvaluationCounter is another propery in question.
+
 namespace Microsoft.Build.Evaluation
 {
 	[DebuggerDisplay ("{FullPath} EffectiveToolsVersion={ToolsVersion} #GlobalProperties="
