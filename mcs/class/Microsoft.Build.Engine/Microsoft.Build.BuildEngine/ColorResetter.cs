@@ -28,6 +28,11 @@
 
 using System;
 
-namespace Microsoft.Build.BuildEngine {
+#if MICROSOFT_BUILD_DLL
+namespace Microsoft.Build.Logging
+#else
+namespace Microsoft.Build.BuildEngine
+#endif
+{
 	public delegate void ColorResetter ();
 }
