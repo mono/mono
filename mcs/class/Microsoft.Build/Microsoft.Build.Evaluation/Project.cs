@@ -390,15 +390,17 @@ namespace Microsoft.Build.Evaluation
 		{
 			throw new NotImplementedException ();
 		}
+		
+		static readonly char [] target_sep = new char[] {';'};
 
 		public bool Build ()
 		{
-			return Build (Xml.DefaultTargets.Split (';'));
+			return Build (Xml.DefaultTargets.Split (target_sep, StringSplitOptions.RemoveEmptyEntries));
 		}
 
 		public bool Build (IEnumerable<ILogger> loggers)
 		{
-			return Build (Xml.DefaultTargets.Split (';'), loggers);
+			return Build (Xml.DefaultTargets.Split (target_sep, StringSplitOptions.RemoveEmptyEntries), loggers);
 		}
 
 		public bool Build (string target)
@@ -413,7 +415,7 @@ namespace Microsoft.Build.Evaluation
 
 		public bool Build (ILogger logger)
 		{
-			return Build (Xml.DefaultTargets.Split (';'), new ILogger [] {logger});
+			return Build (Xml.DefaultTargets.Split (target_sep, StringSplitOptions.RemoveEmptyEntries), new ILogger [] {logger});
 		}
 
 		public bool Build (string[] targets, IEnumerable<ILogger> loggers)
@@ -423,7 +425,7 @@ namespace Microsoft.Build.Evaluation
 
 		public bool Build (IEnumerable<ILogger> loggers, IEnumerable<ForwardingLoggerRecord> remoteLoggers)
 		{
-			return Build (Xml.DefaultTargets.Split (';'), loggers, remoteLoggers);
+			return Build (Xml.DefaultTargets.Split (target_sep, StringSplitOptions.RemoveEmptyEntries), loggers, remoteLoggers);
 		}
 
 		public bool Build (string target, IEnumerable<ILogger> loggers)
