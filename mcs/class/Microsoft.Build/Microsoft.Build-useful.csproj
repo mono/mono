@@ -101,13 +101,8 @@
     <Compile Include="Microsoft.Build.Internal\CollectionFromEnumerable.cs" />
     <Compile Include="Microsoft.Build.Internal\FilteredEnumerable.cs" />
     <Compile Include="Microsoft.Build.Internal\ReverseEnumerable.cs" />
-    <Compile Include="Microsoft.Build.Logging\ColorResetter.cs" />
-    <Compile Include="Microsoft.Build.Logging\ColorSetter.cs" />
-    <Compile Include="Microsoft.Build.Logging\ConsoleLogger.cs" />
-    <Compile Include="Microsoft.Build.Logging\FileLogger.cs" />
     <Compile Include="Microsoft.Build.Logging\ForwardingLoggerRecord.cs" />
     <Compile Include="Microsoft.Build.Logging\LoggerDescription.cs" />
-    <Compile Include="Microsoft.Build.Logging\WriteHandler.cs" />
     <Compile Include="Microsoft.Build.Execution\BuildSubmissionCompleteCallback.cs" />
     <Compile Include="Microsoft.Build.Execution\ProjectOnErrorInstance.cs" />
     <Compile Include="Microsoft.Build.Execution\ProjectTargetInstanceChild.cs" />
@@ -149,6 +144,23 @@
     <Compile Include="Microsoft.Build.Internal\ProjectTaskItem.cs" />
     <Compile Include="Microsoft.Build.Execution\ProjectPropertyGroupTaskInstance.cs" />
     <Compile Include="Microsoft.Build.Execution\ProjectPropertyGroupTaskPropertyInstance.cs" />
+    <Compile Include="..\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\ColorResetter.cs">
+      <Link>Microsoft.Build.Logging\ColorResetter.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\ColorSetter.cs">
+      <Link>Microsoft.Build.Logging\ColorSetter.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\ConsoleLogger.cs">
+      <Link>Microsoft.Build.Logging\ConsoleLogger.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\FileLogger.cs">
+      <Link>Microsoft.Build.Logging\FileLogger.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\WriteHandler.cs">
+      <Link>Microsoft.Build.Logging\WriteHandler.cs</Link>
+    </Compile>
+    <Compile Include="Microsoft.Build.Logging\ConfigurableForwardingLogger.cs" />
+    <Compile Include="Microsoft.Build.Logging\DistributedFileLogger.cs" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
