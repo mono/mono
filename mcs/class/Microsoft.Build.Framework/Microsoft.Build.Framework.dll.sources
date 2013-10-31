@@ -26,7 +26,9 @@ Microsoft.Build.Framework/IBuildEngine2.cs
 Microsoft.Build.Framework/IBuildEngine3.cs
 Microsoft.Build.Framework/IBuildEngine4.cs
 Microsoft.Build.Framework/ICancelableTask.cs
+Microsoft.Build.Framework/IEventRedirector.cs
 Microsoft.Build.Framework/IEventSource.cs
+Microsoft.Build.Framework/IForwardingLogger.cs
 Microsoft.Build.Framework/ILogger.cs
 Microsoft.Build.Framework/INodeLogger.cs
 Microsoft.Build.Framework/ITask.cs
