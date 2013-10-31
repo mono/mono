@@ -2,8 +2,9 @@
 //
 // Author:
 //   Rolf Bjarne Kvinge (rolf@xamarin.com)
+//   Atsushi Enomoto (atsushi@xamarin.com)
 //
-// Copyright (C) 2011 Xamarin Inc.
+// Copyright (C) 2011,2013 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,6 +29,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
+using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.Execution
 {
@@ -45,6 +48,7 @@ namespace Microsoft.Build.Execution
 		BuildRequestData request;
 		BuildSubmissionCompleteCallback callback;
 		bool is_started, is_completed, is_canceled;
+		ManualResetEvent wait_handle = new ManualResetEvent (false);
 
 		public object AsyncContext { get; private set; }
 		public BuildManager BuildManager { get; private set; }
@@ -54,7 +58,11 @@ namespace Microsoft.Build.Execution
 		}
 		public int SubmissionId { get; private set; }
 		public WaitHandle WaitHandle {
-			get { throw new NotImplementedException (); }
+			get {
+				if (!is_started)
+					throw new InvalidOperationException ("Build has not started yet");
+				return wait_handle;
+			}
 		}
 
 		internal void Cancel ()
@@ -66,7 +74,30 @@ namespace Microsoft.Build.Execution
 
 		public BuildResult Execute ()
 		{
-			throw new NotImplementedException ();
+			var result = new BuildResult ();
+			result.SubmissionId = this.SubmissionId;
+			
+			// null targets -> success. empty targets -> success(!)
+			if (request.TargetNames == null)
+				result.OverallResult = BuildResultCode.Success;
+			else {
+				foreach (var targetName in request.TargetNames.Where (t => t != null)) {
+					ProjectTargetInstance target;
+					// null key is allowed and regarded as blind success(!)
+					if (!request.ProjectInstance.Targets.TryGetValue (targetName, out target))
+						result.AddResultsForTarget (targetName, new TargetResult (new ITaskItem [0], TargetResultCode.Failure));
+					else
+						throw new NotImplementedException ();
+				}
+			
+				result.OverallResult = result.ResultsByTarget.Select (p => p.Value).Any (r => r.ResultCode == TargetResultCode.Failure) ? BuildResultCode.Failure : BuildResultCode.Success;
+			}
+			
+			BuildResult = result;
+			wait_handle.Set ();
+			if (callback != null)
+				callback (this);
+			return BuildResult;
 		}
 
 		public void ExecuteAsync (BuildSubmissionCompleteCallback callback, object context)
