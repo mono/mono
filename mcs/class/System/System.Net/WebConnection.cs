@@ -1166,10 +1166,10 @@ namespace System.Net
 				// if SSL is in use then check for TrustFailure
 				if (ssl) {
 #if SECURITY_DEP && MONOTOUCH
-					HttpsClientStream https = (nstream as HttpsClientStream);
+					HttpsClientStream https = (s as HttpsClientStream);
 					if (https.TrustFailure) {
 #else
-					if ((bool) piTrustFailure.GetValue (nstream, null)) {
+					if ((bool) piTrustFailure.GetValue (s , null)) {
 #endif
 						wes = WebExceptionStatus.TrustFailure;
 						msg = "Trust failure";
