@@ -46,8 +46,10 @@ ICALL(COMPROX_2, "FindProxy", ves_icall_Mono_Interop_ComInteropProxy_FindProxy)
 #endif
 
 ICALL_TYPE(RUNTIME, "Mono.Runtime", RUNTIME_1)
+ICALL(RUNTIME_14, "GetArchitectureName", ves_icall_Mono_Runtime_GetArchitectureName)
 ICALL(RUNTIME_1, "GetDisplayName", ves_icall_Mono_Runtime_GetDisplayName)
 ICALL(RUNTIME_12, "GetNativeStackTrace", ves_icall_Mono_Runtime_GetNativeStackTrace)
+ICALL(RUNTIME_15, "GetOperatingSystemName", ves_icall_Mono_Runtime_GetOperatingSystemName)
 ICALL(RUNTIME_13, "SetGCAllowSynchronousMajor", ves_icall_Mono_Runtime_SetGCAllowSynchronousMajor)
 
 #ifndef PLATFORM_RO_FS
