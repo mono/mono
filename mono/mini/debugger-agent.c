@@ -4562,6 +4562,9 @@ process_breakpoint_inner (DebuggerTlsData *tls)
 		SingleStepReq *ss_req = req->info;
 		gboolean hit;
 
+		if (mono_thread_internal_current () != ss_req->thread)
+			continue;
+
 		hit = ss_update (ss_req, ji, sp);
 		if (hit)
 			g_ptr_array_add (ss_reqs, req);
