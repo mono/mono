@@ -1122,11 +1122,11 @@ public class DebuggerTests
 				Assert.AreEqual (2, attr.NamedArguments.Count);
 				Assert.AreEqual ("afield", attr.NamedArguments [0].Field.Name);
 				Assert.AreEqual ("bfield", attr.NamedArguments [1].Field.Name);
-			} else if (attr.Constructor.DeclaringType.Name == "ClassInterface") {
+			} else if (attr.Constructor.DeclaringType.Name == "ClassInterfaceAttribute") {
 				// inherited from System.Object
 				//} else if (attr.Constructor.DeclaringType.Name == "Serializable") {
 				// inherited from System.Object
-			} else if (attr.Constructor.DeclaringType.Name == "ComVisible") {
+			} else if (attr.Constructor.DeclaringType.Name == "ComVisibleAttribute") {
 				// inherited from System.Object
 			} else {
 				Assert.Fail (attr.Constructor.DeclaringType.Name);
