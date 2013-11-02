@@ -106,8 +106,8 @@ $(TEST_RESX_RESOURCES) $(TEST_RESX_RESOURCES_SATELITE): %.resources: %.resx
 
 TEST_RESOURCES = $(TEST_RESX_RESOURCES) $(TEST_RESX_RESOURCES_SATELITE)
 
-satellite_assembly1 = es-ES/$(patsubst %.dll,%.Resources.dll,$(test_lib))
-satellite_assembly2 = nn-NO/$(patsubst %.dll,%.Resources.dll,$(test_lib))
+satellite_assembly1 = es-ES/$(patsubst %.dll,%.resources.dll,$(test_lib))
+satellite_assembly2 = nn-NO/$(patsubst %.dll,%.resources.dll,$(test_lib))
 
 $(test_lib): $(TEST_RESOURCES) $(satellite_assembly1) $(satellite_assembly2) 
 
