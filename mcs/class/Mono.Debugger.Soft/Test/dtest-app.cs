@@ -359,6 +359,7 @@ public class Tests : TestsBase, ITest2
 		ss7 ();
 		ss_nested ();
 		ss_regress_654694 ();
+		ss_step_through ();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -450,6 +451,30 @@ public class Tests : TestsBase, ITest2
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void ss_nested_3 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_step_through () {
+		step_through_1 ();
+		StepThroughClass.step_through_2 ();
+		step_through_3 ();
+	}
+
+	[DebuggerStepThrough]
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void step_through_1 () {
+	}
+
+	[DebuggerStepThrough]
+	class StepThroughClass {
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public static void step_through_2 () {
+		}
+	}
+
+	[DebuggerStepThrough]
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void step_through_3 () {
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]

@@ -517,13 +517,30 @@ public class DebuggerTests
 		e = step_into ();
 		assert_location (e, "ss_nested_1");
 		e = step_out ();
-		Console.WriteLine ("A: " + e.Thread.GetFrames ()[0].Location);
 		assert_location (e, "ss_nested");
 		// Check that step over steps over nested calls
 		e = step_over ();
 		assert_location (e, "ss_nested");
 		e = step_into ();
 		assert_location (e, "ss_nested_3");
+		req.Disable ();
+
+		// Check DebuggerStepThrough support
+		e = run_until ("ss_step_through");
+		req = create_step (e);
+		req.Filter = StepFilter.DebuggerStepThrough;
+		e = step_into ();
+		// Step through step_through_1 ()
+		e = step_into ();
+		assert_location (e, "ss_step_through");
+		// Step through StepThroughClass.step_through_2 ()
+		e = step_into ();
+		assert_location (e, "ss_step_through");
+		req.Disable ();
+		req.Filter = StepFilter.None;
+		e = step_into ();
+		assert_location (e, "step_through_3");
+		req.Disable ();
 	}
 
 	[Test]
