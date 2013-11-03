@@ -566,8 +566,7 @@ namespace System.Collections.Generic {
 
 				empty_slot = NO_SLOT;
 				if (capacity > 0) {
-					table = new int[capacity];
-					slots = new T[capacity];
+					InitArrays(capacity);
 
 					T[] tableArray = (T[]) si.GetValue("Elements", typeof(T[]));
 					if (tableArray == null) 

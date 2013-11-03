@@ -2,3 +2,4 @@ Microsoft.Build.Utilities/CommandLineBuilderTest.cs
 Microsoft.Build.Utilities/LoggerTest.cs
 Microsoft.Build.Utilities/TaskItemTest.cs
 Microsoft.Build.Utilities/TaskLoggingHelperTest.cs
+Microsoft.Build.Utilities/ToolTaskTest.cs

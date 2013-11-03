@@ -109,28 +109,56 @@ namespace Mono.CSharp {
 			this.targs = targs;
 		}
 		
-		protected override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext rc)
 		{
-			Expression expr_resolved = expr.Resolve (ec,
-				ResolveFlags.VariableOrValue | ResolveFlags.Type);
+			var sn = expr as SimpleName;
+			const ResolveFlags flags = ResolveFlags.VariableOrValue | ResolveFlags.Type;
 
-			if (expr_resolved == null)
+			//
+			// Resolve the expression with flow analysis turned off, we'll do the definite
+			// assignment checks later.  This is because we don't know yet what the expression
+			// will resolve to - it may resolve to a FieldExpr and in this case we must do the
+			// definite assignment check on the actual field and not on the whole struct.
+			//
+			using (rc.Set (ResolveContext.Options.OmitStructFlowAnalysis)) {
+				if (sn != null) {
+					expr = sn.LookupNameExpression (rc, MemberLookupRestrictions.ReadAccess | MemberLookupRestrictions.ExactArity);
+
+					//
+					// Resolve expression which does have type set as we need expression type
+					// with disable flow analysis as we don't know whether left side expression
+					// is used as variable or type
+					//
+					if (expr is VariableReference || expr is ConstantExpr || expr is Linq.TransparentMemberAccess) {
+						using (rc.With (ResolveContext.Options.DoFlowAnalysis, false)) {
+							expr = expr.Resolve (rc);
+						}
+					} else if (expr is TypeParameterExpr) {
+						expr.Error_UnexpectedKind (rc, flags, sn.Location);
+						expr = null;
+					}
+				} else {
+					expr = expr.Resolve (rc, flags);
+				}
+			}
+
+			if (expr == null)
 				return null;
 
-			TypeSpec expr_type = expr_resolved.Type;
+			TypeSpec expr_type = expr.Type;
 			if (expr_type.IsPointer || expr_type.Kind == MemberKind.Void || expr_type == InternalType.NullLiteral || expr_type == InternalType.AnonymousMethod) {
-				expr_resolved.Error_OperatorCannotBeApplied (ec, loc, ".", expr_type);
+				expr.Error_OperatorCannotBeApplied (rc, loc, ".", expr_type);
 				return null;
 			}
 
 			if (targs != null) {
-				if (!targs.Resolve (ec))
+				if (!targs.Resolve (rc))
 					return null;
 			}
 
 			var results = new List<string> ();
-			if (expr_resolved is Namespace){
-				Namespace nexpr = expr_resolved as Namespace;
+			if (expr is Namespace) {
+				Namespace nexpr = expr as Namespace;
 				string namespaced_partial;
 
 				if (partial_name == null)
@@ -138,11 +166,11 @@ namespace Mono.CSharp {
 				else
 					namespaced_partial = nexpr.Name + "." + partial_name;
 
-				ec.CurrentMemberDefinition.GetCompletionStartingWith (namespaced_partial, results);
+				rc.CurrentMemberDefinition.GetCompletionStartingWith (namespaced_partial, results);
 				if (partial_name != null)
 					results = results.Select (l => l.Substring (partial_name.Length)).ToList ();
 			} else {
-				var r = MemberCache.GetCompletitionMembers (ec, expr_type, partial_name).Select (l => l.Name);
+				var r = MemberCache.GetCompletitionMembers (rc, expr_type, partial_name).Select (l => l.Name);
 				AppendResults (results, partial_name, r);
 			}
 

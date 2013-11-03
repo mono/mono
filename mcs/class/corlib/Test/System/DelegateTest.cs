@@ -66,6 +66,9 @@ namespace MonoTests.System
 		}
 
 		[Test] // CreateDelegate (Type, MethodInfo)
+#if MONOTOUCH
+		[Category ("NotWorking")] // #14163
+#endif
 		public void CreateDelegate1_Method_Instance ()
 		{
 			C c = new C ();
@@ -971,6 +974,9 @@ namespace MonoTests.System
 		}
 
 		[Test]
+#if MONOTOUCH
+		[Category ("NotWorking")] // #14163
+#endif
 		public void NullTarget_Instance ()
 		{
 			Del1 d = (Del1)Delegate.CreateDelegate (typeof (Del1), null, typeof (DelegateTest).GetMethod ("method1"));

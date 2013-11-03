@@ -62,7 +62,6 @@
 #
 
 break: len:2
-jmp: len:120
 tailcall: len:120 clob:c
 br: len:6
 label: len:0
@@ -292,7 +291,7 @@ amd64_set_xmmreg_r4: dest:f src1:f len:14 clob:m
 amd64_set_xmmreg_r8: dest:f src1:f len:14 clob:m
 amd64_save_sp_to_lmf: len:16
 tls_get: dest:i len:16
-tls_get_reg: dest:i src1:i len:20
+tls_get_reg: dest:i src1:i len:32
 atomic_add_i4: src1:b src2:i dest:i len:32
 atomic_add_new_i4: src1:b src2:i dest:i len:32
 atomic_exchange_i4: src1:b src2:i dest:a len:32

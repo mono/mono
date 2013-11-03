@@ -62,6 +62,14 @@ public class DynamicILInfoTest
 		var res = dm.Invoke(null, null);
 		Assert.AreEqual ("abcd", res);
 	}
+	
+	[Test] // bug #13969
+	public void GetTokenFor_Constructor () {
+		var m = typeof (object).GetConstructor (Type.EmptyTypes);
+		var dm = new DynamicMethod ("Foo", typeof (void), Type.EmptyTypes);
+		var dil = dm.GetDynamicILInfo ();
+		dil.GetTokenFor (m.MethodHandle);
+	}
 
 	[Test]
 	public void GetTokenFor_Type () {

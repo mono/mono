@@ -2231,6 +2231,17 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			}
 		}
 
+		[Test]
+		public void FileNameNotResetOnLoad ()
+		{
+			// Test for bug #14295
+			Project p = new Project ();
+			p.FullFileName = "foo";
+			p.LoadXml ("<Project xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\"/>");
+			Assert.AreEqual ("foo", p.FullFileName);
+			Assert.AreEqual ("foo", p.EvaluatedProperties ["MSBuildThisFile"].Value);
+		}
+
 		void DeleteAllInDir (string path)
 		{
 			if (!Directory.Exists (path))

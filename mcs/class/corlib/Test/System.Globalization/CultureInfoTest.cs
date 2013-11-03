@@ -571,6 +571,14 @@ namespace MonoTests.System.Globalization
 			Assert.AreEqual (31748, new CultureInfo ("zh-CHT").LCID);
 			Assert.AreEqual (31748, new CultureInfo ("zh-CHT").Parent.LCID);
 		}
+
+		[Test]
+		[SetCulture ("zh-TW")]
+		public void ParentOfZh ()
+		{
+			Assert.AreEqual (31748, CultureInfo.CurrentCulture.Parent.LCID);
+			Assert.AreEqual (31748, CultureInfo.CurrentCulture.Parent.Parent.LCID);
+		}
 		
 		[Test]
 		public void CurrentCulture ()

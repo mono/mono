@@ -187,9 +187,6 @@ namespace Mono.CSharp
 		}
 
 		public int CounterAnonymousTypes { get; set; }
-		public int CounterAnonymousMethods { get; set; }
-		public int CounterAnonymousContainers { get; set; }
-		public int CounterSwitchTypes { get; set; }
 
 		public AssemblyDefinition DeclaringAssembly {
 			get {
@@ -314,7 +311,7 @@ namespace Mono.CSharp
 
 		public override void AddTypeContainer (TypeContainer tc)
 		{
-			containers.Add (tc);
+			AddTypeContainerMember (tc);
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)

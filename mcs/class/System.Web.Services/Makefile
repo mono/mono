@@ -3,7 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Web.Services.dll
-MOBILE := $(filter monotouch monodroid mobile, $(PROFILE))
+MOBILE := $(filter monotouch monodroid mobile mobile_static, $(PROFILE))
 ifdef MOBILE
 LIB_MCS_FLAGS = \
 	-nowarn:649 -nowarn:169			\

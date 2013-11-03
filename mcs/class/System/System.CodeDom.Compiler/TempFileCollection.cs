@@ -73,33 +73,36 @@ namespace System.CodeDom.Compiler {
 
 					// note: this property *cannot* change TempDir property
 					string temp = tempdir;
-					if (temp.Length == 0)
-						temp = GetOwnTempDir ();
+					if (temp.Length == 0) {
+						if (ownTempDir != null) {
+							temp = ownTempDir;
+							Directory.CreateDirectory (temp);
+						} else {
+							temp = CreateOwnTempDir ();
+						}
+					}
 
 					// Create a temporary file at the target directory. This ensures
 					// that the generated file name is unique.
-					FileStream f = null;
-					do {
+					int test_counter = 1000;
+					while (true) {
 						int num = rnd.Next ();
 						num++;
 						basepath = Path.Combine (temp, num.ToString("x"));
 						string path = basepath + ".tmp";
 
 						try {
-							f = new FileStream (path, FileMode.CreateNew);
-						}
-						catch (System.IO.IOException) {
-							f = null;
-							continue;
-						}
-						catch {
-							// avoid endless loop
+							using (var f = new FileStream (path, FileMode.CreateNew)) {
+								break;
+							}
+						} catch (IOException) {
+							if (test_counter-- > 0)
+								continue;
+
 							throw;
 						}
-					} while (f == null);
-					
-					f.Close ();
-					
+					}
+
 					// and you must have discovery access to the combined path
 					// note: the cache behaviour is tested in the CAS tests
 					if (SecurityManager.SecurityEnabled) {
@@ -110,12 +113,9 @@ namespace System.CodeDom.Compiler {
 				return(basepath);
 			}
 		}
-		
-		string GetOwnTempDir ()
-		{
-			if (ownTempDir != null)
-				return ownTempDir;
 
+		string CreateOwnTempDir ()
+		{
 			// this call ensure the Environment permissions check
 			string basedir = Path.GetTempPath ();
 			
@@ -245,9 +245,8 @@ namespace System.CodeDom.Compiler {
 				File.Delete (tmpFile);
 				basepath = null;
 			}
-			if (allDeleted && ownTempDir != null) {
+			if (allDeleted && ownTempDir != null && filenames.Length > 0) {
 				Directory.Delete (ownTempDir, true);
-				ownTempDir = null;
 			}
 		}
 

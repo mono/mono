@@ -2512,6 +2512,47 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.IsFalse (typeof (bug82431B4).IsDefined (typeof (NotInheritAttribute), true), "#K4");
 		}
 
+		class Bug13767Attribute : Attribute
+		{
+			public object[] field;
+
+			public Bug13767Attribute (params object[] args)
+			{
+				field = args;
+			}
+		}
+
+		public enum Bug13767Enum
+		{
+			Value0,
+			Value1,
+		}
+
+		[Bug13767("Demo", new[] { Bug13767Enum.Value1, Bug13767Enum.Value0 })]
+		public void Bug13767Method(string attributeName, Bug13767Enum[]options)
+		{
+
+		}
+
+		[Test] //Bug 13767
+		public void CustomAttributeWithNestedArrayOfEnum ()
+		{
+			var m = GetType ().GetMethod ("Bug13767Method");
+
+			var attr = m.GetCustomAttributes (false);
+			Assert.AreEqual (1, attr.Length, "#1");
+
+			var tc = (Bug13767Attribute)attr[0];
+			Assert.AreEqual (2, tc.field.Length, "#2");
+			Assert.AreEqual ("Demo", tc.field[0], "#3");
+			Assert.IsNotNull (tc.field[1], "#4");
+
+			var arr = (Bug13767Enum[])tc.field [1];
+			Assert.AreEqual (2, arr.Length, "#5");
+			Assert.AreEqual (Bug13767Enum.Value1, arr [0], "#6");
+			Assert.AreEqual (Bug13767Enum.Value0, arr [1], "#7");
+		}
+
 		[Test] // GetType (String)
 		public void GetType1_TypeName_Null ()
 		{

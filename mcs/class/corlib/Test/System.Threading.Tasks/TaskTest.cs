@@ -67,6 +67,25 @@ namespace MonoTests.System.Threading.Tasks
 			}
 		}
 
+		class NonInlineableScheduler : TaskScheduler
+		{
+			protected override IEnumerable<Task> GetScheduledTasks ()
+			{
+				throw new NotImplementedException ();
+			}
+
+			protected override void QueueTask (Task task)
+			{
+				if (!base.TryExecuteTask (task))
+					throw new ApplicationException ();
+			}
+
+			protected override bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued)
+			{
+				return false;
+			}
+		}
+
 
 		Task[] tasks;
 		const int max = 6;
@@ -1107,6 +1126,15 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		public void Delay_TimeManagement ()
+		{
+			var delay1 = Task.Delay(50);
+			var delay2 = Task.Delay(25);
+			Assert.IsTrue (Task.WhenAny(new[] { delay1, delay2 }).Wait (1000));
+			Assert.AreEqual (TaskStatus.RanToCompletion, delay2.Status);
+		}
+
+		[Test]
 		public void WaitAny_WithNull ()
 		{
 			var tasks = new [] {
@@ -1636,6 +1664,16 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.AreEqual ("c", c.Result, "#3r");
 			Assert.AreEqual (3, d.AsyncState, "#4");
 			Assert.AreEqual ('d', d.Result, "#3r");
+		}
+
+		[Test]
+		public void ContinueWith_CustomScheduleRejected ()
+		{
+			var scheduler = new NonInlineableScheduler ();
+			var t = Task.Factory.StartNew (delegate { }).
+				ContinueWith (r => {}, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, scheduler);
+			
+			Assert.IsTrue (t.Wait (5000));
 		}
 
 		[Test]

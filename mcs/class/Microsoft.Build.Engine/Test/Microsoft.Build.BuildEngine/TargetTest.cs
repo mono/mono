@@ -366,7 +366,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			var type = Type.GetType ("Microsoft.Build.Evaluation.ProjectCollection, Microsoft.Build, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
 
 			var prop = type.GetProperty ("GlobalProjectCollection");
-			var coll = prop.GetValue (null);
+			var coll = prop.GetValue (null, null);
 				
 			var loadProject = coll.GetType ().GetMethod (
 					"LoadProject", new Type[] { typeof (XmlReader), typeof (string) });

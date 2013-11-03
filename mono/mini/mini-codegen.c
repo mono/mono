@@ -409,7 +409,7 @@ typedef struct {
 	regmask_t preferred_mask; /* the hreg where the register should be allocated, or 0 */
 } RegTrack;
 
-#ifndef DISABLE_LOGGING
+#if !defined(DISABLE_LOGGING) && !defined(DISABLE_JIT)
 
 static const char* const patch_info_str[] = {
 #define PATCH_INFO(a,b) "" #a,
@@ -716,7 +716,7 @@ void
 mono_print_ins_index (int i, MonoInst *ins)
 {
 }
-#endif /* DISABLE_LOGGING */
+#endif /* !defined(DISABLE_LOGGING) && !defined(DISABLE_JIT) */
 
 void
 mono_print_ins (MonoInst *ins)
@@ -1790,7 +1790,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 							continue;
 
 						s = regmask (j);
-						if ((clob_mask & s) && !(rs->free_mask [cur_bank] & s) && (j != ins->sreg1)) {
+						if ((clob_mask & s) && !(rs->free_mask [cur_bank] & s)) {
 							if (j != dreg)
 								free_up_hreg (cfg, bb, tmp, ins, j, cur_bank);
 							else if (rs->symbolic [cur_bank] [j])
@@ -2695,6 +2695,29 @@ mono_peephole_ins (MonoBasicBlock *bb, MonoInst *ins)
 		MONO_DELETE_INS (bb, ins);
 		break;
 	}
+}
+
+int
+mini_exception_id_by_name (const char *name)
+{
+	if (strcmp (name, "IndexOutOfRangeException") == 0)
+		return MONO_EXC_INDEX_OUT_OF_RANGE;
+	if (strcmp (name, "OverflowException") == 0)
+		return MONO_EXC_OVERFLOW;
+	if (strcmp (name, "ArithmeticException") == 0)
+		return MONO_EXC_ARITHMETIC;
+	if (strcmp (name, "DivideByZeroException") == 0)
+		return MONO_EXC_DIVIDE_BY_ZERO;
+	if (strcmp (name, "InvalidCastException") == 0)
+		return MONO_EXC_INVALID_CAST;
+	if (strcmp (name, "NullReferenceException") == 0)
+		return MONO_EXC_NULL_REF;
+	if (strcmp (name, "ArrayTypeMismatchException") == 0)
+		return MONO_EXC_ARRAY_TYPE_MISMATCH;
+	if (strcmp (name, "ArgumentException") == 0)
+		return MONO_EXC_ARGUMENT;
+	g_error ("Unknown intrinsic exception %s\n", name);
+	return -1;
 }
 
 #endif /* DISABLE_JIT */

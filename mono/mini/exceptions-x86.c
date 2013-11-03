@@ -8,6 +8,13 @@
  */
 
 #include <config.h>
+
+#if _WIN32_WINNT < 0x0501
+/* Required for Vectored Exception Handling. */
+#undef _WIN32_WINNT
+#define _WIN32_WINNT 0x0501
+#endif /* _WIN32_WINNT < 0x0501 */
+
 #include <glib.h>
 #include <signal.h>
 #include <string.h>
@@ -40,8 +47,9 @@ static MonoW32ExceptionHandler ill_handler;
 static MonoW32ExceptionHandler segv_handler;
 
 LPTOP_LEVEL_EXCEPTION_FILTER mono_old_win_toplevel_exception_filter;
-guint64 mono_win_chained_exception_filter_result;
-gboolean mono_win_chained_exception_filter_didrun;
+gpointer mono_win_vectored_exception_handle;
+extern gboolean mono_win_chained_exception_needs_run;
+extern int (*gUnhandledExceptionHandler)(EXCEPTION_POINTERS*);
 
 #ifndef PROCESS_CALLBACK_FILTER_ENABLED
 #	define PROCESS_CALLBACK_FILTER_ENABLED 1
@@ -49,6 +57,19 @@ gboolean mono_win_chained_exception_filter_didrun;
 
 #define W32_SEH_HANDLE_EX(_ex) \
 	if (_ex##_handler) _ex##_handler(0, ep, sctx)
+
+LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
+{
+#ifndef MONO_CROSS_COMPILE
+	if (mono_old_win_toplevel_exception_filter) {
+		return (*mono_old_win_toplevel_exception_filter)(ep);
+	}
+#endif
+
+	mono_handle_native_sigsegv (SIGSEGV, NULL);
+
+	return EXCEPTION_CONTINUE_SEARCH;
+}
 
 /*
  * mono_win32_get_handle_stackoverflow (void):
@@ -170,14 +191,14 @@ win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, struct sigcontext *sctx)
  * Unhandled Exception Filter
  * Top-level per-process exception handler.
  */
-LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep)
+LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 {
 	EXCEPTION_RECORD* er;
 	CONTEXT* ctx;
 	struct sigcontext* sctx;
 	LONG res;
 
-	mono_win_chained_exception_filter_didrun = FALSE;
+	mono_win_chained_exception_needs_run = FALSE;
 	res = EXCEPTION_CONTINUE_EXECUTION;
 
 	er = ep->ExceptionRecord;
@@ -217,21 +238,30 @@ LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep)
 		break;
 	}
 
-	/* Copy context back */
-	ctx->Eax = sctx->eax;
-	ctx->Ebx = sctx->ebx;
-	ctx->Ecx = sctx->ecx;
-	ctx->Edx = sctx->edx;
-	ctx->Ebp = sctx->ebp;
-	ctx->Esp = sctx->esp;
-	ctx->Esi = sctx->esi;
-	ctx->Edi = sctx->edi;
-	ctx->Eip = sctx->eip;
+	if (mono_win_chained_exception_needs_run) {
+		/* Don't copy context back if we chained exception
+		* as the handler may have modfied the EXCEPTION_POINTERS
+		* directly. We don't pass sigcontext to chained handlers.
+		* Return continue search so the UnhandledExceptionFilter
+		* can correctly chain the exception.
+		*/
+		res = EXCEPTION_CONTINUE_SEARCH;
+	} else {
+		/* Copy context back */
+		ctx->Eax = sctx->eax;
+		ctx->Ebx = sctx->ebx;
+		ctx->Ecx = sctx->ecx;
+		ctx->Edx = sctx->edx;
+		ctx->Ebp = sctx->ebp;
+		ctx->Esp = sctx->esp;
+		ctx->Esi = sctx->esi;
+		ctx->Edi = sctx->edi;
+		ctx->Eip = sctx->eip;
+	}
 
-	g_free (sctx);
-
-	if (mono_win_chained_exception_filter_didrun)
-		res = mono_win_chained_exception_filter_result;
+	/* TODO: Find right place to free this in stack overflow case */
+	if (er->ExceptionCode != EXCEPTION_STACK_OVERFLOW)
+		g_free (sctx);
 
 	return res;
 }
@@ -242,12 +272,14 @@ void win32_seh_init()
 	if (!restore_stack)
 		restore_stack = mono_win32_get_handle_stackoverflow ();
 
-	mono_old_win_toplevel_exception_filter = SetUnhandledExceptionFilter(seh_handler);
+	mono_old_win_toplevel_exception_filter = SetUnhandledExceptionFilter(seh_unhandled_exception_filter);
+	mono_win_vectored_exception_handle = AddVectoredExceptionHandler (1, seh_vectored_exception_handler);
 }
 
 void win32_seh_cleanup()
 {
 	if (mono_old_win_toplevel_exception_filter) SetUnhandledExceptionFilter(mono_old_win_toplevel_exception_filter);
+	RemoveVectoredExceptionHandler (seh_unhandled_exception_filter);
 }
 
 void win32_seh_set_handler(int type, MonoW32ExceptionHandler handler)
@@ -289,34 +321,60 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 	/* load ctx */
 	x86_mov_reg_membase (code, X86_EAX, X86_ESP, 4, 4);
 
-	/* get return address, stored in ECX */
-	x86_mov_reg_membase (code, X86_ECX, X86_EAX,  G_STRUCT_OFFSET (MonoContext, eip), 4);
 	/* restore EBX */
 	x86_mov_reg_membase (code, X86_EBX, X86_EAX,  G_STRUCT_OFFSET (MonoContext, ebx), 4);
+
 	/* restore EDI */
 	x86_mov_reg_membase (code, X86_EDI, X86_EAX,  G_STRUCT_OFFSET (MonoContext, edi), 4);
+
 	/* restore ESI */
 	x86_mov_reg_membase (code, X86_ESI, X86_EAX,  G_STRUCT_OFFSET (MonoContext, esi), 4);
-	/* restore ESP */
-	x86_mov_reg_membase (code, X86_ESP, X86_EAX,  G_STRUCT_OFFSET (MonoContext, esp), 4);
-	/* save the return addr to the restored stack */
-	x86_push_reg (code, X86_ECX);
-	/* restore EBP */
-	x86_mov_reg_membase (code, X86_EBP, X86_EAX,  G_STRUCT_OFFSET (MonoContext, ebp), 4);
-	/* restore ECX */
-	x86_mov_reg_membase (code, X86_ECX, X86_EAX,  G_STRUCT_OFFSET (MonoContext, ecx), 4);
+
 	/* restore EDX */
 	x86_mov_reg_membase (code, X86_EDX, X86_EAX,  G_STRUCT_OFFSET (MonoContext, edx), 4);
-	/* restore EAX */
-	x86_mov_reg_membase (code, X86_EAX, X86_EAX,  G_STRUCT_OFFSET (MonoContext, eax), 4);
 
+	/*
+	 * The context resides on the stack, in the stack frame of the
+	 * caller of this function.  The stack pointer that we need to
+	 * restore is potentially many stack frames higher up, so the
+	 * distance between them can easily be more than the red zone
+	 * size.  Hence the stack pointer can be restored only after
+	 * we have finished loading everything from the context.
+	 */
+
+	/* load ESP into EBP */
+	x86_mov_reg_membase (code, X86_EBP, X86_EAX,  G_STRUCT_OFFSET (MonoContext, esp), 4);
+	/* load return address into ECX */
+	x86_mov_reg_membase (code, X86_ECX, X86_EAX,  G_STRUCT_OFFSET (MonoContext, eip), 4);
+	/* save the return addr to the restored stack - 4 */
+	x86_mov_membase_reg (code, X86_EBP, -4, X86_ECX, 4);
+
+	/* load EBP into ECX */
+	x86_mov_reg_membase (code, X86_ECX, X86_EAX,  G_STRUCT_OFFSET (MonoContext, ebp), 4);
+	/* save EBP to the restored stack - 8 */
+	x86_mov_membase_reg (code, X86_EBP, -8, X86_ECX, 4);
+
+	/* load EAX into ECX */
+	x86_mov_reg_membase (code, X86_ECX, X86_EAX,  G_STRUCT_OFFSET (MonoContext, eax), 4);
+	/* save EAX to the restored stack - 12 */
+	x86_mov_membase_reg (code, X86_EBP, -12, X86_ECX, 4);
+
+	/* restore ECX */
+	x86_mov_reg_membase (code, X86_ECX, X86_EAX,  G_STRUCT_OFFSET (MonoContext, ecx), 4);
+
+	/* restore ESP - 12 */
+	x86_lea_membase (code, X86_ESP, X86_EBP, -12);
+	/* restore EAX */
+	x86_pop_reg (code, X86_EAX);
+	/* restore EBP */
+	x86_pop_reg (code, X86_EBP);
 	/* jump to the saved IP */
 	x86_ret (code);
 
 	nacl_global_codeman_validate(&start, 128, &code);
 
 	if (info)
-		*info = mono_tramp_info_create (g_strdup_printf ("restore_context"), start, code - start, ji, unwind_ops);
+		*info = mono_tramp_info_create ("restore_context", start, code - start, ji, unwind_ops);
 	else {
 		GSList *l;
 
@@ -393,7 +451,7 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 	nacl_global_codeman_validate(&start, kMaxCodeSize, &code);
 
 	if (info)
-		*info = mono_tramp_info_create (g_strdup_printf ("call_filter"), start, code - start, ji, unwind_ops);
+		*info = mono_tramp_info_create ("call_filter", start, code - start, ji, unwind_ops);
 	else {
 		GSList *l;
 
@@ -415,11 +473,7 @@ void
 mono_x86_throw_exception (mgreg_t *regs, MonoObject *exc, 
 						  mgreg_t eip, gboolean rethrow)
 {
-	static void (*restore_context) (MonoContext *);
 	MonoContext ctx;
-
-	if (!restore_context)
-		restore_context = mono_get_restore_context ();
 
 	ctx.esp = regs [X86_ESP];
 	ctx.eip = eip;
@@ -453,7 +507,7 @@ mono_x86_throw_exception (mgreg_t *regs, MonoObject *exc,
 			ctx_cp.eip = eip - 5;
 
 			if (mono_debugger_handle_exception (&ctx_cp, exc)) {
-				restore_context (&ctx_cp);
+				mono_restore_context (&ctx_cp);
 				g_assert_not_reached ();
 			}
 		}
@@ -464,7 +518,7 @@ mono_x86_throw_exception (mgreg_t *regs, MonoObject *exc,
 
 	mono_handle_exception (&ctx, exc);
 
-	restore_context (&ctx);
+	mono_restore_context (&ctx);
 
 	g_assert_not_reached ();
 }
@@ -636,7 +690,7 @@ get_throw_trampoline (const char *name, gboolean rethrow, gboolean llvm, gboolea
 	g_assert ((code - start) < kMaxCodeSize);
 
 	if (info)
-		*info = mono_tramp_info_create (g_strdup (name), start, code - start, ji, unwind_ops);
+		*info = mono_tramp_info_create (name, start, code - start, ji, unwind_ops);
 	else {
 		GSList *l;
 
@@ -801,9 +855,19 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		/* Adjust IP */
 		new_ctx->eip --;
 
-		if (*lmf && (MONO_CONTEXT_GET_BP (ctx) >= (gpointer)(*lmf)->ebp)) {
-			/* remove any unused lmf */
-			*lmf = (gpointer)(((gsize)(*lmf)->previous_lmf) & ~3);
+		if (*lmf && ((*lmf) != jit_tls->first_lmf)) {
+			gboolean is_tramp = ((guint32)((*lmf)->previous_lmf) & 1);
+			gpointer lmf_esp;
+
+			if (is_tramp)
+				/* lmf->esp is only set in trampoline frames */
+				lmf_esp = (gpointer)(*lmf)->esp;
+			else
+				/* In non-trampoline frames, ebp is the frame pointer */
+				lmf_esp = (gpointer)(*lmf)->ebp;
+			if (MONO_CONTEXT_GET_SP (ctx) >= lmf_esp)
+				/* remove any unused lmf */
+				*lmf = (gpointer)(((gsize)(*lmf)->previous_lmf) & ~3);
 		}
 
 		/* Pop arguments off the stack */
@@ -931,10 +995,6 @@ handle_signal_exception (gpointer obj)
 {
 	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
 	MonoContext ctx;
-	static void (*restore_context) (MonoContext *);
-
-	if (!restore_context)
-		restore_context = mono_get_restore_context ();
 
 	memcpy (&ctx, &jit_tls->ex_ctx, sizeof (MonoContext));
 
@@ -943,7 +1003,7 @@ handle_signal_exception (gpointer obj)
 
 	mono_handle_exception (&ctx, obj);
 
-	restore_context (&ctx);
+	mono_restore_context (&ctx);
 }
 
 /*
@@ -981,7 +1041,7 @@ mono_x86_get_signal_exception_trampoline (MonoTrampInfo **info, gboolean aot)
 	g_assert ((code - start) < 128);
 
 	if (info)
-		*info = mono_tramp_info_create (g_strdup ("x86_signal_exception_trampoline"), start, code - start, ji, unwind_ops);
+		*info = mono_tramp_info_create ("x86_signal_exception_trampoline", start, code - start, ji, unwind_ops);
 	else {
 		GSList *l;
 
@@ -1091,22 +1151,20 @@ prepare_for_guard_pages (MonoContext *mctx)
 static void
 altstack_handle_and_restore (MonoContext *ctx, gpointer obj, gboolean stack_ovf)
 {
-	void (*restore_context) (MonoContext *);
 	MonoContext mctx;
 
-	restore_context = mono_get_restore_context ();
 	mctx = *ctx;
 
 	if (mono_debugger_handle_exception (&mctx, (MonoObject *)obj)) {
 		if (stack_ovf)
 			prepare_for_guard_pages (&mctx);
-		restore_context (&mctx);
+		mono_restore_context (&mctx);
 	}
 
 	mono_handle_exception (&mctx, obj);
 	if (stack_ovf)
 		prepare_for_guard_pages (&mctx);
-	restore_context (&mctx);
+	mono_restore_context (&mctx);
 }
 
 void

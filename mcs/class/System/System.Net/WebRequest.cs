@@ -58,24 +58,17 @@ namespace System.Net
 		static HybridDictionary prefixes = new HybridDictionary ();
 		static bool isDefaultWebProxySet;
 		static IWebProxy defaultWebProxy;
-
-#if !NET_2_1		
 		static RequestCachePolicy defaultCachePolicy;
-#endif		
-		// Constructors
-		
+
 		static WebRequest ()
 		{
-#if NET_2_1
+#if MOBILE
 			IWebRequestCreate http = new HttpRequestCreator ();
 			RegisterPrefix ("http", http);
 			RegisterPrefix ("https", http);
-	#if MOBILE
 			RegisterPrefix ("file", new FileWebRequestCreator ());
 			RegisterPrefix ("ftp", new FtpRequestCreator ());
-	#endif
 #else
-			defaultCachePolicy = new HttpRequestCachePolicy (HttpRequestCacheLevel.NoCacheNoStore);
 	#if CONFIGURATION_DEP
 			object cfg = ConfigurationManager.GetSection ("system.net/webRequestModules");
 			WebRequestModulesSection s = cfg as WebRequestModulesSection;
@@ -137,7 +130,6 @@ namespace System.Net
 			set { throw GetMustImplement (); }
 		}
 
-#if !NET_2_1
 		[MonoTODO ("Implement the caching system. Currently always returns a policy with the NoCacheNoStore level")]
 		public virtual RequestCachePolicy CachePolicy
 		{
@@ -146,14 +138,14 @@ namespace System.Net
 			}
 		}
 		
-		public static RequestCachePolicy DefaultCachePolicy
-		{
-			get { return defaultCachePolicy; }
+		public static RequestCachePolicy DefaultCachePolicy {
+			get {
+				return defaultCachePolicy ?? (defaultCachePolicy = new HttpRequestCachePolicy (HttpRequestCacheLevel.NoCacheNoStore));
+			}
 			set {
 				throw GetMustImplement ();
 			}
 		}
-#endif
 		
 		public virtual WebHeaderCollection Headers { 
 			get { throw GetMustImplement (); }
@@ -335,6 +327,12 @@ namespace System.Net
 #if MONOTOUCH
 			return CFNetwork.GetDefaultProxy ();
 #else
+#if MONODROID
+			// Return the system web proxy.  This only works for ICS+.
+			var androidProxy = AndroidPlatform.GetDefaultProxy ();
+			if (androidProxy != null)
+				return androidProxy;
+#endif
 #if !NET_2_1
 			if (IsWindows ()) {
 				int iProxyEnable = (int)Microsoft.Win32.Registry.GetValue ("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", "ProxyEnable", 0);

@@ -35,9 +35,9 @@ namespace System.Net.WebSockets
 {
 	public enum WebSocketMessageType
 	{
-		Text,
-		Binary,
-		Close
+		Text = 1,
+		Binary = 2,
+		Close = 8
 	}
 }
 

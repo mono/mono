@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
+//      Pablo Ruiz García <pablo.ruiz@gmail.com>
 //
-// Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
+// Copyright (C) 2013 Xamarin Inc (http://www.xamarin.com)
+// Copyright (C) 2013 Pablo Ruiz García
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,10 +30,12 @@
 
 #if NET_4_0
 
+using System;
+
 namespace System.ComponentModel.DataAnnotations
 {
-	[AttributeUsageAttribute (AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-	public sealed class TimestampAttribute : Attribute
+	[AttributeUsageAttribute (AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
+	public class TimestampAttribute : Attribute
 	{
 	}
 }

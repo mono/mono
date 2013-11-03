@@ -32,7 +32,7 @@ namespace MonoTests.System.Net
 			site1Dot = "96.126.105.110",
 			site2Name = "info.diku.dk",
 			site2Dot = "130.225.96.4",
-			noneExistingSite = "www.unlikely.novell.com";
+			noneExistingSite = "unlikely.xamarin.com";
 		private uint site1IP = 1852407392, site2IP = 2195808260; // Big-Endian
 
 		[Test]

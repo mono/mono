@@ -1,8 +1,9 @@
 //
 // RuntimeReflectionExtensions.cs
 //
-// Author:
+// Authors:
 //       Martin Baulig <martin.baulig@xamarin.com>
+//       Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (c) 2013 Xamarin Inc. (http://www.xamarin.com)
 //
@@ -23,67 +24,103 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 #if NET_4_5
-using System;
+
 using System.Collections.Generic;
 
 namespace System.Reflection
 {
 	public static class RuntimeReflectionExtensions
 	{
+		const BindingFlags AllMembersBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
+
 		public static MethodInfo GetMethodInfo (this Delegate del)
 		{
-			return del.GetMethodInfo ();
+			if (del == null)
+				throw new ArgumentNullException ("del");
+
+			return del.Method;
 		}
 
 		public static MethodInfo GetRuntimeBaseDefinition (this MethodInfo method)
 		{
-			return method.GetRuntimeBaseDefinition ();
+			if (method == null)
+				throw new ArgumentNullException ("method");
+
+			return method.GetBaseDefinition ();
 		}
 
 		public static EventInfo GetRuntimeEvent (this Type type, string name)
 		{
-			return type.GetRuntimeEvent (name);
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
+			return type.GetEvent (name);
 		}
 
 		public static IEnumerable<EventInfo> GetRuntimeEvents (this Type type)
 		{
-			return type.GetRuntimeEvents ();
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
+			return type.GetEvents (AllMembersBindingFlags);
 		}
 
 		public static FieldInfo GetRuntimeField (this Type type, string name)
 		{
-			return type.GetRuntimeField (name);
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
+			return type.GetField (name);
 		}
 
 		public static IEnumerable<FieldInfo> GetRuntimeFields (this Type type)
 		{
-			return type.GetRuntimeFields ();
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
+			return type.GetFields (AllMembersBindingFlags);
 		}
 
 		public static InterfaceMapping GetRuntimeInterfaceMap (this TypeInfo typeInfo, Type interfaceType)
 		{
-			return typeInfo.GetRuntimeInterfaceMap (interfaceType);
+			if (typeInfo == null)
+				throw new ArgumentNullException ("typeInfo");
+
+			return typeInfo.GetInterfaceMap (interfaceType);
 		}
 
 		public static MethodInfo GetRuntimeMethod (this Type type, string name, Type[] parameters)
 		{
-			return type.GetRuntimeMethod (name, parameters);
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
+			return type.GetMethod (name, parameters);
 		}
 
 		public static IEnumerable<MethodInfo> GetRuntimeMethods (this Type type)
 		{
-			return type.GetRuntimeMethods ();
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
+			return type.GetMethods (AllMembersBindingFlags);
 		}
 
 		public static IEnumerable<PropertyInfo> GetRuntimeProperties (this Type type)
 		{
-			return type.GetRuntimeProperties ();
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
+			return type.GetProperties (AllMembersBindingFlags);
 		}
 
 		public static PropertyInfo GetRuntimeProperty (this Type type, string name)
 		{
-			return type.GetRuntimeProperty (name);
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
+			return type.GetProperty (name);
 		}
 	}
 }

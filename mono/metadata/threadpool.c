@@ -19,6 +19,7 @@
 #include <mono/metadata/threadpool-internals.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/environment.h>
+#include <mono/metadata/mono-config.h>
 #include <mono/metadata/mono-mlist.h>
 #include <mono/metadata/mono-perfcounters.h>
 #include <mono/metadata/socket-io.h>
@@ -89,7 +90,7 @@ typedef struct {
 
 	gint event_system;
 	gpointer event_data;
-	void (*modify) (gpointer event_data, int fd, int operation, int events, gboolean is_new);
+	void (*modify) (gpointer p, int fd, int operation, int events, gboolean is_new);
 	void (*wait) (gpointer sock_data);
 	void (*shutdown) (gpointer event_data);
 } SocketIOData;
@@ -152,6 +153,7 @@ static void socket_io_cleanup (SocketIOData *data);
 static MonoObject *get_io_event (MonoMList **list, gint event);
 static int get_events_from_list (MonoMList *list);
 static int get_event_from_state (MonoSocketAsyncResult *state);
+static void check_for_interruption_critical (void);
 
 static MonoClass *async_call_klass;
 static MonoClass *socket_async_call_klass;
@@ -557,8 +559,8 @@ socket_io_add (MonoAsyncResult *ares, MonoSocketAsyncResult *state)
 
 	mono_g_hash_table_replace (data->sock_to_state, state->handle, list);
 	ievt = get_events_from_list (list);
-	LeaveCriticalSection (&data->io_lock);
-	data->modify (data->event_data, fd, state->operation, ievt, is_new);
+	/* The modify function leaves the io_lock critical section. */
+	data->modify (data, fd, state->operation, ievt, is_new);
 }
 
 #ifndef DISABLE_SOCKETS
@@ -1070,8 +1072,10 @@ threadpool_append_jobs (ThreadPool *tp, MonoObject **jobs, gint njobs)
 		}
 		/* Create on demand up to min_threads to avoid startup penalty for apps that don't use
 		 * the threadpool that much
-		* mono_thread_create_internal (mono_get_root_domain (), threadpool_start_idle_threads, tp, TRUE, FALSE, SMALL_STACK);
-		*/
+		 */
+		if (mono_config_is_server_mode ()) {
+			mono_thread_create_internal (mono_get_root_domain (), threadpool_start_idle_threads, tp, TRUE, FALSE, SMALL_STACK);
+		}
 	}
 
 	for (i = 0; i < njobs; i++) {
@@ -1392,25 +1396,62 @@ should_i_die (ThreadPool *tp)
 }
 
 static void
+set_tp_thread_info (ThreadPool *tp)
+{
+	const gchar *name;
+	MonoInternalThread *thread = mono_thread_internal_current ();
+
+	mono_profiler_thread_start (thread->tid);
+	name = (tp->is_io) ? "IO Threadpool worker" : "Threadpool worker";
+	mono_thread_set_name_internal (thread, mono_string_new (mono_domain_get (), name), FALSE);
+}
+
+static void
+clear_thread_state (void)
+{
+	MonoInternalThread *thread = mono_thread_internal_current ();
+	/* If the callee changes the background status, set it back to TRUE */
+	mono_thread_clr_state (thread , ~ThreadState_Background);
+	if (!mono_thread_test_state (thread , ThreadState_Background))
+		ves_icall_System_Threading_Thread_SetState (thread, ThreadState_Background);
+}
+
+static void
+check_for_interruption_critical (void)
+{
+	MonoInternalThread *thread;
+	/*RULE NUMBER ONE OF SKIP_THREAD: NEVER POKE MANAGED STATE.*/
+	mono_gc_set_skip_thread (FALSE);
+
+	thread = mono_thread_internal_current ();
+	if (THREAD_WANTS_A_BREAK (thread))
+		mono_thread_interruption_checkpoint ();
+
+	/*RULE NUMBER TWO OF SKIP_THREAD: READ RULE NUMBER ONE.*/
+	mono_gc_set_skip_thread (TRUE);
+}
+
+static void
+fire_profiler_thread_end (void)
+{
+	MonoInternalThread *thread = mono_thread_internal_current ();
+	mono_profiler_thread_end (thread->tid);
+}
+
+static void
 async_invoke_thread (gpointer data)
 {
 	MonoDomain *domain;
-	MonoInternalThread *thread;
 	MonoWSQ *wsq;
 	ThreadPool *tp;
 	gboolean must_die;
-	const gchar *name;
   
 	tp = data;
 	wsq = NULL;
 	if (!tp->is_io)
 		wsq = add_wsq ();
 
-	thread = mono_thread_internal_current ();
-
-	mono_profiler_thread_start (thread->tid);
-	name = (tp->is_io) ? "IO Threadpool worker" : "Threadpool worker";
-	mono_thread_set_name_internal (thread, mono_string_new (mono_domain_get (), name), FALSE);
+	set_tp_thread_info (tp);
 
 	if (tp_start_func)
 		tp_start_func (tp_hooks_user_data);
@@ -1492,10 +1533,7 @@ async_invoke_thread (gpointer data)
 				}
 				mono_thread_pop_appdomain_ref ();
 				InterlockedDecrement (&tp->busy_threads);
-				/* If the callee changes the background status, set it back to TRUE */
-				mono_thread_clr_state (thread , ~ThreadState_Background);
-				if (!mono_thread_test_state (thread , ThreadState_Background))
-					ves_icall_System_Threading_Thread_SetState (thread, ThreadState_Background);
+				clear_thread_state ();
 			}
 		}
 
@@ -1528,8 +1566,7 @@ async_invoke_thread (gpointer data)
 #endif
 				if (mono_runtime_is_shutting_down ())
 					break;
-				if (THREAD_WANTS_A_BREAK (thread))
-					mono_thread_interruption_checkpoint ();
+				check_for_interruption_critical ();
 			}
 			InterlockedDecrement (&tp->waiting);
 
@@ -1566,7 +1603,7 @@ async_invoke_thread (gpointer data)
 						remove_wsq (wsq);
 					}
 
-					mono_profiler_thread_end (thread->tid);
+					fire_profiler_thread_end ();
 
 					if (tp_finish_func)
 						tp_finish_func (tp_hooks_user_data);

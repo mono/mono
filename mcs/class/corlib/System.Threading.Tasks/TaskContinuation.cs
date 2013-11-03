@@ -338,6 +338,21 @@ namespace System.Threading.Tasks
 			evt.Signal ();
 		}
 	}
+
+	sealed class DisposeContinuation : IContinuation
+	{
+		readonly IDisposable instance;
+
+		public DisposeContinuation (IDisposable instance)
+		{
+			this.instance = instance;
+		}
+
+		public void Execute ()
+		{
+			instance.Dispose ();
+		}
+	}
 }
 
 #endif

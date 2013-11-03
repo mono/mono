@@ -188,6 +188,8 @@ namespace Mono.CSharp
 		readonly SeekableStreamReader reader;
 		readonly CompilationSourceFile source_file;
 		readonly CompilerContext context;
+		readonly Report Report;
+
 
 		SourceFile current_source;
 		Location hidden_block_start;
@@ -430,7 +432,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		public Tokenizer (SeekableStreamReader input, CompilationSourceFile file, ParserSession session)
+		public Tokenizer (SeekableStreamReader input, CompilationSourceFile file, ParserSession session, Report report)
 		{
 			this.source_file = file;
 			this.context = file.Compiler;
@@ -439,6 +441,7 @@ namespace Mono.CSharp
 			this.id_builder = session.IDBuilder;
 			this.number_builder = session.NumberBuilder;
 			this.ltb = new LocatedTokenBuffer (session.LocatedTokens);
+			this.Report = report;
 
 			reader = input;
 
@@ -2391,7 +2394,7 @@ namespace Mono.CSharp
 		/// <summary>
 		/// Handles #pragma directive
 		/// </summary>
-		void ParsePragmaDirective (string arg)
+		void ParsePragmaDirective ()
 		{
 			int c;
 			int length = TokenizePreprocessorIdentifier (out c);
@@ -2861,7 +2864,7 @@ namespace Mono.CSharp
 					Report.FeatureIsNotAvailable (context, Location, "#pragma");
 				}
 
-				ParsePragmaDirective (arg);
+				ParsePragmaDirective ();
 				return true;
 
 			case PreprocessorDirective.Line:
@@ -3728,10 +3731,6 @@ namespace Mono.CSharp
 				return ret;
 			}
 			return null;
-		}
-
-		Report Report {
-			get { return context.Report; }
 		}
 
 		void reset_doc_comment ()

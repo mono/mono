@@ -656,7 +656,7 @@ namespace System.Reflection.Emit {
 		private static extern int getToken (ModuleBuilder mb, object obj, bool create_open_instance);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern int getMethodToken (ModuleBuilder mb, MethodInfo method,
+		private static extern int getMethodToken (ModuleBuilder mb, MethodBase method,
 							  Type[] opt_param_types);
 
 		internal int GetToken (string str)
@@ -678,7 +678,7 @@ namespace System.Reflection.Emit {
 			return getToken (this, member, create_open_instance);
 		}
 
-		internal int GetToken (MethodInfo method, Type[] opt_param_types) {
+		internal int GetToken (MethodBase method, Type[] opt_param_types) {
 			return getMethodToken (this, method, opt_param_types);
 		}
 
@@ -981,7 +981,7 @@ namespace System.Reflection.Emit {
 			return mb.GetToken (member, create_open_instance);
 		}
 
-		public int GetToken (MethodInfo method, Type[] opt_param_types) {
+		public int GetToken (MethodBase method, Type[] opt_param_types) {
 			return mb.GetToken (method, opt_param_types);
 		}
 

@@ -6,8 +6,7 @@ LIBRARY = System.Json.dll
 LIB_MCS_FLAGS = \
 	        /r:System.dll \
 	        /r:System.Xml.dll \
-	        /r:System.Core.dll \
-		/r:System.ServiceModel.Web.dll
+	        /r:System.Core.dll
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 

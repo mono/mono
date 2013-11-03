@@ -20,9 +20,11 @@
     <method token="0x6000003">
       <sequencepoints>
         <entry il="0x0" row="14" col="2" file_ref="1" hidden="false" />
-        <entry il="0x1" row="15" col="3" file_ref="1" hidden="false" />
+        <entry il="0x1" row="15" col="11" file_ref="1" hidden="false" />
         <entry il="0x7" row="17" col="4" file_ref="1" hidden="false" />
+        <entry il="0xe" row="17" col="4" file_ref="1" hidden="false" />
         <entry il="0x13" row="20" col="4" file_ref="1" hidden="false" />
+        <entry il="0x1a" row="20" col="4" file_ref="1" hidden="false" />
         <entry il="0x21" row="24" col="2" file_ref="1" hidden="false" />
       </sequencepoints>
       <locals>
@@ -33,7 +35,7 @@
     <method token="0x6000004">
       <sequencepoints>
         <entry il="0x0" row="27" col="2" file_ref="1" hidden="false" />
-        <entry il="0x1" row="28" col="3" file_ref="1" hidden="false" />
+        <entry il="0x1" row="28" col="14" file_ref="1" hidden="false" />
         <entry il="0x7" row="30" col="4" file_ref="1" hidden="false" />
         <entry il="0x12" row="31" col="4" file_ref="1" hidden="false" />
         <entry il="0x1b" row="33" col="2" file_ref="1" hidden="false" />

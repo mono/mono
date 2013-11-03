@@ -608,7 +608,10 @@ MINI_OP(OP_CARD_TABLE_WBARRIER, "card_table_wbarrier", NONE, IREG, IREG)
 
 /* arch-dep tls access */
 MINI_OP(OP_TLS_GET,            "tls_get", IREG, NONE, NONE)
-MINI_OP(OP_TLS_GET_REG,            "tls_get_reg", IREG, IREG, NONE)
+MINI_OP(OP_TLS_GET_REG,        "tls_get_reg", IREG, IREG, NONE)
+/* inst_offset contains the TLS offset */
+MINI_OP(OP_TLS_SET,            "tls_set", NONE, IREG, NONE)
+MINI_OP(OP_TLS_SET_REG,        "tls_set_reg", NONE, IREG, IREG)
 
 MINI_OP(OP_LOAD_GOTADDR, "load_gotaddr", IREG, NONE, NONE)
 MINI_OP(OP_DUMMY_USE, "dummy_use", NONE, IREG, NONE)
@@ -1230,4 +1233,6 @@ MINI_OP(OP_MIPS_COND_EXC_INC, "mips_cond_exc_inc", NONE, IREG, IREG)
 #ifdef ENABLE_LLVM
 MINI_OP(OP_LLVM_OUTARG_VT,	"llvm_outarg_vt", IREG, VREG, NONE)
 #endif
+
+MINI_OP(OP_OBJC_GET_SELECTOR, "objc_get_selector", IREG, NONE, NONE)
 

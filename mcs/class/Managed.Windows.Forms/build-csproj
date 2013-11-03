@@ -177,7 +177,7 @@ SWFresourcelist()
 {
 cat $Resource | while read SRC; do
 SRC=`echo $SRC | $tr '/' '\\\\'`
-SRC=`echo $SRC | sed 's/-resource://' | gawk -F , '{print "                    RelPath = \"" $1 "\"\n                    CustomToolNameSpace = \"" $2 "\""}' | fgrep -v \"\"`
+SRC=`echo $SRC | sed 's/-resource://' | awk -F , '{print "                    RelPath = \"" $1 "\"\n                    CustomToolNameSpace = \"" $2 "\""}' | fgrep -v \"\"`
 
 cat << EOT
                 <File

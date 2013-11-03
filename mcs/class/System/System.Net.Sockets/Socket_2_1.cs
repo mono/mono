@@ -752,16 +752,33 @@ namespace System.Net.Sockets {
 			}
 
 			if (ipv6Supported == -1) {
+				// We need to put a try/catch around ConfigurationManager methods as will always throw an exception 
+				// when run in a mono embedded application.  This occurs as embedded applications do not have a setup
+				// for application config.  The exception is not thrown when called from a normal .NET application. 
+				//
+				// We, then, need to guard calls to the ConfigurationManager.  If the config is not found or throws an
+				// exception, will fall through to the existing Socket / API directly below in the code.
+				//
+				// Also note that catching ConfigurationErrorsException specifically would require library dependency
+				// System.Configuration, and wanted to avoid that.
 #if !NET_2_1
 #if CONFIGURATION_DEP
-				SettingsSection config;
-				config = (SettingsSection) System.Configuration.ConfigurationManager.GetSection ("system.net/settings");
-				if (config != null)
-					ipv6Supported = config.Ipv6.Enabled ? -1 : 0;
+				try {
+					SettingsSection config;
+					config = (SettingsSection) System.Configuration.ConfigurationManager.GetSection ("system.net/settings");
+					if (config != null)
+						ipv6Supported = config.Ipv6.Enabled ? -1 : 0;
+				} catch {
+					ipv6Supported = -1;
+				}
 #else
-				NetConfig config = System.Configuration.ConfigurationSettings.GetConfig("system.net/settings") as NetConfig;
-				if (config != null)
-					ipv6Supported = config.ipv6Enabled ? -1 : 0;
+				try {
+					NetConfig config = System.Configuration.ConfigurationSettings.GetConfig("system.net/settings") as NetConfig;
+					if (config != null)
+						ipv6Supported = config.ipv6Enabled ? -1 : 0;
+				} catch {
+					ipv6Supported = -1;
+				}
 #endif
 #endif
 				if (ipv6Supported != 0) {

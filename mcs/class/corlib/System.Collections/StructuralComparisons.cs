@@ -45,7 +45,7 @@ namespace System.Collections
 
 			int IEqualityComparer.GetHashCode (object obj)
 			{
-				var comparer = obj as IEqualityComparer;
+				var comparer = obj as IStructuralEquatable;
 				if (comparer != null)
 					return comparer.GetHashCode (this);
 
@@ -54,7 +54,7 @@ namespace System.Collections
 
 			bool IEqualityComparer.Equals (object x, object y)
 			{
-				var comparer = x as IEqualityComparer;
+				var comparer = x as IStructuralEquatable;
 				if (comparer != null)
 					return comparer.Equals (y, this);
 

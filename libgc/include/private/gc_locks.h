@@ -231,46 +231,12 @@
 #          define NACL_ALIGN()
 #       endif
         inline static int GC_test_and_set(volatile unsigned int *addr) {
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
-          int ret, tmp;
-          __asm__ __volatile__ (
-                                 "1:\n"
-                                 NACL_ALIGN()
-                                 MASK_REGISTER("%3", "al")
-                                 "ldrex %0, [%3]\n"
-                                 MASK_REGISTER("%3", "al")
-                                 "strex %1, %2, [%3]\n" 
-                                 "teq %1, #0\n"
-                                 "bne 1b\n"
-                                 : "=&r" (ret), "=&r" (tmp)
-                                 : "r" (1), "r" (addr)
-                                 : "memory", "cc");
-          return ret;
-#else
-          int oldval;
-          /* SWP on ARM is very similar to XCHG on x86.  Doesn't lock the
-           * bus because there are no SMP ARM machines.  If/when there are,
-           * this code will likely need to be updated. */
-          /* See linuxthreads/sysdeps/arm/pt-machine.h in glibc-2.1 */
-          __asm__ __volatile__(MASK_REGISTER("%2", "al")
-                               "swp %0, %1, [%2]"
-      		  	     : "=&r"(oldval)
-      			     : "r"(1), "r"(addr)
-			     : "memory");
-          return oldval;
-#endif
+		  return (int) __sync_lock_test_and_set (addr, 1);
         }
 #       define GC_TEST_AND_SET_DEFINED
       inline static void GC_clear(volatile unsigned int *addr) {
-#ifdef HAVE_ARMV6
-		  /* Memory barrier */
-#ifdef __native_client__
-		  /* NaCl requires ARMv7 CPUs. */
-		  __asm__ __volatile__("dsb" : : : "memory");
-#else
-		  __asm__ __volatile__ ("mcr p15, 0, %0, c7, c10, 5" : : "r" (0) : "memory");
-#endif
-#endif
+		  __sync_synchronize ();
+
 		  *(addr) = 0;
       }
 #     define GC_CLEAR_DEFINED

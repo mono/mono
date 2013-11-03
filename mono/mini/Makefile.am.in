@@ -24,14 +24,6 @@ sgen_libs = \
 	$(monodir)/mono/utils/libmonoutils.la \
 	$(GLIB_LIBS) $(LIBICONV)
 
-if MOONLIGHT
-moon_libs = \
-	$(monodir)/mono/metadata/libmonoruntimemoon.la	\
-	$(monodir)/mono/io-layer/libwapi.la	\
-	$(monodir)/mono/utils/libmonoutils.la \
-	$(GLIB_LIBS) $(LIBICONV)
-endif
-
 static_libs=	\
 	$(monodir)/mono/metadata/libmonoruntime-static.la	\
 	$(monodir)/mono/io-layer/libwapi.la	\
@@ -106,19 +98,23 @@ boehm_binaries  = mono-boehm
 endif
 
 #The mono uses sgen, while libmono remains boehm
+if SUPPORT_SGEN
 mono_bin_suffix = sgen
+else
+mono_bin_suffix = boehm
+endif
 libmono_suffix = boehm
 
 if DISABLE_EXECUTABLES
 else
-bin_SCRIPTS = mono
-noinst_SCRIPTS = mono
-
 mono: mono-$(mono_bin_suffix)
 	ln -sf $< $@
 
+mono.exe: mono-$(mono_bin_suffix).exe
+	ln -sf $< $@
+
 install-exec-hook:
-	ln -sf $(DESTDIR)$(bindir)/mono-$(libmono_suffix) $(DESTDIR)$(bindir)/mono
+	(cd $(DESTDIR)$(bindir) && ln -sf mono-$(mono_bin_suffix) mono)
 	(cd $(DESTDIR)$(libdir); for i in libmono$(libmono_suffix)*; do ln -sf $$i `echo $$i | sed s/$(libmono_suffix)//` ; done)
 endif
 
@@ -157,14 +153,6 @@ if DISABLE_EXECUTABLES
 noinst_LTLIBRARIES = $(mini_common_lib)
 else
 noinst_LTLIBRARIES = $(mini_common_lib) libmini-static.la
-endif
-
-if MOONLIGHT
-noinst_LTLIBRARIES += libmono-moon.la
-moon-do-build: $(BUILT_SOURCES) mono libmono-moon.la
-moon-do-clean: maintainer-clean-generic
-	-test -z "mono$(EXEEXT)" || rm -f mono$(EXEEXT)
-	-test -z "libmono-moon.la" || rm -f libmono-moon.la
 endif
 
 if LOADED_LLVM
@@ -236,7 +224,7 @@ MONO_LIB=$(boehm_static_libraries)
 MONO_SGEN_LIB=$(sgen_static_libraries)
 else 
 MONO_LIB=libmonoboehm-2.0.la
-MONO_LIBLIB=libmonosgen-2.0.la
+MONO_SGEN_LIB=libmonosgen-2.0.la
 endif
 
 if LOADED_LLVM
@@ -433,7 +421,8 @@ common_sources = \
 	debug-debugger.h	\
 	xdebug.c			\
 	mini-llvm.h			\
-	mini-llvm-cpp.h
+	mini-llvm-cpp.h	\
+	alias-analysis.c
 
 test_sources = 			\
 	basic-calls.cs 		\
@@ -524,7 +513,7 @@ arch_built=cpu-sparc.h
 arch_define=__sparc__
 endif
 
-if S390x
+if S390X
 arch_sources = $(s390x_sources)
 arch_built=cpu-s390x.h
 arch_define=__s390__
@@ -564,17 +553,6 @@ libmonosgen_2_0_la_SOURCES =
 libmonosgen_2_0_la_CFLAGS = $(mono_sgen_CFLAGS)
 libmonosgen_2_0_la_LIBADD = libmini.la $(sgen_libs) $(LIBMONO_DTRACE_OBJECT)
 libmonosgen_2_0_la_LDFLAGS = $(libmonoldflags)
-
-if MOONLIGHT
-libmono_moon_la_SOURCES = $(libmini_la_SOURCES)
-if MOONLIGHT_BOEHM
-libmono_moon_la_CFLAGS = $(mono_CFLAGS) $(MOONLIGHT_DEFINES)
-libmono_moon_la_LIBADD = $(moon_libs) $(libgc_libs) $(LIBMONO_DTRACE_OBJECT)
-else
-libmono_moon_la_CFLAGS = $(mono_sgen_CFLAGS) $(MOONLIGHT_DEFINES)
-libmono_moon_la_LIBADD = $(moon_libs) $(LIBMONO_DTRACE_OBJECT)
-endif
-endif
 
 #
 # This library is shared between mono and mono-sgen, since the code in mini/ doesn't contain
@@ -787,3 +765,9 @@ patch-automake:
 
 tags:
 	etags -o TAGS `find .. -name "*.h" -o -name "*.c"`
+
+if HAS_EXTENSION_MODULE
+else
+Makefile.am: Makefile.am.in
+	cp $< $@
+endif

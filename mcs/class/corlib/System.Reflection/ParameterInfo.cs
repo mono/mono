@@ -1,9 +1,12 @@
 // System.Reflection.ParameterInfo
 //
-// Sean MacIsaac (macisaac@ximian.com)
+// Authors:
+//   Sean MacIsaac (macisaac@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2001 Ximian, Inc.
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright 2013 Xamarin, Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,6 +34,7 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.Text;
 
 namespace System.Reflection
 {
@@ -40,9 +44,9 @@ namespace System.Reflection
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
 #if MOBILE
-	public class ParameterInfo : ICustomAttributeProvider {
+	public partial class ParameterInfo : ICustomAttributeProvider {
 #else
-	public class ParameterInfo : ICustomAttributeProvider, _ParameterInfo {
+	public partial class ParameterInfo : ICustomAttributeProvider, _ParameterInfo {
 #endif
 
 		protected Type ClassImpl;
@@ -51,59 +55,9 @@ namespace System.Reflection
 		protected string NameImpl;
 		protected int PositionImpl;
 		protected ParameterAttributes AttrsImpl;
-		private MarshalAsAttribute marshalAs;
+		internal MarshalAsAttribute marshalAs;
 
 		protected ParameterInfo () {
-		}
-
-#if !FULL_AOT_RUNTIME
-		internal ParameterInfo (ParameterBuilder pb, Type type, MemberInfo member, int position) {
-			this.ClassImpl = type;
-			this.MemberImpl = member;
-			if (pb != null) {
-				this.NameImpl = pb.Name;
-				this.PositionImpl = pb.Position - 1;	// ParameterInfo.Position is zero-based
-				this.AttrsImpl = (ParameterAttributes) pb.Attributes;
-			} else {
-				this.NameImpl = null;
-				this.PositionImpl = position - 1;
-				this.AttrsImpl = ParameterAttributes.None;
-			}
-		}
-#endif
-
-		/*FIXME this constructor looks very broken in the position parameter*/
-		internal ParameterInfo (ParameterInfo pinfo, Type type, MemberInfo member, int position) {
-			this.ClassImpl = type;
-			this.MemberImpl = member;
-			if (pinfo != null) {
-				this.NameImpl = pinfo.Name;
-				this.PositionImpl = pinfo.Position - 1;	// ParameterInfo.Position is zero-based
-				this.AttrsImpl = (ParameterAttributes) pinfo.Attributes;
-			} else {
-				this.NameImpl = null;
-				this.PositionImpl = position - 1;
-				this.AttrsImpl = ParameterAttributes.None;
-			}
-		}
-
-		internal ParameterInfo (ParameterInfo pinfo, MemberInfo member) {
-			this.ClassImpl = pinfo.ParameterType;
-			this.MemberImpl = member;
-			this.NameImpl = pinfo.Name;
-			this.PositionImpl = pinfo.Position;
-			this.AttrsImpl = pinfo.Attributes;
-			//this.parent = pinfo;
-		}
-
-		/* to build a ParameterInfo for the return type of a method */
-		internal ParameterInfo (Type type, MemberInfo member, MarshalAsAttribute marshalAs) {
-			this.ClassImpl = type;
-			this.MemberImpl = member;
-			this.NameImpl = "";
-			this.PositionImpl = -1;	// since parameter positions are zero-based, return type pos is -1
-			this.AttrsImpl = ParameterAttributes.Retval;
-			this.marshalAs = marshalAs;
 		}
 
 		public override string ToString() {
@@ -124,27 +78,32 @@ namespace System.Reflection
 			return result;
 		}
 
+		internal static void FormatParameters (StringBuilder sb, ParameterInfo[] p)
+		{
+			for (int i = 0; i < p.Length; ++i) {
+				if (i > 0)
+					sb.Append (", ");
+
+				Type pt = p[i].ParameterType;
+				bool byref = pt.IsByRef;
+				if (byref)
+					pt = pt.GetElementType ();
+
+				if (Type.ShouldPrintFullName (pt))
+					sb.Append (pt.ToString ());
+				else
+					sb.Append (pt.Name);
+
+				if (byref)
+					sb.Append (" ByRef");
+			}
+		}
+
 		public virtual Type ParameterType {
 			get {return ClassImpl;}
 		}
 		public virtual ParameterAttributes Attributes {
 			get {return AttrsImpl;}
-		}
-		public virtual object DefaultValue {
-			get {
-				if (ClassImpl == typeof (Decimal)) {
-					/* default values for decimals are encoded using a custom attribute */
-					DecimalConstantAttribute[] attrs = (DecimalConstantAttribute[])GetCustomAttributes (typeof (DecimalConstantAttribute), false);
-					if (attrs.Length > 0)
-						return attrs [0].Value;
-				} else if (ClassImpl == typeof (DateTime)) {
-					/* default values for DateTime are encoded using a custom attribute */
-					DateTimeConstantAttribute[] attrs = (DateTimeConstantAttribute[])GetCustomAttributes (typeof (DateTimeConstantAttribute), false);
-					if (attrs.Length > 0)
-						return new DateTime (attrs [0].Ticks);
-				}
-				return DefaultValueImpl;
-			}
 		}
 
 		public bool IsIn {
@@ -190,41 +149,7 @@ namespace System.Reflection
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern int GetMetadataToken ();
-
-		public
-#if NET_4_0
-		virtual
-#endif
-		int MetadataToken {
-			get {
-				if (MemberImpl is PropertyInfo) {
-					PropertyInfo prop = (PropertyInfo)MemberImpl;
-					MethodInfo mi = prop.GetGetMethod (true);
-					if (mi == null)
-						mi = prop.GetSetMethod (true);
-
-					return mi.GetParametersInternal () [PositionImpl].MetadataToken;
-				} else if (MemberImpl is MethodBase) {
-					return GetMetadataToken ();
-				}
-				throw new ArgumentException ("Can't produce MetadataToken for member of type " + MemberImpl.GetType ());
-			}
-		}
-
-		public virtual object[] GetCustomAttributes (bool inherit)
-		{
-			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
-		}
-
-		public virtual object[] GetCustomAttributes (Type attributeType, bool inherit)
-		{
-			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
-		}
-
-		public virtual bool IsDefined( Type attributeType, bool inherit) {
-			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
-		}
+		internal extern int GetMetadataToken ();
 
 		internal object[] GetPseudoCustomAttributes () {
 			int count = 0;
@@ -257,40 +182,19 @@ namespace System.Reflection
 		}			
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern Type[] GetTypeModifiers (bool optional);
+		internal extern Type[] GetTypeModifiers (bool optional);
 
-		public virtual Type[] GetOptionalCustomModifiers () {
-			Type[] types = GetTypeModifiers (true);
-			if (types == null)
-				return Type.EmptyTypes;
-			return types;
+		internal object GetDefaultValueImpl ()
+		{
+			return DefaultValueImpl;
 		}
-
-		public virtual Type[] GetRequiredCustomModifiers () {
-			Type[] types = GetTypeModifiers (false);
-			if (types == null)
-				return Type.EmptyTypes;
-			return types;
-		}
-
-		public virtual object RawDefaultValue {
-			get {
-				/*FIXME right now DefaultValue doesn't throw for reflection-only assemblies. Change this once the former is fixed.*/
-				return DefaultValue;
-			}
-		}
-
-#if NET_4_0
-		public virtual IList<CustomAttributeData> GetCustomAttributesData () {
-			return CustomAttributeData.GetCustomAttributes (this);
-		}
-#endif
 
 #if NET_4_5
 		public virtual IEnumerable<CustomAttributeData> CustomAttributes {
 			get { return GetCustomAttributesData (); }
 		}
 
+		[MonoTODO]
 		public virtual bool HasDefaultValue {
 			get { throw new NotImplementedException (); }
 		}
@@ -319,5 +223,82 @@ namespace System.Reflection
 		}
 #endif
 
+#if NET_4_0
+		public virtual object DefaultValue {
+			get { throw new NotImplementedException (); }
+		}
+
+		public virtual object RawDefaultValue {
+			get { throw new NotImplementedException (); }
+		}
+
+		public virtual int MetadataToken {
+			get { return 0x8000000; }
+		}
+
+		public virtual object[] GetCustomAttributes (bool inherit)
+		{
+			return new object [0];
+		}
+
+		public virtual object[] GetCustomAttributes (Type attributeType, bool inherit)
+		{
+			return new object [0];
+		}
+
+		public virtual bool IsDefined( Type attributeType, bool inherit) {
+			return false;
+		}
+
+		public virtual Type[] GetRequiredCustomModifiers () {
+			return new Type [0];
+		}
+
+		public virtual Type[] GetOptionalCustomModifiers () {
+			return new Type [0];
+		}
+
+		public virtual IList<CustomAttributeData> GetCustomAttributesData () {
+			throw new NotImplementedException ();
+		}
+#endif
+
+#if !FULL_AOT_RUNTIME
+		internal static ParameterInfo New (ParameterBuilder pb, Type type, MemberInfo member, int position)
+		{
+#if NET_4_0
+			return new MonoParameterInfo (pb, type, member, position);
+#else
+			return new ParameterInfo (pb, type, member, position);
+#endif
+		}
+#endif
+
+		internal static ParameterInfo New (ParameterInfo pinfo, Type type, MemberInfo member, int position)
+		{
+#if NET_4_0
+			return new MonoParameterInfo (pinfo, type, member, position);
+#else
+			return new ParameterInfo (pinfo, type, member, position);
+#endif
+		}
+
+		internal static ParameterInfo New (ParameterInfo pinfo, MemberInfo member)
+		{
+#if NET_4_0
+			return new MonoParameterInfo (pinfo, member);
+#else
+			return new ParameterInfo (pinfo, member);
+#endif
+		}
+
+		internal static ParameterInfo New (Type type, MemberInfo member, MarshalAsAttribute marshalAs)
+		{
+#if NET_4_0
+			return new MonoParameterInfo (type, member, marshalAs);
+#else
+			return new ParameterInfo (type, member, marshalAs);
+#endif	
+		}
 	}
 }

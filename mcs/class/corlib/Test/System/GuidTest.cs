@@ -390,6 +390,13 @@ namespace MonoTests.System {
 
 		[Test]
 		[ExpectedException (typeof (FormatException))]
+		public void ParseError_1 ()
+		{
+			Guid.Parse("08888888-0444-444-0444-012121212121");
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
 		public void ParseExactN ()
 		{
 			Guid.ParseExact ("00010203-0405-0607-0809-0a0b0c0d0e0f", "N");
@@ -412,6 +419,7 @@ namespace MonoTests.System {
 			Assert.AreEqual (Guid.Empty, guid, "A4");
 			Assert.IsFalse (Guid.TryParse("foobar", out guid), "A5");
 			Assert.AreEqual (Guid.Empty, guid, "A6");
+			Assert.IsFalse (Guid.TryParse ("08888888-0444-444-0444-012121212121", out guid), "A7");
 		}
 
 		[Test]

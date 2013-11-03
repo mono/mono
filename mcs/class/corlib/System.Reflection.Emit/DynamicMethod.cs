@@ -263,7 +263,7 @@ namespace System.Reflection.Emit {
 
 			ParameterInfo[] retval = new ParameterInfo [parameters.Length];
 			for (int i = 0; i < parameters.Length; i++) {
-				retval [i] = new ParameterInfo (pinfo == null ? null : pinfo [i + 1], parameters [i], this, i + 1);
+				retval [i] = ParameterInfo.New (pinfo == null ? null : pinfo [i + 1], parameters [i], this, i + 1);
 			}
 			return retval;
 		}
@@ -449,7 +449,7 @@ namespace System.Reflection.Emit {
 			return m.AddRef (str);
 		}
 
-		public int GetToken (MethodInfo method, Type[] opt_param_types) {
+		public int GetToken (MethodBase method, Type[] opt_param_types) {
 			throw new InvalidOperationException ();
 		}
 

@@ -217,7 +217,7 @@ get_vtype_size (MonoType *t)
 
 	size = mono_class_value_size (mono_class_from_mono_type (t), NULL);
 
-	while (size < sizeof (gpointer) && mono_is_power_of_two (size) == -1)
+	while (size < 2 * sizeof (gpointer) && mono_is_power_of_two (size) == -1)
 		size ++;
 
 	return size;
@@ -934,12 +934,12 @@ convert_full (EmitContext *ctx, LLVMValueRef v, LLVMTypeRef dtype, gboolean is_u
 		if (LLVMGetTypeKind (stype) == LLVMPointerTypeKind)
 			return LLVMBuildPtrToInt (ctx->builder, v, dtype, "");
 
-#ifdef MONO_ARCH_SOFT_FLOAT
-		if (stype == LLVMInt32Type () && dtype == LLVMFloatType ())
-			return LLVMBuildBitCast (ctx->builder, v, dtype, "");
-		if (stype == LLVMInt32Type () && dtype == LLVMDoubleType ())
-			return LLVMBuildBitCast (ctx->builder, LLVMBuildZExt (ctx->builder, v, LLVMInt64Type (), ""), dtype, "");
-#endif
+		if (mono_arch_is_soft_float ()) {
+			if (stype == LLVMInt32Type () && dtype == LLVMFloatType ())
+				return LLVMBuildBitCast (ctx->builder, v, dtype, "");
+			if (stype == LLVMInt32Type () && dtype == LLVMDoubleType ())
+				return LLVMBuildBitCast (ctx->builder, LLVMBuildZExt (ctx->builder, v, LLVMInt64Type (), ""), dtype, "");
+		}
 
 		if (LLVMGetTypeKind (stype) == LLVMVectorTypeKind && LLVMGetTypeKind (dtype) == LLVMVectorTypeKind)
 			return LLVMBuildBitCast (ctx->builder, v, dtype, "");
@@ -1865,6 +1865,10 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 				LLVMAddGlobalMapping (ee, callee, target);
 			}
 		}
+
+		if (call->method && strstr (call->method->klass->name, "AsyncVoidMethodBuilder"))
+			/* LLVM miscompiles async methods */
+			LLVM_FAILURE (ctx, "#13734");
 	} else if (calli) {
 	} else {
 		MonoJitICallInfo *info = mono_find_jit_icall_by_addr (call->fptr);
@@ -4237,13 +4241,13 @@ mono_llvm_emit_method (MonoCompile *cfg)
 		static int count = 0;
 		count ++;
 
-		if (getenv ("LLVM_COUNT")) {
-			if (count == atoi (getenv ("LLVM_COUNT"))) {
+		if (g_getenv ("LLVM_COUNT")) {
+			if (count == atoi (g_getenv ("LLVM_COUNT"))) {
 				printf ("LAST: %s\n", mono_method_full_name (cfg->method, TRUE));
 				fflush (stdout);
 				last = TRUE;
 			}
-			if (count > atoi (getenv ("LLVM_COUNT")))
+			if (count > atoi (g_getenv ("LLVM_COUNT")))
 				LLVM_FAILURE (ctx, "");
 		}
 	}
@@ -4333,19 +4337,6 @@ mono_llvm_emit_method (MonoCompile *cfg)
 			LLVMAddAttribute (LLVMGetParam (method, sinfo.pindexes [i]), LLVMByValAttribute);
 	}
 	g_free (names);
-
-	if (cfg->compile_aot) {
-		LLVMValueRef md_args [16];
-		LLVMValueRef md_node;
-		int method_index;
-
-		method_index = mono_aot_get_method_index (cfg->orig_method);
-		md_args [0] = LLVMMDString (method_name, strlen (method_name));
-		md_args [1] = LLVMConstInt (LLVMInt32Type (), method_index, FALSE);
-		md_node = LLVMMDNode (md_args, 2);
-		LLVMAddNamedMetadataOperand (module, "mono.function_indexes", md_node);
-		//LLVMSetMetadata (method, md_kind, LLVMMDNode (&md_arg, 1));
-	}
 
 	max_block_num = 0;
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb)
@@ -4519,6 +4510,19 @@ mono_llvm_emit_method (MonoCompile *cfg)
 		mono_llvm_dump_value (method);
 
 	mark_as_used (module, method);
+
+	if (cfg->compile_aot) {
+		LLVMValueRef md_args [16];
+		LLVMValueRef md_node;
+		int method_index;
+
+		method_index = mono_aot_get_method_index (cfg->orig_method);
+		md_args [0] = LLVMMDString (method_name, strlen (method_name));
+		md_args [1] = LLVMConstInt (LLVMInt32Type (), method_index, FALSE);
+		md_node = LLVMMDNode (md_args, 2);
+		LLVMAddNamedMetadataOperand (module, "mono.function_indexes", md_node);
+		//LLVMSetMetadata (method, md_kind, LLVMMDNode (&md_arg, 1));
+	}
 
 	if (cfg->compile_aot) {
 		/* Don't generate native code, keep the LLVM IR */

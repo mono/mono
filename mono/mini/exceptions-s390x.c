@@ -213,7 +213,7 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 	g_assert ((code - start) < SZ_THROW); 
 
 	if (info)
-		*info = mono_tramp_info_create (g_strdup_printf("call_filter"),
+		*info = mono_tramp_info_create ("call_filter",
 						start, code - start, ji,
 						unwind_ops);
 
@@ -237,11 +237,7 @@ throw_exception (MonoObject *exc, unsigned long ip, unsigned long sp,
 {
 	MonoContext ctx;
 	int iReg;
-	static void (*restore_context) (MonoContext *);
 
-	if (!restore_context)
-		restore_context = mono_get_restore_context();
-	
 	memset(&ctx, 0, sizeof(ctx));
 
 	setup_context(&ctx);
@@ -267,7 +263,7 @@ throw_exception (MonoObject *exc, unsigned long ip, unsigned long sp,
 	}
 //	mono_arch_handle_exception (&ctx, exc, FALSE);
 	mono_handle_exception (&ctx, exc);
-	restore_context(&ctx);
+	mono_restore_context(&ctx);
 
 	g_assert_not_reached ();
 }
@@ -364,9 +360,9 @@ mono_arch_get_throw_exception_generic (int size, MonoTrampInfo **info,
 	g_assert ((code - start) < size);
 
 	if (info)
-		*info = mono_tramp_info_create (g_strdup_printf(corlib ? "throw_corlib_exception" 
+		*info = mono_tramp_info_create (corlib ? "throw_corlib_exception" 
 								       : (rethrow ? "rethrow_exception" 
-								       : "throw_exception")), 
+								       : "throw_exception"), 
 						start, code - start, ji, unwind_ops);
 
 	return start;

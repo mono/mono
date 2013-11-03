@@ -37,6 +37,12 @@ typedef struct {
 	char    msdos_header2 [64];
 } MonoMSDOSHeader;
 
+/* Possible values for coff_machine */
+#define COFF_MACHINE_I386 332
+#define COFF_MACHINE_IA64 512
+#define COFF_MACHINE_AMD64 34404
+#define COFF_MACHINE_ARM 452
+
 /* 20 bytes */
 typedef struct {
 	guint16  coff_machine;
@@ -320,6 +326,6 @@ typedef struct {
 	MonoCLIHeader     cli_cli_header;
 } MonoCLIImageInfo;
 
-guint32       mono_cli_rva_image_map (MonoImage *image, guint32 rva);
+MONO_API guint32       mono_cli_rva_image_map (MonoImage *image, guint32 rva);
 
 #endif /* __MONO_CIL_COFF_H__ */

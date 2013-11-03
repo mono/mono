@@ -107,13 +107,8 @@ unlock_recursive (void)
 }
 
 static void
-binary_protocol_flush_buffers_rec (BinaryProtocolBuffer *buffer)
+binary_protocol_flush_buffer (BinaryProtocolBuffer *buffer)
 {
-	if (!buffer)
-		return;
-
-	binary_protocol_flush_buffers_rec (buffer->next);
-
 	g_assert (buffer->index > 0);
 	fwrite (buffer->buffer, 1, buffer->index, binary_protocol_file);
 
@@ -123,14 +118,29 @@ binary_protocol_flush_buffers_rec (BinaryProtocolBuffer *buffer)
 void
 binary_protocol_flush_buffers (gboolean force)
 {
+	int num_buffers = 0, i;
+	BinaryProtocolBuffer *buf;
+	BinaryProtocolBuffer **bufs;
+
 	if (!binary_protocol_file)
 		return;
 
 	if (!force && !try_lock_exclusive ())
 		return;
 
-	binary_protocol_flush_buffers_rec (binary_protocol_buffers);
+	for (buf = binary_protocol_buffers; buf != NULL; buf = buf->next)
+		++num_buffers;
+	bufs = sgen_alloc_internal_dynamic (num_buffers * sizeof (BinaryProtocolBuffer*), INTERNAL_MEM_BINARY_PROTOCOL, TRUE);
+	for (buf = binary_protocol_buffers, i = 0; buf != NULL; buf = buf->next, i++)
+		bufs [i] = buf;
+	SGEN_ASSERT (0, i == num_buffers, "Binary protocol buffer count error");
+
 	binary_protocol_buffers = NULL;
+
+	for (i = num_buffers - 1; i >= 0; --i)
+		binary_protocol_flush_buffer (bufs [i]);
+
+	sgen_free_internal_dynamic (buf, num_buffers * sizeof (BinaryProtocolBuffer*), INTERNAL_MEM_BINARY_PROTOCOL);
 
 	if (!force)
 		unlock_exclusive ();
@@ -368,10 +378,38 @@ binary_protocol_cement_reset (void)
 }
 
 void
-binary_protocol_dislink_update (gpointer link, gpointer obj, int track)
+binary_protocol_dislink_update (gpointer link, gpointer obj, int track, int staged)
 {
-	SGenProtocolDislinkUpdate entry = { link, obj, track };
+	SGenProtocolDislinkUpdate entry = { link, obj, track, staged };
 	protocol_entry (SGEN_PROTOCOL_DISLINK_UPDATE, &entry, sizeof (SGenProtocolDislinkUpdate));
+}
+
+void
+binary_protocol_dislink_update_staged (gpointer link, gpointer obj, int track, int index)
+{
+	SGenProtocolDislinkUpdateStaged entry = { link, obj, track, index };
+	protocol_entry (SGEN_PROTOCOL_DISLINK_UPDATE_STAGED, &entry, sizeof (SGenProtocolDislinkUpdateStaged));
+}
+
+void
+binary_protocol_dislink_process_staged (gpointer link, gpointer obj, int index)
+{
+	SGenProtocolDislinkProcessStaged entry = { link, obj, index };
+	protocol_entry (SGEN_PROTOCOL_DISLINK_PROCESS_STAGED, &entry, sizeof (SGenProtocolDislinkProcessStaged));
+}
+
+void
+binary_protocol_domain_unload_begin (gpointer domain)
+{
+	SGenProtocolDomainUnload entry = { domain };
+	protocol_entry (SGEN_PROTOCOL_DOMAIN_UNLOAD_BEGIN, &entry, sizeof (SGenProtocolDomainUnload));
+}
+
+void
+binary_protocol_domain_unload_end (gpointer domain)
+{
+	SGenProtocolDomainUnload entry = { domain };
+	protocol_entry (SGEN_PROTOCOL_DOMAIN_UNLOAD_END, &entry, sizeof (SGenProtocolDomainUnload));
 }
 
 #endif

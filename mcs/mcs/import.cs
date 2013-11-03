@@ -56,10 +56,10 @@ namespace Mono.CSharp
 			//
 			// Returns true when object at local position has dynamic attribute flag
 			//
-			public bool IsDynamicObject (MetadataImporter importer)
+			public bool IsDynamicObject ()
 			{
 				if (provider != null)
-					ReadAttribute (importer);
+					ReadAttribute ();
 
 				return flags != null && Position < flags.Length && flags[Position];
 			}
@@ -67,15 +67,15 @@ namespace Mono.CSharp
 			//
 			// Returns true when DynamicAttribute exists
 			//
-			public bool HasDynamicAttribute (MetadataImporter importer)
+			public bool HasDynamicAttribute ()
 			{
 				if (provider != null)
-					ReadAttribute (importer);
+					ReadAttribute ();
 
 				return flags != null;
 			}
 
-			void ReadAttribute (MetadataImporter importer)
+			void ReadAttribute ()
 			{
 				IList<CustomAttributeData> cad;
 				if (provider is MemberInfo) {
@@ -152,7 +152,7 @@ namespace Mono.CSharp
 
 		public FieldSpec CreateField (FieldInfo fi, TypeSpec declaringType)
 		{
-			Modifiers mod = 0;
+			Modifiers mod;
 			var fa = fi.Attributes;
 			switch (fa & FieldAttributes.FieldAccessMask) {
 				case FieldAttributes.Public:
@@ -324,10 +324,9 @@ namespace Mono.CSharp
 					//    IFoo<A<T>> foo;	// A<T> is definition in this case
 					// }
 					//
-					// TODO: Is full logic from CreateType needed here as well?
-					//
 					if (!IsMissingType (type) && type.IsGenericTypeDefinition) {
-						var targs = CreateGenericArguments (0, type.GetGenericArguments (), dtype);
+						var start_pos = spec.DeclaringType == null ? 0 : spec.DeclaringType.MemberDefinition.TypeParametersCount;
+						var targs = CreateGenericArguments (start_pos, type.GetGenericArguments (), dtype);
 						spec = spec.MakeGenericType (module, targs);
 					}
 				}
@@ -714,7 +713,7 @@ namespace Mono.CSharp
 			TypeSpec spec;
 			if (import_cache.TryGetValue (type, out spec)) {
 				if (spec.BuiltinType == BuiltinTypeSpec.Type.Object) {
-					if (dtype.IsDynamicObject (this))
+					if (dtype.IsDynamicObject ())
 						return module.Compiler.BuiltinTypes.Dynamic;
 
 					return spec;
@@ -723,7 +722,7 @@ namespace Mono.CSharp
 				if (!spec.IsGeneric || type.IsGenericTypeDefinition)
 					return spec;
 
-				if (!dtype.HasDynamicAttribute (this))
+				if (!dtype.HasDynamicAttribute ())
 					return spec;
 
 				// We've found same object in the cache but this one has a dynamic custom attribute
@@ -857,9 +856,10 @@ namespace Mono.CSharp
 
 				if (kind == MemberKind.Class) {
 					if ((ma & TypeAttributes.Sealed) != 0) {
-						mod |= Modifiers.SEALED;
 						if ((ma & TypeAttributes.Abstract) != 0)
 							mod |= Modifiers.STATIC;
+						else
+							mod |= Modifiers.SEALED;
 					} else if ((ma & TypeAttributes.Abstract) != 0) {
 						mod |= Modifiers.ABSTRACT;
 					}
@@ -1372,7 +1372,7 @@ namespace Mono.CSharp
 		protected AttributesBag cattrs;
 		protected readonly MetadataImporter importer;
 
-		public ImportedDefinition (MemberInfo provider, MetadataImporter importer)
+		protected ImportedDefinition (MemberInfo provider, MetadataImporter importer)
 		{
 			this.provider = provider;
 			this.importer = importer;
@@ -1893,7 +1893,7 @@ namespace Mono.CSharp
 
 		}
 
-		public static void Error_MissingDependency (IMemberContext ctx, List<TypeSpec> types, Location loc)
+		public static void Error_MissingDependency (IMemberContext ctx, List<MissingTypeSpecReference> missing, Location loc)
 		{
 			// 
 			// Report details about missing type and most likely cause of the problem.
@@ -1904,8 +1904,8 @@ namespace Mono.CSharp
 
 			var report = ctx.Module.Compiler.Report;
 
-			for (int i = 0; i < types.Count; ++i) {
-				var t = types [i];
+			for (int i = 0; i < missing.Count; ++i) {
+				var t = missing [i].Type;
 
 				//
 				// Report missing types only once
@@ -1914,6 +1914,10 @@ namespace Mono.CSharp
 					continue;
 
 				string name = t.GetSignatureForError ();
+
+				var caller = missing[i].Caller;
+				if (caller.Kind != MemberKind.MissingType)
+					report.SymbolRelatedToPreviousError (caller);
 
 				if (t.MemberDefinition.DeclaringAssembly == ctx.Module.DeclaringAssembly) {
 					report.Error (1683, loc,
@@ -2107,7 +2111,13 @@ namespace Mono.CSharp
 						if (get == null && set == null)
 							continue;
 
-						imported = importer.CreateProperty (p, declaringType, get, set);
+						try {
+							imported = importer.CreateProperty (p, declaringType, get, set);
+						} catch (Exception ex) {
+							throw new InternalErrorException (ex, "Could not import property `{0}' inside `{1}'",
+								p.Name, declaringType.GetSignatureForError ());
+						}
+
 						if (imported == null)
 							continue;
 

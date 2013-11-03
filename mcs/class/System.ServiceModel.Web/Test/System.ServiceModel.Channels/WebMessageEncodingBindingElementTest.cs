@@ -1,3 +1,4 @@
+#if !MOBILE
 using System;
 using System.IO;
 using System.ServiceModel;
@@ -167,3 +168,4 @@ namespace MonoTests.System.ServiceModel
 		}
 	}
 }
+#endif

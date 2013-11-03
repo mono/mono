@@ -1072,7 +1072,7 @@ namespace Mono.CSharp {
 				cdata = encoder.ToArray ();
 			}
 
-			if (!ctor.DeclaringType.IsConditionallyExcluded (context, Location)) {
+			if (!ctor.DeclaringType.IsConditionallyExcluded (context)) {
 				try {
 					foreach (Attributable target in targets)
 						target.ApplyAttributeBuilder (this, ctor, cdata, predefined);
@@ -1158,7 +1158,7 @@ namespace Mono.CSharp {
 
 		public Attributes (List<Attribute> attrs)
 		{
-			Attrs = attrs;
+			Attrs = attrs ?? new List<Attribute> ();
 		}
 
 		public void AddAttribute (Attribute attr)
@@ -1650,6 +1650,7 @@ namespace Mono.CSharp {
 		public readonly PredefinedAttribute UnsafeValueType;
 		public readonly PredefinedAttribute UnmanagedFunctionPointer;
 		public readonly PredefinedDebuggerBrowsableAttribute DebuggerBrowsable;
+		public readonly PredefinedAttribute DebuggerStepThrough;
 
 		// New in .NET 3.5
 		public readonly PredefinedAttribute Extension;
@@ -1716,6 +1717,7 @@ namespace Mono.CSharp {
 			UnsafeValueType = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "UnsafeValueTypeAttribute");
 			UnmanagedFunctionPointer = new PredefinedAttribute (module, "System.Runtime.InteropServices", "UnmanagedFunctionPointerAttribute");
 			DebuggerBrowsable = new PredefinedDebuggerBrowsableAttribute (module, "System.Diagnostics", "DebuggerBrowsableAttribute");
+			DebuggerStepThrough = new PredefinedAttribute (module, "System.Diagnostics", "DebuggerStepThroughAttribute");
 
 			Extension = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "ExtensionAttribute");
 

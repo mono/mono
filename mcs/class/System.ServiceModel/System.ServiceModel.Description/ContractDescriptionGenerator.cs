@@ -263,7 +263,7 @@ namespace System.ServiceModel.Description
 		{
 			var l = new List<MethodInfo> ();
 			foreach (var t in GetAllInterfaceTypes (type)) {
-#if MONOTOUCH
+#if FULL_AOT_RUNTIME
 				// The MethodBase[] from t.GetMethods () is cast to a IEnumerable <MethodInfo>
 				// when passed to List<MethodInfo>.AddRange, which in turn casts it to 
 				// ICollection <MethodInfo>.  The full-aot compiler has no idea of this, so

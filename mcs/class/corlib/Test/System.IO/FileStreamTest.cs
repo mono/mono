@@ -15,6 +15,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 
 namespace MonoTests.System.IO
 {
@@ -1513,6 +1514,35 @@ namespace MonoTests.System.IO
 			FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Write);
 			stream.Close ();
 			stream.EndWrite (stream.BeginWrite (new byte[8], 0, 8, null, null));
+		}
+
+		static IAsyncResult DoBeginWrite(Stream stream, ManualResetEvent mre, byte[] RandomBuffer)
+		{
+			return stream.BeginWrite (RandomBuffer, 0, RandomBuffer.Length, ar => {
+				stream.EndWrite (ar);
+
+				// we don't supply an ManualResetEvent so this will throw an NRE on the second run
+				// which nunit-console will ignore (but other test runners don't like that)
+				if (mre == null)
+					return;
+
+				DoBeginWrite (stream, null, RandomBuffer).AsyncWaitHandle.WaitOne ();
+				mre.Set ();
+			}, null);
+		}
+
+		[Test]
+		public void BeginWrite_Recursive ()
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
+			DeleteFile (path);
+	
+			using (FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Write)) {
+				var mre = new ManualResetEvent (false);	
+				var RandomBuffer = new byte[1024];			
+				DoBeginWrite (stream, mre, RandomBuffer);
+				Assert.IsTrue (mre.WaitOne (5000), "#1");
+			}
 		}
 
 		[Test]

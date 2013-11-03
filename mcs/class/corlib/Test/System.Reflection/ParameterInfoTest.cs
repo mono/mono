@@ -13,6 +13,7 @@ using System.Threading;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -232,6 +233,175 @@ namespace MonoTests.System.Reflection
 		public void DefaultValueDecimal () {
 			var info = typeof (ParameterInfoTest).GetMethod ("TestC").GetParameters ();
 			Assert.AreEqual (decimal.MaxValue, info [0].DefaultValue);
+		}
+
+		class MyParameterInfo2 : ParameterInfo
+		{
+			public ParameterAttributes MyAttrsImpl;
+
+			public override ParameterAttributes Attributes {
+				get {return MyAttrsImpl;}
+			}
+
+			public IList<CustomAttributeData> myList = new List<CustomAttributeData> ();
+
+			public override IList<CustomAttributeData> GetCustomAttributesData () {
+				return myList;
+			}
+		}
+
+		class MyParameterInfo : ParameterInfo
+		{
+			public void SetClassImpl (Type t)
+			{
+				ClassImpl = t;
+			}
+
+			public void SetDefaultValueImpl (object o)
+			{
+				DefaultValueImpl = o;
+			}
+
+			public void SetMemberImpl (MemberInfo o)
+			{
+				MemberImpl = o;
+			}
+
+			public void SetNameImpl (string s)
+			{
+				NameImpl = s;
+			}
+
+			public void SetPositionImpl (int i)
+			{
+				PositionImpl = i;
+			}
+
+			public void SetAttrsImpl (ParameterAttributes a)
+			{
+				AttrsImpl = a;
+			}
+
+			public void TestMethod (int a) {}
+			public int this[int x, int y] {
+				get { return 0; }
+				set { }
+			}
+
+		}
+
+		[Test]
+		public void SubClassWithNoOverrides ()
+		{
+			var p = new MyParameterInfo ();
+			Assert.IsFalse (p.IsDefined (typeof (FlagsAttribute), false), "#1");
+			Assert.AreEqual (0, p.GetCustomAttributes (false).Length, "#2");
+			Assert.AreEqual (0, p.GetCustomAttributes (typeof (FlagsAttribute), false).Length, "#3");
+			Assert.AreEqual (0, p.GetOptionalCustomModifiers ().Length, "#4");
+			Assert.AreEqual (0, p.GetRequiredCustomModifiers ().Length, "#5");
+#if NET_4_5
+			try {
+				var ign = p.HasDefaultValue;
+				Assert.Fail ("#6");
+			} catch (NotImplementedException) {
+			}
+#endif
+			Assert.IsFalse (p.IsIn, "#7");
+			Assert.IsFalse (p.IsLcid, "#8");
+			Assert.IsFalse (p.IsOptional, "#9");
+			Assert.IsFalse (p.IsOut, "#10");
+			Assert.IsFalse (p.IsRetval, "#10");
+#if NET_4_5
+			try {
+				var ign = p.CustomAttributes;
+				Assert.Fail ("#11");
+			} catch (NotImplementedException) {
+			}
+#endif
+			try {
+				p.GetCustomAttributesData ();
+				Assert.Fail ("#12");
+			} catch (NotImplementedException) {
+			}
+
+			Assert.AreEqual (0x8000000, p.MetadataToken, "#13");
+			Assert.AreEqual (0, p.Position, "#14");
+			try {
+				var ign = p.DefaultValue;
+				Assert.Fail ("#15");
+			} catch (NotImplementedException) {
+			}
+			try {
+				var ign = p.RawDefaultValue;
+				Assert.Fail ("#16");
+			} catch (NotImplementedException) {
+			}
+			Assert.IsNull (p.Member, "#17");
+			Assert.AreEqual (ParameterAttributes.None, p.Attributes, "#18");
+			Assert.IsNull (p.Name, "#19");
+			Assert.IsNull (p.ParameterType, "#20");
+		}
+
+		[Test]
+		public void SubClassWithValuesSet ()
+		{
+			var p = new MyParameterInfo ();
+			p.SetClassImpl (typeof (Decimal));
+			Assert.AreEqual (typeof (Decimal), p.ParameterType, "#1");
+			p.SetClassImpl (null);
+
+			p.SetDefaultValueImpl ("foo");
+			try {
+				var ign = p.DefaultValue;
+				Assert.Fail ("#2");
+			} catch (NotImplementedException) {
+			}
+			p.SetDefaultValueImpl (null);
+
+			var obj = typeof (object);
+			p.SetMemberImpl (obj);
+			Assert.AreEqual (obj, p.Member, "#3");
+			Assert.AreEqual (0x8000000, p.MetadataToken, "#4");
+			p.SetMemberImpl (null);
+
+			var method = typeof (MyParameterInfo).GetMethod ("TestMethod");
+			p.SetMemberImpl (method);
+			Assert.IsNotNull (method, "#5");
+			Assert.AreEqual (method, p.Member, "#6");
+			Assert.AreEqual (0x8000000, p.MetadataToken, "#7");
+			p.SetMemberImpl (null);
+
+			var property = typeof (MyParameterInfo).GetProperty ("Item");
+			p.SetMemberImpl (property);
+			Assert.IsNotNull (property, "#8");
+			Assert.AreEqual (property, p.Member, "#9");
+			Assert.AreEqual (0x8000000, p.MetadataToken, "#10");
+			p.SetMemberImpl (null);
+
+			p.SetNameImpl ("foo");
+			Assert.AreEqual ("foo", p.Name, "#11");
+			p.SetNameImpl (null);
+
+			p.SetPositionImpl (99);
+			Assert.AreEqual (p.Position, 99, "#12");
+			Assert.AreEqual (p.MetadataToken, 0x8000000, "#13");
+			p.SetPositionImpl (0);
+
+			Assert.IsFalse (p.IsIn, "#14");
+			p.SetAttrsImpl (ParameterAttributes.In);
+			Assert.IsTrue (p.IsIn, "#15");
+		}
+
+		[Test]
+		public void SubClassWithOverrides()
+		{
+			var p2 = new MyParameterInfo2 ();
+			Assert.IsFalse (p2.IsIn, "#1");
+			p2.MyAttrsImpl = ParameterAttributes.In;
+			Assert.IsTrue (p2.IsIn, "#2");
+#if NET_4_5
+			Assert.AreEqual (p2.myList, p2.CustomAttributes, "#3");
+#endif
 		}
 #endif
 	}

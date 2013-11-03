@@ -42,6 +42,8 @@
 #include <mono/utils/mono-logger-internal.h>
 #include <mono/utils/mono-memory-model.h>
 #include <mono/utils/atomic.h>
+#include <mono/utils/bsearch.h>
+
 MonoStats mono_stats;
 
 gboolean mono_print_vtable = FALSE;
@@ -1426,6 +1428,52 @@ mono_class_setup_fields (MonoClass *class)
 	MonoGenericContainer *container = NULL;
 	MonoClass *gtd = class->generic_class ? mono_class_get_generic_type_definition (class) : NULL;
 
+	/*
+	 * FIXME: We have a race condition here.  It's possible that this function returns
+	 * to its caller with `instance_size` set to `0` instead of the actual size.  This
+	 * is not a problem when the function is called recursively on the same class,
+	 * because the size will be initialized by the outer invocation.  What follows is a
+	 * description of how it can occur in other cases, too.  There it is a problem,
+	 * because it can lead to the GC being asked to allocate an object of size `0`,
+	 * which SGen chokes on.  The race condition is triggered infrequently by
+	 * `tests/sgen-suspend.cs`.
+	 *
+	 * This function is called for a class whenever one of its subclasses is inited.
+	 * For example, it's called for every subclass of Object.  What it does is this:
+	 *
+	 *     if (class->setup_fields_called)
+	 *         return;
+	 *     ...
+	 *     class->instance_size = 0;
+	 *     ...
+	 *     class->setup_fields_called = 1;
+	 *     ... critical point
+	 *     class->instance_size = actual_instance_size;
+	 *
+	 * The last two steps are sometimes reversed, but that only changes the way in which
+	 * the race condition works.
+	 *
+	 * Assume thread A goes through this function and makes it to the critical point.
+	 * Now thread B runs the function and, since `setup_fields_called` is set, returns
+	 * immediately, but `instance_size` is incorrect.
+	 *
+	 * The other case looks like this:
+	 *
+	 *     if (class->setup_fields_called)
+	 *         return;
+	 *     ... critical point X
+	 *     class->instance_size = 0;
+	 *     ... critical point Y
+	 *     class->instance_size = actual_instance_size;
+	 *     ...
+	 *     class->setup_fields_called = 1;
+	 *
+	 * Assume thread A goes through the function and makes it to critical point X.  Now
+	 * thread B runs through the whole of the function, returning, assuming
+	 * `instance_size` is set.  At that point thread A gets to run and makes it to
+	 * critical point Y, at which time `instance_size` is `0` again, invalidating thread
+	 * B's assumption.
+	 */
 	if (class->setup_fields_called)
 		return;
 
@@ -1503,6 +1551,7 @@ mono_class_setup_fields (MonoClass *class)
 		mono_memory_barrier ();
 		class->size_inited = 1;
 		class->fields_inited = 1;
+		class->setup_fields_called = 1;
 		return;
 	}
 
@@ -2645,7 +2694,7 @@ compare_interface_ids (const void *p_key, const void *p_element) {
 /*FIXME verify all callers if they should switch to mono_class_interface_offset_with_variance*/
 int
 mono_class_interface_offset (MonoClass *klass, MonoClass *itf) {
-	MonoClass **result = bsearch (
+	MonoClass **result = mono_binary_search (
 			itf,
 			klass->interfaces_packed,
 			klass->interface_offsets_count,
@@ -7397,7 +7446,11 @@ search_modules (MonoImage *image, const char *name_space, const char *name)
  * @name: the type short name.
  *
  * Obtains a MonoClass with a given namespace and a given name which
- * is located in the given MonoImage.   
+ * is located in the given MonoImage.
+ *
+ * To reference nested classes, use the "/" character as a separator.
+ * For example use "Foo/Bar" to reference the class Bar that is nested
+ * inside Foo, like this: "class Foo { class Bar {} }".
  */
 MonoClass *
 mono_class_from_name (MonoImage *image, const char* name_space, const char *name)
@@ -7509,11 +7562,31 @@ mono_class_from_name (MonoImage *image, const char* name_space, const char *name
 	return class;
 }
 
-/*FIXME test for interfaces with variant generic arguments*/
+/**
+ * mono_class_is_subclass_of:
+ * @klass: class to probe if it is a subclass of another one
+ * @klassc: the class we suspect is the base class
+ * @check_interfaces: whether we should perform interface checks
+ *
+ * This method determines whether @klass is a subclass of @klassc.
+ *
+ * If the @check_interfaces flag is set, then if @klassc is an interface
+ * this method return true if the @klass implements the interface or
+ * if @klass is an interface, if one of its base classes is @klass.
+ *
+ * If @check_interfaces is false then, then if @klass is not an interface
+ * then it returns true if the @klass is a subclass of @klassc.
+ *
+ * if @klass is an interface and @klassc is System.Object, then this function
+ * return true.
+ *
+ */
 gboolean
 mono_class_is_subclass_of (MonoClass *klass, MonoClass *klassc, 
 			   gboolean check_interfaces)
 {
+/*FIXME test for interfaces with variant generic arguments*/
+	
 	if (check_interfaces && MONO_CLASS_IS_INTERFACE (klassc) && !MONO_CLASS_IS_INTERFACE (klass)) {
 		if (MONO_CLASS_IMPLEMENTS_INTERFACE (klass, klassc->interface_id))
 			return TRUE;
@@ -8826,6 +8899,32 @@ mono_class_get_nested_types (MonoClass* klass, gpointer *iter)
 		return item->data;
 	}
 	return NULL;
+}
+
+
+/**
+ * mono_class_is_delegate
+ * @klass: the MonoClass to act on
+ *
+ * Returns: true if the MonoClass represents a System.Delegate.
+ */
+mono_bool
+mono_class_is_delegate (MonoClass *klass)
+{
+	return klass->delegate;
+}
+
+/**
+ * mono_class_implements_interface
+ * @klass: The MonoClass to act on
+ * @interface: The interface to check if @klass implements.
+ *
+ * Returns: true if @klass implements @interface.
+ */
+mono_bool
+mono_class_implements_interface (MonoClass* klass, MonoClass* iface)
+{
+	return mono_class_is_assignable_from (iface, klass);
 }
 
 /**

@@ -47,7 +47,7 @@ namespace Mono.CSharp {
 		protected ToplevelBlock block;
 		protected MethodSpec spec;
 
-		public MethodCore (TypeDefinition parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod,
+		protected MethodCore (TypeDefinition parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod,
 			MemberName name, Attributes attrs, ParametersCompiled parameters)
 			: base (parent, type, mod, allowed_mod, name, attrs)
 		{
@@ -493,29 +493,29 @@ namespace Mono.CSharp {
 			return ms;
 		}
 
-		public override List<TypeSpec> ResolveMissingDependencies ()
+		public override List<MissingTypeSpecReference> ResolveMissingDependencies (MemberSpec caller)
 		{
-			var missing = returnType.ResolveMissingDependencies ();
+			var missing = returnType.ResolveMissingDependencies (this);
 			foreach (var pt in parameters.Types) {
-				var m = pt.GetMissingDependencies ();
+				var m = pt.GetMissingDependencies (this);
 				if (m == null)
 					continue;
 
 				if (missing == null)
-					missing = new List<TypeSpec> ();
+					missing = new List<MissingTypeSpecReference> ();
 
 				missing.AddRange (m);
 			}
 
 			if (Arity > 0) {
 				foreach (var tp in GenericDefinition.TypeParameters) {
-					var m = tp.GetMissingDependencies ();
+					var m = tp.GetMissingDependencies (this);
 
 					if (m == null)
 						continue;
 
 					if (missing == null)
-						missing = new List<TypeSpec> ();
+						missing = new List<MissingTypeSpecReference> ();
 
 					missing.AddRange (m);
 				}
@@ -685,6 +685,8 @@ namespace Mono.CSharp {
 				Module.PredefinedAttributes.CompilerGenerated.EmitAttribute (MethodBuilder);
 			if ((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0)
 				Module.PredefinedAttributes.DebuggerHidden.EmitAttribute (MethodBuilder);
+			if ((ModFlags & Modifiers.DEBUGGER_STEP_THROUGH) != 0)
+				Module.PredefinedAttributes.DebuggerStepThrough.EmitAttribute (MethodBuilder);
 
 			if (ReturnType.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 				return_attributes = new ReturnParameter (this, MethodBuilder, Location);
@@ -1232,7 +1234,7 @@ namespace Mono.CSharp {
 					}
 
 					block = (ToplevelBlock) block.ConvertToAsyncTask (this, Parent.PartialContainer, parameters, ReturnType, null, Location);
-					ModFlags |= Modifiers.DEBUGGER_HIDDEN;
+					ModFlags |= Modifiers.DEBUGGER_STEP_THROUGH;
 				}
 
 				if (Compiler.Settings.WriteMetadataOnly)
@@ -1403,7 +1405,7 @@ namespace Mono.CSharp {
 		Arguments argument_list;
 		MethodSpec base_ctor;
 
-		public ConstructorInitializer (Arguments argument_list, Location loc)
+		protected ConstructorInitializer (Arguments argument_list, Location loc)
 		{
 			this.argument_list = argument_list;
 			this.loc = loc;
@@ -2124,13 +2126,11 @@ namespace Mono.CSharp {
 		{
 			DefineOverride (parent);
 
-			var mc = (IMemberContext) method;
-
-			method.ParameterInfo.ApplyAttributes (mc, MethodBuilder);
+			method.ParameterInfo.ApplyAttributes (method, MethodBuilder);
 
 			ToplevelBlock block = method.Block;
 			if (block != null) {
-				BlockContext bc = new BlockContext (mc, block, method.ReturnType);
+				BlockContext bc = new BlockContext (method, block, method.ReturnType);
 				if (block.Resolve (null, bc, method)) {
 					debug_builder = member.Parent.CreateMethodSymbolEntry ();
 					EmitContext ec = method.CreateEmitContext (MethodBuilder.GetILGenerator (), debug_builder);
@@ -2267,7 +2267,7 @@ namespace Mono.CSharp {
 
 		ReturnParameter return_attributes;
 
-		public AbstractPropertyEventMethod (InterfaceMemberBase member, string prefix, Attributes attrs, Location loc)
+		protected AbstractPropertyEventMethod (InterfaceMemberBase member, string prefix, Attributes attrs, Location loc)
 			: base (member.Parent, SetupName (prefix, member, loc), attrs)
 		{
 			this.prefix = prefix;

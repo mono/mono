@@ -35,7 +35,9 @@
 
 using System;
 using System.Reflection;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 
 namespace System.Linq.Expressions {
 
@@ -568,12 +570,48 @@ namespace System.Linq.Expressions {
 
 		void EmitRelationalBinary (EmitContext ec)
 		{
-			if (!IsLifted)
+			if (!IsLifted) {
 				EmitNonLiftedBinary (ec);
-			else if (IsLiftedToNull)
+				return;
+			}
+
+			if (IsLiftedToNull) {
 				EmitLiftedToNullBinary (ec);
-			else
-				EmitLiftedRelationalBinary (ec);
+				return;
+			}
+
+			if (ConstantExpression.IsNull (right) && !ConstantExpression.IsNull (left) && left.Type.IsNullable ()) {
+				EmitNullEquality (ec, left);
+				return;
+			}
+
+			if (ConstantExpression.IsNull (left) && !ConstantExpression.IsNull (right) && right.Type.IsNullable ()) {
+				EmitNullEquality (ec, right);
+				return;
+			}
+
+			EmitLiftedRelationalBinary (ec);
+		}
+
+		void EmitNullEquality (EmitContext ec, Expression e)
+		{
+			var ig = ec.ig;
+
+			if (IsLiftedToNull) {
+				e.Emit (ec);
+				if (e.Type != typeof (void))
+					ig.Emit (OpCodes.Pop);
+
+				ec.EmitNullableNew (typeof (bool?));
+				return;
+			}
+
+			var se = ec.EmitStored (e);
+			ec.EmitNullableHasValue (se);
+			if (NodeType == ExpressionType.Equal) {
+				ig.Emit (OpCodes.Ldc_I4_0);
+				ig.Emit (OpCodes.Ceq);
+			}		
 		}
 
 		void EmitLiftedUserDefinedOperator (EmitContext ec)

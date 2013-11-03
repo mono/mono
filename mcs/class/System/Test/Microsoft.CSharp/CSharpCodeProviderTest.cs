@@ -360,6 +360,49 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
+		public void CompileFromSource_InMemory_Twice ()
+		{
+			CompilerParameters options = new CompilerParameters ();
+			options.GenerateExecutable = false;
+			options.GenerateInMemory = true;
+
+			ICodeCompiler compiler = _codeProvider.CreateCompiler ();
+
+			var src_1 = "class X { ";
+
+			CompilerResults results_1 = compiler.CompileAssemblyFromSource (options, src_1);
+			var output_1 = options.OutputAssembly;
+
+			var src_2 = "class X { }";
+
+			CompilerResults results_2 = compiler.CompileAssemblyFromSource (options, src_2);
+			var output_2 = options.OutputAssembly;
+
+			// verify compilation was successful
+			AssertCompileResults (results_2, true);
+
+			Assert.AreEqual (output_1, output_2, "#1");
+		}
+
+
+		[Test]
+		public void CompileFromSource_InMemory_With_Extra_Delete ()
+		{
+			CompilerParameters options = new CompilerParameters ();
+			options.GenerateExecutable = false;
+			options.GenerateInMemory = true;
+
+			ICodeCompiler compiler = _codeProvider.CreateCompiler ();
+
+			var src_1 = "class X { ";
+
+			compiler.CompileAssemblyFromSource (options, src_1);
+
+			options.TempFiles.Delete ();
+			options.TempFiles.Delete ();
+		}
+
+		[Test]
 		public void CompileFromSourceBatch_InMemory ()
 		{
 			// create a file in temp directory to ensure that compiler is not removing

@@ -418,7 +418,7 @@ the global assembly cache is always trusted.
 .TP
 \fB--server\fR
 Configures the virtual machine to be better suited for server
-operations (currently, a no-op).
+operations (currently, allows a heavier threadpool initialization).
 .TP
 \fB--verify-all\fR 
 Verifies mscorlib and assemblies in the global
@@ -1628,6 +1628,10 @@ for example, to see managed frame names on gdb backtraces.
 Enables the maximum JIT verbosity for the specified method. This is
 very helpfull to diagnose a miscompilation problems of a specific
 method.
+.TP
+\fBMONO_VERBOSE_HWCAP\fR
+If set, makes the JIT output information about detected CPU features
+(such as SSE, CMOV, FCMOV, etc) to stdout.
 .SH VALGRIND
 If you want to use Valgrind, you will find the file `mono.supp'
 useful, it contains the suppressions for the GC which trigger

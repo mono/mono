@@ -27,7 +27,6 @@
 //
 
 using System;
-using System.Linq;
 
 namespace System.DirectoryServices.Protocols
 {
@@ -37,8 +36,8 @@ namespace System.DirectoryServices.Protocols
 		public SortRequestControl (params SortKey [] sortKeys)
 			: base (null, null, false, false)
 		{
-			throw new NotImplementedException ();
 			SortKeys = sortKeys;
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]

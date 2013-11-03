@@ -45,12 +45,12 @@ namespace System.Net.Http.Headers
 			Version = version;
 		}
 
-		private ProductHeaderValue ()
+		internal ProductHeaderValue ()
 		{
 		}
 
-		public string Name { get; private set; }
-		public string Version { get; private set; }
+		public string Name { get; internal set; }
+		public string Version { get; internal set; }
 
 		object ICloneable.Clone ()
 		{

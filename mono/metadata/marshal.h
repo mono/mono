@@ -108,8 +108,12 @@ typedef enum {
 	WRAPPER_SUBTYPE_SYNCHRONIZED_INNER,
 	WRAPPER_SUBTYPE_GSHAREDVT_IN,
 	WRAPPER_SUBTYPE_GSHAREDVT_OUT,
+	WRAPPER_SUBTYPE_ARRAY_ACCESSOR,
 	/* Subtypes of MONO_WRAPPER_MANAGED_TO_MANAGED */
-	WRAPPER_SUBTYPE_GENERIC_ARRAY_HELPER
+	WRAPPER_SUBTYPE_GENERIC_ARRAY_HELPER,
+	/* Subtypes of MONO_WRAPPER_DELEGATE_INVOKE */
+	WRAPPER_SUBTYPE_DELEGATE_INVOKE_VIRTUAL,
+	WRAPPER_SUBTYPE_DELEGATE_INVOKE_BOUND
 } WrapperSubtype;
 
 typedef struct {
@@ -151,6 +155,10 @@ typedef struct {
 	gpointer func;
 } ICallWrapperInfo;
 
+typedef struct {
+	MonoMethod *method;
+} ArrayAccessorWrapperInfo;
+
 /*
  * This structure contains additional information to uniquely identify a given wrapper
  * method. It can be retrieved by mono_marshal_get_wrapper_info () for certain types
@@ -177,6 +185,8 @@ typedef struct {
 		GenericArrayHelperWrapperInfo generic_array_helper;
 		/* ICALL_WRAPPER */
 		ICallWrapperInfo icall;
+		/* ARRAY_ACCESSOR */
+		ArrayAccessorWrapperInfo array_accessor;
 	} d;
 } WrapperInfo;
 
@@ -354,6 +364,9 @@ MonoMethod*
 mono_marshal_get_array_address (int rank, int elem_size) MONO_INTERNAL;
 
 MonoMethod *
+mono_marshal_get_array_accessor_wrapper (MonoMethod *method) MONO_INTERNAL;
+
+MonoMethod *
 mono_marshal_get_generic_array_helper (MonoClass *class, MonoClass *iface,
 				       gchar *name, MonoMethod *method) MONO_INTERNAL;
 
@@ -514,16 +527,16 @@ ves_icall_Mono_Interop_ComInteropProxy_AddProxy (gpointer pUnk, MonoComInteropPr
 MonoComInteropProxy*
 ves_icall_Mono_Interop_ComInteropProxy_FindProxy (gpointer pUnk) MONO_INTERNAL;
 
-void
+MONO_API void
 mono_win32_compat_CopyMemory (gpointer dest, gconstpointer source, gsize length);
 
-void
+MONO_API void
 mono_win32_compat_FillMemory (gpointer dest, gsize length, guchar fill);
 
-void
+MONO_API void
 mono_win32_compat_MoveMemory (gpointer dest, gconstpointer source, gsize length);
 
-void
+MONO_API void
 mono_win32_compat_ZeroMemory (gpointer dest, gsize length);
 
 void

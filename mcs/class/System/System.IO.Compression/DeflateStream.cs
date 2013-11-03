@@ -5,8 +5,10 @@
 // Authors:
 //	Christopher James Lahey <clahey@ximian.com>
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
+//  Marek Safar (marek.safar@gmail.com)
 //
 // (c) Copyright 2004,2009 Novell, Inc. <http://www.novell.com>
+// Copyright (C) 2013 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,12 +39,10 @@ using System.Runtime.Remoting.Messaging;
 using MonoTouch;
 #endif
 
-namespace System.IO.Compression {
+namespace System.IO.Compression
+{
 	public class DeflateStream : Stream
 	{
-		const int BufferSize = 4096;
-		[UnmanagedFunctionPointer (CallingConvention.Cdecl)]
-		delegate int UnmanagedReadOrWrite (IntPtr buffer, int length, IntPtr data);
 		delegate int ReadMethod (byte[] array, int offset, int count);
 		delegate void WriteMethod (byte[] array, int offset, int count);
 
@@ -50,11 +50,7 @@ namespace System.IO.Compression {
 		CompressionMode mode;
 		bool leaveOpen;
 		bool disposed;
-		UnmanagedReadOrWrite feeder; // This will be passed to unmanaged code and used there
-		IntPtr z_stream;
-		byte [] io_buffer;
-
-		GCHandle data;
+		DeflateStreamNative native;
 
 		public DeflateStream (Stream compressedStream, CompressionMode mode) :
 			this (compressedStream, mode, false, false)
@@ -74,14 +70,10 @@ namespace System.IO.Compression {
 			if (mode != CompressionMode.Compress && mode != CompressionMode.Decompress)
 				throw new ArgumentException ("mode");
 
-			this.data = GCHandle.Alloc (this);
 			this.base_stream = compressedStream;
-			this.feeder = (mode == CompressionMode.Compress) ? new UnmanagedReadOrWrite (UnmanagedWrite) :
-									   new UnmanagedReadOrWrite (UnmanagedRead);
-			this.z_stream = CreateZStream (mode, gzip, feeder, GCHandle.ToIntPtr (data));
-			if (z_stream == IntPtr.Zero) {
-				this.base_stream = null;
-				this.feeder = null;
+
+			this.native = DeflateStreamNative.Create (compressedStream, mode, gzip);
+			if (this.native == null) {
 				throw new NotImplementedException ("Failed to initialize zlib. You probably have an old zlib installed. Version 1.2.0.4 or later is required.");
 			}
 			this.mode = mode;
@@ -106,95 +98,20 @@ namespace System.IO.Compression {
 
 		protected override void Dispose (bool disposing)
 		{
+			native.Dispose (disposing);
+
 			if (disposing && !disposed) {
 				disposed = true;
-				IntPtr zz = z_stream;
-				z_stream = IntPtr.Zero;
-				int res = 0;
-				if (zz != IntPtr.Zero)
-					res = CloseZStream (zz); // This will Flush() the remaining output if any
 
-				io_buffer = null;
 				if (!leaveOpen) {
 					Stream st = base_stream;
 					if (st != null)
 						st.Close ();
 					base_stream = null;
 				}
-				CheckResult (res, "Dispose");
-			}
-
-			if (data.IsAllocated) {
-				data.Free ();
-				data = new GCHandle ();
 			}
 
 			base.Dispose (disposing);
-		}
-
-#if MONOTOUCH
-		[MonoPInvokeCallback (typeof (UnmanagedReadOrWrite))]
-#endif
-		static int UnmanagedRead (IntPtr buffer, int length, IntPtr data)
-		{
-			GCHandle s = GCHandle.FromIntPtr (data);
-			var self = s.Target as DeflateStream;
-			if (self == null)
-				return -1;
-			return self.UnmanagedRead (buffer, length);
-		}
-
-		int UnmanagedRead (IntPtr buffer, int length)
-		{
-			int total = 0;
-			int n = 1;
-			while (length > 0 && n > 0) {
-				if (io_buffer == null)
-					io_buffer = new byte [BufferSize];
-
-				int count = Math.Min (length, io_buffer.Length);
-				n = base_stream.Read (io_buffer, 0, count);
-				if (n > 0) {
-					Marshal.Copy (io_buffer, 0, buffer, n);
-					unsafe {
-						buffer = new IntPtr ((byte *) buffer.ToPointer () + n);
-					}
-					length -= n;
-					total += n;
-				}
-			}
-			return total;
-		}
-
-#if MONOTOUCH
-		[MonoPInvokeCallback (typeof (UnmanagedReadOrWrite))]
-#endif
-		static int UnmanagedWrite (IntPtr buffer, int length, IntPtr data)
-		{
-			GCHandle s = GCHandle.FromIntPtr (data);
-			var self = s.Target as DeflateStream;
-			if (self == null)
-				return -1;
-			return self.UnmanagedWrite (buffer, length);
-		}
-
-		int UnmanagedWrite (IntPtr buffer, int length)
-		{
-			int total = 0;
-			while (length > 0) {
-				if (io_buffer == null)
-					io_buffer = new byte [BufferSize];
-
-				int count = Math.Min (length, io_buffer.Length);
-				Marshal.Copy (buffer, io_buffer, 0, count);
-				base_stream.Write (io_buffer, 0, count);
-				unsafe {
-					buffer = new IntPtr ((byte *) buffer.ToPointer () + count);
-				}
-				length -= count;
-				total += count;
-			}
-			return total;
 		}
 
 		unsafe int ReadInternal (byte[] array, int offset, int count)
@@ -202,13 +119,10 @@ namespace System.IO.Compression {
 			if (count == 0)
 				return 0;
 
-			int result = 0;
 			fixed (byte *b = array) {
 				IntPtr ptr = new IntPtr (b + offset);
-				result = ReadZStream (z_stream, ptr, count);
+				return native.ReadZStream (ptr, count);
 			}
-			CheckResult (result, "ReadInternal");
-			return result;
 		}
 
 		public override int Read (byte[] dest, int dest_offset, int count)
@@ -235,12 +149,10 @@ namespace System.IO.Compression {
 			if (count == 0)
 				return;
 
-			int result = 0;
 			fixed (byte *b = array) {
 				IntPtr ptr = new IntPtr (b + offset);
-				result = WriteZStream (z_stream, ptr, count);
+				native.WriteZStream (ptr, count);
 			}
-			CheckResult (result, "WriteInternal");
 		}
 
 		public override void Write (byte[] src, int src_offset, int count)
@@ -263,53 +175,13 @@ namespace System.IO.Compression {
 			WriteInternal (src, src_offset, count);
 		}
 
-		static void CheckResult (int result, string where)
-		{
-			if (result >= 0)
-				return;
-
-			string error;
-			switch (result) {
-			case -1: // Z_ERRNO
-				error = "Unknown error"; // Marshal.GetLastWin32() ?
-				break;
-			case -2: // Z_STREAM_ERROR
-				error = "Internal error";
-				break;
-			case -3: // Z_DATA_ERROR
-				error = "Corrupted data";
-				break;
-			case -4: // Z_MEM_ERROR
-				error = "Not enough memory";
-				break;
-			case -5: // Z_BUF_ERROR
-				error = "Internal error (no progress possible)";
-				break;
-			case -6: // Z_VERSION_ERROR
-				error = "Invalid version";
-				break;
-			case -10:
-				error = "Invalid argument(s)";
-				break;
-			case -11:
-				error = "IO error";
-				break;
-			default:
-				error = "Unknown error";
-				break;
-			}
-
-			throw new IOException (error + " " + where);
-		}
-
 		public override void Flush ()
 		{
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().FullName);
 
 			if (CanWrite) {
-				int result = Flush (z_stream);
-				CheckResult (result, "Flush");
+				native.Flush ();
 			}
 		}
 
@@ -429,6 +301,188 @@ namespace System.IO.Compression {
 		public override long Position {
 			get { throw new NotSupportedException(); }
 			set { throw new NotSupportedException(); }
+		}
+	}
+
+	class DeflateStreamNative
+	{
+		const int BufferSize = 4096;
+
+		[UnmanagedFunctionPointer (CallingConvention.Cdecl)]
+		delegate int UnmanagedReadOrWrite (IntPtr buffer, int length, IntPtr data);
+
+		UnmanagedReadOrWrite feeder; // This will be passed to unmanaged code and used there
+
+		Stream base_stream;
+		IntPtr z_stream;
+		GCHandle data;
+		bool disposed;
+		byte [] io_buffer;
+
+		private DeflateStreamNative ()
+		{
+		}
+
+		public static DeflateStreamNative Create (Stream compressedStream, CompressionMode mode, bool gzip)
+		{
+			var dsn = new DeflateStreamNative ();
+			dsn.data = GCHandle.Alloc (dsn);
+			dsn.feeder = mode == CompressionMode.Compress ? new UnmanagedReadOrWrite (UnmanagedWrite) : new UnmanagedReadOrWrite (UnmanagedRead);
+			dsn.z_stream = CreateZStream (mode, gzip, dsn.feeder, GCHandle.ToIntPtr (dsn.data));
+			if (dsn.z_stream == IntPtr.Zero) {
+				dsn.Dispose (true);
+				return null;
+			}
+
+			dsn.base_stream = compressedStream;
+			return dsn;
+		}
+
+		~DeflateStreamNative ()
+		{
+			Dispose (false);
+		}
+
+		public void Dispose (bool disposing)
+		{
+			if (disposing && !disposed) {
+				disposed = true;
+				GC.SuppressFinalize (this);
+			
+				io_buffer = null;
+			
+				IntPtr zz = z_stream;
+				z_stream = IntPtr.Zero;
+				if (zz != IntPtr.Zero)
+					CloseZStream (zz); // This will Flush() the remaining output if any
+			}
+
+			if (data.IsAllocated) {
+				data.Free ();
+			}
+		}
+
+		public void Flush ()
+		{
+			var res = Flush (z_stream);
+			CheckResult (res, "Flush");
+		}
+
+		public int ReadZStream (IntPtr buffer, int length)
+		{
+			var res = ReadZStream (z_stream, buffer, length);
+			CheckResult (res, "ReadInternal");
+			return res;
+		}
+
+		public void WriteZStream (IntPtr buffer, int length)
+		{
+			var res = WriteZStream (z_stream, buffer, length);
+			CheckResult (res, "WriteInternal");
+		}
+
+#if MONOTOUCH
+		[MonoPInvokeCallback (typeof (UnmanagedReadOrWrite))]
+#endif
+		static int UnmanagedRead (IntPtr buffer, int length, IntPtr data)
+		{
+			GCHandle s = GCHandle.FromIntPtr (data);
+			var self = s.Target as DeflateStreamNative;
+			if (self == null)
+				return -1;
+			return self.UnmanagedRead (buffer, length);
+		}
+
+		int UnmanagedRead (IntPtr buffer, int length)
+		{
+			int total = 0;
+			int n = 1;
+			while (length > 0 && n > 0) {
+				if (io_buffer == null)
+					io_buffer = new byte [BufferSize];
+
+				int count = Math.Min (length, io_buffer.Length);
+				n = base_stream.Read (io_buffer, 0, count);
+				if (n > 0) {
+					Marshal.Copy (io_buffer, 0, buffer, n);
+					unsafe {
+						buffer = new IntPtr ((byte *) buffer.ToPointer () + n);
+					}
+					length -= n;
+					total += n;
+				}
+			}
+			return total;
+		}
+
+#if MONOTOUCH
+		[MonoPInvokeCallback (typeof (UnmanagedReadOrWrite))]
+#endif
+		static int UnmanagedWrite (IntPtr buffer, int length, IntPtr data)
+		{
+			GCHandle s = GCHandle.FromIntPtr (data);
+			var self = s.Target as DeflateStreamNative;
+			if (self == null)
+				return -1;
+			return self.UnmanagedWrite (buffer, length);
+		}
+
+		int UnmanagedWrite (IntPtr buffer, int length)
+		{
+			int total = 0;
+			while (length > 0) {
+				if (io_buffer == null)
+					io_buffer = new byte [BufferSize];
+
+				int count = Math.Min (length, io_buffer.Length);
+				Marshal.Copy (buffer, io_buffer, 0, count);
+				base_stream.Write (io_buffer, 0, count);
+				unsafe {
+					buffer = new IntPtr ((byte *) buffer.ToPointer () + count);
+				}
+				length -= count;
+				total += count;
+			}
+			return total;
+		}
+
+		static void CheckResult (int result, string where)
+		{
+			if (result >= 0)
+				return;
+
+			string error;
+			switch (result) {
+			case -1: // Z_ERRNO
+				error = "Unknown error"; // Marshal.GetLastWin32() ?
+				break;
+			case -2: // Z_STREAM_ERROR
+				error = "Internal error";
+				break;
+			case -3: // Z_DATA_ERROR
+				error = "Corrupted data";
+				break;
+			case -4: // Z_MEM_ERROR
+				error = "Not enough memory";
+				break;
+			case -5: // Z_BUF_ERROR
+				error = "Internal error (no progress possible)";
+				break;
+			case -6: // Z_VERSION_ERROR
+				error = "Invalid version";
+				break;
+			case -10:
+				error = "Invalid argument(s)";
+				break;
+			case -11:
+				error = "IO error";
+				break;
+			default:
+				error = "Unknown error";
+				break;
+			}
+
+			throw new IOException (error + " " + where);
 		}
 
 #if MONOTOUCH || MONODROID

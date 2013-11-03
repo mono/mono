@@ -441,7 +441,7 @@ namespace MonoTests.System
 			var t = new UriTemplate ("*");
 			var m = t.Match (new Uri ("http://localhost"), new Uri ("http://localhost/hoge/ppp"));
 			Assert.IsNotNull (m, "#0");
-			Assert.IsEmpty (m.QueryParameters, "#1.0");
+			Assert.AreEqual (0, m.QueryParameters.Count, "#1.0");
 			Assert.AreEqual ("hoge", m.WildcardPathSegments [0], "#2");
 			Assert.AreEqual ("ppp", m.WildcardPathSegments [1], "#3");
 		}

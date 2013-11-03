@@ -2226,7 +2226,6 @@ NO
 			Assert.IsTrue (sw.ToString ().IndexOf ("NO") > 0);
 		}
 
-#if NET_2_0
 		[Test] // bug #349375
 		public void PreserveWhitespace ()
 		{
@@ -2416,6 +2415,37 @@ NO
 		}
 
 		private bool valueHasBeenSet;
-#endif
+		
+		[Test] // bug #4434
+		public void IncludeProcessStylesheet ()
+		{
+			string includedXsl = @"<?xml version='1.0' ?>
+<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:doc='http://nwalsh.com/xsl/documentation/1.0' exclude-result-prefixes='doc' version='1.0'>
+	<doc:template name='foo' />
+	<xsl:template name='foo'>
+		<foo />
+	</xsl:template>
+</xsl:stylesheet>";
+			string file = Path.Combine (Path.GetTempPath (), "include.xsl");
+			StreamWriter includedWriter = new StreamWriter (file);
+			includedWriter.WriteLine (includedXsl);
+			includedWriter.Close ();
+			XslCompiledTransform transform = new XslCompiledTransform ();
+			string xsl = @"<?xml version='1.0' ?>
+<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0'>
+	<xsl:include href='include.xsl' />
+	<xsl:template match='/'>
+		<xsl:call-template name='foo' />
+	</xsl:template>
+</xsl:stylesheet>".Replace ("include.xsl", file);
+			XmlReader xslReader = XmlReader.Create (new StringReader (xsl));
+			transform.Load (xslReader);
+			XmlReader inputReader = XmlReader.Create (new StringReader ("<bar />"));
+			var sw = new StringWriter ();
+			XmlWriter outputWriter = XmlWriter.Create (sw);
+			transform.Transform (inputReader, outputWriter);
+			outputWriter.Close ();
+			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?><foo />", sw.ToString (), "#1");
+		}
 	}
 }

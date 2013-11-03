@@ -290,12 +290,10 @@ namespace System.Threading.Tasks
 		sealed class FuncTaskSelected<TResult> : TaskActionInvoker
 		{
 			readonly Func<Task, TResult> action;
-			readonly Task[] tasks;
 
-			public FuncTaskSelected (Func<Task, TResult> action, Task[] tasks)
+			public FuncTaskSelected (Func<Task, TResult> action)
 			{
 				this.action = action;
-				this.tasks = tasks;
 			}
 
 			public override Delegate Action {
@@ -306,8 +304,8 @@ namespace System.Threading.Tasks
 
 			public override void Invoke (Task owner, object state, Task context)
 			{
-				var result = ((Task<int>) owner).Result;
-				((Task<TResult>) context).Result = action (tasks[result]);
+				var result = ((Task<Task>) owner).Result;
+				((Task<TResult>) context).Result = action (result);
 			}
 		}
 
@@ -492,9 +490,9 @@ namespace System.Threading.Tasks
 			return new ActionTaskSelected (action);
 		}
 
-		public static TaskActionInvoker Create<TResult> (Func<Task, TResult> action, Task[] tasks)
+		public static TaskActionInvoker CreateSelected<TResult> (Func<Task, TResult> action)
 		{
-			return new FuncTaskSelected<TResult> (action, tasks);
+			return new FuncTaskSelected<TResult> (action);
 		}
 
 		#endregion

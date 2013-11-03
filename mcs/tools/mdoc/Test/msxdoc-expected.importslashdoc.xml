@@ -568,6 +568,12 @@ class Example {
             <remarks>
                 <c>M:Mono.DocTest.Widget.op_Addition(Mono.DocTest.Widget,Mono.DocTest.Widget)</c>.</remarks>
         </member>
+        <member name="F:Mono.DocTest.Widget.op_Division">
+            <summary>To be added.</summary>
+            <returns>A <see cref="T:Mono.DocTest.Widget" /> instance.</returns>
+            <remarks>
+                <c>M:Mono.DocTest.Widget.op_Division</c>.</remarks>
+        </member>
         <member name="M:Mono.DocTest.Widget.op_Explicit(Mono.DocTest.Widget)~System.Int32">
             <param name="x">
                 <see cref="T:Mono.DocTest.Widget" />s are fun!.</param>

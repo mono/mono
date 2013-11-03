@@ -88,4 +88,13 @@ class C
 		
 		return 0;
 	}
+	
+	// This does not look right but C# spec needs tidying up to special case it
+	void BrokenLiftedNull ()
+	{
+		int i = 44;
+		int? u = null;
+		i <<= u;
+		i <<= null;
+	}
 }

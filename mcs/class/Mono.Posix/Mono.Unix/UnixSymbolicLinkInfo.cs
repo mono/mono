@@ -56,19 +56,18 @@ namespace Mono.Unix {
 
 		public string ContentsPath {
 			get {
-				return ReadLink ();
+				return UnixPath.ReadLink (FullPath);
 			}
 		}
 
 		public bool HasContents {
 			get {
-				return TryReadLink () != null;
+				return UnixPath.TryReadLink (FullPath) != null;
 			}
 		}
 
 		public UnixFileSystemInfo GetContents ()
 		{
-			ReadLink ();
 			return UnixFileSystemInfo.GetFileSystemEntry (
 						UnixPath.Combine (UnixPath.GetDirectoryName (FullPath), 
 							ContentsPath));
@@ -102,23 +101,6 @@ namespace Mono.Unix {
 		protected override bool GetFileStatus (string path, out Native.Stat stat)
 		{
 			return Native.Syscall.lstat (path, out stat) == 0;
-		}
-
-		private string ReadLink ()
-		{
-			string r = TryReadLink ();
-			if (r == null)
-				UnixMarshal.ThrowExceptionForLastError ();
-			return r;
-		}
-
-		private string TryReadLink ()
-		{
-			StringBuilder sb = new StringBuilder ((int) base.Length+1);
-			int r = Native.Syscall.readlink (FullPath, sb);
-			if (r == -1)
-				return null;
-			return sb.ToString (0, r);
 		}
 	}
 }

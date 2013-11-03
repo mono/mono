@@ -29,27 +29,23 @@
 
 namespace System.Management
 {
-	[MonoTODO ("System.Management is not implemented")]
 	public class ObjectQuery : ManagementQuery
 	{
 		public ObjectQuery ()
 		{
-			throw new NotImplementedException ();
 		}
 
-		public ObjectQuery (string query)
+		public ObjectQuery (string query) : base(query)
 		{
-			throw new NotImplementedException ();
 		}
 
-		public ObjectQuery (string language, string query)
+		public ObjectQuery (string language, string query) : base(language, query)
 		{
-			throw new NotImplementedException ();
 		}
 
 		public override object Clone ()
 		{
-			throw new NotImplementedException ();
+			return new ObjectQuery(this.QueryLanguage, this.QueryString);
 		}
 	}
 }

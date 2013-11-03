@@ -19,9 +19,11 @@ namespace System {
 	public static partial class Console {
 
 		class NSLogWriter : TextWriter {
-			
 			[DllImport ("__Internal", CharSet=CharSet.Unicode)]
 			extern static void monotouch_log (string s);
+
+			[DllImport ("/usr/lib/libSystem.dylib")]
+			extern static int write (int fd, byte [] buffer, int n);
 			
 			StringBuilder sb;
 			
@@ -33,15 +35,27 @@ namespace System {
 			public override System.Text.Encoding Encoding {
 				get { return System.Text.Encoding.UTF8; }
 			}
+
+			static void direct_write_to_stdout (string s)
+			{
+				byte [] b = Encoding.Default.GetBytes (s);
+				while (write (1, b, b.Length) == -1 && Marshal.GetLastWin32Error () == /* EINTR*/ 4)
+					;
+			}
 			
 			public override void Flush ()
 			{
+				string s = sb.ToString ();
 				try {
-					monotouch_log (sb.ToString ());
-					sb.Length = 0;
+					monotouch_log (s);
 				}
 				catch (Exception) {
+					try {
+						direct_write_to_stdout (s);
+						direct_write_to_stdout (Environment.NewLine);
+					} catch (Exception){}
 				}
+				sb.Length = 0;
 			}
 			
 			// minimum to override - see http://msdn.microsoft.com/en-us/library/system.io.textwriter.aspx

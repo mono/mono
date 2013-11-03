@@ -150,7 +150,7 @@ namespace System.Net.Http.Headers
 
 			switch (token.Value.Kind) {
 			case Token.Type.SeparatorSemicolon:
-				if (!NameValueHeaderValue.ParseParameters (lexer, out parameters))
+				if (!NameValueHeaderValue.TryParseParameters (lexer, out parameters))
 					return false;
 				break;
 			case Token.Type.End:
@@ -181,7 +181,7 @@ namespace System.Net.Http.Headers
 
 			switch (token.Value.Kind) {
 			case Token.Type.SeparatorSemicolon:
-				if (!NameValueHeaderValue.ParseParameters (lexer, out parameters))
+				if (!NameValueHeaderValue.TryParseParameters (lexer, out parameters))
 					return false;
 				break;
 			case Token.Type.End:

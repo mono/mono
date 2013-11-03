@@ -482,7 +482,7 @@ ves_icall_System_IO_MonoIO_FindNext (gpointer handle, gint32 *result_attr, gint3
 	WIN32_FIND_DATA data;
 	MonoString *result;
 
-	error = ERROR_SUCCESS;
+	*error = ERROR_SUCCESS;
 	do {
 		if (FindNextFile (ifh->find_handle, &data) == FALSE){
 			int e = GetLastError ();
@@ -607,6 +607,7 @@ ves_icall_System_IO_MonoIO_ReplaceFile (MonoString *sourceFileName, MonoString *
 	if (ignoreMetadataErrors)
 		replaceFlags |= REPLACEFILE_IGNORE_MERGE_ERRORS;
 
+	/* FIXME: source and destination file names must not be NULL, but apparently they might be! */
 	ret = ReplaceFile (utf16_destinationFileName, utf16_sourceFileName, utf16_destinationBackupFileName,
 			 replaceFlags, NULL, NULL);
 	if (ret == FALSE)
@@ -824,9 +825,9 @@ ves_icall_System_IO_MonoIO_Read (HANDLE handle, MonoArray *dest,
 	*error=ERROR_SUCCESS;
 
 	MONO_CHECK_ARG_NULL (dest);
-	
-	if (dest_offset + count > mono_array_length (dest))
-		return 0;
+
+	if (dest_offset > mono_array_length (dest) - count)
+		mono_raise_exception (mono_get_exception_argument ("array", "array too small. numBytes/offset wrong."));
 
 	buffer = mono_array_addr (dest, guchar, dest_offset);
 	result = ReadFile (handle, buffer, count, &n, NULL);
@@ -854,8 +855,8 @@ ves_icall_System_IO_MonoIO_Write (HANDLE handle, MonoArray *src,
 
 	MONO_CHECK_ARG_NULL (src);
 	
-	if (src_offset + count > mono_array_length (src))
-		return 0;
+	if (src_offset > mono_array_length (src) - count)
+		mono_raise_exception (mono_get_exception_argument ("array", "array too small. numBytes/offset wrong."));
 	
 	buffer = mono_array_addr (src, guchar, src_offset);
 	result = WriteFile (handle, buffer, count, &n, NULL);

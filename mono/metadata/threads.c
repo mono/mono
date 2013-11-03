@@ -48,6 +48,7 @@
 #include <mono/utils/hazard-pointer.h>
 #include <mono/utils/mono-tls.h>
 #include <mono/utils/atomic.h>
+#include <mono/utils/mono-memory-model.h>
 
 #include <mono/metadata/gc-internal.h>
 
@@ -814,10 +815,12 @@ mono_thread_create (MonoDomain *domain, gpointer func, gpointer arg)
 static __inline__ __attribute__((always_inline))
 /* This is not defined by gcc */
 unsigned long long
-__readfsdword (unsigned long long offset)
+__readfsdword (unsigned long offset)
 {
-	unsigned long long value;
-	__asm__("movl %%fs:%a[offset], %k[value]" : [value] "=q" (value) : [offset] "irm" (offset));
+	unsigned long value;
+	//	__asm__("movl %%fs:%a[offset], %k[value]" : [value] "=q" (value) : [offset] "irm" (offset));
+   __asm__ volatile ("movl    %%fs:%1,%0"
+     : "=r" (value) ,"=m" ((*(volatile long *) offset)));
 	return value;
 }
 #endif
@@ -831,16 +834,8 @@ __readfsdword (unsigned long long offset)
 void
 mono_thread_get_stack_bounds (guint8 **staddr, size_t *stsize)
 {
-#if defined(HAVE_PTHREAD_GET_STACKSIZE_NP) && defined(HAVE_PTHREAD_GET_STACKADDR_NP)
-	*staddr = (guint8*)pthread_get_stackaddr_np (pthread_self ());
-	*stsize = pthread_get_stacksize_np (pthread_self ());
-
-	/* staddr points to the start of the stack, not the end */
-	*staddr -= *stsize;
-	*staddr = (guint8*)((gssize)*staddr & ~(mono_pagesize () - 1));
-	return;
-	/* FIXME: simplify the mess below */
-#elif defined(HOST_WIN32)
+#if defined(HOST_WIN32)
+	/* Windows */
 	/* http://en.wikipedia.org/wiki/Win32_Thread_Information_Block */
 	void* tib = (void*)__readfsdword(0x18);
 	guint8 *stackTop = (guint8*)*(int*)((char*)tib + 4);
@@ -849,7 +844,22 @@ mono_thread_get_stack_bounds (guint8 **staddr, size_t *stsize)
 	*staddr = stackBottom;
 	*stsize = stackTop - stackBottom;
 	return;
-#else
+
+#elif defined(HAVE_PTHREAD_GET_STACKSIZE_NP) && defined(HAVE_PTHREAD_GET_STACKADDR_NP)
+	/* Mac OS X */
+	*staddr = (guint8*)pthread_get_stackaddr_np (pthread_self());
+	*stsize = pthread_get_stacksize_np (pthread_self());
+
+	/* staddr points to the start of the stack, not the end */
+	*staddr -= *stsize;
+
+	/* When running under emacs, sometimes staddr is not aligned to a page size */
+	*staddr = (guint8*)((gssize)*staddr & ~(mono_pagesize() - 1));
+	return;
+
+#elif (defined(HAVE_PTHREAD_GETATTR_NP) || defined(HAVE_PTHREAD_ATTR_GET_NP)) && defined(HAVE_PTHREAD_ATTR_GETSTACK)
+	/* Linux, BSD */
+
 	pthread_attr_t attr;
 	guint8 *current = (guint8*)&attr;
 
@@ -857,15 +867,41 @@ mono_thread_get_stack_bounds (guint8 **staddr, size_t *stsize)
 	*stsize = (size_t)-1;
 
 	pthread_attr_init (&attr);
-#  ifdef HAVE_PTHREAD_GETATTR_NP
+
+#if     defined(HAVE_PTHREAD_GETATTR_NP)
+	/* Linux */
 	pthread_getattr_np (pthread_self(), &attr);
-#  else
-#    ifdef HAVE_PTHREAD_ATTR_GET_NP
+
+#elif   defined(HAVE_PTHREAD_ATTR_GET_NP)
+	/* BSD */
 	pthread_attr_get_np (pthread_self(), &attr);
-#    elif defined(sun)
+
+#else
+#error 	Cannot determine which API is needed to retrieve pthread attributes.
+#endif
+
+	pthread_attr_getstack (&attr, (void**)staddr, stsize);
+	pthread_attr_destroy (&attr);
+
+	if (*staddr)
+		g_assert ((current > *staddr) && (current < *staddr + *stsize));
+
+	/* When running under emacs, sometimes staddr is not aligned to a page size */
+	*staddr = (guint8*)((gssize)*staddr & ~(mono_pagesize () - 1));
+	return;
+
+#elif defined(__OpenBSD__)
+	/* OpenBSD */
+	/* TODO :   Determine if this code is actually still needed. It may already be covered by the case above. */
+
+	pthread_attr_t attr;
+	guint8 *current = (guint8*)&attr;
+
 	*staddr = NULL;
-	pthread_attr_getstacksize (&attr, &stsize);
-#    elif defined(__OpenBSD__)
+	*stsize = (size_t)-1;
+
+	pthread_attr_init (&attr);
+
 	stack_t ss;
 	int rslt;
 
@@ -874,29 +910,33 @@ mono_thread_get_stack_bounds (guint8 **staddr, size_t *stsize)
 
 	*staddr = (guint8*)((size_t)ss.ss_sp - ss.ss_size);
 	*stsize = ss.ss_size;
-#    else
-	*staddr = NULL;
-	*stsize = 0;
-	return;
-#    endif
-#  endif
-
-#  if !defined(sun)
-#    if defined(__native_client__)
-	*staddr = NULL;
-	pthread_attr_getstacksize (&attr, &stsize);
-#    elif !defined(__OpenBSD__)
-	pthread_attr_getstack (&attr, (void**)staddr, stsize);
-#    endif
-	if (*staddr)
-		g_assert ((current > *staddr) && (current < *staddr + *stsize));
-#  endif
 
 	pthread_attr_destroy (&attr);
-#endif
+
+	if (*staddr)
+		g_assert ((current > *staddr) && (current < *staddr + *stsize));
 
 	/* When running under emacs, sometimes staddr is not aligned to a page size */
 	*staddr = (guint8*)((gssize)*staddr & ~(mono_pagesize () - 1));
+	return;
+
+#elif defined(sun) || defined(__native_client__)
+	/* Solaris/Illumos, NaCl */
+	pthread_attr_t attr;
+	pthread_attr_init (&attr);
+	pthread_attr_getstacksize (&attr, &stsize);
+	pthread_attr_destroy (&attr);
+	*staddr = NULL;
+	return;
+
+#else
+	/* FIXME:   It'd be better to use the 'error' preprocessor macro here so we know
+		    at compile-time if the target platform isn't supported. */
+#warning "Unable to determine how to retrieve a thread's stack-bounds for this platform in 'mono_thread_get_stack_bounds()'."
+	*staddr = NULL;
+	*stsize = 0;
+	return;
+#endif
 }
 
 MonoThread *
@@ -1143,8 +1183,6 @@ HANDLE ves_icall_System_Threading_Thread_Thread_internal(MonoThread *this,
 
 void ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThread *this, HANDLE thread)
 {
-	MONO_ARCH_SAVE_REGS;
-
 	THREAD_DEBUG (g_message ("%s: Closing thread %p, handle %p", __func__, this, thread));
 
 	if (thread)
@@ -1234,8 +1272,6 @@ void ves_icall_System_Threading_Thread_SpinWait_nop (void)
 gint32
 ves_icall_System_Threading_Thread_GetDomainID (void) 
 {
-	MONO_ARCH_SAVE_REGS;
-
 	return mono_domain_get()->domain_id;
 }
 
@@ -1601,8 +1637,6 @@ ves_icall_System_Threading_WaitHandle_SignalAndWait_Internal (HANDLE toSignal, H
 	guint32 ret;
 	MonoInternalThread *thread = mono_thread_internal_current ();
 
-	MONO_ARCH_SAVE_REGS;
-
 	if (ms == -1)
 		ms = INFINITE;
 
@@ -1621,8 +1655,6 @@ HANDLE ves_icall_System_Threading_Mutex_CreateMutex_internal (MonoBoolean owned,
 { 
 	HANDLE mutex;
 	
-	MONO_ARCH_SAVE_REGS;
-   
 	*created = TRUE;
 	
 	if (name == NULL) {
@@ -1639,8 +1671,6 @@ HANDLE ves_icall_System_Threading_Mutex_CreateMutex_internal (MonoBoolean owned,
 }                                                                   
 
 MonoBoolean ves_icall_System_Threading_Mutex_ReleaseMutex_internal (HANDLE handle ) { 
-	MONO_ARCH_SAVE_REGS;
-
 	return(ReleaseMutex (handle));
 }
 
@@ -1649,8 +1679,6 @@ HANDLE ves_icall_System_Threading_Mutex_OpenMutex_internal (MonoString *name,
 							    gint32 *error)
 {
 	HANDLE ret;
-	
-	MONO_ARCH_SAVE_REGS;
 	
 	*error = ERROR_SUCCESS;
 	
@@ -1667,8 +1695,6 @@ HANDLE ves_icall_System_Threading_Semaphore_CreateSemaphore_internal (gint32 ini
 { 
 	HANDLE sem;
 	
-	MONO_ARCH_SAVE_REGS;
-   
 	*created = TRUE;
 	
 	if (name == NULL) {
@@ -1689,8 +1715,6 @@ gint32 ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (HANDLE ha
 { 
 	gint32 prevcount;
 	
-	MONO_ARCH_SAVE_REGS;
-
 	*fail = !ReleaseSemaphore (handle, releaseCount, &prevcount);
 
 	return (prevcount);
@@ -1699,8 +1723,6 @@ gint32 ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (HANDLE ha
 HANDLE ves_icall_System_Threading_Semaphore_OpenSemaphore_internal (MonoString *name, gint32 rights, gint32 *error)
 {
 	HANDLE ret;
-	
-	MONO_ARCH_SAVE_REGS;
 	
 	*error = ERROR_SUCCESS;
 	
@@ -1716,8 +1738,6 @@ HANDLE ves_icall_System_Threading_Events_CreateEvent_internal (MonoBoolean manua
 {
 	HANDLE event;
 	
-	MONO_ARCH_SAVE_REGS;
-
 	*created = TRUE;
 
 	if (name == NULL) {
@@ -1735,21 +1755,15 @@ HANDLE ves_icall_System_Threading_Events_CreateEvent_internal (MonoBoolean manua
 }
 
 gboolean ves_icall_System_Threading_Events_SetEvent_internal (HANDLE handle) {
-	MONO_ARCH_SAVE_REGS;
-
 	return (SetEvent(handle));
 }
 
 gboolean ves_icall_System_Threading_Events_ResetEvent_internal (HANDLE handle) {
-	MONO_ARCH_SAVE_REGS;
-
 	return (ResetEvent(handle));
 }
 
 void
 ves_icall_System_Threading_Events_CloseEvent_internal (HANDLE handle) {
-	MONO_ARCH_SAVE_REGS;
-
 	CloseHandle (handle);
 }
 
@@ -1758,8 +1772,6 @@ HANDLE ves_icall_System_Threading_Events_OpenEvent_internal (MonoString *name,
 							     gint32 *error)
 {
 	HANDLE ret;
-	
-	MONO_ARCH_SAVE_REGS;
 	
 	*error = ERROR_SUCCESS;
 	
@@ -1773,53 +1785,26 @@ HANDLE ves_icall_System_Threading_Events_OpenEvent_internal (MonoString *name,
 
 gint32 ves_icall_System_Threading_Interlocked_Increment_Int (gint32 *location)
 {
-	MONO_ARCH_SAVE_REGS;
-
 	return InterlockedIncrement (location);
 }
 
 gint64 ves_icall_System_Threading_Interlocked_Increment_Long (gint64 *location)
 {
-	gint64 ret;
-
-	MONO_ARCH_SAVE_REGS;
-
-	mono_interlocked_lock ();
-
-	ret = ++ *location;
-	
-	mono_interlocked_unlock ();
-
-	
-	return ret;
+	return InterlockedIncrement64 (location);
 }
 
 gint32 ves_icall_System_Threading_Interlocked_Decrement_Int (gint32 *location)
 {
-	MONO_ARCH_SAVE_REGS;
-
 	return InterlockedDecrement(location);
 }
 
 gint64 ves_icall_System_Threading_Interlocked_Decrement_Long (gint64 * location)
 {
-	gint64 ret;
-
-	MONO_ARCH_SAVE_REGS;
-
-	mono_interlocked_lock ();
-
-	ret = -- *location;
-	
-	mono_interlocked_unlock ();
-
-	return ret;
+	return InterlockedDecrement64 (location);
 }
 
 gint32 ves_icall_System_Threading_Interlocked_Exchange_Int (gint32 *location, gint32 value)
 {
-	MONO_ARCH_SAVE_REGS;
-
 	return InterlockedExchange(location, value);
 }
 
@@ -1840,8 +1825,6 @@ gfloat ves_icall_System_Threading_Interlocked_Exchange_Single (gfloat *location,
 {
 	IntFloatUnion val, ret;
 
-	MONO_ARCH_SAVE_REGS;
-
 	val.fval = value;
 	ret.ival = InterlockedExchange((gint32 *) location, val.ival);
 
@@ -1851,54 +1834,22 @@ gfloat ves_icall_System_Threading_Interlocked_Exchange_Single (gfloat *location,
 gint64 
 ves_icall_System_Threading_Interlocked_Exchange_Long (gint64 *location, gint64 value)
 {
-#if SIZEOF_VOID_P == 8
-	return (gint64) InterlockedExchangePointer((gpointer *) location, (gpointer)value);
-#else
-	gint64 res;
-
-	/* 
-	 * According to MSDN, this function is only atomic with regards to the 
-	 * other Interlocked functions on 32 bit platforms.
-	 */
-	mono_interlocked_lock ();
-	res = *location;
-	*location = value;
-	mono_interlocked_unlock ();
-
-	return res;
-#endif
+	return InterlockedExchange64 (location, value);
 }
 
 gdouble 
 ves_icall_System_Threading_Interlocked_Exchange_Double (gdouble *location, gdouble value)
 {
-#if SIZEOF_VOID_P == 8
 	LongDoubleUnion val, ret;
 
 	val.fval = value;
-	ret.ival = (gint64)InterlockedExchangePointer((gpointer *) location, (gpointer)val.ival);
+	ret.ival = (gint64)InterlockedExchange64((gint64 *) location, val.ival);
 
 	return ret.fval;
-#else
-	gdouble res;
-
-	/* 
-	 * According to MSDN, this function is only atomic with regards to the 
-	 * other Interlocked functions on 32 bit platforms.
-	 */
-	mono_interlocked_lock ();
-	res = *location;
-	*location = value;
-	mono_interlocked_unlock ();
-
-	return res;
-#endif
 }
 
 gint32 ves_icall_System_Threading_Interlocked_CompareExchange_Int(gint32 *location, gint32 value, gint32 comparand)
 {
-	MONO_ARCH_SAVE_REGS;
-
 	return InterlockedCompareExchange(location, value, comparand);
 }
 
@@ -1918,8 +1869,6 @@ gpointer ves_icall_System_Threading_Interlocked_CompareExchange_IntPtr(gpointer 
 gfloat ves_icall_System_Threading_Interlocked_CompareExchange_Single (gfloat *location, gfloat value, gfloat comparand)
 {
 	IntFloatUnion val, ret, cmp;
-
-	MONO_ARCH_SAVE_REGS;
 
 	val.fval = value;
 	cmp.fval = comparand;
@@ -1955,19 +1904,18 @@ ves_icall_System_Threading_Interlocked_CompareExchange_Double (gdouble *location
 gint64 
 ves_icall_System_Threading_Interlocked_CompareExchange_Long (gint64 *location, gint64 value, gint64 comparand)
 {
-#if SIZEOF_VOID_P == 8
-	return (gint64)InterlockedCompareExchangePointer((gpointer *) location, (gpointer)value, (gpointer)comparand);
-#else
-	gint64 old;
-
-	mono_interlocked_lock ();
-	old = *location;
-	if (old == comparand)
-		*location = value;
-	mono_interlocked_unlock ();
-	
-	return old;
+#if SIZEOF_VOID_P == 4
+	if ((size_t)location & 0x7) {
+		gint64 old;
+		mono_interlocked_lock ();
+		old = *location;
+		if (old == comparand)
+			*location = value;
+		mono_interlocked_unlock ();
+		return old;
+	}
 #endif
+	return InterlockedCompareExchange64 (location, value, comparand);
 }
 
 MonoObject*
@@ -1991,63 +1939,25 @@ ves_icall_System_Threading_Interlocked_Exchange_T (MonoObject **location, MonoOb
 gint32 
 ves_icall_System_Threading_Interlocked_Add_Int (gint32 *location, gint32 value)
 {
-#if SIZEOF_VOID_P == 8
-	/* Should be implemented as a JIT intrinsic */
-	mono_raise_exception (mono_get_exception_not_implemented (NULL));
-	return 0;
-#else
-	gint32 orig;
-
-	mono_interlocked_lock ();
-	orig = *location;
-	*location = orig + value;
-	mono_interlocked_unlock ();
-
-	return orig + value;
-#endif
+	return InterlockedAdd (location, value);
 }
 
 gint64 
 ves_icall_System_Threading_Interlocked_Add_Long (gint64 *location, gint64 value)
 {
-#if SIZEOF_VOID_P == 8
-	/* Should be implemented as a JIT intrinsic */
-	mono_raise_exception (mono_get_exception_not_implemented (NULL));
-	return 0;
-#else
-	gint64 orig;
-
-	mono_interlocked_lock ();
-	orig = *location;
-	*location = orig + value;
-	mono_interlocked_unlock ();
-
-	return orig + value;
-#endif
+	return InterlockedAdd64 (location, value);
 }
 
 gint64 
 ves_icall_System_Threading_Interlocked_Read_Long (gint64 *location)
 {
-#if SIZEOF_VOID_P == 8
-	/* 64 bit reads are already atomic */
-	return *location;
-#else
-	gint64 res;
-
-	mono_interlocked_lock ();
-	res = *location;
-	mono_interlocked_unlock ();
-
-	return res;
-#endif
+	return InterlockedRead64 (location);
 }
 
 void
 ves_icall_System_Threading_Thread_MemoryBarrier (void)
 {
-	mono_threads_lock ();
-	mono_threads_unlock ();
+	mono_memory_barrier ();
 }
 
 void
@@ -2474,104 +2384,225 @@ void mono_thread_stop (MonoThread *thread)
 gint8
 ves_icall_System_Threading_Thread_VolatileRead1 (void *ptr)
 {
-	return *((volatile gint8 *) (ptr));
+	gint8 tmp;
+	mono_atomic_load_acquire (tmp, gint8, (volatile gint8 *) ptr);
+	return tmp;
 }
 
 gint16
 ves_icall_System_Threading_Thread_VolatileRead2 (void *ptr)
 {
-	return *((volatile gint16 *) (ptr));
+	gint16 tmp;
+	mono_atomic_load_acquire (tmp, gint16, (volatile gint16 *) ptr);
+	return tmp;
 }
 
 gint32
 ves_icall_System_Threading_Thread_VolatileRead4 (void *ptr)
 {
-	return *((volatile gint32 *) (ptr));
+	gint32 tmp;
+	mono_atomic_load_acquire (tmp, gint32, (volatile gint32 *) ptr);
+	return tmp;
 }
 
 gint64
 ves_icall_System_Threading_Thread_VolatileRead8 (void *ptr)
 {
-	return *((volatile gint64 *) (ptr));
+	gint64 tmp;
+	mono_atomic_load_acquire (tmp, gint64, (volatile gint64 *) ptr);
+	return tmp;
 }
 
 void *
 ves_icall_System_Threading_Thread_VolatileReadIntPtr (void *ptr)
 {
-	return (void *)  *((volatile void **) ptr);
+	volatile void *tmp;
+	mono_atomic_load_acquire (tmp, volatile void *, (volatile void **) ptr);
+	return (void *) tmp;
+}
+
+void *
+ves_icall_System_Threading_Thread_VolatileReadObject (void *ptr)
+{
+	volatile MonoObject *tmp;
+	mono_atomic_load_acquire (tmp, volatile MonoObject *, (volatile MonoObject **) ptr);
+	return (MonoObject *) tmp;
 }
 
 double
 ves_icall_System_Threading_Thread_VolatileReadDouble (void *ptr)
 {
-	return *((volatile double *) (ptr));
+	double tmp;
+	mono_atomic_load_acquire (tmp, double, (volatile double *) ptr);
+	return tmp;
 }
 
 float
 ves_icall_System_Threading_Thread_VolatileReadFloat (void *ptr)
 {
-	return *((volatile float *) (ptr));
+	float tmp;
+	mono_atomic_load_acquire (tmp, float, (volatile float *) ptr);
+	return tmp;
+}
+
+gint8
+ves_icall_System_Threading_Volatile_Read1 (void *ptr)
+{
+	return InterlockedRead8 (ptr);
+}
+
+gint16
+ves_icall_System_Threading_Volatile_Read2 (void *ptr)
+{
+	return InterlockedRead16 (ptr);
+}
+
+gint32
+ves_icall_System_Threading_Volatile_Read4 (void *ptr)
+{
+	return InterlockedRead (ptr);
+}
+
+gint64
+ves_icall_System_Threading_Volatile_Read8 (void *ptr)
+{
+	return InterlockedRead64 (ptr);
+}
+
+void *
+ves_icall_System_Threading_Volatile_ReadIntPtr (void *ptr)
+{
+	return InterlockedReadPointer (ptr);
+}
+
+double
+ves_icall_System_Threading_Volatile_ReadDouble (void *ptr)
+{
+	LongDoubleUnion u;
+
+	u.ival = InterlockedRead64 (ptr);
+
+	return u.fval;
+}
+
+float
+ves_icall_System_Threading_Volatile_ReadFloat (void *ptr)
+{
+	IntFloatUnion u;
+
+	u.ival = InterlockedRead (ptr);
+
+	return u.fval;
 }
 
 MonoObject*
 ves_icall_System_Threading_Volatile_Read_T (void *ptr)
 {
-	return (MonoObject*)*((volatile MonoObject**)ptr);
+	return InterlockedReadPointer (ptr);
 }
 
 void
 ves_icall_System_Threading_Thread_VolatileWrite1 (void *ptr, gint8 value)
 {
-	*((volatile gint8 *) ptr) = value;
+	mono_atomic_store_release ((volatile gint8 *) ptr, value);
 }
 
 void
 ves_icall_System_Threading_Thread_VolatileWrite2 (void *ptr, gint16 value)
 {
-	*((volatile gint16 *) ptr) = value;
+	mono_atomic_store_release ((volatile gint16 *) ptr, value);
 }
 
 void
 ves_icall_System_Threading_Thread_VolatileWrite4 (void *ptr, gint32 value)
 {
-	*((volatile gint32 *) ptr) = value;
+	mono_atomic_store_release ((volatile gint32 *) ptr, value);
 }
 
 void
 ves_icall_System_Threading_Thread_VolatileWrite8 (void *ptr, gint64 value)
 {
-	*((volatile gint64 *) ptr) = value;
+	mono_atomic_store_release ((volatile gint64 *) ptr, value);
 }
 
 void
 ves_icall_System_Threading_Thread_VolatileWriteIntPtr (void *ptr, void *value)
 {
-	*((volatile void **) ptr) = value;
+	mono_atomic_store_release ((volatile void **) ptr, value);
 }
 
 void
-ves_icall_System_Threading_Thread_VolatileWriteObject (void *ptr, void *value)
+ves_icall_System_Threading_Thread_VolatileWriteObject (void *ptr, MonoObject *value)
 {
-	mono_gc_wbarrier_generic_store (ptr, value);
+	mono_gc_wbarrier_generic_store_atomic (ptr, value);
 }
 
 void
 ves_icall_System_Threading_Thread_VolatileWriteDouble (void *ptr, double value)
 {
-	*((volatile double *) ptr) = value;
+	mono_atomic_store_release ((volatile double *) ptr, value);
 }
 
 void
 ves_icall_System_Threading_Thread_VolatileWriteFloat (void *ptr, float value)
 {
-	*((volatile float *) ptr) = value;
+	mono_atomic_store_release ((volatile float *) ptr, value);
+}
+
+void
+ves_icall_System_Threading_Volatile_Write1 (void *ptr, gint8 value)
+{
+	InterlockedWrite8 (ptr, value);
+}
+
+void
+ves_icall_System_Threading_Volatile_Write2 (void *ptr, gint16 value)
+{
+	InterlockedWrite16 (ptr, value);
+}
+
+void
+ves_icall_System_Threading_Volatile_Write4 (void *ptr, gint32 value)
+{
+	InterlockedWrite (ptr, value);
+}
+
+void
+ves_icall_System_Threading_Volatile_Write8 (void *ptr, gint64 value)
+{
+	InterlockedWrite64 (ptr, value);
+}
+
+void
+ves_icall_System_Threading_Volatile_WriteIntPtr (void *ptr, void *value)
+{
+	InterlockedWritePointer (ptr, value);
+}
+
+void
+ves_icall_System_Threading_Volatile_WriteDouble (void *ptr, double value)
+{
+	LongDoubleUnion u;
+
+	u.fval = value;
+
+	InterlockedWrite64 (ptr, u.ival);
+}
+
+void
+ves_icall_System_Threading_Volatile_WriteFloat (void *ptr, float value)
+{
+	IntFloatUnion u;
+
+	u.fval = value;
+
+	InterlockedWrite (ptr, u.ival);
 }
 
 void
 ves_icall_System_Threading_Volatile_Write_T (void *ptr, MonoObject *value)
 {
-	*((volatile MonoObject **) ptr) = value;
-	mono_gc_wbarrier_generic_nostore (ptr);
+	mono_gc_wbarrier_generic_store_atomic (ptr, value);
 }
 
 void
@@ -3205,7 +3236,7 @@ print_stack_frame_to_string (MonoStackFrameInfo *frame, MonoContext *ctx, gpoint
 	GString *p = (GString*)data;
 	MonoMethod *method = NULL;
 	if (frame->ji)
-		method = frame->ji->method;
+		method = mono_jit_info_get_method (frame->ji);
 
 	if (method) {
 		gchar *location = mono_debug_print_stack_frame (method, frame->native_offset, frame->domain);
@@ -3683,12 +3714,22 @@ mono_free_static_data (gpointer* static_data, gboolean threadlocal)
 {
 	int i;
 	for (i = 1; i < NUM_STATIC_DATA_IDX; ++i) {
-		if (!static_data [i])
+		gpointer p = static_data [i];
+		if (!p)
 			continue;
+		/*
+		 * At this point, the static data pointer array is still registered with the
+		 * GC, so must ensure that mark_tls_slots() will not encounter any invalid
+		 * data.  Freeing the individual arrays without first nulling their slots
+		 * would make it possible for mark_tls_slots() to encounter a pointer to
+		 * such an already freed array.  See bug #13813.
+		 */
+		static_data [i] = NULL;
+		mono_memory_write_barrier ();
 		if (mono_gc_user_markers_supported () && threadlocal)
-			g_free (static_data [i]);
+			g_free (p);
 		else
-			mono_gc_free_fixed (static_data [i]);
+			mono_gc_free_fixed (p);
 	}
 	mono_gc_free_fixed (static_data);
 }
@@ -4597,7 +4638,7 @@ abort_thread_internal (MonoInternalThread *thread, gboolean can_raise_exception,
 	InterlockedIncrement (&thread_interruption_requested);
 
 	ji = mono_thread_info_get_last_managed (info);
-	protected_wrapper = ji && mono_threads_is_critical_method (ji->method);
+	protected_wrapper = ji && mono_threads_is_critical_method (mono_jit_info_get_method (ji));
 	running_managed = mono_jit_info_match (ji, MONO_CONTEXT_GET_IP (&info->suspend_state.ctx));
 
 	if (!protected_wrapper && running_managed) {
@@ -4666,7 +4707,7 @@ suspend_thread_internal (MonoInternalThread *thread, gboolean interrupt)
 		}
 
 		ji = mono_thread_info_get_last_managed (info);
-		protected_wrapper = ji && mono_threads_is_critical_method (ji->method);
+		protected_wrapper = ji && mono_threads_is_critical_method (mono_jit_info_get_method (ji));
 		running_managed = mono_jit_info_match (ji, MONO_CONTEXT_GET_IP (&info->suspend_state.ctx));
 
 		if (running_managed && !protected_wrapper) {

@@ -73,7 +73,10 @@ namespace Mono.CSharp
 
 		readonly TypeSpec return_type;
 
-		public int FlowOffset;
+		//
+		// Tracks the last offset used by VariableInfo
+		//
+		public int AssignmentInfoOffset;
 
 		public BlockContext (IMemberContext mc, ExplicitBlock block, TypeSpec returnType)
 			: base (mc)
@@ -325,7 +328,7 @@ namespace Mono.CSharp
 		// it's public so that we can use a struct at the callsite
 		public struct FlagsHandle : IDisposable
 		{
-			ResolveContext ec;
+			readonly ResolveContext ec;
 			readonly Options invmask, oldval;
 
 			public FlagsHandle (ResolveContext ec, Options flagsToSet)
@@ -513,10 +516,12 @@ namespace Mono.CSharp
 
 			//
 			// Capture only if this or any of child blocks contain await
-			// or it's a parameter
+			// or it's a parameter or we need to access variable from 
+			// different parameter block
 			//
 			if (CurrentAnonymousMethod is AsyncInitializer)
-				return local.IsParameter || local.Block.Explicit.HasAwait || CurrentBlock.Explicit.HasAwait;
+				return local.IsParameter || local.Block.Explicit.HasAwait || CurrentBlock.Explicit.HasAwait ||
+					local.Block.ParametersBlock != CurrentBlock.ParametersBlock.Original;
 
 			return local.Block.ParametersBlock != CurrentBlock.ParametersBlock.Original;
 		}
@@ -758,7 +763,7 @@ namespace Mono.CSharp
 		// it's public so that we can use a struct at the callsite
 		public struct FlagsHandle : IDisposable
 		{
-			BuilderContext ec;
+			readonly BuilderContext ec;
 			readonly Options invmask, oldval;
 
 			public FlagsHandle (BuilderContext ec, Options flagsToSet)

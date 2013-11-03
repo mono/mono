@@ -163,6 +163,13 @@ write_variable (MonoInst *inst, MonoDebugVarInfo *var)
 		var->offset = inst->inst_offset;
 	} else if (inst->opcode == OP_GSHAREDVT_LOCAL) {
 		var->index = inst->inst_imm | MONO_DEBUG_VAR_ADDRESS_MODE_GSHAREDVT_LOCAL;
+	} else if (inst->opcode == OP_VTARG_ADDR) {
+		MonoInst *vtaddr;
+
+		vtaddr = inst->inst_left;
+		g_assert (vtaddr->opcode == OP_REGOFFSET);
+		var->offset = vtaddr->inst_offset;
+		var->index  = vtaddr->inst_basereg | MONO_DEBUG_VAR_ADDRESS_MODE_VTADDR;
 	} else {
 		g_assert_not_reached ();
 	}
@@ -486,6 +493,7 @@ serialize_variable (MonoDebugVarInfo *var, guint8 *p, guint8 **endbuf)
 		encode_value (var->offset, p, &p);
 		break;
 	case MONO_DEBUG_VAR_ADDRESS_MODE_GSHAREDVT_LOCAL:
+	case MONO_DEBUG_VAR_ADDRESS_MODE_VTADDR:
 	case MONO_DEBUG_VAR_ADDRESS_MODE_DEAD:
 		break;
 	default:
@@ -568,6 +576,7 @@ deserialize_variable (MonoDebugVarInfo *var, guint8 *p, guint8 **endbuf)
 		var->offset = decode_value (p, &p);
 		break;
 	case MONO_DEBUG_VAR_ADDRESS_MODE_GSHAREDVT_LOCAL:
+	case MONO_DEBUG_VAR_ADDRESS_MODE_VTADDR:
 	case MONO_DEBUG_VAR_ADDRESS_MODE_DEAD:
 		break;
 	default:
@@ -693,6 +702,9 @@ print_var_info (MonoDebugVarInfo *info, int idx, const char *name, const char *t
 	case MONO_DEBUG_VAR_ADDRESS_MODE_GSHAREDVT_LOCAL:
 		g_print ("%s %s (%d) gsharedvt local.\n", type, name, idx);
 		break;
+	case MONO_DEBUG_VAR_ADDRESS_MODE_VTADDR:
+		g_print ("%s %s (%d) vt address: base register %s + %d\n", type, name, idx, mono_arch_regname (info->index & (~MONO_DEBUG_VAR_ADDRESS_MODE_FLAGS)), info->offset);
+		break;
 	case MONO_DEBUG_VAR_ADDRESS_MODE_TWO_REGISTERS:
 	default:
 		g_assert_not_reached ();
@@ -721,14 +733,14 @@ mono_debug_print_vars (gpointer ip, gboolean only_arguments)
 	if (!ji)
 		return;
 
-	jit = mono_debug_find_method (mono_jit_info_get_method (ji), domain);
+	jit = mono_debug_find_method (jinfo_get_method (ji), domain);
 	if (!jit)
 		return;
 
 	if (only_arguments) {
 		char **names;
 		names = g_new (char *, jit->num_params);
-		mono_method_get_param_names (mono_jit_info_get_method (ji), (const char **) names);
+		mono_method_get_param_names (jinfo_get_method (ji), (const char **) names);
 		if (jit->this_var)
 			print_var_info (jit->this_var, 0, "this", "Arg");
 		for (i = 0; i < jit->num_params; ++i) {

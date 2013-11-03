@@ -24,6 +24,7 @@
 #include <mono/metadata/attrdefs.h>
 #include <mono/utils/strenc.h>
 #include <mono/utils/mono-error-internals.h>
+#include <mono/utils/bsearch.h>
 #include <string.h>
 //#include <signal.h>
 #include <ctype.h>
@@ -1069,7 +1070,7 @@ search_sorted_table (VerifyContext *ctx, int table, int column, guint32 coded_to
 	base = tinfo->base;
 
 	VERIFIER_DEBUG ( printf ("looking token %x table %d col %d rsize %d roff %d\n", coded_token, table, column, locator.col_size, locator.col_offset) );
-	res = bsearch (&locator, base, tinfo->rows, tinfo->row_size, token_locator);
+	res = mono_binary_search (&locator, base, tinfo->rows, tinfo->row_size, token_locator);
 	if (!res)
 		return -1;
 
@@ -2659,8 +2660,8 @@ verify_method_table (VerifyContext *ctx)
 				ADD_ERROR (ctx, g_strdup_printf ("Invalid method row %d is a global method but not Static", i));
 			if (flags & (METHOD_ATTRIBUTE_ABSTRACT | METHOD_ATTRIBUTE_VIRTUAL))
 				ADD_ERROR (ctx, g_strdup_printf ("Invalid method row %d is a global method but is Abstract or Virtual", i));
-			if (!(access == METHOD_ATTRIBUTE_COMPILER_CONTROLLED || access == METHOD_ATTRIBUTE_PUBLIC || access == METHOD_ATTRIBUTE_PRIVATE))
-				ADD_ERROR (ctx, g_strdup_printf ("Invalid method row %d is a global method but not CompilerControled, Public or Private", i));
+			if (access == METHOD_ATTRIBUTE_FAMILY || access == METHOD_ATTRIBUTE_FAM_AND_ASSEM || access == METHOD_ATTRIBUTE_FAM_OR_ASSEM)
+				ADD_ERROR (ctx, g_strdup_printf ("Invalid method row %d is a global method but not CompilerControled, Public, Private or Assembly", i));
 		}
 
 		//TODO check valuetype for synchronized
@@ -3192,7 +3193,7 @@ verify_event_table_full (VerifyContext *ctx)
 		if (!found_add)
 			ADD_ERROR (ctx, g_strdup_printf ("Invalid Event row %d has no AddOn associated method", i));
 		if (!found_remove)
-			ADD_ERROR (ctx, g_strdup_printf ("Invalid Event row %d has no AddOn associated method", i));
+			ADD_ERROR (ctx, g_strdup_printf ("Invalid Event row %d has no RemoveOn associated method", i));
 	}
 }
 
@@ -3625,6 +3626,7 @@ verify_generic_param_constraint_table (VerifyContext *ctx)
 	MonoTableInfo *table = &ctx->image->tables [MONO_TABLE_GENERICPARAMCONSTRAINT];
 	guint32 data [MONO_GENPARCONSTRAINT_SIZE];
 	int i;
+	guint32 last_owner = 0, last_constraint = 0;
 
 	for (i = 0; i < table->rows; ++i) {
 		mono_metadata_decode_row (table, i, data, MONO_GENPARCONSTRAINT_SIZE);
@@ -3637,6 +3639,17 @@ verify_generic_param_constraint_table (VerifyContext *ctx)
 
 		if (!get_coded_index_token (TYPEDEF_OR_REF_DESC, data [MONO_GENPARCONSTRAINT_CONSTRAINT]))
 			ADD_ERROR (ctx, g_strdup_printf ("GenericParamConstraint table row %d has null Constraint token", i));
+
+		if (last_owner > data [MONO_GENPARCONSTRAINT_GENERICPAR])
+			ADD_ERROR (ctx, g_strdup_printf ("GenericParamConstraint table row %d is not properly sorted. Previous value of the owner column is 0x%08x current value is 0x%08x", i, last_owner, data [MONO_GENPARCONSTRAINT_GENERICPAR]));
+
+		if (last_owner == data [MONO_GENPARCONSTRAINT_GENERICPAR]) {
+			if (last_constraint == data [MONO_GENPARCONSTRAINT_CONSTRAINT])
+				ADD_ERROR (ctx, g_strdup_printf ("GenericParamConstraint table row %d has duplicate constraint 0x%08x", i, last_constraint));
+		} else {
+			last_owner = data [MONO_GENPARCONSTRAINT_GENERICPAR];
+		}
+		last_constraint = data [MONO_GENPARCONSTRAINT_CONSTRAINT];
 	}
 }
 

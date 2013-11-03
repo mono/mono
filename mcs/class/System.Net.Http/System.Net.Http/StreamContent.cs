@@ -27,6 +27,7 @@
 //
 
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace System.Net.Http
@@ -35,6 +36,7 @@ namespace System.Net.Http
 	{
 		readonly Stream content;
 		readonly int bufferSize;
+		readonly CancellationToken cancellationToken;
 
 		public StreamContent (Stream content)
 			: this (content, 16 * 1024)
@@ -53,6 +55,18 @@ namespace System.Net.Http
 			this.bufferSize = bufferSize;
 		}
 
+		//
+		// Workarounds for poor .NET API
+		// Instead of having SerializeToStreamAsync with CancellationToken as public API. Only LoadIntoBufferAsync
+		// called internally from the send worker can be cancelled and user cannot see/do it
+		//
+		internal StreamContent (Stream content, CancellationToken cancellationToken)
+			: this (content)
+		{
+			// We don't own the token so don't worry about disposing it
+			this.cancellationToken = cancellationToken;
+		}
+
 		protected override Task<Stream> CreateContentReadStreamAsync ()
 		{
 			return Task.FromResult (content);
@@ -69,7 +83,7 @@ namespace System.Net.Http
 
 		protected internal override Task SerializeToStreamAsync (Stream stream, TransportContext context)
 		{
-			return content.CopyToAsync (stream, bufferSize);
+			return content.CopyToAsync (stream, bufferSize, cancellationToken);
 		}
 
 		protected internal override bool TryComputeLength (out long length)

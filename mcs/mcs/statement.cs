@@ -28,7 +28,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Resolves the statement, true means that all sub-statements
 		///   did resolve ok.
-		//  </summary>
+		///  </summary>
 		public virtual bool Resolve (BlockContext bc)
 		{
 			return true;
@@ -51,6 +51,10 @@ namespace Mono.CSharp {
 
 			bool unreachable = false;
 			if (warn && !ec.UnreachableReported) {
+
+				// TODO: This is wrong, need to form of flow-analysis branch specific flag
+				// or multiple unrelared unreachable code won't be reported
+				// if (false) { // ok } if (false) { // not reported }
 				ec.UnreachableReported = true;
 				unreachable = true;
 				ec.Report.Warning (162, 2, loc, "Unreachable code detected");
@@ -187,7 +191,6 @@ namespace Mono.CSharp {
 				//
 				if (expr is Constant) {
 					bool take = !((Constant) expr).IsDefaultValue;
-
 					if (take) {
 						if (!TrueStatement.Resolve (ec))
 							return false;
@@ -412,8 +415,9 @@ namespace Mono.CSharp {
 						return false;
 					empty = true;
 					return true;
-				} else
-					infinite = true;
+				}
+
+				infinite = true;
 			}
 
 			ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
@@ -548,8 +552,9 @@ namespace Mono.CSharp {
 							return false;
 						empty = true;
 						return true;
-					} else
-						infinite = true;
+					}
+
+					infinite = true;
 				}
 			} else
 				infinite = true;
@@ -702,7 +707,7 @@ namespace Mono.CSharp {
 
 	public class StatementErrorExpression : Statement
 	{
-		readonly Expression expr;
+		Expression expr;
 
 		public StatementErrorExpression (Expression expr)
 		{
@@ -729,7 +734,9 @@ namespace Mono.CSharp {
 
 		protected override void CloneTo (CloneContext clonectx, Statement target)
 		{
-			throw new NotImplementedException ();
+			var t = (StatementErrorExpression) target;
+
+			t.expr = expr.Clone (clonectx);
 		}
 		
 		public override object Accept (StructuralVisitor visitor)
@@ -747,7 +754,7 @@ namespace Mono.CSharp {
 
 		public StatementList (Statement first, Statement second)
 		{
-			statements = new List<Statement> () { first, second };
+			statements = new List<Statement> { first, second };
 		}
 
 		#region Properties
@@ -895,7 +902,7 @@ namespace Mono.CSharp {
 						var async_type = storey.ReturnType;
 
 						if (async_type == null && async_block.ReturnTypeInference != null) {
-							async_block.ReturnTypeInference.AddCommonTypeBound (expr.Type);
+							async_block.ReturnTypeInference.AddCommonTypeBoundAsync (expr.Type);
 							return true;
 						}
 
@@ -1621,7 +1628,7 @@ namespace Mono.CSharp {
 			if (eval_global) {
 				CreateEvaluatorVariable (bc, li);
 			} else if (type != InternalType.ErrorType) {
-				li.PrepareForFlowAnalysis (bc);
+				li.PrepareAssignmentAnalysis (bc);
 			}
 
 			if (initializer != null) {
@@ -1635,7 +1642,7 @@ namespace Mono.CSharp {
 					if (eval_global) {
 						CreateEvaluatorVariable (bc, d.Variable);
 					} else if (type != InternalType.ErrorType) {
-						d.Variable.PrepareForFlowAnalysis (bc);
+						d.Variable.PrepareAssignmentAnalysis (bc);
 					}
 
 					if (d.Initializer != null && resolveDeclaratorInitializers) {
@@ -2013,16 +2020,15 @@ namespace Mono.CSharp {
 			return !ec.DoFlowAnalysis || ec.CurrentBranching.IsAssigned (VariableInfo);
 		}
 
-		public void PrepareForFlowAnalysis (BlockContext bc)
+		public void PrepareAssignmentAnalysis (BlockContext bc)
 		{
 			//
-			// No need for definitely assigned check for these guys
+			// No need to run assignment analysis for these guys
 			//
 			if ((flags & (Flags.Constant | Flags.ReadonlyMask | Flags.CompilerGenerated)) != 0)
 				return;
 
-			VariableInfo = new VariableInfo (this, bc.FlowOffset);
-			bc.FlowOffset += VariableInfo.Length;
+			VariableInfo = VariableInfo.Create (bc, this);
 		}
 
 		//
@@ -2579,7 +2585,8 @@ namespace Mono.CSharp {
 					}
 
 					if (b.Explicit == b.Explicit.ParametersBlock && b.Explicit.ParametersBlock.StateMachine != null) {
-						storey.HoistedThis = b.Explicit.ParametersBlock.StateMachine.HoistedThis;
+						if (storey.HoistedThis == null)
+							storey.HoistedThis = b.Explicit.ParametersBlock.StateMachine.HoistedThis;
 
 						if (storey.HoistedThis != null)
 							break;
@@ -2604,11 +2611,33 @@ namespace Mono.CSharp {
 							continue;
 
 						if (storey.HoistedThis == null) {
-							storey.AddCapturedThisField (ec);
+							storey.AddCapturedThisField (ec, null);
 						}
 
 						for (ExplicitBlock b = ref_block; b.AnonymousMethodStorey != storey; b = b.Parent.Explicit) {
+							ParametersBlock pb;
+
 							if (b.AnonymousMethodStorey != null) {
+								//
+								// Don't add storey cross reference for `this' when the storey ends up not
+								// beeing attached to any parent
+								//
+								if (b.ParametersBlock.StateMachine == null) {
+									AnonymousMethodStorey s = null;
+									for (Block ab = b.AnonymousMethodStorey.OriginalSourceBlock.Parent; ab != null; ab = ab.Parent) {
+										s = ab.Explicit.AnonymousMethodStorey;
+										if (s != null)
+											break;
+									}
+
+									// Needs to be in sync with AnonymousMethodBody::DoCreateMethodHost
+									if (s == null) {
+										var parent = storey == null || storey.Kind == MemberKind.Struct ? null : storey;
+										b.AnonymousMethodStorey.AddCapturedThisField (ec, parent);
+										break;
+									}
+								}
+
 								b.AnonymousMethodStorey.AddParentStoreyReference (ec, storey);
 								b.AnonymousMethodStorey.HoistedThis = storey.HoistedThis;
 
@@ -2621,14 +2650,14 @@ namespace Mono.CSharp {
 								b = b.ParametersBlock;
 							}
 
-							var pb = b as ParametersBlock;
+							pb = b as ParametersBlock;
 							if (pb != null && pb.StateMachine != null) {
 								if (pb.StateMachine == storey)
 									break;
 
 								//
-								// If we are state machine with no parent we can hook into we don't
- 								// add reference but capture this directly
+								// If we are state machine with no parent. We can hook into parent without additional
+ 								// reference and capture this directly
 								//
 								ExplicitBlock parent_storey_block = pb;
 								while (parent_storey_block.Parent != null) {
@@ -2639,7 +2668,7 @@ namespace Mono.CSharp {
 								}
 
 								if (parent_storey_block.AnonymousMethodStorey == null) {
-									pb.StateMachine.AddCapturedThisField (ec);
+									pb.StateMachine.AddCapturedThisField (ec, null);
 									b.HasCapturedThis = true;
 									continue;
 								}
@@ -2984,7 +3013,7 @@ namespace Mono.CSharp {
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			if (statements.Count == 1) {
-				Expression expr = ((Statement) statements[0]).CreateExpressionTree (ec);
+				Expression expr = statements[0].CreateExpressionTree (ec);
 				if (scope_initializers != null)
 					expr = new BlockScopeExpression (expr, this);
 
@@ -3064,7 +3093,7 @@ namespace Mono.CSharp {
 				flags |= Flags.IsExpressionTree;
 
 			try {
-				ResolveMeta (rc);
+				PrepareAssignmentAnalysis (rc);
 
 				using (rc.With (ResolveContext.Options.DoFlowAnalysis, true)) {
 					FlowBranchingToplevel top_level = rc.StartFlowBranching (this, parent);
@@ -3075,7 +3104,7 @@ namespace Mono.CSharp {
 					unreachable = top_level.End ();
 				}
 			} catch (Exception e) {
-				if (e is CompletionResult || rc.Report.IsDisabled || e is FatalException)
+				if (e is CompletionResult || rc.Report.IsDisabled || e is FatalException || rc.Report.Printer is NullReportPrinter)
 					throw;
 
 				if (rc.CurrentBlock != null) {
@@ -3120,19 +3149,15 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		void ResolveMeta (BlockContext ec)
+		void PrepareAssignmentAnalysis (BlockContext bc)
 		{
-			int orig_count = parameters.Count;
+			for (int i = 0; i < parameters.Count; ++i) {
+				var par = parameters.FixedParameters[i];
 
-			for (int i = 0; i < orig_count; ++i) {
-				Parameter.Modifier mod = parameters.FixedParameters[i].ModFlags;
-
-				if ((mod & Parameter.Modifier.OUT) == 0)
+				if ((par.ModFlags & Parameter.Modifier.OUT) == 0)
 					continue;
 
-				VariableInfo vi = new VariableInfo (parameters, i, ec.FlowOffset);
-				parameter_info[i].VariableInfo = vi;
-				ec.FlowOffset += vi.Length;
+				parameter_info [i].VariableInfo = VariableInfo.Create (bc, (Parameter) par);
 			}
 		}
 
@@ -3423,8 +3448,23 @@ namespace Mono.CSharp {
 			int count = parameters.Count;
 			Arguments args = new Arguments (count);
 			for (int i = 0; i < count; ++i) {
-				var arg_expr = GetParameterReference (i, parameter_info[i].Location);
-				args.Add (new Argument (arg_expr));
+				var pi = parameter_info[i];
+				var arg_expr = GetParameterReference (i, pi.Location);
+
+				Argument.AType atype_modifier;
+				switch (pi.Parameter.ParameterModifier & Parameter.Modifier.RefOutMask) {
+				case Parameter.Modifier.REF:
+					atype_modifier = Argument.AType.Ref;
+					break;
+				case Parameter.Modifier.OUT:
+					atype_modifier = Argument.AType.Out;
+					break;
+				default:
+					atype_modifier = 0;
+					break;
+				}
+
+				args.Add (new Argument (arg_expr, atype_modifier));
 			}
 
 			return args;
@@ -3531,7 +3571,7 @@ namespace Mono.CSharp {
 
 			this_variable = new LocalVariable (this, "this", LocalVariable.Flags.IsThis | LocalVariable.Flags.Used, StartLocation);
 			this_variable.Type = bc.CurrentType;
-			this_variable.PrepareForFlowAnalysis (bc);
+			this_variable.PrepareAssignmentAnalysis (bc);
 		}
 
 		public bool IsThisAssigned (BlockContext ec)
@@ -3671,7 +3711,7 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			converted = c.ImplicitConversionRequired (rc, rc.Switch.SwitchType, loc);
+			converted = c.ImplicitConversionRequired (rc, rc.Switch.SwitchType);
 			return converted != null;
 		}
 
@@ -4168,9 +4208,13 @@ namespace Mono.CSharp {
 			var ok = block.Resolve (ec);
 
  			if (case_default == null)
-				ec.CurrentBranching.CurrentUsageVector.ResetBarrier ();
+				ec.CurrentBranching.CreateSibling (null, FlowBranching.SiblingType.SwitchSection);
 
-			ec.EndFlowBranching ();
+			if (ec.IsUnreachable)
+				ec.KillFlowBranching ();
+			else
+				ec.EndFlowBranching ();
+
 			ec.Switch = old_switch;
 
 			//
@@ -4321,7 +4365,9 @@ namespace Mono.CSharp {
 
 				if (!unreachable_reported) {
 					unreachable_reported = true;
-					bc.Report.Warning (162, 2, s.loc, "Unreachable code detected");
+					if (!bc.IsUnreachable) {
+						bc.Report.Warning (162, 2, s.loc, "Unreachable code detected");
+					}
 				}
 
 				block.Statements[i] = new EmptyStatement (s.loc);
@@ -5080,7 +5126,7 @@ namespace Mono.CSharp {
 		{
 			LocalVariable pinned_string;
 
-			public StringEmitter (Expression expr, LocalVariable li, Location loc)
+			public StringEmitter (Expression expr, LocalVariable li)
 				: base (expr, li)
 			{
 			}
@@ -5203,7 +5249,7 @@ namespace Mono.CSharp {
 				// Case 2: string
 				//
 				if (initializer.Type.BuiltinType == BuiltinTypeSpec.Type.String) {
-					return new StringEmitter (initializer, li, loc).Resolve (bc);
+					return new StringEmitter (initializer, li).Resolve (bc);
 				}
 
 				// Case 3: fixed buffer
@@ -5411,7 +5457,7 @@ namespace Mono.CSharp {
 						ec.Report.Error (155, loc, "The type caught or thrown must be derived from System.Exception");
 					} else if (li != null) {
 						li.Type = type;
-						li.PrepareForFlowAnalysis (ec);
+						li.PrepareAssignmentAnalysis (ec);
 
 						// source variable is at the top of the stack
 						Expression source = new EmptyExpression (li.Type);
@@ -5495,7 +5541,7 @@ namespace Mono.CSharp {
 		{
 			TryFinally target = (TryFinally) t;
 
-			target.stmt = (Statement) stmt.Clone (clonectx);
+			target.stmt = stmt.Clone (clonectx);
 			if (fini != null)
 				target.fini = clonectx.LookupBlock (fini);
 		}
@@ -6446,13 +6492,19 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			variable.CreateBuilder (ec);
-
 			Label old_begin = ec.LoopBegin, old_end = ec.LoopEnd;
 			ec.LoopBegin = ec.DefineLabel ();
 			ec.LoopEnd = ec.DefineLabel ();
 
+			if (!(statement is Block))
+				ec.BeginCompilerScope ();
+
+			variable.CreateBuilder (ec);
+
 			statement.Emit (ec);
+
+			if (!(statement is Block))
+				ec.EndScope ();
 
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;

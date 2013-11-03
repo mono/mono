@@ -39,6 +39,7 @@ System.Collections/QueueTest.cs
 System.Collections/ReadOnlyCollectionBaseTest.cs
 System.Collections/SortedListTest.cs
 System.Collections/StackTest.cs
+System.Collections/StructuralComparisonsTest.cs
 System.Collections.Generic/ComparerTest.cs
 System.Collections.Generic/DictionaryTest.cs
 System.Collections.Generic/EqualityComparerTest.cs
@@ -132,6 +133,7 @@ System.Reflection/ConstructorInfoTest.cs
 System.Reflection/CustomAttributeDataTest.cs
 System.Reflection/EventInfoTest.cs
 System.Reflection/FieldInfoTest.cs
+System.Reflection/IntrospectionExtensionsTest.cs
 System.Reflection/MethodBaseTest.cs
 System.Reflection/MethodInfoTest.cs
 System.Reflection/MonoGenericClassTest.cs

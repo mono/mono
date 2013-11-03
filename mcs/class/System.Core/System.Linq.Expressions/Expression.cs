@@ -34,7 +34,9 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 
 namespace System.Linq.Expressions {
 
@@ -50,11 +52,11 @@ namespace System.Linq.Expressions {
 		internal const BindingFlags AllStatic = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy;
 		internal const BindingFlags All = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
 
-		public ExpressionType NodeType {
+		public virtual ExpressionType NodeType {
 			get { return node_type; }
 		}
 
-		public Type Type {
+		public virtual Type Type {
 			get { return type; }
 		}
 
@@ -270,6 +272,12 @@ namespace System.Linq.Expressions {
 
 					if (ltype == rtype && ultype == typeof (bool))
 						return null;
+
+					if (ltype.IsNullable () && ConstantExpression.IsNull (right) && !ConstantExpression.IsNull (left))
+						return null;
+
+					if (rtype.IsNullable () && ConstantExpression.IsNull (left) && !ConstantExpression.IsNull (right))
+						return null;
 				}
 
 				if (oper_name == "op_LeftShift" || oper_name == "op_RightShift") {
@@ -390,12 +398,16 @@ namespace System.Linq.Expressions {
 				if (!left.Type.IsNullable () && !right.Type.IsNullable ()) {
 					is_lifted = false;
 					liftToNull = false;
-					type = typeof (bool);
+					type = typeof(bool);
 				} else if (left.Type.IsNullable () && right.Type.IsNullable ()) {
 					is_lifted = true;
-					type = liftToNull ? typeof (bool?) : typeof (bool);
-				} else
+					type = liftToNull ? typeof(bool?) : typeof(bool);
+				} else if (ConstantExpression.IsNull (left) || ConstantExpression.IsNull (right)) {
+					is_lifted = true;
+					type = typeof (bool);
+				} else {			
 					throw new InvalidOperationException ();
+				}
 			} else {
 				var parameters = method.GetParameters ();
 

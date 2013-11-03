@@ -4,6 +4,7 @@ outfile=$1
 incfile=$2
 excfile=$3
 extfile=$4
+extexcfile=$5
 
 process_includes_1() {
     sed -e '/^[ \t]*$/d' -e '/^[ \t]*#/d' $1 > $2
@@ -39,16 +40,24 @@ fi
 sort -u $outfile.inc > $outfile.inc_s
 rm -f $outfile.inc
 
-if test -z "$excfile"; then
-    mv $outfile.inc_s $outfile
-else
+
+if test -n "$excfile"; then
     process_includes $excfile $outfile.exc
+fi
 
-    sort -u $outfile.exc > $outfile.exc_s
-    rm -f $outfile.exc
+if test -n "$extexcfile"; then
+    process_includes $extexcfile $outfile.ext_exc
+	cat $outfile.ext_exc >> $outfile.exc
+	rm -f $outfile.ext_exc
+fi
 
+if test -f $outfile.exc; then
+	sort -u $outfile.exc > $outfile.exc_s
+	rm -f $outfile.exc
     sort -m $outfile.inc_s $outfile.exc_s | uniq -u > $outfile
     rm -f $outfile.inc_s $outfile.exc_s
+else
+	mv $outfile.inc_s $outfile
 fi
 
 
