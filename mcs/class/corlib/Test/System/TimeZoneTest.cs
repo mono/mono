@@ -122,6 +122,32 @@ public class TimeZoneTest {
 		Assert.AreEqual(0L, t1.GetUtcOffset (d5).Ticks, "D14");
 	}
 
+	private void NZST(TimeZone t1) {
+		Assert.AreEqual("NZST", t1.StandardName, "E01");
+		Assert.AreEqual("NZDT", t1.DaylightName, "E02");
+
+		DaylightTime d1 = t1.GetDaylightChanges (2013);
+		Assert.AreEqual("09/29/2013 02:00:00", d1.Start.ToString ("G"), "E03");
+		Assert.AreEqual("04/07/2013 03:00:00", d1.End.ToString ("G"), "E04");
+		Assert.AreEqual(36000000000L, d1.Delta.Ticks, "E05");
+
+		DaylightTime d2 = t1.GetDaylightChanges (2001);
+		Assert.AreEqual("10/07/2001 02:00:00", d2.Start.ToString ("G"), "E06");
+		Assert.AreEqual("03/18/2001 03:00:00", d2.End.ToString ("G"), "E07");
+		Assert.AreEqual(36000000000L, d2.Delta.Ticks, "E08");
+
+		DateTime d3 = new DateTime(2013,02,15);
+		Assert.AreEqual(true, t1.IsDaylightSavingTime (d3), "E09");
+		DateTime d4 = new DateTime(2013,04,30);
+		Assert.AreEqual(false, t1.IsDaylightSavingTime (d4), "E10");
+		DateTime d5 = new DateTime(2013,11,03);
+		Assert.AreEqual(true, t1.IsDaylightSavingTime (d5), "E11");
+
+		Assert.AreEqual(36000000000L /*hour*/ * 13L, t1.GetUtcOffset (d3).Ticks, "E12");
+		Assert.AreEqual(36000000000L /*hour*/ * 12L, t1.GetUtcOffset (d4).Ticks, "E13");
+		Assert.AreEqual(36000000000L /*hour*/ * 13L, t1.GetUtcOffset (d5).Ticks, "E14");
+	}
+
 	[Test]
 	[Culture ("")]
 	public void TestCtors ()
@@ -140,6 +166,9 @@ public class TimeZoneTest {
 				break;
 			case "GMT":
 				GMT (t1);
+				break;
+			case "NZST":
+				NZST (t1);
 				break;
 			default:
 				NUnit.Framework.Assert.Ignore ("Your time zone (" + t1.StandardName + ") isn't defined in the test case");
