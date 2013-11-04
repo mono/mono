@@ -20,7 +20,7 @@
 // THE SOFTWARE.
 // 
 
-#if !MONOTOUCH
+#if !FULL_AOT_RUNTIME
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.Emit.FlowControl))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.Emit.OpCode))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.Emit.OpCodes))]
