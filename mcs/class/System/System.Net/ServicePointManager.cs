@@ -326,7 +326,8 @@ namespace System.Net
 			if (address == null)
 				throw new ArgumentNullException ("address");
 
-			RecycleServicePoints ();
+			if ((servicePoints.Count % 4) == 0)
+				RecycleServicePoints ();
 
 			var origAddress = new Uri (address.Scheme + "://" + address.Authority);
 			
@@ -346,8 +347,8 @@ namespace System.Net
 			address = new Uri (address.Scheme + "://" + address.Authority);
 			
 			ServicePoint sp = null;
+			SPKey key = new SPKey (origAddress, usesProxy ? address : null, useConnect);
 			lock (servicePoints) {
-				SPKey key = new SPKey (origAddress, usesProxy ? address : null, useConnect);
 				sp = servicePoints [key] as ServicePoint;
 				if (sp != null)
 					return sp;
