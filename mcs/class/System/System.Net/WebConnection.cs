@@ -613,16 +613,16 @@ namespace System.Net
 			return (statusCode >= 200 && statusCode != 204 && statusCode != 304);
 		}
 
-		internal void GetCertificates () 
+		internal void GetCertificates (Stream stream) 
 		{
 			// here the SSL negotiation have been done
 #if SECURITY_DEP && MONOTOUCH
-			HttpsClientStream s = (nstream as HttpsClientStream);
+			HttpsClientStream s = (stream as HttpsClientStream);
 			X509Certificate client = s.SelectedClientCertificate;
 			X509Certificate server = s.ServerCertificate;
 #else
-			X509Certificate client = (X509Certificate) piClient.GetValue (nstream, null);
-			X509Certificate server = (X509Certificate) piServer.GetValue (nstream, null);
+			X509Certificate client = (X509Certificate) piClient.GetValue (stream, null);
+			X509Certificate server = (X509Certificate) piServer.GetValue (stream, null);
 #endif
 			sPoint.SetCertificates (client, server);
 			certsAvailable = (server != null);
@@ -1144,16 +1144,16 @@ namespace System.Net
 			lock (this) {
 				if (Data.request != request)
 					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
-				if (nstream == null)
-					return false;
 				s = nstream;
+				if (s == null)
+					return false;
 			}
 
 			try {
 				s.Write (buffer, offset, size);
 				// here SSL handshake should have been done
 				if (ssl && !certsAvailable)
-					GetCertificates ();
+					GetCertificates (s);
 			} catch (Exception e) {
 				err_msg = e.Message;
 				WebExceptionStatus wes = WebExceptionStatus.SendFailure;
