@@ -34,7 +34,9 @@
     <Reference Include="System" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Mono.Cecil, Version=0.9.4.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756" />
+    <Reference Include="Mono.Cecil, Version=0.9.4.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib" />
     <Reference Include="monodoc, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
       <SpecificVersion>False</SpecificVersion>
@@ -69,19 +71,19 @@
     <Compile Include="Mono.Documentation\index.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\monodoc\Resources\mdoc-html-format.xsl">
+    <EmbeddedResource Include="..\..\class\monodoc\Resources\mdoc-html-format.xsl">
       <Link>Resources\mdoc-html-format.xsl</Link>
       <LogicalName>mdoc-html-format.xsl</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\monodoc\Resources\mdoc-html-utils.xsl">
+    <EmbeddedResource Include="..\..\class\monodoc\Resources\mdoc-html-utils.xsl">
       <Link>Resources\mdoc-html-utils.xsl</Link>
       <LogicalName>mdoc-html-utils.xsl</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\monodoc\Resources\mdoc-sections-css.xsl">
+    <EmbeddedResource Include="..\..\class\monodoc\Resources\mdoc-sections-css.xsl">
       <Link>Resources\mdoc-sections-css.xsl</Link>
       <LogicalName>mdoc-sections-css.xsl</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\monodoc\Resources\mono-ecma-css.xsl">
+    <EmbeddedResource Include="..\..\class\monodoc\Resources\mono-ecma-css.xsl">
       <Link>Resources\mono-ecma-css.xsl</Link>
       <LogicalName>mono-ecma-css.xsl</LogicalName>
     </EmbeddedResource>

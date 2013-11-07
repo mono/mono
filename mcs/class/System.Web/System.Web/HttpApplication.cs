@@ -151,7 +151,8 @@ namespace System.Web
 
 		EventHandlerList events;
 		EventHandlerList nonApplicationEvents = new EventHandlerList ();
-		
+
+		GlobalizationSection gs;
 		// Culture and IPrincipal
 		CultureInfo app_culture;
 		CultureInfo appui_culture;
@@ -222,6 +223,13 @@ namespace System.Web
 					HttpModuleCollection coll = modules.LoadModules (this);
 					Interlocked.CompareExchange (ref modcoll, coll, null);
 					HttpContext.Current = saved;
+					
+					gs = (GlobalizationSection) WebConfigurationManager.GetSection ("system.web/globalization");
+					app_culture = gs.GetCulture ();
+					autoCulture = gs.IsAutoCulture;
+					appui_culture = gs.GetUICulture ();
+					autoUICulture = gs.IsAutoUICulture;
+
 
 					if (full_init) {
 						HttpApplicationFactory.AttachEvents (this);
@@ -235,6 +243,10 @@ namespace System.Web
 						context = null;
 				}
 			}
+		}
+
+		internal GlobalizationSection GlobalizationSection {
+			get { return gs; }
 		}
 
 		internal bool InApplicationStart {
@@ -1486,12 +1498,6 @@ namespace System.Web
 
 		void PreStart ()
 		{
-			GlobalizationSection cfg;
-			cfg = (GlobalizationSection) WebConfigurationManager.GetSection ("system.web/globalization");
-			app_culture = cfg.GetCulture ();
-			autoCulture = cfg.IsAutoCulture;
-			appui_culture = cfg.GetUICulture ();
-			autoUICulture = cfg.IsAutoUICulture;
 #if !TARGET_J2EE
 			context.StartTimeoutTimer ();
 #endif

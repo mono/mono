@@ -304,7 +304,9 @@ namespace System.Web
 		public Encoding HeaderEncoding {
 			get {
 				if (headerEncoding == null) {
-					GlobalizationSection gs = WebConfigurationManager.SafeGetSection ("system.web/globalization", typeof (GlobalizationSection)) as GlobalizationSection;
+					GlobalizationSection gs = (context != null && context.ApplicationInstance != null)
+						? context.ApplicationInstance.GlobalizationSection
+						: WebConfigurationManager.SafeGetSection ("system.web/globalization", typeof(GlobalizationSection)) as GlobalizationSection;
 
 					if (gs == null)
 						headerEncoding = Encoding.UTF8;
