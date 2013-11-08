@@ -159,7 +159,11 @@ namespace System.Timers
 
 		protected override void Dispose (bool disposing)
 		{
-			Close ();
+			// If _lock is null, it means we're finalizing,
+			// in which case everything has been nulled anyway.
+			if (_lock != null)
+				Close ();
+
 			base.Dispose (disposing);
 		}
 
