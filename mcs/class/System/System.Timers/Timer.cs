@@ -159,9 +159,11 @@ namespace System.Timers
 
 		protected override void Dispose (bool disposing)
 		{
-			// If _lock is null, it means we're finalizing,
-			// in which case everything has been nulled anyway.
-			if (_lock != null)
+			// If we're disposing explicitly, clear all
+			// fields. If not, all fields will have been
+			// nulled by the GC during finalization, so
+			// trying to lock on _lock will blow up.
+			if (disposing)
 				Close ();
 
 			base.Dispose (disposing);
