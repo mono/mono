@@ -44,7 +44,7 @@ namespace System.ComponentModel {
 
 		private EventHandlerList event_handlers;
 		private ISite mySite;
-		private object disposedEvent = new object ();
+		static readonly object disposedEvent = new object ();
 
 		public Component ()
 		{
