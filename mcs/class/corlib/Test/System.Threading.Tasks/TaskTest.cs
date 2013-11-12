@@ -1150,6 +1150,16 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		public void WhenAll_Empty ()
+		{
+			var tasks = new Task[0];
+
+			Task t = Task.WhenAll(tasks);
+
+			Assert.IsTrue(t.Wait(1000), "#1");
+		}
+
+		[Test]
 		public void WhenAll_WithNull ()
 		{
 			var tasks = new[] {
@@ -1272,6 +1282,18 @@ namespace MonoTests.System.Threading.Tasks
 			t2.Start ();
 
 			Assert.IsTrue (t.Wait (1000), "#2");
+		}
+
+		[Test]
+		public void WhenAllResult_Empty ()
+		{
+			var tasks = new Task<int>[0];
+
+			Task<int[]> t = Task.WhenAll(tasks);
+
+			Assert.IsTrue(t.Wait(1000), "#1");
+			Assert.IsNotNull(t.Result, "#2");
+			Assert.AreEqual(t.Result.Length, 0, "#3");
 		}
 
 		[Test]

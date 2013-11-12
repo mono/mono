@@ -1082,6 +1082,9 @@ namespace System.Threading.Tasks
 
 		internal static Task<TResult[]> WhenAllCore<TResult> (IList<Task<TResult>> tasks)
 		{
+			if (tasks.Count == 0)
+				return FromResult(new TResult[0]);
+
 			foreach (var t in tasks) {
 				if (t == null)
 					throw new ArgumentException ("tasks", "the tasks argument contains a null element");
