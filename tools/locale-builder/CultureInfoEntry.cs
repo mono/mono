@@ -65,6 +65,12 @@ namespace Mono.Tools.LocaleBuilder
 
 		public bool HasMissingLocale { get; set; }
 
+		public bool IsNeutral {
+			get {
+				return Territory == null;
+			}
+		}
+
 		public string OriginalName { get; set; }
 
 		public CultureInfoEntry Parent { get; set; }
