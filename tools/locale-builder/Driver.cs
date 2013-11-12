@@ -1075,8 +1075,7 @@ namespace Mono.Tools.LocaleBuilder
 				el = node.SelectSingleNode ("decimal");
 				if (el != null) {
 					ni.NumberDecimalSeparator =
-					ni.PercentDecimalSeparator =
-					ni.CurrencyDecimalSeparator = el.InnerText;
+					ni.PercentDecimalSeparator = el.InnerText;
 				}
 
 				el = node.SelectSingleNode ("plusSign");
