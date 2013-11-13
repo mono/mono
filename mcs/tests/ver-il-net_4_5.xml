@@ -31091,6 +31091,9 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
+      <method name="Void test41()" attrs="134">
+        <size>44</size>
+      </method>
     </type>
   </test>
   <test name="test-155.cs">
