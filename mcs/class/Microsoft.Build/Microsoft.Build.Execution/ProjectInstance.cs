@@ -256,7 +256,8 @@ namespace Microsoft.Build.Execution
 		IEnumerable<ProjectElement> Import (ProjectImportElement import)
 		{
 			string dir = projects.GetEvaluationTimeThisFileDirectory (() => FullPath);
-			string path = Path.IsPathRooted (import.Project) ? import.Project : dir != null ? Path.Combine (dir, import.Project) : Path.GetFullPath (import.Project);
+			string path = ExpandString (import.Project);
+			path = Path.IsPathRooted (path) ? path : dir != null ? Path.Combine (dir, path) : Path.GetFullPath (path);
 			if (projects.OngoingImports.Contains (path))
 				throw new InvalidProjectFileException (import.Location, null, string.Format ("Circular imports was detected: {0} is already on \"importing\" stack", path));
 			projects.OngoingImports.Push (path);
