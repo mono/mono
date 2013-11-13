@@ -92,6 +92,7 @@ Microsoft.Build.Internal/ExpressionTokenizer.cs
 Microsoft.Build.Internal/FilteredEnumerable.cs
 Microsoft.Build.Internal/ProjectTaskItem.cs
 Microsoft.Build.Internal/ReverseEnumerable.cs
+Microsoft.Build.Internal/WindowsCompatibilityExtensions.cs
 Microsoft.Build.Logging/ConfigurableForwardingLogger.cs
 Microsoft.Build.Logging/ForwardingLoggerRecord.cs
 Microsoft.Build.Logging/LoggerDescription.cs
