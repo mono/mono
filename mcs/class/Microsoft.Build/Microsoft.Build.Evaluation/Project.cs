@@ -329,17 +329,18 @@ namespace Microsoft.Build.Evaluation
 		IEnumerable<ProjectElement> Import (ProjectImportElement import)
 		{
 			string dir = ProjectCollection.GetEvaluationTimeThisFileDirectory (() => FullPath);
-			string path = Path.IsPathRooted (import.Project) ? import.Project : dir != null ? Path.Combine (dir, import.Project) : Path.GetFullPath (import.Project);
+			string path = ExpandString (import.Project);
+			path = Path.IsPathRooted (path) ? path : dir != null ? Path.Combine (dir, path) : Path.GetFullPath (path);
 			if (ProjectCollection.OngoingImports.Contains (path)) {
 				switch (load_settings) {
 				case ProjectLoadSettings.RejectCircularImports:
-					throw new InvalidProjectFileException (import.Location, null, string.Format ("Circular imports was detected: {0} is already on \"importing\" stack", path));
+					throw new InvalidProjectFileException (import.Location, null, string.Format ("Circular imports was detected: {0} (resolved as \"{1}\") is already on \"importing\" stack", import.Project, path));
 				}
 				return new ProjectElement [0]; // do not import circular references
 			}
 			ProjectCollection.OngoingImports.Push (path);
 			try {
-				using (var reader = XmlReader.Create (path)) {
+				using (var reader = XmlReader.Create (WindowsCompatibilityExtensions.NormalizeFilePath (path))) {
 					var root = ProjectRootElement.Create (reader, ProjectCollection);
 					raw_imports.Add (new ResolvedImport (import, root, true));
 					return this.EvaluatePropertiesAndImports (root.Children).ToArray ();

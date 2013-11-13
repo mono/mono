@@ -313,6 +313,8 @@ namespace Microsoft.Build.Evaluation
 		[MonoTODO]
 		public bool IsBuildEnabled { get; set; }
 		
+		internal string BuildStartupDirectory { get; set; }
+		
 		Stack<string> ongoing_imports = new Stack<string> ();
 		
 		internal Stack<string> OngoingImports {
@@ -382,12 +384,12 @@ namespace Microsoft.Build.Evaluation
 			// FIXME: add MSBuildProgramFiles32
 			yield return create ("MSBuildProjectDefaultTargets", () => project.DefaultTargets);
 			yield return create ("MSBuildProjectDirectory", () => project.DirectoryPath + Path.DirectorySeparatorChar);
-			// FIXME: add MSBuildProjectDirectoryNoRoot
+			yield return create ("MSBuildProjectDirectoryNoRoot", () => project.DirectoryPath.Substring (Path.GetPathRoot (project.DirectoryPath).Length));
 			yield return create ("MSBuildProjectExtension", () => Path.GetExtension (project.FullPath));
 			yield return create ("MSBuildProjectFile", () => Path.GetFileName (project.FullPath));
 			yield return create ("MSBuildProjectFullPath", () => project.FullPath);
 			yield return create ("MSBuildProjectName", () => Path.GetFileNameWithoutExtension (project.FullPath));
-			// FIXME: add MSBuildStartupDirectory
+			yield return create ("MSBuildStartupDirectory", () => BuildStartupDirectory);
 			yield return create ("MSBuildThisFile", () => Path.GetFileName (GetEvaluationTimeThisFile (projectFullPath)));
 			yield return create ("MSBuildThisFileFullPath", () => GetEvaluationTimeThisFile (projectFullPath));
 			yield return create ("MSBuildThisFileName", () => Path.GetFileNameWithoutExtension (GetEvaluationTimeThisFile (projectFullPath)));
@@ -398,6 +400,8 @@ namespace Microsoft.Build.Evaluation
 				string dir = GetEvaluationTimeThisFileDirectory (projectFullPath) + Path.DirectorySeparatorChar;
 				return dir.Substring (Path.GetPathRoot (dir).Length);
 				});
+			yield return create ("MSBuildToolsPath", () => toolset.ToolsPath);
+			yield return create ("MSBuildToolsVersion", () => toolset.ToolsVersion);
 		}
 		
 		// These are required for reserved property, represents dynamically changing property values.
