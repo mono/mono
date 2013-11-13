@@ -266,6 +266,7 @@ class Example {
             <exception cref="T:System.ArgumentNullException">To be added; from:
           <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
           <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
           <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
           <see cref="M:System.String.get_Chars(System.Int32)" />,
           <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
@@ -277,6 +278,7 @@ class Example {
             <exception cref="T:System.ArgumentOutOfRangeException">To be added; from:
           <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
           <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
           <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
           <see cref="M:System.String.get_Chars(System.Int32)" />,
           <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
@@ -288,6 +290,7 @@ class Example {
             <exception cref="T:System.FormatException">To be added; from:
           <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
           <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
           <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
           <see cref="M:System.String.get_Chars(System.Int32)" />,
           <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
@@ -299,6 +302,7 @@ class Example {
             <exception cref="T:System.IndexOutOfRangeException">To be added; from:
           <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
           <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
           <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
           <see cref="M:System.String.get_Chars(System.Int32)" />,
           <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
@@ -402,6 +406,7 @@ class Example {
             <exception cref="T:System.ArgumentNullException">To be added; from:
           <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
           <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
           <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
           <see cref="M:System.String.get_Chars(System.Int32)" />,
           <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
@@ -413,6 +418,7 @@ class Example {
             <exception cref="T:System.ArgumentOutOfRangeException">To be added; from:
           <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
           <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
           <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
           <see cref="M:System.String.get_Chars(System.Int32)" />,
           <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
@@ -424,6 +430,7 @@ class Example {
             <exception cref="T:System.FormatException">To be added; from:
           <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
           <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
           <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
           <see cref="M:System.String.get_Chars(System.Int32)" />,
           <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
@@ -435,6 +442,7 @@ class Example {
             <exception cref="T:System.IndexOutOfRangeException">To be added; from:
           <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
           <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
           <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
           <see cref="M:System.String.get_Chars(System.Int32)" />,
           <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
@@ -854,6 +862,7 @@ class Example {
             <exception cref="T:System.ArgumentNullException">To be added; from:
           <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
           <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
           <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
           <see cref="M:System.String.get_Chars(System.Int32)" />,
           <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
@@ -865,6 +874,7 @@ class Example {
             <exception cref="T:System.ArgumentOutOfRangeException">To be added; from:
           <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
           <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
           <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
           <see cref="M:System.String.get_Chars(System.Int32)" />,
           <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
@@ -876,6 +886,7 @@ class Example {
             <exception cref="T:System.FormatException">To be added; from:
           <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
           <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
           <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
           <see cref="M:System.String.get_Chars(System.Int32)" />,
           <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
@@ -887,6 +898,7 @@ class Example {
             <exception cref="T:System.IndexOutOfRangeException">To be added; from:
           <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
           <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
           <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
           <see cref="M:System.String.get_Chars(System.Int32)" />,
           <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
@@ -925,6 +937,7 @@ class Example {
             <exception cref="T:System.ArgumentNullException">To be added; from:
           <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
           <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
           <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
           <see cref="M:System.String.get_Chars(System.Int32)" />,
           <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
@@ -936,6 +949,7 @@ class Example {
             <exception cref="T:System.ArgumentOutOfRangeException">To be added; from:
           <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
           <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
           <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
           <see cref="M:System.String.get_Chars(System.Int32)" />,
           <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
@@ -947,6 +961,7 @@ class Example {
             <exception cref="T:System.FormatException">To be added; from:
           <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
           <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
           <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
           <see cref="M:System.String.get_Chars(System.Int32)" />,
           <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
@@ -958,6 +973,7 @@ class Example {
             <exception cref="T:System.IndexOutOfRangeException">To be added; from:
           <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />,
           <see cref="M:System.Delegate.CombineImpl(System.Delegate)" />,
+          <see cref="M:System.Delegate.Remove(System.Delegate,System.Delegate)" />,
           <see cref="M:System.String.FormatHelper(System.Text.StringBuilder,System.IFormatProvider,System.String,System.Object[])" />,
           <see cref="M:System.String.get_Chars(System.Int32)" />,
           <see cref="M:System.String.InternalSetChar(System.Int32,System.Char)" />,
