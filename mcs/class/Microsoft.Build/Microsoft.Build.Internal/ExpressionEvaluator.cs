@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
+using System.IO;
 
 namespace Microsoft.Build.Internal
 {
@@ -448,7 +449,19 @@ namespace Microsoft.Build.Internal
 		
 		public override bool EvaluateAsBoolean (EvaluationContext context)
 		{
-			throw new NotImplementedException ();
+			if (string.Equals (Name.Name, "Exists", StringComparison.OrdinalIgnoreCase)) {
+				if (Arguments.Count != 1)
+					throw new InvalidProjectFileException (Location, "Function 'Exists' expects 1 argument");
+				string val = Arguments.First ().EvaluateAsString (context);
+				return Directory.Exists (val) || File.Exists (val);
+			}
+			if (string.Equals (Name.Name, "HasTrailingSlash", StringComparison.OrdinalIgnoreCase)) {
+				if (Arguments.Count != 1)
+					throw new InvalidProjectFileException (Location, "Function 'HasTrailingSlash' expects 1 argument");
+				string val = Arguments.First ().EvaluateAsString (context);
+				return val.LastOrDefault () == '\\' || val.LastOrDefault () == '/';
+			}
+			throw new InvalidProjectFileException (Location, string.Format ("Unsupported function '{0}'", Name));
 		}
 		
 		public override object EvaluateAsObject (EvaluationContext context)
