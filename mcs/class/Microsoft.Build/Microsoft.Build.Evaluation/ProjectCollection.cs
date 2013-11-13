@@ -253,8 +253,8 @@ namespace Microsoft.Build.Evaluation
 				ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version40), this, null));
 #endif
 #if NET_4_5
-			AddToolset (new Toolset ("4.5",
-				ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version45), this, null));
+			AddToolset (new Toolset ("12.0",
+				ToolLocationHelper.GetMSBuildInstallPath ("12.0"), this, ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version40)));
 #endif
 		}
 		
