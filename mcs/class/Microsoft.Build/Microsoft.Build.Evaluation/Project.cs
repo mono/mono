@@ -329,7 +329,7 @@ namespace Microsoft.Build.Evaluation
 		IEnumerable<ProjectElement> Import (ProjectImportElement import)
 		{
 			string dir = ProjectCollection.GetEvaluationTimeThisFileDirectory (() => FullPath);
-			string path = ExpandString (import.Project);
+			string path = WindowsCompatibilityExtensions.NormalizeFilePath (ExpandString (import.Project));
 			path = Path.IsPathRooted (path) ? path : dir != null ? Path.Combine (dir, path) : Path.GetFullPath (path);
 			if (ProjectCollection.OngoingImports.Contains (path)) {
 				switch (load_settings) {
@@ -340,7 +340,7 @@ namespace Microsoft.Build.Evaluation
 			}
 			ProjectCollection.OngoingImports.Push (path);
 			try {
-				using (var reader = XmlReader.Create (WindowsCompatibilityExtensions.NormalizeFilePath (path))) {
+				using (var reader = XmlReader.Create (path)) {
 					var root = ProjectRootElement.Create (reader, ProjectCollection);
 					raw_imports.Add (new ResolvedImport (import, root, true));
 					return this.EvaluatePropertiesAndImports (root.Children).ToArray ();
