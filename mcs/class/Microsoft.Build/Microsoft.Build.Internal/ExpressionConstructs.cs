@@ -21,6 +21,10 @@ namespace Microsoft.Build.Internal
 			Add (entry);
 		}
 		
+		public int Count {
+			get { return list.Count; }
+		}
+		
 		//public int Line {
 		//	get { return list.Count == 0 ? 0 : list [0].Line; }
 		//}

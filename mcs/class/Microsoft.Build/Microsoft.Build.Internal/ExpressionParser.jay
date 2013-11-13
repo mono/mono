@@ -100,27 +100,37 @@ ExpressionList
 	;
 
 Expression
-	: BinaryExpression
+	: LogicalExpression
 	;
 
-BinaryExpression
-	: PrimaryExpression
-	| PrimaryExpression EQ PrimaryExpression
-	  { $$ = Binary (Operator.EQ, $1, $3); }
-	| PrimaryExpression NE PrimaryExpression
-	  { $$ = Binary (Operator.NE, $1, $3); }
-	| PrimaryExpression GT PrimaryExpression
-	  { $$ = Binary (Operator.GT, $1, $3); }
-	| PrimaryExpression GE PrimaryExpression
-	  { $$ = Binary (Operator.GE, $1, $3); }
-	| PrimaryExpression LT PrimaryExpression
-	  { $$ = Binary (Operator.LT, $1, $3); }
-	| PrimaryExpression LE PrimaryExpression
-	  { $$ = Binary (Operator.LE, $1, $3); }
-	| PrimaryExpression AND PrimaryExpression
+LogicalExpression
+	: ComparisonExpression
+	| LogicalExpression AND LogicalExpression
 	  { $$ = Binary (Operator.And, $1, $3); }
-	| PrimaryExpression OR PrimaryExpression
+	| LogicalExpression OR LogicalExpression
 	  { $$ = Binary (Operator.Or, $1, $3); }
+	;
+
+ComparisonExpression
+	: UnaryExpression
+	| ComparisonExpression EQ ComparisonExpression
+	  { $$ = Binary (Operator.EQ, $1, $3); }
+	| ComparisonExpression NE ComparisonExpression
+	  { $$ = Binary (Operator.NE, $1, $3); }
+	| ComparisonExpression GT ComparisonExpression
+	  { $$ = Binary (Operator.GT, $1, $3); }
+	| ComparisonExpression GE ComparisonExpression
+	  { $$ = Binary (Operator.GE, $1, $3); }
+	| ComparisonExpression LT ComparisonExpression
+	  { $$ = Binary (Operator.LT, $1, $3); }
+	| ComparisonExpression LE ComparisonExpression
+	  { $$ = Binary (Operator.LE, $1, $3); }
+	;
+
+UnaryExpression
+	: PrimaryExpression
+	| NOT UnaryExpression
+	  { $$ = new NotExpression () { Negated = (Expression) $2, Location = (ILocation) $1 }; }
 	;
 
 PrimaryExpression
@@ -138,11 +148,6 @@ BooleanLiteral
 	  { $$ = new BooleanLiteral () { Value = true, Location = (ILocation) $1 }; }
 	| FALSE_LITERAL
 	  { $$ = new BooleanLiteral () { Value = false, Location = (ILocation) $1 }; }
-	;
-
-UnaryExpression
-	: NOT Expression
-	  { $$ = new NotExpression () { Negated = (Expression) $2, Location = (ILocation) $1 }; }
 	;
 
 PropertyAccessExpression
