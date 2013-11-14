@@ -93,6 +93,7 @@ namespace Mono.Debugger.Soft
 		public long catch_type_id;
 	}
 
+	[Flags]
 	enum ExceptionClauseFlags {
 		None = 0x0,
 		Filter = 0x1,
@@ -149,6 +150,7 @@ namespace Mono.Debugger.Soft
 		VALUE_TYPE_ID_TYPE = 0xf1
 	}
 
+	[Flags]
 	enum InvokeFlags {
 		NONE = 0x0,
 		DISABLE_BREAKPOINTS = 0x1,
@@ -220,6 +222,7 @@ namespace Mono.Debugger.Soft
 		UNKNOWN = 4
 	}
 
+	[Flags]
 	enum StackFrameFlags {
 		NONE = 0,
 		DEBUGGER_INVOKE = 1,
@@ -549,6 +552,7 @@ namespace Mono.Debugger.Soft
 			IS_INITIALIZED = 18
 		}
 
+		[Flags]
 		enum BindingFlagsExtensions {
 			BINDING_FLAGS_IGNORE_CASE = 0x70000000,
 		}
