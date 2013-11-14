@@ -3183,7 +3183,11 @@ namespace Mono.CSharp {
 						rc.Report.Error (1648, loc, "Members of readonly field `{0}' cannot be modified (except in a constructor or a variable initializer)",
 							fexpr.GetSignatureForError ());
 					}
-				} else if (InstanceExpression is PropertyExpr || InstanceExpression is IndexerExpr || InstanceExpression is Invocation) {
+
+					return true;
+				}
+
+				if (InstanceExpression is PropertyExpr || InstanceExpression is IndexerExpr || InstanceExpression is Invocation) {
 					if (rc.CurrentInitializerVariable != null) {
 						rc.Report.Error (1918, loc, "Members of value type `{0}' cannot be assigned using a property `{1}' object initializer",
 							InstanceExpression.Type.GetSignatureForError (), InstanceExpression.GetSignatureForError ());
@@ -3192,6 +3196,18 @@ namespace Mono.CSharp {
 							"Cannot modify a value type return value of `{0}'. Consider storing the value in a temporary variable",
 							InstanceExpression.GetSignatureForError ());
 					}
+
+					return true;
+				}
+
+				var lvr = InstanceExpression as LocalVariableReference;
+				if (lvr != null) {
+
+					if (!lvr.local_info.IsReadonly)
+						return true;
+
+					rc.Report.Error (1654, loc, "Cannot assign to members of `{0}' because it is a `{1}'",
+						InstanceExpression.GetSignatureForError (), lvr.local_info.GetReadOnlyContext ());
 				}
 			}
 
