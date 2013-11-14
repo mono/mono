@@ -123,8 +123,7 @@ namespace Microsoft.Build.Internal
 				var prop = Evaluator.Project.GetProperty (name);
 				if (prop == null)
 					return null;
-				// FIXME: the last argument should be prop.EvaluatedValue.
-				return EvaluateProperty (prop, prop.Name, prop.UnevaluatedValue);
+				return EvaluateProperty (prop, prop.Name, prop.EvaluatedValue);
 			} else {
 				var prop = Evaluator.ProjectInstance.GetProperty (name);
 				if (prop == null)
