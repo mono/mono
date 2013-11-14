@@ -14,6 +14,11 @@ namespace MonoTests.Microsoft.Build.Internal
 	[TestFixture]
 	public class ExpressionParserTest
 	{
+			string [] invalid_always = {
+				"$(Foo..Bar)",
+				"$([DateTime.Now])", // fullname required
+				"$([System.DateTime.Now])", // member cannot be invoked with '.'
+			};
 			string [] invalid_as_boolean = {
 				"$",
 				"@",
@@ -30,12 +35,10 @@ namespace MonoTests.Microsoft.Build.Internal
 				"1", // ditto (no default conversion to bool)
 				"$ (foo) == ''",
 				"@ (foo) == ''",
+				"$(1)",
 				"$(Foo) == And", // reserved keyword 'and'
 				"$(Foo) == Or", // reserved keyword 'or'
 				"$(Foo) == $(Bar) == $(Baz)", // unexpected '=='
-				"$(Foo..Bar)",
-				"$([DateTime.Now])", // fullname required
-				"$([System.DateTime.Now])", // member cannot be invoked with '.'
 				"$([System.DateTime]::Now)", // it is DateTime
 				"$([System.String]::Format('Tr'))$([System.String]::Format('ue'))", // only one expression is accepted
 				"$([System.String]::Format(null))", // causing ANE, wrapped by InvalidProjectFileException
@@ -64,7 +67,7 @@ namespace MonoTests.Microsoft.Build.Internal
 		[Test]
 		public void EvaluateAsBoolean ()
 		{
-			foreach (var expr in invalid_as_boolean.Concat (valid)) {
+			foreach (var expr in invalid_always.Concat (invalid_as_boolean).Concat (valid)) {
 				string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
   <ItemGroup>
     <Foo Condition=""{0}"" Include='x' />
@@ -74,7 +77,7 @@ namespace MonoTests.Microsoft.Build.Internal
 				var root = ProjectRootElement.Create (xml);
 				try {
 					new Project (root);
-					if (invalid_as_boolean.Contains (expr))
+					if (invalid_as_boolean.Contains (expr) || invalid_always.Contains (expr))
 						Assert.Fail ("Parsing Condition '{0}' should fail", expr);
 				} catch (Exception ex) {
 					if (valid.Contains (expr))
@@ -89,7 +92,7 @@ namespace MonoTests.Microsoft.Build.Internal
 		[Test]
 		public void EvaluateAsString ()
 		{
-			foreach (var expr in invalid_as_boolean.Concat (valid)) {
+			foreach (var expr in invalid_always.Concat (invalid_as_boolean).Concat (valid)) {
 				try {
 					string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
 	  <ItemGroup>
@@ -98,10 +101,11 @@ namespace MonoTests.Microsoft.Build.Internal
 	</Project>";
 					var xml = XmlReader.Create (new StringReader (string.Format (project_xml, expr)));
 					var root = ProjectRootElement.Create (xml);
-					// everything should pass
+					// everything but 'invalid_always' should pass
 					new Project (root);
 				} catch (Exception ex) {
-					throw new Exception (string.Format ("failed to parse '{0}'", expr), ex);
+					if (!invalid_always.Contains (expr))
+						throw new Exception (string.Format ("failed to parse '{0}'", expr), ex);
 				}
 			}
 		}
