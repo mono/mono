@@ -86,8 +86,10 @@ namespace Microsoft.Build.Execution
 					// null key is allowed and regarded as blind success(!)
 					if (!request.ProjectInstance.Targets.TryGetValue (targetName, out target))
 						result.AddResultsForTarget (targetName, new TargetResult (new ITaskItem [0], TargetResultCode.Failure));
-					else
-						throw new NotImplementedException ();
+					else {
+						foreach (var targetChild in target.Children)
+							throw new NotImplementedException ();
+					}
 				}
 			
 				result.OverallResult = result.ResultsByTarget.Select (p => p.Value).Any (r => r.ResultCode == TargetResultCode.Failure) ? BuildResultCode.Failure : BuildResultCode.Success;
