@@ -251,13 +251,13 @@ namespace Mono.ILASM {
 
         public class ExternClass
         {
-            string name;
+            string fullName;
             TypeAttr ta;
             string assemblyReference;
 
-            public ExternClass (string name, TypeAttr ta, string assemblyReference)
+            public ExternClass (string fullName, TypeAttr ta, string assemblyReference)
             {
-                this.name = name;
+                this.fullName = fullName;
                 this.ta = ta;
                 this.assemblyReference = assemblyReference;
             }
@@ -265,8 +265,18 @@ namespace Mono.ILASM {
             public void Resolve (CodeGen code_gen, ExternTable table)
             {
                 var ar = table.GetAssemblyRef (assemblyReference);
-                if (ar != null)
-                    code_gen.PEFile.AddExternClass (name, ta, ar.AssemblyRef);
+                if (ar != null) {
+                    string ns = null;
+                    string name = fullName;
+
+                    int pos = name.LastIndexOf ('.');
+                    if (pos > 0) {
+                        ns = name.Substring (0, pos);
+                        name = name.Substring (pos + 1);
+                    }
+ 
+                    code_gen.PEFile.AddExternClass (ns, name, ta, ar.AssemblyRef);
+                }
             }
         }
 
