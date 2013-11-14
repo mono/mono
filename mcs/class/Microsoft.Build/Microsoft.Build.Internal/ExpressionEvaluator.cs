@@ -57,7 +57,7 @@ namespace Microsoft.Build.Internal
 		
 		public string Evaluate (string source)
 		{
-			return Evaluate (source, new ExpressionParserManual (source, ExpressionValidationType.LaxString).Parse ());
+			return Evaluate (source, new ExpressionParserManual (source ?? string.Empty, ExpressionValidationType.LaxString).Parse ());
 		}
 		
 		string Evaluate (string source, ExpressionList exprList)

@@ -113,17 +113,17 @@ LogicalExpression
 
 ComparisonExpression
 	: UnaryExpression
-	| ComparisonExpression EQ ComparisonExpression
+	| UnaryExpression EQ UnaryExpression
 	  { $$ = Binary (Operator.EQ, $1, $3); }
-	| ComparisonExpression NE ComparisonExpression
+	| UnaryExpression NE UnaryExpression
 	  { $$ = Binary (Operator.NE, $1, $3); }
-	| ComparisonExpression GT ComparisonExpression
+	| UnaryExpression GT UnaryExpression
 	  { $$ = Binary (Operator.GT, $1, $3); }
-	| ComparisonExpression GE ComparisonExpression
+	| UnaryExpression GE UnaryExpression
 	  { $$ = Binary (Operator.GE, $1, $3); }
-	| ComparisonExpression LT ComparisonExpression
+	| UnaryExpression LT UnaryExpression
 	  { $$ = Binary (Operator.LT, $1, $3); }
-	| ComparisonExpression LE ComparisonExpression
+	| UnaryExpression LE UnaryExpression
 	  { $$ = Binary (Operator.LE, $1, $3); }
 	;
 
