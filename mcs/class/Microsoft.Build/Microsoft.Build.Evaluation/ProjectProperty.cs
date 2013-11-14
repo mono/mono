@@ -47,9 +47,8 @@ namespace Microsoft.Build.Evaluation
 			Project = project;
 		}
 
-		string evaluated_value; // see UpdateEvaluatedValue().
 		public string EvaluatedValue {
-			get { return evaluated_value; }
+			get { return InternalEvaluatedValue; }
 		}
 
 		public abstract bool IsEnvironmentProperty { get; }
@@ -75,10 +74,7 @@ namespace Microsoft.Build.Evaluation
 
 		public abstract ProjectPropertyElement Xml { get; }
 		
-		internal void UpdateEvaluatedValue ()
-		{
-			evaluated_value = Project.ExpandString (UnevaluatedValue);
-		}
+		internal abstract string InternalEvaluatedValue { get; }
 	}
 
 	// copy from MS.Build.Engine/BuildProperty.cs
@@ -126,7 +122,37 @@ namespace Microsoft.Build.Evaluation
 		}
 	}
 	
-	internal class XmlProjectProperty : BaseProjectProperty
+	internal abstract class ImmutableProjectProperty : BaseProjectProperty
+	{
+		public ImmutableProjectProperty (Project project, PropertyType propertyType, string name)
+			: base (project, propertyType, name)
+		{
+		}
+		
+		internal override string InternalEvaluatedValue {
+			get { return UnevaluatedValue; }
+		}
+	}
+	
+	internal abstract class MutableProjectProperty : BaseProjectProperty
+	{
+		public MutableProjectProperty (Project project, PropertyType propertyType, string name)
+			: base (project, propertyType, name)
+		{
+		}
+		
+		string evaluated_value; // see UpdateEvaluatedValue().
+		internal void UpdateEvaluatedValue ()
+		{
+			evaluated_value = Project.ExpandString (UnevaluatedValue);
+		}
+		
+		internal override string InternalEvaluatedValue {
+			get { return evaluated_value; }
+		}
+	}
+	
+	internal class XmlProjectProperty : MutableProjectProperty
 	{
 		public XmlProjectProperty (Project project, ProjectPropertyElement xml, PropertyType propertyType, bool isImported)
 			: base (project, propertyType, xml.Name)
@@ -153,7 +179,7 @@ namespace Microsoft.Build.Evaluation
 		}
 	}
 	
-	internal class EnvironmentProjectProperty : BaseProjectProperty
+	internal class EnvironmentProjectProperty : ImmutableProjectProperty
 	{
 		static string extensions_path;
 		internal static string DefaultExtensionsPath {
@@ -178,7 +204,6 @@ namespace Microsoft.Build.Evaluation
 			: base (project, PropertyType.Environment, name)
 		{
 			this.value = value;
-			UpdateEvaluatedValue ();
 			this.wellknown = wellknown;
 		}
 		
@@ -203,13 +228,12 @@ namespace Microsoft.Build.Evaluation
 		}
 	}
 	
-	internal class GlobalProjectProperty : BaseProjectProperty
+	internal class GlobalProjectProperty : ImmutableProjectProperty
 	{
 		public GlobalProjectProperty (Project project, string name, string value)
 			: base (project, PropertyType.Global, name)
 		{
 			this.value = value;
-			UpdateEvaluatedValue ();
 		}
 		
 		readonly string value;
@@ -223,7 +247,7 @@ namespace Microsoft.Build.Evaluation
 		}
 	}
 	
-	internal class ManuallyAddedProjectProperty : BaseProjectProperty
+	internal class ManuallyAddedProjectProperty : MutableProjectProperty
 	{
 		public ManuallyAddedProjectProperty (Project project, string name, string value)
 			: base (project, PropertyType.Normal, name)
@@ -238,7 +262,7 @@ namespace Microsoft.Build.Evaluation
 		}
 	}
 	
-	internal class ReservedProjectProperty : BaseProjectProperty
+	internal class ReservedProjectProperty : ImmutableProjectProperty
 	{
 		public ReservedProjectProperty (Project project, string name, Func<string> value)
 			: base (project, PropertyType.Reserved, name)
