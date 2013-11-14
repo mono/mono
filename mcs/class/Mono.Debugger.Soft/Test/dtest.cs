@@ -1689,6 +1689,8 @@ public class DebuggerTests
 		var e = GetNextEvent ();
 		Assert.IsInstanceOfType (typeof (VMDeathEvent), e);
 
+		Assert.AreEqual (5, (e as VMDeathEvent).ExitCode);
+
 		var p = vm.Process;
 		/* Could be a remote vm with no process */
 		if (p != null) {

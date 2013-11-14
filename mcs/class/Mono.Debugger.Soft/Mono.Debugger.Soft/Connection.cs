@@ -348,6 +348,10 @@ namespace Mono.Debugger.Soft
 			get; set;
 		}
 
+		public int ExitCode {
+			get; set;
+		}
+
 		public EventInfo (EventType type, int req_id) {
 			EventType = type;
 			ReqId = req_id;
@@ -401,7 +405,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 26;
+		internal const int MINOR_VERSION = 27;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -1225,82 +1229,71 @@ namespace Mono.Debugger.Soft
 
 							EventType etype = (EventType)kind;
 
+							long thread_id = r.ReadId ();
 							if (kind == EventKind.VM_START) {
-								long thread_id = r.ReadId ();
 								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id };
 								//EventHandler.VMStart (req_id, thread_id, null);
 							} else if (kind == EventKind.VM_DEATH) {
+								int exit_code = 0;
+								if (Version.AtLeast (2, 27))
+									exit_code = r.ReadInt ();
 								//EventHandler.VMDeath (req_id, 0, null);
-								events [i] = new EventInfo (etype, req_id) { };
+								events [i] = new EventInfo (etype, req_id) { ExitCode = exit_code };
 							} else if (kind == EventKind.THREAD_START) {
-								long thread_id = r.ReadId ();
 								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = thread_id };
 								//EventHandler.ThreadStart (req_id, thread_id, thread_id);
 							} else if (kind == EventKind.THREAD_DEATH) {
-								long thread_id = r.ReadId ();
 								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = thread_id };
 								//EventHandler.ThreadDeath (req_id, thread_id, thread_id);
 							} else if (kind == EventKind.ASSEMBLY_LOAD) {
-								long thread_id = r.ReadId ();
 								long id = r.ReadId ();
 								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = id };
 								//EventHandler.AssemblyLoad (req_id, thread_id, id);
 							} else if (kind == EventKind.ASSEMBLY_UNLOAD) {
-								long thread_id = r.ReadId ();
 								long id = r.ReadId ();
 								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = id };
 								//EventHandler.AssemblyUnload (req_id, thread_id, id);
 							} else if (kind == EventKind.TYPE_LOAD) {
-								long thread_id = r.ReadId ();
 								long id = r.ReadId ();
 								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = id };
 								//EventHandler.TypeLoad (req_id, thread_id, id);
 							} else if (kind == EventKind.METHOD_ENTRY) {
-								long thread_id = r.ReadId ();
 								long id = r.ReadId ();
 								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = id };
 								//EventHandler.MethodEntry (req_id, thread_id, id);
 							} else if (kind == EventKind.METHOD_EXIT) {
-								long thread_id = r.ReadId ();
 								long id = r.ReadId ();
 								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = id };
 								//EventHandler.MethodExit (req_id, thread_id, id);
 							} else if (kind == EventKind.BREAKPOINT) {
-								long thread_id = r.ReadId ();
 								long id = r.ReadId ();
 								long loc = r.ReadLong ();
 								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = id, Location = loc };
 								//EventHandler.Breakpoint (req_id, thread_id, id, loc);
 							} else if (kind == EventKind.STEP) {
-								long thread_id = r.ReadId ();
 								long id = r.ReadId ();
 								long loc = r.ReadLong ();
 								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = id, Location = loc };
 								//EventHandler.Step (req_id, thread_id, id, loc);
 							} else if (kind == EventKind.EXCEPTION) {
-								long thread_id = r.ReadId ();
 								long id = r.ReadId ();
 								long loc = 0; // FIXME
 								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = id, Location = loc };
 								//EventHandler.Exception (req_id, thread_id, id, loc);
 							} else if (kind == EventKind.APPDOMAIN_CREATE) {
-								long thread_id = r.ReadId ();
 								long id = r.ReadId ();
 								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = id };
 								//EventHandler.AppDomainCreate (req_id, thread_id, id);
 							} else if (kind == EventKind.APPDOMAIN_UNLOAD) {
-								long thread_id = r.ReadId ();
 								long id = r.ReadId ();
 								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = id };
 								//EventHandler.AppDomainUnload (req_id, thread_id, id);
 							} else if (kind == EventKind.USER_BREAK) {
-								long thread_id = r.ReadId ();
 								long id = 0;
 								long loc = 0;
 								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = id, Location = loc };
 								//EventHandler.Exception (req_id, thread_id, id, loc);
 							} else if (kind == EventKind.USER_LOG) {
-								long thread_id = r.ReadId ();
 								int level = r.ReadInt ();
 								string category = r.ReadString ();
 								string message = r.ReadString ();
