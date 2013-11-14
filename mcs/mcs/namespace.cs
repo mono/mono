@@ -353,11 +353,20 @@ namespace Mono.CSharp {
 					}
 
 					if (best.MemberDefinition.IsImported && ts.MemberDefinition.IsImported) {
+						if (ts.Kind == MemberKind.MissingType)
+							continue;
+
+						if (best.Kind == MemberKind.MissingType) {
+							best = ts;
+							continue;
+						}
+
 						if (mode == LookupMode.Normal) {
 							ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (best);
 							ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (ts);
 							ctx.Module.Compiler.Report.Error (433, loc, "The imported type `{0}' is defined multiple times", ts.GetSignatureForError ());
 						}
+
 						break;
 					}
 
