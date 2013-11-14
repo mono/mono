@@ -311,12 +311,12 @@ namespace Microsoft.Build.Internal
 						var args = Access.Arguments.Select (e => e.EvaluateAsObject (context)).ToArray ();
 						var method = FindMethod (type, Access.Name.Name, args);
 						if (method == null)
-							throw new InvalidProjectFileException (Location, string.Format ("access to undefined method '{0}' of '{1}' at {2}", Access.Name.Name, Access.Target.EvaluateAsString (context), Location));
+							throw new InvalidProjectFileException (Location, string.Format ("access to undefined static method '{0}' of '{1}' at {2}", Access.Name.Name, Access.Target.EvaluateAsString (context), Location));
 						return method.Invoke (null, AdjustArgsForCall (method, args));
 					} else {
 						var prop = type.GetProperty (Access.Name.Name);
 						if (prop == null)
-							throw new InvalidProjectFileException (Location, string.Format ("access to undefined property '{0}' of '{1}' at {2}", Access.Name.Name, Access.Target.EvaluateAsString (context), Location));
+							throw new InvalidProjectFileException (Location, string.Format ("access to undefined static property '{0}' of '{1}' at {2}", Access.Name.Name, Access.Target.EvaluateAsString (context), Location));
 						return prop.GetValue (null, null);
 					}
 				}
