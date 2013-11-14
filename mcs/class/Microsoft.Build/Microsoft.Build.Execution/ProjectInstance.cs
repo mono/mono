@@ -107,6 +107,14 @@ namespace Microsoft.Build.Execution
 		List<ProjectPropertyInstance> properties;
 		Dictionary<string, ProjectTargetInstance> targets;
 		string tools_version;
+		
+		List<string> GetDefaultTargets (ProjectRootElement xml)
+		{
+			var ret = xml.DefaultTargets.Split (item_target_sep, StringSplitOptions.RemoveEmptyEntries).Select (s => s.Trim ()).ToList ();
+			if (ret.Count == 0 && xml.Targets.Any ())
+				ret.Add (xml.Targets.First ().Name);
+			return ret;
+		}
 
 		void InitializeProperties (ProjectRootElement xml, ProjectInstance parent)
 		{
@@ -115,8 +123,8 @@ namespace Microsoft.Build.Execution
 			#endif
 			full_path = xml.FullPath;
 			directory = string.IsNullOrWhiteSpace (xml.DirectoryPath) ? System.IO.Directory.GetCurrentDirectory () : xml.DirectoryPath;
-			DefaultTargets = xml.DefaultTargets.Split (';').Select (s => s.Trim ()).ToList ();
-			InitialTargets = xml.InitialTargets.Split (';').Select (s => s.Trim ()).ToList ();
+			DefaultTargets = GetDefaultTargets (xml);
+			InitialTargets = xml.InitialTargets.Split (item_target_sep, StringSplitOptions.RemoveEmptyEntries).Select (s => s.Trim ()).ToList ();
 
 			raw_imports = new List<ResolvedImport> ();
 			item_definitions = new Dictionary<string, ProjectItemDefinitionInstance> ();
@@ -143,7 +151,7 @@ namespace Microsoft.Build.Execution
 			ProcessXml (parent, xml);
 		}
 		
-		static readonly char [] item_sep = {';'};
+		static readonly char [] item_target_sep = {';'};
 		
 		void ProcessXml (ProjectInstance parent, ProjectRootElement xml)
 		{
@@ -199,8 +207,8 @@ namespace Microsoft.Build.Execution
 					foreach (var p in ige.Items) {
 						if (!EvaluateCondition (ige.Condition) || !EvaluateCondition (p.Condition))
 							continue;
-						var includes = ExpandString (p.Include).Split (item_sep, StringSplitOptions.RemoveEmptyEntries);
-						var excludes = ExpandString (p.Exclude).Split (item_sep, StringSplitOptions.RemoveEmptyEntries);
+						var includes = ExpandString (p.Include).Split (item_target_sep, StringSplitOptions.RemoveEmptyEntries);
+						var excludes = ExpandString (p.Exclude).Split (item_target_sep, StringSplitOptions.RemoveEmptyEntries);
 						
 						if (includes.Length == 0)
 							continue;						
@@ -264,6 +272,8 @@ namespace Microsoft.Build.Execution
 			try {
 				using (var reader = XmlReader.Create (path)) {
 					var root = ProjectRootElement.Create (reader, projects);
+					if (DefaultTargets.Count == 0)
+						DefaultTargets.AddRange (GetDefaultTargets (root));
 					raw_imports.Add (new ResolvedImport (import, root, true));
 					return this.EvaluatePropertiesAndImports (root.Children).ToArray ();
 				}
@@ -349,7 +359,7 @@ namespace Microsoft.Build.Execution
 		
 		public bool Build (IEnumerable<ILogger> loggers, IEnumerable<ForwardingLoggerRecord> remoteLoggers)
 		{
-			return Build ((string []) null, loggers, remoteLoggers);
+			return Build (DefaultTargets.ToArray (), loggers, remoteLoggers);
 		}
 
 		public bool Build (string target, IEnumerable<ILogger> loggers)
