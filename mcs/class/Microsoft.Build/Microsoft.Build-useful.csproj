@@ -114,14 +114,14 @@
     <Compile Include="Microsoft.Build.Execution\ProjectItemGroupTaskInstance.cs" />
     <Compile Include="Microsoft.Build.Execution\ProjectTaskInstance.cs" />
     <Compile Include="..\Microsoft.Build.Utilities\Microsoft.Build.Utilities\ToolLocationHelper.cs">
-      <Link>ToolLocationHelper.cs</Link>
+      <Link>external\utilities\ToolLocationHelper.cs</Link>
     </Compile>
     <Compile Include="..\Microsoft.Build.Utilities\Microsoft.Build.Utilities\TargetDotNetFrameworkVersion.cs">
-      <Link>TargetDotNetFrameworkVersion.cs</Link>
+      <Link>external\utilities\TargetDotNetFrameworkVersion.cs</Link>
     </Compile>
     <Compile Include="Microsoft.Build.Evaluation\SubToolset.cs" />
     <Compile Include="..\Microsoft.Build.Utilities\Mono.XBuild.Utilities\MSBuildUtils.cs">
-      <Link>MSBuildUtils.cs</Link>
+      <Link>external\utilities\MSBuildUtils.cs</Link>
     </Compile>
     <Compile Include="Microsoft.Build.Evaluation\ProjectCollectionChangedEventArgs.cs" />
     <Compile Include="Microsoft.Build.Evaluation\ProjectCollectionChangedState.cs" />
@@ -133,13 +133,13 @@
     <Compile Include="Microsoft.Build.Internal\ExpressionEvaluator.cs" />
     <Compile Include="Microsoft.Build.Internal\ExpressionParserManual.cs" />
     <Compile Include="..\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\DirectoryScanner.cs">
-      <Link>DirectoryScanner.cs</Link>
+      <Link>external\engine\DirectoryScanner.cs</Link>
     </Compile>
     <Compile Include="..\Microsoft.Build.Utilities\Microsoft.Build.Utilities\TaskItem.cs">
-      <Link>TaskItem.cs</Link>
+      <Link>external\utilities\TaskItem.cs</Link>
     </Compile>
     <Compile Include="..\Microsoft.Build.Utilities\Mono.XBuild.Utilities\ReservedNameUtils.cs">
-      <Link>ReservedNameUtils.cs</Link>
+      <Link>external\engine\ReservedNameUtils.cs</Link>
     </Compile>
     <Compile Include="Microsoft.Build.Internal\ProjectTaskItem.cs" />
     <Compile Include="Microsoft.Build.Execution\ProjectPropertyGroupTaskInstance.cs" />
@@ -182,6 +182,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+    <Folder Include="external\" />
+    <Folder Include="external\engine\" />
+    <Folder Include="external\utilities\" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
