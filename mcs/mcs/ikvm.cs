@@ -124,6 +124,9 @@ namespace Mono.CSharp
 			Namespace ns = targetNamespace;
 			string prev_namespace = null;
 			foreach (var t in types) {
+				if (!t.__IsTypeForwarder)
+					continue;
+
 				// IsMissing tells us the type has been forwarded and target assembly is missing 
 				if (!t.__IsMissing)
 					continue;
