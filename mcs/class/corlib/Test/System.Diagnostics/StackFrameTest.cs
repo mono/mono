@@ -154,6 +154,7 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test]
+		[Category ("LLVMNotWorking")]
 		public void TestGetFileName2 ()
 		{
 			Assert.IsNotNull (frame2.GetFileName (), "File name not null");
@@ -166,6 +167,7 @@ namespace MonoTests.System.Diagnostics
 		/// Tests whether getting file line number works.
 		/// </summary>
 		[Test]
+		[Category ("LLVMNotWorking")]
 		public void TestGetFileLineNumber ()
 		{
 			Assert.AreEqual (0,
@@ -282,6 +284,7 @@ namespace MonoTests.System.Diagnostics
 		/// Tests whether getting file name works.
 		/// </summary>
 		[Test]
+		[Category ("LLVMNotWorking")]
 		public void TestGetFileName ()
 		{
 			Assert.IsNull (frame1.GetFileName (),
@@ -301,6 +304,7 @@ namespace MonoTests.System.Diagnostics
 #if ONLY_1_1
 		[Category ("NotDotNet")] // .NET 1.1 is off by one
 #endif
+		[Category ("LLVMNotWorking")]
 		public void TestGetFileLineNumber ()
 		{
 			Assert.AreEqual (0,
