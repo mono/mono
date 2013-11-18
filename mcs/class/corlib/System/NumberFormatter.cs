@@ -783,18 +783,13 @@ namespace System
 			threadNumberFormatter = null;
 			if (res == null)
 				return new NumberFormatter (Thread.CurrentThread);
+			res.CurrentCulture = Thread.CurrentThread.CurrentCulture;
 			return res;
 		}
 
 		private void Release()
 		{
 			threadNumberFormatter = this;
-		}
-
-		internal static void SetThreadCurrentCulture (CultureInfo culture)
-		{
-			if (threadNumberFormatter != null)
-				threadNumberFormatter.CurrentCulture = culture;
 		}
 
 		public static string NumberToString (string format, sbyte value, IFormatProvider fp)

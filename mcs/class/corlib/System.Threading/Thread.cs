@@ -474,7 +474,6 @@ namespace System.Threading {
 					return culture;
 
 				current_culture = culture = CultureInfo.ConstructCurrentCulture ();
-				NumberFormatter.SetThreadCurrentCulture (culture);
 				return culture;
 			}
 			
@@ -485,7 +484,6 @@ namespace System.Threading {
 
 				value.CheckNeutral ();
 				current_culture = value;
-				NumberFormatter.SetThreadCurrentCulture (value);
 			}
 		}
 
