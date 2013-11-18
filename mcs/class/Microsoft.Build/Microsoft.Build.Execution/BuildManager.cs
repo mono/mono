@@ -58,6 +58,10 @@ namespace Microsoft.Build.Execution
 		
 		BuildParameters ongoing_build_parameters;
 		BuildSubmission ongoing_build_submission;
+		
+		internal BuildParameters OngoingBuildParameters {
+			get { return ongoing_build_parameters; }
+		}
 
 		public void BeginBuild (BuildParameters parameters)
 		{
@@ -129,6 +133,8 @@ namespace Microsoft.Build.Execution
 
 		public BuildSubmission PendBuildRequest (BuildRequestData requestData)
 		{
+			if (ongoing_build_parameters == null)
+				throw new InvalidOperationException ("This method cannot be called before calling BeginBuild method.");
 			var sub = new BuildSubmission (this, requestData);
 			submissions.Add (sub);
 			return sub;

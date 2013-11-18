@@ -38,28 +38,28 @@ namespace MonoTests.Microsoft.Build.Execution
 	[TestFixture]
 	public class BuildManagerTest
 	{
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void GetProjectInstanceForBuildNullFullPath ()
+		Project GetDummyProject ()
 		{
 			string empty_project_xml = "<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
 			var path = "file://localhost/foo.xml";
 			var xml = XmlReader.Create (new StringReader (empty_project_xml), null, path);
 			var root = ProjectRootElement.Create (xml);
-			var proj = new Project (root);
+			return new Project (root);
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void GetProjectInstanceForBuildNullFullPath ()
+		{
 			var manager = new BuildManager ();
-			manager.GetProjectInstanceForBuild (proj);
+			manager.GetProjectInstanceForBuild (GetDummyProject ());
 		}
 		
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void GetProjectInstanceForBuildEmptyFullPath ()
 		{
-			string empty_project_xml = "<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
-			var path = "file://localhost/foo.xml";
-			var xml = XmlReader.Create (new StringReader (empty_project_xml), null, path);
-			var root = ProjectRootElement.Create (xml);
-			var proj = new Project (root);
+			var proj = GetDummyProject ();
 			proj.FullPath = "";
 			var manager = new BuildManager ();
 			manager.GetProjectInstanceForBuild (proj);
@@ -77,6 +77,18 @@ namespace MonoTests.Microsoft.Build.Execution
             var manager = new BuildManager ();
             var inst = manager.GetProjectInstanceForBuild (proj);
             Assert.AreEqual (inst, manager.GetProjectInstanceForBuild (proj), "#1");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void PendBuildRequestBeforeBeginBuild ()
+		{
+			string empty_project_xml = "<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
+			var path = "file://localhost/foo.xml";
+			var xml = XmlReader.Create (new StringReader (empty_project_xml), null, path);
+			var root = ProjectRootElement.Create (xml);
+			var proj = new ProjectInstance (root);
+            new BuildManager ().PendBuildRequest (new BuildRequestData (proj, new string [0]));
 		}
 	}
 }
