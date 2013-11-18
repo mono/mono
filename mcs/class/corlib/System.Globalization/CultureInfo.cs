@@ -1013,13 +1013,12 @@ namespace System.Globalization
 		}
 		
 #if NET_4_5
-		[MonoTODO]
 		public static CultureInfo DefaultThreadCurrentCulture {
 			get {
-				throw new NotImplementedException ();
+				return Thread.default_culture;
 			}
 			set {
-				throw new NotImplementedException ();
+				Thread.default_culture = value;
 			}
 		}
 		

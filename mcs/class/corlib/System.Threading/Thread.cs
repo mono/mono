@@ -137,6 +137,7 @@ namespace System.Threading {
 
 		IPrincipal principal;
 		int principal_version;
+		bool current_culture_set;
 		CultureInfo current_culture;
 		CultureInfo current_ui_culture;
 
@@ -155,6 +156,8 @@ namespace System.Threading {
 		static ExecutionContext _ec;
 
 		static NamedDataSlot namedDataSlot;		
+
+		static internal CultureInfo default_culture;
 
 		// can be both a ThreadStart and a ParameterizedThreadStart
 		private MulticastDelegate threadstart;
@@ -470,8 +473,11 @@ namespace System.Threading {
 		public CultureInfo CurrentCulture {
 			get {
 				CultureInfo culture = current_culture;
-				if (culture != null)
+				if (current_culture_set && culture != null)
 					return culture;
+
+				if (default_culture != null)
+					return default_culture;
 
 				current_culture = culture = CultureInfo.ConstructCurrentCulture ();
 				return culture;
@@ -484,6 +490,7 @@ namespace System.Threading {
 
 				value.CheckNeutral ();
 				current_culture = value;
+				current_culture_set = true;
 			}
 		}
 
