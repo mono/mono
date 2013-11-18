@@ -176,7 +176,7 @@ case "$host" in
 		use_sigposix=yes
 		;;
 	*-*-qnx*)
-		CPPFLAGS="$CPPFLAGS -D_THREAD_SAFE -D_QNX_SOURCE -D_REENTRANT -DUSE_MMAP"
+		CPPFLAGS="$CPPFLAGS -D_THREAD_SAFE -DGC_QNX_THREADS -D_QNX_SOURCE -D_REENTRANT -DUSE_MMAP"
 		libmono_cflags="-D_THREAD_SAFE -D_REENTRANT"
 		platform_win32=no
 		use_sigposix=yes
