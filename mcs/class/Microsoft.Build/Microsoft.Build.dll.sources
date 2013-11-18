@@ -2,6 +2,7 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/MonoTODOAttribute.cs
 ../Microsoft.Build.Engine/Microsoft.Build.BuildEngine/DirectoryScanner.cs
+../Microsoft.Build.Engine/Microsoft.Build.BuildEngine/EventSource.cs
 ../Microsoft.Build.Engine/Microsoft.Build.BuildEngine/ColorSetter.cs
 ../Microsoft.Build.Engine/Microsoft.Build.BuildEngine/ColorResetter.cs
 ../Microsoft.Build.Engine/Microsoft.Build.BuildEngine/ConsoleLogger.cs
@@ -84,6 +85,7 @@ Microsoft.Build.Execution/ProjectTaskOutputPropertyInstance.cs
 Microsoft.Build.Execution/ProjectTargetInstanceChild.cs
 Microsoft.Build.Execution/TargetResult.cs                           
 Microsoft.Build.Execution/TargetResultCode.cs
+Microsoft.Build.Internal/BuildEngine4.cs
 Microsoft.Build.Internal/CollectionFromEnumerable.cs
 Microsoft.Build.Internal/ExpressionConstructs.cs
 Microsoft.Build.Internal/ExpressionEvaluator.cs

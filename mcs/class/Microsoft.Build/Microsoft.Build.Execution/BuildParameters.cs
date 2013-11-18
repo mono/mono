@@ -57,6 +57,10 @@ namespace Microsoft.Build.Execution
 		}
 
 		readonly ProjectCollection projects;
+		
+		internal ProjectCollection ProjectCollection {
+			get { return projects; }
+		}
 
 		public BuildParameters Clone ()
 		{

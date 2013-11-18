@@ -31,6 +31,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Internal;
+using System.Collections.Generic;
 
 namespace Microsoft.Build.Execution
 {
@@ -64,6 +66,10 @@ namespace Microsoft.Build.Execution
 				return wait_handle;
 			}
 		}
+		
+		internal BuildRequestData BuildRequest {
+			get { return this.request; }
+		}
 
 		internal void Cancel ()
 		{
@@ -74,28 +80,10 @@ namespace Microsoft.Build.Execution
 
 		public BuildResult Execute ()
 		{
-			var result = new BuildResult ();
-			result.SubmissionId = this.SubmissionId;
-			
-			// null targets -> success. empty targets -> success(!)
-			if (request.TargetNames == null)
-				result.OverallResult = BuildResultCode.Success;
-			else {
-				foreach (var targetName in request.TargetNames.Where (t => t != null)) {
-					ProjectTargetInstance target;
-					// null key is allowed and regarded as blind success(!)
-					if (!request.ProjectInstance.Targets.TryGetValue (targetName, out target))
-						result.AddResultsForTarget (targetName, new TargetResult (new ITaskItem [0], TargetResultCode.Failure));
-					else {
-						foreach (var targetChild in target.Children)
-							throw new NotImplementedException ();
-					}
-				}
-			
-				result.OverallResult = result.ResultsByTarget.Select (p => p.Value).Any (r => r.ResultCode == TargetResultCode.Failure) ? BuildResultCode.Failure : BuildResultCode.Success;
-			}
-			
-			BuildResult = result;
+			var engine = new BuildEngine4 (this);
+			string toolsVersion = request.ExplicitlySpecifiedToolsVersion ?? request.ProjectInstance.ToolsVersion ?? BuildManager.OngoingBuildParameters.DefaultToolsVersion;
+			var outputs = new Dictionary<string,string> ();
+			BuildResult = engine.BuildProject (() => is_canceled, request.ProjectInstance, request.TargetNames, BuildManager.OngoingBuildParameters.GlobalProperties, outputs, toolsVersion);
 			wait_handle.Set ();
 			if (callback != null)
 				callback (this);
