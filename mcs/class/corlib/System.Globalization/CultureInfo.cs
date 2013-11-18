@@ -1025,10 +1025,10 @@ namespace System.Globalization
 		[MonoTODO]
 		public static CultureInfo DefaultThreadCurrentUICulture {
 			get {
-				throw new NotImplementedException ();
+				return Thread.default_ui_culture;
 			}
 			set {
-				throw new NotImplementedException ();
+				Thread.default_ui_culture = value;
 			}
 		}
 #endif
