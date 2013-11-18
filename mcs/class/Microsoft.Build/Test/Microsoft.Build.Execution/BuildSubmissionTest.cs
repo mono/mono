@@ -41,6 +41,20 @@ namespace MonoTests.Microsoft.Build.Execution
 	[TestFixture]
 	public class BuildSubmissionTest
 	{
+		[Test]
+		public void ResultBeforeExecute ()
+		{
+			string empty_project_xml = "<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
+			var path = "file://localhost/foo.xml";
+			var xml = XmlReader.Create (new StringReader (empty_project_xml), null, path);
+			var root = ProjectRootElement.Create (xml);
+			var proj = new ProjectInstance (root);
+			var bm = new BuildManager ();
+			bm.BeginBuild (new BuildParameters ());
+			var sub = bm.PendBuildRequest (new BuildRequestData (proj, new string [0]));
+			Assert.IsNull (sub.BuildResult, "#1");
+		}
+		
 		// This checks if the build output for each task is written to the loggers and not directly thrown as a Project loader error.
 		[Test]
 		public void TaskOutputsToLoggers ()
