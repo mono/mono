@@ -599,5 +599,119 @@ namespace MonoTests.System.Globalization
 			// https://bugzilla.xamarin.com/show_bug.cgi?id=3471
 			new CultureInfo ("en-HK");
 		}
+
+#if NET_4_5
+		CountdownEvent barrier = new CountdownEvent (3);
+		AutoResetEvent[] evt = new AutoResetEvent [] { new AutoResetEvent (false), new AutoResetEvent (false), new AutoResetEvent (false)};
+
+		CultureInfo[] initial_culture = new CultureInfo[3];
+		CultureInfo[] changed_culture = new CultureInfo[3];
+		CultureInfo[] changed_culture2 = new CultureInfo[3];
+		CultureInfo alternative_culture = new CultureInfo("pt-BR");
+
+		void StepAllPhases (int index)
+		{
+			initial_culture [index] = CultureInfo.CurrentCulture;
+			/*Phase 1 - we witness the original value */
+			barrier.Signal ();
+
+			/*Phase 2 - main thread changes culture */
+			evt [index].WaitOne ();
+
+			/*Phase 3 - we witness the new value */
+			changed_culture [index] = CultureInfo.CurrentCulture;
+			barrier.Signal ();
+
+			/* Phase 4 - main thread changes culture back */
+			evt [index].WaitOne ();
+
+			/*Phase 5 - we witness the new value */
+			changed_culture2 [index] = CultureInfo.CurrentCulture;
+			barrier.Signal ();
+		}
+
+		void ThreadWithoutChange () {
+			StepAllPhases (0);
+		}
+
+		void ThreadWithChange () {
+			Thread.CurrentThread.CurrentCulture = alternative_culture;
+			StepAllPhases (1);
+		}
+
+		void ThreadPoolWithoutChange () {
+			StepAllPhases (2);
+		}
+
+		[Test]
+		public void DefaultThreadCurrentCulture () {
+			var orig_culture = CultureInfo.CurrentCulture;
+			var new_culture = new CultureInfo("fr-FR");
+
+			Console.WriteLine (orig_culture.IsReadOnly);
+			/* Phase 0 - warm up */
+			new Thread (ThreadWithoutChange).Start ();
+			new Thread (ThreadWithChange).Start ();
+			Action x = ThreadPoolWithoutChange;
+			x.BeginInvoke (null, null);
+
+			/* Phase 1 - let everyone witness initial values */
+			initial_culture [0] = CultureInfo.CurrentCulture;
+			barrier.Wait ();
+			barrier.Reset ();
+
+			/* Phase 2 - change the default culture*/
+			CultureInfo.DefaultThreadCurrentCulture = new_culture;
+			evt [0].Set ();
+			evt [1].Set ();
+			evt [2].Set ();
+			/* Phase 3 - let everyone witness the new value */
+			changed_culture [0] = CultureInfo.CurrentCulture;
+			barrier.Wait ();
+			barrier.Reset ();
+
+			/* Phase 4 - revert the default culture back to null */
+			CultureInfo.DefaultThreadCurrentCulture = null;
+			evt [0].Set ();
+			evt [1].Set ();
+			evt [2].Set ();
+
+			/* Phase 5 - let everyone witness the new value */
+			changed_culture2 [0] = CultureInfo.CurrentCulture;
+			barrier.Wait ();
+			barrier.Reset ();
+
+			CultureInfo.DefaultThreadCurrentCulture = null;
+
+			Assert.AreEqual (orig_culture, initial_culture [0], "#2");
+			Assert.AreEqual (alternative_culture, initial_culture [1], "#3");
+			Assert.AreEqual (orig_culture, initial_culture [2], "#4");
+
+			Assert.AreEqual (new_culture, changed_culture [0], "#6");
+			Assert.AreEqual (alternative_culture, changed_culture [1], "#7");
+			Assert.AreEqual (new_culture, changed_culture [2], "#8");
+
+			Assert.AreEqual (orig_culture, changed_culture2 [0], "#10");
+			Assert.AreEqual (alternative_culture, changed_culture2 [1], "#11");
+			Assert.AreEqual (orig_culture, changed_culture2 [2], "#12");
+		}
+
+		[Test]
+		public void DefaultThreadCurrentCultureAndNumberFormaters () {
+			string us_str = null;
+			string br_str = null;
+			var thread = new Thread (() => {
+				CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
+				us_str = 100000.ToString ("C");
+				CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("pt-BR");
+				br_str = 100000.ToString ("C");
+			});
+			thread.Start ();
+			thread.Join ();
+			CultureInfo.DefaultThreadCurrentCulture = null;
+			Assert.AreEqual ("$100,000.00", us_str, "#1");
+			Assert.AreEqual ("R$ 100.000,00", br_str, "#2");
+		}
+#endif
 	}
 }
