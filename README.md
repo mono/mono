@@ -520,6 +520,9 @@ Git submodules maintenance
 
 Read documentation at http://mono-project.com/Git_Submodule_Maintenance
 
+Maintainer
+==========
+
 Mono is maintained by miguel@xamarin.com
 
 Reporting bugs
