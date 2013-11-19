@@ -50,7 +50,7 @@ namespace Microsoft.Build.Execution
 		BuildRequestData request;
 		BuildSubmissionCompleteCallback callback;
 		bool is_started, is_completed, is_canceled;
-		ManualResetEvent wait_handle = new ManualResetEvent (false);
+		ManualResetEvent wait_handle = new ManualResetEvent (true);
 
 		public object AsyncContext { get; private set; }
 		public BuildManager BuildManager { get; private set; }
@@ -60,11 +60,7 @@ namespace Microsoft.Build.Execution
 		}
 		public int SubmissionId { get; private set; }
 		public WaitHandle WaitHandle {
-			get {
-				if (!is_started)
-					throw new InvalidOperationException ("Build has not started yet");
-				return wait_handle;
-			}
+			get { return wait_handle; }
 		}
 		
 		internal BuildRequestData BuildRequest {
@@ -80,10 +76,16 @@ namespace Microsoft.Build.Execution
 
 		public BuildResult Execute ()
 		{
-			var engine = new BuildEngine4 (this);
-			string toolsVersion = request.ExplicitlySpecifiedToolsVersion ?? request.ProjectInstance.ToolsVersion ?? BuildManager.OngoingBuildParameters.DefaultToolsVersion;
-			var outputs = new Dictionary<string,string> ();
-			BuildResult = engine.BuildProject (() => is_canceled, request.ProjectInstance, request.TargetNames, BuildManager.OngoingBuildParameters.GlobalProperties, outputs, toolsVersion);
+			BuildResult = new BuildResult () { SubmissionId = SubmissionId };
+			try {
+				var engine = new BuildEngine4 (this);
+				string toolsVersion = request.ExplicitlySpecifiedToolsVersion ?? request.ProjectInstance.ToolsVersion ?? BuildManager.OngoingBuildParameters.DefaultToolsVersion;
+				var outputs = new Dictionary<string,string> ();
+				engine.BuildProject (() => is_canceled, BuildResult, request.ProjectInstance, request.TargetNames, BuildManager.OngoingBuildParameters.GlobalProperties, outputs, toolsVersion);
+			} catch (Exception ex) {
+				BuildResult.Exception = ex;
+				BuildResult.OverallResult = BuildResultCode.Failure;
+			}
 			wait_handle.Set ();
 			if (callback != null)
 				callback (this);
@@ -99,8 +101,9 @@ namespace Microsoft.Build.Execution
 			is_started = true;
 			this.AsyncContext = context;
 			this.callback = callback;
+			wait_handle.Reset ();
 			
-			BuildManager.ThreadTaskFactory.StartNew (Execute);
+			BuildManager.BuildNodeManager.Enqueue (this);
 		}
 	}
 }
