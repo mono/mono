@@ -165,8 +165,9 @@
     <Compile Include="..\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\EventSource.cs">
       <Link>external\engine\EventSource.cs</Link>
     </Compile>
-    <Compile Include="Microsoft.Build.Internal\TaskEngine.cs" />
     <Compile Include="Microsoft.Build.Internal\BuildEngine4.cs" />
+    <Compile Include="Microsoft.Build.Internal\BuildTaskFactory.cs" />
+    <Compile Include="Microsoft.Build.Internal\BuildNodeManager.cs" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
