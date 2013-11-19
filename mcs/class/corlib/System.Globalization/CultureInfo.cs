@@ -1022,7 +1022,6 @@ namespace System.Globalization
 			}
 		}
 		
-		[MonoTODO]
 		public static CultureInfo DefaultThreadCurrentUICulture {
 			get {
 				return Thread.default_ui_culture;
