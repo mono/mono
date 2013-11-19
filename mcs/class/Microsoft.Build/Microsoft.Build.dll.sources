@@ -66,6 +66,8 @@ Microsoft.Build.Execution/BuildSubmissionCompleteCallback.cs
 Microsoft.Build.Execution/HostServices.cs
 Microsoft.Build.Execution/ITargetResult.cs
 Microsoft.Build.Execution/NodeAffinity.cs
+Microsoft.Build.Execution/NodeEngineShutdownReason.cs
+Microsoft.Build.Execution/OutOfProcNode.cs
 Microsoft.Build.Execution/ProjectInstance.cs
 Microsoft.Build.Execution/ProjectItemDefinitionInstance.cs
 Microsoft.Build.Execution/ProjectItemGroupTaskInstance.cs
