@@ -65,6 +65,7 @@ namespace System.Collections.Concurrent
 			int index;
 			CyclicDeque<T> bag = GetBag (out index);
 			bag.PushBottom (item);
+			staging.TryAdd (index, bag);
 			AddHint (index);
 			Interlocked.Increment (ref count);
 		}
@@ -266,10 +267,7 @@ namespace System.Collections.Concurrent
 			if (container.TryGetValue (index, out value))
 				return value;
 
-			var bag = createBag ? container.GetOrAdd (index, new CyclicDeque<T> ()) : null;
-			if (bag != null)
-				staging.TryAdd (index, bag);
-			return bag;
+			return createBag ? container.GetOrAdd (index, new CyclicDeque<T> ()) : null;
 		}
 
 		void TidyBag (int index, CyclicDeque<T> bag)
