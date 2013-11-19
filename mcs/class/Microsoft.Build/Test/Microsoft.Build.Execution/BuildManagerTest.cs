@@ -32,6 +32,8 @@ using Microsoft.Build.Construction;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
 using NUnit.Framework;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MonoTests.Microsoft.Build.Execution
 {
@@ -89,6 +91,57 @@ namespace MonoTests.Microsoft.Build.Execution
 			var root = ProjectRootElement.Create (xml);
 			var proj = new ProjectInstance (root);
             new BuildManager ().PendBuildRequest (new BuildRequestData (proj, new string [0]));
+		}
+		
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ResetCachesDuringBuildIsInvalid ()
+		{
+			string project_xml = @"<Project DefaultTargets='Wait1Sec' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <Target Name='Wait1Sec'>
+    <Exec Command='ping 10.1.1.1 -n 1 -w 1' />
+  </Target>
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			var proj = new ProjectInstance (root);
+			var bm = new BuildManager ();
+			bm.BeginBuild (new BuildParameters ());
+			var sub = bm.PendBuildRequest (new BuildRequestData (proj, new string [] { "Wait5Sec" }));
+			sub.ExecuteAsync (delegate {}, null);
+			try {
+				bm.ResetCaches ();
+			} finally {
+				bm.EndBuild (); // yes, it should work even after invalid ResetCaches call... at least on .NET it does.
+			}
+		}
+		
+		[Test]
+		public void BasicManualParallelBuilds ()
+		{
+			string project_xml = @"<Project DefaultTargets='Wait1Sec' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <Target Name='Wait1Sec'>
+    <Exec Command='ping 10.1.1.1 -n 1 -w 1' />
+  </Target>
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			var proj = new ProjectInstance (root);
+			var bm = new BuildManager ();
+			bm.BeginBuild (new BuildParameters ());
+			DateTime waitDone = DateTime.MinValue;
+			DateTime beforeExec = DateTime.Now;
+			var l = new List<BuildSubmission> ();
+			for (int i = 0; i < 10; i++) {
+				var sub = bm.PendBuildRequest (new BuildRequestData (proj, new string [] { "Wait5Sec" }));
+				l.Add (sub);
+				sub.ExecuteAsync (delegate { waitDone = DateTime.Now; }, null);
+			}
+			bm.EndBuild ();
+			Assert.IsTrue (l.All (s => s.BuildResult.OverallResult == BuildResultCode.Success), "#1");
+			DateTime endBuildDone = DateTime.Now;
+			Assert.IsTrue (endBuildDone - beforeExec >= TimeSpan.FromSeconds (1), "#2");
+			Assert.IsTrue (endBuildDone > waitDone, "#3");
 		}
 	}
 }

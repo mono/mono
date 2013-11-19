@@ -26,10 +26,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Xml;
-using Microsoft.Build.Construction;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
 using NUnit.Framework;
@@ -54,6 +53,14 @@ namespace MonoTests.Microsoft.Build.Execution
 			// They are NOT equal, because ProjectCollection seems to be different.
 			Assert.AreNotEqual (ProjectCollection.GlobalProjectCollection.Toolsets.First (t => t.ToolsVersion == "2.0"), ts, "#2");			
 		}
+		
+		[Test]
+		public void PropertiesDefault ()
+		{
+			var bp = new BuildParameters ();
+			Assert.IsTrue (bp.EnableNodeReuse, "#1");
+			Assert.IsTrue (bp.EnvironmentProperties.Count > 0, "#2");
+			Assert.AreEqual (CultureInfo.CurrentCulture, bp.Culture, "#3");
+		}
 	}
 }
-

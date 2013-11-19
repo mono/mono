@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using System.Collections;
 
 namespace Microsoft.Build.Execution
 {
@@ -49,14 +50,22 @@ namespace Microsoft.Build.Execution
 			if (projectCollection == null)
 				throw new ArgumentNullException ("projectCollection");
 			projects = projectCollection;
+			
+			EnableNodeReuse = true;
+			Culture = CultureInfo.CurrentCulture;
+			UICulture = CultureInfo.CurrentUICulture;
 
 			// these properties are copied, while some members (such as Loggers) are not.
 			this.DefaultToolsVersion = projectCollection.DefaultToolsVersion;
 			this.ToolsetDefinitionLocations = projectCollection.ToolsetLocations;
 			this.GlobalProperties = projectCollection.GlobalProperties;
+			environment_properties = new Dictionary<string,string> ();
+			foreach (DictionaryEntry p in Environment.GetEnvironmentVariables ())
+				environment_properties [(string) p.Key] = (string) p.Value;
 		}
 
 		readonly ProjectCollection projects;
+		Dictionary<string,string> environment_properties;
 		
 		internal ProjectCollection ProjectCollection {
 			get { return projects; }
@@ -65,9 +74,10 @@ namespace Microsoft.Build.Execution
 		public BuildParameters Clone ()
 		{
 			var ret = (BuildParameters) MemberwiseClone ();
-			ret.ForwardingLoggers = ret.ForwardingLoggers.ToArray ();
-			ret.GlobalProperties = ret.GlobalProperties.ToDictionary (p => p.Key, p => p.Value);
-			ret.Loggers = ret.Loggers == null ? null : ret.Loggers.ToArray ();
+			ret.ForwardingLoggers = ForwardingLoggers == null ? null : ForwardingLoggers.ToArray ();
+			ret.GlobalProperties = GlobalProperties == null ? null : GlobalProperties.ToDictionary (p => p.Key, p => p.Value);
+			ret.Loggers = Loggers == null ? null : new List<ILogger> (Loggers);
+			ret.environment_properties = new Dictionary<string, string> (environment_properties);
 			return ret;
 		}
 
@@ -89,12 +99,11 @@ namespace Microsoft.Build.Execution
 		[MonoTODO]
 		public bool DetailedSummary { get; set; }
 
-		[MonoTODO]
 		public bool EnableNodeReuse { get; set; }
 
 		[MonoTODO]
 		public IDictionary<string, string> EnvironmentProperties {
-			get { throw new NotImplementedException (); }
+			get { return environment_properties; }
 		}
 
 		[MonoTODO]
@@ -103,7 +112,6 @@ namespace Microsoft.Build.Execution
 		[MonoTODO]
 		public IDictionary<string, string> GlobalProperties { get; set; }
 
-		[MonoTODO]
 		public HostServices HostServices { get; set; }
 
 		[MonoTODO]

@@ -28,7 +28,6 @@
 using Microsoft.Build.Evaluation;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Threading;
 using Microsoft.Build.Internal;
 using System.Linq;
@@ -37,8 +36,15 @@ namespace Microsoft.Build.Execution
 {
 	public class BuildManager
 	{
+		static BuildManager default_manager = new BuildManager ();
+
+		public static BuildManager DefaultBuildManager {
+			get { return default_manager; }
+		}
+		
 		public BuildManager ()
 		{
+			build_node_manager = new BuildNodeManager (this);
 		}
 
 		public BuildManager (string hostName)
@@ -48,18 +54,20 @@ namespace Microsoft.Build.Execution
 		
 		public void Dispose ()
 		{
+			WaitHandle.WaitAll (submissions.Select (s => s.WaitHandle).ToArray ());
+			BuildNodeManager.Stop ();
 		}
 
 		~BuildManager ()
 		{
-			// maybe HostServices related cleanup is expected.
+			// maybe processes created by out-of-process nodes should be signaled.
+			BuildNodeManager.Stop ();
 		}
 
-		readonly TaskFactory<BuildResult> task_factory = new TaskFactory<BuildResult> ();
-		List<BuildSubmission> submissions = new List<BuildSubmission> ();
+		readonly List<BuildSubmission> submissions = new List<BuildSubmission> ();
 		
 		BuildParameters ongoing_build_parameters;
-				
+		
 		internal BuildParameters OngoingBuildParameters {
 			get { return ongoing_build_parameters; }
 		}
@@ -68,9 +76,7 @@ namespace Microsoft.Build.Execution
 		{
 			if (ongoing_build_parameters != null)
 				throw new InvalidOperationException ("There is already ongoing build");
-			ongoing_build_parameters = parameters;
-			
-			// FIXME: apply build parameters to this build manager instance.
+			ongoing_build_parameters = parameters.Clone ();
 		}
 
 		public BuildResult Build (BuildParameters parameters, BuildRequestData requestData)
@@ -88,8 +94,14 @@ namespace Microsoft.Build.Execution
 		
 		public void CancelAllSubmissions ()
 		{
-			foreach (var sub in submissions)
-				sub.Cancel ();
+			foreach (var sub in submissions) {
+				try {
+					if (!sub.IsCompleted)
+						sub.Cancel ();
+				} catch (InvalidOperationException) {
+					// some submissions could be already done during this iteration. Ignore that.
+				}
+			}
 			submissions.Clear ();
 		}
 
@@ -97,8 +109,12 @@ namespace Microsoft.Build.Execution
 		{
 			if (ongoing_build_parameters == null)
 				throw new InvalidOperationException ("Build has not started");
+//Console.Error.WriteLine ("{0} EndBuild waiting for subs: " + submissions.Count, GetHashCode ());
 			if (submissions.Count > 0)
 				WaitHandle.WaitAll (submissions.Select (s => s.WaitHandle).ToArray ());
+//Console.Error.WriteLine ("{0} EndBuild waiting for NodeManager", GetHashCode ());
+			BuildNodeManager.Stop ();
+//Console.Error.WriteLine ("{0} EndBuild done", GetHashCode ());
 			ongoing_build_parameters = null;
 		}
 		
@@ -136,7 +152,11 @@ namespace Microsoft.Build.Execution
 
 		public void ResetCaches ()
 		{
-			throw new NotImplementedException ();
+			if (OngoingBuildParameters != null)
+				throw new InvalidOperationException ("Cannot reset caches while builds are in progress.");
+			
+			build_node_manager.ResetCaches ();
+			build_task_factory.ResetCaches ();
 		}
 
 		BuildTaskFactory build_task_factory = new BuildTaskFactory ();
@@ -144,16 +164,11 @@ namespace Microsoft.Build.Execution
 		internal BuildTaskFactory BuildTaskFactory {
 			get { return build_task_factory; }	
 		}
-
-		internal TaskFactory<BuildResult> ThreadTaskFactory {
-			get { return task_factory; }
-		}
 		
-		static BuildManager default_manager = new BuildManager ();
-
-		public static BuildManager DefaultBuildManager {
-			get { return default_manager; }
+		BuildNodeManager build_node_manager;
+		
+		internal BuildNodeManager BuildNodeManager {
+			get { return build_node_manager; }
 		}
 	}
 }
-

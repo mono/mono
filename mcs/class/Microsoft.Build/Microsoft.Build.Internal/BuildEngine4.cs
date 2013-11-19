@@ -46,7 +46,7 @@ namespace Microsoft.Build.Internal
 		}
 
 		BuildSubmission submission;
-		ProjectInstance current_project;
+		ProjectInstance project;
 		ProjectTaskInstance current_task;
 		EventSource event_source;
 		
@@ -66,11 +66,11 @@ namespace Microsoft.Build.Internal
 		// (which is most likely derived from AppDomainIsolatedBuildTask) that marks a task to run
 		// in separate AppDomain.
 		//
-		public BuildResult BuildProject (Func<bool> checkCancel, ProjectInstance project, IEnumerable<string> targetNames, IDictionary<string,string> globalProperties, IDictionary<string,string> targetOutputs, string toolsVersion)
+		public void BuildProject (Func<bool> checkCancel, BuildResult result, ProjectInstance project, IEnumerable<string> targetNames, IDictionary<string,string> globalProperties, IDictionary<string,string> targetOutputs, string toolsVersion)
 		{
-			var result = new BuildResult () { SubmissionId = submission.SubmissionId };
 			var request = submission.BuildRequest;
 			var parameters = submission.BuildManager.OngoingBuildParameters;
+			this.project = project;
 			
 			// null targets -> success. empty targets -> success(!)
 			if (request.TargetNames == null)
@@ -86,23 +86,23 @@ namespace Microsoft.Build.Internal
 						result.AddResultsForTarget (targetName, new TargetResult (new ITaskItem [0], TargetResultCode.Failure));
 					else {
 						foreach (var c in target.Children.OfType<ProjectPropertyGroupTaskInstance> ()) {
-							if (!current_project.EvaluateCondition (c.Condition))
+							if (!project.EvaluateCondition (c.Condition))
 								continue;
 							throw new NotImplementedException ();
 						}
 						foreach (var c in target.Children.OfType<ProjectItemGroupTaskInstance> ()) {
-							if (!current_project.EvaluateCondition (c.Condition))
+							if (!project.EvaluateCondition (c.Condition))
 								continue;
 							throw new NotImplementedException ();
 						}
 						foreach (var c in target.Children.OfType<ProjectOnErrorInstance> ()) {
-							if (!current_project.EvaluateCondition (c.Condition))
+							if (!project.EvaluateCondition (c.Condition))
 								continue;
 							throw new NotImplementedException ();
 						}
 						foreach (var c in target.Children.OfType<ProjectTaskInstance> ()) {
 							var host = request.HostServices == null ? null : request.HostServices.GetHostObject (request.ProjectFullPath, targetName, c.Name);
-							if (!current_project.EvaluateCondition (c.Condition))
+							if (!project.EvaluateCondition (c.Condition))
 								continue;
 							current_task = c;
 							// MSBuildArchitecture and MSBuildRuntime attributes cannot be suppored.
@@ -115,7 +115,6 @@ namespace Microsoft.Build.Internal
 				// FIXME: check .NET behavior, whether cancellation always results in failure.
 				result.OverallResult = checkCancel () ? BuildResultCode.Failure : result.ResultsByTarget.Select (p => p.Value).Any (r => r.ResultCode == TargetResultCode.Failure) ? BuildResultCode.Failure : BuildResultCode.Success;
 			}
-			return result;
 		}
 		
 		#region IBuildEngine4 implementation
@@ -183,12 +182,13 @@ namespace Microsoft.Build.Internal
 
 		public bool BuildProjectFile (string projectFileName, string[] targetNames, IDictionary globalProperties, IDictionary targetOutputs, string toolsVersion)
 		{
-			var project = GetProjectInstance (projectFileName, toolsVersion);
+			var proj = GetProjectInstance (projectFileName, toolsVersion);
 			var globalPropertiesThatMakeSense = new Dictionary<string,string> ();
 			foreach (DictionaryEntry p in globalProperties)
 				globalPropertiesThatMakeSense [(string) p.Key] = (string) p.Value;
+			var result = new BuildResult ();
 			var outputs = new Dictionary<string, string> ();
-			var result = BuildProject (() => false, project, targetNames, globalPropertiesThatMakeSense, outputs, toolsVersion);
+			BuildProject (() => false, result, proj, targetNames, globalPropertiesThatMakeSense, outputs, toolsVersion);
 			foreach (var p in outputs)
 				targetOutputs [p.Key] = p.Value;
 			return result.OverallResult == BuildResultCode.Success;

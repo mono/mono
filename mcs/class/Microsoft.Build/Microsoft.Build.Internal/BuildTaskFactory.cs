@@ -41,6 +41,12 @@ namespace Microsoft.Build.Internal
 		List<Assembly> assemblies = new List<Assembly> ();
 		List<ITaskFactory> task_factories = new List<ITaskFactory> ();
 		
+		public void ResetCaches ()
+		{
+			assemblies.Clear ();
+			task_factories.Clear ();
+		}
+		
 		public ITask GetTask (string name)
 		{
 			throw new NotImplementedException ();
