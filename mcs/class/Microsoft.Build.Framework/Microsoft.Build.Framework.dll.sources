@@ -32,6 +32,8 @@ Microsoft.Build.Framework/IForwardingLogger.cs
 Microsoft.Build.Framework/ILogger.cs
 Microsoft.Build.Framework/INodeLogger.cs
 Microsoft.Build.Framework/ITask.cs
+Microsoft.Build.Framework/ITaskFactory.cs
+Microsoft.Build.Framework/ITaskFactory2.cs
 Microsoft.Build.Framework/ITaskHost.cs
 Microsoft.Build.Framework/ITaskItem.cs
 Microsoft.Build.Framework/ITaskItem2.cs
@@ -54,6 +56,7 @@ Microsoft.Build.Framework/TargetStartedEventHandler.cs
 Microsoft.Build.Framework/TaskCommandLineEventArgs.cs
 Microsoft.Build.Framework/TaskFinishedEventArgs.cs
 Microsoft.Build.Framework/TaskFinishedEventHandler.cs
+Microsoft.Build.Framework/TaskPropertyInfo.cs
 Microsoft.Build.Framework/TaskStartedEventArgs.cs
 Microsoft.Build.Framework/TaskStartedEventHandler.cs
 

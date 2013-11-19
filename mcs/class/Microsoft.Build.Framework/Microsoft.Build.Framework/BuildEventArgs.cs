@@ -97,8 +97,11 @@ namespace Microsoft.Build.Framework
 		}
 
 		public BuildEventContext BuildEventContext {
-			get {
-				return context;
+			get { return context; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("value");
+				context = value;
 			}
 		}
 	}
