@@ -37,7 +37,6 @@ namespace Microsoft.Build.Execution
 		internal ProjectTaskInstance (ProjectTaskElement xml)
 		{
 			condition = xml.Condition;
-			ExecuteTargets = xml.ExecuteTargets;
 			ContinueOnError = xml.ContinueOnError;
 			Name = xml.Name;
 			Outputs = xml.Outputs.Select (o => {
@@ -54,7 +53,6 @@ namespace Microsoft.Build.Execution
 			
 			condition_location = xml.ConditionLocation;
 			ContinueOnErrorLocation = xml.ContinueOnErrorLocation;
-			ExecuteTargetsLocation = xml.ExecuteTargetsLocation;
 			location = xml.Location;
 			MSBuildArchitectureLocation = xml.MSBuildArchitectureLocation;
 			MSBuildRuntimeLocation = xml.MSBuildRuntimeLocation;
@@ -65,8 +63,6 @@ namespace Microsoft.Build.Execution
 		public override string Condition {
 			get { return condition; }
 		}
-
-		public string ExecuteTargets { get; private set; }
 		
 		#if NET_4_5
 		ElementLocation condition_location, location;
@@ -74,8 +70,6 @@ namespace Microsoft.Build.Execution
 		public override ElementLocation ConditionLocation {
 			get { return condition_location; }
 		}
-		
-		public ElementLocation ExecuteTargetsLocation { get; private set; }
 
 		public override ElementLocation Location {
 			get { return location; }
