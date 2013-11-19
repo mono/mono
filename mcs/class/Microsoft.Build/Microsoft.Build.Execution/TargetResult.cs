@@ -34,17 +34,8 @@ namespace Microsoft.Build.Execution
 {
 	public class TargetResult : ITargetResult
 	{
-		internal TargetResult (IEnumerable<ITaskItem> items, TargetResultCode resultCode)
+		internal TargetResult ()
 		{
-			Items = items.ToArray ();
-			ResultCode = resultCode;
-		}
-
-		internal TargetResult (Exception exception)
-		{
-			this.Exception = exception;
-			Items = new ITaskItem [0];
-			ResultCode = TargetResultCode.Failure;
 		}
 
 		public Exception Exception { get; private set; }
@@ -52,6 +43,23 @@ namespace Microsoft.Build.Execution
 		public ITaskItem[] Items { get; private set; }
 
 		public TargetResultCode ResultCode { get; private set; }
+
+		internal void Failure (Exception exception)
+		{
+			this.Exception = exception;
+			ResultCode = TargetResultCode.Failure;
+		}
+		
+		internal void Skip ()
+		{
+			ResultCode = TargetResultCode.Skipped;
+		}
+		
+		internal void Success (IEnumerable<ITaskItem> items)
+		{
+			Items = items.ToArray ();
+			ResultCode = TargetResultCode.Success; 
+		}
 	}
 }
 

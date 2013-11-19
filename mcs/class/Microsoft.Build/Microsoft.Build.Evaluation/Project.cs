@@ -503,13 +503,13 @@ namespace Microsoft.Build.Evaluation
 
 		public static string GetMetadataValueEscaped (ProjectItem item, string name)
 		{
-			var md = item.GetMetadata (name);
+			var md = item.Metadata.FirstOrDefault (m => m.Name.Equals (name, StringComparison.OrdinalIgnoreCase));
 			return md != null ? ProjectCollection.Escape (md.EvaluatedValue) : null;
 		}
 
 		public static string GetMetadataValueEscaped (ProjectItemDefinition item, string name)
 		{
-			var md = item.Metadata.FirstOrDefault (m => m.Name == name);
+			var md = item.Metadata.FirstOrDefault (m => m.Name.Equals (name, StringComparison.OrdinalIgnoreCase));
 			return md != null ? ProjectCollection.Escape (md.EvaluatedValue) : null;
 		}
 
@@ -522,6 +522,7 @@ namespace Microsoft.Build.Evaluation
 		public static string GetPropertyValueEscaped (ProjectProperty property)
 		{
 			// WTF happens here.
+			//return ProjectCollection.Escape (property.EvaluatedValue);
 			return property.EvaluatedValue;
 		}
 

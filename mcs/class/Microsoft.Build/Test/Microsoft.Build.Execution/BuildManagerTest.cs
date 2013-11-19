@@ -95,6 +95,7 @@ namespace MonoTests.Microsoft.Build.Execution
 		
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")]
 		public void ResetCachesDuringBuildIsInvalid ()
 		{
 			string project_xml = @"<Project DefaultTargets='Wait1Sec' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
@@ -117,6 +118,7 @@ namespace MonoTests.Microsoft.Build.Execution
 		}
 		
 		[Test]
+		[Category ("NotWorking")]
 		public void BasicManualParallelBuilds ()
 		{
 			string project_xml = @"<Project DefaultTargets='Wait1Sec' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
