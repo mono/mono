@@ -1,3 +1,30 @@
+//
+// BuildEngine4.cs
+//
+// Author:
+//   Atsushi Enomoto (atsushi@xamarin.com)
+//
+// Copyright (C) 2013 Xamarin Inc. (http://www.xamarin.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,13 +53,19 @@ namespace Microsoft.Build.Internal
 		public ProjectCollection Projects {
 			get { return submission.BuildManager.OngoingBuildParameters.ProjectCollection; }
 		}
-		
-		class BuildTask : ITask
-		{
-			public IBuildEngine BuildEngine { get; set; }
-			public ITaskHost HostObject { get; set; }
-		}
 
+		// FIXME:
+		// While we are not faced to implement those features, there are some modern task execution requirements.
+		//
+		// This will have to be available for "out of process" nodes (see NodeAffinity).
+		// NodeAffinity is set per project file at BuildManager.HostServices.
+		// When NodeAffinity is set to OutOfProc, it should probably launch different build host
+		// that runs separate build tasks. (.NET has MSBuildTaskHost.exe which I guess is about that.)
+		//
+		// Also note that the complete implementation has to support LoadInSeparateAppDomainAttribute
+		// (which is most likely derived from AppDomainIsolatedBuildTask) that marks a task to run
+		// in separate AppDomain.
+		//
 		public BuildResult BuildProject (Func<bool> checkCancel, ProjectInstance project, IEnumerable<string> targetNames, IDictionary<string,string> globalProperties, IDictionary<string,string> targetOutputs, string toolsVersion)
 		{
 			var result = new BuildResult () { SubmissionId = submission.SubmissionId };
@@ -52,15 +85,27 @@ namespace Microsoft.Build.Internal
 					if (!request.ProjectInstance.Targets.TryGetValue (targetName, out target))
 						result.AddResultsForTarget (targetName, new TargetResult (new ITaskItem [0], TargetResultCode.Failure));
 					else {
-						foreach (var c in target.Children.OfType<ProjectPropertyGroupTaskInstance> ())
+						foreach (var c in target.Children.OfType<ProjectPropertyGroupTaskInstance> ()) {
+							if (!current_project.EvaluateCondition (c.Condition))
+								continue;
 							throw new NotImplementedException ();
-						foreach (var c in target.Children.OfType<ProjectItemGroupTaskInstance> ())
+						}
+						foreach (var c in target.Children.OfType<ProjectItemGroupTaskInstance> ()) {
+							if (!current_project.EvaluateCondition (c.Condition))
+								continue;
 							throw new NotImplementedException ();
-						foreach (var c in target.Children.OfType<ProjectOnErrorInstance> ())
+						}
+						foreach (var c in target.Children.OfType<ProjectOnErrorInstance> ()) {
+							if (!current_project.EvaluateCondition (c.Condition))
+								continue;
 							throw new NotImplementedException ();
+						}
 						foreach (var c in target.Children.OfType<ProjectTaskInstance> ()) {
 							var host = request.HostServices == null ? null : request.HostServices.GetHostObject (request.ProjectFullPath, targetName, c.Name);
-							var task = new BuildTask () { BuildEngine = this, HostObject = host };
+							if (!current_project.EvaluateCondition (c.Condition))
+								continue;
+							current_task = c;
+							// MSBuildArchitecture and MSBuildRuntime attributes cannot be suppored.
 							
 							throw new NotImplementedException ();
 						}
@@ -207,7 +252,15 @@ namespace Microsoft.Build.Internal
 		}
 
 		public bool ContinueOnError {
-			get { return current_project.EvaluateCondition (current_task.ContinueOnError); }
+			get {
+				switch (current_task.ContinueOnError) {
+				case "true":
+				case "WarnAndContinue":
+				case "ErrorAndContinue":
+					return true;
+				}
+				return false;
+			}
 		}
 
 		public int LineNumberOfTaskNode {

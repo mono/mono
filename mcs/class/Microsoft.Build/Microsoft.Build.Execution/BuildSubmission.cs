@@ -100,7 +100,7 @@ namespace Microsoft.Build.Execution
 			this.AsyncContext = context;
 			this.callback = callback;
 			
-			BuildManager.TaskFactory.StartNew (Execute);
+			BuildManager.ThreadTaskFactory.StartNew (Execute);
 		}
 	}
 }
