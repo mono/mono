@@ -88,6 +88,7 @@ namespace System.Collections.Concurrent
 			
 			if (bag == null || bag.PopBottom (out result) != PopResult.Succeed) {
 				var self = bag;
+				ret = false;
 				foreach (var other in staging) {
 					// Try to retrieve something based on a hint
 					ret = TryGetHint (out hintIndex) && (bag = container[hintIndex]).PopTop (out result) == PopResult.Succeed;
@@ -129,6 +130,7 @@ namespace System.Collections.Concurrent
 
 			if (bag == null || !bag.PeekBottom (out result)) {
 				var self = bag;
+				ret = false;
 				foreach (var other in staging) {
 					// Try to retrieve something based on a hint
 					ret = TryGetHint (out hintIndex) && container[hintIndex].PeekTop (out result);
