@@ -168,6 +168,8 @@
     <Compile Include="Microsoft.Build.Internal\BuildEngine4.cs" />
     <Compile Include="Microsoft.Build.Internal\BuildTaskFactory.cs" />
     <Compile Include="Microsoft.Build.Internal\BuildNodeManager.cs" />
+    <Compile Include="Microsoft.Build.Execution\OutOfProcNode.cs" />
+    <Compile Include="Microsoft.Build.Execution\NodeEngineShutdownReason.cs" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
