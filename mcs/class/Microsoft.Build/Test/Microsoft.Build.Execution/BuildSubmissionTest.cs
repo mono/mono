@@ -35,6 +35,7 @@ using Microsoft.Build.Execution;
 using NUnit.Framework;
 using Microsoft.Build.Logging;
 using Microsoft.Build.Framework;
+using System.Collections.Generic;
 
 namespace MonoTests.Microsoft.Build.Execution
 {
@@ -73,6 +74,34 @@ namespace MonoTests.Microsoft.Build.Execution
 			var sw = new StringWriter ();
 			Assert.IsFalse (proj.Build (new ILogger [] {new ConsoleLogger (default (LoggerVerbosity), msg => sw.Write (msg), null, null)}), "#1");
 			Assert.IsTrue (sw.ToString ().Contains ("$(X)"), "#2");
+		}
+		
+		[Test]
+		public void EndBuildWaitsForSubmissionCompletion ()
+		{
+			string project_xml = @"<Project DefaultTargets='Wait1Sec' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <Target Name='Wait1Sec'>
+    <Exec Command='ping 10.1.1.1 -n 1 -w 1000' />
+  </Target>
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			var proj = new ProjectInstance (root);
+			var bm = new BuildManager ();
+			bm.BeginBuild (new BuildParameters ());
+			DateTime waitDone = DateTime.MinValue;
+			DateTime beforeExec = DateTime.Now;
+			var l = new List<BuildSubmission> ();
+			for (int i = 0; i < 10; i++) {
+				var sub = bm.PendBuildRequest (new BuildRequestData (proj, new string [] { "Wait5Sec" }));
+				l.Add (sub);
+				sub.ExecuteAsync (delegate { waitDone = DateTime.Now; }, null);
+			}
+			bm.EndBuild ();
+			Assert.IsTrue (l.All (s => s.BuildResult.OverallResult == BuildResultCode.Success), "#1");
+			DateTime endBuildDone = DateTime.Now;
+			Assert.IsTrue (endBuildDone - beforeExec >= TimeSpan.FromSeconds (1), "#2");
+			Assert.IsTrue (endBuildDone > waitDone, "#3");
 		}
 	}
 }

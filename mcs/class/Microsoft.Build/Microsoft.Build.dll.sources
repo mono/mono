@@ -86,6 +86,7 @@ Microsoft.Build.Execution/ProjectTargetInstanceChild.cs
 Microsoft.Build.Execution/TargetResult.cs                           
 Microsoft.Build.Execution/TargetResultCode.cs
 Microsoft.Build.Internal/BuildEngine4.cs
+Microsoft.Build.Internal/BuildTaskFactory.cs
 Microsoft.Build.Internal/CollectionFromEnumerable.cs
 Microsoft.Build.Internal/ExpressionConstructs.cs
 Microsoft.Build.Internal/ExpressionEvaluator.cs

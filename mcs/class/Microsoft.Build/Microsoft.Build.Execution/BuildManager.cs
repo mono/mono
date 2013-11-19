@@ -30,6 +30,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
+using Microsoft.Build.Internal;
+using System.Linq;
 
 namespace Microsoft.Build.Execution
 {
@@ -57,8 +59,7 @@ namespace Microsoft.Build.Execution
 		List<BuildSubmission> submissions = new List<BuildSubmission> ();
 		
 		BuildParameters ongoing_build_parameters;
-		BuildSubmission ongoing_build_submission;
-		
+				
 		internal BuildParameters OngoingBuildParameters {
 			get { return ongoing_build_parameters; }
 		}
@@ -96,15 +97,8 @@ namespace Microsoft.Build.Execution
 		{
 			if (ongoing_build_parameters == null)
 				throw new InvalidOperationException ("Build has not started");
-			// spin wait
-			for (int i = 0; ongoing_build_submission == null && i < 50; i++)
-				Thread.Sleep (20 * i);
-			// long wait...
-			while (ongoing_build_submission == null)
-				Thread.Sleep (500);
-			ongoing_build_submission.WaitHandle.WaitOne ();
-			
-			ongoing_build_submission = null;
+			if (submissions.Count > 0)
+				WaitHandle.WaitAll (submissions.Select (s => s.WaitHandle).ToArray ());
 			ongoing_build_parameters = null;
 		}
 		
@@ -145,7 +139,13 @@ namespace Microsoft.Build.Execution
 			throw new NotImplementedException ();
 		}
 
-		internal TaskFactory<BuildResult> TaskFactory {
+		BuildTaskFactory build_task_factory = new BuildTaskFactory ();
+		
+		internal BuildTaskFactory BuildTaskFactory {
+			get { return build_task_factory; }	
+		}
+
+		internal TaskFactory<BuildResult> ThreadTaskFactory {
 			get { return task_factory; }
 		}
 		
