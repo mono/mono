@@ -155,6 +155,8 @@ namespace Microsoft.Build.Execution
 		
 		void ProcessXml (ProjectInstance parent, ProjectRootElement xml)
 		{
+			TaskDatabase = new BuildTaskDatabase (this, xml);
+			
 			// this needs to be initialized here (regardless of that items won't be evaluated at property evaluation;
 			// Conditions could incorrectly reference items and lack of this list causes NRE.
 			all_evaluated_items = new List<ProjectItemInstance> ();
@@ -443,7 +445,8 @@ namespace Microsoft.Build.Execution
 		
 		public string GetPropertyValue (string name)
 		{
-			throw new NotImplementedException ();
+			var prop = GetProperty (name);
+			return prop != null ? prop.EvaluatedValue : string.Empty;
 		}
 		
 		public bool RemoveItem (ProjectItemInstance item)
@@ -453,12 +456,18 @@ namespace Microsoft.Build.Execution
 
 		public bool RemoveProperty (string name)
 		{
-			throw new NotImplementedException ();
+			var removed = properties.FirstOrDefault (p => p.Name.Equals (name, StringComparison.OrdinalIgnoreCase));
+			if (removed == null)
+				return false;
+			properties.Remove (removed);
+			return true;
 		}
 		
 		public ProjectPropertyInstance SetProperty (string name, string evaluatedValue)
 		{
-			throw new NotImplementedException ();
+			var p = new ProjectPropertyInstance (name, false, evaluatedValue);
+			properties.Add (p);
+			return p;
 		}
 		
 		public ProjectRootElement ToProjectRootElement ()
@@ -477,33 +486,40 @@ namespace Microsoft.Build.Execution
 
 		public static string GetEvaluatedItemIncludeEscaped (ProjectItemDefinitionInstance item)
 		{
+			// ?? ItemDefinition does not have Include attribute. What's the point here?
 			throw new NotImplementedException ();
 		}
 
 		public static string GetEvaluatedItemIncludeEscaped (ProjectItemInstance item)
 		{
-			throw new NotImplementedException ();
+			return ProjectCollection.Escape (item.EvaluatedInclude);
 		}
 
 		public static string GetMetadataValueEscaped (ProjectMetadataInstance metadatum)
 		{
-			throw new NotImplementedException ();
+			return ProjectCollection.Escape (metadatum.EvaluatedValue);
 		}
 		
 		public static string GetMetadataValueEscaped (ProjectItemDefinitionInstance item, string name)
 		{
-			throw new NotImplementedException ();
+			var md = item.Metadata.FirstOrDefault (m => m.Name.Equals (name, StringComparison.OrdinalIgnoreCase));
+			return md != null ? ProjectCollection.Escape (md.EvaluatedValue) : null;
 		}
 		
 		public static string GetMetadataValueEscaped (ProjectItemInstance item, string name)
 		{
-			throw new NotImplementedException ();
+			var md = item.Metadata.FirstOrDefault (m => m.Name.Equals (name, StringComparison.OrdinalIgnoreCase));
+			return md != null ? ProjectCollection.Escape (md.EvaluatedValue) : null;
 		}
 
 		public static string GetPropertyValueEscaped (ProjectPropertyInstance property)
 		{
-			throw new NotImplementedException ();
+			// WTF happens here.
+			//return ProjectCollection.Escape (property.EvaluatedValue);
+			return property.EvaluatedValue;
 		}
+
+		internal BuildTaskDatabase TaskDatabase { get; private set; }
 	}
 }
 

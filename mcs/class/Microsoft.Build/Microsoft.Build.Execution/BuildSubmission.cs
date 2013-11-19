@@ -85,6 +85,8 @@ namespace Microsoft.Build.Execution
 			} catch (Exception ex) {
 				BuildResult.Exception = ex;
 				BuildResult.OverallResult = BuildResultCode.Failure;
+// FIXME: remove this. It's here only for diagnositc purpose
+Console.Error.WriteLine (ex);
 			}
 			wait_handle.Set ();
 			if (callback != null)

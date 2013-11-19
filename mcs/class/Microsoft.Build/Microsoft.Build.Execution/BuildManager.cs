@@ -2,8 +2,9 @@
 //
 // Author:
 //   Rolf Bjarne Kvinge (rolf@xamarin.com)
+//   Atsushi Enomoto (atsushi@xamarin.com)
 //
-// Copyright (C) 2011 Xamarin Inc.
+// Copyright (C) 2011,2013 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -156,13 +157,6 @@ namespace Microsoft.Build.Execution
 				throw new InvalidOperationException ("Cannot reset caches while builds are in progress.");
 			
 			build_node_manager.ResetCaches ();
-			build_task_factory.ResetCaches ();
-		}
-
-		BuildTaskFactory build_task_factory = new BuildTaskFactory ();
-		
-		internal BuildTaskFactory BuildTaskFactory {
-			get { return build_task_factory; }	
 		}
 		
 		BuildNodeManager build_node_manager;

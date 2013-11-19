@@ -40,7 +40,7 @@ namespace Microsoft.Build.Internal
 		public BuildNodeManager (BuildManager buildManager)
 		{
 			BuildManager = buildManager;
-			task_factory.StartNew (RunLoop);
+			new Thread (RunLoop).Start ();
 		}
 		
 		public BuildManager BuildManager { get; private set; }

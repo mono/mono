@@ -77,6 +77,7 @@ namespace MonoTests.Microsoft.Build.Execution
 		}
 		
 		[Test]
+		[Category ("NotWorking")]
 		public void EndBuildWaitsForSubmissionCompletion ()
 		{
 			string project_xml = @"<Project DefaultTargets='Wait1Sec' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>

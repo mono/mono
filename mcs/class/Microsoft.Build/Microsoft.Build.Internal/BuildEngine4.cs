@@ -43,6 +43,9 @@ namespace Microsoft.Build.Internal
 		{
 			this.submission = submission;
 			event_source = new EventSource ();
+			if (submission.BuildManager.OngoingBuildParameters.Loggers != null)
+				foreach (var l in submission.BuildManager.OngoingBuildParameters.Loggers)
+					l.Initialize (event_source);
 		}
 
 		BuildSubmission submission;
@@ -71,6 +74,7 @@ namespace Microsoft.Build.Internal
 			var request = submission.BuildRequest;
 			var parameters = submission.BuildManager.OngoingBuildParameters;
 			this.project = project;
+			var buildTaskFactory = new BuildTaskFactory (BuildTaskDatabase.GetDefaultTaskDatabase (parameters.GetToolset (toolsVersion)), submission.BuildRequest.ProjectInstance.TaskDatabase);
 			
 			// null targets -> success. empty targets -> success(!)
 			if (request.TargetNames == null)
@@ -81,9 +85,14 @@ namespace Microsoft.Build.Internal
 						break;
 
 					ProjectTargetInstance target;
+					var targetResult = new TargetResult ();
+					
+					// FIXME: check skip condition
+					if (false)
+						targetResult.Skip ();
 					// null key is allowed and regarded as blind success(!)
-					if (!request.ProjectInstance.Targets.TryGetValue (targetName, out target))
-						result.AddResultsForTarget (targetName, new TargetResult (new ITaskItem [0], TargetResultCode.Failure));
+					else if (!request.ProjectInstance.Targets.TryGetValue (targetName, out target))
+						targetResult.Success (new ITaskItem[0]);
 					else {
 						foreach (var c in target.Children.OfType<ProjectPropertyGroupTaskInstance> ()) {
 							if (!project.EvaluateCondition (c.Condition))
@@ -105,11 +114,21 @@ namespace Microsoft.Build.Internal
 							if (!project.EvaluateCondition (c.Condition))
 								continue;
 							current_task = c;
-							// MSBuildArchitecture and MSBuildRuntime attributes cannot be suppored.
 							
-							throw new NotImplementedException ();
+							var factoryIdentityParameters = new Dictionary<string,string> ();
+							factoryIdentityParameters ["MSBuildRuntime"] = c.MSBuildRuntime;
+							factoryIdentityParameters ["MSBuildArchitecture"] = c.MSBuildArchitecture;
+							var task = buildTaskFactory.GetTask (c.Name, factoryIdentityParameters, this);
+							task.HostObject = host;
+							task.BuildEngine = this;							
+							if (!task.Execute ()) {
+								targetResult.Failure (null);
+								if (!project.EvaluateCondition (c.ContinueOnError))
+									break;
+							}
 						}
 					}
+					result.AddResultsForTarget (targetName, targetResult);
 				}
 				
 				// FIXME: check .NET behavior, whether cancellation always results in failure.
