@@ -110,12 +110,9 @@ namespace Microsoft.Build.Execution
 		{
 			if (ongoing_build_parameters == null)
 				throw new InvalidOperationException ("Build has not started");
-//Console.Error.WriteLine ("{0} EndBuild waiting for subs: " + submissions.Count, GetHashCode ());
 			if (submissions.Count > 0)
 				WaitHandle.WaitAll (submissions.Select (s => s.WaitHandle).ToArray ());
-//Console.Error.WriteLine ("{0} EndBuild waiting for NodeManager", GetHashCode ());
 			BuildNodeManager.Stop ();
-//Console.Error.WriteLine ("{0} EndBuild done", GetHashCode ());
 			ongoing_build_parameters = null;
 		}
 		

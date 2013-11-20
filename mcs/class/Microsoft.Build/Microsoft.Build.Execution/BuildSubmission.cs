@@ -83,10 +83,10 @@ namespace Microsoft.Build.Execution
 				var outputs = new Dictionary<string,string> ();
 				engine.BuildProject (() => is_canceled, BuildResult, request.ProjectInstance, request.TargetNames, BuildManager.OngoingBuildParameters.GlobalProperties, outputs, toolsVersion);
 			} catch (Exception ex) {
-				BuildResult.Exception = ex;
-				BuildResult.OverallResult = BuildResultCode.Failure;
 // FIXME: remove this. It's here only for diagnositc purpose
 Console.Error.WriteLine (ex);
+				BuildResult.Exception = ex;
+				BuildResult.OverallResult = BuildResultCode.Failure;
 			}
 			wait_handle.Set ();
 			if (callback != null)
