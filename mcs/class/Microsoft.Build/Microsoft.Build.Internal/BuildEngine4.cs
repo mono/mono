@@ -90,9 +90,9 @@ namespace Microsoft.Build.Internal
 					// FIXME: check skip condition
 					if (false)
 						targetResult.Skip ();
-					// null key is allowed and regarded as blind success(!)
+					// null key is allowed and regarded as blind success(!) (as long as it could retrieve target)
 					else if (!request.ProjectInstance.Targets.TryGetValue (targetName, out target))
-						targetResult.Success (new ITaskItem[0]);
+						targetResult.Failure (null);
 					else {
 						foreach (var c in target.Children.OfType<ProjectPropertyGroupTaskInstance> ()) {
 							if (!project.EvaluateCondition (c.Condition))

@@ -49,11 +49,12 @@ namespace Microsoft.Build.Internal
 		List<BuildNode> out_proc_nodes = new List<BuildNode> ();
 		AutoResetEvent queue_wait_handle = new AutoResetEvent (false);
 		Queue<BuildSubmission> queued_builds = new Queue<BuildSubmission> ();
+		// FIXME: currently it is not in use but it should be stored somewhere for cancellation.
 		Dictionary<BuildSubmission,Task> ongoing_builds = new Dictionary<BuildSubmission, Task> ();
 		bool run_loop = true;
 
-		readonly TaskFactory task_factory = new TaskFactory ();
-		internal TaskFactory ThreadTaskFactory {
+		readonly TaskFactory<BuildResult> task_factory = new TaskFactory<BuildResult> ();
+		internal TaskFactory<BuildResult> ThreadTaskFactory {
 			get { return task_factory; }
 		}
 		
@@ -61,7 +62,6 @@ namespace Microsoft.Build.Internal
 		{
 			while (run_loop) {
 				if (queued_builds.Count == 0) {
-//Console.Error.WriteLine ("!!!! {0} waiting for build queue...", BuildManager.GetHashCode ());
 					queue_wait_handle.WaitOne ();
 				}
 				if (!run_loop)
@@ -69,7 +69,7 @@ namespace Microsoft.Build.Internal
 				if (!queued_builds.Any ())
 					continue;
 				var build = queued_builds.Dequeue ();
-				Execute (build);
+				StartOneBuild (build);
 			}
 		}
 
@@ -91,11 +91,12 @@ namespace Microsoft.Build.Internal
 			queue_wait_handle.Set ();
 		}
 		
-		void Execute (BuildSubmission build)
+		void StartOneBuild (BuildSubmission build)
 		{
-//Console.Error.WriteLine ("!!!! {0} BuildNodeManager.Execute", BuildManager.GetHashCode ());
 			var node = TakeNode (build);
-			ongoing_builds [build] = task_factory.StartNew (node.Execute);
+			// FIXME: Task here causes NotImplementedException in somewhere in Interlocked. It does not make sense.
+			//ongoing_builds [build] = task_factory.StartNew (node.ExecuteBuild);
+			new Thread (() => { node.ExecuteBuild (); }).Start ();
 		}
 		
 		// FIXME: take max nodes into account here, and get throttling working.
@@ -160,14 +161,12 @@ namespace Microsoft.Build.Internal
 				Build = build;
 			}
 			
-			public void Execute ()
+			public BuildResult ExecuteBuild ()
 			{
 				// FIXME: depending on NodeAffinity, build it through another MSBuild process.
 				if (Affinity == NodeAffinity.OutOfProc)
 					throw new NotImplementedException ();
-//Console.Error.WriteLine ("!!!! {0} BuildSubmission.Execute start", Manager.BuildManager.GetHashCode ());
-				Build.Execute ();
-//Console.Error.WriteLine ("!!!! {0} BuildSubmission.Execute done", Manager.BuildManager.GetHashCode ());
+				return Build.Execute ();
 			}
 		}
 	}
