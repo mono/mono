@@ -222,13 +222,14 @@ namespace System.Windows.Forms
 						max_width = new_max_width;
 				}
 				// First we have to know the size of text + image
-				Drawing.SizeF tsize = TextRenderer.MeasureText (msgbox_text, this.Font, new Size (max_width, int.MaxValue), TextFormatFlags.WordBreak);
+				int iconImageWidth = 0;
+				if (icon_image != null)
+					iconImageWidth = icon_image.Width + 10;
+				Drawing.SizeF tsize = TextRenderer.MeasureText (msgbox_text, this.Font, new Size (max_width - iconImageWidth, int.MaxValue), TextFormatFlags.WordBreak);
 				text_rect = new RectangleF ();
 				text_rect.Height = tsize.Height;
 
-				int iconImageWidth = 0;
 				if (icon_image != null) {
-					iconImageWidth = icon_image.Width + 10;
 					tsize.Width += iconImageWidth;
 					if(icon_image.Height > tsize.Height) {
 						// Place text middle-right
