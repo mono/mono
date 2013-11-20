@@ -129,6 +129,12 @@ namespace Microsoft.Build.Internal
 							task.HostObject = host;
 							task.BuildEngine = this;
 							// FIXME: this cannot be that simple, value has to be converted to the appropriate target type.
+							var props = task.GetType ().GetProperties ()
+								.Where (p => p.CanWrite && p.GetCustomAttributes (typeof (RequiredAttribute), true).Any ());
+							var missings = props.Where (p => !ti.Parameters.Any (tp => tp.Key.Equals (p.Name, StringComparison.OrdinalIgnoreCase)));
+							if (missings.Any ())
+								throw new InvalidOperationException (string.Format ("Task {0} of type {1} is used without specifying mandatory property: {2}",
+									ti.Name, task.GetType (), string.Join (", ", missings.Select (p => p.Name).ToArray ())));
 							foreach (var p in ti.Parameters) {
 								var prop = task.GetType ().GetProperty (p.Key);
 								if (prop == null)
