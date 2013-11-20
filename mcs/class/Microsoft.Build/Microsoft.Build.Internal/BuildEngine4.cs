@@ -139,7 +139,7 @@ namespace Microsoft.Build.Internal
 							}
 							if (!task.Execute ()) {
 								targetResult.Failure (null);
-								if (!project.EvaluateCondition (ti.ContinueOnError))
+								if (!ContinueOnError)
 									break;
 							}
 							foreach (var to in ti.Outputs) {
@@ -383,12 +383,13 @@ namespace Microsoft.Build.Internal
 		public bool ContinueOnError {
 			get {
 				switch (current_task.ContinueOnError) {
-				case "true":
 				case "WarnAndContinue":
 				case "ErrorAndContinue":
 					return true;
+				case "ErrorAndStop":
+					return false;
 				}
-				return false;
+				return project.EvaluateCondition (current_task.ContinueOnError);
 			}
 		}
 
