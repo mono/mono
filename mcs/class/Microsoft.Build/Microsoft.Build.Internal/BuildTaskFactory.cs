@@ -54,7 +54,7 @@ namespace Microsoft.Build.Internal
 		
 		public ITask GetTask (string name, IDictionary<string,string> factoryIdentityParameters, IBuildEngine engine)
 		{
-			Func<BuildTaskDatabase.TaskDescription,bool> fn = t => string.Equals (t.Name, name, StringComparison.OrdinalIgnoreCase);
+			Func<BuildTaskDatabase.TaskDescription,bool> fn = t => t.IsMatch (name);
 			var td = per_project_database.Tasks.FirstOrDefault (fn) ?? built_in_database.Tasks.FirstOrDefault (fn);
 			if (td == null)
 				throw new InvalidOperationException (string.Format ("Task '{0}' could not be found", name));

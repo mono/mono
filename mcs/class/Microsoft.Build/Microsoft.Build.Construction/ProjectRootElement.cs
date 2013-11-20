@@ -542,7 +542,9 @@ namespace Microsoft.Build.Construction
                                 AppendChild (def);
                                 return def;
                         case "UsingTask":
-                                return AddUsingTask (null, null, null);
+                                var ut = AddUsingTask (null, null, null);
+                                ut.Load (reader.ReadSubtree ());
+                                return ut;
                         case "Choose":
                                 var choose = CreateChooseElement ();
                                 AppendChild (choose);

@@ -171,7 +171,7 @@ namespace Microsoft.Build.Execution
 			EvaluateItems (xml, elements);
 			
 			// finally, evaluate targets and tasks
-			EvaluateTasks (elements);
+			EvaluateTasks (elements);			
 		}
 		
 		IEnumerable<ProjectElement> EvaluatePropertiesAndImports (IEnumerable<ProjectElement> elements)

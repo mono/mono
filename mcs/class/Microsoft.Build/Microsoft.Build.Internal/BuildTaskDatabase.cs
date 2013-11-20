@@ -34,6 +34,7 @@ using Microsoft.Build.Execution;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Construction;
 using System.IO;
+using System.Xml;
 
 namespace Microsoft.Build.Internal
 {
@@ -54,7 +55,9 @@ namespace Microsoft.Build.Internal
 		// for 'default' tasks.
 		BuildTaskDatabase (Toolset toolset)
 		{
-			var root = ProjectRootElement.Create (Path.Combine (toolset.ToolsPath, default_tasks_file));
+			ProjectRootElement root;
+			using (var xml = XmlReader.Create (Path.Combine (toolset.ToolsPath, default_tasks_file)))
+				root = ProjectRootElement.Create (xml);
 			LoadUsingTasks (null, root);
 		}
 		
@@ -71,6 +74,14 @@ namespace Microsoft.Build.Internal
 			public Type TaskType { get; set; }
 			public IDictionary<string, TaskPropertyInfo> TaskFactoryParameters { get; set; }
 			public string TaskBody { get; set; }
+			
+			public bool IsMatch (string name)
+			{
+				int ridx = Name.LastIndexOf ('.');
+				int tidx = name.IndexOf ('.');
+				return string.Equals (Name, name, StringComparison.OrdinalIgnoreCase) ||
+					tidx < 0 && ridx > 0 && string.Equals (Name.Substring (ridx + 1), name, StringComparison.OrdinalIgnoreCase);
+			}
 		}
 		
 		internal class TaskAssembly
@@ -97,26 +108,28 @@ namespace Microsoft.Build.Internal
 					ta.LoadedAssembly = ta.AssemblyName != null ? Assembly.Load (ta.AssemblyName) : Assembly.LoadFile (ta.AssemblyFile);
 					assemblies.Add (ta);
 				}
-				var pg = ut.ParameterGroup.Count == 0 ? null : ut.ParameterGroup.Parameters.Select (p => new TaskPropertyInfo (p.Name, Type.GetType (p.ParameterType), cond (p.Output), cond (p.Required)))
+				var pg = ut.ParameterGroup == null ? null : ut.ParameterGroup.Parameters.Select (p => new TaskPropertyInfo (p.Name, Type.GetType (p.ParameterType), cond (p.Output), cond (p.Required)))
 					.ToDictionary (p => p.Name);
 				var task = new TaskDescription () {
 					TaskAssembly = ta,
 					Name = ut.TaskName,
-					TaskFactoryType = ut.TaskFactory != null ? LoadTypeFrom (ta.LoadedAssembly, ut.TaskFactory) : null,
-					TaskType = ut.TaskFactory == null ? LoadTypeFrom (ta.LoadedAssembly, ut.TaskName) : null,
+					TaskFactoryType = string.IsNullOrEmpty (ut.TaskFactory) ? null : LoadTypeFrom (ta.LoadedAssembly, ut.TaskName, ut.TaskFactory),
+					TaskType = string.IsNullOrEmpty (ut.TaskFactory) ? LoadTypeFrom (ta.LoadedAssembly, ut.TaskName, ut.TaskName) : null,
 					TaskFactoryParameters = pg,
-					TaskBody = cond (ut.TaskBody.Condition) ? ut.TaskBody.Evaluate : null,
+					TaskBody = ut.TaskBody != null && cond (ut.TaskBody.Condition) ? ut.TaskBody.Evaluate : null,
 					};
 				task_descs.Add (task);
 			}
 		}
 		
-		Type LoadTypeFrom (Assembly a, string possiblyShortTypeName)
+		Type LoadTypeFrom (Assembly a, string taskName, string possiblyShortTypeName)
 		{
-			if (possiblyShortTypeName.IndexOf ('.') > 0)
-				return a.GetType (possiblyShortTypeName);
-			else
-				return a.GetTypes ().FirstOrDefault (t => t.Name == possiblyShortTypeName);
+			Type type = a.GetType (possiblyShortTypeName, false, true);
+			if (possiblyShortTypeName.IndexOf ('.') < 0)
+				type = a.GetTypes ().FirstOrDefault (t => t.Name == possiblyShortTypeName);
+			if (type == null)
+				throw new InvalidOperationException (string.Format ("For task '{0}' Specified type '{1}' was not found in assembly '{2}'", taskName, possiblyShortTypeName, a.FullName));
+			return type;
 		}
 	}
 }
