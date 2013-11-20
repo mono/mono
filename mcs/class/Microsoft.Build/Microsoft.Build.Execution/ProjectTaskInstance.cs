@@ -64,17 +64,25 @@ namespace Microsoft.Build.Execution
 			get { return condition; }
 		}
 		
-		#if NET_4_5
 		ElementLocation condition_location, location;
 		
-		public override ElementLocation ConditionLocation {
+		#if NET_4_5
+		public
+		#else
+		internal
+		#endif
+		override ElementLocation ConditionLocation {
 			get { return condition_location; }
 		}
 
-		public override ElementLocation Location {
+		#if NET_4_5
+		public
+		#else
+		internal
+		#endif
+		override ElementLocation Location {
 			get { return location; }
 		}
-		#endif
 		
 		public string ContinueOnError { get; private set; }
 		

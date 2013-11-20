@@ -200,6 +200,35 @@ namespace Microsoft.Build.Execution
 						yield return e;
 			}
 		}
+		
+		internal IEnumerable<T> GetAllItems<T> (string include, string exclude, Func<string,T> creator, Func<string,ITaskItem> taskItemCreator, Func<string,bool> itemTypeCheck, Action<T,string> assignRecurse)
+		{
+			var includes = ExpandString (include).Split (item_target_sep, StringSplitOptions.RemoveEmptyEntries);
+			var excludes = ExpandString (exclude).Split (item_target_sep, StringSplitOptions.RemoveEmptyEntries);
+			
+			if (includes.Length == 0)
+				yield break;
+			if (includes.Length == 1 && includes [0].IndexOf ('*') < 0 && excludes.Length == 0) {
+				// for most case - shortcut.
+				var item = creator (includes [0]);
+				yield return item;
+			} else {
+				var ds = new Microsoft.Build.BuildEngine.DirectoryScanner () {
+					BaseDirectory = new DirectoryInfo (Directory),
+					Includes = includes.Select (i => taskItemCreator (i)).ToArray (),
+					Excludes = excludes.Select (e => taskItemCreator (e)).ToArray (),
+				};
+				ds.Scan ();
+				foreach (var taskItem in ds.MatchedItems) {
+					if (all_evaluated_items.Any (i => i.EvaluatedInclude == taskItem.ItemSpec && itemTypeCheck (i.ItemType)))
+						continue; // skip duplicate
+					var item = creator (taskItem.ItemSpec);
+					string recurse = taskItem.GetMetadata ("RecursiveDir");
+					assignRecurse (item, recurse);
+					yield return item;
+				}
+			}
+		}
 
 		void EvaluateItems (ProjectRootElement xml, IEnumerable<ProjectElement> elements)
 		{
@@ -209,33 +238,9 @@ namespace Microsoft.Build.Execution
 					foreach (var p in ige.Items) {
 						if (!EvaluateCondition (ige.Condition) || !EvaluateCondition (p.Condition))
 							continue;
-						var includes = ExpandString (p.Include).Split (item_target_sep, StringSplitOptions.RemoveEmptyEntries);
-						var excludes = ExpandString (p.Exclude).Split (item_target_sep, StringSplitOptions.RemoveEmptyEntries);
-						
-						if (includes.Length == 0)
-							continue;						
-						if (includes.Length == 1 && includes [0].IndexOf ('*') < 0 && excludes.Length == 0) {
-							// for most case - shortcut.
-							var item = new ProjectItemInstance (this, p, includes [0]);
-							this.raw_items.Add (item);
+						foreach (var item in GetAllItems (p.Include, p.Exclude, s => new ProjectItemInstance (this, p, s), s => new ProjectTaskItem (p, s), it => string.Equals (it, p.ItemType, StringComparison.OrdinalIgnoreCase), (t, s) => t.RecursiveDir = s)) {
+							raw_items.Add (item);
 							all_evaluated_items.Add (item);
-						} else {
-							var ds = new Microsoft.Build.BuildEngine.DirectoryScanner () {
-								BaseDirectory = new DirectoryInfo (Directory),
-								Includes = includes.Select (i => new ProjectTaskItem (p, i)).ToArray (),
-								Excludes = excludes.Select (e => new ProjectTaskItem (p, e)).ToArray (),
-							};
-							ds.Scan ();
-							foreach (var taskItem in ds.MatchedItems) {
-								if (all_evaluated_items.Any (i => i.EvaluatedInclude == taskItem.ItemSpec && i.ItemType == p.ItemType))
-									continue; // skip duplicate
-								var item = new ProjectItemInstance (this, p, taskItem.ItemSpec);
-								string recurse = taskItem.GetMetadata ("RecursiveDir");
-								if (!string.IsNullOrEmpty (recurse))
-									item.RecursiveDir = recurse;
-								this.raw_items.Add (item);
-								all_evaluated_items.Add (item);
-							}
 						}
 					}
 				}

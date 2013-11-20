@@ -37,7 +37,12 @@ using System.IO;
 
 namespace Microsoft.Build.Internal
 {
-	class BuildEngine4 : IBuildEngine4
+	class BuildEngine4
+#if NET_4_5
+		: IBuildEngine4
+#else
+		: IBuildEngine3
+#endif
 	{
 		public BuildEngine4 (BuildSubmission submission)
 		{
@@ -109,33 +114,138 @@ namespace Microsoft.Build.Internal
 								continue;
 							throw new NotImplementedException ();
 						}
-						foreach (var c in target.Children.OfType<ProjectTaskInstance> ()) {
-							var host = request.HostServices == null ? null : request.HostServices.GetHostObject (request.ProjectFullPath, targetName, c.Name);
-							if (!project.EvaluateCondition (c.Condition))
+						foreach (var ti in target.Children.OfType<ProjectTaskInstance> ()) {
+							var host = request.HostServices == null ? null : request.HostServices.GetHostObject (request.ProjectFullPath, targetName, ti.Name);
+							if (!project.EvaluateCondition (ti.Condition))
 								continue;
-							current_task = c;
+							current_task = ti;
 							
 							var factoryIdentityParameters = new Dictionary<string,string> ();
-							factoryIdentityParameters ["MSBuildRuntime"] = c.MSBuildRuntime;
-							factoryIdentityParameters ["MSBuildArchitecture"] = c.MSBuildArchitecture;
-							var task = buildTaskFactory.GetTask (c.Name, factoryIdentityParameters, this);
+#if NET_4_5
+							factoryIdentityParameters ["MSBuildRuntime"] = ti.MSBuildRuntime;
+							factoryIdentityParameters ["MSBuildArchitecture"] = ti.MSBuildArchitecture;
+#endif
+							var task = buildTaskFactory.CreateTask (ti.Name, factoryIdentityParameters, this);
 							task.HostObject = host;
-							task.BuildEngine = this;							
+							task.BuildEngine = this;
+							// FIXME: this cannot be that simple, value has to be converted to the appropriate target type.
+							foreach (var p in ti.Parameters) {
+								var prop = task.GetType ().GetProperty (p.Key);
+								if (prop == null)
+									throw new InvalidOperationException (string.Format ("Task {0} does not have property {1}", ti.Name, p.Key));
+								if (!prop.CanWrite)
+									throw new InvalidOperationException (string.Format ("Task {0} has property {1} but it is read-only.", ti.Name, p.Key));
+								prop.SetValue (task, ConvertTo (p.Value, prop.PropertyType), null);
+							}
 							if (!task.Execute ()) {
 								targetResult.Failure (null);
-								if (!project.EvaluateCondition (c.ContinueOnError))
+								if (!project.EvaluateCondition (ti.ContinueOnError))
 									break;
 							}
+							foreach (var to in ti.Outputs) {
+								var toItem = to as ProjectTaskOutputItemInstance;
+								var toProp = to as ProjectTaskOutputPropertyInstance;
+								string taskParameter = toItem != null ? toItem.TaskParameter : toProp.TaskParameter;
+								var pi = task.GetType ().GetProperty (taskParameter);
+								if (pi == null)
+									throw new InvalidOperationException (string.Format ("Task {0} does not have property {1} specified as TaskParameter", ti.Name, toItem.TaskParameter));
+								if (!pi.CanRead)
+									throw new InvalidOperationException (string.Format ("Task {0} has property {1} specified as TaskParameter, but it is write-only", ti.Name, toItem.TaskParameter));
+								if (toItem != null)
+									project.AddItem (toItem.ItemType, ConvertFrom (pi.GetValue (task, null)));
+								else
+									project.SetProperty (toProp.PropertyName, ConvertFrom (pi.GetValue (task, null)));
+							}
 						}
+						Func<string,ITaskItem> creator = s => new TargetOutputTaskItem () { ItemSpec = s };
+						var items = project.GetAllItems (target.Outputs, string.Empty, creator, creator, s => true, (t, s) => {});
+						targetResult.Success (items);
 					}
+						
 					result.AddResultsForTarget (targetName, targetResult);
 				}
-				
+
 				// FIXME: check .NET behavior, whether cancellation always results in failure.
 				result.OverallResult = checkCancel () ? BuildResultCode.Failure : result.ResultsByTarget.Select (p => p.Value).Any (r => r.ResultCode == TargetResultCode.Failure) ? BuildResultCode.Failure : BuildResultCode.Success;
 			}
 		}
 		
+		object ConvertTo (string source, Type targetType)
+		{
+			if (targetType.IsSubclassOf (typeof (ITaskItem)))
+				return new TargetOutputTaskItem () { ItemSpec = source };
+			if (targetType.IsArray)
+				return new ArrayList (source.Split (';').Select (s => ConvertTo (s, targetType.GetElementType ())).ToArray ())
+						.ToArray (targetType.GetElementType ());
+			else
+				return Convert.ChangeType (source, targetType);
+		}
+		
+		string ConvertFrom (object source)
+		{
+			if (source == null)
+				return string.Empty;
+			var type = source.GetType ();
+			if (type.IsSubclassOf (typeof (ITaskItem)))
+				return ((ITaskItem) source).ItemSpec;
+			if (type.IsArray)
+				return string.Join (":", ((Array) source).Cast<object> ().Select (o => ConvertFrom (o)).ToArray ());
+			else
+				return (string) Convert.ChangeType (source, typeof (string));
+		}
+		
+		class TargetOutputTaskItem : ITaskItem2
+		{
+			#region ITaskItem2 implementation
+			public string GetMetadataValueEscaped (string metadataName)
+			{
+				return null;
+			}
+			public void SetMetadataValueLiteral (string metadataName, string metadataValue)
+			{
+				throw new NotSupportedException ();
+			}
+			public IDictionary CloneCustomMetadataEscaped ()
+			{
+				return new Hashtable ();
+			}
+			public string EvaluatedIncludeEscaped {
+				get { return ProjectCollection.Escape (ItemSpec); }
+				set { ItemSpec = ProjectCollection.Unescape (value); }
+			}
+			#endregion
+			#region ITaskItem implementation
+			public IDictionary CloneCustomMetadata ()
+			{
+				return new Hashtable ();
+			}
+			public void CopyMetadataTo (ITaskItem destinationItem)
+			{
+				// do nothing
+			}
+			public string GetMetadata (string metadataName)
+			{
+				return null;
+			}
+			public void RemoveMetadata (string metadataName)
+			{
+				// do nothing
+			}
+			public void SetMetadata (string metadataName, string metadataValue)
+			{
+				throw new NotSupportedException ();
+			}
+			public string ItemSpec { get; set; }
+			public int MetadataCount {
+				get { return 0; }
+			}
+			public ICollection MetadataNames {
+				get { return new ArrayList (); }
+			}
+			#endregion
+		}
+		
+#if NET_4_5
 		#region IBuildEngine4 implementation
 		
 		// task objects are not in use anyways though...
@@ -175,8 +285,8 @@ namespace Microsoft.Build.Internal
 				task_objects.Remove (reg);
 			return reg.Object;
 		}
-
 		#endregion
+#endif
 
 		#region IBuildEngine3 implementation
 
