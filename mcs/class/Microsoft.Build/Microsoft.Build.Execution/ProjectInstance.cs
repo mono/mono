@@ -238,7 +238,8 @@ namespace Microsoft.Build.Execution
 					foreach (var p in ige.Items) {
 						if (!EvaluateCondition (ige.Condition) || !EvaluateCondition (p.Condition))
 							continue;
-						foreach (var item in GetAllItems (p.Include, p.Exclude, s => new ProjectItemInstance (this, p, s), s => new ProjectTaskItem (p, s), it => string.Equals (it, p.ItemType, StringComparison.OrdinalIgnoreCase), (t, s) => t.RecursiveDir = s)) {
+						Func<string,ProjectItemInstance> creator = s => new ProjectItemInstance (this, p.ItemType, p.Metadata.Select (m => new KeyValuePair<string,string> (m.Name, m.Value)).ToList (), s);
+						foreach (var item in GetAllItems (p.Include, p.Exclude, creator, s => new ProjectTaskItem (p, s), it => string.Equals (it, p.ItemType, StringComparison.OrdinalIgnoreCase), (t, s) => t.RecursiveDir = s)) {
 							raw_items.Add (item);
 							all_evaluated_items.Add (item);
 						}
@@ -351,7 +352,10 @@ namespace Microsoft.Build.Execution
 		
 		public ProjectItemInstance AddItem (string itemType, string evaluatedInclude, IEnumerable<KeyValuePair<string, string>> metadata)
 		{
-			throw new NotImplementedException ();
+			var item = new ProjectItemInstance (this, itemType, metadata, evaluatedInclude);
+			raw_items.Add (item);
+			all_evaluated_items.Add (item);
+			return item;
 		}
 
 		public bool Build ()

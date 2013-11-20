@@ -40,12 +40,13 @@ namespace Microsoft.Build.Execution
 	public class ProjectItemInstance
                 : ITaskItem2
 	{
-		internal ProjectItemInstance (ProjectInstance project, ProjectItemElement xml, string evaluatedInclude)
+		internal ProjectItemInstance (ProjectInstance project, string itemType, IEnumerable<KeyValuePair<string,string>> metadata, string evaluatedInclude)
 		{
 			this.project = project;
 			this.evaluated_include = evaluatedInclude;
-			item_type = xml.ItemType;
-			metadata = xml.Metadata.Select (m => new ProjectMetadataInstance (m.Name, m.Value)).ToList ();
+			this.item_type = itemType;
+			this.metadata = new List<ProjectMetadataInstance> ();
+			SetMetadata (metadata);
 		}
 		
 		readonly ProjectInstance project;
