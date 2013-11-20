@@ -97,17 +97,25 @@ namespace MonoTests.Microsoft.Build.Execution
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void ResetCachesDuringBuildIsInvalid ()
 		{
-			string project_xml = @"<Project DefaultTargets='Wait1Sec' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+			// Windows does not have useful sleep or alternative, so skip it
+			bool is_windows = true;
+			switch (Environment.OSVersion.Platform) {
+			case PlatformID.Unix:
+			case PlatformID.MacOSX:
+				is_windows = false;
+				break;
+			}
+			string project_xml = string.Format (@"<Project DefaultTargets='Wait1Sec' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
   <Target Name='Wait1Sec'>
-    <Exec Command='ping 10.1.1.1 -n 1 -w 1' />
+    <Exec Command='{0}' />
   </Target>
-</Project>";
+</Project>", is_windows ? "powershell -command \"Start-Sleep -s 1\"" : "/bin/sleep 1");
 			var xml = XmlReader.Create (new StringReader (project_xml));
 			var root = ProjectRootElement.Create (xml);
 			var proj = new ProjectInstance (root);
 			var bm = new BuildManager ();
 			bm.BeginBuild (new BuildParameters ());
-			var sub = bm.PendBuildRequest (new BuildRequestData (proj, new string [] { "Wait5Sec" }));
+			var sub = bm.PendBuildRequest (new BuildRequestData (proj, new string [] { "Wait1Sec" }));
 			sub.ExecuteAsync (delegate {}, null);
 			try {
 				bm.ResetCaches ();
@@ -117,7 +125,6 @@ namespace MonoTests.Microsoft.Build.Execution
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void BasicManualParallelBuilds ()
 		{
 			string project_xml = @"<Project DefaultTargets='Wait1Sec' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
@@ -134,7 +141,7 @@ namespace MonoTests.Microsoft.Build.Execution
 			DateTime beforeExec = DateTime.Now;
 			var l = new List<BuildSubmission> ();
 			for (int i = 0; i < 10; i++) {
-				var sub = bm.PendBuildRequest (new BuildRequestData (proj, new string [] { "Wait5Sec" }));
+				var sub = bm.PendBuildRequest (new BuildRequestData (proj, new string [] { "Wait1Sec" }));
 				l.Add (sub);
 				sub.ExecuteAsync (delegate { waitDone = DateTime.Now; }, null);
 			}

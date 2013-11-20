@@ -34,10 +34,19 @@ namespace Microsoft.Build.Execution
 	{
 		public abstract string Condition { get; }
 		public string FullPath { get; internal set; }
-#if NET_4_5
-		public abstract ElementLocation ConditionLocation { get; }
-		public abstract ElementLocation Location { get; }
-#endif
+		#if NET_4_5
+		public
+		#else
+		internal
+		#endif
+		abstract ElementLocation ConditionLocation { get; }
+		
+		#if NET_4_5
+		public
+		#else
+		internal
+		#endif
+		abstract ElementLocation Location { get; }
 	}
 }
 

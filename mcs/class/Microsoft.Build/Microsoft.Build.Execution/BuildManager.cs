@@ -133,7 +133,6 @@ namespace Microsoft.Build.Execution
 			
 		internal ProjectInstance GetProjectInstanceForBuildInternal (Project project)
 		{
-			ProjectInstance ret;
 			if (!instances.ContainsKey (project))
 				instances [project] = project.CreateProjectInstance ();
 			return instances [project];

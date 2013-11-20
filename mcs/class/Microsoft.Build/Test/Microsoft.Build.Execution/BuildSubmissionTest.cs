@@ -77,14 +77,21 @@ namespace MonoTests.Microsoft.Build.Execution
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void EndBuildWaitsForSubmissionCompletion ()
 		{
-			string project_xml = @"<Project DefaultTargets='Wait1Sec' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+			// Windows does not have useful sleep or alternative, so skip it
+			bool is_windows = true;
+			switch (Environment.OSVersion.Platform) {
+			case PlatformID.Unix:
+			case PlatformID.MacOSX:
+				is_windows = false;
+				break;
+			}
+			string project_xml = string.Format (@"<Project DefaultTargets='Wait1Sec' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
   <Target Name='Wait1Sec'>
-    <Exec Command='ping 10.1.1.1 -n 1 -w 1' />
+    <Exec Command='{0}' />
   </Target>
-</Project>";
+</Project>", is_windows ? "powershell -command \"Start-Sleep -s 1\"" : "/bin/sleep 1");
 			var xml = XmlReader.Create (new StringReader (project_xml));
 			var root = ProjectRootElement.Create (xml);
 			var proj = new ProjectInstance (root);
@@ -92,7 +99,7 @@ namespace MonoTests.Microsoft.Build.Execution
 			bm.BeginBuild (new BuildParameters ());
 			DateTime waitDone = DateTime.MinValue;
 			DateTime beforeExec = DateTime.Now;
-			var sub = bm.PendBuildRequest (new BuildRequestData (proj, new string [] { "Wait5Sec" }));
+			var sub = bm.PendBuildRequest (new BuildRequestData (proj, new string [] { "Wait1Sec" }));
 			sub.ExecuteAsync (delegate { waitDone = DateTime.Now; }, null);
 			bm.EndBuild ();
 			Assert.IsTrue (sub.BuildResult.OverallResult == BuildResultCode.Success, "#1");

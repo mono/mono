@@ -52,7 +52,7 @@ namespace Microsoft.Build.Internal
 			task_factories.Clear ();
 		}
 		
-		public ITask GetTask (string name, IDictionary<string,string> factoryIdentityParameters, IBuildEngine engine)
+		public ITask CreateTask (string name, IDictionary<string,string> factoryIdentityParameters, IBuildEngine engine)
 		{
 			Func<BuildTaskDatabase.TaskDescription,bool> fn = t => t.IsMatch (name);
 			var td = per_project_database.Tasks.FirstOrDefault (fn) ?? built_in_database.Tasks.FirstOrDefault (fn);
@@ -62,10 +62,12 @@ namespace Microsoft.Build.Internal
 				var tf = task_factories.FirstOrDefault (f => f.GetType () == td.TaskFactoryType);
 				if (tf == null) {
 					tf = (ITaskFactory) Activator.CreateInstance (td.TaskFactoryType);
+#if NET_4_5
 					var tf2 = tf as ITaskFactory2;
 					if (tf2 != null)
 						tf2.Initialize (name, factoryIdentityParameters, td.TaskFactoryParameters, td.TaskBody, engine);
 					else
+#endif
 						tf.Initialize (name, td.TaskFactoryParameters, td.TaskBody, engine);
 					task_factories.Add (tf);
 				}
