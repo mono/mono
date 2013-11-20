@@ -281,6 +281,45 @@ public class TimeZoneTest {
 	}
 
 		[Test]
+		public void GetUtcOffsetAtDSTBoundary ()
+		{
+			/*
+			 * Getting a definitive list of timezones which do or don't observe Daylight
+			 * Savings is difficult (can't say America's or USA definitively) and lengthy see 
+			 *
+			 * http://en.wikipedia.org/wiki/Daylight_saving_time_by_country
+			 *
+			 * as a good starting point for a list.
+			 *
+			 * The following are SOME of the timezones/regions which do support daylight savings.
+			 *
+			 * Pacific/Auckland
+			 * Pacific/Sydney
+			 * USA (EST, CST, MST, PST, AKST) note this does not cover all states or regions
+			 * Europe/London (GMT)
+			 * CET (member states of the European Union)
+			 *
+			 * This test should work in all the above timezones
+			 */
+
+
+			TimeZone tz = TimeZone.CurrentTimeZone;
+			DaylightTime daylightChanges = tz.GetDaylightChanges(2007);
+			DateTime dst_end = daylightChanges.End;
+
+			if (dst_end == DateTime.MinValue)
+				Assert.Ignore (tz.StandardName + " did not observe daylight saving time during 2007.");
+
+			var standardOffset = tz.GetUtcOffset(daylightChanges.Start.AddMinutes(-1));
+
+			Assert.AreEqual(standardOffset, tz.GetUtcOffset (dst_end));
+			Assert.AreEqual(standardOffset, tz.GetUtcOffset (dst_end.Add (daylightChanges.Delta.Negate ().Add (TimeSpan.FromSeconds(1)))));
+			Assert.AreEqual(standardOffset, tz.GetUtcOffset (dst_end.Add(daylightChanges.Delta.Negate ())));
+			Assert.AreNotEqual(standardOffset, tz.GetUtcOffset (dst_end.Add(daylightChanges.Delta.Negate ().Add (TimeSpan.FromSeconds(-1)))));
+		}
+
+
+		[Test]
 		public void StaticProperties ()
 		{
 			Assert.IsNotNull (TimeZoneInfo.Local, "Local");
