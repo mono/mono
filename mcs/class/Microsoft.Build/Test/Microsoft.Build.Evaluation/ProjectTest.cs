@@ -153,11 +153,14 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		public void BuildCSharpTargetBuild ()
 		{
             string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <PropertyGroup>
+    <AssemblyName>Foo</AssemblyName>
+  </PropertyGroup>
   <Import Project='$(MSBuildToolsPath)\Microsoft.CSharp.targets' />
 </Project>";
             var xml = XmlReader.Create (new StringReader (project_xml));
             var root = ProjectRootElement.Create (xml);
-            var proj = new Project (root);
+			var proj = new Project (root, null, "4.0");
 			Assert.IsFalse (proj.Build ("Build", new ILogger [] {new ConsoleLogger (LoggerVerbosity.Diagnostic, Console.Error.WriteLine, null, null)})); // missing mandatory properties
 		}
 		
