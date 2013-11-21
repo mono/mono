@@ -105,12 +105,13 @@ namespace Microsoft.Build.Internal
 					goto default;
 				start++;
 				last = FindMatchingCloseParen (start, end);
-				if (last < 0)
-				if (validation_type == ExpressionValidationType.StrictBoolean)
-					throw new InvalidProjectFileException (string.Format ("expression did not have matching ')' since index {0} in \"{1}\"", start, source));
-				else {
-					start--;
-					goto default; // treat as raw literal to the section end
+				if (last < 0) {
+					if (validation_type == ExpressionValidationType.StrictBoolean)
+						throw new InvalidProjectFileException (string.Format ("expression did not have matching ')' since index {0} in \"{1}\"", start, source));
+					else {
+						start--;
+						goto default; // treat as raw literal to the section end
+					}
 				}
 				var contents = Parse (start, last).ToArray ();
 				if (contents.Length > 1)

@@ -98,6 +98,7 @@ namespace Microsoft.Build.Internal
 				TokenForItemPropertyValue ("]", Token.BRACE_CLOSE);
 				break;
 			case '(':
+				modes.Push (TokenizerMode.Default);
 				TokenForItemPropertyValue ("(", Token.PAREN_OPEN);
 				break;
 			case ')':

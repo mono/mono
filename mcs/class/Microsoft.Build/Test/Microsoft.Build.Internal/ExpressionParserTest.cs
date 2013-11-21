@@ -84,6 +84,10 @@ namespace MonoTests.Microsoft.Build.Internal
 				"$([System.String]::Format('True'))",
 				"$([System.String]::Format('True', null))",
 				"False And True == True And True",
+				"True or True or False",
+				"(True or True or False)",
+				"True and False",
+				"(True) and (False)",
 			};
 			string [] depends = {
 				// valid only if evaluated to boolean
