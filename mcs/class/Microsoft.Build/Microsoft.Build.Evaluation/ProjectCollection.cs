@@ -106,7 +106,7 @@ namespace Microsoft.Build.Evaluation
 
 		public ProjectCollection (IDictionary<string, string> globalProperties, IEnumerable<ILogger> loggers,
 				ToolsetDefinitionLocations toolsetDefinitionLocations)
-			: this (globalProperties, loggers, null, toolsetDefinitionLocations, int.MaxValue, false)
+			: this (globalProperties, loggers, null, toolsetDefinitionLocations, 1, false)
 		{
 		}
 
@@ -118,7 +118,7 @@ namespace Microsoft.Build.Evaluation
 			global_properties = globalProperties ?? new Dictionary<string, string> ();
 			this.loggers = loggers != null ? loggers.ToList () : new List<ILogger> ();
 			toolset_locations = toolsetDefinitionLocations;
-			max_node_count = maxNodeCount;
+			MaxNodeCount = maxNodeCount;
 			OnlyLogCriticalEvents = onlyLogCriticalEvents;
 
 			LoadDefaultToolsets ();
@@ -132,8 +132,6 @@ namespace Microsoft.Build.Evaluation
 		public event EventHandler<ProjectCollectionChangedEventArgs> ProjectCollectionChanged;
 		[MonoTODO ("not fired yet")]
 		public event EventHandler<ProjectXmlChangedEventArgs> ProjectXmlChanged;
-
-		readonly int max_node_count;
 
 		public void AddProject (Project project)
 		{
@@ -314,6 +312,8 @@ namespace Microsoft.Build.Evaluation
 		public bool IsBuildEnabled { get; set; }
 		
 		internal string BuildStartupDirectory { get; set; }
+		
+		internal int MaxNodeCount { get; private set; }
 		
 		Stack<string> ongoing_imports = new Stack<string> ();
 		

@@ -54,6 +54,7 @@ namespace Microsoft.Build.Execution
 			EnableNodeReuse = true;
 			Culture = CultureInfo.CurrentCulture;
 			UICulture = CultureInfo.CurrentUICulture;
+			MaxNodeCount = projectCollection.MaxNodeCount;
 
 			// these properties are copied, while some members (such as Loggers) are not.
 			this.DefaultToolsVersion = projectCollection.DefaultToolsVersion;
