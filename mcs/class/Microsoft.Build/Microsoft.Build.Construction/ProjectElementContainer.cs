@@ -128,10 +128,10 @@ namespace Microsoft.Build.Construction
                 {
                         reader.Read ();
                         reader.MoveToContent ();
+                        FillLocation (reader);
                         if (reader.LocalName != XmlName || reader.NamespaceURI != MSBuildNamespace)
                                 throw CreateError (reader, string.Format ("Unexpected XML {0} \"{1}\" in namespace \"{2}\" appeared, while \"{3}\" in namespace \"{4}\" is expected.",
                                                 reader.NodeType, reader.LocalName, reader.NamespaceURI, XmlName, MSBuildNamespace), -1);
-                        FillLocation (reader);
                         while (reader.MoveToNextAttribute ()) {
                                 LoadAttribute (reader.Name, reader.Value);
                         }
