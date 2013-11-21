@@ -1129,14 +1129,17 @@ namespace Mono.CSharp {
 						expr = EmptyExpression.Null;
 						return true;
 					}
+
+					if (storey.ReturnType.IsGenericTask)
+						block_return_type = storey.ReturnType.TypeArguments[0];
 				}
 
 				if (ec.CurrentIterator != null) {
 					Error_ReturnFromIterator (ec);
-				} else if (ec.ReturnType != InternalType.ErrorType) {
+				} else if (block_return_type != InternalType.ErrorType) {
 					ec.Report.Error (126, loc,
 						"An object of a type convertible to `{0}' is required for the return statement",
-						ec.ReturnType.GetSignatureForError ());
+						block_return_type.GetSignatureForError ());
 				}
 
 				return false;
