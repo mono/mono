@@ -543,7 +543,6 @@ namespace Microsoft.Build.Construction
                                 return def;
                         case "UsingTask":
                                 var ut = AddUsingTask (null, null, null);
-                                ut.Load (reader.ReadSubtree ());
                                 return ut;
                         case "Choose":
                                 var choose = CreateChooseElement ();
