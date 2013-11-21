@@ -532,6 +532,11 @@ namespace Mono.CSharp
 			}
 		}
 
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			arguments.FlowAnalysis (fc);
+		}
+
 		public static MemberAccess GetBinderNamespace (Location loc)
 		{
 			return new MemberAccess (new MemberAccess (
@@ -611,6 +616,11 @@ namespace Mono.CSharp
 			using (ec.With (BuilderContext.Options.OmitDebugInfo, true)) {
 				stmt.Emit (ec);
 			}
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			invoke.FlowAnalysis (fc);
 		}
 	}
 

@@ -24,6 +24,13 @@ namespace Mono.CSharp {
 	
 	public abstract class Statement {
 		public Location loc;
+		protected bool reachable;
+
+		public bool IsUnreachable {
+			get {
+				return !reachable;
+			}
+		}
 		
 		/// <summary>
 		///   Resolves the statement, true means that all sub-statements
@@ -34,44 +41,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		/// <summary>
-		///   We already know that the statement is unreachable, but we still
-		///   need to resolve it to catch errors.
-		/// </summary>
-		public virtual bool ResolveUnreachable (BlockContext ec, bool warn)
-		{
-			//
-			// This conflicts with csc's way of doing this, but IMHO it's
-			// the right thing to do.
-			//
-			// If something is unreachable, we still check whether it's
-			// correct.  This means that you cannot use unassigned variables
-			// in unreachable code, for instance.
-			//
-
-			bool unreachable = false;
-			if (warn && !ec.UnreachableReported) {
-
-				// TODO: This is wrong, need to form of flow-analysis branch specific flag
-				// or multiple unrelared unreachable code won't be reported
-				// if (false) { // ok } if (false) { // not reported }
-				ec.UnreachableReported = true;
-				unreachable = true;
-				ec.Report.Warning (162, 2, loc, "Unreachable code detected");
-			}
-
-			ec.StartFlowBranching (FlowBranching.BranchingType.Block, loc);
-			ec.CurrentBranching.CurrentUsageVector.Goto ();
-			bool ok = Resolve (ec);
-			ec.KillFlowBranching ();
-
-			if (unreachable) {
-				ec.UnreachableReported = false;
-			}
-
-			return ok;
-		}
-				
 		/// <summary>
 		///   Return value indicates whether all code paths emitted return.
 		/// </summary>
@@ -110,6 +79,64 @@ namespace Mono.CSharp {
 		{
 			return visitor.Visit (this);
 		}
+
+		//
+		// Return value indicates whether statement has unreachable end
+		//
+		protected abstract bool DoFlowAnalysis (FlowAnalysisContext fc);
+
+		public bool FlowAnalysis (FlowAnalysisContext fc)
+		{
+			if (reachable) {
+				fc.UnreachableReported = false;
+				return DoFlowAnalysis (fc);
+			}
+
+			//
+			// Special handling cases
+			//
+			if (this is Block || this is SwitchLabel) {
+				return DoFlowAnalysis (fc);
+			}
+
+			if (this is EmptyStatement)
+				return true;
+
+			if (fc.UnreachableReported)
+				return true;
+
+			fc.Report.Warning (162, 2, loc, "Unreachable code detected");
+			fc.UnreachableReported = true;
+			return true;
+		}
+
+		public virtual Reachability MarkReachable (Reachability rc)
+		{
+			if (!rc.IsUnreachable)
+				reachable = true;
+
+			return rc;
+		}
+
+		protected void CheckExitBoundaries (BlockContext bc, Block scope)
+		{
+			if (bc.CurrentBlock.ParametersBlock.Original != scope.ParametersBlock.Original) {
+				bc.Report.Error (1632, loc, "Control cannot leave the body of an anonymous method");
+				return;
+			}
+
+			for (var b = bc.CurrentBlock; b != null && b != scope; b = b.Parent) {
+				if (b.IsFinallyBlock) {
+					Error_FinallyClauseExit (bc);
+					break;
+				}
+			}
+		}
+
+		protected void Error_FinallyClauseExit (BlockContext bc)
+		{
+			bc.Report.Error (157, loc, "Control cannot leave the body of a finally clause");
+		}
 	}
 
 	public sealed class EmptyStatement : Statement
@@ -118,13 +145,8 @@ namespace Mono.CSharp {
 		{
 			this.loc = loc;
 		}
-		
-		public override bool Resolve (BlockContext ec)
-		{
-			return true;
-		}
 
-		public override bool ResolveUnreachable (BlockContext ec, bool warn)
+		public override bool Resolve (BlockContext ec)
 		{
 			return true;
 		}
@@ -138,6 +160,11 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ();
 		}
 
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			return false;
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Statement target)
 		{
 			// nothing needed.
@@ -148,13 +175,13 @@ namespace Mono.CSharp {
 			return visitor.Visit (this);
 		}
 	}
-	
+
 	public class If : Statement {
 		Expression expr;
 		public Statement TrueStatement;
 		public Statement FalseStatement;
 
-		bool is_true_ret;
+		bool true_returns, false_returns;
 
 		public If (Expression bool_expr, Statement true_statement, Location l)
 			: this (bool_expr, true_statement, null, l)
@@ -180,51 +207,13 @@ namespace Mono.CSharp {
 		
 		public override bool Resolve (BlockContext ec)
 		{
-			bool ok = true;
-
 			expr = expr.Resolve (ec);
-			if (expr == null) {
-				ok = false;
-			} else {
-				//
-				// Dead code elimination
-				//
-				if (expr is Constant) {
-					bool take = !((Constant) expr).IsDefaultValue;
-					if (take) {
-						if (!TrueStatement.Resolve (ec))
-							return false;
 
-						if ((FalseStatement != null) &&
-							!FalseStatement.ResolveUnreachable (ec, true))
-							return false;
-						FalseStatement = null;
-					} else {
-						if (!TrueStatement.ResolveUnreachable (ec, true))
-							return false;
-						TrueStatement = null;
+			var ok = TrueStatement.Resolve (ec);
 
-						if ((FalseStatement != null) &&
-							!FalseStatement.Resolve (ec))
-							return false;
-					}
-
-					return true;
-				}
-			}
-
-			ec.StartFlowBranching (FlowBranching.BranchingType.Conditional, loc);
-			
-			ok &= TrueStatement.Resolve (ec);
-
-			is_true_ret = ec.CurrentBranching.CurrentUsageVector.IsUnreachable;
-
-			ec.CurrentBranching.CreateSibling ();
-
-			if (FalseStatement != null)
+			if (FalseStatement != null) {
 				ok &= FalseStatement.Resolve (ec);
-					
-			ec.EndFlowBranching ();
+			}
 
 			return ok;
 		}
@@ -258,7 +247,7 @@ namespace Mono.CSharp {
 				bool branch_emitted = false;
 				
 				end = ec.DefineLabel ();
-				if (!is_true_ret){
+				if (!true_returns){
 					ec.Emit (OpCodes.Br, end);
 					branch_emitted = true;
 				}
@@ -271,6 +260,68 @@ namespace Mono.CSharp {
 			} else {
 				ec.MarkLabel (false_target);
 			}
+		}
+
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			expr.FlowAnalysis (fc);
+
+			var da = fc.BranchDefiniteAssignment ();
+
+			var res = TrueStatement.FlowAnalysis (fc);
+
+			if (FalseStatement == null) {
+				fc.DefiniteAssignment = da;
+				return false;
+			}
+
+			var da_true = fc.DefiniteAssignment;
+			if (true_returns) {
+				fc.DefiniteAssignment = da;
+				return FalseStatement.FlowAnalysis (fc);
+			}
+
+			fc.DefiniteAssignment = new DefiniteAssignmentBitSet (da);
+			res &= FalseStatement.FlowAnalysis (fc);
+
+			if (false_returns)
+				fc.DefiniteAssignment = da_true;
+			else
+				fc.DefiniteAssignment &= da_true;
+
+			return res;
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			if (rc.IsUnreachable)
+				return rc;
+
+			base.MarkReachable (rc);
+
+			var c = expr as Constant;
+			if (c != null) {
+				bool take = !c.IsDefaultValue;
+				if (take) {
+					rc = TrueStatement.MarkReachable (rc);
+				} else {
+					if (FalseStatement != null)
+						rc = FalseStatement.MarkReachable (rc);
+				}
+
+				return rc;
+			}
+
+			var true_rc = TrueStatement.MarkReachable (rc);
+			true_returns = true_rc.IsUnreachable;
+	
+			if (FalseStatement == null)
+				return rc;
+
+			var false_rc = FalseStatement.MarkReachable (rc);
+			false_returns = false_rc.IsUnreachable;
+
+			return true_rc & false_rc;
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -289,14 +340,15 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class Do : Statement {
+	public class Do : LoopStatement
+	{
 		public Expression expr;
-		public Statement  EmbeddedStatement;
+		bool iterator_reachable, end_reachable;
 
 		public Do (Statement statement, BooleanExpression bool_expr, Location doLocation, Location whileLocation)
+			: base (statement)
 		{
 			expr = bool_expr;
-			EmbeddedStatement = statement;
 			loc = doLocation;
 			WhileLocation = whileLocation;
 		}
@@ -305,32 +357,11 @@ namespace Mono.CSharp {
 			get; private set;
 		}
 
-		public override bool Resolve (BlockContext ec)
+		public override bool Resolve (BlockContext bc)
 		{
-			bool ok = true;
+			var ok = base.Resolve (bc);
 
-			ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
-
-			bool was_unreachable = ec.CurrentBranching.CurrentUsageVector.IsUnreachable;
-
-			ec.StartFlowBranching (FlowBranching.BranchingType.Embedded, loc);
-			if (!EmbeddedStatement.Resolve (ec))
-				ok = false;
-			ec.EndFlowBranching ();
-
-			if (ec.CurrentBranching.CurrentUsageVector.IsUnreachable && !was_unreachable)
-				ec.Report.Warning (162, 2, expr.Location, "Unreachable code detected");
-
-			expr = expr.Resolve (ec);
-			if (expr == null)
-				ok = false;
-			else if (expr is Constant){
-				bool infinite = !((Constant) expr).IsDefaultValue;
-				if (infinite)
-					ec.CurrentBranching.CurrentUsageVector.Goto ();
-			}
-
-			ec.EndFlowBranching ();
+			expr = expr.Resolve (bc);
 
 			return ok;
 		}
@@ -345,7 +376,7 @@ namespace Mono.CSharp {
 			ec.LoopEnd = ec.DefineLabel ();
 				
 			ec.MarkLabel (loop);
-			EmbeddedStatement.Emit (ec);
+			Statement.Emit (ec);
 			ec.MarkLabel (ec.LoopBegin);
 
 			// Mark start of while condition
@@ -370,11 +401,53 @@ namespace Mono.CSharp {
 			ec.LoopEnd = old_end;
 		}
 
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			var dat = fc.BranchDefiniteAssignment ();
+
+			var res = Statement.FlowAnalysis (fc);
+
+			expr.FlowAnalysis (fc);
+
+			fc.DefiniteAssignment = dat | fc.DefiniteAssignment;
+
+			if (res && !iterator_reachable)
+				return !end_reachable;
+
+			if (!end_reachable) {
+				var c = expr as Constant;
+				if (c != null && !c.IsDefaultValue)
+					return true;
+			}
+
+			return false;
+		}
+		
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			base.MarkReachable (rc);
+			
+			var body_rc = Statement.MarkReachable (rc);
+
+			if (body_rc.IsUnreachable && !iterator_reachable) {
+				expr = new UnreachableExpression (expr);
+				return end_reachable ? rc : Reachability.CreateUnreachable ();
+			}
+
+			if (!end_reachable) {
+				var c = expr as Constant;
+				if (c != null && !c.IsDefaultValue)
+					return Reachability.CreateUnreachable ();
+			}
+
+			return rc;
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			Do target = (Do) t;
 
-			target.EmbeddedStatement = EmbeddedStatement.Clone (clonectx);
+			target.Statement = Statement.Clone (clonectx);
 			target.expr = expr.Clone (clonectx);
 		}
 		
@@ -382,58 +455,46 @@ namespace Mono.CSharp {
 		{
 			return visitor.Visit (this);
 		}
+
+		public override void SetEndReachable ()
+		{
+			end_reachable = true;
+		}
+
+		public override void SetIteratorReachable ()
+		{
+			iterator_reachable = true;
+		}
 	}
 
-	public class While : Statement {
+	public class While : LoopStatement
+	{
 		public Expression expr;
-		public Statement Statement;
-		bool infinite, empty;
+		bool empty, infinite, end_reachable;
+		List<DefiniteAssignmentBitSet> end_reachable_das;
 
 		public While (BooleanExpression bool_expr, Statement statement, Location l)
+			: base (statement)
 		{
 			this.expr = bool_expr;
-			Statement = statement;
 			loc = l;
 		}
 
-		public override bool Resolve (BlockContext ec)
+		public override bool Resolve (BlockContext bc)
 		{
 			bool ok = true;
 
-			expr = expr.Resolve (ec);
+			expr = expr.Resolve (bc);
 			if (expr == null)
 				ok = false;
 
-			//
-			// Inform whether we are infinite or not
-			//
-			if (expr is Constant){
-				bool value = !((Constant) expr).IsDefaultValue;
-
-				if (value == false){
-					if (!Statement.ResolveUnreachable (ec, true))
-						return false;
-					empty = true;
-					return true;
-				}
-
-				infinite = true;
+			var c = expr as Constant;
+			if (c != null) {
+				empty = c.IsDefaultValue;
+				infinite = !empty;
 			}
 
-			ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
-			if (!infinite)
-				ec.CurrentBranching.CreateSibling ();
-
-			ec.StartFlowBranching (FlowBranching.BranchingType.Embedded, loc);
-			if (!Statement.Resolve (ec))
-				ok = false;
-			ec.EndFlowBranching ();
-
-			// There's no direct control flow from the end of the embedded statement to the end of the loop
-			ec.CurrentBranching.CurrentUsageVector.Goto ();
-
-			ec.EndFlowBranching ();
-
+			ok &= base.Resolve (bc);
 			return ok;
 		}
 		
@@ -489,6 +550,58 @@ namespace Mono.CSharp {
 			ec.LoopEnd = old_end;
 		}
 
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			expr.FlowAnalysis (fc);
+
+			DefiniteAssignmentBitSet das;
+
+			das = fc.BranchDefiniteAssignment ();
+
+			Statement.FlowAnalysis (fc);
+
+			//
+			// Special case infinite while with breaks
+			//
+			if (end_reachable_das != null) {
+				das = DefiniteAssignmentBitSet.And (end_reachable_das);
+				end_reachable_das = null;
+			}
+
+			fc.DefiniteAssignment = das;
+
+			if (infinite && !end_reachable)
+				return true;
+
+			return false;
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			if (rc.IsUnreachable)
+				return rc;
+
+			base.MarkReachable (rc);
+
+			//
+			// Special case unreachable while body
+			//
+			if (empty) {
+				Statement.MarkReachable (Reachability.CreateUnreachable ());
+				return rc;
+			}
+
+			Statement.MarkReachable (rc);
+
+			//
+			// When infinite while end is unreachable via break anything what follows is unreachable too
+			//
+			if (infinite && !end_reachable)
+				return Reachability.CreateUnreachable ();
+
+			return rc;
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			While target = (While) t;
@@ -501,13 +614,31 @@ namespace Mono.CSharp {
 		{
 			return visitor.Visit (this);
 		}
+
+		public override void AddEndDefiniteAssignment (FlowAnalysisContext fc)
+		{
+			if (!infinite)
+				return;
+
+			if (end_reachable_das == null)
+				end_reachable_das = new List<DefiniteAssignmentBitSet> ();
+
+			end_reachable_das.Add (fc.DefiniteAssignment);
+		}
+
+		public override void SetEndReachable ()
+		{
+			end_reachable = true;
+		}
 	}
 
-	public class For : Statement
+	public class For : LoopStatement
 	{
-		bool infinite, empty;
+		bool infinite, empty, iterator_reachable, end_reachable;
+		List<DefiniteAssignmentBitSet> end_reachability;
 		
 		public For (Location l)
+			: base (null)
 		{
 			loc = l;
 		}
@@ -524,68 +655,68 @@ namespace Mono.CSharp {
 			get; set;
 		}
 
-		public Statement Statement {
-			get; set;
-		}
-
-		public override bool Resolve (BlockContext ec)
+		public override bool Resolve (BlockContext bc)
 		{
-			bool ok = true;
-
-			if (Initializer != null) {
-				if (!Initializer.Resolve (ec))
-					ok = false;
-			}
+			Initializer.Resolve (bc);
 
 			if (Condition != null) {
-				Condition = Condition.Resolve (ec);
-				if (Condition == null)
-					ok = false;
-				else if (Condition is Constant) {
-					bool value = !((Constant) Condition).IsDefaultValue;
-
-					if (value == false){
-						if (!Statement.ResolveUnreachable (ec, true))
-							return false;
-						if ((Iterator != null) &&
-							!Iterator.ResolveUnreachable (ec, false))
-							return false;
+				Condition = Condition.Resolve (bc);
+				var condition_constant = Condition as Constant;
+				if (condition_constant != null) {
+					if (condition_constant.IsDefaultValue) {
 						empty = true;
-						return true;
+					} else {
+						infinite = true;
 					}
-
-					infinite = true;
 				}
-			} else
+			} else {
 				infinite = true;
-
-			ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
-			if (!infinite)
-				ec.CurrentBranching.CreateSibling ();
-
-			bool was_unreachable = ec.CurrentBranching.CurrentUsageVector.IsUnreachable;
-
-			ec.StartFlowBranching (FlowBranching.BranchingType.Embedded, loc);
-			if (!Statement.Resolve (ec))
-				ok = false;
-			ec.EndFlowBranching ();
-
-			if (Iterator != null){
-				if (ec.CurrentBranching.CurrentUsageVector.IsUnreachable) {
-					if (!Iterator.ResolveUnreachable (ec, !was_unreachable))
-						ok = false;
-				} else {
-					if (!Iterator.Resolve (ec))
-						ok = false;
-				}
 			}
 
-			// There's no direct control flow from the end of the embedded statement to the end of the loop
-			ec.CurrentBranching.CurrentUsageVector.Goto ();
+			base.Resolve (bc);
 
-			ec.EndFlowBranching ();
+			Iterator.Resolve (bc);
 
-			return ok;
+			return true;
+		}
+
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			Initializer.FlowAnalysis (fc);
+
+			if (Condition != null)
+				Condition.FlowAnalysis (fc);
+
+			var das = fc.BranchDefiniteAssignment ();
+
+			Statement.FlowAnalysis (fc);
+
+			Iterator.FlowAnalysis (fc);
+
+			fc.DefiniteAssignment = das;
+
+			return infinite && !end_reachable;
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			base.MarkReachable (rc);
+
+			Initializer.MarkReachable (rc);
+
+			var body_rc = Statement.MarkReachable (rc);
+			if (!body_rc.IsUnreachable || iterator_reachable) {
+				Iterator.MarkReachable (rc);
+			}
+
+			//
+			// When infinite for end is unreachable via break anything what follows is unreachable too
+			//
+			if (infinite && !end_reachable) {
+				return Reachability.CreateUnreachable ();
+			}
+
+			return rc;
 		}
 
 		protected override void DoEmit (EmitContext ec)
@@ -658,6 +789,64 @@ namespace Mono.CSharp {
 		{
 			return visitor.Visit (this);
 		}
+
+		public override void AddEndDefiniteAssignment (FlowAnalysisContext fc)
+		{
+			if (!infinite)
+				return;
+
+			if (end_reachability == null)
+				end_reachability = new List<DefiniteAssignmentBitSet> ();
+
+			end_reachability.Add (fc.DefiniteAssignment);
+		}
+
+		public override void SetEndReachable ()
+		{
+			end_reachable = true;
+		}
+
+		public override void SetIteratorReachable ()
+		{
+			iterator_reachable = true;
+		}
+	}
+
+	public abstract class LoopStatement : Statement
+	{
+		protected LoopStatement (Statement statement)
+		{
+			Statement = statement;
+		}
+
+		public Statement Statement { get; set; }
+
+		public override bool Resolve (BlockContext bc)
+		{
+			var prev_loop = bc.EnclosingLoop;
+			var prev_los = bc.EnclosingLoopOrSwitch;
+			bc.EnclosingLoopOrSwitch = bc.EnclosingLoop = this;
+			Statement.Resolve (bc);
+			bc.EnclosingLoopOrSwitch = prev_los;
+			bc.EnclosingLoop = prev_loop;
+
+			return true;
+		}
+
+		//
+		// Needed by possibly infinite loops statements (for, while) and switch statment
+		//
+		public virtual void AddEndDefiniteAssignment (FlowAnalysisContext fc)
+		{
+		}
+
+		public virtual void SetEndReachable ()
+		{
+		}
+
+		public virtual void SetIteratorReachable ()
+		{
+		}
 	}
 	
 	public class StatementExpression : Statement
@@ -691,6 +880,19 @@ namespace Mono.CSharp {
 		protected override void DoEmit (EmitContext ec)
 		{
 			expr.EmitStatement (ec);
+		}
+
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			expr.FlowAnalysis (fc);
+			return false;
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			base.MarkReachable (rc);
+			expr.MarkReachable (rc);
+			return rc;
 		}
 
 		public override bool Resolve (BlockContext ec)
@@ -730,6 +932,11 @@ namespace Mono.CSharp {
 		protected override void DoEmit (EmitContext ec)
 		{
 			throw new NotSupportedException ();
+		}
+
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			return false;
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement target)
@@ -784,6 +991,25 @@ namespace Mono.CSharp {
 				s.Emit (ec);
 		}
 
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			foreach (var s in statements)
+				s.FlowAnalysis (fc);
+
+			return false;
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			base.MarkReachable (rc);
+
+			Reachability res = rc;
+			foreach (var s in statements)
+				res = s.MarkReachable (rc);
+
+			return res;
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Statement target)
 		{
 			StatementList t = (StatementList) target;
@@ -799,23 +1025,54 @@ namespace Mono.CSharp {
 		}
 	}
 
-	// A 'return' or a 'yield break'
+	//
+	// For statements which require special handling when inside try or catch block
+	//
 	public abstract class ExitStatement : Statement
 	{
 		protected bool unwind_protect;
-		protected abstract bool DoResolve (BlockContext ec);
 
-		public virtual void Error_FinallyClause (Report Report)
+		protected abstract bool DoResolve (BlockContext bc);
+		protected abstract bool IsLocalExit { get; }
+
+		public override bool Resolve (BlockContext bc)
 		{
-			Report.Error (157, loc, "Control cannot leave the body of a finally clause");
+			var res = DoResolve (bc);
+
+			if (!IsLocalExit) {
+				//
+				// We are inside finally scope but is it the scope we are exiting
+				//
+				if (bc.HasSet (ResolveContext.Options.FinallyScope)) {
+
+					for (var b = bc.CurrentBlock; b != null; b = b.Parent) {
+						if (b.IsFinallyBlock) {
+							Error_FinallyClauseExit (bc);
+							break;
+						}
+
+						if (b is ParametersBlock)
+							break;
+					}
+				}
+			}
+
+			unwind_protect = bc.HasAny (ResolveContext.Options.TryScope | ResolveContext.Options.CatchScope);
+			return res;
 		}
 
-		public sealed override bool Resolve (BlockContext ec)
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
 		{
-			var res = DoResolve (ec);
-			unwind_protect = ec.CurrentBranching.AddReturnOrigin (ec.CurrentBranching.CurrentUsageVector, this);
-			ec.CurrentBranching.CurrentUsageVector.Goto ();
-			return res;
+			if (IsLocalExit)
+				return true;
+
+			if (fc.TryFinally != null) {
+			    fc.TryFinally.RegisterOutParametersCheck (new DefiniteAssignmentBitSet (fc.DefiniteAssignment));
+			} else {
+			    fc.ParametersBlock.CheckOutParametersAssignment (fc);
+			}
+
+			return true;
 		}
 	}
 
@@ -843,12 +1100,20 @@ namespace Mono.CSharp {
 			}
 		}
 
+		protected override bool IsLocalExit {
+			get {
+				return false;
+			}
+		}
+
 		#endregion
 
 		protected override bool DoResolve (BlockContext ec)
 		{
+			var block_return_type = ec.ReturnType;
+
 			if (expr == null) {
-				if (ec.ReturnType.Kind == MemberKind.Void)
+				if (block_return_type.Kind == MemberKind.Void)
 					return true;
 
 				//
@@ -878,7 +1143,6 @@ namespace Mono.CSharp {
 			}
 
 			expr = expr.Resolve (ec);
-			TypeSpec block_return_type = ec.ReturnType;
 
 			AnonymousExpression am = ec.CurrentAnonymousMethod;
 			if (am == null) {
@@ -1007,7 +1271,7 @@ namespace Mono.CSharp {
 						ec.EmitEpilogue ();
 					}
 
-					ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, async_body.BodyEnd);
+					ec.Emit (OpCodes.Leave, async_body.BodyEnd);
 					return;
 				}
 
@@ -1026,10 +1290,25 @@ namespace Mono.CSharp {
 			}
 		}
 
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			if (expr != null)
+				expr.FlowAnalysis (fc);
+
+			base.DoFlowAnalysis (fc);
+			return true;
+		}
+
 		void Error_ReturnFromIterator (ResolveContext rc)
 		{
 			rc.Report.Error (1622, loc,
 				"Cannot return a value from iterators. Use the yield return statement to return a value, or yield break to end the iteration");
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			base.MarkReachable (rc);
+			return Reachability.CreateUnreachable ();
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -1046,18 +1325,12 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class Goto : Statement {
+	public class Goto : ExitStatement
+	{
 		string target;
 		LabeledStatement label;
-		bool unwind_protect;
+		TryFinally try_finally;
 
-		public override bool Resolve (BlockContext ec)
-		{
-			unwind_protect = ec.CurrentBranching.AddGotoOrigin (ec.CurrentBranching.CurrentUsageVector, this);
-			ec.CurrentBranching.CurrentUsageVector.Goto ();
-			return true;
-		}
-		
 		public Goto (string label, Location l)
 		{
 			loc = l;
@@ -1068,10 +1341,67 @@ namespace Mono.CSharp {
 			get { return target; }
 		}
 
-		public void SetResolvedTarget (LabeledStatement label)
+		protected override bool IsLocalExit {
+			get {
+				return true;
+			}
+		}
+
+		protected override bool DoResolve (BlockContext bc)
 		{
-			this.label = label;
-			label.AddReference ();
+			label = bc.CurrentBlock.LookupLabel (target);
+			if (label == null) {
+				Error_UnknownLabel (bc, target, loc);
+				return false;
+			}
+
+			try_finally = bc.CurrentTryBlock as TryFinally;
+
+			CheckExitBoundaries (bc, label.Block);
+
+			return true;
+		}
+
+		public static void Error_UnknownLabel (BlockContext bc, string label, Location loc)
+		{
+			bc.Report.Error (159, loc, "The label `{0}:' could not be found within the scope of the goto statement",
+				label);
+		}
+
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			if (fc.LabelStack == null) {
+				fc.LabelStack = new List<LabeledStatement> ();
+			} else if (fc.LabelStack.Contains (label)) {
+				return true;
+			}
+
+			fc.LabelStack.Add (label);
+			label.Block.ScanGotoJump (label, fc);
+			fc.LabelStack.Remove (label);
+			return true;
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			if (rc.IsUnreachable)
+				return rc;
+
+			base.MarkReachable (rc);
+
+			if (try_finally != null) {
+				if (try_finally.FinallyBlock.HasReachableClosingBrace) {
+					label.AddGotoReference (rc, false);
+				} else {
+					label.AddGotoReference (rc, true);
+				}
+
+				try_finally = null;
+			} else {
+				label.AddGotoReference (rc, false);
+			}
+
+			return Reachability.CreateUnreachable ();
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement target)
@@ -1083,6 +1413,7 @@ namespace Mono.CSharp {
 		{
 			if (label == null)
 				throw new InternalErrorException ("goto emitted before target resolved");
+
 			Label l = label.LabelTarget (ec);
 			ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, l);
 		}
@@ -1097,10 +1428,9 @@ namespace Mono.CSharp {
 		string name;
 		bool defined;
 		bool referenced;
+		bool finalTarget;
 		Label label;
 		Block block;
-
-		FlowBranching.UsageVector vectors;
 		
 		public LabeledStatement (string name, Block block, Location l)
 		{
@@ -1129,51 +1459,66 @@ namespace Mono.CSharp {
 			get { return name; }
 		}
 
-		public bool IsDefined {
-			get { return defined; }
-		}
-
-		public bool HasBeenReferenced {
-			get { return referenced; }
-		}
-
-		public FlowBranching.UsageVector JumpOrigins {
-			get { return vectors; }
-		}
-
-		public void AddUsageVector (FlowBranching.UsageVector vector)
-		{
-			vector = vector.Clone ();
-			vector.Next = vectors;
-			vectors = vector;
-		}
-
 		protected override void CloneTo (CloneContext clonectx, Statement target)
 		{
 			// nothing to clone
 		}
 
-		public override bool Resolve (BlockContext ec)
+		public override bool Resolve (BlockContext bc)
 		{
-			// this flow-branching will be terminated when the surrounding block ends
-			ec.StartFlowBranching (this);
 			return true;
 		}
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			if (!HasBeenReferenced)
-				ec.Report.Warning (164, 2, loc, "This label has not been referenced");
-
 			LabelTarget (ec);
 			ec.MarkLabel (label);
+
+			if (finalTarget)
+				ec.Emit (OpCodes.Br_S, label);
 		}
 
-		public void AddReference ()
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
 		{
-			referenced = true;
+			if (!referenced) {
+				fc.Report.Warning (164, 2, loc, "This label has not been referenced");
+			}
+
+			return false;
 		}
-		
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			base.MarkReachable (rc);
+
+			if (referenced)
+				rc = new Reachability ();
+
+			return rc;
+		}
+
+		public void AddGotoReference (Reachability rc, bool finalTarget)
+		{
+			if (referenced)
+				return;
+
+			referenced = true;
+
+			//
+			// Label is final target when goto jumps out of try block with
+			// finally clause. In that case we need leave with target but in C#
+			// terms the label is unreachable. Using finalTarget we emit
+			// explicit label not just marker
+			//
+			if (finalTarget) {
+				MarkReachable (rc);
+				this.finalTarget = true;
+				return;
+			}
+
+			block.ScanGotoJump (this);
+		}
+
 		public override object Accept (StructuralVisitor visitor)
 		{
 			return visitor.Visit (this);
@@ -1184,35 +1529,29 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   `goto default' statement
 	/// </summary>
-	public class GotoDefault : Statement {
-		
+	public class GotoDefault : SwitchGoto
+	{		
 		public GotoDefault (Location l)
+			: base (l)
 		{
-			loc = l;
 		}
 
-		protected override void CloneTo (CloneContext clonectx, Statement target)
+		public override bool Resolve (BlockContext bc)
 		{
-			// nothing to clone
-		}
-
-		public override bool Resolve (BlockContext ec)
-		{
-			ec.CurrentBranching.CurrentUsageVector.Goto ();
-
-			if (ec.Switch == null) {
-				ec.Report.Error (153, loc, "A goto case is only valid inside a switch statement");
+			if (bc.Switch == null) {
+				Error_GotoCaseRequiresSwitchBlock (bc);
 				return false;
 			}
 
-			ec.Switch.RegisterGotoCase (null, null);
+			bc.Switch.RegisterGotoCase (null, null);
+			base.Resolve (bc);
 
 			return true;
 		}
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			ec.Emit (OpCodes.Br, ec.Switch.DefaultLabel.GetILLabel (ec));
+			ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, ec.Switch.DefaultLabel.GetILLabel (ec));
 		}
 		
 		public override object Accept (StructuralVisitor visitor)
@@ -1224,31 +1563,30 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   `goto case' statement
 	/// </summary>
-	public class GotoCase : Statement {
+	public class GotoCase : SwitchGoto
+	{
 		Expression expr;
 		
 		public GotoCase (Expression e, Location l)
+			: base (l)
 		{
 			expr = e;
-			loc = l;
 		}
 
 		public Expression Expr {
 			get {
- 				return this.expr;
+ 				return expr;
 			}
 		}
 
 		public SwitchLabel Label { get; set; }
-		
+
 		public override bool Resolve (BlockContext ec)
 		{
-			if (ec.Switch == null){
-				ec.Report.Error (153, loc, "A goto case is only valid inside a switch statement");
+			if (ec.Switch == null) {
+				Error_GotoCaseRequiresSwitchBlock (ec);
 				return false;
 			}
-
-			ec.CurrentBranching.CurrentUsageVector.Goto ();
 
 			Constant c = expr.ResolveLabelConstant (ec);
 			if (c == null) {
@@ -1274,12 +1612,14 @@ namespace Mono.CSharp {
 			}
 
 			ec.Switch.RegisterGotoCase (this, res);
+			base.Resolve (ec);
+
 			return true;
 		}
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			ec.Emit (OpCodes.Br, Label.GetILLabel (ec));
+			ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, Label.GetILLabel (ec));
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -1292,6 +1632,46 @@ namespace Mono.CSharp {
 		public override object Accept (StructuralVisitor visitor)
 		{
 			return visitor.Visit (this);
+		}
+	}
+
+	public abstract class SwitchGoto : Statement
+	{
+		protected bool unwind_protect;
+
+		protected SwitchGoto (Location loc)
+		{
+			this.loc = loc;
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement target)
+		{
+			// Nothing to clone
+		}
+
+		public override bool Resolve (BlockContext bc)
+		{
+			CheckExitBoundaries (bc, bc.Switch.Block);
+
+			unwind_protect = bc.HasAny (ResolveContext.Options.TryScope | ResolveContext.Options.CatchScope);
+
+			return true;
+		}
+
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			return true;
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			base.MarkReachable (rc);
+			return Reachability.CreateUnreachable ();
+		}
+
+		protected void Error_GotoCaseRequiresSwitchBlock (BlockContext bc)
+		{
+			bc.Report.Error (153, loc, "A goto case is only valid inside a switch statement");
 		}
 	}
 	
@@ -1313,12 +1693,22 @@ namespace Mono.CSharp {
 		public override bool Resolve (BlockContext ec)
 		{
 			if (expr == null) {
-				ec.CurrentBranching.CurrentUsageVector.Goto ();
-				return ec.CurrentBranching.CheckRethrow (loc);
+				if (!ec.HasSet (ResolveContext.Options.CatchScope)) {
+					ec.Report.Error (156, loc, "A throw statement with no arguments is not allowed outside of a catch clause");
+				} else if (ec.HasSet (ResolveContext.Options.FinallyScope)) {
+					for (var b = ec.CurrentBlock; b != null && !b.IsCatchBlock; b = b.Parent) {
+						if (b.IsFinallyBlock) {
+							ec.Report.Error (724, loc,
+								"A throw statement with no arguments is not allowed inside of a finally clause nested inside of the innermost catch clause");
+							break;
+						}
+					}
+				}
+
+				return true;
 			}
 
 			expr = expr.Resolve (ec, ResolveFlags.Type | ResolveFlags.VariableOrValue);
-			ec.CurrentBranching.CurrentUsageVector.Goto ();
 
 			if (expr == null)
 				return false;
@@ -1343,6 +1733,20 @@ namespace Mono.CSharp {
 			}
 		}
 
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			if (expr != null)
+				expr.FlowAnalysis (fc);
+
+			return true;
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			base.MarkReachable (rc);
+			return Reachability.CreateUnreachable ();
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			Throw target = (Throw) t;
@@ -1357,20 +1761,16 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class Break : Statement {
-		
+	public class Break : LocalExitStatement
+	{		
 		public Break (Location l)
+			: base (l)
 		{
-			loc = l;
 		}
-
-		bool unwind_protect;
-
-		public override bool Resolve (BlockContext ec)
+		
+		public override object Accept (StructuralVisitor visitor)
 		{
-			unwind_protect = ec.CurrentBranching.AddBreakOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
-			ec.CurrentBranching.CurrentUsageVector.Goto ();
-			return true;
+			return visitor.Visit (this);
 		}
 
 		protected override void DoEmit (EmitContext ec)
@@ -1378,46 +1778,99 @@ namespace Mono.CSharp {
 			ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, ec.LoopEnd);
 		}
 
-		protected override void CloneTo (CloneContext clonectx, Statement t)
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
 		{
-			// nothing needed
+			enclosing_loop.AddEndDefiniteAssignment (fc);
+			return true;
 		}
-		
+
+		protected override bool DoResolve (BlockContext bc)
+		{
+			enclosing_loop = bc.EnclosingLoopOrSwitch;
+			return base.DoResolve (bc);
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			base.MarkReachable (rc);
+
+			if (!rc.IsUnreachable)
+				enclosing_loop.SetEndReachable ();
+
+			return Reachability.CreateUnreachable ();
+		}
+	}
+
+	public class Continue : LocalExitStatement
+	{		
+		public Continue (Location l)
+			: base (l)
+		{
+		}
+
 		public override object Accept (StructuralVisitor visitor)
 		{
 			return visitor.Visit (this);
 		}
-	}
 
-	public class Continue : Statement {
-		
-		public Continue (Location l)
-		{
-			loc = l;
-		}
-
-		bool unwind_protect;
-
-		public override bool Resolve (BlockContext ec)
-		{
-			unwind_protect = ec.CurrentBranching.AddContinueOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
-			ec.CurrentBranching.CurrentUsageVector.Goto ();
-			return true;
-		}
 
 		protected override void DoEmit (EmitContext ec)
 		{
 			ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, ec.LoopBegin);
 		}
 
+		protected override bool DoResolve (BlockContext bc)
+		{
+			enclosing_loop = bc.EnclosingLoop;
+			return base.DoResolve (bc);
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			base.MarkReachable (rc);
+
+			if (!rc.IsUnreachable)
+				enclosing_loop.SetIteratorReachable ();
+
+			return Reachability.CreateUnreachable ();
+		}
+	}
+
+	public abstract class LocalExitStatement : ExitStatement
+	{
+		protected LoopStatement enclosing_loop;
+
+		protected LocalExitStatement (Location loc)
+		{
+			this.loc = loc;
+		}
+
+		protected override bool IsLocalExit {
+			get {
+				return true;
+			}
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			// nothing needed.
 		}
-		
-		public override object Accept (StructuralVisitor visitor)
+
+		protected override bool DoResolve (BlockContext bc)
 		{
-			return visitor.Visit (this);
+			if (enclosing_loop == null) {
+				bc.Report.Error (139, loc, "No enclosing loop out of which to break or continue");
+				return false;
+			}
+
+			var block = enclosing_loop.Statement as Block;
+
+			// Don't need to do extra checks for simple statements loops
+			if (block != null) {
+				CheckExitBoundaries (bc, block);
+			}
+
+			return true;
 		}
 	}
 
@@ -1679,6 +2132,30 @@ namespace Mono.CSharp {
 			}
 		}
 
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			if (Initializer != null)
+				Initializer.FlowAnalysis (fc);
+
+			if (declarators != null) {
+				foreach (var d in declarators) {
+					if (d.Initializer != null)
+						d.Initializer.FlowAnalysis (fc);
+				}
+			}
+
+			return false;
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			var init = initializer as ExpressionStatement;
+			if (init != null)
+				init.MarkReachable (rc);
+
+			return base.MarkReachable (rc);
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Statement target)
 		{
 			BlockVariable t = (BlockVariable) target;
@@ -1749,7 +2226,7 @@ namespace Mono.CSharp {
 	//
 	// The information about a user-perceived local variable
 	//
-	public class LocalVariable : INamedBlockVariable, ILocalVariable
+	public sealed class LocalVariable : INamedBlockVariable, ILocalVariable
 	{
 		[Flags]
 		public enum Flags
@@ -1762,8 +2239,7 @@ namespace Mono.CSharp {
 			ForeachVariable = 1 << 5,
 			FixedVariable = 1 << 6,
 			UsingVariable = 1 << 7,
-//			DefinitelyAssigned = 1 << 8,
-			IsLocked = 1 << 9,
+			IsLocked = 1 << 8,
 
 			ReadonlyMask = ForeachVariable | FixedVariable | UsingVariable
 		}
@@ -2001,23 +2477,20 @@ namespace Mono.CSharp {
 			throw new InternalErrorException ("Variable is not readonly");
 		}
 
-		public bool IsThisAssigned (BlockContext ec, Block block)
+		public bool IsThisAssigned (FlowAnalysisContext fc, Block block)
 		{
 			if (VariableInfo == null)
 				throw new Exception ();
 
-			if (!ec.DoFlowAnalysis || ec.CurrentBranching.IsAssigned (VariableInfo))
+			if (IsAssigned (fc))
 				return true;
 
-			return VariableInfo.IsFullyInitialized (ec, block.StartLocation);
+			return VariableInfo.IsFullyInitialized (fc, block.StartLocation);
 		}
 
-		public bool IsAssigned (BlockContext ec)
+		public bool IsAssigned (FlowAnalysisContext fc)
 		{
-			if (VariableInfo == null)
-				throw new Exception ();
-
-			return !ec.DoFlowAnalysis || ec.CurrentBranching.IsAssigned (VariableInfo);
+			return fc.IsDefinitelyAssigned (VariableInfo);
 		}
 
 		public void PrepareAssignmentAnalysis (BlockContext bc)
@@ -2069,7 +2542,7 @@ namespace Mono.CSharp {
 		public enum Flags
 		{
 			Unchecked = 1,
-			HasRet = 8,
+			ReachableEnd = 8,
 			Unsafe = 16,
 			HasCapturedVariable = 64,
 			HasCapturedThis = 1 << 7,
@@ -2079,7 +2552,10 @@ namespace Mono.CSharp {
 			Resolved = 1 << 11,
 			YieldBlock = 1 << 12,
 			AwaitBlock = 1 << 13,
-			Iterator = 1 << 14
+			FinallyBlock = 1 << 14,
+			CatchBlock = 1 << 15,
+			Iterator = 1 << 20,
+			NoFlowAnalysis = 1 << 21
 		}
 
 		public Block Parent;
@@ -2137,15 +2613,6 @@ namespace Mono.CSharp {
 
 		#region Properties
 
-		public bool HasUnreachableClosingBrace {
-			get {
-				return (flags & Flags.HasRet) != 0;
-			}
-			set {
-				flags = value ? flags | Flags.HasRet : flags & ~Flags.HasRet;
-			}
-		}
-
 		public Block Original {
 			get {
 				return original;
@@ -2158,6 +2625,19 @@ namespace Mono.CSharp {
 		public bool IsCompilerGenerated {
 			get { return (flags & Flags.CompilerGenerated) != 0; }
 			set { flags = value ? flags | Flags.CompilerGenerated : flags & ~Flags.CompilerGenerated; }
+		}
+
+
+		public bool IsCatchBlock {
+			get {
+				return (flags & Flags.CatchBlock) != 0;
+			}
+		}
+
+		public bool IsFinallyBlock {
+			get {
+				return (flags & Flags.FinallyBlock) != 0;
+			}
 		}
 
 		public bool Unchecked {
@@ -2273,123 +2753,72 @@ namespace Mono.CSharp {
 			return ParametersBlock.TopBlock.GetLabel (name, this);
 		}
 
-		public override bool Resolve (BlockContext ec)
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			if (rc.IsUnreachable)
+				return rc;
+
+			base.MarkReachable (rc);
+
+			if (scope_initializers != null) {
+				foreach (var si in scope_initializers)
+					si.MarkReachable (rc);
+			}
+
+			foreach (var s in statements) {
+				rc = s.MarkReachable (rc);
+				if (rc.IsUnreachable) {
+					if ((flags & Flags.ReachableEnd) != 0)
+						return new Reachability ();
+
+					return rc;
+				}
+			}
+
+			flags |= Flags.ReachableEnd;
+
+			return rc;
+		}
+
+		public override bool Resolve (BlockContext bc)
 		{
 			if ((flags & Flags.Resolved) != 0)
 				return true;
 
-			Block prev_block = ec.CurrentBlock;
-			bool ok = true;
-			bool unreachable = ec.IsUnreachable;
-			bool prev_unreachable = unreachable;
-
-			ec.CurrentBlock = this;
-			ec.StartFlowBranching (this);
+			Block prev_block = bc.CurrentBlock;
+			bc.CurrentBlock = this;
 
 			//
 			// Compiler generated scope statements
 			//
 			if (scope_initializers != null) {
 				for (resolving_init_idx = 0; resolving_init_idx < scope_initializers.Count; ++resolving_init_idx) {
-					scope_initializers[resolving_init_idx.Value].Resolve (ec);
+					scope_initializers[resolving_init_idx.Value].Resolve (bc);
 				}
 
 				resolving_init_idx = null;
 			}
 
-			//
-			// This flag is used to notate nested statements as unreachable from the beginning of this block.
-			// For the purposes of this resolution, it doesn't matter that the whole block is unreachable 
-			// from the beginning of the function.  The outer Resolve() that detected the unreachability is
-			// responsible for handling the situation.
-			//
+			bool ok = true;
 			int statement_count = statements.Count;
 			for (int ix = 0; ix < statement_count; ix++){
 				Statement s = statements [ix];
 
-				//
-				// Warn if we detect unreachable code.
-				//
-				if (unreachable) {
-					if (s is EmptyStatement)
-						continue;
-
-					if (!ec.UnreachableReported && !(s is LabeledStatement) && !(s is SwitchLabel)) {
-						ec.Report.Warning (162, 2, s.loc, "Unreachable code detected");
-						ec.UnreachableReported = true;
-					}
-				}
-
-				//
-				// Note that we're not using ResolveUnreachable() for unreachable
-				// statements here.  ResolveUnreachable() creates a temporary
-				// flow branching and kills it afterwards.  This leads to problems
-				// if you have two unreachable statements where the first one
-				// assigns a variable and the second one tries to access it.
-				//
-
-				if (!s.Resolve (ec)) {
+				if (!s.Resolve (bc)) {
 					ok = false;
-					if (!ec.IsInProbingMode)
+					if (!bc.IsInProbingMode)
 						statements [ix] = new EmptyStatement (s.loc);
 
 					continue;
 				}
-
-				if (unreachable && !(s is LabeledStatement) && !(s is SwitchLabel) && !(s is Block))
-					statements [ix] = new EmptyStatement (s.loc);
-
-				unreachable = ec.CurrentBranching.CurrentUsageVector.IsUnreachable;
-				if (unreachable) {
-					ec.IsUnreachable = true;
-				} else if (ec.IsUnreachable)
-					ec.IsUnreachable = false;
 			}
 
-			if (unreachable != prev_unreachable) {
-				ec.IsUnreachable = prev_unreachable;
-				ec.UnreachableReported = false;
-			}
-
-			while (ec.CurrentBranching is FlowBranchingLabeled)
-				ec.EndFlowBranching ();
-
-			bool flow_unreachable = ec.EndFlowBranching ();
-
-			ec.CurrentBlock = prev_block;
-
-			if (flow_unreachable)
-				flags |= Flags.HasRet;
-
-			// If we're a non-static `struct' constructor which doesn't have an
-			// initializer, then we must initialize all of the struct's fields.
-			if (this == ParametersBlock.TopBlock && !ParametersBlock.TopBlock.IsThisAssigned (ec) && !flow_unreachable)
-				ok = false;
+			bc.CurrentBlock = prev_block;
 
 			flags |= Flags.Resolved;
 			return ok;
 		}
 
-		public override bool ResolveUnreachable (BlockContext ec, bool warn)
-		{
-			bool unreachable = false;
-			if (warn && !ec.UnreachableReported) {
-				ec.UnreachableReported = true;
-				unreachable = true;
-				ec.Report.Warning (162, 2, loc, "Unreachable code detected");
-			}
-
-			var fb = ec.StartFlowBranching (FlowBranching.BranchingType.Block, loc);
-			fb.CurrentUsageVector.IsUnreachable = true;
-			bool ok = Resolve (ec);
-			ec.KillFlowBranching ();
-
-			if (unreachable)
-				ec.UnreachableReported = false;
-
-			return ok;
-		}
-		
 		protected override void DoEmit (EmitContext ec)
 		{
 			for (int ix = 0; ix < statements.Count; ix++){
@@ -2409,6 +2838,103 @@ namespace Mono.CSharp {
 		{
 			foreach (Statement s in scope_initializers)
 				s.Emit (ec);
+		}
+
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			if (scope_initializers != null) {
+				foreach (var si in scope_initializers)
+					si.FlowAnalysis (fc);
+			}
+
+			return DoFlowAnalysis (fc, 0);	
+		}
+
+		bool DoFlowAnalysis (FlowAnalysisContext fc, int startIndex)
+		{
+			bool end_unreachable = !reachable;
+			for (; startIndex < statements.Count; ++startIndex) {
+				var s = statements[startIndex];
+
+				end_unreachable = s.FlowAnalysis (fc);
+				if (s.IsUnreachable) {
+					//
+					// This is kind of a hack, switch label is unreachable because we need to mark
+					// switch section end but at the same time we need to run Emit on it
+					//
+					if (s is SwitchLabel)
+						continue;
+
+					statements[startIndex] = new EmptyStatement (s.loc);
+					continue;
+				}
+
+				//
+				// Statement end reachability is needed mostly due to goto support. Consider
+				//
+				// if (cond) {
+				//    goto X;
+				// } else {
+				//    goto Y;
+				// }
+				// X:
+				//
+				// X label is reachable only via goto not as another statement after if. We need
+				// this for flow-analysis only to carry variable info correctly.
+				//
+				if (end_unreachable) { // s is ExitStatement) {
+					for (++startIndex; startIndex < statements.Count; ++startIndex) {
+						s = statements[startIndex];
+						if (s is SwitchLabel) {
+							s.FlowAnalysis (fc);
+							break;
+						}
+
+						if (s.IsUnreachable) {
+							s.FlowAnalysis (fc);
+							statements[startIndex] = new EmptyStatement (s.loc);
+						}
+					}
+				}
+			}
+
+			//
+			// The condition should be true unless there is forward jumping goto
+			// 
+			// if (this is ExplicitBlock && end_unreachable != Explicit.HasReachableClosingBrace)
+			//	Debug.Fail ();
+
+			return !Explicit.HasReachableClosingBrace;
+		}
+
+		public void ScanGotoJump (Statement label)
+		{
+			int i;
+			for (i = 0; i < statements.Count; ++i) {
+				if (statements[i] == label)
+					break;
+			}
+
+			var rc = new Reachability ();
+			for (; i < statements.Count; ++i) {
+				var s = statements[i];
+				rc = s.MarkReachable (rc);
+				if (rc.IsUnreachable)
+					return;
+			}
+
+			flags |= Flags.ReachableEnd;
+		}
+
+		public void ScanGotoJump (Statement label, FlowAnalysisContext fc)
+		{
+			int i;
+			for (i = 0; i < statements.Count; ++i) {
+				if (statements[i] == label)
+					break;
+			}
+
+			DoFlowAnalysis (fc, ++i);
 		}
 
 #if DEBUG
@@ -2497,6 +3023,15 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool HasReachableClosingBrace {
+		    get {
+		        return (flags & Flags.ReachableEnd) != 0;
+		    }
+			set {
+				flags = value ? flags | Flags.ReachableEnd : flags & ~Flags.ReachableEnd;
+			}
+		}
+
 		public bool HasYield {
 			get {
 				return (flags & Flags.YieldBlock) != 0;
@@ -2551,7 +3086,8 @@ namespace Mono.CSharp {
 			if (Parent != null)
 				ec.EndScope ();
 
-			if (ec.EmitAccurateDebugInfo && !HasUnreachableClosingBrace && !IsCompilerGenerated && ec.Mark (EndLocation)) {
+			if (ec.EmitAccurateDebugInfo && HasReachableClosingBrace && !(this is ParametersBlock) &&
+				!IsCompilerGenerated && ec.Mark (EndLocation)) {
 				ec.Emit (OpCodes.Nop);
 			}
 		}
@@ -2744,6 +3280,16 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public void SetCatchBlock ()
+		{
+			flags |= Flags.CatchBlock;
+		}
+
+		public void SetFinallyBlock ()
+		{
+			flags |= Flags.FinallyBlock;
+		}
+
 		public void WrapIntoDestructor (TryFinally tf, ExplicitBlock tryBlock)
 		{
 			tryBlock.statements = statements;
@@ -2879,12 +3425,11 @@ namespace Mono.CSharp {
 
 		protected ParametersCompiled parameters;
 		protected ParameterInfo[] parameter_info;
-		bool resolved;
-		protected bool unreachable;
+		protected bool resolved;
 		protected ToplevelBlock top_block;
 		protected StateMachine state_machine;
 
-		public ParametersBlock (Block parent, ParametersCompiled parameters, Location start)
+		public ParametersBlock (Block parent, ParametersCompiled parameters, Location start, Flags flags = 0)
 			: base (parent, 0, start, start)
 		{
 			if (parameters == null)
@@ -2893,7 +3438,7 @@ namespace Mono.CSharp {
 			this.parameters = parameters;
 			ParametersBlock = this;
 
-			flags |= (parent.ParametersBlock.flags & (Flags.YieldBlock | Flags.AwaitBlock));
+			this.flags |= flags | (parent.ParametersBlock.flags & (Flags.YieldBlock | Flags.AwaitBlock));
 
 			this.top_block = parent.ParametersBlock.top_block;
 			ProcessParameters ();
@@ -2920,9 +3465,10 @@ namespace Mono.CSharp {
 			this.scope_initializers = source.scope_initializers;
 
 			this.resolved = true;
-			this.unreachable = source.unreachable;
+			this.reachable = source.reachable;
 			this.am_storey = source.am_storey;
 			this.state_machine = source.state_machine;
+			this.flags = source.flags & Flags.ReachableEnd;
 
 			ParametersBlock = this;
 
@@ -2984,30 +3530,30 @@ namespace Mono.CSharp {
 
 		#endregion
 
-		// <summary>
-		//   Check whether all `out' parameters have been assigned.
-		// </summary>
-		public void CheckOutParameters (FlowBranching.UsageVector vector)
+		//
+		// Checks whether all `out' parameters have been assigned.
+		//
+		public void CheckOutParametersAssignment (FlowAnalysisContext fc)
 		{
-			if (vector.IsUnreachable)
+			CheckOutParametersAssignment (fc, fc.DefiniteAssignment);
+		}
+
+		public void CheckOutParametersAssignment (FlowAnalysisContext fc, DefiniteAssignmentBitSet dat)
+		{
+			if (parameter_info == null)
 				return;
 
-			int n = parameter_info == null ? 0 : parameter_info.Length;
-
-			for (int i = 0; i < n; i++) {
-				VariableInfo var = parameter_info[i].VariableInfo;
-
-				if (var == null)
+			foreach (var p in parameter_info) {
+				if (p.VariableInfo == null)
 					continue;
 
-				if (vector.IsAssigned (var, false))
+				if (p.VariableInfo.IsAssigned (dat))
 					continue;
 
-				var p = parameter_info[i].Parameter;
-				TopBlock.Report.Error (177, p.Location,
+				fc.Report.Error (177, p.Location,
 					"The out parameter `{0}' must be assigned to before control leaves the current method",
-					p.Name);
-			}
+					p.Parameter.Name);
+			}					
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -3041,6 +3587,16 @@ namespace Mono.CSharp {
 			}
 
 			base.Emit (ec);
+		}
+
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			var res = base.DoFlowAnalysis (fc);
+
+			if (HasReachableClosingBrace)
+				CheckOutParametersAssignment (fc);
+
+			return res;
 		}
 
 		public ParameterInfo GetParameterInfo (Parameter p)
@@ -3082,67 +3638,48 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool Resolve (FlowBranching parent, BlockContext rc, IMethodData md)
+		public override bool Resolve (BlockContext bc)
 		{
+			// TODO: if ((flags & Flags.Resolved) != 0)
+
 			if (resolved)
 				return true;
 
 			resolved = true;
 
-			if (rc.HasSet (ResolveContext.Options.ExpressionTreeConversion))
+			if (bc.HasSet (ResolveContext.Options.ExpressionTreeConversion))
 				flags |= Flags.IsExpressionTree;
 
 			try {
-				PrepareAssignmentAnalysis (rc);
+				PrepareAssignmentAnalysis (bc);
 
-				using (rc.With (ResolveContext.Options.DoFlowAnalysis, true)) {
-					FlowBranchingToplevel top_level = rc.StartFlowBranching (this, parent);
+				if (!base.Resolve (bc))
+					return false;
 
-					if (!Resolve (rc))
-						return false;
-
-					unreachable = top_level.End ();
-				}
 			} catch (Exception e) {
-				if (e is CompletionResult || rc.Report.IsDisabled || e is FatalException || rc.Report.Printer is NullReportPrinter)
+				if (e is CompletionResult || bc.Report.IsDisabled || e is FatalException || bc.Report.Printer is NullReportPrinter)
 					throw;
 
-				if (rc.CurrentBlock != null) {
-					rc.Report.Error (584, rc.CurrentBlock.StartLocation, "Internal compiler error: {0}", e.Message);
+				if (bc.CurrentBlock != null) {
+					bc.Report.Error (584, bc.CurrentBlock.StartLocation, "Internal compiler error: {0}", e.Message);
 				} else {
-					rc.Report.Error (587, "Internal compiler error: {0}", e.Message);
+					bc.Report.Error (587, "Internal compiler error: {0}", e.Message);
 				}
 
-				if (rc.Module.Compiler.Settings.DebugFlags > 0)
+				if (bc.Module.Compiler.Settings.DebugFlags > 0)
 					throw;
 			}
 
-			if (rc.ReturnType.Kind != MemberKind.Void && !unreachable) {
-				if (rc.CurrentAnonymousMethod == null) {
-					// FIXME: Missing FlowAnalysis for generated iterator MoveNext method
-					if (md is StateMachineMethod) {
-						unreachable = true;
-					} else {
-						rc.Report.Error (161, md.Location, "`{0}': not all code paths return a value", md.GetSignatureForError ());
-						return false;
-					}
-				} else {
-					//
-					// If an asynchronous body of F is either an expression classified as nothing, or a 
-					// statement block where no return statements have expressions, the inferred return type is Task
-					//
-					if (IsAsync) {
-						var am = rc.CurrentAnonymousMethod as AnonymousMethodBody;
-						if (am != null && am.ReturnTypeInference != null && !am.ReturnTypeInference.HasBounds (0)) {
-							am.ReturnTypeInference = null;
-							am.ReturnType = rc.Module.PredefinedTypes.Task.TypeSpec;
-							return true;
-						}
-					}
-
-					rc.Report.Error (1643, rc.CurrentAnonymousMethod.Location, "Not all code paths return a value in anonymous method of type `{0}'",
-							  rc.CurrentAnonymousMethod.GetSignatureForError ());
-					return false;
+			//
+			// If an asynchronous body of F is either an expression classified as nothing, or a 
+			// statement block where no return statements have expressions, the inferred return type is Task
+			//
+			if (IsAsync) {
+				var am = bc.CurrentAnonymousMethod as AnonymousMethodBody;
+				if (am != null && am.ReturnTypeInference != null && !am.ReturnTypeInference.HasBounds (0)) {
+					am.ReturnTypeInference = null;
+					am.ReturnType = bc.Module.PredefinedTypes.Task.TypeSpec;
+					return true;
 				}
 			}
 
@@ -3169,9 +3706,8 @@ namespace Mono.CSharp {
 			state_machine = stateMachine;
 			iterator.SetStateMachine (stateMachine);
 
-			var tlb = new ToplevelBlock (host.Compiler, Parameters, Location.Null);
+			var tlb = new ToplevelBlock (host.Compiler, Parameters, Location.Null, Flags.CompilerGenerated);
 			tlb.Original = this;
-			tlb.IsCompilerGenerated = true;
 			tlb.state_machine = stateMachine;
 			tlb.AddStatement (new Return (iterator, iterator.Location));
 			return tlb;
@@ -3216,16 +3752,15 @@ namespace Mono.CSharp {
 			state_machine = stateMachine;
 			initializer.SetStateMachine (stateMachine);
 
+			const Flags flags = Flags.CompilerGenerated;
+
 			var b = this is ToplevelBlock ?
-				new ToplevelBlock (host.Compiler, Parameters, Location.Null) :
-				new ParametersBlock (Parent, parameters, Location.Null) {
-					IsAsync = true,
-				};
+				new ToplevelBlock (host.Compiler, Parameters, Location.Null, flags) :
+				new ParametersBlock (Parent, parameters, Location.Null, flags | Flags.HasAsyncModifier);
 
 			b.Original = this;
-			b.IsCompilerGenerated = true;
 			b.state_machine = stateMachine;
-			b.AddStatement (new StatementExpression (initializer));
+			b.AddStatement (new AsyncInitializerStatement (initializer));
 			return b;
 		}
 	}
@@ -3247,12 +3782,12 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public ToplevelBlock (CompilerContext ctx, ParametersCompiled parameters, Location start)
+		public ToplevelBlock (CompilerContext ctx, ParametersCompiled parameters, Location start, Flags flags = 0)
 			: base (parameters, start)
 		{
 			this.compiler = ctx;
+			this.flags = flags;
 			top_block = this;
-			flags |= Flags.HasRet;
 
 			ProcessParameters ();
 		}
@@ -3268,7 +3803,6 @@ namespace Mono.CSharp {
 		{
 			this.compiler = source.TopBlock.compiler;
 			top_block = this;
-			flags |= Flags.HasRet;
 		}
 
 		public bool IsIterator {
@@ -3543,8 +4077,11 @@ namespace Mono.CSharp {
 			var label = value as LabeledStatement;
 			Block b = block;
 			if (label != null) {
-				if (label.Block == b.Original)
-					return label;
+				do {
+					if (label.Block == b.Original)
+						return label;
+					b = b.Parent;
+				} while (b != null);
 			} else {
 				List<LabeledStatement> list = (List<LabeledStatement>) value;
 				for (int i = 0; i < list.Count; ++i) {
@@ -3574,9 +4111,21 @@ namespace Mono.CSharp {
 			this_variable.PrepareAssignmentAnalysis (bc);
 		}
 
-		public bool IsThisAssigned (BlockContext ec)
+		public bool IsThisAssigned (FlowAnalysisContext fc)
 		{
-			return this_variable == null || this_variable.IsThisAssigned (ec, this);
+			return this_variable == null || this_variable.IsThisAssigned (fc, this);
+		}
+
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			var res = base.DoFlowAnalysis (fc);
+
+			//
+			// If we're a non-static struct constructor which doesn't have an
+			// initializer, then we must initialize all of the struct's fields.
+			//
+			IsThisAssigned (fc);
+			return res;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -3605,7 +4154,7 @@ namespace Mono.CSharp {
 			// As a workaround, we're always creating a return label in
 			// this case.
 			//
-			if (ec.HasReturnLabel || !unreachable) {
+			if (ec.HasReturnLabel || HasReachableClosingBrace) {
 				if (ec.HasReturnLabel)
 					ec.MarkLabel (ec.ReturnLabel);
 
@@ -3622,12 +4171,44 @@ namespace Mono.CSharp {
 				throw new InternalErrorException (e, StartLocation);
 			}
 		}
+
+		public bool Resolve (BlockContext bc, IMethodData md)
+		{
+			if (resolved)
+				return true;
+
+			var errors = bc.Report.Errors;
+
+			base.Resolve (bc);
+
+			if (bc.Report.Errors > errors)
+				return false;
+
+			MarkReachable (new Reachability ());
+
+			if (HasReachableClosingBrace && bc.ReturnType.Kind != MemberKind.Void) {
+				// TODO: var md = bc.CurrentMemberDefinition;
+				bc.Report.Error (161, md.Location, "`{0}': not all code paths return a value", md.GetSignatureForError ());
+			}
+
+			if ((flags & Flags.NoFlowAnalysis) != 0)
+				return true;
+
+			var fc = new FlowAnalysisContext (bc.Module.Compiler, this);
+			try {
+				FlowAnalysis (fc);
+			} catch (Exception e) {
+				throw new InternalErrorException (e, StartLocation);
+			}
+
+			return true;
+		}
 	}
 	
 	public class SwitchLabel : Statement
 	{
-		Expression label;
 		Constant converted;
+		Expression label;
 
 		Label? il_label;
 
@@ -3663,7 +4244,7 @@ namespace Mono.CSharp {
 				return converted;
 			}
 			set {
-				converted = value;
+				converted = value; 
 			}
 		}
 
@@ -3683,21 +4264,34 @@ namespace Mono.CSharp {
 			ec.MarkLabel (GetILLabel (ec));
 		}
 
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			if (!SectionStart)
+				return false;
+
+			if (IsUnreachable) {
+				fc.DefiniteAssignment = new DefiniteAssignmentBitSet (fc.SwitchInitialDefinitiveAssignment);
+			} else {
+				fc.Report.Error (163, Location,
+					"Control cannot fall through from one case label `{0}' to another", GetSignatureForError ());
+			}
+
+			return false;
+		}
+
 		public override bool Resolve (BlockContext bc)
 		{
 			if (ResolveAndReduce (bc))
 				bc.Switch.RegisterLabel (bc, this);
 
-			bc.CurrentBranching.CurrentUsageVector.ResetBarrier ();
-
-			return base.Resolve (bc);
+			return true;
 		}
 
 		//
 		// Resolves the expression, reduces it to a literal if possible
 		// and then converts it to the requested type.
 		//
-		bool ResolveAndReduce (ResolveContext rc)
+		bool ResolveAndReduce (BlockContext rc)
 		{
 			if (IsDefault)
 				return true;
@@ -3717,14 +4311,8 @@ namespace Mono.CSharp {
 
 		public void Error_AlreadyOccurs (ResolveContext ec, SwitchLabel collision_with)
 		{
-			string label;
-			if (converted == null)
-				label = "default";
-			else
-				label = converted.GetValueAsLiteral ();
-			
 			ec.Report.SymbolRelatedToPreviousError (collision_with.loc, null);
-			ec.Report.Error (152, loc, "The label `case {0}:' already occurs in this switch statement", label);
+			ec.Report.Error (152, loc, "The label `{0}' already occurs in this switch statement", GetSignatureForError ());
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement target)
@@ -3738,9 +4326,20 @@ namespace Mono.CSharp {
 		{
 			return visitor.Visit (this);
 		}
+
+		string GetSignatureForError ()
+		{
+			string label;
+			if (converted == null)
+				label = "default";
+			else
+				label = converted.GetValueAsLiteral ();
+
+			return string.Format ("case {0}:", label);
+		}
 	}
 
-	public class Switch : Statement
+	public class Switch : LoopStatement
 	{
 		// structure used to hold blocks of keys while calculating table switch
 		sealed class LabelsRange : IComparable<LabelsRange>
@@ -3806,6 +4405,11 @@ namespace Mono.CSharp {
 				throw new NotImplementedException ();
 			}
 
+			protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+			{
+				return false;
+			}
+
 			protected override void DoEmit (EmitContext ec)
 			{
 				body.EmitDispatch (ec);
@@ -3822,6 +4426,7 @@ namespace Mono.CSharp {
 		List<SwitchLabel> case_labels;
 
 		List<Tuple<GotoCase, Constant>> goto_cases;
+		List<DefiniteAssignmentBitSet> end_reachable_das;
 
 		/// <summary>
 		///   The governing switch type
@@ -3838,6 +4443,7 @@ namespace Mono.CSharp {
 		ExpressionStatement string_dictionary;
 		FieldExpr switch_cache_field;
 		ExplicitBlock block;
+		bool end_reachable;
 
 		//
 		// Nullable Types support
@@ -3845,11 +4451,14 @@ namespace Mono.CSharp {
 		Nullable.Unwrap unwrap;
 
 		public Switch (Expression e, ExplicitBlock block, Location l)
+			: base (block)
 		{
 			Expr = e;
 			this.block = block;
 			loc = l;
 		}
+
+		public SwitchLabel ActiveLabel { get; set; }
 
 		public ExplicitBlock Block {
 			get {
@@ -3866,6 +4475,12 @@ namespace Mono.CSharp {
 		public bool IsNullable {
 			get {
 				return unwrap != null;
+			}
+		}
+
+		public List<SwitchLabel> RegisteredLabels {
+			get {
+				return case_labels;
 			}
 		}
 
@@ -3942,7 +4557,7 @@ namespace Mono.CSharp {
 			};
 		}
 
-		public void RegisterLabel (ResolveContext rc, SwitchLabel sl)
+		public void RegisterLabel (BlockContext rc, SwitchLabel sl)
 		{
 			case_labels.Add (sl);
 
@@ -4131,6 +4746,29 @@ namespace Mono.CSharp {
 			return sl;
 		}
 
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			Expr.FlowAnalysis (fc);
+
+			var prev_switch = fc.SwitchInitialDefinitiveAssignment;
+			var InitialDefinitiveAssignment = fc.DefiniteAssignment;
+			fc.SwitchInitialDefinitiveAssignment = InitialDefinitiveAssignment;
+
+			block.FlowAnalysis (fc);
+
+			fc.SwitchInitialDefinitiveAssignment = prev_switch;
+
+			if (end_reachable_das != null) {
+				var sections_das = DefiniteAssignmentBitSet.And (end_reachable_das);
+				InitialDefinitiveAssignment |= sections_das;
+				end_reachable_das = null;
+			}
+
+			fc.DefiniteAssignment = InitialDefinitiveAssignment;
+
+			return case_default != null && !end_reachable;
+		}
+
 		public override bool Resolve (BlockContext ec)
 		{
 			Expr = Expr.Resolve (ec);
@@ -4199,33 +4837,23 @@ namespace Mono.CSharp {
 
 			Switch old_switch = ec.Switch;
 			ec.Switch = this;
-			ec.Switch.SwitchType = SwitchType;
+			var parent_los = ec.EnclosingLoopOrSwitch;
+			ec.EnclosingLoopOrSwitch = this;
 
-			ec.StartFlowBranching (FlowBranching.BranchingType.Switch, loc);
+			var ok = Statement.Resolve (ec);
 
-			ec.CurrentBranching.CurrentUsageVector.Goto ();
-
-			var ok = block.Resolve (ec);
-
- 			if (case_default == null)
-				ec.CurrentBranching.CreateSibling (null, FlowBranching.SiblingType.SwitchSection);
-
-			if (ec.IsUnreachable)
-				ec.KillFlowBranching ();
-			else
-				ec.EndFlowBranching ();
-
+			ec.EnclosingLoopOrSwitch = parent_los;
 			ec.Switch = old_switch;
 
 			//
 			// Check if all goto cases are valid. Needs to be done after switch
-			// is resolved becuase goto can jump forward in the scope.
+			// is resolved because goto can jump forward in the scope.
 			//
 			if (goto_cases != null) {
 				foreach (var gc in goto_cases) {
 					if (gc.Item1 == null) {
 						if (DefaultLabel == null) {
-							FlowBranchingBlock.Error_UnknownLabel (loc, "default", ec.Report);
+							Goto.Error_UnknownLabel (ec, "default", loc);
 						}
 
 						continue;
@@ -4233,15 +4861,11 @@ namespace Mono.CSharp {
 
 					var sl = FindLabel (gc.Item2);
 					if (sl == null) {
-						FlowBranchingBlock.Error_UnknownLabel (loc, "case " + gc.Item2.GetValueAsLiteral (), ec.Report);
+						Goto.Error_UnknownLabel (ec, "case " + gc.Item2.GetValueAsLiteral (), loc);
 					} else {
 						gc.Item1.Label = sl;
 					}
 				}
-			}
-
-			if (constant != null) {
-				ResolveUnreachableSections (ec, constant);
 			}
 
 			if (!ok)
@@ -4272,6 +4896,87 @@ namespace Mono.CSharp {
 			}
 
 			return true;
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			if (rc.IsUnreachable)
+				return rc;
+
+			base.MarkReachable (rc);
+
+			SwitchLabel constant_label = null;
+			var constant = new_expr as Constant;
+			if (constant != null) {
+				constant_label = FindLabel (constant) ?? case_default;
+				if (constant_label == null) {
+					block.Statements.RemoveAt (0);
+					return rc;
+				}
+			}
+
+			var switch_rc = rc;
+			var section_rc = new Reachability ();
+			SwitchLabel prev_label = null;
+
+			for (int i = 0; i < block.Statements.Count; ++i) {
+				var s = block.Statements[i];
+				var sl = s as SwitchLabel;
+
+				if (sl != null) {
+					if (!sl.SectionStart) {
+						sl.MarkReachable (section_rc);
+						continue;
+					}
+
+					if (prev_label == null) {
+						prev_label = sl;
+						switch_rc = Reachability.CreateUnreachable ();
+
+						if (constant_label != null && sl != constant_label)
+							section_rc = Reachability.CreateUnreachable ();
+
+						continue;
+					}
+
+					//
+					// Small trick, using unreachable flag for label means
+					// the label section does not fallthrough
+					//
+					prev_label.MarkReachable (section_rc);
+
+					prev_label = sl;
+					switch_rc &= section_rc;
+					section_rc = new Reachability ();
+
+					if (constant_label != null && sl != constant_label)
+						section_rc = Reachability.CreateUnreachable ();
+
+					continue;
+				}
+
+				section_rc = s.MarkReachable (section_rc);
+			}
+
+			if (prev_label != null) {
+				prev_label.MarkReachable (section_rc);
+				switch_rc &= section_rc;
+			}
+
+			//
+			// Reachability can affect parent only when all possible paths are handled but
+			// we still need to run reachability check on switch body to check for fall-through
+			//
+			if (case_default == null && constant_label == null)
+				return rc;
+
+			//
+			// We have at least one local exit from the switch
+			//
+			if (end_reachable)
+				return rc;
+
+			return switch_rc;
 		}
 
 		public void RegisterGotoCase (GotoCase gotoCase, Constant value)
@@ -4338,40 +5043,6 @@ namespace Mono.CSharp {
 
 			switch_cache_field = new FieldExpr (field, loc);
 			string_dictionary = new SimpleAssign (switch_cache_field, initializer.Resolve (ec));
-		}
-
-		void ResolveUnreachableSections (BlockContext bc, Constant value)
-		{
-			var constant_label = FindLabel (value) ?? case_default;
-
-			bool found = false;
-			bool unreachable_reported = false;
-			for (int i = 0; i < block.Statements.Count; ++i) {
-				var s = block.Statements[i];
-
-				if (s is SwitchLabel) {
-					if (unreachable_reported) {
-						found = unreachable_reported = false;
-					}
-
-					found |= s == constant_label;
-					continue;
-				}
-
-				if (found) {
-					unreachable_reported = true;
-					continue;
-				}
-
-				if (!unreachable_reported) {
-					unreachable_reported = true;
-					if (!bc.IsUnreachable) {
-						bc.Report.Warning (162, 2, s.loc, "Unreachable code detected");
-					}
-				}
-
-				block.Statements[i] = new EmptyStatement (s.loc);
-			}
 		}
 
 		void DoEmitStringSwitch (EmitContext ec)
@@ -4495,9 +5166,6 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			// Workaround broken flow-analysis
-			block.HasUnreachableClosingBrace = true;
-
 			//
 			// Setup the codegen context
 			//
@@ -4546,16 +5214,32 @@ namespace Mono.CSharp {
 			Switch target = (Switch) t;
 
 			target.Expr = Expr.Clone (clonectx);
-			target.block = (ExplicitBlock) block.Clone (clonectx);
+			target.Statement = target.block = (ExplicitBlock) block.Clone (clonectx);
 		}
 		
 		public override object Accept (StructuralVisitor visitor)
 		{
 			return visitor.Visit (this);
 		}
+
+		public override void AddEndDefiniteAssignment (FlowAnalysisContext fc)
+		{
+			if (case_default == null)
+				return;
+
+			if (end_reachable_das == null)
+				end_reachable_das = new List<DefiniteAssignmentBitSet> ();
+
+			end_reachable_das.Add (fc.DefiniteAssignment);
+		}
+
+		public override void SetEndReachable ()
+		{
+			end_reachable = true;
+		}
 	}
 
-	// A place where execution can restart in an iterator
+	// A place where execution can restart in a state machine
 	public abstract class ResumableStatement : Statement
 	{
 		bool prepared;
@@ -4715,8 +5399,32 @@ namespace Mono.CSharp {
 			ec.EndExceptionBlock ();
 		}
 
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			var res = stmt.FlowAnalysis (fc);
+			parent = null;
+			return res;
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			base.MarkReachable (rc);
+			return Statement.MarkReachable (rc);
+		}
+
 		public override bool Resolve (BlockContext bc)
 		{
+			bool ok;
+
+			parent = bc.CurrentTryBlock;
+			bc.CurrentTryBlock = this;
+
+			using (bc.Set (ResolveContext.Options.TryScope)) {
+				ok = stmt.Resolve (bc);
+			}
+
+			bc.CurrentTryBlock = parent;
+
 			//
 			// Finally block inside iterator is called from MoveNext and
 			// Dispose methods that means we need to lift the block into
@@ -4730,7 +5438,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			return base.Resolve (bc);
+			return base.Resolve (bc) && ok;
 		}
 	}
 
@@ -4739,11 +5447,9 @@ namespace Mono.CSharp {
 	//
 	public abstract class ExceptionStatement : ResumableStatement
 	{
-#if !STATIC
-		bool code_follows;
-#endif
 		protected List<ResumableStatement> resume_points;
 		protected int first_resume_pc;
+		protected ExceptionStatement parent;
 
 		protected ExceptionStatement (Location loc)
 		{
@@ -4778,26 +5484,18 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void SomeCodeFollows ()
+		public virtual int AddResumePoint (ResumableStatement stmt, int pc, StateMachineInitializer stateMachine)
 		{
-#if !STATIC
-			code_follows = true;
-#endif
-		}
+			if (parent != null) {
+				// TODO: MOVE to virtual TryCatch
+				var tc = this as TryCatch;
+				var s = tc != null && tc.IsTryCatchFinally ? stmt : this;
 
-		public override bool Resolve (BlockContext ec)
-		{
-#if !STATIC
-			// System.Reflection.Emit automatically emits a 'leave' at the end of a try clause
-			// So, ensure there's some IL code after this statement.
-			if (!code_follows && resume_points == null && ec.CurrentBranching.CurrentUsageVector.IsUnreachable)
-				ec.NeedReturnLabel ();
-#endif
-			return true;
-		}
+				pc = parent.AddResumePoint (s, pc, stateMachine);
+			} else {
+				pc = stateMachine.AddResumePoint (this);
+			}
 
-		public void AddResumePoint (ResumableStatement stmt, int pc)
-		{
 			if (resume_points == null) {
 				resume_points = new List<ResumableStatement> ();
 				first_resume_pc = pc;
@@ -4807,8 +5505,8 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("missed an intervening AddResumePoint?");
 
 			resume_points.Add (stmt);
+			return pc;
 		}
-
 	}
 
 	public class Lock : TryFinallyBlock
@@ -4871,16 +5569,12 @@ namespace Mono.CSharp {
 			}
 
 			using (ec.Set (ResolveContext.Options.LockScope)) {
-				ec.StartFlowBranching (this);
-				Statement.Resolve (ec);
-				ec.EndFlowBranching ();
+				base.Resolve (ec);
 			}
 
 			if (lv != null) {
 				lv.IsLockedByStatement = locked;
 			}
-
-			base.Resolve (ec);
 
 			return true;
 		}
@@ -4992,6 +5686,17 @@ namespace Mono.CSharp {
 				Block.Emit (ec);
 		}
 
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			return Block.FlowAnalysis (fc);
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			base.MarkReachable (rc);
+			return Block.MarkReachable (rc);
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			Unchecked target = (Unchecked) t;
@@ -5025,6 +5730,17 @@ namespace Mono.CSharp {
 		{
 			using (ec.With (EmitContext.Options.CheckedScope, true))
 				Block.Emit (ec);
+		}
+
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			return Block.FlowAnalysis (fc);
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			base.MarkReachable (rc);
+			return Block.MarkReachable (rc);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -5064,6 +5780,17 @@ namespace Mono.CSharp {
 			Block.Emit (ec);
 		}
 
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			return Block.FlowAnalysis (fc);
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			base.MarkReachable (rc);
+			return Block.MarkReachable (rc);
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			Unsafe target = (Unsafe) t;
@@ -5093,6 +5820,11 @@ namespace Mono.CSharp {
 			}
 
 			public abstract void EmitExit (EmitContext ec);
+
+			public override void FlowAnalysis (FlowAnalysisContext fc)
+			{
+				expr.FlowAnalysis (fc);
+			}
 		}
 
 		class ExpressionEmitter : Emitter {
@@ -5306,19 +6038,20 @@ namespace Mono.CSharp {
 
 		#endregion
 
-		public override bool Resolve (BlockContext ec)
+		public override bool Resolve (BlockContext bc)
 		{
-			using (ec.Set (ResolveContext.Options.FixedInitializerScope)) {
-				if (!decl.Resolve (ec))
+			using (bc.Set (ResolveContext.Options.FixedInitializerScope)) {
+				if (!decl.Resolve (bc))
 					return false;
 			}
 
-			ec.StartFlowBranching (FlowBranching.BranchingType.Conditional, loc);
-			bool ok = statement.Resolve (ec);
-			bool flow_unreachable = ec.EndFlowBranching ();
-			has_ret = flow_unreachable;
+			return statement.Resolve (bc);
+		}
 
-			return ok;
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			decl.FlowAnalysis (fc);
+			return statement.FlowAnalysis (fc);
 		}
 		
 		protected override void DoEmit (EmitContext ec)
@@ -5348,6 +6081,19 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			base.MarkReachable (rc);
+
+			decl.MarkReachable (rc);
+
+			rc = statement.MarkReachable (rc);
+
+			// TODO: What if there is local exit?
+			has_ret = rc.IsUnreachable;
+			return rc;
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			Fixed target = (Fixed) t;
@@ -5364,13 +6110,13 @@ namespace Mono.CSharp {
 
 	public class Catch : Statement
 	{
-		Block block;
+		ExplicitBlock block;
 		LocalVariable li;
 		FullNamedExpression type_expr;
 		CompilerAssign assign;
 		TypeSpec type;
 		
-		public Catch (Block block, Location loc)
+		public Catch (ExplicitBlock block, Location loc)
 		{
 			this.block = block;
 			this.loc = loc;
@@ -5378,7 +6124,7 @@ namespace Mono.CSharp {
 
 		#region Properties
 
-		public Block Block {
+		public ExplicitBlock Block {
 			get {
 				return block;
 			}
@@ -5447,7 +6193,7 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (BlockContext ec)
 		{
-			using (ec.With (ResolveContext.Options.CatchScope, true)) {
+			using (ec.Set (ResolveContext.Options.CatchScope)) {
 				if (type_expr != null) {
 					type = type_expr.ResolveAsType (ec);
 					if (type == null)
@@ -5472,8 +6218,25 @@ namespace Mono.CSharp {
 					}
 				}
 
+				Block.SetCatchBlock ();
 				return Block.Resolve (ec);
 			}
+		}
+
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			if (li != null) {
+				fc.SetVariableAssigned (li.VariableInfo, true);
+			}
+
+			return block.FlowAnalysis (fc);
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			base.MarkReachable (rc);
+
+			return block.MarkReachable (rc);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -5483,46 +6246,43 @@ namespace Mono.CSharp {
 			if (type_expr != null)
 				target.type_expr = (FullNamedExpression) type_expr.Clone (clonectx);
 
-			target.block = clonectx.LookupBlock (block);
+			target.block = (ExplicitBlock) clonectx.LookupBlock (block);
 		}
 	}
 
 	public class TryFinally : TryFinallyBlock
 	{
-		Block fini;
+		ExplicitBlock fini;
+		List<DefiniteAssignmentBitSet> try_exit_dat;
 
-		public TryFinally (Statement stmt, Block fini, Location loc)
+		public TryFinally (Statement stmt, ExplicitBlock fini, Location loc)
 			 : base (stmt, loc)
 		{
 			this.fini = fini;
 		}
 
-		public Block Finallyblock {
+		public ExplicitBlock FinallyBlock {
 			get {
  				return fini;
 			}
 		}
 
-		public override bool Resolve (BlockContext ec)
+		public void RegisterOutParametersCheck (DefiniteAssignmentBitSet vector)
 		{
-			bool ok = true;
+			if (try_exit_dat == null)
+				try_exit_dat = new List<DefiniteAssignmentBitSet> ();
 
-			ec.StartFlowBranching (this);
+			try_exit_dat.Add (vector);
+		}
 
-			if (!stmt.Resolve (ec))
-				ok = false;
+		public override bool Resolve (BlockContext bc)
+		{
+			bool ok = base.Resolve (bc);
 
-			if (ok)
-				ec.CurrentBranching.CreateSibling (fini, FlowBranching.SiblingType.Finally);
-
-			using (ec.With (ResolveContext.Options.FinallyScope, true)) {
-				if (!fini.Resolve (ec))
-					ok = false;
+			fini.SetFinallyBlock ();
+			using (bc.Set (ResolveContext.Options.FinallyScope)) {
+				ok &= fini.Resolve (bc);
 			}
-
-			ec.EndFlowBranching ();
-
-			ok &= base.Resolve (ec);
 
 			return ok;
 		}
@@ -5537,13 +6297,54 @@ namespace Mono.CSharp {
 			fini.Emit (ec);
 		}
 
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			var da = fc.BranchDefiniteAssignment ();
+
+			var tf = fc.TryFinally;
+			fc.TryFinally = this;
+
+			var res_stmt = Statement.FlowAnalysis (fc);
+
+			fc.TryFinally = tf;
+
+			var try_da = fc.DefiniteAssignment;
+			fc.DefiniteAssignment = da;
+
+			var res_fin = fini.FlowAnalysis (fc);
+
+			if (try_exit_dat != null) {
+				//
+				// try block has global exit but we need to run definite assignment check
+				// for parameter block out parameter after finally block because it's always
+				// executed before exit
+				//
+				foreach (var try_da_part in try_exit_dat)
+					fc.ParametersBlock.CheckOutParametersAssignment (fc, fc.DefiniteAssignment | try_da_part);
+
+				try_exit_dat = null;
+			}
+
+			fc.DefiniteAssignment |= try_da;
+			return res_stmt | res_fin;
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			//
+			// Mark finally block first for any exit statement in try block
+			// to know whether the code which follows finally is reachable
+			//
+			return fini.MarkReachable (rc) | base.MarkReachable (rc);
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			TryFinally target = (TryFinally) t;
 
 			target.stmt = stmt.Clone (clonectx);
 			if (fini != null)
-				target.fini = clonectx.LookupBlock (fini);
+				target.fini = (ExplicitBlock) clonectx.LookupBlock (fini);
 		}
 		
 		public override object Accept (StructuralVisitor visitor)
@@ -5578,23 +6379,28 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override bool Resolve (BlockContext ec)
+		public override bool Resolve (BlockContext bc)
 		{
-			bool ok = true;
+			bool ok;
 
-			ec.StartFlowBranching (this);
+			using (bc.Set (ResolveContext.Options.TryScope)) {
+				parent = bc.CurrentTryBlock;
 
-			if (!Block.Resolve (ec))
-				ok = false;
+				if (IsTryCatchFinally) {
+					ok = Block.Resolve (bc);
+				} else {
+					using (bc.Set (ResolveContext.Options.TryWithCatchScope)) {
+						bc.CurrentTryBlock = this;
+						ok = Block.Resolve (bc);
+						bc.CurrentTryBlock = parent;
+					}
+				}
+			}
 
 			for (int i = 0; i < clauses.Count; ++i) {
 				var c = clauses[i];
-				ec.CurrentBranching.CreateSibling (c.Block, FlowBranching.SiblingType.Catch);
 
-				if (!c.Resolve (ec)) {
-					ok = false;
-					continue;
-				}
+				ok &= c.Resolve (bc);
 
 				TypeSpec resolved_type = c.CatchType;
 				for (int ii = 0; ii < clauses.Count; ++ii) {
@@ -5605,13 +6411,13 @@ namespace Mono.CSharp {
 						if (resolved_type.BuiltinType != BuiltinTypeSpec.Type.Exception)
 							continue;
 
-						if (!ec.Module.DeclaringAssembly.WrapNonExceptionThrows)
+						if (!bc.Module.DeclaringAssembly.WrapNonExceptionThrows)
 							continue;
 
-						if (!ec.Module.PredefinedAttributes.RuntimeCompatibility.IsDefined)
+						if (!bc.Module.PredefinedAttributes.RuntimeCompatibility.IsDefined)
 							continue;
 
-						ec.Report.Warning (1058, 1, c.loc,
+						bc.Report.Warning (1058, 1, c.loc,
 							"A previous catch clause already catches all exceptions. All non-exceptions thrown will be wrapped in a `System.Runtime.CompilerServices.RuntimeWrappedException'");
 
 						continue;
@@ -5625,7 +6431,7 @@ namespace Mono.CSharp {
 						continue;
 
 					if (resolved_type == ct || TypeSpec.IsBaseClass (resolved_type, ct, true)) {
-						ec.Report.Error (160, c.loc,
+						bc.Report.Error (160, c.loc,
 							"A previous catch clause already catches all exceptions of this or a super type `{0}'",
 							ct.GetSignatureForError ());
 						ok = false;
@@ -5633,9 +6439,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ec.EndFlowBranching ();
-
-			return base.Resolve (ec) && ok;
+			return base.Resolve (bc) && ok;
 		}
 
 		protected sealed override void DoEmit (EmitContext ec)
@@ -5650,6 +6454,45 @@ namespace Mono.CSharp {
 
 			if (!inside_try_finally)
 				ec.EndExceptionBlock ();
+		}
+
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			var start_fc = fc.BranchDefiniteAssignment ();
+			var res = Block.FlowAnalysis (fc);
+
+			DefiniteAssignmentBitSet try_fc = res ? null : fc.DefiniteAssignment;
+
+			foreach (var c in clauses) {
+				fc.DefiniteAssignment = new DefiniteAssignmentBitSet (start_fc);
+				if (!c.FlowAnalysis (fc)) {
+					if (try_fc == null)
+						try_fc = fc.DefiniteAssignment;
+					else
+						try_fc &= fc.DefiniteAssignment;
+
+					res = false;
+				}
+			}
+
+			fc.DefiniteAssignment = try_fc ?? start_fc;
+			parent = null;
+			return res;
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			if (rc.IsUnreachable)
+				return rc;
+
+			base.MarkReachable (rc);
+
+			var tc_rc = Block.MarkReachable (rc);
+
+			foreach (var c in clauses)
+				tc_rc &= c.MarkReachable (rc);
+
+			return tc_rc;
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -5881,6 +6724,18 @@ namespace Mono.CSharp {
 			decl.EmitDispose (ec);
 		}
 
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			decl.FlowAnalysis (fc);
+			return stmt.FlowAnalysis (fc);
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			decl.MarkReachable (rc);
+			return base.MarkReachable (rc);
+		}
+
 		public override bool Resolve (BlockContext ec)
 		{
 			VariableReference vr;
@@ -5909,16 +6764,10 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ec.StartFlowBranching (this);
-
-			stmt.Resolve (ec);
-
-			ec.EndFlowBranching ();
+			base.Resolve (ec);
 
 			if (vr != null)
 				vr.IsLockedByStatement = vr_locked;
-
-			base.Resolve (ec);
 
 			return true;
 		}
@@ -5940,7 +6789,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Implementation of the foreach C# statement
 	/// </summary>
-	public class Foreach : Statement
+	public class Foreach : LoopStatement
 	{
 		abstract class IteratorStatement : Statement
 		{
@@ -5964,6 +6813,11 @@ namespace Mono.CSharp {
 				}
 
 				base.Emit (ec);
+			}
+
+			protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+			{
+				throw new NotImplementedException ();
 			}
 		}
 
@@ -6046,22 +6900,7 @@ namespace Mono.CSharp {
 
 				for_each.body.AddScopeStatement (new StatementExpression (new CompilerAssign (variable_ref, access, Location.Null), for_each.type.Location));
 
-				bool ok = true;
-
-				ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
-				ec.CurrentBranching.CreateSibling ();
-
-				ec.StartFlowBranching (FlowBranching.BranchingType.Embedded, loc);
-				if (!for_each.body.Resolve (ec))
-					ok = false;
-				ec.EndFlowBranching ();
-
-				// There's no direct control flow from the end of the embedded statement to the end of the loop
-				ec.CurrentBranching.CurrentUsageVector.Goto ();
-
-				ec.EndFlowBranching ();
-
-				return ok;
+				return for_each.body.Resolve (ec);
 			}
 
 			protected override void DoEmit (EmitContext ec)
@@ -6431,15 +7270,14 @@ namespace Mono.CSharp {
 		Expression type;
 		LocalVariable variable;
 		Expression expr;
-		Statement statement;
 		Block body;
 
 		public Foreach (Expression type, LocalVariable var, Expression expr, Statement stmt, Block body, Location l)
+			: base (stmt)
 		{
 			this.type = type;
 			this.variable = var;
 			this.expr = expr;
-			this.statement = stmt;
 			this.body = body;
 			loc = l;
 		}
@@ -6448,16 +7286,21 @@ namespace Mono.CSharp {
 			get { return expr; }
 		}
 
-		public Statement Statement {
-			get { return statement; }
-		}
-
 		public Expression TypeExpression {
 			get { return type; }
 		}
 
 		public LocalVariable Variable {
 			get { return variable; }
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			base.MarkReachable (rc);
+
+			body.MarkReachable (rc);
+
+			return rc;
 		}
 
 		public override bool Resolve (BlockContext ec)
@@ -6471,12 +7314,12 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			body.AddStatement (statement);
+			body.AddStatement (Statement);
 
 			if (expr.Type.BuiltinType == BuiltinTypeSpec.Type.String) {
-				statement = new ArrayForeach (this, 1);
+				Statement = new ArrayForeach (this, 1);
 			} else if (expr.Type is ArrayContainer) {
-				statement = new ArrayForeach (this, ((ArrayContainer) expr.Type).Rank);
+				Statement = new ArrayForeach (this, ((ArrayContainer) expr.Type).Rank);
 			} else {
 				if (expr.eclass == ExprClass.MethodGroup || expr is AnonymousMethodExpression) {
 					ec.Report.Error (446, expr.Location, "Foreach statement cannot operate on a `{0}'",
@@ -6484,10 +7327,11 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				statement = new CollectionForeach (this, variable, expr);
+				Statement = new CollectionForeach (this, variable, expr);
 			}
 
-			return statement.Resolve (ec);
+			base.Resolve (ec);
+			return true;
 		}
 
 		protected override void DoEmit (EmitContext ec)
@@ -6496,18 +7340,28 @@ namespace Mono.CSharp {
 			ec.LoopBegin = ec.DefineLabel ();
 			ec.LoopEnd = ec.DefineLabel ();
 
-			if (!(statement is Block))
+			if (!(Statement is Block))
 				ec.BeginCompilerScope ();
 
 			variable.CreateBuilder (ec);
 
-			statement.Emit (ec);
+			Statement.Emit (ec);
 
-			if (!(statement is Block))
+			if (!(Statement is Block))
 				ec.EndScope ();
 
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
+		}
+
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			expr.FlowAnalysis (fc);
+
+			var da = fc.BranchDefiniteAssignment ();
+			body.FlowAnalysis (fc);
+			fc.DefiniteAssignment = da;
+			return false;
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -6517,7 +7371,7 @@ namespace Mono.CSharp {
 			target.type = type.Clone (clonectx);
 			target.expr = expr.Clone (clonectx);
 			target.body = (Block) body.Clone (clonectx);
-			target.statement = statement.Clone (clonectx);
+			target.Statement = Statement.Clone (clonectx);
 		}
 		
 		public override object Accept (StructuralVisitor visitor)

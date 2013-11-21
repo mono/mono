@@ -83,6 +83,11 @@ namespace Mono.CSharp
 			call.EmitPredefined (ec, oper, arguments, loc);
 		}
 
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			arguments.FlowAnalysis (fc);
+		}
+
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 #if STATIC
@@ -570,6 +575,19 @@ namespace Mono.CSharp
 		public override void EmitSideEffect (EmitContext ec)
 		{
 			Expr.EmitSideEffect (ec);
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			if (Oper == Operator.AddressOf) {
+				var vr = Expr as VariableReference;
+				if (vr != null && vr.VariableInfo != null)
+					fc.SetVariableAssigned (vr.VariableInfo);
+
+				return;
+			}
+
+			Expr.FlowAnalysis (fc);
 		}
 
 		//
@@ -1274,6 +1292,11 @@ namespace Mono.CSharp
 			EmitCode (ec, false);
 		}
 
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			expr.FlowAnalysis (fc);
+		}
+
 		//
 		// Converts operator to System.Linq.Expressions.ExpressionType enum name
 		//
@@ -1365,6 +1388,11 @@ namespace Mono.CSharp
 			}
 
 			return this;
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			expr.FlowAnalysis (fc);
 		}
 
 		protected abstract string OperatorName { get; }
@@ -2516,6 +2544,12 @@ namespace Mono.CSharp
 		void Error_OperatorCannotBeApplied (ResolveContext ec, Expression left, Expression right)
 		{
 			Error_OperatorCannotBeApplied (ec, left, right, OperName (oper), loc);
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			left.FlowAnalysis (fc);
+			right.FlowAnalysis (fc);
 		}
 
 		//
@@ -4890,6 +4924,11 @@ namespace Mono.CSharp
 			}
 		}
 
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			arguments.FlowAnalysis (fc);
+		}
+
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 			if (arguments.Count != 2)
@@ -5259,32 +5298,8 @@ namespace Mono.CSharp
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			expr = expr.Resolve (ec);
-
-			//
-			// Unreachable code needs different resolve path. For instance for await
-			// expression to not generate unreachable resumable statement
-			//
-			Constant c = expr as Constant;
-			if (c != null && ec.CurrentBranching != null) {
-				bool unreachable = ec.CurrentBranching.CurrentUsageVector.IsUnreachable;
-
-				if (c.IsDefaultValue) {
-					ec.CurrentBranching.CurrentUsageVector.IsUnreachable = true;
-					true_expr = true_expr.Resolve (ec);
-					ec.CurrentBranching.CurrentUsageVector.IsUnreachable = unreachable;
-
-					false_expr = false_expr.Resolve (ec);
-				} else {
-					true_expr = true_expr.Resolve (ec);
-
-					ec.CurrentBranching.CurrentUsageVector.IsUnreachable = true;
-					false_expr = false_expr.Resolve (ec);
-					ec.CurrentBranching.CurrentUsageVector.IsUnreachable = unreachable;
-				}
-			} else {
-				true_expr = true_expr.Resolve (ec);
-				false_expr = false_expr.Resolve (ec);
-			}
+			true_expr = true_expr.Resolve (ec);
+			false_expr = false_expr.Resolve (ec);
 
 			if (true_expr == null || false_expr == null || expr == null)
 				return null;
@@ -5345,8 +5360,9 @@ namespace Mono.CSharp
 						true_type.GetSignatureForError (), false_type.GetSignatureForError ());
 					return null;
 				}
-			}			
+			}
 
+			Constant c = expr as Constant;
 			if (c != null) {
 				bool is_false = c.IsDefaultValue;
 
@@ -5392,6 +5408,14 @@ namespace Mono.CSharp
 			ec.MarkLabel (end_target);
 		}
 
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			// FIXME: Need to branch
+			expr.FlowAnalysis (fc);
+			true_expr.FlowAnalysis (fc);
+			false_expr.FlowAnalysis (fc);
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			Conditional target = (Conditional) t;
@@ -5409,7 +5433,6 @@ namespace Mono.CSharp
 		#region Abstract
 		public abstract HoistedVariable GetHoistedVariable (AnonymousExpression ae);
 		public abstract void SetHasAddressTaken ();
-		public abstract void VerifyDefiniteAssignment (ResolveContext rc);
 
 		public abstract bool IsLockedByStatement { get; set; }
 
@@ -5642,17 +5665,17 @@ namespace Mono.CSharp
 
 		#endregion
 
-		public override void VerifyDefiniteAssignment (ResolveContext rc)
+		public override void FlowAnalysis (FlowAnalysisContext fc)
 		{
 			VariableInfo variable_info = VariableInfo;
 			if (variable_info == null)
 				return;
 
-			if (variable_info.IsAssigned (rc))
+			if (fc.IsDefinitelyAssigned (variable_info))
 				return;
 
-			rc.Report.Error (165, loc, "Use of unassigned local variable `{0}'", Name);
-			variable_info.SetAssigned (rc);
+			fc.Report.Error (165, loc, "Use of unassigned local variable `{0}'", Name);
+			variable_info.SetAssigned (fc.DefiniteAssignment, true);
 		}
 
 		public override void SetHasAddressTaken ()
@@ -5689,8 +5712,6 @@ namespace Mono.CSharp
 		{
 			local_info.SetIsUsed ();
 
-			VerifyDefiniteAssignment (ec);
-
 			DoResolveBase (ec);
 			return this;
 		}
@@ -5721,8 +5742,6 @@ namespace Mono.CSharp
 					}
 					ec.Report.Error (code, loc, msg, Name, local_info.GetReadOnlyContext ());
 				}
-			} else if (VariableInfo != null) {
-				VariableInfo.SetAssigned (ec);
 			}
 
 			if (eclass == ExprClass.Unresolved)
@@ -5842,15 +5861,6 @@ namespace Mono.CSharp
 			Parameter.HasAddressTaken = true;
 		}
 
-		void SetAssigned (ResolveContext ec)
-		{
-			if (Parameter.HoistedVariant != null)
-				Parameter.HoistedVariant.IsAssigned = true;
-
-			if (HasOutModifier && ec.DoFlowAnalysis)
-				ec.CurrentBranching.SetAssigned (VariableInfo);
-		}
-
 		bool DoResolveBase (ResolveContext ec)
 		{
 			if (eclass != ExprClass.Unresolved)
@@ -5916,7 +5926,6 @@ namespace Mono.CSharp
 			if (!DoResolveBase (ec))
 				return null;
 
-			VerifyDefiniteAssignment (ec);
 			return this;
 		}
 
@@ -5925,21 +5934,23 @@ namespace Mono.CSharp
 			if (!DoResolveBase (ec))
 				return null;
 
-			SetAssigned (ec);
+			if (Parameter.HoistedVariant != null)
+				Parameter.HoistedVariant.IsAssigned = true;
+
 			return base.DoResolveLValue (ec, right_side);
 		}
 
-		public override void VerifyDefiniteAssignment (ResolveContext rc)
+		public override void FlowAnalysis (FlowAnalysisContext fc)
 		{
 			VariableInfo variable_info = VariableInfo;
 			if (variable_info == null)
 				return;
 
-			if (variable_info.IsAssigned (rc))
+			if (fc.IsDefinitelyAssigned (variable_info))
 				return;
 
-			rc.Report.Error (269, loc, "Use of unassigned out parameter `{0}'", Name);
-			variable_info.SetAssigned (rc);
+			fc.Report.Error (269, loc, "Use of unassigned out parameter `{0}'", Name);
+			fc.SetVariableAssigned (variable_info);
 		}
 	}
 	
@@ -6201,6 +6212,14 @@ namespace Mono.CSharp
 		protected virtual MethodGroupExpr DoResolveOverload (ResolveContext ec)
 		{
 			return mg.OverloadResolve (ec, ref arguments, null, OverloadResolver.Restrictions.None);
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			mg.FlowAnalysis (fc);
+
+			if (arguments != null)
+				arguments.FlowAnalysis (fc);
 		}
 
 		public override string GetSignatureForError ()
@@ -6628,6 +6647,12 @@ namespace Mono.CSharp
 				ec.Emit (OpCodes.Pop);
 		}
 
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			if (arguments != null)
+				arguments.FlowAnalysis (fc);
+		}
+
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			EmitAddressOf (ec, mode);
@@ -6785,6 +6810,11 @@ namespace Mono.CSharp
 		}
 
 		public override void Emit (EmitContext ec)
+		{
+			throw new InternalErrorException ("Missing Resolve call");
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
 		{
 			throw new InternalErrorException ("Missing Resolve call");
 		}
@@ -7047,6 +7077,17 @@ namespace Mono.CSharp
 		protected override void Error_NegativeArrayIndex (ResolveContext ec, Location loc)
 		{
 			ec.Report.Error (248, loc, "Cannot create an array with a negative size");
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			foreach (var arg in arguments)
+				arg.FlowAnalysis (fc);
+
+			if (array_data != null) {
+				foreach (var ad in array_data)
+					ad.FlowAnalysis (fc);
+			}
 		}
 
 		bool InitializersContainAwait ()
@@ -7693,7 +7734,7 @@ namespace Mono.CSharp
 
 		#endregion
 
-		public void CheckStructThisDefiniteAssignment (ResolveContext rc)
+		void CheckStructThisDefiniteAssignment (FlowAnalysisContext fc)
 		{
 			//
 			// It's null for all cases when we don't need to check `this'
@@ -7702,13 +7743,10 @@ namespace Mono.CSharp
 			if (variable_info == null)
 				return;
 
-			if (rc.OmitStructFlowAnalysis)
+			if (fc.IsDefinitelyAssigned (variable_info))
 				return;
 
-			if (!variable_info.IsAssigned (rc)) {
-				rc.Report.Error (188, loc,
-					"The `this' object cannot be used before all of its fields are assigned to");
-			}
+			fc.Report.Error (188, loc, "The `this' object cannot be used before all of its fields are assigned to");
 		}
 
 		protected virtual void Error_ThisNotAvailable (ResolveContext ec)
@@ -7722,6 +7760,11 @@ namespace Mono.CSharp
 			} else {
 				ec.Report.Error (27, loc, "Keyword `this' is not available in the current context");
 			}
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			CheckStructThisDefiniteAssignment (fc);
 		}
 
 		public override HoistedVariable GetHoistedVariable (AnonymousExpression ae)
@@ -7781,9 +7824,6 @@ namespace Mono.CSharp
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			ResolveBase (ec);
-
-			CheckStructThisDefiniteAssignment (ec);
-
 			return this;
 		}
 
@@ -7791,9 +7831,6 @@ namespace Mono.CSharp
 		{
 			if (eclass == ExprClass.Unresolved)
 				ResolveBase (ec);
-
-			if (variable_info != null)
-				variable_info.SetAssigned (ec);
 
 			if (type.IsClass){
 				if (right_side == EmptyExpression.UnaryAddress)
@@ -7829,10 +7866,6 @@ namespace Mono.CSharp
 		public override void SetHasAddressTaken ()
 		{
 			// Nothing
-		}
-
-		public override void VerifyDefiniteAssignment (ResolveContext rc)
-		{
 		}
 		
 		public override object Accept (StructuralVisitor visitor)
@@ -8616,49 +8649,24 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext rc)
 		{
-			var e = DoResolveName (rc, null);
-
-			if (!rc.OmitStructFlowAnalysis) {
-				var fe = e as FieldExpr;
-				if (fe != null) {
-					fe.VerifyAssignedStructField (rc, null);
-				}
-			}
+			var e = LookupNameExpression (rc, MemberLookupRestrictions.ReadAccess);
+			if (e != null)
+				e = e.Resolve (rc, ResolveFlags.VariableOrValue | ResolveFlags.Type | ResolveFlags.MethodGroup);
 
 			return e;
 		}
 
 		public override Expression DoResolveLValue (ResolveContext rc, Expression rhs)
 		{
-			var e = DoResolveName (rc, rhs);
+			var e = LookupNameExpression (rc, MemberLookupRestrictions.None);
 
-			if (!rc.OmitStructFlowAnalysis) {
-				var fe = e as FieldExpr;
-				if (fe != null && fe.InstanceExpression is FieldExpr) {
-					fe = (FieldExpr) fe.InstanceExpression;
-					fe.VerifyAssignedStructField (rc, rhs);
-				}
-			}
-
-			return e;
-		}
-
-		Expression DoResolveName (ResolveContext rc, Expression right_side)
-		{
-			Expression e = LookupNameExpression (rc, right_side == null ? MemberLookupRestrictions.ReadAccess : MemberLookupRestrictions.None);
-			if (e == null)
+			if (e is TypeExpr) {
+				e.Error_UnexpectedKind (rc, ResolveFlags.VariableOrValue, loc);
 				return null;
-
-			if (right_side != null) {
-				if (e is TypeExpr) {
-					e.Error_UnexpectedKind (rc, ResolveFlags.VariableOrValue, loc);
-					return null;
-				}
-
-				e = e.ResolveLValue (rc, right_side);
-			} else {
-				e = e.Resolve (rc, ResolveFlags.VariableOrValue | ResolveFlags.Type | ResolveFlags.MethodGroup);
 			}
+
+			if (e != null)
+				e = e.ResolveLValue (rc, rhs);
 
 			return e;
 		}
@@ -8684,32 +8692,22 @@ namespace Mono.CSharp
 			var sn = expr as SimpleName;
 			const ResolveFlags flags = ResolveFlags.VariableOrValue | ResolveFlags.Type;
 
-			//
-			// Resolve the expression with flow analysis turned off, we'll do the definite
-			// assignment checks later.  This is because we don't know yet what the expression
-			// will resolve to - it may resolve to a FieldExpr and in this case we must do the
-			// definite assignment check on the actual field and not on the whole struct.
-			//
-			using (rc.Set (ResolveContext.Options.OmitStructFlowAnalysis)) {
-				if (sn != null) {
-					expr = sn.LookupNameExpression (rc, MemberLookupRestrictions.ReadAccess | MemberLookupRestrictions.ExactArity);
+			if (sn != null) {
+				expr = sn.LookupNameExpression (rc, MemberLookupRestrictions.ReadAccess | MemberLookupRestrictions.ExactArity);
 
-					//
-					// Resolve expression which does have type set as we need expression type
-					// with disable flow analysis as we don't know whether left side expression
-					// is used as variable or type
-					//
-					if (expr is VariableReference || expr is ConstantExpr || expr is Linq.TransparentMemberAccess) {
-						using (rc.With (ResolveContext.Options.DoFlowAnalysis, false)) {
-							expr = expr.Resolve (rc);
-						}
-					} else if (expr is TypeParameterExpr) {
-						expr.Error_UnexpectedKind (rc, flags, sn.Location);
-						expr = null;
-					}
-				} else {
-					expr = expr.Resolve (rc, flags);
+				//
+				// Resolve expression which does have type set as we need expression type
+				// with disable flow analysis as we don't know whether left side expression
+				// is used as variable or type
+				//
+				if (expr is VariableReference || expr is ConstantExpr || expr is Linq.TransparentMemberAccess) {
+					expr = expr.Resolve (rc);
+				} else if (expr is TypeParameterExpr) {
+					expr.Error_UnexpectedKind (rc, flags, sn.Location);
+					expr = null;
 				}
+			} else {
+				expr = expr.Resolve (rc, flags);
 			}
 
 			if (expr == null)
@@ -8736,16 +8734,6 @@ namespace Mono.CSharp
 				me = expr as MemberExpr;
 				if (me != null)
 					me.ResolveInstanceExpression (rc, null);
-
-				//
-				// Run defined assigned checks on expressions resolved with
-				// disabled flow-analysis
-				//
-				if (sn != null) {
-					var vr = expr as VariableReference;
-					if (vr != null)
-						vr.VerifyDefiniteAssignment (rc);
-				}
 
 				Arguments args = new Arguments (1);
 				args.Add (new Argument (expr));
@@ -8775,16 +8763,6 @@ namespace Mono.CSharp
 									return null;
 
 								emg.SetTypeArguments (rc, targs);
-							}
-
-							//
-							// Run defined assigned checks on expressions resolved with
-							// disabled flow-analysis
-							//
-							if (sn != null && !errorMode) {
-								var vr = expr as VariableReference;
-								if (vr != null)
-									vr.VerifyDefiniteAssignment (rc);
 							}
 
 							// TODO: it should really skip the checks bellow
@@ -8857,16 +8835,6 @@ namespace Mono.CSharp
 					return null;
 
 				me.SetTypeArguments (rc, targs);
-			}
-
-			//
-			// Run defined assigned checks on expressions resolved with
-			// disabled flow-analysis
-			//
-			if (sn != null && !(me is FieldExpr && TypeSpec.IsValueType (expr_type))) {
-				var vr = expr as VariableReference;
-				if (vr != null)
-					vr.VerifyDefiniteAssignment (rc);
 			}
 
 			return me;
@@ -9081,6 +9049,11 @@ namespace Mono.CSharp
 				Expr.EmitBranchable (ec, target, on_true);
 		}
 
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			Expr.FlowAnalysis (fc);
+		}
+
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 			using (ctx.With (BuilderContext.Options.CheckedScope, true)) {
@@ -9151,6 +9124,11 @@ namespace Mono.CSharp
 		{
 			using (ec.With (EmitContext.Options.CheckedScope, false))
 				Expr.EmitBranchable (ec, target, on_true);
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			Expr.FlowAnalysis (fc);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -9291,6 +9269,12 @@ namespace Mono.CSharp
 			Report.Error (1742, na.Location, "An element access expression cannot use named argument");
 		}
 
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			Expr.FlowAnalysis (fc);
+			Arguments.FlowAnalysis (fc);
+		}
+
 		public override string GetSignatureForError ()
 		{
 			return Expr.GetSignatureForError ();
@@ -9391,6 +9375,11 @@ namespace Mono.CSharp
 		protected override void Error_NegativeArrayIndex (ResolveContext ec, Location loc)
 		{
 			ec.Report.Warning (251, 2, loc, "Indexing an array with a negative index (array indices always start at zero)");
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			ea.FlowAnalysis (fc);
 		}
 
 		//
@@ -9688,6 +9677,13 @@ namespace Mono.CSharp
 			if (await_source_arg != null) {
 				await_source_arg.Release (ec);
 			}
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			// TODO: Check the order
+			base.FlowAnalysis (fc);
+			arguments.FlowAnalysis (fc);
 		}
 
 		public override string GetSignatureForError ()
@@ -10098,6 +10094,11 @@ namespace Mono.CSharp
 			source.Emit (ec);
 			ec.MarkCallEntry (loc);
 			ec.Emit (OpCodes.Call, method);
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			source.FlowAnalysis (fc);
 		}
 
 		public override string GetSignatureForError ()
@@ -10801,6 +10802,12 @@ namespace Mono.CSharp
 				e.EmitStatement (ec);
 			}
 		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			foreach (var initializer in initializers)
+				initializer.FlowAnalysis (fc);
+		}
 	}
 	
 	//
@@ -10993,6 +11000,12 @@ namespace Mono.CSharp
 				initializers.Emit (ec);
 
 			return instance;
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			base.FlowAnalysis (fc);
+			initializers.FlowAnalysis (fc);
 		}
 
 		public override object Accept (StructuralVisitor visitor)

@@ -69,8 +69,6 @@ namespace Mono.CSharp
 	//
 	public class BlockContext : ResolveContext
 	{
-		FlowBranching current_flow_branching;
-
 		readonly TypeSpec return_type;
 
 		//
@@ -112,124 +110,17 @@ namespace Mono.CSharp
 				flags |= ResolveContext.Options.BaseInitializer;
 		}
 
-		public override FlowBranching CurrentBranching {
-			get { return current_flow_branching; }
-		}
+		public ExceptionStatement CurrentTryBlock { get; set; }
+
+		public LoopStatement EnclosingLoop { get; set; }
+
+		public LoopStatement EnclosingLoopOrSwitch { get; set; }
+
+		public Switch Switch { get; set; }
 
 		public TypeSpec ReturnType {
 			get { return return_type; }
 		}
-
-		public bool IsUnreachable {
-			get {
-				return HasSet (Options.UnreachableScope);
-			}
-			set {
-				flags = value ? flags | Options.UnreachableScope : flags & ~Options.UnreachableScope;
-			}
-		}
-
-		public bool UnreachableReported {
-			get {
-				return HasSet (Options.UnreachableReported);
-			}
-			set {
-				flags = value ? flags | Options.UnreachableReported : flags & ~Options.UnreachableScope;
-			}
-		}
-
-		// <summary>
-		//   Starts a new code branching.  This inherits the state of all local
-		//   variables and parameters from the current branching.
-		// </summary>
-		public FlowBranching StartFlowBranching (FlowBranching.BranchingType type, Location loc)
-		{
-			current_flow_branching = FlowBranching.CreateBranching (CurrentBranching, type, null, loc);
-			return current_flow_branching;
-		}
-
-		// <summary>
-		//   Starts a new code branching for block `block'.
-		// </summary>
-		public FlowBranching StartFlowBranching (Block block)
-		{
-			Set (Options.DoFlowAnalysis);
-
-			current_flow_branching = FlowBranching.CreateBranching (
-				CurrentBranching, FlowBranching.BranchingType.Block, block, block.StartLocation);
-			return current_flow_branching;
-		}
-
-		public FlowBranchingTryCatch StartFlowBranching (TryCatch stmt)
-		{
-			FlowBranchingTryCatch branching = new FlowBranchingTryCatch (CurrentBranching, stmt);
-			current_flow_branching = branching;
-			return branching;
-		}
-
-		public FlowBranchingTryFinally StartFlowBranching (TryFinallyBlock stmt)
-		{
-			FlowBranchingTryFinally branching = new FlowBranchingTryFinally (CurrentBranching, stmt);
-			current_flow_branching = branching;
-			return branching;
-		}
-
-		public FlowBranchingLabeled StartFlowBranching (LabeledStatement stmt)
-		{
-			FlowBranchingLabeled branching = new FlowBranchingLabeled (CurrentBranching, stmt);
-			current_flow_branching = branching;
-			return branching;
-		}
-
-		public FlowBranchingIterator StartFlowBranching (Iterator iterator, FlowBranching parent)
-		{
-			FlowBranchingIterator branching = new FlowBranchingIterator (parent, iterator);
-			current_flow_branching = branching;
-			return branching;
-		}
-
-		public FlowBranchingAsync StartFlowBranching (AsyncInitializer asyncBody, FlowBranching parent)
-		{
-			var branching = new FlowBranchingAsync (parent, asyncBody);
-			current_flow_branching = branching;
-			return branching;
-		}
-
-		public FlowBranchingToplevel StartFlowBranching (ParametersBlock stmt, FlowBranching parent)
-		{
-			FlowBranchingToplevel branching = new FlowBranchingToplevel (parent, stmt);
-			current_flow_branching = branching;
-			return branching;
-		}
-
-		// <summary>
-		//   Ends a code branching.  Merges the state of locals and parameters
-		//   from all the children of the ending branching.
-		// </summary>
-		public bool EndFlowBranching ()
-		{
-			FlowBranching old = current_flow_branching;
-			current_flow_branching = current_flow_branching.Parent;
-
-			FlowBranching.UsageVector vector = current_flow_branching.MergeChild (old);
-			return vector.IsUnreachable;
-		}
-
-		// <summary>
-		//   Kills the current code branching.  This throws away any changed state
-		//   information and should only be used in case of an error.
-		// </summary>
-		// FIXME: this is evil
-		public void KillFlowBranching ()
-		{
-			current_flow_branching = current_flow_branching.Parent;
-		}
-
-#if !STATIC
-		public void NeedReturnLabel ()
-		{
-		}
-#endif
 	}
 
 	//
@@ -290,20 +181,9 @@ namespace Mono.CSharp
 
 			LockScope = 1 << 13,
 
-			UnreachableScope = 1 << 14,
+			TryScope = 1 << 14,
 
-			UnreachableReported = 1 << 15,
-
-			/// <summary>
-			///   Whether control flow analysis is enabled
-			/// </summary>
-			DoFlowAnalysis = 1 << 20,
-
-			/// <summary>
-			///   Whether control flow analysis is disabled on structs
-			///   (only meaningful when DoFlowAnalysis is set)
-			/// </summary>
-			OmitStructFlowAnalysis = 1 << 21,
+			TryWithCatchScope = 1 << 15,
 
 			///
 			/// Indicates the current context is in probing mode, no errors are reported. 
@@ -372,11 +252,6 @@ namespace Mono.CSharp
 
 		public readonly IMemberContext MemberContext;
 
-		/// <summary>
-		///   If this is non-null, points to the current switch statement
-		/// </summary>
-		public Switch Switch;
-
 		public ResolveContext (IMemberContext mc)
 		{
 			if (mc == null)
@@ -416,10 +291,6 @@ namespace Mono.CSharp
 			}
 		}
 
-		public virtual FlowBranching CurrentBranching {
-			get { return null; }
-		}
-
 		//
 		// The current iterator
 		//
@@ -441,10 +312,6 @@ namespace Mono.CSharp
 
 		public bool ConstantCheckState {
 			get { return (flags & Options.ConstantCheckState) != 0; }
-		}
-
-		public bool DoFlowAnalysis {
-			get { return (flags & Options.DoFlowAnalysis) != 0; }
 		}
 
 		public bool IsInProbingMode {
@@ -480,7 +347,7 @@ namespace Mono.CSharp
 
 		public bool IsVariableCapturingRequired {
 			get {
-				return !IsInProbingMode && (CurrentBranching == null || !CurrentBranching.CurrentUsageVector.IsUnreachable);
+				return !IsInProbingMode;
 			}
 		}
 
@@ -488,10 +355,6 @@ namespace Mono.CSharp
 			get {
 				return MemberContext.Module;
 			}
-		}
-
-		public bool OmitStructFlowAnalysis {
-			get { return (flags & Options.OmitStructFlowAnalysis) != 0; }
 		}
 
 		public Report Report {
@@ -572,6 +435,65 @@ namespace Mono.CSharp
 
 		#endregion
 	}
+
+	public class FlowAnalysisContext
+	{
+		readonly CompilerContext ctx;
+
+		public FlowAnalysisContext (CompilerContext ctx, ParametersBlock parametersBlock)
+		{
+			this.ctx = ctx;
+			this.ParametersBlock = parametersBlock;
+
+			DefiniteAssignment = new DefiniteAssignmentBitSet ();
+		}
+
+		public DefiniteAssignmentBitSet DefiniteAssignment { get; set; }
+
+		public List<LabeledStatement> LabelStack { get; set; }
+
+		public ParametersBlock ParametersBlock { get; set; }
+
+		public Report Report {
+			get {
+				return ctx.Report;
+			}
+		}
+
+		public DefiniteAssignmentBitSet SwitchInitialDefinitiveAssignment { get; set; }
+
+		public TryFinally TryFinally { get; set; }
+
+		public bool UnreachableReported { get; set; }
+
+		public DefiniteAssignmentBitSet BranchDefiniteAssignment ()
+		{
+			var dat = DefiniteAssignment;
+			DefiniteAssignment = new DefiniteAssignmentBitSet (dat);
+			return dat;
+		}
+
+		public bool IsDefinitelyAssigned (VariableInfo variable)
+		{
+			return variable.IsAssigned (DefiniteAssignment);
+		}
+
+		public bool IsStructFieldDefinitelyAssigned (VariableInfo variable, string name)
+		{
+			return variable.IsStructFieldAssigned (DefiniteAssignment, name);
+		}
+
+		public void SetVariableAssigned (VariableInfo variable, bool generatedAssignment = false)
+		{
+			variable.SetAssigned (DefiniteAssignment, generatedAssignment);
+		}
+
+		public void SetStructFieldAssigned (VariableInfo variable, string name)
+		{
+			variable.SetStructFieldAssigned (DefiniteAssignment, name);
+		}
+	}
+
 
 	//
 	// This class is used during the Statement.Clone operation

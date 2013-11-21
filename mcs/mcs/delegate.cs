@@ -828,6 +828,13 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall (ec, "Invoke", args);
 		}
 
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			InstanceExpr.FlowAnalysis (fc);
+			if (arguments != null)
+				arguments.FlowAnalysis (fc);
+		}
+
 		protected override Expression DoResolve (ResolveContext ec)
 		{		
 			TypeSpec del_type = InstanceExpr.Type;
