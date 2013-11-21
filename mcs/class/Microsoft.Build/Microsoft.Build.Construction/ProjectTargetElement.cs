@@ -122,15 +122,15 @@ namespace Microsoft.Build.Construction
                  public ElementLocation OutputsLocation { get; private set; }
                  public ElementLocation ReturnsLocation { get; private set; }
 #else
-                 ElementLocation AfterTargetsLocation { get; set; }
-                 ElementLocation BeforeTargetsLocation { get; set; }
-                 ElementLocation DependsOnTargetsLocation { get; set; }
-                 ElementLocation InputsLocation { get; set; }
-                 ElementLocation KeepDuplicateOutputsLocation { get; set; }
-                 ElementLocation LabelLocation { get; set; }
-                 ElementLocation NameLocation { get; set; }
-                 ElementLocation OutputsLocation { get; set; }
-                 ElementLocation ReturnsLocation { get; set; }
+                 internal ElementLocation AfterTargetsLocation { get; set; }
+                 internal ElementLocation BeforeTargetsLocation { get; set; }
+                 internal ElementLocation DependsOnTargetsLocation { get; set; }
+                 internal ElementLocation InputsLocation { get; set; }
+                 internal ElementLocation KeepDuplicateOutputsLocation { get; set; }
+                 internal ElementLocation LabelLocation { get; set; }
+                 internal ElementLocation NameLocation { get; set; }
+                 internal ElementLocation OutputsLocation { get; set; }
+                 internal ElementLocation ReturnsLocation { get; set; }
 #endif
 
                 internal override ProjectElement LoadChildElement (XmlReader reader)
