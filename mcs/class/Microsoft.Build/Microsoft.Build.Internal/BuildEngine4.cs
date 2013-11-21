@@ -383,7 +383,7 @@ namespace Microsoft.Build.Internal
 		}
 
 		public int ColumnNumberOfTaskNode {
-			get { return current_task.Location.Column; }
+			get { return current_task.Location != null ? current_task.Location.Column : 0; }
 		}
 
 		public bool ContinueOnError {
@@ -400,7 +400,7 @@ namespace Microsoft.Build.Internal
 		}
 
 		public int LineNumberOfTaskNode {
-			get { return current_task.Location.Line; }
+			get { return current_task.Location != null ? current_task.Location.Line : 0; }
 		}
 
 		public string ProjectFileOfTaskNode {
