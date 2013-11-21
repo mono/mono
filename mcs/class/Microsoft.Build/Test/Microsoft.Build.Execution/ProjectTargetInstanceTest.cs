@@ -32,6 +32,8 @@ using System.Xml;
 using Microsoft.Build.Construction;
 using Microsoft.Build.Execution;
 using NUnit.Framework;
+using Microsoft.Build.Logging;
+using Microsoft.Build.Framework;
 
 namespace MonoTests.Microsoft.Build.Execution
 {
@@ -125,6 +127,21 @@ namespace MonoTests.Microsoft.Build.Execution
 				Assert.AreEqual ("Foo", proj.DefaultTargets.FirstOrDefault (), "#1-" + i);
 				Assert.AreEqual (expected [i], proj.Build (), "#2-" + i);
 			}
+		}
+		
+		[Test]
+		public void DependsOnTargets ()
+		{
+            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+	<Target Name='Foo'>
+	    <Error Text='expected error' />
+	</Target>
+	<Target Name='Bar' DependsOnTargets='Foo' />
+</Project>";
+            var xml = XmlReader.Create (new StringReader (project_xml));
+            var root = ProjectRootElement.Create (xml);
+            var proj = new ProjectInstance (root);
+			Assert.IsFalse (proj.Build ("Bar", new ILogger [] {new ConsoleLogger (LoggerVerbosity.Diagnostic, Console.Error.WriteLine, null, null)}), "#1");
 		}
 	}
 }

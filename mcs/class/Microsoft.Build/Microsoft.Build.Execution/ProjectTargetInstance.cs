@@ -42,6 +42,7 @@ namespace Microsoft.Build.Execution
 	{
 		internal ProjectTargetInstance (ProjectTargetElement xml)
 		{
+			FullPath = xml.ContainingProject.FullPath;
 			Children = xml.Children.Select<ProjectElement,ProjectTargetInstanceChild> (c => {
 				if (c is ProjectOnErrorElement)
 					return new ProjectOnErrorInstance ((ProjectOnErrorElement) c);
@@ -83,9 +84,7 @@ namespace Microsoft.Build.Execution
 		public ElementLocation ConditionLocation { get; private set; }
 		public string DependsOnTargets { get; private set; }
 		public ElementLocation DependsOnTargetsLocation { get; private set; }
-		public string FullPath {
-			get { throw new NotImplementedException (); }
-		}
+		public string FullPath { get; private set; }
 		public string Inputs { get; private set; }
 		public ElementLocation InputsLocation { get; private set; }
 		public string KeepDuplicateOutputs { get; private set; }
