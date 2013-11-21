@@ -15,6 +15,7 @@ while (defined(my $file = readdir(DIR))) {
 	if (-d "$path$file"){
 		if (-f "$path$file/versions.txt") {
 			system("cat $path$file/versions.txt >> collectedbuilds/versions-aggregated.txt");
+			system("echo \"\" >> collectedbuilds/versions-aggregated.txt");
 		}
 		dircopy("$path$file","collectedbuilds/") or die ("failed copying $path$file");
 		push @folders,"$path$file";
