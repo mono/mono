@@ -83,6 +83,11 @@ namespace Microsoft.Build.Construction
                 {
                         SaveAttribute (writer, "Include", Include);
                         SaveAttribute (writer, "Exclude", Exclude);
+#if NET_4_5
+                        SaveAttribute (writer, "KeepDuplicates", KeepDuplicates);
+                        SaveAttribute (writer, "KeepMetadata", KeepMetadata);
+                        SaveAttribute (writer, "RemoveMetadata", RemoveMetadata);
+#endif
                         SaveAttribute (writer, "Remove", Remove);
                         base.SaveValue (writer);
                 }
@@ -96,6 +101,17 @@ namespace Microsoft.Build.Construction
                         case "Exclude":
                                 Exclude = value;
                                 break;
+#if NET_4_5
+                        case "KeepDuplicates":
+                                KeepDuplicates = value;
+                                break;
+                        case "KeepMetadata":
+                                KeepMetadata = value;
+                                break;
+                        case "RemoveMetadata":
+                                RemoveMetadata = value;
+                                break;
+#endif
                         case "Remove":
                                 Remove = value;
                                 break;
@@ -106,8 +122,8 @@ namespace Microsoft.Build.Construction
                 }
                 internal override void LoadValue (XmlReader reader)
                 {
-                        if (string.IsNullOrWhiteSpace (Include))
-                                throw new InvalidProjectFileException (Location, null, string.Format ("Include attribute is null or empty on '{0}' item", ItemType));
+                        if (string.IsNullOrWhiteSpace (Include) && string.IsNullOrEmpty (Remove))
+                                throw new InvalidProjectFileException (Location, null, string.Format ("Both Include and Remove attribute are null or empty on '{0}' item", ItemType));
                         base.LoadValue (reader);
                 }
                 internal override ProjectElement LoadChildElement (XmlReader reader)
