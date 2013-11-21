@@ -73,7 +73,7 @@ namespace Microsoft.Build.Internal
 {
 	class ExpressionParser
 	{
-		const int yacc_verbose_flag = 0;
+		static readonly int yacc_verbose_flag = Environment.GetEnvironmentVariable ("MONO_MSBUILD_PARSER_DEBUG") == "1" ? 1 : 0;
 
 		object debug_obj = yacc_verbose_flag == 0 ? null : new yydebug.yyDebugSimple ();
 		
@@ -169,6 +169,7 @@ PrimaryExpression
 	| MetadataAccessExpression
 	| RawStringLiteralOrFunction
 	| ParenthesizedExpression
+	;
 	
 BooleanLiteral
 	: TRUE_LITERAL
