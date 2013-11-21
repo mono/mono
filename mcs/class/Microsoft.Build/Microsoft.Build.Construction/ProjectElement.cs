@@ -88,7 +88,7 @@ namespace Microsoft.Build.Construction
                                 Condition = value;
                                 break;
                         default:
-                                throw new InvalidProjectFileException (string.Format (
+                                throw new InvalidProjectFileException (Location, null, string.Format (
                                         "Attribute \"{0}\" is not known on node \"{1}\" [type {2}].", name, XmlName,
                                         GetType ()));
                         }
@@ -126,7 +126,6 @@ namespace Microsoft.Build.Construction
                 
                 internal void FillLocation (XmlReader reader)
                 {
-#if NET_4_5
                         var l = reader as IXmlLineInfo;
                         if (l != null && l.HasLineInfo ())
                                 Location = new ProjectElementLocation (reader.BaseURI, l);
@@ -135,7 +134,6 @@ namespace Microsoft.Build.Construction
                         if (reader.MoveToAttribute ("Label") && l.HasLineInfo ())
                                 LabelLocation = new ProjectElementLocation (reader.BaseURI, l);
                         reader.MoveToElement ();
-#endif
                 }
                 
                 class ProjectElementLocation : ElementLocation

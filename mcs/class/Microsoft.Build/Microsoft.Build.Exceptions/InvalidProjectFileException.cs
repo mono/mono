@@ -109,8 +109,15 @@ namespace Microsoft.Build.Exceptions
                 public string HelpKeyword { get; private set; }
                 public int LineNumber { get; private set; }
                 public override string Message {
-                        get { return ProjectFile == null ? base.Message : base.Message + " " + ProjectFile; }
+                        get { return ProjectFile == null ? base.Message : base.Message + " " + GetLocation (); }
                 }
                 public string ProjectFile { get; private set; }
+
+                string GetLocation ()
+                {
+                        string start = LineNumber == 0 ? string.Empty : ColumnNumber > 0 ? string.Format ("{0},{1}", LineNumber, ColumnNumber) : string.Format ("{0}", LineNumber);
+                        string end = EndLineNumber == 0 ? string.Empty : EndColumnNumber > 0 ? string.Format (" - {0},{1}", EndLineNumber, EndColumnNumber) : string.Format (" - {0}", EndLineNumber);
+                        return LineNumber == 0 ? ProjectFile : String.Format (" at: {0} ({1}{2})", ProjectFile, start, end);
+                }
         }
 }
