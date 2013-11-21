@@ -1498,6 +1498,12 @@ namespace Mono.CSharp {
 		{
 			Emit (ec);
 		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			if (argument_list != null)
+				argument_list.FlowAnalysis (fc);
+		}
 	}
 
 	public class ConstructorBaseInitializer : ConstructorInitializer {
@@ -1742,7 +1748,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (block.Resolve (null, bc, this)) {
+				if (block.Resolve (bc, this)) {
 					debug_builder = Parent.CreateMethodSymbolEntry ();
 					EmitContext ec = new EmitContext (this, ConstructorBuilder.GetILGenerator (), bc.ReturnType, debug_builder);
 					ec.With (EmitContext.Options.ConstructorScope, true);
@@ -2131,7 +2137,7 @@ namespace Mono.CSharp {
 			ToplevelBlock block = method.Block;
 			if (block != null) {
 				BlockContext bc = new BlockContext (method, block, method.ReturnType);
-				if (block.Resolve (null, bc, method)) {
+				if (block.Resolve (bc, method)) {
 					debug_builder = member.Parent.CreateMethodSymbolEntry ();
 					EmitContext ec = method.CreateEmitContext (MethodBuilder.GetILGenerator (), debug_builder);
 

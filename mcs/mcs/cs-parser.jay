@@ -5900,12 +5900,12 @@ try_statement
 	  }
 	| TRY block FINALLY block
 	  {
-		$$ = new TryFinally ((Statement) $2, (Block) $4, GetLocation ($1));
+		$$ = new TryFinally ((Statement) $2, (ExplicitBlock) $4, GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($3));
 	  }
 	| TRY block catch_clauses FINALLY block
 	  {
-		$$ = new TryFinally (new TryCatch ((Block) $2, (List<Catch>) $3, Location.Null, true), (Block) $5, GetLocation ($1));
+		$$ = new TryFinally (new TryCatch ((Block) $2, (List<Catch>) $3, Location.Null, true), (ExplicitBlock) $5, GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($4));
 	  }
 	| TRY block error
@@ -5945,12 +5945,12 @@ opt_identifier
 catch_clause 
 	: CATCH block
 	  {
-		$$ = new Catch ((Block) $2, GetLocation ($1));
+		$$ = new Catch ((ExplicitBlock) $2, GetLocation ($1));
 	  }
 	| CATCH open_parens_any type opt_identifier CLOSE_PARENS
 	  {
 		start_block (GetLocation ($2));
-		var c = new Catch (current_block, GetLocation ($1));
+		var c = new Catch ((ExplicitBlock) current_block, GetLocation ($1));
 		c.TypeExpression = (FullNamedExpression) $3;
 
 		if ($4 != null) {

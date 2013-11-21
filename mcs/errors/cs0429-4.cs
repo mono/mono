@@ -1,4 +1,4 @@
-// CS0162: Unreachable code detected
+// CS0429: Unreachable expression code detected
 // Line: 12
 // Compiler options: -warnaserror
 

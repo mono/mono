@@ -389,7 +389,7 @@ namespace Mono.CSharp
 				BlockContext bc = new BlockContext (method, method.Block, ctx.BuiltinTypes.Void);
 
 				try {
-					method.Block.Resolve (null, bc, method);
+					method.Block.Resolve (bc, method);
 				} catch (CompletionResult cr) {
 					prefix = cr.BaseText;
 					return cr.Result;
