@@ -5410,10 +5410,17 @@ namespace Mono.CSharp
 
 		public override void FlowAnalysis (FlowAnalysisContext fc)
 		{
-			// FIXME: Need to branch
 			expr.FlowAnalysis (fc);
+			var expr_fc = fc.DefiniteAssignment;
+
+			fc.DefiniteAssignment = new DefiniteAssignmentBitSet (expr_fc);
 			true_expr.FlowAnalysis (fc);
+			var true_fc = fc.DefiniteAssignment;
+
+			fc.DefiniteAssignment = new DefiniteAssignmentBitSet (expr_fc);
 			false_expr.FlowAnalysis (fc);
+
+			fc.DefiniteAssignment &= true_fc;
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
