@@ -61,15 +61,20 @@ namespace Microsoft.Build.Internal
 		void RunLoop ()
 		{
 			while (run_loop) {
-				if (queued_builds.Count == 0) {
-					queue_wait_handle.WaitOne ();
+				try {
+					if (queued_builds.Count == 0) {
+						queue_wait_handle.WaitOne ();
+					}
+					if (!run_loop)
+						break;
+					if (!queued_builds.Any ())
+						continue;
+					var build = queued_builds.Dequeue ();
+					StartOneBuild (build);
+				} catch (Exception ex) {
+					Console.Error.WriteLine ("Uncaught build node exception occured");
+					Console.Error.WriteLine (ex);
 				}
-				if (!run_loop)
-					break;
-				if (!queued_builds.Any ())
-					continue;
-				var build = queued_builds.Dequeue ();
-				StartOneBuild (build);
 			}
 		}
 
