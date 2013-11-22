@@ -132,7 +132,6 @@ namespace Microsoft.Build.Internal
 				// process DependsOnTargets first.
 				foreach (var dep in project.ExpandString (target.DependsOnTargets).Split (';').Where (s => !string.IsNullOrEmpty (s))) {
 					var result = BuildTarget (dep, args);
-					if (result != null)
 					args.Result.AddResultsForTarget (dep, result);
 					if (result.ResultCode == TargetResultCode.Failure) {
 						targetResult.Failure (null);
@@ -192,31 +191,37 @@ namespace Microsoft.Build.Internal
 							throw new InvalidOperationException (string.Format ("Task {0} has property {1} but it is read-only.", ti.Name, p.Key));
 						prop.SetValue (task, ConvertTo (p.Value, prop.PropertyType), null);
 					}
+					event_source.FireTaskStarted (this, new TaskStartedEventArgs ("Task Started", null, project.FullPath, ti.FullPath, ti.Name));
 					if (!task.Execute ()) {
+						event_source.FireTaskFinished (this, new TaskFinishedEventArgs ("Task Finished", null, project.FullPath, ti.FullPath, ti.Name, false));
 						targetResult.Failure (null);
-						if (!ContinueOnError)
-							break;
-					}
-					foreach (var to in ti.Outputs) {
-						var toItem = to as ProjectTaskOutputItemInstance;
-						var toProp = to as ProjectTaskOutputPropertyInstance;
-						string taskParameter = toItem != null ? toItem.TaskParameter : toProp.TaskParameter;
-						var pi = task.GetType ().GetProperty (taskParameter);
-						if (pi == null)
-							throw new InvalidOperationException (string.Format ("Task {0} does not have property {1} specified as TaskParameter", ti.Name, toItem.TaskParameter));
-						if (!pi.CanRead)
-							throw new InvalidOperationException (string.Format ("Task {0} has property {1} specified as TaskParameter, but it is write-only", ti.Name, toItem.TaskParameter));
-						if (toItem != null)
-							args.Project.AddItem (toItem.ItemType, ConvertFrom (pi.GetValue (task, null)));
-						else
-							args.Project.SetProperty (toProp.PropertyName, ConvertFrom (pi.GetValue (task, null)));
+						if (!ContinueOnError) {
+							event_source.FireTargetFinished (this, new TargetFinishedEventArgs ("Target Failed", null, targetName, project.FullPath, target.FullPath, false));
+							return targetResult;
+						}
+					} else {
+						event_source.FireTaskFinished (this, new TaskFinishedEventArgs ("Task Finished", null, project.FullPath, ti.FullPath, ti.Name, true));
+						foreach (var to in ti.Outputs) {
+							var toItem = to as ProjectTaskOutputItemInstance;
+							var toProp = to as ProjectTaskOutputPropertyInstance;
+							string taskParameter = toItem != null ? toItem.TaskParameter : toProp.TaskParameter;
+							var pi = task.GetType ().GetProperty (taskParameter);
+							if (pi == null)
+								throw new InvalidOperationException (string.Format ("Task {0} does not have property {1} specified as TaskParameter", ti.Name, toItem.TaskParameter));
+							if (!pi.CanRead)
+								throw new InvalidOperationException (string.Format ("Task {0} has property {1} specified as TaskParameter, but it is write-only", ti.Name, toItem.TaskParameter));
+							if (toItem != null)
+								args.Project.AddItem (toItem.ItemType, ConvertFrom (pi.GetValue (task, null)));
+							else
+								args.Project.SetProperty (toProp.PropertyName, ConvertFrom (pi.GetValue (task, null)));
+						}
 					}
 				}
 				Func<string,ITaskItem> creator = s => new TargetOutputTaskItem () { ItemSpec = s };
 				var items = args.Project.GetAllItems (target.Outputs, string.Empty, creator, creator, s => true, (t, s) => {
 				});
 				targetResult.Success (items);
-				event_source.FireTargetFinished (this, new TargetFinishedEventArgs ("Target Started", null, targetName, project.FullPath, target.FullPath, true));
+				event_source.FireTargetFinished (this, new TargetFinishedEventArgs ("Target Finished", null, targetName, project.FullPath, target.FullPath, true));
 			}
 			return targetResult;
 		}
@@ -440,7 +445,7 @@ namespace Microsoft.Build.Internal
 				case "ErrorAndStop":
 					return false;
 				}
-				return project.EvaluateCondition (current_task.ContinueOnError);
+				return !string.IsNullOrEmpty (current_task.ContinueOnError) && project.EvaluateCondition (current_task.ContinueOnError);
 			}
 		}
 
