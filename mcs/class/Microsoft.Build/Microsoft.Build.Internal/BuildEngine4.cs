@@ -55,6 +55,7 @@ namespace Microsoft.Build.Internal
 
 		BuildSubmission submission;
 		ProjectInstance project;
+		ProjectTargetInstance current_target;
 		ProjectTaskInstance current_task;
 		EventSource event_source;
 		
@@ -91,6 +92,12 @@ namespace Microsoft.Build.Internal
 			public IDictionary<string,string> TargetOutputs;
 			public string ToolsVersion;
 			public BuildTaskFactory BuildTaskFactory;
+			
+			public void AddTargetResult (string targetName, TargetResult targetResult)
+			{
+				if (!Result.HasResultsForTarget (targetName))
+					Result.AddResultsForTarget (targetName, targetResult);
+			}
 		}
 		
 		void BuildProject (InternalBuildArguments args)
@@ -106,7 +113,7 @@ namespace Microsoft.Build.Internal
 				args.Result.OverallResult = BuildResultCode.Success;
 			else {
 				foreach (var targetName in request.TargetNames.Where (t => t != null))
-					args.Result.AddResultsForTarget (targetName, BuildTarget (targetName, args));
+					args.AddTargetResult (targetName, BuildTargetByName (targetName, args));
 		
 				// FIXME: check .NET behavior, whether cancellation always results in failure.
 				args.Result.OverallResult = args.CheckCancel () ? BuildResultCode.Failure : args.Result.ResultsByTarget.Select (p => p.Value).Any (r => r.ResultCode == TargetResultCode.Failure) ? BuildResultCode.Failure : BuildResultCode.Success;
@@ -114,7 +121,7 @@ namespace Microsoft.Build.Internal
 			event_source.FireBuildFinished (this, new BuildFinishedEventArgs ("Build Finished.", null, args.Result.OverallResult == BuildResultCode.Success));
 		}
 		
-		TargetResult BuildTarget (string targetName, InternalBuildArguments args)
+		TargetResult BuildTargetByName (string targetName, InternalBuildArguments args)
 		{
 			var targetResult = new TargetResult ();
 
@@ -129,33 +136,67 @@ namespace Microsoft.Build.Internal
 			else if (!request.ProjectInstance.Targets.TryGetValue (targetName, out target))
 				targetResult.Failure (new InvalidOperationException (string.Format ("target '{0}' was not found in project '{1}'", targetName, project.FullPath)));
 			else {
-				// process DependsOnTargets first.
-				foreach (var dep in project.ExpandString (target.DependsOnTargets).Split (';').Where (s => !string.IsNullOrEmpty (s))) {
-					var result = BuildTarget (dep, args);
-					args.Result.AddResultsForTarget (dep, result);
-					if (result.ResultCode == TargetResultCode.Failure) {
-						targetResult.Failure (null);
+				current_target = target;
+				try {
+					if (!DoBuildTarget (targetResult, args))
 						return targetResult;
-					}
+				} finally {
+					current_target = null;
 				}
-				
-				event_source.FireTargetStarted (this, new TargetStartedEventArgs ("Target Started", null, targetName, project.FullPath, target.FullPath));
-				
-				// Here we check cancellation (only after TargetStarted event).
-				if (args.CheckCancel ()) {
-					targetResult.Failure (new OperationCanceledException ("Build has canceled"));
-					return targetResult;
+				Func<string,ITaskItem> creator = s => new TargetOutputTaskItem () { ItemSpec = s };
+				var items = args.Project.GetAllItems (target.Outputs, string.Empty, creator, creator, s => true, (t, s) => {
+				});
+				targetResult.Success (items);
+				event_source.FireTargetFinished (this, new TargetFinishedEventArgs ("Target Finished", null, targetName, project.FullPath, target.FullPath, true));
+			}
+			return targetResult;
+		}
+		
+		bool DoBuildTarget (TargetResult targetResult, InternalBuildArguments args)
+		{
+			var request = submission.BuildRequest;
+			var target = current_target;
+	
+			// process DependsOnTargets first.
+			foreach (var dep in project.ExpandString (target.DependsOnTargets).Split (';').Where (s => !string.IsNullOrEmpty (s))) {
+				var result = BuildTargetByName (dep, args);
+				args.AddTargetResult (dep, result);
+				if (result.ResultCode == TargetResultCode.Failure) {
+					targetResult.Failure (null);
+					return false;
 				}
-				
+			}
+			
+			event_source.FireTargetStarted (this, new TargetStartedEventArgs ("Target Started", null, target.Name, project.FullPath, target.FullPath));
+			
+			// Here we check cancellation (only after TargetStarted event).
+			if (args.CheckCancel ()) {
+				targetResult.Failure (new OperationCanceledException ("Build has canceled"));
+				return false;
+			}
+			
+			var propsToRestore = new Dictionary<string,string> ();
+			var itemsToRemove = new List<ProjectItemInstance> ();
+			try {
 				foreach (var c in target.Children.OfType<ProjectPropertyGroupTaskInstance> ()) {
 					if (!args.Project.EvaluateCondition (c.Condition))
 						continue;
-					throw new NotImplementedException ();
+					foreach (var p in c.Properties) {
+						if (!args.Project.EvaluateCondition (p.Condition))
+							continue;
+						var value = args.Project.ExpandString (p.Value);
+						propsToRestore.Add (p.Name, project.GetPropertyValue (value));
+						project.SetProperty (p.Name, value);
+					}
 				}
 				foreach (var c in target.Children.OfType<ProjectItemGroupTaskInstance> ()) {
 					if (!args.Project.EvaluateCondition (c.Condition))
 						continue;
-					throw new NotImplementedException ();
+					foreach (var item in c.Items) {
+						Func<string,ProjectItemInstance> creator = i => new ProjectItemInstance (project, item.ItemType, item.Metadata.Select (m => new KeyValuePair<string,string> (m.Name, m.Value)), i);
+						foreach (var ti in project.GetAllItems (item.Include, item.Exclude, creator, creator, s => s == item.ItemType, (ti, s) => ti.SetMetadata ("RecurseDir", s)))
+							itemsToRemove.Add (ti);
+					}
 				}
 				foreach (var c in target.Children.OfType<ProjectOnErrorInstance> ()) {
 					if (!args.Project.EvaluateCondition (c.Condition))
@@ -163,7 +204,7 @@ namespace Microsoft.Build.Internal
 					throw new NotImplementedException ();
 				}
 				foreach (var ti in target.Children.OfType<ProjectTaskInstance> ()) {
-					var host = request.HostServices == null ? null : request.HostServices.GetHostObject (request.ProjectFullPath, targetName, ti.Name);
+					var host = request.HostServices == null ? null : request.HostServices.GetHostObject (request.ProjectFullPath, target.Name, ti.Name);
 					if (!args.Project.EvaluateCondition (ti.Condition))
 						continue;
 					current_task = ti;
@@ -196,8 +237,8 @@ namespace Microsoft.Build.Internal
 						event_source.FireTaskFinished (this, new TaskFinishedEventArgs ("Task Finished", null, project.FullPath, ti.FullPath, ti.Name, false));
 						targetResult.Failure (null);
 						if (!ContinueOnError) {
-							event_source.FireTargetFinished (this, new TargetFinishedEventArgs ("Target Failed", null, targetName, project.FullPath, target.FullPath, false));
-							return targetResult;
+							event_source.FireTargetFinished (this, new TargetFinishedEventArgs ("Target Failed", null, target.Name, project.FullPath, target.FullPath, false));
+							return false;
 						}
 					} else {
 						event_source.FireTaskFinished (this, new TaskFinishedEventArgs ("Task Finished", null, project.FullPath, ti.FullPath, ti.Name, true));
@@ -217,13 +258,18 @@ namespace Microsoft.Build.Internal
 						}
 					}
 				}
-				Func<string,ITaskItem> creator = s => new TargetOutputTaskItem () { ItemSpec = s };
-				var items = args.Project.GetAllItems (target.Outputs, string.Empty, creator, creator, s => true, (t, s) => {
-				});
-				targetResult.Success (items);
-				event_source.FireTargetFinished (this, new TargetFinishedEventArgs ("Target Finished", null, targetName, project.FullPath, target.FullPath, true));
+			} finally {
+				// restore temporary property state to the original state.
+				foreach (var p in propsToRestore) {
+					if (p.Value == string.Empty)
+						project.RemoveProperty (p.Key);
+					else
+						project.SetProperty (p.Key, p.Value);
+				}
+				foreach (var item in itemsToRemove)
+					project.RemoveItem (item);
 			}
-			return targetResult;
+			return true;
 		}
 		
 		object ConvertTo (string source, Type targetType)
@@ -437,16 +483,20 @@ namespace Microsoft.Build.Internal
 		}
 
 		public bool ContinueOnError {
-			get {
-				switch (current_task.ContinueOnError) {
-				case "WarnAndContinue":
-				case "ErrorAndContinue":
-					return true;
-				case "ErrorAndStop":
-					return false;
-				}
-				return !string.IsNullOrEmpty (current_task.ContinueOnError) && project.EvaluateCondition (current_task.ContinueOnError);
+			get { return current_task != null && project.EvaluateCondition (current_task.Condition) && EvaluateContinueOnError (current_task.ContinueOnError); }
+		}
+		
+		bool EvaluateContinueOnError (string value)
+		{
+			switch (value) {
+			case "WarnAndContinue":
+			case "ErrorAndContinue":
+				return true;
+			case "ErrorAndStop":
+				return false;
 			}
+			// empty means "stop on error", so don't pass empty string to EvaluateCondition().
+			return !string.IsNullOrEmpty (value) && project.EvaluateCondition (value);
 		}
 
 		public int LineNumberOfTaskNode {

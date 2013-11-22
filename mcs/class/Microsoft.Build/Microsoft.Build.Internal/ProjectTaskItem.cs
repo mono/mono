@@ -35,12 +35,12 @@ namespace Microsoft.Build.Internal
 	class ProjectTaskItem : ITaskItem
 	{
 		ProjectItemElement item;
-		string evaluated_include_element;
+		string evaluated_include_part;
 		
-		public ProjectTaskItem (ProjectItemElement item, string evaluatedIncludeElement)
+		public ProjectTaskItem (ProjectItemElement item, string evaluatedIncludePart)
 		{
 			this.item = item;
-			this.evaluated_include_element = evaluatedIncludeElement;
+			this.evaluated_include_part = evaluatedIncludePart;
 		}
 		#region ITaskItem implementation
 		System.Collections.IDictionary ITaskItem.CloneCustomMetadata ()
@@ -68,7 +68,7 @@ namespace Microsoft.Build.Internal
 			throw new NotImplementedException ();
 		}
 		string ITaskItem.ItemSpec {
-			get { return evaluated_include_element; }
+			get { return evaluated_include_part; }
 			set { throw new NotImplementedException (); }
 		}
 		int ITaskItem.MetadataCount {
