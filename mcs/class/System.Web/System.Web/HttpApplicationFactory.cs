@@ -727,8 +727,6 @@ namespace System.Web
 			} else if (StrUtils.EndsWith (name, "lobal.asax", true) && String.Compare (name, "global.asax", true, Helpers.InvariantCulture) != 0)
 				return;
 
-			Console.WriteLine ("Change: " + name);
-
 			// {Inotify,FAM}Watcher will notify about events for a directory regardless
 			// of the filter pattern. This might be a bug in the watchers code, but
 			// since I couldn't find any rationale for the code in there I'd opted for
