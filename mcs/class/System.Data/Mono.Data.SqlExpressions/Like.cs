@@ -62,12 +62,13 @@ namespace Mono.Data.SqlExpressions {
 
 		override public object Eval (DataRow row)
 		{
-			object o = expr.Eval (row);
-			if (o == null || o == DBNull.Value)
+			string str = expr.Eval (row) as string;
+			string pattern = _pattern.Eval (row) as string;
+
+			if (str == null || pattern == null)
 				return false;
-			string str = (string)o;
+
 			bool openStart, openEnd;
-			string pattern = (string) _pattern.Eval (row);
 			string original = pattern;
 			int len = pattern.Length;
 			openStart = (pattern [0] == '*' || pattern [0] == '%');

@@ -325,11 +325,11 @@ IsPredicate
 	;
 
 LikePredicate
-	: StringExpr LIKE StringExpr
+	: ArithExpr LIKE ArithExpr
 	{
 		$$ = new Like ((IExpression)$1, (IExpression)$3);
 	}
-	| StringExpr NOT_LIKE StringExpr
+	| ArithExpr NOT_LIKE ArithExpr
 	{
 		$$ = new Negation (new Like ((IExpression)$1, (IExpression)$3));
 	}
