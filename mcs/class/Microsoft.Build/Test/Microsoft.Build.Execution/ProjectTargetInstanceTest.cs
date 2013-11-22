@@ -133,15 +133,16 @@ namespace MonoTests.Microsoft.Build.Execution
 		public void DependsOnTargets ()
 		{
             string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+	<Target Name='Bar' DependsOnTargets='Foo' />
 	<Target Name='Foo'>
 	    <Error Text='expected error' />
 	</Target>
-	<Target Name='Bar' DependsOnTargets='Foo' />
 </Project>";
             var xml = XmlReader.Create (new StringReader (project_xml));
             var root = ProjectRootElement.Create (xml);
             var proj = new ProjectInstance (root);
-			Assert.IsFalse (proj.Build ("Bar", new ILogger [] {new ConsoleLogger (LoggerVerbosity.Diagnostic, Console.Error.WriteLine, null, null)}), "#1");
+			Assert.AreEqual (2, proj.Targets.Count, "#1");
+			Assert.IsFalse (proj.Build ("Bar", new ILogger [0]), "#2");
 		}
 	}
 }
