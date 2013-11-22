@@ -460,7 +460,9 @@ namespace Microsoft.Build.Execution
 		
 		public bool RemoveItem (ProjectItemInstance item)
 		{
-			throw new NotImplementedException ();
+			// yeah, this raw_items should vanish...
+			raw_items.Remove (item);
+			return all_evaluated_items.Remove (item);
 		}
 
 		public bool RemoveProperty (string name)
