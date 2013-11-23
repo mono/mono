@@ -2201,6 +2201,8 @@ namespace MonoTests.Microsoft.Win32
 		}
 
 		[Test]
+		// This hangs on windows
+		[Category ("NotWorking")]
 		public void OpenRemoteBaseKey_MachineName_DoesNotExist ()
 		{
 			// access to registry of remote machines is not implemented on unix
