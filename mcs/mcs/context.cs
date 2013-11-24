@@ -440,12 +440,12 @@ namespace Mono.CSharp
 	{
 		readonly CompilerContext ctx;
 
-		public FlowAnalysisContext (CompilerContext ctx, ParametersBlock parametersBlock)
+		public FlowAnalysisContext (CompilerContext ctx, ParametersBlock parametersBlock, int definiteAssignmentLength)
 		{
 			this.ctx = ctx;
 			this.ParametersBlock = parametersBlock;
 
-			DefiniteAssignment = new DefiniteAssignmentBitSet ();
+			DefiniteAssignment = new DefiniteAssignmentBitSet (definiteAssignmentLength);
 		}
 
 		public DefiniteAssignmentBitSet DefiniteAssignment { get; set; }

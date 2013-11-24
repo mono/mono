@@ -1537,6 +1537,9 @@ namespace Mono.CSharp {
 				if (!CheckReachableExit (ec.Report)) {
 					return null;
 				}
+
+				if (bc != null)
+					bc.AssignmentInfoOffset = aec.AssignmentInfoOffset;
 			}
 
 			if (am != null && am.ReturnTypeInference != null) {

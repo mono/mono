@@ -512,9 +512,9 @@ namespace Mono.CSharp
 		System.Collections.BitArray bits;
 		bool copy_on_write;
 
-		public DefiniteAssignmentBitSet ()
+		public DefiniteAssignmentBitSet (int length)
 		{
-			bits = new System.Collections.BitArray (4096); // TODO:
+			bits = new System.Collections.BitArray (length);
 		}
 
 		public DefiniteAssignmentBitSet (DefiniteAssignmentBitSet source)
@@ -548,7 +548,7 @@ namespace Mono.CSharp
 		public static DefiniteAssignmentBitSet And (List<DefiniteAssignmentBitSet> das)
 		{
 			if (das.Count == 0)
-				return new DefiniteAssignmentBitSet ();
+				throw new ArgumentException ("Empty das");
 
 			DefiniteAssignmentBitSet res = das [0];
 			for (int i = 1; i < das.Count; ++i) {
@@ -586,6 +586,17 @@ namespace Mono.CSharp
 		{
 			bits = new System.Collections.BitArray (bits);
 			copy_on_write = false;
+		}
+
+		public override string ToString ()
+		{
+			var length = bits.Length;
+			StringBuilder sb = new StringBuilder (length);
+			for (int i = 0; i < length; ++i) {
+				sb.Append (bits[i] ? '1' : '0');
+			}
+
+			return sb.ToString ();
 		}
 	}
 }

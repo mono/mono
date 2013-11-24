@@ -4197,7 +4197,7 @@ namespace Mono.CSharp {
 			if ((flags & Flags.NoFlowAnalysis) != 0)
 				return true;
 
-			var fc = new FlowAnalysisContext (bc.Module.Compiler, this);
+			var fc = new FlowAnalysisContext (bc.Module.Compiler, this, bc.AssignmentInfoOffset);
 			try {
 				FlowAnalysis (fc);
 			} catch (Exception e) {
