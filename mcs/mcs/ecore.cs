@@ -3550,6 +3550,8 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class MethodGroupExpr : MemberExpr, OverloadResolver.IBaseMembersProvider
 	{
+		static readonly MemberSpec[] Excluded = new MemberSpec[0];
+
 		protected IList<MemberSpec> Methods;
 		MethodSpec best_candidate;
 		TypeSpec best_candidate_return;
@@ -3596,6 +3598,12 @@ namespace Mono.CSharp {
 		protected override TypeSpec DeclaringType {
 			get {
 				return queried_type;
+			}
+		}
+
+		public bool IsConditionallyExcluded {
+			get {
+				return Methods == Excluded;
 			}
 		}
 
@@ -3668,7 +3676,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (best_candidate.IsConditionallyExcluded (ec))
+			if (IsConditionallyExcluded)
 				ec.Report.Error (765, loc,
 					"Partial methods with only a defining declaration or removed conditional methods cannot be used in an expression tree");
 			
@@ -3792,6 +3800,10 @@ namespace Mono.CSharp {
 				ec.Report.SymbolRelatedToPreviousError (best_candidate);
 				ErrorIsInaccesible (ec, best_candidate.GetSignatureForError (), loc);
 			}
+
+			// Speed up the check by not doing it on disallowed targets
+			if (best_candidate_return.Kind == MemberKind.Void && best_candidate.IsConditionallyExcluded (ec))
+				Methods = Excluded;
 
 			return this;
 		}

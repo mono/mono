@@ -205,6 +205,8 @@ namespace Mono.CSharp {
 		TypeSpec[] targs;
 		TypeParameterSpec[] constraints;
 
+		public static readonly MethodSpec Excluded = new MethodSpec (MemberKind.Method, InternalType.FakeInternalType, null, null, ParametersCompiled.EmptyReadOnlyParameters, 0);
+
 		public MethodSpec (MemberKind kind, TypeSpec declaringType, IMethodDefinition details, TypeSpec returnType,
 			AParametersCollection parameters, Modifiers modifiers)
 			: base (kind, declaringType, details, modifiers)

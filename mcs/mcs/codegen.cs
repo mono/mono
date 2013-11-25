@@ -968,10 +968,6 @@ namespace Mono.CSharp
 
 		public void Emit (EmitContext ec, MethodSpec method, Arguments Arguments, Location loc)
 		{
-			// Speed up the check by not doing it on not allowed targets
-			if (method.ReturnType.Kind == MemberKind.Void && method.IsConditionallyExcluded (ec.MemberContext))
-				return;
-
 			EmitPredefined (ec, method, Arguments, loc);
 		}
 

@@ -532,7 +532,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			TypeSpec rt = delegate_method.ReturnType;
+			TypeSpec rt = method_group.BestCandidateReturnType;
 			if (rt.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
 				rt = ec.BuiltinTypes.Object;
 
@@ -541,7 +541,7 @@ namespace Mono.CSharp {
 				Error_ConversionFailed (ec, delegate_method, ret_expr);
 			}
 
-			if (delegate_method.IsConditionallyExcluded (ec)) {
+			if (method_group.IsConditionallyExcluded) {
 				ec.Report.SymbolRelatedToPreviousError (delegate_method);
 				MethodOrOperator m = delegate_method.MemberDefinition as MethodOrOperator;
 				if (m != null && m.IsPartialDefinition) {
