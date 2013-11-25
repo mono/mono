@@ -445,7 +445,9 @@ namespace Mono.CSharp
 			this.ctx = ctx;
 			this.ParametersBlock = parametersBlock;
 
-			DefiniteAssignment = new DefiniteAssignmentBitSet (definiteAssignmentLength);
+			DefiniteAssignment = definiteAssignmentLength == 0 ?
+				DefiniteAssignmentBitSet.Empty :
+				new DefiniteAssignmentBitSet (definiteAssignmentLength);
 		}
 
 		public DefiniteAssignmentBitSet DefiniteAssignment { get; set; }
@@ -469,7 +471,8 @@ namespace Mono.CSharp
 		public DefiniteAssignmentBitSet BranchDefiniteAssignment ()
 		{
 			var dat = DefiniteAssignment;
-			DefiniteAssignment = new DefiniteAssignmentBitSet (dat);
+			if (dat != DefiniteAssignmentBitSet.Empty)
+				DefiniteAssignment = new DefiniteAssignmentBitSet (dat);
 			return dat;
 		}
 
