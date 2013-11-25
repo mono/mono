@@ -32,6 +32,7 @@ using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Collections.Concurrent;
 
 namespace Microsoft.Build.Internal
 {
@@ -48,7 +49,7 @@ namespace Microsoft.Build.Internal
 		List<BuildNode> in_proc_nodes = new List<BuildNode> ();
 		List<BuildNode> out_proc_nodes = new List<BuildNode> ();
 		AutoResetEvent queue_wait_handle = new AutoResetEvent (false);
-		Queue<BuildSubmission> queued_builds = new Queue<BuildSubmission> ();
+		ConcurrentQueue<BuildSubmission> queued_builds = new ConcurrentQueue<BuildSubmission> ();
 		// FIXME: currently it is not in use but it should be stored somewhere for cancellation.
 		Dictionary<BuildSubmission,Task> ongoing_builds = new Dictionary<BuildSubmission, Task> ();
 		bool run_loop = true;
@@ -67,9 +68,9 @@ namespace Microsoft.Build.Internal
 					}
 					if (!run_loop)
 						break;
-					if (!queued_builds.Any ())
+					BuildSubmission build;
+					if (!queued_builds.TryDequeue (out build))
 						continue;
-					var build = queued_builds.Dequeue ();
 					StartOneBuild (build);
 				} catch (Exception ex) {
 					Console.Error.WriteLine ("Uncaught build node exception occured");
