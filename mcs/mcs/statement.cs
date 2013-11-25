@@ -895,6 +895,19 @@ namespace Mono.CSharp {
 			return rc;
 		}
 
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			expr.FlowAnalysis (fc);
+			return false;
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			base.MarkReachable (rc);
+			expr.MarkReachable (rc);
+			return rc;
+		}
+
 		public override bool Resolve (BlockContext ec)
 		{
 			expr = expr.ResolveStatement (ec);
