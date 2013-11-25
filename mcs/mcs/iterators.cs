@@ -791,7 +791,8 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext rc)
 		{
-			var ctx = CreateBlockContext ((BlockContext) rc);
+			var bc = (BlockContext) rc;
+			var ctx = CreateBlockContext (bc);
 
 			Block.Resolve (ctx);
 
@@ -801,6 +802,7 @@ namespace Mono.CSharp
 				storey.AddEntryMethod (move_next);
 			}
 
+			bc.AssignmentInfoOffset = ctx.AssignmentInfoOffset;
 			eclass = ExprClass.Value;
 			return this;
 		}

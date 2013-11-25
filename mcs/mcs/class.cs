@@ -991,6 +991,7 @@ namespace Mono.CSharp
 					if (!has_complex_initializer && fi.IsDefaultInitializer)
 						continue;
 
+					ec.AssignmentInfoOffset += fi.AssignmentOffset;
 					ec.CurrentBlock.AddScopeStatement (new StatementExpression (init [i]));
 				}
 
@@ -1012,6 +1013,7 @@ namespace Mono.CSharp
 				if (fi.IsDefaultInitializer && ec.Module.Compiler.Settings.Optimize)
 					continue;
 
+				ec.AssignmentInfoOffset += fi.AssignmentOffset;
 				ec.CurrentBlock.AddScopeStatement (new StatementExpression (s));
 			}
 		}

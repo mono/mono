@@ -39,8 +39,9 @@
 #include "debugger-agent.h"
 #include "mini-gc.h"
 
-static gint lmf_tls_offset = -1;
-static gint lmf_addr_tls_offset = -1;
+#ifdef HOST_WIN32
+static gint jit_tls_offset = -1;
+#endif
 static gint appdomain_tls_offset = -1;
 
 #ifdef MONO_XEN_OPT
@@ -1743,6 +1744,8 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 			if (AMD64_IS_CALLEE_SAVED_REG (i) && (cfg->used_int_regs & (1 << i))) {
 				offset += sizeof(mgreg_t);
 			}
+		if (!cfg->arch.omit_fp)
+			cfg->arch.reg_save_area_offset = -offset;
 	}
 
 	if (sig_ret->type != MONO_TYPE_VOID) {
@@ -2018,9 +2021,12 @@ mono_arch_create_vars (MonoCompile *cfg)
 	if (cfg->method->save_lmf)
 		cfg->create_lmf_var = TRUE;
 
-#if !defined(HOST_WIN32) && !defined(MONO_ARCH_ENABLE_MONO_LMF_VAR)
-	if (cfg->method->save_lmf)
+#if !defined(HOST_WIN32)
+	if (cfg->method->save_lmf) {
 		cfg->lmf_ir = TRUE;
+		if (mono_get_lmf_tls_offset () != -1 && !optimize_for_xen)
+			cfg->lmf_ir_mono_lmf = TRUE;
+	}
 #endif
 
 #ifndef MONO_AMD64_NO_PUSHES
@@ -3692,6 +3698,43 @@ emit_tls_get_reg (guint8* code, int dreg, int offset_reg)
 	return code;
 }
 
+static guint8*
+amd64_emit_tls_set (guint8 *code, int sreg, int tls_offset)
+{
+#ifdef HOST_WIN32
+	g_assert_not_reached ();
+#elif defined(__APPLE__)
+	x86_prefix (code, X86_GS_PREFIX);
+	amd64_mov_mem_reg (code, tls_gs_offset + (tls_offset * 8), sreg, 8);
+#else
+	g_assert (!optimize_for_xen);
+	x86_prefix (code, X86_FS_PREFIX);
+	amd64_mov_mem_reg (code, tls_offset, sreg, 8);
+#endif
+	return code;
+}
+
+static guint8*
+amd64_emit_tls_set_reg (guint8 *code, int sreg, int offset_reg)
+{
+#ifdef HOST_WIN32
+	g_assert_not_reached ();
+#elif defined(__APPLE__)
+	// FIXME: tls_gs_offset can change too, do these when calculating the tls offset
+	g_assert (sreg != AMD64_R11);
+	amd64_mov_reg_reg (code, AMD64_R11, offset_reg, sizeof (gpointer));
+	amd64_shift_reg_imm (code, X86_SHL, AMD64_R11, 3);
+	if (tls_gs_offset)
+		amd64_alu_reg_imm (code, X86_ADD, AMD64_R11, tls_gs_offset);
+	x86_prefix (code, X86_GS_PREFIX);
+	amd64_mov_membase_reg (code, AMD64_R11, 0, sreg, sizeof (gpointer));
+#else
+	x86_prefix (code, X86_FS_PREFIX);
+	amd64_mov_membase_reg (code, offset_reg, 0, sreg, 8);
+#endif
+	return code;
+}
+
 /*
  * emit_setup_lmf:
  *
@@ -3742,7 +3785,9 @@ emit_setup_lmf (MonoCompile *cfg, guint8 *code, gint32 lmf_offset, int cfa_offse
 
 	/* These can't contain refs */
 	mini_gc_set_slot_type_from_fp (cfg, lmf_offset + G_STRUCT_OFFSET (MonoLMF, previous_lmf), SLOT_NOREF);
+#ifdef HOST_WIN32
 	mini_gc_set_slot_type_from_fp (cfg, lmf_offset + G_STRUCT_OFFSET (MonoLMF, lmf_addr), SLOT_NOREF);
+#endif
 	mini_gc_set_slot_type_from_fp (cfg, lmf_offset + G_STRUCT_OFFSET (MonoLMF, rip), SLOT_NOREF);
 	mini_gc_set_slot_type_from_fp (cfg, lmf_offset + G_STRUCT_OFFSET (MonoLMF, rsp), SLOT_NOREF);
 
@@ -3769,61 +3814,32 @@ emit_setup_lmf (MonoCompile *cfg, guint8 *code, gint32 lmf_offset, int cfa_offse
 static guint8*
 emit_push_lmf (MonoCompile *cfg, guint8 *code, gint32 lmf_offset, gboolean *args_clobbered)
 {
-	if (cfg->lmf_ir) {
-		*args_clobbered = TRUE;
-		return code;
-	}
-
-	if ((lmf_tls_offset != -1) && !optimize_for_xen) {
-		/*
-		 * Optimized version which uses the mono_lmf TLS variable instead of 
-		 * indirection through the mono_lmf_addr TLS variable.
-		 */
-		/* %rax = previous_lmf */
-		x86_prefix (code, X86_FS_PREFIX);
-		amd64_mov_reg_mem (code, AMD64_RAX, lmf_tls_offset, 8);
-
-		/* Save previous_lmf */
-		amd64_mov_membase_reg (code, cfg->frame_reg, lmf_offset + G_STRUCT_OFFSET (MonoLMF, previous_lmf), AMD64_RAX, 8);
-		/* Set new lmf */
-		if (lmf_offset == 0) {
-			x86_prefix (code, X86_FS_PREFIX);
-			amd64_mov_mem_reg (code, lmf_tls_offset, cfg->frame_reg, 8);
-		} else {
-			amd64_lea_membase (code, AMD64_R11, cfg->frame_reg, lmf_offset);
-			x86_prefix (code, X86_FS_PREFIX);
-			amd64_mov_mem_reg (code, lmf_tls_offset, AMD64_R11, 8);
-		}
-	} else {
-		if (lmf_addr_tls_offset != -1) {
-			/* Load lmf quicky using the FS register */
-			code = mono_amd64_emit_tls_get (code, AMD64_RAX, lmf_addr_tls_offset);
 #ifdef HOST_WIN32
-			/* The TLS key actually contains a pointer to the MonoJitTlsData structure */
-			/* FIXME: Add a separate key for LMF to avoid this */
-			amd64_alu_reg_imm (code, X86_ADD, AMD64_RAX, G_STRUCT_OFFSET (MonoJitTlsData, lmf));
-#endif
-		}
-		else {
-			/* 
-			 * The call might clobber argument registers, but they are already
-			 * saved to the stack/global regs.
-			 */
-			if (args_clobbered)
-				*args_clobbered = TRUE;
-			code = emit_call (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD, 
-							  (gpointer)"mono_get_lmf_addr", TRUE);		
-		}
-
-		/* Save lmf_addr */
-		amd64_mov_membase_reg (code, cfg->frame_reg, lmf_offset + G_STRUCT_OFFSET (MonoLMF, lmf_addr), AMD64_RAX, sizeof(gpointer));
-		/* Save previous_lmf */
-		amd64_mov_reg_membase (code, AMD64_R11, AMD64_RAX, 0, sizeof(gpointer));
-		amd64_mov_membase_reg (code, cfg->frame_reg, lmf_offset + G_STRUCT_OFFSET (MonoLMF, previous_lmf), AMD64_R11, sizeof(gpointer));
-		/* Set new lmf */
-		amd64_lea_membase (code, AMD64_R11, cfg->frame_reg, lmf_offset);
-		amd64_mov_membase_reg (code, AMD64_RAX, 0, AMD64_R11, sizeof(gpointer));
+	if (jit_tls_offset != -1) {
+		code = mono_amd64_emit_tls_get (code, AMD64_RAX, jit_tls_offset);
+		amd64_alu_reg_imm (code, X86_ADD, AMD64_RAX, G_STRUCT_OFFSET (MonoJitTlsData, lmf));
+	} else {
+		/* 
+		 * The call might clobber argument registers, but they are already
+		 * saved to the stack/global regs.
+		 */
+		if (args_clobbered)
+			*args_clobbered = TRUE;
+		code = emit_call (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD, 
+						  (gpointer)"mono_get_lmf_addr", TRUE);		
 	}
+
+	/* Save lmf_addr */
+	amd64_mov_membase_reg (code, cfg->frame_reg, lmf_offset + G_STRUCT_OFFSET (MonoLMF, lmf_addr), AMD64_RAX, sizeof(gpointer));
+	/* Save previous_lmf */
+	amd64_mov_reg_membase (code, AMD64_R11, AMD64_RAX, 0, sizeof(gpointer));
+	amd64_mov_membase_reg (code, cfg->frame_reg, lmf_offset + G_STRUCT_OFFSET (MonoLMF, previous_lmf), AMD64_R11, sizeof(gpointer));
+	/* Set new lmf */
+	amd64_lea_membase (code, AMD64_R11, cfg->frame_reg, lmf_offset);
+	amd64_mov_membase_reg (code, AMD64_RAX, 0, AMD64_R11, sizeof(gpointer));
+#else
+	g_assert_not_reached ();
+#endif
 
 	return code;
 }
@@ -3836,24 +3852,14 @@ emit_push_lmf (MonoCompile *cfg, guint8 *code, gint32 lmf_offset, gboolean *args
 static guint8*
 emit_pop_lmf (MonoCompile *cfg, guint8 *code, gint32 lmf_offset)
 {
-	if (cfg->lmf_ir)
-		return code;
-
-	if ((lmf_tls_offset != -1) && !optimize_for_xen) {
-		/*
-		 * Optimized version which uses the mono_lmf TLS variable instead of indirection
-		 * through the mono_lmf_addr TLS variable.
-		 */
-		/* reg = previous_lmf */
-		amd64_mov_reg_membase (code, AMD64_R11, cfg->frame_reg, lmf_offset + G_STRUCT_OFFSET (MonoLMF, previous_lmf), sizeof(gpointer));
-		x86_prefix (code, X86_FS_PREFIX);
-		amd64_mov_mem_reg (code, lmf_tls_offset, AMD64_R11, 8);
-	} else {
-		/* Restore previous lmf */
-		amd64_mov_reg_membase (code, AMD64_RCX, cfg->frame_reg, lmf_offset + G_STRUCT_OFFSET (MonoLMF, previous_lmf), sizeof(gpointer));
-		amd64_mov_reg_membase (code, AMD64_R11, cfg->frame_reg, lmf_offset + G_STRUCT_OFFSET (MonoLMF, lmf_addr), sizeof(gpointer));
-		amd64_mov_membase_reg (code, AMD64_R11, 0, AMD64_RCX, sizeof(gpointer));
-	}
+#ifdef HOST_WIN32
+	/* Restore previous lmf */
+	amd64_mov_reg_membase (code, AMD64_RCX, cfg->frame_reg, lmf_offset + G_STRUCT_OFFSET (MonoLMF, previous_lmf), sizeof(gpointer));
+	amd64_mov_reg_membase (code, AMD64_R11, cfg->frame_reg, lmf_offset + G_STRUCT_OFFSET (MonoLMF, lmf_addr), sizeof(gpointer));
+	amd64_mov_membase_reg (code, AMD64_R11, 0, AMD64_RCX, sizeof(gpointer));
+#else
+	g_assert_not_reached ();
+#endif
 
 	return code;
 }
@@ -5667,7 +5673,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_TLS_GET_REG:
 			code = emit_tls_get_reg (code, ins->dreg, ins->sreg1);
 			break;
+		case OP_TLS_SET: {
+			code = amd64_emit_tls_set (code, ins->sreg1, ins->inst_offset);
 			break;
+		}
+		case OP_TLS_SET_REG: {
+			code = amd64_emit_tls_set_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		}
 		case OP_MEMORY_BARRIER: {
 			switch (ins->backend.memory_barrier_kind) {
 			case StoreLoadBarrier:
@@ -6730,23 +6743,6 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 #endif
 	}
 
-	/* Save callee saved registers */
-	if (!cfg->arch.omit_fp && !method->save_lmf) {
-		int offset = cfa_offset;
-
-		for (i = 0; i < AMD64_NREG; ++i)
-			if (AMD64_IS_CALLEE_SAVED_REG (i) && (cfg->used_int_regs & (1 << i))) {
-				amd64_push_reg (code, i);
-				pos += 8; /* AMD64 push inst is always 8 bytes, no way to change it */
-				offset += 8;
-				mono_emit_unwind_op_offset (cfg, code, i, - offset);
-				async_exc_point (code);
-
-				/* These are handled automatically by the stack marking code */
-				mini_gc_set_slot_type_from_cfa (cfg, - offset, SLOT_NOREF);
-			}
-	}
-
 	/* The param area is always at offset 0 from sp */
 	/* This needs to be allocated here, since it has to come after the spill area */
 	if (cfg->arch.no_pushes && cfg->param_area) {
@@ -6883,19 +6879,31 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	}
 
 	/* Save callee saved registers */
-	if (cfg->arch.omit_fp && !method->save_lmf) {
-		gint32 save_area_offset = cfg->arch.reg_save_area_offset;
+	if (!method->save_lmf) {
+		gint32 save_area_offset;
 
-		/* Save caller saved registers after sp is adjusted */
-		/* The registers are saved at the bottom of the frame */
-		/* FIXME: Optimize this so the regs are saved at the end of the frame in increasing order */
+		if (cfg->arch.omit_fp) {
+			save_area_offset = cfg->arch.reg_save_area_offset;
+			/* Save caller saved registers after sp is adjusted */
+			/* The registers are saved at the bottom of the frame */
+			/* FIXME: Optimize this so the regs are saved at the end of the frame in increasing order */
+		} else {
+			/* The registers are saved just below the saved rbp */
+			save_area_offset = cfg->arch.reg_save_area_offset;
+		}
+
 		for (i = 0; i < AMD64_NREG; ++i)
 			if (AMD64_IS_CALLEE_SAVED_REG (i) && (cfg->used_int_regs & (1 << i))) {
-				amd64_mov_membase_reg (code, AMD64_RSP, save_area_offset, i, 8);
-				mono_emit_unwind_op_offset (cfg, code, i, - (cfa_offset - save_area_offset));
+				amd64_mov_membase_reg (code, cfg->frame_reg, save_area_offset, i, 8);
 
-				/* These are handled automatically by the stack marking code */
-				mini_gc_set_slot_type_from_cfa (cfg, - (cfa_offset - save_area_offset), SLOT_NOREF);
+				if (cfg->arch.omit_fp) {
+					mono_emit_unwind_op_offset (cfg, code, i, - (cfa_offset - save_area_offset));
+					/* These are handled automatically by the stack marking code */
+					mini_gc_set_slot_type_from_cfa (cfg, - (cfa_offset - save_area_offset), SLOT_NOREF);
+				} else {
+					mono_emit_unwind_op_offset (cfg, code, i, - (-save_area_offset + (2 * 8)));
+					// FIXME: GC
+				}
 
 				save_area_offset += 8;
 				async_exc_point (code);
@@ -7096,9 +7104,13 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		}
 	}
 
+#ifdef HOST_WIN32
 	if (method->save_lmf) {
 		code = emit_push_lmf (cfg, code, lmf_var->inst_offset, &args_clobbered);
 	}
+#else
+	args_clobbered = TRUE;
+#endif
 
 	if (trace) {
 		args_clobbered = TRUE;
@@ -7236,7 +7248,9 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	pos = 0;
 	
 	if (method->save_lmf) {
+#ifdef HOST_WIN32
 		code = emit_pop_lmf (cfg, code, lmf_offset);
+#endif
 
 		/* check if we need to restore protection of the stack after a stack overflow */
 		if (mono_get_jit_tls_offset () != -1) {
@@ -7288,40 +7302,13 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 		}
 #endif
 	} else {
+		gint32 save_area_offset = cfg->arch.reg_save_area_offset;
 
-		if (cfg->arch.omit_fp) {
-			gint32 save_area_offset = cfg->arch.reg_save_area_offset;
-
-			for (i = 0; i < AMD64_NREG; ++i)
-				if (AMD64_IS_CALLEE_SAVED_REG (i) && (cfg->used_int_regs & (1 << i))) {
-					amd64_mov_reg_membase (code, i, AMD64_RSP, save_area_offset, 8);
-					save_area_offset += 8;
-				}
-		}
-		else {
-			for (i = 0; i < AMD64_NREG; ++i)
-				if (AMD64_IS_CALLEE_SAVED_REG (i) && (cfg->used_int_regs & (1 << i)))
-					pos -= sizeof(mgreg_t);
-
-			if (pos) {
-				if (pos == - sizeof(mgreg_t)) {
-					/* Only one register, so avoid lea */
-					for (i = AMD64_NREG - 1; i > 0; --i)
-						if (AMD64_IS_CALLEE_SAVED_REG (i) && (cfg->used_int_regs & (1 << i))) {
-							amd64_mov_reg_membase (code, i, AMD64_RBP, pos, 8);
-						}
-				}
-				else {
-					amd64_lea_membase (code, AMD64_RSP, AMD64_RBP, pos);
-
-					/* Pop registers in reverse order */
-					for (i = AMD64_NREG - 1; i > 0; --i)
-						if (AMD64_IS_CALLEE_SAVED_REG (i) && (cfg->used_int_regs & (1 << i))) {
-							amd64_pop_reg (code, i);
-						}
-				}
+		for (i = 0; i < AMD64_NREG; ++i)
+			if (AMD64_IS_CALLEE_SAVED_REG (i) && (cfg->used_int_regs & (1 << i))) {
+				amd64_mov_reg_membase (code, i, cfg->frame_reg, save_area_offset, 8);
+				save_area_offset += 8;
 			}
-		}
 	}
 
 	/* Load returned vtypes into registers if needed */
@@ -8097,23 +8084,18 @@ mono_arch_finish_init (void)
 	 * be initialized yet.
 	 */
 	appdomain_tls_offset = mono_domain_get_tls_key ();
-	lmf_tls_offset = mono_get_jit_tls_key ();
-	lmf_addr_tls_offset = mono_get_jit_tls_key ();
+	jit_tls_offset = mono_get_jit_tls_key ();
 
 	/* Only 64 tls entries can be accessed using inline code */
 	if (appdomain_tls_offset >= 64)
 		appdomain_tls_offset = -1;
-	if (lmf_tls_offset >= 64)
-		lmf_tls_offset = -1;
-	if (lmf_addr_tls_offset >= 64)
-		lmf_addr_tls_offset = -1;
+	if (jit_tls_offset >= 64)
+		jit_tls_offset = -1;
 #else
 #ifdef MONO_XEN_OPT
 	optimize_for_xen = access ("/proc/xen", F_OK) == 0;
 #endif
 	appdomain_tls_offset = mono_domain_get_tls_offset ();
- 	lmf_tls_offset = mono_get_lmf_tls_offset ();
-	lmf_addr_tls_offset = mono_get_lmf_addr_tls_offset ();
 #endif
 }
 

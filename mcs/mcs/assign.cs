@@ -555,20 +555,21 @@ namespace Mono.CSharp {
 		// share same constructor (block) for expression trees resolve but
 		// they have they own resolve scope
 		//
-		sealed class FieldInitializerContext : ResolveContext
+		sealed class FieldInitializerContext : BlockContext
 		{
-			ExplicitBlock ctor_block;
+			readonly ExplicitBlock ctor_block;
 
-			public FieldInitializerContext (IMemberContext mc, ResolveContext constructorContext)
-				: base (mc, Options.FieldInitializerScope | Options.ConstructorScope)
+			public FieldInitializerContext (IMemberContext mc, BlockContext constructorContext)
+				: base (mc, null, constructorContext.ReturnType)
 			{
+				flags |= Options.FieldInitializerScope | Options.ConstructorScope;
 				this.ctor_block = constructorContext.CurrentBlock.Explicit;
 			}
 
 			public override ExplicitBlock ConstructorBlock {
-				get {
-					return ctor_block;
-				}
+			    get {
+			        return ctor_block;
+			    }
 			}
 		}
 
@@ -586,21 +587,25 @@ namespace Mono.CSharp {
 				((FieldExpr)target).InstanceExpression = new CompilerGeneratedThis (mc.CurrentType, expression.Location);
 		}
 
+		public int AssignmentOffset { get; private set; }
+
 		public override Location StartLocation {
 			get {
 				return loc;
 			}
 		}
 
-		protected override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext rc)
 		{
 			// Field initializer can be resolved (fail) many times
 			if (source == null)
 				return null;
 
+			var bc = (BlockContext) rc;
 			if (resolved == null) {
-				var ctx = new FieldInitializerContext (mc, ec);
+				var ctx = new FieldInitializerContext (mc, bc);
 				resolved = base.DoResolve (ctx) as ExpressionStatement;
+				AssignmentOffset = ctx.AssignmentInfoOffset - bc.AssignmentInfoOffset;
 			}
 
 			return resolved;
