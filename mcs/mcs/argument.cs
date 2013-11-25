@@ -499,8 +499,25 @@ namespace Mono.CSharp
 
 		public void FlowAnalysis (FlowAnalysisContext fc)
 		{
-			foreach (var arg in args)
+			bool has_out = false;
+			foreach (var arg in args) {
+				if (arg.ArgType == Argument.AType.Out) {
+					has_out = true;
+					continue;
+				}
+
 				arg.FlowAnalysis (fc);
+			}
+
+			if (!has_out)
+				return;
+
+			foreach (var arg in args) {
+				if (arg.ArgType != Argument.AType.Out)
+					continue;
+
+				arg.FlowAnalysis (fc);
+			}
 		}
 
 		public List<Argument>.Enumerator GetEnumerator ()
