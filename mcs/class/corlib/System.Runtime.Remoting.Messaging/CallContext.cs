@@ -127,14 +127,14 @@ namespace System.Runtime.Remoting.Messaging
 			object oldData = new object[] { datastore, logicalDatastore };
 
 			if (ctx != null && ctx.HasInfo)
-				datastore = (Hashtable) ctx.Datastore.Clone ();
+				logicalDatastore = (Hashtable) ctx.Datastore.Clone ();
 			else
-				datastore = null;
+				logicalDatastore = null;
 				
 			return oldData;
 		}
 		
-		internal static void UpdateCurrentCallContext (LogicalCallContext ctx)
+		internal static void UpdateCurrentLogicalCallContext (LogicalCallContext ctx)
 		{
 			Hashtable data = ctx.Datastore;
 			foreach (DictionaryEntry entry in data)
@@ -144,8 +144,8 @@ namespace System.Runtime.Remoting.Messaging
 		internal static void RestoreCallContext (object oldContext)
 		{
 			object[] contextArray = (object[])oldContext;
-			datastore = (Hashtable) contextArray[0];
-			logicalDatastore = (Hashtable) contextArray[1];
+			datastore = (Hashtable)contextArray [0];
+			logicalDatastore = (Hashtable)contextArray [1];
 		}
 
 		private static Hashtable Datastore
