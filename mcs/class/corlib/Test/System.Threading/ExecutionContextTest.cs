@@ -67,6 +67,8 @@ namespace MonoTests.System.Threading {
 		{
 			if (ExecutionContext.IsFlowSuppressed ())
 				ExecutionContext.RestoreFlow ();
+
+			CallContext.FreeNamedDataSlot ("testlc");
 		}
 
 		[Test]
