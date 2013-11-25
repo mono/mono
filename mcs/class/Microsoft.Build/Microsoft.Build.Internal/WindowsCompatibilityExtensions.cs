@@ -30,7 +30,7 @@ using System.IO;
 
 namespace Microsoft.Build.Internal
 {
-	public static class WindowsCompatibilityExtensions
+	static class WindowsCompatibilityExtensions
 	{
 		public static string NormalizeFilePath (string path)
 		{
