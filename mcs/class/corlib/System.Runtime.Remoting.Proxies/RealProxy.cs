@@ -218,7 +218,7 @@ namespace System.Runtime.Remoting.Proxies
 			}
 			
 			if (res_msg.LogicalCallContext != null && res_msg.LogicalCallContext.HasInfo)
-				CallContext.UpdateCurrentCallContext (res_msg.LogicalCallContext);
+				CallContext.UpdateCurrentLogicalCallContext (res_msg.LogicalCallContext);
 
 			exc = res_msg.Exception;
 
