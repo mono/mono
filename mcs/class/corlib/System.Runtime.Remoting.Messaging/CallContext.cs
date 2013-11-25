@@ -143,8 +143,9 @@ namespace System.Runtime.Remoting.Messaging
 		
 		internal static void RestoreCallContext (object oldContext)
 		{
-			datastore = (Hashtable) oldContext[0];
-			logicalDatastore = (Hashtable) oldContext[1];
+			object[] contextArray = (object[])oldContext;
+			datastore = (Hashtable) contextArray[0];
+			logicalDatastore = (Hashtable) contextArray[1];
 		}
 
 		private static Hashtable Datastore
