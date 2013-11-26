@@ -158,7 +158,7 @@ namespace Microsoft.Build.Internal
 			var target = current_target;
 	
 			// process DependsOnTargets first.
-			foreach (var dep in project.ExpandString (target.DependsOnTargets).Split (';').Where (s => !string.IsNullOrEmpty (s))) {
+			foreach (var dep in project.ExpandString (target.DependsOnTargets).Split (';').Where (s => !string.IsNullOrEmpty (s)).Select (s => s.Trim ())) {
 				var result = BuildTargetByName (dep, args);
 				args.AddTargetResult (dep, result);
 				if (result.ResultCode == TargetResultCode.Failure) {
@@ -274,7 +274,7 @@ namespace Microsoft.Build.Internal
 		
 		object ConvertTo (string source, Type targetType)
 		{
-			if (targetType.IsSubclassOf (typeof (ITaskItem)))
+			if (targetType == typeof (ITaskItem) || targetType.IsSubclassOf (typeof (ITaskItem)))
 				return new TargetOutputTaskItem () { ItemSpec = source };
 			if (targetType.IsArray)
 				return new ArrayList (source.Split (';').Select (s => ConvertTo (s, targetType.GetElementType ())).ToArray ())
@@ -287,10 +287,9 @@ namespace Microsoft.Build.Internal
 		{
 			if (source == null)
 				return string.Empty;
-			var type = source.GetType ();
-			if (type.IsSubclassOf (typeof (ITaskItem)))
+			if (source is ITaskItem)
 				return ((ITaskItem) source).ItemSpec;
-			if (type.IsArray)
+			if (source.GetType ().IsArray)
 				return string.Join (":", ((Array) source).Cast<object> ().Select (o => ConvertFrom (o)).ToArray ());
 			else
 				return (string) Convert.ChangeType (source, typeof (string));
@@ -298,18 +297,23 @@ namespace Microsoft.Build.Internal
 		
 		class TargetOutputTaskItem : ITaskItem2
 		{
+			Hashtable metadata = new Hashtable ();
+			
 			#region ITaskItem2 implementation
 			public string GetMetadataValueEscaped (string metadataName)
 			{
-				return null;
+				return ProjectCollection.Escape ((string) metadata [metadataName]);
 			}
 			public void SetMetadataValueLiteral (string metadataName, string metadataValue)
 			{
-				throw new NotSupportedException ();
+				metadata [metadataName] = ProjectCollection.Unescape (metadataValue);
 			}
 			public IDictionary CloneCustomMetadataEscaped ()
 			{
-				return new Hashtable ();
+				var ret = new Hashtable ();
+				foreach (DictionaryEntry e in metadata)
+					ret [e.Key] = ProjectCollection.Escape ((string) e.Value);
+				return ret;
 			}
 			public string EvaluatedIncludeEscaped {
 				get { return ProjectCollection.Escape (ItemSpec); }
@@ -319,30 +323,31 @@ namespace Microsoft.Build.Internal
 			#region ITaskItem implementation
 			public IDictionary CloneCustomMetadata ()
 			{
-				return new Hashtable ();
+				return new Hashtable (metadata);
 			}
 			public void CopyMetadataTo (ITaskItem destinationItem)
 			{
-				// do nothing
+				foreach (DictionaryEntry e in metadata)
+					destinationItem.SetMetadata ((string) e.Key, (string) e.Value);
 			}
 			public string GetMetadata (string metadataName)
 			{
-				return null;
+				return (string) metadata [metadataName];
 			}
 			public void RemoveMetadata (string metadataName)
 			{
-				// do nothing
+				metadata.Remove (metadataName);
 			}
 			public void SetMetadata (string metadataName, string metadataValue)
 			{
-				throw new NotSupportedException ();
+				metadata [metadataName] = metadataValue;
 			}
 			public string ItemSpec { get; set; }
 			public int MetadataCount {
-				get { return 0; }
+				get { return metadata.Count; }
 			}
 			public ICollection MetadataNames {
-				get { return new ArrayList (); }
+				get { return metadata.Keys; }
 			}
 			#endregion
 		}
