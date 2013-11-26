@@ -1,7 +1,7 @@
 using System;
 using Microsoft.Build.Framework;
 
-namespace Microsoft.Build
+namespace Microsoft.Build.Logging
 {
 	public class DistributedFileLogger : IForwardingLogger
 	{
