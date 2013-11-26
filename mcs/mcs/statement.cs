@@ -284,10 +284,12 @@ namespace Mono.CSharp {
 			fc.DefiniteAssignment = new DefiniteAssignmentBitSet (da);
 			res &= FalseStatement.FlowAnalysis (fc);
 
-			if (false_returns)
-				fc.DefiniteAssignment = da_true;
-			else
-				fc.DefiniteAssignment &= da_true;
+			if (!TrueStatement.IsUnreachable) {
+				if (false_returns || FalseStatement.IsUnreachable)
+					fc.DefiniteAssignment = da_true;
+				else
+					fc.DefiniteAssignment &= da_true;
+			}
 
 			return res;
 		}
