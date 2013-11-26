@@ -613,5 +613,29 @@ public class X
 		}
 
 		Console.WriteLine (z);
-	}	
+	}
+	
+	public void test42 (int arg)
+	{
+		bool x;
+		for (; ; ) {
+			x = false;
+			if (arg > 0) {
+				x = true;
+				switch (arg) {
+				case 1:
+				case 2:
+					continue;
+				default:
+					break;
+				}
+				break;
+			} else {
+				x = false;
+				break;
+			}
+		}
+
+		Console.WriteLine (x);
+	}
 }

@@ -31094,6 +31094,9 @@
       <method name="Void test41()" attrs="134">
         <size>44</size>
       </method>
+      <method name="Void test42(Int32)" attrs="134">
+        <size>73</size>
+      </method>
     </type>
   </test>
   <test name="test-155.cs">
