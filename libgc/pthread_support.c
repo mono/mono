@@ -1381,6 +1381,27 @@ int GC_thread_register_foreign (void *base_addr)
     return me != NULL;
 }
 
+int GC_thread_unregister_foreign ()
+{
+    GC_thread me;
+
+    LOCK();
+    me = GC_lookup_thread(pthread_self());
+
+    if (me && (me -> flags & FOREIGN_THREAD))
+    {
+#if defined(THREAD_LOCAL_ALLOC) && !defined(DBG_HDRS_ALL)
+        GC_destroy_thread_local (me);
+#endif
+        GC_delete_gc_thread(me->id, me);
+        UNLOCK();
+        return 1;
+    }
+
+    UNLOCK();
+    return 0;
+}
+
 void * GC_start_routine(void * arg)
 {
 #if defined(PLATFORM_ANDROID)
