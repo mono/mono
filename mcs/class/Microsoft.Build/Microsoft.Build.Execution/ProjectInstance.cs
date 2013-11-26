@@ -439,7 +439,7 @@ namespace Microsoft.Build.Execution
 
 		public ICollection<ProjectItemInstance> GetItems (string itemType)
 		{
-			throw new NotImplementedException ();
+			return new CollectionFromEnumerable<ProjectItemInstance> (Items.Where (p => p.ItemType.Equals (itemType, StringComparison.OrdinalIgnoreCase)));
 		}
 
 		public IEnumerable<ProjectItemInstance> GetItemsByItemTypeAndEvaluatedInclude (string itemType, string evaluatedInclude)
