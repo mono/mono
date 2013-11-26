@@ -278,7 +278,7 @@ namespace Microsoft.Build.Internal
 			if (targetType == typeof (ITaskItem) || targetType.IsSubclassOf (typeof (ITaskItem)))
 				return new TargetOutputTaskItem () { ItemSpec = source };
 			if (targetType.IsArray)
-				return new ArrayList (source.Split (';').Select (s => ConvertTo (s, targetType.GetElementType ())).ToArray ())
+				return new ArrayList (source.Split (';').Where (s => !string.IsNullOrEmpty (s)).Select (s => ConvertTo (s, targetType.GetElementType ())).ToArray ())
 						.ToArray (targetType.GetElementType ());
 			else
 				return Convert.ChangeType (source, targetType);
