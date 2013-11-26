@@ -34,6 +34,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Evaluation;
 using System.Linq;
 using System.IO;
+using Microsoft.Build.Exceptions;
 
 namespace Microsoft.Build.Internal
 {
@@ -171,7 +172,7 @@ namespace Microsoft.Build.Internal
 			
 			// Here we check cancellation (only after TargetStarted event).
 			if (args.CheckCancel ()) {
-				targetResult.Failure (new OperationCanceledException ("Build has canceled"));
+				targetResult.Failure (new BuildAbortedException ("Build has canceled"));
 				return false;
 			}
 			

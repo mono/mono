@@ -54,6 +54,7 @@ Microsoft.Build.Evaluation/ResolvedImport.cs
 Microsoft.Build.Evaluation/SubToolset.cs
 Microsoft.Build.Evaluation/Toolset.cs
 Microsoft.Build.Evaluation/ToolsetDefinitionLocations.cs
+Microsoft.Build.Exceptions/BuildAbortedException.cs
 Microsoft.Build.Exceptions/InvalidProjectFileException.cs
 Microsoft.Build.Execution/BuildManager.cs
 Microsoft.Build.Execution/BuildParameters.cs
