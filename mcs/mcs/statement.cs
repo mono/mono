@@ -95,7 +95,7 @@ namespace Mono.CSharp {
 			//
 			// Special handling cases
 			//
-			if (this is Block || this is SwitchLabel) {
+			if (this is Block) {
 				return DoFlowAnalysis (fc);
 			}
 
@@ -1506,6 +1506,7 @@ namespace Mono.CSharp {
 				return;
 
 			referenced = true;
+			MarkReachable (rc);
 
 			//
 			// Label is final target when goto jumps out of try block with
@@ -1514,7 +1515,6 @@ namespace Mono.CSharp {
 			// explicit label not just marker
 			//
 			if (finalTarget) {
-				MarkReachable (rc);
 				this.finalTarget = true;
 				return;
 			}
@@ -1556,7 +1556,20 @@ namespace Mono.CSharp {
 		{
 			ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, ec.Switch.DefaultLabel.GetILLabel (ec));
 		}
-		
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			if (!rc.IsUnreachable) {
+				var label = switch_statement.DefaultLabel;
+				if (label.IsUnreachable) {
+					label.MarkReachable (rc);
+					switch_statement.Block.ScanGotoJump (label);
+				}
+			}
+
+			return base.MarkReachable (rc);
+		}
+
 		public override object Accept (StructuralVisitor visitor)
 		{
 			return visitor.Visit (this);
@@ -1616,6 +1629,7 @@ namespace Mono.CSharp {
 
 			ec.Switch.RegisterGotoCase (this, res);
 			base.Resolve (ec);
+			expr = res;
 
 			return true;
 		}
@@ -1631,6 +1645,19 @@ namespace Mono.CSharp {
 
 			target.expr = expr.Clone (clonectx);
 		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			if (!rc.IsUnreachable) {
+				var label = switch_statement.FindLabel ((Constant) expr);
+				if (label.IsUnreachable) {
+					label.MarkReachable (rc);
+					switch_statement.Block.ScanGotoJump (label);
+				}
+			}
+
+			return base.MarkReachable (rc);
+		}
 		
 		public override object Accept (StructuralVisitor visitor)
 		{
@@ -1641,6 +1668,7 @@ namespace Mono.CSharp {
 	public abstract class SwitchGoto : Statement
 	{
 		protected bool unwind_protect;
+		protected Switch switch_statement;
 
 		protected SwitchGoto (Location loc)
 		{
@@ -1657,6 +1685,7 @@ namespace Mono.CSharp {
 			CheckExitBoundaries (bc, bc.Switch.Block);
 
 			unwind_protect = bc.HasAny (ResolveContext.Options.TryScope | ResolveContext.Options.CatchScope);
+			switch_statement = bc.Switch;
 
 			return true;
 		}
@@ -2861,13 +2890,6 @@ namespace Mono.CSharp {
 
 				end_unreachable = s.FlowAnalysis (fc);
 				if (s.IsUnreachable) {
-					//
-					// This is kind of a hack, switch label is unreachable because we need to mark
-					// switch section end but at the same time we need to run Emit on it
-					//
-					if (s is SwitchLabel)
-						continue;
-
 					statements[startIndex] = new EmptyStatement (s.loc);
 					continue;
 				}
@@ -2885,7 +2907,7 @@ namespace Mono.CSharp {
 				// X label is reachable only via goto not as another statement after if. We need
 				// this for flow-analysis only to carry variable info correctly.
 				//
-				if (end_unreachable) { // s is ExitStatement) {
+				if (end_unreachable) {
 					for (++startIndex; startIndex < statements.Count; ++startIndex) {
 						s = statements[startIndex];
 						if (s is SwitchLabel) {
@@ -2919,7 +2941,7 @@ namespace Mono.CSharp {
 			}
 
 			var rc = new Reachability ();
-			for (; i < statements.Count; ++i) {
+			for (++i; i < statements.Count; ++i) {
 				var s = statements[i];
 				rc = s.MarkReachable (rc);
 				if (rc.IsUnreachable)
@@ -4272,13 +4294,7 @@ namespace Mono.CSharp {
 			if (!SectionStart)
 				return false;
 
-			if (IsUnreachable) {
-				fc.DefiniteAssignment = new DefiniteAssignmentBitSet (fc.SwitchInitialDefinitiveAssignment);
-			} else {
-				fc.Report.Error (163, Location,
-					"Control cannot fall through from one case label `{0}' to another", GetSignatureForError ());
-			}
-
+			fc.DefiniteAssignment = new DefiniteAssignmentBitSet (fc.SwitchInitialDefinitiveAssignment);
 			return false;
 		}
 
@@ -4330,7 +4346,7 @@ namespace Mono.CSharp {
 			return visitor.Visit (this);
 		}
 
-		string GetSignatureForError ()
+		public string GetSignatureForError ()
 		{
 			string label;
 			if (converted == null)
@@ -4416,6 +4432,33 @@ namespace Mono.CSharp {
 			protected override void DoEmit (EmitContext ec)
 			{
 				body.EmitDispatch (ec);
+			}
+		}
+
+		class MissingBreak : Statement
+		{
+			SwitchLabel label;
+
+			public MissingBreak (SwitchLabel sl)
+			{
+				this.label = sl;
+				this.loc = sl.loc;
+			}
+
+			protected override void DoEmit (EmitContext ec)
+			{
+			}
+
+			protected override void CloneTo (CloneContext clonectx, Statement target)
+			{
+			}
+
+			protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+			{
+				fc.Report.Error (163, loc, "Control cannot fall through from one case label `{0}' to another",
+					label.GetSignatureForError ());
+
+				return true;
 			}
 		}
 
@@ -4724,7 +4767,7 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		SwitchLabel FindLabel (Constant value)
+		public SwitchLabel FindLabel (Constant value)
 		{
 			SwitchLabel sl = null;
 
@@ -4908,8 +4951,12 @@ namespace Mono.CSharp {
 
 			base.MarkReachable (rc);
 
+			if (block.Statements.Count == 0)
+				return rc;
+
 			SwitchLabel constant_label = null;
 			var constant = new_expr as Constant;
+
 			if (constant != null) {
 				constant_label = FindLabel (constant) ?? case_default;
 				if (constant_label == null) {
@@ -4918,7 +4965,6 @@ namespace Mono.CSharp {
 				}
 			}
 
-			var switch_rc = rc;
 			var section_rc = new Reachability ();
 			SwitchLabel prev_label = null;
 
@@ -4926,44 +4972,41 @@ namespace Mono.CSharp {
 				var s = block.Statements[i];
 				var sl = s as SwitchLabel;
 
-				if (sl != null) {
-					if (!sl.SectionStart) {
-						sl.MarkReachable (section_rc);
+				if (sl != null && sl.SectionStart) {
+					//
+					// Section is marked already via constant switch or goto case
+					//
+					if (!sl.IsUnreachable) {
+						section_rc = new Reachability ();
 						continue;
 					}
 
-					if (prev_label == null) {
-						prev_label = sl;
-						switch_rc = Reachability.CreateUnreachable ();
-
-						if (constant_label != null && sl != constant_label)
-							section_rc = Reachability.CreateUnreachable ();
-
-						continue;
+					if (section_rc.IsUnreachable) {
+						section_rc = new Reachability ();
+					} else {
+						if (prev_label != null) {
+							sl.SectionStart = false;
+							s = new MissingBreak (prev_label);
+							s.MarkReachable (rc);
+							block.Statements.Insert (i - 1, s);
+							++i;
+						}
 					}
-
-					//
-					// Small trick, using unreachable flag for label means
-					// the label section does not fallthrough
-					//
-					prev_label.MarkReachable (section_rc);
 
 					prev_label = sl;
-					switch_rc &= section_rc;
-					section_rc = new Reachability ();
 
-					if (constant_label != null && sl != constant_label)
+					if (constant_label != null && constant_label != sl)
 						section_rc = Reachability.CreateUnreachable ();
-
-					continue;
 				}
 
 				section_rc = s.MarkReachable (section_rc);
 			}
 
-			if (prev_label != null) {
-				prev_label.MarkReachable (section_rc);
-				switch_rc &= section_rc;
+			if (!section_rc.IsUnreachable && prev_label != null) {
+				prev_label.SectionStart = false;
+				var s = new MissingBreak (prev_label);
+				s.MarkReachable (rc);
+				block.Statements.Add (s);
 			}
 
 			//
@@ -4979,7 +5022,7 @@ namespace Mono.CSharp {
 			if (end_reachable)
 				return rc;
 
-			return switch_rc;
+			return Reachability.CreateUnreachable ();
 		}
 
 		public void RegisterGotoCase (GotoCase gotoCase, Constant value)
@@ -5153,8 +5196,23 @@ namespace Mono.CSharp {
 		{
 			if (value == null) {
 				//
-				// Constant switch, we already done the work
+				// Constant switch, we've already done the work if there is only 1 label
+				// referenced
 				//
+				int reachable = 0;
+				foreach (var sl in case_labels) {
+					if (sl.IsUnreachable)
+						continue;
+
+					if (reachable++ > 0) {
+						var constant = (Constant) new_expr;
+						var constant_label = FindLabel (constant) ?? case_default;
+
+						ec.Emit (OpCodes.Br, constant_label.GetILLabel (ec));
+						break;
+					}
+				}
+
 				return;
 			}
 

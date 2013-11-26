@@ -48389,7 +48389,7 @@
   <test name="test-876.cs">
     <type name="T">
       <method name="Int32 Main()" attrs="150">
-        <size>34</size>
+        <size>39</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -48405,6 +48405,9 @@
       </method>
       <method name="Void Test4()" attrs="145">
         <size>25</size>
+      </method>
+      <method name="Void Test5()" attrs="145">
+        <size>65</size>
       </method>
     </type>
   </test>

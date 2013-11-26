@@ -8,6 +8,7 @@ class T
 		Test2 ();
 		Test3 (0, 1);
 		Test4 ();
+		Test5 ();
 		
 		switch (1) {
 		case 1:
@@ -87,5 +88,25 @@ class T
 		}
 		
 		Console.WriteLine (v);
+	}
+
+	static void Test5 ()
+	{
+		int i = 8;
+		switch (10) {
+		case 5:
+			if (i != 10)
+				throw new ApplicationException ();
+			
+			Console.WriteLine (5);
+			break;
+		case 10:
+			i = 10;
+			Console.WriteLine (10);
+			goto default;
+		default:
+			Console.WriteLine ("default");
+			goto case 5;
+		}
 	}
 }
