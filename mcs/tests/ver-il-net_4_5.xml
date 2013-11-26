@@ -48411,6 +48411,21 @@
       </method>
     </type>
   </test>
+  <test name="test-877.cs">
+    <type name="S">
+      <method name="Void .ctor(Int32)" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-88.cs">
     <type name="X">
       <method name="Void f(System.String)" attrs="145">
