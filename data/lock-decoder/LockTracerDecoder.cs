@@ -102,14 +102,15 @@ Global locks:
 	Adding global locks is not to be taken lightly.
 
 The current lock hierarchy:
-loader lock
-	domain lock
-		domain jit lock
+loader lock (global)
+	domain lock (complex)
+		domain jit lock (complex)
 			simple locks
 
 Examples:
 	You can take the loader lock without holding a domain lock.
-	You cannot take a domain lock if the loader lock is held.
+	You can take the domain load while holding the loader lock
+	You cannot take the loader lock if only the domain lock is held.
 	You cannot take a domain lock while holding the lock to another domain.
 */
 
@@ -120,6 +121,7 @@ public enum Lock {
 	DomainLock,
 	DomainAssembliesLock,
 	DomainJitCodeHashLock,
+	IcallLock,
 }
 
 public class SimLock
