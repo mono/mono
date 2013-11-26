@@ -226,11 +226,12 @@ namespace Microsoft.Build.Internal
 							ti.Name, task.GetType (), string.Join (", ", missings.Select (p => p.Name).ToArray ())));
 					foreach (var p in ti.Parameters) {
 						var prop = task.GetType ().GetProperty (p.Key);
+						var value = project.ExpandString (p.Value);
 						if (prop == null)
 							throw new InvalidOperationException (string.Format ("Task {0} does not have property {1}", ti.Name, p.Key));
 						if (!prop.CanWrite)
 							throw new InvalidOperationException (string.Format ("Task {0} has property {1} but it is read-only.", ti.Name, p.Key));
-						prop.SetValue (task, ConvertTo (p.Value, prop.PropertyType), null);
+						prop.SetValue (task, ConvertTo (value, prop.PropertyType), null);
 					}
 					event_source.FireTaskStarted (this, new TaskStartedEventArgs ("Task Started", null, project.FullPath, ti.FullPath, ti.Name));
 					if (!task.Execute ()) {
