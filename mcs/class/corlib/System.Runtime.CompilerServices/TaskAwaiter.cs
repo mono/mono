@@ -68,7 +68,7 @@ namespace System.Runtime.CompilerServices
 			case TaskStatus.Faulted:
 				return task.Exception.InnerException;
 			default:
-				throw new ArgumentException ("Should never be reached");
+				throw new ArgumentException (string.Format ("Unexpected task `{0}' status `{1}'", task.Id, task.Status));
 			}
 		}
 
