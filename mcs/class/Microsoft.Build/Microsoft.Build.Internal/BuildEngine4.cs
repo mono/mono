@@ -288,6 +288,8 @@ namespace Microsoft.Build.Internal
 				// Evaluate task output properties and items.
 				event_source.FireTaskFinished (this, new TaskFinishedEventArgs ("Task Finished", null, project.FullPath, ti.FullPath, ti.Name, true));
 				foreach (var to in ti.Outputs) {
+					if (!project.EvaluateCondition (to.Condition))
+						continue;
 					var toItem = to as ProjectTaskOutputItemInstance;
 					var toProp = to as ProjectTaskOutputPropertyInstance;
 					string taskParameter = toItem != null ? toItem.TaskParameter : toProp.TaskParameter;
