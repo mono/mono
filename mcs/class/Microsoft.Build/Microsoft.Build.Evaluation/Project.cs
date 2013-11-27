@@ -267,6 +267,12 @@ namespace Microsoft.Build.Evaluation
 						yield return e;
 			}
 		}
+		
+		internal IEnumerable<T> GetAllItems<T> (string include, string exclude, Func<string,T> creator, Func<string,ITaskItem> taskItemCreator, Func<string,bool> itemTypeCheck, Action<T,string> assignRecurse)
+		{
+			return ProjectCollection.GetAllItems<T> (ExpandString, include, exclude, creator, taskItemCreator, DirectoryPath, assignRecurse,
+				t => all_evaluated_items.Any (i => i.EvaluatedInclude == t.ItemSpec && itemTypeCheck (i.ItemType)));
+		}
 
 		void EvaluateItems (IEnumerable<ProjectElement> elements)
 		{
@@ -276,33 +282,10 @@ namespace Microsoft.Build.Evaluation
 					foreach (var p in ige.Items) {
 						if (!Evaluate (ige.Condition) || !Evaluate (p.Condition))
 							continue;
-						var includes = ExpandString (p.Include).Split (item_sep, StringSplitOptions.RemoveEmptyEntries);
-						var excludes = ExpandString (p.Exclude).Split (item_sep, StringSplitOptions.RemoveEmptyEntries);
-						
-						if (includes.Length == 0)
-							continue;						
-						if (includes.Length == 1 && includes [0].IndexOf ('*') < 0 && excludes.Length == 0) {
-							// for most case - shortcut.
-							var item = new ProjectItem (this, p, includes [0]);
-							this.raw_items.Add (item);
+						Func<string,ProjectItem> creator = s => new ProjectItem (this, p, s);
+						foreach (var item in GetAllItems<ProjectItem> (p.Include, p.Exclude, creator, s => new ProjectTaskItem (p, s), it => string.Equals (it, p.ItemType, StringComparison.OrdinalIgnoreCase), (t, s) => t.RecursiveDir = s)) {
+							raw_items.Add (item);
 							all_evaluated_items.Add (item);
-						} else {
-							var ds = new Microsoft.Build.BuildEngine.DirectoryScanner () {
-								BaseDirectory = new DirectoryInfo (DirectoryPath),
-								Includes = includes.Select (i => new ProjectTaskItem (p, i)).ToArray (),
-								Excludes = excludes.Select (e => new ProjectTaskItem (p, e)).ToArray (),
-							};
-							ds.Scan ();
-							foreach (var taskItem in ds.MatchedItems) {
-								if (all_evaluated_items.Any (i => i.EvaluatedInclude == taskItem.ItemSpec && i.ItemType == p.ItemType))
-									continue; // skip duplicate
-								var item = new ProjectItem (this, p, taskItem.ItemSpec);
-								string recurse = taskItem.GetMetadata ("RecursiveDir");
-								if (!string.IsNullOrEmpty (recurse))
-									item.RecursiveDir = recurse;
-								this.raw_items.Add (item);
-								all_evaluated_items.Add (item);
-							}
 						}
 					}
 				}

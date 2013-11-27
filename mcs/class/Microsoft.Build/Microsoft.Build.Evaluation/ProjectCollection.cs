@@ -420,5 +420,36 @@ namespace Microsoft.Build.Evaluation
 		{
 			return OngoingImports.Count > 0 ? OngoingImports.Peek () : (nonImportingTimeFullPath () ?? string.Empty);
 		}
+		
+		static readonly char [] item_target_sep = {';'};
+		
+		internal static IEnumerable<T> GetAllItems<T> (Func<string,string> expandString, string include, string exclude, Func<string,T> creator, Func<string,ITaskItem> taskItemCreator, string directory, Action<T,string> assignRecurse, Func<ITaskItem,bool> isDuplicate)
+		{
+			var includes = expandString (include).Split (item_target_sep, StringSplitOptions.RemoveEmptyEntries);
+			var excludes = expandString (exclude).Split (item_target_sep, StringSplitOptions.RemoveEmptyEntries);
+			
+			if (includes.Length == 0)
+				yield break;
+			if (includes.Length == 1 && includes [0].IndexOf ('*') < 0 && excludes.Length == 0) {
+				// for most case - shortcut.
+				var item = creator (includes [0]);
+				yield return item;
+			} else {
+				var ds = new Microsoft.Build.BuildEngine.DirectoryScanner () {
+					BaseDirectory = new DirectoryInfo (directory),
+					Includes = includes.Select (i => taskItemCreator (i)).ToArray (),
+					Excludes = excludes.Select (e => taskItemCreator (e)).ToArray (),
+				};
+				ds.Scan ();
+				foreach (var taskItem in ds.MatchedItems) {
+					if (isDuplicate (taskItem))
+						continue; // skip duplicate
+					var item = creator (taskItem.ItemSpec);
+					string recurse = taskItem.GetMetadata ("RecursiveDir");
+					assignRecurse (item, recurse);
+					yield return item;
+				}
+			}
+		}
 	}
 }
