@@ -69,7 +69,7 @@ it is likely that the MS tokenizer is hand-written.
 
 */
 
-namespace Microsoft.Build.Internal
+namespace Microsoft.Build.Internal.Expressions
 {
 	class ExpressionParser
 	{
