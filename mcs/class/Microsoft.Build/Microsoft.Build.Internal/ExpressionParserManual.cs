@@ -58,8 +58,11 @@ namespace Microsoft.Build.Internal.Expressions
 
 			var ret = new ExpressionList ();
 			while (start < end) {
+				int bak = start;
 				ret.Add (ParseSingle (ref start, end));
 				SkipSpaces (ref start);
+				if (bak == start)
+					throw new Exception ("Parser failed to progress token position: " + source);
 			}
 			return ret;
 		}
@@ -122,7 +125,7 @@ namespace Microsoft.Build.Internal.Expressions
 				int idx = source.IndexOfAny (token_starters, start + 1);
 				string name = idx < 0 ? source.Substring (start, end - start) : source.Substring (start, idx - start);
 				var val = new NameToken () { Name = name };
-				ret = new StringLiteral () { Value = val };
+				ret = new RawStringLiteral () { Value = val };
 				if (idx >= 0)
 					start = idx;
 				else

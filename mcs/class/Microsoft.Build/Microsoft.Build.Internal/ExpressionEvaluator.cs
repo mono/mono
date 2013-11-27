@@ -440,7 +440,7 @@ namespace Microsoft.Build.Internal.Expressions
 		
 		public override string EvaluateAsString (EvaluationContext context)
 		{
-			return this.Value.Name;
+			return context.Evaluator.Evaluate (this.Value.Name);
 		}
 		
 		public override object EvaluateAsObject (EvaluationContext context)
