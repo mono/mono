@@ -202,7 +202,10 @@ namespace Microsoft.Build.Evaluation
 				properties = new List<ProjectProperty> ();
 			
 				foreach (DictionaryEntry p in Environment.GetEnvironmentVariables ())
-					this.properties.Add (new EnvironmentProjectProperty (this, (string)p.Key, (string)p.Value));
+					// FIXME: this is kind of workaround for unavoidable issue that PLATFORM=* is actually given
+					// on some platforms and that prevents setting default "PLATFORM=AnyCPU" property.
+					if (!string.Equals ("PLATFORM", (string) p.Key, StringComparison.OrdinalIgnoreCase))
+						this.properties.Add (new EnvironmentProjectProperty (this, (string)p.Key, (string)p.Value));
 				foreach (var p in GlobalProperties)
 					this.properties.Add (new GlobalProjectProperty (this, p.Key, p.Value));
 				var tools = ProjectCollection.GetToolset (this.ToolsVersion) ?? ProjectCollection.GetToolset (this.ProjectCollection.DefaultToolsVersion);

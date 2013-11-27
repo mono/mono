@@ -139,7 +139,10 @@ namespace Microsoft.Build.Execution
 				properties = new List<ProjectPropertyInstance> ();
 			
 				foreach (DictionaryEntry p in Environment.GetEnvironmentVariables ())
-					this.properties.Add (new ProjectPropertyInstance ((string) p.Key, false, (string) p.Value));
+					// FIXME: this is kind of workaround for unavoidable issue that PLATFORM=* is actually given
+					// on some platforms and that prevents setting default "PLATFORM=AnyCPU" property.
+					if (!string.Equals ("PLATFORM", (string) p.Key, StringComparison.OrdinalIgnoreCase))
+						this.properties.Add (new ProjectPropertyInstance ((string) p.Key, false, (string) p.Value));
 				foreach (var p in global_properties)
 					this.properties.Add (new ProjectPropertyInstance (p.Key, false, p.Value));
 				var tools = projects.GetToolset (tools_version) ?? projects.GetToolset (projects.DefaultToolsVersion);
