@@ -286,14 +286,17 @@ namespace Microsoft.Build.Evaluation
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO ("Not verified at all")]
 		public void UnloadProject (Project project)
 		{
-			throw new NotImplementedException ();
+			this.loaded_projects.Remove (project);
 		}
 
+		[MonoTODO ("Not verified at all")]
 		public void UnloadProject (ProjectRootElement projectRootElement)
 		{
-			throw new NotImplementedException ();
+			foreach (var proj in loaded_projects.Where (p => p.Xml == projectRootElement).ToArray ())
+				UnloadProject (proj);
 		}
 
 		public static Version Version {
