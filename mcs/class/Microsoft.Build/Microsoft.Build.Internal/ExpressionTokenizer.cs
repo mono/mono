@@ -200,6 +200,14 @@ namespace Microsoft.Build.Internal.Expressions
 					current_token = Token.TRUE_LITERAL;
 				else if (val.Equals ("FALSE", StringComparison.OrdinalIgnoreCase))
 					current_token = Token.FALSE_LITERAL;
+				else if (val.Equals ("YES", StringComparison.OrdinalIgnoreCase))
+					current_token = Token.TRUE_LITERAL;
+				else if (val.Equals ("NO", StringComparison.OrdinalIgnoreCase))
+					current_token = Token.FALSE_LITERAL;
+				else if (val.Equals ("ON", StringComparison.OrdinalIgnoreCase))
+					current_token = Token.TRUE_LITERAL;
+				else if (val.Equals ("OFF", StringComparison.OrdinalIgnoreCase))
+					current_token = Token.FALSE_LITERAL;
 				else {
 					current_token = Token.NAME;
 					token_value = ProjectCollection.Unescape (val);
