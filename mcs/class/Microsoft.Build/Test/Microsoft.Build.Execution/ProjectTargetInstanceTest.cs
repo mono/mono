@@ -149,7 +149,7 @@ namespace MonoTests.Microsoft.Build.Execution
 		public void InputsAndOutputs ()
 		{
 			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
-  <Target Name='Foo' Inputs='test.txt' Outputs='test.txt'>
+  <Target Name='Foo' Inputs='inputsandoutputstest.txt' Outputs='inputsandoutputstest.txt'>
     <Error Text='error' />
   </Target>
 </Project>";
