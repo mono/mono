@@ -108,7 +108,10 @@ namespace Microsoft.Build.Internal
 			this.project = args.Project;
 			
 			event_source.FireBuildStarted (this, new BuildStartedEventArgs ("Build Started", null));
-						
+			
+			var initialPropertiesFormatted = "Initial Properties:\n" + string.Join (Environment.NewLine, project.Properties.OrderBy (p => p.Name).Select (p => string.Format ("{0} = {1}", p.Name, p.EvaluatedValue)).ToArray ());
+			event_source.FireMessageRaised (this, new BuildMessageEventArgs (initialPropertiesFormatted, null, null, MessageImportance.Low));
+			
 			// null targets -> success. empty targets -> success(!)
 			if (request.TargetNames == null)
 				args.Result.OverallResult = BuildResultCode.Success;
@@ -206,8 +209,10 @@ namespace Microsoft.Build.Internal
 				}
 				foreach (var ti in target.Children.OfType<ProjectTaskInstance> ()) {
 					var host = request.HostServices == null ? null : request.HostServices.GetHostObject (request.ProjectFullPath, target.Name, ti.Name);
-					if (!args.Project.EvaluateCondition (ti.Condition))
+					if (!args.Project.EvaluateCondition (ti.Condition)) {
+						event_source.FireMessageRaised (this, new BuildMessageEventArgs (string.Format ("Task '{0}' was skipped because condition '{1}' wasn't met.", ti.Name, ti.Condition), null, null, MessageImportance.Low));
 						continue;
+					}
 					current_task = ti;
 					
 					var factoryIdentityParameters = new Dictionary<string,string> ();
@@ -216,6 +221,7 @@ namespace Microsoft.Build.Internal
 					factoryIdentityParameters ["MSBuildArchitecture"] = ti.MSBuildArchitecture;
 					#endif
 					var task = args.BuildTaskFactory.CreateTask (ti.Name, factoryIdentityParameters, this);
+					event_source.FireMessageRaised (this, new BuildMessageEventArgs (string.Format ("Using task {0} from {1}", ti.Name, task.GetType ().AssemblyQualifiedName), null, null, MessageImportance.Low));
 					task.HostObject = host;
 					task.BuildEngine = this;
 					// FIXME: this cannot be that simple, value has to be converted to the appropriate target type.
