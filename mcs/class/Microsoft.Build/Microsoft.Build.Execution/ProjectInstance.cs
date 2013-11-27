@@ -207,31 +207,8 @@ namespace Microsoft.Build.Execution
 		
 		internal IEnumerable<T> GetAllItems<T> (string include, string exclude, Func<string,T> creator, Func<string,ITaskItem> taskItemCreator, Func<string,bool> itemTypeCheck, Action<T,string> assignRecurse)
 		{
-			var includes = ExpandString (include).Split (item_target_sep, StringSplitOptions.RemoveEmptyEntries);
-			var excludes = ExpandString (exclude).Split (item_target_sep, StringSplitOptions.RemoveEmptyEntries);
-			
-			if (includes.Length == 0)
-				yield break;
-			if (includes.Length == 1 && includes [0].IndexOf ('*') < 0 && excludes.Length == 0) {
-				// for most case - shortcut.
-				var item = creator (includes [0]);
-				yield return item;
-			} else {
-				var ds = new Microsoft.Build.BuildEngine.DirectoryScanner () {
-					BaseDirectory = new DirectoryInfo (Directory),
-					Includes = includes.Select (i => taskItemCreator (i)).ToArray (),
-					Excludes = excludes.Select (e => taskItemCreator (e)).ToArray (),
-				};
-				ds.Scan ();
-				foreach (var taskItem in ds.MatchedItems) {
-					if (all_evaluated_items.Any (i => i.EvaluatedInclude == taskItem.ItemSpec && itemTypeCheck (i.ItemType)))
-						continue; // skip duplicate
-					var item = creator (taskItem.ItemSpec);
-					string recurse = taskItem.GetMetadata ("RecursiveDir");
-					assignRecurse (item, recurse);
-					yield return item;
-				}
-			}
+			return ProjectCollection.GetAllItems<T> (ExpandString, include, exclude, creator, taskItemCreator, Directory, assignRecurse,
+				t => all_evaluated_items.Any (i => i.EvaluatedInclude == t.ItemSpec && itemTypeCheck (i.ItemType)));
 		}
 
 		void EvaluateItems (ProjectRootElement xml, IEnumerable<ProjectElement> elements)
