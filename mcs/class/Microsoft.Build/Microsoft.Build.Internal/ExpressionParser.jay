@@ -228,7 +228,7 @@ MetadataAccess
 	: NAME
 	  { $$ = new MetadataAccess () { Metadata = (NameToken) $1, Location = (ILocation) $1 }; }
 	| NAME DOT NAME
-	  { $$ = new MetadataAccess () { Item = (NameToken) $1, Metadata = (NameToken) $3, Location = (ILocation) $1 }; }
+	  { $$ = new MetadataAccess () { ItemType = (NameToken) $1, Metadata = (NameToken) $3, Location = (ILocation) $1 }; }
 	;
 
 StringLiteral
