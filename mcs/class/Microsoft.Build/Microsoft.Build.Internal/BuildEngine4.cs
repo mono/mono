@@ -114,7 +114,7 @@ namespace Microsoft.Build.Internal
 			var parameters = submission.BuildManager.OngoingBuildParameters;
 			this.project = args.Project;
 			
-			event_source.FireBuildStarted (this, new BuildStartedEventArgs ("Build Started", null));
+			event_source.FireBuildStarted (this, new BuildStartedEventArgs ("Build Started", null, DateTime.Now));
 			
 			var initialPropertiesFormatted = "Initial Properties:\n" + string.Join (Environment.NewLine, project.Properties.OrderBy (p => p.Name).Select (p => string.Format ("{0} = {1}", p.Name, p.EvaluatedValue)).ToArray ());
 			event_source.FireMessageRaised (this, new BuildMessageEventArgs (initialPropertiesFormatted, null, null, MessageImportance.Low));
@@ -128,8 +128,8 @@ namespace Microsoft.Build.Internal
 		
 				// FIXME: check .NET behavior, whether cancellation always results in failure.
 				args.Result.OverallResult = args.CheckCancel () ? BuildResultCode.Failure : args.Result.ResultsByTarget.Select (p => p.Value).Any (r => r.ResultCode == TargetResultCode.Failure) ? BuildResultCode.Failure : BuildResultCode.Success;
-			}			
-			event_source.FireBuildFinished (this, new BuildFinishedEventArgs ("Build Finished.", null, args.Result.OverallResult == BuildResultCode.Success));
+			}
+			event_source.FireBuildFinished (this, new BuildFinishedEventArgs ("Build Finished.", null, args.Result.OverallResult == BuildResultCode.Success, DateTime.Now));
 		}
 		
 		bool BuildTargetByName (string targetName, InternalBuildArguments args)
@@ -182,15 +182,17 @@ namespace Microsoft.Build.Internal
 						if (skip) {
 							targetResult.Skip ();
 						}
-						else if (DoBuildTarget (targetResult, args)) {
-							var items = args.Project.GetAllItems (target.Outputs, string.Empty, creator, creator, s => true, (t, s) => {});
-							targetResult.Success (items);
+						else {
+							if (DoBuildTarget (targetResult, args)) {
+								var items = args.Project.GetAllItems (target.Outputs, string.Empty, creator, creator, s => true, (t, s) => {});
+								targetResult.Success (items);
+								event_source.FireTargetFinished (this, new TargetFinishedEventArgs ("Target Finished", null, targetName, project.FullPath, target.FullPath, true));
+							}
 						}
 					}
 				} finally {
 					current_target = null;
 				}
-				event_source.FireTargetFinished (this, new TargetFinishedEventArgs ("Target Finished", null, targetName, project.FullPath, target.FullPath, true));
 			}
 			args.AddTargetResult (targetName, targetResult);
 			
@@ -289,22 +291,29 @@ namespace Microsoft.Build.Internal
 			task.BuildEngine = this;
 			
 			// Prepare task parameters.
-			var props = task.GetType ().GetProperties ()
+			var evaluatedTaskParams = ti.Parameters.Select (p => new KeyValuePair<string,string> (p.Key, project.ExpandString (p.Value)));
+			
+			var requiredProps = task.GetType ().GetProperties ()
 				.Where (p => p.CanWrite && p.GetCustomAttributes (typeof (RequiredAttribute), true).Any ());
-			var missings = props.Where (p => !ti.Parameters.Any (tp => tp.Key.Equals (p.Name, StringComparison.OrdinalIgnoreCase)));
+			var missings = requiredProps.Where (p => !evaluatedTaskParams.Any (tp => tp.Key.Equals (p.Name, StringComparison.OrdinalIgnoreCase)));
 			if (missings.Any ())
 				throw new InvalidOperationException (string.Format ("Task {0} of type {1} is used without specifying mandatory property: {2}",
 					ti.Name, task.GetType (), string.Join (", ", missings.Select (p => p.Name).ToArray ())));
 			
-			foreach (var p in ti.Parameters) {
+			foreach (var p in evaluatedTaskParams) {
 				var prop = task.GetType ().GetProperty (p.Key);
-				var value = project.ExpandString (p.Value);
 				if (prop == null)
 					throw new InvalidOperationException (string.Format ("Task {0} does not have property {1}", ti.Name, p.Key));
 				if (!prop.CanWrite)
 					throw new InvalidOperationException (string.Format ("Task {0} has property {1} but it is read-only.", ti.Name, p.Key));
-				var valueInstance = ConvertTo (value, prop.PropertyType);
-				prop.SetValue (task, valueInstance, null);
+				if (string.IsNullOrEmpty (p.Value) && !requiredProps.Contains (prop))
+					continue;
+				try {
+					var valueInstance = ConvertTo (p.Value, prop.PropertyType);
+					prop.SetValue (task, valueInstance, null);
+				} catch (Exception ex) {
+					throw new InvalidOperationException (string.Format ("Failed to convert '{0}' for property '{1}' of type {2}", p.Value, prop.Name, prop.PropertyType));
+				}
 			}
 			
 			// Do execute task.
@@ -344,15 +353,6 @@ namespace Microsoft.Build.Internal
 		
 		object ConvertTo (string source, Type targetType)
 		{
-			try {
-				return DoConvertTo (source, targetType);
-			} catch (Exception ex) {
-				throw new InvalidOperationException (string.Format ("Failed to convert '{0}' to type {1}", source, targetType));
-			}
-		}
-		
-		object DoConvertTo (string source, Type targetType)
-		{
 			if (targetType == typeof(ITaskItem) || targetType.IsSubclassOf (typeof(ITaskItem)))
 				return new TargetOutputTaskItem () { ItemSpec = WindowsCompatibilityExtensions.NormalizeFilePath (source.Trim ()) };
 			if (targetType.IsArray)
@@ -371,7 +371,7 @@ namespace Microsoft.Build.Internal
 					return false;
 				}
 			}
-			return Convert.ChangeType (source, targetType);
+			return Convert.ChangeType (source == "" ? null : source, targetType);
 		}
 		
 		string ConvertFrom (object source)
