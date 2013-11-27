@@ -140,13 +140,13 @@ namespace Microsoft.Build.Internal
 			var parameters = submission.BuildManager.OngoingBuildParameters;
 			ProjectTargetInstance target;
 			
-			// FIXME: check skip condition
-			if (false)
-				targetResult.Skip ();
 			// null key is allowed and regarded as blind success(!) (as long as it could retrieve target)
-			else if (!request.ProjectInstance.Targets.TryGetValue (targetName, out target))
+			if (!request.ProjectInstance.Targets.TryGetValue (targetName, out target))
 				targetResult.Failure (new InvalidOperationException (string.Format ("target '{0}' was not found in project '{1}'", targetName, project.FullPath)));
-			else {
+			else if (!args.Project.EvaluateCondition (target.Condition)) {
+				event_source.FireMessageRaised (this, new BuildMessageEventArgs (string.Format ("Target '{0}' was skipped because condition '{1}' wasn't met.", target.Name, target.Condition), null, null, MessageImportance.Low));
+				targetResult.Skip ();
+			} else {
 				current_target = target;
 				try {
 					if (!DoBuildTarget (targetResult, args))
