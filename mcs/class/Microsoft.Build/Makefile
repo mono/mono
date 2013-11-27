@@ -40,4 +40,5 @@ include ../../build/library.make
 
 export TESTING_MONO=a
 XBUILD_DIR=../../tools/xbuild
+XBUILD_FRAMEWORK_FOLDERS_PATH=xbuild-testing
 include $(XBUILD_DIR)/xbuild_targets.make
