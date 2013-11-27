@@ -269,7 +269,8 @@ namespace Microsoft.Build.Internal
 					throw new InvalidOperationException (string.Format ("Task {0} does not have property {1}", ti.Name, p.Key));
 				if (!prop.CanWrite)
 					throw new InvalidOperationException (string.Format ("Task {0} has property {1} but it is read-only.", ti.Name, p.Key));
-				prop.SetValue (task, ConvertTo (value, prop.PropertyType), null);
+				var valueInstance = ConvertTo (value, prop.PropertyType);
+				prop.SetValue (task, valueInstance, null);
 			}
 			
 			// Do execute task.
@@ -308,7 +309,7 @@ namespace Microsoft.Build.Internal
 		object ConvertTo (string source, Type targetType)
 		{
 			if (targetType == typeof (ITaskItem) || targetType.IsSubclassOf (typeof (ITaskItem)))
-				return new TargetOutputTaskItem () { ItemSpec = source };
+				return new TargetOutputTaskItem () { ItemSpec = WindowsCompatibilityExtensions.NormalizeFilePath (source) };
 			if (targetType.IsArray)
 				return new ArrayList (source.Split (';').Where (s => !string.IsNullOrEmpty (s)).Select (s => ConvertTo (s, targetType.GetElementType ())).ToArray ())
 						.ToArray (targetType.GetElementType ());
@@ -365,6 +366,9 @@ namespace Microsoft.Build.Internal
 			}
 			public string GetMetadata (string metadataName)
 			{
+				var wk = ProjectCollection.GetWellKnownMetadata (metadataName, ItemSpec, Path.GetFullPath, null);
+				if (wk != null)
+					return wk;
 				return (string) metadata [metadataName];
 			}
 			public void RemoveMetadata (string metadataName)

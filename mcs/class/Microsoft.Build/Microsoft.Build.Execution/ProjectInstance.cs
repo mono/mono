@@ -512,6 +512,13 @@ namespace Microsoft.Build.Execution
 		}
 
 		internal BuildTaskDatabase TaskDatabase { get; private set; }
+		
+		internal string GetFullPath (string pathRelativeToProject)
+		{
+			if (Path.IsPathRooted (pathRelativeToProject))
+				return pathRelativeToProject;
+			return Path.GetFullPath (Path.Combine (Directory, pathRelativeToProject));
+		}
 	}
 }
 

@@ -34,6 +34,8 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Evaluation;
 using System.Collections;
 using Microsoft.Build.Construction;
+using System.Globalization;
+using System.IO;
 
 namespace Microsoft.Build.Execution
 {
@@ -56,11 +58,19 @@ namespace Microsoft.Build.Execution
 		
 		public ProjectMetadataInstance GetMetadata (string name)
 		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			// This does not return any Well Known metadata
 			return Metadata.FirstOrDefault (m => m.Name.Equals (name, StringComparison.OrdinalIgnoreCase));
 		}
 
 		public string GetMetadataValue (string name)
 		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			var wk = ProjectCollection.GetWellKnownMetadata (name, EvaluatedInclude, project.GetFullPath, RecursiveDir);
+			if (wk != null)
+				return wk;
 			var m = GetMetadata (name);
 			return m != null ? m.EvaluatedValue : null;
 		}
