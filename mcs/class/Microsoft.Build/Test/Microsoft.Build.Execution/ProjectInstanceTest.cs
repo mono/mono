@@ -32,6 +32,7 @@ using System.Xml;
 using Microsoft.Build.Construction;
 using Microsoft.Build.Execution;
 using NUnit.Framework;
+using Microsoft.Build.Evaluation;
 
 namespace MonoTests.Microsoft.Build.Execution
 {
@@ -62,6 +63,16 @@ namespace MonoTests.Microsoft.Build.Execution
 			var prop = proj.Properties.First (p => p.Name=="P");
 			Assert.AreEqual ("valid", prop.EvaluatedValue, "#2");
 			Assert.IsNotNull (proj.GetProperty ("MSBuildProjectDirectory"), "#3");
+		}
+		
+		[Test]
+		public void ExplicitToolsVersion ()
+		{
+            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
+            var xml = XmlReader.Create (new StringReader(project_xml));
+            var root = ProjectRootElement.Create (xml);
+			var proj = new ProjectInstance (root, null, "4.0", new ProjectCollection ());
+			Assert.AreEqual ("4.0", proj.ToolsVersion, "#1");
 		}
 		
 		[Test]

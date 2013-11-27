@@ -94,7 +94,6 @@ namespace Microsoft.Build.Execution
 		[MonoTODO]
 		public CultureInfo Culture { get; set; }
 
-		[MonoTODO]
 		public string DefaultToolsVersion { get; set; }
 
 		[MonoTODO]
