@@ -115,6 +115,16 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			Assert.AreEqual ("1+1+2", new Project (root).GetProperty ("C").EvaluatedValue, "#1");
 			Assert.AreEqual ("1+1+2", new ProjectInstance (root).GetProperty ("C").EvaluatedValue, "#1");
 		}
+		
+		[Test]
+		public void PlatformPropertyEmptyByDefault ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			var proj = new Project (root);
+			Assert.IsNull (proj.GetProperty ("PLATFORM"), "#1");
+		}
 	}
 }
 

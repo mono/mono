@@ -187,6 +187,21 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		}
 		
 		[Test]
+		public void EvaluateSamePropertiesInOrder ()
+		{
+			// used in Microsoft.Common.targets
+            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <PropertyGroup>
+    <BaseIntermediateOutputPath Condition=""'$(BaseIntermediateOutputPath)' == ''"">obj\</BaseIntermediateOutputPath>
+  </PropertyGroup>
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			var proj = new Project (root);
+			Assert.AreEqual ("obj\\", proj.GetPropertyValue ("BaseIntermediateOutputPath"), "#1");
+		}
+		
+		[Test]
 		public void DirtyMarking ()
 		{
 			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
