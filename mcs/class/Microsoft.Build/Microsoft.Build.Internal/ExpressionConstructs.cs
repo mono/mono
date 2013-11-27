@@ -29,7 +29,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Microsoft.Build.Internal
+namespace Microsoft.Build.Internal.Expressions
 {
 	
 	class Locatable

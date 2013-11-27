@@ -41,6 +41,7 @@ using Microsoft.Build.Exceptions;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Internal;
+using Microsoft.Build.Internal.Expressions;
 using Microsoft.Build.Logging;
 using System.Collections;
 

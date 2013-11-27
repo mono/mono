@@ -29,6 +29,7 @@
 using System;
 using System.Runtime.Serialization;
 using Microsoft.Build.Construction;
+using Microsoft.Build.Internal.Expressions;
 
 namespace Microsoft.Build.Exceptions
 {
@@ -58,7 +59,7 @@ namespace Microsoft.Build.Exceptions
                         : base(message, innerException)
                 {
                 }
-                internal InvalidProjectFileException (Microsoft.Build.Internal.ILocation start, string message,
+                internal InvalidProjectFileException (ILocation start, string message,
                                                       string errorSubcategory = null, string errorCode = null, string helpKeyword = null)
                         : this (null, 0, start != null ? start.Column : 0, 0, 0, message, errorSubcategory, errorCode, helpKeyword)
                 {
