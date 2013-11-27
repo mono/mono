@@ -182,6 +182,7 @@ namespace Microsoft.Build.Internal
 			var propsToRestore = new Dictionary<string,string> ();
 			var itemsToRemove = new List<ProjectItemInstance> ();
 			try {
+				// Evaluate additional target properties
 				foreach (var c in target.Children.OfType<ProjectPropertyGroupTaskInstance> ()) {
 					if (!args.Project.EvaluateCondition (c.Condition))
 						continue;
@@ -193,6 +194,8 @@ namespace Microsoft.Build.Internal
 						project.SetProperty (p.Name, value);
 					}
 				}
+				
+				// Evaluate additional target items
 				foreach (var c in target.Children.OfType<ProjectItemGroupTaskInstance> ()) {
 					if (!args.Project.EvaluateCondition (c.Condition))
 						continue;
@@ -202,69 +205,22 @@ namespace Microsoft.Build.Internal
 							itemsToRemove.Add (ti);
 					}
 				}
+				
 				foreach (var c in target.Children.OfType<ProjectOnErrorInstance> ()) {
 					if (!args.Project.EvaluateCondition (c.Condition))
 						continue;
 					throw new NotImplementedException ();
 				}
+				
+				// run tasks
 				foreach (var ti in target.Children.OfType<ProjectTaskInstance> ()) {
-					var host = request.HostServices == null ? null : request.HostServices.GetHostObject (request.ProjectFullPath, target.Name, ti.Name);
+					current_task = ti;
 					if (!args.Project.EvaluateCondition (ti.Condition)) {
 						event_source.FireMessageRaised (this, new BuildMessageEventArgs (string.Format ("Task '{0}' was skipped because condition '{1}' wasn't met.", ti.Name, ti.Condition), null, null, MessageImportance.Low));
 						continue;
 					}
-					current_task = ti;
-					
-					var factoryIdentityParameters = new Dictionary<string,string> ();
-					#if NET_4_5
-					factoryIdentityParameters ["MSBuildRuntime"] = ti.MSBuildRuntime;
-					factoryIdentityParameters ["MSBuildArchitecture"] = ti.MSBuildArchitecture;
-					#endif
-					var task = args.BuildTaskFactory.CreateTask (ti.Name, factoryIdentityParameters, this);
-					event_source.FireMessageRaised (this, new BuildMessageEventArgs (string.Format ("Using task {0} from {1}", ti.Name, task.GetType ().AssemblyQualifiedName), null, null, MessageImportance.Low));
-					task.HostObject = host;
-					task.BuildEngine = this;
-					// FIXME: this cannot be that simple, value has to be converted to the appropriate target type.
-					var props = task.GetType ().GetProperties ()
-						.Where (p => p.CanWrite && p.GetCustomAttributes (typeof(RequiredAttribute), true).Any ());
-					var missings = props.Where (p => !ti.Parameters.Any (tp => tp.Key.Equals (p.Name, StringComparison.OrdinalIgnoreCase)));
-					if (missings.Any ())
-						throw new InvalidOperationException (string.Format ("Task {0} of type {1} is used without specifying mandatory property: {2}",
-							ti.Name, task.GetType (), string.Join (", ", missings.Select (p => p.Name).ToArray ())));
-					foreach (var p in ti.Parameters) {
-						var prop = task.GetType ().GetProperty (p.Key);
-						var value = project.ExpandString (p.Value);
-						if (prop == null)
-							throw new InvalidOperationException (string.Format ("Task {0} does not have property {1}", ti.Name, p.Key));
-						if (!prop.CanWrite)
-							throw new InvalidOperationException (string.Format ("Task {0} has property {1} but it is read-only.", ti.Name, p.Key));
-						prop.SetValue (task, ConvertTo (value, prop.PropertyType), null);
-					}
-					event_source.FireTaskStarted (this, new TaskStartedEventArgs ("Task Started", null, project.FullPath, ti.FullPath, ti.Name));
-					if (!task.Execute ()) {
-						event_source.FireTaskFinished (this, new TaskFinishedEventArgs ("Task Finished", null, project.FullPath, ti.FullPath, ti.Name, false));
-						targetResult.Failure (null);
-						if (!ContinueOnError) {
-							event_source.FireTargetFinished (this, new TargetFinishedEventArgs ("Target Failed", null, target.Name, project.FullPath, target.FullPath, false));
-							return false;
-						}
-					} else {
-						event_source.FireTaskFinished (this, new TaskFinishedEventArgs ("Task Finished", null, project.FullPath, ti.FullPath, ti.Name, true));
-						foreach (var to in ti.Outputs) {
-							var toItem = to as ProjectTaskOutputItemInstance;
-							var toProp = to as ProjectTaskOutputPropertyInstance;
-							string taskParameter = toItem != null ? toItem.TaskParameter : toProp.TaskParameter;
-							var pi = task.GetType ().GetProperty (taskParameter);
-							if (pi == null)
-								throw new InvalidOperationException (string.Format ("Task {0} does not have property {1} specified as TaskParameter", ti.Name, toItem.TaskParameter));
-							if (!pi.CanRead)
-								throw new InvalidOperationException (string.Format ("Task {0} has property {1} specified as TaskParameter, but it is write-only", ti.Name, toItem.TaskParameter));
-							if (toItem != null)
-								args.Project.AddItem (toItem.ItemType, ConvertFrom (pi.GetValue (task, null)));
-							else
-								args.Project.SetProperty (toProp.PropertyName, ConvertFrom (pi.GetValue (task, null)));
-						}
-					}
+					if (!RunBuildTask (ti, targetResult, args))
+						return false;
 				}
 			} finally {
 				// restore temporary property state to the original state.
@@ -277,6 +233,75 @@ namespace Microsoft.Build.Internal
 				foreach (var item in itemsToRemove)
 					project.RemoveItem (item);
 			}
+			return true;
+		}
+		
+		bool RunBuildTask (ProjectTaskInstance ti, TargetResult targetResult, InternalBuildArguments args)
+		{
+			var request = submission.BuildRequest;
+			var target = current_target;
+
+			var host = request.HostServices == null ? null : request.HostServices.GetHostObject (request.ProjectFullPath, target.Name, ti.Name);
+			
+			// Create Task instance.
+			var factoryIdentityParameters = new Dictionary<string,string> ();
+			#if NET_4_5
+			factoryIdentityParameters ["MSBuildRuntime"] = ti.MSBuildRuntime;
+			factoryIdentityParameters ["MSBuildArchitecture"] = ti.MSBuildArchitecture;
+			#endif
+			var task = args.BuildTaskFactory.CreateTask (ti.Name, factoryIdentityParameters, this);
+			event_source.FireMessageRaised (this, new BuildMessageEventArgs (string.Format ("Using task {0} from {1}", ti.Name, task.GetType ().AssemblyQualifiedName), null, null, MessageImportance.Low));
+			task.HostObject = host;
+			task.BuildEngine = this;
+			
+			// Prepare task parameters.
+			var props = task.GetType ().GetProperties ()
+				.Where (p => p.CanWrite && p.GetCustomAttributes (typeof (RequiredAttribute), true).Any ());
+			var missings = props.Where (p => !ti.Parameters.Any (tp => tp.Key.Equals (p.Name, StringComparison.OrdinalIgnoreCase)));
+			if (missings.Any ())
+				throw new InvalidOperationException (string.Format ("Task {0} of type {1} is used without specifying mandatory property: {2}",
+					ti.Name, task.GetType (), string.Join (", ", missings.Select (p => p.Name).ToArray ())));
+			
+			foreach (var p in ti.Parameters) {
+				var prop = task.GetType ().GetProperty (p.Key);
+				var value = project.ExpandString (p.Value);
+				if (prop == null)
+					throw new InvalidOperationException (string.Format ("Task {0} does not have property {1}", ti.Name, p.Key));
+				if (!prop.CanWrite)
+					throw new InvalidOperationException (string.Format ("Task {0} has property {1} but it is read-only.", ti.Name, p.Key));
+				prop.SetValue (task, ConvertTo (value, prop.PropertyType), null);
+			}
+			
+			// Do execute task.
+			event_source.FireTaskStarted (this, new TaskStartedEventArgs ("Task Started", null, project.FullPath, ti.FullPath, ti.Name));
+			var taskSuccess = task.Execute ();
+			
+			if (!taskSuccess) {
+				event_source.FireTaskFinished (this, new TaskFinishedEventArgs ("Task Finished", null, project.FullPath, ti.FullPath, ti.Name, false));
+				targetResult.Failure (null);
+				if (!ContinueOnError) {
+					event_source.FireTargetFinished (this, new TargetFinishedEventArgs ("Target Failed", null, target.Name, project.FullPath, target.FullPath, false));
+					return false;
+				}
+			} else {
+				// Evaluate task output properties and items.
+				event_source.FireTaskFinished (this, new TaskFinishedEventArgs ("Task Finished", null, project.FullPath, ti.FullPath, ti.Name, true));
+				foreach (var to in ti.Outputs) {
+					var toItem = to as ProjectTaskOutputItemInstance;
+					var toProp = to as ProjectTaskOutputPropertyInstance;
+					string taskParameter = toItem != null ? toItem.TaskParameter : toProp.TaskParameter;
+					var pi = task.GetType ().GetProperty (taskParameter);
+					if (pi == null)
+						throw new InvalidOperationException (string.Format ("Task {0} does not have property {1} specified as TaskParameter", ti.Name, toItem.TaskParameter));
+					if (!pi.CanRead)
+						throw new InvalidOperationException (string.Format ("Task {0} has property {1} specified as TaskParameter, but it is write-only", ti.Name, toItem.TaskParameter));
+					if (toItem != null)
+						args.Project.AddItem (toItem.ItemType, ConvertFrom (pi.GetValue (task, null)));
+					else
+						args.Project.SetProperty (toProp.PropertyName, ConvertFrom (pi.GetValue (task, null)));
+				}
+			}
+			
 			return true;
 		}
 		
