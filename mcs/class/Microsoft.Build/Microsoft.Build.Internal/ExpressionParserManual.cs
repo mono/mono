@@ -250,8 +250,6 @@ namespace Microsoft.Build.Internal.Expressions
 					Application = new ItemApplication () { Name = new NameToken () { Name = name } }
 					};
 			}
-			
-			throw new NotImplementedException ();
 		}
 		
 		MetadataAccessExpression EvaluateMetadataExpression (int start, int end)
