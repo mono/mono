@@ -273,6 +273,10 @@ namespace Microsoft.Build.Execution
 			}
 		}
 
+		internal IEnumerable<ProjectItemInstance> AllEvaluatedItems {
+			get { return all_evaluated_items; }
+		}
+
 		public List<string> DefaultTargets { get; private set; }
 		
 		public string Directory {
