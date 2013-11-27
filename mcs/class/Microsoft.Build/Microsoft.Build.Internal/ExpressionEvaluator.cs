@@ -127,6 +127,14 @@ namespace Microsoft.Build.Internal.Expressions
 			else
 				return Evaluator.ProjectInstance.GetItems (name);
 		}
+
+		public IEnumerable<object> GetAllItems ()
+		{
+			if (Evaluator.Project != null)
+				return Evaluator.Project.AllEvaluatedItems;
+			else
+				return Evaluator.ProjectInstance.AllEvaluatedItems;
+		}
 		
 		public string EvaluateItem (string itemType, object item)
 		{
@@ -422,7 +430,7 @@ namespace Microsoft.Build.Internal.Expressions
 		
 		public override string EvaluateAsString (EvaluationContext context)
 		{
-			string itemType = this.Access.ItemType.Name;
+			string itemType = this.Access.ItemType != null ? this.Access.ItemType.Name : null;
 			string metadataName = Access.Metadata.Name;
 			IEnumerable<object> items;
 			if (this.Access.ItemType != null)
@@ -430,7 +438,7 @@ namespace Microsoft.Build.Internal.Expressions
 			else if (context.ContextItem != null)
 				items = new Object [] { context.ContextItem };
 			else
-				throw new InvalidProjectFileException (Location, null, string.Format ("Unexpected occurence of metadata reference: {0}{1}", itemType != null ? itemType + '.' : null, metadataName), null, null);
+				items = context.GetAllItems ();
 			
 			var values = items.Select (i => (i is ProjectItem) ? ((ProjectItem) i).GetMetadataValue (metadataName) : ((ProjectItemInstance) i).GetMetadataValue (metadataName)).Where (s => !string.IsNullOrEmpty (s));
 			return string.Join (";", values);
