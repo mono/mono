@@ -30,7 +30,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Build.Exceptions;
 
-namespace Microsoft.Build.Internal
+namespace Microsoft.Build.Internal.Expressions
 {
 	class ExpressionParserManual
 	{

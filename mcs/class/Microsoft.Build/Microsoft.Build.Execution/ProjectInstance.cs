@@ -35,6 +35,7 @@ using System.Linq;
 using Microsoft.Build.Construction;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Internal.Expressions;
 using Microsoft.Build.Logging;
 
 //
