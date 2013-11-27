@@ -438,8 +438,8 @@ namespace Microsoft.Build.Evaluation
 			} else {
 				var ds = new Microsoft.Build.BuildEngine.DirectoryScanner () {
 					BaseDirectory = new DirectoryInfo (directory),
-					Includes = includes.Select (i => taskItemCreator (i)).ToArray (),
-					Excludes = excludes.Select (e => taskItemCreator (e)).ToArray (),
+					Includes = includes.Where (s => !string.IsNullOrWhiteSpace (s)).Select (i => taskItemCreator (i)).ToArray (),
+					Excludes = excludes.Where (s => !string.IsNullOrWhiteSpace (s)).Select (e => taskItemCreator (e)).ToArray (),
 				};
 				ds.Scan ();
 				foreach (var taskItem in ds.MatchedItems) {

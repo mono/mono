@@ -144,5 +144,26 @@ namespace MonoTests.Microsoft.Build.Execution
 			Assert.AreEqual (2, proj.Targets.Count, "#1");
 			Assert.IsFalse (proj.Build ("Bar", new ILogger [0]), "#2");
 		}
+		
+		[Test]
+		public void InputsAndOutputs ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <Target Name='Foo' Inputs='test.txt' Outputs='test.txt'>
+    <Error Text='error' />
+  </Target>
+</Project>";
+			try {
+				if (!File.Exists ("inputsandoutputstest.txt"))
+					File.CreateText ("inputsandoutputstest.txt").Close ();
+				var xml = XmlReader.Create (new StringReader (project_xml));
+				var root = ProjectRootElement.Create (xml);
+				var proj = new ProjectInstance (root);
+				Assert.IsTrue (proj.Build (), "#1"); // if it does not skip Foo, it results in an error.
+			} finally {
+				if (File.Exists ("inputsandoutputstest.txt"))
+					File.Delete ("inputsandoutputstest.txt");
+			}
+		}
 	}
 }

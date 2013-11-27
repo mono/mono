@@ -28,13 +28,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Evaluation;
 using System.Linq;
 using System.IO;
 using Microsoft.Build.Exceptions;
+using System.Globalization;
 
 namespace Microsoft.Build.Internal
 {
@@ -48,7 +48,7 @@ namespace Microsoft.Build.Internal
 		public BuildEngine4 (BuildSubmission submission)
 		{
 			this.submission = submission;
-			event_source = new EventSource ();
+			event_source = new Microsoft.Build.BuildEngine.EventSource ();
 			if (submission.BuildManager.OngoingBuildParameters.Loggers != null)
 				foreach (var l in submission.BuildManager.OngoingBuildParameters.Loggers)
 					l.Initialize (event_source);
@@ -58,7 +58,7 @@ namespace Microsoft.Build.Internal
 		ProjectInstance project;
 		ProjectTargetInstance current_target;
 		ProjectTaskInstance current_task;
-		EventSource event_source;
+		Microsoft.Build.BuildEngine.EventSource event_source;
 		
 		public ProjectCollection Projects {
 			get { return submission.BuildManager.OngoingBuildParameters.ProjectCollection; }
@@ -124,7 +124,7 @@ namespace Microsoft.Build.Internal
 				args.Result.OverallResult = BuildResultCode.Success;
 			else {
 				foreach (var targetName in request.TargetNames.Where (t => t != null))
-					args.AddTargetResult (targetName, BuildTargetByName (targetName, args));
+					BuildTargetByName (targetName, args);
 		
 				// FIXME: check .NET behavior, whether cancellation always results in failure.
 				args.Result.OverallResult = args.CheckCancel () ? BuildResultCode.Failure : args.Result.ResultsByTarget.Select (p => p.Value).Any (r => r.ResultCode == TargetResultCode.Failure) ? BuildResultCode.Failure : BuildResultCode.Success;
@@ -132,7 +132,7 @@ namespace Microsoft.Build.Internal
 			event_source.FireBuildFinished (this, new BuildFinishedEventArgs ("Build Finished.", null, args.Result.OverallResult == BuildResultCode.Success));
 		}
 		
-		TargetResult BuildTargetByName (string targetName, InternalBuildArguments args)
+		bool BuildTargetByName (string targetName, InternalBuildArguments args)
 		{
 			var targetResult = new TargetResult ();
 
@@ -142,25 +142,64 @@ namespace Microsoft.Build.Internal
 			
 			// null key is allowed and regarded as blind success(!) (as long as it could retrieve target)
 			if (!request.ProjectInstance.Targets.TryGetValue (targetName, out target))
-				targetResult.Failure (new InvalidOperationException (string.Format ("target '{0}' was not found in project '{1}'", targetName, project.FullPath)));
+				throw new InvalidOperationException (string.Format ("target '{0}' was not found in project '{1}'", targetName, project.FullPath));
 			else if (!args.Project.EvaluateCondition (target.Condition)) {
 				event_source.FireMessageRaised (this, new BuildMessageEventArgs (string.Format ("Target '{0}' was skipped because condition '{1}' wasn't met.", target.Name, target.Condition), null, null, MessageImportance.Low));
 				targetResult.Skip ();
 			} else {
+				// process DependsOnTargets first.
+				foreach (var dep in project.ExpandString (target.DependsOnTargets).Split (';').Where (s => !string.IsNullOrEmpty (s)).Select (s => s.Trim ())) {
+					if (!BuildTargetByName (dep, args)) {
+						return false;
+					}
+				}
+				
 				current_target = target;
+				Func<string,ITaskItem> creator = s => new TargetOutputTaskItem () { ItemSpec = s };
 				try {
-					if (!DoBuildTarget (targetResult, args))
-						return targetResult;
+					event_source.FireTargetStarted (this, new TargetStartedEventArgs ("Target Started", null, target.Name, project.FullPath, target.FullPath));
+			
+					if (!string.IsNullOrEmpty (target.Inputs) != !string.IsNullOrEmpty (target.Outputs)) {
+						targetResult.Failure (new InvalidProjectFileException (target.Location, null, string.Format ("Target {0} has mismatching Inputs and Outputs specification. When one is specified, another one has to be specified too.", targetName), null, null, null));
+					} else {
+						bool skip = false;
+						if (!string.IsNullOrEmpty (target.Inputs)) {
+							var inputs = args.Project.GetAllItems (target.Inputs, string.Empty, creator, creator, s => true, (t, s) => {});
+							if (!inputs.Any ()) {
+								event_source.FireMessageRaised (this, new BuildMessageEventArgs (string.Format ("Target '{0}' was skipped because there is no input.", target.Name), null, null, MessageImportance.Low));
+								skip = true;
+							} else {
+								var outputs = args.Project.GetAllItems (target.Outputs, string.Empty, creator, creator, s => true, (t, s) => {});
+								var needsUpdates = GetOlderOutputsThanInputs (inputs, outputs).FirstOrDefault ();
+								if (needsUpdates != null)
+									event_source.FireMessageRaised (this, new BuildMessageEventArgs (string.Format ("Target '{0}' needs to be built because new output {1} is needed.", target.Name, needsUpdates.ItemSpec), null, null, MessageImportance.Low));
+								else {
+									event_source.FireMessageRaised (this, new BuildMessageEventArgs (string.Format ("Target '{0}' was skipped because all the outputs are newer than all the inputs.", target.Name), null, null, MessageImportance.Low));
+									skip =true;
+								}
+							}
+						}
+						if (skip) {
+							targetResult.Skip ();
+						}
+						else if (DoBuildTarget (targetResult, args)) {
+							var items = args.Project.GetAllItems (target.Outputs, string.Empty, creator, creator, s => true, (t, s) => {});
+							targetResult.Success (items);
+						}
+					}
 				} finally {
 					current_target = null;
 				}
-				Func<string,ITaskItem> creator = s => new TargetOutputTaskItem () { ItemSpec = s };
-				var items = args.Project.GetAllItems (target.Outputs, string.Empty, creator, creator, s => true, (t, s) => {
-				});
-				targetResult.Success (items);
 				event_source.FireTargetFinished (this, new TargetFinishedEventArgs ("Target Finished", null, targetName, project.FullPath, target.FullPath, true));
 			}
-			return targetResult;
+			args.AddTargetResult (targetName, targetResult);
+			
+			return targetResult.ResultCode != TargetResultCode.Failure;
+		}
+		
+		IEnumerable<ITaskItem> GetOlderOutputsThanInputs (IEnumerable<ITaskItem> inputs, IEnumerable<ITaskItem> outputs)
+		{
+			return outputs.Where (o => !File.Exists (o.GetMetadata ("FullPath")) || inputs.Any (i => string.CompareOrdinal (i.GetMetadata ("LastModifiedTime"), o.GetMetadata ("LastModifiedTime")) > 0));
 		}
 		
 		bool DoBuildTarget (TargetResult targetResult, InternalBuildArguments args)
@@ -168,18 +207,6 @@ namespace Microsoft.Build.Internal
 			var request = submission.BuildRequest;
 			var target = current_target;
 	
-			// process DependsOnTargets first.
-			foreach (var dep in project.ExpandString (target.DependsOnTargets).Split (';').Where (s => !string.IsNullOrEmpty (s)).Select (s => s.Trim ())) {
-				var result = BuildTargetByName (dep, args);
-				args.AddTargetResult (dep, result);
-				if (result.ResultCode == TargetResultCode.Failure) {
-					targetResult.Failure (null);
-					return false;
-				}
-			}
-			
-			event_source.FireTargetStarted (this, new TargetStartedEventArgs ("Target Started", null, target.Name, project.FullPath, target.FullPath));
-			
 			// Here we check cancellation (only after TargetStarted event).
 			if (args.CheckCancel ()) {
 				targetResult.Failure (new BuildAbortedException ("Build has canceled"));
@@ -317,13 +344,34 @@ namespace Microsoft.Build.Internal
 		
 		object ConvertTo (string source, Type targetType)
 		{
-			if (targetType == typeof (ITaskItem) || targetType.IsSubclassOf (typeof (ITaskItem)))
-				return new TargetOutputTaskItem () { ItemSpec = WindowsCompatibilityExtensions.NormalizeFilePath (source) };
+			try {
+				return DoConvertTo (source, targetType);
+			} catch (Exception ex) {
+				throw new InvalidOperationException (string.Format ("Failed to convert '{0}' to type {1}", source, targetType));
+			}
+		}
+		
+		object DoConvertTo (string source, Type targetType)
+		{
+			if (targetType == typeof(ITaskItem) || targetType.IsSubclassOf (typeof(ITaskItem)))
+				return new TargetOutputTaskItem () { ItemSpec = WindowsCompatibilityExtensions.NormalizeFilePath (source.Trim ()) };
 			if (targetType.IsArray)
 				return new ArrayList (source.Split (';').Where (s => !string.IsNullOrEmpty (s)).Select (s => ConvertTo (s, targetType.GetElementType ())).ToArray ())
 						.ToArray (targetType.GetElementType ());
-			else
-				return Convert.ChangeType (source, targetType);
+			if (targetType == typeof(bool)) {
+				switch (source != null ? source.ToLower (CultureInfo.InvariantCulture) : string.Empty) {
+				case "true":
+				case "yes":
+				case "on":
+					return true;
+				case "false":
+				case "no":
+				case "off":
+				case "":
+					return false;
+				}
+			}
+			return Convert.ChangeType (source, targetType);
 		}
 		
 		string ConvertFrom (object source)
