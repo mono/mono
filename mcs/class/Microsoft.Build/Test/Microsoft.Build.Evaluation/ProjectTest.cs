@@ -228,6 +228,22 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			proj.MarkDirty ();
 			Assert.IsTrue (proj.IsDirty, "#3");
 		}
+		
+		[Test]
+		public void CreateProjectInstance ()
+		{
+            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <PropertyGroup>
+    <AssemblyName>Foo</AssemblyName>
+  </PropertyGroup>
+  <Import Project='$(MSBuildToolsPath)\Microsoft.CSharp.targets' />
+</Project>";
+            var xml = XmlReader.Create (new StringReader (project_xml));
+            var root = ProjectRootElement.Create (xml);
+			var proj = new Project (root, null, "4.0");
+			var inst = proj.CreateProjectInstance ();
+			Assert.AreEqual ("4.0", inst.ToolsVersion, "#1");
+		}
 	}
 }
 

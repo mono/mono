@@ -83,7 +83,7 @@ namespace Microsoft.Build.Execution
 		{
 			projects = projectCollection;
 			global_properties = globalProperties ?? new Dictionary<string, string> ();
-			tools_version = toolsVersion ?? projects.DefaultToolsVersion;
+			tools_version = toolsVersion ?? xml.ToolsVersion ?? projects.DefaultToolsVersion;
 			InitializeProperties (xml, null);
 		}
 
@@ -324,7 +324,9 @@ namespace Microsoft.Build.Execution
 			get { return targets; }
 		}
 		
-		public string ToolsVersion { get; private set; }
+		public string ToolsVersion {
+			get { return tools_version; }
+		}
 
 		public ProjectItemInstance AddItem (string itemType, string evaluatedInclude)
 		{
@@ -385,7 +387,7 @@ namespace Microsoft.Build.Execution
 			var manager = new BuildManager ();
 			var parameters = new BuildParameters (projects) {
 				ForwardingLoggers = remoteLoggers,
-				Loggers = loggers
+				Loggers = loggers,
 			};
 			var requestData = new BuildRequestData (this, targets);
 			var result = manager.Build (parameters, requestData);

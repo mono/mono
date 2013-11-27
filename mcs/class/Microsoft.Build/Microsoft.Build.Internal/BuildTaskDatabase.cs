@@ -45,6 +45,8 @@ namespace Microsoft.Build.Internal
 
 		public static BuildTaskDatabase GetDefaultTaskDatabase (Toolset toolset)
 		{
+			if (toolset == null)
+				throw new ArgumentNullException ("toolset");
 			BuildTaskDatabase defaults;
 			if (!default_factory.TryGetValue (toolset.ToolsVersion, out defaults)) {
 				defaults = new BuildTaskDatabase (toolset);
