@@ -82,8 +82,11 @@ namespace Microsoft.Build.Internal
 				throw new ArgumentNullException ("toolsVersion");
 			
 			var parameters = submission.BuildManager.OngoingBuildParameters;
+			var toolset = parameters.GetToolset (toolsVersion);
+			if (toolset == null)
+				throw new InvalidOperationException (string.Format ("Toolset version '{0}' was not resolved to valid toolset", toolsVersion));
 			event_source.FireMessageRaised (this, new BuildMessageEventArgs (string.Format ("Using Toolset version {0}.", toolsVersion), null, null, MessageImportance.Low));
-			var buildTaskFactory = new BuildTaskFactory (BuildTaskDatabase.GetDefaultTaskDatabase (parameters.GetToolset (toolsVersion)), submission.BuildRequest.ProjectInstance.TaskDatabase);
+			var buildTaskFactory = new BuildTaskFactory (BuildTaskDatabase.GetDefaultTaskDatabase (toolset), submission.BuildRequest.ProjectInstance.TaskDatabase);
 			BuildProject (new InternalBuildArguments () { CheckCancel = checkCancel, Result = result, Project = project, TargetNames = targetNames, GlobalProperties = globalProperties, TargetOutputs = targetOutputs, ToolsVersion = toolsVersion, BuildTaskFactory = buildTaskFactory });
 		}
 
