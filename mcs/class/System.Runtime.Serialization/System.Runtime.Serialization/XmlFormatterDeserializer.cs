@@ -261,7 +261,7 @@ namespace System.Runtime.Serialization
 			if (name.StartsWith ("ArrayOf", StringComparison.Ordinal)) {
 				name = name.Substring (7); // strip "ArrayOf"
 				if (ns == KnownTypeCollection.MSArraysNamespace)
-					return GetTypeFromNamePair (name, String.Empty).MakeArrayType ();
+					return GetTypeFromNamePair (name, KnownTypeCollection.MSSimpleNamespace).MakeArrayType ();
 				makeArray = true;
 			}
 
