@@ -67,34 +67,14 @@ namespace Microsoft.Build.Evaluation
 		{
 			return metadata.FirstOrDefault (m => m.Name == name);
 		}
-		
-		static readonly char [] path_sep = {Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar};
-		
-		static readonly Dictionary<string,Func<ProjectItem,string>> well_known_metadata = new Dictionary<string, Func<ProjectItem,string>> {
-				{"FullPath", p => Path.Combine (p.Project.GetFullPath (p.evaluated_include)) },
-				{"RootDir", p => Path.GetPathRoot (p.Project.GetFullPath (p.evaluated_include)) },
-				{"Filename", p => Path.GetFileNameWithoutExtension (p.evaluated_include) },
-				{"Extension", p => Path.GetExtension (p.evaluated_include) },
-				{"RelativeDir", p => {
-					var idx = p.evaluated_include.LastIndexOfAny (path_sep);
-					return idx < 0 ? string.Empty : p.evaluated_include.Substring (0, idx + 1); }
-					},
-				{"Directory", p => {
-					var fp = p.Project.GetFullPath (p.evaluated_include);
-					return Path.GetDirectoryName (fp).Substring (Path.GetPathRoot (fp).Length); }
-					},
-				{"RecursiveDir", p => p.RecursiveDir },
-				{"Identity", p => p.EvaluatedInclude },
-				{"ModifiedTime", p => new FileInfo (p.Project.GetFullPath (p.evaluated_include)).LastWriteTime.ToString ("yyyy-MM-dd HH:mm:ss.fffffff") },
-				{"CreatedTime", p => new FileInfo (p.Project.GetFullPath (p.evaluated_include)).CreationTime.ToString ("yyyy-MM-dd HH:mm:ss.fffffff") },
-				{"AccessedTime", p => new FileInfo (p.Project.GetFullPath (p.evaluated_include)).LastAccessTime.ToString ("yyyy-MM-dd HH:mm:ss.fffffff") },
-				};
 
 		public string GetMetadataValue (string name)
 		{
-			var wellKnown = well_known_metadata.FirstOrDefault (p => p.Key.Equals (name, StringComparison.OrdinalIgnoreCase));
-			if (wellKnown.Value != null)
-				return wellKnown.Value (this);
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			var wk = ProjectCollection.GetWellKnownMetadata (name, EvaluatedInclude, project.GetFullPath, RecursiveDir);
+			if (wk != null)
+				return wk;
 			var m = GetMetadata (name);
 			return m != null ? m.EvaluatedValue : string.Empty;
 		}

@@ -29,6 +29,8 @@ using System;
 using System.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Construction;
+using Microsoft.Build.Evaluation;
+using System.IO;
 
 namespace Microsoft.Build.Internal
 {
@@ -40,7 +42,7 @@ namespace Microsoft.Build.Internal
 		public ProjectTaskItem (ProjectItemElement item, string evaluatedIncludePart)
 		{
 			this.item = item;
-			this.evaluated_include_part = evaluatedIncludePart;
+			this.evaluated_include_part = WindowsCompatibilityExtensions.NormalizeFilePath (evaluatedIncludePart);
 		}
 		#region ITaskItem implementation
 		System.Collections.IDictionary ITaskItem.CloneCustomMetadata ()
@@ -56,6 +58,9 @@ namespace Microsoft.Build.Internal
 		}
 		string ITaskItem.GetMetadata (string metadataName)
 		{
+			var wk = ProjectCollection.GetWellKnownMetadata (metadataName, evaluated_include_part, Path.GetFullPath, null);
+			if (wk != null)
+				return wk;
 			var mde = item.Metadata.FirstOrDefault (m => m.Name == metadataName);
 			return mde != null ? mde.Value : null;
 		}

@@ -41,6 +41,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Reflection;
+using System.Globalization;
 
 namespace Microsoft.Build.Evaluation
 {
@@ -450,6 +451,39 @@ namespace Microsoft.Build.Evaluation
 					yield return item;
 				}
 			}
+		}
+		
+		static readonly char [] path_sep = {Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar};
+		
+		internal static string GetWellKnownMetadata (string name, string file, Func<string,string> getFullPath, string recursiveDir)
+		{
+			switch (name.ToLower (CultureInfo.InvariantCulture)) {
+			case "fullpath":
+				return getFullPath (file);
+			case "rootdir":
+				return Path.GetPathRoot (getFullPath (file));
+			case "filename":
+				return Path.GetFileNameWithoutExtension (file);
+			case "extension":
+				return Path.GetExtension (file);
+			case "relativedir":
+					var idx = file.LastIndexOfAny (path_sep);
+					return idx < 0 ? string.Empty : file.Substring (0, idx + 1);
+			case "directory":
+					var fp = getFullPath (file);
+					return Path.GetDirectoryName (fp).Substring (Path.GetPathRoot (fp).Length);
+			case "recursivedir":
+				return recursiveDir;
+			case "identity":
+				return file;
+			case "modifiedtime":
+				return new FileInfo (getFullPath (file)).LastWriteTime.ToString ("yyyy-MM-dd HH:mm:ss.fffffff");
+			case "createdtime":
+				return new FileInfo (getFullPath (file)).CreationTime.ToString ("yyyy-MM-dd HH:mm:ss.fffffff");
+			case "accessedtime":
+				return new FileInfo (getFullPath (file)).LastAccessTime.ToString ("yyyy-MM-dd HH:mm:ss.fffffff");
+			}
+			return null;
 		}
 	}
 }
