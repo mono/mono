@@ -69,6 +69,10 @@ namespace MonoTests.Microsoft.Build.Internal
 				"$([System.DateTime]::Now)", // it is DateTime
 				"$([System.String]::Format('Tr'))$([System.String]::Format('ue'))", // only one expression is accepted
 				"$([System.String]::Format(null))", // causing ANE, wrapped by InvalidProjectFileException
+				"yep",
+				"nope",
+				"ONN",
+				"OFFF",
 			};
 			string [] valid = {
 				"'%24' == 0",
@@ -88,6 +92,10 @@ namespace MonoTests.Microsoft.Build.Internal
 				"(True or True or False)",
 				"True and False",
 				"(True) and (False)",
+				"yes",
+				"nO",
+				"oN",
+				"oFf",
 			};
 			string [] depends = {
 				// valid only if evaluated to boolean
