@@ -261,7 +261,7 @@ namespace Microsoft.Build.Internal.Expressions
 			string item = idx < 0 ? null : source.Substring (start, idx);
 			string meta = idx < 0 ? source.Substring (start, end - start) : source.Substring (idx + 1, end - idx - 1);
 			var access = new MetadataAccess () {
-					Item = item == null ? null : new NameToken () { Column = start, Name = item },
+					ItemType = item == null ? null : new NameToken () { Column = start, Name = item },
 					Metadata = new NameToken () { Column = idx < 0 ? start : idx + 1, Name = meta }
 					};
 			return new MetadataAccessExpression () { Access = access };

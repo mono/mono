@@ -175,7 +175,7 @@ namespace Microsoft.Build.Internal.Expressions
 	class MetadataAccess : Locatable
 	{
 		public NameToken Metadata { get; set; }
-		public NameToken Item { get; set; }
+		public NameToken ItemType { get; set; }
 	}
 	
 	partial class StringLiteral : Expression

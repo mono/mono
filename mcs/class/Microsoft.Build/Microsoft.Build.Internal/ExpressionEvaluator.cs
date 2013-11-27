@@ -415,19 +415,30 @@ namespace Microsoft.Build.Internal.Expressions
 
 	partial class MetadataAccessExpression : Expression
 	{
-		public override string EvaluateAsString (EvaluationContext context)
-		{
-			throw new NotImplementedException ();
-		}
-		
 		public override bool EvaluateAsBoolean (EvaluationContext context)
 		{
-			throw new NotImplementedException ();
+			return EvaluateStringAsBoolean (EvaluateAsString (context));
+		}
+		
+		public override string EvaluateAsString (EvaluationContext context)
+		{
+			string itemType = this.Access.ItemType.Name;
+			string metadataName = Access.Metadata.Name;
+			IEnumerable<object> items;
+			if (this.Access.ItemType != null)
+				items = context.GetItems (itemType);
+			else if (context.ContextItem != null)
+				items = new Object [] { context.ContextItem };
+			else
+				throw new InvalidProjectFileException (Location, null, string.Format ("Unexpected occurence of metadata reference: {0}{1}", itemType != null ? itemType + '.' : null, metadataName), null, null);
+			
+			var values = items.Select (i => (i is ProjectItem) ? ((ProjectItem) i).GetMetadataValue (metadataName) : ((ProjectItemInstance) i).GetMetadataValue (metadataName)).Where (s => !string.IsNullOrEmpty (s));
+			return string.Join (";", values);
 		}
 		
 		public override object EvaluateAsObject (EvaluationContext context)
 		{
-			throw new NotImplementedException ();
+			return EvaluateAsString (context);
 		}
 	}
 	partial class StringLiteral : Expression
