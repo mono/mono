@@ -862,7 +862,7 @@
         <size>26</size>
       </method>
       <method name="Void .ctor(Int32)" attrs="6278">
-        <size>9</size>
+        <size>16</size>
       </method>
     </type>
     <type name="MyTypeExplicit">
@@ -19273,7 +19273,7 @@
         <size>8</size>
       </method>
       <method name="Void .ctor(Object)" attrs="6278">
-        <size>9</size>
+        <size>16</size>
       </method>
     </type>
     <type name="C">
@@ -19445,7 +19445,7 @@
         <size>26</size>
       </method>
       <method name="Void .ctor(Int32)" attrs="6278">
-        <size>9</size>
+        <size>16</size>
       </method>
     </type>
     <type name="MyTypeExplicit">
@@ -40955,7 +40955,7 @@
   <test name="test-545.cs">
     <type name="Dingus">
       <method name="Void .ctor(Int32)" attrs="6278">
-        <size>2</size>
+        <size>9</size>
       </method>
     </type>
     <type name="X">
@@ -48439,6 +48439,21 @@
       </method>
       <method name="Void Test2()" attrs="129">
         <size>12</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-879.cs">
+    <type name="AStruct">
+      <method name="Void .ctor(Int32)" attrs="6278">
+        <size>9</size>
+      </method>
+    </type>
+    <type name="Tests">
+      <method name="Int32 Main()" attrs="150">
+        <size>83</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -58424,7 +58439,7 @@
         <size>9</size>
       </method>
       <method name="Void .ctor(Int32, String)" attrs="6278">
-        <size>9</size>
+        <size>16</size>
       </method>
     </type>
     <type name="Tester">

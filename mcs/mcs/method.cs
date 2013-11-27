@@ -1466,7 +1466,7 @@ namespace Mono.CSharp {
 				} else {
 					//
 					// It is legal to have "this" initializers that take no arguments
-					// in structs, they are just no-ops.
+					// in structs
 					//
 					// struct D { public D (int a) : this () {}
 					//
@@ -1487,9 +1487,17 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			// It can be null for static initializers
-			if (base_ctor == null)
+			//
+			// It can be null for struct initializers or System.Object
+			//
+			if (base_ctor == null) {
+				if (type == ec.BuiltinTypes.Object)
+					return;
+
+				ec.Emit (OpCodes.Ldarg_0);
+				ec.Emit (OpCodes.Initobj, type);
 				return;
+			}
 			
 			var call = new CallEmitter ();
 			call.InstanceExpression = new CompilerGeneratedThis (type, loc); 
