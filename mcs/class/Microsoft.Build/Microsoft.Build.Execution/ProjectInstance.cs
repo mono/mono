@@ -83,7 +83,9 @@ namespace Microsoft.Build.Execution
 		{
 			projects = projectCollection;
 			global_properties = globalProperties ?? new Dictionary<string, string> ();
-			tools_version = toolsVersion ?? xml.ToolsVersion ?? projects.DefaultToolsVersion;
+			tools_version = !string.IsNullOrEmpty (toolsVersion) ? toolsVersion :
+				!string.IsNullOrEmpty (xml.ToolsVersion) ? xml.ToolsVersion :
+				projects.DefaultToolsVersion;
 			InitializeProperties (xml, null);
 		}
 

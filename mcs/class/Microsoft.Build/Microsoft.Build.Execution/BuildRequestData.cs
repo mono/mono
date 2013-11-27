@@ -67,7 +67,6 @@ namespace Microsoft.Build.Execution
 			ExplicitlySpecifiedToolsVersion = toolsVersion;
 		}
 
-		[MonoTODO ("unused")]
 		public string ExplicitlySpecifiedToolsVersion { get; private set; }
 
 		[MonoTODO ("unused")]

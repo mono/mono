@@ -146,7 +146,7 @@ namespace Microsoft.Build.Evaluation
 		}
 
 		public string DefaultToolsVersion {
-			get { return Toolsets.Any () ? Toolsets.First ().ToolsVersion : null; }
+			get { return Toolsets.First ().ToolsVersion; }
 		}
 
 		public void Dispose ()
