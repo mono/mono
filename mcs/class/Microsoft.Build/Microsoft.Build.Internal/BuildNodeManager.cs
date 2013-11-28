@@ -43,6 +43,12 @@ namespace Microsoft.Build.Internal
 			BuildManager = buildManager;
 			new Thread (RunLoop).Start ();
 		}
+
+		~BuildNodeManager ()
+		{
+			run_loop = false;
+			queue_wait_handle.Set ();
+		}
 		
 		public BuildManager BuildManager { get; private set; }
 		
@@ -63,9 +69,8 @@ namespace Microsoft.Build.Internal
 		{
 			while (run_loop) {
 				try {
-					if (queued_builds.Count == 0) {
+					if (queued_builds.Count == 0)
 						queue_wait_handle.WaitOne ();
-					}
 					if (!run_loop)
 						break;
 					BuildSubmission build;
@@ -73,6 +78,7 @@ namespace Microsoft.Build.Internal
 						continue;
 					StartOneBuild (build);
 				} catch (Exception ex) {
+					// FIXME: I guess INodeLogger should be used instead.
 					Console.Error.WriteLine ("Uncaught build node exception occured");
 					Console.Error.WriteLine (ex);
 				}
@@ -100,9 +106,16 @@ namespace Microsoft.Build.Internal
 		void StartOneBuild (BuildSubmission build)
 		{
 			var node = TakeNode (build);
-			// FIXME: Task here causes NotImplementedException in somewhere in Interlocked. It does not make sense.
-			//ongoing_builds [build] = task_factory.StartNew (node.ExecuteBuild);
-			new Thread (() => { node.ExecuteBuild (); }).Start ();
+			// FIXME: Task (non-generic) here causes NotImplementedException in somewhere in Interlocked. It does not make sense.
+			ongoing_builds [build] = task_factory.StartNew (node.ExecuteBuild);
+			//new Thread (() => { node.ExecuteBuild (); }).Start ();
+		}
+		
+		void EndOneBuild (BuildNode node)
+		{
+			var task = ongoing_builds [node.Build];
+			ongoing_builds [node.Build] = null;
+			node.Release ();
 		}
 		
 		// FIXME: take max nodes into account here, and get throttling working.
@@ -167,12 +180,29 @@ namespace Microsoft.Build.Internal
 				Build = build;
 			}
 			
+			public void Release ()
+			{
+				Build = null;
+				IsAvailable = true;
+			}
+			
 			public BuildResult ExecuteBuild ()
 			{
-				// FIXME: depending on NodeAffinity, build it through another MSBuild process.
-				if (Affinity == NodeAffinity.OutOfProc)
-					throw new NotImplementedException ();
-				return Build.Execute ();
+				BuildResult result;
+				try {
+					// FIXME: depending on NodeAffinity, build it through another MSBuild process.
+					if (Affinity == NodeAffinity.OutOfProc)
+						throw new NotImplementedException ();
+					result = Build.InternalExecute ();
+				} catch (Exception ex) {
+					// FIXME: I guess INodeLogger should be used instead.
+					Console.Error.WriteLine ("Uncaught build node exception occured");
+					Console.Error.WriteLine (ex);
+					result = null;
+				} finally {
+					Manager.EndOneBuild (this);
+				}
+				return result;
 			}
 		}
 	}

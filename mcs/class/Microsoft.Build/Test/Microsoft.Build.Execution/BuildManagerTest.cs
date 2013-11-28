@@ -138,7 +138,7 @@ namespace MonoTests.Microsoft.Build.Execution
 			var root = ProjectRootElement.Create (xml);
 			var proj = new ProjectInstance (root);
 			var bm = new BuildManager ();
-			bm.BeginBuild (new BuildParameters () { Loggers = new ILogger [] { new ConsoleLogger () } });
+			bm.BeginBuild (new BuildParameters ());
 			DateTime waitDone = DateTime.MinValue;
 			DateTime beforeExec = DateTime.Now;
 			var l = new List<BuildSubmission> ();
@@ -152,6 +152,33 @@ namespace MonoTests.Microsoft.Build.Execution
 			DateTime endBuildDone = DateTime.Now;
 			Assert.IsTrue (endBuildDone - beforeExec >= TimeSpan.FromSeconds (1), "#2");
 			Assert.IsTrue (endBuildDone > waitDone, "#3");
+		}
+		
+		[Test]
+		public void BuildCommonResolveAssemblyReferences ()
+		{
+            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <Import Project='$(MSBuildToolsPath)\Microsoft.Common.targets' />
+  <ItemGroup>
+    <Reference Include='System.Core' />
+    <Reference Include='System.Xml' />
+  </ItemGroup>
+</Project>";
+            var xml = XmlReader.Create (new StringReader (project_xml));
+            var root = ProjectRootElement.Create (xml);
+			root.FullPath = "BuildManagerTest.BuildCommonResolveAssemblyReferences.proj";
+            var proj = new ProjectInstance (root);
+			var manager = new BuildManager ();
+			var parameters = new BuildParameters () { Loggers = new ILogger [] {new ConsoleLogger (LoggerVerbosity.Diagnostic)} };
+			var request = new BuildRequestData (proj, new string [] {"ResolveAssemblyReferences"});
+			var result = manager.Build (parameters, request);
+			var items = result.ResultsByTarget ["ResolveAssemblyReferences"].Items;
+			Assert.AreEqual (2, items.Count (), "#0");
+			Assert.IsTrue (items.Any (i => Path.GetFileName (i.ItemSpec) == "System.Core.dll"), "#1");
+			Assert.IsTrue (items.Any (i => Path.GetFileName (i.ItemSpec) == "System.Xml.dll"), "#2");
+			Assert.IsTrue (File.Exists (items.First (i => Path.GetFileName (i.ItemSpec) == "System.Core.dll").ItemSpec), "#3");
+			Assert.IsTrue (File.Exists (items.First (i => Path.GetFileName (i.ItemSpec) == "System.Xml.dll").ItemSpec), "#4");
+			Assert.AreEqual (BuildResultCode.Success, result.OverallResult, "#5");
 		}
 	}
 }
