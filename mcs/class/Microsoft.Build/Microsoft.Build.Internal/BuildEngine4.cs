@@ -115,21 +115,28 @@ namespace Microsoft.Build.Internal
 			
 			event_source.FireBuildStarted (this, new BuildStartedEventArgs ("Build Started", null, DateTime.Now));
 			
-			var initialPropertiesFormatted = "Initial Properties:\n" + string.Join (Environment.NewLine, project.Properties.OrderBy (p => p.Name).Select (p => string.Format ("{0} = {1}", p.Name, p.EvaluatedValue)).ToArray ());
-			event_source.FireMessageRaised (this, new BuildMessageEventArgs (initialPropertiesFormatted, null, null, MessageImportance.Low));
+			try {
+				
+				var initialPropertiesFormatted = "Initial Properties:\n" + string.Join (Environment.NewLine, project.Properties.OrderBy (p => p.Name).Select (p => string.Format ("{0} = {1}", p.Name, p.EvaluatedValue)).ToArray ());
+				event_source.FireMessageRaised (this, new BuildMessageEventArgs (initialPropertiesFormatted, null, null, MessageImportance.Low));
+				
+				// null targets -> success. empty targets -> success(!)
+				if (request.TargetNames == null)
+					args.Result.OverallResult = BuildResultCode.Success;
+				else {
+					foreach (var targetName in request.TargetNames.Where (t => t != null))
+						BuildTargetByName (targetName, args);
 			
-			// null targets -> success. empty targets -> success(!)
-			if (request.TargetNames == null)
-				args.Result.OverallResult = BuildResultCode.Success;
-			else {
-				foreach (var targetName in request.TargetNames.Where (t => t != null))
-					BuildTargetByName (targetName, args);
-		
-				// FIXME: check .NET behavior, whether cancellation always results in failure.
-				args.Result.OverallResult = args.CheckCancel () ? BuildResultCode.Failure : args.Result.ResultsByTarget.Select (p => p.Value).Any (r => r.ResultCode == TargetResultCode.Failure) ? BuildResultCode.Failure : BuildResultCode.Success;
+					// FIXME: check .NET behavior, whether cancellation always results in failure.
+					args.Result.OverallResult = args.CheckCancel () ? BuildResultCode.Failure : args.Result.ResultsByTarget.Select (p => p.Value).Any (r => r.ResultCode == TargetResultCode.Failure) ? BuildResultCode.Failure : BuildResultCode.Success;
+				}
+			} catch (Exception ex) {
+				event_source.FireErrorRaised (this, new BuildErrorEventArgs (null, null, project.FullPath, 0, 0, 0, 0, "Unhandled exception occured during a build", null, null));
+				event_source.FireMessageRaised (this, new BuildMessageEventArgs ("Exception details: " + ex, null, null, MessageImportance.Low));
+				args.Result.OverallResult = BuildResultCode.Failure;
+			} finally {
+				event_source.FireBuildFinished (this, new BuildFinishedEventArgs ("Build Finished.", null, args.Result.OverallResult == BuildResultCode.Success, DateTime.Now));
 			}
-			
-			event_source.FireBuildFinished (this, new BuildFinishedEventArgs ("Build Finished.", null, args.Result.OverallResult == BuildResultCode.Success, DateTime.Now));
 		}
 		
 		bool BuildTargetByName (string targetName, InternalBuildArguments args)
