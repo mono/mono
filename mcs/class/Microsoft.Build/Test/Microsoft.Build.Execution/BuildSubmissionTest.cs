@@ -60,7 +60,7 @@ namespace MonoTests.Microsoft.Build.Execution
 		[Test]
 		public void TaskOutputsToLoggers ()
 		{
-            string project_xml = @"<Project DefaultTargets='Foo;Bar' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+            string project_xml = @"<Project DefaultTargets='Foo' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
   <Import Project='$(MSBuildToolsPath)\Microsoft.Common.targets' />
   <Target Name='Foo'>
     <ItemGroup>
@@ -70,6 +70,7 @@ namespace MonoTests.Microsoft.Build.Execution
 </Project>";
             var xml = XmlReader.Create (new StringReader (project_xml));
             var root = ProjectRootElement.Create (xml);
+			root.FullPath = "BuildSubmissionTest.TaskOutputsToLoggers.proj";
             var proj = new ProjectInstance (root);
 			var sw = new StringWriter ();
 			Assert.IsFalse (proj.Build (new ILogger [] {new ConsoleLogger (default (LoggerVerbosity), msg => sw.Write (msg), null, null)}), "#1");
@@ -94,6 +95,7 @@ namespace MonoTests.Microsoft.Build.Execution
 </Project>", is_windows ? "powershell -command \"Start-Sleep -s 1\"" : "/bin/sleep 1");
 			var xml = XmlReader.Create (new StringReader (project_xml));
 			var root = ProjectRootElement.Create (xml);
+			root.FullPath = "BuildSubmissionTest.EndBuildWaitsForSubmissionCompletion.proj";
 			var proj = new ProjectInstance (root);
 			var bm = new BuildManager ();
 			bm.BeginBuild (new BuildParameters ());

@@ -123,6 +123,7 @@ namespace MonoTests.Microsoft.Build.Execution
 </Project>", defaultTargets [i], targets [i]);
 				var xml = XmlReader.Create (new StringReader (project_xml));
 				var root = ProjectRootElement.Create (xml);
+				root.FullPath = string.Format ("ProjectInstanceTest.MultipleDefaultTargets.{0}.proj", i);
 				var proj = new ProjectInstance (root);
 				Assert.AreEqual ("Foo", proj.DefaultTargets.FirstOrDefault (), "#1-" + i);
 				Assert.AreEqual (expected [i], proj.Build (), "#2-" + i);
@@ -140,6 +141,7 @@ namespace MonoTests.Microsoft.Build.Execution
 </Project>";
             var xml = XmlReader.Create (new StringReader (project_xml));
             var root = ProjectRootElement.Create (xml);
+			root.FullPath = "ProjectInstanceTest.DependsOnTargets.proj";
             var proj = new ProjectInstance (root);
 			Assert.AreEqual (2, proj.Targets.Count, "#1");
 			Assert.IsFalse (proj.Build ("Bar", new ILogger [0]), "#2");
@@ -158,6 +160,7 @@ namespace MonoTests.Microsoft.Build.Execution
 					File.CreateText ("inputsandoutputstest.txt").Close ();
 				var xml = XmlReader.Create (new StringReader (project_xml));
 				var root = ProjectRootElement.Create (xml);
+				root.FullPath = "ProjectTargetInstanceTest.InputsAndOutputs.proj";
 				var proj = new ProjectInstance (root);
 				Assert.IsTrue (proj.Build (), "#1"); // if it does not skip Foo, it results in an error.
 			} finally {
