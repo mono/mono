@@ -155,40 +155,44 @@ namespace Microsoft.Build.Internal
 				}
 				
 				Func<string,ITaskItem> creator = s => new TargetOutputTaskItem () { ItemSpec = s };
-				
-					event_source.FireTargetStarted (this, new TargetStartedEventArgs ("Target Started", null, target.Name, project.FullPath, target.FullPath));
 			
+				event_source.FireTargetStarted (this, new TargetStartedEventArgs ("Target Started", null, target.Name, project.FullPath, target.FullPath));
+				try {
 					if (!string.IsNullOrEmpty (target.Inputs) != !string.IsNullOrEmpty (target.Outputs)) {
 						targetResult.Failure (new InvalidProjectFileException (target.Location, null, string.Format ("Target {0} has mismatching Inputs and Outputs specification. When one is specified, another one has to be specified too.", targetName), null, null, null));
 					} else {
 						bool skip = false;
 						if (!string.IsNullOrEmpty (target.Inputs)) {
-							var inputs = args.Project.GetAllItems (target.Inputs, string.Empty, creator, creator, s => true, (t, s) => {});
+							var inputs = args.Project.GetAllItems (target.Inputs, string.Empty, creator, creator, s => true, (t, s) => {
+							});
 							if (!inputs.Any ()) {
 								event_source.FireMessageRaised (this, new BuildMessageEventArgs (string.Format ("Target '{0}' was skipped because there is no input.", target.Name), null, null, MessageImportance.Low));
 								skip = true;
 							} else {
-								var outputs = args.Project.GetAllItems (target.Outputs, string.Empty, creator, creator, s => true, (t, s) => {});
+								var outputs = args.Project.GetAllItems (target.Outputs, string.Empty, creator, creator, s => true, (t, s) => {
+								});
 								var needsUpdates = GetOlderOutputsThanInputs (inputs, outputs).FirstOrDefault ();
 								if (needsUpdates != null)
 									event_source.FireMessageRaised (this, new BuildMessageEventArgs (string.Format ("Target '{0}' needs to be built because new output {1} is needed.", target.Name, needsUpdates.ItemSpec), null, null, MessageImportance.Low));
 								else {
 									event_source.FireMessageRaised (this, new BuildMessageEventArgs (string.Format ("Target '{0}' was skipped because all the outputs are newer than all the inputs.", target.Name), null, null, MessageImportance.Low));
-									skip =true;
+									skip = true;
 								}
 							}
 						}
 						if (skip) {
 							targetResult.Skip ();
-						}
-						else {
+						} else {
 							if (DoBuildTarget (target, targetResult, args)) {
-								var items = args.Project.GetAllItems (target.Outputs, string.Empty, creator, creator, s => true, (t, s) => {});
+								var items = args.Project.GetAllItems (target.Outputs, string.Empty, creator, creator, s => true, (t, s) => {
+								});
 								targetResult.Success (items);
-								event_source.FireTargetFinished (this, new TargetFinishedEventArgs ("Target Finished", null, targetName, project.FullPath, target.FullPath, true));
 							}
 						}
 					}
+				} finally {
+					event_source.FireTargetFinished (this, new TargetFinishedEventArgs ("Target Finished", null, targetName, project.FullPath, target.FullPath, targetResult.ResultCode != TargetResultCode.Failure));
+				}
 			}
 			args.AddTargetResult (targetName, targetResult);
 			
@@ -318,7 +322,6 @@ namespace Microsoft.Build.Internal
 				event_source.FireTaskFinished (this, new TaskFinishedEventArgs ("Task Finished", null, project.FullPath, taskInstance.FullPath, taskInstance.Name, false));
 				targetResult.Failure (null);
 				if (!ContinueOnError) {
-					event_source.FireTargetFinished (this, new TargetFinishedEventArgs ("Target Failed", null, target.Name, project.FullPath, target.FullPath, false));
 					return false;
 				}
 			} else {
