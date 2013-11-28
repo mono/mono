@@ -34,6 +34,8 @@ using Microsoft.Build.Execution;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Logging;
 
 namespace MonoTests.Microsoft.Build.Execution
 {
@@ -136,7 +138,7 @@ namespace MonoTests.Microsoft.Build.Execution
 			var root = ProjectRootElement.Create (xml);
 			var proj = new ProjectInstance (root);
 			var bm = new BuildManager ();
-			bm.BeginBuild (new BuildParameters ());
+			bm.BeginBuild (new BuildParameters () { Loggers = new ILogger [] { new ConsoleLogger () } });
 			DateTime waitDone = DateTime.MinValue;
 			DateTime beforeExec = DateTime.Now;
 			var l = new List<BuildSubmission> ();
