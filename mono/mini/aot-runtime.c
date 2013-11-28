@@ -55,7 +55,7 @@
 #include <mono/utils/mono-mmap.h>
 #include "mono/utils/mono-compiler.h"
 #include <mono/utils/mono-counters.h>
-#include <mono/utils/sha1.h>
+#include <mono/utils/mono-digest.h>
 
 #include "mini.h"
 #include "version.h"
@@ -172,9 +172,13 @@ static GHashTable *ji_to_amodule;
 
 /*
  * Whenever to AOT compile loaded assemblies on demand and store them in
- * a cache under $HOME/.mono/aot-cache.
+ * a cache.
  */
-static gboolean aot_on_demand = FALSE;
+static gboolean enable_aot_on_demand = FALSE;
+/* The cache directory used by aot_on_demand */
+static char *cache_dir;
+/* The number of assemblies AOTed in this run */
+static int on_demand_count;
 
 /* For debugging */
 static gint32 mono_last_aot_method = -1;
@@ -1280,6 +1284,8 @@ collect_assemblies (gpointer data, gpointer user_data)
 	*l = g_slist_prepend (*l, ass);
 }
 
+#define SHA1_DIGEST_LENGTH 20
+
 /*
  * get_aot_config_hash:
  *
@@ -1292,7 +1298,6 @@ get_aot_config_hash (MonoAssembly *assembly)
 	GSList *l, *assembly_list = NULL;
 	GString *s;
 	int i;
-	SHA1_CTX ctx;
 	guint8 digest [SHA1_DIGEST_LENGTH];
 	char *digest_str;
 
@@ -1320,9 +1325,7 @@ get_aot_config_hash (MonoAssembly *assembly)
 			s->str [i] = '_';
 	}
 
-	SHA1Init (&ctx);
-	SHA1Update (&ctx, (guint8*)s->str, s->len);
-	SHA1Final (digest, &ctx);
+	mono_sha1_get_digest ((guint8*)s->str, s->len, digest);
 
 	digest_str = g_malloc0 ((SHA1_DIGEST_LENGTH * 2) + 1);
 	for (i = 0; i < SHA1_DIGEST_LENGTH; ++i)
@@ -1335,32 +1338,25 @@ get_aot_config_hash (MonoAssembly *assembly)
 	return digest_str;
 }
 
-static char *cache_dir;
-static int on_demand_count;
-
 /*
- * load_aot_module_on_demand:
- *
- *  Experimental code to AOT compile loaded assemblies on demand. 
- *
  * FIXME: 
- * - Add environment variable MONO_AOT_CACHE_OPTIONS
  * - Add options for controlling the cache size
  * - Handle full cache by deleting old assemblies lru style
- * - Add options for excluding assemblies during development
+ * - Add options for controlling the set of assemblies to be included/excluded
  * - Maybe add a threshold after an assembly is AOT compiled
- * - invoking a new mono process is a security risk
- * - recompile the AOT module if one of its dependencies changes
+ * - Add options for enabling this for specific main assemblies
+ * - Cache failures
+ * - Add a config file
+ * - Add a way to disable by the user
  */
+#ifdef ENABLE_AOT_ON_DEMAND
 static MonoDl*
 load_aot_module_on_demand (MonoAssembly *assembly, char **aot_name)
 {
-#ifdef ENABLE_AOT_ON_DEMAND
 	char *fname, *tmp2, *aot_options;
 	const char *home;
 	MonoDl *module;
 	gboolean res;
-	gchar *err;
 	gint exit_status;
 	char *hash;
 	int pid;
@@ -1393,62 +1389,64 @@ load_aot_module_on_demand (MonoAssembly *assembly, char **aot_name)
 	*aot_name = fname;
 	g_free (tmp2);
 
-	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT: trying to load from cache: '%s'.", fname);
+	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT: loading from cache: '%s'.", fname);
 	module = mono_dl_open (fname, MONO_DL_LAZY, NULL);
 
-	if (!module) {
-		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT: not found.");
+	if (module)
+		return module;
 
-		if (!strcmp (assembly->aname.name, "mscorlib") && !mono_defaults.corlib)
-			/* Can't AOT this during startup */
-			return NULL;
+	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT: not found.");
 
-		/*
-		 * Only AOT one assembly per run to avoid slowing down execution too much.
-		 */
-		if (on_demand_count > 0)
-			return NULL;
-		on_demand_count ++;
+	if (!strcmp (assembly->aname.name, "mscorlib") && !mono_defaults.corlib)
+		/* Can't AOT this during startup */
+		return NULL;
 
-		mono_trace (G_LOG_LEVEL_MESSAGE, MONO_TRACE_AOT, "AOT: precompiling assembly '%s'... ", assembly->image->name);
+	/* Only AOT one assembly per run to avoid slowing down execution too much */
+	if (on_demand_count > 0)
+		return NULL;
+	on_demand_count ++;
 
-		aot_options = g_strdup_printf ("outfile=%s", fname);
+	mono_trace (G_LOG_LEVEL_MESSAGE, MONO_TRACE_AOT, "AOT: compiling assembly '%s'... ", assembly->image->name);
 
-		/*
-		 * We need to invoke the AOT compiler here. There are multiple approaches:
-		 * - spawn a new runtim process. This can be hard when running with mkbundle, and
-		 * its hard to make the new process load the same set of assemblies.
-		 * - doing it in-process. This exposes the current process to bugs/leaks/side effects of
-		 * the AOT compiler.
-		 * - fork a new process and do the work there. This is the current approach.
-		 */
-		pid = fork ();
-		if (pid == 0) {
-			// FIXME: Redirect stdout/stderr
-			res = mono_compile_assembly (assembly, mono_parse_default_optimizations (NULL), aot_options);
-			if (!res) {
-				exit (1);
-			} else {
-				exit (0);
-			}
+	aot_options = g_strdup_printf ("outfile=%s", fname);
+
+	/*
+	 * We need to invoke the AOT compiler here. There are multiple approaches:
+	 * - spawn a new runtime process. This can be hard when running with mkbundle, and
+	 * its hard to make the new process load the same set of assemblies.
+	 * - doing it in-process. This exposes the current process to bugs/leaks/side effects of
+	 * the AOT compiler.
+	 * - fork a new process and do the work there. This is the current approach.
+	 */
+	pid = fork ();
+	if (pid == 0) {
+		// FIXME: Redirect stdout/stderr
+		res = mono_compile_assembly (assembly, mono_parse_default_optimizations (NULL), aot_options);
+		if (!res) {
+			exit (1);
 		} else {
-			waitpid (pid, &exit_status, 0);
-			if (!WIFEXITED (exit_status) && (WEXITSTATUS (exit_status) == 0))
-				mono_trace (G_LOG_LEVEL_MESSAGE, MONO_TRACE_AOT, "AOT: failed: %s.", err);
-			else
-				mono_trace (G_LOG_LEVEL_MESSAGE, MONO_TRACE_AOT, "AOT: succeeded.");
+			exit (0);
 		}
-
-		module = mono_dl_open (fname, MONO_DL_LAZY, NULL);
-
-		g_free (aot_options);
+	} else {
+		waitpid (pid, &exit_status, 0);
+		if (!WIFEXITED (exit_status) && (WEXITSTATUS (exit_status) == 0))
+			mono_trace (G_LOG_LEVEL_MESSAGE, MONO_TRACE_AOT, "AOT: failed.");
+		else
+			mono_trace (G_LOG_LEVEL_MESSAGE, MONO_TRACE_AOT, "AOT: succeeded.");
 	}
 
+	module = mono_dl_open (fname, MONO_DL_LAZY, NULL);
+
+	g_free (aot_options);
 	return module;
-#else
-	return NULL;
-#endif
 }
+#else
+static MonoDl*
+load_aot_module_on_demand (MonoAssembly *assembly, char **aot_name)
+{
+	return NULL;
+}
+#endif
 
 static void
 find_symbol (MonoDl *module, gpointer *globals, const char *name, gpointer *value)
@@ -1641,7 +1639,7 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 	if (mono_security_cas_enabled ())
 		return;
 
-	if (aot_on_demand && !strcmp (assembly->aname.name, "mscorlib") && !mono_defaults.corlib)
+	if (enable_aot_on_demand && !strcmp (assembly->aname.name, "mscorlib") && !mono_defaults.corlib)
 		/* Loaded later from mono_aot_get_method () */
 		return;
 
@@ -1659,7 +1657,7 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "Found statically linked AOT module '%s'.\n", aot_name);
 		globals = info->globals;
 	} else {
-		if (aot_on_demand)
+		if (enable_aot_on_demand)
 			sofile = load_aot_module_on_demand (assembly, &aot_name);
 		else {
 			char *err;
@@ -2000,7 +1998,7 @@ mono_aot_init (void)
 	if (g_getenv ("MONO_LASTAOT"))
 		mono_last_aot_method = atoi (g_getenv ("MONO_LASTAOT"));
 	if (g_getenv ("MONO_AOT_ON_DEMAND"))
-		aot_on_demand = TRUE;
+		enable_aot_on_demand = TRUE;
 }
 
 void
@@ -3695,7 +3693,7 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method)
 	MonoAotModule *amodule = klass->image->aot_module;
 	guint8 *code;
 
-	if (aot_on_demand && !amodule && klass->image == mono_defaults.corlib) {
+	if (enable_aot_on_demand && !amodule && klass->image == mono_defaults.corlib) {
 		/* This cannot be AOTed during startup, so do it now */
 		load_aot_module (klass->image->assembly, NULL);
 		amodule = klass->image->aot_module;
