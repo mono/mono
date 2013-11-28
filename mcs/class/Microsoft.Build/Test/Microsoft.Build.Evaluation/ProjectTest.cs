@@ -149,7 +149,7 @@ namespace MonoTests.Microsoft.Build.Evaluation
             var root = ProjectRootElement.Create (xml);
             var proj = new Project (root);
 			root.FullPath = "ProjectTest.BuildCSharpTargetGetFrameworkPaths.proj";
-			Assert.IsTrue (proj.Build ("GetFrameworkPaths", new ILogger [] {new ConsoleLogger ()}));
+			Assert.IsTrue (proj.Build ("GetFrameworkPaths", new ILogger [] {/*new ConsoleLogger ()*/}));
 		}
 		
 		[Test]
@@ -165,7 +165,7 @@ namespace MonoTests.Microsoft.Build.Evaluation
             var root = ProjectRootElement.Create (xml);
 			root.FullPath = "ProjectTest.BuildCSharpTargetBuild.proj";
 			var proj = new Project (root, null, "4.0");
-			Assert.IsFalse (proj.Build ("Build", new ILogger [] {new ConsoleLogger (LoggerVerbosity.Diagnostic)})); // missing mandatory properties
+			Assert.IsFalse (proj.Build ("Build", new ILogger [] {/*new ConsoleLogger (LoggerVerbosity.Diagnostic)*/})); // missing mandatory properties
 		}
 		
 		[Test]

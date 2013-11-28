@@ -84,7 +84,7 @@ namespace Microsoft.Build.Internal
 			var toolset = parameters.GetToolset (toolsVersion);
 			if (toolset == null)
 				throw new InvalidOperationException (string.Format ("Toolset version '{0}' was not resolved to valid toolset", toolsVersion));
-			event_source.FireMessageRaised (this, new BuildMessageEventArgs (string.Format ("Using Toolset version {0}.", toolsVersion), null, null, MessageImportance.Low));
+			LogMessageEvent (new BuildMessageEventArgs (string.Format ("Using Toolset version {0}.", toolsVersion), null, null, MessageImportance.Low));
 			var buildTaskFactory = new BuildTaskFactory (BuildTaskDatabase.GetDefaultTaskDatabase (toolset), submission.BuildRequest.ProjectInstance.TaskDatabase);
 			BuildProject (new InternalBuildArguments () { CheckCancel = checkCancel, Result = result, Project = project, TargetNames = targetNames, GlobalProperties = globalProperties, TargetOutputs = targetOutputs, ToolsVersion = toolsVersion, BuildTaskFactory = buildTaskFactory });
 		}
@@ -118,7 +118,7 @@ namespace Microsoft.Build.Internal
 			try {
 				
 				var initialPropertiesFormatted = "Initial Properties:\n" + string.Join (Environment.NewLine, project.Properties.OrderBy (p => p.Name).Select (p => string.Format ("{0} = {1}", p.Name, p.EvaluatedValue)).ToArray ());
-				event_source.FireMessageRaised (this, new BuildMessageEventArgs (initialPropertiesFormatted, null, null, MessageImportance.Low));
+				LogMessageEvent (new BuildMessageEventArgs (initialPropertiesFormatted, null, null, MessageImportance.Low));
 				
 				// null targets -> success. empty targets -> success(!)
 				if (request.TargetNames == null)
@@ -128,12 +128,12 @@ namespace Microsoft.Build.Internal
 						BuildTargetByName (targetName, args);
 			
 					// FIXME: check .NET behavior, whether cancellation always results in failure.
-					args.Result.OverallResult = args.CheckCancel () ? BuildResultCode.Failure : args.Result.ResultsByTarget.Select (p => p.Value).Any (r => r.ResultCode == TargetResultCode.Failure) ? BuildResultCode.Failure : BuildResultCode.Success;
+					args.Result.OverallResult = args.CheckCancel () ? BuildResultCode.Failure : args.Result.ResultsByTarget.Any (p => p.Value.ResultCode == TargetResultCode.Failure) ? BuildResultCode.Failure : BuildResultCode.Success;
 				}
 			} catch (Exception ex) {
-				event_source.FireErrorRaised (this, new BuildErrorEventArgs (null, null, project.FullPath, 0, 0, 0, 0, "Unhandled exception occured during a build", null, null));
-				event_source.FireMessageRaised (this, new BuildMessageEventArgs ("Exception details: " + ex, null, null, MessageImportance.Low));
-				args.Result.OverallResult = BuildResultCode.Failure;
+				LogErrorEvent (new BuildErrorEventArgs (null, null, project.FullPath, 0, 0, 0, 0, "Unhandled exception occured during a build", null, null));
+				LogMessageEvent (new BuildMessageEventArgs ("Exception details: " + ex, null, null, MessageImportance.Low));
+				throw; // BuildSubmission re-catches this.
 			} finally {
 				event_source.FireBuildFinished (this, new BuildFinishedEventArgs ("Build Finished.", null, args.Result.OverallResult == BuildResultCode.Success, DateTime.Now));
 			}
@@ -151,7 +151,7 @@ namespace Microsoft.Build.Internal
 			if (!request.ProjectInstance.Targets.TryGetValue (targetName, out target))
 				throw new InvalidOperationException (string.Format ("target '{0}' was not found in project '{1}'", targetName, project.FullPath));
 			else if (!args.Project.EvaluateCondition (target.Condition)) {
-				event_source.FireMessageRaised (this, new BuildMessageEventArgs (string.Format ("Target '{0}' was skipped because condition '{1}' wasn't met.", target.Name, target.Condition), null, null, MessageImportance.Low));
+				LogMessageEvent (new BuildMessageEventArgs (string.Format ("Target '{0}' was skipped because condition '{1}' wasn't met.", target.Name, target.Condition), null, null, MessageImportance.Low));
 				targetResult.Skip ();
 			} else {
 				// process DependsOnTargets first.
@@ -173,16 +173,16 @@ namespace Microsoft.Build.Internal
 							var inputs = args.Project.GetAllItems (target.Inputs, string.Empty, creator, creator, s => true, (t, s) => {
 							});
 							if (!inputs.Any ()) {
-								event_source.FireMessageRaised (this, new BuildMessageEventArgs (string.Format ("Target '{0}' was skipped because there is no input.", target.Name), null, null, MessageImportance.Low));
+								LogMessageEvent (new BuildMessageEventArgs (string.Format ("Target '{0}' was skipped because there is no input.", target.Name), null, null, MessageImportance.Low));
 								skip = true;
 							} else {
 								var outputs = args.Project.GetAllItems (target.Outputs, string.Empty, creator, creator, s => true, (t, s) => {
 								});
 								var needsUpdates = GetOlderOutputsThanInputs (inputs, outputs).FirstOrDefault ();
 								if (needsUpdates != null)
-									event_source.FireMessageRaised (this, new BuildMessageEventArgs (string.Format ("Target '{0}' needs to be built because new output {1} is needed.", target.Name, needsUpdates.ItemSpec), null, null, MessageImportance.Low));
+									LogMessageEvent (new BuildMessageEventArgs (string.Format ("Target '{0}' needs to be built because new output {1} is needed.", target.Name, needsUpdates.ItemSpec), null, null, MessageImportance.Low));
 								else {
-									event_source.FireMessageRaised (this, new BuildMessageEventArgs (string.Format ("Target '{0}' was skipped because all the outputs are newer than all the inputs.", target.Name), null, null, MessageImportance.Low));
+									LogMessageEvent (new BuildMessageEventArgs (string.Format ("Target '{0}' was skipped because all the outputs are newer than all the inputs.", target.Name), null, null, MessageImportance.Low));
 									skip = true;
 								}
 							}
@@ -258,7 +258,7 @@ namespace Microsoft.Build.Internal
 				foreach (var ti in target.Children.OfType<ProjectTaskInstance> ()) {
 					current_task = ti;
 					if (!args.Project.EvaluateCondition (ti.Condition)) {
-						event_source.FireMessageRaised (this, new BuildMessageEventArgs (string.Format ("Task '{0}' was skipped because condition '{1}' wasn't met.", ti.Name, ti.Condition), null, null, MessageImportance.Low));
+						LogMessageEvent (new BuildMessageEventArgs (string.Format ("Task '{0}' was skipped because condition '{1}' wasn't met.", ti.Name, ti.Condition), null, null, MessageImportance.Low));
 						continue;
 					}
 					if (!RunBuildTask (target, ti, targetResult, args))
@@ -291,7 +291,7 @@ namespace Microsoft.Build.Internal
 			factoryIdentityParameters ["MSBuildArchitecture"] = taskInstance.MSBuildArchitecture;
 			#endif
 			var task = args.BuildTaskFactory.CreateTask (taskInstance.Name, factoryIdentityParameters, this);
-			event_source.FireMessageRaised (this, new BuildMessageEventArgs (string.Format ("Using task {0} from {1}", taskInstance.Name, task.GetType ().AssemblyQualifiedName), null, null, MessageImportance.Low));
+			LogMessageEvent (new BuildMessageEventArgs (string.Format ("Using task {0} from {1}", taskInstance.Name, task.GetType ().AssemblyQualifiedName), null, null, MessageImportance.Low));
 			task.HostObject = host;
 			task.BuildEngine = this;
 			

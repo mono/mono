@@ -76,6 +76,13 @@ namespace Microsoft.Build.Execution
 
 		public BuildResult Execute ()
 		{
+			ExecuteAsync (null, null);
+			WaitHandle.WaitOne ();
+			return BuildResult;
+		}
+		
+		internal BuildResult InternalExecute ()
+		{
 			BuildResult = new BuildResult () { SubmissionId = SubmissionId };
 			try {
 				var engine = new BuildEngine4 (this);
@@ -83,24 +90,24 @@ namespace Microsoft.Build.Execution
 				var outputs = new Dictionary<string,string> ();
 				engine.BuildProject (() => is_canceled, BuildResult, request.ProjectInstance, request.TargetNames, BuildManager.OngoingBuildParameters.GlobalProperties, outputs, toolsVersion);
 			} catch (Exception ex) {
-// FIXME: remove this. It's here only for diagnositc purpose
-Console.Error.WriteLine (ex);
 				BuildResult.Exception = ex;
 				BuildResult.OverallResult = BuildResultCode.Failure;
 			}
 			is_completed = true;
-			wait_handle.Set ();
 			if (callback != null)
 				callback (this);
+			wait_handle.Set ();
 			return BuildResult;
 		}
 
 		public void ExecuteAsync (BuildSubmissionCompleteCallback callback, object context)
 		{
-			if (is_started)
-				throw new InvalidOperationException ("Build has already started");
+			if (is_completed)
+				throw new InvalidOperationException ("Build has already completed");
 			if (is_canceled)
 				throw new InvalidOperationException ("Build has already canceled");
+			if (is_started)
+				throw new InvalidOperationException ("Build has already started");
 			is_started = true;
 			this.AsyncContext = context;
 			this.callback = callback;

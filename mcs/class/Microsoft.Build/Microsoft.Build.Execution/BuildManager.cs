@@ -45,7 +45,6 @@ namespace Microsoft.Build.Execution
 		
 		public BuildManager ()
 		{
-			build_node_manager = new BuildNodeManager (this);
 		}
 
 		public BuildManager (string hostName)
@@ -83,7 +82,9 @@ namespace Microsoft.Build.Execution
 		public BuildResult Build (BuildParameters parameters, BuildRequestData requestData)
 		{
 			BeginBuild (parameters);
-			return BuildRequest (requestData);
+			var ret = BuildRequest (requestData);
+			EndBuild ();
+			return ret;
 		}
 
 		public BuildResult BuildRequest (BuildRequestData requestData)
@@ -152,13 +153,17 @@ namespace Microsoft.Build.Execution
 			if (OngoingBuildParameters != null)
 				throw new InvalidOperationException ("Cannot reset caches while builds are in progress.");
 			
-			build_node_manager.ResetCaches ();
+			BuildNodeManager.ResetCaches ();
 		}
 		
 		BuildNodeManager build_node_manager;
 		
 		internal BuildNodeManager BuildNodeManager {
-			get { return build_node_manager; }
+			get {
+				if (build_node_manager == null)
+						build_node_manager = new BuildNodeManager (this);
+				return build_node_manager;
+			}
 		}
 	}
 }
