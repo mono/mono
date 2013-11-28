@@ -161,7 +161,7 @@ namespace MonoTests.Microsoft.Build.Evaluation
             var xml = XmlReader.Create (new StringReader (project_xml));
             var root = ProjectRootElement.Create (xml);
 			var proj = new Project (root, null, "4.0");
-			Assert.IsFalse (proj.Build ("Build", new ILogger [] {new ConsoleLogger (LoggerVerbosity.Diagnostic, Console.Error.WriteLine, null, null)})); // missing mandatory properties
+			Assert.IsFalse (proj.Build ("Build", new ILogger [] {new ConsoleLogger (LoggerVerbosity.Diagnostic)})); // missing mandatory properties
 		}
 		
 		[Test]

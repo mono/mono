@@ -56,7 +56,6 @@ namespace Microsoft.Build.Internal
 
 		BuildSubmission submission;
 		ProjectInstance project;
-		ProjectTargetInstance current_target;
 		ProjectTaskInstance current_task;
 		Microsoft.Build.BuildEngine.EventSource event_source;
 		
@@ -129,6 +128,7 @@ namespace Microsoft.Build.Internal
 				// FIXME: check .NET behavior, whether cancellation always results in failure.
 				args.Result.OverallResult = args.CheckCancel () ? BuildResultCode.Failure : args.Result.ResultsByTarget.Select (p => p.Value).Any (r => r.ResultCode == TargetResultCode.Failure) ? BuildResultCode.Failure : BuildResultCode.Success;
 			}
+			
 			event_source.FireBuildFinished (this, new BuildFinishedEventArgs ("Build Finished.", null, args.Result.OverallResult == BuildResultCode.Success, DateTime.Now));
 		}
 		
@@ -154,9 +154,8 @@ namespace Microsoft.Build.Internal
 					}
 				}
 				
-				current_target = target;
 				Func<string,ITaskItem> creator = s => new TargetOutputTaskItem () { ItemSpec = s };
-				try {
+				
 					event_source.FireTargetStarted (this, new TargetStartedEventArgs ("Target Started", null, target.Name, project.FullPath, target.FullPath));
 			
 					if (!string.IsNullOrEmpty (target.Inputs) != !string.IsNullOrEmpty (target.Outputs)) {
@@ -183,16 +182,13 @@ namespace Microsoft.Build.Internal
 							targetResult.Skip ();
 						}
 						else {
-							if (DoBuildTarget (targetResult, args)) {
+							if (DoBuildTarget (target, targetResult, args)) {
 								var items = args.Project.GetAllItems (target.Outputs, string.Empty, creator, creator, s => true, (t, s) => {});
 								targetResult.Success (items);
 								event_source.FireTargetFinished (this, new TargetFinishedEventArgs ("Target Finished", null, targetName, project.FullPath, target.FullPath, true));
 							}
 						}
 					}
-				} finally {
-					current_target = null;
-				}
 			}
 			args.AddTargetResult (targetName, targetResult);
 			
@@ -204,10 +200,9 @@ namespace Microsoft.Build.Internal
 			return outputs.Where (o => !File.Exists (o.GetMetadata ("FullPath")) || inputs.Any (i => string.CompareOrdinal (i.GetMetadata ("LastModifiedTime"), o.GetMetadata ("LastModifiedTime")) > 0));
 		}
 		
-		bool DoBuildTarget (TargetResult targetResult, InternalBuildArguments args)
+		bool DoBuildTarget (ProjectTargetInstance target, TargetResult targetResult, InternalBuildArguments args)
 		{
 			var request = submission.BuildRequest;
-			var target = current_target;
 	
 			// Here we check cancellation (only after TargetStarted event).
 			if (args.CheckCancel ()) {
@@ -255,7 +250,7 @@ namespace Microsoft.Build.Internal
 						event_source.FireMessageRaised (this, new BuildMessageEventArgs (string.Format ("Task '{0}' was skipped because condition '{1}' wasn't met.", ti.Name, ti.Condition), null, null, MessageImportance.Low));
 						continue;
 					}
-					if (!RunBuildTask (ti, targetResult, args))
+					if (!RunBuildTask (target, ti, targetResult, args))
 						return false;
 				}
 			} finally {
@@ -272,56 +267,55 @@ namespace Microsoft.Build.Internal
 			return true;
 		}
 		
-		bool RunBuildTask (ProjectTaskInstance ti, TargetResult targetResult, InternalBuildArguments args)
+		bool RunBuildTask (ProjectTargetInstance target, ProjectTaskInstance taskInstance, TargetResult targetResult, InternalBuildArguments args)
 		{
 			var request = submission.BuildRequest;
-			var target = current_target;
 
-			var host = request.HostServices == null ? null : request.HostServices.GetHostObject (request.ProjectFullPath, target.Name, ti.Name);
+			var host = request.HostServices == null ? null : request.HostServices.GetHostObject (request.ProjectFullPath, target.Name, taskInstance.Name);
 			
 			// Create Task instance.
 			var factoryIdentityParameters = new Dictionary<string,string> ();
 			#if NET_4_5
-			factoryIdentityParameters ["MSBuildRuntime"] = ti.MSBuildRuntime;
-			factoryIdentityParameters ["MSBuildArchitecture"] = ti.MSBuildArchitecture;
+			factoryIdentityParameters ["MSBuildRuntime"] = taskInstance.MSBuildRuntime;
+			factoryIdentityParameters ["MSBuildArchitecture"] = taskInstance.MSBuildArchitecture;
 			#endif
-			var task = args.BuildTaskFactory.CreateTask (ti.Name, factoryIdentityParameters, this);
-			event_source.FireMessageRaised (this, new BuildMessageEventArgs (string.Format ("Using task {0} from {1}", ti.Name, task.GetType ().AssemblyQualifiedName), null, null, MessageImportance.Low));
+			var task = args.BuildTaskFactory.CreateTask (taskInstance.Name, factoryIdentityParameters, this);
+			event_source.FireMessageRaised (this, new BuildMessageEventArgs (string.Format ("Using task {0} from {1}", taskInstance.Name, task.GetType ().AssemblyQualifiedName), null, null, MessageImportance.Low));
 			task.HostObject = host;
 			task.BuildEngine = this;
 			
 			// Prepare task parameters.
-			var evaluatedTaskParams = ti.Parameters.Select (p => new KeyValuePair<string,string> (p.Key, project.ExpandString (p.Value)));
+			var evaluatedTaskParams = taskInstance.Parameters.Select (p => new KeyValuePair<string,string> (p.Key, project.ExpandString (p.Value)));
 			
 			var requiredProps = task.GetType ().GetProperties ()
 				.Where (p => p.CanWrite && p.GetCustomAttributes (typeof (RequiredAttribute), true).Any ());
 			var missings = requiredProps.Where (p => !evaluatedTaskParams.Any (tp => tp.Key.Equals (p.Name, StringComparison.OrdinalIgnoreCase)));
 			if (missings.Any ())
 				throw new InvalidOperationException (string.Format ("Task {0} of type {1} is used without specifying mandatory property: {2}",
-					ti.Name, task.GetType (), string.Join (", ", missings.Select (p => p.Name).ToArray ())));
+					taskInstance.Name, task.GetType (), string.Join (", ", missings.Select (p => p.Name).ToArray ())));
 			
 			foreach (var p in evaluatedTaskParams) {
 				var prop = task.GetType ().GetProperty (p.Key);
 				if (prop == null)
-					throw new InvalidOperationException (string.Format ("Task {0} does not have property {1}", ti.Name, p.Key));
+					throw new InvalidOperationException (string.Format ("Task {0} does not have property {1}", taskInstance.Name, p.Key));
 				if (!prop.CanWrite)
-					throw new InvalidOperationException (string.Format ("Task {0} has property {1} but it is read-only.", ti.Name, p.Key));
+					throw new InvalidOperationException (string.Format ("Task {0} has property {1} but it is read-only.", taskInstance.Name, p.Key));
 				if (string.IsNullOrEmpty (p.Value) && !requiredProps.Contains (prop))
 					continue;
 				try {
 					var valueInstance = ConvertTo (p.Value, prop.PropertyType);
 					prop.SetValue (task, valueInstance, null);
 				} catch (Exception ex) {
-					throw new InvalidOperationException (string.Format ("Failed to convert '{0}' for property '{1}' of type {2}", p.Value, prop.Name, prop.PropertyType));
+					throw new InvalidOperationException (string.Format ("Failed to convert '{0}' for property '{1}' of type {2}", p.Value, prop.Name, prop.PropertyType), ex);
 				}
 			}
 			
 			// Do execute task.
-			event_source.FireTaskStarted (this, new TaskStartedEventArgs ("Task Started", null, project.FullPath, ti.FullPath, ti.Name));
+			event_source.FireTaskStarted (this, new TaskStartedEventArgs ("Task Started", null, project.FullPath, taskInstance.FullPath, taskInstance.Name));
 			var taskSuccess = task.Execute ();
 			
 			if (!taskSuccess) {
-				event_source.FireTaskFinished (this, new TaskFinishedEventArgs ("Task Finished", null, project.FullPath, ti.FullPath, ti.Name, false));
+				event_source.FireTaskFinished (this, new TaskFinishedEventArgs ("Task Finished", null, project.FullPath, taskInstance.FullPath, taskInstance.Name, false));
 				targetResult.Failure (null);
 				if (!ContinueOnError) {
 					event_source.FireTargetFinished (this, new TargetFinishedEventArgs ("Target Failed", null, target.Name, project.FullPath, target.FullPath, false));
@@ -329,8 +323,8 @@ namespace Microsoft.Build.Internal
 				}
 			} else {
 				// Evaluate task output properties and items.
-				event_source.FireTaskFinished (this, new TaskFinishedEventArgs ("Task Finished", null, project.FullPath, ti.FullPath, ti.Name, true));
-				foreach (var to in ti.Outputs) {
+				event_source.FireTaskFinished (this, new TaskFinishedEventArgs ("Task Finished", null, project.FullPath, taskInstance.FullPath, taskInstance.Name, true));
+				foreach (var to in taskInstance.Outputs) {
 					if (!project.EvaluateCondition (to.Condition))
 						continue;
 					var toItem = to as ProjectTaskOutputItemInstance;
@@ -338,9 +332,9 @@ namespace Microsoft.Build.Internal
 					string taskParameter = toItem != null ? toItem.TaskParameter : toProp.TaskParameter;
 					var pi = task.GetType ().GetProperty (taskParameter);
 					if (pi == null)
-						throw new InvalidOperationException (string.Format ("Task {0} does not have property {1} specified as TaskParameter", ti.Name, toItem.TaskParameter));
+						throw new InvalidOperationException (string.Format ("Task {0} does not have property {1} specified as TaskParameter", taskInstance.Name, toItem.TaskParameter));
 					if (!pi.CanRead)
-						throw new InvalidOperationException (string.Format ("Task {0} has property {1} specified as TaskParameter, but it is write-only", ti.Name, toItem.TaskParameter));
+						throw new InvalidOperationException (string.Format ("Task {0} has property {1} specified as TaskParameter, but it is write-only", taskInstance.Name, toItem.TaskParameter));
 					if (toItem != null)
 						args.Project.AddItem (toItem.ItemType, ConvertFrom (pi.GetValue (task, null)));
 					else

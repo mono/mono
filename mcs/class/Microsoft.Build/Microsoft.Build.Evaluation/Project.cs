@@ -220,8 +220,6 @@ namespace Microsoft.Build.Evaluation
 			ProjectCollection.AddProject (this);
 		}
 		
-		static readonly char [] item_sep = {';'};
-		
 		void ProcessXml (Project parent)
 		{
 			// this needs to be initialized here (regardless of that items won't be evaluated at property evaluation;
