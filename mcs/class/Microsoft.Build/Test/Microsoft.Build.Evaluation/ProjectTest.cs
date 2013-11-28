@@ -90,17 +90,18 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
 			var xml = XmlReader.Create (new StringReader (project_xml), null, "file://localhost/foo.xml");
 			var root = ProjectRootElement.Create (xml);
+			root.FullPath = "ProjectTest.BuildEmptyProject.proj";
             
 			// This seems to do nothing and still returns true
-			Assert.IsTrue (new Project (root).Build (), "#1");
+			Assert.IsTrue (new Project (root) { FullPath = "ProjectTest.BuildEmptyProject.1.proj" }.Build (), "#1");
 			// This seems to fail to find the appropriate target
-			Assert.IsFalse (new Project (root).Build ("Build", null), "#2");
+			Assert.IsFalse (new Project (root) { FullPath = "ProjectTest.BuildEmptyProject.2.proj" }.Build ("Build", null), "#2");
 			// Thus, this tries to build all the targets (empty) and no one failed, so returns true(!)
-			Assert.IsTrue (new Project (root).Build (new string [0], null), "#3");
+			Assert.IsTrue (new Project (root) { FullPath = "ProjectTest.BuildEmptyProject.3.proj" }.Build (new string [0], null), "#3");
 			// Actially null "targets" is accepted and returns true(!!)
-			Assert.IsTrue (new Project (root).Build ((string []) null, null), "#4");
+			Assert.IsTrue (new Project (root) { FullPath = "ProjectTest.BuildEmptyProject.4.proj" }.Build ((string []) null, null), "#4");
 			// matching seems to be blindly done, null string also results in true(!!)
-			Assert.IsTrue (new Project (root).Build ((string) null, null), "#5");
+			Assert.IsTrue (new Project (root) { FullPath = "ProjectTest.BuildEmptyProject.5.proj" }.Build ((string) null, null), "#5");
 		}
 		
 		[Test]
@@ -132,6 +133,7 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			var reader = XmlReader.Create (new StringReader (xml));
 			var root = ProjectRootElement.Create (reader);
 			var proj = new Project (root);
+			root.FullPath = "ProjectTest.ExpandString.proj";
 			Assert.AreEqual ("xyz", proj.ExpandString ("x$(BAR)z"), "#1");
 			Assert.AreEqual ("x$(BARz", proj.ExpandString ("x$(BARz"), "#2"); // incomplete
 			Assert.AreEqual ("xz", proj.ExpandString ("x@(BAR)z"), "#3"); // not an item
@@ -146,6 +148,7 @@ namespace MonoTests.Microsoft.Build.Evaluation
             var xml = XmlReader.Create (new StringReader (project_xml));
             var root = ProjectRootElement.Create (xml);
             var proj = new Project (root);
+			root.FullPath = "ProjectTest.BuildCSharpTargetGetFrameworkPaths.proj";
 			Assert.IsTrue (proj.Build ("GetFrameworkPaths", new ILogger [] {new ConsoleLogger ()}));
 		}
 		
@@ -160,6 +163,7 @@ namespace MonoTests.Microsoft.Build.Evaluation
 </Project>";
             var xml = XmlReader.Create (new StringReader (project_xml));
             var root = ProjectRootElement.Create (xml);
+			root.FullPath = "ProjectTest.BuildCSharpTargetBuild.proj";
 			var proj = new Project (root, null, "4.0");
 			Assert.IsFalse (proj.Build ("Build", new ILogger [] {new ConsoleLogger (LoggerVerbosity.Diagnostic)})); // missing mandatory properties
 		}

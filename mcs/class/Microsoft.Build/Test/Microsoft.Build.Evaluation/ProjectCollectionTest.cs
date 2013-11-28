@@ -68,14 +68,15 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		[Test]
 		public void BuildDoesNotIncreaseCollectionContent ()
 		{
-            string empty_project_xml = "<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
-            var xml = XmlReader.Create (new StringReader (empty_project_xml));
-            var root = ProjectRootElement.Create (xml);
-            var coll = new ProjectCollection ();
-            var inst = new ProjectInstance (root, null, null, coll);
-            Assert.AreEqual (0, coll.Count, "#1");
-            inst.Build ();
-            Assert.AreEqual (0, coll.Count, "#2");
+			string empty_project_xml = "<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
+			var xml = XmlReader.Create (new StringReader (empty_project_xml));
+			var root = ProjectRootElement.Create (xml);
+			var coll = new ProjectCollection ();
+			var inst = new ProjectInstance (root, null, null, coll);
+			root.FullPath = "ProjectCollectionTest.BuildDoesNotIncreaseCollectionContent.proj";
+			Assert.AreEqual (0, coll.Count, "#1");
+			inst.Build ();
+			Assert.AreEqual (0, coll.Count, "#2");
 		}
 		
 		[Test]
