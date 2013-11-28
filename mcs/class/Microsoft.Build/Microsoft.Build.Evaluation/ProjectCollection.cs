@@ -181,12 +181,14 @@ namespace Microsoft.Build.Evaluation
 		
 		public Project LoadProject (string fileName, string toolsVersion)
 		{
-			return LoadProject (fileName, toolsVersion);
+			return LoadProject (fileName, null, toolsVersion);
 		}
 		
 		public Project LoadProject (string fileName, IDictionary<string,string> globalProperties, string toolsVersion)
 		{
-			return new Project (fileName, globalProperties, toolsVersion);
+			var ret = new Project (fileName, globalProperties, toolsVersion);
+			loaded_projects.Add (ret);
+			return ret;
 		}
 		
 		// These methods somehow don't add the project to ProjectCollection...

@@ -114,11 +114,9 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		}
 			
 		[Test]
-		[Category ("NotWorking")] // stackoverflow at some IO operation.
 		public void GetLoadedProjectsSuccess2 ()
 		{
 			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
-			var xml = XmlReader.Create (new StringReader (project_xml));
 			string path = Path.GetFullPath ("GetLoadedProjectsSuccess2.xml");
 			var pc = new ProjectCollection ();
 			
