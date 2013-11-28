@@ -88,6 +88,7 @@ Console.Error.WriteLine (ex);
 				BuildResult.Exception = ex;
 				BuildResult.OverallResult = BuildResultCode.Failure;
 			}
+			is_completed = true;
 			wait_handle.Set ();
 			if (callback != null)
 				callback (this);
