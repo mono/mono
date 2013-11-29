@@ -452,6 +452,10 @@ namespace Mono.CSharp
 
 		public DefiniteAssignmentBitSet DefiniteAssignment { get; set; }
 
+		public DefiniteAssignmentBitSet DefiniteAssignmentOnTrue { get; set; }
+
+		public DefiniteAssignmentBitSet DefiniteAssignmentOnFalse { get; set; }
+
 		public List<LabeledStatement> LabelStack { get; set; }
 
 		public ParametersBlock ParametersBlock { get; set; }

@@ -89,7 +89,9 @@ namespace Mono.CSharp {
 		{
 			if (reachable) {
 				fc.UnreachableReported = false;
-				return DoFlowAnalysis (fc);
+				var res = DoFlowAnalysis (fc);
+				fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = null;
+				return res;
 			}
 
 			//
@@ -264,24 +266,34 @@ namespace Mono.CSharp {
 
 		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
 		{
+			fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignment;
+
 			expr.FlowAnalysis (fc);
 
-			var da = fc.BranchDefiniteAssignment ();
+			var da_false = new DefiniteAssignmentBitSet (fc.DefiniteAssignmentOnFalse);
+
+			fc.DefiniteAssignment = fc.DefiniteAssignmentOnTrue;
+			fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = null;
 
 			var res = TrueStatement.FlowAnalysis (fc);
 
 			if (FalseStatement == null) {
-				fc.DefiniteAssignment = da;
+				if (true_returns)
+					fc.DefiniteAssignment = da_false;
+				else
+					fc.DefiniteAssignment &= da_false;
+ 
 				return false;
 			}
 
-			var da_true = fc.DefiniteAssignment;
 			if (true_returns) {
-				fc.DefiniteAssignment = da;
+				fc.DefiniteAssignment = da_false;
 				return FalseStatement.FlowAnalysis (fc);
 			}
 
-			fc.DefiniteAssignment = new DefiniteAssignmentBitSet (da);
+			var da_true = fc.DefiniteAssignment;
+
+			fc.DefiniteAssignment = da_false;
 			res &= FalseStatement.FlowAnalysis (fc);
 
 			if (!TrueStatement.IsUnreachable) {
@@ -405,13 +417,12 @@ namespace Mono.CSharp {
 
 		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
 		{
-			var dat = fc.BranchDefiniteAssignment ();
-
 			var res = Statement.FlowAnalysis (fc);
 
+			fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignment;
 			expr.FlowAnalysis (fc);
 
-			fc.DefiniteAssignment = dat | fc.DefiniteAssignment;
+			fc.DefiniteAssignment = fc.DefiniteAssignmentOnFalse;
 
 			if (res && !iterator_reachable)
 				return !end_reachable;
@@ -554,11 +565,13 @@ namespace Mono.CSharp {
 
 		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
 		{
+			fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignment;
+	
 			expr.FlowAnalysis (fc);
 
-			DefiniteAssignmentBitSet das;
-
-			das = fc.BranchDefiniteAssignment ();
+			fc.DefiniteAssignment = fc.DefiniteAssignmentOnTrue;
+			var da_false = new DefiniteAssignmentBitSet (fc.DefiniteAssignmentOnFalse);
+			fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = null;
 
 			Statement.FlowAnalysis (fc);
 
@@ -566,11 +579,11 @@ namespace Mono.CSharp {
 			// Special case infinite while with breaks
 			//
 			if (end_reachable_das != null) {
-				das = DefiniteAssignmentBitSet.And (end_reachable_das);
+				da_false = DefiniteAssignmentBitSet.And (end_reachable_das);
 				end_reachable_das = null;
 			}
 
-			fc.DefiniteAssignment = das;
+			fc.DefiniteAssignment = da_false;
 
 			if (infinite && !end_reachable)
 				return true;
@@ -686,10 +699,17 @@ namespace Mono.CSharp {
 		{
 			Initializer.FlowAnalysis (fc);
 
-			if (Condition != null)
-				Condition.FlowAnalysis (fc);
+			DefiniteAssignmentBitSet da_false;
+			if (Condition != null) {
+				fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = fc.DefiniteAssignment;
 
-			var das = fc.BranchDefiniteAssignment ();
+				Condition.FlowAnalysis (fc);
+				fc.DefiniteAssignment = fc.DefiniteAssignmentOnTrue;
+				da_false = new DefiniteAssignmentBitSet (fc.DefiniteAssignmentOnFalse);
+				fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = null;
+			} else {
+				da_false = fc.BranchDefiniteAssignment ();
+			}
 
 			Statement.FlowAnalysis (fc);
 
@@ -699,11 +719,11 @@ namespace Mono.CSharp {
 			// Special case infinite for with breaks
 			//
 			if (end_reachable_das != null) {
-				das = DefiniteAssignmentBitSet.And (end_reachable_das);
+				da_false = DefiniteAssignmentBitSet.And (end_reachable_das);
 				end_reachable_das = null;
 			}
 
-			fc.DefiniteAssignment = das;
+			fc.DefiniteAssignment = da_false;
 
 			if (infinite && !end_reachable)
 				return true;

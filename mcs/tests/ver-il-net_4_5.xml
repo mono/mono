@@ -48473,6 +48473,46 @@
       </method>
     </type>
   </test>
+  <test name="test-880.cs">
+    <type name="A">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void Test1()" attrs="145">
+        <size>33</size>
+      </method>
+      <method name="Void Test2()" attrs="145">
+        <size>21</size>
+      </method>
+      <method name="Void Test3()" attrs="145">
+        <size>27</size>
+      </method>
+      <method name="Void Test4()" attrs="145">
+        <size>42</size>
+      </method>
+      <method name="Void Test5()" attrs="145">
+        <size>72</size>
+      </method>
+      <method name="Void Test6()" attrs="145">
+        <size>33</size>
+      </method>
+      <method name="Boolean Test7()" attrs="145">
+        <size>37</size>
+      </method>
+      <method name="Boolean OutCall(Int32 ByRef)" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="Boolean Call(Int32)" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Boolean Foo(System.Object[])" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-89.cs">
     <type name="X">
       <method name="X F(Int32)" attrs="145">

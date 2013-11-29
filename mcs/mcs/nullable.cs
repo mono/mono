@@ -1239,7 +1239,9 @@ namespace Mono.CSharp.Nullable
 		public override void FlowAnalysis (FlowAnalysisContext fc)
 		{
 			left.FlowAnalysis (fc);
+			var left_da = fc.BranchDefiniteAssignment ();
 			right.FlowAnalysis (fc);
+			fc.DefiniteAssignment = left_da;
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)

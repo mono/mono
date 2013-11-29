@@ -1596,11 +1596,15 @@ namespace Mono.CSharp {
 			var das = fc.BranchDefiniteAssignment ();
 			var prev_pb = fc.ParametersBlock;
 			fc.ParametersBlock = Block;
+			var da_ontrue = fc.DefiniteAssignmentOnTrue;
+			var da_onfalse = fc.DefiniteAssignmentOnFalse;
 
 			block.FlowAnalysis (fc);
 
 			fc.ParametersBlock = prev_pb;
 			fc.DefiniteAssignment = das;
+			fc.DefiniteAssignmentOnTrue = da_ontrue;
+			fc.DefiniteAssignmentOnFalse = da_onfalse;
 		}
 
 		public override void MarkReachable (Reachability rc)

@@ -526,8 +526,12 @@ namespace Mono.CSharp
 
 		public DefiniteAssignmentBitSet (DefiniteAssignmentBitSet source)
 		{
-			large_bits = source.large_bits;
-			bits = source.bits | copy_on_write_flag;
+			if (source.large_bits != null) {
+				large_bits = source.large_bits;
+				bits = source.bits | copy_on_write_flag;
+			} else {
+				bits = source.bits & ~copy_on_write_flag;
+			}
 		}
 
 		public static DefiniteAssignmentBitSet operator & (DefiniteAssignmentBitSet a, DefiniteAssignmentBitSet b)
@@ -640,10 +644,7 @@ namespace Mono.CSharp
 
 		void Clone ()
 		{
-			if (large_bits != null)
-				large_bits = (int[]) large_bits.Clone ();
-
-			bits &= ~copy_on_write_flag;
+			large_bits = (int[]) large_bits.Clone ();
 		}
 
 		bool GetBit (int index)
