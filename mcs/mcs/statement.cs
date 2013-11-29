@@ -1497,7 +1497,9 @@ namespace Mono.CSharp {
 
 		protected override void CloneTo (CloneContext clonectx, Statement target)
 		{
-			// nothing to clone
+			var t = (LabeledStatement) target;
+
+			t.block = clonectx.RemapBlockCopy (block);
 		}
 
 		public override bool Resolve (BlockContext bc)
@@ -2805,14 +2807,6 @@ namespace Mono.CSharp {
 			statements.Add (s);
 		}
 
-		public int AssignableSlots {
-			get {
-				// FIXME: HACK, we don't know the block available variables count now, so set this high enough
-				return 4096;
-//				return assignable_slots;
-			}
-		}
-
 		public LabeledStatement LookupLabel (string name)
 		{
 			return ParametersBlock.TopBlock.GetLabel (name, this);
@@ -2998,7 +2992,7 @@ namespace Mono.CSharp {
 #if DEBUG
 		public override string ToString ()
 		{
-			return String.Format ("{0} ({1}:{2})", GetType (), ID, StartLocation);
+			return String.Format ("{0}: ID={1} Clone={2} Location={3}", GetType (), ID, clone_id != 0, StartLocation);
 		}
 #endif
 
@@ -3006,7 +3000,7 @@ namespace Mono.CSharp {
 		{
 			Block target = (Block) t;
 #if DEBUG
-			target.clone_id = clone_id_counter++;
+			target.clone_id = ++clone_id_counter;
 #endif
 
 			clonectx.AddBlockMap (this, target);
