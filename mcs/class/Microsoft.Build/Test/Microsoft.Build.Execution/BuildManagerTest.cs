@@ -126,22 +126,28 @@ namespace MonoTests.Microsoft.Build.Execution
 			}
 		}
 
-		// It is not working because ConsoleLogger is not designed to be multi-build safe. It should assign
-		// different set of event stack per EventSource (or BuildEngine or BuildSubmission or whatsoever).
 		[Test]
-		[Category ("NotWorking")]
 		public void BasicManualParallelBuilds ()
 		{
 			string project_xml = @"<Project DefaultTargets='Wait1Sec' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
   <Target Name='Wait1Sec'>
-    <Exec Command='ping 10.1.1.1 -n 1 -w 1' />
+    <!-- Exec Command='ping 10.1.1.1 -n 1 -w 1' /-->
+    <Exec Command='/bin/sleep 1' />
   </Target>
 </Project>";
+			switch (Environment.OSVersion.Platform) {
+			case PlatformID.MacOSX:
+			case PlatformID.Unix:
+				break;
+			default:
+				return; // ignore, cannot run it
+			}
+			
 			var xml = XmlReader.Create (new StringReader (project_xml));
 			var root = ProjectRootElement.Create (xml);
 			var proj = new ProjectInstance (root);
 			var bm = new BuildManager ();
-			bm.BeginBuild (new BuildParameters ());
+			bm.BeginBuild (new BuildParameters () { Loggers = new ILogger [] {new ConsoleLogger (LoggerVerbosity.Diagnostic, TextWriter.Null.WriteLine, null, null)} });
 			DateTime waitDone = DateTime.MinValue;
 			DateTime beforeExec = DateTime.Now;
 			var l = new List<BuildSubmission> ();
