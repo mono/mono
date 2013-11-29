@@ -373,7 +373,7 @@ namespace Microsoft.Build.Internal
 			if (targetType == typeof(ITaskItem) || targetType.IsSubclassOf (typeof(ITaskItem)))
 				return new TargetOutputTaskItem () { ItemSpec = WindowsCompatibilityExtensions.NormalizeFilePath (source.Trim ()) };
 			if (targetType.IsArray)
-				return new ArrayList (source.Split (';').Where (s => !string.IsNullOrEmpty (s)).Select (s => ConvertTo (s.Trim (), targetType.GetElementType ())).ToArray ())
+				return new ArrayList (source.Split (';').Select (s => s.Trim ()).Where (s => !string.IsNullOrEmpty (s)).Select (s => ConvertTo (s, targetType.GetElementType ())).ToArray ())
 						.ToArray (targetType.GetElementType ());
 			if (targetType == typeof(bool)) {
 				switch (source != null ? source.ToLower (CultureInfo.InvariantCulture) : string.Empty) {
