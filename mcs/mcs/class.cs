@@ -2379,8 +2379,6 @@ namespace Mono.CSharp
 		//
 		// Public function used to locate types.
 		//
-		// Set 'ignore_cs0104' to true if you want to ignore cs0104 errors.
-		//
 		// Returns: Type or null if they type can not be found.
 		//
 		public override FullNamedExpression LookupNamespaceOrType (string name, int arity, LookupMode mode, Location loc)

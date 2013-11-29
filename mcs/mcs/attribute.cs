@@ -284,7 +284,8 @@ namespace Mono.CSharp {
 		/// </summary>
 		void ResolveAttributeType (bool comparisonOnly)
 		{
-			SessionReportPrinter resolve_printer = new SessionReportPrinter ();
+			var resolve_printer = new SessionReportPrinter ();
+			SessionReportPrinter secondary_printer = null;
 			ReportPrinter prev_recorder = Report.SetPrinter (resolve_printer);
 
 			bool t1_is_attr = false;
@@ -297,10 +298,10 @@ namespace Mono.CSharp {
 
 			try {
 				t1 = expression.ResolveAsType (context);
-				if (t1 != null)
-					t1_is_attr = t1.IsAttribute;
-
 				resolve_printer.EndSession ();
+
+				if (t1 != null && resolve_printer.ErrorsCount == 0)
+					t1_is_attr = t1.IsAttribute;
 
 				if (nameEscaped) {
 					t2 = null;
@@ -308,9 +309,14 @@ namespace Mono.CSharp {
 					expanded = (ATypeNameExpression) expression.Clone (null);
 					expanded.Name += "Attribute";
 
+					secondary_printer = new SessionReportPrinter ();
+					Report.SetPrinter (secondary_printer);
 					t2 = expanded.ResolveAsType (context);
-					if (t2 != null)
+					secondary_printer.EndSession ();
+					if (t2 != null && secondary_printer.ErrorsCount == 0)
 						t2_is_attr = t2.IsAttribute;
+
+					secondary_printer.EndSession ();
 				}
 			} finally {
 				context.Module.Compiler.Report.SetPrinter (prev_recorder);
@@ -341,17 +347,25 @@ namespace Mono.CSharp {
 
 			resolve_error = true;
 
-			if (t1 != null) {
-				resolve_printer.Merge (prev_recorder);
+			if (t1 != null) {	
+				if (resolve_printer.IsEmpty) {
+					Report.SymbolRelatedToPreviousError (t1);
+					Report.Error (616, Location, "`{0}': is not an attribute class", t1.GetSignatureForError ());
+				} else {
+					resolve_printer.Merge (prev_recorder);
+				}
 
-				Report.SymbolRelatedToPreviousError (t1);
-				Report.Error (616, Location, "`{0}': is not an attribute class", t1.GetSignatureForError ());
 				return;
 			}
 
 			if (t2 != null) {
-				Report.SymbolRelatedToPreviousError (t2);
-				Report.Error (616, Location, "`{0}': is not an attribute class", t2.GetSignatureForError ());
+				if (secondary_printer.IsEmpty) {
+					Report.SymbolRelatedToPreviousError (t2);
+					Report.Error (616, Location, "`{0}': is not an attribute class", t2.GetSignatureForError ());
+				} else {
+					secondary_printer.Merge (prev_recorder);
+				}
+
 				return;
 			}
 

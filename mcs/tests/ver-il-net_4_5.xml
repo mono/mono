@@ -48513,6 +48513,26 @@
       </method>
     </type>
   </test>
+  <test name="test-881.cs">
+    <type name="A.XAttribute">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B.XAttribute">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C.Test">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-89.cs">
     <type name="X">
       <method name="X F(Int32)" attrs="145">
