@@ -157,28 +157,33 @@ namespace MonoTests.Microsoft.Build.Execution
 		[Test]
 		public void BuildCommonResolveAssemblyReferences ()
 		{
-            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
   <Import Project='$(MSBuildToolsPath)\Microsoft.Common.targets' />
   <ItemGroup>
     <Reference Include='System.Core' />
     <Reference Include='System.Xml' />
   </ItemGroup>
 </Project>";
-            var xml = XmlReader.Create (new StringReader (project_xml));
-            var root = ProjectRootElement.Create (xml);
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
 			root.FullPath = "BuildManagerTest.BuildCommonResolveAssemblyReferences.proj";
-            var proj = new ProjectInstance (root);
+			var proj = new ProjectInstance (root);
 			var manager = new BuildManager ();
 			var parameters = new BuildParameters () { Loggers = new ILogger [] {new ConsoleLogger (LoggerVerbosity.Diagnostic)} };
 			var request = new BuildRequestData (proj, new string [] {"ResolveAssemblyReferences"});
+			Assert.AreEqual (string.Empty, proj.GetPropertyValue ("TargetFrameworkDirectory"), "#1-1");
 			var result = manager.Build (parameters, request);
+			Assert.AreNotEqual (string.Empty, proj.GetPropertyValue ("TargetFrameworkDirectory"), "#1-2"); // filled during build.
+			Assert.IsTrue (result.ResultsByTarget.ContainsKey ("GetFrameworkPaths"), "#2-1");
+			Assert.IsTrue (result.ResultsByTarget.ContainsKey ("PrepareForBuild"), "#2-2");
+			Assert.IsTrue (result.ResultsByTarget.ContainsKey ("ResolveAssemblyReferences"), "#2-3");
 			var items = result.ResultsByTarget ["ResolveAssemblyReferences"].Items;
-			Assert.AreEqual (2, items.Count (), "#0");
-			Assert.IsTrue (items.Any (i => Path.GetFileName (i.ItemSpec) == "System.Core.dll"), "#1");
-			Assert.IsTrue (items.Any (i => Path.GetFileName (i.ItemSpec) == "System.Xml.dll"), "#2");
-			Assert.IsTrue (File.Exists (items.First (i => Path.GetFileName (i.ItemSpec) == "System.Core.dll").ItemSpec), "#3");
-			Assert.IsTrue (File.Exists (items.First (i => Path.GetFileName (i.ItemSpec) == "System.Xml.dll").ItemSpec), "#4");
-			Assert.AreEqual (BuildResultCode.Success, result.OverallResult, "#5");
+			Assert.AreEqual (2, items.Count (), "#3");
+			Assert.IsTrue (items.Any (i => Path.GetFileName (i.ItemSpec) == "System.Core.dll"), "#4-1");
+			Assert.IsTrue (items.Any (i => Path.GetFileName (i.ItemSpec) == "System.Xml.dll"), "#4-2");
+			Assert.IsTrue (File.Exists (items.First (i => Path.GetFileName (i.ItemSpec) == "System.Core.dll").ItemSpec), "#5-1");
+			Assert.IsTrue (File.Exists (items.First (i => Path.GetFileName (i.ItemSpec) == "System.Xml.dll").ItemSpec), "#5-2");
+			Assert.AreEqual (BuildResultCode.Success, result.OverallResult, "#6");
 		}
 	}
 }
