@@ -1285,6 +1285,8 @@ decode_resolve_method_ref (MonoAotModule *module, guint8 *buf, guint8 **endbuf)
  * - Cache failures
  * - Add a config file
  * - Add a way to disable by the user
+ * - Avoid waiting for the aot process to finish ?
+ *   (less overhead, but multiple processes could aot the same assembly at the same time)
  */
 
 /* The cache directory */
@@ -1418,8 +1420,6 @@ aot_cache_load_module (MonoAssembly *assembly, char **aot_name)
 
 	mono_trace (G_LOG_LEVEL_MESSAGE, MONO_TRACE_AOT, "AOT: compiling assembly '%s'... ", assembly->image->name);
 
-	aot_options = g_strdup_printf ("outfile=%s", fname);
-
 	/*
 	 * We need to invoke the AOT compiler here. There are multiple approaches:
 	 * - spawn a new runtime process. This can be hard when running with mkbundle, and
@@ -1442,6 +1442,7 @@ aot_cache_load_module (MonoAssembly *assembly, char **aot_name)
 		dup2 (fileno (logfile), 1);
 		dup2 (fileno (logfile), 2);
 
+		aot_options = g_strdup_printf ("outfile=%s", fname);
 		res = mono_compile_assembly (assembly, mono_parse_default_optimizations (NULL), aot_options);
 		if (!res) {
 			exit (1);
@@ -1450,7 +1451,6 @@ aot_cache_load_module (MonoAssembly *assembly, char **aot_name)
 		}
 	} else {
 		/* Parent */
-
 		waitpid (pid, &exit_status, 0);
 		if (!WIFEXITED (exit_status) && (WEXITSTATUS (exit_status) == 0))
 			mono_trace (G_LOG_LEVEL_MESSAGE, MONO_TRACE_AOT, "AOT: failed.");
@@ -1460,7 +1460,6 @@ aot_cache_load_module (MonoAssembly *assembly, char **aot_name)
 
 	module = mono_dl_open (fname, MONO_DL_LAZY, NULL);
 
-	g_free (aot_options);
 	return module;
 }
 
