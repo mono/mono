@@ -7,7 +7,8 @@ export ANDROID_PLATFORM=android-5
 GCC_PREFIX=arm-linux-androideabi-
 GCC_VERSION=4.4.3
 OUTDIR=builds/embedruntimes/android
-PREFIX=`pwd`/builds/android
+CWD="$(pwd)"
+PREFIX="$CWD/builds/android"
 
 perl PrepareAndroidSDK.pl -ndk=r8 -env=envsetup.sh && source envsetup.sh
 
@@ -64,6 +65,8 @@ CFLAGS="\
 -ffunction-sections -fdata-sections"
 CXXFLAGS=$CFLAGS
 LDFLAGS="\
+-Wl,--wrap,sigaction \
+-L${CWD}/unity/lib/android/armeabi -lkrait-signal-handler \
 -Wl,--no-undefined \
 -Wl,-rpath-link=$PLATFORM_ROOT/usr/lib \
 -ldl -lm -llog -lc"
