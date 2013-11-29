@@ -146,6 +146,7 @@ namespace Microsoft.Build.Internal
 			var request = submission.BuildRequest;
 			var parameters = submission.BuildManager.OngoingBuildParameters;
 			ProjectTargetInstance target;
+			TargetResult dummyResult;
 			
 			// null key is allowed and regarded as blind success(!) (as long as it could retrieve target)
 			if (!request.ProjectInstance.Targets.TryGetValue (targetName, out target))
@@ -153,6 +154,9 @@ namespace Microsoft.Build.Internal
 			else if (!args.Project.EvaluateCondition (target.Condition)) {
 				LogMessageEvent (new BuildMessageEventArgs (string.Format ("Target '{0}' was skipped because condition '{1}' was not met.", target.Name, target.Condition), null, null, MessageImportance.Low));
 				targetResult.Skip ();
+			} else if (args.Result.ResultsByTarget.TryGetValue (target.Condition, out dummyResult) && dummyResult.ResultCode == TargetResultCode.Success) {
+				LogMessageEvent (new BuildMessageEventArgs (string.Format ("Target '{0}' was skipped because it was already built successfully.", target.Name), null, null, MessageImportance.Low));
+				return false;
 			} else {
 				// process DependsOnTargets first.
 				foreach (var dep in project.ExpandString (target.DependsOnTargets).Split (';').Select (s => s.Trim ()).Where (s => !string.IsNullOrEmpty (s))) {
