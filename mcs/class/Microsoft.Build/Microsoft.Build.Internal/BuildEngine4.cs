@@ -141,22 +141,24 @@ namespace Microsoft.Build.Internal
 		
 		bool BuildTargetByName (string targetName, InternalBuildArguments args)
 		{
-			var targetResult = new TargetResult ();
-
 			var request = submission.BuildRequest;
 			var parameters = submission.BuildManager.OngoingBuildParameters;
 			ProjectTargetInstance target;
 			TargetResult dummyResult;
+
+			if (args.Result.ResultsByTarget.TryGetValue (targetName, out dummyResult) && dummyResult.ResultCode == TargetResultCode.Success) {
+				LogMessageEvent (new BuildMessageEventArgs (string.Format ("Target '{0}' was skipped because it was already built successfully.", targetName), null, null, MessageImportance.Low));
+				return true; // do not add result.
+			}
 			
+			var targetResult = new TargetResult ();
+
 			// null key is allowed and regarded as blind success(!) (as long as it could retrieve target)
 			if (!request.ProjectInstance.Targets.TryGetValue (targetName, out target))
 				throw new InvalidOperationException (string.Format ("target '{0}' was not found in project '{1}'", targetName, project.FullPath));
 			else if (!args.Project.EvaluateCondition (target.Condition)) {
 				LogMessageEvent (new BuildMessageEventArgs (string.Format ("Target '{0}' was skipped because condition '{1}' was not met.", target.Name, target.Condition), null, null, MessageImportance.Low));
 				targetResult.Skip ();
-			} else if (args.Result.ResultsByTarget.TryGetValue (target.Condition, out dummyResult) && dummyResult.ResultCode == TargetResultCode.Success) {
-				LogMessageEvent (new BuildMessageEventArgs (string.Format ("Target '{0}' was skipped because it was already built successfully.", target.Name), null, null, MessageImportance.Low));
-				return false;
 			} else {
 				// process DependsOnTargets first.
 				foreach (var dep in project.ExpandString (target.DependsOnTargets).Split (';').Select (s => s.Trim ()).Where (s => !string.IsNullOrEmpty (s))) {
@@ -337,7 +339,6 @@ namespace Microsoft.Build.Internal
 				}
 			} else {
 				// Evaluate task output properties and items.
-				event_source.FireTaskFinished (this, new TaskFinishedEventArgs ("Task Finished", null, project.FullPath, taskInstance.FullPath, taskInstance.Name, true));
 				foreach (var to in taskInstance.Outputs) {
 					if (!project.EvaluateCondition (to.Condition))
 						continue;
@@ -358,6 +359,8 @@ namespace Microsoft.Build.Internal
 						args.Project.SetProperty (toProp.PropertyName, value);
 					}
 				}
+				
+				event_source.FireTaskFinished (this, new TaskFinishedEventArgs ("Task Finished", null, project.FullPath, taskInstance.FullPath, taskInstance.Name, true));
 			}
 			
 			return true;
@@ -368,7 +371,7 @@ namespace Microsoft.Build.Internal
 			if (targetType == typeof(ITaskItem) || targetType.IsSubclassOf (typeof(ITaskItem)))
 				return new TargetOutputTaskItem () { ItemSpec = WindowsCompatibilityExtensions.NormalizeFilePath (source.Trim ()) };
 			if (targetType.IsArray)
-				return new ArrayList (source.Split (';').Where (s => !string.IsNullOrEmpty (s)).Select (s => ConvertTo (s, targetType.GetElementType ())).ToArray ())
+				return new ArrayList (source.Split (';').Where (s => !string.IsNullOrEmpty (s)).Select (s => ConvertTo (s.Trim (), targetType.GetElementType ())).ToArray ())
 						.ToArray (targetType.GetElementType ());
 			if (targetType == typeof(bool)) {
 				switch (source != null ? source.ToLower (CultureInfo.InvariantCulture) : string.Empty) {
