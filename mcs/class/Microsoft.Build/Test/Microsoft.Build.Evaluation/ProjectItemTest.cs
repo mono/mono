@@ -180,6 +180,33 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			Assert.AreEqual (null, item.GetMetadata ("Filename"), "#7");
 			Assert.AreEqual ("bar", item.GetMetadataValue ("Filename"), "#8");
 		}
+		
+		[Test]
+		public void ExpandPropertyThenTrim ()
+		{
+			string test = @"A
+B
+C
+    ";
+			string project_xml = string.Format (@"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <PropertyGroup>
+    <Test>{0}</Test>
+    <Test2>$(TEST)</Test2>
+  </PropertyGroup>
+  <ItemGroup>
+    <X Include='$(TEST)' />
+    <X2 Include='$(TEST)z' />
+  </ItemGroup>
+</Project>", test);
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			root.FullPath = "ProjectItemTest.ExpandPropertyThenTrim.proj";
+			var proj = new ProjectInstance (root);
+			Assert.AreEqual (test, proj.GetPropertyValue ("TEST"), "#1");
+			Assert.AreEqual (test, proj.GetPropertyValue ("TEST2"), "#2");
+			Assert.AreEqual (test.Trim (), proj.GetItems ("X").First ().EvaluatedInclude, "#3");			
+			Assert.AreEqual (test + "z", proj.GetItems ("X2").First ().EvaluatedInclude, "#4");
+		}
 	}
 }
 

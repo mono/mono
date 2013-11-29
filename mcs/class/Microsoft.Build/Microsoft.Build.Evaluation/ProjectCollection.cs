@@ -428,8 +428,8 @@ namespace Microsoft.Build.Evaluation
 		
 		internal static IEnumerable<T> GetAllItems<T> (Func<string,string> expandString, string include, string exclude, Func<string,T> creator, Func<string,ITaskItem> taskItemCreator, string directory, Action<T,string> assignRecurse, Func<ITaskItem,bool> isDuplicate)
 		{
-			var includes = expandString (include).Split (item_target_sep, StringSplitOptions.RemoveEmptyEntries);
-			var excludes = expandString (exclude).Split (item_target_sep, StringSplitOptions.RemoveEmptyEntries);
+			var includes = expandString (include).Trim ().Split (item_target_sep, StringSplitOptions.RemoveEmptyEntries);
+			var excludes = expandString (exclude).Trim ().Split (item_target_sep, StringSplitOptions.RemoveEmptyEntries);
 			
 			if (includes.Length == 0)
 				yield break;
