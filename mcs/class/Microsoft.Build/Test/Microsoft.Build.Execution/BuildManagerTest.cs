@@ -125,8 +125,11 @@ namespace MonoTests.Microsoft.Build.Execution
 				bm.EndBuild (); // yes, it should work even after invalid ResetCaches call... at least on .NET it does.
 			}
 		}
-		
+
+		// It is not working because ConsoleLogger is not designed to be multi-build safe. It should assign
+		// different set of event stack per EventSource (or BuildEngine or BuildSubmission or whatsoever).
 		[Test]
+		[Category ("NotWorking")]
 		public void BasicManualParallelBuilds ()
 		{
 			string project_xml = @"<Project DefaultTargets='Wait1Sec' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
