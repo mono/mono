@@ -240,7 +240,7 @@ namespace Monodoc.Generators.Html
 
 		static void ClearUntil (StateInfo s, string required)
 		{
-			string e;
+			string e = null;
 			while (s.tags.Count > 0 && 
 			       (e = s.tags.Peek ().ToString ()) != required) {
 				s.output.Append (s.tags.Pop ().ToString ());
