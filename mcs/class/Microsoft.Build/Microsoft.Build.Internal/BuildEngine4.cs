@@ -355,7 +355,8 @@ namespace Microsoft.Build.Internal
 						var value = ConvertFrom (pi.GetValue (task, null));
 						if (toItem != null) {
 							LogMessageEvent (new BuildMessageEventArgs (string.Format ("Output Item {0} from TaskParameter {1}: {2}", toItem.ItemType, toItem.TaskParameter, value), null, null, MessageImportance.Low));
-							args.Project.AddItem (toItem.ItemType, value);
+							foreach (var item in value.Split (';'))
+								args.Project.AddItem (toItem.ItemType, item);
 						} else {
 							LogMessageEvent (new BuildMessageEventArgs (string.Format ("Output Property {0} from TaskParameter {1}: {2}", toProp.PropertyName, toProp.TaskParameter, value), null, null, MessageImportance.Low));
 							args.Project.SetProperty (toProp.PropertyName, value);
@@ -398,7 +399,7 @@ namespace Microsoft.Build.Internal
 			if (source is ITaskItem)
 				return ((ITaskItem) source).ItemSpec;
 			if (source.GetType ().IsArray)
-				return string.Join (":", ((Array) source).Cast<object> ().Select (o => ConvertFrom (o)).ToArray ());
+				return string.Join (";", ((Array) source).Cast<object> ().Select (o => ConvertFrom (o)).ToArray ());
 			else
 				return (string) Convert.ChangeType (source, typeof (string));
 		}
