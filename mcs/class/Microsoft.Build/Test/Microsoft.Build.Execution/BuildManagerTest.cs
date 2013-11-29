@@ -180,12 +180,14 @@ namespace MonoTests.Microsoft.Build.Execution
 			Assert.IsTrue (result.ResultsByTarget.ContainsKey ("GetFrameworkPaths"), "#2-1");
 			Assert.IsTrue (result.ResultsByTarget.ContainsKey ("PrepareForBuild"), "#2-2");
 			Assert.IsTrue (result.ResultsByTarget.ContainsKey ("ResolveAssemblyReferences"), "#2-3");
-			var items = result.ResultsByTarget ["ResolveAssemblyReferences"].Items;
+			var items = proj.GetItems ("ReferencePath");
 			Assert.AreEqual (2, items.Count (), "#3");
-			Assert.IsTrue (items.Any (i => Path.GetFileName (i.ItemSpec) == "System.Core.dll"), "#4-1");
-			Assert.IsTrue (items.Any (i => Path.GetFileName (i.ItemSpec) == "System.Xml.dll"), "#4-2");
-			Assert.IsTrue (File.Exists (items.First (i => Path.GetFileName (i.ItemSpec) == "System.Core.dll").ItemSpec), "#5-1");
-			Assert.IsTrue (File.Exists (items.First (i => Path.GetFileName (i.ItemSpec) == "System.Xml.dll").ItemSpec), "#5-2");
+			var syscore = items.FirstOrDefault (i => Path.GetFileName (i.EvaluatedInclude) == "System.Core.dll");
+			var sysxml = items.FirstOrDefault (i => Path.GetFileName (i.EvaluatedInclude) == "System.Xml.dll");
+			Assert.IsNotNull (syscore, "#4-1");
+			Assert.IsNotNull (sysxml, "#4-2");
+			Assert.IsTrue (File.Exists (syscore.EvaluatedInclude), "#5-1");
+			Assert.IsTrue (File.Exists (sysxml.EvaluatedInclude), "#5-1");
 			Assert.AreEqual (BuildResultCode.Success, result.OverallResult, "#6");
 		}
 	}
