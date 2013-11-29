@@ -1370,8 +1370,7 @@ aot_cache_load_module (MonoAssembly *assembly, char **aot_name)
 	gboolean res;
 	gint exit_status;
 	char *hash;
-	int pid, err;
-	int fds [2];
+	int pid;
 
 	*aot_name = NULL;
 
@@ -1429,17 +1428,12 @@ aot_cache_load_module (MonoAssembly *assembly, char **aot_name)
 	 * the AOT compiler.
 	 * - fork a new process and do the work there. This is the current approach.
 	 */
-	err = pipe (fds);
-	if (err)
-		return NULL;
 	pid = fork ();
 	if (pid == 0) {
 		FILE *logfile;
 		char *logfile_name;
 
 		/* Child */
-
-		close (fds [1]);
 
 		logfile_name = g_strdup_printf ("%s/aot.log", cache_dir);
 		logfile = fopen (logfile_name, "a+");
@@ -1448,11 +1442,6 @@ aot_cache_load_module (MonoAssembly *assembly, char **aot_name)
 		dup2 (fileno (logfile), 1);
 		dup2 (fileno (logfile), 2);
 
-#if 0
-		close (fds [0]);
-		dup2 (fds [1], 1);
-		printf ("HIT!\n");
-#endif
 		res = mono_compile_assembly (assembly, mono_parse_default_optimizations (NULL), aot_options);
 		if (!res) {
 			exit (1);
@@ -1460,32 +1449,13 @@ aot_cache_load_module (MonoAssembly *assembly, char **aot_name)
 			exit (0);
 		}
 	} else {
-#if 0
-		FILE *logfile;
-		char *logfile_name;
-
-		close (fds [1]);
-
-		logfile_name = g_strdup_printf ("%s/aot.log", cache_dir);
-		logfile = fopen (logfile_name, "a+");
-		g_free (logfile_name);
-		if (logfile) {
-			dup2 (fileno (logfile), fds [0]);
-		} else {
-			close (fds [0]);
-		}
-#endif
+		/* Parent */
 
 		waitpid (pid, &exit_status, 0);
 		if (!WIFEXITED (exit_status) && (WEXITSTATUS (exit_status) == 0))
 			mono_trace (G_LOG_LEVEL_MESSAGE, MONO_TRACE_AOT, "AOT: failed.");
 		else
 			mono_trace (G_LOG_LEVEL_MESSAGE, MONO_TRACE_AOT, "AOT: succeeded.");
-
-#if 0
-		if (logfile)
-			fclose (logfile);
-#endif
 	}
 
 	module = mono_dl_open (fname, MONO_DL_LAZY, NULL);
