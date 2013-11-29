@@ -131,6 +131,7 @@ namespace Microsoft.Build.Internal
 					args.Result.OverallResult = args.CheckCancel () ? BuildResultCode.Failure : args.Result.ResultsByTarget.Any (p => p.Value.ResultCode == TargetResultCode.Failure) ? BuildResultCode.Failure : BuildResultCode.Success;
 				}
 			} catch (Exception ex) {
+				args.Result.OverallResult = BuildResultCode.Failure;
 				LogErrorEvent (new BuildErrorEventArgs (null, null, project.FullPath, 0, 0, 0, 0, "Unhandled exception occured during a build", null, null));
 				LogMessageEvent (new BuildMessageEventArgs ("Exception details: " + ex, null, null, MessageImportance.Low));
 				throw; // BuildSubmission re-catches this.
@@ -328,41 +329,42 @@ namespace Microsoft.Build.Internal
 			}
 			
 			// Do execute task.
+			bool taskSuccess = false;
 			event_source.FireTaskStarted (this, new TaskStartedEventArgs ("Task Started", null, project.FullPath, taskInstance.FullPath, taskInstance.Name));
-			var taskSuccess = task.Execute ();
+			try {
+				taskSuccess = task.Execute ();
 			
-			if (!taskSuccess) {
-				event_source.FireTaskFinished (this, new TaskFinishedEventArgs ("Task Finished", null, project.FullPath, taskInstance.FullPath, taskInstance.Name, false));
-				targetResult.Failure (null);
-				if (!ContinueOnError) {
-					return false;
-				}
-			} else {
-				// Evaluate task output properties and items.
-				foreach (var to in taskInstance.Outputs) {
-					if (!project.EvaluateCondition (to.Condition))
-						continue;
-					var toItem = to as ProjectTaskOutputItemInstance;
-					var toProp = to as ProjectTaskOutputPropertyInstance;
-					string taskParameter = toItem != null ? toItem.TaskParameter : toProp.TaskParameter;
-					var pi = task.GetType ().GetProperty (taskParameter);
-					if (pi == null)
-						throw new InvalidOperationException (string.Format ("Task {0} does not have property {1} specified as TaskParameter", taskInstance.Name, toItem.TaskParameter));
-					if (!pi.CanRead)
-						throw new InvalidOperationException (string.Format ("Task {0} has property {1} specified as TaskParameter, but it is write-only", taskInstance.Name, toItem.TaskParameter));
-					var value = ConvertFrom (pi.GetValue (task, null));
-					if (toItem != null) {
-						LogMessageEvent (new BuildMessageEventArgs (string.Format ("Output Item {0} from TaskParameter {1}: {2}", toItem.ItemType, toItem.TaskParameter, value), null, null, MessageImportance.Low));
-						args.Project.AddItem (toItem.ItemType, value);
-					} else {
-						LogMessageEvent (new BuildMessageEventArgs (string.Format ("Output Property {0} from TaskParameter {1}: {2}", toProp.PropertyName, toProp.TaskParameter, value), null, null, MessageImportance.Low));
-						args.Project.SetProperty (toProp.PropertyName, value);
+				if (!taskSuccess) {
+					targetResult.Failure (null);
+					if (!ContinueOnError) {
+						return false;
+					}
+				} else {
+					// Evaluate task output properties and items.
+					foreach (var to in taskInstance.Outputs) {
+						if (!project.EvaluateCondition (to.Condition))
+							continue;
+						var toItem = to as ProjectTaskOutputItemInstance;
+						var toProp = to as ProjectTaskOutputPropertyInstance;
+						string taskParameter = toItem != null ? toItem.TaskParameter : toProp.TaskParameter;
+						var pi = task.GetType ().GetProperty (taskParameter);
+						if (pi == null)
+							throw new InvalidOperationException (string.Format ("Task {0} does not have property {1} specified as TaskParameter", taskInstance.Name, toItem.TaskParameter));
+						if (!pi.CanRead)
+							throw new InvalidOperationException (string.Format ("Task {0} has property {1} specified as TaskParameter, but it is write-only", taskInstance.Name, toItem.TaskParameter));
+						var value = ConvertFrom (pi.GetValue (task, null));
+						if (toItem != null) {
+							LogMessageEvent (new BuildMessageEventArgs (string.Format ("Output Item {0} from TaskParameter {1}: {2}", toItem.ItemType, toItem.TaskParameter, value), null, null, MessageImportance.Low));
+							args.Project.AddItem (toItem.ItemType, value);
+						} else {
+							LogMessageEvent (new BuildMessageEventArgs (string.Format ("Output Property {0} from TaskParameter {1}: {2}", toProp.PropertyName, toProp.TaskParameter, value), null, null, MessageImportance.Low));
+							args.Project.SetProperty (toProp.PropertyName, value);
+						}
 					}
 				}
-				
-				event_source.FireTaskFinished (this, new TaskFinishedEventArgs ("Task Finished", null, project.FullPath, taskInstance.FullPath, taskInstance.Name, true));
+			} finally {
+				event_source.FireTaskFinished (this, new TaskFinishedEventArgs ("Task Finished", null, project.FullPath, taskInstance.FullPath, taskInstance.Name, taskSuccess));
 			}
-			
 			return true;
 		}
 		
