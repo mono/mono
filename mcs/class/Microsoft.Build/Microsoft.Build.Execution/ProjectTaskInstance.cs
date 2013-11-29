@@ -41,9 +41,9 @@ namespace Microsoft.Build.Execution
 			Name = xml.Name;
 			Outputs = xml.Outputs.Select (o => {
 				if (o.IsOutputItem)
-					return new ProjectTaskOutputItemInstance ((ProjectOutputElement) o);
+					return (ProjectTaskInstanceChild) new ProjectTaskOutputItemInstance ((ProjectOutputElement) o);
 				if (o.IsOutputProperty)
-					return new ProjectTaskOutputItemInstance ((ProjectOutputElement) o);
+					return new ProjectTaskOutputPropertyInstance ((ProjectOutputElement) o);
 				throw new NotSupportedException ();
 				}).ToArray ();
 			Parameters = new Dictionary<string,string> (xml.Parameters);
