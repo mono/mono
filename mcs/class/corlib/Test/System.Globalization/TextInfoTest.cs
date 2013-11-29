@@ -24,10 +24,11 @@ public class TextInfoTest {
 	{
 		TextInfo ti = new CultureInfo ("en-US", false).TextInfo;
 
-		Assert.AreEqual (" The Dog", ti.ToTitleCase (" the dog"));
-		Assert.AreEqual (" The Dude", ti.ToTitleCase (" The Dude"));
-		Assert.AreEqual ("La Guerra Yla Paz", ti.ToTitleCase ("la Guerra yLa pAz"));
-		Assert.AreEqual ("\tTab\tAnd\tPeace", ti.ToTitleCase ("\ttab\taNd\tpeaCE"));
+		Assert.AreEqual (" The Dog", ti.ToTitleCase (" the dog"), "#1");
+		Assert.AreEqual (" The Dude", ti.ToTitleCase (" The Dude"), "#2");
+		Assert.AreEqual ("La Guerra Yla Paz", ti.ToTitleCase ("la Guerra yLa pAz"), "#3");
+		Assert.AreEqual ("\tTab\tAnd\tPeace", ti.ToTitleCase ("\ttab\taNd\tpeaCE"), "#4");
+		Assert.AreEqual ("This_Is\uFE58A\u0095String\u06D4With\uFE33Separators", ti.ToTitleCase ("this_is\uFE58a\u0095string\u06D4with\uFE33separators"), "#5");
 	}
 
 	[Test]
