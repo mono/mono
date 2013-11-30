@@ -648,7 +648,10 @@ namespace MonoTests.System.Globalization
 			var orig_culture = CultureInfo.CurrentCulture;
 			var new_culture = new CultureInfo("fr-FR");
 
-			Console.WriteLine (orig_culture.IsReadOnly);
+			// The test doesn't work if the current culture is already set
+			if (orig_culture != CultureInfo.InvariantCulture)
+				return;
+
 			/* Phase 0 - warm up */
 			new Thread (ThreadWithoutChange).Start ();
 			new Thread (ThreadWithChange).Start ();
