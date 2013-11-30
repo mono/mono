@@ -541,6 +541,18 @@ public class DebuggerTests
 		e = step_into ();
 		assert_location (e, "step_through_3");
 		req.Disable ();
+
+		// Check that step-over doesn't stop at inner frames with recursive functions
+		e = run_until ("ss_recursive");
+		req = create_step (e);
+		e = step_over ();
+		e = step_over ();
+		e = step_over ();
+		var f = e.Thread.GetFrames () [0];
+		assert_location (e, "ss_recursive");
+		AssertValue (1, f.GetValue (f.Method.GetLocal ("n")));
+
+		req.Disable ();
 	}
 
 	[Test]

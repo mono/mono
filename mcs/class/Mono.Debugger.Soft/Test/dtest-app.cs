@@ -360,6 +360,7 @@ public class Tests : TestsBase, ITest2
 		ss_nested ();
 		ss_regress_654694 ();
 		ss_step_through ();
+		ss_recursive (1);
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -475,6 +476,13 @@ public class Tests : TestsBase, ITest2
 	[DebuggerStepThrough]
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void step_through_3 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_recursive (int n) {
+		if (n == 10)
+			return;
+		ss_recursive (n + 1);
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
