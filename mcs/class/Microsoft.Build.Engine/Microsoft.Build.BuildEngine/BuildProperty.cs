@@ -30,6 +30,7 @@
 using System;
 using System.Text;
 using System.Xml;
+using System.Collections.Generic;
 
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -240,6 +241,14 @@ namespace Microsoft.Build.BuildEngine {
 
 		internal XmlElement XmlElement {
 			get { return propertyElement; }
+		}
+
+		internal IEnumerable<string> GetAttributes ()
+		{
+			if (!FromXml)
+				yield break;
+			foreach (XmlAttribute attr in propertyElement.Attributes)
+				yield return attr.Value;
 		}
 	}
 
