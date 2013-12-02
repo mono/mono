@@ -145,8 +145,14 @@ namespace Microsoft.Build.Evaluation
 			get { return loaded_projects.Count; }
 		}
 
+		string default_tools_version;
 		public string DefaultToolsVersion {
-			get { return Toolsets.First ().ToolsVersion; }
+			get { return default_tools_version; }
+			set {
+				if (GetToolset (value) == null)
+					throw new InvalidOperationException (string.Format ("Toolset '{0}' does not exist", value));
+				default_tools_version = value;
+			}
 		}
 
 		public void Dispose ()
@@ -257,6 +263,7 @@ namespace Microsoft.Build.Evaluation
 			AddToolset (new Toolset ("12.0",
 				ToolLocationHelper.GetMSBuildInstallPath ("12.0"), this, ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version40)));
 #endif
+			default_tools_version = toolsets.First ().ToolsVersion;
 		}
 		
 		[MonoTODO ("not verified at all")]
