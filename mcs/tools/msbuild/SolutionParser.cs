@@ -38,7 +38,6 @@ using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Construction;
 using Microsoft.Build.Exceptions;
-using System.Xml;
 
 namespace Mono.XBuild.CommandLine {
 	class ProjectInfo {
@@ -122,9 +121,7 @@ namespace Mono.XBuild.CommandLine {
 
 			StreamReader reader = new StreamReader (file);
 			string slnVersion = GetSlnFileVersion (reader);
-			if (slnVersion == "12.00")
-				projects.DefaultToolsVersion = "12.0";
-			else if (slnVersion == "11.00")
+			if (slnVersion == "11.00")
 				projects.DefaultToolsVersion = "4.0";
 			else if (slnVersion == "10.00")
 				projects.DefaultToolsVersion = "3.5";
@@ -212,11 +209,7 @@ namespace Mono.XBuild.CommandLine {
 
 				Project currentProject;
 				try {
-					using (var xmlReader = XmlReader.Create (filename)) {
-						var root = ProjectRootElement.Create (xmlReader, projects);
-						root.FullPath = filename;
-						currentProject = new Project (root, null, null, projects, ProjectLoadSettings.IgnoreMissingImports);
-					}
+					currentProject = new Project (filename, null, null, new ProjectCollection (), ProjectLoadSettings.IgnoreMissingImports);
 				} catch (InvalidProjectFileException e) {
 					RaiseWarning (0, e.Message);
 					continue;
@@ -375,8 +368,8 @@ namespace Mono.XBuild.CommandLine {
 		{
 			p.DefaultTargets = "Build";
 			p.InitialTargets = "ValidateSolutionConfiguration";
-			//p.AddUsingTask ("CreateTemporaryVCProject", null, "Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
-			//p.AddUsingTask ("ResolveVCProjectOutput", null, "Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
+			p.AddUsingTask ("CreateTemporaryVCProject", null, "Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
+			p.AddUsingTask ("ResolveVCProjectOutput", null, "Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
 
 			string solutionFilePath = Path.GetFullPath (solutionFile);
 			var solutionPropertyGroup = p.CreatePropertyGroupElement ();
@@ -772,11 +765,11 @@ namespace Mono.XBuild.CommandLine {
 			var t = p.AddTarget ("ValidateSolutionConfiguration");
 			var task = t.AddTask ("Warning");
 			task.SetParameter ("Text", "On windows, an environment variable 'Platform' is set to MCD sometimes, and this overrides the Platform property" +
-						" for Mono msbuild, which could be an invalid Platform for this solution file. And so you are getting the following error." +
+						" for xbuild, which could be an invalid Platform for this solution file. And so you are getting the following error." +
 						" You could override it by either setting the environment variable to nothing, as\n" +
 						"   set Platform=\n" +
 						"Or explicity specify its value on the command line, as\n" +
-						"   msbuild Foo.sln /p:Platform=Release");
+						"   xbuild Foo.sln /p:Platform=Release");
 			task.Condition = "('$(CurrentSolutionConfigurationContents)' == '') and ('$(SkipInvalidConfigurations)' != 'true')" +
 					" and '$(Platform)' == 'MCD' and '$(OS)' == 'Windows_NT'";
 
@@ -1041,3 +1034,4 @@ namespace Mono.XBuild.CommandLine {
 		}
 	}
 }
+
