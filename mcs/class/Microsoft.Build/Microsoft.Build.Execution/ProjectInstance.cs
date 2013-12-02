@@ -385,7 +385,7 @@ namespace Microsoft.Build.Execution
 
 		public bool Build (string[] targets, IEnumerable<ILogger> loggers, out IDictionary<string, TargetResult> targetOutputs)
 		{
-				return Build (targets, loggers, new ForwardingLoggerRecord [0], out targetOutputs);
+			return Build (targets, loggers, new ForwardingLoggerRecord [0], out targetOutputs);
 		}
 
 		public bool Build (string[] targets, IEnumerable<ILogger> loggers, IEnumerable<ForwardingLoggerRecord> remoteLoggers, out IDictionary<string, TargetResult> targetOutputs)

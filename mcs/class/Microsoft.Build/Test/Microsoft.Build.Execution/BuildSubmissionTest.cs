@@ -72,8 +72,9 @@ namespace MonoTests.Microsoft.Build.Execution
             var root = ProjectRootElement.Create (xml);
 			root.FullPath = "BuildSubmissionTest.TaskOutputsToLoggers.proj";
             var proj = new ProjectInstance (root);
+			Assert.AreEqual ("$(X)", root.Targets.First ().ItemGroups.First ().Items.First ().Condition, "#0");
 			var sw = new StringWriter ();
-			Assert.IsFalse (proj.Build (new ILogger [] {new ConsoleLogger (default (LoggerVerbosity), msg => sw.Write (msg), null, null)}), "#1");
+			Assert.IsFalse (proj.Build (new ILogger [] {new ConsoleLogger (LoggerVerbosity.Diagnostic, sw.WriteLine, null, null)}), "#1");
 			Assert.IsTrue (sw.ToString ().Contains ("$(X)"), "#2");
 		}
 		

@@ -65,9 +65,9 @@ namespace Microsoft.Build.Internal.Expressions
 			*/
 		}
 		
-		EvaluationContext CreateContext ()
+		EvaluationContext CreateContext (string source)
 		{
-			return new EvaluationContext (this);
+			return new EvaluationContext (source, this);
 		}
 		
 		public Project Project { get; private set; }
@@ -91,7 +91,7 @@ namespace Microsoft.Build.Internal.Expressions
 		{
 			if (exprList == null)
 				throw new ArgumentNullException ("exprList");
-			return string.Concat (exprList.Select (e => e.EvaluateAsString (CreateContext ())));
+			return string.Concat (exprList.Select (e => e.EvaluateAsString (CreateContext (source))));
 		}
 		
 		public bool EvaluateAsBoolean (string source)
@@ -100,7 +100,7 @@ namespace Microsoft.Build.Internal.Expressions
 				var el = new ExpressionParser ().Parse (source, ExpressionValidationType.StrictBoolean);
 				if (el.Count () != 1)
 					throw new InvalidProjectFileException ("Unexpected number of tokens: " + el.Count ());
-				return el.First ().EvaluateAsBoolean (CreateContext ());
+				return el.First ().EvaluateAsBoolean (CreateContext (source));
 			} catch (yyParser.yyException ex) {
 				throw new InvalidProjectFileException (string.Format ("failed to evaluate expression as boolean: '{0}': {1}", source, ex.Message), ex);
 			}
@@ -109,10 +109,13 @@ namespace Microsoft.Build.Internal.Expressions
 	
 	class EvaluationContext
 	{
-		public EvaluationContext (ExpressionEvaluator evaluator)
+		public EvaluationContext (string source, ExpressionEvaluator evaluator)
 		{
+			Source = source;
 			Evaluator = evaluator;
 		}
+
+		public string Source { get; private set; }
 		
 		public ExpressionEvaluator Evaluator { get; private set; }
 		public object ContextItem { get; set; }
@@ -187,7 +190,7 @@ namespace Microsoft.Build.Internal.Expressions
 		public abstract bool EvaluateAsBoolean (EvaluationContext context);
 		public abstract object EvaluateAsObject (EvaluationContext context);
 		
-		public bool EvaluateStringAsBoolean (string ret)
+		public bool EvaluateStringAsBoolean (EvaluationContext context, string ret)
 		{
 			if (ret != null) {
 				if (ret.Equals ("TRUE", StringComparison.InvariantCultureIgnoreCase))
@@ -195,7 +198,7 @@ namespace Microsoft.Build.Internal.Expressions
 				else if (ret.Equals ("FALSE", StringComparison.InvariantCultureIgnoreCase))
 					return false;
 			}
-			throw new InvalidProjectFileException (this.Location, null, string.Format ("String is evaluated as '{0}' and cannot be converted to boolean", ret));
+			throw new InvalidProjectFileException (this.Location, string.Format ("Condition '{0}' is evaluated as '{1}' and cannot be converted to boolean", context.Source, ret));
 		}
 	}
 	
@@ -298,7 +301,7 @@ namespace Microsoft.Build.Internal.Expressions
 		public override bool EvaluateAsBoolean (EvaluationContext context)
 		{
 			var ret = EvaluateAsString (context);
-			return EvaluateStringAsBoolean (ret);
+			return EvaluateStringAsBoolean (context, ret);
 		}
 		
 		public override string EvaluateAsString (EvaluationContext context)
@@ -395,7 +398,7 @@ namespace Microsoft.Build.Internal.Expressions
 	{
 		public override bool EvaluateAsBoolean (EvaluationContext context)
 		{
-			return EvaluateStringAsBoolean (EvaluateAsString (context));
+			return EvaluateStringAsBoolean (context, EvaluateAsString (context));
 		}
 		
 		public override string EvaluateAsString (EvaluationContext context)
@@ -425,7 +428,7 @@ namespace Microsoft.Build.Internal.Expressions
 	{
 		public override bool EvaluateAsBoolean (EvaluationContext context)
 		{
-			return EvaluateStringAsBoolean (EvaluateAsString (context));
+			return EvaluateStringAsBoolean (context, EvaluateAsString (context));
 		}
 		
 		public override string EvaluateAsString (EvaluationContext context)
@@ -454,7 +457,7 @@ namespace Microsoft.Build.Internal.Expressions
 		public override bool EvaluateAsBoolean (EvaluationContext context)
 		{
 			var ret = EvaluateAsString (context);
-			return EvaluateStringAsBoolean (ret);
+			return EvaluateStringAsBoolean (context, ret);
 		}
 		
 		public override string EvaluateAsString (EvaluationContext context)
@@ -498,7 +501,7 @@ namespace Microsoft.Build.Internal.Expressions
 				if (Arguments.Count != 1)
 					throw new InvalidProjectFileException (Location, "Function 'Exists' expects 1 argument");
 				string val = Arguments.First ().EvaluateAsString (context);
-				return Directory.Exists (val) || File.Exists (val);
+				return Directory.Exists (val) || System.IO.File.Exists (val);
 			}
 			if (string.Equals (Name.Name, "HasTrailingSlash", StringComparison.OrdinalIgnoreCase)) {
 				if (Arguments.Count != 1)
