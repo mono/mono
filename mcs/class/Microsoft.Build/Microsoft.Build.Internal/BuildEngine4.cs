@@ -119,12 +119,14 @@ namespace Microsoft.Build.Internal
 				
 				var initialPropertiesFormatted = "Initial Properties:\n" + string.Join (Environment.NewLine, project.Properties.OrderBy (p => p.Name).Select (p => string.Format ("{0} = {1}", p.Name, p.EvaluatedValue)).ToArray ());
 				LogMessageEvent (new BuildMessageEventArgs (initialPropertiesFormatted, null, null, MessageImportance.Low));
+				var initialItemsFormatted = "Initial Items:\n" + string.Join (Environment.NewLine, project.Items.OrderBy (i => i.ItemType).Select (i => string.Format ("{0} : {1}", i.ItemType, i.EvaluatedInclude)).ToArray ());
+				LogMessageEvent (new BuildMessageEventArgs (initialItemsFormatted, null, null, MessageImportance.Low));
 				
 				// null targets -> success. empty targets -> success(!)
 				if (request.TargetNames == null)
 					args.Result.OverallResult = BuildResultCode.Success;
 				else {
-					foreach (var targetName in request.TargetNames.Where (t => t != null))
+					foreach (var targetName in (args.TargetNames ?? request.TargetNames).Where (t => t != null))
 						BuildTargetByName (targetName, args);
 			
 					// FIXME: check .NET behavior, whether cancellation always results in failure.
@@ -249,6 +251,8 @@ namespace Microsoft.Build.Internal
 					if (!args.Project.EvaluateCondition (c.Condition))
 						continue;
 					foreach (var item in c.Items) {
+						if (!args.Project.EvaluateCondition (item.Condition))
+							continue;
 						Func<string,ProjectItemInstance> creator = i => new ProjectItemInstance (project, item.ItemType, item.Metadata.Select (m => new KeyValuePair<string,string> (m.Name, m.Value)), i);
 						foreach (var ti in project.GetAllItems (item.Include, item.Exclude, creator, creator, s => s == item.ItemType, (ti, s) => ti.SetMetadata ("RecurseDir", s)))
 							itemsToRemove.Add (ti);
