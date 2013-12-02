@@ -727,6 +727,28 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 					</Target>
 				</Project>", "Sun", "Rain");
 		}
+
+		[Test]
+		public void PropertyGroupInsideTarget_Condition ()
+		{
+			ItemGroupInsideTarget (
+				@"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""4.0"">
+					<ItemGroup>
+						<Shells Include=""/bin/sh;/bin/bash;/bin/false"" />
+					</ItemGroup>
+
+					<Target Name='Main'>
+						<PropertyGroup>
+							<HasBash Condition=""'%(Shells.Filename)' == 'bash'"">true</HasBash>
+						</PropertyGroup>
+
+						<ItemGroup Condition=""'$(HasBash)' == 'true'"">
+							<Weather Include='Rain' />
+						</ItemGroup>
+						<Message Text='%(Weather.Identity)' />
+					</Target>
+				</Project>", "Rain");
+		}
 		#endif
 
 		[Test]
