@@ -58,9 +58,9 @@ namespace Microsoft.Build.Internal.Expressions
 		public int Column {
 			get { return list.Count == 0 ? 0 : list [0].Column; }
 		}
-		//public string File {
-		//	get { return list.Count == 0 ? null : list [0].File; }
-		//}
+		public string File {
+			get { return list.Count == 0 ? null : list [0].File; }
+		}
 		public string ToLocationString ()
 		{
 			return list.Count == 0 ? null : list [0].Location.ToLocationString ();
@@ -99,9 +99,9 @@ namespace Microsoft.Build.Internal.Expressions
 		public int Column {
 			get { return Location.Column; }
 		}
-		//public string File {
-		//	get { return Location.File; }
-		//}
+		public string File {
+			get { return Location.File; }
+		}
 		public string ToLocationString ()
 		{
 			return Location.ToLocationString ();

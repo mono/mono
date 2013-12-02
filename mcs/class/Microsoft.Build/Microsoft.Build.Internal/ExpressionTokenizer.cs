@@ -290,7 +290,7 @@ namespace Microsoft.Build.Internal.Expressions
 	{
 		//int Line { get; }
 		int Column { get; }
-		//string File { get; }
+		string File { get; }
 		
 		string ToLocationString ();
 	}
@@ -299,7 +299,7 @@ namespace Microsoft.Build.Internal.Expressions
 	{
 		//public int Line { get; set; }
 		public int Column { get; set; }
-		//public string File { get; set; }
+		public string File { get; set; }
 		
 		public string ToLocationString ()
 		{
