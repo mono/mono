@@ -1,13 +1,11 @@
 //
-// MonoTests.System.Diagnostics.DebuggerDisplayAttributeTest.cs
+// DebuggerDisplayAttributeTest.cs
 //
 // Author:
 //      Rolf Bjarne Kvinge  (RKvinge@novell.com)
 //
 // (C) 2007
 //
-
-#if NET_2_0
 
 using System;
 using System.Diagnostics;
@@ -172,5 +170,3 @@ namespace MonoTests.System.Diagnostics
 		}
 	}
 }
-
-#endif
