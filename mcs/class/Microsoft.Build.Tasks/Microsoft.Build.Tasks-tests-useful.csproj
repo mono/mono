@@ -83,9 +83,7 @@
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
-    <Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
-      <Private>False</Private>
-    </Reference>
+    <Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77" />
     <ProjectReference Include="..\Microsoft.Build.Engine\Microsoft.Build.Engine-useful.csproj">
       <Project>{0DA63190-E6E1-41C5-B683-A54FADBE61CB}</Project>
       <Name>Microsoft.Build.Engine-useful</Name>
