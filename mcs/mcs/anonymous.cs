@@ -1531,7 +1531,7 @@ namespace Mono.CSharp {
 
 			bool res = Block.Resolve (aec);
 
-			if (res) {
+			if (res && errors == ec.Report.Errors) {
 				MarkReachable (new Reachability ());
 
 				if (!CheckReachableExit (ec.Report)) {
