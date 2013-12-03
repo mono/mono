@@ -1798,6 +1798,16 @@ namespace Mono.CSharp
 			}
 		}
 
+		bool ITypeDefinition.IsCyclicTypeForwarder {
+			get {
+#if STATIC
+				return ((MetaType) provider).__IsCyclicTypeForwarder;
+#else
+				return false;
+#endif
+			}
+		}
+
 		public override string Name {
 			get {
 				if (name == null) {
@@ -1919,20 +1929,24 @@ namespace Mono.CSharp
 				if (caller.Kind != MemberKind.MissingType)
 					report.SymbolRelatedToPreviousError (caller);
 
-				if (t.MemberDefinition.DeclaringAssembly == ctx.Module.DeclaringAssembly) {
+				var definition = t.MemberDefinition;
+				if (definition.DeclaringAssembly == ctx.Module.DeclaringAssembly) {
 					report.Error (1683, loc,
 						"Reference to type `{0}' claims it is defined in this assembly, but it is not defined in source or any added modules",
 						name);
-				} else if (t.MemberDefinition.DeclaringAssembly.IsMissing) {
-					if (t.MemberDefinition.IsTypeForwarder) {
+				} else if (definition.DeclaringAssembly.IsMissing) {
+					if (definition.IsTypeForwarder) {
 						report.Error (1070, loc,
 							"The type `{0}' has been forwarded to an assembly that is not referenced. Consider adding a reference to assembly `{1}'",
-							name, t.MemberDefinition.DeclaringAssembly.FullName);
+							name, definition.DeclaringAssembly.FullName);
 					} else {
 						report.Error (12, loc,
 							"The type `{0}' is defined in an assembly that is not referenced. Consider adding a reference to assembly `{1}'",
-							name, t.MemberDefinition.DeclaringAssembly.FullName);
+							name, definition.DeclaringAssembly.FullName);
 					}
+				} else if (definition.IsTypeForwarder) {
+					report.Error (731, loc, "The type forwarder for type `{0}' in assembly `{1}' has circular dependency",
+						name, definition.DeclaringAssembly.FullName);
 				} else {
 					report.Error (1684, loc,
 						"Reference to type `{0}' claims it is defined assembly `{1}', but it could not be found",
@@ -2226,6 +2240,12 @@ namespace Mono.CSharp
 		}
 
 		bool ITypeDefinition.IsTypeForwarder {
+			get {
+				return false;
+			}
+		}
+
+		bool ITypeDefinition.IsCyclicTypeForwarder {
 			get {
 				return false;
 			}

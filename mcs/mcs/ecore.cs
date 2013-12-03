@@ -712,13 +712,20 @@ namespace Mono.CSharp {
 		{
 			var ctors = MemberCache.FindMembers (type, Constructor.ConstructorName, true);
 			if (ctors == null) {
-				rc.Report.SymbolRelatedToPreviousError (type);
-				if (type.IsStruct) {
+				switch (type.Kind) {
+				case MemberKind.Struct:
+					rc.Report.SymbolRelatedToPreviousError (type);
 					// Report meaningful error for struct as they always have default ctor in C# context
 					OverloadResolver.Error_ConstructorMismatch (rc, type, args == null ? 0 : args.Count, loc);
-				} else {
+					break;
+				case MemberKind.MissingType:
+				case MemberKind.InternalCompilerType:
+					break;
+				default:
+					rc.Report.SymbolRelatedToPreviousError (type);
 					rc.Report.Error (143, loc, "The class `{0}' has no constructors defined",
 						type.GetSignatureForError ());
+					break;
 				}
 
 				return null;
