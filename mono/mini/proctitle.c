@@ -77,8 +77,8 @@ int mono_proctitle_set(const char* title)
   /* No need to terminate, byte after is always '\0'. */
   strncpy(mono_process_title.str, title, mono_process_title.len);
   
-#ifdef PLATFORM_MACOSX  
-  mono_proctitle_set_macosx(title);
+#if defined(PLATFORM_MACOSX)
+  mono_proctitle_set_darwin(title);
 #endif
 
   return 0;

@@ -12,7 +12,7 @@ void mono_proctitle_shutdown(void);
 
 /* private */
 
-#ifdef PLATFORM_MACOSX
-int mono_proctitle_set_macosx(const char* title);
+#if defined(PLATFORM_MACOSX)
+int mono_proctitle_set_darwin(const char* title);
 #endif
 
