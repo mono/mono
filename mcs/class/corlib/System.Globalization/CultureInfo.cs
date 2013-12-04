@@ -683,13 +683,7 @@ namespace System.Globalization
 			}
 
 			if (!construct_internal_locale_from_name (name.ToLowerInvariant ())) {
-#if NET_4_0
-				throw new CultureNotFoundException ("name",
-						"Culture name " + name + " is not supported.");
-#else
-				throw new ArgumentException ("Culture name " + name +
-						" is not supported.", "name");
-#endif
+				throw CreateNotFoundException (name);
 			}
 		}
 
@@ -794,28 +788,20 @@ namespace System.Globalization
 			if (name.Length == 0)
 				return InvariantCulture;
 
-			CultureInfo ci = null;
-			try {
-				ci = new CultureInfo (name);
-			} catch (Exception) {
-				// TODO: Use construct_internal_locale_from_name when it's not bound to constructor instead
-				// of try-catch
+			var src_name = name;
+			name = name.ToLowerInvariant ();
+			CultureInfo ci = new CultureInfo ();
+
+			if (!ci.construct_internal_locale_from_name (name)) {
 				int idx = name.IndexOf ('-');
-				if (idx > 0) {
-					try {
-						ci = new CultureInfo (name.Substring (0, idx));
-					} catch {
-					}
-				}
-				
-				if (ci == null)
-					throw;
+				if (idx < 1 || !ci.construct_internal_locale_from_name (name.Substring (0, idx)))
+					throw CreateNotFoundException (src_name);
 			}
 
-			if (!ci.IsNeutralCulture)
-				return ci;
+			if (ci.IsNeutralCulture)
+				ci = CreateSpecificCultureFromNeutral (ci.Name);
 
-			return CreateSpecificCultureFromNeutral (ci.Name);
+			return ci;
 		}
 
 		//
@@ -1011,6 +997,15 @@ namespace System.Globalization
 			if (type == null)
 				return CreateCalendar (1 << CalendarTypeBits); // return invariant calandar if not found
 			return (Calendar) Activator.CreateInstance (type);
+		}
+
+		static Exception CreateNotFoundException (string name)
+		{
+#if NET_4_0
+			return new CultureNotFoundException ("name", "Culture name " + name + " is not supported.");
+#else
+			return new ArgumentException ("Culture name " + name + " is not supported.", "name");
+#endif
 		}
 		
 #if NET_4_5
