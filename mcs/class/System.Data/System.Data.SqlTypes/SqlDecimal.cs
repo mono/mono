@@ -164,9 +164,7 @@ namespace System.Data.SqlTypes
 			if (precision > 38)
 				throw new SqlTypeException (Locale.GetText ("Invalid precision/scale combination."));
 
-			if (this.ToDouble () > (Math.Pow (10, 38) - 1) ||
-			    this.ToDouble () < -(Math.Pow (10, 38)))
-				throw new OverflowException ("Can't convert to SqlDecimal, Out of range ");
+			// removed range check because the static constructor fails when instantiating MaxValue under ARM build with --trace=disabled
 		}
 
 		#endregion
