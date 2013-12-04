@@ -416,6 +416,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				for (int i = 0; i < messages.Length; i++)
 					logger.CheckLoggedMessageHead (messages [i], i.ToString ());
 				Assert.AreEqual(0, logger.NormalMessageCount, "Extra messages found");
+				Assert.AreEqual(0, logger.WarningMessageCount, "Extra warningmessages found");
 				
 				Assert.AreEqual(expectedTargetCount, logger.TargetStarted, "TargetStarted count");
 				Assert.AreEqual(expectedTargetCount, logger.TargetFinished, "TargetFinished count");
@@ -968,7 +969,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		{
 			engine = new Engine (Consts.BinPath);
 			project = engine.CreateNewProject ();
-			project.Load (Path.Combine ("Test", "resources", "TestReturns.csproj"));
+			project.Load (Path.Combine ("Test", Path.Combine ("resources", "TestReturns.csproj")));
 
 			var logger = new TestMessageLogger ();
 			engine.RegisterLogger (logger);
