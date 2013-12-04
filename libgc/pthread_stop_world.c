@@ -19,10 +19,6 @@
 #undef PACKAGE_VERSION
 #include "mono/utils/mono-compiler.h"
 
-#ifdef MONO_DEBUGGER_SUPPORTED
-#include "include/libgc-mono-debugger.h"
-#endif
-
 #ifdef NACL
 volatile int __nacl_thread_suspension_needed = 0;
 pthread_t nacl_thread_parker = -1;
@@ -625,11 +621,6 @@ void GC_stop_world()
       /* We should have previously waited for it to become zero. */
 #   endif /* PARALLEL_MARK */
     ++GC_stop_count;
-#ifdef MONO_DEBUGGER_SUPPORTED
-    if (gc_thread_vtable && gc_thread_vtable->stop_world)
-	gc_thread_vtable->stop_world ();
-    else
-#endif
 	pthread_stop_world ();
 #   ifdef PARALLEL_MARK
       GC_release_mark_lock();
@@ -717,11 +708,6 @@ static void pthread_start_world()
 
 void GC_start_world()
 {
-#ifdef MONO_DEBUGGER_SUPPORTED
-    if (gc_thread_vtable && gc_thread_vtable->start_world)
-	gc_thread_vtable->start_world();
-    else
-#endif
 	pthread_start_world ();
 }
 
@@ -773,27 +759,7 @@ static void pthread_stop_init() {
 /* We hold the allocation lock.	*/
 void GC_stop_init()
 {
-#ifdef MONO_DEBUGGER_SUPPORTED
-    if (gc_thread_vtable && gc_thread_vtable->initialize)
-	gc_thread_vtable->initialize ();
-    else
-#endif
 	pthread_stop_init ();
 }
-
-#ifdef MONO_DEBUGGER_SUPPORTED
-
-GCThreadFunctions *gc_thread_vtable = NULL;
-
-void *
-GC_mono_debugger_get_stack_ptr (void)
-{
-	GC_thread me;
-
-	me = GC_lookup_thread (pthread_self ());
-	return &me->stop_info.stack_ptr;
-}
-
-#endif
 
 #endif
