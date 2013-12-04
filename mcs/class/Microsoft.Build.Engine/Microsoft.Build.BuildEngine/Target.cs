@@ -403,9 +403,12 @@ namespace Microsoft.Build.BuildEngine {
 
 		ITaskItem [] OutputsAsITaskItems {
 			get {
-				string outputs = targetElement.GetAttribute ("Outputs");
-				if (outputs == String.Empty)
-					return new ITaskItem [0];
+				var outputs = targetElement.GetAttribute ("Returns");
+				if (string.IsNullOrEmpty (outputs)) {
+					outputs = targetElement.GetAttribute ("Outputs");
+					if (string.IsNullOrEmpty (outputs))
+						return new ITaskItem [0];
+				}
 
 				Expression e = new Expression ();
 				e.Parse (outputs, ParseOptions.AllowItemsNoMetadataAndSplit);
