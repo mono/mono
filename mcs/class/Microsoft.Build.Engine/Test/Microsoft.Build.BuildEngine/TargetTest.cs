@@ -963,5 +963,26 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 #endif
 
+		[Test]
+		public void TestTargetReturns ()
+		{
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.Load (Path.Combine ("Test", "resources", "TestReturns.csproj"));
+
+			var logger = new TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			bool result = project.Build ("Main");
+			if (!result) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			logger.CheckLoggedMessageHead ("Result: Bar", "A1");
+
+			Assert.AreEqual (0, logger.NormalMessageCount, "Unexpected extra messages found");
+		}
+
 	}
 }
