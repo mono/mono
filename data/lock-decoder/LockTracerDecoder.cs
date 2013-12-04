@@ -122,6 +122,8 @@ public enum Lock {
 	DomainAssembliesLock,
 	DomainJitCodeHashLock,
 	IcallLock,
+	AssemblyBindingLock,
+	MarshalLock,
 }
 
 public class SimLock
