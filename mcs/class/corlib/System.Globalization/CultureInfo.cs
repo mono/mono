@@ -127,9 +127,19 @@ namespace System.Globalization
 			if (default_current_culture != null)
 				return default_current_culture;
 
-			CultureInfo ci = new CultureInfo ();
-			if (!ConstructInternalLocaleFromCurrentLocale (ci))
+			var locale_name = get_current_locale_name ();
+			CultureInfo ci = null;
+			try {
+				ci = CreateSpecificCulture (locale_name);
+			} catch {
+			}
+
+			if (ci == null) {
 				ci = InvariantCulture;
+			} else {
+				ci.m_isReadOnly = true;
+				ci.m_useUserOverride = true;
+			}
 
 			default_current_culture = ci;
 			return ci;
@@ -573,24 +583,14 @@ namespace System.Globalization
 			constructed = true;
 		}
 
-		static bool ConstructInternalLocaleFromCurrentLocale (CultureInfo ci)
-		{
-			if (!construct_internal_locale_from_current_locale (ci))
-				return false;
-			return true;
-		}
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern bool construct_internal_locale_from_lcid (int lcid);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern bool construct_internal_locale_from_name (string name);
 
-//		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-//		private extern static bool construct_internal_locale_from_specific_name (CultureInfo ci, string name);
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static bool construct_internal_locale_from_current_locale (CultureInfo ci);
+		private extern static string get_current_locale_name ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static CultureInfo [] internal_get_cultures (bool neutral, bool specific, bool installed);
