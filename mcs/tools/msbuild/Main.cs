@@ -158,7 +158,7 @@ namespace Mono.XBuild.CommandLine {
 				
 				var projectInstance = new ProjectInstance (project, parameters.Properties, parameters.ToolsVersion, project_collection);
 
-				result = projectInstance.Build (parameters.Targets, parameters.Loggers);
+				result = projectInstance.Build (parameters.Targets.Length > 0 ? parameters.Targets : null, parameters.Loggers.Count > 0 ? parameters.Loggers : project_collection.Loggers);
 				//result = project_collection.BuildProjectFile (projectFile, parameters.Targets, null, null, BuildSettings.None, parameters.ToolsVersion);
 			}
 			

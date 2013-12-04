@@ -765,11 +765,11 @@ namespace Mono.XBuild.CommandLine {
 			var t = p.AddTarget ("ValidateSolutionConfiguration");
 			var task = t.AddTask ("Warning");
 			task.SetParameter ("Text", "On windows, an environment variable 'Platform' is set to MCD sometimes, and this overrides the Platform property" +
-						" for xbuild, which could be an invalid Platform for this solution file. And so you are getting the following error." +
+						" for Mono msbuild, which could be an invalid Platform for this solution file. And so you are getting the following error." +
 						" You could override it by either setting the environment variable to nothing, as\n" +
 						"   set Platform=\n" +
 						"Or explicity specify its value on the command line, as\n" +
-						"   xbuild Foo.sln /p:Platform=Release");
+						"   msbuild Foo.sln /p:Platform=Release");
 			task.Condition = "('$(CurrentSolutionConfigurationContents)' == '') and ('$(SkipInvalidConfigurations)' != 'true')" +
 					" and '$(Platform)' == 'MCD' and '$(OS)' == 'Windows_NT'";
 

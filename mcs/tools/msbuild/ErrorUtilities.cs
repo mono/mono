@@ -33,9 +33,9 @@ namespace Mono.XBuild.CommandLine {
 	public static class ErrorUtilities {
 
 		static string[] version = {
-			String.Format ("XBuild Engine Version {0}", Consts.MonoVersion),
+			String.Format ("MSBuild Engine Version {0}", Consts.MonoVersion),
 			String.Format ("Mono, Version {0}", Consts.MonoVersion),
-			"Copyright (C) Marek Sieradzki 2005-2008, Novell 2008-2011.",
+			"Copyright (C) Mono Project Contributors, 2008-2013.",
 		};
 
 		
@@ -78,9 +78,9 @@ namespace Mono.XBuild.CommandLine {
 		static public void ShowUsage ()
 		{
 			Display (version);
-			Console.WriteLine ("xbuild [options] [project-file]");
+			Console.WriteLine ("msbuild [options] [project-file]");
 			Console.WriteLine (
-				"    /version		Show the xbuild version\n" +
+				"    /version		Show the msbuild version\n" +
 				"    /noconsolelogger	Disable the default console logger\n" +
 				"    /target:T1[,TN]	List of targets to build\n" +
 				"    /property:Name=Value\n" +
