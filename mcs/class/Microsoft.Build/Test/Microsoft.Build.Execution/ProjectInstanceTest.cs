@@ -98,6 +98,19 @@ namespace MonoTests.Microsoft.Build.Execution
 			root.FullPath = "ProjectInstanceTest.BuildEmptyProject.5.proj";
 			Assert.IsTrue (new ProjectInstance (root).Build ((string) null, null), "#5");
 		}
+		
+		[Test]
+		public void DefaultTargets ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <Import Project='$(MSBuildToolsPath)\Microsoft.Common.targets' />
+</Project>";
+			var xml = XmlReader.Create (new StringReader(project_xml));
+			var root = ProjectRootElement.Create (xml);
+			var proj = new ProjectInstance (root);
+			Assert.AreEqual (1, proj.DefaultTargets.Count, "#1");
+			Assert.AreEqual ("Build", proj.DefaultTargets [0], "#2");
+		}
 	}
 }
 
