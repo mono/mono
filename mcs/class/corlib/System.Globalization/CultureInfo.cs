@@ -44,7 +44,6 @@ namespace System.Globalization
 	{
 		static volatile CultureInfo invariant_culture_info = new CultureInfo (InvariantCultureId, false, true);
 		static object shared_table_lock = new object ();
-		internal static int BootstrapCultureID;
 		static CultureInfo default_current_culture;
 
 #pragma warning disable 169, 649
@@ -100,7 +99,7 @@ namespace System.Globalization
 		// Used by Thread.set_CurrentCulture
 		internal byte[] cached_serialized_form;
 		
-		const int InvariantCultureId = 0x7F;
+		internal const int InvariantCultureId = 0x7F;
 		const int CalendarTypeBits = 8;
 
 		const string MSG_READONLY = "This instance is read only";
@@ -127,10 +126,11 @@ namespace System.Globalization
 		{
 			if (default_current_culture != null)
 				return default_current_culture;
+
 			CultureInfo ci = new CultureInfo ();
 			if (!ConstructInternalLocaleFromCurrentLocale (ci))
 				ci = InvariantCulture;
-			BootstrapCultureID = ci.cultureID;
+
 			default_current_culture = ci;
 			return ci;
 		}
@@ -539,9 +539,10 @@ namespace System.Globalization
 			}
 		}
 
-		public static CultureInfo InstalledUICulture
-		{
-			get { return GetCultureInfo (BootstrapCultureID); }
+		public static CultureInfo InstalledUICulture {
+			get {
+				return ConstructCurrentCulture ();
+			}
 		}
 
 		public bool IsReadOnly {
