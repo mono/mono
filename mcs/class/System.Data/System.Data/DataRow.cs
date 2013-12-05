@@ -319,6 +319,8 @@ namespace System.Data {
 					column [Proposed] = e.ProposedValue;
 					_table.RaiseOnColumnChanged (e);
 				}
+				
+				this.rowChanged = true;
 
 				EndEdit ();
 			}
