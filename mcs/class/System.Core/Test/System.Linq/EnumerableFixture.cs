@@ -542,8 +542,8 @@ namespace MonoTests.System.Linq
 		[Test]
 		public void ElementAt_ReadOnlyListOptimization_ReturnsValueAtGivenIndex()
 		{
-			var source = new NonEnumerableReadOnlyList<int>(new List<int> (new[] { 1, 2, 3, 4, 5, 6 }));
-			Assert.That(source.ElementAt(2), Is.EqualTo(3));
+			var source = new NonEnumerableReadOnlyList<int> (new List<int> (new[] { 1, 2, 3, 4, 5, 6 }));
+			Assert.That(source.ElementAt (2), Is.EqualTo (3));
 		}
 
 		[Test]
@@ -570,8 +570,8 @@ namespace MonoTests.System.Linq
 		[Test]
 		public void ElementAtOrDefault_ReadOnlyListOptimization_ReturnsValueAtGivenIndex()
 		{
-			var source = new NonEnumerableReadOnlyList<int>(new List<int>(new[] { 1, 2, 3, 4, 5, 6 }));
-			Assert.That(source.ElementAtOrDefault(2), Is.EqualTo(3));
+			var source = new NonEnumerableReadOnlyList<int>(new List<int> (new[] { 1, 2, 3, 4, 5, 6 }));
+			Assert.That(source.ElementAtOrDefault (2), Is.EqualTo (3));
 		}
 
 		[Test]
