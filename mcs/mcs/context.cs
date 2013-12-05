@@ -616,7 +616,7 @@ namespace Mono.CSharp
 			string path;
 			if (!Path.IsPathRooted (name)) {
 				string root = Path.GetDirectoryName (comp_unit.SourceFile.FullPathName);
-				path = Path.Combine (root, name);
+				path = Path.GetFullPath (Path.Combine (root, name));
 			} else
 				path = name;
 
