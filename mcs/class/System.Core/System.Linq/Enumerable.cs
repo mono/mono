@@ -771,7 +771,7 @@ namespace System.Linq
             #if NET_4_5
             var readOnlyList = source as IReadOnlyList<TSource>;
             if (readOnlyList != null)
-                return readOnlyList[index];
+                return index < readOnlyList.Count ? readOnlyList [index] : default (TSource);
             #endif
 
 			return source.ElementAt (index, Fallback.Default);
