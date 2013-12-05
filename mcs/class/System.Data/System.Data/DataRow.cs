@@ -320,7 +320,7 @@ namespace System.Data {
 					_table.RaiseOnColumnChanged (e);
 				}
 				
-				this.rowChanged = true;
+				_rowChanged = true;
 
 				EndEdit ();
 			}
