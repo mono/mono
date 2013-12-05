@@ -105,7 +105,7 @@ namespace System.Reflection {
 
 		static internal ParameterInfo GetReturnParameterInfo (MonoMethod method)
 		{
-			return new ParameterInfo (GetReturnType (method.mhandle), method, get_retval_marshal (method.mhandle));
+			return ParameterInfo.New (GetReturnType (method.mhandle), method, get_retval_marshal (method.mhandle));
 		}
 	};
 	
@@ -322,15 +322,10 @@ namespace System.Reflection {
 			return attrs;
 		}
 
-		static bool ShouldPrintFullName (Type type) {
-			return type.IsGenericType || (type.IsClass && (!type.IsPointer ||
-				(!type.GetElementType ().IsPrimitive && !type.GetElementType ().IsNested)));
-		}
-
 		public override string ToString () {
 			StringBuilder sb = new StringBuilder ();
 			Type retType = ReturnType;
-			if (ShouldPrintFullName (retType))
+			if (Type.ShouldPrintFullName (retType))
 				sb.Append (retType.ToString ());
 			else
 				sb.Append (retType.Name);
@@ -347,21 +342,10 @@ namespace System.Reflection {
 				sb.Append ("]");
 			}
 			sb.Append ("(");
-			ParameterInfo[] p = GetParametersInternal ();
-			for (int i = 0; i < p.Length; ++i) {
-				if (i > 0)
-					sb.Append (", ");
-				Type pt = p[i].ParameterType;
-				bool byref = pt.IsByRef;
-				if (byref)
-					pt = pt.GetElementType ();
-				if (ShouldPrintFullName (pt))
-					sb.Append (pt.ToString ());
-				else
-					sb.Append (pt.Name);
-				if (byref)
-					sb.Append (" ByRef");
-			}
+
+			var p = GetParametersInternal ();
+			ParameterInfo.FormatParameters (sb, p);
+
 			if ((CallingConvention & CallingConventions.VarArgs) != 0) {
 				if (p.Length > 0)
 					sb.Append (", ");

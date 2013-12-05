@@ -421,6 +421,8 @@ get_pid_status_item (int pid, const char *item, MonoProcessError *error, int mul
 		ret = t_info.virtual_size;
 	else if (strcmp (item, "Threads") == 0)
 		ret = th_count;
+	else
+		ret = 0;
 
 	mach_port_deallocate (mach_task_self (), task);
 	
@@ -559,7 +561,7 @@ get_cpu_times (int cpu_id, gint64 *user, gint64 *systemt, gint64 *irq, gint64 *s
 	char buf [256];
 	char *s;
 	int hz = get_user_hz ();
-	long long unsigned int user_ticks, nice_ticks, system_ticks, idle_ticks, iowait_ticks, irq_ticks, sirq_ticks;
+	guint64	user_ticks = 0, nice_ticks = 0, system_ticks = 0, idle_ticks = 0, iowait_ticks, irq_ticks = 0, sirq_ticks = 0;
 	FILE *f = fopen ("/proc/stat", "r");
 	if (!f)
 		return;
@@ -576,7 +578,14 @@ get_cpu_times (int cpu_id, gint64 *user, gint64 *systemt, gint64 *irq, gint64 *s
 		} else {
 			continue;
 		}
-		sscanf (data, "%Lu %Lu %Lu %Lu %Lu %Lu %Lu", &user_ticks, &nice_ticks, &system_ticks, &idle_ticks, &iowait_ticks, &irq_ticks, &sirq_ticks);
+		
+		user_ticks = strtoull (data, &data, 10);
+		nice_ticks = strtoull (data, &data, 10);
+		system_ticks = strtoull (data, &data, 10);
+		idle_ticks = strtoull (data, &data, 10);
+		iowait_ticks = strtoull (data, &data, 10);
+		irq_ticks = strtoull (data, &data, 10);
+		sirq_ticks = strtoull (data, &data, 10);
 		break;
 	}
 	fclose (f);

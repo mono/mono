@@ -778,6 +778,7 @@ int _wapi_setsockopt(guint32 fd, int level, int optname,
 	gpointer handle = GUINT_TO_POINTER (fd);
 	int ret;
 	const void *tmp_val;
+	int bufsize = 0;
 	struct timeval tv;
 	
 	if (startup_count == 0) {
@@ -805,7 +806,7 @@ int _wapi_setsockopt(guint32 fd, int level, int optname,
 		 * buffer sizes "to allow space for bookkeeping
 		 * overhead."
 		 */
-		int bufsize = *((int *) optval);
+		bufsize = *((int *) optval);
 
 		bufsize /= 2;
 		tmp_val = &bufsize;
@@ -1294,13 +1295,13 @@ WSAIoctl (guint32 fd, gint32 command,
 			keepalivetime /= 1000;
 			if (keepalivetime == 0 || rem >= 500)
 				keepalivetime++;
-			ret = setsockopt (fd, SOL_TCP, TCP_KEEPIDLE, &keepalivetime, sizeof (uint32_t));
+			ret = setsockopt (fd, IPPROTO_TCP, TCP_KEEPIDLE, &keepalivetime, sizeof (uint32_t));
 			if (ret == 0) {
 				rem = keepaliveinterval % 1000;
 				keepaliveinterval /= 1000;
 				if (keepaliveinterval == 0 || rem >= 500)
 					keepaliveinterval++;
-				ret = setsockopt (fd, SOL_TCP, TCP_KEEPINTVL, &keepaliveinterval, sizeof (uint32_t));
+				ret = setsockopt (fd, IPPROTO_TCP, TCP_KEEPINTVL, &keepaliveinterval, sizeof (uint32_t));
 			}
 			if (ret != 0) {
 				gint errnum = errno;

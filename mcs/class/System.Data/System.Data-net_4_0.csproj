@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{6865A6A5-DF93-45C7-BE83-F06907EC81F8}</ProjectGuid>
+    <ProjectGuid>{BC1890C0-51E5-48D0-8DBA-B1DD23468F9C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,649</NoWarn>
     <OutputPath>bin\Debug\System.Data-net_4_0</OutputPath>
@@ -127,6 +127,7 @@
     <Compile Include="System.Data.Common\SchemaTableColumn.cs" />
     <Compile Include="System.Data.Common\SchemaTableOptionalColumn.cs" />
     <Compile Include="System.Data.Common\SupportedJoinOperators.cs" />
+    <Compile Include="System.Data.Common\TaskHelper.cs" />
     <Compile Include="System.Data.Odbc\libodbc.cs" />
     <Compile Include="System.Data.Odbc\NativeBuffer.cs" />
     <Compile Include="System.Data.Odbc\OdbcCategoryAttribute.cs" />
@@ -400,31 +401,31 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
+      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0-2.csproj">
-      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
+      <Project>{8260E24F-1471-4320-AB5B-7CC7B68521E3}</Project>
       <Name>System\System-net_4_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_0-1.csproj">
-      <Project>{F9E777F8-E3F2-4E19-8DC9-2D1BB6B380A6}</Project>
+      <Project>{51720A26-B4D9-4B84-8CB5-9CBA57477FBB}</Project>
       <Name>System.XML\System.Xml-net_4_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.EnterpriseServices\System.EnterpriseServices-net_4_0.csproj">
-      <Project>{801DF65A-F6B4-4D66-B415-9E8832E66F48}</Project>
+      <Project>{31465E05-7B4F-4209-8B9B-5F596A032D27}</Project>
       <Name>System.EnterpriseServices\System.EnterpriseServices-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Data.Tds\Mono.Data.Tds-net_4_0.csproj">
-      <Project>{2038AFC9-B4E4-4A05-B57B-11B698CA67DF}</Project>
+      <Project>{4DA7FF20-BC1E-496E-BA80-FAD46C54EC1D}</Project>
       <Name>Mono.Data.Tds\Mono.Data.Tds-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration\System.Configuration-net_4_0.csproj">
-      <Project>{610C7C77-5851-4B95-A3FE-B04E1B011E6A}</Project>
+      <Project>{CA49630B-FD24-411F-9651-B15CA72CE5B8}</Project>
       <Name>System.Configuration\System.Configuration-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Transactions\System.Transactions-net_4_0.csproj">
-      <Project>{46371E88-F274-4BE7-8587-444F4E6F7247}</Project>
+      <Project>{91AF1828-5F39-42D2-AAAB-EAEF2DCFBA4B}</Project>
       <Name>System.Transactions\System.Transactions-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>

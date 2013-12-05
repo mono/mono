@@ -5,9 +5,9 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{76A71BC0-3D69-40C6-BF09-46F7B0009F00}</ProjectGuid>
+    <ProjectGuid>{F311EB21-B217-44F5-B4CB-96A7A4692C2E}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <NoWarn>1699,618,219,67,169,612</NoWarn>
+    <NoWarn>1699,618,672,219,67,169,612</NoWarn>
     <OutputPath>bin\Debug\System-tests-net_2_0</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>False</NoConfig>
@@ -22,7 +22,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <NoWarn>1699,618,219,67,169,612</NoWarn>
+    <NoWarn>1699,618,672,219,67,169,612</NoWarn>
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -30,7 +30,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <NoWarn>1699,618,219,67,169,612</NoWarn>
+    <NoWarn>1699,618,672,219,67,169,612</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -44,7 +44,6 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="Test\Microsoft.CSharp\CodeGeneratorFromCompileUnitTest.cs" />
     <Compile Include="Test\Microsoft.CSharp\CodeGeneratorFromExpressionTest.cs" />
     <Compile Include="Test\Microsoft.CSharp\CodeGeneratorFromNamespaceTest.cs" />
@@ -564,11 +563,11 @@
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
+      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <Reference Include="System.Drawing.dll">
@@ -577,7 +576,7 @@
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="..\Mono.Security\Mono.Security-net_2_0.csproj">
-      <Project>{83A0F0D3-5813-4805-8AC5-8E8B0DC55B9D}</Project>
+      <Project>{6785B2B5-3B06-48F3-9E6C-99B23B9AAC4F}</Project>
       <Name>Mono.Security\Mono.Security-net_2_0</Name>
     </ProjectReference>
     <Reference Include="System.Data">
@@ -586,15 +585,15 @@
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="..\System.XML\System.Xml-net_2_0.csproj">
-      <Project>{67A04408-CBEF-4B63-B975-29D827B0DBED}</Project>
+      <Project>{2EB99669-03DF-4DF7-9B20-0B6E6C9DBFEF}</Project>
       <Name>System.XML\System.Xml-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_2_0.csproj">
-      <Project>{F684BA24-FC9A-4BAB-8CF3-ACC489E6B88E}</Project>
+      <Project>{B91370A1-A33A-4F7A-BDF2-1E194AFA0869}</Project>
       <Name>System.Core\System.Core-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration\System.Configuration-net_2_0.csproj">
-      <Project>{725170B0-51F0-46E2-A74D-F764B68553D6}</Project>
+      <Project>{8131BE5D-BE64-4BA5-A62D-FAC4BE0A0B53}</Project>
       <Name>System.Configuration\System.Configuration-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>

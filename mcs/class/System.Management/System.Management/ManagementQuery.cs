@@ -36,8 +36,22 @@ namespace System.Management
 	//[TypeConverter ("")]
 	public abstract class ManagementQuery : ICloneable
 	{
+		string sQueryLanguage;
+		string sQueryString;
+
 		internal ManagementQuery ()
 		{
+		}
+
+		internal ManagementQuery (string query)
+		{
+			QueryString = query;
+		}
+
+		internal ManagementQuery (string language, string query)
+		{
+			QueryLanguage = language;
+			QueryString = query;
 		}
 
 		static ManagementQuery ()
@@ -46,19 +60,19 @@ namespace System.Management
 
 		public virtual string QueryLanguage {
 			get {
-				throw new NotImplementedException ();
+				return sQueryLanguage;
 			}
 			set {
-				throw new NotImplementedException ();
+				sQueryLanguage = value;
 			}
 		}
 
 		public virtual string QueryString {
 			get {
-				throw new NotImplementedException ();
+				return sQueryString;
 			}
 			set {
-				throw new NotImplementedException ();
+				sQueryString = value;
 			}
 		}
 

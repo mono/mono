@@ -382,7 +382,8 @@ namespace System.Xml.Linq
 
 		public XAttribute Attribute (XName name)
 		{
-			foreach (XAttribute a in Attributes ())
+			XAttribute next;
+			for (XAttribute a = attr_first; a != null; a = a.NextAttribute)
 				if (a.Name == name)
 					return a;
 			return null;
@@ -760,8 +761,9 @@ namespace System.Xml.Linq
 
 		public void ReplaceAll (object content)
 		{
-			RemoveNodes ();
-			Add (content);
+			// it's waste of resource, but from bug #11298 it must save content
+			// snapshot first and then remove existing attributes.
+			ReplaceAll (XUtil.ExpandArray (content).ToArray ());
 		}
 
 		public void ReplaceAll (params object [] content)
@@ -772,8 +774,9 @@ namespace System.Xml.Linq
 
 		public void ReplaceAttributes (object content)
 		{
-			RemoveAttributes ();
-			Add (content);
+			// it's waste of resource, but from bug #11298 it must save content
+			// snapshot first and then remove existing attributes.
+			ReplaceAttributes (XUtil.ExpandArray (content).ToArray ());
 		}
 
 		public void ReplaceAttributes (params object [] content)
@@ -785,8 +788,9 @@ namespace System.Xml.Linq
 		public void SetElementValue (XName name, object value)
 		{
 			var element = Element (name);
-			if (element == null && value != null) {
-				Add (new XElement (name, value));
+			if (element == null) {
+				if (value != null)
+					Add (new XElement (name, value));
 			} else if (element != null && value == null) {
 				element.Remove ();
 			} else

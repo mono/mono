@@ -590,7 +590,6 @@ thread_suspend_func (gpointer user_data, void *sigctx, MonoContext *ctx)
 
 	if (!tls) {
 		/* Happens during startup */
-		tls->unwind_state.valid = FALSE;
 		return;
 	}
 
@@ -599,7 +598,11 @@ thread_suspend_func (gpointer user_data, void *sigctx, MonoContext *ctx)
 		gboolean res;
 
 		g_assert (tls->info);
+#ifdef TARGET_WIN32
+		return;
+#else
 		res = mono_thread_state_init_from_handle (&tls->unwind_state, (MonoNativeThreadId)tls->tid, tls->info->native_handle);
+#endif
 	} else {
 		tls->unwind_state.unwind_data [MONO_UNWIND_DATA_LMF] = mono_get_lmf ();
 		if (sigctx) {
@@ -699,6 +702,7 @@ static void
 conservative_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
 {
 	MonoJitInfo *ji;
+	MonoMethod *method;
 	MonoContext ctx, new_ctx;
 	MonoLMF *lmf;
 	guint8 *stack_limit;
@@ -808,10 +812,15 @@ conservative_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
 			continue;
 		}
 
+		if (ji)
+			method = jinfo_get_method (ji);
+		else
+			method = NULL;
+
 		/* The last frame can be in any state so mark conservatively */
 		if (last) {
 			if (ji) {
-				DEBUG (char *fname = mono_method_full_name (ji->method, TRUE); fprintf (logfile, "Mark(0): %s+0x%x (%p)\n", fname, pc_offset, (gpointer)MONO_CONTEXT_GET_IP (&ctx)); g_free (fname));
+				DEBUG (char *fname = mono_method_full_name (method, TRUE); fprintf (logfile, "Mark(0): %s+0x%x (%p)\n", fname, pc_offset, (gpointer)MONO_CONTEXT_GET_IP (&ctx)); g_free (fname));
 			}
 			DEBUG (fprintf (logfile, "\t <Last frame>\n"));
 			last = FALSE;
@@ -838,8 +847,8 @@ conservative_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
 		pc_offset = (guint8*)MONO_CONTEXT_GET_IP (&ctx) - (guint8*)ji->code_start;
 
 		/* These frames are very problematic */
-		if (ji->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
-			DEBUG (char *fname = mono_method_full_name (ji->method, TRUE); fprintf (logfile, "Mark(0): %s+0x%x (%p)\n", fname, pc_offset, (gpointer)MONO_CONTEXT_GET_IP (&ctx)); g_free (fname));
+		if (method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
+			DEBUG (char *fname = mono_method_full_name (method, TRUE); fprintf (logfile, "Mark(0): %s+0x%x (%p)\n", fname, pc_offset, (gpointer)MONO_CONTEXT_GET_IP (&ctx)); g_free (fname));
 			DEBUG (fprintf (logfile, "\tSkip.\n"));
 			continue;
 		}
@@ -870,7 +879,7 @@ conservative_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
 		emap = ji->gc_info;
 
 		if (!emap) {
-			DEBUG (char *fname = mono_method_full_name (ji->method, TRUE); fprintf (logfile, "Mark(0): %s+0x%x (%p)\n", fname, pc_offset, (gpointer)MONO_CONTEXT_GET_IP (&ctx)); g_free (fname));
+			DEBUG (char *fname = mono_method_full_name (jinfo_get_method (ji), TRUE); fprintf (logfile, "Mark(0): %s+0x%x (%p)\n", fname, pc_offset, (gpointer)MONO_CONTEXT_GET_IP (&ctx)); g_free (fname));
 			DEBUG (fprintf (logfile, "\tNo GC Map.\n"));
 			continue;
 		}
@@ -882,14 +891,14 @@ conservative_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
 		 * Debugging aid to control the number of frames scanned precisely
 		 */
 		if (!precise_frame_limit_inited) {
-			if (getenv ("MONO_PRECISE_COUNT"))
-				precise_frame_limit = atoi (getenv ("MONO_PRECISE_COUNT"));
+			if (g_getenv ("MONO_PRECISE_COUNT"))
+				precise_frame_limit = atoi (g_getenv ("MONO_PRECISE_COUNT"));
 			precise_frame_limit_inited = TRUE;
 		}
 				
 		if (precise_frame_limit != -1) {
 			if (precise_frame_count [FALSE] == precise_frame_limit)
-				printf ("LAST PRECISE FRAME: %s\n", mono_method_full_name (ji->method, TRUE));
+				printf ("LAST PRECISE FRAME: %s\n", mono_method_full_name (method, TRUE));
 			if (precise_frame_count [FALSE] > precise_frame_limit)
 				continue;
 		}
@@ -910,7 +919,7 @@ conservative_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
 		frame_start = fp + map->start_offset + map->map_offset;
 		frame_end = fp + map->end_offset;
 
-		DEBUG (char *fname = mono_method_full_name (ji->method, TRUE); fprintf (logfile, "Mark(0): %s+0x%x (%p) limit=%p fp=%p frame=%p-%p (%d)\n", fname, pc_offset, (gpointer)MONO_CONTEXT_GET_IP (&ctx), stack_limit, fp, frame_start, frame_end, (int)(frame_end - frame_start)); g_free (fname));
+		DEBUG (char *fname = mono_method_full_name (jinfo_get_method (ji), TRUE); fprintf (logfile, "Mark(0): %s+0x%x (%p) limit=%p fp=%p frame=%p-%p (%d)\n", fname, pc_offset, (gpointer)MONO_CONTEXT_GET_IP (&ctx), stack_limit, fp, frame_start, frame_end, (int)(frame_end - frame_start)); g_free (fname));
 
 		/* Find the callsite index */
 		if (map->callsite_entry_size == 1) {
@@ -932,7 +941,7 @@ conservative_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
 					break;
 		}
 		if (i == map->ncallsites) {
-			printf ("Unable to find ip offset 0x%x in callsite list of %s.\n", pc_offset + 1, mono_method_full_name (ji->method, TRUE));
+			printf ("Unable to find ip offset 0x%x in callsite list of %s.\n", pc_offset + 1, mono_method_full_name (method, TRUE));
 			g_assert_not_reached ();
 		}
 		cindex = i;
@@ -1111,7 +1120,7 @@ precise_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
 		fi = &tls->frames [findex];
 		frame_start = stack_start + fi->frame_start_offset;
 
-		DEBUG (char *fname = mono_method_full_name (fi->ji->method, TRUE); fprintf (logfile, "Mark(1): %s\n", fname); g_free (fname));
+		DEBUG (char *fname = mono_method_full_name (jinfo_get_method (fi->ji), TRUE); fprintf (logfile, "Mark(1): %s\n", fname); g_free (fname));
 
 		/* 
 		 * FIXME: Add a function to mark using a bitmap, to avoid doing a 
@@ -1238,10 +1247,10 @@ mini_gc_init_gc_map (MonoCompile *cfg)
 		static int precise_count;
 
 		precise_count ++;
-		if (getenv ("MONO_GCMAP_COUNT")) {
-			if (precise_count == atoi (getenv ("MONO_GCMAP_COUNT")))
+		if (g_getenv ("MONO_GCMAP_COUNT")) {
+			if (precise_count == atoi (g_getenv ("MONO_GCMAP_COUNT")))
 				printf ("LAST: %s\n", mono_method_full_name (cfg->method, TRUE));
-			if (precise_count > atoi (getenv ("MONO_GCMAP_COUNT")))
+			if (precise_count > atoi (g_getenv ("MONO_GCMAP_COUNT")))
 				return;
 		}
 	}
@@ -2440,9 +2449,9 @@ static void
 parse_debug_options (void)
 {
 	char **opts, **ptr;
-	char *env;
+	const char *env;
 
-	env = getenv ("MONO_GCMAP_DEBUG");
+	env = g_getenv ("MONO_GCMAP_DEBUG");
 	if (!env)
 		return;
 

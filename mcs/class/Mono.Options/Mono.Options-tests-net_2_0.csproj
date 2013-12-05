@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{5FB08388-B878-4D04-BEA6-C182E6E631BE}</ProjectGuid>
+    <ProjectGuid>{F9DBE056-BDF6-45CB-987D-4941274A5E32}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\Mono.Options-tests-net_2_0</OutputPath>
@@ -69,23 +69,23 @@
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Options\Mono.Options-net_2_0.csproj">
-      <Project>{0C571D99-7F7B-4FF4-AA05-F82271C8158C}</Project>
+      <Project>{B9B516C1-9723-4DCC-91E8-6904B3B350AB}</Project>
       <Name>Mono.Options\Mono.Options-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Posix\Mono.Posix-net_2_0.csproj">
-      <Project>{BFC160FF-5B62-41D2-B039-52C469077AE0}</Project>
+      <Project>{F83F663F-89F7-481C-941E-E4FE67867254}</Project>
       <Name>Mono.Posix\Mono.Posix-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
+      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_2_0.csproj">
-      <Project>{F684BA24-FC9A-4BAB-8CF3-ACC489E6B88E}</Project>
+      <Project>{B91370A1-A33A-4F7A-BDF2-1E194AFA0869}</Project>
       <Name>System.Core\System.Core-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>

@@ -76,9 +76,15 @@ namespace Microsoft.Build.Construction
                         get { return "PropertyGroup"; }
                 }
 
-                internal override ProjectElement LoadChildElement (string name)
+                internal override ProjectElement LoadChildElement (XmlReader reader)
                 {
-                        return AddProperty (name, null);
+                        switch (reader.LocalName) {
+                        case "ItemGroup":
+                        case "PropertyGroup":
+                                throw CreateError (reader, string.Format ("{0} is a reserved name that cannot be used for a property.", reader.LocalName));
+                        // others need to be checked too, but things like "Project" are somehow allowed...
+                        }
+                        return AddProperty (reader.LocalName, null);
                 }
         }
 }

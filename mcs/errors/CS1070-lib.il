@@ -14,7 +14,7 @@
 
 .module 'CS1070-lib.dll'
 
-.class extern forwarder E
+.class extern forwarder N.E
 {
   .assembly extern 'CS1070-lib-missing'
 }

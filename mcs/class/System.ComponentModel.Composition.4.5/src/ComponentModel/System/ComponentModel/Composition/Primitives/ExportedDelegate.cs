@@ -42,7 +42,7 @@ namespace System.ComponentModel.Composition.Primitives
 
         private Type CreateStandardDelegateType()
         {
-#if MONOTOUCH
+#if FULL_AOT_RUNTIME
             throw new NotImplementedException ();
 #else
             ParameterInfo[] parameters = this._method.GetParameters();

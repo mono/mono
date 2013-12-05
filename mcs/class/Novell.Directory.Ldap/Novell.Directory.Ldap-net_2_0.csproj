@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{EE7F7F21-5B86-4D33-A935-858260FD774D}</ProjectGuid>
+    <ProjectGuid>{FCCE71BD-4C5C-4616-8B3E-ED306528BE16}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,612</NoWarn>
     <OutputPath>bin\Debug\Novell.Directory.Ldap-net_2_0</OutputPath>
@@ -277,15 +277,15 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
+      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Security\Mono.Security-net_2_0.csproj">
-      <Project>{83A0F0D3-5813-4805-8AC5-8E8B0DC55B9D}</Project>
+      <Project>{6785B2B5-3B06-48F3-9E6C-99B23B9AAC4F}</Project>
       <Name>Mono.Security\Mono.Security-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>

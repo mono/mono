@@ -125,6 +125,21 @@ namespace System.Threading.Tasks
 		}
 	}
 
+	class SchedulerAwaitContinuation : IContinuation
+	{
+		readonly Task task;
+
+		public SchedulerAwaitContinuation (Task task)
+		{
+			this.task = task;
+		}
+
+		public void Execute ()
+		{
+			task.RunSynchronouslyCore (task.scheduler);
+		}
+	}
+
 	class SynchronizationContextContinuation : IContinuation
 	{
 		readonly Action action;
@@ -336,6 +351,21 @@ namespace System.Threading.Tasks
 		public void Execute ()
 		{
 			evt.Signal ();
+		}
+	}
+
+	sealed class DisposeContinuation : IContinuation
+	{
+		readonly IDisposable instance;
+
+		public DisposeContinuation (IDisposable instance)
+		{
+			this.instance = instance;
+		}
+
+		public void Execute ()
+		{
+			instance.Dispose ();
 		}
 	}
 }

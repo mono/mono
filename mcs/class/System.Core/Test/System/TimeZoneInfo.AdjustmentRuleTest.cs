@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using NUnit.Framework;
 
 #if NET_2_0
@@ -89,7 +91,28 @@ namespace MonoTests.System
 				TimeZoneInfo.TransitionTime daylightTransitionEnd = TimeZoneInfo.TransitionTime.CreateFixedDateRule (new DateTime (1,1,1,2,0,0), 10, 11);
 				TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule (dateStart, dateEnd, new TimeSpan (55), daylightTransitionStart, daylightTransitionEnd);
 			}
-		}	
+		}
+	
+		[TestFixture]
+		public class NonExceptional
+		{
+			[Test]
+			public void Serialization_Deserialization ()
+			{
+				TimeZoneInfo.TransitionTime start = TimeZoneInfo.TransitionTime.CreateFloatingDateRule (new DateTime (1,1,1,1,0,0), 3, 5, DayOfWeek.Sunday);
+				TimeZoneInfo.TransitionTime end = TimeZoneInfo.TransitionTime.CreateFloatingDateRule (new DateTime (1,1,1,2,0,0), 10, 5, DayOfWeek.Sunday);
+				TimeZoneInfo.AdjustmentRule rule = TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule (DateTime.MinValue.Date, DateTime.MaxValue.Date, new TimeSpan (1,0,0), start, end);
+				MemoryStream stream = new MemoryStream ();
+				BinaryFormatter formatter = new BinaryFormatter ();
+				formatter.Serialize (stream, rule);
+				stream.Position = 0;
+				TimeZoneInfo.AdjustmentRule deserialized = (TimeZoneInfo.AdjustmentRule) formatter.Deserialize (stream);
+				stream.Close ();
+				stream.Dispose ();
+
+				Assert.IsTrue (rule.Equals (deserialized));
+			}
+		}
 	}	
 }
 #endif

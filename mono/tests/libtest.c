@@ -581,6 +581,29 @@ mono_test_marshal_out_struct (int a, simplestruct *ss, int b, OutVTypeDelegate f
 		return 1;
 }
 
+typedef int (STDCALL *InVTypeDelegate) (int a, simplestruct *ss, int b);
+
+LIBTEST_API int STDCALL 
+mono_test_marshal_in_struct (int a, simplestruct *ss, int b, InVTypeDelegate func)
+{
+	simplestruct ss2;
+	int res;
+
+	memcpy (&ss2, ss, sizeof (simplestruct));
+
+	res = func (a, ss, b);
+	if (res) {
+		printf ("mono_test_marshal_in_struct () failed: %d\n", res);
+		return 1;
+	}
+
+	/* Check that no modifications is made to the struct */
+	if (ss2.a == ss->a && ss2.b == ss->b && ss2.c == ss->c && ss2.d == ss->d)
+		return 0;
+	else
+		return 1;
+}
+
 typedef struct {
 	int a;
 	SimpleDelegate func, func2, func3;
@@ -2856,7 +2879,7 @@ mono_test_marshal_variant_out_bstr_byref(VARIANT* variant)
 {
 	variant->vt = VT_BSTR|VT_BYREF;
 	variant->byref = marshal_alloc(sizeof(gpointer));
-	*((gunichar**)variant->byref) = marshal_bstr_alloc("PI");
+	*((gunichar**)variant->byref) = (gunichar*)marshal_bstr_alloc("PI");
 
 	return 0;
 }
@@ -5277,3 +5300,81 @@ mono_test_marshal_return_lpwstr (void)
 
 	return res;
 }
+
+
+#ifndef TARGET_X86
+
+LIBTEST_API int STDCALL
+mono_test_has_thiscall (void)
+{
+	return 1;
+}
+
+LIBTEST_API int
+_mono_test_native_thiscall1 (int arg)
+{
+	return arg;
+}
+
+LIBTEST_API int
+_mono_test_native_thiscall2 (int arg, int arg2)
+{
+	return arg + (arg2^1);
+}
+
+LIBTEST_API int
+_mono_test_native_thiscall3 (int arg, int arg2, int arg3)
+{
+	return arg + (arg2^1) + (arg3^2);
+}
+
+#elif defined(__GNUC__)
+
+LIBTEST_API int STDCALL
+mono_test_has_thiscall (void)
+{
+	return 1;
+}
+
+#define def_asm_fn(name) \
+	"\t.align 4\n" \
+	"\t.globl _" #name "\n" \
+	"_" #name ":\n" \
+	"\t.globl __" #name "\n" \
+	"__" #name ":\n"
+
+asm(".text\n"
+
+def_asm_fn(mono_test_native_thiscall1)
+"\tmovl %ecx,%eax\n"
+"\tret\n"
+
+def_asm_fn(mono_test_native_thiscall2)
+"\tmovl %ecx,%eax\n"
+"\tmovl 4(%esp),%ecx\n"
+"\txorl $1,%ecx\n"
+"\taddl %ecx,%eax\n"
+"\tret $4\n"
+
+def_asm_fn(mono_test_native_thiscall3)
+"\tmovl %ecx,%eax\n"
+"\tmovl 4(%esp),%ecx\n"
+"\txorl $1,%ecx\n"
+"\taddl %ecx,%eax\n"
+"\tmovl 8(%esp),%ecx\n"
+"\txorl $2,%ecx\n"
+"\taddl %ecx,%eax\n"
+"\tret $8\n"
+
+);
+
+#else
+
+LIBTEST_API int STDCALL
+mono_test_has_thiscall (void)
+{
+	return 0;
+}
+
+#endif
+

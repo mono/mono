@@ -108,6 +108,26 @@ namespace System
 				return new TransitionTime (timeOfDay, month, week, dayOfWeek);
 			}
 
+			private TransitionTime (SerializationInfo info, StreamingContext context)
+			{
+				if (info == null)
+					throw new ArgumentNullException ("info");
+				timeOfDay = (DateTime) info.GetValue ("TimeOfDay", typeof (DateTime));
+				month = (byte) info.GetValue ("Month", typeof (byte));
+				week = (byte) info.GetValue ("Week", typeof (byte));
+				day = (byte) info.GetValue ("Day", typeof (byte));
+				dayOfWeek = (DayOfWeek) info.GetValue ("DayOfWeek", typeof (DayOfWeek));
+				isFixedDateRule = (bool) info.GetValue ("IsFixedDateRule", typeof (bool));
+
+				if (isFixedDateRule)
+				{
+					week = -1;
+					dayOfWeek = (DayOfWeek) (-1);
+				}
+				if (!isFixedDateRule)			
+					day = -1;
+			}
+
 			private TransitionTime (
 				DateTime timeOfDay,
 				int month,
@@ -190,8 +210,24 @@ namespace System
 			public void GetObjectData (SerializationInfo info, StreamingContext context)
 #endif
 			{
-				throw new NotImplementedException ();
-			}
+				if (info == null)
+					throw new ArgumentNullException ("info");
+				info.AddValue ("TimeOfDay", TimeOfDay);
+				info.AddValue ("Month", System.Convert.ToByte(Month));
+				if (week > -1)
+					info.AddValue ("Week", System.Convert.ToByte(week));
+				else 
+					info.AddValue ("Week", (byte) 1);
+				if (day > -1)
+					info.AddValue ("Day", System.Convert.ToByte(day));
+				else
+					info.AddValue ("Day", (byte) 1);
+				if (dayOfWeek !=  ((System.DayOfWeek) (-1)))
+					info.AddValue ("DayOfWeek", dayOfWeek);
+				else
+					info.AddValue ("DayOfWeek", DayOfWeek.Sunday);
+				info.AddValue ("IsFixedDateRule", IsFixedDateRule);
+			}	
 	
 			public override bool Equals (object obj)
 			{
@@ -216,7 +252,47 @@ namespace System
 			public void OnDeserialization (object sender)
 #endif
 			{
-				throw new NotImplementedException ();
+				try {
+					TimeZoneInfo.TransitionTime.Validate (timeOfDay, month, week, day, dayOfWeek, isFixedDateRule);
+				} catch (ArgumentException ex) {
+					throw new SerializationException ("invalid serialization data", ex);
+				}
+			}
+
+			private static void Validate (DateTime timeOfDay, int month,int week, int day, DayOfWeek dayOfWeek, bool isFixedDateRule)
+			{
+				if (timeOfDay.Year != 1 || timeOfDay.Month != 1 || timeOfDay.Day != 1)
+					throw new ArgumentException ("timeOfDay parameter has a non-default date component");
+
+				if (timeOfDay.Kind != DateTimeKind.Unspecified)
+					throw new ArgumentException ("timeOfDay parameter Kind's property is not DateTimeKind.Unspecified");
+
+				if (timeOfDay.Ticks % TimeSpan.TicksPerMillisecond != 0)
+					throw new ArgumentException ("timeOfDay parameter does not represent a whole number of milliseconds");
+
+				if (day < 1 || day > 31) {
+					if (!(!isFixedDateRule && day == -1))
+						throw new ArgumentOutOfRangeException ("day parameter is less than 1 or greater than 31");
+				}
+
+				if (week < 1 || week > 5) {
+					if (!(isFixedDateRule && week == -1))
+						throw new ArgumentOutOfRangeException ("week parameter is less than 1 or greater than 5");
+				}
+
+				if (month < 1 || month > 12)
+					throw new ArgumentOutOfRangeException ("month parameter is less than 1 or greater than 12");
+
+				if (dayOfWeek != DayOfWeek.Sunday &&
+						dayOfWeek != DayOfWeek.Monday &&
+						dayOfWeek != DayOfWeek.Tuesday &&
+						dayOfWeek != DayOfWeek.Wednesday &&
+						dayOfWeek != DayOfWeek.Thursday &&
+						dayOfWeek != DayOfWeek.Friday &&
+						dayOfWeek != DayOfWeek.Saturday) {
+					if (!(isFixedDateRule && dayOfWeek == (DayOfWeek) (-1)))
+						throw new ArgumentOutOfRangeException ("dayOfWeek parameter is not a member od DayOfWeek enumeration");
+				}
 			}
 		}
 	}

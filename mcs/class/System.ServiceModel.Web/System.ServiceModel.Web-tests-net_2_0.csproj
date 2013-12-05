@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C7B73985-3AA4-4070-A4F9-893C3EFB2AEC}</ProjectGuid>
+    <ProjectGuid>{87C220D2-8B51-4F16-A266-DF2067863135}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\System.ServiceModel.Web-tests-net_2_0</OutputPath>
@@ -97,39 +97,39 @@
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.ServiceModel.Web\System.ServiceModel.Web-net_2_0.csproj">
-      <Project>{54969D84-6764-49E4-A6AF-51ADD6A7CDFA}</Project>
+      <Project>{C1E98610-9EA1-4973-A48B-E7CE2E790F40}</Project>
       <Name>System.ServiceModel.Web\System.ServiceModel.Web-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
+      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
-      <Project>{205A8E90-88CC-4B46-8151-87FA90B666A5}</Project>
+      <Project>{D9776E38-7673-45F6-BF19-7B77830DF9CA}</Project>
       <Name>System.XML\System.Xml-net_2_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Runtime.Serialization\System.Runtime.Serialization-net_2_0.csproj">
-      <Project>{44AAFF44-CBA6-4B20-B883-5D2BA76E1386}</Project>
+      <Project>{FBE202BB-4389-49E8-A81F-155E92BF1B0B}</Project>
       <Name>System.Runtime.Serialization\System.Runtime.Serialization-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.ServiceModel\System.ServiceModel-net_2_0.csproj">
-      <Project>{77DBD5F4-13EC-45EC-A6BD-3C5543D42B90}</Project>
+      <Project>{28B2271C-CC55-4812-B732-A67317405AA9}</Project>
       <Name>System.ServiceModel\System.ServiceModel-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_2_0.csproj">
-      <Project>{F684BA24-FC9A-4BAB-8CF3-ACC489E6B88E}</Project>
+      <Project>{B91370A1-A33A-4F7A-BDF2-1E194AFA0869}</Project>
       <Name>System.Core\System.Core-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration\System.Configuration-net_2_0.csproj">
-      <Project>{725170B0-51F0-46E2-A74D-F764B68553D6}</Project>
+      <Project>{8131BE5D-BE64-4BA5-A62D-FAC4BE0A0B53}</Project>
       <Name>System.Configuration\System.Configuration-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Web.Extensions\System.Web.Extensions-net_2_0.csproj">
-      <Project>{F0188B31-4CA0-41B2-8554-42C84D351D5E}</Project>
+      <Project>{2081F80F-9D8D-4D22-AF56-367D7BAC61D6}</Project>
       <Name>System.Web.Extensions\System.Web.Extensions-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>

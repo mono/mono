@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{81767FAD-2EEC-42CE-A053-45FFDEC0D67D}</ProjectGuid>
+    <ProjectGuid>{5EA25213-0854-4620-A67B-67E9BC6D213E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\Microsoft.Build.Utilities-net_3_5</OutputPath>
@@ -82,15 +82,15 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
+      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Framework\Microsoft.Build.Framework-net_3_5.csproj">
-      <Project>{E861AE49-8E73-4B00-883A-7517D1C530FE}</Project>
+      <Project>{50A41B06-27A6-4003-BA97-763C6CA4D51B}</Project>
       <Name>Microsoft.Build.Framework\Microsoft.Build.Framework-net_3_5</Name>
     </ProjectReference>
   </ItemGroup>

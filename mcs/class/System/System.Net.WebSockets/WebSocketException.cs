@@ -36,72 +36,68 @@ namespace System.Net.WebSockets
 {
 	public sealed class WebSocketException : Win32Exception
 	{
-		public WebSocketException ()
+		const string DefaultMessage = "Generic WebSocket exception";
+
+		public WebSocketException () : this (WebSocketError.Success, -1, DefaultMessage, null)
 		{
 			
 		}
 
-		public WebSocketException (int nativeError) : base (nativeError)
+		public WebSocketException (int nativeError) : this (WebSocketError.Success, nativeError, DefaultMessage, null)
 		{
 			
 		}
 
-		public WebSocketException (string message) : base (message)
+		public WebSocketException (string message) : this (WebSocketError.Success, -1, message, null)
 		{
 			
 		}
 
-		public WebSocketException (WebSocketError error)
+		public WebSocketException (WebSocketError error) : this (error, -1, DefaultMessage, null)
 		{
-			WebSocketErrorCode = error;
 		}
 
-		public WebSocketException (int nativeError, Exception innerException)
-		{
-			
-		}
-
-		public WebSocketException (int nativeError, string message) : base (nativeError, message)
+		public WebSocketException (int nativeError, Exception innerException) : this (WebSocketError.Success, nativeError, DefaultMessage, innerException)
 		{
 			
 		}
 
-		public WebSocketException (string message, Exception innerException) : base (message, innerException)
+		public WebSocketException (int nativeError, string message) : this (WebSocketError.Success, nativeError, message, null)
 		{
 			
 		}
 
-		public WebSocketException (WebSocketError error, Exception innerException)
+		public WebSocketException (string message, Exception innerException) : this (WebSocketError.Success, -1, message, innerException)
 		{
-			WebSocketErrorCode = error;
+			
 		}
 
-		public WebSocketException (WebSocketError error, int nativeError) : base (nativeError)
+		public WebSocketException (WebSocketError error, Exception innerException) : this (error, -1, DefaultMessage, innerException)
 		{
-			WebSocketErrorCode = error;
+
 		}
 
-		public WebSocketException (WebSocketError error, string message) : base (message)
+		public WebSocketException (WebSocketError error, int nativeError) : this (error, nativeError, DefaultMessage, null)
 		{
-			WebSocketErrorCode = error;
 		}
 
-		public WebSocketException (WebSocketError error, int nativeError, Exception innerException) : base (nativeError)
+		public WebSocketException (WebSocketError error, string message) : this (error, -1, message, null)
 		{
-			WebSocketErrorCode = error;
 		}
 
-		public WebSocketException (WebSocketError error, int nativeError, string message) : base (nativeError, message)
+		public WebSocketException (WebSocketError error, int nativeError, Exception innerException) : this (error, nativeError, DefaultMessage, innerException)
 		{
-			WebSocketErrorCode = error;
 		}
 
-		public WebSocketException (WebSocketError error, string message, Exception innerException)
+		public WebSocketException (WebSocketError error, int nativeError, string message) : this (error, nativeError, message, null)
 		{
-			WebSocketErrorCode = error;
 		}
 
-		public WebSocketException (WebSocketError error, int nativeError, string message, Exception innerException) : base (nativeError, message)
+		public WebSocketException (WebSocketError error, string message, Exception innerException) : this (error, -1, message, innerException)
+		{
+		}
+
+		public WebSocketException (WebSocketError error, int nativeError, string message, Exception innerException) : base (message, innerException)
 		{
 			WebSocketErrorCode = error;
 		}

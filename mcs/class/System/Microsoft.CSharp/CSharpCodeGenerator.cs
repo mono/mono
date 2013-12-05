@@ -172,7 +172,28 @@ namespace Mono.CSharp
 		{
 			GenerateCompileUnitStart (compileUnit);
 
-			GenerateGlobalNamespace (compileUnit);
+			List<CodeNamespaceImport> imports = null;
+			foreach (CodeNamespace codeNamespace in compileUnit.Namespaces) {
+				if (!string.IsNullOrEmpty (codeNamespace.Name))
+					continue;
+
+				if (codeNamespace.Imports.Count == 0)
+					continue;
+
+				if (imports == null)
+					imports = new List<CodeNamespaceImport> ();
+
+				foreach (CodeNamespaceImport i in codeNamespace.Imports)
+					imports.Add (i);
+			}
+
+			if (imports != null) {
+				imports.Sort ((a, b) => a.Namespace.CompareTo (b.Namespace));
+				foreach (var import in imports)
+					GenerateNamespaceImport (import);
+
+				Output.WriteLine ();
+			}
 
 			if (compileUnit.AssemblyCustomAttributes.Count > 0) {
 				OutputAttributes (compileUnit.AssemblyCustomAttributes, 
@@ -180,26 +201,22 @@ namespace Mono.CSharp
 				Output.WriteLine ("");
 			}
 
-			GenerateLocalNamespaces (compileUnit);
+			CodeNamespaceImportCollection global_imports = null;
+			foreach (CodeNamespace codeNamespace in compileUnit.Namespaces) {
+				if (string.IsNullOrEmpty (codeNamespace.Name)) {
+					global_imports = codeNamespace.Imports;
+					codeNamespace.Imports = new CodeNamespaceImportCollection ();
+				}
+
+				GenerateNamespace (codeNamespace);
+
+				if (global_imports != null) {
+					codeNamespace.Imports = global_imports;
+					global_imports = null;
+				}
+			}
 
 			GenerateCompileUnitEnd (compileUnit);
-		}
-
-		private void GenerateGlobalNamespace (CodeCompileUnit compileUnit) {
-			CodeNamespace globalNamespace = null;
-
-			foreach (CodeNamespace codeNamespace in compileUnit.Namespaces)
-				if (string.IsNullOrEmpty (codeNamespace.Name)) 
-					globalNamespace = codeNamespace;
-  
-			if (globalNamespace != null)
-				GenerateNamespace (globalNamespace);
-		}
-
-		private void GenerateLocalNamespaces (CodeCompileUnit compileUnit) {
-			foreach (CodeNamespace codeNamespace in compileUnit.Namespaces)
-				if (!string.IsNullOrEmpty (codeNamespace.Name))
-					GenerateNamespace (codeNamespace);
 		}
 
 		protected override void GenerateDefaultValueExpression (CodeDefaultValueExpression e)

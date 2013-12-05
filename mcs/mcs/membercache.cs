@@ -226,7 +226,7 @@ namespace Mono.CSharp {
 						continue;
 
 					if (list is MemberSpec[]) {
-						list = new List<MemberSpec> () { list [0] };
+						list = new List<MemberSpec> { list [0] };
 						member_hash[entry.Key] = list;
 					}
 
@@ -335,7 +335,7 @@ namespace Mono.CSharp {
 					member_hash[name] = list;
 			} else {
 				if (list.Count == 1) {
-					list = new List<MemberSpec> () { list[0] };
+					list = new List<MemberSpec> { list[0] };
 					member_hash[name] = list;
 				}
 
@@ -390,7 +390,7 @@ namespace Mono.CSharp {
 			}
 
 			if (existing.Count == 1) {
-				existing = new List<MemberSpec> () { existing[0], member };
+				existing = new List<MemberSpec> { existing[0], member };
 				return true;
 			}
 
@@ -502,7 +502,7 @@ namespace Mono.CSharp {
 		//
 		// Looks for extension methods with defined name and extension type
 		//
-		public List<MethodSpec> FindExtensionMethods (IMemberContext invocationContext, TypeSpec extensionType, string name, int arity)
+		public List<MethodSpec> FindExtensionMethods (IMemberContext invocationContext, string name, int arity)
 		{
 			IList<MemberSpec> entries;
 			if (!member_hash.TryGetValue (name, out entries))

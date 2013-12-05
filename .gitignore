@@ -55,7 +55,7 @@ _ReSharper*/
 ~$*
 
 # Autotools-generated files
-Makefile
+/Makefile
 Makefile.in
 aclocal.m4
 autom4te.cache
@@ -112,6 +112,7 @@ GTAGS
 # Mono-specific patterns
 ##############################################################################
 
+.dirstamp
 compile
 mono.h
 mono-*.tar.*

@@ -29,7 +29,6 @@
 //
 
 using System;
-using System.Linq;
 
 namespace System.DirectoryServices.Protocols
 {

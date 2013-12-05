@@ -96,14 +96,17 @@ namespace Microsoft.Build.BuildEngine {
 					return;
 
 				int offset = 0;
+				string full_path;
 				if (Path.IsPathRooted (name)) {
+					full_path = name;
 					baseDirectory = new DirectoryInfo (Path.GetPathRoot (name));
 					if (IsRunningOnWindows)
 						// skip the "drive:"
 						offset = 1;
+				} else {
+					full_path = Path.GetFullPath (Path.Combine (Environment.CurrentDirectory, name));
 				}
 
-				string full_path = Path.GetFullPath (Path.Combine (Environment.CurrentDirectory, include_item.ItemSpec));
 				fileInfo = ParseIncludeExclude (separatedPath, offset, baseDirectory);
 
 				int wildcard_offset = full_path.IndexOf ("**");

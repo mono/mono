@@ -347,6 +347,7 @@ mono_gc_try_alloc_obj_nolock (MonoVTable *vtable, size_t size)
 	TLAB_ACCESS_INIT;
 
 	size = ALIGN_UP (size);
+	SGEN_ASSERT (9, size >= sizeof (MonoObject), "Object too small");
 
 	g_assert (vtable->gc_descr);
 	if (size > SGEN_MAX_SMALL_OBJ_SIZE)
@@ -434,6 +435,24 @@ mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 	void *res;
 #ifndef DISABLE_CRITICAL_REGION
 	TLAB_ACCESS_INIT;
+
+	if (G_UNLIKELY (has_per_allocation_action)) {
+		static int alloc_count;
+		int current_alloc = InterlockedIncrement (&alloc_count);
+
+		if (verify_before_allocs) {
+			if ((current_alloc % verify_before_allocs) == 0)
+				sgen_check_whole_heap_stw ();
+		}
+		if (collect_before_allocs) {
+			if (((current_alloc % collect_before_allocs) == 0) && nursery_section) {
+				LOCK_GC;
+				sgen_perform_collection (0, GENERATION_NURSERY, "collect-before-alloc-triggered", TRUE);
+				UNLOCK_GC;
+			}
+		}
+	}
+
 	ENTER_CRITICAL_REGION;
 	res = mono_gc_try_alloc_obj_nolock (vtable, size);
 	if (res) {
@@ -685,6 +704,9 @@ create_allocator (int atype)
 	MONO_THREAD_VAR_OFFSET (tlab_next_addr, tlab_next_addr_offset);
 	MONO_THREAD_VAR_OFFSET (tlab_temp_end, tlab_temp_end_offset);
 
+	mono_tls_key_set_offset (TLS_KEY_SGEN_TLAB_NEXT_ADDR, tlab_next_addr_offset);
+	mono_tls_key_set_offset (TLS_KEY_SGEN_TLAB_TEMP_END, tlab_temp_end_offset);
+
 	g_assert (tlab_next_addr_offset != -1);
 	g_assert (tlab_temp_end_offset != -1);
 #endif
@@ -832,7 +854,7 @@ create_allocator (int atype)
 
 	/* tlab_next_addr (local) = tlab_next_addr (TLS var) */
 	tlab_next_addr_var = mono_mb_add_local (mb, &mono_defaults.int_class->byval_arg);
-	EMIT_TLS_ACCESS (mb, tlab_next_addr, tlab_next_addr_offset);
+	EMIT_TLS_ACCESS (mb, tlab_next_addr, TLS_KEY_SGEN_TLAB_NEXT_ADDR);
 	mono_mb_emit_stloc (mb, tlab_next_addr_var);
 
 	/* p = (void**)tlab_next; */
@@ -851,7 +873,7 @@ create_allocator (int atype)
 
 	/* if (G_LIKELY (new_next < tlab_temp_end)) */
 	mono_mb_emit_ldloc (mb, new_next_var);
-	EMIT_TLS_ACCESS (mb, tlab_temp_end, tlab_temp_end_offset);
+	EMIT_TLS_ACCESS (mb, tlab_temp_end, TLS_KEY_SGEN_TLAB_TEMP_END);
 	slowpath_branch = mono_mb_emit_short_branch (mb, MONO_CEE_BLT_UN_S);
 
 	/* Slowpath */
@@ -967,7 +989,8 @@ mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box)
 	if (tlab_next_offset == -1 || tlab_temp_end_offset == -1)
 		return NULL;
 #endif
-
+	if (collect_before_allocs)
+		return NULL;
 	if (!mono_runtime_has_tls_get ())
 		return NULL;
 	if (klass->instance_size > tlab_size)
@@ -979,8 +1002,6 @@ mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box)
 		return NULL;
 	if (klass->byval_arg.type == MONO_TYPE_STRING)
 		return mono_gc_get_managed_allocator_by_type (ATYPE_STRING);
-	if (collect_before_allocs)
-		return NULL;
 	/* Generic classes have dynamic field and can go above MAX_SMALL_OBJ_SIZE. */
 	if (ALIGN_TO (klass->instance_size, ALLOC_ALIGN) < MAX_SMALL_OBJ_SIZE && !mono_class_is_open_constructed_type (&klass->byval_arg))
 		return mono_gc_get_managed_allocator_by_type (ATYPE_SMALL);

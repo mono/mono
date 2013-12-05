@@ -322,4 +322,38 @@ namespace Mono.CSharp {
 			}
 		}
 	}
+
+	struct TypeNameParser
+	{
+		internal static string Escape(string name)
+		{
+			if (name == null) {
+				return null;
+			}
+			StringBuilder sb = null;
+			for (int pos = 0; pos < name.Length; pos++) {
+				char c = name[pos];
+				switch (c) {
+					case '\\':
+					case '+':
+					case ',':
+					case '[':
+					case ']':
+					case '*':
+					case '&':
+						if (sb == null) {
+							sb = new StringBuilder(name, 0, pos, name.Length + 3);
+						}
+						sb.Append("\\").Append(c);
+						break;
+					default:
+						if (sb != null) {
+							sb.Append(c);
+						}
+						break;
+				}
+			}
+			return sb != null ? sb.ToString() : name;
+		}
+	}
 }

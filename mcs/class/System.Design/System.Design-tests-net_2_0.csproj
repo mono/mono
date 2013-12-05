@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{AF5F10D5-D0C9-4D8F-A3EC-368A3F552E15}</ProjectGuid>
+    <ProjectGuid>{0FCBC103-009C-4138-948F-3E301D2B1912}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\System.Design-tests-net_2_0</OutputPath>
@@ -74,23 +74,23 @@
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Design\System.Design-net_2_0-1.csproj">
-      <Project>{D75106C3-9D48-4054-82FF-DB9E7BAF216D}</Project>
+      <Project>{7BD57C92-6B92-45F0-8050-A0AEE810BC8D}</Project>
       <Name>System.Design\System.Design-net_2_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
+      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Drawing\System.Drawing-net_2_0.csproj">
-      <Project>{0877A48B-2DF5-40A2-8714-ABBF2BD48987}</Project>
+      <Project>{CA7E5301-90D2-4C07-87B7-851AA216D4C9}</Project>
       <Name>System.Drawing\System.Drawing-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Managed.Windows.Forms\System.Windows.Forms-net_2_0.csproj">
-      <Project>{4F08F704-E8AE-4C02-9A8F-6E9225D8ACE2}</Project>
+      <Project>{19413C30-6E39-4AAC-B9D1-FC88082E74C8}</Project>
       <Name>Managed.Windows.Forms\System.Windows.Forms-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>

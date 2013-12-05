@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{195F7869-84C4-4D20-BCA3-7C0E0AE1A2C3}</ProjectGuid>
+    <ProjectGuid>{37C99354-C244-4BEE-B9AD-1FE718CD5A6F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\Mono.Data.Tds-tests-net_4_0</OutputPath>
@@ -64,19 +64,19 @@
   <ItemGroup>
     <Reference Include="..\lib\net_4_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
+      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Data.Tds\Mono.Data.Tds-net_4_0.csproj">
-      <Project>{2038AFC9-B4E4-4A05-B57B-11B698CA67DF}</Project>
+      <Project>{4DA7FF20-BC1E-496E-BA80-FAD46C54EC1D}</Project>
       <Name>Mono.Data.Tds\Mono.Data.Tds-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0-2.csproj">
-      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
+      <Project>{8260E24F-1471-4320-AB5B-7CC7B68521E3}</Project>
       <Name>System\System-net_4_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Net\System.Net-net_2_0.csproj">
-      <Project>{52BCBA52-95B9-4437-B630-4A7C492BF560}</Project>
+      <Project>{87D4A457-1D00-48A7-8BD6-E786E93CC4CA}</Project>
       <Name>System.Net\System.Net-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>

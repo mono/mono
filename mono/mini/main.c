@@ -14,7 +14,7 @@
 static int
 mono_main_with_options (int argc, char *argv [])
 {
-	const char *env_options = getenv ("MONO_ENV_OPTIONS");
+	const char *env_options = g_getenv ("MONO_ENV_OPTIONS");
 	if (env_options != NULL){
 		GPtrArray *array = g_ptr_array_new ();
 		GString *buffer = g_string_new ("");
@@ -94,7 +94,7 @@ mono_main_with_options (int argc, char *argv [])
 #ifdef HOST_WIN32
 
 int
-main ()
+main (void)
 {
 	int argc;
 	gunichar2** argvw;

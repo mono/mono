@@ -92,6 +92,14 @@
 /* Define to 1 if you have the <curses.h> header file. */
 /* #undef HAVE_CURSES_H */
 
+/* Define to 1 if you have the declaration of `InterlockedCompareExchange64',
+   and to 0 if you don't. */
+#define HAVE_DECL_INTERLOCKEDCOMPAREEXCHANGE64 1
+
+/* Define to 1 if you have the declaration of `__readfsdword',
+   and to 0 if you don't. */
+#define HAVE_DECL___READFSDWORD 1
+
 /* Define to 1 if you have the <dirent.h> header file. */
 /* #define HAVE_DIRENT_H 1 */
 
@@ -528,9 +536,6 @@
 
 /* Enable the allocation and indexing of arrays greater than Int32.MaxValue */
 /* #undef MONO_BIG_ARRAYS */
-
-/* The Mono Debugger is supported on this platform */
-/* #undef MONO_DEBUGGER_SUPPORTED */
 
 /* Sizeof sock_un.sun_path */
 /* #undef MONO_SIZEOF_SUNPATH */

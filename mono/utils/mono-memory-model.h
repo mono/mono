@@ -152,16 +152,17 @@ Acquire/release semantics macros.
 	*(target) = (value);	\
 } while (0)
 
-#define mono_atomic_load_release(target) ({	\
-	typeof (*target) __tmp;	\
+#define mono_atomic_load_release(_type,target) ({	\
+	_type __tmp;	\
 	LOAD_RELEASE_FENCE;	\
 	__tmp = *target;	\
 	__tmp; })
 
-#define mono_atomic_load_acquire(target) ({	\
-	typeof (*target) __tmp = *target;	\
+#define mono_atomic_load_acquire(var,_type,target) do {	\
+	_type __tmp = *target;	\
 	LOAD_ACQUIRE_FENCE;	\
-	__tmp; })
+	(var) = __tmp; \
+} while (0)
 
 #define mono_atomic_store_acquire(target,value) {	\
 	*target = value;	\

@@ -58,7 +58,7 @@ static void
 update_current_thread_stack (void *start)
 {
 	int stack_guard = 0;
-#ifndef USE_MONO_CTX
+#if !defined(USE_MONO_CTX)
 	void *reg_ptr = cur_thread_regs;
 #endif
 	SgenThreadInfo *info = mono_thread_info_current ();
@@ -91,11 +91,17 @@ is_ip_in_managed_allocator (MonoDomain *domain, gpointer ip)
 		return FALSE;
 	if (!sgen_has_critical_method ())
 		return FALSE;
-	ji = mono_jit_info_table_find (domain, ip);
+
+	/*
+	 * mono_jit_info_table_find is not async safe since it calls into the AOT runtime to load information for
+	 * missing methods (#13951). To work around this, we disable the AOT fallback. For this to work, the JIT needs
+	 * to register the jit info for all GC critical methods after they are JITted/loaded.
+	 */
+	ji = mono_jit_info_table_find_internal (domain, ip, FALSE);
 	if (!ji)
 		return FALSE;
 
-	return sgen_is_critical_method (ji->method);
+	return sgen_is_critical_method (mono_jit_info_get_method (ji));
 }
 
 static int
@@ -111,9 +117,9 @@ restart_threads_until_none_in_managed_allocator (void)
 		   allocator */
 		FOREACH_THREAD_SAFE (info) {
 			gboolean result;
-			if (info->skip || info->gc_disabled || !info->joined_stw)
+			if (info->skip || info->gc_disabled)
 				continue;
-			if (!info->thread_is_dying && (!info->stack_start || info->in_critical_region ||
+			if (mono_thread_info_run_state (info) == STATE_RUNNING && (!info->stack_start || info->in_critical_region || info->info.inside_critical_region ||
 					is_ip_in_managed_allocator (info->stopped_domain, info->stopped_ip))) {
 				binary_protocol_thread_restart ((gpointer)mono_thread_info_get_tid (info));
 				SGEN_LOG (3, "thread %p resumed.", (void*) (size_t) info->info.native_handle);
@@ -189,18 +195,6 @@ release_gc_locks (void)
 	UNLOCK_INTERRUPTION;
 }
 
-static void
-stw_bridge_process (void)
-{
-	sgen_bridge_processing_stw_step ();
-}
-
-static void
-bridge_process (int generation)
-{
-	sgen_bridge_processing_finish (generation);
-}
-
 static TV_DECLARE (stop_world_time);
 static unsigned long max_pause_usec = 0;
 
@@ -233,6 +227,7 @@ sgen_stop_world (int generation)
 	MONO_GC_WORLD_STOP_END ();
 
 	sgen_memgov_collection_start (generation);
+	sgen_bridge_reset_data ();
 
 	return count;
 }
@@ -248,6 +243,7 @@ sgen_restart_world (int generation, GGTimingInfo *timing)
 	unsigned long usec, bridge_usec;
 
 	/* notify the profiler of the leftovers */
+	/* FIXME this is the wrong spot at we can STW for non collection reasons. */
 	if (G_UNLIKELY (mono_profiler_events & MONO_PROFILE_GC_MOVES))
 		sgen_gc_event_moves ();
 	mono_profiler_gc_event (MONO_GC_EVENT_PRE_START_WORLD, generation);
@@ -261,9 +257,6 @@ sgen_restart_world (int generation, GGTimingInfo *timing)
 #endif
 	} END_FOREACH_THREAD
 
-	stw_bridge_process ();
-	release_gc_locks ();
-
 	count = sgen_thread_handshake (FALSE);
 	TV_GETTIME (end_sw);
 	usec = TV_ELAPSED (stop_world_time, end_sw);
@@ -272,9 +265,21 @@ sgen_restart_world (int generation, GGTimingInfo *timing)
 	mono_profiler_gc_event (MONO_GC_EVENT_POST_START_WORLD, generation);
 	MONO_GC_WORLD_RESTART_END (generation);
 
+	/*
+	 * We must release the thread info suspend lock after doing
+	 * the thread handshake.  Otherwise, if the GC stops the world
+	 * and a thread is in the process of starting up, but has not
+	 * yet registered (it's not in the thread_list), it is
+	 * possible that the thread does register while the world is
+	 * stopped.  When restarting the GC will then try to restart
+	 * said thread, but since it never got the suspend signal, it
+	 * cannot answer the restart signal, so a deadlock results.
+	 */
+	release_gc_locks ();
+
 	mono_thread_hazardous_try_free_some ();
 
-	bridge_process (generation);
+	sgen_bridge_processing_finish (generation);
 
 	TV_GETTIME (end_bridge);
 	bridge_usec = TV_ELAPSED (end_sw, end_bridge);

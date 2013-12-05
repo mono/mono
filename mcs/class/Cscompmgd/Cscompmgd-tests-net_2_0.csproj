@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{3B0B4F90-D5C5-4A93-9642-CF9D871D03AC}</ProjectGuid>
+    <ProjectGuid>{09C1F680-F5E0-421A-9040-D98664AF9895}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618,219,169</NoWarn>
     <OutputPath>bin\Debug\Cscompmgd-tests-net_2_0</OutputPath>
@@ -63,15 +63,15 @@
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Cscompmgd\Cscompmgd-net_2_0.csproj">
-      <Project>{50F09AFF-918B-442C-8380-A2398448E2DF}</Project>
+      <Project>{9E7D403F-232E-4126-ADF8-0897129C037F}</Project>
       <Name>Cscompmgd\Cscompmgd-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
+      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
   </ItemGroup>

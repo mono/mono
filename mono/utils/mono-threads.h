@@ -76,10 +76,10 @@ and reduce the number of casts drastically.
 #endif
 
 enum {
-	STATE_STARTING			= 0x01,
-	STATE_RUNNING			= 0x02,
-	STATE_SHUTTING_DOWN		= 0x03,
-	STATE_DEAD				= 0x04,
+	STATE_STARTING			= 0x00,
+	STATE_RUNNING			= 0x01,
+	STATE_SHUTTING_DOWN		= 0x02,
+	STATE_DEAD				= 0x03,
 	RUN_STATE_MASK			= 0x0F,
 
 	STATE_SUSPENDED			= 0x10,
@@ -87,8 +87,8 @@ enum {
 	SUSPEND_STATE_MASK		= 0xF0,
 };
 
-#define mono_thread_info_run_state(info) ((info)->thread_state & RUN_STATE_MASK)
-#define mono_thread_info_suspend_state(info) ((info)->thread_state & SUSPEND_STATE_MASK)
+#define mono_thread_info_run_state(info) (((MonoThreadInfo*)info)->thread_state & RUN_STATE_MASK)
+#define mono_thread_info_suspend_state(info) (((MonoThreadInfo*)info)->thread_state & SUSPEND_STATE_MASK)
 
 typedef struct {
 	MonoLinkedListSetNode node;
@@ -99,8 +99,8 @@ typedef struct {
 	/*Tells if this thread was created by the runtime or not.*/
 	gboolean runtime_thread;
 
-	/* suspend machinery, fields protected by the suspend_lock */
-	mono_mutex_t suspend_lock;
+	/* suspend machinery, fields protected by suspend_semaphore */
+	MonoSemType suspend_semaphore;
 	int suspend_count;
 
 	MonoSemType finish_resume_semaphore;
@@ -108,7 +108,7 @@ typedef struct {
 
 	/* only needed by the posix backend */ 
 #if (defined(_POSIX_VERSION) || defined(__native_client__)) && !defined (__MACH__)
-	MonoSemType suspend_semaphore;
+	MonoSemType begin_suspend_semaphore;
 	gboolean syscall_break_signal;
 	gboolean suspend_can_continue;
 #endif
@@ -119,15 +119,37 @@ typedef struct {
 	/*async call machinery, thread MUST be suspended before accessing those fields*/
 	void (*async_target)(void*);
 	void *user_data;
+
+	/*
+	If true, this thread is running a critical region of code and cannot be suspended.
+	A critical session is implicitly started when you call mono_thread_info_safe_suspend_sync
+	and is ended when you call either mono_thread_info_resume or mono_thread_info_finish_suspend.
+	*/
+	gboolean inside_critical_region;
+
+	/*
+	 * If TRUE, the thread is in async context. Code can use this information to avoid async-unsafe
+	 * operations like locking without having to pass an 'async' parameter around.
+	 */
+	gboolean is_async_context;
 } MonoThreadInfo;
 
 typedef struct {
 	void* (*thread_register)(THREAD_INFO_TYPE *info, void *baseaddr);
 	/*
-	This callback is called after @info is removed from the thread list.
+	This callback is called with @info still on the thread list.
+	This call is made while holding the suspend lock, so don't do callbacks.
 	SMR remains functional as its small_id has not been reclaimed.
 	*/
 	void (*thread_unregister)(THREAD_INFO_TYPE *info);
+	/*
+	This callback is called right before thread_unregister. This is called
+	without any locks held so it's the place for complicated cleanup.
+
+	The thread must remain operational between this call and thread_unregister.
+	It must be possible to successfully suspend it after thread_unregister completes.
+	*/
+	void (*thread_detach)(THREAD_INFO_TYPE *info);
 	void (*thread_attach)(THREAD_INFO_TYPE *info);
 	gboolean (*mono_method_is_critical) (void *method);
 #ifndef HOST_WIN32
@@ -144,13 +166,13 @@ typedef struct {
 /*
 Requires the world to be stoped
 */
-#define FOREACH_THREAD(thread) MONO_LLS_FOREACH (mono_thread_info_list_head (), thread, SgenThreadInfo*)
+#define FOREACH_THREAD(thread) MONO_LLS_FOREACH (mono_thread_info_list_head (), thread, THREAD_INFO_TYPE*)
 #define END_FOREACH_THREAD MONO_LLS_END_FOREACH
 
 /*
 Snapshot iteration.
 */
-#define FOREACH_THREAD_SAFE(thread) MONO_LLS_FOREACH_SAFE (mono_thread_info_list_head (), thread, SgenThreadInfo*)
+#define FOREACH_THREAD_SAFE(thread) MONO_LLS_FOREACH_SAFE (mono_thread_info_list_head (), thread, THREAD_INFO_TYPE*)
 #define END_FOREACH_THREAD_SAFE MONO_LLS_END_FOREACH_SAFE
 
 #define mono_thread_info_get_tid(info) ((MonoNativeThreadId)((MonoThreadInfo*)info)->node.key)
@@ -190,14 +212,17 @@ mono_thread_info_get_small_id (void) MONO_INTERNAL;
 MonoLinkedListSet*
 mono_thread_info_list_head (void) MONO_INTERNAL;
 
-MonoThreadInfo*
+THREAD_INFO_TYPE*
 mono_thread_info_lookup (MonoNativeThreadId id) MONO_INTERNAL;
 
-MonoThreadInfo*
+THREAD_INFO_TYPE*
 mono_thread_info_safe_suspend_sync (MonoNativeThreadId tid, gboolean interrupt_kernel) MONO_INTERNAL;
 
 gboolean
 mono_thread_info_resume (MonoNativeThreadId tid) MONO_INTERNAL;
+
+void
+mono_thread_info_finish_suspend (void) MONO_INTERNAL;
 
 void
 mono_thread_info_self_suspend (void) MONO_INTERNAL;
@@ -206,7 +231,7 @@ gboolean
 mono_thread_info_new_interrupt_enabled (void) MONO_INTERNAL;
 
 void
-mono_thread_info_setup_async_call (MonoThreadInfo *info, void (*target_func)(void*), void *user_data) MONO_INTERNAL;
+mono_thread_info_setup_async_call (THREAD_INFO_TYPE *info, void (*target_func)(void*), void *user_data) MONO_INTERNAL;
 
 void
 mono_thread_info_suspend_lock (void) MONO_INTERNAL;
@@ -215,13 +240,16 @@ void
 mono_thread_info_suspend_unlock (void) MONO_INTERNAL;
 
 void
-mono_threads_unregister_current_thread (THREAD_INFO_TYPE *info) MONO_INTERNAL;
-
-void
 mono_thread_info_disable_new_interrupt (gboolean disable) MONO_INTERNAL;
 
 void
 mono_thread_info_abort_socket_syscall_for_close (MonoNativeThreadId tid) MONO_INTERNAL;
+
+void
+mono_thread_info_set_is_async_context (gboolean async_context) MONO_INTERNAL;
+
+gboolean
+mono_thread_info_is_async_context (void) MONO_INTERNAL;
 
 #if !defined(HOST_WIN32)
 
@@ -244,12 +272,12 @@ HANDLE
 
 /* Plartform specific functions DON'T use them */
 void mono_threads_init_platform (void) MONO_INTERNAL; //ok
-gboolean mono_threads_core_suspend (MonoThreadInfo *info) MONO_INTERNAL;
-gboolean mono_threads_core_resume (MonoThreadInfo *info) MONO_INTERNAL;
-void mono_threads_platform_register (MonoThreadInfo *info) MONO_INTERNAL; //ok
-void mono_threads_platform_free (MonoThreadInfo *info) MONO_INTERNAL;
-void mono_threads_core_interrupt (MonoThreadInfo *info) MONO_INTERNAL;
-void mono_threads_core_abort_syscall (MonoThreadInfo *info) MONO_INTERNAL;
+gboolean mono_threads_core_suspend (THREAD_INFO_TYPE *info) MONO_INTERNAL;
+gboolean mono_threads_core_resume (THREAD_INFO_TYPE *info) MONO_INTERNAL;
+void mono_threads_platform_register (THREAD_INFO_TYPE *info) MONO_INTERNAL; //ok
+void mono_threads_platform_free (THREAD_INFO_TYPE *info) MONO_INTERNAL;
+void mono_threads_core_interrupt (THREAD_INFO_TYPE *info) MONO_INTERNAL;
+void mono_threads_core_abort_syscall (THREAD_INFO_TYPE *info) MONO_INTERNAL;
 gboolean mono_threads_core_needs_abort_syscall (void) MONO_INTERNAL;
 
 MonoNativeThreadId mono_native_thread_id_get (void) MONO_INTERNAL;

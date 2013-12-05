@@ -138,24 +138,24 @@ Mono_Posix_Syscall_ttyname_r (int fd, char *buf, mph_size_t len)
 }
 #endif /* ndef HAVE_TTYNAME_R */
 
-gint32
-Mono_Posix_Syscall_readlink (const char *path, char *buf, mph_size_t len)
+gint64
+Mono_Posix_Syscall_readlink (const char *path, unsigned char *buf, mph_size_t len)
 {
-	int r;
+	gint64 r;
 	mph_return_if_size_t_overflow (len);
-	r = readlink (path, buf, (size_t) len);
+	r = readlink (path, (char*) buf, (size_t) len);
 	if (r >= 0 && r < len)
 		buf [r] = '\0';
 	return r;
 }
 
 #ifdef HAVE_READLINKAT
-gint32
-Mono_Posix_Syscall_readlinkat (int dirfd, const char *path, char *buf, mph_size_t len)
+gint64
+Mono_Posix_Syscall_readlinkat (int dirfd, const char *path, unsigned char *buf, mph_size_t len)
 {
-	int r;
+	gint64 r;
 	mph_return_if_size_t_overflow (len);
-	r = readlinkat (dirfd, path, buf, (size_t) len);
+	r = readlinkat (dirfd, path, (char*) buf, (size_t) len);
 	if (r >= 0 && r < len)
 		buf [r] = '\0';
 	return r;

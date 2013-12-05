@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{E59B1BBE-C3A6-4BF5-A493-C4266D09919A}</ProjectGuid>
+    <ProjectGuid>{6CFB5489-DE34-4BCF-85FB-62CD355C4FEB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\I18N.CJK-tests-net_2_0</OutputPath>
@@ -63,15 +63,15 @@
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\I18N\Common\I18N-net_2_0.csproj">
-      <Project>{6932625D-F574-4E6A-B4E1-AF4CFD2AB290}</Project>
+      <Project>{B4A11584-7362-47A0-9E27-0E4DE9539D77}</Project>
       <Name>Common\I18N-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\I18N\CJK\I18N.CJK-net_2_0.csproj">
-      <Project>{E7899531-46E6-4B4A-8709-E7B099CD40C0}</Project>
+      <Project>{4E0A4799-A3C5-4E57-8713-FDD18BC6A51F}</Project>
       <Name>CJK\I18N.CJK-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>

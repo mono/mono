@@ -38,7 +38,7 @@
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
-#if FULL_AOT_RUNTIME
+#if MONOTOUCH && FULL_AOT_RUNTIME
 using Crimson.CommonCrypto;
 #endif
 
@@ -48,7 +48,7 @@ namespace System {
 	[StructLayout (LayoutKind.Sequential)]
 	[ComVisible (true)]
 	public struct Guid : IFormattable, IComparable, IComparable<Guid>, IEquatable<Guid> {
-#if FULL_AOT_RUNTIME
+#if MONOTOUCH
 		static Guid () {
 			if (MonoTouchAOTHelper.FalseFlag) {
 				var comparer = new System.Collections.Generic.GenericComparer <Guid> ();
@@ -76,8 +76,8 @@ namespace System {
 			X, // {0x00000000,0x0000,0x0000,{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}}
 		}
 
-		class GuidParser {
-
+		struct GuidParser
+		{
 			private string _src;
 			private int _length;
 			private int _cur;
@@ -85,7 +85,8 @@ namespace System {
 			public GuidParser (string src)
 			{
 				_src = src;
-				Reset ();
+				_cur = 0;
+				_length = _src.Length;
 			}
 
 			void Reset ()
@@ -235,19 +236,29 @@ namespace System {
 					if (Eof)
 						return !(strict && (i + 1 != length));
 
-					char c = Char.ToLowerInvariant (_src[_cur]);
+					char c = _src [_cur];
 					if (Char.IsDigit (c)) {
 						res = res * 16 + c - '0';
 						_cur++;
-					} else if (c >= 'a' && c <= 'f') {
+						continue;
+					}
+
+					if (c >= 'a' && c <= 'f') {
 						res = res * 16 + c - 'a' + 10;
 						_cur++;
-					} else {
-						if (!strict)
-							return true;
-
-						return !(strict && (i + 1 != length));
+						continue;
 					}
+
+					if (c >= 'A' && c <= 'F') {
+						res = res * 16 + c - 'A' + 10;
+						_cur++;
+						continue;
+					}
+
+					if (!strict)
+						return true;
+
+					return false; //!(strict && (i + 1 != length));
 				}
 
 				return true;
@@ -263,20 +274,28 @@ namespace System {
 
 			public bool Parse (out Guid guid)
 			{
-				if (TryParseNDBP (Format.N, out guid))
-					return true;
-
-				Reset ();
-				if (TryParseNDBP (Format.D, out guid))
-					return true;
-
-				Reset ();
-				if (TryParseNDBP (Format.B, out guid))
-					return true;
-
-				Reset ();
-				if (TryParseNDBP (Format.P, out guid))
-					return true;
+				switch (_length) {
+				case 32:
+					if (TryParseNDBP (Format.N, out guid))
+						return true;
+					break;
+				case 36:
+					if (TryParseNDBP (Format.D, out guid))
+						return true;
+					break;
+				case 38:
+					switch (_src [0]) {
+					case '{':
+						if (TryParseNDBP (Format.B, out guid))
+							return true;
+						break;
+					case '(':
+						if (TryParseNDBP (Format.P, out guid))
+							return true;
+						break;
+					}
+					break;
+				}
 
 				Reset ();
 				return TryParseX (out guid);
@@ -472,6 +491,15 @@ namespace System {
 		private static RandomNumberGenerator _fastRng;
 #endif
 
+#if FULL_AOT_RUNTIME && !MONOTOUCH
+		// NSA approved random generator.
+		static void LameRandom (byte [] b)
+		{
+			var r = new Random ();
+			r.NextBytes (b);
+		}
+#endif
+		
 		// generated as per section 3.4 of the specification
 		public static Guid NewGuid ()
 		{
@@ -483,8 +511,10 @@ namespace System {
 					_rng = RandomNumberGenerator.Create ();
 				_rng.GetBytes (b);
 			}
-#else
+#elif MONOTOUCH
 			Cryptor.GetRandom (b);
+#else
+			LameRandom (b);
 #endif
 
 			Guid res = new Guid (b);

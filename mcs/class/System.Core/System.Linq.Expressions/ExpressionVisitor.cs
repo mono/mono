@@ -31,7 +31,7 @@ using System.Collections.ObjectModel;
 
 namespace System.Linq.Expressions {
 
-#if MONOTOUCH
+#if FULL_AOT_RUNTIME
 	public
 #endif
 	abstract class ExpressionVisitor {

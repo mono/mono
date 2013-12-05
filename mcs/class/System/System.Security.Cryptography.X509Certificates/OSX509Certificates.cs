@@ -22,11 +22,15 @@
 //
 #if SECURITY_DEP
 
+#if MONOTOUCH
+using MSX = Mono.Security.X509;
+#else
 extern alias MonoSecurity;
+using MSX = MonoSecurity::Mono.Security.X509;
+#endif
 
 using System;
 using System.Runtime.InteropServices;
-using MSX = MonoSecurity::Mono.Security.X509;
 
 namespace System.Security.Cryptography.X509Certificates {
 

@@ -30,8 +30,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -286,6 +284,10 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.AreEqual (l1.Count, l1.Capacity);
 			for (int i = 0; i < l1.Count; i++)
 				Assert.AreEqual (_list1 [i], l1 [i]);
+
+			var input = new [] { "a", "b", "c" };
+			var l2 = new List<string>(input);
+			Assert.AreEqual (3, l2.Capacity);
 		}
 
 		[Test, ExpectedException (typeof (ArgumentNullException))]
@@ -555,12 +557,55 @@ namespace MonoTests.System.Collections.Generic {
 
 			i = _list1.FindIndex (FindMultipleOfTwelve);
 			Assert.AreEqual (-1, i);
+
+			var a = new List<int> () { 2, 2, 2, 3, 2 };
+			Assert.AreEqual (2, a.FindIndex (2, 2, l => true));
 		}
 
-		[Test, ExpectedException (typeof (ArgumentNullException))]
-		public void FindIndexNullTest ()
+		[Test]
+		public void FindIndex_Invalid ()
 		{
-			int i = _list1.FindIndex (null);
+			try {
+				_list1.FindIndex (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException) {
+			}
+
+			try {
+				_list1.FindIndex (-1, l => true);
+				Assert.Fail ("#2");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				_list1.FindIndex (-1, 0, l => true);
+				Assert.Fail ("#2b");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				_list1.FindIndex (0, -1, l => true);
+				Assert.Fail ("#3");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				_list1.FindIndex (100, l => true);
+				Assert.Fail ("#4");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				_list1.FindIndex (100, 0, l => true);
+				Assert.Fail ("#4b");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				_list1.FindIndex (7, 2, l => true);
+				Assert.Fail ("#5");
+			} catch (ArgumentOutOfRangeException) {
+			}
 		}
 
 		[Test]
@@ -579,8 +624,6 @@ namespace MonoTests.System.Collections.Generic {
 			int i = _list1.FindLast (null);
 		}
 
-		// FIXME currently generates Invalid IL Code error
-		/*
 		[Test]
 		public void ForEachTest ()
 		{
@@ -589,7 +632,7 @@ namespace MonoTests.System.Collections.Generic {
 
 			Assert.AreEqual (418, i);
 		}
-		*/
+
 		[Test]
 		public void FindLastIndexTest ()
 		{
@@ -601,12 +644,56 @@ namespace MonoTests.System.Collections.Generic {
 
 			i = _list1.FindIndex (FindMultipleOfTwelve);
 			Assert.AreEqual (-1, i);
+
+			Assert.AreEqual (2, _list1.FindLastIndex (2, 3, l => true));
+			Assert.AreEqual (2, _list1.FindLastIndex (2, 2, l => true));
+			Assert.AreEqual (1, _list1.FindLastIndex (1, 2, l => true));
 		}
 
-		[Test, ExpectedException (typeof (ArgumentNullException))]
-		public void FindLastIndexNullTest ()
+		[Test]
+		public void FindLastIndex_Invalid ()
 		{
-			int i = _list1.FindLastIndex (null);
+			try {
+				_list1.FindLastIndex (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException) {
+			}
+
+			try {
+				_list1.FindLastIndex (-1, l => true);
+				Assert.Fail ("#2");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				_list1.FindLastIndex (-1, 0, l => true);
+				Assert.Fail ("#2b");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				_list1.FindLastIndex (0, -1, l => true);
+				Assert.Fail ("#3");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				_list1.FindLastIndex (100, l => true);
+				Assert.Fail ("#4");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				_list1.FindLastIndex (100, 0, l => true);
+				Assert.Fail ("#4b");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				_list1.FindLastIndex (2, 4, l => true);
+				Assert.Fail ("#5");
+			} catch (ArgumentOutOfRangeException) {
+			}
 		}
 
 		[Test]
@@ -1464,5 +1551,4 @@ namespace MonoTests.System.Collections.Generic {
 
 	}
 }
-#endif
 

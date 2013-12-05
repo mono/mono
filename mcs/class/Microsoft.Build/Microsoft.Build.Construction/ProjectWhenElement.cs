@@ -29,6 +29,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using Microsoft.Build.Exceptions;
 using Microsoft.Build.Internal;
 
@@ -57,9 +58,9 @@ namespace Microsoft.Build.Construction
                 internal override string XmlName {
                         get { return "When"; }
                 }
-                internal override ProjectElement LoadChildElement (string name)
+                internal override ProjectElement LoadChildElement (XmlReader reader)
                 {
-                        switch (name) {
+                        switch (reader.LocalName) {
                         case "PropertyGroup":
                                 var property = ContainingProject.CreatePropertyGroupElement ();
                                 AppendChild (property);
@@ -74,7 +75,7 @@ namespace Microsoft.Build.Construction
                                 return when;
                         default:
                                 throw new InvalidProjectFileException (string.Format (
-                                        "Child \"{0}\" is not a known node type.", name));
+                                        "Child \"{0}\" is not a known node type.", reader.LocalName));
                         }
                 }
         }

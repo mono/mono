@@ -82,6 +82,42 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		public void Dispose_WithReadLock ()
+		{
+			var rwl = new ReaderWriterLockSlim ();
+			rwl.EnterReadLock ();
+			try {
+				rwl.Dispose ();
+				Assert.Fail ("1");
+			} catch (SynchronizationLockException) {
+			}
+		}
+
+		[Test]
+		public void Dispose_WithWriteLock ()
+		{
+			var rwl = new ReaderWriterLockSlim ();
+			rwl.EnterWriteLock ();
+			try {
+				rwl.Dispose ();
+				Assert.Fail ("1");
+			} catch (SynchronizationLockException) {
+			}
+		}
+
+		[Test]
+		public void Dispose_UpgradeableReadLock ()
+		{
+			var rwl = new ReaderWriterLockSlim ();
+			rwl.EnterUpgradeableReadLock ();
+			try {
+				rwl.Dispose ();
+				Assert.Fail ("1");
+			} catch (SynchronizationLockException) {
+			}
+		}
+
+		[Test]
 		public void TryEnterReadLock_OutOfRange ()
 		{
 			var v = new ReaderWriterLockSlim ();

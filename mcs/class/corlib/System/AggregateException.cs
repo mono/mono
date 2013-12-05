@@ -163,7 +163,7 @@ namespace System
 
 		public override Exception GetBaseException ()
 		{
-			if (innerExceptions == null || innerExceptions.Count == 0)
+			if (innerExceptions == null || innerExceptions.Count != 1)
 				return this;
 			return innerExceptions[0].GetBaseException ();
 		}

@@ -263,6 +263,26 @@ public class RSACryptoServiceProviderTest {
 	}
 
 	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void SignDataWithInvalidOid ()
+	{
+		byte[] data = new byte [5];
+		rsa = new RSACryptoServiceProvider (minKeySize);
+
+		rsa.SignData (data, "1.2.3");
+	}
+
+	[Test]
+	public void SignDataWithOid ()
+	{
+		string oid  = CryptoConfig.MapNameToOID ("SHA256");
+		byte[] data = new byte [5];
+		rsa = new RSACryptoServiceProvider (minKeySize);
+
+		rsa.SignData (data, oid);
+	}
+
+	[Test]
 	[ExpectedException (typeof (ArgumentNullException))]
 	public void SignHashNullValue () 
 	{

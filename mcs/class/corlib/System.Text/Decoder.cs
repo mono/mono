@@ -108,10 +108,11 @@ public abstract class Decoder
 		CheckArguments (chars, charCount, bytes, byteCount);
 
 		char [] carr = new char [charCount];
-		Marshal.Copy ((IntPtr) chars, carr, 0, charCount);
 		byte [] barr = new byte [byteCount];
 		Marshal.Copy ((IntPtr) bytes, barr, 0, byteCount);
-		return GetChars (barr, 0, byteCount, carr, 0, flush);
+		int charsUsed = GetChars (barr, 0, byteCount, carr, 0, flush);
+		Marshal.Copy (carr, 0, (IntPtr) chars, charsUsed);
+		return charsUsed;
 	}
 
 	[ComVisible (false)]

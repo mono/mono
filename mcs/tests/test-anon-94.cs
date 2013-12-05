@@ -8,6 +8,7 @@ class Program
 	{
 		public int i;
 		public virtual void Print () { Console.WriteLine ("BaseClass.Print"); i = 90; }
+		public virtual void TestOut (out int arg) { arg = 4; }
 	}
 
 	public class Derived : BaseClass
@@ -16,6 +17,18 @@ class Program
 		{
 			Action a = () => base.Print ();
 			a ();
+		}
+		
+		public override void TestOut (out int arg)
+		{
+			int p = 9;
+			Action a = () => {
+				base.TestOut (out p);
+				Console.WriteLine (p);
+			};
+			
+			a ();
+			arg = p;
 		}
 	}
 	
@@ -35,12 +48,17 @@ class Program
 
 		if (d.i != 90)
 			return 1;
+		
+		int arg;
+		d.TestOut (out arg);
+		if (arg != 4)
+			return 2;
 
 		var d2 = new DerivedLibrary ();
 		d2.Print (0);
 
 		if (d2.i != 30)
-			return 2;
+			return 3;
 
 		return 0;
 	}

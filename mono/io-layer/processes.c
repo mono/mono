@@ -76,6 +76,7 @@
 #include <mono/utils/mono-time.h>
 #include <mono/utils/mono-membar.h>
 #include <mono/utils/mono-mutex.h>
+#include <mono/utils/mono-signal-handler.h>
 
 /* The process' environment strings */
 #if defined(__APPLE__) && !defined (__arm__)
@@ -1714,10 +1715,11 @@ static GSList *load_modules (void)
 
 		slide = _dyld_get_image_vmaddr_slide (i);
 		name = _dyld_get_image_name (i);
-		hdr = _dyld_get_image_header (i);
 #if SIZEOF_VOID_P == 8
+		hdr = (const struct mach_header_64*)_dyld_get_image_header (i);
 		sec = getsectbynamefromheader_64 (hdr, SEG_DATA, SECT_DATA);
 #else
+		hdr = _dyld_get_image_header (i);
 		sec = getsectbynamefromheader (hdr, SEG_DATA, SECT_DATA);
 #endif
 
@@ -2118,9 +2120,11 @@ static gchar *get_process_name_from_proc (pid_t pid)
 	size_t size;
 	struct kinfo_proc2 *pi;
 #elif defined(PLATFORM_MACOSX)
+#if !(!defined (__mono_ppc__) && defined (TARGET_OSX))
 	size_t size;
 	struct kinfo_proc *pi;
 	int mib[] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, pid };
+#endif
 #else
 	FILE *fp;
 	gchar *filename = NULL;
@@ -2828,8 +2832,7 @@ process_close (gpointer handle, gpointer data)
 }
 
 #if HAVE_SIGACTION
-static void
-mono_sigchld_signal_handler (int _dummy, siginfo_t *info, void *context)
+MONO_SIGNAL_HANDLER_FUNC (static, mono_sigchld_signal_handler, (int _dummy, siginfo_t *info, void *context))
 {
 	int status;
 	int pid;
@@ -2870,6 +2873,7 @@ mono_sigchld_signal_handler (int _dummy, siginfo_t *info, void *context)
 	fprintf (stdout, "SIG CHILD handler: done looping.");
 #endif
 }
+
 #endif
 
 static void process_add_sigchld_handler (void)

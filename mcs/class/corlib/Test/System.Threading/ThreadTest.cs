@@ -1123,6 +1123,60 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		public void TestSetApartmentStateSameState ()
+		{
+			Thread t1 = new Thread (new ThreadStart (Start));
+			t1.SetApartmentState (ApartmentState.STA);
+			Assert.AreEqual (ApartmentState.STA, t1.ApartmentState, "Thread1 Set Once");
+
+			t1.SetApartmentState (ApartmentState.STA);
+			Assert.AreEqual (ApartmentState.STA, t1.ApartmentState, "Thread1 Set twice");
+		}
+
+		[Test]
+		[ExpectedException(typeof(InvalidOperationException))]
+		public void TestSetApartmentStateDiffState ()
+		{
+			Thread t1 = new Thread (new ThreadStart (Start));
+			t1.SetApartmentState (ApartmentState.STA);
+			Assert.AreEqual (ApartmentState.STA, t1.ApartmentState, "Thread1 Set Once");
+
+			t1.SetApartmentState (ApartmentState.MTA);
+		}
+
+		[Test]
+		public void TestTrySetApartmentState ()
+		{
+			Thread t1 = new Thread (new ThreadStart (Start));
+			t1.SetApartmentState (ApartmentState.STA);
+			Assert.AreEqual (ApartmentState.STA, t1.ApartmentState, "#1");
+
+			bool result = t1.TrySetApartmentState (ApartmentState.MTA);
+			Assert.IsFalse (result, "#2");
+
+			result = t1.TrySetApartmentState (ApartmentState.STA);
+			Assert.IsTrue (result, "#3");
+		}
+
+		[Test]
+		public void TestTrySetApartmentStateRunning ()
+		{
+			Thread t1 = new Thread (new ThreadStart (Start));
+			t1.SetApartmentState (ApartmentState.STA);
+			Assert.AreEqual (ApartmentState.STA, t1.ApartmentState, "#1");
+
+			t1.Start ();
+
+			try {
+				t1.TrySetApartmentState (ApartmentState.STA);
+				Assert.Fail ("#2");
+			} catch (ThreadStateException) {
+			}
+
+			t1.Join ();
+		}
+
+		[Test]
 		public void Volatile () {
 			double v3 = 55667;
 			Thread.VolatileWrite (ref v3, double.MaxValue);

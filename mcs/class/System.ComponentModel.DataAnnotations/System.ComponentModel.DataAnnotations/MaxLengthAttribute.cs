@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
+//	Pablo Ruiz García <pablo.ruiz@gmail.com>
 //
 // Copyright (C) 2012 Xamarin Inc (http://www.xamarin.com)
 //
@@ -28,21 +29,62 @@
 
 #if NET_4_5
 
+using System;
+using System.Globalization;
+
 namespace System.ComponentModel.DataAnnotations
 {
 	[AttributeUsageAttribute (AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
 	public class MaxLengthAttribute : ValidationAttribute
 	{
+		private const string DefaultErrorMessage = "The field {0} must be a string or array type with a maximum length of '{1}'.";
+		private const string InvalidLengthErrorMessage = "MaxLengthAttribute must have a Length value that is greater than zero. " +
+								 "Use MaxLength() without parameters to indicate that the string or array can have the maximum allowable length.";
+		private bool _maxLength = true;
+
 		public MaxLengthAttribute ()
+			: base (() => DefaultErrorMessage)
 		{
 		}
 		
 		public MaxLengthAttribute (int length)
+			: this ()
 		{
 			Length = length;
+			_maxLength = false;
 		}
 		
 		public int Length { get; private set; }
+
+		public override string FormatErrorMessage (string name)
+		{
+			return string.Format (ErrorMessageString, name, Length);
+		}
+
+		public override bool IsValid (object value)
+		{
+			// See: http://msdn.microsoft.com/en-us/library/gg696614.aspx
+
+			if (this.Length == 0 || this.Length < -1)
+				throw new InvalidOperationException (InvalidLengthErrorMessage);
+
+			// Weird, but using 'MaxLength' with no length seems to be valid
+			// and we should be returning true, and not throwing. (pablo)
+			if (value != null && !_maxLength) {
+
+				if (value is string) {
+					return (value as string).Length <= this.Length;
+				}
+
+				if (value is Array) {
+					return (value as Array).Length <= this.Length;
+				}
+
+				// NOTE: from my tests, MS.NET does not support IEnumerable as value. :(
+			}
+
+			return true;
+		}
 	}
 }
 

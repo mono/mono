@@ -27,67 +27,75 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Microsoft.Build.Execution
 {
-        public class BuildResult
-        {
-                public void AddResultsForTarget (string target, TargetResult result)
-                {
-                        throw new NotImplementedException ();
-                }
+	public class BuildResult
+	{
+		public BuildResult ()
+		{
+			ResultsByTarget = new Dictionary<string, TargetResult> ();
+		}
+		
+		public void AddResultsForTarget (string target, TargetResult result)
+		{
+			ResultsByTarget.Add (target, result);
+		}
 
-                public bool HasResultsForTarget (string target)
-                {
-                        throw new NotImplementedException ();
-                }
+		public bool HasResultsForTarget (string target)
+		{
+			return ResultsByTarget.ContainsKey (target);
+		}
 
-                public void MergeResults (BuildResult results)
-                {
-                        throw new NotImplementedException ();
-                }
+		public void MergeResults (BuildResult results)
+		{
+			if (ConfigurationId != results.ConfigurationId)
+				throw new InvalidOperationException ("Argument BuildResults have inconsistent ConfigurationId.");
+			if (GlobalRequestId != results.GlobalRequestId)
+				throw new InvalidOperationException ("Argument BuildResults have inconsistent GlobalRequestId.");
+			if (NodeRequestId != results.NodeRequestId)
+				throw new InvalidOperationException ("Argument BuildResults have inconsistent NodeRequestId.");
+			if (ParentGlobalRequestId != results.ParentGlobalRequestId)
+				throw new InvalidOperationException ("Argument BuildResults have inconsistent ParentGlobalRequestId.");
+			if (SubmissionId != results.SubmissionId)
+				throw new InvalidOperationException ("Argument BuildResults have inconsistent SubmissionId.");
+			
+			CircularDependency |= results.CircularDependency;
+			Exception = Exception ?? results.Exception;
+			foreach (var p in results.ResultsByTarget)
+				ResultsByTarget.Add (p.Key, p.Value);
+		}
 
-                public bool CircularDependency {
-                        get { throw new NotImplementedException (); }
-                }
+		public bool CircularDependency { get; internal set; }
 
-                public int ConfigurationId {
-                        get { throw new NotImplementedException (); }
-                }
+		public int ConfigurationId { get; internal set; }
 
-                public Exception Exception {
-                        get { throw new NotImplementedException (); }
-                        set { throw new NotImplementedException (); }
-                }
+		public Exception Exception { get; set; }
 
-                public int GlobalRequestId {
-                        get { throw new NotImplementedException (); }
-                }
+		public int GlobalRequestId { get; internal set; }
 
-                public ITargetResult this [string target] {
-                        get { throw new NotImplementedException (); }
-                }
+		public ITargetResult this [string target] {
+			get { return ResultsByTarget [target]; }
+		}
 
-                public int NodeRequestId {
-                        get { throw new NotImplementedException (); }
-                }
+		public int NodeRequestId { get; internal set; }
 
-                public BuildResultCode OverallResult {
-                        get { throw new NotImplementedException (); }
-                }
+		BuildResultCode? overall_result;
+		public BuildResultCode OverallResult {
+			get {
+				if (overall_result == null)
+					throw new InvalidOperationException ("Build has not finished");
+				return overall_result.Value;
+			}
+			internal set { overall_result = value; }
+		}
 
-                public int ParentGlobalRequestId {
-                        get { throw new NotImplementedException (); }
-                }
+		public int ParentGlobalRequestId { get; internal set; }
 
-                public IDictionary<string, TargetResult> ResultsByTarget {
-                        get { throw new NotImplementedException (); }
-                }
+		public IDictionary<string, TargetResult> ResultsByTarget { get; private set; }
 
-                public int SubmissionId {
-                        get { throw new NotImplementedException (); }
-                }
-
-        }
+		public int SubmissionId { get; internal set; }
+	}
 }
 

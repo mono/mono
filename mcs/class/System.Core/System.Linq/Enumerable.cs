@@ -1111,7 +1111,7 @@ namespace System.Linq
 
 			foreach (TOuter element in outer) {
 				TKey outerKey = outerKeySelector (element);
-				if (innerKeys.Contains (outerKey))
+				if (outerKey != null && innerKeys.Contains (outerKey))
 					yield return resultSelector (element, innerKeys [outerKey]);
 				else
 					yield return resultSelector (element, Empty<TInner> ());
@@ -1178,7 +1178,7 @@ namespace System.Linq
 
 			foreach (TOuter element in outer) {
 				TKey outerKey = outerKeySelector (element);
-				if (innerKeys.Contains (outerKey)) {
+				if (outerKey != null && innerKeys.Contains (outerKey)) {
 					foreach (TInner innerElement in innerKeys [outerKey])
 						yield return resultSelector (element, innerElement);
 				}

@@ -33,6 +33,7 @@
 #include <mono/utils/mono-path.h>
 #include <mono/metadata/reflection.h>
 #include <mono/metadata/coree.h>
+#include <mono/metadata/cil-coff.h>
 #include <mono/utils/mono-io-portability.h>
 #include <mono/utils/atomic.h>
 
@@ -107,6 +108,8 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	{"System.Data", 0},
 	{"System.Data.Linq", 2},
 	{"System.Data.OracleClient", 0},
+	{"System.Data.Services", 2},
+	{"System.Data.Services.Client", 2},
 	{"System.Data.SqlXml", 0},
 	{"System.Design", 0},
 	{"System.DirectoryServices", 0},
@@ -115,19 +118,25 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	{"System.EnterpriseServices", 0},
 	{"System.Management", 0},
 	{"System.Messaging", 0},
+	{"System.Net", 2},
 	{"System.Runtime.Remoting", 0},
 	{"System.Runtime.Serialization", 3},
 	{"System.Runtime.Serialization.Formatters.Soap", 0},
 	{"System.Security", 0},
+	{"System.ServiceModel.Web", 2},
 	{"System.ServiceProcess", 0},
 	{"System.Transactions", 0},
 	{"System.Web", 0},
 	{"System.Web.Abstractions", 2},
+	{"System.Web.DynamicData", 2},
+	{"System.Web.Extensions", 2},
 	{"System.Web.Mobile", 0},
 	{"System.Web.Routing", 2},
 	{"System.Web.Services", 0},
 	{"System.Windows.Forms", 0},
 	{"System.Xml", 0},
+	{"System.Xml.Linq", 2},
+	{"WindowsBase", 3},
 	{"mscorlib", 0}
 };
 #endif
@@ -733,6 +742,7 @@ mono_assembly_fill_assembly_name (MonoImage *image, MonoAssemblyName *aname)
 {
 	MonoTableInfo *t = &image->tables [MONO_TABLE_ASSEMBLY];
 	guint32 cols [MONO_ASSEMBLY_SIZE];
+	gint32 machine;
 
 	if (!t->rows)
 		return FALSE;
@@ -776,6 +786,24 @@ mono_assembly_fill_assembly_name (MonoImage *image, MonoAssemblyName *aname)
 	}
 	else
 		aname->public_key = 0;
+
+	machine = ((MonoCLIImageInfo*)(image->image_info))->cli_header.coff.coff_machine;
+	switch (machine) {
+	case COFF_MACHINE_I386:
+		aname->arch = MONO_PROCESSOR_ARCHITECTURE_X86;
+		break;
+	case COFF_MACHINE_IA64:
+		aname->arch = MONO_PROCESSOR_ARCHITECTURE_IA64;
+		break;
+	case COFF_MACHINE_AMD64:
+		aname->arch = MONO_PROCESSOR_ARCHITECTURE_AMD64;
+		break;
+	case COFF_MACHINE_ARM:
+		aname->arch = MONO_PROCESSOR_ARCHITECTURE_ARM;
+		break;
+	default:
+		break;
+	}
 
 	return TRUE;
 }
@@ -836,6 +864,11 @@ mono_assembly_addref (MonoAssembly *assembly)
 	InterlockedIncrement (&assembly->ref_count);
 }
 
+/*
+ * CAUTION: This table must be kept in sync with
+ *          ivkm/reflect/Fusion.cs
+ */
+
 #define SILVERLIGHT_KEY "7cec85d7bea7798e"
 #define WINFX_KEY "31bf3856ad364e35"
 #define ECMA_KEY "b77a5c561934e089"
@@ -854,7 +887,7 @@ static KeyRemapEntry key_remap_table[] = {
 	{ "System.ComponentModel.DataAnnotations", "ddd0da4d3e678217", WINFX_KEY },
 	{ "System.Core", SILVERLIGHT_KEY, ECMA_KEY },
 	// FIXME: MS uses MSFINAL_KEY for .NET 4.5
-	{ "System.Net", SILVERLIGHT_KEY, ECMA_KEY },
+	{ "System.Net", SILVERLIGHT_KEY, MSFINAL_KEY },
 	{ "System.Numerics", WINFX_KEY, ECMA_KEY },
 	{ "System.Runtime.Serialization", SILVERLIGHT_KEY, ECMA_KEY },
 	{ "System.ServiceModel", WINFX_KEY, ECMA_KEY },
@@ -862,7 +895,7 @@ static KeyRemapEntry key_remap_table[] = {
 	{ "System.Windows", SILVERLIGHT_KEY, MSFINAL_KEY },
 	{ "System.Xml", SILVERLIGHT_KEY, ECMA_KEY },
 	{ "System.Xml.Linq", WINFX_KEY, ECMA_KEY },
-	{ "System.Xml.Serialization", WINFX_KEY, MSFINAL_KEY }
+	{ "System.Xml.Serialization", WINFX_KEY, ECMA_KEY }
 };
 
 static void

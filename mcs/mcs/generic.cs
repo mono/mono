@@ -28,6 +28,50 @@ using System.Reflection.Emit;
 #endif
 
 namespace Mono.CSharp {
+	public class VarianceDecl
+	{
+		public VarianceDecl (Variance variance, Location loc)
+		{
+			this.Variance = variance;
+			this.Location = loc;
+		}
+
+		public Variance Variance { get; private set; }
+		public Location Location { get; private set; }
+
+		public static Variance CheckTypeVariance (TypeSpec t, Variance expected, IMemberContext member)
+		{
+			var tp = t as TypeParameterSpec;
+			if (tp != null) {
+				var v = tp.Variance;
+				if (expected == Variance.None && v != expected ||
+					expected == Variance.Covariant && v == Variance.Contravariant ||
+					expected == Variance.Contravariant && v == Variance.Covariant) {
+					((TypeParameter) tp.MemberDefinition).ErrorInvalidVariance (member, expected);
+				}
+
+				return expected;
+			}
+
+			if (t.TypeArguments.Length > 0) {
+				var targs_definition = t.MemberDefinition.TypeParameters;
+				TypeSpec[] targs = TypeManager.GetTypeArguments (t);
+				for (int i = 0; i < targs.Length; ++i) {
+					var v = targs_definition[i].Variance;
+					CheckTypeVariance (targs[i], (Variance) ((int) v * (int) expected), member);
+				}
+
+				return expected;
+			}
+
+			var ac = t as ArrayContainer;
+			if (ac != null)
+				return CheckTypeVariance (ac.Element, expected, member);
+
+			return Variance.None;
+		}
+	}
+
 	public enum Variance
 	{
 		//
@@ -73,9 +117,9 @@ namespace Mono.CSharp {
 	//
 	public class Constraints
 	{
-		SimpleMemberName tparam;
-		List<FullNamedExpression> constraints;
-		Location loc;
+		readonly SimpleMemberName tparam;
+		readonly List<FullNamedExpression> constraints;
+		readonly Location loc;
 		bool resolved;
 		bool resolving;
 		
@@ -235,7 +279,7 @@ namespace Mono.CSharp {
 					// is valid with respect to T
 					//
 					if (tp.IsMethodTypeParameter) {
-						TypeManager.CheckTypeVariance (type, Variance.Contravariant, context);
+						VarianceDecl.CheckTypeVariance (type, Variance.Contravariant, context);
 					}
 
 					var tp_def = constraint_tp.MemberDefinition as TypeParameter;
@@ -354,26 +398,28 @@ namespace Mono.CSharp {
 	//
 	public class TypeParameter : MemberCore, ITypeDefinition
 	{
-		static readonly string[] attribute_target = new string [] { "type parameter" };
+		static readonly string[] attribute_target = { "type parameter" };
 		
 		Constraints constraints;
 		GenericTypeParameterBuilder builder;
 		readonly TypeParameterSpec spec;
 
-		public TypeParameter (int index, MemberName name, Constraints constraints, Attributes attrs, Variance variance)
+		public TypeParameter (int index, MemberName name, Constraints constraints, Attributes attrs, Variance Variance)
 			: base (null, name, attrs)
 		{
 			this.constraints = constraints;
-			this.spec = new TypeParameterSpec (null, index, this, SpecialConstraint.None, variance, null);
+			this.spec = new TypeParameterSpec (null, index, this, SpecialConstraint.None, Variance, null);
 		}
 
 		//
 		// Used by parser
 		//
-		public TypeParameter (MemberName name, Attributes attrs, Variance variance)
+		public TypeParameter (MemberName name, Attributes attrs, VarianceDecl variance)
 			: base (null, name, attrs)
 		{
-			this.spec = new TypeParameterSpec (null, -1, this, SpecialConstraint.None, variance, null);
+			var var = variance == null ? Variance.None : variance.Variance;
+			this.spec = new TypeParameterSpec (null, -1, this, SpecialConstraint.None, var, null);
+			this.VarianceDecl = variance;
 		}
 		
 		public TypeParameter (TypeParameterSpec spec, TypeSpec parentSpec, MemberName name, Attributes attrs)
@@ -440,6 +486,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		bool ITypeDefinition.IsCyclicTypeForwarder {
+			get {
+				return false;
+			}
+		}
+
 		public string Name {
 			get {
 				return MemberName.Name;
@@ -482,6 +534,8 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public VarianceDecl VarianceDecl { get; private set; }
+
 		#endregion
 
 		//
@@ -511,7 +565,7 @@ namespace Mono.CSharp {
 
 			// Copy constraint from resolved part to partial container
 			spec.SpecialConstraint = tp.spec.SpecialConstraint;
-			spec.Interfaces = tp.spec.Interfaces;
+			spec.InterfacesDefined = tp.spec.InterfacesDefined;
 			spec.TypeArguments = tp.spec.TypeArguments;
 			spec.BaseType = tp.spec.BaseType;
 			
@@ -583,8 +637,21 @@ namespace Mono.CSharp {
 			if (spec.InterfacesDefined != null)
 				builder.SetInterfaceConstraints (spec.InterfacesDefined.Select (l => l.GetMetaInfo ()).ToArray ());
 
-			if (spec.TypeArguments != null)
-				builder.SetInterfaceConstraints (spec.TypeArguments.Select (l => l.GetMetaInfo ()).ToArray ());
+			if (spec.TypeArguments != null) {
+				var meta_constraints = new List<MetaType> (spec.TypeArguments.Length);
+				foreach (var c in spec.TypeArguments) {
+					//
+					// Inflated type parameters can collide with special constraint types, don't
+					// emit any such type parameter.
+					//
+					if (c.BuiltinType == BuiltinTypeSpec.Type.Object || c.BuiltinType == BuiltinTypeSpec.Type.ValueType)
+						continue;
+
+					meta_constraints.Add (c.GetMetaInfo ());
+				}
+
+				builder.SetInterfaceConstraints (meta_constraints.ToArray ());
+			}
 
 			builder.SetGenericParameterAttributes (attr);
 		}
@@ -812,10 +879,7 @@ namespace Mono.CSharp {
 		public TypeSpec[] InterfacesDefined {
 			get {
 				if (ifaces_defined == null) {
-					if (ifaces == null)
-						return null;
-
-					ifaces_defined = ifaces.ToArray ();
+					ifaces_defined = ifaces == null ? TypeSpec.EmptyTypes : ifaces.ToArray ();
 				}
 
 				return ifaces_defined.Length == 0 ? null : ifaces_defined;
@@ -1189,6 +1253,8 @@ namespace Mono.CSharp {
 				tps.ifaces_defined = new TypeSpec[defined.Length];
 				for (int i = 0; i < defined.Length; ++i)
 					tps.ifaces_defined [i] = inflator.Inflate (defined[i]);
+			} else if (ifaces_defined == TypeSpec.EmptyTypes) {
+				tps.ifaces_defined = TypeSpec.EmptyTypes;
 			}
 
 			var ifaces = Interfaces;
@@ -1196,6 +1262,7 @@ namespace Mono.CSharp {
 				tps.ifaces = new List<TypeSpec> (ifaces.Count);
 				for (int i = 0; i < ifaces.Count; ++i)
 					tps.ifaces.Add (inflator.Inflate (ifaces[i]));
+				tps.state |= StateFlags.InterfacesExpanded;
 			}
 
 			if (targs != null) {
@@ -1208,6 +1275,10 @@ namespace Mono.CSharp {
 		public override MemberSpec InflateMember (TypeParameterInflator inflator)
 		{
 			var tps = (TypeParameterSpec) MemberwiseClone ();
+#if DEBUG
+			tps.ID += 1000000;
+#endif
+
 			InflateConstraints (inflator, tps);
 			return tps;
 		}
@@ -1665,7 +1736,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override bool IsGenericIterateInterface {
+		public override bool IsArrayGenericInterface {
 			get {
 				return (open_type.state & StateFlags.GenericIterateInterface) != 0;
 			}
@@ -1722,7 +1793,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		TypeParameterInflator CreateLocalInflator (IModuleContext context)
+		public TypeParameterInflator CreateLocalInflator (IModuleContext context)
 		{
 			TypeParameterSpec[] tparams_full;
 			TypeSpec[] targs_full = targs;
@@ -1774,7 +1845,7 @@ namespace Mono.CSharp {
 			return new TypeParameterInflator (context, this, tparams_full, targs_full);
 		}
 
-		MetaType CreateMetaInfo (TypeParameterMutator mutator)
+		MetaType CreateMetaInfo ()
 		{
 			//
 			// Converts nested type arguments into right order
@@ -1824,7 +1895,7 @@ namespace Mono.CSharp {
 		public override MetaType GetMetaInfo ()
 		{
 			if (info == null)
-				info = CreateMetaInfo (null);
+				info = CreateMetaInfo ();
 
 			return info;
 		}
@@ -2494,8 +2565,8 @@ namespace Mono.CSharp {
 			//
 			// Check the interfaces constraints
 			//
-			if (tparam.Interfaces != null) {
-				foreach (TypeSpec iface in tparam.Interfaces) {
+			if (tparam.InterfacesDefined != null) {
+				foreach (TypeSpec iface in tparam.InterfacesDefined) {
 					if (!CheckConversion (mc, context, atype, tparam, iface, loc)) {
 						if (mc == null)
 							return false;
@@ -2638,40 +2709,6 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public partial class TypeManager
-	{
-		public static Variance CheckTypeVariance (TypeSpec t, Variance expected, IMemberContext member)
-		{
-			var tp = t as TypeParameterSpec;
-			if (tp != null) {
-				Variance v = tp.Variance;
-				if (expected == Variance.None && v != expected ||
-					expected == Variance.Covariant && v == Variance.Contravariant ||
-					expected == Variance.Contravariant && v == Variance.Covariant) {
-					((TypeParameter)tp.MemberDefinition).ErrorInvalidVariance (member, expected);
-				}
-
-				return expected;
-			}
-
-			if (t.TypeArguments.Length > 0) {
-				var targs_definition = t.MemberDefinition.TypeParameters;
-				TypeSpec[] targs = GetTypeArguments (t);
-				for (int i = 0; i < targs.Length; ++i) {
-					Variance v = targs_definition[i].Variance;
-					CheckTypeVariance (targs[i], (Variance) ((int)v * (int)expected), member);
-				}
-
-				return expected;
-			}
-
-			if (t.IsArray)
-				return CheckTypeVariance (GetElementType (t), expected, member);
-
-			return Variance.None;
-		}
-	}
-
 	//
 	// Implements C# type inference
 	//
@@ -2752,7 +2789,7 @@ namespace Mono.CSharp {
 				//
 				AnonymousMethodExpression am = a.Expr as AnonymousMethodExpression;
 				if (am != null) {
-					if (am.ExplicitTypeInference (ec, tic, method_parameter))
+					if (am.ExplicitTypeInference (tic, method_parameter))
 						--score; 
 					continue;
 				}
@@ -2818,7 +2855,7 @@ namespace Mono.CSharp {
 				var mi = Delegate.GetInvokeMethod (t_i);
 				TypeSpec rtype = mi.ReturnType;
 
-				if (tic.IsReturnTypeNonDependent (ec, mi, rtype)) {
+				if (tic.IsReturnTypeNonDependent (mi, rtype)) {
 					// It can be null for default arguments
 					if (arguments[i] == null)
 						continue;
@@ -2917,15 +2954,20 @@ namespace Mono.CSharp {
 
 		public void AddCommonTypeBound (TypeSpec type)
 		{
-			AddToBounds (new BoundInfo (type, BoundKind.Lower), 0);
+			AddToBounds (new BoundInfo (type, BoundKind.Lower), 0, false);
 		}
 
-		void AddToBounds (BoundInfo bound, int index)
+		public void AddCommonTypeBoundAsync (TypeSpec type)
+		{
+			AddToBounds (new BoundInfo (type, BoundKind.Lower), 0, true);
+		}
+
+		void AddToBounds (BoundInfo bound, int index, bool voidAllowed)
 		{
 			//
 			// Some types cannot be used as type arguments
 			//
-			if (bound.Type.Kind == MemberKind.Void || bound.Type.IsPointer || bound.Type.IsSpecialRuntimeType ||
+			if ((bound.Type.Kind == MemberKind.Void && !voidAllowed) || bound.Type.IsPointer || bound.Type.IsSpecialRuntimeType ||
 				bound.Type == InternalType.MethodGroup || bound.Type == InternalType.AnonymousMethod)
 				return;
 
@@ -2999,7 +3041,7 @@ namespace Mono.CSharp {
 			if (pos == -1)
 				return 0;
 
-			AddToBounds (new BoundInfo (u, BoundKind.Exact), pos);
+			AddToBounds (new BoundInfo (u, BoundKind.Exact), pos, false);
 			return 1;
 		}
 
@@ -3106,87 +3148,100 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// Determines a unique type from which there is
-			// a standard implicit conversion to all the other
-			// candidate types.
+			// The set of candidate types Uj starts out as the set of
+			// all types in the set of bounds for Xi
 			//
-			TypeSpec best_candidate = null;
-			int cii;
-			int candidates_count = candidates.Count;
-			for (int ci = 0; ci < candidates_count; ++ci) {
-				BoundInfo bound = candidates [ci];
-				for (cii = 0; cii < candidates_count; ++cii) {
-					if (cii == ci)
-						continue;
+			var applicable = new bool [candidates.Count];
+			for (int ci = 0; ci < applicable.Length; ++ci)
+				applicable [ci] = true;
 
-					BoundInfo cbound = candidates[cii];
-					
-					// Same type parameters with different bounds
-					if (cbound.Type == bound.Type) {
-						if (bound.Kind != BoundKind.Exact)
-							bound = cbound;
+			for (int ci = 0; ci < applicable.Length; ++ci) {
+				var bound = candidates [ci];
+				int cii = 0;
 
-						continue;
-					}
-
-					if (bound.Kind == BoundKind.Exact || cbound.Kind == BoundKind.Exact) {
-						if (cbound.Kind == BoundKind.Lower) {
-							if (!Convert.ImplicitConversionExists (ec, cbound.GetTypeExpression (), bound.Type)) {
-								break;
-							}
-
+				switch (bound.Kind) {
+				case BoundKind.Exact:
+					for (; cii != applicable.Length; ++cii) {
+						if (ci == cii)
 							continue;
-						}
-						if (cbound.Kind == BoundKind.Upper) {
-							if (!Convert.ImplicitConversionExists (ec, bound.GetTypeExpression (), cbound.Type)) {
-								break;
-							}
 
-							continue;
-						}
-						
-						if (bound.Kind != BoundKind.Exact) {
-							if (!Convert.ImplicitConversionExists (ec, bound.GetTypeExpression (), cbound.Type)) {
-								break;
-							}
-
-							bound = cbound;
-							continue;
-						}
-						
-						break;
-					}
-
-					if (bound.Kind == BoundKind.Lower) {
-						if (cbound.Kind == BoundKind.Lower) {
-							if (!Convert.ImplicitConversionExists (ec, cbound.GetTypeExpression (), bound.Type)) {
-								break;
-							}
-						} else {
-							if (!Convert.ImplicitConversionExists (ec, bound.GetTypeExpression (), cbound.Type)) {
-								break;
-							}
-
-							bound = cbound;
-						}
-
-						continue;
-					}
-
-					if (bound.Kind == BoundKind.Upper) {
-						if (!Convert.ImplicitConversionExists (ec, bound.GetTypeExpression (), cbound.Type)) {
+						if (!applicable[cii])
 							break;
-						}
-					} else {
-						throw new NotImplementedException ("variance conversion");
+
+						//
+						// For each exact bound U of Xi all types Uj which are not identical
+						// to U are removed from the candidate set
+						//
+						if (candidates [cii].Type != bound.Type)
+							applicable[cii] = false;
 					}
+
+					break;
+				case BoundKind.Lower:
+					for (; cii != applicable.Length; ++cii) {
+						if (ci == cii)
+							continue;
+
+						if (!applicable[cii])
+							break;
+
+						//
+						// For each lower bound U of Xi all types Uj to which there is not an implicit conversion
+						// from U are removed from the candidate set
+						//
+						if (!Convert.ImplicitConversionExists (ec, bound.GetTypeExpression (), candidates [cii].Type)) {
+							applicable[cii] = false;
+						}
+					}
+
+					break;
+
+				case BoundKind.Upper:
+					for (; cii != applicable.Length; ++cii) {
+						if (ci == cii)
+							continue;
+
+						if (!applicable[cii])
+							break;
+
+						//
+						// For each upper bound U of Xi all types Uj from which there is not an implicit conversion
+						// to U are removed from the candidate set
+						//
+						if (!Convert.ImplicitConversionExists (ec, candidates[cii].GetTypeExpression (), bound.Type))
+							applicable[cii] = false;
+					}
+
+					break;
+				}
+			}
+
+			TypeSpec best_candidate = null;
+			for (int ci = 0; ci < applicable.Length; ++ci) {
+				if (!applicable[ci])
+					continue;
+
+				var bound = candidates [ci];
+				if (bound.Type == best_candidate)
+					continue;
+
+				int cii = 0;
+				for (; cii < applicable.Length; ++cii) {
+					if (ci == cii)
+						continue;
+
+					if (!applicable[cii])
+						continue;
+
+					if (!Convert.ImplicitConversionExists (ec, candidates[cii].GetTypeExpression (), bound.Type))
+						break;
 				}
 
-				if (cii != candidates_count)
+				if (cii != applicable.Length)
 					continue;
 
 				//
-				// We already have the best candidate, break if thet are different
+				// We already have the best candidate, break if it's different (non-unique)
 				//
 				// Dynamic is never ambiguous as we prefer dynamic over other best candidate types
 				//
@@ -3265,8 +3320,13 @@ namespace Mono.CSharp {
 		// Tests whether all delegate input arguments are fixed and generic output type
 		// requires output type inference 
 		//
-		public bool IsReturnTypeNonDependent (ResolveContext ec, MethodSpec invoke, TypeSpec returnType)
+		public bool IsReturnTypeNonDependent (MethodSpec invoke, TypeSpec returnType)
 		{
+			AParametersCollection d_parameters = invoke.Parameters;
+
+			if (d_parameters.IsEmpty)
+				return true;
+
 			while (returnType.IsArray)
 				returnType = ((ArrayContainer) returnType).Element;
 
@@ -3274,11 +3334,6 @@ namespace Mono.CSharp {
 				if (IsFixed (returnType))
 				    return false;
 			} else if (TypeManager.IsGenericType (returnType)) {
-				if (returnType.IsDelegate) {
-					invoke = Delegate.GetInvokeMethod (returnType);
-					return IsReturnTypeNonDependent (ec, invoke, invoke.ReturnType);
-				}
-					
 				TypeSpec[] g_args = TypeManager.GetTypeArguments (returnType);
 				
 				// At least one unfixed return type has to exist 
@@ -3289,7 +3344,6 @@ namespace Mono.CSharp {
 			}
 
 			// All generic input arguments have to be fixed
-			AParametersCollection d_parameters = invoke.Parameters;
 			return AllTypesAreFixed (d_parameters.Types);
 		}
 
@@ -3331,7 +3385,7 @@ namespace Mono.CSharp {
 			// If V is one of the unfixed type arguments
 			int pos = IsUnfixed (v);
 			if (pos != -1) {
-				AddToBounds (new BoundInfo (u, inversed ? BoundKind.Upper : BoundKind.Lower), pos);
+				AddToBounds (new BoundInfo (u, inversed ? BoundKind.Upper : BoundKind.Lower), pos, false);
 				return 1;
 			}			
 
@@ -3349,7 +3403,7 @@ namespace Mono.CSharp {
 					return LowerBoundInference (u_ac.Element, v_ac.Element, inversed);
 				}
 
-				if (u_ac.Rank != 1 || !v.IsGenericIterateInterface)
+				if (u_ac.Rank != 1 || !v.IsArrayGenericInterface)
 					return 0;
 
 				var v_i = TypeManager.GetTypeArguments (v) [0];
@@ -3499,7 +3553,7 @@ namespace Mono.CSharp {
 				var invoke = Delegate.GetInvokeMethod (t);
 				TypeSpec rtype = invoke.ReturnType;
 
-				if (!IsReturnTypeNonDependent (ec, invoke, rtype))
+				if (!IsReturnTypeNonDependent (invoke, rtype))
 					return 0;
 
 				// LAMESPEC: Standard does not specify that all methodgroup arguments

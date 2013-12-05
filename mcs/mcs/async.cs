@@ -65,8 +65,19 @@ namespace Mono.CSharp
 			return true;
 		}
 
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			expr.FlowAnalysis (fc);
+
+			stmt.RegisterResumePoint ();
+		}
+
 		protected override Expression DoResolve (ResolveContext rc)
 		{
+			if (rc.HasSet (ResolveContext.Options.FinallyScope)) {
+				rc.Report.Error (1984, loc,  "The `await' operator cannot be used in the body of a finally clause");
+			}
+
 			if (rc.HasSet (ResolveContext.Options.LockScope)) {
 				rc.Report.Error (1996, loc,
 					"The `await' operator cannot be used in the body of a lock statement");
@@ -113,6 +124,12 @@ namespace Mono.CSharp
 		public override void EmitStatement (EmitContext ec)
 		{
 			stmt.EmitStatement (ec);
+		}
+
+		public override void MarkReachable (Reachability rc)
+		{
+			base.MarkReachable (rc);
+			stmt.MarkReachable (rc);
 		}
 
 		public override object Accept (StructuralVisitor visitor)
@@ -175,6 +192,7 @@ namespace Mono.CSharp
 		public AwaitStatement (Expression expr, Location loc)
 			: base (expr, loc)
 		{
+			unwind_protect = true;
 		}
 
 		#region Properties
@@ -195,7 +213,9 @@ namespace Mono.CSharp
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			GetResultExpression (ec).Emit (ec);
+			using (ec.With (BuilderContext.Options.OmitDebugInfo, true)) {
+				GetResultExpression (ec).Emit (ec);
+			}
 		}
 
 		public Expression GetResultExpression (EmitContext ec)
@@ -219,38 +239,38 @@ namespace Mono.CSharp
 
 		public void EmitPrologue (EmitContext ec)
 		{
-			awaiter = ((AsyncTaskStorey) machine_initializer.Storey).AddAwaiter (expr.Type, loc);
+			awaiter = ((AsyncTaskStorey) machine_initializer.Storey).AddAwaiter (expr.Type);
 
 			var fe_awaiter = new FieldExpr (awaiter, loc);
 			fe_awaiter.InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, loc);
 
-			//
-			// awaiter = expr.GetAwaiter ();
-			//
+				Label skip_continuation = ec.DefineLabel ();
+
 			using (ec.With (BuilderContext.Options.OmitDebugInfo, true)) {
+				//
+				// awaiter = expr.GetAwaiter ();
+				//
 				fe_awaiter.EmitAssign (ec, expr, false, false);
+
+				Expression completed_expr;
+				if (IsDynamic) {
+					var rc = new ResolveContext (ec.MemberContext);
+
+					Arguments dargs = new Arguments (1);
+					dargs.Add (new Argument (fe_awaiter));
+					completed_expr = new DynamicMemberBinder ("IsCompleted", dargs, loc).Resolve (rc);
+
+					dargs = new Arguments (1);
+					dargs.Add (new Argument (completed_expr));
+					completed_expr = new DynamicConversion (ec.Module.Compiler.BuiltinTypes.Bool, 0, dargs, loc).Resolve (rc);
+				} else {
+					var pe = PropertyExpr.CreatePredefined (awaiter_definition.IsCompleted, loc);
+					pe.InstanceExpression = fe_awaiter;
+					completed_expr = pe;
+				}
+
+				completed_expr.EmitBranchable (ec, skip_continuation, true);
 			}
-
-			Label skip_continuation = ec.DefineLabel ();
-
-			Expression completed_expr;
-			if (IsDynamic) {
-				var rc = new ResolveContext (ec.MemberContext);
-
-				Arguments dargs = new Arguments (1);
-				dargs.Add (new Argument (fe_awaiter));
-				completed_expr = new DynamicMemberBinder ("IsCompleted", dargs, loc).Resolve (rc);
-
-				dargs = new Arguments (1);
-				dargs.Add (new Argument (completed_expr));
-				completed_expr = new DynamicConversion (ec.Module.Compiler.BuiltinTypes.Bool, 0, dargs, loc).Resolve (rc);
-			} else {
-				var pe = PropertyExpr.CreatePredefined (awaiter_definition.IsCompleted, loc);
-				pe.InstanceExpression = fe_awaiter;
-				completed_expr = pe;
-			}
-
-			completed_expr.EmitBranchable (ec, skip_continuation, true);
 
 			base.DoEmit (ec);
 
@@ -302,6 +322,10 @@ namespace Mono.CSharp
 				bc.Report.Error (1995, loc,
 					"The `await' operator may only be used in a query expression within the first collection expression of the initial `from' clause or within the collection expression of a `join' clause");
 				return false;
+			}
+
+			if (bc.HasSet (ResolveContext.Options.CatchScope)) {
+				bc.Report.Error (1985, loc, "The `await' operator cannot be used in the body of a catch clause");
 			}
 
 			if (!base.Resolve (bc))
@@ -361,6 +385,47 @@ namespace Mono.CSharp
 		}
 	}
 
+	class AsyncInitializerStatement : StatementExpression
+	{
+		public AsyncInitializerStatement (AsyncInitializer expr)
+			: base (expr)
+		{
+		}
+
+		protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+		{
+			base.DoFlowAnalysis (fc);
+
+			var init = (AsyncInitializer) Expr;
+			var res = !init.Block.HasReachableClosingBrace;
+			var storey = (AsyncTaskStorey) init.Storey;
+
+			if (storey.ReturnType.IsGenericTask)
+				return res;
+
+			return true;
+		}
+
+		public override Reachability MarkReachable (Reachability rc)
+		{
+			if (!rc.IsUnreachable)
+				reachable = true;
+
+			var init = (AsyncInitializer) Expr;
+			rc = init.Block.MarkReachable (rc);
+
+			var storey = (AsyncTaskStorey) init.Storey;
+
+			//
+			// Explicit return is required for Task<T> state machine
+			//
+			if (storey.ReturnType != null && storey.ReturnType.IsGenericTask)
+				return rc;
+
+		    return Reachability.CreateUnreachable ();
+		}
+	}
+
 	public class AsyncInitializer : StateMachineInitializer
 	{
 		TypeInferenceContext return_inference;
@@ -396,20 +461,16 @@ namespace Mono.CSharp
 
 		#endregion
 
-		protected override BlockContext CreateBlockContext (ResolveContext rc)
+		protected override BlockContext CreateBlockContext (BlockContext bc)
 		{
-			var ctx = base.CreateBlockContext (rc);
-			var lambda = rc.CurrentAnonymousMethod as LambdaMethod;
+			var ctx = base.CreateBlockContext (bc);
+			var lambda = bc.CurrentAnonymousMethod as LambdaMethod;
 			if (lambda != null)
 				return_inference = lambda.ReturnTypeInference;
 
-			ctx.StartFlowBranching (this, rc.CurrentBranching);
-			return ctx;
-		}
+			ctx.Set (ResolveContext.Options.TryScope);
 
-		public override Expression CreateExpressionTree (ResolveContext ec)
-		{
-			return base.CreateExpressionTree (ec);
+			return ctx;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -428,6 +489,13 @@ namespace Mono.CSharp
 			var storey = (AsyncTaskStorey) Storey;
 			storey.EmitInitializer (ec);
 			ec.Emit (OpCodes.Ret);
+		}
+
+		public override void MarkReachable (Reachability rc)
+		{
+			//
+			// Reachability has been done in AsyncInitializerStatement
+			//
 		}
 	}
 
@@ -481,12 +549,12 @@ namespace Mono.CSharp
 
 		#endregion
 
-		public Field AddAwaiter (TypeSpec type, Location loc)
+		public Field AddAwaiter (TypeSpec type)
 		{
 			if (mutator != null)
 				type = mutator.Mutate (type);
 
-			List<Field> existing_fields = null;
+			List<Field> existing_fields;
 			if (awaiter_fields.TryGetValue (type, out existing_fields)) {
 				foreach (var f in existing_fields) {
 					if (f.IsAvailableForReuse) {
@@ -741,7 +809,9 @@ namespace Mono.CSharp
 			var args = new Arguments (2);
 			args.Add (new Argument (awaiter, Argument.AType.Ref));
 			args.Add (new Argument (new CompilerGeneratedThis (CurrentType, Location), Argument.AType.Ref));
-			mg.EmitCall (ec, args);
+			using (ec.With (BuilderContext.Options.OmitDebugInfo, true)) {
+				mg.EmitCall (ec, args);
+			}
 		}
 
 		public void EmitInitializer (EmitContext ec)
@@ -817,7 +887,9 @@ namespace Mono.CSharp
 			Arguments args = new Arguments (1);
 			args.Add (new Argument (exceptionVariable));
 
-			mg.EmitCall (ec, args);
+			using (ec.With (BuilderContext.Options.OmitDebugInfo, true)) {
+				mg.EmitCall (ec, args);
+			}
 		}
 
 		public void EmitSetResult (EmitContext ec)
@@ -839,7 +911,9 @@ namespace Mono.CSharp
 				args.Add (new Argument (new LocalVariableReference (hoisted_return, Location)));
 			}
 
-			mg.EmitCall (ec, args);
+			using (ec.With (BuilderContext.Options.OmitDebugInfo, true)) {
+				mg.EmitCall (ec, args);
+			}
 		}
 
 		protected override TypeSpec[] ResolveBaseTypes (out FullNamedExpression base_class)

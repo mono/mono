@@ -15,10 +15,12 @@ class C1
 
 class C2
 {
+	const object o2 = c2;
+	const string c2 = null;
+	
 	public static void Main ()
 	{
-		// BUG compatibility for now
-		//const object o = null;
-		//const string s = (string) o;
+		const object o = null;
+		const string s = (string) o;
 	}
 }

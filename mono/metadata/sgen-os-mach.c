@@ -92,7 +92,7 @@ sgen_suspend_thread (SgenThreadInfo *info)
 	if (mono_gc_get_gc_callbacks ()->thread_suspend_func)
 		mono_gc_get_gc_callbacks ()->thread_suspend_func (info->runtime_data, &ctx, NULL);
 
-	SGEN_LOG (2, "thread %p stopped at %p stack_start=%p", (void*)info->info.native_handle, info->stopped_ip, info->stack_start);
+	SGEN_LOG (2, "thread %p stopped at %p stack_start=%p", (void*)(gsize)info->info.native_handle, info->stopped_ip, info->stack_start);
 
 	binary_protocol_thread_suspend ((gpointer)mono_thread_info_get_tid (info), info->stopped_ip);
 
@@ -116,25 +116,15 @@ sgen_thread_handshake (BOOL suspend)
 	int count = 0;
 
 	FOREACH_THREAD_SAFE (info) {
-		if (info->joined_stw == suspend)
-			continue;
-		info->joined_stw = suspend;
-
 		if (info == cur_thread || sgen_is_worker_thread (mono_thread_info_get_tid (info)))
 			continue;
 		if (info->gc_disabled)
 			continue;
 
 		if (suspend) {
-			g_assert (!info->doing_handshake);
-			info->doing_handshake = TRUE;
-
 			if (!sgen_suspend_thread (info))
 				continue;
 		} else {
-			g_assert (info->doing_handshake);
-			info->doing_handshake = FALSE;
-
 			ret = thread_resume (info->info.native_handle);
 			if (ret != KERN_SUCCESS)
 				continue;

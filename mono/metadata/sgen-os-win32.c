@@ -57,9 +57,42 @@ sgen_suspend_thread (SgenThreadInfo *info)
 
 	CloseHandle (handle);
 
+#ifdef USE_MONO_CTX
+	memset (&info->ctx, 0, sizeof (MonoContext));
+#ifdef TARGET_AMD64
+	info->ctx.rip = context.Rip;
+	info->ctx.rax = context.Rax;
+	info->ctx.rcx = context.Rcx;
+	info->ctx.rdx = context.Rdx;
+	info->ctx.rbx = context.Rbx;
+	info->ctx.rsp = context.Rsp;
+	info->ctx.rbp = context.Rbp;
+	info->ctx.rsi = context.Rsi;
+	info->ctx.rdi = context.Rdi;
+	info->ctx.r8 = context.R8;
+	info->ctx.r9 = context.R9;
+	info->ctx.r10 = context.R10;
+	info->ctx.r11 = context.R11;
+	info->ctx.r12 = context.R12;
+	info->ctx.r13 = context.R13;
+	info->ctx.r14 = context.R14;
+	info->ctx.r15 = context.R15;
+	info->stopped_ip = info->ctx.rip;
+	info->stack_start = (char*)info->ctx.rsp - REDZONE_SIZE;
+#else
+	info->ctx.edi = context.Edi;
+	info->ctx.esi = context.Esi;
+	info->ctx.ebx = context.Ebx;
+	info->ctx.edx = context.Edx;
+	info->ctx.ecx = context.Ecx;
+	info->ctx.eax = context.Eax;
+	info->ctx.ebp = context.Ebp;
+	info->ctx.esp = context.Esp;
 	info->stopped_ip = (gpointer)context.Eip;
 	info->stack_start = (char*)context.Esp - REDZONE_SIZE;
+#endif
 
+#else
 	info->regs [0] = context.Edi;
 	info->regs [1] = context.Esi;
 	info->regs [2] = context.Ebx;
@@ -68,6 +101,9 @@ sgen_suspend_thread (SgenThreadInfo *info)
 	info->regs [5] = context.Eax;
 	info->regs [6] = context.Ebp;
 	info->regs [7] = context.Esp;
+	info->stopped_ip = (gpointer)context.Eip;
+	info->stack_start = (char*)context.Esp - REDZONE_SIZE;
+#endif
 
 	/* Notify the JIT */
 	if (mono_gc_get_gc_callbacks ()->thread_suspend_func)
@@ -90,23 +126,14 @@ sgen_thread_handshake (BOOL suspend)
 	int count = 0;
 
 	FOREACH_THREAD_SAFE (info) {
-		if (info->joined_stw == suspend)
-			continue;
-		info->joined_stw = suspend;
 		if (info == current)
 			continue;
 		if (info->gc_disabled)
 			continue;
 		if (suspend) {
-			g_assert (!info->doing_handshake);
-			info->doing_handshake = TRUE;
-
 			if (!sgen_suspend_thread (info))
 				continue;
 		} else {
-			g_assert (info->doing_handshake);
-			info->doing_handshake = FALSE;
-
 			if (!sgen_resume_thread (info))
 				continue;
 		}

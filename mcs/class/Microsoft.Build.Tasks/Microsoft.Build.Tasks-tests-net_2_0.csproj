@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{8213E693-D672-48AB-9348-9DB1D6AC902F}</ProjectGuid>
+    <ProjectGuid>{7B10DE59-3656-4F8F-A1C6-A090220D7BAF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\Microsoft.Build.Tasks-tests-net_2_0</OutputPath>
@@ -91,27 +91,27 @@
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Tasks\Microsoft.Build.Tasks-net_2_0.csproj">
-      <Project>{CF0D30D5-B824-4D4E-B1B2-173524B53942}</Project>
+      <Project>{3DD52713-DB38-4D0D-8692-650B8821B047}</Project>
       <Name>Microsoft.Build.Tasks\Microsoft.Build.Tasks-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Engine\Microsoft.Build.Engine-net_2_0.csproj">
-      <Project>{13F89BAD-94E5-46B5-B8E1-0F1EDB272352}</Project>
+      <Project>{E8E948B8-6DCF-48F2-A6BC-04309AED8740}</Project>
       <Name>Microsoft.Build.Engine\Microsoft.Build.Engine-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Framework\Microsoft.Build.Framework-net_2_0.csproj">
-      <Project>{BFA79A16-152D-42DA-98E3-D494F9C4CC3E}</Project>
+      <Project>{AB5EDD8C-84A4-4F96-80EE-1B6F3A86785B}</Project>
       <Name>Microsoft.Build.Framework\Microsoft.Build.Framework-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_2_0.csproj">
-      <Project>{A77A0E38-0000-4E4D-BEA6-704BC3677151}</Project>
+      <Project>{4AC4EDEE-4895-4CF9-84DF-9419E6980F38}</Project>
       <Name>Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_2_0.csproj">
-      <Project>{F684BA24-FC9A-4BAB-8CF3-ACC489E6B88E}</Project>
+      <Project>{B91370A1-A33A-4F7A-BDF2-1E194AFA0869}</Project>
       <Name>System.Core\System.Core-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>

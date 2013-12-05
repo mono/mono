@@ -3365,10 +3365,10 @@ public abstract class MemberFormatter {
 		if (type is PointerType) {
 			return AppendPointerTypeName (buf, type, context);
 		}
-		AppendNamespace (buf, type);
 		if (type is GenericParameter) {
 			return AppendTypeName (buf, type, context);
 		}
+		AppendNamespace (buf, type);
 		GenericInstanceType genInst = type as GenericInstanceType;
 		if (type.GenericParameters.Count == 0 &&
 				(genInst == null ? true : genInst.GenericArguments.Count == 0)) {

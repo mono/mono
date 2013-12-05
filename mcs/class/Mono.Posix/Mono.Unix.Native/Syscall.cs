@@ -3937,17 +3937,51 @@ namespace Mono.Unix.Native {
 				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
 				string newpath);
 
+		delegate long DoReadlinkFun (byte[] target);
+
+		// Helper function for readlink(string, StringBuilder) and readlinkat (int, string, StringBuilder)
+		static int ReadlinkIntoStringBuilder (DoReadlinkFun doReadlink, [Out] StringBuilder buf, ulong bufsiz)
+		{
+			// bufsiz > int.MaxValue can't work because StringBuilder can store only int.MaxValue chars
+			int bufsizInt = checked ((int) bufsiz);
+			var target = new byte [bufsizInt];
+
+			var r = doReadlink (target);
+			if (r < 0)
+				return checked ((int) r);
+
+			buf.Length = 0;
+			var chars = UnixEncoding.Instance.GetChars (target, 0, checked ((int) r));
+			// Make sure that at more bufsiz chars are written
+			buf.Append (chars, 0, System.Math.Min (bufsizInt, chars.Length));
+			if (r == bufsizInt) {
+				// may not have read full contents; fill 'buf' so that caller can properly check
+				buf.Append (new string ('\x00', bufsizInt - buf.Length));
+			}
+			return buf.Length;
+		}
+
 		// readlink(2)
-		//    int readlink(const char *path, char *buf, size_t bufsize);
-		[DllImport (MPH, SetLastError=true,
-				EntryPoint="Mono_Posix_Syscall_readlink")]
-		public static extern int readlink (
-				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
-				string path, [Out] StringBuilder buf, ulong bufsiz);
+		//    ssize_t readlink(const char *path, char *buf, size_t bufsize);
+		public static int readlink (string path, [Out] StringBuilder buf, ulong bufsiz)
+		{
+			return ReadlinkIntoStringBuilder (target => readlink (path, target), buf, bufsiz);
+		}
 
 		public static int readlink (string path, [Out] StringBuilder buf)
 		{
 			return readlink (path, buf, (ulong) buf.Capacity);
+		}
+
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_readlink")]
+		private static extern long readlink (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string path, byte[] buf, ulong bufsiz);
+
+		public static long readlink (string path, byte[] buf)
+		{
+			return readlink (path, buf, (ulong) buf.LongLength);
 		}
 
 		[DllImport (LIBC, SetLastError=true)]
@@ -4226,16 +4260,26 @@ namespace Mono.Unix.Native {
 		}
 
 		// readlinkat(2)
-		//    int readlinkat(int dirfd, const char *pathname, char *buf, size_t bufsize);
-		[DllImport (MPH, SetLastError=true,
-				EntryPoint="Mono_Posix_Syscall_readlinkat")]
-		public static extern int readlinkat (int dirfd,
-				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
-				string pathname, [Out] StringBuilder buf, ulong bufsiz);
+		//    ssize_t readlinkat(int dirfd, const char *pathname, char *buf, size_t bufsize);
+		public static int readlinkat (int dirfd, string pathname, [Out] StringBuilder buf, ulong bufsiz)
+		{
+			return ReadlinkIntoStringBuilder (target => readlinkat (dirfd, pathname, target), buf, bufsiz);
+		}
 
 		public static int readlinkat (int dirfd, string pathname, [Out] StringBuilder buf)
 		{
 			return readlinkat (dirfd, pathname, buf, (ulong) buf.Capacity);
+		}
+
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_readlinkat")]
+		private static extern long readlinkat (int dirfd,
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string pathname, byte[] buf, ulong bufsiz);
+
+		public static long readlinkat (int dirfd, string pathname, byte[] buf)
+		{
+			return readlinkat (dirfd, pathname, buf, (ulong) buf.LongLength);
 		}
 
 		[DllImport (LIBC, SetLastError=true)]

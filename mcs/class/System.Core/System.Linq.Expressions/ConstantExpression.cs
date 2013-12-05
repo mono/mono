@@ -33,7 +33,9 @@
 
 using System;
 using System.Reflection;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 
 namespace System.Linq.Expressions {
 
@@ -48,6 +50,12 @@ namespace System.Linq.Expressions {
 			: base (ExpressionType.Constant, type)
 		{
 			this.value = value;
+		}
+		
+		internal static bool IsNull (Expression e)
+		{
+			var c = e as ConstantExpression;
+			return c != null && c.value == null;
 		}
 
 #if !FULL_AOT_RUNTIME

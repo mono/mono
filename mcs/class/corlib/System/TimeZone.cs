@@ -357,10 +357,20 @@ namespace System
 			if (time.Kind == DateTimeKind.Utc)
 				return TimeSpan.Zero;
 
-			if (IsDaylightSavingTime (time))
+			if (IsDaylightSavingTime (time) && !IsAmbiguousTime (time))
 				return utcOffsetWithDLS;
 
 			return utcOffsetWithOutDLS;
+		}
+
+		private bool IsAmbiguousTime (DateTime time)
+		{
+			if (time.Kind == DateTimeKind.Utc)
+				return false;
+
+			DaylightTime changes = GetDaylightChanges (time.Year);
+
+			return time < changes.End && time >= changes.End - changes.Delta;
 		}
 
 		void IDeserializationCallback.OnDeserialization (object sender)

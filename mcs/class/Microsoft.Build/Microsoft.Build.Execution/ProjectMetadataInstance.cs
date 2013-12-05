@@ -27,15 +27,29 @@
 //
 
 using System;
+using Microsoft.Build.Construction;
 
 namespace Microsoft.Build.Execution
 {
-        public class ProjectMetadataInstance
-        {
-                private ProjectMetadataInstance ()
-                {
-                        throw new NotImplementedException ();
-                }
-        }
+	public class ProjectMetadataInstance
+	{
+		internal ProjectMetadataInstance (string name, string value)
+		{
+			Name = name;
+			EvaluatedValue = value;
+		}
+		
+		public string EvaluatedValue { get; private set; }
+		public string Name { get; private set; }
+		
+		public ProjectMetadataInstance DeepClone ()
+		{
+			return new ProjectMetadataInstance (Name, EvaluatedValue);
+		}
+		
+		public override string ToString ()
+		{
+			return string.Format ("{0}={1}", Name, EvaluatedValue);
+		}
+	}
 }
-

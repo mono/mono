@@ -1452,6 +1452,40 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			Assert.AreEqual (1, dict.Count, "#2");
 			Assert.AreEqual ("value", dict ["key"], "#3");
 		}
+		
+		[Test]
+		public void Bug13485 ()
+		{
+			const string json = "{ \"Name\" : \"Test\", \"Value\" : \"ValueA\" }";
+
+			string result = string.Empty;
+			var serializer = new DataContractJsonSerializer (typeof (Bug13485Type));
+			Bug13485Type entity;
+			using (var stream = new MemoryStream (Encoding.UTF8.GetBytes (json)))
+				entity = (Bug13485Type) serializer.ReadObject (stream);
+
+			result = entity.GetValue;
+			Assert.AreEqual ("ValueA", result, "#1");
+		}
+
+		[DataContract(Name = "UriTest")]
+		public class UriTest
+		{
+			[DataMember(Name = "members")]
+			public Uri MembersRelativeLink { get; set; }
+		}
+
+		[Test]
+		public void Bug15169 ()
+		{
+			const string json = "{\"members\":\"foo/bar/members\"}";
+			var serializer = new DataContractJsonSerializer (typeof (UriTest));
+			UriTest entity;
+			using (var stream = new MemoryStream (Encoding.UTF8.GetBytes (json)))
+				entity = (UriTest) serializer.ReadObject (stream);
+
+			Assert.AreEqual ("foo/bar/members", entity.MembersRelativeLink.ToString ());
+		}
 	}
 	
 	public class CharTest
@@ -1761,4 +1795,17 @@ public class MyDictionary<K, V> : System.Collections.Generic.IDictionary<K, V>
 		return Coll.GetEnumerator ();
 	}
 }
+
+[DataContract]
+public class Bug13485Type
+{
+	[DataMember]
+	public string Name { get; set; }
+
+	[DataMember (Name = "Value")]
+	private string Value { get; set; }
+
+	public string GetValue { get { return this.Value; } }
+}
+
 

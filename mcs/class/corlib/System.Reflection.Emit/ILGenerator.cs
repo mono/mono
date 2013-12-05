@@ -180,7 +180,7 @@ namespace System.Reflection.Emit {
 
 		int GetToken (MemberInfo member, bool create_open_instance);
 
-		int GetToken (MethodInfo method, Type[] opt_param_types);
+		int GetToken (MethodBase method, Type[] opt_param_types);
 
 		int GetToken (SignatureHelper helper);
 	}		
@@ -988,11 +988,11 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 
-		internal void label_fixup ()
+		internal void label_fixup (MethodBase mb)
 		{
 			for (int i = 0; i < num_fixups; ++i) {
 				if (labels [fixups [i].label_idx].addr < 0)
-					throw new ArgumentException ("Label not marked");
+					throw new ArgumentException (string.Format ("Label #{0} is not marked in method `{1}'", fixups [i].label_idx + 1, mb.Name));
 				// Diff is the offset from the end of the jump instruction to the address of the label
 				int diff = labels [fixups [i].label_idx].addr - (fixups [i].pos + fixups [i].offset);
 				if (fixups [i].offset == 1) {

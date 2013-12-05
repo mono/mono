@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{EBDF7A9B-728D-4D71-A603-3D840220FBE4}</ProjectGuid>
+    <ProjectGuid>{3429D3B3-51DC-4236-9C5A-33C4F9E260FE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618,219,169</NoWarn>
     <OutputPath>bin\Debug\Mono.Messaging-tests-net_4_5</OutputPath>
@@ -64,23 +64,23 @@
   <ItemGroup>
     <Reference Include="..\lib\net_4_5\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</Project>
+      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Messaging\Mono.Messaging-net_4_5.csproj">
-      <Project>{3D737371-B7D6-49E4-AA91-F67EF2E07A45}</Project>
+      <Project>{1CB843E3-75E7-4115-9EE6-7B7262AC6C96}</Project>
       <Name>Mono.Messaging\Mono.Messaging-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_5-2.csproj">
-      <Project>{34966210-D64D-419C-94A4-9A6093CE5882}</Project>
+      <Project>{38FCD731-0E11-46F7-A31B-DCBE853AD8D7}</Project>
       <Name>System\System-net_4_5-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration\System.Configuration-net_4_5.csproj">
-      <Project>{847BF7E9-DEFB-43C9-8410-CA775ADC0E8A}</Project>
+      <Project>{CA2CD67B-1308-460D-BDBA-498F63DEAA31}</Project>
       <Name>System.Configuration\System.Configuration-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Messaging\System.Messaging-net_4_0.csproj">
-      <Project>{2651037E-FD2B-4BBC-B655-CC3F0B0E4BD0}</Project>
+      <Project>{443D0D78-0A65-4288-80C2-B58011E3A5D1}</Project>
       <Name>System.Messaging\System.Messaging-net_4_0</Name>
     </ProjectReference>
     <Reference Include="nunit.mocks.dll">

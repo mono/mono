@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{35CA0215-5507-43AB-BBB1-10B274733076}</ProjectGuid>
+    <ProjectGuid>{7CD39108-AA65-4A1D-A185-658C4DFED0F6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618,414,169,219,1595,168,183,414</NoWarn>
     <OutputPath>bin\Debug\System.Security-tests-net_4_0</OutputPath>
@@ -121,23 +121,23 @@
   <ItemGroup>
     <Reference Include="..\lib\net_4_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
+      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Security\System.Security-net_4_0.csproj">
-      <Project>{BC281223-A7A5-415D-B4AA-59417DBFFBBB}</Project>
+      <Project>{DE980ED1-84A5-4B5B-A707-8D1BB4E2BDD5}</Project>
       <Name>System.Security\System.Security-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0-1.csproj">
-      <Project>{C57BB644-EEFC-475A-AF6F-43EF29C75933}</Project>
+      <Project>{FCBCCC55-006E-41B2-A649-CF9A843E34BD}</Project>
       <Name>System\System-net_4_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_0.csproj">
-      <Project>{18CD7C68-EF7C-4C7A-B8D6-FE9834145437}</Project>
+      <Project>{8BF2FA62-9F71-4D96-A5D6-3DD903B25ED8}</Project>
       <Name>System.XML\System.Xml-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Security\Mono.Security-net_4_0.csproj">
-      <Project>{A2DAEB75-C366-4B5F-8BDD-9B3234A1ABFA}</Project>
+      <Project>{5E680987-7C43-48A0-9BF1-86124ACA78BD}</Project>
       <Name>Mono.Security\Mono.Security-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>

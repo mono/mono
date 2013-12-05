@@ -30,12 +30,16 @@
 
 #if SECURITY_DEP
 
+#if MONOTOUCH
+using Mono.Security.Protocol.Ntlm;
+#else
 extern alias MonoSecurity;
+using MonoSecurity::Mono.Security.Protocol.Ntlm;
+#endif
 
 using System;
 using System.Collections;
 using System.Net;
-using MonoSecurity::Mono.Security.Protocol.Ntlm;
 
 namespace Mono.Http
 {

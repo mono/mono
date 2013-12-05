@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{A8B97A8D-D9F3-4BE5-926D-CE7E7C57FE6D}</ProjectGuid>
+    <ProjectGuid>{267C4423-C2E5-4EA8-9F3B-F2B13EFA4CCC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618</NoWarn>
     <OutputPath>bin\Debug\System-net_4_0</OutputPath>
@@ -44,16 +44,6 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\build\common\Consts.cs" />
-    <Compile Include="..\..\build\common\Locale.cs" />
-    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include="..\corlib\Mono\DataConverter.cs" />
-    <Compile Include="..\corlib\System.Collections.Generic\CollectionDebuggerView.cs" />
-    <Compile Include="..\corlib\System.Collections\CollectionDebuggerView.cs" />
-    <Compile Include="..\corlib\System.Threading.Tasks\CyclicDeque.cs" />
-    <Compile Include="..\corlib\System.Threading.Tasks\IConcurrentDeque.cs" />
-    <Compile Include="..\corlib\System.Threading.Tasks\PopResult.cs" />
-    <Compile Include="..\corlib\System.Threading\AtomicBoolean.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Microsoft.CSharp\CSharpCodeCompiler.cs" />
     <Compile Include="Microsoft.CSharp\CSharpCodeGenerator.cs" />
@@ -652,6 +642,7 @@
     <Compile Include="System.Diagnostics\TraceSwitch.cs" />
     <Compile Include="System.Diagnostics\Win32EventLog.cs" />
     <Compile Include="System.Diagnostics\XmlWriterTraceListener.cs" />
+    <Compile Include="System.IO.Compression\CompressionLevel.cs" />
     <Compile Include="System.IO.Compression\CompressionMode.cs" />
     <Compile Include="System.IO.Compression\DeflateStream.cs" />
     <Compile Include="System.IO.Compression\GZipStream.cs" />
@@ -683,8 +674,6 @@
     <Compile Include="System.IO\InvalidDataException.cs" />
     <Compile Include="System.IO\IODescriptionAttribute.cs" />
     <Compile Include="System.IO\KeventWatcher.cs" />
-    <Compile Include="System.IO\MonoIO.cs" />
-    <Compile Include="System.IO\MonoIOError.cs" />
     <Compile Include="System.IO\MonoSyncFileStream.cs" />
     <Compile Include="System.IO\NotifyFilters.cs" />
     <Compile Include="System.IO\NullFileWatcher.cs" />
@@ -851,6 +840,17 @@
     <Compile Include="System.Net.Sockets\TransmitFileOptions.cs" />
     <Compile Include="System.Net.Sockets\UdpClient.cs" />
     <Compile Include="System.Net.Sockets\UdpReceiveResult.cs" />
+    <Compile Include="System.Net.WebSockets\ClientWebSocket.cs" />
+    <Compile Include="System.Net.WebSockets\ClientWebSocketOptions.cs" />
+    <Compile Include="System.Net.WebSockets\HttpListenerWebSocketContext.cs" />
+    <Compile Include="System.Net.WebSockets\WebSocket.cs" />
+    <Compile Include="System.Net.WebSockets\WebSocketCloseStatus.cs" />
+    <Compile Include="System.Net.WebSockets\WebSocketContext.cs" />
+    <Compile Include="System.Net.WebSockets\WebSocketError.cs" />
+    <Compile Include="System.Net.WebSockets\WebSocketException.cs" />
+    <Compile Include="System.Net.WebSockets\WebSocketMessageType.cs" />
+    <Compile Include="System.Net.WebSockets\WebSocketReceiveResult.cs" />
+    <Compile Include="System.Net.WebSockets\WebSocketState.cs" />
     <Compile Include="System.Net\AuthenticationManager.cs" />
     <Compile Include="System.Net\AuthenticationSchemes.cs" />
     <Compile Include="System.Net\AuthenticationSchemeSelector.cs" />
@@ -1076,6 +1076,7 @@
     <Compile Include="System.Text.RegularExpressions\quicksearch.cs" />
     <Compile Include="System.Text.RegularExpressions\Regex.cs" />
     <Compile Include="System.Text.RegularExpressions\RegexCompilationInfo.cs" />
+    <Compile Include="System.Text.RegularExpressions\RegexMatchTimeoutException.cs" />
     <Compile Include="System.Text.RegularExpressions\RegexOptions.cs" />
     <Compile Include="System.Text.RegularExpressions\RegexRunner.cs" />
     <Compile Include="System.Text.RegularExpressions\RegexRunnerFactory.cs" />
@@ -1143,24 +1144,24 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
+      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
-      <Project>{205A8E90-88CC-4B46-8151-87FA90B666A5}</Project>
+      <Project>{D9776E38-7673-45F6-BF19-7B77830DF9CA}</Project>
       <Name>System.XML\System.Xml-net_2_0-1</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Mono.Security\Mono.Security-net_2_0.csproj">
-      <Project>{83A0F0D3-5813-4805-8AC5-8E8B0DC55B9D}</Project>
-      <Name>Mono.Security\Mono.Security-net_2_0</Name>
-    </ProjectReference>
     <ProjectReference Include="..\System.Configuration\System.Configuration-net_2_0.csproj">
-      <Project>{725170B0-51F0-46E2-A74D-F764B68553D6}</Project>
+      <Project>{8131BE5D-BE64-4BA5-A62D-FAC4BE0A0B53}</Project>
       <Name>System.Configuration\System.Configuration-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
+      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
       <Name>System\System-net_2_0-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mono.Security\Mono.Security-net_2_0.csproj">
+      <Project>{6785B2B5-3B06-48F3-9E6C-99B23B9AAC4F}</Project>
+      <Name>Mono.Security\Mono.Security-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

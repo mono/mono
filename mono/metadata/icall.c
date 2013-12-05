@@ -84,6 +84,7 @@
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/mono-io-portability.h>
 #include <mono/utils/mono-digest.h>
+#include <mono/utils/bsearch.h>
 
 #if defined (HOST_WIN32)
 #include <windows.h>
@@ -684,7 +685,7 @@ ICALL_EXPORT void
 ves_icall_System_Array_ClearInternal (MonoArray *arr, int idx, int length)
 {
 	int sz = mono_array_element_size (mono_object_class (arr));
-	mono_gc_bzero (mono_array_addr_with_size (arr, sz, idx), length * sz);
+	mono_gc_bzero (mono_array_addr_with_size_fast (arr, sz, idx), length * sz);
 }
 
 ICALL_EXPORT gboolean
@@ -693,92 +694,59 @@ ves_icall_System_Array_FastCopy (MonoArray *source, int source_idx, MonoArray* d
 	int element_size;
 	void * dest_addr;
 	void * source_addr;
+	MonoVTable *src_vtable;
+	MonoVTable *dest_vtable;
 	MonoClass *src_class;
 	MonoClass *dest_class;
 
-	MONO_ARCH_SAVE_REGS;
+	src_vtable = source->obj.vtable;
+	dest_vtable = dest->obj.vtable;
 
-	if (source->obj.vtable->klass->rank != dest->obj.vtable->klass->rank)
+	if (src_vtable->rank != dest_vtable->rank)
 		return FALSE;
 
 	if (source->bounds || dest->bounds)
 		return FALSE;
 
 	/* there's no integer overflow since mono_array_length returns an unsigned integer */
-	if ((dest_idx + length > mono_array_length (dest)) ||
-		(source_idx + length > mono_array_length (source)))
+	if ((dest_idx + length > mono_array_length_fast (dest)) ||
+		(source_idx + length > mono_array_length_fast (source)))
 		return FALSE;
 
-	src_class = source->obj.vtable->klass->element_class;
-	dest_class = dest->obj.vtable->klass->element_class;
+	src_class = src_vtable->klass->element_class;
+	dest_class = dest_vtable->klass->element_class;
 
 	/*
 	 * Handle common cases.
 	 */
 
-	/* Case1: object[] -> valuetype[] (ArrayList::ToArray) */
-	if (src_class == mono_defaults.object_class && dest_class->valuetype) {
-		// FIXME: This is racy
+	/* Case1: object[] -> valuetype[] (ArrayList::ToArray) 
+	We fallback to managed here since we need to typecheck each boxed valuetype before storing them in the dest array.
+	*/
+	if (src_class == mono_defaults.object_class && dest_class->valuetype)
 		return FALSE;
-		/*
-		  int i;
-		int has_refs = dest_class->has_references;
-		for (i = source_idx; i < source_idx + length; ++i) {
-			MonoObject *elem = mono_array_get (source, MonoObject*, i);
-			if (elem && !mono_object_isinst (elem, dest_class))
-				return FALSE;
-		}
-
-		element_size = mono_array_element_size (dest->obj.vtable->klass);
-		memset (mono_array_addr_with_size (dest, element_size, dest_idx), 0, element_size * length);
-		for (i = 0; i < length; ++i) {
-			MonoObject *elem = mono_array_get (source, MonoObject*, source_idx + i);
-			void *addr = mono_array_addr_with_size (dest, element_size, dest_idx + i);
-			if (!elem)
-				continue;
-			if (has_refs)
-				mono_value_copy (addr, (char *)elem + sizeof (MonoObject), dest_class);
-			else
-				memcpy (addr, (char *)elem + sizeof (MonoObject), element_size);
-		}
-		return TRUE;
-		*/
-	}
 
 	/* Check if we're copying a char[] <==> (u)short[] */
 	if (src_class != dest_class) {
 		if (dest_class->valuetype || dest_class->enumtype || src_class->valuetype || src_class->enumtype)
 			return FALSE;
 
-		if (mono_class_is_subclass_of (src_class, dest_class, FALSE))
-			;
-		/* Case2: object[] -> reftype[] (ArrayList::ToArray) */
-		else if (mono_class_is_subclass_of (dest_class, src_class, FALSE)) {
-			// FIXME: This is racy
-			return FALSE;
-			/*
-			  int i;
-			for (i = source_idx; i < source_idx + length; ++i) {
-				MonoObject *elem = mono_array_get (source, MonoObject*, i);
-				if (elem && !mono_object_isinst (elem, dest_class))
-					return FALSE;
-			}
-			*/
-		} else
+		/* It's only safe to copy between arrays if we can ensure the source will always have a subtype of the destination. We bail otherwise. */
+		if (!mono_class_is_subclass_of (src_class, dest_class, FALSE))
 			return FALSE;
 	}
 
 	if (dest_class->valuetype) {
 		element_size = mono_array_element_size (source->obj.vtable->klass);
-		source_addr = mono_array_addr_with_size (source, element_size, source_idx);
+		source_addr = mono_array_addr_with_size_fast (source, element_size, source_idx);
 		if (dest_class->has_references) {
 			mono_value_copy_array (dest, dest_idx, source_addr, length);
 		} else {
-			dest_addr = mono_array_addr_with_size (dest, element_size, dest_idx);
+			dest_addr = mono_array_addr_with_size_fast (dest, element_size, dest_idx);
 			mono_gc_memmove (dest_addr, source_addr, element_size * length);
 		}
 	} else {
-		mono_array_memcpy_refs (dest, dest_idx, source, source_idx, length);
+		mono_array_memcpy_refs_fast (dest, dest_idx, source, source_idx, length);
 	}
 
 	return TRUE;
@@ -1146,7 +1114,7 @@ ves_icall_System_ValueType_Equals (MonoObject *this, MonoObject *that, MonoArray
 		int i;
 		mono_gc_wbarrier_generic_store (fields, (MonoObject*) mono_array_new (mono_domain_get (), mono_defaults.object_class, count));
 		for (i = 0; i < count; ++i)
-			mono_array_setref (*fields, i, values [i]);
+			mono_array_setref_fast (*fields, i, values [i]);
 		return FALSE;
 	} else {
 		return TRUE;
@@ -2784,6 +2752,7 @@ ves_icall_InternalInvoke (MonoReflectionMethod *method, MonoObject *this, MonoAr
 	 */
 	MonoMethod *m = method->method;
 	MonoMethodSignature *sig = mono_method_signature (m);
+	MonoImage *image;
 	int pcount;
 	void *obj = this;
 
@@ -2837,8 +2806,14 @@ ves_icall_InternalInvoke (MonoReflectionMethod *method, MonoObject *this, MonoAr
 		return NULL;
 	}
 
-	if (m->klass->image->assembly->ref_only) {
+	image = m->klass->image;
+	if (image->assembly->ref_only) {
 		mono_gc_wbarrier_generic_store (exc, (MonoObject*) mono_get_exception_invalid_operation ("It is illegal to invoke a method on a type loaded using the ReflectionOnly api."));
+		return NULL;
+	}
+
+	if (image->dynamic && !((MonoDynamicImage*)image)->run) {
+		mono_gc_wbarrier_generic_store (exc, (MonoObject*) mono_get_exception_not_supported ("Cannot invoke a method in a dynamic assembly without run access."));
 		return NULL;
 	}
 	
@@ -5955,9 +5930,11 @@ ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData (guint32 year, MonoArray 
 	struct tm start, tt;
 	time_t t;
 
-	long int gmtoff;
-	int is_daylight = 0, day;
+	long int gmtoff, gmtoff_after, gmtoff_st, gmtoff_ds;
+	int day, transitioned;
 	char tzone [64];
+
+	gmtoff_st = gmtoff_ds = transitioned = 0;
 
 	MONO_ARCH_SAVE_REGS;
 
@@ -5994,13 +5971,15 @@ ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData (guint32 year, MonoArray 
 	gmtoff = gmt_offset (&start, t);
 
 	/* For each day of the year, calculate the tm_gmtoff. */
-	for (day = 0; day < 365; day++) {
+	for (day = 0; day < 365 && transitioned < 2; day++) {
 
 		t += 3600*24;
 		tt = *localtime (&t);
 
+        gmtoff_after = gmt_offset(&tt, t);
+
 		/* Daylight saving starts or ends here. */
-		if (gmt_offset (&tt, t) != gmtoff) {
+		if (gmtoff_after != gmtoff) {
 			struct tm tt1;
 			time_t t1;
 
@@ -6020,36 +5999,37 @@ ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData (guint32 year, MonoArray 
 			strftime (tzone, sizeof (tzone), "%Z", &tt);
 			
 			/* Write data, if we're already in daylight saving, we're done. */
-			if (is_daylight) {
-				mono_array_setref ((*names), 0, mono_string_new (domain, tzone));
-				mono_array_set ((*data), gint64, 1, ((gint64)t1 + EPOCH_ADJUST) * 10000000L);
-				return 1;
-			} else {
-				struct tm end;
-				time_t te;
-				
-				memset (&end, 0, sizeof (end));
-				end.tm_year = year-1900 + 1;
-				end.tm_mday = 1;
-				
-				te = mktime (&end);
-				
+			if (tt.tm_isdst) {
 				mono_array_setref ((*names), 1, mono_string_new (domain, tzone));
 				mono_array_set ((*data), gint64, 0, ((gint64)t1 + EPOCH_ADJUST) * 10000000L);
+				if (gmtoff_ds == 0) {
+					gmtoff_st = gmtoff;
+					gmtoff_ds = gmtoff_after;
+				}
+				transitioned++;
+			} else {
+				time_t te;
+				te = mktime (&tt);
+				
 				mono_array_setref ((*names), 0, mono_string_new (domain, tzone));
-				mono_array_set ((*data), gint64, 1, ((gint64)te + EPOCH_ADJUST) * 10000000L);
-				is_daylight = 1;
+				mono_array_set ((*data), gint64, 1, ((gint64)t1 + EPOCH_ADJUST) * 10000000L);
+				if (gmtoff_ds == 0) {
+					gmtoff_st = gmtoff_after;
+					gmtoff_ds = gmtoff;
+				}
+				transitioned++;
 			}
 
 			/* This is only set once when we enter daylight saving. */
-			mono_array_set ((*data), gint64, 2, (gint64)gmtoff * 10000000L);
-			mono_array_set ((*data), gint64, 3, (gint64)(gmt_offset (&tt, t) - gmtoff) * 10000000L);
-
+			if (tt1.tm_isdst) {
+				mono_array_set ((*data), gint64, 2, (gint64)gmtoff_st * 10000000L);
+				mono_array_set ((*data), gint64, 3, (gint64)(gmtoff_ds - gmtoff_st) * 10000000L);
+			}
 			gmtoff = gmt_offset (&tt, t);
 		}
 	}
 
-	if (!is_daylight) {
+	if (transitioned < 2) {
 		strftime (tzone, sizeof (tzone), "%Z", &tt);
 		mono_array_setref ((*names), 0, mono_string_new (domain, tzone));
 		mono_array_setref ((*names), 1, mono_string_new (domain, tzone));
@@ -6519,6 +6499,8 @@ ICALL_EXPORT void
 ves_icall_System_Environment_Exit (int result)
 {
 	MONO_ARCH_SAVE_REGS;
+
+	mono_environment_exitcode_set (result);
 
 /* FIXME: There are some cleanup hangs that should be worked out, but
  * if the program is going to exit, everything will be cleaned up when
@@ -7051,7 +7033,7 @@ ves_icall_get_resources_ptr (MonoReflectionAssembly *assembly, gpointer *result,
 ICALL_EXPORT MonoBoolean
 ves_icall_System_Diagnostics_Debugger_IsAttached_internal (void)
 {
-	return mono_debug_using_mono_debugger () || mono_is_debugger_attached ();
+	return mono_is_debugger_attached ();
 }
 
 ICALL_EXPORT MonoBoolean
@@ -7947,7 +7929,7 @@ compare_method_imap (const void *key, const void *elem)
 static gpointer
 find_method_icall (const IcallTypeDesc *imap, const char *name)
 {
-	const guint16 *nameslot = bsearch (name, icall_names_idx + imap->first_icall, icall_desc_num_icalls (imap), sizeof (icall_names_idx [0]), compare_method_imap);
+	const guint16 *nameslot = mono_binary_search (name, icall_names_idx + imap->first_icall, icall_desc_num_icalls (imap), sizeof (icall_names_idx [0]), compare_method_imap);
 	if (!nameslot)
 		return NULL;
 	return (gpointer)icall_functions [(nameslot - &icall_names_idx [0])];
@@ -7963,7 +7945,7 @@ compare_class_imap (const void *key, const void *elem)
 static const IcallTypeDesc*
 find_class_icalls (const char *name)
 {
-	const guint16 *nameslot = bsearch (name, icall_type_names_idx, Icall_type_num, sizeof (icall_type_names_idx [0]), compare_class_imap);
+	const guint16 *nameslot = mono_binary_search (name, icall_type_names_idx, Icall_type_num, sizeof (icall_type_names_idx [0]), compare_class_imap);
 	if (!nameslot)
 		return NULL;
 	return &icall_type_descs [nameslot - &icall_type_names_idx [0]];
@@ -7981,7 +7963,7 @@ compare_method_imap (const void *key, const void *elem)
 static gpointer
 find_method_icall (const IcallTypeDesc *imap, const char *name)
 {
-	const char **nameslot = bsearch (name, icall_names + imap->first_icall, icall_desc_num_icalls (imap), sizeof (icall_names [0]), compare_method_imap);
+	const char **nameslot = mono_binary_search (name, icall_names + imap->first_icall, icall_desc_num_icalls (imap), sizeof (icall_names [0]), compare_method_imap);
 	if (!nameslot)
 		return NULL;
 	return (gpointer)icall_functions [(nameslot - icall_names)];
@@ -7997,7 +7979,7 @@ compare_class_imap (const void *key, const void *elem)
 static const IcallTypeDesc*
 find_class_icalls (const char *name)
 {
-	const char **nameslot = bsearch (name, icall_type_names, Icall_type_num, sizeof (icall_type_names [0]), compare_class_imap);
+	const char **nameslot = mono_binary_search (name, icall_type_names, Icall_type_num, sizeof (icall_type_names [0]), compare_class_imap);
 	if (!nameslot)
 		return NULL;
 	return &icall_type_descs [nameslot - icall_type_names];
@@ -8208,7 +8190,7 @@ mono_lookup_icall_symbol (MonoMethod *m)
 	func = mono_lookup_internal_call (m);
 	if (!func)
 		return NULL;
-	slot = bsearch (func, functions_sorted, G_N_ELEMENTS (icall_functions), sizeof (gpointer), func_cmp);
+	slot = mono_binary_search (func, functions_sorted, G_N_ELEMENTS (icall_functions), sizeof (gpointer), func_cmp);
 	if (!slot)
 		return NULL;
 	g_assert (slot);

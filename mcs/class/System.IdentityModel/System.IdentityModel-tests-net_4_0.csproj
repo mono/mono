@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{0E0B4A97-BE69-42C4-B5A5-B901FD60DBCC}</ProjectGuid>
+    <ProjectGuid>{EAA2407E-0E00-46D9-85F4-4EA31B1A0A95}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\System.IdentityModel-tests-net_4_0</OutputPath>
@@ -98,43 +98,43 @@
   <ItemGroup>
     <Reference Include="..\lib\net_4_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
+      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.IdentityModel\System.IdentityModel-net_4_0.csproj">
-      <Project>{4326E85E-00B2-47F8-9A54-A8E15021CBA3}</Project>
+      <Project>{F3D909C0-D548-4FBC-BA04-BC8A445954EA}</Project>
       <Name>System.IdentityModel\System.IdentityModel-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0-2.csproj">
-      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
+      <Project>{8260E24F-1471-4320-AB5B-7CC7B68521E3}</Project>
       <Name>System\System-net_4_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_0-1.csproj">
-      <Project>{F9E777F8-E3F2-4E19-8DC9-2D1BB6B380A6}</Project>
+      <Project>{51720A26-B4D9-4B84-8CB5-9CBA57477FBB}</Project>
       <Name>System.XML\System.Xml-net_4_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Security\System.Security-net_4_0.csproj">
-      <Project>{BC281223-A7A5-415D-B4AA-59417DBFFBBB}</Project>
+      <Project>{DE980ED1-84A5-4B5B-A707-8D1BB4E2BDD5}</Project>
       <Name>System.Security\System.Security-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Web\System.Web-net_4_0-2.csproj">
-      <Project>{909BD42B-05C0-4147-BC2A-0F79A0A2B9DA}</Project>
+      <Project>{C410B7A1-AC09-4CBB-9F20-AC9473811B40}</Project>
       <Name>System.Web\System.Web-net_4_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration\System.Configuration-net_4_0.csproj">
-      <Project>{610C7C77-5851-4B95-A3FE-B04E1B011E6A}</Project>
+      <Project>{CA49630B-FD24-411F-9651-B15CA72CE5B8}</Project>
       <Name>System.Configuration\System.Configuration-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Security\Mono.Security-net_4_0.csproj">
-      <Project>{A2DAEB75-C366-4B5F-8BDD-9B3234A1ABFA}</Project>
+      <Project>{5E680987-7C43-48A0-9BF1-86124ACA78BD}</Project>
       <Name>Mono.Security\Mono.Security-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Runtime.Serialization\System.Runtime.Serialization-net_4_0.csproj">
-      <Project>{B3C699B6-74B4-4B41-901E-32E57D0909AC}</Project>
+      <Project>{4F614C6C-A83E-4C3C-859B-0548391F519E}</Project>
       <Name>System.Runtime.Serialization\System.Runtime.Serialization-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Web.ApplicationServices\System.Web.ApplicationServices-net_4_0.csproj">
-      <Project>{5D580843-B172-4BF3-AABD-116A64020C1C}</Project>
+      <Project>{8EF189A4-B862-4825-9938-00658C43B534}</Project>
       <Name>System.Web.ApplicationServices\System.Web.ApplicationServices-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>

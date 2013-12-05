@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{AD97431A-3538-4597-9C5C-97137A9ECCA1}</ProjectGuid>
+    <ProjectGuid>{C43E1948-715C-4711-9442-13652674CE49}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\mcs-net_4_5</OutputPath>
@@ -52,10 +52,10 @@
     <Compile Include="..\..\external\ikvm\reflect\Reader\*.cs" />
     <Compile Include="..\..\external\ikvm\reflect\Writer\*.cs" />
     <Compile Include="..\build\common\Consts.cs" />
-    <Compile Include="..\class\corlib\Mono.Security.Cryptography\CryptoConvert.cs" />
     <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs" />
     <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolTable.cs" />
     <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\SourceMethodBuilder.cs" />
+    <Compile Include="..\class\Mono.Security\Mono.Security.Cryptography\CryptoConvert.cs" />
     <Compile Include="..\tools\monop\outline.cs" />
     <Compile Include="anonymous.cs" />
     <Compile Include="argument.cs" />
@@ -127,7 +127,7 @@ $(ProjectDir)\..\jay\jay.exe -ct &lt; $(ProjectDir)\..\jay\skeleton.cs $(Project
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
+      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>

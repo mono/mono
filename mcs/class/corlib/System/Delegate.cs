@@ -527,7 +527,7 @@ namespace System
 				return source;
 
 			if (source.GetType () != value.GetType ())
-				throw new ArgumentException ("Delegate type mismatch");
+				throw new ArgumentException (Locale.GetText ("Incompatible Delegate Types. First is {0} second is {1}.", source.GetType ().FullName, value.GetType ().FullName));
 
 			return source.RemoveImpl (value);
 		}

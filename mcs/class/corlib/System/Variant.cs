@@ -247,7 +247,7 @@ namespace System
 				obj = Marshal.PtrToStringBSTR(Marshal.ReadIntPtr(addr));
 				break;
 // GetObjectForIUnknown is excluded from Marshal using FULL_AOT_RUNTIME
-#if !MONOTOUCH
+#if !DISABLE_COM
 			case VarEnum.VT_UNKNOWN:
 			case VarEnum.VT_DISPATCH:
 			{

@@ -30,7 +30,12 @@
 
 #if SECURITY_DEP
 
+#if MONOTOUCH
+using Mono.Security.Protocol.Tls;
+#else
 extern alias MonoSecurity;
+using MonoSecurity::Mono.Security.Protocol.Tls;
+#endif
 
 using System.Collections;
 using System.Collections.Specialized;
@@ -44,7 +49,6 @@ using System.Security.Authentication.ExtendedProtection;
 #if NET_4_5
 using System.Threading.Tasks;
 #endif
-using MonoSecurity::Mono.Security.Protocol.Tls;
 
 namespace System.Net {
 	public sealed class HttpListenerRequest

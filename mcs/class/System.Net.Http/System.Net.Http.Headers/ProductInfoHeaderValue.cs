@@ -26,6 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections.Generic;
+
 namespace System.Net.Http.Headers
 {
 	public class ProductInfoHeaderValue : ICloneable
@@ -93,9 +95,44 @@ namespace System.Net.Http.Headers
 			parsedValue = null;
 
 			var lexer = new Lexer (input);
-			string comment;
+			if (!TryParseElement (lexer, out parsedValue) || parsedValue == null)
+				return false;
 
-			if (lexer.ScanCommentOptional (out comment)) {
+			if (lexer.Scan () != Token.Type.End) {
+				parsedValue = null;
+				return false;
+			}	
+
+			return true;
+		}
+
+		internal static bool TryParse (string input, out List<ProductInfoHeaderValue> result)
+		{
+			var list = new List<ProductInfoHeaderValue> ();
+			var lexer = new Lexer (input);
+			result = null;
+
+			while (true) {
+				ProductInfoHeaderValue element;
+				if (!TryParseElement (lexer, out element))
+					return false;
+
+				if (element == null) {
+					result = list;
+					return true;
+				}
+
+				list.Add (element);
+			}
+		}
+
+		static bool TryParseElement (Lexer lexer, out ProductInfoHeaderValue parsedValue)
+		{
+			string comment;
+			parsedValue = null;
+			Token t;
+
+			if (lexer.ScanCommentOptional (out comment, out t)) {
 				if (comment == null)
 					return false;
 
@@ -104,11 +141,25 @@ namespace System.Net.Http.Headers
 				return true;
 			}
 
-			ProductHeaderValue res;
-			if (!ProductHeaderValue.TryParse (input, out res))
+			if (t == Token.Type.End)
+				return true;
+
+			if (t != Token.Type.Token)
 				return false;
 
-			parsedValue = new ProductInfoHeaderValue (res);
+			var value = new ProductHeaderValue ();
+			value.Name = lexer.GetStringValue (t);
+
+			t = lexer.Scan ();
+			if (t == Token.Type.SeparatorSlash) {
+				t = lexer.Scan ();
+				if (t != Token.Type.Token)
+					return false;
+
+				value.Version = lexer.GetStringValue (t);
+			}
+
+			parsedValue = new ProductInfoHeaderValue (value);
 			return true;
 		}
 

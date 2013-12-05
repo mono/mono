@@ -49,8 +49,8 @@ namespace System.Threading.Tasks
 		
 		// parent is the outer task in which this task is created
 		readonly Task parent;
-		// contAncestor is the Task on which this continuation was setup
-		readonly Task contAncestor;
+		// A reference to a Task on which this continuation is attached to
+		Task contAncestor;
 		
 		static int          id = -1;
 		static readonly TaskFactory defaultFactory = new TaskFactory ();
@@ -214,7 +214,6 @@ namespace System.Threading.Tasks
 		internal void RunSynchronouslyCore (TaskScheduler scheduler)
 		{
 			SetupScheduler (scheduler);
-			var saveStatus = status;
 			Status = TaskStatus.WaitingToRun;
 
 			try {
@@ -224,9 +223,8 @@ namespace System.Threading.Tasks
 				throw new TaskSchedulerException (inner);
 			}
 
-			Status = saveStatus;
-			Start (scheduler);
-			Wait ();
+			Schedule ();
+			WaitCore (Timeout.Infinite, CancellationToken.None, false);
 		}
 		#endregion
 		
@@ -502,7 +500,9 @@ namespace System.Threading.Tasks
 		void InnerInvoke ()
 		{
 			if (IsContinuation) {
-				invoker.Invoke (contAncestor, state, this);
+				var ancestor = contAncestor;
+				contAncestor = null;
+				invoker.Invoke (ancestor, state, this);
 			} else {
 				invoker.Invoke (this, state, this);
 			}
@@ -641,25 +641,7 @@ namespace System.Threading.Tasks
 			if (millisecondsTimeout < -1)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
 
-			bool result = true;
-
-			if (!IsCompleted) {
-				// If the task is ready to be run and we were supposed to wait on it indefinitely without cancellation, just run it
-				if (Status == TaskStatus.WaitingToRun && millisecondsTimeout == Timeout.Infinite && scheduler != null && !cancellationToken.CanBeCanceled)
-					scheduler.RunInline (this, true);
-
-				if (!IsCompleted) {
-					var continuation = new ManualResetContinuation ();
-					try {
-						ContinueWith (continuation);
-						result = continuation.Event.Wait (millisecondsTimeout, cancellationToken);
-					} finally {
-						if (!result)
-							RemoveContinuation (continuation);
-						continuation.Dispose ();
-					}
-				}
-			}
+			bool result = WaitCore (millisecondsTimeout, cancellationToken, true);
 
 			if (IsCanceled)
 				throw new AggregateException (new TaskCanceledException (this));
@@ -667,6 +649,32 @@ namespace System.Threading.Tasks
 			var exception = Exception;
 			if (exception != null)
 				throw exception;
+
+			return result;
+		}
+
+		internal bool WaitCore (int millisecondsTimeout, CancellationToken cancellationToken, bool runInline)
+		{
+			if (IsCompleted)
+				return true;
+
+			// If the task is ready to be run and we were supposed to wait on it indefinitely without cancellation, just run it
+			if (runInline && Status == TaskStatus.WaitingToRun && millisecondsTimeout == Timeout.Infinite && scheduler != null && !cancellationToken.CanBeCanceled)
+				scheduler.RunInline (this, true);
+
+			bool result = true;
+
+			if (!IsCompleted) {
+				var continuation = new ManualResetContinuation ();
+				try {
+					ContinueWith (continuation);
+					result = continuation.Event.Wait (millisecondsTimeout, cancellationToken);
+				} finally {
+					if (!result)
+						RemoveContinuation (continuation);
+					continuation.Dispose ();
+				}
+			}
 
 			return result;
 		}
@@ -951,11 +959,23 @@ namespace System.Threading.Tasks
 			if (millisecondsDelay < -1)
 				throw new ArgumentOutOfRangeException ("millisecondsDelay");
 
-			var task = new Task (TaskActionInvoker.Delay, millisecondsDelay, cancellationToken, TaskCreationOptions.None, null, TaskConstants.Finished);
-			task.SetupScheduler (TaskScheduler.Current);
-			
-			if (millisecondsDelay != Timeout.Infinite)
-				task.scheduler.QueueTask (task);
+			if (cancellationToken.IsCancellationRequested)
+				return TaskConstants.Canceled;
+
+			var task = new Task (TaskActionInvoker.Empty, null, cancellationToken, TaskCreationOptions.None, null, null);
+			task.SetupScheduler (TaskScheduler.Default);
+
+			if (millisecondsDelay != Timeout.Infinite) {
+				var timer = new Timer (delegate (object state) {
+					var t = (Task) state;
+					if (t.Status == TaskStatus.WaitingForActivation) {
+						t.Status = TaskStatus.Running;
+						t.Finish ();
+					}
+				}, task, millisecondsDelay, -1);
+
+				task.ContinueWith (new DisposeContinuation (timer));
+			}
 
 			return task;
 		}
@@ -1062,6 +1082,9 @@ namespace System.Threading.Tasks
 
 		internal static Task<TResult[]> WhenAllCore<TResult> (IList<Task<TResult>> tasks)
 		{
+			if (tasks.Count == 0)
+				return FromResult(new TResult[0]);
+
 			foreach (var t in tasks) {
 				if (t == null)
 					throw new ArgumentException ("tasks", "the tasks argument contains a null element");

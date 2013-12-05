@@ -134,13 +134,13 @@ namespace System
 
 		T IList<T>.this[int index] {
 			get {
-				if (index < 0 || count < index)
+				if (index < 0 || index >= count)
 					throw new ArgumentOutOfRangeException ("index");
 
 				return array[offset + index];
 			}
 			set {
-				if (index < 0 || count < index)
+				if (index < 0 || index >= count)
 					throw new ArgumentOutOfRangeException ("index");
 
 				array[offset + index] = value;

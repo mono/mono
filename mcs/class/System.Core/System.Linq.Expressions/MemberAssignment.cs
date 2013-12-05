@@ -28,7 +28,9 @@
 
 using System;
 using System.Reflection;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 using System.Text;
 
 namespace System.Linq.Expressions {

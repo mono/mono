@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{EF1AE0BA-B984-4149-8968-0337A4D9BDA4}</ProjectGuid>
+    <ProjectGuid>{9A686629-45E0-431D-975C-BEDF137D75F1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,169,219,414,1030,3001,3005,3006,618,219,169</NoWarn>
     <OutputPath>bin\Debug\Mono.C5-tests-net_4_5</OutputPath>
@@ -86,15 +86,15 @@
   <ItemGroup>
     <Reference Include="..\lib\net_4_5\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</Project>
+      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.C5\Mono.C5-net_4_5.csproj">
-      <Project>{557C0FF1-A6FA-4B27-92A2-98A59CD740E1}</Project>
+      <Project>{E8DC0734-B7DB-4CA3-9DF2-4103F35B8A39}</Project>
       <Name>Mono.C5\Mono.C5-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_5-2.csproj">
-      <Project>{34966210-D64D-419C-94A4-9A6093CE5882}</Project>
+      <Project>{38FCD731-0E11-46F7-A31B-DCBE853AD8D7}</Project>
       <Name>System\System-net_4_5-2</Name>
     </ProjectReference>
   </ItemGroup>

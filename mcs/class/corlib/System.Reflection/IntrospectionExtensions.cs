@@ -4,7 +4,7 @@
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
 //
-// Copyright 2011 Xamarin Inc.
+// Copyright (C) 2013 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,7 +34,12 @@ namespace System.Reflection
 	{
 		public static TypeInfo GetTypeInfo (this Type type)
 		{
-			return new TypeDelegator (type);
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
+			// This is odd but that's what .net does
+			var reflectable = (IReflectableType) type;
+			return reflectable.GetTypeInfo ();
 		}
 	}
 }

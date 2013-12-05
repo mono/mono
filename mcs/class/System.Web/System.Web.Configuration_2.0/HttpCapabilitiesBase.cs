@@ -247,9 +247,17 @@ namespace System.Web.Configuration
 			}
 		}
 
-		public IDictionary Capabilities {
+		public IDictionary Capabilities
+		{
 			get { return capabilities; }
-			set { capabilities = new Hashtable(value, StringComparer.OrdinalIgnoreCase); }
+			set {
+				//value comes with duplicated keys, so we filter them out
+				capabilities = new Hashtable (value.Keys.Count, StringComparer.OrdinalIgnoreCase);
+				foreach (object key in value.Keys) {
+					if (!capabilities.Contains (key))
+						capabilities.Add (key, value [key]);
+				}
+			}
 		}
 
 		int defaultSubmitButtonLimit;

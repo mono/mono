@@ -21,6 +21,7 @@
 #include <mono/metadata/threads.h>
 #include <mono/metadata/profiler-private.h>
 #include <mono/utils/mono-math.h>
+#include <mono/utils/mono-hwcap-ia64.h>
 
 #include "trace.h"
 #include "mini-ia64.h"
@@ -4745,12 +4746,6 @@ gboolean
 mono_arch_print_tree (MonoInst *tree, int arity)
 {
 	return 0;
-}
-
-MonoInst*
-mono_arch_get_domain_intrinsic (MonoCompile* cfg)
-{
-	return mono_get_domain_intrinsic (cfg);
 }
 
 mgreg_t

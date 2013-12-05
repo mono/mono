@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.Xml;
 using Microsoft.Build.Exceptions;
 
 namespace Microsoft.Build.Construction
@@ -107,16 +108,16 @@ namespace Microsoft.Build.Construction
                 internal override string XmlName {
                         get { return "UsingTask"; }
                 }
-                internal override ProjectElement LoadChildElement (string name)
+                internal override ProjectElement LoadChildElement (XmlReader reader)
                 {
-                        switch (name) {
+                        switch (reader.LocalName) {
                         case "ParameterGroup":
                                 return AddParameterGroup ();
                         case "Task":
                                 return AddUsingTaskBody (null, null);
                         default:
                                 throw new InvalidProjectFileException (string.Format (
-                                        "Child \"{0}\" is not a known node type.", name));
+                                        "Child \"{0}\" is not a known node type.", reader.LocalName));
                         }
                 }
         }

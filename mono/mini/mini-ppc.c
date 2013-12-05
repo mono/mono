@@ -16,6 +16,7 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/utils/mono-proclib.h>
 #include <mono/utils/mono-mmap.h>
+#include <mono/utils/mono-hwcap-ppc.h>
 
 #include "mini-ppc.h"
 #ifdef TARGET_POWERPC64
@@ -67,7 +68,6 @@ static CRITICAL_SECTION mini_arch_mutex;
 int mono_exc_esp_offset = 0;
 static int tls_mode = TLS_MODE_DETECT;
 static int lmf_pthread_key = -1;
-static int monodomain_key = -1;
 
 /*
  * The code generated for sequence points reads from this location, which is
@@ -442,13 +442,16 @@ mono_arch_get_delegate_invoke_impls (void)
 	guint8 *code;
 	guint32 code_len;
 	int i;
+	char *tramp_name;
 
 	code = get_delegate_invoke_impl (TRUE, 0, &code_len, TRUE);
-	res = g_slist_prepend (res, mono_tramp_info_create (g_strdup ("delegate_invoke_impl_has_target"), code, code_len, NULL, NULL));
+	res = g_slist_prepend (res, mono_tramp_info_create ("delegate_invoke_impl_has_target", code, code_len, NULL, NULL));
 
 	for (i = 0; i < MAX_ARCH_DELEGATE_PARAMS; ++i) {
 		code = get_delegate_invoke_impl (FALSE, i, &code_len, TRUE);
-		res = g_slist_prepend (res, mono_tramp_info_create (g_strdup_printf ("delegate_invoke_impl_target_%d", i), code, code_len, NULL, NULL));
+		tramp_name = g_strdup_printf ("delegate_invoke_impl_target_%d", i);
+		res = g_slist_prepend (res, mono_tramp_info_create (tramp_name, code, code_len, NULL, NULL));
+		g_free (tramp_name);
 	}
 
 	return res;
@@ -520,32 +523,6 @@ typedef struct {
 	long int value;
 } AuxVec;
 
-#ifdef USE_ENVIRON_HACK
-static AuxVec*
-linux_find_auxv (int *count)
-{
-	AuxVec *vec;
-	int c = 0;
-	char **result = __environ;
-	/* Scan over the env vector looking for the ending NULL */
-	for (; *result != NULL; ++result) {
-	}
-	/* Bump the pointer one more step, which should be the auxv. */
-	++result;
-	vec = (AuxVec *)result;
-	if (vec->type != 22 /*AT_IGNOREPPC*/) {
-		*count = 0;
-		return NULL;
-	}
-	while (vec->type != 0 /*AT_NULL*/) {
-		vec++;
-		c++;
-	}
-	*count = c;
-	return (AuxVec *)result;
-}
-#endif
-
 #define MAX_AUX_ENTRIES 128
 /* 
  * PPC_FEATURE_POWER4, PPC_FEATURE_POWER5, PPC_FEATURE_POWER5_PLUS, PPC_FEATURE_CELL,
@@ -575,11 +552,12 @@ mono_arch_init (void)
 #if defined(MONO_CROSS_COMPILE)
 #elif defined(__APPLE__)
 	int mib [3];
-	size_t len;
+	size_t len = sizeof (cachelinesize);
+
 	mib [0] = CTL_HW;
 	mib [1] = HW_CACHELINE;
-	len = sizeof (cachelinesize);
-	if (sysctl (mib, 2, &cachelinesize, (size_t*)&len, NULL, 0) == -1) {
+
+	if (sysctl (mib, 2, &cachelinesize, &len, NULL, 0) == -1) {
 		perror ("sysctl");
 		cachelinesize = 128;
 	} else {
@@ -590,37 +568,17 @@ mono_arch_init (void)
 	int i, vec_entries = 0;
 	/* sadly this will work only with 2.6 kernels... */
 	FILE* f = fopen ("/proc/self/auxv", "rb");
+
 	if (f) {
 		vec_entries = fread (&vec, sizeof (AuxVec), MAX_AUX_ENTRIES, f);
 		fclose (f);
-#ifdef USE_ENVIRON_HACK
-	} else {
-		AuxVec *evec = linux_find_auxv (&vec_entries);
-		if (vec_entries)
-			memcpy (&vec, evec, sizeof (AuxVec) * MIN (vec_entries, MAX_AUX_ENTRIES));
-#endif
 	}
+
 	for (i = 0; i < vec_entries; i++) {
 		int type = vec [i].type;
+
 		if (type == 19) { /* AT_DCACHEBSIZE */
 			cachelinesize = vec [i].value;
-			continue;
-		} else if (type == 16) { /* AT_HWCAP */
-			if (vec [i].value & 0x00002000 /*PPC_FEATURE_ICACHE_SNOOP*/)
-				cpu_hw_caps |= PPC_ICACHE_SNOOP;
-			if (vec [i].value & ISA_2X)
-				cpu_hw_caps |= PPC_ISA_2X;
-			if (vec [i].value & ISA_64)
-				cpu_hw_caps |= PPC_ISA_64;
-			if (vec [i].value & ISA_MOVE_FPR_GPR)
-				cpu_hw_caps |= PPC_MOVE_FPR_GPR;
-			continue;
-		} else if (type == 15) { /* AT_PLATFORM */
-			const char *arch = (char*)vec [i].value;
-			if (strcmp (arch, "ppc970") == 0 ||
-					(strncmp (arch, "power", 5) == 0 && arch [5] >= '4' && arch [5] <= '7'))
-				cpu_hw_caps |= PPC_MULTIPLE_LS_UNITS;
-			/*printf ("cpu: %s\n", (char*)vec [i].value);*/
 			continue;
 		}
 	}
@@ -630,13 +588,31 @@ mono_arch_init (void)
 #else
 //#error Need a way to get cache line size
 #endif
+
+	if (mono_hwcap_ppc_has_icache_snoop)
+		cpu_hw_caps |= PPC_ICACHE_SNOOP;
+
+	if (mono_hwcap_ppc_is_isa_2x)
+		cpu_hw_caps |= PPC_ISA_2X;
+
+	if (mono_hwcap_ppc_is_isa_64)
+		cpu_hw_caps |= PPC_ISA_64;
+
+	if (mono_hwcap_ppc_has_move_fpr_gpr)
+		cpu_hw_caps |= PPC_MOVE_FPR_GPR;
+
+	if (mono_hwcap_ppc_has_multiple_ls_units)
+		cpu_hw_caps |= PPC_MULTIPLE_LS_UNITS;
+
 	if (!cachelinesize)
 		cachelinesize = 32;
+
 	if (!cachelineinc)
 		cachelineinc = cachelinesize;
 
 	if (mono_cpu_count () > 1)
 		cpu_hw_caps |= PPC_SMP_CAPABLE;
+
 	InitializeCriticalSection (&mini_arch_mutex);
 
 	ss_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT);
@@ -1278,7 +1254,7 @@ get_call_info (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig)
 }
 
 gboolean
-mono_ppc_tail_call_supported (MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
+mono_arch_tail_call_supported (MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
 	CallInfo *c1, *c2;
 	gboolean res;
@@ -4598,6 +4574,7 @@ mono_arch_patch_code (MonoMethod *method, MonoDomain *domain, guint8 *code, Mono
 		case MONO_PATCH_INFO_ABS:
 		case MONO_PATCH_INFO_CLASS_INIT:
 		case MONO_PATCH_INFO_RGCTX_FETCH:
+		case MONO_PATCH_INFO_JIT_ICALL_ADDR:
 			is_fd = TRUE;
 			break;
 #endif
@@ -5419,8 +5396,6 @@ try_offset_access (void *value, guint32 idx)
 static void
 setup_tls_access (void)
 {
-	guint32 ptk;
-
 #if defined(__linux__) && defined(_CS_GNU_LIBPTHREAD_VERSION)
 	size_t conf_size = 0;
 	char confbuf[128];
@@ -5470,6 +5445,7 @@ setup_tls_access (void)
 		ppc_blr (code);
 		if (*ins == cmplwi_1023) {
 			int found_lwz_284 = 0;
+			guint32 ptk;
 			for (ptk = 0; ptk < 20; ++ptk) {
 				++ins;
 				if (!*ins || *ins == blr_ins)
@@ -5527,17 +5503,6 @@ setup_tls_access (void)
 		tls_mode = TLS_MODE_FAILED;
 	if (tls_mode == TLS_MODE_FAILED)
 		return;
-	if ((monodomain_key == -1) && (tls_mode == TLS_MODE_NPTL)) {
-		monodomain_key = mono_domain_get_tls_offset();
- 	}
-	/* if not TLS_MODE_NPTL or local dynamic (as indicated by
-	   mono_domain_get_tls_offset returning -1) then use keyed access. */
-	if (monodomain_key == -1) {
-		ptk = mono_domain_get_tls_key ();
-		if (ptk < 1024)
-		    monodomain_key = ptk;
-	}
-
 	if ((lmf_pthread_key == -1) && (tls_mode == TLS_MODE_NPTL)) {
 		lmf_pthread_key = mono_get_lmf_addr_tls_offset();
 	}
@@ -5546,7 +5511,7 @@ setup_tls_access (void)
 	/* if not TLS_MODE_NPTL or local dynamic (as indicated by
 	   mono_get_lmf_addr_tls_offset returning -1) then use keyed access. */
 	if (lmf_pthread_key == -1) {
-		ptk = mono_jit_tls_id;
+		guint32 ptk = mono_jit_tls_id;
 		if (ptk < 1024) {
 			/*g_print ("MonoLMF at: %d\n", ptk);*/
 			/*if (!try_offset_access (mono_get_lmf_addr (), ptk)) {
@@ -5762,19 +5727,6 @@ mono_arch_print_tree (MonoInst *tree, int arity)
 	return 0;
 }
 
-MonoInst* mono_arch_get_domain_intrinsic (MonoCompile* cfg)
-{
-	MonoInst* ins;
-
-	setup_tls_access ();
-	if (monodomain_key == -1)
-		return NULL;
-	
-	MONO_INST_NEW (cfg, ins, OP_TLS_GET);
-	ins->inst_offset = monodomain_key;
-	return ins;
-}
-
 mgreg_t
 mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
@@ -5977,6 +5929,15 @@ mono_arch_get_seq_point_info (MonoDomain *domain, guint8 *code)
 {
 	NOT_IMPLEMENTED;
 	return NULL;
+}
+
+void
+mono_arch_init_lmf_ext (MonoLMFExt *ext, gpointer prev_lmf)
+{
+	ext->lmf.previous_lmf = prev_lmf;
+	/* Mark that this is a MonoLMFExt */
+	ext->lmf.previous_lmf = (gpointer)(((gssize)ext->lmf.previous_lmf) | 2);
+	ext->lmf.ebp = (gssize)ext;
 }
 
 #endif

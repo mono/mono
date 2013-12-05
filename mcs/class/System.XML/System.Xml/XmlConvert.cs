@@ -928,47 +928,60 @@ namespace System.Xml {
 #if NET_4_0
 		public static bool IsNCNameChar (char ch)
 		{
-			throw new NotImplementedException ();
+			return XmlChar.IsNCNameChar (ch);
 		}
 
 		public static bool IsPublicIdChar (char ch)
 		{
-			throw new NotImplementedException ();
+			return XmlChar.IsPubidChar (ch);
 		}
 
 		public static bool IsStartNCNameChar (char ch)
 		{
-			throw new NotImplementedException ();
+			return XmlChar.IsFirstNameChar (ch);
 		}
 
 		public static bool IsWhitespaceChar (char ch)
 		{
-			throw new NotImplementedException ();
+			return XmlChar.IsWhitespace (ch);
 		}
 
 		public static bool IsXmlChar (char ch)
 		{
-			throw new NotImplementedException ();
+			return XmlChar.IsValid (ch);
 		}
 
 		public static bool IsXmlSurrogatePair (char lowChar, char highChar)
 		{
-			throw new NotImplementedException ();
+			return 0xD800 <= lowChar && lowChar <= 0xDBFF && 0xDC00 <= highChar && highChar <= 0xDFFF;
 		}
 		
 		public static string VerifyPublicId (string publicId)
 		{
-			throw new NotImplementedException ();
+			if (publicId == null)
+				throw new ArgumentNullException ("publicId");
+			if (XmlChar.IsPubid (publicId))
+				return publicId;
+			throw new XmlException (string.Format ("'{0}' is not a valid PUBLIC ID", publicId));
 		}
 
 		public static string VerifyWhitespace (string content)
 		{
-			throw new NotImplementedException ();
+			if (content == null)
+				throw new ArgumentNullException ("content");
+			if (XmlChar.IsWhitespace (content))
+				return content;
+			throw new XmlException (string.Format ("'{0}' is not whitespace", content));
 		}
 
 		public static string VerifyXmlChars (string content)
 		{
-			throw new NotImplementedException ();
+			if (content == null)
+				throw new ArgumentNullException ("content");
+			var idx = XmlChar.IndexOfInvalid (content, true);
+			if (idx < 0)
+				return content;
+			throw new XmlException (string.Format ("Invalid XML character was found in the content, at index {0}.", idx));
 		}
 #endif
 	}

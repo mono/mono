@@ -80,9 +80,10 @@ namespace System.Xml.Linq
 		public string ToString (SaveOptions options)
 		{
 			StringWriter sw = new StringWriter ();
-			XmlWriterSettings s = new XmlWriterSettings ();
-			s.ConformanceLevel = ConformanceLevel.Auto;
-			s.Indent = options != SaveOptions.DisableFormatting;
+			XmlWriterSettings s = new XmlWriterSettings () {
+				ConformanceLevel = ConformanceLevel.Auto,
+				Indent = options != SaveOptions.DisableFormatting,
+				OmitXmlDeclaration = true };
 			XmlWriter xw = XmlWriter.Create (sw, s);
 			WriteTo (xw);
 			xw.Close ();

@@ -29,6 +29,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Build.Internal;
+using System.Xml;
 
 namespace Microsoft.Build.Construction
 {
@@ -50,7 +51,7 @@ namespace Microsoft.Build.Construction
                         return import;
                 }
                 internal override string XmlName { get { return "ImportGroup"; } }
-                internal override ProjectElement LoadChildElement (string name)
+                internal override ProjectElement LoadChildElement (XmlReader reader)
                 {
                         return AddImport (null);
                 }

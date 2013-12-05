@@ -7,7 +7,10 @@
 	<Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\$(MSBuildThisFile)\ImportBefore\*"
 		Condition="'$(ImportByWildcardBeforeMicrosoftCommonTargets)' == 'true' and Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\$(MSBuildThisFile)\ImportBefore')"/>
 
+	<Import Project="$(MSBuildProjectFullPath).user" Condition="Exists('$(MSBuildProjectFullPath).user')"/>	
+	
 	<PropertyGroup>
+		<OutputType Condition="'$(OutputType)' == ''">Exe</OutputType>
 		<TargetExt Condition="'$(OutputType)' == 'Winexe'">.exe</TargetExt>
 		<TargetExt Condition="'$(OutputType)' == 'Exe'">.exe</TargetExt>
 		<TargetExt Condition="'$(OutputType)' == 'Library'">.dll</TargetExt>
@@ -19,7 +22,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<AssemblyName Condition="'$(AssemblyName)' == ''">$(RootNamespace)</AssemblyName>
+		<AssemblyName Condition="'$(AssemblyName)' == ''">$(MSBuildProjectName)</AssemblyName>
 		<OutputPath Condition="'$(OutputPath)' != '' and !HasTrailingSlash('$(OutputPath)')">$(OutputPath)\</OutputPath> 
 		<OutputPath Condition=" '$(Platform)'=='' and '$(Configuration)'=='' and '$(OutputPath)'=='' ">bin\Debug\</OutputPath>
 		<WarningLevel Condition="'$(WarningLevel)' == ''" >2</WarningLevel>
@@ -196,12 +199,15 @@
 		</AllowedReferenceAssemblyFileExtensions>
 
 		<AllowedReferenceRelatedFileExtensions Condition=" '$(AllowedReferenceRelatedFileExtensions)' == '' ">
-			.mdb
+			.exe.mdb;
+			.dll.mdb;
+			.xml
 		</AllowedReferenceRelatedFileExtensions>
 
 		<AssemblySearchPaths Condition="'$(AssemblySearchPaths)' == ''">
 			{CandidateAssemblyFiles};
 			$(ReferencePath);
+			@(AdditionalReferencePath);
 			{HintPathFromItem};
 			{TargetFrameworkDirectory};
 			{PkgConfig};
@@ -247,6 +253,10 @@
 			ContinueOnError="true"
 			Condition="'@(Compile)' != '' and '$(TargetFrameworkMonikerAssemblyAttributeText)' != ''"
 		/>
+		
+		<ItemGroup Condition="'@(Compile)' != '' and '$(TargetFrameworkMonikerAssemblyAttributeText)' != ''">
+			<Compile Include="$(TargetFrameworkMonikerAssemblyAttributesPath)"/>
+		</ItemGroup>
 	</Target>
 
 	<Target Name="ResolveReferences" DependsOnTargets="$(ResolveReferencesDependsOn)"/>
@@ -291,7 +301,7 @@
 	</Target>
 
 	<Target
-		Name="AssignProjectConfigurations"
+		Name="AssignProjectConfiguration"
 		Condition="'@(ProjectReference)' != ''">
 
 		<!-- assign configs if building a solution file -->
@@ -315,7 +325,7 @@
 		ProjectReferenceWithConfigurationNonExistent: Projects non-existent on disk -->
 
 	<Target Name="SplitProjectReferencesByExistent"
-		DependsOnTargets="AssignProjectConfigurations">
+		DependsOnTargets="AssignProjectConfiguration">
 
 		<CreateItem Include="@(ProjectReferenceWithConfiguration)" Condition="'@(ProjectReferenceWithConfiguration)' != ''">
 			<Output TaskParameter="Include" ItemName="ProjectReferenceWithConfigurationExistent"
@@ -794,10 +804,6 @@
 			<Output TaskParameter="Lines" ItemName="PreviousFileWrites"/>
 		</ReadLinesFromFile>
 
-		<RemoveDuplicates Inputs="@(PreviousFileWrites);@(FileWrites->'%(FullPath)')">
-			<Output TaskParameter="Filtered" ItemName="CombinedFileWrites"/>
-		</RemoveDuplicates>
-
 		<!-- CopyLocal files: In case all the projects build to common output
 		     directory, then other projects might depend on some of these
 		     CopyLocal files, so delete only the ones under *this* project
@@ -805,6 +811,10 @@
 		<FindUnderPath Path="$(MSBuildProjectDirectory)" Files="@(FileWritesShareable)">
 			<Output TaskParameter="InPath" ItemName="FileWrites"/>
 		</FindUnderPath>
+
+		<RemoveDuplicates Inputs="@(PreviousFileWrites);@(FileWrites->'%(FullPath)')">
+			<Output TaskParameter="Filtered" ItemName="CombinedFileWrites"/>
+		</RemoveDuplicates>
 
 		<WriteLinesToFile
 			File="$(IntermediateOutputPath)$(CleanFile)"
@@ -842,7 +852,7 @@
 	</Target>
 
 	<Target Name="CleanReferencedProjects"
-		DependsOnTargets="AssignProjectConfigurations">
+		DependsOnTargets="AssignProjectConfiguration">
 
 		<!-- If building from .sln.proj or from IDE, clean will get handled by them,
 		     else we are building a project directly, from the command line, so

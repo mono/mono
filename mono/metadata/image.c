@@ -151,7 +151,16 @@ mono_image_rva_map (MonoImage *image, guint32 addr)
 	const int top = iinfo->cli_section_count;
 	MonoSectionTable *tables = iinfo->cli_section_tables;
 	int i;
-	
+
+#ifdef HOST_WIN32
+	if (image->is_module_handle) {
+		if (addr && addr < image->raw_data_len)
+			return image->raw_data + addr;
+		else
+			return NULL;
+	}
+#endif
+
 	for (i = 0; i < top; i++){
 		if ((addr >= tables->st_virtual_address) &&
 		    (addr < tables->st_virtual_address + tables->st_raw_data_size)){
@@ -159,10 +168,6 @@ mono_image_rva_map (MonoImage *image, guint32 addr)
 				if (!mono_image_ensure_section_idx (image, i))
 					return NULL;
 			}
-#ifdef HOST_WIN32
-			if (image->is_module_handle)
-				return image->raw_data + addr;
-#endif
 			return (char*)iinfo->cli_sections [i] +
 				(addr - tables->st_virtual_address);
 		}
@@ -1622,8 +1627,10 @@ mono_image_close_except_pools (MonoImage *image)
 	free_hash (image->delegate_invoke_generic_cache);
 	free_hash (image->delegate_begin_invoke_generic_cache);
 	free_hash (image->delegate_end_invoke_generic_cache);
+	free_hash (image->synchronized_generic_cache);
 	free_hash (image->remoting_invoke_cache);
 	free_hash (image->runtime_invoke_cache);
+	free_hash (image->runtime_invoke_vtype_cache);
 	free_hash (image->runtime_invoke_direct_cache);
 	free_hash (image->runtime_invoke_vcall_cache);
 	free_hash (image->synchronized_cache);

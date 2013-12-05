@@ -209,69 +209,59 @@ namespace Mono.Unix {
 
 		// Read the specified symbolic link.  If the file isn't a symbolic link,
 		// return null; otherwise, return the contents of the symbolic link.
-		//
-		// readlink(2) is horribly evil, as there is no way to query how big the
-		// symlink contents are.  Consequently, it's trial and error...
 		internal static string ReadSymbolicLink (string path)
 		{
-			StringBuilder buf = new StringBuilder (256);
-			do {
-				int r = Native.Syscall.readlink (path, buf);
-				if (r < 0) {
-					Native.Errno e;
-					switch (e = Native.Stdlib.GetLastError()) {
-					case Native.Errno.EINVAL:
-						// path isn't a symbolic link
-						return null;
-					default:
-						UnixMarshal.ThrowExceptionForError (e);
-						break;
-					}
-				}
-				else if (r == buf.Capacity) {
-					buf.Capacity *= 2;
-				}
-				else
-					return buf.ToString (0, r);
-			} while (true);
-		}
-
-		// Read the specified symbolic link.  If the file isn't a symbolic link,
-		// return null; otherwise, return the contents of the symbolic link.
-		//
-		// readlink(2) is horribly evil, as there is no way to query how big the
-		// symlink contents are.  Consequently, it's trial and error...
-		private static string ReadSymbolicLink (string path, out Native.Errno errno)
-		{
-			errno = (Native.Errno) 0;
-			StringBuilder buf = new StringBuilder (256);
-			do {
-				int r = Native.Syscall.readlink (path, buf);
-				if (r < 0) {
-					errno = Native.Stdlib.GetLastError ();
-					return null;
-				}
-				else if (r == buf.Capacity) {
-					buf.Capacity *= 2;
-				}
-				else
-					return buf.ToString (0, r);
-			} while (true);
+			string target = TryReadLink (path);
+			if (target == null) {
+				Native.Errno errno = Native.Stdlib.GetLastError ();
+				if (errno != Native.Errno.EINVAL)
+					UnixMarshal.ThrowExceptionForError (errno);
+			}
+			return target;
 		}
 
 		public static string TryReadLink (string path)
 		{
-			Native.Errno errno;
-			return ReadSymbolicLink (path, out errno);
+			byte[] buf = new byte[256];
+			do {
+				long r = Native.Syscall.readlink (path, buf);
+				if (r < 0)
+					return null;
+				else if (r == buf.Length)
+					buf = new byte[checked (buf.LongLength * 2)];
+				else
+					return UnixEncoding.Instance.GetString (buf, 0, checked ((int) r));
+			} while (true);
+		}
+
+		public static string TryReadLinkAt (int dirfd, string path)
+		{
+			byte[] buf = new byte[256];
+			do {
+				long r = Native.Syscall.readlinkat (dirfd, path, buf);
+				if (r < 0)
+					return null;
+				else if (r == buf.Length)
+					buf = new byte[checked (buf.LongLength * 2)];
+				else
+					return UnixEncoding.Instance.GetString (buf, 0, checked ((int) r));
+			} while (true);
 		}
 
 		public static string ReadLink (string path)
 		{
-			Native.Errno errno;
-			path = ReadSymbolicLink (path, out errno);
-			if (errno != 0)
-				UnixMarshal.ThrowExceptionForError (errno);
-			return path;
+			string target = TryReadLink (path);
+			if (target == null)
+				UnixMarshal.ThrowExceptionForLastError (); 
+			return target;
+		}
+
+		public static string ReadLinkAt (int dirfd, string path)
+		{
+			string target = TryReadLinkAt (dirfd, path);
+			if (target == null)
+				UnixMarshal.ThrowExceptionForLastError (); 
+			return target;
 		}
 
 		public static bool IsPathRooted (string path)

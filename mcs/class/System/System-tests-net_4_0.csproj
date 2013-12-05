@@ -5,9 +5,9 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{29AFC20E-0D3A-46E8-B41F-034DD6AC9D31}</ProjectGuid>
+    <ProjectGuid>{3CF54815-AE4B-40C1-9FFA-8291CA826229}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <NoWarn>1699,618,219,67,169,612</NoWarn>
+    <NoWarn>1699,618,672,219,67,169,612</NoWarn>
     <OutputPath>bin\Debug\System-tests-net_4_0</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>False</NoConfig>
@@ -22,7 +22,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <NoWarn>1699,618,219,67,169,612</NoWarn>
+    <NoWarn>1699,618,672,219,67,169,612</NoWarn>
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -30,7 +30,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <NoWarn>1699,618,219,67,169,612</NoWarn>
+    <NoWarn>1699,618,672,219,67,169,612</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -44,7 +44,6 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="Test\Microsoft.CSharp\CodeGeneratorFromCompileUnitTest.cs" />
     <Compile Include="Test\Microsoft.CSharp\CodeGeneratorFromExpressionTest.cs" />
     <Compile Include="Test\Microsoft.CSharp\CodeGeneratorFromNamespaceTest.cs" />
@@ -564,35 +563,35 @@
   <ItemGroup>
     <Reference Include="..\lib\net_4_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{7B7210E5-3B98-492F-B57E-BD53A99C39B0}</Project>
+      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_0-2.csproj">
-      <Project>{1A075F2A-40CF-48B5-B817-8B03444DB7C6}</Project>
+      <Project>{8260E24F-1471-4320-AB5B-7CC7B68521E3}</Project>
       <Name>System\System-net_4_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Drawing\System.Drawing-net_2_0.csproj">
-      <Project>{0877A48B-2DF5-40A2-8714-ABBF2BD48987}</Project>
+      <Project>{CA7E5301-90D2-4C07-87B7-851AA216D4C9}</Project>
       <Name>System.Drawing\System.Drawing-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Security\Mono.Security-net_4_0.csproj">
-      <Project>{A2DAEB75-C366-4B5F-8BDD-9B3234A1ABFA}</Project>
+      <Project>{5E680987-7C43-48A0-9BF1-86124ACA78BD}</Project>
       <Name>Mono.Security\Mono.Security-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data\System.Data-net_2_0.csproj">
-      <Project>{B8CA1780-FF35-49B9-B385-C24BD0558109}</Project>
+      <Project>{49220562-83E1-49A2-971F-5D31C4AB0258}</Project>
       <Name>System.Data\System.Data-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_0.csproj">
-      <Project>{18CD7C68-EF7C-4C7A-B8D6-FE9834145437}</Project>
+      <Project>{8BF2FA62-9F71-4D96-A5D6-3DD903B25ED8}</Project>
       <Name>System.XML\System.Xml-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_0.csproj">
-      <Project>{2590BECB-2660-49C6-93B1-B9E7D0796214}</Project>
+      <Project>{D121EB80-19C6-4313-9BBE-6F66556CE8B7}</Project>
       <Name>System.Core\System.Core-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration\System.Configuration-net_4_0.csproj">
-      <Project>{610C7C77-5851-4B95-A3FE-B04E1B011E6A}</Project>
+      <Project>{CA49630B-FD24-411F-9651-B15CA72CE5B8}</Project>
       <Name>System.Configuration\System.Configuration-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>

@@ -32,7 +32,12 @@ using System.IO;
 using System.Text;
 using Microsoft.Build.Framework;
 
-namespace Microsoft.Build.BuildEngine {
+#if MICROSOFT_BUILD_DLL
+namespace Microsoft.Build.Logging
+#else
+namespace Microsoft.Build.BuildEngine
+#endif
+{
 	public class FileLogger : ConsoleLogger {
 		StreamWriter sw;
 		string logfile;

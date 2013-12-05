@@ -1,5 +1,6 @@
 Microsoft.Build.Framework/BuildErrorEventArgsTest.cs
 Microsoft.Build.Framework/BuildEventArgsTest.cs
+Microsoft.Build.Framework/BuildEventContextTest.cs
 Microsoft.Build.Framework/BuildFinishedEventArgsTest.cs
 Microsoft.Build.Framework/BuildMessageEventArgsTest.cs
 Microsoft.Build.Framework/BuildStartedEventArgsTest.cs

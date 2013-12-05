@@ -540,6 +540,7 @@ System.Reflection/MonoEvent.cs
 System.Reflection/MonoField.cs
 System.Reflection/MonoMethod.cs
 System.Reflection/MonoModule.cs
+System.Reflection/MonoParameterInfo.cs
 System.Reflection/MonoProperty.cs
 System.Reflection/ObfuscateAssemblyAttribute.cs
 System.Reflection/ObfuscationAttribute.cs

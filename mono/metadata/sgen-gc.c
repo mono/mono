@@ -317,6 +317,7 @@ static int stat_wbarrier_set_field = 0;
 static int stat_wbarrier_set_arrayref = 0;
 static int stat_wbarrier_arrayref_copy = 0;
 static int stat_wbarrier_generic_store = 0;
+static int stat_wbarrier_generic_store_atomic = 0;
 static int stat_wbarrier_set_root = 0;
 static int stat_wbarrier_value_copy = 0;
 static int stat_wbarrier_object_copy = 0;
@@ -1048,6 +1049,10 @@ mono_gc_clear_domain (MonoDomain * domain)
 
 	LOCK_GC;
 
+	binary_protocol_domain_unload_begin (domain);
+
+	sgen_stop_world (0);
+
 	if (concurrent_collection_in_progress)
 		sgen_perform_collection (0, GENERATION_OLD, "clear domain", TRUE);
 	g_assert (!concurrent_collection_in_progress);
@@ -1111,6 +1116,10 @@ mono_gc_clear_domain (MonoDomain * domain)
 			sgen_pin_stats_print_class_stats ();
 		sgen_object_layout_dump (stdout);
 	}
+
+	sgen_restart_world (0, NULL);
+
+	binary_protocol_domain_unload_end (domain);
 
 	UNLOCK_GC;
 }
@@ -1908,7 +1917,8 @@ finish_gray_stack (int generation, GrayQueue *queue)
 	We must reset the gathered bridges since their original block might be evacuated due to major
 	fragmentation in the meanwhile and the bridge code should not have to deal with that.
 	*/
-	sgen_bridge_reset_data ();
+	if (sgen_need_bridge_processing ())
+		sgen_bridge_reset_data ();
 
 	/*
 	 * Walk the ephemeron tables marking all values with reachable keys. This must be completely done
@@ -1925,9 +1935,25 @@ finish_gray_stack (int generation, GrayQueue *queue)
 	sgen_scan_togglerefs (start_addr, end_addr, ctx);
 
 	if (sgen_need_bridge_processing ()) {
+		/*Make sure the gray stack is empty before we process bridge objects so we get liveness right*/
+		sgen_drain_gray_stack (-1, ctx);
 		sgen_collect_bridge_objects (generation, ctx);
 		if (generation == GENERATION_OLD)
 			sgen_collect_bridge_objects (GENERATION_NURSERY, ctx);
+
+		/*
+		Do the first bridge step here, as the collector liveness state will become useless after that.
+
+		An important optimization is to only proccess the possibly dead part of the object graph and skip
+		over all live objects as we transitively know everything they point must be alive too.
+
+		The above invariant is completely wrong if we let the gray queue be drained and mark/copy everything.
+
+		This has the unfortunate side effect of making overflow collections perform the first step twice, but
+		given we now have heuristics that perform major GC in anticipation of minor overflows this should not
+		be a big deal.
+		*/
+		sgen_bridge_processing_stw_step ();
 	}
 
 	/*
@@ -2209,6 +2235,7 @@ init_stats (void)
 	mono_counters_register ("WBarrier set arrayref", MONO_COUNTER_GC | MONO_COUNTER_INT, &stat_wbarrier_set_arrayref);
 	mono_counters_register ("WBarrier arrayref copy", MONO_COUNTER_GC | MONO_COUNTER_INT, &stat_wbarrier_arrayref_copy);
 	mono_counters_register ("WBarrier generic store called", MONO_COUNTER_GC | MONO_COUNTER_INT, &stat_wbarrier_generic_store);
+	mono_counters_register ("WBarrier generic atomic store called", MONO_COUNTER_GC | MONO_COUNTER_INT, &stat_wbarrier_generic_store_atomic);
 	mono_counters_register ("WBarrier set root", MONO_COUNTER_GC | MONO_COUNTER_INT, &stat_wbarrier_set_root);
 	mono_counters_register ("WBarrier value copy", MONO_COUNTER_GC | MONO_COUNTER_INT, &stat_wbarrier_value_copy);
 	mono_counters_register ("WBarrier object copy", MONO_COUNTER_GC | MONO_COUNTER_INT, &stat_wbarrier_object_copy);
@@ -3079,6 +3106,13 @@ major_start_collection (gboolean concurrent, int *old_next_pin_slot)
 static void
 wait_for_workers_to_finish (void)
 {
+	while (!sgen_workers_all_done ())
+		g_usleep (200);
+}
+
+static void
+join_workers (void)
+{
 	if (concurrent_collection_in_progress || major_collector.is_parallel) {
 		gray_queue_redirect (&gray_queue);
 		sgen_workers_join ();
@@ -3101,13 +3135,13 @@ major_finish_collection (const char *reason, int old_next_pin_slot, gboolean sca
 	TV_GETTIME (btv);
 
 	if (concurrent_collection_in_progress || major_collector.is_parallel)
-		wait_for_workers_to_finish ();
+		join_workers ();
 
 	if (concurrent_collection_in_progress) {
 		current_object_ops = major_collector.major_concurrent_ops;
 
 		major_copy_or_mark_from_roots (NULL, TRUE, scan_mod_union);
-		wait_for_workers_to_finish ();
+		join_workers ();
 
 		g_assert (sgen_gray_object_queue_is_empty (&gray_queue));
 
@@ -3255,6 +3289,9 @@ major_do_collection (const char *reason)
 	TV_DECLARE (all_btv);
 	int old_next_pin_slot;
 
+	if (disable_major_collections)
+		return FALSE;
+
 	if (major_collector.get_and_reset_num_major_objects_marked) {
 		long long num_marked = major_collector.get_and_reset_num_major_objects_marked ();
 		g_assert (!num_marked);
@@ -3276,13 +3313,15 @@ major_do_collection (const char *reason)
 	return bytes_pinned_from_failed_allocation > 0;
 }
 
-static gboolean major_do_collection (const char *reason);
-
 static void
 major_start_concurrent_collection (const char *reason)
 {
-	long long num_objects_marked = major_collector.get_and_reset_num_major_objects_marked ();
+	long long num_objects_marked;
 
+	if (disable_major_collections)
+		return;
+
+	num_objects_marked = major_collector.get_and_reset_num_major_objects_marked ();
 	g_assert (num_objects_marked == 0);
 
 	MONO_GC_CONCURRENT_START_BEGIN (GENERATION_OLD);
@@ -3309,18 +3348,29 @@ major_update_or_finish_concurrent_collection (gboolean force_finish)
 
 	g_assert (sgen_gray_object_queue_is_empty (&gray_queue));
 
-	major_collector.update_cardtable_mod_union ();
-	sgen_los_update_cardtable_mod_union ();
-
 	if (!force_finish && !sgen_workers_all_done ()) {
+		major_collector.update_cardtable_mod_union ();
+		sgen_los_update_cardtable_mod_union ();
+
 		MONO_GC_CONCURRENT_UPDATE_END (GENERATION_OLD, major_collector.get_and_reset_num_major_objects_marked ());
 		return FALSE;
 	}
 
-	if (mod_union_consistency_check)
-		sgen_check_mod_union_consistency ();
+	/*
+	 * The major collector can add global remsets which are processed in the finishing
+	 * nursery collection, below.  That implies that the workers must have finished
+	 * marking before the nursery collection is allowed to run, otherwise we might miss
+	 * some remsets.
+	 */
+	wait_for_workers_to_finish ();
+
+	major_collector.update_cardtable_mod_union ();
+	sgen_los_update_cardtable_mod_union ();
 
 	collect_nursery (&unpin_queue, TRUE);
+
+	if (mod_union_consistency_check)
+		sgen_check_mod_union_consistency ();
 
 	current_collection_generation = GENERATION_OLD;
 	major_finish_collection ("finishing", -1, TRUE);
@@ -3382,6 +3432,9 @@ sgen_ensure_free_space (size_t size)
 	sgen_perform_collection (size, generation_to_collect, reason, FALSE);
 }
 
+/*
+ * LOCKING: Assumes the GC lock is held.
+ */
 void
 sgen_perform_collection (size_t requested_size, int generation_to_collect, const char *reason, gboolean wait_to_finish)
 {
@@ -3985,34 +4038,30 @@ scan_thread_data (void *start_nursery, void *end_nursery, gboolean precise, Gray
 			SGEN_LOG (3, "GC disabled for thread %p, range: %p-%p, size: %td", info, info->stack_start, info->stack_end, (char*)info->stack_end - (char*)info->stack_start);
 			continue;
 		}
-
-		if (!info->joined_stw) {
-			SGEN_LOG (3, "Skipping thread not seen in STW %p, range: %p-%p, size: %td", info, info->stack_start, info->stack_end, (char*)info->stack_end - (char*)info->stack_start);
+		if (mono_thread_info_run_state (info) != STATE_RUNNING) {
+			SGEN_LOG (3, "Skipping non-running thread %p, range: %p-%p, size: %td (state %d)", info, info->stack_start, info->stack_end, (char*)info->stack_end - (char*)info->stack_start, mono_thread_info_run_state (info));
 			continue;
 		}
-		
 		SGEN_LOG (3, "Scanning thread %p, range: %p-%p, size: %td, pinned=%d", info, info->stack_start, info->stack_end, (char*)info->stack_end - (char*)info->stack_start, sgen_get_pinned_count ());
-		if (!info->thread_is_dying) {
-			if (gc_callbacks.thread_mark_func && !conservative_stack_mark) {
-				UserCopyOrMarkData data = { NULL, queue };
-				set_user_copy_or_mark_data (&data);
-				gc_callbacks.thread_mark_func (info->runtime_data, info->stack_start, info->stack_end, precise);
-				set_user_copy_or_mark_data (NULL);
-			} else if (!precise) {
-				if (!conservative_stack_mark) {
-					fprintf (stderr, "Precise stack mark not supported - disabling.\n");
-					conservative_stack_mark = TRUE;
-				}
-				conservatively_pin_objects_from (info->stack_start, info->stack_end, start_nursery, end_nursery, PIN_TYPE_STACK);
+		if (gc_callbacks.thread_mark_func && !conservative_stack_mark) {
+			UserCopyOrMarkData data = { NULL, queue };
+			set_user_copy_or_mark_data (&data);
+			gc_callbacks.thread_mark_func (info->runtime_data, info->stack_start, info->stack_end, precise);
+			set_user_copy_or_mark_data (NULL);
+		} else if (!precise) {
+			if (!conservative_stack_mark) {
+				fprintf (stderr, "Precise stack mark not supported - disabling.\n");
+				conservative_stack_mark = TRUE;
 			}
+			conservatively_pin_objects_from (info->stack_start, info->stack_end, start_nursery, end_nursery, PIN_TYPE_STACK);
 		}
 
-		if (!info->thread_is_dying && !precise) {
+		if (!precise) {
 #ifdef USE_MONO_CTX
 			conservatively_pin_objects_from ((void**)&info->ctx, (void**)&info->ctx + ARCH_NUM_REGS,
 				start_nursery, end_nursery, PIN_TYPE_STACK);
 #else
-			conservatively_pin_objects_from (&info->regs, &info->regs + ARCH_NUM_REGS,
+			conservatively_pin_objects_from ((void**)&info->regs, (void**)&info->regs + ARCH_NUM_REGS,
 					start_nursery, end_nursery, PIN_TYPE_STACK);
 #endif
 		}
@@ -4033,7 +4082,6 @@ ptr_on_stack (void *ptr)
 static void*
 sgen_thread_register (SgenThreadInfo* info, void *addr)
 {
-	LOCK_GC;
 #ifndef HAVE_KW_THREAD
 	info->tlab_start = info->tlab_next = info->tlab_temp_end = info->tlab_real_end = NULL;
 
@@ -4043,14 +4091,11 @@ sgen_thread_register (SgenThreadInfo* info, void *addr)
 	sgen_thread_info = info;
 #endif
 
-#if !defined(__MACH__)
+#ifdef SGEN_POSIX_STW
 	info->stop_count = -1;
 	info->signal = 0;
 #endif
 	info->skip = 0;
-	info->joined_stw = FALSE;
-	info->doing_handshake = FALSE;
-	info->thread_is_dying = FALSE;
 	info->stack_start = NULL;
 	info->stopped_ip = NULL;
 	info->stopped_domain = NULL;
@@ -4064,6 +4109,7 @@ sgen_thread_register (SgenThreadInfo* info, void *addr)
 
 	binary_protocol_thread_register ((gpointer)mono_thread_info_get_tid (info));
 
+	// FIXME: Unift with mono_thread_get_stack_bounds ()
 	/* try to get it with attributes first */
 #if (defined(HAVE_PTHREAD_GETATTR_NP) || defined(HAVE_PTHREAD_ATTR_GET_NP)) && defined(HAVE_PTHREAD_ATTR_GETSTACK)
   {
@@ -4088,8 +4134,14 @@ sgen_thread_register (SgenThreadInfo* info, void *addr)
      pthread_attr_destroy (&attr);
   }
 #elif defined(HAVE_PTHREAD_GET_STACKSIZE_NP) && defined(HAVE_PTHREAD_GET_STACKADDR_NP)
-		 info->stack_end = (char*)pthread_get_stackaddr_np (pthread_self ());
-		 info->stack_start_limit = (char*)info->stack_end - pthread_get_stacksize_np (pthread_self ());
+	{
+		size_t stsize = 0;
+		guint8 *staddr = NULL;
+
+		mono_thread_get_stack_bounds (&staddr, &stsize);
+		info->stack_start_limit = staddr;
+		info->stack_end = staddr + stsize;
+	}
 #else
 	{
 		/* FIXME: we assume the stack grows down */
@@ -4108,13 +4160,11 @@ sgen_thread_register (SgenThreadInfo* info, void *addr)
 
 	if (gc_callbacks.thread_attach_func)
 		info->runtime_data = gc_callbacks.thread_attach_func ();
-
-	UNLOCK_GC;
 	return info;
 }
 
 static void
-sgen_thread_unregister (SgenThreadInfo *p)
+sgen_thread_detach (SgenThreadInfo *p)
 {
 	/* If a delegate is passed to native code and invoked on a thread we dont
 	 * know about, the jit will register it with mono_jit_thread_attach, but
@@ -4124,39 +4174,11 @@ sgen_thread_unregister (SgenThreadInfo *p)
 	 */
 	if (mono_domain_get ())
 		mono_thread_detach (mono_thread_current ());
+}
 
-	p->thread_is_dying = TRUE;
-
-	/*
-	There is a race condition between a thread finishing executing and been removed
-	from the GC thread set.
-	This happens on posix systems when TLS data is been cleaned-up, libpthread will
-	set the thread_info slot to NULL before calling the cleanup function. This
-	opens a window in which the thread is registered but has a NULL TLS.
-
-	The suspend signal handler needs TLS data to know where to store thread state
-	data or otherwise it will simply ignore the thread.
-
-	This solution works because the thread doing STW will wait until all threads been
-	suspended handshake back, so there is no race between the doing_hankshake test
-	and the suspend_thread call.
-
-	This is not required on systems that do synchronous STW as those can deal with
-	the above race at suspend time.
-
-	FIXME: I believe we could avoid this by using mono_thread_info_lookup when
-	mono_thread_info_current returns NULL. Or fix mono_thread_info_lookup to do so.
-	*/
-#if (defined(__MACH__) && MONO_MACH_ARCH_SUPPORTED) || !defined(HAVE_PTHREAD_KILL)
-	LOCK_GC;
-#else
-	while (!TRYLOCK_GC) {
-		if (!sgen_park_current_thread_if_doing_handshake (p))
-			g_usleep (50);
-	}
-	MONO_GC_LOCKED ();
-#endif
-
+static void
+sgen_thread_unregister (SgenThreadInfo *p)
+{
 	binary_protocol_thread_unregister ((gpointer)mono_thread_info_get_tid (p));
 	SGEN_LOG (3, "unregister thread %p (%p)", p, (gpointer)mono_thread_info_get_tid (p));
 
@@ -4164,9 +4186,6 @@ sgen_thread_unregister (SgenThreadInfo *p)
 		gc_callbacks.thread_detach_func (p->runtime_data);
 		p->runtime_data = NULL;
 	}
-
-	mono_threads_unregister_current_thread (p);
-	UNLOCK_GC;
 }
 
 
@@ -4397,6 +4416,24 @@ mono_gc_wbarrier_generic_store (gpointer ptr, MonoObject* value)
 	*(void**)ptr = value;
 	if (ptr_in_nursery (value))
 		mono_gc_wbarrier_generic_nostore (ptr);
+	sgen_dummy_use (value);
+}
+
+/* Same as mono_gc_wbarrier_generic_store () but performs the store
+ * as an atomic operation with release semantics.
+ */
+void
+mono_gc_wbarrier_generic_store_atomic (gpointer ptr, MonoObject *value)
+{
+	HEAVY_STAT (++stat_wbarrier_generic_store_atomic);
+
+	SGEN_LOG (8, "Wbarrier atomic store at %p to %p (%s)", ptr, value, value ? safe_name (value) : "null");
+
+	InterlockedWritePointer (ptr, value);
+
+	if (ptr_in_nursery (value))
+		mono_gc_wbarrier_generic_nostore (ptr);
+
 	sgen_dummy_use (value);
 }
 
@@ -4794,7 +4831,7 @@ void
 mono_gc_base_init (void)
 {
 	MonoThreadInfoCallbacks cb;
-	char *env;
+	const char *env;
 	char **opts, **ptr;
 	char *major_collector_opt = NULL;
 	char *minor_collector_opt = NULL;
@@ -4832,6 +4869,7 @@ mono_gc_base_init (void)
 	gc_debug_file = stderr;
 
 	cb.thread_register = sgen_thread_register;
+	cb.thread_detach = sgen_thread_detach;
 	cb.thread_unregister = sgen_thread_unregister;
 	cb.thread_attach = sgen_thread_attach;
 	cb.mono_method_is_critical = (gpointer)is_critical_method;
@@ -4846,7 +4884,7 @@ mono_gc_base_init (void)
 
 	init_user_copy_or_mark_key ();
 
-	if ((env = getenv (MONO_GC_PARAMS_NAME))) {
+	if ((env = g_getenv (MONO_GC_PARAMS_NAME))) {
 		opts = g_strsplit (env, ",", -1);
 		for (ptr = opts; *ptr; ++ptr) {
 			char *opt = *ptr;
@@ -4865,6 +4903,7 @@ mono_gc_base_init (void)
 	init_stats ();
 	sgen_init_internal_allocator ();
 	sgen_init_nursery_allocator ();
+	sgen_init_fin_weak_hash ();
 
 	sgen_register_fixed_internal_mem_type (INTERNAL_MEM_SECTION, SGEN_SIZEOF_GC_MEM_SECTION);
 	sgen_register_fixed_internal_mem_type (INTERNAL_MEM_FINALIZE_READY_ENTRY, sizeof (FinalizeReadyEntry));
@@ -4873,6 +4912,19 @@ mono_gc_base_init (void)
 
 #ifndef HAVE_KW_THREAD
 	mono_native_tls_alloc (&thread_info_key, NULL);
+#if defined(__APPLE__) || defined (HOST_WIN32)
+	/* 
+	 * CEE_MONO_TLS requires the tls offset, not the key, so the code below only works on darwin,
+	 * where the two are the same.
+	 */
+	mono_tls_key_set_offset (TLS_KEY_SGEN_THREAD_INFO, thread_info_key);
+#endif
+#else
+	{
+		int tls_offset = -1;
+		MONO_THREAD_VAR_OFFSET (sgen_thread_info, tls_offset);
+		mono_tls_key_set_offset (TLS_KEY_SGEN_THREAD_INFO, tls_offset);
+	}
 #endif
 
 	/*
@@ -5071,6 +5123,10 @@ mono_gc_base_init (void)
 			}
 
 			if (!strcmp (opt, "cementing")) {
+				if (major_collector.is_parallel) {
+					sgen_env_var_error (MONO_GC_PARAMS_NAME, "Ignoring.", "`cementing` is not supported for the parallel major collector.");
+					continue;
+				}
 				cement_enabled = TRUE;
 				continue;
 			}
@@ -5115,10 +5171,12 @@ mono_gc_base_init (void)
 		g_strfreev (opts);
 	}
 
-	if (major_collector.is_parallel)
+	if (major_collector.is_parallel) {
+		cement_enabled = FALSE;
 		sgen_workers_init (num_workers);
-	else if (major_collector.is_concurrent)
+	} else if (major_collector.is_concurrent) {
 		sgen_workers_init (1);
+	}
 
 	if (major_collector_opt)
 		g_free (major_collector_opt);
@@ -5130,7 +5188,7 @@ mono_gc_base_init (void)
 
 	sgen_cement_init (cement_enabled);
 
-	if ((env = getenv (MONO_GC_DEBUG_NAME))) {
+	if ((env = g_getenv (MONO_GC_DEBUG_NAME))) {
 		gboolean usage_printed = FALSE;
 
 		opts = g_strsplit (env, ",", -1);

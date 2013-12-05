@@ -894,7 +894,7 @@ namespace System.Windows.Forms
 				if (this is MenuStrip && mouse_currently_over is ToolStripMenuItem && !(mouse_currently_over as ToolStripMenuItem).HasDropDownItems)
 					return;
 			} else {
-				this.HideMenus (true, ToolStripDropDownCloseReason.AppClicked);
+				this.Dismiss (ToolStripDropDownCloseReason.AppClicked);
 			}
 			
 			if (this is MenuStrip)
@@ -1503,17 +1503,6 @@ namespace System.Windows.Forms
 			this.GetTopLevelToolStrip ().Dismiss (ToolStripDropDownCloseReason.ItemClicked);
 		}
 		
-		internal void HideMenus (bool release, ToolStripDropDownCloseReason reason)
-		{
-			if (this is MenuStrip && release && menu_selected)
-				(this as MenuStrip).FireMenuDeactivate ();
-				
-			if (release)
-				menu_selected = false;
-				
-			NotifySelectedChanged (null);
-		}
-
 		internal void NotifySelectedChanged (ToolStripItem tsi)
 		{
 			foreach (ToolStripItem tsi2 in this.DisplayedItems)

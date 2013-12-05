@@ -68,6 +68,7 @@ namespace Mono {
 
 			eval.InteractiveBaseClass = typeof (InteractiveBaseShell);
 			eval.DescribeTypeExpressions = true;
+			eval.WaitOnTask = true;
 
 			CSharpShell shell;
 #if !ON_DOTNET

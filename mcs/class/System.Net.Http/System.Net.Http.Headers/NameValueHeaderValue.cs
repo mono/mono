@@ -121,8 +121,18 @@ namespace System.Net.Http.Headers
 			throw new FormatException (input);
 		}
 
-		internal static bool ParseParameters (Lexer lexer, out List<NameValueHeaderValue> result)
+		internal static bool TryParseParameters (Lexer lexer, out List<NameValueHeaderValue> result)
 		{
+			return TryParseCollection (lexer, out result, Token.Type.SeparatorSemicolon);
+		}
+
+		internal static bool TryParsePragma (string input, out List<NameValueHeaderValue> result)
+		{			
+			return TryParseCollection (new Lexer (input), out result, Token.Type.SeparatorComma);
+		}
+
+		static bool TryParseCollection (Lexer lexer, out List<NameValueHeaderValue> result, Token.Type separator)
+		{		
 			var list = new List<NameValueHeaderValue> ();
 			result = null;
 
@@ -146,7 +156,7 @@ namespace System.Net.Http.Headers
 					t = lexer.Scan ();
 				}
 
-				if (t == Token.Type.SeparatorSemicolon || t == Token.Type.End) {
+				if (t == separator|| t == Token.Type.End) {
 					list.Add (new NameValueHeaderValue () {
 						Name = lexer.GetStringValue (attr),
 						value = value
@@ -155,7 +165,7 @@ namespace System.Net.Http.Headers
 					return false;
 				}
 
-			} while (t == Token.Type.SeparatorSemicolon);
+			} while (t == separator);
 
 			result = list;
 			return true;

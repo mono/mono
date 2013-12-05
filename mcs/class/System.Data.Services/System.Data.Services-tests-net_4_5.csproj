@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{9C91B0D3-EEDF-4914-A1D1-13360A6B7A8F}</ProjectGuid>
+    <ProjectGuid>{FCB4DC7D-7B4C-4BD6-98CA-4F5AA08CB18B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\System.Data.Services-tests-net_4_5</OutputPath>
@@ -74,19 +74,19 @@
   <ItemGroup>
     <Reference Include="..\lib\net_4_5\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{05A7A0C2-6946-4CF5-9ED3-44AB0B428C4E}</Project>
+      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data.Services\System.Data.Services-net_4_5.csproj">
-      <Project>{16E0F17C-FBA5-46E2-97D1-E04E9E0CBB6D}</Project>
+      <Project>{90405849-4C66-4BF7-B9F6-E0D81995231B}</Project>
       <Name>System.Data.Services\System.Data.Services-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.ServiceModel\System.ServiceModel-net_4_5.csproj">
-      <Project>{CF2A0D90-EB73-49B1-900B-BCE40990B404}</Project>
+      <Project>{0EDE201B-DEE2-486E-8DF2-F18F9D6239B9}</Project>
       <Name>System.ServiceModel\System.ServiceModel-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
-      <Project>{E77D8877-AEAD-4FDF-8A44-36AAA0B20653}</Project>
+      <Project>{D8260595-C32F-4AC3-9C01-2CD2528CFA1D}</Project>
       <Name>System.Core\System.Core-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>

@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{77EAF39A-5236-4980-9B23-C96AEAEC65BA}</ProjectGuid>
+    <ProjectGuid>{C6B37C3E-439F-425C-A48D-096CD95CF803}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618,219,169</NoWarn>
     <OutputPath>bin\Debug\System.Messaging-tests-net_2_0</OutputPath>
@@ -72,35 +72,35 @@
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{928D664D-8277-47B3-AB06-538D932143FE}</Project>
+      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Messaging\System.Messaging-net_2_0.csproj">
-      <Project>{02BA7387-C09A-40FB-BE80-39588B822A29}</Project>
+      <Project>{858BC3D5-8B2D-4B24-8BD9-BDC36A1DAFE4}</Project>
       <Name>System.Messaging\System.Messaging-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{73E16B85-93E9-44B4-A1AB-FDD7AEB08FB7}</Project>
+      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration.Install\System.Configuration.Install-net_2_0.csproj">
-      <Project>{33DED2E2-4FCD-4070-BE3A-026D4F80D3C8}</Project>
+      <Project>{5CE6E3F2-E63D-4C2B-9CCE-6446021A1AF5}</Project>
       <Name>System.Configuration.Install\System.Configuration.Install-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Drawing\System.Drawing-net_2_0.csproj">
-      <Project>{0877A48B-2DF5-40A2-8714-ABBF2BD48987}</Project>
+      <Project>{CA7E5301-90D2-4C07-87B7-851AA216D4C9}</Project>
       <Name>System.Drawing\System.Drawing-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Managed.Windows.Forms\System.Windows.Forms-net_2_0.csproj">
-      <Project>{4F08F704-E8AE-4C02-9A8F-6E9225D8ACE2}</Project>
+      <Project>{19413C30-6E39-4AAC-B9D1-FC88082E74C8}</Project>
       <Name>Managed.Windows.Forms\System.Windows.Forms-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
-      <Project>{205A8E90-88CC-4B46-8151-87FA90B666A5}</Project>
+      <Project>{D9776E38-7673-45F6-BF19-7B77830DF9CA}</Project>
       <Name>System.XML\System.Xml-net_2_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Messaging\Mono.Messaging-net_2_0.csproj">
-      <Project>{6D5EFF77-937D-4425-9DDC-B88F7A4AB456}</Project>
+      <Project>{A516A3FA-33AA-46AB-9542-49952ED25A0F}</Project>
       <Name>Mono.Messaging\Mono.Messaging-net_2_0</Name>
     </ProjectReference>
     <Reference Include="nunit.mocks.dll">

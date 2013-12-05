@@ -31,11 +31,16 @@
 
 #if SECURITY_DEP
 
-extern alias MonoSecurity;
-
-using System.Collections;
+#if MONOTOUCH
 using Mono.Security;
 using MX = Mono.Security.X509;
+#else
+extern alias MonoSecurity;
+using MonoSecurity::Mono.Security;
+using MX = MonoSecurity::Mono.Security.X509;
+#endif
+
+using System.Collections;
 
 namespace System.Security.Cryptography.X509Certificates {
 
@@ -51,13 +56,13 @@ namespace System.Security.Cryptography.X509Certificates {
 			_list = new ArrayList ();
 		}
 
-		internal X509ExtensionCollection (MonoSecurity::Mono.Security.X509.X509Certificate cert)
+		internal X509ExtensionCollection (MX.X509Certificate cert)
 		{
 			_list = new ArrayList (cert.Extensions.Count);
 			if (cert.Extensions.Count == 0)
 				return;
 
-			foreach (MonoSecurity::Mono.Security.X509.X509Extension ext in cert.Extensions) {
+			foreach (MX.X509Extension ext in cert.Extensions) {
 				bool critical = ext.Critical;
 				string oid = ext.Oid;
 				byte[] raw_data = null;
