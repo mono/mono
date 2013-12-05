@@ -122,6 +122,10 @@ namespace MonoTests.System.Runtime.CompilerServices
 		[Test]
 		public void CustomScheduler ()
 		{
+			// some test runners (e.g. Touch.Unit) will execute this on the main thread and that would lock them
+			if (!Thread.CurrentThread.IsBackground)
+				return;
+
 			var a = new Scheduler ("a");
 			var b = new Scheduler ("b");
 
