@@ -53,7 +53,7 @@ namespace System.Runtime.CompilerServices
 		public void GetResult ()
 		{
 			if (!task.IsCompleted)
-				task.WaitCore (Timeout.Infinite, CancellationToken.None);
+				task.WaitCore (Timeout.Infinite, CancellationToken.None, true);
 
 			if (task.Status != TaskStatus.RanToCompletion)
 				// Merge current and dispatched stack traces if there is any
@@ -77,7 +77,16 @@ namespace System.Runtime.CompilerServices
 			if (continueOnSourceContext && SynchronizationContext.Current != null) {
 				task.ContinueWith (new SynchronizationContextContinuation (continuation, SynchronizationContext.Current));
 			} else {
-				task.ContinueWith (new ActionContinuation (continuation));
+				IContinuation cont;
+				if (TaskScheduler.Current != TaskScheduler.Default) {
+					var runner = new Task (TaskActionInvoker.Create (continuation), null, CancellationToken.None, TaskCreationOptions.None, null);
+					runner.SetupScheduler (TaskScheduler.Current);
+					cont = new SchedulerAwaitContinuation (runner);
+				} else {
+					cont = new ActionContinuation (continuation);
+				}
+
+				task.ContinueWith (cont);
 			}
 		}
 

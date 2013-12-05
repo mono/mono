@@ -125,6 +125,21 @@ namespace System.Threading.Tasks
 		}
 	}
 
+	class SchedulerAwaitContinuation : IContinuation
+	{
+		readonly Task task;
+
+		public SchedulerAwaitContinuation (Task task)
+		{
+			this.task = task;
+		}
+
+		public void Execute ()
+		{
+			task.RunSynchronouslyCore (task.scheduler);
+		}
+	}
+
 	class SynchronizationContextContinuation : IContinuation
 	{
 		readonly Action action;

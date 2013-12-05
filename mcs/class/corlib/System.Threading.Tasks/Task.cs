@@ -224,7 +224,7 @@ namespace System.Threading.Tasks
 			}
 
 			Schedule ();
-			Wait ();
+			WaitCore (Timeout.Infinite, CancellationToken.None, false);
 		}
 		#endregion
 		
@@ -641,7 +641,7 @@ namespace System.Threading.Tasks
 			if (millisecondsTimeout < -1)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
 
-			bool result = WaitCore (millisecondsTimeout, cancellationToken);
+			bool result = WaitCore (millisecondsTimeout, cancellationToken, true);
 
 			if (IsCanceled)
 				throw new AggregateException (new TaskCanceledException (this));
@@ -653,13 +653,13 @@ namespace System.Threading.Tasks
 			return result;
 		}
 
-		internal bool WaitCore (int millisecondsTimeout, CancellationToken cancellationToken)
+		internal bool WaitCore (int millisecondsTimeout, CancellationToken cancellationToken, bool runInline)
 		{
 			if (IsCompleted)
 				return true;
 
 			// If the task is ready to be run and we were supposed to wait on it indefinitely without cancellation, just run it
-			if (Status == TaskStatus.WaitingToRun && millisecondsTimeout == Timeout.Infinite && scheduler != null && !cancellationToken.CanBeCanceled)
+			if (runInline && Status == TaskStatus.WaitingToRun && millisecondsTimeout == Timeout.Infinite && scheduler != null && !cancellationToken.CanBeCanceled)
 				scheduler.RunInline (this, true);
 
 			bool result = true;
