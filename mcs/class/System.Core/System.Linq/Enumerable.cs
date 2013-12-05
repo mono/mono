@@ -744,6 +744,12 @@ namespace System.Linq
 			if (list != null)
 				return list [index];
 
+#if NET_4_5
+			var readOnlyList = source as IReadOnlyList<TSource>;
+			if (readOnlyList != null)
+				return readOnlyList[index];
+#endif
+
 			return source.ElementAt (index, Fallback.Throw);
 		}
 
@@ -761,6 +767,12 @@ namespace System.Linq
 			var list = source as IList<TSource>;
 			if (list != null)
 				return index < list.Count ? list [index] : default (TSource);
+
+#if NET_4_5
+			var readOnlyList = source as IReadOnlyList<TSource>;
+			if (readOnlyList != null)
+				return index < readOnlyList.Count ? readOnlyList [index] : default (TSource);
+#endif
 
 			return source.ElementAt (index, Fallback.Default);
 		}
