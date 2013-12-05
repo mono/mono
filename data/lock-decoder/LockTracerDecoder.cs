@@ -105,6 +105,7 @@ The current lock hierarchy:
 loader lock (global)
 	domain lock (complex)
 		domain jit lock (complex)
+		marshal lock
 			simple locks
 
 Examples:
@@ -112,6 +113,24 @@ Examples:
 	You can take the domain load while holding the loader lock
 	You cannot take the loader lock if only the domain lock is held.
 	You cannot take a domain lock while holding the lock to another domain.
+
+
+TODO:
+
+We have a few known ok violation. We need a way to whitelist them.
+
+Known ok issues:
+
+ERROR: tried to acquire lock DomainLock at mono_domain_code_reserve_align while holding DomainLock at mono_class_create_runtime_vtable: Hierarchy violation.
+	This is triggered when building the vtable of a non-root domain and fetching a vtable trampoline for an offset that has not been built. We'll take the root
+	domain lock while holding the other one.
+	This is ok since we never allow locking to have in the other direction, IOW, the root-domain lock is one level down from the other domain-locks.
+
+WARNING: tried to acquire lock ImageDataLock at mono_image_init_name_cache while holding ImageDataLock at mono_class_from_name
+WARNING: tried to acquire lock ImageDataLock at mono_image_init_name_cache while holding ImageDataLock at mono_image_add_to_name_cache
+	Both of those happen when filling up the name_cache, as it needs to alloc image memory.
+	This one is fixable by spliting mono_image_init_name_cache into a locked and an unlocked variants and calling them appropriatedly.
+
 */
 
 public enum Lock {
@@ -143,6 +162,7 @@ public class SimLock
 			case Lock.DomainLock:
 				return 1;
 			case Lock.DomainJitCodeHashLock:
+			case Lock.MarshalLock:
 				return 2;
 			default:
 				return 3;
@@ -159,6 +179,10 @@ public class SimLock
 
 	public bool IsGlobalLock {
 		get { return kind == Lock.LoaderLock; }
+	}
+
+	public bool IsResursiveLock {
+		get { return kind == Lock.LoaderLock || kind == Lock.DomainLock; }
 	}
 
 	/*locked is already owned by the thread, 'this' is the new one*/
@@ -280,6 +304,11 @@ public class Trace {
 		"mono_loader_unlock",
 		"mono_image_lock",
 		"mono_image_unlock",
+		"mono_icall_lock",
+		"mono_icall_unlock",
+		"add_record",
+		"mono_locks_lock_acquired",
+		"mono_locks_lock_released",
 	};
 
 	public Trace (string[] fields) {
@@ -330,6 +359,10 @@ public class Symbol : IComparable<Symbol>
 	public int CompareTo(Symbol other) {
 		return offset - other.offset;
 	}
+
+	public void AdjustSize (Symbol next) {
+		size = next.offset - this.offset;
+	}
 }
 
 public interface SymbolTable {
@@ -356,21 +389,26 @@ public class OsxSymbolTable : SymbolTable
 		string line;
 		while ((line = proc.StandardOutput.ReadLine ()) != null) {
 			string[] fields = line.Split(new char[] {' ', '\t'}, StringSplitOptions.RemoveEmptyEntries);
-			if (fields.Length < 4)
+			if (fields.Length < 7)
 				continue;
-			if (!(fields [1].Equals ("g") || fields [1].Equals ("d")))
-				continue;
-			if (!fields [2].Equals ("*UND*"))
+
+			if (!fields [3].Equals ("FUN"))
 				continue;
 
 			int offset = fields [0].ParseHex ();
-			string name = fields [3];
+			string name = fields [6];
+			if (name.StartsWith ("_"))
+				name = name.Substring (1);
+
 			if (offset != 0)
 				list.Add (new Symbol (offset, 0, name));
 		}
 		table = new Symbol [list.Count];
 		list.CopyTo (table, 0);
 		Array.Sort (table);
+		for (int i = 1; i < table.Length; ++i) {
+			table [i - 1].AdjustSize (table [i]);
+		}
 	}
 
 	public string Translate (int offset) {
