@@ -540,6 +540,13 @@ namespace MonoTests.System.Linq
 		}
 
 		[Test]
+		public void ElementAt_ReadOnlyListOptimization_ReturnsValueAtGivenIndex()
+		{
+			var source = new NonEnumerableReadOnlyList<int> (new List<int> (new[] { 1, 2, 3, 4, 5, 6 }));
+			Assert.That(source.ElementAt (2), Is.EqualTo (3));
+		}
+
+		[Test]
 		public void ElementAtOrDefault_IntegersWithOutOfRangeIndex_ReturnsDefault ()
 		{
 			var source = Read (3, 6, 8);
@@ -558,6 +565,13 @@ namespace MonoTests.System.Linq
 		{
 			var source = new NonEnumerableList<int> (new [] { 1, 2, 3, 4, 5, 6 });
 			Assert.That (source.ElementAtOrDefault (2), Is.EqualTo (3));
+		}
+
+		[Test]
+		public void ElementAtOrDefault_ReadOnlyListOptimization_ReturnsValueAtGivenIndex()
+		{
+			var source = new NonEnumerableReadOnlyList<int>(new List<int> (new[] { 1, 2, 3, 4, 5, 6 }));
+			Assert.That(source.ElementAtOrDefault (2), Is.EqualTo (3));
 		}
 
 		[Test]
@@ -2185,6 +2199,27 @@ namespace MonoTests.System.Linq
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return ((IEnumerable<T>) this).GetEnumerator ();
+		}
+	}
+
+	[Serializable]
+	internal sealed class NonEnumerableReadOnlyList<T> : ReadOnlyCollection<T>, IEnumerable<T> {
+		public NonEnumerableReadOnlyList () : 
+			this (new List<T>()) { }
+
+		public NonEnumerableReadOnlyList (IList<T> collection) :
+			base (collection) { }
+
+		// Re-implement GetEnumerator to be undefined.
+
+		IEnumerator<T> IEnumerable<T>.GetEnumerator ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return ((IEnumerable<T>) this).GetEnumerator();
 		}
 	}
 
