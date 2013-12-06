@@ -18524,6 +18524,40 @@
       </method>
     </type>
   </test>
+  <test name="gtest-600.cs">
+    <type name="A">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Delta">
+      <method name="Void Test[U](ICharlie`1[U], U)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void World[U](U, IFoo`1[U])" attrs="134">
+        <size>2</size>
+      </method>
+      <method name="Void Test(Foo)" attrs="134">
+        <size>14</size>
+      </method>
+      <method name="Void Main()" attrs="145">
+        <size>32</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Foo">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">

@@ -2912,7 +2912,6 @@ namespace Mono.CSharp {
 		readonly TypeSpec[] tp_args;
 		readonly TypeSpec[] fixed_types;
 		readonly List<BoundInfo>[] bounds;
-		bool failed;
 
 		// TODO MemberCache: Could it be TypeParameterSpec[] ??
 		public TypeInferenceContext (TypeSpec[] typeArguments)
@@ -3130,9 +3129,6 @@ namespace Mono.CSharp {
 			// It's already fixed
 			if (fixed_types[i] != null)
 				throw new InternalErrorException ("Type argument has been already fixed");
-
-			if (failed)
-				return false;
 
 			var candidates = bounds [i];
 			if (candidates == null)
@@ -3457,10 +3453,9 @@ namespace Mono.CSharp {
 						}
 
 						//
-						// This should always cause type inference failure
+						// Break when candidate arguments are ambiguous
 						//
-						failed = true;
-						return 1;
+						return 0;
 					}
 
 					//
