@@ -209,7 +209,7 @@ namespace Mono.XBuild.CommandLine {
 
 				Project currentProject;
 				try {
-					currentProject = new Project (filename, null, null, new ProjectCollection (), ProjectLoadSettings.IgnoreMissingImports);
+					currentProject = new Project (filename, null, null, projects, ProjectLoadSettings.IgnoreMissingImports);
 				} catch (InvalidProjectFileException e) {
 					RaiseWarning (0, e.Message);
 					continue;
@@ -368,8 +368,8 @@ namespace Mono.XBuild.CommandLine {
 		{
 			p.DefaultTargets = "Build";
 			p.InitialTargets = "ValidateSolutionConfiguration";
-			p.AddUsingTask ("CreateTemporaryVCProject", null, "Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
-			p.AddUsingTask ("ResolveVCProjectOutput", null, "Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
+			//p.AddUsingTask ("CreateTemporaryVCProject", null, "Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
+			//p.AddUsingTask ("ResolveVCProjectOutput", null, "Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
 
 			string solutionFilePath = Path.GetFullPath (solutionFile);
 			var solutionPropertyGroup = p.CreatePropertyGroupElement ();
