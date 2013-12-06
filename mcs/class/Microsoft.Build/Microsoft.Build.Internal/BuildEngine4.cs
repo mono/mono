@@ -546,9 +546,13 @@ namespace Microsoft.Build.Internal
 			var globalPropertiesThatMakeSense = new Dictionary<string,string> ();
 			foreach (DictionaryEntry p in globalProperties)
 				globalPropertiesThatMakeSense [(string) p.Key] = (string) p.Value;
-			var result = new BuildManager ().Build (this.submission.BuildManager.OngoingBuildParameters.Clone (), new BuildRequestData (projectFileName, globalPropertiesThatMakeSense, toolsVersion, targetNames, null));
-			foreach (var p in result.ResultsByTarget)
-				targetOutputs [p.Key] = p.Value.Items;
+			var result = new BuildResult ();
+			var outputs = new Dictionary<string, string> ();
+			var request = this.submission.BuildRequest;
+			toolsVersion = toolsVersion ?? request.ExplicitlySpecifiedToolsVersion ?? request.ProjectInstance.ToolsVersion ?? submission.BuildManager.OngoingBuildParameters.DefaultToolsVersion;
+			BuildProject (() => false, result, proj, targetNames, globalPropertiesThatMakeSense, outputs, toolsVersion);
+			foreach (var p in outputs)
+				targetOutputs [p.Key] = p.Value;
 			return result.OverallResult == BuildResultCode.Success;
 		}
 
