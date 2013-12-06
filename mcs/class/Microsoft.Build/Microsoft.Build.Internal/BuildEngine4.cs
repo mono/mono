@@ -317,6 +317,11 @@ namespace Microsoft.Build.Internal
 					taskInstance.Name, task.GetType (), string.Join (", ", missings.Select (p => p.Name).ToArray ())));
 			
 			foreach (var p in evaluatedTaskParams) {
+				switch (p.Key.ToLower ()) {
+				case "condition":
+				case "continueonerror":
+					continue;
+				}
 				var prop = task.GetType ().GetProperty (p.Key);
 				if (prop == null)
 					throw new InvalidOperationException (string.Format ("Task {0} does not have property {1}", taskInstance.Name, p.Key));
@@ -540,6 +545,8 @@ namespace Microsoft.Build.Internal
 				globalPropertiesThatMakeSense [(string) p.Key] = (string) p.Value;
 			var result = new BuildResult ();
 			var outputs = new Dictionary<string, string> ();
+			var request = this.submission.BuildRequest;
+			toolsVersion = toolsVersion ?? request.ExplicitlySpecifiedToolsVersion ?? request.ProjectInstance.ToolsVersion ?? submission.BuildManager.OngoingBuildParameters.DefaultToolsVersion;
 			BuildProject (() => false, result, proj, targetNames, globalPropertiesThatMakeSense, outputs, toolsVersion);
 			foreach (var p in outputs)
 				targetOutputs [p.Key] = p.Value;
