@@ -2743,11 +2743,13 @@ namespace System
 			if (values == null)
 				throw new ArgumentNullException ("values");
 			
-			var stringList = new List<string> ();
-			foreach (var v in values)
-				stringList.Add (v.ToString ());
+			var stringList = values as IList<T> ?? new List<T> (values);
+			var strCopy = new string [stringList.Count];
+			int i = 0;
+			foreach (var v in stringList)
+				strCopy [i++] = v.ToString ();
 
-			return JoinUnchecked (separator, stringList.ToArray (), 0, stringList.Count);
+			return JoinUnchecked (separator, strCopy, 0, strCopy.Length);
 		}
 
 		public static bool IsNullOrWhiteSpace (string value)
