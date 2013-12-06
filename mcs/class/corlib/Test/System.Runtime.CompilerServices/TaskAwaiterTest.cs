@@ -129,8 +129,9 @@ namespace MonoTests.System.Runtime.CompilerServices
 			var a = new Scheduler ("a");
 			var b = new Scheduler ("b");
 
-			var r = TestCS (a, b).Result;
-			Assert.AreEqual (0, r, "#1");
+			var t = TestCS (a, b);
+			Assert.IsTrue (t.Wait (3000), "#0");
+			Assert.AreEqual (0, t.Result, "#1");
 			Assert.AreEqual (1, a.InlineCalls, "#2a");
 			Assert.AreEqual (0, b.InlineCalls, "#2b");
 			Assert.AreEqual (2, a.QueueCalls, "#3a");
