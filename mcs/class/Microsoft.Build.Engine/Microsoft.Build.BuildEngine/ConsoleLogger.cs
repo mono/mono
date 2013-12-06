@@ -290,7 +290,12 @@ namespace Microsoft.Build.BuildEngine
 			// record for the event without correct sender object.
 			// Hence we expect sender as a valid object only if it is IBuildEngine4 -
 			// only Microsoft.Build.Internal.BuildEngine4 implements it so far. 
-			var key = sender as IBuildEngine4 ?? dummy_key;
+			// (Used IBuildEngine3 because it needs to build for NET_4_0).
+#if NET_4_0
+			var key = sender as IBuildEngine3 ?? dummy_key;
+#else
+			var key = dummy_key;
+#endif
 			if (!build_records.TryGetValue (key, out r)) {
 				r = new BuildRecord (this);
 				build_records.Add (key, r);
