@@ -1232,7 +1232,7 @@ namespace System.Net
 			}
 		}
 
-		internal void SendRequestHeaders (bool propagate_error)
+		internal byte[] GetRequestHeaders ()
 		{
 			StringBuilder req = new StringBuilder ();
 			string query;
@@ -1254,18 +1254,7 @@ namespace System.Net
 								actualVersion.Major, actualVersion.Minor);
 			req.Append (GetHeaders ());
 			string reqstr = req.ToString ();
-			byte [] bytes = Encoding.UTF8.GetBytes (reqstr);
-			try {
-				writeStream.SetHeaders (bytes);
-			} catch (WebException wexc) {
-				SetWriteStreamError (wexc.Status, wexc);
-				if (propagate_error)
-					throw;
-			} catch (Exception exc) {
-				SetWriteStreamError (WebExceptionStatus.SendFailure, exc);
-				if (propagate_error)
-					throw;
-			}
+			return Encoding.UTF8.GetBytes (reqstr);
 		}
 
 		internal void SetWriteStream (WebConnectionStream stream)
@@ -1280,14 +1269,32 @@ namespace System.Net
 				writeStream.SendChunked = false;
 			}
 
-			SendRequestHeaders (false);
+			byte[] requestHeaders = GetRequestHeaders ();
+			WebAsyncResult result = new WebAsyncResult (new AsyncCallback (SetWriteStreamCB), null);
+			writeStream.SetHeadersAsync (requestHeaders, result);
+		}
 
+		void SetWriteStreamCB(IAsyncResult ar)
+		{
+			WebAsyncResult result = ar as WebAsyncResult;
+
+			if (result.Exception != null) {
+				WebException wexc = result.Exception as WebException;
+				if (wexc != null) {
+					SetWriteStreamError (wexc.Status, wexc);
+					return;
+				}
+				SetWriteStreamError (WebExceptionStatus.SendFailure, result.Exception);
+				return;
+			}
+		
 			haveRequest = true;
-			
+
 			if (bodyBuffer != null) {
 				// The body has been written and buffered. The request "user"
 				// won't write it again, so we must do it.
 				if (ntlm_auth_state != NtlmAuthState.Challenge) {
+					// FIXME: this is a blocking call on the thread pool that could lead to thread pool exhaustion
 					writeStream.Write (bodyBuffer, 0, bodyBufferLength);
 					bodyBuffer = null;
 					writeStream.Close ();
@@ -1295,11 +1302,12 @@ namespace System.Net
 			} else if (method != "HEAD" && method != "GET" && method != "MKCOL" && method != "CONNECT" &&
 					method != "TRACE") {
 				if (getResponseCalled && !writeStream.RequestWritten)
+					// FIXME: this is a blocking call on the thread pool that could lead to thread pool exhaustion
 					writeStream.WriteRequest ();
 			}
 
 			if (asyncWrite != null) {
-				asyncWrite.SetCompleted (false, stream);
+				asyncWrite.SetCompleted (false, writeStream);
 				asyncWrite.DoCallback ();
 				asyncWrite = null;
 			}
