@@ -48533,6 +48533,42 @@
       </method>
     </type>
   </test>
+  <test name="test-882.cs">
+    <type name="MyUInt32">
+      <method name="UInt32 op_Implicit(MyUInt32)" attrs="2198">
+        <size>15</size>
+      </method>
+      <method name="Int64 op_Implicit(MyUInt32)" attrs="2198">
+        <size>7</size>
+      </method>
+      <method name="MyUInt32 op_Implicit(UInt32)" attrs="2198">
+        <size>15</size>
+      </method>
+      <method name="MyUInt32 op_Implicit(Int64)" attrs="2198">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor(UInt32)" attrs="6278">
+        <size>15</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="MyUInt32 test1(MyUInt32)" attrs="145">
+        <size>25</size>
+      </method>
+      <method name="MyUInt32 test2(MyUInt32)" attrs="145">
+        <size>25</size>
+      </method>
+      <method name="MyUInt32 test3(MyUInt32)" attrs="145">
+        <size>25</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>109</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-89.cs">
     <type name="X">
       <method name="X F(Int32)" attrs="145">

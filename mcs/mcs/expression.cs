@@ -577,6 +577,12 @@ namespace Mono.CSharp
 			Expr.EmitSideEffect (ec);
 		}
 
+		public static void Error_Ambiguous (ResolveContext rc, string oper, TypeSpec type, Location loc)
+		{
+			rc.Report.Error (35, loc, "Operator `{0}' is ambiguous on an operand of type `{1}'",
+				oper, type.GetSignatureForError ());
+		}
+
 		public override void FlowAnalysis (FlowAnalysisContext fc)
 		{
 			if (Oper == Operator.AddressOf) {
@@ -781,8 +787,7 @@ namespace Mono.CSharp
 				int result = OverloadResolver.BetterTypeConversion (ec, best_expr.Type, t);
 				if (result == 0) {
 					if ((oper_expr is UserOperatorCall || oper_expr is UserCast) && (best_expr is UserOperatorCall || best_expr is UserCast)) {
-						ec.Report.Error (35, loc, "Operator `{0}' is ambiguous on an operand of type `{1}'",
-							OperName (Oper), expr.Type.GetSignatureForError ());
+						Error_Ambiguous (ec, OperName (Oper), expr.Type, loc);
 					} else {
 						Error_OperatorCannotBeApplied (ec, loc, OperName (Oper), expr.Type);
 					}
@@ -1223,14 +1228,33 @@ namespace Mono.CSharp
 
 					source = operation;
 				} else {
+					Expression best_source = null;
 					foreach (var t in ec.BuiltinTypes.OperatorsUnaryMutator) {
 						source = Convert.ImplicitUserConversion (ec, operation, t, loc);
 
 						// LAMESPEC: It should error on ambiguous operators but that would make us incompatible
-						if (source != null) {
-							break;
+						if (source == null)
+							continue;
+
+						if (best_source == null) {
+							best_source = source;
+							continue;
 						}
+
+						var better = OverloadResolver.BetterTypeConversion (ec, best_source.Type, source.Type);
+						if (better == 1)
+							continue;
+
+						if (better == 2) {
+							best_source = source;
+							continue;
+						}
+
+						Unary.Error_Ambiguous (ec, OperName (mode), type, loc);
+						break;
 					}
+
+					source = best_source;
 				}
 
 				// ++/-- on enum types
@@ -1324,6 +1348,11 @@ namespace Mono.CSharp
 			return SLE.Expression.Assign (target, source);
 		}
 #endif
+
+		public static string OperName (Mode oper)
+		{
+			return (oper & Mode.IsDecrement) != 0 ? "--" : "++";
+		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
