@@ -1145,5 +1145,19 @@ namespace MonoTests.System.Numerics
 			a = new BigInteger ();
 			Assert.AreEqual (BigInteger.Zero.GetHashCode (), a.GetHashCode (), "#15");
 		}
+
+		[Test]
+		public void Bug16526 ()
+		{
+			var x = BigInteger.Pow(2, 63);
+			x *= -1;
+			x -= 1;
+			Assert.AreEqual ("-9223372036854775809", x.ToString (), "#1");
+			try {
+				x = (long)x;
+				Assert.Fail ("#2 Must OVF");
+			} catch (OverflowException) {
+			}
+		}
 	}
 }

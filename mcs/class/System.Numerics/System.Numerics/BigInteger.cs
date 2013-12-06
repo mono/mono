@@ -473,10 +473,20 @@ namespace System.Numerics {
 				return (((long)high) << 32) | low;
 			}
 
-			if (high > 0x80000000u)
-				throw new OverflowException ();
+			/*
+			We cannot represent negative numbers smaller than long.MinValue.
+			Those values are encoded into what look negative numbers, so negating
+			them produces a positive value, that's why it's safe to check for that
+			condition.
 
-			return - ((((long)high) << 32) | (long)low);
+			long.MinValue works fine since it's bigint encoding looks like a negative
+			number, but since long.MinValue == -long.MinValue, we're good.
+			*/
+
+			long result = - ((((long)high) << 32) | (long)low);
+			if (result > 0)
+				throw new OverflowException ();
+			return result;
 		}
 
 		[CLSCompliantAttribute (false)]
