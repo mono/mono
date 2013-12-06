@@ -196,8 +196,9 @@ namespace Microsoft.Build.Execution
 				var ige = child as ProjectImportGroupElement;
 				if (ige != null && EvaluateCondition (ige.Condition)) {
 					foreach (var incc in ige.Imports) {
-						foreach (var e in Import (incc))
-							yield return e;
+						if (EvaluateCondition (incc.Condition))
+							foreach (var e in Import (incc))
+								yield return e;
 					}
 				}
 				var inc = child as ProjectImportElement;
