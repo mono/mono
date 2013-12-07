@@ -160,6 +160,28 @@ namespace MonoTests.System.Runtime.CompilerServices
 
 			return res.Result;
 		}
+
+		[Test]
+		public void FinishedTaskOnCompleted ()
+		{
+			var mres = new ManualResetEvent (false);
+			var mres2 = new ManualResetEvent (false);
+
+			var tcs = new TaskCompletionSource<object> ();
+			tcs.SetResult (null);
+			var task = tcs.Task;
+
+			var awaiter = task.GetAwaiter ();
+			Assert.IsTrue (awaiter.IsCompleted, "#1");
+
+			awaiter.OnCompleted(() => { 
+				if (mres.WaitOne (1000))
+					mres2.Set ();
+			});
+
+			mres.Set ();
+			Assert.IsTrue (mres2.WaitOne (2000), "#2");;
+		}
 	}
 }
 

@@ -330,18 +330,28 @@ namespace System.Threading.Tasks
 			ContinueWith (new TaskContinuation (continuation, options));
 		}
 		
-		internal void ContinueWith (IContinuation continuation)
+		internal bool ContinueWith (IContinuation continuation, bool canExecuteInline = true)
 		{
 			if (IsCompleted) {
+				if (!canExecuteInline)
+					return false;
+
 				continuation.Execute ();
-				return;
+				return true;
 			}
 			
 			continuations.Add (continuation);
 			
 			// Retry in case completion was achieved but event adding was too late
-			if (IsCompleted && continuations.Remove (continuation))
+			if (IsCompleted) {
+				continuations.Remove (continuation);
+				if (!canExecuteInline)
+					return false;
+
 				continuation.Execute ();
+			}
+
+			return true;
 		}
 
 		internal void RemoveContinuation (IContinuation continuation)

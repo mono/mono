@@ -78,15 +78,29 @@ namespace System.Runtime.CompilerServices
 				task.ContinueWith (new SynchronizationContextContinuation (continuation, SynchronizationContext.Current));
 			} else {
 				IContinuation cont;
+				Task cont_task;
 				if (TaskScheduler.Current != TaskScheduler.Default) {
-					var runner = new Task (TaskActionInvoker.Create (continuation), null, CancellationToken.None, TaskCreationOptions.None, null);
-					runner.SetupScheduler (TaskScheduler.Current);
-					cont = new SchedulerAwaitContinuation (runner);
+					cont_task = new Task (TaskActionInvoker.Create (continuation), null, CancellationToken.None, TaskCreationOptions.None, null);
+					cont_task.SetupScheduler (TaskScheduler.Current);
+					cont = new SchedulerAwaitContinuation (cont_task);
 				} else {
+					cont_task = null;
 					cont = new ActionContinuation (continuation);
 				}
 
-				task.ContinueWith (cont);
+				//
+				// This is awaiter continuation. For finished tasks we get false result and need to
+				// queue the continuation otherwise the task would block
+				//
+				if (task.ContinueWith (cont, false))
+					return;
+
+				if (cont_task == null) {
+					cont_task = new Task (TaskActionInvoker.Create (continuation), null, CancellationToken.None, TaskCreationOptions.None, null);
+					cont_task.SetupScheduler (TaskScheduler.Current);
+				}
+
+				cont_task.Schedule ();
 			}
 		}
 
