@@ -59974,7 +59974,7 @@
     </type>
     <type name="Program+C">
       <method name="Void M()" attrs="134">
-        <size>12</size>
+        <size>2</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -60532,6 +60532,38 @@
     <type name="X+&lt;Foo&gt;c__AnonStorey1+&lt;Foo&gt;c__async0">
       <method name="Void MoveNext()" attrs="486">
         <size>43</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-54.cs">
+    <type name="Test">
+      <method name="Int32 Main()" attrs="150">
+        <size>79</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] TestMethod(System.Exception)" attrs="145">
+        <size>41</size>
+      </method>
+      <method name="System.Threading.Tasks.Task Foo(System.Exception)" attrs="145">
+        <size>41</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;TestMethod&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>226</size>
+      </method>
+      <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Foo&gt;c__async1">
+      <method name="Void MoveNext()" attrs="486">
+        <size>159</size>
       </method>
       <method name="Void SetStateMachine(IAsyncStateMachine)" attrs="486">
         <size>13</size>

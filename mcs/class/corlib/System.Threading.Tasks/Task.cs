@@ -448,7 +448,7 @@ namespace System.Threading.Tasks
 			return true;
 		}
 
-		internal bool TrySetException (AggregateException aggregate)
+		internal bool TrySetException (AggregateException aggregate, bool cancellation)
 		{
 			if (IsCompleted)
 				return false;
@@ -460,8 +460,16 @@ namespace System.Threading.Tasks
 
 				return false;
 			}
-			
-			HandleGenericException (aggregate);
+
+			if (cancellation) {
+				ExceptionSlot.Exception = aggregate;
+				Thread.MemoryBarrier ();
+
+				CancelReal ();
+			} else {
+				HandleGenericException (aggregate);
+			}
+
 			return true;
 		}
 
@@ -1255,7 +1263,7 @@ namespace System.Threading.Tasks
 		
 		public AggregateException Exception {
 			get {
-				if (exSlot == null)
+				if (exSlot == null || !IsFaulted)
 					return null;
 				exSlot.Observed = true;
 				return exSlot.Exception;
@@ -1296,7 +1304,7 @@ namespace System.Threading.Tasks
 			}
 		}
 
-		TaskExceptionSlot ExceptionSlot {
+		internal TaskExceptionSlot ExceptionSlot {
 			get {
 				if (exSlot != null)
 					return exSlot;

@@ -64,9 +64,13 @@ namespace System.Runtime.CompilerServices
 		{
 			switch (task.Status) {
 			case TaskStatus.Canceled:
+				// Use original exception when we have one
+				if (task.ExceptionSlot.Exception != null)
+					goto case TaskStatus.Faulted;
+
 				return new TaskCanceledException (task);
 			case TaskStatus.Faulted:
-				return task.Exception.InnerException;
+				return task.ExceptionSlot.Exception.InnerException;
 			default:
 				throw new ArgumentException (string.Format ("Unexpected task `{0}' status `{1}'", task.Id, task.Status));
 			}

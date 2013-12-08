@@ -194,7 +194,7 @@ namespace System.Threading.Tasks
 			}
 
 			if (exceptions != null) {
-				owner.TrySetException (new AggregateException (exceptions));
+				owner.TrySetException (new AggregateException (exceptions), false);
 				return;
 			}
 
@@ -254,7 +254,7 @@ namespace System.Threading.Tasks
 			}
 
 			if (exceptions != null) {
-				owner.TrySetException (new AggregateException (exceptions));
+				owner.TrySetException (new AggregateException (exceptions), false);
 				return;
 			}
 
