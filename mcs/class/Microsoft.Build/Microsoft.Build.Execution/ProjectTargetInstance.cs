@@ -35,10 +35,7 @@ using System.Linq;
 
 namespace Microsoft.Build.Execution
 {
-#if NET_4_5
-	public
-#endif
-	sealed class ProjectTargetInstance
+	public sealed class ProjectTargetInstance
 	{
 		internal ProjectTargetInstance (ProjectTargetElement xml)
 		{
@@ -64,7 +61,6 @@ namespace Microsoft.Build.Execution
 			Outputs = xml.Outputs;
 			Returns = xml.Returns;
 			Tasks = xml.Tasks.Select (t => new ProjectTaskInstance (t)).ToArray ();
-			#if NET_4_5
 			AfterTargetsLocation = xml.AfterTargetsLocation;
 			BeforeTargetsLocation = xml.BeforeTargetsLocation;
 			ConditionLocation = xml.ConditionLocation;
@@ -74,29 +70,40 @@ namespace Microsoft.Build.Execution
 			Location = xml.Location;
 			OutputsLocation = xml.OutputsLocation;
 			ReturnsLocation = xml.ReturnsLocation;
-			#endif
 		}
 
-		public ElementLocation AfterTargetsLocation { get; private set; }
-		public ElementLocation BeforeTargetsLocation { get; private set; }
 		public IList<ProjectTargetInstanceChild> Children { get; private set; }
 		public string Condition { get; private set; }
-		public ElementLocation ConditionLocation { get; private set; }
 		public string DependsOnTargets { get; private set; }
-		public ElementLocation DependsOnTargetsLocation { get; private set; }
 		public string FullPath { get; private set; }
 		public string Inputs { get; private set; }
-		public ElementLocation InputsLocation { get; private set; }
 		public string KeepDuplicateOutputs { get; private set; }
-		public ElementLocation KeepDuplicateOutputsLocation { get; private set; }
-		public ElementLocation Location { get; private set; }
 		public string Name { get; private set; }
 		public IList<ProjectOnErrorInstance> OnErrorChildren { get; private set; }
 		public string Outputs { get; private set; }
-		public ElementLocation OutputsLocation { get; private set; }
 		public string Returns { get; private set; }
-		public ElementLocation ReturnsLocation { get; private set; }
 		public ICollection<ProjectTaskInstance> Tasks { get; private set; }
+#if NET_4_5
+		public ElementLocation AfterTargetsLocation { get; private set; }
+		public ElementLocation BeforeTargetsLocation { get; private set; }
+		public ElementLocation ConditionLocation { get; private set; }
+		public ElementLocation DependsOnTargetsLocation { get; private set; }
+		public ElementLocation InputsLocation { get; private set; }
+		public ElementLocation KeepDuplicateOutputsLocation { get; private set; }
+		public ElementLocation Location { get; private set; }
+		public ElementLocation OutputsLocation { get; private set; }
+		public ElementLocation ReturnsLocation { get; private set; }
+#else
+		internal ElementLocation AfterTargetsLocation { get; private set; }
+		internal ElementLocation BeforeTargetsLocation { get; private set; }
+		internal ElementLocation ConditionLocation { get; private set; }
+		internal ElementLocation DependsOnTargetsLocation { get; private set; }
+		internal ElementLocation InputsLocation { get; private set; }
+		internal ElementLocation KeepDuplicateOutputsLocation { get; private set; }
+		internal ElementLocation Location { get; private set; }
+		internal ElementLocation OutputsLocation { get; private set; }
+		internal ElementLocation ReturnsLocation { get; private set; }
+#endif
 	}
 }
 
