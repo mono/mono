@@ -83,7 +83,7 @@ namespace System.Runtime.CompilerServices
 			} else {
 				IContinuation cont;
 				Task cont_task;
-				if (TaskScheduler.Current != TaskScheduler.Default) {
+				if (continueOnSourceContext && TaskScheduler.Current != TaskScheduler.Default) {
 					cont_task = new Task (TaskActionInvoker.Create (continuation), null, CancellationToken.None, TaskCreationOptions.None, null);
 					cont_task.SetupScheduler (TaskScheduler.Current);
 					cont = new SchedulerAwaitContinuation (cont_task);
