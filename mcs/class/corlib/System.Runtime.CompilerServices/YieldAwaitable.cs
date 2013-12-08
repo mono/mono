@@ -60,7 +60,7 @@ namespace System.Runtime.CompilerServices
 					throw new ArgumentNullException ("continuation");
 
 				var ctx = SynchronizationContext.Current;
-				if (ctx != null) {
+				if (ctx != null && ctx.GetType () != typeof (SynchronizationContext)) {
 					ctx.Post (l => ((Action) l) (), continuation);
 					return;
 				}

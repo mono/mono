@@ -78,7 +78,7 @@ namespace System.Runtime.CompilerServices
 
 		internal static void HandleOnCompleted (Task task, Action continuation, bool continueOnSourceContext, bool manageContext)
 		{
-			if (continueOnSourceContext && SynchronizationContext.Current != null) {
+			if (continueOnSourceContext && SynchronizationContext.Current != null && SynchronizationContext.Current.GetType () != typeof (SynchronizationContext)) {
 				task.ContinueWith (new SynchronizationContextContinuation (continuation, SynchronizationContext.Current));
 			} else {
 				IContinuation cont;
