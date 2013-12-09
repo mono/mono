@@ -161,7 +161,8 @@ namespace Mono.XBuild.CommandLine {
 					var parser = new SolutionParser ();
 					var root = ProjectRootElement.Create ();
 					parser.ParseSolution (projectFile, project_collection, root, LogWarning);
-					projectInstances.Add (new ProjectInstance (root, null, null, project_collection));
+					foreach (var p in project_collection.LoadedProjects)
+						projectInstances.Add (p.CreateProjectInstance ());
 				} else {
 					project = ProjectRootElement.Create (XmlReader.Create (projectFile, settings), project_collection);
 					var pi = new ProjectInstance (project, parameters.Properties, parameters.ToolsVersion, project_collection);
@@ -169,6 +170,7 @@ namespace Mono.XBuild.CommandLine {
 				}
 				foreach (var projectInstance in projectInstances) {
 					var targets = parameters.Targets.Length == 0 ? projectInstance.DefaultTargets.ToArray () : parameters.Targets;
+					Console.WriteLine ("!!!!! {0} {1}", projectInstance.FullPath, string.Join (";", targets));
 					result = projectInstance.Build (targets, parameters.Loggers.Count > 0 ? parameters.Loggers : project_collection.Loggers);
 					if (!result)
 						break;
