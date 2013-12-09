@@ -137,6 +137,9 @@ namespace System.Runtime.Remoting.Messaging
 		internal static void UpdateCurrentLogicalCallContext (LogicalCallContext ctx)
 		{
 			Hashtable data = ctx.Datastore;
+			if (data == null)
+				return;
+
 			foreach (DictionaryEntry entry in data)
 				LogicalSetData ((string)entry.Key, entry.Value);
 		}
