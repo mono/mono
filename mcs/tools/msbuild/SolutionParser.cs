@@ -38,6 +38,7 @@ using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Construction;
 using Microsoft.Build.Exceptions;
+using System.Xml;
 
 namespace Mono.XBuild.CommandLine {
 	class ProjectInfo {
@@ -121,7 +122,9 @@ namespace Mono.XBuild.CommandLine {
 
 			StreamReader reader = new StreamReader (file);
 			string slnVersion = GetSlnFileVersion (reader);
-			if (slnVersion == "11.00")
+			if (slnVersion == "12.00")
+				projects.DefaultToolsVersion = "12.0";
+			else if (slnVersion == "11.00")
 				projects.DefaultToolsVersion = "4.0";
 			else if (slnVersion == "10.00")
 				projects.DefaultToolsVersion = "3.5";
@@ -209,7 +212,11 @@ namespace Mono.XBuild.CommandLine {
 
 				Project currentProject;
 				try {
-					currentProject = new Project (filename, null, null, projects, ProjectLoadSettings.IgnoreMissingImports);
+					using (var xmlReader = XmlReader.Create (filename)) {
+						var root = ProjectRootElement.Create (xmlReader, projects);
+						root.FullPath = filename;
+						currentProject = new Project (root, null, null, projects, ProjectLoadSettings.IgnoreMissingImports);
+					}
 				} catch (InvalidProjectFileException e) {
 					RaiseWarning (0, e.Message);
 					continue;
