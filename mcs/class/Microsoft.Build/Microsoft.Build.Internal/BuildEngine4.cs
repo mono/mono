@@ -112,7 +112,9 @@ namespace Microsoft.Build.Internal
 			var request = submission.BuildRequest;
 			var parameters = submission.BuildManager.OngoingBuildParameters;
 			this.project = args.Project;
-			
+
+			string directoryBackup = Directory.GetCurrentDirectory ();
+			Directory.SetCurrentDirectory (project.Directory);
 			event_source.FireBuildStarted (this, new BuildStartedEventArgs ("Build Started", null, DateTime.Now));
 			
 			try {
@@ -139,6 +141,7 @@ namespace Microsoft.Build.Internal
 				throw; // BuildSubmission re-catches this.
 			} finally {
 				event_source.FireBuildFinished (this, new BuildFinishedEventArgs ("Build Finished.", null, args.Result.OverallResult == BuildResultCode.Success, DateTime.Now));
+				Directory.SetCurrentDirectory (directoryBackup);
 			}
 		}
 		
@@ -537,19 +540,15 @@ namespace Microsoft.Build.Internal
 
 		#region IBuildEngine2 implementation
 
+		// To NOT reuse this IBuildEngine instance for different build, we create another BuildManager and BuildSubmisson and then run it.
 		public bool BuildProjectFile (string projectFileName, string[] targetNames, IDictionary globalProperties, IDictionary targetOutputs, string toolsVersion)
 		{
-			var proj = GetProjectInstance (projectFileName, toolsVersion);
 			var globalPropertiesThatMakeSense = new Dictionary<string,string> ();
 			foreach (DictionaryEntry p in globalProperties)
 				globalPropertiesThatMakeSense [(string) p.Key] = (string) p.Value;
-			var result = new BuildResult ();
-			var outputs = new Dictionary<string, string> ();
-			var request = this.submission.BuildRequest;
-			toolsVersion = toolsVersion ?? request.ExplicitlySpecifiedToolsVersion ?? request.ProjectInstance.ToolsVersion ?? submission.BuildManager.OngoingBuildParameters.DefaultToolsVersion;
-			BuildProject (() => false, result, proj, targetNames, globalPropertiesThatMakeSense, outputs, toolsVersion);
-			foreach (var p in outputs)
-				targetOutputs [p.Key] = p.Value;
+			var result = new BuildManager ().Build (this.submission.BuildManager.OngoingBuildParameters.Clone (), new BuildRequestData (projectFileName, globalPropertiesThatMakeSense, toolsVersion, targetNames, null));
+			foreach (var p in result.ResultsByTarget)
+				targetOutputs [p.Key] = p.Value.Items;
 			return result.OverallResult == BuildResultCode.Success;
 		}
 
