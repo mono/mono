@@ -1071,29 +1071,19 @@ namespace System.Net
 			redirects++;
 			Exception e = null;
 			string uriString = null;
-
 			switch (code) {
 			case HttpStatusCode.Ambiguous: // 300
 				e = new WebException ("Ambiguous redirect.");
 				break;
 			case HttpStatusCode.MovedPermanently: // 301
 			case HttpStatusCode.Redirect: // 302
-			case HttpStatusCode.TemporaryRedirect: // 307
-				/* MS follows the redirect for POST too
-				if (method != "GET" && method != "HEAD") // 10.3
-					return false;
-				*/
-
-				contentLength = -1;
-				bodyBufferLength = 0;
-				bodyBuffer = null;
-				if (code != HttpStatusCode.TemporaryRedirect)
+				if (method == "POST")
 					method = "GET";
-				uriString = webResponse.Headers ["Location"];
+				break;
+			case HttpStatusCode.TemporaryRedirect: // 307
 				break;
 			case HttpStatusCode.SeeOther: //303
 				method = "GET";
-				uriString = webResponse.Headers ["Location"];
 				break;
 			case HttpStatusCode.NotModified: // 304
 				return false;
@@ -1108,6 +1098,11 @@ namespace System.Net
 
 			if (e != null)
 				throw e;
+
+			//contentLength = -1;
+			//bodyBufferLength = 0;
+			//bodyBuffer = null;
+			uriString = webResponse.Headers ["Location"];
 
 			if (uriString == null)
 				throw new WebException ("No Location header found for " + (int) code,
