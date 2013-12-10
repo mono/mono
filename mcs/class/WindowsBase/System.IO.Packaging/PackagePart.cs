@@ -237,7 +237,7 @@ namespace System.IO.Packaging {
 		{
 			while (true)
 			{
-				string s = relationshipId.ToString ();
+				string s = "Re" + relationshipId.ToString ();
 				if (!RelationshipExists (s))
 					return s;
 				relationshipId ++;
