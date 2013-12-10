@@ -2946,6 +2946,40 @@
       </method>
     </type>
   </test>
+  <test name="dtest-059.cs">
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C`1[T]">
+      <method name="Void Test()" attrs="134">
+        <size>238</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C`1+&lt;Test&gt;c__DynamicSite0+Container0[T]">
+      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Type, System.Object, Int32 ByRef)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)" attrs="6278">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="C`1+&lt;Test&gt;c__DynamicSite0+Container1[T]">
+      <method name="Void Invoke(System.Runtime.CompilerServices.CallSite, System.Type, System.Object, Int32 ByRef)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)" attrs="6278">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="dtest-anontype-01.cs">
     <type name="C">
       <method name="Void Main()" attrs="150">
