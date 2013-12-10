@@ -19,7 +19,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 // 
-
+#if !FULL_AOT_RUNTIME
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Dynamic.BinaryOperationBinder))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Dynamic.BindingRestrictions))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Dynamic.CallInfo))]
@@ -46,4 +46,6 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.CompilerServices.CallSiteBinder))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.CompilerServices.CallSiteHelpers))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.CompilerServices.DynamicAttribute))]
+#endif
 
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.CompilerServices.ConditionalWeakTable<,>))]
