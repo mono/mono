@@ -1566,6 +1566,21 @@ namespace System.Diagnostics {
 							async_output.Close ();
 						if (async_error != null)
 							async_error.Close ();
+
+						if (input_stream != null) {
+							input_stream.Close();
+							input_stream = null;
+						}
+
+						if (output_stream != null) {
+							output_stream.Close();
+							output_stream = null;
+						}
+
+						if (error_stream != null) {
+							error_stream.Close();
+							error_stream = null;
+						}
 					}
 				}
 				
@@ -1575,21 +1590,6 @@ namespace System.Diagnostics {
 					if(process_handle!=IntPtr.Zero) {
 						Process_free_internal(process_handle);
 						process_handle=IntPtr.Zero;
-					}
-
-					if (input_stream != null) {
-						input_stream.Close();
-						input_stream = null;
-					}
-
-					if (output_stream != null) {
-						output_stream.Close();
-						output_stream = null;
-					}
-
-					if (error_stream != null) {
-						error_stream.Close();
-						error_stream = null;
 					}
 				}
 			}
