@@ -30,6 +30,9 @@
 
 using System.IO;
 using System.Reflection;
+#if NET_4_0
+using System.Runtime.CompilerServices;
+#endif
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
@@ -87,7 +90,15 @@ namespace System.Runtime.InteropServices
 		{
 			IntPtr result;
 
-			Marshal.ThrowExceptionForHR (CLRCreateInstance (clsid, riid, out result));
+			if (clsid == Guid.Empty)
+			{
+			    Guid CLSID_CLRMetaHost = new Guid ("9280188d-0e8e-4867-b30c-7fa83884e8de");
+				ICLRMetaHost metahost = (ICLRMetaHost)GetRuntimeInterfaceAsObject (CLSID_CLRMetaHost, typeof(ICLRMetaHost).GUID);
+
+				result = metahost.GetRuntime (GetSystemVersion (), riid);
+			}
+			else
+				Marshal.ThrowExceptionForHR (CLRCreateInstance (clsid, riid, out result));
 
 			return result;
 		}
@@ -111,4 +122,38 @@ namespace System.Runtime.InteropServices
 		}
 #endif
 	}
+
+#if NET_4_0
+    [Guid ("d332db9e-b9b3-4125-8207-a14884f53216")]
+    [InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
+    [ComImport ()]
+    internal interface ICLRMetaHost
+    {
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		IntPtr GetRuntime (
+		    string pwzVersion,
+		    [MarshalAs(UnmanagedType.LPStruct)] Guid iid);
+
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		void GetVersionFromFile (
+		    string pwzFilePath,
+		    IntPtr pwzBuffer,
+		    ref uint pcchBuffer);
+
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		IntPtr EnumerateInstalledRuntimes (); // IEnumUnknown
+
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		IntPtr EnumerateLoadedRuntimes (IntPtr hndProcess); // IEnumUnknown
+
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		void RequestRuntimeLoadedNotification (IntPtr pCallbackFunction);
+
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		IntPtr QueryLegacyV2RuntimeBinding (Guid riid);
+
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		void ExitProcess (int iExitCode);
+    }
+#endif
 }
