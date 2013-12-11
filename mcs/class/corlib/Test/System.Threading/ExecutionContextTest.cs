@@ -152,6 +152,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Category("MobileNotWorking")]
 		public void Capture ()
 		{
 			ExecutionContext ec = ExecutionContext.Capture ();
@@ -169,6 +170,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Category("MobileNotWorking")]
 		public void Copy ()
 		{
 			ExecutionContext ec = ExecutionContext.Capture ();
@@ -198,6 +200,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Category("MobileNotWorking")]
 		public void IsFlowSuppressed ()
 		{
 			Assert.IsFalse (ExecutionContext.IsFlowSuppressed (), "IsFlowSuppressed-1");
@@ -211,12 +214,14 @@ namespace MonoTests.System.Threading {
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
+		[Category("MobileNotWorking")]
 		public void RestoreFlow_None ()
 		{
 			ExecutionContext.RestoreFlow ();
 		}
 
 		[Test]
+		[Category("MobileNotWorking")]
 		public void RestoreFlow_SuppressFlow ()
 		{
 			Assert.IsFalse (ExecutionContext.IsFlowSuppressed (), "IsFlowSuppressed-1");
@@ -237,6 +242,7 @@ namespace MonoTests.System.Threading {
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
+		[Category("MobileNotWorking")]
 		public void Run_SuppressFlow ()
 		{
 			Assert.IsFalse (ExecutionContext.IsFlowSuppressed ());
@@ -251,6 +257,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Category("MobileNotWorking")]
 		public void SuppressFlow ()
 		{
 			Assert.IsFalse (ExecutionContext.IsFlowSuppressed (), "IsFlowSuppressed-1");
@@ -264,6 +271,7 @@ namespace MonoTests.System.Threading {
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
+		[Category("MobileNotWorking")]
 		public void SuppressFlow_Two_Undo ()
 		{
 			Assert.IsFalse (ExecutionContext.IsFlowSuppressed (), "IsFlowSuppressed-1");
