@@ -950,6 +950,14 @@ namespace System.Net
 
 			return result.Response;
 		}
+		
+#if NET_4_0
+		public Stream EndGetRequestStream (IAsyncResult asyncResult, out System.Net.TransportContext transportContext)
+		{
+			transportContext = null;
+			return EndGetRequestStream (asyncResult);
+		}
+#endif
 
 		public override WebResponse GetResponse()
 		{
