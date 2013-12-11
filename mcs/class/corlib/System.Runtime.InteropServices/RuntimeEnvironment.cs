@@ -74,5 +74,41 @@ namespace System.Runtime.InteropServices
 		{
 			return "v" + Environment.Version.Major + "." + Environment.Version.Minor + "." + Environment.Version.Build;
 		}
+
+#if NET_4_0
+		[DllImport("mscoree")]
+		private extern static int CLRCreateInstance (
+		    [MarshalAs(UnmanagedType.LPStruct)] Guid clsid,
+		    [MarshalAs(UnmanagedType.LPStruct)] Guid riid,
+		    out IntPtr punk);
+
+		[SecurityCritical]
+		public static IntPtr GetRuntimeInterfaceAsIntPtr (Guid clsid, Guid riid)
+		{
+			IntPtr result;
+
+			Marshal.ThrowExceptionForHR (CLRCreateInstance (clsid, riid, out result));
+
+			return result;
+		}
+
+		[SecurityCritical]
+		public static object GetRuntimeInterfaceAsObject (Guid clsid, Guid riid)
+		{
+			IntPtr punk = GetRuntimeInterfaceAsIntPtr (clsid, riid);
+			object result;
+
+			try
+			{
+				result = Marshal.GetObjectForIUnknown (punk);
+			}
+			finally
+			{
+				Marshal.Release (punk);
+			}
+
+			return result;
+		}
+#endif
 	}
 }
