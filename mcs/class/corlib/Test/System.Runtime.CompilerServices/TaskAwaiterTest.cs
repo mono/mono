@@ -180,7 +180,9 @@ namespace MonoTests.System.Runtime.CompilerServices
 			});
 
 			mres.Set ();
-			Assert.IsTrue (mres2.WaitOne (2000), "#2");;
+			// this will only terminate correctly if the test was not executed from the main thread
+			// e.g. Touch.Unit defaults to run tests on the main thread and this will return false
+			Assert.AreEqual (Thread.CurrentThread.IsBackground, mres2.WaitOne (2000), "#2");;
 		}
 	}
 }
