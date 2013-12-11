@@ -2809,7 +2809,7 @@ namespace Mono.CSharp {
 
 		public LabeledStatement LookupLabel (string name)
 		{
-			return ParametersBlock.TopBlock.GetLabel (name, this);
+			return ParametersBlock.GetLabel (name, this);
 		}
 
 		public override Reachability MarkReachable (Reachability rc)
@@ -3480,6 +3480,7 @@ namespace Mono.CSharp {
 		protected bool resolved;
 		protected ToplevelBlock top_block;
 		protected StateMachine state_machine;
+		protected Dictionary<string, object> labels;
 
 		public ParametersBlock (Block parent, ParametersCompiled parameters, Location start, Flags flags = 0)
 			: base (parent, 0, start, start)
@@ -3608,6 +3609,46 @@ namespace Mono.CSharp {
 			}					
 		}
 
+		protected override void CloneTo (CloneContext clonectx, Statement t)
+		{
+			base.CloneTo (clonectx, t);
+
+			var target = (ParametersBlock) t;
+
+			//
+			// Clone label statements as well as they contain block reference
+			//
+			var pb = this;
+			while (true) {
+				if (pb.labels != null) {
+					target.labels = new Dictionary<string, object> ();
+
+					foreach (var entry in pb.labels) {
+						var list = entry.Value as List<LabeledStatement>;
+
+						if (list != null) {
+							var list_clone = new List<LabeledStatement> ();
+							foreach (var lentry in list) {
+								list_clone.Add (RemapLabeledStatement (lentry, lentry.Block, clonectx.RemapBlockCopy (lentry.Block)));
+							}
+
+							target.labels.Add (entry.Key, list_clone);
+						} else {
+							var labeled = (LabeledStatement) entry.Value;
+							target.labels.Add (entry.Key, RemapLabeledStatement (labeled, labeled.Block, clonectx.RemapBlockCopy (labeled.Block)));
+						}
+					}
+
+					break;
+				}
+
+				if (pb.Parent == null)
+					break;
+
+				pb = pb.Parent.ParametersBlock;
+			}
+		}
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			if (statements.Count == 1) {
@@ -3651,6 +3692,43 @@ namespace Mono.CSharp {
 			return res;
 		}
 
+		public LabeledStatement GetLabel (string name, Block block)
+		{
+			//
+			// Cloned parameters blocks can have their own cloned version of top-level labels
+			//
+			if (labels == null) {
+				if (Parent != null)
+					return Parent.ParametersBlock.GetLabel (name, block);
+
+				return null;
+			}
+
+			object value;
+			if (!labels.TryGetValue (name, out value)) {
+				return null;
+			}
+
+			var label = value as LabeledStatement;
+			Block b = block;
+			if (label != null) {
+				do {
+					if (label.Block == b)
+						return label;
+					b = b.Parent;
+				} while (b != null);
+			} else {
+				List<LabeledStatement> list = (List<LabeledStatement>) value;
+				for (int i = 0; i < list.Count; ++i) {
+					label = list[i];
+					if (label.Block == b)
+						return label;
+				}
+			}
+
+			return null;
+		}
+
 		public ParameterInfo GetParameterInfo (Parameter p)
 		{
 			for (int i = 0; i < parameters.Count; ++i) {
@@ -3688,6 +3766,17 @@ namespace Mono.CSharp {
 				if (p.Name != null)
 					AddLocalName (p.Name, parameter_info[i]);
 			}
+		}
+
+		static LabeledStatement RemapLabeledStatement (LabeledStatement stmt, Block src, Block dst)
+		{
+			var src_stmts = src.Statements;
+			for (int i = 0; i < src_stmts.Count; ++i) {
+				if (src_stmts[i] == stmt)
+					return (LabeledStatement) dst.Statements[i];
+			}
+
+			throw new InternalErrorException ("Should never be reached");
 		}
 
 		public override bool Resolve (BlockContext bc)
@@ -3825,7 +3914,6 @@ namespace Mono.CSharp {
 		LocalVariable this_variable;
 		CompilerContext compiler;
 		Dictionary<string, object> names;
-		Dictionary<string, object> labels;
 
 		List<ExplicitBlock> this_references;
 
@@ -4114,36 +4202,6 @@ namespace Mono.CSharp {
 
 			variable = null;
 			return false;
-		}
-
-		public LabeledStatement GetLabel (string name, Block block)
-		{
-			if (labels == null)
-				return null;
-
-			object value;
-			if (!labels.TryGetValue (name, out value)) {
-				return null;
-			}
-
-			var label = value as LabeledStatement;
-			Block b = block;
-			if (label != null) {
-				do {
-					if (label.Block == b.Original)
-						return label;
-					b = b.Parent;
-				} while (b != null);
-			} else {
-				List<LabeledStatement> list = (List<LabeledStatement>) value;
-				for (int i = 0; i < list.Count; ++i) {
-					label = list[i];
-					if (label.Block == b.Original)
-						return label;
-				}
-			}
-				
-			return null;
 		}
 
 		// <summary>
