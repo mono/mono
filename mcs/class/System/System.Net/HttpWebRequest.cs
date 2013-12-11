@@ -36,6 +36,7 @@ using System.Collections;
 using System.Configuration;
 using System.Globalization;
 using System.IO;
+using System.Net;
 using System.Net.Cache;
 using System.Net.Sockets;
 using System.Runtime.Remoting.Messaging;
@@ -951,8 +952,8 @@ namespace System.Net
 			return result.Response;
 		}
 		
-#if NET_4_0
-		public Stream EndGetRequestStream (IAsyncResult asyncResult, out System.Net.TransportContext transportContext)
+#if NET_3_5
+		public Stream EndGetRequestStream (IAsyncResult asyncResult, out TransportContext transportContext)
 		{
 			transportContext = null;
 			return EndGetRequestStream (asyncResult);
