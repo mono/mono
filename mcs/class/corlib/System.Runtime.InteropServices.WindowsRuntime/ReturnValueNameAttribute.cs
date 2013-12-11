@@ -1,6 +1,5 @@
-#if NET_4_5
 //
-// EventRegistrationToken.cs
+// ReturnValueNameAttribute.cs
 //
 // Author:
 //       Martin Baulig <martin.baulig@xamarin.com>
@@ -29,31 +28,17 @@ using System.Runtime.CompilerServices;
 
 namespace System.Runtime.InteropServices.WindowsRuntime
 {
-	public struct EventRegistrationToken
+	[AttributeUsageAttribute(AttributeTargets.Delegate|AttributeTargets.ReturnValue, AllowMultiple = false, Inherited = false)]
+	public sealed class ReturnValueNameAttribute : Attribute
 	{
-#pragma warning disable 0649
-		long value;
-#pragma warning restore 0649
-
-		public static bool operator == (EventRegistrationToken left, EventRegistrationToken right)
+		public ReturnValueNameAttribute (string name)
 		{
-			return left.value == right.value;
+			Name = name;
 		}
 
-		public static bool operator != (EventRegistrationToken left, EventRegistrationToken right)
-		{
-			return left.value != right.value;
-		}
-
-		public override bool Equals (object obj)
-		{
-			return ((EventRegistrationToken)obj).value == value;
-		}
-
-		public override int GetHashCode ()
-		{
-			return unchecked ((int)value);
+		public string Name {
+			get;
+			private set;
 		}
 	}
 }
-#endif

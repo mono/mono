@@ -1,6 +1,6 @@
 #if NET_4_5
 //
-// EventRegistrationToken.cs
+// DefaultInterfaceAttribute.cs
 //
 // Author:
 //       Martin Baulig <martin.baulig@xamarin.com>
@@ -29,30 +29,17 @@ using System.Runtime.CompilerServices;
 
 namespace System.Runtime.InteropServices.WindowsRuntime
 {
-	public struct EventRegistrationToken
+	[AttributeUsageAttribute(AttributeTargets.Class|AttributeTargets.Interface, AllowMultiple = false, Inherited = false)]
+	public sealed class DefaultInterfaceAttribute : Attribute
 	{
-#pragma warning disable 0649
-		long value;
-#pragma warning restore 0649
-
-		public static bool operator == (EventRegistrationToken left, EventRegistrationToken right)
-		{
-			return left.value == right.value;
+		public Type DefaultInterface {
+			get;
+			private set;
 		}
 
-		public static bool operator != (EventRegistrationToken left, EventRegistrationToken right)
+		public DefaultInterfaceAttribute (Type defaultInterface)
 		{
-			return left.value != right.value;
-		}
-
-		public override bool Equals (object obj)
-		{
-			return ((EventRegistrationToken)obj).value == value;
-		}
-
-		public override int GetHashCode ()
-		{
-			return unchecked ((int)value);
+			DefaultInterface = defaultInterface;
 		}
 	}
 }

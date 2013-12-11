@@ -1,6 +1,6 @@
 #if NET_4_5
 //
-// EventRegistrationToken.cs
+// WindowsRuntimeMarshal.cs
 //
 // Author:
 //       Martin Baulig <martin.baulig@xamarin.com>
@@ -29,31 +29,44 @@ using System.Runtime.CompilerServices;
 
 namespace System.Runtime.InteropServices.WindowsRuntime
 {
-	public struct EventRegistrationToken
+	[MonoTODO]
+	public static class WindowsRuntimeMarshal
 	{
-#pragma warning disable 0649
-		long value;
-#pragma warning restore 0649
-
-		public static bool operator == (EventRegistrationToken left, EventRegistrationToken right)
+		public static void AddEventHandler<T> (	Func<T, EventRegistrationToken> addMethod, Action<EventRegistrationToken> removeMethod, T handler)
 		{
-			return left.value == right.value;
+			throw new NotImplementedException ();
 		}
 
-		public static bool operator != (EventRegistrationToken left, EventRegistrationToken right)
+		public static void FreeHString (IntPtr ptr)
 		{
-			return left.value != right.value;
+			throw new NotImplementedException ();
 		}
 
-		public override bool Equals (object obj)
+		public static IActivationFactory GetActivationFactory (Type type)
 		{
-			return ((EventRegistrationToken)obj).value == value;
+			throw new NotImplementedException ();
 		}
 
-		public override int GetHashCode ()
+		public static string PtrToStringHString (IntPtr ptr)
 		{
-			return unchecked ((int)value);
+			throw new NotImplementedException ();
+		}
+
+		public static void RemoveAllEventHandlers(Action<EventRegistrationToken> removeMethod)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static void RemoveEventHandler<T> (Action<EventRegistrationToken> removeMethod, T handler)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static IntPtr StringToHString (string s)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }
 #endif
+

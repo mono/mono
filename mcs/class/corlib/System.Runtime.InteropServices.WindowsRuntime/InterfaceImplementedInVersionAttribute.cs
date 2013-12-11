@@ -1,6 +1,6 @@
 #if NET_4_5
 //
-// EventRegistrationToken.cs
+// InterfaceImplementedInVersionAttribute.cs
 //
 // Author:
 //       Martin Baulig <martin.baulig@xamarin.com>
@@ -29,30 +29,42 @@ using System.Runtime.CompilerServices;
 
 namespace System.Runtime.InteropServices.WindowsRuntime
 {
-	public struct EventRegistrationToken
+	[AttributeUsageAttribute(AttributeTargets.Class|AttributeTargets.Interface, AllowMultiple = false, Inherited = false)]
+	public sealed class InterfaceImplementedInVersionAttribute : Attribute
 	{
-#pragma warning disable 0649
-		long value;
-#pragma warning restore 0649
-
-		public static bool operator == (EventRegistrationToken left, EventRegistrationToken right)
+		public InterfaceImplementedInVersionAttribute (Type interfaceType, byte majorVersion, byte minorVersion,
+			byte buildVersion, byte revisionVersion)
 		{
-			return left.value == right.value;
+			InterfaceType = interfaceType;
+			MajorVersion = majorVersion;
+			MinorVersion = minorVersion;
+			BuildVersion = buildVersion;
+			RevisionVersion = revisionVersion;
 		}
 
-		public static bool operator != (EventRegistrationToken left, EventRegistrationToken right)
-		{
-			return left.value != right.value;
+		public byte BuildVersion {
+			get;
+			private set;
 		}
 
-		public override bool Equals (object obj)
-		{
-			return ((EventRegistrationToken)obj).value == value;
+		public Type InterfaceType {
+			get;
+			private set;
 		}
 
-		public override int GetHashCode ()
-		{
-			return unchecked ((int)value);
+		public byte MajorVersion {
+			get;
+			private set;
+		}
+
+		public byte MinorVersion {
+			get;
+			private set;
+		}
+	
+		public byte RevisionVersion {
+			get;
+			private set;
 		}
 	}
 }

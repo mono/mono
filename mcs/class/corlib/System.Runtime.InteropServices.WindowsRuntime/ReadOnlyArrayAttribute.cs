@@ -1,6 +1,6 @@
 #if NET_4_5
 //
-// EventRegistrationToken.cs
+// ReadOnlyArrayAttribute.cs
 //
 // Author:
 //       Martin Baulig <martin.baulig@xamarin.com>
@@ -29,31 +29,9 @@ using System.Runtime.CompilerServices;
 
 namespace System.Runtime.InteropServices.WindowsRuntime
 {
-	public struct EventRegistrationToken
+	[AttributeUsageAttribute(AttributeTargets.Parameter, Inherited = false, AllowMultiple = false)]
+	public sealed class ReadOnlyArrayAttribute : Attribute
 	{
-#pragma warning disable 0649
-		long value;
-#pragma warning restore 0649
-
-		public static bool operator == (EventRegistrationToken left, EventRegistrationToken right)
-		{
-			return left.value == right.value;
-		}
-
-		public static bool operator != (EventRegistrationToken left, EventRegistrationToken right)
-		{
-			return left.value != right.value;
-		}
-
-		public override bool Equals (object obj)
-		{
-			return ((EventRegistrationToken)obj).value == value;
-		}
-
-		public override int GetHashCode ()
-		{
-			return unchecked ((int)value);
-		}
 	}
 }
 #endif

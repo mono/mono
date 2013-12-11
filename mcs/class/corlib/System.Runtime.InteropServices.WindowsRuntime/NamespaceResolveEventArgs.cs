@@ -1,6 +1,6 @@
 #if NET_4_5
 //
-// EventRegistrationToken.cs
+// NamespaceResolveEventArgs.cs
 //
 // Author:
 //       Martin Baulig <martin.baulig@xamarin.com>
@@ -25,34 +25,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Reflection;
+using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 
 namespace System.Runtime.InteropServices.WindowsRuntime
 {
-	public struct EventRegistrationToken
+	[ComVisibleAttribute(false)]
+	public class NamespaceResolveEventArgs : EventArgs
 	{
-#pragma warning disable 0649
-		long value;
-#pragma warning restore 0649
-
-		public static bool operator == (EventRegistrationToken left, EventRegistrationToken right)
+		public NamespaceResolveEventArgs (string namespaceName, Assembly requestingAssembly)
 		{
-			return left.value == right.value;
+			NamespaceName = namespaceName;
+			RequestingAssembly = requestingAssembly;
+			ResolvedAssemblies = new Collection<Assembly> ();
 		}
 
-		public static bool operator != (EventRegistrationToken left, EventRegistrationToken right)
-		{
-			return left.value != right.value;
+		public string NamespaceName {
+			get;
+			private set;
 		}
 
-		public override bool Equals (object obj)
-		{
-			return ((EventRegistrationToken)obj).value == value;
+		public Assembly RequestingAssembly {
+			get;
+			private set;
 		}
 
-		public override int GetHashCode ()
-		{
-			return unchecked ((int)value);
+		public Collection<Assembly> ResolvedAssemblies {
+			get;
+			private set;
 		}
 	}
 }

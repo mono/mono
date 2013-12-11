@@ -1,6 +1,6 @@
 #if NET_4_5
 //
-// EventRegistrationToken.cs
+// IActivationFactory.cs
 //
 // Author:
 //       Martin Baulig <martin.baulig@xamarin.com>
@@ -29,31 +29,10 @@ using System.Runtime.CompilerServices;
 
 namespace System.Runtime.InteropServices.WindowsRuntime
 {
-	public struct EventRegistrationToken
+	[Guid("00000035-0000-0000-C000-000000000046")]
+	public interface IActivationFactory
 	{
-#pragma warning disable 0649
-		long value;
-#pragma warning restore 0649
-
-		public static bool operator == (EventRegistrationToken left, EventRegistrationToken right)
-		{
-			return left.value == right.value;
-		}
-
-		public static bool operator != (EventRegistrationToken left, EventRegistrationToken right)
-		{
-			return left.value != right.value;
-		}
-
-		public override bool Equals (object obj)
-		{
-			return ((EventRegistrationToken)obj).value == value;
-		}
-
-		public override int GetHashCode ()
-		{
-			return unchecked ((int)value);
-		}
+		object ActivateInstance ();
 	}
 }
 #endif
