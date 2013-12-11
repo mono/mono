@@ -1,6 +1,6 @@
 #if NET_4_5
 //
-// EventRegistrationToken.cs
+// EventRegistrationTokenTable.cs
 //
 // Author:
 //       Martin Baulig <martin.baulig@xamarin.com>
@@ -29,31 +29,40 @@ using System.Runtime.CompilerServices;
 
 namespace System.Runtime.InteropServices.WindowsRuntime
 {
-	public struct EventRegistrationToken
+	[MonoTODO]
+	public sealed class EventRegistrationTokenTable<T>
+		where T : class
 	{
-#pragma warning disable 0649
-		long value;
-#pragma warning restore 0649
-
-		public static bool operator == (EventRegistrationToken left, EventRegistrationToken right)
+		public EventRegistrationTokenTable ()
 		{
-			return left.value == right.value;
+			throw new NotImplementedException ();
 		}
 
-		public static bool operator != (EventRegistrationToken left, EventRegistrationToken right)
-		{
-			return left.value != right.value;
+		public T InvocationList {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 
-		public override bool Equals (object obj)
+		public EventRegistrationToken AddEventHandler (T handler)
 		{
-			return ((EventRegistrationToken)obj).value == value;
+			throw new NotImplementedException ();
 		}
 
-		public override int GetHashCode ()
+		public static EventRegistrationTokenTable<T> GetOrCreateEventRegistrationTokenTable(ref EventRegistrationTokenTable<T> refEventTable)
 		{
-			return unchecked ((int)value);
+			throw new NotImplementedException ();
+		}
+
+		public void RemoveEventHandler (T handler)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void RemoveEventHandler (EventRegistrationToken token)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }
 #endif
+

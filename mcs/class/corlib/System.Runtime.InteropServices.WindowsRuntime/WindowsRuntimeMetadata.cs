@@ -1,6 +1,6 @@
 #if NET_4_5
 //
-// EventRegistrationToken.cs
+// WindowsRuntimeMetadata.cs
 //
 // Author:
 //       Martin Baulig <martin.baulig@xamarin.com>
@@ -25,35 +25,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace System.Runtime.InteropServices.WindowsRuntime
 {
-	public struct EventRegistrationToken
+	[MonoTODO]
+	public static class WindowsRuntimeMetadata
 	{
-#pragma warning disable 0649
-		long value;
-#pragma warning restore 0649
-
-		public static bool operator == (EventRegistrationToken left, EventRegistrationToken right)
+		public static IEnumerable<string> ResolveNamespace (string namespaceName, IEnumerable<string> packageGraphFilePaths)
 		{
-			return left.value == right.value;
+			throw new NotImplementedException ();
 		}
 
-		public static bool operator != (EventRegistrationToken left, EventRegistrationToken right)
+		public static IEnumerable<string> ResolveNamespace (string namespaceName, string windowsSdkFilePath, IEnumerable<string> packageGraphFilePaths)
 		{
-			return left.value != right.value;
+			throw new NotImplementedException ();
 		}
-
-		public override bool Equals (object obj)
-		{
-			return ((EventRegistrationToken)obj).value == value;
-		}
-
-		public override int GetHashCode ()
-		{
-			return unchecked ((int)value);
-		}
+		
+#pragma warning disable 0067
+		public static event EventHandler<DesignerNamespaceResolveEventArgs> DesignerNamespaceResolve;
+		public static event EventHandler<NamespaceResolveEventArgs> ReflectionOnlyNamespaceResolve;
+#pragma warning restore 0067
 	}
 }
 #endif
+

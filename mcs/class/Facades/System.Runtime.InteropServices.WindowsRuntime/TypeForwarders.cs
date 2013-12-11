@@ -19,5 +19,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 // 
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.InteropServices.WindowsRuntime.DefaultInterfaceAttribute))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.InteropServices.WindowsRuntime.EventRegistrationToken))]
-	
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.InteropServices.WindowsRuntime.EventRegistrationTokenTable<>))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.InteropServices.WindowsRuntime.IActivationFactory))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.InteropServices.WindowsRuntime.InterfaceImplementedInVersionAttribute))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.InteropServices.WindowsRuntime.ReadOnlyArrayAttribute))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.InteropServices.WindowsRuntime.ReturnValueNameAttribute))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.InteropServices.WindowsRuntime.WindowsRuntimeMarshal))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.InteropServices.WindowsRuntime.WriteOnlyArrayAttribute))]
