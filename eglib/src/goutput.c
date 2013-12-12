@@ -28,6 +28,12 @@
 #include <stdlib.h>
 #include <glib.h>
 
+#if G_OS_WIN32
+#include <windows.h>
+#else
+#include <signal.h>
+#endif
+
 /* The current fatal levels, error is always fatal */
 static GLogLevelFlags fatal = G_LOG_LEVEL_ERROR;
 
@@ -127,8 +133,11 @@ g_log_set_fatal_mask (const gchar *log_domain, GLogLevelFlags fatal_mask)
 static void
 explicitly_abort_from_unity ()
 {
-	char **segv = NULL;
-	free (*segv);
+#ifdef G_OS_WIN32
+	RaiseException (EXCEPTION_ACCESS_VIOLATION, 0, 0, NULL);
+#else
+	raise (SIGSEGV);
+#endif
 }
 
 void

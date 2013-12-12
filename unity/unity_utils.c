@@ -8,6 +8,8 @@
 #include <mono/metadata/metadata.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/class-internals.h>
+#include <mono/metadata/object-internals.h>
+#include <mono/metadata/threads.h>
 
 #include <glib.h>
 
@@ -142,4 +144,14 @@ void
 unity_mono_install_memory_callbacks(MonoMemoryCallbacks* callbacks)
 {
 	g_mem_set_callbacks (callbacks);
+}
+
+void mono_unity_thread_clear_domain_fields (void)
+{
+	/*
+	 we need to clear fields that may reference objects living in non-root appdomain
+	 since the objects will live but their vtables will be destroyed when domain is torn down.
+	 */
+	MonoThread* thread = mono_thread_current ();
+	thread->principal = NULL;
 }

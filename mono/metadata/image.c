@@ -916,6 +916,12 @@ do_mono_image_load (MonoImage *image, MonoImageOpenStatus *status,
 
 	if (!mono_verifier_verify_table_data (image, NULL))
 		goto invalid_image;
+	
+#ifndef USE_COREE
+	/* if the last bit is not set, then the image is mixed mode with native code */
+	if (!(iinfo->cli_cli_header.ch_flags & 1))
+		goto invalid_image;
+#endif
 
 	mono_image_load_names (image);
 
