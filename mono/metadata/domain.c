@@ -238,7 +238,7 @@ jit_info_table_free (MonoJitInfoTable *table)
 	int num_chunks = table->num_chunks;
 	MonoDomain *domain = table->domain;
 
-	mono_domain_lock (domain);
+	mono_domain_jit_code_hash_lock (domain);
 
 	table->domain->num_jit_info_tables--;
 	if (table->domain->num_jit_info_tables <= 1) {
@@ -274,7 +274,7 @@ jit_info_table_free (MonoJitInfoTable *table)
 		g_free (chunk);
 	}
 
-	mono_domain_unlock (domain);
+	mono_domain_jit_code_hash_unlock (domain);
 
 	g_free (table);
 }
@@ -382,11 +382,12 @@ mono_jit_info_table_find (MonoDomain *domain, char *addr)
 	MonoImage *image;
 
 	/* 
-	 * Take the domain lock instead of using hazard pointers.
+	 * Take the jit code hash lock instead of using hazard pointers.
 	 * This prevents issues with corrupt tls data after 
 	 * reloading domains with child threads running.
+	 * TOCONSIDER: create a separate lock for jit info table, instead of sharing jit code hash lock?
 	 */
-	mono_domain_lock (domain);
+	mono_domain_jit_code_hash_lock (domain);
 
 	++mono_stats.jit_info_table_lookup_count;
 
@@ -422,7 +423,7 @@ mono_jit_info_table_find (MonoDomain *domain, char *addr)
 			}
 			if ((gint8*)addr >= (gint8*)ji->code_start
 					&& (gint8*)addr < (gint8*)ji->code_start + ji->code_size) {
-				mono_domain_unlock (domain);
+				mono_domain_jit_code_hash_unlock (domain);
 				return ji;
 			}
 
@@ -438,7 +439,7 @@ mono_jit_info_table_find (MonoDomain *domain, char *addr)
 	} while (chunk_pos < table->num_chunks);
 
  not_found:
-	mono_domain_unlock (domain);
+	mono_domain_jit_code_hash_unlock (domain);
 	ji = NULL;
 
 	/* Maybe its an AOT module */
@@ -711,7 +712,7 @@ mono_jit_info_table_add (MonoDomain *domain, MonoJitInfo *ji)
 
 	g_assert (ji->method != NULL);
 
-	mono_domain_lock (domain);
+	mono_domain_jit_code_hash_lock (domain);
 
 	++mono_stats.jit_info_table_insert_count;
 
@@ -771,7 +772,7 @@ mono_jit_info_table_add (MonoDomain *domain, MonoJitInfo *ji)
 	/* Debugging code, should be removed. */
 	//jit_info_table_check (table);
 
-	mono_domain_unlock (domain);
+	mono_domain_jit_code_hash_unlock (domain);
 }
 
 static MonoJitInfo*
@@ -809,7 +810,7 @@ mono_jit_info_table_remove (MonoDomain *domain, MonoJitInfo *ji)
 	gpointer start = ji->code_start;
 	int chunk_pos, pos;
 
-	mono_domain_lock (domain);
+	mono_domain_jit_code_hash_lock (domain);
 	table = domain->jit_info_table;
 
 	++mono_stats.jit_info_table_remove_count;
@@ -847,7 +848,7 @@ mono_jit_info_table_remove (MonoDomain *domain, MonoJitInfo *ji)
 
 	mono_jit_info_free_or_queue (domain, ji);
 
-	mono_domain_unlock (domain);
+	mono_domain_jit_code_hash_unlock (domain);
 }
 
 static MonoAotModuleInfoTable*

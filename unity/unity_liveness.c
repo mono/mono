@@ -377,6 +377,9 @@ void mono_unity_liveness_calculation_from_statics(LivenessState* liveness_state)
 				continue;
 			if(!mono_field_can_contain_references(field))
 				continue;
+			// shortcut check for special statics
+			if (field->offset == -1)
+				continue;
 
 			if (MONO_TYPE_ISSTRUCT(field->type))
 			{
@@ -391,12 +394,6 @@ void mono_unity_liveness_calculation_from_statics(LivenessState* liveness_state)
 				{
 					mono_traverse_object_internal((MonoObject*)offseted, TRUE, field->type->data.klass, liveness_state);
 				}
-				continue;
-			}
-
-			if (field->offset == -1)
-			{
-				//g_assert_not_reached ();
 			}
 			else
 			{
