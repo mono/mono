@@ -65,7 +65,7 @@ namespace System.Runtime.CompilerServices
 					return;
 				}
 
-				if (TaskScheduler.Current == TaskScheduler.Default) {
+				if (TaskScheduler.IsDefault) {
 					//
 					// Pass continuation as an argument to avoid allocating
 					// hoisting class
