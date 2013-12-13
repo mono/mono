@@ -110,18 +110,26 @@ namespace System.Threading.Tasks
 		}
 	}
 
-	class ActionContinuation : IContinuation
+	class AwaiterActionContinuation : IContinuation
 	{
 		readonly Action action;
 
-		public ActionContinuation (Action action)
+		public AwaiterActionContinuation (Action action)
 		{
 			this.action = action;
 		}
 
 		public void Execute ()
 		{
-			action ();
+			//
+			// Continuation can be inlined only when the current context allows it. This is different to awaiter setup
+			// because the context where the awaiter task is set to completed can be anywhere (due to TaskCompletionSource)
+			//
+			if ((SynchronizationContext.Current == null || SynchronizationContext.Current.GetType () == typeof (SynchronizationContext)) && TaskScheduler.IsDefault) {
+				action ();
+			} else {
+				ThreadPool.UnsafeQueueUserWorkItem (l => ((Action) l) (), action);
+			}
 		}
 	}
 
