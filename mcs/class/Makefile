@@ -197,6 +197,7 @@ net_4_0_dirs := \
 	System.Reactive.Runtime.Remoting \
 	System.Reactive.Windows.Forms \
 	System.Reactive.Windows.Threading \
+	System.Reactive.Observable.Aliases \
 	System.Reactive.Experimental \
 	System.Reactive.Debugger \
 	Microsoft.Web.Infrastructure \
