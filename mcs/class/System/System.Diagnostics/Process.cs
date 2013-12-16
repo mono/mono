@@ -918,8 +918,7 @@ namespace System.Diagnostics {
 								  IntPtr stderr,
 								  ref ProcInfo proc_info);
 
-		private static bool Start_shell (ProcessStartInfo startInfo,
-						 Process process)
+		private static bool Start_shell (ProcessStartInfo startInfo)
 		{
 			ProcInfo proc_info=new ProcInfo();
 			bool ret;
@@ -945,11 +944,6 @@ namespace System.Diagnostics {
 			if (!ret) {
 				throw new Win32Exception (-proc_info.pid);
 			}
-
-			process.process_handle = proc_info.process_handle;
-			process.pid = proc_info.pid;
-
-			process.StartExitCallbackIfNeeded ();
 
 			return(ret);
 		}
@@ -1162,7 +1156,7 @@ namespace System.Diagnostics {
 			if (startInfo.UseShellExecute) {
 				if (!String.IsNullOrEmpty (startInfo.UserName))
 					throw new InvalidOperationException ("UserShellExecute must be false if an explicit UserName is specified when starting a process");
-				return (Start_shell (startInfo, process));
+				return (Start_shell (startInfo));
 			} else {
 				return (Start_noshell (startInfo, process));
 			}
@@ -1182,8 +1176,11 @@ namespace System.Diagnostics {
 			if (startInfo == null)
 				throw new ArgumentNullException ("startInfo");
 
-			Process process=new Process();
-			process.StartInfo = startInfo;
+			Process process = null;
+			if (!startInfo.UseShellExecute) {
+				process = new Process();
+				process.StartInfo = startInfo;
+			}
 			if (Start_common(startInfo, process))
 				return process;
 			return null;
