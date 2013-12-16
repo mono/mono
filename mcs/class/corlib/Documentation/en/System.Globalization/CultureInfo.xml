@@ -23,15 +23,9 @@
   </Interfaces>
   <Docs>
     <summary>
-      <para> Reserved for future use.</para>
+      <para>Represents locale information used by all culture dependendent types and methods.</para>
     </summary>
     <remarks>
-      <para>
-        <block subset="none" type="note">This class is 
-      provided in order to implement the abstract methods that require it in the
-      reflection library.
-   </block>
-      </para>
     </remarks>
   </Docs>
   <Members>
@@ -225,9 +219,9 @@
         <ReturnType>System.Globalization.CultureInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>CultureInfo that represents the culture used by the current thread.</summary>
+        <value></value>
+        <remarks>Initial value for each thread is determined using following rules. When <see cref="P:System.Globalization.CultureInfo.DefaultThreadCurrentCulture" /> is set its value is used otherwise the framework uses <see cref="M:System.Globalization.CultureInfo.CreateSpecificCulture" /> method to map system locate to framework culture name. This operation may fail in rare cases when system locale is set to invalid value or to value which cannot be translated to framework culture name. In such case <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> values is used.</remarks>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
