@@ -364,6 +364,9 @@ struct _MonoThread {
 	gpointer unused4;
 	gpointer unused5;
 	gpointer unused6;
+	MonoObject *threadstart;
+	int managed_id;
+	MonoObject* principal;
 };
 
 typedef struct {

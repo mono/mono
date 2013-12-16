@@ -342,18 +342,18 @@ ptr_t arg;
 /* Case 564033 */
 #if UNITY_CLEAR_LARGE_STACK
     if (++random_no % 13 == 0) {
-	limit = sp;
-	MAKE_HOTTER(limit, BIG_CLEAR_SIZE*sizeof(word));
-        limit &= ~0xf;	/* Make it sufficiently aligned for assembly	*/
-        		/* implementations of GC_clear_stack_inner.	*/
-	return GC_clear_stack_inner(arg, limit);
-    } else {
-#endif
-	BZERO(dummy, SMALL_CLEAR_SIZE*sizeof(word));
-	return arg;
-#if UNITY_CLEAR_LARGE_STACK
+        limit = sp;
+        MAKE_HOTTER(limit, BIG_CLEAR_SIZE*sizeof(word));
+        limit &= ~0xf;  /* Make it sufficiently aligned for assembly	*/
+                        /* implementations of GC_clear_stack_inner.	*/
+        return GC_clear_stack_inner(arg, limit);
     }
+    else
 #endif
+    {
+        BZERO(dummy, SMALL_CLEAR_SIZE*sizeof(word));
+        return arg;
+    }
 # else
     if (GC_gc_no > GC_stack_last_cleared) {
         /* Start things over, so we clear the entire stack again */
