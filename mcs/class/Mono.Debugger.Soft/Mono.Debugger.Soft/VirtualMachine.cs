@@ -21,8 +21,9 @@ namespace Mono.Debugger.Soft
 		internal Connection conn;
 
 		VersionInfo version;
+		ISuspendPolicyProvider suspendPolicyProvider;
 
-		internal VirtualMachine (ITargetProcess process, Connection conn) : base () {
+		internal VirtualMachine (ITargetProcess process, Connection conn, ISuspendPolicyProvider suspendPolicyProvider) : base () {
 			SetVirtualMachine (this);
 			queue = new Queue ();
 			queue_monitor = new Object ();
@@ -30,6 +31,7 @@ namespace Mono.Debugger.Soft
 			requests = new Dictionary <int, EventRequest> ();
 			this.conn = conn;
 			this.process = process;
+			this.suspendPolicyProvider = suspendPolicyProvider;
 			conn.ErrorHandler += ErrorHandler;
 		}
 
@@ -230,7 +232,7 @@ namespace Mono.Debugger.Soft
 			foreach (EventType etype in events) {
 				if (etype == EventType.Breakpoint)
 					throw new ArgumentException ("Breakpoint events cannot be requested using EnableEvents", "events");
-				conn.EnableEvent (etype, SuspendPolicy.All, null);
+				conn.EnableEvent (etype, suspendPolicyProvider.ProvideFor(etype), null);
 			}
 		}
 
