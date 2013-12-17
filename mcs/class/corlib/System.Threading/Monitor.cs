@@ -227,10 +227,12 @@ namespace System.Threading
 #endif
 
 #if NET_4_5
-		[MonoTODO]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static bool Monitor_test_owner (object obj);
+		
 		public static bool IsEntered (object obj)
 		{
-			throw new NotImplementedException ();
+			return Monitor_test_owner(obj);
 		}
 #endif
 	}
