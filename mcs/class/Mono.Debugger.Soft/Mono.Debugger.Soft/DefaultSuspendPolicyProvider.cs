@@ -7,5 +7,4 @@ namespace Mono.Debugger.Soft
 			return SuspendPolicy.All;
 		}
 	}
-	
 }
