@@ -73,3 +73,5 @@ Mono.Debugger.Soft/ITargetProcess.cs
 Mono.Debugger.Soft/AbsentInformationException.cs
 Mono.Debugger.Soft/UserBreakEvent.cs
 Mono.Debugger.Soft/UserLogEvent.cs
+Mono.Debugger.Soft/ISuspendPolicyProvider.cs
+Mono.Debugger.Soft/DefaultSuspendPolicyProvider.cs
