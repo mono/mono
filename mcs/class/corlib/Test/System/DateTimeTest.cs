@@ -12,12 +12,6 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Globalization;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Runtime.Serialization;
 
 using NUnit.Framework;
 
