@@ -484,33 +484,22 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public override void Import (string fileName) 
 		{
-			byte[] rawData = Load (fileName);
+			byte[] rawData = File.ReadAllBytes (fileName);
 			Import (rawData, (string)null, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		[MonoTODO ("missing KeyStorageFlags support")]
 		public override void Import (string fileName, string password, X509KeyStorageFlags keyStorageFlags) 
 		{
-			byte[] rawData = Load (fileName);
+			byte[] rawData = File.ReadAllBytes (fileName);
 			Import (rawData, password, keyStorageFlags);
 		}
 
 		[MonoTODO ("SecureString is incomplete")]
 		public override void Import (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags) 
 		{
-			byte[] rawData = Load (fileName);
+			byte[] rawData = File.ReadAllBytes (fileName);
 			Import (rawData, (string)null, keyStorageFlags);
-		}
-
-		private static byte[] Load (string fileName)
-		{
-			byte[] data = null;
-			using (FileStream fs = File.OpenRead (fileName)) {
-				data = new byte [fs.Length];
-				fs.Read (data, 0, data.Length);
-				fs.Close ();
-			}
-			return data;
 		}
 
 		public override void Reset () 
@@ -654,7 +643,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (fileName.Length == 0)
 				throw new ArgumentException ("fileName");
 
-			byte[] data = Load (fileName);
+			byte[] data = File.ReadAllBytes (fileName);
 			return GetCertContentType (data);
 		}
 
