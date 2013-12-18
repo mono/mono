@@ -6,6 +6,7 @@
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2004-2006,2008 Novell, Inc (http://www.novell.com)
+// Copyright 2013 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Text;
@@ -249,7 +250,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		[ComVisible (false)]
 		public virtual void Import (string fileName)
 		{
-			byte[] rawData = Load (fileName);
+			byte[] rawData = File.ReadAllBytes (fileName);
 			Import (rawData, (string)null, X509KeyStorageFlags.DefaultKeySet);
 		}
 
@@ -257,14 +258,14 @@ namespace System.Security.Cryptography.X509Certificates {
 		[ComVisible (false)]
 		public virtual void Import (string fileName, string password, X509KeyStorageFlags keyStorageFlags)
 		{
-			byte[] rawData = Load (fileName);
+			byte[] rawData = File.ReadAllBytes (fileName);
 			Import (rawData, password, keyStorageFlags);
 		}
 
 		[MonoTODO ("SecureString support is incomplete, missing KeyStorageFlags support")]
 		public virtual void Import (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
-			byte[] rawData = Load (fileName);
+			byte[] rawData = File.ReadAllBytes (fileName);
 			Import (rawData, (string)null, keyStorageFlags);
 		}
 
