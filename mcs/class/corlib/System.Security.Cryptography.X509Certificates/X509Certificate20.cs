@@ -200,6 +200,29 @@ namespace System.Security.Cryptography.X509Certificates {
 			Import (rawData, (string)null, X509KeyStorageFlags.DefaultKeySet);
 		}
 
+		private Mono.Security.X509.X509Certificate ImportPkcs12 (byte[] rawData, string password)
+		{
+			var pfx = (password == null) ? new Mono.Security.X509.PKCS12 (rawData) : new Mono.Security.X509.PKCS12 (rawData, password);
+			if (pfx.Certificates.Count == 0) {
+				// no certificate was found
+				return null;
+			} else if (pfx.Keys.Count == 0) {
+				// no key were found - pick the first certificate
+				return pfx.Certificates [0];
+			} else {
+				// find the certificate that match the first key
+				var keypair = (pfx.Keys [0] as AsymmetricAlgorithm);
+				string pubkey = keypair.ToXmlString (false);
+				foreach (var c in pfx.Certificates) {
+					if ((c.RSA != null) && (pubkey == c.RSA.ToXmlString (false)))
+						return c;
+					if ((c.DSA != null) && (pubkey == c.DSA.ToXmlString (false)))
+						return c;
+				}
+				return pfx.Certificates [0]; // no match, pick first certificate without keys
+			}
+		}
+
 		[MonoTODO ("missing KeyStorageFlags support")]
 		[ComVisible (false)]
 		public virtual void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
@@ -211,11 +234,7 @@ namespace System.Security.Cryptography.X509Certificates {
 				}
 				catch (Exception e) {
 					try {
-						PKCS12 pfx = new PKCS12 (rawData);
-						if (pfx.Certificates.Count > 0)
-							x509 = pfx.Certificates [0];
-						else
-							x509 = null;
+						x509 = ImportPkcs12 (rawData, null);
 					}
 					catch {
 						string msg = Locale.GetText ("Unable to decode certificate.");
@@ -226,12 +245,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			} else {
 				// try PKCS#12
 				try {
-					PKCS12 pfx = new PKCS12 (rawData, password);
-					if (pfx.Certificates.Count > 0) {
-						x509 = pfx.Certificates [0];
-					} else {
-						x509 = null;
-					}
+					x509 = ImportPkcs12 (rawData, password);
 				}
 				catch {
 					// it's possible to supply a (unrequired/unusued) password
