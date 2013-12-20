@@ -5,12 +5,6 @@ NO_TESTS = yes
 
 include xbuild.make
 
-INSTALL_FRAMEWORK_VERSION = $(FRAMEWORK_VERSION)
-
-ifeq (4.5, $(FRAMEWORK_VERSION))
-INSTALL_FRAMEWORK_VERSION = 4.0
-endif
-
 LOCAL_MCS_FLAGS = -r:$(XBUILD_FRAMEWORK) -r:$(XBUILD_UTILITIES) -r:$(XBUILD_ENGINE)
 PROGRAM = xbuild.exe
 
@@ -26,23 +20,21 @@ install-local:	install-extras
 WEBAPP_DIR = Microsoft/VisualStudio
 SILVERLIGHT_DIR = $(mono_libdir)/mono/xbuild/Microsoft/Silverlight
 PORTABLE_DIR = $(mono_libdir)/mono/xbuild/Microsoft/Portable
-EXTRAS_DIR = $(mono_libdir)/mono/$(INSTALL_FRAMEWORK_VERSION)
+
 install-extras: 
-	$(MKINSTALLDIRS) $(DESTDIR)$(EXTRAS_DIR) $(DESTDIR)$(REDISTLIST_DIR) $(DESTDIR)$(XBUILD_FRAMEWORKS_DIR)/v3.0/RedistList $(DESTDIR)$(XBUILD_FRAMEWORKS_DIR)/v4.0/RedistList $(DESTDIR)$(mono_libdir)/mono/3.5 $(DESTDIR)$(mono_libdir)/mono/4.0
-	$(INSTALL_DATA) xbuild/xbuild.rsp $(DESTDIR)$(mono_libdir)/mono/$(FRAMEWORK_VERSION)
-	$(INSTALL_DATA) xbuild/$(INSTALL_FRAMEWORK_VERSION)/Microsoft.Common.tasks $(DESTDIR)$(EXTRAS_DIR)
-	$(INSTALL_DATA) xbuild/$(INSTALL_FRAMEWORK_VERSION)/Microsoft.Common.targets $(DESTDIR)$(EXTRAS_DIR)
-	$(INSTALL_DATA) xbuild/Microsoft.Build.xsd $(DESTDIR)$(EXTRAS_DIR)
-	$(INSTALL_DATA) xbuild/2.0/Microsoft.Common.targets $(DESTDIR)$(mono_libdir)/mono/2.0
-	$(INSTALL_DATA) xbuild/3.5/Microsoft.Common.targets $(DESTDIR)$(mono_libdir)/mono/3.5
-	$(INSTALL_DATA) xbuild/Microsoft.CSharp.targets $(DESTDIR)$(EXTRAS_DIR)
-	$(INSTALL_DATA) xbuild/Microsoft.VisualBasic.targets $(DESTDIR)$(EXTRAS_DIR)
+	$(MKINSTALLDIRS) $(DESTDIR)$(XBUILD_BIN_DIR) $(DESTDIR)$(REDISTLIST_DIR) $(DESTDIR)$(XBUILD_FRAMEWORKS_DIR)/v3.0/RedistList $(DESTDIR)$(XBUILD_FRAMEWORKS_DIR)/v4.0/RedistList $(DESTDIR)$(mono_libdir)/mono/3.5 $(DESTDIR)$(mono_libdir)/mono/4.0
+	$(INSTALL_DATA) xbuild/xbuild.rsp $(DESTDIR)$(XBUILD_BIN_DIR)
+	$(INSTALL_DATA) xbuild/$(XBUILD_VERSION)/Microsoft.Common.tasks $(DESTDIR)$(XBUILD_BIN_DIR)
+	$(INSTALL_DATA) xbuild/$(XBUILD_VERSION)/Microsoft.Common.targets $(DESTDIR)$(XBUILD_BIN_DIR)
+	$(INSTALL_DATA) xbuild/Microsoft.Build.xsd $(DESTDIR)$(XBUILD_BIN_DIR)
+	$(INSTALL_DATA) xbuild/Microsoft.CSharp.targets $(DESTDIR)$(XBUILD_BIN_DIR)
+	$(INSTALL_DATA) xbuild/Microsoft.VisualBasic.targets $(DESTDIR)$(XBUILD_BIN_DIR)
 	$(INSTALL_DATA) xbuild/$(FRAMEWORK_VERSION)/FrameworkList.xml $(DESTDIR)$(REDISTLIST_DIR)
 	$(INSTALL_DATA) xbuild/4.0/FrameworkList.xml $(DESTDIR)$(XBUILD_FRAMEWORKS_DIR)/v4.0/RedistList/FrameworkList.xml
 	$(INSTALL_DATA) xbuild/FrameworkList-3.0.xml $(DESTDIR)$(XBUILD_FRAMEWORKS_DIR)/v3.0/RedistList/FrameworkList.xml
-	$(MKINSTALLDIRS) $(DESTDIR)$(EXTRAS_DIR)/MSBuild
-	$(INSTALL_DATA) xbuild/MSBuild/Microsoft.Build.CommonTypes.xsd $(DESTDIR)$(EXTRAS_DIR)/MSBuild
-	$(INSTALL_DATA) xbuild/MSBuild/Microsoft.Build.Core.xsd $(DESTDIR)$(EXTRAS_DIR)/MSBuild
+	$(MKINSTALLDIRS) $(DESTDIR)$(XBUILD_BIN_DIR)/MSBuild
+	$(INSTALL_DATA) xbuild/MSBuild/Microsoft.Build.CommonTypes.xsd $(DESTDIR)$(XBUILD_BIN_DIR)/MSBuild
+	$(INSTALL_DATA) xbuild/MSBuild/Microsoft.Build.Core.xsd $(DESTDIR)$(XBUILD_BIN_DIR)/MSBuild
 	$(MKINSTALLDIRS) $(DESTDIR)$(mono_libdir)/mono/xbuild
 	$(MKINSTALLDIRS) $(DESTDIR)$(mono_libdir)/mono/xbuild/$(WEBAPP_DIR)/v9.0/WebApplications
 	$(INSTALL_DATA) xbuild/Microsoft.WebApplication.targets $(DESTDIR)$(mono_libdir)/mono/xbuild/$(WEBAPP_DIR)/v9.0/WebApplications
