@@ -3,24 +3,15 @@ SUBDIRS =
 include ../../build/rules.make
 NO_TESTS = yes
 
-BUILD_FRAMEWORK = Microsoft.Build.Framework.dll
-BUILD_ENGINE = Microsoft.Build.Engine.dll
+include xbuild.make
+
 INSTALL_FRAMEWORK_VERSION = $(FRAMEWORK_VERSION)
 
-ifeq (3.5, $(FRAMEWORK_VERSION))
-NAME_SUFFIX = .v3.5
-ASSEMBLY_VERSION = 3.5.0.0
-BUILD_FRAMEWORK := $(topdir)/class/lib/$(PROFILE)/$(BUILD_FRAMEWORK)
-BUILD_ENGINE := $(topdir)/class/lib/$(PROFILE)/$(BUILD_ENGINE)
-else
-ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
-NAME_SUFFIX = .v4.0
-ASSEMBLY_VERSION = 4.0.0.0
+ifeq (4.5, $(FRAMEWORK_VERSION))
 INSTALL_FRAMEWORK_VERSION = 4.0
 endif
-endif
 
-LOCAL_MCS_FLAGS = -r:$(BUILD_FRAMEWORK) -r:Microsoft.Build.Utilities$(NAME_SUFFIX).dll -r:$(BUILD_ENGINE)
+LOCAL_MCS_FLAGS = -r:$(XBUILD_FRAMEWORK) -r:$(XBUILD_UTILITIES) -r:$(XBUILD_ENGINE)
 PROGRAM = xbuild.exe
 
 include ../../build/executable.make

@@ -2,14 +2,10 @@ thisdir = class/Microsoft.Build
 SUBDIRS = 
 include ../../build/rules.make
 
-LIBRARY = Microsoft.Build.dll
+XBUILD_DIR=$(topdir)/tools/xbuild
+include $(XBUILD_DIR)/xbuild.make
 
-ifneq (4, $(FRAMEWORK_VERSION_MAJOR))
-LIBRARY_NAME = dummy-Microsoft.Build.dll
-NO_INSTALL = yes
-NO_TEST = yes
-NO_SIGN_ASSEMBLY = yes
-endif
+LIBRARY = Microsoft.Build.dll
 
 LIB_MCS_FLAGS = \
 	/r:$(corlib)				\
@@ -39,6 +35,5 @@ BUILT_SOURCES = $(EXPR_PARSER).cs
 include ../../build/library.make
 
 export TESTING_MONO=a
-XBUILD_DIR=../../tools/xbuild
 XBUILD_FRAMEWORK_FOLDERS_PATH=xbuild-testing
 include $(XBUILD_DIR)/xbuild_targets.make

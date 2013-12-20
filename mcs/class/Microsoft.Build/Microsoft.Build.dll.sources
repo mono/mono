@@ -1,6 +1,7 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/MonoTODOAttribute.cs
+../../tools/xbuild/XBuildConsts.cs
 ../Microsoft.Build.Engine/Microsoft.Build.BuildEngine/DirectoryScanner.cs
 ../Microsoft.Build.Engine/Microsoft.Build.BuildEngine/EventSource.cs
 ../Microsoft.Build.Engine/Microsoft.Build.BuildEngine/ColorSetter.cs

@@ -1,6 +1,7 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/MonoTODOAttribute.cs
+../../tools/xbuild/XBuildConsts.cs
 Microsoft.Build.Tasks/AL.cs
 Microsoft.Build.Tasks/AppDomainIsolatedTaskExtension.cs
 Microsoft.Build.Tasks/AspNetCompiler.cs

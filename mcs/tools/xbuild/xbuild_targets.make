@@ -1,14 +1,16 @@
+XBUILD_TARGETS_DIR=$(topdir)/tools/xbuild/xbuild
+
 test-local: copy-targets
 
 copy-targets:
 	for p in net_2_0 net_3_5 net_4_0; do \
-		cp $(XBUILD_DIR)/xbuild/Microsoft.CSharp.targets $(topdir)/class/lib/$$p; \
-		cp $(XBUILD_DIR)/xbuild/Microsoft.VisualBasic.targets $(topdir)/class/lib/$$p; \
-		cp $(XBUILD_DIR)/xbuild/Microsoft.Silverlight*.targets $(topdir)/class/lib/$$p; \
+		cp $(XBUILD_TARGETS_DIR)/Microsoft.CSharp.targets $(topdir)/class/lib/$$p; \
+		cp $(XBUILD_TARGETS_DIR)/Microsoft.VisualBasic.targets $(topdir)/class/lib/$$p; \
+		cp $(XBUILD_TARGETS_DIR)/Microsoft.Silverlight*.targets $(topdir)/class/lib/$$p; \
 	done
-	cp $(XBUILD_DIR)/xbuild/2.0/Microsoft.Common.* $(topdir)/class/lib/net_2_0
-	cp $(XBUILD_DIR)/xbuild/3.5/Microsoft.Common.* $(topdir)/class/lib/net_3_5
-	cp $(XBUILD_DIR)/xbuild/4.0/Microsoft.Common.* $(topdir)/class/lib/net_4_0
+	cp $(XBUILD_TARGETS_DIR)/2.0/Microsoft.Common.* $(topdir)/class/lib/net_2_0
+	cp $(XBUILD_TARGETS_DIR)/3.5/Microsoft.Common.* $(topdir)/class/lib/net_3_5
+	cp $(XBUILD_TARGETS_DIR)/4.0/Microsoft.Common.* $(topdir)/class/lib/net_4_0
 
 clean-local: clean-target-files
 

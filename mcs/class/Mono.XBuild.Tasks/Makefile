@@ -2,6 +2,9 @@ thisdir = class/Mono.XBuild.Tasks
 SUBDIRS = 
 include ../../build/rules.make
 
+XBUILD_DIR=$(topdir)/tools/xbuild
+include $(XBUILD_DIR)/xbuild.make
+
 LIBRARY = Mono.XBuild.Tasks.dll
 
 LIB_MCS_FLAGS = \
@@ -10,7 +13,6 @@ LIB_MCS_FLAGS = \
 	/r:System.Xml.dll
 
 export TESTING_MONO=a
-XBUILD_DIR=../../tools/xbuild
 include $(XBUILD_DIR)/xbuild_targets.make
 
 include ../../build/library.make

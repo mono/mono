@@ -1,22 +1,11 @@
 thisdir = class/Microsoft.Build.Tasks
-SUBDIRS = 
+SUBDIRS =
 include ../../build/rules.make
 
-LIBRARY = Microsoft.Build.Tasks.dll
-BUILD_FRAMEWORK = Microsoft.Build.Framework.dll
-BUILD_ENGINE = Microsoft.Build.Engine.dll
-XBUILD_TASKS = Mono.XBuild.Tasks.dll
+XBUILD_DIR=$(topdir)/tools/xbuild
+include $(XBUILD_DIR)/xbuild.make
 
-ifeq (3.5, $(FRAMEWORK_VERSION))
-NAME_SUFFIX = .v3.5
-BUILD_FRAMEWORK := $(topdir)/class/lib/$(PROFILE)/$(BUILD_FRAMEWORK)
-BUILD_ENGINE := $(topdir)/class/lib/$(PROFILE)/$(BUILD_ENGINE)
-XBUILD_TASKS := $(topdir)/class/lib/$(PROFILE)/$(XBUILD_TASKS)
-else
-ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
-NAME_SUFFIX = .v4.0
-endif
-endif
+LIBRARY = Microsoft.Build.Tasks.dll
 
 # Some tests are explicitly testing Microsoft.Build.Tasks.v3.5.dll
 TEST_MONO_PATH = $(topdir)/class/lib/net_3_5$(PLATFORM_PATH_SEPARATOR)$(topdir)/class/lib/net_2_0
@@ -29,16 +18,16 @@ LIB_MCS_FLAGS = \
 	/r:System.Core.dll			\
 	/r:System.Xml.dll			\
 	/r:System.Windows.Forms.dll		\
-	/r:Microsoft.Build.Utilities$(NAME_SUFFIX).dll	\
-	/r:$(BUILD_FRAMEWORK)	\
-	/r:$(BUILD_ENGINE)		\
+	/r:$(XBUILD_UTILITIES)			\
+	/r:$(XBUILD_FRAMEWORK)			\
+	/r:$(XBUILD_ENGINE)			\
 	/r:$(XBUILD_TASKS)
 
 TEST_MCS_FLAGS = \
-	/r:$(BUILD_ENGINE)	\
-	/r:$(BUILD_FRAMEWORK)	\
-	/r:$(XBUILD_TASKS)		\
-	/r:Microsoft.Build.Utilities$(NAME_SUFFIX).dll \
+	/r:$(XBUILD_ENGINE)	\
+	/r:$(XBUILD_FRAMEWORK)	\
+	/r:$(XBUILD_TASKS)	\
+	/r:$(XBUILD_UTILITIES)			\
 	/r:System.Core.dll
 
 EXTRA_DISTFILES = \
@@ -78,7 +67,6 @@ endif
 endif
 
 export TESTING_MONO=a
-XBUILD_DIR=../../tools/xbuild
 include $(XBUILD_DIR)/xbuild_targets.make
 
 include ../../build/library.make

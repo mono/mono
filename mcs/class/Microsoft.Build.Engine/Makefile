@@ -2,30 +2,22 @@ thisdir = class/Microsoft.Build.Engine
 SUBDIRS = 
 include ../../build/rules.make
 
+XBUILD_DIR=$(topdir)/tools/xbuild
+include $(XBUILD_DIR)/xbuild.make
+
 LIBRARY = Microsoft.Build.Engine.dll
 
-BUILD_FRAMEWORK = Microsoft.Build.Framework.dll
-
-ifeq (3.5, $(FRAMEWORK_VERSION))
-NAME_SUFFIX = .v3.5
-BUILD_FRAMEWORK := $(topdir)/class/lib/$(PROFILE)/$(BUILD_FRAMEWORK)
-else
-ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
-NAME_SUFFIX = .v4.0
-endif
-endif
-
 LIB_MCS_FLAGS = \
-	/r:$(corlib)				\
-	/r:System.dll				\
-	/r:System.Core.dll		\
-	/r:System.Xml.dll			\
-	/r:$(BUILD_FRAMEWORK)			\
-	/r:Microsoft.Build.Utilities$(NAME_SUFFIX).dll
+	/r:$(corlib)		\
+	/r:System.dll		\
+	/r:System.Core.dll	\
+	/r:System.Xml.dll	\
+	/r:$(XBUILD_FRAMEWORK)	\
+	/r:$(XBUILD_UTILITIES)
 
 TEST_MCS_FLAGS = \
-	/r:$(BUILD_FRAMEWORK)	\
-	/r:Microsoft.Build.Utilities$(NAME_SUFFIX).dll \
+	/r:$(XBUILD_FRAMEWORK)	\
+	/r:$(XBUILD_UTILITIES) \
 	/r:System.Xml.dll
 
 EXTRA_DISTFILES = \
@@ -35,7 +27,7 @@ EXTRA_DISTFILES = \
 	Test/test-config-file*
 
 Test/resources/TestTasks.dll: Test/resources/TestTasks.cs
-	$(CSCOMPILE) Test/resources/TestTasks.cs /r:Microsoft.Build.Framework.dll /r:Microsoft.Build.Utilities$(NAME_SUFFIX).dll /target:library
+	$(CSCOMPILE) Test/resources/TestTasks.cs /r:$(XBUILD_FRAMEWORK) /r:$(XBUILD_UTILITIES) /target:library
 
 clean-local: clean-test-tasks
 
@@ -57,7 +49,6 @@ endif
 endif
 
 export TESTING_MONO=a
-XBUILD_DIR=../../tools/xbuild
 include $(XBUILD_DIR)/xbuild_targets.make
 
 test-local: Test/resources/TestTasks.dll

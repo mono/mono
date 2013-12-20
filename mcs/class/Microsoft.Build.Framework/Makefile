@@ -2,14 +2,10 @@ thisdir = class/Microsoft.Build.Framework
 SUBDIRS = 
 include ../../build/rules.make
 
-LIBRARY = Microsoft.Build.Framework.dll
+XBUILD_DIR=$(topdir)/tools/xbuild
+include $(XBUILD_DIR)/xbuild.make
 
-ifeq (1.0, $(FRAMEWORK_VERSION))
-LIBRARY_NAME = dummy-Microsoft.Build.Framework.dll
-NO_INSTALL = yes
-NO_TEST = yes
-NO_SIGN_ASSEMBLY = yes
-endif
+LIBRARY = Microsoft.Build.Framework.dll
 
 LIB_MCS_FLAGS = \
 	/r:$(corlib)				\
@@ -18,7 +14,6 @@ LIB_MCS_FLAGS = \
 include ../../build/library.make
 
 export TESTING_MONO=a
-XBUILD_DIR=../../tools/xbuild
 include $(XBUILD_DIR)/xbuild_targets.make
 
 EXTRA_DISTFILES = \
