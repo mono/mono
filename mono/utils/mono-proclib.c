@@ -555,6 +555,7 @@ mono_cpu_count (void)
 	return 1;
 }
 
+#if !defined(HOST_WIN32)
 static void
 get_cpu_times (int cpu_id, gint64 *user, gint64 *systemt, gint64 *irq, gint64 *sirq, gint64 *idle)
 {
@@ -601,6 +602,7 @@ get_cpu_times (int cpu_id, gint64 *user, gint64 *systemt, gint64 *irq, gint64 *s
 	if (idle)
 		*idle = (idle_ticks) * 10000000 / hz;
 }
+#endif
 
 /**
  * mono_cpu_get_data:
@@ -614,6 +616,7 @@ mono_cpu_get_data (int cpu_id, MonoCpuData data, MonoProcessError *error)
 {
 	gint64 value = 0;
 
+#if !defined(HOST_WIN32)
 	if (error)
 		*error = MONO_PROCESS_ERROR_NONE;
 	switch (data) {
@@ -637,6 +640,8 @@ mono_cpu_get_data (int cpu_id, MonoCpuData data, MonoProcessError *error)
 		/* Nothing yet */
 		return 0;
 	}
+#endif
+
 	return value;
 }
 
