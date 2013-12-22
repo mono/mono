@@ -1032,7 +1032,7 @@ namespace Microsoft.Build.BuildEngine {
 			SetExtensionsPathProperties (DefaultExtensionsPath);
 			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectDefaultTargets", DefaultTargets, PropertyType.Reserved));
 			evaluatedProperties.AddProperty (new BuildProperty ("OS", OS, PropertyType.Environment));
-#if NET_4_5
+#if XBUILD_12
 			// see http://msdn.microsoft.com/en-us/library/vstudio/hh162058(v=vs.120).aspx
 			if (effective_tools_version == "12.0") {
 				evaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsPath32", toolsPath, PropertyType.Reserved));

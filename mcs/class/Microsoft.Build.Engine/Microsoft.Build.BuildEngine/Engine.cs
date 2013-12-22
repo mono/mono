@@ -118,7 +118,7 @@ namespace Microsoft.Build.BuildEngine {
 			Toolsets.Add (new Toolset ("4.0",
 						ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version40)));
 #endif
-#if NET_4_5
+#if XBUILD_12
 			Toolsets.Add (new Toolset("12.0",
 						ToolLocationHelper.GetMSBuildInstallPath ("12.0"),
 						ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version40)));
