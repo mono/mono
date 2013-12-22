@@ -38,6 +38,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using Mono.XBuild.Framework;
 using Mono.XBuild.CommandLine;
 
@@ -1036,9 +1037,9 @@ namespace Microsoft.Build.BuildEngine {
 			// see http://msdn.microsoft.com/en-us/library/vstudio/hh162058(v=vs.120).aspx
 			if (effective_tools_version == "12.0") {
 				evaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsPath32", toolsPath, PropertyType.Reserved));
-				string frameworkToolsPath = parentEngine.Toolsets [effective_tools_version].FrameworkToolsPath;
-				if (frameworkToolsPath == null)
-					throw new Exception (String.Format ("Invalid tools version '{0}', no framework tools path set for this.", effective_tools_version));				
+
+				var frameworkToolsPath = ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version451);
+
 				evaluatedProperties.AddProperty (new BuildProperty ("MSBuildFrameworkToolsPath", frameworkToolsPath, PropertyType.Reserved));
 				evaluatedProperties.AddProperty (new BuildProperty ("MSBuildFrameworkToolsPath32", frameworkToolsPath, PropertyType.Reserved));
 			}
