@@ -45,6 +45,7 @@ namespace System.Web
 			mimeTypes.Add ("3dmf", "x-world/x-3dmf");
 			mimeTypes.Add ("3dm", "x-world/x-3dmf");
 			mimeTypes.Add ("aab", "application/x-authorware-bin");
+			mimeTypes.Add ("aac", "audio/mp4");
 			mimeTypes.Add ("aam", "application/x-authorware-map");
 			mimeTypes.Add ("aas", "application/x-authorware-seg");
 			mimeTypes.Add ("abc", "text/vnd.abc");
@@ -257,6 +258,7 @@ namespace System.Web
 			mimeTypes.Add ("mp2", "video/mpeg");
 			mimeTypes.Add ("mp3", "audio/mpeg3");
 			mimeTypes.Add ("mp4", "video/mp4");
+			mimeTypes.Add ("mp4a", "audio/mp4");
 			mimeTypes.Add ("mpa", "audio/mpeg");
 			mimeTypes.Add ("mpc", "application/x-project");
 			mimeTypes.Add ("mpeg", "video/mpeg");
@@ -287,6 +289,8 @@ namespace System.Web
 			mimeTypes.Add ("nws", "message/rfc822");
 			mimeTypes.Add ("oda", "application/oda");
 			mimeTypes.Add ("ods", "application/oleobject");
+			mimeTypes.Add ("oga", "audio/ogg");
+			mimeTypes.Add ("ogg", "audio/ogg");
 			mimeTypes.Add ("ogv", "video/ogg");
 			mimeTypes.Add ("omc", "application/x-omc");
 			mimeTypes.Add ("omcd", "application/x-omcdatamaker");
