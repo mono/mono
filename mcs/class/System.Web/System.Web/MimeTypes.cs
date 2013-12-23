@@ -256,6 +256,7 @@ namespace System.Web
 			mimeTypes.Add ("mov", "video/quicktime");
 			mimeTypes.Add ("mp2", "video/mpeg");
 			mimeTypes.Add ("mp3", "audio/mpeg3");
+			mimeTypes.Add ("mp4", "video/mp4");
 			mimeTypes.Add ("mpa", "audio/mpeg");
 			mimeTypes.Add ("mpc", "application/x-project");
 			mimeTypes.Add ("mpeg", "video/mpeg");
@@ -286,6 +287,7 @@ namespace System.Web
 			mimeTypes.Add ("nws", "message/rfc822");
 			mimeTypes.Add ("oda", "application/oda");
 			mimeTypes.Add ("ods", "application/oleobject");
+			mimeTypes.Add ("ogv", "video/ogg");
 			mimeTypes.Add ("omc", "application/x-omc");
 			mimeTypes.Add ("omcd", "application/x-omcdatamaker");
 			mimeTypes.Add ("omcr", "application/x-omcregerator");
@@ -477,6 +479,7 @@ namespace System.Web
 			mimeTypes.Add ("wcm", "application/vnd.ms-works");
 			mimeTypes.Add ("wdb", "application/vnd.ms-works");
 			mimeTypes.Add ("web", "application/vnd.xara");
+			mimeTypes.Add ("webm", "video/webm");
 			mimeTypes.Add ("wiz", "application/msword");
 			mimeTypes.Add ("wk1", "application/x-123");
 			mimeTypes.Add ("wks", "application/vnd.ms-works");
