@@ -206,7 +206,7 @@ namespace System.Data {
 				if (column == null)
 					throw new ArgumentException ("The column '" + columnName +
 						"' does not belong to the table : " + _table.TableName);
-				return this [column.Ordinal, version];
+				return this [column, version];
 			}
 		}
 
@@ -221,7 +221,19 @@ namespace System.Data {
 					throw new ArgumentException (string.Format (CultureInfo.InvariantCulture,
 						"The column '{0}' does not belong to the table : {1}.",
 						column.ColumnName, _table.TableName));
-				return this [column.Ordinal, version];
+				int recordIndex = IndexFromVersion (version);
+
+				if (column.Expression != String.Empty && _table.Rows.IndexOf (this) != -1) {
+					// FIXME: how does this handle 'version'?
+					// TODO: Can we avoid the Eval each time by using the cached value?
+					object o = column.CompiledExpression.Eval (this);
+					if (o != null && o != DBNull.Value)
+						o = Convert.ChangeType (o, column.DataType);
+					column [recordIndex] = o;
+					return column [recordIndex];
+				}
+
+				return column [recordIndex];
 			}
 		}
 
@@ -255,19 +267,7 @@ namespace System.Data {
 					throw new IndexOutOfRangeException ();
 
 				DataColumn column = _table.Columns [columnIndex];
-				int recordIndex = IndexFromVersion (version);
-
-				if (column.Expression != String.Empty && _table.Rows.IndexOf (this) != -1) {
-					// FIXME: how does this handle 'version'?
-					// TODO: Can we avoid the Eval each time by using the cached value?
-					object o = column.CompiledExpression.Eval (this);
-					if (o != null && o != DBNull.Value)
-						o = Convert.ChangeType (o, column.DataType);
-					column [recordIndex] = o;
-					return column [recordIndex];
-				}
-
-				return column [recordIndex];
+				return this [column, version];
 			}
 		}
 
