@@ -130,4 +130,8 @@ definition correctly.
   <group positions="0-3" match="Oper" javascript="true">
     <!-- Opera -->
   </group>
+
+  <group positions="0-6" match="Uplevel" javascript="true">
+    <!-- Manually set Page.ClientTarget as Uplevel to be consistent with MS.NET -->
+  </group>
 </uplevel>
