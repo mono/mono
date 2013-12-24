@@ -2710,9 +2710,7 @@ namespace System
 			if (values == null)
 				throw new ArgumentNullException ("values");
 			
-			var stringList = new List<string> ();
-			foreach (var v in values)
-				stringList.Add (v);
+			var stringList = new List<string> (values);
 
 			return JoinUnchecked (separator, stringList.ToArray (), 0, stringList.Count);
 		}
