@@ -223,14 +223,13 @@ namespace System.Data {
 						column.ColumnName, _table.TableName));
 				int recordIndex = IndexFromVersion (version);
 
-				if (column.Expression != String.Empty && _table.Rows.IndexOf (this) != -1) {
+				if (!string.IsNullOrEmpty(column.Expression)) {
 					// FIXME: how does this handle 'version'?
 					// TODO: Can we avoid the Eval each time by using the cached value?
 					object o = column.CompiledExpression.Eval (this);
 					if (o != null && o != DBNull.Value)
 						o = Convert.ChangeType (o, column.DataType);
 					column [recordIndex] = o;
-					return column [recordIndex];
 				}
 
 				return column [recordIndex];
