@@ -881,7 +881,7 @@ public class TupleGen
 			Console.WriteLine ("\t\t\tvar t = other as {0};", type_name);
 			Console.WriteLine ("\t\t\tif (t == null) {");
 			Console.WriteLine ("\t\t\t\tif (other == null) return 1;");
-			Console.WriteLine ("\t\t\t\tthrow new ArgumentException ("other");");
+			Console.WriteLine ("\t\t\t\tthrow new ArgumentException (\"other\");");
 			Console.WriteLine ("\t\t\t}");
 			Console.WriteLine ();
 			
