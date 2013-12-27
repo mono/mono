@@ -372,7 +372,11 @@ namespace System.Web.UI.WebControls
 				Page page = Page;
 				string onclick = page != null ? page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true) : String.Empty;
 				onclick = String.Concat ("setTimeout('", onclick.Replace ("\\", "\\\\").Replace ("'", "\\'"), "', 0)");
-				w.AddAttribute (HtmlTextWriterAttribute.Onclick, BuildScriptAttribute ("onclick", onclick));
+				if (common_attrs != null && common_attrs ["onclick"] != null) {
+					onclick = ClientScriptManager.EnsureEndsWithSemicolon (common_attrs ["onclick"]) + onclick;
+					common_attrs.Remove ("onclick");
+				}
+				w.AddAttribute (HtmlTextWriterAttribute.Onclick, onclick);
 			}
 
 			if (AccessKey.Length > 0)
