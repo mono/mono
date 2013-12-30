@@ -25,8 +25,6 @@
 #include "mini.h"
 #include "mini-x86.h"
 
-static guint8* nullified_class_init_trampoline;
-
 /*
  * mono_arch_get_unbox_trampoline:
  * @m: method pointer
@@ -239,6 +237,7 @@ mono_arch_nullify_class_init_trampoline (guint8 *code, mgreg_t *regs)
 {
 	guint8 buf [16];
 	gboolean can_write = mono_breakpoint_clean_code (NULL, code, 6, buf, sizeof (buf));
+	gpointer tramp = mini_get_nullified_class_init_trampoline ();
 
 	if (!can_write)
 		return;
@@ -273,7 +272,7 @@ mono_arch_nullify_class_init_trampoline (guint8 *code, mgreg_t *regs)
 			//VALGRIND_DISCARD_TRANSLATIONS (code, 8);
 		}
 #elif defined(__native_client_codegen__)
-		mono_arch_patch_callsite (code, code + 5, nullified_class_init_trampoline);
+		mono_arch_patch_callsite (code, code + 5, tramp);
 #endif
 	} else if (code [0] == 0x90 || code [0] == 0xeb) {
 		/* Already changed by another thread */
@@ -285,7 +284,7 @@ mono_arch_nullify_class_init_trampoline (guint8 *code, mgreg_t *regs)
 		vtable_slot = get_vcall_slot_addr (code + 5, regs);
 		g_assert (vtable_slot);
 
-		*vtable_slot = nullified_class_init_trampoline;
+		*vtable_slot = tramp;
 	} else {
 			printf ("Invalid trampoline sequence: %x %x %x %x %x %x %x\n", code [0], code [1], code [2], code [3],
 				code [4], code [5], code [6]);
@@ -296,10 +295,7 @@ mono_arch_nullify_class_init_trampoline (guint8 *code, mgreg_t *regs)
 void
 mono_arch_nullify_plt_entry (guint8 *code, mgreg_t *regs)
 {
-	if (mono_aot_only && !nullified_class_init_trampoline)
-		nullified_class_init_trampoline = mono_aot_get_trampoline ("nullified_class_init_trampoline");
-
-	mono_arch_patch_plt_entry (code, NULL, regs, nullified_class_init_trampoline);
+	mono_arch_patch_plt_entry (code, NULL, regs, mini_get_nullified_class_init_trampoline ());
 }
 
 guchar*
@@ -543,11 +539,6 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 		g_free (tramp_name);
 	}
 
-	if (tramp_type == MONO_TRAMPOLINE_CLASS_INIT) {
-		/* Initialize the nullified class init trampoline used in the AOT case */
-		nullified_class_init_trampoline = mono_arch_get_nullified_class_init_trampoline (NULL);
-	}
-
 	return buf;
 }
 
@@ -566,9 +557,6 @@ mono_arch_get_nullified_class_init_trampoline (MonoTrampInfo **info)
 
 	if (info)
 		*info = mono_tramp_info_create ("nullified_class_init_trampoline", buf, code - buf, NULL, NULL);
-
-	if (mono_jit_map_is_enabled ())
-		mono_emit_jit_tramp (buf, code - buf, "nullified_class_init_trampoline");
 
 	return buf;
 }
@@ -873,7 +861,15 @@ mono_arch_create_monitor_enter_trampoline (MonoTrampInfo **info, gboolean aot)
 		x86_branch8 (code, X86_CC_Z, -1, 1);
 
 		/* load MonoInternalThread* into EDX */
-		code = mono_x86_emit_tls_get (code, X86_EDX, mono_thread_get_tls_offset ());
+		if (aot) {
+			/* load_aotconst () puts the result into EAX */
+			x86_mov_reg_reg (code, X86_EDX, X86_EAX, sizeof (mgreg_t));
+			code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_TLS_OFFSET, GINT_TO_POINTER (TLS_KEY_THREAD));
+			code = mono_x86_emit_tls_get_reg (code, X86_EAX, X86_EAX);
+			x86_xchg_reg_reg (code, X86_EAX, X86_EDX, sizeof (mgreg_t));
+		} else {
+			code = mono_x86_emit_tls_get (code, X86_EDX, mono_thread_get_tls_offset ());
+		}
 		/* load TID into EDX */
 		x86_mov_reg_membase (code, X86_EDX, X86_EDX, G_STRUCT_OFFSET (MonoInternalThread, tid), 4);
 
@@ -1006,7 +1002,15 @@ mono_arch_create_monitor_exit_trampoline (MonoTrampInfo **info, gboolean aot)
 
 		/* next case: synchronization is not null */
 		/* load MonoInternalThread* into EDX */
-		code = mono_x86_emit_tls_get (code, X86_EDX, mono_thread_get_tls_offset ());
+		if (aot) {
+			/* load_aotconst () puts the result into EAX */
+			x86_mov_reg_reg (code, X86_EDX, X86_EAX, sizeof (mgreg_t));
+			code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_TLS_OFFSET, GINT_TO_POINTER (TLS_KEY_THREAD));
+			code = mono_x86_emit_tls_get_reg (code, X86_EAX, X86_EAX);
+			x86_xchg_reg_reg (code, X86_EAX, X86_EDX, sizeof (mgreg_t));
+		} else {
+			code = mono_x86_emit_tls_get (code, X86_EDX, mono_thread_get_tls_offset ());
+		}
 		/* load TID into EDX */
 		x86_mov_reg_membase (code, X86_EDX, X86_EDX, G_STRUCT_OFFSET (MonoInternalThread, tid), 4);
 		/* is synchronization->owner == TID */

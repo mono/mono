@@ -40,18 +40,47 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 	[TestFixture]
 	public class EmailAddressAttributeTest
 	{
+		static readonly object[] ValidAddresses = new object[] {
+			null,
+			"\"Abc\\@def\"@example.com",
+			"\"Fred Bloggs\"@example.com",
+			"\"Joe\\\\Blow\"@example.com",
+			"\"Abc@def\"@example.com",
+			"customer/department=shipping@example.com",
+			"$A12345@example.com",
+			"!def!xyz%abc@example.com",
+			"_somename@example.com",
+			"valid.ipv4.addr@[123.1.72.10]",
+			"valid.ipv6.addr@[IPv6:0::1]",
+			"valid.ipv6.addr@[IPv6:2607:f0d0:1002:51::4]",
+			"valid.ipv6.addr@[IPv6:fe80::230:48ff:fe33:bc33]",
+			"valid.ipv6v4.addr@[IPv6:aaaa:aaaa:aaaa:aaaa:aaaa:aaaa:127.0.0.1]",
+		};
+
+		static readonly object[] InvalidAddresses = new object[] {
+			"",
+			123,
+			DateTime.Now,
+			"invalid",
+			"invalid@",
+			"invalid @",
+			"invalid@[555.666.777.888]",
+			"invalid@[IPv6:123456]",
+			"invalid@[127.0.0.1.]",
+			"invalid@[127.0.0.1].",
+			"invalid@[127.0.0.1]x",
+		};
+
 		[Test]
 		public void IsValid ()
 		{
 			var sla = new EmailAddressAttribute ();
 
-			Assert.IsTrue (sla.IsValid (null), "#A1-1");
-			Assert.IsFalse (sla.IsValid (String.Empty), "#A1-2");
-			Assert.IsFalse (sla.IsValid ("string"), "#A1-3");
-			Assert.IsTrue (sla.IsValid ("addr@mail.com"), "#A1-4");
-			Assert.IsTrue (sla.IsValid ("addr@sub.mail.com"), "#A1-5");
-			Assert.IsFalse (sla.IsValid (123), "#A1-6");
-			Assert.IsFalse (sla.IsValid (DateTime.Now), "#A1-7");
+			for (int i = 0; i < ValidAddresses.Length; i++)
+				Assert.IsTrue (sla.IsValid (ValidAddresses[i]), "#A1-{0}", i);
+
+			for (int i = 0; i < InvalidAddresses.Length; i++)
+				Assert.IsFalse (sla.IsValid (InvalidAddresses[i]), "#B1-{0}", i);
 		}
 	}
 #endif

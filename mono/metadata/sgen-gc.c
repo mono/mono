@@ -317,6 +317,7 @@ static int stat_wbarrier_set_field = 0;
 static int stat_wbarrier_set_arrayref = 0;
 static int stat_wbarrier_arrayref_copy = 0;
 static int stat_wbarrier_generic_store = 0;
+static int stat_wbarrier_generic_store_atomic = 0;
 static int stat_wbarrier_set_root = 0;
 static int stat_wbarrier_value_copy = 0;
 static int stat_wbarrier_object_copy = 0;
@@ -400,6 +401,7 @@ sgen_safe_name (void* obj)
  * ######################################################################
  */
 LOCK_DECLARE (gc_mutex);
+gboolean sgen_try_free_some_memory;
 
 #define SCAN_START_SIZE	SGEN_SCAN_START_SIZE
 
@@ -2234,6 +2236,7 @@ init_stats (void)
 	mono_counters_register ("WBarrier set arrayref", MONO_COUNTER_GC | MONO_COUNTER_INT, &stat_wbarrier_set_arrayref);
 	mono_counters_register ("WBarrier arrayref copy", MONO_COUNTER_GC | MONO_COUNTER_INT, &stat_wbarrier_arrayref_copy);
 	mono_counters_register ("WBarrier generic store called", MONO_COUNTER_GC | MONO_COUNTER_INT, &stat_wbarrier_generic_store);
+	mono_counters_register ("WBarrier generic atomic store called", MONO_COUNTER_GC | MONO_COUNTER_INT, &stat_wbarrier_generic_store_atomic);
 	mono_counters_register ("WBarrier set root", MONO_COUNTER_GC | MONO_COUNTER_INT, &stat_wbarrier_set_root);
 	mono_counters_register ("WBarrier value copy", MONO_COUNTER_GC | MONO_COUNTER_INT, &stat_wbarrier_value_copy);
 	mono_counters_register ("WBarrier object copy", MONO_COUNTER_GC | MONO_COUNTER_INT, &stat_wbarrier_object_copy);
@@ -2917,8 +2920,8 @@ major_copy_or_mark_from_roots (int *old_next_pin_slot, gboolean finish_up_concur
 				continue;
 			}
 			sgen_los_pin_object (bigobj->data);
-			/* FIXME: only enqueue if object has references */
-			GRAY_OBJECT_ENQUEUE (WORKERS_DISTRIBUTE_GRAY_QUEUE, bigobj->data);
+			if (SGEN_OBJECT_HAS_REFERENCES (bigobj->data))
+				GRAY_OBJECT_ENQUEUE (WORKERS_DISTRIBUTE_GRAY_QUEUE, bigobj->data);
 			if (G_UNLIKELY (do_pin_stats))
 				sgen_pin_stats_register_object ((char*) bigobj->data, safe_object_get_size ((MonoObject*) bigobj->data));
 			SGEN_LOG (6, "Marked large object %p (%s) size: %lu from roots", bigobj->data, safe_name (bigobj->data), (unsigned long)sgen_los_object_size (bigobj));
@@ -3104,6 +3107,13 @@ major_start_collection (gboolean concurrent, int *old_next_pin_slot)
 static void
 wait_for_workers_to_finish (void)
 {
+	while (!sgen_workers_all_done ())
+		g_usleep (200);
+}
+
+static void
+join_workers (void)
+{
 	if (concurrent_collection_in_progress || major_collector.is_parallel) {
 		gray_queue_redirect (&gray_queue);
 		sgen_workers_join ();
@@ -3126,13 +3136,13 @@ major_finish_collection (const char *reason, int old_next_pin_slot, gboolean sca
 	TV_GETTIME (btv);
 
 	if (concurrent_collection_in_progress || major_collector.is_parallel)
-		wait_for_workers_to_finish ();
+		join_workers ();
 
 	if (concurrent_collection_in_progress) {
 		current_object_ops = major_collector.major_concurrent_ops;
 
 		major_copy_or_mark_from_roots (NULL, TRUE, scan_mod_union);
-		wait_for_workers_to_finish ();
+		join_workers ();
 
 		g_assert (sgen_gray_object_queue_is_empty (&gray_queue));
 
@@ -3339,18 +3349,29 @@ major_update_or_finish_concurrent_collection (gboolean force_finish)
 
 	g_assert (sgen_gray_object_queue_is_empty (&gray_queue));
 
-	major_collector.update_cardtable_mod_union ();
-	sgen_los_update_cardtable_mod_union ();
-
 	if (!force_finish && !sgen_workers_all_done ()) {
+		major_collector.update_cardtable_mod_union ();
+		sgen_los_update_cardtable_mod_union ();
+
 		MONO_GC_CONCURRENT_UPDATE_END (GENERATION_OLD, major_collector.get_and_reset_num_major_objects_marked ());
 		return FALSE;
 	}
 
-	if (mod_union_consistency_check)
-		sgen_check_mod_union_consistency ();
+	/*
+	 * The major collector can add global remsets which are processed in the finishing
+	 * nursery collection, below.  That implies that the workers must have finished
+	 * marking before the nursery collection is allowed to run, otherwise we might miss
+	 * some remsets.
+	 */
+	wait_for_workers_to_finish ();
+
+	major_collector.update_cardtable_mod_union ();
+	sgen_los_update_cardtable_mod_union ();
 
 	collect_nursery (&unpin_queue, TRUE);
+
+	if (mod_union_consistency_check)
+		sgen_check_mod_union_consistency ();
 
 	current_collection_generation = GENERATION_OLD;
 	major_finish_collection ("finishing", -1, TRUE);
@@ -4041,7 +4062,7 @@ scan_thread_data (void *start_nursery, void *end_nursery, gboolean precise, Gray
 			conservatively_pin_objects_from ((void**)&info->ctx, (void**)&info->ctx + ARCH_NUM_REGS,
 				start_nursery, end_nursery, PIN_TYPE_STACK);
 #else
-			conservatively_pin_objects_from (&info->regs, &info->regs + ARCH_NUM_REGS,
+			conservatively_pin_objects_from ((void**)&info->regs, (void**)&info->regs + ARCH_NUM_REGS,
 					start_nursery, end_nursery, PIN_TYPE_STACK);
 #endif
 		}
@@ -4089,6 +4110,7 @@ sgen_thread_register (SgenThreadInfo* info, void *addr)
 
 	binary_protocol_thread_register ((gpointer)mono_thread_info_get_tid (info));
 
+	// FIXME: Unift with mono_thread_get_stack_bounds ()
 	/* try to get it with attributes first */
 #if (defined(HAVE_PTHREAD_GETATTR_NP) || defined(HAVE_PTHREAD_ATTR_GET_NP)) && defined(HAVE_PTHREAD_ATTR_GETSTACK)
   {
@@ -4113,8 +4135,14 @@ sgen_thread_register (SgenThreadInfo* info, void *addr)
      pthread_attr_destroy (&attr);
   }
 #elif defined(HAVE_PTHREAD_GET_STACKSIZE_NP) && defined(HAVE_PTHREAD_GET_STACKADDR_NP)
-		 info->stack_end = (char*)pthread_get_stackaddr_np (pthread_self ());
-		 info->stack_start_limit = (char*)info->stack_end - pthread_get_stacksize_np (pthread_self ());
+	{
+		size_t stsize = 0;
+		guint8 *staddr = NULL;
+
+		mono_thread_get_stack_bounds (&staddr, &stsize);
+		info->stack_start_limit = staddr;
+		info->stack_end = staddr + stsize;
+	}
 #else
 	{
 		/* FIXME: we assume the stack grows down */
@@ -4137,7 +4165,7 @@ sgen_thread_register (SgenThreadInfo* info, void *addr)
 }
 
 static void
-sgen_thread_unregister (SgenThreadInfo *p)
+sgen_thread_detach (SgenThreadInfo *p)
 {
 	/* If a delegate is passed to native code and invoked on a thread we dont
 	 * know about, the jit will register it with mono_jit_thread_attach, but
@@ -4147,7 +4175,11 @@ sgen_thread_unregister (SgenThreadInfo *p)
 	 */
 	if (mono_domain_get ())
 		mono_thread_detach (mono_thread_current ());
+}
 
+static void
+sgen_thread_unregister (SgenThreadInfo *p)
+{
 	binary_protocol_thread_unregister ((gpointer)mono_thread_info_get_tid (p));
 	SGEN_LOG (3, "unregister thread %p (%p)", p, (gpointer)mono_thread_info_get_tid (p));
 
@@ -4385,6 +4417,24 @@ mono_gc_wbarrier_generic_store (gpointer ptr, MonoObject* value)
 	*(void**)ptr = value;
 	if (ptr_in_nursery (value))
 		mono_gc_wbarrier_generic_nostore (ptr);
+	sgen_dummy_use (value);
+}
+
+/* Same as mono_gc_wbarrier_generic_store () but performs the store
+ * as an atomic operation with release semantics.
+ */
+void
+mono_gc_wbarrier_generic_store_atomic (gpointer ptr, MonoObject *value)
+{
+	HEAVY_STAT (++stat_wbarrier_generic_store_atomic);
+
+	SGEN_LOG (8, "Wbarrier atomic store at %p to %p (%s)", ptr, value, value ? safe_name (value) : "null");
+
+	InterlockedWritePointer (ptr, value);
+
+	if (ptr_in_nursery (value))
+		mono_gc_wbarrier_generic_nostore (ptr);
+
 	sgen_dummy_use (value);
 }
 
@@ -4820,6 +4870,7 @@ mono_gc_base_init (void)
 	gc_debug_file = stderr;
 
 	cb.thread_register = sgen_thread_register;
+	cb.thread_detach = sgen_thread_detach;
 	cb.thread_unregister = sgen_thread_unregister;
 	cb.thread_attach = sgen_thread_attach;
 	cb.mono_method_is_critical = (gpointer)is_critical_method;
@@ -4862,6 +4913,19 @@ mono_gc_base_init (void)
 
 #ifndef HAVE_KW_THREAD
 	mono_native_tls_alloc (&thread_info_key, NULL);
+#if defined(__APPLE__) || defined (HOST_WIN32)
+	/* 
+	 * CEE_MONO_TLS requires the tls offset, not the key, so the code below only works on darwin,
+	 * where the two are the same.
+	 */
+	mono_tls_key_set_offset (TLS_KEY_SGEN_THREAD_INFO, thread_info_key);
+#endif
+#else
+	{
+		int tls_offset = -1;
+		MONO_THREAD_VAR_OFFSET (sgen_thread_info, tls_offset);
+		mono_tls_key_set_offset (TLS_KEY_SGEN_THREAD_INFO, tls_offset);
+	}
 #endif
 
 	/*
@@ -5448,7 +5512,7 @@ mono_gc_get_write_barrier (void)
 	res = mono_mb_create_method (mb, sig, 16);
 	mono_mb_free (mb);
 
-	mono_loader_lock ();
+	LOCK_GC;
 	if (write_barrier_method) {
 		/* Already created */
 		mono_free_method (res);
@@ -5457,7 +5521,7 @@ mono_gc_get_write_barrier (void)
 		mono_memory_barrier ();
 		write_barrier_method = res;
 	}
-	mono_loader_unlock ();
+	UNLOCK_GC;
 
 	return write_barrier_method;
 }
@@ -5534,7 +5598,12 @@ sgen_gc_lock (void)
 void
 sgen_gc_unlock (void)
 {
-	UNLOCK_GC;
+	gboolean try_free = sgen_try_free_some_memory;
+	sgen_try_free_some_memory = FALSE;
+	mono_mutex_unlock (&gc_mutex);
+	MONO_GC_UNLOCKED ();
+	if (try_free)
+		mono_thread_hazardous_try_free_some ();
 }
 
 void

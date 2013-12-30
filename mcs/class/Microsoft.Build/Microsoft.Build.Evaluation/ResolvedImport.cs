@@ -26,24 +26,35 @@
 //
 
 using Microsoft.Build.Construction;
-
 using System;
 
 namespace Microsoft.Build.Evaluation
 {
-        [System.Runtime.InteropServices.StructLayout (System.Runtime.InteropServices.LayoutKind.Sequential)]
-        public struct ResolvedImport
-        {
-                private ProjectImportElement import;
-                private ProjectRootElement root;
+	[System.Runtime.InteropServices.StructLayout (System.Runtime.InteropServices.LayoutKind.Sequential)]
+	public struct ResolvedImport
+	{
+		internal ResolvedImport (ProjectImportElement import, ProjectRootElement root, bool isImported)
+		{
+			this.import = import;
+			this.root = root;
+			this.imported = isImported;
+		}
 
-                public ProjectImportElement ImportingElement {
-                        get { return import; }
-                }
+		readonly ProjectImportElement import;
+		readonly ProjectRootElement root;
+		readonly bool imported;
 
-                public ProjectRootElement ImportedProject {
-                        get { return root; }
-                }
-        }
+		public ProjectImportElement ImportingElement {
+			get { return import; }
+		}
+
+		public ProjectRootElement ImportedProject {
+			get { return root; }
+		}
+		
+		public bool IsImported {
+			get { return imported; }
+		}
+	}
 }
 

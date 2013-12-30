@@ -71,7 +71,6 @@ static void mono_generic_class_setup_parent (MonoClass *klass, MonoClass *gklass
 
 
 void (*mono_debugger_class_init_func) (MonoClass *klass) = NULL;
-void (*mono_debugger_class_loaded_methods_func) (MonoClass *klass) = NULL;
 
 
 /*
@@ -2175,9 +2174,6 @@ mono_class_setup_methods (MonoClass *class)
 
 	class->methods = methods;
 
-	if (mono_debugger_class_loaded_methods_func)
-		mono_debugger_class_loaded_methods_func (class);
-
 	mono_loader_unlock ();
 }
 
@@ -2929,9 +2925,12 @@ get_implicit_generic_array_interfaces (MonoClass *class, int *num, int *is_enume
 	 * We collect the types needed to build the
 	 * instantiations in interfaces at intervals of 3/5, because 3/5 are
 	 * the generic interfaces needed to implement.
+	 *
+	 * On 4.5, as an optimization, we don't expand ref classes for the variant generic interfaces
+	 * (IEnumerator, IReadOnlyList and IReadOnlyColleciton). The regular dispatch code can handle those cases.
 	 */
-	nifaces = generic_ireadonlylist_class ? 5 : 3;
 	if (eclass->valuetype) {
+		nifaces = generic_ireadonlylist_class ? 5 : 3;
 		fill_valuetype_array_derived_types (valuetype_types, eclass, original_rank);
 
 		/* IList, ICollection, IEnumerable, IReadOnlyList`1 */
@@ -2953,6 +2952,7 @@ get_implicit_generic_array_interfaces (MonoClass *class, int *num, int *is_enume
 		int idepth = eclass->idepth;
 		if (!internal_enumerator)
 			idepth--;
+		nifaces = generic_ireadonlylist_class ? 2 : 3;
 
 		// FIXME: This doesn't seem to work/required for generic params
 		if (!(eclass->this_arg.type == MONO_TYPE_VAR || eclass->this_arg.type == MONO_TYPE_MVAR || (eclass->image->dynamic && !eclass->wastypebuilder)))
@@ -3016,10 +3016,16 @@ get_implicit_generic_array_interfaces (MonoClass *class, int *num, int *is_enume
 
 		interfaces [i + 0] = inflate_class_one_arg (mono_defaults.generic_ilist_class, iface);
 		interfaces [i + 1] = inflate_class_one_arg (generic_icollection_class, iface);
-		interfaces [i + 2] = inflate_class_one_arg (generic_ienumerable_class, iface);
-		if (generic_ireadonlylist_class) {
-			interfaces [i + 3] = inflate_class_one_arg (generic_ireadonlylist_class, iface);
-			interfaces [i + 4] = inflate_class_one_arg (generic_ireadonlycollection_class, iface);
+
+		if (eclass->valuetype) {
+			interfaces [i + 2] = inflate_class_one_arg (generic_ienumerable_class, iface);
+			if (generic_ireadonlylist_class) {
+				interfaces [i + 3] = inflate_class_one_arg (generic_ireadonlylist_class, iface);
+				interfaces [i + 4] = inflate_class_one_arg (generic_ireadonlycollection_class, iface);
+			}
+		} else {
+			if (!generic_ireadonlylist_class)
+				interfaces [i + 2] = inflate_class_one_arg (generic_ienumerable_class, iface);
 		}
 	}
 	if (internal_enumerator) {
@@ -3612,10 +3618,6 @@ mono_class_setup_vtable_full (MonoClass *class, GList *in_setup)
 
 	if (class->vtable)
 		return;
-
-	if (mono_debug_using_mono_debugger ())
-		/* The debugger currently depends on this */
-		mono_class_setup_methods (class);
 
 	if (MONO_CLASS_IS_INTERFACE (class)) {
 		/* This sets method->slot for all methods if this is an interface */
@@ -5490,7 +5492,7 @@ mono_class_setup_parent (MonoClass *class, MonoClass *parent)
  *  - supertypes: array of classes: each element has a class in the hierarchy
  *    starting from @class up to System.Object
  * 
- * LOCKING: this assumes the loader lock is held
+ * LOCKING: This function is atomic, in case of contention we waste memory.
  */
 void
 mono_class_setup_supertypes (MonoClass *class)
@@ -5498,7 +5500,8 @@ mono_class_setup_supertypes (MonoClass *class)
 	int ms;
 	MonoClass **supertypes;
 
-	if (class->supertypes)
+	mono_atomic_load_acquire (supertypes, void*, &class->supertypes);
+	if (supertypes)
 		return;
 
 	if (class->parent && !class->parent->supertypes)
@@ -8660,7 +8663,7 @@ mono_class_get_virtual_methods (MonoClass* klass, gpointer *iter)
 	MonoMethod** method;
 	if (!iter)
 		return NULL;
-	if (klass->methods || !MONO_CLASS_HAS_STATIC_METADATA (klass) || mono_debug_using_mono_debugger ()) {
+	if (klass->methods || !MONO_CLASS_HAS_STATIC_METADATA (klass)) {
 		if (!*iter) {
 			mono_class_setup_methods (klass);
 			/*
@@ -8905,6 +8908,32 @@ mono_class_get_nested_types (MonoClass* klass, gpointer *iter)
 		return item->data;
 	}
 	return NULL;
+}
+
+
+/**
+ * mono_class_is_delegate
+ * @klass: the MonoClass to act on
+ *
+ * Returns: true if the MonoClass represents a System.Delegate.
+ */
+mono_bool
+mono_class_is_delegate (MonoClass *klass)
+{
+	return klass->delegate;
+}
+
+/**
+ * mono_class_implements_interface
+ * @klass: The MonoClass to act on
+ * @interface: The interface to check if @klass implements.
+ *
+ * Returns: true if @klass implements @interface.
+ */
+mono_bool
+mono_class_implements_interface (MonoClass* klass, MonoClass* iface)
+{
+	return mono_class_is_assignable_from (iface, klass);
 }
 
 /**

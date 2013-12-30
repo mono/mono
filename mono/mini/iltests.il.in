@@ -348,7 +348,7 @@ PASS:	ldc.i4.0
         IL_000a:  ret
     }
 
-	// Check that localloc can't be inlined
+	// Check that localloc cannot be inlined
 	.method static public int32 test_0_localloc_inline () cil managed {
 		.maxstack 16
 		.locals init (
@@ -962,6 +962,15 @@ COND:   ldloc.0
 	.method public static int32 test_15_lconv_to_u () cil managed
 	{
      	ldc.i8 0x10000000f
+		conv.u
+		conv.i4
+		ret
+	}
+
+	.method public static int32 test_1234_fconv_u () cil managed {
+		.maxstack 16
+
+		ldc.r8 1234.0
 		conv.u
 		conv.i4
 		ret

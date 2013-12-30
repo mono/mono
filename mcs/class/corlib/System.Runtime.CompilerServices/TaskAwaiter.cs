@@ -53,7 +53,7 @@ namespace System.Runtime.CompilerServices
 		public void GetResult ()
 		{
 			if (!task.IsCompleted)
-				task.WaitCore (Timeout.Infinite, CancellationToken.None);
+				task.WaitCore (Timeout.Infinite, CancellationToken.None, true);
 
 			if (task.Status != TaskStatus.RanToCompletion)
 				// Merge current and dispatched stack traces if there is any
@@ -64,20 +64,47 @@ namespace System.Runtime.CompilerServices
 		{
 			switch (task.Status) {
 			case TaskStatus.Canceled:
+				// Use original exception when we have one
+				if (task.ExceptionSlot.Exception != null)
+					goto case TaskStatus.Faulted;
+
 				return new TaskCanceledException (task);
 			case TaskStatus.Faulted:
-				return task.Exception.InnerException;
+				return task.ExceptionSlot.Exception.InnerException;
 			default:
-				throw new ArgumentException ("Should never be reached");
+				throw new ArgumentException (string.Format ("Unexpected task `{0}' status `{1}'", task.Id, task.Status));
 			}
 		}
 
 		internal static void HandleOnCompleted (Task task, Action continuation, bool continueOnSourceContext, bool manageContext)
 		{
-			if (continueOnSourceContext && SynchronizationContext.Current != null) {
+			if (continueOnSourceContext && SynchronizationContext.Current != null && SynchronizationContext.Current.GetType () != typeof (SynchronizationContext)) {
 				task.ContinueWith (new SynchronizationContextContinuation (continuation, SynchronizationContext.Current));
 			} else {
-				task.ContinueWith (new ActionContinuation (continuation));
+				IContinuation cont;
+				Task cont_task;
+				if (continueOnSourceContext && !TaskScheduler.IsDefault) {
+					cont_task = new Task (TaskActionInvoker.Create (continuation), null, CancellationToken.None, TaskCreationOptions.None, null);
+					cont_task.SetupScheduler (TaskScheduler.Current);
+					cont = new SchedulerAwaitContinuation (cont_task);
+				} else {
+					cont_task = null;
+					cont = new AwaiterActionContinuation (continuation);
+				}
+
+				//
+				// This is awaiter continuation. For finished tasks we get false result and need to
+				// queue the continuation otherwise the task would block
+				//
+				if (task.ContinueWith (cont, false))
+					return;
+
+				if (cont_task == null) {
+					cont_task = new Task (TaskActionInvoker.Create (continuation), null, CancellationToken.None, TaskCreationOptions.None, null);
+					cont_task.SetupScheduler (TaskScheduler.Current);
+				}
+
+				cont_task.Schedule ();
 			}
 		}
 

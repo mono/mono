@@ -35,33 +35,24 @@ using System.Security;
 using System.Text;
 using Microsoft.Build.Framework;
 
-namespace Microsoft.Build.BuildEngine {
+#if MICROSOFT_BUILD_DLL
+namespace Microsoft.Build.Logging
+#else
+namespace Microsoft.Build.BuildEngine
+#endif
+{
 	public class ConsoleLogger : ILogger {
 	
 		string		parameters;
-		int		indent;
 		LoggerVerbosity	verbosity;
 		WriteHandler	writeHandler;
-		int		errorCount;
-		int		warningCount;
-		DateTime		buildStart;
-		bool		performanceSummary;
-		bool		showSummary;
 		bool		skipProjectStartedText;
-		List<string> errors, warnings;
-		bool		projectFailed;
 		ConsoleColor errorColor, warningColor, eventColor, messageColor, highMessageColor;
 		ColorSetter colorSet;
 		ColorResetter colorReset;
 		IEventSource eventSource;
 		bool no_message_color, use_colors;
-		bool noItemAndPropertyList;
-
-		List<BuildEvent> events;
-		Dictionary<string, List<string>> errorsTable;
-		Dictionary<string, List<string>> warningsTable;
-		SortedDictionary<string, PerfInfo> targetPerfTable, tasksPerfTable;
-		string current_events_string;
+		ConsoleLoggerParameter config = new ConsoleLoggerParameter ();		
 		
 		public ConsoleLogger ()
 			: this (LoggerVerbosity.Normal, null, null, null)
@@ -69,7 +60,7 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		public ConsoleLogger (LoggerVerbosity verbosity)
-			: this (LoggerVerbosity.Normal, null, null, null)
+			: this (verbosity, null, null, null)
 		{
 		}
 		
@@ -79,26 +70,13 @@ namespace Microsoft.Build.BuildEngine {
 				      ColorResetter colorReset)
 		{
 			this.verbosity = verbosity;
-			this.indent = 0;
-			this.errorCount = 0;
-			this.warningCount = 0;
 			if (write == null)
 				this.writeHandler += new WriteHandler (WriteHandlerFunction);
 			else
 				this.writeHandler += write;
-			this.performanceSummary = false;
-			this.showSummary = true;
 			this.skipProjectStartedText = false;
-			errors = new List<string> ();
-			warnings = new List<string> ();
 			this.colorSet = colorSet;
 			this.colorReset = colorReset;
-
-			events = new List<BuildEvent> ();
-			errorsTable = new Dictionary<string, List<string>> ();
-			warningsTable = new Dictionary<string, List<string>> ();
-			targetPerfTable = new SortedDictionary<string, PerfInfo> ();
-			tasksPerfTable = new SortedDictionary<string, PerfInfo> ();
 
 			//defaults
 			errorColor = ConsoleColor.DarkRed;
@@ -146,6 +124,11 @@ namespace Microsoft.Build.BuildEngine {
 				}
 			}
 		}
+		
+		private void WriteHandlerFunction (string message)
+		{
+			Console.WriteLine (message);
+		}
 
 		bool TryParseConsoleColor (string color_str, ref ConsoleColor color)
 		{
@@ -192,21 +175,32 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 		
+		class ConsoleLoggerParameter
+		{
+			public ConsoleLoggerParameter ()
+			{
+				ShowSummary = true;
+			}
+			public bool PerformanceSummary { get; set; }
+			public bool ShowSummary { get; set; }
+			public bool NoItemAndPropertyList { get; set; }
+		}
+		
 		public void ApplyParameter (string parameterName,
 					    string parameterValue)
 		{
 			switch (parameterName) {
 				case "PerformanceSummary":
-					this.performanceSummary = true;
+					config.PerformanceSummary = true;
 					break;
 				case "Summary":
-					this.showSummary = true;
+					config.ShowSummary = true;
 					break;
 				case "NoSummary":
-					this.showSummary = false;
+					config.ShowSummary = false;
 					break;
 				case "NoItemAndPropertyList":
-					this.noItemAndPropertyList = true;
+					config.NoItemAndPropertyList = true;
 					break;
 				default:
 					if (parameterName.StartsWith ("Verbosity="))
@@ -282,375 +276,93 @@ namespace Microsoft.Build.BuildEngine {
 			if (!String.IsNullOrEmpty (parameters))
 				ParseParameters ();
 		}
+		
+		Dictionary<object,BuildRecord> build_records = new Dictionary<object, BuildRecord> ();
+		
+		object dummy_key = new object ();
+		
+		BuildRecord GetBuildRecord (object sender)
+		{
+			BuildRecord r;
+			// FIXME: our Microsoft.Build.Engine shouldn't give different "sender" object for each event
+			// during the same build run. But it actually does.
+			// It is problematic for parallel build because it is impossible to determine right "ongoing build"
+			// record for the event without correct sender object.
+			// Hence we expect sender as a valid object only if it is IBuildEngine4 -
+			// only Microsoft.Build.Internal.BuildEngine4 implements it so far. 
+			// (Used IBuildEngine3 because it needs to build for NET_4_0).
+#if NET_4_0
+			var key = sender as IBuildEngine3 ?? dummy_key;
+#else
+			var key = dummy_key;
+#endif
+			if (!build_records.TryGetValue (key, out r)) {
+				r = new BuildRecord (this);
+				build_records.Add (key, r);
+			}
+			return r;
+		}
 
 		public void BuildStartedHandler (object sender, BuildStartedEventArgs args)
 		{
-			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) {
-				WriteLine (String.Empty);
-				WriteLine (String.Format ("Build started {0}.", args.Timestamp));
-				WriteLine ("__________________________________________________");
-			}
-			buildStart = args.Timestamp;
-
-			PushEvent (args);
+			GetBuildRecord (sender).BuildStartedHandler (sender, args);
 		}
 		
 		public void BuildFinishedHandler (object sender, BuildFinishedEventArgs args)
 		{
-			BuildFinishedHandlerActual (args);
-
-			// Reset
-			events.Clear ();
-			errorsTable.Clear ();
-			warningsTable.Clear ();
-			targetPerfTable.Clear ();
-			tasksPerfTable.Clear ();
-			errors.Clear ();
-			warnings.Clear ();
-
-			indent = 0;
-			errorCount = 0;
-			warningCount = 0;
-			projectFailed = false;
+			GetBuildRecord (sender).BuildFinishedHandler (args);
+			build_records.Remove (sender);
 		}
-
-		void BuildFinishedHandlerActual (BuildFinishedEventArgs args)
+		
+		void PushEvent<T> (object sender, T args) where T: BuildStatusEventArgs
 		{
-			if (!IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) {
-				PopEvent (args);
-				return;
-			}
-
-			TimeSpan timeElapsed = args.Timestamp - buildStart;
-			if (performanceSummary || verbosity == LoggerVerbosity.Diagnostic)
-				DumpPerformanceSummary ();
-
-			if (args.Succeeded == true && !projectFailed) {
-				WriteLine ("Build succeeded.");
-			} else {
-				WriteLine ("Build FAILED.");
-			}
-			if (warnings.Count > 0) {
-				WriteLine (Environment.NewLine + "Warnings:");
-				SetColor (warningColor);
-
-				WriteLine (String.Empty);
-				foreach (KeyValuePair<string, List<string>> pair in warningsTable) {
-					if (!String.IsNullOrEmpty (pair.Key))
-						WriteLine (pair.Key);
-
-					string indent_str = String.IsNullOrEmpty (pair.Key) ? String.Empty : "\t";
-					foreach (string msg in pair.Value)
-						WriteLine (String.Format ("{0}{1}", indent_str, msg));
-
-					WriteLine (String.Empty);
-				}
-
-				ResetColor ();
-			}
-
-			if (errors.Count > 0) {
-				WriteLine ("Errors:");
-				SetColor (errorColor);
-
-				WriteLine (String.Empty);
-				foreach (KeyValuePair<string, List<string>> pair in errorsTable) {
-					if (!String.IsNullOrEmpty (pair.Key))
-						WriteLine (pair.Key);
-
-					string indent_str = String.IsNullOrEmpty (pair.Key) ? String.Empty : "\t";
-					foreach (string msg in pair.Value)
-						WriteLine (String.Format ("{0}{1}", indent_str, msg));
-
-					WriteLine (String.Empty);
-				}
-				ResetColor ();
-			}
-
-			if (showSummary == true){
-				WriteLine (String.Format ("\t {0} Warning(s)", warningCount));
-				WriteLine (String.Format ("\t {0} Error(s)", errorCount));
-				WriteLine (String.Empty);
-				WriteLine (String.Format ("Time Elapsed {0}", timeElapsed));
-			}
-
-			PopEvent (args);
+			GetBuildRecord (sender).PushEvent (sender, args);
 		}
-
+		void PopEvent<T> (object sender, T args) where T: BuildStatusEventArgs
+		{
+			GetBuildRecord (sender).PopEvent (args);
+		}
 		public void ProjectStartedHandler (object sender, ProjectStartedEventArgs args)
 		{
-			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) {
-				SetColor (eventColor);
-				WriteLine (String.Format ("Project \"{0}\" ({1} target(s)):", args.ProjectFile,
-							String.IsNullOrEmpty (args.TargetNames) ? "default" : args.TargetNames));
-				ResetColor ();
-				DumpProperties (args.Properties);
-				DumpItems (args.Items);
-			}
+			GetBuildRecord (sender).ProjectStartedHandler (args);
 		}
-		
 		public void ProjectFinishedHandler (object sender, ProjectFinishedEventArgs args)
 		{
-			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) {
-				if (indent == 1)
-					indent --;
-				SetColor (eventColor);
-				WriteLine (String.Format ("Done building project \"{0}\".{1}", args.ProjectFile,
-							args.Succeeded ? String.Empty : "-- FAILED"));
-				ResetColor ();
-				WriteLine (String.Empty);
-			}
-			if (!projectFailed)
-				// no project has failed yet, so update the flag
-				projectFailed = !args.Succeeded;
-		}
-		
+			GetBuildRecord (sender).ProjectFinishedHandler (args);
+		}		
 		public void TargetStartedHandler (object sender, TargetStartedEventArgs args)
 		{
-			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) {
-				indent++;
-				SetColor (eventColor);
-				WriteLine (String.Empty);
-				WriteLine (String.Format ("Target {0}:",args.TargetName));
-				ResetColor ();
-			}
+			GetBuildRecord (sender).TargetStartedHandler (args);
 		}
-		
 		public void TargetFinishedHandler (object sender, TargetFinishedEventArgs args)
 		{
-			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Detailed) ||
-					(!args.Succeeded && IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal))) {
-				SetColor (eventColor);
-				WriteLine (String.Format ("Done building target \"{0}\" in project \"{1}\".{2}",
-					args.TargetName, args.ProjectFile,
-					args.Succeeded ? String.Empty : "-- FAILED"));
-				ResetColor ();
-				WriteLine (String.Empty);
-			}
-			indent--;
+			GetBuildRecord (sender).TargetFinishedHandler (args);
 		}
-		
 		public void TaskStartedHandler (object sender, TaskStartedEventArgs args)
 		{
-			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Detailed)) {
-				SetColor (eventColor);
-				WriteLine (String.Format ("Task \"{0}\"",args.TaskName));
-				ResetColor ();
-			}
-			indent++;
+			GetBuildRecord (sender).TaskStartedHandler (args);
 		}
-		
 		public void TaskFinishedHandler (object sender, TaskFinishedEventArgs args)
 		{
-			indent--;
-			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Detailed) ||
-					(!args.Succeeded && IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal))) {
-				SetColor (eventColor);
-				if (args.Succeeded)
-					WriteLine (String.Format ("Done executing task \"{0}\"", args.TaskName));
-				else
-					WriteLine (String.Format ("Task \"{0}\" execution -- FAILED", args.TaskName));
-				ResetColor ();
-			}
+			GetBuildRecord (sender).TaskFinishedHandler (args);
 		}
-		
 		public void MessageHandler (object sender, BuildMessageEventArgs args)
 		{
-			if (IsMessageOk (args)) {
-				if (no_message_color) {
-					ExecutePendingEventHandlers ();
-					WriteLine (args.Message);
-				} else {
-					ExecutePendingEventHandlers ();
-					SetColor (args.Importance == MessageImportance.High ? highMessageColor : messageColor);
-					WriteLine (args.Message);
-					ResetColor ();
-				}
-			}
+			GetBuildRecord (sender).MessageHandler (args);
 		}
-		
 		public void WarningHandler (object sender, BuildWarningEventArgs args)
 		{
-			string msg = FormatWarningEvent (args);
-			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Quiet)) {
-				ExecutePendingEventHandlers ();
-				SetColor (warningColor);
-				WriteLineWithoutIndent (msg);
-				ResetColor ();
-			}
-			warnings.Add (msg);
-
-			List<string> list = null;
-			if (!warningsTable.TryGetValue (EventsAsString, out list))
-				warningsTable [EventsAsString] = list = new List<string> ();
-			list.Add (msg);
-
-			warningCount++;
+			GetBuildRecord (sender).WarningHandler (args);
 		}
-		
 		public void ErrorHandler (object sender, BuildErrorEventArgs args)
 		{
-			string msg = FormatErrorEvent (args);
-			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Quiet)) {
-				ExecutePendingEventHandlers ();
-				SetColor (errorColor);
-				WriteLineWithoutIndent (msg);
-				ResetColor ();
-			}
-			errors.Add (msg);
-
-			List<string> list = null;
-			if (!errorsTable.TryGetValue (EventsAsString, out list))
-				errorsTable [EventsAsString] = list = new List<string> ();
-			list.Add (msg);
-			errorCount++;
+			GetBuildRecord (sender).ErrorHandler (args);
 		}
 		
 		[MonoTODO]
 		public void CustomEventHandler (object sender, CustomBuildEventArgs args)
 		{
-		}
-
-		private void WriteLine (string message)
-		{
-			if (indent > 0) {
-				StringBuilder sb = new StringBuilder ();
-				for (int i = 0; i < indent; i++)
-					sb.Append ('\t');
-
-				string indent_str = sb.ToString ();
-
-				foreach (string line in message.Split (new string[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries))
-					writeHandler (indent_str + line);
-			} else {
-				writeHandler (message);
-			}
-		}
-
-		void PushEvent<T> (object sender, T args) where T: BuildStatusEventArgs
-		{
-			PushEvent (args);
-		}
-
-		void PushEvent<T> (T args) where T: BuildStatusEventArgs
-		{
-			BuildEvent be = new BuildEvent {
-				EventArgs = args,
-				StartHandlerHasExecuted = false,
-				ConsoleLogger = this
-			};
-
-			events.Add (be);
-			current_events_string = null;
-		}
-
-		void PopEvent<T> (object sender, T finished_args) where T: BuildStatusEventArgs
-		{
-			PopEvent (finished_args);
-		}
-
-		void PopEvent<T> (T finished_args) where T: BuildStatusEventArgs
-		{
-			if (events.Count == 0)
-				throw new InvalidOperationException ("INTERNAL ERROR: Trying to pop from an empty events stack");
-
-			BuildEvent be = events [events.Count - 1];
-			if (performanceSummary || verbosity == LoggerVerbosity.Diagnostic) {
-				var args = be.EventArgs;
-				TargetStartedEventArgs tgt_args = args as TargetStartedEventArgs;
-				if (tgt_args != null) {
-					AddPerfInfo (tgt_args.TargetName, args.Timestamp, targetPerfTable);
-				} else {
-					TaskStartedEventArgs tsk_args = args as TaskStartedEventArgs;
-					if (tsk_args != null)
-						AddPerfInfo (tsk_args.TaskName, args.Timestamp, tasksPerfTable);
-				}
-			}
-
-			be.ExecuteFinishedHandler (finished_args);
-			events.RemoveAt (events.Count - 1);
-			current_events_string = null;
-		}
-
-		void ExecutePendingEventHandlers ()
-		{
-			foreach (var be in events)
-				be.ExecuteStartedHandler ();
-		}
-
-		string EventsToString ()
-		{
-			StringBuilder sb = new StringBuilder ();
-
-			string last_imported_target_file = String.Empty;
-			for (int i = 0; i < events.Count; i ++) {
-				var args = events [i].EventArgs;
-				ProjectStartedEventArgs pargs = args as ProjectStartedEventArgs;
-				if (pargs != null) {
-					sb.AppendFormat ("{0} ({1}) ->\n", pargs.ProjectFile,
-							String.IsNullOrEmpty (pargs.TargetNames) ?
-								"default targets" :
-								pargs.TargetNames);
-					last_imported_target_file = String.Empty;
-					continue;
-				}
-
-				TargetStartedEventArgs targs = args as TargetStartedEventArgs;
-				if (targs != null) {
-					if (targs.TargetFile != targs.ProjectFile && targs.TargetFile != last_imported_target_file)
-						// target from an imported file,
-						// and it hasn't been mentioned as yet
-						sb.AppendFormat ("{0} ", targs.TargetFile);
-
-					last_imported_target_file = targs.TargetFile;
-					sb.AppendFormat ("({0} target) ->\n", targs.TargetName);
-				}
-			}
-
-			return sb.ToString ();
-		}
-
-		void AddPerfInfo (string name, DateTime start, IDictionary<string, PerfInfo> perf_table)
-		{
-			PerfInfo pi;
-			if (!perf_table.TryGetValue (name, out pi)) {
-				pi = new PerfInfo ();
-				perf_table [name] = pi;
-			}
-
-			pi.Time += DateTime.Now - start;
-			pi.NumberOfCalls ++;
-		}
-
-		void DumpPerformanceSummary ()
-		{
-			SetColor (eventColor);
-			WriteLine ("Target perfomance summary:");
-			ResetColor ();
-
-			foreach (var pi in targetPerfTable.OrderBy (pair => pair.Value.Time))
-				WriteLine (String.Format ("{0,10:0.000} ms  {1,-50}  {2,5} calls", pi.Value.Time.TotalMilliseconds, pi.Key, pi.Value.NumberOfCalls));
-
-			WriteLine (String.Empty);
-
-			SetColor (eventColor);
-			WriteLine ("Tasks perfomance summary:");
-			ResetColor ();
-
-			foreach (var pi in tasksPerfTable.OrderBy (pair => pair.Value.Time))
-				WriteLine (String.Format ("{0,10:0.000} ms  {1,-50}  {2,5} calls", pi.Value.Time.TotalMilliseconds, pi.Key, pi.Value.NumberOfCalls));
-
-			WriteLine (String.Empty);
-		}
-		
-		private void WriteLineWithoutIndent (string message)
-		{
-			writeHandler (message);
-		}
-		
-		private void WriteHandlerFunction (string message)
-		{
-			Console.WriteLine (message);
+			build_records [sender].CustomHandler (args);
 		}
 
 		void SetColor (ConsoleColor color)
@@ -694,131 +406,6 @@ namespace Microsoft.Build.BuildEngine {
 			eventSource.ErrorRaised -= ErrorHandler;
 		}
 
-		static bool InEmacs = Environment.GetEnvironmentVariable ("EMACS") == "t";
-		
-		private string FormatErrorEvent (BuildErrorEventArgs args)
-		{
-			// For some reason we get an 1-char empty string as Subcategory somtimes.
-			string subprefix = args.Subcategory == null || args.Subcategory == "" || args.Subcategory == " " ? "" : " ";
-			string subcat = subprefix == "" ? "" : args.Subcategory;
-				
-			if (args.LineNumber != 0){
-				if (args.ColumnNumber != 0 && !InEmacs) 
-					return String.Format ("{0}({1},{2}): {3}{4}error {5}: {6}",
-							      args.File, args.LineNumber, args.ColumnNumber,
-							      subprefix, subcat, args.Code, args.Message);
-
-				return String.Format ("{0}({1}): {2}{3}error {4}: {5}",
-						      args.File, args.LineNumber,
-						      subprefix, subcat, args.Code, args.Message);
-			} else {
-				return String.Format ("{0}: {1}{2}error {3}: {4}", args.File, subprefix, subcat, args.Code,
-					args.Message);
-			}
-		}
-
-		private string FormatWarningEvent (BuildWarningEventArgs args)
-		{
-			// For some reason we get an 1-char empty string as Subcategory somtimes.
-			string subprefix = args.Subcategory == null || args.Subcategory == "" || args.Subcategory == " " ? "" : " ";
-			string subcat = subprefix == "" ? "" : args.Subcategory;
-
-			// FIXME: show more complicated args
-			if (args.LineNumber != 0){
-
-				if (args.ColumnNumber != 0 && !InEmacs) {
-					return String.Format ("{0}({1},{2}): {3}{4}warning {5}: {6}",
-							      args.File, args.LineNumber, args.ColumnNumber,
-							      subprefix, subcat, args.Code, args.Message);
-				}
-				return String.Format ("{0}({1}): {2}{3}warning {4}: {5}",
-						      args.File, args.LineNumber,
-						      subprefix, subcat, args.Code, args.Message);
-			} else {
-				return String.Format ("{0}: {1} warning {2}: {3}", args.File, args.Subcategory, args.Code,
-					args.Message);
-			}
-		}
-		
-		private bool IsMessageOk (BuildMessageEventArgs bsea)
-		{
-			if (bsea.Importance == MessageImportance.High && IsVerbosityGreaterOrEqual (LoggerVerbosity.Minimal)) {
-				return true;
-			} else if (bsea.Importance == MessageImportance.Normal && IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) {
-				return true;
-			} else if (bsea.Importance == MessageImportance.Low && IsVerbosityGreaterOrEqual (LoggerVerbosity.Detailed)) {
-				return true;
-			} else
-				return false;
-		}
-		
-                private bool IsVerbosityGreaterOrEqual (LoggerVerbosity v)
-                {
-                		if (v == LoggerVerbosity.Diagnostic) {
-                			return LoggerVerbosity.Diagnostic <= verbosity;
-                		} else if (v == LoggerVerbosity.Detailed) {
-                			return LoggerVerbosity.Detailed <= verbosity;
-                		} else if (v == LoggerVerbosity.Normal) {
-                			return LoggerVerbosity.Normal <= verbosity;
-                		} else if (v == LoggerVerbosity.Minimal) {
-                			return LoggerVerbosity.Minimal <= verbosity;
-                		} else if (v == LoggerVerbosity.Quiet) {
-                			return true;
-                		} else
-                			return false;
-                }
-
-		void DumpProperties (IEnumerable properties)
-		{
-			if (noItemAndPropertyList || !IsVerbosityGreaterOrEqual (LoggerVerbosity.Diagnostic))
-				return;
-
-			SetColor (eventColor);
-			WriteLine (String.Empty);
-			WriteLine ("Initial Properties:");
-			ResetColor ();
-
-			if (properties == null)
-				return;
-
-			var dict = new SortedDictionary<string, string> ();
-			foreach (DictionaryEntry de in properties)
-				dict [(string)de.Key] = (string)de.Value;
-
-			foreach (KeyValuePair<string, string> pair in dict)
-				WriteLine (String.Format ("{0} = {1}", pair.Key, pair.Value));
-		}
-
-		void DumpItems (IEnumerable items)
-		{
-			if (noItemAndPropertyList || !IsVerbosityGreaterOrEqual (LoggerVerbosity.Diagnostic) || items == null)
-				return;
-
-			SetColor (eventColor);
-			WriteLine (String.Empty);
-			WriteLine ("Initial Items:");
-			ResetColor ();
-			if (items == null)
-				return;
-
-			var items_table = new SortedDictionary<string, List<ITaskItem>> ();
-			foreach (DictionaryEntry de in items) {
-				string key = (string)de.Key;
-				if (!items_table.ContainsKey (key))
-					items_table [key] = new List<ITaskItem> ();
-
-				items_table [key].Add ((ITaskItem) de.Value);
-			}
-
-			foreach (string name in items_table.Keys) {
-				WriteLine (name);
-				indent ++;
-				foreach (ITaskItem item in items_table [name])
-					WriteLine (item.ItemSpec);
-				indent--;
-			}
-		}
-
 		public string Parameters {
 			get {
 				return parameters;
@@ -827,20 +414,13 @@ namespace Microsoft.Build.BuildEngine {
 				if (value == null)
 					throw new ArgumentNullException ();
 				parameters = value;
-			}
-		}
-
-		string EventsAsString {
-			get {
-				if (current_events_string == null)
-					current_events_string = EventsToString ();
-				return current_events_string;
+				ParseParameters ();
 			}
 		}
 		
 		public bool ShowSummary {
-			get { return showSummary; }
-			set { showSummary = value; }
+			get { return config.ShowSummary; }
+			set { config.ShowSummary = value; }
 		}
 		
 		public bool SkipProjectStartedText {
@@ -857,9 +437,561 @@ namespace Microsoft.Build.BuildEngine {
 			get { return writeHandler; }
 			set { writeHandler = value; }
 		}
+		
+		class BuildRecord
+		{
+			readonly ConsoleLogger parent;
+			
+			readonly List<BuildEvent> events;
+			readonly Dictionary<string, List<string>> errorsTable;
+			readonly Dictionary<string, List<string>> warningsTable;
+			readonly SortedDictionary<string, PerfInfo> targetPerfTable, tasksPerfTable;
+			List<string> errors, warnings;
+			int		indent;
+			int		errorCount;
+			int		warningCount;
+			bool		projectFailed;
+			DateTime		buildStart;
+	
+			string current_events_string;
+			
+			ConsoleColor eventColor {
+				get { return parent.eventColor; }
+			}
+			LoggerVerbosity verbosity {
+				get { return parent.Verbosity; }
+			}
+			
+			public BuildRecord (ConsoleLogger parent)
+			{
+				this.parent = parent;
+				
+				this.indent = 0;
+				this.errorCount = 0;
+				this.warningCount = 0;
+				errors = new List<string> ();
+				warnings = new List<string> ();
+				events = new List<BuildEvent> ();
+				errorsTable = new Dictionary<string, List<string>> ();
+				warningsTable = new Dictionary<string, List<string>> ();
+				targetPerfTable = new SortedDictionary<string, PerfInfo> ();
+				tasksPerfTable = new SortedDictionary<string, PerfInfo> ();
+			}
+	
+			internal void PushEvent<T> (object sender, T args) where T: BuildStatusEventArgs
+			{
+				BuildEvent be = new BuildEvent {
+					Sender = sender,
+					EventArgs = args,
+					StartHandlerHasExecuted = false,
+					ConsoleLogger = this.parent
+				};
+	
+				events.Add (be);
+				current_events_string = null;
+			}
+	
+			void PopEvent<T> (object sender, T finished_args) where T: BuildStatusEventArgs
+			{
+				PopEvent (finished_args);
+			}
+	
+			internal void PopEvent<T> (T finished_args) where T: BuildStatusEventArgs
+			{
+				if (events.Count == 0)
+					throw new InvalidOperationException ("INTERNAL ERROR: Trying to pop from an empty events stack");
+	
+				BuildEvent be = events [events.Count - 1];
+				if (parent.config.PerformanceSummary || verbosity == LoggerVerbosity.Diagnostic) {
+					var args = be.EventArgs;
+					TargetStartedEventArgs tgt_args = args as TargetStartedEventArgs;
+					if (tgt_args != null) {
+						AddPerfInfo (tgt_args.TargetName, args.Timestamp, targetPerfTable);
+					} else {
+						TaskStartedEventArgs tsk_args = args as TaskStartedEventArgs;
+						if (tsk_args != null)
+							AddPerfInfo (tsk_args.TaskName, args.Timestamp, tasksPerfTable);
+					}
+				}
+	
+				be.ExecuteFinishedHandler (finished_args);
+				events.RemoveAt (events.Count - 1);
+				current_events_string = null;
+			}
+	
+			public void ResetBuildState ()
+			{
+				// Reset
+				events.Clear ();
+				errorsTable.Clear ();
+				warningsTable.Clear ();
+				targetPerfTable.Clear ();
+				tasksPerfTable.Clear ();
+				errors.Clear ();
+				warnings.Clear ();
+	
+				indent = 0;
+				errorCount = 0;
+				warningCount = 0;
+				projectFailed = false;
+			}
+	
+			void AddPerfInfo (string name, DateTime start, IDictionary<string, PerfInfo> perf_table)
+			{
+				PerfInfo pi;
+				if (!perf_table.TryGetValue (name, out pi)) {
+					pi = new PerfInfo ();
+					perf_table [name] = pi;
+				}
+	
+				pi.Time += DateTime.Now - start;
+				pi.NumberOfCalls ++;
+			}
+	
+			public void BuildStartedHandler (object sender, BuildStartedEventArgs args)
+			{
+				if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) {
+					WriteLine (String.Empty);
+					WriteLine (String.Format ("Build started {0}.", args.Timestamp));
+					WriteLine ("__________________________________________________");
+				}
+				buildStart = args.Timestamp;
+	
+				PushEvent (sender, args);
+			}
+			
+			public void BuildFinishedHandler (BuildFinishedEventArgs args)
+			{
+				BuildFinishedHandlerActual (args);
+				
+				ResetBuildState ();
+			}
+	
+			void BuildFinishedHandlerActual (BuildFinishedEventArgs args)
+			{
+				if (!IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) {
+					PopEvent (args);
+					return;
+				}
+	
+				TimeSpan timeElapsed = args.Timestamp - buildStart;
+				if (parent.config.PerformanceSummary || verbosity == LoggerVerbosity.Diagnostic)
+					DumpPerformanceSummary ();
+	
+				if (args.Succeeded == true && !projectFailed) {
+					WriteLine ("Build succeeded.");
+				} else {
+					WriteLine ("Build FAILED.");
+				}
+				if (warnings.Count > 0) {
+					WriteLine (Environment.NewLine + "Warnings:");
+					SetColor (parent.warningColor);
+	
+					WriteLine (String.Empty);
+					foreach (KeyValuePair<string, List<string>> pair in warningsTable) {
+						if (!String.IsNullOrEmpty (pair.Key))
+							WriteLine (pair.Key);
+	
+						string indent_str = String.IsNullOrEmpty (pair.Key) ? String.Empty : "\t";
+						foreach (string msg in pair.Value)
+							WriteLine (String.Format ("{0}{1}", indent_str, msg));
+	
+						WriteLine (String.Empty);
+					}
+	
+					ResetColor ();
+				}
+	
+				if (errors.Count > 0) {
+					WriteLine ("Errors:");
+					SetColor (parent.errorColor);
+	
+					WriteLine (String.Empty);
+					foreach (KeyValuePair<string, List<string>> pair in errorsTable) {
+						if (!String.IsNullOrEmpty (pair.Key))
+							WriteLine (pair.Key);
+	
+						string indent_str = String.IsNullOrEmpty (pair.Key) ? String.Empty : "\t";
+						foreach (string msg in pair.Value)
+							WriteLine (String.Format ("{0}{1}", indent_str, msg));
+	
+						WriteLine (String.Empty);
+					}
+					ResetColor ();
+				}
+	
+				if (parent.ShowSummary == true){
+					WriteLine (String.Format ("\t {0} Warning(s)", warningCount));
+					WriteLine (String.Format ("\t {0} Error(s)", errorCount));
+					WriteLine (String.Empty);
+					WriteLine (String.Format ("Time Elapsed {0}", timeElapsed));
+				}
+	
+				PopEvent (args);
+			}
+	
+			public void ProjectStartedHandler (ProjectStartedEventArgs args)
+			{
+				if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) {
+					SetColor (eventColor);
+					WriteLine (String.Format ("Project \"{0}\" ({1} target(s)):", args.ProjectFile,
+								String.IsNullOrEmpty (args.TargetNames) ? "default" : args.TargetNames));
+					ResetColor ();
+					DumpProperties (args.Properties);
+					DumpItems (args.Items);
+				}
+			}
+			
+			public void ProjectFinishedHandler (ProjectFinishedEventArgs args)
+			{
+				if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) {
+					if (indent == 1)
+						indent --;
+					SetColor (eventColor);
+					WriteLine (String.Format ("Done building project \"{0}\".{1}", args.ProjectFile,
+								args.Succeeded ? String.Empty : "-- FAILED"));
+					ResetColor ();
+					WriteLine (String.Empty);
+				}
+				if (!projectFailed)
+					// no project has failed yet, so update the flag
+					projectFailed = !args.Succeeded;
+			}
+			
+			public void TargetStartedHandler (TargetStartedEventArgs args)
+			{
+				if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) {
+					indent++;
+					SetColor (eventColor);
+					WriteLine (String.Empty);
+					WriteLine (String.Format ("Target {0}:",args.TargetName));
+					ResetColor ();
+				}
+			}
+			
+			public void TargetFinishedHandler (TargetFinishedEventArgs args)
+			{
+				if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Detailed) ||
+						(!args.Succeeded && IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal))) {
+					SetColor (eventColor);
+					WriteLine (String.Format ("Done building target \"{0}\" in project \"{1}\".{2}",
+						args.TargetName, args.ProjectFile,
+						args.Succeeded ? String.Empty : "-- FAILED"));
+					ResetColor ();
+					WriteLine (String.Empty);
+				}
+				indent--;
+			}
+			
+			public void TaskStartedHandler (TaskStartedEventArgs args)
+			{
+				if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Detailed)) {
+					SetColor (eventColor);
+					WriteLine (String.Format ("Task \"{0}\"",args.TaskName));
+					ResetColor ();
+				}
+				indent++;
+			}
+			
+			public void TaskFinishedHandler (TaskFinishedEventArgs args)
+			{
+				indent--;
+				if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Detailed) ||
+						(!args.Succeeded && IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal))) {
+					SetColor (eventColor);
+					if (args.Succeeded)
+						WriteLine (String.Format ("Done executing task \"{0}\"", args.TaskName));
+					else
+						WriteLine (String.Format ("Task \"{0}\" execution -- FAILED", args.TaskName));
+					ResetColor ();
+				}
+			}
+			
+			public void MessageHandler (BuildMessageEventArgs args)
+			{
+				if (IsMessageOk (args)) {
+					if (parent.no_message_color) {
+						ExecutePendingEventHandlers ();
+						WriteLine (args.Message);
+					} else {
+						ExecutePendingEventHandlers ();
+						SetColor (args.Importance == MessageImportance.High ? parent.highMessageColor : parent.messageColor);
+						WriteLine (args.Message);
+						ResetColor ();
+					}
+				}
+			}
+			
+			public void WarningHandler (BuildWarningEventArgs args)
+			{
+				string msg = FormatWarningEvent (args);
+				if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Quiet)) {
+					ExecutePendingEventHandlers ();
+					SetColor (parent.warningColor);
+					WriteLineWithoutIndent (msg);
+					ResetColor ();
+				}
+				warnings.Add (msg);
+	
+				List<string> list = null;
+				if (!warningsTable.TryGetValue (EventsAsString, out list))
+					warningsTable [EventsAsString] = list = new List<string> ();
+				list.Add (msg);
+	
+				warningCount++;
+			}
+			
+			public void ErrorHandler (BuildErrorEventArgs args)
+			{
+				string msg = FormatErrorEvent (args);
+				if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Quiet)) {
+					ExecutePendingEventHandlers ();
+					SetColor (parent.errorColor);
+					WriteLineWithoutIndent (msg);
+					ResetColor ();
+				}
+				errors.Add (msg);
+	
+				List<string> list = null;
+				if (!errorsTable.TryGetValue (EventsAsString, out list))
+					errorsTable [EventsAsString] = list = new List<string> ();
+				list.Add (msg);
+				errorCount++;
+			}
+			
+			public void CustomHandler (CustomBuildEventArgs args)
+			{
+			}
+			
+			private bool IsVerbosityGreaterOrEqual (LoggerVerbosity v)
+			{
+				if (v == LoggerVerbosity.Diagnostic) {
+					return LoggerVerbosity.Diagnostic <= verbosity;
+				} else if (v == LoggerVerbosity.Detailed) {
+					return LoggerVerbosity.Detailed <= verbosity;
+				} else if (v == LoggerVerbosity.Normal) {
+					return LoggerVerbosity.Normal <= verbosity;
+				} else if (v == LoggerVerbosity.Minimal) {
+					return LoggerVerbosity.Minimal <= verbosity;
+				} else if (v == LoggerVerbosity.Quiet) {
+					return true;
+				} else
+					return false;
+			}
+	
+			void DumpItems (IEnumerable items)
+			{
+				if (parent.config.NoItemAndPropertyList || !IsVerbosityGreaterOrEqual (LoggerVerbosity.Diagnostic) || items == null)
+					return;
+	
+				SetColor (eventColor);
+				WriteLine (String.Empty);
+				WriteLine ("Initial Items:");
+				ResetColor ();
+				if (items == null)
+					return;
+	
+				var items_table = new SortedDictionary<string, List<ITaskItem>> ();
+				foreach (DictionaryEntry de in items) {
+					string key = (string)de.Key;
+					if (!items_table.ContainsKey (key))
+						items_table [key] = new List<ITaskItem> ();
+	
+					items_table [key].Add ((ITaskItem) de.Value);
+				}
+	
+				foreach (string name in items_table.Keys) {
+					WriteLine (name);
+					indent ++;
+					foreach (ITaskItem item in items_table [name])
+						WriteLine (item.ItemSpec);
+					indent--;
+				}
+			}
+	
+			string EventsAsString {
+				get {
+					if (current_events_string == null)
+						current_events_string = EventsToString ();
+					return current_events_string;
+				}
+			}
+			
+			private bool IsMessageOk (BuildMessageEventArgs bsea)
+			{
+				if (bsea.Importance == MessageImportance.High && IsVerbosityGreaterOrEqual (LoggerVerbosity.Minimal)) {
+					return true;
+				} else if (bsea.Importance == MessageImportance.Normal && IsVerbosityGreaterOrEqual (LoggerVerbosity.Normal)) {
+					return true;
+				} else if (bsea.Importance == MessageImportance.Low && IsVerbosityGreaterOrEqual (LoggerVerbosity.Detailed)) {
+					return true;
+				} else
+					return false;
+			}
+	
+			void DumpProperties (IEnumerable properties)
+			{
+				if (parent.config.NoItemAndPropertyList || !IsVerbosityGreaterOrEqual (LoggerVerbosity.Diagnostic))
+					return;
+	
+				SetColor (eventColor);
+				WriteLine (String.Empty);
+				WriteLine ("Initial Properties:");
+				ResetColor ();
+	
+				if (properties == null)
+					return;
+	
+				var dict = new SortedDictionary<string, string> ();
+				foreach (DictionaryEntry de in properties)
+					dict [(string)de.Key] = (string)de.Value;
+	
+				foreach (KeyValuePair<string, string> pair in dict)
+					WriteLine (String.Format ("{0} = {1}", pair.Key, pair.Value));
+			}
+	
+			private void WriteLine (string message)
+			{
+				if (indent > 0) {
+					StringBuilder sb = new StringBuilder ();
+					for (int i = 0; i < indent; i++)
+						sb.Append ('\t');
+	
+					string indent_str = sb.ToString ();
+	
+					foreach (string line in message.Split (new string[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries))
+						parent.writeHandler (indent_str + line);
+				} else {
+					parent.writeHandler (message);
+				}
+			}
+	
+			void ExecutePendingEventHandlers ()
+			{
+				foreach (var be in events)
+					be.ExecuteStartedHandler ();
+			}
+	
+			string EventsToString ()
+			{
+				StringBuilder sb = new StringBuilder ();
+	
+				string last_imported_target_file = String.Empty;
+				for (int i = 0; i < events.Count; i ++) {
+					var args = events [i].EventArgs;
+					ProjectStartedEventArgs pargs = args as ProjectStartedEventArgs;
+					if (pargs != null) {
+						sb.AppendFormat ("{0} ({1}) ->\n", pargs.ProjectFile,
+								String.IsNullOrEmpty (pargs.TargetNames) ?
+									"default targets" :
+									pargs.TargetNames);
+						last_imported_target_file = String.Empty;
+						continue;
+					}
+	
+					TargetStartedEventArgs targs = args as TargetStartedEventArgs;
+					if (targs != null) {
+						if (targs.TargetFile != targs.ProjectFile && targs.TargetFile != last_imported_target_file)
+							// target from an imported file,
+							// and it hasn't been mentioned as yet
+							sb.AppendFormat ("{0} ", targs.TargetFile);
+	
+						last_imported_target_file = targs.TargetFile;
+						sb.AppendFormat ("({0} target) ->\n", targs.TargetName);
+					}
+				}
+	
+				return sb.ToString ();
+			}
+	
+			void DumpPerformanceSummary ()
+			{
+				SetColor (eventColor);
+				WriteLine ("Target perfomance summary:");
+				ResetColor ();
+	
+				foreach (var pi in targetPerfTable.OrderBy (pair => pair.Value.Time))
+					WriteLine (String.Format ("{0,10:0.000} ms  {1,-50}  {2,5} calls", pi.Value.Time.TotalMilliseconds, pi.Key, pi.Value.NumberOfCalls));
+	
+				WriteLine (String.Empty);
+	
+				SetColor (eventColor);
+				WriteLine ("Tasks perfomance summary:");
+				ResetColor ();
+	
+				foreach (var pi in tasksPerfTable.OrderBy (pair => pair.Value.Time))
+					WriteLine (String.Format ("{0,10:0.000} ms  {1,-50}  {2,5} calls", pi.Value.Time.TotalMilliseconds, pi.Key, pi.Value.NumberOfCalls));
+	
+				WriteLine (String.Empty);
+			}
+			
+			private string FormatErrorEvent (BuildErrorEventArgs args)
+			{
+				// For some reason we get an 1-char empty string as Subcategory somtimes.
+				string subprefix = args.Subcategory == null || args.Subcategory == "" || args.Subcategory == " " ? "" : " ";
+				string subcat = subprefix == "" ? "" : args.Subcategory;
+					
+				if (args.LineNumber != 0){
+					if (args.ColumnNumber != 0 && !InEmacs) 
+						return String.Format ("{0}({1},{2}): {3}{4}error {5}: {6}",
+								      args.File, args.LineNumber, args.ColumnNumber,
+								      subprefix, subcat, args.Code, args.Message);
+	
+					return String.Format ("{0}({1}): {2}{3}error {4}: {5}",
+							      args.File, args.LineNumber,
+							      subprefix, subcat, args.Code, args.Message);
+				} else {
+					return String.Format ("{0}: {1}{2}error {3}: {4}", args.File, subprefix, subcat, args.Code,
+						args.Message);
+				}
+			}
+	
+			static bool InEmacs = Environment.GetEnvironmentVariable ("EMACS") == "t";
+	
+			private string FormatWarningEvent (BuildWarningEventArgs args)
+			{
+				// For some reason we get an 1-char empty string as Subcategory somtimes.
+				string subprefix = args.Subcategory == null || args.Subcategory == "" || args.Subcategory == " " ? "" : " ";
+				string subcat = subprefix == "" ? "" : args.Subcategory;
+	
+				// FIXME: show more complicated args
+				if (args.LineNumber != 0){
+	
+					if (args.ColumnNumber != 0 && !InEmacs) {
+						return String.Format ("{0}({1},{2}): {3}{4}warning {5}: {6}",
+								      args.File, args.LineNumber, args.ColumnNumber,
+								      subprefix, subcat, args.Code, args.Message);
+					}
+					return String.Format ("{0}({1}): {2}{3}warning {4}: {5}",
+							      args.File, args.LineNumber,
+							      subprefix, subcat, args.Code, args.Message);
+				} else {
+					return String.Format ("{0}: {1} warning {2}: {3}", args.File, args.Subcategory, args.Code,
+						args.Message);
+				}
+			}
+	
+			void SetColor (ConsoleColor color)
+			{
+				if (parent.use_colors)
+					parent.colorSet (color);
+			}
+	
+			void ResetColor ()
+			{
+				if (parent.use_colors)
+					parent.colorReset ();
+			}
+			
+			private void WriteLineWithoutIndent (string message)
+			{
+				parent.writeHandler (message);
+			}
+		}
 	}
 
 	class BuildEvent {
+		public object Sender; 
 		public BuildStatusEventArgs EventArgs;
 		public bool StartHandlerHasExecuted;
 		public ConsoleLogger ConsoleLogger;
@@ -870,11 +1002,11 @@ namespace Microsoft.Build.BuildEngine {
 				return;
 
 			if (EventArgs is ProjectStartedEventArgs)
-				ConsoleLogger.ProjectStartedHandler (null, (ProjectStartedEventArgs)EventArgs);
+				ConsoleLogger.ProjectStartedHandler (Sender, (ProjectStartedEventArgs)EventArgs);
 			else if (EventArgs is TargetStartedEventArgs)
-				ConsoleLogger.TargetStartedHandler (null, (TargetStartedEventArgs)EventArgs);
+				ConsoleLogger.TargetStartedHandler (Sender, (TargetStartedEventArgs)EventArgs);
 			else if (EventArgs is TaskStartedEventArgs)
-				ConsoleLogger.TaskStartedHandler (null, (TaskStartedEventArgs)EventArgs);
+				ConsoleLogger.TaskStartedHandler (Sender, (TaskStartedEventArgs)EventArgs);
 			else if (!(EventArgs is BuildStartedEventArgs))
 				throw new InvalidOperationException ("Unexpected event on the stack, type: " + EventArgs.GetType ());
 
@@ -887,11 +1019,11 @@ namespace Microsoft.Build.BuildEngine {
 				return;
 
 			if (EventArgs is ProjectStartedEventArgs)
-				ConsoleLogger.ProjectFinishedHandler (null, finished_args as ProjectFinishedEventArgs);
+				ConsoleLogger.ProjectFinishedHandler (Sender, finished_args as ProjectFinishedEventArgs);
 			else if (EventArgs is TargetStartedEventArgs)
-				ConsoleLogger.TargetFinishedHandler (null, finished_args as TargetFinishedEventArgs);
+				ConsoleLogger.TargetFinishedHandler (Sender, finished_args as TargetFinishedEventArgs);
 			else if (EventArgs is TaskStartedEventArgs)
-				ConsoleLogger.TaskFinishedHandler (null, finished_args as TaskFinishedEventArgs);
+				ConsoleLogger.TaskFinishedHandler (Sender, finished_args as TaskFinishedEventArgs);
 			else if (!(EventArgs is BuildStartedEventArgs))
 				throw new InvalidOperationException ("Unexpected event on the stack, type: " + EventArgs.GetType ());
 		}

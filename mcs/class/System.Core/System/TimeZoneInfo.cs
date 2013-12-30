@@ -1,3 +1,4 @@
+
 /*
  * System.TimeZoneInfo
  *
@@ -285,10 +286,17 @@ namespace System
 
 			if (this == TimeZoneInfo.Utc)
 				return DateTime.SpecifyKind (dateTime, DateTimeKind.Utc);
-
+			
 			//FIXME: do not rely on DateTime implementation !
-			if (this == TimeZoneInfo.Local)
+			if (this == TimeZoneInfo.Local) 
+			{
+#if NET_4_0
+				return dateTime.ToLocalTime ();
+#else
 				return DateTime.SpecifyKind (dateTime.ToLocalTime (), DateTimeKind.Unspecified);
+#endif
+			}
+
 
 			AdjustmentRule rule = GetApplicableRule (dateTime);
 		

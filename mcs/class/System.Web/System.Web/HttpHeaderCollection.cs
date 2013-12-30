@@ -34,6 +34,10 @@ namespace System.Web
 	{
 		bool? headerCheckingEnabled;
 
+		public HttpHeaderCollection () : base (StringComparer.OrdinalIgnoreCase)
+		{
+		}
+
 		bool HeaderCheckingEnabled {
 			get {
 				if (headerCheckingEnabled == null)

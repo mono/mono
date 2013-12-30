@@ -417,6 +417,14 @@ namespace Mono.CSharp {
 			Emit (ec, true);
 		}
 
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			source.FlowAnalysis (fc);
+
+			if (target is ArrayAccess || target is IndexerExpr || target is PropertyExpr)
+				target.FlowAnalysis (fc);
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			Assign _target = (Assign) t;
@@ -464,6 +472,32 @@ namespace Mono.CSharp {
 				ec.Report.Warning (1717, 3, loc, "Assignment made to same variable; did you mean to assign something else?");
 
 			return this;
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			base.FlowAnalysis (fc);
+
+			var vr = target as VariableReference;
+			if (vr != null) {
+				if (vr.VariableInfo != null)
+					fc.SetVariableAssigned (vr.VariableInfo);
+
+				return;
+			}
+
+			var fe = target as FieldExpr;
+			if (fe != null) {
+				fe.SetFieldAssigned (fc);
+				return;
+			}
+		}
+
+		public override void MarkReachable (Reachability rc)
+		{
+			var es = source as ExpressionStatement;
+			if (es != null)
+				es.MarkReachable (rc);
 		}
 	}
 
@@ -521,20 +555,21 @@ namespace Mono.CSharp {
 		// share same constructor (block) for expression trees resolve but
 		// they have they own resolve scope
 		//
-		sealed class FieldInitializerContext : ResolveContext
+		sealed class FieldInitializerContext : BlockContext
 		{
-			ExplicitBlock ctor_block;
+			readonly ExplicitBlock ctor_block;
 
-			public FieldInitializerContext (IMemberContext mc, ResolveContext constructorContext)
-				: base (mc, Options.FieldInitializerScope | Options.ConstructorScope)
+			public FieldInitializerContext (IMemberContext mc, BlockContext constructorContext)
+				: base (mc, null, constructorContext.ReturnType)
 			{
+				flags |= Options.FieldInitializerScope | Options.ConstructorScope;
 				this.ctor_block = constructorContext.CurrentBlock.Explicit;
 			}
 
 			public override ExplicitBlock ConstructorBlock {
-				get {
-					return ctor_block;
-				}
+			    get {
+			        return ctor_block;
+			    }
 			}
 		}
 
@@ -552,21 +587,25 @@ namespace Mono.CSharp {
 				((FieldExpr)target).InstanceExpression = new CompilerGeneratedThis (mc.CurrentType, expression.Location);
 		}
 
+		public int AssignmentOffset { get; private set; }
+
 		public override Location StartLocation {
 			get {
 				return loc;
 			}
 		}
 
-		protected override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext rc)
 		{
 			// Field initializer can be resolved (fail) many times
 			if (source == null)
 				return null;
 
+			var bc = (BlockContext) rc;
 			if (resolved == null) {
-				var ctx = new FieldInitializerContext (mc, ec);
+				var ctx = new FieldInitializerContext (mc, bc);
 				resolved = base.DoResolve (ctx) as ExpressionStatement;
+				AssignmentOffset = ctx.AssignmentInfoOffset - bc.AssignmentInfoOffset;
 			}
 
 			return resolved;
@@ -592,6 +631,11 @@ namespace Mono.CSharp {
 				resolved.EmitStatement (ec);
 			else
 				base.EmitStatement (ec);
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			source.FlowAnalysis (fc);
 		}
 		
 		public bool IsDefaultInitializer {
@@ -780,6 +824,12 @@ namespace Mono.CSharp {
 			return base.DoResolve (ec);
 		}
 
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			target.FlowAnalysis (fc);
+			source.FlowAnalysis (fc);
+		}
+
 		protected override Expression ResolveConversions (ResolveContext ec)
 		{
 			//
@@ -807,7 +857,9 @@ namespace Mono.CSharp {
 			if (b == null) {
 				if (source is ReducedExpression)
 					b = ((ReducedExpression) source).OriginalExpression as Binary;
-				else if (source is Nullable.LiftedBinaryOperator) {
+				else if (source is ReducedExpression.ReducedConstantExpression) {
+					b = ((ReducedExpression.ReducedConstantExpression) source).OriginalExpression as Binary;
+				} else if (source is Nullable.LiftedBinaryOperator) {
 					var po = ((Nullable.LiftedBinaryOperator) source);
 					if (po.UserOperator == null)
 						b = po.Binary;

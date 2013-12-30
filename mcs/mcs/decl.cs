@@ -303,7 +303,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		internal Flags caching_flags;
 
-		public MemberCore (TypeContainer parent, MemberName name, Attributes attrs)
+		protected MemberCore (TypeContainer parent, MemberName name, Attributes attrs)
 		{
 			this.Parent = parent;
 			member_name = name;
@@ -435,7 +435,7 @@ namespace Mono.CSharp {
 				if ((mod_flags & Modifiers.COMPILER_GENERATED) != 0)
 					return true;
 
-				return Parent == null ? false : Parent.IsCompilerGenerated;
+				return Parent != null && Parent.IsCompilerGenerated;
 			}
 		}
 
@@ -884,7 +884,7 @@ namespace Mono.CSharp {
 				if (GetAttributeObsolete () != null)
 					return true;
 
-				return Parent == null ? false : Parent.IsObsolete;
+				return Parent != null && Parent.IsObsolete;
 			}
 		}
 
@@ -893,7 +893,7 @@ namespace Mono.CSharp {
 				if ((ModFlags & Modifiers.UNSAFE) != 0)
 					return true;
 
-				return Parent == null ? false : Parent.IsUnsafe;
+				return Parent != null && Parent.IsUnsafe;
 			}
 		}
 

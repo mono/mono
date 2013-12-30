@@ -13,11 +13,13 @@
 
 #include <mono/utils/atomic.h>
 
-#if defined (WAPI_NO_ATOMIC_ASM) || !defined (HAS_64BITS_ATOMICS)
+#if defined (WAPI_NO_ATOMIC_ASM) || defined (BROKEN_64BIT_ATOMICS_INTRINSIC)
 
 #include <pthread.h>
 
 static pthread_mutex_t spin = PTHREAD_MUTEX_INITIALIZER;
+
+#define NEED_64BIT_CMPXCHG_FALLBACK
 
 #endif
 
@@ -82,6 +84,52 @@ gpointer InterlockedCompareExchangePointer(volatile gpointer *dest,
 	return(old);
 }
 
+gint32 InterlockedAdd(volatile gint32 *dest, gint32 add)
+{
+	gint32 ret;
+	int thr_ret;
+
+	mono_once(&spin_once, spin_init);
+
+	pthread_cleanup_push ((void(*)(void *))pthread_mutex_unlock,
+			      (void *)&spin);
+	thr_ret = pthread_mutex_lock(&spin);
+	g_assert (thr_ret == 0);
+
+	*dest += add;
+	ret= *dest;
+
+	thr_ret = pthread_mutex_unlock(&spin);
+	g_assert (thr_ret == 0);
+
+	pthread_cleanup_pop (0);
+
+	return(ret);
+}
+
+gint64 InterlockedAdd64(volatile gint64 *dest, gint64 add)
+{
+	gint64 ret;
+	int thr_ret;
+
+	mono_once(&spin_once, spin_init);
+
+	pthread_cleanup_push ((void(*)(void *))pthread_mutex_unlock,
+			      (void *)&spin);
+	thr_ret = pthread_mutex_lock(&spin);
+	g_assert (thr_ret == 0);
+
+	*dest += add;
+	ret= *dest;
+
+	thr_ret = pthread_mutex_unlock(&spin);
+	g_assert (thr_ret == 0);
+
+	pthread_cleanup_pop (0);
+
+	return(ret);
+}
+
 gint32 InterlockedIncrement(volatile gint32 *dest)
 {
 	gint32 ret;
@@ -102,6 +150,29 @@ gint32 InterlockedIncrement(volatile gint32 *dest)
 	
 	pthread_cleanup_pop (0);
 	
+	return(ret);
+}
+
+gint64 InterlockedIncrement64(volatile gint64 *dest)
+{
+	gint64 ret;
+	int thr_ret;
+
+	mono_once(&spin_once, spin_init);
+
+	pthread_cleanup_push ((void(*)(void *))pthread_mutex_unlock,
+			      (void *)&spin);
+	thr_ret = pthread_mutex_lock(&spin);
+	g_assert (thr_ret == 0);
+
+	(*dest)++;
+	ret= *dest;
+
+	thr_ret = pthread_mutex_unlock(&spin);
+	g_assert (thr_ret == 0);
+
+	pthread_cleanup_pop (0);
+
 	return(ret);
 }
 
@@ -128,6 +199,29 @@ gint32 InterlockedDecrement(volatile gint32 *dest)
 	return(ret);
 }
 
+gint64 InterlockedDecrement64(volatile gint64 *dest)
+{
+	gint64 ret;
+	int thr_ret;
+
+	mono_once(&spin_once, spin_init);
+
+	pthread_cleanup_push ((void(*)(void *))pthread_mutex_unlock,
+			      (void *)&spin);
+	thr_ret = pthread_mutex_lock(&spin);
+	g_assert (thr_ret == 0);
+
+	(*dest)--;
+	ret= *dest;
+
+	thr_ret = pthread_mutex_unlock(&spin);
+	g_assert (thr_ret == 0);
+
+	pthread_cleanup_pop (0);
+
+	return(ret);
+}
+
 gint32 InterlockedExchange(volatile gint32 *dest, gint32 exch)
 {
 	gint32 ret;
@@ -148,6 +242,29 @@ gint32 InterlockedExchange(volatile gint32 *dest, gint32 exch)
 	
 	pthread_cleanup_pop (0);
 	
+	return(ret);
+}
+
+gint64 InterlockedExchange64(volatile gint64 *dest, gint64 exch)
+{
+	gint64 ret;
+	int thr_ret;
+
+	mono_once(&spin_once, spin_init);
+
+	pthread_cleanup_push ((void(*)(void *))pthread_mutex_unlock,
+			      (void *)&spin);
+	thr_ret = pthread_mutex_lock(&spin);
+	g_assert (thr_ret == 0);
+
+	ret=*dest;
+	*dest=exch;
+
+	thr_ret = pthread_mutex_unlock(&spin);
+	g_assert (thr_ret == 0);
+
+	pthread_cleanup_pop (0);
+
 	return(ret);
 }
 
@@ -197,46 +314,253 @@ gint32 InterlockedExchangeAdd(volatile gint32 *dest, gint32 add)
 	return(ret);
 }
 
-#endif
-
-#ifndef HAS_64BITS_ATOMICS
-
-#if defined (TARGET_MACH) && defined (TARGET_ARM) && (defined(__ARM_ARCH_7__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7S__))
-
-gint64 InterlockedCompareExchange64(volatile gint64 *dest, gint64 exch, gint64 comp)  __attribute__ ((naked));
-
-gint64
-InterlockedCompareExchange64(volatile gint64 *dest, gint64 exch, gint64 comp)
+gint64 InterlockedExchangeAdd64(volatile gint64 *dest, gint64 add)
 {
-	__asm__ (
-	"push {r4, r5, r6, r7}\n"
-	"ldr r4, [sp, #16]\n"
-	"dmb\n"
-"1:\n"
-	"ldrexd	r6, r7, [r0]\n"
-	"cmp	r7, r4\n"
-	"bne 2f\n"
-	"cmp	r6, r3\n"
-	"bne	2f\n"
-	"strexd	r5, r1, r2, [r0]\n"
-	"cmp	r5, #0\n"
-	"bne	1b\n"
-"2:\n"
-	"dmb\n"
-	"mov	r0, r6\n"
-	"mov	r1, r7\n"
-	"pop {r4, r5, r6, r7}\n"
-	"bx	lr\n"
-	);
+	gint64 ret;
+	int thr_ret;
+	
+	mono_once(&spin_once, spin_init);
+	
+	pthread_cleanup_push ((void(*)(void *))pthread_mutex_unlock,
+			      (void *)&spin);
+	thr_ret = pthread_mutex_lock(&spin);
+	g_assert (thr_ret == 0);
+
+	ret= *dest;
+	*dest+=add;
+	
+	thr_ret = pthread_mutex_unlock(&spin);
+	g_assert (thr_ret == 0);
+
+	pthread_cleanup_pop (0);
+
+	return(ret);
 }
 
-#elif defined (TARGET_MACH) && (defined (TARGET_X86) || defined (TARGET_AMD64))
+gint8 InterlockedRead8(volatile gint8 *src)
+{
+	gint8 ret;
+	int thr_ret;
+	
+	mono_once(&spin_once, spin_init);
+	
+	pthread_cleanup_push ((void(*)(void *))pthread_mutex_unlock,
+			      (void *)&spin);
+	thr_ret = pthread_mutex_lock(&spin);
+	g_assert (thr_ret == 0);
+
+	ret= *src;
+	
+	thr_ret = pthread_mutex_unlock(&spin);
+	g_assert (thr_ret == 0);
+
+	pthread_cleanup_pop (0);
+
+	return(ret);
+}
+
+gint16 InterlockedRead16(volatile gint16 *src)
+{
+	gint16 ret;
+	int thr_ret;
+	
+	mono_once(&spin_once, spin_init);
+	
+	pthread_cleanup_push ((void(*)(void *))pthread_mutex_unlock,
+			      (void *)&spin);
+	thr_ret = pthread_mutex_lock(&spin);
+	g_assert (thr_ret == 0);
+
+	ret= *src;
+	
+	thr_ret = pthread_mutex_unlock(&spin);
+	g_assert (thr_ret == 0);
+
+	pthread_cleanup_pop (0);
+
+	return(ret);
+}
+
+gint32 InterlockedRead(volatile gint32 *src)
+{
+	gint32 ret;
+	int thr_ret;
+	
+	mono_once(&spin_once, spin_init);
+	
+	pthread_cleanup_push ((void(*)(void *))pthread_mutex_unlock,
+			      (void *)&spin);
+	thr_ret = pthread_mutex_lock(&spin);
+	g_assert (thr_ret == 0);
+
+	ret= *src;
+	
+	thr_ret = pthread_mutex_unlock(&spin);
+	g_assert (thr_ret == 0);
+
+	pthread_cleanup_pop (0);
+
+	return(ret);
+}
+
+gint64 InterlockedRead64(volatile gint64 *src)
+{
+	gint64 ret;
+	int thr_ret;
+	
+	mono_once(&spin_once, spin_init);
+	
+	pthread_cleanup_push ((void(*)(void *))pthread_mutex_unlock,
+			      (void *)&spin);
+	thr_ret = pthread_mutex_lock(&spin);
+	g_assert (thr_ret == 0);
+
+	ret= *src;
+	
+	thr_ret = pthread_mutex_unlock(&spin);
+	g_assert (thr_ret == 0);
+
+	pthread_cleanup_pop (0);
+
+	return(ret);
+}
+
+gpointer InterlockedReadPointer(volatile gpointer *src)
+{
+	gpointer ret;
+	int thr_ret;
+	
+	mono_once(&spin_once, spin_init);
+	
+	pthread_cleanup_push ((void(*)(void *))pthread_mutex_unlock,
+			      (void *)&spin);
+	thr_ret = pthread_mutex_lock(&spin);
+	g_assert (thr_ret == 0);
+
+	ret= *src;
+	
+	thr_ret = pthread_mutex_unlock(&spin);
+	g_assert (thr_ret == 0);
+
+	pthread_cleanup_pop (0);
+
+	return(ret);
+}
+
+void InterlockedWrite(volatile gint8 *dst, gint8 val)
+{
+	int thr_ret;
+	
+	mono_once(&spin_once, spin_init);
+	
+	pthread_cleanup_push ((void(*)(void *))pthread_mutex_unlock,
+			      (void *)&spin);
+	thr_ret = pthread_mutex_lock(&spin);
+	g_assert (thr_ret == 0);
+
+	*dst=val;
+	
+	thr_ret = pthread_mutex_unlock(&spin);
+	g_assert (thr_ret == 0);
+	
+	pthread_cleanup_pop (0);
+}
+
+void InterlockedWrite16(volatile gint16 *dst, gint16 val)
+{
+	int thr_ret;
+	
+	mono_once(&spin_once, spin_init);
+	
+	pthread_cleanup_push ((void(*)(void *))pthread_mutex_unlock,
+			      (void *)&spin);
+	thr_ret = pthread_mutex_lock(&spin);
+	g_assert (thr_ret == 0);
+
+	*dst=val;
+	
+	thr_ret = pthread_mutex_unlock(&spin);
+	g_assert (thr_ret == 0);
+	
+	pthread_cleanup_pop (0);
+}
+
+void InterlockedWrite(volatile gint32 *dst, gint32 val)
+{
+	int thr_ret;
+	
+	mono_once(&spin_once, spin_init);
+	
+	pthread_cleanup_push ((void(*)(void *))pthread_mutex_unlock,
+			      (void *)&spin);
+	thr_ret = pthread_mutex_lock(&spin);
+	g_assert (thr_ret == 0);
+
+	*dst=val;
+	
+	thr_ret = pthread_mutex_unlock(&spin);
+	g_assert (thr_ret == 0);
+	
+	pthread_cleanup_pop (0);
+}
+
+void InterlockedWrite64(volatile gint64 *dst, gint64 val)
+{
+	int thr_ret;
+	
+	mono_once(&spin_once, spin_init);
+	
+	pthread_cleanup_push ((void(*)(void *))pthread_mutex_unlock,
+			      (void *)&spin);
+	thr_ret = pthread_mutex_lock(&spin);
+	g_assert (thr_ret == 0);
+
+	*dst=val;
+	
+	thr_ret = pthread_mutex_unlock(&spin);
+	g_assert (thr_ret == 0);
+	
+	pthread_cleanup_pop (0);
+}
+
+void InterlockedWritePointer(volatile gpointer *dst, gpointer val)
+{
+	int thr_ret;
+	
+	mono_once(&spin_once, spin_init);
+	
+	pthread_cleanup_push ((void(*)(void *))pthread_mutex_unlock,
+			      (void *)&spin);
+	thr_ret = pthread_mutex_lock(&spin);
+	g_assert (thr_ret == 0);
+
+	*dst=val;
+	
+	thr_ret = pthread_mutex_unlock(&spin);
+	g_assert (thr_ret == 0);
+	
+	pthread_cleanup_pop (0);
+}
+
+#endif
+
+#if defined (NEED_64BIT_CMPXCHG_FALLBACK)
+
+#if defined (TARGET_OSX)
+
+/* The compiler breaks if this code is in the header... */
 
 gint64
 InterlockedCompareExchange64(volatile gint64 *dest, gint64 exch, gint64 comp)
 {
 	return __sync_val_compare_and_swap (dest, comp, exch);
 }
+
+#elif defined (HAVE_64BIT_CMPXCHG_FALLBACK)
+
+#ifdef ENABLE_EXTENSION_MODULE
+#include "../../../mono-extensions/mono/utils/atomic.c"
+#endif
 
 #else
 
@@ -256,4 +580,5 @@ InterlockedCompareExchange64(volatile gint64 *dest, gint64 exch, gint64 comp)
 }
 
 #endif
+
 #endif

@@ -112,6 +112,7 @@ GTAGS
 # Mono-specific patterns
 ##############################################################################
 
+.dirstamp
 compile
 mono.h
 mono-*.tar.*

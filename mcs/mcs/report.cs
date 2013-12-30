@@ -954,7 +954,7 @@ namespace Mono.CSharp {
 			if (timers == null)
 				return;
 
-			Dictionary<TimerType, string> timer_names = new Dictionary<TimerType,string> () {
+			Dictionary<TimerType, string> timer_names = new Dictionary<TimerType,string> {
 				{ TimerType.ParseTotal, "Parsing source files" },
 				{ TimerType.AssemblyBuilderSetup, "Assembly builder setup" },
 				{ TimerType.CreateTypeTotal, "Compiled types created" },
@@ -1053,7 +1053,7 @@ namespace Mono.CSharp {
 
 			public override bool IsEnabled (int code, bool previous)
 			{
-				return this.code == code ? false : previous;
+				return this.code != code && previous;
 			}
 		}
 
@@ -1079,7 +1079,7 @@ namespace Mono.CSharp {
 
 			public override bool IsEnabled(int code, bool previous)
 			{
-				return this.code == code ? true : previous;
+				return this.code == code || previous;
 			}
 		}
 

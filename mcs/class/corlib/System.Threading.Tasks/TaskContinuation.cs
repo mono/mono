@@ -110,18 +110,41 @@ namespace System.Threading.Tasks
 		}
 	}
 
-	class ActionContinuation : IContinuation
+	class AwaiterActionContinuation : IContinuation
 	{
 		readonly Action action;
 
-		public ActionContinuation (Action action)
+		public AwaiterActionContinuation (Action action)
 		{
 			this.action = action;
 		}
 
 		public void Execute ()
 		{
-			action ();
+			//
+			// Continuation can be inlined only when the current context allows it. This is different to awaiter setup
+			// because the context where the awaiter task is set to completed can be anywhere (due to TaskCompletionSource)
+			//
+			if ((SynchronizationContext.Current == null || SynchronizationContext.Current.GetType () == typeof (SynchronizationContext)) && TaskScheduler.IsDefault) {
+				action ();
+			} else {
+				ThreadPool.UnsafeQueueUserWorkItem (l => ((Action) l) (), action);
+			}
+		}
+	}
+
+	class SchedulerAwaitContinuation : IContinuation
+	{
+		readonly Task task;
+
+		public SchedulerAwaitContinuation (Task task)
+		{
+			this.task = task;
+		}
+
+		public void Execute ()
+		{
+			task.RunSynchronouslyCore (task.scheduler);
 		}
 	}
 
@@ -179,7 +202,7 @@ namespace System.Threading.Tasks
 			}
 
 			if (exceptions != null) {
-				owner.TrySetException (new AggregateException (exceptions));
+				owner.TrySetException (new AggregateException (exceptions), false);
 				return;
 			}
 
@@ -239,7 +262,7 @@ namespace System.Threading.Tasks
 			}
 
 			if (exceptions != null) {
-				owner.TrySetException (new AggregateException (exceptions));
+				owner.TrySetException (new AggregateException (exceptions), false);
 				return;
 			}
 
@@ -336,6 +359,21 @@ namespace System.Threading.Tasks
 		public void Execute ()
 		{
 			evt.Signal ();
+		}
+	}
+
+	sealed class DisposeContinuation : IContinuation
+	{
+		readonly IDisposable instance;
+
+		public DisposeContinuation (IDisposable instance)
+		{
+			this.instance = instance;
+		}
+
+		public void Execute ()
+		{
+			instance.Dispose ();
 		}
 	}
 }

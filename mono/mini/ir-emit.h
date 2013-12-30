@@ -337,6 +337,7 @@ handle_gsharedvt_ldaddr (MonoCompile *cfg)
 		(dest)->type = STACK_MP;	\
 		(dest)->klass = (var)->klass;	\
         (dest)->dreg = alloc_dreg ((cfg), STACK_MP); \
+		(cfg)->has_indirection = TRUE;	\
 			  if (G_UNLIKELY (cfg->gsharedvt) && mini_is_gsharedvt_variable_type ((cfg), (var)->inst_vtype)) { handle_gsharedvt_ldaddr ((cfg)); } \
 		if (SIZEOF_REGISTER == 4 && DECOMPOSE_INTO_REGPAIR ((var)->type)) { MonoInst *var1 = get_vreg_to_inst (cfg, (var)->dreg + 1); MonoInst *var2 = get_vreg_to_inst (cfg, (var)->dreg + 2); g_assert (var1); g_assert (var2); var1->flags |= MONO_INST_INDIRECT; var2->flags |= MONO_INST_INDIRECT; } \
 	} while (0)
@@ -834,8 +835,6 @@ static int ccount = 0;
 
 /* Loads/Stores which can fault are handled correctly by the LLVM mono branch */
 #define MONO_EMIT_NEW_IMPLICIT_EXCEPTION_LOAD_STORE(cfg) do { \
-	if (COMPILE_LLVM (cfg) && !IS_LLVM_MONO_BRANCH)			\
-		MONO_EMIT_NEW_IMPLICIT_EXCEPTION ((cfg));			\
     } while (0)
 
 /* Emit an explicit null check which doesn't depend on SIGSEGV signal handling */
@@ -863,8 +862,6 @@ static int ccount = 0;
 		int __ins_flags = ins_flags; \
 		if (__ins_flags & MONO_INST_FAULT) {								\
 			MONO_EMIT_NULL_CHECK ((cfg), (base));						\
-			if (cfg->explicit_null_checks)								\
-				__ins_flags &= ~MONO_INST_FAULT;							\
 		}																\
 		NEW_LOAD_MEMBASE ((cfg), (dest), (op), (dr), (base), (offset));	\
 		(dest)->flags = (__ins_flags);									\
@@ -875,8 +872,6 @@ static int ccount = 0;
 		int __ins_flags = ins_flags; \
 	    if (__ins_flags & MONO_INST_FAULT) {									\
 			MONO_EMIT_NULL_CHECK ((cfg), (base));						\
-			if (cfg->explicit_null_checks)								\
-				__ins_flags &= ~MONO_INST_FAULT;							\
 		}																\
 		NEW_LOAD_MEMBASE ((cfg), (inst), (op), (dr), (base), (offset)); \
 		inst->flags = (__ins_flags); \
@@ -897,6 +892,12 @@ static int ccount = 0;
 
 #define MONO_EMIT_NEW_LOAD_MEMBASE_FAULT(cfg,dr,base,offset) MONO_EMIT_NEW_LOAD_MEMBASE_OP_FAULT ((cfg), (OP_LOAD_MEMBASE), (dr), (base), (offset))
 
+#define NEW_LOAD_MEMBASE_INVARIANT(cfg,dest,op,dr,base,offset) NEW_LOAD_MEMBASE_FLAGS ((cfg), (dest), (op), (dr), (base), (offset), MONO_INST_INVARIANT_LOAD)
+
+#define MONO_EMIT_NEW_LOAD_MEMBASE_OP_INVARIANT(cfg,op,dr,base,offset) MONO_EMIT_NEW_LOAD_MEMBASE_OP_FLAGS ((cfg), (op), (dr), (base), (offset), MONO_INST_INVARIANT_LOAD)
+
+#define MONO_EMIT_NEW_LOAD_MEMBASE_INVARIANT(cfg,dr,base,offset) MONO_EMIT_NEW_LOAD_MEMBASE_OP_INVARIANT ((cfg), (OP_LOAD_MEMBASE), (dr), (base), (offset))
+
 /*Object Model related macros*/
 
 /* Default bounds check implementation for most architectures + llvm */
@@ -905,7 +906,7 @@ static int ccount = 0;
 			if (fault) \
 				MONO_EMIT_NEW_LOAD_MEMBASE_OP_FAULT (cfg, OP_LOADI4_MEMBASE, _length_reg, array_reg, offset); \
 			else \
-				MONO_EMIT_NEW_LOAD_MEMBASE_OP_FLAGS (cfg, OP_LOADI4_MEMBASE, _length_reg, array_reg, offset, MONO_INST_CONSTANT_LOAD); \
+				MONO_EMIT_NEW_LOAD_MEMBASE_OP_FLAGS (cfg, OP_LOADI4_MEMBASE, _length_reg, array_reg, offset, MONO_INST_INVARIANT_LOAD); \
 			MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, _length_reg, index_reg); \
 			MONO_EMIT_NEW_COND_EXC (cfg, LE_UN, "IndexOutOfRangeException"); \
 	} while (0)

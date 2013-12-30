@@ -846,7 +846,7 @@ namespace System.Data.SqlClient {
 					if (keyInfo || schemaOnly)
 						epilog = sql2.ToString ();
 					try {
-						Connection.Tds.BeginExecuteProcedure (prolog,
+						ar = Connection.Tds.BeginExecuteProcedure (prolog,
 										      epilog,
 										      CommandText,
 										      !wantResults,

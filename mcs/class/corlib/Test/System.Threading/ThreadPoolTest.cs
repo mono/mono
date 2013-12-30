@@ -49,6 +49,37 @@ namespace MonoTests.System.Threading
 				Assert.Fail ("#2");
 			} catch (ArgumentNullException) {
 			}			
-		}	
+		}
+
+		[Test]
+		public void UnsafeQueueUserWorkItem_InvalidArguments ()
+		{
+			try {
+				ThreadPool.UnsafeQueueUserWorkItem (null, 1);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException) {
+			}
+		}
+
+#if NET_4_0
+		event WaitCallback e;
+
+		[Test]
+		public void UnsafeQueueUserWorkItem_MulticastDelegate ()
+		{
+			CountdownEvent ev = new CountdownEvent (2);
+
+			e += delegate {
+				ev.Signal ();
+			};
+
+			e += delegate {
+				ev.Signal ();
+			};
+
+			ThreadPool.UnsafeQueueUserWorkItem (e, null);
+			Assert.IsTrue (ev.Wait (3000));
+		}
+#endif
 	}
 }

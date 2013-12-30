@@ -61,6 +61,9 @@ namespace Xamarin.ApiDiff {
 						sb.Append ("public ");
 					}
 
+					if ((attr & FieldAttributes.Static) != 0)
+						sb.Append ("static ");
+
 					if ((attr & FieldAttributes.Literal) != 0)
 						sb.Append ("const ");
 				}

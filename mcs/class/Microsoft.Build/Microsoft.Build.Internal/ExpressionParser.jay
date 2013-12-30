@@ -1,0 +1,264 @@
+//
+// ExpressionParser.jay
+//
+// Author:
+//   Atsushi Enomoto (atsushi@xamarin.com)
+//
+// Copyright (C) 2013 Xamarin Inc. (http://www.xamarin.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+%{
+
+using System;
+using System.Text;
+using Microsoft.Build.Evaluation;
+using Microsoft.Build.Exceptions;
+using Microsoft.Build.Framework;
+
+/*
+
+Pseudo formal syntax for .NET 4.0 expression:
+
+Condition = Expression
+Include = Expression*
+
+ Expression
+	BooleanLiteral
+		TrueLiteral
+		FalseLiteral
+	BinaryExpression
+		Expression "==" Expression
+		Expression "!=" Expression
+		Expression ">" Expression
+		Expression ">=" Expression
+		Expression "<" Expression
+		Expression "<=" Expression
+		Expression "And" Expression
+		Expression "Or" Expression
+	UnaryExpression
+		"!" Expression
+	PropertyExpression
+		"$(" PropertyApplication ")"
+	ItemExpression
+		"@(" ItemApplication ")"
+	MetadataBatchingExpression
+		"%(" MetadataBatchingApplication ")"
+  StringLiteralOrFunction
+		StringLiteralOrFunctionName ( "(" FunctionArguments ")" )?
+
+.NET error messages are so detailed which is something like "you forgot '(' after '$' ?" - so
+it is likely that the MS tokenizer is hand-written.
+
+*/
+
+namespace Microsoft.Build.Internal.Expressions
+{
+	class ExpressionParser
+	{
+		static readonly int yacc_verbose_flag = Environment.GetEnvironmentVariable ("MONO_MSBUILD_PARSER_DEBUG") == "1" ? 1 : 0;
+
+		object debug_obj = yacc_verbose_flag == 0 ? null : new yydebug.yyDebugSimple ();
+		
+		public ExpressionList Parse (string source, ExpressionValidationType validationType)
+		{
+			var tokenizer = new ExpressionTokenizer (source, validationType);
+			return (ExpressionList) yyparse (tokenizer, debug_obj);
+		}
+		
+		BinaryExpression Binary (Operator op, object left, object right)
+		{
+			return new BinaryExpression () { Operator = op, Left = (Expression) left, Right = (Expression) right, Location = (ILocation) left };
+		}
+%}
+
+%token TRUE_LITERAL
+%token FALSE_LITERAL
+%token STRING_LITERAL
+%token EQ // ==
+%token NE // !=
+%token GT // >
+%token GE // >=
+%token LT // <
+%token LE // <=
+%token AND // AND
+%token OR // OR
+%token NOT //!
+%token DOT //.
+%token COMMA //,
+%token PROP_OPEN // $(
+%token ITEM_OPEN // @(
+%token METADATA_OPEN // %(
+%token PAREN_OPEN // (
+%token PAREN_CLOSE // )
+%token BRACE_OPEN // [
+%token BRACE_CLOSE // ]
+%token COLON2 // ::
+%token ARROW // ->
+%token NAME
+%token ERROR
+
+%start ExpressionList
+
+%%
+
+ExpressionList
+	: /* empty */
+	  { $$ = new ExpressionList (); }
+	| ExpressionList Expression
+	  { $$ = ((ExpressionList) $1).Add ((Expression) $2); }
+	;
+
+Expression
+	: LogicalExpression
+	;
+
+LogicalExpression
+	: ComparisonExpression
+	| LogicalExpression AND LogicalExpression
+	  { $$ = Binary (Operator.And, $1, $3); }
+	| LogicalExpression OR LogicalExpression
+	  { $$ = Binary (Operator.Or, $1, $3); }
+	;
+
+ComparisonExpression
+	: UnaryExpression
+	| UnaryExpression EQ UnaryExpression
+	  { $$ = Binary (Operator.EQ, $1, $3); }
+	| UnaryExpression NE UnaryExpression
+	  { $$ = Binary (Operator.NE, $1, $3); }
+	| UnaryExpression GT UnaryExpression
+	  { $$ = Binary (Operator.GT, $1, $3); }
+	| UnaryExpression GE UnaryExpression
+	  { $$ = Binary (Operator.GE, $1, $3); }
+	| UnaryExpression LT UnaryExpression
+	  { $$ = Binary (Operator.LT, $1, $3); }
+	| UnaryExpression LE UnaryExpression
+	  { $$ = Binary (Operator.LE, $1, $3); }
+	;
+
+UnaryExpression
+	: PrimaryExpression
+	| NOT UnaryExpression
+	  { $$ = new NotExpression () { Negated = (Expression) $2, Location = (ILocation) $1 }; }
+	;
+
+PrimaryExpression
+	: BooleanLiteral
+	| StringLiteral
+	| UnaryExpression
+	| PropertyAccessExpression
+	| ItemAccessExpression
+	| MetadataAccessExpression
+	| RawStringLiteralOrFunction
+	| ParenthesizedExpression
+	;
+	
+BooleanLiteral
+	: TRUE_LITERAL
+	  { $$ = new BooleanLiteral () { Value = true, Location = (ILocation) $1 }; }
+	| FALSE_LITERAL
+	  { $$ = new BooleanLiteral () { Value = false, Location = (ILocation) $1 }; }
+	;
+
+PropertyAccessExpression
+	: PROP_OPEN PropertyAccess PAREN_CLOSE
+	  { $$ = new PropertyAccessExpression () { Access = (PropertyAccess) $2, Location = (ILocation) $1 }; }
+	;
+
+PropertyAccess
+	: NAME
+	  { $$ = new PropertyAccess () { Name = (NameToken) $1, TargetType = PropertyTargetType.Object, Location = (NameToken) $1 }; }
+	| Expression DOT NAME
+	  { $$ = new PropertyAccess () { Name = (NameToken) $3, Target = (Expression) $1, TargetType = PropertyTargetType.Object, Location = (ILocation) $1 }; }
+	| BRACE_OPEN QualifiedNameExpression BRACE_CLOSE COLON2 NAME
+	  { $$ = new PropertyAccess () { Name = (NameToken) $5, Target = (Expression) $2, TargetType = PropertyTargetType.Type, Location = (ILocation) $1 }; }
+	| BRACE_OPEN QualifiedNameExpression BRACE_CLOSE COLON2 NAME PAREN_OPEN FunctionCallArguments PAREN_CLOSE
+	  { $$ = new PropertyAccess () { Name = (NameToken) $5, Target = (Expression) $2, TargetType = PropertyTargetType.Type, Arguments = (ExpressionList) $7, Location = (ILocation) $1 }; }
+	;
+
+QualifiedNameExpression
+	: QualifiedName
+	  { $$ = new StringLiteral () { Value = (NameToken) $1, Location = (ILocation) $1 }; }
+	;
+
+QualifiedName
+	: NAME
+	| QualifiedName DOT NAME
+	  { $$ = new NameToken () { Name = ((NameToken) $1).Name + "." + ((NameToken) $3).Name, Column = ((ILocation) $1).Column }; }
+	;
+
+ItemAccessExpression
+	: ITEM_OPEN ItemApplication PAREN_CLOSE
+	  { $$ = new ItemAccessExpression () { Application = (ItemApplication) $2, Location = (ILocation) $1 }; }
+	;
+
+// looking a bit messy, but gives different location
+ItemApplication
+	: NAME
+	  { $$ = new ItemApplication () { Name = (NameToken) $1, Location = (ILocation) $1 }; }
+	| NAME ARROW ExpressionList
+	  { $$ = new ItemApplication () { Name = (NameToken) $1, Expressions = (ExpressionList) $3, Location = (ILocation) $1 }; }
+	;
+
+MetadataAccessExpression
+	: METADATA_OPEN MetadataAccess PAREN_CLOSE
+	  { $$ = new MetadataAccessExpression () { Access = (MetadataAccess) $2, Location = (ILocation) $1 }; }
+	;
+
+// looking a bit messy, but gives different location
+MetadataAccess
+	: NAME
+	  { $$ = new MetadataAccess () { Metadata = (NameToken) $1, Location = (ILocation) $1 }; }
+	| NAME DOT NAME
+	  { $$ = new MetadataAccess () { ItemType = (NameToken) $1, Metadata = (NameToken) $3, Location = (ILocation) $1 }; }
+	;
+
+StringLiteral
+	: STRING_LITERAL
+	  { $$ = new StringLiteral () { Value = (NameToken) $1, Location = (ILocation) $1 }; }
+	;
+
+RawStringLiteralOrFunction
+	: NAME
+	  { $$ = new RawStringLiteral () { Value = (NameToken) $1, Location = (ILocation) $1 }; }
+	| NAME PAREN_OPEN PAREN_CLOSE
+	  { $$ = new FunctionCallExpression () { Name = (NameToken) $1, Arguments = new ExpressionList (), Location = (ILocation) $1 }; }
+	| NAME PAREN_OPEN FunctionCallArguments PAREN_CLOSE
+	  { $$ = new FunctionCallExpression () { Name = (NameToken) $1, Arguments = (ExpressionList) $3, Location = (ILocation) $1 }; }
+	;
+
+FunctionCallArguments
+	: /* empty */
+	  { $$ = new ExpressionList (); }
+	| Expression
+	  { $$ = new ExpressionList ().Add ((Expression) $1); }
+	| FunctionCallArguments COMMA Expression
+	  { $$ = ((ExpressionList) $1).Add ((Expression) $3); }
+	;
+
+ParenthesizedExpression
+	: PAREN_OPEN Expression PAREN_CLOSE
+	  { $$ = (Expression) $2; }
+	;
+
+%%
+
+	}

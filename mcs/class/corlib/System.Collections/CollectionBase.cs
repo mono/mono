@@ -37,6 +37,8 @@ namespace System.Collections {
 
 	[ComVisible(true)]
 	[Serializable]
+	[System.Diagnostics.DebuggerDisplay ("Count={Count}")]
+	[System.Diagnostics.DebuggerTypeProxy (typeof (CollectionDebuggerView))]
 #if INSIDE_CORLIB
 	public
 #else

@@ -3,3 +3,4 @@ bin/
 *.vs10x
 *.docstates
 *.suo
+Microsoft.Build.Internal/ExpressionParser.cs

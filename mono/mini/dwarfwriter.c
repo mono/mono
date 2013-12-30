@@ -35,7 +35,6 @@ typedef struct {
 	char *start_symbol, *end_symbol;
 	guint8 *code;
 	guint32 code_size;
-	MonoDebugMethodJitInfo *debug_info;
 } MethodLineNumberInfo;
 
 struct _MonoDwarfWriter
@@ -466,9 +465,6 @@ static int subprogram_attr [] = {
 
 static int tramp_subprogram_attr [] = {
 	DW_AT_name         , DW_FORM_string,
-#ifndef TARGET_IOS
-	DW_AT_description  , DW_FORM_string,
-#endif
     DW_AT_low_pc       , DW_FORM_addr,
     DW_AT_high_pc      , DW_FORM_addr,
 };
@@ -888,8 +884,11 @@ emit_all_line_number_info (MonoDwarfWriter *w)
 	/* Emit line number table */
 	for (l = info_list; l; l = l->next) {
 		MethodLineNumberInfo *info = l->data;
+		MonoDebugMethodJitInfo *dmji;
 
-		emit_line_number_info (w, info->method, info->start_symbol, info->end_symbol, info->code, info->code_size, info->debug_info);
+		dmji = mono_debug_find_method (info->method, mono_domain_get ());;
+		emit_line_number_info (w, info->method, info->start_symbol, info->end_symbol, info->code, info->code_size, dmji);
+		mono_debug_free_method_jit_info (dmji);
 	}
 	g_slist_free (info_list);
 
@@ -917,7 +916,7 @@ emit_debug_info_end (MonoDwarfWriter *w)
 }
 
 void
-mono_dwarf_writer_emit_base_info (MonoDwarfWriter *w, GSList *base_unwind_program)
+mono_dwarf_writer_emit_base_info (MonoDwarfWriter *w, const char *cu_name, GSList *base_unwind_program)
 {
 	char *s, *build_info;
 	int i;
@@ -986,13 +985,16 @@ mono_dwarf_writer_emit_base_info (MonoDwarfWriter *w, GSList *base_unwind_progra
 	emit_string (w, s);
 	g_free (build_info);
 	g_free (s);
-	emit_string (w, "JITted code");
+	emit_string (w, cu_name);
 	emit_string (w, "");
 	emit_byte (w, DW_LANG_C);
 	emit_pointer_value (w, 0);
 	emit_pointer_value (w, 0);
 	/* offset into .debug_line section */
-	emit_symbol_diff (w, ".Ldebug_line_start", ".Ldebug_line_section_start", 0);
+	if (w->emit_line)
+		emit_symbol_diff (w, ".Ldebug_line_start", ".Ldebug_line_section_start", 0);
+	else
+		emit_pointer_value (w, 0);
 
 	/* Base types */
 	for (i = 0; i < G_N_ELEMENTS (basic_types); ++i) {
@@ -1008,14 +1010,6 @@ mono_dwarf_writer_emit_base_info (MonoDwarfWriter *w, GSList *base_unwind_progra
 	/* debug_loc section */
 	emit_section_change (w, ".debug_loc", 0);
 	emit_label (w, ".Ldebug_loc_start");
-
-	/* debug_line section */
-	/*
-	 * We emit some info even if emit_line is FALSE, as the
-	 * apple linker seems to require a .debug_line section.
-	 */
-	if (!w->collect_line_info)
-		emit_line_number_info_begin (w);
 
 	emit_cie (w);
 }
@@ -2083,7 +2077,6 @@ mono_dwarf_writer_emit_method (MonoDwarfWriter *w, MonoCompile *cfg, MonoMethod 
 			info->end_symbol = g_strdup (end_symbol);
 			info->code = code;
 			info->code_size = code_size;
-			info->debug_info = debug_info;
 			w->line_info = g_slist_prepend (w->line_info, info);
 		} else {
 			emit_line_number_info (w, method, start_symbol, end_symbol, code, code_size, debug_info);

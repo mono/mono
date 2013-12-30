@@ -359,6 +359,8 @@ public class Tests : TestsBase, ITest2
 		ss7 ();
 		ss_nested ();
 		ss_regress_654694 ();
+		ss_step_through ();
+		ss_recursive (1);
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -450,6 +452,37 @@ public class Tests : TestsBase, ITest2
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void ss_nested_3 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_step_through () {
+		step_through_1 ();
+		StepThroughClass.step_through_2 ();
+		step_through_3 ();
+	}
+
+	[DebuggerStepThrough]
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void step_through_1 () {
+	}
+
+	[DebuggerStepThrough]
+	class StepThroughClass {
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public static void step_through_2 () {
+		}
+	}
+
+	[DebuggerStepThrough]
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void step_through_3 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_recursive (int n) {
+		if (n == 10)
+			return;
+		ss_recursive (n + 1);
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -867,6 +900,15 @@ public class Tests : TestsBase, ITest2
 		}
 		try {
 			throw new OverflowException ();
+		} catch (Exception) {
+		}
+		// no subclasses
+		try {
+			throw new OverflowException ();
+		} catch (Exception) {
+		}
+		try {
+			throw new Exception ();
 		} catch (Exception) {
 		}
 

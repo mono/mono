@@ -62,7 +62,7 @@ namespace System.Net
 	{
 		ServicePoint sPoint;
 		Stream nstream;
-		Socket socket;
+		internal Socket socket;
 		object socketLock = new object ();
 		WebExceptionStatus status;
 		WaitCallback initConn;
@@ -613,16 +613,16 @@ namespace System.Net
 			return (statusCode >= 200 && statusCode != 204 && statusCode != 304);
 		}
 
-		internal void GetCertificates () 
+		internal void GetCertificates (Stream stream) 
 		{
 			// here the SSL negotiation have been done
 #if SECURITY_DEP && MONOTOUCH
-			HttpsClientStream s = (nstream as HttpsClientStream);
+			HttpsClientStream s = (stream as HttpsClientStream);
 			X509Certificate client = s.SelectedClientCertificate;
 			X509Certificate server = s.ServerCertificate;
 #else
-			X509Certificate client = (X509Certificate) piClient.GetValue (nstream, null);
-			X509Certificate server = (X509Certificate) piServer.GetValue (nstream, null);
+			X509Certificate client = (X509Certificate) piClient.GetValue (stream, null);
+			X509Certificate server = (X509Certificate) piServer.GetValue (stream, null);
 #endif
 			sPoint.SetCertificates (client, server);
 			certsAvailable = (server != null);
@@ -750,6 +750,8 @@ namespace System.Net
 		{
 			HttpWebRequest request = (HttpWebRequest) state;
 			request.WebConnection = this;
+			if (request.ReuseConnection)
+				request.StoredConnection = this;
 
 			if (request.Aborted)
 				return;
@@ -1142,16 +1144,16 @@ namespace System.Net
 			lock (this) {
 				if (Data.request != request)
 					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
-				if (nstream == null)
-					return false;
 				s = nstream;
+				if (s == null)
+					return false;
 			}
 
 			try {
 				s.Write (buffer, offset, size);
 				// here SSL handshake should have been done
 				if (ssl && !certsAvailable)
-					GetCertificates ();
+					GetCertificates (s);
 			} catch (Exception e) {
 				err_msg = e.Message;
 				WebExceptionStatus wes = WebExceptionStatus.SendFailure;
@@ -1164,10 +1166,10 @@ namespace System.Net
 				// if SSL is in use then check for TrustFailure
 				if (ssl) {
 #if SECURITY_DEP && MONOTOUCH
-					HttpsClientStream https = (nstream as HttpsClientStream);
+					HttpsClientStream https = (s as HttpsClientStream);
 					if (https.TrustFailure) {
 #else
-					if ((bool) piTrustFailure.GetValue (nstream, null)) {
+					if ((bool) piTrustFailure.GetValue (s , null)) {
 #endif
 						wes = WebExceptionStatus.TrustFailure;
 						msg = "Trust failure";
@@ -1183,6 +1185,11 @@ namespace System.Net
 		internal void Close (bool sendNext)
 		{
 			lock (this) {
+				if (Data != null && Data.request != null && Data.request.ReuseConnection) {
+					Data.request.ReuseConnection = false;
+					return;
+				}
+
 				if (nstream != null) {
 					try {
 						nstream.Close ();

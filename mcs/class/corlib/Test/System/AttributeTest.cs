@@ -88,6 +88,13 @@ namespace MonoTests.System
 		class MyDerivedClassNoAttribute : MyClass
 		{
 		}
+
+		internal class AttributeWithTypeId : Attribute
+		{
+			public override object TypeId {
+				get { return this; }
+			}
+		}
 	}
 
 	[TestFixture]
@@ -997,6 +1004,14 @@ namespace MonoTests.System
 
 			MyOwnCustomAttribute b1 = new MyOwnCustomAttribute (null);
 			Assert.AreNotEqual (a1.GetHashCode (), b1.GetHashCode (), "non-identical-types");
+		}
+
+		[Test]
+		public void GetHashCodeWithOverriddenTypeId ()
+		{
+			//check for not throwing stack overflow exception
+			AttributeWithTypeId a = new AttributeWithTypeId ();
+			a.GetHashCode ();
 		}
 	}
 

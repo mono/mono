@@ -183,7 +183,7 @@ namespace Xamarin.ApiDiff {
 			if (t != null) {
 				Output.WriteLine ();
 				Indent ().WriteLine ("\t// inner types");
-				kcomparer = new ClassComparer ();
+				kcomparer = new NestedClassComparer ();
 				State.Indent++;
 				foreach (var inner in t.Elements ("class"))
 					kcomparer.AddedInner (inner);
@@ -208,21 +208,38 @@ namespace Xamarin.ApiDiff {
 			var si = source.Element ("classes");
 			if (si != null) {
 				var ti = target.Element ("classes");
-				kcomparer = new ClassComparer ();
+				kcomparer = new NestedClassComparer ();
 				kcomparer.Compare (si.Elements ("class"), ti == null ? null : ti.Elements ("class"));
 			}
 
 			var s = (Output as StringWriter).ToString ();
 			State.Output = output;
 			if (s.Length > 0) {
-				Output.WriteLine ("<h3>Type Changed: {0}.{1}</h3>", State.Namespace, target.Attribute ("name").Value);
+				Output.WriteLine ("<h3>Type Changed: {0}.{1}</h3>", State.Namespace, GetTypeName (target));
 				Output.WriteLine (s);
 			}
 		}
 
 		public override void Removed (XElement source)
 		{
-			Output.WriteLine ("<h3>Removed Type {0}.{1}", State.Namespace, source.Attribute ("name").Value);
+			Output.WriteLine ("<h3>Removed Type {0}.{1}", State.Namespace, GetTypeName (source));
+		}
+
+		public virtual string GetTypeName (XElement type)
+		{
+			return type.GetAttribute ("name");
+		}
+	}
+
+	public class NestedClassComparer : ClassComparer {
+
+		public override void SetContext (XElement current)
+		{
+		}
+
+		public override string GetTypeName (XElement type)
+		{
+			return State.Type + "." + base.GetTypeName (type);
 		}
 	}
 }

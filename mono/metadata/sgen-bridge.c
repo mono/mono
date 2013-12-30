@@ -636,7 +636,7 @@ sgen_bridge_processing_finish (int generation)
 
 	/* sort array according to decreasing finishing time */
 
-	qsort (all_entries, hash_table.num_entries, sizeof (HashEntry*), compare_hash_entries);
+	sgen_qsort (all_entries, hash_table.num_entries, sizeof (HashEntry*), compare_hash_entries);
 
 	SGEN_TV_GETTIME (btv);
 	step_3 = SGEN_TV_ELAPSED (atv, btv);
@@ -814,6 +814,28 @@ sgen_bridge_processing_finish (int generation)
 	step_1 = 0; /* We must cleanup since this value is used as an accumulator. */
 
 	bridge_processing_in_progress = FALSE;
+}
+
+void
+sgen_bridge_describe_pointer (MonoObject *obj)
+{
+	HashEntry *entry;
+	int i;
+
+	for (i = 0; i < registered_bridges.size; ++i) {
+		if (obj == DYN_ARRAY_PTR_REF (&registered_bridges, i)) {
+			printf ("Pointer is a registered bridge object.\n");
+			break;
+		}
+	}
+
+	entry = sgen_hash_table_lookup (&hash_table, obj);
+	if (!entry)
+		return;
+
+	printf ("Bridge hash table entry %p:\n", entry);
+	printf ("  is bridge: %d\n", (int)entry->is_bridge);
+	printf ("  is visited: %d\n", (int)entry->is_visited);
 }
 
 static const char *bridge_class;

@@ -3,6 +3,7 @@
 ../../../../external/rx/Rx/NET/Source/Tests.System.Reactive/Semaphore.cs
 ../../../../external/rx/Rx/NET/Source/Tests.System.Reactive/Stress/Core/Disposables/Composite.cs
 ../../../../external/rx/Rx/NET/Source/Tests.System.Reactive/Stress/Core/Disposables/Serial.cs
+../../../../external/rx/Rx/NET/Source/Tests.System.Reactive/Stress/Core/Schedulers/EventLoop.cs
 ../../../../external/rx/Rx/NET/Source/Tests.System.Reactive/Stress/Core/Disposables/SingleAssignment.cs
 ../../../../external/rx/Rx/NET/Source/Tests.System.Reactive/Stress/Core/Disposables/RefCount.cs
 ../../../../external/rx/Rx/NET/Source/Tests.System.Reactive/Stress/Linq/Delay.cs
@@ -11,6 +12,7 @@
 ../../../../external/rx/Rx/NET/Source/Tests.System.Reactive/Stress/Linq/Replay.cs
 ../../../../external/rx/Rx/NET/Source/Tests.System.Reactive/TestBase.cs
 ../../../../external/rx/Rx/NET/Source/Tests.System.Reactive/TestLongRunningScheduler.cs
+../../../../external/rx/Rx/NET/Source/Tests.System.Reactive/Tests/Aliases.cs
 ../../../../external/rx/Rx/NET/Source/Tests.System.Reactive/Tests/AnonymousTest.cs
 ../../../../external/rx/Rx/NET/Source/Tests.System.Reactive/Tests/Concurrency/ConcurrencyTest.cs
 ../../../../external/rx/Rx/NET/Source/Tests.System.Reactive/Tests/Concurrency/ScheduledItemTest.cs

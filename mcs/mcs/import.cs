@@ -56,10 +56,10 @@ namespace Mono.CSharp
 			//
 			// Returns true when object at local position has dynamic attribute flag
 			//
-			public bool IsDynamicObject (MetadataImporter importer)
+			public bool IsDynamicObject ()
 			{
 				if (provider != null)
-					ReadAttribute (importer);
+					ReadAttribute ();
 
 				return flags != null && Position < flags.Length && flags[Position];
 			}
@@ -67,15 +67,15 @@ namespace Mono.CSharp
 			//
 			// Returns true when DynamicAttribute exists
 			//
-			public bool HasDynamicAttribute (MetadataImporter importer)
+			public bool HasDynamicAttribute ()
 			{
 				if (provider != null)
-					ReadAttribute (importer);
+					ReadAttribute ();
 
 				return flags != null;
 			}
 
-			void ReadAttribute (MetadataImporter importer)
+			void ReadAttribute ()
 			{
 				IList<CustomAttributeData> cad;
 				if (provider is MemberInfo) {
@@ -713,7 +713,7 @@ namespace Mono.CSharp
 			TypeSpec spec;
 			if (import_cache.TryGetValue (type, out spec)) {
 				if (spec.BuiltinType == BuiltinTypeSpec.Type.Object) {
-					if (dtype.IsDynamicObject (this))
+					if (dtype.IsDynamicObject ())
 						return module.Compiler.BuiltinTypes.Dynamic;
 
 					return spec;
@@ -722,7 +722,7 @@ namespace Mono.CSharp
 				if (!spec.IsGeneric || type.IsGenericTypeDefinition)
 					return spec;
 
-				if (!dtype.HasDynamicAttribute (this))
+				if (!dtype.HasDynamicAttribute ())
 					return spec;
 
 				// We've found same object in the cache but this one has a dynamic custom attribute
@@ -1372,7 +1372,7 @@ namespace Mono.CSharp
 		protected AttributesBag cattrs;
 		protected readonly MetadataImporter importer;
 
-		public ImportedDefinition (MemberInfo provider, MetadataImporter importer)
+		protected ImportedDefinition (MemberInfo provider, MetadataImporter importer)
 		{
 			this.provider = provider;
 			this.importer = importer;
@@ -1798,6 +1798,16 @@ namespace Mono.CSharp
 			}
 		}
 
+		bool ITypeDefinition.IsCyclicTypeForwarder {
+			get {
+#if STATIC
+				return ((MetaType) provider).__IsCyclicTypeForwarder;
+#else
+				return false;
+#endif
+			}
+		}
+
 		public override string Name {
 			get {
 				if (name == null) {
@@ -1919,20 +1929,24 @@ namespace Mono.CSharp
 				if (caller.Kind != MemberKind.MissingType)
 					report.SymbolRelatedToPreviousError (caller);
 
-				if (t.MemberDefinition.DeclaringAssembly == ctx.Module.DeclaringAssembly) {
+				var definition = t.MemberDefinition;
+				if (definition.DeclaringAssembly == ctx.Module.DeclaringAssembly) {
 					report.Error (1683, loc,
 						"Reference to type `{0}' claims it is defined in this assembly, but it is not defined in source or any added modules",
 						name);
-				} else if (t.MemberDefinition.DeclaringAssembly.IsMissing) {
-					if (t.MemberDefinition.IsTypeForwarder) {
+				} else if (definition.DeclaringAssembly.IsMissing) {
+					if (definition.IsTypeForwarder) {
 						report.Error (1070, loc,
 							"The type `{0}' has been forwarded to an assembly that is not referenced. Consider adding a reference to assembly `{1}'",
-							name, t.MemberDefinition.DeclaringAssembly.FullName);
+							name, definition.DeclaringAssembly.FullName);
 					} else {
 						report.Error (12, loc,
 							"The type `{0}' is defined in an assembly that is not referenced. Consider adding a reference to assembly `{1}'",
-							name, t.MemberDefinition.DeclaringAssembly.FullName);
+							name, definition.DeclaringAssembly.FullName);
 					}
+				} else if (definition.IsTypeForwarder) {
+					report.Error (731, loc, "The type forwarder for type `{0}' in assembly `{1}' has circular dependency",
+						name, definition.DeclaringAssembly.FullName);
 				} else {
 					report.Error (1684, loc,
 						"Reference to type `{0}' claims it is defined assembly `{1}', but it could not be found",
@@ -2226,6 +2240,12 @@ namespace Mono.CSharp
 		}
 
 		bool ITypeDefinition.IsTypeForwarder {
+			get {
+				return false;
+			}
+		}
+
+		bool ITypeDefinition.IsCyclicTypeForwarder {
 			get {
 				return false;
 			}

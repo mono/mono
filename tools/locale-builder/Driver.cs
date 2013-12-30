@@ -429,11 +429,6 @@ namespace Mono.Tools.LocaleBuilder
 					ci.DateTimeFormatEntry.CalendarWeekRule = (int) rule;
 				}
 
-				string fraction_value;
-				if (currency_fractions.TryGetValue (ci.Territory, out fraction_value)) {
-					ci.NumberFormatEntry.CurrencyDecimalDigits = fraction_value;
-				}
-
 				RegionInfoEntry region = regions.Where (l => l.Name == ci.Territory).FirstOrDefault ();
 				if (region == null) {
 					region = new RegionInfoEntry () {
@@ -464,6 +459,11 @@ namespace Mono.Tools.LocaleBuilder
 					var lcdid_value = int.Parse (ci.LCID.Substring (2), NumberStyles.HexNumber);
 					Patterns.FillValues (lcdid_value, region);
 					regions.Add (region);
+				}
+
+				string fraction_value;
+				if (currency_fractions.TryGetValue (region.ISOCurrencySymbol, out fraction_value)) {
+					ci.NumberFormatEntry.CurrencyDecimalDigits = fraction_value;
 				}
 
 				ci.RegionInfoEntry = region;
@@ -587,7 +587,7 @@ namespace Mono.Tools.LocaleBuilder
 					case "zh-Hant":
 						nfe.CurrencySymbol = "HK$";
 						break;
-						
+
 					default:
 						var all_currencies = new List<string> ();
 						GetAllChildrenValues (ci, all_currencies, l => l.NumberFormatEntry.CurrencySymbol);
@@ -621,6 +621,8 @@ namespace Mono.Tools.LocaleBuilder
 						if (!ci.HasMissingLocale)
 							Console.WriteLine ("No currency decimal digits data for `{0}'", ci.Name);
 
+						nfe.CurrencyDecimalDigits = "2";
+					} else if (ci.IsNeutral) {
 						nfe.CurrencyDecimalDigits = "2";
 					} else {
 						// .NET has weird concept of territory data available for neutral cultures (e.g. en, es, pt)
@@ -1073,8 +1075,7 @@ namespace Mono.Tools.LocaleBuilder
 				el = node.SelectSingleNode ("decimal");
 				if (el != null) {
 					ni.NumberDecimalSeparator =
-					ni.PercentDecimalSeparator =
-					ni.CurrencyDecimalSeparator = el.InnerText;
+					ni.PercentDecimalSeparator = el.InnerText;
 				}
 
 				el = node.SelectSingleNode ("plusSign");

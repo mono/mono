@@ -2609,11 +2609,11 @@ check_image_sets (MonoImage *image)
 	}
 }
 
-GSList*
+void
 mono_metadata_clean_for_image (MonoImage *image)
 {
 	CleanForImageUserData ginst_data, gclass_data;
-	GSList *l, *set_list, *free_list = NULL;
+	GSList *l, *set_list;
 
 	//check_image_sets (image);
 
@@ -2653,8 +2653,6 @@ mono_metadata_clean_for_image (MonoImage *image)
 	g_slist_free (set_list);
 
 	mono_loader_unlock ();
-
-	return free_list;
 }
 
 static void
@@ -6201,6 +6199,21 @@ gboolean
 mono_signature_is_instance (MonoMethodSignature *sig)
 {
 	return sig->hasthis;
+}
+
+/**
+ * mono_signature_param_is_out
+ * @sig: the method signature inspected
+ * @param_num: the 0-based index of the inspected parameter
+ * 
+ * Returns: #TRUE if the parameter is an out parameter, #FALSE
+ * otherwise.
+ */
+mono_bool
+mono_signature_param_is_out (MonoMethodSignature *sig, int param_num)
+{
+	g_assert (param_num >= 0 && param_num < sig->param_count);
+	return (sig->params [param_num]->attrs & PARAM_ATTRIBUTE_OUT) != 0;
 }
 
 /**

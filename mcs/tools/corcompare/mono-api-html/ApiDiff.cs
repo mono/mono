@@ -69,9 +69,27 @@ namespace Xamarin.ApiDiff {
 				string input = args [0];
 				string output = args [1];
 				var ac = new AssemblyComparer (input, output);
-				if (args.Length > 2)
-					State.Output = new StreamWriter (args [2]); 
-				ac.Compare ();
+				if (args.Length > 2) {
+					string diff = String.Empty;
+					using (var writer = new StringWriter ()) {
+						State.Output = writer;
+						ac.Compare ();
+						diff = State.Output.ToString ();
+					}
+					if (diff.Length > 0) {
+						using (var file = new StreamWriter (args [2])) {
+							if (ac.SourceAssembly == ac.TargetAssembly) {
+								file.WriteLine ("<h1>{0}.dll</h1>", ac.SourceAssembly);
+							} else {
+								file.WriteLine ("<h1>{0}.dll vs {1}.dll</h1>", ac.SourceAssembly, ac.TargetAssembly);
+							}
+							file.Write (diff);
+						}
+					}
+				} else {
+					State.Output = Console.Out;
+					ac.Compare ();
+				}
 			}
 			catch (Exception e) {
 				Console.WriteLine (e);

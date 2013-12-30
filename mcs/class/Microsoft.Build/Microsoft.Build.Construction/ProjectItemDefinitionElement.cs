@@ -29,6 +29,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using Microsoft.Build.Internal;
 
 namespace Microsoft.Build.Construction
@@ -56,9 +57,9 @@ namespace Microsoft.Build.Construction
                 internal override string XmlName {
                         get { return ItemType; }
                 }
-                internal override ProjectElement LoadChildElement (string name)
+                internal override ProjectElement LoadChildElement (XmlReader reader)
                 {
-                        return AddMetadata (name, null);
+                        return AddMetadata (reader.LocalName, null);
                 }
         }
 }

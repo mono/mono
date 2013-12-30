@@ -1,3 +1,5 @@
+using System;
+
 class Foo {
 	public static int Main ()
 	{
@@ -5,9 +7,17 @@ class Foo {
 			f ();
 			return 1;
 		} catch {
-			return 0;
 		}
+
+		try {
+			f2 ();
+			return 2;
+		} catch (ApplicationException) {
+		}
+
+		return 0;
 	}
+
 	static void f ()
 	{
 		try {
@@ -19,5 +29,16 @@ class Foo {
 		}
 	skip:
 		;
+	}
+
+	static void f2 ()
+	{
+		try {
+			goto FinallyExit;
+		} finally {
+			throw new ApplicationException ();
+		}
+	FinallyExit:
+		Console.WriteLine ("Too late");
 	}
 }

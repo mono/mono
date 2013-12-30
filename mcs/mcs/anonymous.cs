@@ -199,14 +199,9 @@ namespace Mono.CSharp {
 				this.parent = parent;
 			}
 
-			public override bool Resolve (BlockContext bc)
-			{
-				return base.Resolve (bc);
-			}
-
 			protected override void DoEmit (EmitContext ec)
 			{
-				Expression source = EmptyExpression.Null;
+				Expression source;
 
 				if (parent == null)
 					source = new CompilerGeneratedThis (ec.CurrentType, loc);
@@ -217,6 +212,11 @@ namespace Mono.CSharp {
 				}
 
 				hoisted_this.EmitAssign (ec, source, false, false);
+			}
+
+			protected override bool DoFlowAnalysis (FlowAnalysisContext fc)
+			{
+				return false;
 			}
 
 			protected override void CloneTo (CloneContext clonectx, Statement target)
@@ -249,11 +249,11 @@ namespace Mono.CSharp {
 		AnonymousMethodStorey hoisted_this_parent;
 
 		public AnonymousMethodStorey (ExplicitBlock block, TypeDefinition parent, MemberBase host, TypeParameters tparams, string name, MemberKind kind)
-			: base (parent, MakeMemberName (host, name, parent.Module.CounterAnonymousContainers, tparams, block.StartLocation),
+			: base (parent, MakeMemberName (host, name, parent.PartialContainer.CounterAnonymousContainers, tparams, block.StartLocation),
 				tparams, 0, kind)
 		{
 			OriginalSourceBlock = block;
-			ID = parent.Module.CounterAnonymousContainers++;
+			ID = parent.PartialContainer.CounterAnonymousContainers++;
 		}
 
 		public void AddCapturedThisField (EmitContext ec, AnonymousMethodStorey parent)
@@ -1344,13 +1344,6 @@ namespace Mono.CSharp {
 			if (!DoResolveParameters (ec))
 				return null;
 
-#if !STATIC
-			// FIXME: The emitted code isn't very careful about reachability
-			// so, ensure we have a 'ret' at the end
-			BlockContext bc = ec as BlockContext;
-			if (bc != null && bc.CurrentBranching != null && bc.CurrentBranching.CurrentUsageVector.IsUnreachable)
-				bc.NeedReturnLabel ();
-#endif
 			return this;
 		}
 
@@ -1526,12 +1519,28 @@ namespace Mono.CSharp {
 			}
 
 			var bc = ec as BlockContext;
-			if (bc != null)
-				aec.FlowOffset = bc.FlowOffset;
+
+			if (bc != null) {
+				aec.AssignmentInfoOffset = bc.AssignmentInfoOffset;
+				aec.EnclosingLoop = bc.EnclosingLoop;
+				aec.EnclosingLoopOrSwitch = bc.EnclosingLoopOrSwitch;
+				aec.Switch = bc.Switch;
+			}
 
 			var errors = ec.Report.Errors;
 
-			bool res = Block.Resolve (ec.CurrentBranching, aec, null);
+			bool res = Block.Resolve (aec);
+
+			if (res && errors == ec.Report.Errors) {
+				MarkReachable (new Reachability ());
+
+				if (!CheckReachableExit (ec.Report)) {
+					return null;
+				}
+
+				if (bc != null)
+					bc.AssignmentInfoOffset = aec.AssignmentInfoOffset;
+			}
 
 			if (am != null && am.ReturnTypeInference != null) {
 				am.ReturnTypeInference.FixAllTypes (ec);
@@ -1540,10 +1549,14 @@ namespace Mono.CSharp {
 
 				//
 				// If e is synchronous the inferred return type is T
-				// If e is asynchronous the inferred return type is Task<T>
+				// If e is asynchronous and the body of F is either an expression classified as nothing
+				// or a statement block where no return statements have expressions, the inferred return type is Task
+				// If e is async and has an inferred result type T, the inferred return type is Task<T>
 				//
 				if (block.IsAsync && ReturnType != null) {
-					ReturnType = ec.Module.PredefinedTypes.TaskGeneric.TypeSpec.MakeGenericType (ec, new [] { ReturnType });
+					ReturnType = ReturnType.Kind == MemberKind.Void ?
+						ec.Module.PredefinedTypes.Task.TypeSpec :
+						ec.Module.PredefinedTypes.TaskGeneric.TypeSpec.MakeGenericType (ec, new [] { ReturnType });
 				}
 			}
 
@@ -1556,6 +1569,47 @@ namespace Mono.CSharp {
 		public override bool ContainsEmitWithAwait ()
 		{
 			return false;
+		}
+
+		bool CheckReachableExit (Report report)
+		{
+			if (block.HasReachableClosingBrace && ReturnType.Kind != MemberKind.Void) {
+				// FIXME: Flow-analysis on MoveNext generated code
+				if (!IsIterator) {
+					report.Error (1643, StartLocation,
+							"Not all code paths return a value in anonymous method of type `{0}'", GetSignatureForError ());
+
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			// We are reachable, mark block body reachable too
+			MarkReachable (new Reachability ());
+
+			CheckReachableExit (fc.Report);
+
+			var das = fc.BranchDefiniteAssignment ();
+			var prev_pb = fc.ParametersBlock;
+			fc.ParametersBlock = Block;
+			var da_ontrue = fc.DefiniteAssignmentOnTrue;
+			var da_onfalse = fc.DefiniteAssignmentOnFalse;
+
+			block.FlowAnalysis (fc);
+
+			fc.ParametersBlock = prev_pb;
+			fc.DefiniteAssignment = das;
+			fc.DefiniteAssignmentOnTrue = da_ontrue;
+			fc.DefiniteAssignmentOnFalse = da_onfalse;
+		}
+
+		public override void MarkReachable (Reachability rc)
+		{
+			block.MarkReachable (rc);
 		}
 
 		public void SetHasThisAccess ()
@@ -1719,7 +1773,7 @@ namespace Mono.CSharp {
 				parent = ec.CurrentTypeDefinition.Parent.PartialContainer;
 
 			string name = CompilerGeneratedContainer.MakeName (parent != storey ? block_name : null,
-				"m", null, ec.Module.CounterAnonymousMethods++);
+				"m", null, parent.PartialContainer.CounterAnonymousMethods++);
 
 			MemberName member_name;
 			if (storey == null && ec.CurrentTypeParameters != null) {

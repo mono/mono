@@ -26,30 +26,40 @@
 //
 
 using Microsoft.Build.Framework;
-
 using System;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Microsoft.Build.Execution
 {
-        public class TargetResult : ITargetResult
-        {
-                internal TargetResult ()
-                {
-                        throw new NotImplementedException ();
-                }
+	public class TargetResult : ITargetResult
+	{
+		internal TargetResult ()
+		{
+		}
 
-                public Exception Exception {
-                        get { throw new NotImplementedException (); }
-                }
+		public Exception Exception { get; private set; }
 
-                public ITaskItem[] Items {
-                        get { throw new NotImplementedException (); }
-                }
+		public ITaskItem[] Items { get; private set; }
 
+		public TargetResultCode ResultCode { get; private set; }
 
-                public TargetResultCode ResultCode {
-                        get { throw new NotImplementedException (); }
-                }
-        }
+		internal void Failure (Exception exception)
+		{
+			this.Exception = exception;
+			ResultCode = TargetResultCode.Failure;
+		}
+		
+		internal void Skip ()
+		{
+			ResultCode = TargetResultCode.Skipped;
+		}
+		
+		internal void Success (IEnumerable<ITaskItem> items)
+		{
+			Items = items.ToArray ();
+			ResultCode = TargetResultCode.Success; 
+		}
+	}
 }
 

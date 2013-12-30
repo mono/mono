@@ -7,7 +7,6 @@ class Program
 	{
 		public void M ()
 		{
-			Console.WriteLine ("called");
 		}
 	}
 

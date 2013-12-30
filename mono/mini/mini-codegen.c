@@ -453,9 +453,22 @@ mono_print_ins_index (int i, MonoInst *ins)
 	else
 		printf (" %s", mono_inst_name (ins->opcode));
 	if (spec == MONO_ARCH_CPU_SPEC) {
+		gboolean dest_base = FALSE;
+		switch (ins->opcode) {
+		case OP_STOREV_MEMBASE:
+			dest_base = TRUE;
+			break;
+		default:
+			break;
+		}
+
 		/* This is a lowered opcode */
-		if (ins->dreg != -1)
-			printf (" R%d <-", ins->dreg);
+		if (ins->dreg != -1) {
+			if (dest_base)
+				printf (" [R%d + 0x%lx] <-", ins->dreg, (long)ins->inst_offset);
+			else
+				printf (" R%d <-", ins->dreg);
+		}
 		if (ins->sreg1 != -1)
 			printf (" R%d", ins->sreg1);
 		if (ins->sreg2 != -1)
@@ -584,11 +597,8 @@ mono_print_ins_index (int i, MonoInst *ins)
 	case OP_CALL_MEMBASE:
 	case OP_CALL_REG:
 	case OP_FCALL:
-	case OP_FCALLVIRT:
 	case OP_LCALL:
-	case OP_LCALLVIRT:
 	case OP_VCALL:
-	case OP_VCALLVIRT:
 	case OP_VCALL_REG:
 	case OP_VCALL_MEMBASE:
 	case OP_VCALL2:
@@ -596,7 +606,6 @@ mono_print_ins_index (int i, MonoInst *ins)
 	case OP_VCALL2_MEMBASE:
 	case OP_VOIDCALL:
 	case OP_VOIDCALL_MEMBASE:
-	case OP_VOIDCALLVIRT:
 	case OP_TAILCALL: {
 		MonoCallInst *call = (MonoCallInst*)ins;
 		GSList *list;
@@ -2341,6 +2350,8 @@ mono_opcode_to_cond (int opcode)
 	case OP_CMOV_IEQ:
 	case OP_CMOV_LEQ:
 		return CMP_EQ;
+	case OP_FCNEQ:
+	case OP_ICNEQ:
 	case OP_IBNE_UN:
 	case OP_LBNE_UN:
 	case OP_FBNE_UN:
@@ -2349,12 +2360,16 @@ mono_opcode_to_cond (int opcode)
 	case OP_CMOV_INE_UN:
 	case OP_CMOV_LNE_UN:
 		return CMP_NE;
+	case OP_FCLE:
+	case OP_ICLE:
 	case OP_IBLE:
 	case OP_LBLE:
 	case OP_FBLE:
 	case OP_CMOV_ILE:
 	case OP_CMOV_LLE:
 		return CMP_LE;
+	case OP_FCGE:
+	case OP_ICGE:
 	case OP_IBGE:
 	case OP_LBGE:
 	case OP_FBGE:
@@ -2386,6 +2401,7 @@ mono_opcode_to_cond (int opcode)
 	case OP_CMOV_LGT:
 		return CMP_GT;
 
+	case OP_ICLE_UN:
 	case OP_IBLE_UN:
 	case OP_LBLE_UN:
 	case OP_FBLE_UN:
@@ -2394,6 +2410,8 @@ mono_opcode_to_cond (int opcode)
 	case OP_CMOV_ILE_UN:
 	case OP_CMOV_LLE_UN:
 		return CMP_LE_UN;
+
+	case OP_ICGE_UN:
 	case OP_IBGE_UN:
 	case OP_LBGE_UN:
 	case OP_FBGE_UN:
@@ -2695,6 +2713,29 @@ mono_peephole_ins (MonoBasicBlock *bb, MonoInst *ins)
 		MONO_DELETE_INS (bb, ins);
 		break;
 	}
+}
+
+int
+mini_exception_id_by_name (const char *name)
+{
+	if (strcmp (name, "IndexOutOfRangeException") == 0)
+		return MONO_EXC_INDEX_OUT_OF_RANGE;
+	if (strcmp (name, "OverflowException") == 0)
+		return MONO_EXC_OVERFLOW;
+	if (strcmp (name, "ArithmeticException") == 0)
+		return MONO_EXC_ARITHMETIC;
+	if (strcmp (name, "DivideByZeroException") == 0)
+		return MONO_EXC_DIVIDE_BY_ZERO;
+	if (strcmp (name, "InvalidCastException") == 0)
+		return MONO_EXC_INVALID_CAST;
+	if (strcmp (name, "NullReferenceException") == 0)
+		return MONO_EXC_NULL_REF;
+	if (strcmp (name, "ArrayTypeMismatchException") == 0)
+		return MONO_EXC_ARRAY_TYPE_MISMATCH;
+	if (strcmp (name, "ArgumentException") == 0)
+		return MONO_EXC_ARGUMENT;
+	g_error ("Unknown intrinsic exception %s\n", name);
+	return -1;
 }
 
 #endif /* DISABLE_JIT */

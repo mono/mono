@@ -1177,9 +1177,7 @@ public class AssemblyNameTest {
 		Assert.AreEqual (an.HashAlgorithm, clone.HashAlgorithm, "HashAlgorithm");
 		Assert.AreEqual (an.KeyPair, clone.KeyPair, "KeyPair");
 		Assert.AreEqual (an.Name, clone.Name, "Name");
-#if NET_2_0
-		Assert.AreEqual (an.ProcessorArchitecture, clone.ProcessorArchitecture, "PA");
-#endif
+		//Assert.AreEqual (an.ProcessorArchitecture, clone.ProcessorArchitecture, "PA");
 		Assert.AreEqual (an.Version, clone.Version, "Version");
 		Assert.AreEqual (an.VersionCompatibility, clone.VersionCompatibility, "VersionCompatibility");
 		Assert.AreEqual (an.GetPublicKey (), clone.GetPublicKey (), "GetPublicKey");

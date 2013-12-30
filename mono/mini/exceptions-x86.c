@@ -32,7 +32,6 @@
 #include "mini.h"
 #include "mini-x86.h"
 #include "tasklets.h"
-#include "debug-mini.h"
 
 static gpointer signal_exception_trampoline;
 
@@ -473,11 +472,7 @@ void
 mono_x86_throw_exception (mgreg_t *regs, MonoObject *exc, 
 						  mgreg_t eip, gboolean rethrow)
 {
-	static void (*restore_context) (MonoContext *);
 	MonoContext ctx;
-
-	if (!restore_context)
-		restore_context = mono_get_restore_context ();
 
 	ctx.esp = regs [X86_ESP];
 	ctx.eip = eip;
@@ -500,29 +495,12 @@ mono_x86_throw_exception (mgreg_t *regs, MonoObject *exc,
 			mono_ex->stack_trace = NULL;
 	}
 
-	if (mono_debug_using_mono_debugger ()) {
-		guint8 buf [16], *code;
-
-		mono_breakpoint_clean_code (NULL, (gpointer)eip, 8, buf, sizeof (buf));
-		code = buf + 8;
-
-		if (buf [3] == 0xe8) {
-			MonoContext ctx_cp = ctx;
-			ctx_cp.eip = eip - 5;
-
-			if (mono_debugger_handle_exception (&ctx_cp, exc)) {
-				restore_context (&ctx_cp);
-				g_assert_not_reached ();
-			}
-		}
-	}
-
 	/* adjust eip so that it point into the call instruction */
 	ctx.eip -= 1;
 
 	mono_handle_exception (&ctx, exc);
 
-	restore_context (&ctx);
+	mono_restore_context (&ctx);
 
 	g_assert_not_reached ();
 }
@@ -859,9 +837,19 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		/* Adjust IP */
 		new_ctx->eip --;
 
-		if (*lmf && (MONO_CONTEXT_GET_BP (ctx) >= (gpointer)(*lmf)->ebp)) {
-			/* remove any unused lmf */
-			*lmf = (gpointer)(((gsize)(*lmf)->previous_lmf) & ~3);
+		if (*lmf && ((*lmf) != jit_tls->first_lmf)) {
+			gboolean is_tramp = ((guint32)((*lmf)->previous_lmf) & 1);
+			gpointer lmf_esp;
+
+			if (is_tramp)
+				/* lmf->esp is only set in trampoline frames */
+				lmf_esp = (gpointer)(*lmf)->esp;
+			else
+				/* In non-trampoline frames, ebp is the frame pointer */
+				lmf_esp = (gpointer)(*lmf)->ebp;
+			if (MONO_CONTEXT_GET_SP (ctx) >= lmf_esp)
+				/* remove any unused lmf */
+				*lmf = (gpointer)(((gsize)(*lmf)->previous_lmf) & ~3);
 		}
 
 		/* Pop arguments off the stack */
@@ -989,19 +977,12 @@ handle_signal_exception (gpointer obj)
 {
 	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
 	MonoContext ctx;
-	static void (*restore_context) (MonoContext *);
-
-	if (!restore_context)
-		restore_context = mono_get_restore_context ();
 
 	memcpy (&ctx, &jit_tls->ex_ctx, sizeof (MonoContext));
 
-	if (mono_debugger_handle_exception (&ctx, (MonoObject *)obj))
-		return;
-
 	mono_handle_exception (&ctx, obj);
 
-	restore_context (&ctx);
+	mono_restore_context (&ctx);
 }
 
 /*
@@ -1109,9 +1090,6 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 
 	mono_arch_sigctx_to_monoctx (sigctx, &mctx);
 
-	if (mono_debugger_handle_exception (&mctx, (MonoObject *)obj))
-		return TRUE;
-
 	mono_handle_exception (&mctx, obj);
 
 	mono_arch_monoctx_to_sigctx (&mctx, sigctx);
@@ -1149,22 +1127,14 @@ prepare_for_guard_pages (MonoContext *mctx)
 static void
 altstack_handle_and_restore (MonoContext *ctx, gpointer obj, gboolean stack_ovf)
 {
-	void (*restore_context) (MonoContext *);
 	MonoContext mctx;
 
-	restore_context = mono_get_restore_context ();
 	mctx = *ctx;
-
-	if (mono_debugger_handle_exception (&mctx, (MonoObject *)obj)) {
-		if (stack_ovf)
-			prepare_for_guard_pages (&mctx);
-		restore_context (&mctx);
-	}
 
 	mono_handle_exception (&mctx, obj);
 	if (stack_ovf)
 		prepare_for_guard_pages (&mctx);
-	restore_context (&mctx);
+	mono_restore_context (&mctx);
 }
 
 void

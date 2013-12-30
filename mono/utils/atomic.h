@@ -11,16 +11,6 @@
 #ifndef _WAPI_ATOMIC_H_
 #define _WAPI_ATOMIC_H_
 
-#if defined(__NetBSD__)
-#include <sys/param.h>
-
-#if __NetBSD_Version__ > 499004000
-#include <sys/atomic.h>
-#define HAVE_ATOMIC_OPS
-#endif
-
-#endif
-
 #include "config.h"
 #include <glib.h>
 
@@ -31,8 +21,11 @@
 /* On Windows, we always use the functions provided by the Windows API. */
 #if defined(__WIN32__) || defined(_WIN32)
 
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
-#define HAS_64BITS_ATOMICS 1
+#include <mono/utils/mono-membar.h>
 
 /* mingw is missing InterlockedCompareExchange64 () from winbase.h */
 #if HAVE_DECL_INTERLOCKEDCOMPAREEXCHANGE64==0
@@ -41,6 +34,109 @@ static inline gint64 InterlockedCompareExchange64(volatile gint64 *dest, gint64 
 	return __sync_val_compare_and_swap (dest, comp, exch);
 }
 #endif
+
+/* mingw is missing InterlockedExchange64 () from winbase.h */
+#if HAVE_DECL_INTERLOCKEDEXCHANGE64==0
+static inline gint64 InterlockedExchange64(volatile gint64 *val, gint64 new_val)
+{
+	gint64 old_val;
+	do {
+		old_val = *val;
+	} while (InterlockedCompareExchange64 (val, new_val, old_val) != old_val);
+	return old_val;
+}
+#endif
+
+/* mingw is missing InterlockedIncrement64 () from winbase.h */
+#if HAVE_DECL_INTERLOCKEDINCREMENT64==0
+static inline gint64 InterlockedIncrement64(volatile gint64 *val)
+{
+	return __sync_add_and_fetch (val, 1);
+}
+#endif
+
+/* mingw is missing InterlockedDecrement64 () from winbase.h */
+#if HAVE_DECL_INTERLOCKEDDECREMENT64==0
+static inline gint64 InterlockedDecrement64(volatile gint64 *val)
+{
+	return __sync_sub_and_fetch (val, 1);
+}
+#endif
+
+/* mingw is missing InterlockedAdd () from winbase.h */
+#if HAVE_DECL_INTERLOCKEDADD==0
+static inline gint32 InterlockedAdd(volatile gint32 *dest, gint32 add)
+{
+	return __sync_add_and_fetch (dest, add);
+}
+#endif
+
+/* mingw is missing InterlockedAdd64 () from winbase.h */
+#if HAVE_DECL_INTERLOCKEDADD64==0
+static inline gint64 InterlockedAdd64(volatile gint64 *dest, gint64 add)
+{
+	return __sync_add_and_fetch (dest, add);
+}
+#endif
+
+/* And now for some dirty hacks... The Windows API doesn't
+ * provide any useful primitives for this (other than getting
+ * into architecture-specific madness), so use CAS. */
+
+static inline gint32 InterlockedRead(volatile gint32 *src)
+{
+	return InterlockedCompareExchange (src, 0, 0);
+}
+
+static inline gint64 InterlockedRead64(volatile gint64 *src)
+{
+	return InterlockedCompareExchange64 (src, 0, 0);
+}
+
+static inline gpointer InterlockedReadPointer(volatile gpointer *src)
+{
+	return InterlockedCompareExchangePointer (src, NULL, NULL);
+}
+
+static inline void InterlockedWrite(volatile gint32 *dst, gint32 val)
+{
+	InterlockedExchange (dst, val);
+}
+
+static inline void InterlockedWrite64(volatile gint64 *dst, gint64 val)
+{
+	InterlockedExchange64 (dst, val);
+}
+
+static inline void InterlockedWritePointer(volatile gpointer *dst, gpointer val)
+{
+	InterlockedExchangePointer (dst, val);
+}
+
+/* We can't even use CAS for these, so write them out
+ * explicitly according to x86(_64) semantics... */
+
+static inline gint8 InterlockedRead8(volatile gint8 *src)
+{
+	return *src;
+}
+
+static inline gint16 InterlockedRead16(volatile gint16 *src)
+{
+	return *src;
+}
+
+static inline void InterlockedWrite8(volatile gint8 *dst, gint8 val)
+{
+	*dst = val;
+	mono_memory_barrier ();
+}
+
+static inline void InterlockedWrite16(volatile gint16 *dst, gint16 val)
+{
+	*dst = val;
+	mono_memory_barrier ();
+}
 
 /* Prefer GCC atomic ops if the target supports it (see configure.in). */
 #elif defined(USE_GCC_ATOMIC_OPS)
@@ -56,6 +152,11 @@ static inline gpointer InterlockedCompareExchangePointer(volatile gpointer *dest
 	return __sync_val_compare_and_swap (dest, comp, exch);
 }
 
+static inline gint32 InterlockedAdd(volatile gint32 *dest, gint32 add)
+{
+	return __sync_add_and_fetch (dest, add);
+}
+
 static inline gint32 InterlockedIncrement(volatile gint32 *val)
 {
 	return __sync_add_and_fetch (val, 1);
@@ -63,7 +164,7 @@ static inline gint32 InterlockedIncrement(volatile gint32 *val)
 
 static inline gint32 InterlockedDecrement(volatile gint32 *val)
 {
-	return __sync_add_and_fetch (val, -1);
+	return __sync_sub_and_fetch (val, 1);
 }
 
 static inline gint32 InterlockedExchange(volatile gint32 *val, gint32 new_val)
@@ -90,339 +191,167 @@ static inline gint32 InterlockedExchangeAdd(volatile gint32 *val, gint32 add)
 	return __sync_fetch_and_add (val, add);
 }
 
-#if defined (TARGET_OSX)
+static inline gint8 InterlockedRead8(volatile gint8 *src)
+{
+	/* Kind of a hack, but GCC doesn't give us anything better, and it's
+	 * certainly not as bad as using a CAS loop. */
+	return __sync_fetch_and_add (src, 0);
+}
+
+static inline gint16 InterlockedRead16(volatile gint16 *src)
+{
+	return __sync_fetch_and_add (src, 0);
+}
+
+static inline gint32 InterlockedRead(volatile gint32 *src)
+{
+	return __sync_fetch_and_add (src, 0);
+}
+
+static inline void InterlockedWrite8(volatile gint8 *dst, gint8 val)
+{
+	/* Nothing useful from GCC at all, so fall back to CAS. */
+	gint8 old_val;
+	do {
+		old_val = *dst;
+	} while (__sync_val_compare_and_swap (dst, old_val, val) != old_val);
+}
+
+static inline void InterlockedWrite16(volatile gint16 *dst, gint16 val)
+{
+	gint16 old_val;
+	do {
+		old_val = *dst;
+	} while (__sync_val_compare_and_swap (dst, old_val, val) != old_val);
+}
+
+static inline void InterlockedWrite(volatile gint32 *dst, gint32 val)
+{
+	/* Nothing useful from GCC at all, so fall back to CAS. */
+	gint32 old_val;
+	do {
+		old_val = *dst;
+	} while (__sync_val_compare_and_swap (dst, old_val, val) != old_val);
+}
+
+#if defined (TARGET_OSX) || defined (__arm__) || (defined (__mips__) && !defined (__mips64)) || (defined (__powerpc__) && !defined (__powerpc64__)) || (defined (__sparc__) && !defined (__arch64__))
 #define BROKEN_64BIT_ATOMICS_INTRINSIC 1
 #endif
 
-
 #if !defined (BROKEN_64BIT_ATOMICS_INTRINSIC)
-#define HAS_64BITS_ATOMICS 1
 
 static inline gint64 InterlockedCompareExchange64(volatile gint64 *dest, gint64 exch, gint64 comp)
 {
 	return __sync_val_compare_and_swap (dest, comp, exch);
 }
 
-#endif
-
-
-#elif defined(__NetBSD__) && defined(HAVE_ATOMIC_OPS)
-
-static inline gint32 InterlockedCompareExchange(volatile gint32 *dest,
-       gint32 exch, gint32 comp)
+static inline gint64 InterlockedAdd64(volatile gint64 *dest, gint64 add)
 {
-       return atomic_cas_32((uint32_t*)dest, comp, exch);
+	return __sync_add_and_fetch (dest, add);
 }
 
-static inline gpointer InterlockedCompareExchangePointer(volatile gpointer *dest, gpointer exch, gpointer comp)
+static inline gint64 InterlockedIncrement64(volatile gint64 *val)
 {
-       return atomic_cas_ptr(dest, comp, exch);
+	return __sync_add_and_fetch (val, 1);
 }
 
-static inline gint32 InterlockedIncrement(volatile gint32 *val)
+static inline gint64 InterlockedDecrement64(volatile gint64 *val)
 {
-       return atomic_inc_32_nv((uint32_t*)val);
+	return __sync_sub_and_fetch (val, 1);
 }
 
-static inline gint32 InterlockedDecrement(volatile gint32 *val)
+static inline gint64 InterlockedExchangeAdd64(volatile gint64 *val, gint64 add)
 {
-       return atomic_dec_32_nv((uint32_t*)val);
+	return __sync_fetch_and_add (val, add);
 }
 
-static inline gint32 InterlockedExchange(volatile gint32 *val, gint32 new_val)
+static inline gint64 InterlockedRead64(volatile gint64 *src)
 {
-       return atomic_swap_32((uint32_t*)val, new_val);
+	/* Kind of a hack, but GCC doesn't give us anything better. */
+	return __sync_fetch_and_add (src, 0);
 }
 
-static inline gpointer InterlockedExchangePointer(volatile gpointer *val,
-               gpointer new_val)
-{
-       return atomic_swap_ptr(val, new_val);
-}
-
-static inline gint32 InterlockedExchangeAdd(volatile gint32 *val, gint32 add)
-{
-       return atomic_add_32_nv((uint32_t*)val, add) - add;
-}
-
-#elif (defined(sparc) || defined (__sparc__)) && defined(__GNUC__)
-
-G_GNUC_UNUSED 
-static inline gint32 InterlockedCompareExchange(volatile gint32 *_dest, gint32 _exch, gint32 _comp)
-{
-       register volatile gint32 *dest asm("g1") = _dest;
-       register gint32 comp asm("o4") = _comp;
-       register gint32 exch asm("o5") = _exch;
-
-       __asm__ __volatile__(
-               /* cas [%%g1], %%o4, %%o5 */
-               ".word 0xdbe0500c"
-               : "=r" (exch)
-               : "0" (exch), "r" (dest), "r" (comp)
-               : "memory");
-
-       return exch;
-}
-
-G_GNUC_UNUSED 
-static inline gpointer InterlockedCompareExchangePointer(volatile gpointer *_dest, gpointer _exch, gpointer _comp)
-{
-       register volatile gpointer *dest asm("g1") = _dest;
-       register gpointer comp asm("o4") = _comp;
-       register gpointer exch asm("o5") = _exch;
-
-       __asm__ __volatile__(
-#ifdef SPARCV9
-               /* casx [%%g1], %%o4, %%o5 */
-               ".word 0xdbf0500c"
 #else
-               /* cas [%%g1], %%o4, %%o5 */
-               ".word 0xdbe0500c"
+
+/* Implement 64-bit cmpxchg by hand or emulate it. */
+extern gint64 InterlockedCompareExchange64(volatile gint64 *dest, gint64 exch, gint64 comp);
+
+/* Implement all other 64-bit atomics in terms of a specialized CAS
+ * in this case, since chances are that the other 64-bit atomic
+ * intrinsics are broken too.
+ */
+
+static inline gint64 InterlockedExchangeAdd64(volatile gint64 *dest, gint64 add)
+{
+	gint64 old_val;
+	do {
+		old_val = *dest;
+	} while (InterlockedCompareExchange64 (dest, old_val + add, old_val) != old_val);
+	return old_val;
+}
+
+static inline gint64 InterlockedIncrement64(volatile gint64 *val)
+{
+	gint64 get, set;
+	do {
+		get = *val;
+		set = get + 1;
+	} while (InterlockedCompareExchange64 (val, set, get) != get);
+	return set;
+}
+
+static inline gint64 InterlockedDecrement64(volatile gint64 *val)
+{
+	gint64 get, set;
+	do {
+		get = *val;
+		set = get - 1;
+	} while (InterlockedCompareExchange64 (val, set, get) != get);
+	return set;
+}
+
+static inline gint64 InterlockedAdd64(volatile gint64 *dest, gint64 add)
+{
+	gint64 get, set;
+	do {
+		get = *dest;
+		set = get + add;
+	} while (InterlockedCompareExchange64 (dest, set, get) != get);
+	return set;
+}
+
+static inline gint64 InterlockedRead64(volatile gint64 *src)
+{
+	return InterlockedCompareExchange64 (src, 0, 0);
+}
+
 #endif
-               : "=r" (exch)
-               : "0" (exch), "r" (dest), "r" (comp)
-               : "memory");
 
-       return exch;
+static inline gpointer InterlockedReadPointer(volatile gpointer *src)
+{
+	return InterlockedCompareExchangePointer (src, NULL, NULL);
 }
 
-G_GNUC_UNUSED 
-static inline gint32 InterlockedIncrement(volatile gint32 *_dest)
+static inline void InterlockedWritePointer(volatile gpointer *dst, gpointer val)
 {
-       register volatile gint32 *dest asm("g1") = _dest;
-       register gint32 tmp asm("o4");
-       register gint32 ret asm("o5");
-
-       __asm__ __volatile__(
-               "1:     ld      [%%g1], %%o4\n\t"
-               "       add     %%o4, 1, %%o5\n\t"
-               /*      cas     [%%g1], %%o4, %%o5 */
-               "       .word   0xdbe0500c\n\t"
-               "       cmp     %%o4, %%o5\n\t"
-               "       bne     1b\n\t"
-               "        add    %%o5, 1, %%o5"
-               : "=&r" (tmp), "=&r" (ret)
-               : "r" (dest)
-               : "memory", "cc");
-
-        return ret;
+	InterlockedExchangePointer (dst, val);
 }
 
-G_GNUC_UNUSED 
-static inline gint32 InterlockedDecrement(volatile gint32 *_dest)
+/* We always implement this in terms of a 64-bit cmpxchg since
+ * GCC doesn't have an intrisic to model it anyway. */
+static inline gint64 InterlockedExchange64(volatile gint64 *val, gint64 new_val)
 {
-       register volatile gint32 *dest asm("g1") = _dest;
-       register gint32 tmp asm("o4");
-       register gint32 ret asm("o5");
-
-       __asm__ __volatile__(
-               "1:     ld      [%%g1], %%o4\n\t"
-               "       sub     %%o4, 1, %%o5\n\t"
-               /*      cas     [%%g1], %%o4, %%o5 */
-               "       .word   0xdbe0500c\n\t"
-               "       cmp     %%o4, %%o5\n\t"
-               "       bne     1b\n\t"
-               "        sub    %%o5, 1, %%o5"
-               : "=&r" (tmp), "=&r" (ret)
-               : "r" (dest)
-               : "memory", "cc");
-
-        return ret;
+	gint64 old_val;
+	do {
+		old_val = *val;
+	} while (InterlockedCompareExchange64 (val, new_val, old_val) != old_val);
+	return old_val;
 }
 
-G_GNUC_UNUSED
-static inline gint32 InterlockedExchange(volatile gint32 *_dest, gint32 exch)
+static inline void InterlockedWrite64(volatile gint64 *dst, gint64 val)
 {
-       register volatile gint32 *dest asm("g1") = _dest;
-       register gint32 tmp asm("o4");
-       register gint32 ret asm("o5");
-
-       __asm__ __volatile__(
-               "1:     ld      [%%g1], %%o4\n\t"
-               "       mov     %3, %%o5\n\t"
-               /*      cas     [%%g1], %%o4, %%o5 */
-               "       .word   0xdbe0500c\n\t"
-               "       cmp     %%o4, %%o5\n\t"
-               "       bne     1b\n\t"
-               "        nop"
-               : "=&r" (tmp), "=&r" (ret)
-               : "r" (dest), "r" (exch)
-               : "memory", "cc");
-
-        return ret;
-}
-
-G_GNUC_UNUSED
-static inline gpointer InterlockedExchangePointer(volatile gpointer *_dest, gpointer exch)
-{
-       register volatile gpointer *dest asm("g1") = _dest;
-       register gpointer tmp asm("o4");
-       register gpointer ret asm("o5");
-
-       __asm__ __volatile__(
-#ifdef SPARCV9
-               "1:     ldx     [%%g1], %%o4\n\t"
-#else
-               "1:     ld      [%%g1], %%o4\n\t"
-#endif
-               "       mov     %3, %%o5\n\t"
-#ifdef SPARCV9
-               /*      casx    [%%g1], %%o4, %%o5 */
-               "       .word   0xdbf0500c\n\t"
-#else
-               /*      cas     [%%g1], %%o4, %%o5 */
-               "       .word   0xdbe0500c\n\t"
-#endif
-               "       cmp     %%o4, %%o5\n\t"
-               "       bne     1b\n\t"
-               "        nop"
-               : "=&r" (tmp), "=&r" (ret)
-               : "r" (dest), "r" (exch)
-               : "memory", "cc");
-
-        return ret;
-}
-
-G_GNUC_UNUSED
-static inline gint32 InterlockedExchangeAdd(volatile gint32 *_dest, gint32 add)
-{
-       register volatile gint32 *dest asm("g1") = _dest;
-       register gint32 tmp asm("o4");
-       register gint32 ret asm("o5");
-
-       __asm__ __volatile__(
-               "1:     ld      [%%g1], %%o4\n\t"
-               "       add     %%o4, %3, %%o5\n\t"
-               /*      cas     [%%g1], %%o4, %%o5 */
-               "       .word   0xdbe0500c\n\t"
-               "       cmp     %%o4, %%o5\n\t"
-               "       bne     1b\n\t"
-               "        add    %%o5, %3, %%o5"
-               : "=&r" (tmp), "=&r" (ret)
-               : "r" (dest), "r" (add)
-               : "memory", "cc");
-
-        return ret;
-}
-
-#elif __s390x__
-
-static inline gint32 
-InterlockedCompareExchange(volatile gint32 *dest,
-			   gint32 exch, gint32 comp)
-{
-	gint32 old;
-
-	__asm__ __volatile__ ("\tLA\t1,%0\n"
-			      "\tLR\t%1,%3\n"
-			      "\tCS\t%1,%2,0(1)\n"
-			      : "+m" (*dest), "=&r" (old)
-			      : "r" (exch), "r" (comp)
-			      : "1", "cc");	
-	return(old);
-}
-
-static inline gpointer 
-InterlockedCompareExchangePointer(volatile gpointer *dest, 
-				  gpointer exch, 
-			          gpointer comp)
-{
-	gpointer old;
-
-	__asm__ __volatile__ ("\tLA\t1,%0\n"
-			      "\tLGR\t%1,%3\n"
-			      "\tCSG\t%1,%2,0(1)\n"
-			      : "+m" (*dest), "=&r" (old)
-			      : "r" (exch), "r" (comp)
-			      : "1", "cc");
-
-	return(old);
-}
-
-static inline gint32 
-InterlockedIncrement(volatile gint32 *val)
-{
-	gint32 tmp;
-	
-	__asm__ __volatile__ ("\tLA\t2,%1\n"
-			      "0:\tLGF\t%0,%1\n"
-			      "\tLGFR\t1,%0\n"
-			      "\tAGHI\t1,1\n"
-			      "\tCS\t%0,1,0(2)\n"
-			      "\tJNZ\t0b\n"
-			      "\tLGFR\t%0,1"
-			      : "=r" (tmp), "+m" (*val)
-			      : : "1", "2", "cc");
-
-	return(tmp);
-}
-
-static inline gint32 
-InterlockedDecrement(volatile gint32 *val)
-{
-	gint32 tmp;
-	
-	__asm__ __volatile__ ("\tLA\t2,%1\n"
-			      "0:\tLGF\t%0,%1\n"
-			      "\tLGFR\t1,%0\n"
-			      "\tAGHI\t1,-1\n"
-			      "\tCS\t%0,1,0(2)\n"
-			      "\tJNZ\t0b\n"
-			      "\tLGFR\t%0,1"
-			      : "=r" (tmp), "+m" (*val)
-			      : : "1", "2", "cc");
-
-	return(tmp);
-}
-
-static inline gint32 
-InterlockedExchange(volatile gint32 *val, gint32 new_val)
-{
-	gint32 ret;
-	
-	__asm__ __volatile__ ("\tLA\t1,%0\n"
-			      "0:\tL\t%1,%0\n"
-			      "\tCS\t%1,%2,0(1)\n"
-			      "\tJNZ\t0b"
-			      : "+m" (*val), "=&r" (ret)
-			      : "r" (new_val)
-			      : "1", "cc");
-
-	return(ret);
-}
-
-static inline gpointer
-InterlockedExchangePointer(volatile gpointer *val, gpointer new_val)
-{
-	gpointer ret;
-	
-	__asm__ __volatile__ ("\tLA\t1,%0\n"
-			      "0:\tLG\t%1,%0\n"
-			      "\tCSG\t%1,%2,0(1)\n"
-			      "\tJNZ\t0b"
-			      : "+m" (*val), "=&r" (ret)
-			      : "r" (new_val)
-			      : "1", "cc");
-
-	return(ret);
-}
-
-static inline gint32 
-InterlockedExchangeAdd(volatile gint32 *val, gint32 add)
-{
-	gint32 ret;
-
-	__asm__ __volatile__ ("\tLA\t2,%1\n"
-			      "0:\tLGF\t%0,%1\n"
-			      "\tLGFR\t1,%0\n"
-			      "\tAGR\t1,%2\n"
-			      "\tCS\t%0,1,0(2)\n"
-			      "\tJNZ\t0b"
-			      : "=&r" (ret), "+m" (*val)
-			      : "r" (add) 
-			      : "1", "2", "cc");
-	
-	return(ret);
+	/* Nothing useful from GCC at all, so fall back to CAS. */
+	InterlockedExchange64 (dst, val);
 }
 
 #elif defined(__ia64__)
@@ -546,17 +475,30 @@ static inline gint32 InterlockedExchangeAdd(gint32 volatile *val, gint32 add)
 #define WAPI_NO_ATOMIC_ASM
 
 extern gint32 InterlockedCompareExchange(volatile gint32 *dest, gint32 exch, gint32 comp);
+extern gint64 InterlockedCompareExchange64(volatile gint64 *dest, gint64 exch, gint64 comp);
 extern gpointer InterlockedCompareExchangePointer(volatile gpointer *dest, gpointer exch, gpointer comp);
+extern gint32 InterlockedAdd(volatile gint32 *dest, gint32 add);
+extern gint64 InterlockedAdd64(volatile gint64 *dest, gint64 add);
 extern gint32 InterlockedIncrement(volatile gint32 *dest);
+extern gint64 InterlockedIncrement64(volatile gint64 *dest);
 extern gint32 InterlockedDecrement(volatile gint32 *dest);
+extern gint64 InterlockedDecrement64(volatile gint64 *dest);
 extern gint32 InterlockedExchange(volatile gint32 *dest, gint32 exch);
+extern gint64 InterlockedExchange64(volatile gint64 *dest, gint64 exch);
 extern gpointer InterlockedExchangePointer(volatile gpointer *dest, gpointer exch);
 extern gint32 InterlockedExchangeAdd(volatile gint32 *dest, gint32 add);
+extern gint64 InterlockedExchangeAdd64(volatile gint64 *dest, gint64 add);
+extern gint8 InterlockedRead8(volatile gint8 *src);
+extern gint16 InterlockedRead16(volatile gint16 *src);
+extern gint32 InterlockedRead(volatile gint32 *src);
+extern gint64 InterlockedRead64(volatile gint64 *src);
+extern gpointer InterlockedReadPointer(volatile gpointer *src);
+extern void InterlockedWrite8(volatile gint8 *dst, gint8 val);
+extern void InterlockedWrite16(volatile gint16 *dst, gint16 val);
+extern void InterlockedWrite(volatile gint32 *dst, gint32 val);
+extern void InterlockedWrite64(volatile gint64 *dst, gint64 val);
+extern void InterlockedWritePointer(volatile gpointer *dst, gpointer val);
 
-#endif
-
-#ifndef HAS_64BITS_ATOMICS
-extern gint64 InterlockedCompareExchange64(volatile gint64 *dest, gint64 exch, gint64 comp);
 #endif
 
 #endif /* _WAPI_ATOMIC_H_ */

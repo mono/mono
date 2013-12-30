@@ -1126,6 +1126,15 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		public void Delay_TimeManagement ()
+		{
+			var delay1 = Task.Delay(50);
+			var delay2 = Task.Delay(25);
+			Assert.IsTrue (Task.WhenAny(new[] { delay1, delay2 }).Wait (1000));
+			Assert.AreEqual (TaskStatus.RanToCompletion, delay2.Status);
+		}
+
+		[Test]
 		public void WaitAny_WithNull ()
 		{
 			var tasks = new [] {
@@ -1138,6 +1147,16 @@ namespace MonoTests.System.Threading.Tasks
 				Assert.Fail ();
 			} catch (ArgumentException) {
 			}
+		}
+
+		[Test]
+		public void WhenAll_Empty ()
+		{
+			var tasks = new Task[0];
+
+			Task t = Task.WhenAll(tasks);
+
+			Assert.IsTrue(t.Wait(1000), "#1");
 		}
 
 		[Test]
@@ -1263,6 +1282,18 @@ namespace MonoTests.System.Threading.Tasks
 			t2.Start ();
 
 			Assert.IsTrue (t.Wait (1000), "#2");
+		}
+
+		[Test]
+		public void WhenAllResult_Empty ()
+		{
+			var tasks = new Task<int>[0];
+
+			Task<int[]> t = Task.WhenAll(tasks);
+
+			Assert.IsTrue(t.Wait(1000), "#1");
+			Assert.IsNotNull(t.Result, "#2");
+			Assert.AreEqual(t.Result.Length, 0, "#3");
 		}
 
 		[Test]

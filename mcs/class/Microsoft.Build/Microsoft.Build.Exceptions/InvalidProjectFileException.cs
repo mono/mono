@@ -28,6 +28,8 @@
 
 using System;
 using System.Runtime.Serialization;
+using Microsoft.Build.Construction;
+using Microsoft.Build.Internal.Expressions;
 
 namespace Microsoft.Build.Exceptions
 {
@@ -57,10 +59,31 @@ namespace Microsoft.Build.Exceptions
                         : base(message, innerException)
                 {
                 }
+                internal InvalidProjectFileException (ILocation start, string message,
+                                                      string errorSubcategory = null, string errorCode = null, string helpKeyword = null)
+                        : this (start != null ? start.File : null, 0, start != null ? start.Column : 0, 0, 0, message, errorSubcategory, errorCode, helpKeyword)
+                {
+                }
+                internal InvalidProjectFileException (ElementLocation start, ElementLocation end, string message,
+                                                    string errorSubcategory = null, string errorCode = null, string helpKeyword = null)
+                        : this (start != null ? start.File : null, start != null ? start.Line : 0, start != null ? start.Column : 0,
+                                end != null ? end.Line : 0, end != null ? end.Column : 0,
+                                message, errorSubcategory, errorCode, helpKeyword)
+                {
+                }
                 public InvalidProjectFileException (string projectFile, int lineNumber, int columnNumber,
                                                     int endLineNumber, int endColumnNumber, string message,
                                                     string errorSubcategory, string errorCode, string helpKeyword)
+                        : base(message)
                 {
+                        ProjectFile = projectFile;
+                        LineNumber = lineNumber;
+                        ColumnNumber = columnNumber;
+                        EndLineNumber = endLineNumber;
+                        EndColumnNumber = endColumnNumber;
+                        ErrorSubcategory = errorSubcategory;
+                        ErrorCode = errorCode;
+                        HelpKeyword = helpKeyword;
                 }
                 public override void GetObjectData (SerializationInfo info, StreamingContext context)
                 {
@@ -87,8 +110,15 @@ namespace Microsoft.Build.Exceptions
                 public string HelpKeyword { get; private set; }
                 public int LineNumber { get; private set; }
                 public override string Message {
-                        get { return ProjectFile == null ? base.Message : base.Message + " " + ProjectFile; }
+                        get { return ProjectFile == null ? base.Message : base.Message + " " + GetLocation (); }
                 }
                 public string ProjectFile { get; private set; }
+
+                string GetLocation ()
+                {
+                        string start = LineNumber == 0 ? string.Empty : ColumnNumber > 0 ? string.Format ("{0},{1}", LineNumber, ColumnNumber) : string.Format ("{0}", LineNumber);
+                        string end = EndLineNumber == 0 ? string.Empty : EndColumnNumber > 0 ? string.Format (" - {0},{1}", EndLineNumber, EndColumnNumber) : string.Format (" - {0}", EndLineNumber);
+                        return LineNumber == 0 ? ProjectFile : String.Format (" at: {0} ({1}{2})", ProjectFile, start, end);
+                }
         }
 }

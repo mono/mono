@@ -517,13 +517,42 @@ public class DebuggerTests
 		e = step_into ();
 		assert_location (e, "ss_nested_1");
 		e = step_out ();
-		Console.WriteLine ("A: " + e.Thread.GetFrames ()[0].Location);
 		assert_location (e, "ss_nested");
 		// Check that step over steps over nested calls
 		e = step_over ();
 		assert_location (e, "ss_nested");
 		e = step_into ();
 		assert_location (e, "ss_nested_3");
+		req.Disable ();
+
+		// Check DebuggerStepThrough support
+		e = run_until ("ss_step_through");
+		req = create_step (e);
+		req.Filter = StepFilter.DebuggerStepThrough;
+		e = step_into ();
+		// Step through step_through_1 ()
+		e = step_into ();
+		assert_location (e, "ss_step_through");
+		// Step through StepThroughClass.step_through_2 ()
+		e = step_into ();
+		assert_location (e, "ss_step_through");
+		req.Disable ();
+		req.Filter = StepFilter.None;
+		e = step_into ();
+		assert_location (e, "step_through_3");
+		req.Disable ();
+
+		// Check that step-over doesn't stop at inner frames with recursive functions
+		e = run_until ("ss_recursive");
+		req = create_step (e);
+		e = step_over ();
+		e = step_over ();
+		e = step_over ();
+		var f = e.Thread.GetFrames () [0];
+		assert_location (e, "ss_recursive");
+		AssertValue (1, f.GetValue (f.Method.GetLocal ("n")));
+
+		req.Disable ();
 	}
 
 	[Test]
@@ -1103,7 +1132,7 @@ public class DebuggerTests
 		t = frame.Method.GetParameters ()[8].ParameterType;
 		Assert.AreEqual ("Tests2", t.Name);
 		var attrs = t.GetCustomAttributes (true);
-		Assert.AreEqual (3, attrs.Length);
+		Assert.AreEqual (5, attrs.Length);
 		foreach (var attr in attrs) {
 			if (attr.Constructor.DeclaringType.Name == "DebuggerDisplayAttribute") {
 				Assert.AreEqual (1, attr.ConstructorArguments.Count);
@@ -1122,6 +1151,12 @@ public class DebuggerTests
 				Assert.AreEqual (2, attr.NamedArguments.Count);
 				Assert.AreEqual ("afield", attr.NamedArguments [0].Field.Name);
 				Assert.AreEqual ("bfield", attr.NamedArguments [1].Field.Name);
+			} else if (attr.Constructor.DeclaringType.Name == "ClassInterfaceAttribute") {
+				// inherited from System.Object
+				//} else if (attr.Constructor.DeclaringType.Name == "Serializable") {
+				// inherited from System.Object
+			} else if (attr.Constructor.DeclaringType.Name == "ComVisibleAttribute") {
+				// inherited from System.Object
 			} else {
 				Assert.Fail (attr.Constructor.DeclaringType.Name);
 			}
@@ -1665,6 +1700,8 @@ public class DebuggerTests
 
 		var e = GetNextEvent ();
 		Assert.IsInstanceOfType (typeof (VMDeathEvent), e);
+
+		Assert.AreEqual (5, (e as VMDeathEvent).ExitCode);
 
 		var p = vm.Process;
 		/* Could be a remote vm with no process */
@@ -2501,6 +2538,17 @@ public class DebuggerTests
 		e = GetNextEvent ();
 		Assert.IsInstanceOfType (typeof (ExceptionEvent), e);
 		Assert.AreEqual ("OverflowException", (e as ExceptionEvent).Exception.Type.Name);
+		req.Disable ();
+
+		// no subclasses
+		req.IncludeSubclasses = false;
+		req.Enable ();
+
+		vm.Resume ();
+
+		e = GetNextEvent ();
+		Assert.IsInstanceOfType (typeof (ExceptionEvent), e);
+		Assert.AreEqual ("Exception", (e as ExceptionEvent).Exception.Type.Name);
 		req.Disable ();
 
 		// Implicit exceptions

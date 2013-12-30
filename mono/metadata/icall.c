@@ -85,6 +85,7 @@
 #include <mono/utils/mono-io-portability.h>
 #include <mono/utils/mono-digest.h>
 #include <mono/utils/bsearch.h>
+#include <mono/utils/mono-mutex.h>
 
 #if defined (HOST_WIN32)
 #include <windows.h>
@@ -1510,10 +1511,8 @@ ves_icall_type_is_subtype_of (MonoReflectionType *type, MonoReflectionType *c, M
 		mono_class_init_or_throw (klass);
 		mono_class_init_or_throw (klassc);
 	} else if (!klass->supertypes || !klassc->supertypes) {
-		mono_loader_lock ();
 		mono_class_setup_supertypes (klass);
 		mono_class_setup_supertypes (klassc);
-		mono_loader_unlock ();
 	}
 
 	if (type->type->byref)
@@ -2669,9 +2668,9 @@ ves_icall_MonoMethod_GetGenericMethodDefinition (MonoReflectionMethod *method)
 		 * FIXME: Why is this stuff needed at all ? Why can't the code below work for
 		 * the dynamic case as well ?
 		 */
-		mono_loader_lock ();
+		mono_image_lock ((MonoImage*)image);
 		res = mono_g_hash_table_lookup (image->generic_def_objects, imethod);
-		mono_loader_unlock ();
+		mono_image_unlock ((MonoImage*)image);
 
 		if (res)
 			return res;
@@ -5930,9 +5929,11 @@ ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData (guint32 year, MonoArray 
 	struct tm start, tt;
 	time_t t;
 
-	long int gmtoff;
-	int is_daylight = 0, day;
+	long int gmtoff, gmtoff_after, gmtoff_st, gmtoff_ds;
+	int day, transitioned;
 	char tzone [64];
+
+	gmtoff_st = gmtoff_ds = transitioned = 0;
 
 	MONO_ARCH_SAVE_REGS;
 
@@ -5969,13 +5970,15 @@ ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData (guint32 year, MonoArray 
 	gmtoff = gmt_offset (&start, t);
 
 	/* For each day of the year, calculate the tm_gmtoff. */
-	for (day = 0; day < 365; day++) {
+	for (day = 0; day < 365 && transitioned < 2; day++) {
 
 		t += 3600*24;
 		tt = *localtime (&t);
 
+        gmtoff_after = gmt_offset(&tt, t);
+
 		/* Daylight saving starts or ends here. */
-		if (gmt_offset (&tt, t) != gmtoff) {
+		if (gmtoff_after != gmtoff) {
 			struct tm tt1;
 			time_t t1;
 
@@ -5995,36 +5998,37 @@ ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData (guint32 year, MonoArray 
 			strftime (tzone, sizeof (tzone), "%Z", &tt);
 			
 			/* Write data, if we're already in daylight saving, we're done. */
-			if (is_daylight) {
-				mono_array_setref ((*names), 0, mono_string_new (domain, tzone));
-				mono_array_set ((*data), gint64, 1, ((gint64)t1 + EPOCH_ADJUST) * 10000000L);
-				return 1;
-			} else {
-				struct tm end;
-				time_t te;
-				
-				memset (&end, 0, sizeof (end));
-				end.tm_year = year-1900 + 1;
-				end.tm_mday = 1;
-				
-				te = mktime (&end);
-				
+			if (tt.tm_isdst) {
 				mono_array_setref ((*names), 1, mono_string_new (domain, tzone));
 				mono_array_set ((*data), gint64, 0, ((gint64)t1 + EPOCH_ADJUST) * 10000000L);
+				if (gmtoff_ds == 0) {
+					gmtoff_st = gmtoff;
+					gmtoff_ds = gmtoff_after;
+				}
+				transitioned++;
+			} else {
+				time_t te;
+				te = mktime (&tt);
+				
 				mono_array_setref ((*names), 0, mono_string_new (domain, tzone));
-				mono_array_set ((*data), gint64, 1, ((gint64)te + EPOCH_ADJUST) * 10000000L);
-				is_daylight = 1;
+				mono_array_set ((*data), gint64, 1, ((gint64)t1 + EPOCH_ADJUST) * 10000000L);
+				if (gmtoff_ds == 0) {
+					gmtoff_st = gmtoff_after;
+					gmtoff_ds = gmtoff;
+				}
+				transitioned++;
 			}
 
 			/* This is only set once when we enter daylight saving. */
-			mono_array_set ((*data), gint64, 2, (gint64)gmtoff * 10000000L);
-			mono_array_set ((*data), gint64, 3, (gint64)(gmt_offset (&tt, t) - gmtoff) * 10000000L);
-
+			if (tt1.tm_isdst) {
+				mono_array_set ((*data), gint64, 2, (gint64)gmtoff_st * 10000000L);
+				mono_array_set ((*data), gint64, 3, (gint64)(gmtoff_ds - gmtoff_st) * 10000000L);
+			}
 			gmtoff = gmt_offset (&tt, t);
 		}
 	}
 
-	if (!is_daylight) {
+	if (transitioned < 2) {
 		strftime (tzone, sizeof (tzone), "%Z", &tt);
 		mono_array_setref ((*names), 0, mono_string_new (domain, tzone));
 		mono_array_setref ((*names), 1, mono_string_new (domain, tzone));
@@ -6494,6 +6498,8 @@ ICALL_EXPORT void
 ves_icall_System_Environment_Exit (int result)
 {
 	MONO_ARCH_SAVE_REGS;
+
+	mono_environment_exitcode_set (result);
 
 /* FIXME: There are some cleanup hangs that should be worked out, but
  * if the program is going to exit, everything will be cleaned up when
@@ -7026,7 +7032,7 @@ ves_icall_get_resources_ptr (MonoReflectionAssembly *assembly, gpointer *result,
 ICALL_EXPORT MonoBoolean
 ves_icall_System_Diagnostics_Debugger_IsAttached_internal (void)
 {
-	return mono_debug_using_mono_debugger () || mono_is_debugger_attached ();
+	return mono_is_debugger_attached ();
 }
 
 ICALL_EXPORT MonoBoolean
@@ -7852,6 +7858,7 @@ icall_symbols [] = {
 
 #endif /* DISABLE_ICALL_TABLES */
 
+static mono_mutex_t icall_mutex;
 static GHashTable *icall_hash = NULL;
 static GHashTable *jit_icall_hash_name = NULL;
 static GHashTable *jit_icall_hash_addr = NULL;
@@ -7889,6 +7896,19 @@ mono_icall_init (void)
 #endif
 
 	icall_hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+	mono_mutex_init (&icall_mutex);
+}
+
+static void
+mono_icall_lock (void)
+{
+	mono_locks_mutex_acquire (&icall_mutex, IcallLock);
+}
+
+static void
+mono_icall_unlock (void)
+{
+	mono_locks_mutex_release (&icall_mutex, IcallLock);
 }
 
 void
@@ -7897,16 +7917,17 @@ mono_icall_cleanup (void)
 	g_hash_table_destroy (icall_hash);
 	g_hash_table_destroy (jit_icall_hash_name);
 	g_hash_table_destroy (jit_icall_hash_addr);
+	mono_mutex_destroy (&icall_mutex);
 }
 
 void
 mono_add_internal_call (const char *name, gconstpointer method)
 {
-	mono_loader_lock ();
+	mono_icall_lock ();
 
 	g_hash_table_insert (icall_hash, g_strdup (name), (gpointer) method);
 
-	mono_loader_unlock ();
+	mono_icall_unlock ();
 }
 
 #ifndef DISABLE_ICALL_TABLES
@@ -8069,23 +8090,23 @@ mono_lookup_internal_call (MonoMethod *method)
 	sigstart [siglen + 2] = 0;
 	g_free (tmpsig);
 	
-	mono_loader_lock ();
+	mono_icall_lock ();
 
 	res = g_hash_table_lookup (icall_hash, mname);
 	if (res) {
-		mono_loader_unlock ();
+		mono_icall_unlock ();;
 		return res;
 	}
 	/* try without signature */
 	*sigstart = 0;
 	res = g_hash_table_lookup (icall_hash, mname);
 	if (res) {
-		mono_loader_unlock ();
+		mono_icall_unlock ();
 		return res;
 	}
 
 #ifdef DISABLE_ICALL_TABLES
-	mono_loader_unlock ();
+	mono_icall_unlock ();
 	/* Fail only when the result is actually used */
 	/* mono_marshal_get_native_wrapper () depends on this */
 	if (method->klass == mono_defaults.string_class && !strcmp (method->name, ".ctor"))
@@ -8095,19 +8116,19 @@ mono_lookup_internal_call (MonoMethod *method)
 #else
 	/* it wasn't found in the static call tables */
 	if (!imap) {
-		mono_loader_unlock ();
+		mono_icall_unlock ();
 		return NULL;
 	}
 	res = find_method_icall (imap, sigstart - mlen);
 	if (res) {
-		mono_loader_unlock ();
+		mono_icall_unlock ();
 		return res;
 	}
 	/* try _with_ signature */
 	*sigstart = '(';
 	res = find_method_icall (imap, sigstart - mlen);
 	if (res) {
-		mono_loader_unlock ();
+		mono_icall_unlock ();
 		return res;
 	}
 
@@ -8119,7 +8140,7 @@ mono_lookup_internal_call (MonoMethod *method)
 	g_print ("If you see other errors or faults after this message they are probably related\n");
 	g_print ("and you need to fix your mono install first.\n");
 
-	mono_loader_unlock ();
+	mono_icall_unlock ();
 
 	return NULL;
 #endif
@@ -8244,20 +8265,24 @@ type_from_typename (char *typename)
 	return &klass->byval_arg;
 }
 
+/**
+ * LOCKING: Take the corlib image lock.
+ */
 MonoMethodSignature*
 mono_create_icall_signature (const char *sigstr)
 {
 	gchar **parts;
 	int i, len;
 	gchar **tmp;
-	MonoMethodSignature *res;
+	MonoMethodSignature *res, *res2;
+	MonoImage *corlib = mono_defaults.corlib;
 
-	mono_loader_lock ();
-	res = g_hash_table_lookup (mono_defaults.corlib->helper_signatures, sigstr);
-	if (res) {
-		mono_loader_unlock ();
+	mono_image_lock (corlib);
+	res = g_hash_table_lookup (corlib->helper_signatures, sigstr);
+	mono_image_unlock (corlib);
+
+	if (res)
 		return res;
-	}
 
 	parts = g_strsplit (sigstr, " ", 256);
 
@@ -8268,7 +8293,7 @@ mono_create_icall_signature (const char *sigstr)
 		tmp ++;
 	}
 
-	res = mono_metadata_signature_alloc (mono_defaults.corlib, len - 1);
+	res = mono_metadata_signature_alloc (corlib, len - 1);
 	res->pinvoke = 1;
 
 #ifdef HOST_WIN32
@@ -8286,9 +8311,13 @@ mono_create_icall_signature (const char *sigstr)
 
 	g_strfreev (parts);
 
-	g_hash_table_insert (mono_defaults.corlib->helper_signatures, (gpointer)sigstr, res);
-
-	mono_loader_unlock ();
+	mono_image_lock (corlib);
+	res2 = g_hash_table_lookup (corlib->helper_signatures, sigstr);
+	if (res2)
+		res = res2; /*Value is allocated in the image pool*/
+	else
+		g_hash_table_insert (corlib->helper_signatures, (gpointer)sigstr, res);
+	mono_image_unlock (corlib);
 
 	return res;
 }
@@ -8299,9 +8328,9 @@ mono_find_jit_icall_by_name (const char *name)
 	MonoJitICallInfo *info;
 	g_assert (jit_icall_hash_name);
 
-	mono_loader_lock ();
+	mono_icall_lock ();
 	info = g_hash_table_lookup (jit_icall_hash_name, name);
-	mono_loader_unlock ();
+	mono_icall_unlock ();
 	return info;
 }
 
@@ -8311,9 +8340,9 @@ mono_find_jit_icall_by_addr (gconstpointer addr)
 	MonoJitICallInfo *info;
 	g_assert (jit_icall_hash_addr);
 
-	mono_loader_lock ();
+	mono_icall_lock ();
 	info = g_hash_table_lookup (jit_icall_hash_addr, (gpointer)addr);
-	mono_loader_unlock ();
+	mono_icall_unlock ();
 
 	return info;
 }
@@ -8322,7 +8351,7 @@ mono_find_jit_icall_by_addr (gconstpointer addr)
  * mono_get_jit_icall_info:
  *
  *   Return the hashtable mapping JIT icall names to MonoJitICallInfo structures. The
- * caller should access it while holding the loader lock.
+ * caller should access it while holding the icall lock.
  */
 GHashTable*
 mono_get_jit_icall_info (void)
@@ -8341,20 +8370,20 @@ mono_lookup_jit_icall_symbol (const char *name)
 	MonoJitICallInfo *info;
 	const char *res = NULL;
 
-	mono_loader_lock ();
+	mono_icall_lock ();
 	info = g_hash_table_lookup (jit_icall_hash_name, name);
 	if (info)
 		res = info->c_symbol;
-	mono_loader_unlock ();
+	mono_icall_unlock ();
 	return res;
 }
 
 void
 mono_register_jit_icall_wrapper (MonoJitICallInfo *info, gconstpointer wrapper)
 {
-	mono_loader_lock ();
+	mono_icall_lock ();
 	g_hash_table_insert (jit_icall_hash_addr, (gpointer)wrapper, info);
-	mono_loader_unlock ();
+	mono_icall_unlock ();
 }
 
 MonoJitICallInfo *
@@ -8365,7 +8394,7 @@ mono_register_jit_icall_full (gconstpointer func, const char *name, MonoMethodSi
 	g_assert (func);
 	g_assert (name);
 
-	mono_loader_lock ();
+	mono_icall_lock ();
 
 	if (!jit_icall_hash_name) {
 		jit_icall_hash_name = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, g_free);
@@ -8393,7 +8422,7 @@ mono_register_jit_icall_full (gconstpointer func, const char *name, MonoMethodSi
 	g_hash_table_insert (jit_icall_hash_name, (gpointer)info->name, info);
 	g_hash_table_insert (jit_icall_hash_addr, (gpointer)func, info);
 
-	mono_loader_unlock ();
+	mono_icall_unlock ();
 	return info;
 }
 

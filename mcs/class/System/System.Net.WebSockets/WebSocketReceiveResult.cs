@@ -36,20 +36,22 @@ namespace System.Net.WebSockets
 {
 	public class WebSocketReceiveResult
 	{
-		[MonoTODO]
 		public WebSocketReceiveResult (int count, WebSocketMessageType messageType, bool endOfMessage)
+		     : this (count, messageType, endOfMessage, null, null)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public WebSocketReceiveResult (int count,
 		                               WebSocketMessageType messageType,
 		                               bool endOfMessage,
 		                               WebSocketCloseStatus? closeStatus,
 		                               string closeStatusDescription)
 		{
-			throw new NotImplementedException ();
+			MessageType = messageType;
+			CloseStatus = closeStatus;
+			CloseStatusDescription = closeStatusDescription;
+			Count = count;
+			EndOfMessage = endOfMessage;
 		}
 
 		public WebSocketCloseStatus? CloseStatus {

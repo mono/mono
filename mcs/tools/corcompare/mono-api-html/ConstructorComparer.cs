@@ -84,8 +84,18 @@ namespace Xamarin.ApiDiff {
 
 			// the XML file `name` does not contain parameter names, so we must process them ourselves
 			// which gives us the opportunity to simplify type names
-			sb.Append (name.Substring (0, name.IndexOf ('('))).Append (" (");
+			sb.Append (name.Substring (0, name.IndexOf ('(')));
 
+			var genericp = e.Element ("generic-parameters");
+			if (genericp != null) {
+				var list = new List<string> ();
+				foreach (var p in genericp.Elements ("generic-parameter")) {
+					list.Add (p.GetTypeName ("name"));
+				}
+				sb.Append ("&lt;").Append (String.Join (", ", list)).Append ("&gt;");
+			}
+
+			sb.Append (" (");
 			var parameters = e.Element ("parameters");
 			if (parameters != null) {
 				var list = new List<string> ();

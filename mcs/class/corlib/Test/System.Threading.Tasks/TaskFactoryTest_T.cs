@@ -33,6 +33,9 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using NUnit.Framework;
+#if !MOBILE
+using NUnit.Framework.SyntaxHelpers;
+#endif
 
 namespace MonoTests.System.Threading.Tasks
 {
@@ -249,6 +252,29 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.AreEqual ("1", task.Result, "#2");
 		}
 
+		[Test]
+		public void StartNewCancelled ()
+		{
+			var ct = new CancellationToken (true);
+			var factory = new TaskFactory<int> ();
+
+			var task = factory.StartNew (() => { Assert.Fail ("Should never be called"); return 1; }, ct);
+			try {
+				task.Start ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {
+			}
+
+			Assert.IsTrue (task.IsCanceled, "#2");
+
+			task = factory.StartNew (() => 1, ct);
+			try {
+				task.Wait ();
+			} catch (AggregateException e) {
+				Assert.IsTrue (task.IsCanceled, "#3");
+				Assert.That (e.InnerException, Is.TypeOf (typeof (TaskCanceledException)), "#4");
+			}
+		}
 	}
 }
 

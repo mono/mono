@@ -36,6 +36,7 @@ using System.Collections;
 using System.Configuration;
 using System.Globalization;
 using System.IO;
+using System.Net;
 using System.Net.Cache;
 using System.Net.Sockets;
 using System.Runtime.Remoting.Messaging;
@@ -950,6 +951,14 @@ namespace System.Net
 
 			return result.Response;
 		}
+		
+#if NET_3_5
+		public Stream EndGetRequestStream (IAsyncResult asyncResult, out TransportContext transportContext)
+		{
+			transportContext = null;
+			return EndGetRequestStream (asyncResult);
+		}
+#endif
 
 		public override WebResponse GetResponse()
 		{
@@ -1071,29 +1080,19 @@ namespace System.Net
 			redirects++;
 			Exception e = null;
 			string uriString = null;
-
 			switch (code) {
 			case HttpStatusCode.Ambiguous: // 300
 				e = new WebException ("Ambiguous redirect.");
 				break;
 			case HttpStatusCode.MovedPermanently: // 301
 			case HttpStatusCode.Redirect: // 302
-			case HttpStatusCode.TemporaryRedirect: // 307
-				/* MS follows the redirect for POST too
-				if (method != "GET" && method != "HEAD") // 10.3
-					return false;
-				*/
-
-				contentLength = -1;
-				bodyBufferLength = 0;
-				bodyBuffer = null;
-				if (code != HttpStatusCode.TemporaryRedirect)
+				if (method == "POST")
 					method = "GET";
-				uriString = webResponse.Headers ["Location"];
+				break;
+			case HttpStatusCode.TemporaryRedirect: // 307
 				break;
 			case HttpStatusCode.SeeOther: //303
 				method = "GET";
-				uriString = webResponse.Headers ["Location"];
 				break;
 			case HttpStatusCode.NotModified: // 304
 				return false;
@@ -1108,6 +1107,11 @@ namespace System.Net
 
 			if (e != null)
 				throw e;
+
+			//contentLength = -1;
+			//bodyBufferLength = 0;
+			//bodyBuffer = null;
+			uriString = webResponse.Headers ["Location"];
 
 			if (uriString == null)
 				throw new WebException ("No Location header found for " + (int) code,
@@ -1163,7 +1167,9 @@ namespace System.Net
 			bool spoint10 = (proto_version == null || proto_version == HttpVersion.Version10);
 
 			if (keepAlive && (version == HttpVersion.Version10 || spoint10)) {
-				webHeaders.RemoveAndAdd (connectionHeader, "keep-alive");
+				if (webHeaders[connectionHeader] == null
+				    || webHeaders[connectionHeader].IndexOf ("keep-alive", StringComparison.OrdinalIgnoreCase) == -1)
+					webHeaders.RemoveAndAdd (connectionHeader, "keep-alive");
 			} else if (!keepAlive && version == HttpVersion.Version11) {
 				webHeaders.RemoveAndAdd (connectionHeader, "close");
 			}
@@ -1605,6 +1611,13 @@ namespace System.Net
 
 			throw throwMe;
 		}
+
+		internal bool ReuseConnection {
+			get;
+			set;
+		}
+
+		internal WebConnection StoredConnection;
 	}
 }
 

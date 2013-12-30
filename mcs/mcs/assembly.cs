@@ -919,7 +919,7 @@ namespace Mono.CSharp
 						return;
 					}
 
-					var mtype = texpr.Type.MemberDefinition as ClassOrStruct;
+					var mtype = texpr.MemberDefinition as ClassOrStruct;
 					if (mtype == null) {
 						Report.Error (1556, "`{0}' specified for Main method must be a valid class or struct", main_class);
 						return;
@@ -1110,13 +1110,13 @@ namespace Mono.CSharp
 		}
 	}
 
-	abstract class AssemblyReferencesLoader<T>
+	abstract class AssemblyReferencesLoader<T> where T : class
 	{
 		protected readonly CompilerContext compiler;
 
 		protected readonly List<string> paths;
 
-		public AssemblyReferencesLoader (CompilerContext compiler)
+		protected AssemblyReferencesLoader (CompilerContext compiler)
 		{
 			this.compiler = compiler;
 

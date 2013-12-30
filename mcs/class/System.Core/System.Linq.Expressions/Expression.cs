@@ -270,7 +270,7 @@ namespace System.Linq.Expressions {
 					if (ltype == rtype && ultype.IsEnum)
 						return null;
 
-					if (ltype == rtype && ultype == typeof (bool))
+					if (ltype == rtype && (ultype == typeof (bool) || ultype == typeof (char)))
 						return null;
 
 					if (ltype.IsNullable () && ConstantExpression.IsNull (right) && !ConstantExpression.IsNull (left))

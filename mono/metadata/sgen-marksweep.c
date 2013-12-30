@@ -564,7 +564,13 @@ ms_alloc_block (int size_index, gboolean pinned, gboolean has_references)
 	info->pinned = pinned;
 	info->has_references = has_references;
 	info->has_pinned = pinned;
-	info->is_to_space = (sgen_get_current_collection_generation () == GENERATION_OLD); /*FIXME WHY??? */
+	/*
+	 * Blocks that are to-space are not evacuated from.  During an major collection
+	 * blocks are allocated for two reasons: evacuating objects from the nursery and
+	 * evacuating them from major blocks marked for evacuation.  In both cases we don't
+	 * want further evacuation.
+	 */
+	info->is_to_space = (sgen_get_current_collection_generation () == GENERATION_OLD);
 	info->swept = 1;
 #ifndef FIXED_HEAP
 	info->block = ms_get_empty_block ();
@@ -947,7 +953,7 @@ major_is_valid_object (char *object)
 }
 
 
-static gboolean
+static MonoVTable*
 major_describe_pointer (char *ptr)
 {
 	MSBlockInfo *block;
@@ -989,10 +995,10 @@ major_describe_pointer (char *ptr)
 
 		SGEN_LOG (0, " marked %d)\n", marked ? 1 : 0);
 
-		return TRUE;
+		return vtable;
 	} END_FOREACH_BLOCK;
 
-	return FALSE;
+	return NULL;
 }
 
 static void
@@ -1185,6 +1191,7 @@ major_copy_or_mark_object (void **ptr, void *obj, SgenGrayQueue *queue)
 				MS_CALC_MARK_BIT (word, bit, obj);
 				SGEN_ASSERT (9, !MS_MARK_BIT (block, word, bit), "object %p already marked", obj);
 				MS_PAR_SET_MARK_BIT (was_marked, block, word, bit);
+				binary_protocol_mark (obj, vt, sgen_safe_object_get_size ((MonoObject*)obj));
 			}
 		} else {
 			/*
@@ -1297,8 +1304,8 @@ major_copy_or_mark_object_concurrent (void **ptr, void *obj, SgenGrayQueue *queu
 #endif
 
 			sgen_los_pin_object (obj);
-			/* FIXME: only enqueue if object has references */
-			GRAY_OBJECT_ENQUEUE (queue, obj);
+			if (SGEN_OBJECT_HAS_REFERENCES (obj))
+				GRAY_OBJECT_ENQUEUE (queue, obj);
 			INC_NUM_MAJOR_OBJECTS_MARKED ();
 		}
 	}
@@ -1436,8 +1443,8 @@ major_copy_or_mark_object (void **ptr, void *obj, SgenGrayQueue *queue)
 #endif
 
 			sgen_los_pin_object (obj);
-			/* FIXME: only enqueue if object has references */
-			GRAY_OBJECT_ENQUEUE (queue, obj);
+			if (SGEN_OBJECT_HAS_REFERENCES (obj))
+				GRAY_OBJECT_ENQUEUE (queue, obj);
 		}
 	}
 }
@@ -1538,6 +1545,7 @@ static void
 sweep_block (MSBlockInfo *block, gboolean during_major_collection)
 {
 	int count;
+	void *reversed = NULL;
 
 	if (!during_major_collection)
 		g_assert (!sgen_concurrent_collection_in_progress ());
@@ -1563,10 +1571,15 @@ sweep_block (MSBlockInfo *block, gboolean during_major_collection)
 	/* reset mark bits */
 	memset (block->mark_words, 0, sizeof (mword) * MS_NUM_MARK_WORDS);
 
-	/*
-	 * FIXME: reverse free list so that it's in address
-	 * order
-	 */
+	/* Reverse free list so that it's in address order */
+	reversed = NULL;
+	while (block->free_list) {
+		void *next = *(void**)block->free_list;
+		*(void**)block->free_list = reversed;
+		reversed = block->free_list;
+		block->free_list = next;
+	}
+	block->free_list = reversed;
 
 	block->swept = 1;
 }
@@ -1574,22 +1587,20 @@ sweep_block (MSBlockInfo *block, gboolean during_major_collection)
 static inline int
 bitcount (mword d)
 {
-#if SIZEOF_VOID_P == 8
-	/* http://www.jjj.de/bitwizardry/bitwizardrypage.html */
-	d -=  (d>>1) & 0x5555555555555555;
-	d  = ((d>>2) & 0x3333333333333333) + (d & 0x3333333333333333);
-	d  = ((d>>4) + d) & 0x0f0f0f0f0f0f0f0f;
-	d *= 0x0101010101010101;
-	return d >> 56;
+	int count = 0;
+
+#ifdef __GNUC__
+	if (sizeof (mword) == sizeof (unsigned long))
+		count += __builtin_popcountl (d);
+	else
+		count += __builtin_popcount (d);
 #else
-	/* http://aggregate.org/MAGIC/ */
-	d -= ((d >> 1) & 0x55555555);
-	d = (((d >> 2) & 0x33333333) + (d & 0x33333333));
-	d = (((d >> 4) + d) & 0x0f0f0f0f);
-	d += (d >> 8);
-	d += (d >> 16);
-	return (d & 0x0000003f);
+	while (d) {
+		count ++;
+		d &= (d - 1);
+	}
 #endif
+	return count;
 }
 
 static void
@@ -1916,7 +1927,7 @@ major_have_computer_minor_collection_allowance (void)
 			empty_block_arr [i++] = block;
 		SGEN_ASSERT (0, i == num_empty_blocks, "empty block count wrong");
 
-		qsort (empty_block_arr, num_empty_blocks, sizeof (void*), compare_pointers);
+		sgen_qsort (empty_block_arr, num_empty_blocks, sizeof (void*), compare_pointers);
 
 		/*
 		 * We iterate over the free blocks, trying to find MS_BLOCK_ALLOC_NUM

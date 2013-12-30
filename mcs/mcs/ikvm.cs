@@ -91,12 +91,12 @@ namespace Mono.CSharp
 
 		public void ImportAssembly (Assembly assembly, RootNamespace targetNamespace)
 		{
-			// It can be used more than once when importing same assembly
-			// into 2 or more global aliases
-			// TODO: Should be just Add
-			GetAssemblyDefinition (assembly);
-
 			try {
+				// It can be used more than once when importing same assembly
+				// into 2 or more global aliases
+				// TODO: Should be just Add
+				GetAssemblyDefinition (assembly);
+
 				var all_types = assembly.GetTypes ();
 				ImportTypes (all_types, targetNamespace, true);
 
@@ -124,6 +124,9 @@ namespace Mono.CSharp
 			Namespace ns = targetNamespace;
 			string prev_namespace = null;
 			foreach (var t in types) {
+				if (!t.__IsTypeForwarder)
+					continue;
+
 				// IsMissing tells us the type has been forwarded and target assembly is missing 
 				if (!t.__IsMissing)
 					continue;
@@ -226,7 +229,7 @@ namespace Mono.CSharp
 		readonly StaticImporter importer;
 		readonly Universe domain;
 		Assembly corlib;
-		List<Tuple<AssemblyName, string, Assembly>> loaded_names;
+		readonly List<Tuple<AssemblyName, string, Assembly>> loaded_names;
 		static readonly Dictionary<string, string[]> sdk_directory;
 
 		static StaticLoader ()

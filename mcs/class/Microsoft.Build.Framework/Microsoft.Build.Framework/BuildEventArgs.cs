@@ -41,7 +41,8 @@ namespace Microsoft.Build.Framework
 		string	senderName;
 		int	threadId;
 		DateTime	timestamp;
-		
+		BuildEventContext context;
+
 		protected BuildEventArgs ()
 			: this (null, null, null)
 		{
@@ -61,6 +62,7 @@ namespace Microsoft.Build.Framework
 			this.senderName = senderName;
 			this.threadId = Thread.CurrentThread.GetHashCode ();
 			this.timestamp = eventTimestamp;
+			this.context = BuildEventContext.NewInstance ();
 		}
 
 		public string HelpKeyword {
@@ -91,6 +93,15 @@ namespace Microsoft.Build.Framework
 		public DateTime Timestamp {
 			get {
 				return timestamp;
+			}
+		}
+
+		public BuildEventContext BuildEventContext {
+			get { return context; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("value");
+				context = value;
 			}
 		}
 	}

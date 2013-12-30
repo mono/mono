@@ -104,9 +104,7 @@ typedef struct MonoAotModule {
 	guint8 *plt_end;
 	guint8 *blob;
 	gint32 *code_offsets;
-#ifdef MONOTOUCH
 	gpointer *method_addresses;
-#endif
 	/* This contains <offset, index> pairs sorted by offset */
 	/* This is needed because LLVM emitted methods can be in any order */
 	gint32 *sorted_code_offsets;
@@ -1599,7 +1597,7 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 			sofile = mono_dl_open (aot_name, MONO_DL_LAZY, &err);
 
 			if (!sofile) {
-				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT failed to load AOT module %s: %s\n", aot_name, err);
+				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT module '%s' not found: %s\n", aot_name, err);
 				g_free (err);
 			}
 		}
@@ -1730,9 +1728,7 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 	}
 
 	amodule->code_offsets = info->code_offsets;
-#ifdef MONOTOUCH
 	amodule->method_addresses = info->method_addresses;
-#endif
 	amodule->code = info->methods;
 #ifdef TARGET_ARM
 	/* Mask out thumb interop bit */
@@ -1766,7 +1762,7 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 		amodule->code_offsets = g_malloc0 (amodule->info.nmethods * sizeof (gint32));
 		for (i = 0; i < amodule->info.nmethods; ++i) {
 			/* method_addresses () contains a table of branches, since the ios linker can update those correctly */
-			void *addr = get_arm_bl_target ((guint32*)(amodule->method_addresses + i));
+			void *addr = get_arm_bl_target ((guint32*)amodule->method_addresses + i);
 
 			if (addr == amodule->method_addresses)
 				amodule->code_offsets [i] = 0xffffffff;
@@ -2748,7 +2744,7 @@ mono_aot_find_jit_info (MonoDomain *domain, MonoImage *image, gpointer addr)
 	int method_index, table_len;
 	guint32 token;
 	MonoAotModule *amodule = image->aot_module;
-	MonoMethod *method;
+	MonoMethod *method = NULL;
 	MonoJitInfo *jinfo;
 	guint8 *code, *ex_info, *p;
 	guint32 *table;
@@ -2922,7 +2918,7 @@ mono_aot_find_jit_info (MonoDomain *domain, MonoImage *image, gpointer addr)
 				len = old_table[0].method_index;
 			else
 				len = 1;
-			new_table = alloc0_jit_info_data (domain, (len * 1) * sizeof (JitInfoMap), async);
+			new_table = alloc0_jit_info_data (domain, (len + 1) * sizeof (JitInfoMap), async);
 			if (old_table)
 				memcpy (new_table, old_table, len * sizeof (JitInfoMap));
 			new_table [0].method_index = len + 1;
@@ -2952,7 +2948,8 @@ decode_patch (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guin
 	case MONO_PATCH_INFO_METHOD:
 	case MONO_PATCH_INFO_METHOD_JUMP:
 	case MONO_PATCH_INFO_ICALL_ADDR:
-	case MONO_PATCH_INFO_METHOD_RGCTX: {
+	case MONO_PATCH_INFO_METHOD_RGCTX:
+	case MONO_PATCH_INFO_METHOD_CODE_SLOT: {
 		MethodRef ref;
 		gboolean res;
 
@@ -3746,7 +3743,7 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method)
 				char *full_name;
 
 				full_name = mono_method_full_name (method, TRUE);
-				mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_AOT, "AOT NOT FOUND: %s.\n", full_name);
+				mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_AOT, "AOT NOT FOUND: %s.", full_name);
 				g_free (full_name);
 			}
 			return NULL;
@@ -4279,14 +4276,16 @@ get_new_trampoline_from_page (int tramp_type)
 	vm_address_t addr, taddr;
 	kern_return_t ret;
 	vm_prot_t prot, max_prot;
-	int psize;
+	int psize, specific_trampoline_size;
 	unsigned char *code;
+
+	specific_trampoline_size = 2 * sizeof (gpointer);
 
 	mono_aot_page_lock ();
 	page = trampoline_pages [tramp_type];
 	if (page && page->trampolines < page->trampolines_end) {
 		code = page->trampolines;
-		page->trampolines += 8;
+		page->trampolines += specific_trampoline_size;
 		mono_aot_page_unlock ();
 		return code;
 	}
@@ -4298,6 +4297,8 @@ get_new_trampoline_from_page (int tramp_type)
 
 	amodule = image->aot_module;
 	g_assert (amodule);
+
+	g_assert (amodule->info.tramp_page_size == psize);
 
 	if (tramp_type == MONO_AOT_TRAMP_SPECIFIC)
 		tpage = load_function (amodule, "specific_trampolines_page");
@@ -4342,7 +4343,7 @@ get_new_trampoline_from_page (int tramp_type)
 		/* some other thread already allocated, so use that to avoid wasting memory */
 		if (page && page->trampolines < page->trampolines_end) {
 			code = page->trampolines;
-			page->trampolines += 8;
+			page->trampolines += specific_trampoline_size;
 			mono_aot_page_unlock ();
 			vm_deallocate (mach_task_self (), addr, psize);
 			vm_deallocate (mach_task_self (), taddr, psize);
@@ -4454,7 +4455,7 @@ get_numerous_trampoline (MonoAotTrampoline tramp_type, int n_got_slots, MonoAotM
 	*out_amodule = amodule;
 
 #ifdef MONOTOUCH
-#define	MONOTOUCH_TRAMPOLINES_ERROR ". See http://docs.xamarin.com/ios/troubleshooting for instruction on how to fix this condition"
+#define	MONOTOUCH_TRAMPOLINES_ERROR ". See http://docs.xamarin.com/ios/troubleshooting for instructions on how to fix this condition."
 #else
 #define	MONOTOUCH_TRAMPOLINES_ERROR ""
 #endif

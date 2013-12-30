@@ -15,13 +15,13 @@ var guids_android = new string [] {
 "5F7F40B6-19D3-48C7-8E15-AE1F976F60E1", "065F2411-7610-4AD6-9513-A1EFFCE576C0",
 "C4037060-1692-4423-B29E-76F3A74A72A5",
 // Rx
-"4fa878dc-6e88-43c4-b37b-8c1151cec56f", "fef62c23-10cd-4def-a5ae-54a8b309e970", "d263c126-9d3c-4299-a0c1-f25c703d07c9", "ec704077-ea31-4852-ad24-6732244174c0", "9360e845-d79d-4288-9100-63a80fad2bf0", "00dc3654-e373-4e3f-80fe-109f795adf1f", "e662282b-4341-4f86-aaaa-a942335b47fb", "a153a379-670c-42c2-9018-fc0d933a4f7f", "b29d45a6-0b8c-49c5-82a2-457e4d3cbc33", "3a3b5e76-029f-46b0-9ccf-fefe06eb61e7", "cb2ab716-bfcb-43bc-a03b-a3bda427746c", "73c5260f-8972-4e7c-822b-1a3a0358fa0b" };
+"4fa878dc-6e88-43c4-b37b-8c1151cec56f", "fef62c23-10cd-4def-a5ae-54a8b309e970", "d263c126-9d3c-4299-a0c1-f25c703d07c9", "ec704077-ea31-4852-ad24-6732244174c0", "9360e845-d79d-4288-9100-63a80fad2bf0", "00dc3654-e373-4e3f-80fe-109f795adf1f", "e662282b-4341-4f86-aaaa-a942335b47fb", "a153a379-670c-42c2-9018-fc0d933a4f7f", "b29d45a6-0b8c-49c5-82a2-457e4d3cbc33", "3a3b5e76-029f-46b0-9ccf-fefe06eb61e7", "328e4291-92f0-49de-a0fd-fbc714a47f53", "cb2ab716-bfcb-43bc-a03b-a3bda427746c", "73c5260f-8972-4e7c-822b-1a3a0358fa0b" };
 var guids_ios = new string [] {
 // Ix
 "AD6FCBE9-0F6A-4F27-8147-17AB1C8799A2", "220AD2F1-FEE9-4514-8F36-6BE37F0AAD7F",
 "4779C7FF-6969-4715-9389-DF6C43655D6F",
 // Rx
-"6f2675f5-fcc7-4a28-9dc3-657b4613dcc5", "a67f34b5-75c1-4319-a93e-93df87e728a4", "79a43ceb-1a18-49ea-aac4-b72b9c90bf5a", "0a977063-0796-4cd4-84b8-aedb2d648b26", "b41cb61a-dca0-4539-8f99-7b3499e18e6d", "24f995bd-7075-489c-b7a5-7fde08c304b6", "894021ec-14fb-430a-8572-bea9569ae435", "92857c8e-0e83-4d02-a831-8af3fed43336", "912e14a2-7bdf-4600-8d55-e8c4f33a2063", "0f6c2933-8d0c-41e6-9f77-e8714ab8c4ab", "47d85a91-e8e2-4088-bf5a-68a161754d48", "45377009-1425-47fc-985e-05f98022f9e3" };
+"6f2675f5-fcc7-4a28-9dc3-657b4613dcc5", "a67f34b5-75c1-4319-a93e-93df87e728a4", "79a43ceb-1a18-49ea-aac4-b72b9c90bf5a", "0a977063-0796-4cd4-84b8-aedb2d648b26", "b41cb61a-dca0-4539-8f99-7b3499e18e6d", "24f995bd-7075-489c-b7a5-7fde08c304b6", "894021ec-14fb-430a-8572-bea9569ae435", "92857c8e-0e83-4d02-a831-8af3fed43336", "912e14a2-7bdf-4600-8d55-e8c4f33a2063", "0f6c2933-8d0c-41e6-9f77-e8714ab8c4ab", "1a476d81-f91a-448f-8790-f55498e013d2", "47d85a91-e8e2-4088-bf5a-68a161754d48", "45377009-1425-47fc-985e-05f98022f9e3" };
 
 var asses = new string [] {
 	"System.Interactive",
@@ -37,6 +37,7 @@ var asses = new string [] {
 	"System.Reactive.Runtime.Remoting",
 	"System.Reactive.Windows.Forms",
 	"System.Reactive.Windows.Threading",
+	"System.Reactive.Observable.Aliases",
 	"Microsoft.Reactive.Testing",
 	"Tests.System.Reactive",
 	};
@@ -103,8 +104,8 @@ foreach (var ass in asses) {
 		if (!Directory.Exists (assdir))
 			Directory.CreateDirectory (assdir);
 		using (var tw = File.CreateText (assinfo)) {
-			tw.WriteLine ("[assembly:System.Reflection.AssemblyVersion (\"2.1.30214.0\")]");
-			tw.WriteLine ("[assembly:System.Reflection.AssemblyFileVersion (\"2.1.30214.0\")]");
+			//tw.WriteLine ("[assembly:System.Reflection.AssemblyVersion (\"2.1.30214.0\")]");
+			//tw.WriteLine ("[assembly:System.Reflection.AssemblyFileVersion (\"2.1.30214.0\")]");
 		}
 	}
 

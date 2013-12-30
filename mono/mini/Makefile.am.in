@@ -162,7 +162,7 @@ libmono_llvm_la_LIBADD = $(LLVM_LIBS) $(LLVM_LDFLAGS)
 if PLATFORM_DARWIN
 libmono_llvm_la_LDFLAGS=-Wl,-undefined -Wl,suppress -Wl,-flat_namespace
 else
-libmono_llvm_la_LIBADD += $(top_builddir)/mono/mini/libmono-$(API_VER).la $(libs)
+libmono_llvm_la_LIBADD += $(top_builddir)/mono/mini/libmonoboehm-$(API_VER).la $(libs)
 endif
 endif
 
@@ -389,7 +389,6 @@ common_sources = \
 	local-propagation.c	\
 	driver.c		\
 	debug-mini.c		\
-	debug-mini.h		\
 	linear-scan.c		\
 	aot-compiler.c		\
 	aot-runtime.c		\
@@ -417,11 +416,10 @@ common_sources = \
 	mini-gc.c		\
 	debugger-agent.h 	\
 	debugger-agent.c	\
-	debug-debugger.c	\
-	debug-debugger.h	\
 	xdebug.c			\
 	mini-llvm.h			\
-	mini-llvm-cpp.h
+	mini-llvm-cpp.h	\
+	alias-analysis.c
 
 test_sources = 			\
 	basic-calls.cs 		\
@@ -450,26 +448,13 @@ regtests += nacl.exe
 endif
 
 if X86
-if MONO_DEBUGGER_SUPPORTED
-if PLATFORM_DARWIN
-mdb_x86 = mdb-debug-info32-darwin.s
-else
-mdb_x86 = mdb-debug-info32.s
-endif
-else
-mdb_x86 = 
-endif
-arch_sources = $(x86_sources) $(mdb_x86)
+arch_sources = $(x86_sources)
 arch_built=cpu-x86.h
 arch_define=__i386__
 endif
 
 if AMD64
-if MONO_DEBUGGER_SUPPORTED
-arch_sources = $(amd64_sources) mdb-debug-info64.s
-else
 arch_sources = $(amd64_sources)
-endif
 arch_built=cpu-amd64.h
 arch_define=__x86_64__
 endif

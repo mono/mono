@@ -66,14 +66,8 @@ namespace System.ComponentModel.DataAnnotations
 			//
 			// See: http://en.wikipedia.org/wiki/Luhn_algorithm
 			// See: http://rosettacode.org/wiki/Luhn_test_of_credit_card_numbers
-			// See: http://www.codeproject.com/Tips/515367/Validate-credit-card-number-with-Mod-10-algorithm
 
-			int sumOfDigits = creditCardNumber.Where((e) => e >= '0' && e <= '9')
-				.Reverse()
-				.Select((e, i) => ((int)e - 48) * (i % 2 == 0 ? 1 : 2))
-				.Sum((e) => e / 10 + e % 10);
-
-			return sumOfDigits % 10 == 0;
+			return true;	
 		}
 	}
 }

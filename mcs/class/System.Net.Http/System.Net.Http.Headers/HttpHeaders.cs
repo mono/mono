@@ -231,16 +231,9 @@ namespace System.Net.Http.Headers
 			if (values == null)
 				throw new ArgumentNullException ("values");
 
-			if (string.IsNullOrEmpty (name))
-				return false;
-
-			Parser.Token.Check (name);
-
 			HeaderInfo headerInfo;
-			if (known_headers.TryGetValue (name, out headerInfo) && (headerInfo.HeaderKind & HeaderKind) == 0) {
-				if (HeaderKind != HttpHeaderKind.None && ((HeaderKind | headerInfo.HeaderKind) & HttpHeaderKind.Content) != 0)
-					return false;
-			}
+			if (!TryCheckName (name, out headerInfo))
+				return false;
 
 			AddInternal (name, values, null, true);
 			return true;
@@ -262,6 +255,21 @@ namespace System.Net.Http.Headers
 			}
 
 			return headerInfo;
+		}
+
+		bool TryCheckName (string name, out HeaderInfo headerInfo)
+		{
+			if (!Parser.Token.TryCheck (name)) {
+				headerInfo = null;
+				return false;
+			}
+
+			if (known_headers.TryGetValue (name, out headerInfo) && (headerInfo.HeaderKind & HeaderKind) == 0) {
+				if (HeaderKind != HttpHeaderKind.None && ((HeaderKind | headerInfo.HeaderKind) & HttpHeaderKind.Content) != 0)
+					return false;
+			}
+
+			return true;
 		}
 
 		public void Clear ()
@@ -301,6 +309,8 @@ namespace System.Net.Http.Headers
 
 		public IEnumerable<string> GetValues (string name)
 		{
+			CheckName (name);
+
 			IEnumerable<string> values;
 			if (!TryGetValues (name, out values))
 				throw new InvalidOperationException ();
@@ -316,7 +326,11 @@ namespace System.Net.Http.Headers
 
 		public bool TryGetValues (string name, out IEnumerable<string> values)
 		{
-			var header_info = CheckName (name);
+			HeaderInfo headerInfo;
+			if (!TryCheckName (name, out headerInfo)) {
+				values = null;
+				return false;
+			}
 
 			HeaderBucket bucket;
 			if (!headers.TryGetValue (name, out bucket)) {
@@ -324,7 +338,7 @@ namespace System.Net.Http.Headers
 				return false;
 			}
 
-			values = GetAllHeaderValues (bucket, header_info);
+			values = GetAllHeaderValues (bucket, headerInfo);
 			return true;
 		}
 

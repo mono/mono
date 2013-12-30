@@ -346,7 +346,7 @@ namespace System {
 
 			static void Fill (Stream stream, byte[] nbuf, int required)
 			{
-				int read, offset = 0;
+				int read = 0, offset = 0;
 				while (offset < required && (read = stream.Read (nbuf, offset, required - offset)) > 0)
 					offset += read;
 				if (read != required)

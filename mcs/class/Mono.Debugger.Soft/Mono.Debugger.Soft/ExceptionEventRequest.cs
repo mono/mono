@@ -6,7 +6,7 @@ namespace Mono.Debugger.Soft
 	public sealed class ExceptionEventRequest : EventRequest {
 
 		TypeMirror exc_type;
-		bool caught, uncaught;
+		bool caught, uncaught, subclasses;
 		
 		internal ExceptionEventRequest (VirtualMachine vm, TypeMirror exc_type, bool caught, bool uncaught) : base (vm, EventType.Exception) {
 			if (exc_type != null) {
@@ -18,6 +18,7 @@ namespace Mono.Debugger.Soft
 			this.exc_type = exc_type;
 			this.caught = caught;
 			this.uncaught = uncaught;
+			this.subclasses = true;
 		}
 
 		public TypeMirror ExceptionType {
@@ -26,9 +27,21 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
+		// Defaults to true
+		// Supported since protocol version 2.25
+		public bool IncludeSubclasses {
+			get {
+				return subclasses;
+			}
+			set {
+				vm.CheckProtocolVersion (2, 25);
+				subclasses = value;
+			}
+		}
+
 		public override void Enable () {
 			var mods = new List <Modifier> ();
-			mods.Add (new ExceptionModifier () { Type = exc_type != null ? exc_type.Id : 0, Caught = caught, Uncaught = uncaught });
+			mods.Add (new ExceptionModifier () { Type = exc_type != null ? exc_type.Id : 0, Caught = caught, Uncaught = uncaught, Subclasses = subclasses });
 			SendReq (mods);
 		}
 	}

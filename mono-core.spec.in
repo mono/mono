@@ -139,7 +139,7 @@ rm -rf %buildroot
 
 %files -f mcs.lang
 %defattr(-, root, root)
-%doc AUTHORS COPYING.LIB ChangeLog NEWS README
+%doc AUTHORS COPYING.LIB ChangeLog NEWS README.md
 %config %_sysconfdir/mono/2.0/machine.config
 %config %_sysconfdir/mono/2.0/settings.map
 %config %_sysconfdir/mono/4.0/machine.config
@@ -1113,6 +1113,7 @@ desktop-specific features.
 %_prefix/lib/mono/4.5/System.Reactive.Experimental.dll
 %_prefix/lib/mono/4.5/System.Reactive.Interfaces.dll
 %_prefix/lib/mono/4.5/System.Reactive.Linq.dll
+%_prefix/lib/mono/4.5/System.Reactive.Observable.Aliases.dll
 %_prefix/lib/mono/4.5/System.Reactive.PlatformServices.dll
 %_prefix/lib/mono/4.5/System.Reactive.Providers.dll
 %_prefix/lib/mono/4.5/System.Reactive.Runtime.Remoting.dll
@@ -1121,6 +1122,7 @@ desktop-specific features.
 %_prefix/lib/mono/gac/System.Reactive.Experimental
 %_prefix/lib/mono/gac/System.Reactive.Interfaces
 %_prefix/lib/mono/gac/System.Reactive.Linq
+%_prefix/lib/mono/gac/System.Reactive.Observable.Aliases.dll
 %_prefix/lib/mono/gac/System.Reactive.PlatformServices
 %_prefix/lib/mono/gac/System.Reactive.Providers
 %_prefix/lib/mono/gac/System.Reactive.Runtime.Remoting

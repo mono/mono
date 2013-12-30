@@ -123,20 +123,27 @@ public:
 	virtual void deallocateExceptionTable(void*) {
 	}
 
-	virtual uint8_t *allocateCodeSection(uintptr_t Size, unsigned Alignment,
-										 unsigned SectionID) {
+	virtual uint8_t *allocateCodeSection(uintptr_t Size, unsigned Alignment, unsigned SectionID,
+										 StringRef SectionName) {
 		// FIXME:
 		assert(0);
 		return NULL;
 	}
 
-	virtual uint8_t* allocateDataSection(uintptr_t, unsigned int, unsigned int, bool) {
+	virtual uint8_t *allocateDataSection(uintptr_t Size, unsigned Alignment, unsigned SectionID,
+										 StringRef SectionName, bool IsReadOnly) {
 		// FIXME:
 		assert(0);
 		return NULL;
 	}
 
 	virtual bool applyPermissions(std::string*) {
+		// FIXME:
+		assert(0);
+		return false;
+	}
+
+	virtual bool finalizeMemory(std::string *ErrMsg = 0) {
 		// FIXME:
 		assert(0);
 		return false;
@@ -262,17 +269,8 @@ public:
 		 * install a profiler hook and reset the code model here.
 		 * This should be inside an ifdef, but we can't include our config.h either,
 		 * since its definitions conflict with LLVM's config.h.
-		 *
+		 * The LLVM mono branch contains a workaround.
 		 */
-		//#if defined(TARGET_X86) || defined(TARGET_AMD64)
-#ifndef LLVM_MONO_BRANCH
-		/* The LLVM mono branch contains a workaround, so this is not needed */
-		if (Details.MF->getTarget ().getCodeModel () == CodeModel::Large) {
-			Details.MF->getTarget ().setCodeModel (CodeModel::Default);
-		}
-#endif
-		//#endif
-
 		emitted_cb (wrap (&F), Code, (char*)Code + Size);
 	}
 };
@@ -287,7 +285,10 @@ static FunctionPassManager *fpm;
 void
 mono_llvm_optimize_method (LLVMValueRef method)
 {
-	verifyFunction (*(unwrap<Function> (method)));
+	/*
+	 * The verifier does some checks on the whole module, leading to quadratic behavior.
+	 */
+	//verifyFunction (*(unwrap<Function> (method)));
 	fpm->run (*unwrap<Function> (method));
 }
 
@@ -417,7 +418,7 @@ force_pass_linking (void)
       (void) llvm::createBasicAliasAnalysisPass();
       (void) llvm::createLibCallAliasAnalysisPass(0);
       (void) llvm::createScalarEvolutionAliasAnalysisPass();
-      (void) llvm::createBlockPlacementPass();
+      //(void) llvm::createBlockPlacementPass();
       (void) llvm::createBreakCriticalEdgesPass();
       (void) llvm::createCFGSimplificationPass();
 	  /*
@@ -487,7 +488,7 @@ force_pass_linking (void)
       (void) llvm::createReassociatePass();
       (void) llvm::createSCCPPass();
       (void) llvm::createScalarReplAggregatesPass();
-      (void) llvm::createSimplifyLibCallsPass();
+      //(void) llvm::createSimplifyLibCallsPass();
 	  /*
       (void) llvm::createSingleLoopExtractorPass();
       (void) llvm::createStripSymbolsPass();
@@ -547,10 +548,6 @@ mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, Func
   mono_mm->alloc_cb = alloc_cb;
   mono_mm->dlsym_cb = dlsym_cb;
 
-  //JITExceptionHandling = true;
-  // PrettyStackTrace installs signal handlers which trip up libgc
-  DisablePrettyStackTrace = true;
-
   /*
    * The Default code model doesn't seem to work on amd64,
    * test_0_fields_with_big_offsets (among others) crashes, because LLVM tries to call
@@ -568,14 +565,6 @@ mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, Func
 #endif
   g_assert (EE);
 
-#if 0
-  ExecutionEngine *EE = ExecutionEngine::createJIT (unwrap (MP), &Error, mono_mm, CodeGenOpt::Default, true, Reloc::Default, CodeModel::Large);
-  if (!EE) {
-	  errs () << "Unable to create LLVM ExecutionEngine: " << Error << "\n";
-	  g_assert_not_reached ();
-  }
-#endif
-
   EE->InstallExceptionTableRegister (exception_cb);
   mono_event_listener = new MonoJITEventListener (emitted_cb);
   EE->RegisterJITEventListener (mono_event_listener);
@@ -587,12 +576,10 @@ mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, Func
   PassRegistry &Registry = *PassRegistry::getPassRegistry();
   initializeCore(Registry);
   initializeScalarOpts(Registry);
-  //initializeIPO(Registry);
   initializeAnalysis(Registry);
   initializeIPA(Registry);
   initializeTransformUtils(Registry);
   initializeInstCombine(Registry);
-  //initializeInstrumentation(Registry);
   initializeTarget(Registry);
 
   llvm::cl::ParseEnvironmentOptions("mono", "MONO_LLVM", "");
@@ -610,7 +597,7 @@ mono_llvm_create_ee (LLVMModuleProviderRef MP, AllocCodeMemoryCb *alloc_cb, Func
 	  }
   } else {
 	  /* Use the same passes used by 'opt' by default, without the ipo passes */
-	  const char *opts = "-simplifycfg -domtree -domfrontier -scalarrepl -instcombine -simplifycfg -domtree -domfrontier -scalarrepl -simplify-libcalls -instcombine -simplifycfg -instcombine -simplifycfg -reassociate -domtree -loops -loop-simplify -domfrontier -loop-simplify -lcssa -loop-rotate -licm -lcssa -loop-unswitch -instcombine -scalar-evolution -loop-simplify -lcssa -iv-users -indvars -loop-deletion -loop-simplify -lcssa -loop-unroll -instcombine -memdep -gvn -memdep -memcpyopt -sccp -instcombine -domtree -memdep -dse -adce -gvn -simplifycfg -preverify -domtree -verify";
+	  const char *opts = "-simplifycfg -domtree -domfrontier -scalarrepl -instcombine -simplifycfg -domtree -domfrontier -scalarrepl -instcombine -simplifycfg -instcombine -simplifycfg -reassociate -domtree -loops -loop-simplify -domfrontier -loop-simplify -lcssa -loop-rotate -licm -lcssa -loop-unswitch -instcombine -scalar-evolution -loop-simplify -lcssa -iv-users -indvars -loop-deletion -loop-simplify -lcssa -loop-unroll -instcombine -memdep -gvn -memdep -memcpyopt -sccp -instcombine -domtree -memdep -dse -adce -gvn -simplifycfg";
 	  char **args;
 	  int i;
 

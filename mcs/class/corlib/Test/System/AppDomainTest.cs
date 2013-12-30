@@ -2073,7 +2073,6 @@ namespace MonoTests.System
 				AppDomain.CurrentDomain.ExecuteAssembly (
 					assembly.Location);
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (MissingMethodException ex) {
 				// Entry point not found in assembly '...'
 				Assert.AreEqual (typeof (MissingMethodException), ex.GetType (), "#2");
@@ -2081,15 +2080,6 @@ namespace MonoTests.System
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsTrue (ex.Message.IndexOf (assembly.FullName) != -1, "#5");
 			}
-#else
-			} catch (COMException ex) {
-				// Unspecified error
-				Assert.AreEqual (typeof (COMException), ex.GetType (), "#2");
-				Assert.AreEqual (-2147467259, ex.ErrorCode, "#3");
-				Assert.IsNull (ex.InnerException, "#4");
-				Assert.IsNotNull (ex.Message, "#5");
-			}
-#endif
 		}
 
 		[Test] // ExecuteAssembly (String, Evidence)
@@ -2102,7 +2092,6 @@ namespace MonoTests.System
 					assembly.Location,
 					(Evidence) null);
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (MissingMethodException ex) {
 				// Entry point not found in assembly '...'
 				Assert.AreEqual (typeof (MissingMethodException), ex.GetType (), "#2");
@@ -2110,15 +2099,6 @@ namespace MonoTests.System
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsTrue (ex.Message.IndexOf (assembly.FullName) != -1, "#5");
 			}
-#else
-			} catch (COMException ex) {
-				// Unspecified error
-				Assert.AreEqual (typeof (COMException), ex.GetType (), "#2");
-				Assert.AreEqual (-2147467259, ex.ErrorCode, "#3");
-				Assert.IsNull (ex.InnerException, "#4");
-				Assert.IsNotNull (ex.Message, "#5");
-			}
-#endif
 		}
 
 		[Test] // ExecuteAssembly (String, Evidence, String [])
@@ -2132,7 +2112,6 @@ namespace MonoTests.System
 					(Evidence) null,
 					new string [0]);
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (MissingMethodException ex) {
 				// Entry point not found in assembly '...'
 				Assert.AreEqual (typeof (MissingMethodException), ex.GetType (), "#2");
@@ -2140,15 +2119,6 @@ namespace MonoTests.System
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsTrue (ex.Message.IndexOf (assembly.FullName) != -1, "#5");
 			}
-#else
-			} catch (COMException ex) {
-				// Unspecified error
-				Assert.AreEqual (typeof (COMException), ex.GetType (), "#2");
-				Assert.AreEqual (-2147467259, ex.ErrorCode, "#3");
-				Assert.IsNull (ex.InnerException, "#4");
-				Assert.IsNotNull (ex.Message, "#5");
-			}
-#endif
 		}
 
 		[Test] // ExecuteAssembly (String, Evidence, String [], Byte [], AssemblyHashAlgorithm)
@@ -2165,7 +2135,6 @@ namespace MonoTests.System
 					(byte []) null,
 					AssemblyHashAlgorithm.SHA1);
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (MissingMethodException ex) {
 				// Entry point not found in assembly '...'
 				Assert.AreEqual (typeof (MissingMethodException), ex.GetType (), "#2");
@@ -2173,15 +2142,6 @@ namespace MonoTests.System
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsTrue (ex.Message.IndexOf (assembly.FullName) != -1, "#5");
 			}
-#else
-			} catch (COMException ex) {
-				// Unspecified error
-				Assert.AreEqual (typeof (COMException), ex.GetType (), "#2");
-				Assert.AreEqual (-2147467259, ex.ErrorCode, "#3");
-				Assert.IsNull (ex.InnerException, "#4");
-				Assert.IsNotNull (ex.Message, "#5");
-			}
-#endif
 		}
 
 		[Test] // bug #79720
@@ -3044,14 +3004,9 @@ namespace MonoTests.System
 			try {
 				AppDomain.CurrentDomain.Load (aname);
 				Assert.Fail ("#C9");
-#if NET_2_0
 			} catch (SecurityException) {
 				// Invalid assembly public key
 			}
-#else
-			} catch (FileLoadException) {
-			}
-#endif
 
 			aname = new AssemblyName ();
 			aname.Name = "bug79522C";
@@ -3210,6 +3165,30 @@ namespace MonoTests.System
 			ad = AppDomain.CreateDomain ("ReflectionOnlyGetAssemblies");
 			Assert.IsFalse (ad.IsDefaultAppDomain (), "IsDefaultAppDomain");
 			// we have no public way to get the default appdomain
+		}
+
+		static bool resolve_called;
+
+		[Test]
+		public void AssemblyResolveParseError ()
+		{
+			AppDomain currentDomain = AppDomain.CurrentDomain;
+			ResolveEventHandler d = ParseErrorResolve;
+			currentDomain.AssemblyResolve += d;
+			try {
+				resolve_called = false;
+				var a = Assembly.Load ("MyDynamicType, 1.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756");
+				Assert.Fail ();
+			} catch (FileNotFoundException) {
+				Assert.IsTrue (resolve_called);
+			}
+			currentDomain.AssemblyResolve -= d;
+		}
+
+		static Assembly ParseErrorResolve (object sender, ResolveEventArgs args)
+		{
+			resolve_called = true;
+			return null;
 		}
 
 		[Test]

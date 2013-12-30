@@ -551,10 +551,11 @@ namespace Monodoc.Providers
 				break;
 			// binary operators: overloading is possible [ECMA-335 §10.3.2]
 			default:
-				memberSignature =
-					nicename + "("
-					+ string.Join (",", member.Element ("Parameters").Elements ("Parameter").Select (p => (string)p.Attribute ("Type")))
-					+ ")";
+				if (member.Element ("Parameters") != null)
+					memberSignature =
+						nicename + "("
+						+ string.Join (",", member.Element ("Parameters").Elements ("Parameter").Select (p => (string)p.Attribute ("Type")))
+						+ ")";
 				break;
 			}
 

@@ -1,0 +1,29 @@
+<Type Name="NativeObjectSecurity+ExceptionFromErrorCode" FullName="System.Security.AccessControl.NativeObjectSecurity+ExceptionFromErrorCode">
+  <TypeSignature Language="C#" Value="protected delegate Exception NativeObjectSecurity.ExceptionFromErrorCode(int errorCode, string name, SafeHandle handle, object context);" />
+  <TypeSignature Language="ILAsm" Value=".class nested protected auto ansi sealed NativeObjectSecurity/ExceptionFromErrorCode extends System.MulticastDelegate" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="errorCode" Type="System.Int32" />
+    <Parameter Name="name" Type="System.String" />
+    <Parameter Name="handle" Type="System.Runtime.InteropServices.SafeHandle" />
+    <Parameter Name="context" Type="System.Object" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Exception</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="errorCode">To be added.</param>
+    <param name="name">To be added.</param>
+    <param name="handle">To be added.</param>
+    <param name="context">To be added.</param>
+    <summary>To be added.</summary>
+    <returns>To be added.</returns>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>
