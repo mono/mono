@@ -67,7 +67,6 @@ namespace Mono.PkgConfig
 		const string MacOSXExternalPkgConfigDir = "/Library/Frameworks/Mono.framework/External/pkgconfig";
 		
 		Dictionary<string, TP> infos = new Dictionary<string, TP> ();
-		Dictionary<string, List<TP>> filesByFolder = new Dictionary<string, List<TP>> ();
 		
 		string cacheFile;
 		bool hasChanges;
@@ -118,12 +117,23 @@ namespace Mono.PkgConfig
 		{
 			if (pkgConfigDirs == null)
 				pkgConfigDirs = GetDefaultPaths ();
+			else
+				pkgConfigDirs = NormaliseAndFilterPaths (pkgConfigDirs, Environment.CurrentDirectory);
+
+			string[] keys = new string [infos.Count];
+			TP[] vals = new TP [infos.Count];
+			lock (infos) {
+				infos.Keys.CopyTo (keys, 0);
+				infos.Values.CopyTo (vals, 0);
+			}
 
 			foreach (string sp in pkgConfigDirs) {
-				List<TP> list;
-				if (filesByFolder.TryGetValue (Path.GetFullPath (sp), out list)) {
-					foreach (TP p in list)
-						yield return p;
+				int i = 0;
+				foreach (var file in keys) {
+					string dirOfFile = Path.GetFullPath (Path.GetDirectoryName (file));
+					if (dirOfFile == sp)
+						yield return vals [i];
+					i++;
 				}
 			}
 		}
@@ -144,7 +154,7 @@ namespace Mono.PkgConfig
 		// Returns information about a .pc file
 		public TP GetPackageInfo (string file)
 		{
-			TP info, oldInfo = null;
+			TP info;
 			file = Path.GetFullPath (file);
 			
 			DateTime wtime = File.GetLastWriteTime (file);
@@ -153,7 +163,6 @@ namespace Mono.PkgConfig
 				if (infos.TryGetValue (file, out info)) {
 					if (info.LastWriteTime == wtime)
 						return info;
-					oldInfo = info;
 				}
 			}
 
@@ -168,30 +177,11 @@ namespace Mono.PkgConfig
 				if (!info.IsValidPackage)
 					info = new TP (); // Create a default empty instance
 				info.LastWriteTime = wtime;
-				Add (file, info, oldInfo);
+				infos [file] = info;
 				hasChanges = true;
 			}
 			
 			return info;
-		}
-		
-		void Add (string file, TP info, TP replacedInfo)
-		{
-			infos [file] = info;
-			string dir = Path.GetFullPath (Path.GetDirectoryName (file));
-			List<TP> list;
-			if (!filesByFolder.TryGetValue (dir, out list)) {
-				list = new List<TP> ();
-				filesByFolder [dir] = list;
-			}
-			if (replacedInfo != null) {
-				int i = list.IndexOf (replacedInfo);
-				if (i != -1) {
-					list [i] = info;
-					return;
-				}
-			}
-			list.Add (info);
 		}
 		
 		FileStream OpenFile (FileAccess access)
@@ -313,8 +303,10 @@ namespace Mono.PkgConfig
 				tr.Read ();
 			tr.MoveToContent ();
 			
-			if (!pinfo.IsValidPackage || ctx.IsCustomDataComplete (file, pinfo))
-				Add (file, pinfo, null);
+			if (!pinfo.IsValidPackage || ctx.IsCustomDataComplete (file, pinfo)) {
+				lock (infos)
+					infos [file] = pinfo;
+			}
 		}
 		
 		protected virtual void ReadPackageContent (XmlReader tr, TP pinfo)
