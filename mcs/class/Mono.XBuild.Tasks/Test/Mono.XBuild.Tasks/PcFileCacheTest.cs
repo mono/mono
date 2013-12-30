@@ -24,6 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Mono.PkgConfig;
 using NUnit.Framework;
@@ -158,12 +159,60 @@ Requires: glib-sharp-2.0
 			CollectionAssert.IsEmpty (cache.GetPackages (pkgConfigDirs), "A2");
 		}
 
+		[Test]
+		public void GetPackagesOrderedByFolder ()
+		{
+			string pkgConfigDir1 = "testpkgconfigdir1";
+			string pkgConfigDir2 = "testpkgconfigdir2";
+			Directory.CreateDirectory (pkgConfigDir1);
+			Directory.CreateDirectory (pkgConfigDir2);
+
+			string pkgConfigFile11NameAttr = "gtk-sharp-2.0";
+			string pkgConfigFile11FullPath = Path.GetFullPath (Path.Combine (pkgConfigDir1, "gtk-sharp-2.0.pc"));
+
+			string pkgConfigFile21NameAttr = "art-sharp-2.0";
+			string pkgConfigFile21FullPath = Path.GetFullPath (Path.Combine (pkgConfigDir2, "art-sharp-2.0.pc"));
+
+			string pkgConfigFile12NameAttr = "cecil";
+			string pkgConfigFile12FullPath = Path.GetFullPath (Path.Combine (pkgConfigDir1, "cecil.pc"));
+
+			string pcCacheFileContent = @"<PcFileCache>
+  <File path=""" + pkgConfigFile11FullPath + @""" lastWriteTime=""2013-11-23T21:18:31+01:00"" name=""" + pkgConfigFile11NameAttr + @""" />
+  <File path=""" + pkgConfigFile21FullPath + @""" lastWriteTime=""2011-07-12T12:04:53+02:00"" name=""" + pkgConfigFile21NameAttr + @""" />
+  <File path=""" + pkgConfigFile12FullPath + @""" lastWriteTime=""2012-07-24T22:28:30+02:00"" name=""" + pkgConfigFile12NameAttr + @""" />
+</PcFileCache>
+";
+
+			WritePcCacheFileContent (pcCacheFileContent);
+
+			PcFileCache cache = PcFileCacheStub.Create (cacheDir);
+			string[] pkgConfigDirs = { pkgConfigDir1, pkgConfigDir2 };
+			IEnumerable<PackageInfo> packages = cache.GetPackages (pkgConfigDirs);
+
+			PackageInfo[] packageArray = new PackageInfo [3];
+			int i = 0;
+			foreach (PackageInfo package in packages)
+				packageArray [i++] = package;
+
+			Assert.AreEqual (pkgConfigFile11NameAttr, packageArray [0].Name, "A1");
+			Assert.AreEqual (pkgConfigFile12NameAttr, packageArray [1].Name, "A2");
+			Assert.AreEqual (pkgConfigFile21NameAttr, packageArray [2].Name, "A3");
+
+			Directory.Delete (pkgConfigDir1, true);
+			Directory.Delete (pkgConfigDir2, true);
+		}
+
 		static void WritePcCacheFileContent (string content)
 		{
 			File.WriteAllText (pcCacheFilePath, content);
 		}
 
 		static void AddPkgConfigFile (string fileName, string content)
+		{
+			AddPkgConfigFile (fileName, content, pkgConfigDir);
+		}
+
+		static void AddPkgConfigFile (string fileName, string content, string pkgConfigDir)
 		{
 			string path = Path.Combine (pkgConfigDir, fileName);
 			File.WriteAllText (path, content);
