@@ -36,7 +36,7 @@ using System.Collections.Generic;
 
 namespace Mono.PkgConfig
 {
-	internal interface IPcFileCacheContext<TP> where TP:PackageInfo, new()
+	public interface IPcFileCacheContext<TP> where TP:PackageInfo, new()
 	{
 		// In the implementation of this method, the host application can extract
 		// information from the pc file and store it in the PackageInfo object
@@ -50,18 +50,18 @@ namespace Mono.PkgConfig
 		void ReportError (string message, Exception ex);
 	}
 	
-	internal interface IPcFileCacheContext: IPcFileCacheContext<PackageInfo>
+	public interface IPcFileCacheContext: IPcFileCacheContext<PackageInfo>
 	{
 	}
 	
-	internal abstract class PcFileCache: PcFileCache<PackageInfo>
+	public abstract class PcFileCache: PcFileCache<PackageInfo>
 	{
 		public PcFileCache (IPcFileCacheContext ctx): base (ctx)
 		{
 		}
 	}
 	
-	internal abstract class PcFileCache<TP> where TP:PackageInfo, new()
+	public abstract class PcFileCache<TP> where TP:PackageInfo, new()
 	{
 		const string CACHE_VERSION = "2";
 		const string MacOSXExternalPkgConfigDir = "/Library/Frameworks/Mono.framework/External/pkgconfig";
@@ -449,7 +449,7 @@ namespace Mono.PkgConfig
 		}
 	}
 
-	internal class PcFile
+	public class PcFile
 	{
 		Dictionary<string,string> variables = new Dictionary<string, string> ();
 		
@@ -575,7 +575,7 @@ namespace Mono.PkgConfig
 		}
 	}
 	
-	internal class PackageInfo
+	public class PackageInfo
 	{
 		Dictionary<string,string> customData;
 		DateTime lastWriteTime;

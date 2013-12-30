@@ -132,12 +132,10 @@
     <Compile Include="Microsoft.Build.Tasks\GetFrameworkSdkPath.cs" />
     <Compile Include="Microsoft.Build.Tasks\GetReferenceAssemblyPaths.cs" />
     <Compile Include="Microsoft.Build.Tasks\LC.cs" />
-    <Compile Include="Microsoft.Build.Tasks\LibraryPcFileCache.cs" />
     <Compile Include="Microsoft.Build.Tasks\MakeDir.cs" />
     <Compile Include="Microsoft.Build.Tasks\ManagedCompiler.cs" />
     <Compile Include="Microsoft.Build.Tasks\Message.cs" />
     <Compile Include="Microsoft.Build.Tasks\MSBuild.cs" />
-    <Compile Include="Microsoft.Build.Tasks\PcFileCache.cs" />
     <Compile Include="Microsoft.Build.Tasks\ReadLinesFromFile.cs" />
     <Compile Include="Microsoft.Build.Tasks\RegisterAssembly.cs" />
     <Compile Include="Microsoft.Build.Tasks\RemoveDir.cs" />
@@ -209,6 +207,10 @@
     <ProjectReference Include="..\Microsoft.Build.Engine\Microsoft.Build.Engine-net_3_5.csproj">
       <Project>{874516A3-F5F6-4EAB-B005-4D1A567C5E4D}</Project>
       <Name>Microsoft.Build.Engine\Microsoft.Build.Engine-net_3_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mono.XBuild.Tasks\Mono.XBuild.Tasks-net_3_5.csproj">
+      <Project>{7B888FCD-9064-4F4A-954E-795B43F98127}</Project>
+      <Name>Mono.XBuild.Tasks-net_3_5</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
