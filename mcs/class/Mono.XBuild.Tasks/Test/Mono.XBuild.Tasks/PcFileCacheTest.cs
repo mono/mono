@@ -202,6 +202,29 @@ Requires: glib-sharp-2.0
 			Directory.Delete (pkgConfigDir2, true);
 		}
 
+		[Test]
+		public void UpdatePcFileCacheWithOrphanedEntry ()
+		{
+			string pkgConfigFileNameAttr = "gtk-sharp-2.0";
+			string pkgConfigFileName = "gtk-sharp-2.0.pc";
+			string pkgConfigFullFilePath = Path.GetFullPath (Path.Combine (pkgConfigDir, pkgConfigFileName));
+			string pcCacheFileContent = @"<PcFileCache>
+  <File path=""" + pkgConfigFullFilePath + @""" lastWriteTime=""2013-11-23T21:18:31+01:00"" name=""" + pkgConfigFileNameAttr + @""" />
+</PcFileCache>
+";
+
+			WritePcCacheFileContent (pcCacheFileContent);
+
+			PcFileCache cache = PcFileCacheStub.Create (cacheDir);
+
+			// precondition
+			string[] pkgConfigDirs = { pkgConfigDir };
+			Assert.IsNotNull (cache.GetPackageInfoByName (pkgConfigFileNameAttr, pkgConfigDirs), "A1");
+
+			cache.Update (pkgConfigDirs);
+			Assert.IsNull (cache.GetPackageInfoByName (pkgConfigFileNameAttr, pkgConfigDirs), "A2");
+		}
+
 		static void WritePcCacheFileContent (string content)
 		{
 			File.WriteAllText (pcCacheFilePath, content);

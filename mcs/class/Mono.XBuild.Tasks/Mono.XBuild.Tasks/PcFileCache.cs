@@ -99,12 +99,25 @@ namespace Mono.PkgConfig
 		}
 
 		// Updates the pkg-config index, looking for .pc files in the provided directories
+		// Deletes pkg info entries, of which .pc files don't exist, from cache
 		public void Update (IEnumerable<string> pkgConfigDirs)
 		{
 			foreach (string pcdir in pkgConfigDirs) {
 				foreach (string pcfile in Directory.GetFiles (pcdir, "*.pc"))
 					GetPackageInfo (pcfile);
 			}
+
+			lock (infos) {
+				string[] keys = new string [infos.Count];
+				infos.Keys.CopyTo (keys, 0);
+				foreach (string key in keys) {
+					if (!File.Exists (key)) {
+						infos.Remove (key);
+						hasChanges = true;
+					}
+				}
+			}
+
 			Save ();
 		}
 		
