@@ -133,7 +133,7 @@ namespace System.Threading
 			
 			try {
 				Action cb;
-				for (int id = int.MinValue + 1; id <= currId; id++) {
+				for (int id = currId; id != int.MinValue; id--) {
 					if (!callbacks.TryRemove (new CancellationTokenRegistration (id, this), out cb))
 						continue;
 					if (cb == null)
