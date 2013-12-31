@@ -375,10 +375,9 @@ namespace MonoTests.System.Threading
 			var source = new CancellationTokenSource ();
 			var token = source.Token;
 
-			var reg = new CancellationTokenRegistration ();
 			Console.WriteLine ("Test1");
+			var reg = token.Register (() => unregister = true);
 			token.Register (() => reg.Dispose ());
-			reg = token.Register (() => unregister = true);
 			token.Register (() => { Console.WriteLine ("Gnyah"); token.Register (() => register = true); });
 			source.Cancel ();
 
