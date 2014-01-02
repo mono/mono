@@ -60,6 +60,15 @@ class C
 	}
 }
 
+class D
+{
+	enum E {}
+
+	async Task M ()
+	{
+	}
+}
+
 class async
 {
 	async (async arg)
