@@ -98,6 +98,15 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (ParamEnum.Foo, info [5].DefaultValue, "#2");
 		}
 
+#if NET_4_5
+		[Test]
+		public void HasDefaultValueEnum () {
+			ParameterInfo[] info = typeof (ParameterInfoTest).GetMethod ("paramMethod").GetParameters ();
+
+			Assert.IsTrue (info [5].HasDefaultValue);
+		}
+#endif
+
 		public static void Sample2 ([DecimalConstantAttribute(2,2,2,2,2)] decimal a, [DateTimeConstantAttribute(123456)] DateTime b) {}
 
 		[Test]
@@ -117,7 +126,19 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (pi [1].DefaultValue.GetType (), typeof (Missing), "#2");
 		}
 
-		public void Sample (int a, [Optional] int b)
+#if NET_4_5
+		[Test]
+		public void TestHasDefaultValues ()
+		{
+			ParameterInfo [] pi = typeof (ParameterInfoTest).GetMethod ("Sample").GetParameters ();
+
+			Assert.IsFalse (pi [0].HasDefaultValue, "#1");
+			Assert.IsFalse (pi [1].HasDefaultValue, "#2");
+			Assert.IsTrue (pi [2].HasDefaultValue, "#3");
+		}
+#endif
+
+		public void Sample (int a, [Optional] int b, object c = null)
 		{
 		}
 
@@ -234,6 +255,14 @@ namespace MonoTests.System.Reflection
 			var info = typeof (ParameterInfoTest).GetMethod ("TestC").GetParameters ();
 			Assert.AreEqual (decimal.MaxValue, info [0].DefaultValue);
 		}
+
+#if NET_4_5
+		[Test]
+		public void HasDefaultValueDecimal () {
+			var info = typeof (ParameterInfoTest).GetMethod ("TestC").GetParameters ();
+			Assert.IsTrue (info [0].HasDefaultValue);
+		}
+#endif
 
 		class MyParameterInfo2 : ParameterInfo
 		{
