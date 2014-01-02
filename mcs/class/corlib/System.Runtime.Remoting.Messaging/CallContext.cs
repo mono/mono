@@ -46,7 +46,6 @@ namespace System.Runtime.Remoting.Messaging
 	public sealed class CallContext 
 	{
 		[ThreadStatic] static Header [] Headers;
-		[ThreadStatic] static Hashtable logicalDatastore;
 		[ThreadStatic] static Hashtable datastore;
 		[ThreadStatic] static object hostContext;
 		
@@ -55,24 +54,20 @@ namespace System.Runtime.Remoting.Messaging
 		}
 
 		public static object HostContext {
-			get { return hostContext; }
-			set { hostContext = value; }
+			get { return LogicalCallContext.HostContext ?? hostContext; }
+			set { LogicalCallContext.HostContext = value; hostContext = value; }
 		}
 
 		// public methods
 		public static void FreeNamedDataSlot (string name) 
 		{
 			Datastore.Remove (name);
-			LogicalDatastore.Remove (name);
+			LogicalCallContext.FreeNamedDataSlot (name);
 		}
 
-		public static object GetData (string name) 
+		public static object GetData (string name)
 		{
-			if (LogicalDatastore.ContainsKey (name)) {
-				return LogicalDatastore [name];
-			} else {
-				return Datastore [name];
-			}
+			return LogicalCallContext.GetData (name) ?? Datastore [name];
 		}
 		
 		public static void SetData (string name, object data) 
@@ -80,20 +75,20 @@ namespace System.Runtime.Remoting.Messaging
 			if (data is ILogicalThreadAffinative) {
 				LogicalSetData (name, data);
 			} else {
-				LogicalDatastore.Remove (name);
+				LogicalCallContext.FreeNamedDataSlot (name);
 				Datastore [name] = data;
 			}
 		}
 		
 		public static object LogicalGetData (string name) 
 		{
-			return LogicalDatastore [name];
+			return LogicalCallContext.GetData (name);
 		}
 
 		public static void LogicalSetData (string name, object data) 
 		{
 			Datastore.Remove (name);
-			LogicalDatastore [name] = data;
+			LogicalCallContext.SetData (name, data);
 		}
 
 		public static Header[] GetHeaders () 
@@ -108,29 +103,24 @@ namespace System.Runtime.Remoting.Messaging
 
 		internal static LogicalCallContext CreateLogicalCallContext (bool createEmpty)
 		{
-			LogicalCallContext ctx = null;
-			if (logicalDatastore != null) {
-				ctx = new LogicalCallContext ();
-				foreach (DictionaryEntry entry in logicalDatastore) {
-					ctx.SetData ((string)entry.Key, entry.Value);
-				}
-			}
-
-			if (ctx == null && createEmpty)
-				return new LogicalCallContext ();
-			else
-				return ctx;
+			return (LogicalCallContext) LogicalCallContext.Clone ();
 		}
-
 		internal static object SetCurrentCallContext (LogicalCallContext ctx)
 		{
-			object oldData = new object[] { datastore, logicalDatastore };
+			return SetCurrentCallContext (ctx, false);
+		}
 
-			if (ctx != null && ctx.HasInfo)
-				logicalDatastore = (Hashtable) ctx.Datastore.Clone ();
+		internal static object SetCurrentCallContext (LogicalCallContext ctx, bool resetIllogicalContext)
+		{
+			object oldData = new object [] { datastore, LogicalCallContext };
+
+			if (resetIllogicalContext)
+				datastore = null;
+			if (ctx != null)
+				LogicalCallContext = (LogicalCallContext) ctx.Clone ();
 			else
-				logicalDatastore = null;
-				
+				LogicalCallContext = null;
+
 			return oldData;
 		}
 		
@@ -148,7 +138,7 @@ namespace System.Runtime.Remoting.Messaging
 		{
 			object[] contextArray = (object[])oldContext;
 			datastore = (Hashtable)contextArray [0];
-			logicalDatastore = (Hashtable)contextArray [1];
+			LogicalCallContext = (LogicalCallContext) contextArray [1];
 		}
 
 		private static Hashtable Datastore
@@ -161,13 +151,20 @@ namespace System.Runtime.Remoting.Messaging
 			}
 		}
 
-		private static Hashtable LogicalDatastore
+		private static ExecutionContext ExecutionContext
 		{
 			get {
-				Hashtable r = logicalDatastore;
-				if (r == null)
-					return logicalDatastore = new Hashtable ();
-				return r;
+				return Thread.CurrentThread.ExecutionContext;
+			}
+		}
+
+		private static LogicalCallContext LogicalCallContext
+		{
+			get {
+				return Thread.CurrentThread.ExecutionContext.LogicalCallContext;
+			}
+			set {
+				Thread.CurrentThread.ExecutionContext.LogicalCallContext = value;
 			}
 		}
 	}
