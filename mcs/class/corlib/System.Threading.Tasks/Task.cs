@@ -182,6 +182,9 @@ namespace System.Threading.Tasks
 			if (IsContinuation)
 				throw new InvalidOperationException ("Start may not be called on a continuation task");
 
+			if (IsPromise)
+				throw new InvalidOperationException ("Start may not be called on a promise-style task");
+
 			SetupScheduler (scheduler);
 			Schedule ();
 		}
@@ -207,6 +210,9 @@ namespace System.Threading.Tasks
 
 			if (IsContinuation)
 				throw new InvalidOperationException ("RunSynchronously may not be called on a continuation task");
+
+			if (IsPromise)
+				throw new InvalidOperationException ("RunSynchronously may not be called on a promise-style task");
 
 			RunSynchronouslyCore (scheduler);
 		}
@@ -1346,6 +1352,12 @@ namespace System.Threading.Tasks
 		bool IsContinuation {
 			get {
 				return contAncestor != null;
+			}
+		}
+
+		bool IsPromise {
+			get {
+				return invoker == TaskActionInvoker.Promise;
 			}
 		}
 
