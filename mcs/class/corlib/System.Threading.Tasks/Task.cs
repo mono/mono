@@ -76,6 +76,8 @@ namespace System.Threading.Tasks
 		CancellationToken token;
 		CancellationTokenRegistration? cancellationRegistration;
 
+		ExecutionContext context;
+
 		internal const TaskCreationOptions WorkerTaskNotSupportedOptions = TaskCreationOptions.LongRunning | TaskCreationOptions.PreferFairness;
 
 		const TaskCreationOptions MaxTaskCreationOptions =
@@ -382,6 +384,7 @@ namespace System.Threading.Tasks
 		#region Internal and protected thingies
 		internal void Schedule ()
 		{
+			context = ExecutionContext.Capture ();
 			Status = TaskStatus.WaitingToRun;
 			scheduler.QueueTask (this);
 		}
@@ -411,30 +414,31 @@ namespace System.Threading.Tasks
 #else
 			TaskScheduler.Current = scheduler;
 #endif
-			
-			if (!token.IsCancellationRequested) {
-				
-				status = TaskStatus.Running;
-				
-				try {
-					InnerInvoke ();
-				} catch (OperationCanceledException oce) {
-					if (token != CancellationToken.None && oce.CancellationToken == token)
-						CancelReal ();
-					else
-						HandleGenericException (oce);
-				} catch (Exception e) {
-					HandleGenericException (e);
-				}
-			} else {
-				CancelReal ();
-			}
+			var context = this.context ?? ExecutionContext.Capture();
+			ExecutionContext.Run (context, (s) => {
+				if (!token.IsCancellationRequested) {
+					status = TaskStatus.Running;
 
-			if (saveCurrent != null)
-				current = saveCurrent;
-			if (saveScheduler != null)
-				TaskScheduler.Current = saveScheduler;
-			Finish ();
+					try {
+						InnerInvoke ();
+					} catch (OperationCanceledException oce) {
+						if (token != CancellationToken.None && oce.CancellationToken == token)
+							CancelReal ();
+						else
+							HandleGenericException (oce);
+					} catch (Exception e) {
+						HandleGenericException (e);
+					}
+				} else {
+					CancelReal ();
+				}
+
+				if (saveCurrent != null)
+					current = saveCurrent;
+				if (saveScheduler != null)
+					TaskScheduler.Current = saveScheduler;
+				Finish ();
+			}, null);
 		}
 
 		internal bool TrySetCanceled ()
