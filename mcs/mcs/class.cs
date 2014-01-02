@@ -13,6 +13,7 @@
 //
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -2748,6 +2749,17 @@ namespace Mono.CSharp
 
 			if (base_type != null && base_type.HasDynamicElement) {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (TypeBuilder, base_type, Location);
+			}
+		}
+
+		public override void GetCompletionStartingWith (string prefix, List<string> results)
+		{
+			base.GetCompletionStartingWith (prefix, results);
+
+			var bt = base_type;
+			while (bt != null) {
+				results.AddRange (MemberCache.GetCompletitionMembers (this, bt, prefix).Where (l => l.IsStatic).Select (l => l.Name));
+				bt = bt.BaseType;
 			}
 		}
 

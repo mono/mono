@@ -370,8 +370,14 @@ namespace Mono.CSharp
 				if (parser == null){
 					return null;
 				}
-				
-				Class parser_result = parser.InteractiveResult;
+
+				Class host = parser.InteractiveResult;
+
+				var base_class_imported = importer.ImportType (base_class);
+				var baseclass_list = new List<FullNamedExpression> (1) {
+					new TypeExpression (base_class_imported, host.Location)
+				};
+				host.SetBaseTypes (baseclass_list);
 
 #if NET_4_0
 				var access = AssemblyBuilderAccess.RunAndCollect;
@@ -383,9 +389,11 @@ namespace Mono.CSharp
 				module.SetDeclaringAssembly (a);
 
 				// Need to setup MemberCache
-				parser_result.CreateContainer ();
+				host.CreateContainer ();
+				// Need to setup base type
+				host.DefineContainer ();
 
-				var method = parser_result.Members[0] as Method;
+				var method = host.Members[0] as Method;
 				BlockContext bc = new BlockContext (method, method.Block, ctx.BuiltinTypes.Void);
 
 				try {
