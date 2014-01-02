@@ -193,8 +193,7 @@ namespace System.Reflection
 		public virtual IEnumerable<CustomAttributeData> CustomAttributes {
 			get { return GetCustomAttributesData (); }
 		}
-
-		[MonoTODO]
+		
 		public virtual bool HasDefaultValue {
 			get { throw new NotImplementedException (); }
 		}
