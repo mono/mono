@@ -384,6 +384,12 @@ System.Web.Management/WebApplicationInformation.cs
 System.Web.Management/WebBaseEvent.cs
 System.Web.Management/WebEventCodes.cs
 System.Web.Management/WebEventFormatter.cs
+System.Web.Management/WebBaseErrorEvent.cs
+System.Web.Management/WebManagementEvent.cs
+System.Web.Management/WebProcessInformation.cs
+System.Web.Management/WebRequestErrorEvent.cs
+System.Web.Management/WebRequestInformation.cs
+System.Web.Management/WebThreadInformation.cs
 System.Web/MimeTypes.cs
 System.Web/NoParamsInvoker.cs
 System.Web/ParserErrorCollection.cs
