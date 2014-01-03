@@ -49,6 +49,7 @@
     <Compile Include="Test\System.Collections.Specialized\CollectionChangedEventValidators.cs" />
     <Compile Include="Test\System.Collections.Specialized\NotifyCollectionChangedEventArgsTest.cs" />
     <Compile Include="Test\System.ComponentModel\CurrentChangingEventArgsTest.cs" />
+    <Compile Include="Test\System.ComponentModel\GroupDescriptionTest.cs" />
     <Compile Include="Test\System.ComponentModel\PropertyFilterAttributeTest.cs" />
     <Compile Include="Test\System.ComponentModel\SortDescriptionCollectionTest.cs" />
     <Compile Include="Test\System.ComponentModel\SortDescriptionTest.cs" />
