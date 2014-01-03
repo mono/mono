@@ -464,6 +464,7 @@
     <Compile Include="System.Web.Security\MachineKeyProtection.cs" />
     <Compile Include="System.Web.Security\Membership.cs" />
     <Compile Include="System.Web.Security\MembershipHelper.cs" />
+    <Compile Include="System.Web.Security\MembershipPasswordAttribute.cs" />
     <Compile Include="System.Web.Security\PassportAuthenticationEventArgs.cs" />
     <Compile Include="System.Web.Security\PassportAuthenticationEventHandler.cs" />
     <Compile Include="System.Web.Security\PassportAuthenticationModule.cs" />

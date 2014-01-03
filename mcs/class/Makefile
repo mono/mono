@@ -51,6 +51,7 @@ common_dirs := \
 	Managed.Windows.Forms		\
 	Mono.Data.Sqlite		\
 	System.Web.ApplicationServices	\
+	System.ComponentModel.DataAnnotations	\
 	System.Web			\
 	Mono.Web			\
 	System.Web.Services		\
@@ -97,6 +98,7 @@ net_2_0_dirs := \
 	System.Runtime.Serialization	\
 	System.Data.DataSetExtensions	\
 	System.Data.Linq		\
+	System.ComponentModel.DataAnnotations	\
 	System.Web			\
 	System.Web.Abstractions		\
 	System.Web.Routing		\
@@ -105,7 +107,6 @@ net_2_0_dirs := \
 	System.ServiceModel		\
 	System.Web.Extensions		\
 	System.Web.Extensions.Design	\
-	System.ComponentModel.DataAnnotations	\
 	System.Web.DynamicData		\
 	System.Web.Mvc2			\
 	Mono.C5				\
@@ -209,7 +210,7 @@ net_4_0_dirs := \
 	System.Data.Services \
 	System.Json.Microsoft \
 	monodoc
-	
+
 net_4_0_only_dirs := \
 	System.ComponentModel.Composition
 

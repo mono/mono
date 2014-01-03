@@ -1,3 +1,4 @@
 #include net_4_0_System.Web.dll.sources
 
 System.Web/MimeMapping.cs
+System.Web.Security/MembershipPasswordAttribute.cs
