@@ -216,6 +216,7 @@ namespace System.Web
 			app.InApplicationStart = true;
 			FireEvent ("Application_Start", app, args);
 			app.InApplicationStart = false;
+			app.SetContext (null);
 			return app;
 		}
 
@@ -540,6 +541,7 @@ namespace System.Web
 			app = (HttpApplication) Interlocked.Exchange (ref factory.next_free, null);
 			if (app != null) {
 				app.RequestCompleted = false;
+				app.SetContext (null);
 				return app;
 			}
 
@@ -547,6 +549,7 @@ namespace System.Web
 				if (factory.available.Count > 0) {
 					app = (HttpApplication) factory.available.Pop ();
 					app.RequestCompleted = false;
+					app.SetContext (null);
 					return app;
 				}
 			}
@@ -602,18 +605,17 @@ namespace System.Web
 			get { return theFactory != null && !theFactory.app_start_needed; }
 		}
 
-
-                internal static bool WatchLocationForRestart (string filter)
-	        {
+		internal static bool WatchLocationForRestart (string filter)
+		{
 			return WatchLocationForRestart (String.Empty, filter, false);
-	        }
+		}
 
 		internal static bool WatchLocationForRestart (string virtualPath, string filter)
 		{
 			return WatchLocationForRestart (virtualPath, filter, false);
 		}
 		
-                internal static bool WatchLocationForRestart(string virtualPath, string filter, bool watchSubdirs)
+		internal static bool WatchLocationForRestart (string virtualPath, string filter, bool watchSubdirs)
 		{
 			// map the path to the physical one
 			string physicalPath = HttpRuntime.AppDomainAppPath;
@@ -636,7 +638,7 @@ namespace System.Web
 			} else {
 				return false;
 			}
-	        }
+		}
 
 		internal static bool ApplicationDisabled {
 			get { return app_disabled; }
