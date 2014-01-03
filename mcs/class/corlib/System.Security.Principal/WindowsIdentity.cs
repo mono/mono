@@ -33,12 +33,19 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+#if NET_4_5
+using System.Security.Claims;
+#endif
 
 namespace System.Security.Principal {
 
 	[Serializable]
 	[ComVisible (true)]
+#if NET_4_5
+	public class WindowsIdentity : ClaimsIdentity, IIdentity, IDeserializationCallback, ISerializable, IDisposable {
+#else
 	public class WindowsIdentity : IIdentity, IDeserializationCallback, ISerializable, IDisposable {
+#endif
 		private IntPtr _token;
 		private string _type;
 		private WindowsAccountType _account;
@@ -68,6 +75,9 @@ namespace System.Security.Principal {
 
 		[SecurityPermission (SecurityAction.Demand, ControlPrincipal=true)]
 		public WindowsIdentity (IntPtr userToken, string type, WindowsAccountType acctType, bool isAuthenticated)
+#if NET_4_5
+			: base(null, null, type, null, null)
+#endif
 		{
 			_type = type;
 			_account = acctType;
@@ -107,6 +117,16 @@ namespace System.Security.Principal {
 		{
 			_info = info;
 		}
+#if NET_4_5
+		[SecurityCritical]
+		internal WindowsIdentity(ClaimsIdentity claimsIdentity, IntPtr userToken)
+			: base((IIdentity)claimsIdentity)
+		{
+			if (!(userToken != IntPtr.Zero) || userToken.ToInt64() <= 0L)
+				return;
+			this.SetToken(userToken);
+		}
+#endif
 
 		[ComVisible (false)]
 		public void Dispose ()
@@ -169,7 +189,11 @@ namespace System.Security.Principal {
 
 		// properties
 
+#if NET_4_5
+		public override sealed string AuthenticationType {
+#else
 		public string AuthenticationType {
+#endif
 			get { return _type; }
 		}
 
@@ -178,7 +202,11 @@ namespace System.Security.Principal {
 			get { return (_account == WindowsAccountType.Anonymous); }
 		}
 
+#if NET_4_5
+		public override bool IsAuthenticated
+#else
 		public virtual bool IsAuthenticated
+#endif
 		{
 			get { return _authenticated; }
 		}
@@ -193,7 +221,11 @@ namespace System.Security.Principal {
 			get { return (_account == WindowsAccountType.System); }
 		}
 
+#if NET_4_5
+		public override string Name
+#else
 		public virtual string Name
+#endif
 		{
 			get {
 				if (_name == null) {
@@ -203,6 +235,12 @@ namespace System.Security.Principal {
 				return _name; 
 			}
 		}
+#if NET_4_5
+		internal ClaimsIdentity CloneClaimsIdentity()
+		{
+			return base.Clone();
+		}
+#endif
 
 		public virtual IntPtr Token
 		{
