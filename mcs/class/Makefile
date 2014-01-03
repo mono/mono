@@ -91,6 +91,7 @@ net_2_0_dirs := \
 	Microsoft.Build.Framework	\
 	Microsoft.Build.Utilities	\
 	Microsoft.Build.Engine		\
+	Mono.XBuild.Tasks			\
 	Microsoft.Build.Tasks		\
 	System.Xml.Linq			\
 	System.Runtime.Serialization	\
@@ -173,6 +174,7 @@ net_3_5_only_dirs := \
 	Microsoft.Build.Framework	\
 	Microsoft.Build.Utilities	\
 	Microsoft.Build.Engine		\
+	Mono.XBuild.Tasks			\
 	Microsoft.Build.Tasks
 
 net_4_0_dirs := \

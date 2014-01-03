@@ -5,11 +5,13 @@ include ../../build/rules.make
 LIBRARY = Microsoft.Build.Tasks.dll
 BUILD_FRAMEWORK = Microsoft.Build.Framework.dll
 BUILD_ENGINE = Microsoft.Build.Engine.dll
+XBUILD_TASKS = Mono.XBuild.Tasks.dll
 
 ifeq (3.5, $(FRAMEWORK_VERSION))
 NAME_SUFFIX = .v3.5
 BUILD_FRAMEWORK := $(topdir)/class/lib/$(PROFILE)/$(BUILD_FRAMEWORK)
 BUILD_ENGINE := $(topdir)/class/lib/$(PROFILE)/$(BUILD_ENGINE)
+XBUILD_TASKS := $(topdir)/class/lib/$(PROFILE)/$(XBUILD_TASKS)
 else
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 NAME_SUFFIX = .v4.0
@@ -29,11 +31,13 @@ LIB_MCS_FLAGS = \
 	/r:System.Windows.Forms.dll		\
 	/r:Microsoft.Build.Utilities$(NAME_SUFFIX).dll	\
 	/r:$(BUILD_FRAMEWORK)	\
-	/r:$(BUILD_ENGINE)
+	/r:$(BUILD_ENGINE)		\
+	/r:$(XBUILD_TASKS)
 
 TEST_MCS_FLAGS = \
 	/r:$(BUILD_ENGINE)	\
 	/r:$(BUILD_FRAMEWORK)	\
+	/r:$(XBUILD_TASKS)		\
 	/r:Microsoft.Build.Utilities$(NAME_SUFFIX).dll \
 	/r:System.Core.dll
 
