@@ -7,6 +7,8 @@ System.ComponentModel.DataAnnotations/EmailAddressAttribute.cs
 System.ComponentModel.DataAnnotations/PhoneAttribute.cs
 System.ComponentModel.DataAnnotations/FileExtensionsAttribute.cs
 System.ComponentModel.DataAnnotations/CompareAttribute.cs
+System.ComponentModel.DataAnnotations/UrlAttribute.cs
+System.ComponentModel.DataAnnotations/BindableTypeAttribute.cs
 System.ComponentModel.DataAnnotations.Schema/ColumnAttribute.cs
 System.ComponentModel.DataAnnotations.Schema/ComplexTypeAttribute.cs
 System.ComponentModel.DataAnnotations.Schema/DatabaseGeneratedAttribute.cs
