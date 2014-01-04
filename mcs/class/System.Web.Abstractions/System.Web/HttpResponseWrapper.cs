@@ -173,7 +173,13 @@ namespace System.Web
 			get { return w.TrySkipIisCustomErrors; }
 			set { w.TrySkipIisCustomErrors = value; }
 		}
-
+#if NET_4_5
+		public override bool SuppressFormsAuthenticationRedirect
+		{
+			get { return w.SuppressFormsAuthenticationRedirect; }
+			set { w.SuppressFormsAuthenticationRedirect = value; }
+		}
+#endif
 		public override void AddCacheDependency (params CacheDependency [] dependencies)
 		{
 			w.AddCacheDependency (dependencies);

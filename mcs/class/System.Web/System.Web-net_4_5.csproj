@@ -1287,6 +1287,7 @@
     <Compile Include="System.Web\HttpRuntime.cs" />
     <Compile Include="System.Web\HttpServerUtility.cs" />
     <Compile Include="System.Web\HttpStaticObjectsCollection.cs" />
+    <Compile Include="System.Web\HttpTaskAsyncHandler.cs" />
     <Compile Include="System.Web\HttpUnhandledException.cs" />
     <Compile Include="System.Web\HttpUtility.cs" />
     <Compile Include="System.Web\HttpValidationStatus.cs" />
@@ -1314,6 +1315,7 @@
     <Compile Include="System.Web\ProcessShutdownReason.cs" />
     <Compile Include="System.Web\ProcessStatus.cs" />
     <Compile Include="System.Web\QueueManager.cs" />
+    <Compile Include="System.Web\ReadEntityBodyMode.cs" />
     <Compile Include="System.Web\RequestNotification.cs" />
     <Compile Include="System.Web\RequestNotificationStatus.cs" />
     <Compile Include="System.Web\ServerVariablesCollection.cs" />
@@ -1333,6 +1335,9 @@
     <Compile Include="System.Web\TraceData.cs" />
     <Compile Include="System.Web\TraceManager.cs" />
     <Compile Include="System.Web\TraceMode.cs" />
+    <Compile Include="System.Web\UnvalidatedRequestValues.cs" />
+    <Compile Include="System.Web\UnvalidatedRequestValuesBase.cs" />
+    <Compile Include="System.Web\UnvalidatedRequestValuesWrapper.cs" />
     <Compile Include="System.Web\VirtualPath.cs" />
     <Compile Include="System.Web\VirtualPathUtility.cs" />
     <Compile Include="System.Web\WebCategoryAttribute.cs" />

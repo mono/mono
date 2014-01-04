@@ -45,6 +45,10 @@ namespace System.Web.Configuration {
 		static ConfigurationProperty decryptionKeyProp;
 		static ConfigurationProperty validationProp;
 		static ConfigurationProperty validationKeyProp;
+#if NET_4_5
+		static ConfigurationProperty propDataProtectorType;
+		static ConfigurationProperty propApplicationName;
+#endif
 		static ConfigurationPropertyCollection properties;
 		static MachineKeyValidationConverter converter = new MachineKeyValidationConverter ();
 #if NET_4_0
@@ -76,6 +80,16 @@ namespace System.Web.Configuration {
 								       PropertyHelper.WhiteSpaceTrimStringConverter,
 								       PropertyHelper.NonEmptyStringValidator,
 								       ConfigurationPropertyOptions.None);
+#if NET_4_5
+			propDataProtectorType = new ConfigurationProperty ("dataProtectorType", typeof (string), (object) "",
+										PropertyHelper.WhiteSpaceTrimStringConverter,
+										null,
+										ConfigurationPropertyOptions.None);
+			propApplicationName = new ConfigurationProperty ("applicationName", typeof (string), (object) "",
+										PropertyHelper.WhiteSpaceTrimStringConverter,
+										null,
+										ConfigurationPropertyOptions.None);
+#endif
 
 			properties = new ConfigurationPropertyCollection ();
 
@@ -83,6 +97,10 @@ namespace System.Web.Configuration {
 			properties.Add (decryptionKeyProp);
 			properties.Add (validationProp);
 			properties.Add (validationKeyProp);
+#if NET_4_5
+			properties.Add (propDataProtectorType);
+			properties.Add (propApplicationName);
+#endif
 
 			Config.AutoGenerate (MachineKeyRegistryStorage.KeyType.Encryption);
 			Config.AutoGenerate (MachineKeyRegistryStorage.KeyType.Validation);
@@ -120,6 +138,35 @@ namespace System.Web.Configuration {
 				base[decryptionProp] = value;
 			}
 		}
+
+#if NET_4_5
+		[TypeConverter (typeof (WhiteSpaceTrimStringConverter))]
+		[ConfigurationProperty ("dataProtectorType", DefaultValue = "")]
+		public string DataProtectorType
+		{
+			get
+			{
+				return (string) base [propDataProtectorType];
+			}
+			set
+			{
+				base [propDataProtectorType] = value;
+			}
+		}
+		[ConfigurationProperty ("applicationName", DefaultValue = "")]
+		[TypeConverter (typeof (WhiteSpaceTrimStringConverter))]
+		public string ApplicationName
+		{
+			get
+			{
+				return (string) this [propApplicationName];
+			}
+			set
+			{
+				this [propApplicationName] = (object) value;
+			}
+		}
+#endif
 
 		[TypeConverter (typeof (WhiteSpaceTrimStringConverter))]
 		[StringValidator (MinLength = 1)]

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -1287,9 +1287,11 @@
     <Compile Include="System.Web\HttpRuntime.cs" />
     <Compile Include="System.Web\HttpServerUtility.cs" />
     <Compile Include="System.Web\HttpStaticObjectsCollection.cs" />
+    <Compile Include="System.Web\HttpTaskAsyncHandler.cs" />
     <Compile Include="System.Web\HttpUnhandledException.cs" />
     <Compile Include="System.Web\HttpUtility.cs" />
     <Compile Include="System.Web\HttpValidationStatus.cs" />
+    <Compile Include="System.Web\HttpValueCollection.cs" />
     <Compile Include="System.Web\HttpWorkerRequest.cs" />
     <Compile Include="System.Web\HttpWriter.cs" />
     <Compile Include="System.Web\IHtmlString.cs" />
@@ -1314,6 +1316,7 @@
     <Compile Include="System.Web\ProcessShutdownReason.cs" />
     <Compile Include="System.Web\ProcessStatus.cs" />
     <Compile Include="System.Web\QueueManager.cs" />
+    <Compile Include="System.Web\ReadEntityBodyMode.cs" />
     <Compile Include="System.Web\RequestNotification.cs" />
     <Compile Include="System.Web\RequestNotificationStatus.cs" />
     <Compile Include="System.Web\ServerVariablesCollection.cs" />
@@ -1333,6 +1336,9 @@
     <Compile Include="System.Web\TraceData.cs" />
     <Compile Include="System.Web\TraceManager.cs" />
     <Compile Include="System.Web\TraceMode.cs" />
+    <Compile Include="System.Web\UnvalidatedRequestValues.cs" />
+    <Compile Include="System.Web\UnvalidatedRequestValuesBase.cs" />
+    <Compile Include="System.Web\UnvalidatedRequestValuesWrapper.cs" />
     <Compile Include="System.Web\VirtualPath.cs" />
     <Compile Include="System.Web\VirtualPathUtility.cs" />
     <Compile Include="System.Web\WebCategoryAttribute.cs" />
@@ -1340,7 +1346,8 @@
     <Compile Include="System.Web\WebROCollection.cs" />
     <Compile Include="System.Web\WebSysDescriptionAttribute.cs" />
     <Compile Include="System.Web\XmlSiteMapProvider.cs" />
-    <Compile Include="System.Web\UplevelHelper.cs" />  </ItemGroup>
+    <Compile Include="System.Web\UplevelHelper.cs" />
+  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -1350,7 +1357,6 @@
   -->
   <PropertyGroup>
     <PreBuildEvent>
-
     </PreBuildEvent>
     <PostBuildEvent>
       xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
@@ -1360,6 +1366,10 @@
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
       <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
       <Name>corlib\corlib-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.ComponentModel.DataAnnotations\System.ComponentModel.DataAnnotations-net_4_5.csproj">
+      <Project>{64e625c0-aa4e-44dc-98f4-352d552f2ef8}</Project>
+      <Name>System.ComponentModel.DataAnnotations-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_5-2.csproj">
       <Project>{38FCD731-0E11-46F7-A31B-DCBE853AD8D7}</Project>

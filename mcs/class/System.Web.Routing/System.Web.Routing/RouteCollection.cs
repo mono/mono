@@ -78,6 +78,10 @@ namespace System.Web.Routing
 
 			read_lock = new Lock (this, true);
 			write_lock = new Lock (this, false);
+#if NET_4_5
+			AppendTrailingSlash = true;
+			LowercaseUrls = false;
+#endif
 		}
 
 		//VirtualPathProvider provider;
@@ -93,6 +97,33 @@ namespace System.Web.Routing
 				return null;
 			}
 		}
+#if NET_4_5
+		private bool appendTrailingSlash = true;
+		public bool AppendTrailingSlash
+		{
+			get { return appendTrailingSlash; }
+			set
+			{
+				if (!appendTrailingSlash)
+					throw new Exception ("not implemented");
+				
+				appendTrailingSlash = value;
+			}
+		}
+
+		private bool lowercaseUrls = false;
+		public bool LowercaseUrls
+		{
+			get { return lowercaseUrls; }
+			set
+			{
+				if (lowercaseUrls)
+					throw new Exception ("not implemented");
+				
+				lowercaseUrls = value;
+			}
+		}
+#endif
 
 		public bool RouteExistingFiles { get; set; }
 
@@ -178,9 +209,18 @@ namespace System.Web.Routing
 
 			if (vp != null) {
 				string appPath = requestContext.HttpContext.Request.ApplicationPath;
-				if (appPath != null && (appPath.Length == 0 || !appPath.EndsWith ("/", StringComparison.Ordinal)))
+
+				if (appPath != null &&
+#if NET_4_5
+					AppendTrailingSlash &&
+#endif
+					(appPath.Length == 0 || !appPath.EndsWith ("/", StringComparison.Ordinal)))
 					appPath += "/";
-				
+#if NET_4_5
+				if (LowercaseUrls)
+					appPath = appPath.ToLowerInvariant ();
+#endif
+
 				string pathWithApp = String.Concat (appPath, vp.VirtualPath);
 				vp.VirtualPath = requestContext.HttpContext.Response.ApplyAppPathModifier (pathWithApp);
 				return vp;
