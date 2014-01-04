@@ -2476,11 +2476,11 @@ namespace MonoTests.System
 		}
 		
 		[Test]
-		public void Foo ()
+		public void GenitiveMonth ()
 		{
 			var ci = new CultureInfo ("ru-RU");
 			var dt = new DateTime (2012, 9, 15);
-			Assert.AreEqual ("сентября 15", dt.ToString ("m", ci));
+			Assert.AreEqual ("15 сентября", dt.ToString ("m", ci));
 		}
 	}
 }
