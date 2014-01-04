@@ -63,7 +63,7 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public ChartAreaCollection ChartAreas { get; private set; }
 		public DataManipulator DataManipulator { get; private set;}
 		public Object DataSource { get; set; }
-		protected override Size DefaultSize { get { return DefaultSize; } }//FIXME
+		protected override Size DefaultSize { get { return base.DefaultSize; } }//FIXME
 		public Font Font { get; set; }
 		public override Color ForeColor { get; set; }
 		public NamedImagesCollection Images { get; private set;}
