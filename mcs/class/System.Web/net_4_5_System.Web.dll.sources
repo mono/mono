@@ -2,3 +2,8 @@
 
 System.Web/MimeMapping.cs
 System.Web.Security/MembershipPasswordAttribute.cs
+System.Web/HttpTaskAsyncHandler.cs
+System.Web/UnvalidatedRequestValues.cs
+System.Web/UnvalidatedRequestValuesBase.cs
+System.Web/UnvalidatedRequestValuesWrapper.cs
+System.Web/ReadEntityBodyMode.cs

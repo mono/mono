@@ -181,11 +181,11 @@ namespace System.Web
 #if !TARGET_JVM // No remoting CallContext support in Grasshopper
 		public static HttpContext Current {
 			get {
-				return (HttpContext) CallContext.GetData ("c");
+				return (HttpContext) CallContext.HostContext;
 			}
 
 			set {
-				CallContext.SetData ("c", value);
+				CallContext.HostContext = value;
 			}
 		}
 #endif

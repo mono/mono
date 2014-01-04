@@ -54,14 +54,12 @@ namespace System.IO.Compression {
 		public GZipStream (Stream stream, CompressionLevel compressionLevel)
 			: this (stream, CompressionMode.Compress)
 		{
-			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		public GZipStream (Stream stream, CompressionLevel compressionLevel, bool leaveOpen)
 			: this (stream, CompressionMode.Compress, leaveOpen)
 		{
-			throw new NotImplementedException ();
 		}
 #endif
 
