@@ -76,7 +76,7 @@ namespace System.Runtime.CompilerServices
 		
 		public void SetException (Exception exception)
 		{
-			if (Task.TrySetException (new AggregateException (exception), exception is OperationCanceledException))
+			if (Task.TrySetException (new AggregateException (exception), exception is OperationCanceledException, true))
 				return;
 
 			throw new InvalidOperationException ("The task has already completed");
