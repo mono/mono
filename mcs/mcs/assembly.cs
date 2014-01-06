@@ -54,6 +54,7 @@ namespace Mono.CSharp
 		bool is_cls_compliant;
 		bool wrap_non_exception_throws;
 		bool wrap_non_exception_throws_custom;
+		bool has_user_debuggable;
 
 		protected ModuleContainer module;
 		readonly string name;
@@ -366,6 +367,8 @@ namespace Mono.CSharp
 				vi_copyright = a.GetString ();
 			} else if (a.Type == pa.AssemblyTrademark) {
 				vi_trademark = a.GetString ();
+			} else if (a.Type == pa.Debuggable) {
+				has_user_debuggable = true;
 			}
 
 			SetCustomAttribute (ctor, cdata);
@@ -473,6 +476,17 @@ namespace Mono.CSharp
 			}
 
 			if (!IsSatelliteAssembly) {
+				if (!has_user_debuggable && Compiler.Settings.GenerateDebugInfo) {
+					var pa = module.PredefinedAttributes.Debuggable;
+					if (pa.IsDefined) {
+						var modes = System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints;
+						if (!Compiler.Settings.Optimize)
+							modes |= System.Diagnostics.DebuggableAttribute.DebuggingModes.DisableOptimizations;
+
+						pa.EmitAttribute (Builder, modes);
+					}
+				}
+
 				if (!wrap_non_exception_throws_custom) {
 					PredefinedAttribute pa = module.PredefinedAttributes.RuntimeCompatibility;
 					if (pa.IsDefined && pa.ResolveBuilder ()) {
