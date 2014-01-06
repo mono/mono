@@ -23,6 +23,7 @@ PORTABLE_DIR = $(mono_libdir)/mono/xbuild/Microsoft/Portable
 install-extras: 
 	$(MKINSTALLDIRS) $(DESTDIR)$(XBUILD_BIN_DIR) $(DESTDIR)$(REDISTLIST_DIR) $(DESTDIR)$(XBUILD_FRAMEWORKS_DIR)/v3.0/RedistList $(DESTDIR)$(XBUILD_FRAMEWORKS_DIR)/v4.0/RedistList $(DESTDIR)$(mono_libdir)/mono/3.5 $(DESTDIR)$(mono_libdir)/mono/4.0
 	$(INSTALL_DATA) xbuild/xbuild.rsp $(DESTDIR)$(XBUILD_BIN_DIR)
+	sed -e 's/@XBUILD_ASSEMBLY_VERSION@/$(XBUILD_ASSEMBLY_VERSION)/g' xbuild.exe.config.in  > $(DESTDIR)$(XBUILD_BIN_DIR)/xbuild.exe.config
 	$(INSTALL_DATA) xbuild/$(XBUILD_VERSION)/Microsoft.Common.tasks $(DESTDIR)$(XBUILD_BIN_DIR)
 	$(INSTALL_DATA) xbuild/$(XBUILD_VERSION)/Microsoft.Common.targets $(DESTDIR)$(XBUILD_BIN_DIR)
 	$(INSTALL_DATA) xbuild/Microsoft.Build.xsd $(DESTDIR)$(XBUILD_BIN_DIR)
@@ -69,4 +70,5 @@ EXTRA_DISTFILES = \
 	xbuild/Microsoft.VisualBasic.targets \
 	xbuild/Microsoft.WebApplication.targets \
 	xbuild/Microsoft.Portable.CSharp.targets \
-	xbuild_targets.make
+	xbuild_targets.make \
+	xbuild.exe.config.in
