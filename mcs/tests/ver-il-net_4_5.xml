@@ -18602,6 +18602,59 @@
       </method>
     </type>
   </test>
+  <test name="gtest-602.cs">
+    <type name="Factory`2[TKey,TBase]">
+      <method name="Void Register[T](TKey)" attrs="134">
+        <size>26</size>
+      </method>
+      <method name="TBase Produce(TKey)" attrs="134">
+        <size>26</size>
+      </method>
+      <method name="TBase Constructor[T]()" attrs="145">
+        <size>54</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>18</size>
+      </method>
+    </type>
+    <type name="Factory`2+InstantiateMethod`1[TKey,TBase,T]">
+      <method name="T Invoke()" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="T EndInvoke(IAsyncResult)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)" attrs="6278">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="BaseClass">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="ChildClass1">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="ChildClass2">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestClass">
+      <method name="Int32 Main()" attrs="150">
+        <size>108</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
