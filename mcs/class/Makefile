@@ -222,23 +222,15 @@ net_4_5_dirs := \
 	System.Xml.Serialization \
 	$(pcl_facade_dirs)
 
-xbuild_common_dirs := \
+xbuild_2_0_dirs := \
 	Microsoft.Build.Framework	\
 	Microsoft.Build.Utilities	\
 	Microsoft.Build.Engine		\
 	Mono.XBuild.Tasks		\
 	Microsoft.Build.Tasks
 
-xbuild_2_0_dirs := \
-	$(xbuild_common_dirs)	\
-	Moonlight.Build.Tasks
-
 xbuild_4_0_dirs := \
 	$(xbuild_2_0_dirs)	\
-	Microsoft.Build
-
-xbuild_12_dirs := \
-	$(xbuild_common_dirs)	\
 	Microsoft.Build
 
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(xbuild_2_0_dirs) aot-compiler
@@ -250,7 +242,7 @@ mobile_SUBDIRS := $(mobile_dirs)
 net_3_5_SUBDIRS := $(xbuild_2_0_dirs)
 net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs) $(xbuild_4_0_dirs)
 net_4_5_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_5_dirs) $(xbuild_4_0_dirs) aot-compiler
-xbuild_12_SUBDIRS := $(xbuild_12_dirs)
+xbuild_12_SUBDIRS := $(xbuild_4_0_dirs)
 
 include ../build/rules.make
 

@@ -18,7 +18,6 @@ include $(XBUILD_DIR)/xbuild_targets.make
 install-local:	install-extras
 
 WEBAPP_DIR = Microsoft/VisualStudio
-SILVERLIGHT_DIR = $(mono_libdir)/mono/xbuild/Microsoft/Silverlight
 PORTABLE_DIR = $(mono_libdir)/mono/xbuild/Microsoft/Portable
 
 install-extras: 
@@ -42,14 +41,6 @@ install-extras:
 	$(INSTALL_DATA) xbuild/Microsoft.WebApplication.targets $(DESTDIR)$(mono_libdir)/mono/xbuild/$(WEBAPP_DIR)/v10.0/WebApplications
 	$(MKINSTALLDIRS) $(DESTDIR)$(mono_libdir)/mono/xbuild/$(WEBAPP_DIR)/v11.0/WebApplications
 	$(INSTALL_DATA) xbuild/Microsoft.WebApplication.targets $(DESTDIR)$(mono_libdir)/mono/xbuild/$(WEBAPP_DIR)/v11.0/WebApplications
-	$(MKINSTALLDIRS) $(DESTDIR)$(SILVERLIGHT_DIR)/v2.0
-	$(MKINSTALLDIRS) $(DESTDIR)$(SILVERLIGHT_DIR)/v3.0
-	$(INSTALL_DATA) xbuild/Microsoft.Silverlight.CSharp.targets $(DESTDIR)$(SILVERLIGHT_DIR)/v2.0
-	$(INSTALL_DATA) xbuild/Microsoft.Silverlight.CSharp.targets $(DESTDIR)$(SILVERLIGHT_DIR)/v3.0
-	$(INSTALL_DATA) xbuild/Microsoft.Silverlight.VisualBasic.targets $(DESTDIR)$(SILVERLIGHT_DIR)/v2.0
-	$(INSTALL_DATA) xbuild/Microsoft.Silverlight.VisualBasic.targets $(DESTDIR)$(SILVERLIGHT_DIR)/v3.0
-	sed -e 's/@SILVERLIGHT_VERSION@/2.0/g' xbuild/Microsoft.Silverlight.Common.targets > $(DESTDIR)$(SILVERLIGHT_DIR)/v2.0/Microsoft.Silverlight.Common.targets
-	sed -e 's/@SILVERLIGHT_VERSION@/3.0/g' xbuild/Microsoft.Silverlight.Common.targets > $(DESTDIR)$(SILVERLIGHT_DIR)/v3.0/Microsoft.Silverlight.Common.targets
 	$(MKINSTALLDIRS) $(DESTDIR)$(PORTABLE_DIR)/v4.0
 	$(MKINSTALLDIRS) $(DESTDIR)$(PORTABLE_DIR)/v4.5
 	$(INSTALL_DATA) xbuild/4.0/Microsoft.Portable.CSharp.targets $(DESTDIR)$(PORTABLE_DIR)/v4.0
@@ -77,8 +68,5 @@ EXTRA_DISTFILES = \
 	xbuild/MSBuild/Microsoft.Build.Core.xsd		\
 	xbuild/Microsoft.VisualBasic.targets \
 	xbuild/Microsoft.WebApplication.targets \
-	xbuild/Microsoft.Silverlight.Common.targets \
-	xbuild/Microsoft.Silverlight.CSharp.targets \
-	xbuild/Microsoft.Silverlight.VisualBasic.targets \
 	xbuild/Microsoft.Portable.CSharp.targets \
 	xbuild_targets.make
