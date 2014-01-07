@@ -220,7 +220,9 @@ namespace System.Threading.Tasks
 				if (scheduler.RunInline (this, false))
 					return;
 			} catch (Exception inner) {
-				throw new TaskSchedulerException (inner);
+				var ex = new TaskSchedulerException (inner);
+				TrySetException (new AggregateException (ex), false, true);
+				throw ex;
 			}
 
 			Schedule ();
@@ -448,7 +450,7 @@ namespace System.Threading.Tasks
 			return true;
 		}
 
-		internal bool TrySetException (AggregateException aggregate, bool cancellation)
+		internal bool TrySetException (AggregateException aggregate, bool cancellation, bool observed)
 		{
 			if (IsCompleted)
 				return false;
@@ -469,6 +471,9 @@ namespace System.Threading.Tasks
 			} else {
 				HandleGenericException (aggregate);
 			}
+
+			if (observed)
+				exSlot.Observed = true;
 
 			return true;
 		}
