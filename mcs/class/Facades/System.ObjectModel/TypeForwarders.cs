@@ -20,9 +20,7 @@
 // THE SOFTWARE.
 // 
 
-#if !MONOTOUCH
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Collections.ObjectModel.ReadOnlyDictionary<,>))]
-#endif
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Collections.ObjectModel.KeyedCollection<,>))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Collections.ObjectModel.ObservableCollection<>))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Collections.ObjectModel.ReadOnlyObservableCollection<>))]
