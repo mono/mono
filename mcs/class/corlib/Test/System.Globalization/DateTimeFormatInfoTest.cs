@@ -94,11 +94,11 @@ namespace MonoTests.System.Globalization
 		{
 			CultureInfo ci = new CultureInfo ("es-ES");
 			DateTimeFormatInfo di = ci.DateTimeFormat;
-			Assert.AreEqual ("dddd, dd' de 'MMMM' de 'yyyy", di.LongDatePattern, "#1");
+			Assert.AreEqual ("dddd, d' de 'MMMM' de 'yyyy", di.LongDatePattern, "#1");
 			Assert.AreEqual ("H:mm:ss", di.LongTimePattern, "#2");
-			Assert.AreEqual ("dddd, dd' de 'MMMM' de 'yyyy H:mm:ss", di.FullDateTimePattern, "#3");
+			Assert.AreEqual ("dddd, d' de 'MMMM' de 'yyyy H:mm:ss", di.FullDateTimePattern, "#3");
 			Assert.AreEqual ("MMMM' de 'yyyy", di.YearMonthPattern, "#4");
-			Assert.AreEqual ("dd MMMM", di.MonthDayPattern, "#5");
+			Assert.AreEqual ("d' de 'MMMM", di.MonthDayPattern, "#5");
 		}
 
 		[Test]

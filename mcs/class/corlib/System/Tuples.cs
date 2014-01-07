@@ -183,9 +183,10 @@ namespace System
 
 		int IStructuralEquatable.GetHashCode (IEqualityComparer comparer)
 		{
-			int h = comparer.GetHashCode (item1);
-			h = (h << 5) - h + comparer.GetHashCode (item2);
-			return h;
+			int h0;
+			h0 = comparer.GetHashCode (item1);
+			h0 = (h0 << 5) + h0 ^ comparer.GetHashCode (item2);
+			return h0;
 		}
 
 		public override string ToString ()
@@ -263,10 +264,11 @@ namespace System
 
 		int IStructuralEquatable.GetHashCode (IEqualityComparer comparer)
 		{
-			int h = comparer.GetHashCode (item1);
-			h = (h << 5) - h + comparer.GetHashCode (item2);
-			h = (h << 5) - h + comparer.GetHashCode (item3);
-			return h;
+			int h0;
+			h0 = comparer.GetHashCode (item1);
+			h0 = (h0 << 5) + h0 ^ comparer.GetHashCode (item2);
+			h0 = (h0 << 5) + h0 ^ comparer.GetHashCode (item3);
+			return h0;
 		}
 
 		public override string ToString ()
@@ -353,11 +355,13 @@ namespace System
 
 		int IStructuralEquatable.GetHashCode (IEqualityComparer comparer)
 		{
-			int h = comparer.GetHashCode (item1);
-			h = (h << 5) - h + comparer.GetHashCode (item2);
-			h = (h << 5) - h + comparer.GetHashCode (item3);
-			h = (h << 5) - h + comparer.GetHashCode (item4);
-			return h;
+			int h0, h1;
+			h0 = comparer.GetHashCode (item1);
+			h0 = (h0 << 5) + h0 ^ comparer.GetHashCode (item2);
+			h1 = comparer.GetHashCode (item3);
+			h1 = (h1 << 5) + h1 ^ comparer.GetHashCode (item4);
+			h0 = (h0 << 5) + h0 ^ h1;
+			return h0;
 		}
 
 		public override string ToString ()
@@ -453,12 +457,14 @@ namespace System
 
 		int IStructuralEquatable.GetHashCode (IEqualityComparer comparer)
 		{
-			int h = comparer.GetHashCode (item1);
-			h = (h << 5) - h + comparer.GetHashCode (item2);
-			h = (h << 5) - h + comparer.GetHashCode (item3);
-			h = (h << 5) - h + comparer.GetHashCode (item4);
-			h = (h << 5) - h + comparer.GetHashCode (item5);
-			return h;
+			int h0, h1;
+			h0 = comparer.GetHashCode (item1);
+			h0 = (h0 << 5) + h0 ^ comparer.GetHashCode (item2);
+			h1 = comparer.GetHashCode (item3);
+			h1 = (h1 << 5) + h1 ^ comparer.GetHashCode (item4);
+			h0 = (h0 << 5) + h0 ^ h1;
+			h0 = (h0 << 5) + h0 ^ comparer.GetHashCode (item5);
+			return h0;
 		}
 
 		public override string ToString ()
@@ -563,13 +569,16 @@ namespace System
 
 		int IStructuralEquatable.GetHashCode (IEqualityComparer comparer)
 		{
-			int h = comparer.GetHashCode (item1);
-			h = (h << 5) - h + comparer.GetHashCode (item2);
-			h = (h << 5) - h + comparer.GetHashCode (item3);
-			h = (h << 5) - h + comparer.GetHashCode (item4);
-			h = (h << 5) - h + comparer.GetHashCode (item5);
-			h = (h << 5) - h + comparer.GetHashCode (item6);
-			return h;
+			int h0, h1;
+			h0 = comparer.GetHashCode (item1);
+			h0 = (h0 << 5) + h0 ^ comparer.GetHashCode (item2);
+			h1 = comparer.GetHashCode (item3);
+			h1 = (h1 << 5) + h1 ^ comparer.GetHashCode (item4);
+			h0 = (h0 << 5) + h0 ^ h1;
+			h1 = comparer.GetHashCode (item5);
+			h1 = (h1 << 5) + h1 ^ comparer.GetHashCode (item6);
+			h0 = (h0 << 5) + h0 ^ h1;
+			return h0;
 		}
 
 		public override string ToString ()
@@ -683,14 +692,17 @@ namespace System
 
 		int IStructuralEquatable.GetHashCode (IEqualityComparer comparer)
 		{
-			int h = comparer.GetHashCode (item1);
-			h = (h << 5) - h + comparer.GetHashCode (item2);
-			h = (h << 5) - h + comparer.GetHashCode (item3);
-			h = (h << 5) - h + comparer.GetHashCode (item4);
-			h = (h << 5) - h + comparer.GetHashCode (item5);
-			h = (h << 5) - h + comparer.GetHashCode (item6);
-			h = (h << 5) - h + comparer.GetHashCode (item7);
-			return h;
+			int h0, h1;
+			h0 = comparer.GetHashCode (item1);
+			h0 = (h0 << 5) + h0 ^ comparer.GetHashCode (item2);
+			h1 = comparer.GetHashCode (item3);
+			h1 = (h1 << 5) + h1 ^ comparer.GetHashCode (item4);
+			h0 = (h0 << 5) + h0 ^ h1;
+			h1 = comparer.GetHashCode (item5);
+			h1 = (h1 << 5) + h1 ^ comparer.GetHashCode (item6);
+			h1 = (h1 << 5) + h1 ^ comparer.GetHashCode (item7);
+			h0 = (h0 << 5) + h0 ^ h1;
+			return h0;
 		}
 
 		public override string ToString ()
@@ -801,15 +813,19 @@ namespace System
 
 		int IStructuralEquatable.GetHashCode (IEqualityComparer comparer)
 		{
-			int h = comparer.GetHashCode (item1);
-			h = (h << 5) - h + comparer.GetHashCode (item2);
-			h = (h << 5) - h + comparer.GetHashCode (item3);
-			h = (h << 5) - h + comparer.GetHashCode (item4);
-			h = (h << 5) - h + comparer.GetHashCode (item5);
-			h = (h << 5) - h + comparer.GetHashCode (item6);
-			h = (h << 5) - h + comparer.GetHashCode (item7);
-			h = (h << 5) - h + comparer.GetHashCode (rest);
-			return h;
+			int h0, h1, h2;
+			h0 = comparer.GetHashCode (item1);
+			h0 = (h0 << 5) + h0 ^ comparer.GetHashCode (item2);
+			h1 = comparer.GetHashCode (item3);
+			h1 = (h1 << 5) + h1 ^ comparer.GetHashCode (item4);
+			h0 = (h0 << 5) + h0 ^ h1;
+			h1 = comparer.GetHashCode (item5);
+			h1 = (h1 << 5) + h1 ^ comparer.GetHashCode (item6);
+			h2 = comparer.GetHashCode (item7);
+			h2 = (h2 << 5) + h2 ^ comparer.GetHashCode (rest);
+			h1 = (h1 << 5) + h1 ^ h2;
+			h0 = (h0 << 5) + h0 ^ h1;
+			return h0;
 		}
 
 		public override string ToString ()
@@ -881,7 +897,7 @@ public class TupleGen
 			Console.WriteLine ("\t\t\tvar t = other as {0};", type_name);
 			Console.WriteLine ("\t\t\tif (t == null) {");
 			Console.WriteLine ("\t\t\t\tif (other == null) return 1;");
-			Console.WriteLine ("\t\t\t\tthrow new ArgumentException ("other");");
+			Console.WriteLine ("\t\t\t\tthrow new ArgumentException (\"other\");");
 			Console.WriteLine ("\t\t\t}");
 			Console.WriteLine ();
 			
@@ -937,10 +953,15 @@ public class TupleGen
 			if (arity == 1) {
 				Console.WriteLine ("\t\t\treturn comparer.GetHashCode ({0});", GetItemName (arity));
 			} else {
-				Console.WriteLine ("\t\t\tint h = comparer.GetHashCode ({0});", GetItemName (1));
-				for (int i = 2; i <= arity; ++i)
-					Console.WriteLine ("\t\t\th = (h << 5) - h + comparer.GetHashCode ({0});", GetItemName (i));
-				Console.WriteLine ("\t\t\treturn h;");
+				int varnum = IntLog2(arity);
+				Console.Write ("\t\t\tint h0");
+				for (int i = 1; i < varnum; ++i)
+					Console.Write (", h{0}", i);
+				Console.WriteLine (";");
+
+				WriteHash(0, 1, arity);
+
+				Console.WriteLine ("\t\t\treturn h0;");
 			}
 
 			Console.WriteLine ("\t\t}");
@@ -964,6 +985,36 @@ public class TupleGen
 			Console.WriteLine ("\t\t}");
 
 			Console.WriteLine ("\t}\n");
+		}
+	}
+
+	static int IntLog2 (int n)
+	{
+		int r = -1;
+
+		while (n != 0) {
+			n >>= 1;
+			r++;
+		}
+
+		return r;
+	}
+
+	static void WriteHash (int destVar, int start, int count)
+	{
+		if (count == 1) {
+			Console.WriteLine ("\t\t\th{0} = comparer.GetHashCode ({1});", destVar, GetItemName (start));
+		} else {
+			int subCount = 1 << IntLog2(count-1);
+			computeHash(destVar, start, subCount);
+			start += subCount;
+			count -= subCount;
+			if (count == 1) {
+				Console.WriteLine ("\t\t\th{0} = (h{0} << 5) + h{0} ^ comparer.GetHashCode ({1});", destVar, GetItemName (start));
+			} else {
+				WriteHash(destVar+1, start, count);
+				Console.WriteLine ("\t\t\th{0} = (h{0} << 5) + h{0} ^ h{1};", destVar, destVar+1);
+			}
 		}
 	}
 

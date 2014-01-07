@@ -44,7 +44,6 @@ namespace System.Globalization
 	{
 		static volatile CultureInfo invariant_culture_info = new CultureInfo (InvariantCultureId, false, true);
 		static object shared_table_lock = new object ();
-		internal static int BootstrapCultureID;
 		static CultureInfo default_current_culture;
 
 #pragma warning disable 169, 649
@@ -100,7 +99,7 @@ namespace System.Globalization
 		// Used by Thread.set_CurrentCulture
 		internal byte[] cached_serialized_form;
 		
-		const int InvariantCultureId = 0x7F;
+		internal const int InvariantCultureId = 0x7F;
 		const int CalendarTypeBits = 8;
 
 		const string MSG_READONLY = "This instance is read only";
@@ -127,10 +126,21 @@ namespace System.Globalization
 		{
 			if (default_current_culture != null)
 				return default_current_culture;
-			CultureInfo ci = new CultureInfo ();
-			if (!ConstructInternalLocaleFromCurrentLocale (ci))
+
+			var locale_name = get_current_locale_name ();
+			CultureInfo ci = null;
+			try {
+				ci = CreateSpecificCulture (locale_name);
+			} catch {
+			}
+
+			if (ci == null) {
 				ci = InvariantCulture;
-			BootstrapCultureID = ci.cultureID;
+			} else {
+				ci.m_isReadOnly = true;
+				ci.m_useUserOverride = true;
+			}
+
 			default_current_culture = ci;
 			return ci;
 		}
@@ -539,9 +549,10 @@ namespace System.Globalization
 			}
 		}
 
-		public static CultureInfo InstalledUICulture
-		{
-			get { return GetCultureInfo (BootstrapCultureID); }
+		public static CultureInfo InstalledUICulture {
+			get {
+				return ConstructCurrentCulture ();
+			}
 		}
 
 		public bool IsReadOnly {
@@ -572,24 +583,14 @@ namespace System.Globalization
 			constructed = true;
 		}
 
-		static bool ConstructInternalLocaleFromCurrentLocale (CultureInfo ci)
-		{
-			if (!construct_internal_locale_from_current_locale (ci))
-				return false;
-			return true;
-		}
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern bool construct_internal_locale_from_lcid (int lcid);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern bool construct_internal_locale_from_name (string name);
 
-//		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-//		private extern static bool construct_internal_locale_from_specific_name (CultureInfo ci, string name);
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static bool construct_internal_locale_from_current_locale (CultureInfo ci);
+		private extern static string get_current_locale_name ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static CultureInfo [] internal_get_cultures (bool neutral, bool specific, bool installed);
@@ -682,13 +683,7 @@ namespace System.Globalization
 			}
 
 			if (!construct_internal_locale_from_name (name.ToLowerInvariant ())) {
-#if NET_4_0
-				throw new CultureNotFoundException ("name",
-						"Culture name " + name + " is not supported.");
-#else
-				throw new ArgumentException ("Culture name " + name +
-						" is not supported.", "name");
-#endif
+				throw CreateNotFoundException (name);
 			}
 		}
 
@@ -793,28 +788,20 @@ namespace System.Globalization
 			if (name.Length == 0)
 				return InvariantCulture;
 
-			CultureInfo ci = null;
-			try {
-				ci = new CultureInfo (name);
-			} catch (Exception) {
-				// TODO: Use construct_internal_locale_from_name when it's not bound to constructor instead
-				// of try-catch
+			var src_name = name;
+			name = name.ToLowerInvariant ();
+			CultureInfo ci = new CultureInfo ();
+
+			if (!ci.construct_internal_locale_from_name (name)) {
 				int idx = name.IndexOf ('-');
-				if (idx > 0) {
-					try {
-						ci = new CultureInfo (name.Substring (0, idx));
-					} catch {
-					}
-				}
-				
-				if (ci == null)
-					throw;
+				if (idx < 1 || !ci.construct_internal_locale_from_name (name.Substring (0, idx)))
+					throw CreateNotFoundException (src_name);
 			}
 
-			if (!ci.IsNeutralCulture)
-				return ci;
+			if (ci.IsNeutralCulture)
+				ci = CreateSpecificCultureFromNeutral (ci.Name);
 
-			return CreateSpecificCultureFromNeutral (ci.Name);
+			return ci;
 		}
 
 		//
@@ -1010,6 +997,15 @@ namespace System.Globalization
 			if (type == null)
 				return CreateCalendar (1 << CalendarTypeBits); // return invariant calandar if not found
 			return (Calendar) Activator.CreateInstance (type);
+		}
+
+		static Exception CreateNotFoundException (string name)
+		{
+#if NET_4_0
+			return new CultureNotFoundException ("name", "Culture name " + name + " is not supported.");
+#else
+			return new ArgumentException ("Culture name " + name + " is not supported.", "name");
+#endif
 		}
 		
 #if NET_4_5

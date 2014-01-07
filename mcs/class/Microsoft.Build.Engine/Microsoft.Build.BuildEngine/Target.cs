@@ -128,15 +128,23 @@ namespace Microsoft.Build.BuildEngine {
 		internal bool Build (string built_targets_key)
 		{
 			bool executeOnErrors;
-			return Build (built_targets_key, out executeOnErrors);
+			return Build (built_targets_key, null, out executeOnErrors);
 		}
 
-		bool Build (string built_targets_key, out bool executeOnErrors)
+		bool Build (string built_targets_key, string parentTarget, out bool executeOnErrors)
 		{
+			string message;
+			if (parentTarget != null)
+				message = string.Format ("\"{0}\" in project \"{1}\" (\"{2}\"); \"{3}\" depends on it", Name, project.FullFileName, TargetFile, parentTarget);
+			else
+				message = string.Format ("\"{0}\" in project \"{1}\" (\"{2}\")", Name, project.FullFileName, TargetFile);
+
 			project.PushThisFileProperty (TargetFile);
 			try {
+				LogMessage (MessageImportance.Low, "Building target {0}.", message);
 				return BuildActual (built_targets_key, out executeOnErrors);
 			} finally {
+				LogMessage (MessageImportance.Low, "Done building target {0}.", message);
 				project.PopThisFileProperty ();
 			}
 		}
@@ -256,7 +264,7 @@ namespace Microsoft.Build.BuildEngine {
 				}
 
 				if (t.BuildState == BuildState.NotStarted)
-					if (!t.Build (null, out executeOnErrors))
+					if (!t.Build (null, Name, out executeOnErrors))
 						return false;
 
 				if (t.BuildState == BuildState.Started)
@@ -403,9 +411,12 @@ namespace Microsoft.Build.BuildEngine {
 
 		ITaskItem [] OutputsAsITaskItems {
 			get {
-				string outputs = targetElement.GetAttribute ("Outputs");
-				if (outputs == String.Empty)
-					return new ITaskItem [0];
+				var outputs = targetElement.GetAttribute ("Returns");
+				if (string.IsNullOrEmpty (outputs)) {
+					outputs = targetElement.GetAttribute ("Outputs");
+					if (string.IsNullOrEmpty (outputs))
+						return new ITaskItem [0];
+				}
 
 				Expression e = new Expression ();
 				e.Parse (outputs, ParseOptions.AllowItemsNoMetadataAndSplit);

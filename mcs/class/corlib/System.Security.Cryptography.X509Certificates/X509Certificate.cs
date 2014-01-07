@@ -94,7 +94,7 @@ namespace System.Security.Cryptography.X509Certificates {
 	
 		public static X509Certificate CreateFromCertFile (string filename) 
 		{
-			byte[] data = Load (filename);
+			byte[] data = File.ReadAllBytes (filename);
 			return new X509Certificate (data);
 		}
 
@@ -376,16 +376,6 @@ namespace System.Security.Cryptography.X509Certificates {
 			return sb.ToString ();
 		}
 
-		private static byte[] Load (string fileName)
-		{
-			byte[] data = null;
-			using (FileStream fs = File.OpenRead (fileName)) {
-				data = new byte [fs.Length];
-				fs.Read (data, 0, data.Length);
-				fs.Close ();
-			}
-			return data;
-		}
 #if NET_4_0
 		protected static string FormatDate (DateTime date)
 		{

@@ -510,27 +510,27 @@ namespace System.Web
 			if (headers_sent)
 				throw new HttpException ("Headers have been already sent");
 #if !TARGET_J2EE
-			if (String.Compare (name, "content-length", true, Helpers.InvariantCulture) == 0){
+			if (String.Compare (name, "content-length", StringComparison.OrdinalIgnoreCase) == 0){
 				content_length = (long) UInt64.Parse (value);
 				use_chunked = false;
 				return;
 			}
 #endif
 
-			if (String.Compare (name, "content-type", true, Helpers.InvariantCulture) == 0){
+			if (String.Compare (name, "content-type", StringComparison.OrdinalIgnoreCase) == 0){
 				ContentType = value;
 				return;
 			}
 
 #if !TARGET_J2EE
-			if (String.Compare (name, "transfer-encoding", true, Helpers.InvariantCulture) == 0){
+			if (String.Compare (name, "transfer-encoding", StringComparison.OrdinalIgnoreCase) == 0){
 				transfer_encoding = value;
 				use_chunked = false;
 				return;
 			}
 #endif
 
-			if (String.Compare (name, "cache-control", true, Helpers.InvariantCulture) == 0){
+			if (String.Compare (name, "cache-control", StringComparison.OrdinalIgnoreCase) == 0){
 				user_cache_control = value;
 				return;
 			}

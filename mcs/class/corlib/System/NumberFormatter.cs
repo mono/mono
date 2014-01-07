@@ -557,9 +557,7 @@ namespace System
 
 		private void Resize (int len)
 		{
-			char[] newBuf = new char [len];
-			Array.Copy (_cbuf, newBuf, _ind);
-			_cbuf = newBuf;
+			Array.Resize (ref _cbuf, len);
 		}
 
 		private void Append (char c)

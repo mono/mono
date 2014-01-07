@@ -18,7 +18,6 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
     [TestFixture]
     public class UIHintAttributeTest {
         [Test]
-        [Description("Simple ctors set expected properties.")]
         public void UIHintAttribute_Simple_Ctors_Set_Properties() {
             var attr = new UIHintAttribute(null, null);
             Assert.IsNull(attr.UIHint);

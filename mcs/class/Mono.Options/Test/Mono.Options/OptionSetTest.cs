@@ -193,7 +193,7 @@ namespace Tests.Mono.Options
 			Assert.AreEqual (libs [1], null);
 
 			Utils.AssertException (typeof(OptionException), 
-					"Cannot bundle unregistered option '-V'.",
+					"Cannot use unregistered option 'V' in bundle '-EVALUENOTSUP'.",
 					p, v => { v.Parse (_("-EVALUENOTSUP")); });
 		}
 
@@ -370,7 +370,7 @@ namespace Tests.Mono.Options
 
 			// try to bundle with an option requiring a value
 			Utils.AssertException (typeof(OptionException), 
-					"Cannot bundle unregistered option '-z'.", 
+					"Cannot use unregistered option 'z' in bundle '-cz'.",
 					p, v => { v.Parse (_("-cz", "extra")); });
 
 			Utils.AssertException (typeof(ArgumentNullException), 
@@ -879,6 +879,22 @@ namespace Tests.Mono.Options
 			Assert.AreEqual (formats ["baz"].Count, 2);
 			Assert.AreEqual (formats ["baz"][0], "e");
 			Assert.AreEqual (formats ["baz"][1], "f");
+		}
+
+		[Test]
+		public void ReportInvalidDuplication ()
+		{
+			int verbosity = 0;
+			var p = new OptionSet () {
+				{ "v", v => verbosity = v != null ? verbosity + 1 : verbosity },
+			};
+			try {
+				p.Parse (new []{"-v-v-v"});
+				Assert.Fail ("Should not be reached.");
+			} catch (OptionException e) {
+				Assert.AreEqual (null, e.OptionName);
+				Assert.AreEqual ("Cannot use unregistered option '-' in bundle '-v-v-v'.", e.Message);
+			}
 		}
 	}
 }

@@ -541,6 +541,18 @@ public class DebuggerTests
 		e = step_into ();
 		assert_location (e, "step_through_3");
 		req.Disable ();
+
+		// Check that step-over doesn't stop at inner frames with recursive functions
+		e = run_until ("ss_recursive");
+		req = create_step (e);
+		e = step_over ();
+		e = step_over ();
+		e = step_over ();
+		var f = e.Thread.GetFrames () [0];
+		assert_location (e, "ss_recursive");
+		AssertValue (1, f.GetValue (f.Method.GetLocal ("n")));
+
+		req.Disable ();
 	}
 
 	[Test]
@@ -2072,6 +2084,18 @@ public class DebuggerTests
 		m = cl1.GetMethod ("invoke_iface");
 		v = this_obj.InvokeMethod (e.Thread, m, null);
 		AssertValue (42, v);
+
+#if NET_4_5
+		// instance
+		m = t.GetMethod ("invoke_pass_ref");
+		var task = this_obj.InvokeMethodAsync (e.Thread, m, new Value [] { vm.RootDomain.CreateString ("ABC") });
+		AssertValue ("ABC", task.Result);
+
+		// static
+		m = t.GetMethod ("invoke_static_pass_ref");
+		task = t.InvokeMethodAsync (e.Thread, m, new Value [] { vm.RootDomain.CreateString ("ABC") });
+		AssertValue ("ABC", task.Result);
+#endif
 
 		// Argument checking
 		

@@ -269,9 +269,12 @@ namespace Microsoft.Build.BuildEngine {
 
 		void AddMetadata (string name, string value)
 		{
+			var options = IsDynamic ?
+			              ParseOptions.AllowItemsMetadataAndSplit : ParseOptions.AllowItemsNoMetadataAndSplit;
+
 			if (parent_item_group != null) {
 				Expression e = new Expression ();
-				e.Parse (value, ParseOptions.AllowItemsNoMetadataAndSplit);
+				e.Parse (value, options);
 				evaluatedMetadata [name] = (string) e.ConvertTo (parent_item_group.ParentProject,
 						typeof (string), ExpressionOptions.ExpandItemRefs);
 			} else

@@ -29,7 +29,7 @@ TEST_SUPPORT_FILES = \
 	CS0506-3-lib.dll CS0507-7-lib.dll CS0507-8-lib.dll CS0534-3-lib.dll CS0534-4-lib.dll CS0534-6-lib.dll CS0571-3-lib.dll CS0571-5-lib.dll CS0571-6-lib.dll \
 	CS0612-2-lib.dll CS0618-2-lib.dll CS0619-8-lib.dll CS0619-17-lib.dll CS0619-32-lib.dll CS0619-33-lib.dll CS0619-36-lib.dll CS0619-42-lib.dll \
 	CS0619-43-lib.dll CS1546-lib.dll CS0619-51-lib.dll CS1509-module.dll CS1681-2-lib.dll \
-	CS0730-lib.dll \
+	CS0730-lib.dll CS0731-1-lib.dll CS0731-2-lib.dll \
 	CS1070-lib.dll \
 	CS1540-15-lib.dll CS1540-17-lib.dll CS1542-lib.dll CS1577-lib.dll \
 	CS1607-3-lib.dll CS1683-lib.dll CS1684-lib.dll CS1685-2-lib.dll \

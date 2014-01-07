@@ -1,8 +1,9 @@
 //
 // System.Diagnostics.DebuggerTypeProxyAttribute.cs
 //
-// Author:
+// Authors:
 //   Chris Toshok (toshok@novell.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 
 //
@@ -46,8 +47,12 @@ namespace System.Diagnostics {
 			proxy_type_name = typeName;
 		}
 
-		public DebuggerTypeProxyAttribute (Type type) {
-			proxy_type_name = type.Name;
+		public DebuggerTypeProxyAttribute (Type type)
+		{
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
+			proxy_type_name = type.AssemblyQualifiedName;
 		}
 
 		public string ProxyTypeName {

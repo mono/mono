@@ -152,5 +152,51 @@ namespace MonoTests.System.ComponentModel {
 			Assert.AreEqual (ListSortDirection.Descending, addedItem.Direction, "ADD_#2");
 			Assert.AreEqual (true, addedItem.IsSealed, "ADD_#3");
 		}
+
+		[Test]
+		public void GetEmptyCollection ()
+		{
+			var collection = SortDescriptionCollection.Empty;
+			CollectionAssert.IsEmpty (collection, "A1");
+		}
+
+		[Test]
+		[ExpectedException (typeof(NotSupportedException))]
+		public void AddToEmptyCollection ()
+		{
+			var collection = SortDescriptionCollection.Empty;
+			collection.Add (new SortDescription ());
+		}
+
+		[Test]
+		public void RemoveFromEmptyCollection ()
+		{
+			var collection = SortDescriptionCollection.Empty;
+			Assert.IsFalse (collection.Remove (new SortDescription ()), "A1");
+		}
+
+		[Test]
+		[ExpectedException (typeof(NotSupportedException))]
+		public void RemoveAtIndexFromEmptyCollection ()
+		{
+			var collection = SortDescriptionCollection.Empty;
+			collection.RemoveAt (0);
+		}
+
+		[Test]
+		[ExpectedException (typeof(NotSupportedException))]
+		public void ClearEmptyCollection ()
+		{
+			var collection = SortDescriptionCollection.Empty;
+			collection.Clear ();
+		}
+
+		[Test]
+		[ExpectedException (typeof(NotSupportedException))]
+		public void InsertIntoEmptyCollection ()
+		{
+			var collection = SortDescriptionCollection.Empty;
+			collection.Insert (0, new SortDescription ());
+		}
 	}
 }

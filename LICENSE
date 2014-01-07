@@ -64,13 +64,6 @@ For comments, corrections and updates, please contact mono@xamarin.com
 	the terms of the MIT X11, this means that this code can be
 	used for any purposes by anyone.
 
-** mono/metadata/sgen*: Mono's Copying Collector
-
-	This new garbage collector is licensed under the terms of
-	the MIT X11 license, in hopes that the GC could be reused
-	by third party projects, follows the same spirit than the
-	Boehm GC.
-
 ** mono/arch/*/XXX-codegen.h
 
 	This are C macros that are useful when generating native

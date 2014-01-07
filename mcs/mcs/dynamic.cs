@@ -450,6 +450,14 @@ namespace Mono.CSharp
 				d.PrepareEmit ();
 
 				site.AddTypeContainer (d);
+
+				//
+				// Add new container to inflated site container when the
+				// member cache already exists
+				//
+				if (site.CurrentType is InflatedTypeSpec && index > 0)
+					site.CurrentType.MemberCache.AddMember (d.CurrentType);
+
 				del_type = new TypeExpression (d.CurrentType, loc);
 				if (targs_for_instance != null) {
 					del_type_instance_access = null;

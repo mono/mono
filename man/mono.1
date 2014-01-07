@@ -265,6 +265,12 @@ instructs the Mono runtime to start debugging in server mode, where Mono
 actively waits for the debugger front end to connect to the Mono process.  
 Mono will print out to stdout the IP address and port where it is listening.
 .TP
+.I setpgid=[y/n]
+If set to yes, Mono will call \fBsetpgid(0, 0)\fB on startup, if that function
+is available on the system. This is useful for ensuring that signals delivered
+to a process that is executing the debuggee are not propagated to the debuggee,
+e.g. when Ctrl-C sends \fBSIGINT\fB to the \fBsdb\fB tool.
+.TP
 .I suspend=[y/n]
 Defaults to yes, with the default option Mono will suspend the vm on startup 
 until it connects successfully to a debugger front end.  If you set it to 'n', in 

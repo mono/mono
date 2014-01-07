@@ -69,7 +69,7 @@ namespace System.Collections.Generic {
 				AddEnumerable (collection);
 			} else {
 				_size = c.Count;
-				_items = new T [Math.Max (_size, DefaultCapacity)];
+				_items = new T [_size];
 				c.CopyTo (_items, 0);
 			}
 		}

@@ -1,0 +1,13 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+
+	<Target Name="GetFoo" Outputs="Out" Returns="Bar" />
+
+	<Target Name="Main">
+		<MSBuild Projects="TestReturns.csproj" Targets="GetFoo">
+			<Output TaskParameter="TargetOutputs" ItemName="FooResult"/>
+		</MSBuild>
+		
+		<Message Text="Result: %(FooResult.Identity)" />
+	</Target>
+
+</Project>

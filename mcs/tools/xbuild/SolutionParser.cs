@@ -118,7 +118,7 @@ namespace Mono.XBuild.CommandLine {
 
 			StreamReader reader = new StreamReader (file);
 			string slnVersion = GetSlnFileVersion (reader);
-			if (slnVersion == "11.00")
+			if (slnVersion == "11.00" || slnVersion == "12.00")
 				p.DefaultToolsVersion = "4.0";
 			else if (slnVersion == "10.00")
 				p.DefaultToolsVersion = "3.5";

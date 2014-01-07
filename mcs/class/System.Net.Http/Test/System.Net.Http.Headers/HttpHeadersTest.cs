@@ -131,6 +131,14 @@ namespace MonoTests.System.Net.Http.Headers
 		}
 
 		[Test]
+		public void TryGetValuesTest ()
+		{
+			IEnumerable<string> headerValues;
+			Assert.IsFalse (headers.TryGetValues (null, out headerValues), "#1");
+			Assert.IsFalse (headers.TryGetValues ("some-name", out headerValues), "#2");
+		}
+
+		[Test]
 		public void ToStringTest ()
 		{
 			headers.Add ("aa", "v");

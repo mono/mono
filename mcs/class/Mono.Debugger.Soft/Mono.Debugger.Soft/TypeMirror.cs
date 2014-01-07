@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using C = Mono.Cecil;
 using Mono.Cecil.Metadata;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 namespace Mono.Debugger.Soft
 {
@@ -794,6 +797,23 @@ namespace Mono.Debugger.Soft
 		public Value EndInvokeMethod (IAsyncResult asyncResult) {
 			return ObjectMirror.EndInvokeMethodInternal (asyncResult);
 		}
+
+#if NET_4_5
+		public Task<Value> InvokeMethodAsync (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
+			var tcs = new TaskCompletionSource<Value> ();
+			BeginInvokeMethod (thread, method, arguments, options, iar =>
+					{
+						try {
+							tcs.SetResult (EndInvokeMethod (iar));
+						} catch (OperationCanceledException) {
+							tcs.TrySetCanceled ();
+						} catch (Exception ex) {
+							tcs.TrySetException (ex);
+						}
+					}, null);
+			return tcs.Task;
+		}
+#endif
 
 		public Value NewInstance (ThreadMirror thread, MethodMirror method, IList<Value> arguments) {
 			return ObjectMirror.InvokeMethod (vm, thread, method, null, arguments, InvokeOptions.None);

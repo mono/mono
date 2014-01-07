@@ -13,7 +13,6 @@
 // 
 
 using System;
-using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Xml;
@@ -1546,7 +1545,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 
-#if NET_2_0
 		[Test]
 		public void TestFromEnum_Null_TypeName ()
 		{
@@ -1566,7 +1564,6 @@ namespace MonoTests.System.XmlSerialization
 			Assert.IsTrue (ex.Message.IndexOf ("AnInvalidValue") != -1, "#4");
 			Assert.IsTrue (ex.Message.IndexOf ("SomeType") != -1, "#5");
 		}
-#endif
 
 		[Test]
 		public void WriteCharacter ()
@@ -1581,7 +1578,7 @@ namespace MonoTests.System.XmlSerialization
 		[Serializable]
 		public class ToBeSerialized
 		{
-			[DefaultValue ('a')]
+			[global::System.ComponentModel.DefaultValue ('a')]
 			public char character = '\'';
 		}
 

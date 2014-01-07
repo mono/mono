@@ -36,7 +36,7 @@ using System.Collections.Generic;
 
 namespace Mono.PkgConfig
 {
-	internal interface IPcFileCacheContext<TP> where TP:PackageInfo, new()
+	public interface IPcFileCacheContext<TP> where TP:PackageInfo, new()
 	{
 		// In the implementation of this method, the host application can extract
 		// information from the pc file and store it in the PackageInfo object
@@ -50,24 +50,23 @@ namespace Mono.PkgConfig
 		void ReportError (string message, Exception ex);
 	}
 	
-	internal interface IPcFileCacheContext: IPcFileCacheContext<PackageInfo>
+	public interface IPcFileCacheContext: IPcFileCacheContext<PackageInfo>
 	{
 	}
 	
-	internal abstract class PcFileCache: PcFileCache<PackageInfo>
+	public abstract class PcFileCache: PcFileCache<PackageInfo>
 	{
 		public PcFileCache (IPcFileCacheContext ctx): base (ctx)
 		{
 		}
 	}
 	
-	internal abstract class PcFileCache<TP> where TP:PackageInfo, new()
+	public abstract class PcFileCache<TP> where TP:PackageInfo, new()
 	{
 		const string CACHE_VERSION = "2";
 		const string MacOSXExternalPkgConfigDir = "/Library/Frameworks/Mono.framework/External/pkgconfig";
 		
 		Dictionary<string, TP> infos = new Dictionary<string, TP> ();
-		Dictionary<string, List<TP>> filesByFolder = new Dictionary<string, List<TP>> ();
 		
 		string cacheFile;
 		bool hasChanges;
@@ -100,12 +99,25 @@ namespace Mono.PkgConfig
 		}
 
 		// Updates the pkg-config index, looking for .pc files in the provided directories
+		// Deletes pkg info entries, of which .pc files don't exist, from cache
 		public void Update (IEnumerable<string> pkgConfigDirs)
 		{
 			foreach (string pcdir in pkgConfigDirs) {
 				foreach (string pcfile in Directory.GetFiles (pcdir, "*.pc"))
 					GetPackageInfo (pcfile);
 			}
+
+			lock (infos) {
+				string[] keys = new string [infos.Count];
+				infos.Keys.CopyTo (keys, 0);
+				foreach (string key in keys) {
+					if (!File.Exists (key)) {
+						infos.Remove (key);
+						hasChanges = true;
+					}
+				}
+			}
+
 			Save ();
 		}
 		
@@ -118,12 +130,23 @@ namespace Mono.PkgConfig
 		{
 			if (pkgConfigDirs == null)
 				pkgConfigDirs = GetDefaultPaths ();
+			else
+				pkgConfigDirs = NormaliseAndFilterPaths (pkgConfigDirs, Environment.CurrentDirectory);
+
+			string[] keys = new string [infos.Count];
+			TP[] vals = new TP [infos.Count];
+			lock (infos) {
+				infos.Keys.CopyTo (keys, 0);
+				infos.Values.CopyTo (vals, 0);
+			}
 
 			foreach (string sp in pkgConfigDirs) {
-				List<TP> list;
-				if (filesByFolder.TryGetValue (Path.GetFullPath (sp), out list)) {
-					foreach (TP p in list)
-						yield return p;
+				int i = 0;
+				foreach (var file in keys) {
+					string dirOfFile = Path.GetFullPath (Path.GetDirectoryName (file));
+					if (dirOfFile == sp)
+						yield return vals [i];
+					i++;
 				}
 			}
 		}
@@ -144,7 +167,7 @@ namespace Mono.PkgConfig
 		// Returns information about a .pc file
 		public TP GetPackageInfo (string file)
 		{
-			TP info, oldInfo = null;
+			TP info;
 			file = Path.GetFullPath (file);
 			
 			DateTime wtime = File.GetLastWriteTime (file);
@@ -153,7 +176,6 @@ namespace Mono.PkgConfig
 				if (infos.TryGetValue (file, out info)) {
 					if (info.LastWriteTime == wtime)
 						return info;
-					oldInfo = info;
 				}
 			}
 
@@ -168,30 +190,11 @@ namespace Mono.PkgConfig
 				if (!info.IsValidPackage)
 					info = new TP (); // Create a default empty instance
 				info.LastWriteTime = wtime;
-				Add (file, info, oldInfo);
+				infos [file] = info;
 				hasChanges = true;
 			}
 			
 			return info;
-		}
-		
-		void Add (string file, TP info, TP replacedInfo)
-		{
-			infos [file] = info;
-			string dir = Path.GetFullPath (Path.GetDirectoryName (file));
-			List<TP> list;
-			if (!filesByFolder.TryGetValue (dir, out list)) {
-				list = new List<TP> ();
-				filesByFolder [dir] = list;
-			}
-			if (replacedInfo != null) {
-				int i = list.IndexOf (replacedInfo);
-				if (i != -1) {
-					list [i] = info;
-					return;
-				}
-			}
-			list.Add (info);
 		}
 		
 		FileStream OpenFile (FileAccess access)
@@ -313,8 +316,10 @@ namespace Mono.PkgConfig
 				tr.Read ();
 			tr.MoveToContent ();
 			
-			if (!pinfo.IsValidPackage || ctx.IsCustomDataComplete (file, pinfo))
-				Add (file, pinfo, null);
+			if (!pinfo.IsValidPackage || ctx.IsCustomDataComplete (file, pinfo)) {
+				lock (infos)
+					infos [file] = pinfo;
+			}
 		}
 		
 		protected virtual void ReadPackageContent (XmlReader tr, TP pinfo)
@@ -449,7 +454,7 @@ namespace Mono.PkgConfig
 		}
 	}
 
-	internal class PcFile
+	public class PcFile
 	{
 		Dictionary<string,string> variables = new Dictionary<string, string> ();
 		
@@ -575,7 +580,7 @@ namespace Mono.PkgConfig
 		}
 	}
 	
-	internal class PackageInfo
+	public class PackageInfo
 	{
 		Dictionary<string,string> customData;
 		DateTime lastWriteTime;

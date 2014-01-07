@@ -67,7 +67,7 @@ namespace Mono.CSharp
 
 		public override void FlowAnalysis (FlowAnalysisContext fc)
 		{
-			expr.FlowAnalysis (fc);
+			stmt.Expr.FlowAnalysis (fc);
 
 			stmt.RegisterResumePoint ();
 		}

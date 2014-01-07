@@ -369,7 +369,8 @@ namespace MonoTests.Microsoft.Build.Tasks
 			CheckLoggedMessageAny (testLogger, "Number: 2 Color: Red-- Items in ExampColl:  ExampColl2: Item5", "A3");
 			CheckLoggedMessageAny (testLogger, "Number: 3 Color: Green-- Items in ExampColl:  ExampColl2: Item6", "A4");
 			CheckLoggedMessageAny (testLogger, "Number: 2 Color: -- Items in ExampColl: Item2 ExampColl2: ", "A5");
-			Assert.AreEqual (0, testLogger.Count, "A6");
+			Assert.AreEqual (0, testLogger.NormalMessageCount, "A6");
+			Assert.AreEqual (0, testLogger.WarningMessageCount, "A7");
 			CheckEngineEventCounts (testLogger, 1, 1, 4, 4);
 		}
 
@@ -459,7 +460,8 @@ namespace MonoTests.Microsoft.Build.Tasks
 			CheckLoggedMessageAny (testLogger, "Identity: Item4 -- Items in ExampColl: Item4;Item4", "A5");
 			CheckLoggedMessageAny (testLogger, "Identity: Item5 -- Items in ExampColl: Item5", "A6");
 			CheckLoggedMessageAny (testLogger, "Identity: Item6 -- Items in ExampColl: Item6", "A7");
-			Assert.AreEqual (0, testLogger.Count, "A8");
+			Assert.AreEqual (0, testLogger.NormalMessageCount, "A8");
+			Assert.AreEqual (0, testLogger.WarningMessageCount, "A7");
 			CheckEngineEventCounts (testLogger, 1, 1, 6, 6);
 		}
 
