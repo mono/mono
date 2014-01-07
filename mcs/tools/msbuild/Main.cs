@@ -360,4 +360,3 @@ namespace Mono.XBuild.CommandLine {
 }
 
 #endif
-

@@ -322,7 +322,12 @@ namespace Microsoft.Build.Execution
 			get { return properties; }
 		}
 		
-		public IDictionary<string, ProjectTargetInstance> Targets {
+		#if NET_4_5
+		public
+		#else
+		internal
+		#endif
+		IDictionary<string, ProjectTargetInstance> Targets {
 			get { return targets; }
 		}
 		
