@@ -13,7 +13,7 @@ include ../../build/executable.make
 XBUILD_DIR=.
 XBUILD_FRAMEWORKS_DIR=$(mono_libdir)/mono/xbuild-frameworks/.NETFramework/
 REDISTLIST_DIR=$(XBUILD_FRAMEWORKS_DIR)/v$(FRAMEWORK_VERSION)/RedistList
-include $(XBUILD_DIR)/xbuild_targets.make
+include $(XBUILD_DIR)/xbuild_test.make
 
 install-local:	install-extras
 

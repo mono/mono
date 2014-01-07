@@ -11,10 +11,8 @@ LIB_MCS_FLAGS = \
 	/r:$(corlib)				\
 	/r:System.dll
 
-include ../../build/library.make
-
-export TESTING_MONO=a
-include $(XBUILD_DIR)/xbuild_targets.make
-
 EXTRA_DISTFILES = \
 	Mono.XBuild.Framework/AssemblyLoadInfo.cs
+
+include ../../build/library.make
+include $(XBUILD_DIR)/xbuild_test.make

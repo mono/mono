@@ -34,6 +34,5 @@ BUILT_SOURCES = $(EXPR_PARSER).cs
 
 include ../../build/library.make
 
-export TESTING_MONO=a
 XBUILD_FRAMEWORK_FOLDERS_PATH=xbuild-testing
-include $(XBUILD_DIR)/xbuild_targets.make
+include $(XBUILD_DIR)/xbuild_test.make

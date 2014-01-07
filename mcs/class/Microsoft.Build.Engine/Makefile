@@ -23,34 +23,17 @@ TEST_MCS_FLAGS = \
 EXTRA_DISTFILES = \
 	Test/resources/TestTasks.cs		\
 	Test/resources/*.*proj	\
-	Test/resources/*.csproj \
-	Test/test-config-file*
+	Test/resources/*.csproj
 
 Test/resources/TestTasks.dll: Test/resources/TestTasks.cs
 	$(CSCOMPILE) Test/resources/TestTasks.cs /r:$(XBUILD_FRAMEWORK) /r:$(XBUILD_UTILITIES) /target:library
 
-clean-local: clean-test-tasks
-
-clean-test-tasks:
+clean-test-resources:
 	rm -f Test/resources/TestTasks.dll	
-
-test-local: copy-config
-
-ifeq (net_4_0, $(PROFILE))
-copy-config:
-	cp Test/test-config-file-net-4.0 $(test_lib).config
-else
-ifeq (net_3_5, $(PROFILE))
-copy-config:
-	cp Test/test-config-file-net-3.5 $(test_lib).config
-else
-copy-config:
-endif
-endif
-
-export TESTING_MONO=a
-include $(XBUILD_DIR)/xbuild_targets.make
 
 test-local: Test/resources/TestTasks.dll
 
+clean-local: clean-test-resources
+
+include $(XBUILD_DIR)/xbuild_test.make
 include ../../build/library.make

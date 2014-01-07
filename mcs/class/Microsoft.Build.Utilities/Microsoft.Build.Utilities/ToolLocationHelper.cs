@@ -161,6 +161,9 @@ namespace Microsoft.Build.Utilities
 			if (toolsVersion != "12.0")
 				return null;
 
+			if (Environment.GetEnvironmentVariable ("TESTING_MONO") != null)
+				return Path.Combine (lib_mono_dir, "xbuild_12");
+
 			if (runningOnDotNet) {
 				//see http://msdn.microsoft.com/en-us/library/vstudio/bb397428(v=vs.120).aspx
 				var programFiles = Environment.GetFolderPath (Environment.SpecialFolder.ProgramFilesX86);

@@ -12,7 +12,6 @@ LIB_MCS_FLAGS = \
 	/r:System.dll				\
 	/r:System.Xml.dll
 
-export TESTING_MONO=a
-include $(XBUILD_DIR)/xbuild_targets.make
+include $(XBUILD_DIR)/xbuild_test.make
 
 include ../../build/library.make
