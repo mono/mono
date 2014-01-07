@@ -6,6 +6,7 @@ System/TimeZoneInfo.AdjustmentRule.cs
 System/TimeZoneInfo.cs
 System/TimeZoneInfo.TransitionTime.cs
 System/TimeZoneNotFoundException.cs
+System/Util.cs
 System.Runtime.CompilerServices/ExecutionScope.cs
 System.Runtime.CompilerServices/ExtensionAttribute.cs
 System.Runtime.CompilerServices/IStrongBox.cs
