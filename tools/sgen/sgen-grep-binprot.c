@@ -25,6 +25,10 @@ read_entry (FILE *in, void **data)
 	case SGEN_PROTOCOL_COLLECTION_FORCE: size = sizeof (SGenProtocolCollectionForce); break;
 	case SGEN_PROTOCOL_COLLECTION_BEGIN: size = sizeof (SGenProtocolCollection); break;
 	case SGEN_PROTOCOL_COLLECTION_END: size = sizeof (SGenProtocolCollection); break;
+	case SGEN_PROTOCOL_CONCURRENT_START: size = 0; break;
+	case SGEN_PROTOCOL_CONCURRENT_UPDATE_FINISH: size = 0; break;
+	case SGEN_PROTOCOL_WORLD_STOPPING: size = sizeof (SGenProtocolWorldStop); break;
+	case SGEN_PROTOCOL_WORLD_RESTARTED: size = sizeof (SGenProtocolWorldRestart); break;
 	case SGEN_PROTOCOL_ALLOC: size = sizeof (SGenProtocolAlloc); break;
 	case SGEN_PROTOCOL_ALLOC_PINNED: size = sizeof (SGenProtocolAlloc); break;
 	case SGEN_PROTOCOL_ALLOC_DEGRADED: size = sizeof (SGenProtocolAlloc); break;
@@ -84,6 +88,24 @@ print_entry (int type, void *data)
 	case SGEN_PROTOCOL_COLLECTION_END: {
 		SGenProtocolCollection *entry = data;
 		printf ("%s collection end %d generation %d\n", WORKER_PREFIX (type), entry->index, entry->generation);
+		break;
+	}
+	case SGEN_PROTOCOL_CONCURRENT_START: {
+		printf ("%s concurrent start\n", WORKER_PREFIX (type));
+		break;
+	}
+	case SGEN_PROTOCOL_CONCURRENT_UPDATE_FINISH: {
+		printf ("%s concurrent update or finish\n", WORKER_PREFIX (type));
+		break;
+	}
+	case SGEN_PROTOCOL_WORLD_STOPPING: {
+		SGenProtocolWorldStop *entry = data;
+		printf ("%s world stopping timestamp %lld\n", WORKER_PREFIX (type), entry->timestamp);
+		break;
+	}
+	case SGEN_PROTOCOL_WORLD_RESTARTED: {
+		SGenProtocolWorldRestart *entry = data;
+		printf ("%s world restarted generation %d timestamp %lld\n", WORKER_PREFIX (type), entry->generation, entry->timestamp);
 		break;
 	}
 	case SGEN_PROTOCOL_ALLOC: {
@@ -243,6 +265,10 @@ is_match (gpointer ptr, int type, void *data)
 	case SGEN_PROTOCOL_COLLECTION_FORCE:
 	case SGEN_PROTOCOL_COLLECTION_BEGIN:
 	case SGEN_PROTOCOL_COLLECTION_END:
+	case SGEN_PROTOCOL_CONCURRENT_START:
+	case SGEN_PROTOCOL_CONCURRENT_UPDATE_FINISH:
+	case SGEN_PROTOCOL_WORLD_STOPPING:
+	case SGEN_PROTOCOL_WORLD_RESTARTED:
 	case SGEN_PROTOCOL_THREAD_SUSPEND:
 	case SGEN_PROTOCOL_THREAD_RESTART:
 	case SGEN_PROTOCOL_THREAD_REGISTER:
@@ -379,8 +405,6 @@ is_vtable_match (gpointer ptr, int type, void *data)
 	}
 }
 
-static gboolean dump_all = FALSE;
-
 int
 main (int argc, char *argv[])
 {
@@ -392,12 +416,19 @@ main (int argc, char *argv[])
 	int i;
 	long nums [num_args];
 	long vtables [num_args];
+	gboolean dump_all = FALSE;
+	gboolean pause_times = FALSE;
+	gboolean pause_times_stopped = FALSE;
+	gboolean pause_times_concurrent = FALSE;
+	long long pause_times_ts = 0;
 
 	for (i = 0; i < num_args; ++i) {
 		char *arg = argv [i + 1];
 		char *next_arg = argv [i + 2];
 		if (!strcmp (arg, "--all")) {
 			dump_all = TRUE;
+		} else if (!strcmp (arg, "--pause-times")) {
+			pause_times = TRUE;
 		} else if (!strcmp (arg, "-v") || !strcmp (arg, "--vtable")) {
 			vtables [num_vtables++] = strtoul (next_arg, NULL, 16);
 			++i;
@@ -406,26 +437,59 @@ main (int argc, char *argv[])
 		}
 	}
 
+	if (dump_all)
+		assert (!pause_times);
+	if (pause_times)
+		assert (!dump_all);
+
 	while ((type = read_entry (stdin, &data)) != SGEN_PROTOCOL_EOF) {
-		gboolean match = FALSE;
-		for (i = 0; i < num_nums; ++i) {
-			if (is_match ((gpointer) nums [i], type, data)) {
-				match = TRUE;
+		if (pause_times) {
+			switch (type) {
+			case SGEN_PROTOCOL_WORLD_STOPPING: {
+				SGenProtocolWorldStop *entry = data;
+				assert (!pause_times_stopped);
+				pause_times_concurrent = FALSE;
+				pause_times_ts = entry->timestamp;
+				pause_times_stopped = TRUE;
 				break;
 			}
-		}
-		if (!match) {
-			for (i = 0; i < num_vtables; ++i) {
-				if (is_vtable_match ((gpointer) vtables [i], type, data)) {
+			case SGEN_PROTOCOL_CONCURRENT_START:
+			case SGEN_PROTOCOL_CONCURRENT_UPDATE_FINISH:
+				pause_times_concurrent = TRUE;
+				break;
+			case SGEN_PROTOCOL_WORLD_RESTARTED: {
+				SGenProtocolWorldRestart *entry = data;
+				assert (pause_times_stopped);
+				printf ("pause-time %d %d %lld %lld\n",
+						entry->generation,
+						pause_times_concurrent,
+						entry->timestamp - pause_times_ts,
+						pause_times_ts);
+				pause_times_stopped = FALSE;
+				break;
+			}
+			}
+		} else {
+			gboolean match = FALSE;
+			for (i = 0; i < num_nums; ++i) {
+				if (is_match ((gpointer) nums [i], type, data)) {
 					match = TRUE;
 					break;
 				}
 			}
+			if (!match) {
+				for (i = 0; i < num_vtables; ++i) {
+					if (is_vtable_match ((gpointer) vtables [i], type, data)) {
+						match = TRUE;
+						break;
+					}
+				}
+			}
+			if (dump_all)
+				printf (match ? "* " : "  ");
+			if (match || dump_all)
+				print_entry (type, data);
 		}
-		if (dump_all)
-			printf (match ? "* " : "  ");
-		if (match || dump_all)
-			print_entry (type, data);
 		free (data);
 	}
 
