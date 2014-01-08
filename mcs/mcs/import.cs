@@ -1150,6 +1150,10 @@ namespace Mono.CSharp
 				throw new NotImplementedException ("Unknown element type " + type.ToString ());
 			}
 
+			TypeSpec compiled_type;
+			if (compiled_types.TryGetValue (type, out compiled_type))
+				return compiled_type;
+
 			return CreateType (type, dtype, true);
 		}
 

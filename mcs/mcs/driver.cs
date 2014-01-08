@@ -328,6 +328,7 @@ namespace Mono.CSharp
 			tr.Start (TimeReporter.TimerType.CreateTypeTotal);
 			module.CreateContainer ();
 			importer.AddCompiledAssembly (assembly);
+			references_loader.CompiledAssembly = assembly;
 			tr.Stop (TimeReporter.TimerType.CreateTypeTotal);
 
 			references_loader.LoadReferences (module);
