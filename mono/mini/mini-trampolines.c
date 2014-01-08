@@ -894,10 +894,11 @@ mono_class_init_trampoline (mgreg_t *regs, guint8 *code, MonoVTable *vtable, gui
 
 	mono_runtime_class_init (vtable);
 
-	if (plt_entry) {
-		mono_arch_nullify_plt_entry (plt_entry, regs);
-	} else {
-		mono_arch_nullify_class_init_trampoline (code, regs);
+	if (vtable->initialized) {
+		if (plt_entry)
+			mono_arch_nullify_plt_entry (plt_entry, regs);
+		else
+			mono_arch_nullify_class_init_trampoline (code, regs);
 	}
 }
 
@@ -1115,13 +1116,8 @@ mono_handler_block_guard_trampoline (mgreg_t *regs, guint8 *code, gpointer *tram
 		exc = mono_thread_resume_interruption ();
 
 	if (exc) {
-		static void (*restore_context) (MonoContext *);
-
-		if (!restore_context)
-			restore_context = mono_get_restore_context ();
-
 		mono_handle_exception (&ctx, exc);
-		restore_context (&ctx);
+		mono_restore_context (&ctx);
 	}
 
 	return resume_ip;

@@ -64,6 +64,7 @@ namespace System.Threading
 				LocalDataStoreSlot slot;
 				if (!datastorehash.TryGetValue (name, out slot)) {
 					slot = new LocalDataStoreSlot (true);
+					datastorehash.Add (name, slot);
 				}
 			
 				return slot;

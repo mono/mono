@@ -259,9 +259,8 @@ namespace Microsoft.Build.Evaluation
 			AddToolset (new Toolset ("4.0",
 				ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version40), this, null));
 #endif
-#if NET_4_5
-			AddToolset (new Toolset ("12.0",
-				ToolLocationHelper.GetMSBuildInstallPath ("12.0"), this, ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version40)));
+#if XBUILD_12
+			AddToolset (new Toolset ("12.0", ToolLocationHelper.GetPathToBuildTools ("12.0"), this, null));
 #endif
 			default_tools_version = toolsets.First ().ToolsVersion;
 		}

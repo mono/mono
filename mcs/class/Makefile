@@ -88,10 +88,6 @@ common_dirs := \
 	SystemWebTestShim
 
 net_2_0_dirs := \
-	Microsoft.Build.Framework	\
-	Microsoft.Build.Utilities	\
-	Microsoft.Build.Engine		\
-	Microsoft.Build.Tasks		\
 	System.Xml.Linq			\
 	System.Runtime.Serialization	\
 	System.Data.DataSetExtensions	\
@@ -114,7 +110,6 @@ net_2_0_dirs := \
 	Mono.Tasklets       		\
 	System.Dynamic			\
 	Mono.CSharp			\
-	Moonlight.Build.Tasks		\
 	System.Net				\
 	System.Json
 
@@ -169,16 +164,9 @@ monodroid_dirs := \
 monotouch_runtime_dirs := \
 	corlib
 
-net_3_5_only_dirs := \
-	Microsoft.Build.Framework	\
-	Microsoft.Build.Utilities	\
-	Microsoft.Build.Engine		\
-	Microsoft.Build.Tasks
-
 net_4_0_dirs := \
 	System.Numerics		\
 	Microsoft.CSharp	\
-	Microsoft.Build		\
 	System.Windows.Forms.DataVisualization	\
 	System.Xaml \
 	WindowsBase \
@@ -233,22 +221,34 @@ net_4_5_dirs := \
 	System.Windows \
 	System.Xml.Serialization \
 	$(pcl_facade_dirs)
-	
-net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) aot-compiler
+
+xbuild_2_0_dirs := \
+	Microsoft.Build.Framework	\
+	Microsoft.Build.Utilities	\
+	Microsoft.Build.Engine		\
+	Mono.XBuild.Tasks		\
+	Microsoft.Build.Tasks
+
+xbuild_4_0_dirs := \
+	$(xbuild_2_0_dirs)	\
+	Microsoft.Build
+
+net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(xbuild_2_0_dirs) aot-compiler
 monodroid_SUBDIRS := $(mobile_dirs) $(monodroid_dirs)
 monotouch_SUBDIRS := $(mobile_dirs)
 monotouch_runtime_SUBDIRS := $(monotouch_runtime_dirs)
 mobile_static_SUBDIRS := $(mobile_dirs)
 mobile_SUBDIRS := $(mobile_dirs)
-net_3_5_SUBDIRS := $(net_3_5_only_dirs)
-net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs)
-net_4_5_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_5_dirs) aot-compiler
+net_3_5_SUBDIRS := $(xbuild_2_0_dirs)
+net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs) $(xbuild_4_0_dirs)
+net_4_5_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_5_dirs) $(xbuild_4_0_dirs) aot-compiler
+xbuild_12_SUBDIRS := $(xbuild_4_0_dirs)
 
 include ../build/rules.make
 
-SUBDIRS = $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(net_3_5_only_dirs) $(mobile_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs) $(net_4_5_dirs)
+SUBDIRS = $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(mobile_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs) $(net_4_5_dirs)
 
-DIST_ONLY_SUBDIRS = dlr aot-compiler
+DIST_ONLY_SUBDIRS = dlr aot-compiler $(xbuild_dirs)
 
 # No new makefiles for: System.Messaging, System.Web.Mobile,
 # System.ServiceProcess

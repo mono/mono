@@ -701,11 +701,15 @@ mono_arch_get_argument_info (MonoGenericSharingContext *gsctx, MonoMethodSignatu
 }
 
 gboolean
-mono_arch_tail_call_supported (MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
+mono_arch_tail_call_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
 	MonoType *callee_ret;
 	CallInfo *c1, *c2;
 	gboolean res;
+
+	if (cfg->compile_aot && !cfg->full_aot)
+		/* OP_TAILCALL doesn't work with AOT */
+		return FALSE;
 
 	c1 = get_call_info (NULL, NULL, caller_sig);
 	c2 = get_call_info (NULL, NULL, callee_sig);
@@ -1058,6 +1062,11 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 
 	cfg->frame_reg = X86_EBP;
 	offset = 0;
+
+	if (cfg->has_atomic_add_new_i4 || cfg->has_atomic_exchange_i4) {
+		/* The opcode implementations use callee-saved regs as scratch regs by pushing and pop-ing them, but that is not async safe */
+		cfg->used_int_regs |= (1 << X86_EBX) | (1 << X86_EDI) | (1 << X86_ESI);
+	}
 
 	/* Reserve space to save LMF and caller saved registers */
 
@@ -4362,6 +4371,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_ATOMIC_ADD_NEW_I4: {
 			int dreg = ins->dreg;
 
+			g_assert (cfg->has_atomic_add_new_i4);
+
 			/* hack: limit in regalloc, dreg != sreg1 && dreg != sreg2 */
 			if (ins->sreg2 == dreg) {
 				if (dreg == X86_EBX) {
@@ -4406,6 +4417,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			guchar *br[2];
 			int sreg2 = ins->sreg2;
 			int breg = ins->inst_basereg;
+
+			g_assert (cfg->has_atomic_exchange_i4);
 
 			/* cmpxchg uses eax as comperand, need to make sure we can use it
 			 * hack to overcome limits in x86 reg allocator 

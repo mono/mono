@@ -2601,6 +2601,8 @@ enum_declaration
 	  }
 	  opt_enum_member_declarations
 	  {
+		lexer.parsing_modifiers = true;
+	  
 	  	// here will be evaluated after CLOSE_BLACE is consumed.
 		if (doc_support)
 			Lexer.doc_state = XmlCommentState.Allowed;

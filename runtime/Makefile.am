@@ -41,7 +41,7 @@ al_profile = net_4_0
 endif
 
 if INSTALL_4_5
-build_profiles += net_4_5
+build_profiles += net_4_5 xbuild_12
 al_profile = net_4_5
 endif
 

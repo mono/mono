@@ -9935,8 +9935,8 @@ namespace Mono.CSharp
 		{
 			base.Emit (ec);
 
-			var context_type = ec.CurrentType;
-			if (context_type.IsStruct) {
+			if (type == ec.Module.Compiler.BuiltinTypes.ValueType) {
+				var context_type = ec.CurrentType;
 				ec.Emit (OpCodes.Ldobj, context_type);
 				ec.Emit (OpCodes.Box, context_type);
 			}

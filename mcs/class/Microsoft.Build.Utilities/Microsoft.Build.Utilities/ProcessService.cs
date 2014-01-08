@@ -117,6 +117,7 @@ namespace Microsoft.Build.Utilities
 			startInfo.RedirectStandardError = true;
 			startInfo.RedirectStandardInput = redirectStandardInput;
 			startInfo.UseShellExecute = false;
+			startInfo.CreateNoWindow = true;
 
 			return startInfo;
 		}

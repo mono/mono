@@ -45,6 +45,10 @@ bin_SCRIPTS += $(scripts_4_0)
 bin_SCRIPTS += dmcs
 endif
 
+if INSTALL_4_5
+bin_SCRIPTS += xbuild
+endif
+
 scripts_4_0_umask = \
 	makecert$(SCRIPT_SUFFIX)		\
 	sn$(SCRIPT_SUFFIX)
@@ -96,7 +100,6 @@ scripts_4_0 = \
 	sqlmetal$(SCRIPT_SUFFIX)		\
 	sqlsharp$(SCRIPT_SUFFIX)		\
 	svcutil$(SCRIPT_SUFFIX)			\
-	xbuild$(SCRIPT_SUFFIX)			\
 	ccrewrite$(SCRIPT_SUFFIX)		\
 	cccheck$(SCRIPT_SUFFIX)			\
 	mdbrebase$(SCRIPT_SUFFIX)
@@ -149,6 +152,7 @@ EXTRA_DIST =			\
 	mono-find-provides.in	\
 	mono-find-requires.in	\
 	peverify.in			\
+	xbuild.in			\
 	update_submodules		\
 	mcs.in				\
 	gmcs.in				\
@@ -238,6 +242,10 @@ nunit-console2$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
 
 nunit-console4$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
 	$(REWRITE4_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
+	mv -f $@.tmp $@
+
+xbuild: xbuild.in Makefile
+	$(REWRITE_COMMON) $(srcdir)/xbuild.in > $@.tmp
 	mv -f $@.tmp $@
 
 #FIXME: this is not the correct rule for mod.bat.

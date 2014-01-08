@@ -2201,7 +2201,7 @@ namespace Mono.CSharp {
 				target = TypeManager.GetTypeArguments (target_type) [0];
 				e = ExplicitConversionCore (ec, expr, target, loc);
 				if (e != null)
-					return Nullable.Wrap.Create (e, target_type);
+					return TypeSpec.IsReferenceType (expr.Type) ? new UnboxCast (expr, target_type) : Nullable.Wrap.Create (e, target_type);
 			} else if (expr_type.IsNullableType) {
 				e = ImplicitBoxingConversion (expr, Nullable.NullableInfo.GetUnderlyingType (expr_type), target_type);
 				if (e != null)

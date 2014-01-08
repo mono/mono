@@ -1,5 +1,6 @@
 ../../build/common/Consts.cs
 ../../build/common/MonoTODOAttribute.cs
+../../tools/xbuild/XBuildConsts.cs
 Assembly/AssemblyInfo.cs
 ../Microsoft.Build.Framework/Mono.XBuild.Framework/AssemblyLoadInfo.cs
 ../Microsoft.Build.Utilities/Mono.XBuild.Utilities/MSBuildUtils.cs

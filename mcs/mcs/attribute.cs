@@ -1665,6 +1665,7 @@ namespace Mono.CSharp {
 		public readonly PredefinedAttribute UnmanagedFunctionPointer;
 		public readonly PredefinedDebuggerBrowsableAttribute DebuggerBrowsable;
 		public readonly PredefinedAttribute DebuggerStepThrough;
+		public readonly PredefinedDebuggableAttribute Debuggable;
 
 		// New in .NET 3.5
 		public readonly PredefinedAttribute Extension;
@@ -1732,6 +1733,7 @@ namespace Mono.CSharp {
 			UnmanagedFunctionPointer = new PredefinedAttribute (module, "System.Runtime.InteropServices", "UnmanagedFunctionPointerAttribute");
 			DebuggerBrowsable = new PredefinedDebuggerBrowsableAttribute (module, "System.Diagnostics", "DebuggerBrowsableAttribute");
 			DebuggerStepThrough = new PredefinedAttribute (module, "System.Diagnostics", "DebuggerStepThroughAttribute");
+			Debuggable = new PredefinedDebuggableAttribute (module, "System.Diagnostics", "DebuggableAttribute");
 
 			Extension = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "ExtensionAttribute");
 
@@ -1886,6 +1888,40 @@ namespace Mono.CSharp {
 
 			AttributeEncoder encoder = new AttributeEncoder ();
 			encoder.Encode ((int) state);
+			encoder.EncodeEmptyNamedArguments ();
+
+			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
+		}
+	}
+
+	public class PredefinedDebuggableAttribute : PredefinedAttribute
+	{
+		public PredefinedDebuggableAttribute (ModuleContainer module, string ns, string name)
+			: base (module, ns, name)
+		{
+		}
+
+		public void EmitAttribute (AssemblyBuilder builder, System.Diagnostics.DebuggableAttribute.DebuggingModes modes)
+		{
+			var atype = module.PredefinedAttributes.Debuggable;
+			if (!atype.Define ())
+				return;
+
+			MethodSpec ctor = null;
+			foreach (MethodSpec m in MemberCache.FindMembers (atype.TypeSpec, CSharp.Constructor.ConstructorName, true)) {
+				if (m.Parameters.Count != 1)
+					continue;
+
+				if (m.Parameters.Types[0].Kind == MemberKind.Enum) {
+					ctor = m;
+				}
+			}
+
+			if (ctor == null)
+				return;
+
+			AttributeEncoder encoder = new AttributeEncoder ();
+			encoder.Encode ((int) modes);
 			encoder.EncodeEmptyNamedArguments ();
 
 			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());

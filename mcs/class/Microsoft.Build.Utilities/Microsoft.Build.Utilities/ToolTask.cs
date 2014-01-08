@@ -298,6 +298,7 @@ namespace Microsoft.Build.Utilities
 
 			pinfo.WorkingDirectory = GetWorkingDirectory () ?? Environment.CurrentDirectory;
 			pinfo.UseShellExecute = false;
+			pinfo.CreateNoWindow = true;
 			pinfo.RedirectStandardOutput = true;
 			pinfo.RedirectStandardError = true;
 

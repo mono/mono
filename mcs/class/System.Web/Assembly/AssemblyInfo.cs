@@ -49,9 +49,9 @@ using System.Web.UI;
 #if !NET_4_0
 [assembly: AssemblyConfiguration("Development version")]
 #endif
-[assembly: AssemblyCompany("MONO development team")]
-[assembly: AssemblyProduct("MONO CLI")]
-[assembly: AssemblyCopyright("(c) 2003 Various Authors")]
+[assembly: AssemblyCompany (Consts.MonoCompany)]
+[assembly: AssemblyProduct (Consts.MonoProduct)]
+[assembly: AssemblyCopyright (Consts.MonoCopyright)]
 #if !NET_4_0
 [assembly: AssemblyTrademark("")]
 #endif
@@ -72,12 +72,9 @@ using System.Web.UI;
 [assembly: AssemblyKeyFile("../msfinal.pub")]
 
 #if NET_4_0
-[assembly: Debuggable (true, false)]
 [assembly: AssemblyFileVersion (Consts.FxVersion)]
-[assembly: AssemblyTargetedPatchBand ("1.0.21-0")]
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
 [assembly: Dependency ("System", LoadHint.Always)]
-[assembly: TypeLibVersion (4, 2)]
 [assembly: SecurityRules (SecurityRuleSet.Level2, SkipVerificationInFullTrust=true)]
 
 [assembly: TypeForwardedTo (typeof (System.Web.Security.MembershipPasswordException))]

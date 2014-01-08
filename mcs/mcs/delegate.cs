@@ -681,6 +681,25 @@ namespace Mono.CSharp {
 
 			return false;
 		}
+		
+		bool HasMvar ()
+		{
+			if (ContainsMethodTypeParameter (type))
+				return false;
+
+			var best = method_group.BestCandidate;
+			if (ContainsMethodTypeParameter (best.DeclaringType))
+				return false;
+
+			if (best.TypeArguments != null) {
+				foreach (var ta in best.TypeArguments) {
+					if (ContainsMethodTypeParameter (ta))
+						return false;
+				}
+			}
+
+			return true;
+		}
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
@@ -700,10 +719,7 @@ namespace Mono.CSharp {
 			//
 			// Cannot easily cache types with MVAR
 			//
-			if (ContainsMethodTypeParameter (type))
-				return expr;
-
-			if (ContainsMethodTypeParameter (method_group.BestCandidate.DeclaringType))
+			if (!HasMvar ())
 				return expr;
 
 			//

@@ -69,6 +69,7 @@ static guint32 mono_field_resolve_flags (MonoClassField *field);
 static void mono_class_setup_vtable_full (MonoClass *class, GList *in_setup);
 static void mono_generic_class_setup_parent (MonoClass *klass, MonoClass *gklass);
 
+static gboolean mono_class_implement_interface_slow (MonoClass *target, MonoClass *candidate);
 
 void (*mono_debugger_class_init_func) (MonoClass *klass) = NULL;
 
@@ -6646,6 +6647,9 @@ mono_class_data_size (MonoClass *klass)
 {	
 	if (!klass->inited)
 		mono_class_init (klass);
+	/* This can happen with dynamically created types */
+	if (!klass->fields_inited)
+		mono_class_setup_fields_locking (klass);
 
 	/* in arrays, sizes.class_size is unioned with element_size
 	 * and arrays have no static fields
@@ -7829,13 +7833,6 @@ mono_gparam_is_assignable_from (MonoClass *target, MonoClass *candidate)
 gboolean
 mono_class_is_assignable_from (MonoClass *klass, MonoClass *oklass)
 {
-	/*FIXME this will cause a lot of irrelevant stuff to be loaded.*/
-	if (!klass->inited)
-		mono_class_init (klass);
-
-	if (!oklass->inited)
-		mono_class_init (oklass);
-
 	if (klass->exception_type || oklass->exception_type)
 		return FALSE;
 
@@ -7868,9 +7865,14 @@ mono_class_is_assignable_from (MonoClass *klass, MonoClass *oklass)
 			 * interface_offsets set.
 			 */
  			return mono_reflection_call_is_assignable_to (oklass, klass);
-		if (!oklass->interface_bitmap)
-			/* Happens with generic instances of not-yet created dynamic types */
-			return FALSE;
+
+		/* When either the interface offset or the iid was not setup.
+		   FIXME we should just lazy init that part of those 2 types, right now this doesn't
+			work because setup_interface_offsets aborts when doing this for corlib.
+		*/
+		if (!oklass->interface_bitmap || !klass->interface_id)
+			return mono_class_implement_interface_slow (klass, oklass);
+
 		if (MONO_CLASS_IMPLEMENTS_INTERFACE (oklass, klass->interface_id))
 			return TRUE;
 
@@ -8012,6 +8014,10 @@ mono_class_implement_interface_slow (MonoClass *target, MonoClass *candidate)
 			}
 		} else {
 			/*setup_interfaces don't mono_class_init anything*/
+			/*FIXME this doesn't handle primitive type arrays.
+			ICollection<sbyte> x byte [] won't work because candidate->interfaces, for byte[], won't have IList<sbyte>.
+			A possible way to fix this would be to move that to setup_interfaces from setup_interface_offsets.
+			*/
 			mono_class_setup_interfaces (candidate, &error);
 			if (!mono_error_ok (&error)) {
 				mono_error_cleanup (&error);
@@ -8057,7 +8063,34 @@ mono_class_is_assignable_from_slow (MonoClass *target, MonoClass *candidate)
  	if (target->delegate && mono_class_has_variant_generic_params (target))
 		return mono_class_is_variant_compatible (target, candidate, FALSE);
 
-	/*FIXME properly handle nullables and arrays */
+	if (target->rank) {
+		MonoClass *eclass, *eoclass;
+
+		if (target->rank != candidate->rank)
+			return FALSE;
+
+		/* vectors vs. one dimensional arrays */
+		if (target->byval_arg.type != candidate->byval_arg.type)
+			return FALSE;
+
+		eclass = target->cast_class;
+		eoclass = candidate->cast_class;
+
+		/*
+		 * a is b does not imply a[] is b[] when a is a valuetype, and
+		 * b is a reference type.
+		 */
+
+		if (eoclass->valuetype) {
+			if ((eclass == mono_defaults.enum_class) ||
+				(eclass == mono_defaults.enum_class->parent) ||
+				(eclass == mono_defaults.object_class))
+				return FALSE;
+		}
+
+		return mono_class_is_assignable_from_slow (target->cast_class, candidate->cast_class);
+	}
+	/*FIXME properly handle nullables */
 	/*FIXME properly handle (M)VAR */
 	return FALSE;
 }

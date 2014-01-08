@@ -4692,16 +4692,51 @@ emit_and_reloc_code (MonoAotCompile *acfg, MonoMethod *method, guint8 *code, gui
 /*
  * sanitize_symbol:
  *
- *   Modify SYMBOL so it only includes characters permissible in symbols.
+ *   Return a modified version of S which only includes characters permissible in symbols.
  */
-static void
-sanitize_symbol (char *symbol)
+static char*
+sanitize_symbol (MonoAotCompile *acfg, char *s)
 {
-	int i, len = strlen (symbol);
+	gboolean process = FALSE;
+	int i, len;
+	GString *gs;
+	char *res;
 
+	if (!s)
+		return s;
+
+	len = strlen (s);
 	for (i = 0; i < len; ++i)
-		if (!isalnum (symbol [i]) && (symbol [i] != '_'))
-			symbol [i] = '_';
+		if (!(s [i] <= 0x7f && (isalnum (s [i]) || s [i] == '_')))
+			process = TRUE;
+	if (!process)
+		return s;
+
+	gs = g_string_sized_new (len);
+	for (i = 0; i < len; ++i) {
+		guint8 c = s [i];
+		if (c <= 0x7f && (isalnum (c) || c == '_')) {
+			g_string_append_c (gs, c);
+		} else if (c > 0x7f) {
+			/* multi-byte utf8 */
+			g_string_append_printf (gs, "_0x%x", c);
+			i ++;
+			c = s [i];
+			while (c >> 6 == 0x2) {
+				g_string_append_printf (gs, "%x", c);
+				i ++;
+				c = s [i];
+			}
+			g_string_append_printf (gs, "_");
+			i --;
+		} else {
+			g_string_append_c (gs, '_');
+		}
+	}
+
+	res = mono_mempool_strdup (acfg->mempool, gs->str);
+	g_string_free (gs, TRUE);
+	return res;
 }
 
 static char*
@@ -5528,6 +5563,7 @@ static char*
 get_plt_entry_debug_sym (MonoAotCompile *acfg, MonoJumpInfo *ji, GHashTable *cache)
 {
 	char *debug_sym = NULL;
+	char *s;
 
 	switch (ji->type) {
 	case MONO_PATCH_INFO_METHOD:
@@ -5537,8 +5573,9 @@ get_plt_entry_debug_sym (MonoAotCompile *acfg, MonoJumpInfo *ji, GHashTable *cac
 		debug_sym = g_strdup_printf ("plt__jit_icall_%s", ji->data.name);
 		break;
 	case MONO_PATCH_INFO_CLASS_INIT:
-		debug_sym = g_strdup_printf ("plt__class_init_%s", mono_type_get_name (&ji->data.klass->byval_arg));
-		sanitize_symbol (debug_sym);
+		s = mono_type_get_name (&ji->data.klass->byval_arg);
+		debug_sym = g_strdup_printf ("plt__class_init_%s", s);
+		g_free (s);
 		break;
 	case MONO_PATCH_INFO_RGCTX_FETCH:
 		debug_sym = g_strdup_printf ("plt__rgctx_fetch_%d", acfg->label_generator ++);
@@ -5560,7 +5597,7 @@ get_plt_entry_debug_sym (MonoAotCompile *acfg, MonoJumpInfo *ji, GHashTable *cac
 		break;
 	}
 
-	return debug_sym;
+	return sanitize_symbol (acfg, debug_sym);
 }
 
 /*
@@ -6444,7 +6481,7 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 	 * the runtime will not see AOT methods during AOT compilation,so it
 	 * does not need to support them by creating a fake GOT etc.
 	 */
-	cfg = mini_method_compile (method, acfg->opts, mono_get_root_domain (), FALSE, TRUE, 0);
+	cfg = mini_method_compile (method, acfg->opts, mono_get_root_domain (), acfg->aot_opts.full_aot ? (JIT_FLAG_AOT|JIT_FLAG_FULL_AOT) : (JIT_FLAG_AOT), 0);
 	mono_loader_clear_error ();
 
 	if (cfg->exception_type == MONO_EXCEPTION_GENERIC_SHARING_FAILED) {
@@ -8383,7 +8420,7 @@ compile_asm (MonoAotCompile *acfg)
 #elif defined(sparc) && SIZEOF_VOID_P == 8
 #define AS_OPTIONS "-xarch=v9"
 #elif defined(TARGET_X86) && defined(TARGET_MACH) && !defined(__native_client_codegen__)
-#define AS_OPTIONS "-arch i386 -W"
+#define AS_OPTIONS "-arch i386"
 #else
 #define AS_OPTIONS ""
 #endif

@@ -36,7 +36,7 @@ using System.Collections.Generic;
 
 namespace Mono.PkgConfig
 {
-	internal class LibraryPcFileCache: PcFileCache<LibraryPackageInfo>
+	public class LibraryPcFileCache: PcFileCache<LibraryPackageInfo>
 	{
 		Dictionary<string, PackageAssemblyInfo> assemblyLocations;
 		
@@ -251,7 +251,7 @@ namespace Mono.PkgConfig
 		}
 	}
 	
-	internal class LibraryPackageInfo: PackageInfo
+	public class LibraryPackageInfo: PackageInfo
 	{
 		public bool IsGacPackage {
 			get { return GetData ("gacPackage") != "false"; }
@@ -270,7 +270,7 @@ namespace Mono.PkgConfig
 		}
 	}
 	
-	internal class PackageAssemblyInfo
+	public class PackageAssemblyInfo
 	{
 		public string File { get; set; }
 		

@@ -2085,6 +2085,18 @@ public class DebuggerTests
 		v = this_obj.InvokeMethod (e.Thread, m, null);
 		AssertValue (42, v);
 
+#if NET_4_5
+		// instance
+		m = t.GetMethod ("invoke_pass_ref");
+		var task = this_obj.InvokeMethodAsync (e.Thread, m, new Value [] { vm.RootDomain.CreateString ("ABC") });
+		AssertValue ("ABC", task.Result);
+
+		// static
+		m = t.GetMethod ("invoke_static_pass_ref");
+		task = t.InvokeMethodAsync (e.Thread, m, new Value [] { vm.RootDomain.CreateString ("ABC") });
+		AssertValue ("ABC", task.Result);
+#endif
+
 		// Argument checking
 		
 		// null thread
