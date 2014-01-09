@@ -108,6 +108,10 @@ namespace System.Net
 		static extern void monotouch_start_wwan (string uri);
 #endif
 
+		internal ChunkStream ChunkStream {
+			get { return chunkStream; }
+		}
+
 		public WebConnection (WebConnectionGroup group, ServicePoint sPoint)
 		{
 			this.sPoint = sPoint;

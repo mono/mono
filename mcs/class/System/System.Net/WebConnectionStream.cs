@@ -208,11 +208,18 @@ namespace System.Net
 				cnc.NextRead ();
 			}
 		}
-		
+
 		internal void CheckComplete ()
 		{
-			bool nrc = nextReadCalled;
-			if (!nrc && readBufferSize - readBufferOffset == contentLength) {
+			var nrc = nextReadCalled;
+			var cstr = cnc.ChunkStream;
+
+			if (nrc)
+				return;
+			if (readBufferSize - readBufferOffset == contentLength) {
+				nextReadCalled = true;
+				cnc.NextRead ();
+			} else if (cstr != null && cstr.TotalDataSize == contentLength) {
 				nextReadCalled = true;
 				cnc.NextRead ();
 			}
