@@ -15,7 +15,9 @@
 
 using System.Diagnostics;
 using System.Reflection;
+#if FEATURE_REFEMIT
 using System.Reflection.Emit;
+#endif
 using System.Text;
 
 namespace System.Dynamic.Utils {
@@ -28,13 +30,12 @@ namespace System.Dynamic.Utils {
         /// </summary>
         internal static Delegate CreateDelegate(this MethodInfo methodInfo, Type delegateType, object target) {
             Debug.Assert(methodInfo != null && delegateType != null);
-
+#if FEATURE_REFEMIT
             var dm = methodInfo as DynamicMethod;
-            if (dm != null) {
+            if (dm != null)
                 return dm.CreateDelegate(delegateType, target);
-            } else {
-                return Delegate.CreateDelegate(delegateType, target, methodInfo);
-            }
+#endif
+            return Delegate.CreateDelegate(delegateType, target, methodInfo);
         }
 
         internal static Type GetReturnType(this MethodBase mi) {
