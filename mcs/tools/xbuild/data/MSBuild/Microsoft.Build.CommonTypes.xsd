@@ -4,7 +4,7 @@ elementFormDefault="qualified">
 
     <!-- =================== INCLUDE COMMON SCHEMA =========================== -->
     <xs:include schemaLocation="Microsoft.Build.Core.xsd"/>
-    
+
     <!-- ======================== ITEMS =====================================-->
     <!-- Possible Types include SimpleItemType (no meta-data subelements), GenericItemType (any meta-data), or something more specific.-->
     <xs:element name="Reference" substitutionGroup="msb:Item">
@@ -30,7 +30,7 @@ elementFormDefault="qualified">
                                 <xs:annotation>
                                     <xs:documentation>Fusion name of the assembly (optional)</xs:documentation>
                                 </xs:annotation>
-                            </xs:element>                            
+                            </xs:element>
                             <xs:element name="SpecificVersion">
                                 <xs:annotation>
                                     <xs:documentation>Whether only the version in the fusion name should be referenced (optional, boolean)</xs:documentation>
@@ -45,7 +45,7 @@ elementFormDefault="qualified">
                                 <xs:annotation>
                                     <xs:documentation>Whether the reference should be copied to the output folder (optional, boolean)</xs:documentation>
                                 </xs:annotation>
-                            </xs:element>                                
+                            </xs:element>
                         </xs:choice>
                     </xs:sequence>
                     <!-- redefine Include just to give a specific description -->
@@ -142,7 +142,7 @@ elementFormDefault="qualified">
                         <xs:annotation>
                             <xs:documentation>Path to native reference</xs:documentation>
                         </xs:annotation>
-                    </xs:attribute>                    
+                    </xs:attribute>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -165,7 +165,7 @@ elementFormDefault="qualified">
                                 <xs:annotation>
                                     <xs:documentation>Project GUID, in the form {00000000-0000-0000-0000-000000000000}</xs:documentation>
                                 </xs:annotation>
-                            </xs:element>                                
+                            </xs:element>
                             <xs:element name="Package"/>
                         </xs:choice>
                     </xs:sequence>
@@ -178,15 +178,15 @@ elementFormDefault="qualified">
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
-    </xs:element>    
+    </xs:element>
     <xs:element name="Compile" substitutionGroup="msb:Item">
         <xs:annotation>
             <xs:documentation>Source files for compiler</xs:documentation>
-        </xs:annotation>        
-        <xs:complexType>           
+        </xs:annotation>
+        <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="msb:SimpleItemType">
-                    <xs:sequence minOccurs="0" maxOccurs="unbounded">                       
+                    <xs:sequence minOccurs="0" maxOccurs="unbounded">
                         <xs:choice>
                             <xs:element name="SubType"/>
                             <xs:element name="DependentUpon"/>
@@ -194,7 +194,7 @@ elementFormDefault="qualified">
                                 <xs:annotation>
                                     <xs:documentation>Whether file was generated from another file (boolean)</xs:documentation>
                                 </xs:annotation>
-                            </xs:element>                                 
+                            </xs:element>
                             <xs:element name="DesignTime"/>
                             <xs:element name="Link">
                                 <xs:annotation>
@@ -206,7 +206,7 @@ elementFormDefault="qualified">
                                 <xs:annotation>
                                     <xs:documentation>Display in user interface (optional, boolean)</xs:documentation>
                                 </xs:annotation>
-                            </xs:element>                                
+                            </xs:element>
                         </xs:choice>
                     </xs:sequence>
                     <!-- redefine Include just to give a specific description -->
@@ -214,7 +214,7 @@ elementFormDefault="qualified">
                         <xs:annotation>
                             <xs:documentation>Semi-colon separated list of source files (wildcards are allowed)</xs:documentation>
                         </xs:annotation>
-                    </xs:attribute>                    
+                    </xs:attribute>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -222,7 +222,7 @@ elementFormDefault="qualified">
     <xs:element name="EmbeddedResource" substitutionGroup="msb:Item">
         <xs:annotation>
             <xs:documentation>Resources to be embedded in the generated assembly</xs:documentation>
-        </xs:annotation>        
+        </xs:annotation>
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="msb:SimpleItemType">
@@ -233,27 +233,27 @@ elementFormDefault="qualified">
                                 <xs:annotation>
                                     <xs:documentation>Name of any file generator that is run on this item</xs:documentation>
                                 </xs:annotation>
-                            </xs:element>                               
+                            </xs:element>
                             <xs:element name="LastGenOutput">
                                 <xs:annotation>
                                     <xs:documentation>File that was created by any file generator that was run on this item</xs:documentation>
                                 </xs:annotation>
-                            </xs:element>                                 
+                            </xs:element>
                             <xs:element name="CustomToolNamespace">
                                 <xs:annotation>
                                     <xs:documentation>Namespace into which any file generator that is run on this item should create code</xs:documentation>
                                 </xs:annotation>
-                            </xs:element>                                
+                            </xs:element>
                             <xs:element name="Link">
                                 <xs:annotation>
                                     <xs:documentation>Notional path within project to display if the file is physically located outside of the project file's cone (optional)</xs:documentation>
                                 </xs:annotation>
-                            </xs:element>                                
+                            </xs:element>
                             <xs:element name="InProject">
                                 <xs:annotation>
                                     <xs:documentation>Display in user interface (optional, boolean)</xs:documentation>
                                 </xs:annotation>
-                            </xs:element>                                
+                            </xs:element>
                             <xs:element name="SubType"/>
                         </xs:choice>
                     </xs:sequence>
@@ -262,7 +262,7 @@ elementFormDefault="qualified">
                         <xs:annotation>
                             <xs:documentation>Semi-colon separated list of resource files (wildcards are allowed)</xs:documentation>
                         </xs:annotation>
-                    </xs:attribute>                    
+                    </xs:attribute>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
@@ -281,14 +281,14 @@ elementFormDefault="qualified">
                                 <xs:annotation>
                                     <xs:documentation>Name of any file generator that is run on this item</xs:documentation>
                                 </xs:annotation>
-                            </xs:element>                                  
+                            </xs:element>
                             <xs:element name="LastGenOutput"/>
                             <xs:element name="CustomToolNamespace"/>
                             <xs:element name="Link">
                                 <xs:annotation>
                                     <xs:documentation>Notional path within project to display if the file is physically located outside of the project file's cone (optional)</xs:documentation>
                                 </xs:annotation>
-                            </xs:element>                                
+                            </xs:element>
                             <xs:element name="Group"/>
                             <xs:element name="PublishState">
                             <xs:annotation>
@@ -306,7 +306,7 @@ elementFormDefault="qualified">
                                 <xs:annotation>
                                     <xs:documentation>Copy file to output directory (optional, boolean, default false)</xs:documentation>
                                 </xs:annotation>
-                            </xs:element>                                    
+                            </xs:element>
                         </xs:choice>
                     </xs:sequence>
                     <!-- redefine Include just to give a specific description -->
@@ -318,7 +318,7 @@ elementFormDefault="qualified">
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
-    </xs:element>    
+    </xs:element>
     <xs:element name="None" substitutionGroup="msb:Item">
         <xs:annotation>
             <xs:documentation>Files that should have no role in the build process</xs:documentation>
@@ -334,19 +334,19 @@ elementFormDefault="qualified">
                                 <xs:annotation>
                                     <xs:documentation>Name of any file generator that is run on this item</xs:documentation>
                                 </xs:annotation>
-                            </xs:element>                                  
+                            </xs:element>
                             <xs:element name="LastGenOutput"/>
                             <xs:element name="CustomToolNamespace"/>
                             <xs:element name="Link">
                                 <xs:annotation>
                                     <xs:documentation>Notional path within project to display if the file is physically located outside of the project file's cone (optional)</xs:documentation>
                                 </xs:annotation>
-                            </xs:element>                                
+                            </xs:element>
                             <xs:element name="InProject">
                                 <xs:annotation>
                                     <xs:documentation>Display in user interface (optional, boolean)</xs:documentation>
                                 </xs:annotation>
-                            </xs:element>                                
+                            </xs:element>
                         </xs:choice>
                     </xs:sequence>
                 </xs:extension>
@@ -362,17 +362,17 @@ elementFormDefault="qualified">
         <xs:annotation>
             <xs:documentation>Assemblies whose namespaces should be imported by the Visual Basic compiler</xs:documentation>
         </xs:annotation>
-    </xs:element>        
+    </xs:element>
     <xs:element name="Service" type="msb:SimpleItemType" substitutionGroup="msb:Item"/>
     <xs:element name="WebReferences" type="msb:SimpleItemType" substitutionGroup="msb:Item">
         <xs:annotation>
             <xs:documentation>Name of Web References folder to display in user interface</xs:documentation>
         </xs:annotation>
-    </xs:element>        
+    </xs:element>
     <xs:element name="WebReferenceUrl" substitutionGroup="msb:Item">
         <xs:annotation>
             <xs:documentation>Represents a reference to a web service</xs:documentation>
-        </xs:annotation>        
+        </xs:annotation>
             <xs:complexType>
                 <xs:complexContent>
                     <xs:extension base="msb:SimpleItemType">
@@ -392,7 +392,7 @@ elementFormDefault="qualified">
                             <xs:annotation>
                                 <xs:documentation>URL to web service</xs:documentation>
                             </xs:annotation>
-                        </xs:attribute>                        
+                        </xs:attribute>
                     </xs:extension>
                 </xs:complexContent>
             </xs:complexType>
@@ -407,7 +407,7 @@ elementFormDefault="qualified">
                                 <xs:annotation>
                                     <xs:documentation>Display in user interface (optional, boolean)</xs:documentation>
                                 </xs:annotation>
-                            </xs:element>                                
+                            </xs:element>
                             <xs:element name="ProductName"/>
                             <xs:element name="Install"/>
                         </xs:choice>
@@ -426,7 +426,7 @@ elementFormDefault="qualified">
                                 <xs:annotation>
                                     <xs:documentation>Display in user interface (optional, boolean)</xs:documentation>
                                 </xs:annotation>
-                            </xs:element>                                
+                            </xs:element>
                             <xs:element name="Group"/>
                             <xs:element name="IsAssembly">
                                 <xs:annotation>
@@ -437,7 +437,7 @@ elementFormDefault="qualified">
                                 <xs:annotation>
                                     <xs:documentation>Default, Included, Excluded, DataFile, or Prerequisite</xs:documentation>
                                 </xs:annotation>
-                            </xs:element>                            
+                            </xs:element>
                         </xs:choice>
                     </xs:sequence>
                 </xs:extension>
@@ -469,7 +469,7 @@ elementFormDefault="qualified">
         <xs:annotation>
             <xs:documentation>Name of output assembly</xs:documentation>
         </xs:annotation>
-    </xs:element>           
+    </xs:element>
     <xs:element name="AssemblyOriginatorKeyFile" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="AssemblyOriginatorKeyFileType" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="AssemblyOriginatorKeyMode" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
@@ -478,13 +478,13 @@ elementFormDefault="qualified">
         <xs:annotation>
             <xs:documentation>boolean</xs:documentation>
         </xs:annotation>
-    </xs:element>         
+    </xs:element>
     <xs:element name="BaseAddress" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="BootstrapperComponentsLocation" type="msb:StringPropertyType" substitutionGroup="msb:Property">
         <xs:annotation>
             <xs:documentation>HomeSite, Relative, or Absolute</xs:documentation>
         </xs:annotation>
-    </xs:element>        
+    </xs:element>
     <xs:element name="BootstrapperComponentsUrl" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="BootstrapperEnabled" type="msb:StringPropertyType" substitutionGroup="msb:Property">
         <xs:annotation>
@@ -505,26 +505,26 @@ elementFormDefault="qualified">
         <xs:annotation>
             <xs:documentation>Whether to emit symbols (boolean)</xs:documentation>
         </xs:annotation>
-    </xs:element>        
-    <xs:element name="DebugType" type="msb:StringPropertyType" substitutionGroup="msb:Property">   
+    </xs:element>
+    <xs:element name="DebugType" type="msb:StringPropertyType" substitutionGroup="msb:Property">
         <xs:annotation>
             <xs:documentation>none, pdbonly, or full</xs:documentation>
         </xs:annotation>
-    </xs:element>         
+    </xs:element>
     <xs:element name="DefaultClientScript" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="DefaultHTMLPageLayout" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="DefaultTargetSchema" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="DefineConstants" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
-    <xs:element name="DefineDebug" type="msb:StringPropertyType" substitutionGroup="msb:Property">   
+    <xs:element name="DefineDebug" type="msb:StringPropertyType" substitutionGroup="msb:Property">
         <xs:annotation>
             <xs:documentation>Whether DEBUG is defined (boolean)</xs:documentation>
         </xs:annotation>
-    </xs:element>          
+    </xs:element>
     <xs:element name="DefineTrace" type="msb:StringPropertyType" substitutionGroup="msb:Property">
         <xs:annotation>
             <xs:documentation>Whether TRACE is defined (boolean)</xs:documentation>
         </xs:annotation>
-    </xs:element>          
+    </xs:element>
     <xs:element name="DelaySign" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="DisableLangXtns" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="DisallowUrlActiviation" type="msb:StringPropertyType" substitutionGroup="msb:Property">
@@ -566,75 +566,75 @@ elementFormDefault="qualified">
         <xs:annotation>
             <xs:documentation>boolean</xs:documentation>
         </xs:annotation>
-    </xs:element>                
+    </xs:element>
     <xs:element name="MinimumRequiredVersion" type="msb:StringPropertyType" substitutionGroup="msb:Property">
         <xs:annotation>
             <xs:documentation>Matches the expression "\d\.\d\.\d\.\d"</xs:documentation>
         </xs:annotation>
-    </xs:element>                
+    </xs:element>
     <xs:element name="MyType" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
-    <xs:element name="NoConfig" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>    
+    <xs:element name="NoConfig" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="NoStandardLibraries" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="NoStdLib" type="msb:StringPropertyType" substitutionGroup="msb:Property">
         <xs:annotation>
             <xs:documentation>Whether standard libraries (such as mscorlib) should be referenced automatically (boolean)</xs:documentation>
         </xs:annotation>
-    </xs:element>          
+    </xs:element>
     <xs:element name="NoWarn" type="msb:StringPropertyType" substitutionGroup="msb:Property">
         <xs:annotation>
             <xs:documentation>Comma separated list of disabled warnings</xs:documentation>
         </xs:annotation>
-    </xs:element>        
+    </xs:element>
     <xs:element name="OpenBrowserOnPublish" type="msb:StringPropertyType" substitutionGroup="msb:Property">
         <xs:annotation>
             <xs:documentation>boolean</xs:documentation>
         </xs:annotation>
-    </xs:element>                
+    </xs:element>
     <xs:element name="Optimize" type="msb:StringPropertyType" substitutionGroup="msb:Property">
         <xs:annotation>
             <xs:documentation>Should compiler optimize output (boolean)</xs:documentation>
         </xs:annotation>
-    </xs:element>     
+    </xs:element>
     <xs:element name="OptionCompare" type="msb:StringPropertyType" substitutionGroup="msb:Property">
         <xs:annotation>
             <xs:documentation>Option Compare setting (Text or Binary)</xs:documentation>
         </xs:annotation>
-    </xs:element>         
+    </xs:element>
     <xs:element name="OptionExplicit" type="msb:StringPropertyType" substitutionGroup="msb:Property">
         <xs:annotation>
             <xs:documentation>Should Option Explicit be set (On or Off)</xs:documentation>
         </xs:annotation>
-    </xs:element>         
+    </xs:element>
     <xs:element name="OptionStrict" type="msb:StringPropertyType" substitutionGroup="msb:Property">
         <xs:annotation>
             <xs:documentation>Should Option Strict be set (On or Off)</xs:documentation>
         </xs:annotation>
-    </xs:element>            
+    </xs:element>
     <xs:element name="OSVersion" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="OutputPath" type="msb:StringPropertyType" substitutionGroup="msb:Property">
         <xs:annotation>
             <xs:documentation>Path to output folder, with trailing slash</xs:documentation>
         </xs:annotation>
-    </xs:element>        
+    </xs:element>
     <xs:element name="OutputType" type="msb:StringPropertyType" substitutionGroup="msb:Property">
         <xs:annotation>
             <xs:documentation>Type of output to generate (WinExe, Exe, or Library)</xs:documentation>
         </xs:annotation>
     </xs:element>
     <xs:element name="Platform" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
-    <xs:element name="PlatformFamilyName" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>    
-    <xs:element name="PlatformID" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>    
+    <xs:element name="PlatformFamilyName" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
+    <xs:element name="PlatformID" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="PlatformTarget" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="PostBuildEvent" type="msb:StringPropertyType" substitutionGroup="msb:Property">
         <xs:annotation>
             <xs:documentation>Command line to be run at the end of build</xs:documentation>
         </xs:annotation>
-    </xs:element>          
+    </xs:element>
     <xs:element name="PreBuildEvent" type="msb:StringPropertyType" substitutionGroup="msb:Property">
         <xs:annotation>
             <xs:documentation>Command line to be run at the start of build</xs:documentation>
         </xs:annotation>
-    </xs:element>        
+    </xs:element>
     <xs:element name="ProductName" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="ProductVersion" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="ProjectGuid" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
@@ -647,7 +647,7 @@ elementFormDefault="qualified">
         <xs:annotation>
             <xs:documentation>Semi-colon separated list of folders to search during reference resolution</xs:documentation>
         </xs:annotation>
-    </xs:element>        
+    </xs:element>
     <xs:element name="RegisterForComInterop" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="RemoteDebugEnabled" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="RemoteDebugMachine" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
@@ -671,7 +671,7 @@ elementFormDefault="qualified">
         <xs:annotation>
             <xs:documentation>Type that contains the main entry point</xs:documentation>
         </xs:annotation>
-    </xs:element>        
+    </xs:element>
     <xs:element name="SupportUrl" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="TargetCulture" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="TargetZone" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
@@ -680,13 +680,13 @@ elementFormDefault="qualified">
         <xs:annotation>
             <xs:documentation>boolean</xs:documentation>
         </xs:annotation>
-    </xs:element>                
+    </xs:element>
     <xs:element name="TypeComplianceDiagnostics" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="UpdateEnabled" type="msb:StringPropertyType" substitutionGroup="msb:Property">
         <xs:annotation>
             <xs:documentation>boolean</xs:documentation>
         </xs:annotation>
-    </xs:element>                
+    </xs:element>
     <xs:element name="UpdateInterval" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="UpdateIntervalUnits" type="msb:StringPropertyType" substitutionGroup="msb:Property">
         <xs:annotation>
@@ -702,13 +702,13 @@ elementFormDefault="qualified">
         <xs:annotation>
             <xs:documentation>boolean</xs:documentation>
         </xs:annotation>
-    </xs:element>        
+    </xs:element>
     <xs:element name="UpdateRequired" type="msb:StringPropertyType" substitutionGroup="msb:Property">
         <xs:annotation>
             <xs:documentation>boolean</xs:documentation>
         </xs:annotation>
-    </xs:element>                
-    <xs:element name="UpdateUrl" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>    
+    </xs:element>
+    <xs:element name="UpdateUrl" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="UTF8OutPut" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="UseVSHostingProcess" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="VSTO_TrustAssembliesLocation" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
@@ -716,12 +716,12 @@ elementFormDefault="qualified">
         <xs:annotation>
             <xs:documentation>integer between 0 and 4 inclusive</xs:documentation>
         </xs:annotation>
-    </xs:element>        
+    </xs:element>
     <xs:element name="WarningsAsErrors" type="msb:StringPropertyType" substitutionGroup="msb:Property">
         <xs:annotation>
             <xs:documentation>Comma separated list of warning numbers to treat as errors</xs:documentation>
         </xs:annotation>
-    </xs:element>          
+    </xs:element>
     <xs:element name="WebPage" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <xs:element name="Win32ResourceFile" type="msb:StringPropertyType" substitutionGroup="msb:Property"/>
     <!-- ======================== TASKS =====================================-->

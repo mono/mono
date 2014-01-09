@@ -1,7 +1,7 @@
 <Project DefaultTargets="Build" InitialTargets="_ValidateEssentialProperties" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 	<Import Project="$(MSBuildProjectFullPath).user" Condition="Exists('$(MSBuildProjectFullPath).user')"/>
-	
+
 	<PropertyGroup>
 		<OutputType Condition="'$(OutputType)' == ''">Exe</OutputType>
 		<TargetExt Condition="'$(OutputType)' == 'Winexe'">.exe</TargetExt>
@@ -16,7 +16,7 @@
 
 	<PropertyGroup>
 		<AssemblyName Condition="'$(AssemblyName)' == ''">$(MSBuildProjectName)</AssemblyName>
-		<OutputPath Condition="'$(OutputPath)' != '' and !HasTrailingSlash('$(OutputPath)')">$(OutputPath)\</OutputPath> 
+		<OutputPath Condition="'$(OutputPath)' != '' and !HasTrailingSlash('$(OutputPath)')">$(OutputPath)\</OutputPath>
 		<OutputPath Condition=" '$(Platform)'=='' and '$(Configuration)'=='' and '$(OutputPath)'=='' ">bin\Debug\</OutputPath>
 		<WarningLevel Condition="'$(WarningLevel)' == ''" >2</WarningLevel>
 		<TargetFrameworkVersion Condition="'$(TargetFrameworkVersion)' == ''">v2.0</TargetFrameworkVersion>
@@ -100,7 +100,7 @@
 			<Output TaskParameter="AppConfigFile" ItemName="AppConfigWithTargetPath"/>
 		</FindAppConfigFile>
 
-		<MakeDir 
+		<MakeDir
 			Directories="$(OutDir);$(IntermediateOutputPath);@(DocFileItem->'%(RelativeDir)')"
 		/>
 	</Target>
@@ -113,10 +113,10 @@
 			<Output Condition="'$(TargetFrameworkVersion)' == 'v3.5'"
 				TaskParameter="FrameworkVersion35Path"
 				ItemName="_CombinedTargetFrameworkDirectoriesItem"/>
-			<Output Condition="'$(TargetFrameworkVersion)' == 'v3.0' or '$(TargetFrameworkVersion)' == 'v3.5'" 
+			<Output Condition="'$(TargetFrameworkVersion)' == 'v3.0' or '$(TargetFrameworkVersion)' == 'v3.5'"
 				TaskParameter="FrameworkVersion30Path"
 				ItemName="_CombinedTargetFrameworkDirectoriesItem"/>
-			<Output Condition="'$(TargetFrameworkVersion)' == 'v2.0' or '$(TargetFrameworkVersion)' == 'v3.0' or '$(TargetFrameworkVersion)' == 'v3.5'" 
+			<Output Condition="'$(TargetFrameworkVersion)' == 'v2.0' or '$(TargetFrameworkVersion)' == 'v3.0' or '$(TargetFrameworkVersion)' == 'v3.5'"
 				TaskParameter="FrameworkVersion20Path"
 				ItemName="_CombinedTargetFrameworkDirectoriesItem"/>
 		</GetFrameworkPath>
@@ -495,7 +495,7 @@
 	<Target Name="DeployOutputFiles"
 		DependsOnTargets="PrepareResources;CoreCompile;_CopyDeployFilesToOutputDirectory;_CopyAppConfigFile">
 
-		<Copy 
+		<Copy
 			SourceFiles="$(IntermediateOutputPath)$(AssemblyName)$(TargetExt).mdb"
 			Condition="'$(OutDir)' != '' and Exists('$(IntermediateOutputPath)$(AssemblyName)$(TargetExt).mdb')"
 			DestinationFolder="$(OutDir)"

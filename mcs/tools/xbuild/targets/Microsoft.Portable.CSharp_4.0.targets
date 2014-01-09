@@ -10,23 +10,23 @@
 		<AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
 		<NoStdLib>true</NoStdLib>
 
-		<ImplicitlyExpandTargetFramework Condition="'$(ImplicitlyExpandTargetFramework)' == '' ">true</ImplicitlyExpandTargetFramework>	
+		<ImplicitlyExpandTargetFramework Condition="'$(ImplicitlyExpandTargetFramework)' == '' ">true</ImplicitlyExpandTargetFramework>
 	</PropertyGroup>
 
 	<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.Targets" />
-	
+
 	<PropertyGroup>
 		<ResolveReferencesDependsOn>
 			$(ResolveReferencesDependsOn);
 			ImplicitlyExpandTargetFramework;
 		</ResolveReferencesDependsOn>
-		
+
 		<ImplicitlyExpandTargetFrameworkDependsOn>
 			$(ImplicitlyExpandTargetFrameworkDependsOn);
 			GetReferenceAssemblyPaths
 		</ImplicitlyExpandTargetFrameworkDependsOn>
 	</PropertyGroup>
-	
+
 	<Target Name="ImplicitlyExpandTargetFramework"
 		DependsOnTargets="$(ImplicitlyExpandTargetFrameworkDependsOn)">
 

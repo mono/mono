@@ -64,7 +64,7 @@
 			OptionCompare="$(OptionCompare)"
 			OptionExplicit="$(OptionExplicit)"
 			OptionStrict="$(OptionStrict)"
-			OptionStrictType="$(OptionStrictType)" 
+			OptionStrictType="$(OptionStrictType)"
 			OutputAssembly="@(IntermediateAssembly)"
 			Platform="$(PlatformTarget)"
 			References="@(ResolvedFiles)"
