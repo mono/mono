@@ -1151,8 +1151,12 @@ namespace Mono.CSharp
 			}
 
 			TypeSpec compiled_type;
-			if (compiled_types.TryGetValue (type, out compiled_type))
+			if (compiled_types.TryGetValue (type, out compiled_type)) {
+				if (compiled_type.BuiltinType == BuiltinTypeSpec.Type.Object && dtype.IsDynamicObject ())
+					return module.Compiler.BuiltinTypes.Dynamic;
+
 				return compiled_type;
+			}
 
 			return CreateType (type, dtype, true);
 		}
