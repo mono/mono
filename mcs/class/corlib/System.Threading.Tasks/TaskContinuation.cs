@@ -339,6 +339,7 @@ namespace System.Threading.Tasks
 	sealed class CountdownContinuation : IContinuation, IDisposable
 	{
 		readonly CountdownEvent evt;
+		bool disposed;
 
 		public CountdownContinuation (int initialCount)
 		{
@@ -353,12 +354,18 @@ namespace System.Threading.Tasks
 
 		public void Dispose ()
 		{
+			disposed = true;
+			Thread.MemoryBarrier ();
+	
 			evt.Dispose ();
 		}
 
 		public void Execute ()
 		{
-			evt.Signal ();
+			// Guard against possible race when continuation is disposed and some tasks may still
+			// execute it (removal was late and the execution is slower than the Dispose thread)
+			if (!disposed)
+				evt.Signal ();
 		}
 	}
 
