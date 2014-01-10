@@ -569,6 +569,9 @@ namespace Mono {
 		public static string GetString (this Stream stream)
 		{
 			int len = stream.GetInt ();
+			if (len == 0)
+				return "";
+
 			byte [] b = new byte [len];
 			stream.GetBuffer (b);
 
