@@ -544,23 +544,37 @@ namespace Mono {
 	public static class StreamHelper {
 		static DataConverter converter = DataConverter.LittleEndian;
 		
+		static void GetBuffer (this Stream stream, byte [] b)
+		{
+			int n, offset = 0;
+			int len = b.Length;
+
+			do {
+				n = stream.Read (b, offset, len);
+				if (n == 0)
+					throw new IOException ("End reached");
+
+				offset += n;
+				len -= n;
+			} while (len > 0);
+		}
+
 		public static int GetInt (this Stream stream)
 		{
 			byte [] b = new byte [4];
-			if (stream.Read (b, 0, 4) != 4)
-				throw new IOException ("End reached");
+			stream.GetBuffer (b);
 			return converter.GetInt32 (b, 0);
 		}
-		
+
 		public static string GetString (this Stream stream)
 		{
 			int len = stream.GetInt ();
 			byte [] b = new byte [len];
-			if (stream.Read (b, 0, len) != len)
-				throw new IOException ("End reached");
+			stream.GetBuffer (b);
+
 			return Encoding.UTF8.GetString (b);
 		}
-	
+
 		public static void WriteInt (this Stream stream, int n)
 		{
 			byte [] bytes = converter.GetBytes (n);
