@@ -167,9 +167,11 @@ namespace System.ServiceModel.Channels
 						case "Expect":
 							web_request.Expect = hp.Headers [key];
 							break;
+#if NET_4_0
 						case "Host":
 							web_request.Host = hp.Headers [key];
 							break;
+#endif
 						//case "If-Modified-Since":
 						//	web_request.IfModifiedSince = hp.Headers [key];
 						//	break;
