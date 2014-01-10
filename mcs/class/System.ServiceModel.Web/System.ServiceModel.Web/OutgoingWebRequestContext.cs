@@ -36,6 +36,7 @@ namespace System.ServiceModel.Web
 	{
 		internal OutgoingWebRequestContext ()
 		{
+			Headers = new WebHeaderCollection ();
 		}
 
 		public string Accept { get; set; }
