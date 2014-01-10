@@ -1,7 +1,3 @@
 #include mobile_System.Core.dll.sources
-#include static_System.Core.dll.sources
-System.Linq.jvm/Conversion.cs
-System.Linq.jvm/ExpressionInterpreter.cs
-System.Linq.jvm/Runner.cs
-System.Linq.jvm/Math.cs
+#include interpreter_System.Core.dll.sources
 System/TimeZoneInfo.MonoTouch.cs

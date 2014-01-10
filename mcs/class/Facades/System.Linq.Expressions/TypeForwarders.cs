@@ -20,7 +20,6 @@
 // THE SOFTWARE.
 // 
 
-#if !FULL_AOT_RUNTIME
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Linq.Expressions.BlockExpression))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Linq.Expressions.CatchBlock))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Linq.Expressions.DebugInfoExpression))]
@@ -36,7 +35,6 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Linq.Expressions.SwitchExpression))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Linq.Expressions.SymbolDocumentInfo))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Linq.Expressions.TryExpression))]
-#endif
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Linq.Expressions.BinaryExpression))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Linq.Expressions.ConditionalExpression))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Linq.Expressions.ConstantExpression))]

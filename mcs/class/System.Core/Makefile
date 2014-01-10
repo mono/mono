@@ -6,12 +6,31 @@ LIBRARY = System.Core.dll
 
 LIB_MCS_FLAGS = -d:INSIDE_SYSCORE -d:LIBC /r:System.dll -unsafe
 
+INTERPRETER_DEP := Mono.Dynamic.Interpreter.dll
+INTERPRETER_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(INTERPRETER_DEP))
+
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NET_3_5 -nowarn:1720
 endif
 
 ifeq (monodroid, $(PROFILE))
 LIB_MCS_FLAGS += -d:FEATURE_CORE_DLR,FEATURE_REFEMIT,ANDROID
+endif
+
+ifeq (monotouch, $(PROFILE))
+LIBRARY_USE_INTERMEDIATE_FILE = yes
+
+CYCLIC_DEPS := $(INTERPRETER_DEP)
+CYCLIC_DEP_FILES := $(INTERPRETER_DEP_FILE)
+LIB_MCS_FLAGS += -d:FEATURE_CORE_DLR
+
+ifdef CYCLIC_DEP_FILES
+LIB_MCS_FLAGS += -d:MONO_INTERPRETER -r:$(INTERPRETER_DEP)
+else
+NO_SIGN_ASSEMBLY = yes
+NO_INSTALL = yes
+endif
+
 endif
 
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
@@ -29,4 +48,8 @@ endif
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 include ../../build/library.make
+
+ifdef CYCLIC_DEP_FILES
+$(build_lib): $(INTERPRETER_DEP_FILE)
+endif
 
