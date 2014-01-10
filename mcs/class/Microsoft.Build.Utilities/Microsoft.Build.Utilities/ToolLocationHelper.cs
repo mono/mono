@@ -66,7 +66,10 @@ namespace Microsoft.Build.Utilities
 					Path.Combine (lib_mono_dir, "net_2_0"),
 					Path.Combine (lib_mono_dir, "net_2_0"),
 					Path.Combine (lib_mono_dir, "net_3_5"),
-					Path.Combine (lib_mono_dir, "net_4_0"),
+					// mono's 4.0 is not an actual framework directory with all tools etc
+					// it's simply reference assemblies. So like .NET we consider 4.5 to
+					// be a complete replacement for 4.0.
+					Path.Combine (lib_mono_dir, "net_4_5"),
 					Path.Combine (lib_mono_dir, "net_4_5"),
 					Path.Combine (lib_mono_dir, "net_4_5")
 				};	
@@ -86,7 +89,8 @@ namespace Microsoft.Build.Utilities
 					Path.Combine (lib_mono_dir, "2.0"),
 					Path.Combine (lib_mono_dir, "2.0"),
 					Path.Combine (lib_mono_dir, "3.5"),
-					Path.Combine (lib_mono_dir, "4.0"),
+					// see comment above regarding 4.0/4.5
+					Path.Combine (lib_mono_dir, "4.5"),
 					Path.Combine (lib_mono_dir, "4.5"),
 					Path.Combine (lib_mono_dir, "4.5"),
 				};

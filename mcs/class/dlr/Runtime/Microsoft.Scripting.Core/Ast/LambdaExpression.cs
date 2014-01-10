@@ -19,7 +19,9 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Dynamic.Utils;
 using System.Reflection;
+#if FEATURE_REFEMIT
 using System.Reflection.Emit;
+#endif
 using System.Threading;
 using System.Runtime.CompilerServices;
 
@@ -61,9 +63,9 @@ namespace System.Linq.Expressions {
             _delegateType = delegateType;
             _tailCall = tailCall;
         }
-
+#if FEATURE_REFEMIT
         internal abstract LambdaExpression Accept(StackSpiller spiller);
-
+#endif
         /// <summary>
         /// Gets the static type of the expression that this <see cref="Expression" /> represents. (Inherited from <see cref="Expression"/>.)
         /// </summary>
@@ -217,11 +219,11 @@ namespace System.Linq.Expressions {
         protected internal override Expression Accept(ExpressionVisitor visitor) {
             return visitor.VisitLambda(this);
         }
-
+#if FEATURE_REFEMIT
         internal override LambdaExpression Accept(StackSpiller spiller) {
             return spiller.Rewrite(this);
         }
-
+#endif
         internal static LambdaExpression Create(Expression body, string name, bool tailCall, ReadOnlyCollection<ParameterExpression> parameters) {
             return new Expression<TDelegate>(body, name, tailCall, parameters);
         }

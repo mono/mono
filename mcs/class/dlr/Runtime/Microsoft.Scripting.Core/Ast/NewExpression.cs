@@ -20,7 +20,7 @@ using System.Diagnostics;
 using System.Dynamic.Utils;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Microsoft.Scripting.Utils;
+//using Microsoft.Scripting.Utils;
 
 #if !FEATURE_CORE_DLR
 namespace Microsoft.Scripting.Ast {
@@ -207,7 +207,7 @@ namespace System.Linq.Expressions {
             }
             ConstructorInfo ci = null;
             if (!type.IsValueType) {
-                ci = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, ReflectionUtils.EmptyTypes, null);
+                ci = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Microsoft.Scripting.Utils.ReflectionUtils.EmptyTypes, null);
                 if (ci == null) {
                     throw Error.TypeMissingDefaultConstructor(type);
                 }
