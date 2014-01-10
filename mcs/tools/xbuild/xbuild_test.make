@@ -4,7 +4,15 @@ XBUILD_PROFILE_DIR=$(topdir)/class/lib/$(PROFILE)
 # makes xbuild look in the class/lib/$PROFILE build directories for targets etc
 export TESTING_MONO=a
 
+ifeq (4.0, $(FRAMEWORK_VERSION))
+test-local: xbuild-net4-fail
+else
 test-local: copy-targets $(test_lib).config
+endif
+
+xbuild-net4-fail:
+	@echo "The net_4_0 profile contains reference assemblies only and cannot be installed/tested as an xbuild toolset"
+	@exit 1
 
 copy-targets:
 	cp $(XBUILD_DATA_DIR)/$(XBUILD_VERSION)/Microsoft.Common.targets $(XBUILD_PROFILE_DIR)

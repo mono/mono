@@ -13,11 +13,16 @@ include ../../build/executable.make
 XBUILD_DIR=.
 include $(XBUILD_DIR)/xbuild_test.make
 
-install-local:	install-extras
+ifeq (4.0, $(FRAMEWORK_VERSION))
+install-local: xbuild-net4-fail
+else
+install-local: install-extras
+endif
 
 NETFRAMEWORK_DIR=$(mono_libdir)/mono/xbuild-frameworks/.NETFramework
 VS_TARGETS_DIR = $(mono_libdir)/mono/xbuild/Microsoft/VisualStudio
 PORTABLE_TARGETS_DIR = $(mono_libdir)/mono/xbuild/Microsoft/Portable
+
 
 install-extras: install-bin-data install-frameworks install-pcl-targets install-web-targets
 
