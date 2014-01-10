@@ -361,8 +361,11 @@ namespace Mono.Tools.LocaleBuilder
 
 			var territory2dayofweek = new Dictionary<string, DayOfWeek> (StringComparer.OrdinalIgnoreCase);
 			foreach (XmlNode entry in supplemental.SelectNodes ("supplementalData/weekData/firstDay")) {
-				DayOfWeek dow;
 
+				if (entry.Attributes ["alt"] != null)
+					continue;
+
+				DayOfWeek dow;
 				switch (entry.Attributes["day"].Value) {
 				case "mon":
 					dow = DayOfWeek.Monday;
@@ -381,8 +384,9 @@ namespace Mono.Tools.LocaleBuilder
 				}
 
 				var territories = entry.Attributes["territories"].Value.Split ();
-				foreach (var t in territories)
-					territory2dayofweek[t] = dow;
+				foreach (var t in territories) {
+					territory2dayofweek.Add (t, dow);
+				}
 			}
 
 			var territory2wr = new Dictionary<string, CalendarWeekRule> (StringComparer.OrdinalIgnoreCase);
