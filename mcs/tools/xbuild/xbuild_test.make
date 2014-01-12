@@ -27,7 +27,7 @@ clean-targets: clean-targets-$(XBUILD_VERSION)
 
 XBUILD_2_0_PROFILE_DIR=$(topdir)/class/lib/net_2_0
 XBUILD_3_5_PROFILE_DIR=$(topdir)/class/lib/net_3_5
-XBUILD_4_0_PROFILE_DIR=$(topdir)/class/lib/net_4_0
+XBUILD_4_0_PROFILE_DIR=$(topdir)/class/lib/net_4_5
 XBUILD_12_0_PROFILE_DIR=$(topdir)/class/lib/xbuild_12
 
 copy-targets-2.0:
