@@ -5,7 +5,7 @@ XBUILD_PROFILE_DIR=$(topdir)/class/lib/$(PROFILE)
 export TESTING_MONO=a
 
 ifeq (4.0, $(FRAMEWORK_VERSION))
-test-local: xbuild-net4-fail
+NO_TEST=true
 else
 test-local: copy-targets $(test_lib).config
 clean-local: clean-targets clean-test-config
