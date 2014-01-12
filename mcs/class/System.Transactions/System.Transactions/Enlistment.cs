@@ -25,6 +25,12 @@ namespace System.Transactions
 		public void Done ()
 		{
 			done = true;
+
+			InternalOnDone();
+		}
+
+		internal virtual void InternalOnDone ()
+		{
 		}
 	}
 }
