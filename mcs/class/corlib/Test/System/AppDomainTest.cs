@@ -3308,11 +3308,28 @@ namespace MonoTests.System
 			TestSerialization (tester, typeof (StuffToPick<int>).GetMethod ("GenericMethod").MakeGenericMethod (typeof (int)));
 		}
 
+		[Test]
+		public void ShadowCopyTypeGetTypeMissingAssemblyTest ()
+		{
+			ad = CreateShadowCopyAppDomain (tempDir, true);
+			CrossDomainTester tester = CreateCrossDomainTester (ad);
+			tester.AssertLoadMissingAssemblyType ();
+		}
+
 		private static AppDomain CreateTestDomain (string baseDirectory, bool assemblyResolver)
 		{
 			AppDomainSetup setup = new AppDomainSetup ();
 			setup.ApplicationBase = baseDirectory;
 			setup.ApplicationName = "testdomain";
+			return CreateTestDomain (setup, assemblyResolver);
+		}
+
+		private static AppDomain CreateShadowCopyAppDomain (string baseDirectory, bool assemblyResolver)
+		{
+			AppDomainSetup setup = new AppDomainSetup ();
+			setup.ApplicationBase = baseDirectory;
+			setup.ApplicationName = "testdomain";
+			setup.ShadowCopyFiles = "true";
 			return CreateTestDomain (setup, assemblyResolver);
 		}
 
@@ -3423,22 +3440,17 @@ namespace MonoTests.System
 				}
 			}
 
+			public void AssertLoadMissingAssemblyType ()
+			{
+				Assert.IsNull (Type.GetType ("A.B.C, MissingAssembly"));
+			}
+
 			public bool AssertFileLoadException (AssemblyName assemblyRef)
 			{
 				try {
 					AppDomain.CurrentDomain.Load (assemblyRef);
 					return false;
 				} catch (FileLoadException) {
-					return true;
-				}
-			}
-
-			public bool AssertFileNotFoundException (AssemblyName assemblyRef)
-			{
-				try {
-					AppDomain.CurrentDomain.Load (assemblyRef);
-					return false;
-				} catch (FileNotFoundException) {
 					return true;
 				}
 			}
