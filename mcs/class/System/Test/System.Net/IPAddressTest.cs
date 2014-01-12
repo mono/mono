@@ -545,6 +545,15 @@ public class IPAddressTest
 		Assert.IsTrue (IPAddress.Parse ("FF01::1").IsIPv6Multicast, "#2");
 		Assert.IsFalse (IPAddress.Parse ("FE00::1").IsIPv6Multicast, "#3");
 	}
+
+#if NET_4_0
+	[Test]
+	public void IsIPv6Teredo ()
+	{
+		Assert.IsTrue (IPAddress.Parse ("2001::1").IsIPv6Teredo, "#1");
+		Assert.IsFalse (IPAddress.Parse ("2002::1").IsIPv6Teredo, "#2");
+	}
+#endif
 }
 }
 
