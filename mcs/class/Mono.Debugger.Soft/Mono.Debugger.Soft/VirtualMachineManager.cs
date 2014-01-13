@@ -34,6 +34,12 @@ namespace Mono.Debugger.Soft
 		private delegate VirtualMachine LaunchCallback (ITargetProcess p, ProcessStartInfo info, Socket socket);
 		private delegate VirtualMachine ListenCallback (Socket dbg_sock, Socket con_sock); 
 		private delegate VirtualMachine ConnectCallback (Socket dbg_sock, Socket con_sock, IPEndPoint dbg_ep, IPEndPoint con_ep); 
+		public static ISuspendPolicyProvider SuspendPolicyProvider { get; set; }
+
+		static VirtualMachineManager()
+		{
+			SuspendPolicyProvider = new DefaultSuspendPolicyProvider ();
+		}
 
 		internal VirtualMachineManager () {
 		}
@@ -53,7 +59,7 @@ namespace Mono.Debugger.Soft
 
 			Connection conn = new TcpConnection (accepted);
 
-			VirtualMachine vm = new VirtualMachine (p, conn);
+			VirtualMachine vm = new VirtualMachine (p, conn, SuspendPolicyProvider);
 
 			if (info.RedirectStandardOutput)
 				vm.StandardOutput = p.StandardOutput;
@@ -325,7 +331,7 @@ namespace Mono.Debugger.Soft
 		
 		public static VirtualMachine Connect (Connection transport, StreamReader standardOutput, StreamReader standardError)
 		{
-			VirtualMachine vm = new VirtualMachine (null, transport);
+			VirtualMachine vm = new VirtualMachine (null, transport, SuspendPolicyProvider);
 			
 			vm.StandardOutput = standardOutput;
 			vm.StandardError = standardError;
