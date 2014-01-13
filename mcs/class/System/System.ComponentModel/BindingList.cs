@@ -242,7 +242,7 @@ namespace System.ComponentModel {
 			if (raise_list_changed_events)
 				OnListChanged (new ListChangedEventArgs (ListChangedType.ItemAdded, index));
 
-			if (type_raises_item_changed_events)
+			if (item != null && type_raises_item_changed_events)
 				(item as INotifyPropertyChanged).PropertyChanged += Item_PropertyChanged;
 		}
 
