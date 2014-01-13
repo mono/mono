@@ -227,10 +227,14 @@ namespace Mono.Debugger.Soft
 		}
 
 		public void EnableEvents (params EventType[] events) {
+			EnableEvents (events, SuspendPolicy.All);
+		}
+
+		public void EnableEvents (EventType[] events, SuspendPolicy suspendPolicy) {
 			foreach (EventType etype in events) {
 				if (etype == EventType.Breakpoint)
 					throw new ArgumentException ("Breakpoint events cannot be requested using EnableEvents", "events");
-				conn.EnableEvent (etype, SuspendPolicy.All, null);
+				conn.EnableEvent (etype, suspendPolicy, null);
 			}
 		}
 
