@@ -26,6 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections.Generic;
+
 namespace System.Net.Http.Headers
 {
 	public class ViaHeaderValue : ICloneable
@@ -110,11 +112,25 @@ namespace System.Net.Http.Headers
 		
 		public static bool TryParse (string input, out ViaHeaderValue parsedValue)
 		{
+			var lexer = new Lexer (input);
+			Token token;
+			if (TryParseElement (lexer, out parsedValue, out token) && token == Token.Type.End)
+				return true;
+
+			parsedValue = null;
+			return false;
+		}
+
+		internal static bool TryParse (string input, int minimalCount, out List<ViaHeaderValue> result)
+		{
+			return CollectionParser.TryParse (input, minimalCount, TryParseElement, out result);
+		}
+
+		static bool TryParseElement (Lexer lexer, out ViaHeaderValue parsedValue, out Token t)	
+		{
 			parsedValue = null;
 
-			var lexer = new Lexer (input);
-
-			var t = lexer.Scan ();
+			t = lexer.Scan ();
 			if (t != Token.Type.Token)
 				return false;
 
@@ -150,8 +166,9 @@ namespace System.Net.Http.Headers
 			value.ReceivedBy = lexer.GetStringValue (next, t);
 
 			string comment;
-			if (!lexer.ScanCommentOptional (out comment))
-				return false;
+			if (lexer.ScanCommentOptional (out comment, out t)) {
+				t = lexer.Scan ();
+			}
 
 			value.Comment = comment;
 			parsedValue = value;

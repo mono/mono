@@ -46,6 +46,8 @@ namespace System.Net.Http.Headers
 			OpenParens,
 		}
 
+		public static readonly Token Empty = new Token (Type.Token, 0, 0);
+
 		readonly Type type;
 
 		public Token (Type type, int startPosition, int endPosition)

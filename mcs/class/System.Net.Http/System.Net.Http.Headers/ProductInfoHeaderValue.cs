@@ -106,7 +106,7 @@ namespace System.Net.Http.Headers
 			return true;
 		}
 
-		internal static bool TryParse (string input, out List<ProductInfoHeaderValue> result)
+		internal static bool TryParse (string input, int minimalCount, out List<ProductInfoHeaderValue> result)
 		{
 			var list = new List<ProductInfoHeaderValue> ();
 			var lexer = new Lexer (input);
@@ -118,8 +118,12 @@ namespace System.Net.Http.Headers
 					return false;
 
 				if (element == null) {
-					result = list;
-					return true;
+					if (list != null && minimalCount <= list.Count) {
+						result = list;
+						return true;
+					}
+
+					return false;
 				}
 
 				list.Add (element);
