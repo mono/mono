@@ -597,8 +597,9 @@ public class Tests : TestsBase, ITest2
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void locals () {
 		string s = null;
+		var astruct = new AStruct () { i = 42 };
 		locals1 (null);
-		locals2<string> (null, 5, "ABC", ref s);
+		locals2<string> (null, 5, "ABC", ref s, ref astruct);
 		locals3 ();
 		locals6 ();
 		locals7<int> (22);
@@ -624,7 +625,7 @@ public class Tests : TestsBase, ITest2
 #if NET_4_5
 	[StateMachine (typeof (int))]
 #endif
-	public static void locals2<T> (string[] args, int arg, T t, ref string rs) {
+	public static void locals2<T> (string[] args, int arg, T t, ref string rs, ref AStruct astruct) {
 		long i = 42;
 		string s = "AB";
 
@@ -633,6 +634,7 @@ public class Tests : TestsBase, ITest2
 				i ++;
 			if (t != null)
 				i ++;
+			astruct = new AStruct ();
 		}
 		rs = "A";
 	}
