@@ -45,6 +45,8 @@ install-frameworks:
 	$(INSTALL_DATA) frameworks/net_3.0.xml $(DESTDIR)$(NETFRAMEWORK_DIR)/v3.0/RedistList/FrameworkList.xml
 	$(MKINSTALLDIRS) $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.0/RedistList
 	$(INSTALL_DATA) frameworks/net_4.0.xml $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.0/RedistList/FrameworkList.xml
+	$(MKINSTALLDIRS) $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.0/Profile/Client/RedistList
+	$(INSTALL_DATA) frameworks/net_4.0_client.xml $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.0/Profile/Client/RedistList/FrameworkList.xml
 
 install-pcl-targets:
 	$(MKINSTALLDIRS) $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.0
