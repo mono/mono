@@ -1,4 +1,4 @@
-#if !FULL_AOT_RUNTIME
+#if !FULL_AOT_RUNTIME || IOS_REFLECTION
 namespace System.Reflection.Emit {
 	static class OpCodeNames {
 		internal static readonly string [] names = {

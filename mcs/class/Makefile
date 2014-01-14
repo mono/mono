@@ -165,6 +165,8 @@ monotouch_runtime_dirs := \
 	corlib
 
 monotouch_dirs := \
+	Mono.CSharp	\
+	Microsoft.CSharp \
 	Mono.Dynamic.Interpreter \
 	System.Core
 
