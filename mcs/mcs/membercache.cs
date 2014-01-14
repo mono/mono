@@ -464,6 +464,7 @@ namespace Mono.CSharp {
 			IList<MemberSpec> applicable;
 			TypeSpec best_match = null;
 			do {
+#if !FULL_AOT_RUNTIME
 				// TODO: Don't know how to handle this yet
 				// When resolving base type of nested type, parent type must have
 				// base type resolved to scan full hierarchy correctly
@@ -472,6 +473,7 @@ namespace Mono.CSharp {
 				var tc = container.MemberDefinition as TypeContainer;
 				if (tc != null)
 					tc.DefineContainer ();
+#endif
 
 				if (container.MemberCacheTypes.member_hash.TryGetValue (name, out applicable)) {
 					for (int i = applicable.Count - 1; i >= 0; i--) {
