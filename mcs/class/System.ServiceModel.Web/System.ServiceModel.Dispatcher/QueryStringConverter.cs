@@ -74,10 +74,8 @@ namespace System.ServiceModel.Dispatcher
 			switch (Type.GetTypeCode (parameterType)) {
 			case TypeCode.String:
 				return parameter;
-#if !NET_2_1
 			case TypeCode.Char:
 				return parameter != null ? Char.Parse (parameter) : default (char);
-#endif
 			case TypeCode.SByte:
 				return parameter != null ? SByte.Parse (parameter, CultureInfo.InvariantCulture): default (sbyte);
 			case TypeCode.Byte:
