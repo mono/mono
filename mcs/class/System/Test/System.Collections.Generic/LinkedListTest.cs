@@ -12,6 +12,24 @@ namespace MonoTests.System.Collections.Generic
 	[TestFixture]
 	public class LinkedListTest
 	{
+		class EquatableValue : IEquatable<EquatableValue>
+		{
+			public readonly string Value;
+
+			public EquatableValue (string value)
+			{
+				this.Value = value;
+			}
+
+			public bool Equals (EquatableValue other)
+			{
+				if (other == null)
+					return false;
+
+				return string.Equals (Value, other.Value, StringComparison.OrdinalIgnoreCase);
+			}
+		}
+
 		LinkedList <int> intlist;
 		LinkedList <string> strings;
 
@@ -279,6 +297,19 @@ namespace MonoTests.System.Collections.Generic
 			Assert.AreEqual (2, li.Count);
 			Assert.AreEqual ("efgh", li.Last.Value);
 			Assert.AreEqual ("abcd", li.First.Value);
+		}
+
+		[Test]
+		public void EqualityComparer ()
+		{
+			var list = new LinkedList<EquatableValue> ();
+			var mv  = new EquatableValue ("first");
+			list.AddFirst (mv);
+
+			var test = new EquatableValue ("FIRST");
+			Assert.IsTrue (list.Contains (test), "#1");
+			Assert.AreSame (mv, list.Find (test).Value, "#2");
+			Assert.AreSame (mv, list.FindLast (test).Value, "#3");
 		}
 	}
 }
