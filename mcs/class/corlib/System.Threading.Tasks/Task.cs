@@ -351,8 +351,7 @@ namespace System.Threading.Tasks
 			continuations.Add (continuation);
 			
 			// Retry in case completion was achieved but event adding was too late
-			if (IsCompleted) {
-				continuations.Remove (continuation);
+			if (IsCompleted && continuations.Remove (continuation)) {
 				if (!canExecuteInline)
 					return false;
 
