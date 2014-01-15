@@ -167,9 +167,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (ReservedNameUtils.IsReservedMetadataName (metadataName)) {
 				string metadata = ReservedNameUtils.GetReservedMetadata (FinalItemSpec, metadataName, evaluatedMetadata);
-				return string.Equals (metadataName, "fullpath", StringComparison.OrdinalIgnoreCase)
-						? MSBuildUtils.Escape (metadata)
-						: metadata;
+				return MSBuildUtils.Unescape (metadata);
 			}
 
 			if (evaluatedMetadata.Contains (metadataName))
@@ -181,10 +179,7 @@ namespace Microsoft.Build.BuildEngine {
 		public string GetMetadata (string metadataName)
 		{
 			if (ReservedNameUtils.IsReservedMetadataName (metadataName)) {
-				string metadata = ReservedNameUtils.GetReservedMetadata (FinalItemSpec, metadataName, unevaluatedMetadata);
-				return string.Equals (metadataName, "fullpath", StringComparison.OrdinalIgnoreCase)
-					? MSBuildUtils.Escape (metadata)
-					: metadata;
+				return ReservedNameUtils.GetReservedMetadata (FinalItemSpec, metadataName, unevaluatedMetadata);
 			} else if (unevaluatedMetadata.Contains (metadataName))
 				return (string) unevaluatedMetadata [metadataName];
 			else
