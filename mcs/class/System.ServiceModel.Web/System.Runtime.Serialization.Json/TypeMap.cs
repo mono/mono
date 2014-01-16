@@ -195,7 +195,7 @@ namespace System.Runtime.Serialization.Json
 			foreach (TypeMapMember member in members) {
 				object memberObj = member.GetMemberOf (graph);
 				shouldWrite = true;
-				if (memberObj == null && member.EmitDefaultValue == false) {
+				if (memberObj == null && member.EmitDefaultValue == false) { // FIXME: Won't handle defaults for non-nullables like ints or bools atm.
 					shouldWrite = false;
 				}
 				if (shouldWrite) {
