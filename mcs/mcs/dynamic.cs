@@ -13,7 +13,7 @@ using System;
 using System.Linq;
 using SLE = System.Linq.Expressions;
 
-#if NET_4_0 || MONODROID
+#if NET_4_0 || MOBILE_DYNAMIC
 using System.Dynamic;
 #endif
 
@@ -63,7 +63,7 @@ namespace Mono.CSharp
 	//
 	public class RuntimeValueExpression : Expression, IDynamicAssign, IMemoryLocation
 	{
-#if !NET_4_0 && !MONODROID
+#if !NET_4_0 && !MOBILE_DYNAMIC
 		public class DynamicMetaObject
 		{
 			public TypeSpec RuntimeType;
@@ -146,7 +146,7 @@ namespace Mono.CSharp
 			return base.MakeExpression (ctx);
 #else
 
-#if NET_4_0 || MONODROID
+#if NET_4_0 || MOBILE_DYNAMIC
 				if (type.IsStruct && !obj.Expression.Type.IsValueType)
 					return SLE.Expression.Unbox (obj.Expression, type.GetMetaInfo ());
 
@@ -181,7 +181,7 @@ namespace Mono.CSharp
 			return this;
 		}
 
-#if NET_4_0 || MONODROID
+#if NET_4_0 || MOBILE_DYNAMIC
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 #if STATIC
