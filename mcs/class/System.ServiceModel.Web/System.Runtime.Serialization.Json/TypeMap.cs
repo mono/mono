@@ -191,12 +191,18 @@ namespace System.Runtime.Serialization.Json
 				OnSerializing.Invoke (graph, new object [] {new StreamingContext (StreamingContextStates.All)});
 
 			outputter.Writer.WriteAttributeString ("type", type);
+			bool shouldWrite;
 			foreach (TypeMapMember member in members) {
 				object memberObj = member.GetMemberOf (graph);
-				// FIXME: consider EmitDefaultValue
-				outputter.Writer.WriteStartElement (member.Name);
-				outputter.WriteObjectContent (memberObj, false, false);
-				outputter.Writer.WriteEndElement ();
+				shouldWrite = true;
+				if (memberObj == null && member.EmitDefaultValue == false) {
+					shouldWrite = false;
+				}
+				if (shouldWrite) {
+					outputter.Writer.WriteStartElement(member.Name);
+					outputter.WriteObjectContent(memberObj, false, false);
+					outputter.Writer.WriteEndElement();
+				}
 			}
 
 			if (OnSerialized != null)
