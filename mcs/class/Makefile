@@ -161,6 +161,12 @@ monodroid_dirs := \
 	Microsoft.CSharp \
 	System.Net.Http
 
+xammac_dirs := \
+	Mono.CompilerServices.SymbolWriter	\
+	Mono.CSharp	\
+	Microsoft.CSharp \
+	System.Net.Http
+
 monotouch_runtime_dirs := \
 	corlib
 
@@ -245,6 +251,7 @@ monotouch_SUBDIRS := $(mobile_dirs) $(monotouch_dirs)
 monotouch_runtime_SUBDIRS := $(monotouch_runtime_dirs)
 mobile_static_SUBDIRS := $(mobile_dirs)
 mobile_SUBDIRS := $(mobile_dirs)
+xammac_SUBDIRS := $(mobile_dirs) $(xammac_dirs)
 net_3_5_SUBDIRS := $(xbuild_2_0_dirs)
 net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs) $(xbuild_4_0_dirs)
 net_4_5_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_5_dirs) $(xbuild_4_0_dirs) aot-compiler

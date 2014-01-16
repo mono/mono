@@ -17,6 +17,10 @@ ifeq (monodroid, $(PROFILE))
 LIB_MCS_FLAGS += -d:FEATURE_CORE_DLR,FEATURE_REFEMIT,ANDROID
 endif
 
+ifeq (xammac, $(PROFILE))
+LIB_MCS_FLAGS += -d:FEATURE_CORE_DLR,FEATURE_REFEMIT
+endif
+
 ifeq (monotouch, $(PROFILE))
 LIBRARY_USE_INTERMEDIATE_FILE = yes
 
