@@ -6748,10 +6748,12 @@ namespace Mono.CSharp {
 						return;
 					}
 
-					bc.Report.SymbolRelatedToPreviousError (type);
-					var loc = type_expr == null ? initializer.Location : type_expr.Location;
-					bc.Report.Error (1674, loc, "`{0}': type used in a using statement must be implicitly convertible to `System.IDisposable'",
-						type.GetSignatureForError ());
+					if (type != InternalType.ErrorType) {
+						bc.Report.SymbolRelatedToPreviousError (type);
+						var loc = type_expr == null ? initializer.Location : type_expr.Location;
+						bc.Report.Error (1674, loc, "`{0}': type used in a using statement must be implicitly convertible to `System.IDisposable'",
+							type.GetSignatureForError ());
+					}
 
 					return;
 				}
