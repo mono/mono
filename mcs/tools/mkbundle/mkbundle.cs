@@ -582,7 +582,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			Assembly a = universe.LoadFile (new Uri(codebase).LocalPath);
 
 			foreach (AssemblyName an in a.GetReferencedAssemblies ()) {
-				a = universe.Load (an.Name);
+				a = universe.Load (an.FullName);
 				QueueAssembly (files, a.CodeBase);
 			}
 		} catch (Exception e) {
