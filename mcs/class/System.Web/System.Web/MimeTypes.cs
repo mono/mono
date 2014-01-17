@@ -217,6 +217,7 @@ namespace System.Web
 			mimeTypes.Add ("jpg", "image/jpeg");
 			mimeTypes.Add ("jps", "image/x-jps");
 			mimeTypes.Add ("js", "application/javascript");
+			mimeTypes.Add ("json", "application/json");
 			mimeTypes.Add ("jut", "image/jutvision");
 			mimeTypes.Add ("kar", "audio/midi");
 			mimeTypes.Add ("ksh", "text/x-script.ksh");
@@ -533,6 +534,8 @@ namespace System.Web
 			mimeTypes.Add ("xbm", "image/x-xbitmap");
 			mimeTypes.Add ("xdr", "video/x-amt-demorun");
 			mimeTypes.Add ("xgz", "xgl/drawing");
+			mimeTypes.Add ("xht", "application/xhtml+xml");
+			mimeTypes.Add ("xhtml", "application/xhtml+xml");
 			mimeTypes.Add ("xif", "image/vnd.xiff");
 			mimeTypes.Add ("xla", "application/vnd.ms-excel");
 			mimeTypes.Add ("xlam", "application/vnd.ms-excel.addin.macroEnabled.12");
