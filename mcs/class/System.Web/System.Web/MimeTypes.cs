@@ -46,6 +46,7 @@ namespace System.Web
 			mimeTypes.Add ("3dm", "x-world/x-3dmf");
 			mimeTypes.Add ("3g2", "video/3gpp2");
 			mimeTypes.Add ("3gp", "video/3gpp");
+			mimeTypes.Add ("7z", "application/x-7z-compressed");
 			mimeTypes.Add ("aab", "application/x-authorware-bin");
 			mimeTypes.Add ("aac", "audio/aac");
 			mimeTypes.Add ("aam", "application/x-authorware-map");
@@ -62,6 +63,7 @@ namespace System.Web
 			mimeTypes.Add ("aip", "text/x-audiosoft-intra");
 			mimeTypes.Add ("ani", "application/x-navi-animation");
 			mimeTypes.Add ("aos", "application/x-nokia-9000-communicator-add-on-software");
+			mimeTypes.Add ("appcache", "text/cache-manifest");
 			mimeTypes.Add ("application", "application/x-ms-application");
 			mimeTypes.Add ("aps", "application/mime");
 			mimeTypes.Add ("art", "image/x-jg");
@@ -70,6 +72,7 @@ namespace System.Web
 			mimeTypes.Add ("asp", "text/asp");
 			mimeTypes.Add ("asr", "video/x-ms-asf");
 			mimeTypes.Add ("asx", "application/x-mplayer2");
+			mimeTypes.Add ("atom", "application/atom+xml");
 			mimeTypes.Add ("au", "audio/x-au");
 			mimeTypes.Add ("avi", "video/avi");
 			mimeTypes.Add ("avs", "video/avs-video");
@@ -97,6 +100,7 @@ namespace System.Web
 			mimeTypes.Add ("clp", "application/x-msclip");
 			mimeTypes.Add ("cmx", "image/x-cmx");
 			mimeTypes.Add ("cod", "image/cis-cod");
+			mimeTypes.Add ("coffee", "text/x-coffeescript");
 			mimeTypes.Add ("conf", "text/plain");
 			mimeTypes.Add ("cpio", "application/x-cpio");
 			mimeTypes.Add ("cpp", "text/plain");
@@ -109,7 +113,9 @@ namespace System.Web
 			mimeTypes.Add ("c", "text/plain");
 			mimeTypes.Add ("c++", "text/plain");
 			mimeTypes.Add ("cxx", "text/plain");
+			mimeTypes.Add ("dart", "application/dart");
 			mimeTypes.Add ("dcr", "application/x-director");
+			mimeTypes.Add ("deb", "application/x-deb");
 			mimeTypes.Add ("deepv", "application/x-deepv");
 			mimeTypes.Add ("def", "text/plain");
 			mimeTypes.Add ("deploy", "application/octet-stream");
@@ -128,6 +134,7 @@ namespace System.Web
 			mimeTypes.Add ("dotx", "application/vnd.openxmlformats-officedocument.wordprocessingml.template");
 			mimeTypes.Add ("dp", "application/commonground");
 			mimeTypes.Add ("drw", "application/drafting");
+			mimeTypes.Add ("dtd", "application/xml-dtd");
 			mimeTypes.Add ("dvi", "application/x-dvi");
 			mimeTypes.Add ("dv", "video/x-dv");
 			mimeTypes.Add ("dwf", "drawing/x-dwf (old)");
@@ -147,6 +154,7 @@ namespace System.Web
 			mimeTypes.Add ("f90", "text/plain");
 			mimeTypes.Add ("fdf", "application/vnd.fdf");
 			mimeTypes.Add ("fif", "image/fif");
+			mimeTypes.Add ("flac", "audio/x-flac");
 			mimeTypes.Add ("fli", "video/fli");
 			mimeTypes.Add ("flo", "image/florian");
 			mimeTypes.Add ("flr", "x-world/x-vrml");
@@ -249,6 +257,7 @@ namespace System.Web
 			mimeTypes.Add ("mcf", "image/vasa");
 			mimeTypes.Add ("mcp", "application/netmc");
 			mimeTypes.Add ("mdb", "application/x-msaccess");
+			mimeTypes.Add ("mesh", "model/mesh");
 			mimeTypes.Add ("me", "application/x-troff-me");
 			mimeTypes.Add ("mht", "message/rfc822");
 			mimeTypes.Add ("mhtml", "message/rfc822");
@@ -282,6 +291,7 @@ namespace System.Web
 			mimeTypes.Add ("mpx", "application/x-project");
 			mimeTypes.Add ("mrc", "application/marc");
 			mimeTypes.Add ("ms", "application/x-troff-ms");
+			mimeTypes.Add ("msh", "model/mesh");
 			mimeTypes.Add ("m", "text/plain");
 			mimeTypes.Add ("mvb", "application/x-msmediaview");
 			mimeTypes.Add ("mv", "video/x-sgi-movie");
@@ -306,6 +316,8 @@ namespace System.Web
 			mimeTypes.Add ("omc", "application/x-omc");
 			mimeTypes.Add ("omcd", "application/x-omcdatamaker");
 			mimeTypes.Add ("omcr", "application/x-omcregerator");
+			mimeTypes.Add ("opus", "audio/ogg");
+			mimeTypes.Add ("oxps", "application/oxps");
 			mimeTypes.Add ("p10", "application/pkcs10");
 			mimeTypes.Add ("p12", "application/pkcs-12");
 			mimeTypes.Add ("p7a", "application/x-pkcs7-signature");
@@ -389,7 +401,7 @@ namespace System.Web
 			mimeTypes.Add ("roff", "application/x-troff");
 			mimeTypes.Add ("rp", "image/vnd.rn-realpix");
 			mimeTypes.Add ("rpm", "audio/x-pn-realaudio-plugin");
-			mimeTypes.Add ("rss", "text/xml");
+			mimeTypes.Add ("rss", "application/rss+xml");
 			mimeTypes.Add ("rtf", "text/richtext");
 			mimeTypes.Add ("rt", "text/richtext");
 			mimeTypes.Add ("rtx", "text/richtext");
@@ -412,6 +424,7 @@ namespace System.Web
 			mimeTypes.Add ("sh", "text/x-script.sh");
 			mimeTypes.Add ("shtml", "text/html");
 			mimeTypes.Add ("sid", "audio/x-psid");
+			mimeTypes.Add ("silo", "model/mesh");
 			mimeTypes.Add ("sit", "application/x-sit");
 			mimeTypes.Add ("skd", "application/x-koan");
 			mimeTypes.Add ("skm", "application/x-koan");
@@ -426,6 +439,7 @@ namespace System.Web
 			mimeTypes.Add ("spl", "application/futuresplash");
 			mimeTypes.Add ("spr", "application/x-sprite");
 			mimeTypes.Add ("sprite", "application/x-sprite");
+			mimeTypes.Add ("spx", "audio/ogg");
 			mimeTypes.Add ("src", "application/x-wais-source");
 			mimeTypes.Add ("ssi", "text/x-server-parsed-html");
 			mimeTypes.Add ("ssm", "application/streamingmedia");
@@ -456,6 +470,7 @@ namespace System.Web
 			mimeTypes.Add ("tif", "image/tiff");
 			mimeTypes.Add ("tr", "application/x-troff");
 			mimeTypes.Add ("trm", "application/x-msterminal");
+			mimeTypes.Add ("ts", "text/x-typescript");
 			mimeTypes.Add ("tsi", "audio/tsp-audio");
 			mimeTypes.Add ("tsp", "audio/tsplayer");
 			mimeTypes.Add ("tsv", "text/tab-separated-values");
@@ -473,7 +488,8 @@ namespace System.Web
 			mimeTypes.Add ("uue", "text/x-uuencode");
 			mimeTypes.Add ("uu", "text/x-uuencode");
 			mimeTypes.Add ("vcd", "application/x-cdlink");
-			mimeTypes.Add ("vcf", "text/x-vcard");
+			mimeTypes.Add ("vcf", "text/vcard");
+			mimeTypes.Add ("vcard", "text/vcard");
 			mimeTypes.Add ("vcs", "text/x-vCalendar");
 			mimeTypes.Add ("vda", "application/vda");
 			mimeTypes.Add ("vdo", "video/vdo");
@@ -527,6 +543,9 @@ namespace System.Web
 			mimeTypes.Add ("wsdl", "text/xml");
 			mimeTypes.Add ("wsrc", "application/x-wais-source");
 			mimeTypes.Add ("wtk", "application/x-wintalk");
+			mimeTypes.Add ("x3d", "model/x3d+xml");
+			mimeTypes.Add ("x3db", "model/x3d+fastinfoset");
+			mimeTypes.Add ("x3dv", "model/x3d-vrml");
 			mimeTypes.Add ("xaf", "x-world/x-vrml");
 			mimeTypes.Add ("xaml", "application/xaml+xml");
 			mimeTypes.Add ("xap", "application/x-silverlight-app");
@@ -562,6 +581,7 @@ namespace System.Web
 			mimeTypes.Add ("xpi", "application/x-xpinstall");
 			mimeTypes.Add ("xpix", "application/x-vnd.ls-xpix");
 			mimeTypes.Add ("xpm", "image/xpm");
+			mimeTypes.Add ("xps", "application/vnd.ms-xpsdocument");
 			mimeTypes.Add ("x-png", "image/png");
 			mimeTypes.Add ("xsd", "text/xml");
 			mimeTypes.Add ("xsl", "text/xml");
