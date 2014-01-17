@@ -25936,6 +25936,19 @@
       </method>
     </type>
   </test>
+  <test name="gtest-lambda-32.cs">
+    <type name="X">
+      <method name="Void Main()" attrs="145">
+        <size>34</size>
+      </method>
+      <method name="Byte &lt;Main&gt;m__0()" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-linq-01.cs">
     <type name="from.C">
       <method name="Void Main()" attrs="150">
