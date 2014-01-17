@@ -61,7 +61,7 @@ namespace System.Threading
 #if NET_4_5
 			timer_callback = token => {
 				var cts = (CancellationTokenSource) token;
-				cts.Cancel ();
+				cts.CancelSafe ();
 			};
 #endif
 		}
@@ -118,23 +118,46 @@ namespace System.Threading
 		public void Cancel (bool throwOnFirstException)
 		{
 			CheckDisposed ();
+			Cancellation (throwOnFirstException);
+		}
 
+		//
+		// Don't throw ObjectDisposedException if the callback
+		// is called concurrently with a Dispose
+		//
+		public void CancelSafe ()
+		{
+			if (!disposed)
+				Cancellation (true);
+		}
+
+		void Cancellation (bool throwOnFirstException)
+		{
 			if (canceled)
 				return;
 
 			Thread.MemoryBarrier ();
 			canceled = true;
-			
-			handle.Set ();
+
+			Thread.MemoryBarrier ();
+
+			// Dispose might be running at same time
+			if (!disposed)
+				handle.Set ();
+
 			if (linkedTokens != null)
 				UnregisterLinkedTokens ();
-			
+
+			var cbs = callbacks;
+			if (cbs == null)
+				return;
+
 			List<Exception> exceptions = null;
-			
+
 			try {
 				Action cb;
 				for (int id = currId; id != int.MinValue; id--) {
-					if (!callbacks.TryRemove (new CancellationTokenRegistration (id, this), out cb))
+					if (!cbs.TryRemove (new CancellationTokenRegistration (id, this), out cb))
 						continue;
 					if (cb == null)
 						continue;
@@ -153,22 +176,11 @@ namespace System.Threading
 					}
 				}
 			} finally {
-				callbacks.Clear ();
+				cbs.Clear ();
 			}
 
 			if (exceptions != null)
 				throw new AggregateException (exceptions);
-		}
-
-		/* This is the callback registered on linked tokens
-		 * so that they don't throw an ODE if the callback
-		 * is called concurrently with a Dispose
-		 */
-		void SafeLinkedCancel ()
-		{
-			try {
-				Cancel ();
-			} catch (ObjectDisposedException) {}
 		}
 
 #if NET_4_5
@@ -212,7 +224,7 @@ namespace System.Threading
 				throw new ArgumentException ("Empty tokens array");
 
 			CancellationTokenSource src = new CancellationTokenSource ();
-			Action action = src.SafeLinkedCancel;
+			Action action = src.CancelSafe;
 			var registrations = new List<CancellationTokenRegistration> (tokens.Length);
 
 			foreach (CancellationToken token in tokens) {
@@ -250,18 +262,20 @@ namespace System.Threading
 		void Dispose (bool disposing)
 		{
 			if (disposing && !disposed) {
-				Thread.MemoryBarrier ();
 				disposed = true;
+				Thread.MemoryBarrier ();
 
 				if (!canceled) {
-					Thread.MemoryBarrier ();
 					UnregisterLinkedTokens ();
 					callbacks = null;
+				} else {
+					handle.WaitOne ();
 				}
 #if NET_4_5
 				if (timer != null)
 					timer.Dispose ();
 #endif
+
 				handle.Dispose ();
 			}
 		}
