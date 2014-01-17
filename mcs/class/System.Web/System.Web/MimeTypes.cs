@@ -44,8 +44,10 @@ namespace System.Web
 			mimeTypes.Add ("323", "text/h323");
 			mimeTypes.Add ("3dmf", "x-world/x-3dmf");
 			mimeTypes.Add ("3dm", "x-world/x-3dmf");
+			mimeTypes.Add ("3g2", "video/3gpp2");
+			mimeTypes.Add ("3gp", "video/3gpp");
 			mimeTypes.Add ("aab", "application/x-authorware-bin");
-			mimeTypes.Add ("aac", "audio/mp4");
+			mimeTypes.Add ("aac", "audio/aac");
 			mimeTypes.Add ("aam", "application/x-authorware-map");
 			mimeTypes.Add ("aas", "application/x-authorware-seg");
 			mimeTypes.Add ("abc", "text/vnd.abc");
@@ -234,6 +236,8 @@ namespace System.Web
 			mimeTypes.Add ("m2a", "audio/mpeg");
 			mimeTypes.Add ("m2v", "video/mpeg");
 			mimeTypes.Add ("m3u", "audio/x-mpequrl");
+			mimeTypes.Add ("m4a", "audio/mp4");
+			mimeTypes.Add ("m4v", "video/mp4");
 			mimeTypes.Add ("man", "application/x-troff-man");
 			mimeTypes.Add ("manifest", "application/x-ms-manifest");
 			mimeTypes.Add ("map", "application/x-navimap");
@@ -263,7 +267,7 @@ namespace System.Web
 			mimeTypes.Add ("mp2", "video/mpeg");
 			mimeTypes.Add ("mp3", "audio/mpeg3");
 			mimeTypes.Add ("mp4", "video/mp4");
-			mimeTypes.Add ("mp4a", "audio/mp4");
+			//mimeTypes.Add ("mp4a", "audio/mp4");  // A common but unofficial alternative to m4a
 			mimeTypes.Add ("mpa", "audio/mpeg");
 			mimeTypes.Add ("mpc", "application/x-project");
 			mimeTypes.Add ("mpeg", "video/mpeg");
@@ -297,6 +301,7 @@ namespace System.Web
 			mimeTypes.Add ("oga", "audio/ogg");
 			mimeTypes.Add ("ogg", "audio/ogg");
 			mimeTypes.Add ("ogv", "video/ogg");
+			mimeTypes.Add ("ogx", "application/ogg");
 			mimeTypes.Add ("omc", "application/x-omc");
 			mimeTypes.Add ("omcd", "application/x-omcdatamaker");
 			mimeTypes.Add ("omcr", "application/x-omcregerator");
