@@ -322,7 +322,7 @@ namespace MonoTests.System.DirectoryServices
 			ds.Filter = "(objectClass=person)";
 			result = ds.FindOne();
 
-			// Properties that does not exists are not loaded
+			// Properties that do not exist are not loaded
 			Assert.AreEqual(result.Properties.Count,3);
 			Assert.IsTrue(result.Properties.Contains("cn"));
 			Assert.IsTrue(result.Properties.Contains("objectClass"));

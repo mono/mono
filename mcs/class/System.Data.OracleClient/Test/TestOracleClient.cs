@@ -1345,7 +1345,7 @@ namespace Test.OracleClient
 				cmd2.ExecuteNonQuery ();
 			}
 			catch(OracleException) {
-				// ignore if procedure does not exists
+				// ignore if procedure does not exist
 			}
 
 			Console.WriteLine("  Create table MONO_TEST_TABLE2...");

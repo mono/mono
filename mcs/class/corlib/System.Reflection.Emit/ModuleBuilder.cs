@@ -1,4 +1,3 @@
-
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -534,7 +533,7 @@ namespace System.Reflection.Emit {
 			if (resourceFileName == String.Empty)
 				throw new ArgumentException ("resourceFileName");
 			if (!File.Exists (resourceFileName) || Directory.Exists (resourceFileName))
-				throw new FileNotFoundException ("File '" + resourceFileName + "' does not exists or is a directory.");
+				throw new FileNotFoundException ("File '" + resourceFileName + "' does not exist or is a directory.");
 
 			throw new NotImplementedException ();
 		}

@@ -93,7 +93,7 @@ namespace System.IO {
 				throw new ArgumentException ("Empty path", "path");
 
 			if (!Directory.Exists (path))
-				throw new ArgumentException ("Directory does not exists", "path");
+				throw new ArgumentException ("Directory does not exist", "path");
 
 			this.enableRaisingEvents = false;
 			this.filter = filter;
@@ -312,7 +312,7 @@ namespace System.IO {
 					throw new ArgumentException ("Invalid directory name", "value", exc);
 
 				if (!exists)
-					throw new ArgumentException ("Directory does not exists", "value");
+					throw new ArgumentException ("Directory does not exist", "value");
 
 				path = value;
 				fullpath = null;
