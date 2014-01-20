@@ -99,22 +99,18 @@ namespace System.Net {
 			if (start_host >= length)
 				throw new ArgumentException ("No host specified.");
 
-			int colon = uri.IndexOf (':', start_host, length - start_host);
-			int root;
-			if (colon > 0) {
+			int root = uri.IndexOf('/', start_host, length - start_host);
+			int colon = uri.LastIndexOf (':', start_host, root - start_host - 1);
+			if (colon > 0 && ushort.TryParse(uri.Substring(colon + 1, root - colon - 1), out port)) {
 				host = uri.Substring (start_host, colon - start_host);
-				root = uri.IndexOf ('/', colon, length - colon);
-				port = (ushort) Int32.Parse (uri.Substring (colon + 1, root - colon - 1));
-				path = uri.Substring (root);
 			} else {
-				root = uri.IndexOf ('/', start_host, length - start_host);
 				host = uri.Substring (start_host, root - start_host);
-				path = uri.Substring (root);
 			}
 
 			if (IPAddress.TryParse(host, out address))
 				host = "*"; // not sure if * or + is more appropriate to match with MS.NET, but both are better than host header filtering to IP
 
+			path = uri.Substring(root);
 			if (path.Length != 1)
 				path = path.Substring (0, path.Length - 1);
 		}
@@ -138,25 +134,6 @@ namespace System.Net {
 			int colon = uri.IndexOf (':', start_host, length - start_host);
 			if (start_host == colon)
 				throw new ArgumentException ("No host specified.");
-
-			int root;
-			if (colon > 0) {
-				root = uri.IndexOf ('/', colon, length - colon);
-				if (root == -1)
-					throw new ArgumentException ("No path specified.");
-
-				try {
-					int p = Int32.Parse (uri.Substring (colon + 1, root - colon - 1));
-					if (p <= 0 || p >= 65536)
-						throw new Exception ();
-				} catch {
-					throw new ArgumentException ("Invalid port.");
-				}
-			} else {
-				root = uri.IndexOf ('/', start_host, length - start_host);
-				if (root == -1)
-					throw new ArgumentException ("No path specified.");
-			}
 
 			if (uri [uri.Length - 1] != '/')
 				throw new ArgumentException ("The prefix must end with '/'");
