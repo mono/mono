@@ -697,6 +697,32 @@ namespace MonoTests.System
 				Assert.IsTrue (london.Equals (deserialized));
 			}
 		}
+
+		[TestFixture]
+		public class ToSerializedString {
+			
+			[Test]
+			public void SerializedString_ForWindows(){
+				if(!IsWindows)
+					return;
+
+				TimeZoneInfo info = TimeZoneInfo.Local;
+				string serialized = info.ToSerializedString();
+
+				Assert.IsNotEmpty(serialized);
+			}
+
+			/// <summary>
+			/// Determine whether windows of not (taken Stephane Delcroix's code)
+			/// </summary>
+			private static bool IsWindows
+			{
+				get {
+					int platform = (int) Environment.OSVersion.Platform;
+					return ((platform != 4) && (platform != 6) && (platform != 128));
+				}
+			}
+		}		
 	}
 }
 #endif

@@ -854,7 +854,36 @@ namespace System
 		
 		public string ToSerializedString ()
 		{
-			throw new NotImplementedException ();
+			if(!IsWindows)
+				throw new NotImplementedException();
+				
+			string header = String.Empty;
+            string rules = String.Empty;
+            header += Id + ";" + BaseUtcOffset.TotalMinutes + ";" + DisplayName + ";" + StandardName + ";" + DaylightName + ";";
+
+            foreach (TimeZoneInfo.AdjustmentRule rule in GetAdjustmentRules()) {
+                rules+="[";
+                rules+=rule.DateStart.ToString("MM/dd/yyyy").Replace("/",":")+";";
+                rules+=rule.DateEnd.ToString("MM/dd/yyyy").Replace("/",":")+";";
+                rules+=rule.DaylightDelta.TotalMinutes+";";
+                rules+="[";
+                rules+=Convert.ToInt32(rule.DaylightTransitionStart.IsFixedDateRule)+";";
+                rules+=rule.DaylightTransitionStart.TimeOfDay.Millisecond<=0?rule.DaylightTransitionStart.TimeOfDay.ToLongTimeString()+";":rule.DaylightTransitionStart.TimeOfDay.ToLongTimeString()+"."+rule.DaylightTransitionStart.TimeOfDay.Millisecond+";";
+                rules+=rule.DaylightTransitionStart.Month+";";
+                rules+=rule.DaylightTransitionStart.Week+";";
+                rules+=Convert.ToInt32(rule.DaylightTransitionStart.DayOfWeek)+";";
+                rules+="];";
+                rules+="[";
+                rules+=Convert.ToInt32(rule.DaylightTransitionEnd.IsFixedDateRule)+";";
+                rules+=rule.DaylightTransitionEnd.TimeOfDay.Millisecond<=0?rule.DaylightTransitionEnd.TimeOfDay.ToLongTimeString()+";":rule.DaylightTransitionEnd.TimeOfDay.ToLongTimeString()+"."+rule.DaylightTransitionEnd.TimeOfDay.Millisecond+";";
+                rules+=rule.DaylightTransitionEnd.Month+";";
+                rules+=rule.DaylightTransitionEnd.Week+";";
+                rules+=Convert.ToInt32(rule.DaylightTransitionEnd.DayOfWeek)+";";
+                rules+="];";
+                rules+="]";
+            }
+
+            return header + rules + ";";
 		}
 
 		public override string ToString ()
