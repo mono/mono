@@ -4968,7 +4968,7 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token)
 	if ((class->flags & TYPE_ATTRIBUTE_STRING_FORMAT_MASK) == TYPE_ATTRIBUTE_UNICODE_CLASS)
 		class->unicode = 1;
 
-#ifdef PLATFORM_WIN32
+#if defined(PLATFORM_WIN32) && !defined(PLATFORM_IPHONE_XCOMP)
 	if ((class->flags & TYPE_ATTRIBUTE_STRING_FORMAT_MASK) == TYPE_ATTRIBUTE_AUTO_CLASS)
 		class->unicode = 1;
 #endif
