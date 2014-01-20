@@ -107,9 +107,10 @@ namespace Microsoft.Build.Utilities
 
 		public string GetMetadata (string metadataName)
 		{
-			if (ReservedNameUtils.IsReservedMetadataName (metadataName))
-				return ReservedNameUtils.GetReservedMetadata (ItemSpec, metadataName, metadata);
-			else if (metadata.Contains (metadataName))
+			if (ReservedNameUtils.IsReservedMetadataName (metadataName)) {
+				var escapedMetadata = ReservedNameUtils.GetReservedMetadata (ItemSpec, metadataName, metadata);
+				return MSBuildUtils.Unescape (escapedMetadata);
+			} else if (metadata.Contains (metadataName))
 				return (string) metadata [metadataName];
 			else
 				return String.Empty;
