@@ -595,7 +595,6 @@ namespace MonoTests.System.Web.Routing
 		}
 
 		[Test]
-		[Ignore ("looks like RouteExistingFiles ( = false) does not affect... so this test needs more investigation")]
 		public void GetVirtualPathToExistingFile ()
 		{
 			var c = new RouteCollection ();
@@ -926,6 +925,27 @@ namespace MonoTests.System.Web.Routing
 			Assert.AreEqual (typeof (PageRouteHandler), rd.RouteHandler.GetType (), "#A4-3");
 			Assert.IsFalse (((PageRouteHandler) rd.RouteHandler).CheckPhysicalUrlAccess, "#A4-4");
 		}
+
+#if NET_4_5
+		[Test]
+		public void AppendTrailingSlash ()
+		{
+			var c = new RouteCollection ();
+			c.AppendTrailingSlash = true;
+			Assert.IsTrue (c.AppendTrailingSlash);
+			c.AppendTrailingSlash = false;
+			Assert.IsFalse (c.AppendTrailingSlash);
+		}
+		[Test]
+		public void LowercaseUrls ()
+		{
+			var c = new RouteCollection ();
+			c.LowercaseUrls = true;
+			Assert.IsTrue (c.LowercaseUrls);
+			c.LowercaseUrls = false;
+			Assert.IsFalse (c.LowercaseUrls);
+		}
+#endif
 #endif
 	}
 }
