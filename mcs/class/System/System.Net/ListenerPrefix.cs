@@ -100,7 +100,7 @@ namespace System.Net {
 				throw new ArgumentException ("No host specified.");
 
 			int root = uri.IndexOf('/', start_host, length - start_host);
-			int colon = uri.LastIndexOf (':', start_host, root - start_host - 1);
+			int colon = uri.LastIndexOf (':', root - 1, root - start_host - 1);
 			if (colon > 0 && ushort.TryParse(uri.Substring(colon + 1, root - colon - 1), out port)) {
 				host = uri.Substring (start_host, colon - start_host);
 			} else {
