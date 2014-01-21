@@ -23,6 +23,18 @@ class C
 			s.F = 1.0f;
 		}
 	}
+
+	static void Test2 (bool b)
+	{
+		S s;
+		if (b) {
+			s.s2 = new S2 ();
+			s.F = 1.0f;
+		} else {
+			s.s2.f1 = 2.1f;
+			s.F = 1.0f;
+		}
+	}
 	
 	public static int Main ()
 	{

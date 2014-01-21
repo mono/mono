@@ -5814,25 +5814,36 @@ namespace Mono.CSharp {
 			}
 
 			var fe = InstanceExpression as FieldExpr;
-			if (fe != null || lvalue_instance) {
-				if (fe == null)
-					return;
+			if (fe != null) {
+				Expression instance;
 
-				/*
-				while (fe.InstanceExpression is FieldExpr) {
-					fe = (FieldExpr) fe.InstanceExpression;
-					if (!fe.Spec.DeclaringType.IsStruct)
-						continue;
+				do {
+					instance = fe.InstanceExpression;
+					var fe_instance = instance as FieldExpr;
+					if ((fe_instance != null && !fe_instance.IsStatic) || instance is LocalVariableReference) {
+						if (TypeSpec.IsReferenceType (fe.Type) && instance.Type.IsStruct) {
+							var var = InstanceExpression as IVariableReference;
+							if (var != null && var.VariableInfo == null) {
+								var var_inst = instance as IVariableReference;
+								if (var_inst == null || (var_inst.VariableInfo != null && !fc.IsDefinitelyAssigned (var_inst.VariableInfo)))
+									fc.Report.Warning (1060, 1, fe.loc, "Use of possibly unassigned field `{0}'", fe.Name);
+							}
+						}
 
-					if (fe.VariableInfo != null && fc.IsStructFieldDefinitelyAssigned (fe.VariableInfo, fe.Name)) {
-						fc.Report.Warning (1060, 1, fe.loc, "Use of possibly unassigned field `{0}'", fe.Name);
+						if (fe_instance != null) {
+							fe = fe_instance;
+							continue;
+						}
 					}
-				}
 
-				fe.InstanceExpression.FlowAnalysis (fc);
-				*/
+					break;
+				} while (true);
+
+				if (instance != null && TypeSpec.IsReferenceType (instance.Type))
+					instance.FlowAnalysis (fc);
 			} else {
-				InstanceExpression.FlowAnalysis (fc);
+				if (TypeSpec.IsReferenceType (InstanceExpression.Type))
+					InstanceExpression.FlowAnalysis (fc);
 			}
 		}
 

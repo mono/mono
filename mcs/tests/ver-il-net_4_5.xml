@@ -47563,6 +47563,9 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
+      <method name="Void Test2(Boolean)" attrs="145">
+        <size>74</size>
+      </method>
     </type>
   </test>
   <test name="test-83.cs">
