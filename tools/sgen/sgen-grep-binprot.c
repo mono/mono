@@ -488,7 +488,7 @@ main (int argc, char *argv[])
 			}
 			}
 		} else {
-			gboolean match = FALSE;
+			gboolean match = num_nums == 0 ? is_match (NULL, type, data) : FALSE;
 			for (i = 0; i < num_nums; ++i) {
 				if (is_match ((gpointer) nums [i], type, data)) {
 					match = TRUE;
