@@ -178,7 +178,8 @@ class MakeBundle {
 		List<string> assemblies = LoadAssemblies (sources);
 		List<string> files = new List<string> ();
 		foreach (string file in assemblies)
-			QueueAssembly (files, file);
+			if (!QueueAssembly (files, file))
+				return 1;
 			
 		GenerateBundles (files);
 		//GenerateJitWrapper ();
@@ -551,27 +552,41 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 	}
 	
 	static readonly Universe universe = new Universe ();
+	static readonly Dictionary<string, string> loaded_assemblies = new Dictionary<string, string> ();
 	
-	static void QueueAssembly (List<string> files, string codebase)
+	static bool QueueAssembly (List<string> files, string codebase)
 	{
 		// Console.WriteLine ("CODE BASE IS {0}", codebase);
 		if (files.Contains (codebase))
-			return;
+			return true;
+
+		var path = new Uri(codebase).LocalPath;
+		var name = Path.GetFileName (path);
+		string found;
+		if (loaded_assemblies.TryGetValue (name, out found)) {
+			Error (string.Format ("Duplicate assembly name `{0}'. Both `{1}' and `{2}' use same assembly name.", name, path, found));
+			return false;
+		}
+
+		loaded_assemblies.Add (name, path);
 
 		files.Add (codebase);
 		if (!autodeps)
-			return;
+			return true;
 		try {
-			Assembly a = universe.LoadFile (new Uri(codebase).LocalPath);
+			Assembly a = universe.LoadFile (path);
 
 			foreach (AssemblyName an in a.GetReferencedAssemblies ()) {
 				a = universe.Load (an.FullName);
-				QueueAssembly (files, a.CodeBase);
+				if (!QueueAssembly (files, a.CodeBase))
+					return false;
 			}
 		} catch (Exception e) {
 			if (!skip_scan)
 				throw;
 		}
+
+		return true;
 	}
 
 	static Assembly LoadAssembly (string assembly)
@@ -622,7 +637,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 
 	static void Error (string msg)
 	{
-		Console.Error.WriteLine (msg);
+		Console.Error.WriteLine ("ERROR: " + msg);
 		Environment.Exit (1);
 	}
 
