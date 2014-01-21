@@ -180,23 +180,6 @@ class MakeBundle {
 		foreach (string file in assemblies)
 			QueueAssembly (files, file);
 			
-		// Special casing mscorlib.dll: any specified mscorlib.dll cannot be loaded
-		// by Assembly.ReflectionFromLoadFrom(). Instead the fx assembly which runs
-		// mkbundle.exe is loaded, which is not what we want.
-		// So, replace it with whatever actually specified.
-		foreach (string srcfile in sources) {
-			if (Path.GetFileName (srcfile) == "mscorlib.dll") {
-				foreach (string file in files) {
-					if (Path.GetFileName (new Uri (file).LocalPath) == "mscorlib.dll") {
-						files.Remove (file);
-						files.Add (new Uri (Path.GetFullPath (srcfile)).LocalPath);
-						break;
-					}
-				}
-				break;
-			}
-		}
-
 		GenerateBundles (files);
 		//GenerateJitWrapper ();
 		
