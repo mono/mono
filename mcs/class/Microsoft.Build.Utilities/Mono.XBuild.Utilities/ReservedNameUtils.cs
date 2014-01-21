@@ -75,10 +75,10 @@ namespace Mono.XBuild.Utilities {
 			if (String.IsNullOrEmpty (itemSpec))
 				return String.Empty;
 		
+			itemSpec = MSBuildUtils.Unescape (itemSpec);
 			switch (metadataName.ToLowerInvariant ()) {
 			case "fullpath":
-				var unescapedItemSpec = MSBuildUtils.Unescape (itemSpec);
-				return MSBuildUtils.Escape (Path.GetFullPath (unescapedItemSpec));
+				return Path.GetFullPath (itemSpec);
 			case "rootdir":
 				if (Path.IsPathRooted (itemSpec))
 					return Path.GetPathRoot (itemSpec);
