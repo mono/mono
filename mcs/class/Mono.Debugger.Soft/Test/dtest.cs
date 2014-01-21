@@ -551,7 +551,20 @@ public class DebuggerTests
 		var f = e.Thread.GetFrames () [0];
 		assert_location (e, "ss_recursive");
 		AssertValue (1, f.GetValue (f.Method.GetLocal ("n")));
+		req.Disable ();
 
+		// Check that single stepping doesn't clobber fp values
+		e = run_until ("ss_fp_clobber");
+		req = create_step (e);
+		while (true) {
+			f = e.Thread.GetFrames ()[0];
+			e = step_into ();
+			if ((e as StepEvent).Method.Name == "ss_fp_clobber_2")
+				break;
+			e = step_into ();
+		}
+		f = e.Thread.GetFrames ()[0];
+		AssertValue (7.0, f.GetValue (f.Method.GetParameters ()[0]));
 		req.Disable ();
 	}
 

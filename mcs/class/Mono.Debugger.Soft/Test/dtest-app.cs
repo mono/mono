@@ -361,6 +361,7 @@ public class Tests : TestsBase, ITest2
 		ss_regress_654694 ();
 		ss_step_through ();
 		ss_recursive (1);
+		ss_fp_clobber ();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -483,6 +484,21 @@ public class Tests : TestsBase, ITest2
 		if (n == 10)
 			return;
 		ss_recursive (n + 1);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_fp_clobber () {
+		double v = ss_fp_clobber_1 (5.0);
+		ss_fp_clobber_2 (v);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static double ss_fp_clobber_1 (double d) {
+		return d + 2.0;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_fp_clobber_2 (double d) {
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
