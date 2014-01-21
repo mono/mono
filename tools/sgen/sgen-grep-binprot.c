@@ -27,8 +27,10 @@ read_entry (FILE *in, void **data)
 	case SGEN_PROTOCOL_COLLECTION_END: size = sizeof (SGenProtocolCollection); break;
 	case SGEN_PROTOCOL_CONCURRENT_START: size = 0; break;
 	case SGEN_PROTOCOL_CONCURRENT_UPDATE_FINISH: size = 0; break;
-	case SGEN_PROTOCOL_WORLD_STOPPING: size = sizeof (SGenProtocolWorldStop); break;
-	case SGEN_PROTOCOL_WORLD_RESTARTED: size = sizeof (SGenProtocolWorldRestart); break;
+	case SGEN_PROTOCOL_WORLD_STOPPING: size = sizeof (SGenProtocolWorldStopping); break;
+	case SGEN_PROTOCOL_WORLD_STOPPED: size = sizeof (SGenProtocolWorldStopped); break;
+	case SGEN_PROTOCOL_WORLD_RESTARTING: size = sizeof (SGenProtocolWorldRestarting); break;
+	case SGEN_PROTOCOL_WORLD_RESTARTED: size = sizeof (SGenProtocolWorldRestarted); break;
 	case SGEN_PROTOCOL_ALLOC: size = sizeof (SGenProtocolAlloc); break;
 	case SGEN_PROTOCOL_ALLOC_PINNED: size = sizeof (SGenProtocolAlloc); break;
 	case SGEN_PROTOCOL_ALLOC_DEGRADED: size = sizeof (SGenProtocolAlloc); break;
@@ -99,12 +101,26 @@ print_entry (int type, void *data)
 		break;
 	}
 	case SGEN_PROTOCOL_WORLD_STOPPING: {
-		SGenProtocolWorldStop *entry = data;
+		SGenProtocolWorldStopping *entry = data;
 		printf ("%s world stopping timestamp %lld\n", WORKER_PREFIX (type), entry->timestamp);
 		break;
 	}
+	case SGEN_PROTOCOL_WORLD_STOPPED: {
+		SGenProtocolWorldStopped *entry = data;
+		long long total = entry->total_major_cards + entry->total_los_cards;
+		long long marked = entry->marked_major_cards + entry->marked_los_cards;
+		printf ("%s world stopped timestamp %lld total %lld marked %lld %0.2f%%\n", WORKER_PREFIX (type), entry->timestamp, total, marked, 100.0 * (double) marked / (double) total);
+		break;
+	}
+	case SGEN_PROTOCOL_WORLD_RESTARTING: {
+		SGenProtocolWorldRestarting *entry = data;
+		long long total = entry->total_major_cards + entry->total_los_cards;
+		long long marked = entry->marked_major_cards + entry->marked_los_cards;
+		printf ("%s world restarting generation %d timestamp %lld total %lld marked %lld %0.2f%%\n", WORKER_PREFIX (type), entry->generation, entry->timestamp, total, marked, 100.0 * (double) marked / (double) total);
+		break;
+	}
 	case SGEN_PROTOCOL_WORLD_RESTARTED: {
-		SGenProtocolWorldRestart *entry = data;
+		SGenProtocolWorldRestarted *entry = data;
 		printf ("%s world restarted generation %d timestamp %lld\n", WORKER_PREFIX (type), entry->generation, entry->timestamp);
 		break;
 	}
@@ -268,6 +284,8 @@ is_match (gpointer ptr, int type, void *data)
 	case SGEN_PROTOCOL_CONCURRENT_START:
 	case SGEN_PROTOCOL_CONCURRENT_UPDATE_FINISH:
 	case SGEN_PROTOCOL_WORLD_STOPPING:
+	case SGEN_PROTOCOL_WORLD_STOPPED:
+	case SGEN_PROTOCOL_WORLD_RESTARTING:
 	case SGEN_PROTOCOL_WORLD_RESTARTED:
 	case SGEN_PROTOCOL_THREAD_SUSPEND:
 	case SGEN_PROTOCOL_THREAD_RESTART:
@@ -446,7 +464,7 @@ main (int argc, char *argv[])
 		if (pause_times) {
 			switch (type) {
 			case SGEN_PROTOCOL_WORLD_STOPPING: {
-				SGenProtocolWorldStop *entry = data;
+				SGenProtocolWorldStopping *entry = data;
 				assert (!pause_times_stopped);
 				pause_times_concurrent = FALSE;
 				pause_times_ts = entry->timestamp;
@@ -458,7 +476,7 @@ main (int argc, char *argv[])
 				pause_times_concurrent = TRUE;
 				break;
 			case SGEN_PROTOCOL_WORLD_RESTARTED: {
-				SGenProtocolWorldRestart *entry = data;
+				SGenProtocolWorldRestarted *entry = data;
 				assert (pause_times_stopped);
 				printf ("pause-time %d %d %lld %lld\n",
 						entry->generation,
