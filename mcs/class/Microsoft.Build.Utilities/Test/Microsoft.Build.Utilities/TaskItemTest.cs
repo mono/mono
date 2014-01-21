@@ -240,5 +240,19 @@ namespace MonoTests.Microsoft.Build.Utilities {
 			item = new TaskItem ("lalala");
 			item.SetMetadata ("Identity", "some value");
 		}
+
+		[Test]
+		public void GetFullPathOfItemWithUnescapedSpecialChar ()
+		{
+			var item = new TaskItem ("my@file");
+			Assert.IsTrue (item.GetMetadata ("FullPath").EndsWith ("my@file"), "A1");
+		}
+
+		[Test]
+		public void GetFullPathOfItemWithEscapedSpecialChar ()
+		{
+			var item = new TaskItem ("my%40file");
+			Assert.IsTrue (item.GetMetadata ("FullPath").EndsWith ("my@file"), "A1");
+		}
 	}
 }
