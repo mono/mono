@@ -346,8 +346,15 @@ mono_arch_create_trampoline_code_full (MonoTrampolineType tramp_type, guint32 *c
 		code = emit_bx (code, ARMREG_IP);
 
 	constants = (gpointer*)code;
+#if defined(PLATFORM_IPHONE_XCOMP)
+	/* These seem to be unused when AOT'ing, as addresses are saved without any modification.
+	   So setting it to dummy value to make uniform cross compilation for Windows and OSX. */
+	constants[0] = (gpointer*)0xDEADC0DE;
+	constants[1] = (gpointer*)0xDEADC0DE;
+#else
 	constants [0] = mono_get_lmf_addr;
 	constants [1] = (gpointer)mono_get_trampoline_func (tramp_type);
+#endif
 
 	if (!aot) {
 		/* backpatch by emitting the missing instructions skipped above */
