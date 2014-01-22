@@ -82,7 +82,7 @@ namespace Microsoft.Scripting.Interpreter {
             public override int Run(InterpretedFrame frame) {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (UInt64)((Int16)l / (Int16)r);
+                frame.Data[frame.StackIndex - 2] = (UInt64)((UInt64)l / (UInt64)r);
                 frame.StackIndex--;
                 return 1;
             }
