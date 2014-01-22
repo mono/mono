@@ -54,6 +54,7 @@ namespace Microsoft.Build.BuildEngine {
 		bool		isDynamic;
 		bool		keepDuplicates = true;
 		string		removeMetadata, keepMetadata;
+		ITaskItem	taskItem;
 
 		BuildItem ()
 		{
@@ -65,6 +66,7 @@ namespace Microsoft.Build.BuildEngine {
 				throw new ArgumentNullException ("taskItem");
 
 			this.name = itemName;
+			this.taskItem = taskItem;
 			this.finalItemSpec = taskItem.ItemSpec;
 			this.itemInclude = MSBuildUtils.Escape (taskItem.ItemSpec);
 			this.evaluatedMetadata = (Hashtable) taskItem.CloneCustomMetadata ();
@@ -166,8 +168,7 @@ namespace Microsoft.Build.BuildEngine {
 		public string GetEvaluatedMetadata (string metadataName)
 		{
 			if (ReservedNameUtils.IsReservedMetadataName (metadataName)) {
-				string metadata = ReservedNameUtils.GetReservedMetadata (FinalItemSpec, metadataName, evaluatedMetadata);
-				return MSBuildUtils.Unescape (metadata);
+				return ReservedNameUtils.GetReservedMetadata (FinalItemSpec, metadataName, evaluatedMetadata);
 			}
 
 			if (evaluatedMetadata.Contains (metadataName))
@@ -179,7 +180,27 @@ namespace Microsoft.Build.BuildEngine {
 		public string GetMetadata (string metadataName)
 		{
 			if (ReservedNameUtils.IsReservedMetadataName (metadataName)) {
-				return ReservedNameUtils.GetReservedMetadata (FinalItemSpec, metadataName, unevaluatedMetadata);
+				if (taskItem != null)
+					return MSBuildUtils.Escape (taskItem.GetMetadata (metadataName));
+
+				// Very special case: when the ctor with signature (string, string) has been called (taskItem == null),
+				// metadata for "FullPath" is always returned escaped. For "FileName" and "Identity" the return value
+				// depends on whether the initial itemspec passed to the ctor was escaped. If it was escaped, an escaped
+				// value is returned; otherwise an unescaped value.
+				var metadata = ReservedNameUtils.GetReservedMetadata (FinalItemSpec, metadataName, unevaluatedMetadata);
+				metadataName = metadataName.ToLowerInvariant ();
+				switch (metadataName) {
+				case "fullpath":
+					return MSBuildUtils.Escape (metadata);
+				case "filename":
+					if (!FinalItemSpec.EndsWith (metadata, StringComparison.InvariantCulture))
+						return MSBuildUtils.Escape (metadata);
+					break;
+				case "identity":
+					return FinalItemSpec;
+				}
+
+				return metadata;
 			} else if (unevaluatedMetadata.Contains (metadataName))
 				return (string) unevaluatedMetadata [metadataName];
 			else
