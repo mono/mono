@@ -95,7 +95,7 @@ function clean_build_krait_patch
 	local KRAIT_PATCH_REPO="git://github.com/Unity-Technologies/krait-signal-handler.git"
 	if [ ${UNITY_THISISABUILDMACHINE:+1} ]; then
 		echo "Trusting TC to have cloned krait patch repository for us"
-	elif [ -d "$PATCH_PATH" ]; then
+	elif [ -d "$KRAIT_PATCH_PATH" ]; then
 		echo "Krait patch repository already cloned"
 	else
 		git clone --branch "master" "$KRAIT_PATCH_REPO" "$KRAIT_PATCH_PATH"
