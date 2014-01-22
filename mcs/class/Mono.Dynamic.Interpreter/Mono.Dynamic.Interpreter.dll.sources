@@ -41,6 +41,7 @@ Assembly/AssemblyInfo.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/RuntimeVariables.cs
 
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/AddInstruction.cs
+../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/AndInstruction.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/ArrayOperations.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/CallInstruction.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/CallInstruction.Generated.cs
@@ -58,10 +59,19 @@ Assembly/AssemblyInfo.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/LabelInfo.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/LessThanInstruction.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/LocalAccess.cs
+../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/ModInstruction.cs
+../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/MulInstruction.cs
+../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/NegateInstruction.cs
+../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/NotInstruction.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/NotEqualInstruction.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/NumericConvertInstruction.cs
+../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/OrInstruction.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/StackOperations.cs
+../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/ShlInstruction.cs
+../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/ShrInstruction.cs
+../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/SubInstruction.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/TypeOperations.cs
+../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/XorInstruction.cs
 
 ../dlr/Runtime/Microsoft.Dynamic/Math/BigIntegerV4.cs
 ../dlr/Runtime/Microsoft.Dynamic/Math/Complex64.cs

@@ -561,6 +561,7 @@ namespace Microsoft.Scripting.Interpreter {
                     case ExpressionType.Multiply:
                     case ExpressionType.MultiplyChecked:
                     case ExpressionType.Divide:
+                    case ExpressionType.Modulo:
                         CompileArithmetic(node.NodeType, node.Left, node.Right);
                         return;
 
@@ -577,6 +578,17 @@ namespace Microsoft.Scripting.Interpreter {
                     case ExpressionType.GreaterThan:
                     case ExpressionType.GreaterThanOrEqual:
                         CompileComparison(node.NodeType, node.Left, node.Right);
+                        return;
+
+                    case ExpressionType.LeftShift:
+                    case ExpressionType.RightShift:
+                        CompileShift(node.NodeType, node.Left, node.Right);
+                        return;
+
+                    case ExpressionType.And:
+                    case ExpressionType.Or:
+                    case ExpressionType.ExclusiveOr:
+                        CompileLogical(node.NodeType, node.Left, node.Right);
                         return;
 
                     default:
@@ -629,6 +641,30 @@ namespace Microsoft.Scripting.Interpreter {
                 case ExpressionType.Multiply: _instructions.EmitMul(left.Type, false); break;
                 case ExpressionType.MultiplyChecked: _instructions.EmitMul(left.Type, true); break;
                 case ExpressionType.Divide: _instructions.EmitDiv(left.Type); break;
+                case ExpressionType.Modulo: _instructions.EmitMod(left.Type); break;
+                default: throw Assert.Unreachable;
+            }
+        }
+
+        private void CompileShift(ExpressionType nodeType, Expression left, Expression right) {
+            Debug.Assert(right.Type == typeof (int));
+            Compile(left);
+            Compile(right);
+            switch (nodeType) {
+                case ExpressionType.LeftShift: _instructions.EmitShl(left.Type); break;
+                case ExpressionType.RightShift: _instructions.EmitShr(left.Type); break;
+                default: throw Assert.Unreachable;
+            }
+        }
+
+        private void CompileLogical(ExpressionType nodeType, Expression left, Expression right) {
+            Debug.Assert(left.Type == right.Type && TypeUtils.IsIntegerOrBool(left.Type));
+            Compile(left);
+            Compile(right);
+            switch (nodeType) {
+                case ExpressionType.And: _instructions.EmitAnd(left.Type); break;
+                case ExpressionType.Or: _instructions.EmitOr(left.Type); break;
+                case ExpressionType.ExclusiveOr: _instructions.EmitExclusiveOr(left.Type); break;
                 default: throw Assert.Unreachable;
             }
         }
@@ -673,13 +709,14 @@ namespace Microsoft.Scripting.Interpreter {
             return;
         }
 
+        private void CompileNegateExpression(UnaryExpression node, bool @checked) {
+            Compile(node.Operand);
+            _instructions.EmitNegate(node.Type, @checked);
+        }
+
         private void CompileNotExpression(UnaryExpression node) {
-            if (node.Operand.Type == typeof(bool)) {
-                Compile(node.Operand);
-                _instructions.EmitNot();
-            } else {
-                throw new NotImplementedException();
-            }
+            Compile(node.Operand);
+            _instructions.EmitNot(node.Type);
         }
 
         private void CompileUnaryExpression(Expression expr) {
@@ -690,8 +727,22 @@ namespace Microsoft.Scripting.Interpreter {
                 EmitCall(node.Method);
             } else {
                 switch (node.NodeType) {
+                    case ExpressionType.ArrayLength:
+                        Compile(node.Operand);
+                        _instructions.EmitGetArrayLength (node.Type);
+                        return;
+                    case ExpressionType.Negate:
+                        CompileNegateExpression(node, false);
+                        return;
+                    case ExpressionType.NegateChecked:
+                        CompileNegateExpression(node, true);
+                        return;                    
                     case ExpressionType.Not:
                         CompileNotExpression(node);
+                        return;
+                    case ExpressionType.UnaryPlus:
+                        // unary plus is a nop:
+                        Compile(node.Operand);                    
                         return;
                     case ExpressionType.TypeAs:
                         CompileTypeAsExpression(node);
@@ -1205,7 +1256,11 @@ namespace Microsoft.Scripting.Interpreter {
             // need to generate code.
             if (!CollectionUtils.TrueForAll(parameters, (p) => !p.ParameterType.IsByRef) ||
                 (!node.Method.IsStatic && node.Method.DeclaringType.IsValueType() && !node.Method.DeclaringType.IsPrimitive())) {
+#if MONO_INTERPRETER
+                throw new NotImplementedException ("Interpreter of ref types");
+#else
                 _forceCompile = true;
+#endif
             }
 
             // CF bug workaround

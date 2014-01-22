@@ -601,6 +601,10 @@ namespace Microsoft.Scripting.Interpreter {
             }
         }
 
+        public void EmitGetArrayLength(Type arrayType) {
+            Emit(GetArrayLengthInstruction.Create());
+        }
+
         public void EmitSetArrayItem(Type arrayType) {
             Type elementType = arrayType.GetElementType();
             if (elementType.IsClass() || elementType.IsInterface()) {
@@ -634,21 +638,51 @@ namespace Microsoft.Scripting.Interpreter {
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
         public void EmitSub(Type type, bool @checked) {
-            throw new NotSupportedException();
+            if (@checked) {
+                Emit(SubOvfInstruction.Create(type));
+            } else {
+                Emit(SubInstruction.Create(type));
+            }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
         public void EmitMul(Type type, bool @checked) {
-            throw new NotSupportedException();
+            if (@checked) {
+                Emit(MulOvfInstruction.Create(type));
+            } else {
+                Emit(MulInstruction.Create(type));
+            }
         }
 
         public void EmitDiv(Type type) {
             Emit(DivInstruction.Create(type));
         }
 
+        public void EmitMod(Type type) {
+            Emit(ModInstruction.Create(type));
+        }
+
         #endregion
+
+        public void EmitShl(Type type) {
+            Emit(ShlInstruction.Create(type));
+        }
+
+        public void EmitShr(Type type) {
+            Emit(ShrInstruction.Create(type));
+        }
+
+        public void EmitOr(Type type) {
+            Emit(OrInstruction.Create(type));
+        }
+
+        public void EmitAnd(Type type) {
+            Emit(AndInstruction.Create(type));
+        }
+
+        public void EmitExclusiveOr(Type type) {
+            Emit(XorInstruction.Create(type));
+        }        
 
         #region Comparisons
 
@@ -692,10 +726,17 @@ namespace Microsoft.Scripting.Interpreter {
 
         #endregion
 
-        #region Boolean Operators
+        #region Unary Operators
 
-        public void EmitNot() {
-            Emit(NotInstruction.Instance);
+        public void EmitNegate(Type type, bool @checked) {
+            if (@checked)
+                Emit(NegateOvfInstruction.Create(type));
+            else
+                Emit(NegateInstruction.Create(type));            
+        }
+
+        public void EmitNot(Type type) {
+            Emit(NotInstruction.Create(type));
         }
 
         #endregion
