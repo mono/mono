@@ -22,7 +22,7 @@ class A
 		return 1;
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		return Test (1);
 	}

@@ -26,7 +26,9 @@
 #include <errno.h>
 
 #include <sys/types.h>
-#ifndef HOST_WIN32 
+#ifdef HOST_WIN32
+#include <ws2tcpip.h>
+#else
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <netinet/in.h>
@@ -49,7 +51,10 @@
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/threadpool-internals.h>
 #include <mono/metadata/domain-internals.h>
+#include <mono/utils/mono-threads.h>
+#include <mono/utils/mono-memory-model.h>
 
+#include <time.h>
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
@@ -73,6 +78,11 @@
 #include <sys/un.h>
 #endif
 
+#ifdef HAVE_GETIFADDRS
+// <net/if.h> must be included before <ifaddrs.h>
+#include <ifaddrs.h>
+#endif
+
 #include "mono/io-layer/socket-wrappers.h"
 
 #if defined(HOST_WIN32)
@@ -85,11 +95,6 @@
 #undef AF_INET6
 #endif
 
-#ifdef PLATFORM_ANDROID
-// not yet actually implemented...
-#undef AF_INET6
-#endif
-
 #define LOGDEBUG(...)  
 /* define LOGDEBUG(...) g_message(__VA_ARGS__)  */
 
@@ -99,6 +104,15 @@
  */
 #ifndef AI_ADDRCONFIG
 #define AI_ADDRCONFIG 0
+#endif
+
+#ifdef __APPLE__
+/*
+ * We remove this until we have a Darwin implementation
+ * that can walk the result of struct ifconf.  The current
+ * implementation only works for Linux
+ */
+#undef HAVE_SIOCGIFCONF
 #endif
 
 static gint32 convert_family(MonoAddressFamily mono_family)
@@ -662,43 +676,22 @@ static gint32 convert_sockopt_level_and_name(MonoSocketOptionLevel mono_level,
 
 static MonoImage *get_socket_assembly (void)
 {
-	static const char *version = NULL;
-	static gboolean moonlight;
 	MonoDomain *domain = mono_domain_get ();
-	
-	if (version == NULL) {
-		version = mono_get_runtime_info ()->framework_version;
-		moonlight = !strcmp (version, "2.1");
-	}
 	
 	if (domain->socket_assembly == NULL) {
 		MonoImage *socket_assembly;
 
-		if (moonlight) {
-			socket_assembly = mono_image_loaded ("System.Net");
-			if (!socket_assembly) {
-				MonoAssembly *sa = mono_assembly_open ("System.Net.dll", NULL);
-			
-				if (!sa) {
-					g_assert_not_reached ();
-				} else {
-					socket_assembly = mono_assembly_get_image (sa);
-				}
-			}
-		} else {
-			socket_assembly = mono_image_loaded ("System");
-			if (!socket_assembly) {
-				MonoAssembly *sa = mono_assembly_open ("System.dll", NULL);
-			
-				if (!sa) {
-					g_assert_not_reached ();
-				} else {
-					socket_assembly = mono_assembly_get_image (sa);
-				}
+		socket_assembly = mono_image_loaded ("System");
+		if (!socket_assembly) {
+			MonoAssembly *sa = mono_assembly_open ("System.dll", NULL);
+		
+			if (!sa) {
+				g_assert_not_reached ();
+			} else {
+				socket_assembly = mono_assembly_get_image (sa);
 			}
 		}
-
-		domain->socket_assembly = socket_assembly;
+		mono_atomic_store_release (&domain->socket_assembly, socket_assembly);
 	}
 	
 	return domain->socket_assembly;
@@ -831,7 +824,8 @@ gint32 ves_icall_System_Net_Sockets_Socket_Available_internal(SOCKET sock,
 	MONO_ARCH_SAVE_REGS;
 
 	*error = 0;
-	
+
+	/* FIXME: this might require amount to be unsigned long. */
 	ret=ioctlsocket(sock, FIONREAD, &amount);
 	if(ret==SOCKET_ERROR) {
 		*error = WSAGetLastError ();
@@ -906,6 +900,27 @@ void ves_icall_System_Net_Sockets_Socket_Listen_internal(SOCKET sock,
 	}
 }
 
+#ifdef AF_INET6
+// Check whether it's ::ffff::0:0.
+static gboolean
+is_ipv4_mapped_any (const struct in6_addr *addr)
+{
+	int i;
+	
+	for (i = 0; i < 10; i++) {
+		if (addr->s6_addr [i])
+			return FALSE;
+	}
+	if ((addr->s6_addr [10] != 0xff) || (addr->s6_addr [11] != 0xff))
+		return FALSE;
+	for (i = 12; i < 16; i++) {
+		if (addr->s6_addr [i])
+			return FALSE;
+	}
+	return TRUE;
+}
+#endif
+
 static MonoObject *create_object_from_sockaddr(struct sockaddr *saddr,
 					       int sa_size, gint32 *error)
 {
@@ -927,20 +942,11 @@ static MonoObject *create_object_from_sockaddr(struct sockaddr *saddr,
 		g_assert (domain->sockaddr_data_field);
 	}
 
-	/* Make sure there is space for the family and size bytes */
-#ifdef HAVE_SYS_UN_H
-	if (saddr->sa_family == AF_UNIX) {
-		/* sa_len includes the entire sockaddr size, so we don't need the
-		 * N bytes (sizeof (unsigned short)) of the family. */
-		data=mono_array_new_cached(domain, mono_get_byte_class (), sa_size);
-	} else
-#endif
-	{
-		/* May be the +2 here is too conservative, as sa_len returns
-		 * the length of the entire sockaddr_in/in6, including
-		 * sizeof (unsigned short) of the family */
-		data=mono_array_new_cached(domain, mono_get_byte_class (), sa_size+2);
-	}
+	/* May be the +2 here is too conservative, as sa_len returns
+	 * the length of the entire sockaddr_in/in6, including
+	 * sizeof (unsigned short) of the family */
+	/* We can't really avoid the +2 as all code below depends on this size - INCLUDING unix domain sockets.*/
+	data=mono_array_new_cached(domain, mono_get_byte_class (), sa_size+2);
 
 	/* The data buffer is laid out as follows:
 	 * bytes 0 and 1 are the address family
@@ -989,10 +995,17 @@ static MonoObject *create_object_from_sockaddr(struct sockaddr *saddr,
 
 		mono_array_set(data, guint8, 2, (port>>8) & 0xff);
 		mono_array_set(data, guint8, 3, (port) & 0xff);
-
-		for(i=0; i<16; i++) {
-			mono_array_set(data, guint8, 8+i,
-				       sa_in->sin6_addr.s6_addr[i]);
+		
+		if (is_ipv4_mapped_any (&sa_in->sin6_addr)) {
+			// Map ::ffff:0:0 to :: (bug #5502)
+			for(i=0; i<16; i++) {
+				mono_array_set(data, guint8, 8+i, 0);
+			}
+		} else {
+			for(i=0; i<16; i++) {
+				mono_array_set(data, guint8, 8+i,
+					       sa_in->sin6_addr.s6_addr[i]);
+			}
 		}
 
 		mono_array_set(data, guint8, 24, sa_in->sin6_scope_id & 0xff);
@@ -1401,19 +1414,13 @@ extern void ves_icall_System_Net_Sockets_Socket_Disconnect_internal(SOCKET sock,
 		 */
 		_wapi_disconnectex = NULL;
 
-		/* Look up the TransmitFile extension function pointer
-		 * instead of calling TransmitFile() directly, because
-		 * apparently "Several of the extension functions have
-		 * been available since WinSock 1.1 and are exported
-		 * from MSWsock.dll, however it's not advisable to
-		 * link directly to this dll as this ties you to the
-		 * Microsoft WinSock provider. A provider neutral way
-		 * of accessing these extension functions is to load
-		 * them dynamically via WSAIoctl using the
-		 * SIO_GET_EXTENSION_FUNCTION_POINTER op code. This
-		 * should, theoretically, allow you to access these
-		 * functions from any provider that supports them..." 
-		 * (http://www.codeproject.com/internet/jbsocketserver3.asp)
+		/*
+		 * Use the SIO_GET_EXTENSION_FUNCTION_POINTER to
+		 * determine the address of the disconnect method without
+		 * taking a hard dependency on a single provider
+		 * 
+		 * For an explanation of why this is done, you can read
+		 * the article at http://www.codeproject.com/internet/jbsocketserver3.asp
 		 */
 		ret = WSAIoctl (sock, SIO_GET_EXTENSION_FUNCTION_POINTER,
 				(void *)&trans_guid, sizeof(GUID),
@@ -2032,8 +2039,8 @@ static struct in6_addr ipaddress_to_struct_in6_addr(MonoObject *ipaddr)
 #ifndef s6_addr16
 	for(i=0; i<8; i++) {
 		guint16 s = mono_array_get (data, guint16, i);
-		in6addr.s6_addr[2 * i] = (s >> 8) & 0xff;
-		in6addr.s6_addr[2 * i + 1] = s & 0xff;
+		in6addr.s6_addr[2 * i + 1] = (s >> 8) & 0xff;
+		in6addr.s6_addr[2 * i] = s & 0xff;
 	}
 #else
 	for(i=0; i<8; i++)
@@ -2043,6 +2050,46 @@ static struct in6_addr ipaddress_to_struct_in6_addr(MonoObject *ipaddr)
 }
 #endif /* AF_INET6 */
 #endif
+
+#if defined(__APPLE__)
+
+#if defined(HAVE_GETIFADDRS) && defined(HAVE_IF_NAMETOINDEX)
+static int
+get_local_interface_id (int family)
+{
+	struct ifaddrs *ifap = NULL, *ptr;
+	int idx = 0;
+	
+	if (getifaddrs (&ifap)) {
+		return 0;
+	}
+	
+	for (ptr = ifap; ptr; ptr = ptr->ifa_next) {
+		if (!ptr->ifa_addr || !ptr->ifa_name)
+			continue;
+		if (ptr->ifa_addr->sa_family != family)
+			continue;
+		if ((ptr->ifa_flags & IFF_LOOPBACK) != 0)
+			continue;
+		if ((ptr->ifa_flags & IFF_MULTICAST) == 0)
+			continue;
+			
+		idx = if_nametoindex (ptr->ifa_name);
+		break;
+	}
+	
+	freeifaddrs (ifap);
+	return idx;
+}
+#else
+static int
+get_local_interface_id (int family)
+{
+	return 0;
+}
+#endif
+
+#endif /* __APPLE__ */
 
 void ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal(SOCKET sock, gint32 level, gint32 name, MonoObject *obj_val, MonoArray *byte_val, gint32 int_val, gint32 *error)
 {
@@ -2139,7 +2186,22 @@ void ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal(SOCKET sock, g
 
 				field=mono_class_get_field_from_name(obj_val->vtable->klass, "ifIndex");
 				mreq6.ipv6mr_interface =*(guint64 *)(((char *)obj_val)+field->offset);
-
+				
+#if defined(__APPLE__)
+				/*
+				* Bug #5504:
+				*
+				* Mac OS Lion doesn't allow ipv6mr_interface = 0.
+				*
+				* Tests on Windows and Linux show that the multicast group is only
+				* joined on one NIC when interface = 0, so we simply use the interface
+				* id from the first non-loopback interface (this is also what
+				* Dns.GetHostName (string.Empty) would return).
+				*/
+				if (!mreq6.ipv6mr_interface)
+					mreq6.ipv6mr_interface = get_local_interface_id (AF_INET6);
+#endif
+					
 				ret = _wapi_setsockopt (sock, system_level,
 							system_name, &mreq6,
 							sizeof (mreq6));
@@ -2172,12 +2234,15 @@ void ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal(SOCKET sock, g
 				if(address) {
 					mreq.imr_address = ipaddress_to_struct_in_addr (address);
 				}
+
+				field = mono_class_get_field_from_name(obj_val->vtable->klass, "iface_index");
+				mreq.imr_ifindex = *(gint32 *)(((char *)obj_val)+field->offset);
 #else
 				if(address) {
 					mreq.imr_interface = ipaddress_to_struct_in_addr (address);
 				}
 #endif /* HAVE_STRUCT_IP_MREQN */
-			
+
 				ret = _wapi_setsockopt (sock, system_level,
 							system_name, &mreq,
 							sizeof (mreq));
@@ -2215,6 +2280,23 @@ void ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal(SOCKET sock, g
 			linger.l_onoff = !int_val;
 			linger.l_linger = 0;
 			ret = _wapi_setsockopt (sock, system_level, system_name, &linger, sizeof (linger));
+			break;
+		case SocketOptionName_MulticastInterface:
+#ifndef HOST_WIN32
+#ifdef HAVE_STRUCT_IP_MREQN
+			int_val = GUINT32_FROM_BE (int_val);
+			if ((int_val & 0xff000000) == 0) {
+				/* int_val is interface index */
+				struct ip_mreqn mreq = {{0}};
+				mreq.imr_ifindex = int_val;
+				ret = _wapi_setsockopt (sock, system_level, system_name, (char *) &mreq, sizeof (mreq));
+				break;
+			}
+			int_val = GUINT32_TO_BE (int_val);
+#endif /* HAVE_STRUCT_IP_MREQN */
+#endif /* HOST_WIN32 */
+			/* int_val is in_addr */
+			ret = _wapi_setsockopt (sock, system_level, system_name, (char *) &int_val, sizeof (int_val));
 			break;
 		case SocketOptionName_DontFragment:
 #ifdef HAVE_IP_MTU_DISCOVER
@@ -2270,7 +2352,7 @@ ves_icall_System_Net_Sockets_Socket_WSAIoctl (SOCKET sock, gint32 code,
 
 	*error = 0;
 	
-	if (code == FIONBIO) {
+	if ((guint32)code == FIONBIO) {
 		/* Invalid command. Must use Socket.Blocking */
 		return -1;
 	}
@@ -2394,6 +2476,76 @@ get_local_ips (int family, int *nips)
 	}
 
 	g_free (ifc.ifc_buf);
+	return result;
+}
+#elif defined(HAVE_GETIFADDRS)
+static gboolean
+is_loopback (int family, void *ad)
+{
+	char *ptr = (char *) ad;
+
+	if (family == AF_INET) {
+		return (ptr [0] == 127);
+	}
+#ifdef AF_INET6
+	else {
+		return (IN6_IS_ADDR_LOOPBACK ((struct in6_addr *) ptr));
+	}
+#endif
+	return FALSE;
+}
+
+static void *
+get_local_ips (int family, int *nips)
+{
+	struct ifaddrs *ifap = NULL, *ptr;
+	int addr_size, offset, count, i;
+	char *result, *tmp_ptr;
+
+	*nips = 0;
+	if (family == AF_INET) {
+		addr_size = sizeof (struct in_addr);
+		offset = G_STRUCT_OFFSET (struct sockaddr_in, sin_addr);
+#ifdef AF_INET6
+	} else if (family == AF_INET6) {
+		addr_size = sizeof (struct in6_addr);
+		offset = G_STRUCT_OFFSET (struct sockaddr_in6, sin6_addr);
+#endif
+	} else {
+		return NULL;
+	}
+	
+	if (getifaddrs (&ifap)) {
+		return NULL;
+	}
+	
+	count = 0;
+	for (ptr = ifap; ptr; ptr = ptr->ifa_next) {
+		if (!ptr->ifa_addr)
+			continue;
+		if (ptr->ifa_addr->sa_family != family)
+			continue;
+		if (is_loopback (family, ((char *) ptr->ifa_addr) + offset))
+			continue;
+		count++;
+	}
+		
+	result = g_malloc (addr_size * count);
+	tmp_ptr = result;
+	for (i = 0, ptr = ifap; ptr; ptr = ptr->ifa_next) {
+		if (!ptr->ifa_addr)
+			continue;
+		if (ptr->ifa_addr->sa_family != family)
+			continue;
+		if (is_loopback (family, ((char *) ptr->ifa_addr) + offset))
+			continue;
+			
+		memcpy (tmp_ptr, ((char *) ptr->ifa_addr) + offset, addr_size);
+		tmp_ptr += addr_size;
+	}
+	
+	freeifaddrs (ifap);
+	*nips = count;
 	return result;
 }
 #else
@@ -3011,7 +3163,7 @@ extern MonoBoolean ves_icall_System_Net_Dns_GetHostByAddr_internal(MonoString *a
 	struct sockaddr_in6 saddr6;
 	struct addrinfo *info = NULL, hints;
 	gint32 family;
-	char hostname[1024] = {0};
+	char hostname[NI_MAXHOST] = {0};
 	int flags = 0;
 #else
 	struct in_addr inaddr;
@@ -3161,5 +3313,19 @@ void mono_network_cleanup(void)
 	WSACleanup();
 }
 
+void
+icall_cancel_blocking_socket_operation (MonoThread *thread)
+{
+	MonoInternalThread *internal = thread->internal_thread;
+	
+	if (mono_thread_info_new_interrupt_enabled ()) {
+		mono_thread_info_abort_socket_syscall_for_close ((MonoNativeThreadId)(gsize)internal->tid);
+	} else {
+#ifndef HOST_WIN32
+		internal->ignore_next_signal = TRUE;
+		mono_thread_kill (internal, mono_thread_get_abort_signal ());		
+#endif
+	}
+}
 
 #endif /* #ifndef DISABLE_SOCKETS */

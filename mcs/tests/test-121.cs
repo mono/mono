@@ -12,7 +12,7 @@ class X {
 	}
 
 	
-	static int Main ()
+	public static int Main ()
 	{
 		int [] a = new int [10];
 		int i = 0;

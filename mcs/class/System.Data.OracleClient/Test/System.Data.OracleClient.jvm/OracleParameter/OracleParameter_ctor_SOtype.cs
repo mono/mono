@@ -36,6 +36,7 @@ using Microsoft.ApplicationBlocks;
 namespace MonoTests.System.Data.OracleClient
 {
 [TestFixture]
+[Category ("NotWorking")]
 public class OracleParameter_ctor_SOtype : ADONetTesterClass
 {
 	private Exception exp;

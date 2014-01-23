@@ -50,7 +50,7 @@ namespace System.Threading
 		{
 		}
 
-		[Obsolete ("Not 64bit compatible.  Please use the constructor that takes IntPtr for the event handle", false)]
+		[Obsolete ("Not 64bit compatible.  Please use the constructor that takes IntPtr for the event handle")]
 		public Overlapped(int offsetLo, int offsetHi, int hEvent, IAsyncResult ar)
 		{
 			offsetL = offsetLo;
@@ -91,7 +91,7 @@ namespace System.Threading
 		}
 
 		[CLSCompliant(false)]
-		[Obsolete ("Use Pack(iocb, userData) instead", false)]
+		[Obsolete ("Use Pack(iocb, userData) instead")]
 		[MonoTODO ("Security - we need to propagate the call stack")]
 		unsafe public NativeOverlapped *Pack (IOCompletionCallback iocb)
 		{
@@ -115,7 +115,7 @@ namespace System.Threading
 		}
 		
 		[CLSCompliant(false)]
-		[Obsolete ("Use UnsafePack(iocb, userData) instead", false)]
+		[Obsolete ("Use UnsafePack(iocb, userData) instead")]
 		[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 		unsafe public NativeOverlapped *UnsafePack (IOCompletionCallback iocb)
 		{
@@ -135,7 +135,7 @@ namespace System.Threading
 			set { ares = value; }
 		}
 
-		[Obsolete ("Not 64bit compatible.  Use EventHandleIntPtr instead.", false)]
+		[Obsolete ("Not 64bit compatible.  Use EventHandleIntPtr instead.")]
 		public int EventHandle {
 			get { return evt; }
 			set { evt = value; }

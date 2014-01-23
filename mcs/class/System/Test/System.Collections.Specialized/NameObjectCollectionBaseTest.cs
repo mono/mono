@@ -135,10 +135,9 @@ namespace MonoTests.System.Collections.Specialized {
 		}
 	}
 
-#if NET_2_0
 	public class EqualityComparer: IEqualityComparer {
 
-		public bool Equals (object x, object y)
+		bool IEqualityComparer.Equals (object x, object y)
 		{
 			return (CaseInsensitiveComparer.DefaultInvariant.Compare (x, y) == 0);
 		}
@@ -148,7 +147,6 @@ namespace MonoTests.System.Collections.Specialized {
 			return obj.GetHashCode ();
 		}
 	}
-#endif
 
 	[TestFixture]
 	public class NameObjectCollectionBaseTest

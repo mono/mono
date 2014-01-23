@@ -19,7 +19,7 @@ class A
 		return f (t1, t2);
 	}
 	
-	static void Main ()
+	public static void Main ()
 	{
 		var r = Test ("a", "b", Factory.Create);
 	}

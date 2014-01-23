@@ -226,6 +226,11 @@ namespace System.Data.OracleClient.Oci
 				IntPtr usrmempp);
 
 			[DllImport ("oci")]
+			internal static extern int OCICacheFree (IntPtr envhp,
+				IntPtr errhp,
+				IntPtr stmthp);
+
+			[DllImport ("oci")]
 			internal static extern int OCIAttrGet (IntPtr trgthndlp,
 				[MarshalAs (UnmanagedType.U4)] OciHandleType trghndltyp,
 				out IntPtr attributep,
@@ -461,19 +466,19 @@ namespace System.Data.OracleClient.Oci
 			internal static extern int OCICharSetToUnicode (
 				IntPtr svchp,
 				[MarshalAs (UnmanagedType.LPWStr)] StringBuilder dst,
-				[MarshalAs (UnmanagedType.U4)] int dstlen,
+				[MarshalAs (UnmanagedType.SysUInt)] int dstlen,
 				byte [] src,
-				[MarshalAs (UnmanagedType.U4)] int srclen,
-				[MarshalAs (UnmanagedType.U4)] out int rsize);
+				[MarshalAs (UnmanagedType.SysUInt)] int srclen,
+				out long rsize);
 
 			[DllImport ("oci")]
 			internal static extern int OCIUnicodeToCharSet (
 				IntPtr svchp,
 				byte [] dst,
-				[MarshalAs (UnmanagedType.U4)] int dstlen,
+				[MarshalAs (UnmanagedType.SysUInt)] int dstlen,
 				[MarshalAs (UnmanagedType.LPWStr)] string src,
-				[MarshalAs (UnmanagedType.U4)] int srclen,
-				[MarshalAs (UnmanagedType.U4)] out int rsize);
+				[MarshalAs (UnmanagedType.SysUInt)] int srclen,
+				out long rsize);
 		}
 
 		#endregion
@@ -772,6 +777,16 @@ namespace System.Data.OracleClient.Oci
 			#endif
 			return OciNativeCalls.OCIEnvCreate (out envhpp, mode, ctxp, malocfp, ralocfp, mfreep,
 				xtramem_sz, usrmempp);
+		}
+
+		internal static int OCICacheFree (IntPtr envhp,
+			IntPtr svchp,
+			IntPtr stmthp)
+		{
+			#if TRACE
+			Trace.WriteLineIf(traceOci, "OCICacheFree", "OCI");
+			#endif
+			return OciNativeCalls.OCICacheFree (envhp, svchp, stmthp);
 		}
 
 		internal static int OCIAttrGet (IntPtr trgthndlp,
@@ -1185,24 +1200,37 @@ namespace System.Data.OracleClient.Oci
 			byte [] src,
 			out int rsize)
 		{
+			int rc;
+			long retSize;
+
 			#if TRACE
 			Trace.WriteLineIf(traceOci, "OCICharSetToUnicode", "OCI");
 			#endif
-
-			return OciNativeCalls.OCICharSetToUnicode (svchp, dst, dst!=null ? dst.Capacity : 0, src, src.Length, out rsize);
+			rc = OciNativeCalls.OCICharSetToUnicode (svchp, dst,
+						(dst != null ? dst.Capacity : 0), 
+						src, src.Length, out retSize);
+			rsize = (int) retSize;
+			return(rc);
 		}
 
 		internal static int OCIUnicodeToCharSet (
 			IntPtr svchp,
 			byte [] dst,
-			[MarshalAs (UnmanagedType.LPWStr)] string src,
-			[MarshalAs (UnmanagedType.U4)] out int rsize)
+			string src,
+			out int rsize)
 		{
+			int rc;
+			long retSize;
+
 			#if TRACE
 			Trace.WriteLineIf(traceOci, "OCIUnicodeToCharSet", "OCI");
 			#endif
 
-			return OciNativeCalls.OCIUnicodeToCharSet (svchp, dst, dst!=null ? dst.Length : 0, src, src.Length, out rsize);
+			rc = OciNativeCalls.OCIUnicodeToCharSet (svchp, dst,
+					(dst != null ? dst.Length : 0), 
+					src, src.Length, out retSize);
+			rsize = (int) retSize;
+			return(rc);
 		}
 
 		[DllImport ("oci")]

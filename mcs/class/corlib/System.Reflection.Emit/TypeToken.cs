@@ -25,6 +25,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !FULL_AOT_RUNTIME
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
@@ -39,14 +40,7 @@ namespace System.Reflection.Emit {
 
 		internal int tokValue;
 
-		public static readonly TypeToken Empty;
-
-
-		static TypeToken ()
-		{
-			Empty = new TypeToken ();
-		}
-
+		public static readonly TypeToken Empty = new TypeToken ();
 
 		internal TypeToken (int val)
 		{
@@ -105,3 +99,4 @@ namespace System.Reflection.Emit {
 
 }
 
+#endif

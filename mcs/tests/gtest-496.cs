@@ -18,7 +18,7 @@ class Derived : Base
 
 class a
 {
-	static int Main ()
+	public static int Main ()
 	{
 		Derived.EndExecute<Derived> (null, "something");
 		return 0;

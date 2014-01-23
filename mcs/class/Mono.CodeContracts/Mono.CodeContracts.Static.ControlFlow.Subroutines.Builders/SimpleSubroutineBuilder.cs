@@ -31,23 +31,23 @@ using Mono.CodeContracts.Static.ControlFlow.Blocks;
 using Mono.CodeContracts.Static.Providers;
 
 namespace Mono.CodeContracts.Static.ControlFlow.Subroutines.Builders {
-	class SimpleSubroutineBuilder<Label> : SubroutineBuilder<Label> {
-		private readonly HashSet<Label> beginOldStart = new HashSet<Label> ();
-		private readonly HashSet<Label> endOldStart = new HashSet<Label> ();
+	class SimpleSubroutineBuilder<TLabel> : SubroutineBuilder<TLabel> {
+		private readonly HashSet<TLabel> begin_old_start = new HashSet<TLabel> ();
+		private readonly HashSet<TLabel> end_old_start = new HashSet<TLabel> ();
 
-		private BlockWithLabels<Label> block_prior_to_old;
-		private OldValueSubroutine<Label> current_old_subroutine;
-		private SubroutineBase<Label> current_subroutine;
+		private BlockWithLabels<TLabel> block_prior_to_old;
+		private OldValueSubroutine<TLabel> current_old_subroutine;
+		private SubroutineBase<TLabel> current_subroutine;
 
-		public SimpleSubroutineBuilder (ICodeProvider<Label> codeProvider,
+		public SimpleSubroutineBuilder (ICodeProvider<TLabel> codeProvider,
 		                                SubroutineFacade subroutineFacade,
-		                                Label entry)
+		                                TLabel entry)
 			: base (codeProvider, subroutineFacade, entry)
 		{
 			Initialize (entry);
 		}
 
-		public override SubroutineBase<Label> CurrentSubroutine
+		public override SubroutineBase<TLabel> CurrentSubroutine
 		{
 			get
 			{
@@ -57,44 +57,44 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines.Builders {
 			}
 		}
 
-		public BlockWithLabels<Label> BuildBlocks (Label entry, SubroutineBase<Label> subroutine)
+		public BlockWithLabels<TLabel> BuildBlocks (TLabel entry, SubroutineBase<TLabel> subroutine)
 		{
 			this.current_subroutine = subroutine;
 
 			return base.BuildBlocks (entry);
 		}
 
-		public override BlockWithLabels<Label> RecordInformationForNewBlock (Label currentLabel, BlockWithLabels<Label> previousBlock)
+		public override BlockWithLabels<TLabel> RecordInformationForNewBlock (TLabel currentLabel, BlockWithLabels<TLabel> previousBlock)
 		{
-			Label label;
-			if (previousBlock != null && previousBlock.TryGetLastLabel (out label) && this.endOldStart.Contains (label)) {
-				OldValueSubroutine<Label> oldValueSubroutine = this.current_old_subroutine;
+			TLabel label;
+			if (previousBlock != null && previousBlock.TryGetLastLabel (out label) && this.end_old_start.Contains (label)) {
+				OldValueSubroutine<TLabel> oldValueSubroutine = this.current_old_subroutine;
 				oldValueSubroutine.Commit (previousBlock);
 				this.current_old_subroutine = null;
-				BlockWithLabels<Label> result = base.RecordInformationForNewBlock (currentLabel, this.block_prior_to_old);
+				BlockWithLabels<TLabel> result = base.RecordInformationForNewBlock (currentLabel, this.block_prior_to_old);
 				CurrentSubroutine.AddEdgeSubroutine (this.block_prior_to_old, result, oldValueSubroutine, EdgeTag.Old);
 				return result;
 			}
 
-			if (!this.beginOldStart.Contains (currentLabel))
+			if (!this.begin_old_start.Contains (currentLabel))
 				return base.RecordInformationForNewBlock (currentLabel, previousBlock);
-			this.current_old_subroutine = new OldValueSubroutine<Label> (this.SubroutineFacade,
-			                                                             ((MethodContractSubroutine<Label>) this.current_subroutine).Method,
+			this.current_old_subroutine = new OldValueSubroutine<TLabel> (this.SubroutineFacade,
+			                                                             ((MethodContractSubroutine<TLabel>) this.current_subroutine).Method,
 			                                                             this, currentLabel);
 			this.block_prior_to_old = previousBlock;
-			BlockWithLabels<Label> newBlock = base.RecordInformationForNewBlock (currentLabel, null);
+			BlockWithLabels<TLabel> newBlock = base.RecordInformationForNewBlock (currentLabel, null);
 			this.current_old_subroutine.RegisterBeginBlock (newBlock);
 			return newBlock;
 		}
 
-		public override void BeginOldHook (Label label)
+		public override void BeginOldHook (TLabel label)
 		{
-			this.beginOldStart.Add (label);
+			this.begin_old_start.Add (label);
 		}
 
-		public override void EndOldHook (Label label)
+		public override void EndOldHook (TLabel label)
 		{
-			this.endOldStart.Add (label);
+			this.end_old_start.Add (label);
 		}
 	}
 }

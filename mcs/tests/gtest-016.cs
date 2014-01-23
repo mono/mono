@@ -11,7 +11,7 @@ class X
 {
 	Stack<int> stack;
 
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

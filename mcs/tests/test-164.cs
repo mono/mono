@@ -32,7 +32,7 @@ class Y : X
 		return foo ();
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		Y y = new Y ();
 		int result = y.Hello ();

@@ -42,11 +42,7 @@ namespace System.Threading
 	[ComVisible (true)]
 	[StructLayout (LayoutKind.Sequential)]
 	public abstract class WaitHandle
-#if MOONLIGHT
-		: IDisposable
-#else
 		: MarshalByRefObject, IDisposable
-#endif
 	{
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern bool WaitAll_internal(WaitHandle[] handles, int ms, bool exitContext);
@@ -243,7 +239,7 @@ namespace System.Threading
 			Dispose(true);
 		}
 
-#if NET_4_0 || MOBILE || MOONLIGHT
+#if NET_4_0
 		public void Dispose ()
 #else		
 		void IDisposable.Dispose ()
@@ -375,17 +371,17 @@ namespace System.Threading
 			bool release = false;
 			try {
 				if (exitContext) {
-#if MONOTOUCH
-					throw new NotSupportedException ("exitContext == true is not supported");
-#else
+#if !MONOTOUCH
 					SynchronizationAttribute.ExitContext ();
 #endif
 				}
 				safe_wait_handle.DangerousAddRef (ref release);
 				return (WaitOne_internal(safe_wait_handle.DangerousGetHandle (), millisecondsTimeout, exitContext));
 			} finally {
+#if !MONOTOUCH
 				if (exitContext)
 					SynchronizationAttribute.EnterContext ();
+#endif
 				if (release)
 					safe_wait_handle.DangerousRelease ();
 			}
@@ -411,9 +407,7 @@ namespace System.Threading
 			bool release = false;
 			try {
 				if (exitContext) {
-#if MONOTOUCH
-					throw new NotSupportedException ("exitContext == true is not supported");
-#else
+#if !MONOTOUCH
 					SynchronizationAttribute.ExitContext ();
 #endif
 				}
@@ -421,8 +415,10 @@ namespace System.Threading
 				return (WaitOne_internal(safe_wait_handle.DangerousGetHandle (), (int) ms, exitContext));
 			}
 			finally {
+#if !MONOTOUCH
 				if (exitContext)
 					SynchronizationAttribute.EnterContext ();
+#endif
 				if (release)
 					safe_wait_handle.DangerousRelease ();
 			}

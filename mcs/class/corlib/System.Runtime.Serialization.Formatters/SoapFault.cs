@@ -39,7 +39,7 @@ using System.Runtime.InteropServices;
 namespace System.Runtime.Serialization.Formatters {
 
 	[Serializable]
-	[SoapType()]
+	[SoapType(Embedded=true)]
 	[ComVisible (true)]
 	public sealed class SoapFault : ISerializable
 	{

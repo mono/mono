@@ -9,7 +9,7 @@ using Namespace1;
 
 public class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		// This shouldn't produce a clash
 		if (MyClass1.StaticMethod () != 2)

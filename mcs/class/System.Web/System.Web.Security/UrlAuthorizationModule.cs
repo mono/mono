@@ -78,10 +78,11 @@ namespace System.Web.Security
 		}
 
 #if NET_2_0
-		[MonoTODO ("Not implemented")]
 		public static bool CheckUrlAccessForPrincipal (string virtualPath, IPrincipal user, string verb)
 		{
-			throw new NotImplementedException ();
+			AuthorizationSection config = (AuthorizationSection) WebConfigurationManager.GetSection ("system.web/authorization", virtualPath);
+
+			return config == null ? true : config.IsValidUser (user, verb);
 		}
 #endif
 	}

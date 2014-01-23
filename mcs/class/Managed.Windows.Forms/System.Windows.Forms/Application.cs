@@ -1016,11 +1016,15 @@ namespace System.Windows.Forms
 		internal static event EventHandler FormAdded;
 		internal static event EventHandler PreRun;
 
+#pragma warning disable 0067
+		[MonoTODO]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static event EventHandler EnterThreadModal;
 
+		[MonoTODO]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static event EventHandler LeaveThreadModal;
+#pragma warning restore 0067
 
 		#endregion	// Events
 

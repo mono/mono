@@ -32,6 +32,7 @@ using System.Linq;
 using Mono.CodeContracts.Static.AST;
 using Mono.CodeContracts.Static.ControlFlow;
 using Mono.CodeContracts.Static.DataStructures;
+using Mono.CodeContracts.Static.Lattices;
 
 namespace Mono.CodeContracts.Static.Proving
 {
@@ -45,7 +46,7 @@ namespace Mono.CodeContracts.Static.Proving
 			this.isUnreachable = isUnreachable;
 		}
 
-		public void Add(IFactQuery<BoxedExpression, Variable> item )
+		public void Add(IFactQuery<BoxedExpression, Variable> item)
 		{
 			if (item == null)
 				return;
@@ -53,14 +54,14 @@ namespace Mono.CodeContracts.Static.Proving
 		}
 
 		#region Implementation of IFactBase<Variable>
-		public ProofOutcome IsNull(APC pc, Variable variable)
+		public FlatDomain<bool> IsNull(APC pc, Variable variable)
 		{
-			return elements.Select(fact => fact.IsNull(pc, variable)).FirstOrDefault(factResult => factResult != ProofOutcome.Top);
+			return elements.Select(fact => fact.IsNull(pc, variable)).FirstOrDefault(factResult => !factResult.IsTop);
 		}
 
-		public ProofOutcome IsNonNull(APC pc, Variable variable)
+        public FlatDomain<bool> IsNonNull(APC pc, Variable variable)
 		{
-			return elements.Select(fact => fact.IsNonNull(pc, variable)).FirstOrDefault(factResult => factResult != ProofOutcome.Top);
+            return elements.Select(fact => fact.IsNonNull(pc, variable)).FirstOrDefault(factResult => !factResult.IsTop);
 		}
 
 		public bool IsUnreachable(APC pc)
@@ -72,49 +73,37 @@ namespace Mono.CodeContracts.Static.Proving
 		#endregion
 
 		#region Implementation of IFactQuery<BoxedExpression,Variable>
-		public ProofOutcome IsNull(APC pc, BoxedExpression expr)
+        public FlatDomain<bool> IsNull(APC pc, BoxedExpression expr)
 		{
-			return elements.Select (fact => fact.IsNull (pc, expr)).FirstOrDefault (factResult => factResult != ProofOutcome.Top);
+            return elements.Select(fact => fact.IsNull(pc, expr)).FirstOrDefault(factResult => !factResult.IsTop);
 		}
 
-		public ProofOutcome IsNonNull(APC pc, BoxedExpression expr)
+        public FlatDomain<bool> IsNonNull(APC pc, BoxedExpression expr)
 		{
-			return elements.Select(fact => fact.IsNonNull(pc, expr)).FirstOrDefault(factResult => factResult != ProofOutcome.Top);
+            return elements.Select(fact => fact.IsNonNull(pc, expr)).FirstOrDefault(factResult => !factResult.IsTop);
 		}
 
-		public ProofOutcome IsTrue(APC pc, BoxedExpression expr)
+        public FlatDomain<bool> IsTrue(APC pc, BoxedExpression expr)
 		{
-			ProofOutcome res = ProofOutcome.Top;
+            FlatDomain<bool> res = ProofOutcome.Top;
 			foreach (var factQuery in elements) {
 				var outcome = factQuery.IsTrue (pc, expr);
-				switch (outcome) {
-					case ProofOutcome.True:
-					case ProofOutcome.Bottom:
-						return outcome;
-					case ProofOutcome.False:
-						res = outcome;
-						continue;
-					default:
-						continue;
-				}
+
+                if (outcome.IsTrue() || outcome.IsBottom)
+                    return outcome;
+			    if (outcome.IsFalse ())
+			        res = outcome;
 			}
-			if (res != ProofOutcome.Top)
+			if (!res.IsTop)
 				return res;
 
 			BinaryOperator op;
 			BoxedExpression left;
 			BoxedExpression right;
 			if (expr.IsBinaryExpression (out op, out left, out right)) {
-				if ((op == BinaryOperator.Ceq || op == BinaryOperator.Cobjeq) && this.IsRelational (left) && this.IsNull (pc, right) == ProofOutcome.True) {
+				if ((op == BinaryOperator.Ceq || op == BinaryOperator.Cobjeq) && this.IsRelational (left) && this.IsNull (pc, right).IsTrue ()) {
 					var outcome = this.IsTrue (pc, left);
-					switch (outcome) {
-						case ProofOutcome.False:
-							return ProofOutcome.True;
-						case ProofOutcome.True:
-							return ProofOutcome.False;
-						default:
-							return outcome;
-					}
+				    return outcome.Negate ();
 				}
 				int leftInt;
 				int rightInt;
@@ -124,14 +113,7 @@ namespace Mono.CodeContracts.Static.Proving
 
 			if (expr.IsUnary && expr.UnaryOperator == UnaryOperator.Not) {
 				var outcome = this.IsTrue (pc, expr.UnaryArgument);
-				switch (outcome) {
-					case ProofOutcome.False:
-						return ProofOutcome.True;
-					case ProofOutcome.True:
-						return ProofOutcome.False;
-					default:
-						return outcome;
-				}
+			    return outcome.Negate ();
 			} 
 
 			return ProofOutcome.Top;
@@ -160,24 +142,24 @@ namespace Mono.CodeContracts.Static.Proving
 			return false;
 		}
 
-		public ProofOutcome IsTrueImply(APC pc, LispList<BoxedExpression> positiveAssumptions, LispList<BoxedExpression> negativeAssumptions, BoxedExpression goal)
+		public FlatDomain<bool> IsTrueImply(APC pc, Sequence<BoxedExpression> positiveAssumptions, Sequence<BoxedExpression> negativeAssumptions, BoxedExpression goal)
 		{
-			return elements.Select(fact => fact.IsTrueImply(pc, positiveAssumptions, negativeAssumptions, goal)).FirstOrDefault(factResult => factResult != ProofOutcome.Top);
+            return elements.Select(fact => fact.IsTrueImply(pc, positiveAssumptions, negativeAssumptions, goal)).FirstOrDefault(factResult => !factResult.IsTop);
 		}
 
-		public ProofOutcome IsGreaterEqualToZero(APC pc, BoxedExpression expr)
+        public FlatDomain<bool> IsGreaterEqualToZero(APC pc, BoxedExpression expr)
 		{
-			return elements.Select(fact => fact.IsGreaterEqualToZero(pc, expr)).FirstOrDefault(factResult => factResult != ProofOutcome.Top);
+			return elements.Select(fact => fact.IsGreaterEqualToZero(pc, expr)).FirstOrDefault(factResult => !factResult.IsTop);
 		}
 
-		public ProofOutcome IsLessThan(APC pc, BoxedExpression expr, BoxedExpression right)
+        public FlatDomain<bool> IsLessThan(APC pc, BoxedExpression expr, BoxedExpression right)
 		{
-			return elements.Select(fact => fact.IsLessThan(pc, expr, right)).FirstOrDefault(factResult => factResult != ProofOutcome.Top);
+            return elements.Select(fact => fact.IsLessThan(pc, expr, right)).FirstOrDefault(factResult => !factResult.IsTop);
 		}
 
-		public ProofOutcome IsNonZero(APC pc, BoxedExpression expr)
+        public FlatDomain<bool> IsNonZero(APC pc, BoxedExpression expr)
 		{
-			return elements.Select(fact => fact.IsNonZero(pc, expr)).FirstOrDefault(factResult => factResult != ProofOutcome.Top);
+            return elements.Select(fact => fact.IsNonZero(pc, expr)).FirstOrDefault(factResult => !factResult.IsTop);
 		}
 		#endregion
 	}

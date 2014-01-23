@@ -1,3 +1,8 @@
+2012-12-23  Daniel Lo Nigro  <daniel@dan.cx>
+
+	* RouteTest.cs: added tests for value types in route default values
+	(Xamarin bug #9116)
+
 2009-09-09  Marek Habersack  <mhabersack@novell.com>
 
 	* RouteTest.cs: added two tests for empty and null route URLs (bug

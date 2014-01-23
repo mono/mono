@@ -19,7 +19,7 @@ class T : IB {
         public A Prop {
                 get { return new A(); }
         }
-        static int Main() {
+        public static int Main() {
 		PropertyInfo[] p = typeof (T).GetProperties (BindingFlags.Public| BindingFlags.NonPublic|BindingFlags.Instance);
 		if (p == null || p.Length != 2)
 			return 1;

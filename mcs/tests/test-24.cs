@@ -19,7 +19,7 @@ class X {
 
 	static string x, b;
 	
-	static int Main ()
+	public static int Main ()
 	{
 
 		x = S = b = "hlo";

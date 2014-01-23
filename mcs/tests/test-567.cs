@@ -6,7 +6,7 @@ namespace preservesig_test
 {
 	class Class1
 	{
-		static int Main(string[] args)
+		public static int Main(string[] args)
 		{
 			MethodInfo dofoo = typeof(TestClass).GetMethod("DoFoo");
 			if ((dofoo.GetMethodImplementationFlags() & MethodImplAttributes.PreserveSig) == 0)

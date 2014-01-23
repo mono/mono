@@ -36,6 +36,8 @@ using System.Web;
 using System.Xml.Linq;
 
 using Monodoc;
+using Monodoc.Generators;
+using Monodoc.Caches;
 using Mono.Documentation;
 
 using Mono.Options;
@@ -68,9 +70,9 @@ namespace Mono.Documentation
 				formatOptions [0],
 				formatOptions [1],
 				{ "o|out=",
-					"The {PREFIX} to place the generated files and directories.  " + 
+					"The {PREFIX} to place the generated files and directories.  " +
 					"Default: \"`dirname FILE`/cache/\".\n" +
-					"Underneath {PREFIX}, `basename FILE .tree` directories will be " + 
+					"Underneath {PREFIX}, `basename FILE .tree` directories will be " +
 					"created which will contain the pre-generated HTML content.",
 					v => opts.OutputDirectory = v },
 				{ "r=",
@@ -83,18 +85,15 @@ namespace Mono.Documentation
 					"Default is " + (opts.UseSystemSources ? "enabled" : "disabled") + ".",
 					v => opts.UseSystemSources = v != null },
 			};
-			Parse (options, args, "export-html-webdoc", 
+			Parse (options, args, "export-html-webdoc",
 					"[OPTIONS]+ FILES",
 					"Export mdoc documentation within FILES to HTML for use by ASP.NET webdoc.\n\n" +
 					"FILES are .tree or .zip files as produced by 'mdoc assemble', or .source files\n" +
-					"which reference .tree and .zip files produced by 'mdoc assemble'.\n\n" + 
+					"which reference .tree and .zip files produced by 'mdoc assemble'.\n\n" +
 					"See mdoc(5) or mdoc-assemble(1) for information about the .source file format.");
 			if (opts.Formats.Values.All (files => files.Count == 0))
 				Error ("No files specified.");
 			ProcessSources (opts);
-			HelpSource.use_css = true;
-			HelpSource.FullHtml = false;
-			SettingsHandler.Settings.EnableEditing = false;
 			foreach (var p in opts.Formats)
 				ProcessFiles (opts, p.Key, p.Value);
 		}
@@ -120,7 +119,7 @@ namespace Mono.Documentation
 			try {
 				var source = XElement.Load (sourceFile);
 				return source.Descendants ("source")
-					.Select (e => new KeyValuePair<string, string>(e.Attribute ("provider").Value, 
+					.Select (e => new KeyValuePair<string, string>(e.Attribute ("provider").Value,
 								Path.Combine (Path.GetDirectoryName (sourceFile), e.Attribute ("basefile").Value + ".tree")));
 			}
 			catch (Exception e) {
@@ -131,15 +130,15 @@ namespace Mono.Documentation
 
 		void ProcessFiles (Options opts, string format, List<string> files)
 		{
-			foreach (var basePath in 
-					files.Select (f => 
+			foreach (var basePath in
+					files.Select (f =>
 							Path.Combine (Path.GetDirectoryName (f), Path.GetFileNameWithoutExtension (f)))
 					.Distinct ()) {
 				string treeFile = basePath + ".tree";
 				string zipFile  = basePath + ".zip";
 				if (!Exists (treeFile) || !Exists (zipFile))
 					continue;
-				string outDir = opts.OutputDirectory != null 
+				string outDir = opts.OutputDirectory != null
 					? Path.Combine (opts.OutputDirectory, Path.GetFileName (basePath))
 					: XmlDocUtils.GetCacheDirectory (basePath);
 				if (!opts.ForceUpdate && Directory.Exists (outDir) &&
@@ -196,15 +195,15 @@ namespace Mono.Documentation
 					docRoot.AddSourceFile (source);
 			}
 			hs.RootTree = docRoot;
-			foreach (Node node in tree.TraverseDepthFirst<Node, Node> (t => t, t => t.Nodes.Cast<Node> ())) {
-				var url = node.URL;
+			var generator = new HtmlGenerator (new NullCache ());
+			foreach (Node node in tree.RootNode.TraverseDepthFirst<Node, Node> (t => t, t => t.ChildNodes)) {
+				var url = node.PublicUrl;
 				Message (TraceLevel.Info, "\tProcessing URL: {0}", url);
 				if (string.IsNullOrEmpty (url))
 					continue;
 				var file = XmlDocUtils.GetCachedFileName (outDir, url);
 				using (var o = File.AppendText (file)) {
-					Node _;
-					string contents = hs.GetText (url, out _) ?? hs.RenderNamespaceLookup (url, out _);
+					string contents = docRoot.RenderUrl (url, generator, hs);
 					o.Write (contents);
 				}
 			}

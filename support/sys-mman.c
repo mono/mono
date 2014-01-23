@@ -7,11 +7,17 @@
  * Copyright (C) 2004-2006 Jonathan Pryor
  */
 
+#include <config.h>
+
 #define _XOPEN_SOURCE 600
 
 #ifdef PLATFORM_MACOSX
 /* For mincore () */
 #define _DARWIN_C_SOURCE
+#endif
+#ifdef __FreeBSD__
+/* For mincore () */
+#define __BSD_VISIBLE 1
 #endif
 
 #include <sys/types.h>

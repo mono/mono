@@ -22,7 +22,7 @@ namespace test2
 		{
 		}
 
-		static void Main ()
+		public static void Main ()
 		{
 			new Test<MainClass, MainClass, MainClass> ().Method ();
 		}

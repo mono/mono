@@ -94,9 +94,6 @@ namespace System.Xml.Serialization
 
 		object ReadEncodedObject (XmlTypeMapping typeMap)
 		{
-#if MOONLIGHT
-			throw new NotSupportedException ();
-#else
 			object ob = null;
 			Reader.MoveToContent();
 			if (Reader.NodeType == System.Xml.XmlNodeType.Element) 
@@ -111,14 +108,10 @@ namespace System.Xml.Serialization
 
 			ReadReferencedElements();
 			return ob;
-#endif
 		}
 
 		protected virtual object ReadMessage (XmlMembersMapping typeMap)
 		{
-#if MOONLIGHT
-			throw new NotSupportedException ();
-#else
 			object[] parameters = new object[typeMap.Count];
 
 			if (typeMap.HasWrapperElement)
@@ -175,7 +168,6 @@ namespace System.Xml.Serialization
 				ReadReferencedElements();
 
 			return parameters;
-#endif
 		}
 
 		object ReadRoot (XmlTypeMapping rootMap)
@@ -279,7 +271,6 @@ namespace System.Xml.Serialization
 							nss.Add ("", Reader.Value);
 					}
 				}	
-#if !MOONLIGHT
 				else if (anyAttrMember != null) 
 				{
 					XmlAttribute attr = (XmlAttribute) Document.ReadNode(Reader);
@@ -288,16 +279,13 @@ namespace System.Xml.Serialization
 				}
 				else
 					ProcessUnknownAttribute(ob);
-#endif
 			}
 
-#if !MOONLIGHT
 			if (anyAttrMember != null)
 			{
 				anyAttributeArray = ShrinkArray ((Array)anyAttributeArray, anyAttributeIndex, anyAttrMember.TypeData.Type.GetElementType(), true);
 				SetMemberValue (anyAttrMember, ob, anyAttributeArray, isValueList);
 			}
-#endif
 			Reader.MoveToElement ();
 		}
 
@@ -329,12 +317,12 @@ namespace System.Xml.Serialization
 			object[] flatLists = null;
 			object[] flatListsChoices = null;
 			Fixup fixup = null;
-			int ind = 0;
+			int ind = -1;
 			int maxInd;
 
 			if (readBySoapOrder) {
 				if (map.ElementMembers != null) maxInd = map.ElementMembers.Count;
-				else maxInd = 0;
+				else maxInd = -1;
 			}
 			else
 				maxInd = int.MaxValue;
@@ -373,14 +361,15 @@ namespace System.Xml.Serialization
 				AddFixup (fixup);
 			}
 
-			while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && (ind < maxInd)) 
+			XmlTypeMapMember previousMember = null;
+			while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && (ind < maxInd - 1))
 			{
 				if (Reader.NodeType == System.Xml.XmlNodeType.Element) 
 				{
 					XmlTypeMapElementInfo info;
 					
 					if (readBySoapOrder) {
-						info = map.GetElement (ind++);
+						info = map.GetElement (Reader.LocalName, Reader.NamespaceURI, ind);
 					}
 					else if (hasAnyReturnMember) {
 						info = (XmlTypeMapElementInfo) ((XmlTypeMapMemberElement)map.ReturnMember).ElementInfo[0];
@@ -388,16 +377,24 @@ namespace System.Xml.Serialization
 					}
 					else {
 						if (map.IsOrderDependentMap) {
-							while ((info = map.GetElement (ind++)) != null)
-								if (info.ElementName == Reader.LocalName && info.Namespace == Reader.NamespaceURI)
-									break;
+							info = map.GetElement (Reader.LocalName, Reader.NamespaceURI, ind);
 						}
 						else
-							info = map.GetElement (Reader.LocalName, Reader.NamespaceURI, -1);
+							info = map.GetElement (Reader.LocalName, Reader.NamespaceURI);
 					}
 
 					if (info != null && !readFlag[info.Member.Index] )
 					{
+						if (info.Member != previousMember)
+						{
+							ind = info.ExplicitOrder + 1;
+							// If the member is a flat list don't increase the index, since the next element may
+							// be another item of the list. This is a fix for Xamarin bug #9193.
+							if (info.Member is XmlTypeMapMemberFlatList)
+								ind--;
+							previousMember = info.Member;
+						}
+
 						if (info.Member.GetType() == typeof (XmlTypeMapMemberList))
 						{
 							if (_format == SerializationFormat.Encoded && info.MultiReferenceType)
@@ -513,10 +510,8 @@ namespace System.Xml.Serialization
 							SetMemberValue (mem, ob, GetValueFromXmlString (Reader.ReadString(), info.TypeData, info.MappedType), isValueList);
 					}
 				}
-#if !MOONLIGHT
 				else 
 					UnknownNode(ob);
-#endif
 				Reader.MoveToContent();
 			}
 
@@ -755,11 +750,7 @@ namespace System.Xml.Serialization
 
 		static object CreateInstance (Type type, bool nonPublic)
 		{
-#if MOONLIGHT
-			return Activator.CreateInstance (type); // always false
-#else
 			return Activator.CreateInstance (type, nonPublic);
-#endif
 		}
 
 		object CreateInstance (Type type)
@@ -808,14 +799,10 @@ namespace System.Xml.Serialization
 		
 		object ReadXmlNode (TypeData type, bool wrapped)
 		{
-#if MOONLIGHT
-			throw new NotSupportedException ();
-#else
 			if (type.Type == typeof (XmlDocument))
 				return ReadXmlDocument (wrapped);
 			else
 				return ReadXmlNode (wrapped);
-#endif
 		}
 
 		object ReadPrimitiveElement (XmlTypeMapping typeMap, bool isNullable)

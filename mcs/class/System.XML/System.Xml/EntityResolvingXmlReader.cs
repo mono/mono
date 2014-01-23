@@ -26,9 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 using System;
 using System.Globalization;
 using System.IO;
@@ -40,10 +38,7 @@ using System.Xml;
 namespace Mono.Xml
 {
 	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
-	internal class EntityResolvingXmlReader : XmlReader,
-#if NET_2_0
-		IXmlNamespaceResolver,
-#endif
+	internal class EntityResolvingXmlReader : XmlReader, IXmlNamespaceResolver,
 		IXmlLineInfo, IHasXmlParserContext
 	{
 		EntityResolvingXmlReader entity;
@@ -77,21 +72,6 @@ namespace Mono.Xml
 		private XmlReader Current {
 			get { return entity != null && entity.ReadState != ReadState.Initial ? (XmlReader) entity : source; }
 		}
-
-#if NET_2_0
-#else
-		public override string this [int i] {
-			get { return GetAttribute (i); }
-		}
-
-		public override string this [string name] {
-			get { return GetAttribute (name); }
-		}
-
-		public override string this [string localName, string namespaceName] {
-			get { return GetAttribute (localName, namespaceName); }
-		}
-#endif
 
 		public override int AttributeCount {
 			get { return Current.AttributeCount; }
@@ -264,7 +244,6 @@ namespace Mono.Xml
 			return Current.GetAttribute (localName, namespaceURI);
 		}
 
-#if NET_2_0
 		public IDictionary<string, string> GetNamespacesInScope (XmlNamespaceScope scope)
 		{
 			return ((IXmlNamespaceResolver) Current).GetNamespacesInScope (scope);
@@ -279,7 +258,6 @@ namespace Mono.Xml
 		{
 			return ((IXmlNamespaceResolver) Current).LookupPrefix (ns);
 		}
-#endif
 
 		public override string LookupNamespace (string prefix)
 		{
@@ -421,14 +399,9 @@ namespace Mono.Xml
 			return base.ReadString ();
 		}
 
-		public override
-		void ResolveEntity ()
+		public override void ResolveEntity ()
 		{
-#if NET_2_0
 			DoResolveEntity ();
-#else
-			do_resolve = true;
-#endif
 		}
 
 		void DoResolveEntity ()

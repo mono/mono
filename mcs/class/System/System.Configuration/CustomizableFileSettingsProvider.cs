@@ -615,47 +615,49 @@ namespace System.Configuration
 			if (userGroup == null) {
 				userGroup = new UserSettingsGroup ();
 				config.SectionGroups.Add ("userSettings", userGroup);
-				ApplicationSettingsBase asb = context.CurrentSettings;
-				ClientSettingsSection cs = new ClientSettingsSection ();
-				string class_name = NormalizeInvalidXmlChars ((asb != null ? asb.GetType () : typeof (ApplicationSettingsBase)).FullName);
-				userGroup.Sections.Add (class_name, cs);
+			}
+			ApplicationSettingsBase asb = context.CurrentSettings;
+			string class_name = NormalizeInvalidXmlChars ((asb != null ? asb.GetType () : typeof (ApplicationSettingsBase)).FullName);
+			ClientSettingsSection userSection = null;
+			ConfigurationSection cnf = userGroup.Sections.Get (class_name);
+			userSection = cnf as ClientSettingsSection;
+			if (userSection == null) {
+				userSection = new ClientSettingsSection ();
+				userGroup.Sections.Add (class_name, userSection);
 			}
 
 			bool hasChanges = false;
 
-			foreach (ConfigurationSection section in userGroup.Sections) {
-				ClientSettingsSection userSection = section as ClientSettingsSection;
-				if (userSection == null)
+			if (userSection == null)
+				return;
+
+			foreach (SettingsPropertyValue value in collection) {
+				if (checkUserLevel && value.Property.Attributes.Contains (typeof (SettingsManageabilityAttribute)) != isRoaming)
+					continue;
+				// The default impl does not save the ApplicationScopedSetting properties
+				if (value.Property.Attributes.Contains (typeof (ApplicationScopedSettingAttribute)))
 					continue;
 
-				foreach (SettingsPropertyValue value in collection) {
-					if (checkUserLevel && value.Property.Attributes.Contains (typeof (SettingsManageabilityAttribute)) != isRoaming)
-						continue;
-					// The default impl does not save the ApplicationScopedSetting properties
-					if (value.Property.Attributes.Contains (typeof (ApplicationScopedSettingAttribute)))
-						continue;
-
-					hasChanges = true;
-					SettingElement element = userSection.Settings.Get (value.Name);
-					if (element == null) {
-						element = new SettingElement (value.Name, value.Property.SerializeAs);
-						userSection.Settings.Add (element);
-					}
-					if (element.Value.ValueXml == null)
-						element.Value.ValueXml = new XmlDocument ().CreateElement ("value");
-					switch (value.Property.SerializeAs) {
-					case SettingsSerializeAs.Xml:
-						element.Value.ValueXml.InnerXml = (value.SerializedValue as string) ?? string.Empty;
-						break;
-					case SettingsSerializeAs.String:
-						element.Value.ValueXml.InnerText = value.SerializedValue as string;
-						break;
-					case SettingsSerializeAs.Binary:
-						element.Value.ValueXml.InnerText = value.SerializedValue != null ? Convert.ToBase64String (value.SerializedValue as byte []) : string.Empty;
-						break;
-					default:
-						throw new NotImplementedException ();
-					}
+				hasChanges = true;
+				SettingElement element = userSection.Settings.Get (value.Name);
+				if (element == null) {
+					element = new SettingElement (value.Name, value.Property.SerializeAs);
+					userSection.Settings.Add (element);
+				}
+				if (element.Value.ValueXml == null)
+					element.Value.ValueXml = new XmlDocument ().CreateElement ("value");
+				switch (value.Property.SerializeAs) {
+				case SettingsSerializeAs.Xml:
+					element.Value.ValueXml.InnerXml = (value.SerializedValue as string) ?? string.Empty;
+					break;
+				case SettingsSerializeAs.String:
+					element.Value.ValueXml.InnerText = value.SerializedValue as string;
+					break;
+				case SettingsSerializeAs.Binary:
+					element.Value.ValueXml.InnerText = value.SerializedValue != null ? Convert.ToBase64String (value.SerializedValue as byte []) : string.Empty;
+					break;
+				default:
+					throw new NotImplementedException ();
 				}
 			}
 			if (hasChanges)
@@ -792,21 +794,19 @@ namespace System.Configuration
 		{
 			CreateExeMap ();
 
-			if (values == null) {
-				values = new SettingsPropertyValueCollection ();
-				string groupName = context ["GroupName"] as string;
-				groupName = NormalizeInvalidXmlChars (groupName); // we likely saved the element removing the non valid xml chars.
-				LoadProperties (exeMapCurrent, collection, ConfigurationUserLevel.None, "applicationSettings", false, groupName);
-				LoadProperties (exeMapCurrent, collection, ConfigurationUserLevel.None, "userSettings", false, groupName);
+			values = new SettingsPropertyValueCollection ();
+			string groupName = context ["GroupName"] as string;
+			groupName = NormalizeInvalidXmlChars (groupName); // we likely saved the element removing the non valid xml chars.
+			LoadProperties (exeMapCurrent, collection, ConfigurationUserLevel.None, "applicationSettings", false, groupName);
+			LoadProperties (exeMapCurrent, collection, ConfigurationUserLevel.None, "userSettings", false, groupName);
 
-				LoadProperties (exeMapCurrent, collection, ConfigurationUserLevel.PerUserRoaming, "userSettings", true, groupName);
-				LoadProperties (exeMapCurrent, collection, ConfigurationUserLevel.PerUserRoamingAndLocal, "userSettings", true, groupName);
+			LoadProperties (exeMapCurrent, collection, ConfigurationUserLevel.PerUserRoaming, "userSettings", true, groupName);
+			LoadProperties (exeMapCurrent, collection, ConfigurationUserLevel.PerUserRoamingAndLocal, "userSettings", true, groupName);
 
-				// create default values if not exist
-				foreach (SettingsProperty p in collection)
-					if (values [p.Name] == null)
-						values.Add (new SettingsPropertyValue (p));
-			}
+			// create default values if not exist
+			foreach (SettingsProperty p in collection)
+				if (values [p.Name] == null)
+					values.Add (new SettingsPropertyValue (p));
 			return values;
 		}
 
@@ -858,14 +858,13 @@ namespace System.Configuration
 
 		public void Reset (SettingsContext context)
 		{
-			SettingsPropertyCollection coll = new SettingsPropertyCollection ();
-			GetPropertyValues (context, coll);
-			foreach (SettingsPropertyValue propertyValue in values) {
-				// Can't use propertyValue.Property.DefaultValue
-				// as it may cause InvalidCastException (see bug# 532180)
-				propertyValue.PropertyValue = propertyValue.Reset ();
+			if (values != null) {
+				foreach (SettingsPropertyValue propertyValue in values) {
+					// Can't use propertyValue.Property.DefaultValue
+					// as it may cause InvalidCastException (see bug# 532180)
+					values[propertyValue.Name].PropertyValue = propertyValue.Reset ();
+				}
 			}
-			SetPropertyValues (context, values);
 		}
 
 		// FIXME: implement

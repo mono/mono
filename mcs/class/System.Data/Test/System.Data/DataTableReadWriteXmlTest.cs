@@ -125,11 +125,11 @@ namespace MonoTests.System.Data
             // Get XML for DataSet writes.
             sw.GetStringBuilder().Length = 0;
             ds.WriteXml(sw);
-            string xmlDSNone = sw.ToString();
+            string xmlDSNone = sw.ToString().Replace ("\n", "\r\n");
             
             sw.GetStringBuilder().Length = 0;
             ds.WriteXml(sw, XmlWriteMode.DiffGram);
-            string xmlDSDiffGram = sw.ToString();
+            string xmlDSDiffGram = sw.ToString().Replace ("\n", "\r\n");
 
             sw.GetStringBuilder().Length = 0;
             ds.WriteXml(sw, XmlWriteMode.WriteSchema);
@@ -187,11 +187,11 @@ namespace MonoTests.System.Data
             
             sw.GetStringBuilder().Length = 0;
             ds.WriteXml(sw);
-            xmlDSNone = sw.ToString();
+            xmlDSNone = sw.ToString().Replace ("\n", "\r\n");
             
             sw.GetStringBuilder().Length = 0;
             ds.WriteXml(sw, XmlWriteMode.DiffGram);
-            xmlDSDiffGram = sw.ToString();
+            xmlDSDiffGram = sw.ToString().Replace ("\n", "\r\n");;
 
             sw.GetStringBuilder().Length = 0;
             ds.WriteXml(sw, XmlWriteMode.WriteSchema);

@@ -23,5 +23,5 @@
 	public class C
 #endif
 	{
-		static void Main () {}
+		public static void Main () {}
 	}

@@ -93,7 +93,7 @@ namespace Mono.CodeContracts.Static.Analysis.StackAnalysis {
 				isLoadResult = false;
 				isOld = false;
 				lookupPC = pc;
-				for (LispList<Edge<CFGBlock, EdgeTag>> list = pc.SubroutineContext; list != null; list = list.Tail) {
+				for (Sequence<Edge<CFGBlock, EdgeTag>> list = pc.SubroutineContext; list != null; list = list.Tail) {
 					EdgeTag edgeTag = list.Head.Tag;
 					if (edgeTag == EdgeTag.Entry) {
 						param = RemapParameter (param, list.Head.From, pc.Block);
@@ -111,7 +111,7 @@ namespace Mono.CodeContracts.Static.Analysis.StackAnalysis {
 
 			if (pc.Block.Subroutine.IsEnsuresOrOldValue) {
 				isOld = true;
-				for (LispList<Edge<CFGBlock, EdgeTag>> ctx = pc.SubroutineContext; ctx != null; ctx = ctx.Tail) {
+				for (Sequence<Edge<CFGBlock, EdgeTag>> ctx = pc.SubroutineContext; ctx != null; ctx = ctx.Tail) {
 					EdgeTag tag = ctx.Head.Tag;
 					if (tag == EdgeTag.Exit) {
 						param = RemapParameter (param, ctx.Head.From, pc.Block);
@@ -155,7 +155,7 @@ namespace Mono.CodeContracts.Static.Analysis.StackAnalysis {
 			}
 
 			if (pc.Block.Subroutine.IsInvariant) {
-				for (LispList<Edge<CFGBlock, EdgeTag>> list = pc.SubroutineContext; list != null; list = list.Tail) {
+				for (Sequence<Edge<CFGBlock, EdgeTag>> list = pc.SubroutineContext; list != null; list = list.Tail) {
 					EdgeTag tag = list.Head.Tag;
 					if (tag == EdgeTag.Entry || tag == EdgeTag.Exit) {
 						Method method;

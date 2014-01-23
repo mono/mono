@@ -29,9 +29,7 @@
 
 using System.IO;
 using System.Runtime.InteropServices;
-#if !NET_2_1
 using System.Security.AccessControl;
-#endif
 
 namespace System.Threading
 {
@@ -57,6 +55,8 @@ namespace System.Threading
 			Handle = NativeEventCalls.CreateEvent_internal (manual, initialState, null, out created);
 		}
 		
+#if !MOBILE
+		
 		public EventWaitHandle (bool initialState, EventResetMode mode,
 					string name)
 		{
@@ -71,8 +71,9 @@ namespace System.Threading
 			bool manual = IsManualReset (mode);
 			Handle = NativeEventCalls.CreateEvent_internal (manual, initialState, name, out createdNew);
 		}
-#if !NET_2_1
-		[MonoTODO ("Implement access control")]
+
+
+		[MonoTODO ("Use access control in CreateEvent_internal")]
 		public EventWaitHandle (bool initialState, EventResetMode mode,
 					string name, out bool createdNew,
 					EventWaitHandleSecurity eventSecurity)
@@ -81,10 +82,13 @@ namespace System.Threading
 			Handle = NativeEventCalls.CreateEvent_internal (manual, initialState, name, out createdNew);
 		}
 		
-		[MonoTODO]
 		public EventWaitHandleSecurity GetAccessControl ()
 		{
-			throw new NotImplementedException ();
+			return new EventWaitHandleSecurity (SafeWaitHandle,
+							    AccessControlSections.Owner |
+							    AccessControlSections.Group |
+							    AccessControlSections.Access);
+
 		}
 
 		public static EventWaitHandle OpenExisting (string name)
@@ -116,7 +120,75 @@ namespace System.Threading
 			
 			return(new EventWaitHandle (handle));
 		}
+
+		public static bool TryOpenExisting (string name, out EventWaitHandle result)
+		{
+			return TryOpenExisting (
+				name, EventWaitHandleRights.Synchronize | EventWaitHandleRights.Modify, out result);
+		}
+
+		public static bool TryOpenExisting (string name, EventWaitHandleRights rights,
+		                                    out EventWaitHandle result)
+		{
+			if (name == null) {
+				throw new ArgumentNullException ("name");
+			}
+			if ((name.Length == 0) || (name.Length > 260)) {
+				throw new ArgumentException ("name", Locale.GetText ("Invalid length [1-260]."));
+			}
+			
+			MonoIOError error;
+			IntPtr handle = NativeEventCalls.OpenEvent_internal (name, rights, out error);
+			if (handle == (IntPtr)null) {
+				result = null;
+				return false;
+			}
+
+			result = new EventWaitHandle (handle);
+			return true;
+		}
+#else
+		public EventWaitHandle (bool initialState, EventResetMode mode, string name)
+		{
+			throw new NotSupportedException ();
+		}
+		
+		public EventWaitHandle (bool initialState, EventResetMode mode,
+		                        string name, out bool createdNew)
+		{
+			throw new NotSupportedException ();
+		}
+		
+		
+		public EventWaitHandle (bool initialState, EventResetMode mode,
+		                        string name, out bool createdNew,
+		                        EventWaitHandleSecurity eventSecurity)
+		{
+			throw new NotSupportedException ();
+		}
+
+		public static EventWaitHandle OpenExisting (string name)
+		{
+			throw new NotSupportedException (); 
+		}
+
+		public static EventWaitHandle OpenExisting (string name, EventWaitHandleRights rights)
+		{
+			throw new NotSupportedException (); 
+		}
+
+		public static bool TryOpenExisting (string name, out EventWaitHandle result)
+		{
+			throw new NotSupportedException (); 
+		}
+
+		public static bool TryOpenExisting (string name, EventWaitHandleRights rights,
+		                                    out EventWaitHandle result)
+		{
+			throw new NotSupportedException (); 
+		}
 #endif
+
 		public bool Reset ()
 		{
 			/* This needs locking since another thread could dispose the handle */
@@ -136,10 +208,13 @@ namespace System.Threading
 			}
 		}
 #if !NET_2_1
-		[MonoTODO]
 		public void SetAccessControl (EventWaitHandleSecurity eventSecurity)
 		{
-			throw new NotImplementedException ();
+			if (null == eventSecurity)
+				throw new ArgumentNullException ("eventSecurity");
+				
+			eventSecurity.PersistModifications (SafeWaitHandle);
+
 		}
 #endif
 	}

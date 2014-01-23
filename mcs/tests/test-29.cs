@@ -24,7 +24,7 @@ class Derived : Base {
 
 class Demo {
 
-	static int Main ()
+	public static int Main ()
 	{
 		Derived d = new Derived ();
 

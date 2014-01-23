@@ -4,7 +4,7 @@ class X {
 	}
 	const A foo = A.x | A.y;
 	
-	static void Main () {}
+	public static void Main () {}
 }
 
 

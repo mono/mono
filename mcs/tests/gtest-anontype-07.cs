@@ -5,7 +5,7 @@ using System.Collections;
 
 public class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		var v1 = new {  };
 		var v2 = new {  };

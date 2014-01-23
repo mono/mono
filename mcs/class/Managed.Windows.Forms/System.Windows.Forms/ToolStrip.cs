@@ -727,19 +727,21 @@ namespace System.Windows.Forms
 		{
 			if (!IsDisposed) {
 
-				// Event Handler must be stopped before disposing Items.
-				Events.Dispose();
+				if(disposing) {
+					// Event Handler must be stopped before disposing Items.
+					Events.Dispose();
 
-				CloseToolTip (null);
-				// ToolStripItem.Dispose modifes the collection,
-				// so we iterate it in reverse order
-				for (int i = Items.Count - 1; i >= 0; i--)
-					Items [i].Dispose ();
-					
-				if (this.overflow_button != null && this.overflow_button.drop_down != null)
-					this.overflow_button.drop_down.Dispose ();
+					CloseToolTip (null);
+					// ToolStripItem.Dispose modifes the collection,
+					// so we iterate it in reverse order
+					for (int i = Items.Count - 1; i >= 0; i--)
+						Items [i].Dispose ();
 
-				ToolStripManager.RemoveToolStrip (this);
+					if (this.overflow_button != null && this.overflow_button.drop_down != null)
+						this.overflow_button.drop_down.Dispose ();
+
+					ToolStripManager.RemoveToolStrip (this);
+				}
 				base.Dispose (disposing);
 			}
 		}
@@ -892,7 +894,7 @@ namespace System.Windows.Forms
 				if (this is MenuStrip && mouse_currently_over is ToolStripMenuItem && !(mouse_currently_over as ToolStripMenuItem).HasDropDownItems)
 					return;
 			} else {
-				this.HideMenus (true, ToolStripDropDownCloseReason.AppClicked);
+				this.Dismiss (ToolStripDropDownCloseReason.AppClicked);
 			}
 			
 			if (this is MenuStrip)
@@ -1501,17 +1503,6 @@ namespace System.Windows.Forms
 			this.GetTopLevelToolStrip ().Dismiss (ToolStripDropDownCloseReason.ItemClicked);
 		}
 		
-		internal void HideMenus (bool release, ToolStripDropDownCloseReason reason)
-		{
-			if (this is MenuStrip && release && menu_selected)
-				(this as MenuStrip).FireMenuDeactivate ();
-				
-			if (release)
-				menu_selected = false;
-				
-			NotifySelectedChanged (null);
-		}
-
 		internal void NotifySelectedChanged (ToolStripItem tsi)
 		{
 			foreach (ToolStripItem tsi2 in this.DisplayedItems)

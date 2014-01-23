@@ -96,8 +96,12 @@ namespace System.ServiceModel.Channels.Http
 			lock (ce.RetrieverLock) {
 				var q = ce.ContextQueue;
 				if (q.Count == 0) {
-					bool ret = ce.WaitHandle.WaitOne (timeout);
-					return ret && TryDequeueRequest (channel, timeout - (DateTime.Now - start), out context); // recurse, am lazy :/
+					if (timeout.TotalMilliseconds < 0) return false;
+					TimeSpan waitTimeout = timeout;
+					if (timeout == TimeSpan.MaxValue)
+						waitTimeout = TimeSpan.FromMilliseconds (int.MaxValue);
+					bool ret = ce.WaitHandle.WaitOne (waitTimeout);
+					return ret && TryDequeueRequest (channel, waitTimeout - (DateTime.Now - start), out context); // recurse, am lazy :/
 				}
 				context = q.Dequeue ();
 				return true;

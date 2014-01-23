@@ -24,6 +24,6 @@ public class ArrayBase<T>: SequencedBase<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

@@ -8,7 +8,7 @@ enum A {
 
 class X {
 
-	static int Main () {
+	public static int Main () {
 		try {
 			switch (0) {
 			default:

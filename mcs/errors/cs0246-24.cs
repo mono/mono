@@ -1,4 +1,4 @@
-// CS0246: The type or namespace name `TypeMe' could not be found. Are you missing a using directive or an assembly reference?
+// CS0246: The type or namespace name `TypeMe' could not be found. Are you missing an assembly reference?
 // Line: 12
 
 class C

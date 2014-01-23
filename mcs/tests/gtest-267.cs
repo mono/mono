@@ -11,7 +11,7 @@ public class T {
 
         void Response <T> (Handler <T> handler) {}
 
-	static void Main ()
+	public static void Main ()
 	{ }
 } 
 

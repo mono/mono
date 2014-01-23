@@ -47,6 +47,7 @@ namespace System.Net.Http
 		bool useDefaultCredentials;
 		bool useProxy;
 		ClientCertificateOption certificate;
+		bool sentRequest;
 
 		public HttpClientHandler ()
 		{
@@ -57,11 +58,20 @@ namespace System.Net.Http
 			useProxy = true;
 		}
 
+		internal void EnsureModifiability ()
+		{
+			if (sentRequest)
+				throw new InvalidOperationException (
+					"This instance has already started one or more requests. " +
+					"Properties can only be modified before sending the first request.");
+		}
+
 		public bool AllowAutoRedirect {
 			get {
 				return allowAutoRedirect;
 			}
 			set {
+				EnsureModifiability ();
 				allowAutoRedirect = value;
 			}
 		}
@@ -71,6 +81,7 @@ namespace System.Net.Http
 				return automaticDecompression;
 			}
 			set {
+				EnsureModifiability ();
 				automaticDecompression = value;
 			}
 		}
@@ -80,6 +91,7 @@ namespace System.Net.Http
 				return certificate;
 			}
 			set {
+				EnsureModifiability ();
 				certificate = value;
 			}
 		}
@@ -89,6 +101,7 @@ namespace System.Net.Http
 				return cookieContainer ?? (cookieContainer = new CookieContainer ());
 			}
 			set {
+				EnsureModifiability ();
 				cookieContainer = value;
 			}
 		}
@@ -98,6 +111,7 @@ namespace System.Net.Http
 				return credentials;
 			}
 			set {
+				EnsureModifiability ();
 				credentials = value;
 			}
 		}
@@ -107,6 +121,7 @@ namespace System.Net.Http
 				return maxAutomaticRedirections;
 			}
 			set {
+				EnsureModifiability ();
 				if (value <= 0)
 					throw new ArgumentOutOfRangeException ();
 
@@ -119,6 +134,7 @@ namespace System.Net.Http
 				return maxRequestContentBufferSize;
 			}
 			set {
+				EnsureModifiability ();
 				if (value < 0)
 					throw new ArgumentOutOfRangeException ();
 
@@ -131,6 +147,7 @@ namespace System.Net.Http
 				return preAuthenticate;
 			}
 			set {
+				EnsureModifiability ();
 				preAuthenticate = value;
 			}
 		}
@@ -140,6 +157,7 @@ namespace System.Net.Http
 				return proxy;
 			}
 			set {
+				EnsureModifiability ();
 				if (!UseProxy)
 					throw new InvalidOperationException ();
 
@@ -170,6 +188,7 @@ namespace System.Net.Http
 				return useCookies;
 			}
 			set {
+				EnsureModifiability ();
 				useCookies = value;
 			}
 		}
@@ -179,6 +198,7 @@ namespace System.Net.Http
 				return useDefaultCredentials;
 			}
 			set {
+				EnsureModifiability ();
 				useDefaultCredentials = value;
 			}
 		}
@@ -188,6 +208,7 @@ namespace System.Net.Http
 				return useProxy;
 			}
 			set {
+				EnsureModifiability ();
 				useProxy = value;
 			}
 		}
@@ -198,7 +219,7 @@ namespace System.Net.Http
 			base.Dispose (disposing);
 		}
 
-		HttpWebRequest CreateWebRequest (HttpRequestMessage request)
+		internal virtual HttpWebRequest CreateWebRequest (HttpRequestMessage request)
 		{
 			var wr = new HttpWebRequest (request.RequestUri);
 			wr.ThrowOnError = false;
@@ -218,13 +239,16 @@ namespace System.Net.Http
 			if (allowAutoRedirect) {
 				wr.AllowAutoRedirect = true;
 				wr.MaximumAutomaticRedirections = maxAutomaticRedirections;
+			} else {
+				wr.AllowAutoRedirect = false;
 			}
 
 			wr.AutomaticDecompression = automaticDecompression;
 			wr.PreAuthenticate = preAuthenticate;
 
 			if (useCookies) {
-				wr.CookieContainer = cookieContainer;
+				// It cannot be null or allowAutoRedirect won't work
+				wr.CookieContainer = CookieContainer;
 			}
 
 			if (useDefaultCredentials) {
@@ -248,12 +272,12 @@ namespace System.Net.Http
 			return wr;
 		}
 
-		HttpResponseMessage CreateResponseMessage (HttpWebResponse wr, HttpRequestMessage requestMessage)
+		HttpResponseMessage CreateResponseMessage (HttpWebResponse wr, HttpRequestMessage requestMessage, CancellationToken cancellationToken)
 		{
 			var response = new HttpResponseMessage (wr.StatusCode);
 			response.RequestMessage = requestMessage;
 			response.ReasonPhrase = wr.StatusDescription;
-			response.Content = new StreamContent (wr.GetResponseStream ());
+			response.Content = new StreamContent (wr.GetResponseStream (), cancellationToken);
 
 			var headers = wr.Headers;
 			for (int i = 0; i < headers.Count; ++i) {
@@ -274,6 +298,7 @@ namespace System.Net.Http
 
 		protected async internal override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
 		{
+			sentRequest = true;
 			var wrequest = CreateWebRequest (request);
 
 			if (request.Content != null) {
@@ -283,14 +308,28 @@ namespace System.Net.Http
 						headers.AddValue (header.Key, value);
 					}
 				}
-				
-				var stream = wrequest.GetRequestStream ();
-				await request.Content.CopyToAsync (stream);
+
+				var stream = await wrequest.GetRequestStreamAsync ().ConfigureAwait (false);
+				await request.Content.CopyToAsync (stream).ConfigureAwait (false);
 			}
 
-			// FIXME: GetResponseAsync does not accept cancellationToken
-			var wresponse = (HttpWebResponse) await wrequest.GetResponseAsync ().ConfigureAwait (false);
-			return CreateResponseMessage (wresponse, request);
+			HttpWebResponse wresponse = null;
+			using (cancellationToken.Register (l => ((HttpWebRequest) l).Abort (), wrequest)) {
+				try {
+					wresponse = (HttpWebResponse) await wrequest.GetResponseAsync ().ConfigureAwait (false);
+				} catch (WebException we) {
+					if (we.Status != WebExceptionStatus.RequestCanceled)
+						throw;
+				}
+
+				if (cancellationToken.IsCancellationRequested) {
+					var cancelled = new TaskCompletionSource<HttpResponseMessage> ();
+					cancelled.SetCanceled ();
+					return await cancelled.Task;
+				}
+			}
+			
+			return CreateResponseMessage (wresponse, request, cancellationToken);
 		}
 	}
 }

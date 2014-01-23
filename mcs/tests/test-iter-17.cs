@@ -12,7 +12,7 @@ class Program
         }
     }
 
-    static void Main()
+    public static void Main()
     {
         IEnumerator enumerator = Empty.GetEnumerator();
         if (enumerator.Current == null)

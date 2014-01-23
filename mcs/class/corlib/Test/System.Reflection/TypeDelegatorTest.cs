@@ -28,7 +28,7 @@
 using System;
 using System.Threading;
 using System.Reflection;
-#if !TARGET_JVM
+#if !TARGET_JVM && !MONOTOUCH
 using System.Reflection.Emit;
 #endif // TARGET_JVM
 

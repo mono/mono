@@ -1,5 +1,6 @@
 <Type Name="Action" FullName="System.Action">
   <TypeSignature Language="C#" Value="public delegate void Action();" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed Action extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>

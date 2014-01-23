@@ -1010,7 +1010,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.ComponentModel.DefaultValue(&#x0;)</AttributeName>
+          <AttributeName>System.ComponentModel.DefaultValue(&apos;\0&apos;)</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.ComponentModel.RefreshProperties(System.ComponentModel.RefreshProperties.Repaint)</AttributeName>

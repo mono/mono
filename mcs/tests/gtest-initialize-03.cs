@@ -20,7 +20,7 @@ public class Test
 		return new Data () { Value = 3 };
 	}
 	
-	static void Main ()
+	public static void Main ()
 	{
 		Prop = new Data () { Value = 3 };
 		Data data = new Data () { Value = 6 };

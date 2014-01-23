@@ -10,7 +10,7 @@ unsafe class Test
 			lowLevelCall (pi);
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		int i = 0;
 		Func (out i);

@@ -55,6 +55,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestProperties2 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);

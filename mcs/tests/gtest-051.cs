@@ -25,7 +25,7 @@ public class B : A
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Foo<B> foo = new Foo<B> ();
 		foo.Test (new B ());

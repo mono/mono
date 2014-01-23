@@ -28,6 +28,9 @@
 
 using System;
 using System.Xml;
+using Microsoft.Build.Exceptions;
+
+
 namespace Microsoft.Build.Construction
 {
         [System.Diagnostics.DebuggerDisplayAttribute ("Project={Project} Condition={Condition}")]
@@ -55,6 +58,13 @@ namespace Microsoft.Build.Construction
                 {
                         SaveAttribute (writer, "Project", Project);
                         base.SaveValue (writer);
+                }
+                
+                internal override void LoadValue (XmlReader reader)
+                {
+                        if (string.IsNullOrWhiteSpace (Project))
+                                throw new InvalidProjectFileException (Location, null, "Project attribute is null or empty on an Import element");
+                        base.LoadValue (reader);
                 }
 
                 internal override void LoadAttribute (string name, string value)

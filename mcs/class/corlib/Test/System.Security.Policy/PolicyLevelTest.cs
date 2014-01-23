@@ -38,6 +38,9 @@ using System.Text;
 namespace MonoTests.System.Security.Policy {
 
 	[TestFixture]
+#if MOBILE
+	[Ignore ("Not supported")]
+#endif
 	public class PolicyLevelTest {
 
 		static string minimal = null;

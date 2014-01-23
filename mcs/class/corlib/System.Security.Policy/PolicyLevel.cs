@@ -31,8 +31,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !MOONLIGHT
-
 using System.Collections; // for IList
 using System.Globalization;
 using System.IO;
@@ -596,6 +594,3 @@ namespace System.Security.Policy {
 		}
         }
 }
-
-#endif
-

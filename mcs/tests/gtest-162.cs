@@ -8,7 +8,7 @@ public class Generic<T>
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		Type t = typeof (Generic<bool>);
 		MemberInfo[] mi = t.FindMembers (MemberTypes.NestedType,

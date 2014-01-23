@@ -19,6 +19,6 @@ public class Temp<T> : IEnumerable<Temp<T>.Foo>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

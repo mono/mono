@@ -29,7 +29,9 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Reflection;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 
 namespace System.Linq.Expressions {
 
@@ -57,6 +59,7 @@ namespace System.Linq.Expressions {
 			return ExpressionPrinter.ToString (this);
 		}
 
+#if !FULL_AOT_RUNTIME
 		void EmitPopIfNeeded (EmitContext ec)
 		{
 			if (add_method.ReturnType == typeof (void))
@@ -70,5 +73,6 @@ namespace System.Linq.Expressions {
 			ec.EmitCall (local, arguments, add_method);
 			EmitPopIfNeeded (ec);
 		}
+#endif
 	}
 }

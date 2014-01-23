@@ -26,8 +26,6 @@
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
-
 namespace System.Configuration
 {
 	public enum PropertyValueOrigin
@@ -37,4 +35,3 @@ namespace System.Configuration
 		SetHere = 2
 	}
 }
-#endif

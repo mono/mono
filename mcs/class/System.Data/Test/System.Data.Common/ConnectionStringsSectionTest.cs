@@ -27,16 +27,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
-#region Using directives
+#if !MOBILE
 
 using System;
 using System.Configuration;
 
 using NUnit.Framework;
-
-#endregion
 
 namespace MonoTests.System.Configuration
 {
@@ -63,4 +59,4 @@ namespace MonoTests.System.Configuration
 
 
 }
-#endif // NET_2_0
+#endif

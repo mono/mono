@@ -8,6 +8,8 @@
 //
 
 //
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -32,7 +34,12 @@ using System;
 
 namespace Mono.Security.X509 {
 
-	public interface ITrustAnchors
+#if INSIDE_CORLIB
+	internal
+#else
+	public
+#endif
+	interface ITrustAnchors
 	{
 		X509CertificateCollection Anchors { get; }
 	}

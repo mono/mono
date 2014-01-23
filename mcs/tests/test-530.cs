@@ -5,6 +5,6 @@
 class X {
 	static void e(params object[] args\u03c4) {
         }
-	static void Main () {
+	public static void Main () {
 }
 }

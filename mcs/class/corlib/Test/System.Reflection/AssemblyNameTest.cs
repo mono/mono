@@ -13,7 +13,7 @@ using System;
 using System.Configuration.Assemblies;
 using System.IO;
 using System.Reflection;
-#if !TARGET_JVM
+#if !TARGET_JVM && !MOBILE
 using System.Reflection.Emit;
 #endif
 using System.Runtime.Serialization;
@@ -429,7 +429,16 @@ public class AssemblyNameTest {
 	{
 		an = typeof(int).Assembly.GetName ();
 		Assert.IsNotNull (an.FullName, "#1");
-		Assert.AreEqual (Consts.AssemblyCorlib, an.FullName, "#2");
+
+		string AssemblyCorlib;
+#if MOBILE
+		AssemblyCorlib = "mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e";
+#elif NET_4_0
+		AssemblyCorlib = "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+#else
+		AssemblyCorlib = "mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+#endif
+		Assert.AreEqual (AssemblyCorlib, an.FullName, "#2");
 	}
 
 	[Test]
@@ -889,7 +898,7 @@ public class AssemblyNameTest {
 		return assemblyName;
 	}
 
-#if !TARGET_JVM // Reflection.Emit is not supported for TARGET_JVM.
+#if !TARGET_JVM && !MOBILE // Reflection.Emit is not supported for TARGET_JVM.
 	private Assembly GenerateAssembly (AssemblyName name) 
 	{
 		AssemblyBuilder ab = domain.DefineDynamicAssembly (
@@ -1168,9 +1177,7 @@ public class AssemblyNameTest {
 		Assert.AreEqual (an.HashAlgorithm, clone.HashAlgorithm, "HashAlgorithm");
 		Assert.AreEqual (an.KeyPair, clone.KeyPair, "KeyPair");
 		Assert.AreEqual (an.Name, clone.Name, "Name");
-#if NET_2_0
-		Assert.AreEqual (an.ProcessorArchitecture, clone.ProcessorArchitecture, "PA");
-#endif
+		//Assert.AreEqual (an.ProcessorArchitecture, clone.ProcessorArchitecture, "PA");
 		Assert.AreEqual (an.Version, clone.Version, "Version");
 		Assert.AreEqual (an.VersionCompatibility, clone.VersionCompatibility, "VersionCompatibility");
 		Assert.AreEqual (an.GetPublicKey (), clone.GetPublicKey (), "GetPublicKey");
@@ -2006,6 +2013,23 @@ public class AssemblyNameTest {
 		var an = new AssemblyName (nameWithSpaces);
 
 		Assert.AreEqual (fullName, an.FullName);
+	}
+
+	[Test]
+	public void ReferenceMatchesDefinition_Compares_Only_SimpleName ()
+	{
+		var an1 = new AssemblyName ("TestDll, Version=1.0.0.0, Culture=Neutral, PublicKeyToken=b77a5c561934e089");
+		var an2 = new AssemblyName ("TestDll, Version=2.0.0.2001, Culture=en-US, PublicKeyToken=ab7a5c561934e089");
+
+		var an3 = new AssemblyName ("TestDll");
+		var an4 = new AssemblyName ("tesTDlL");
+
+		var an5 = new AssemblyName ("TestDll");
+		var an6 = new AssemblyName ("TestDll2");
+		
+		Assert.IsTrue (AssemblyName.ReferenceMatchesDefinition (an1, an2));
+		Assert.IsTrue (AssemblyName.ReferenceMatchesDefinition (an3, an4));
+		Assert.IsFalse (AssemblyName.ReferenceMatchesDefinition (an5, an6));
 	}
 #endif
 }

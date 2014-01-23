@@ -51,7 +51,11 @@ namespace System.Security.Cryptography {
 
 		public static new DSA Create ()
 		{
+#if FULL_AOT_RUNTIME
+			return new System.Security.Cryptography.DSACryptoServiceProvider ();
+#else
 			return Create ("System.Security.Cryptography.DSA");
+#endif
 		}
 
 		public static new DSA Create (string algName) 

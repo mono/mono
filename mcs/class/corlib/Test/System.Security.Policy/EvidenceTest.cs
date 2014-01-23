@@ -292,17 +292,12 @@ namespace MonoTests.System.Security.Policy {
 			Evidence e = new Evidence ();
 			Assert.AreEqual (0, e.Count, "Count");
 			Assert.IsTrue (!e.IsReadOnly, "IsReadOnly");
-#if NET_2_0
 			Assert.IsTrue (!e.IsSynchronized, "IsSynchronized");
-#else
-			// LAMESPEC: Always TRUE (not FALSE)
-			Assert.IsTrue (e.IsSynchronized, "IsSynchronized");
-#endif
 			Assert.IsTrue (!e.Locked, "Locked");
 			Assert.IsNotNull (e.SyncRoot, "SyncRoot");
 		}
 
-#if NET_2_0
+#if !NET_4_0
 		[Test]
 		public void Equals_GetHashCode () 
 		{
@@ -318,6 +313,7 @@ namespace MonoTests.System.Security.Policy {
 			Assert.AreEqual (e1.GetHashCode (), e2.GetHashCode (), "GetHashCode-3");
 			Assert.IsTrue (e2.Equals (e1), "e2.Equals(e1)");
 		}
+#endif
 
 		[Test]
 		public void Clear () 
@@ -344,17 +340,7 @@ namespace MonoTests.System.Security.Policy {
 			e.RemoveType (typeof (object));
 			Assert.AreEqual (0, e.Count, "Count-RemoveType(object)");
 		}
-#else
-		[Test]
-		public void Equals_GetHashCode () 
-		{
-			Evidence e1 = new Evidence ();
-			Evidence e2 = new Evidence ();
-			Assert.IsTrue (e1.GetHashCode () != e2.GetHashCode (), "GetHashCode");
-			Assert.IsTrue (!e1.Equals (e2), "!e1.Equals(e2)");
-			Assert.IsTrue (!e2.Equals (e1), "!e2.Equals(e1)");
-		}
-#endif
+
 		[Test]
 		public void AppDomain_NoPermissionRequestEvidence ()
 		{
@@ -368,6 +354,7 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void Assembly_NoPermissionRequestEvidence ()
 		{
 			// PermissionRequestEvidence is only used druing policy resolution

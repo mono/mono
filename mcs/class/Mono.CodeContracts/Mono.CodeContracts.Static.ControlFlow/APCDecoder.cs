@@ -55,32 +55,29 @@ namespace Mono.CodeContracts.Static.ControlFlow {
 			get { return this; }
 		}
 
-		public Result ForwardDecode<Data, Result, Visitor> (APC pc, Visitor visitor, Data data)
-			where Visitor : IILVisitor<APC, Dummy, Dummy, Data, Result>
+		public TResult ForwardDecode<TData, TResult, TVisitor> (APC pc, TVisitor visitor, TData data)
+			where TVisitor : IILVisitor<APC, Dummy, Dummy, TData, TResult>
 		{
-			return this.subroutine_facade.ForwardDecode<Data, Result, RemoveBranchDelegator<Data, Result, Visitor>>
-				(pc, new RemoveBranchDelegator<Data, Result, Visitor> (visitor, this.meta_data_provider), data);
+		        return this.subroutine_facade.ForwardDecode<TData, TResult, RemoveBranchDelegator<TData, TResult, TVisitor>> 
+                                         (pc, new RemoveBranchDelegator<TData, TResult, TVisitor> (visitor, this.meta_data_provider), data);
 		}
 
-		public bool IsUnreachable (APC pc)
+	        public bool IsUnreachable (APC pc)
 		{
 			return false;
 		}
 
-		public Dummy EdgeData (APC @from, APC to)
+		public Dummy EdgeData (APC from, APC to)
 		{
 			return Dummy.Value;
 		}
 		#endregion
 
-		#region IMethodContextProvider Members
 		public IMethodContext MethodContext
 		{
 			get { return this; }
 		}
-		#endregion
 
-		#region IMethodContext Members
 		public Method CurrentMethod
 		{
 			get { return this.cfg.CFGMethod; }
@@ -100,6 +97,5 @@ namespace Mono.CodeContracts.Static.ControlFlow {
 		{
 			return this.subroutine_facade.GetAffectedGetters (field);
 		}
-		#endregion
 	}
 }

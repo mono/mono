@@ -8,7 +8,7 @@ public class Test
 {
 	public string Foo { get; set; }
 	
-	static int Main ()
+	public static int Main ()
 	{
 		FieldInfo [] fields = typeof (Test).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
 		if (!(fields.Length > 0))

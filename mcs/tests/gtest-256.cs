@@ -14,7 +14,7 @@ public class Test
 		yield return "TEST2";
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		new Test ().Run ();
 	}

@@ -1,7 +1,7 @@
 using System;
 
 public class GetElementTypeTest {
-	static int Main (string[] args) {
+	public static int Main (string[] args) {
 		GetElementTypeTest me = new GetElementTypeTest ();
 		Type t = me.GetType ();
 		Type elementt = t.GetElementType ();

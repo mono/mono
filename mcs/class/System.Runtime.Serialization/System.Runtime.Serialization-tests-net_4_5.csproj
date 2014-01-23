@@ -5,14 +5,16 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{DC1A3B5B-AFAC-4EE0-B9B8-6664F9E744B7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,168,169,219,414</NoWarn>
-    <OutputPath>.\</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\System.Runtime.Serialization-tests-net_4_5</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>False</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>System.Runtime.Serialization_test_net_4_5</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -25,7 +27,6 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;NET_3_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,35 +35,46 @@
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;NET_3_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="Test\System.Runtime.Serialization\Bug666333Test.cs" />
-   <Compile Include="Test\System.Runtime.Serialization\Bug675144Test.cs" />
-   <Compile Include="Test\System.Runtime.Serialization\Bug2843Test.cs" />
-   <Compile Include="Test\System.Runtime.Serialization\DataContractSerializerTest_NullableWithDictionary.cs" />
-   <Compile Include="Test\System.Runtime.Serialization\Bug695203Test.cs" />
-   <Compile Include="Test\System.Runtime.Serialization\DataContractResolverTest.cs" />
-   <Compile Include="Test\System.Runtime.Serialization\KnownTypeAttributeTest.cs" />
-   <Compile Include="Test\System.Runtime.Serialization\XmlObjectSerializerTest.cs" />
-   <Compile Include="Test\System.Runtime.Serialization\XsdDataContractExporterTest.cs" />
-   <Compile Include="Test\System.Runtime.Serialization\XsdDataContractImporterTest.cs" />
-   <Compile Include="Test\System.Xml\UniqueIdTest.cs" />
-   <Compile Include="Test\System.Xml\XmlBinaryDictionaryReaderTest.cs" />
-   <Compile Include="Test\System.Xml\XmlBinaryDictionaryWriterTest.cs" />
-   <Compile Include="Test\System.Xml\XmlBinaryWriterSessionTest.cs" />
-   <Compile Include="Test\System.Xml\XmlDictionaryReaderAbstractTest.cs" />
-   <Compile Include="Test\System.Xml\XmlDictionaryReaderQuotasTest.cs" />
-   <Compile Include="Test\System.Xml\XmlDictionaryTest.cs" />
-   <Compile Include="Test\System.Xml\XmlDictionaryStringTest.cs" />
-   <Compile Include="Test\System.Xml\XmlDictionaryWriterTest.cs" />
-   <Compile Include="Test\System.Xml\XmlMtomDictionaryWriterTest.cs" />
-   <Compile Include="Test\System.Xml\XmlSimpleDictionaryWriterTest.cs" />
-   <Compile Include="Test\System.Runtime.Serialization\AttributesTest.cs" />
-   <Compile Include="Test\XmlComparer.cs" />
-
-  </ItemGroup>
+    <Compile Include="Test\System.Runtime.Serialization\AttributesTest.cs" />
+    <Compile Include="Test\System.Runtime.Serialization\Bug242Test.cs" />
+    <Compile Include="Test\System.Runtime.Serialization\Bug2843Test.cs" />
+    <Compile Include="Test\System.Runtime.Serialization\Bug3258Test.cs" />
+    <Compile Include="Test\System.Runtime.Serialization\Bug666333Test.cs" />
+    <Compile Include="Test\System.Runtime.Serialization\Bug675144Test.cs" />
+    <Compile Include="Test\System.Runtime.Serialization\Bug695203Test.cs" />
+    <Compile Include="Test\System.Runtime.Serialization\CollectionSerialization.cs" />
+    <Compile Include="Test\System.Runtime.Serialization\DataContractResolverTest.cs" />
+    <Compile Include="Test\System.Runtime.Serialization\DataContractSerializerTest_DuplicateQName.cs" />
+    <Compile Include="Test\System.Runtime.Serialization\DataContractSerializerTest_InvalidCharacters.cs" />
+    <Compile Include="Test\System.Runtime.Serialization\DataContractSerializerTest_NullableWithDictionary.cs" />
+    <Compile Include="Test\System.Runtime.Serialization\KnownTypeAttributeTest.cs" />
+    <Compile Include="Test\System.Runtime.Serialization\WsdlHelper.cs" />
+    <Compile Include="Test\System.Runtime.Serialization\XmlObjectSerializerTest.cs" />
+    <Compile Include="Test\System.Runtime.Serialization\XsdDataContractExporterTest.cs" />
+    <Compile Include="Test\System.Runtime.Serialization\XsdDataContractExporterTest2.cs" />
+    <Compile Include="Test\System.Runtime.Serialization\XsdDataContractImporterTest.cs" />
+    <Compile Include="Test\System.Runtime.Serialization\XsdDataContractImporterTest2.cs" />
+    <Compile Include="Test\System.Xml\UniqueIdTest.cs" />
+    <Compile Include="Test\System.Xml\XmlBinaryDictionaryReaderTest.cs" />
+    <Compile Include="Test\System.Xml\XmlBinaryDictionaryWriterTest.cs" />
+    <Compile Include="Test\System.Xml\XmlBinaryWriterSessionTest.cs" />
+    <Compile Include="Test\System.Xml\XmlDictionaryReaderAbstractTest.cs" />
+    <Compile Include="Test\System.Xml\XmlDictionaryReaderQuotasTest.cs" />
+    <Compile Include="Test\System.Xml\XmlDictionaryStringTest.cs" />
+    <Compile Include="Test\System.Xml\XmlDictionaryTest.cs" />
+    <Compile Include="Test\System.Xml\XmlDictionaryWriterTest.cs" />
+    <Compile Include="Test\System.Xml\XmlMtomDictionaryWriterTest.cs" />
+    <Compile Include="Test\System.Xml\XmlSimpleDictionaryWriterTest.cs" />
+    <Compile Include="Test\XmlComparer.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -71,52 +83,64 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="./../../class/lib/net_4_5/System.Runtime.Serialization.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../class/lib/net_4_5/System.Runtime.Serialization.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Core.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Configuration.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ServiceModel.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.ServiceModel.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework" />
-
+    <Reference Include="..\lib\net_4_5\nunit.framework.dll" />
+    <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
+      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
+      <Name>corlib\corlib-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Runtime.Serialization\System.Runtime.Serialization-net_4_5.csproj">
+      <Project>{E90544E8-C031-49EE-BB6F-8688382E8618}</Project>
+      <Name>System.Runtime.Serialization\System.Runtime.Serialization-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_5-2.csproj">
+      <Project>{38FCD731-0E11-46F7-A31B-DCBE853AD8D7}</Project>
+      <Name>System\System-net_4_5-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
+      <Project>{4ED6CCE8-8E8A-4D82-8BCA-3EA4D4203AA4}</Project>
+      <Name>System.XML\System.Xml-net_4_5-1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
+      <Project>{D8260595-C32F-4AC3-9C01-2CD2528CFA1D}</Project>
+      <Name>System.Core\System.Core-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Data\System.Data-net_4_5.csproj">
+      <Project>{663D8C81-B74E-4D44-8C59-2264C6942B30}</Project>
+      <Name>System.Data\System.Data-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Configuration\System.Configuration-net_4_5.csproj">
+      <Project>{CA2CD67B-1308-460D-BDBA-498F63DEAA31}</Project>
+      <Name>System.Configuration\System.Configuration-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.ServiceModel\System.ServiceModel-net_4_0.csproj">
+      <Project>{3353D8EA-FB17-4A46-B7B6-82D55B12BD5D}</Project>
+      <Name>System.ServiceModel\System.ServiceModel-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Web.Services\System.Web.Services-net_4_5.csproj">
+      <Project>{1CD96FCF-0288-4FA4-9451-47B0C2206186}</Project>
+      <Name>System.Web.Services\System.Web.Services-net_4_5</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-    <ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="resources/mstypes.schema">
-       <LogicalName>mstypes.schema</LogicalName>
+      <LogicalName>mstypes.schema</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Test/Resources/WSDL/collections.wsdl">
+      <LogicalName>collections.wsdl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Test/Resources/WSDL/custom-collections.wsdl">
+      <LogicalName>custom-collections.wsdl</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
-
 </Project>
-

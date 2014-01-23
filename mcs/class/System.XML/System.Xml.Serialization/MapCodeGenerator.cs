@@ -691,6 +691,7 @@ namespace System.Xml.Serialization {
 			}
 			else
 			{
+				defaultValue = defaultValue is decimal ? (object) ('"' + ((decimal) defaultValue).ToString (CultureInfo.InvariantCulture) + '"') : defaultValue;
 				AddCustomAttribute (externalField, "System.ComponentModel.DefaultValue", GetArg (defaultValue));
 				//internalField.InitExpression = new CodePrimitiveExpression (defaultValue);
 			}

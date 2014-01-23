@@ -30,7 +30,7 @@ static class TestB
 
 public class CustomQueryExpressionPattern
 {
-	static int Main ()
+	public static int Main ()
 	{
 		var v = new TestA ("Oh yes");
 		string foo = from a in v select a;

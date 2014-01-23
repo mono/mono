@@ -37,11 +37,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		List<LocalVariableEntry> _locals;
 		List<CodeBlockEntry> _blocks;
 		List<ScopeVariable> _scope_vars;
-#if NET_2_1
-		System.Collections.Stack _block_stack;
-#else		
 		Stack<CodeBlockEntry> _block_stack;
-#endif
 		readonly List<LineNumberEntry> method_lines;
 
 		readonly ICompileUnit _comp_unit;
@@ -90,11 +86,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		public void StartBlock (CodeBlockEntry.Type type, int start_offset)
 		{
 			if (_block_stack == null) {
-#if NET_2_1
-				_block_stack = new System.Collections.Stack ();
-#else				
 				_block_stack = new Stack<CodeBlockEntry> ();
-#endif
 			}
 			
 			if (_blocks == null)

@@ -14,7 +14,7 @@ class D : B {
 	{
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		MethodInfo [] mi = typeof (D).GetMethods (BindingFlags.Instance | BindingFlags.NonPublic);
 		MethodInfo m = null;

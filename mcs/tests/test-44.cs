@@ -31,7 +31,7 @@ class X {
 		return total;
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		int [,] b = new int [10,10];
 

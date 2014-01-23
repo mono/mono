@@ -381,10 +381,10 @@ namespace System.IO
 
 		public Task WriteAsync (char[] buffer)
 		{
-			return Task.Factory.StartNew (l => {
-				var t = (Tuple<TextWriter, char[]>) l;
-				t.Item1.Write (t.Item2);
-			}, Tuple.Create (this, buffer));
+			if (buffer == null)
+				return TaskConstants.Finished;
+
+			return WriteAsync (buffer, 0, buffer.Length);
 		}
 
 		public virtual Task WriteAsync (char[] buffer, int index, int count)

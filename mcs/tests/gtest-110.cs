@@ -23,7 +23,7 @@ public class SpecialList<V> : IList<V>
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		IList<int> list = new List<int> ();
 		int result = list.Map ("Hello");

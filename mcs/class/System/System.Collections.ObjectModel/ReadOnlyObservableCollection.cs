@@ -23,7 +23,7 @@
 //	Chris Toshok (toshok@novell.com)
 //	Brian O'Keefe (zer0keefie@gmail.com)
 //
-#if NET_4_0 || MOBILE
+#if NET_4_0
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;

@@ -30,7 +30,7 @@
 
 namespace System.Runtime.CompilerServices
 {
-	[AttributeUsage (AttributeTargets.Method)]
+	[AttributeUsage (AttributeTargets.Method, Inherited = false)]
 	[Serializable]
 	public sealed class AsyncStateMachineAttribute : StateMachineAttribute
 	{

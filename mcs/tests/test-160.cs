@@ -14,7 +14,7 @@ class T {
                 return look.s.a;
         }
 
-        static int Main() {
+        public static int Main() {
 		// Compilation only test;
 		return 0;
 	}

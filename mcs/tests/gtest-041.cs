@@ -8,7 +8,7 @@ class Stack<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Stack<string> stack = new Stack<string> ();
 		stack.Hello (1, "Hello", "World");

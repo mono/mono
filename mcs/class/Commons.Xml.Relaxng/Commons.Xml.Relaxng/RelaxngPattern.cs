@@ -83,8 +83,8 @@ namespace Commons.Xml.Relaxng
 			RelaxngGrammar g = null;
 			RelaxngPattern p;
 			try {
-				if (grammar.IsSourceCompactSyntax) {
-					p = RncParser.ParseRnc (new StreamReader ((Stream) grammar.Resolver.GetEntity (uri, null, typeof (Stream))), null, BaseUri, nsContext);
+				if (uri.AbsolutePath.EndsWith(".rnc", StringComparison.InvariantCultureIgnoreCase)) {
+					p = RncParser.ParseRnc (new StreamReader ((Stream) grammar.Resolver.GetEntity (uri, null, typeof (Stream))), null, uri.AbsoluteUri, nsContext);
 				} else {
 					xtr = new XmlTextReader (uri.AbsoluteUri, (Stream) grammar.Resolver.GetEntity (uri, null, typeof (Stream)));
 					RelaxngReader r = new RelaxngReader (xtr, nsContext, grammar.Resolver);

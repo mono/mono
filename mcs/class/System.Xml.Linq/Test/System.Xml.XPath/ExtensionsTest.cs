@@ -37,9 +37,18 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace MonoTests.System.Xml
 {
+	public static class Helpers
+	{
+		public static string NormalizeNewline(this string str)
+		{
+			return str.Replace("\r\n", "\n");
+		}
+	}
+
 	[TestFixture]
 	public class ExtensionsTest
 	{
@@ -418,7 +427,7 @@ namespace MonoTests.System.Xml
 			string ret = @"<one>
   <two>Some data.</two>
 </one>";
-			Assert.AreEqual (ret, nav.OuterXml.Replace ("\r\n", "\n"), "#1");
+			Assert.AreEqual (ret.NormalizeNewline (), nav.OuterXml.NormalizeNewline (), "#1");
 		}
 
 		[Test]
@@ -461,6 +470,13 @@ namespace MonoTests.System.Xml
 			XDocument d = XDocument.Parse (xml);
 			IEnumerable att = (IEnumerable) d.XPathEvaluate ("/root/@a");
 			att.Cast<XAttribute> ().FirstOrDefault ();
+		}
+
+		[Test] // bug #5902
+		public void EvaluateNodeSetAsEnumerableOfObject ()
+		{
+			var root = XDocument.Parse("<config><item name=\"A\" /></config>");
+			Assert.IsTrue (root.XPathSelectElements ("config/*").First ().XPathEvaluate (".") is IEnumerable<object>);
 		}
 
 		[Test] // bug #2146

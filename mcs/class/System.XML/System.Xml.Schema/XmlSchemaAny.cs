@@ -226,7 +226,7 @@ namespace System.Xml.Schema
 		}
 
 
-		internal override void CheckRecursion (int depth, ValidationEventHandler h, XmlSchema schema)
+		internal override void CheckRecursion (Stack depth, ValidationEventHandler h, XmlSchema schema)
 		{
 			// do nothing
 		}

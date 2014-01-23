@@ -18,7 +18,7 @@ struct X {
 class Y {
 	static X x;
 
-	static int Main ()
+	public static int Main ()
 	{
 		int total = 0;
 		x = new X ();

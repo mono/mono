@@ -1,9 +1,11 @@
 <Type Name="Syscall+sighandler_t" FullName="Mono.Posix.Syscall+sighandler_t">
   <TypeSignature Language="C#" Value="public delegate void Syscall.sighandler_t(int v);" />
+  <TypeSignature Language="ILAsm" Value=".class nested public auto ansi sealed Syscall/sighandler_t extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>

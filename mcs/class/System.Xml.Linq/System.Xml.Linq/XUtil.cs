@@ -93,7 +93,7 @@ namespace System.Xml.Linq
 			throw new NotImplementedException ();
 		}
 
-		public static IEnumerable ExpandArray (object o)
+		public static IEnumerable<object> ExpandArray (object o)
 		{
 			XNode n = o as XNode;
 			if (n != null)

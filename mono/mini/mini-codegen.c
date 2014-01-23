@@ -409,7 +409,38 @@ typedef struct {
 	regmask_t preferred_mask; /* the hreg where the register should be allocated, or 0 */
 } RegTrack;
 
-#ifndef DISABLE_LOGGING
+#if !defined(DISABLE_LOGGING) && !defined(DISABLE_JIT)
+
+static const char* const patch_info_str[] = {
+#define PATCH_INFO(a,b) "" #a,
+#include "patch-info.h"
+#undef PATCH_INFO
+};
+
+void
+mono_print_ji (const MonoJumpInfo *ji)
+{
+	switch (ji->type) {
+	case MONO_PATCH_INFO_RGCTX_FETCH: {
+		MonoJumpInfoRgctxEntry *entry = ji->data.rgctx_entry;
+
+		printf ("[RGCTX_FETCH ");
+		mono_print_ji (entry->data);
+		printf (" - %s]", mono_rgctx_info_type_to_str (entry->info_type));
+		break;
+	}
+	case MONO_PATCH_INFO_METHODCONST: {
+		char *s = mono_method_full_name (ji->data.method, TRUE);
+		printf ("[METHODCONST - %s]", s);
+		g_free (s);
+		break;
+	}
+	default:
+		printf ("[%s]", patch_info_str [ji->type]);
+		break;
+	}
+}
+
 void
 mono_print_ins_index (int i, MonoInst *ins)
 {
@@ -422,9 +453,22 @@ mono_print_ins_index (int i, MonoInst *ins)
 	else
 		printf (" %s", mono_inst_name (ins->opcode));
 	if (spec == MONO_ARCH_CPU_SPEC) {
+		gboolean dest_base = FALSE;
+		switch (ins->opcode) {
+		case OP_STOREV_MEMBASE:
+			dest_base = TRUE;
+			break;
+		default:
+			break;
+		}
+
 		/* This is a lowered opcode */
-		if (ins->dreg != -1)
-			printf (" R%d <-", ins->dreg);
+		if (ins->dreg != -1) {
+			if (dest_base)
+				printf (" [R%d + 0x%lx] <-", ins->dreg, (long)ins->inst_offset);
+			else
+				printf (" R%d <-", ins->dreg);
+		}
 		if (ins->sreg1 != -1)
 			printf (" R%d", ins->sreg1);
 		if (ins->sreg2 != -1)
@@ -467,6 +511,7 @@ mono_print_ins_index (int i, MonoInst *ins)
 			printf (" R%d", ((MonoInst*)ins->inst_p0)->dreg);
 			break;
 		case OP_REGOFFSET:
+		case OP_GSHAREDVT_ARG_REGOFFSET:
 			printf (" + 0x%lx", (long)ins->inst_offset);
 			break;
 		default:
@@ -532,6 +577,7 @@ mono_print_ins_index (int i, MonoInst *ins)
 	case OP_IAND_IMM:
 	case OP_IOR_IMM:
 	case OP_IXOR_IMM:
+	case OP_SUB_IMM:
 		printf (" [%d]", (int)ins->inst_imm);
 		break;
 	case OP_ADD_IMM:
@@ -551,11 +597,8 @@ mono_print_ins_index (int i, MonoInst *ins)
 	case OP_CALL_MEMBASE:
 	case OP_CALL_REG:
 	case OP_FCALL:
-	case OP_FCALLVIRT:
 	case OP_LCALL:
-	case OP_LCALLVIRT:
 	case OP_VCALL:
-	case OP_VCALLVIRT:
 	case OP_VCALL_REG:
 	case OP_VCALL_MEMBASE:
 	case OP_VCALL2:
@@ -563,7 +606,6 @@ mono_print_ins_index (int i, MonoInst *ins)
 	case OP_VCALL2_MEMBASE:
 	case OP_VOIDCALL:
 	case OP_VOIDCALL_MEMBASE:
-	case OP_VOIDCALLVIRT:
 	case OP_TAILCALL: {
 		MonoCallInst *call = (MonoCallInst*)ins;
 		GSList *list;
@@ -581,6 +623,11 @@ mono_print_ins_index (int i, MonoInst *ins)
 			char *full_name = mono_method_full_name (call->method, TRUE);
 			printf (" [%s]", full_name);
 			g_free (full_name);
+		} else if (call->fptr_is_patch) {
+			MonoJumpInfo *ji = (MonoJumpInfo*)call->fptr;
+
+			printf (" ");
+			mono_print_ji (ji);
 		} else if (call->fptr) {
 			MonoJitICallInfo *info = mono_find_jit_icall_by_addr (call->fptr);
 			if (info)
@@ -668,11 +715,17 @@ print_regtrack (RegTrack *t, int num)
 	}
 }
 #else
+
+void
+mono_print_ji (const MonoJumpInfo *ji)
+{
+}
+
 void
 mono_print_ins_index (int i, MonoInst *ins)
 {
 }
-#endif /* DISABLE_LOGGING */
+#endif /* !defined(DISABLE_LOGGING) && !defined(DISABLE_JIT) */
 
 void
 mono_print_ins (MonoInst *ins)
@@ -777,7 +830,7 @@ get_register_spilling (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, Mo
 
 	g_assert (bank < MONO_NUM_REGBANKS);
 
-	DEBUG (printf ("\tstart regmask to assign R%d: 0x%08" G_GUINT64_FORMAT " (R%d <- R%d R%d R%d)\n", reg, (guint64)regmask, ins->dreg, ins->sreg1, ins->sreg2, ins->sreg3));
+	DEBUG (printf ("\tstart regmask to assign R%d: 0x%08llu (R%d <- R%d R%d R%d)\n", reg, (unsigned long long)regmask, ins->dreg, ins->sreg1, ins->sreg2, ins->sreg3));
 	/* exclude the registers in the current instruction */
 	num_sregs = mono_inst_get_src_registers (ins, sregs);
 	for (i = 0; i < num_sregs; ++i) {
@@ -794,7 +847,7 @@ get_register_spilling (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, Mo
 		DEBUG (printf ("\t\texcluding dreg %s\n", mono_regname_full (ins->dreg, bank)));
 	}
 
-	DEBUG (printf ("\t\tavailable regmask: 0x%08" G_GUINT64_FORMAT "\n", (guint64)regmask));
+	DEBUG (printf ("\t\tavailable regmask: 0x%08llu\n", (unsigned long long)regmask));
 	g_assert (regmask); /* need at least a register we can free */
 	sel = 0;
 	/* we should track prev_use and spill the register that's farther */
@@ -1746,7 +1799,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 							continue;
 
 						s = regmask (j);
-						if ((clob_mask & s) && !(rs->free_mask [cur_bank] & s) && (j != ins->sreg1)) {
+						if ((clob_mask & s) && !(rs->free_mask [cur_bank] & s)) {
 							if (j != dreg)
 								free_up_hreg (cfg, bb, tmp, ins, j, cur_bank);
 							else if (rs->symbolic [cur_bank] [j])
@@ -2297,6 +2350,8 @@ mono_opcode_to_cond (int opcode)
 	case OP_CMOV_IEQ:
 	case OP_CMOV_LEQ:
 		return CMP_EQ;
+	case OP_FCNEQ:
+	case OP_ICNEQ:
 	case OP_IBNE_UN:
 	case OP_LBNE_UN:
 	case OP_FBNE_UN:
@@ -2305,12 +2360,16 @@ mono_opcode_to_cond (int opcode)
 	case OP_CMOV_INE_UN:
 	case OP_CMOV_LNE_UN:
 		return CMP_NE;
+	case OP_FCLE:
+	case OP_ICLE:
 	case OP_IBLE:
 	case OP_LBLE:
 	case OP_FBLE:
 	case OP_CMOV_ILE:
 	case OP_CMOV_LLE:
 		return CMP_LE;
+	case OP_FCGE:
+	case OP_ICGE:
 	case OP_IBGE:
 	case OP_LBGE:
 	case OP_FBGE:
@@ -2342,6 +2401,7 @@ mono_opcode_to_cond (int opcode)
 	case OP_CMOV_LGT:
 		return CMP_GT;
 
+	case OP_ICLE_UN:
 	case OP_IBLE_UN:
 	case OP_LBLE_UN:
 	case OP_FBLE_UN:
@@ -2350,6 +2410,8 @@ mono_opcode_to_cond (int opcode)
 	case OP_CMOV_ILE_UN:
 	case OP_CMOV_LLE_UN:
 		return CMP_LE_UN;
+
+	case OP_ICGE_UN:
 	case OP_IBGE_UN:
 	case OP_LBGE_UN:
 	case OP_FBGE_UN:
@@ -2651,6 +2713,29 @@ mono_peephole_ins (MonoBasicBlock *bb, MonoInst *ins)
 		MONO_DELETE_INS (bb, ins);
 		break;
 	}
+}
+
+int
+mini_exception_id_by_name (const char *name)
+{
+	if (strcmp (name, "IndexOutOfRangeException") == 0)
+		return MONO_EXC_INDEX_OUT_OF_RANGE;
+	if (strcmp (name, "OverflowException") == 0)
+		return MONO_EXC_OVERFLOW;
+	if (strcmp (name, "ArithmeticException") == 0)
+		return MONO_EXC_ARITHMETIC;
+	if (strcmp (name, "DivideByZeroException") == 0)
+		return MONO_EXC_DIVIDE_BY_ZERO;
+	if (strcmp (name, "InvalidCastException") == 0)
+		return MONO_EXC_INVALID_CAST;
+	if (strcmp (name, "NullReferenceException") == 0)
+		return MONO_EXC_NULL_REF;
+	if (strcmp (name, "ArrayTypeMismatchException") == 0)
+		return MONO_EXC_ARRAY_TYPE_MISMATCH;
+	if (strcmp (name, "ArgumentException") == 0)
+		return MONO_EXC_ARGUMENT;
+	g_error ("Unknown intrinsic exception %s\n", name);
+	return -1;
 }
 
 #endif /* DISABLE_JIT */

@@ -4,7 +4,7 @@ using System;
 [My(TypeCode.Empty)]
 [My(typeof(System.Enum))]
 class T {
-	static int Main() {
+	public static int Main() {
 		object[] a = Attribute.GetCustomAttributes (typeof (T), false);
 		if (a.Length != 3)
 			return 1;

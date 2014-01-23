@@ -465,11 +465,7 @@ namespace Mono.Security.Protocol.Tls
 					break;
 
 				case CipherAlgorithmType.Rijndael:
-#if MOONLIGHT
-					this.encryptionAlgorithm = Aes.Create();
-#else
 					this.encryptionAlgorithm = Rijndael.Create();
-#endif
 					break;
 			}
 
@@ -535,11 +531,7 @@ namespace Mono.Security.Protocol.Tls
 					break;
 
 				case CipherAlgorithmType.Rijndael:
-#if MOONLIGHT
-					this.decryptionAlgorithm = Aes.Create();
-#else
 					this.decryptionAlgorithm = Rijndael.Create();
-#endif
 					break;
 			}
 

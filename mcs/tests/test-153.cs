@@ -14,7 +14,7 @@ class Z
 		Test2 (message, args);
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		Test ("TEST");
 		Test ("Foo", 8);

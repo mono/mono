@@ -1,7 +1,7 @@
 class Base
 {
     public int Property { get { return 42; } }
-    static void Main () {}
+    public static void Main () {}
 }
 
 // TC #1

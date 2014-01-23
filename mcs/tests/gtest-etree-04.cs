@@ -22,11 +22,16 @@ struct Foo
 	{
 		throw new ApplicationException ();
 	}
+	
+	public static Foo operator + (Foo d1, Foo d2)
+	{
+		throw new ApplicationException ();
+	}
 }
 
 class C
 {
-	static int Main()
+	public static int Main()
 	{
 		Foo f;
 		Expression<Func<bool>> e = () => f > null;
@@ -45,6 +50,10 @@ class C
 		if (!e.Compile ().Invoke ())
 			return 4;
 		
+		Expression<Func<Foo?>> e2 = () => f + null;
+		if (e2.Compile ().Invoke () != null)
+			return 5;
+
 		Console.WriteLine ("OK");
 		return 0;
 	}

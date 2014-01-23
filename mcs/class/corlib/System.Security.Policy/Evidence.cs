@@ -38,10 +38,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Security.Cryptography.X509Certificates;
-
-#if !MOONLIGHT
 using Mono.Security.Authenticode;
-#endif
 
 namespace System.Security.Policy {
 
@@ -53,7 +50,6 @@ namespace System.Security.Policy {
 		private bool _locked;
 		private ArrayList hostEvidenceList;	
 		private ArrayList assemblyEvidenceList;
-		private int _hashCode;
 
 		public Evidence () 
 		{
@@ -140,7 +136,6 @@ namespace System.Security.Policy {
 		public void AddAssembly (object id) 
 		{
 			AssemblyEvidenceList.Add (id);
-			_hashCode = 0;
 		}
 
 #if NET_4_0
@@ -152,7 +147,6 @@ namespace System.Security.Policy {
 				new SecurityPermission (SecurityPermissionFlag.ControlEvidence).Demand ();
 			}
 			HostEvidenceList.Add (id);
-			_hashCode = 0;
 		}
 
 		[ComVisible (false)]
@@ -162,7 +156,6 @@ namespace System.Security.Policy {
 				hostEvidenceList.Clear ();
 			if (assemblyEvidenceList != null)
 				assemblyEvidenceList.Clear ();
-			_hashCode = 0;
 		}
 
 #if NET_4_0
@@ -180,6 +173,7 @@ namespace System.Security.Policy {
 				assemblyEvidenceList.CopyTo (array, index + hc);
 		}
 
+#if !NET_4_0
 		[ComVisible (false)]
 		public override bool Equals (object obj)
 		{
@@ -219,6 +213,7 @@ namespace System.Security.Policy {
 			
 			return true;
 		}
+#endif
 
 #if NET_4_0
 		[Obsolete]
@@ -239,23 +234,23 @@ namespace System.Security.Policy {
 			return AssemblyEvidenceList.GetEnumerator ();
 		}
 
+#if !NET_4_0
 		[ComVisible (false)]
 		public override int GetHashCode ()
 		{
-			// kind of long so we cache it
-			if (_hashCode == 0) {
-				if (hostEvidenceList != null) {
-					for (int i = 0; i < hostEvidenceList.Count; i++)
-						_hashCode ^= hostEvidenceList [i].GetHashCode ();
-				}
-				if (assemblyEvidenceList != null) {
-					for (int i = 0; i < assemblyEvidenceList.Count; i++)
-						_hashCode ^= assemblyEvidenceList [i].GetHashCode ();
-				}
+			int _hashCode = 0;
+			if (hostEvidenceList != null) {
+				for (int i = 0; i < hostEvidenceList.Count; i++)
+					_hashCode ^= hostEvidenceList [i].GetHashCode ();
 			}
+			if (assemblyEvidenceList != null) {
+				for (int i = 0; i < assemblyEvidenceList.Count; i++)
+					_hashCode ^= assemblyEvidenceList [i].GetHashCode ();
+			}
+			
 			return _hashCode;
 		}
-
+#endif
 		public IEnumerator GetHostEnumerator () 
 		{
 			return HostEvidenceList.GetEnumerator ();
@@ -272,7 +267,6 @@ namespace System.Security.Policy {
 					foreach (object o in evidence.assemblyEvidenceList)
 						AddAssembly (o);
 				}
-				_hashCode = 0;
 			}
 		}
 
@@ -282,13 +276,11 @@ namespace System.Security.Policy {
 			for (int i = hostEvidenceList.Count; i >= 0; i--) {
 				if (hostEvidenceList.GetType () == t) {
 					hostEvidenceList.RemoveAt (i);
-					_hashCode = 0;
 				}
 			}
 			for (int i = assemblyEvidenceList.Count; i >= 0; i--) {
 				if (assemblyEvidenceList.GetType () == t) {
 					assemblyEvidenceList.RemoveAt (i);
-					_hashCode = 0;
 				}
 			}
 		}

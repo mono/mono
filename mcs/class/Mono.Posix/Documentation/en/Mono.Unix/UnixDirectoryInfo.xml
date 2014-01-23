@@ -1,9 +1,11 @@
 <Type Name="UnixDirectoryInfo" FullName="Mono.Unix.UnixDirectoryInfo">
   <TypeSignature Language="C#" Value="public sealed class UnixDirectoryInfo : Mono.Unix.UnixFileSystemInfo" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit UnixDirectoryInfo extends Mono.Unix.UnixFileSystemInfo" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
   <Base>
@@ -41,7 +43,13 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public UnixDirectoryInfo (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string path) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="path" Type="System.String" />
       </Parameters>
@@ -76,14 +84,16 @@
           <see cref="M:Mono.Unix.UnixPath.GetInvalidPathChars" />.
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="public void Create ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Create() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -92,8 +102,12 @@
         <summary>Create the directory 
         <see cref="P:Mono.Unix.UnixFileSystemInfo.FullName" />.</summary>
         <remarks>This is identical to calling 
-        <see cref="M:Mono.Unix.UnixDirectoryInfo.Create" />
-        (<see cref="F:Mono.Unix.FileAccessPermissions.AllPermissions" />).</remarks>
+          <c><see cref="M:Mono.Unix.UnixDirectoryInfo.Create" />
+            (<see cref="F:Mono.Unix.FileAccessPermissions.AllPermissions" />)</c>.
+          <block subset="none" type="note">
+            The <c>Create</c> obeys the process'
+            <see cref="M:Mono.Unix.Native.Syscall.umask" /> value.
+          </block></remarks>
         <exception cref="T:System.UnauthorizedAccessException">
           <para>Search permission is denied for a component of 
           <see cref="P:Mono.Unix.UnixFileSystemInfo.FullName" />.
@@ -176,14 +190,16 @@
           </para>
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="public void Create (Mono.Unix.FileAccessPermissions mode);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Create(valuetype Mono.Unix.FileAccessPermissions mode) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -197,6 +213,10 @@
         <summary>Create the directory 
         <see cref="P:Mono.Unix.UnixFileSystemInfo.FullName" />.</summary>
         <remarks>
+          <block subset="none" type="note">
+            The <c>Create</c> obeys the process'
+            <see cref="M:Mono.Unix.Native.Syscall.umask" /> value.
+          </block>
         </remarks>
         <exception cref="T:System.UnauthorizedAccessException">
           <para>Search permission is denied for a component of 
@@ -281,14 +301,21 @@
         </exception>
         <altmember cref="M:Mono.Unix.Native.Syscall.mkdir" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="public void Create (Mono.Unix.Native.FilePermissions mode);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Create(valuetype Mono.Unix.Native.FilePermissions mode) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -386,19 +413,16 @@
         </exception>
         <altmember cref="M:Mono.Unix.Native.Syscall.mkdir" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="Delete">
       <MemberSignature Language="C#" Value="public override void Delete ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Delete() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -407,14 +431,16 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Delete">
       <MemberSignature Language="C#" Value="public void Delete (bool recursive);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Delete(bool recursive) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -512,14 +538,16 @@
         </exception>
         <altmember cref="M:Mono.Unix.Native.rmdir" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetCurrentDirectory">
       <MemberSignature Language="C#" Value="public static string GetCurrentDirectory ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetCurrentDirectory() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -542,14 +570,16 @@
         </exception>
         <altmember cref="M:Mono.Unix.Native.Syscall.getcwd" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEntries">
       <MemberSignature Language="C#" Value="public Mono.Unix.Native.Dirent[] GetEntries ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Unix.Native.Dirent[] GetEntries() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.Dirent[]</ReturnType>
       </ReturnValue>
@@ -600,14 +630,16 @@
           </para>
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEntries">
       <MemberSignature Language="C#" Value="public Mono.Unix.Native.Dirent[] GetEntries (string regex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Unix.Native.Dirent[] GetEntries(string regex) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.Dirent[]</ReturnType>
       </ReturnValue>
@@ -668,14 +700,16 @@
           </para>
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEntries">
       <MemberSignature Language="C#" Value="public Mono.Unix.Native.Dirent[] GetEntries (System.Text.RegularExpressions.Regex regex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Unix.Native.Dirent[] GetEntries(class System.Text.RegularExpressions.Regex regex) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.Dirent[]</ReturnType>
       </ReturnValue>
@@ -736,14 +770,16 @@
           </para>
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetFileSystemEntries">
       <MemberSignature Language="C#" Value="public Mono.Unix.UnixFileSystemInfo[] GetFileSystemEntries ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Unix.UnixFileSystemInfo[] GetFileSystemEntries() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.UnixFileSystemInfo[]</ReturnType>
       </ReturnValue>
@@ -785,14 +821,16 @@
           </para>
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetFileSystemEntries">
       <MemberSignature Language="C#" Value="public Mono.Unix.UnixFileSystemInfo[] GetFileSystemEntries (string regex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Unix.UnixFileSystemInfo[] GetFileSystemEntries(string regex) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.UnixFileSystemInfo[]</ReturnType>
       </ReturnValue>
@@ -839,14 +877,16 @@
           </para>
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetFileSystemEntries">
       <MemberSignature Language="C#" Value="public Mono.Unix.UnixFileSystemInfo[] GetFileSystemEntries (System.Text.RegularExpressions.Regex regex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Unix.UnixFileSystemInfo[] GetFileSystemEntries(class System.Text.RegularExpressions.Regex regex) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.UnixFileSystemInfo[]</ReturnType>
       </ReturnValue>
@@ -893,14 +933,16 @@
           </para>
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Name">
       <MemberSignature Language="C#" Value="public override string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -909,14 +951,16 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Parent">
       <MemberSignature Language="C#" Value="public Mono.Unix.UnixDirectoryInfo Parent { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Unix.UnixDirectoryInfo Parent" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.UnixDirectoryInfo</ReturnType>
       </ReturnValue>
@@ -930,14 +974,16 @@
         </remarks>
         <altmember cref="M:Mono.Unix.UnixPath.GetDirectoryName" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Root">
       <MemberSignature Language="C#" Value="public Mono.Unix.UnixDirectoryInfo Root { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.Unix.UnixDirectoryInfo Root" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.UnixDirectoryInfo</ReturnType>
       </ReturnValue>
@@ -951,14 +997,16 @@
         <c>new <see cref="T:Mono.Unix.UnixDirectoryInfo" />("/")</c>.</remarks>
         <altmember cref="M:Mono.Unix.UnixPath.GetPathRoot" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetCurrentDirectory">
       <MemberSignature Language="C#" Value="public static void SetCurrentDirectory (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetCurrentDirectory(string path) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1005,10 +1053,6 @@
         </exception>
         <altmember cref="M:Mono.Unix.Native.Syscall.chdir" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

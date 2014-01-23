@@ -24,7 +24,7 @@ public class Test<T>
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		Foo<long> foo = new Foo<long> (3, 5);
 		if (foo.Data != 3)

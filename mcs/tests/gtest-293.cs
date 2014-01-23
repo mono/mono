@@ -15,6 +15,6 @@ public class Test<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

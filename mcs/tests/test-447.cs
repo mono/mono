@@ -25,4 +25,4 @@ namespace System.Web
 	}
 }
 
-class Test { static void Main () { } }
+class Test { public static void Main () { } }

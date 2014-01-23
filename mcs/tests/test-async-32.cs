@@ -22,7 +22,7 @@ class Program
 		throw new ApplicationException();
 	}
 
-	static int Main()
+	public static int Main()
 	{
 		bool canceled = false;
 		var t = TestCanceled().ContinueWith(l =>

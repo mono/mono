@@ -116,7 +116,7 @@ namespace System.Diagnostics
 			is_running = false;
 		}
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		public void Restart ()
 		{
 			started = GetTimestamp ();

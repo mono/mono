@@ -35,6 +35,9 @@ using System.Security.Permissions;
 namespace MonoTests.System.Security.Permissions {
 
 	[TestFixture]
+#if MOBILE
+	[Ignore]
+#endif
 	public class PermissionSetAttributeTest {
 
 		[Test]

@@ -105,5 +105,17 @@ namespace MonoTests.System.Net.Http
 			} catch (InvalidOperationException) {
 			}
 		}
+
+		[Test]
+		public void Properties_AfterClientCreation ()
+		{
+			var h = new HttpClientHandler ();
+			h.AllowAutoRedirect = true;
+
+			// We may modify properties after creating the HttpClient.
+			using (var c = new HttpClient (h, true)) {
+				h.AllowAutoRedirect = false;
+			}
+		}
 	}
 }

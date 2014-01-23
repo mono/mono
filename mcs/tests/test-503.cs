@@ -1,7 +1,7 @@
 // Compiler options: -warnaserror
 
 class Foo {
-	static int Main ()
+	public static int Main ()
 	{
 		for (;;) {
 			try {

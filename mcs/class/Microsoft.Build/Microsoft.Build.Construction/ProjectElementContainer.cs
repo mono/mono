@@ -29,6 +29,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using Microsoft.Build.Exceptions;
 using Microsoft.Build.Internal;
 
 namespace Microsoft.Build.Construction
@@ -123,11 +124,25 @@ namespace Microsoft.Build.Construction
                                 child.Save (writer);
                 }
 
+                internal override void Load (XmlReader reader)
+                {
+                        reader.Read ();
+                        reader.MoveToContent ();
+                        FillLocation (reader);
+                        if (reader.LocalName != XmlName || reader.NamespaceURI != MSBuildNamespace)
+                                throw CreateError (reader, string.Format ("Unexpected XML {0} \"{1}\" in namespace \"{2}\" appeared, while \"{3}\" in namespace \"{4}\" is expected.",
+                                                reader.NodeType, reader.LocalName, reader.NamespaceURI, XmlName, MSBuildNamespace), -1);
+                        while (reader.MoveToNextAttribute ()) {
+                                LoadAttribute (reader.Name, reader.Value);
+                        }
+                        LoadValue (reader);
+                }
+
                 internal override void LoadValue (XmlReader reader)
                 {
                         while (reader.Read ()) {
                                 if (reader.NodeType == XmlNodeType.Element) {
-                                        var child = LoadChildElement (reader.Name);
+                                        var child = LoadChildElement (reader);
                                         child.Load (reader.ReadSubtree ());
                                 } else if (reader.NodeType == XmlNodeType.Comment) {
                                         var commentElement = new ProjectCommentElement (ContainingProject);
@@ -137,6 +152,6 @@ namespace Microsoft.Build.Construction
                         }
                 }
 
-                internal abstract ProjectElement LoadChildElement (string name);
+                internal abstract ProjectElement LoadChildElement (XmlReader reader);
         }
 }

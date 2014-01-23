@@ -77,7 +77,7 @@ public class Program
 		return 1;
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		if (Test_1 (5) != 0)
 			return 1;

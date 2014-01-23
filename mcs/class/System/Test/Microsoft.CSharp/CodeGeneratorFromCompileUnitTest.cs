@@ -181,24 +181,45 @@ namespace MonoTests.Microsoft.CSharp
 		[Test]
 		public void AttributeAndGlobalNamespaceWithImportTest ()
 		{
-			var import = new CodeNamespaceImport ("Z");
-			AddGlobalNamespaceWithImport (codeUnit, import);
-			AddAssemblyAttribute (codeUnit, "A");
+			CodeNamespace ns = new CodeNamespace ();
+			ns.Imports.Add (new CodeNamespaceImport ("Z"));
+			ns.Imports.Add (new CodeNamespaceImport ("A"));
+			codeUnit.Namespaces.Add (ns);
+
+			CodeAttributeDeclaration attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "A";
+			codeUnit.AssemblyCustomAttributes.Add (attrDec);
 
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"using Z;{0}{0}[assembly: A()]{0}{0}", NewLine), Generate ());
+				"using A;{0}using Z;{0}{0}[assembly: A()]{0}{0}{0}", NewLine), Generate ());
 		}
 
-		private static void AddGlobalNamespaceWithImport (CodeCompileUnit codeUnit, CodeNamespaceImport import) {
-			CodeNamespace ns = new CodeNamespace ();
-			ns.Imports.Add (import);
-			codeUnit.Namespaces.Add (ns);
-		}
+		[Test]
+		public void GlobalAttributeBeforeType ()
+		{
+			StringWriter writer = new StringWriter ();
+			writer.NewLine = NewLine;
 
-		private static void AddAssemblyAttribute (CodeCompileUnit codeUnit, string attributeName) {
-			CodeAttributeDeclaration attrDec = new CodeAttributeDeclaration ();
-			attrDec.Name = attributeName;
-			codeUnit.AssemblyCustomAttributes.Add (attrDec);
+			codeUnit = new CodeCompileUnit () {
+				AssemblyCustomAttributes = {
+					new CodeAttributeDeclaration (
+						new CodeTypeReference (typeof (CLSCompliantAttribute)),
+						new CodeAttributeArgument (new CodePrimitiveExpression (false))),
+				},
+				Namespaces = {
+					new CodeNamespace () {
+						Types = {
+							new CodeTypeDeclaration ("Resources"),
+						},
+					}
+				},
+			};
+
+			generator.GenerateCodeFromCompileUnit (codeUnit, writer, options);
+			writer.Close ();
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"[assembly: System.CLSCompliantAttribute(false)]{0}{0}{0}{0}public class Resources {{{0}}}{0}", NewLine), Generate ());
 		}
 	}
 }

@@ -174,13 +174,19 @@ namespace System.ServiceModel.Channels.NetTcp
 
 		protected override void OnOpen (TimeSpan timeout)
 		{
-			IPHostEntry entry = Dns.GetHostEntry (Uri.Host);
-			
-			if (entry.AddressList.Length ==0)
-				throw new ArgumentException (String.Format ("Invalid listen URI: {0}", Uri));
+			IPAddress address;
+
+			if (string.Equals (Uri.Host, "localhost", StringComparison.InvariantCultureIgnoreCase))
+				address = IPAddress.Any;
+			else {
+				IPHostEntry entry = Dns.GetHostEntry (Uri.Host);
+				if (entry.AddressList.Length == 0)
+					throw new ArgumentException (String.Format ("Invalid listen URI: {0}", Uri));
+				address = entry.AddressList [0];
+			}
 			
 			int explicitPort = Uri.Port;
-			tcp_listener = new TcpListener (entry.AddressList [0], explicitPort <= 0 ? TcpTransportBindingElement.DefaultPort : explicitPort);
+			tcp_listener = new TcpListener (address, explicitPort <= 0 ? TcpTransportBindingElement.DefaultPort : explicitPort);
 			tcp_listener.Start ();
 			tcp_listener.BeginAcceptTcpClient (TcpListenerAcceptedClient, tcp_listener);
 		}

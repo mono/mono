@@ -28,7 +28,7 @@ struct S {
 }
 
 class M {
-	static int Main ()
+	public static int Main ()
 	{
 		S s = new S ();
 

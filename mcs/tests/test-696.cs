@@ -4,5 +4,5 @@ struct S {
 }
 
 class C {
-	static void Main () { S.f (null); }
+	public static void Main () { S.f (null); }
 }

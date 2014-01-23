@@ -19,4 +19,4 @@ partial class A2 : System.Object {
 partial class A2 {
 }
 
-class D { static void Main () {} }
+class D { public static void Main () {} }

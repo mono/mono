@@ -109,7 +109,11 @@ namespace MonoTests.System.Collections.Specialized {
 			//TODO: add memory and time measurement
 			
 			nvc.Clear();
-			int max=10000;
+#if MOBILE
+			const int max=100;
+#else
+			const int max=1000;
+#endif
 			String[] cache=new String[max*2];
 			int n=0;
 

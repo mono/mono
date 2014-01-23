@@ -1,3 +1,31 @@
+// 
+// ValueAnalysis.cs
+// 
+// Authors:
+//	Alexander Chebaturkin (chebaturkin@gmail.com)
+// 
+// Copyright (C) 2012 Alexander Chebaturkin
+// 
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//  
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
 using System;
 using System.IO;
 using Mono.CodeContracts.Static.AST.Visitors;
@@ -12,7 +40,7 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis {
 	                                                                 IILVisitor<APC, SymbolicValue, SymbolicValue, ExprDomain<SymbolicValue>, ExprDomain<SymbolicValue>>, EdgeData>
 			where SymbolicValue : IEquatable<SymbolicValue> 
 			where Context : IValueContextProvider<SymbolicValue> 
-			where EdgeData : IImmutableMap<SymbolicValue, LispList<SymbolicValue>> {
+			where EdgeData : IImmutableMap<SymbolicValue, Sequence<SymbolicValue>> {
 		private readonly ExpressionAnalysisFacade<SymbolicValue, Context, EdgeData> parent;
 
 		public ValueAnalysis (ExpressionAnalysisFacade<SymbolicValue, Context, EdgeData> parent)
@@ -37,15 +65,15 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis {
 			ExprDomain<SymbolicValue> domain = originalState.Empty ();
 
 			foreach (SymbolicValue sv in originalState.Keys) {
-				Expr<SymbolicValue> expression = originalState [sv].Concrete.Substitute (sourceTargetMap);
+				Expr<SymbolicValue> expression = originalState [sv].Value.Substitute (sourceTargetMap);
 				if (expression != null)
 					domain = domain.Add (sv, expression);
 			}
 
 			foreach (SymbolicValue sv in sourceTargetMap.Keys) {
 				FlatDomain<Expr<SymbolicValue>> expressionDomain = domain [sv];
-				if (expressionDomain.IsNormal) {
-					Expr<SymbolicValue> expression = expressionDomain.Concrete;
+				if (expressionDomain.IsNormal()) {
+					Expr<SymbolicValue> expression = expressionDomain.Value;
 					foreach (SymbolicValue sub in sourceTargetMap [sv].AsEnumerable ())
 						result = result.Add (sub, expression);
 				}
@@ -94,7 +122,7 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis {
 			pair.Key.Dump (pair.Value);
 		}
 
-		private void DumpMap (IImmutableMap<SymbolicValue, LispList<SymbolicValue>> sourceTargetMap)
+		private void DumpMap (IImmutableMap<SymbolicValue, Sequence<SymbolicValue>> sourceTargetMap)
 		{
 			Console.WriteLine ("Source-Target assignment");
 			foreach (SymbolicValue key in sourceTargetMap.Keys) {
@@ -109,8 +137,8 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis {
 			Console.WriteLine ("--- {0} ---", header);
 			foreach (SymbolicValue index in state.Keys) {
 				FlatDomain<Expr<SymbolicValue>> domain = state [index];
-				if (domain.IsNormal)
-					Console.WriteLine ("{0} -> {1}", index, domain.Concrete);
+				if (domain.IsNormal())
+					Console.WriteLine ("{0} -> {1}", index, domain.Value);
 				else if (domain.IsTop)
 					Console.WriteLine ("{0} -> (Top)", index);
 				else if (domain.IsBottom)

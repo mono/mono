@@ -215,6 +215,7 @@ namespace System.Windows.Forms
 
 				// First we have to know the size of text + image
 				Drawing.SizeF tsize = TextRenderer.MeasureString (msgbox_text, this.Font, max_width);
+				text_rect = new RectangleF ();
 				text_rect.Size = tsize;
 				
 				if (icon_image != null) {

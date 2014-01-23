@@ -173,6 +173,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void TestSimpleMutualImport ()
 		{
 			XmlReader r = new XmlTextReader ("Test/XmlFiles/xsd/inter-inc-1.xsd");
@@ -585,7 +586,7 @@ namespace MonoTests.System.Xml
 		public void TestResolveUri ()
 		{
 			XmlSchemaSet schemaSet = new XmlSchemaSet ();
-			FileStream stream = new FileStream ("Test/XmlFiles/xsd/resolveUriSchema.xsd", FileMode.Open);
+			FileStream stream = new FileStream ("Test/XmlFiles/xsd/resolveUriSchema.xsd", FileMode.Open, FileAccess.Read);
 			schemaSet.Add ("http://tempuri.org/resolveUriSchema.xsd", new XmlTextReader (stream));
 
 			XmlTestResolver resolver = new XmlTestResolver ();		

@@ -23,7 +23,7 @@ class Foo<T>
 
 class Program
 {
-	static int Main ()
+	public static int Main ()
 	{
 		var x = new Foo<int> ();
 		return x.ContainsAll (new [] { 4, 6, 78 }) ? 0 : 1;

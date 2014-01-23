@@ -6,5 +6,5 @@ internal class Rest
 {
 	protected const int foo = Test.foo;
 
-	static void Main () {}
+	public static void Main () {}
 }

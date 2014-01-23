@@ -78,7 +78,37 @@ namespace MonoTests.System.ServiceModel.Description
 				host.Close ();
 			}
 		}
-		
+
+		[Test]
+		public void CreateMexHttpsBinding()
+		{
+			var b = MetadataExchangeBindings.CreateMexHttpsBinding() as WSHttpBinding;
+			Assert.IsNotNull(b, "#1");
+			Assert.AreEqual(SecurityMode.Transport, b.Security.Mode, "#2");
+			Assert.IsFalse(b.TransactionFlow, "#3");
+			Assert.IsFalse(b.ReliableSession.Enabled, "#4");
+			Assert.IsFalse(b.CreateBindingElements().Any(be => be is SecurityBindingElement), "#b1");
+			Assert.IsTrue(b.CreateBindingElements().Any(be => be is TransactionFlowBindingElement), "#b2");
+			Assert.IsFalse(b.CreateBindingElements().Any(be => be is ReliableSessionBindingElement), "#b3");
+			Assert.IsTrue(new TransactionFlowBindingElement().TransactionProtocol == TransactionProtocol.Default, "#x1");
+			Assert.AreEqual(MessageVersion.Soap12WSAddressing10, b.MessageVersion, "#5");
+			Assert.AreEqual(MessageVersion.Soap12WSAddressing10, b.GetProperty<MessageVersion>(new BindingParameterCollection()), "#6");
+			Assert.AreEqual(Uri.UriSchemeHttps, b.Scheme, "#8");
+
+			var host = new ServiceHost(typeof(MetadataExchange));
+			host.AddServiceEndpoint(typeof(IMetadataExchange), MetadataExchangeBindings.CreateMexHttpsBinding(), CreateUri("https://localhost:8080"));
+			host.Open();
+			try
+			{
+				// it still does not rewrite MessageVersion.None. It's rather likely ServiceMetadataExtension which does overwriting.
+				Assert.AreEqual(MessageVersion.Soap12WSAddressing10, ((ChannelDispatcher)host.ChannelDispatchers[0]).MessageVersion, "#7");
+			}
+			finally
+			{
+				host.Close();
+			}
+		}
+
 		public class MetadataExchange : IMetadataExchange
 		{
 			public Message Get (Message request)

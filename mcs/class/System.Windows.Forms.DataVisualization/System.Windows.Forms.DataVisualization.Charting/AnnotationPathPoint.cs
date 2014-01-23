@@ -46,6 +46,8 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		#endregion
 
 		#region Public Properties
+		public string Name { get; private set; }
+		public byte PointType { get; set; }
 		public float X { get; set; }
 		public float Y { get; set; }
 		#endregion

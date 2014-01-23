@@ -36,12 +36,21 @@ namespace Microsoft.Web.Infrastructure.DynamicValidationHelper
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	public static class ValidationUtility
 	{
+		private const string UNVALIDATED_DATA_KEY = "__MWI_UNVALIDATED_DATA_KEY";
+
 		[SecuritySafeCritical]
 		public static void EnableDynamicValidation (HttpContext context)
 		{
 			HttpRequest req = context != null ? context.Request : null;
 			if (req == null)
 				return;
+
+			// We might get called more than once.. (weird, isnt it?)
+			if (context.Items [UNVALIDATED_DATA_KEY] != null)
+				return;
+
+			// Store unvalidated values at context so we can access them later.
+			context.Items [UNVALIDATED_DATA_KEY] = new object [] { req.FormUnvalidated, req.QueryStringUnvalidated };
 
 			// Just to be safe, make sure it's on
 			req.ValidateInput ();
@@ -71,15 +80,24 @@ namespace Microsoft.Web.Infrastructure.DynamicValidationHelper
 				HttpRequest req = context != null ? context.Request : null;
 				if (req == null)
 					return null;
-				return req.FormUnvalidated;
+				return GetUnvalidatedCollection (context, 0) ?? req.FormUnvalidated;
 			};
 
 			queryStringGetter = () => {
 				HttpRequest req = context != null ? context.Request : null;
 				if (req == null)
 					return null;
-				return req.QueryStringUnvalidated;
+				return GetUnvalidatedCollection (context, 1) ?? req.QueryStringUnvalidated;
 			};
+		}
+
+		private static NameValueCollection GetUnvalidatedCollection (HttpContext context, int offset)
+		{
+			if (context.Items [UNVALIDATED_DATA_KEY] == null)
+				return null;
+
+			var data = context.Items [UNVALIDATED_DATA_KEY] as object [];
+			return data [offset] as NameValueCollection;
 		}
 	}
 }

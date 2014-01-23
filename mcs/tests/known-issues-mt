@@ -1,0 +1,56 @@
+# This file contains test files which cause any type of error.
+
+# This file supports extended syntax
+# csXXXX.cs		: test case causes error
+# csXXXX.cs IGNORE 	: adds test to ignore list
+
+gtest-230.cs
+
+# exluded (tricky to build, extra dependency or hitting MT restrictions)
+gtest-444.cs SKIP
+gtest-exmethod-23.cs SKIP
+test-74.cs SKIP
+test-468.cs SKIP
+test-513.cs SKIP
+test-616.cs SKIP
+test-695.cs SKIP
+test-707.cs SKIP
+test-814.cs SKIP
+gtest-186.cs SKIP
+test-com-01.cs SKIP
+
+#reflection
+test-19.cs SKIP
+test-295.cs SKIP
+test-555.cs SKIP
+
+#app domain
+test-795.cs SKIP
+
+#com test
+test-com-01.cs SKIP
+test-com-02.cs SKIP
+test-com-03.cs SKIP
+
+# Tests without ConfigureAwait (false)
+test-async-13.cs SKIP
+
+# MT bugs
+
+# Modules loading
+test-416.cs SKIP
+test-418.cs SKIP
+test-715.cs SKIP
+
+# Aggressive references loading
+test-760.cs SKIP
+test-792.cs SKIP
+
+# __arglist support
+test-269.cs SKIP
+test-270.cs SKIP
+test-399.cs SKIP
+test-482.cs SKIP
+test-562.cs SKIP
+test-704.cs SKIP
+test-811.cs SKIP

@@ -33,10 +33,6 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.Text;
 
-#if NET_2_1
-using NameValueCollection = System.Object;
-#endif
-
 namespace System
 {
 	public class UriTemplate
@@ -108,7 +104,6 @@ namespace System
 
 		// Bind
 
-#if !MOONLIGHT
 		public Uri BindByName (Uri baseAddress, NameValueCollection parameters)
 		{
 			return BindByName (baseAddress, parameters, false);
@@ -118,7 +113,6 @@ namespace System
 		{
 			return BindByNameCommon (baseAddress, parameters, null, omitDefaults);
 		}
-#endif
 
 		public Uri BindByName (Uri baseAddress, IDictionary<string,string> parameters)
 		{
@@ -176,11 +170,8 @@ namespace System
 			foreach (string name in names) {
 				int s = template.IndexOf ('{', src);
 				int e = template.IndexOf ('}', s + 1);
-#if NET_2_1
-				string value = null;
-#else
 				string value = nvc != null ? nvc [name] : null;
-#endif
+
 				if (dic != null)
 					dic.TryGetValue (name, out value);
 

@@ -25,8 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -77,9 +75,10 @@ namespace Mono.XBuild.Utilities {
 			if (String.IsNullOrEmpty (itemSpec))
 				return String.Empty;
 		
-			switch (metadataName.ToLower ()) {
+			switch (metadataName.ToLowerInvariant ()) {
 			case "fullpath":
-				return Path.GetFullPath (itemSpec);
+				var unescapedItemSpec = MSBuildUtils.Unescape (itemSpec);
+				return MSBuildUtils.Escape (Path.GetFullPath (unescapedItemSpec));
 			case "rootdir":
 				if (Path.IsPathRooted (itemSpec))
 					return Path.GetPathRoot (itemSpec);
@@ -181,5 +180,3 @@ namespace Mono.XBuild.Utilities {
 		}
 	}
 }
-
-#endif

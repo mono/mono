@@ -146,6 +146,12 @@
     ret
   }
 
+  .method public hidebysig static void  Test(object o, class ['missing-lib']XX o2, [opt] object o3) cil managed
+  {
+    .param [2] = nullref  
+    ret
+  }
+
   .method public hidebysig specialname rtspecialname 
           instance void  .ctor() cil managed
   {

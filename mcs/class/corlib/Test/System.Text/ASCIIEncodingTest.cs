@@ -8,9 +8,15 @@ using System;
 using System.Text;
 
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
+
+#if !MOBILE
+using NUnit.Framework.SyntaxHelpers;
+#endif
 
 namespace MonoTests.System.Text
 {
+	[TestFixture]
 	public class ASCIIEncodingTest
 	{
 		private char[] testchars;
@@ -46,13 +52,13 @@ namespace MonoTests.System.Text
 		[Test]
 		public void IsMailNewsDisplay ()
 		{
-			Assert.IsFalse (Encoding.ASCII.IsMailNewsDisplay);
+			Assert.IsTrue (Encoding.ASCII.IsMailNewsDisplay);
 		}
 
 		[Test]
 		public void IsMailNewsSave ()
 		{
-			Assert.IsFalse (Encoding.ASCII.IsMailNewsSave);
+			Assert.IsTrue (Encoding.ASCII.IsMailNewsSave);
 		}
 
 		[Test] // Test GetBytes(char[])
@@ -210,7 +216,6 @@ namespace MonoTests.System.Text
 			Assert.AreEqual (string.Empty, encoding.GetString (new byte [0], 0, 0), "#2");
 		}
 
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (DecoderFallbackException))]
 		public void DecoderFallback ()
@@ -219,6 +224,97 @@ namespace MonoTests.System.Text
 			e.DecoderFallback = new DecoderExceptionFallback ();
 			e.GetChars (new byte [] {0x80});
 		}
-#endif
+
+		[Test]
+	//	[ExpectedException (typeof (ArgumentException))]
+		public void DecoderFallback2 ()
+		{
+			var bytes = new byte[] {
+				0x30, 0xa0, 0x31, 0xa8
+			};
+			var enc = (ASCIIEncoding)Encoding.ASCII.Clone ();
+			enc.DecoderFallback = new TestFallbackDecoder ();
+			
+			var chars = new char [7];
+			var ret = enc.GetChars (bytes, 0, bytes.Length, chars, 0);
+			Console.WriteLine (ret);
+			
+			for (int i = 0; i < chars.Length; i++) {
+				Console.Write ("{0:x2} ", (int)chars [i]);
+			}
+			Console.WriteLine ();
+		}
+		
+		[Test]
+		public void DecoderFallback3 ()
+		{
+			var bytes = new byte[] {
+				0x30, 0xa0, 0x31, 0xa8
+			};
+			var enc = (ASCIIEncoding)Encoding.ASCII.Clone ();
+			enc.DecoderFallback = new TestFallbackDecoder ();
+			
+			var chars = new char[] { '9', '8', '7', '6', '5' };
+			var ret = enc.GetChars (bytes, 0, bytes.Length, chars, 0);
+			
+			Assert.That (ret, Is.EqualTo (4), "ret"); // FIXME: Wrong it should be 2
+			Assert.That (chars [0], Is.EqualTo ('0'), "chars[0]");
+			Assert.That (chars [1], Is.EqualTo ('1'), "chars[1]");
+			Assert.That (chars [2], Is.EqualTo ('7'), "chars[2]");
+			Assert.That (chars [3], Is.EqualTo ('6'), "chars[3]");
+			Assert.That (chars [4], Is.EqualTo ('5'), "chars[4]");
+		}
+		
+		class TestFallbackDecoder : DecoderFallback {
+			const int count = 2;
+			
+			public override int MaxCharCount {
+				get { return count; }
+			}
+			
+			public override DecoderFallbackBuffer CreateFallbackBuffer ()
+			{
+				return new Buffer ();
+			}
+			
+			class Buffer : DecoderFallbackBuffer {
+				char[] queue;
+				int index;
+				
+				public override int Remaining {
+					get {
+						return queue.Length - index;
+					}
+				}
+				
+				public override char GetNextChar ()
+				{
+					return index < queue.Length ? queue [index++] : '\0';
+				}
+				
+				public override bool Fallback (byte[] bytes, int unused)
+				{
+					queue = new char[bytes.Length * count];
+					index = 0;
+					for (int i = 0; i < bytes.Length; i++) {
+						for (int j = 0; j < count; j++)
+							queue [index++] = (char)(bytes [i]+j);
+					}
+					return true;
+				}
+				
+				public override bool MovePrevious ()
+				{
+					throw new NotImplementedException ();
+				}
+				
+				public override void Reset ()
+				{
+					base.Reset ();
+				}
+			}
+		}
+		
+
 	}
 }

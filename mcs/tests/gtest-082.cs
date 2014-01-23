@@ -15,6 +15,6 @@ public class Queue<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

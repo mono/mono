@@ -54,6 +54,38 @@ namespace Mono.Unix.Native {
 			return rval;
 		}
 
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromAtFlags")]
+		private static extern int FromAtFlags (AtFlags value, out Int32 rval);
+
+		public static bool TryFromAtFlags (AtFlags value, out Int32 rval)
+		{
+			return FromAtFlags (value, out rval) == 0;
+		}
+
+		public static Int32 FromAtFlags (AtFlags value)
+		{
+			Int32 rval;
+			if (FromAtFlags (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToAtFlags")]
+		private static extern int ToAtFlags (Int32 value, out AtFlags rval);
+
+		public static bool TryToAtFlags (Int32 value, out AtFlags rval)
+		{
+			return ToAtFlags (value, out rval) == 0;
+		}
+
+		public static AtFlags ToAtFlags (Int32 value)
+		{
+			AtFlags rval;
+			if (ToAtFlags (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
 		[DllImport (LIB, EntryPoint="Mono_Posix_FromConfstrName")]
 		private static extern int FromConfstrName (ConfstrName value, out Int32 rval);
 
@@ -292,6 +324,22 @@ namespace Mono.Unix.Native {
 		public static bool TryCopy (IntPtr source, out Flock destination)
 		{
 			return ToFlock (source, out destination) == 0;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromIovec")]
+		private static extern int FromIovec (ref Iovec source, IntPtr destination);
+
+		public static bool TryCopy (ref Iovec source, IntPtr destination)
+		{
+			return FromIovec (ref source, destination) == 0;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToIovec")]
+		private static extern int ToIovec (IntPtr source, out Iovec destination);
+
+		public static bool TryCopy (IntPtr source, out Iovec destination)
+		{
+			return ToIovec (source, out destination) == 0;
 		}
 
 		[DllImport (LIB, EntryPoint="Mono_Posix_FromLockType")]
@@ -788,22 +836,6 @@ namespace Mono.Unix.Native {
 			if (ToSignum (value, out rval) == -1)
 				ThrowArgumentException (value);
 			return rval;
-		}
-
-		[DllImport (LIB, EntryPoint="Mono_Posix_FromStat")]
-		private static extern int FromStat (ref Stat source, IntPtr destination);
-
-		public static bool TryCopy (ref Stat source, IntPtr destination)
-		{
-			return FromStat (ref source, destination) == 0;
-		}
-
-		[DllImport (LIB, EntryPoint="Mono_Posix_ToStat")]
-		private static extern int ToStat (IntPtr source, out Stat destination);
-
-		public static bool TryCopy (IntPtr source, out Stat destination)
-		{
-			return ToStat (source, out destination) == 0;
 		}
 
 		[DllImport (LIB, EntryPoint="Mono_Posix_FromSysconfName")]

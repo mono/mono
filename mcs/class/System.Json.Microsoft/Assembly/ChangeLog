@@ -1,0 +1,16 @@
+2010-03-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AssemblyInfo.cs : use the same pub key in 2.0 (dummy), to ease
+	  testing locally.
+
+2008-05-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Remove AssemblyDelaySign(true) since it's
+	not always needed and can be controlled from the Makefile.
+	Adjust public key for System.Windows (InternalsVisibleTo)
+
+2008-04-13  Jb Evain  <jbevain@novell.com>
+
+	* AssemblyInfo.cs: agmono is renamed to Mono.Moonlight.
+	Merged from the Moonlight 2 branch.
+

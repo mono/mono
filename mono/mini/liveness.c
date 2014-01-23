@@ -8,6 +8,10 @@
  * Copyright 2011 Xamarin, Inc (http://www.xamarin.com)
  */
 
+#include <config.h>
+
+#ifndef DISABLE_JIT
+
 #include "mini.h"
 
 #define SPILL_COST_INCREMENT (1 << (bb->nesting << 1))
@@ -215,7 +219,8 @@ analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 	MonoMethodVar *vars = cfg->vars;
 	guint32 abs_pos = (bb->dfn << 16);
 	
-	for (inst_num = 0, ins = bb->code; ins; ins = ins->next, inst_num += 2) {
+	/* Start inst_num from > 0, so last_use.abs_pos is only 0 for dead variables */
+	for (inst_num = 2, ins = bb->code; ins; ins = ins->next, inst_num += 2) {
 		const char *spec = INS_INFO (ins->opcode);
 		int num_sregs, i;
 		int sregs [MONO_MAX_SRC_REGS];
@@ -844,7 +849,7 @@ mono_analyze_liveness2 (MonoCompile *cfg)
 	MonoInst **reverse;
 
 	if (disabled == -1)
-		disabled = getenv ("DISABLED") != NULL;
+		disabled = g_getenv ("DISABLED") != NULL;
 
 	if (disabled)
 		return;
@@ -1128,3 +1133,4 @@ mono_analyze_liveness_gc (MonoCompile *cfg)
 	g_free (vreg_to_varinfo);
 }
 
+#endif /* DISABLE_JIT */

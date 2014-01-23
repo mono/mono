@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 
 class X {
-	static int Main ()
+	public static int Main ()
 	{
 		object [] attrs = typeof (X).Assembly.GetCustomAttributes (true);
 

@@ -9,7 +9,6 @@
 // Copyright (C) Tim Coleman, 2002
 // (C) 2003 Erik LeBel
 //
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -248,7 +247,8 @@ namespace System.Xml.Serialization {
 
 		XmlTypeMapping CreateTypeMapping (TypeData typeData, XmlRootAttribute root, string defaultXmlType, string defaultNamespace)
 		{
-			string rootNamespace = defaultNamespace;
+			bool hasTypeNamespace = !string.IsNullOrEmpty (defaultNamespace);
+			string rootNamespace = null;
 			string typeNamespace = null;
 			string elementName;
 			bool includeInSchema = true;
@@ -274,8 +274,10 @@ namespace System.Xml.Serialization {
 
 			if (atts.XmlType != null)
 			{
-				if (atts.XmlType.Namespace != null)
+				if (atts.XmlType.Namespace != null) {
 					typeNamespace = atts.XmlType.Namespace;
+					hasTypeNamespace = true;
+				}
 
 				if (atts.XmlType.TypeName != null && atts.XmlType.TypeName != string.Empty)
 					defaultXmlType = XmlConvert.EncodeLocalName (atts.XmlType.TypeName);
@@ -289,13 +291,15 @@ namespace System.Xml.Serialization {
 			{
 				if (root.ElementName.Length != 0)
 					elementName = XmlConvert.EncodeLocalName(root.ElementName);
-				if (root.Namespace != null)
+				if (root.Namespace != null) {
 					rootNamespace = root.Namespace;
+					hasTypeNamespace = true;
+				}
 				nullable = root.IsNullable;
 			}
 
-			if (rootNamespace == null) rootNamespace = "";
-			if (typeNamespace == null) typeNamespace = rootNamespace;
+			rootNamespace = rootNamespace ?? defaultNamespace ?? string.Empty;
+			typeNamespace = typeNamespace ?? rootNamespace;
 			
 			XmlTypeMapping map;
 			switch (typeData.SchemaType) {
@@ -311,7 +315,7 @@ namespace System.Xml.Serialization {
 							typeData, defaultXmlType, typeNamespace);
 					break;
 				default:
-					map = new XmlTypeMapping (elementName, rootNamespace, typeData, defaultXmlType, typeNamespace);
+					map = new XmlTypeMapping (elementName, rootNamespace, typeData, defaultXmlType, hasTypeNamespace ? typeNamespace : null);
 					break;
 			}
 
@@ -369,7 +373,8 @@ namespace System.Xml.Serialization {
 				if (rmember.XmlAttributes.XmlIgnore) continue;
 				if (rmember.DeclaringType != null && rmember.DeclaringType != type) {
 					XmlTypeMapping bmap = ImportClassMapping (rmember.DeclaringType, root, defaultNamespace);
-					ns = bmap.XmlTypeNamespace;
+					if (bmap.HasXmlTypeNamespace)
+						ns = bmap.XmlTypeNamespace;
 				}
 
 				try {
@@ -419,9 +424,7 @@ namespace System.Xml.Serialization {
 				XmlTypeMapMember mem = classMap.XmlTextCollector;
 				if (mem.TypeData.Type != typeof(string) && 
 				   mem.TypeData.Type != typeof(string[]) && 
-#if !MOONLIGHT
 				   mem.TypeData.Type != typeof(XmlNode[]) && 
-#endif
 				   mem.TypeData.Type != typeof(object[]))
 				   
 					throw new InvalidOperationException (String.Format (errSimple2, map.TypeData.TypeName, mem.Name, mem.TypeData.TypeName));
@@ -633,16 +636,7 @@ namespace System.Xml.Serialization {
 			helper.RegisterClrType (map, type, map.XmlTypeNamespace);
 			return map;
 		}
-#if MOONLIGHT
-		// Enum.GetNames is not available in SL API
-		public static System.Collections.Generic.IEnumerable<string> GetEnumNames (Type type)
-		{
-			System.Collections.Generic.List<string> names = new System.Collections.Generic.List<string> ();
-			foreach (FieldInfo fi in type.GetFields (BindingFlags.Static | BindingFlags.Public))
-				names.Add (fi.Name);
-			return names;
-		}
-#endif
+
 		XmlTypeMapping ImportEnumMapping (TypeData typeData, XmlRootAttribute root, string defaultNamespace)
 		{
 			Type type = typeData.Type;
@@ -657,12 +651,8 @@ namespace System.Xml.Serialization {
 			helper.RegisterClrType (map, type, map.XmlTypeNamespace);
 
 			ArrayList members = new ArrayList();
-#if MOONLIGHT
-			foreach (string name in GetEnumNames (type)) {
-#else
 			string [] names = Enum.GetNames (type);
 			foreach (string name in names) {
-#endif
 				FieldInfo field = type.GetField (name);
 				string xmlName = null;
 				if (field.IsDefined(typeof(XmlIgnoreAttribute), false))
@@ -836,7 +826,6 @@ namespace System.Xml.Serialization {
 					throw new InvalidOperationException ("XmlArrayAttribute can be applied to members of array or collection type.");
 			}
 
-#if !MOONLIGHT
 			if (atts.XmlAnyAttribute != null)
 			{
 				if ( (rmember.MemberType.FullName == "System.Xml.XmlAttribute[]") ||
@@ -848,7 +837,6 @@ namespace System.Xml.Serialization {
 					throw new InvalidOperationException ("XmlAnyAttributeAttribute can only be applied to members of type XmlAttribute[] or XmlNode[]");
 			}
 			else
-#endif
 			if (atts.XmlAnyElements != null && atts.XmlAnyElements.Count > 0)
 			{
 				// no XmlNode type check is done here (seealso: bug #553032).
@@ -1017,7 +1005,11 @@ namespace System.Xml.Serialization {
 				elem.Form = att.Form;
 				if (elem.Form != XmlSchemaForm.Unqualified)
 					elem.Namespace = (att.Namespace != null) ? att.Namespace : defaultNamespace;
-				elem.IsNullable = att.IsNullable;
+
+				// elem may already be nullable, and IsNullable property in XmlElement is false by default
+				if (att.IsNullable && !elem.IsNullable)
+					elem.IsNullable = att.IsNullable;
+
 				elem.ExplicitOrder = att.Order;
 
 				if (elem.IsNullable && !elem.TypeData.IsNullable)
@@ -1068,7 +1060,6 @@ namespace System.Xml.Serialization {
 
 			ImportTextElementInfo (list, rmember.MemberType, member, atts, defaultNamespace);
 
-#if !MOONLIGHT // no practical anyElement support
 			foreach (XmlAnyElementAttribute att in atts.XmlAnyElements)
 			{
 				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (member, TypeTranslator.GetTypeData(typeof(XmlElement)));
@@ -1087,7 +1078,6 @@ namespace System.Xml.Serialization {
 				elem.ExplicitOrder = att.Order;
 				list.Add (elem);
 			}
-#endif
 			return list;
 		}
 
@@ -1103,9 +1093,7 @@ namespace System.Xml.Serialization {
 					}
 					defaultType = atts.XmlText.Type;
 				}
-#if !MOONLIGHT
 				if (defaultType == typeof(XmlNode)) defaultType = typeof(XmlText);	// Nodes must be text nodes
-#endif
 
 				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (member, TypeTranslator.GetTypeData(defaultType, atts.XmlText.DataType));
 
@@ -1163,15 +1151,10 @@ namespace System.Xml.Serialization {
 			if (defaultValue == DBNull.Value || typeData.SchemaType != SchemaTypes.Enum)
 				return defaultValue;
 
-#if MOONLIGHT
-			string namedValue = (defaultValue as Enum).ToString ("g");
-			string decimalValue = (defaultValue as Enum).ToString ("d");
-#else
 			// get string representation of enum value
 			string namedValue = Enum.Format (typeData.Type, defaultValue, "g");
 			// get decimal representation of enum value
 			string decimalValue = Enum.Format (typeData.Type, defaultValue, "d");
-#endif
 			// if decimal representation matches string representation, then
 			// the value is not defined in the enum type (as the "g" format
 			// will return the decimal equivalent of the value if the value

@@ -147,10 +147,6 @@ public static class InterfaceTester
 	static readonly Type generic_icollection_type;
 	static readonly Type generic_ienumerable_type;
 	static readonly Type icloneable_type;
-#if NET_4_0
-	static readonly Type istructuralequatable_type = typeof (IStructuralEquatable);
-	static readonly Type istructuralcomparable_type = typeof (IStructuralComparable);
-#endif
 
 	static InterfaceTester ()
 	{
@@ -177,10 +173,9 @@ public static class InterfaceTester
 		ifaces.Add (ienumerable_type, State.Missing);
 		ifaces.Add (icloneable_type, State.Missing);
 #if NET_4_0
-		ifaces.Add (istructuralequatable_type, State.Missing);
-		ifaces.Add (istructuralcomparable_type, State.Missing);
+		ifaces.Add (typeof (IStructuralEquatable), State.Missing);
+		ifaces.Add (typeof (IStructuralComparable), State.Missing);
 #endif
-
 		Type array_type = t.MakeArrayType ();
 
 		if (Debug) {
@@ -194,6 +189,11 @@ public static class InterfaceTester
 			ifaces.Add (generic_ilist_type.MakeGenericType (gargs), State.Missing);
 			ifaces.Add (generic_icollection_type.MakeGenericType (gargs), State.Missing);
 			ifaces.Add (generic_ienumerable_type.MakeGenericType (gargs), State.Missing);
+
+#if NET_4_5
+			ifaces.Add (typeof (IReadOnlyCollection<>).MakeGenericType (gargs), State.Missing);
+			ifaces.Add (typeof (IReadOnlyList<>).MakeGenericType (gargs), State.Missing);
+#endif
 		}
 
 		foreach (Type iface in array_type.GetInterfaces ()) {
@@ -288,7 +288,7 @@ class Z
 		return 0;
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		int result = Test ();
 		if (result == 0)

@@ -27,8 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -40,6 +38,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using Mono.XBuild.Framework;
 using Mono.XBuild.CommandLine;
 
@@ -392,7 +391,7 @@ namespace Microsoft.Build.BuildEngine {
 		internal string GetKeyForTarget (string target_name, bool include_global_properties)
 		{
 			// target name is case insensitive
-			return fullFileName + ":" + target_name.ToLower () +
+			return fullFileName + ":" + target_name.ToLowerInvariant () +
 					(include_global_properties ? (":" + GlobalPropertiesToString (GlobalProperties))
 					 			   : String.Empty);
 		}
@@ -557,7 +556,8 @@ namespace Microsoft.Build.BuildEngine {
 		public void Load (TextReader textReader, ProjectLoadSettings projectLoadSettings)
 		{
 			project_load_settings = projectLoadSettings;
-			fullFileName = String.Empty;
+			if (!string.IsNullOrEmpty (fullFileName))
+				PushThisFileProperty (fullFileName);
 			DoLoad (textReader);
 		}
 
@@ -569,7 +569,8 @@ namespace Microsoft.Build.BuildEngine {
 		public void LoadXml (string projectXml, ProjectLoadSettings projectLoadSettings)
 		{
 			project_load_settings = projectLoadSettings;
-			fullFileName = String.Empty;
+			if (!string.IsNullOrEmpty (fullFileName))
+				PushThisFileProperty (fullFileName);
 			DoLoad (new StringReader (projectXml));
 			MarkProjectAsDirty ();
 		}
@@ -937,6 +938,9 @@ namespace Microsoft.Build.BuildEngine {
 					case "Import":
 						AddImport (xe, ip, true);
 						break;
+					case "ImportGroup":
+						AddImportGroup (xe, ip, true);
+						break;
 					case "ItemGroup":
 						AddItemGroup (xe, ip);
 						break;
@@ -947,7 +951,7 @@ namespace Microsoft.Build.BuildEngine {
 						AddChoose (xe, ip);
 						break;
 					default:
-						throw new InvalidProjectFileException (String.Format ("Invalid element '{0}' in project file.", xe.Name));
+						throw new InvalidProjectFileException (String.Format ("Invalid element '{0}' in project file '{1}'.", xe.Name, ip.FullFileName));
 					}
 				}
 			}
@@ -957,8 +961,8 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			evaluatedItems = new BuildItemGroup (null, this, null, true);
 			evaluatedItemsIgnoringCondition = new BuildItemGroup (null, this, null, true);
-			evaluatedItemsByName = new Dictionary <string, BuildItemGroup> (StringComparer.InvariantCultureIgnoreCase);
-			evaluatedItemsByNameIgnoringCondition = new Dictionary <string, BuildItemGroup> (StringComparer.InvariantCultureIgnoreCase);
+			evaluatedItemsByName = new Dictionary <string, BuildItemGroup> (StringComparer.OrdinalIgnoreCase);
+			evaluatedItemsByNameIgnoringCondition = new Dictionary <string, BuildItemGroup> (StringComparer.OrdinalIgnoreCase);
 			if (building && current_settings == BuildSettings.None)
 				RemoveBuiltTargets ();
 
@@ -1029,7 +1033,17 @@ namespace Microsoft.Build.BuildEngine {
 			SetExtensionsPathProperties (DefaultExtensionsPath);
 			evaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectDefaultTargets", DefaultTargets, PropertyType.Reserved));
 			evaluatedProperties.AddProperty (new BuildProperty ("OS", OS, PropertyType.Environment));
+#if XBUILD_12
+			// see http://msdn.microsoft.com/en-us/library/vstudio/hh162058(v=vs.120).aspx
+			if (effective_tools_version == "12.0") {
+				evaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsPath32", toolsPath, PropertyType.Reserved));
 
+				var frameworkToolsPath = ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version451);
+
+				evaluatedProperties.AddProperty (new BuildProperty ("MSBuildFrameworkToolsPath", frameworkToolsPath, PropertyType.Reserved));
+				evaluatedProperties.AddProperty (new BuildProperty ("MSBuildFrameworkToolsPath32", frameworkToolsPath, PropertyType.Reserved));
+			}
+#endif
 			// FIXME: make some internal method that will work like GetDirectoryName but output String.Empty on null/String.Empty
 			string projectDir;
 			if (FullFileName == String.Empty)
@@ -1104,9 +1118,10 @@ namespace Microsoft.Build.BuildEngine {
 		void AddImport (XmlElement xmlElement, ImportedProject importingProject, bool evaluate_properties)
 		{
 			// eval all the properties etc till the import
-			if (evaluate_properties)
+			if (evaluate_properties) {
 				groupingCollection.Evaluate (EvaluationType.Property);
-
+				groupingCollection.Evaluate (EvaluationType.Choose);
+			}
 			try {
 				PushThisFileProperty (importingProject != null ? importingProject.FullFileName : FullFileName);
 
@@ -1118,6 +1133,30 @@ namespace Microsoft.Build.BuildEngine {
 					(importPath, from_source_msg) => AddSingleImport (xmlElement, importPath, importingProject, from_source_msg));
 			} finally {
 				PopThisFileProperty ();
+			}
+		}
+
+		void AddImportGroup (XmlElement xmlElement, ImportedProject importedProject, bool evaluate_properties)
+		{
+			// eval all the properties etc till the import group
+			if (evaluate_properties) {
+				groupingCollection.Evaluate (EvaluationType.Property);
+				groupingCollection.Evaluate (EvaluationType.Choose);
+			}
+			string condition_attribute = xmlElement.GetAttribute ("Condition");
+			if (!ConditionParser.ParseAndEvaluate (condition_attribute, this))
+				return;
+			foreach (XmlNode xn in xmlElement.ChildNodes) {
+				if (xn is XmlElement) {
+					XmlElement xe = (XmlElement) xn;
+					switch (xe.Name) {
+					case "Import":
+						AddImport (xe, importedProject, evaluate_properties);
+						break;
+					default:
+						throw new InvalidProjectFileException(String.Format("Invalid element '{0}' inside ImportGroup in project file '{1}'.", xe.Name, importedProject.FullFileName));
+					}
+				}
 			}
 		}
 
@@ -1560,7 +1599,7 @@ namespace Microsoft.Build.BuildEngine {
 				return xmlDocument != null && xmlDocument.DocumentElement.HasAttribute ("ToolsVersion");
 			}
 		}
-		
+
 		public string ToolsVersion {
 			get; internal set;
 		}
@@ -1569,6 +1608,11 @@ namespace Microsoft.Build.BuildEngine {
 			get { return last_item_group_containing; }
 		}
 		
+		internal ProjectLoadSettings ProjectLoadSettings {
+			get { return project_load_settings; }
+			set { project_load_settings = value; }
+		}
+
 		internal static XmlNamespaceManager XmlNamespaceManager {
 			get {
 				if (manager == null) {
@@ -1609,5 +1653,3 @@ namespace Microsoft.Build.BuildEngine {
 
 	}
 }
-
-#endif

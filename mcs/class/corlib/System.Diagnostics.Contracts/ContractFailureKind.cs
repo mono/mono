@@ -30,7 +30,7 @@ using System;
 
 namespace System.Diagnostics.Contracts {
 
-#if NET_2_1 || NET_4_0
+#if NET_4_0
 	public
 #else
 	internal

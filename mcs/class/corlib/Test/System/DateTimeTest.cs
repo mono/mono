@@ -1,4 +1,4 @@
-//
+﻿//
 // DateTimeTest.cs - NUnit Test Cases for the System.DateTime struct
 //
 // author:
@@ -1749,6 +1749,41 @@ namespace MonoTests.System
 		{
 			DateTime.FromFileTimeUtc (-1);
 		}
+
+		[Test]
+		public void ToFileTimeUtc ()
+		{
+			// Randomly generated time outside DST.
+			var utc = new DateTime (1993, 01, 28, 08, 49, 48, DateTimeKind.Utc);
+			var local = utc.ToLocalTime ();
+			var unspecified = new DateTime (1993, 01, 28, 08, 49, 48);
+
+			Assert.AreEqual (DateTimeKind.Utc, utc.Kind);
+			Assert.AreEqual (DateTimeKind.Local, local.Kind);
+			Assert.AreEqual (DateTimeKind.Unspecified, unspecified.Kind);
+
+			Assert.AreEqual (628638077880000000, utc.Ticks);
+			Console.WriteLine (local.Ticks - utc.Ticks);
+
+			var offset = TimeZone.CurrentTimeZone.GetUtcOffset (local);
+
+			var utcFt = utc.ToFileTime ();
+			var localFt = local.ToFileTime ();
+			var unspecifiedFt = unspecified.ToFileTime ();
+
+			var utcUft = utc.ToFileTimeUtc ();
+			var localUft = local.ToFileTimeUtc ();
+			var unspecifiedUft = unspecified.ToFileTimeUtc ();
+
+			Assert.AreEqual (123726845880000000, utcFt);
+			Assert.AreEqual (utcFt, localFt);
+
+			Assert.AreEqual (offset.Ticks, utcFt - unspecifiedFt);
+
+			Assert.AreEqual (utcFt, utcUft);
+			Assert.AreEqual (utcFt, localUft);
+			Assert.AreEqual (utcFt, unspecifiedUft);
+		}
 		
 		[Test]
 		public void FromFileTimeUtcTest ()
@@ -2230,6 +2265,10 @@ namespace MonoTests.System
 			Assert.AreEqual ("2000-01-01T00:00:00.0000000Z", DateTime.SpecifyKind (new DateTime (2000, 1, 1), DateTimeKind.Utc).ToString ("o"), "#2");
 			Assert.AreEqual ("2000-01-01T00:00:00.0000000+09:00".Length, DateTime.SpecifyKind (
 				new DateTime (2000, 1, 1), DateTimeKind.Local).ToString ("o").Length, "#3");
+
+			var culture = new CultureInfo ("ps-AF");
+			Assert.AreEqual ("1976-06-19T00:00:00.0000000", new DateTime(1976, 6, 19).ToString ("O", culture), "#4");
+			Assert.AreEqual ("1976-06-19T00:00:00.0000000", new DateTime(1976, 6, 19).ToString ("o", culture), "#5");
 		}
 
 		[Test]
@@ -2434,6 +2473,14 @@ namespace MonoTests.System
 			DateTimeOffset result = DateTimeOffset.Parse (testDateWithTimeZoneInfo, null, DateTimeStyles.RoundtripKind);
 
 			Assert.AreEqual (expectedUtcTics, result.UtcTicks);
+		}
+		
+		[Test]
+		public void GenitiveMonth ()
+		{
+			var ci = new CultureInfo ("ru-RU");
+			var dt = new DateTime (2012, 9, 15);
+			Assert.AreEqual ("15 сентября", dt.ToString ("m", ci));
 		}
 	}
 }

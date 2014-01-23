@@ -6,7 +6,7 @@
 
 enum Foo { Bar }
 class T {
-	static int Main ()
+	public static int Main ()
 	{
 		System.Enum e = Foo.Bar;
 		System.ValueType vt1 = Foo.Bar, vt2 = 1;

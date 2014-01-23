@@ -16,7 +16,7 @@ class X
 		Foo = 20;
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		Test ();
 		if (Foo != 20)

@@ -1,5 +1,5 @@
 class Foo {
-	static int Main ()
+	public static int Main ()
 	{
 		int ret = 1;
 		try {

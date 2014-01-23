@@ -162,7 +162,7 @@ namespace System.Runtime.Serialization.Json
 						return null;
 					}
 					else
-						return new Uri (reader.ReadElementContentAsString ());
+						return new Uri (reader.ReadElementContentAsString (), UriKind.RelativeOrAbsolute);
 				} else if (type == typeof (XmlQualifiedName)) {
 					s = reader.ReadElementContentAsString ();
 					int idx = s.IndexOf (':');

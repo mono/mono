@@ -24,6 +24,32 @@
 #include <mono/utils/mono-time.h>
 #include "trace.h"
 
+#if defined (PLATFORM_ANDROID) || (defined (TARGET_IOS) && defined (TARGET_IOS))
+#  undef printf
+#  define printf(...) g_log("mono", G_LOG_LEVEL_MESSAGE, __VA_ARGS__)
+#  undef fprintf
+#  define fprintf(__ignore, ...) g_log ("mono-gc", G_LOG_LEVEL_MESSAGE, __VA_ARGS__)
+#endif
+
+#ifdef __GNUC__
+
+#define RETURN_ADDRESS_N(N) (__builtin_extract_return_addr (__builtin_return_address (N)))
+#define RETURN_ADDRESS() RETURN_ADDRESS_N(0)
+
+#elif defined(_MSC_VER)
+
+#include <intrin.h>
+#pragma intrinsic(_ReturnAddress)
+
+#define RETURN_ADDRESS() _ReturnAddress()
+#define RETURN_ADDRESS_N(N) NULL
+
+#else
+
+#error "Missing return address intrinsics implementation"
+
+#endif
+
 static MonoTraceSpec trace_spec;
 
 gboolean
@@ -75,6 +101,10 @@ mono_trace_eval (MonoMethod *method)
 			inc = 1; break;
 		case MONO_TRACEOP_PROGRAM:
 			if (trace_spec.assembly && (method->klass->image == mono_assembly_get_image (trace_spec.assembly)))
+				inc = 1; break;
+		case MONO_TRACEOP_WRAPPER:
+			if ((method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED) ||
+				(method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE))
 				inc = 1; break;
 		case MONO_TRACEOP_METHOD:
 			if (mono_method_desc_full_match ((MonoMethodDesc *) op->data, method))
@@ -138,6 +168,7 @@ enum Token {
 	TOKEN_PROGRAM,
 	TOKEN_EXCEPTION,
 	TOKEN_NAMESPACE,
+	TOKEN_WRAPPER,
 	TOKEN_STRING,
 	TOKEN_EXCLUDE,
 	TOKEN_DISABLED,
@@ -185,6 +216,8 @@ get_token (void)
 			return TOKEN_ALL;
 		if (strcmp (value, "program") == 0)
 			return TOKEN_PROGRAM;
+		if (strcmp (value, "wrapper") == 0)
+			return TOKEN_WRAPPER;
 		if (strcmp (value, "disabled") == 0)
 			return TOKEN_DISABLED;
 		return TOKEN_STRING;
@@ -235,6 +268,8 @@ get_spec (int *last)
 		trace_spec.ops [*last].op = MONO_TRACEOP_ALL;
 	else if (token == TOKEN_PROGRAM)
 		trace_spec.ops [*last].op = MONO_TRACEOP_PROGRAM;
+	else if (token == TOKEN_WRAPPER)
+		trace_spec.ops [*last].op = MONO_TRACEOP_WRAPPER;
 	else if (token == TOKEN_NAMESPACE){
 		trace_spec.ops [*last].op = MONO_TRACEOP_NAMESPACE;
 		trace_spec.ops [*last].data = g_strdup (value);
@@ -374,6 +409,7 @@ mono_trace_enter_method (MonoMethod *method, char *ebp)
 	MonoJitArgumentInfo *arg_info;
 	MonoMethodSignature *sig;
 	char *fname;
+	MonoGenericSharingContext *gsctx = NULL;
 
 	if (!trace_spec.enabled)
 		return;
@@ -384,7 +420,7 @@ mono_trace_enter_method (MonoMethod *method, char *ebp)
 	g_free (fname);
 
 	if (!ebp) {
-		printf (") ip: %p\n", __builtin_return_address (1));
+		printf (") ip: %p\n", RETURN_ADDRESS_N (1));
 		return;
 	}	
 
@@ -392,7 +428,20 @@ mono_trace_enter_method (MonoMethod *method, char *ebp)
 
 	arg_info = alloca (sizeof (MonoJitArgumentInfo) * (sig->param_count + 1));
 
-	mono_arch_get_argument_info (sig, sig->param_count, arg_info);
+	if (method->is_inflated) {
+		/* FIXME: Might be better to pass the ji itself */
+		MonoJitInfo *ji = mini_jit_info_table_find (mono_domain_get (), RETURN_ADDRESS (), NULL);
+		if (ji) {
+			gsctx = mono_jit_info_get_generic_sharing_context (ji);
+			if (gsctx && (gsctx->var_is_vt || gsctx->mvar_is_vt)) {
+				/* Needs a ctx to get precise method */
+				printf (") <gsharedvt>\n");
+				return;
+			}
+		}
+	}
+
+	mono_arch_get_argument_info (gsctx, sig, sig->param_count, arg_info);
 
 	if (MONO_TYPE_ISSTRUCT (mono_method_signature (method)->ret)) {
 		g_assert (!mono_method_signature (method)->ret->byref);
@@ -525,6 +574,7 @@ mono_trace_leave_method (MonoMethod *method, ...)
 	MonoType *type;
 	char *fname;
 	va_list ap;
+	MonoGenericSharingContext *gsctx;
 
 	if (!trace_spec.enabled)
 		return;
@@ -535,6 +585,19 @@ mono_trace_leave_method (MonoMethod *method, ...)
 	indent (-1);
 	printf ("LEAVE: %s", fname);
 	g_free (fname);
+
+	if (method->is_inflated) {
+		/* FIXME: Might be better to pass the ji itself */
+		MonoJitInfo *ji = mini_jit_info_table_find (mono_domain_get (), RETURN_ADDRESS (), NULL);
+		if (ji) {
+			gsctx = mono_jit_info_get_generic_sharing_context (ji);
+			if (gsctx && (gsctx->var_is_vt || gsctx->mvar_is_vt)) {
+				/* Needs a ctx to get precise method */
+				printf (") <gsharedvt>\n");
+				return;
+			}
+		}
+	}
 
 	type = mono_method_signature (method)->ret;
 
@@ -617,7 +680,7 @@ handle_enum:
 	case MONO_TYPE_R4:
 	case MONO_TYPE_R8: {
 		double f = va_arg (ap, double);
-		printf ("FP=%f\n", f);
+		printf ("FP=%f", f);
 		break;
 	}
 	case MONO_TYPE_VALUETYPE: 
@@ -638,7 +701,7 @@ handle_enum:
 		printf ("(unknown return type %x)", mono_method_signature (method)->ret->type);
 	}
 
-	//printf (" ip: %p\n", __builtin_return_address (1));
+	//printf (" ip: %p\n", RETURN_ADDRESS_N (1));
 	printf ("\n");
 	fflush (stdout);
 }

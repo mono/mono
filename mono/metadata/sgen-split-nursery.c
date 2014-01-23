@@ -4,30 +4,23 @@
  * Author:
  *	Rodrigo Kumpera Kumpera <kumpera@gmail.com>
  *
- * SGen is licensed under the terms of the MIT X11 license
- *
  * Copyright 2001-2003 Ximian, Inc
  * Copyright 2003-2010 Novell, Inc.
  * Copyright 2011-2012 Xamarin Inc (http://www.xamarin.com)
- * 
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- * 
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * Copyright (C) 2012 Xamarin Inc
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License 2.0 as published by the Free Software Foundation;
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License 2.0 along with this library; if not, write to the Free
+ * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
 #include "config.h"
@@ -37,6 +30,8 @@
 
 #include "metadata/sgen-gc.h"
 #include "metadata/sgen-protocol.h"
+#include "metadata/sgen-layout-stats.h"
+#include "utils/mono-memory-model.h"
 
 /*
 The nursery is logically divided into 3 spaces: Allocator space and two Survivor spaces.
@@ -271,14 +266,14 @@ alloc_for_promotion_slow_path (int age, size_t objsize)
 }
 
 static inline char*
-alloc_for_promotion (char *obj, size_t objsize, gboolean has_references)
+alloc_for_promotion (MonoVTable *vtable, char *obj, size_t objsize, gboolean has_references)
 {
 	char *p = NULL;
 	int age;
 
 	age = get_object_age (obj);
 	if (age >= promote_age)
-		return major_collector.alloc_object (objsize, has_references);
+		return major_collector.alloc_object (vtable, objsize, has_references);
 
 	/* Promote! */
 	++age;
@@ -289,8 +284,10 @@ alloc_for_promotion (char *obj, size_t objsize, gboolean has_references)
 	} else {
 		p = alloc_for_promotion_slow_path (age, objsize);
 		if (!p)
-			p = major_collector.alloc_object (objsize, has_references);
+			return major_collector.alloc_object (vtable, objsize, has_references);
 	}
+
+	*(MonoVTable**)p = vtable;
 
 	return p;
 }
@@ -310,16 +307,18 @@ restart:
 		if (SGEN_CAS_PTR ((void*)&age_alloc_buffers [age].next, p + objsize, p) != p)
 			goto restart;
 	} else {
-		/*Reclaim remaining space*/
+		/* Reclaim remaining space - if we OOMd the nursery nothing to see here. */
 		char *end = age_alloc_buffers [age].end;
-		do {
-			p = age_alloc_buffers [age].next;
-		} while (SGEN_CAS_PTR ((void*)&age_alloc_buffers [age].next, end, p) != p);
-		sgen_clear_range (p, end);
+		if (end) {
+			do {
+				p = age_alloc_buffers [age].next;
+			} while (SGEN_CAS_PTR ((void*)&age_alloc_buffers [age].next, end, p) != p);
+				sgen_clear_range (p, end);
+		}
 
 		/* By setting end to NULL we make sure no other thread can advance while we're updating.*/
 		age_alloc_buffers [age].end = NULL;
-		mono_memory_barrier ();
+		STORE_STORE_FENCE;
 
 		p = sgen_fragment_allocator_par_range_alloc (
 			&collector_allocator,
@@ -328,8 +327,8 @@ restart:
 			&allocated_size);
 		if (p) {
 			set_age_in_range (p, p + allocated_size, age);
-			sgen_clear_range (age_alloc_buffers [age].next, age_alloc_buffers [age].end);
 			age_alloc_buffers [age].next = p + objsize;
+			STORE_STORE_FENCE; /* Next must arrive before the new value for next. */
 			age_alloc_buffers [age].end = p + allocated_size;
 		}
 	}
@@ -339,17 +338,20 @@ restart:
 }
 
 static inline char*
-par_alloc_for_promotion (char *obj, size_t objsize, gboolean has_references)
+par_alloc_for_promotion (MonoVTable *vtable, char *obj, size_t objsize, gboolean has_references)
 {
 	char *p;
 	int age;
 
 	age = get_object_age (obj);
 	if (age >= promote_age)
-		return major_collector.par_alloc_object (objsize, has_references);
+		return major_collector.par_alloc_object (vtable, objsize, has_references);
 
 restart:
 	p = age_alloc_buffers [age].next;
+
+	LOAD_LOAD_FENCE; /* The read of ->next must happen before ->end */
+
 	if (G_LIKELY (p + objsize <= age_alloc_buffers [age].end)) {
 		if (SGEN_CAS_PTR ((void*)&age_alloc_buffers [age].next, p + objsize, p) != p)
 			goto restart;
@@ -358,42 +360,47 @@ restart:
 
 		/* Have we failed to promote to the nursery, lets just evacuate it to old gen. */
 		if (!p)
-			p = major_collector.par_alloc_object (objsize, has_references);			
+			return major_collector.par_alloc_object (vtable, objsize, has_references);
 	}
+
+	*(MonoVTable**)p = vtable;
 
 	return p;
 }
 
 static char*
-minor_alloc_for_promotion (char *obj, size_t objsize, gboolean has_references)
+minor_alloc_for_promotion (MonoVTable *vtable, char *obj, size_t objsize, gboolean has_references)
 {
 	/*
 	We only need to check for a non-nursery object if we're doing a major collection.
 	*/
 	if (!sgen_ptr_in_nursery (obj))
-		return major_collector.alloc_object (objsize, has_references);
+		return major_collector.alloc_object (vtable, objsize, has_references);
 
-	return alloc_for_promotion (obj, objsize, has_references);
+	return alloc_for_promotion (vtable, obj, objsize, has_references);
 }
 
 static char*
-minor_par_alloc_for_promotion (char *obj, size_t objsize, gboolean has_references)
+minor_par_alloc_for_promotion (MonoVTable *vtable, char *obj, size_t objsize, gboolean has_references)
 {
 	/*
 	We only need to check for a non-nursery object if we're doing a major collection.
 	*/
 	if (!sgen_ptr_in_nursery (obj))
-		return major_collector.par_alloc_object (objsize, has_references);
+		return major_collector.par_alloc_object (vtable, objsize, has_references);
 
-	return par_alloc_for_promotion (obj, objsize, has_references);
+	return par_alloc_for_promotion (vtable, obj, objsize, has_references);
 }
 
 static SgenFragment*
 build_fragments_get_exclude_head (void)
 {
 	int i;
-	for (i = 0; i < MAX_AGE; ++i)
-		sgen_clear_range (age_alloc_buffers [i].next, age_alloc_buffers [i].end);
+	for (i = 0; i < MAX_AGE; ++i) {
+		/*If we OOM'd on the last collection ->end might be null while ->next not.*/
+		if (age_alloc_buffers [i].end)
+			sgen_clear_range (age_alloc_buffers [i].next, age_alloc_buffers [i].end);
+	}
 
 	return collector_allocator.region_head;
 }
@@ -512,13 +519,20 @@ print_gc_param_usage (void)
 
 /******************************************Copy/Scan functins ************************************************/
 
+#define SGEN_SPLIT_NURSERY
+
+#define SERIAL_COPY_OBJECT split_nursery_serial_copy_object
+#define PARALLEL_COPY_OBJECT split_nursery_parallel_copy_object
+#define SERIAL_COPY_OBJECT_FROM_OBJ split_nursery_serial_copy_object_from_obj
+
 #include "sgen-minor-copy-object.h"
 #include "sgen-minor-scan-object.h"
-
 
 void
 sgen_split_nursery_init (SgenMinorCollector *collector)
 {
+	collector->is_split = TRUE;
+
 	collector->alloc_for_promotion = minor_alloc_for_promotion;
 	collector->par_alloc_for_promotion = minor_par_alloc_for_promotion;
 

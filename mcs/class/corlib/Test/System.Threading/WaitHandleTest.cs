@@ -315,6 +315,87 @@ namespace MonoTests.System.Threading {
 			WaitHandle.WaitAny (new WaitHandle [0]);
 		}
 
+		[Test]
+		public void InterrupedWaitAny ()
+		{
+			using (var m1 = new Mutex (true)) {
+				using (var m2 = new Mutex (true)) {
+					using (var done = new ManualResetEvent (false)) {
+						var thread = new Thread (() =>
+						{
+							try {
+								WaitHandle.WaitAny (new WaitHandle [] { m1, m2 });
+							} catch (ThreadInterruptedException) {
+								done.Set ();
+							}
+						});
+						thread.Start ();
+						Thread.Sleep (100); // wait a bit so the thread can enter its wait
+						thread.Interrupt ();
+
+						Assert.IsTrue (thread.Join (1000), "Join");
+						Assert.IsTrue (done.WaitOne (1000), "done");
+
+						m1.ReleaseMutex ();
+						m2.ReleaseMutex ();
+					}
+				}
+			}
+		}
+		
+		[Test]
+		public void InterrupedWaitAll ()
+		{
+			using (var m1 = new Mutex (true)) {
+				using (var m2 = new Mutex (true)) {
+					using (var done = new ManualResetEvent (false)) {
+						var thread = new Thread (() =>
+						                         {
+							try {
+								WaitHandle.WaitAll (new WaitHandle [] { m1, m2 });
+							} catch (ThreadInterruptedException) {
+								done.Set ();
+							}
+						});
+						thread.Start ();
+						Thread.Sleep (100); // wait a bit so the thread can enter its wait
+						thread.Interrupt ();
+
+						Assert.IsTrue (thread.Join (1000), "Join");
+						Assert.IsTrue (done.WaitOne (1000), "done");
+
+						m1.ReleaseMutex ();
+						m2.ReleaseMutex ();
+					}
+				}
+			}
+		}
+		
+		[Test]
+		public void InterrupedWaitOne ()
+		{
+			using (var m1 = new Mutex (true)) {
+				using (var done = new ManualResetEvent (false)) {
+					var thread = new Thread (() =>
+					                         {
+						try {
+							m1.WaitOne ();
+						} catch (ThreadInterruptedException) {
+							done.Set ();
+						}
+					});
+					thread.Start ();
+					Thread.Sleep (100); // wait a bit so the thread can enter its wait
+					thread.Interrupt ();
+
+					Assert.IsTrue (thread.Join (1000), "Join");
+					Assert.IsTrue (done.WaitOne (1000), "done");
+
+					m1.ReleaseMutex ();
+				}
+			}
+		}
+
 	}
 }
 

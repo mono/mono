@@ -69,10 +69,10 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.SymbolicGraph {
 			this.const_root = FreshSymbol ();
 
 			TermMap = DoubleImmutableMap<SymValue, TFunc, SymValue>.Empty (SymValue.GetUniqueKey);
-			MultiEdgeMap = DoubleImmutableMap<SymValue, MultiEdge<TFunc, TADomain>, LispList<SymValue>>.Empty (SymValue.GetUniqueKey);
+			MultiEdgeMap = DoubleImmutableMap<SymValue, MultiEdge<TFunc, TADomain>, Sequence<SymValue>>.Empty (SymValue.GetUniqueKey);
 			this.abs_map = ImmutableIntKeyMap<SymValue, TADomain>.Empty (SymValue.GetUniqueKey);
 			this.forw_map = ImmutableIntKeyMap<SymValue, SymValue>.Empty (SymValue.GetUniqueKey);
-			EqualTermsMap = ImmutableIntKeyMap<SymValue, LispList<SymGraphTerm<TFunc>>>.Empty (SymValue.GetUniqueKey);
+			EqualTermsMap = ImmutableIntKeyMap<SymValue, Sequence<SymGraphTerm<TFunc>>>.Empty (SymValue.GetUniqueKey);
 			EqualMultiTermsMap = ImmutableIntKeyMap<SymValue, SymGraphTerm<TFunc>>.Empty (SymValue.GetUniqueKey);
 
 			this.BottomPlaceHolder = FreshSymbol ();
@@ -109,11 +109,11 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.SymbolicGraph {
 		}
 
 		public IImmutableMap<SymValue, SymGraphTerm<TFunc>> EqualMultiTermsMap { get; private set; }
-		public IImmutableMap<SymValue, LispList<SymGraphTerm<TFunc>>> EqualTermsMap { get; private set; }
-		public DoubleImmutableMap<SymValue, MultiEdge<TFunc, TADomain>, LispList<SymValue>> MultiEdgeMap { get; private set; }
+		public IImmutableMap<SymValue, Sequence<SymGraphTerm<TFunc>>> EqualTermsMap { get; private set; }
+		public DoubleImmutableMap<SymValue, MultiEdge<TFunc, TADomain>, Sequence<SymValue>> MultiEdgeMap { get; private set; }
 		public DoubleImmutableMap<SymValue, TFunc, SymValue> TermMap { get; private set; }
 		public int IdGenerator { get; private set; }
-		public LispList<Update<TFunc, TADomain>> Updates { get; private set; }
+		public Sequence<Update<TFunc, TADomain>> Updates { get; private set; }
 
 		public bool IsImmutable
 		{
@@ -164,8 +164,8 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.SymbolicGraph {
 
 				for (int i = 0; i < len; i++) {
 					var edge = new MultiEdge<TFunc, TADomain> (function, i, len);
-					LispList<SymValue> list = MultiEdgeMap [args [i], edge];
-					if (isTermEqual && !LispList<SymValue>.Contains (list, value))
+					Sequence<SymValue> list = MultiEdgeMap [args [i], edge];
+					if (isTermEqual && !Sequence<SymValue>.Contains (list, value))
 						isTermEqual = false;
 					if (!isTermEqual)
 						MultiEdgeMap = MultiEdgeMap.Add (args [i], edge, list.Cons (value));
@@ -192,7 +192,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.SymbolicGraph {
 				if (sv == null) {
 					key = FreshSymbol ();
 					TermMap = TermMap.Add (source, function, key);
-					EqualTermsMap = EqualTermsMap.Add (key, LispList<SymGraphTerm<TFunc>>.Cons (new SymGraphTerm<TFunc> (function, source), null));
+					EqualTermsMap = EqualTermsMap.Add (key, Sequence<SymGraphTerm<TFunc>>.Cons (new SymGraphTerm<TFunc> (function, source), null));
 					AddEdgeUpdate (source, function);
 				} else
 					key = Find (sv);
@@ -205,7 +205,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.SymbolicGraph {
 				value = Find (value);
 
 				TermMap = TermMap.Add (source, function, value);
-				LispList<SymGraphTerm<TFunc>> rest = EqualTermsMap [value];
+				Sequence<SymGraphTerm<TFunc>> rest = EqualTermsMap [value];
 				if (rest.IsEmpty () || (!rest.Head.Function.Equals (function) || rest.Head.Args [0] != source))
 					EqualTermsMap = EqualTermsMap.Add (value, rest.Cons (new SymGraphTerm<TFunc> (function, source)));
 
@@ -376,7 +376,12 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.SymbolicGraph {
 			return new SymGraph<TFunc, TADomain> (this);
 		}
 
-		public SymGraph<TFunc, TADomain> Join (SymGraph<TFunc, TADomain> that, bool widening, out bool weaker)
+	    public SymGraph<TFunc, TADomain> Join(SymGraph<TFunc, TADomain> that)
+	    {
+	        throw new NotImplementedException();
+	    }
+
+	    public SymGraph<TFunc, TADomain> Join (SymGraph<TFunc, TADomain> that, bool widening, out bool weaker)
 		{
 			IMergeInfo info;
 			SymGraph<TFunc, TADomain> join = Join (that, out info, widening);
@@ -384,16 +389,19 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.SymbolicGraph {
 			return join;
 		}
 
-		public SymGraph<TFunc, TADomain> Join (SymGraph<TFunc, TADomain> that, out IMergeInfo mergeInfo, bool widen)
+	    public SymGraph<TFunc, TADomain> Widen(SymGraph<TFunc, TADomain> that)
+	    {
+	        throw new NotImplementedException();
+	    }
+
+	    public SymGraph<TFunc, TADomain> Join (SymGraph<TFunc, TADomain> that, out IMergeInfo mergeInfo, bool widen)
 		{
 			SymGraph<TFunc, TADomain> egraph = this;
 			int updateSize;
 			SymGraph<TFunc, TADomain> commonTail = ComputeCommonTail (egraph, that, out updateSize);
-			bool hasCommonTail = true;
-			if (commonTail == null)
-				hasCommonTail = false;
+	        bool hasCommonTail = commonTail != null;
 
-			bool doingIncrementalJoin = hasCommonTail & commonTail != egraph.root_graph & !widen & DoIncrementalJoin;
+	        bool doingIncrementalJoin = hasCommonTail & commonTail != egraph.root_graph & !widen & DoIncrementalJoin;
 
 			//debug
 
@@ -494,7 +502,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.SymbolicGraph {
 
 		public bool LessEqual (SymGraph<TFunc, TADomain> that)
 		{
-			IImmutableMap<SymValue, LispList<SymValue>> forwardMap;
+			IImmutableMap<SymValue, Sequence<SymValue>> forwardMap;
 			IImmutableMap<SymValue, SymValue> backwardMap;
 
 			return LessEqual (that, out forwardMap, out backwardMap);
@@ -507,7 +515,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.SymbolicGraph {
 		}
 
 		public bool LessEqual (SymGraph<TFunc, TADomain> that, 
-			out IImmutableMap<SymValue, LispList<SymValue>> forward, 
+			out IImmutableMap<SymValue, Sequence<SymValue>> forward, 
 			out IImmutableMap<SymValue, SymValue> backward)
 		{
 			if (!IsSameEGraph (that))
@@ -591,7 +599,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.SymbolicGraph {
 		{
 			int length = args.Length;
 			var multiEdge = new MultiEdge<TFunc, TADomain> (function, 0, length);
-			for (LispList<SymValue> list = MultiEdgeMap [args [0], multiEdge]; list != null; list = list.Tail) {
+			for (Sequence<SymValue> list = MultiEdgeMap [args [0], multiEdge]; list != null; list = list.Tail) {
 				SymGraphTerm<TFunc> term = EqualMultiTermsMap [list.Head];
 				if (term.Args.Length == length) {
 					bool found = true;
@@ -700,7 +708,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.SymbolicGraph {
 		}
 
 		private static bool InternalLessEqual (SymGraph<TFunc, TADomain> thisG, SymGraph<TFunc, TADomain> thatG,
-		                                       out IImmutableMap<SymValue, LispList<SymValue>> forward,
+		                                       out IImmutableMap<SymValue, Sequence<SymValue>> forward,
 		                                       out IImmutableMap<SymValue, SymValue> backward)
 		{
 			int updateSize;
@@ -712,7 +720,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.SymbolicGraph {
 			workList.Add (new EqualityPair<TFunc, TADomain> (thisG.const_root, thatG.const_root));
 			IImmutableSet<SymValue> backwardManifested = ImmutableSet<SymValue>.Empty (SymValue.GetUniqueKey);
 			IImmutableMap<SymValue, SymValue> backwardMap = ImmutableIntKeyMap<SymValue, SymValue>.Empty (SymValue.GetUniqueKey);
-			IImmutableMap<SymValue, LispList<SymValue>> forwardMap = ImmutableIntKeyMap<SymValue, LispList<SymValue>>.Empty (SymValue.GetUniqueKey);
+			IImmutableMap<SymValue, Sequence<SymValue>> forwardMap = ImmutableIntKeyMap<SymValue, Sequence<SymValue>>.Empty (SymValue.GetUniqueKey);
 			IImmutableMap<SymValue, int> triggers = ImmutableIntKeyMap<SymValue, int>.Empty (SymValue.GetUniqueKey);
 
 			while (!workList.IsEmpty ()) {
@@ -896,11 +904,11 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis.SymbolicGraph {
 		}
 		#endregion
 
-		public IImmutableMap<SymValue, LispList<SymValue>> GetForwardIdentityMap ()
+		public IImmutableMap<SymValue, Sequence<SymValue>> GetForwardIdentityMap ()
 		{
-			var res = ImmutableIntKeyMap<SymValue, LispList<SymValue>>.Empty (SymValue.GetUniqueKey);
+			var res = ImmutableIntKeyMap<SymValue, Sequence<SymValue>>.Empty (SymValue.GetUniqueKey);
 			foreach (var sv in this.EqualTermsMap.Keys.Union (this.EqualMultiTermsMap.Keys)) {
-				res = res.Add (sv, LispList<SymValue>.Cons (sv, null));
+				res = res.Add (sv, Sequence<SymValue>.Cons (sv, null));
 			}
 			return res;
 		}

@@ -1,5 +1,5 @@
 
-INCLUDES = $(GMODULE_CFLAGS)
+AM_CPPFLAGS = $(GMODULE_CFLAGS)
 
 lib_LTLIBRARIES = libikvm-native.la
 

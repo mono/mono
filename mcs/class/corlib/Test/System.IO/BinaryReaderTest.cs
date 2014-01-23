@@ -1435,5 +1435,132 @@ namespace MonoTests.System.IO
 		if (File.Exists (path))
 			File.Delete (path);
 	}
+
+	class MockBinaryReader : BinaryReader
+	{
+		public int ReadCharsCounter;
+		public int ReadCounter;
+		
+		public MockBinaryReader (Stream input)
+			: base (input)
+		{
+		}
+		
+		public override char[] ReadChars (int count)
+		{
+			++ReadCharsCounter;
+			return base.ReadChars (count);
+		}
+		
+		public override int Read (char[] buffer, int index, int count)
+		{
+			++ReadCounter;
+			return base.Read (buffer, index, count);
+		}
+	}
+
+	class ReadStringMockStream : Stream
+	{
+		int noc;
+
+		#region implemented abstract members of Stream
+
+		public override void Flush ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override int Read (byte[] buffer, int offset, int count)
+		{
+			switch (noc++) {
+			case 0:
+				buffer [0] = 42; // Length
+				return 2; 
+			default:
+				buffer [0] = 0x65;
+				return 1;
+			}
+		}
+
+		public override long Seek (long offset, SeekOrigin origin)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override void SetLength (long value)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override void Write (byte[] buffer, int offset, int count)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override bool CanRead {
+			get {
+				return true;
+			}
+		}
+
+		public override bool CanSeek {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public override bool CanWrite {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public override long Length {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public override long Position {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		#endregion
+	}
+
+	[Test]
+	public void ReadSting_CustomStream ()
+	{
+		var sr = new BinaryReader (new ReadStringMockStream ());
+		var s = sr.ReadString ();
+		Assert.AreEqual ("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", s);
+	}
+
+	[Test]
+	public void ReadOverrides ()
+	{
+		var stream = new MemoryStream ();
+		
+		using (var writer = new BinaryWriter (stream)) {
+			writer.Write ("TEST");
+			stream.Seek (0, SeekOrigin.Begin);
+		
+			using (var reader = new MockBinaryReader (stream)) {
+				var readChars = reader.ReadChars (4);
+		
+				Assert.AreEqual (1, reader.ReadCharsCounter);
+				Assert.AreEqual (0, reader.ReadCounter);
+		
+				reader.Read (readChars, 0, 4);
+				Assert.AreEqual (1, reader.ReadCharsCounter);
+				Assert.AreEqual (1, reader.ReadCounter);
+			}
+		}
+	}
 }
 }

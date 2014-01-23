@@ -30,7 +30,7 @@
 
 namespace System.Runtime.CompilerServices
 {
-	[AttributeUsage (AttributeTargets.Method)]
+	[AttributeUsage (AttributeTargets.Method, Inherited = false)]
 	[Serializable]
 	public class StateMachineAttribute : Attribute
 	{

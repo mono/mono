@@ -81,7 +81,7 @@ class Derived : Base {
 }
 
 class boot {
-	static int Main ()
+	public static int Main ()
 	{
 		Derived d = new Derived ();
 		return d.Test ();

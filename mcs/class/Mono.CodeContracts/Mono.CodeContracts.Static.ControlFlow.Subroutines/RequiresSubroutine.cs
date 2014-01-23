@@ -32,12 +32,11 @@ using Mono.CodeContracts.Static.ControlFlow.Subroutines.Builders;
 using Mono.CodeContracts.Static.DataStructures;
 
 namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
-	sealed class RequiresSubroutine<Label> : MethodContractSubroutine<Label>, IEquatable<RequiresSubroutine<Label>>
+	sealed class RequiresSubroutine<TLabel> : MethodContractSubroutine<TLabel>, IEquatable<RequiresSubroutine<TLabel>>
 	{
 		public override SubroutineKind Kind { get { return SubroutineKind.Requires; } }
 
 		public override bool IsContract { get { return true; } }
-
 		public override bool IsRequires { get { return true; } }
 
 		public RequiresSubroutine(SubroutineFacade subroutineFacade,
@@ -52,8 +51,8 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 
 		public RequiresSubroutine(SubroutineFacade subroutineFacade,
 		                          Method method,
-		                          SimpleSubroutineBuilder<Label> builder,
-		                          Label entryLabel,
+		                          SimpleSubroutineBuilder<TLabel> builder,
+		                          TLabel entryLabel,
 		                          IImmutableSet<Subroutine> inheritedRequires)
 			: base(subroutineFacade, method, builder, entryLabel)
 		{
@@ -77,7 +76,7 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 				this.AddEdgeSubroutine(this.Entry, targetOfEntry, subroutine, EdgeTag.Inherited);
 		}
 
-		public bool Equals(RequiresSubroutine<Label> that)
+		public bool Equals(RequiresSubroutine<TLabel> that)
 		{
 			return this.Id == that.Id;
 		}

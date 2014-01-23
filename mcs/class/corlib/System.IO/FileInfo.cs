@@ -49,11 +49,6 @@ namespace System.IO {
 	{
 		private bool exists;
 
-#if MOONLIGHT
-		internal FileInfo ()
-		{
-		}
-#endif
 		public FileInfo (string fileName)
 		{
 			if (fileName == null)
@@ -281,12 +276,12 @@ namespace System.IO {
 #if !NET_2_1
 		public FileSecurity GetAccessControl ()
 		{
-			throw new NotImplementedException ();
+			return File.GetAccessControl (FullPath); 
 		}
 		
 		public FileSecurity GetAccessControl (AccessControlSections includeSections)
 		{
-			throw new NotImplementedException ();
+			return File.GetAccessControl (FullPath, includeSections);
 		}
 
 		[ComVisible (false)]
@@ -332,7 +327,7 @@ namespace System.IO {
 
 		public void SetAccessControl (FileSecurity fileSecurity)
 		{
-			throw new NotImplementedException ();
+			File.SetAccessControl (FullPath, fileSecurity);
 		}
 #endif
 	}

@@ -1,14 +1,14 @@
 //
-// attribute.cs: Attribute Handler
+// attribute.cs: Attributes handling
 //
 // Author: Ravi Pratap (ravi@ximian.com)
-//         Marek Safar (marek.safar@seznam.cz)
+//         Marek Safar (marek.safar@gmail.com)
 //
 // Dual licensed under the terms of the MIT X11 or GNU GPL
 //
 // Copyright 2001-2003 Ximian, Inc (http://www.ximian.com)
 // Copyright 2003-2008 Novell, Inc.
-// Copyright 2011 Xamarin Inc
+// Copyright 2011-2013 Xamarin Inc
 //
 
 using System;
@@ -144,6 +144,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool ResolveError {
+			get {
+				return resolve_error;
+			}
+		}
+
 		public ATypeNameExpression TypeExpression {
 			get {
 				return expression;
@@ -167,7 +173,7 @@ namespace Mono.CSharp {
 			if (NamedArguments == null)
 				named_args = new Arguments (1);
 
-			var value = Constant.CreateConstant (rc.Module.PredefinedTypes.CharSet.TypeSpec, rc.Module.DefaultCharSet, Location);
+			var value = Constant.CreateConstantFromValue (rc.Module.PredefinedTypes.CharSet.TypeSpec, rc.Module.DefaultCharSet, Location);
 			NamedArguments.Add (new NamedArgument (dll_import_char_set, loc, value));
 		}
 
@@ -259,7 +265,7 @@ namespace Mono.CSharp {
 		public void Error_AttributeEmitError (string inner)
 		{
 			Report.Error (647, Location, "Error during emitting `{0}' attribute. The reason is `{1}'",
-				      TypeManager.CSharpName (Type), inner);
+				      Type.GetSignatureForError (), inner);
 		}
 
 		public void Error_InvalidSecurityParent ()
@@ -276,9 +282,10 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Tries to resolve the type of the attribute. Flags an error if it can't, and complain is true.
 		/// </summary>
-		void ResolveAttributeType ()
+		void ResolveAttributeType (bool comparisonOnly)
 		{
-			SessionReportPrinter resolve_printer = new SessionReportPrinter ();
+			var resolve_printer = new SessionReportPrinter ();
+			SessionReportPrinter secondary_printer = null;
 			ReportPrinter prev_recorder = Report.SetPrinter (resolve_printer);
 
 			bool t1_is_attr = false;
@@ -291,10 +298,10 @@ namespace Mono.CSharp {
 
 			try {
 				t1 = expression.ResolveAsType (context);
-				if (t1 != null)
-					t1_is_attr = t1.IsAttribute;
-
 				resolve_printer.EndSession ();
+
+				if (t1 != null && resolve_printer.ErrorsCount == 0)
+					t1_is_attr = t1.IsAttribute;
 
 				if (nameEscaped) {
 					t2 = null;
@@ -302,18 +309,26 @@ namespace Mono.CSharp {
 					expanded = (ATypeNameExpression) expression.Clone (null);
 					expanded.Name += "Attribute";
 
+					secondary_printer = new SessionReportPrinter ();
+					Report.SetPrinter (secondary_printer);
 					t2 = expanded.ResolveAsType (context);
-					if (t2 != null)
+					secondary_printer.EndSession ();
+					if (t2 != null && secondary_printer.ErrorsCount == 0)
 						t2_is_attr = t2.IsAttribute;
+
+					secondary_printer.EndSession ();
 				}
 			} finally {
 				context.Module.Compiler.Report.SetPrinter (prev_recorder);
 			}
 
 			if (t1_is_attr && t2_is_attr && t1 != t2) {
-				Report.Error (1614, Location, "`{0}' is ambiguous between `{1}' and `{2}'. Use either `@{0}' or `{0}Attribute'",
-					GetSignatureForError (), expression.GetSignatureForError (), expanded.GetSignatureForError ());
-				resolve_error = true;
+				if (!comparisonOnly) {
+					Report.Error (1614, Location, "`{0}' is ambiguous between `{1}' and `{2}'. Use either `@{0}' or `{0}Attribute'",
+						GetSignatureForError (), expression.GetSignatureForError (), expanded.GetSignatureForError ());
+					resolve_error = true;
+				}
+
 				return;
 			}
 
@@ -327,36 +342,47 @@ namespace Mono.CSharp {
 				return;
 			}
 
+			if (comparisonOnly)
+				return;
+
 			resolve_error = true;
 
-			if (t1 != null) {
-				resolve_printer.Merge (prev_recorder);
+			if (t1 != null) {	
+				if (resolve_printer.IsEmpty) {
+					Report.SymbolRelatedToPreviousError (t1);
+					Report.Error (616, Location, "`{0}': is not an attribute class", t1.GetSignatureForError ());
+				} else {
+					resolve_printer.Merge (prev_recorder);
+				}
 
-				Report.SymbolRelatedToPreviousError (t1);
-				Report.Error (616, Location, "`{0}': is not an attribute class", t1.GetSignatureForError ());
 				return;
 			}
 
 			if (t2 != null) {
-				Report.SymbolRelatedToPreviousError (t2);
-				Report.Error (616, Location, "`{0}': is not an attribute class", t2.GetSignatureForError ());
+				if (secondary_printer.IsEmpty) {
+					Report.SymbolRelatedToPreviousError (t2);
+					Report.Error (616, Location, "`{0}': is not an attribute class", t2.GetSignatureForError ());
+				} else {
+					secondary_printer.Merge (prev_recorder);
+				}
+
 				return;
 			}
 
 			resolve_printer.Merge (prev_recorder);
 		}
 
-		public TypeSpec ResolveType ()
+		public TypeSpec ResolveTypeForComparison ()
 		{
 			if (Type == null && !resolve_error)
-				ResolveAttributeType ();
+				ResolveAttributeType (true);
 			return Type;
 		}
 
 		public string GetSignatureForError ()
 		{
 			if (Type != null)
-				return TypeManager.CSharpName (Type);
+				return Type.GetSignatureForError ();
 
 			return expression.GetSignatureForError ();
 		}
@@ -371,6 +397,19 @@ namespace Mono.CSharp {
 		public bool IsValidSecurityAttribute ()
 		{
 			return HasSecurityAttribute && IsSecurityActionValid ();
+		}
+
+		static bool IsValidMethodImplOption (int value)
+		{
+			//
+			// Allow to use AggressiveInlining on any runtime/corlib
+			//
+			MethodImplOptions all = (MethodImplOptions) 256;
+			foreach (MethodImplOptions v in System.Enum.GetValues (typeof (MethodImplOptions))) {
+				all |= v;
+			}
+
+			return ((MethodImplOptions) value | all) == all;
 		}
 
 		static bool IsValidArgumentType (TypeSpec t)
@@ -425,7 +464,7 @@ namespace Mono.CSharp {
 			arg_resolved = true;
 
 			if (Type == null) {
-				ResolveAttributeType ();
+				ResolveAttributeType (false);
 				if (Type == null)
 					return null;
 			}
@@ -437,7 +476,7 @@ namespace Mono.CSharp {
 
 			ObsoleteAttribute obsolete_attr = Type.GetAttributeObsolete ();
 			if (obsolete_attr != null) {
-				AttributeTester.Report_ObsoleteMessage (obsolete_attr, TypeManager.CSharpName (Type), Location, Report);
+				AttributeTester.Report_ObsoleteMessage (obsolete_attr, Type.GetSignatureForError (), Location, Report);
 			}
 
 			ResolveContext rc = null;
@@ -1011,12 +1050,16 @@ namespace Mono.CSharp {
 								if (pos_args.Count == 1 && pos_args[0].Expr is Constant) {
 									var value = ((Constant) pos_args[0].Expr).GetValue () as string;
 									if (string.IsNullOrEmpty (value))
-										Error_AttributeEmitError ("DllName cannot be empty");
+										Error_AttributeEmitError ("DllName cannot be empty or null");
 								}
-							} else if (Type == predefined.MethodImpl && pt.BuiltinType == BuiltinTypeSpec.Type.Short &&
-								!System.Enum.IsDefined (typeof (MethodImplOptions), ((Constant) arg_expr).GetValue ().ToString ())) {
-								Error_AttributeEmitError ("Incorrect argument value.");
-								return;
+							} else if (Type == predefined.MethodImpl) {
+								if (pos_args.Count == 1) {
+									var value = (int) ((Constant) arg_expr).GetValueAsLong ();
+
+									if (!IsValidMethodImplOption (value)) {
+										Error_AttributeEmitError ("Incorrect argument value");
+									}
+								}
 							}
 						}
 
@@ -1043,15 +1086,17 @@ namespace Mono.CSharp {
 				cdata = encoder.ToArray ();
 			}
 
-			try {
-				foreach (Attributable target in targets)
-					target.ApplyAttributeBuilder (this, ctor, cdata, predefined);
-			} catch (Exception e) {
-				if (e is BadImageFormat && Report.Errors > 0)
-					return;
+			if (!ctor.DeclaringType.IsConditionallyExcluded (context)) {
+				try {
+					foreach (Attributable target in targets)
+						target.ApplyAttributeBuilder (this, ctor, cdata, predefined);
+				} catch (Exception e) {
+					if (e is BadImageFormat && Report.Errors > 0)
+						return;
 
-				Error_AttributeEmitError (e.Message);
-				return;
+					Error_AttributeEmitError (e.Message);
+					return;
+				}
 			}
 
 			if (!usage_attr.AllowMultiple && allEmitted != null) {
@@ -1127,7 +1172,7 @@ namespace Mono.CSharp {
 
 		public Attributes (List<Attribute> attrs)
 		{
-			Attrs = attrs;
+			Attrs = attrs ?? new List<Attribute> ();
 		}
 
 		public void AddAttribute (Attribute attr)
@@ -1193,6 +1238,16 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool HasResolveError()
+		{
+			foreach (var a in Attrs) {
+				if (a.ResolveError)
+					return true;
+			}
+
+			return false;
+		}
+
 		public Attribute Search (PredefinedAttribute t)
 		{
 			return Search (null, t);
@@ -1204,7 +1259,7 @@ namespace Mono.CSharp {
 				if (explicitTarget != null && a.ExplicitTarget != explicitTarget)
 					continue;
 
-				if (a.ResolveType () == t)
+				if (a.ResolveTypeForComparison () == t)
 					return a;
 			}
 			return null;
@@ -1218,7 +1273,7 @@ namespace Mono.CSharp {
 			List<Attribute> ar = null;
 
 			foreach (Attribute a in Attrs) {
-				if (a.ResolveType () == t) {
+				if (a.ResolveTypeForComparison () == t) {
 					if (ar == null)
 						ar = new List<Attribute> (Attrs.Count);
 					ar.Add (a);
@@ -1609,6 +1664,8 @@ namespace Mono.CSharp {
 		public readonly PredefinedAttribute UnsafeValueType;
 		public readonly PredefinedAttribute UnmanagedFunctionPointer;
 		public readonly PredefinedDebuggerBrowsableAttribute DebuggerBrowsable;
+		public readonly PredefinedAttribute DebuggerStepThrough;
+		public readonly PredefinedDebuggableAttribute Debuggable;
 
 		// New in .NET 3.5
 		public readonly PredefinedAttribute Extension;
@@ -1618,7 +1675,6 @@ namespace Mono.CSharp {
 
 		// New in .NET 4.5
 		public readonly PredefinedStateMachineAttribute AsyncStateMachine;
-		public readonly PredefinedStateMachineAttribute IteratorStateMachine;
 
 		//
 		// Optional types which are used as types and for member lookup
@@ -1627,6 +1683,11 @@ namespace Mono.CSharp {
 		public readonly PredefinedDecimalAttribute DecimalConstant;
 		public readonly PredefinedAttribute StructLayout;
 		public readonly PredefinedAttribute FieldOffset;
+		public readonly PredefinedAttribute AssemblyProduct;
+		public readonly PredefinedAttribute AssemblyCompany;
+		public readonly PredefinedAttribute AssemblyDescription;
+		public readonly PredefinedAttribute AssemblyCopyright;
+		public readonly PredefinedAttribute AssemblyTrademark;
 		public readonly PredefinedAttribute CallerMemberNameAttribute;
 		public readonly PredefinedAttribute CallerLineNumberAttribute;
 		public readonly PredefinedAttribute CallerFilePathAttribute;
@@ -1671,6 +1732,8 @@ namespace Mono.CSharp {
 			UnsafeValueType = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "UnsafeValueTypeAttribute");
 			UnmanagedFunctionPointer = new PredefinedAttribute (module, "System.Runtime.InteropServices", "UnmanagedFunctionPointerAttribute");
 			DebuggerBrowsable = new PredefinedDebuggerBrowsableAttribute (module, "System.Diagnostics", "DebuggerBrowsableAttribute");
+			DebuggerStepThrough = new PredefinedAttribute (module, "System.Diagnostics", "DebuggerStepThroughAttribute");
+			Debuggable = new PredefinedDebuggableAttribute (module, "System.Diagnostics", "DebuggableAttribute");
 
 			Extension = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "ExtensionAttribute");
 
@@ -1680,11 +1743,13 @@ namespace Mono.CSharp {
 			DecimalConstant = new PredefinedDecimalAttribute (module, "System.Runtime.CompilerServices", "DecimalConstantAttribute");
 			StructLayout = new PredefinedAttribute (module, "System.Runtime.InteropServices", "StructLayoutAttribute");
 			FieldOffset = new PredefinedAttribute (module, "System.Runtime.InteropServices", "FieldOffsetAttribute");
+			AssemblyProduct = new PredefinedAttribute (module, "System.Reflection", "AssemblyProductAttribute");
+			AssemblyCompany = new PredefinedAttribute (module, "System.Reflection", "AssemblyCompanyAttribute");
+			AssemblyDescription = new PredefinedAttribute (module, "System.Reflection", "AssemblyDescriptionAttribute");
+			AssemblyCopyright = new PredefinedAttribute (module, "System.Reflection", "AssemblyCopyrightAttribute");
+			AssemblyTrademark = new PredefinedAttribute (module, "System.Reflection", "AssemblyTrademarkAttribute");
 
 			AsyncStateMachine = new PredefinedStateMachineAttribute (module, "System.Runtime.CompilerServices", "AsyncStateMachineAttribute");
-			IteratorStateMachine = new PredefinedStateMachineAttribute (module, "System.Runtime.CompilerServices", "IteratorStateMachineAttribute") {
-				IsIterator = true
-			};
 
 			CallerMemberNameAttribute = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "CallerMemberNameAttribute");
 			CallerLineNumberAttribute = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "CallerLineNumberAttribute");
@@ -1800,7 +1865,7 @@ namespace Mono.CSharp {
 			//
 			// Handle all parameter-less attributes as optional
 			//
-			if (!IsDefined)
+			if (!Define ())
 				return false;
 
 			ctor = (MethodSpec) MemberCache.FindMember (type, MemberFilter.Constructor (ParametersCompiled.EmptyReadOnlyParameters), BindingRestriction.DeclaredOnly);
@@ -1823,6 +1888,40 @@ namespace Mono.CSharp {
 
 			AttributeEncoder encoder = new AttributeEncoder ();
 			encoder.Encode ((int) state);
+			encoder.EncodeEmptyNamedArguments ();
+
+			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
+		}
+	}
+
+	public class PredefinedDebuggableAttribute : PredefinedAttribute
+	{
+		public PredefinedDebuggableAttribute (ModuleContainer module, string ns, string name)
+			: base (module, ns, name)
+		{
+		}
+
+		public void EmitAttribute (AssemblyBuilder builder, System.Diagnostics.DebuggableAttribute.DebuggingModes modes)
+		{
+			var atype = module.PredefinedAttributes.Debuggable;
+			if (!atype.Define ())
+				return;
+
+			MethodSpec ctor = null;
+			foreach (MethodSpec m in MemberCache.FindMembers (atype.TypeSpec, CSharp.Constructor.ConstructorName, true)) {
+				if (m.Parameters.Count != 1)
+					continue;
+
+				if (m.Parameters.Types[0].Kind == MemberKind.Enum) {
+					ctor = m;
+				}
+			}
+
+			if (ctor == null)
+				return;
+
+			AttributeEncoder encoder = new AttributeEncoder ();
+			encoder.Encode ((int) modes);
 			encoder.EncodeEmptyNamedArguments ();
 
 			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
@@ -1880,13 +1979,9 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public bool IsIterator { get; set; }
-
 		public void EmitAttribute (MethodBuilder builder, StateMachine type)
 		{
-			var predefined_ctor = IsIterator ?
-				module.PredefinedMembers.IteratorStateMachineAttributeCtor :
-				module.PredefinedMembers.AsyncStateMachineAttributeCtor;
+			var predefined_ctor = module.PredefinedMembers.AsyncStateMachineAttributeCtor;
 
 			var ctor = predefined_ctor.Get ();
 
@@ -1962,7 +2057,7 @@ namespace Mono.CSharp {
 			if (ac != null) {
 				element = GetTransformationFlags (ac.Element);
 				if (element == null)
-					return null;
+					return new bool[] { false, false };
 
 				bool[] res = new bool[element.Length + 1];
 				res[0] = false;

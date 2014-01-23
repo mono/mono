@@ -1,12 +1,12 @@
 //
 // TraceSource.cs
 //
-// Author:
+// Authors:
 //	Atsushi Enomoto  <atsushi@ximian.com>
+//	Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (C) 2007 Novell, Inc.
-//
-
+// Copyright 2013 Xamarin Inc
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -45,17 +45,21 @@ namespace System.Diagnostics
 		{
 		}
 
-		public TraceSource (string name, SourceLevels sourceLevels)
+		public TraceSource (string name, SourceLevels defaultLevel)
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
+			if (name.Length == 0)
+				throw new ArgumentException ("name");
+			
 			Hashtable sources = DiagnosticsConfiguration.Settings ["sources"] as Hashtable;
 			TraceSourceInfo info = sources != null ? sources [name] as TraceSourceInfo : null;
 			source_switch = new SourceSwitch (name);
 
-			if (info == null)
+			if (info == null) {
 				listeners = new TraceListenerCollection ();
-			else {
+				source_switch.Level = defaultLevel;
+			} else {
 				source_switch.Level = info.Levels;
 				listeners = info.Listeners;
 			}

@@ -52,9 +52,7 @@ namespace System.Xml.Serialization
 
 		#region Fields
 
-#if !MOONLIGHT
 		XmlDocument document;
-#endif
 		XmlReader reader;
 		ArrayList fixups;
 		Hashtable collFixups;
@@ -117,7 +115,6 @@ namespace System.Xml.Serialization
 		{
 		}
 
-#if !MOONLIGHT
 		protected XmlDocument Document
 		{
 			get {
@@ -127,7 +124,6 @@ namespace System.Xml.Serialization
 				return document;
 			}
 		}
-#endif
 
 		protected XmlReader Reader {
 			get { return reader; }
@@ -387,7 +383,6 @@ namespace System.Xml.Serialization
 			return name.StartsWith ("xmlns:");
 		}
 
-#if !MOONLIGHT
 		protected void ParseWsdlArrayType (XmlAttribute attr)
 		{
 			if (attr.NamespaceURI == wsdlNS && attr.LocalName == arrayType)
@@ -398,7 +393,6 @@ namespace System.Xml.Serialization
 				attr.Value = ns + type + dimensions;
 			}
 		}
-#endif
 
 		protected XmlQualifiedName ReadElementQualifiedName ()
 		{
@@ -442,13 +436,8 @@ namespace System.Xml.Serialization
 			}
 
 			reader.ReadStartElement();
-#if MOONLIGHT
-			while (reader.NodeType != XmlNodeType.EndElement)
-				reader.Skip ();
-#else
 			while (reader.NodeType != XmlNodeType.EndElement)
 				UnknownNode (null);
-#endif
 
 			ReadEndElement ();
 			return true;
@@ -769,11 +758,6 @@ namespace System.Xml.Serialization
 			TypeData typeData = TypeTranslator.FindPrimitiveTypeData (qname.Name);
 			if (typeData == null || typeData.SchemaType != SchemaTypes.Primitive)
 			{
-#if MOONLIGHT
-				// skip everything
-				reader.Skip ();
-				return new Object ();
-#else
 				// Put everything into a node array
 				readCount++;
 				XmlNode node = Document.ReadNode (reader);
@@ -797,7 +781,6 @@ namespace System.Xml.Serialization
 						nodes[n++] = no;
 					return nodes;
 				}
-#endif
 			}
 
 			if (typeData.Type == typeof (XmlQualifiedName)) return ReadNullableQualifiedName ();
@@ -805,7 +788,6 @@ namespace System.Xml.Serialization
 			return XmlCustomFormatter.FromXmlString (typeData, Reader.ReadElementString ());
 		}
 
-#if !MOONLIGHT
 		protected XmlNode ReadXmlNode (bool wrapped)
 		{
 			readCount++;
@@ -832,7 +814,6 @@ namespace System.Xml.Serialization
 				
 			return doc;
 		}
-#endif
 
 		protected void Referenced (object o)
 		{
@@ -900,17 +881,10 @@ namespace System.Xml.Serialization
 			return XmlCustomFormatter.ToDateTime (value);
 		}
 
-#if MOONLIGHT
-		protected static long ToEnum (string value, IDictionary h, string typeName)
-		{
-			return XmlCustomFormatter.ToEnum (value, (Hashtable) h, typeName, true);
-		}
-#else
 		protected static long ToEnum (string value, Hashtable h, string typeName)
 		{
 			return XmlCustomFormatter.ToEnum (value, h, typeName, true);
 		}
-#endif
 
 		protected static DateTime ToTime (string value)
 		{
@@ -958,12 +932,6 @@ namespace System.Xml.Serialization
 			return new XmlQualifiedName (name, ns);
 		}
 
-#if MOONLIGHT
-		protected void UnknownNode (object o)
-		{
-			throw new NotSupportedException ();
-		}
-#else
 		protected void UnknownAttribute (object o, XmlAttribute attr)
 		{
 			UnknownAttribute (o, attr, null);
@@ -1066,7 +1034,6 @@ namespace System.Xml.Serialization
 					throw new InvalidOperationException ("End of document found");
 			}
 		}
-#endif // !NET_2_1
 
 		protected void UnreferencedObject (string id, object o)
 		{

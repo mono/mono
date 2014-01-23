@@ -42,6 +42,6 @@ public interface IAVLNode<K, C> : IBSTNode<K, C>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

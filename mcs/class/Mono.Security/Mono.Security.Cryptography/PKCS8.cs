@@ -3,10 +3,11 @@
 //	ftp://ftp.rsasecurity.com/pub/pkcs/doc/pkcs-8.doc
 //
 // Author:
-//	Sebastien Pouliot <sebastien@ximian.com>
+//	Sebastien Pouliot <sebastien@xamarin.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2004-2006 Novell Inc. (http://www.novell.com)
+// Copyright 2013 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,15 +32,12 @@
 using System;
 using System.Collections;
 using System.Security.Cryptography;
-using System.Text;
 
 using Mono.Security.X509;
 
 namespace Mono.Security.Cryptography {
 
-#if INSIDE_CORLIB
-	internal
-#else
+#if !INSIDE_CORLIB
 	public 
 #endif
 	sealed class PKCS8 {
@@ -279,6 +277,11 @@ namespace Mono.Security.Cryptography {
 					rsa.ImportParameters (param);
 				}
 				catch (CryptographicException) {
+#if MONOTOUCH
+					// there's no machine-wide store available for iOS so we can drop the dependency on
+					// CspParameters (which drops other things, like XML key persistance, unless used elsewhere)
+					throw;
+#else
 					// this may cause problem when this code is run under
 					// the SYSTEM identity on Windows (e.g. ASP.NET). See
 					// http://bugzilla.ximian.com/show_bug.cgi?id=77559
@@ -286,6 +289,7 @@ namespace Mono.Security.Cryptography {
 					csp.Flags = CspProviderFlags.UseMachineKeyStore;
 					rsa = new RSACryptoServiceProvider (csp);
 					rsa.ImportParameters (param);
+#endif
 				}
 				return rsa;
 			}

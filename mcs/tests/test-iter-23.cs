@@ -19,7 +19,7 @@ class X
 		return 1;
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		var e = GetIt2 ().GetEnumerator ();
 		ThreadPool.QueueUserWorkItem (l => {

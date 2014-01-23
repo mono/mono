@@ -25,8 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -119,6 +117,9 @@ namespace Microsoft.Build.BuildEngine {
 #if NET_4_0
 			Toolsets.Add (new Toolset ("4.0",
 						ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version40)));
+#endif
+#if XBUILD_12
+			Toolsets.Add (new Toolset ("12.0", ToolLocationHelper.GetPathToBuildTools ("12.0")));
 #endif
 		}
 		
@@ -589,5 +590,3 @@ namespace Microsoft.Build.BuildEngine {
 		}
 	}
 }
-
-#endif

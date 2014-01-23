@@ -17,7 +17,7 @@ class Stack<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Stack<int> stack = new Stack<int> (5);
 		System.Console.WriteLine (stack.Test ());

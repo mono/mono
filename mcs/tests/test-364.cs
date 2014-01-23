@@ -9,7 +9,7 @@ class X {
 
 	delegate int Foo ();
 	
-	static int Main ()
+	public static int Main ()
 	{
 		int x = t1 (1);
 		if (x != 1)
@@ -41,7 +41,7 @@ class X {
 	// This is just here to check that it compiles, but the logic is the
 	// same as the ones before
 	
-	static void Main2 (string[] argv)
+	public static void Main2 (string[] argv)
 	{
 		Console.WriteLine ("Test");
 

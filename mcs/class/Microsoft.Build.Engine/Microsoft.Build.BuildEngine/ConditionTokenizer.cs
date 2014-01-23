@@ -27,8 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -49,7 +47,7 @@ namespace Microsoft.Build.BuildEngine {
 //		bool	ignoreWhiteSpace = true;
 		
 		static TokenType[] charIndexToTokenType = new TokenType[128];
-		static Dictionary <string, TokenType> keywords = new Dictionary <string, TokenType> (StringComparer.InvariantCultureIgnoreCase);
+		static Dictionary <string, TokenType> keywords = new Dictionary <string, TokenType> (StringComparer.OrdinalIgnoreCase);
 
 		static ConditionTokenizer ()
 		{
@@ -302,5 +300,3 @@ namespace Microsoft.Build.BuildEngine {
 		};
 	}
 }
-
-#endif

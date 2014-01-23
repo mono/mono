@@ -344,7 +344,7 @@ namespace MonoTests.System.IO
 				DeleteDir (path);
 			}
 		}
-
+#if !MOBILE
 		[Test]
 		public void Serialization ()
 		{
@@ -386,5 +386,6 @@ namespace MonoTests.System.IO
 				DeleteDir (path);
 			}
 		}
+#endif
 	}
 }

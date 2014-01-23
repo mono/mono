@@ -869,7 +869,7 @@ mono_type_is_valid_in_context (VerifyContext *ctx, MonoType *type)
 	if (!is_valid_type_in_context (ctx, type)) {
 		char *str = mono_type_full_name (type);
 		ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid generic type (%s%s) (argument out of range or %s is not generic) at 0x%04x",
-			type->type == MONO_TYPE_VAR ? "!" : "!!",
+			str [0] == '!' ? "" : type->type == MONO_TYPE_VAR ? "!" : "!!",
 			str,
 			type->type == MONO_TYPE_VAR ? "class" : "method",
 			ctx->ip_offset),
@@ -2089,6 +2089,28 @@ get_icollection_class (void)
 }
 
 static MonoClass*
+get_ireadonlylist_class (void)
+{
+	static MonoClass* generic_ireadonlylist_class = NULL;
+
+	if (generic_ireadonlylist_class == NULL)
+		generic_ireadonlylist_class = mono_class_from_name (mono_defaults.corlib,
+			"System.Collections.Generic", "IReadOnlyList`1");
+	return generic_ireadonlylist_class;
+}
+
+static MonoClass*
+get_ireadonlycollection_class (void)
+{
+	static MonoClass* generic_ireadonlycollection_class = NULL;
+
+	if (generic_ireadonlycollection_class == NULL)
+		generic_ireadonlycollection_class = mono_class_from_name (mono_defaults.corlib,
+			"System.Collections.Generic", "IReadOnlyCollection`1");
+	return generic_ireadonlycollection_class;
+}
+
+static MonoClass*
 inflate_class_one_arg (MonoClass *gtype, MonoClass *arg0)
 {
 	MonoType *args [1];
@@ -2118,12 +2140,19 @@ verifier_class_is_assignable_from (MonoClass *target, MonoClass *candidate)
 
 	if (mono_class_has_variant_generic_params (target)) {
 		if (MONO_CLASS_IS_INTERFACE (target)) {
+			if (MONO_CLASS_IS_INTERFACE (candidate) && mono_class_is_variant_compatible (target, candidate, TRUE))
+				return TRUE;
+
 			if (candidate->rank == 1) {
 				if (verifier_inflate_and_check_compat (target, mono_defaults.generic_ilist_class, candidate->element_class))
 					return TRUE;
 				if (verifier_inflate_and_check_compat (target, get_icollection_class (), candidate->element_class))
 					return TRUE;
 				if (verifier_inflate_and_check_compat (target, get_ienumerable_class (), candidate->element_class))
+					return TRUE;
+				if (verifier_inflate_and_check_compat (target, get_ireadonlylist_class (), candidate->element_class))
+					return TRUE;
+				if (verifier_inflate_and_check_compat (target, get_ireadonlycollection_class (), candidate->element_class))
 					return TRUE;
 			} else {
 				MonoError error;
@@ -3165,14 +3194,14 @@ do_invoke_method (VerifyContext *ctx, int method_token, gboolean virtual)
 		ILStackDesc copy;
 
 		if (mono_method_is_constructor (method) && !method->klass->valuetype) {
-			if (!mono_method_is_constructor (ctx->method))
+			if (IS_STRICT_MODE (ctx) && !mono_method_is_constructor (ctx->method))
 				CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Cannot call a constructor outside one at 0x%04x", ctx->ip_offset));
-			if (method->klass != ctx->method->klass->parent && method->klass != ctx->method->klass)
+			if (IS_STRICT_MODE (ctx) && method->klass != ctx->method->klass->parent && method->klass != ctx->method->klass)
 				CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Cannot call a constructor of a type different from this or super at 0x%04x", ctx->ip_offset));
 
 			ctx->super_ctor_called = TRUE;
 			value = stack_pop_safe (ctx);
-			if ((value->stype & THIS_POINTER_MASK) != THIS_POINTER_MASK)
+			if (IS_STRICT_MODE (ctx) && (value->stype & THIS_POINTER_MASK) != THIS_POINTER_MASK)
 				CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid 'this ptr' argument for constructor at 0x%04x", ctx->ip_offset));
 		} else {
 			value = stack_pop (ctx);
@@ -4500,7 +4529,7 @@ static void
 merge_stacks (VerifyContext *ctx, ILCodeDesc *from, ILCodeDesc *to, gboolean start, gboolean external) 
 {
 	MonoError error;
-	int i, j, k;
+	int i, j;
 	stack_init (ctx, to);
 
 	if (start) {
@@ -4544,6 +4573,14 @@ merge_stacks (VerifyContext *ctx, ILCodeDesc *from, ILCodeDesc *to, gboolean sta
 			continue;
 		}
 
+		/*Both slots are the same boxed valuetype. Simply copy it.*/
+		if (stack_slot_is_boxed_value (old_slot) && 
+			stack_slot_is_boxed_value (new_slot) &&
+			mono_metadata_type_equal (old_type, new_type)) {
+			copy_stack_value (new_slot, old_slot);
+			continue;
+		}
+
 		if (mono_type_is_generic_argument (old_type) || mono_type_is_generic_argument (new_type)) {
 			char *old_name = stack_slot_full_name (old_slot); 
 			char *new_name = stack_slot_full_name (new_slot);
@@ -4580,15 +4617,6 @@ merge_stacks (VerifyContext *ctx, ILCodeDesc *from, ILCodeDesc *to, gboolean sta
 				CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Cannot merge stacks due to a TypeLoadException %s at 0x%04x", mono_error_get_message (&error), ctx->ip_offset));
 				mono_error_cleanup (&error);
 				goto end_verify;
-			}
-
-			for (j = 0; j < old_class->interface_count; ++j) {
-				for (k = 0; k < new_class->interface_count; ++k) {
-					if (mono_metadata_type_equal (&old_class->interfaces [j]->byval_arg, &new_class->interfaces [k]->byval_arg)) {
-						match_class = old_class->interfaces [j];
-						goto match_found;
-					}
-				}
 			}
 
 			/* if old class is an interface that new class implements */
@@ -4950,7 +4978,9 @@ mono_method_verify (MonoMethod *method, int level)
 				ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Catch clause %d with invalid type", i));
 				break;
 			}
-		
+			if (!mono_type_is_valid_in_context (&ctx, &clause->data.catch_class->byval_arg))
+				break;
+
 			init_stack_with_value_at_exception_boundary (&ctx, ctx.code + clause->handler_offset, clause->data.catch_class);
 		}
 		else if (clause->flags == MONO_EXCEPTION_CLAUSE_FILTER) {
@@ -4958,6 +4988,9 @@ mono_method_verify (MonoMethod *method, int level)
 			init_stack_with_value_at_exception_boundary (&ctx, ctx.code + clause->handler_offset, mono_defaults.exception_class);	
 		}
 	}
+
+	if (!ctx.valid)
+		goto cleanup;
 
 	original_bb = bb = mono_basic_block_split (method, &error);
 	if (!mono_error_ok (&error)) {
@@ -6004,7 +6037,7 @@ gboolean
 mono_verifier_is_class_full_trust (MonoClass *klass)
 {
 	/* under CoreCLR code is trusted if it is part of the "platform" otherwise all code inside the GAC is trusted */
-	gboolean trusted_location = (mono_security_get_mode () != MONO_SECURITY_MODE_CORE_CLR) ? 
+	gboolean trusted_location = !mono_security_core_clr_enabled () ?
 		(klass->image->assembly && klass->image->assembly->in_gac) : mono_security_core_clr_is_platform_image (klass->image);
 
 	if (verify_all && verifier_mode == MONO_VERIFIER_MODE_OFF)
@@ -6212,6 +6245,9 @@ verify_generic_parameters (MonoClass *class)
 		for (constraints = param_info->constraints; *constraints; ++constraints) {
 			MonoClass *ctr = *constraints;
 			MonoType *constraint_type = &ctr->byval_arg;
+
+			if (!mono_class_can_access_class (class, ctr))
+				goto fail;
 
 			if (!mono_type_is_valid_type_in_context (constraint_type, &gc->context))
 				goto fail;

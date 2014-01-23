@@ -192,6 +192,28 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 		}
 	}
 
+	[Serializable]
+	public class Comparable
+	{
+		public int Foo {
+			get;
+			set;
+		}
+
+		public override bool Equals (object obj)
+		{
+			var other = obj as Comparable;
+			if (other == null)
+				return false;
+			return other.Foo == Foo;
+		}
+
+		public override int GetHashCode ()
+		{
+			return Foo;
+		}
+	}
+
 	[TestFixture]
 	public class BinaryFormatterTest
 	{
@@ -318,6 +340,24 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 			Assert.AreEqual (e.Length, a.Length);
 			for (int i = 0; i < e.Length; ++i)
 				Assert.AreEqual (e [i], a [i], names [i]);
+		}
+
+		[Test]
+		public void GenericArray ()
+		{
+			Comparable [] a = new Comparable [1];
+			a [0] = new Comparable ();
+
+			BinaryFormatter bf = new BinaryFormatter ();
+			MemoryStream ms = new MemoryStream ();
+
+			bf.Serialize (ms, a);
+
+			ms.Position = 0;
+			Comparable [] b = (Comparable []) bf.Deserialize (ms);
+
+			Assert.AreEqual (a.Length, b.Length, "#1");
+			Assert.AreEqual (a [0], b [0], "#2");
 		}
 
 		public Stream GetSerializedStream ()

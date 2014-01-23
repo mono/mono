@@ -7,7 +7,7 @@ class Foo
 
 class Y
 {
-	static int Main ()
+	public static int Main ()
 	{
 		Foo foo = new Foo ();
 		foo.P = 1;

@@ -1,7 +1,5 @@
-// CS0246: The type or namespace name `Uri' could not be found. Are you missing a using directive or an assembly reference?
+// CS0246: The type or namespace name `Uri' could not be found. Are you missing `System' using directive?
 // Line: 7
-
-// This bug actual checks that the compiler doesn't crash
 
 public interface IFoo
 {

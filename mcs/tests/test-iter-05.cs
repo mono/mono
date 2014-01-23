@@ -18,7 +18,7 @@ class X {
 			yield return i;
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		int total = 0;
 		foreach (int i in GetIt ()) {

@@ -43,9 +43,10 @@ namespace System.Web.Routing
 	public class UrlRoutingModule : IHttpModule
 	{
 		RouteCollection routes;
+#if !NET_4_0
 		object module_identity_key = new object ();
 		object original_path_key = new object ();
-		
+#endif		
 		public RouteCollection RouteCollection {
 			get {
 				if (routes == null)

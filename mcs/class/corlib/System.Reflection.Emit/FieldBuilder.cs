@@ -31,6 +31,7 @@
 // (C) 2001-2002 Ximian, Inc.  http://www.ximian.com
 //
 
+#if !FULL_AOT_RUNTIME
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -208,12 +209,6 @@ namespace System.Reflection.Emit {
 			throw CreateNotSupportedException ();
 		}
 
-		internal override UnmanagedMarshal UMarshal {
-			get {
-				return marshal_info;
-			}
-		}
-
 		private Exception CreateNotSupportedException ()
 		{
 			return new NotSupportedException ("The invoked member is not supported in a dynamic module.");
@@ -253,3 +248,4 @@ namespace System.Reflection.Emit {
 	}
 }
 
+#endif

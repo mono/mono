@@ -8,8 +8,6 @@
 // (C) 2004 Novell, Inc. <http://www.novell.com>
 // 
 
-#if NET_2_0
-
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -122,6 +120,7 @@ namespace MonoTests.System.IO.Compression
 			decompressing.Read (dummy, 10, 20);
 		}
 
+#if !MOBILE
 		[Test]
 		[Category("NotWorking")]
 		public void CheckInvalidDataRead ()
@@ -136,6 +135,7 @@ namespace MonoTests.System.IO.Compression
 			} catch (InvalidDataException) {
 			}
 		}
+#endif
 
 		[Test]
 		public void CheckClosedRead ()
@@ -275,6 +275,22 @@ namespace MonoTests.System.IO.Compression
 			decompress.Dispose ();
 		}
 
+		[Test]
+		public void DisposeOrderTest ()
+		{
+			var fs = new MemoryStream();
+			GZipStream compressed = new GZipStream(fs, CompressionMode.Compress);
+			byte[] buffer = new byte[1024];
+			compressed.Write(buffer, 0, buffer.Length);
+			compressed.Close();
+
+			try {
+				fs.WriteByte(2);
+				Assert.Fail ();
+			} catch (ObjectDisposedException) {
+			}			
+		}
+
 		static byte [] compressed_data = {
 			0x1f, 0x8b, 0x08, 0x08, 0x70, 0xbb, 0x5d, 0x41, 0x00,
 			0x03, 0x74, 0x65, 0x73, 0x74, 0x00, 0xf3, 0x48, 0xcd,
@@ -283,4 +299,3 @@ namespace MonoTests.System.IO.Compression
 	}
 }
 
-#endif

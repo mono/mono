@@ -11,7 +11,7 @@ class Foo<T1, T2> where T2 : I<I<T1>>
 
 class Bar : I<I<string>>
 {
-	static int Main ()
+	public static int Main ()
 	{
 		var foo = new Foo<string, Bar> (new Bar ());
 		return 0;

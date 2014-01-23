@@ -91,7 +91,7 @@ namespace System.ServiceModel.Channels
 			VerifyMessageVersion (message);
 
 			// FIXME: no way to acquire maxSizeInBytes and startInfo?
-			message.WriteMessage (XmlDictionaryWriter.CreateMtomWriter (stream, encoding, int.MaxValue, null));
+			message.WriteMessage (XmlDictionaryWriter.CreateMtomWriter (stream, encoding, int.MaxValue, string.Empty));
 		}
 
 		[MonoTODO]

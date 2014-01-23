@@ -34,15 +34,15 @@
 //
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace System.Runtime.Serialization
 {
 	[System.Runtime.InteropServices.ComVisibleAttribute (true)]
 	public sealed class SerializationInfo
 	{
-		Hashtable serialized = new Hashtable ();
-		ArrayList values = new ArrayList ();
+		Dictionary<string, SerializationEntry> serialized = new Dictionary<string, SerializationEntry> ();
+		List<SerializationEntry> values = new List<SerializationEntry> ();
 
 		string assemblyName; // the assembly being serialized
 		string fullTypeName; // the type being serialized.
@@ -181,7 +181,7 @@ namespace System.Runtime.Serialization
 			if (!serialized.ContainsKey (name))
 				throw new SerializationException ("No element named " + name + " could be found.");
 						
-			SerializationEntry entry = (SerializationEntry) serialized [name];
+			SerializationEntry entry = serialized [name];
 
 			if (entry.Value != null && !type.IsInstanceOfType (entry.Value))
 				return converter.Convert (entry.Value, type);
@@ -191,7 +191,7 @@ namespace System.Runtime.Serialization
 
 		internal bool HasKey (string name)
 		{
-			return serialized [name] != null;
+			return serialized.ContainsKey (name);
 		}
 		
 		public void SetType (Type type)

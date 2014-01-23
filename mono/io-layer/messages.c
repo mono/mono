@@ -17,12 +17,13 @@
 #include <mono/io-layer/wapi-private.h>
 #include <mono/io-layer/misc-private.h>
 #include <mono/io-layer/messages.h>
+#include <mono/utils/bsearch.h>
 
 #undef DEBUG
 
 typedef struct {
 	int id;
-	const char const *txt;
+	const char *txt;
 } ErrorDesc;
 
 static ErrorDesc common_messages [] = {
@@ -47,6 +48,7 @@ static ErrorDesc common_messages [] = {
 	{ ERROR_PROC_NOT_FOUND, "Process not found" },
 	{ ERROR_ALREADY_EXISTS, "Already exists" },
 	{ ERROR_DIRECTORY, "Is a directory" },
+	{ ERROR_OPERATION_ABORTED, "Operation aborted" },
 	{ ERROR_ENCRYPTION_FAILED, "Encryption failed" },
 	{ WSAEINTR, "interrupted" },
 	{ WSAEBADF, "Bad file number" },
@@ -290,7 +292,6 @@ static ErrorDesc messages [] = {
 	{ ERROR_PIPE_CONNECTED, "Pipe connected" },
 	{ ERROR_PIPE_LISTENING, "Pipe listening" },
 	{ ERROR_EA_ACCESS_DENIED, "EA access denied" },
-	{ ERROR_OPERATION_ABORTED, "Operation aborted" },
 	{ ERROR_IO_INCOMPLETE, "IO incomplete" },
 	{ ERROR_IO_PENDING, "IO pending" },
 	{ ERROR_NOACCESS, "No access" },
@@ -1830,7 +1831,7 @@ find_msg (guint32 id, ErrorDesc *base, int n)
 	ErrorDesc d, *result;
 	d.id = id;
 	
-	result = bsearch (&d, base, n, sizeof (ErrorDesc), msg_compare);
+	result = mono_binary_search (&d, base, n, sizeof (ErrorDesc), msg_compare);
 	if (result == NULL)
 		return NULL;
 	return result->txt;

@@ -37,10 +37,12 @@ using MonoTests.System.Data.Utils;
 using System.Xml;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Globalization;
 
 namespace MonoTests_System.Data
 {
-	[TestFixture] public class DataSetTest2
+	[TestFixture]
+	public class DataSetTest2
 	{
 		private DataSet m_ds = null;
 		private bool EventRaised = false;
@@ -983,6 +985,17 @@ namespace MonoTests_System.Data
 			ds.Locale = culInfo ;
 			Assert.AreEqual(culInfo , ds.Locale , "DS157");
 		}
+
+		[Test]
+		[SetCulture ("cs-CZ")]
+		public void DataSetSpecificCulture ()
+		{			
+			var ds = new DataSet() ;
+			ds.Locale = CultureInfo.GetCultureInfo (1033);
+			var dt = ds.Tables.Add ("machine");
+			dt.Locale = ds.Locale;
+			Assert.AreSame (dt, ds.Tables["MACHINE"]);
+		}		
 
 		[Test] public void MergeFailed()
 		{
@@ -2021,7 +2034,7 @@ namespace MonoTests_System.Data
 
 		[Test] public void ReadXmlSchema_ByFileName()
 		{
-			string sTempFileName = "tmpDataSet_ReadWriteXml_43899.xml"  ;
+			string sTempFileName = Path.Combine (Path.GetTempPath (), "tmpDataSet_ReadWriteXml_43899.xml");
 
 			DataSet ds1 = new DataSet();
 			ds1.Tables.Add(DataProvider.CreateParentDataTable());
@@ -3519,17 +3532,17 @@ namespace MonoTests_System.Data
 			//ds1.Load (reader, LoadOption.PreserveChanges, dt3, dt4);
 			ds1.Load (reader, LoadOption.OverwriteChanges, dt3, dt4);
 
-			Assertion.AssertEquals ("DataSet Tables count mistmatch", ds2.Tables.Count, ds1.Tables.Count);
+			Assert.AreEqual (ds2.Tables.Count, ds1.Tables.Count, "DataSet Tables count mistmatch");
 			int i = 0;
 			foreach (DataTable dt in ds1.Tables) {
 				DataTable dt5 = ds2.Tables[i];
-				Assertion.AssertEquals ("Table " + dt.TableName + " row count mistmatch", dt5.Rows.Count, dt.Rows.Count);
+				Assert.AreEqual (dt5.Rows.Count, dt.Rows.Count, "Table " + dt.TableName + " row count mistmatch");
 				int j = 0;
 				DataRow row1;
 				foreach (DataRow row in dt.Rows) {
 					row1 = dt5.Rows[j];
 					for (int k = 0; k < dt.Columns.Count; k++) {
-						Assertion.AssertEquals ("DataRow " + k + " mismatch", row1[k], row[k]);
+						Assert.AreEqual (row1[k], row[k], "DataRow " + k + " mismatch");
 					}
 					j++;
 				}
@@ -3567,17 +3580,17 @@ namespace MonoTests_System.Data
 			//ds1.Load (reader, LoadOption.PreserveChanges, dt3, dt4);
 			ds1.Load (reader, LoadOption.OverwriteChanges, dt3, dt4);
 
-			Assertion.AssertEquals ("DataSet Tables count mistmatch", ds2.Tables.Count, ds1.Tables.Count);
+			Assert.AreEqual (ds2.Tables.Count, ds1.Tables.Count, "DataSet Tables count mistmatch");
 			int i = 0;
 			foreach (DataTable dt in ds1.Tables) {
 				DataTable dt5 = ds2.Tables[i];
-				Assertion.AssertEquals ("Table " + dt.TableName + " row count mistmatch", dt5.Rows.Count, dt.Rows.Count);
+				Assert.AreEqual (dt5.Rows.Count, dt.Rows.Count, "Table " + dt.TableName + " row count mistmatch");
 				int j = 0;
 				DataRow row1;
 				foreach (DataRow row in dt.Rows) {
 					row1 = dt5.Rows[j];
 					for (int k = 0; k < dt.Columns.Count; k++) {
-						Assertion.AssertEquals ("DataRow " + k + " mismatch", row1[k], row[k]);
+						Assert.AreEqual (row1[k], row[k], "DataRow " + k + " mismatch");
 					}
 					j++;
 				}

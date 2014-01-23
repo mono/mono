@@ -19,7 +19,7 @@ internal_init (void)
 {
 	if (keepalive_stacks)
 		return;
-	MONO_GC_REGISTER_ROOT (keepalive_stacks);
+	MONO_GC_REGISTER_ROOT_PINNING (keepalive_stacks);
 	keepalive_stacks = mono_g_hash_table_new (NULL, NULL);
 }
 
@@ -69,12 +69,12 @@ continuation_mark_frame (MonoContinuation *cont)
 		ctx = new_ctx;
 		if (endloop)
 			break;
-		if (strcmp (ji->method->name, "Mark") == 0)
+		if (strcmp (jinfo_get_method (ji)->name, "Mark") == 0)
 			endloop = TRUE;
 	} while (1);
 
 	cont->top_sp = MONO_CONTEXT_GET_SP (&ctx);
-	/*g_print ("method: %s, sp: %p\n", ji->method->name, cont->top_sp);*/
+	/*g_print ("method: %s, sp: %p\n", jinfo_get_method (ji)->name, cont->top_sp);*/
 
 	return NULL;
 }
@@ -95,7 +95,7 @@ continuation_store (MonoContinuation *cont, int state, MonoException **e)
 	}
 
 	cont->lmf = lmf;
-	cont->return_ip = __builtin_return_address (0);
+	cont->return_ip = __builtin_extract_return_addr (__builtin_return_address (0));
 	cont->return_sp = __builtin_frame_address (0);
 
 	num_bytes = (char*)cont->top_sp - (char*)cont->return_sp;
@@ -106,8 +106,8 @@ continuation_store (MonoContinuation *cont, int state, MonoException **e)
 		/* clear to avoid GC retention */
 		if (num_bytes < cont->stack_used_size) {
 			memset ((char*)cont->saved_stack + num_bytes, 0, cont->stack_used_size - num_bytes);
-			cont->stack_used_size = num_bytes;
 		}
+		cont->stack_used_size = num_bytes;
 	} else {
 		tasklets_lock ();
 		internal_init ();

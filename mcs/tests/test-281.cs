@@ -42,7 +42,7 @@ namespace Test
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		if (Test.Test1.World () != 8)
 			return 1;

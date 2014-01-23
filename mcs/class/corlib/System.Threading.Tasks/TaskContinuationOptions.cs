@@ -22,7 +22,7 @@
 //
 //
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 using System;
 
 namespace System.Threading.Tasks
@@ -34,6 +34,11 @@ namespace System.Threading.Tasks
 		PreferFairness        = 0x00001,
 		LongRunning           = 0x00002,
 		AttachedToParent      = 0x00004,
+#if NET_4_5
+		DenyChildAttach       = 0x00008,
+		HideScheduler         = 0x00010,
+		LazyCancellation      = 0x00020,
+#endif
 		NotOnRanToCompletion  = 0x10000,
 		NotOnFaulted          = 0x20000,
 		NotOnCanceled         = 0x40000,

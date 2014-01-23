@@ -19,6 +19,6 @@ public class Bar<X,Y,Z> : IBar<X>, IBar<Y,Z>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

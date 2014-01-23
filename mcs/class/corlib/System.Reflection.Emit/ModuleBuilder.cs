@@ -1,4 +1,3 @@
-
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -31,6 +30,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+#if !FULL_AOT_RUNTIME
 using System;
 using System.Reflection;
 using System.Collections;
@@ -104,16 +104,12 @@ namespace System.Reflection.Emit {
 			}
 
 			if (emitSymbolInfo) {
-#if MOONLIGHT
-				symbolWriter = new Mono.CompilerServices.SymbolWriter.SymbolWriterImpl (this);
-#else
 				Assembly asm = Assembly.LoadWithPartialName ("Mono.CompilerServices.SymbolWriter");
 				if (asm == null)
 					throw new TypeLoadException ("The assembly for default symbol writer cannot be loaded");
 
 				Type t = asm.GetType ("Mono.CompilerServices.SymbolWriter.SymbolWriterImpl", true);
 				symbolWriter = (ISymbolWriter) Activator.CreateInstance (t, new object[] { this });
-#endif
 				string fileName = fqname;
 				if (assemblyb.AssemblyDir != null)
 					fileName = Path.Combine (assemblyb.AssemblyDir, fileName);
@@ -537,7 +533,7 @@ namespace System.Reflection.Emit {
 			if (resourceFileName == String.Empty)
 				throw new ArgumentException ("resourceFileName");
 			if (!File.Exists (resourceFileName) || Directory.Exists (resourceFileName))
-				throw new FileNotFoundException ("File '" + resourceFileName + "' does not exists or is a directory.");
+				throw new FileNotFoundException ("File '" + resourceFileName + "' does not exist or is a directory.");
 
 			throw new NotImplementedException ();
 		}
@@ -659,7 +655,7 @@ namespace System.Reflection.Emit {
 		private static extern int getToken (ModuleBuilder mb, object obj, bool create_open_instance);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern int getMethodToken (ModuleBuilder mb, MethodInfo method,
+		private static extern int getMethodToken (ModuleBuilder mb, MethodBase method,
 							  Type[] opt_param_types);
 
 		internal int GetToken (string str)
@@ -681,7 +677,7 @@ namespace System.Reflection.Emit {
 			return getToken (this, member, create_open_instance);
 		}
 
-		internal int GetToken (MethodInfo method, Type[] opt_param_types) {
+		internal int GetToken (MethodBase method, Type[] opt_param_types) {
 			return getMethodToken (this, method, opt_param_types);
 		}
 
@@ -825,7 +821,7 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 		public override	Assembly Assembly {
 			get { return assemblyb; }
 		}
@@ -984,7 +980,7 @@ namespace System.Reflection.Emit {
 			return mb.GetToken (member, create_open_instance);
 		}
 
-		public int GetToken (MethodInfo method, Type[] opt_param_types) {
+		public int GetToken (MethodBase method, Type[] opt_param_types) {
 			return mb.GetToken (method, opt_param_types);
 		}
 
@@ -994,3 +990,4 @@ namespace System.Reflection.Emit {
 	}
 }
 
+#endif

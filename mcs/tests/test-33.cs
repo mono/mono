@@ -31,7 +31,7 @@ public class Fifth : FirstOuter.FirstInner.First {}
 
 class Application
 {
-	static int Main(string[] args)
+	public static int Main(string[] args)
 	{
 		FirstOuter.FirstInner.First V1 = new FirstOuter.FirstInner.First();
 		FirstOuter.Second V2 = new FirstOuter.Second();

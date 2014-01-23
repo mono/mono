@@ -62,7 +62,7 @@ namespace Mono.Tuner {
 		{
 			methodName = null;
 
-			int pos = fullName.IndexOf (prefix);
+			int pos = fullName.IndexOf (prefix, StringComparison.Ordinal);
 			if (pos == -1)
 				return false;
 
@@ -74,7 +74,7 @@ namespace Mono.Tuner {
 		{
 			methodName = null;
 
-			int pos = fullName.LastIndexOf (suffix);
+			int pos = fullName.LastIndexOf (suffix, StringComparison.Ordinal);
 			if (pos == -1)
 				return false;
 
@@ -84,7 +84,7 @@ namespace Mono.Tuner {
 
 		static bool IsWebServiceClient (TypeDefinition type)
 		{
-			return type.Inherits ("System.Web.Services.Protocols.SoapHttpClientProtocol");
+			return type.Inherits ("System.Web.Services.Protocols", "SoapHttpClientProtocol");
 		}
 	}
 }

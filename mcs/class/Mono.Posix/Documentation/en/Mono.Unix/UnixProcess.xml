@@ -1,9 +1,11 @@
 <Type Name="UnixProcess" FullName="Mono.Unix.UnixProcess">
   <TypeSignature Language="C#" Value="public sealed class UnixProcess" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit UnixProcess extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
   <Base>
@@ -45,7 +47,13 @@
   <Members>
     <Member MemberName="ExitCode">
       <MemberSignature Language="C#" Value="public int ExitCode { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 ExitCode" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -63,14 +71,16 @@
         </exception>
         <altmember cref="M:Mono.Unix.Native.Syscall.WEXITSTATUS" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetCurrentProcess">
       <MemberSignature Language="C#" Value="public static Mono.Unix.UnixProcess GetCurrentProcess ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Mono.Unix.UnixProcess GetCurrentProcess() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.UnixProcess</ReturnType>
       </ReturnValue>
@@ -85,14 +95,16 @@
         </remarks>
         <altmember cref="M:Mono.Unix.Native.Syscall.getpid" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetCurrentProcessId">
       <MemberSignature Language="C#" Value="public static int GetCurrentProcessId ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 GetCurrentProcessId() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -107,14 +119,16 @@
         </remarks>
         <altmember cref="M:Mono.Unix.Native.Syscall.getpid" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="HasExited">
       <MemberSignature Language="C#" Value="public bool HasExited { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool HasExited" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -159,14 +173,16 @@
         </exception>
         <altmember cref="M:Mono.Unix.Native.Syscall.WIFEXITED" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="HasSignaled">
       <MemberSignature Language="C#" Value="public bool HasSignaled { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool HasSignaled" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -206,14 +222,16 @@
         </exception>
         <altmember cref="M:Mono.Unix.Native.Syscall.WIFSIGNALED" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="HasStopped">
       <MemberSignature Language="C#" Value="public bool HasStopped { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool HasStopped" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -253,14 +271,16 @@
         </exception>
         <altmember cref="M:Mono.Unix.Native.Syscall.WIFSTOPPED" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Id">
       <MemberSignature Language="C#" Value="public int Id { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Id" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -273,14 +293,16 @@
         <remarks>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Kill">
       <MemberSignature Language="C#" Value="public void Kill ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Kill() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -303,14 +325,16 @@
         </exception>
         <altmember cref="M:Mono.Unix.Native.Syscall.kill" />
       </Docs>
+    </Member>
+    <Member MemberName="ProcessGroupId">
+      <MemberSignature Language="C#" Value="public int ProcessGroupId { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 ProcessGroupId" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ProcessGroupId">
-      <MemberSignature Language="C#" Value="public int ProcessGroupId { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -332,14 +356,16 @@
         <altmember cref="M:Mono.Unix.Native.Syscall.getpgid" />
         <altmember cref="M:Mono.Unix.Native.Syscall.setpgid" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SessionId">
       <MemberSignature Language="C#" Value="public int SessionId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 SessionId" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -352,14 +378,21 @@
         <remarks>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Signal">
       <MemberSignature Language="C#" Value="public void Signal (Mono.Unix.Native.Signum signal);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Signal(valuetype Mono.Unix.Native.Signum signal) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -384,19 +417,16 @@
           </para>
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="StopSignal">
       <MemberSignature Language="C#" Value="public Mono.Unix.Native.Signum StopSignal { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype Mono.Unix.Native.Signum StopSignal" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.Signum</ReturnType>
       </ReturnValue>
@@ -414,14 +444,16 @@
         </exception>
         <altmember cref="M:Mono.Unix.Native.Syscall.WSTOPSIG" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TerminationSignal">
       <MemberSignature Language="C#" Value="public Mono.Unix.Native.Signum TerminationSignal { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype Mono.Unix.Native.Signum TerminationSignal" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.Native.Signum</ReturnType>
       </ReturnValue>
@@ -439,14 +471,16 @@
         </exception>
         <altmember cref="M:Mono.Unix.Native.Syscall.WTERMSIG" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WaitForExit">
       <MemberSignature Language="C#" Value="public void WaitForExit ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void WaitForExit() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -491,10 +525,6 @@
         </exception>
         <altmember cref="M:Mono.Unix.Native.Syscall.waitpid" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

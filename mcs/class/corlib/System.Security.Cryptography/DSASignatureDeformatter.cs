@@ -3,10 +3,11 @@
 //
 // Authors:
 //	Thomas Neidhart (tome@sbox.tugraz.at)
-//	Sebastien Pouliot (sebastien@ximian.com)
+//	Sebastien Pouliot  <sebastien@xamarin.com>
 //
 // Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright 2013 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,6 +32,8 @@
 using System.Globalization;
 using System.Runtime.InteropServices;
 
+using Mono.Security.Cryptography;
+
 namespace System.Security.Cryptography {
 
 	[ComVisible (true)]
@@ -52,14 +55,10 @@ namespace System.Security.Cryptography {
 			if (strName == null)
 				throw new ArgumentNullException ("strName");
 
-			try {
-				// just to test, we don't need the object
-				SHA1.Create (strName);
-			}
-			catch (InvalidCastException) {
+			var instance = PKCS1.CreateFromName (strName) as SHA1;
+			if (instance == null)
 				throw new CryptographicUnexpectedOperationException (
 					Locale.GetText ("DSA requires SHA1"));
-			}
 		}
 
 		public override void SetKey (AsymmetricAlgorithm key)

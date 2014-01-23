@@ -29,7 +29,7 @@ namespace Test
 	
 	class Program
 	{
-		static void Main ()
+		public static void Main ()
 		{
 			var value = new S<int> ();
 			var e = from item in value

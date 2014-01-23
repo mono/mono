@@ -1,6 +1,6 @@
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		while (true) {
 			if (true)

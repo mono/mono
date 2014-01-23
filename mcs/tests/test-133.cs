@@ -17,7 +17,7 @@ class T {
 		ss.b = 2;
 		s = ss;
 	}
-	static int Main() {
+	public static int Main() {
 		OpCode op;
 		OpFlags flags;
 		S s;

@@ -9,7 +9,7 @@ interface Iface
 
 public class MySubClass : Iface
 {
-	static int Main ()
+	public static int Main ()
 	{
 		MySubClass m = new MySubClass ();
 		m [1] = true;

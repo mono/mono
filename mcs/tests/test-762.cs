@@ -15,5 +15,5 @@ public class DerivedAttribute : Attribute {
 
 [Derived ()]
 class T {
-	static void Main () {}
+	public static void Main () {}
 }

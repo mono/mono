@@ -1,3 +1,4 @@
+System.ServiceProcess/ServiceBaseTest.cs
 System.ServiceProcess/ServiceControllerTest.cs
 System.ServiceProcess/ServiceControllerPermissionAttributeTest.cs
 System.ServiceProcess/ServiceControllerPermissionTest.cs

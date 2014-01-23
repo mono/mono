@@ -54,7 +54,7 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Expressions {
 			return visitor.Sizeof (pc, this.Type, dest, data);
 		}
 
-		public override Expr<TSymbolicValue> Substitute (IImmutableMap<TSymbolicValue, LispList<TSymbolicValue>> substitutions)
+		public override Expr<TSymbolicValue> Substitute (IImmutableMap<TSymbolicValue, Sequence<TSymbolicValue>> substitutions)
 		{
 			return this;
 		}

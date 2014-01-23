@@ -34,6 +34,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace System.Net {
@@ -54,24 +55,128 @@ namespace System.Net {
 			this.length = header.Length;
 		}
 
-		public bool GetNextNameValue (out string name, out string val)
+		public IEnumerable<Cookie> Parse ()
 		{
-			name = null;
-			val = null;
+			while (pos < length) {
+				Cookie cookie;
+				try {
+					cookie = DoParse ();
+				} catch {
+					while ((pos < length) && (header [pos] != ','))
+						pos++;
+					pos++;
+					continue;
+				}
+				yield return cookie;
+			}
+		}
 
+		Cookie DoParse ()
+		{
+			var name = GetCookieName ();
 			if (pos >= length)
-				return false;
+				return new Cookie (name, string.Empty);
 
-			name = GetCookieName ();
-			if (pos < header.Length && header [pos] == '=') {
+			var value = string.Empty;
+			if (header [pos] == '=') {
 				pos++;
-				val = GetCookieValue ();
+				value = GetCookieValue ();
 			}
 
-			if (pos < length && header [pos] == ';')
-				pos++;
+			var cookie = new Cookie (name, value);
 
-			return true;
+			if (pos >= length) {
+				return cookie;
+			} else if (header [pos] == ',') {
+				pos++;
+				return cookie;
+			} else if ((header [pos++] != ';') || (pos >= length)) {
+				return cookie;
+			}
+
+			while (pos < length) {
+				var argName = GetCookieName ();
+				string argVal = string.Empty;
+				if ((pos < length) && (header [pos] == '=')) {
+					pos++;
+					argVal = GetCookieValue ();
+				}
+				ProcessArg (cookie, argName, argVal);
+
+				if (pos >= length)
+					break;
+				if (header [pos] == ',') {
+					pos++;
+					break;
+				} else if (header [pos] != ';') {
+					break;
+				}
+
+				pos++;
+			}
+
+			return cookie;
+		}
+
+		void ProcessArg (Cookie cookie, string name, string val)
+		{
+			if ((name == null) || (name == string.Empty))
+				throw new InvalidOperationException ();
+
+			name = name.ToUpper ();
+			switch (name) {
+			case "COMMENT":
+				if (cookie.Comment == null)
+					cookie.Comment = val;
+				break;
+			case "COMMENTURL":
+				if (cookie.CommentUri == null)
+					cookie.CommentUri = new Uri (val);
+				break;
+			case "DISCARD":
+				cookie.Discard = true;
+				break;
+			case "DOMAIN":
+				if (cookie.Domain == "")
+					cookie.Domain = val;
+				break;
+			case "HTTPONLY":
+				cookie.HttpOnly = true;
+				break;
+			case "MAX-AGE": // RFC Style Set-Cookie2
+				if (cookie.Expires == DateTime.MinValue) {
+					try {
+					cookie.Expires = cookie.TimeStamp.AddSeconds (UInt32.Parse (val));
+					} catch {}
+				}
+				break;
+			case "EXPIRES": // Netscape Style Set-Cookie
+				if (cookie.Expires != DateTime.MinValue)
+					break;
+
+				if ((pos < length) && (header [pos] == ',') && IsWeekDay (val)) {
+					pos++;
+					val = val + ", " + GetCookieValue ();
+				}
+
+				cookie.Expires = CookieParser.TryParseCookieExpires (val);
+				break;
+			case "PATH":
+				cookie.Path = val;
+				break;
+			case "PORT":
+				if (cookie.Port == null)
+					cookie.Port = val;
+				break;
+			case "SECURE":
+				cookie.Secure = true;
+				break;
+			case "VERSION":
+				try {
+					cookie.Version = (int) UInt32.Parse (val);
+				} catch {}
+				break;
+			}
 		}
 
 		string GetCookieName ()
@@ -81,7 +186,7 @@ namespace System.Net {
 				k++;
 
 			int begin = k;
-			while (k < length && header [k] != ';' &&  header [k] != '=')
+			while (k < length && header [k] != ';' && header [k] != ',' && header [k] != '=')
 				k++;
 
 			pos = k;
@@ -100,30 +205,44 @@ namespace System.Net {
 			int begin;
 			if (header [k] == '"'){
 				int j;
-				begin = ++k;
+				begin = k++;
 
 				while (k < length && header [k] != '"')
 					k++;
 
-				for (j = k; j < length && header [j] != ';'; j++)
+				for (j = ++k; j < length && header [j] != ';' && header [j] != ','; j++)
 					;
 				pos = j;
 			} else {
 				begin = k;
-				while (k < length && header [k] != ';')
+				while (k < length && header [k] != ';' && header [k] != ',')
 					k++;
 				pos = k;
 			}
-				
+
 			return header.Substring (begin, k - begin).Trim ();
 		}
+
+		static bool IsWeekDay (string value)
+		{
+			foreach (string day in weekDays) {
+				if (value.ToLower ().Equals (day))
+					return true;
+			}
+			return false;
+		}
+
+		static string[] weekDays =
+			new string[] { "mon", "tue", "wed", "thu", "fri", "sat", "sun",
+				       "monday", "tuesday", "wednesday", "thursday",
+				       "friday", "saturday", "sunday" };
 
 		static string[] cookieExpiresFormats =
 			new string[] { "r",
 					"ddd, dd'-'MMM'-'yyyy HH':'mm':'ss 'GMT'",
 					"ddd, dd'-'MMM'-'yy HH':'mm':'ss 'GMT'" };
 
-		static public DateTime TryParseCookieExpires (string value)
+		static DateTime TryParseCookieExpires (string value)
 		{
 			if (String.IsNullOrEmpty (value))
 				return DateTime.MinValue;

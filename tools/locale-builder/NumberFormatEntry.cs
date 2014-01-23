@@ -68,6 +68,9 @@ namespace Mono.Tools.LocaleBuilder
 		{
 			get
 			{
+				if (InfinitySymbol.StartsWith (PositiveSign))
+					return NegativeSign + InfinitySymbol.Substring (1, InfinitySymbol.Length - 1);
+	
 				return NegativeSign + InfinitySymbol;
 			}
 		}
@@ -76,7 +79,7 @@ namespace Mono.Tools.LocaleBuilder
 		{
 			get
 			{
-				return InfinitySymbol == "Infinity" ? InfinitySymbol : PositiveSign + InfinitySymbol;
+				return InfinitySymbol;
 			}
 		}
 

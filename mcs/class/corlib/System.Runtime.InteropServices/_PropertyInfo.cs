@@ -14,7 +14,9 @@ namespace System.Runtime.InteropServices
 	[CLSCompliant (false)]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("F59ED4E4-E68F-3218-BD77-061AA82824BF")]
+#if !FULL_AOT_RUNTIME
 	[TypeLibImportClass (typeof (PropertyInfo))]
+#endif
 	[ComVisible (true)]
 	public interface _PropertyInfo
 	{

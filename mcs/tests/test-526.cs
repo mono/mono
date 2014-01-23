@@ -49,7 +49,7 @@ interface IM2 : IM1
 
 class Test
 {
-	static void Main ()
+	public static void Main ()
 	{
 	}
 	

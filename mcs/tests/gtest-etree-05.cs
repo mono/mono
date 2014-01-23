@@ -18,7 +18,7 @@ class C
 		}
 	}
 	
-	static int Main()
+	public static int Main()
 	{
 		// It also tests constant boxing
 		Expression<Func<ArrayList>> e1 = () => new ArrayList { null, "Hello", "World", 5 };

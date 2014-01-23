@@ -20,7 +20,7 @@
 //
 // Copyright (C) 2007 Novell, Inc (http://www.novell.com)
 
-#if NET_2_0
+#if !MOBILE
 
 using NUnit.Framework;
 using System;

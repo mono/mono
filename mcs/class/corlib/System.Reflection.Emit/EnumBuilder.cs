@@ -31,6 +31,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+#if !FULL_AOT_RUNTIME
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -42,7 +43,14 @@ namespace System.Reflection.Emit {
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_EnumBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
-	public sealed class EnumBuilder : Type, _EnumBuilder {
+	public sealed class EnumBuilder : 
+#if NET_4_5
+		TypeInfo
+#else
+		Type
+#endif
+		, _EnumBuilder
+	{
 		private TypeBuilder _tb;
 		private FieldBuilder _underlyingField;
 		private Type _underlyingType;
@@ -411,5 +419,24 @@ namespace System.Reflection.Emit {
 		{
 			throw new NotImplementedException ();
 		}
+
+		internal override bool IsUserType {
+			get {
+				return false;
+			}
+		}
+
+#if NET_4_5
+		public override bool IsConstructedGenericType {
+			get { return false; }
+		}
+
+		public override bool IsAssignableFrom (TypeInfo typeInfo)
+		{
+			return base.IsAssignableFrom (typeInfo);
+		}
+#endif
+
 	}
 }
+#endif

@@ -48,7 +48,7 @@ namespace System.Net.Http
 		}
 
 		public HttpRequestMessage (HttpMethod method, string requestUri)
-			: this (method, string.IsNullOrEmpty (requestUri) ? (Uri) null : new Uri (requestUri))
+			: this (method, string.IsNullOrEmpty (requestUri) ? (Uri) null : new Uri (requestUri, System.UriKind.RelativeOrAbsolute))
 		{
 		}
 
@@ -89,7 +89,7 @@ namespace System.Net.Http
 				return uri;
 			}
 			set {
-				if (value != null && (value.Scheme != Uri.UriSchemeHttp && value.Scheme != Uri.UriSchemeHttps))
+				if (value != null && (value.IsAbsoluteUri && value.Scheme != Uri.UriSchemeHttp && value.Scheme != Uri.UriSchemeHttps))
 					throw new ArgumentException ("Only http or https scheme is allowed");
 
 				uri = value;

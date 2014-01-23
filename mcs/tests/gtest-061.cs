@@ -19,7 +19,7 @@ public class Foo<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Test<double,int> test = new Test<double,int> (Math.Sign);
 

@@ -26,7 +26,7 @@
 //
 //
 
-#if NET_4_5 || MOBILE
+#if NET_4_5
 using System;
 using System.Runtime.CompilerServices;
 

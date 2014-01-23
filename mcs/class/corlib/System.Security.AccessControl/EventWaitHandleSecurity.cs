@@ -4,8 +4,10 @@
 // Authors:
 //	Dick Porter  <dick@ximian.com>
 //	Atsushi Enomoto  <atsushi@ximian.com>
+//	James Bellinger  <jfb@zer7.com>
 //
 // Copyright (C) 2005-2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012      James Bellinger
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,6 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
 using System.Security.Principal;
 
 namespace System.Security.AccessControl
@@ -34,10 +37,16 @@ namespace System.Security.AccessControl
 	public sealed class EventWaitHandleSecurity : NativeObjectSecurity
 	{
 		public EventWaitHandleSecurity ()
+			: base (false, ResourceType.KernelObject)
 		{
-			throw new NotImplementedException ();
 		}
 
+		internal EventWaitHandleSecurity (SafeHandle handle,
+						  AccessControlSections includeSections)
+			: base (false, ResourceType.KernelObject, handle, includeSections)
+		{
+		}
+		
 		public override Type AccessRightType {
 			get { return typeof (EventWaitHandleRights); }
 		}
@@ -50,84 +59,73 @@ namespace System.Security.AccessControl
 			get { return typeof (EventWaitHandleAuditRule); }
 		}
 		
-		// AccessRule
-		
-		public override AccessRule AccessRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type)
+		public override AccessRule AccessRuleFactory (IdentityReference identityReference, int accessMask,
+							      bool isInherited, InheritanceFlags inheritanceFlags,
+							      PropagationFlags propagationFlags, AccessControlType type)
 		{
 			return new EventWaitHandleAccessRule (identityReference, (EventWaitHandleRights) accessMask, type);
 		}
 		
-		[MonoTODO]
 		public void AddAccessRule (EventWaitHandleAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			AddAccessRule ((AccessRule)rule);
 		}
 		
-		[MonoTODO]
 		public bool RemoveAccessRule (EventWaitHandleAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			return RemoveAccessRule ((AccessRule)rule);
 		}
 		
-		[MonoTODO]
 		public void RemoveAccessRuleAll (EventWaitHandleAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			RemoveAccessRuleAll ((AccessRule)rule);
 		}
 		
-		[MonoTODO]
 		public void RemoveAccessRuleSpecific (EventWaitHandleAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			RemoveAccessRuleSpecific ((AccessRule)rule);
 		}
 		
-		[MonoTODO]
 		public void ResetAccessRule (EventWaitHandleAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			ResetAccessRule ((AccessRule)rule);
 		}
 		
-		[MonoTODO]
 		public void SetAccessRule (EventWaitHandleAccessRule rule)
 		{
-			throw new NotImplementedException ();
+			SetAccessRule ((AccessRule)rule);
 		}
 		
-		// AuditRule
-		
-		public override AuditRule AuditRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags)
+		public override AuditRule AuditRuleFactory (IdentityReference identityReference, int accessMask,
+							    bool isInherited, InheritanceFlags inheritanceFlags,
+							    PropagationFlags propagationFlags, AuditFlags flags)
 		{
 			return new EventWaitHandleAuditRule (identityReference, (EventWaitHandleRights) accessMask, flags);
 		}
 		
-		[MonoTODO]
 		public void AddAuditRule (EventWaitHandleAuditRule rule)
 		{
-			throw new NotImplementedException ();
+			AddAuditRule ((AuditRule)rule);
 		}
 		
-		[MonoTODO]
 		public bool RemoveAuditRule (EventWaitHandleAuditRule rule)
 		{
-			throw new NotImplementedException ();
+			return RemoveAuditRule((AuditRule)rule);
 		}
 		
-		[MonoTODO]
 		public void RemoveAuditRuleAll (EventWaitHandleAuditRule rule)
 		{
-			throw new NotImplementedException ();
+			RemoveAuditRuleAll((AuditRule)rule);
 		}
 		
-		[MonoTODO]
 		public void RemoveAuditRuleSpecific (EventWaitHandleAuditRule rule)
 		{
-			throw new NotImplementedException ();
+			RemoveAuditRuleSpecific((AuditRule)rule);
 		}
 		
-		[MonoTODO]
 		public void SetAuditRule (EventWaitHandleAuditRule rule)
 		{
-			throw new NotImplementedException ();
+			SetAuditRule((AuditRule)rule);
 		}
 	}
 }

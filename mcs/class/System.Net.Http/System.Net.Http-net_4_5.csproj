@@ -5,55 +5,47 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{9862694d-e4fa-418b-8692-a0280feddf36}</ProjectGuid>
+    <ProjectGuid>{BE71D058-35CB-4623-AA66-631C7EB5F139}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>./../../class/lib/net_4_5</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\System.Net.Http-net_4_5</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
+    
     <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>System.Net.Http</AssemblyName>
-    <FileAlignment>512</FileAlignment>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
+    <NoWarn>1699</NoWarn>
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
-    <OutputPath>..\lib\net_4_5</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
+    <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
-    <OutputPath>..\lib\net_4_5</OutputPath>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
-    <Compile Include="System.Net.Http\ByteArrayContent.cs" />
-    <Compile Include="System.Net.Http\ClientCertificateOption.cs" />
-    <Compile Include="System.Net.Http\DelegatingHandler.cs" />
-    <Compile Include="System.Net.Http\FormUrlEncodedContent.cs" />
-    <Compile Include="System.Net.Http\HttpClient.cs" />
-    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
-    <Compile Include="System.Net.Http\HttpCompletionOption.cs" />
-    <Compile Include="System.Net.Http\HttpContent.cs" />
-    <Compile Include="System.Net.Http\HttpMessageHandler.cs" />
-    <Compile Include="System.Net.Http\HttpMethod.cs" />
-    <Compile Include="System.Net.Http\HttpRequestException.cs" />
-    <Compile Include="System.Net.Http\HttpRequestMessage.cs" />
-    <Compile Include="System.Net.Http\HttpResponseMessage.cs" />
-    <Compile Include="System.Net.Http\MessageProcessingHandler.cs" />
-    <Compile Include="System.Net.Http\StreamContent.cs" />
-    <Compile Include="System.Net.Http\StringContent.cs" />
     <Compile Include="System.Net.Http.Headers\AuthenticationHeaderValue.cs" />
     <Compile Include="System.Net.Http.Headers\CacheControlHeaderValue.cs" />
     <Compile Include="System.Net.Http.Headers\CollectionExtensions.cs" />
@@ -86,7 +78,25 @@
     <Compile Include="System.Net.Http.Headers\TransferCodingWithQualityHeaderValue.cs" />
     <Compile Include="System.Net.Http.Headers\ViaHeaderValue.cs" />
     <Compile Include="System.Net.Http.Headers\WarningHeaderValue.cs" />
-  </ItemGroup>
+    <Compile Include="System.Net.Http\ByteArrayContent.cs" />
+    <Compile Include="System.Net.Http\ClientCertificateOption.cs" />
+    <Compile Include="System.Net.Http\DelegatingHandler.cs" />
+    <Compile Include="System.Net.Http\FormUrlEncodedContent.cs" />
+    <Compile Include="System.Net.Http\HttpClient.cs" />
+    <Compile Include="System.Net.Http\HttpClientHandler.cs" />
+    <Compile Include="System.Net.Http\HttpCompletionOption.cs" />
+    <Compile Include="System.Net.Http\HttpContent.cs" />
+    <Compile Include="System.Net.Http\HttpMessageHandler.cs" />
+    <Compile Include="System.Net.Http\HttpMessageInvoker.cs" />
+    <Compile Include="System.Net.Http\HttpMethod.cs" />
+    <Compile Include="System.Net.Http\HttpRequestException.cs" />
+    <Compile Include="System.Net.Http\HttpRequestMessage.cs" />
+    <Compile Include="System.Net.Http\HttpResponseMessage.cs" />
+    <Compile Include="System.Net.Http\MessageProcessingHandler.cs" />
+    <Compile Include="System.Net.Http\MultipartContent.cs" />
+    <Compile Include="System.Net.Http\MultipartFormDataContent.cs" />
+    <Compile Include="System.Net.Http\StreamContent.cs" />
+    <Compile Include="System.Net.Http\StringContent.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -96,18 +106,27 @@
   -->
   <PropertyGroup>
     <PreBuildEvent>
+
     </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="Properties\" />
+    <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
+      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
+      <Name>corlib\corlib-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
+      <Project>{D8260595-C32F-4AC3-9C01-2CD2528CFA1D}</Project>
+      <Name>System.Core\System.Core-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_5-2.csproj">
+      <Project>{38FCD731-0E11-46F7-A31B-DCBE853AD8D7}</Project>
+      <Name>System\System-net_4_5-2</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.Core.dll" />
-    <Reference Include="System">
-      <HintPath>..\lib\net_4_5\System.dll</HintPath>
-    </Reference>
-    <Reference Include="mscorlib">
-      <HintPath>..\lib\net_4_5\mscorlib.dll</HintPath>
-    </Reference>
+    <Folder Include="Properties\" />
   </ItemGroup>
 </Project>

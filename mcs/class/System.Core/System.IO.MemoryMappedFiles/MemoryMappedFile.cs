@@ -26,7 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 
 using System;
 using System.IO;
@@ -124,7 +124,7 @@ namespace System.IO.MemoryMappedFiles
 				if (Syscall.stat (path, out buf) == -1)
 					UnixMarshal.ThrowExceptionForLastError ();
 
-				if ((capacity == 0 && buf.st_size == 0) || (capacity > buf.st_size))
+				if (capacity > buf.st_size)
 					throw new ArgumentException ("capacity");
 
 				int fd = Syscall.open (path, ToUnixMode (mode) | ToUnixMode (access), FilePermissions.DEFFILEMODE);
@@ -199,7 +199,7 @@ namespace System.IO.MemoryMappedFiles
 		}
 
 
-		[DllImport("kernel32.dll", SetLastError = true)]
+		[DllImport("kernel32", SetLastError = true)]
 		static extern bool SetHandleInformation (IntPtr hObject, int dwMask, int dwFlags);
 		static void ConfigureWindowsFD (IntPtr handle, HandleInheritability h)
 		{
@@ -236,8 +236,18 @@ namespace System.IO.MemoryMappedFiles
 		[DllImport ("libc", SetLastError=true)]
 		static extern int open (string path, int flags, int access);
 
+#if MONODROID
+		[DllImport ("__Internal")]
+		static extern int monodroid_getpagesize ();
+
+		static int getpagesize ()
+		{
+			return monodroid_getpagesize ();
+		}
+#else
 		[DllImport ("libc")]
 		static extern int getpagesize ();
+#endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern long mono_filesize_from_path (string str);
@@ -359,7 +369,7 @@ namespace System.IO.MemoryMappedFiles
 			if (file_size < 0)
 				throw new FileNotFoundException (path);
 
-			if ((capacity == 0 && file_size == 0) || (capacity > file_size))
+			if (capacity > file_size)
 				throw new ArgumentException ("capacity");
 
 			int fd = open (path, ToUnixMode (mode) | ToUnixMode (access), DEFFILEMODE);
@@ -497,7 +507,7 @@ namespace System.IO.MemoryMappedFiles
 				throw new ArgumentNullException ("fileStream");
 			if (mapName != null && mapName.Length == 0)
 				throw new ArgumentException ("mapName");
-			if ((capacity == 0 && fileStream.Length == 0) || (capacity > fileStream.Length))
+			if ((!MonoUtil.IsUnix && capacity == 0 && fileStream.Length == 0) || (capacity > fileStream.Length))
 				throw new ArgumentException ("capacity");
 
 			MemoryMapImpl.ConfigureFD (fileStream.Handle, inheritability);

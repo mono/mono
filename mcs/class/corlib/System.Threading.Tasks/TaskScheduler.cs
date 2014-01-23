@@ -26,7 +26,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -100,10 +100,16 @@ namespace System.Threading.Tasks
 				return id;
 			}
 		}
+
+		internal static bool IsDefault {
+			get {
+				return currentScheduler == null || currentScheduler == defaultScheduler;
+			}
+		}
 		
 		public virtual int MaximumConcurrencyLevel {
 			get {
-				return Environment.ProcessorCount;
+				return int.MaxValue;
 			}
 		}
 

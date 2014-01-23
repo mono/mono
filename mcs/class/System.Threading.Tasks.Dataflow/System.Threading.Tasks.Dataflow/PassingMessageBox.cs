@@ -1,6 +1,7 @@
 // PassingMessageBox.cs
 //
 // Copyright (c) 2011 Jérémie "garuma" Laval
+// Copyright (c) 2012 Petr Onderka
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,36 +20,35 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-//
 
-
-using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
 
-namespace System.Threading.Tasks.Dataflow
-{
-	internal class PassingMessageBox<TInput> : MessageBox<TInput>
-	{
-		readonly DataflowBlockOptions dataflowBlockOptions;
-		readonly Action processQueue;
-		
-		public PassingMessageBox (BlockingCollection<TInput> messageQueue,
-		                          CompletionHelper compHelper,
-		                          Func<bool> externalCompleteTester,
-		                          Action processQueue,
-		                          DataflowBlockOptions dataflowBlockOptions) : base (messageQueue, compHelper, externalCompleteTester)
+namespace System.Threading.Tasks.Dataflow {
+	/// <summary>
+	/// Message box for blocks that don't need any special processing of incoming items.
+	/// </summary>
+	class PassingMessageBox<TInput> : MessageBox<TInput> {
+		readonly Action<bool> processQueue;
+
+		public PassingMessageBox (
+			ITargetBlock<TInput> target, BlockingCollection<TInput> messageQueue,
+			CompletionHelper compHelper, Func<bool> externalCompleteTester,
+			Action<bool> processQueue, DataflowBlockOptions dataflowBlockOptions,
+			bool greedy = true, Func<bool> canAccept = null)
+			: base (target, messageQueue, compHelper, externalCompleteTester,
+				dataflowBlockOptions, greedy, canAccept)
 		{
-			this.dataflowBlockOptions = dataflowBlockOptions;
 			this.processQueue = processQueue;
 		}
 
-		protected override void EnsureProcessing ()
+		/// <summary>
+		/// Makes sure the input queue is processed the way it needs to.
+		/// Executes synchronously, so shouldn't cause any long processing.
+		/// </summary>
+		/// <param name="newItem">Was new item just added?</param>
+		protected override void EnsureProcessing (bool newItem)
 		{
-			processQueue ();
+			processQueue (newItem);
 		}
 	}
 }
-

@@ -153,7 +153,7 @@ namespace System.Xml.Linq
 
 		public override string ToString ()
 		{
-			if (ns == XNamespace.None)
+			if (Object.ReferenceEquals (ns, XNamespace.None))
 				return local;
 			return String.Concat ("{", ns.NamespaceName, "}", local);
 		}

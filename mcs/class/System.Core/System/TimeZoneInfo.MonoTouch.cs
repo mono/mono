@@ -5,7 +5,7 @@
 // Authors:
 //	Sebastien Pouliot  <sebastien@xamarin.com>
 //
-// Copyright 2011 Xamarin Inc.
+// Copyright 2011-2013 Xamarin Inc.
 //
 // The class can be either constructed from a string (from user code)
 // or from a handle (from iphone-sharp.dll internal calls).  This
@@ -35,55 +35,48 @@
 #if (INSIDE_CORLIB && MONOTOUCH)
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace System {
 
 	public partial class TimeZoneInfo {
 		
-		static Type nstimezone;
-		
-		static Type NSTimeZone {
-			get {
-				if (nstimezone == null)
-					nstimezone = Type.GetType ("MonoTouch.Foundation.NSTimeZone, monotouch, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
-				return nstimezone;
-			}
-		}
-		
+		[DllImport ("__Internal")]
+		extern static IntPtr monotouch_timezone_get_names (ref int count);
+
 		static ReadOnlyCollection<string> GetMonoTouchNames ()
 		{
-			try {
-				var p = NSTimeZone.GetProperty ("KnownTimeZoneNames", BindingFlags.Static | BindingFlags.Public);
-				var m = p.GetGetMethod ();
-				return (ReadOnlyCollection<string>) m.Invoke (null, null);
+			int count = 0;
+			IntPtr array = monotouch_timezone_get_names (ref count);
+			string [] names = new string [count];
+			for (int i = 0, offset = 0; i < count; i++, offset += IntPtr.Size) {
+				IntPtr p = Marshal.ReadIntPtr (array, offset);
+				names [i] = Marshal.PtrToStringAnsi (p);
+				Marshal.FreeHGlobal (p);
 			}
-			catch (TargetInvocationException tie) {
-				throw tie.InnerException;
-			}
+			Marshal.FreeHGlobal (array);
+			return new ReadOnlyCollection<string> (names);
 		}
-		
-		static Stream GetMonoTouchDefault ()
-		{
-			try {
-				var m = NSTimeZone.GetMethod ("_GetDefault", BindingFlags.Static | BindingFlags.NonPublic);
-				return (Stream) m.Invoke (null, null);
-			}
-			catch (TargetInvocationException tie) {
-				throw tie.InnerException;
-			}
-		}
+
+		[DllImport ("__Internal")]
+		extern static IntPtr monotouch_timezone_get_data (string name, ref int size);
 
 		static Stream GetMonoTouchData (string name)
 		{
-			try {
-				var m = NSTimeZone.GetMethod ("_GetData", BindingFlags.Static | BindingFlags.NonPublic);
-				return (Stream) m.Invoke (null, new object[] { name });
-			}
-			catch (TargetInvocationException tie) {
-				throw tie.InnerException;
+			int size = 0;
+			IntPtr data = monotouch_timezone_get_data (name, ref size);
+			if (size <= 0)
+				throw new TimeZoneNotFoundException ();
+
+			unsafe {
+				var s = new UnmanagedMemoryStream ((byte*) data, size);
+				s.Closed += delegate {
+					Marshal.FreeHGlobal (data);
+				};
+				return s;
 			}
 		}
 	}

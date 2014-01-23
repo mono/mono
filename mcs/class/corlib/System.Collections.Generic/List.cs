@@ -10,7 +10,7 @@
 //
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 // Copyright (C) 2005 David Waite
-// Copyright (C) 2011 Xamarin, Inc (http://www.xamarin.com)
+// Copyright (C) 2011,2012 Xamarin, Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,6 +35,7 @@
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace System.Collections.Generic {
 	[Serializable]
@@ -49,12 +50,11 @@ namespace System.Collections.Generic {
 		int _size;
 		int _version;
 		
-		static readonly T [] EmptyArray = new T [0]; 
 		const int DefaultCapacity = 4;
 		
 		public List ()
 		{
-			_items = EmptyArray;
+			_items = EmptyArray<T>.Value;
 		}
 		
 		public List (IEnumerable <T> collection)
@@ -65,11 +65,11 @@ namespace System.Collections.Generic {
 			// initialize to needed size (if determinable)
 			ICollection <T> c = collection as ICollection <T>;
 			if (c == null) {
-				_items = EmptyArray;
+				_items = EmptyArray<T>.Value;;
 				AddEnumerable (collection);
 			} else {
 				_size = c.Count;
-				_items = new T [Math.Max (_size, DefaultCapacity)];
+				_items = new T [_size];
 				c.CopyTo (_items, 0);
 			}
 		}
@@ -93,7 +93,7 @@ namespace System.Collections.Generic {
 			// we can speed things up by 25%
 			if (_size == _items.Length)
 				GrowIfNeeded (1);
-			_items [_size ++] = item;
+			_items [_size++] = item;
 			_version++;
 		}
 		
@@ -116,6 +116,18 @@ namespace System.Collections.Generic {
 				throw new ArgumentException ("index and count exceed length of list");
 		}
 		
+		void CheckRangeOutOfRange (int idx, int count)
+		{
+			if (idx < 0)
+				throw new ArgumentOutOfRangeException ("index");
+			
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count");
+
+			if ((uint) idx + (uint) count > (uint) _size)
+				throw new ArgumentOutOfRangeException ("index and count exceed length of list");
+		}
+
 		void AddCollection (ICollection <T> collection)
 		{
 			int collectionCount = collection.Count;
@@ -212,14 +224,27 @@ namespace System.Collections.Generic {
 		public bool Exists (Predicate <T> match)
 		{
 			CheckMatch(match);
-			return GetIndex(0, _size, match) != -1;
+
+			for (int i = 0; i < _size; i++) {
+				var item = _items [i];
+				if (match (item))
+					return true;
+			}
+
+			return false;
 		}
 		
 		public T Find (Predicate <T> match)
 		{
 			CheckMatch(match);
-			int i = GetIndex(0, _size, match);
-			return (i != -1) ? _items [i] : default (T);
+
+			for (int i = 0; i < _size; i++) {
+				var item = _items [i];
+				if (match (item))
+					return item;
+			}
+
+			return default (T);
 		}
 		
 		static void CheckMatch (Predicate <T> match)
@@ -296,68 +321,56 @@ namespace System.Collections.Generic {
 		public int FindIndex (Predicate <T> match)
 		{
 			CheckMatch (match);
-			return GetIndex (0, _size, match);
+			return Array.GetIndex (_items, 0, _size, match);
 		}
 		
 		public int FindIndex (int startIndex, Predicate <T> match)
 		{
 			CheckMatch (match);
-			CheckIndex (startIndex);
-			return GetIndex (startIndex, _size - startIndex, match);
+			CheckStartIndex (startIndex);
+			return Array.GetIndex (_items, startIndex, _size - startIndex, match);
 		}
 		public int FindIndex (int startIndex, int count, Predicate <T> match)
 		{
 			CheckMatch (match);
-			CheckRange (startIndex, count);
-			return GetIndex (startIndex, count, match);
-		}
-		int GetIndex (int startIndex, int count, Predicate <T> match)
-		{
-			int end = startIndex + count;
-			for (int i = startIndex; i < end; i ++)
-				if (match (_items [i]))
-					return i;
-				
-			return -1;
+			CheckRangeOutOfRange (startIndex, count);
+			return Array.GetIndex (_items, startIndex, count, match);
 		}
 		
 		public T FindLast (Predicate <T> match)
 		{
 			CheckMatch (match);
-			int i = GetLastIndex (0, _size, match);
+			int i = Array.GetLastIndex (_items, 0, _size, match);
 			return i == -1 ? default (T) : this [i];
 		}
 		
 		public int FindLastIndex (Predicate <T> match)
 		{
 			CheckMatch (match);
-			return GetLastIndex (0, _size, match);
+			return Array.GetLastIndex (_items, 0, _size, match);
 		}
 		
 		public int FindLastIndex (int startIndex, Predicate <T> match)
 		{
 			CheckMatch (match);
-			CheckIndex (startIndex);
-			return GetLastIndex (0, startIndex + 1, match);
+			CheckStartIndex (startIndex);
+			return Array.GetLastIndex (_items, 0, startIndex + 1, match);
 		}
 		
 		public int FindLastIndex (int startIndex, int count, Predicate <T> match)
 		{
 			CheckMatch (match);
-			int start = startIndex - count + 1;
-			CheckRange (start, count);
-			return GetLastIndex (start, count, match);
+			CheckStartIndex (startIndex);
+			
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count");
+
+			if (startIndex - count + 1 < 0)
+				throw new ArgumentOutOfRangeException ("count must refer to a location within the collection");
+
+			return Array.GetLastIndex (_items, startIndex - count + 1, count, match);
 		}
 
-		int GetLastIndex (int startIndex, int count, Predicate <T> match)
-		{
-			// unlike FindLastIndex, takes regular params for search range
-			for (int i = startIndex + count; i != startIndex;)
-				if (match (_items [--i]))
-					return i;
-			return -1;	
-		}
-		
 		public void ForEach (Action <T> action)
 		{
 			if (action == null)
@@ -422,6 +435,12 @@ namespace System.Collections.Generic {
 		{
 			if (index < 0 || (uint) index > (uint) _size)
 				throw new ArgumentOutOfRangeException ("index");
+		}
+
+		void CheckStartIndex (int index)
+		{
+			if (index < 0 || (uint) index > (uint) _size)
+				throw new ArgumentOutOfRangeException ("startIndex");
 		}
 		
 		public void Insert (int index, T item)
@@ -635,14 +654,16 @@ namespace System.Collections.Generic {
 		}
 		
 		public T this [int index] {
+			[MethodImpl ((MethodImplOptions)256)]
 			get {
 				if ((uint) index >= (uint) _size)
 					throw new ArgumentOutOfRangeException ("index");
-				return _items [index];
+				return Array.UnsafeLoad (_items, index);
 			}
+
+			[MethodImpl ((MethodImplOptions)256)]
 			set {
-				CheckIndex (index);
-				if ((uint) index == (uint) _size)
+				if ((uint) index >= (uint) _size)
 					throw new ArgumentOutOfRangeException ("index");
 				_items [index] = value;
 				_version++;
@@ -764,9 +785,9 @@ namespace System.Collections.Generic {
 				
 		[Serializable]
 		public struct Enumerator : IEnumerator <T>, IDisposable {
-			List <T> l;
+			readonly List<T> l;
 			int next;
-			int ver;
+			readonly int ver;
 
 			T current;
 
@@ -781,42 +802,39 @@ namespace System.Collections.Generic {
 			{
 			}
 
-			void VerifyState ()
-			{
-				if (ver != l._version)
-					throw new InvalidOperationException (
-						"Collection was modified; enumeration operation may not execute.");
-			}
-			
 			public bool MoveNext ()
 			{
-				VerifyState ();
+				var list = l;
 
-				if (next < 0)
-					return false;
-
-				if (next < l._size) {
-					current = l._items [next++];
+				if ((uint)next < (uint)list._size && ver == list._version) {
+					current = list._items [next++];
 					return true;
 				}
+
+				if (ver != l._version)
+					throw new InvalidOperationException ("Collection was modified; enumeration operation may not execute.");
 
 				next = -1;
 				return false;
 			}
-			
+
 			public T Current {
 				get { return current; }
 			}
 			
 			void IEnumerator.Reset ()
 			{
-				VerifyState ();
+				if (ver != l._version)
+					throw new InvalidOperationException ("Collection was modified; enumeration operation may not execute.");
+
 				next = 0;
 			}
 			
 			object IEnumerator.Current {
 				get {
-					VerifyState ();
+					if (ver != l._version)
+						throw new InvalidOperationException ("Collection was modified; enumeration operation may not execute.");
+
 					if (next <= 0)
 						throw new InvalidOperationException ();
 					return current;

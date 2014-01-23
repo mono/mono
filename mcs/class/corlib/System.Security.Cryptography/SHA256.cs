@@ -43,7 +43,11 @@ namespace System.Security.Cryptography {
 	
 		public static new SHA256 Create () 
 		{
+#if FULL_AOT_RUNTIME
+			return new System.Security.Cryptography.SHA256Managed ();
+#else
 			return Create ("System.Security.Cryptography.SHA256");
+#endif
 		}
 	
 		public static new SHA256 Create (string hashName) 

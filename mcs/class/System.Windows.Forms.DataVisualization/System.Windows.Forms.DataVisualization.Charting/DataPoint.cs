@@ -28,8 +28,7 @@ using System.Linq;
 
 namespace System.Windows.Forms.DataVisualization.Charting
 {
-	[MonoTODO ("Base class should be DataPointCustomProperties")]
-	public class DataPoint : ChartNamedElement
+	public class DataPoint : DataPointCustomProperties
 	{
 		#region Constructors
 		public DataPoint ()
@@ -39,32 +38,38 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public DataPoint (double xValue, double yValue)
 		{
 			XValue = xValue;
-			YValue = new double[] { yValue };
+			YValues = new double[] { yValue };
 		}
 
 		public DataPoint (double xValue, double[] yValues)
 		{
 			XValue = xValue;
-			YValue = yValues;
+			YValues = yValues;
 		}
 
 		[MonoTODO ()]
 		public DataPoint (Series series)
 		{
 		}
+
+		[MonoTODO ()]
+		public DataPoint(double xValue,	string yValues)
+		{
+		}
+
 		#endregion
 
 		#region Public Properties
 		public bool IsEmpty { get; set; }
 		public override string Name { get; set; }
 		public double XValue { get; set; }
-		public double[] YValue { get; set; }
+		public double[] YValues { get; set; }
 		#endregion
 
 		#region Public Methods
 		public DataPoint Clone ()
 		{
-			DataPoint clone = new DataPoint (XValue, YValue);
+			DataPoint clone = new DataPoint (XValue, YValues);
 			clone.IsEmpty = IsEmpty;
 			clone.Name = Name;
 
@@ -83,17 +88,17 @@ namespace System.Windows.Forms.DataVisualization.Charting
 
 			if (valueName.StartsWith ("y")) {
 				if (valueName.Length == 1)
-					return YValue[0];
+					return YValues[0];
 
 				int index = 0;
 
 				if (int.TryParse (valueName.Substring (1), out index)) {
-					if (index > YValue.Length)
+					if (index > YValues.Length)
 						throw new ArgumentException ("Y index greater than number of YValues");
 					if (index == 0)
 						throw new ArgumentException ("Y index must be greater than zero");
 
-					return YValue[index - 1];
+					return YValues[index - 1];
 				}
 			}
 
@@ -103,12 +108,12 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		public void SetValueXY (object xValue, params object[] yValue)
 		{
 			XValue = (double)xValue;
-			YValue = yValue.Cast<double> ().ToArray ();
+			YValues = yValue.Cast<double> ().ToArray ();
 		}
 
 		public void SetValueY (params object[] yValue)
 		{
-			YValue = yValue.Cast<double> ().ToArray ();
+			YValues = yValue.Cast<double> ().ToArray ();
 		}
 		#endregion
 	}

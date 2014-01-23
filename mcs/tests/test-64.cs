@@ -19,7 +19,7 @@ class Blah {
 }
 
 class T {
-	static int Main ()
+	public static int Main ()
 	{
 		Blah b = new Blah (Blah.Operator.A);
 

@@ -10,7 +10,7 @@ static class C
 
 class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		Action<int, int, int> test = (x, y, z) => {
 			int i = x + y + z;

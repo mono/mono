@@ -10,7 +10,7 @@ public class Test
 		IEnumerable<U> itu = ita;
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		Bla<string, object> ();
 	}

@@ -8,7 +8,7 @@ class MyString
 
 public class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		var v = new [] { new MyString (), "a" };
 		if (v [0] != "ggtt")

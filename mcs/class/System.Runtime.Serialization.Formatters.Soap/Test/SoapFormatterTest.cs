@@ -2,6 +2,8 @@
 using System;
 using System.Collections;
 using System.Reflection;
+using System.Threading;
+using System.Globalization;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization;
@@ -381,6 +383,42 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Soap {
 			Console.WriteLine ("PPP:" + ts[0].GetType());
 			Assertion.AssertEquals ("#6", typeof(string), ts[0]);
 			Assertion.AssertEquals ("#7", typeof(SignatureTest[]), ts[1]);
+		}
+
+		[Test]
+		public void TestCulture ()
+		{
+			var currentCulture = Thread.CurrentThread.CurrentCulture;
+			try {
+				Thread.CurrentThread.CurrentCulture = new CultureInfo ("de-DE");
+
+				var ms = new MemoryStream ();
+				var test = new CultureTest ();
+
+				_soapFormatter.Serialize(ms, test);
+				ms.Position = 0;
+				_soapFormatter.Deserialize(ms);
+			} finally {
+				Thread.CurrentThread.CurrentCulture = currentCulture;
+			}
+		}
+
+		[Serializable]
+		public class CultureTest
+		{
+			[OnDeserialized]
+			public void OnDeserialization (StreamingContext context)
+			{
+				var ci = Thread.CurrentThread.CurrentCulture;
+				Assertion.AssertEquals("#1", "German (Germany)", ci.EnglishName);
+			}
+			
+			[OnSerialized]
+			public void OnSerialized (StreamingContext context)
+			{
+				var ci = Thread.CurrentThread.CurrentCulture;
+				Assertion.AssertEquals("#2", "German (Germany)", ci.EnglishName);
+			}
 		}
 	}
 	

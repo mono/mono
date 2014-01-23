@@ -59,7 +59,7 @@ class Test
 		return -b;
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		if (NegateFooNullable (null).Value != 42)
 			return 1;

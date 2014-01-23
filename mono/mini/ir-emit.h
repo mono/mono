@@ -44,13 +44,13 @@ alloc_lreg (MonoCompile *cfg)
 static inline guint32
 alloc_freg (MonoCompile *cfg)
 {
-#ifdef MONO_ARCH_SOFT_FLOAT
-	/* Allocate an lvreg so float ops can be decomposed into long ops */
-	return alloc_lreg (cfg);
-#else
-	/* Allocate these from the same pool as the int regs */
-	return cfg->next_vreg ++;
-#endif
+	if (mono_arch_is_soft_float ()) {
+		/* Allocate an lvreg so float ops can be decomposed into long ops */
+		return alloc_lreg (cfg);
+	} else {
+		/* Allocate these from the same pool as the int regs */
+		return cfg->next_vreg ++;
+	}
 }
 
 static inline guint32
@@ -261,7 +261,16 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 
 #define NEW_TYPE_FROM_HANDLE_CONST(cfg,dest,image,token,generic_context) NEW_AOTCONST_TOKEN ((cfg), (dest), MONO_PATCH_INFO_TYPE_FROM_HANDLE, (image), (token), (generic_context), STACK_OBJ, mono_defaults.monotype_class)
 
-#define NEW_LDTOKENCONST(cfg,dest,image,token) NEW_AOTCONST_TOKEN ((cfg), (dest), MONO_PATCH_INFO_LDTOKEN, (image), (token), NULL, STACK_PTR, NULL)
+#define NEW_LDTOKENCONST(cfg,dest,image,token,generic_context) NEW_AOTCONST_TOKEN ((cfg), (dest), MONO_PATCH_INFO_LDTOKEN, (image), (token), (generic_context), STACK_PTR, NULL)
+
+#define NEW_TLS_OFFSETCONST(cfg,dest,key) do { \
+	if (cfg->compile_aot) { \
+		NEW_AOTCONST ((cfg), (dest), MONO_PATCH_INFO_TLS_OFFSET, GINT_TO_POINTER (key)); \
+	} else {															\
+		int _offset = mini_get_tls_offset ((key));							\
+		NEW_PCONST ((cfg), (dest), GINT_TO_POINTER (_offset)); \
+		} \
+	} while (0)
 
 #define NEW_DECLSECCONST(cfg,dest,image,entry) do { \
 		if (cfg->compile_aot) { \
@@ -291,6 +300,8 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 		} \
 	} while (0)
 
+#define NEW_JIT_ICALL_ADDRCONST(cfg,dest,name) NEW_AOTCONST ((cfg), (dest), MONO_PATCH_INFO_JIT_ICALL_ADDR, (name))
+
 #define GET_VARINFO_INST(cfg,num) ((cfg)->varinfo [(num)]->inst)
 
 #define NEW_VARLOAD(cfg,dest,var,vartype) do { \
@@ -303,11 +314,21 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
         if ((dest)->opcode == OP_VMOVE) (dest)->klass = mono_class_from_mono_type ((vartype)); \
 	} while (0)
 
-#ifdef MONO_ARCH_SOFT_FLOAT
-#define DECOMPOSE_INTO_REGPAIR(stack_type) ((stack_type) == STACK_I8 || (stack_type) == STACK_R8)
-#else
-#define DECOMPOSE_INTO_REGPAIR(stack_type) ((stack_type) == STACK_I8)
-#endif
+#define DECOMPOSE_INTO_REGPAIR(stack_type) (mono_arch_is_soft_float () ? ((stack_type) == STACK_I8 || (stack_type) == STACK_R8) : ((stack_type) == STACK_I8))
+
+static inline void
+handle_gsharedvt_ldaddr (MonoCompile *cfg)
+{
+	/* The decomposition of ldaddr makes use of these two variables, so add uses for them */
+	MonoInst *use;
+
+	MONO_INST_NEW (cfg, use, OP_DUMMY_USE);
+	use->sreg1 = cfg->gsharedvt_info_var->dreg;
+	MONO_ADD_INS (cfg->cbb, use);
+	MONO_INST_NEW (cfg, use, OP_DUMMY_USE);
+	use->sreg1 = cfg->gsharedvt_locals_var->dreg;
+	MONO_ADD_INS (cfg->cbb, use);
+}
 
 #define NEW_VARLOADA(cfg,dest,var,vartype) do {	\
         MONO_INST_NEW ((cfg), (dest), OP_LDADDR); \
@@ -316,6 +337,8 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 		(dest)->type = STACK_MP;	\
 		(dest)->klass = (var)->klass;	\
         (dest)->dreg = alloc_dreg ((cfg), STACK_MP); \
+		(cfg)->has_indirection = TRUE;	\
+			  if (G_UNLIKELY (cfg->gsharedvt) && mini_is_gsharedvt_variable_type ((cfg), (var)->inst_vtype)) { handle_gsharedvt_ldaddr ((cfg)); } \
 		if (SIZEOF_REGISTER == 4 && DECOMPOSE_INTO_REGPAIR ((var)->type)) { MonoInst *var1 = get_vreg_to_inst (cfg, (var)->dreg + 1); MonoInst *var2 = get_vreg_to_inst (cfg, (var)->dreg + 2); g_assert (var1); g_assert (var2); var1->flags |= MONO_INST_INDIRECT; var2->flags |= MONO_INST_INDIRECT; } \
 	} while (0)
 
@@ -424,7 +447,9 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 
 #define EMIT_NEW_TYPE_FROM_HANDLE_CONST(cfg,dest,image,token,generic_context) do { NEW_AOTCONST_TOKEN ((cfg), (dest), MONO_PATCH_INFO_TYPE_FROM_HANDLE, (image), (token), (generic_context), STACK_OBJ, mono_defaults.monotype_class); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
-#define EMIT_NEW_LDTOKENCONST(cfg,dest,image,token) do { NEW_AOTCONST_TOKEN ((cfg), (dest), MONO_PATCH_INFO_LDTOKEN, (image), (token), NULL, STACK_PTR, NULL); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
+#define EMIT_NEW_LDTOKENCONST(cfg,dest,image,token,generic_context) do { NEW_AOTCONST_TOKEN ((cfg), (dest), MONO_PATCH_INFO_LDTOKEN, (image), (token), (generic_context), STACK_PTR, NULL); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
+
+#define EMIT_NEW_TLS_OFFSETCONST(cfg,dest,key) do { NEW_TLS_OFFSETCONST ((cfg), (dest), (key)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 #define EMIT_NEW_DOMAINCONST(cfg,dest) do { NEW_DOMAINCONST ((cfg), (dest)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
@@ -432,14 +457,15 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 
 #define EMIT_NEW_METHOD_RGCTX_CONST(cfg,dest,method) do { NEW_METHOD_RGCTX_CONST ((cfg), (dest), (method)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
+#define EMIT_NEW_JIT_ICALL_ADDRCONST(cfg,dest,name) do { NEW_JIT_ICALL_ADDRCONST ((cfg), (dest), (name)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
+
 #define EMIT_NEW_VARLOAD(cfg,dest,var,vartype) do { NEW_VARLOAD ((cfg), (dest), (var), (vartype)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 #define EMIT_NEW_VARSTORE(cfg,dest,var,vartype,inst) do { NEW_VARSTORE ((cfg), (dest), (var), (vartype), (inst)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 #define EMIT_NEW_VARLOADA(cfg,dest,var,vartype) do { NEW_VARLOADA ((cfg), (dest), (var), (vartype)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
-
-#ifdef MONO_ARCH_SOFT_FLOAT
+#ifdef MONO_ARCH_SOFT_FLOAT_FALLBACK
 
 /*
  * Since the IL stack (and our vregs) contain double values, we have to do a conversion
@@ -447,33 +473,61 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
  */
 
 #define EMIT_NEW_VARLOAD_SFLOAT(cfg,dest,var,vartype) do { \
-		if (COMPILE_SOFT_FLOAT ((cfg)) && !(vartype)->byref && (vartype)->type == MONO_TYPE_R4) { \
-             MonoInst *iargs [1]; \
-             EMIT_NEW_VARLOADA (cfg, iargs [0], (var), (vartype)); \
-             (dest) = mono_emit_jit_icall (cfg, mono_fload_r4, iargs); \
-        } else { \
-             EMIT_NEW_VARLOAD ((cfg), (dest), (var), (vartype)); \
-        } \
-    } while (0)
+		if (!COMPILE_LLVM ((cfg)) && !(vartype)->byref && (vartype)->type == MONO_TYPE_R4) { \
+			MonoInst *iargs [1]; \
+			EMIT_NEW_VARLOADA (cfg, iargs [0], (var), (vartype)); \
+			(dest) = mono_emit_jit_icall (cfg, mono_fload_r4, iargs); \
+		} else { \
+			EMIT_NEW_VARLOAD ((cfg), (dest), (var), (vartype)); \
+		} \
+	} while (0)
 
 #define EMIT_NEW_VARSTORE_SFLOAT(cfg,dest,var,vartype,inst) do {	\
 		if (COMPILE_SOFT_FLOAT ((cfg)) && !(vartype)->byref && (vartype)->type == MONO_TYPE_R4) { \
-             MonoInst *iargs [2]; \
-             iargs [0] = (inst); \
-             EMIT_NEW_VARLOADA (cfg, iargs [1], (var), (vartype)); \
-             mono_emit_jit_icall (cfg, mono_fstore_r4, iargs); \
-        } else { \
-             EMIT_NEW_VARSTORE ((cfg), (dest), (var), (vartype), (inst)); \
-        } \
-    } while (0)
+			MonoInst *iargs [2]; \
+			iargs [0] = (inst); \
+			EMIT_NEW_VARLOADA (cfg, iargs [1], (var), (vartype)); \
+			mono_emit_jit_icall (cfg, mono_fstore_r4, iargs); \
+		} else { \
+			EMIT_NEW_VARSTORE ((cfg), (dest), (var), (vartype), (inst)); \
+		} \
+	} while (0)
 
-#define EMIT_NEW_ARGLOAD(cfg,dest,num) EMIT_NEW_VARLOAD_SFLOAT ((cfg), (dest), cfg->args [(num)], cfg->arg_types [(num)])
+#define EMIT_NEW_ARGLOAD(cfg,dest,num) do {	\
+		if (mono_arch_is_soft_float ()) {	\
+			EMIT_NEW_VARLOAD_SFLOAT ((cfg), (dest), cfg->args [(num)], cfg->arg_types [(num)]);	\
+		} else {	\
+			NEW_ARGLOAD ((cfg), (dest), (num));	\
+			MONO_ADD_INS ((cfg)->cbb, (dest));	\
+		}	\
+	} while (0)
 
-#define EMIT_NEW_LOCLOAD(cfg,dest,num) EMIT_NEW_VARLOAD_SFLOAT ((cfg), (dest), cfg->locals [(num)], header->locals [(num)])
+#define EMIT_NEW_LOCLOAD(cfg,dest,num) do {	\
+		if (mono_arch_is_soft_float ()) {	\
+			EMIT_NEW_VARLOAD_SFLOAT ((cfg), (dest), cfg->locals [(num)], header->locals [(num)]);	\
+		} else {	\
+			NEW_LOCLOAD ((cfg), (dest), (num));	\
+			MONO_ADD_INS ((cfg)->cbb, (dest));	\
+		}	\
+	} while (0)
 
-#define EMIT_NEW_LOCSTORE(cfg,dest,num,inst) EMIT_NEW_VARSTORE_SFLOAT ((cfg), (dest), (cfg)->locals [(num)], (cfg)->locals [(num)]->inst_vtype, (inst))
+#define EMIT_NEW_LOCSTORE(cfg,dest,num,inst) do {	\
+		if (mono_arch_is_soft_float ()) {	\
+			EMIT_NEW_VARSTORE_SFLOAT ((cfg), (dest), (cfg)->locals [(num)], (cfg)->locals [(num)]->inst_vtype, (inst));	\
+		} else {	\
+			NEW_LOCSTORE ((cfg), (dest), (num), (inst));	\
+			MONO_ADD_INS ((cfg)->cbb, (dest));	\
+		}	\
+	} while (0)
 
-#define EMIT_NEW_ARGSTORE(cfg,dest,num,inst) EMIT_NEW_VARSTORE_SFLOAT ((cfg), (dest), cfg->args [(num)], cfg->arg_types [(num)], (inst))
+#define EMIT_NEW_ARGSTORE(cfg,dest,num,inst) do {	\
+		if (mono_arch_is_soft_float ()) {	\
+			EMIT_NEW_VARSTORE_SFLOAT ((cfg), (dest), cfg->args [(num)], cfg->arg_types [(num)], (inst));	\
+		} else {	\
+			NEW_ARGSTORE ((cfg), (dest), (num), (inst));	\
+			MONO_ADD_INS ((cfg)->cbb, (dest));	\
+		}	\
+	} while (0)
 
 #else
 
@@ -714,8 +768,8 @@ static int ccount = 0;
             ins->inst_false_bb = NULL; \
             mono_link_bblock ((cfg), (cfg)->cbb, (truebb)); \
             MONO_ADD_INS ((cfg)->cbb, ins); \
-            if (getenv ("COUNT2") && ccount == atoi (getenv ("COUNT2")) - 1) { printf ("HIT: %d\n", cfg->cbb->block_num); } \
-            if (getenv ("COUNT2") && ccount < atoi (getenv ("COUNT2"))) { \
+            if (g_getenv ("COUNT2") && ccount == atoi (g_getenv ("COUNT2")) - 1) { printf ("HIT: %d\n", cfg->cbb->block_num); } \
+            if (g_getenv ("COUNT2") && ccount < atoi (g_getenv ("COUNT2"))) { \
                  cfg->cbb->extended = TRUE; \
             } else { NEW_BBLOCK ((cfg), falsebb); ins->inst_false_bb = (falsebb); mono_link_bblock ((cfg), (cfg)->cbb, (falsebb)); MONO_START_BB ((cfg), falsebb); } \
         } \
@@ -781,8 +835,6 @@ static int ccount = 0;
 
 /* Loads/Stores which can fault are handled correctly by the LLVM mono branch */
 #define MONO_EMIT_NEW_IMPLICIT_EXCEPTION_LOAD_STORE(cfg) do { \
-	if (COMPILE_LLVM (cfg) && !IS_LLVM_MONO_BRANCH)			\
-		MONO_EMIT_NEW_IMPLICIT_EXCEPTION ((cfg));			\
     } while (0)
 
 /* Emit an explicit null check which doesn't depend on SIGSEGV signal handling */
@@ -810,8 +862,6 @@ static int ccount = 0;
 		int __ins_flags = ins_flags; \
 		if (__ins_flags & MONO_INST_FAULT) {								\
 			MONO_EMIT_NULL_CHECK ((cfg), (base));						\
-			if (cfg->explicit_null_checks)								\
-				__ins_flags &= ~MONO_INST_FAULT;							\
 		}																\
 		NEW_LOAD_MEMBASE ((cfg), (dest), (op), (dr), (base), (offset));	\
 		(dest)->flags = (__ins_flags);									\
@@ -822,8 +872,6 @@ static int ccount = 0;
 		int __ins_flags = ins_flags; \
 	    if (__ins_flags & MONO_INST_FAULT) {									\
 			MONO_EMIT_NULL_CHECK ((cfg), (base));						\
-			if (cfg->explicit_null_checks)								\
-				__ins_flags &= ~MONO_INST_FAULT;							\
 		}																\
 		NEW_LOAD_MEMBASE ((cfg), (inst), (op), (dr), (base), (offset)); \
 		inst->flags = (__ins_flags); \
@@ -844,6 +892,12 @@ static int ccount = 0;
 
 #define MONO_EMIT_NEW_LOAD_MEMBASE_FAULT(cfg,dr,base,offset) MONO_EMIT_NEW_LOAD_MEMBASE_OP_FAULT ((cfg), (OP_LOAD_MEMBASE), (dr), (base), (offset))
 
+#define NEW_LOAD_MEMBASE_INVARIANT(cfg,dest,op,dr,base,offset) NEW_LOAD_MEMBASE_FLAGS ((cfg), (dest), (op), (dr), (base), (offset), MONO_INST_INVARIANT_LOAD)
+
+#define MONO_EMIT_NEW_LOAD_MEMBASE_OP_INVARIANT(cfg,op,dr,base,offset) MONO_EMIT_NEW_LOAD_MEMBASE_OP_FLAGS ((cfg), (op), (dr), (base), (offset), MONO_INST_INVARIANT_LOAD)
+
+#define MONO_EMIT_NEW_LOAD_MEMBASE_INVARIANT(cfg,dr,base,offset) MONO_EMIT_NEW_LOAD_MEMBASE_OP_INVARIANT ((cfg), (OP_LOAD_MEMBASE), (dr), (base), (offset))
+
 /*Object Model related macros*/
 
 /* Default bounds check implementation for most architectures + llvm */
@@ -852,7 +906,7 @@ static int ccount = 0;
 			if (fault) \
 				MONO_EMIT_NEW_LOAD_MEMBASE_OP_FAULT (cfg, OP_LOADI4_MEMBASE, _length_reg, array_reg, offset); \
 			else \
-				MONO_EMIT_NEW_LOAD_MEMBASE_OP_FLAGS (cfg, OP_LOADI4_MEMBASE, _length_reg, array_reg, offset, MONO_INST_CONSTANT_LOAD); \
+				MONO_EMIT_NEW_LOAD_MEMBASE_OP_FLAGS (cfg, OP_LOADI4_MEMBASE, _length_reg, array_reg, offset, MONO_INST_INVARIANT_LOAD); \
 			MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, _length_reg, index_reg); \
 			MONO_EMIT_NEW_COND_EXC (cfg, LE_UN, "IndexOutOfRangeException"); \
 	} while (0)

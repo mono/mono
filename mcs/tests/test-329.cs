@@ -10,7 +10,7 @@ class X : Attribute {
 			ID = 55;
 	}
 	
-	static int Main () {
+	public static int Main () {
 		object[] attrs = typeof(X).GetCustomAttributes(typeof (X),false);
 		if (attrs.Length != 1)
 			return 2;

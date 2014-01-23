@@ -2,7 +2,7 @@ using System;
 
 class Program
 {
-	static int Main ()
+	public static int Main ()
 	{
 		B b = new B ();
 		if (b.Message != "OK")

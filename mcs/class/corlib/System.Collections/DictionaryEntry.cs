@@ -37,7 +37,6 @@ using System.Runtime.InteropServices;
 namespace System.Collections {
 
 	[ComVisible(true)]
-	[System.Diagnostics.DebuggerDisplay ("{_value}", Name="[{_key}]")]
 	[Serializable]
 	public struct DictionaryEntry {
 		private object _key;

@@ -35,9 +35,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Text;
-#if !MOONLIGHT
 using System.Xml.XPath;
-#endif
 #if NET_4_5
 using System.Threading;
 using System.Threading.Tasks;
@@ -47,9 +45,7 @@ namespace System.Xml
 {
 	public abstract class XmlWriter : IDisposable
 	{
-#if NET_2_0
 		XmlWriterSettings settings;
-#endif
 
 		#region Constructors
 
@@ -59,16 +55,12 @@ namespace System.Xml
 
 		#region Properties
 
-#if NET_2_0
 		public virtual XmlWriterSettings Settings {
 			get { return settings; }
 		}
-#endif
 
 		public abstract WriteState WriteState { get; }
-		
 
-#if NET_2_0
 		public virtual string XmlLang {
 			get { return null; }
 		}
@@ -76,11 +68,6 @@ namespace System.Xml
 		public virtual XmlSpace XmlSpace {
 			get { return XmlSpace.None; }
 		}
-#else
-		public abstract string XmlLang { get; }
-
-		public abstract XmlSpace XmlSpace { get; }
-#endif
 
 		#endregion
 
@@ -96,7 +83,6 @@ namespace System.Xml
 		public abstract void Close ();
 #endif
 
-#if NET_2_0
 		public static XmlWriter Create (Stream output)
 		{
 			return Create (output, null);
@@ -203,7 +189,7 @@ namespace System.Xml
 			Close ();
 		}
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		public void Dispose ()
 #else
 		void IDisposable.Dispose() 
@@ -211,7 +197,6 @@ namespace System.Xml
 		{
 			Dispose (false);
 		}
-#endif
 
 		public abstract void Flush ();
 
@@ -223,10 +208,6 @@ namespace System.Xml
 				return;
 
 			WriteStartAttribute (reader.Prefix, reader.LocalName, reader.NamespaceURI);
-#if MOONLIGHT
-			// no ReadAttributeValue() in 2.1 profile.
-			WriteString (reader.Value);
-#else
 			while (reader.ReadAttributeValue ()) {
 				switch (reader.NodeType) {
 				case XmlNodeType.Text:
@@ -237,7 +218,6 @@ namespace System.Xml
 					break;
 				}
 			}
-#endif
 			WriteEndAttribute ();
 		}
 
@@ -292,16 +272,12 @@ namespace System.Xml
 
 		public abstract void WriteBase64 (byte[] buffer, int index, int count);
 
-#if NET_2_0
 		public virtual void WriteBinHex (byte [] buffer, int index, int count)
 		{
 			StringWriter sw = new StringWriter ();
 			XmlConvert.WriteBinHex (buffer, index, count, sw);
 			WriteString (sw.ToString ());
 		}
-#else
-		public abstract void WriteBinHex (byte[] buffer, int index, int count);
-#endif
 
 		public abstract void WriteCData (string text);
 
@@ -329,7 +305,6 @@ namespace System.Xml
 			WriteEndElement();
 		}
 
-#if NET_2_0
 		public void WriteElementString (string prefix, string localName, string ns, string value)
 		{
 			WriteStartElement(prefix, localName, ns);
@@ -337,7 +312,6 @@ namespace System.Xml
 				WriteString(value);
 			WriteEndElement();
 		}
-#endif
 
 		public abstract void WriteEndAttribute ();
 
@@ -349,7 +323,6 @@ namespace System.Xml
 
 		public abstract void WriteFullEndElement ();
 
-#if NET_2_0
 		public virtual void WriteName (string name)
 		{
 			WriteNameInternal (name);
@@ -364,42 +337,27 @@ namespace System.Xml
 		{
 			WriteQualifiedNameInternal (localName, ns);
 		}
-#else
-		public abstract void WriteName (string name);
-
-		public abstract void WriteNmToken (string name);
-
-		public abstract void WriteQualifiedName (string localName, string ns);
-#endif
 
 		internal void WriteNameInternal (string name)
 		{
-#if NET_2_0
 			switch (Settings.ConformanceLevel) {
 			case ConformanceLevel.Document:
 			case ConformanceLevel.Fragment:
 				XmlConvert.VerifyName (name);
 				break;
 			}
-#else
-			XmlConvert.VerifyName (name);
-#endif
 			WriteString (name);
 		}
 
 		internal virtual void WriteNmTokenInternal (string name)
 		{
 			bool valid = true;
-#if NET_2_0
 			switch (Settings.ConformanceLevel) {
 			case ConformanceLevel.Document:
 			case ConformanceLevel.Fragment:
 				valid = XmlChar.IsNmToken (name);
 					break;
 			}
-#else
-			valid = XmlChar.IsNmToken (name);
-#endif
 			if (!valid)
 				throw new ArgumentException ("Argument name is not a valid NMTOKEN.");
 			WriteString (name);
@@ -412,7 +370,6 @@ namespace System.Xml
 			if (ns == null)
 				ns = String.Empty;
 
-#if NET_2_0
 			if (Settings != null) {
 				switch (Settings.ConformanceLevel) {
 				case ConformanceLevel.Document:
@@ -423,9 +380,6 @@ namespace System.Xml
 			}
 			else
 				XmlConvert.VerifyNCName (localName);
-#else
-			XmlConvert.VerifyNCName (localName);
-#endif
 
 			string prefix = ns.Length > 0 ? LookupPrefix (ns) : String.Empty;
 			if (prefix == null)
@@ -440,7 +394,6 @@ namespace System.Xml
 				WriteString (localName);
 		}
 
-#if !MOONLIGHT
 		public virtual void WriteNode (XPathNavigator navigator, bool defattr)
 		{
 			if (navigator == null)
@@ -510,7 +463,6 @@ namespace System.Xml
 				throw new NotSupportedException ();
 			}
 		}
-#endif
 
 		public virtual void WriteNode (XmlReader reader, bool defattr)
 		{
@@ -605,12 +557,10 @@ namespace System.Xml
 
 		public abstract void WriteRaw (char[] buffer, int index, int count);
 
-#if NET_2_0
 		public void WriteStartAttribute (string localName)
 		{
 			WriteStartAttribute (null, localName, null);
 		}
-#endif
 
 		public void WriteStartAttribute (string localName, string ns)
 		{
@@ -641,7 +591,6 @@ namespace System.Xml
 
 		public abstract void WriteWhitespace (string ws);
 
-#if NET_2_0
 		public virtual void WriteValue (bool value)
 		{
 			WriteString (XQueryConvert.BooleanToString (value));
@@ -744,7 +693,6 @@ namespace System.Xml
 		{
 			WriteString (XmlConvert.ToString (value));
 		}
-#endif
 #endif
 
 		#endregion

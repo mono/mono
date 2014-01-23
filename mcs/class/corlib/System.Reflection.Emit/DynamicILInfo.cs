@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !FULL_AOT_RUNTIME
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -66,7 +67,7 @@ namespace System.Reflection.Emit {
 		}
 
 		public int GetTokenFor (RuntimeMethodHandle method) {
-			MethodInfo mi = (MethodInfo)MethodBase.GetMethodFromHandle (method);
+			MethodBase mi = MethodBase.GetMethodFromHandle (method);
 			return this.method.GetILGenerator ().TokenGenerator.GetToken (mi, false);
 		}
 
@@ -129,3 +130,4 @@ namespace System.Reflection.Emit {
 	}
 }
 
+#endif

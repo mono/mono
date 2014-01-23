@@ -170,6 +170,15 @@ namespace System.DirectoryServices
 			}
 		}
 
+		[MonoTODO]
+		public string PropertyName
+		{
+			get
+			{
+				return string.Empty;
+			}
+		}
+
 		public object Value 
 		{
 			get

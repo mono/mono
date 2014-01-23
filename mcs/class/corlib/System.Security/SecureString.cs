@@ -33,11 +33,14 @@ using System.Runtime.InteropServices;
 using System.Runtime.ConstrainedExecution;
 using System.Security.Cryptography;
 using System.Security.Permissions;
+#if NET_4_0
+using System.Runtime.ExceptionServices;
+#endif
 
 namespace System.Security {
 
 	[MonoTODO ("work in progress - encryption is missing")]
-	public sealed class SecureString : CriticalFinalizerObject, IDisposable {
+	public sealed class SecureString : IDisposable {
 
 		private const int BlockSize = 16;
 		private const int MaxSize = 65536;
@@ -88,6 +91,9 @@ namespace System.Security {
 			}
 		}
 
+#if NET_4_0
+		[HandleProcessCorruptedStateExceptions]
+#endif
 		public void AppendChar (char c)
 		{
 			if (disposed)
@@ -144,6 +150,9 @@ namespace System.Security {
 			length = 0;
 		}
 
+#if NET_4_0
+		[HandleProcessCorruptedStateExceptions]
+#endif
 		public void InsertAt (int index, char c)
 		{
 			if (disposed)
@@ -185,6 +194,9 @@ namespace System.Security {
 			read_only = true;
 		}
 
+#if NET_4_0
+		[HandleProcessCorruptedStateExceptions]
+#endif
 		public void RemoveAt (int index)
 		{
 			if (disposed)
@@ -198,7 +210,7 @@ namespace System.Security {
 
 			try {
 				Decrypt ();
-				Buffer.BlockCopy (data, index + 1, data, index, data.Length - index - 1);
+				Buffer.BlockCopy (data, index * 2 + 2, data, index * 2, data.Length - index * 2 - 2);
 				Alloc (--length, true);
 			}
 			finally {
@@ -206,6 +218,9 @@ namespace System.Security {
 			}
 		}
 
+#if NET_4_0
+		[HandleProcessCorruptedStateExceptions]
+#endif
 		public void SetAt (int index, char c)
 		{
 			if (disposed)

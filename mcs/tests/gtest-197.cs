@@ -67,7 +67,7 @@ namespace Martin.Collections.Generic {
 
 	class X
 	{
-		static void Main ()
+		public static void Main ()
 		{ }
 	}
 }

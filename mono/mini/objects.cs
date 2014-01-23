@@ -26,6 +26,11 @@ using System.Runtime.CompilerServices;
  * the IL code looks.
  */
 
+#if MOBILE
+namespace ObjectTests
+{
+#endif
+
 struct Simple {
 	public int a;
 	public byte b;
@@ -114,9 +119,11 @@ struct Gamma {
 
 class Tests {
 
-	static int Main () {
-		return TestDriver.RunTests (typeof (Tests));
+#if !MOBILE
+	public static int Main (string[] args) {
+		return TestDriver.RunTests (typeof (Tests), args);
 	}
+#endif
 	
 	public static int test_0_return () {
 		Simple s;
@@ -1078,7 +1085,8 @@ class Tests {
 	}
 	public static int test_0_cond_branch_side_effects () {
 		counter = 5;
-		if (WriteStuff());
+		if (WriteStuff()) {
+		}
 		if (counter == 10)
 			return 0;
 		return 1;
@@ -1548,5 +1556,77 @@ ncells ) {
 		getInstance ();
 		return 0;
 	}
+
+	struct BStruct {
+		public Type t;
+	}
+
+	class Del<T> {
+		public static BStruct foo () {
+			return new BStruct () { t = typeof (T) };
+		}
+	}
+
+	delegate BStruct ADelegate ();
+
+	static int test_0_regress_10601 () {
+		var act = (ADelegate)(Del<string>.foo);
+		BStruct b = act ();
+		if (b.t != typeof (string))
+			return 1;
+		return 0;
+	}
+
+	static int test_0_regress_11058 () {
+		int foo = -252674008;
+		int foo2 = (int)(foo ^ 0xF0F0F0F0); // = 28888
+		var arr = new byte[foo2].Length;
+		return 0;
+	}
+
+	public static void do_throw () {
+		throw new Exception ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static void empty () {
+	}
+
+	// #11297
+	public static int test_0_llvm_inline_throw () {
+		try {
+			empty ();
+		} catch (Exception) {
+			do_throw ();
+		}
+
+		return 0;
+	}
+
+	enum ByteEnum : byte {
+        Zero = 0
+    }
+
+    struct BugStruct {
+        public ByteEnum f1;
+        public ByteEnum f2;
+        public ByteEnum f3;
+        public byte f4;
+        public byte f5;
+        public byte f6;
+        public byte f7;
+    }
+
+	public static int test_0_14217 () {
+		t_14217_inner (new BugStruct ());
+		return 0;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static void t_14217_inner (BugStruct bug) {
+    }
 }
 
+#if MOBILE
+}
+#endif

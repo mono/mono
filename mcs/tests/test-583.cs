@@ -1,6 +1,6 @@
 class Program
 {
-	static int Main ()
+	public static int Main ()
 	{
 		IExtContainer e = null;
 		ObjectContainerBase b = null;

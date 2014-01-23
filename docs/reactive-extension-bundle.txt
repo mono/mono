@@ -1,0 +1,49 @@
+With this change, we bundle Reactive Extensions from Microsoft.
+
+Steps to do:
+
+- Until we add submodule, check out Rx sources from http://rx.codeplex.com:
+
+	$ cd external
+	$ git clone git://github.com/atsushieno/rx.git
+	$ cd rx
+	$ git checkout rx-oss-v1.0
+	$ cd ../..
+
+  Note that the original repo at rx.codeplex.com will *fail* on Linux!
+  codeplex.codeplex.com/workitem/26133
+  Also note that rx.codeplex.com is huge and takes very long time to checkout.
+
+- expand rx-mono-changes-3.tar.bz2
+
+	$ tar jxvf rx-mono-changes-3.tar.bz2
+
+- Apply changes to mcs/class/Makefile:
+
+	$ cd mcs/class
+	$ patch -i add-rx-libs.patch -p3
+	$ cd ../..
+
+Then it should be done.
+
+Note that this does not include Mono.Reactive.Testing into the build yet -
+this library depends on nunit.framework.dll but it wouldn't be built before
+this assembly is built. This needs to be resolved.
+
+** Current Status
+
+- We don't have Microsoft.Reactive.Testing.dll. Instead, I created an
+  alternative Mono.Reactive.Testing.dll which *mostly* uses MS sources for
+  that assembly but uses NUnit.Framework instead.
+
+  To make it happen, I added a small script that automatically replaces
+  MSTest dependency parts with that for NUnit (replacer.sh under rx tree).
+
+  (We'll also have to rename namespaces and have more source changes, but
+  so far it is to get things runnable.)
+
+- To check the build sanity, I imported unit tests (as explained above)
+  and it is supposed to run by "make run-test" in Mono.Reactive.Testing
+  directory (the tests were all in one place in MS tests, so I made it
+  in Mono.Reactive.Testing directory instead).
+

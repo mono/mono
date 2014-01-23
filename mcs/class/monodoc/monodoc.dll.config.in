@@ -1,0 +1,7 @@
+<configuration>
+        <appSettings>
+                <add key="docPath" value="@monodoc_refdir@" />
+                <add key="docExternalPath" value="" />
+                <!-- <add key="cache" value="file,~/path/to/cache/directory" /> -->
+        </appSettings>
+</configuration>

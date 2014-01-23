@@ -1,7 +1,7 @@
-// Compiler options: -warnaserror
-
 // This ensures that any "unreachable code" warning will error out
-// rather than generate invalid IL
+// rather than generate invalid IL or crash compiler
+
+using System;
 
 class Foo
 {
@@ -19,5 +19,26 @@ class Foo
 		} while (x > y);
 
 		return 1;
+	}
+
+	public static string Test_2 ()
+	{
+		throw new Exception ();
+
+		var account = "yo";
+		if (account == null) {
+		}
+
+		var s = "yo";
+
+		switch (8) {
+		case 1:
+		case 2:
+			break;
+		default:
+			throw new NotSupportedException ();
+		}
+
+		return s;
 	}
 }

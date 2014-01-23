@@ -26,6 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !MOBILE
+
 using System;
 using System.IO;
 using System.Text;
@@ -95,3 +97,5 @@ Content-Type: application/xop+xml;charset=utf-8;type=""sTaRt""
 		}
 	}
 }
+
+#endif

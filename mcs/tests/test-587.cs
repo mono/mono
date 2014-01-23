@@ -1,6 +1,6 @@
 class Program
 {
-	static int Main ()
+	public static int Main ()
 	{
 		int ctc_f = 0;
 

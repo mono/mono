@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
-MOONLIGHT_SUBDIRS = $(libgc_dir) eglib/src mono
+MONOTOUCH_SUBDIRS = $(libgc_dir) eglib/src mono
 
 if CROSS_COMPILING
 SUBDIRS = po $(libgc_dir) eglib mono $(ikvm_native_dir) data runtime scripts man samples msvc $(docs_dir)
@@ -8,13 +8,17 @@ SUBDIRS = po $(libgc_dir) eglib mono $(ikvm_native_dir) data runtime scripts man
 ## 'tools' is not normally built
 DIST_SUBDIRS = m4 po libgc eglib mono ikvm-native data runtime scripts man samples tools msvc docs
 else
-if ONLY_MOONLIGHT
-SUBDIRS = $(MOONLIGHT_SUBDIRS) runtime
+if ONLY_MONOTOUCH
+SUBDIRS = $(MONOTOUCH_SUBDIRS) runtime
+else
+if ONLY_XAMMAC
+SUBDIRS = $(libgc_dir) eglib/src mono runtime
 else
 SUBDIRS = po $(libgc_dir) eglib mono $(ikvm_native_dir) support data runtime scripts man samples msvc $(docs_dir)
 # Keep in sync with SUBDIRS
 ## 'tools' is not normally built
 DIST_SUBDIRS = m4 po libgc eglib mono ikvm-native support data runtime scripts man samples tools msvc docs
+endif
 endif
 endif
 
@@ -27,6 +31,7 @@ update_submodules:
 .PHONY: update_submodules
 
 EXTRA_DIST= \
+        README.md \
 	    LICENSE \
 	    autogen.sh \
 	    build-mingw32.sh \
@@ -43,6 +48,7 @@ GIT_DIR ?= $(srcdir)/.git
 dist-hook:
 	test -d $(distdir)/mcs || mkdir $(distdir)/mcs
 	d=`cd $(distdir)/mcs && pwd`; cd $(mcs_topdir) && $(MAKE) distdir=$$d dist-recursive
+	rm -rf `find $(top_distdir)/external -path '*\.git' -and -type d`
 # Disable this for now because it is very slow and causes wrench to timeout:
 #	test ! -d $(GIT_DIR) || ./scripts/commits-to-changelog.py --root=$(distdir) last-commit-with-compulsory-changelog-entry
 
@@ -54,7 +60,7 @@ DISTCLEANFILES= mono-uninstalled.pc
 mcslib = $(mcs_topdir)/class/lib
 monolite = $(mcslib)/monolite
 mono_corlib_version = $(shell sed -n "s/\#define MONO_CORLIB_VERSION //p" $(srcdir)/mono/metadata/appdomain.c)
-monolite_url = http://mono.ximian.com/daily/monolite-$(mono_corlib_version)-latest.tar.gz
+monolite_url = http://storage.bos.xamarin.com/mono-dist-master/latest/monolite-$(mono_corlib_version)-latest.tar.gz
 .PHONY: get-monolite-latest 
 get-monolite-latest:
 	-rm -fr $(mcslib)/monolite-*
@@ -86,28 +92,28 @@ mcs-do-compiler-tests:
 bootstrap-world: compiler-tests
 	$(MAKE) install
 
-if MOONLIGHT
-moon-do-build: config.h
-	@list='$(MOONLIGHT_SUBDIRS)'; for subdir in $$list; do \
+if INSTALL_MONOTOUCH
+monotouch-do-build: config.h
+	@list='$(MONOTOUCH_SUBDIRS)'; for subdir in $$list; do \
 	  case "x$$subdir" in \
-		xmono ) target="moon-do-build";; \
+		xmono ) target="monotouch-do-build";; \
 		* ) target="all";; \
 	  esac; \
 	  echo "Making $$target in $$subdir"; \
 	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$target); \
         done;
-	(cd runtime && $(MAKE) $(AM_MAKEFLAGS) moon-do-build)
+	(cd runtime && $(MAKE) $(AM_MAKEFLAGS) monotouch-do-build)
 
-moon-do-clean:
-	@list='$(MOONLIGHT_SUBDIRS)'; for subdir in $$list; do \
+monotouch-do-clean:
+	@list='$(MONOTOUCH_SUBDIRS)'; for subdir in $$list; do \
 	  case "x$$subdir" in \
-		xmono ) target="moon-do-clean";; \
+		xmono ) target="monotouch-do-clean";; \
 		* ) target="clean";; \
 	  esac; \
 	  echo "Making $$target in $$subdir"; \
 	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$target); \
         done;
-	(cd runtime && $(MAKE) $(AM_MAKEFLAGS) moon-do-clean)
+	(cd runtime && $(MAKE) $(AM_MAKEFLAGS) monotouch-do-clean)
 
 endif
 
@@ -128,12 +134,10 @@ win32getdeps:
 win32setup:
 	makensis /DMILESTONE=$(VERSION) /DSOURCE_INSTALL_DIR=$(SOURCE_INSTALL_DIR) /DBUILDNUM=$(BUILDNUM) monowiz.win32.nsi
 
-patch-quiet:
-	find mono -name Makefile -exec scripts/patch-quiet.sh {} \;
-	find libgc -name Makefile -exec scripts/patch-quiet.sh {} \;
-
 update-csproj:
 	-rm msvc/scripts/order 
+	-rm msvc/scripts/order.xml
+	-rm -rf msvc/scripts/inputs
 	-mkdir msvc/scripts/inputs
 	(cd runtime; make V=1 extra_targets=csproj-local)
 
@@ -142,16 +146,23 @@ package-inputs:
 	echo '<root>' >> msvc/scripts/order.xml
 	for i in `cat msvc/scripts/order`; do \
 		set `echo $$i | sed -e 's/:/ /' -e 's/.input//'`; \
-		cat msvc/scripts/inputs/$$2.input | \
+		cat msvc/scripts/inputs/$$2.input | sed -e 's/\\\\/\\/g' -e 's/\\/\\\\/g' | \
 		(echo "    <project dir=\"$$1\" library=\"$$2\">"; \
 		 read boot;   echo "      <boot>$$boot</boot>"; \
-		 read mcs;    echo "      <mcs>$$mcs</mcs>"; \
 		 read flags;  echo "      <flags>$$flags</flags>"; \
 		 read output; echo "      <output>$$output</output>"; \
-		 read built;  echo "      <built_sources>$$built</built_sources>"; \
+		 read built;  echo "      <built_sources>`echo $$built | sed 's/\\\/\\\\/g'`</built_sources>"; \
 		 read libou;  echo "      <library_output>$$libou</library_output>"; \
 		 read fx_ver; echo "      <fx_version>$$fx_ver</fx_version>"; \
+		 read profile; echo "      <profile>$$profile</profile>"; \
 		 read resp;   echo "      <response>$$resp</response>"; \
-		echo "    </project>") >> msvc/scripts/order.xml; \
+		 echo "    </project>") >> msvc/scripts/order.xml; \
 	done
 	echo "</root>" >> msvc/scripts/order.xml
+
+# Update llvm version in configure.in to the output of $LLVM_DIR/bin/llvm-config --version
+update-llvm-version:
+	if test "x$$LLVM_DIR" = "x"; then echo "Set the make variable LLVM_DIR to the directory containing the LLVM installation."; exit 1; fi
+	REV=`$(LLVM_DIR)/bin/llvm-config --version` && sed -e "s,expected_llvm_version=.*,expected_llvm_version=\"$$REV\"," < configure.in > tmp && mv tmp configure.in && echo "Version set to $$REV."
+
+

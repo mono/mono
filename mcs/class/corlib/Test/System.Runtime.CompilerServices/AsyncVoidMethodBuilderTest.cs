@@ -62,7 +62,6 @@ namespace MonoTests.System.Runtime.CompilerServices
 			{
 				if (state is Exception) {
 					++PostCounter;
-					base.Post (d, state);
 				}
 			}
 
@@ -86,6 +85,8 @@ namespace MonoTests.System.Runtime.CompilerServices
 		public void SetException ()
 		{
 			var context = new MyContext ();
+			var old = SynchronizationContext.Current;
+
 			try {
 				SynchronizationContext.SetSynchronizationContext (context);
 				var awaiter = AsyncVoidMethodBuilder.Create ();
@@ -109,7 +110,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 				Assert.AreEqual (0, context.SendCounter, "#11");
 				Assert.AreEqual (1, context.PostCounter, "#12");
 			} finally {
-				SynchronizationContext.SetSynchronizationContext (null);
+				SynchronizationContext.SetSynchronizationContext (old);
 			}
 		}
 	}

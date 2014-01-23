@@ -104,7 +104,7 @@ public class CryptoConfigTest {
 		CreateFromName ("System.Security.Cryptography.HMACSHA1", "System.Security.Cryptography.HMACSHA1");
 		CreateFromName ("MACTripleDES", "System.Security.Cryptography.MACTripleDES");
 		CreateFromName ("System.Security.Cryptography.MACTripleDES", "System.Security.Cryptography.MACTripleDES");
-#if NET_2_0
+
 		// new HMAC - new base class doesn't return anything with it's short name
 		Assert.IsNull (CryptoConfig.CreateFromName ("HMAC"), "HMAC");
 		CreateFromName ("System.Security.Cryptography.HMAC", "System.Security.Cryptography.HMACSHA1");
@@ -123,13 +123,13 @@ public class CryptoConfigTest {
 		CreateFromName ("RIPEMD-160", "System.Security.Cryptography.RIPEMD160Managed");
 		CreateFromName ("System.Security.Cryptography.RIPEMD160", "System.Security.Cryptography.RIPEMD160Managed");
 		// x.509 stuff
-#if !TARGET_JVM //TargetJvmNotWorking - this algorithm should be added to System
+#if !MOBILE
 		CreateFromName ("X509Chain", "System.Security.Cryptography.X509Certificates.X509Chain");
-#endif
-#endif
+
 		// note: CryptoConfig can create any object !
 		CreateFromName ("System.Security.Cryptography.CryptoConfig", "System.Security.Cryptography.CryptoConfig");
 		CreateFromName ("System.IO.MemoryStream", "System.IO.MemoryStream");
+#endif
 		// non existing algo should return null (without exception)
 		Assert.IsNull (CryptoConfig.CreateFromName ("NonExistingAlgorithm"), "NonExistingAlgorithm");
 	}

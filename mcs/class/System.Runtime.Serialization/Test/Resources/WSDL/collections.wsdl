@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions name="MyService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://tempuri.org/" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing">
+  <wsdl:types>
+    <xs:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+      <xs:import namespace="http://schemas.datacontract.org/2004/07/TestWCF.Model" />
+      <xs:element name="GetSimpleList">
+        <xs:complexType>
+          <xs:sequence />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetSimpleListResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="GetSimpleListResult" nillable="true" type="q1:ArrayOfint" xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetListOfStringArray">
+        <xs:complexType>
+          <xs:sequence />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetListOfStringArrayResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="GetListOfStringArrayResult" nillable="true" type="q2:ArrayOfArrayOfstring" xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetListOfFoo">
+        <xs:complexType>
+          <xs:sequence />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetListOfFooResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="GetListOfFooResult" nillable="true" type="q3:ArrayOfFoo" xmlns:q3="http://schemas.datacontract.org/2004/07/TestWCF.Model" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetSimpleDictionary">
+        <xs:complexType>
+          <xs:sequence />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetSimpleDictionaryResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="GetSimpleDictionaryResult" nillable="true" type="q4:ArrayOfKeyValueOfintstring" xmlns:q4="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+    <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/">
+      <xs:element name="anyType" nillable="true" type="xs:anyType" />
+      <xs:element name="anyURI" nillable="true" type="xs:anyURI" />
+      <xs:element name="base64Binary" nillable="true" type="xs:base64Binary" />
+      <xs:element name="boolean" nillable="true" type="xs:boolean" />
+      <xs:element name="byte" nillable="true" type="xs:byte" />
+      <xs:element name="dateTime" nillable="true" type="xs:dateTime" />
+      <xs:element name="decimal" nillable="true" type="xs:decimal" />
+      <xs:element name="double" nillable="true" type="xs:double" />
+      <xs:element name="float" nillable="true" type="xs:float" />
+      <xs:element name="int" nillable="true" type="xs:int" />
+      <xs:element name="long" nillable="true" type="xs:long" />
+      <xs:element name="QName" nillable="true" type="xs:QName" />
+      <xs:element name="short" nillable="true" type="xs:short" />
+      <xs:element name="string" nillable="true" type="xs:string" />
+      <xs:element name="unsignedByte" nillable="true" type="xs:unsignedByte" />
+      <xs:element name="unsignedInt" nillable="true" type="xs:unsignedInt" />
+      <xs:element name="unsignedLong" nillable="true" type="xs:unsignedLong" />
+      <xs:element name="unsignedShort" nillable="true" type="xs:unsignedShort" />
+      <xs:element name="char" nillable="true" type="tns:char" />
+      <xs:simpleType name="char">
+        <xs:restriction base="xs:int" />
+      </xs:simpleType>
+      <xs:element name="duration" nillable="true" type="tns:duration" />
+      <xs:simpleType name="duration">
+        <xs:restriction base="xs:duration">
+          <xs:pattern value="\-?P(\d*D)?(T(\d*H)?(\d*M)?(\d*(\.\d*)?S)?)?" />
+          <xs:minInclusive value="-P10675199DT2H48M5.4775808S" />
+          <xs:maxInclusive value="P10675199DT2H48M5.4775807S" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="guid" nillable="true" type="tns:guid" />
+      <xs:simpleType name="guid">
+        <xs:restriction base="xs:string">
+          <xs:pattern value="[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:attribute name="FactoryType" type="xs:QName" />
+      <xs:attribute name="Id" type="xs:ID" />
+      <xs:attribute name="Ref" type="xs:IDREF" />
+    </xs:schema>
+    <xs:schema elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+      <xs:complexType name="ArrayOfint">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="int" type="xs:int" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="ArrayOfint" nillable="true" type="tns:ArrayOfint" />
+      <xs:complexType name="ArrayOfArrayOfstring">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="ArrayOfstring" nillable="true" type="tns:ArrayOfstring" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="ArrayOfArrayOfstring" nillable="true" type="tns:ArrayOfArrayOfstring" />
+      <xs:complexType name="ArrayOfstring">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="ArrayOfstring" nillable="true" type="tns:ArrayOfstring" />
+      <xs:complexType name="ArrayOfKeyValueOfintstring">
+        <xs:annotation>
+          <xs:appinfo>
+            <IsDictionary xmlns="http://schemas.microsoft.com/2003/10/Serialization/">true</IsDictionary>
+          </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="KeyValueOfintstring">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="Key" type="xs:int" />
+                <xs:element name="Value" nillable="true" type="xs:string" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="ArrayOfKeyValueOfintstring" nillable="true" type="tns:ArrayOfKeyValueOfintstring" />
+    </xs:schema>
+    <xs:schema elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/TestWCF.Model" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.datacontract.org/2004/07/TestWCF.Model">
+      <xs:complexType name="ArrayOfFoo">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Foo" nillable="true" type="tns:Foo" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="ArrayOfFoo" nillable="true" type="tns:ArrayOfFoo" />
+      <xs:complexType name="Foo">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Text" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="Foo" nillable="true" type="tns:Foo" />
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="IMyService_GetSimpleList_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetSimpleList" />
+  </wsdl:message>
+  <wsdl:message name="IMyService_GetSimpleList_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetSimpleListResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMyService_GetListOfStringArray_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetListOfStringArray" />
+  </wsdl:message>
+  <wsdl:message name="IMyService_GetListOfStringArray_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetListOfStringArrayResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMyService_GetListOfFoo_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetListOfFoo" />
+  </wsdl:message>
+  <wsdl:message name="IMyService_GetListOfFoo_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetListOfFooResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMyService_GetSimpleDictionary_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetSimpleDictionary" />
+  </wsdl:message>
+  <wsdl:message name="IMyService_GetSimpleDictionary_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetSimpleDictionaryResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IMyService">
+    <wsdl:operation name="GetSimpleList">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMyService/GetSimpleList" message="tns:IMyService_GetSimpleList_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMyService/GetSimpleListResponse" message="tns:IMyService_GetSimpleList_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetListOfStringArray">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMyService/GetListOfStringArray" message="tns:IMyService_GetListOfStringArray_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMyService/GetListOfStringArrayResponse" message="tns:IMyService_GetListOfStringArray_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetListOfFoo">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMyService/GetListOfFoo" message="tns:IMyService_GetListOfFoo_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMyService/GetListOfFooResponse" message="tns:IMyService_GetListOfFoo_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSimpleDictionary">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMyService/GetSimpleDictionary" message="tns:IMyService_GetSimpleDictionary_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMyService/GetSimpleDictionaryResponse" message="tns:IMyService_GetSimpleDictionary_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="defaultEndpoint" type="tns:IMyService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetSimpleList">
+      <soap:operation soapAction="http://tempuri.org/IMyService/GetSimpleList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetListOfStringArray">
+      <soap:operation soapAction="http://tempuri.org/IMyService/GetListOfStringArray" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetListOfFoo">
+      <soap:operation soapAction="http://tempuri.org/IMyService/GetListOfFoo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSimpleDictionary">
+      <soap:operation soapAction="http://tempuri.org/IMyService/GetSimpleDictionary" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="MyService">
+    <wsdl:port name="defaultEndpoint" binding="tns:defaultEndpoint">
+      <soap:address location="http://provcon-faust/TestWCF/MyService.svc" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

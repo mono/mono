@@ -67,12 +67,18 @@
 /* Determine the machine type: */
 # if defined(__native_client__)
 #    define NACL
-#    define I386
-#    define mach_type_known
+#    if !defined(__portable_native_client__) && !defined(__arm__)
+#        define I386
+#        define mach_type_known
+#    else
+         /* Here we will rely upon arch-specific defines. */
+#    endif
 # endif
 # if defined(__arm__) || defined(__thumb__)
 #    define ARM32
-#    if !defined(LINUX) && !defined(NETBSD) && !defined(DARWIN)
+#    if defined(NACL)
+#      define mach_type_known
+#    elif !defined(LINUX) && !defined(NETBSD) && !defined(DARWIN)
 #      define NOSYS
 #      define mach_type_known
 #    endif
@@ -312,6 +318,7 @@
 #   define mach_type_known
 # endif
 # ifdef DARWIN
+#    include "TargetConditionals.h"
 #   if defined(__ppc__)  || defined(__ppc64__)
 #    define POWERPC
 #    define mach_type_known
@@ -320,7 +327,9 @@
 #    define mach_type_known
 #    define DARWIN_DONT_PARSE_STACK
 #    define OS_TYPE "DARWIN"
-#    define DYNAMIC_LOADING
+#    if TARGET_IPHONE_SIMULATOR == 0
+#     define DYNAMIC_LOADING
+#    endif
      /* XXX: see get_end(3), get_etext() and get_end() should not be used.
         These aren't used when dyld support is enabled (it is by default) */
 #    define DATASTART ((ptr_t) get_etext())
@@ -925,6 +934,30 @@
 #   endif
 # endif
 
+
+# ifdef NACL
+#   define OS_TYPE "NACL"
+#   if defined(__GLIBC__)
+#      define DYNAMIC_LOADING
+#   endif
+#   define DATASTART ((ptr_t)0x10020000)
+    extern int _end[];
+#   define DATAEND (_end)
+#   ifdef STACK_GRAN
+#      undef STACK_GRAN
+#   endif /* STACK_GRAN */
+#   define STACK_GRAN 0x10000
+#   define HEURISTIC1
+#   define USE_MMAP
+#   define USE_MUNMAP
+#   define USE_MMAP_ANON
+#   ifdef USE_MMAP_FIXED
+#	undef USE_MMAP_FIXED
+#   endif
+#   define GETPAGESIZE() 65536
+#   define MAX_NACL_GC_THREADS 1024
+# endif
+
 # ifdef VAX
 #   define MACH_TYPE "VAX"
 #   define ALIGNMENT 4	/* Pointers are longword aligned by 4.2 C compiler */
@@ -1201,33 +1234,6 @@
 #	  define HEAP_START DATAEND
 #	endif /* USE_MMAP */
 #   endif /* DGUX */
-#   ifdef NACL
-#	define OS_TYPE "NACL"
-	extern int etext[];
-//#	define DATASTART ((ptr_t)((((word) (etext)) + 0xfff) & ~0xfff))
-#       define DATASTART ((ptr_t)0x10000000)
-	extern int _end[];
-#	define DATAEND (_end)
-#	ifdef STACK_GRAN
-#	  undef STACK_GRAN
-#	endif /* STACK_GRAN */
-#	define STACK_GRAN 0x10000
-#	define HEURISTIC1
-#	ifdef USE_MMAP
-#	  undef USE_MMAP
-#	endif
-#	ifdef USE_MUNMAP
-#	  undef USE_MUNMAP
-#	endif
-#	ifdef USE_MMAP_ANON
-#	  undef USE_MMAP_ANON
-#	endif
-#	ifdef USE_MMAP_FIXED
-#	  undef USE_MMAP_FIXED
-#	endif
-#	define GETPAGESIZE() 65536
-#	define MAX_NACL_GC_THREADS 1024
-#   endif
 #   ifdef LINUX
 #	ifndef __GNUC__
 	  /* The Intel compiler doesn't like inline assembly */
@@ -1905,12 +1911,12 @@
 #       define OS_TYPE "LINUX"
 #       define LINUX_STACKBOTTOM
 #       define DYNAMIC_LOADING
-	extern int __data_start[];
+	extern int __data_start[] __attribute__((weak));
 #       define DATASTART ((ptr_t)(__data_start))
-    extern int _end[];
-#   define DATAEND (_end)
-#   define CACHE_LINE_SIZE 256
-#   define GETPAGESIZE() 4096
+        extern int _end[] __attribute__((weak));
+#       define DATAEND (_end)
+#       define CACHE_LINE_SIZE 256
+#       define GETPAGESIZE() 4096
 #   endif
 # endif
 
@@ -1922,8 +1928,12 @@
 # endif
 
 # ifdef ARM32
-#   define CPP_WORDSZ 32
+# if defined( NACL )
+#   define MACH_TYPE "NACL"
+# else
 #   define MACH_TYPE "ARM32"
+# endif
+#   define CPP_WORDSZ 32
 #   define ALIGNMENT 4
 #   ifdef NETBSD
 #       define OS_TYPE "NETBSD"

@@ -71,6 +71,7 @@ namespace MonoTests.System.ServiceModel.Description
 			Assert.IsFalse (c.CanConvert (typeof (QueryStringConverter)), "#18");
 			// TypeConverterAttribute does not help it.
 			Assert.IsFalse (c.CanConvert (typeof (MyConvertible)), "#19");
+			Assert.IsTrue (c.CanConvert (typeof (DemoEnum)), "#20");
 		}
 
 		// ConvertStringToValue
@@ -139,7 +140,21 @@ namespace MonoTests.System.ServiceModel.Description
 			Assert.AreEqual ("123", c.ConvertValueToString (123.0, typeof (double)), "#3");
 		}
 
+		[Test]
+		public void ConvertValueToStringEnum ()
+		{
+			string stringValue = c.ConvertValueToString (DemoEnum.Value2, typeof (DemoEnum));
+			Assert.AreEqual ("Value2", stringValue);
+		}
+
 		// ConvertStringToValue
+
+		[Test]
+		public void ConvertStringToValueEnum ()
+		{
+			Assert.AreEqual (DemoEnum.Value3, (DemoEnum)c.ConvertStringToValue ("Value3", typeof(DemoEnum)));
+			Assert.AreEqual (DemoEnum.Value2, (DemoEnum)c.ConvertStringToValue ("value2", typeof(DemoEnum)));
+		}
 
 		[Test]
 		[ExpectedException (typeof (FormatException))]
@@ -193,6 +208,14 @@ namespace MonoTests.System.ServiceModel.Description
 		}
 
 		// Types
+
+		public enum DemoEnum
+		{
+			Value1,
+			Value2,
+			Value3,
+			Value4,
+		}
 
 		[TypeConverter (typeof (MyTypeConverter))]
 		class MyConvertible

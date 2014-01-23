@@ -16,7 +16,7 @@ public static class X
 	static void Test<T> (T t)
 	{ }
 
-	static void Main ()
+	public static void Main ()
 	{
 		Foo<long> (Test);
 	}

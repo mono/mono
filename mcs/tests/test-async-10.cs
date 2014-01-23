@@ -10,43 +10,43 @@ class C
 {
 	static async Task<string> TestCompositionCall_1 ()
 	{
-		return await Task.Factory.StartNew (() => { Thread.Sleep (10); return "a"; }) +
-			await Task.Factory.StartNew (() => "b") + "c";
+		return await Task.Factory.StartNew (() => { Thread.Sleep (10); return "a"; }).ConfigureAwait (false) +
+			await Task.Factory.StartNew (() => "b").ConfigureAwait (false) + "c";
 	}
 
 	static async Task<string> TestCompositionCall_2 ()
 	{
 		return "a" + 1.ToString () +
-			await Task.Factory.StartNew (() => "b") + "c";
+			await Task.Factory.StartNew (() => "b").ConfigureAwait (false) + "c";
 	}
 
 	static async Task<int> TestCompositionCall_3 ()
 	{
-		return await M (await Task.Factory.StartNew (() => (byte) 4));
+		return await M (await Task.Factory.StartNew (() => (byte) 4).ConfigureAwait (false)).ConfigureAwait (false);
 	}
 
 	static async Task<int> TestCompositionPair_1 ()
 	{
-		return await Task.Factory.StartNew (() => 3) + 6;
+		return await Task.Factory.StartNew (() => 3).ConfigureAwait (false) + 6;
 	}
 
 	static async Task<int> TestCompositionPair_2 ()
 	{
-		return await Task.Factory.StartNew (() => { Thread.Sleep (10); return 3; }) - 
-			await Task.Factory.StartNew (() => 4);
+		return await Task.Factory.StartNew (() => { Thread.Sleep (10); return 3; }).ConfigureAwait (false) - 
+			await Task.Factory.StartNew (() => 4).ConfigureAwait (false);
 	}
 
 	static async Task<int> TestCompositionPair_3 ()
 	{
 		return -8 * 
-			await Task.Factory.StartNew (() => 4);
+			await Task.Factory.StartNew (() => 4).ConfigureAwait (false);
 	}
 
 	static async Task<int> TestCompositionPair_4 ()
 	{
-		return await Task.Factory.StartNew (() => 3) + 
-			await Task.Factory.StartNew (() => 4) +
-			await Task.Factory.StartNew (() => 7);
+		return await Task.Factory.StartNew (() => 3).ConfigureAwait (false) + 
+			await Task.Factory.StartNew (() => 4).ConfigureAwait (false) +
+			await Task.Factory.StartNew (() => 7).ConfigureAwait (false);
 	}
 	
 	static Task<byte> M (byte value)

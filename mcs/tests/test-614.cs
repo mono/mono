@@ -34,7 +34,7 @@ class C {
 			return;
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		value = 0;
 		And ();

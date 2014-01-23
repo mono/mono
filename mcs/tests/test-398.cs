@@ -6,7 +6,7 @@ using System;
 
  public class Tester {
 
-	 static void Main ()
+	 public static void Main ()
 	 {
 		 A a = new A (8);
 		 B b = new B (9);

@@ -166,6 +166,10 @@ namespace Mono.Security.Cryptography {
 				throw new CryptographicException ("Invalid blob.", e);
 			}
 
+#if INSIDE_CORLIB && MOBILE
+			RSA rsa = RSA.Create ();
+			rsa.ImportParameters (rsap);
+#else
 			RSA rsa = null;
 			try {
 				rsa = RSA.Create ();
@@ -186,6 +190,7 @@ namespace Mono.Security.Cryptography {
 					throw ce;
 				}
 			}
+#endif
 			return rsa;
 		}
 
@@ -246,6 +251,10 @@ namespace Mono.Security.Cryptography {
 				throw new CryptographicException ("Invalid blob.", e);
 			}
 
+#if INSIDE_CORLIB && MOBILE
+			DSA dsa = (DSA)DSA.Create ();
+			dsa.ImportParameters (dsap);
+#else
 			DSA dsa = null;
 			try {
 				dsa = (DSA)DSA.Create ();
@@ -266,6 +275,7 @@ namespace Mono.Security.Cryptography {
 					throw ce;
 				}
 			}
+#endif
 			return dsa;
 		}
 
@@ -434,7 +444,10 @@ namespace Mono.Security.Cryptography {
 				rsap.Modulus = new byte [byteLen];
 				Buffer.BlockCopy (blob, pos, rsap.Modulus, 0, byteLen);
 				Array.Reverse (rsap.Modulus);
-
+#if INSIDE_CORLIB && MOBILE
+				RSA rsa = RSA.Create ();
+				rsa.ImportParameters (rsap);
+#else
 				RSA rsa = null;
 				try {
 					rsa = RSA.Create ();
@@ -449,6 +462,7 @@ namespace Mono.Security.Cryptography {
 					rsa = new RSACryptoServiceProvider (csp);
 					rsa.ImportParameters (rsap);
 				}
+#endif
 				return rsa;
 			}
 			catch (Exception e) {

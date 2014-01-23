@@ -821,8 +821,11 @@ namespace System.Data.OracleClient
 					if (direction == ParameterDirection.Output || 
 						direction == ParameterDirection.InputOutput || 
 						direction == ParameterDirection.ReturnValue) {
-
-						cursor = IntPtr.Zero;
+						if (cursor != IntPtr.Zero) {
+							OciCalls.OCIHandleFree (cursor,
+								OciHandleType.Statement);
+							cursor = IntPtr.Zero;
+						}
 						OciCalls.OCIHandleAlloc (connection.Environment,
 							out cursor,
 							OciHandleType.Statement,
@@ -1116,8 +1119,14 @@ namespace System.Data.OracleClient
 
 		private void SetOracleType (OracleType type, bool inferring)
 		{
+			Type valType;
 			FreeHandle ();
-			Type valType = value.GetType ();
+
+			if (value == null)
+				valType = typeof(System.DBNull);
+			else
+				valType = value.GetType ();
+
 			string exception = String.Format ("No mapping exists from OracleType {0} to a known DbType.", type);
 			switch (type) {
 			case OracleType.BFile:

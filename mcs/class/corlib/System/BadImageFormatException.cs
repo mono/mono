@@ -92,7 +92,7 @@ namespace System
 		{
 			get {
 				if (base.message == null) {
-					return string.Format (CultureInfo.CurrentCulture,
+					return string.Format (
 						"Could not load file or assembly '{0}' or one of"
 						+ " its dependencies. An attempt was made to load"
 						+ " a program with an incorrect format.", fileName);

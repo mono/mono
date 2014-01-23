@@ -18,7 +18,7 @@ public class Test<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Test<int> test = new Test<int> (3);
 		foreach (int a in test)

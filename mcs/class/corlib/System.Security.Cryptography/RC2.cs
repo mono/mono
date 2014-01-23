@@ -40,7 +40,11 @@ namespace System.Security.Cryptography {
 
 		public static new RC2 Create () 
 		{
+#if FULL_AOT_RUNTIME
+			return new System.Security.Cryptography.RC2CryptoServiceProvider ();
+#else
 			return Create ("System.Security.Cryptography.RC2");
+#endif
 		}
 		
 		public static new RC2 Create (string AlgName) 

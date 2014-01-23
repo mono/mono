@@ -26,6 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections.Generic;
+
 namespace System.Net.Http.Headers
 {
 	public class EntityTagHeaderValue : ICloneable
@@ -85,14 +87,32 @@ namespace System.Net.Http.Headers
 
 		public static bool TryParse (string input, out EntityTagHeaderValue parsedValue)
 		{
+			var lexer = new Lexer (input);
+			Token token;
+			if (TryParseElement (lexer, out parsedValue, out token) && token == Token.Type.End)
+				return true;
+
+			parsedValue = null;
+			return false;
+		}
+
+		static bool TryParseElement (Lexer lexer, out EntityTagHeaderValue parsedValue, out Token t)
+		{
 			parsedValue = null;
 
-			var lexer = new Lexer (input);
-			var t = lexer.Scan ();
+			t = lexer.Scan ();
 			bool is_weak = false;
 
 			if (t == Token.Type.Token) {
-				if (lexer.GetStringValue (t) != "W" || lexer.PeekChar () != '/')
+				var s = lexer.GetStringValue (t);
+				if (s == "*") {
+					parsedValue = any;
+
+					t = lexer.Scan ();
+					return true;
+				}
+
+				if (s != "W" || lexer.PeekChar () != '/')
 					return false;
 
 				is_weak = true;
@@ -103,13 +123,18 @@ namespace System.Net.Http.Headers
 			if (t != Token.Type.QuotedString)
 				return false;
 
-			if (lexer.Scan () != Token.Type.End)
-				return false;
-
 			parsedValue = new EntityTagHeaderValue ();
 			parsedValue.Tag = lexer.GetStringValue (t);
 			parsedValue.IsWeak = is_weak;
+
+			t = lexer.Scan ();
+
 			return true;
+		}
+
+		internal static bool TryParse (string input, int minimalCount, out List<EntityTagHeaderValue> result)
+		{
+			return CollectionParser.TryParse (input, minimalCount, TryParseElement, out result);
 		}
 
 		public override string ToString ()

@@ -2,8 +2,9 @@
 //
 // Author:
 //   Rolf Bjarne Kvinge (rolf@xamarin.com)
+//   Atsushi Enomoto (atsushi@xamarin.com)
 //
-// Copyright (C) 2011 Xamarin Inc.
+// Copyright (C) 2011,2013 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,132 +29,128 @@
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Logging;
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
+using System.Collections;
 
 namespace Microsoft.Build.Execution
 {
-        public class BuildParameters
-        {
-                public BuildParameters ()
-                {
-                        throw new NotImplementedException ();
-                }
+	public class BuildParameters
+	{
+		public BuildParameters ()
+			: this (new ProjectCollection ())
+		{
+		}
 
-                public BuildParameters (ProjectCollection projectCollection)
-                {
-                        throw new NotImplementedException ();
-                }
+		public BuildParameters (ProjectCollection projectCollection)
+		{
+			if (projectCollection == null)
+				throw new ArgumentNullException ("projectCollection");
+			projects = projectCollection;
+			
+			EnableNodeReuse = true;
+			Culture = CultureInfo.CurrentCulture;
+			UICulture = CultureInfo.CurrentUICulture;
+			MaxNodeCount = projectCollection.MaxNodeCount;
 
-                public BuildParameters Clone ()
-                {
-                        throw new NotImplementedException ();
-                }
+			// these properties are copied, while some members (such as Loggers) are not.
+			this.DefaultToolsVersion = projectCollection.DefaultToolsVersion;
+			this.ToolsetDefinitionLocations = projectCollection.ToolsetLocations;
+			this.GlobalProperties = projectCollection.GlobalProperties;
+			environment_properties = new Dictionary<string,string> ();
+			foreach (DictionaryEntry p in Environment.GetEnvironmentVariables ())
+				environment_properties [(string) p.Key] = (string) p.Value;
+		}
 
-                public Toolset GetToolset (string toolsVersion)
-                {
-                        throw new NotImplementedException ();
-                }
+		readonly ProjectCollection projects;
+		Dictionary<string,string> environment_properties;
+		
+		internal ProjectCollection ProjectCollection {
+			get { return projects; }
+		}
 
-                public ThreadPriority BuildThreadPriority {
-                        get { throw new NotImplementedException (); }
-                        set { throw new NotImplementedException (); }
-                }
+		public BuildParameters Clone ()
+		{
+			var ret = (BuildParameters) MemberwiseClone ();
+			ret.ForwardingLoggers = ForwardingLoggers == null ? null : ForwardingLoggers.ToArray ();
+			ret.GlobalProperties = GlobalProperties == null ? null : GlobalProperties.ToDictionary (p => p.Key, p => p.Value);
+			ret.Loggers = Loggers == null ? null : new List<ILogger> (Loggers);
+			ret.environment_properties = new Dictionary<string, string> (environment_properties);
+			return ret;
+		}
 
-                public CultureInfo Culture {
-                        get { throw new NotImplementedException (); }
-                        set { throw new NotImplementedException (); }
-                }
+		public Toolset GetToolset (string toolsVersion)
+		{
+			// can return null.
+			return projects.Toolsets.FirstOrDefault (t => t.ToolsVersion == toolsVersion);
+		}
 
-                public string DefaultToolsVersion {
-                        get { throw new NotImplementedException (); }
-                        set { throw new NotImplementedException (); }
-                }
+		[MonoTODO]
+		public ThreadPriority BuildThreadPriority { get; set; }
 
-                public bool DetailedSummary {
-                        get { throw new NotImplementedException (); }
-                        set { throw new NotImplementedException (); }
-                }
+		[MonoTODO]
+		public CultureInfo Culture { get; set; }
 
-                public bool EnableNodeReuse {
-                        get { throw new NotImplementedException (); }
-                        set { throw new NotImplementedException (); }
-                }
+		public string DefaultToolsVersion { get; set; }
 
-                public IDictionary<string, string> EnvironmentProperties {
-                        get { throw new NotImplementedException (); }
-                }
+		[MonoTODO]
+		public bool DetailedSummary { get; set; }
 
-                public IEnumerable<ForwardingLoggerRecord> ForwardingLoggers {
-                        get { throw new NotImplementedException (); }
-                        set { throw new NotImplementedException (); }
-                }
+		public bool EnableNodeReuse { get; set; }
 
-                public IDictionary<string, string> GlobalProperties {
-                        get { throw new NotImplementedException (); }
-                        set { throw new NotImplementedException (); }
-                }
+		[MonoTODO]
+		public IDictionary<string, string> EnvironmentProperties {
+			get { return environment_properties; }
+		}
 
-                public HostServices HostServices {
-                        get { throw new NotImplementedException (); }
-                        set { throw new NotImplementedException (); }
-                }
+		[MonoTODO]
+		public IEnumerable<ForwardingLoggerRecord> ForwardingLoggers { get; set; }
 
-                public bool LegacyThreadingSemantics { get; set; }
+		[MonoTODO]
+		public IDictionary<string, string> GlobalProperties { get; set; }
 
-                public IEnumerable<ILogger> Loggers {
-                        get { throw new NotImplementedException (); }
-                        set { throw new NotImplementedException (); }
-                }
+		public HostServices HostServices { get; set; }
 
-                public int MaxNodeCount {
-                        get { throw new NotImplementedException (); }
-                        set { throw new NotImplementedException (); }
-                }
+		[MonoTODO]
+		public bool LegacyThreadingSemantics { get; set; }
 
-                public int MemoryUseLimit {
-                        get { throw new NotImplementedException (); }
-                        set { throw new NotImplementedException (); }
-                }
+		[MonoTODO]
+		public IEnumerable<ILogger> Loggers { get; set; }
 
-                public string NodeExeLocation {
-                        get { throw new NotImplementedException (); }
-                        set { throw new NotImplementedException (); }
-                }
+		[MonoTODO]
+		public int MaxNodeCount { get; set; }
 
-                public bool OnlyLogCriticalEvents {
-                        get { throw new NotImplementedException (); }
-                        set { throw new NotImplementedException (); }
-                }
+		[MonoTODO]
+		public int MemoryUseLimit { get; set; }
 
-                public bool ResetCaches { get; set; }
+		[MonoTODO]
+		public string NodeExeLocation { get; set; }
 
-                public bool SaveOperatingEnvironment {
-                        get { throw new NotImplementedException (); }
-                        set { throw new NotImplementedException (); }
-                }
+		[MonoTODO]
+		public bool OnlyLogCriticalEvents { get; set; }
 
-                public ToolsetDefinitionLocations ToolsetDefinitionLocations {
-                        get { throw new NotImplementedException (); }
-                        set { throw new NotImplementedException (); }
-                }
+		[MonoTODO]
+		public bool ResetCaches { get; set; }
 
-                public ICollection<Toolset> Toolsets {
-                        get { throw new NotImplementedException (); }
-                }
+		[MonoTODO]
+		public bool SaveOperatingEnvironment { get; set; }
 
-                public CultureInfo UICulture {
-                        get { throw new NotImplementedException (); }
-                        set { throw new NotImplementedException (); }
-                }
+		[MonoTODO]
+		public ToolsetDefinitionLocations ToolsetDefinitionLocations { get; set; }
 
-                public bool UseSynchronousLogging {
-                        get { throw new NotImplementedException (); }
-                        set { throw new NotImplementedException (); }
-                }
-        }
+		[MonoTODO]
+		public ICollection<Toolset> Toolsets {
+			get { return projects.Toolsets; }
+		}
+
+		[MonoTODO]
+		public CultureInfo UICulture { get; set; }
+
+		[MonoTODO]
+		public bool UseSynchronousLogging { get; set; }
+	}
 }
 

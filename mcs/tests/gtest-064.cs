@@ -36,6 +36,6 @@ public class Foo<T> : IBar<T>, IFoo<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

@@ -33,6 +33,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
@@ -66,10 +67,6 @@ namespace System.Runtime.Serialization.Json
 			if (IsPrimitiveType (type))
 				return null;
 
-#if MOONLIGHT
-			if (ExternalTypeMap.HasType (type))
-				return new ExternalTypeMap (type);
-#endif
 			return CreateDefaultTypeMap (type);
 		}
 
@@ -89,7 +86,7 @@ namespace System.Runtime.Serialization.Json
 				if (!fi.IsStatic)
 					l.Add (new TypeMapField (fi, null));
 			foreach (var pi in type.GetProperties ())
-				if (pi.CanRead && pi.CanWrite && !pi.GetGetMethod ().IsStatic && pi.GetIndexParameters ().Length == 0)
+				if (pi.CanRead && pi.CanWrite && !pi.GetGetMethod (true).IsStatic && pi.GetIndexParameters ().Length == 0)
 					l.Add (new TypeMapProperty (pi, null));
 			l.Sort ((x, y) => x.Order != y.Order ? x.Order - y.Order : String.Compare (x.Name, y.Name, StringComparison.Ordinal));
 			return new TypeMap (type, null, l.ToArray ());
@@ -120,7 +117,9 @@ namespace System.Runtime.Serialization.Json
 
 			List<TypeMapMember> members = new List<TypeMapMember> ();
 
-			foreach (FieldInfo fi in type.GetFields (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
+			foreach (FieldInfo fi in type.GetFields (binding_flags)) {
+				if (fi.GetCustomAttributes (typeof (CompilerGeneratedAttribute), false).Length > 0)
+					continue;
 				if (dca != null) {
 					object [] atts = fi.GetCustomAttributes (typeof (DataMemberAttribute), true);
 					if (atts.Length == 0)
@@ -135,7 +134,7 @@ namespace System.Runtime.Serialization.Json
 			}
 
 			if (dca != null) {
-				foreach (PropertyInfo pi in type.GetProperties (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
+				foreach (PropertyInfo pi in type.GetProperties (binding_flags)) {
 					object [] atts = pi.GetCustomAttributes (typeof (DataMemberAttribute), true);
 					if (atts.Length == 0)
 						continue;
@@ -174,14 +173,23 @@ namespace System.Runtime.Serialization.Json
 					OnDeserializing = mi;
 				else if (mi.GetCustomAttributes (typeof (OnDeserializedAttribute), false).Length > 0)
 					OnDeserialized = mi;
+				else if (mi.GetCustomAttributes (typeof (OnSerializingAttribute), false).Length > 0)
+					OnSerializing = mi;
+				else if (mi.GetCustomAttributes (typeof (OnSerializedAttribute), false).Length > 0)
+					OnSerialized = mi;
 			}
 		}
 
 		public MethodInfo OnDeserializing { get; set; }
 		public MethodInfo OnDeserialized { get; set; }
+		public MethodInfo OnSerializing { get; set; }
+		public MethodInfo OnSerialized { get; set; }
 
 		public virtual void Serialize (JsonSerializationWriter outputter, object graph, string type)
 		{
+			if (OnSerializing != null)
+				OnSerializing.Invoke (graph, new object [] {new StreamingContext (StreamingContextStates.All)});
+
 			outputter.Writer.WriteAttributeString ("type", type);
 			foreach (TypeMapMember member in members) {
 				object memberObj = member.GetMemberOf (graph);
@@ -190,6 +198,9 @@ namespace System.Runtime.Serialization.Json
 				outputter.WriteObjectContent (memberObj, false, false);
 				outputter.Writer.WriteEndElement ();
 			}
+
+			if (OnSerialized != null)
+				OnSerialized.Invoke (graph, new object [] {new StreamingContext (StreamingContextStates.All)});
 		}
 
 		internal static object CreateInstance (Type type)

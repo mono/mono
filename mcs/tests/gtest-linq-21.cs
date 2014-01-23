@@ -3,7 +3,7 @@ using System.Linq;
 
 static class Program
 {
-	static int Main()
+	public static int Main()
 	{
 		int i = 0;
 		var input = new int[] { 1 };

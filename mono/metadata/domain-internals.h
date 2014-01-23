@@ -91,11 +91,16 @@ typedef struct {
 } MonoJitExceptionInfo;
 
 /*
- * Will contain information on the generic type arguments in the
- * future.  For now, all arguments are always reference types.
+ * Contains information about the type arguments for generic shared methods.
  */
 typedef struct {
-	int dummy;
+	/*
+	 * If not NULL, determines whenever the class type arguments of the gshared method are references or vtypes.
+	 * The array length is equal to class_inst->type_argv.
+	 */
+	gboolean *var_is_vt;
+	/* Same for method type parameters */
+	gboolean *mvar_is_vt;
 } MonoGenericSharingContext;
 
 /* Simplified DWARF location list entry */
@@ -170,12 +175,26 @@ typedef struct
 	guint32 stack_size;
 } MonoArchEHJitInfo;
 
+typedef struct {
+	gboolean    cas_inited:1;
+	gboolean    cas_class_assert:1;
+	gboolean    cas_class_deny:1;
+	gboolean    cas_class_permitonly:1;
+	gboolean    cas_method_assert:1;
+	gboolean    cas_method_deny:1;
+	gboolean    cas_method_permitonly:1;
+} MonoMethodCasInfo;
+
 struct _MonoJitInfo {
 	/* NOTE: These first two elements (method and
 	   next_jit_code_hash) must be in the same order and at the
 	   same offset as in RuntimeMethod, because of the jit_code_hash
 	   internal hash table in MonoDomain. */
-	MonoMethod *method;
+	union {
+		MonoMethod *method;
+		MonoImage *image;
+		gpointer aot_info;
+	} d;
 	struct _MonoJitInfo *next_jit_code_hash;
 	gpointer    code_start;
 	/* This might contain an id for the unwind info instead of a register mask */
@@ -184,18 +203,18 @@ struct _MonoJitInfo {
 	guint32     num_clauses:15;
 	/* Whenever the code is domain neutral or 'shared' */
 	gboolean    domain_neutral:1;
-	gboolean    cas_inited:1;
-	gboolean    cas_class_assert:1;
-	gboolean    cas_class_deny:1;
-	gboolean    cas_class_permitonly:1;
-	gboolean    cas_method_assert:1;
-	gboolean    cas_method_deny:1;
-	gboolean    cas_method_permitonly:1;
+	gboolean    has_cas_info:1;
 	gboolean    has_generic_jit_info:1;
 	gboolean    has_try_block_holes:1;
 	gboolean    has_arch_eh_info:1;
 	gboolean    from_aot:1;
 	gboolean    from_llvm:1;
+	gboolean    dbg_hidden_inited:1;
+	gboolean    dbg_hidden:1;
+	/* Whenever this jit info was loaded in async context */
+	gboolean    async:1;
+	gboolean    dbg_step_through_inited:1;
+	gboolean    dbg_step_through:1;
 
 	/* FIXME: Embed this after the structure later*/
 	gpointer    gc_info; /* Currently only used by SGen */
@@ -214,6 +233,17 @@ struct _MonoAppContext {
 	gint32 context_id;
 	gpointer *static_data;
 };
+
+/* Lock-free allocator */
+typedef struct {
+	guint8 *mem;
+	gpointer prev;
+	int size, pos;
+} LockFreeMempoolChunk;
+
+typedef struct {
+	LockFreeMempoolChunk *current, *chunks;
+} LockFreeMempool;
 
 /*
  * We have two unloading states because the domain
@@ -304,10 +334,17 @@ struct _MonoDomain {
 	int		    num_jit_info_tables;
 	MonoJitInfoTable * 
 	  volatile          jit_info_table;
+	/*
+	 * Contains information about AOT loaded code.
+	 * Only used in the root domain.
+	 */
+	MonoJitInfoTable *
+	  volatile          aot_modules;
 	GSList		   *jit_info_free_queue;
 	/* Used when loading assemblies */
 	gchar **search_path;
 	gchar *private_bin_path;
+	LockFreeMempool *lock_free_mp;
 	
 	/* Used by remoting proxies */
 	MonoMethod         *create_proxy_for_type_method;
@@ -320,12 +357,6 @@ struct _MonoDomain {
 	 * if the hashtable contains a GC visible reference to them.
 	 */
 	GHashTable         *finalizable_objects_hash;
-
-	/* These two are boehm only */
-	/* Maps MonoObjects to a GSList of WeakTrackResurrection GCHandles pointing to them */
-	GHashTable         *track_resurrection_objects_hash;
-	/* Maps WeakTrackResurrection GCHandles to the MonoObjects they point to */
-	GHashTable         *track_resurrection_handles_hash;
 
 	/* Protects the three hashes above */
 	CRITICAL_SECTION   finalizable_objects_hash_lock;
@@ -367,7 +398,6 @@ struct _MonoDomain {
 
 	/* Used by threadpool.c */
 	MonoImage *system_image;
-	MonoImage *system_net_dll;
 	MonoClass *corlib_asyncresult_class;
 	MonoClass *socket_class;
 	MonoClass *ad_unloaded_ex_class;
@@ -388,7 +418,7 @@ typedef struct  {
 typedef struct  {
 	const char runtime_version [12];
 	const char framework_version [4];
-	const AssemblyVersionSet version_sets [3];
+	const AssemblyVersionSet version_sets [4];
 } MonoRuntimeInfo;
 
 #define mono_domain_lock(domain) mono_locks_acquire(&(domain)->lock, DomainLock)
@@ -415,9 +445,6 @@ typedef void (*MonoFreeDomainFunc) (MonoDomain *domain);
 
 void
 mono_install_free_domain_hook (MonoFreeDomainFunc func) MONO_INTERNAL;
-
-void 
-mono_init_com_types (void) MONO_INTERNAL;
 
 void 
 mono_cleanup (void) MONO_INTERNAL;
@@ -458,6 +485,9 @@ mono_domain_alloc  (MonoDomain *domain, guint size) MONO_INTERNAL;
 gpointer
 mono_domain_alloc0 (MonoDomain *domain, guint size) MONO_INTERNAL;
 
+gpointer
+mono_domain_alloc0_lock_free (MonoDomain *domain, guint size) MONO_INTERNAL;
+
 void*
 mono_domain_code_reserve (MonoDomain *domain, int size) MONO_LLVM_INTERNAL;
 
@@ -487,6 +517,9 @@ mono_jit_info_get_try_block_hole_table_info (MonoJitInfo *ji) MONO_INTERNAL;
 
 MonoArchEHJitInfo*
 mono_jit_info_get_arch_eh_info (MonoJitInfo *ji) MONO_INTERNAL;
+
+MonoMethodCasInfo*
+mono_jit_info_get_cas_info (MonoJitInfo *ji) MONO_INTERNAL;
 
 /* 
  * Installs a new function which is used to return a MonoJitInfo for a method inside
@@ -604,7 +637,7 @@ MonoImage *mono_assembly_open_from_bundle (const char *filename,
 					   MonoImageOpenStatus *status,
 					   gboolean refonly) MONO_INTERNAL;
 
-void
+MONO_API void
 mono_domain_add_class_static_data (MonoDomain *domain, MonoClass *klass, gpointer data, guint32 *bitmap);
 
 MonoReflectionAssembly *
@@ -621,6 +654,8 @@ int mono_framework_version (void) MONO_INTERNAL;
 
 void mono_reflection_cleanup_domain (MonoDomain *domain) MONO_INTERNAL;
 
-void mono_assembly_cleanup_domain_bindings (guint32 domain_id) MONO_INTERNAL;;
+void mono_assembly_cleanup_domain_bindings (guint32 domain_id) MONO_INTERNAL;
+
+MonoJitInfo* mono_jit_info_table_find_internal (MonoDomain *domain, char *addr, gboolean try_aot) MONO_INTERNAL;
 
 #endif /* __MONO_METADATA_DOMAIN_INTERNALS_H__ */

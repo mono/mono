@@ -391,6 +391,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			Assert.AreEqual ("FF", copy.SubjectKeyIdentifier, "SubjectKeyIdentifier");
 		}
 
+#if !MOBILE
 		[Test]
 		public void CreateViaCryptoConfig ()
 		{
@@ -400,6 +401,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			Assert.AreEqual (String.Empty, ski.SubjectKeyIdentifier, "SubjectKeyIdentifier");
 			Assert.AreEqual ("04-00", BitConverter.ToString (ski.RawData), "RawData");
 		}
+#endif
 	}
 }
 

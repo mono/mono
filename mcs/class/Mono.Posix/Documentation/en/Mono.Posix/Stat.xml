@@ -1,16 +1,23 @@
 <Type Name="Stat" FullName="Mono.Posix.Stat">
   <TypeSignature Language="C#" Maintainer="auto" Value="public struct Stat" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit Stat extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 79 15 99 77 D2 D0 3A 8E 6B EA 7A 2E 74 E8 D1 AF CC 93 E8 85 19 74 95 2B B4 80 A1 2C 91 34 47 4D 04 06 24 47 C3 7E 0E 68 C0 80 53 6F CF 3C 3F BE 2F F9 C9 79 CE 99 84 75 E5 06 E8 CE 82 DD 5B 0F 35 0D C1 0E 93 BF 2E EE CF 87 4B 24 77 0C 50 81 DB EA 74 47 FD DA FA 27 7B 22 DE 47 D6 FF EA 44 96 74 A4 F9 FC CF 84 D1 50 69 08 93 80 28 4D BD D3 5F 46 CD FF 12 A1 BD 78 E4 EF 00 65 D0 16 DF]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the <link location="node:gtk-sharp/programming/threads">Gtk# Thread Programming</link> for details.</ThreadSafetyStatement>
   <Base>
     <BaseTypeName>System.ValueType</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat")</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>Every file has a unique INODE data structure. Mono's managed representation is the Stat struct. the Syscall.stat and Syscall.lstat methods return the Stat struct as an output parameter.</summary>
     <remarks>
@@ -23,7 +30,18 @@
   <Members>
     <Member MemberName="ATime">
       <MemberSignature Language="C#" Value="public readonly DateTime ATime;" />
+      <MemberSignature Language="ILAsm" Value=".field public initonly valuetype System.DateTime ATime" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_atime")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -33,19 +51,21 @@
         <summary>Last access time.</summary>
         <remarks />
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_atime")</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Blocks">
       <MemberSignature Language="C#" Value="public readonly long Blocks;" />
+      <MemberSignature Language="ILAsm" Value=".field public initonly int64 Blocks" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_blocks")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -55,19 +75,21 @@
         <summary>Blocks gives the size of the file in 512-byte blocks. </summary>
         <remarks>This may be smaller than Size/512 e.g. when the file has holes.</remarks>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_blocks")</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="BlockSize">
       <MemberSignature Language="C#" Value="public readonly long BlockSize;" />
+      <MemberSignature Language="ILAsm" Value=".field public initonly int64 BlockSize" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_blksize")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -77,19 +99,21 @@
         <summary>Contains the preferred block size for efficient file system I/O.</summary>
         <remarks />
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_blksize")</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CTime">
       <MemberSignature Language="C#" Value="public readonly DateTime CTime;" />
+      <MemberSignature Language="ILAsm" Value=".field public initonly valuetype System.DateTime CTime" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_ctime")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -99,19 +123,21 @@
         <summary>Creation time.</summary>
         <remarks />
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_ctime")</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Device">
       <MemberSignature Language="C#" Value="public readonly int Device;" />
+      <MemberSignature Language="ILAsm" Value=".field public initonly int32 Device" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_dev")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -121,19 +147,21 @@
         <summary>A device number on which the file resides.</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_dev")</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DeviceType">
       <MemberSignature Language="C#" Value="public readonly long DeviceType;" />
+      <MemberSignature Language="ILAsm" Value=".field public initonly int64 DeviceType" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_rdev")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -143,19 +171,21 @@
         <summary>For a character or block device, the device major and minor numbers.</summary>
         <remarks />
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_rdev")</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Gid">
       <MemberSignature Language="C#" Value="public readonly int Gid;" />
+      <MemberSignature Language="ILAsm" Value=".field public initonly int32 Gid" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_gid")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -165,19 +195,21 @@
         <summary>Group ID</summary>
         <remarks />
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_gid")</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="INode">
       <MemberSignature Language="C#" Value="public readonly int INode;" />
+      <MemberSignature Language="ILAsm" Value=".field public initonly int32 INode" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_ino")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -187,19 +219,21 @@
         <summary>The inode number of file on disk.</summary>
         <remarks />
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_ino")</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Mode">
       <MemberSignature Language="C#" Value="public readonly Mono.Posix.StatMode Mode;" />
+      <MemberSignature Language="ILAsm" Value=".field public initonly valuetype Mono.Posix.StatMode Mode" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_mode")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>Mono.Posix.StatMode</ReturnType>
       </ReturnValue>
@@ -209,19 +243,21 @@
         <summary>The file mode as defined by the StatMode enumeration.</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_mode")</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MTime">
       <MemberSignature Language="C#" Value="public readonly DateTime MTime;" />
+      <MemberSignature Language="ILAsm" Value=".field public initonly valuetype System.DateTime MTime" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_mtime")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -231,19 +267,21 @@
         <summary>File last modified.</summary>
         <remarks />
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_mtime")</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NLinks">
       <MemberSignature Language="C#" Value="public readonly int NLinks;" />
+      <MemberSignature Language="ILAsm" Value=".field public initonly int32 NLinks" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_nlink")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -253,19 +291,21 @@
         <summary>The number of pathnames or links that reference this inode.</summary>
         <remarks />
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_nlink")</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Size">
       <MemberSignature Language="C#" Value="public readonly long Size;" />
+      <MemberSignature Language="ILAsm" Value=".field public initonly int64 Size" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_size")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -275,19 +315,21 @@
         <summary>Size gives the size of the file in bytes.</summary>
         <remarks>If the file is a symlink then this is the length of the pathname it contains without trailing null.</remarks>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_size")</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Uid">
       <MemberSignature Language="C#" Value="public readonly int Uid;" />
+      <MemberSignature Language="ILAsm" Value=".field public initonly int32 Uid" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_uid")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -297,42 +339,46 @@
         <summary>The owner user ID</summary>
         <remarks />
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat.st_uid")</AttributeName>
-        </Attribute>
-      </Attributes>
+    </Member>
+    <Member MemberName="UnixEpoch">
+      <MemberSignature Language="C#" Value="public static readonly DateTime UnixEpoch;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype System.DateTime UnixEpoch" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="UnixEpoch">
-      <MemberSignature Language="C#" Value="public static readonly DateTime UnixEpoch = 1/1/1970 12:00:00 AM;" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.DateTime</ReturnType>
-      </ReturnValue>
-      <Parameters>
-      </Parameters>
-      <Docs>
-        <summary>DateTime value corresponding to Unix Epoch (1/1/1970)</summary>
-        <remarks>Read-only.</remarks>
-      </Docs>
-      <MemberValue>1/1/1970 12:00:00 AM</MemberValue>
       <Attributes>
         <Attribute>
           <AttributeName>System.Obsolete("Use Mono.Unix.Native.NativeConvert.LocalUnixEpoch")</AttributeName>
         </Attribute>
       </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <MemberValue>1/1/1970 12:00:00 AM</MemberValue>
+      <Docs>
+        <summary>DateTime value corresponding to Unix Epoch (1/1/1970)</summary>
+        <remarks>Read-only.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="UnixToDateTime">
       <MemberSignature Language="C#" Value="public static DateTime UnixToDateTime (long unix);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.DateTime UnixToDateTime(int64 unix) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use Mono.Unix.Native.NativeConvert.ToDateTime")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -345,20 +391,6 @@
         <returns>a <see cref="T:System.DateTime" /></returns>
         <remarks />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Use Mono.Unix.Native.NativeConvert.ToDateTime")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Obsolete("Use Mono.Unix.Native.Stat")</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

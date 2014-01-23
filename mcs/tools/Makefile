@@ -38,7 +38,6 @@ net_4_0_dirs := \
 	macpack		\
 	dtd2rng		\
 	dtd2xsd		\
-	monodoc		\
 	mdoc		\
 	mod		\
 	installvst	\
@@ -46,7 +45,8 @@ net_4_0_dirs := \
 	mono-configuration-crypto \
 	ccrewrite	\
 	cccheck		\
-	security
+	security	\
+	mdbrebase
 
 net_2_0_dirs := \
 	$(per_profile_dirs)

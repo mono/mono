@@ -223,41 +223,25 @@
 #       define GC_CLEAR_DEFINED
 #    endif /* ALPHA */
 #    ifdef ARM32
+#       ifdef __native_client__
+#          define MASK_REGISTER(reg, cond) "bic" cond " " reg ", " reg ", #0xc0000000\n"
+#          define NACL_ALIGN() ".align 4\n"
+#       else
+#          define MASK_REGISTER(reg, cond)
+#          define NACL_ALIGN()
+#       endif
         inline static int GC_test_and_set(volatile unsigned int *addr) {
-#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
-          int ret, tmp;
-          __asm__ __volatile__ (
-                                 "1:\n"
-                                 "ldrex %0, [%3]\n"
-                                 "strex %1, %2, [%3]\n" 
-                                 "teq %1, #0\n"
-                                 "bne 1b\n"
-                                 : "=&r" (ret), "=&r" (tmp)
-                                 : "r" (1), "r" (addr)
-                                 : "memory", "cc");
-          return ret;
-#else
-          int oldval;
-          /* SWP on ARM is very similar to XCHG on x86.  Doesn't lock the
-           * bus because there are no SMP ARM machines.  If/when there are,
-           * this code will likely need to be updated. */
-          /* See linuxthreads/sysdeps/arm/pt-machine.h in glibc-2.1 */
-          __asm__ __volatile__("swp %0, %1, [%2]"
-      		  	     : "=&r"(oldval)
-      			     : "r"(1), "r"(addr)
-			     : "memory");
-          return oldval;
-#endif
+		  return (int) __sync_lock_test_and_set (addr, 1);
         }
 #       define GC_TEST_AND_SET_DEFINED
       inline static void GC_clear(volatile unsigned int *addr) {
-#ifdef HAVE_ARMV6
-		  /* Memory barrier */
-		  __asm__ __volatile__ ("mcr p15, 0, %0, c7, c10, 5" : : "r" (0) : "memory");
-#endif
+		  __sync_synchronize ();
+
 		  *(addr) = 0;
       }
 #     define GC_CLEAR_DEFINED
+#     undef NACL_ALIGN
+#     undef MASK_REGISTER
 #    endif /* ARM32 */
 #    ifdef CRIS
         inline static int GC_test_and_set(volatile unsigned int *addr) {
@@ -475,6 +459,9 @@
         inline static GC_bool GC_compare_and_exchange(volatile GC_word *addr,
             GC_word old, GC_word new_val) 
         {
+#         if HAS___SYNC_BOOL_COMPARE_AND_SWAP
+            return __sync_bool_compare_and_swap(addr, old, new_val);
+#         else
             unsigned long result, dummy;
             __asm__ __volatile__(
                 "1:\tldarx %0,0,%5\n"
@@ -491,12 +478,16 @@
                 :  "r" (new_val), "r" (old), "2"(addr)
                 : "cr0","memory");
             return (GC_bool) result;
+#         endif
         }
 #       else
         /* Returns TRUE if the comparison succeeded. */
         inline static GC_bool GC_compare_and_exchange(volatile GC_word *addr,
             GC_word old, GC_word new_val) 
         {
+#         if HAS___SYNC_BOOL_COMPARE_AND_SWAP
+            return __sync_bool_compare_and_swap(addr, old, new_val);
+#         else
             int result, dummy;
             __asm__ __volatile__(
                 "1:\tlwarx %0,0,%5\n"
@@ -513,6 +504,7 @@
                 :  "r" (new_val), "r" (old), "2"(addr)
                 : "cr0","memory");
             return (GC_bool) result;
+#         endif
         }
 #       endif
 #      endif /* !GENERIC_COMPARE_AND_SWAP */

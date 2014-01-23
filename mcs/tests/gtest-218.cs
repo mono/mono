@@ -6,6 +6,6 @@ class Foo : IFoo<Foo>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

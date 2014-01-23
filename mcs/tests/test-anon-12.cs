@@ -5,7 +5,7 @@ delegate bool predicate (object a);
 
 class X {
 
-	static int Main ()
+	public static int Main ()
 	{
 		ArrayList a = new ArrayList ();
 		for (int i = 0; i < 10; i++)

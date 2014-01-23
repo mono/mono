@@ -36,7 +36,7 @@ namespace MyAssembly02
 
 public class Test
 {
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

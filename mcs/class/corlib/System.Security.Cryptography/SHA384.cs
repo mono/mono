@@ -29,8 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !MOONLIGHT
-
 using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
@@ -45,7 +43,11 @@ namespace System.Security.Cryptography {
 
 		public static new SHA384 Create () 
 		{
+#if FULL_AOT_RUNTIME
+			return new System.Security.Cryptography.SHA384Managed ();
+#else
 			return Create ("System.Security.Cryptography.SHA384");
+#endif
 		}
 	
 		public static new SHA384 Create (string hashName) 
@@ -54,5 +56,3 @@ namespace System.Security.Cryptography {
 		}
 	}
 }
-#endif
-

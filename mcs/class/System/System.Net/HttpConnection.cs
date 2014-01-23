@@ -29,6 +29,13 @@
 
 #if SECURITY_DEP
 
+#if MONOTOUCH
+using Mono.Security.Protocol.Tls;
+#else
+extern alias MonoSecurity;
+using MonoSecurity::Mono.Security.Protocol.Tls;
+#endif
+
 using System.IO;
 using System.Net.Sockets;
 using System.Reflection;
@@ -36,7 +43,6 @@ using System.Text;
 using System.Threading;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using Mono.Security.Protocol.Tls;
 
 namespace System.Net {
 	sealed class HttpConnection
@@ -439,7 +445,9 @@ namespace System.Net {
 		{
 			if (sock != null) {
 				Stream st = GetResponseStream ();
-				st.Close ();
+				if (st != null)
+					st.Close ();
+
 				o_stream = null;
 			}
 

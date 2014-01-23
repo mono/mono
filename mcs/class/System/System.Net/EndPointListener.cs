@@ -29,13 +29,20 @@
 
 #if SECURITY_DEP
 
+#if MONOTOUCH
+using Mono.Security.Authenticode;
+#else
+extern alias MonoSecurity;
+using MonoSecurity::Mono.Security.Authenticode;
+#endif
+
 using System.IO;
 using System.Net.Sockets;
 using System.Collections;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
-using Mono.Security.Authenticode;
 
 namespace System.Net {
 	sealed class EndPointListener
@@ -48,7 +55,7 @@ namespace System.Net {
 		X509Certificate2 cert;
 		AsymmetricAlgorithm key;
 		bool secure;
-		Hashtable unregistered;
+		Dictionary<HttpConnection, HttpConnection> unregistered;
 
 		public EndPointListener (IPAddress addr, int port, bool secure)
 		{
@@ -66,7 +73,7 @@ namespace System.Net {
 			args.Completed += OnAccept;
 			sock.AcceptAsync (args);
 			prefixes = new Hashtable ();
-			unregistered = new Hashtable ();
+			unregistered = new Dictionary<HttpConnection, HttpConnection> ();
 		}
 
 		void LoadCertificateAndKey (IPAddress addr, int port)
@@ -276,7 +283,12 @@ namespace System.Net {
 		{
 			sock.Close ();
 			lock (unregistered) {
-				foreach (HttpConnection c in unregistered.Keys)
+				//
+				// Clone the list because RemoveConnection can be called from Close
+				//
+				var connections = new List<HttpConnection> (unregistered.Keys);
+
+				foreach (HttpConnection c in connections)
 					c.Close (true);
 				unregistered.Clear ();
 			}

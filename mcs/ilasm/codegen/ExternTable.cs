@@ -9,9 +9,11 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Security;
 using System.Globalization;
+using PEAPI;
 
 namespace Mono.ILASM {
 
@@ -247,11 +249,44 @@ namespace Mono.ILASM {
 
         }
 
+        public class ExternClass
+        {
+            string fullName;
+            TypeAttr ta;
+            string assemblyReference;
+
+            public ExternClass (string fullName, TypeAttr ta, string assemblyReference)
+            {
+                this.fullName = fullName;
+                this.ta = ta;
+                this.assemblyReference = assemblyReference;
+            }
+
+            public void Resolve (CodeGen code_gen, ExternTable table)
+            {
+                var ar = table.GetAssemblyRef (assemblyReference);
+                if (ar != null) {
+                    string ns = null;
+                    string name = fullName;
+
+                    int pos = name.LastIndexOf ('.');
+                    if (pos > 0) {
+                        ns = name.Substring (0, pos);
+                        name = name.Substring (pos + 1);
+                    }
+ 
+                    code_gen.PEFile.AddExternClass (ns, name, ta, ar.AssemblyRef);
+                }
+            }
+        }
+
         
         public class ExternTable {
 
                 Hashtable assembly_table;
                 Hashtable module_table;
+                List<ExternClass> class_table;
+
                 bool is_resolved;
                 
                 public void AddCorlib ()
@@ -305,6 +340,14 @@ namespace Mono.ILASM {
                         return em;
                 }
 
+                public void AddClass (string name, TypeAttr ta, string assemblyReference)
+                {
+                    if (class_table == null)
+                        class_table = new List<ExternClass> ();
+
+                    class_table.Add (new ExternClass (name, ta, assemblyReference));
+                }
+
                 public void Resolve (CodeGen code_gen)
                 {
                         if (is_resolved)
@@ -313,12 +356,16 @@ namespace Mono.ILASM {
                         if (assembly_table != null)
                                 foreach (ExternAssembly ext in assembly_table.Values)
                                         ext.Resolve (code_gen);
-                        if (module_table == null)
-                                return;
-                        foreach (ExternModule ext in module_table.Values)
-                                ext.Resolve (code_gen);
 
-			is_resolved = true;	
+                        if (module_table != null)
+                            foreach (ExternModule ext in module_table.Values)
+                                    ext.Resolve (code_gen);
+
+                        if (class_table != null)
+                            foreach (var entry in class_table)
+                                entry.Resolve (code_gen, this);
+
+                        is_resolved = true;	
                 }
 
                 public ExternTypeRef GetTypeRef (string asmb_name, string full_name, bool is_valuetype)
@@ -354,6 +401,18 @@ namespace Mono.ILASM {
                                 Report.Error ("Module " + mod_name + " not defined.");
 
                         return mod.GetTypeRef (full_name, is_valuetype);
+                }
+
+                public ExternAssembly GetAssemblyRef (string assembly_name)
+                {
+                        ExternAssembly ass = null;
+                        if (assembly_table != null)
+                                ass = assembly_table [assembly_name] as ExternAssembly;
+
+                        if (ass == null)
+                                Report.Error ("Assembly " + assembly_name + " is not defined.");
+
+                        return ass;
                 }
 
                 public static void GetNameAndNamespace (string full_name,

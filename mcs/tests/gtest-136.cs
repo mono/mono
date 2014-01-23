@@ -33,7 +33,7 @@ namespace Martin {
 
 	class X
 	{
-		static void Main ()
+		public static void Main ()
 		{
 			B? b = new B (5);
 			A? a = b;

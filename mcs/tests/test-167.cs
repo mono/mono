@@ -21,7 +21,7 @@ class X
                 A, B
         }
 
-        static int Main ()
+        public static int Main ()
         {
                 int v = Test (Foo.A);
 		if (v != 0)

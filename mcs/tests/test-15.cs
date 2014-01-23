@@ -17,7 +17,7 @@ struct StructImplementor : Iface {
 }
 class Run {
 
-	static int Main ()
+	public static int Main ()
 	{
 		Iface iface;
 		Implementor i = new Implementor ();

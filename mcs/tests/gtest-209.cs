@@ -9,7 +9,7 @@ namespace ClassLibrary3
 
 	public class Test
 	{
-		static void Main ()
+		public static void Main ()
 		{
 			Dictionary1<Guid, String> _D = new Dictionary1<Guid, string>();
 			_D.Add(Guid.NewGuid(), "foo");

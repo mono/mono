@@ -28,6 +28,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+
 using Mono.CodeContracts.Static.AST;
 using Mono.CodeContracts.Static.AST.Visitors;
 using Mono.CodeContracts.Static.ControlFlow.Blocks;
@@ -65,12 +67,12 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 		}
 		#endregion
 
-		public Result ForwardDecode<Data, Result, Visitor> (APC pc, Visitor visitor, Data data)
-			where Visitor : IILVisitor<APC, Dummy, Dummy, Data, Result>
+		public TResult ForwardDecode<TData, TResult, TVisitor> (APC pc, TVisitor visitor, TData data)
+			where TVisitor : IILVisitor<APC, Dummy, Dummy, TData, TResult>
 		{
 			var block = pc.Block as BlockBase;
 			if (block != null)
-				return block.ForwardDecode<Data, Result, Visitor> (pc, visitor, data);
+				return block.ForwardDecode<TData, TResult, TVisitor> (pc, visitor, data);
 
 			return visitor.Nop (pc, data);
 		}
@@ -107,12 +109,10 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 			return new ControlFlowGraph (this.MetaDataProvider.AccessMethodBody (method, this, Dummy.Value), this);
 		}
 
-
 		public void AddReads (Method method, Field field)
 		{
 			throw new NotImplementedException ();
 		}
-
 
 		public IEnumerable<Method> GetAffectedGetters (Field field)
 		{
@@ -123,8 +123,8 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 
 		public IEnumerable<Field> GetModifies (Method method)
 		{
-			//todo: implement this
-			return new Field[0];
+                        //todo: implement this
+                        return Enumerable.Empty<Field> ();
 		}
 	}
 }

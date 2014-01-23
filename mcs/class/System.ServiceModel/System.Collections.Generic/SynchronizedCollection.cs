@@ -33,22 +33,6 @@ using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic
 {
-#if MOONLIGHT
-	public class SynchronizedCollection<T> : Collection<T>
-	{
-		public object SyncRoot;
-		
-		public SynchronizedCollection ()
-		{
-			SyncRoot = new object ();
-		}
-		
-		internal SynchronizedCollection (object syncRoot)
-		{
-			SyncRoot = syncRoot;
-		}
-	}
-#else
 	[ComVisibleAttribute (false)] 
 	public class SynchronizedCollection<T> : IList<T>, ICollection<T>, 
 		IEnumerable<T>, IList, ICollection, IEnumerable
@@ -273,5 +257,4 @@ namespace System.Collections.Generic
 
 		#endregion
 	}
-#endif
 }

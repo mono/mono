@@ -4,7 +4,7 @@
 
 class Program
 {
-	static void Main ()
+	public static void Main ()
 	{
 		S s;
 		s.Test ();

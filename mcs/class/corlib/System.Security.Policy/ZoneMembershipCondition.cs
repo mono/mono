@@ -28,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !MOONLIGHT
-
 using System.Collections;
 using System.Globalization;
 using System.Runtime.InteropServices;
@@ -139,6 +137,3 @@ namespace System.Security.Policy {
                 }
         }
 }
-
-#endif
-

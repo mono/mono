@@ -139,7 +139,10 @@ namespace System.Net
 		{
 			if (!callbackDone && cb != null) {
 				callbackDone = true;
-				ThreadPool.QueueUserWorkItem (CB, null);
+				if (synch)
+					cb (this);
+				else
+					ThreadPool.QueueUserWorkItem (CB, null);
 			}
 		}
 

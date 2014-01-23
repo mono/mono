@@ -24,8 +24,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !MOONLIGHT
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -59,11 +57,11 @@ namespace System.Xml.XPath
 			return GetUnderlyingXObjects((XPathNodeIterator) navigationResult);
 		}
 
-		private static IEnumerable<XObject> GetUnderlyingXObjects(XPathNodeIterator nodeIterator)
+		private static IEnumerable<object> GetUnderlyingXObjects(XPathNodeIterator nodeIterator)
 		{
 			foreach (XPathNavigator nav in nodeIterator)
 			{
-				yield return (XObject)(nav.UnderlyingObject);
+				yield return nav.UnderlyingObject;
 			}
 		}
 
@@ -95,5 +93,3 @@ namespace System.Xml.XPath
 		}
 	}
 }
-
-#endif

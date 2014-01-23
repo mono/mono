@@ -10,7 +10,7 @@ class Program
 		var t2 = Task.Run (() => { return t; });
 	}
 	
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

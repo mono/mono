@@ -17,7 +17,7 @@ class TestClass
 		return 1;
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		C c = new C ();
 		Test (c, c, new object [0]);

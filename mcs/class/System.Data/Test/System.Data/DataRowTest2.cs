@@ -2079,7 +2079,8 @@ namespace MonoTests.System.Data
 			Assert.AreEqual(true , dr.IsNull(1) , "DRW95");
 		}
 
-		[Test] public void IsNull_ByName()
+		[Test]
+		public void IsNull_ByName()
 		{
 			DataTable dt = new DataTable(); 
 			DataColumn dc0 = new DataColumn("Col0",typeof(int));
@@ -2114,7 +2115,7 @@ namespace MonoTests.System.Data
 
 			foreach( DataRow row in ds.Tables[0].Rows )
 			{
-				// Console.WriteLine(row["ValueListValueMember"].ToString() + " " );
+				Console.WriteLine(row["ValueListValueMember"].ToString() + " " );
 				if( row.IsNull("ValueListValueMember") == true )
 					Assert.AreEqual("Failed", "SubTest", "DRW98");
 				else
@@ -2799,7 +2800,6 @@ namespace MonoTests.System.Data
 		}
 
 #if NET_2_0
-		string SetAddedModified_ErrMsg = "SetAdded and SetModified can only be called on DataRows with Unchanged DataRowState.";
 		[Test]
 		public void SetAdded_test()
 		{
@@ -2810,8 +2810,6 @@ namespace MonoTests.System.Data
 				row.SetAdded();
 				Assert.Fail ("#1");
 			} catch (InvalidOperationException e) {
-				// Never premise English.
-				//Assert.AreEqual (SetAddedModified_ErrMsg, e.Message, "#2");
 			}
 
 			table.Columns.Add("col1", typeof(int));
@@ -2824,8 +2822,6 @@ namespace MonoTests.System.Data
 				row.SetAdded();
 				Assert.Fail ("#2");
 			} catch (InvalidOperationException e) {
-				// Never premise English.
-				//Assert.AreEqual (SetAddedModified_ErrMsg, e.Message, "#2");
 			}
 			Assert.AreEqual(DataRowState.Added, row.RowState, "#2");
 
@@ -2836,8 +2832,6 @@ namespace MonoTests.System.Data
 				row.SetAdded();
 				Assert.Fail ("#3");
 			} catch (InvalidOperationException e) {
-				// Never premise English.
-				//Assert.AreEqual (SetAddedModified_ErrMsg, e.Message, "#2");
 			}
 
 			row.AcceptChanges();

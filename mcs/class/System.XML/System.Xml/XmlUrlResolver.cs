@@ -90,8 +90,11 @@ namespace System.Xml
 			// (MS documentation says) parameter role isn't used yet.
 			WebRequest req = WebRequest.Create (absoluteUri);
 #if NET_4_5
+
+#if !NET_2_1
 			if (cachePolicy != null)
 				req.CachePolicy = cachePolicy;
+#endif
 			if (proxy != null)
 				req.Proxy = proxy;
 #endif
@@ -138,8 +141,10 @@ namespace System.Xml
 
 			// (MS documentation says) parameter role isn't used yet.
 			WebRequest req = WebRequest.Create (absoluteUri);
+#if !NET_2_1
 			if (cachePolicy != null)
 				req.CachePolicy = cachePolicy;
+#endif
 			if (proxy != null)
 				req.Proxy = proxy;
 			if (credential != null)

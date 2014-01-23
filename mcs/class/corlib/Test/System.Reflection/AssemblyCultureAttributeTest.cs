@@ -5,6 +5,8 @@
 // (C) 2004 Ximian, Inc. http://www.ximian.com
 //
 
+#if !MOBILE
+
 using System;
 using System.Threading;
 using System.Reflection;
@@ -81,3 +83,4 @@ namespace MonoTests.System.Reflection {
 	}
 }
 
+#endif

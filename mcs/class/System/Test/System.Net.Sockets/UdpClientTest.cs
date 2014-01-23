@@ -262,7 +262,6 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (Int32, AddressFamily)
-		[Category ("NotOnMac")]
 		public void Constructor5 ()
 		{
 			MyUdpClient client;
@@ -384,14 +383,15 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (String, Int32)
-		[Category ("NotOnMac")]
 		public void Constructor6 ()
 		{
 			MyUdpClient client;
 			Socket s;
 			IPEndPoint localEP;
 
-			client = new MyUdpClient ("localhost", IPEndPoint.MinPort);
+			// Bug #5503
+			// UDP port 0 doesn't seem to be valid.
+			client = new MyUdpClient ("127.0.0.1", 53);
 			s = client.Client;
 			Assert.IsNotNull (s, "#A:Client");
 			Assert.AreEqual (AddressFamily.InterNetwork, s.AddressFamily, "#A:Client:AddressFamily");
@@ -414,7 +414,7 @@ namespace MonoTests.System.Net.Sockets {
 			Assert.AreEqual (IPAddress.Loopback, localEP.Address, "#A:Client:LocalEndPoint/Address");
 			Assert.AreEqual (AddressFamily.InterNetwork, localEP.AddressFamily, "#A:Client:LocalEndPoint/AddressFamily");
 
-			client = new MyUdpClient ("localhost", IPEndPoint.MaxPort);
+			client = new MyUdpClient ("127.0.0.1", IPEndPoint.MaxPort);
 			s = client.Client;
 			Assert.IsNotNull (s, "#B:Client");
 			Assert.AreEqual (AddressFamily.InterNetwork, s.AddressFamily, "#B:Client:AddressFamily");
@@ -479,10 +479,9 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test]
-		[Category ("NotOnMac")]
 		public void UdpClientBroadcastTest () 
 		{
-			UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Loopback, 1234));
+			UdpClient client = new UdpClient ();
 			byte[] bytes = new byte[] {10, 11, 12, 13};
 
 			try {
@@ -503,7 +502,6 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // JoinMulticastGroup (IPAddress)
-		[Category ("NotOnMac")]
 		public void JoinMulticastGroup1_IPv6 ()
 		{
 #if NET_2_0
@@ -613,7 +611,6 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // JoinMulticastGroup (In32, IPAddress)
-		[Category ("NotOnMac")]
 		public void JoinMulticastGroup2_IPv6 ()
 		{
 #if NET_2_0
@@ -705,7 +702,6 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // JoinMulticastGroup (IPAddress, Int32)
-		[Category ("NotOnMac")]
 		public void JoinMulticastGroup3_IPv6 ()
 		{
 #if NET_2_0
@@ -905,7 +901,19 @@ namespace MonoTests.System.Net.Sockets {
 		[Test]
 		public void CloseInReceive ()
 		{
-			UdpClient client = new UdpClient (50000);
+			UdpClient client = null;
+			var rnd = new Random ();
+			for (int i = 0; i < 5; i++) {
+				int port = rnd.Next (1025, 65534);
+				try {
+					client = new UdpClient (port);
+					break;
+				} catch (Exception ex) {
+					if (i == 5)
+						throw;
+				}
+			}
+
 			new Thread(delegate() {
 				Thread.Sleep(2000);
 				client.Close();
@@ -962,7 +970,6 @@ namespace MonoTests.System.Net.Sockets {
 		}
 		
 		[Test]
-		[Category ("NotOnMac")]
 		public void BeginSend ()
 		{
 			UdpClient client = new UdpClient ();
@@ -1017,7 +1024,6 @@ namespace MonoTests.System.Net.Sockets {
 		}
 		
 		[Test]
-		[Category ("NotOnMac")]
 		public void BeginReceive ()
 		{
 			UdpClient client = new UdpClient (1237);
@@ -1026,7 +1032,7 @@ namespace MonoTests.System.Net.Sockets {
 			
 			client.BeginReceive (BRCallback, client);
 
-			IPEndPoint ep = new IPEndPoint (Dns.GetHostEntry (string.Empty).AddressList[0], 1237);
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 1237);
 			byte[] send_bytes = new byte[] {10, 11, 12, 13};
 			client.Send (send_bytes, send_bytes.Length, ep);
 
@@ -1043,19 +1049,23 @@ namespace MonoTests.System.Net.Sockets {
 		}
 		
 		[Test]
-		[Category ("NotOnMac")]
 		public void Available ()
 		{
-			UdpClient client = new UdpClient (1238);
-			IPEndPoint ep = new IPEndPoint (Dns.GetHostEntry (string.Empty).AddressList[0], 1238);
-			byte[] bytes = new byte[] {10, 11, 12, 13};
-			
-			client.Send (bytes, bytes.Length, ep);
-			int avail = client.Available;
-			
-			Assert.AreEqual (bytes.Length, avail, "Available #1");
+			using (UdpClient client = new UdpClient (1238)) {
+				IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 1238);
+				byte[] bytes = new byte[] {10, 11, 12, 13};
+				
+				int res = client.Send (bytes, bytes.Length, ep);
+				Assert.AreEqual (bytes.Length, res, "Send");
 
-			client.Close ();
+				// that might happen too quickly, data sent and not yet received/available
+				Thread.Sleep (100);
+				int avail = client.Available;
+				
+				Assert.AreEqual (bytes.Length, avail, "Available #1");
+
+				client.Close ();
+			}
 		}
 		
 		[Test]

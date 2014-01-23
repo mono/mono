@@ -80,9 +80,10 @@ namespace System.Xml.Linq
 		public string ToString (SaveOptions options)
 		{
 			StringWriter sw = new StringWriter ();
-			XmlWriterSettings s = new XmlWriterSettings ();
-			s.ConformanceLevel = ConformanceLevel.Auto;
-			s.Indent = options != SaveOptions.DisableFormatting;
+			XmlWriterSettings s = new XmlWriterSettings () {
+				ConformanceLevel = ConformanceLevel.Auto,
+				Indent = options != SaveOptions.DisableFormatting,
+				OmitXmlDeclaration = true };
 			XmlWriter xw = XmlWriter.Create (sw, s);
 			WriteTo (xw);
 			xw.Close ();
@@ -99,6 +100,7 @@ namespace System.Xml.Linq
 				if (o == null || Owner.OnAddingObject (o, true, here, false))
 					continue;
 				XNode n = XUtil.ToNode (o);
+				Owner.OnAddingObject (n);
 				n = (XNode) XUtil.GetDetachedObject (n);
 				n.SetOwner (Owner);
 				n.previous = here;
@@ -109,6 +111,7 @@ namespace System.Xml.Linq
 				else
 					Owner.LastNode = n;
 				here = n;
+				Owner.OnAddedObject (n);
 			}
 		}
 
@@ -126,7 +129,9 @@ namespace System.Xml.Linq
 			foreach (object o in XUtil.ExpandArray (content)) {
 				if (o == null || Owner.OnAddingObject (o, true, previous, true))
 					continue;
+
 				XNode n = XUtil.ToNode (o);
+				Owner.OnAddingObject (n);
 				n = (XNode) XUtil.GetDetachedObject (n);
 				n.SetOwner (Owner);
 				n.previous = previous;
@@ -136,6 +141,7 @@ namespace System.Xml.Linq
 				previous = n;
 				if (Owner.FirstNode == this)
 					Owner.FirstNode = n;
+				Owner.OnAddedObject (n);
 			}
 		}
 
@@ -196,6 +202,8 @@ namespace System.Xml.Linq
 			if (Owner == null)
 				throw new InvalidOperationException ("Owner is missing");
 
+			var owner = Owner;
+			owner.OnRemovingObject (this);
 			if (Owner.FirstNode == this)
 				Owner.FirstNode = next;
 			if (Owner.LastNode == this)
@@ -207,6 +215,7 @@ namespace System.Xml.Linq
 			previous = null;
 			next = null;
 			SetOwner (null);
+			owner.OnRemovedObject (this);
 		}
 
 		public override string ToString ()

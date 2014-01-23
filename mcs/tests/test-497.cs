@@ -17,7 +17,7 @@ public class PlotMenuItem
 		child.Callback += new EventHandler (callback);
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		PlotMenuItem pmi = new PlotMenuItem (new EventHandler (MenuItem_Click));
 		pmi.Callback (null, null);

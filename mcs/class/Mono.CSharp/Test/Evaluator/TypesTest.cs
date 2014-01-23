@@ -85,10 +85,18 @@ namespace MonoTests.EvaluatorTest
 		}
 
 		[Test]
-		public void GG ()
+		public void MoreThanOneType ()
 		{
 			Evaluator.Run ("public class D { int x; public int X { get { return x; } set { x = value;} } };");
 			Evaluator.Run ("public class C { public int Speed{get;set;}};");
+		}
+
+		[Test]
+		public void StructType ()
+		{
+			Evaluator.Run ("class C { }");
+			Evaluator.Run ("struct B { public string foo; public int bar; }");
+			Evaluator.Run ("B aStruct = new B { foo = \"foo\", bar = 1 };");
 		}
 	}
 }

@@ -32,7 +32,7 @@ namespace System.Runtime.CompilerServices {
 
 		public T Value;
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 		public StrongBox ()
 		{
 		}

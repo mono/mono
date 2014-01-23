@@ -65,6 +65,7 @@ namespace System.Windows.Forms.DataVisualization.Charting
 		}
 		#endregion
 
+
 		#region Protected Methods
 		protected virtual void Dispose (bool disposing)
 		{

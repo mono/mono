@@ -67,7 +67,8 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisible (false)]
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 [assembly: TypeForwardedTo (typeof (System.Security.Cryptography.Aes))]
+[assembly: TypeForwardedTo (typeof (System.Threading.LazyThreadSafetyMode ))]
+[assembly: TypeForwardedTo (typeof (System.Lazy<>))]
 #endif
-

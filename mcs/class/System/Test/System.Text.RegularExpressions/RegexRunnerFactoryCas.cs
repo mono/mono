@@ -27,6 +27,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !MOBILE
+
 using NUnit.Framework;
 
 using System;
@@ -83,3 +85,5 @@ namespace MonoCasTests.System.Text.RegularExpressions {
 		}
 	}
 }
+
+#endif

@@ -14,7 +14,9 @@ namespace System.Runtime.InteropServices
 	[CLSCompliant (false)]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("8A7C1442-A9FB-366B-80D8-4939FFA6DBE0")]
+#if !FULL_AOT_RUNTIME
 	[TypeLibImportClass (typeof (FieldInfo))]
+#endif
 	[ComVisible (true)]
 	public interface _FieldInfo
 	{

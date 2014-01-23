@@ -28,7 +28,7 @@ public class Identifier
 		return -1;
 	}	
 
-	static int Main ()
+	public static int Main ()
 	{
 		Identifier a = null;
 		string b = "a";

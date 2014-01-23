@@ -48,11 +48,7 @@ namespace System.ComponentModel
 
 		public virtual bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 		{
-			if (sourceType == typeof (InstanceDescriptor)) {
-				return true;
-			}
-
-			return false;
+			return sourceType == typeof (InstanceDescriptor);
 		}
 
 		public bool CanConvertTo (Type destinationType)
@@ -112,14 +108,18 @@ namespace System.ComponentModel
 		public virtual object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value,
 						 Type destinationType)
 		{
-			// context? culture?
+			// context?
 			if (destinationType == null)
 				throw new ArgumentNullException ("destinationType");
 
 			if (destinationType == typeof (string)) {
-				if (value != null)
-					return value.ToString();
-				return String.Empty;
+				if (value == null)
+					return String.Empty;
+
+				if (culture != null)
+					return Convert.ToString (value, culture);
+
+				return value.ToString();
 			}
 
 			return GetConvertToException (value, destinationType);
@@ -259,7 +259,18 @@ namespace System.ComponentModel
 
 		public virtual bool IsValid (ITypeDescriptorContext context, object value)
 		{
-			return true;
+			if (value == null)
+				return false;
+
+      		if (!this.CanConvertFrom(context, value.GetType()))
+        		return false;
+        
+      		try {
+        		this.ConvertFrom(context, CultureInfo.InvariantCulture, value);
+        		return true;
+      		} catch {
+        		return false;
+      		}
 		}
 
 		protected PropertyDescriptorCollection SortProperties (PropertyDescriptorCollection props, string[] names)

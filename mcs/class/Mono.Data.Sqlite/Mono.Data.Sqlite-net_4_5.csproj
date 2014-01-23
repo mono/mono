@@ -5,14 +5,16 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{0ECDAF31-B581-4319-A1B3-1CDF1FF1BA0B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>./../../class/lib/net_4_5</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\Mono.Data.Sqlite-net_4_5</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>Mono.Data.Sqlite</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -25,7 +27,6 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;SQLITE_STANDARD</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,44 +35,47 @@
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;SQLITE_STANDARD</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="Assembly\AssemblyInfo.cs" />
-   <Compile Include="..\..\build\common\Consts.cs" />
-   <Compile Include="..\..\build\common\Locale.cs" />
-   <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\MonoPInvokeCallbackAttribute.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\SQLite3.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\SQLite3_UTF16.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\SQLiteBase.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\SQLiteCommandBuilder.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\SQLiteCommand.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\SQLiteConnection.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\LINQ\SQLiteConnection_Linq.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\SQLiteConnectionPool.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\SQLiteConnectionStringBuilder.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\SQLiteConvert.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\SQLiteDataAdapter.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\SQLiteDataReader.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\SqliteDataSourceEnumerator.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\SQLiteEnlistment.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\SQLiteException.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\SQLiteFactory.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\LINQ\SQLiteFactory_Linq.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\SQLiteFunctionAttribute.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\SQLiteFunction.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\SQLiteKeyReader.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\SQLiteMetaDataCollectionNames.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\SQLiteParameterCollection.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\SQLiteParameter.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\SQLiteStatement.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\SQLiteTransaction.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\SR.Designer.cs" />
-   <Compile Include="Mono.Data.Sqlite_2.0\UnsafeNativeMethods.cs" />
-
-  </ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\..\build\common\Locale.cs" />
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\LINQ\SQLiteConnection_Linq.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\LINQ\SQLiteFactory_Linq.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\MonoPInvokeCallbackAttribute.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\SQLite3.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\SQLite3_UTF16.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\SQLiteBase.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\SQLiteCommand.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\SQLiteCommandBuilder.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\SQLiteConnection.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\SQLiteConnectionPool.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\SQLiteConnectionStringBuilder.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\SQLiteConvert.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\SQLiteDataAdapter.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\SQLiteDataReader.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\SqliteDataSourceEnumerator.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\SQLiteEnlistment.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\SQLiteException.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\SQLiteFactory.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\SQLiteFunction.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\SQLiteFunctionAttribute.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\SQLiteKeyReader.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\SQLiteMetaDataCollectionNames.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\SQLiteParameter.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\SQLiteParameterCollection.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\SQLiteStatement.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\SQLiteTransaction.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\SR.Designer.cs" />
+    <Compile Include="Mono.Data.Sqlite_2.0\UnsafeNativeMethods.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -80,48 +84,50 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Transactions.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Transactions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Xml.dll</HintPath>
-    </Reference>
-
+    <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
+      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
+      <Name>corlib\corlib-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_5-2.csproj">
+      <Project>{38FCD731-0E11-46F7-A31B-DCBE853AD8D7}</Project>
+      <Name>System\System-net_4_5-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Data\System.Data-net_4_5.csproj">
+      <Project>{663D8C81-B74E-4D44-8C59-2264C6942B30}</Project>
+      <Name>System.Data\System.Data-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Transactions\System.Transactions-net_4_5.csproj">
+      <Project>{9C3F8EFB-4A3A-4BD1-9072-881F1F558781}</Project>
+      <Name>System.Transactions\System.Transactions-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
+      <Project>{4ED6CCE8-8E8A-4D82-8BCA-3EA4D4203AA4}</Project>
+      <Name>System.XML\System.Xml-net_4_5-1</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-    <ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="resources/SR.resources">
-       <LogicalName>SR.resources</LogicalName>
+      <LogicalName>SR.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/SQLiteCommand.bmp">
-       <LogicalName>SQLiteCommand.bmp</LogicalName>
+      <LogicalName>SQLiteCommand.bmp</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/SQLiteConnection.bmp">
-       <LogicalName>SQLiteConnection.bmp</LogicalName>
+      <LogicalName>SQLiteConnection.bmp</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/SQLiteDataAdapter.bmp">
-       <LogicalName>SQLiteDataAdapter.bmp</LogicalName>
+      <LogicalName>SQLiteDataAdapter.bmp</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
-
 </Project>
-

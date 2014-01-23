@@ -58,7 +58,7 @@ class C : B
 
 public class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		var b = new B ();
 		var c = new C ();

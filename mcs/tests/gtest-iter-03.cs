@@ -20,7 +20,7 @@ public class Test {
 				yield return o;
 	}
 	
-	static void Main ()
+	public static void Main ()
 	{
 		var test = new Test ();
 		test.Annotations<Test> ();

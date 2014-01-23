@@ -30,8 +30,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !MOONLIGHT
-
 using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
@@ -119,12 +117,6 @@ namespace System.Security.Cryptography {
 				Buffer.BlockCopy (_HashValue, 0, hash, 0, 20);
 			}
 			return hash;
-		}
-		/// <summary>
-		/// Finalizes the RIPEMD160Managed.
-		/// </summary>
-		~RIPEMD160Managed() {
-			Dispose(false);
 		}
 
 		/// <summary>
@@ -445,5 +437,3 @@ namespace System.Security.Cryptography {
 		private const int BLOCK_SIZE_BYTES =  64;
 	}
 }
-
-#endif

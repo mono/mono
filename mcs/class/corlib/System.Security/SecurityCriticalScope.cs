@@ -28,6 +28,9 @@
 
 namespace System.Security {
 
+#if NET_4_0
+	[Obsolete]
+#endif
 	public enum SecurityCriticalScope {
 		Explicit,
 		Everything

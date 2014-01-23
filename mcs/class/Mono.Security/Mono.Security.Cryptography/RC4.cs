@@ -3,9 +3,10 @@
 //	RC4 is a trademark of RSA Security
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@xamarin.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright 2013 Xamarin Inc. (http://www.xamarin.com)
 //
 
 //
@@ -34,7 +35,10 @@ using System.Security.Cryptography;
 
 namespace Mono.Security.Cryptography {
 
-public abstract class RC4 : SymmetricAlgorithm {
+#if !INSIDE_CORLIB
+	public
+#endif
+	abstract class RC4 : SymmetricAlgorithm {
 
 	private static KeySizes[] s_legalBlockSizes = {
 		new KeySizes (64, 64, 0)
@@ -61,7 +65,11 @@ public abstract class RC4 : SymmetricAlgorithm {
 
 	new static public RC4 Create() 
 	{
+#if FULL_AOT_RUNTIME
+		return new ARC4Managed ();
+#else
 		return Create ("RC4");
+#endif
 	}
 
 	new static public RC4 Create (string algName) 

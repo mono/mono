@@ -8,7 +8,7 @@ class X {
 
 	static int gt, gj;
     
-	static int Main ()
+	public static int Main ()
 	{
 		int times = 0;
 		

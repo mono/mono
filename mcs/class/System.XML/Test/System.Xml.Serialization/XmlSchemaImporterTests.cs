@@ -39,8 +39,9 @@ using System.IO;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+#if !MOBILE
 using Microsoft.CSharp;
-
+#endif
 using NUnit.Framework;
 
 using MonoTests.System.Xml.TestClasses;
@@ -891,6 +892,8 @@ namespace MonoTests.System.Xml.Serialization
 			Assert.AreEqual ("UInt16", map.TypeName, "#6");
 		}
 
+#if !MOBILE
+
 		[Test]
 		public void ImportTypeMapping_EnumSimpleContent ()
 		{
@@ -1075,30 +1078,6 @@ namespace MonoTests.System.Xml.Serialization
 			return null;
 		}
 
-		private static XmlSchemas ExportType (Type type)
-		{
-			XmlReflectionImporter ri = new XmlReflectionImporter ("NS" + type.Name);
-			XmlSchemas schemas = new XmlSchemas ();
-			XmlSchemaExporter sx = new XmlSchemaExporter (schemas);
-			XmlTypeMapping tm = ri.ImportTypeMapping (type);
-			sx.ExportTypeMapping (tm);
-			return schemas;
-		}
-
-		private static ArrayList GetXmlQualifiedNames (XmlSchemas schemas)
-		{
-			ArrayList qnames = new ArrayList ();
-
-			foreach (XmlSchema schema in schemas) {
-				if (!schema.IsCompiled) schema.Compile (null);
-				foreach (XmlSchemaObject ob in schema.Items)
-					if (ob is XmlSchemaElement)
-						qnames.Add (((XmlSchemaElement) ob).QualifiedName);
-			}
-
-			return qnames;
-		}
-
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void ImportTypeMappingNonExistent ()
@@ -1237,6 +1216,32 @@ namespace MonoTests.System.Xml.Serialization
 			foreach (string xsd in schemaXmlStrings)
 				xss.Add (XmlSchema.Read (new XmlTextReader (new StringReader (xsd)), null));
 			return new XmlSchemaImporter (xss);
+		}
+
+#endif
+
+		private static ArrayList GetXmlQualifiedNames (XmlSchemas schemas)
+		{
+			ArrayList qnames = new ArrayList ();
+			
+			foreach (XmlSchema schema in schemas) {
+				if (!schema.IsCompiled) schema.Compile (null);
+				foreach (XmlSchemaObject ob in schema.Items)
+					if (ob is XmlSchemaElement)
+						qnames.Add (((XmlSchemaElement) ob).QualifiedName);
+			}
+			
+			return qnames;
+		}
+
+		private static XmlSchemas ExportType (Type type)
+		{
+			XmlReflectionImporter ri = new XmlReflectionImporter ("NS" + type.Name);
+			XmlSchemas schemas = new XmlSchemas ();
+			XmlSchemaExporter sx = new XmlSchemaExporter (schemas);
+			XmlTypeMapping tm = ri.ImportTypeMapping (type);
+			sx.ExportTypeMapping (tm);
+			return schemas;
 		}
 	}
 }

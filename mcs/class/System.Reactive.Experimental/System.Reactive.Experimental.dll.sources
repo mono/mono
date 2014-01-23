@@ -1,0 +1,11 @@
+Assembly/AssemblyInfo.cs
+../../../external/rx/Rx/NET/Source/System.Reactive.Experimental/ExperimentalAttribute.cs
+../../../external/rx/Rx/NET/Source/System.Reactive.Experimental/InternalsVisibleTo.cs
+../../../external/rx/Rx/NET/Source/System.Reactive.Experimental/Properties/AssemblyInfo.cs
+../../../external/rx/Rx/NET/Source/System.Reactive.Experimental/Reactive/Internal/BinaryObserver.cs
+../../../external/rx/Rx/NET/Source/System.Reactive.Experimental/Reactive/Linq/QbservableEx.cs
+../../../external/rx/Rx/NET/Source/System.Reactive.Experimental/Reactive/Linq/IQueryLanguageEx.cs
+../../../external/rx/Rx/NET/Source/System.Reactive.Experimental/Reactive/Linq/ObservableEx.cs
+../../../external/rx/Rx/NET/Source/System.Reactive.Experimental/Reactive/Linq/QbservableEx.Generated.cs
+../../../external/rx/Rx/NET/Source/System.Reactive.Experimental/Reactive/Linq/QueryLanguageEx.cs
+../../../external/rx/Rx/NET/Source/System.Reactive.Experimental/Reactive/ListObservable.cs

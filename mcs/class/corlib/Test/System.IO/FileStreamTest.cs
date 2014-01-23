@@ -15,6 +15,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 
 namespace MonoTests.System.IO
 {
@@ -42,12 +43,13 @@ namespace MonoTests.System.IO
 				Directory.Delete (TempFolder, true);
 
 			Directory.CreateDirectory (TempFolder);
-			
+#if !MOBILE			
 			// from XplatUI.cs
 			IntPtr buf = Marshal.AllocHGlobal (8192);
 			if (uname (buf) == 0)
 				MacOSX = Marshal.PtrToStringAnsi (buf) == "Darwin";
 			Marshal.FreeHGlobal (buf);
+#endif
 		}
 
 		public void TestCtr ()
@@ -1514,6 +1516,35 @@ namespace MonoTests.System.IO
 			stream.EndWrite (stream.BeginWrite (new byte[8], 0, 8, null, null));
 		}
 
+		static IAsyncResult DoBeginWrite(Stream stream, ManualResetEvent mre, byte[] RandomBuffer)
+		{
+			return stream.BeginWrite (RandomBuffer, 0, RandomBuffer.Length, ar => {
+				stream.EndWrite (ar);
+
+				// we don't supply an ManualResetEvent so this will throw an NRE on the second run
+				// which nunit-console will ignore (but other test runners don't like that)
+				if (mre == null)
+					return;
+
+				DoBeginWrite (stream, null, RandomBuffer).AsyncWaitHandle.WaitOne ();
+				mre.Set ();
+			}, null);
+		}
+
+		[Test]
+		public void BeginWrite_Recursive ()
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "temp";
+			DeleteFile (path);
+	
+			using (FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Write)) {
+				var mre = new ManualResetEvent (false);	
+				var RandomBuffer = new byte[1024];			
+				DoBeginWrite (stream, mre, RandomBuffer);
+				Assert.IsTrue (mre.WaitOne (5000), "#1");
+			}
+		}
+
 		[Test]
 		[Category("TargetJvmNotSupported")] // File locking not supported for TARGET_JVM
 		[ExpectedException (typeof (ObjectDisposedException))]
@@ -1604,6 +1635,7 @@ namespace MonoTests.System.IO
 			
 		}
 
+#if !MOBILE
 		[Test]
 		public void WriteWithExposedHandle ()
 		{
@@ -1637,5 +1669,6 @@ namespace MonoTests.System.IO
 				DeleteFile (path);
 			}
 		}
+#endif
 	}
 }

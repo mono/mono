@@ -5,7 +5,7 @@ class X {
 	//
 	// DO NOT ADD ANYTHING ELSE TO THIS TEST
 	//
-	static int Main ()
+	public static int Main ()
 	{
 		int a;
 

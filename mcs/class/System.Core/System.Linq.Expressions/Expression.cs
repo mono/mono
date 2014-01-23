@@ -34,7 +34,9 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 
 namespace System.Linq.Expressions {
 
@@ -50,11 +52,11 @@ namespace System.Linq.Expressions {
 		internal const BindingFlags AllStatic = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy;
 		internal const BindingFlags All = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
 
-		public ExpressionType NodeType {
+		public virtual ExpressionType NodeType {
 			get { return node_type; }
 		}
 
-		public Type Type {
+		public virtual Type Type {
 			get { return type; }
 		}
 
@@ -268,7 +270,13 @@ namespace System.Linq.Expressions {
 					if (ltype == rtype && ultype.IsEnum)
 						return null;
 
-					if (ltype == rtype && ultype == typeof (bool))
+					if (ltype == rtype && (ultype == typeof (bool) || ultype == typeof (char)))
+						return null;
+
+					if (ltype.IsNullable () && ConstantExpression.IsNull (right) && !ConstantExpression.IsNull (left))
+						return null;
+
+					if (rtype.IsNullable () && ConstantExpression.IsNull (left) && !ConstantExpression.IsNull (right))
 						return null;
 				}
 
@@ -390,12 +398,16 @@ namespace System.Linq.Expressions {
 				if (!left.Type.IsNullable () && !right.Type.IsNullable ()) {
 					is_lifted = false;
 					liftToNull = false;
-					type = typeof (bool);
+					type = typeof(bool);
 				} else if (left.Type.IsNullable () && right.Type.IsNullable ()) {
 					is_lifted = true;
-					type = liftToNull ? typeof (bool?) : typeof (bool);
-				} else
+					type = liftToNull ? typeof(bool?) : typeof(bool);
+				} else if (ConstantExpression.IsNull (left) || ConstantExpression.IsNull (right)) {
+					is_lifted = true;
+					type = typeof (bool);
+				} else {			
 					throw new InvalidOperationException ();
+				}
 			} else {
 				var parameters = method.GetParameters ();
 
@@ -1333,7 +1345,7 @@ namespace System.Linq.Expressions {
 				throw new ArgumentNullException ("addMethod");
 			if (arguments == null)
 				throw new ArgumentNullException ("arguments");
-			if (addMethod.Name.ToLower (CultureInfo.InvariantCulture) != "add")
+			if (addMethod.Name.ToLowerInvariant () != "add")
 				throw new ArgumentException ("addMethod");
 			if (addMethod.IsStatic)
 				throw new ArgumentException ("addMethod must be an instance method", "addMethod");
@@ -1713,7 +1725,7 @@ namespace System.Linq.Expressions {
 			var inits = CheckListInit (newExpression, initializers);
 
 			if (addMethod != null) {
-				if (addMethod.Name.ToLower (CultureInfo.InvariantCulture) != "add")
+				if (addMethod.Name.ToLowerInvariant () != "add")
 					throw new ArgumentException ("addMethod");
 
 				var parameters = addMethod.GetParameters ();
@@ -2268,9 +2280,11 @@ namespace System.Linq.Expressions {
 		// This method must be overwritten by derived classes to
 		// compile the expression
 		//
+#if !FULL_AOT_RUNTIME
 		internal virtual void Emit (EmitContext ec)
 		{
 			throw new NotImplementedException (String.Format ("Emit method is not implemented in expression type {0}", GetType ()));
 		}
+#endif
 	}
 }

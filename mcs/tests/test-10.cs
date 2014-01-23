@@ -149,7 +149,7 @@ checked (			(ulong) a), checked ((char) a), checked ((float) a), (decimal) a);
 		decimal dec2 = (decimal)dec;
 	}
 	
-	static void Main ()
+	public static void Main ()
 	{
 
 	}

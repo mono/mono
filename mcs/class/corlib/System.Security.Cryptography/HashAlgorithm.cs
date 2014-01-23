@@ -112,7 +112,11 @@ namespace System.Security.Cryptography {
 	
 		public static HashAlgorithm Create () 
 		{
+#if FULL_AOT_RUNTIME
+			return new System.Security.Cryptography.SHA1CryptoServiceProvider ();
+#else
 			return Create ("System.Security.Cryptography.HashAlgorithm");
+#endif
 		}
 	
 		public static HashAlgorithm Create (string hashName)

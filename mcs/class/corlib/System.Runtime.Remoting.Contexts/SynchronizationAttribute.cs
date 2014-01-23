@@ -49,7 +49,7 @@ namespace System.Runtime.Remoting.Contexts
 		[NonSerialized]
 		bool _locked;
 		[NonSerialized]
-		int _lockCount = 0;
+		int _lockCount;
 		
 		[NonSerialized]
 		Mutex _mutex = new Mutex (false);

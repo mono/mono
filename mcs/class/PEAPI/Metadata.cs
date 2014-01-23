@@ -55,6 +55,7 @@ namespace PEAPI {
 		PublicSealed = 0x101, SpecialName = 0x400, RTSpecialName = 0x800, 
 		Import = 0x1000, Serializable = 0x2000, UnicodeClass = 0x10000,
 		AutoClass = 0x20000, HasSecurity = 0x40000, BeforeFieldInit = 0x100000,
+		Forwarder = 0x200000,
 		VisibilityMask = 0x07 }
 
 	/// <summary>
@@ -2090,9 +2091,9 @@ namespace PEAPI {
 		ExternClass externClass;
 
 		internal ExternClassRef(TypeAttr attrs, string nsName, string name,
-				FileRef declFile, MetaData md) : base(nsName,name,md) 
+				MetaDataElement declRef, MetaData md) : base(nsName,name,md) 
 		{
-			externClass = new ExternClass(attrs,nameSpaceIx,nameIx,declFile);
+			externClass = new ExternClass(attrs,nameSpaceIx,nameIx,declRef);
 			metaData.AddToTable(MDTable.ExportedType,externClass);
 		}
 

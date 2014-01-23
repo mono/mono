@@ -170,8 +170,8 @@ namespace Mono.CodeContracts.Static.AST.Visitors {
 			if (node == null)
 				return node;
 
-			node.Operand1 = VisitExpression (node.Operand1);
-			node.Operand2 = VisitExpression (node.Operand2);
+			node.Left = VisitExpression (node.Left);
+			node.Right = VisitExpression (node.Right);
 
 			return node;
 		}

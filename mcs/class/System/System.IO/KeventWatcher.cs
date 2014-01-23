@@ -268,6 +268,7 @@ namespace System.IO {
 									requests [ev.ident] = data;
 									ProcessEvent(ev);
 								}
+								changedFsi = fsi;
 								PostEvent(filename, fsw, fa, changedFsi);
 							}
 						}
@@ -283,6 +284,7 @@ namespace System.IO {
 								filename = entry.fsi.Name;
 								fa = FileAction.Removed;
 								data.DirEntries.Remove (entry.fsi.FullName);
+								changedFsi = entry.fsi;
 								PostEvent(filename, fsw, fa, changedFsi);
 								break;
 							}
@@ -334,6 +336,13 @@ namespace System.IO {
 				return;
 
 			lock (fsw) {
+				if (changedFsi.FullName.StartsWith (fsw.FullPath, StringComparison.Ordinal)) {
+					if (fsw.FullPath.EndsWith ("/", StringComparison.Ordinal)) {
+						filename = changedFsi.FullName.Substring (fsw.FullPath.Length);
+					} else {
+						filename = changedFsi.FullName.Substring (fsw.FullPath.Length + 1);
+					}
+				}
 				fsw.DispatchEvents (fa, filename, ref renamed);
 				if (fsw.Waiting) {
 					fsw.Waiting = false;

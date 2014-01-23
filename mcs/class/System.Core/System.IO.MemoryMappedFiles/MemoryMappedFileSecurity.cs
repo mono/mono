@@ -26,7 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 
 using System.Security.AccessControl;
 
@@ -34,6 +34,9 @@ namespace System.IO.MemoryMappedFiles
 {
 	public class MemoryMappedFileSecurity : ObjectSecurity<MemoryMappedFileRights>
 	{
+		public MemoryMappedFileSecurity() : base (false, ResourceType.FileObject) {
+
+		}
 	}
 }
 

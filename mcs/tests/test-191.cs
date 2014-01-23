@@ -28,7 +28,7 @@ class Y {
 }
 
 class R {
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

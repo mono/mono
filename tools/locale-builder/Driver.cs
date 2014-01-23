@@ -71,6 +71,7 @@ namespace Mono.Tools.LocaleBuilder
 		List<CultureInfoEntry> cultures;
 		Dictionary<string, string> region_currency;
 		Dictionary<string, string> currency_fractions;
+		Dictionary<string, string> extra_parent_locales; 
 
 		// The lang is the language that display names will be displayed in
 		public string Lang
@@ -261,6 +262,19 @@ namespace Mono.Tools.LocaleBuilder
 				region_currency.Add (entry.Attributes["iso3166"].Value, child.Attributes["iso4217"].Value);
 			}
 
+			// Parent locales
+			extra_parent_locales = new Dictionary<string, string> (StringComparer.OrdinalIgnoreCase);
+			foreach (XmlNode entry in supplemental.SelectNodes ("supplementalData/parentLocales/parentLocale")) {
+				var parent = entry.Attributes["parent"].Value;
+
+				if (parent == "root")
+					continue;
+
+				var locales = entry.Attributes["locales"].Value;
+				foreach (var locale in locales.Split (' '))
+					extra_parent_locales.Add (locale, parent);
+			}
+
 			var lcdids = GetXmlDocument ("lcids.xml");
 			foreach (XmlNode lcid in lcdids.SelectNodes ("lcids/lcid")) {
 				var name = lcid.Attributes["name"].Value;
@@ -347,8 +361,11 @@ namespace Mono.Tools.LocaleBuilder
 
 			var territory2dayofweek = new Dictionary<string, DayOfWeek> (StringComparer.OrdinalIgnoreCase);
 			foreach (XmlNode entry in supplemental.SelectNodes ("supplementalData/weekData/firstDay")) {
-				DayOfWeek dow;
 
+				if (entry.Attributes ["alt"] != null)
+					continue;
+
+				DayOfWeek dow;
 				switch (entry.Attributes["day"].Value) {
 				case "mon":
 					dow = DayOfWeek.Monday;
@@ -367,8 +384,9 @@ namespace Mono.Tools.LocaleBuilder
 				}
 
 				var territories = entry.Attributes["territories"].Value.Split ();
-				foreach (var t in territories)
-					territory2dayofweek[t] = dow;
+				foreach (var t in territories) {
+					territory2dayofweek.Add (t, dow);
+				}
 			}
 
 			var territory2wr = new Dictionary<string, CalendarWeekRule> (StringComparer.OrdinalIgnoreCase);
@@ -415,11 +433,6 @@ namespace Mono.Tools.LocaleBuilder
 					ci.DateTimeFormatEntry.CalendarWeekRule = (int) rule;
 				}
 
-				string fraction_value;
-				if (currency_fractions.TryGetValue (ci.Territory, out fraction_value)) {
-					ci.NumberFormatEntry.CurrencyDecimalDigits = fraction_value;
-				}
-
 				RegionInfoEntry region = regions.Where (l => l.Name == ci.Territory).FirstOrDefault ();
 				if (region == null) {
 					region = new RegionInfoEntry () {
@@ -450,6 +463,11 @@ namespace Mono.Tools.LocaleBuilder
 					var lcdid_value = int.Parse (ci.LCID.Substring (2), NumberStyles.HexNumber);
 					Patterns.FillValues (lcdid_value, region);
 					regions.Add (region);
+				}
+
+				string fraction_value;
+				if (currency_fractions.TryGetValue (region.ISOCurrencySymbol, out fraction_value)) {
+					ci.NumberFormatEntry.CurrencyDecimalDigits = fraction_value;
 				}
 
 				ci.RegionInfoEntry = region;
@@ -573,7 +591,7 @@ namespace Mono.Tools.LocaleBuilder
 					case "zh-Hant":
 						nfe.CurrencySymbol = "HK$";
 						break;
-						
+
 					default:
 						var all_currencies = new List<string> ();
 						GetAllChildrenValues (ci, all_currencies, l => l.NumberFormatEntry.CurrencySymbol);
@@ -607,6 +625,8 @@ namespace Mono.Tools.LocaleBuilder
 						if (!ci.HasMissingLocale)
 							Console.WriteLine ("No currency decimal digits data for `{0}'", ci.Name);
 
+						nfe.CurrencyDecimalDigits = "2";
+					} else if (ci.IsNeutral) {
 						nfe.CurrencyDecimalDigits = "2";
 					} else {
 						// .NET has weird concept of territory data available for neutral cultures (e.g. en, es, pt)
@@ -837,7 +857,17 @@ namespace Mono.Tools.LocaleBuilder
 
 					fname += part;
 
-					var xml = GetXmlDocument (Path.Combine (data_root, "main", fname + ".xml"));
+					XmlDocument xml;
+					string extra;
+					if (extra_parent_locales.TryGetValue (fname, out extra)) {
+						xml = GetXmlDocument (Path.Combine (data_root, "main", extra + ".xml"));
+						if (doc == null)
+							doc = xml;
+
+						Import (xml, data);
+					}
+
+					xml = GetXmlDocument (Path.Combine (data_root, "main", fname + ".xml"));
 					if (doc == null)
 						doc = xml;
 
@@ -886,14 +916,6 @@ namespace Mono.Tools.LocaleBuilder
 						}
 					}
 				}
-
-				if (data.DateTimeFormatEntry.MonthGenitiveNames[0] == null)
-					data.DateTimeFormatEntry.MonthGenitiveNames = data.DateTimeFormatEntry.MonthNames;
-
-				if (data.DateTimeFormatEntry.AbbreviatedMonthGenitiveNames[0] == null)
-					data.DateTimeFormatEntry.AbbreviatedMonthGenitiveNames = data.DateTimeFormatEntry.AbbreviatedMonthNames;
-
-
 			}
 
 			// It looks like it never changes
@@ -981,8 +1003,12 @@ namespace Mono.Tools.LocaleBuilder
 				ProcessAllNodes (nodes, df.AbbreviatedMonthNames, AddOrReplaceValue);
 
 				nodes = node.SelectNodes ("months/monthContext[@type='format']/monthWidth[@type='wide']/month");
-				if (nodes != null)
+				if (nodes != null) {
 					ProcessAllNodes (nodes, df.MonthGenitiveNames, AddOrReplaceValue);
+				}
+
+				// All values seem to match
+				Array.Copy (df.AbbreviatedMonthNames, df.AbbreviatedMonthGenitiveNames, df.AbbreviatedMonthNames.Length);
 
 				nodes = node.SelectNodes ("days/dayContext[@type='format']/dayWidth[@type='wide']/day");
 				ProcessAllNodes (nodes, df.DayNames, AddOrReplaceDayValue);
@@ -1053,8 +1079,7 @@ namespace Mono.Tools.LocaleBuilder
 				el = node.SelectSingleNode ("decimal");
 				if (el != null) {
 					ni.NumberDecimalSeparator =
-					ni.PercentDecimalSeparator =
-					ni.CurrencyDecimalSeparator = el.InnerText;
+					ni.PercentDecimalSeparator = el.InnerText;
 				}
 
 				el = node.SelectSingleNode ("plusSign");
@@ -1062,15 +1087,24 @@ namespace Mono.Tools.LocaleBuilder
 					ni.PositiveSign = el.InnerText;
 
 				el = node.SelectSingleNode ("minusSign");
-				if (el != null)
-					ni.NegativeSign = el.InnerText;
+				if (el != null) {
+					// CLDR uses unicode negative sign for some culture (e.g sv, is, lt, don't kwnow why) but .net always
+					// uses simple - sign
+					if (el.InnerText == "\u2212")
+						ni.NegativeSign = "-";
+					else
+						ni.NegativeSign = el.InnerText;					
+				}
 
 				el = node.SelectSingleNode ("infinity");
 
 				// We cannot use the value from CLDR because many broken
 				// .NET serializers (e.g. JSON) use text value of NegativeInfinity
 				// and different value would break interoperability with .NET
-				if (el != null && el.InnerText != "∞") {
+				var inf = GetInfinitySymbol (ci);
+				if (inf != null)
+					ni.InfinitySymbol = inf;
+				else if (el != null && el.InnerText != "∞") {
 					ni.InfinitySymbol = el.InnerText;
 				}
 
@@ -1093,6 +1127,50 @@ namespace Mono.Tools.LocaleBuilder
 					ni.CurrencyGroupSeparator = el.InnerText;
 				}
 			}
+		}
+
+		string GetInfinitySymbol (CultureInfoEntry ci)
+		{
+			// TODO: Add more
+			switch (ci.TwoLetterISOLanguageName) {
+				case "ca":
+					return "Infinit";
+				case "cs":
+				case "sk":
+					return "+nekonečno";
+				case "de":
+					return "+unendlich";
+				case "el":
+					return "Άπειρο";
+				case "es":
+				case "gl":
+					return "Infinito";
+				case "it":
+				case "pt":
+					return "+Infinito";
+				case "nl":
+					return "oneindig";
+				case "fr":
+				case "tzm":
+					return "+Infini";
+				case "pl":
+					return "+nieskończoność";
+				case "ru":
+			 	case "tg":
+					return "бесконечность";
+				case "sl":
+					return "neskončnost";
+				case "rm":
+					return "+infinit";
+				case "lv":
+					return "bezgalība";
+				case "lt":
+					return "begalybė";
+				case "eu":
+					return "Infinitu";
+			}
+
+			return null;
 		}
 
 		static string ConvertDatePatternFormat (string format)

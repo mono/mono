@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 class Program
 {
-	static int Main ()
+	public static int Main ()
 	{
 		var mre = new ManualResetEvent (false);
 		var mre_l = new ManualResetEvent (false);
@@ -15,7 +15,7 @@ class Program
 			await Task.Factory.StartNew (() => {
 				if (!mre_l.WaitOne (3000))
 					throw new ApplicationException ("1");
-			});
+			}).ConfigureAwait (false);
 
 			if (mre_l.WaitOne ())
 				mre.Set ();
@@ -33,7 +33,7 @@ class Program
 			await Task.Factory.StartNew (() => {
 				if (!mre_l.WaitOne (3000))
 					throw new ApplicationException ("2");
-			});
+			}).ConfigureAwait (false);
 
 			if (mre_l.WaitOne ())
 				mre.Set ();
@@ -52,7 +52,7 @@ class Program
 					throw new ApplicationException ("3");
 
 				return l;
-			});
+			}).ConfigureAwait (false);
 
 			return t;
 		};
@@ -73,7 +73,7 @@ class Program
 					throw new ApplicationException ("4");
 
 				return l;
-			});
+			}).ConfigureAwait (false);
 
 			return t;
 		};

@@ -38,7 +38,7 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis {
 	class ExpressionAnalysisFacade<TSymValue, TContext, TEdgeData>
 		where TSymValue : IEquatable<TSymValue>
 		where TContext : IValueContextProvider<TSymValue>
-		where TEdgeData : IImmutableMap<TSymValue, LispList<TSymValue>> {
+		where TEdgeData : IImmutableMap<TSymValue, Sequence<TSymValue>> {
 		
 		public readonly Predicate<APC> IsUnreachable;
 

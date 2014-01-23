@@ -18,7 +18,7 @@ public class X {
 
 class Y : X, A {
 
-	static int Main ()
+	public static int Main ()
 	{
 		Y y = new Y ();
 		

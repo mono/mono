@@ -32,7 +32,7 @@ class X {
 		}
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		m ();
 		if (i != 1)

@@ -38,7 +38,7 @@ class X
 		yield return foo4.disposed;
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		ArrayList list = new ArrayList ();
 		foreach (object data in Test (3, 5))

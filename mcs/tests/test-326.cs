@@ -6,7 +6,7 @@ public delegate double Mapper (int item);
 
 class X
 {
-        static int Main ()
+        public static int Main ()
         {
                 Mapper mapper = new Mapper (delegate (int i){
 			return i * 12; });

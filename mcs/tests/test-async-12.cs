@@ -9,9 +9,9 @@ class C
 	static async Task<int> TestNested_1 ()
 	{
 		return Call (
-			await Task.Factory.StartNew (() => { Thread.Sleep (10); return 5; }),
-			await Task.Factory.StartNew (() => -3),
-			await Task.Factory.StartNew (() => 6));
+			await Task.Factory.StartNew (() => { Thread.Sleep (10); return 5; }).ConfigureAwait (false),
+			await Task.Factory.StartNew (() => -3).ConfigureAwait (false),
+			await Task.Factory.StartNew (() => 6).ConfigureAwait (false));
 	}
 
 	static int Call (int arg1, int arg2, int arg3)

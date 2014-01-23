@@ -12,7 +12,7 @@ public class Bar<Q> : Foo<Bar<Q>.Baz>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Bar<int> bar = new Bar<int> ();
 		System.Console.WriteLine (bar);

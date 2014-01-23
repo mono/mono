@@ -249,13 +249,7 @@ public class Manager
 					// and has zero arguments.
 					try
 					{
-						handler = type.InvokeMember
-								(String.Empty,
-								 BindingFlags.CreateInstance |
-								 	BindingFlags.Public |
-								 	BindingFlags.NonPublic |
-								 	BindingFlags.Instance,
-								 null, null, null, null, null, null);
+						handler = Activator.CreateInstance (type);
 					}
 					catch(MissingMethodException)
 					{

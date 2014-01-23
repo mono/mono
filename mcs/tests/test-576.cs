@@ -1,5 +1,5 @@
 class Foo {
-	static void Main ()
+	public static void Main ()
 	{
 		int a = 0;
 		int b = 5;

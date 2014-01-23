@@ -856,13 +856,15 @@ namespace System.Windows.Forms
 				if (typeof (IBindingList).IsAssignableFrom (propcol[i].PropertyType)) {
 					table_relations.Add (propcol[i].Name);
 				} else {
-					st = CreateGridColumn (propcol[i],  true);
-					st.bound = true;
-					st.grid = datagrid;
-					st.MappingName = propcol[i].Name;
-					st.HeaderText = propcol[i].Name;
-					st.Width = CurrentPreferredColumnWidth;
-					column_styles.Add (st);
+					if (propcol[i].IsBrowsable) {
+						st = CreateGridColumn (propcol[i],  true);
+						st.bound = true;
+						st.grid = datagrid;
+						st.MappingName = propcol[i].Name;
+						st.HeaderText = propcol[i].Name;
+						st.Width = CurrentPreferredColumnWidth;
+						column_styles.Add (st);
+					}
 				}
 			}
 

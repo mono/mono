@@ -37,7 +37,6 @@ public class Log<T> {
 }
 
 class TestLog {
-  class MyTest {
     public static void Main(String[] args) {
       Log<String> log1 = new Log<String>();
       log1.Add("Reboot");
@@ -53,6 +52,5 @@ class TestLog {
       foreach (DateTime dt in dts) 
 	Console.Write("{0}   ", dt);
       Console.WriteLine();
-    }
   }
 }

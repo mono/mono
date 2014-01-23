@@ -27,24 +27,38 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.IO;
-using System.Text;
-#if SECURITY_DEP || MOONLIGHT
+#if SECURITY_DEP
+
+#if MONOTOUCH
 using Mono.Security;
 using Mono.Security.Cryptography;
 using MX = Mono.Security.X509;
+#else
+extern alias MonoSecurity;
+
+using MonoSecurity::Mono.Security;
+using MonoSecurity::Mono.Security.Cryptography;
+using MX = MonoSecurity::Mono.Security.X509;
 #endif
+
+#endif
+
+using System.IO;
+using System.Text;
 
 namespace System.Security.Cryptography.X509Certificates {
 
+#if NET_4_0
+	[Serializable]
+#endif
 	public class X509Certificate2 : X509Certificate {
-#if !SECURITY_DEP && !MOONLIGHT
+#if !SECURITY_DEP
 		// Used in Mono.Security HttpsClientStream
 		public X509Certificate2 (byte[] rawData)
 		{
 		}
 #endif
-#if SECURITY_DEP || MOONLIGHT
+#if SECURITY_DEP
 		private bool _archived;
 		private X509ExtensionCollection _extensions;
 		private string _name = String.Empty;
@@ -74,7 +88,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 			Import (rawData, password, X509KeyStorageFlags.DefaultKeySet);
 		}
-#if !MOONLIGHT
+
 		public X509Certificate2 (byte[] rawData, SecureString password)
 		{
 			Import (rawData, password, X509KeyStorageFlags.DefaultKeySet);
@@ -114,7 +128,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 			Import (fileName, password, keyStorageFlags);
 		}
-#endif
+
 		public X509Certificate2 (IntPtr handle) : base (handle) 
 		{
 			_cert = new MX.X509Certificate (base.GetRawCertData ());
@@ -201,11 +215,10 @@ namespace System.Security.Cryptography.X509Certificates {
 					throw new CryptographicException (empty_error);
 				try {
 					if (_cert.RSA != null) {
-#if !MOONLIGHT
 						RSACryptoServiceProvider rcsp = _cert.RSA as RSACryptoServiceProvider;
 						if (rcsp != null)
 							return rcsp.PublicOnly ? null : rcsp;
-#endif
+
 						RSAManaged rsam = _cert.RSA as RSAManaged;
 						if (rsam != null)
 							return rsam.PublicOnly ? null : rsam;
@@ -213,11 +226,10 @@ namespace System.Security.Cryptography.X509Certificates {
 						_cert.RSA.ExportParameters (true);
 						return _cert.RSA;
 					} else if (_cert.DSA != null) {
-#if !MOONLIGHT
 						DSACryptoServiceProvider dcsp = _cert.DSA as DSACryptoServiceProvider;
 						if (dcsp != null)
 							return dcsp.PublicOnly ? null : dcsp;
-#endif	
+
 						_cert.DSA.ExportParameters (true);
 						return _cert.DSA;
 					}
@@ -414,17 +426,34 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 		}
 
-		private void ImportPkcs12 (byte[] rawData, string password)
+		private MX.X509Certificate ImportPkcs12 (byte[] rawData, string password)
 		{
 			MX.PKCS12 pfx = (password == null) ? new MX.PKCS12 (rawData) : new MX.PKCS12 (rawData, password);
-			if (pfx.Certificates.Count > 0) {
-				_cert = pfx.Certificates [0];
+			if (pfx.Certificates.Count == 0) {
+				// no certificate was found
+				return null;
+			} else if (pfx.Keys.Count == 0) {
+				// no key were found - pick the first certificate
+				return pfx.Certificates [0];
 			} else {
-				_cert = null;
-			}
-			if (pfx.Keys.Count > 0) {
-				_cert.RSA = (pfx.Keys [0] as RSA);
-				_cert.DSA = (pfx.Keys [0] as DSA);
+				// find the certificate that match the first key
+				MX.X509Certificate cert = null;
+				var keypair = (pfx.Keys [0] as AsymmetricAlgorithm);
+				string pubkey = keypair.ToXmlString (false);
+				foreach (var c in pfx.Certificates) {
+					if (((c.RSA != null) && (pubkey == c.RSA.ToXmlString (false))) ||
+						((c.DSA != null) && (pubkey == c.DSA.ToXmlString (false)))) {
+						cert = c;
+						break;
+					}
+				}
+				if (cert == null) {
+					cert = pfx.Certificates [0]; // no match, pick first certificate without keys
+				} else {
+					cert.RSA = (keypair as RSA);
+					cert.DSA = (keypair as DSA);
+				}
+				return cert;
 			}
 		}
 
@@ -436,14 +465,14 @@ namespace System.Security.Cryptography.X509Certificates {
 		[MonoTODO ("missing KeyStorageFlags support")]
 		public override void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
-			base.Import (rawData, password, keyStorageFlags);
+			MX.X509Certificate cert = null;
 			if (password == null) {
 				try {
-					_cert = new Mono.Security.X509.X509Certificate (rawData);
+					cert = new MX.X509Certificate (rawData);
 				}
 				catch (Exception e) {
 					try {
-						ImportPkcs12 (rawData, null);
+						cert = ImportPkcs12 (rawData, null);
 					}
 					catch {
 						string msg = Locale.GetText ("Unable to decode certificate.");
@@ -454,17 +483,21 @@ namespace System.Security.Cryptography.X509Certificates {
 			} else {
 				// try PKCS#12
 				try {
-					ImportPkcs12 (rawData, password);
+					cert = ImportPkcs12 (rawData, password);
 				}
 				catch {
 					// it's possible to supply a (unrequired/unusued) password
 					// fix bug #79028
-					_cert = new Mono.Security.X509.X509Certificate (rawData);
+					cert = new MX.X509Certificate (rawData);
 				}
+			}
+			// we do not have to fully re-decode the certificate since X509Certificate does not deal with keys
+			if (cert != null) {
+				base.Import (cert.RawData, (string) null, keyStorageFlags);
+				_cert = cert; // becuase base call will call Reset!
 			}
 		}
 
-#if !MOONLIGHT
 		[MonoTODO ("SecureString is incomplete")]
 		public override void Import (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
@@ -473,33 +506,22 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public override void Import (string fileName) 
 		{
-			byte[] rawData = Load (fileName);
+			byte[] rawData = File.ReadAllBytes (fileName);
 			Import (rawData, (string)null, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		[MonoTODO ("missing KeyStorageFlags support")]
 		public override void Import (string fileName, string password, X509KeyStorageFlags keyStorageFlags) 
 		{
-			byte[] rawData = Load (fileName);
+			byte[] rawData = File.ReadAllBytes (fileName);
 			Import (rawData, password, keyStorageFlags);
 		}
 
 		[MonoTODO ("SecureString is incomplete")]
 		public override void Import (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags) 
 		{
-			byte[] rawData = Load (fileName);
+			byte[] rawData = File.ReadAllBytes (fileName);
 			Import (rawData, (string)null, keyStorageFlags);
-		}
-#endif
-		private static byte[] Load (string fileName)
-		{
-			byte[] data = null;
-			using (FileStream fs = File.OpenRead (fileName)) {
-				data = new byte [fs.Length];
-				fs.Read (data, 0, data.Length);
-				fs.Close ();
-			}
-			return data;
 		}
 
 		public override void Reset () 
@@ -579,7 +601,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (_cert == null)
 				throw new CryptographicException (empty_error);
 
-			X509Chain chain = (X509Chain) CryptoConfig.CreateFromName ("X509Chain");
+			X509Chain chain = X509Chain.Create ();
 			if (!chain.Build (this))
 				return false;
 			// TODO - check chain and other stuff ???
@@ -614,22 +636,18 @@ namespace System.Security.Cryptography.X509Certificates {
 						if ((data [1].Tag == 0x30) && (data [2].Tag == 0x03))
 							type = X509ContentType.Cert;
 						break;
-#if !MOONLIGHT
 					case 0x02:
 						// INTEGER / SEQUENCE / SEQUENCE
 						if ((data [1].Tag == 0x30) && (data [2].Tag == 0x30))
 							type = X509ContentType.Pkcs12;
 						// note: Pfx == Pkcs12
 						break;
-#endif
 					}
 				}
-#if !MOONLIGHT
 				// check for PKCS#7 (count unknown but greater than 0)
 				// SEQUENCE / OID (signedData)
 				if ((data [0].Tag == 0x06) && data [0].CompareValue (signedData))
 					type = X509ContentType.Pkcs7;
-#endif
 			}
 			catch (Exception e) {
 				string msg = Locale.GetText ("Unable to decode certificate.");
@@ -647,7 +665,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (fileName.Length == 0)
 				throw new ArgumentException ("fileName");
 
-			byte[] data = Load (fileName);
+			byte[] data = File.ReadAllBytes (fileName);
 			return GetCertContentType (data);
 		}
 

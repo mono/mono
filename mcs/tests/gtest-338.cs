@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 class Test {
 
-	static void Main ()
+	public static void Main ()
 	{
 		FooList<string> l = new FooList<string> ();
 		Foo<string> (l);

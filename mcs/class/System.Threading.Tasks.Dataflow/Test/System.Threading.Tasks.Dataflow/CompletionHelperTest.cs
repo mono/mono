@@ -26,7 +26,6 @@
 
 using System;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 
@@ -42,7 +41,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		[SetUp]
 		public void Setup ()
 		{
-			helper = CompletionHelper.GetNew ();
+			helper = CompletionHelper.GetNew (null);
 		}
 
 		[Test]
@@ -58,7 +57,7 @@ namespace MonoTests.System.Threading.Tasks.Dataflow
 		public void FaultedTest ()
 		{
 			Exception ex = new ApplicationException ("Foobar");
-			helper.Fault (ex);
+			helper.RequestFault (ex);
 			Task completed = helper.Completion;
 
 			Assert.IsNotNull (completed);

@@ -91,12 +91,21 @@ namespace Mono.CSharp
 
 		public void ImportAssembly (Assembly assembly, RootNamespace targetNamespace)
 		{
-			// It can be used more than once when importing same assembly
-			// into 2 or more global aliases
-			var definition = GetAssemblyDefinition (assembly);
+			try {
+				// It can be used more than once when importing same assembly
+				// into 2 or more global aliases
+				// TODO: Should be just Add
+				GetAssemblyDefinition (assembly);
 
-			var all_types = assembly.GetTypes ();
-			ImportTypes (all_types, targetNamespace, definition.HasExtensionMethod);
+				var all_types = assembly.GetTypes ();
+				ImportTypes (all_types, targetNamespace, true);
+
+				all_types = assembly.ManifestModule.__GetExportedTypes ();
+				if (all_types.Length != 0)
+					ImportForwardedTypes (all_types, targetNamespace);
+			} catch (Exception e) {
+				throw new InternalErrorException (e, "Failed to import assembly `{0}'", assembly.FullName);
+			}
 		}
 
 		public ImportedModuleDefinition ImportModule (Module module, RootNamespace targetNamespace)
@@ -108,6 +117,34 @@ namespace Mono.CSharp
 			ImportTypes (all_types, targetNamespace, false);
 
 			return module_definition;
+		}
+
+		void ImportForwardedTypes (MetaType[] types, Namespace targetNamespace)
+		{
+			Namespace ns = targetNamespace;
+			string prev_namespace = null;
+			foreach (var t in types) {
+				if (!t.__IsTypeForwarder)
+					continue;
+
+				// IsMissing tells us the type has been forwarded and target assembly is missing 
+				if (!t.__IsMissing)
+					continue;
+
+				if (t.Name[0] == '<')
+					continue;
+
+				var it = CreateType (t, null, new DynamicTypeReader (t), true);
+				if (it == null)
+					continue;
+
+				if (prev_namespace != t.Namespace) {
+					ns = t.Namespace == null ? targetNamespace : targetNamespace.GetNamespace (t.Namespace, true);
+					prev_namespace = t.Namespace;
+				}
+
+				ns.AddType (module, it);
+			}
 		}
 
 		public void InitializeBuiltinTypes (BuiltinTypes builtin, Assembly corlib)
@@ -192,7 +229,7 @@ namespace Mono.CSharp
 		readonly StaticImporter importer;
 		readonly Universe domain;
 		Assembly corlib;
-		List<Tuple<AssemblyName, string, Assembly>> loaded_names;
+		readonly List<Tuple<AssemblyName, string, Assembly>> loaded_names;
 		static readonly Dictionary<string, string[]> sdk_directory;
 
 		static StaticLoader ()
@@ -207,15 +244,14 @@ namespace Mono.CSharp
 			: base (compiler)
 		{
 			this.importer = importer;
-			domain = new Universe ();
-			domain.EnableMissingMemberResolution ();
+			domain = new Universe (UniverseOptions.MetadataOnly | UniverseOptions.ResolveMissingMembers | UniverseOptions.DisableFusion);
 			domain.AssemblyResolve += AssemblyReferenceResolver;
 			loaded_names = new List<Tuple<AssemblyName, string, Assembly>> ();
 
-			var corlib_path = Path.GetDirectoryName (typeof (object).Assembly.Location);
-			string fx_path = corlib_path.Substring (0, corlib_path.LastIndexOf (Path.DirectorySeparatorChar));
-
 			if (compiler.Settings.StdLib) {
+				var corlib_path = Path.GetDirectoryName (typeof (object).Assembly.Location);
+				string fx_path = corlib_path.Substring (0, corlib_path.LastIndexOf (Path.DirectorySeparatorChar));
+
 				string sdk_path = null;
 
 				string sdk_version = compiler.Settings.SdkVersion ?? "4.5";
@@ -249,6 +285,8 @@ namespace Mono.CSharp
 			}
 		}
 
+		public AssemblyDefinitionStatic CompiledAssembly {  get; set; }
+
 		public Universe Domain {
 			get {
 				return domain;
@@ -274,7 +312,7 @@ namespace Mono.CSharp
 
 			foreach (var assembly in domain.GetAssemblies ()) {
 				AssemblyComparisonResult result;
-				if (!Fusion.CompareAssemblyIdentityPure (refname, false, assembly.FullName, false, out result)) {
+				if (!domain.CompareAssemblyIdentity (refname, false, assembly.FullName, false, out result)) {
 					if ((result == AssemblyComparisonResult.NonEquivalentVersion || result == AssemblyComparisonResult.NonEquivalentPartialVersion) &&
 						(version_mismatch == null || version_mismatch.GetName ().Version < assembly.GetName ().Version) &&
 						!is_fx_assembly) {
@@ -332,6 +370,14 @@ namespace Mono.CSharp
 				return version_mismatch;
 			}
 
+			//
+			// Recursive reference to compiled assembly checks name only. Any other
+			// details (PublicKey, Version, etc) are not yet known hence cannot be checked
+			//
+			ParsedAssemblyName referenced_assembly;
+			if (Fusion.ParseAssemblyName (args.Name, out referenced_assembly) == ParseAssemblyResult.OK && CompiledAssembly.Name == referenced_assembly.Name)
+				return CompiledAssembly.Builder;
+
 			// AssemblyReference has not been found in the domain
 			// create missing reference and continue
 			return domain.CreateMissingAssembly (args.Name);
@@ -387,54 +433,59 @@ namespace Mono.CSharp
 				}
 
 				try {
-					using (RawModule module = domain.OpenRawModule (file)) {
-						if (!module.IsManifestModule) {
-							Error_AssemblyIsModule (fileName);
-							return null;
-						}
+					using (var stream = new FileStream (file, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+						using (RawModule module = domain.OpenRawModule (stream, file)) {
+							if (!module.IsManifestModule) {
+								Error_AssemblyIsModule (fileName);
+								return null;
+							}
 
-						//
-						// check whether the assembly can be actually imported without
-						// collision
-						//
-						var an = module.GetAssemblyName ();
-						foreach (var entry in loaded_names) {
-							var loaded_name = entry.Item1;
-							if (an.Name != loaded_name.Name)
-								continue;
+							//
+							// check whether the assembly can be actually imported without
+							// collision
+							//
+							var an = module.GetAssemblyName ();
+							foreach (var entry in loaded_names) {
+								var loaded_name = entry.Item1;
+								if (an.Name != loaded_name.Name)
+									continue;
 
-							if (module.ModuleVersionId == entry.Item3.ManifestModule.ModuleVersionId)
-								return entry.Item3;
+								if (module.ModuleVersionId == entry.Item3.ManifestModule.ModuleVersionId)
+									return entry.Item3;
 							
-							if (((an.Flags | loaded_name.Flags) & AssemblyNameFlags.PublicKey) == 0) {
-								compiler.Report.SymbolRelatedToPreviousError (entry.Item2);
-								compiler.Report.SymbolRelatedToPreviousError (fileName);
-								compiler.Report.Error (1704,
-									"An assembly with the same name `{0}' has already been imported. Consider removing one of the references or sign the assembly",
-									an.Name);
-								return null;
+								if (((an.Flags | loaded_name.Flags) & AssemblyNameFlags.PublicKey) == 0) {
+									compiler.Report.SymbolRelatedToPreviousError (entry.Item2);
+									compiler.Report.SymbolRelatedToPreviousError (fileName);
+									compiler.Report.Error (1704,
+										"An assembly with the same name `{0}' has already been imported. Consider removing one of the references or sign the assembly",
+										an.Name);
+									return null;
+								}
+
+								if ((an.Flags & AssemblyNameFlags.PublicKey) == (loaded_name.Flags & AssemblyNameFlags.PublicKey) && an.Version.Equals (loaded_name.Version)) {
+									compiler.Report.SymbolRelatedToPreviousError (entry.Item2);
+									compiler.Report.SymbolRelatedToPreviousError (fileName);
+									compiler.Report.Error (1703,
+										"An assembly with the same identity `{0}' has already been imported. Consider removing one of the references",
+										an.FullName);
+									return null;
+								}
 							}
 
-							if ((an.Flags & AssemblyNameFlags.PublicKey) == (loaded_name.Flags & AssemblyNameFlags.PublicKey) && an.Version.Equals (loaded_name.Version)) {
-								compiler.Report.SymbolRelatedToPreviousError (entry.Item2);
-								compiler.Report.SymbolRelatedToPreviousError (fileName);
-								compiler.Report.Error (1703,
-									"An assembly with the same identity `{0}' has already been imported. Consider removing one of the references",
-									an.FullName);
-								return null;
-							}
+							if (compiler.Settings.DebugFlags > 0)
+								Console.WriteLine ("Loading assembly `{0}'", fileName);
+
+							var assembly = domain.LoadAssembly (module);
+							if (assembly != null)
+								loaded_names.Add (Tuple.Create (an, fileName, assembly));
+
+							return assembly;
 						}
-
-						if (compiler.Settings.DebugFlags > 0)
-							Console.WriteLine ("Loading assembly `{0}'", fileName);
-
-						var assembly = domain.LoadAssembly (module);
-						if (assembly != null)
-							loaded_names.Add (Tuple.Create (an, fileName, assembly));
-
-						return assembly;
 					}
-				} catch {
+				} catch (Exception e) {
+					if (compiler.Settings.DebugFlags > 0)
+						Console.WriteLine ("Exception during loading: {0}'", e.ToString ());
+
 					if (!isImplicitReference)
 						Error_FileCorrupted (file);
 
@@ -545,7 +596,7 @@ namespace Mono.CSharp
 
 		public override void SetFlags (uint flags, Location loc)
 		{
-			builder.__SetAssemblyFlags ((AssemblyNameFlags) flags);
+			builder.__AssemblyFlags = (AssemblyNameFlags) flags;
 		}
 
 		public override void SetVersion (Version version, Location loc)

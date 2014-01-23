@@ -28,6 +28,7 @@ namespace MonoTests.System.Runtime.Serialization
 		string uri;
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void TestSerialization ()
 		{
 			MethodTester mt = new MethodTester();
@@ -765,14 +766,14 @@ namespace MonoTests.System.Runtime.Serialization
 		void SerializeCall (IMessage call)
 		{
 			RemotingSurrogateSelector rss = new RemotingSurrogateSelector();
-			IRemotingFormatter fmt = new BinaryFormatter (rss, new StreamingContext(StreamingContextStates.Remoting));
+			var fmt = new BinaryFormatter (rss, new StreamingContext(StreamingContextStates.Remoting));
 			fmt.Serialize (_stream, call, GetHeaders());
 		}
 
 		void SerializeResponse (IMessage resp)
 		{
 			RemotingSurrogateSelector rss = new RemotingSurrogateSelector();
-			IRemotingFormatter fmt = new BinaryFormatter (rss, new StreamingContext(StreamingContextStates.Remoting));
+			var fmt = new BinaryFormatter (rss, new StreamingContext(StreamingContextStates.Remoting));
 			fmt.Serialize (_stream, resp, GetHeaders());
 		}
 

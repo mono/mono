@@ -36,7 +36,7 @@ namespace Mono.CSharp {
 			return System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode (obj);
 		}
 	}
-#if !NET_4_0 && !MONODROID
+#if !NET_4_0 && !MOBILE_DYNAMIC
 	public class Tuple<T1, T2> : IEquatable<Tuple<T1, T2>>
 	{
 		public Tuple (T1 item1, T2 item2)
@@ -136,21 +136,28 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class SeekableStreamReader : IDisposable
 	{
+		public const int DefaultReadAheadSize =
+#if FULL_AST
+			65536 / 2; // Large buffer because of ReadChars of large literal string
+#else
+			4096 / 2;
+#endif
+
 		StreamReader reader;
 		Stream stream;
 
-		static char[] buffer;
+		char[] buffer;
 		int read_ahead_length;	// the length of read buffer
 		int buffer_start;       // in chars
 		int char_count;         // count of filled characters in buffer[]
 		int pos;                // index into buffer[]
 
-		public SeekableStreamReader (Stream stream, Encoding encoding)
+		public SeekableStreamReader (Stream stream, Encoding encoding, char[] sharedBuffer = null)
 		{
 			this.stream = stream;
+			this.buffer = sharedBuffer;
 
-			const int default_read_ahead = 2048;
-			InitializeStream (default_read_ahead);
+			InitializeStream (DefaultReadAheadSize);
 			reader = new StreamReader (stream, encoding, true);
 		}
 
@@ -313,6 +320,40 @@ namespace Mono.CSharp {
 			get {
 				return base_text;
 			}
+		}
+	}
+
+	struct TypeNameParser
+	{
+		internal static string Escape(string name)
+		{
+			if (name == null) {
+				return null;
+			}
+			StringBuilder sb = null;
+			for (int pos = 0; pos < name.Length; pos++) {
+				char c = name[pos];
+				switch (c) {
+					case '\\':
+					case '+':
+					case ',':
+					case '[':
+					case ']':
+					case '*':
+					case '&':
+						if (sb == null) {
+							sb = new StringBuilder(name, 0, pos, name.Length + 3);
+						}
+						sb.Append("\\").Append(c);
+						break;
+					default:
+						if (sb != null) {
+							sb.Append(c);
+						}
+						break;
+				}
+			}
+			return sb != null ? sb.ToString() : name;
 		}
 	}
 }

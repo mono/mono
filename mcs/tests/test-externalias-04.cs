@@ -6,7 +6,7 @@ using System;
 
 public class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		if (MyAssembly01::Namespace1.Namespace2.MyClass2.StaticMethod () != 1)
 			return 1;

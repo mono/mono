@@ -82,7 +82,10 @@ namespace System.ServiceModel.Channels
 		[MonoTODO]
 		public XmlElement GetTransportTokenAssertion ()
 		{
-			throw new NotImplementedException ();
+			var doc = new XmlDocument ();
+			var element = doc.CreateElement (
+				"msf", "SslTransportSecurity", PolicyImportHelper.FramingPolicyNS);
+			return element;
 		}
 
 		[MonoTODO]
@@ -130,9 +133,11 @@ namespace System.ServiceModel.Channels
 		[MonoTODO]
 		void IPolicyExportExtension.ExportPolicy (
 			MetadataExporter exporter,
-			PolicyConversionContext policyContext)
+			PolicyConversionContext context)
 		{
-			throw new NotImplementedException ();
+			var token = GetTransportTokenAssertion ();
+			var transportBinding = TransportBindingElement.CreateTransportBinding (token);
+			context.GetBindingAssertions ().Add (transportBinding);
 		}
 		#endregion
 	}

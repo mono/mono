@@ -31,6 +31,7 @@
 #include <mono/utils/mono-path.h>
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/mono-io-portability.h>
+#include <mono/utils/atomic.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/object-internals.h>
@@ -150,7 +151,16 @@ mono_image_rva_map (MonoImage *image, guint32 addr)
 	const int top = iinfo->cli_section_count;
 	MonoSectionTable *tables = iinfo->cli_section_tables;
 	int i;
-	
+
+#ifdef HOST_WIN32
+	if (image->is_module_handle) {
+		if (addr && addr < image->raw_data_len)
+			return image->raw_data + addr;
+		else
+			return NULL;
+	}
+#endif
+
 	for (i = 0; i < top; i++){
 		if ((addr >= tables->st_virtual_address) &&
 		    (addr < tables->st_virtual_address + tables->st_raw_data_size)){
@@ -158,10 +168,6 @@ mono_image_rva_map (MonoImage *image, guint32 addr)
 				if (!mono_image_ensure_section_idx (image, i))
 					return NULL;
 			}
-#ifdef HOST_WIN32
-			if (image->is_module_handle)
-				return image->raw_data + addr;
-#endif
 			return (char*)iinfo->cli_sections [i] +
 				(addr - tables->st_virtual_address);
 		}
@@ -1482,7 +1488,6 @@ mono_image_close_except_pools (MonoImage *image)
 	MonoImage *image2;
 	GHashTable *loaded_images;
 	int i;
-	GSList *free_list;
 
 	g_return_val_if_fail (image != NULL, FALSE);
 
@@ -1527,7 +1532,7 @@ mono_image_close_except_pools (MonoImage *image)
 
 	mono_image_invoke_unload_hook (image);
 
-	free_list = mono_metadata_clean_for_image (image);
+	mono_metadata_clean_for_image (image);
 
 	/*
 	 * The caches inside a MonoImage might refer to metadata which is stored in referenced 
@@ -1535,10 +1540,7 @@ mono_image_close_except_pools (MonoImage *image)
 	 * MonoImage might outlive its associated MonoAssembly.
 	 */
 	if (image->references && !image->dynamic) {
-		MonoTableInfo *t = &image->tables [MONO_TABLE_ASSEMBLYREF];
-		int i;
-
-		for (i = 0; i < t->rows; i++) {
+		for (i = 0; i < image->nreferences; i++) {
 			if (image->references [i] && image->references [i] != REFERENCE_MISSING) {
 				if (!mono_assembly_close_except_image_pools (image->references [i]))
 					image->references [i] = NULL;
@@ -1621,8 +1623,13 @@ mono_image_close_except_pools (MonoImage *image)
 	free_hash (image->delegate_invoke_cache);
 	free_hash (image->delegate_abstract_invoke_cache);
 	free_hash (image->delegate_bound_static_invoke_cache);
+	free_hash (image->delegate_invoke_generic_cache);
+	free_hash (image->delegate_begin_invoke_generic_cache);
+	free_hash (image->delegate_end_invoke_generic_cache);
+	free_hash (image->synchronized_generic_cache);
 	free_hash (image->remoting_invoke_cache);
 	free_hash (image->runtime_invoke_cache);
+	free_hash (image->runtime_invoke_vtype_cache);
 	free_hash (image->runtime_invoke_direct_cache);
 	free_hash (image->runtime_invoke_vcall_cache);
 	free_hash (image->synchronized_cache);
@@ -1643,11 +1650,10 @@ mono_image_close_except_pools (MonoImage *image)
 	free_hash (image->native_wrapper_aot_cache);
 	free_hash (image->pinvoke_scopes);
 	free_hash (image->pinvoke_scope_filenames);
+	free_hash (image->gsharedvt_types);
 
 	/* The ownership of signatures is not well defined */
-	//g_hash_table_foreach (image->memberref_signatures, free_mr_signatures, NULL);
 	g_hash_table_destroy (image->memberref_signatures);
-	//g_hash_table_foreach (image->helper_signatures, free_mr_signatures, NULL);
 	g_hash_table_destroy (image->helper_signatures);
 	g_hash_table_destroy (image->method_signatures);
 
@@ -1657,8 +1663,12 @@ mono_image_close_except_pools (MonoImage *image)
 	if (image->property_hash)
 		mono_property_hash_destroy (image->property_hash);
 
-	g_slist_free (image->reflection_info_unregister_classes);
-	image->reflection_info_unregister_classes = free_list;
+	/*
+	reflection_info_unregister_classes is only required by dynamic images, which will not be properly
+	cleared during shutdown as we don't perform regular appdomain unload for the root one.
+	*/
+	g_assert (!image->reflection_info_unregister_classes || mono_runtime_is_shutting_down ());
+	image->reflection_info_unregister_classes = NULL;
 
 	if (image->interface_bitset) {
 		mono_unload_interface_ids (image->interface_bitset);
@@ -1702,18 +1712,9 @@ void
 mono_image_close_finish (MonoImage *image)
 {
 	int i;
-	GSList *l;
-
-	for (l = image->reflection_info_unregister_classes; l; l = l->next)
-		g_free (l->data);
-	g_slist_free (image->reflection_info_unregister_classes);
-	image->reflection_info_unregister_classes = NULL;
 
 	if (image->references && !image->dynamic) {
-		MonoTableInfo *t = &image->tables [MONO_TABLE_ASSEMBLYREF];
-		int i;
-
-		for (i = 0; i < t->rows; i++) {
+		for (i = 0; i < image->nreferences; i++) {
 			if (image->references [i] && image->references [i] != REFERENCE_MISSING)
 				mono_assembly_close_finish (image->references [i]);
 		}
@@ -1729,7 +1730,9 @@ mono_image_close_finish (MonoImage *image)
 	if (image->modules)
 		g_free (image->modules);
 
+#ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->loader_bytes -= mono_mempool_get_allocated (image->mempool);
+#endif
 
 	if (!image->dynamic) {
 		if (debug_assembly_unload)
@@ -2225,7 +2228,9 @@ mono_image_alloc (MonoImage *image, guint size)
 {
 	gpointer res;
 
+#ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->loader_bytes += size;
+#endif
 	mono_image_lock (image);
 	res = mono_mempool_alloc (image->mempool, size);
 	mono_image_unlock (image);
@@ -2238,7 +2243,9 @@ mono_image_alloc0 (MonoImage *image, guint size)
 {
 	gpointer res;
 
+#ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->loader_bytes += size;
+#endif
 	mono_image_lock (image);
 	res = mono_mempool_alloc0 (image->mempool, size);
 	mono_image_unlock (image);
@@ -2251,7 +2258,9 @@ mono_image_strdup (MonoImage *image, const char *s)
 {
 	char *res;
 
+#ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->loader_bytes += strlen (s);
+#endif
 	mono_image_lock (image);
 	res = mono_mempool_strdup (image->mempool, s);
 	mono_image_unlock (image);
@@ -2349,4 +2358,14 @@ mono_image_property_remove (MonoImage *image, gpointer subject)
 	mono_image_lock (image);
 	mono_property_hash_remove_object (image->property_hash, subject);
  	mono_image_unlock (image);
+}
+
+void
+mono_image_append_class_to_reflection_info_set (MonoClass *class)
+{
+	MonoImage *image = class->image;
+	g_assert (image->dynamic);
+	mono_image_lock (image);
+	image->reflection_info_unregister_classes = g_slist_prepend_mempool (image->mempool, image->reflection_info_unregister_classes, class);
+	mono_image_unlock (image);
 }

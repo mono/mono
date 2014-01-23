@@ -28,7 +28,7 @@ class Stack<T>
 
 class Test
 {
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

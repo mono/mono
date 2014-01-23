@@ -14,7 +14,7 @@
 #include <signal.h>
 #endif
 
-#if defined(__i386__)
+#if defined(TARGET_X86)
 
 #if defined(__FreeBSD__) || defined(__APPLE__) || defined(__DragonFly__)
 #include <ucontext.h>
@@ -34,7 +34,7 @@
 	#define UCONTEXT_REG_EDI(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_edi)
 	#define UCONTEXT_REG_EIP(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_eip)
 #elif defined(__APPLE__)
-#  if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5
+#  if defined (TARGET_IOS) || (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5)
 	#define UCONTEXT_REG_EAX(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__ss.__eax)
 	#define UCONTEXT_REG_EBX(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__ss.__ebx)
 	#define UCONTEXT_REG_ECX(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__ss.__ecx)
@@ -152,7 +152,7 @@ typedef struct ucontext {
 	#define UCONTEXT_REG_EIP(ctx) (((ucontext_t*)(ctx))->uc_mcontext.gregs [REG_EIP])
 #endif
 
-#elif defined(__x86_64__)
+#elif defined(TARGET_AMD64)
 
 #if defined(__FreeBSD__)
 #include <ucontext.h>
@@ -301,7 +301,7 @@ typedef struct ucontext {
 	#define UCONTEXT_REG_LNK(ctx)     ((ctx)->uc_mcontext.mc_lr)
 #endif
 
-#elif defined(__arm__)
+#elif defined(TARGET_ARM)
 #if defined(__APPLE__)
 	typedef ucontext_t arm_ucontext;
 
@@ -322,6 +322,7 @@ typedef struct ucontext {
 	#define UCONTEXT_REG_R11(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__ss.__r[11])
 	#define UCONTEXT_REG_R12(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__ss.__r[12])
 	#define UCONTEXT_REG_CPSR(ctx) (((ucontext_t*)(ctx))->uc_mcontext->__ss.__cpsr)
+	#define UCONTEXT_REG_VFPREGS(ctx) (double*)(((ucontext_t*)(ctx))->uc_mcontext->__fs.__r)
 #elif defined(__linux__)
 	typedef struct arm_ucontext {
 		unsigned long       uc_flags;

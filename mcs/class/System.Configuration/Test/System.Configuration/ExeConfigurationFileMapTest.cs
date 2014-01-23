@@ -34,6 +34,8 @@ using System.Configuration;
 using NUnit.Framework;
 
 namespace MonoTests.System.Configuration {
+	using Util;
+
 	[TestFixture]
 	public class ExeConfigurationFileMapTest
 	{
@@ -62,6 +64,93 @@ namespace MonoTests.System.Configuration {
 			Assert.IsNull (map.LocalUserConfigFilename, "A7");
 			map.RoamingUserConfigFilename = null;
 			Assert.IsNull (map.RoamingUserConfigFilename, "A8");
+		}
+
+		[Test]
+		public void MissingRoamingFilename ()
+		{
+			TestUtil.RunWithTempFile (filename => {
+				var map = new ExeConfigurationFileMap ();
+				map.ExeConfigFilename = filename;
+				
+				try {
+					ConfigurationManager.OpenMappedExeConfiguration (
+						map, ConfigurationUserLevel.PerUserRoaming);
+					Assert.Fail ("#1");
+				} catch (ArgumentException) {
+					;
+				}
+			});
+		}
+		
+		[Test]
+		public void MissingRoamingFilename2 ()
+		{
+			TestUtil.RunWithTempFile (filename => {
+				var map = new ExeConfigurationFileMap ();
+				map.LocalUserConfigFilename = filename;
+				
+				try {
+					ConfigurationManager.OpenMappedExeConfiguration (
+						map, ConfigurationUserLevel.PerUserRoamingAndLocal);
+					Assert.Fail ("#1");
+				} catch (ArgumentException) {
+					;
+				}
+			});
+		}
+		
+		[Test]
+		public void MissingLocalFilename ()
+		{
+			TestUtil.RunWithTempFile (filename => {
+				var map = new ExeConfigurationFileMap ();
+				map.ExeConfigFilename = filename;
+				map.RoamingUserConfigFilename = filename;
+				
+				try {
+					ConfigurationManager.OpenMappedExeConfiguration (
+						map, ConfigurationUserLevel.PerUserRoamingAndLocal);
+					Assert.Fail ("#1");
+				} catch (ArgumentException) {
+					;
+				}
+			});
+		}
+		
+		[Test]
+		public void MissingExeFilename ()
+		{
+			TestUtil.RunWithTempFiles ((roaming,local) => {
+				var map = new ExeConfigurationFileMap ();
+				map.RoamingUserConfigFilename = roaming;
+				map.LocalUserConfigFilename = local;
+				
+				try {
+					ConfigurationManager.OpenMappedExeConfiguration (
+						map, ConfigurationUserLevel.PerUserRoamingAndLocal);
+					Assert.Fail ("#1");
+				} catch (ArgumentException) {
+					;
+				}
+			});
+		}
+
+		[Test]
+		public void MissingExeFilename2 ()
+		{
+			TestUtil.RunWithTempFile ((machine) => {
+				var map = new ExeConfigurationFileMap ();
+				map.MachineConfigFilename = machine;
+
+				try {
+					ConfigurationManager.OpenMappedExeConfiguration (
+						map, ConfigurationUserLevel.None);
+					Assert.Fail ("#1");
+				} catch (ArgumentException) {
+					;
+				}
+			});
 		}
 	}
 }

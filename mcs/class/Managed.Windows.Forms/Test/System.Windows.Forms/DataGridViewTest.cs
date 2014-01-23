@@ -47,8 +47,8 @@ namespace MonoTests.System.Windows.Forms
 	public class DataGridViewTest : TestHelper
 	{
 		// Send a mouse event in Win32.
-		[DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-		private static extern void mouse_event(long dwFlags, long dx, long dy, long dwData, long dwExtraInfo);
+		[DllImport ("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+		private static extern void mouse_event (long dwFlags, long dx, long dy, long dwData, long dwExtraInfo);
 		private const int MOUSEEVENTF_LEFTDOWN = 0x02;
 		private const int MOUSEEVENTF_LEFTUP = 0x04;
 		private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
@@ -56,11 +56,11 @@ namespace MonoTests.System.Windows.Forms
 		private const int MOUSEEVENTF_ABSOLUTE = 0x8000;
 
 		// Set the mouse-pointer position in Win32.
-		[DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+		[DllImport ("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
 		private static extern long SetCursorPos (int x, int y);
 
 		// Convert from window coordinates to screen coordinates in Win32.
-		[DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+		[DllImport ("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
 		private static extern bool ClientToScreen (IntPtr hWnd, ref Win32Point point);
 		[StructLayout (LayoutKind.Sequential)]
 		private struct Win32Point
@@ -790,8 +790,8 @@ namespace MonoTests.System.Windows.Forms
 
 				// Make sure the combo-box has the list of allowed
 				// items from the column.
-				string items = string.Join (",", itemList);
-				string expectedItems = string.Join (",", expectedItemList);
+				string items = string.Join (",", itemList.ToArray ());
+				string expectedItems = string.Join (",", expectedItemList.ToArray ());
 				Assert.AreEqual (expectedItems, items, "1-1");
 
 				// Make sure the combo-box has the right selected item.
@@ -1045,8 +1045,8 @@ namespace MonoTests.System.Windows.Forms
 		// mouse clicks can be faked on it.
 		private class ClickableDataGridView : DataGridView
 		{
-			public ClickableDataGridView()
-			: base()
+			public ClickableDataGridView ()
+			: base ()
 			{
 			}
 
@@ -1068,7 +1068,11 @@ namespace MonoTests.System.Windows.Forms
 
 			try
 			{
-				form = new Form();
+				// Create a form, a text label, and a data-grid-view.
+				form = new Form ();
+				Label label = new Label ();
+				label.Text = "Label";
+				label.Parent = form;
 				ClickableDataGridView dgv = new ClickableDataGridView ();
 				dgv.Parent = form;
 
@@ -1091,9 +1095,14 @@ namespace MonoTests.System.Windows.Forms
 				// Select the cell.
 				dgv.CurrentCell = dgv.Rows[0].Cells[0];
 
+				// Focus the data-grid-view.  (Without this, its Leave
+				// event won't get called when something outside of the
+				// data-grid-view gets focused.)
+				dgv.Focus ();
+
 				// Show the form, let it draw.
-				form.Show();
-				Application.DoEvents();
+				form.Show ();
+				Application.DoEvents ();
 
 				// Locate the drop-down button.  (This code is taken from mono-winforms,
 				// from the private method DataGridViewComboBoxCell.CalculateButtonArea(),
@@ -1112,9 +1121,10 @@ namespace MonoTests.System.Windows.Forms
 				// Click on the drop-down button.
 				int x = button_area.X + (button_area.Width / 2);
 				int y = button_area.Y + (button_area.Height / 2);
-				if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+				if (Environment.OSVersion.Platform == PlatformID.Win32NT
+				&& Type.GetType ("Mono.Runtime") == null)
 				{
-					// Calling OnMouseDownInternal() in Win32 doesn't work.
+					// Calling OnMouseDownInternal () in Win32 doesn't work.
 					// My best guess as to why is that the WinForms ComboBox
 					// is a wrapper around the ComCtl control, e.g. similar
 					// to the reason that Paint event-handlers don't work on
@@ -1123,7 +1133,7 @@ namespace MonoTests.System.Windows.Forms
 
 					// First, get the location of the desired mouse-click, in
 					// data-grid-view coordinates.
-					Win32Point ptGlobal = new Win32Point();
+					Win32Point ptGlobal = new Win32Point ();
 					ptGlobal.x = x + dgv.Location.X;
 					ptGlobal.y = y + dgv.Location.Y;
 
@@ -1145,7 +1155,7 @@ namespace MonoTests.System.Windows.Forms
 						ptGlobal.x, ptGlobal.y, 0, 0);
 
 					// Let the system process these events.
-					Application.DoEvents();
+					Application.DoEvents ();
 				}
 				else
 				{
@@ -1163,11 +1173,24 @@ namespace MonoTests.System.Windows.Forms
 
 				// Make sure that dropped down the menu.
 				Assert.AreEqual (true, cb.DroppedDown, "1-2");
+
+				// Close the menu.
+				cb.DroppedDown = false;
+
+				// Change the selection on the menu.
+				cb.SelectedIndex = 2 /* "Item3" */;
+
+				// Leave the data-grid-view.
+				label.Focus ();
+
+				// That should have ended editing and saved the value.
+				string cellValue = (string)(dgv.Rows[0].Cells[0].FormattedValue);
+				Assert.AreEqual ("Item3", cellValue, "1-3");
 			}
 			finally
 			{
 				if (form != null)
-					form.Close();
+					form.Close ();
 			}
 		}
 
@@ -2399,6 +2422,75 @@ namespace MonoTests.System.Windows.Forms
 		{
 			DataGridView gdv = new DataGridView ();
 			Assert.IsNull (gdv.RowTemplate.DataGridView, "#1");
+		}
+
+		[Test] // Xamarin bug 2392
+		public void RowHeightInVirtualMode ()
+		{
+			using (var dgv = new DataGridView ()) {
+				dgv.RowHeightInfoNeeded += (sender, e) => {
+					e.Height = 50;
+					e.MinimumHeight = 30;
+				};
+				dgv.VirtualMode = true;
+				dgv.RowCount = 2;
+				Assert.AreEqual (50, dgv.Rows [0].Height);
+				Assert.AreEqual (30, dgv.Rows [0].MinimumHeight);
+				Assert.AreEqual (50, dgv.Rows [1].Height);
+				Assert.AreEqual (30, dgv.Rows [1].MinimumHeight);
+			}
+		}
+
+		[Test] // Novell bug 660986
+		public void TestDispose ()
+		{
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("TestColumn", "Test column");
+			dgv.Rows.Add ();
+			dgv.Dispose ();
+
+			try {
+				DataGridViewColumn col = dgv.Columns[0];
+				Assert.Fail ("#1");
+			}
+			catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				DataGridViewRow row = dgv.Rows[0];
+				Assert.Fail ("#2");
+			}
+			catch (ArgumentOutOfRangeException) {
+			}
+		}
+
+		[Test] // Xamarin bug 3125
+		public void TestRemoveBug3125 ()
+		{
+			DataGridViewRow dgvr1 = new DataGridViewRow ();
+			DataGridViewRow dgvr2 = new DataGridViewRow ();
+			DataGridViewRow dgvr3 = new DataGridViewRow ();
+
+			Assert.IsNull (dgvr1.DataGridView, "#1");
+			Assert.IsNull (dgvr2.DataGridView, "#2");
+			Assert.IsNull (dgvr3.DataGridView, "#3");
+
+			DataGridView dgv = new DataGridView ();
+			// dgv needs column and cell or throws error
+			DataGridViewColumn  dgvc1 = new DataGridViewColumn ();
+			DataGridViewCell cell = new DataGridViewTextBoxCell ();
+			dgvc1.CellTemplate = cell;
+			dgv.Columns.Add (dgvc1);
+			
+			dgv.Rows.Add (dgvr1);
+			dgv.Rows.Add (dgvr2);
+			dgv.Rows.Add (dgvr3);
+			// was dgv.Clear () and that caused test build to fail
+			dgv.Rows.Clear (); // presumbly this was the intention?
+
+			Assert.IsNull (dgvr1.DataGridView, "#4");
+			Assert.IsNull (dgvr2.DataGridView, "#5");
+			Assert.IsNull (dgvr3.DataGridView, "#6");
 		}
 	}
 	

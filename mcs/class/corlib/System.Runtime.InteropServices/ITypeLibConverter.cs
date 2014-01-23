@@ -30,6 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !FULL_AOT_RUNTIME
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -46,3 +47,4 @@ namespace System.Runtime.InteropServices {
 		bool GetPrimaryInteropAssembly (Guid g, int major, int minor, int lcid, out string asmName, out string asmCodeBase);
 	}
 }
+#endif

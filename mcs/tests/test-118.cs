@@ -8,7 +8,7 @@ class Container {
 	// and LoaderOptimization is also the abbreviation for
 	// LoaderOptimizationAttribute
 	[LoaderOptimization (LoaderOptimization.SingleDomain)]
-	static int Main (string[] args) {
+	public static int Main (string[] args) {
 		return 0;
 	}
 }

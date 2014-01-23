@@ -64,7 +64,10 @@ namespace System.Net.NetworkInformation {
 		static readonly string [] PingBinPaths = new string [] {
 			"/bin/ping",
 			"/sbin/ping",
-			"/usr/sbin/ping"
+			"/usr/sbin/ping",
+#if MONODROID
+			"/system/bin/ping"
+#endif
 		};
 		static readonly string PingBinPath;
 		const int default_timeout = 4000; // 4 sec.
@@ -150,13 +153,14 @@ namespace System.Net.NetworkInformation {
 
 		protected void OnPingCompleted (PingCompletedEventArgs e)
 		{
-			if (PingCompleted != null)
-				PingCompleted (this, e);
 			user_async_state = null;
 			worker = null;
 #if NET_4_5
 			cts = null;
 #endif
+
+			if (PingCompleted != null)
+				PingCompleted (this, e);
 		}
 
 		// Sync

@@ -51,8 +51,9 @@ namespace System.Security {
 		private IPermission _firstperm;
 //		private IPermission _permfailed;
 		private MethodInfo _method;
+#if !MOBILE
 		private Evidence _evidence;
-
+#endif
 		private SecurityAction _action;
 		private object _denyset;
 		private object _permitset;
@@ -146,9 +147,8 @@ namespace System.Security {
 		// Constructors
 
 		public SecurityException ()
-			: base (Locale.GetText ("A security error has been detected."))
+			: this (Locale.GetText ("A security error has been detected."))
 		{
-			base.HResult = unchecked ((int)0x8013150A);
 		}
 
 		public SecurityException (string message) 
@@ -212,7 +212,7 @@ namespace System.Security {
 			_demanded = demanded;
 			_firstperm = permThatFailed;
 		}
-
+#if !MOBILE
 		public SecurityException (string message, AssemblyName assemblyName, PermissionSet grant, 
 			PermissionSet refused, MethodInfo method, SecurityAction action, object demanded, 
 			IPermission permThatFailed, Evidence evidence)
@@ -230,13 +230,13 @@ namespace System.Security {
 				permissionType = _firstperm.GetType ();
 			_evidence = evidence;
 		}
-
+#endif
 		// Methods
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);
 			try {
-				info.AddValue ("PermissionState", PermissionState);
+				info.AddValue ("PermissionState", permissionState);
 			}
 			catch (SecurityException) {
 				// serialize only if permitted to do so

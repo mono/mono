@@ -37,7 +37,7 @@ namespace System.Linq.Parallel
 	{
 		internal class SlotBucket
 		{
-			readonly ConcurrentDictionary<long, T> temporaryArea = new ConcurrentDictionary<long, T> ();
+			readonly TemporaryArea<long, T> temporaryArea = new TemporaryArea<long, T> ();
 			readonly KeyValuePair<long, T>[] stagingArea;
 			
 			long currentIndex;

@@ -8,6 +8,6 @@ namespace Test{
 	public override int GetHashCode(){  
 	    return 1;  
 	}
-	static void Main () {}
+	public static void Main () {}
     }  
 }

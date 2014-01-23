@@ -53,7 +53,6 @@ namespace System.Security {
 	}
 #pragma warning restore 649	
 
-#if !MOONLIGHT
 	internal struct SecurityFrame {
 
 		private AppDomain _domain;
@@ -185,5 +184,4 @@ namespace System.Security {
 			return al;
 		}
 	}
-#endif
 }

@@ -14,7 +14,7 @@ namespace TestBUG
 	public class Test
 	{
 
-		static int Main  ()
+		public static int Main  ()
 		{
 			return 0;
 		}

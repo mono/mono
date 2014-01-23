@@ -42,12 +42,18 @@ namespace System.Security {
 	}
 
 #else
-
 	[MonoTODO ("Only supported by the runtime when CoreCLR is enabled")]
-	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Module | AttributeTargets.Class | AttributeTargets.Struct |
-		AttributeTargets.Enum | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property |
-		AttributeTargets.Field | AttributeTargets.Event | AttributeTargets.Interface | AttributeTargets.Delegate,
+#if NET_4_0
+	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct |
+		AttributeTargets.Enum | AttributeTargets.Constructor | AttributeTargets.Method |
+		AttributeTargets.Field | AttributeTargets.Interface | AttributeTargets.Delegate,
 		AllowMultiple=false, Inherited=false)]
+#else
+	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Module | AttributeTargets.Class | AttributeTargets.Struct |
+		AttributeTargets.Enum | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Event |
+		AttributeTargets.Field | AttributeTargets.Interface | AttributeTargets.Delegate,
+		AllowMultiple=false, Inherited=false)]
+#endif
 	public sealed class SecurityCriticalAttribute : Attribute {
 
 		private SecurityCriticalScope _scope;
@@ -72,6 +78,9 @@ namespace System.Security {
 			}
 		}
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		public SecurityCriticalScope Scope {
 			get { return _scope; }
 		}

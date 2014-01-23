@@ -1,9 +1,11 @@
 <Type Name="FileSpecialAttributes" FullName="Mono.Unix.FileSpecialAttributes">
   <TypeSignature Language="C#" Value="public enum FileSpecialAttributes" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed FileSpecialAttributes extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -26,7 +28,13 @@
   <Members>
     <Member MemberName="SetGroupId">
       <MemberSignature Language="C#" Value="SetGroupId" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileSpecialAttributes SetGroupId = int32(1024)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileSpecialAttributes</ReturnType>
       </ReturnValue>
@@ -39,14 +47,16 @@
           (<see cref="P:Mono.Unix.UnixFileSystemInfo.OwnerGroupId" />).
         </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetUserId">
       <MemberSignature Language="C#" Value="SetUserId" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileSpecialAttributes SetUserId = int32(2048)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileSpecialAttributes</ReturnType>
       </ReturnValue>
@@ -59,14 +69,16 @@
           (<see cref="P:Mono.Unix.UnixFileSystemInfo.OwnerUserId" />).
         </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Sticky">
       <MemberSignature Language="C#" Value="Sticky" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileSpecialAttributes Sticky = int32(512)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileSpecialAttributes</ReturnType>
       </ReturnValue>
@@ -97,10 +109,6 @@
           </list>
         </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

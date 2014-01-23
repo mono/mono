@@ -13,7 +13,7 @@ class C {
 }
 
 class M {
-	static void Main () { 
+	public static void Main () { 
 		C.Rev (new list<object>.Cons <string> ());
 		C.Rev (new list<object>.Nil <string> ());
 	 }

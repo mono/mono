@@ -32,6 +32,8 @@
 // NetDataContractSerializer. The code could be mostly common.
 //
 
+#if !MOBILE
+
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
@@ -783,3 +785,5 @@ namespace MonoTests.System.Runtime.Serialization
 	}
 
 }
+
+#endif

@@ -3,7 +3,7 @@ using System.Reflection;
 
 class Program
 {
-	static int Main ()
+	public static int Main ()
 	{
 		Type type = typeof (Foo<>);
 		Type [] gargs = type.GetGenericArguments ();

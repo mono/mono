@@ -104,7 +104,7 @@ class X
 		}
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		IrishPub pub = new IrishPub (IrishBeer.Guinness);
 		if (PubToLong (pub) != 0x1001)

@@ -2,10 +2,11 @@
 // PKCS1.cs - Implements PKCS#1 primitives.
 //
 // Author:
-//	Sebastien Pouliot <sebastien@ximian.com>
+//	Sebastien Pouliot  <sebastien@xamarin.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright 2013 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -286,12 +287,24 @@ namespace Mono.Security.Cryptography {
 			byte[] S = I2OSP (s, size);
 			return S;
 		}
-	
+
+		internal static byte[] Sign_v15 (RSA rsa, string hashName, byte[] hashValue) 
+		{
+			using (var hash = CreateFromName (hashName))
+				return Sign_v15 (rsa, hash, hashValue);
+		}
+
 		// PKCS #1 v.2.1, Section 8.2.2
 		// RSASSA-PKCS1-V1_5-VERIFY ((n, e), M, S)
 		public static bool Verify_v15 (RSA rsa, HashAlgorithm hash, byte[] hashValue, byte[] signature) 
 		{
 			return Verify_v15 (rsa, hash, hashValue, signature, false);
+		}
+
+		internal static bool Verify_v15 (RSA rsa, string hashName, byte[] hashValue, byte[] signature) 
+		{
+			using (var hash = CreateFromName (hashName))
+				return Verify_v15 (rsa, hash, hashValue, signature, false);
 		}
 
 		// DO NOT USE WITHOUT A VERY GOOD REASON
@@ -404,13 +417,79 @@ namespace Mono.Security.Cryptography {
 				Buffer.BlockCopy (C, 0, toBeHashed, mgfSeedLength, 4);
 				byte[] output = hash.ComputeHash (toBeHashed);
 				Buffer.BlockCopy (output, 0, T, pos, hLen);
-				pos += mgfSeedLength;
+				pos += hLen;
 			}
 			
 			// 4. Output the leading maskLen octets of T as the octet string mask.
 			byte[] mask = new byte [maskLen];
 			Buffer.BlockCopy (T, 0, mask, 0, maskLen);
 			return mask;
+		}
+
+		static internal string HashNameFromOid (string oid, bool throwOnError = true)
+		{
+			switch (oid) {
+			case "1.2.840.113549.1.1.2":	// MD2 with RSA encryption 
+				return "MD2";
+			case "1.2.840.113549.1.1.3":	// MD4 with RSA encryption 
+				return "MD4";
+			case "1.2.840.113549.1.1.4":	// MD5 with RSA encryption 
+				return "MD5";
+			case "1.2.840.113549.1.1.5":	// SHA-1 with RSA Encryption 
+			case "1.3.14.3.2.29":		// SHA1 with RSA signature 
+			case "1.2.840.10040.4.3":	// SHA1-1 with DSA
+				return "SHA1";
+			case "1.2.840.113549.1.1.11":	// SHA-256 with RSA Encryption
+				return "SHA256";
+			case "1.2.840.113549.1.1.12":	// SHA-384 with RSA Encryption
+				return "SHA384";
+			case "1.2.840.113549.1.1.13":	// SHA-512 with RSA Encryption
+				return "SHA512";
+			case "1.3.36.3.3.1.2":
+				return "RIPEMD160";
+			default:
+				if (throwOnError)
+					throw new CryptographicException ("Unsupported hash algorithm: " + oid);
+				return null;
+			}
+		}
+		
+		static internal HashAlgorithm CreateFromOid (string oid)
+		{
+			return CreateFromName (HashNameFromOid (oid));
+		}
+		
+		static internal HashAlgorithm CreateFromName (string name)
+		{
+#if FULL_AOT_RUNTIME
+			switch (name) {
+			case "MD2":
+				return MD2.Create ();
+			case "MD4":
+				return MD4.Create ();
+			case "MD5":
+				return MD5.Create ();
+			case "SHA1":
+				return SHA1.Create ();
+			case "SHA256":
+				return SHA256.Create ();
+			case "SHA384":
+				return SHA384.Create ();
+			case "SHA512":
+				return SHA512.Create ();
+			case "RIPEMD160":
+				return RIPEMD160.Create ();
+			default:
+				try {
+					return (HashAlgorithm) Activator.CreateInstance (Type.GetType (name));
+				}
+				catch {
+					throw new CryptographicException ("Unsupported hash algorithm: " + name);
+				}
+			}
+#else
+			return HashAlgorithm.Create (name);
+#endif
 		}
 	}
 }

@@ -8,6 +8,8 @@
 // Copyright (C) 2004, 2007 Novell, Inc (http://www.novell.com)
 //
 
+#if !MOBILE
+
 using NUnit.Framework;
 using System;
 using System.Security.Cryptography;
@@ -61,3 +63,5 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 	}
 }
+
+#endif

@@ -60,7 +60,7 @@ using System;
 		 return new C (name);
 	 }
 
-	 static void Main ()
+	 public static void Main ()
 	 {
 		 MethodHandler a = MethodSampleA;
 		 MethodHandler b = MethodSampleB;

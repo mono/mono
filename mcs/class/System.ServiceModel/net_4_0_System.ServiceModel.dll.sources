@@ -2,6 +2,9 @@
 ../../build/common/MonoTODOAttribute.cs
 #include System.ServiceModel.dll.sources
 
+System.ServiceModel.Channels/IHttpCookieContainer.cs
+System.ServiceModel.Channels/HttpCookieContainerBindingElement.cs
+
 ../System.ServiceModel.Web/System.ServiceModel.Syndication/Atom10FeedFormatter.cs
 ../System.ServiceModel.Web/System.ServiceModel.Syndication/Atom10FeedFormatter_1.cs
 ../System.ServiceModel.Web/System.ServiceModel.Syndication/Atom10ItemFormatter.cs

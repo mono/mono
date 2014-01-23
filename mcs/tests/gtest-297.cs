@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 public class Test
 {
-	static void Main ()
+	public static void Main ()
 	{
 		try {
 		} catch (Exception) {

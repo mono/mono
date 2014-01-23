@@ -20,7 +20,7 @@ class Test {
 	static public void MyPublic () { }
 	static void MyPrivate () {}
 	      
-	static int Main ()
+	public static int Main ()
 	{
 		Type myself = typeof (Test);
 		BindingFlags bf = BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public;

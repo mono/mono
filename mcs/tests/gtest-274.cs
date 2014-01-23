@@ -45,9 +45,17 @@ public struct Baz
 	}
 }
 
+struct S
+{
+	public static implicit operator bool?(S arg)
+	{
+		throw new ApplicationException ("should not be called");
+	}
+}
+
 class X
 {
-	static void Main ()
+	public static int Main ()
 	{
 		int a = 3;
 		int? b = a;
@@ -67,5 +75,12 @@ class X
 		Baz? z2 = (Baz?) f2;
 		Baz? z3 = (Baz?) f3;
 		Baz z4 = (Baz) f2;
+
+		S? s = null;
+		bool? g = s;
+		if (g != null)
+			return 1;
+
+		return 0;
 	}
 }

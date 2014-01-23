@@ -11,7 +11,7 @@ class ItemCollection<T> where T : Item
 
 class a
 {
-	static void Main ()
+	public static void Main ()
 	{
 		var ic = new ItemCollection<Item> ();
 		ic.Bind (ic);

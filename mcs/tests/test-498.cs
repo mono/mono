@@ -14,7 +14,7 @@ struct A
 
 struct C
 {
-	static int Main ()
+	public static int Main ()
 	{
 		MethodImplAttributes iflags = typeof (A).GetConstructors()[0].GetMethodImplementationFlags ();
 		if ((iflags & MethodImplAttributes.InternalCall) == 0)

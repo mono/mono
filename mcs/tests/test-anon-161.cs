@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class TestCase
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Test (new IList<int> [] { new int[] { 1, 2, 3 } });
 	}

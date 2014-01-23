@@ -13,7 +13,7 @@ namespace MonoPointerBugTest
 
 	class Program
 	{
-		static int Main ()
+		public static int Main ()
 		{
 			unsafe {
 				MyStructure structure = new MyStructure ();

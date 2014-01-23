@@ -78,12 +78,6 @@
 #elif defined(__ia64__)
 #define CONFIG_CPU "ia64"
 #define CONFIG_WORDSIZE "64"
-#elif defined(__alpha__)
-#define CONFIG_CPU "alpha"
-#define CONFIG_WORDSIZE "64"
-#elif defined(hppa) || defined(__hppa__)
-#define CONFIG_CPU "hppa"
-#define CONFIG_WORDSIZE "32"
 #elif defined(mips) || defined(__mips) || defined(_mips)
 #define CONFIG_CPU "mips"
 #define CONFIG_WORDSIZE "32"
@@ -570,7 +564,7 @@ mono_config_parse (const char *filename) {
 	mono_config_parse_file (mono_cfg);
 	g_free (mono_cfg);
 
-#ifndef TARGET_WIN32
+#if !defined(TARGET_WIN32) && !defined(__native_client__)
 	home = g_get_home_dir ();
 	user_cfg = g_strconcat (home, G_DIR_SEPARATOR_S, ".mono/config", NULL);
 	mono_config_parse_file (user_cfg);
@@ -794,5 +788,19 @@ mono_config_parse_assembly_bindings (const char *filename, int amajor, int amino
 	state.inited = TRUE; /* We are already inited */
 
 	mono_config_parse_file_with_context (&state, filename);
+}
+
+static mono_bool mono_server_mode = FALSE;
+
+void
+mono_config_set_server_mode (mono_bool server_mode)
+{
+	mono_server_mode = server_mode;
+}
+
+mono_bool
+mono_config_is_server_mode (void)
+{
+	return mono_server_mode;
 }
 

@@ -22,7 +22,7 @@ class Bar : Foo<int>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Bar bar = new Bar ();
 		bar.Test ();

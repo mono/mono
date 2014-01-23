@@ -30,10 +30,16 @@ using System.IO;
 
 namespace Microsoft.Build.Utilities
 {
-	public static class ToolLocationHelper
+	#if MICROSOFT_BUILD_DLL
+	internal
+	#else
+	public
+	#endif
+	static class ToolLocationHelper
 	{
 		static string lib_mono_dir;
 		static string [] mono_dir;
+		static bool runningOnDotNet;
 
 		static ToolLocationHelper ()
 		{
@@ -48,23 +54,45 @@ namespace Microsoft.Build.Utilities
 			t2 = t1.Parent;
 
 			lib_mono_dir = t2.FullName;
+
+#if NET_4_0
+			var windowsPath = Environment.GetFolderPath (Environment.SpecialFolder.Windows);
+			runningOnDotNet = !string.IsNullOrEmpty (windowsPath) && lib_mono_dir.StartsWith (windowsPath);
+#endif
+
 			if (Environment.GetEnvironmentVariable ("TESTING_MONO") != null) {
 				mono_dir = new string [] {
 					Path.Combine (lib_mono_dir, "net_1_0"),
 					Path.Combine (lib_mono_dir, "net_2_0"),
 					Path.Combine (lib_mono_dir, "net_2_0"),
 					Path.Combine (lib_mono_dir, "net_3_5"),
-					Path.Combine (lib_mono_dir, "net_4_0"),
+					// mono's 4.0 is not an actual framework directory with all tools etc
+					// it's simply reference assemblies. So like .NET we consider 4.5 to
+					// be a complete replacement for 4.0.
+					Path.Combine (lib_mono_dir, "net_4_5"),
+					Path.Combine (lib_mono_dir, "net_4_5"),
 					Path.Combine (lib_mono_dir, "net_4_5")
 				};	
+			} else if (runningOnDotNet) {
+				mono_dir = new string [] {
+					Path.Combine (lib_mono_dir, "v1.0.3705"),
+					Path.Combine (lib_mono_dir, "v2.0.50727"),
+					Path.Combine (lib_mono_dir, "v2.0.50727"),
+					Path.Combine (lib_mono_dir, "v3.5"),
+					Path.Combine (lib_mono_dir, "v4.0.30319"),
+					Path.Combine (lib_mono_dir, "v4.0.30319"),
+					Path.Combine (lib_mono_dir, "v4.0.30319")
+				};
 			} else {
 				mono_dir = new string [] {
 					Path.Combine (lib_mono_dir, "1.0"),
 					Path.Combine (lib_mono_dir, "2.0"),
 					Path.Combine (lib_mono_dir, "2.0"),
 					Path.Combine (lib_mono_dir, "3.5"),
-					Path.Combine (lib_mono_dir, "4.0"),
-					Path.Combine (lib_mono_dir, "4.5")
+					// see comment above regarding 4.0/4.5
+					Path.Combine (lib_mono_dir, "4.5"),
+					Path.Combine (lib_mono_dir, "4.5"),
+					Path.Combine (lib_mono_dir, "4.5"),
 				};
 			}
 
@@ -124,5 +152,30 @@ namespace Microsoft.Build.Utilities
 				throw new NotImplementedException ();
 			}
 		}
+
+#if XBUILD_12
+		public static string CurrentToolsVersion {
+			get {
+				return XBuildConsts.Version;
+			}
+		}
+
+		public static string GetPathToBuildTools (string toolsVersion)
+		{
+			if (toolsVersion != "12.0")
+				return null;
+
+			if (Environment.GetEnvironmentVariable ("TESTING_MONO") != null)
+				return Path.Combine (lib_mono_dir, "xbuild_12");
+
+			if (runningOnDotNet) {
+				//see http://msdn.microsoft.com/en-us/library/vstudio/bb397428(v=vs.120).aspx
+				var programFiles = Environment.GetFolderPath (Environment.SpecialFolder.ProgramFilesX86);
+				return Path.Combine (programFiles, "MSBuild", toolsVersion, "bin");
+			}
+
+			return Path.Combine (lib_mono_dir, "xbuild", toolsVersion, "bin");
+		}
+#endif
 	}
 }

@@ -13,7 +13,7 @@ public class SequencedEqualityComparer<T,W>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		EqualityComparer<int>.Test ();
 	}

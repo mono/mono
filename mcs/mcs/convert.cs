@@ -34,7 +34,7 @@ namespace Mono.CSharp {
 		//
 		static bool ArrayToIList (ArrayContainer array, TypeSpec list, bool isExplicit)
 		{
-			if (array.Rank != 1 || !list.IsGenericIterateInterface)
+			if (array.Rank != 1 || !list.IsArrayGenericInterface)
 				return false;
 
 			var arg_type = list.TypeArguments[0];
@@ -55,7 +55,7 @@ namespace Mono.CSharp {
 		
 		static bool IList_To_Array(TypeSpec list, ArrayContainer array)
 		{
-			if (array.Rank != 1 || !list.IsGenericIterateInterface)
+			if (array.Rank != 1 || !list.IsArrayGenericInterface)
 				return false;
 
 			var arg_type = list.TypeArguments[0];
@@ -479,7 +479,7 @@ namespace Mono.CSharp {
 			}
 			
 			if (expr_type != expr.Type)
-				return new Nullable.Lifted (conv, unwrap, target_type).Resolve (ec);
+				return new Nullable.LiftedConversion (conv, unwrap, target_type).Resolve (ec);
 
 			return Nullable.Wrap.Create (conv, target_type);
 		}
@@ -704,7 +704,7 @@ namespace Mono.CSharp {
 			if (expr.Type == InternalType.Arglist)
 				return target_type == ec.Module.PredefinedTypes.ArgIterator.TypeSpec;
 
-			return ImplicitUserConversion (ec, expr, target_type, Location.Null) != null;
+			return UserDefinedConversion (ec, expr, target_type, true, true, Location.Null) != null;
 		}
 
 		//
@@ -917,16 +917,19 @@ namespace Mono.CSharp {
 		//
 		static TypeSpec FindMostSpecificSource (List<MethodSpec> list, TypeSpec sourceType, Expression source, bool apply_explicit_conv_rules)
 		{
-			var src_types_set = new TypeSpec [list.Count];
+			TypeSpec[] src_types_set = null;
 
 			//
 			// Try exact match first, if any operator converts from S then Sx = S
 			//
-			for (int i = 0; i < src_types_set.Length; ++i) {
+			for (int i = 0; i < list.Count; ++i) {
 				TypeSpec param_type = list [i].Parameters.Types [0];
 
 				if (param_type == sourceType)
 					return param_type;
+
+				if (src_types_set == null)
+					src_types_set = new TypeSpec [list.Count];
 
 				src_types_set [i] = param_type;
 			}
@@ -961,7 +964,7 @@ namespace Mono.CSharp {
 		static public TypeSpec FindMostSpecificTarget (IList<MethodSpec> list,
 							   TypeSpec target, bool apply_explicit_conv_rules)
 		{
-			var tgt_types_set = new List<TypeSpec> ();
+			List<TypeSpec> tgt_types_set = null;
 
 			//
 			// If any operator converts to T then Tx = T
@@ -970,6 +973,12 @@ namespace Mono.CSharp {
 				TypeSpec ret_type = mi.ReturnType;
 				if (ret_type == target)
 					return ret_type;
+
+				if (tgt_types_set == null) {
+					tgt_types_set = new List<TypeSpec> (list.Count);
+				} else if (tgt_types_set.Contains (ret_type)) {
+					continue;
+				}
 
 				tgt_types_set.Add (ret_type);
 			}
@@ -1005,7 +1014,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		static public Expression ImplicitUserConversion (ResolveContext ec, Expression source, TypeSpec target, Location loc)
 		{
-			return UserDefinedConversion (ec, source, target, true, loc);
+			return UserDefinedConversion (ec, source, target, true, false, loc);
 		}
 
 		/// <summary>
@@ -1013,7 +1022,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		static Expression ExplicitUserConversion (ResolveContext ec, Expression source, TypeSpec target, Location loc)
 		{
-			return UserDefinedConversion (ec, source, target, false, loc);
+			return UserDefinedConversion (ec, source, target, false, false, loc);
 		}
 
 		static void FindApplicableUserDefinedConversionOperators (IList<MemberSpec> operators, Expression source, TypeSpec target, bool implicitOnly, ref List<MethodSpec> candidates)
@@ -1077,7 +1086,7 @@ namespace Mono.CSharp {
 		//
 		// User-defined conversions
 		//
-		static Expression UserDefinedConversion (ResolveContext ec, Expression source, TypeSpec target, bool implicitOnly, Location loc)
+		static Expression UserDefinedConversion (ResolveContext ec, Expression source, TypeSpec target, bool implicitOnly, bool probingOnly, Location loc)
 		{
 			List<MethodSpec> candidates = null;
 
@@ -1088,14 +1097,17 @@ namespace Mono.CSharp {
 			TypeSpec source_type = source.Type;
 			TypeSpec target_type = target;
 			Expression source_type_expr;
+			bool nullable_source = false;
 
 			if (source_type.IsNullableType) {
-				// No implicit conversion S? -> T for non-reference types
-				if (implicitOnly && !TypeSpec.IsReferenceType (target_type) && !target_type.IsNullableType)
-					return null;
-
-				source_type_expr = Nullable.Unwrap.Create (source);
-				source_type = source_type_expr.Type;
+				// No unwrapping conversion S? -> T for non-reference types
+				if (implicitOnly && !TypeSpec.IsReferenceType (target_type) && !target_type.IsNullableType) {
+					source_type_expr = source;
+				} else {
+					source_type_expr = Nullable.Unwrap.CreateUnwrapped (source);
+					source_type = source_type_expr.Type;
+					nullable_source = true;
+				}
 			} else {
 				source_type_expr = source;
 			}
@@ -1172,18 +1184,23 @@ namespace Mono.CSharp {
 				}
 
 				if (most_specific_operator == null) {
-					MethodSpec ambig_arg = null;
-					foreach (var candidate in candidates) {
-						if (candidate.ReturnType == t_x)
-							most_specific_operator = candidate;
-						else if (candidate.Parameters.Types[0] == s_x)
-							ambig_arg = candidate;
-					}
+					//
+					// Unless running in probing more
+					//
+					if (!probingOnly) {
+						MethodSpec ambig_arg = null;
+						foreach (var candidate in candidates) {
+							if (candidate.ReturnType == t_x)
+								most_specific_operator = candidate;
+							else if (candidate.Parameters.Types[0] == s_x)
+								ambig_arg = candidate;
+						}
 
-					ec.Report.Error (457, loc,
-						"Ambiguous user defined operators `{0}' and `{1}' when converting from `{2}' to `{3}'",
-						ambig_arg.GetSignatureForError (), most_specific_operator.GetSignatureForError (),
-						source.Type.GetSignatureForError (), target.GetSignatureForError ());
+						ec.Report.Error (457, loc,
+							"Ambiguous user defined operators `{0}' and `{1}' when converting from `{2}' to `{3}'",
+							ambig_arg.GetSignatureForError (), most_specific_operator.GetSignatureForError (),
+							source.Type.GetSignatureForError (), target.GetSignatureForError ());
+					}
 
 					return ErrorExpression.Instance;
 				}
@@ -1195,8 +1212,12 @@ namespace Mono.CSharp {
 			if (s_x != source_type) {
 				var c = source as Constant;
 				if (c != null) {
-					source = c.TryReduce (ec, s_x);
-				} else {
+					source = c.Reduce (ec, s_x);
+					if (source == null)
+						c = null;
+				}
+
+				if (c == null) {
 					source = implicitOnly ?
 						ImplicitConversionStandard (ec, source_type_expr, s_x, loc) :
 						ExplicitConversionStandard (ec, source_type_expr, s_x, loc);
@@ -1212,26 +1233,48 @@ namespace Mono.CSharp {
 			//
 			if (t_x != target_type) {
 				//
-				// User operator is of T?, no need to lift it
+				// User operator is of T?
 				//
-				if (t_x == target && t_x.IsNullableType)
-					return source;
+				if (t_x.IsNullableType && target.IsNullableType) {
+					//
+					// User operator return type does not match target type we need
+					// yet another conversion. This should happen for promoted numeric
+					// types only
+					//
+					if (t_x != target) {
+						var unwrap = Nullable.Unwrap.CreateUnwrapped (source);
 
-				source = implicitOnly ?
-					ImplicitConversionStandard (ec, source, target_type, loc) :
-					ExplicitConversionStandard (ec, source, target_type, loc);
+						source = implicitOnly ?
+							ImplicitConversionStandard (ec, unwrap, target_type, loc) :
+							ExplicitConversionStandard (ec, unwrap, target_type, loc);
 
-				if (source == null)
-					return null;
+						if (source == null)
+							return null;
+
+						source = new Nullable.LiftedConversion (source, unwrap, target).Resolve (ec);
+					}
+				} else {
+					source = implicitOnly ?
+						ImplicitConversionStandard (ec, source, target_type, loc) :
+						ExplicitConversionStandard (ec, source, target_type, loc);
+
+					if (source == null)
+						return null;
+				}
 			}
 
+
 			//
-			// Source expression is of nullable type, lift the result in the case it's null and
-			// not nullable/lifted user operator is used
+			// Source expression is of nullable type and underlying conversion returns
+			// only non-nullable type we need to lift it manually
 			//
-			if (source_type_expr is Nullable.Unwrap && !s_x.IsNullableType && (TypeSpec.IsReferenceType (target) || target_type != target))
-				source = new Nullable.Lifted (source, source_type_expr, target).Resolve (ec);
-			else if (target_type != target)
+			if (nullable_source && !s_x.IsNullableType)
+				return new Nullable.LiftedConversion (source, source_type_expr, target).Resolve (ec);
+
+			//
+			// Target is of nullable type but source type is not, wrap the result expression
+			//
+			if (target.IsNullableType && !t_x.IsNullableType)
 				source = Nullable.Wrap.Create (source, target);
 
 			return source;
@@ -1291,8 +1334,7 @@ namespace Mono.CSharp {
 				if (ec.Module.Compiler.Settings.Version != LanguageVersion.ISO_1){
 					MethodGroupExpr mg = expr as MethodGroupExpr;
 					if (mg != null)
-						return ImplicitDelegateCreation.Create (
-							ec, mg, target_type, loc);
+						return new ImplicitDelegateCreation (target_type, mg, loc).Resolve (ec);
 				}
 			}
 
@@ -1396,6 +1438,9 @@ namespace Mono.CSharp {
 				Expression am = ame.Compatible (ec, target_type);
 				if (am != null)
 					return am.Resolve (ec);
+
+				// Avoid CS1503 after CS1661
+				return ErrorExpression.Instance;
 			}
 
 			if (expr_type == InternalType.Arglist && target_type == ec.Module.PredefinedTypes.ArgIterator.TypeSpec)
@@ -1985,21 +2030,28 @@ namespace Mono.CSharp {
 				if (expr_type == real_target)
 					return EmptyCast.Create (expr, target_type);
 
-				ne = ImplicitNumericConversion (expr, real_target);
-				if (ne != null)
-					return EmptyCast.Create (ne, target_type);
-
-				ne = ExplicitNumericConversion (ec, expr, real_target);
-				if (ne != null)
-					return EmptyCast.Create (ne, target_type);
-
-				//
-				// LAMESPEC: IntPtr and UIntPtr conversion to any Enum is allowed
-				//
-				if (expr_type.BuiltinType == BuiltinTypeSpec.Type.IntPtr || expr_type.BuiltinType == BuiltinTypeSpec.Type.UIntPtr) {
-					ne = ExplicitUserConversion (ec, expr, real_target, loc);
+				Constant c = expr as Constant;
+				if (c != null) {
+					c = c.TryReduce (ec, real_target);
+					if (c != null)
+						return c;
+				} else {
+					ne = ImplicitNumericConversion (expr, real_target);
 					if (ne != null)
-						return ExplicitConversionCore (ec, ne, target_type, loc);
+						return EmptyCast.Create (ne, target_type);
+
+					ne = ExplicitNumericConversion (ec, expr, real_target);
+					if (ne != null)
+						return EmptyCast.Create (ne, target_type);
+
+					//
+					// LAMESPEC: IntPtr and UIntPtr conversion to any Enum is allowed
+					//
+					if (expr_type.BuiltinType == BuiltinTypeSpec.Type.IntPtr || expr_type.BuiltinType == BuiltinTypeSpec.Type.UIntPtr) {
+						ne = ExplicitUserConversion (ec, expr, real_target, loc);
+						if (ne != null)
+							return ExplicitConversionCore (ec, ne, target_type, loc);
+					}
 				}
 			} else {
 				ne = ExplicitNumericConversion (ec, expr, target_type);
@@ -2140,7 +2192,7 @@ namespace Mono.CSharp {
 					if (e == null)
 						return null;
 
-					return new Nullable.Lifted (e, unwrap, target_type).Resolve (ec);
+					return new Nullable.LiftedConversion (e, unwrap, target_type).Resolve (ec);
 				}
 				if (expr_type.BuiltinType == BuiltinTypeSpec.Type.Object) {
 					return new UnboxCast (expr, target_type);
@@ -2149,7 +2201,7 @@ namespace Mono.CSharp {
 				target = TypeManager.GetTypeArguments (target_type) [0];
 				e = ExplicitConversionCore (ec, expr, target, loc);
 				if (e != null)
-					return Nullable.Wrap.Create (e, target_type);
+					return TypeSpec.IsReferenceType (expr.Type) ? new UnboxCast (expr, target_type) : Nullable.Wrap.Create (e, target_type);
 			} else if (expr_type.IsNullableType) {
 				e = ImplicitBoxingConversion (expr, Nullable.NullableInfo.GetUnderlyingType (expr_type), target_type);
 				if (e != null)

@@ -1783,11 +1783,9 @@ namespace MonoTests.System.XmlSerialization
 		[Test]
 #if NET_2_0
 		[Category ("NotWorking")] // support for XmlSchemaProvider is not implemented
-#else
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 #endif
 		public void ExportXmlSerializable_SchemaProvider1 () {
-			XmlSchemas schemas = schemas = Export (typeof (PrimitiveSchemaProvider));
+			XmlSchemas schemas = Export (typeof (PrimitiveSchemaProvider));
 			Assert.AreEqual (1, schemas.Count, "#1");
 
 			StringWriter sw = new StringWriter ();

@@ -105,6 +105,24 @@ typedef struct {
 #define MONO_CONTEXT_GET_SP(ctx) ((gpointer)((ctx)->esp))
 
 /*We set EAX to zero since we are clobering it anyway*/
+#ifdef _MSC_VER
+#define MONO_CONTEXT_GET_CURRENT(ctx) do { \
+	void *_ptr = &(ctx);												\
+	__asm {																\
+	 __asm mov eax, _ptr												\
+	 __asm mov [eax+0x00], eax											\
+	 __asm mov [eax+0x04], ebx											\
+	 __asm mov [eax+0x08], ecx											\
+	 __asm mov [eax+0x0c], edx											\
+	 __asm mov [eax+0x10], ebp											\
+	 __asm mov [eax+0x14], esp											\
+	 __asm mov [eax+0x18], esi											\
+	 __asm mov [eax+0x1c], edi											\
+	 __asm call $+5														\
+	 __asm pop dword ptr [eax+0x20]										\
+		 }																\
+	} while (0)
+#else
 #define MONO_CONTEXT_GET_CURRENT(ctx) \
 	__asm__ __volatile__(   \
 	"movl $0x0, 0x00(%0)\n" \
@@ -120,10 +138,9 @@ typedef struct {
 	:	\
 	: "a" (&(ctx))  \
 	: "memory")
-
-#if !defined(HOST_WIN32)
-#define MONO_ARCH_HAS_MONO_CONTEXT 1
 #endif
+
+#define MONO_ARCH_HAS_MONO_CONTEXT 1
 
 #elif (defined(__x86_64__) && !defined(MONO_CROSS_COMPILE)) || (defined(TARGET_AMD64)) /* defined(__i386__) */
 
@@ -221,7 +238,7 @@ typedef struct {
 typedef struct {
 	mgreg_t pc;
 	mgreg_t regs [16];
-	double fregs [8];
+	double fregs [16];
 	mgreg_t cpsr;
 } MonoContext;
 
@@ -234,10 +251,29 @@ typedef struct {
 #define MONO_CONTEXT_GET_BP(ctx) ((gpointer)((ctx)->regs [ARMREG_FP]))
 #define MONO_CONTEXT_GET_SP(ctx) ((gpointer)((ctx)->regs [ARMREG_SP]))
 
-// FIXME:
 #define MONO_CONTEXT_GET_CURRENT(ctx)	do { 	\
-	g_assert_not_reached (); \
+	__asm__ __volatile__(			\
+		"push {r0}\n"				\
+		"push {r1}\n"				\
+		"mov r0, %0\n"				\
+		"ldr r1, [sp, #4]\n"			\
+		"str r1, [r0]!\n"			\
+		"ldr r1, [sp, #0]\n"			\
+		"str r1, [r0]!\n"			\
+		"stmia r0!, {r2-r12}\n"		\
+		"str sp, [r0]!\n"			\
+		"str lr, [r0]!\n"			\
+		"mov r1, pc\n"				\
+		"str r1, [r0]!\n"			\
+		"pop {r1}\n"				\
+		"pop {r0}\n"				\
+		:							\
+		: "r" (&ctx.regs)			\
+		: "memory"					\
+	);								\
+	ctx.pc = ctx.regs [15];			\
 } while (0)
+
 
 #elif defined(__mono_ppc__) /* defined(__arm__) */
 

@@ -35,7 +35,7 @@ interface IC
 
 class M
 {
-	static int Main ()
+	public static int Main ()
 	{
 		new ATop<short>().Test ();
 		return 0;

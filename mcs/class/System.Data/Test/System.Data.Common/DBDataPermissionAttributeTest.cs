@@ -51,6 +51,9 @@ namespace MonoTests.System.Data.Common
 	}
 
 	[TestFixture]
+#if MOBILE
+	[Ignore ("CAS is not supported and parts will be linked away")]
+#endif
 	public class DBDataPermissionAttributeTest
 	{
 		[Test]

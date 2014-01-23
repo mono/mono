@@ -10,7 +10,7 @@ namespace Baulig
 
 	class X
 	{
-		static void Main ()
+		public static void Main ()
 		{
 			M.Foo<int> foo;
 		}

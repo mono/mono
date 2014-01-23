@@ -27,6 +27,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !MOBILE
+
 using NUnit.Framework;
 using System;
 using System.Collections;
@@ -1172,7 +1174,7 @@ namespace MonoTests.System.Security {
 			ps.PermitOnly ();
 			// it's simply ignored
 		}
-
+#if !MOBILE
 		// note: this only ensure that the ECMA key support unification (more test required, outside corlib, for other keys, like MS final).
 		private const string PermissionPattern = "<PermissionSet class=\"System.Security.PermissionSet\" version=\"1\"><IPermission class=\"System.Security.Permissions.FileDialogPermission, mscorlib, Version={0}, Culture=neutral, PublicKeyToken=b77a5c561934e089\" version=\"1\" Access=\"Open\"/></PermissionSet>";
 		private const string fx10version = "1.0.3300.0";
@@ -1211,5 +1213,8 @@ namespace MonoTests.System.Security {
 		{
 			Unification (String.Format (PermissionPattern, "9.99.999.9999"));
 		}
+#endif
 	}
 }
+
+#endif

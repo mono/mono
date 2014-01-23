@@ -26,7 +26,7 @@ namespace MonoTests.Mono.Security.Protocol.Ntlm {
 			AssertEquals ("Type", 1, msg.Type);
 			msg.Domain = "Ursa-Minor";
 			msg.Host = "LightCity";
-			AssertEquals ("GetBytes", "4E-54-4C-4D-53-53-50-00-01-00-00-00-03-B2-00-00-0A-00-0A-00-29-00-00-00-09-00-09-00-20-00-00-00-4C-49-47-48-54-43-49-54-59-55-52-53-41-2D-4D-49-4E-4F-52", BitConverter.ToString (msg.GetBytes ()));
+			AssertEquals ("GetBytes", "4E-54-4C-4D-53-53-50-00-01-00-00-00-07-B2-00-00-0A-00-0A-00-29-00-00-00-09-00-09-00-20-00-00-00-4C-49-47-48-54-43-49-54-59-55-52-53-41-2D-4D-49-4E-4F-52", BitConverter.ToString (msg.GetBytes ()));
 		}
 
 		[Test]

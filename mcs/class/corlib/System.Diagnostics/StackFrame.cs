@@ -141,26 +141,12 @@ namespace System.Diagnostics {
 			string filename = "<filename unknown>";
 			if (fileName == null)
 				return filename;
-#if !MOONLIGHT
 			try {
 				filename = GetFileName ();
 			}
 			catch (SecurityException) {
 				// CAS check failure
 			}
-#else
-			// Silverlight always return <filename unknown> but that's not very useful for debugging
-			// OTOH we do not want to share any details about the original file system (even if they
-			// are likely available in the debugging symbols files) from the browser's plugin (but
-			// compiling stuff from smcs is fine since it's outside the sandbox)
-			try {
-				if (SecurityManager.SecurityEnabled)
-					filename = Path.GetFileName (fileName);
-			}
-			catch (ArgumentException) {
-				// e.g. invalid chars in filename
-			}
-#endif
 			return filename;
 		}
                 

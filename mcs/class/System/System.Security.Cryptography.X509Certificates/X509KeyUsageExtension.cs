@@ -28,11 +28,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP || MOONLIGHT
+#if SECURITY_DEP
+
+#if MONOTOUCH
+using Mono.Security;
+#else
+extern alias MonoSecurity;
+using MonoSecurity::Mono.Security;
+#endif
 
 using System.Text;
-
-using Mono.Security;
 
 namespace System.Security.Cryptography.X509Certificates {
 

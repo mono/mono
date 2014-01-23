@@ -4,7 +4,7 @@ delegate void Y ();
 
 class X {
 	public event Y y;
-	static void Main (string [] args)
+	public static void Main (string [] args)
 	{
 		X x = new X ();
 		x.Foo ();

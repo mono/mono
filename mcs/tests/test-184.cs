@@ -30,7 +30,7 @@ public class Test
 	//
 	User t2=new User(new Struct(251));
 
-	static int Main ()
+	public static int Main ()
 	{
 		Test tt = new Test ();
 

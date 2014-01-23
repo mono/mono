@@ -115,7 +115,7 @@ namespace Mono.Documentation
 				return CreateDefaultDocument ();
 
 			var settings = new XmlReaderSettings {
-				ProhibitDtd = false,
+				DtdProcessing = DtdProcessing.Parse
 			};
 			using (var reader = XmlReader.Create (file, settings))
 				return XDocument.Load (reader);

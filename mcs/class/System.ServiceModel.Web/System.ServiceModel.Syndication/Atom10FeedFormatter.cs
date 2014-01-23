@@ -476,7 +476,7 @@ namespace System.ServiceModel.Syndication
 				}
 
 			if (Feed.Description != null)
-				Feed.Description.WriteTo (writer, "description", AtomNamespace);
+				Feed.Description.WriteTo (writer, "subtitle", AtomNamespace);
 
 			if (Feed.ImageUrl != null)
 				writer.WriteElementString ("logo", AtomNamespace, Feed.ImageUrl.ToString ());

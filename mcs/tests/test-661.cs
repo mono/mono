@@ -2,7 +2,7 @@
 
 public class Test
 {
-	static void Main ()
+	public static void Main ()
 	{
 	}
 	

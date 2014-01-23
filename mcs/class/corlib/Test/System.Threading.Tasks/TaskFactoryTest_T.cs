@@ -26,13 +26,16 @@
 //
 //
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 using NUnit.Framework;
+#if !MOBILE
+using NUnit.Framework.SyntaxHelpers;
+#endif
 
 namespace MonoTests.System.Threading.Tasks
 {
@@ -89,6 +92,34 @@ namespace MonoTests.System.Threading.Tasks
 				get { return false; }
 			}
 		}
+
+		class TestAsyncResultCompletedSynchronously : IAsyncResult
+		{
+			public object AsyncState {
+				get {
+					throw new NotImplementedException ();
+				}
+			}
+
+			public WaitHandle AsyncWaitHandle {
+				get {
+					throw new NotImplementedException ();
+				}
+			}
+
+			public bool CompletedSynchronously {
+				get {
+					return true;
+				}
+			}
+
+			public bool IsCompleted {
+				get {
+					throw new NotImplementedException ();
+				}
+			}
+		}
+		
 
 		[SetUp]
 		public void Setup ()
@@ -177,6 +208,72 @@ namespace MonoTests.System.Threading.Tasks
 
 			Assert.IsTrue (task.Wait (1000), "#1");
 			Assert.AreEqual (5, task.Result, "#2");
+		}
+
+		IAsyncResult BeginGetTestAsyncResultCompletedSynchronously (AsyncCallback cb, object obj)
+		{
+			return new TestAsyncResultCompletedSynchronously ();
+		}
+
+		string EndGetTestAsyncResultCompletedSynchronously (IAsyncResult res)
+		{
+			return "1";
+		}
+
+		[Test]
+		public void FromAsync_CompletedSynchronously ()
+		{
+			var factory = new TaskFactory<string> ();
+			var task = factory.FromAsync (BeginGetTestAsyncResultCompletedSynchronously, EndGetTestAsyncResultCompletedSynchronously, null);
+
+			Assert.IsTrue (task.Wait (1000), "#1");
+			Assert.AreEqual ("1", task.Result, "#2");
+		}
+
+		IAsyncResult BeginGetTestAsyncResultCompletedSynchronously2 (AsyncCallback cb, object obj)
+		{
+			var result = new TestAsyncResultCompletedSynchronously ();
+			cb (result);
+			return result;
+		}
+		
+		string EndGetTestAsyncResultCompletedSynchronously2 (IAsyncResult res)
+		{
+			return "1";
+		}
+		
+		[Test]
+		public void FromAsync_CompletedSynchronously_with_Callback ()
+		{
+			var factory = new TaskFactory<string> ();
+			var task = factory.FromAsync (BeginGetTestAsyncResultCompletedSynchronously2, EndGetTestAsyncResultCompletedSynchronously2, null);
+			
+			Assert.IsTrue (task.Wait (1000), "#1");
+			Assert.AreEqual ("1", task.Result, "#2");
+		}
+
+		[Test]
+		public void StartNewCancelled ()
+		{
+			var ct = new CancellationToken (true);
+			var factory = new TaskFactory<int> ();
+
+			var task = factory.StartNew (() => { Assert.Fail ("Should never be called"); return 1; }, ct);
+			try {
+				task.Start ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {
+			}
+
+			Assert.IsTrue (task.IsCanceled, "#2");
+
+			task = factory.StartNew (() => 1, ct);
+			try {
+				task.Wait ();
+			} catch (AggregateException e) {
+				Assert.IsTrue (task.IsCanceled, "#3");
+				Assert.That (e.InnerException, Is.TypeOf (typeof (TaskCanceledException)), "#4");
+			}
 		}
 	}
 }

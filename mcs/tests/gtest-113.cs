@@ -10,7 +10,7 @@ public class List<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		List<int> list = new List<int> ();
 		list.Map (new Mapper<int,double> (delegate (int i) { return i/10.0; }));

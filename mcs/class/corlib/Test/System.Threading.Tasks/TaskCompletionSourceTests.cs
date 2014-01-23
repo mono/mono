@@ -31,6 +31,9 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using NUnit.Framework;
+#if !MOBILE
+using NUnit.Framework.SyntaxHelpers;
+#endif
 
 namespace MonoTests.System.Threading.Tasks
 {
@@ -111,7 +114,7 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.IsNotNull (completionSource.Task, "#1");
 			Assert.IsTrue (completionSource.TrySetException (e), "#2");
 			Assert.AreEqual (TaskStatus.Faulted, completionSource.Task.Status, "#3");
-			Assert.IsInstanceOfType (typeof (AggregateException), completionSource.Task.Exception, "#4.1");
+			Assert.That (completionSource.Task.Exception, Is.TypeOf(typeof (AggregateException)), "#4.1");
 			
 			AggregateException aggr = (AggregateException)completionSource.Task.Exception;
 			Assert.AreEqual (1, aggr.InnerExceptions.Count, "#4.2");

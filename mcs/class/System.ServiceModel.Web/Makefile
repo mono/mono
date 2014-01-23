@@ -11,11 +11,16 @@ LIB_MCS_FLAGS += -d:NET_3_5 -d:NET_3_0 	\
 			-r:System.Web.Extensions.dll
 endif
 
+ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
+LIB_MCS_FLAGS += -r:System.ServiceModel.Activation.dll
+endif
+
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES = $(RESOURCE_FILES) \
 	Test/config/webHttpBinding \
-	Test/config/webHttpBinding.config
+	Test/config/webHttpBinding.config \
+	System.Runtime.Serialization.Json/DataContractJsonSerializerSettings.cs
 
 VALID_PROFILE := $(filter 2 4, $(FRAMEWORK_VERSION_MAJOR))
 ifndef VALID_PROFILE

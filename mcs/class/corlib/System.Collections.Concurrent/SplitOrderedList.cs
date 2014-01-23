@@ -22,7 +22,7 @@
 //
 //
 
-#if NET_4_0 || INSIDE_SYSTEM_WEB || MOBILE
+#if NET_4_0 || INSIDE_SYSTEM_WEB
 
 using System;
 using System.Threading;
@@ -80,14 +80,6 @@ namespace System.Collections.Concurrent
 				return this;
 			}
 		}
-
-		class NodeObjectPool : ObjectPool<Node> {
-			protected override Node Creator ()
-			{
-				return new Node ();
-			}
-		}
-		static readonly NodeObjectPool pool = new NodeObjectPool ();
 
 		const int MaxLoad = 5;
 		const uint BucketSize = 512;
@@ -155,7 +147,7 @@ namespace System.Collections.Concurrent
 
 		bool InsertInternal (uint key, TKey subKey, T data, Func<T> dataCreator, out Node current)
 		{
-			Node node = pool.Take ().Init (ComputeRegularKey (key), subKey, data);
+			Node node = new Node ().Init (ComputeRegularKey (key), subKey, data);
 
 			uint b = key % (uint)size;
 			Node bucket;
@@ -252,7 +244,7 @@ namespace System.Collections.Concurrent
 			if ((bucket = GetBucket (parent)) == null)
 				bucket = InitializeBucket (parent);
 
-			Node dummy = pool.Take ().Init (ComputeDummyKey (b));
+			Node dummy = new Node ().Init (ComputeDummyKey (b));
 			if (!ListInsert (dummy, bucket, out current, null))
 				return current;
 
@@ -356,7 +348,6 @@ namespace System.Collections.Concurrent
 				}
 				
 				if (Interlocked.CompareExchange (ref left.Next, rightNode, leftNodeNext) == leftNodeNext) {
-					pool.Release (leftNodeNext);
 					if (rightNode != tail && rightNode.Next.Marked)
 						continue;
 					else
@@ -381,7 +372,7 @@ namespace System.Collections.Concurrent
 
 				if (!rightNodeNext.Marked) {
 					if (markedNode == null)
-						markedNode = pool.Take ();
+						markedNode = new Node ();
 					markedNode.Init (rightNodeNext);
 
 					if (Interlocked.CompareExchange (ref rightNode.Next, markedNode, rightNodeNext) == rightNodeNext)
@@ -391,8 +382,6 @@ namespace System.Collections.Concurrent
 			
 			if (Interlocked.CompareExchange (ref leftNode.Next, rightNodeNext, rightNode) != rightNode)
 				ListSearch (rightNode.Key, subKey, ref leftNode, startPoint);
-			else
-				pool.Release (rightNode);
 			
 			return true;
 		}

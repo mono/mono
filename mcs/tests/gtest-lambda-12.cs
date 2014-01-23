@@ -13,7 +13,7 @@ class Demo
 		Console.WriteLine (values [0]);
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		int[] a = new int [] { 10 };
 		F (a, 5, i => a [0] = i);

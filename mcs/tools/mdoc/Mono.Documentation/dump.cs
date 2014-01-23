@@ -40,7 +40,7 @@ namespace Mono.Documentation {
 						? null
 						: RootTree.GetHelpSource (format, file.Replace (".tree", ""));
 					Tree t = new Tree (hs, file);
-					Node.PrintTree (t);
+					TreeDumper.PrintTree (t.RootNode);
 				}
 			}
 		}

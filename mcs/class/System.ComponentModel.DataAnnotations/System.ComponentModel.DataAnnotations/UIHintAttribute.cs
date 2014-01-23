@@ -1,12 +1,12 @@
 //
 // UIHintAttribute.cs
 //
-// Author:
+// Authors:
 //	Atsushi Enomoto <atsushi@ximian.com>
+//	Marek Safar  <marek.safar@gmail.com>
 //
 // Copyright (C) 2008 Novell Inc. http://novell.com
-//
-
+// Copyright (C) 2013 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,35 +30,65 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace System.ComponentModel.DataAnnotations
 {
 	[AttributeUsage (AttributeTargets.Property|AttributeTargets.Field, AllowMultiple = true)]
 	public class UIHintAttribute : Attribute
 	{
+		readonly ControlParameters controlParameters;
+
 		public UIHintAttribute (string uiHint)
 			: this (uiHint, null)
 		{
 		}
 
 		public UIHintAttribute (string uiHint, string presentationLayer)
-			: this (uiHint, null, null)
+			: this (uiHint, presentationLayer, null)
 		{
 		}
 
-		[MonoTODO]
 		public UIHintAttribute (string uiHint, string presentationLayer, params object [] controlParameters)
 		{
 			UIHint = uiHint;
 			PresentationLayer = presentationLayer;
-			ControlParameters = new Dictionary<string, object> ();
+			this.controlParameters = new ControlParameters (controlParameters);
 		}
 
-		public IDictionary<string, object> ControlParameters { get; private set; }
+		public IDictionary<string, object> ControlParameters {
+			get {
+				return controlParameters.Dictionary;
+			}
+		}
 
 		public string PresentationLayer { get; private set; }
 
 		public string UIHint { get; private set; }
 
+#if NET_4_0
+		public override object TypeId {
+			get {
+				return this;
+			}
+		}
+#endif
+
+		public override int GetHashCode ()
+		{
+			return RuntimeHelpers.GetHashCode (UIHint) ^
+				RuntimeHelpers.GetHashCode (PresentationLayer);
+		}
+
+		public override bool Equals (object obj)
+		{
+			var ha = obj as UIHintAttribute;
+			if (ha == null)
+				return false;
+
+			return ha.UIHint == UIHint && 
+				ha.PresentationLayer == PresentationLayer &&
+				ha.controlParameters.Equals (controlParameters);
+		}
 	}
 }

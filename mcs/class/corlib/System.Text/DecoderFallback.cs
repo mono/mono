@@ -33,11 +33,11 @@ namespace System.Text
 	[Serializable]
 	public abstract class DecoderFallback
 	{
-		static DecoderFallback exception_fallback =
+		static readonly DecoderFallback exception_fallback =
 			new DecoderExceptionFallback ();
-		static DecoderFallback replacement_fallback =
+		static readonly DecoderFallback replacement_fallback =
 			new DecoderReplacementFallback ();
-		static DecoderFallback standard_safe_fallback =
+		static readonly DecoderFallback standard_safe_fallback =
 			new DecoderReplacementFallback ("\uFFFD");
 
 		protected DecoderFallback ()

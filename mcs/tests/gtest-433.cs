@@ -6,7 +6,7 @@ using Cit = Blah.Class2.Citrus;
 
 public class M 
 {
-    static void Main() 
+    public static void Main() 
     {
         // access an internal type
         C1 a = new C1();

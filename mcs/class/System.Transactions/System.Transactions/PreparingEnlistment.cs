@@ -21,6 +21,7 @@ namespace System.Transactions
 		Transaction tx;
 		IEnlistmentNotification enlisted;
 		WaitHandle waitHandle;
+		Exception ex;
 
 		internal PreparingEnlistment (Transaction tx, IEnlistmentNotification enlisted)
 		{
@@ -32,6 +33,11 @@ namespace System.Transactions
 		public void ForceRollback ()
 		{
 			ForceRollback (null);
+		}
+
+		internal override void InternalOnDone ()
+		{
+			this.Prepared();			
 		}
 
 		[MonoTODO]
@@ -67,6 +73,14 @@ namespace System.Transactions
 		internal IEnlistmentNotification EnlistmentNotification
 		{
 			get { return enlisted; }
+		}
+
+		// Uncatched exceptions thrown during prepare will
+		// be saved here so they can be retrieved by TM.
+		internal Exception Exception
+		{
+			get { return ex; }
+			set { ex = value; }
 		}
 	}
 }

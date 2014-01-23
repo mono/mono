@@ -28,8 +28,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
 using System.Collections.Generic;
 using System.Xml;
@@ -42,7 +40,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 		}
 
-		public bool Build (BuildTask buildTask, out bool executeOnErrors)
+		public bool Build (IBuildTask buildTask, out bool executeOnErrors)
 		{
 			executeOnErrors = false;
 			try {
@@ -70,7 +68,7 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
-		bool Run (BuildTask buildTask, out bool executeOnErrors)
+		bool Run (IBuildTask buildTask, out bool executeOnErrors)
 		{
 			executeOnErrors = false;
 
@@ -110,25 +108,12 @@ namespace Microsoft.Build.BuildEngine {
 		// Parse task attributes to get list of referenced metadata and items
 		// to determine batching
 		//
-		void ParseTaskAttributes (BuildTask buildTask)
+		void ParseTaskAttributes (IBuildTask buildTask)
 		{
-			foreach (XmlAttribute attrib in buildTask.TaskElement.Attributes)
-				ParseAttribute (attrib.Value);
-
-			foreach (XmlNode xn in buildTask.TaskElement.ChildNodes) {
-				XmlElement xe = xn as XmlElement;
-				if (xe == null)
-					continue;
-
-				//FIXME: error on any other child
-				if (String.Compare (xe.LocalName, "Output", StringComparison.Ordinal) == 0) {
-					foreach (XmlAttribute attrib in xe.Attributes)
-						ParseAttribute (attrib.Value);
-				}
+			foreach (var attr in buildTask.GetAttributes ()) {
+				ParseAttribute (attr);
 			}
 		}
 	}
 
 }
-
-#endif

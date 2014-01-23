@@ -9,5 +9,5 @@ namespace Test {
         Cache<T> _cache;   // CS0452
     }
 
-    class Foo { static void Main () { object foo = new MyType<Base> (); } }
+    class Foo { public static void Main () { object foo = new MyType<Base> (); } }
 }

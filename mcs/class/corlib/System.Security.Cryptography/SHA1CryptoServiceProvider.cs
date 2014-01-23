@@ -316,8 +316,6 @@ namespace System.Security.Cryptography {
 		}
 	}
 
-#if !MOONLIGHT
-
 	[ComVisible (true)]
 	public sealed class SHA1CryptoServiceProvider : SHA1 {
 
@@ -356,5 +354,4 @@ namespace System.Security.Cryptography {
 			sha.Initialize ();
 		}
 	}
-#endif // NET_2_1
 }

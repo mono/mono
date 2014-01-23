@@ -381,7 +381,13 @@ namespace MonoTests.Mono.Security.Authenticode {
 		0x77, 0xEF, 0xEC, 0x17, 0x92, 0xC7, 0xD6, 0xCD, 0xE1, 0x2A, 0x2E, 0xE7, 
 		0xF3, 0xED, 0x7F, 0x66, 0x86, 0x31, 0x00 };
 	
-		private const string testfile = "test.spc";
+		string testfile;
+
+		[TestFixtureSetUp]
+		public void FixtureSetup ()
+		{
+			testfile = Path.Combine (Path.GetTempPath (), "test.spc");
+		}
 	
 		[TearDown]
 		public void TearDown () 
@@ -397,11 +403,11 @@ namespace MonoTests.Mono.Security.Authenticode {
 				if (unicode) {
 					data = Encoding.Unicode.GetBytes (s);
 				} else if (pem) {
-					string b64pem = "-----BEGIN PKCS7-----\n" + s + "\n-----END PKCS7-----";
-					data = Encoding.ASCII.GetBytes (b64pem);
-			using (FileStream fs = File.Create ("bad.pem")) {
-				fs.Write (data, 0, data.Length);
-			}
+					//string b64pem = "-----BEGIN PKCS7-----\n" + s + "\n-----END PKCS7-----";
+					//data = Encoding.ASCII.GetBytes (b64pem);
+					//using (FileStream fs = File.Create ("bad.pem")) {
+					//	fs.Write (data, 0, data.Length);
+					//}
 				} else {
 					data = Encoding.ASCII.GetBytes (s);
 				}

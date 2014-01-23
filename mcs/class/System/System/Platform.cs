@@ -1,7 +1,7 @@
 //
 // System.Platform
 //
-// Copyright (C) 2011 Xamarin, Inc. (www.xamarin.com)
+// Copyright (C) 2011-2013 Xamarin Inc. (www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,6 +28,11 @@ using System.Runtime.InteropServices;
 
 namespace System {
 	internal static class Platform {
+#if MONOTOUCH
+		public static bool IsMacOS {
+			get { return true; }
+		}
+#else
 		[DllImport ("libc")]
 		static extern int uname (IntPtr buf);
 		
@@ -53,5 +58,6 @@ namespace System {
 				return isMacOS;
 			}
 		}
+#endif
 	}
 }

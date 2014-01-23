@@ -28,8 +28,10 @@
 
 using System;
 using System.Data;
-using System.Data.Odbc;
 using System.Data.SqlClient;
+#if !MOBILE
+using System.Data.Odbc;
+#endif
 
 using NUnit.Framework;
 
@@ -363,30 +365,6 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
-		public void DeleteCommand_IDbDataAdapter ()
-		{
-			IDbDataAdapter da = new SqlDataAdapter ();
-			SqlCommand cmd1 = new SqlCommand ();
-			SqlCommand cmd2 = new SqlCommand ();
-
-			da.DeleteCommand = cmd1;
-			Assert.AreSame (cmd1, da.DeleteCommand, "#A1");
-			da.DeleteCommand = cmd2;
-			Assert.AreSame (cmd2, da.DeleteCommand, "#A2");
-			da.DeleteCommand = null;
-			Assert.IsNull (da.DeleteCommand, "#A3");
-
-			try {
-				da.DeleteCommand = new OdbcCommand ();
-				Assert.Fail ("#B1");
-			} catch (InvalidCastException ex) {
-				Assert.AreEqual (typeof (InvalidCastException), ex.GetType (), "#B2");
-				Assert.IsNull (ex.InnerException, "#B3");
-				Assert.IsNotNull (ex.Message, "#B4");
-			}
-		}
-
-		[Test]
 		public void Dispose ()
 		{
 			SqlDataAdapter da = new SqlDataAdapter ();
@@ -420,30 +398,6 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
-		public void InsertCommand_IDbDataAdapter ()
-		{
-			IDbDataAdapter da = new SqlDataAdapter ();
-			SqlCommand cmd1 = new SqlCommand ();
-			SqlCommand cmd2 = new SqlCommand ();
-
-			da.InsertCommand = cmd1;
-			Assert.AreSame (cmd1, da.InsertCommand, "#A1");
-			da.InsertCommand = cmd2;
-			Assert.AreSame (cmd2, da.InsertCommand, "#A2");
-			da.InsertCommand = null;
-			Assert.IsNull (da.InsertCommand, "#A3");
-
-			try {
-				da.InsertCommand = new OdbcCommand ();
-				Assert.Fail ("#B1");
-			} catch (InvalidCastException ex) {
-				Assert.AreEqual (typeof (InvalidCastException), ex.GetType (), "#B2");
-				Assert.IsNull (ex.InnerException, "#B3");
-				Assert.IsNotNull (ex.Message, "#B4");
-			}
-		}
-
-		[Test]
 		public void SelectCommand ()
 		{
 			SqlDataAdapter da = new SqlDataAdapter ();
@@ -458,31 +412,6 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.IsNull (da.SelectCommand, "#3");
 		}
 
-		[Test]
-		public void SelectCommand_IDbDataAdapter ()
-		{
-			IDbDataAdapter da = new SqlDataAdapter ();
-			SqlCommand cmd1 = new SqlCommand ();
-			SqlCommand cmd2 = new SqlCommand ();
-
-			da.SelectCommand = cmd1;
-			Assert.AreSame (cmd1, da.SelectCommand, "#A1");
-			da.SelectCommand = cmd2;
-			Assert.AreSame (cmd2, da.SelectCommand, "#A2");
-			da.SelectCommand = null;
-			Assert.IsNull (da.SelectCommand, "#A3");
-
-			try {
-				da.SelectCommand = new OdbcCommand ();
-				Assert.Fail ("#B1");
-			} catch (InvalidCastException ex) {
-				Assert.AreEqual (typeof (InvalidCastException), ex.GetType (), "#B2");
-				Assert.IsNull (ex.InnerException, "#B3");
-				Assert.IsNotNull (ex.Message, "#B4");
-			}
-		}
-
-#if NET_2_0
 		[Test]
 		public void UpdateBatchSize ()
 		{
@@ -510,7 +439,6 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual ("UpdateBatchSize", ex.ParamName, "#6");
 			}
 		}
-#endif
 
 		[Test]
 		public void UpdateCommand ()
@@ -525,6 +453,80 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreSame (cmd2, da.UpdateCommand, "#2");
 			da.UpdateCommand = null;
 			Assert.IsNull (da.UpdateCommand, "#3");
+		}
+
+#if !MOBILE
+		[Test]
+		public void DeleteCommand_IDbDataAdapter ()
+		{
+			IDbDataAdapter da = new SqlDataAdapter ();
+			SqlCommand cmd1 = new SqlCommand ();
+			SqlCommand cmd2 = new SqlCommand ();
+			
+			da.DeleteCommand = cmd1;
+			Assert.AreSame (cmd1, da.DeleteCommand, "#A1");
+			da.DeleteCommand = cmd2;
+			Assert.AreSame (cmd2, da.DeleteCommand, "#A2");
+			da.DeleteCommand = null;
+			Assert.IsNull (da.DeleteCommand, "#A3");
+			
+			try {
+				da.DeleteCommand = new OdbcCommand ();
+				Assert.Fail ("#B1");
+			} catch (InvalidCastException ex) {
+				Assert.AreEqual (typeof (InvalidCastException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+			}
+		}
+
+		
+		[Test]
+		public void InsertCommand_IDbDataAdapter ()
+		{
+			IDbDataAdapter da = new SqlDataAdapter ();
+			SqlCommand cmd1 = new SqlCommand ();
+			SqlCommand cmd2 = new SqlCommand ();
+			
+			da.InsertCommand = cmd1;
+			Assert.AreSame (cmd1, da.InsertCommand, "#A1");
+			da.InsertCommand = cmd2;
+			Assert.AreSame (cmd2, da.InsertCommand, "#A2");
+			da.InsertCommand = null;
+			Assert.IsNull (da.InsertCommand, "#A3");
+			
+			try {
+				da.InsertCommand = new OdbcCommand ();
+				Assert.Fail ("#B1");
+			} catch (InvalidCastException ex) {
+				Assert.AreEqual (typeof (InvalidCastException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+			}
+		}
+
+		[Test]
+		public void SelectCommand_IDbDataAdapter ()
+		{
+			IDbDataAdapter da = new SqlDataAdapter ();
+			SqlCommand cmd1 = new SqlCommand ();
+			SqlCommand cmd2 = new SqlCommand ();
+			
+			da.SelectCommand = cmd1;
+			Assert.AreSame (cmd1, da.SelectCommand, "#A1");
+			da.SelectCommand = cmd2;
+			Assert.AreSame (cmd2, da.SelectCommand, "#A2");
+			da.SelectCommand = null;
+			Assert.IsNull (da.SelectCommand, "#A3");
+			
+			try {
+				da.SelectCommand = new OdbcCommand ();
+				Assert.Fail ("#B1");
+			} catch (InvalidCastException ex) {
+				Assert.AreEqual (typeof (InvalidCastException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+			}
 		}
 
 		[Test]
@@ -550,5 +552,6 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.IsNotNull (ex.Message, "#B4");
 			}
 		}
+#endif
 	}
 }

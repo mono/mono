@@ -30,7 +30,9 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 
 namespace System.Linq.Expressions {
 
@@ -48,6 +50,7 @@ namespace System.Linq.Expressions {
 			this.expressions = expressions;
 		}
 
+#if !FULL_AOT_RUNTIME
 		void EmitNewArrayInit (EmitContext ec, Type type)
 		{
 			var size = expressions.Count;
@@ -107,5 +110,6 @@ namespace System.Linq.Expressions {
 				throw new NotSupportedException ();
 			}
 		}
+#endif
 	}
 }

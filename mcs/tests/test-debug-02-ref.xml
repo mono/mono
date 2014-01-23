@@ -60,15 +60,15 @@
       <scopes />
     </method>
     <method token="0x6000007">
-      <sequencepoints>
-        <entry il="0x0" row="47" col="2" file_ref="1" hidden="false" />
-        <entry il="0x1" row="48" col="2" file_ref="1" hidden="false" />
-      </sequencepoints>
+      <sequencepoints />
       <locals />
       <scopes />
     </method>
     <method token="0x6000008">
-      <sequencepoints />
+      <sequencepoints>
+        <entry il="0x0" row="47" col="2" file_ref="1" hidden="false" />
+        <entry il="0x1" row="48" col="2" file_ref="1" hidden="false" />
+      </sequencepoints>
       <locals />
       <scopes />
     </method>

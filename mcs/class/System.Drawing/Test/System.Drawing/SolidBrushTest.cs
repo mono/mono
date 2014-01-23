@@ -105,6 +105,14 @@ namespace MonoTests.System.Drawing {
 				Assert.AreEqual (Color.Red.ToArgb (), bmp.GetPixel (8, 8).ToArgb (), "8,8");
 				Assert.AreEqual (Color.Red.ToArgb (), bmp.GetPixel (9, 9).ToArgb (), "9,9"); // include end point
 			}
+			using (Bitmap bmp = new Bitmap (10, 10)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					SolidBrush sb = new SolidBrush (Color.Red);
+					Pen p = new Pen (sb);
+					g.DrawLine (p, float.NaN, float.NaN, 9, 9);
+				}
+				Assert.AreNotEqual (Color.Red.ToArgb (), bmp.GetPixel (0, 0).ToArgb (), "#DrawLine: Drew Line with NaN value when shouldn't have");
+			}
 		}
 
 		[Test]

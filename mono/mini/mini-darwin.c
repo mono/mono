@@ -69,7 +69,7 @@
 #include <dlfcn.h>
 #include <AvailabilityMacros.h>
 
-#if (MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_5) && !defined (TARGET_ARM)
+#if defined (TARGET_OSX) && (MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_5)
 #define NEEDS_EXCEPTION_THREAD
 #endif
 
@@ -246,32 +246,47 @@ void
 mono_gdb_render_native_backtraces (pid_t crashed_pid)
 {
 	const char *argv [5];
-	char gdb_template [] = "/tmp/mono-gdb-commands.XXXXXX";
+	char template [] = "/tmp/mono-gdb-commands.XXXXXX";
+	FILE *commands;
+	gboolean using_lldb = FALSE;
 
 	argv [0] = g_find_program_in_path ("gdb");
-	if (argv [0] == NULL) {
-		return;
+	if (!argv [0]) {
+		argv [0] = g_find_program_in_path ("lldb");
+		using_lldb = TRUE;
 	}
 
-	if (mkstemp (gdb_template) != -1) {
-		FILE *gdb_commands = fopen (gdb_template, "w");
+	if (argv [0] == NULL)
+		return;
 
-		fprintf (gdb_commands, "attach %ld\n", (long) crashed_pid);
-		fprintf (gdb_commands, "info threads\n");
-		fprintf (gdb_commands, "thread apply all bt\n");
+	if (mkstemp (template) == -1)
+		return;
 
-		fflush (gdb_commands);
-		fclose (gdb_commands);
-
+	commands = fopen (template, "w");
+	if (using_lldb) {
+		fprintf (commands, "process attach --pid %ld\n", (long) crashed_pid);
+		fprintf (commands, "script lldb.debugger.HandleCommand (\"thread list\")\n");
+		fprintf (commands, "script lldb.debugger.HandleCommand (\"thread backtrace all\")\n");
+		fprintf (commands, "detach\n");
+		fprintf (commands, "quit\n");
+		argv [1] = "--source";
+		argv [2] = template;
+		argv [3] = 0;
+		
+	} else {
+		fprintf (commands, "attach %ld\n", (long) crashed_pid);
+		fprintf (commands, "info threads\n");
+		fprintf (commands, "thread apply all bt\n");
 		argv [1] = "-batch";
 		argv [2] = "-x";
-		argv [3] = gdb_template;
+		argv [3] = template;
 		argv [4] = 0;
-
-		execv (argv [0], (char**)argv);
-
-		unlink (gdb_template);
 	}
+	fflush (commands);
+	fclose (commands);
+
+	execv (argv [0], (char**)argv);
+	unlink (template);
 }
 
 gboolean
@@ -282,12 +297,10 @@ mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoNativeThrea
 	thread_state_t state;
 	ucontext_t ctx;
 	mcontext_t mctx;
-	guint32 domain_key, jit_key;
 	MonoJitTlsData *jit_tls;
 	void *domain;
-#if defined (MONO_ARCH_ENABLE_MONO_LMF_VAR)
-	guint32 lmf_key;
-#endif
+	MonoLMF *lmf;
+	MonoThreadInfo *info;
 
 	/*Zero enough state to make sure the caller doesn't confuse itself*/
 	tctx->valid = FALSE;
@@ -307,26 +320,40 @@ mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoNativeThrea
 
 	mono_sigctx_to_monoctx (&ctx, &tctx->ctx);
 
-	domain_key = mono_domain_get_tls_offset ();
-	jit_key = mono_get_jit_tls_key ();
+	info = mono_thread_info_lookup (thread_id);
 
-	jit_tls = mono_mach_arch_get_tls_value_from_thread (thread_id, jit_key);
-	domain = mono_mach_arch_get_tls_value_from_thread (thread_id, domain_key);
+	if (info) {
+		/* mono_set_jit_tls () sets this */
+		jit_tls = mono_thread_info_tls_get (info, TLS_KEY_JIT_TLS);
+		/* SET_APPDOMAIN () sets this */
+		domain = mono_thread_info_tls_get (info, TLS_KEY_DOMAIN);
+	} else {
+		jit_tls = NULL;
+		domain = NULL;
+	}
 
 	/*Thread already started to cleanup, can no longer capture unwind state*/
-	if (!jit_tls)
+	if (!jit_tls || !domain)
 		return FALSE;
-	g_assert (domain);
 
-#if defined (MONO_ARCH_ENABLE_MONO_LMF_VAR)
-	lmf_key =  mono_get_lmf_tls_offset ();
-	tctx->unwind_data [MONO_UNWIND_DATA_LMF] = mono_mach_arch_get_tls_value_from_thread (thread_id, lmf_key);;
-#else
-	tctx->unwind_data [MONO_UNWIND_DATA_LMF] = jit_tls ? jit_tls->lmf : NULL;
-#endif
+	/*
+	 * The current LMF address is kept in a separate TLS variable, and its hard to read its value without
+	 * arch-specific code. But the address of the TLS variable is stored in another TLS variable which
+	 * can be accessed through MonoThreadInfo.
+	 */
+	lmf = NULL;
+	if (info) {
+		gpointer *addr;
+
+		/* mono_set_lmf_addr () sets this */
+		addr = mono_thread_info_tls_get (info, TLS_KEY_LMF_ADDR);
+		if (addr)
+			lmf = *addr;
+	}
 
 	tctx->unwind_data [MONO_UNWIND_DATA_DOMAIN] = domain;
 	tctx->unwind_data [MONO_UNWIND_DATA_JIT_TLS] = jit_tls;
+	tctx->unwind_data [MONO_UNWIND_DATA_LMF] = lmf;
 	tctx->valid = TRUE;
 
 	return TRUE;

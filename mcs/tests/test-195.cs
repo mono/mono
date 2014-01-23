@@ -22,7 +22,7 @@ class X {
 	X (int a) {
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		X x = new X ();
 	}

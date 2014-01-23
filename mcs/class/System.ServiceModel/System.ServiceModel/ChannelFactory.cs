@@ -282,7 +282,7 @@ namespace System.ServiceModel
 		public T GetProperty<T> () where T : class
 		{
 			if (OpenedChannelFactory != null)
-				OpenedChannelFactory.GetProperty<T> ();
+				return OpenedChannelFactory.GetProperty<T> ();
 			return null;
 		}
 

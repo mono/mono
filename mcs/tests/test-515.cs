@@ -1,5 +1,5 @@
 class X {
-	static void Main ()
+	public static void Main ()
 	{
 		int i = 0;
 		goto a;

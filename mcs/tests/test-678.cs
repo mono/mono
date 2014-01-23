@@ -17,7 +17,7 @@ public class NaNTest
 			throw new ArgumentException ("fails 4");
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		if (Double.NaN < 0 || Double.NaN < 0)
 			throw new ArgumentException ("passes");

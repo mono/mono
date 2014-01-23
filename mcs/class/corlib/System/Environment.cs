@@ -39,6 +39,7 @@ using System.Security;
 using System.Security.Permissions;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace System {
 
@@ -55,7 +56,7 @@ namespace System {
 		 * of icalls, do not require an increment.
 		 */
 #pragma warning disable 169
-		private const int mono_corlib_version = 101;
+		private const int mono_corlib_version = 111;
 #pragma warning restore 169
 
 		[ComVisible (true)]
@@ -84,7 +85,7 @@ namespace System {
 			ProgramFiles = 0x26,
 			MyPictures = 0x27,
 			CommonProgramFiles = 0x2b,
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 			MyVideos = 0x0e,
 #endif
 #if NET_4_0
@@ -168,6 +169,14 @@ namespace System {
 				Directory.SetCurrentDirectory (value);
 			}
 		}
+		
+#if NET_4_5
+		public static int CurrentManagedThreadId {
+			get {
+				return Thread.CurrentThread.ManagedThreadId;
+			}
+		}
+#endif
 
 		/// <summary>
 		/// Gets or sets the exit code of this process
@@ -357,6 +366,7 @@ namespace System {
 				// If value not found, add %FOO to stream,
 				//  and use the closing % for the next iteration.
 				// If value found, expand it in place of %FOO%
+				int realOldOff2 = off2;
 				if (value == null) {
 					result.Append ('%');
 					result.Append (var);
@@ -380,7 +390,7 @@ namespace System {
 				// If value not found in current iteration, but a % was found for next iteration,
 				//  use text from current closing % to the next %.
 				else
-					textLen = off1 - oldOff2;
+					textLen = off1 - realOldOff2;
 				if(off1 >= oldOff2 || off1 == -1)
 					result.Append (name, oldOff2+1, textLen);
 			} while (off2 > -1 && off2 < len);
@@ -521,10 +531,10 @@ namespace System {
 							string path = line.Substring (delim_index + 1).Trim ('"');
 							bool relative = false;
 							
-							if (path.StartsWith ("$HOME/")) {
+							if (path.StartsWithOrdinalUnchecked ("$HOME/")) {
 								relative = true;
 								path = path.Substring (6);
-							} else if (!path.StartsWith ("/")) {
+							} else if (!path.StartsWithOrdinalUnchecked ("/")) {
 								relative = true;
 							}
 							
@@ -618,7 +628,7 @@ namespace System {
 			
 			case SpecialFolder.Templates:
 				return ReadXdgUserDir (config, home, "XDG_TEMPLATES_DIR", "Templates");
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 			case SpecialFolder.MyVideos:
 				return ReadXdgUserDir (config, home, "XDG_VIDEOS_DIR", "Videos");
 #endif
@@ -826,7 +836,7 @@ namespace System {
 			throw new NotImplementedException ();
 		}
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 		[SecurityCritical]
 		public static void FailFast (string message, Exception exception)
 		{
@@ -839,15 +849,20 @@ namespace System {
 			get { return IntPtr.Size == 8; } // FIXME: is this good enough?
 		}
 
-		public static bool Is64BitProcess {
-			get { return Is64BitOperatingSystem; }
-		}
-
 		public static int SystemPageSize {
 			get { return GetPageSize (); }
 		}
 #endif
 
+#if NET_4_0
+		public
+#else
+		internal
+#endif
+		static bool Is64BitProcess {
+			get { return IntPtr.Size == 8; }
+		}
+		
 		public static extern int ProcessorCount {
 			[EnvironmentPermission (SecurityAction.Demand, Read="NUMBER_OF_PROCESSORS")]
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -855,10 +870,14 @@ namespace System {
 		}
 
 		// private methods
-
+#if MOBILE 
+		internal const bool IsRunningOnWindows = false;
+#else
 		internal static bool IsRunningOnWindows {
 			get { return ((int) Platform < 4); }
 		}
+#endif
+
 #if !NET_2_1
 		//
 		// Used by gacutil.exe

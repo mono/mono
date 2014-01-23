@@ -65,7 +65,28 @@ namespace System.ComponentModel.DataAnnotations
 			// else
 			ServiceContainer = new ValidationContextServiceContainer ();
 		}
+		
+#if NET_4_5
+		public ValidationContext (object instance)
+			: this (instance, null, null)
+		{
+		}
+		
+		public ValidationContext (object instance, IDictionary<object, object> items)
+			: this (instance, null, items)
+		{
+		}
 
+		// FIXME: According to MSDN, this should be defined in
+		//        4.5, Silverlight and PCL
+		[MonoTODO]
+		public void InitializeServiceProvider (
+			Func<Type, Object> serviceProvider)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+		
 		public object GetService (Type serviceType)
 		{
 			return ServiceContainer.GetService (serviceType);

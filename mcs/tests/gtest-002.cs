@@ -4,7 +4,7 @@ class Cell <X> {
 }
 
 class D {
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

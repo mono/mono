@@ -47,8 +47,8 @@ namespace Mono.Security.Protocol.Tls
 		public SslHandshakeHash(byte[] secret)
 		{
 			// Create md5 and sha1 hashes
-			this.md5 = HashAlgorithm.Create("MD5");
-			this.sha = HashAlgorithm.Create("SHA1");
+			this.md5 = MD5.Create ();
+			this.sha = SHA1.Create ();
 			
 			// Set HashSizeValue
 			this.HashSizeValue = md5.HashSize + sha.HashSize;

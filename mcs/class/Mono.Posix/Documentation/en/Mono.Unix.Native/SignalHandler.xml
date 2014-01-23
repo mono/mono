@@ -1,9 +1,11 @@
 <Type Name="SignalHandler" FullName="Mono.Unix.Native.SignalHandler">
   <TypeSignature Language="C#" Value="public delegate void SignalHandler(int signal);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SignalHandler extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>

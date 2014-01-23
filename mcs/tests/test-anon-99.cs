@@ -34,7 +34,7 @@ class C
 		a ();
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		new C ().Test ();
 		return 0;

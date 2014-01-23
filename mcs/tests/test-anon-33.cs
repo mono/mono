@@ -15,7 +15,7 @@ class T {
         static void doit (int v) {
                 Console.WriteLine (v);
         }
-        static void Main () {
+        public static void Main () {
                 Do[] arr = new Do [5];
                 for (int i = 0; i < 5; ++i) {
                         arr [i] = delegate {doit (i);};

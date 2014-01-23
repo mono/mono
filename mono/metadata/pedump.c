@@ -454,6 +454,7 @@ verify_image_file (const char *fname)
 	assembly->in_gac = FALSE;
 	assembly->image = image;
 	image->assembly = assembly;
+	mono_assembly_fill_assembly_name (image, &assembly->aname);
 
 	/*Finish initializing the runtime*/
 	mono_install_assembly_load_hook (pedump_assembly_load_hook, NULL);
@@ -649,7 +650,9 @@ main (int argc, char *argv [])
 	if (!file)
 		usage ();
 
+#ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters_init ();
+#endif
 	mono_metadata_init ();
 	mono_images_init ();
 	mono_assemblies_init ();

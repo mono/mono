@@ -1,5 +1,5 @@
-// CS0246: The type or namespace name `IBase' could not be found. Are you missing a using directive or an assembly reference?
-// Line: 155555
+// CS0246: The type or namespace name `IBase' could not be found. Are you missing `Foo' using directive?
+// Line: 15
 
 namespace Foo {
         public interface IBase {

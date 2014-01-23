@@ -10,7 +10,7 @@ class Stack<S>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

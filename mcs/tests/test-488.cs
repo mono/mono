@@ -12,7 +12,7 @@ struct Q {
 class Test {
 	static IEnumerable foo () { return null; }
 
-	static void Main ()
+	public static void Main ()
 	{
 		IEnumerable f = foo ();
 		if (f != null)

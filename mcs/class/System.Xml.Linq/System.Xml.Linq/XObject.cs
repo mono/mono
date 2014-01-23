@@ -163,20 +163,61 @@ namespace System.Xml.Linq
 				BaseUri = r.BaseURI;
 		}
 		
-		internal virtual void OnAddingObject ()
+		internal void OnAddingObject (object addedObject)
 		{
-			if (Parent != null)
-				Parent.OnAddingObject ();
-			if (Changing != null)
-				Changing.Invoke (this, null);
+			OnChanging (addedObject, XObjectChangeEventArgs.Add);
+		}
+
+		internal void OnAddedObject (object addedObject)
+		{
+			OnChanged (addedObject, XObjectChangeEventArgs.Add);
+		}
+
+		internal void OnNameChanging (object renamedObject)
+		{
+			OnChanging (renamedObject, XObjectChangeEventArgs.Name);
+		}
+
+		internal void OnNameChanged (object renamedObject)
+		{
+			OnChanged (renamedObject, XObjectChangeEventArgs.Name);
 		}
 		
-		internal virtual void OnAddedObject ()
+		internal void OnRemovingObject (object removedObject)
 		{
+			OnChanging (removedObject, XObjectChangeEventArgs.Remove);
+		}
+
+		internal void OnRemovedObject (object removedObject)
+		{
+			OnChanged (removedObject, XObjectChangeEventArgs.Remove);
+		}
+
+		internal void OnValueChanging (object changedObject)
+		{
+			OnChanging (changedObject, XObjectChangeEventArgs.Value);
+		}
+
+		internal void OnValueChanged (object changedObject)
+		{
+			OnChanged (changedObject, XObjectChangeEventArgs.Value);
+		}
+
+		
+		void OnChanging (object sender, XObjectChangeEventArgs args)
+		{
+			if (Changing != null)
+				Changing (sender, args);
 			if (Parent != null)
-				Parent.OnAddedObject ();
+				Parent.OnChanging (sender, args);
+		}
+
+		void OnChanged (object sender, XObjectChangeEventArgs args)
+		{
 			if (Changed != null)
-				Changed.Invoke (this, null);
+				Changed (sender, args);
+			if (Parent != null)
+				Parent.OnChanged (sender, args);
 		}
 	}
 }

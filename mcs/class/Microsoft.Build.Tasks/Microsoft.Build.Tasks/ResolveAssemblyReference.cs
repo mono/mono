@@ -114,6 +114,7 @@ namespace Microsoft.Build.Tasks {
 
 			ResolveAssemblies ();
 			ResolveAssemblyFiles ();
+			resolvedFiles = tempResolvedFiles.ToArray ();
 
 			alreadyScannedAssemblyNames = new Dictionary<string, string> ();
 
@@ -125,7 +126,6 @@ namespace Microsoft.Build.Tasks {
 			foreach (PrimaryReference pref in primaryReferences)
 				ResolveAssemblyFileDependencies (pref.TaskItem, pref.ParentCopyLocal);
 
-			resolvedFiles = tempResolvedFiles.ToArray ();
 			copyLocalFiles = tempCopyLocalFiles.Values.ToArray ();
 			satelliteFiles = tempSatelliteFiles.Values.ToArray ();
 			relatedFiles = tempRelatedFiles.Values.ToArray ();
@@ -334,11 +334,12 @@ namespace Microsoft.Build.Tasks {
 						continue;
 
 					ResolvedReference resolved_ref = ResolveDependencyByAssemblyName (
-							aname, asm.FullName, parent_copy_local);
+						aname, asm.FullName, parent_copy_local);
 
-					if (resolved_ref != null && !IsFromGacOrTargetFramework (resolved_ref)
-							&& resolved_ref.FoundInSearchPath != SearchPath.PkgConfig)
+					if (IncludeDependencies (resolved_ref, aname.FullName)) {
+						tempResolvedDepFiles[resolved_ref.AssemblyName.FullName] = resolved_ref.TaskItem;
 						dependencies.Enqueue (resolved_ref.TaskItem.ItemSpec);
+					}
 				}
 				alreadyScannedAssemblyNames.Add (asm.FullName, String.Empty);
 			}
@@ -407,7 +408,7 @@ namespace Microsoft.Build.Tasks {
 				return;
 
 			foreach (string ext in allowedRelatedFileExtensions) {
-				string rfile = filename + ext;
+				string rfile = Path.ChangeExtension (filename, ext);
 				if (File.Exists (rfile)) {
 					ITaskItem item = new TaskItem (rfile);
 					SetCopyLocal (item, parent_copy_local);
@@ -497,7 +498,9 @@ namespace Microsoft.Build.Tasks {
 			assembly_resolver.LogSearchMessage ("Choosing '{0}' as it is a primary reference.",
 					found_ref.AssemblyName.FullName);
 
-			LogConflictWarning (found_ref.AssemblyName.FullName, key_aname.FullName);
+			// If we can successfully use the primary reference, don't log a warning. It's too
+			// verbose.
+			//LogConflictWarning (found_ref.AssemblyName.FullName, key_aname.FullName);
 
 			return true;
 		}
@@ -523,6 +526,15 @@ namespace Microsoft.Build.Tasks {
 		{
 			return rr.FoundInSearchPath == SearchPath.Gac ||
 				rr.FoundInSearchPath == SearchPath.TargetFrameworkDirectory;
+		}
+
+		bool IncludeDependencies (ResolvedReference rr, string aname)
+		{
+			if (rr == null)
+				return false;
+			if (aname.Equals ("System.Runtime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"))
+				return true;
+			return !IsFromGacOrTargetFramework (rr) && rr.FoundInSearchPath != SearchPath.PkgConfig;
 		}
 
 		void LogTaskParameters ()

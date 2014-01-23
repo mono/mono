@@ -17,6 +17,7 @@ namespace MonoTests.System.Transactions
 	[TestFixture]
 	public class TransactionScopeTest
 	{
+
 		[Test]
 		public void TransactionScopeCommit ()
 		{

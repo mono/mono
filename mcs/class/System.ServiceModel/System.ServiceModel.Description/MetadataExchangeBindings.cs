@@ -42,9 +42,9 @@ namespace System.ServiceModel.Description
 
 		public static Binding CreateMexHttpsBinding ()
 		{
-			var b = (WSHttpBinding) CreateMexHttpBinding ();
-			b.Name = "MetadataExchangeHttpsBinding";
-			b.Security.Transport.ClientCredentialType = HttpClientCredentialType.Certificate;
+			var b = new WSHttpBinding(SecurityMode.Transport) {
+				Name = "MetadataExchangeHttpsBinding",
+				Namespace = "http://schemas.microsoft.com/ws/2005/02/mex/bindings"};
 			return b;
 		}
 

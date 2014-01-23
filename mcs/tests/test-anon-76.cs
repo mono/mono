@@ -22,7 +22,7 @@ public class C
 		};
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		C o = new C ();
 		o.X ();

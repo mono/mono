@@ -5,14 +5,16 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{B18D6BCC-5C63-490F-92C5-20E10C4D311A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618,618,219,169</NoWarn>
-    <OutputPath>.\</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\Mono.Messaging.RabbitMQ-tests-net_2_0</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>False</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>Mono.Messaging.RabbitMQ_test_net_2_0</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -25,7 +27,6 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,21 +35,24 @@
     <DefineConstants>NET_1_1;NET_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="Test\Mono.Messaging.RabbitMQ\FailuresTest.cs" />
-   <Compile Include="Test\Mono.Messaging.RabbitMQ\RabbitMQMessagingProviderTest.cs" />
-   <Compile Include="Test\Mono.Messaging.RabbitMQ\BinaryMessageFormatterTest.cs" />
-   <Compile Include="Test\Mono.Messaging.RabbitMQ\XmlMessageFormatterTest.cs" />
-   <Compile Include="Test\Mono.Messaging.RabbitMQ\TestUtils.cs" />
-   <Compile Include="Test\Mono.Messaging.RabbitMQ\MessageTest.cs" />
-   <Compile Include="Test\Mono.Messaging.RabbitMQ\MessagingContextPoolTest.cs" />
-   <Compile Include="Test\Mono.Messaging.RabbitMQ\MessageBaseTest.cs" />
-   <Compile Include="Test\Mono.Messaging.RabbitMQ\MessageEnumeratorExceptionTest.cs" />
-
-  </ItemGroup>
+    <Compile Include="Test\Mono.Messaging.RabbitMQ\BinaryMessageFormatterTest.cs" />
+    <Compile Include="Test\Mono.Messaging.RabbitMQ\FailuresTest.cs" />
+    <Compile Include="Test\Mono.Messaging.RabbitMQ\MessageBaseTest.cs" />
+    <Compile Include="Test\Mono.Messaging.RabbitMQ\MessageEnumeratorExceptionTest.cs" />
+    <Compile Include="Test\Mono.Messaging.RabbitMQ\MessageTest.cs" />
+    <Compile Include="Test\Mono.Messaging.RabbitMQ\MessagingContextPoolTest.cs" />
+    <Compile Include="Test\Mono.Messaging.RabbitMQ\RabbitMQMessagingProviderTest.cs" />
+    <Compile Include="Test\Mono.Messaging.RabbitMQ\TestUtils.cs" />
+    <Compile Include="Test\Mono.Messaging.RabbitMQ\XmlMessageFormatterTest.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -57,43 +61,46 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="./../../class/lib/net_2_0/Mono.Messaging.RabbitMQ.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../class/lib/net_2_0/Mono.Messaging.RabbitMQ.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Messaging.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Messaging.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Messaging.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Mono.Messaging.dll</HintPath>
-    </Reference>
-    <Reference Include="RabbitMQ.Client">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>RabbitMQ.Client</HintPath>
-    </Reference>
+    <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
+    <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
+      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
+      <Name>corlib\corlib-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mono.Messaging.RabbitMQ\Mono.Messaging.RabbitMQ-net_2_0.csproj">
+      <Project>{74D6BCAB-F3E7-463C-8D99-601FE69F67A6}</Project>
+      <Name>Mono.Messaging.RabbitMQ\Mono.Messaging.RabbitMQ-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_2_0-2.csproj">
+      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
+      <Name>System\System-net_2_0-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Messaging\System.Messaging-net_2_0.csproj">
+      <Project>{858BC3D5-8B2D-4B24-8BD9-BDC36A1DAFE4}</Project>
+      <Name>System.Messaging\System.Messaging-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mono.Messaging\Mono.Messaging-net_2_0.csproj">
+      <Project>{A516A3FA-33AA-46AB-9542-49952ED25A0F}</Project>
+      <Name>Mono.Messaging\Mono.Messaging-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RabbitMQ.Client\src\client\RabbitMQ.Client-net_2_0.csproj">
+      <Project>{8AD2E2D6-9C65-4DE7-AD7A-6AAA07754C9C}</Project>
+      <Name>client\RabbitMQ.Client-net_2_0</Name>
+    </ProjectReference>
     <Reference Include="nunit.mocks.dll">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>nunit.mocks.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="nunit.framework" />
-
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
-

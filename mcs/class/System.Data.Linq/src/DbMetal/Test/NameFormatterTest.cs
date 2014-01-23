@@ -33,6 +33,10 @@ using DbLinq.Util;
 using DbMetal;
 using DbMetal.Language;
 using NUnit.Framework;
+
+// These don't build in tools/sqlmetal
+#if FALSE
+
 using Case = DbLinq.Schema.Case;
 using WordsExtraction = DbLinq.Schema.WordsExtraction;
 
@@ -153,3 +157,5 @@ namespace DbLinqTest
         }
     }
 }
+
+#endif

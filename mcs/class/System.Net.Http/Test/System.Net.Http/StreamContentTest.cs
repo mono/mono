@@ -142,6 +142,11 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		/*
+		 * The .NET runtime hits the "#9" assertion.
+		 * The test succeeds with Mono.
+		 */
+		[Category ("NotWorking")]
 		public void CopyToAsync ()
 		{
 			var ms = new MemoryStream ();
@@ -168,6 +173,18 @@ namespace MonoTests.System.Net.Http
 			}
 
 			Assert.IsTrue (hit, "#10");
+		}
+
+		[Test]
+		public void CopyToAsync_ClosedInput ()
+		{
+			var stream = new MemoryStream (new byte[] { 1 });
+			var content = new StreamContent (stream);
+			Assert.IsTrue (content.LoadIntoBufferAsync ().Wait (3000), "#1");
+			stream.Close ();
+
+			var stream_out = new MemoryStream (10);
+			Assert.IsTrue (content.CopyToAsync (stream_out).Wait (3000), "#2");
 		}
 
 		[Test]
@@ -292,6 +309,21 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		public void Headers_Multi ()
+		{
+			var sc = new StreamContent (MemoryStream.Null);
+			var headers = sc.Headers;
+
+			headers.Add ("Allow", "");
+			headers.Add ("Allow", "a , b, c");
+
+			Assert.AreEqual (3, headers.Allow.Count, "#1a");
+			Assert.IsTrue (headers.Allow.SequenceEqual (
+				new[] { "a", "b", "c" }
+			), "#1b");
+		}
+
+		[Test]
 		public void LoadIntoBuffer ()
 		{
 			var ms = new MemoryStream ();
@@ -314,7 +346,7 @@ namespace MonoTests.System.Net.Http
 				Assert.IsTrue (sc.LoadIntoBufferAsync (50).Wait (200));
 				Assert.Fail ("#1");
 			} catch (AggregateException e) {
-				Assert.IsInstanceOfType (typeof (HttpRequestException), e.InnerException, "#2");
+				Assert.IsTrue (e.InnerException is HttpRequestException, "#2");
 			}
 		}
 
@@ -360,6 +392,20 @@ namespace MonoTests.System.Net.Http
 			var sc = new StreamContent (ms);
 			var res = sc.ReadAsStreamAsync ().Result;
 			Assert.AreEqual (77, res.ReadByte (), "#1");
+		}
+
+		[Test]
+		public void ReadAsStreamAsync_ClosedInput ()
+		{
+			var stream = new MemoryStream (new byte[] { 1 });
+			var content = new StreamContent (stream);
+			Assert.IsTrue (content.LoadIntoBufferAsync ().Wait (3000), "#1");
+			stream.Close ();
+
+			var stream_read = content.ReadAsStreamAsync ().Result;
+			Assert.IsTrue (stream_read.CanSeek, "#2");
+			Assert.AreEqual (0, stream_read.Position, "#3");	
+			Assert.AreEqual (1, stream_read.Length, "#4");
 		}
 	}
 }

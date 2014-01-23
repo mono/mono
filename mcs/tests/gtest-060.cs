@@ -23,7 +23,7 @@ class Foo : IFoo
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Foo foo = new Foo ();
 		MyList<int> list = foo.Map<int> ();

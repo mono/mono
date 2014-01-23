@@ -130,7 +130,11 @@ namespace MonoTests.System.Windows.Forms
 			Menu menu = new MainMenu ();
 			menu.MenuItems.Add (new MenuItem ());
 			menu.Dispose ();
-			Assert.Throws (typeof (ArgumentOutOfRangeException), delegate { MenuItem item = menu.MenuItems[0]; });
+			try {
+				MenuItem item = menu.MenuItems[0];
+				Assert.Fail ();
+			} catch (ArgumentOutOfRangeException) {
+			}
 		}
 	}
 }

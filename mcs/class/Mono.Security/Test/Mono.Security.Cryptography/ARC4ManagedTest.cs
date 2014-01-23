@@ -23,7 +23,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 	//	http://wp.netscape.com/eng/ssl3/traces/trc-clnt-ex.html
 
 	[TestFixture]
-	public class ARC4ManagedTest : Assertion {
+	public class ARC4ManagedTest {
 
 		// because most crypto stuff works with byte[] buffers
 		static public void AssertEquals (string msg, byte[] array1, byte[] array2) 
@@ -31,9 +31,9 @@ namespace MonoTests.Mono.Security.Cryptography {
 			if ((array1 == null) && (array2 == null))
 				return;
 			if (array1 == null)
-				Fail (msg + " -> First array is NULL");
+				Assert.Fail (msg + " -> First array is NULL");
 			if (array2 == null)
-				Fail (msg + " -> Second array is NULL");
+				Assert.Fail (msg + " -> Second array is NULL");
 	        
 			bool a = (array1.Length == array2.Length);
 			if (a) {
@@ -46,7 +46,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 			}
 			msg += " -> Expected " + BitConverter.ToString (array1, 0);
 			msg += " is different than " + BitConverter.ToString (array2, 0);
-			Assert (msg, a);
+			Assert.IsTrue (a, msg);
 		}
 
 		// from ref. a
@@ -205,10 +205,10 @@ namespace MonoTests.Mono.Security.Cryptography {
 		public void DefaultProperties () 
 		{
 			ARC4Managed rc4 = new ARC4Managed ();
-			Assert ("CanReuseTransform", !rc4.CanReuseTransform);
-			Assert ("CanTransformMultipleBlocks", rc4.CanTransformMultipleBlocks);
-			AssertEquals ("InputBlockSize", 1, rc4.InputBlockSize);
-			AssertEquals ("OutputBlockSize", 1, rc4.OutputBlockSize);
+			Assert.IsFalse (rc4.CanReuseTransform, "CanReuseTransform");
+			Assert.IsTrue (rc4.CanTransformMultipleBlocks, "CanTransformMultipleBlocks");
+			Assert.AreEqual (1, rc4.InputBlockSize, "InputBlockSize");
+			Assert.AreEqual (1, rc4.OutputBlockSize, "OutputBlockSize");
 		}
 		
 		[Test]
@@ -217,9 +217,9 @@ namespace MonoTests.Mono.Security.Cryptography {
 			ARC4Managed rc4 = new ARC4Managed ();
 			rc4.GenerateKey ();
 			rc4.GenerateIV ();
-			AssertEquals ("Key.Length", 16, rc4.Key.Length);
-			AssertEquals ("KeySize", 128, rc4.KeySize);
-			AssertEquals ("IV.Length", 0, rc4.IV.Length);
+			Assert.AreEqual (16, rc4.Key.Length, "Key.Length");
+			Assert.AreEqual (128, rc4.KeySize, "KeySize");
+			Assert.AreEqual (0, rc4.IV.Length, "IV.Length");
 		}
 
 		[Test]

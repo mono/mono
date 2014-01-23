@@ -33,11 +33,11 @@ namespace System.Text
 	[Serializable]
 	public abstract class EncoderFallback
 	{
-		static EncoderFallback exception_fallback =
+		static readonly EncoderFallback exception_fallback =
 			new EncoderExceptionFallback ();
-		static EncoderFallback replacement_fallback =
+		static readonly EncoderFallback replacement_fallback =
 			new EncoderReplacementFallback ();
-		static EncoderFallback standard_safe_fallback =
+		static readonly EncoderFallback standard_safe_fallback =
 			new EncoderReplacementFallback ("\uFFFD");
 
 		protected EncoderFallback ()

@@ -29,7 +29,7 @@
 //
 //
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 
 using System.Collections.Generic;
 
@@ -50,7 +50,7 @@ namespace System.Threading.Tasks
 				return;
 			}
 
-			ThreadPool.UnsafeQueueUserWorkItem (callback, task);
+			ThreadPool.QueueWorkItem (callback, task);
 		}
 
 		static void TaskExecuterCallback (object obj)

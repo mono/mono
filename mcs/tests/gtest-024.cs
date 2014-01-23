@@ -22,7 +22,7 @@ class X
 		foo.Hello (4);
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		Foo<int> foo = new Foo<int> ();
 		Test (foo);

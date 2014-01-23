@@ -39,7 +39,11 @@ namespace System.Security.Policy
 {
 	[Serializable]
 	[ComVisible (true)]
-	public sealed class ApplicationTrust : ISecurityEncodable {
+	public sealed class ApplicationTrust :
+#if NET_4_0
+		EvidenceBase,
+#endif
+		ISecurityEncodable {
 
 		private ApplicationIdentity _appid;
 		private PolicyStatement _defaultPolicy;

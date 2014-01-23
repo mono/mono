@@ -15,7 +15,7 @@ class C
 				throw new ApplicationException ();
 		});
 
-		await a;
+		await a.ConfigureAwait (false);
 	}
 
 	public static int Main ()

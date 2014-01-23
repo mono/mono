@@ -20,7 +20,7 @@ public class FooCollection <T> : IFoo <T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		IFoo<int> foo = new FooCollection<int> ();
 		int a = foo [3];

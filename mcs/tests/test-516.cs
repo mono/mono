@@ -3,7 +3,7 @@
 // Same as test-515, but we're checking that there's no "unreachable code" warning either
 
 class X {
-	static void Main ()
+	public static void Main ()
 	{
 		int i = 0;
 		goto a;

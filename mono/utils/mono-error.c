@@ -12,6 +12,7 @@
 
 #include <mono/metadata/exception.h>
 #include <mono/metadata/object-internals.h>
+#include <mono/metadata/class-internals.h>
 #include <mono/metadata/debug-helpers.h>
 
 #define mono_internal_error_get_message(E) ((E)->full_message ? (E)->full_message : (E)->message)
@@ -265,6 +266,136 @@ mono_error_set_generic_error (MonoError *oerror, const char * name_space, const 
 	error->error_code = MONO_ERROR_GENERIC;
 	mono_error_set_corlib_exception (oerror, name_space, name);
 	set_error_message ();
+}
+
+void
+mono_error_set_from_loader_error (MonoError *oerror)
+{
+	MonoLoaderError *loader_error = mono_loader_get_last_error ();
+	MonoErrorInternal *error = (MonoErrorInternal*)oerror;
+
+	mono_error_prepare (error);
+
+
+	if (!loader_error) {
+		mono_error_set_generic_error (oerror, "System", "ExecutionEngineException", "Runtime tried to produce a mono-error from an empty loader-error");
+		return;
+	}
+
+	switch (loader_error->exception_type) {
+	case MONO_EXCEPTION_NONE:
+		mono_error_set_generic_error (oerror, "System", "ExecutionEngineException", "Runtime tried to produce a mono-error from a non-error loader-error");
+		break;
+	case MONO_EXCEPTION_SECURITY_LINKDEMAND:
+	case MONO_EXCEPTION_SECURITY_INHERITANCEDEMAND:
+		mono_error_set_generic_error (oerror, "System.Security", "SecurityException", "Failed for unknown reasons.");
+		break;
+
+	case MONO_EXCEPTION_INVALID_PROGRAM:
+		mono_error_set_generic_error (oerror, "System", "InvalidProgramException", "Failed for unknown reasons.");
+		break;
+
+	case MONO_EXCEPTION_UNVERIFIABLE_IL:
+		mono_error_set_generic_error (oerror, "System.Security", "VerificationException", "Failed for unknown reasons.");
+		break;
+
+	case MONO_EXCEPTION_MISSING_METHOD:
+		error->error_code = MONO_ERROR_MISSING_METHOD;
+		mono_error_set_type_name (oerror, loader_error->class_name);
+		mono_error_set_member_name (oerror, loader_error->member_name);
+		g_snprintf (error->message, sizeof (error->message), "Failed for unknown reasons.");
+		break;
+
+	case MONO_EXCEPTION_MISSING_FIELD:
+		mono_error_set_field_load (oerror, loader_error->klass, loader_error->member_name, "Failed for unknown reasons.");
+		break;
+
+	case MONO_EXCEPTION_TYPE_LOAD:
+		mono_error_set_type_load_name (oerror, loader_error->class_name, loader_error->assembly_name, "Failed for unknown reasons.");
+		break;
+	
+	case MONO_EXCEPTION_FILE_NOT_FOUND:
+		if (loader_error->ref_only)
+			mono_error_set_assembly_load (oerror, loader_error->assembly_name, "Cannot resolve dependency to assembly because it has not been preloaded. When using the ReflectionOnly APIs, dependent assemblies must be pre-loaded or loaded on demand through the ReflectionOnlyAssemblyResolve event.");
+		else
+			mono_error_set_assembly_load (oerror, loader_error->assembly_name, "Could not load file or assembly or one of its dependencies.");
+		break;
+
+	case MONO_EXCEPTION_METHOD_ACCESS:
+		mono_error_set_generic_error (oerror, "System", "MethodAccessException", "Failed for unknown reasons.");
+		break;
+
+	case MONO_EXCEPTION_FIELD_ACCESS:
+		mono_error_set_generic_error (oerror, "System", "FieldAccessException", "Failed for unknown reasons.");
+		break;
+
+	case MONO_EXCEPTION_OBJECT_SUPPLIED:
+	case MONO_EXCEPTION_GENERIC_SHARING_FAILED:
+		mono_error_set_generic_error (oerror, "System", "ExecutionEngineException", "Runtime tried to produce a mono-error from JIT internal error %d", loader_error->exception_type);
+		break;
+
+	case MONO_EXCEPTION_BAD_IMAGE:
+		mono_error_set_bad_image_name (oerror, "<unknown>", "%s", loader_error->msg);
+		break;
+
+	case MONO_EXCEPTION_OUT_OF_MEMORY:
+		mono_error_set_out_of_memory (oerror, "Failed for unknown reasons.");
+		break;
+
+	default:
+		mono_error_set_generic_error (oerror, "System", "ExecutionEngineException", "Runtime tried to produce an unknown loader-error %d", loader_error->exception_type);
+		break;
+	}
+
+	mono_error_dup_strings (oerror, TRUE);
+	mono_loader_clear_error ();
+}
+
+static const char*
+get_type_name (MonoErrorInternal *error)
+{
+	if (error->type_name)
+		return error->type_name;
+	if (error->klass)
+		return error->klass->name;
+	return "<unknown type>";
+}
+
+static const char*
+get_assembly_name (MonoErrorInternal *error)
+{
+	if (error->assembly_name)
+		return error->assembly_name;
+	if (error->klass && error->klass->image)
+		return error->klass->image->name;
+	return "<unknown assembly>";
+}
+
+void
+mono_loader_set_error_from_mono_error (MonoError *oerror)
+{
+	MonoErrorInternal *error = (MonoErrorInternal*)oerror;
+
+	switch (error->error_code) {
+	case MONO_ERROR_MISSING_METHOD:
+		mono_loader_set_error_method_load (get_type_name (error), error->member_name);
+		break;
+	case MONO_ERROR_MISSING_FIELD:
+		mono_loader_set_error_field_load (error->klass, error->member_name);
+		break;
+	case MONO_ERROR_TYPE_LOAD:
+		mono_loader_set_error_type_load (get_type_name (error), get_assembly_name (error));
+		break;
+	case MONO_ERROR_FILE_NOT_FOUND:
+		/* XXX can't recover if it's ref only or not */
+		mono_loader_set_error_assembly_load (get_assembly_name (error), FALSE);
+		break;
+	case MONO_ERROR_BAD_IMAGE:
+		mono_loader_set_error_bad_image (g_strdup (mono_internal_error_get_message (error)));
+		break;
+	default:
+		mono_loader_set_error_bad_image (g_strdup_printf ("Non translatable error: %s", mono_internal_error_get_message (error)));
+	}
 }
 
 void

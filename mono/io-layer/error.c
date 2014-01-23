@@ -177,6 +177,12 @@ errno_to_WSA (guint32 code, const gchar *function_name)
 #ifdef EDESTADDRREQ
 	case EDESTADDRREQ: result = WSAEDESTADDRREQ; break;
 #endif
+#ifdef EHOSTDOWN
+	case EHOSTDOWN: result = WSAEHOSTDOWN; break;
+#endif
+#ifdef ENETDOWN
+	case ENETDOWN: result = WSAENETDOWN; break;
+#endif	
 	case ENODEV: result = WSAENETDOWN; break;
 	default:
 		sys_error = strerror (code);

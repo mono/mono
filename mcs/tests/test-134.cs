@@ -47,7 +47,7 @@ class T: IB {
         public void A () {}
         public void B () {}
 
-        static int Main() {
+        public static int Main() {
 
 		BB bb = new BB ();
 		bb.A ();

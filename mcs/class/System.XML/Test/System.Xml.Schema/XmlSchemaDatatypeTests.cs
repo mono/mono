@@ -3,17 +3,18 @@
 //
 // Author:
 //   Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+//   Wojciech Kotlarski <wojciech.kotlarski@7digital.com>
+//   Andres G. Aragoneses <andres.aragoneses@7digital.com>
 //
 // (C) 2002 Atsushi Enomoto
+// (C) 2012 7digital Media Ltd.
 //
 
 using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Schema;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 using NUnit.Framework;
 
 using QName = System.Xml.XmlQualifiedName;
@@ -121,7 +122,6 @@ namespace MonoTests.System.Xml
 			vr.Read ();
 		}
 
-#if NET_2_0
 		string [] allTypes = new string [] {
 			"string", "boolean", "float", "double", "decimal", 
 			"duration", "dateTime", "time", "date", "gYearMonth", 
@@ -195,6 +195,270 @@ namespace MonoTests.System.Xml
 
 			AssertType.IsFalse (GetDatatype ("string").IsDerivedFrom (null), "null arg");
 		}
-#endif
+
+		[Test]
+		public void ChangeType_StringTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.String).Datatype;
+			Assert.IsTrue (datatype != null);
+			Assert.AreEqual (XmlTypeCode.String, datatype.TypeCode);
+			Assert.AreEqual (typeof(string), datatype.ValueType);
+
+			Assert.AreEqual ("test", datatype.ChangeType("test", typeof(string)));
+		}
+
+		[Test]
+		public void ChangeType_StringToObjectTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.String).Datatype;
+			Assert.IsTrue (datatype != null);
+			Assert.AreEqual (XmlTypeCode.String, datatype.TypeCode);
+			Assert.AreEqual (typeof(string), datatype.ValueType);
+
+			Assert.AreEqual ("test", datatype.ChangeType("test", typeof(object)));
+		}
+
+		[Test]
+		public void ChangeType_IntegerTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.Integer).Datatype;
+			Assert.IsTrue (datatype != null);
+			Assert.AreEqual (XmlTypeCode.Integer, datatype.TypeCode);
+			Assert.AreEqual (typeof(decimal), datatype.ValueType);
+
+			Assert.AreEqual (300, datatype.ChangeType("300", typeof(int)));
+		}
+
+		[Test]
+		public void ChangeType_FromDateTimeTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.DateTime).Datatype;
+			Assert.IsTrue (datatype != null);
+			Assert.AreEqual (XmlTypeCode.DateTime, datatype.TypeCode);
+			Assert.AreEqual (typeof(DateTime), datatype.ValueType);
+
+			DateTime date = new DateTime (2012, 06, 27, 0, 0, 0, DateTimeKind.Utc);
+			Assert.AreEqual ("2012-06-27T00:00:00Z", datatype.ChangeType(date, typeof(string)));
+		}
+
+		[Test]
+		public void ChangeType_FromTimeSpanTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.DayTimeDuration).Datatype;
+			Assert.IsTrue (datatype != null);
+			Assert.AreEqual (XmlTypeCode.DayTimeDuration, datatype.TypeCode);
+			Assert.AreEqual (typeof(TimeSpan), datatype.ValueType);
+
+			TimeSpan span = new TimeSpan(1, 2, 3);
+			Assert.AreEqual ("PT1H2M3S", datatype.ChangeType(span, typeof(string)));
+		}
+
+		[Test]
+		public void ChangeType_ToDateTimeTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.DateTime).Datatype;
+			Assert.IsTrue (datatype != null);
+			Assert.AreEqual (XmlTypeCode.DateTime, datatype.TypeCode);
+			Assert.AreEqual (typeof(DateTime), datatype.ValueType);
+
+			DateTime date = new DateTime (2012, 06, 27, 0, 0, 0, DateTimeKind.Utc);
+			Assert.AreEqual (date, datatype.ChangeType("2012-06-27T00:00:00Z", typeof(DateTime)));
+		}
+
+		[Test]
+		public void ChangeType_ToTimeSpanTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.DayTimeDuration).Datatype;
+			Assert.IsTrue (datatype != null);
+			Assert.AreEqual (XmlTypeCode.DayTimeDuration, datatype.TypeCode);
+			Assert.AreEqual (typeof(TimeSpan), datatype.ValueType);
+
+			TimeSpan span = new TimeSpan(1, 2, 3);
+			Assert.AreEqual (span, datatype.ChangeType("PT1H2M3S", typeof(TimeSpan)));
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void ChangeType_NullValueArgumentInFromStringTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.Integer).Datatype;
+			datatype.ChangeType(null, typeof(string));
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void ChangeType_NullValueArgumentInToStringTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.Integer).Datatype;
+			datatype.ChangeType(null, typeof(int));
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void ChangeType_NullTargetArgumentInFromStringTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.Integer).Datatype;
+			datatype.ChangeType("100", null);
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void ChangeType_NullNamespaceResolverArgumentInFromStringTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.Integer).Datatype;
+			datatype.ChangeType("100", typeof(string), null);
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		[ExpectedException (typeof(InvalidCastException))]
+		public void InvalidCastExceptionTest()
+		{
+			XmlSchemaDatatype datatype = XmlSchemaType.GetBuiltInSimpleType(XmlTypeCode.DateTime).Datatype;
+			Assert.IsTrue (datatype != null);
+			Assert.AreEqual (XmlTypeCode.DateTime, datatype.TypeCode);
+			Assert.AreEqual (typeof(DateTime), datatype.ValueType);
+
+			datatype.ChangeType(300, typeof (int));
+		}
+		
+		[Test]
+		public void Bug12469 ()
+		{
+			Dictionary<string, string> validValues = new Dictionary<string, string> {
+				{"string", "abc"},
+
+				{"normalizedString", "abc"},
+				{"token", "abc"},
+				{"language", "en"},
+				{"Name", "abc"},
+				{"NCName", "abc"},
+				{"ID", "abc"},
+				{"ENTITY", "abc"},
+				{"NMTOKEN", "abc"},
+
+				{"boolean", "true"},
+				{"decimal", "1"},
+				{"integer", "1"},
+				{"nonPositiveInteger", "0"},
+				{"negativeInteger", "-1"},
+				{"long", "9223372036854775807"},
+				{"int", "2147483647"},
+				{"short", "32767"},
+				{"byte", "127"},
+				{"nonNegativeInteger", "0"},
+				{"unsignedLong", "18446744073709551615"},
+				{"unsignedInt", "4294967295"},
+				{"unsignedShort", "65535"},
+				{"unsignedByte", "255"},
+				{"positiveInteger", "1"},
+				{"float", "1.1"},
+				{"double", "1.1"},
+				{"time", "00:00:00"},
+				{"date", "1999-12-31"},
+				{"dateTime", "1999-12-31T00:00:00.000"},
+				{"duration", "P1Y2M3DT10H30M"},
+				{"gYearMonth", "1999-01"},
+				{"gYear", "1999"},
+				{"gMonthDay", "--12-31"},
+				{"gMonth", "--12"},
+				{"gDay", "---31"},
+
+				{"base64Binary", "AbCd eFgH IjKl 019+"},
+				{"hexBinary", "0123456789ABCDEF"},
+
+				{"anyURI", "https://www.server.com"},
+				{"QName", "xml:abc"},
+				};
+
+			// FIXME: implement validation
+			Dictionary<string, string> invalidValues = new Dictionary<string, string> {
+				{"Name", "***"},
+				{"NCName", "a::"},
+				{"ID", "123"},
+				{"ENTITY", "***"},
+				{"NMTOKEN", "***"},
+
+				{"boolean", "ABC"},
+				{"decimal", "1A"},
+				{"integer", "1.5"},
+				{"nonPositiveInteger", "5"},
+				{"negativeInteger", "10"},
+				{"long", "999999999999999999999999999999999999999"},
+				{"int", "999999999999999999999999999999999999999"},
+				{"short", "32768"},
+				{"byte", "128"},
+				{"nonNegativeInteger", "-1"},
+				{"unsignedLong", "-1"},
+				{"unsignedInt", "-1"},
+				{"unsignedShort", "-1"},
+				{"unsignedByte", "-1"},
+				{"positiveInteger", "0"},
+				{"float", "1.1x"},
+				{"double", "1.1x"},
+				{"time", "0"},
+				{"date", "1"},
+				{"dateTime", "2"},
+				{"duration", "P1"},
+				{"gYearMonth", "1999"},
+				{"gYear", "-1"},
+				{"gMonthDay", "-12-31"},
+				{"gMonth", "-12"},
+				{"gDay", "--31"},
+
+				{"base64Binary", "####"},
+				{"hexBinary", "G"},
+
+				// anyURI passes everything (as long as I observed)
+				{"QName", "::"},
+				};
+
+			const string schemaTemplate = @"
+				<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' elementFormDefault='qualified'> 
+					<xs:element name='EL'>
+						<xs:complexType>
+							<xs:attribute name='attr' type='xs:{0}' use='required' />
+						</xs:complexType>
+					</xs:element>
+				</xs:schema>";
+
+			const string documentTemplate = @"<EL attr='{0}' />";
+
+			foreach (var type in validValues.Keys) {
+				try {
+					var schema = string.Format (schemaTemplate, type);
+					var document = string.Format (documentTemplate, validValues[type]);
+
+					var schemaSet = new XmlSchemaSet ();
+					using (var reader = new StringReader (schema))
+						schemaSet.Add (XmlSchema.Read (reader, null));
+					schemaSet.Compile ();
+					var doc = new XmlDocument ();
+					using (var reader = new StringReader (document))
+						doc.Load (reader);
+					doc.Schemas = schemaSet;
+					doc.Validate (null);
+
+					// FIXME: implement validation
+					/*
+					if (!invalidValues.ContainsKey (type))
+						continue;
+					try {
+						doc = new XmlDocument ();
+						document = string.Format (documentTemplate, invalidValues [type]);
+						using (var reader = new StringReader (document))
+							doc.Load (reader);
+						doc.Schemas = schemaSet;
+						doc.Validate (null);
+						Assert.Fail (string.Format ("Failed to invalidate {0} for {1}", document, type));
+					} catch (XmlSchemaException) {
+					}
+					*/
+				} catch (Exception) {
+					Console.Error.WriteLine (type);
+					throw;
+				}
+			}
+		}
 	}
 }

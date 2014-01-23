@@ -14,7 +14,7 @@ struct S
 		this.b = 2;
 	}
 	
-	static void Main ()
+	public static void Main ()
 	{
 		S s = new S (1);
 	}

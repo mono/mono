@@ -2,8 +2,9 @@
 //
 // Author:
 //   Rolf Bjarne Kvinge (rolf@xamarin.com)
+//   Atsushi Enomoto (atsushi@xamarin.com)
 //
-// Copyright (C) 2011 Xamarin Inc.
+// Copyright (C) 2011,2013 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,15 +27,43 @@
 //
 
 using System;
+using System.Collections.Generic;
+using Microsoft.Build.Construction;
 
 namespace Microsoft.Build.Evaluation
 {
-        public class ProjectItemDefinition
-        {
-                private ProjectItemDefinition ()
-                {
-                        throw new NotImplementedException ();
-                }
-        }
-}
+	public class ProjectItemDefinition
+	{
+		internal ProjectItemDefinition (Project project, string itemType)
+		{
+			this.project = project;
+			this.item_type = itemType;
+		}
 
+		Project project;
+		string item_type;
+		List<ProjectMetadata> metadata = new List<ProjectMetadata> ();
+
+		public string ItemType {
+			get { return item_type; }
+		}
+
+		public IEnumerable<ProjectMetadata> Metadata {
+			get { return metadata; }
+		}
+
+		public int MetadataCount {
+			get { return metadata.Count; }
+		}
+
+		public Project Project {
+			get { return project; }
+		}
+		
+		internal void AddItems (ProjectItemDefinitionElement xml)
+		{
+			foreach (var item in xml.Metadata)
+				metadata.Add (new ProjectMetadata (project, ItemType, metadata, m => metadata.Remove (m), item));
+		}
+	}
+}

@@ -12,6 +12,6 @@ public class ArrayList<T> : IExtensible<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

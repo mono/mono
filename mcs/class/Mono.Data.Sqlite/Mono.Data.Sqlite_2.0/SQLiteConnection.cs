@@ -304,6 +304,9 @@ namespace Mono.Data.Sqlite
     {
       base.Dispose(disposing);
 
+      if (_sql != null)
+        _sql.Dispose ();
+
       if (disposing)
         Close();
     }

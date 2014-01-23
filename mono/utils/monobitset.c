@@ -210,25 +210,17 @@ mono_bitset_count (const MonoBitSet *set) {
 	count = 0;
 	for (i = 0; i < set->size / BITS_PER_CHUNK; ++i) {
 		d = set->data [i];
-		/* there is probably some asm code that can do this much faster */
-		if (d) {
-#if SIZEOF_VOID_P == 8
-			/* http://www.jjj.de/bitwizardry/bitwizardrypage.html */
-			d -=  (d>>1) & 0x5555555555555555;
-			d  = ((d>>2) & 0x3333333333333333) + (d & 0x3333333333333333);
-			d  = ((d>>4) + d) & 0x0f0f0f0f0f0f0f0f;
-			d *= 0x0101010101010101;
-			count += d >> 56;
+#ifdef __GNUC__
+		if (sizeof (gsize) == sizeof (unsigned long))
+			count += __builtin_popcountl (d);
+		else
+			count += __builtin_popcount (d);
 #else
-			/* http://aggregate.org/MAGIC/ */
-			d -= ((d >> 1) & 0x55555555);
-			d = (((d >> 2) & 0x33333333) + (d & 0x33333333));
-			d = (((d >> 4) + d) & 0x0f0f0f0f);
-			d += (d >> 8);
-			d += (d >> 16);
-			count += (d & 0x0000003f);
-#endif
+		while (d) {
+			count ++;
+			d &= (d - 1);
 		}
+#endif
 	}
 	return count;
 }
@@ -285,7 +277,11 @@ my_g_bit_nth_lsf (gsize mask, gint nth_bit)
 	if ((mask == 0) || (nth_bit == BITS_PER_CHUNK))
 		return -1;
 
-#if defined(__i386__) && defined(__GNUC__)
+#if defined(__native_client__) && (defined(__i386__) || defined(__x86_64))
+#define USE_X86_32BIT_INSTRUCTIONS 1
+#endif
+
+#if (defined(__i386__) && defined(__GNUC__)) || defined(USE_X86_32BIT_INSTRUCTIONS)
  {
 	 int r;
 	 /* This depends on mask != 0 */
@@ -315,7 +311,7 @@ static inline gint
 my_g_bit_nth_lsf_nomask (gsize mask)
 {
 	/* Mask is expected to be != 0 */
-#if defined(__i386__) && defined(__GNUC__)
+#if (defined(__i386__) && defined(__GNUC__)) || defined(USE_X86_32BIT_INSTRUCTIONS)
 	int r;
 
 	__asm__("bsfl %1,%0\n\t"
@@ -817,4 +813,3 @@ main() {
 }
 
 #endif
-

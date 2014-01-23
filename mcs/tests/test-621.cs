@@ -20,7 +20,7 @@ struct A {
 }
 
 class X {
-	static void Main ()
+	public static void Main ()
 	{
 		A a = new A ();
 

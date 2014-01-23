@@ -46,7 +46,12 @@ namespace Mono.Security.X509.Extensions {
 	 * KeyIdentifier ::= OCTET STRING
 	 */
 
-	public class AuthorityKeyIdentifierExtension : X509Extension {
+#if INSIDE_SYSTEM
+	internal
+#else
+	public
+#endif
+	class AuthorityKeyIdentifierExtension : X509Extension {
 
 		private byte[] aki;
 

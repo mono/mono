@@ -37,7 +37,11 @@ using System.Security.Permissions;
 namespace System.Runtime.Serialization.Formatters.Binary {
 
 	[ComVisible (true)]
-	public sealed class BinaryFormatter : IRemotingFormatter, IFormatter 
+	public sealed class BinaryFormatter :
+#if !FULL_AOT_RUNTIME
+						IRemotingFormatter,
+#endif
+						IFormatter
 	{
 		private FormatterAssemblyStyle assembly_format = FormatterAssemblyStyle.Simple;
 		private SerializationBinder binder;

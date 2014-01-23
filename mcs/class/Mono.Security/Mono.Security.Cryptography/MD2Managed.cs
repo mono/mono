@@ -35,7 +35,10 @@ namespace Mono.Security.Cryptography {
 	// a.	RFC1319: The MD2 Message-Digest Algorithm
 	//	http://www.ietf.org/rfc/rfc1319.txt
 
-	public class MD2Managed : MD2 {
+#if !INSIDE_CORLIB
+	public
+#endif
+	class MD2Managed : MD2 {
 
 		private byte[] state;
 		private byte[] checksum;

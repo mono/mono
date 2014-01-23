@@ -25,12 +25,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
 
-namespace Microsoft.Build.BuildEngine {
+#if MICROSOFT_BUILD_DLL
+namespace Microsoft.Build.Logging
+#else
+namespace Microsoft.Build.BuildEngine
+#endif
+{
 	public delegate void ColorSetter (ConsoleColor color);
 }
-
-#endif

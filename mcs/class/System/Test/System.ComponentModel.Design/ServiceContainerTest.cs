@@ -5,6 +5,8 @@
 // (C) Alexandre Pigolkine (pigolkine@gmx.de)
 // 
 
+#if !MOBILE
+
 using System;
 using System.ComponentModel.Design;
 using System.Collections;
@@ -783,3 +785,5 @@ namespace MonoTests.System.ComponentModel.Design
 		}
 	}
 }
+
+#endif

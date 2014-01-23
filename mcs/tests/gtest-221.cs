@@ -17,6 +17,6 @@ class C3 : C2
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

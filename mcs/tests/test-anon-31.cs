@@ -4,7 +4,7 @@ using System.Reflection;
 class X {
 	delegate object test (MethodInfo x);
 		
-	static void Main ()
+	public static void Main ()
 	{
 		DoCall (delegate(MethodInfo from) {
                     return from.Invoke (null, new object[] { from });

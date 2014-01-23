@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 class Program
 {
-	static int Main ()
+	public static int Main ()
 	{
 		Type t = typeof (Control);
 		MethodInfo m = t.GetMethod ("set_Foo");

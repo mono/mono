@@ -1,20 +1,11 @@
 thisdir = class/Microsoft.Build.Tasks
-SUBDIRS = 
+SUBDIRS =
 include ../../build/rules.make
 
-LIBRARY = Microsoft.Build.Tasks.dll
-BUILD_FRAMEWORK = Microsoft.Build.Framework.dll
-BUILD_ENGINE = Microsoft.Build.Engine.dll
+XBUILD_DIR=$(topdir)/tools/xbuild
+include $(XBUILD_DIR)/xbuild.make
 
-ifeq (3.5, $(FRAMEWORK_VERSION))
-NAME_SUFFIX = .v3.5
-BUILD_FRAMEWORK := $(topdir)/class/lib/$(PROFILE)/$(BUILD_FRAMEWORK)
-BUILD_ENGINE := $(topdir)/class/lib/$(PROFILE)/$(BUILD_ENGINE)
-else
-ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
-NAME_SUFFIX = .v4.0
-endif
-endif
+LIBRARY = Microsoft.Build.Tasks.dll
 
 LIBRARY_NAME = Microsoft.Build.Tasks$(NAME_SUFFIX).dll
 
@@ -24,14 +15,16 @@ LIB_MCS_FLAGS = \
 	/r:System.Core.dll			\
 	/r:System.Xml.dll			\
 	/r:System.Windows.Forms.dll		\
-	/r:Microsoft.Build.Utilities$(NAME_SUFFIX).dll	\
-	/r:$(BUILD_FRAMEWORK)	\
-	/r:$(BUILD_ENGINE)
+	/r:$(XBUILD_UTILITIES)			\
+	/r:$(XBUILD_FRAMEWORK)			\
+	/r:$(XBUILD_ENGINE)			\
+	/r:$(XBUILD_TASKS)
 
 TEST_MCS_FLAGS = \
-	/r:$(BUILD_ENGINE)	\
-	/r:$(BUILD_FRAMEWORK)	\
-	/r:Microsoft.Build.Utilities$(NAME_SUFFIX).dll \
+	/r:$(XBUILD_ENGINE)	\
+	/r:$(XBUILD_FRAMEWORK)	\
+	/r:$(XBUILD_TASKS)	\
+	/r:$(XBUILD_UTILITIES)			\
 	/r:System.Core.dll
 
 EXTRA_DISTFILES = \
@@ -41,32 +34,15 @@ EXTRA_DISTFILES = \
 	Test/resources/junk.txt \
 	Test/test-config-file*
 
-test-local: Test/resources/test.dll
-
 Test/resources/test.dll: Test/resources/test.cs
 	$(CSCOMPILE) -target:library Test/resources/test.cs
 
-clean-local: clean-test-dll
-
-clean-test-dll:
+clean-test-resources:
 	rm -f Test/resources/test.dll
 
-test-local: copy-config
+test-local: Test/resources/test.dll
 
-ifeq (net_4_0, $(PROFILE))
-copy-config:
-	cp Test/test-config-file-net-4.0 $(test_lib).config
-else
-ifeq (net_3_5, $(PROFILE))
-copy-config:
-	cp Test/test-config-file-net-3.5 $(test_lib).config
-else
-copy-config:
-endif
-endif
+clean-local: clean-test-resources
 
-export TESTING_MONO=a
-XBUILD_DIR=../../tools/xbuild
-include $(XBUILD_DIR)/xbuild_targets.make
-
+include $(XBUILD_DIR)/xbuild_test.make
 include ../../build/library.make

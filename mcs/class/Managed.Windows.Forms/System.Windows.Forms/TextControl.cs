@@ -2444,6 +2444,8 @@ namespace System.Windows.Forms {
 
 				if (selection_visible == false) {
 					SetSelectionToCaret (true);
+					move_sel_start = false;
+					move_sel_end = false;
 				}
 			}
 

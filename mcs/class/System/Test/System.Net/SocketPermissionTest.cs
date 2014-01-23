@@ -8,6 +8,8 @@
 // (C) 2003 Martin Willemoes Hansen
 //
 
+#if !MOBILE
+
 using NUnit.Framework;
 using System;
 using System.Net;
@@ -117,3 +119,4 @@ public class SocketPermissionTest
 
 }
 
+#endif

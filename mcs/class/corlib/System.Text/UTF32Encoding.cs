@@ -314,9 +314,9 @@ public sealed class UTF32Encoding : Encoding
 				preamble[1] = (byte)0xFE;
 			}
 			return preamble;
-		} else {
-			return new byte [0];
 		}
+		
+		return EmptyArray<byte>.Value;
 	}
 
 	// Determine if this object is equal to another.

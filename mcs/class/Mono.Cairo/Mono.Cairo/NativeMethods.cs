@@ -36,8 +36,8 @@ using System.Runtime.InteropServices;
 
 namespace Cairo
 {
-	// sort these so it is easier to find what is missing
-	// http://www.cairographics.org/manual/ix01.html
+	// sort the functions like in the following page so it is easier to find what is missing
+	// http://cairographics.org/manual/index-all.html
 
 	internal static class NativeMethods
 	{
@@ -86,9 +86,6 @@ namespace Cairo
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern IntPtr cairo_create (IntPtr target);
 
-		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
-		internal static extern uint cairo_get_reference_count (IntPtr surface);
-		
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern void cairo_curve_to (IntPtr cr, double x1, double y1, double x2, double y2, double x3, double y3);
 		
@@ -241,6 +238,9 @@ namespace Cairo
 		internal static extern Operator cairo_get_operator (IntPtr cr);
 		
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern uint cairo_get_reference_count (IntPtr surface);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern IntPtr cairo_get_source (IntPtr cr);
 		
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
@@ -292,9 +292,6 @@ namespace Cairo
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern int cairo_image_surface_get_width  (IntPtr surface);
 
-		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
-		internal static extern uint cairo_surface_get_reference_count (IntPtr surface);
-		
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		[return: MarshalAs (UnmanagedType.U1)]
 		internal static extern bool cairo_in_fill (IntPtr cr, double x, double y);
@@ -453,10 +450,10 @@ namespace Cairo
 		//[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		//internal static extern IntPtr cairo_ps_surface_create_for_stream (string filename, double width, double height);
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
-		internal static extern void cairo_ps_surface_begin_page_setup (IntPtr surface);
+		internal static extern void cairo_ps_surface_dsc_begin_page_setup (IntPtr surface);
 		
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
-		internal static extern void cairo_ps_surface_begin_setup (IntPtr surface);
+		internal static extern void cairo_ps_surface_dsc_begin_setup (IntPtr surface);
 		
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern void cairo_ps_surface_dsc_comment (IntPtr surface, string comment);
@@ -485,6 +482,75 @@ namespace Cairo
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern void cairo_reference (IntPtr cr);
 		
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern bool cairo_region_contains_point (IntPtr region, int x, int y);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern RegionOverlap cairo_region_contains_rectangle (IntPtr region, ref RectangleInt rectangle);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern IntPtr cairo_region_copy (IntPtr original);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern IntPtr cairo_region_create ();
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern IntPtr cairo_region_create_rectangle (ref RectangleInt rect);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern IntPtr cairo_region_create_rectangles (RectangleInt[] rects, int count);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern void cairo_region_destroy (IntPtr region);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern bool cairo_region_equal (IntPtr a, IntPtr b);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern void cairo_region_get_extents (IntPtr region, out RectangleInt extents);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern void cairo_region_get_rectangle (IntPtr region, int nth, out RectangleInt rectangle);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern Status cairo_region_intersect (IntPtr dst, IntPtr other);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern Status cairo_region_intersect_rectangle (IntPtr dst, ref RectangleInt rectangle);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern bool cairo_region_is_empty (IntPtr region);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern int cairo_region_num_rectangles (IntPtr region);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern IntPtr cairo_region_reference (IntPtr region);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern Status cairo_region_status (IntPtr region);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern Status cairo_region_subtract (IntPtr dst, IntPtr other);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern Status cairo_region_subtract_rectangle (IntPtr dst, ref RectangleInt rectangle);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern void cairo_region_translate (IntPtr region, int dx, int dy);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern Status cairo_region_union (IntPtr dst, IntPtr other);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern Status cairo_region_union_rectangle (IntPtr dst, ref RectangleInt rectangle);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern Status cairo_region_xor (IntPtr dst, IntPtr other);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern Status cairo_region_xor_rectangle (IntPtr dst, ref RectangleInt rectangle);
+
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern void cairo_rel_curve_to (IntPtr cr, double dx1, double dy1, double dx2, double dy2, double dx3, double dy3);
 		
@@ -666,6 +732,9 @@ namespace Cairo
 
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern void cairo_surface_get_font_options (IntPtr surface, IntPtr FontOptions);
+
+		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
+		internal static extern uint cairo_surface_get_reference_count (IntPtr surface);
 
 		[DllImport (cairo, CallingConvention=CallingConvention.Cdecl)]
 		internal static extern SurfaceType cairo_surface_get_type (IntPtr surface);

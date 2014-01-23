@@ -7,8 +7,6 @@
 // (C) 2006 Novell, Inc.
 // 
 
-#if NET_2_0
-
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -19,6 +17,7 @@ using System.Text;
 namespace MonoTests.System.Text
 {
 	[TestFixture]
+	[Category ("MobileNotWorking")]
 	public class EncodingInfoTest
 	{
 		[Test]
@@ -40,11 +39,8 @@ namespace MonoTests.System.Text
 
 			List<int> list = new List<int> ();
 			for (int i = 1; i < 0x10000; i++) {
-				try {
-					Encoding.GetEncoding (i);
-					list.Add (i);
-				} catch {
-				}
+				// Do this in a method to work around #5432
+				GetEncoding (i, list);
 			}
 			int [] reference = list.ToArray ();
 
@@ -63,7 +59,13 @@ namespace MonoTests.System.Text
 			foreach (EncodingInfo i in Encoding.GetEncodings ())
 				Assert.IsNotNull (i.GetEncoding (), "codepage " + i);
 		}
+
+		void GetEncoding (int id, List<int> list) {
+			try {
+				Encoding.GetEncoding (id);
+				list.Add (id);
+			} catch {
+			}
+		}
 	}
 }
-
-#endif

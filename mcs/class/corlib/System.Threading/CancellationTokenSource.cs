@@ -26,7 +26,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 
@@ -42,6 +42,7 @@ namespace System.Threading
 		
 		int currId = int.MinValue;
 		ConcurrentDictionary<CancellationTokenRegistration, Action> callbacks;
+		CancellationTokenRegistration[] linkedTokens;
 
 		ManualResetEvent handle;
 		
@@ -60,7 +61,7 @@ namespace System.Threading
 #if NET_4_5
 			timer_callback = token => {
 				var cts = (CancellationTokenSource) token;
-				cts.Cancel ();
+				cts.CancelSafe ();
 			};
 #endif
 		}
@@ -117,21 +118,46 @@ namespace System.Threading
 		public void Cancel (bool throwOnFirstException)
 		{
 			CheckDisposed ();
+			Cancellation (throwOnFirstException);
+		}
 
+		//
+		// Don't throw ObjectDisposedException if the callback
+		// is called concurrently with a Dispose
+		//
+		public void CancelSafe ()
+		{
+			if (!disposed)
+				Cancellation (true);
+		}
+
+		void Cancellation (bool throwOnFirstException)
+		{
 			if (canceled)
 				return;
 
 			Thread.MemoryBarrier ();
 			canceled = true;
-			
-			handle.Set ();
-			
+
+			Thread.MemoryBarrier ();
+
+			// Dispose might be running at same time
+			if (!disposed)
+				handle.Set ();
+
+			if (linkedTokens != null)
+				UnregisterLinkedTokens ();
+
+			var cbs = callbacks;
+			if (cbs == null)
+				return;
+
 			List<Exception> exceptions = null;
-			
+
 			try {
 				Action cb;
-				for (int id = int.MinValue + 1; id <= currId; id++) {
-					if (!callbacks.TryRemove (new CancellationTokenRegistration (id, this), out cb))
+				for (int id = currId; id != int.MinValue; id--) {
+					if (!cbs.TryRemove (new CancellationTokenRegistration (id, this), out cb))
 						continue;
 					if (cb == null)
 						continue;
@@ -150,7 +176,7 @@ namespace System.Threading
 					}
 				}
 			} finally {
-				callbacks.Clear ();
+				cbs.Clear ();
 			}
 
 			if (exceptions != null)
@@ -198,12 +224,14 @@ namespace System.Threading
 				throw new ArgumentException ("Empty tokens array");
 
 			CancellationTokenSource src = new CancellationTokenSource ();
-			Action action = src.Cancel;
+			Action action = src.CancelSafe;
+			var registrations = new List<CancellationTokenRegistration> (tokens.Length);
 
 			foreach (CancellationToken token in tokens) {
 				if (token.CanBeCanceled)
-					token.Register (action);
+					registrations.Add (token.Register (action));
 			}
+			src.linkedTokens = registrations.ToArray ();
 			
 			return src;
 		}
@@ -234,19 +262,31 @@ namespace System.Threading
 		void Dispose (bool disposing)
 		{
 			if (disposing && !disposed) {
-				Thread.MemoryBarrier ();
 				disposed = true;
+				Thread.MemoryBarrier ();
 
 				if (!canceled) {
-					Thread.MemoryBarrier ();
+					UnregisterLinkedTokens ();
 					callbacks = null;
+				} else {
+					handle.WaitOne ();
 				}
 #if NET_4_5
 				if (timer != null)
 					timer.Dispose ();
 #endif
+
 				handle.Dispose ();
 			}
+		}
+
+		void UnregisterLinkedTokens ()
+		{
+			var registrations = Interlocked.Exchange (ref linkedTokens, null);
+			if (registrations == null)
+				return;
+			foreach (var linked in registrations)
+				linked.Dispose ();
 		}
 		
 		internal CancellationTokenRegistration Register (Action callback, bool useSynchronizationContext)

@@ -112,16 +112,12 @@ namespace System.Windows.Forms {
 						ThemeEngine.Current.ColorControlText = ColorFromGdkColor (style.fg[0]);
 						ThemeEngine.Current.ColorControlDark = ColorFromGdkColor (style.dark[0]);
 						ThemeEngine.Current.ColorControlLight = ColorFromGdkColor (style.light[0]);
-						ThemeEngine.Current.ColorControlLightLight = ControlPaint.Light(ColorFromGdkColor (style.light[0]));
-						ThemeEngine.Current.ColorControlDarkDark = ControlPaint.Dark(ColorFromGdkColor (style.dark[0]));
+						ThemeEngine.Current.ColorControlLightLight = ControlPaint.Light (ThemeEngine.Current.ColorControlLight);
+						ThemeEngine.Current.ColorControlDarkDark = ControlPaint.Dark (ThemeEngine.Current.ColorControlDark);
 
-						// We don't want ControlLight and ControlLightLight to disappear on a white background!
-						Color white = Color.FromArgb(255, 255, 255, 255);
-						if (ThemeEngine.Current.ColorControlLight.ToArgb() == white.ToArgb()) {
-							ThemeEngine.Current.ColorControlLight = Color.FromArgb (255, 190, 190, 190);
-						}
-						if (ThemeEngine.Current.ColorControlLightLight.ToArgb() == white.ToArgb()) {
-							ThemeEngine.Current.ColorControlLightLight = Color.FromArgb (255, 220, 220, 220);
+						// We don't want ControlLight to disappear on a white background!
+						if (ThemeEngine.Current.ColorControlLight.ToArgb () == Color.White.ToArgb ()) {
+							ThemeEngine.Current.ColorControlLight = Color.FromArgb (255, 227, 227, 227);
 						}
 						widget = gtk_menu_new ();
 						gtk_widget_ensure_style (widget);

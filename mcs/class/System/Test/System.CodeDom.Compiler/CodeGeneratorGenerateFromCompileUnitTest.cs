@@ -29,6 +29,7 @@
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using Microsoft.CSharp;
 using System.IO;
 
 using NUnit.Framework;
@@ -52,6 +53,64 @@ namespace MonoTests.System.CodeDom.Compiler
 			int attributePosition = result.IndexOf (ATTRIBUTE);
 
 			Assert.Greater (attributePosition, importPosition, "Actual order: " + result);
+		}
+
+		[Test]
+		public void CodeSnippetBlankLines ()
+		{
+			var opt = new CodeGeneratorOptions () {
+				BlankLinesBetweenMembers = false,
+				VerbatimOrder = false
+			};
+
+			var ccu = new CodeCompileUnit ();
+			var ns = new CodeNamespace ("Foo");
+			ccu.Namespaces.Add (ns);
+			var t = new CodeTypeDeclaration ("Bar");
+			ns.Types.Add (t);
+
+			t.Members.Add (new CodeSnippetTypeMember ("#line hidden"));
+			t.Members.Add (new CodeSnippetTypeMember ("#line hidden2"));
+	
+			t.Members.Add (new CodeMemberMethod () { Name = "Foo" });
+
+			using (var sw = new StringWriter ()) {
+				new CSharpCodeProvider ().GenerateCodeFromCompileUnit (ccu, sw, opt);
+				var str = sw.ToString ();
+
+				Assert.IsFalse (str.Contains ("hidden2private"), "#0");
+				Assert.IsTrue (str.Contains( "#line hidden#line hidden2"), "#1");
+			}
+		}
+
+		[Test]
+		public void CodeSnippetBlankLinesVerbatimOrder ()
+		{
+			var opt = new CodeGeneratorOptions () {
+				BlankLinesBetweenMembers = false,
+				VerbatimOrder = true
+			};
+
+			var ccu = new CodeCompileUnit ();
+			var ns = new CodeNamespace ("Foo");
+			ccu.Namespaces.Add (ns);
+			var t = new CodeTypeDeclaration ("Bar");
+			ns.Types.Add (t);
+
+			t.Members.Add (new CodeSnippetTypeMember ("#line hidden"));
+			t.Members.Add (new CodeSnippetTypeMember ("#line hidden2"));
+	
+			t.Members.Add (new CodeMemberMethod () { Name = "Foo" });
+
+			using (var sw = new StringWriter ()) {
+				new CSharpCodeProvider ().GenerateCodeFromCompileUnit (ccu, sw, opt);
+				var str = sw.ToString ();
+
+				Assert.IsFalse (str.Contains ("hidden2private"), "#0");
+				Assert.IsFalse (str.Contains( "#line hidden#line hidden2"), "#1");
+				Assert.IsTrue (str.Contains( "#line hidden" + Environment.NewLine), "#2");
+				Assert.IsTrue (str.Contains( "#line hidden2" + Environment.NewLine), "#3");
+			}
 		}
 
 		private const string ATTRIBUTE = "ATTRIBUTE";

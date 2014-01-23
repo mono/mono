@@ -1,0 +1,14 @@
+Assembly/AssemblyInfo.cs
+../../../external/rx/Rx/NET/Source/Microsoft.Reactive.Testing/ColdObservable.cs
+../../../external/rx/Rx/NET/Source/Microsoft.Reactive.Testing/GlobalSuppressions.cs
+../../../external/rx/Rx/NET/Source/Microsoft.Reactive.Testing/HotObservable.cs
+../../../external/rx/Rx/NET/Source/Microsoft.Reactive.Testing/ITestObservable.cs
+../../../external/rx/Rx/NET/Source/Microsoft.Reactive.Testing/ITestObserver.cs
+../../../external/rx/Rx/NET/Source/Microsoft.Reactive.Testing/MockObserver.cs
+../../../external/rx/Rx/NET/Source/Microsoft.Reactive.Testing/NamespaceDoc.cs
+../../../external/rx/Rx/NET/Source/Microsoft.Reactive.Testing/Properties/AssemblyInfo.cs
+../../../external/rx/Rx/NET/Source/Microsoft.Reactive.Testing/ReactiveAssert.cs
+../../../external/rx/Rx/NET/Source/Microsoft.Reactive.Testing/ReactiveTest.cs
+../../../external/rx/Rx/NET/Source/Microsoft.Reactive.Testing/Recorded.cs
+../../../external/rx/Rx/NET/Source/Microsoft.Reactive.Testing/Subscription.cs
+../../../external/rx/Rx/NET/Source/Microsoft.Reactive.Testing/TestScheduler.cs

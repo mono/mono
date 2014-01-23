@@ -154,7 +154,7 @@ namespace Test
 
 	public class X
 	{
-		static void Main ()
+		public static void Main ()
 		{
 			Test<V.SimpleCounter>.Foo (new V.SimpleCounter ());
 			Test<V.PrintingCounter>.Foo (new V.PrintingCounter ());

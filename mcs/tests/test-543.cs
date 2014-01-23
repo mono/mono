@@ -37,7 +37,7 @@ class MainClass
         }
     }
 
-    static void Main(string[] args)
+    public static void Main(string[] args)
     {
         MainClass t = new MainClass();
         t [2, "foo", "doo"] = 2;

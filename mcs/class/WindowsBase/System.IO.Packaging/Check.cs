@@ -70,6 +70,18 @@ namespace System.IO.Packaging
 		{
 			return (s != null && (s == "" || s.Trim ().Length == 0));
 		}
+
+		private static void PartUriDoesntEndWithSlash(Uri uri)
+		{
+			var s = !uri.IsAbsoluteUri ? uri.OriginalString
+				: uri.GetComponents(UriComponents.Path, UriFormat.UriEscaped);
+
+			// We allow '/' at uri's beggining.
+			if ((s.Length > 1) && s.EndsWith("/"))
+			{
+				throw new ArgumentException("Part URI cannot end with a forward slash.");
+			}
+		}
 		
 		public static void Package(object package)
 		{
@@ -91,11 +103,11 @@ namespace System.IO.Packaging
 		
 		public static void PackUriIsValid (Uri packUri)
 		{
+			if (!packUri.IsAbsoluteUri)
+				throw new ArgumentException("packUri", "PackUris must be absolute");
+
 			if (packUri.Scheme != PackUriHelper.UriSchemePack)
 				throw new ArgumentException ("packUri", "Uri scheme is not a valid PackUri scheme");
-			    
-			if (!packUri.IsAbsoluteUri)
-				throw new ArgumentException ("packUri", "PackUris must be absolute");
 		}
 
 		public static void PartUri (object partUri)
@@ -131,10 +143,23 @@ namespace System.IO.Packaging
 				throw new ArgumentException ("partUri", "Part uri cannot be an empty string");
 		}
 
+		public static void PackUri(Uri packUri)
+		{
+			NotNull(packUri, "packUri");
+		}
+
 		public static void SourcePartUri (Uri sourcePartUri)
 		{
 			NotNull(sourcePartUri, "sourcePartUri");
+			PartUriDoesntEndWithSlash(sourcePartUri);
 		}
+
+		public static void TargetPartUri (Uri targetPartUri)
+		{
+			NotNull(targetPartUri, "targetPartUri");
+			PartUriDoesntEndWithSlash(targetPartUri);
+		}
+
 		public static void SourceUri (Uri sourceUri)
 		{
 			if (sourceUri == null)

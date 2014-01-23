@@ -154,7 +154,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 		}
 		#endregion
 
-		public static bool IsRootedInParameter (LispList<PathElement> path)
+		public static bool IsRootedInParameter (Sequence<PathElement> path)
 		{
 			return path.Head is PathElement<Parameter>;
 		}
@@ -215,7 +215,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 		private void AssignValue (SymValue address, FlatDomain<TypeNode> type)
 		{
 			Havoc (address);
-			SetType (address, type.IsNormal ? MetaDataProvider.ManagedPointer (type.Concrete) : type);
+			SetType (address, type.IsNormal() ? MetaDataProvider.ManagedPointer (type.Value) : type);
 			if (IsStructWithFields (type))
 				return;
 
@@ -223,10 +223,10 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			SetType (fresh, type);
 			this.egraph [this.Functions.ValueOf, address] = fresh;
 
-			if (!type.IsNormal)
+			if (!type.IsNormal())
 				return;
 
-			if (NeedsArrayLengthManifested (type.Concrete))
+			if (NeedsArrayLengthManifested (type.Value))
 				ManifestArrayLength (fresh);
 		}
 
@@ -271,7 +271,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 		{
 			var args = new[] {Value (op1), Value (op2)};
 			SymFunction c = this.Functions.For (op);
-			TypeNode type = !typeOpt.IsNormal ? MetaDataProvider.System_Int32 : typeOpt.Concrete;
+			TypeNode type = !typeOpt.IsNormal() ? MetaDataProvider.System_Int32 : typeOpt.Value;
 
 			bool fresh;
 
@@ -285,7 +285,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 		public void AssignPureUnary (int dest, UnaryOperator op, FlatDomain<TypeNode> typeOpt, int operand)
 		{
 			SymFunction c = this.Functions.For (op);
-			TypeNode type = !typeOpt.IsNormal ? MetaDataProvider.System_Int32 : typeOpt.Concrete;
+			TypeNode type = !typeOpt.IsNormal() ? MetaDataProvider.System_Int32 : typeOpt.Value;
 
 			SymValue unaryOperand = this.egraph [c, Value (operand)];
 			SymValue sv = Address (dest);
@@ -319,7 +319,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 		private void HavocIfStruct (SymValue address)
 		{
 			AbstractType aType = this.egraph [address];
-			if (aType.IsBottom || (aType.IsNormal && MetaDataProvider.IsStruct (aType.ConcreteType)))
+			if (aType.IsBottom || (aType.IsNormal() && MetaDataProvider.IsStruct (aType.ConcreteType)))
 				Havoc (address);
 		}
 
@@ -464,8 +464,8 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			FlatDomain<TypeNode> targetType = TargetType (addrType);
 
 			if (IsStructWithFields (targetType))
-				CopyOldStructValue (pc, destAddr, srcAddr, targetType.Concrete, target, atEndOld);
-			else if (atEndOld && targetType.IsNormal && MetaDataProvider.IsManagedPointer (targetType.Concrete)) {
+				CopyOldStructValue (pc, destAddr, srcAddr, targetType.Value, target, atEndOld);
+			else if (atEndOld && targetType.IsNormal() && MetaDataProvider.IsManagedPointer (targetType.Value)) {
 				srcAddr = TryValue (srcAddr);
 				if (srcAddr == null)
 					return;
@@ -499,13 +499,13 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			}
 		}
 
-		private IEnumerable<LispList<PathElementBase>> GetAccessPathsRaw (SymValue sv, AccessPathFilter<Method> filter, bool compress)
+		private IEnumerable<Sequence<PathElementBase>> GetAccessPathsRaw (SymValue sv, AccessPathFilter<Method> filter, bool compress)
 		{
 			var visited = new HashSet<SymValue> ();
 			return GetAccessPathsRaw (sv, null, visited, filter, compress);
 		}
 
-		private IEnumerable<LispList<PathElementBase>> GetAccessPathsRaw (SymValue sv, LispList<PathElementBase> path, HashSet<SymValue> visited, AccessPathFilter<Method> filter, bool compress)
+		private IEnumerable<Sequence<PathElementBase>> GetAccessPathsRaw (SymValue sv, Sequence<PathElementBase> path, HashSet<SymValue> visited, AccessPathFilter<Method> filter, bool compress)
 		{
 			if (sv == this.egraph.ConstRoot)
 				yield return path;
@@ -515,7 +515,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 					if (!(term.Function is Wrapper<object>) && !(term.Function is Wrapper<int>)) {
 						PathElementBase next = term.Function.ToPathElement (compress);
 						if (next != null && !filter.FilterOutPathElement (term.Function)) {
-							LispList<PathElementBase> newPath;
+							Sequence<PathElementBase> newPath;
 
 							if (path == null || !compress || (!(next is PathElement<Method>)))
 								newPath = path.Cons (next);
@@ -530,11 +530,11 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			}
 		}
 
-		private LispList<PathElementBase> GetBestAccessPath (SymValue sv, AccessPathFilter<Method> filter, bool compress, bool allowLocal, bool preferLocal)
+		private Sequence<PathElementBase> GetBestAccessPath (SymValue sv, AccessPathFilter<Method> filter, bool compress, bool allowLocal, bool preferLocal)
 		{
-			LispList<PathElementBase> bestParameterPath = null;
-			LispList<PathElementBase> bestLocalPath = null;
-			LispList<PathElementBase> bestFieldMethodPath = null;
+			Sequence<PathElementBase> bestParameterPath = null;
+			Sequence<PathElementBase> bestLocalPath = null;
+			Sequence<PathElementBase> bestFieldMethodPath = null;
 
 			foreach (var path in GetAccessPathsFiltered (sv, filter, compress)) {
 				if (path != null) {
@@ -563,12 +563,12 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			return bestFieldMethodPath;
 		}
 
-		public IEnumerable<LispList<PathElementBase>> GetAccessPathsFiltered (SymValue sv, AccessPathFilter<Method> filter, bool compress)
+		public IEnumerable<Sequence<PathElementBase>> GetAccessPathsFiltered (SymValue sv, AccessPathFilter<Method> filter, bool compress)
 		{
 			return GetAccessPathsTyped (sv, filter, compress).Where (path => PathIsVisibleAccordingToFilter (path, filter));
 		}
 
-		private bool PathIsVisibleAccordingToFilter (LispList<PathElementBase> path, AccessPathFilter<Method> filter)
+		private bool PathIsVisibleAccordingToFilter (Sequence<PathElementBase> path, AccessPathFilter<Method> filter)
 		{
 			if (path.Length () == 0 || !filter.HasVisibilityMember)
 				return true;
@@ -614,7 +614,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			return true;
 		}
 
-		private bool TryPropagateTypeInfo (LispList<PathElementBase> path, out LispList<PathElementBase> result)
+		private bool TryPropagateTypeInfo (Sequence<PathElementBase> path, out Sequence<PathElementBase> result)
 		{
 			if (path == null) {
 				result = null;
@@ -627,7 +627,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 				return false;
 			}
 
-			LispList<PathElementBase> result1;
+			Sequence<PathElementBase> result1;
 			if (!TryPropagateTypeInfoRecurse (path.Tail, prevType, out result1)) {
 				result = null;
 				return false;
@@ -642,7 +642,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			return true;
 		}
 
-		private bool TryPropagateTypeInfoRecurse (LispList<PathElementBase> path, TypeNode prevType, out LispList<PathElementBase> result)
+		private bool TryPropagateTypeInfoRecurse (Sequence<PathElementBase> path, TypeNode prevType, out Sequence<PathElementBase> result)
 		{
 			if (path == null) {
 				result = null;
@@ -650,7 +650,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			}
 			PathElementBase head = path.Head;
 			if (head.TrySetType (prevType, MetaDataProvider, out prevType)) {
-				LispList<PathElementBase> updatedPath;
+				Sequence<PathElementBase> updatedPath;
 				if (TryPropagateTypeInfoRecurse (path.Tail, prevType, out updatedPath)) {
 					result = updatedPath.Cons (head);
 					return true;
@@ -661,11 +661,11 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			return false;
 		}
 
-		private IEnumerable<LispList<PathElementBase>> GetAccessPathsTyped (SymValue sv, AccessPathFilter<Method> filter, bool compress)
+		private IEnumerable<Sequence<PathElementBase>> GetAccessPathsTyped (SymValue sv, AccessPathFilter<Method> filter, bool compress)
 		{
 			var visited = new HashSet<SymValue> ();
 			foreach (var path in GetAccessPathsRaw (sv, null, visited, filter, compress)) {
-				LispList<PathElementBase> result;
+				Sequence<PathElementBase> result;
 				if (TryPropagateTypeInfo (path, out result))
 					yield return result;
 			}
@@ -697,7 +697,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 		{
 			FlatDomain<TypeNode> type = TargetType (addrType);
 			if (IsStructWithFields (type))
-				CopyStructValue (destAddr, sourceAddr, type.Concrete);
+				CopyStructValue (destAddr, sourceAddr, type.Value);
 
 			CopyPrimValue (destAddr, sourceAddr, cast, type);
 		}
@@ -710,8 +710,8 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			else
 				SetTypeIfUnknown (value, elementType);
 
-			if (elementType.IsNormal) {
-				if (NeedsArrayLengthManifested (elementType.Concrete))
+			if (elementType.IsNormal()) {
+				if (NeedsArrayLengthManifested (elementType.Value))
 					ManifestArrayLength (value);
 			}
 
@@ -724,7 +724,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			SymValue srcAddress = Address (source);
 
 			AbstractType aType = GetType (srcAddress);
-			TypeNode addrType = aType.IsNormal ? aType.ConcreteType : MetaDataProvider.ManagedPointer (type);
+			TypeNode addrType = aType.IsNormal() ? aType.ConcreteType : MetaDataProvider.ManagedPointer (type);
 			CopyValueToOldState (pc, addrType, destAddress, srcAddress, target);
 		}
 
@@ -772,10 +772,10 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			SymValue fresh = this.egraph.FreshSymbol ();
 			SetType (fresh, targetType);
 			this.egraph [this.Functions.ValueOf, destAddress] = fresh;
-			if (!targetType.IsNormal)
+			if (!targetType.IsNormal())
 				return;
 
-			if (NeedsArrayLengthManifested (targetType.Concrete))
+			if (NeedsArrayLengthManifested (targetType.Value))
 				ManifestArrayLength (fresh);
 		}
 
@@ -970,18 +970,18 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 
 		private bool IsStructWithFields (FlatDomain<TypeNode> type)
 		{
-			if (!type.IsNormal)
+			if (!type.IsNormal())
 				return false;
 
-			return !MetaDataProvider.HasValueRepresentation (type.Concrete);
+			return !MetaDataProvider.HasValueRepresentation (type.Value);
 		}
 
 		private FlatDomain<TypeNode> TargetType (FlatDomain<TypeNode> type)
 		{
-			if (!type.IsNormal)
+			if (!type.IsNormal())
 				return type;
 
-			TypeNode normalType = type.Concrete;
+			TypeNode normalType = type.Value;
 			if (MetaDataProvider.IsManagedPointer (normalType))
 				return MetaDataProvider.ElementType (normalType);
 
@@ -1001,7 +1001,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 		{
 			AbstractType abstractType = this.egraph [sv];
 
-			if (!abstractType.IsZero && (!abstractType.Type.IsNormal || abstractType.Type.Equals (MetaDataProvider.System_IntPtr)))
+			if (!abstractType.IsZero && (!abstractType.Type.IsNormal() || abstractType.Type.Equals (MetaDataProvider.System_IntPtr)))
 				this.egraph [sv] = abstractType.With (type);
 		}
 
@@ -1066,7 +1066,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 
 		private bool IsStructAddress (AbstractType abstractType)
 		{
-			if (!abstractType.IsNormal)
+			if (!abstractType.IsNormal())
 				return false;
 
 			TypeNode normalType = abstractType.ConcreteType;
@@ -1183,13 +1183,13 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			FlatDomain<TypeNode> type = aType.Type;
 			if (!IsStructWithFields (type)) {
 				SymValue ptrValue = this.egraph.FreshSymbol ();
-				if (type.IsNormal)
+				if (type.IsNormal())
 					aType = new AbstractType (!unsigned ? MetaDataProvider.System_IntPtr : MetaDataProvider.System_UIntPtr, aType.IsZero);
-				SetType (address, type.IsNormal ? MetaDataProvider.ManagedPointer (type.Concrete) : type);
+				SetType (address, type.IsNormal() ? MetaDataProvider.ManagedPointer (type.Value) : type);
 				this.egraph [ptrValue] = aType;
 				this.egraph [this.Functions.ValueOf, address] = ptrValue;
 			} else
-				SetType (address, type.IsNormal ? MetaDataProvider.ManagedPointer (type.Concrete) : type);
+				SetType (address, type.IsNormal() ? MetaDataProvider.ManagedPointer (type.Value) : type);
 		}
 
 		public TypeNode UnaryResultType (UnaryOperator op, AbstractType type)
@@ -1212,7 +1212,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			case UnaryOperator.Conv_u8:
 				return MetaDataProvider.System_UInt64;
 			default:
-				if (type.IsNormal)
+				if (type.IsNormal())
 					return type.ConcreteType;
 				return MetaDataProvider.System_Int32;
 			}
@@ -1223,7 +1223,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			SymValue srcAddr = Address (temporaryForWhichAddressIsTaken);
 			this.egraph [this.Functions.ValueOf, destAddr] = srcAddr;
 			AbstractType aType = CurrentType (srcAddr);
-			FlatDomain<TypeNode> t = !aType.IsNormal ? new FlatDomain<TypeNode> () : MetaDataProvider.ManagedPointer (aType.Type.Concrete);
+			FlatDomain<TypeNode> t = !aType.IsNormal() ? new FlatDomain<TypeNode> () : MetaDataProvider.ManagedPointer (aType.Type.Value);
 			SetType (destAddr, t);
 		}
 
@@ -1458,19 +1458,19 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 
 		public string GetAccessPath (SymValue sv)
 		{
-			LispList<PathElementBase> bestAccessPath = GetBestAccessPath (sv, AccessPathFilter<Method>.NoFilter, true, true, false);
+			Sequence<PathElementBase> bestAccessPath = GetBestAccessPath (sv, AccessPathFilter<Method>.NoFilter, true, true, false);
 			if (bestAccessPath == null)
 				return null;
 
 			return bestAccessPath.Select (i => (PathElement) i).ToCodeString ();
 		}
 
-		public LispList<PathElement> GetAccessPathList (SymValue symbol, AccessPathFilter<Method> filter, bool allowLocal, bool preferLocal)
+		public Sequence<PathElement> GetAccessPathList (SymValue symbol, AccessPathFilter<Method> filter, bool allowLocal, bool preferLocal)
 		{
 			return GetBestAccessPath (symbol, filter, true, allowLocal, preferLocal).Coerce<PathElementBase, PathElement> ();
 		}
 
-		public bool LessEqual (Domain that, out IImmutableMap<SymValue, LispList<SymValue>> forward, out IImmutableMap<SymValue, SymValue> backward)
+		public bool LessEqual (Domain that, out IImmutableMap<SymValue, Sequence<SymValue>> forward, out IImmutableMap<SymValue, SymValue> backward)
 		{
 			return this.egraph.LessEqual (that.egraph, out forward, out backward);
 		}
@@ -1490,7 +1490,7 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			return mi.IsGraph2 (this.egraph);
 		}
 
-		public IImmutableMap<SymValue, LispList<SymValue>> GetForwardIdentityMap ()
+		public IImmutableMap<SymValue, Sequence<SymValue>> GetForwardIdentityMap ()
 		{
 			return this.egraph.GetForwardIdentityMap ();
 		}
@@ -1608,13 +1608,23 @@ namespace Mono.CodeContracts.Static.Analysis.HeapAnalysis {
 			}
 		}
 
-		public Domain Join (Domain that, bool widening, out bool weaker)
+	    public Domain Join(Domain that)
+	    {
+	        throw new NotImplementedException();
+	    }
+
+	    public Domain Join (Domain that, bool widening, out bool weaker)
 		{
 			IMergeInfo mergeInfo;
 			return Join (that, widening, out weaker, out mergeInfo);
 		}
 
-		public Domain Meet (Domain that)
+	    public Domain Widen(Domain that)
+	    {
+	        throw new NotImplementedException();
+	    }
+
+	    public Domain Meet (Domain that)
 		{
 			SymGraph<SymFunction, AbstractType> graph = this.egraph.Meet (that.egraph);
 			return new Domain (graph, RecomputeConstantMap (graph), this.unmodifiedSinceEntry, this.unmodifiedFieldsSinceEntry, null, this, OldDomain);

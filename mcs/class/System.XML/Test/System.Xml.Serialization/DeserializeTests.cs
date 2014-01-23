@@ -4,9 +4,11 @@
 // Author:
 //	Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 //	Hagit Yidov <hagity@mainsoft.com>
+//	Andres G. Aragoneses <andres.aragoneses@7digital.com>
 //
 // (C) 2003 Atsushi Enomoto
 // (C) 2005 Mainsoft Corporation (http://www.mainsoft.com)
+// (C) 2012 7digital Media Ltd (http://www.7digital.com)
 //
 //
 using System;
@@ -1552,6 +1554,130 @@ namespace MonoTests.System.XmlSerialization
 			XmlSerializer xs = new XmlSerializer (typeof (NotExactDateParseClass));
 			NotExactDateParseClass o = (NotExactDateParseClass) xs.Deserialize (new StringReader ("<NotExactDateParseClass xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><SomeDate xsi:type=\"xsd:date\">2012-02-05-09:00</SomeDate></NotExactDateParseClass>"));
 			Assert.AreEqual (new DateTime (2012,2,5), o.SomeDate);
+		}
+
+
+		public class Foo
+		{
+			public DateTime? Baz { get; set; }
+		}
+
+		[Test]
+		public void CanDeserializeXsiNil()
+		{
+			var reader = new StringReader(
+@"<Foo xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
+	<Baz xsi:nil=""true"" />
+</Foo>");
+
+			using (var xmlReader = new XmlTextReader(reader))
+			{
+				var serializer = new XmlSerializer(typeof(Foo));
+				var foo = (Foo)serializer.Deserialize(xmlReader);
+				Assert.IsNull(foo.Baz);
+			}
+		}
+
+		public class Bar
+		{
+			[XmlElement("baz")]
+			public DateTime? Baz { get; set; }
+		}
+
+		[Test]
+		public void CanDeserializeXsiNilToAPropertyWithXmlElementAttrib()
+		{
+			var reader = new StringReader(
+@"<Bar xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
+	<baz xsi:nil=""true"" />
+</Bar>");
+
+			using (var xmlReader = new XmlTextReader(reader))
+			{
+				var serializer = new XmlSerializer(typeof(Bar));
+				var bar = (Bar)serializer.Deserialize(xmlReader);
+				Assert.IsNull(bar.Baz);
+			}
+		}
+
+		public class FooBar
+		{
+			[XmlElement("baz", IsNullable = true)]
+			public DateTime? Baz { get; set; }
+		}
+
+		[Test]
+		public void CanDeserializeXsiNilToAPropertyWithXmlElementAttribAndIsNullableTrue()
+		{
+			var reader = new StringReader(
+@"<FooBar xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
+	<baz xsi:nil=""true"" />
+</FooBar>");
+
+			using (var xmlReader = new XmlTextReader(reader))
+			{
+				var serializer = new XmlSerializer(typeof(FooBar));
+				var foobar = (FooBar)serializer.Deserialize(xmlReader);
+				Assert.IsNull(foobar.Baz);
+			}
+		}
+
+		[Test] // bug #8468
+		public void TestUseSubclassDefaultNamespace ()
+		{
+			XmlSerializer xs = new XmlSerializer (typeof (Bug8468Subclass));
+			string msg = "<Test xmlns=\"http://test-namespace\"><Base>BaseValue</Base><Mid>MidValue</Mid></Test>";
+			var res1 = (Bug8468Subclass)xs.Deserialize (new StringReader (msg));
+			Assert.IsNotNull (res1);
+			Assert.AreEqual ("BaseValue", res1.Base);
+			Assert.AreEqual ("MidValue", res1.Mid);
+
+			xs = new XmlSerializer (typeof (Bug8468SubclassNoNamespace), "http://test-namespace");
+			var res2 = (Bug8468SubclassNoNamespace)xs.Deserialize (new StringReader (msg));
+			Assert.IsNotNull (res2);
+			Assert.AreEqual ("BaseValue", res2.Base);
+			Assert.AreEqual ("MidValue", res2.Mid);
+
+			xs = new XmlSerializer (typeof (Bug8468SubclassV2));
+			var res3 = (Bug8468SubclassV2)xs.Deserialize (new StringReader (msg));
+			Assert.IsNotNull (res3);
+			Assert.IsNull (res3.Base);
+			Assert.AreEqual ("MidValue", res3.Mid);
+
+			xs = new XmlSerializer (typeof (Bug8468SubclassNoNamespaceV2), "http://test-namespace");
+			var res4 = (Bug8468SubclassNoNamespaceV2)xs.Deserialize (new StringReader (msg));
+			Assert.IsNotNull (res4);
+			Assert.IsNull (res4.Base);
+			Assert.AreEqual ("MidValue", res4.Mid);
+
+			msg = "<Test xmlns=\"http://test-namespace\"><Base xmlns=\"\">BaseValue</Base><Mid>MidValue</Mid></Test>";
+
+			xs = new XmlSerializer (typeof (Bug8468SubclassV2));
+			var res5 = (Bug8468SubclassV2)xs.Deserialize (new StringReader (msg));
+			Assert.IsNotNull (res5);
+			Assert.AreEqual ("BaseValue", res5.Base);
+			Assert.AreEqual ("MidValue", res5.Mid);
+
+			xs = new XmlSerializer (typeof (Bug8468SubclassNoNamespaceV2), "http://test-namespace");
+			var res6 = (Bug8468SubclassNoNamespaceV2)xs.Deserialize (new StringReader (msg));
+			Assert.IsNotNull (res6);
+			Assert.AreEqual ("BaseValue", res6.Base);
+			Assert.AreEqual ("MidValue", res6.Mid);	
+		}
+		
+		[Test] // bug #9193
+		public void TestOrderedMapWithFlatList ()
+		{
+			var d = (Bug9193Class) Deserialize (typeof(Bug9193Class), "<Test><Data>One</Data><Data>Two</Data><Data>Three</Data><Extra>a</Extra><Extra>b</Extra></Test>");
+			Assert.IsNotNull (d);
+			Assert.AreEqual (3, d.Data.Length);
+			Assert.AreEqual ("One", d.Data[0]);
+			Assert.AreEqual ("Two", d.Data[1]);
+			Assert.AreEqual ("Three", d.Data[2]);
+
+			Assert.AreEqual (2, d.Extra.Length);
+			Assert.AreEqual ("a", d.Extra[0]);
+			Assert.AreEqual ("b", d.Extra[1]);
 		}
 	}
 }

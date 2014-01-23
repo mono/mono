@@ -12,7 +12,7 @@ class FlagsAttributeDemo
         Blue = 4
     };
 
-    static int Main( )
+    public static int Main( )
     {
         string s = ((MultiHue)7).ToString ();
         

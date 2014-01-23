@@ -4,8 +4,10 @@
 // Authors:
 //	Dick Porter  <dick@ximian.com>
 //	Atsushi Enomoto  <atsushi@ximian.com>
+//	James Bellinger  <jfb@zer7.com>
 //
 // Copyright (C) 2005-2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012      James Bellinger
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,153 +31,215 @@
 
 using System.Collections.Generic;
 
-namespace System.Security.AccessControl {
-
-	[MonoTODO ("required for NativeObjectSecurity - implementation is missing")]
-	public abstract class CommonObjectSecurity : ObjectSecurity {
-
+namespace System.Security.AccessControl
+{
+	public abstract class CommonObjectSecurity : ObjectSecurity
+	{
 		protected CommonObjectSecurity (bool isContainer)
 			: base (isContainer, false)
 		{
 		}
 		
-		List<AccessRule> access_rules = new List<AccessRule> ();
-		List<AuditRule> audit_rules = new List<AuditRule> ();
+		internal CommonObjectSecurity (CommonSecurityDescriptor securityDescriptor)
+			: base (securityDescriptor)
+		{
+		}
 		
 		public AuthorizationRuleCollection GetAccessRules (bool includeExplicit, bool includeInherited, Type targetType)
 		{
-			throw new NotImplementedException ();
+			return InternalGetAccessRules (includeExplicit, includeInherited, targetType);
 		}
 		
 		public AuthorizationRuleCollection GetAuditRules (bool includeExplicit, bool includeInherited, Type targetType)
 		{
-			throw new NotImplementedException ();
+			return InternalGetAuditRules (includeExplicit, includeInherited, targetType);
 		}
-		
-		// Access
 		
 		protected void AddAccessRule (AccessRule rule)
 		{
-			access_rules.Add (rule);
-			AccessRulesModified = true;
+			bool modified;
+			ModifyAccess (AccessControlModification.Add, rule, out modified);
 		}
 		
 		protected bool RemoveAccessRule (AccessRule rule)
 		{
-			throw new NotImplementedException ();
+			bool modified;
+			return ModifyAccess (AccessControlModification.Remove, rule, out modified);
 		}
 		
 		protected void RemoveAccessRuleAll (AccessRule rule)
 		{
-			throw new NotImplementedException ();
+			bool modified;
+			ModifyAccess (AccessControlModification.RemoveAll, rule, out modified);
 		}
 		
 		protected void RemoveAccessRuleSpecific (AccessRule rule)
 		{
-			throw new NotImplementedException ();
+			bool modified;
+			ModifyAccess (AccessControlModification.RemoveSpecific, rule, out modified);
 		}
 		
 		protected void ResetAccessRule (AccessRule rule)
 		{
-			throw new NotImplementedException ();
+			bool modified;
+			ModifyAccess (AccessControlModification.Reset, rule, out modified);
 		}
 		
 		protected void SetAccessRule (AccessRule rule)
 		{
-			throw new NotImplementedException ();
-		}
+			bool modified;
+			ModifyAccess (AccessControlModification.Set, rule, out modified);
+		}		
 		
 		protected override bool ModifyAccess (AccessControlModification modification, AccessRule rule, out bool modified)
-		{
-			foreach (AccessRule r in access_rules) {
-				if (rule != r)
-					continue;
+		{		
+			if (null == rule)
+				throw new ArgumentNullException ("rule");
+				
+			modified = true;
+			
+			WriteLock ();
+			try {
 				switch (modification) {
 				case AccessControlModification.Add:
-					AddAccessRule (rule);
+					descriptor.DiscretionaryAcl.AddAccess (rule.AccessControlType,
+									       SidFromIR (rule.IdentityReference),
+									       rule.AccessMask,
+									       rule.InheritanceFlags,
+									       rule.PropagationFlags);
 					break;
 				case AccessControlModification.Set:
-					SetAccessRule (rule);
+					descriptor.DiscretionaryAcl.SetAccess (rule.AccessControlType,
+									       SidFromIR (rule.IdentityReference),
+									       rule.AccessMask,
+									       rule.InheritanceFlags,
+									       rule.PropagationFlags);
 					break;
 				case AccessControlModification.Reset:
-					ResetAccessRule (rule);
-					break;
+					PurgeAccessRules (rule.IdentityReference);
+					goto case AccessControlModification.Add;
 				case AccessControlModification.Remove:
-					RemoveAccessRule (rule);
+					modified = descriptor.DiscretionaryAcl.RemoveAccess (rule.AccessControlType,
+											     SidFromIR (rule.IdentityReference),
+											     rule.AccessMask,
+											     rule.InheritanceFlags,
+											     rule.PropagationFlags);
 					break;
 				case AccessControlModification.RemoveAll:
-					RemoveAccessRuleAll (rule);
+					PurgeAccessRules (rule.IdentityReference);
 					break;
 				case AccessControlModification.RemoveSpecific:
-					RemoveAccessRuleSpecific (rule);
+					descriptor.DiscretionaryAcl.RemoveAccessSpecific (rule.AccessControlType,
+											  SidFromIR (rule.IdentityReference),
+											  rule.AccessMask,
+											  rule.InheritanceFlags,
+											  rule.PropagationFlags);
 					break;
+				default:
+					throw new ArgumentOutOfRangeException ("modification");
 				}
-				modified = true;
-				return true;
+				
+				if (modified) AccessRulesModified = true;
+			} finally {
+				WriteUnlock ();
 			}
-			modified = false;
-			return false;
+			
+			return modified;
 		}
-		
-		// Audit
 		
 		protected void AddAuditRule (AuditRule rule)
 		{
-			audit_rules.Add (rule);
-			AuditRulesModified = true;
+			bool modified;
+			ModifyAudit (AccessControlModification.Add, rule, out modified);
 		}
 		
 		protected bool RemoveAuditRule (AuditRule rule)
 		{
-			throw new NotImplementedException ();
+			bool modified;
+			return ModifyAudit (AccessControlModification.Remove, rule, out modified);
 		}
 		
 		protected void RemoveAuditRuleAll (AuditRule rule)
 		{
-			throw new NotImplementedException ();
+			bool modified;
+			ModifyAudit (AccessControlModification.RemoveAll, rule, out modified);
 		}
 		
 		protected void RemoveAuditRuleSpecific (AuditRule rule)
 		{
-			throw new NotImplementedException ();
+			bool modified;
+			ModifyAudit (AccessControlModification.RemoveSpecific, rule, out modified);
 		}
 		
 		protected void SetAuditRule (AuditRule rule)
 		{
-			throw new NotImplementedException ();
+			bool modified;
+			ModifyAudit (AccessControlModification.Set, rule, out modified);
 		}
 		
 		protected override bool ModifyAudit (AccessControlModification modification, AuditRule rule, out bool modified)
 		{
-			foreach (AuditRule r in audit_rules) {
-				if (rule != r)
-					continue;
+			if (null == rule)
+				throw new ArgumentNullException ("rule");
+
+			modified = true;
+			
+			WriteLock ();
+			try {
 				switch (modification) {
 				case AccessControlModification.Add:
-					AddAuditRule (rule);
+					if (null == descriptor.SystemAcl)
+						descriptor.SystemAcl = new SystemAcl (IsContainer, IsDS, 1);
+					
+					descriptor.SystemAcl.AddAudit (rule.AuditFlags,
+								       SidFromIR (rule.IdentityReference),
+								       rule.AccessMask,
+								       rule.InheritanceFlags,
+								       rule.PropagationFlags);
 					break;
 				case AccessControlModification.Set:
-					SetAuditRule (rule);
+					if (null == descriptor.SystemAcl)
+						descriptor.SystemAcl = new SystemAcl (IsContainer, IsDS, 1);
+
+					descriptor.SystemAcl.SetAudit (rule.AuditFlags,
+								       SidFromIR (rule.IdentityReference),
+								       rule.AccessMask,
+								       rule.InheritanceFlags,
+								       rule.PropagationFlags);
 					break;
-				//case AccessControlModification.Reset:
-				//	ResetAuditRule (rule);
-				//	break;
+				case AccessControlModification.Reset:
+					break;
 				case AccessControlModification.Remove:
-					RemoveAuditRule (rule);
+					if (null == descriptor.SystemAcl)
+						modified = false;
+					else
+						modified = descriptor.SystemAcl.RemoveAudit (rule.AuditFlags,
+											     SidFromIR (rule.IdentityReference),
+											     rule.AccessMask,
+											     rule.InheritanceFlags,
+											     rule.PropagationFlags);
 					break;
 				case AccessControlModification.RemoveAll:
-					RemoveAuditRuleAll (rule);
+					PurgeAuditRules (rule.IdentityReference);
 					break;
 				case AccessControlModification.RemoveSpecific:
-					RemoveAuditRuleSpecific (rule);
+					if (null != descriptor.SystemAcl)
+						descriptor.SystemAcl.RemoveAuditSpecific (rule.AuditFlags,
+											  SidFromIR (rule.IdentityReference),
+											  rule.AccessMask,
+											  rule.InheritanceFlags,
+											  rule.PropagationFlags);
 					break;
+				default:
+					throw new ArgumentOutOfRangeException ("modification");
 				}
-				AuditRulesModified = true;
-				modified = true;
-				return true;
+				
+				if (modified) AuditRulesModified = true;
+			} finally {
+				WriteUnlock ();
 			}
-			modified = false;
-			return false;
+			
+			return modified;
 		}
 	}
 }

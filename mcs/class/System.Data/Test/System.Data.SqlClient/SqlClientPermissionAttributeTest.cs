@@ -37,6 +37,9 @@ using System.Security.Permissions;
 namespace MonoTests.System.Data.SqlClient {
 
 	[TestFixture]
+#if MOBILE
+	[Ignore ("CAS is not supported and parts will be linked away")]
+#endif
 	public class SqlClientPermissionAttributeTest {
 
 		[Test]

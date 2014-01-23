@@ -4,6 +4,10 @@ using System.Text;
 using NUnit.Framework;
 using Mono;
 
+#if !MOBILE
+using NUnit.Framework.SyntaxHelpers;
+#endif
+
 namespace MonoTests {
 
 	[TestFixture]
@@ -58,7 +62,7 @@ namespace MonoTests {
 		public void UnpackTests ()
 		{
 			float f = (float)DataConverter.Unpack ("%f", DataConverter.Pack ("f", 3.14), 0) [0];
-			Assert.IsTrue ((f - 3.14f) < Single.Epsilon);
+			Assert.That ((f - 3.14f), Is.LessThanOrEqualTo (Single.Epsilon));
 		}
 	}
 }

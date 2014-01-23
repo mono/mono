@@ -1445,6 +1445,7 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
+		[Category ("NotOnMac")]
 		public void FillDrawRectangle_Width_2 ()
 		{
 			// even pen size
@@ -1608,6 +1609,7 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
+		[Category ("NotOnMac")]
 		public void DrawFillRectangle_Width_2 ()
 		{
 			// even pen size

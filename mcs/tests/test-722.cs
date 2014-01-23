@@ -27,7 +27,7 @@ struct S : IF
 		((IF)ia).Prop = 3;
 	}
 	
-	static void Main ()
+	public static void Main ()
 	{
 		S s = new S ();
 		object o = s;

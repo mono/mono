@@ -1,0 +1,15 @@
+#include System.dll.sources
+../../build/common/Consts.cs
+../../build/common/Locale.cs
+../../build/common/MonoTODOAttribute.cs
+../corlib/System.Threading.Tasks/CyclicDeque.cs
+../corlib/System.Threading.Tasks/PopResult.cs
+../corlib/System.Threading.Tasks/IConcurrentDeque.cs
+../corlib/System.Threading/AtomicBoolean.cs
+../corlib/System.Collections/CollectionDebuggerView.cs
+../corlib/System.Collections.Generic/CollectionDebuggerView.cs
+../corlib/Mono/DataConverter.cs
+../corlib/System.IO/MonoIOError.cs
+../corlib/System.IO/MonoIO.cs
+../corlib/System.IO/MonoFileType.cs
+../corlib/System.IO/MonoIOStat.cs

@@ -78,6 +78,7 @@ Mono_Posix_Syscall_readdir (void *dirp, struct Mono_Posix_Syscall__Dirent *entry
 		return -1;
 	}
 
+	errno = 0;
 	d = readdir (dirp);
 
 	if (d == NULL) {

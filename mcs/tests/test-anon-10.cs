@@ -26,7 +26,7 @@ class S {
 		}
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 	    S s = new S ();
 	    s.Test ();

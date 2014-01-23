@@ -204,6 +204,26 @@ namespace MonoTests.System.ServiceModel
 		}
 
 		[Test]
+		public void Open ()
+		{
+			ServiceHost host = new ServiceHost (typeof (ZeroOperationsImpl));
+			host.AddServiceEndpoint (typeof (IHaveZeroOperarationsContract), new BasicHttpBinding (), "http://localhost/echo");
+
+			try {
+				host.Open ();
+				Assert.Fail ("InvalidOperationException expected");
+			} 
+			catch (InvalidOperationException e) {
+				//"ContractDescription 'IHaveZeroOperarationsContract' has zero operations; a contract must have at least one operation."
+				StringAssert.Contains ("IHaveZeroOperarationsContract", e.Message);
+			}
+			finally {
+				if (host.State == CommunicationState.Opened)
+					host.Close (); // It is to make sure to close unexpectedly opened host if the test fail.
+			}
+		}
+
+		[Test]
 		public void AddServiceEndpoint4 ()
 		{
 			ServiceHost host = new ServiceHost (typeof (Baz), new Uri ("http://localhost/echo"));
@@ -228,6 +248,21 @@ namespace MonoTests.System.ServiceModel
 			host.AddServiceEndpoint ("ISuchTypeDoesNotExist", new BasicHttpBinding (), "rel");
 		}
 
+		[Test]
+		public void AddServiceEndpoint7 ()
+		{
+			ServiceHost host = new ServiceHost (typeof (Foo), new Uri ("http://localhost/echo"));
+			var a = host.AddServiceEndpoint (typeof (Foo), new BasicHttpBinding (), "a");
+			Console.WriteLine (a.Address);
+			Assert.AreEqual ("http", a.Address.Uri.Scheme, "#1");
+			Assert.AreEqual ("http://localhost/echo/a", a.Address.Uri.AbsoluteUri, "#2");
+
+			var b = host.AddServiceEndpoint (typeof (Foo), new BasicHttpBinding (), "/b");
+			Console.WriteLine (b.Address);
+			Assert.AreEqual ("http", b.Address.Uri.Scheme, "#3");
+			Assert.AreEqual ("http://localhost/echo/b", b.Address.Uri.AbsoluteUri, "#4");
+		}
+		
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void AddServiceEndpointMexWithNoImpl ()
@@ -345,7 +380,21 @@ namespace MonoTests.System.ServiceModel
 			[OperationContract]
 			void DoY ();
 		}
-		
+
+		[ServiceContract]
+		interface IHaveZeroOperarationsContract
+		{
+			string Echo (string source);
+		}
+
+		class ZeroOperationsImpl : IHaveZeroOperarationsContract
+		{
+			public string Echo(string source)
+			{
+				return null;
+			}
+		}
+
 		class HogeFuga : IHoge, IFuga
 		{
 			public void DoX () {}

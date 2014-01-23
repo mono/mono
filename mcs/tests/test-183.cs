@@ -15,7 +15,7 @@ class Test
 		return ++x;
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		int x = 1;
 		int y = 0;

@@ -349,6 +349,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestValueXml ()
 		{
 			BuildPropertyGroup [] bpgs = new BuildPropertyGroup [1];

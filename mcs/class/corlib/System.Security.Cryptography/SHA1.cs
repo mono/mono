@@ -43,7 +43,11 @@ namespace System.Security.Cryptography {
 	
 		public static new SHA1 Create () 
 		{
+#if FULL_AOT_RUNTIME
+			return new System.Security.Cryptography.SHA1CryptoServiceProvider ();
+#else
 			return Create ("System.Security.Cryptography.SHA1");
+#endif
 		}
 
 		public static new SHA1 Create (string hashName) 

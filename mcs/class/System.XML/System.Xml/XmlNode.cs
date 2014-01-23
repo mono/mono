@@ -36,10 +36,8 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml.XPath;
-#if NET_2_0
 using System.Diagnostics;
 using System.Xml.Schema;
-#endif
 
 namespace System.Xml
 {
@@ -339,12 +337,10 @@ namespace System.Xml
 			}
 		}
 
-#if NET_2_0
 		public virtual IXmlSchemaInfo SchemaInfo {
 			get { return null; }
 			internal set { }
 		}
-#endif
 
 		#endregion
 
@@ -369,21 +365,12 @@ namespace System.Xml
 
 		public abstract XmlNode CloneNode (bool deep);
 
-#if NET_2_0
 		public virtual XPathNavigator CreateNavigator ()
 		{
 			// XmlDocument has overriden definition, so it is safe
 			// to use OwnerDocument here.
 			return OwnerDocument.CreateNavigator (this);
 		}
-#else
-		public XPathNavigator CreateNavigator ()
-		{
-			XmlDocument document = this.NodeType == XmlNodeType.Document ?
-				this as XmlDocument : this.ownerDocument;
-			return document.CreateNavigator (this);
-		}
-#endif
 
 		public IEnumerator GetEnumerator ()
 		{
@@ -395,12 +382,10 @@ namespace System.Xml
 			switch (prefix) {
 			case null:
 				throw new ArgumentNullException ("prefix");
-#if NET_2_0
 			case "xml":
 				return XmlNamespaceManager.XmlnsXml;
 			case "xmlns":
 				return XmlNamespaceManager.XmlnsXmlns;
-#endif
 			}
 
 			XmlNode node;
@@ -438,14 +423,12 @@ namespace System.Xml
 
 		public virtual string GetPrefixOfNamespace (string namespaceURI)
 		{
-#if NET_2_0
 			switch (namespaceURI) {
 			case XmlNamespaceManager.XmlnsXml:
 				return XmlNamespaceManager.PrefixXml;
 			case XmlNamespaceManager.XmlnsXmlns:
 				return XmlNamespaceManager.PrefixXmlns;
 			}
-#endif
 
 			XmlNode node;
 			switch (NodeType) {

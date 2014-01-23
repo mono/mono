@@ -9,6 +9,7 @@ System.Configuration/ConfigurationPropertyTest.cs
 System.Configuration/ConfigurationManagerTest.cs
 System.Configuration/ConfigurationSectionGroupTest.cs
 System.Configuration/ConfigurationSectionTest.cs
+System.Configuration/ConfigurationSaveTest.cs
 System.Configuration/ConnectionStringSettingsTest.cs
 System.Configuration/DefaultValidatorTest.cs
 System.Configuration/ExeConfigurationFileMapTest.cs
@@ -32,3 +33,5 @@ System.Configuration/TypeNameConverterTest.cs
 System.Configuration/WhiteSpaceTrimStringConverterTest.cs
 System.Configuration.Provider/ProviderBaseTest.cs
 System.Configuration.Provider/ProviderCollectionTest.cs
+Util/TestLabel.cs
+Util/TestUtil.cs

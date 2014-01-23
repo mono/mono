@@ -26,6 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !MOBILE
+
 using NUnit.Framework;
 using System;
 using System.Net;
@@ -107,3 +109,5 @@ namespace MonoTests.System.Net {
 		}
 	}
 }
+
+#endif

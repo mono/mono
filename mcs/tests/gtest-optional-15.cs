@@ -11,7 +11,7 @@ class Program
 	{
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		var t = typeof (Program).GetMethod ("Test");
 		var p = t.GetParameters ()[0];

@@ -84,6 +84,6 @@ namespace Test7
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

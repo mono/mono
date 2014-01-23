@@ -5,5 +5,5 @@ namespace N {
 class X <T> : N.A <T> {
 }
 class Foo {
-	static void Main () {}
+	public static void Main () {}
 }

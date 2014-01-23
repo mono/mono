@@ -1,6 +1,8 @@
 /Makefile
 /Makefile.in
+/Makefile.am
 /*.o
+/*.g.c
 /*.so
 /*.exe
 /*.dll
@@ -15,14 +17,9 @@
 /inssel.c
 /inssel.h
 /mini.pc
-/cpu-pentium.h
-/cpu-g4.h
-/cpu-amd64.h
+/cpu-*.h
 /mono
 /monow
-/cpu-sparc.h
-/cpu-s390.h
-/cpu-x86.h
 /.hidden
 /semantic.cache
 /.project
@@ -32,5 +29,6 @@
 /buildver.h
 /TAGS
 /mono-sgen
+/mono-boehm
 /buildver-sgen.h
-
+/buildver-boehm.h

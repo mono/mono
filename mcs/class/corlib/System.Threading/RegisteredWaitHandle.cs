@@ -37,9 +37,7 @@ namespace System.Threading
 {
 	[ComVisible (true)]
 	public sealed class RegisteredWaitHandle
-#if !MOONLIGHT
 		: MarshalByRefObject
-#endif
 	{
 		WaitHandle _waitObject;
 		WaitOrTimerCallback _callback;

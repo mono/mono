@@ -3,9 +3,12 @@
 ../../build/common/Locale.cs
 ./Mono.Cairo/Antialias.cs
 ./Mono.Cairo/Cairo.cs
+./Mono.Cairo/CairoDebug.cs
+./Mono.Cairo/Color.cs
 ./Mono.Cairo/Content.cs
 ./Mono.Cairo/Context.cs
 ./Mono.Cairo/DirectFBSurface.cs
+./Mono.Cairo/Distance.cs
 ./Mono.Cairo/Extend.cs
 ./Mono.Cairo/FillRule.cs
 ./Mono.Cairo/Filter.cs
@@ -32,9 +35,12 @@
 ./Mono.Cairo/Pattern.cs
 ./Mono.Cairo/PatternType.cs
 ./Mono.Cairo/PdfSurface.cs
+./Mono.Cairo/Point.cs
+./Mono.Cairo/PointD.cs
 ./Mono.Cairo/PSSurface.cs
 ./Mono.Cairo/RadialGradient.cs
 ./Mono.Cairo/Rectangle.cs
+./Mono.Cairo/Region.cs
 ./Mono.Cairo/ScaledFont.cs
 ./Mono.Cairo/SolidPattern.cs
 ./Mono.Cairo/Status.cs

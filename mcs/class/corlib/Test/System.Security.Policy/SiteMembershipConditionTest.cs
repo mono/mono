@@ -205,6 +205,9 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
+#if MOBILE
+		[ExpectedException (typeof (NotSupportedException))]
+#endif
 		public void FromXml_PolicyLevel () 
 		{
 			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
@@ -230,6 +233,9 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
+#if MOBILE
+		[ExpectedException (typeof (NotSupportedException))]
+#endif
 		public void ToXml_PolicyLevel () 
 		{
 			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");

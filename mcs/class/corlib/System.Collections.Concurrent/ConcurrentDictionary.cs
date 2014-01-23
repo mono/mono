@@ -22,7 +22,7 @@
 //
 //
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 
 using System;
 using System.Threading;
@@ -35,6 +35,7 @@ namespace System.Collections.Concurrent
 {
 	[DebuggerDisplay ("Count={Count}")]
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView<,>))]
+	[Serializable]
 	public class ConcurrentDictionary<TKey, TValue> : IDictionary<TKey, TValue>,
 	  ICollection<KeyValuePair<TKey, TValue>>, IEnumerable<KeyValuePair<TKey, TValue>>,
 	  IDictionary, ICollection, IEnumerable
@@ -87,6 +88,12 @@ namespace System.Collections.Concurrent
 
 		}
 
+		void CheckKey (TKey key)
+		{
+			if (key == null)
+				throw new ArgumentNullException ("key");
+		}
+
 		void Add (TKey key, TValue value)
 		{
 			while (!TryAdd (key, value));
@@ -99,6 +106,7 @@ namespace System.Collections.Concurrent
 
 		public bool TryAdd (TKey key, TValue value)
 		{
+			CheckKey (key);
 			return internalDictionary.Insert (Hash (key), key, Make (key, value));
 		}
 
@@ -109,6 +117,11 @@ namespace System.Collections.Concurrent
 
 		public TValue AddOrUpdate (TKey key, Func<TKey, TValue> addValueFactory, Func<TKey, TValue, TValue> updateValueFactory)
 		{
+			CheckKey (key);
+			if (addValueFactory == null)
+				throw new ArgumentNullException ("addValueFactory");
+			if (updateValueFactory == null)
+				throw new ArgumentNullException ("updateValueFactory");
 			return internalDictionary.InsertOrUpdate (Hash (key),
 			                                          key,
 			                                          () => Make (key, addValueFactory (key)),
@@ -122,6 +135,7 @@ namespace System.Collections.Concurrent
 
 		TValue AddOrUpdate (TKey key, TValue addValue, TValue updateValue)
 		{
+			CheckKey (key);
 			return internalDictionary.InsertOrUpdate (Hash (key),
 			                                          key,
 			                                          Make (key, addValue),
@@ -138,6 +152,7 @@ namespace System.Collections.Concurrent
 
 		public bool TryGetValue (TKey key, out TValue value)
 		{
+			CheckKey (key);
 			KeyValuePair<TKey, TValue> pair;
 			bool result = internalDictionary.Find (Hash (key), key, out pair);
 			value = pair.Value;
@@ -147,6 +162,7 @@ namespace System.Collections.Concurrent
 
 		public bool TryUpdate (TKey key, TValue newValue, TValue comparisonValue)
 		{
+			CheckKey (key);
 			return internalDictionary.CompareExchange (Hash (key), key, Make (key, newValue), (e) => e.Value.Equals (comparisonValue));
 		}
 
@@ -161,16 +177,19 @@ namespace System.Collections.Concurrent
 
 		public TValue GetOrAdd (TKey key, Func<TKey, TValue> valueFactory)
 		{
+			CheckKey (key);
 			return internalDictionary.InsertOrGet (Hash (key), key, Make (key, default(TValue)), () => Make (key, valueFactory (key))).Value;
 		}
 
 		public TValue GetOrAdd (TKey key, TValue value)
 		{
+			CheckKey (key);
 			return internalDictionary.InsertOrGet (Hash (key), key, Make (key, value), null).Value;
 		}
 
 		public bool TryRemove (TKey key, out TValue value)
 		{
+			CheckKey (key);
 			KeyValuePair<TKey, TValue> data;
 			bool result = internalDictionary.Delete (Hash (key), key, out data);
 			value = data.Value;
@@ -196,6 +215,7 @@ namespace System.Collections.Concurrent
 
 		public bool ContainsKey (TKey key)
 		{
+			CheckKey (key);
 			KeyValuePair<TKey, TValue> dummy;
 			return internalDictionary.Find (Hash (key), key, out dummy);
 		}

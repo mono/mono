@@ -19,7 +19,7 @@ namespace testapp{
         }
 
         class TestApp{
-                static void Main(string[] args){
+                public static void Main(string[] args){
                         LibTestAPI myapi = new LibTestAPI();
                         myapi.Create();
                 }

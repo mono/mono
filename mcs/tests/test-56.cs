@@ -52,7 +52,7 @@ class C : A {
 
 class M {
 
-	static int Main ()
+	public static int Main ()
 	{
 		B b = new B ();
 

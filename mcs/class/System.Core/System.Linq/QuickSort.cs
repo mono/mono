@@ -65,70 +65,7 @@ namespace System.Linq {
 
 			// Then sorts the elements according to the collected
 			// key values and the selected ordering
-			Sort (0, indexes.Length - 1);
-		}
-
-		int CompareItems (int first_index, int second_index)
-		{
-			return context.Compare (first_index, second_index);
-		}
-
-		// We look at the first, middle, and last items in the subarray.
-		// Then we put the largest on the right side, the smallest on
-		// the left side, and the median becomes our pivot.
-		int MedianOfThree (int left, int right)
-		{
-			int center = (left + right) / 2;
-			if (CompareItems (indexes [center], indexes [left]) < 0)
-				Swap (left, center);
-			if (CompareItems (indexes [right], indexes [left]) < 0)
-				Swap (left, right);
-			if (CompareItems (indexes [right], indexes [center]) < 0)
-				Swap (center, right);
-			Swap (center, right - 1);
-			return indexes [right - 1];
-		}
-
-		void Sort (int left, int right)
-		{
-			if (left + 3 <= right) {
-				int l = left, r = right - 1, pivot = MedianOfThree (left, right);
-				while (true) {
-					while (CompareItems (indexes [++l], pivot) < 0) { }
-					while (CompareItems (indexes [--r], pivot) > 0) { }
-					if (l < r)
-						Swap (l, r);
-					else
-						break;
-				}
-
-				// Restore pivot
-				Swap (l, right - 1);
-				// Partition and sort
-				Sort (left, l - 1);
-				Sort (l + 1, right);
-			} else
-				// If there are three items in the subarray, insertion sort is better
-				InsertionSort (left, right);
-		}
-
-		void InsertionSort (int left, int right)
-		{
-			for (int i = left + 1; i <= right; i++) {
-				int j, tmp = indexes [i];
-
-				for (j = i; j > left && CompareItems (tmp, indexes [j - 1]) < 0; j--)
-					indexes [j] = indexes [j - 1];
-
-				indexes [j] = tmp;
-			}
-		}
-
-		void Swap (int left, int right)
-		{
-			int temp = indexes [right];
-			indexes [right] = indexes [left];
-			indexes [left] = temp;
+			Array.Sort<int> (indexes, context);
 		}
 
 		public static IEnumerable<TElement> Sort (IEnumerable<TElement> source, SortContext<TElement> context)
@@ -137,7 +74,7 @@ namespace System.Linq {
 
 			sorter.PerformSort ();
 
-			for (int i = 0; i < sorter.indexes.Length; i++)
+			for (int i = 0; i < sorter.elements.Length; i++)
 				yield return sorter.elements [sorter.indexes [i]];
 		}
 	}

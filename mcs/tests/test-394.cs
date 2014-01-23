@@ -70,7 +70,7 @@ using System;
 		 return value.Name + " " + value.Value;
 	 }
 
-	 static void Main ()
+	 public static void Main ()
 	 {
 		 MethodHandler da = MethodSampleA;
 		 MethodHandler db = MethodSampleB;

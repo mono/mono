@@ -259,6 +259,15 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void Parse_Infinity ()
+		{
+			double value;
+			IFormatProvider german = new CultureInfo ("de-DE");
+			var res = double.Parse ("+unendlich", NumberStyles.Float, german);
+			Assert.AreEqual (double.PositiveInfinity, res);
+		}
+
+		[Test]
 		public void TestToString ()
 		{
 			try {

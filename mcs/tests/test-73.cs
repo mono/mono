@@ -15,7 +15,7 @@ public class Concrete : Abstract {
 
 class Test {
 
-	static int Main ()
+	public static int Main ()
 	{
 		Concrete c = new Concrete ();
 

@@ -23,7 +23,7 @@ namespace MonoTests.Mono.Security.Protocol.Ntlm {
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Decode_Null () 
 		{
-			Type3Message msg = new Type3Message (null);
+			Type3Message msg = new Type3Message ((byte[])null);
 		}
 
 		[Test]

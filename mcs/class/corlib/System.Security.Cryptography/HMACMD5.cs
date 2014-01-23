@@ -2,10 +2,11 @@
 // HMACMD5.cs: HMAC implementation using MD5
 //
 // Author:
-//	Sebastien Pouliot  <sebastien@ximian.com>
+//	Sebastien Pouliot  <sebastien@xamarin.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright 2013 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,8 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-#if !MOONLIGHT
 
 using System.Runtime.InteropServices;
 
@@ -52,11 +51,13 @@ namespace System.Security.Cryptography {
 
 		public HMACMD5 (byte[] key) : base ()
 		{
+#if FULL_AOT_RUNTIME
+			SetHash ("MD5", new MD5CryptoServiceProvider ());
+#else
 			HashName = "MD5";
+#endif
 			HashSizeValue = 128;
 			Key = key;
 		}
 	}
 }
-
-#endif

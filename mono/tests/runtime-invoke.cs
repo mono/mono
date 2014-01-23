@@ -133,7 +133,7 @@ class Tests
 	}
 
 	public static int test_0_string_ctor () {
-		string res = (string)typeof (String).GetConstructor (new Type [] { typeof (char[]) }).Invoke (null, new object [] { new char [] { 'A', 'B', 'C' } });
+		string res = (string)typeof (String).GetConstructor (new Type [] { typeof (char[]) }).Invoke (new object [] { new char [] { 'A', 'B', 'C' } });
 		if (res == "ABC")
 			return 0;
 		else
@@ -178,4 +178,75 @@ class Tests
 		//Console.WriteLine (new IntPtr (val));
         return val;
     }
+
+	public static bool pack_u2 (ushort us) {
+		return true;
+	}
+
+	public static bool pack_i2 (short value) {
+		int c = 0;
+		// Force 'value' to be register allocated
+		for (int i = 0; i < value; ++i)
+			c += value;
+	  return value < 0x80;
+	}
+
+	// #11750
+	public static int test_0_i2_u2 () {
+		typeof (Tests).GetMethod ("pack_u2").Invoke (null, new object [] { (ushort)0 });
+		var res = typeof (Tests).GetMethod ("pack_i2").Invoke (null, new object [] { (short)-1 });
+		return (bool)res ? 0 : 1;
+	}
+
+	public static bool pack_bool (bool b) {
+		return true;
+	}
+
+	public static bool pack_i1 (sbyte value) {
+		int c = 0;
+		// Force 'value' to be register allocated
+		for (int i = 0; i < value; ++i)
+			c += value;
+		return value < -1;
+	}
+
+	public static int test_0_i1_bool () {
+		typeof (Tests).GetMethod ("pack_bool").Invoke (null, new object [] { true });
+		var res = typeof (Tests).GetMethod ("pack_i1").Invoke (null, new object [] { (sbyte)-0x40 });
+		return (bool)res ? 0 : 1;
+	}
+
+	struct Point {
+		public int x, y;
+	}
+
+	struct Foo2 {
+		public Point Location {
+			get {
+				return new Point () { x = 10, y = 20 };
+			}
+		}
+	}
+
+	public static int test_0_vtype_method_vtype_ret () {
+		var f = new Foo2 ();
+		var p = (Point)typeof (Foo2).GetMethod ("get_Location").Invoke (f, null);
+		if (p.x != 10 || p.y != 20)
+			return 1;
+		return 0;
+	}
+
+	public static int test_0_array_get_set () {
+		int[,,] arr = new int [10, 10, 10];
+		arr [0, 1, 2] = 42;
+		var gm = arr.GetType ().GetMethod ("Get");
+		int i = (int) gm.Invoke (arr, new object [] { 0, 1, 2 });
+		if (i != 42)
+			return 1;
+		var sm = arr.GetType ().GetMethod ("Set");
+		sm.Invoke (arr, new object [] { 0, 1, 2, 33 });
+		if (arr [0, 1, 2] != 33)
+			return 2;
+		return 0;
+	}
 }

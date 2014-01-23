@@ -2,10 +2,11 @@
 // PKCS12.cs: PKCS 12 - Personal Information Exchange Syntax
 //
 // Author:
-//	Sebastien Pouliot <sebastien@ximian.com>
+//	Sebastien Pouliot  <sebastien@xamarin.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2004,2005,2006 Novell Inc. (http://www.novell.com)
+// Copyright 2013 Xamarin Inc. (http://www.xamarin.com)
 //
 // Key derivation translated from Bouncy Castle JCE (http://www.bouncycastle.org/)
 // See bouncycastle.txt for license.
@@ -184,7 +185,7 @@ namespace Mono.Security.X509 {
 
 			private byte[] Derive (byte[] diversifier, int n) 
 			{
-				HashAlgorithm digest = HashAlgorithm.Create (_hashName);
+				HashAlgorithm digest = PKCS1.CreateFromName (_hashName);
 				int u = (digest.HashSize >> 3); // div 8
 				int v = 64;
 				byte[] dKey = new byte [n];
@@ -265,7 +266,7 @@ namespace Mono.Security.X509 {
 			}
 		}
 
-		static private int recommendedIterationCount = 2000;
+		const int recommendedIterationCount = 2000;
 
 		//private int _version;
 		private byte[] _password;
@@ -649,7 +650,29 @@ namespace Mono.Security.X509 {
 					throw new NotSupportedException ("unknown oid " + algorithm);
 			}
 
-			SymmetricAlgorithm sa = SymmetricAlgorithm.Create (algorithm);
+			SymmetricAlgorithm sa = null;
+#if INSIDE_CORLIB && FULL_AOT_RUNTIME
+			// we do not want CryptoConfig to bring the whole crypto stack
+			// in particular Rijndael which is not supported by CommonCrypto
+			switch (algorithm) {
+			case "DES":
+				sa = DES.Create ();
+				break;
+			case "RC2":
+				sa = RC2.Create ();
+				break;
+			case "TripleDES":
+				sa = TripleDES.Create ();
+				break;
+			case "RC4":
+				sa = RC4.Create ();
+				break;
+			default:
+				throw new NotSupportedException (algorithm);
+			}
+#else
+			sa = SymmetricAlgorithm.Create (algorithm);
+#endif
 			sa.Key = pd.DeriveKey (keyLength);
 			// IV required only for block ciphers (not stream ciphers)
 			if (ivLength > 0) {

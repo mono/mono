@@ -5,7 +5,7 @@ class A
 {
 	public A(TestFunc<int> func) { }
 
-	static void Main ()
+	public static void Main ()
 	{ }
 }
 

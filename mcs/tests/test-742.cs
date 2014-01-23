@@ -17,7 +17,7 @@ public class C
 }
 public class Driver
 {
-	static int Main ()
+	public static int Main ()
 	{
 		var v = Test.Set (new C ());
 		Console.WriteLine (v.Foo);

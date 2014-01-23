@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Collections.Generic;
 using System.Text;
 using Mono.Cecil.Cil;
@@ -57,7 +58,7 @@ namespace Mono.Debugger.Soft
 		static OpCode [] TwoBytesOpCode = new OpCode [0x1e + 1];
 
 		// Adapted from Cecil
-	    List<ILInstruction> ReadCilBody (BinaryReader br, int code_size)
+		List<ILInstruction> ReadCilBody (BinaryReader br, int code_size)
 		{
 			long start = br.BaseStream.Position;
 			ILInstruction last = null;

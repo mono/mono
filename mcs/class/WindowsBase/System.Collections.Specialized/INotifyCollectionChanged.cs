@@ -32,7 +32,6 @@ using System.Runtime.CompilerServices;
 #else
 
 using System;
-using System.Windows;
 
 namespace System.Collections.Specialized {
 

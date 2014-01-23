@@ -11,7 +11,7 @@ class X
                 var = i;
         }
 
-        static void Main ()
+        public static void Main ()
         {
         }
 }

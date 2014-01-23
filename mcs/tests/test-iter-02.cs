@@ -15,7 +15,7 @@ class X {
 		yield return 100;
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		start = 10;
 		end = 30;

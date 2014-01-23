@@ -96,7 +96,7 @@ namespace Mono.CodeContracts.Static.DataStructures {
 			public virtual void VisitAll ()
 			{
 				foreach (Node node in this.graph.Nodes)
-					VisitSubGraphNonRecursive (node);
+					this.VisitSubGraphNonRecursive (node);
 			}
 
 			public void VisitSubGraphNonRecursive (Node node)
@@ -121,41 +121,40 @@ namespace Mono.CodeContracts.Static.DataStructures {
 				}
 			}
 
-			private void VisitEdgeNonRecursive (Info<Node> sourceInfo, Node source, Edge info, Node target)
-			{
-				if (this.edge_visitor != null)
-					this.edge_visitor (source, info, target);
+            private void VisitEdgeNonRecursive(Info<Node> sourceInfo, Node source, Edge info, Node target)
+            {
+                if (!VisitEdgeCommon (sourceInfo, source, info, target))
+                    ScheduleNode (target, source);
+            }
 
-				Info<Node> targetInfo;
-				if (this.history.TryGetValue (target, out targetInfo)) {
-					if (targetInfo.FinishTime != 0)
-						return;
+		    private void VisitEdge (Info<Node> sourceInfo, Node source, Edge info, Node target)
+		    {
+		        if (!VisitEdgeCommon (sourceInfo, source, info, target))
+		            VisitSubGraph (target, source);
+		    }
 
-					targetInfo.TargetOfBackEdge = true;
-					sourceInfo.SourceOfBackEdge = true;
-					this.back_edges.Add (new Tuple<Node, Edge, Node> (source, info, target));
-				} else
-					ScheduleNode (target, source);
-			}
+		    private bool VisitEdgeCommon(Info<Node> sourceInfo, Node source, Edge info, Node target )
+            {
+                if (this.edge_visitor != null)
+                    this.edge_visitor(source, info, target);
 
-			private void VisitEdge (Info<Node> sourceInfo, Node source, Edge info, Node target)
-			{
-				if (this.edge_visitor != null)
-					this.edge_visitor (source, info, target);
+                Info<Node> targetInfo;
+                if (this.history.TryGetValue(target, out targetInfo))
+                {
+                    if (targetInfo.FinishTime != 0)
+                        return true;
 
-				Info<Node> targetInfo;
-				if (this.history.TryGetValue (target, out targetInfo)) {
-					if (targetInfo.FinishTime != 0)
-						return;
+                    targetInfo.TargetOfBackEdge = true;
+                    sourceInfo.SourceOfBackEdge = true;
+                    this.back_edges.Add(new Tuple<Node, Edge, Node>(source, info, target));
 
-					targetInfo.TargetOfBackEdge = true;
-					sourceInfo.SourceOfBackEdge = true;
-					this.back_edges.Add (new Tuple<Node, Edge, Node> (source, info, target));
-				} else
-					VisitSubGraph (target, source);
-			}
+                    return true;
+                }
 
-			public void VisitSubGraph (Node node, Node parent)
+		        return false;
+            }
+
+		    public void VisitSubGraph (Node node, Node parent)
 			{
 				if (this.history.ContainsKey (node))
 					return;

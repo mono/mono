@@ -459,7 +459,7 @@ namespace Mono.Security {
 
 #if INSIDE_CORLIB
 		static object lockObject = new object ();
-		static bool initialized = false;
+		static bool initialized;
 
 		// We don't want a dependency on StrongNameManager in Mono.Security.dll
 		static public bool IsAssemblyStrongnamed (string assemblyName) 

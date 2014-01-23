@@ -14,7 +14,7 @@ class X
 
 	private class NestedPrivate { }
 
-	static void Main () { }
+	public static void Main () { }
 }
 
 public class A : Public { }

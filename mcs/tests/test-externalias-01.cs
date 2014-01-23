@@ -6,7 +6,7 @@ using System;
 
 public class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		if (MyAssembly01::GlobalClass.StaticMethod () != 1)
 			return 1;

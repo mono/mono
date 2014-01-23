@@ -39,12 +39,7 @@ namespace System.Runtime.InteropServices
 	[ComVisible (true)]
 	public sealed class ExtensibleClassFactory
 	{
-		static Hashtable hashtable;
-
-		static ExtensibleClassFactory ()
-		{
-			hashtable = new Hashtable ();
-		}
+		static readonly Hashtable hashtable = new Hashtable ();
 
 		private ExtensibleClassFactory ()
 		{

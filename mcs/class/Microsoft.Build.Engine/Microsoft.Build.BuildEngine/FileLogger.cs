@@ -27,14 +27,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
 using System.IO;
 using System.Text;
 using Microsoft.Build.Framework;
 
-namespace Microsoft.Build.BuildEngine {
+#if MICROSOFT_BUILD_DLL
+namespace Microsoft.Build.Logging
+#else
+namespace Microsoft.Build.BuildEngine
+#endif
+{
 	public class FileLogger : ConsoleLogger {
 		StreamWriter sw;
 		string logfile;
@@ -149,5 +152,3 @@ namespace Microsoft.Build.BuildEngine {
 		}
 	}
 }
-
-#endif

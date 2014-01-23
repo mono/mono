@@ -5,7 +5,7 @@ using System;
 
 class X {
 
-	static void Main ()
+	public static void Main ()
 	{
 		MethodSignature ms = new MethodSignature ("hello", null, null);
 		

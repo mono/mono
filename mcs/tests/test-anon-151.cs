@@ -4,7 +4,7 @@ public delegate void Bla ();
 
 public class Driver
 {
-	static int Main ()
+	public static int Main ()
 	{
 		new Driver().Repro ();
 		return 0;

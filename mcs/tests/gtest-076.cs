@@ -20,7 +20,7 @@ class Test<T>
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		Test<long> test = new Test<long> ();
 		Foo<long> foo = test.GetFoo (0x800);

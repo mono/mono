@@ -40,7 +40,6 @@ namespace System.Xml.Xsl
 	{
 		#region Constructors
 
-#if NET_2_0
 		public XsltCompileException ()
 		{
 		}
@@ -54,7 +53,6 @@ namespace System.Xml.Xsl
 			: base (message, innerException)
 		{
 		}
-#endif
 
 		protected XsltCompileException (SerializationInfo info, StreamingContext context )
 			: base (info, context)
@@ -62,12 +60,8 @@ namespace System.Xml.Xsl
 		}
 
 		public XsltCompileException (Exception inner, String sourceUri, int lineNumber, int linePosition)
-#if NET_2_0
 			: base (lineNumber != 0 ? "{0} at {1}({2},{3}). See InnerException for details." : "{0}.",
 				"XSLT compile error", inner, lineNumber, linePosition, sourceUri)
-#else
-			: base ("{0}{1}({2},{3}) :\n", string.Empty, inner, lineNumber, linePosition, sourceUri)
-#endif
 		{
 		}
 
@@ -75,17 +69,6 @@ namespace System.Xml.Xsl
 			: base (message, innerException, nav)
 		{
 		}
-		#endregion
-
-		#region Properties
-
-#if NET_2_0
-#else
-		public override string Message {
-			get { return base.Message; }
-		}
-#endif
-
 		#endregion
 
 		#region Methods

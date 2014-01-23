@@ -40,7 +40,7 @@ class Derived : Base {
 
 class D {
 
-	static int Main ()
+	public static int Main ()
 	{
 		//
 		// These tests just are compilation tests, the new property code

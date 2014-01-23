@@ -216,7 +216,6 @@ namespace System.Web.DynamicData
 		[MonoTODO]
 		protected virtual void SetUpValidator (BaseValidator validator)
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]

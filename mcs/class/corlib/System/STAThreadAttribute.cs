@@ -33,9 +33,6 @@ using System.Runtime.InteropServices;
 
 namespace System
 {
-#if MOONLIGHT
-	[Obsolete ("STAThreadAttribute is not supported in this release. It has been left in so that legacy tools can be used with this release, but it cannot be used in your code.", true)]
-#endif
 	[AttributeUsage (AttributeTargets.Method)]
 	[ComVisible (true)]
 	public sealed class STAThreadAttribute : Attribute

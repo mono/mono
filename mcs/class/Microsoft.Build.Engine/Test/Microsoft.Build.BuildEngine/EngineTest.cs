@@ -275,6 +275,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void TestBuildProject1 ()
 		{
@@ -305,6 +306,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void TestBuildProjectNull1 ()
 		{
@@ -313,6 +315,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void TestBuildProjectNull2 ()
 		{

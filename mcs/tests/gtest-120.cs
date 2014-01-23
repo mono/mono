@@ -24,7 +24,7 @@ public class Sequenced<T> : ISequenced<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Sequenced<int> s = new Sequenced<int> ();
 		SequencedHasher<Sequenced<int>,int> hasher = new SequencedHasher<Sequenced<int>,int> ();

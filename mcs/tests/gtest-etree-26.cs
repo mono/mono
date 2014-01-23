@@ -22,7 +22,7 @@ class A<TA>
 
 class Program
 {
-	static int Main ()
+	public static int Main ()
 	{
 		A<int>.B<ulong>.foo ();
 		return 0;

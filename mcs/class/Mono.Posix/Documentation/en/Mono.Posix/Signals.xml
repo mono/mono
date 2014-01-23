@@ -1,15 +1,25 @@
 <Type Name="Signals" FullName="Mono.Posix.Signals">
   <TypeSignature Language="C#" Value="public enum Signals" Maintainer="auto" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed Signals extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 79 15 99 77 D2 D0 3A 8E 6B EA 7A 2E 74 E8 D1 AF CC 93 E8 85 19 74 95 2B B4 80 A1 2C 91 34 47 4D 04 06 24 47 C3 7E 0E 68 C0 80 53 6F CF 3C 3F BE 2F F9 C9 79 CE 99 84 75 E5 06 E8 CE 82 DD 5B 0F 35 0D C1 0E 93 BF 2E EE CF 87 4B 24 77 0C 50 81 DB EA 74 47 FD DA FA 27 7B 22 DE 47 D6 FF EA 44 96 74 A4 F9 FC CF 84 D1 50 69 08 93 80 28 4D BD D3 5F 46 CD FF 12 A1 BD 78 E4 EF 00 65 D0 16 DF]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the <link location="node:gtk-sharp/programming/threads">Gtk# Thread Programming</link> for details.</ThreadSafetyStatement>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.CLSCompliant(false)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Obsolete("Use Mono.Unix.Native.Signum")</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>List of available signals.</summary>
     <remarks>
@@ -22,7 +32,13 @@
   <Members>
     <Member MemberName="SIGABRT">
       <MemberSignature Language="C#" Value="SIGABRT" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGABRT = int32(5)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -32,14 +48,16 @@
         <summary>Abort signal from abort</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGALRM">
       <MemberSignature Language="C#" Value="SIGALRM" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGALRM = int32(13)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -49,14 +67,16 @@
         <summary>Timer signal from alarm</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGBUS">
       <MemberSignature Language="C#" Value="SIGBUS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGBUS = int32(6)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -66,14 +86,16 @@
         <summary>Bus error (bad memory access)</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGCHLD">
       <MemberSignature Language="C#" Value="SIGCHLD" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGCHLD = int32(15)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -83,14 +105,16 @@
         <summary>Child stopped or terminated</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGCONT">
       <MemberSignature Language="C#" Value="SIGCONT" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGCONT = int32(16)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -100,14 +124,16 @@
         <summary>Continue if stopped</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGFPE">
       <MemberSignature Language="C#" Value="SIGFPE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGFPE = int32(7)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -117,14 +143,16 @@
         <summary>Floating point exception</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGHUP">
       <MemberSignature Language="C#" Value="SIGHUP" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGHUP = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -134,14 +162,16 @@
         <summary>Hangup detected on controlling terminal or death of controlling process</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGILL">
       <MemberSignature Language="C#" Value="SIGILL" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGILL = int32(3)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -151,14 +181,16 @@
         <summary>Illegal Instruction</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGINT">
       <MemberSignature Language="C#" Value="SIGINT" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGINT = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -168,14 +200,16 @@
         <summary>Interrupt from keyboard</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGIO">
       <MemberSignature Language="C#" Value="SIGIO" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGIO = int32(27)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -185,14 +219,16 @@
         <summary>I/O now possible (4.2 BSD)</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGKILL">
       <MemberSignature Language="C#" Value="SIGKILL" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGKILL = int32(8)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -202,14 +238,16 @@
         <summary>Kill signal</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGPIPE">
       <MemberSignature Language="C#" Value="SIGPIPE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGPIPE = int32(12)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -219,14 +257,16 @@
         <summary>Broken pipe: write to pipe with no readers</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGPROF">
       <MemberSignature Language="C#" Value="SIGPROF" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGPROF = int32(25)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -236,14 +276,16 @@
         <summary>Profiling timer expired</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGQUIT">
       <MemberSignature Language="C#" Value="SIGQUIT" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGQUIT = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -253,14 +295,16 @@
         <summary>Quit from keyboard</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGSEGV">
       <MemberSignature Language="C#" Value="SIGSEGV" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGSEGV = int32(10)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -270,14 +314,16 @@
         <summary> Invalid memory reference</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGSTOP">
       <MemberSignature Language="C#" Value="SIGSTOP" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGSTOP = int32(17)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -287,14 +333,16 @@
         <summary>Stop process</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGSYS">
       <MemberSignature Language="C#" Value="SIGSYS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGSYS = int32(28)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -304,14 +352,16 @@
         <summary>Bad argument to routine (SVID)</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGTERM">
       <MemberSignature Language="C#" Value="SIGTERM" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGTERM = int32(14)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -321,14 +371,16 @@
         <summary>Termination signal</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGTRAP">
       <MemberSignature Language="C#" Value="SIGTRAP" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGTRAP = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -338,14 +390,16 @@
         <summary>Trace/breakpoint trap</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGTSTP">
       <MemberSignature Language="C#" Value="SIGTSTP" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGTSTP = int32(18)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -355,14 +409,16 @@
         <summary>Stop typed at tty</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGTTIN">
       <MemberSignature Language="C#" Value="SIGTTIN" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGTTIN = int32(19)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -372,14 +428,16 @@
         <summary>tty input for background process</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGTTOU">
       <MemberSignature Language="C#" Value="SIGTTOU" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGTTOU = int32(20)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -389,14 +447,16 @@
         <summary>tty output for background process</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGURG">
       <MemberSignature Language="C#" Value="SIGURG" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGURG = int32(21)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -406,14 +466,16 @@
         <summary>Urgent condition on socket (4.2 BSD)</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGUSR1">
       <MemberSignature Language="C#" Value="SIGUSR1" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGUSR1 = int32(9)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -423,14 +485,16 @@
         <summary>User-defined signal 1</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGUSR2">
       <MemberSignature Language="C#" Value="SIGUSR2" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGUSR2 = int32(11)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -440,14 +504,16 @@
         <summary>User-defined signal 2</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGVTALRM">
       <MemberSignature Language="C#" Value="SIGVTALRM" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGVTALRM = int32(24)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -457,14 +523,16 @@
         <summary>Virtual alarm clock (4.2 BSD)</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGWINCH">
       <MemberSignature Language="C#" Value="SIGWINCH" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGWINCH = int32(26)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -474,14 +542,16 @@
         <summary> Window resize signal (4.3 BSD, Sun)</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGXCPU">
       <MemberSignature Language="C#" Value="SIGXCPU" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGXCPU = int32(22)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -491,14 +561,16 @@
         <summary>CPU time limit exceeded (4.2 BSD)</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SIGXFSZ">
       <MemberSignature Language="C#" Value="SIGXFSZ" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Posix.Signals SIGXFSZ = int32(23)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Posix.Signals</ReturnType>
       </ReturnValue>
@@ -508,18 +580,6 @@
         <summary>File size limit exceeded (4.2 BSD)</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Obsolete("Use Mono.Unix.Native.Signum")</AttributeName>
-    </Attribute>
-    <Attribute>
-      <AttributeName>System.CLSCompliant(false)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

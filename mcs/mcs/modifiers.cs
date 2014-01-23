@@ -51,6 +51,7 @@ namespace Mono.CSharp
 		COMPILER_GENERATED		= 0x100000,
 		BACKING_FIELD			= 0x200000,
 		DEBUGGER_HIDDEN			= 0x400000,
+		DEBUGGER_STEP_THROUGH	= 0x800000,
 
 		AccessibilityMask = PUBLIC | PROTECTED | INTERNAL | PRIVATE,
 		AllowedExplicitImplFlags = UNSAFE | EXTERN,
@@ -262,7 +263,7 @@ namespace Mono.CSharp
 				return mod;
 			}
 
-			for (i = 1; i <= (int) Modifiers.TOP; i <<= 1) {
+			for (i = 1; i < (int) Modifiers.TOP; i <<= 1) {
 				if ((i & invalid_flags) == 0)
 					continue;
 

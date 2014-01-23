@@ -9,6 +9,6 @@ namespace A.B {
 	class Tester {
 		internal static Y1 y1 = Y1.x1;
 		internal static Y2 y2 = Y2.x2;
-		static void Main() { }
+		public static void Main() { }
 	}
 }

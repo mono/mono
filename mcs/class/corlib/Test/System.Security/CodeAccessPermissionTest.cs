@@ -54,6 +54,7 @@ namespace MonoTests.System.Security {
 	}
 
 	[TestFixture]
+	[Category ("CAS")]
 	public class CodeAccessPermissionTest {
 
 		[Test]

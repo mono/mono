@@ -23,7 +23,7 @@ namespace GLib {
 			g_object_get (Raw);
 		}
 
-		static int Main ()
+		public static int Main ()
 		{
 			return 0;
 		}

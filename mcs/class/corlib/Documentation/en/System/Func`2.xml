@@ -1,5 +1,6 @@
 <Type Name="Func&lt;T,TResult&gt;" FullName="System.Func&lt;T,TResult&gt;">
-  <TypeSignature Language="C#" Value="public delegate TResult Func&lt;in T,out TResult&gt;(T arg1);" />
+  <TypeSignature Language="C#" Value="public delegate TResult Func&lt;in T,out TResult&gt;(T arg);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed Func`2&lt;- T, + TResult&gt; extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -25,7 +26,7 @@
     </Attribute>
   </Attributes>
   <Parameters>
-    <Parameter Name="arg1" Type="T" />
+    <Parameter Name="arg" Type="T" />
   </Parameters>
   <ReturnValue>
     <ReturnType>TResult</ReturnType>
@@ -33,9 +34,9 @@
   <Docs>
     <typeparam name="T">To be added.</typeparam>
     <typeparam name="TResult">To be added.</typeparam>
-    <param name="arg1">To be added.</param>
+    <param name="arg">To be added.</param>
     <summary>To be added.</summary>
-    <value>To be added.</value>
+    <returns>To be added.</returns>
     <remarks>To be added.</remarks>
   </Docs>
 </Type>

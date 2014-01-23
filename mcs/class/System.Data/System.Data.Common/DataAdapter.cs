@@ -200,9 +200,7 @@ namespace System.Data.Common
 
 		#region Methods
 
-#if !ONLY_1_0
-		[Obsolete ("Use the protected constructor instead", false)]
-#endif
+		[Obsolete ("Use the protected constructor instead")]
 		[MonoTODO]
 		protected virtual DataAdapter CloneInternals ()
 		{
@@ -217,7 +215,6 @@ namespace System.Data.Common
 		[MonoTODO]
 		protected override void Dispose (bool disposing)
 		{
-			throw new NotImplementedException ();
 		}
 
 		protected virtual bool ShouldSerializeTableMappings ()

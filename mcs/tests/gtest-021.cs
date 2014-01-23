@@ -55,7 +55,7 @@ class X
 			Console.WriteLine ("OBJECT: {0} {1}", obj, obj.GetType ());
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		Foo<string> a = new Foo<string> (4);
 		a.Test ();

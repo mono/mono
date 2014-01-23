@@ -5,7 +5,7 @@ struct X : IDisposable {
         {
         }
  
-        static void Main ()
+        public static void Main ()
         {
                 X x = new X ();
                 using (x)

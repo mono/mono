@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using Monodoc;
+using Monodoc.Providers;
 using Mono.Options;
 
 namespace Mono.Documentation {
@@ -90,10 +91,6 @@ public class MDocAssembler : MDocCommand {
 				list.Add (new ManProvider (formats [format].ToArray ()));
 				break;
 
-			case "simple":
-				list.AddRange (formats [format].Select (d => (Provider) new SimpleProvider (d)));
-				break;
-
 			case "error":
 				list.AddRange (formats [format].Select (d => (Provider) new ErrorProvider (d)));
 				break;
@@ -116,7 +113,7 @@ public class MDocAssembler : MDocCommand {
 		}
 
 		if (sort && hs.Tree != null)
-			hs.Tree.Sort ();
+			hs.Tree.RootNode.Sort ();
 			      
 		//
 		// Flushes the EcmaProvider

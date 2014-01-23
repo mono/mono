@@ -1,6 +1,7 @@
 // DataflowBlockOptions.cs
 //
 // Copyright (c) 2011 Jérémie "garuma" Laval
+// Copyright (c) 2012 Petr Onderka
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,18 +20,25 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-//
 
+namespace System.Threading.Tasks.Dataflow {
+	public class DataflowBlockOptions {
+		static readonly DataflowBlockOptions DefaultOptions =
+			new DataflowBlockOptions ();
 
-using System;
-using System.Threading.Tasks;
+		/// <summary>
+		/// Cached default block options
+		/// </summary>
+		internal static DataflowBlockOptions Default {
+			get { return DefaultOptions; }
+		}
 
-namespace System.Threading.Tasks.Dataflow
-{
-	public class DataflowBlockOptions
-	{
-		public readonly static int Unbounded = -1;
+		public const int Unbounded = -1;
+
+		int boundedCapacity;
+		int maxMessagesPerTask;
+		TaskScheduler taskScheduler;
+		string nameFormat;
 
 		public DataflowBlockOptions ()
 		{
@@ -38,27 +46,49 @@ namespace System.Threading.Tasks.Dataflow
 			CancellationToken = CancellationToken.None;
 			MaxMessagesPerTask = -1;
 			TaskScheduler = TaskScheduler.Default;
+			NameFormat = "{0} Id={1}";
 		}
 
 		public int BoundedCapacity {
-			get;
-			set;
+			get { return boundedCapacity; }
+			set {
+				if (value < -1)
+					throw new ArgumentOutOfRangeException("value");
+
+				boundedCapacity = value;
+			}
 		}
 
-		public CancellationToken CancellationToken {
-			get;
-			set;
-		}
+		public CancellationToken CancellationToken { get; set; }
 
 		public int MaxMessagesPerTask {
-			get;
-			set;
+			get { return maxMessagesPerTask; }
+			set {
+				if (value < -1)
+					throw new ArgumentOutOfRangeException("value");
+
+				maxMessagesPerTask = value;
+			}
 		}
 
 		public TaskScheduler TaskScheduler {
-			get;
-			set;
+			get { return taskScheduler; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException("value");
+
+				taskScheduler = value;
+			}
+		}
+
+		public string NameFormat {
+			get { return nameFormat; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException("value");
+
+				nameFormat = value;
+			}
 		}
 	}
 }
-

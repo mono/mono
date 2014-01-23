@@ -27,14 +27,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 
 namespace System.Runtime.InteropServices {
 	[ComVisible (true)]
 	[CLSCompliant (false)]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("7D13DD37-5A04-393C-BBCA-A5FEA802893D")]
+#if !FULL_AOT_RUNTIME
 	[TypeLibImportClass (typeof (SignatureHelper))]
+#endif
 	public interface _SignatureHelper {
 
 		void GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);

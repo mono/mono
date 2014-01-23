@@ -7,5 +7,5 @@ class B : A {
    }
    
 class C : B {
-	static void Main () {}
+	public static void Main () {}
 } 

@@ -1,3 +1,5 @@
+#if !MOBILE
+
 using System;
 using System.Runtime.Serialization;
 using System.IO;
@@ -357,3 +359,4 @@ public abstract class ESObject : INotifyPropertyChanged
     }
 }
 
+#endif

@@ -11,7 +11,7 @@ public class Test : Moo<Test>.Foo
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Moo<Test> moo = new Moo<Test> ();
 	}

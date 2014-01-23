@@ -1,5 +1,5 @@
 //
-// System.Collections.DebuggableAttribute.cs
+// ConditionalAttribute.cs
 //
 // Author:
 //   Nick Drochak II (ndrochak@gol.com)

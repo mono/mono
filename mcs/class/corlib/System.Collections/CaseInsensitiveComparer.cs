@@ -44,8 +44,8 @@ namespace System.Collections
 #endif
 	class CaseInsensitiveComparer : IComparer
 	{
-		private static CaseInsensitiveComparer defaultComparer = new CaseInsensitiveComparer ();
-		private static CaseInsensitiveComparer defaultInvariantComparer = new CaseInsensitiveComparer (true);
+		readonly static CaseInsensitiveComparer defaultComparer = new CaseInsensitiveComparer ();
+		readonly static CaseInsensitiveComparer defaultInvariantComparer = new CaseInsensitiveComparer (true);
 
 		private CultureInfo culture;
 

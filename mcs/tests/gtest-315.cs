@@ -11,7 +11,7 @@ public partial class A<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		A<int> a = new A<int> ();
 		a.Test = new A<int>.B ();

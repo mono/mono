@@ -30,6 +30,13 @@
 
 #if SECURITY_DEP
 
+#if MONOTOUCH
+using Mono.Security.Protocol.Tls;
+#else
+extern alias MonoSecurity;
+using MonoSecurity::Mono.Security.Protocol.Tls;
+#endif
+
 using System.Collections;
 using System.Collections.Specialized;
 using System.Globalization;
@@ -42,7 +49,6 @@ using System.Security.Authentication.ExtendedProtection;
 #if NET_4_5
 using System.Threading.Tasks;
 #endif
-using Mono.Security.Protocol.Tls;
 
 namespace System.Net {
 	public sealed class HttpListenerRequest
@@ -165,7 +171,7 @@ namespace System.Net {
 			if (Uri.MaybeUri (raw_url) && Uri.TryCreate (raw_url, UriKind.Absolute, out raw_uri))
 				path = raw_uri.PathAndQuery;
 			else
-				path = HttpUtility.UrlDecode (raw_url);
+				path = raw_url;
 
 			if ((host == null || host.Length == 0))
 				host = UserHostAddress;
@@ -319,7 +325,7 @@ namespace System.Net {
 				// TODO: test if MS has a timeout when doing this
 				try {
 					IAsyncResult ares = InputStream.BeginRead (bytes, 0, length, null, null);
-					if (!ares.IsCompleted && !ares.AsyncWaitHandle.WaitOne (100))
+					if (!ares.IsCompleted && !ares.AsyncWaitHandle.WaitOne (1000))
 						return false;
 					if (InputStream.EndRead (ares) <= 0)
 						return true;

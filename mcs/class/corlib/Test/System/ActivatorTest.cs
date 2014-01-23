@@ -13,7 +13,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-#if !TARGET_JVM // Reflection.Emit not supported for TARGET_JVM
+#if !TARGET_JVM && !MONOTOUCH // Reflection.Emit not supported for TARGET_JVM
 using System.Reflection.Emit;
 #endif
 using System.Runtime.InteropServices;
@@ -61,6 +61,192 @@ namespace MonoTests.System {
 
 	using MonoTests.System.ActivatorTestInternal;
 
+	class CustomUserType : Type
+	{
+		public override Assembly Assembly
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		public override string AssemblyQualifiedName
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		public override Type BaseType
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		public override string FullName
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		public override Guid GUID
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		protected override TypeAttributes GetAttributeFlagsImpl ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override ConstructorInfo GetConstructorImpl (BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override ConstructorInfo[] GetConstructors (BindingFlags bindingAttr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override Type GetElementType ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override EventInfo GetEvent (string name, BindingFlags bindingAttr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override EventInfo[] GetEvents (BindingFlags bindingAttr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override FieldInfo GetField (string name, BindingFlags bindingAttr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override FieldInfo[] GetFields (BindingFlags bindingAttr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override Type GetInterface (string name, bool ignoreCase)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override Type[] GetInterfaces ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override MemberInfo[] GetMembers (BindingFlags bindingAttr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override MethodInfo GetMethodImpl (string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override MethodInfo[] GetMethods (BindingFlags bindingAttr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override Type GetNestedType (string name, BindingFlags bindingAttr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override Type[] GetNestedTypes (BindingFlags bindingAttr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override PropertyInfo[] GetProperties (BindingFlags bindingAttr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override PropertyInfo GetPropertyImpl (string name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override bool HasElementTypeImpl ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override object InvokeMember (string name, BindingFlags invokeAttr, Binder binder, object target, object[] args, ParameterModifier[] modifiers, CultureInfo culture, string[] namedParameters)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override bool IsArrayImpl ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override bool IsByRefImpl ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override bool IsCOMObjectImpl ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override bool IsPointerImpl ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected override bool IsPrimitiveImpl ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override Module Module
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		public override string Namespace
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		public override Type UnderlyingSystemType
+		{
+			get {
+				return this;
+			}
+		}
+
+		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override object[] GetCustomAttributes (bool inherit)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override bool IsDefined (Type attributeType, bool inherit)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override string Name
+		{
+			get { throw new NotImplementedException (); }
+		}
+	}
+
+
 	[TestFixture]
 	public class ActivatorTest {
 
@@ -78,6 +264,13 @@ namespace MonoTests.System {
 		public void CreateInstance_TypeNull ()
 		{
 			Activator.CreateInstance ((Type)null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CreateInstance_CustomType ()
+		{
+			Activator.CreateInstance (new CustomUserType ());
 		}
 
 		[Test]
@@ -118,7 +311,7 @@ namespace MonoTests.System {
 			Assert.AreEqual (7, objCOMTest.Id, "#A05");
 		}
 
-#if !TARGET_JVM // Reflection.Emit not supported for TARGET_JVM
+#if !TARGET_JVM && !MONOTOUCH // Reflection.Emit not supported for TARGET_JVM
 		[Test]
 		[ExpectedException (typeof (MissingMethodException))]
 		public void CreateInstance_TypeBuilder ()
@@ -223,6 +416,7 @@ namespace MonoTests.System {
 			Activator.GetObject (null, "tcp://localhost:1234/COMTestUri");
 		}
 
+#if !MOBILE
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		[Category ("TargetJvmNotWorking")]
@@ -230,6 +424,7 @@ namespace MonoTests.System {
 		{
 			Activator.GetObject (typeof (COMTest), null);
 		}
+#endif
 
 /* This test is now executed in System.Runtime.Remoting unit tests 
 		[Test]
@@ -261,6 +456,8 @@ namespace MonoTests.System {
 			objHandle.Unwrap ();
 			// TODO: Implement the test methods for all the overriden function using activationAttribute
 		}
+
+#if !MOBILE
 
 		// note: this only ensure that the ECMA key support unification (more test required, outside corlib, for other keys, like MS final).
 		private const string CorlibPermissionPattern = "System.Security.Permissions.FileDialogPermission, mscorlib, Version={0}, Culture=neutral, PublicKeyToken=b77a5c561934e089";
@@ -317,7 +514,7 @@ namespace MonoTests.System {
 		{
 			Assert.IsNull (Type.GetType (String.Format (SystemPermissionPattern, "9.99.999.9999")));
 		}
-
+#endif
 		class foo2<T, U> {}
 		class foo1<T> : foo2<T, int> {}
 
@@ -345,12 +542,18 @@ namespace MonoTests.System {
 			Activator.CreateInstance (AppDomain.CurrentDomain, "mscorlib.dll", "System.Object", false,
 						  BindingFlags.Public | BindingFlags.Instance, null, null, CultureInfo.InvariantCulture,
 						  null, null);
+		}
+
+#if !MONOTOUCH
+		[Test]
+		public void CreateInstanceCustomDomain ()
+		{
 			// FIXME: below works as a standalone case, but does not as a unit test (causes JIT error).
                 	Activator.CreateInstance (AppDomain.CreateDomain ("foo"), "mscorlib.dll", "System.Object", false,
 						  BindingFlags.Public | BindingFlags.Instance, null, null, null,
 						  null, null);
 		}
-
+#endif
 		[Test]
 		public void CreateInstanceCrossDomainNonSerializableArgs ()
 		{

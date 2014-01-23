@@ -15,7 +15,7 @@ class Test
 		return 2;
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		if (Foo (async (string str) => (short) 1) != 2)
 			return 1;

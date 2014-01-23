@@ -54,7 +54,7 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Expressions {
 			return visitor.Isinst (pc, this.Type, dest, this.Argument, data);
 		}
 
-		public override Expr<TSymbolicValue> Substitute (IImmutableMap<TSymbolicValue, LispList<TSymbolicValue>> substitutions)
+		public override Expr<TSymbolicValue> Substitute (IImmutableMap<TSymbolicValue, Sequence<TSymbolicValue>> substitutions)
 		{
 			if (substitutions.ContainsKey (this.Argument))
 				return new IsInstExpr<TSymbolicValue> (substitutions [this.Argument].Head, this.Type);

@@ -43,6 +43,7 @@
 #include <mono/utils/strenc.h>
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/mono-error-internals.h>
+#include <mono/utils/mono-memory-model.h>
 #include "cominterop.h"
 
 #ifdef HAVE_BOEHM_GC
@@ -484,12 +485,17 @@ default_jump_trampoline (MonoDomain *domain, MonoMethod *method, gboolean add_sy
 	return NULL;
 }
 
+#ifndef DISABLE_REMOTING
+
 static gpointer
 default_remoting_trampoline (MonoDomain *domain, MonoMethod *method, MonoRemotingTarget target)
 {
 	g_error ("remoting not installed");
 	return NULL;
 }
+
+static MonoRemotingTrampoline arch_create_remoting_trampoline = default_remoting_trampoline;
+#endif
 
 static gpointer
 default_delegate_trampoline (MonoDomain *domain, MonoClass *klass)
@@ -500,7 +506,6 @@ default_delegate_trampoline (MonoDomain *domain, MonoClass *klass)
 
 static MonoTrampoline arch_create_jit_trampoline = default_trampoline;
 static MonoJumpTrampoline arch_create_jump_trampoline = default_jump_trampoline;
-static MonoRemotingTrampoline arch_create_remoting_trampoline = default_remoting_trampoline;
 static MonoDelegateTrampoline arch_create_delegate_trampoline = default_delegate_trampoline;
 static MonoImtThunkBuilder imt_thunk_builder = NULL;
 #define ARCH_USE_IMT (imt_thunk_builder != NULL)
@@ -532,11 +537,13 @@ mono_install_jump_trampoline (MonoJumpTrampoline func)
 	arch_create_jump_trampoline = func? func: default_jump_trampoline;
 }
 
+#ifndef DISABLE_REMOTING
 void
 mono_install_remoting_trampoline (MonoRemotingTrampoline func) 
 {
 	arch_create_remoting_trampoline = func? func: default_remoting_trampoline;
 }
+#endif
 
 void
 mono_install_delegate_trampoline (MonoDelegateTrampoline func) 
@@ -1304,6 +1311,7 @@ build_imt_slots (MonoClass *klass, MonoVTable *vt, MonoDomain *domain, gpointer*
 		if (mono_class_has_variant_generic_params (iface))
 			has_variant_iface = TRUE;
 
+		mono_class_setup_methods (iface);
 		vt_slot = interface_offset;
 		for (method_slot_in_interface = 0; method_slot_in_interface < iface->method.count; method_slot_in_interface++) {
 			MonoMethod *method;
@@ -1998,21 +2006,23 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class, gboolean
 				gsize default_bitmap [4] = {0};
 				gsize *bitmap;
 				int max_set = 0;
+				int numbits;
 				MonoClass *fclass;
 				if (mono_type_is_reference (field->type)) {
 					default_bitmap [0] = 1;
-					max_set = 1;
+					numbits = 1;
 					bitmap = default_bitmap;
 				} else if (mono_type_is_struct (field->type)) {
 					fclass = mono_class_from_mono_type (field->type);
-					bitmap = compute_class_bitmap (fclass, default_bitmap, sizeof (default_bitmap) * 8, 0, &max_set, FALSE);
+					bitmap = compute_class_bitmap (fclass, default_bitmap, sizeof (default_bitmap) * 8, - (int)(sizeof (MonoObject) / sizeof (gpointer)), &max_set, FALSE);
+					numbits = max_set + 1;
 				} else {
 					default_bitmap [0] = 0;
-					max_set = 0;
+					numbits = 0;
 					bitmap = default_bitmap;
 				}
 				size = mono_type_size (field->type, &align);
-				offset = mono_alloc_special_static_data (special_static, size, align, (uintptr_t*)bitmap, max_set);
+				offset = mono_alloc_special_static_data (special_static, size, align, (uintptr_t*)bitmap, numbits);
 				if (!domain->special_static_fields)
 					domain->special_static_fields = g_hash_table_new (NULL, NULL);
 				g_hash_table_insert (domain->special_static_fields, field, GUINT_TO_POINTER (offset));
@@ -2104,10 +2114,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class, gboolean
 			MONO_GC_REGISTER_ROOT_IF_MOVING(vt->type);
 	}
 
-	if (class->contextbound)
-		vt->remote = 1;
-	else
-		vt->remote = 0;
+	mono_vtable_set_is_remote (vt, mono_class_is_contextbound (class));
 
 	/*  class_vtable_array keeps an array of created vtables
 	 */
@@ -2165,7 +2172,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class, gboolean
 	mono_loader_unlock ();
 
 	/* Initialization is now complete, we can throw if the InheritanceDemand aren't satisfied */
-	if (mono_is_security_manager_active () && (class->exception_type == MONO_EXCEPTION_SECURITY_INHERITANCEDEMAND) && raise_on_error)
+	if (mono_security_enabled () && (class->exception_type == MONO_EXCEPTION_SECURITY_INHERITANCEDEMAND) && raise_on_error)
 		mono_raise_exception (mono_class_get_exception_for_failure (class));
 
 	/* make sure the parent is initialized */
@@ -2176,6 +2183,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class, gboolean
 	return vt;
 }
 
+#ifndef DISABLE_REMOTING
 /**
  * mono_class_proxy_vtable:
  * @domain: the application domain
@@ -2356,6 +2364,8 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 	return pvt;
 }
 
+#endif /* DISABLE_REMOTING */
+
 /**
  * mono_class_field_is_special_static:
  *
@@ -2415,6 +2425,7 @@ mono_class_has_special_static_fields (MonoClass *klass)
 	return FALSE;
 }
 
+#ifndef DISABLE_REMOTING
 /**
  * create_remote_class_key:
  * Creates an array of pointers that can be used as a hash key for a remote class.
@@ -2535,7 +2546,9 @@ mono_remote_class (MonoDomain *domain, MonoString *class_name, MonoClass *proxy_
 	rc->default_vtable = NULL;
 	rc->xdomain_vtable = NULL;
 	rc->proxy_class_name = name;
+#ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->loader_bytes += mono_string_length (class_name) + 1;
+#endif
 
 	g_hash_table_insert (domain->proxy_vtable_hash, key, rc);
 
@@ -2614,9 +2627,11 @@ mono_remote_class_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mon
 		MonoClass *klass;
 		type = ((MonoReflectionType *)rp->class_to_proxy)->type;
 		klass = mono_class_from_mono_type (type);
-		if ((klass->is_com_object || (mono_defaults.com_object_class && klass == mono_defaults.com_object_class)) && !mono_class_vtable (mono_domain_get (), klass)->remote)
+#ifndef DISABLE_COM
+		if ((mono_class_is_com_object (klass) || (mono_class_get_com_object_class () && klass == mono_class_get_com_object_class ())) && !mono_vtable_is_remote (mono_class_vtable (mono_domain_get (), klass)))
 			remote_class->default_vtable = mono_class_proxy_vtable (domain, remote_class, MONO_REMOTING_TARGET_COMINTEROP);
 		else
+#endif
 			remote_class->default_vtable = mono_class_proxy_vtable (domain, remote_class, MONO_REMOTING_TARGET_UNKNOWN);
 	}
 	
@@ -2667,6 +2682,7 @@ mono_upgrade_remote_class (MonoDomain *domain, MonoObject *proxy_object, MonoCla
 	mono_domain_unlock (domain);
 	mono_loader_unlock ();
 }
+#endif /* DISABLE_REMOTING */
 
 
 /**
@@ -2682,16 +2698,16 @@ mono_object_get_virtual_method (MonoObject *obj, MonoMethod *method)
 {
 	MonoClass *klass;
 	MonoMethod **vtable;
-	gboolean is_proxy;
+	gboolean is_proxy = FALSE;
 	MonoMethod *res = NULL;
 
 	klass = mono_object_class (obj);
+#ifndef DISABLE_REMOTING
 	if (klass == mono_defaults.transparent_proxy_class) {
 		klass = ((MonoTransparentProxy *)obj)->remote_class->proxy_class;
 		is_proxy = TRUE;
-	} else {
-		is_proxy = FALSE;
 	}
+#endif
 
 	if (!is_proxy && ((method->flags & METHOD_ATTRIBUTE_FINAL) || !(method->flags & METHOD_ATTRIBUTE_VIRTUAL)))
 			return method;
@@ -2724,6 +2740,7 @@ mono_object_get_virtual_method (MonoObject *obj, MonoMethod *method)
 		}
     }
 
+#ifndef DISABLE_REMOTING
 	if (is_proxy) {
 		/* It may be an interface, abstract class method or generic method */
 		if (!res || mono_method_signature (res)->generic_param_count)
@@ -2734,13 +2751,15 @@ mono_object_get_virtual_method (MonoObject *obj, MonoMethod *method)
 			res = mono_marshal_get_remoting_invoke_with_check (res);
 		else {
 #ifndef DISABLE_COM
-			if (klass == mono_defaults.com_object_class || klass->is_com_object)
+			if (klass == mono_class_get_com_object_class () || mono_class_is_com_object (klass))
 				res = mono_cominterop_get_invoke (res);
 			else
 #endif
 				res = mono_marshal_get_remoting_invoke (res);
 		}
-	} else {
+	} else
+#endif
+	{
 		if (method->is_inflated) {
 			/* Have to inflate the result */
 			res = mono_class_inflate_generic_method (res, &((MonoMethodInflated*)method)->context);
@@ -3160,14 +3179,7 @@ mono_field_get_value_object (MonoDomain *domain, MonoClassField *field, MonoObje
 		is_static = TRUE;
 
 		if (!is_literal) {
-			vtable = mono_class_vtable (domain, field->parent);
-			if (!vtable) {
-				char *name = mono_type_get_full_name (field->parent);
-				/*FIXME extend this to use the MonoError api*/
-				g_warning ("Could not retrieve the vtable for type %s in mono_field_get_value_object", name);
-				g_free (name);
-				return NULL;
-			}
+			vtable = mono_class_vtable_full (domain, field->parent, TRUE);
 			if (!vtable->initialized)
 				mono_runtime_class_init (vtable);
 		}
@@ -3464,6 +3476,44 @@ mono_get_delegate_invoke (MonoClass *klass)
 }
 
 /**
+ * mono_get_delegate_begin_invoke:
+ * @klass: The delegate class
+ *
+ * Returns: the MonoMethod for the "BeginInvoke" method in the delegate klass or NULL if @klass is a broken delegate type
+ */
+MonoMethod *
+mono_get_delegate_begin_invoke (MonoClass *klass)
+{
+	MonoMethod *im;
+
+	/* This is called at runtime, so avoid the slower search in metadata */
+	mono_class_setup_methods (klass);
+	if (klass->exception_type)
+		return NULL;
+	im = mono_class_get_method_from_name (klass, "BeginInvoke", -1);
+	return im;
+}
+
+/**
+ * mono_get_delegate_end_invoke:
+ * @klass: The delegate class
+ *
+ * Returns: the MonoMethod for the "EndInvoke" method in the delegate klass or NULL if @klass is a broken delegate type
+ */
+MonoMethod *
+mono_get_delegate_end_invoke (MonoClass *klass)
+{
+	MonoMethod *im;
+
+	/* This is called at runtime, so avoid the slower search in metadata */
+	mono_class_setup_methods (klass);
+	if (klass->exception_type)
+		return NULL;
+	im = mono_class_get_method_from_name (klass, "EndInvoke", -1);
+	return im;
+}
+
+/**
  * mono_runtime_delegate_invoke:
  * @delegate: pointer to a delegate object.
  * @params: parameters for the delegate.
@@ -3647,7 +3697,7 @@ serialize_object (MonoObject *obj, gboolean *failure, MonoObject **exc)
 		return NULL;
 	}
 
-	g_assert (!mono_object_class (obj)->marshalbyref);
+	g_assert (!mono_class_is_marshalbyref (mono_object_class (obj)));
 
 	params [0] = obj;
 	*exc = NULL;
@@ -3684,6 +3734,7 @@ deserialize_object (MonoObject *obj, gboolean *failure, MonoObject **exc)
 	return result;
 }
 
+#ifndef DISABLE_REMOTING
 static MonoObject*
 make_transparent_proxy (MonoObject *obj, gboolean *failure, MonoObject **exc)
 {
@@ -3697,7 +3748,7 @@ make_transparent_proxy (MonoObject *obj, gboolean *failure, MonoObject **exc)
 	if (!get_proxy_method)
 		get_proxy_method = mono_class_get_method_from_name (mono_defaults.real_proxy_class, "GetTransparentProxy", 0);
 
-	g_assert (obj->vtable->klass->marshalbyref);
+	g_assert (mono_class_is_marshalbyref (obj->vtable->klass));
 
 	real_proxy = (MonoRealProxy*) mono_object_new (domain, mono_defaults.real_proxy_class);
 	reflection_type = mono_type_get_object (domain, &obj->vtable->klass->byval_arg);
@@ -3712,6 +3763,7 @@ make_transparent_proxy (MonoObject *obj, gboolean *failure, MonoObject **exc)
 
 	return (MonoObject*) transparent_proxy;
 }
+#endif /* DISABLE_REMOTING */
 
 /**
  * mono_object_xdomain_representation
@@ -3735,9 +3787,13 @@ mono_object_xdomain_representation (MonoObject *obj, MonoDomain *target_domain, 
 
 	*exc = NULL;
 
-	if (mono_object_class (obj)->marshalbyref) {
+#ifndef DISABLE_REMOTING
+	if (mono_class_is_marshalbyref (mono_object_class (obj))) {
 		deserialized = make_transparent_proxy (obj, &failure, exc);
-	} else {
+	} 
+	else
+#endif
+	{
 		MonoDomain *domain = mono_domain_get ();
 		MonoObject *serialized;
 
@@ -3991,8 +4047,6 @@ mono_runtime_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc)
 	}
 	mono_thread_init_apartment_state ();
 
-	mono_debugger_event (MONO_DEBUGGER_EVENT_REACHED_MAIN, 0, 0);
-
 	/* FIXME: check signature of method */
 	if (mono_method_signature (method)->ret->type == MONO_TYPE_I4) {
 		MonoObject *res;
@@ -4017,8 +4071,6 @@ mono_runtime_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc)
 			mono_environment_exitcode_set (rval);
 		}
 	}
-
-	mono_debugger_event (MONO_DEBUGGER_EVENT_MAIN_EXITED, (guint64) (gsize) rval, 0);
 
 	return rval;
 }
@@ -4183,9 +4235,11 @@ mono_runtime_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 		if (!obj) {
 			obj = mono_object_new (mono_domain_get (), method->klass);
 			g_assert (obj); /*maybe we should raise a TLE instead?*/
+#ifndef DISABLE_REMOTING
 			if (mono_object_class(obj) == mono_defaults.transparent_proxy_class) {
 				method = mono_marshal_get_remoting_invoke (method->slot == -1 ? method : method->klass->vtable [method->slot]);
 			}
+#endif
 			if (method->klass->valuetype)
 				o = mono_object_unbox (obj);
 			else
@@ -4361,7 +4415,7 @@ mono_object_new_specific (MonoVTable *vtable)
 	MONO_ARCH_SAVE_REGS;
 	
 	/* check for is_com_object for COM Interop */
-	if (vtable->remote || vtable->klass->is_com_object)
+	if (mono_vtable_is_remote (vtable) || mono_class_is_com_object (vtable->klass))
 	{
 		gpointer pa [1];
 		MonoMethod *im = vtable->domain->create_proxy_for_type_method;
@@ -4465,7 +4519,7 @@ mono_class_get_allocation_ftn (MonoVTable *vtable, gboolean for_box, gboolean *p
 	if (!(mono_profiler_get_events () & MONO_PROFILE_ALLOCATIONS))
 		profile_allocs = FALSE;
 
-	if (mono_class_has_finalizer (vtable->klass) || vtable->klass->marshalbyref || (mono_profiler_get_events () & MONO_PROFILE_ALLOCATIONS))
+	if (mono_class_has_finalizer (vtable->klass) || mono_class_is_marshalbyref (vtable->klass) || (mono_profiler_get_events () & MONO_PROFILE_ALLOCATIONS))
 		return mono_object_new_specific;
 
 	if (!vtable->klass->has_references) {
@@ -4570,7 +4624,7 @@ mono_array_full_copy (MonoArray *src, MonoArray *dest)
 #ifdef HAVE_SGEN_GC
 	if (klass->element_class->valuetype) {
 		if (klass->element_class->has_references)
-			mono_value_copy_array (dest, 0, mono_array_addr_with_size (src, 0, 0), mono_array_length (src));
+			mono_value_copy_array (dest, 0, mono_array_addr_with_size_fast (src, 0, 0), mono_array_length (src));
 		else
 			mono_gc_memmove (&dest->vector, &src->vector, size);
 	} else {
@@ -4607,7 +4661,7 @@ mono_array_clone_in_domain (MonoDomain *domain, MonoArray *array)
 #ifdef HAVE_SGEN_GC
 		if (klass->element_class->valuetype) {
 			if (klass->element_class->has_references)
-				mono_value_copy_array (o, 0, mono_array_addr_with_size (array, 0, 0), mono_array_length (array));
+				mono_value_copy_array (o, 0, mono_array_addr_with_size_fast (array, 0, 0), mono_array_length (array));
 			else
 				mono_gc_memmove (&o->vector, &array->vector, size);
 		} else {
@@ -4630,7 +4684,7 @@ mono_array_clone_in_domain (MonoDomain *domain, MonoArray *array)
 #ifdef HAVE_SGEN_GC
 	if (klass->element_class->valuetype) {
 		if (klass->element_class->has_references)
-			mono_value_copy_array (o, 0, mono_array_addr_with_size (array, 0, 0), mono_array_length (array));
+			mono_value_copy_array (o, 0, mono_array_addr_with_size_fast (array, 0, 0), mono_array_length (array));
 		else
 			mono_gc_memmove (&o->vector, &array->vector, size);
 	} else {
@@ -4943,7 +4997,7 @@ mono_string_new_len (MonoDomain *domain, const char *text, guint length)
 	guint16 *ut;
 	glong items_written;
 
-	ut = g_utf8_to_utf16 (text, length, NULL, &items_written, &error);
+	ut = eg_utf8_to_utf16_with_nuls (text, length, NULL, &items_written, &error);
 
 	if (!error)
 		o = mono_string_new_utf16 (domain, ut, items_written);
@@ -5109,7 +5163,7 @@ void
 mono_value_copy_array (MonoArray *dest, int dest_idx, gpointer src, int count)
 {
 	int size = mono_array_element_size (dest->obj.vtable->klass);
-	char *d = mono_array_addr_with_size (dest, size, dest_idx);
+	char *d = mono_array_addr_with_size_fast (dest, size, dest_idx);
 	g_assert (size == mono_class_value_size (mono_object_class (dest)->element_class, NULL));
 	mono_gc_wbarrier_value_copy (d, src, count, mono_object_class (dest)->element_class);
 }
@@ -5193,7 +5247,7 @@ mono_object_isinst (MonoObject *obj, MonoClass *klass)
 	if (!klass->inited)
 		mono_class_init (klass);
 
-	if (klass->marshalbyref || (klass->flags & TYPE_ATTRIBUTE_INTERFACE))
+	if (mono_class_is_marshalbyref (klass) || (klass->flags & TYPE_ATTRIBUTE_INTERFACE))
 		return mono_object_isinst_mbyref (obj, klass);
 
 	if (!obj)
@@ -5222,14 +5276,14 @@ mono_object_isinst_mbyref (MonoObject *obj, MonoClass *klass)
 			return obj;
 	} else {
 		MonoClass *oklass = vt->klass;
-		if (oklass == mono_defaults.transparent_proxy_class)
+		if (mono_class_is_transparent_proxy (oklass))
 			oklass = ((MonoTransparentProxy *)obj)->remote_class->proxy_class;
 
 		mono_class_setup_supertypes (klass);	
 		if ((oklass->idepth >= klass->idepth) && (oklass->supertypes [klass->idepth - 1] == klass))
 			return obj;
 	}
-
+#ifndef DISABLE_REMOTING
 	if (vt->klass == mono_defaults.transparent_proxy_class && ((MonoTransparentProxy *)obj)->custom_type_info) 
 	{
 		MonoDomain *domain = mono_domain_get ();
@@ -5254,7 +5308,7 @@ mono_object_isinst_mbyref (MonoObject *obj, MonoClass *klass)
 			return obj;
 		}
 	}
-
+#endif /* DISABLE_REMOTING */
 	return NULL;
 }
 
@@ -5833,23 +5887,18 @@ mono_message_init (MonoDomain *domain,
 	if (!object_array_klass) {
 		MonoClass *klass;
 
-		klass = mono_array_class_get (mono_defaults.object_class, 1);
-		g_assert (klass);
-
-		mono_memory_barrier ();
-		object_array_klass = klass;
-
 		klass = mono_array_class_get (mono_defaults.byte_class, 1);
 		g_assert (klass);
-
-		mono_memory_barrier ();
 		byte_array_klass = klass;
 
 		klass = mono_array_class_get (mono_defaults.string_class, 1);
 		g_assert (klass);
-
-		mono_memory_barrier ();
 		string_array_klass = klass;
+
+		klass = mono_array_class_get (mono_defaults.object_class, 1);
+		g_assert (klass);
+
+		mono_atomic_store_release (&object_array_klass, klass);
 	}
 
 	MONO_OBJECT_SETREF (this, method, method);
@@ -5888,6 +5937,7 @@ mono_message_init (MonoDomain *domain,
 	}
 }
 
+#ifndef DISABLE_REMOTING
 /**
  * mono_remoting_invoke:
  * @real_proxy: pointer to a RealProxy object
@@ -5924,6 +5974,7 @@ mono_remoting_invoke (MonoObject *real_proxy, MonoMethodMessage *msg,
 
 	return mono_runtime_invoke (im, NULL, pa, exc);
 }
+#endif
 
 MonoObject *
 mono_message_invoke (MonoObject *target, MonoMethodMessage *msg, 
@@ -5936,15 +5987,16 @@ mono_message_invoke (MonoObject *target, MonoMethodMessage *msg,
 	MonoObject *ret;
 	int i, j, outarg_count = 0;
 
-	if (target && target->vtable->klass == mono_defaults.transparent_proxy_class) {
-
+#ifndef DISABLE_REMOTING
+	if (target && mono_object_is_transparent_proxy (target)) {
 		MonoTransparentProxy* tp = (MonoTransparentProxy *)target;
-		if (tp->remote_class->proxy_class->contextbound && tp->rp->context == (MonoObject *) mono_context_get ()) {
+		if (mono_class_is_contextbound (tp->remote_class->proxy_class) && tp->rp->context == (MonoObject *) mono_context_get ()) {
 			target = tp->rp->unwrapped_server;
 		} else {
 			return mono_remoting_invoke ((MonoObject *)tp->rp, msg, exc, out_args);
 		}
 	}
+#endif
 
 	domain = mono_domain_get (); 
 	method = msg->method->method;
@@ -5995,6 +6047,7 @@ mono_object_to_string (MonoObject *obj, MonoObject **exc)
 {
 	static MonoMethod *to_string = NULL;
 	MonoMethod *method;
+	void *target = obj;
 
 	g_assert (obj);
 
@@ -6003,7 +6056,12 @@ mono_object_to_string (MonoObject *obj, MonoObject **exc)
 
 	method = mono_object_get_virtual_method (obj, to_string);
 
-	return (MonoString *) mono_runtime_invoke (method, obj, NULL, exc);
+	// Unbox value type if needed
+	if (mono_class_is_valuetype (mono_method_get_class (method))) {
+		target = mono_object_unbox (obj);
+	}
+
+	return (MonoString *) mono_runtime_invoke (method, target, NULL, exc);
 }
 
 /**
@@ -6022,15 +6080,33 @@ mono_print_unhandled_exception (MonoObject *exc)
 
 	if (exc == (MonoObject*)mono_object_domain (exc)->out_of_memory_ex) {
 		message = g_strdup ("OutOfMemoryException");
+		free_message = TRUE;
 	} else {
-		str = mono_object_to_string (exc, NULL);
-		if (str) {
-			message = mono_string_to_utf8_checked (str, &error);
-			if (!mono_error_ok (&error)) {
-				mono_error_cleanup (&error);
-				message = (char *) "";
-			} else {
+		
+		if (((MonoException*)exc)->native_trace_ips) {
+			message = mono_exception_get_native_backtrace ((MonoException*)exc);
+			free_message = TRUE;
+		} else {
+			MonoObject *other_exc = NULL;
+			str = mono_object_to_string (exc, &other_exc);
+			if (other_exc) {
+				char *original_backtrace = mono_exception_get_managed_backtrace ((MonoException*)exc);
+				char *nested_backtrace = mono_exception_get_managed_backtrace ((MonoException*)other_exc);
+				
+				message = g_strdup_printf ("Nested exception detected.\nOriginal Exception: %s\nNested exception:%s\n",
+					original_backtrace, nested_backtrace);
+
+				g_free (original_backtrace);
+				g_free (nested_backtrace);
 				free_message = TRUE;
+			} else if (str) {
+				message = mono_string_to_utf8_checked (str, &error);
+				if (!mono_error_ok (&error)) {
+					mono_error_cleanup (&error);
+					message = (char *) "";
+				} else {
+					free_message = TRUE;
+				}
 			}
 		}
 	}
@@ -6039,7 +6115,7 @@ mono_print_unhandled_exception (MonoObject *exc)
 	 * g_printerr ("\nUnhandled Exception: %s.%s: %s\n", exc->vtable->klass->name_space, 
 	 *	   exc->vtable->klass->name, message);
 	 */
-	g_printerr ("\nUnhandled Exception: %s\n", message);
+	g_printerr ("\nUnhandled Exception:\n%s\n", message);
 	
 	if (free_message)
 		g_free (message);
@@ -6072,16 +6148,15 @@ mono_delegate_ctor_with_method (MonoObject *this, MonoObject *target, gpointer a
 	class = this->vtable->klass;
 	mono_stats.delegate_creations++;
 
+#ifndef DISABLE_REMOTING
 	if (target && target->vtable->klass == mono_defaults.transparent_proxy_class) {
 		g_assert (method);
 		method = mono_marshal_get_remoting_invoke (method);
 		delegate->method_ptr = mono_compile_method (method);
 		MONO_OBJECT_SETREF (delegate, target, target);
-	} else if (method && mono_method_signature (method)->hasthis && method->klass->valuetype) {
-		method = mono_marshal_get_unbox_wrapper (method);
-		delegate->method_ptr = mono_compile_method (method);
-		MONO_OBJECT_SETREF (delegate, target, target);
-	} else {
+	} else
+#endif
+	{
 		delegate->method_ptr = addr;
 		MONO_OBJECT_SETREF (delegate, target, target);
 	}
@@ -6111,7 +6186,7 @@ mono_delegate_ctor (MonoObject *this, MonoObject *target, gpointer addr)
 	if (!ji && domain != mono_get_root_domain ())
 		ji = mono_jit_info_table_find (mono_get_root_domain (), mono_get_addr_from_ftnptr (addr));
 	if (ji) {
-		method = ji->method;
+		method = mono_jit_info_get_method (ji);
 		g_assert (!method->klass->generic_container);
 	}
 
@@ -6228,6 +6303,8 @@ mono_method_return_message_restore (MonoMethod *method, gpointer *params, MonoAr
 	}
 }
 
+#ifndef DISABLE_REMOTING
+
 /**
  * mono_load_remote_field:
  * @this: pointer to an object
@@ -6254,10 +6331,10 @@ mono_load_remote_field (MonoObject *this, MonoClass *klass, MonoClassField *fiel
 	MonoObject *exc;
 	char* full_name;
 
-	g_assert (this->vtable->klass == mono_defaults.transparent_proxy_class);
+	g_assert (mono_object_is_transparent_proxy (this));
 	g_assert (res != NULL);
 
-	if (tp->remote_class->proxy_class->contextbound && tp->rp->context == (MonoObject *) mono_context_get ()) {
+	if (mono_class_is_contextbound (tp->remote_class->proxy_class) && tp->rp->context == (MonoObject *) mono_context_get ()) {
 		mono_field_get_value (tp->rp->unwrapped_server, field, res);
 		return res;
 	}
@@ -6313,11 +6390,11 @@ mono_load_remote_field_new (MonoObject *this, MonoClass *klass, MonoClassField *
 	MonoObject *exc, *res;
 	char* full_name;
 
-	g_assert (this->vtable->klass == mono_defaults.transparent_proxy_class);
+	g_assert (mono_object_is_transparent_proxy (this));
 
 	field_class = mono_class_from_mono_type (field->type);
 
-	if (tp->remote_class->proxy_class->contextbound && tp->rp->context == (MonoObject *) mono_context_get ()) {
+	if (mono_class_is_contextbound (tp->remote_class->proxy_class) && tp->rp->context == (MonoObject *) mono_context_get ()) {
 		gpointer val;
 		if (field_class->valuetype) {
 			res = mono_object_new (domain, field_class);
@@ -6380,11 +6457,11 @@ mono_store_remote_field (MonoObject *this, MonoClass *klass, MonoClassField *fie
 	MonoObject *arg;
 	char* full_name;
 
-	g_assert (this->vtable->klass == mono_defaults.transparent_proxy_class);
+	g_assert (mono_object_is_transparent_proxy (this));
 
 	field_class = mono_class_from_mono_type (field->type);
 
-	if (tp->remote_class->proxy_class->contextbound && tp->rp->context == (MonoObject *) mono_context_get ()) {
+	if (mono_class_is_contextbound (tp->remote_class->proxy_class) && tp->rp->context == (MonoObject *) mono_context_get ()) {
 		if (field_class->valuetype) mono_field_set_value (tp->rp->unwrapped_server, field, val);
 		else mono_field_set_value (tp->rp->unwrapped_server, field, *((MonoObject **)val));
 		return;
@@ -6436,11 +6513,11 @@ mono_store_remote_field_new (MonoObject *this, MonoClass *klass, MonoClassField 
 	MonoObject *exc;
 	char* full_name;
 
-	g_assert (this->vtable->klass == mono_defaults.transparent_proxy_class);
+	g_assert (mono_object_is_transparent_proxy (this));
 
 	field_class = mono_class_from_mono_type (field->type);
 
-	if (tp->remote_class->proxy_class->contextbound && tp->rp->context == (MonoObject *) mono_context_get ()) {
+	if (mono_class_is_contextbound (tp->remote_class->proxy_class) && tp->rp->context == (MonoObject *) mono_context_get ()) {
 		if (field_class->valuetype) mono_field_set_value (tp->rp->unwrapped_server, field, ((gchar *) arg) + sizeof (MonoObject));
 		else mono_field_set_value (tp->rp->unwrapped_server, field, arg);
 		return;
@@ -6464,6 +6541,7 @@ mono_store_remote_field_new (MonoObject *this, MonoClass *klass, MonoClassField 
 
 	if (exc) mono_raise_exception ((MonoException *)exc);
 }
+#endif
 
 /*
  * mono_create_ftnptr:

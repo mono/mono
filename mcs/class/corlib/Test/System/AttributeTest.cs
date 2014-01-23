@@ -12,7 +12,9 @@
 
 using System;
 using System.Reflection;
+#if !MONOTOUCH
 using System.Reflection.Emit;
+#endif
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -85,6 +87,13 @@ namespace MonoTests.System
 
 		class MyDerivedClassNoAttribute : MyClass
 		{
+		}
+
+		internal class AttributeWithTypeId : Attribute
+		{
+			public override object TypeId {
+				get { return this; }
+			}
 		}
 	}
 
@@ -813,6 +822,14 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void IsDefinedForPseudoAttribute ()
+		{			
+			Assert.IsTrue (Attribute.IsDefined (typeof (object), typeof(SerializableAttribute), true), "#1");
+			Assert.IsFalse (Attribute.IsDefined (typeof (AttributeTest), typeof(SerializableAttribute), true), "#2");
+		}
+
+#if !MONOTOUCH
+		[Test]
 		public void GetCustomAttributeOnNewSreTypes ()
 		{
 			AssemblyName assemblyName = new AssemblyName ();
@@ -859,7 +876,7 @@ namespace MonoTests.System
 				Assert.Fail ("#1");
 			} catch (NotSupportedException) {}
 		}
-
+#endif
 		[Test] //Regression test for #499569
 		public void GetCattrOnPropertyAndInheritance ()
 		{
@@ -987,6 +1004,14 @@ namespace MonoTests.System
 
 			MyOwnCustomAttribute b1 = new MyOwnCustomAttribute (null);
 			Assert.AreNotEqual (a1.GetHashCode (), b1.GetHashCode (), "non-identical-types");
+		}
+
+		[Test]
+		public void GetHashCodeWithOverriddenTypeId ()
+		{
+			//check for not throwing stack overflow exception
+			AttributeWithTypeId a = new AttributeWithTypeId ();
+			a.GetHashCode ();
 		}
 	}
 

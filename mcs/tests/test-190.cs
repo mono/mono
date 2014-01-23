@@ -18,6 +18,6 @@ class A
 		}
 	}
 
-	static void Main ()
+	public static void Main ()
 	{ }
 }

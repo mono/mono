@@ -7,7 +7,7 @@
 // (C) 2005 Novell
 //
 
-#if NET_2_0
+#if !MOBILE
 
 using System.Net.Configuration;
 

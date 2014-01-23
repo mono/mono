@@ -40,12 +40,12 @@ namespace Mono.Unix {
 	public class Catalog {
 		private Catalog () {}
 
-		[DllImport("intl")]
+		[DllImport("intl", CallingConvention=CallingConvention.Cdecl)]
 		static extern IntPtr bindtextdomain (IntPtr domainname, IntPtr dirname);
-		[DllImport("intl")]
+		[DllImport("intl", CallingConvention=CallingConvention.Cdecl)]
 		static extern IntPtr bind_textdomain_codeset (IntPtr domainname,
 			IntPtr codeset);
-		[DllImport("intl")]
+		[DllImport("intl", CallingConvention=CallingConvention.Cdecl)]
 		static extern IntPtr textdomain (IntPtr domainname);
 		
 		public static void Init (String package, String localedir)
@@ -91,7 +91,7 @@ namespace Mono.Unix {
 			}
 		}
 	
-		[DllImport("intl")]
+		[DllImport("intl", CallingConvention=CallingConvention.Cdecl)]
 		static extern IntPtr gettext (IntPtr instring);
 		
 		public static String GetString (String s)
@@ -109,7 +109,7 @@ namespace Mono.Unix {
 			}
 		}
 	
-		[DllImport("intl")]
+		[DllImport("intl", CallingConvention=CallingConvention.Cdecl)]
 		static extern IntPtr ngettext (IntPtr singular, IntPtr plural, Int32 n);
 		
 		public static String GetPluralString (String s, String p, Int32 n)

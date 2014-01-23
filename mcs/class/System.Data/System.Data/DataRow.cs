@@ -1365,7 +1365,7 @@ namespace System.Data {
 		/// </summary>
 		public void SetParentRow (DataRow parentRow, DataRelation relation)
 		{
-			if (_table == null || parentRow.Table == null)
+			if (_table == null || (parentRow != null && parentRow.Table == null))
 				throw new RowNotInTableException ("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
 
 			if (parentRow != null && _table.DataSet != parentRow.Table.DataSet)
@@ -1378,10 +1378,13 @@ namespace System.Data {
 			BeginEdit();
 
 			IEnumerable relations;
-			if (relation == null)
-				relations = _table.ParentRelations;
-			else
+			if (relation != null) {
+				if (parentRow != null && relation.ParentColumns [0].Table != parentRow.Table)
+					throw new InvalidConstraintException (string.Format ("Parent belongs to table {0} but relation is for table {1}", parentRow.Table, relation.ParentColumns [0].Table));
 				relations = new DataRelation [] { relation };
+			} else {
+				relations = _table.ParentRelations;
+			}
 
 			foreach (DataRelation rel in relations) {
 				DataColumn [] childCols = rel.ChildColumns;
@@ -1390,7 +1393,7 @@ namespace System.Data {
 				for (int i = 0; i < parentCols.Length; i++) {
 					if (parentRow == null) {
 						childCols [i].DataContainer [Proposed] = DBNull.Value;
-					} else {
+					} else if (parentCols [i].Table == parentRow.Table) {
 						int defaultIdx = parentRow.IndexFromVersion (DataRowVersion.Default);
 						childCols [i].DataContainer.CopyValue(parentCols [i].DataContainer, defaultIdx, Proposed);
 					}

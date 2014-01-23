@@ -1,7 +1,7 @@
 // Compiler options: -unsafe
 
 unsafe class T {
-	static int Main () {
+	public static int Main () {
 		int len = 10;
 		int* x = stackalloc int [len];
 		for (int i = 0; i < len; i++)

@@ -181,6 +181,9 @@ namespace MonoTests.System
 			uri = new Uri ("http://dummy.com");
 			Assert.IsTrue (Uri.TryCreate (relative, UriKind.Relative, out uri), "relative-Relative");
 			Assert.AreEqual (relative, uri.OriginalString, "relative-RelativeOrAbsolute-OriginalString");
+
+			Assert.IsTrue (Uri.TryCreate ("http://mono-project.com/☕", UriKind.Absolute, out uri), "highunicode-Absolute");
+			Assert.AreEqual("http://mono-project.com/%E2%98%95", uri.AbsoluteUri, "highunicode-Absolute-AbsoluteUri");
 		}
 
 		[Test] // TryCreate (String, UriKind, Uri)
@@ -439,6 +442,9 @@ namespace MonoTests.System
 			Uri uri11 = new Uri ("mailto:xxx@xxx.com?subject=hola");
 			Uri uri12 = new Uri ("mailto:xxx@mail.xxx.com?subject=hola");
 			Uri uri13 = new Uri ("mailto:xxx@xxx.com/foo/bar");
+			Uri uri14 = new Uri ("http://www.contoso.com/test1/");
+			Uri uri15 = new Uri ("http://www.contoso.com/");
+			Uri uri16 = new Uri ("http://www.contoso.com/test");
 
 			AssertRelativeUri ("foo/bar/index.htm#fragment", uri1, uri2, "#A");
 			AssertRelativeUri ("../../index.htm?x=2", uri2, uri1, "#B");
@@ -470,6 +476,61 @@ namespace MonoTests.System
 			Assert.IsTrue (relativeUri.IsAbsoluteUri, "#N1");
 			Assert.AreEqual (uri5.ToString (), relativeUri.ToString (), "#N2");
 			Assert.AreEqual (uri5.OriginalString, relativeUri.OriginalString, "#N3");
+
+			AssertRelativeUri ("../", uri14, uri15, "#O");
+			AssertRelativeUri ("./", uri16, uri15, "#P");
+
+			Uri a1 = new Uri ("http://something/something2/test/");
+			Uri a2 = new Uri ("http://something/something2/");
+			Uri a3 = new Uri ("http://something/something2/test");
+			Uri a4 = new Uri ("http://something/something2");
+
+			AssertRelativeUri ("../", a1, a2, "Q1");
+			AssertRelativeUri ("../../something2", a1, a4, "Q2");
+			AssertRelativeUri ("./", a3, a2, "Q3");
+			AssertRelativeUri ("../something2", a3, a4, "Q4");
+
+			Uri b1 = new Uri ("http://something/test/");
+			Uri b2 = new Uri ("http://something/");
+			Uri b3 = new Uri ("http://something/test");
+			Uri b4 = new Uri ("http://something");
+			
+			AssertRelativeUri ("../", b1, b2, "R1");
+			AssertRelativeUri ("../", b1, b4, "R2");
+			AssertRelativeUri ("./", b3, b2, "R3");
+			AssertRelativeUri ("./", b3, b4, "R4");
+
+			Uri c1 = new Uri ("C:\\something\\something2\\test\\");
+			Uri c2 = new Uri ("C:\\something\\something2\\");
+			Uri c3 = new Uri ("C:\\something\\something2\\test");
+			Uri c4 = new Uri ("C:\\something\\something2");
+			
+			AssertRelativeUri ("../", c1, c2, "S1");
+			AssertRelativeUri ("../../something2", c1, c4, "S2");
+			AssertRelativeUri ("./", c3, c2, "S3");
+			AssertRelativeUri ("../something2", c3, c4, "S4");
+
+			Uri d1 = new Uri ("C:\\something\\test\\");
+			Uri d2 = new Uri ("C:\\something\\");
+			Uri d3 = new Uri ("C:\\something\\test");
+			Uri d4 = new Uri ("C:\\something");
+			
+			AssertRelativeUri ("../", d1, d2, "T1");
+			AssertRelativeUri ("../../something", d1, d4, "T2");
+			AssertRelativeUri ("./", d3, d2, "T3");
+			AssertRelativeUri ("../something", d3, d4, "T4");
+
+			Uri e1 = new Uri ("C:\\something\\");
+			Uri e2 = new Uri ("C:\\");
+			Uri e3 = new Uri ("C:\\something");
+			
+			AssertRelativeUri ("../", e1, e2, "U1");
+			AssertRelativeUri ("./", e3, e2, "U2");
+			AssertRelativeUri ("", e1, e1, "U3");
+			AssertRelativeUri ("", e3, e3, "U4");
+			AssertRelativeUri ("../something", e1, e3, "U5");
+			AssertRelativeUri ("something/", e3, e1, "U6");
+			AssertRelativeUri ("something", e2, e3, "U7");
 		}
 
 		[Test]
@@ -623,6 +684,19 @@ namespace MonoTests.System
 							: base(DefaultOptions)
 			{
 			}
+		}
+
+		[Test]
+		public void DomainLabelLength ()
+		{
+			UriHostNameType type = Uri.CheckHostName ("3.141592653589793238462643383279502884197169399375105820974944592.com");
+			Assert.AreEqual (UriHostNameType.Dns, type, "DomainLabelLength#1");
+			type = Uri.CheckHostName ("3141592653589793238462643383279502884197169399375105820974944592.com");
+			Assert.AreEqual (UriHostNameType.Unknown, type, "DomainLabelLength#2");
+			type = Uri.CheckHostName ("3.1415926535897932384626433832795028841971693993751058209749445923.com");
+			Assert.AreEqual (UriHostNameType.Unknown, type, "DomainLabelLength#2");
+			type = Uri.CheckHostName ("3.141592653589793238462643383279502884197169399375105820974944592._om");
+			Assert.AreEqual (UriHostNameType.Unknown, type, "DomainLabelLength#3");
 		}
 	}
 }

@@ -23,8 +23,8 @@ namespace System.IO.Ports
 		const uint GenericWrite = 0x40000000;
 		const uint OpenExisting = 3;
 		const uint FileFlagOverlapped = 0x40000000;
-		const uint PurgeRxClear = 0x0004;
-		const uint PurgeTxClear = 0x0008;
+		const uint PurgeRxClear = 0x0008;
+		const uint PurgeTxClear = 0x0004;
 		const uint WinInfiniteTimeout = 0xFFFFFFFF;
 		const uint FileIOPending = 997;
 
@@ -375,7 +375,7 @@ namespace System.IO.Ports
 
 		public void DiscardOutBuffer ()
 		{
-			if (!PurgeComm (handle, PurgeRxClear))
+			if (!PurgeComm (handle, PurgeTxClear))
 				ReportIOError (null);
 		}
 

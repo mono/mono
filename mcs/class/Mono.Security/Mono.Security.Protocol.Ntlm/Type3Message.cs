@@ -39,28 +39,71 @@ using System.Text;
 
 namespace Mono.Security.Protocol.Ntlm {
 
-	public class Type3Message : MessageBase {
+#if INSIDE_SYSTEM
+	internal
+#else
+	public
+#endif
+	class Type3Message : MessageBase {
 
+		private NtlmAuthLevel _level;
 		private byte[] _challenge;
 		private string _host;
 		private string _domain;
 		private string _username;
 		private string _password;
+		private Type2Message _type2;
 		private byte[] _lm;
 		private byte[] _nt;
-
+		
+		internal const string LegacyAPIWarning = 
+			"Use of this API is highly discouraged, " +
+			"it selects legacy-mode LM/NTLM authentication, which sends " +
+			"your password in very weak encryption over the wire even if " +
+			"the server supports the more secure NTLMv2 / NTLMv2 Session. " +
+			"You need to use the new `Type3Message (Type2Message)' constructor " +
+			"to use the more secure NTLMv2 / NTLMv2 Session authentication modes. " +
+			"These require the Type 2 message from the server to compute the response.";
+		
+		[Obsolete (LegacyAPIWarning)]
 		public Type3Message () : base (3)
 		{
+			if (DefaultAuthLevel != NtlmAuthLevel.LM_and_NTLM)
+				throw new InvalidOperationException (
+					"Refusing to use legacy-mode LM/NTLM authentication " +
+					"unless explicitly enabled using DefaultAuthLevel.");
+
 			// default values
 			_domain = Environment.UserDomainName;
 			_host = Environment.MachineName;
 			_username = Environment.UserName;
+			_level = NtlmAuthLevel.LM_and_NTLM;
 			Flags = (NtlmFlags) 0x8201;
 		}
 
 		public Type3Message (byte[] message) : base (3)
 		{
 			Decode (message);
+		}
+
+		public Type3Message (Type2Message type2) : base (3)
+		{
+			_type2 = type2;
+			_level = DefaultAuthLevel;
+			_challenge = (byte[]) type2.Nonce.Clone ();
+
+			_domain = type2.TargetName;
+			_host = Environment.MachineName;
+			_username = Environment.UserName;
+
+			Flags = (NtlmFlags) 0x8200;
+			if ((type2.Flags & NtlmFlags.NegotiateUnicode) != 0)
+				Flags |= NtlmFlags.NegotiateUnicode;
+			else
+				Flags |= NtlmFlags.NegotiateOem;
+
+			if ((type2.Flags & NtlmFlags.NegotiateNtlm2Key) != 0)
+				Flags |= NtlmFlags.NegotiateNtlm2Key;
 		}
 
 		~Type3Message () 
@@ -73,14 +116,34 @@ namespace Mono.Security.Protocol.Ntlm {
 				Array.Clear (_nt, 0, _nt.Length);
 		}
 
+		// Default auth level
+
+		static NtlmAuthLevel _default = NtlmAuthLevel.LM_and_NTLM_and_try_NTLMv2_Session;
+
+		public static NtlmAuthLevel DefaultAuthLevel {
+			get { return _default; }
+			set { _default = value; }
+		}
+
+		public NtlmAuthLevel Level {
+			get { return _level; }
+			set { _level = value; }
+		}
+		
 		// properties
 
+		[Obsolete (LegacyAPIWarning)]
 		public byte[] Challenge {
 			get { 
 				if (_challenge == null)
 					return null;
 				return (byte[]) _challenge.Clone (); }
 			set { 
+				if ((_type2 != null) || (_level != NtlmAuthLevel.LM_and_NTLM))
+					throw new InvalidOperationException (
+						"Refusing to use legacy-mode LM/NTLM authentication " +
+							"unless explicitly enabled using DefaultAuthLevel.");
+				
 				if (value == null)
 					throw new ArgumentNullException ("Challenge");
 				if (value.Length != 8) {
@@ -135,120 +198,165 @@ namespace Mono.Security.Protocol.Ntlm {
 
 		public byte[] NT {
 			get { return _nt; }
+			set { _nt = value; }
 		}
 
 		// methods
 
-		protected override void Decode (byte[] message) 
+		protected override void Decode (byte[] message)
 		{
 			base.Decode (message);
 
-			if (BitConverterLE.ToUInt16 (message, 56) != message.Length) {
-				string msg = Locale.GetText ("Invalid Type3 message length.");
-				throw new ArgumentException (msg, "message");
-			}
-
 			_password = null;
 
-			int dom_len = BitConverterLE.ToUInt16 (message, 28);
-			int dom_off = 64;
-			_domain = Encoding.Unicode.GetString (message, dom_off, dom_len);
+			if (message.Length >= 64)
+				Flags = (NtlmFlags)BitConverterLE.ToUInt32 (message, 60);
+			else
+				Flags = (NtlmFlags)0x8201;
+			
+			int lm_len = BitConverterLE.ToUInt16 (message, 12);
+			int lm_off = BitConverterLE.ToUInt16 (message, 16);
+			_lm = new byte [lm_len];
+			Buffer.BlockCopy (message, lm_off, _lm, 0, lm_len);
 
-			int host_len = BitConverterLE.ToUInt16 (message, 44);
-			int host_off = BitConverterLE.ToUInt16 (message, 48);
-			_host = Encoding.Unicode.GetString (message, host_off, host_len);
+			int nt_len = BitConverterLE.ToUInt16 (message, 20);
+			int nt_off = BitConverterLE.ToUInt16 (message, 24);
+			_nt = new byte [nt_len];
+			Buffer.BlockCopy (message, nt_off, _nt, 0, nt_len);
+			
+			int dom_len = BitConverterLE.ToUInt16 (message, 28);
+			int dom_off = BitConverterLE.ToUInt16 (message, 32);
+			_domain = DecodeString (message, dom_off, dom_len);
 
 			int user_len = BitConverterLE.ToUInt16 (message, 36);
 			int user_off = BitConverterLE.ToUInt16 (message, 40);
-			_username = Encoding.Unicode.GetString (message, user_off, user_len);
-
-			_lm = new byte [24];
-			int lm_off = BitConverterLE.ToUInt16 (message, 16);
-			Buffer.BlockCopy (message, lm_off, _lm, 0, 24);
+			_username = DecodeString (message, user_off, user_len);
 			
-			_nt = new byte [24];
-			int nt_off = BitConverterLE.ToUInt16 (message, 24);
-			Buffer.BlockCopy (message, nt_off, _nt, 0, 24);
-
-			if (message.Length >= 64)
-				Flags = (NtlmFlags) BitConverterLE.ToUInt32 (message, 60);
+			int host_len = BitConverterLE.ToUInt16 (message, 44);
+			int host_off = BitConverterLE.ToUInt16 (message, 48);
+			_host = DecodeString (message, host_off, host_len);
+			
+			// Session key.  We don't use it yet.
+			// int skey_len = BitConverterLE.ToUInt16 (message, 52);
+			// int skey_off = BitConverterLE.ToUInt16 (message, 56);
 		}
 
-		public override byte[] GetBytes () 
+		string DecodeString (byte[] buffer, int offset, int len)
 		{
-			byte[] domain = Encoding.Unicode.GetBytes (_domain.ToUpper (CultureInfo.InvariantCulture));
-			byte[] user = Encoding.Unicode.GetBytes (_username);
-			byte[] host = Encoding.Unicode.GetBytes (_host.ToUpper (CultureInfo.InvariantCulture));
+			if ((Flags & NtlmFlags.NegotiateUnicode) != 0)
+				return Encoding.Unicode.GetString (buffer, offset, len);
+			else
+				return Encoding.ASCII.GetString (buffer, offset, len);
+		}
 
-			byte[] data = PrepareMessage (64 + domain.Length + user.Length + host.Length + 24 + 24);
+		byte[] EncodeString (string text)
+		{
+			if (text == null)
+				return new byte [0];
+			if ((Flags & NtlmFlags.NegotiateUnicode) != 0)
+				return Encoding.Unicode.GetBytes (text);
+			else
+				return Encoding.ASCII.GetBytes (text);
+		}
+
+		public override byte[] GetBytes ()
+		{
+			byte[] target = EncodeString (_domain);
+			byte[] user = EncodeString (_username);
+			byte[] host = EncodeString (_host);
+
+			byte[] lm, ntlm;
+			if (_type2 == null) {
+				if (_level != NtlmAuthLevel.LM_and_NTLM)
+					throw new InvalidOperationException (
+						"Refusing to use legacy-mode LM/NTLM authentication " +
+							"unless explicitly enabled using DefaultAuthLevel.");
+				
+				using (var legacy = new ChallengeResponse (_password, _challenge)) {
+					lm = legacy.LM;
+					ntlm = legacy.NT;
+				}
+			} else {
+				ChallengeResponse2.Compute (_type2, _level, _username, _password, _domain, out lm, out ntlm);
+			}
+
+			var lmresp_len = lm != null ? lm.Length : 0;
+			var ntresp_len = ntlm != null ? ntlm.Length : 0;
+
+			byte[] data = PrepareMessage (64 + target.Length + user.Length + host.Length + lmresp_len + ntresp_len);
 
 			// LM response
-			short lmresp_off = (short)(64 + domain.Length + user.Length + host.Length);
-			data [12] = (byte) 0x18;
-			data [13] = (byte) 0x00;
-			data [14] = (byte) 0x18;
-			data [15] = (byte) 0x00;
-			data [16] = (byte) lmresp_off;
+			short lmresp_off = (short)(64 + target.Length + user.Length + host.Length);
+			data [12] = (byte)lmresp_len;
+			data [13] = (byte)0x00;
+			data [14] = (byte)lmresp_len;
+			data [15] = (byte)0x00;
+			data [16] = (byte)lmresp_off;
 			data [17] = (byte)(lmresp_off >> 8);
 
 			// NT response
-			short ntresp_off = (short)(lmresp_off + 24);
-			data [20] = (byte) 0x18;
-			data [21] = (byte) 0x00;
-			data [22] = (byte) 0x18;
-			data [23] = (byte) 0x00;
-			data [24] = (byte) ntresp_off;
+			short ntresp_off = (short)(lmresp_off + lmresp_len);
+			data [20] = (byte)ntresp_len;
+			data [21] = (byte)(ntresp_len >> 8);
+			data [22] = (byte)ntresp_len;
+			data [23] = (byte)(ntresp_len >> 8);
+			data [24] = (byte)ntresp_off;
 			data [25] = (byte)(ntresp_off >> 8);
 
-			// domain
-			short dom_len = (short)domain.Length;
+			// target
+			short dom_len = (short)target.Length;
 			short dom_off = 64;
-			data [28] = (byte) dom_len;
+			data [28] = (byte)dom_len;
 			data [29] = (byte)(dom_len >> 8);
 			data [30] = data [28];
 			data [31] = data [29];
-			data [32] = (byte) dom_off;
+			data [32] = (byte)dom_off;
 			data [33] = (byte)(dom_off >> 8);
 
 			// username
 			short uname_len = (short)user.Length;
 			short uname_off = (short)(dom_off + dom_len);
-			data [36] = (byte) uname_len;
+			data [36] = (byte)uname_len;
 			data [37] = (byte)(uname_len >> 8);
 			data [38] = data [36];
 			data [39] = data [37];
-			data [40] = (byte) uname_off;
+			data [40] = (byte)uname_off;
 			data [41] = (byte)(uname_off >> 8);
 
 			// host
 			short host_len = (short)host.Length;
 			short host_off = (short)(uname_off + uname_len);
-			data [44] = (byte) host_len;
+			data [44] = (byte)host_len;
 			data [45] = (byte)(host_len >> 8);
 			data [46] = data [44];
 			data [47] = data [45];
-			data [48] = (byte) host_off;
+			data [48] = (byte)host_off;
 			data [49] = (byte)(host_off >> 8);
 
 			// message length
 			short msg_len = (short)data.Length;
-			data [56] = (byte) msg_len;
+			data [56] = (byte)msg_len;
 			data [57] = (byte)(msg_len >> 8);
 
-			// options flags
-			data [60] = (byte) Flags;
-			data [61] = (byte)((uint)Flags >> 8);
-			data [62] = (byte)((uint)Flags >> 16);
-			data [63] = (byte)((uint)Flags >> 24);
+			int flags = (int)Flags;
 
-			Buffer.BlockCopy (domain, 0, data, dom_off, domain.Length);
+			// options flags
+			data [60] = (byte)flags;
+			data [61] = (byte)((uint)flags >> 8);
+			data [62] = (byte)((uint)flags >> 16);
+			data [63] = (byte)((uint)flags >> 24);
+
+			Buffer.BlockCopy (target, 0, data, dom_off, target.Length);
 			Buffer.BlockCopy (user, 0, data, uname_off, user.Length);
 			Buffer.BlockCopy (host, 0, data, host_off, host.Length);
 
-			using (ChallengeResponse ntlm = new ChallengeResponse (_password, _challenge)) {
-				Buffer.BlockCopy (ntlm.LM, 0, data, lmresp_off, 24);
-				Buffer.BlockCopy (ntlm.NT, 0, data, ntresp_off, 24);
+			if (lm != null) {
+				Buffer.BlockCopy (lm, 0, data, lmresp_off, lm.Length);
+				Array.Clear (lm, 0, lm.Length);
 			}
+			Buffer.BlockCopy (ntlm, 0, data, ntresp_off, ntlm.Length);
+			Array.Clear (ntlm, 0, ntlm.Length);
+
 			return data;
 		}
 	}

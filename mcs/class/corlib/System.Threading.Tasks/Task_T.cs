@@ -27,7 +27,7 @@
 //
 //
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 
 using System.Runtime.CompilerServices;
 
@@ -122,8 +122,8 @@ namespace System.Threading.Tasks
 				throw new ArgumentNullException ("function");
 		}
 
-		internal Task (TaskActionInvoker invoker, object state, CancellationToken cancellationToken, TaskCreationOptions creationOptions, Task parent, Task contAncestor = null)
-			: base (invoker, state, cancellationToken, creationOptions, parent, contAncestor)
+		internal Task (TaskActionInvoker invoker, object state, CancellationToken cancellationToken, TaskCreationOptions creationOptions, Task parent, Task contAncestor = null, bool ignoreCancellation = false)
+			: base (invoker, state, cancellationToken, creationOptions, parent, contAncestor, ignoreCancellation)
 		{
 		}
 
@@ -229,6 +229,31 @@ namespace System.Threading.Tasks
 
 			return true;
 		}
+
+#if NET_4_5
+		public
+#else
+		internal
+#endif
+		Task ContinueWith (Action<Task<TResult>, object> continuationAction, object state, CancellationToken cancellationToken,
+								  TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
+		{
+			if (continuationAction == null)
+				throw new ArgumentNullException ("continuationAction");
+			if (scheduler == null)
+				throw new ArgumentNullException ("scheduler");
+
+			var t = new Task (TaskActionInvoker.Create (continuationAction),
+			                  state,
+			                  cancellationToken,
+			                  GetCreationOptions (continuationOptions),
+			                  null,
+			                  this);
+
+			ContinueWithCore (t, continuationOptions, scheduler);
+
+			return t;
+		}
 		
 #if NET_4_5
 
@@ -250,26 +275,6 @@ namespace System.Threading.Tasks
 		public Task ContinueWith (Action<Task<TResult>, object> continuationAction, object state, TaskScheduler scheduler)
 		{
 			return ContinueWith (continuationAction, state, CancellationToken.None, TaskContinuationOptions.None, scheduler);
-		}
-
-		public Task ContinueWith (Action<Task<TResult>, object> continuationAction, object state, CancellationToken cancellationToken,
-								  TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
-		{
-			if (continuationAction == null)
-				throw new ArgumentNullException ("continuationAction");
-			if (scheduler == null)
-				throw new ArgumentNullException ("scheduler");
-
-			var t = new Task (TaskActionInvoker.Create (continuationAction),
-			                  state,
-			                  cancellationToken,
-			                  GetCreationOptions (continuationOptions),
-			                  null,
-			                  this);
-
-			ContinueWithCore (t, continuationOptions, scheduler);
-
-			return t;
 		}
 
 		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, object, TNewResult> continuationFunction, object state)
@@ -322,6 +327,13 @@ namespace System.Threading.Tasks
 		public new TaskAwaiter<TResult> GetAwaiter ()
 		{
 			return new TaskAwaiter<TResult> (this);
+		}
+
+		internal static Task<TResult> FromException (Exception ex)
+		{
+			var tcs = new TaskCompletionSource<TResult>();
+			tcs.TrySetException (ex);
+			return tcs.Task;
 		}
 #endif
 	}

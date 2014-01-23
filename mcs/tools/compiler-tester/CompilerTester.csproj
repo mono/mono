@@ -84,5 +84,8 @@
     <Compile Include="compiler-tester.cs" />
     <Compile Include="xmldocdiff.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

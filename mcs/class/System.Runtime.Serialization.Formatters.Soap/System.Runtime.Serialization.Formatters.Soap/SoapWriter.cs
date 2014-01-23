@@ -29,6 +29,7 @@
 
 using System;
 using System.IO;
+using System.Threading;
 using System.Reflection;
 using System.Collections;
 using System.Runtime.Remoting;
@@ -198,6 +199,21 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 
 		internal void Serialize (object objGraph, Header[] headers, FormatterTypeStyle typeFormat, FormatterAssemblyStyle assemblyFormat)
 		{
+			CultureInfo savedCi = CultureInfo.CurrentCulture;
+			try {
+				Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+				Serialize_inner (objGraph, headers, typeFormat, assemblyFormat);
+			} finally {
+				Thread.CurrentThread.CurrentCulture = savedCi;
+			}
+
+#if NET_2_0 && !TARGET_JVM
+			_manager.RaiseOnSerializedEvent ();
+#endif
+		}
+
+		void Serialize_inner (object objGraph, Header[] headers, FormatterTypeStyle typeFormat, FormatterAssemblyStyle assemblyFormat)
+		{
 			_typeFormat = typeFormat;
 			_assemblyFormat = assemblyFormat;
 			// Create the XmlDocument with the 
@@ -280,10 +296,6 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			_xmlWriter.WriteFullEndElement(); // the body element
 			_xmlWriter.WriteFullEndElement(); // the envelope element
 			_xmlWriter.Flush();
-
-#if NET_2_0 && !TARGET_JVM
-			_manager.RaiseOnSerializedEvent ();
-#endif
 		}
 		
 		private void WriteObjectQueue ()

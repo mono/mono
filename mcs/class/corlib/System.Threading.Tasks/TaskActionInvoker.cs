@@ -26,7 +26,7 @@
 //
 //
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 
 using System.Threading;
 
@@ -35,6 +35,7 @@ namespace System.Threading.Tasks
 	abstract class TaskActionInvoker
 	{
 		public static readonly TaskActionInvoker Empty = new EmptyTaskActionInvoker ();
+		public static readonly TaskActionInvoker Promise = new EmptyTaskActionInvoker ();
 		public static readonly TaskActionInvoker Delay = new DelayTaskInvoker ();
 		
 		sealed class EmptyTaskActionInvoker : TaskActionInvoker
@@ -132,6 +133,7 @@ namespace System.Threading.Tasks
 
 			public override void Invoke (Task owner, object state, Task context)
 			{
+				owner.TrySetExceptionObserved ();
 				action (tasks);
 			}
 		}
@@ -281,6 +283,7 @@ namespace System.Threading.Tasks
 
 			public override void Invoke (Task owner, object state, Task context)
 			{
+				owner.TrySetExceptionObserved ();
 				((Task<TResult>) context).Result = action (tasks);
 			}
 		}
@@ -288,12 +291,10 @@ namespace System.Threading.Tasks
 		sealed class FuncTaskSelected<TResult> : TaskActionInvoker
 		{
 			readonly Func<Task, TResult> action;
-			readonly Task[] tasks;
 
-			public FuncTaskSelected (Func<Task, TResult> action, Task[] tasks)
+			public FuncTaskSelected (Func<Task, TResult> action)
 			{
 				this.action = action;
-				this.tasks = tasks;
 			}
 
 			public override Delegate Action {
@@ -304,8 +305,8 @@ namespace System.Threading.Tasks
 
 			public override void Invoke (Task owner, object state, Task context)
 			{
-				var result = ((Task<int>) owner).Result;
-				((Task<TResult>) context).Result = action (tasks[result]);
+				var result = ((Task<Task>) owner).Result;
+				((Task<TResult>) context).Result = action (result);
 			}
 		}
 
@@ -469,6 +470,8 @@ namespace System.Threading.Tasks
 			return new FuncTaskObjectInvoke<TResult, TNewResult> (action);
 		}
 
+		#region Used by ContinueWhenAll
+
 		public static TaskActionInvoker Create (Action<Task[]> action, Task[] tasks)
 		{
 			return new ActionTasksInvoke (action, tasks);
@@ -479,16 +482,18 @@ namespace System.Threading.Tasks
 			return new FuncTasksInvoke<TResult> (action, tasks);
 		}
 
-		#region Used by WhenAny
+		#endregion
+
+		#region Used by ContinueWhenAny
 
 		public static TaskActionInvoker CreateSelected (Action<Task> action)
 		{
 			return new ActionTaskSelected (action);
 		}
 
-		public static TaskActionInvoker Create<TResult> (Func<Task, TResult> action, Task[] tasks)
+		public static TaskActionInvoker CreateSelected<TResult> (Func<Task, TResult> action)
 		{
-			return new FuncTaskSelected<TResult> (action, tasks);
+			return new FuncTaskSelected<TResult> (action);
 		}
 
 		#endregion

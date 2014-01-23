@@ -7,7 +7,7 @@ struct Foo {
 }
 
 class Test {
-	static void Main ()
+	public static void Main ()
 	{
 		Foo foo = new Foo ();
 		System.Console.WriteLine (foo.GetHashCode ());

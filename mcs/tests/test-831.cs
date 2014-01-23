@@ -7,7 +7,7 @@ class C
 	{
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

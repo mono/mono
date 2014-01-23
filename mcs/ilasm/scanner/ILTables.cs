@@ -318,6 +318,7 @@ namespace Mono.ILASM {
                                 keywords ["on"] = new ILToken (Token.K_ON, "on");
                                 keywords ["off"] = new ILToken (Token.K_OFF, "off");
 				keywords ["strict"] = new ILToken (Token.K_STRICT, "strict");
+				keywords ["forwarder"] = new ILToken (Token.K_FORWARDER, "forwarder");
 
                                 return keywords;
                         }

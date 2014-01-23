@@ -41,7 +41,7 @@ namespace MonoBug
 			}
 		}
 
-		static int Main ()
+		public static int Main ()
 		{
 			EventHandlers handlers = new EventHandlers ();
 			handlers.Handler = handlers.DoSomethingEventHandler;

@@ -27,7 +27,7 @@ public class Test
 		}
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		Test test = new Test ();
 		Foo foo = test;

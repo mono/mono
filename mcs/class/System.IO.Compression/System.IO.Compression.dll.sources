@@ -1,0 +1,7 @@
+AssemblyInfo.cs
+TypeForwarders.cs
+ZipArchive.cs
+ZipArchiveEntry.cs
+ZipArchiveMode.cs
+../../build/common/Consts.cs
+../../build/common/MonoTODOAttribute.cs

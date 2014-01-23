@@ -36,9 +36,8 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Decoding {
 		public static bool IsNull (E expr, FullExpressionDecoder<V, E> decoder)
 		{
 			VisitorForIsNull<V, E> v = decoder.IsNullVisitor;
-			bool res = Decode (expr, v, decoder);
 
-			return res;
+		    return Decode (expr, v, decoder);
 		}
 
 		public override bool LoadNull (E pc, V dest, Dummy polarity)

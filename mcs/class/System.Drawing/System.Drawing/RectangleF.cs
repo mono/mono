@@ -487,7 +487,7 @@ namespace System.Drawing
 		
 		public bool Contains (RectangleF rect)
 		{
-			return (rect == Intersect (this, rect));
+			return X <= rect.X && Right >= rect.Right && Y <= rect.Y && Bottom >= rect.Bottom;
 		}
 
 		/// <summary>

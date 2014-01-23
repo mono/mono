@@ -41,7 +41,7 @@ public class HashBag<T>: CollectionBase<T>, ICollection<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

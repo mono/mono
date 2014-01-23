@@ -69,7 +69,7 @@ namespace System.Net
 			this.connectionLimit = connectionLimit;
 			this.maxIdleTime = maxIdleTime;			
 			this.currentConnections = 0;
-			this.idleSince = DateTime.Now;
+			this.idleSince = DateTime.UtcNow;
 		}
 		
 		// Properties
@@ -130,11 +130,11 @@ namespace System.Net
 
 		public DateTime IdleSince {
 			get {
-				return idleSince;
+				return idleSince.ToLocalTime ();
 			}
 			internal set {
 				lock (locker)
-					idleSince = value;
+					idleSince = value.ToUniversalTime ();
 			}
 		}
 		
@@ -241,7 +241,7 @@ namespace System.Net
 			get { 
 				return CurrentConnections == 0
 				    && maxIdleTime != Timeout.Infinite
-			            && DateTime.Now >= IdleSince.AddMilliseconds (maxIdleTime);
+			            && DateTime.UtcNow >= IdleSince.AddMilliseconds (maxIdleTime);
 			}
 		}
 
@@ -341,7 +341,7 @@ namespace System.Net
 		{
 			lock (locker) {
 				currentConnections++;
-				idleSince = DateTime.Now.AddMilliseconds (1000000);
+				idleSince = DateTime.UtcNow.AddMilliseconds (1000000);
 			}
 		}
 
@@ -350,7 +350,7 @@ namespace System.Net
 			lock (locker) {
 				currentConnections--;
 				if (currentConnections == 0)
-					idleSince = DateTime.Now;
+					idleSince = DateTime.UtcNow;
 			}
 		}
 

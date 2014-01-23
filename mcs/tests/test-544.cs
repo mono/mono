@@ -4,7 +4,7 @@ enum ByteEnum : byte {
 }
 
 class X {
-	static void Main ()
+	public static void Main ()
 	{
 		ByteEnum b = ByteEnum.One;
 		

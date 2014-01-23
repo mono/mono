@@ -69,11 +69,9 @@ namespace System.Xml
 			}
 		}
 
-#if NET_2_0
 		public override XmlNode ParentNode {
 			get { return base.ParentNode; }
 		}
-#endif
 
 		// Methods
 		public override XmlNode CloneNode (bool deep)

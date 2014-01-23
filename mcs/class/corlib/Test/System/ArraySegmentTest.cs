@@ -260,6 +260,24 @@ namespace MonoTests.System
 			s[1] = -3;
 			Assert.AreEqual (-3, s[1], "#2a");
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void IList_IndexerErrorTest1 ()
+		{
+			byte[] arr = new byte[4];
+			IList<byte> seg = new ArraySegment<byte> (arr, 1, 2);
+			seg[-1] = 3;
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void IList_IndexerErrorTest2 ()
+		{
+			byte[] arr = new byte[4];
+			IList<byte> seg = new ArraySegment<byte> (arr);
+			seg[4] = 3;
+		}
 #endif
 	}
 }

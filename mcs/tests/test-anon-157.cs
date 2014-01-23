@@ -21,7 +21,7 @@ class X<T> : IFoo<T>
 
 class M
 {
-	static void Main ()
+	public static void Main ()
 	{
 		IFoo<int> x = new X<int> ();
 		x.Test ();

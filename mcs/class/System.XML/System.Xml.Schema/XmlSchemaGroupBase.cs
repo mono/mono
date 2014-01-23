@@ -27,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections;
 using System.Xml.Serialization;
 
 namespace System.Xml.Schema
@@ -82,10 +83,10 @@ namespace System.Xml.Schema
 			return true;
 		}
 
-		internal override void CheckRecursion (int depth, ValidationEventHandler h, XmlSchema schema)
+		internal override void CheckRecursion (Stack stack, ValidationEventHandler h, XmlSchema schema)
 		{
 			foreach (XmlSchemaParticle p in this.Items)
-				p.CheckRecursion (depth, h, schema);
+				p.CheckRecursion (stack, h, schema);
 		}
 
 		internal bool ValidateNSRecurseCheckCardinality (XmlSchemaAny any,

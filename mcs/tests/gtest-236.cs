@@ -15,7 +15,7 @@ class Foo<T>
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		Foo<long> foo = new Foo<long> ();
 		Foo<int> bar = new Foo<int> ();

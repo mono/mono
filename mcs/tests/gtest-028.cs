@@ -21,7 +21,7 @@ class X
 		return stack.Test ();
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		Stack<int> stack = new Stack<int> (9);
 		System.Console.WriteLine (Test (stack));

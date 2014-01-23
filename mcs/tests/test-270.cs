@@ -12,7 +12,7 @@ class X
 		return 2;
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		if (Test ("Hello", 1, 2, "World") != 1)
 			return 1;

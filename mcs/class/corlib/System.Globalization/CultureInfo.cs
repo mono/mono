@@ -30,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -44,7 +44,7 @@ namespace System.Globalization
 	{
 		static volatile CultureInfo invariant_culture_info = new CultureInfo (InvariantCultureId, false, true);
 		static object shared_table_lock = new object ();
-		internal static int BootstrapCultureID;
+		static CultureInfo default_current_culture;
 
 #pragma warning disable 169, 649
 		bool m_isReadOnly;
@@ -99,7 +99,7 @@ namespace System.Globalization
 		// Used by Thread.set_CurrentCulture
 		internal byte[] cached_serialized_form;
 		
-		const int InvariantCultureId = 0x7F;
+		internal const int InvariantCultureId = 0x7F;
 		const int CalendarTypeBits = 8;
 
 		const string MSG_READONLY = "This instance is read only";
@@ -124,10 +124,24 @@ namespace System.Globalization
 
 		internal static CultureInfo ConstructCurrentCulture ()
 		{
-			CultureInfo ci = new CultureInfo ();
-			if (!ConstructInternalLocaleFromCurrentLocale (ci))
+			if (default_current_culture != null)
+				return default_current_culture;
+
+			var locale_name = get_current_locale_name ();
+			CultureInfo ci = null;
+			try {
+				ci = CreateSpecificCulture (locale_name);
+			} catch {
+			}
+
+			if (ci == null) {
 				ci = InvariantCulture;
-			BootstrapCultureID = ci.cultureID;
+			} else {
+				ci.m_isReadOnly = true;
+				ci.m_useUserOverride = true;
+			}
+
+			default_current_culture = ci;
 			return ci;
 		}
 
@@ -237,12 +251,6 @@ namespace System.Globalization
 
 		public virtual string Name {
 			get {
-#if MOONLIGHT
-				if (m_name == "zh-CHS")
-					return "zh-Hans";
-				if (m_name == "zh-CHT")
-					return "zh-Hant";
-#endif
 				return(m_name);
 			}
 		}
@@ -285,8 +293,15 @@ namespace System.Globalization
 				if (parent_culture == null) {
 					if (!constructed)
 						Construct ();
-					if (parent_lcid == cultureID)
+					if (parent_lcid == cultureID) {
+						//
+						// Parent lcid is same but culture info is not for legacy zh culture
+						//
+						if (parent_lcid == 0x7C04 && EnglishName.EndsWith (" Legacy", StringComparison.Ordinal))
+							return parent_culture = new CultureInfo ("zh-Hant");
+
 						return null;
+					}
 					
 					if (parent_lcid == InvariantCultureId)
 						parent_culture = InvariantCulture;
@@ -372,7 +387,6 @@ namespace System.Globalization
 			return false;
 		}
 
-#if !MOONLIGHT
 		public static CultureInfo[] GetCultures(CultureTypes types)
 		{
 			bool neutral=((types & CultureTypes.NeutralCultures)!=0);
@@ -389,7 +403,6 @@ namespace System.Globalization
 
 			return infos;
 		}
-#endif
 
 		public override int GetHashCode ()
 		{
@@ -452,7 +465,7 @@ namespace System.Globalization
 
 		internal void CheckNeutral ()
 		{
-#if !MOONLIGHT && !NET_4_0
+#if !NET_4_0
 			if (IsNeutralCulture) {
 				throw new NotSupportedException ("Culture \"" + m_name + "\" is " +
 						"a neutral culture. It can not be used in formatting " +
@@ -536,9 +549,10 @@ namespace System.Globalization
 			}
 		}
 
-		public static CultureInfo InstalledUICulture
-		{
-			get { return GetCultureInfo (BootstrapCultureID); }
+		public static CultureInfo InstalledUICulture {
+			get {
+				return ConstructCurrentCulture ();
+			}
 		}
 
 		public bool IsReadOnly {
@@ -569,24 +583,14 @@ namespace System.Globalization
 			constructed = true;
 		}
 
-		static bool ConstructInternalLocaleFromCurrentLocale (CultureInfo ci)
-		{
-			if (!construct_internal_locale_from_current_locale (ci))
-				return false;
-			return true;
-		}
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern bool construct_internal_locale_from_lcid (int lcid);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern bool construct_internal_locale_from_name (string name);
 
-//		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-//		private extern static bool construct_internal_locale_from_specific_name (CultureInfo ci, string name);
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static bool construct_internal_locale_from_current_locale (CultureInfo ci);
+		private extern static string get_current_locale_name ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static CultureInfo [] internal_get_cultures (bool neutral, bool specific, bool installed);
@@ -679,13 +683,7 @@ namespace System.Globalization
 			}
 
 			if (!construct_internal_locale_from_name (name.ToLowerInvariant ())) {
-#if NET_4_0
-				throw new CultureNotFoundException ("name",
-						"Culture name " + name + " is not supported.");
-#else
-				throw new ArgumentException ("Culture name " + name +
-						" is not supported.", "name");
-#endif
+				throw CreateNotFoundException (name);
 			}
 		}
 
@@ -693,13 +691,14 @@ namespace System.Globalization
 		// current locale so we can initialize the object without
 		// doing any member initialization
 		private CultureInfo () { constructed = true; }
-		static Hashtable shared_by_number, shared_by_name;
+		static Dictionary<int, CultureInfo> shared_by_number;
+		static Dictionary<string, CultureInfo> shared_by_name;
 		
 		static void insert_into_shared_tables (CultureInfo c)
 		{
 			if (shared_by_number == null){
-				shared_by_number = new Hashtable ();
-				shared_by_name = new Hashtable ();
+				shared_by_number = new Dictionary<int, CultureInfo> ();
+				shared_by_name = new Dictionary<string, CultureInfo> ();
 			}
 			shared_by_number [c.cultureID] = c;
 			shared_by_name [c.m_name] = c;
@@ -710,12 +709,11 @@ namespace System.Globalization
 			CultureInfo c;
 			
 			lock (shared_table_lock){
-				if (shared_by_number != null){
-					c = shared_by_number [culture] as CultureInfo;
-
-					if (c != null)
-						return (CultureInfo) c;
+				if (shared_by_number != null) {
+					if (shared_by_number.TryGetValue (culture, out c))
+						return c;
 				}
+
 				c = new CultureInfo (culture, false, true);
 				insert_into_shared_tables (c);
 				return c;
@@ -730,10 +728,8 @@ namespace System.Globalization
 			CultureInfo c;
 			lock (shared_table_lock){
 				if (shared_by_name != null){
-					c = shared_by_name [name] as CultureInfo;
-
-					if (c != null)
-						return (CultureInfo) c;
+					if (shared_by_name.TryGetValue (name, out c))
+						return c;
 				}
 				c = new CultureInfo (name, false, true);
 				insert_into_shared_tables (c);
@@ -792,28 +788,20 @@ namespace System.Globalization
 			if (name.Length == 0)
 				return InvariantCulture;
 
-			CultureInfo ci = null;
-			try {
-				ci = new CultureInfo (name);
-			} catch (Exception) {
-				// TODO: Use construct_internal_locale_from_name when it's not bound to constructor instead
-				// of try-catch
+			var src_name = name;
+			name = name.ToLowerInvariant ();
+			CultureInfo ci = new CultureInfo ();
+
+			if (!ci.construct_internal_locale_from_name (name)) {
 				int idx = name.IndexOf ('-');
-				if (idx > 0) {
-					try {
-						ci = new CultureInfo (name.Substring (0, idx));
-					} catch {
-					}
-				}
-				
-				if (ci == null)
-					throw;
+				if (idx < 1 || !ci.construct_internal_locale_from_name (name.Substring (0, idx)))
+					throw CreateNotFoundException (src_name);
 			}
 
-			if (!ci.IsNeutralCulture)
-				return ci;
+			if (ci.IsNeutralCulture)
+				ci = CreateSpecificCultureFromNeutral (ci.Name);
 
-			return CreateSpecificCultureFromNeutral (ci.Name);
+			return ci;
 		}
 
 		//
@@ -986,20 +974,58 @@ namespace System.Globalization
 
 		static Calendar CreateCalendar (int calendarType)
 		{
+			string name = null;
 			switch (calendarType >> CalendarTypeBits) {
 			case 1:
 				GregorianCalendarTypes greg_type;
 				greg_type = (GregorianCalendarTypes) (calendarType & 0xFF);
 				return new GregorianCalendar (greg_type);
 			case 2:
-				return new ThaiBuddhistCalendar ();
+				name = "System.Globalization.ThaiBuddhistCalendar";
+				break;
 			case 3:
-				return new UmAlQuraCalendar ();
+				name = "System.Globalization.UmAlQuraCalendar";
+				break;
 			case 4:
-				return new HijriCalendar ();
+				name = "System.Globalization.HijriCalendar";
+				break;
 			default:
 				throw new NotImplementedException ("Unknown calendar type: " + calendarType);
 			}
+
+			Type type = Type.GetType (name, false);
+			if (type == null)
+				return CreateCalendar (1 << CalendarTypeBits); // return invariant calandar if not found
+			return (Calendar) Activator.CreateInstance (type);
 		}
+
+		static Exception CreateNotFoundException (string name)
+		{
+#if NET_4_0
+			return new CultureNotFoundException ("name", "Culture name " + name + " is not supported.");
+#else
+			return new ArgumentException ("Culture name " + name + " is not supported.", "name");
+#endif
+		}
+		
+#if NET_4_5
+		public static CultureInfo DefaultThreadCurrentCulture {
+			get {
+				return Thread.default_culture;
+			}
+			set {
+				Thread.default_culture = value;
+			}
+		}
+		
+		public static CultureInfo DefaultThreadCurrentUICulture {
+			get {
+				return Thread.default_ui_culture;
+			}
+			set {
+				Thread.default_ui_culture = value;
+			}
+		}
+#endif
 	}
 }

@@ -35,7 +35,7 @@ namespace Mono.CSharp
 	// This includes properties, indexers, and events
 	public abstract class PropertyBasedMember : InterfaceMemberBase
 	{
-		public PropertyBasedMember (TypeDefinition parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, MemberName name, Attributes attrs)
+		protected PropertyBasedMember (TypeDefinition parent, FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, MemberName name, Attributes attrs)
 			: base (parent, type, mod, allowed_mod, name, attrs)
 		{
 		}
@@ -174,9 +174,9 @@ namespace Mono.CSharp
 			return ps;
 		}
 
-		public override List<TypeSpec> ResolveMissingDependencies ()
+		public override List<MissingTypeSpecReference> ResolveMissingDependencies (MemberSpec caller)
 		{
-			return memberType.ResolveMissingDependencies ();
+			return memberType.ResolveMissingDependencies (this);
 		}
 	}
 
@@ -201,14 +201,14 @@ namespace Mono.CSharp
 			{
 				base.Define (parent);
 
-				Spec = new MethodSpec (MemberKind.Method, parent.PartialContainer.Definition, this, ReturnType, null, ParameterInfo, ModFlags);
+				Spec = new MethodSpec (MemberKind.Method, parent.PartialContainer.Definition, this, ReturnType, ParameterInfo, ModFlags);
 
 				method_data = new MethodData (method, ModFlags, flags, this);
 
 				if (!method_data.Define (parent.PartialContainer, method.GetFullName (MemberName)))
 					return null;
 
-				Spec.SetMetaInfo (method_data.MethodBuilder);
+				method_data.DefineMethodBuilder (parent.PartialContainer, ParameterInfo);
 
 				return method_data.MethodBuilder;
 			}
@@ -253,7 +253,7 @@ namespace Mono.CSharp
 					return;
 				}
 
-				base.ApplyAttributeBuilder (a, ctor, cdata, pa);
+				base.ApplyToExtraTarget (a, ctor, cdata, pa);
 			}
 
 			public override ParametersCompiled ParameterInfo {
@@ -268,14 +268,14 @@ namespace Mono.CSharp
 				
 				base.Define (parent);
 
-				Spec = new MethodSpec (MemberKind.Method, parent.PartialContainer.Definition, this, ReturnType, null, ParameterInfo, ModFlags);
+				Spec = new MethodSpec (MemberKind.Method, parent.PartialContainer.Definition, this, ReturnType, ParameterInfo, ModFlags);
 
 				method_data = new MethodData (method, ModFlags, flags, this);
 
 				if (!method_data.Define (parent.PartialContainer, method.GetFullName (MemberName)))
 					return null;
 
-				Spec.SetMetaInfo (method_data.MethodBuilder);
+				method_data.DefineMethodBuilder (parent.PartialContainer, ParameterInfo);
 
 				return method_data.MethodBuilder;
 			}
@@ -408,7 +408,7 @@ namespace Mono.CSharp
 		PropertyMethod get, set, first;
 		PropertyBuilder PropertyBuilder;
 
-		public PropertyBase (TypeDefinition parent, FullNamedExpression type, Modifiers mod_flags, Modifiers allowed_mod, MemberName name, Attributes attrs)
+		protected PropertyBase (TypeDefinition parent, FullNamedExpression type, Modifiers mod_flags, Modifiers allowed_mod, MemberName name, Attributes attrs)
 			: base (parent, type, mod_flags, allowed_mod, name, attrs)
 		{
 		}
@@ -735,6 +735,10 @@ namespace Mono.CSharp
 			}
 		}
 
+		static readonly string[] attribute_target_auto = new string[] { "property", "field" };
+
+		Field backing_field;
+
 		public Property (TypeDefinition parent, FullNamedExpression type, Modifiers mod,
 				 MemberName name, Attributes attrs)
 			: base (parent, type, mod,
@@ -749,19 +753,28 @@ namespace Mono.CSharp
 		{
 			visitor.Visit (this);
 		}
-		
+
+		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
+		{
+			if (a.Target == AttributeTargets.Field) {
+				backing_field.ApplyAttributeBuilder (a, ctor, cdata, pa);
+				return;
+			}
+
+			base.ApplyAttributeBuilder (a, ctor, cdata, pa);
+		}
 
 		void CreateAutomaticProperty ()
 		{
 			// Create backing field
-			Field field = new BackingField (this);
-			if (!field.Define ())
+			backing_field = new BackingField (this);
+			if (!backing_field.Define ())
 				return;
 
-			Parent.PartialContainer.Members.Add (field);
+			Parent.PartialContainer.Members.Add (backing_field);
 
-			FieldExpr fe = new FieldExpr (field, Location);
-			if ((field.ModFlags & Modifiers.STATIC) == 0)
+			FieldExpr fe = new FieldExpr (backing_field, Location);
+			if ((backing_field.ModFlags & Modifiers.STATIC) == 0)
 				fe.InstanceExpression = new CompilerGeneratedThis (Parent.CurrentType, Location);
 
 			//
@@ -825,6 +838,13 @@ namespace Mono.CSharp
 			}
 
 			base.Emit ();
+		}
+
+		public override string[] ValidAttributeTargets {
+			get {
+				return Get != null && ((Get.ModFlags & Modifiers.COMPILER_GENERATED) != 0) ?
+					attribute_target_auto : base.ValidAttributeTargets;
+			}
 		}
 	}
 
@@ -943,8 +963,7 @@ namespace Mono.CSharp
 
 				var cond = new BooleanExpression (new Binary (Binary.Operator.Inequality,
 					new Cast (new TypeExpression (Module.Compiler.BuiltinTypes.Object, Location), new LocalVariableReference (obj1, Location), Location),
-					new Cast (new TypeExpression (Module.Compiler.BuiltinTypes.Object, Location), new LocalVariableReference (obj2, Location), Location),
-					Location));
+					new Cast (new TypeExpression (Module.Compiler.BuiltinTypes.Object, Location), new LocalVariableReference (obj2, Location), Location)));
 
 				var body = new ExplicitBlock (block, Location, Location);
 				block.AddStatement (new Do (body, cond, Location, Location));
@@ -1172,7 +1191,7 @@ namespace Mono.CSharp
 					return;
 				}
 
-				base.ApplyAttributeBuilder (a, ctor, cdata, pa);
+				base.ApplyToExtraTarget (a, ctor, cdata, pa);
 			}
 
 			public override AttributeTargets AttributeTargets {
@@ -1199,15 +1218,15 @@ namespace Mono.CSharp
 				if (!method_data.Define (parent.PartialContainer, method.GetFullName (MemberName)))
 					return null;
 
+				method_data.DefineMethodBuilder (parent.PartialContainer, ParameterInfo);
+
 				if (Compiler.Settings.WriteMetadataOnly)
 					block = null;
 
-				MethodBuilder mb = method_data.MethodBuilder;
-
-				Spec = new MethodSpec (MemberKind.Method, parent.PartialContainer.Definition, this, ReturnType, mb, ParameterInfo, method.ModFlags);
+				Spec = new MethodSpec (MemberKind.Method, parent.PartialContainer.Definition, this, ReturnType, ParameterInfo, method.ModFlags);
 				Spec.IsAccessor = true;
 
-				return mb;
+				return method_data.MethodBuilder;
 			}
 
 			public override TypeSpec ReturnType {
@@ -1428,9 +1447,9 @@ namespace Mono.CSharp
 			return es;
 		}
 
-		public override List<TypeSpec> ResolveMissingDependencies ()
+		public override List<MissingTypeSpecReference> ResolveMissingDependencies (MemberSpec caller)
 		{
-			return MemberType.ResolveMissingDependencies ();
+			return MemberType.ResolveMissingDependencies (this);
 		}
 	}
  
@@ -1702,16 +1721,17 @@ namespace Mono.CSharp
 			return spec;
 		}
 
-		public override List<TypeSpec> ResolveMissingDependencies ()
+		public override List<MissingTypeSpecReference> ResolveMissingDependencies (MemberSpec caller)
 		{
-			var missing = base.ResolveMissingDependencies ();
+			var missing = base.ResolveMissingDependencies (caller);
+
 			foreach (var pt in parameters.Types) {
-				var m = pt.GetMissingDependencies ();
+				var m = pt.GetMissingDependencies (caller);
 				if (m == null)
 					continue;
 
 				if (missing == null)
-					missing = new List<TypeSpec> ();
+					missing = new List<MissingTypeSpecReference> ();
 
 				missing.AddRange (m);
 			}

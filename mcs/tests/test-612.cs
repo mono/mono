@@ -347,7 +347,7 @@ public class XXX
 	    return false;
 	}
 
-    static void Main ()
+    public static void Main ()
     {
     }
     

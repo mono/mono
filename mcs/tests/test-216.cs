@@ -25,7 +25,7 @@ class cls
 
 class MonoEmbed 
 {
-	static void Main() 
+	public static void Main() 
 	{
 		cls c = new cls();
 		c.OnWhatever += new OnWhateverDelegate( Whatever );

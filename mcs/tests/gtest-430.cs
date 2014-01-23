@@ -12,7 +12,7 @@ public class Driver
 		get { return tmp != null ? tmp.stuff : (int?)null; }
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		int? r = new Driver().Prop;
 		Console.WriteLine (r);

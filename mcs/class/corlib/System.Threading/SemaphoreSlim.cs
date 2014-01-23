@@ -24,8 +24,11 @@
 
 using System;
 using System.Diagnostics;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 namespace System.Threading
 {
 	[System.Diagnostics.DebuggerDisplayAttribute ("Current Count = {currCount}")]
@@ -51,7 +54,7 @@ namespace System.Threading
 
 			this.maxCount = maxCount;
 			this.currCount = initialCount;
-			this.handle = new ManualResetEvent (initialCount == 0);
+			this.handle = new ManualResetEvent (initialCount > 0);
 		}
 
 		public void Dispose ()
@@ -168,9 +171,11 @@ namespace System.Threading
 					if (stopCondition ())
 						return false;
 
-					if (wait.Count > spinCount)
-						handle.WaitOne (Math.Min (Math.Max (millisecondsTimeout - (int)sw.ElapsedMilliseconds, 1), deepSleepTime));
-					else
+					if (wait.Count > spinCount) {
+						int timeout = millisecondsTimeout < 0 ? deepSleepTime :
+							Math.Min (Math.Max (millisecondsTimeout - (int)sw.ElapsedMilliseconds, 1), deepSleepTime);
+						handle.WaitOne (timeout);
+					} else
 						wait.SpinOnce ();
 				}
 			} while (true);
@@ -183,6 +188,39 @@ namespace System.Threading
 				return handle;
 			}
 		}
+
+#if NET_4_5
+		public Task WaitAsync ()
+		{
+			return Task.Factory.StartNew (() => Wait ());
+		}
+
+		public Task WaitAsync (CancellationToken cancellationToken)
+		{
+			return Task.Factory.StartNew (() => Wait (cancellationToken), cancellationToken);
+		}
+
+		public Task<bool> WaitAsync (int millisecondsTimeout)
+		{
+			return Task.Factory.StartNew (() => Wait (millisecondsTimeout));
+		}
+
+		public Task<bool> WaitAsync (TimeSpan timeout)
+		{
+			return Task.Factory.StartNew (() => Wait (timeout));
+		}
+
+		public Task<bool> WaitAsync (int millisecondsTimeout, CancellationToken cancellationToken)
+		{
+			return Task.Factory.StartNew (() => Wait (millisecondsTimeout, cancellationToken), cancellationToken);
+		}
+
+		public Task<bool> WaitAsync (TimeSpan timeout, CancellationToken cancellationToken)
+		{
+			return Task.Factory.StartNew (() => Wait (timeout, cancellationToken), cancellationToken);
+		}
+#endif
+
 	}
 }
 #endif

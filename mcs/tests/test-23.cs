@@ -21,7 +21,7 @@ class X {
 		}
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		if (Value != 10)
 			return 1;

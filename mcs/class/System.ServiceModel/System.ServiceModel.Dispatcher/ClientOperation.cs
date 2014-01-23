@@ -150,11 +150,7 @@ namespace System.ServiceModel.Dispatcher
 			get { return name; }
 		}
 
-#if MOONLIGHT
-		public IList<IParameterInspector> ParameterInspectors {
- #else
 		public SynchronizedCollection<IParameterInspector> ParameterInspectors {
-#endif
 			get { return inspectors; }
 		}
 
@@ -189,21 +185,25 @@ namespace System.ServiceModel.Dispatcher
 			}
 			throw new InvalidOperationException ("Cannot change this property after the service host is opened");
 		}
-		
-#if MOONLIGHT
-		// introduced for silverlight sdk compatibility
-		internal bool IsFaultFormatterSetExplicit {
+
+#if NET_4_5
+		[MonoTODO]
+		public ICollection<IParameterInspector> ClientParameterInspectors {
 			get { throw new NotImplementedException (); }
 		}
-		// introduced for silverlight sdk compatibility
-		internal SynchronizedCollection<FaultContractInfo> FaultContractInfos {
+
+		[MonoTODO]
+		public MethodInfo TaskMethod {
 			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
-		// introduced for silverlight sdk compatibility
-		internal IClientFaultFormatter FaultFormatter {
+
+		[MonoTODO]
+		public Type TaskTResult {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 #endif
+		
 	}
 }

@@ -7,7 +7,7 @@ struct Rect {
 }
 
 class X {
-        static int Main ()
+        public static int Main ()
         {
                 Rect rect = new Rect ();
                 rect.X += 20;

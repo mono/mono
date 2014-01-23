@@ -41,17 +41,19 @@ namespace System.Drawing {
 		private const int Error_Hand = 2;
 		private const int Exclamation_Warning = 3;
 		private const int Question_ = 4;
+		private const int Shield_ = 5;
 
 		static SystemIcons ()
 		{
 			// we minimize the # of icons to load since most of them are duplicates
-			icons = new Icon [5];
+			icons = new Icon [6];
 			// we use an internal .ctor to ensure the SystemIcons can't de disposed
 			icons [Application_Winlogo] = new Icon ("Mono.ico", true);
 			icons [Asterisk_Information] = new Icon ("Information.ico", true);
 			icons [Error_Hand] = new Icon ("Error.ico", true);
 			icons [Exclamation_Warning] = new Icon ("Warning.ico", true);
 			icons [Question_] = new Icon ("Question.ico", true);
+			icons [Shield_] = new Icon ("Shield.ico", true);
 		}
 
 		private SystemIcons ()
@@ -100,6 +102,10 @@ namespace System.Drawing {
 		// note: same as Application (for Mono)
 		public static Icon WinLogo {
 			get { return icons [Application_Winlogo]; }
+		}
+
+		public static Icon Shield {
+			get { return icons [Shield_]; }
 		}
 	}
 }

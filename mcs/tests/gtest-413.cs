@@ -10,7 +10,7 @@ struct S
 
 class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		int? n = 1;
 		S f = new S ();

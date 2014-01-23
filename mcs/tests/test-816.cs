@@ -8,7 +8,7 @@ namespace System
 
 	class Program
 	{
-		static int Main ()
+		public static int Main ()
 		{
 			System.AppDomain.CurrentDomain.TypeResolve += new ResolveEventHandler (CurrentDomain_TypeResolve);
 			System.Type intType = System.Type.GetType ("System.Int32");

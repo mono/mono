@@ -1,4 +1,4 @@
-// CS1061: Type `int' does not contain a definition for `Value' and no extension method `Value' of type `int' could be found (are you missing a using directive or an assembly reference?)
+// CS1061: Type `int' does not contain a definition for `Value' and no extension method `Value' of type `int' could be found. Are you missing an assembly reference?
 // Line: 24
 
 using System;

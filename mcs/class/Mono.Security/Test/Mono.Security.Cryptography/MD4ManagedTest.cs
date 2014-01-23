@@ -32,7 +32,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 		{
 			// try creating ourselve using Create
 			HashAlgorithm h = MD4.Create ("MD4Managed");
-			Assert ("MD4Managed", (h is MD4Managed));
+			Assert.IsTrue ((h is MD4Managed), "MD4Managed");
 		}
 	}
 }

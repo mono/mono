@@ -28,7 +28,9 @@
 
 using System;
 using System.Reflection;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 
 namespace System.Linq.Expressions {
 
@@ -56,6 +58,7 @@ namespace System.Linq.Expressions {
 			return ExpressionPrinter.ToString (this);
 		}
 
+#if !FULL_AOT_RUNTIME
 		internal abstract void Emit (EmitContext ec, LocalBuilder local);
 
 		internal LocalBuilder EmitLoadMember (EmitContext ec, LocalBuilder local)
@@ -86,5 +89,6 @@ namespace System.Linq.Expressions {
 			ec.ig.Emit (OpCodes.Stloc, store);
 			return store;
 		}
+#endif
 	}
 }

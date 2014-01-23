@@ -24,7 +24,7 @@ class G<T>
 	{
 		T[] a = new T[] { t };
 		return Call (t, a[0], out t,
-			await Task.Factory.StartNew (() => 3));
+			await Task.Factory.StartNew (() => 3).ConfigureAwait (false));
 	}
 	
 	int Call (T t1, T t2, out T t3, int i)
@@ -74,7 +74,7 @@ class C
 		int v = 9;
 		var array = new ulong[] { ulong.MaxValue };
 		return new C ().TestCall (ref v, typeof (string), new S () { value = 4 }, array [0],
-			await Task.Factory.StartNew (() => 3));
+			await Task.Factory.StartNew (() => 3).ConfigureAwait (false));
 	}
 
 	int TestCall2<T1, T2, T3, T4, T5, T6, T7> (T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7)
@@ -86,7 +86,7 @@ class C
 	{
 		short v = 2;
 		return new C ().TestCall2 ((byte) 1, v, value = 9999, float.MaxValue, double.MaxValue, decimal.MaxValue,
-			await Task.Factory.StartNew (() => 3));
+			await Task.Factory.StartNew (() => 3).ConfigureAwait (false));
 	}
 
 	static async Task<int> TestStack_3 ()
@@ -98,7 +98,7 @@ class C
 		s2[0, 0].value = 3;
 		
 		TestCall3 (ref s [0], ref s2 [0, 0], s [0].value++,
-			await Task.Factory.StartNew (() => 3));
+			await Task.Factory.StartNew (() => 3).ConfigureAwait (false));
 		
 		if (s [0].value != 10)
 			return 1;
@@ -123,7 +123,7 @@ class C
 		var a3 = new [] { new C () };
 		
 		return TestCall4 (a1[0], a2[0], a3[0],
-			await Task.Factory.StartNew (() => 3));
+			await Task.Factory.StartNew (() => 3).ConfigureAwait (false));
 	}
 	
 	static int TestCall4 (E e, S s, C c, int i)
@@ -150,7 +150,7 @@ class C
 			
 			c.prop_value = 99;
 			return 3;
-		});
+		}).ConfigureAwait (false);
 		
 		if (c.get_called != 1)
 			return 1;

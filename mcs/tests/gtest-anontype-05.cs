@@ -11,7 +11,7 @@ public class Test
 		return null;
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		var v1 = new { Name = "Scott", Age = 21 };
 		var v2 = new { Age = 20, Name = "Sam" };

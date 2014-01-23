@@ -26,9 +26,8 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-using System;
-using System.Reflection;
-using System.Reflection.Emit;
+#if !FULL_AOT_RUNTIME || IOS_REFLECTION
+
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
@@ -152,3 +151,4 @@ namespace System.Reflection.Emit {
 		}
 	}
 } 
+#endif

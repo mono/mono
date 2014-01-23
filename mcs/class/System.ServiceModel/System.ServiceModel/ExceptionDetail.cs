@@ -52,32 +52,47 @@ namespace System.ServiceModel
 
 		[DataMember]
 		public string HelpLink {
-			get; 
-			private set;
+			get;
+#if !NET_4_5
+			private
+#endif
+			set;
 		}
 
 		[DataMember]
 		public ExceptionDetail InnerException {
 			get;
-			private set;
+#if !NET_4_5
+			private
+#endif
+			set;
 		}
 
 		[DataMember]
 		public string Message {
 			get;
-			private set;
+#if !NET_4_5
+			private
+#endif
+			set;
 		}
 
 		[DataMember]
 		public string StackTrace {
 			get;
-			private set;
+#if !NET_4_5
+			private
+#endif
+			set;
 		}
 
 		[DataMember]
 		public string Type {
 			get;
-			private set;
+#if !NET_4_5
+			private
+#endif
+			set;
 		}
 
 		public override string ToString ()

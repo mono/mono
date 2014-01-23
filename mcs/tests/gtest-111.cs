@@ -27,7 +27,7 @@ public class Collection<T>
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		KeyValuePair<int,long> p = new KeyValuePair<int,long> (3);
 		KeyValuePair<int,long> q = new KeyValuePair<int,long> (5, 9);

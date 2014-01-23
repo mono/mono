@@ -106,9 +106,10 @@ mono_llvm_load (const char* bpath)
 #endif
 	if (binl != -1) {
 		char *base;
-		char *name;
+		char *resolvedname, *name;
 		buf [binl] = 0;
-		base = g_path_get_dirname (buf);
+		resolvedname = mono_path_resolve_symlinks (buf);
+		base = g_path_get_dirname (resolvedname);
 		name = g_strdup_printf ("%s/.libs", base);
 		err = NULL;
 		llvm_lib = try_llvm_load (name, &err);
@@ -120,7 +121,17 @@ mono_llvm_load (const char* bpath)
 			llvm_lib = try_llvm_load (name, &err);
 			g_free (name);
 		}
+#ifdef __MACH__
+		if (!llvm_lib) {
+			char *newbase = g_path_get_dirname (base);
+			name = g_strdup_printf ("%s/Libraries", newbase);
+			err = NULL;
+			llvm_lib = try_llvm_load (name, &err);
+			g_free (name);
+		}
+#endif
 		g_free (base);
+		g_free (resolvedname);
 	}
 	if (!llvm_lib) {
 		llvm_lib = try_llvm_load (NULL, &err);

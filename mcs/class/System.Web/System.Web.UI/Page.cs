@@ -1175,7 +1175,7 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	void ProcessPostData (NameValueCollection data, bool second)
 	{
-		NameValueCollection requestValues = _requestValueCollection == null ? new NameValueCollection () : _requestValueCollection;
+		NameValueCollection requestValues = _requestValueCollection == null ? new NameValueCollection (SecureHashCodeProvider.DefaultInvariant, CaseInsensitiveComparer.DefaultInvariant) : _requestValueCollection;
 		
 		if (data != null && data.Count > 0) {
 			var used = new Dictionary <string, string> (StringComparer.Ordinal);
@@ -1210,7 +1210,7 @@ public partial class Page : TemplateControl, IHttpHandler
 
 				} else if (!second) {
 					if (secondPostData == null)
-						secondPostData = new NameValueCollection ();
+						secondPostData = new NameValueCollection (SecureHashCodeProvider.DefaultInvariant, CaseInsensitiveComparer.DefaultInvariant);
 					secondPostData.Add (id, data [id]);
 				}
 			}
@@ -2269,7 +2269,7 @@ public partial class Page : TemplateControl, IHttpHandler
 			parallelTasks = null; // Shouldn't execute tasks twice
 			List<IAsyncResult> asyncResults = new List<IAsyncResult>();
 			foreach (PageAsyncTask parallelTask in localParallelTasks) {
-				IAsyncResult result = parallelTask.BeginHandler (this, EventArgs.Empty, new AsyncCallback (EndAsyncTaskCallback), parallelTask.State);
+				IAsyncResult result = parallelTask.BeginHandler (this, EventArgs.Empty, new AsyncCallback (EndAsyncTaskCallback), parallelTask);
 				if (result.CompletedSynchronously)
 					parallelTask.EndHandler (result);
 				else

@@ -39,11 +39,7 @@ namespace System.Xml.Serialization
 	/// </summary>
 	public class XmlSerializerNamespaces
 	{
-#if MOONLIGHT
-		private Dictionary<string,XmlQualifiedName> namespaces = new Dictionary<string,XmlQualifiedName> ();
-#else
 		private ListDictionary namespaces = new ListDictionary ();
-#endif
 		public XmlSerializerNamespaces ()
 		{
 		}
@@ -88,18 +84,12 @@ namespace System.Xml.Serialization
 			}
 			return null;
 		}
-#if MOONLIGHT
-		internal IEnumerable<XmlQualifiedName> GetNamespaces ()
-		{
-			return namespaces.Values;
-		}
-#else
+
 		internal ListDictionary Namespaces
 		{
 			get {
 				return namespaces;
 			}
 		}
-#endif
 	}
 }

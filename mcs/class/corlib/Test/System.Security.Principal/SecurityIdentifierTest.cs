@@ -10,16 +10,17 @@ using System.Security.Principal;
 using System.Text;
 using NUnit.Framework;
 
-namespace MonoTests.System.Security.Principal {
+namespace MonoTests.System.Security.Principal
+{
 	[TestFixture]
-	public class SecurityIdentifierTest : Assert {
-		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
+	public class SecurityIdentifierTest
+	{
+		[Test, ExpectedException (typeof (ArgumentNullException))]
 		public void ConstructorNull ()
 		{
 			new SecurityIdentifier (null);
 		}
-
+		
 		private void CheckStringCtor (string strValue, byte[] expectedBinary)
 		{
 			SecurityIdentifier sid = new SecurityIdentifier (strValue);
@@ -301,6 +302,63 @@ namespace MonoTests.System.Security.Principal {
 		{
 			Assert.AreEqual (8, SecurityIdentifier.MinBinaryLength);
 			Assert.AreEqual (68, SecurityIdentifier.MaxBinaryLength);
+		}
+		
+		[Test]
+		public void CompareOrdering ()
+		{
+			SecurityIdentifier[] sids = new SecurityIdentifier[] {
+				new SecurityIdentifier ("S-1-5-32-544"),
+				new SecurityIdentifier ("S-1-5-40"),
+				new SecurityIdentifier ("S-1-5-32-5432"),
+				new SecurityIdentifier ("S-1-6-0"),
+				new SecurityIdentifier ("S-1-5-32-99"),
+				new SecurityIdentifier ("S-1-0-2")
+			};
+
+			SecurityIdentifier[] sortedSids = (SecurityIdentifier[])sids.Clone ();
+			Array.Sort (sortedSids);
+
+			Assert.AreSame (sids [5], sortedSids [0]);
+			Assert.AreSame (sids [1], sortedSids [1]);
+			Assert.AreSame (sids [4], sortedSids [2]);
+			Assert.AreSame (sids [0], sortedSids [3]);
+			Assert.AreSame (sids [2], sortedSids [4]);
+			Assert.AreSame (sids [3], sortedSids [5]);
+		}
+		
+		[Test, ExpectedExceptionAttribute (typeof (ArgumentNullException))]
+		public void CompareToNull ()
+		{
+			SecurityIdentifier sid = new SecurityIdentifier (WellKnownSidType.BuiltinUsersSid, null);
+			sid.CompareTo ((SecurityIdentifier)null);
+		}
+
+		[Test]
+		public void EqualsNull ()
+		{
+			SecurityIdentifier sid = new SecurityIdentifier (WellKnownSidType.BuiltinUsersSid, null);
+			Assert.IsFalse (sid.Equals ((object)null));
+			Assert.IsFalse (sid.Equals ((SecurityIdentifier)null));
+		}
+		
+		[Test]
+		public unsafe void IntPtrRoundtrip ()
+		{
+			SecurityIdentifier sidIn, sidOut;
+			byte[] binaryFormIn, binaryFormOut;
+
+			sidIn = new SecurityIdentifier ("WD");
+			binaryFormIn = new byte[sidIn.BinaryLength];
+			sidIn.GetBinaryForm (binaryFormIn, 0);
+
+			fixed (byte* pointerForm = binaryFormIn)
+				sidOut = new SecurityIdentifier ((IntPtr)pointerForm);
+			binaryFormOut = new byte[sidOut.BinaryLength];
+			sidOut.GetBinaryForm (binaryFormOut, 0);
+
+			Assert.AreEqual (sidIn, sidOut);
+			Assert.AreEqual (binaryFormIn, binaryFormOut);
 		}
 	}
 }

@@ -84,6 +84,41 @@ namespace MonoTests.System
 			Throws (typeof (ArgumentNullException), () => new AggregateException ((Exception[])null));
 		}
 
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Handle_Invalid ()
+		{
+			e.Handle (null);
+		}
+
+		[Test]
+		public void Handle_AllHandled ()
+		{
+			e.Handle (l => true);
+		}
+
+		[Test]
+		public void Handle_Unhandled ()
+		{
+			try {
+				e.Handle (l => l is AggregateException);
+				Assert.Fail ();
+			} catch (AggregateException e) {
+				Assert.AreEqual (1, e.InnerExceptions.Count);
+			}
+		}
+
+		[Test]
+		public void GetBaseWithInner ()
+		{
+			var ae = new AggregateException ("x", new [] { new ArgumentException (), new ArgumentNullException () });
+			Assert.AreEqual (ae, ae.GetBaseException (), "#1");
+
+			var expected = new ArgumentException ();
+			var ae2 = new AggregateException ("x", new AggregateException (expected, new Exception ()));
+			Assert.AreEqual (expected, ae2.GetBaseException ().InnerException, "#2");
+		}
+
 		static void Throws (Type t, Action action)
 		{
 			Exception e = null;

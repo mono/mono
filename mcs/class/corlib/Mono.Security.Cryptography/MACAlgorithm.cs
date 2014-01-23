@@ -98,13 +98,7 @@ namespace Mono.Security.Cryptography {
 			if ((blockCount > 0) || ((algo.Padding != PaddingMode.Zeros) && (algo.Padding != PaddingMode.None))) {
 				result = enc.TransformFinalBlock (block, 0, blockCount);
 			} else {
-#if NET_1_0
-				// add an empty (zeros) block for MAC padding
-				byte[] emptyBlock = new byte [blockSize];
-				result = enc.TransformFinalBlock (emptyBlock, 0, blockSize);
-#else
 				result = (byte[]) block.Clone ();
-#endif
 			}
 
 			if (!enc.CanReuseTransform) {

@@ -34,7 +34,10 @@ namespace Mono.Security.Cryptography {
 	// a.	Usenet 1994 - RC4 Algorithm revealed
 	//	http://www.qrst.de/html/dsds/rc4.htm
 
-	public class ARC4Managed : RC4, ICryptoTransform {
+#if !INSIDE_CORLIB
+	public
+#endif
+	class ARC4Managed : RC4, ICryptoTransform {
 
 		private byte[] key;
 		private byte[] state;

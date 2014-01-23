@@ -4,7 +4,7 @@ namespace BugReport
 {
 	class Program
 	{
-		static int Main()
+		public static int Main()
 		{
 			A a = new A();
 			a.Counter++;

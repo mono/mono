@@ -32,7 +32,7 @@ static class Program
 		return Get (i) ();
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		if (Run (0) != 42)
 			return 1;

@@ -157,6 +157,9 @@ namespace System.Net
 			GC.SuppressFinalize (this);  
 		}
 		
+#if NET_4_0
+		protected override
+#endif		
 		void Dispose (bool disposing)
 		{
 			if (this.disposed)
@@ -174,6 +177,9 @@ namespace System.Net
 			fileStream = null;
 			if (stream != null)
 				stream.Close (); // also closes webRequest
+#if NET_4_0
+			base.Dispose (disposing);
+#endif
 		}
 		
 		private void CheckDisposed ()

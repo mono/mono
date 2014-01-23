@@ -35,6 +35,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
 	public class ConsoleLoggerTest {
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestAssignment ()
 		{
 			ConsoleLogger cl = new ConsoleLogger ();

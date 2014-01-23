@@ -27,7 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 
 using System;
 using System.Runtime.Serialization;
@@ -62,7 +62,7 @@ namespace System
 		}
 
 		public Lazy (bool isThreadSafe)
-			: this (() => Activator.CreateInstance<T> (), isThreadSafe ? LazyThreadSafetyMode.ExecutionAndPublication : LazyThreadSafetyMode.None)
+			: this (Activator.CreateInstance<T>, isThreadSafe ? LazyThreadSafetyMode.ExecutionAndPublication : LazyThreadSafetyMode.None)
 		{
 		}
 		
@@ -72,7 +72,7 @@ namespace System
 		}
 
 		public Lazy (LazyThreadSafetyMode mode)
-			: this (() => Activator.CreateInstance<T> (), mode)
+			: this (Activator.CreateInstance<T>, mode)
 		{
 		}
 

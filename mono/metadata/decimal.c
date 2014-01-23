@@ -552,11 +552,15 @@ DECINLINE static void rshift192(guint64* pclo, guint64* pcmi, guint64* pchi)
     *pchi >>= 1;
 }
 
+#if defined(__native_client__) && (defined(__i386__) || defined(__x86_64))
+#define USE_X86_32BIT_INSTRUCTIONS 1
+#endif
+
 static inline gint
 my_g_bit_nth_msf (gsize mask)
 {
 	/* Mask is expected to be != 0 */
-#if defined(__i386__) && defined(__GNUC__)
+#if (defined(__i386__) && defined(__GNUC__)) || defined(USE_X86_32BIT_INSTRUCTIONS)
 	int r;
 
 	__asm__("bsrl %1,%0\n\t"
@@ -1079,6 +1083,10 @@ gint32 mono_string2decimal(/*[Out]*/decimal_repr* pA, MonoString* str, gint32 de
         }
     }
 
+    // Set correct scale for zeros decimal (000 input is 0.00)
+    if (sigLen < 0 && len > decrDecimal)
+        sigLen = len;
+
     scale = sigLen - decrDecimal;
 
     if (i < len) { /* too much digits, we must round */
@@ -1104,129 +1112,11 @@ gint32 mono_string2decimal(/*[Out]*/decimal_repr* pA, MonoString* str, gint32 de
         if (rc != DECIMAL_SUCCESS) return rc;
     }
 
-    if (alo == 0 && ahi == 0) {
-        DECINIT(pA);
+    if (alo == 0 && ahi == 0 && scale <= 0) {
         return DECIMAL_SUCCESS;
     } else {
         return pack128toDecimal(pA, alo, ahi, sigLen - decrDecimal, sign);
     }
-}
-
-/**
- * mono_decimal2string:
- * @
- * returns minimal number of digit string to represent decimal
- * No leading or trailing zeros !
- * Examples:
- * *pA == 0            =>   buf = "", *pDecPos = 1, *pSign = 0
- * *pA == 12.34        =>   buf = "1234", *pDecPos = 2, *pSign = 0
- * *pA == -1000.0000   =>   buf = "1", *pDecPos = 4, *pSign = 1
- * *pA == -0.00000076  =>   buf = "76", *pDecPos = -6, *pSign = 0
- * 
- * Parameters:
- *    pA         decimal instance to convert     
- *    digits     < 0: use decimals instead
- *               = 0: gets mantisse as integer
- *               > 0: gets at most <digits> digits, rounded according to banker's rule if necessary
- *    decimals   only used if digits < 0
- *               >= 0: number of decimal places
- *    buf        pointer to result buffer
- *    bufSize    size of buffer
- *    pDecPos    receives insert position of decimal point relative to start of buffer
- *    pSign      receives sign
- */
-gint32 mono_decimal2string(/*[In]*/decimal_repr* pA, gint32 digits, gint32 decimals,
-                                   MonoArray* pArray, gint32 bufSize, gint32* pDecPos, gint32* pSign)
-{
-    guint16 tmp[41];
-    guint16 *buf = (guint16*) mono_array_addr(pArray, guint16, 0);
-    guint16 *q, *p = tmp;
-    decimal_repr aa;
-    guint64 alo, ahi;
-    guint32 rest;
-    gint32 sigDigits, d;
-    int i, scale, len;
-
-    MONO_ARCH_SAVE_REGS;
-
-    scale = pA->signscale.scale;
-    DECTO128(pA, alo, ahi);
-    sigDigits = calcDigits(alo, ahi); /* significant digits */
-
-    /* calc needed digits (without leading or trailing zeros) */
-    d = (digits == 0) ? sigDigits : digits;
-    if (d < 0) { /* use decimals ? */
-        if (0 <= decimals && decimals < scale) {
-            d = sigDigits - scale + decimals;
-        } else {
-            d = sigDigits; /* use all you can get */
-        }
-    } 
-
-    if (sigDigits > d) { /* we need to round decimal number */
-        DECCOPY(&aa, pA);
-        aa.signscale.scale = DECIMAL_MAX_SCALE;
-        mono_decimalRound(&aa, DECIMAL_MAX_SCALE - sigDigits + d);
-        DECTO128(&aa, alo, ahi);
-        sigDigits += calcDigits(alo, ahi) - d;
-    }
-
-    len = 0;
-    if (d > 0) {
-        /* get digits starting from the tail */
-        for (; (alo != 0 || ahi != 0) && len < 40; len++) {
-            div128by32(&alo, &ahi, 10, &rest);
-            *p++ = '0' + (char) rest;
-        }
-    }
-    *p = 0;
-
-    if (len >= bufSize) return DECIMAL_BUFFER_OVERFLOW;
-
-    /* now we have the minimal count of digits, 
-       extend to wished count of digits or decimals */
-    q = buf;
-    if (digits >= 0) { /* count digits */
-        if (digits >= bufSize) return DECIMAL_BUFFER_OVERFLOW;
-        if (len == 0) {
-            /* zero or rounded to zero */
-            *pDecPos = 1;
-        } else {
-            /* copy significant digits */
-            for (i = 0; i < len; i++) {
-                *q++ = *(--p);
-            }
-            *pDecPos = sigDigits - scale;
-        }
-        /* add trailing zeros */
-        for (i = len; i < digits; i++) {
-            *q++ = '0';
-        }
-    } else { /* count decimals */
-        if (scale >= sigDigits) { /* add leading zeros */
-            if (decimals+2 >= bufSize) return DECIMAL_BUFFER_OVERFLOW;
-            *pDecPos = 1;
-            for (i = 0; i <= scale - sigDigits; i++) {
-                *q++ = '0';
-            }
-        } else {
-            if (sigDigits - scale + decimals+1 >= bufSize) return DECIMAL_BUFFER_OVERFLOW;
-            *pDecPos = sigDigits - scale;
-        }
-        /* copy significant digits */
-        for (i = 0; i < len; i++) {
-            *q++ = *(--p);
-        }
-        /* add trailing zeros */
-        for (i = scale; i < decimals; i++) {
-            *q++ = '0';
-        }
-    }
-    *q = 0;
-
-    *pSign = (sigDigits > 0) ? pA->signscale.sign : 0; /* zero has positive sign */
-
-    return DECIMAL_SUCCESS;
 }
 
 /**
@@ -1591,17 +1481,6 @@ DECINLINE static void buildIEEE754Double(double* pd, int sign, int texp, guint64
 
     PRECONDITION(sign == 0 || sign == 1);
     *p = (((guint64)sign) << 63) | (((guint64)((1023+texp)&0x7ff)) << 52) | mantisse;
-#ifdef ARM_FPU_FPA
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-    {
-	    guint32 temp;
-	    guint32 *t = (guint32*)p;
-	    temp = t [0];
-	    t [0] = t [1];
-	    t [1] = temp;
-    }
-#endif
-#endif
 }
 
 double mono_decimal2double(/*[In]*/decimal_repr* pA)
@@ -1694,4 +1573,3 @@ gint32 mono_decimalSetExponent(/*[In, Out]*/decimal_repr* pA, gint32 texp)
 }
 
 #endif /* DISABLE_DECIMAL */
-

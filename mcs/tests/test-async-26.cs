@@ -19,7 +19,7 @@ namespace ConsoleApplication1
 			return await task.Result;
 		}
 
-		static int Main ()
+		public static int Main ()
 		{
 			var t2 = Run (() => Task<int>.Factory.StartNew (() => 5));
 

@@ -56,6 +56,13 @@ namespace System {
 			}
 		}
 
+		private OperatingSystem (SerializationInfo information, StreamingContext context)
+		{
+			_platform = (System.PlatformID)information.GetValue("_platform", typeof(System.PlatformID));
+			_version = (Version)information.GetValue("_version", typeof(Version));
+			_servicePack = information.GetString("_servicePack");
+		}
+		
 		public PlatformID Platform {
 			get {
 				return _platform;

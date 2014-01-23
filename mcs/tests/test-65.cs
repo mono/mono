@@ -29,7 +29,7 @@ class X {
 		return new S ();
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		object a = new S ();
 		receiver (new S ());

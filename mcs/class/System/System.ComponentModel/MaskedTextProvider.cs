@@ -74,8 +74,8 @@ namespace System.ComponentModel {
 		
 		private EditPosition [] edit_positions;
 		
-		private static char default_prompt_char = '_';
-		private static char default_password_char = char.MinValue;
+		const char default_prompt_char = '_';
+		const char default_password_char = char.MinValue;
 		
 #endregion
 

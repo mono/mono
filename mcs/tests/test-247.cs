@@ -8,7 +8,7 @@ struct Blah : IEnumerable {
 }
 
 class B  {
-	static void Main () {
+	public static void Main () {
 		foreach (object o in new Blah ())
 			;
 	}

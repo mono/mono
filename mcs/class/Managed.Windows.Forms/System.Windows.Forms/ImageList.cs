@@ -705,7 +705,7 @@ namespace System.Windows.Forms
 			public void Clear()
 			{
 				list.Clear();
-				if (this.handleCreated)
+				if (!this.handleCreated)
 					this.count = 0;
 				keys.Clear();
 			}

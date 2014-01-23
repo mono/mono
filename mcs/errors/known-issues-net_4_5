@@ -11,7 +11,8 @@
 # csXXXX.cs NO ERROR	: error test case doesn't report any error. An exception is considered
 #			  as NO ERROR and CS5001 is automatically ignored.
 
-cs0162-7.cs NO ERROR
+# Parser problems
+cs0080.cs 
 
 # Operators
 cs0457-2.cs

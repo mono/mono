@@ -32,7 +32,7 @@ class Program
 	[DllImport ("bah")]
 	public static extern void test ();
 
-	static int Main ()
+	public static int Main ()
 	{
 		DllImportAttribute dia = Attribute.GetCustomAttribute (typeof (Program).GetMethod ("test"), typeof (DllImportAttribute)) as DllImportAttribute;
 		if (dia == null)

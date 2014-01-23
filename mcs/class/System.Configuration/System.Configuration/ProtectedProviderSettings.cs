@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace System.Configuration
 {
 	public class ProtectedProviderSettings : ConfigurationElement
@@ -56,4 +54,3 @@ namespace System.Configuration
 
 }
 
-#endif

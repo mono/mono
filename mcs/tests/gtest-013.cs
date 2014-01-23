@@ -9,6 +9,6 @@ public class X
 		stack.Hello (3);
 	}
 
-	static void Main ()
+	public static void Main ()
 	{ }
 }

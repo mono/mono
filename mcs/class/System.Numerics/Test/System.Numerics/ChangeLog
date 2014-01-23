@@ -1,3 +1,13 @@
+2013-06-13 Christoph Ruegg <git@cdrnet.ch>
+
+	* BigIntegerTest.cs: Extended tests for
+	GreatestCommonDivisor to cover zero-args.
+
+2013-06-09 Christoph Ruegg <git@cdrnet.ch>
+
+	* ComplexTest.cs: Created; Tests ToString
+	with special format strings.
+
 2010-03-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* BigIntegerTest.cs: Tests for decimal stuff.

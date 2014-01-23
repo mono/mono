@@ -26,7 +26,8 @@
 #include "marshal.h"
 #include "debug-helpers.h"
 #include <mono/utils/mono-error-internals.h>
- 
+#include <mono/utils/bsearch.h>
+
 /* Auxiliary structure used for caching inflated signatures */
 typedef struct {
 	MonoMethodSignature *sig;
@@ -757,7 +758,6 @@ mono_metadata_compute_size (MonoImage *meta, int tableindex, guint32 *result_bit
 			n = MAX (n, meta->tables [MONO_TABLE_METHOD].rows);
 			n = MAX (n, meta->tables [MONO_TABLE_MODULEREF].rows);
 			n = MAX (n, meta->tables [MONO_TABLE_TYPESPEC].rows);
-			n = MAX (n, meta->tables [MONO_TABLE_MEMBERREF].rows);
 
 			/* 3 bits to encode */
 			field_size = rtsize (n, 16 - 3);
@@ -883,6 +883,7 @@ mono_metadata_locate_token (MonoImage *meta, guint32 token)
 const char *
 mono_metadata_string_heap (MonoImage *meta, guint32 index)
 {
+	g_assert (index < meta->heap_strings.size);
 	g_return_val_if_fail (index < meta->heap_strings.size, "");
 	return meta->heap_strings.data + index;
 }
@@ -897,6 +898,7 @@ mono_metadata_string_heap (MonoImage *meta, guint32 index)
 const char *
 mono_metadata_user_string (MonoImage *meta, guint32 index)
 {
+	g_assert (index < meta->heap_us.size);
 	g_return_val_if_fail (index < meta->heap_us.size, "");
 	return meta->heap_us.data + index;
 }
@@ -911,6 +913,7 @@ mono_metadata_user_string (MonoImage *meta, guint32 index)
 const char *
 mono_metadata_blob_heap (MonoImage *meta, guint32 index)
 {
+	g_assert (index < meta->heap_blob.size);
 	g_return_val_if_fail (index < meta->heap_blob.size, "");/*FIXME shouldn't we return NULL and check for index == 0?*/
 	return meta->heap_blob.data + index;
 }
@@ -2428,15 +2431,18 @@ collect_inflated_signature_images (MonoInflatedMethodSignature *sig, CollectData
 static void
 collect_method_images (MonoMethodInflated *method, CollectData *data)
 {
+	MonoMethod *m = method->declaring;
+
 	add_image (method->declaring->klass->image, data);
 	if (method->context.class_inst)
 		collect_ginst_images (method->context.class_inst, data);
 	if (method->context.method_inst)
 		collect_ginst_images (method->context.method_inst, data);
 	/*
-	if (((MonoMethod*)method)->signature)
-		collect_signature_images (mono_method_signature ((MonoMethod*)method), data);
-	*/
+	 * Dynamic assemblies have no references, so the images they depend on can be unloaded before them.
+	 */
+	if (m->klass->image->dynamic)
+		collect_signature_images (mono_method_signature (m), data);
 }
 
 static void
@@ -2603,11 +2609,11 @@ check_image_sets (MonoImage *image)
 	}
 }
 
-GSList*
+void
 mono_metadata_clean_for_image (MonoImage *image)
 {
 	CleanForImageUserData ginst_data, gclass_data;
-	GSList *l, *set_list, *free_list = NULL;
+	GSList *l, *set_list;
 
 	//check_image_sets (image);
 
@@ -2647,8 +2653,6 @@ mono_metadata_clean_for_image (MonoImage *image)
 	g_slist_free (set_list);
 
 	mono_loader_unlock ();
-
-	return free_list;
 }
 
 static void
@@ -3912,7 +3916,7 @@ mono_metadata_typedef_from_field (MonoImage *meta, guint32 index)
 	if (meta->uncompressed_metadata)
 		loc.idx = search_ptr_table (meta, MONO_TABLE_FIELD_POINTER, loc.idx);
 
-	if (!bsearch (&loc, tdef->base, tdef->rows, tdef->row_size, typedef_locator))
+	if (!mono_binary_search (&loc, tdef->base, tdef->rows, tdef->row_size, typedef_locator))
 		return 0;
 
 	/* loc_result is 0..1, needs to be mapped to table index (that is +1) */
@@ -3943,7 +3947,7 @@ mono_metadata_typedef_from_method (MonoImage *meta, guint32 index)
 	if (meta->uncompressed_metadata)
 		loc.idx = search_ptr_table (meta, MONO_TABLE_METHOD_POINTER, loc.idx);
 
-	if (!bsearch (&loc, tdef->base, tdef->rows, tdef->row_size, typedef_locator))
+	if (!mono_binary_search (&loc, tdef->base, tdef->rows, tdef->row_size, typedef_locator))
 		return 0;
 
 	/* loc_result is 0..1, needs to be mapped to table index (that is +1) */
@@ -3985,7 +3989,7 @@ mono_metadata_interfaces_from_typedef_full (MonoImage *meta, guint32 index, Mono
 	loc.col_idx = MONO_INTERFACEIMPL_CLASS;
 	loc.t = tdef;
 
-	if (!bsearch (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator))
+	if (!mono_binary_search (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator))
 		return TRUE;
 
 	start = loc.result;
@@ -4066,7 +4070,7 @@ mono_metadata_interfaces_from_typedef (MonoImage *meta, guint32 index, guint *co
  * 
  * Returns: the 1-based index into the TypeDef table of the type
  * where the type described by @index is nested.
- * Retruns 0 if @index describes a non-nested type.
+ * Returns 0 if @index describes a non-nested type.
  */
 guint32
 mono_metadata_nested_in_typedef (MonoImage *meta, guint32 index)
@@ -4081,7 +4085,7 @@ mono_metadata_nested_in_typedef (MonoImage *meta, guint32 index)
 	loc.col_idx = MONO_NESTED_CLASS_NESTED;
 	loc.t = tdef;
 
-	if (!bsearch (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator))
+	if (!mono_binary_search (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator))
 		return 0;
 
 	/* loc_result is 0..1, needs to be mapped to table index (that is +1) */
@@ -4145,7 +4149,7 @@ mono_metadata_packing_from_typedef (MonoImage *meta, guint32 index, guint32 *pac
 	loc.col_idx = MONO_CLASS_LAYOUT_PARENT;
 	loc.t = tdef;
 
-	if (!bsearch (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator))
+	if (!mono_binary_search (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator))
 		return 0;
 
 	mono_metadata_decode_row (tdef, loc.result, cols, MONO_CLASS_LAYOUT_SIZE);
@@ -4182,7 +4186,7 @@ mono_metadata_custom_attrs_from_index (MonoImage *meta, guint32 index)
 
 	/* FIXME: Index translation */
 
-	if (!bsearch (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator))
+	if (!mono_binary_search (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator))
 		return 0;
 
 	/* Find the first entry by searching backwards */
@@ -4215,7 +4219,7 @@ mono_metadata_declsec_from_index (MonoImage *meta, guint32 index)
 	loc.col_idx = MONO_DECL_SECURITY_PARENT;
 	loc.t = tdef;
 
-	if (!bsearch (&loc, tdef->base, tdef->rows, tdef->row_size, declsec_locator))
+	if (!mono_binary_search (&loc, tdef->base, tdef->rows, tdef->row_size, declsec_locator))
 		return -1;
 
 	/* Find the first entry by searching backwards */
@@ -4287,12 +4291,7 @@ mono_type_size (MonoType *t, int *align)
 		return 4;
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8:
-#if defined(__APPLE__) && SIZEOF_VOID_P==4
-		/* xcode 4.3 llvm-gcc bug */
-		*align = 4;
-#else		
 		*align = abi__alignof__(gint64);
-#endif
 		return 8;		
 	case MONO_TYPE_R8:
 		*align = abi__alignof__(double);
@@ -4599,6 +4598,8 @@ mono_metadata_generic_param_equal (MonoGenericParam *p1, MonoGenericParam *p2, g
 		return TRUE;
 	if (mono_generic_param_num (p1) != mono_generic_param_num (p2))
 		return FALSE;
+	if (p1->serial != p2->serial)
+		return FALSE;
 
 	/*
 	 * We have to compare the image as well because if we didn't,
@@ -4644,6 +4645,9 @@ mono_metadata_class_equal (MonoClass *c1, MonoClass *c2, gboolean signature_only
 	if (signature_only &&
 	    (c1->byval_arg.type == MONO_TYPE_SZARRAY) && (c2->byval_arg.type == MONO_TYPE_SZARRAY))
 		return mono_metadata_class_equal (c1->byval_arg.data.klass, c2->byval_arg.data.klass, signature_only);
+	if (signature_only &&
+	    (c1->byval_arg.type == MONO_TYPE_ARRAY) && (c2->byval_arg.type == MONO_TYPE_ARRAY))
+		return do_mono_metadata_type_equal (&c1->byval_arg, &c2->byval_arg, signature_only);
 	return FALSE;
 }
 
@@ -4929,7 +4933,7 @@ mono_metadata_field_info_full (MonoImage *meta, guint32 index, guint32 *offset, 
 		loc.col_idx = MONO_FIELD_LAYOUT_FIELD;
 		loc.t = tdef;
 
-		if (tdef->base && bsearch (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator)) {
+		if (tdef->base && mono_binary_search (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator)) {
 			*offset = mono_metadata_decode_row_col (tdef, loc.result, MONO_FIELD_LAYOUT_OFFSET);
 		} else {
 			*offset = (guint32)-1;
@@ -4941,7 +4945,7 @@ mono_metadata_field_info_full (MonoImage *meta, guint32 index, guint32 *offset, 
 		loc.col_idx = MONO_FIELD_RVA_FIELD;
 		loc.t = tdef;
 		
-		if (tdef->base && bsearch (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator)) {
+		if (tdef->base && mono_binary_search (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator)) {
 			/*
 			 * LAMESPEC: There is no signature, no nothing, just the raw data.
 			 */
@@ -5002,7 +5006,7 @@ mono_metadata_get_constant_index (MonoImage *meta, guint32 token, guint32 hint)
 	if ((hint > 0) && (hint < tdef->rows) && (mono_metadata_decode_row_col (tdef, hint - 1, MONO_CONSTANT_PARENT) == index))
 		return hint;
 
-	if (tdef->base && bsearch (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator)) {
+	if (tdef->base && mono_binary_search (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator)) {
 		return loc.result + 1;
 	}
 	return 0;
@@ -5033,7 +5037,7 @@ mono_metadata_events_from_typedef (MonoImage *meta, guint32 index, guint *end_id
 	loc.col_idx = MONO_EVENT_MAP_PARENT;
 	loc.idx = index + 1;
 
-	if (!bsearch (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator))
+	if (!mono_binary_search (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator))
 		return 0;
 	
 	start = mono_metadata_decode_row_col (tdef, loc.result, MONO_EVENT_MAP_EVENTLIST);
@@ -5075,7 +5079,7 @@ mono_metadata_methods_from_event   (MonoImage *meta, guint32 index, guint *end_i
 	loc.col_idx = MONO_METHOD_SEMA_ASSOCIATION;
 	loc.idx = ((index + 1) << MONO_HAS_SEMANTICS_BITS) | MONO_HAS_SEMANTICS_EVENT; /* Method association coded index */
 
-	if (!bsearch (&loc, msemt->base, msemt->rows, msemt->row_size, table_locator))
+	if (!mono_binary_search (&loc, msemt->base, msemt->rows, msemt->row_size, table_locator))
 		return 0;
 
 	start = loc.result;
@@ -5124,7 +5128,7 @@ mono_metadata_properties_from_typedef (MonoImage *meta, guint32 index, guint *en
 	loc.col_idx = MONO_PROPERTY_MAP_PARENT;
 	loc.idx = index + 1;
 
-	if (!bsearch (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator))
+	if (!mono_binary_search (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator))
 		return 0;
 	
 	start = mono_metadata_decode_row_col (tdef, loc.result, MONO_PROPERTY_MAP_PROPERTY_LIST);
@@ -5166,7 +5170,7 @@ mono_metadata_methods_from_property   (MonoImage *meta, guint32 index, guint *en
 	loc.col_idx = MONO_METHOD_SEMA_ASSOCIATION;
 	loc.idx = ((index + 1) << MONO_HAS_SEMANTICS_BITS) | MONO_HAS_SEMANTICS_PROPERTY; /* Method association coded index */
 
-	if (!bsearch (&loc, msemt->base, msemt->rows, msemt->row_size, table_locator))
+	if (!mono_binary_search (&loc, msemt->base, msemt->rows, msemt->row_size, table_locator))
 		return 0;
 
 	start = loc.result;
@@ -5205,7 +5209,7 @@ mono_metadata_implmap_from_method (MonoImage *meta, guint32 method_idx)
 	loc.col_idx = MONO_IMPLMAP_MEMBER;
 	loc.idx = ((method_idx + 1) << MONO_MEMBERFORWD_BITS) | MONO_MEMBERFORWD_METHODDEF;
 
-	if (!bsearch (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator))
+	if (!mono_binary_search (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator))
 		return 0;
 
 	return loc.result + 1;
@@ -5589,7 +5593,7 @@ mono_metadata_get_marshal_info (MonoImage *meta, guint32 idx, gboolean is_field)
 
 	/* FIXME: Index translation */
 
-	if (!bsearch (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator))
+	if (!mono_binary_search (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator))
 		return NULL;
 
 	return mono_metadata_blob_heap (meta, mono_metadata_decode_row_col (tdef, loc.result, MONO_FIELD_MARSHAL_NATIVE_TYPE));
@@ -5642,7 +5646,7 @@ mono_class_get_overrides_full (MonoImage *image, guint32 type_token, MonoMethod 
 	loc.col_idx = MONO_METHODIMPL_CLASS;
 	loc.idx = mono_metadata_token_index (type_token);
 
-	if (!bsearch (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator))
+	if (!mono_binary_search (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator))
 		return TRUE;
 
 	start = loc.result;
@@ -5782,7 +5786,7 @@ mono_metadata_get_generic_param_row (MonoImage *image, guint32 token, guint32 *o
 	loc.col_idx = MONO_GENERICPARAM_OWNER;
 	loc.t = tdef;
 
-	if (!bsearch (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator))
+	if (!mono_binary_search (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator))
 		return 0;
 
 	/* Find the first entry by searching backwards */
@@ -6195,6 +6199,21 @@ gboolean
 mono_signature_is_instance (MonoMethodSignature *sig)
 {
 	return sig->hasthis;
+}
+
+/**
+ * mono_signature_param_is_out
+ * @sig: the method signature inspected
+ * @param_num: the 0-based index of the inspected parameter
+ * 
+ * Returns: #TRUE if the parameter is an out parameter, #FALSE
+ * otherwise.
+ */
+mono_bool
+mono_signature_param_is_out (MonoMethodSignature *sig, int param_num)
+{
+	g_assert (param_num >= 0 && param_num < sig->param_count);
+	return (sig->params [param_num]->attrs & PARAM_ATTRIBUTE_OUT) != 0;
 }
 
 /**

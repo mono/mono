@@ -24,8 +24,6 @@
 #include "mini.h"
 #include "mini-mips.h"
 
-static guint8* nullified_class_init_trampoline;
-
 /*
  * get_unbox_trampoline:
  * @m: method pointer
@@ -109,15 +107,14 @@ mono_arch_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *a
  * STACK would be 444 for 32 bit darwin
  */
 
-#define STACK (4*IREG_SIZE + 8 + sizeof(MonoLMF) + 32)
+#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
+
+#define STACK (int)(ALIGN_TO(4*IREG_SIZE + 8 + sizeof(MonoLMF) + 32, 8))
 
 void
 mono_arch_nullify_plt_entry (guint8 *code, mgreg_t *regs)
 {
-	if (mono_aot_only && !nullified_class_init_trampoline)
-		nullified_class_init_trampoline = mono_aot_get_trampoline ("nullified_class_init_trampoline");
-
-	mono_arch_patch_plt_entry (code, NULL, regs, nullified_class_init_trampoline);
+	mono_arch_patch_plt_entry (code, NULL, regs, mini_get_nullified_class_init_trampoline ());
 }
 
 void
@@ -151,7 +148,7 @@ mono_arch_get_nullified_class_init_trampoline (MonoTrampInfo **info)
 	mono_arch_flush_icache (buf, code - buf);
 
 	if (info)
-		*info = mono_tramp_info_create (g_strdup_printf ("nullified_class_init_trampoline"), buf, code - buf, NULL, NULL);
+		*info = mono_tramp_info_create ("nullified_class_init_trampoline", buf, code - buf, NULL, NULL);
 
 	return buf;
 }
@@ -174,6 +171,7 @@ mono_arch_get_nullified_class_init_trampoline (MonoTrampInfo **info)
 guchar*
 mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInfo **info, gboolean aot)
 {
+	char *tramp_name;
 	guint8 *buf, *tramp, *code = NULL;
 	int i, lmf;
 	GSList *unwind_ops = NULL;
@@ -185,9 +183,9 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 
 	/* Now we'll create in 'buf' the MIPS trampoline code. This
 	   is the trampoline code common to all methods  */
-		
+
 	code = buf = mono_global_codeman_reserve (max_code_len);
-		
+
 	/* Allocate the stack frame, and save the return address */
 	mips_addiu (code, mips_sp, mips_sp, -STACK);
 	mips_sw (code, mips_ra, mips_sp, STACK + MIPS_RET_ADDR_OFFSET);
@@ -311,12 +309,11 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	/* Sanity check */
 	g_assert ((code - buf) <= max_code_len);
 
-	if (tramp_type == MONO_TRAMPOLINE_CLASS_INIT)
-		/* Initialize the nullified class init trampoline used in the AOT case */
-		nullified_class_init_trampoline = mono_arch_get_nullified_class_init_trampoline (NULL);
-
-	if (info)
-		*info = mono_tramp_info_create (mono_get_generic_trampoline_name (tramp_type), buf, code - buf, ji, unwind_ops);
+	if (info) {
+		tramp_name = mono_get_generic_trampoline_name (tramp_type);
+		*info = mono_tramp_info_create (tramp_name, buf, code - buf, ji, unwind_ops);
+		g_free (tramp_name);
+	}
 
 	return buf;
 }
@@ -480,8 +477,11 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 
 	g_assert (code - buf <= tramp_size);
 
-	if (info)
-		*info = mono_tramp_info_create (mono_get_rgctx_fetch_trampoline_name (slot), buf, code - buf, ji, unwind_ops);
+	if (info) {
+		char *name = mono_get_rgctx_fetch_trampoline_name (slot);
+		*info = mono_tramp_info_create (name, buf, code - buf, ji, unwind_ops);
+		g_free (name);
+	}
 
 	return buf;
 }
@@ -537,7 +537,7 @@ mono_arch_create_generic_class_init_trampoline (MonoTrampInfo **info, gboolean a
 	g_assert (code - buf <= tramp_size);
 
 	if (info)
-		*info = mono_tramp_info_create (g_strdup_printf ("generic_class_init_trampoline"), buf, code - buf, ji, unwind_ops);
+		*info = mono_tramp_info_create ("generic_class_init_trampoline", buf, code - buf, ji, unwind_ops);
 
 	return buf;
 }

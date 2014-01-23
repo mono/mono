@@ -19,7 +19,7 @@ class X {
 		Console.WriteLine ("Hook invoked");
 	}
 	
-	static void Main ()
+	public static void Main ()
 	{
 		X x = new X ();
 		x.Hook += M;

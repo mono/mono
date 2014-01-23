@@ -298,7 +298,13 @@ namespace System.Web
 
 		public virtual int ReadEntityBody (byte [] buffer, int offset, int size)
 		{
-			return 0;
+			byte[] temp = new byte [size];
+			int n = ReadEntityBody (temp, size);
+
+			if(n > 0)
+				Array.Copy (temp, 0, buffer, offset, n);
+
+			return n;
 		}
 
 		public virtual void SendCalculatedContentLength (long contentLength)

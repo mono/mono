@@ -35,11 +35,9 @@ using System.Collections;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-#if !MOONLIGHT
 using System.Xml.Schema; // only required for NET_2_0 (SchemaInfo)
 using System.Xml.Serialization; // only required for NET_2_0 (SchemaInfo)
 using Mono.Xml.Schema; // only required for NET_2_0
-#endif
 using Mono.Xml; // only required for NET_2_0
 #if NET_4_5
 using System.Threading;
@@ -209,11 +207,9 @@ namespace System.Xml
 		public abstract ReadState ReadState { get; }
 
 #if NET_2_0
-#if !MOONLIGHT
 		public virtual IXmlSchemaInfo SchemaInfo {
 			get { return null; }
 		}
-#endif
 
 		public virtual XmlReaderSettings Settings {
 			get { return settings; }
@@ -465,9 +461,6 @@ namespace System.Xml
 
 		private static XmlReader CreateValidatingXmlReader (XmlReader reader, XmlReaderSettings settings)
 		{
-#if MOONLIGHT
-			return reader;
-#else
 			XmlValidatingReader xvr = null;
 			switch (settings.ValidationType) {
 			// Auto and XDR are obsoleted in 2.0 and therefore ignored.
@@ -493,10 +486,9 @@ namespace System.Xml
 			//	throw new NotImplementedException ();
 
 			return xvr != null ? xvr : reader;
-#endif
 		}
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 		public void Dispose ()
 #else
 		void IDisposable.Dispose() 

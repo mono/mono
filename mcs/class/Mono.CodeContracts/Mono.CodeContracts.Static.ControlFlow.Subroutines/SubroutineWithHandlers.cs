@@ -42,8 +42,8 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 
 		public readonly Dictionary<Handler, Subroutine> FaultFinallySubroutines = new Dictionary<Handler, Subroutine> ();
 		protected readonly Dictionary<Handler, BlockWithLabels<Label>> FilterCodeBlocks = new Dictionary<Handler, BlockWithLabels<Label>> ();
-		public readonly Dictionary<CFGBlock, LispList<Handler>> ProtectingHandlers = new Dictionary<CFGBlock, LispList<Handler>> ();
-		public LispList<Handler> CurrentProtectingHandlers = LispList<Handler>.Empty;
+		public readonly Dictionary<CFGBlock, Sequence<Handler>> ProtectingHandlers = new Dictionary<CFGBlock, Sequence<Handler>> ();
+		public Sequence<Handler> CurrentProtectingHandlers = Sequence<Handler>.Empty;
 
 		protected SubroutineWithHandlers (SubroutineFacade subroutineFacade)
 			: base (subroutineFacade)
@@ -67,9 +67,9 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 			return CodeProvider.IsFaultHandler (handler);
 		}
 
-		private LispList<Handler> ProtectingHandlerList (CFGBlock block)
+		private Sequence<Handler> ProtectingHandlerList (CFGBlock block)
 		{
-			LispList<Handler> list;
+			Sequence<Handler> list;
 			this.ProtectingHandlers.TryGetValue (block, out list);
 			return list;
 		}
@@ -95,17 +95,17 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 			return this.FaultFinallySubroutines.Values.Concat (base.UsedSubroutines (alreadySeen));
 		}
 
-		public override LispList<Pair<EdgeTag, Subroutine>> EdgeSubroutinesOuterToInner (CFGBlock current, CFGBlock succ,
-		                                                                                 out bool isExceptionHandlerEdge, LispList<Edge<CFGBlock, EdgeTag>> context)
+		public override Sequence<Pair<EdgeTag, Subroutine>> EdgeSubroutinesOuterToInner (CFGBlock current, CFGBlock succ,
+		                                                                                 out bool isExceptionHandlerEdge, Sequence<Edge<CFGBlock, EdgeTag>> context)
 		{
 			if (current.Subroutine != this)
 				return current.Subroutine.EdgeSubroutinesOuterToInner (current, succ, out isExceptionHandlerEdge, context);
 
-			LispList<Handler> l1 = ProtectingHandlerList (current);
-			LispList<Handler> l2 = ProtectingHandlerList (succ);
+			Sequence<Handler> l1 = ProtectingHandlerList (current);
+			Sequence<Handler> l2 = ProtectingHandlerList (succ);
 			isExceptionHandlerEdge = IsCatchFilterHeader (succ);
 
-			LispList<Pair<EdgeTag, Subroutine>> result = GetOrdinaryEdgeSubroutines (current, succ, context);
+			Sequence<Pair<EdgeTag, Subroutine>> result = GetOrdinaryEdgeSubroutines (current, succ, context);
 
 			while (l1 != l2) {
 				if (l1.Length () >= l2.Length ()) {
@@ -142,7 +142,7 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 		                                                                      Data data, IHandlerFilter<Data> handlerPredicate)
 		{
 			IHandlerFilter<Data> handleFilter = handlerPredicate;
-			LispList<Handler> protectingHandlers = ProtectingHandlerList (block);
+			Sequence<Handler> protectingHandlers = ProtectingHandlerList (block);
 			if (innerSubroutine != null && innerSubroutine.IsFaultFinally) {
 				for (; protectingHandlers != null; protectingHandlers = protectingHandlers.Tail) {
 					if (IsFaultOrFinally (protectingHandlers.Head) && this.FaultFinallySubroutines [protectingHandlers.Head] == innerSubroutine) {
@@ -175,9 +175,9 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 		}
 
 		protected override void PrintReferencedSubroutines (TextWriter tw, HashSet<Subroutine> subs, ILPrinter<APC> printer,
-		                                                    Func<CFGBlock, IEnumerable<LispList<Edge<CFGBlock, EdgeTag>>>> contextLookup,
-		                                                    LispList<Edge<CFGBlock, EdgeTag>> context,
-		                                                    HashSet<Pair<Subroutine, LispList<Edge<CFGBlock, EdgeTag>>>> printed)
+		                                                    Func<CFGBlock, IEnumerable<Sequence<Edge<CFGBlock, EdgeTag>>>> contextLookup,
+		                                                    Sequence<Edge<CFGBlock, EdgeTag>> context,
+		                                                    HashSet<Pair<Subroutine, Sequence<Edge<CFGBlock, EdgeTag>>>> printed)
 		{
 			foreach (Subroutine sub in this.FaultFinallySubroutines.Values) {
 				if (contextLookup == null)

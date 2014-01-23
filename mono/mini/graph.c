@@ -6,6 +6,11 @@
  *
  * (C) 2003 Ximian, Inc.
  */
+
+#include <config.h>
+
+#ifndef DISABLE_JIT
+
 #include <string.h>
 #include <mono/metadata/debug-helpers.h>
 
@@ -190,15 +195,15 @@ mono_print_label (FILE *fp, MonoInst *tree) {
 		mono_print_label (fp, tree->inst_newa_len);
 		break;
 	case OP_CALL:
-	case OP_CALLVIRT:
+	case OP_CALL_MEMBASE:
 	case OP_FCALL:
-	case OP_FCALLVIRT:
+	case OP_FCALL_MEMBASE:
 	case OP_LCALL:
-	case OP_LCALLVIRT:
+	case OP_LCALL_MEMBASE:
 	case OP_VCALL:
-	case OP_VCALLVIRT:
+	case OP_VCALL_MEMBASE:
 	case OP_VOIDCALL:
-	case OP_VOIDCALLVIRT: {
+	case OP_VOIDCALL_MEMBASE: {
 		MonoCallInst *call = (MonoCallInst*)tree;
 		if (call->method) {
 			if (mono_method_signature (call->method)->hasthis && tree->inst_left) {
@@ -309,6 +314,7 @@ mono_draw_graph (MonoCompile *cfg, MonoGraphOptions draw_options)
 	char *com;
 	const char *fn;
 	FILE *fp;
+	int _i G_GNUC_UNUSED;
 
 	fn = "/tmp/minidtree.graph";
 	fp = fopen (fn, "w+");
@@ -332,7 +338,9 @@ mono_draw_graph (MonoCompile *cfg, MonoGraphOptions draw_options)
 
 	//com = g_strdup_printf ("dot %s -Tpng -o %s.png; eog %s.png", fn, fn, fn);
 	com = g_strdup_printf ("dot %s -Tps -o %s.ps;gv %s.ps", fn, fn, fn);
-	system (com);
+	_i = system (com);
 	g_free (com);
 }
+
+#endif /* DISABLE_JIT */
 

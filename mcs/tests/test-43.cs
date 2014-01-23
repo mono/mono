@@ -72,7 +72,7 @@ class X {
 		return (total == 46);
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		int [] a = new int [10];
 		int [] b = new int [2];

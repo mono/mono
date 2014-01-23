@@ -38,7 +38,7 @@ class Bug379822 {
 		TestOr (var);
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		Test (false);
 		Test (true);

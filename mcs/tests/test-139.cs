@@ -29,7 +29,7 @@ struct T {
                 return val.GetHashCode();
         }
 
-        static int  Main() 	
+        public static int Main() 	
 	{
 		T t = new T ();
 

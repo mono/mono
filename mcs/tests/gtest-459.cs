@@ -15,7 +15,7 @@ namespace GenericTest
 
 	class Program
 	{
-		static int Main ()
+		public static int Main ()
 		{
 			string typeNames = OuterGeneric<int>.InnerGeneric<long>.GetTypeNames ();
 			Console.WriteLine (typeNames);

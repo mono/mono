@@ -1,10 +1,12 @@
 //
 // System.Net.NetworkInformation.NetworkChange
 //
-// Author:
-//	Gonzalo Paniagua Javier (gonzalo@novell.com)
+// Authors:
+//   Gonzalo Paniagua Javier (LinuxNetworkChange) (gonzalo@novell.com)
+//   Aaron Bockover (MacNetworkChange) (abock@xamarin.com)
 //
 // Copyright (c) 2006,2011 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2013 Xamarin, Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -13,10 +15,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -26,44 +28,335 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Threading;
 
+#if NETWORK_CHANGE_STANDALONE
+namespace NetworkInformation {
+
+	public class NetworkAvailabilityEventArgs : EventArgs
+	{
+		public bool IsAvailable { get; set; }
+
+		public NetworkAvailabilityEventArgs (bool available)
+		{
+			IsAvailable = available;
+		}
+	}
+
+	public delegate void NetworkAddressChangedEventHandler (object sender, EventArgs args);
+	public delegate void NetworkAvailabilityChangedEventHandler (object sender, NetworkAvailabilityEventArgs args);
+#else
 namespace System.Net.NetworkInformation {
+#endif
+
+	internal interface INetworkChange : IDisposable {
+		event NetworkAddressChangedEventHandler NetworkAddressChanged;
+		event NetworkAvailabilityChangedEventHandler NetworkAvailabilityChanged;
+		bool HasRegisteredEvents { get; }
+	}
+
 	public sealed class NetworkChange {
+		static INetworkChange networkChange;
+
+		public static event NetworkAddressChangedEventHandler NetworkAddressChanged {
+			add {
+				lock (typeof (INetworkChange)) {
+					MaybeCreate ();
+					if (networkChange != null)
+						networkChange.NetworkAddressChanged += value;
+				}
+			}
+
+			remove {
+				lock (typeof (INetworkChange)) {
+					if (networkChange != null) {
+						networkChange.NetworkAddressChanged -= value;
+						MaybeDispose ();
+					}
+				}
+			}
+		}
+
+		public static event NetworkAvailabilityChangedEventHandler NetworkAvailabilityChanged {
+			add {
+				lock (typeof (INetworkChange)) {
+					MaybeCreate ();
+					if (networkChange != null)
+						networkChange.NetworkAvailabilityChanged += value;
+				}
+			}
+
+			remove {
+				lock (typeof (INetworkChange)) {
+					if (networkChange != null) {
+						networkChange.NetworkAvailabilityChanged -= value;
+						MaybeDispose ();
+					}
+				}
+			}
+		}
+
+		static void MaybeCreate ()
+		{
+			if (networkChange != null)
+				return;
+
+			try {
+				networkChange = new MacNetworkChange ();
+			} catch {
+#if !NETWORK_CHANGE_STANDALONE
+				networkChange = new LinuxNetworkChange ();
+#endif
+			}
+		}
+
+		static void MaybeDispose ()
+		{
+			if (networkChange != null && networkChange.HasRegisteredEvents) {
+				networkChange.Dispose ();
+				networkChange = null;
+			}
+		}
+	}
+
+	internal sealed class MacNetworkChange : INetworkChange
+	{
+		const string DL_LIB = "/usr/lib/libSystem.dylib";
+		const string CORE_SERVICES_LIB = "/System/Library/Frameworks/SystemConfiguration.framework/SystemConfiguration";
+		const string CORE_FOUNDATION_LIB = "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation";
+
+		[UnmanagedFunctionPointerAttribute (CallingConvention.Cdecl)]
+		delegate void SCNetworkReachabilityCallback (IntPtr target, NetworkReachabilityFlags flags, IntPtr info);
+
+		[DllImport (DL_LIB)]
+		static extern IntPtr dlopen (string path, int mode);
+
+		[DllImport (DL_LIB)]
+		static extern IntPtr dlsym (IntPtr handle, string symbol);
+
+		[DllImport (DL_LIB)]
+		static extern int dlclose (IntPtr handle);
+
+		[DllImport (CORE_FOUNDATION_LIB)]
+		static extern void CFRelease (IntPtr handle);
+
+		[DllImport (CORE_FOUNDATION_LIB)]
+		static extern IntPtr CFRunLoopGetMain ();
+
+		[DllImport (CORE_SERVICES_LIB)]
+		static extern IntPtr SCNetworkReachabilityCreateWithAddress (IntPtr allocator, ref sockaddr_in sockaddr);
+
+		[DllImport (CORE_SERVICES_LIB)]
+		static extern bool SCNetworkReachabilityGetFlags (IntPtr reachability, out NetworkReachabilityFlags flags);
+
+		[DllImport (CORE_SERVICES_LIB)]
+		static extern bool SCNetworkReachabilitySetCallback (IntPtr reachability, SCNetworkReachabilityCallback callback, ref SCNetworkReachabilityContext context);
+
+		[DllImport (CORE_SERVICES_LIB)]
+		static extern bool SCNetworkReachabilityScheduleWithRunLoop (IntPtr reachability, IntPtr runLoop, IntPtr runLoopMode);
+
+		[DllImport (CORE_SERVICES_LIB)]
+		static extern bool SCNetworkReachabilityUnscheduleFromRunLoop (IntPtr reachability, IntPtr runLoop, IntPtr runLoopMode);
+
+		[StructLayout (LayoutKind.Explicit, Size = 28)]
+		struct sockaddr_in {
+			[FieldOffset (0)] public byte sin_len;
+			[FieldOffset (1)] public byte sin_family;
+
+			public static sockaddr_in Create ()
+			{
+				return new sockaddr_in {
+					sin_len = 28,
+					sin_family = 2 // AF_INET
+				};
+			}
+		}
+
+		[StructLayout (LayoutKind.Sequential)]
+		struct SCNetworkReachabilityContext {
+			public IntPtr version;
+			public IntPtr info;
+			public IntPtr retain;
+			public IntPtr release;
+			public IntPtr copyDescription;
+		}
+
+		[Flags]
+		enum NetworkReachabilityFlags {
+			None = 0,
+			TransientConnection = 1 << 0,
+			Reachable = 1 << 1,
+			ConnectionRequired = 1 << 2,
+			ConnectionOnTraffic = 1 << 3,
+			InterventionRequired = 1 << 4,
+			ConnectionOnDemand = 1 << 5,
+			IsLocalAddress = 1 << 16,
+			IsDirect = 1 << 17,
+			IsWWAN = 1 << 18,
+			ConnectionAutomatic = ConnectionOnTraffic
+		}
+
+		IntPtr handle;
+		IntPtr runLoopMode;
+		SCNetworkReachabilityCallback callback;
+		bool scheduledWithRunLoop;
+		NetworkReachabilityFlags flags;
+
+		event NetworkAddressChangedEventHandler networkAddressChanged;
+		event NetworkAvailabilityChangedEventHandler networkAvailabilityChanged;
+
+		public event NetworkAddressChangedEventHandler NetworkAddressChanged {
+			add {
+				value (null, EventArgs.Empty);
+				networkAddressChanged += value;
+			}
+
+			remove { networkAddressChanged -= value; }
+		}
+
+		public event NetworkAvailabilityChangedEventHandler NetworkAvailabilityChanged {
+			add {
+				value (null, new NetworkAvailabilityEventArgs (IsAvailable));
+				networkAvailabilityChanged += value;
+			}
+
+			remove { networkAvailabilityChanged -= value; }
+		}
+
+		bool IsAvailable {
+			get {
+				return (flags & NetworkReachabilityFlags.Reachable) != 0 &&
+					(flags & NetworkReachabilityFlags.ConnectionRequired) == 0;
+			}
+		}
+
+		public bool HasRegisteredEvents {
+			get { return networkAddressChanged != null || networkAvailabilityChanged != null; }
+		}
+
+		public MacNetworkChange ()
+		{
+			var sockaddr = sockaddr_in.Create ();
+			handle = SCNetworkReachabilityCreateWithAddress (IntPtr.Zero, ref sockaddr);
+			if (handle == IntPtr.Zero)
+				throw new Exception ("SCNetworkReachabilityCreateWithAddress returned NULL");
+
+			callback = new SCNetworkReachabilityCallback (HandleCallback);
+			var info = new SCNetworkReachabilityContext {
+				info = GCHandle.ToIntPtr (GCHandle.Alloc (this))
+			};
+
+			SCNetworkReachabilitySetCallback (handle, callback, ref info);
+
+			scheduledWithRunLoop =
+			LoadRunLoopMode () &&
+				SCNetworkReachabilityScheduleWithRunLoop (handle, CFRunLoopGetMain (), runLoopMode);
+
+			SCNetworkReachabilityGetFlags (handle, out flags);
+		}
+
+		bool LoadRunLoopMode ()
+		{
+			var cfLibHandle = dlopen (CORE_FOUNDATION_LIB, 0);
+			if (cfLibHandle == IntPtr.Zero)
+				return false;
+
+			try {
+				runLoopMode = dlsym (cfLibHandle, "kCFRunLoopDefaultMode");
+				if (runLoopMode != IntPtr.Zero) {
+					runLoopMode = Marshal.ReadIntPtr (runLoopMode);
+					return runLoopMode != IntPtr.Zero;
+				}
+			} finally {
+				dlclose (cfLibHandle);
+			}
+
+			return false;
+		}
+
+		public void Dispose ()
+		{
+			lock (this) {
+				if (handle == IntPtr.Zero)
+					return;
+
+				if (scheduledWithRunLoop)
+					SCNetworkReachabilityUnscheduleFromRunLoop (handle, CFRunLoopGetMain (), runLoopMode);
+
+				CFRelease (handle);
+				handle = IntPtr.Zero;
+				callback = null;
+				flags = NetworkReachabilityFlags.None;
+				scheduledWithRunLoop = false;
+			}
+		}
+
+#if MONOTOUCH
+		[MonoTouch.MonoPInvokeCallback (typeof (SCNetworkReachabilityCallback))]
+#endif
+		static void HandleCallback (IntPtr reachability, NetworkReachabilityFlags flags, IntPtr info)
+		{
+			if (info == IntPtr.Zero)
+				return;
+
+			var instance = GCHandle.FromIntPtr (info).Target as MacNetworkChange;
+			if (instance == null || instance.flags == flags)
+				return;
+
+			instance.flags = flags;
+
+			var addressChanged = instance.networkAddressChanged;
+			if (addressChanged != null)
+				addressChanged (null, EventArgs.Empty);
+
+			var availabilityChanged = instance.networkAvailabilityChanged;
+			if (availabilityChanged != null)
+				availabilityChanged (null, new NetworkAvailabilityEventArgs (instance.IsAvailable));
+		}
+	}
+
+#if !NETWORK_CHANGE_STANDALONE
+
+	internal sealed class LinuxNetworkChange : INetworkChange {
 		[Flags]
 		enum EventType {
 			Availability = 1 << 0,
 			Address = 1 << 1,
 		}
 
-		static object _lock = new object ();
-		static Socket nl_sock;
-		static SocketAsyncEventArgs nl_args;
-		static EventType pending_events;
-		static Timer timer;
+		object _lock = new object ();
+		Socket nl_sock;
+		SocketAsyncEventArgs nl_args;
+		EventType pending_events;
+		Timer timer;
 
-		static NetworkAddressChangedEventHandler AddressChanged;
-		static NetworkAvailabilityChangedEventHandler AvailabilityChanged;
+		NetworkAddressChangedEventHandler AddressChanged;
+		NetworkAvailabilityChangedEventHandler AvailabilityChanged;
 
-		private NetworkChange ()
+		public event NetworkAddressChangedEventHandler NetworkAddressChanged {
+			add { Register (value); }
+			remove { Unregister (value); }
+		}
+
+		public event NetworkAvailabilityChangedEventHandler NetworkAvailabilityChanged {
+			add { Register (value); }
+			remove { Unregister (value); }
+		}
+
+		public bool HasRegisteredEvents {
+			get { return AddressChanged != null || AvailabilityChanged != null; }
+		}
+
+		public void Dispose ()
 		{
-		}
-
-		public static event NetworkAddressChangedEventHandler NetworkAddressChanged {
-			add { Register (value); }
-			remove { Unregister (value); }
-		}
-
-		public static event NetworkAvailabilityChangedEventHandler NetworkAvailabilityChanged {
-			add { Register (value); }
-			remove { Unregister (value); }
 		}
 
 		//internal Socket (AddressFamily family, SocketType type, ProtocolType proto, IntPtr sock)
 
-		static bool EnsureSocket ()
+		bool EnsureSocket ()
 		{
 			lock (_lock) {
 				if (nl_sock != null)
@@ -82,7 +375,7 @@ namespace System.Net.NetworkInformation {
 		}
 
 		// _lock is held by the caller
-		static void MaybeCloseSocket ()
+		void MaybeCloseSocket ()
 		{
 			if (nl_sock == null || AvailabilityChanged != null || AddressChanged != null)
 				return;
@@ -93,7 +386,7 @@ namespace System.Net.NetworkInformation {
 			nl_args = null;
 		}
 
-		static bool GetAvailability ()
+		bool GetAvailability ()
 		{
 			NetworkInterface [] adapters = NetworkInterface.GetAllNetworkInterfaces ();
 			foreach (NetworkInterface n in adapters) {
@@ -106,19 +399,19 @@ namespace System.Net.NetworkInformation {
 			return false;
 		}
 
-		static void OnAvailabilityChanged (object unused)
+		void OnAvailabilityChanged (object unused)
 		{
 			NetworkAvailabilityChangedEventHandler d = AvailabilityChanged;
 			d (null, new NetworkAvailabilityEventArgs (GetAvailability ()));
 		}
 
-		static void OnAddressChanged (object unused)
+		void OnAddressChanged (object unused)
 		{
 			NetworkAddressChangedEventHandler d = AddressChanged;
 			d (null, EventArgs.Empty);
 		}
 
-		static void OnEventDue (object unused)
+		void OnEventDue (object unused)
 		{
 			EventType evts;
 			lock (_lock) {
@@ -132,7 +425,7 @@ namespace System.Net.NetworkInformation {
 				ThreadPool.QueueUserWorkItem (OnAddressChanged);
 		}
 
-		static void QueueEvent (EventType type)
+		void QueueEvent (EventType type)
 		{
 			lock (_lock) {
 				if (timer == null)
@@ -143,7 +436,7 @@ namespace System.Net.NetworkInformation {
 			}
 		}
 
-		unsafe static void OnDataAvailable (object sender, SocketAsyncEventArgs args)
+		unsafe void OnDataAvailable (object sender, SocketAsyncEventArgs args)
 		{
 			EventType type;
 			fixed (byte *ptr = args.Buffer) {	
@@ -154,19 +447,19 @@ namespace System.Net.NetworkInformation {
 				QueueEvent (type);
 		}
 
-		static void Register (NetworkAddressChangedEventHandler d)
+		void Register (NetworkAddressChangedEventHandler d)
 		{
 			EnsureSocket ();
 			AddressChanged += d;
 		}
 
-		static void Register (NetworkAvailabilityChangedEventHandler d)
+		void Register (NetworkAvailabilityChangedEventHandler d)
 		{
 			EnsureSocket ();
 			AvailabilityChanged += d;
 		}
 
-		static void Unregister (NetworkAddressChangedEventHandler d)
+		void Unregister (NetworkAddressChangedEventHandler d)
 		{
 			lock (_lock) {
 				AddressChanged -= d;
@@ -174,7 +467,7 @@ namespace System.Net.NetworkInformation {
 			}
 		}
 
-		static void Unregister (NetworkAvailabilityChangedEventHandler d)
+		void Unregister (NetworkAvailabilityChangedEventHandler d)
 		{
 			lock (_lock) {
 				AvailabilityChanged -= d;
@@ -197,5 +490,7 @@ namespace System.Net.NetworkInformation {
 		[DllImport (LIBNAME, CallingConvention=CallingConvention.Cdecl)]
 		static extern IntPtr CloseNLSocket (IntPtr sock);
 	}
-}
 
+#endif
+
+}

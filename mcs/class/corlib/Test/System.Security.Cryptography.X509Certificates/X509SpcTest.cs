@@ -1005,22 +1005,20 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[Category ("NotWorking")] // we're missing the root certificate
 		public void ValidSignature () 
 		{
-			string filename = Path.GetFullPath ("smallspc.exe");
+			string filename = Path.Combine (Path.GetTempPath (), "smallspc.exe");
 			WriteFile (filename, smallspcexe);
 
 			X509Certificate spc = X509Certificate.CreateFromSignedFile (filename);
 			X509Certificate cert = new X509Certificate (motus);
 			Assert.AreEqual (cert.GetRawCertDataString (), spc.GetRawCertDataString (), "CreateFromSignedFile");
+
+			File.Delete (filename);
 		}
 
 		[Test]
-#if !NET_2_0
-		[ExpectedException (typeof (COMException))]
-		[Category ("NotWorking")]
-#endif
 		public void InvalidSignature () 
 		{
-			string filename = Path.GetFullPath ("smallspc-invalid.exe");
+			string filename = Path.Combine (Path.GetTempPath (), "smallspc-invalid.exe");
 			byte[] content = (byte[]) smallspcexe.Clone ();
 			// make sure it's invalid
 			byte[] mark = Encoding.ASCII.GetBytes ("bad signature");
@@ -1028,28 +1026,25 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			WriteFile (filename, content);
 
 			X509Certificate spc = X509Certificate.CreateFromSignedFile (filename);
-#if NET_2_0
 			X509Certificate cert = new X509Certificate (motus);
 			Assert.AreEqual (cert.GetRawCertDataString (), spc.GetRawCertDataString (), "CreateFromSignedFile");
 			// Invalid authenticode signature cannot be detected this way with 2.0 ?
-#endif
+
+			File.Delete (filename);
 		}
 
 		[Test]
-#if NET_2_0
 		[ExpectedException (typeof (CryptographicException))]
-#endif
 		public void NonSignedAssembly () 
 		{
-			string filename = Path.GetFullPath ("small.exe");
+			string filename = Path.Combine (Path.GetTempPath (), "small.exe");
 			WriteFile (filename, smallexe);
 
-#if NET_2_0
-			X509Certificate.CreateFromSignedFile (filename);
-#else
-			X509Certificate spc = X509Certificate.CreateFromSignedFile (filename);
-			Assert.AreEqual (0, spc.GetHashCode (), "NonSignedAssembly");
-#endif
+			try {
+				X509Certificate.CreateFromSignedFile (filename);
+			} finally {
+				File.Delete (filename);
+			}
 		}
 	}
 }

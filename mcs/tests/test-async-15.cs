@@ -32,7 +32,7 @@ class Tester
 		int value = 9;
 		
 		var s = new T () {
-			Value = await Task.Factory.StartNew (() => 13)
+			Value = await Task.Factory.StartNew (() => 13).ConfigureAwait (false)
 		};
 		
 		if (s.Value != 13)

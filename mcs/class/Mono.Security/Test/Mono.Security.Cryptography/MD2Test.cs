@@ -24,9 +24,19 @@ namespace MonoTests.Mono.Security.Cryptography {
 
 	// MD2 is a abstract class - so ALL of the test included here wont be tested
 	// on the abstract class but should be tested in ALL its descendants.
-	public abstract class MD2Test : Assertion {
+	public abstract class MD2Test {
 
 		protected MD2 hash;
+
+		static void Fail (string msg)
+		{
+			Assert.Fail (msg);
+		}
+
+		static void AssertEquals (string msg, int expected, int actual)
+		{
+			Assert.AreEqual (expected, actual, msg);
+		}
 
 		// because most crypto stuff works with byte[] buffers
 		static public void AssertEquals (string msg, byte[] array1, byte[] array2) 
@@ -51,7 +61,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 				msg += " -> Expected " + BitConverter.ToString (array1, 0);
 				msg += " is different than " + BitConverter.ToString (array2, 0);
 			}
-			Assert (msg, a);
+			Assert.IsTrue (a, msg);
 		}
 
 		// MD2 ("") = 8350e5a3e24c153df2275c9f80692773
@@ -232,7 +242,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 		{
 			// create the default implementation
 			HashAlgorithm h = MD2.Create ();
-			Assert ("MD2Managed", (h is MD2Managed));
+			Assert.IsTrue ((h is MD2Managed), "MD2Managed");
 			// Note: will fail is default is changed in machine.config
 		}
 	}

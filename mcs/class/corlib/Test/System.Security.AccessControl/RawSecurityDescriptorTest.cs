@@ -9,6 +9,7 @@ using System;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using NUnit.Framework;
+using NUnit.Framework.SyntaxHelpers;
 
 namespace MonoTests.System.Security.AccessControl {
 
@@ -18,7 +19,7 @@ namespace MonoTests.System.Security.AccessControl {
 		{
 			RawSecurityDescriptor sd = new RawSecurityDescriptor (sddl);
 			
-			Assert.GreaterOrEqual (sd.BinaryLength, 0);
+			Assert.That (sd.BinaryLength, Is.GreaterThanOrEqualTo (0));
 			byte[] buffer = new byte[sd.BinaryLength];
 			
 			sd.GetBinaryForm (buffer, 0);

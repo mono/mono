@@ -74,9 +74,10 @@ namespace System.Xml.Linq
 			{
 				if (!OnAddingObject (o, false, last, false))
 				{
-					OnAddingObject ();
-					AddNode (XUtil.ToNode (o));
-					OnAddedObject ();
+					var node = XUtil.ToNode (o);
+					OnAddingObject (node);
+					AddNode (node);
+					OnAddedObject (node);
 				}
 			}
 		}
@@ -180,16 +181,20 @@ namespace System.Xml.Linq
 
 		public IEnumerable <XElement> Elements (XName name)
 		{
-			foreach (XElement el in Elements ())
-				if (el.Name == name)
+			foreach (XNode n in Nodes ()) {
+				XElement el = n as XElement;
+				if (el != null && el.Name == name)
 					yield return el;
+			}
 		}
 
 		public XElement Element (XName name)
 		{
-			foreach (XElement el in Elements ())
-				if (el.Name == name)
+			foreach (XNode n in Nodes ()) {
+				XElement el = n as XElement;
+				if (el != null && el.Name == name)
 					return el;
+			}
 			return null;
 		}
 

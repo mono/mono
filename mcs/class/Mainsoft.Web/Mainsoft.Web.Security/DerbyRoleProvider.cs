@@ -138,7 +138,7 @@ namespace Mainsoft.Web.Security
 				if (returnValue == 0)
 					return true;
 				if (returnValue == 2)
-					return false; //role does not exists
+					return false; //role does not exist
 				else if (returnValue == 3 && throwOnPopulatedRole)
 					throw new ProviderException (rolename + " is not empty");
 				else

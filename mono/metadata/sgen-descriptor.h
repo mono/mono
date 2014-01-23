@@ -1,26 +1,24 @@
 /*
+ * sgen-descriptor.h: GC descriptors describe object layout.
+
  * Copyright 2001-2003 Ximian, Inc
  * Copyright 2003-2010 Novell, Inc.
  * Copyright 2011 Xamarin Inc (http://www.xamarin.com)
- * 
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- * 
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * Copyright (C) 2012 Xamarin Inc
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License 2.0 as published by the Free Software Foundation;
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License 2.0 along with this library; if not, write to the Free
+ * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 #ifndef __MONO_SGEN_DESCRIPTOR_H__
 #define __MONO_SGEN_DESCRIPTOR_H__
@@ -139,6 +137,7 @@ sgen_gc_descr_has_references (mword desc)
 
 #define SGEN_VTABLE_HAS_REFERENCES(vt)	(sgen_gc_descr_has_references ((mword)((MonoVTable*)(vt))->gc_descr))
 #define SGEN_CLASS_HAS_REFERENCES(c)	(sgen_gc_descr_has_references ((mword)(c)->gc_descr))
+#define SGEN_OBJECT_HAS_REFERENCES(o)	(SGEN_VTABLE_HAS_REFERENCES (SGEN_LOAD_VTABLE ((o))))
 
 /* helper macros to scan and traverse objects, macros because we resue them in many functions */
 #define OBJ_RUN_LEN_SIZE(size,desc,obj) do { \
@@ -155,6 +154,12 @@ sgen_gc_descr_has_references (mword desc)
 #define PREFETCH(addr)
 #endif
 
+#if defined(__GNUC__) && SIZEOF_VOID_P==4
+#define GNUC_BUILTIN_CTZ(bmap)	__builtin_ctz(bmap)
+#elif defined(__GNUC__) && SIZEOF_VOID_P==8
+#define GNUC_BUILTIN_CTZ(bmap)	__builtin_ctzl(bmap)
+#endif
+
 /* code using these macros must define a HANDLE_PTR(ptr) macro that does the work */
 #define OBJ_RUN_LEN_FOREACH_PTR(desc,obj)	do {	\
 		if ((desc) & 0xffff0000) {	\
@@ -163,6 +168,8 @@ sgen_gc_descr_has_references (mword desc)
 			void **_objptr = (void**)(obj);	\
 			_objptr += ((desc) >> 16) & 0xff;	\
 			_objptr_end = _objptr + (((desc) >> 24) & 0xff);	\
+			HANDLE_PTR (_objptr, (obj)); \
+			_objptr ++; \
 			while (_objptr < _objptr_end) {	\
 				HANDLE_PTR (_objptr, (obj));	\
 				_objptr++;	\
@@ -170,19 +177,42 @@ sgen_gc_descr_has_references (mword desc)
 		}	\
 	} while (0)
 
+#if defined(__GNUC__)
 #define OBJ_BITMAP_FOREACH_PTR(desc,obj)       do {    \
 		/* there are pointers */        \
 		void **_objptr = (void**)(obj); \
 		gsize _bmap = (desc) >> 16;     \
 		_objptr += OBJECT_HEADER_WORDS; \
+		{ \
+			int _index = GNUC_BUILTIN_CTZ (_bmap);		\
+			_objptr += _index; \
+			_bmap >>= (_index + 1);				\
+			HANDLE_PTR (_objptr, (obj));		\
+			_objptr ++;							\
+			} \
 		while (_bmap) { \
-			if ((_bmap & 1)) {      \
-				HANDLE_PTR (_objptr, (obj));    \
-			}       \
-			_bmap >>= 1;    \
-			++_objptr;      \
-			}       \
+			int _index = GNUC_BUILTIN_CTZ (_bmap);		\
+			_objptr += _index; \
+			_bmap >>= (_index + 1);				\
+			HANDLE_PTR (_objptr, (obj));		\
+			_objptr ++;							\
+		}										\
 	} while (0)
+#else
+#define OBJ_BITMAP_FOREACH_PTR(desc,obj)       do {    \
+		/* there are pointers */        \
+		void **_objptr = (void**)(obj); \
+		gsize _bmap = (desc) >> 16;     \
+		_objptr += OBJECT_HEADER_WORDS; \
+		while (_bmap) {						   \
+			if ((_bmap & 1)) {								   \
+				HANDLE_PTR (_objptr, (obj));				   \
+			}												   \
+			_bmap >>= 1;									   \
+			++_objptr;										   \
+		}													   \
+	} while (0)
+#endif
 
 /* a bitmap desc means that there are pointer references or we'd have
  * choosen run-length, instead: add an assert to check.

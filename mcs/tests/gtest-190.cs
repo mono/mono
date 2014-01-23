@@ -23,7 +23,7 @@ public class Foo<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Foo<int> foo = new Foo<int> ();
 		Foo<int>.Node root = foo.GetRoot ();

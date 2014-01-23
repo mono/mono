@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libmonoutils.la
 
-INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS)
 
 if ENABLE_DTRACE
 
@@ -32,6 +32,8 @@ monoutils_sources = \
 	mono-math.c  		\
 	mono-mmap.c  		\
 	mono-mmap.h  		\
+	mono-mutex.c  		\
+	mono-mutex.h  		\
 	mono-networkinterfaces.c		\
 	mono-networkinterfaces.h		\
 	mono-proclib.c		\
@@ -98,10 +100,20 @@ monoutils_sources = \
 	mono-threads-windows.c	\
 	mono-threads.h	\
 	mono-tls.h	\
+	mono-tls.c	\
 	linux_magic.h	\
-	mono-memory-model.h
+	mono-memory-model.h	\
+	atomic.h	\
+	atomic.c	\
+	mono-hwcap.h	\
+	mono-hwcap.c	\
+	bsearch.h	\
+	bsearch.c	\
+	mono-signal-handler.h
 
 arch_sources = 
+
+if !CROSS_COMPILE
 
 if X86
 arch_sources += mach-support-x86.c
@@ -113,6 +125,52 @@ endif
 
 if ARM
 arch_sources += mach-support-arm.c
+endif
+
+else
+
+arch_sources += mach-support-unknown.c
+
+endif
+
+if X86
+arch_sources += mono-hwcap-x86.c mono-hwcap-x86.h
+endif
+
+if AMD64
+arch_sources += mono-hwcap-x86.c mono-hwcap-x86.h
+endif
+
+if ARM
+arch_sources += mono-hwcap-arm.c mono-hwcap-arm.h
+endif
+
+if MIPS
+arch_sources += mono-hwcap-mips.c mono-hwcap-mips.h
+endif
+
+if POWERPC
+arch_sources += mono-hwcap-ppc.c mono-hwcap-ppc.h
+endif
+
+if POWERPC64
+arch_sources += mono-hwcap-ppc.c mono-hwcap-ppc.h
+endif
+
+if SPARC
+arch_sources += mono-hwcap-sparc.c mono-hwcap-sparc.h
+endif
+
+if SPARC64
+arch_sources += mono-hwcap-sparc.c mono-hwcap-sparc.h
+endif
+
+if IA64
+arch_sources += mono-hwcap-ia64.c mono-hwcap-ia64.h
+endif
+
+if S390X
+arch_sources += mono-hwcap-s390x.c mono-hwcap-s390x.h
 endif
 
 libmonoutils_la_SOURCES = $(monoutils_sources) $(arch_sources)

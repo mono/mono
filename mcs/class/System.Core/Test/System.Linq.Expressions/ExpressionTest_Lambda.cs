@@ -118,6 +118,9 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+#if MONOTOUCH
+		[Category ("NotWorking")]
+#endif
 		[ExpectedException(typeof(InvalidOperationException))]
 		public void ParameterOutOfScope ()
 		{

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<node label="Mono Documentation" name="libraries">
+  <node label="Commands and Files" name="man" />
+  <node label="Languages" name="languages" />
+  <node label="Tools" name="tools" />
+  <node label="Various" name="various" />
+</node>

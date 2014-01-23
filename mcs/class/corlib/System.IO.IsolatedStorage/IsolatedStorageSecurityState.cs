@@ -28,7 +28,7 @@
 
 using System.Security;
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 
 namespace System.IO.IsolatedStorage
 {

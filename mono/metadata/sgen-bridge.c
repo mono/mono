@@ -45,6 +45,7 @@
 
 #include "sgen-gc.h"
 #include "sgen-bridge.h"
+#include "sgen-hash-table.h"
 #include "utils/mono-logger-internal.h"
 #include "utils/mono-time.h"
 
@@ -107,7 +108,7 @@ dyn_array_ensure_capacity (DynArray *da, int capacity)
 	while (capacity > da->capacity)
 		da->capacity *= 2;
 
-	new_data = sgen_alloc_internal_dynamic (da->elem_size * da->capacity, INTERNAL_MEM_BRIDGE_DATA);
+	new_data = sgen_alloc_internal_dynamic (da->elem_size * da->capacity, INTERNAL_MEM_BRIDGE_DATA, TRUE);
 	memcpy (new_data, da->data, da->elem_size * da->size);
 	sgen_free_internal_dynamic (da->data, da->elem_size * old_capacity, INTERNAL_MEM_BRIDGE_DATA);
 	da->data = new_data;
@@ -270,11 +271,25 @@ typedef struct _SCC {
 	DynArray xrefs;		/* these are incoming, not outgoing */
 } SCC;
 
-static SgenHashTable hash_table = SGEN_HASH_TABLE_INIT (INTERNAL_MEM_BRIDGE_DATA, INTERNAL_MEM_BRIDGE_DATA, sizeof (HashEntry), mono_aligned_addr_hash, NULL);
+static SgenHashTable hash_table = SGEN_HASH_TABLE_INIT (INTERNAL_MEM_BRIDGE_HASH_TABLE, INTERNAL_MEM_BRIDGE_HASH_TABLE_ENTRY, sizeof (HashEntry), mono_aligned_addr_hash, NULL);
 
 static MonoGCBridgeCallbacks bridge_callbacks;
 
 static int current_time;
+
+gboolean bridge_processing_in_progress = FALSE;
+
+void
+mono_gc_wait_for_bridge_processing (void)
+{
+	if (!bridge_processing_in_progress)
+		return;
+
+	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_BRIDGE waiting for bridge processing to finish");
+
+	sgen_gc_lock ();
+	sgen_gc_unlock ();
+}
 
 void
 mono_gc_register_bridge_callbacks (MonoGCBridgeCallbacks *callbacks)
@@ -539,6 +554,12 @@ sgen_bridge_processing_stw_step (void)
 	if (!registered_bridges.size)
 		return;
 
+	/*
+	 * bridge_processing_in_progress must be set with the world
+	 * stopped.  If not there would be race conditions.
+	 */
+	bridge_processing_in_progress = TRUE;
+
 	SGEN_TV_GETTIME (btv);
 
 	/* first DFS pass */
@@ -547,15 +568,37 @@ sgen_bridge_processing_stw_step (void)
 	dyn_array_int_init (&merge_array);
 
 	current_time = 0;
+	/*
+	First we insert all bridges into the hash table and then we do dfs1.
+
+	It must be done in 2 steps since the bridge arrays doesn't come in reverse topological order,
+	which means that we can have entry N pointing to entry N + 1.
+
+	If we dfs1 entry N before N + 1 is registered we'll not consider N + 1 for this bridge
+	pass and not create the required xref between the two.
+	*/
 	for (i = 0; i < registered_bridges.size; ++i)
-		dfs1 (register_bridge_object (DYN_ARRAY_PTR_REF (&registered_bridges, i)), NULL);
+		register_bridge_object (DYN_ARRAY_PTR_REF (&registered_bridges, i));
+
+	for (i = 0; i < registered_bridges.size; ++i)
+		dfs1 (get_hash_entry (DYN_ARRAY_PTR_REF (&registered_bridges, i), NULL), NULL);
 
 	SGEN_TV_GETTIME (atv);
 	step_2 = SGEN_TV_ELAPSED (btv, atv);
 }
 
+static mono_bool
+is_bridge_object_alive (MonoObject *obj, void *data)
+{
+	SgenHashTable *table = data;
+	unsigned char *value = sgen_hash_table_lookup (table, obj);
+	if (!value)
+		return TRUE;
+	return *value;
+}
+
 void
-sgen_bridge_processing_finish (void)
+sgen_bridge_processing_finish (int generation)
 {
 	int i, j;
 	int num_sccs, num_xrefs;
@@ -567,17 +610,20 @@ sgen_bridge_processing_finish (void)
 	HashEntry **all_entries;
 	MonoGCBridgeSCC **api_sccs;
 	MonoGCBridgeXRef *api_xrefs;
+	SgenHashTable alive_hash = SGEN_HASH_TABLE_INIT (INTERNAL_MEM_BRIDGE_ALIVE_HASH_TABLE, INTERNAL_MEM_BRIDGE_ALIVE_HASH_TABLE_ENTRY, 1, mono_aligned_addr_hash, NULL);
 	SGEN_TV_DECLARE (atv);
 	SGEN_TV_DECLARE (btv);
 
 	if (!registered_bridges.size)
 		return;
 
+	g_assert (bridge_processing_in_progress);
+
 	SGEN_TV_GETTIME (atv);
 
 	/* alloc and fill array of all entries */
 
-	all_entries = sgen_alloc_internal_dynamic (sizeof (HashEntry*) * hash_table.num_entries, INTERNAL_MEM_BRIDGE_DATA);
+	all_entries = sgen_alloc_internal_dynamic (sizeof (HashEntry*) * hash_table.num_entries, INTERNAL_MEM_BRIDGE_DATA, TRUE);
 
 	j = 0;
 	SGEN_HASH_TABLE_FOREACH (&hash_table, obj, entry) {
@@ -590,7 +636,7 @@ sgen_bridge_processing_finish (void)
 
 	/* sort array according to decreasing finishing time */
 
-	qsort (all_entries, hash_table.num_entries, sizeof (HashEntry*), compare_hash_entries);
+	sgen_qsort (all_entries, hash_table.num_entries, sizeof (HashEntry*), compare_hash_entries);
 
 	SGEN_TV_GETTIME (btv);
 	step_3 = SGEN_TV_ELAPSED (atv, btv);
@@ -638,7 +684,7 @@ sgen_bridge_processing_finish (void)
 		max_sccs_links = MAX (max_sccs_links, scc->xrefs.size);
 	}
 
-	api_sccs = sgen_alloc_internal_dynamic (sizeof (MonoGCBridgeSCC*) * num_sccs, INTERNAL_MEM_BRIDGE_DATA);
+	api_sccs = sgen_alloc_internal_dynamic (sizeof (MonoGCBridgeSCC*) * num_sccs, INTERNAL_MEM_BRIDGE_DATA, TRUE);
 	num_xrefs = 0;
 	j = 0;
 	for (i = 0; i < sccs.size; ++i) {
@@ -646,7 +692,8 @@ sgen_bridge_processing_finish (void)
 		if (!scc->num_bridge_entries)
 			continue;
 
-		api_sccs [j] = sgen_alloc_internal_dynamic (sizeof (MonoGCBridgeSCC) + sizeof (MonoObject*) * scc->num_bridge_entries, INTERNAL_MEM_BRIDGE_DATA);
+		api_sccs [j] = sgen_alloc_internal_dynamic (sizeof (MonoGCBridgeSCC) + sizeof (MonoObject*) * scc->num_bridge_entries, INTERNAL_MEM_BRIDGE_DATA, TRUE);
+		api_sccs [j]->is_alive = FALSE;
 		api_sccs [j]->num_objs = scc->num_bridge_entries;
 		scc->num_bridge_entries = 0;
 		scc->api_index = j++;
@@ -661,7 +708,7 @@ sgen_bridge_processing_finish (void)
 		}
 	} SGEN_HASH_TABLE_FOREACH_END;
 
-	api_xrefs = sgen_alloc_internal_dynamic (sizeof (MonoGCBridgeXRef) * num_xrefs, INTERNAL_MEM_BRIDGE_DATA);
+	api_xrefs = sgen_alloc_internal_dynamic (sizeof (MonoGCBridgeXRef) * num_xrefs, INTERNAL_MEM_BRIDGE_DATA, TRUE);
 	j = 0;
 	for (i = 0; i < sccs.size; ++i) {
 		int k;
@@ -714,16 +761,28 @@ sgen_bridge_processing_finish (void)
 
 	bridge_callbacks.cross_references (num_sccs, api_sccs, num_xrefs, api_xrefs);
 
-/*Release for finalization those objects we no longer care. */
+	/* Release for finalization those objects we no longer care. */
 	SGEN_TV_GETTIME (btv);
 	step_7 = SGEN_TV_ELAPSED (atv, btv);
 
 	for (i = 0; i < num_sccs; ++i) {
-		if (!api_sccs [i]->objs [0])
-			continue;
-		for (j = 0; j < api_sccs [i]->num_objs; ++j)
-			sgen_mark_bridge_object (api_sccs [i]->objs [j]);
+		unsigned char alive = api_sccs [i]->is_alive ? 1 : 0;
+		for (j = 0; j < api_sccs [i]->num_objs; ++j) {
+			/* Build hash table for nulling weak links. */
+			sgen_hash_table_replace (&alive_hash, api_sccs [i]->objs [j], &alive, NULL);
+
+			/* Release for finalization those objects we no longer care. */
+			if (!api_sccs [i]->is_alive)
+				sgen_mark_bridge_object (api_sccs [i]->objs [j]);
+		}
 	}
+
+	/* Null weak links to dead objects. */
+	sgen_null_links_with_predicate (GENERATION_NURSERY, is_bridge_object_alive, &alive_hash);
+	if (generation == GENERATION_OLD)
+		sgen_null_links_with_predicate (GENERATION_OLD, is_bridge_object_alive, &alive_hash);
+
+	sgen_hash_table_clean (&alive_hash);
 
 	/* free callback data */
 
@@ -753,6 +812,30 @@ sgen_bridge_processing_finish (void)
 		dsf1_passes, dsf2_passes);
 
 	step_1 = 0; /* We must cleanup since this value is used as an accumulator. */
+
+	bridge_processing_in_progress = FALSE;
+}
+
+void
+sgen_bridge_describe_pointer (MonoObject *obj)
+{
+	HashEntry *entry;
+	int i;
+
+	for (i = 0; i < registered_bridges.size; ++i) {
+		if (obj == DYN_ARRAY_PTR_REF (&registered_bridges, i)) {
+			printf ("Pointer is a registered bridge object.\n");
+			break;
+		}
+	}
+
+	entry = sgen_hash_table_lookup (&hash_table, obj);
+	if (!entry)
+		return;
+
+	printf ("Bridge hash table entry %p:\n", entry);
+	printf ("  is bridge: %d\n", (int)entry->is_bridge);
+	printf ("  is visited: %d\n", (int)entry->is_visited);
 }
 
 static const char *bridge_class;
@@ -779,7 +862,7 @@ bridge_test_cross_reference (int num_sccs, MonoGCBridgeSCC **sccs, int num_xrefs
 		for (j = 0; j < sccs [i]->num_objs; ++j) {
 	//		g_print ("  %s\n", sgen_safe_name (sccs [i]->objs [j]));
 			if (i & 1) /*retain half of the bridged objects */
-				sccs [i]->objs [0] = NULL;
+				sccs [i]->is_alive = TRUE;
 		}
 	}
 	for (i = 0; i < num_xrefs; ++i) {
@@ -789,6 +872,84 @@ bridge_test_cross_reference (int num_sccs, MonoGCBridgeSCC **sccs, int num_xrefs
 	}
 }
 
+static MonoClassField *mono_bridge_test_field;
+
+enum {
+	BRIDGE_DEAD,
+	BRIDGE_ROOT,
+	BRIDGE_SAME_SCC,
+	BRIDGE_XREF,
+};
+
+static gboolean
+test_scc (MonoGCBridgeSCC *scc, int i)
+{
+	int status = BRIDGE_DEAD;
+	mono_field_get_value (scc->objs [i], mono_bridge_test_field, &status);
+	return status > 0;
+}
+
+static void
+mark_scc (MonoGCBridgeSCC *scc, int value)
+{
+	int i;
+	for (i = 0; i < scc->num_objs; ++i) {
+		if (!test_scc (scc, i)) {
+			int status = value;
+			mono_field_set_value (scc->objs [i], mono_bridge_test_field, &status);
+		}
+	}
+}
+
+static void
+bridge_test_cross_reference2 (int num_sccs, MonoGCBridgeSCC **sccs, int num_xrefs, MonoGCBridgeXRef *xrefs)
+{
+	int i;
+	gboolean modified;
+
+	if (!mono_bridge_test_field) {
+		mono_bridge_test_field = mono_class_get_field_from_name (mono_object_get_class (sccs[0]->objs [0]), "__test");
+		g_assert (mono_bridge_test_field);
+	}
+
+	/*We mark all objects in a scc with live objects as reachable by scc*/
+	for (i = 0; i < num_sccs; ++i) {
+		int j;
+		gboolean live = FALSE;
+		for (j = 0; j < sccs [i]->num_objs; ++j) {
+			if (test_scc (sccs [i], j)) {
+				live = TRUE;
+				break;
+			}
+		}
+		if (!live)
+			continue;
+		for (j = 0; j < sccs [i]->num_objs; ++j) {
+			if (!test_scc (sccs [i], j)) {
+				int status = BRIDGE_SAME_SCC;
+				mono_field_set_value (sccs [i]->objs [j], mono_bridge_test_field, &status);
+			}
+		}
+	}
+
+	/*Now we mark the transitive closure of reachable objects from the xrefs*/
+	modified = TRUE;
+	while (modified) {
+		modified = FALSE;
+		/* Mark all objects that are brought to life due to xrefs*/
+		for (i = 0; i < num_xrefs; ++i) {
+			MonoGCBridgeXRef ref = xrefs [i];
+			if (test_scc (sccs [ref.src_scc_index], 0) && !test_scc (sccs [ref.dst_scc_index], 0)) {
+				modified = TRUE;
+				mark_scc (sccs [ref.dst_scc_index], BRIDGE_XREF);
+			}
+		}
+	}
+
+	/* keep everything in memory, all we want to do is test persistence */
+	for (i = 0; i < num_sccs; ++i)
+		sccs [i]->is_alive = TRUE;
+}
 
 void
 sgen_register_test_bridge_callbacks (const char *bridge_class_name)
@@ -797,9 +958,9 @@ sgen_register_test_bridge_callbacks (const char *bridge_class_name)
 	callbacks.bridge_version = SGEN_BRIDGE_VERSION;
 	callbacks.is_bridge_class = bridge_test_is_bridge_class;
 	callbacks.is_bridge_object = bridge_test_is_bridge_object;
-	callbacks.cross_references = bridge_test_cross_reference;
+	callbacks.cross_references = bridge_class_name[0] == '2' ? bridge_test_cross_reference2 : bridge_test_cross_reference;
 	mono_gc_register_bridge_callbacks (&callbacks);
-	bridge_class = bridge_class_name;
+	bridge_class = bridge_class_name + (bridge_class_name[0] == '2' ? 1 : 0);
 }
 
 #endif

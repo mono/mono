@@ -10,12 +10,12 @@ class C
 
 	public async Task TestTask ()
 	{
-		await Call ();
+		await Call ().ConfigureAwait (false);
 	}
 
 	public async Task TestTask2 ()
 	{
-		await Call ();
+		await Call ().ConfigureAwait (false);
 		return;
 	}
 
@@ -29,7 +29,7 @@ class C
 
 	public async Task<int> TestTaskGeneric ()
 	{
-		return await CallGeneric ();
+		return await CallGeneric ().ConfigureAwait (false);
 	}
 
 	Task<int> CallGeneric ()

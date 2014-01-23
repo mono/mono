@@ -41,14 +41,9 @@ namespace Monotests_System.Data
 		[Test]
 		public void XmlLoadTest ()
 		{
-			try {
 				DataSet ds = new DataSet();
 				ds.ReadXmlSchema ("Test/System.Data/TestReadXmlSchema1.xml");
 				ds.ReadXml ("Test/System.Data/TestReadXml1.xml");
-				ds = null;
-			} catch {
-				Assert.Fail ("#1 Should not throw Exception");
-			}
 		}
 		
 		// Test for Bug#377146

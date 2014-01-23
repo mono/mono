@@ -11,6 +11,6 @@ struct Bar
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

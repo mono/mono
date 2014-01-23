@@ -7,6 +7,7 @@
 
 /* No managed code here */
 void mono_thread_pool_init (void) MONO_INTERNAL;
+void mono_thread_pool_init_tls (void) MONO_INTERNAL;
 
 void icall_append_job (MonoObject *ar) MONO_INTERNAL;
 void icall_append_io_job (MonoObject *target, MonoSocketAsyncResult *state) MONO_INTERNAL;
@@ -21,6 +22,9 @@ mono_thread_pool_finish (MonoAsyncResult *ares, MonoArray **out_args,
 void mono_thread_pool_cleanup (void) MONO_INTERNAL;
 
 gboolean mono_thread_pool_remove_domain_jobs (MonoDomain *domain, int timeout) MONO_INTERNAL;
+
+void mono_thread_pool_suspend (void) MONO_INTERNAL;
+void mono_thread_pool_resume (void) MONO_INTERNAL;
 
 void
 ves_icall_System_Threading_ThreadPool_GetAvailableThreads (int *workerThreads,
@@ -43,10 +47,10 @@ ves_icall_System_Threading_ThreadPool_SetMaxThreads (gint workerThreads,
 								gint completionPortThreads) MONO_INTERNAL;
 
 typedef void  (*MonoThreadPoolFunc) (gpointer user_data);
-void mono_install_threadpool_thread_hooks (MonoThreadPoolFunc start_func, MonoThreadPoolFunc finish_func, gpointer user_data);
+MONO_API void mono_install_threadpool_thread_hooks (MonoThreadPoolFunc start_func, MonoThreadPoolFunc finish_func, gpointer user_data);
 
 typedef void  (*MonoThreadPoolItemFunc) (gpointer user_data);
-void mono_install_threadpool_item_hooks (MonoThreadPoolItemFunc begin_func, MonoThreadPoolItemFunc end_func, gpointer user_data);
+MONO_API void mono_install_threadpool_item_hooks (MonoThreadPoolItemFunc begin_func, MonoThreadPoolItemFunc end_func, gpointer user_data);
 
 #endif
 

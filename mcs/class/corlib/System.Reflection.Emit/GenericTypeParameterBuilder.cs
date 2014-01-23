@@ -29,6 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !FULL_AOT_RUNTIME
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections;
@@ -41,7 +42,12 @@ namespace System.Reflection.Emit
 {
 	[ComVisible (true)]
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed class GenericTypeParameterBuilder : Type
+	public sealed class GenericTypeParameterBuilder : 
+#if NET_4_5
+		TypeInfo
+#else
+		Type
+#endif	
 	{
 	#region Sync with reflection.h
 		private TypeBuilder tbuilder;
@@ -448,5 +454,12 @@ namespace System.Reflection.Emit
 		{
 			return new PointerType (this);
 		}
+
+		internal override bool IsUserType {
+			get {
+				return false;
+			}
+		}
 	}
 }
+#endif

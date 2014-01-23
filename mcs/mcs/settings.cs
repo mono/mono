@@ -301,8 +301,8 @@ namespace Mono.CSharp {
 			UnknownOption
 		}
 
-		static readonly char[] argument_value_separator = new char[] { ';', ',' };
-		static readonly char[] numeric_value_separator = new char[] { ';', ',', ' ' };
+		static readonly char[] argument_value_separator = { ';', ',' };
+		static readonly char[] numeric_value_separator = { ';', ',', ' ' };
 
 		readonly TextWriter output;
 		readonly Report report;
@@ -350,6 +350,17 @@ namespace Mono.CSharp {
 		public CompilerSettings ParseArguments (string[] args)
 		{
 			CompilerSettings settings = new CompilerSettings ();
+			if (!ParseArguments (settings, args))
+				return null;
+
+			return settings;
+		}
+
+		public bool ParseArguments (CompilerSettings settings, string[] args)
+		{
+			if (settings == null)
+				throw new ArgumentNullException ("settings");
+
 			List<string> response_file_list = null;
 			bool parsing_options = true;
 			stop_argument = false;
@@ -369,7 +380,7 @@ namespace Mono.CSharp {
 
 					if (response_file_list.Contains (response_file)) {
 						report.Error (1515, "Response file `{0}' specified multiple times", response_file);
-						return null;
+						return false;
 					}
 
 					response_file_list.Add (response_file);
@@ -377,7 +388,7 @@ namespace Mono.CSharp {
 					extra_args = LoadArgs (response_file);
 					if (extra_args == null) {
 						report.Error (2011, "Unable to open response file: " + response_file);
-						return null;
+						return false;
 					}
 
 					args = AddArgs (args, extra_args);
@@ -399,7 +410,7 @@ namespace Mono.CSharp {
 							continue;
 						case ParseResult.Stop:
 							stop_argument = true;
-							return settings;
+							return true;
 						case ParseResult.UnknownOption:
 							if (UnknownOptionHandler != null) {
 								var ret = UnknownOptionHandler (args, i);
@@ -433,11 +444,11 @@ namespace Mono.CSharp {
 							}
 
 							Error_WrongOption (arg);
-							return null;
+							return false;
 
 						case ParseResult.Stop:
 							stop_argument = true;
-							return settings;
+							return true;
 						}
 					}
 				}
@@ -445,10 +456,7 @@ namespace Mono.CSharp {
 				ProcessSourceFiles (arg, false, settings.SourceFiles);
 			}
 
-			if (report.Errors > 0)
-				return null;
-
-			return settings;
+			return report.Errors == 0;
 		}
 
 		void ProcessSourceFiles (string spec, bool recurse, List<SourceFile> sourceFiles)
@@ -461,7 +469,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			string[] files = null;
+			string[] files;
 			try {
 				files = Directory.GetFiles (path, pattern);
 			} catch (System.IO.DirectoryNotFoundException) {
@@ -568,7 +576,7 @@ namespace Mono.CSharp {
 		public bool ProcessWarningsList (string text, Action<int> action)
 		{
 			bool valid = true;
-			foreach (string wid in text.Split (numeric_value_separator)) {
+			foreach (string wid in text.Split (numeric_value_separator, StringSplitOptions.RemoveEmptyEntries)) {
 				int id;
 				if (!int.TryParse (wid, NumberStyles.AllowLeadingWhite, CultureInfo.InvariantCulture, out id)) {
 					report.Error (1904, "`{0}' is not a valid warning number", wid);
@@ -600,24 +608,7 @@ namespace Mono.CSharp {
 
 		static bool IsExternAliasValid (string identifier)
 		{
-			if (identifier.Length == 0)
-				return false;
-			if (identifier[0] != '_' && !char.IsLetter (identifier[0]))
-				return false;
-
-			for (int i = 1; i < identifier.Length; i++) {
-				char c = identifier[i];
-				if (char.IsLetter (c) || char.IsDigit (c))
-					continue;
-
-				UnicodeCategory category = char.GetUnicodeCategory (c);
-				if (category != UnicodeCategory.Format || category != UnicodeCategory.NonSpacingMark ||
-						category != UnicodeCategory.SpacingCombiningMark ||
-						category != UnicodeCategory.ConnectorPunctuation)
-					return false;
-			}
-
-			return true;
+			return Tokenizer.IsValidIdentifier (identifier);
 		}
 
 		static string[] LoadArgs (string file)
@@ -984,7 +975,7 @@ namespace Mono.CSharp {
 					settings.WarningsAreErrors = true;
 					parser_settings.WarningsAreErrors = true;
 				} else {
-					if (!ProcessWarningsList (value, v => settings.AddWarningAsError (v)))
+					if (!ProcessWarningsList (value, settings.AddWarningAsError))
 						return ParseResult.Error;
 				}
 				return ParseResult.Success;
@@ -993,7 +984,7 @@ namespace Mono.CSharp {
 				if (value.Length == 0) {
 					settings.WarningsAreErrors = false;
 				} else {
-					if (!ProcessWarningsList (value, v => settings.AddWarningOnly (v)))
+					if (!ProcessWarningsList (value, settings.AddWarningOnly))
 						return ParseResult.Error;
 				}
 				return ParseResult.Success;
@@ -1014,7 +1005,7 @@ namespace Mono.CSharp {
 					return ParseResult.Error;
 				}
 
-				if (!ProcessWarningsList (value, v => settings.SetIgnoreWarning (v)))
+				if (!ProcessWarningsList (value, settings.SetIgnoreWarning))
 					return ParseResult.Error;
 
 				return ParseResult.Success;

@@ -64,6 +64,22 @@ namespace MonoTests.System.Text
 			Assert.IsNotNull (encoder);
 		}
 
+		[Test]
+		public void ConvertZeroCharacters ()
+		{
+			int charsUsed, bytesUsed;
+			bool completed;
+			byte [] bytes = new byte [0];
+
+			Encoding.UTF8.GetEncoder ().Convert (
+				new char[0], 0, 0, bytes, 0, bytes.Length, true,
+				out charsUsed, out bytesUsed, out completed);
+
+			Assert.IsTrue (completed, "#1");
+			Assert.AreEqual (0, charsUsed, "#2");
+			Assert.AreEqual (0, bytesUsed, "#3");
+		}
+
 		class CustomEncoding : Encoding {
 
 			public override int GetByteCount (char [] chars, int index, int count)

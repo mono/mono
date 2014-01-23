@@ -26,6 +26,7 @@
 //	Peter Bartok	pbartok@novell.com
 //	Gert Driesen	drieseng@users.sourceforge.net
 //	Olivier Dufour	olivier.duff@gmail.com
+//	Gary Barnett	gary.barnett.mono@gmail.com
 
 using System;
 using System.Collections;
@@ -39,6 +40,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
 using System.Reflection;
 using System.Drawing;
+using System.Runtime.Serialization;
 
 namespace System.Resources
 {
@@ -183,6 +185,10 @@ namespace System.Resources
 					}
 				} catch (XmlException ex) {
 					throw new ArgumentException ("Invalid ResX input.", ex);
+				} catch (SerializationException ex) {
+					throw ex;
+				} catch (TargetInvocationException ex) {
+					throw ex;
 				} catch (Exception ex) {
 					XmlException xex = new XmlException (ex.Message, ex, 
 						xmlReader.LineNumber, xmlReader.LinePosition);
@@ -278,93 +284,46 @@ namespace System.Resources
 			string type_name = GetAttribute ("type");
 			string mime_type = GetAttribute ("mimetype");
 
-			Type type = type_name == null ? null : ResolveType (type_name);
-
-			if (type_name != null && type == null)
-				throw new ArgumentException (String.Format (
-					"The type '{0}' of the element '{1}' could not be resolved.", type_name, name));
-
-			if (type == typeof (ResXNullRef)) {
-				
-				if (useResXDataNodes)
-					hashtable [name] = new ResXDataNode (name, null, pos);
-				else
-					hashtable [name] = null;
-				return;
-			}
 
 			string comment = null;
 			string value = GetDataValue (meta, out comment);
-			object obj = null;
 
-			if (mime_type != null && mime_type.Length > 0) {
-				if (mime_type == ResXResourceWriter.BinSerializedObjectMimeType) {
-					byte [] data = Convert.FromBase64String (value);
-					BinaryFormatter f = new BinaryFormatter ();
-					using (MemoryStream s = new MemoryStream (data)) {
-						obj = f.Deserialize (s);
-					}
-				} else if (mime_type == ResXResourceWriter.ByteArraySerializedObjectMimeType) {
-					if (type != null) {
-						TypeConverter c = TypeDescriptor.GetConverter (type);
-						if (c.CanConvertFrom (typeof (byte [])))
-							obj = c.ConvertFrom (Convert.FromBase64String (value));
-					}
-				}
-			} else if (type != null) {
-				if (type == typeof (byte [])) {
-					obj = Convert.FromBase64String (value);
-				} else {
-					TypeConverter c = TypeDescriptor.GetConverter (type);
-					if (c.CanConvertFrom (typeof (string))) {
-						if (BasePath != null && type == typeof (ResXFileRef)) {
-							string [] parts = ResXFileRef.Parse (value);
-							parts [0] = Path.Combine (BasePath, parts [0]);
-							obj = c.ConvertFromInvariantString (string.Join (";", parts));
-						} else {
-							obj = c.ConvertFromInvariantString (value);
-						}
-					}
-				}
-			} else {
-				obj = value;
+			ResXDataNode node = new ResXDataNode (name, mime_type, type_name, value, comment, pos, BasePath);
+
+			if (useResXDataNodes) {
+				hashtable [name] = node;
+				return;
 			}
 
 			if (name == null)
 				throw new ArgumentException (string.Format (CultureInfo.CurrentCulture,
-					"Could not find a name for a resource. The resource value "
-					+ "was '{0}'.", obj));
-			if (useResXDataNodes)
-			{
-				ResXDataNode dataNode = new ResXDataNode(name, obj, pos);
-				dataNode.Comment = comment;
-				hashtable [name] = dataNode;
-				
-			}
-			else
-			hashtable [name] = obj;
-		}
+							"Could not find a name for a resource. The resource value was '{0}'.",
+				                        node.GetValue ((AssemblyName []) null).ToString()));
 
-		private Type ResolveType (string type)
-		{
-			if (typeresolver != null) {
-				return typeresolver.GetType (type);
-			} 
-			if (assemblyNames != null) {
-				Type result;
-				foreach (AssemblyName assem in assemblyNames) {
-					Assembly myAssembly = Assembly.Load (assem);
-					result = myAssembly.GetType (type, false);
-					if (result != null)
-						return result;
-					//else loop
+			// useResXDataNodes is false, add to dictionary of values
+			if (assemblyNames != null) { 
+				try {
+					hashtable [name] = node.GetValue (assemblyNames);
+				} catch (TypeLoadException ex) {
+					// different error messages depending on type of resource, hacky solution
+					if (node.handler is TypeConverterFromResXHandler)
+						hashtable [name] = null;
+					else 
+						throw ex;
 				}
-				//if type not found on assembly list we return null or we get from current assembly?
-				//=> unit test needed
+			} else { // there is a typeresolver or its null
+				try {
+					hashtable [name] = node.GetValue (typeresolver); 
+				} catch (TypeLoadException ex) {
+					if (node.handler is TypeConverterFromResXHandler)
+						hashtable [name] = null;
+					else 
+						throw ex;
+				}
 			}
-			return Type.GetType (type);
 
 		}
+
 		#endregion	// Private Methods
 
 		#region Public Methods

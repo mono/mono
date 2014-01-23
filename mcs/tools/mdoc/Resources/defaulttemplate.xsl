@@ -230,7 +230,7 @@
   <xsl:template name="create-index">
     <xsl:if test="
         count(PageTitle/@id) &gt; 0 and 
-        count(Signature/@id) &gt; 0 and
+        (count(Signature/@id) &gt; 0 or count(Signature/div/@id) &gt; 0) and
         count(Remarks/@id) &gt; 0 and
         count(Members/@id) &gt; 0
         ">
@@ -249,6 +249,7 @@
             <xsl:attribute name="href">
               <xsl:text>#</xsl:text>
               <xsl:value-of select="Signature/@id" />
+              <xsl:value-of select="Signature/div/@id" />
             </xsl:attribute>
             <xsl:text>Signature</xsl:text>
           </a>

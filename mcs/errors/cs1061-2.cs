@@ -1,4 +1,4 @@
-// CS1061: Type `A' does not contain a definition for `Foo' and no extension method `Foo' of type `A' could be found (are you missing a using directive or an assembly reference?)
+// CS1061: Type `A' does not contain a definition for `Foo' and no extension method `Foo' of type `A' could be found. Are you missing an assembly reference?
 // Line: 17
 
 using System;

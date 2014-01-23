@@ -1036,8 +1036,14 @@ namespace System.Windows.Forms {
 				} else if (value > rows.Count) {
 					// If we need to add rows and don't have any columns,
 					// we create one column
-					if (ColumnCount == 0)
-						ColumnCount = 1;
+					if (ColumnCount == 0) {
+						System.Diagnostics.Debug.Assert (rows.Count == 0);
+						ColumnCount = 1; // this creates the edit row
+						if (VirtualMode) {
+							// update edit row height
+							UpdateRowHeightInfo (0, false);
+						}
+					}
 
 					List<DataGridViewRow> newRows = new List<DataGridViewRow> (value - rows.Count);
 					for (int i = rows.Count; i < value; i++)
@@ -1362,6 +1368,7 @@ namespace System.Windows.Forms {
 					} else {
 						Controls.Remove (editingControl);
 					}
+					editingControl.Dispose();
 				}
 				
 				
@@ -2233,10 +2240,20 @@ namespace System.Windows.Forms {
 			int new_width = 0;
 			
 			if (rowHeadersWidthSizeMode == DataGridViewRowHeadersWidthSizeMode.AutoSizeToDisplayedHeaders) {
-				foreach (DataGridViewRow row in Rows)
-					if (row.Displayed)
+				bool anyRowsDisplayed = false;
+				foreach(DataGridViewRow row in Rows)
+					if(row.Displayed) {
+						anyRowsDisplayed = true;
 						new_width = Math.Max (new_width, row.HeaderCell.PreferredSize.Width);
-						
+					}
+	
+			        // if there are no rows which are displayed, we still have to set new_width
+				// to a value >= 4 as RowHeadersWidth will throw an exception otherwise	
+				if(!anyRowsDisplayed) {
+					foreach (DataGridViewRow row in Rows)
+							new_width = Math.Max (new_width, row.HeaderCell.PreferredSize.Width);
+			        }		
+				
 				if (RowHeadersWidth != new_width)
 					RowHeadersWidth = new_width;
 					
@@ -2491,7 +2508,8 @@ namespace System.Windows.Forms {
 			currentCell.SetIsInEditMode (false);
 			currentCell.DetachEditingControl ();
 			OnCellEndEdit (new DataGridViewCellEventArgs (currentCell.ColumnIndex, currentCell.RowIndex));
-			Focus ();
+			if (context != DataGridViewDataErrorContexts.LeaveControl)
+				Focus ();
 			if (currentCell.RowIndex == NewRowIndex) {
 				new_row_editing = false;
 				editing_row = null; // editing row becomes a real row
@@ -3379,6 +3397,18 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void Dispose (bool disposing) {
+			if (disposing) {
+				ClearSelection();
+				foreach (DataGridViewColumn column in Columns)
+					column.Dispose();
+				Columns.Clear();
+				foreach (DataGridViewRow row in Rows)
+					row.Dispose();
+				Rows.Clear();
+			}
+			editingControl = null;
+
+			base.Dispose(disposing);
 		}
 
 		protected override AccessibleObject GetAccessibilityObjectById (int objectId)
@@ -4218,6 +4248,7 @@ namespace System.Windows.Forms {
 
 		protected override void OnLeave (EventArgs e)
 		{
+			EndEdit (DataGridViewDataErrorContexts.LeaveControl);
 			base.OnLeave(e);
 		}
 
@@ -5077,6 +5108,11 @@ namespace System.Windows.Forms {
 				MoveCurrentCell (ColumnDisplayIndexToIndex (0), 0, true, false, false, true);
 
 			AutoResizeColumnsInternal ();
+			if (VirtualMode) {
+				for (int i = 0; i < e.RowCount; i++)
+					UpdateRowHeightInfo (e.RowIndex + i, false);
+			}
+
 			Invalidate ();
 			OnRowsAdded (e);
 		}
@@ -5431,7 +5467,7 @@ namespace System.Windows.Forms {
 			DataGridViewCell cell = CurrentCell;
 			
 			if (cell != null) {
-				if (cell.KeyEntersEditMode (new KeyEventArgs ((Keys)m.WParam.ToInt32 ())))
+				if (cell.KeyEntersEditMode (new KeyEventArgs (((Keys)m.WParam.ToInt32 ()) | XplatUI.State.ModifierKeys)))
 					BeginEdit (true);
 				if (EditingControl != null && ((Msg)m.Msg == Msg.WM_KEYDOWN || (Msg)m.Msg == Msg.WM_CHAR))
 					XplatUI.SendMessage (EditingControl.Handle, (Msg)m.Msg, m.WParam, m.LParam);
@@ -5443,7 +5479,7 @@ namespace System.Windows.Forms {
 		protected override bool ProcessKeyPreview (ref Message m)
 		{
 			if ((Msg)m.Msg == Msg.WM_KEYDOWN && (IsCurrentCellInEditMode || m.HWnd == horizontalScrollBar.Handle || m.HWnd == verticalScrollBar.Handle)) {
-				KeyEventArgs e = new KeyEventArgs ((Keys)m.WParam.ToInt32 ());
+				KeyEventArgs e = new KeyEventArgs (((Keys)m.WParam.ToInt32 ()) | XplatUI.State.ModifierKeys);
 			
 				IDataGridViewEditingControl ctrl = (IDataGridViewEditingControl)EditingControlInternal;
 				
@@ -6306,7 +6342,7 @@ namespace System.Windows.Forms {
 				
 					horizontalScrollBar.SafeValueSet (horizontalScrollBar.Value - delta_x);
 					OnHScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, horizontalScrollBar.Value));
-				} else if (disp_x > first_col_index + displayedColumnsCount - 1) {
+				} else if (disp_x > first_col_index + displayedColumnsCount - 1 && disp_x != 0) {
 					RefreshScrollBars ();
 					scrollbarsRefreshed = true;
 					
@@ -6340,7 +6376,7 @@ namespace System.Windows.Forms {
 
 					verticalScrollBar.SafeValueSet (verticalScrollBar.Value - delta_y);
 					OnVScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, verticalScrollBar.Value));
-				} else if (disp_y > first_row_index + displayedRowsCount - 1) {
+				} else if (disp_y > first_row_index + displayedRowsCount - 1 && disp_y != 0) {
 					if (!scrollbarsRefreshed)
 						RefreshScrollBars ();
 

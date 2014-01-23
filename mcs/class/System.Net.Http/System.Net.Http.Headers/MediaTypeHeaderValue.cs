@@ -33,7 +33,7 @@ namespace System.Net.Http.Headers
 	public class MediaTypeHeaderValue : ICloneable
 	{
 		internal List<NameValueHeaderValue> parameters;
-		string media_type;
+		internal string media_type;
 
 		public MediaTypeHeaderValue (string mediaType)
 		{
@@ -85,7 +85,8 @@ namespace System.Net.Http.Headers
 					throw new ArgumentNullException ("MediaType");
 
 				string temp;
-				if (TryParseMediaType (new Lexer (value), out temp) != Token.Type.End)
+				var token = TryParseMediaType (new Lexer (value), out temp);
+				if (token == null || token.Value.Kind != Token.Type.End)
 					throw new FormatException ();
 
 				media_type = temp;
@@ -149,7 +150,8 @@ namespace System.Net.Http.Headers
 
 			switch (token.Value.Kind) {
 			case Token.Type.SeparatorSemicolon:
-				if (!NameValueHeaderValue.ParseParameters (lexer, out parameters))
+				Token t;
+				if (!NameValueHeaderValue.TryParseParameters (lexer, out parameters, out t) || t != Token.Type.End)
 					return false;
 				break;
 			case Token.Type.End:
@@ -166,37 +168,7 @@ namespace System.Net.Http.Headers
 			return true;
 		}
 
-		internal static bool TryParse<T> (string input, out T parsedValue, Func<T> factory) where T : MediaTypeHeaderValue
-		{
-			parsedValue = null;
-
-			var lexer = new Lexer (input);
-
-			string media;
-			List<NameValueHeaderValue> parameters = null;
-			var token = TryParseMediaType (lexer, out media);
-			if (token == null)
-				return false;
-
-			switch (token.Value.Kind) {
-			case Token.Type.SeparatorSemicolon:
-				if (!NameValueHeaderValue.ParseParameters (lexer, out parameters))
-					return false;
-				break;
-			case Token.Type.End:
-				break;
-			default:
-				return false;
-			}
-
-			parsedValue = factory ();
-			parsedValue.media_type = media;
-			parsedValue.parameters = parameters;
-
-			return true;
-		}
-
-		static Token? TryParseMediaType (Lexer lexer, out string media)
+		internal static Token? TryParseMediaType (Lexer lexer, out string media)
 		{
 			media = null;
 

@@ -14,5 +14,5 @@ class Test
 	[Baz ((Foo) 1)]        void f1() {}
 	[Baz (foo2 = (Foo) 2)] void f2() {}
 	[Baz (foo3 = (Foo) 3)] void f3() {}
-	static void Main() { }
+	public static void Main() { }
 }

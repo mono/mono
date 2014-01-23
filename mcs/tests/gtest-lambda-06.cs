@@ -38,7 +38,7 @@ class TestClass
 	
 	static void StopTrue (T t) { }
 
-	static int Main ()
+	public static int Main ()
 	{
 		// Test that we encode (!v3) & ((!v1) & ((v1 | v2) & (v2 | v3)))
 		P (v1 => P (v2 => P (v3 => StopTrue (

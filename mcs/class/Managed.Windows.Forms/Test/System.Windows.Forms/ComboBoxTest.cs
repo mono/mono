@@ -1074,6 +1074,36 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual(false, eventFired, "SWC2");
 		}
 
+		[Test]
+		public void SelectionWithModification()
+		{
+			// ComboBox's this[int].set() was dealing with the
+			// current index badly.  This reproduces the old bug and
+			// makes sure it's fixed.
+			ComboBox cb = new ComboBox ();
+			cb.DropDownStyle = ComboBoxStyle.DropDown;
+
+			// Add a menu item.
+			string strItemText = "Item text";
+			cb.Items.Add (strItemText);
+
+			// Select the menu item.
+			cb.SelectedIndex = 0;
+
+			// Move the selection to the end of the text.
+			cb.SelectionLength = 0;
+			cb.SelectionStart = strItemText.Length;
+
+			// Now set the menu item's text to the empty string and
+			// back again.
+			cb.Items[0] = string.Empty;
+			cb.Items[0] = strItemText;
+
+			// Make sure the text didn't get duplicated (i.e. the
+			// bugged code would produce "Item textItem text").
+			Assert.AreEqual (strItemText, cb.Text, "A1");
+		}
+
 		// Bug #333750 - DisplayMember assignation 
 		// when ComboBox already has a BindingContext BUT
 		// handle hasn't been created yet.
@@ -1231,6 +1261,16 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsNotNull (cmbbox.Text, "#J1");
 			Assert.AreEqual ("BAD", cmbbox.Text, "#J2");
 			Assert.AreEqual (4, cmbbox.SelectedIndex, "#J3");
+
+			cmbbox.Text = "Something";
+			Assert.IsNotNull (cmbbox.Text, "#T1");
+			Assert.AreEqual ("Something", cmbbox.Text, "#T2");
+			Assert.AreEqual (4, cmbbox.SelectedIndex, "#T3");
+
+			cmbbox.Text = "BAD";
+			Assert.IsNotNull (cmbbox.Text, "#U1");
+			Assert.AreEqual ("BAD", cmbbox.Text, "#U2");
+			Assert.AreEqual (4, cmbbox.SelectedIndex, "#U3");
 
 			cmbbox.Text = "baD";
 			Assert.IsNotNull (cmbbox.Text, "#K1");

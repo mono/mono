@@ -6,7 +6,7 @@ public class A : C5.ArrayList<int>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		A x = new A ();
 		foreach (int i in x) {

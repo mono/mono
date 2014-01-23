@@ -37,6 +37,8 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.Web.Configuration;
 
+using SysConfig = System.Configuration.Configuration;
+
 namespace System.ServiceModel.Configuration
 {
 	internal static class ConfigUtil
@@ -301,6 +303,17 @@ namespace System.ServiceModel.Configuration
 		public static X509Certificate2 CreateInstance (this X509DefaultServiceCertificateElement el)
 		{
 			return CreateCertificateFrom (el.StoreLocation, el.StoreName, el.X509FindType, el.FindValue);
+		}
+
+		public static BindingCollectionElement FindCollectionElement (Binding binding, SysConfig config)
+		{
+			var section = (BindingsSection) config.GetSection ("system.serviceModel/bindings");
+			foreach (var element in section.BindingCollections) {
+				if (binding.GetType ().Equals (element.BindingType))
+					return element;
+			}
+			
+			return null;
 		}
 	}
 

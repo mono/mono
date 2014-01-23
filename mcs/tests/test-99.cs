@@ -13,7 +13,7 @@ class X {
 		B
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		int v = 1;
 		object foo = (v + A.a);

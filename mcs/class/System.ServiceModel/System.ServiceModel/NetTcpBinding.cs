@@ -32,6 +32,9 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Security;
 using System.ServiceModel.Security.Tokens;
+#if NET_4_0
+using System.ServiceModel.Configuration;
+#endif
 using System.Text;
 using System.Xml;
 
@@ -45,7 +48,7 @@ namespace System.ServiceModel
 		XmlDictionaryReaderQuotas reader_quotas;
 		bool transaction_flow;
 		TransactionProtocol transaction_protocol;
-		TcpTransportBindingElement transport = new TcpTransportBindingElement ();
+		TcpTransportBindingElement transport;
 
 		public NetTcpBinding ()
 			: this (SecurityMode.Transport)
@@ -61,6 +64,25 @@ namespace System.ServiceModel
 			bool reliableSessionEnabled)
 		{
 			security = new NetTcpSecurity (securityMode);
+			transport = new TcpTransportBindingElement ();
+		}
+
+#if NET_4_0
+		public NetTcpBinding (string configurationName)
+			: this ()
+		{
+			var bindingsSection = ConfigUtil.BindingsSection;
+			var el = bindingsSection.NetTcpBinding.Bindings [configurationName];
+			el.ApplyConfiguration (this);
+		}
+#endif
+
+		internal NetTcpBinding (TcpTransportBindingElement transport,
+		                        NetTcpSecurity security,
+		                        bool reliableSessionEnabled)
+		{
+			this.transport = transport;
+			this.security = security;
 		}
 
 		public HostNameComparisonMode HostNameComparisonMode {
@@ -111,6 +133,9 @@ namespace System.ServiceModel
 
 		public NetTcpSecurity Security {
 			get { return security; }
+#if NET_4_0
+			set { security = value; }
+#endif
 		}
 
 		public EnvelopeVersion EnvelopeVersion {
@@ -223,8 +248,14 @@ namespace System.ServiceModel
 		BindingElement CreateTransportSecurity ()
 		{
 			switch (Security.Mode) {
-			case SecurityMode.None:
-			case SecurityMode.Message:
+			case SecurityMode.Transport:
+				return new WindowsStreamSecurityBindingElement () {
+					ProtectionLevel = Security.Transport.ProtectionLevel };
+
+			case SecurityMode.TransportWithMessageCredential:
+				return new SslStreamSecurityBindingElement ();
+
+			default:
 				return null;
 			}
 

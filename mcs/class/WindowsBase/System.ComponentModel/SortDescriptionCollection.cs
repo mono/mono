@@ -32,10 +32,17 @@ namespace System.ComponentModel {
 
 	public class SortDescriptionCollection : Collection<SortDescription>, INotifyCollectionChanged
 	{
-		public static readonly SortDescriptionCollection Empty = new SortDescriptionCollection ();
+		public static readonly SortDescriptionCollection Empty = new SortDescriptionCollection (true);
 
-		public SortDescriptionCollection ()
+		readonly bool isReadOnly;
+
+		public SortDescriptionCollection () : this (false)
 		{
+		}
+
+		SortDescriptionCollection (bool isReadOnly)
+		{
+			this.isReadOnly = isReadOnly;
 		}
 
 		event NotifyCollectionChangedEventHandler INotifyCollectionChanged.CollectionChanged {
@@ -47,12 +54,18 @@ namespace System.ComponentModel {
 
 		protected override void ClearItems ()
 		{
+			if (isReadOnly)
+				throw new NotSupportedException ();
+
 			base.ClearItems ();
 			OnCollectionChanged (NotifyCollectionChangedAction.Reset);
 		}
 
 		protected override void InsertItem (int index, SortDescription item)
 		{
+			if (isReadOnly)
+				throw new NotSupportedException ();
+
 			item.Seal ();
 			base.InsertItem (index, item);
 			OnCollectionChanged (NotifyCollectionChangedAction.Add, item, index);
@@ -60,6 +73,9 @@ namespace System.ComponentModel {
 
 		protected override void RemoveItem (int index)
 		{
+			if (isReadOnly)
+				throw new NotSupportedException ();
+
 			SortDescription sd = base [index];
 			base.RemoveItem (index);
 			OnCollectionChanged (NotifyCollectionChangedAction.Remove, sd, index);
@@ -67,6 +83,9 @@ namespace System.ComponentModel {
 
 		protected override void SetItem (int index, SortDescription item)
 		{
+			if (isReadOnly)
+				throw new NotSupportedException ();
+
 			SortDescription old = base [index];
 			item.Seal ();
 			base.SetItem (index, item);

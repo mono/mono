@@ -31,7 +31,9 @@ using System.Security.Permissions;
 using System.Security.Policy;
 using System.Security.Principal;
 using System.Reflection;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 using System.Globalization;
 using System.Runtime.Remoting;
 using System.Runtime.InteropServices;
@@ -44,13 +46,10 @@ namespace System
 	[Guid ("05F696DC-2B29-3663-AD8B-C4389CF2A713")]
 	public interface _AppDomain
 	{
-#if !MOONLIGHT
 		string BaseDirectory {get; }
 		string DynamicDirectory {get; }
 		Evidence Evidence {get; }
-#endif
 		string FriendlyName {get; }
-#if !MOONLIGHT
 		string RelativeSearchPath {get; }
 		bool ShadowCopyFiles {get; }
 
@@ -62,9 +61,7 @@ namespace System
 
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		void ClearShadowCopyPath ();
-#endif
 
-#if !MOONLIGHT
 		ObjectHandle CreateInstance (string assemblyName, string typeName);
 		ObjectHandle CreateInstance (string assemblyName, string typeName, object[] activationAttributes);
 		ObjectHandle CreateInstance (string assemblyName, string typeName, bool ignoreCase,
@@ -76,7 +73,8 @@ namespace System
 		ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName, bool ignoreCase,
 			BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture,
 			object[] activationAttributes, Evidence securityAttributes);
-#endif
+
+#if !FULL_AOT_RUNTIME
 		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access);
 		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, Evidence evidence);
 		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir);
@@ -94,6 +92,7 @@ namespace System
 		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir,
 			Evidence evidence, PermissionSet requiredPermissions, PermissionSet optionalPermissions,
 			PermissionSet refusedPermissions, bool isSynchronized);
+#endif
 
 		void DoCallBack (CrossAppDomainDelegate theDelegate);
 		bool Equals (object other);
@@ -109,16 +108,12 @@ namespace System
 #if !NET_4_0
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 #endif
-#if !MOONLIGHT
 		object GetLifetimeService ();
-#endif
 
 		Type GetType ();
 
-#if !MOONLIGHT
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 		object InitializeLifetimeService ();
-#endif
 
 		Assembly Load (AssemblyName assemblyRef);
 		Assembly Load (byte[] rawAssembly);
@@ -128,25 +123,21 @@ namespace System
 		Assembly Load (string assemblyString, Evidence assemblySecurity);
 		Assembly Load (byte[] rawAssembly, byte[] rawSymbolStore, Evidence securityEvidence);
 
-#if !MOONLIGHT
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		void SetAppDomainPolicy (PolicyLevel domainPolicy);
 
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		void SetCachePath (string s);
-#endif
 
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		void SetData (string name, object data);
 
-#if !MOONLIGHT
 		void SetPrincipalPolicy (PrincipalPolicy policy);
 
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		void SetShadowCopyPath (string s);
 
 		void SetThreadPrincipal (IPrincipal principal);
-#endif
 
 		string ToString ();
 

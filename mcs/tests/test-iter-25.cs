@@ -33,7 +33,7 @@ public class UploadAction
 		yield break;
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		foreach (object bar in TagsError ()) {
 			Console.WriteLine ("No op {0}", bar);

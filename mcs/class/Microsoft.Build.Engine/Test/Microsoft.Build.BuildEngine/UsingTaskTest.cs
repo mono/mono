@@ -202,6 +202,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestDuplicate1 ()
 		{
 			string documentString = @"
@@ -294,6 +295,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestLazyLoad2 ()
 		{
 			string documentString = @"

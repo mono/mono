@@ -46,8 +46,8 @@ namespace MonoTests.System.Data
 			string deleted = @"<DataViewSettingCollectionString><table2-1 Sort="""" RowFilter="""" RowStateFilter=""Deleted""/></DataViewSettingCollectionString>";
 
 			DataViewManager m = new DataViewManager (null);
-			Assert (m.DataSet == null);
-			Assert (m.DataViewSettingCollectionString == "");
+			AssertNull (m.DataSet);
+			AssertEquals ("", m.DataViewSettingCollectionString);
 			AssertNotNull (m.DataViewSettings);
 			DataSet ds = new DataSet ("ds");
 			m.DataSet = ds;

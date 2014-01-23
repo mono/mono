@@ -93,7 +93,11 @@ namespace System.Security.Cryptography {
 		
 		public static AsymmetricAlgorithm Create () 
 		{
+#if FULL_AOT_RUNTIME
+			return new RSACryptoServiceProvider ();
+#else
 			return Create ("System.Security.Cryptography.AsymmetricAlgorithm");
+#endif
 		}
 	
 		public static AsymmetricAlgorithm Create (string algName) 

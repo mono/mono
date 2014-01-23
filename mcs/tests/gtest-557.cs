@@ -18,7 +18,7 @@ class Test
 		t = default (T);
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		foreach (var e in Foo<string, object> (new string[] { "as" })) {
 		}

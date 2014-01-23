@@ -3,7 +3,7 @@ using System;
 
 public class Test
 {
-	static void Main ()
+	public static void Main ()
 	{
 		// We should be able to access them
 		new InternalFriendClass ();

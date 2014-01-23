@@ -23,13 +23,13 @@ if test x$GCC != xyes; then
 fi
 case $host in
 i?86-*-linux*|x86_64-*-linux*|powerpc-*-linux*|powerpc64-*-linux* \
-|amd64-*-freebsd*|i?86-*-freebsd*|ia64-*-freebsd*|arm*-*-linux*|sparc*-*-linux*|mips*-*-linux*)
+|amd64-*-freebsd*|i?86-*-freebsd*|ia64-*-freebsd*|arm*-*-linux*|sparc*-*-linux*|mips*-*-linux*|x86_64-apple-darwin*)
     pic_options='-fPIC'
     ;;
 ?86-pc-cygwin*|i?86-pc-cygwin*)
     pic_options='-DDLL_EXPORT'
     ;;
-i?86-apple-darwin*)
+i?86-apple-darwin*|arm-apple-darwin*)
     pic_options='-fno-common'
     ;;
 *)
@@ -158,6 +158,7 @@ modeok=false
 tagok=false
 for arg in "$[]@"; do
     case "$arg" in
+        --silent) ;;    
         --mode=compile) modeok=true ;;
         --tag=CC|--tag=CXX) tagok=true ;;
         --quiet) ;;

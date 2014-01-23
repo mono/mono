@@ -5,7 +5,7 @@ using System.Collections;
 
 public class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		string [] strings = new string [] { "Foo", "Bar", "Baz" };
 		foreach (var item in strings)

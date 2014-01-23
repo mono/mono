@@ -1,4 +1,3 @@
-#if NET_4_0
 // 
 // ConcurrentBagTests.cs
 //  
@@ -25,6 +24,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#if NET_4_0
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -35,6 +36,7 @@ using System.Linq;
 
 using NUnit;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 
 namespace MonoTests.System.Collections.Concurrent
 {
@@ -48,6 +50,191 @@ namespace MonoTests.System.Collections.Concurrent
 		{
 			bag = new ConcurrentBag<int> ();
 		}
+
+		[Test]
+		public void BasicAddTakeTest ()
+		{
+			bag.Add (1);
+			Assert.IsFalse (bag.IsEmpty);
+			Assert.AreEqual (1, bag.Count);
+
+			var array = bag.ToArray ();
+			Assert.AreEqual (1, array.Length);
+			Assert.AreEqual (1, array[0]);
+
+			int result;
+			Assert.IsTrue (bag.TryTake (out result));
+			Assert.AreEqual (1, result);
+			Assert.IsTrue (bag.IsEmpty);
+		}
+
+		[Test]
+		public void BasicAddTakeFromOtherThread ()
+		{
+			var t = new Thread (() => bag.Add (1));
+			t.Start ();
+			Assert.IsTrue (t.Join (300));
+
+			Assert.IsFalse (bag.IsEmpty);
+			Assert.AreEqual (1, bag.Count);
+
+			var array = bag.ToArray ();
+			Assert.AreEqual (1, array.Length);
+			Assert.AreEqual (1, array[0]);
+
+			int result;
+			Assert.IsTrue (bag.TryTake (out result));
+			Assert.AreEqual (1, result);
+			Assert.IsTrue (bag.IsEmpty);
+		}
+
+		[Test]
+		public void AddFromMultipleThreadTakeFromOneThread ()
+		{
+			var threads = new Thread[10];
+			for (int i = 0; i < threads.Length; i++) {
+				threads[i] = new Thread (() => bag.Add (1));
+				threads[i].Start ();
+			}
+			foreach (var t in threads)
+				Assert.IsTrue (t.Join (2000));
+
+			Assert.IsFalse (bag.IsEmpty);
+			Assert.AreEqual (threads.Length, bag.Count);
+
+			var array = bag.ToArray ();
+			Assert.AreEqual (threads.Length, array.Length);
+
+			Assert.That (array, new CollectionEquivalentConstraint (Enumerable.Repeat (1, 10).ToArray ()), "#1, same");
+
+			int result;
+			for (int i = 0; i < threads.Length; i++) {
+				Assert.IsTrue (bag.TryTake (out result));
+				Assert.AreEqual (1, result);
+			}
+			Assert.IsTrue (bag.IsEmpty);
+		}
+
+		[Test]
+		public void AddFromOneThreadTakeFromMultiple ()
+		{
+			var threads = new Thread[10];
+			for (int i = 0; i < threads.Length; i++)
+				bag.Add (1);
+
+			Assert.IsFalse (bag.IsEmpty);
+			Assert.AreEqual (threads.Length, bag.Count);
+
+			bool valid = true;
+
+			for (int i = 0; i < threads.Length; i++) {
+				int result;
+				threads[i] = new Thread (() => valid &= bag.TryTake (out result) && result == 1);
+				threads[i].Start ();
+			}
+
+			foreach (var t in threads)
+				Assert.IsTrue (t.Join (200));
+
+			Assert.IsTrue (valid, "Aggregate test");
+		}
+
+		[Test]
+		public void BasicAddPeekTest ()
+		{
+			bag.Add (1);
+			Assert.IsFalse (bag.IsEmpty);
+			Assert.AreEqual (1, bag.Count);
+
+			int result;
+			Assert.IsTrue (bag.TryPeek (out result));
+			Assert.AreEqual (1, result);
+			Assert.IsFalse (bag.IsEmpty);
+		}
+
+		[Test]
+		public void BasicAddPeekFromOtherThread ()
+		{
+			var t = new Thread (() => bag.Add (1));
+			t.Start ();
+			Assert.IsTrue (t.Join (300));
+
+			Assert.IsFalse (bag.IsEmpty);
+			Assert.AreEqual (1, bag.Count);
+
+			int result;
+			Assert.IsTrue (bag.TryPeek (out result));
+			Assert.AreEqual (1, result);
+			Assert.IsFalse (bag.IsEmpty);
+		}
+
+		[Test]
+		public void AddFromOneThreadPeekFromMultiple ()
+		{
+			var threads = new Thread[10];
+			for (int i = 0; i < threads.Length; i++)
+				bag.Add (1);
+
+			Assert.IsFalse (bag.IsEmpty);
+			Assert.AreEqual (threads.Length, bag.Count);
+
+			bool valid = true;
+
+			for (int i = 0; i < threads.Length; i++) {
+				int result;
+				threads[i] = new Thread (() => valid &= bag.TryPeek (out result) && result == 1);
+				threads[i].Start ();
+			}
+
+			foreach (var t in threads)
+				Assert.IsTrue (t.Join (200));
+
+			Assert.IsTrue (valid, "Aggregate test");
+		}
+
+        [Test]
+        public void BasicRemoveEmptyTest ()
+        {
+            int result;
+            Assert.IsTrue(bag.IsEmpty);
+            Assert.IsFalse(bag.TryTake(out result));
+        }
+
+        [Test]
+        public void BasicRemoveTwiceTest()
+        {
+            bag.Add (1);
+            Assert.IsFalse (bag.IsEmpty);
+            Assert.AreEqual (1, bag.Count);
+
+            int result;
+            Assert.IsTrue (bag.TryTake (out result));
+            Assert.AreEqual (1, result);
+            Assert.IsTrue (bag.IsEmpty);
+            Assert.IsFalse (bag.TryTake (out result));
+            Assert.IsFalse (bag.TryTake (out result));
+        }
+
+        [Test]
+        public void AddRemoveAddTest()
+        {
+            bag.Add (1);
+            Assert.IsFalse (bag.IsEmpty);
+            Assert.AreEqual (1, bag.Count);
+
+            int result;
+            Assert.IsTrue (bag.TryTake (out result));
+            Assert.AreEqual (1, result);
+            Assert.IsTrue (bag.IsEmpty);
+
+            bag.Add (1);
+            Assert.IsFalse (bag.IsEmpty);
+            Assert.AreEqual (1, bag.Count);
+
+            Assert.IsTrue (bag.TryTake (out result));
+            Assert.AreEqual (1, result);
+            Assert.IsTrue (bag.IsEmpty);
+        }
 		
 		[Test]
 		public void AddStressTest ()

@@ -436,9 +436,6 @@ namespace System.Security {
 					foreach (SecurityElement child in children) {
 						child.ToXml (ref s, level + 1);
 					}
-#if ! NET_2_0
-					s.Append (' ', level * 3);
-#endif
 				}
 				s.Append ("</")
 				 .Append (tag)

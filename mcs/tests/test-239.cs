@@ -21,7 +21,7 @@ class TestClass: BaseClass
 
 class MainClass
 {
-        static int Main()
+        public static int Main()
         {
             TestClass ts = new TestClass ();
             ts.ConditionalMethod ();

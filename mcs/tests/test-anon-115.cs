@@ -25,7 +25,7 @@ class Test<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Test<string>.Hello ("World", 3.1415F);
 	}

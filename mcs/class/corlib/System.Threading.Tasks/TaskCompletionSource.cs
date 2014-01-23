@@ -26,7 +26,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 using System;
 using System.Collections.Generic;
 
@@ -113,7 +113,7 @@ namespace System.Threading.Tasks
 			if (aggregate.InnerExceptions.Count == 0)
 				throw new ArgumentNullException ("exceptions");
 
-			return source.TrySetException (aggregate);
+			return source.TrySetException (aggregate, false, false);
 		}
 		
 		public bool TrySetResult (TResult result)

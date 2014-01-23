@@ -1,3 +1,13 @@
+2013-06-12 Christoph Ruegg <git@cdrnet.ch>
+
+	* BigInteger.cs: Fix GreatestCommonDivisor to
+	return absolute value if one of the args is zero.
+
+2013-06-09 Christoph Ruegg <git@cdrnet.ch>
+
+	* Complex.cs: Fix IFormattable.ToString to pass custom
+	format strings to double.ToString instead of string.Format.
+
 2010-07-12  Jb Evain  <jbevain@novell.com>
 
 	* Complex.cs: implement IFormattable.

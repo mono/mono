@@ -8,7 +8,7 @@ using System.Configuration.Assemblies;
 
 class Program
 {
-	static int Main ()
+	public static int Main ()
 	{
 		Assembly a = Assembly.GetExecutingAssembly ();
 		var an = a.GetName ();

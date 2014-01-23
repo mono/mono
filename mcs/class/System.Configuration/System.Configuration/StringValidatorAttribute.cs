@@ -26,8 +26,6 @@
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
-
 namespace System.Configuration
 {
 	[AttributeUsage (AttributeTargets.Property)]
@@ -63,4 +61,3 @@ namespace System.Configuration
 	}
 }
 
-#endif

@@ -2,7 +2,7 @@ namespace Test {
 	delegate void Foo (string x, params object [] args);
 	class Testee {
 		static void Bar (string x, params object [] args) {}
-		static void Main () {
+		public static void Main () {
 			Foo bar = new Foo (Bar);
 			bar ("Hello");
 			bar ("Hello", "world");

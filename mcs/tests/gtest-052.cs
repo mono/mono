@@ -20,7 +20,7 @@ class X
 		Console.WriteLine ("Hello World");
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		Foo<X> foo = new Foo<X> ();
 		foo.Create ().Hello ();

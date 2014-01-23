@@ -8,7 +8,7 @@
 
 class App
 {
-    static void Main ()
+    public static void Main ()
     {
     }
 }

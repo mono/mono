@@ -68,18 +68,24 @@ namespace System.Net
 		AsyncCallback cb_wrapper; // Calls to ReadCallbackWrapper or WriteCallbacWrapper
 		internal bool IgnoreIOErrors;
 
-		public WebConnectionStream (WebConnection cnc)
-		{
+		public WebConnectionStream (WebConnection cnc, WebConnectionData data)
+		{          
+			if (data == null)
+				throw new InvalidOperationException ("data was not initialized");
+			if (data.Headers == null)
+				throw new InvalidOperationException ("data.Headers was not initialized");
+			if (data.request == null)
+				throw new InvalidOperationException ("data.request was not initialized");
 			isRead = true;
 			cb_wrapper = new AsyncCallback (ReadCallbackWrapper);
 			pending = new ManualResetEvent (true);
-			this.request = cnc.Data.request;
+			this.request = data.request;
 			read_timeout = request.ReadWriteTimeout;
 			write_timeout = read_timeout;
 			this.cnc = cnc;
-			string contentType = cnc.Data.Headers ["Transfer-Encoding"];
+			string contentType = data.Headers ["Transfer-Encoding"];
 			bool chunkedRead = (contentType != null && contentType.IndexOf ("chunked", StringComparison.OrdinalIgnoreCase) != -1);
-			string clength = cnc.Data.Headers ["Content-Length"];
+			string clength = data.Headers ["Content-Length"];
 			if (!chunkedRead && clength != null && clength != "") {
 				try {
 					contentLength = Int32.Parse (clength);
@@ -636,7 +642,10 @@ namespace System.Net
 			string method = request.Method;
 			bool no_writestream = (method == "GET" || method == "CONNECT" || method == "HEAD" ||
 						method == "TRACE");
-			if (sendChunked || cl > -1 || no_writestream) {
+			bool webdav = (method == "PROPFIND" || method == "PROPPATCH" || method == "MKCOL" ||
+			               method == "COPY" || method == "MOVE" || method == "LOCK" ||
+			               method == "UNLOCK");
+			if (sendChunked || cl > -1 || no_writestream || webdav) {
 				WriteHeaders ();
 				if (!initRead) {
 					initRead = true;

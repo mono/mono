@@ -49,10 +49,6 @@ namespace Mono.Data.Sqlite
     {
       if (bDisposing)
         Close();
-#if MONOTOUCH
-      if (gch.IsAllocated)
-        gch.Free ();
-#endif
     }
 
     // It isn't necessary to cleanup any functions we've registered.  If the connection
@@ -73,6 +69,10 @@ namespace Mono.Data.Sqlite
       }
 
       _sql = null;
+#if MONOTOUCH
+      if (gch.IsAllocated)
+        gch.Free ();
+#endif
     }
 
     internal override void Cancel()

@@ -13,7 +13,7 @@ static class Program
 		yield break;
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

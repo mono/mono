@@ -16,7 +16,7 @@ class Test
 	{
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		V = "";
 		m (f (1), b: f (2), c: f (3));

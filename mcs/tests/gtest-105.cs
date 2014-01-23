@@ -96,7 +96,7 @@ namespace B
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		A.X.Test ();
 		B.X.Test ();

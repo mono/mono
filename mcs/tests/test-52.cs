@@ -32,7 +32,7 @@ class X {
 		return new Y ();
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		//
 		// String test

@@ -15,7 +15,7 @@ class X {
 		A (ref a);
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		int a = 10;
 

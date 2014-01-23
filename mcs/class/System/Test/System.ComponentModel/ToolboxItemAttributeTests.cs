@@ -8,7 +8,6 @@
 
 using System;
 using System.ComponentModel;
-using System.Drawing.Design;
 
 using NUnit.Framework;
 
@@ -17,6 +16,7 @@ namespace MonoTests.System.ComponentModel
 	[TestFixture]
 	public class ToolboxItemAttributeTests
 	{
+#if !MOBILE
 		[Test]
 #if TARGET_JVM
 		[Ignore ("TD BUG ID: 7215, 7216")]
@@ -25,7 +25,7 @@ namespace MonoTests.System.ComponentModel
 		{
 			ToolboxItemAttribute attr = new ToolboxItemAttribute (true);
 			
-			Type toolboxItemType = typeof(ToolboxItem);
+			Type toolboxItemType = typeof(global::System.Drawing.Design.ToolboxItem);
 
 			Assert.AreEqual (toolboxItemType.AssemblyQualifiedName, attr.ToolboxItemTypeName, "#1");
 			Assert.AreEqual (toolboxItemType, attr.ToolboxItemType, "#2");
@@ -37,7 +37,7 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (true, ToolboxItemAttribute.Default.IsDefaultAttribute (), "#3");
 			Assert.AreEqual (ToolboxItemAttribute.Default.ToolboxItemTypeName.GetHashCode (), attr.GetHashCode (), "#4");
 		}
-
+#endif
 		[Test]
 		public void NonDefaultType ()
 		{

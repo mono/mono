@@ -29,6 +29,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using Microsoft.Build.Internal;
 
 namespace Microsoft.Build.Construction
@@ -111,9 +112,30 @@ namespace Microsoft.Build.Construction
                         get { return "Target"; }
                 }
 
-                internal override ProjectElement LoadChildElement (string name)
+#if NET_4_5
+                 public ElementLocation AfterTargetsLocation { get; private set; }
+                 public ElementLocation BeforeTargetsLocation { get; private set; }
+                 public ElementLocation DependsOnTargetsLocation { get; private set; }
+                 public ElementLocation InputsLocation { get; private set; }
+                 public ElementLocation KeepDuplicateOutputsLocation { get; private set; }
+                 public ElementLocation NameLocation { get; private set; }
+                 public ElementLocation OutputsLocation { get; private set; }
+                 public ElementLocation ReturnsLocation { get; private set; }
+#else
+                 internal ElementLocation AfterTargetsLocation { get; set; }
+                 internal ElementLocation BeforeTargetsLocation { get; set; }
+                 internal ElementLocation DependsOnTargetsLocation { get; set; }
+                 internal ElementLocation InputsLocation { get; set; }
+                 internal ElementLocation KeepDuplicateOutputsLocation { get; set; }
+                 internal ElementLocation LabelLocation { get; set; }
+                 internal ElementLocation NameLocation { get; set; }
+                 internal ElementLocation OutputsLocation { get; set; }
+                 internal ElementLocation ReturnsLocation { get; set; }
+#endif
+
+                internal override ProjectElement LoadChildElement (XmlReader reader)
                 {
-                        switch (name) {
+                        switch (reader.LocalName) {
                         case "OnError":
                                 var error = new ProjectOnErrorElement (ContainingProject);
                                 AppendChild (error);
@@ -123,9 +145,10 @@ namespace Microsoft.Build.Construction
                         case "ItemGroup":
                                 return AddItemGroup ();
                         default:
-                                return AddTask (name);
+                                return AddTask (reader.LocalName);
                         }
                 }
+                // This seriously needs to change to become able to fill ElementLocation...
                 internal override void LoadAttribute (string name, string value)
                 {
                         switch (name) {

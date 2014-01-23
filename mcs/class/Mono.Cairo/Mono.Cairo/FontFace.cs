@@ -38,42 +38,48 @@ namespace Cairo
 	{
 		IntPtr handle;
 
-		internal static FontFace Lookup (IntPtr handle)
+		internal static FontFace Lookup (IntPtr handle, bool owner)
 		{
 			if (handle == IntPtr.Zero)
 				return null;
-
-			NativeMethods.cairo_font_face_reference (handle);
-
-			return new FontFace (handle);
+			return new FontFace (handle, owner);
 		}
 
 		~FontFace ()
 		{
-			// Since Cairo is not thread safe, we can not unref the
-			// font_face here, the programmer must do this with Dispose
-
-			Console.Error.WriteLine ("Programmer forgot to call Dispose on the FontFace");
 			Dispose (false);
 		}
 
 		public void Dispose ()
 		{
 			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (disposing)
-				NativeMethods.cairo_font_face_destroy (handle);
+			if (!disposing || CairoDebug.Enabled)
+				CairoDebug.OnDisposed<FontFace> (handle, disposing);
+
+			if (!disposing|| handle == IntPtr.Zero)
+				return;
+
+			NativeMethods.cairo_font_face_destroy (handle);
 			handle = IntPtr.Zero;
-			GC.SuppressFinalize (this);
 		}
-		
-		// TODO: make non-public when all entry points are complete in binding
-		public FontFace (IntPtr handle)
+
+		[Obsolete]
+		public FontFace (IntPtr handle) : this (handle, true)
+		{
+		}
+
+		public FontFace (IntPtr handle, bool owned)
 		{
 			this.handle = handle;
+			if (!owned)
+				NativeMethods.cairo_font_face_reference (handle);
+			if (CairoDebug.Enabled)
+				CairoDebug.OnAllocated (handle);
 		}
 
 		public IntPtr Handle {

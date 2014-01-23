@@ -935,9 +935,6 @@ namespace System.Xml
 
 		private DTDAttributeDefinition ReadAttributeDefinition ()
 		{
-#if MOONLIGHT
-			throw new NotImplementedException ();
-#else
 			DTDAttributeDefinition def = new DTDAttributeDefinition (DTD);
 			def.IsInternalSubset = this.processingInternalSubset;
 
@@ -1048,7 +1045,6 @@ namespace System.Xml
 			ReadAttributeDefaultValue (def);
 
 			return def;
-#endif
 		}
 
 		private void ReadAttributeDefaultValue (DTDAttributeDefinition def)

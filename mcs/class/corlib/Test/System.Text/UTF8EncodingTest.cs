@@ -125,34 +125,36 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
 		public void TestMaxCharCount()
 		{
 			UTF8Encoding UTF8enc = new UTF8Encoding ();
-#if NET_2_0
-			// hmm, where is this extra 1 coming from?
+			Encoding UTF8encWithBOM = new UTF8Encoding(true);
 			Assert.AreEqual (51, UTF8enc.GetMaxCharCount(50), "UTF #1");
-#else
-			Assert.AreEqual (50, UTF8enc.GetMaxCharCount(50), "UTF #1");
-#endif
+			Assert.AreEqual (UTF8enc.GetMaxByteCount(50), UTF8encWithBOM.GetMaxByteCount(50), "UTF #2");
 		}
 
 		[Test]
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
+		public void TestMaxCharCountWithCustomFallback()
+		{
+			Encoding encoding = Encoding.GetEncoding("utf-8", new EncoderReplacementFallback("\u2047\u2047"), new DecoderReplacementFallback("\u2047\u2047"));
+			Assert.AreEqual (102, encoding.GetMaxCharCount(50), "UTF #1");
+		}
+
+		[Test]
 		public void TestMaxByteCount()
 		{
 			UTF8Encoding UTF8enc = new UTF8Encoding ();
-#if NET_2_0
-			// maybe under .NET 2.0 insufficient surrogate pair is
-			// just not handled, and 3 is Preamble size.
+			Encoding UTF8encWithBOM = new UTF8Encoding(true);
+
 			Assert.AreEqual (153, UTF8enc.GetMaxByteCount(50), "UTF #1");
-#else
-			Assert.AreEqual (200, UTF8enc.GetMaxByteCount(50), "UTF #1");
-#endif
+			Assert.AreEqual (UTF8enc.GetMaxByteCount(50), UTF8encWithBOM.GetMaxByteCount(50), "UTF #2");
+		}
+
+		[Test]
+		public void TestMaxByteCountWithCustomFallback()
+		{
+			Encoding encoding = Encoding.GetEncoding("utf-8", new EncoderReplacementFallback("\u2047\u2047"), new DecoderReplacementFallback("?"));
+			Assert.AreEqual (306, encoding.GetMaxByteCount(50), "UTF #1");
 		}
 
 		// regression for bug #59648
@@ -1154,6 +1156,7 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void Bug415628 ()
 		{
 			using (var f = File.Open ("Test/resources/415628.bin", FileMode.Open)) {
@@ -1163,5 +1166,37 @@ namespace MonoTests.System.Text
 			}
 		}
 #endif
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Bug10788()
+		{
+			byte[] bytes = new byte[4096];
+			char[] chars = new char[10];
+
+			Encoding.UTF8.GetDecoder ().GetChars (bytes, 0, 4096, chars, 9, false);
+		}
+
+		[Test]
+		public void Bug10789()
+		{
+			byte[] bytes = new byte[4096];
+			char[] chars = new char[10];
+
+			try {
+				Encoding.UTF8.GetDecoder ().GetChars (bytes, 0, 1, chars, 10, false);
+				Assert.Fail ("ArgumentException is expected #1");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				Encoding.UTF8.GetDecoder ().GetChars (bytes, 0, 1, chars, 11, false);
+				Assert.Fail ("ArgumentOutOfRangeException is expected #2");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			int charactersWritten = Encoding.UTF8.GetDecoder ().GetChars (bytes, 0, 0, chars, 10, false);
+			Assert.AreEqual (0, charactersWritten, "#3");
+		}
 	}
 }

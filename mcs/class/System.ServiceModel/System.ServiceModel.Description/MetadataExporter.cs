@@ -40,12 +40,14 @@ namespace System.ServiceModel.Description
 	[MonoTODO]
 	public abstract class MetadataExporter
 	{
+		Collection<MetadataConversionError> errors = new Collection<MetadataConversionError> ();
+
 		internal MetadataExporter ()
 		{
 		}
 
 		public Collection<MetadataConversionError> Errors {
-			get { throw new NotImplementedException (); }
+			get { return errors; }
 		}
 
 		public Dictionary<Object,Object> State {
@@ -62,6 +64,40 @@ namespace System.ServiceModel.Description
 			ServiceEndpoint endpoint)
 		{
 			throw new NotImplementedException ();
+		}
+
+		internal MetadataConversionError AddError (string message, params object[] args)
+		{
+			var error = new MetadataConversionError (string.Format (message, args));
+			Errors.Add (error);
+			return error;
+		}
+		
+		internal MetadataConversionError AddWarning (string message, params object[] args)
+		{
+			var error = new MetadataConversionError (string.Format (message, args), true);
+			Errors.Add (error);
+			return error;
+		}
+		
+		internal class MetadataExportException : Exception
+		{
+			public MetadataConversionError Error {
+				get;
+				private set;
+			}
+			
+			public MetadataExportException (MetadataConversionError error)
+				: base (error.Message)
+			{
+				this.Error = error;
+			}
+			
+			public MetadataExportException (MetadataConversionError error, Exception inner)
+				: base (error.Message, inner)
+			{
+				this.Error = error;
+			}
 		}
 	}
 }

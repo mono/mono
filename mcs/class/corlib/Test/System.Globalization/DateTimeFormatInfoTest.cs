@@ -94,11 +94,11 @@ namespace MonoTests.System.Globalization
 		{
 			CultureInfo ci = new CultureInfo ("es-ES");
 			DateTimeFormatInfo di = ci.DateTimeFormat;
-			Assert.AreEqual ("dddd, dd' de 'MMMM' de 'yyyy", di.LongDatePattern, "#1");
+			Assert.AreEqual ("dddd, d' de 'MMMM' de 'yyyy", di.LongDatePattern, "#1");
 			Assert.AreEqual ("H:mm:ss", di.LongTimePattern, "#2");
-			Assert.AreEqual ("dddd, dd' de 'MMMM' de 'yyyy H:mm:ss", di.FullDateTimePattern, "#3");
+			Assert.AreEqual ("dddd, d' de 'MMMM' de 'yyyy H:mm:ss", di.FullDateTimePattern, "#3");
 			Assert.AreEqual ("MMMM' de 'yyyy", di.YearMonthPattern, "#4");
-			Assert.AreEqual ("dd MMMM", di.MonthDayPattern, "#5");
+			Assert.AreEqual ("d' de 'MMMM", di.MonthDayPattern, "#5");
 		}
 
 		[Test]
@@ -121,6 +121,14 @@ namespace MonoTests.System.Globalization
 		{
 			var dfi = new CultureInfo ("cs-CZ").DateTimeFormat;
 			Assert.AreEqual ("ledna", dfi.MonthGenitiveNames[0], "#1");
+			Assert.AreEqual ("1.", dfi.AbbreviatedMonthGenitiveNames[0], "#2");
+		}
+
+		[Test]
+		public void QuoteInValue ()
+		{
+			var culture = new CultureInfo("mt-MT");
+			Assert.AreEqual ("dddd, d' ta\\' 'MMMM yyyy", culture.DateTimeFormat.LongDatePattern);
 		}
 
 #if !TARGET_JVM

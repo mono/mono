@@ -11,7 +11,7 @@ using System;
 unsafe struct X {
 	int x, y, z;
 	
-	static int Main ()
+	public static int Main ()
 	{
 		X* foo = null;
 		

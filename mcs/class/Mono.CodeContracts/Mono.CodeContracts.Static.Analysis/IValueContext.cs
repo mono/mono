@@ -39,6 +39,6 @@ namespace Mono.CodeContracts.Static.Analysis {
 		bool TryParameterValue (APC at, Parameter p, out SymbolicValue sv);
 		bool IsConstant (APC readAt, SymbolicValue symbol, out TypeNode type, out object constant);
 		FlatDomain<TypeNode> GetType (APC readAt, SymbolicValue symbol);
-		LispList<PathElement> AccessPathList (APC at, SymbolicValue value, bool allowLocal, bool preferLocal);
+		Sequence<PathElement> AccessPathList (APC at, SymbolicValue value, bool allowLocal, bool preferLocal);
 	}
 }

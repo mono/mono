@@ -30,7 +30,7 @@ public class Derived2 : Base, IVehicle {
 
 public class Test {
 
-	static int Main () {
+	public static int Main () {
 		Derived1 d1 = new Derived1 ();
 		Derived2 d2 = new Derived2 ();
 		Base b1 = d1;

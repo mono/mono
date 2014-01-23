@@ -22,7 +22,7 @@ the_libdir = $(topdir)/class/lib/build/
 LOCAL_MCS_FLAGS += -lib:$(topdir)/class/lib/build -debug
 endif
 
-LOCAL_MCS_FLAGS += -d:STATIC,NO_SYMBOL_WRITER
+LOCAL_MCS_FLAGS += -d:STATIC,NO_SYMBOL_WRITER,NO_AUTHENTICODE
 
 PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/4.5
 
@@ -38,17 +38,6 @@ CLEAN_FILES += y.output
 KEEP_OUTPUT_FILE_COPY = yes
 
 include ../build/executable.make
-
-csproj-local:
-	config_file=`basename $(PROGRAM) .exe`-$(PROFILE).input; \
-	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
-	(echo $(is_boot); \
-	echo $(BOOTSTRAP_MCS);	\
-	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS); \
-	echo $(PROGRAM); \
-	echo $(BUILT_SOURCES); \
-	echo $(PROGRAM); \
-	echo $(response)) > $(topdir)/../msvc/scripts/inputs/$$config_file
 
 #
 # Below this line we have local targets used for testing and development
@@ -99,6 +88,7 @@ profile : $(PROGRAM)
 	$(RUNTIME) $(RUNTIME_FLAGS) --profile=$(PROFILER) $(PROGRAM) $(USE_MCS_FLAGS) -target:exe -out:mcs2.exe $(BUILT_SOURCES) @$(response)
 
 debug-parser:
+	rm cs-parser.cs
 	$(MAKE) JAY_FLAGS=-cvt
 
 #

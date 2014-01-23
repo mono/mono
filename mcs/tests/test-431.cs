@@ -5,7 +5,7 @@ namespace Foo {
 }
 
 class X {
-	static void Main ()
+	public static void Main ()
 	{
 		foo::A a = new Foo.A ();
 		System.Console.WriteLine (a.GetType ());

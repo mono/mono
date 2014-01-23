@@ -1,0 +1,11 @@
+Assembly/AssemblyInfo.cs
+../../../external/rx/Ix/NET/System.Interactive/IAwaitable.cs
+../../../external/rx/Ix/NET/System.Interactive/EnumerableEx.Imperative.cs
+../../../external/rx/Ix/NET/System.Interactive/EnumerableEx.Multiple.cs
+../../../external/rx/Ix/NET/System.Interactive/EnumerableEx.Single.cs
+../../../external/rx/Ix/NET/System.Interactive/EnumerableEx.Exceptions.cs
+../../../external/rx/Ix/NET/System.Interactive/EnumerableEx.Creation.cs
+../../../external/rx/Ix/NET/System.Interactive/EnumerableEx.Buffering.cs
+../../../external/rx/Ix/NET/System.Interactive/EnumerableEx.Aggregates.cs
+../../../external/rx/Ix/NET/System.Interactive/IYielder.cs
+../../../external/rx/Ix/NET/System.Interactive/Properties/AssemblyInfo.cs

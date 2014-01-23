@@ -4,7 +4,7 @@ namespace N2
 {
 	class Test : T1
 	{
-		static int Main()
+		public static int Main()
 		{
 			// Compilation-only test.
 			Foo ();

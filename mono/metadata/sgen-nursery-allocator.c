@@ -1,31 +1,24 @@
 /*
  * sgen-nursery-allocator.c: Nursery allocation code.
  *
- *
  * Copyright 2009-2010 Novell, Inc.
  *           2011 Rodrigo Kumpera
  * 
  * Copyright 2011 Xamarin Inc  (http://www.xamarin.com)
+ * Copyright (C) 2012 Xamarin Inc
  *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License 2.0 as published by the Free Software Foundation;
  *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- * 
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License 2.0 along with this library; if not, write to the Free
+ * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
 /*
@@ -77,6 +70,7 @@
 #include "metadata/sgen-protocol.h"
 #include "metadata/sgen-archdep.h"
 #include "metadata/sgen-bridge.h"
+#include "metadata/sgen-memory-governor.h"
 #include "metadata/mono-gc.h"
 #include "metadata/method-builder.h"
 #include "metadata/profiler-private.h"
@@ -158,6 +152,8 @@ static AllocRecord *alloc_records;
 static volatile int next_record;
 static volatile int alloc_count;
 
+void dump_alloc_records (void);
+void verify_alloc_records (void);
 
 static const char*
 get_reason_name (AllocRecord *rec)
@@ -206,7 +202,7 @@ void
 dump_alloc_records (void)
 {
 	int i;
-	qsort (alloc_records, next_record, sizeof (AllocRecord), comp_alloc_record);
+	sgen_qsort (alloc_records, next_record, sizeof (AllocRecord), comp_alloc_record);
 
 	printf ("------------------------------------DUMP RECORDS----------------------------\n");
 	for (i = 0; i < next_record; ++i) {
@@ -224,7 +220,7 @@ verify_alloc_records (void)
 	int max_hole = 0;
 	AllocRecord *prev = NULL;
 
-	qsort (alloc_records, next_record, sizeof (AllocRecord), comp_alloc_record);
+	sgen_qsort (alloc_records, next_record, sizeof (AllocRecord), comp_alloc_record);
 	printf ("------------------------------------DUMP RECORDS- %d %d---------------------------\n", next_record, alloc_count);
 	for (i = 0; i < next_record; ++i) {
 		AllocRecord *rec = alloc_records + i;
@@ -643,7 +639,7 @@ sgen_clear_allocator_fragments (SgenFragmentAllocator *allocator)
 	SgenFragment *frag;
 
 	for (frag = unmask (allocator->alloc_head); frag; frag = unmask (frag->next)) {
-		DEBUG (4, fprintf (gc_debug_file, "Clear nursery frag %p-%p\n", frag->fragment_next, frag->fragment_end));
+		SGEN_LOG (4, "Clear nursery frag %p-%p", frag->fragment_next, frag->fragment_end);
 		sgen_clear_range (frag->fragment_next, frag->fragment_end);
 #ifdef NALLOC_DEBUG
 		add_alloc_record (frag->fragment_next, frag->fragment_end - frag->fragment_next, CLEAR_NURSERY_FRAGS);
@@ -661,11 +657,23 @@ sgen_clear_nursery_fragments (void)
 	}
 }
 
+/*
+ * Mark a given range of memory as invalid.
+ *
+ * This can be done either by zeroing memory or by placing
+ * a phony byte[] array. This keeps the heap forward walkable.
+ *
+ * This function ignores calls with a zero range, even if
+ * both start and end are NULL.
+ */
 void
 sgen_clear_range (char *start, char *end)
 {
 	MonoArray *o;
 	size_t size = end - start;
+
+	if ((start && !end) || (start > end))
+		g_error ("Invalid range [%p %p]", start, end);
 
 	if (size < sizeof (MonoArray)) {
 		memset (start, 0, size);
@@ -698,8 +706,9 @@ static mword fragment_total = 0;
 static void
 add_nursery_frag (SgenFragmentAllocator *allocator, size_t frag_size, char* frag_start, char* frag_end)
 {
-	DEBUG (4, fprintf (gc_debug_file, "Found empty fragment: %p-%p, size: %zd\n", frag_start, frag_end, frag_size));
+	SGEN_LOG (4, "Found empty fragment: %p-%p, size: %zd", frag_start, frag_end, frag_size);
 	binary_protocol_empty (frag_start, frag_size);
+	MONO_GC_NURSERY_SWEPT ((mword)frag_start, frag_end - frag_start);
 	/* Not worth dealing with smaller fragments: need to tune */
 	if (frag_size >= SGEN_MAX_NURSERY_WASTE) {
 		/* memsetting just the first chunk start is bound to provide better cache locality */
@@ -736,7 +745,7 @@ fragment_list_reverse (SgenFragmentAllocator *allocator)
 }
 
 mword
-sgen_build_nursery_fragments (GCMemSection *nursery_section, void **start, int num_entries)
+sgen_build_nursery_fragments (GCMemSection *nursery_section, void **start, int num_entries, SgenGrayQueue *unpin_queue)
 {
 	char *frag_start, *frag_end;
 	size_t frag_size;
@@ -770,7 +779,10 @@ sgen_build_nursery_fragments (GCMemSection *nursery_section, void **start, int n
 			addr1 = frags_ranges->fragment_start;
 
 		if (addr0 < addr1) {
-			SGEN_UNPIN_OBJECT (addr0);
+			if (unpin_queue)
+				GRAY_OBJECT_ENQUEUE (unpin_queue, addr0);
+			else
+				SGEN_UNPIN_OBJECT (addr0);
 			sgen_set_nursery_scan_start (addr0);
 			frag_end = addr0;
 			size = SGEN_ALIGN_UP (sgen_safe_object_get_size ((MonoObject*)addr0));
@@ -815,9 +827,9 @@ sgen_build_nursery_fragments (GCMemSection *nursery_section, void **start, int n
 	sgen_minor_collector.build_fragments_finish (&mutator_allocator);
 
 	if (!unmask (mutator_allocator.alloc_head)) {
-		DEBUG (1, fprintf (gc_debug_file, "Nursery fully pinned (%d)\n", num_entries));
+		SGEN_LOG (1, "Nursery fully pinned (%d)", num_entries);
 		for (i = 0; i < num_entries; ++i) {
-			DEBUG (3, fprintf (gc_debug_file, "Bastard pinning obj %p (%s), size: %d\n", start [i], sgen_safe_name (start [i]), sgen_safe_object_get_size (start [i])));
+			SGEN_LOG (3, "Bastard pinning obj %p (%s), size: %d", start [i], sgen_safe_name (start [i]), sgen_safe_object_get_size (start [i]));
 		}
 	}
 	return fragment_total;
@@ -853,7 +865,7 @@ sgen_can_alloc_size (size_t size)
 void*
 sgen_nursery_alloc (size_t size)
 {
-	DEBUG (4, fprintf (gc_debug_file, "Searching nursery for size: %zd\n", size));
+	SGEN_LOG (4, "Searching nursery for size: %zd", size);
 	size = SGEN_ALIGN_UP (size);
 
 	HEAVY_STAT (InterlockedIncrement (&stat_nursery_alloc_requests));
@@ -864,7 +876,7 @@ sgen_nursery_alloc (size_t size)
 void*
 sgen_nursery_alloc_range (size_t desired_size, size_t minimum_size, size_t *out_alloc_size)
 {
-	DEBUG (4, fprintf (gc_debug_file, "Searching for byte range desired size: %zd minimum size %zd\n", desired_size, minimum_size));
+	SGEN_LOG (4, "Searching for byte range desired size: %zd minimum size %zd", desired_size, minimum_size);
 
 	HEAVY_STAT (InterlockedIncrement (&stat_nursery_alloc_range_requests));
 
@@ -898,7 +910,7 @@ sgen_init_nursery_allocator (void)
 {
 	sgen_register_fixed_internal_mem_type (INTERNAL_MEM_FRAGMENT, sizeof (SgenFragment));
 #ifdef NALLOC_DEBUG
-	alloc_records = sgen_alloc_os_memory (sizeof (AllocRecord) * ALLOC_RECORD_COUNT, TRUE);
+	alloc_records = sgen_alloc_os_memory (sizeof (AllocRecord) * ALLOC_RECORD_COUNT, SGEN_ALLOC_INTERNAL | SGEN_ALLOC_ACTIVATE, "debugging memory");
 #endif
 }
 
@@ -909,7 +921,7 @@ sgen_nursery_alloc_prepare_for_minor (void)
 }
 
 void
-sgen_nursery_alloc_prepare_for_major (const char *reason)
+sgen_nursery_alloc_prepare_for_major (void)
 {
 	sgen_minor_collector.prepare_to_space (sgen_space_bitmap, sgen_space_bitmap_size);
 }

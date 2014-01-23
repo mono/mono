@@ -82,6 +82,9 @@ namespace MonoTests.System.Data.Common {
 	}
 
 	[TestFixture]
+#if MOBILE
+	[Ignore ("CAS is not supported and parts will be linked away")]
+#endif
 	public class DBDataPermissionTest {
 
 		private const string defaultConnectString = "Data Source=localhost;Integrated Security=SSPI;Initial Catalog=Northwind;";

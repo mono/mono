@@ -138,6 +138,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("MobileNotWorking")]
 		public void Name ()
 		{
 			string path = TempFolder + DSC + "DIT.Name.Test";
@@ -558,6 +559,18 @@ namespace MonoTests.System.IO
 			}
 		}
 
+		[Test] //GetDirectories (String, SearchOptions)
+		public void GetDirectiories_SearchOptionAllDirectories ()
+		{
+			string directoryToBeLookedFor = "lookforme";
+			DirectoryInfo baseDir = Directory.CreateDirectory(Path.Combine(TempFolder, "GetDirectiories_SearchOptionAllDirectories"));
+			DirectoryInfo subdir = baseDir.CreateSubdirectory("subdir");
+			DirectoryInfo subsubdir = subdir.CreateSubdirectory(directoryToBeLookedFor);
+			DirectoryInfo[] directoriesFound = baseDir.GetDirectories(directoryToBeLookedFor, SearchOption.AllDirectories);
+			Assert.AreEqual(1, directoriesFound.Length, "There should be exactly one directory with the specified name.");
+			Assert.AreEqual(directoryToBeLookedFor, directoriesFound[0].Name, "The name of the directory found should match the expected one.");
+		}
+
 #if NET_2_0
 		[Test] // GetDirectories (String, SearchOption)
 		public void GetDirectories3_SearchPattern_Null ()
@@ -866,6 +879,32 @@ namespace MonoTests.System.IO
 				DeleteDir (path);
 			}
 		}
+		
+		[Test]
+		public void MoveTo_UpdateProperties ()
+		{
+			string path = TempFolder + DSC + "DIT.MoveToUpdateProperties.Test";
+			string path2 = TempFolder + DSC + "DIT.MoveToUpdateProperties2.Test";
+			string path3 = path2 + DSC + "DIT.MoveToUpdateProperties3.Test";
+			DeleteDir (path);
+			Directory.CreateDirectory (path);
+			Directory.CreateDirectory (path2);
+
+			DirectoryInfo info = new DirectoryInfo(path);
+			
+			Assert.IsTrue (Directory.Exists(info.FullName));
+			Assert.AreEqual (path, info.FullName);
+			Assert.AreEqual ("DIT.MoveToUpdateProperties.Test", info.Name);
+			Assert.AreEqual (TempFolder, info.Parent.FullName);
+			Assert.AreEqual (path, info.ToString ());
+
+			info.MoveTo (path3);
+			Assert.IsTrue (Directory.Exists(info.FullName));
+			Assert.AreEqual (path3, info.FullName);
+			Assert.AreEqual ("DIT.MoveToUpdateProperties3.Test", info.Name);
+			Assert.AreEqual (path2, info.Parent.FullName);
+			Assert.AreEqual (path3, info.ToString ());
+		}
 
 		[Test]
 		public void DirectoryNameWithSpace ()
@@ -1024,6 +1063,7 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (TempFolder + DSC + "ToString.Test", info.ToString ());
 		}
 
+#if !MOBILE
 		[Test]
 		public void Serialization ()
 		{
@@ -1061,7 +1101,7 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (info.Name, clone.Name, "#1");
 			Assert.AreEqual (info.FullName, clone.FullName, "#2");
 		}
-		
+
 		// Needed so that UnixSymbolicLinkInfo doesn't have to
 		// be JITted on windows
 		private void Symlink_helper ()
@@ -1099,7 +1139,7 @@ namespace MonoTests.System.IO
 
 			Symlink_helper ();
 		}
-
+#endif
 		static bool RunningOnUnix {
 			get {
 				int p = (int) Environment.OSVersion.Platform;

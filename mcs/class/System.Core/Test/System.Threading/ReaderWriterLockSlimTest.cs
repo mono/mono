@@ -29,8 +29,10 @@
 using System;
 using NUnit.Framework;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Linq;
+#if NET_4_0
+using System.Threading.Tasks;
+#endif
 
 namespace MonoTests.System.Threading
 {
@@ -76,6 +78,42 @@ namespace MonoTests.System.Threading
 				v.EnterWriteLock ();
 				Assert.Fail ("3");
 			} catch (ObjectDisposedException) {
+			}
+		}
+
+		[Test]
+		public void Dispose_WithReadLock ()
+		{
+			var rwl = new ReaderWriterLockSlim ();
+			rwl.EnterReadLock ();
+			try {
+				rwl.Dispose ();
+				Assert.Fail ("1");
+			} catch (SynchronizationLockException) {
+			}
+		}
+
+		[Test]
+		public void Dispose_WithWriteLock ()
+		{
+			var rwl = new ReaderWriterLockSlim ();
+			rwl.EnterWriteLock ();
+			try {
+				rwl.Dispose ();
+				Assert.Fail ("1");
+			} catch (SynchronizationLockException) {
+			}
+		}
+
+		[Test]
+		public void Dispose_UpgradeableReadLock ()
+		{
+			var rwl = new ReaderWriterLockSlim ();
+			rwl.EnterUpgradeableReadLock ();
+			try {
+				rwl.Dispose ();
+				Assert.Fail ("1");
+			} catch (SynchronizationLockException) {
 			}
 		}
 

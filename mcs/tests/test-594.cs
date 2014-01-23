@@ -5,7 +5,7 @@ using System.Reflection;
 
 public class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		var v = typeof (Test).Assembly.GetName ().Version;
 		if (v.Major != 2)

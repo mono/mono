@@ -1,9 +1,11 @@
 <Type Name="FileHandleOperations" FullName="Mono.Unix.FileHandleOperations">
   <TypeSignature Language="C#" Value="public sealed class FileHandleOperations" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit FileHandleOperations extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
   <Base>
@@ -23,7 +25,13 @@
   <Members>
     <Member MemberName="AdviseFileAccessPattern">
       <MemberSignature Language="C#" Value="public static void AdviseFileAccessPattern (Mono.Unix.UnixStream stream, Mono.Unix.FileAccessPattern pattern);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void AdviseFileAccessPattern(class Mono.Unix.UnixStream stream, valuetype Mono.Unix.FileAccessPattern pattern) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -66,14 +74,16 @@
           refers to a pipe or FIFO.</exception>
         <altmember cref="M:Mono.Unix.Native.Syscall.posix_fadvise" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AdviseFileAccessPattern">
       <MemberSignature Language="C#" Value="public static void AdviseFileAccessPattern (int fd, Mono.Unix.FileAccessPattern pattern);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void AdviseFileAccessPattern(int32 fd, valuetype Mono.Unix.FileAccessPattern pattern) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -115,14 +125,16 @@
           refers to a pipe or FIFO.</exception>
         <altmember cref="M:Mono.Unix.Native.Syscall.posix_fadvise" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AdviseFileAccessPattern">
       <MemberSignature Language="C#" Value="public static void AdviseFileAccessPattern (System.IO.FileStream file, Mono.Unix.FileAccessPattern pattern);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void AdviseFileAccessPattern(class System.IO.FileStream file, valuetype Mono.Unix.FileAccessPattern pattern) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -165,14 +177,16 @@
           refers to a pipe or FIFO.</exception>
         <altmember cref="M:Mono.Unix.Native.Syscall.posix_fadvise" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AdviseFileAccessPattern">
       <MemberSignature Language="C#" Value="public static void AdviseFileAccessPattern (Mono.Unix.UnixStream stream, Mono.Unix.FileAccessPattern pattern, long offset, long len);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void AdviseFileAccessPattern(class Mono.Unix.UnixStream stream, valuetype Mono.Unix.FileAccessPattern pattern, int64 offset, int64 len) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -229,14 +243,16 @@
           refers to a pipe or FIFO.</exception>
         <altmember cref="M:Mono.Unix.Native.Syscall.posix_fadvise" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AdviseFileAccessPattern">
       <MemberSignature Language="C#" Value="public static void AdviseFileAccessPattern (int fd, Mono.Unix.FileAccessPattern pattern, long offset, long len);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void AdviseFileAccessPattern(int32 fd, valuetype Mono.Unix.FileAccessPattern pattern, int64 offset, int64 len) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -293,14 +309,16 @@
           refers to a pipe or FIFO.</exception>
         <altmember cref="M:Mono.Unix.Native.Syscall.posix_fadvise" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AdviseFileAccessPattern">
       <MemberSignature Language="C#" Value="public static void AdviseFileAccessPattern (System.IO.FileStream file, Mono.Unix.FileAccessPattern pattern, long offset, long len);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void AdviseFileAccessPattern(class System.IO.FileStream file, valuetype Mono.Unix.FileAccessPattern pattern, int64 offset, int64 len) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -358,10 +376,6 @@
           refers to a pipe or FIFO.</exception>
         <altmember cref="M:Mono.Unix.Native.Syscall.posix_fadvise" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

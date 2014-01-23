@@ -1,7 +1,7 @@
 class T {
 	static int ret_code = 0;
     
-	static int Main ()
+	public static int Main ()
 	{
 		try {
 			T t = null;

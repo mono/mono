@@ -505,7 +505,7 @@ namespace System.Text {
 			return this;
 		}
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 		public StringBuilder Clear ()
 		{
 			Length = 0;
@@ -538,31 +538,19 @@ namespace System.Text {
 			return this;
 		}
 
-#if MOONLIGHT
-		internal
-#else
 		public
-#endif
 		StringBuilder AppendFormat (string format, object arg0)
 		{
 			return AppendFormat (null, format, new object [] { arg0 });
 		}
 
-#if MOONLIGHT
-		internal
-#else
 		public
-#endif
 		StringBuilder AppendFormat (string format, object arg0, object arg1)
 		{
 			return AppendFormat (null, format, new object [] { arg0, arg1 });
 		}
 
-#if MOONLIGHT
-		internal
-#else
 		public
-#endif
 		StringBuilder AppendFormat (string format, object arg0, object arg1, object arg2)
 		{
 			return AppendFormat (null, format, new object [] { arg0, arg1, arg2 });

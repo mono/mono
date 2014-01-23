@@ -16,7 +16,7 @@ class Test {
 		Console.WriteLine ("Async Callback " + ar.AsyncState);
 	}
 	
-	static int Main () {
+	public static int Main () {
 		SimpleDelegate d = new SimpleDelegate (F);
 		AsyncCallback ac = new AsyncCallback (async_callback);
 		string state1 = "STATE1";

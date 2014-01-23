@@ -73,11 +73,24 @@ namespace MonoTests.System.Runtime.ExceptionServices
 			var orig_stack = orig.StackTrace;
 			try {
 				ed.Throw ();
+				Assert.Fail ("#0");
 			} catch (Exception e) {
 				var s = e.StackTrace.Split ('\n');
 				Assert.AreEqual (4, s.Length, "#1");
 				Assert.AreEqual (orig, e, "#2");
 				Assert.AreNotEqual (orig_stack, e.StackTrace, "#3");
+			}
+		}
+
+		[Test]
+		public void ThrowWithEmptyFrames ()
+		{
+			var edi = ExceptionDispatchInfo.Capture (new OperationCanceledException ());
+			try {
+				edi.Throw ();
+				Assert.Fail ("#0");
+			} catch (OperationCanceledException e) {
+				Assert.IsFalse (e.StackTrace.Contains ("---"));
 			}
 		}
 

@@ -15,7 +15,7 @@ struct _tp_epoll_data {
 };
 
 typedef struct _tp_epoll_data tp_epoll_data;
-static void tp_epoll_modify (gpointer event_data, int fd, int operation, int events, gboolean is_new);
+static void tp_epoll_modify (gpointer p, int fd, int operation, int events, gboolean is_new);
 static void tp_epoll_shutdown (gpointer event_data);
 static void tp_epoll_wait (gpointer event_data);
 
@@ -51,11 +51,15 @@ tp_epoll_init (SocketIOData *data)
 }
 
 static void
-tp_epoll_modify (gpointer event_data, int fd, int operation, int events, gboolean is_new)
+tp_epoll_modify (gpointer p, int fd, int operation, int events, gboolean is_new)
 {
-	tp_epoll_data *data = event_data;
+	SocketIOData *socket_io_data;
+	tp_epoll_data *data;
 	struct epoll_event evt;
 	int epoll_op;
+
+	socket_io_data = p;
+	data = socket_io_data->event_data;
 
 	memset (&evt, 0, sizeof (evt));
 	evt.data.fd = fd;
@@ -74,6 +78,7 @@ tp_epoll_modify (gpointer event_data, int fd, int operation, int events, gboolea
 			}
 		}
 	}
+	LeaveCriticalSection (&socket_io_data->io_lock);
 }
 
 static void
@@ -92,7 +97,6 @@ tp_epoll_wait (gpointer p)
 {
 	SocketIOData *socket_io_data;
 	int epollfd;
-	MonoInternalThread *thread;
 	struct epoll_event *events, *evt;
 	int ready = 0, i;
 	gpointer async_results [EPOLL_NEVENTS * 2]; // * 2 because each loop can add up to 2 results here
@@ -102,7 +106,6 @@ tp_epoll_wait (gpointer p)
 	socket_io_data = p;
 	data = socket_io_data->event_data;
 	epollfd = data->epollfd;
-	thread = mono_thread_internal_current ();
 	events = g_new0 (struct epoll_event, EPOLL_NEVENTS);
 
 	while (1) {
@@ -110,8 +113,7 @@ tp_epoll_wait (gpointer p)
 
 		do {
 			if (ready == -1) {
-				if (THREAD_WANTS_A_BREAK (thread))
-					mono_thread_interruption_checkpoint ();
+				check_for_interruption_critical ();
 			}
 			ready = epoll_wait (epollfd, events, EPOLL_NEVENTS, -1);
 		} while (ready == -1 && errno == EINTR);

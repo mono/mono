@@ -48,17 +48,11 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.IsNull (cn.Container, "#3");
 			Assert.AreEqual (string.Empty, cn.Database, "#4");
 			Assert.AreEqual (string.Empty, cn.DataSource, "#5");
-#if NET_2_0
 			Assert.IsFalse (cn.FireInfoMessageEventOnUserErrors, "#6");
 			Assert.AreEqual (8000, cn.PacketSize, "#7");
-#else
-			Assert.AreEqual (8192, cn.PacketSize, "#7");
-#endif
 			Assert.IsNull (cn.Site, "#8");
 			Assert.AreEqual (ConnectionState.Closed, cn.State, "#9");
-#if NET_2_0
 			Assert.IsFalse (cn.StatisticsEnabled, "#10");
-#endif
 			Assert.IsTrue (string.Compare (Environment.MachineName, cn.WorkstationId, true) == 0, "#11");
 		}
 
@@ -73,17 +67,11 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.IsNull (cn.Container, "#A3");
 			Assert.AreEqual ("Mono", cn.Database, "#A4");
 			Assert.AreEqual ("SQLSRV", cn.DataSource, "#A5");
-#if NET_2_0
 			Assert.IsFalse (cn.FireInfoMessageEventOnUserErrors, "#A6");
 			Assert.AreEqual (8000, cn.PacketSize, "#A7");
-#else
-			Assert.AreEqual (8192, cn.PacketSize, "#A7");
-#endif
 			Assert.IsNull (cn.Site, "#A8");
 			Assert.AreEqual (ConnectionState.Closed, cn.State, "#A9");
-#if NET_2_0
 			Assert.IsFalse (cn.StatisticsEnabled, "#A10");
-#endif
 			Assert.IsTrue (string.Compare (Environment.MachineName, cn.WorkstationId, true) == 0, "#A11");
 
 			cn = new SqlConnection ((string) null);
@@ -92,17 +80,11 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.IsNull (cn.Container, "#B3");
 			Assert.AreEqual (string.Empty, cn.Database, "#B4");
 			Assert.AreEqual (string.Empty, cn.DataSource, "#B5");
-#if NET_2_0
 			Assert.IsFalse (cn.FireInfoMessageEventOnUserErrors, "#B6");
 			Assert.AreEqual (8000, cn.PacketSize, "#B7");
-#else
-			Assert.AreEqual (8192, cn.PacketSize, "#B7");
-#endif
 			Assert.IsNull (cn.Site, "#B8");
 			Assert.AreEqual (ConnectionState.Closed, cn.State, "#B9");
-#if NET_2_0
 			Assert.IsFalse (cn.StatisticsEnabled, "#B10");
-#endif
 			Assert.IsTrue (string.Compare (Environment.MachineName, cn.WorkstationId, true) == 0, "#B11");
 		}
 
@@ -281,7 +263,6 @@ namespace MonoTests.System.Data.SqlClient
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		public void ChangePassword_ConnectionString_Empty ()
 		{
@@ -374,7 +355,6 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual ("connection", ex.ParamName, "#5");
 			}
 		}
-#endif
 
 		[Test]
 		public void ConnectionString ()
@@ -434,10 +414,8 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreSame (cn, cmd.Connection, "#5");
 			Assert.IsNull (cmd.Container, "#6");
 			Assert.IsTrue (cmd.DesignTimeVisible, "#7");
-#if NET_2_0
 			Assert.IsNull (cmd.Notification, "#8");
 			Assert.IsTrue (cmd.NotificationAutoEnlist, "#9");
-#endif
 			Assert.IsNotNull (cmd.Parameters, "#10");
 			Assert.AreEqual (0, cmd.Parameters.Count, "#11");
 			Assert.IsNull (cmd.Site, "#12");
@@ -455,11 +433,7 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (15, cn.ConnectionTimeout, "#2");
 			Assert.AreEqual (string.Empty, cn.Database, "#3");
 			Assert.AreEqual (string.Empty, cn.DataSource, "#4");
-#if NET_2_0
 			Assert.AreEqual (8000, cn.PacketSize, "#5");
-#else
-			Assert.AreEqual (8192, cn.PacketSize, "#5");
-#endif
 			Assert.IsTrue (string.Compare (Environment.MachineName, cn.WorkstationId, true) == 0, "#6");
 			Assert.AreEqual (ConnectionState.Closed, cn.State, "#7");
 			cn.Dispose ();
@@ -468,7 +442,6 @@ namespace MonoTests.System.Data.SqlClient
 			cn.Dispose ();
 		}
 
-#if NET_2_0
 		[Test]
 		public void GetSchema_Connection_Closed ()
 		{
@@ -544,40 +517,13 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.IsNotNull (ex.Message, "#G4");
 			}
 		}
-#endif
 
 		[Test]
 		public void ConnectionString_AsynchronousProcessing ()
 		{
 			SqlConnection cn = new SqlConnection ();
-#if NET_2_0
 			cn.ConnectionString = "Asynchronous Processing=False";
 			cn.ConnectionString = "Async=True";
-#else
-			try {
-				cn.ConnectionString = "Asynchronous Processing=False";
-				Assert.Fail ("#A1");
-			} catch (ArgumentException ex) {
-				// Keyword not supported: 'asynchronous processing'
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
-				Assert.IsNull (ex.InnerException, "#A3");
-				Assert.IsNotNull (ex.Message, "#A4");
-				Assert.IsTrue (ex.Message.IndexOf ("'asynchronous processing'") != -1, "#A5:" + ex.Message);
-				Assert.IsNull (ex.ParamName, "#A6");
-			}
-
-			try {
-				cn.ConnectionString = "Async=True";
-				Assert.Fail ("#B1");
-			} catch (ArgumentException ex) {
-				// Keyword not supported: 'asynchronous processing'
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-				Assert.IsNull (ex.InnerException, "#B3");
-				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsTrue (ex.Message.IndexOf ("'async'") != -1, "#B5:" + ex.Message);
-				Assert.IsNull (ex.ParamName, "#B6");
-			}
-#endif
 		}
 
 		[Test]
@@ -610,9 +556,7 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
 				Assert.IsNull (ex.InnerException, "#A3");
 				Assert.IsNotNull (ex.Message, "#A4");
-#if NET_2_0
 				Assert.IsTrue (ex.Message.IndexOf ("'connect timeout'") != -1, "#A5:" + ex.Message);
-#endif
 				Assert.IsNull (ex.ParamName, "#A6");
 			}
 
@@ -718,9 +662,7 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
 				Assert.IsNull (ex.InnerException, "#A3");
 				Assert.IsNotNull (ex.Message, "#A4");
-#if NET_2_0
 				Assert.IsTrue (ex.Message.IndexOf ("'max pool size'") != -1, "#A5:" + ex.Message);
-#endif
 				Assert.IsNull (ex.ParamName, "#A6");
 			}
 
@@ -771,9 +713,7 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
 				Assert.IsNull (ex.InnerException, "#D3");
 				Assert.IsNotNull (ex.Message, "#D4");
-#if NET_2_0
 				Assert.IsTrue (ex.Message.IndexOf ("'max pool size'") != -1, "#D5:" + ex.Message);
-#endif
 				Assert.IsNull (ex.ParamName, "#D6");
 			}
 
@@ -804,7 +744,7 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void ConnectionString_MinPoolSize_Invalid ()
 		{
-			SqlConnection cn = cn = new SqlConnection ();
+			SqlConnection cn = new SqlConnection ();
 
 			// negative number
 			try {
@@ -815,9 +755,7 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
 				Assert.IsNull (ex.InnerException, "#A3");
 				Assert.IsNotNull (ex.Message, "#A4");
-#if NET_2_0
 				Assert.IsTrue (ex.Message.IndexOf ("'min pool size'") != -1, "#A5:" + ex.Message);
-#endif
 				Assert.IsNull (ex.ParamName, "#A6");
 			}
 
@@ -864,21 +802,7 @@ namespace MonoTests.System.Data.SqlClient
 		public void ConnectionString_MultipleActiveResultSets ()
 		{
 			SqlConnection cn = new SqlConnection ();
-#if NET_2_0
 			cn.ConnectionString = "MultipleActiveResultSets=true";
-#else
-			try {
-				cn.ConnectionString = "MultipleActiveResultSets=true";
-				Assert.Fail ("#1");
-			} catch (ArgumentException ex) {
-				// Keyword not supported: 'multipleactiveresultsets'
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsTrue (ex.Message.IndexOf ("'multipleactiveresultsets'") != -1, "#5:" + ex.Message);
-				Assert.IsNull (ex.ParamName, "#6");
-			}
-#endif
 		}
 
 		[Test]
@@ -888,7 +812,6 @@ namespace MonoTests.System.Data.SqlClient
 			try {
 				cn.ConnectionString = "MultipleActiveResultSets=1";
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentException ex) {
 				// Invalid value for key 'multipleactiveresultsets'
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -897,16 +820,6 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.IsTrue (ex.Message.IndexOf ("'multipleactiveresultsets'") != -1, "#5:" + ex.Message);
 				Assert.IsNull (ex.ParamName, "#6");
 			}
-#else
-			} catch (ArgumentException ex) {
-				// Keyword not supported: 'multipleactiveresultsets'
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsTrue (ex.Message.IndexOf ("'multipleactiveresultsets'") != -1, "#5:" + ex.Message);
-				Assert.IsNull (ex.ParamName, "#6");
-			}
-#endif
 		}
 
 		[Test]
@@ -928,19 +841,10 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (533, cn.PacketSize, "#2");
 			cn.ConnectionString = "packet SizE=512";
 			Assert.AreEqual (512, cn.PacketSize, "#3");
-#if NET_2_0
 			cn.ConnectionString = "packet SizE=32768";
 			Assert.AreEqual (32768, cn.PacketSize, "#4");
-#else
-			cn.ConnectionString = "packet SizE=32767";
-			Assert.AreEqual (32767, cn.PacketSize, "#4");
-#endif
 			cn.ConnectionString = "packet Size=";
-#if NET_2_0
 			Assert.AreEqual (8000, cn.PacketSize, "#5");
-#else
-			Assert.AreEqual (8192, cn.PacketSize, "#5");
-#endif
 		}
 
 		[Test]
@@ -964,11 +868,7 @@ namespace MonoTests.System.Data.SqlClient
 
 			// invalid packet size (> maximum)
 			try {
-#if NET_2_0
 				cn.ConnectionString = "packet SIze=32769";
-#else
-				cn.ConnectionString = "packet SIze=32768";
-#endif
 				Assert.Fail ("#B1");
 			} catch (ArgumentException ex) {
 				// Invalid 'Packet Size'.  The value must be an
@@ -1029,21 +929,7 @@ namespace MonoTests.System.Data.SqlClient
 		public void ConnectionString_UserInstance ()
 		{
 			SqlConnection cn = new SqlConnection ();
-#if NET_2_0
 			cn.ConnectionString = "User Instance=true";
-#else
-			try {
-				cn.ConnectionString = "User Instance=true";
-				Assert.Fail ("#1");
-			} catch (ArgumentException ex) {
-				// Keyword not supported: 'user instance'
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsTrue (ex.Message.IndexOf ("'user instance'") != -1, "#5:" + ex.Message);
-				Assert.IsNull (ex.ParamName, "#6");
-			}
-#endif
 		}
 
 		[Test]
@@ -1053,7 +939,6 @@ namespace MonoTests.System.Data.SqlClient
 			try {
 				cn.ConnectionString = "User Instance=1";
 				Assert.Fail ("#1");
-#if NET_2_0
 			} catch (ArgumentException ex) {
 				// Invalid value for key 'user instance'
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
@@ -1062,16 +947,6 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.IsTrue (ex.Message.IndexOf ("'user instance'") != -1, "#5:" + ex.Message);
 				Assert.IsNull (ex.ParamName, "#6");
 			}
-#else
-			} catch (ArgumentException ex) {
-				// Keyword not supported: 'user instance'
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsTrue (ex.Message.IndexOf ("'user instance'") != -1, "#5:" + ex.Message);
-				Assert.IsNull (ex.ParamName, "#6");
-			}
-#endif
 		}
 
 		[Test]

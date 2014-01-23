@@ -6,7 +6,7 @@ class Test<T> where T: struct{
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		new Test<bool> ();
 		return 0;

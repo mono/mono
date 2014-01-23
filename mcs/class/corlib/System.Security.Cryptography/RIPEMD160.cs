@@ -27,8 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !MOONLIGHT
-
 using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
@@ -51,7 +49,11 @@ namespace System.Security.Cryptography {
 		/// <returns>A new instance of the RIPEMD160 hash algorithm.</returns>
 		public static new RIPEMD160 Create () 
 		{
+#if FULL_AOT_RUNTIME
+			return new System.Security.Cryptography.RIPEMD160Managed ();
+#else
 			return Create ("System.Security.Cryptography.RIPEMD160");
+#endif
 		}
 
 		/// <summary>
@@ -65,5 +67,3 @@ namespace System.Security.Cryptography {
 		}
 	}
 }
-
-#endif

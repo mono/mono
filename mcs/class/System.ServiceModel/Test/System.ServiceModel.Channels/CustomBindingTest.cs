@@ -84,12 +84,49 @@ namespace MonoTests.System.ServiceModel.Channels
 			Assert.AreEqual (4, cb.CreateBindingElements ().Count, "#9");
 		}
 
+		class MessageVersionBindingElement : BindingElement {
+			public MessageVersion Version {
+				get;
+				private set;
+			}
+			
+			public MessageVersionBindingElement (MessageVersion version)
+			{
+				this.Version = version;
+			}
+			
+			public override BindingElement Clone ()
+			{
+				return new MessageVersionBindingElement (Version);
+			}
+			
+			public override T GetProperty<T> (BindingContext context)
+			{
+				if (typeof (T) == typeof (MessageVersion))
+					return (T)(object) Version;
+				return null;
+			}
+		}
+		
 		[Test]
 		public void MessageVersionProperty ()
 		{
 			Assert.IsNull (new CustomBinding ().MessageVersion, "#1");
 			Assert.AreEqual (MessageVersion.Soap12WSAddressing10, new CustomBinding (new HttpTransportBindingElement ()).MessageVersion, "#2");
 			Assert.AreEqual (MessageVersion.Soap12WSAddressing10, new CustomBinding (new TextMessageEncodingBindingElement ()).MessageVersion, "#3");
+
+			var versions = new[] {
+				MessageVersion.Soap11, MessageVersion.Soap11WSAddressing10,
+				MessageVersion.Soap11WSAddressingAugust2004,
+				MessageVersion.Soap12, MessageVersion.Soap12WSAddressing10,
+				MessageVersion.Soap12WSAddressingAugust2004
+			};
+			
+			foreach (var version in versions) {
+				var binding = new CustomBinding ();
+				binding.Elements.Add (new MessageVersionBindingElement (version));
+				Assert.AreEqual (version, binding.MessageVersion, "#4:" + version);
+			}
 		}
 
 		[Test]

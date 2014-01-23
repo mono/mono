@@ -25,7 +25,9 @@
 // 
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace System.Net
 {
@@ -606,13 +608,87 @@ namespace System.Net
 		public const string CFNetworkLibrary = "/System/Library/Frameworks/CFNetwork.framework/CFNetwork";
 #endif
 		
-		[DllImport (CFNetworkLibrary)]
-		// CFArrayRef CFNetworkCopyProxiesForAutoConfigurationScript (CFStringRef proxyAutoConfigurationScript, CFURLRef targetURL);
-		extern static IntPtr CFNetworkCopyProxiesForAutoConfigurationScript (IntPtr proxyAutoConfigurationScript, IntPtr targetURL);
-		
+		[DllImport (CFNetworkLibrary, EntryPoint = "CFNetworkCopyProxiesForAutoConfigurationScript")]
+		// CFArrayRef CFNetworkCopyProxiesForAutoConfigurationScript (CFStringRef proxyAutoConfigurationScript, CFURLRef targetURL, CFErrorRef* error);
+		extern static IntPtr CFNetworkCopyProxiesForAutoConfigurationScriptSequential (IntPtr proxyAutoConfigurationScript, IntPtr targetURL, out IntPtr error);
+
+		class GetProxyData : IDisposable {
+			public IntPtr script;
+			public IntPtr targetUri;
+			public IntPtr error;
+			public IntPtr result;
+			public ManualResetEvent evt = new ManualResetEvent (false);
+
+			public void Dispose ()
+			{
+				evt.Close ();
+			}
+		}
+
+		static object lock_obj = new object ();
+		static Queue<GetProxyData> get_proxy_queue;
+		static AutoResetEvent proxy_event;
+
+		static void CFNetworkCopyProxiesForAutoConfigurationScriptThread ()
+		{
+			GetProxyData data;
+			var data_left = true;
+
+			while (true) {
+				proxy_event.WaitOne ();
+
+				do {
+					lock (lock_obj) {
+						if (get_proxy_queue.Count == 0)
+							break;
+						data = get_proxy_queue.Dequeue ();
+						data_left = get_proxy_queue.Count > 0;
+					}
+
+					data.result = CFNetworkCopyProxiesForAutoConfigurationScriptSequential (data.script, data.targetUri, out data.error);
+					data.evt.Set ();
+				} while (data_left);
+			}
+		}
+
+		static IntPtr CFNetworkCopyProxiesForAutoConfigurationScript (IntPtr proxyAutoConfigurationScript, IntPtr targetURL, out IntPtr error)
+		{
+			// This method must only be called on only one thread during an application's life time.
+			// Note that it's not enough to use a lock to make calls sequential across different threads,
+			// it has to be one thread. Also note that that thread can't be the main thread, because the
+			// main thread might be blocking waiting for this network request to finish.
+			// Another possibility would be to use JavaScriptCore to execute this piece of
+			// javascript ourselves, but unfortunately it's not available before iOS7.
+			// See bug #7923 comment #21+.
+
+			using (var data = new GetProxyData ()) {
+				data.script = proxyAutoConfigurationScript;
+				data.targetUri = targetURL;
+
+				lock (lock_obj) {
+					if (get_proxy_queue == null) {
+						get_proxy_queue = new Queue<GetProxyData> ();
+						proxy_event = new AutoResetEvent (false);
+						new Thread (CFNetworkCopyProxiesForAutoConfigurationScriptThread) {
+							IsBackground = true,
+						}.Start ();
+					}
+					get_proxy_queue.Enqueue (data);
+					proxy_event.Set ();
+				}
+
+				data.evt.WaitOne ();
+
+				error = data.error;
+
+				return data.result;
+			}
+		}
+
 		static CFArray CopyProxiesForAutoConfigurationScript (IntPtr proxyAutoConfigurationScript, CFUrl targetURL)
 		{
-			IntPtr native = CFNetworkCopyProxiesForAutoConfigurationScript (proxyAutoConfigurationScript, targetURL.Handle);
+			IntPtr err = IntPtr.Zero;
+			IntPtr native = CFNetworkCopyProxiesForAutoConfigurationScript (proxyAutoConfigurationScript, targetURL.Handle, out err);
 			
 			if (native == IntPtr.Zero)
 				return null;
@@ -729,16 +805,22 @@ namespace System.Net
 		}
 		
 		class CFWebProxy : IWebProxy {
+			ICredentials credentials;
+			bool userSpecified;
+			
 			public CFWebProxy ()
 			{
-				
 			}
 			
 			public ICredentials Credentials {
-				get; set;
+				get { return credentials; }
+				set {
+					userSpecified = true;
+					credentials = value;
+				}
 			}
 			
-			static Uri GetProxyUri (CFProxy proxy)
+			static Uri GetProxyUri (CFProxy proxy, out NetworkCredential credentials)
 			{
 				string protocol;
 				
@@ -751,6 +833,7 @@ namespace System.Net
 					protocol = "http://";
 					break;
 				default:
+					credentials = null;
 					return null;
 				}
 				
@@ -758,29 +841,26 @@ namespace System.Net
 				string password = proxy.Password;
 				string hostname = proxy.HostName;
 				int port = proxy.Port;
-				string userinfo;
 				string uri;
 				
-				if (username != null) {
-					if (password != null)
-						userinfo = Uri.EscapeDataString (username) + ':' + Uri.EscapeDataString (password) + '@';
-					else
-						userinfo = Uri.EscapeDataString (username) + '@';
-				} else {
-					userinfo = string.Empty;
-				}
+				if (username != null)
+					credentials = new NetworkCredential (username, password);
+				else
+					credentials = null;
 				
-				uri = protocol + userinfo + hostname + (port != 0 ? ':' + port.ToString () : string.Empty);
+				uri = protocol + hostname + (port != 0 ? ':' + port.ToString () : string.Empty);
 				
 				return new Uri (uri, UriKind.Absolute);
 			}
 			
-			static Uri GetProxyUriFromScript (IntPtr script, Uri targetUri)
+			static Uri GetProxyUriFromScript (IntPtr script, Uri targetUri, out NetworkCredential credentials)
 			{
 				CFProxy[] proxies = CFNetwork.GetProxiesForAutoConfigurationScript (script, targetUri);
 				
-				if (proxies == null)
+				if (proxies == null) {
+					credentials = null;
 					return targetUri;
+				}
 				
 				for (int i = 0; i < proxies.Length; i++) {
 					switch (proxies[i].ProxyType) {
@@ -788,60 +868,76 @@ namespace System.Net
 					case CFProxyType.HTTP:
 					case CFProxyType.FTP:
 						// create a Uri based on the hostname/port/etc info
-						return GetProxyUri (proxies[i]);
+						return GetProxyUri (proxies[i], out credentials);
 					case CFProxyType.SOCKS:
 					default:
 						// unsupported proxy type, try the next one
 						break;
 					case CFProxyType.None:
 						// no proxy should be used
+						credentials = null;
 						return targetUri;
 					}
 				}
+				
+				credentials = null;
 				
 				return null;
 			}
 			
 			public Uri GetProxy (Uri targetUri)
 			{
+				NetworkCredential credentials = null;
+				Uri proxy = null;
+				
 				if (targetUri == null)
 					throw new ArgumentNullException ("targetUri");
 				
 				try {
 					CFProxySettings settings = CFNetwork.GetSystemProxySettings ();
 					CFProxy[] proxies = CFNetwork.GetProxiesForUri (targetUri, settings);
-					Uri uri;
 					
-					if (proxies == null)
-						return targetUri;
-					
-					for (int i = 0; i < proxies.Length; i++) {
-						switch (proxies[i].ProxyType) {
-						case CFProxyType.AutoConfigurationJavaScript:
-							if ((uri = GetProxyUriFromScript (proxies[i].AutoConfigurationJavaScript, targetUri)) != null)
-								return uri;
-							break;
-						case CFProxyType.AutoConfigurationUrl:
-							// unsupported proxy type (requires fetching script from remote url)
-							break;
-						case CFProxyType.HTTPS:
-						case CFProxyType.HTTP:
-						case CFProxyType.FTP:
-							// create a Uri based on the hostname/port/etc info
-							return GetProxyUri (proxies[i]);
-						case CFProxyType.SOCKS:
-							// unsupported proxy type, try the next one
-							break;
-						case CFProxyType.None:
-							// no proxy should be used
-							return targetUri;
+					if (proxies != null) {
+						for (int i = 0; i < proxies.Length && proxy == null; i++) {
+							switch (proxies[i].ProxyType) {
+							case CFProxyType.AutoConfigurationJavaScript:
+								proxy = GetProxyUriFromScript (proxies[i].AutoConfigurationJavaScript, targetUri, out credentials);
+								break;
+							case CFProxyType.AutoConfigurationUrl:
+								// unsupported proxy type (requires fetching script from remote url)
+								break;
+							case CFProxyType.HTTPS:
+							case CFProxyType.HTTP:
+							case CFProxyType.FTP:
+								// create a Uri based on the hostname/port/etc info
+								proxy = GetProxyUri (proxies[i], out credentials);
+								break;
+							case CFProxyType.SOCKS:
+								// unsupported proxy type, try the next one
+								break;
+							case CFProxyType.None:
+								// no proxy should be used
+								proxy = targetUri;
+								break;
+							}
 						}
+						
+						if (proxy == null) {
+							// no supported proxies for this Uri, fall back to trying to connect to targetUri directly
+							proxy = targetUri;
+						}
+					} else {
+						proxy = targetUri;
 					}
 				} catch {
 					// ignore errors while retrieving proxy data
+					proxy = targetUri;
 				}
-				// no supported proxies for this Uri, fall back to trying to connect to targetUri directly.
-				return targetUri;
+				
+				if (!userSpecified)
+					this.credentials = credentials;
+				
+				return proxy;
 			}
 			
 			public bool IsBypassed (Uri targetUri)
@@ -853,13 +949,9 @@ namespace System.Net
 			}
 		}
 		
-		static CFWebProxy defaultWebProxy;
 		public static IWebProxy GetDefaultProxy ()
 		{
-			if (defaultWebProxy == null)
-				defaultWebProxy = new CFWebProxy ();
-			
-			return defaultWebProxy;
+			return new CFWebProxy ();
 		}
 	}
 }

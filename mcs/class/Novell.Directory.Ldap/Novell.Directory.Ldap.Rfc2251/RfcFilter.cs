@@ -463,7 +463,7 @@ namespace Novell.Directory.Ldap.Rfc2251
 
 //								utf8Bytes = new System.String(ca).getBytes("UTF-8");
 								// copy utf8 encoded character into octets
-								Array.Copy((System.Array) SupportClass.ToByteArray(utf8Bytes), 0, (System.Array)SupportClass.ToByteArray( octets), iOctets, utf8Bytes.Length);
+								Array.Copy((System.Array) (utf8Bytes), 0, (System.Array) octets, iOctets, utf8Bytes.Length);
 								iOctets = iOctets + utf8Bytes.Length;
 							}
 							escape = false;

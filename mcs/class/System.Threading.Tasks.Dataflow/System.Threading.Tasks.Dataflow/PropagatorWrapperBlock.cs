@@ -1,6 +1,7 @@
 // PropagatorWrapperBlock.cs
 //
 // Copyright (c) 2011 Jérémie "garuma" Laval
+// Copyright (c) 2012 Petr Onderka
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,76 +20,73 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-//
 
+namespace System.Threading.Tasks.Dataflow {
+	/// <summary>
+	/// Block returned by <see cref="DataflowBlock.Encapsulate{TInput,TOutput}"/>.
+	/// </summary>
+	class PropagatorWrapperBlock<TInput, TOutput> :
+		IPropagatorBlock<TInput, TOutput> {
+		readonly ITargetBlock<TInput> targetBlock;
+		readonly ISourceBlock<TOutput> sourceBlock;
 
-using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
-
-namespace System.Threading.Tasks.Dataflow
-{
-	internal class PropagatorWrapperBlock<TInput, TOutput> : IPropagatorBlock<TInput, TOutput>
-	{
-		ITargetBlock<TInput> target;
-		ISourceBlock<TOutput> source;
-		CompletionHelper compHelper = CompletionHelper.GetNew ();
-
-		public PropagatorWrapperBlock (ITargetBlock<TInput> target, ISourceBlock<TOutput> source)
+		public PropagatorWrapperBlock (
+			ITargetBlock<TInput> target, ISourceBlock<TOutput> source)
 		{
-			this.target = target;
-			this.source = source;
+			if (target == null)
+				throw new ArgumentNullException ("target");
+			if (source == null)
+				throw new ArgumentNullException ("source");
+
+			targetBlock = target;
+			sourceBlock = source;
 		}
 
-		public DataflowMessageStatus OfferMessage (DataflowMessageHeader messageHeader,
-		                                           TInput messageValue,
-		                                           ISourceBlock<TInput> source,
-		                                           bool consumeToAccept)
+		public DataflowMessageStatus OfferMessage (
+			DataflowMessageHeader messageHeader, TInput messageValue,
+			ISourceBlock<TInput> source, bool consumeToAccept)
 		{
-			return target.OfferMessage (messageHeader, messageValue, source, consumeToAccept);
+			return targetBlock.OfferMessage (
+				messageHeader, messageValue, source, consumeToAccept);
 		}
 
-		public TOutput ConsumeMessage (DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target, out bool messageConsumed)
+		public TOutput ConsumeMessage (
+			DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target,
+			out bool messageConsumed)
 		{
-			return source.ConsumeMessage (messageHeader, target, out messageConsumed);
+			return sourceBlock.ConsumeMessage (messageHeader, target, out messageConsumed);
 		}
 
-		public IDisposable LinkTo (ITargetBlock<TOutput> target, bool unlinkAfterOne)
+		public IDisposable LinkTo (
+			ITargetBlock<TOutput> target, DataflowLinkOptions linkOptions)
 		{
-			return source.LinkTo (target, unlinkAfterOne);
+			return sourceBlock.LinkTo (target, linkOptions);
 		}
 
-		public void ReleaseReservation (DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target)
+		public void ReleaseReservation (
+			DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target)
 		{
-			source.ReleaseReservation (messageHeader, target);
+			sourceBlock.ReleaseReservation (messageHeader, target);
 		}
 
-		public bool ReserveMessage (DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target)
+		public bool ReserveMessage (
+			DataflowMessageHeader messageHeader, ITargetBlock<TOutput> target)
 		{
-			return source.ReserveMessage (messageHeader, target);
+			return sourceBlock.ReserveMessage (messageHeader, target);
 		}
 
 		public void Complete ()
 		{
-			compHelper.Complete ();
-			source.Complete ();
-			target.Complete ();
+			targetBlock.Complete ();
 		}
 
-		public void Fault (Exception ex)
+		public void Fault (Exception exception)
 		{
-			compHelper.Fault (ex);
-			source.Fault (ex);
-			target.Fault (ex);
+			targetBlock.Fault (exception);
 		}
 
 		public Task Completion {
-			get {
-				return compHelper.Completion;
-			}
+			get { return sourceBlock.Completion; }
 		}
 	}
 }
-

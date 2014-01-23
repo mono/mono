@@ -125,7 +125,7 @@ namespace MonoTests.System.Runtime.InteropServices
 				gch.Free ();
 			}
 		}
-
+#if !MONOTOUCH
 		[Test]
 		public void WeakHandleWorksOnNonRootDomain ()
 		{
@@ -192,6 +192,7 @@ namespace MonoTests.System.Runtime.InteropServices
 			private readonly string _assemblyFile;
 			private readonly string _assemblyName;
 		}
+#endif
 	}
 
 }

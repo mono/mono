@@ -27,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if !FULL_AOT_RUNTIME
 using System;
 using System.Collections;
 using System.Reflection;
@@ -94,11 +94,11 @@ namespace Mono.Interop
 			Marshal.ThrowExceptionForHR (hr);
 			ComInteropProxy obj = FindProxy (ppv);
 			if (obj == null) {
-				Marshal.Release (pItf);
+				Marshal.Release (ppv);
 				return new ComInteropProxy (ppv);
 			}
 			else {
-				Marshal.Release (pItf);
+				Marshal.Release (ppv);
 				System.Threading.Interlocked.Increment (ref obj.ref_count);
 				return obj;
 			}
@@ -153,3 +153,4 @@ namespace Mono.Interop
 		}
 	}
 }
+#endif

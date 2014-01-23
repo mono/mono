@@ -173,6 +173,8 @@ namespace System.Windows.Forms
 			this.MenuDroppedDown = false;
 			
 			base.Dismiss (reason);
+
+			this.FireMenuDeactivate ();
 		}
 		
 		internal void FireMenuActivate ()

@@ -30,6 +30,7 @@ using System;
 using Mono.CodeContracts.Static.Analysis;
 using Mono.CodeContracts.Static.ControlFlow;
 using Mono.CodeContracts.Static.DataStructures;
+using Mono.CodeContracts.Static.Lattices;
 
 namespace Mono.CodeContracts.Static.Proving {
 	class BasicFacts<Expression, Variable> : IFactQuery<BoxedExpression, Variable> {
@@ -45,12 +46,12 @@ namespace Mono.CodeContracts.Static.Proving {
 		}
 
 		#region Implementation of IFactBase<Variable>
-		public ProofOutcome IsNull (APC pc, Variable variable)
+        public FlatDomain<bool> IsNull(APC pc, Variable variable)
 		{
 			return this.FactBase.IsNull (pc, variable);
 		}
 
-		public ProofOutcome IsNonNull (APC pc, Variable variable)
+        public FlatDomain<bool> IsNonNull(APC pc, Variable variable)
 		{
 			return this.FactBase.IsNonNull (pc, variable);
 		}
@@ -77,56 +78,53 @@ namespace Mono.CodeContracts.Static.Proving {
 		#endregion
 
 		#region Implementation of IFactQuery<BoxedExpression,Variable>
-		public virtual ProofOutcome IsNull (APC pc, BoxedExpression expr)
+        public virtual FlatDomain<bool> IsNull(APC pc, BoxedExpression expr)
 		{
 			Variable v;
 			if (TryVariable (expr, out v)) {
-				ProofOutcome outcome = this.FactBase.IsNull (pc, v);
-				if (outcome != ProofOutcome.Top)
+                FlatDomain<bool> outcome = this.FactBase.IsNull(pc, v);
+				if (!outcome.IsTop)
 					return outcome;
 			}
 			return ProofOutcome.Top;
 		}
 
-		public virtual ProofOutcome IsNonNull (APC pc, BoxedExpression expr)
+        public virtual FlatDomain<bool> IsNonNull(APC pc, BoxedExpression expr)
 		{
 			Variable v;
 			if (TryVariable (expr, out v)) {
-				ProofOutcome outcome = this.FactBase.IsNonNull (pc, v);
-				if (outcome != ProofOutcome.Top)
+                FlatDomain<bool> outcome = this.FactBase.IsNonNull(pc, v);
+				if (!outcome.IsTop)
 					return outcome;
 			}
 			return ProofOutcome.Top;
 		}
 
-		public ProofOutcome IsTrue (APC pc, BoxedExpression expr)
+        public FlatDomain<bool> IsTrue(APC pc, BoxedExpression expr)
 		{
 			return IsNonZero (pc, expr);
 		}
 
-		public ProofOutcome IsTrueImply (APC pc, LispList<BoxedExpression> positiveAssumptions, LispList<BoxedExpression> negativeAssumptions, BoxedExpression goal)
+        public FlatDomain<bool> IsTrueImply(APC pc, Sequence<BoxedExpression> positiveAssumptions, Sequence<BoxedExpression> negativeAssumptions, BoxedExpression goal)
 		{
-			ProofOutcome outcome = IsTrue (pc, goal);
-			switch (outcome) {
-			case ProofOutcome.True:
-			case ProofOutcome.Bottom:
-				return outcome;
-			default:
-				return ProofOutcome.Top;
-			}
+            FlatDomain<bool> outcome = IsTrue(pc, goal);
+            if (outcome.IsTrue() || outcome.IsBottom)
+                return outcome;
+
+            return ProofOutcome.Top;
 		}
 
-		public ProofOutcome IsGreaterEqualToZero (APC pc, BoxedExpression expr)
+        public FlatDomain<bool> IsGreaterEqualToZero(APC pc, BoxedExpression expr)
 		{
 			return ProofOutcome.Top;
 		}
 
-		public ProofOutcome IsLessThan (APC pc, BoxedExpression expr, BoxedExpression right)
+        public FlatDomain<bool> IsLessThan(APC pc, BoxedExpression expr, BoxedExpression right)
 		{
 			return ProofOutcome.Top;
 		}
 
-		public ProofOutcome IsNonZero (APC pc, BoxedExpression expr)
+        public FlatDomain<bool> IsNonZero(APC pc, BoxedExpression expr)
 		{
 			return IsNonNull (pc, expr);
 		}

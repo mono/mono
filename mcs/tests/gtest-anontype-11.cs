@@ -34,7 +34,7 @@ internal sealed class Beta
 
 internal static class Program
 {
-	private static int Main ()
+	public static int Main ()
 	{
 		var a = new { First = new Alpha ("joe bob"), Second = new Beta ("main street") };
 		Console.WriteLine ("hash = {0}", a.GetHashCode ());

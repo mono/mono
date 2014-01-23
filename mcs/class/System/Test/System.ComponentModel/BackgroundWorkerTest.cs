@@ -7,8 +7,6 @@
 // Copyright (C) 2007 Novell, Inc.
 //
 
-#if NET_2_0
-
 using System;
 using System.Threading;
 using System.Reflection;
@@ -21,7 +19,31 @@ namespace MonoTests.System.ComponentModel
 {
 	[TestFixture]
 	public class BackgroundWorkerTest
-	{
+	{		
+		ManualResetEvent m;
+		bool runworkercalled;
+		SynchronizationContext old_context;
+
+		[TestFixtureSetUp]
+		public void FixtureSetup ()
+		{
+			old_context = AsyncOperationManager.SynchronizationContext;
+			AsyncOperationManager.SynchronizationContext = new SynchronizationContext ();
+		}
+
+		[TestFixtureTearDown]
+		public void TestFixtureTearDown ()
+		{
+			AsyncOperationManager.SynchronizationContext = old_context;
+		}
+
+		[SetUp]
+		public void Setup ()
+		{
+			m = new ManualResetEvent (false);
+			runworkercalled = false;
+		}
+
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void ReportProgressNoReportingSupported ()
@@ -57,10 +79,7 @@ namespace MonoTests.System.ComponentModel
 			Assert.IsFalse (b.IsBusy, "#1");
 			b.CancelAsync ();
 		}
-		
-		ManualResetEvent m = new ManualResetEvent (false);
-		bool runworkercalled = false;
-		
+
 		[Test]
 		public void CancelBackgroundWorker ()
 		{
@@ -97,9 +116,6 @@ namespace MonoTests.System.ComponentModel
 			m.Set ();
 		}
 
-		ManualResetEvent m2 = new ManualResetEvent (false);
-		bool runworkercalled2 = false;
-
 		[Test]
 		public void ExceptionBackgroundWorker ()
 		{
@@ -109,19 +125,19 @@ namespace MonoTests.System.ComponentModel
 			bw.DoWork += new DoWorkEventHandler (bw_DoWork);
 			bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler (bw_RunWorkerCompletedException);
 
-			runworkercalled2 = false;
+			runworkercalled = false;
 			bw.RunWorkerAsync ("exception");
 
 			// We don't want to hang forever if the test fails.
-			Assert.AreEqual (true, m2.WaitOne (10000, false), "A");
+			Assert.AreEqual (true, m.WaitOne (10000, false), "A");
 
-			Assert.AreEqual (true, runworkercalled2, "B");
+			Assert.AreEqual (true, runworkercalled, "B");
 			Assert.AreEqual (false, bw.IsBusy, "C");
 		}
 
 		void bw_RunWorkerCompletedException (object sender, RunWorkerCompletedEventArgs e)
 		{
-			runworkercalled2 = true;
+			runworkercalled = true;
 			Assert.AreEqual (false, e.Cancelled, "A1");
 
 			try
@@ -134,11 +150,8 @@ namespace MonoTests.System.ComponentModel
 
 			Assert.IsNotNull (e.Error, "A3");
 
-			m2.Set ();
+			m.Set ();
 		}
-
-		ManualResetEvent m3 = new ManualResetEvent (false);
-		bool runworkercalled3 = false;
 
 		[Test]
 		public void CompleteBackgroundWorker ()
@@ -149,30 +162,29 @@ namespace MonoTests.System.ComponentModel
 			bw.DoWork += new DoWorkEventHandler (bw_DoWork);
 			bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler (bw_RunWorkerCompletedSuccess);
 
-			runworkercalled3 = false;
+			runworkercalled = false;
 			bw.RunWorkerAsync ();
 
 			// We don't want to hang forever if the test fails.
-			Assert.AreEqual (true, m3.WaitOne (10000, false), "A");
+			Assert.AreEqual (true, m.WaitOne (10000, false), "A");
 
-			Assert.AreEqual (true, runworkercalled3, "B");
+			Assert.AreEqual (true, runworkercalled, "B");
 			Assert.AreEqual (false, bw.IsBusy, "C");
 		}
 
 		void bw_RunWorkerCompletedSuccess (object sender, RunWorkerCompletedEventArgs e)
 		{
-			runworkercalled3 = true;
+			runworkercalled = true;
 			Assert.AreEqual (false, e.Cancelled, "A1");
 
 			Assert.AreEqual ("B", e.Result, "A2");
 			Assert.IsNull (e.Error, "A3");
 
-			m3.Set ();
+			m.Set ();
 		}
 
 		void bw_DoWork (object sender, DoWorkEventArgs e)
-		{
-		
+		{		
 			if ((string)e.Argument == "cancel") {
 				e.Cancel = true;
 				e.Result = "A";
@@ -184,4 +196,3 @@ namespace MonoTests.System.ComponentModel
 	}
 }
 
-#endif

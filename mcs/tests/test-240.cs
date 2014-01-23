@@ -13,7 +13,7 @@ class TestClass {
             return_code = 0;
         }
     
-        static int Main()
+        public static int Main()
         {
             ConditionalMethod ();
             return return_code;

@@ -26,9 +26,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections.Generic;
+
 namespace System.Linq {
 
-	abstract class SortContext<TElement> {
+	abstract class SortContext<TElement> : IComparer<int> {
 
 		protected SortDirection direction;
 		protected SortContext<TElement> child_context;

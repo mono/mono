@@ -64,6 +64,9 @@ namespace Mono.Data.Tds.Protocol
 		int databaseMajorVersion;
 		CultureInfo locale = CultureInfo.InvariantCulture;
 
+		readonly int lifeTime;
+		readonly DateTime created = DateTime.Now;
+
 		string charset;
 		string language;
 
@@ -147,7 +150,7 @@ namespace Mono.Data.Tds.Protocol
 			get { return dataSource; }
 		}
 
-		public bool IsConnected {
+		public virtual bool IsConnected {
 			get { return connected && comm != null && comm.IsConnected (); }
 			set { connected = value; }
 		}
@@ -416,18 +419,37 @@ namespace Mono.Data.Tds.Protocol
 		#region Constructors
 
 		public Tds (string dataSource, int port, int packetSize, int timeout, TdsVersion tdsVersion)
+			: this  (dataSource, port, packetSize, timeout, 0, tdsVersion)
+		{
+		}
+
+		public Tds (string dataSource, int port, int packetSize, int timeout, int lifeTime, TdsVersion tdsVersion)
 		{
 			this.tdsVersion = tdsVersion;
 			this.packetSize = packetSize;
 			this.dataSource = dataSource;
 			this.columns = new TdsDataColumnCollection ();
+			this.lifeTime = lifeTime;
 
+			InitComm (port, timeout);
+		}
+
+		protected virtual void InitComm (int port, int timeout)
+		{
 			comm = new TdsComm (dataSource, port, packetSize, timeout, tdsVersion);
 		}
 
 		#endregion // Constructors
 
 		#region Public Methods
+
+		internal bool Expired {
+			get {
+				if (lifeTime == 0)
+					return false;
+				return DateTime.Now > (created + TimeSpan.FromSeconds (lifeTime));
+			}
+		}
 
 		internal protected void InitExec () 
 		{
@@ -477,7 +499,7 @@ namespace Mono.Data.Tds.Protocol
 			return new TdsTimeoutException (0, 0, message, -2, method, dataSource, "Mono TdsClient Data Provider", 0);
 		}
 
-		public void Disconnect ()
+		public virtual void Disconnect ()
 		{
 			try {
 				comm.StartPacket (TdsPacketType.Logoff);
@@ -1441,8 +1463,7 @@ namespace Mono.Data.Tds.Protocol
 			// 0x0200	Negotiate NTLM
 			// 0x8000	Negotiate Always Sign
 
-			Type3Message t3 = new Type3Message ();
-			t3.Challenge = t2.Nonce;
+			Type3Message t3 = new Type3Message (t2);
 			
 			t3.Domain = this.connectionParms.DefaultDomain;
 			t3.Host = this.connectionParms.Hostname;

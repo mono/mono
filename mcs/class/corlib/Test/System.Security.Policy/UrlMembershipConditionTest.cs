@@ -342,6 +342,9 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
+#if MOBILE
+		[ExpectedException (typeof (NotSupportedException))]
+#endif
 		public void FromXml_PolicyLevel () 
 		{
 			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.go-mono.com");
@@ -367,6 +370,9 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
+#if MOBILE
+		[ExpectedException (typeof (NotSupportedException))]
+#endif
 		public void ToXml_PolicyLevel () 
 		{
 			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.go-mono.com");

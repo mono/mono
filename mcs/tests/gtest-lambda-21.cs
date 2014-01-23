@@ -17,7 +17,7 @@ class Program
 		return Foo (str => str.ToLower ());
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		var str = Foo (s => s);
 		Console.WriteLine (str);

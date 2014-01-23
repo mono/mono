@@ -6,7 +6,7 @@ static class Program {
 	delegate void D (X o);
 	static event D E;
 	
-	static void Main()
+	public static void Main()
 	{
 		bool running = true;
 

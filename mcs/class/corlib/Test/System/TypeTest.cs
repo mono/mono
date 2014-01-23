@@ -14,7 +14,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+#if !MONOTOUCH
 using System.Reflection.Emit;
+#endif
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Globalization;
@@ -232,12 +234,12 @@ namespace MonoTests.System
 		}
 	}
 
-
 	[TestFixture]
 	public class TypeTest
 	{
-		private AssemblyBuilder assembly;
+#if !MONOTOUCH
 		private ModuleBuilder module;
+#endif
 		const string ASSEMBLY_NAME = "MonoTests.System.TypeTest";
 		static int typeIndexer = 0;
 
@@ -246,9 +248,11 @@ namespace MonoTests.System
 		{
 			AssemblyName assemblyName = new AssemblyName ();
 			assemblyName.Name = ASSEMBLY_NAME;
-			assembly = AppDomain.CurrentDomain.DefineDynamicAssembly (
+#if !MONOTOUCH
+			var assembly = AppDomain.CurrentDomain.DefineDynamicAssembly (
 					assemblyName, AssemblyBuilderAccess.RunAndSave, Path.GetTempPath ());
 			module = assembly.DefineDynamicModule ("module1");
+#endif
 		}
 
 		private string genTypeName ()
@@ -1623,7 +1627,7 @@ namespace MonoTests.System
 			Type [] typeArgs = typeof (List<>).GetGenericArguments ();
 			Assert.IsFalse (typeArgs [0].IsAbstract, "#7");
 		}
-
+#if !MOBILE
 		[Test]
 		public void IsCOMObject ()
 		{
@@ -1650,7 +1654,7 @@ namespace MonoTests.System
 			type = tb.CreateType ();
 			Assert.IsTrue (type.IsImport, "#3");
 		}
-
+#endif
 		[Test]
 		public void IsInterface ()
 		{
@@ -1696,6 +1700,45 @@ PublicKeyToken=b77a5c561934e089"));
 		{
 			Type t = Type.GetType ("System.String[*]");
 			Assert.AreEqual ("System.String[*]", t.ToString ());
+		}
+
+#if MONOTOUCH
+		// feature not available when compiled under FULL_AOT_RUNTIME
+		[ExpectedException (typeof (NotImplementedException))]
+#endif
+		[Test]
+		public void TypeFromCLSID ()
+		{
+			Guid CLSID_ShellDesktop = new Guid("00021400-0000-0000-c000-000000000046");
+			Guid CLSID_Bogus = new Guid("1ea9d7a9-f7ab-443b-b486-30d285b21f1b");
+
+			Type t1 = Type.GetTypeFromCLSID (CLSID_ShellDesktop);
+
+			Type t2 = Type.GetTypeFromCLSID (CLSID_Bogus);
+
+			Assert.AreEqual (t1.FullName, "System.__ComObject");
+
+			if (Environment.OSVersion.Platform == PlatformID.Win32Windows ||
+				Environment.OSVersion.Platform == PlatformID.Win32NT)
+				Activator.CreateInstance(t1);
+
+			Assert.AreEqual (t2.FullName, "System.__ComObject");
+
+			Assert.AreNotEqual (t1, t2);
+		}
+
+		[Test]
+		[Category("NotWorking")] // Mono throws TargetInvokationException
+		[ExpectedException("System.Runtime.InteropServices.COMException")]
+		public void TypeFromCLSIDBogus ()
+		{
+			Guid CLSID_Bogus = new Guid("1ea9d7a9-f7ab-443b-b486-30d285b21f1b");
+			Type t = Type.GetTypeFromCLSID (CLSID_Bogus);
+			if (Environment.OSVersion.Platform == PlatformID.Win32Windows ||
+				Environment.OSVersion.Platform == PlatformID.Win32NT)
+				Activator.CreateInstance(t);
+			else
+				throw new COMException ();
 		}
 		
 		[Test]
@@ -1754,6 +1797,13 @@ PublicKeyToken=b77a5c561934e089"));
 				BindingFlags.Instance | BindingFlags.DeclaredOnly,
 				Type.FilterNameIgnoreCase, "NonExistingMethod");
 			Assert.AreEqual (0, mi.Length);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidFilterCriteriaException))]
+		public void FilterAttribute_Invalid ()
+		{
+			Type.FilterAttribute (MethodBase.GetCurrentMethod (), (byte) 1);
 		}
 
 		[Test]
@@ -2462,6 +2512,47 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.IsFalse (typeof (bug82431B4).IsDefined (typeof (NotInheritAttribute), true), "#K4");
 		}
 
+		class Bug13767Attribute : Attribute
+		{
+			public object[] field;
+
+			public Bug13767Attribute (params object[] args)
+			{
+				field = args;
+			}
+		}
+
+		public enum Bug13767Enum
+		{
+			Value0,
+			Value1,
+		}
+
+		[Bug13767("Demo", new[] { Bug13767Enum.Value1, Bug13767Enum.Value0 })]
+		public void Bug13767Method(string attributeName, Bug13767Enum[]options)
+		{
+
+		}
+
+		[Test] //Bug 13767
+		public void CustomAttributeWithNestedArrayOfEnum ()
+		{
+			var m = GetType ().GetMethod ("Bug13767Method");
+
+			var attr = m.GetCustomAttributes (false);
+			Assert.AreEqual (1, attr.Length, "#1");
+
+			var tc = (Bug13767Attribute)attr[0];
+			Assert.AreEqual (2, tc.field.Length, "#2");
+			Assert.AreEqual ("Demo", tc.field[0], "#3");
+			Assert.IsNotNull (tc.field[1], "#4");
+
+			var arr = (Bug13767Enum[])tc.field [1];
+			Assert.AreEqual (2, arr.Length, "#5");
+			Assert.AreEqual (Bug13767Enum.Value1, arr [0], "#6");
+			Assert.AreEqual (Bug13767Enum.Value0, arr [1], "#7");
+		}
+
 		[Test] // GetType (String)
 		public void GetType1_TypeName_Null ()
 		{
@@ -2683,7 +2774,7 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.IsNull (i);
 		}
 
-#if !TARGET_JVM // Reflection.Emit is not supported for TARGET_JVM
+#if !TARGET_JVM && !MOBILE // Reflection.Emit is not supported for TARGET_JVM
 		[Test]
 		public void EqualsUnderlyingType ()
 		{
@@ -2926,7 +3017,10 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual ("System.Int32", t.FullName);
 		}
 
-		[Test] //bug #331199
+		[Test]
+#if MONOTOUCH
+		[ExpectedException (typeof (NotSupportedException))]
+#endif
 		public void MakeGenericType_UserDefinedType ()
 		{
 			Type ut = new UserType (typeof (int));
@@ -2967,6 +3061,9 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 		
 		[Test]
+#if MONOTOUCH
+		[ExpectedException (typeof (NotSupportedException))]
+#endif
 		public void MakeGenericType_BadUserType ()
 		{
 			Type ut = new UserType (null);
@@ -3100,7 +3197,7 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual (t1, t2);
 		}
 
-
+#if !MONOTOUCH
 		[Test]
 		public void Bug506757 ()
 		{
@@ -3145,7 +3242,7 @@ PublicKeyToken=b77a5c561934e089"));
 			foreach (var m in t2.GetMethods (BindingFlags.Instance | BindingFlags.NonPublic))
 				Assert.IsTrue (m.DeclaringType == typeof (object), String.Format ("{0}::{1}", m.DeclaringType, m.Name));
 		}
-
+#endif
 		[Test]
 		public void MakeArrayTypeOfOneDimension ()
 		{
@@ -3489,6 +3586,22 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual ("C", res [2], "#7");
 		}
 
+		public enum OutOfOrderEnum : sbyte
+		{
+			D = -1, C = 2, B = 1, A = 0
+		}
+				
+		[Test]
+		public void GetEnumNamesSortsByUnsignedValue ()
+		{
+			string[] names = typeof (OutOfOrderEnum).GetEnumNames ();
+			Assert.AreEqual (4, names.Length);
+			Assert.AreEqual ("A", names [0]);
+			Assert.AreEqual ("B", names [1]);
+			Assert.AreEqual ("C", names [2]);
+			Assert.AreEqual ("D", names [3]);
+		}
+		
 		[Test]
 		public void GetEnumValues () {
 			try {
@@ -3910,6 +4023,25 @@ PublicKeyToken=b77a5c561934e089"));
             Console.WriteLine(typeof(IEnumerable<int?>).IsAssignableFrom(typeof(IEnumerable<int>)));
 		}
 #endif
+
+		[Test]
+		public void GetTypeParseGenericCorrectly () { //Bug #15124
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1"), typeof (Foo<>), "#1");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[System.Int32]"), typeof (Foo<int>), "#2");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[[System.Int32]]"), typeof (Foo<int>), "#3");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[System.Int32][]"), typeof (Foo<int>[]), "#4");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[][System.Int32]"), null, "#5");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[System.Int32][,]"), typeof (Foo<int>[,]), "#6");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[]"), typeof (Foo<>).MakeArrayType(), "#7");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[,]"), typeof (Foo<>).MakeArrayType (2), "#8");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[][]"), typeof (Foo<>).MakeArrayType ().MakeArrayType (), "#9");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1["), null, "#10");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[["), null, "#11");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[[]"), null, "#12");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[,"), null, "#13");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[*"), null, "#14");
+			Assert.AreEqual (Type.GetType ("MonoTests.System.Foo`1[System.Int32"), null, "#15");
+		}
 
 		public abstract class Stream : IDisposable
 		{

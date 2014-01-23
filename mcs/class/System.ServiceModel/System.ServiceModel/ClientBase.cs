@@ -39,9 +39,7 @@ namespace System.ServiceModel
 {
 	[MonoTODO ("It somehow rejects classes, but dunno how we can do that besides our code wise.")]
 	public abstract class ClientBase<TChannel> :
-#if !MOONLIGHT
 		IDisposable,
-#endif
 		ICommunicationObject where TChannel : class
 	{
 		static InstanceContext initialContxt = new InstanceContext (null);
@@ -224,12 +222,7 @@ namespace System.ServiceModel
 
 		void RunCompletedCallback (SendOrPostCallback callback, InvokeAsyncCompletedEventArgs args)
 		{
-#if !MOONLIGHT
 			callback (args);
-#else
-			// this ensure the "dirty" work is done in mscorlib and "frees" this assembly from any [SC] or [SSC] code
-			Mono.MoonlightHelper.RunOnMainThread (callback, args);
-#endif
 		}
 
 		protected void InvokeAsync (BeginOperationDelegate beginOperationDelegate,
@@ -265,12 +258,11 @@ namespace System.ServiceModel
 		}
 		IAsyncResult begin_async_result;
 
-#if !MOONLIGHT
 		void IDisposable.Dispose ()
 		{
 			Close ();
 		}
-#endif
+
 		protected virtual TChannel CreateChannel ()
 		{
 			return ChannelFactory.CreateChannel ();
@@ -361,7 +353,7 @@ namespace System.ServiceModel
 			public object [] Results { get; private set; }
 		}
 
-#if NET_2_1
+#if NET_4_0
 		protected internal
 #else
 		internal
@@ -391,7 +383,6 @@ namespace System.ServiceModel
 				}
 			}
 
-#if !MOONLIGHT
 			protected object Invoke (string methodName, object [] args)
 			{
 				var cd = endpoint.Contract;
@@ -400,7 +391,6 @@ namespace System.ServiceModel
 					throw new ArgumentException (String.Format ("Operation '{0}' not found in the service contract '{1}' in namespace '{2}'", methodName, cd.Name, cd.Namespace));
 				return Inner.Process (od.SyncMethod, methodName, args);
 			}
-#endif
 
 			protected IAsyncResult BeginInvoke (string methodName, object [] args, AsyncCallback callback, object state)
 			{

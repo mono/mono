@@ -15,7 +15,7 @@ public class MyClass
 
 public class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		MyClass mc = new MyClass() { Foo = "Baz", Answer = 42 };
 		if (mc.Foo != "Baz")

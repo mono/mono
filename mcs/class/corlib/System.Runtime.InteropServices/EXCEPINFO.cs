@@ -30,6 +30,7 @@
 
 using System;
 
+#if !FULL_AOT_RUNTIME
 namespace System.Runtime.InteropServices
 {
 	[Obsolete]
@@ -49,3 +50,4 @@ namespace System.Runtime.InteropServices
 	}
 }
 
+#endif

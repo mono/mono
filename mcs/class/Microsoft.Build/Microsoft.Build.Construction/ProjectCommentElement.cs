@@ -47,6 +47,7 @@ namespace Microsoft.Build.Construction
 
                 internal override void Load (XmlReader reader)
                 {
+                        FillLocation (reader);
                         LoadValue (reader);
                 }
 

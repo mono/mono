@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using C = Mono.Cecil;
 using Mono.Cecil.Metadata;
+#if NET_4_5
+using System.Threading.Tasks;
+#endif
 
 namespace Mono.Debugger.Soft
 {
@@ -26,6 +29,8 @@ namespace Mono.Debugger.Soft
 		TypeMirror[] ifaces;
 		Dictionary<TypeMirror, InterfaceMappingMirror> iface_map;
 		TypeMirror[] type_args;
+		bool cached_base_type;
+		bool inited;
 
 		internal const BindingFlags DefaultBindingFlags =
 		BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
@@ -77,9 +82,9 @@ namespace Mono.Debugger.Soft
 
 		public TypeMirror BaseType {
 			get {
-				// FIXME: base_type could be null for object/interfaces
-				if (base_type == null) {
+				if (!cached_base_type) {
 					base_type = vm.GetType (GetInfo ().base_type);
+					cached_base_type = true;
 				}
 				return base_type;
 			}
@@ -354,8 +359,26 @@ namespace Mono.Debugger.Soft
 					switch (Name) {
 					case "Byte":
 						return "byte";
+					case "Sbyte":
+						return "sbyte";
+					case "Char":
+						return "char";
+					case "UInt16":
+						return "ushort";
+					case "Int16":
+						return "short";
+					case "UInt32":
+						return "uint";
 					case "Int32":
 						return "int";
+					case "UInt64":
+						return "ulong";
+					case "Int64":
+						return "long";
+					case "Single":
+						return "float";
+					case "Double":
+						return "double";
 					case "Boolean":
 						return "bool";
 					default:
@@ -366,6 +389,10 @@ namespace Mono.Debugger.Soft
 				if (Namespace == "System") {
 					string s = Name;
 					switch (s) {
+					case "Decimal":
+						return "decimal";
+					case "Object":
+						return "object";
 					case "String":
 						return "string";
 					default:
@@ -568,11 +595,11 @@ namespace Mono.Debugger.Soft
 
 		string[] source_files;
 		string[] source_files_full_path;
-		public string[] GetSourceFiles (bool return_full_paths) {
-			string[] res = return_full_paths ? source_files_full_path : source_files;
+		public string[] GetSourceFiles (bool returnFullPaths) {
+			string[] res = returnFullPaths ? source_files_full_path : source_files;
 			if (res == null) {
-				res = vm.conn.Type_GetSourceFiles (id, return_full_paths);
-				if (return_full_paths)
+				res = vm.conn.Type_GetSourceFiles (id, returnFullPaths);
+				if (returnFullPaths)
 					source_files_full_path = res;
 				else
 					source_files = res;
@@ -661,29 +688,38 @@ namespace Mono.Debugger.Soft
 		 * used by the reflection-only functionality on .net.
 		 */
 		public CustomAttributeDataMirror[] GetCustomAttributes (bool inherit) {
-			return GetCAttrs (null, inherit);
+			return GetCustomAttrs (null, inherit);
 		}
 
 		public CustomAttributeDataMirror[] GetCustomAttributes (TypeMirror attributeType, bool inherit) {
 			if (attributeType == null)
 				throw new ArgumentNullException ("attributeType");
-			return GetCAttrs (attributeType, inherit);
+			return GetCustomAttrs (attributeType, inherit);
 		}
 
-		CustomAttributeDataMirror[] GetCAttrs (TypeMirror type, bool inherit) {
+		void AppendCustomAttrs (IList<CustomAttributeDataMirror> attrs, TypeMirror type, bool inherit)
+		{
 			if (cattrs == null && Metadata != null && !Metadata.HasCustomAttributes)
 				cattrs = new CustomAttributeDataMirror [0];
 
-			// FIXME: Handle inherit
 			if (cattrs == null) {
 				CattrInfo[] info = vm.conn.Type_GetCustomAttributes (id, 0, false);
 				cattrs = CustomAttributeDataMirror.Create (vm, info);
 			}
-			var res = new List<CustomAttributeDataMirror> ();
-			foreach (var attr in cattrs)
+
+			foreach (var attr in cattrs) {
 				if (type == null || attr.Constructor.DeclaringType == type)
-					res.Add (attr);
-			return res.ToArray ();
+					attrs.Add (attr);
+			}
+
+			if (inherit && BaseType != null)
+				BaseType.AppendCustomAttrs (attrs, type, inherit);
+		}
+
+		CustomAttributeDataMirror[] GetCustomAttrs (TypeMirror type, bool inherit) {
+			var attrs = new List<CustomAttributeDataMirror> ();
+			AppendCustomAttrs (attrs, type, inherit);
+			return attrs.ToArray ();
 		}
 
 		public MethodMirror[] GetMethodsByNameFlags (string name, BindingFlags flags, bool ignoreCase) {
@@ -762,6 +798,23 @@ namespace Mono.Debugger.Soft
 			return ObjectMirror.EndInvokeMethodInternal (asyncResult);
 		}
 
+#if NET_4_5
+		public Task<Value> InvokeMethodAsync (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
+			var tcs = new TaskCompletionSource<Value> ();
+			BeginInvokeMethod (thread, method, arguments, options, iar =>
+					{
+						try {
+							tcs.SetResult (EndInvokeMethod (iar));
+						} catch (OperationCanceledException) {
+							tcs.TrySetCanceled ();
+						} catch (Exception ex) {
+							tcs.TrySetException (ex);
+						}
+					}, null);
+			return tcs.Task;
+		}
+#endif
+
 		public Value NewInstance (ThreadMirror thread, MethodMirror method, IList<Value> arguments) {
 			return ObjectMirror.InvokeMethod (vm, thread, method, null, arguments, InvokeOptions.None);
 		}			
@@ -821,5 +874,15 @@ namespace Mono.Debugger.Soft
 			return res;
 		}
 
+		// Return whenever the type initializer of this type has ran
+		// Since protocol version 2.23
+		public bool IsInitialized {
+			get {
+				vm.CheckProtocolVersion (2, 23);
+				if (!inited)
+					inited = vm.conn.Type_IsInitialized (id);
+				return inited;
+			}
+		}
     }
 }

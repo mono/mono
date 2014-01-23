@@ -5,7 +5,7 @@ class X {
 	delegate void D (out int a);
 	static void C (out int a) { a = 5; }
 	
-	static void Main()
+	public static void Main()
 	{
 		(new B (A)) (1, 2);
 

@@ -10,7 +10,7 @@ class X {
 			yield return i;
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		Console.WriteLine ("GetRange 10..20");
 				   

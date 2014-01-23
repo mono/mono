@@ -10,7 +10,7 @@ class X
 		yield return a;
         }
 
-	static int Main ()
+	public static int Main ()
 	{
 		X x = new X ();
 		long sum = 0;

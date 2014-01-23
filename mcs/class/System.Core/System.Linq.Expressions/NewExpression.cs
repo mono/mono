@@ -29,7 +29,9 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Reflection;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 
 namespace System.Linq.Expressions {
 
@@ -65,6 +67,7 @@ namespace System.Linq.Expressions {
 			this.members = members;
 		}
 
+#if !FULL_AOT_RUNTIME
 		internal override void Emit (EmitContext ec)
 		{
 			var ig = ec.ig;
@@ -90,6 +93,7 @@ namespace System.Linq.Expressions {
 			} else
 				ig.Emit (OpCodes.Newobj, constructor ?? GetDefaultConstructor (type));
 		}
+#endif
 
 		static ConstructorInfo GetDefaultConstructor (Type type)
 		{

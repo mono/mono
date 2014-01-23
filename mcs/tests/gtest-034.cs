@@ -14,6 +14,6 @@ class Bar<T> : Foo<Stack<T>>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

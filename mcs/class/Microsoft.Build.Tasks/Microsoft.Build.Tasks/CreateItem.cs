@@ -38,7 +38,8 @@ namespace Microsoft.Build.Tasks {
 		string[]	additionalMetadata;
 		ITaskItem[]	exclude;
 		ITaskItem[]	include;
-	
+		bool		preserveExistingMetadata;
+
 		public CreateItem ()
 		{
 		}
@@ -65,8 +66,12 @@ namespace Microsoft.Build.Tasks {
 				foreach (string metadata in AdditionalMetadata) {
 					//a=1
 					string [] parts = metadata.Split (new char [] {'='}, 2, StringSplitOptions.RemoveEmptyEntries);
-					if (parts.Length == 2)
-						matchedItem.SetMetadata (parts [0].Trim (), parts [1].Trim ());
+					if (parts.Length == 2) {
+						string name = parts [0].Trim ();
+						string oldValue = matchedItem.GetMetadata (name);
+						if (!preserveExistingMetadata || string.IsNullOrEmpty (oldValue))
+							matchedItem.SetMetadata (name, parts [1].Trim ());
+					}
 				}
 			}
 
@@ -90,6 +95,13 @@ namespace Microsoft.Build.Tasks {
 			get { return include; }
 			set { include = value; }
 		}
+
+#if NET_3_5
+		public bool PreserveExistingMetadata {
+			get { return preserveExistingMetadata; }
+			set { preserveExistingMetadata = value; }
+		}
+#endif
 	}
 }
 

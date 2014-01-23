@@ -118,10 +118,3 @@
 ../dlr/Runtime/Microsoft.Scripting.Core/Utils/ReflectionUtils.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Utils/TrueReadOnlyCollection.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Utils/TypeExtensions.cs
-
-System.Core/Dummy.cs
-
-System.Runtime.CompilerServices/ExecutionScope.cs
-System.Runtime.CompilerServices/DynamicAttribute.cs
-System.Linq.Expressions/ExpressionTransformer.cs
-System.Linq.Expressions/Extensions.cs

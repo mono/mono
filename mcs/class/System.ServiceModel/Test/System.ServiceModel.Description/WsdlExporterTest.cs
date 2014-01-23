@@ -224,6 +224,11 @@ namespace MonoTests.System.ServiceModel.Description
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		// System.Xml.Schema.XmlSchemaException : XmlSchema error: Named item
+		// http://schemas.datacontract.org/2004/07/System.Reflection:ArrayOfTypeInfo was already contained
+		// in the schema object table. Consider setting MONO_STRICT_MS_COMPLIANT to 'yes' to mimic
+		// MS implementation. Related schema item SourceUri: , Line 0, Position 0.
 		public void ExportMessageContract ()
 		{
 			WsdlExporter we = new WsdlExporter ();

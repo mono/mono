@@ -1,6 +1,6 @@
 class Program
 {
-	static int Main ()
+	public static int Main ()
 	{
 		MyColor [] c = new MyColor [1];
 		c [0] += new MyColor (1.3F);

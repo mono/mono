@@ -27,8 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using NUnit.Framework;
 using System;
 using System.Security;
@@ -37,7 +35,7 @@ namespace MonoTests.System.Security {
 
 	[TestFixture]
 	public class SecurityCriticalAttributeTest {
-
+#if !MOBILE
 		[Test]
 		public void Constructor_Default ()
 		{
@@ -66,7 +64,7 @@ namespace MonoTests.System.Security {
 			SecurityCriticalAttribute sca = new SecurityCriticalAttribute (scs);
 			Assert.AreEqual (SecurityCriticalScope.Explicit, sca.Scope);
 		}
-
+#endif
 		[Test]
 		public void Attributes ()
 		{
@@ -78,10 +76,12 @@ namespace MonoTests.System.Security {
 			AttributeUsageAttribute aua = (AttributeUsageAttribute)attrs [0];
 			Assert.IsFalse (aua.AllowMultiple, "AllowMultiple");
 			Assert.IsFalse (aua.Inherited, "Inherited");
+#if NET_4_0 && !MOBILE
+			AttributeTargets at = (AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Field | AttributeTargets.Interface | AttributeTargets.Delegate);
+#else
 			AttributeTargets at = (AttributeTargets.Assembly | AttributeTargets.Module | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Event | AttributeTargets.Interface | AttributeTargets.Delegate);
+#endif
 			Assert.AreEqual (at, aua.ValidOn, "ValidOn");
 		}
 	}
 }
-
-#endif

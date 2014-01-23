@@ -7,6 +7,7 @@
 
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright 2012 Xamarin Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -38,6 +39,9 @@ using System.Text;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using NUnit.Framework;
+#if !MOBILE
+using NUnit.Framework.SyntaxHelpers;
+#endif
 
 namespace MonoTests.System.Collections.Generic
 {
@@ -462,6 +466,55 @@ namespace MonoTests.System.Collections.Generic
 			Assert.IsTrue(sl.Keys[0] == 1, "NCIC #D1");
 			Assert.IsTrue(sl.Keys[1] == 2, "NCIC #D2");
 			Assert.IsTrue(sl.Keys[2] == 3, "NCIC #D3");
+		}
+
+		[Test]
+		public void ClearDoesNotTouchCapacity ()
+		{
+			SortedList<int, int> sl = new SortedList<int, int> ();
+			for (int i = 0; i < 18; i++) {
+				sl.Add (i, i);
+			}
+			int capacityBeforeClear = sl.Capacity;
+			sl.Clear ();
+			int capacityAfterClear = sl.Capacity;
+			Assert.AreEqual (capacityBeforeClear, capacityAfterClear);
+		}
+
+		class Uncomparable : IComparer<double>
+		{
+			public int Compare (double x, double y)
+			{
+				throw new DivideByZeroException ();
+			}
+		}
+
+		[Test]
+		// Bug #4327
+		public void UncomparableList ()
+		{
+			var list = new SortedList<double, int> (new Uncomparable ());
+
+			list.Add (Math.PI, 1);
+
+			try {
+				list.Add (Math.E, 2);
+				Assert.Fail ("UC #1");
+			} catch (Exception ex) {
+				Assert.That (ex, Is.TypeOf (typeof (InvalidOperationException)), "UC #2");
+				Assert.IsNotNull (ex.InnerException, "UC #3");
+				Assert.That (ex.InnerException, Is.TypeOf (typeof (DivideByZeroException)), "UC #4");
+			}
+
+			try {
+				int a;
+				list.TryGetValue (Math.E, out a);
+				Assert.Fail ("UC #5");
+			} catch (Exception ex) {
+				Assert.That (ex, Is.TypeOf (typeof (InvalidOperationException)), "UC #6");
+				Assert.IsNotNull (ex.InnerException, "UC #7");
+				Assert.That (ex.InnerException, Is.TypeOf (typeof (DivideByZeroException)), "UC #8");
+			}
 		}
 	}
 }

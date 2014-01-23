@@ -66,7 +66,9 @@
 ./Mono.Security.Cryptography/TlsHMAC.cs
 ./Mono.Security.Cryptography/MD5SHA1.cs
 ./Mono.Security.Protocol.Ntlm/ChallengeResponse.cs
+./Mono.Security.Protocol.Ntlm/ChallengeResponse2.cs
 ./Mono.Security.Protocol.Ntlm/MessageBase.cs
+./Mono.Security.Protocol.Ntlm/NtlmAuthLevel.cs
 ./Mono.Security.Protocol.Ntlm/NtlmFlags.cs
 ./Mono.Security.Protocol.Ntlm/Type1Message.cs
 ./Mono.Security.Protocol.Ntlm/Type2Message.cs

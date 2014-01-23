@@ -1,6 +1,6 @@
 public class A
 {
-	static int Main ()
+	public static int Main ()
 	{
 		var a = new A ();
 		a.Test ();

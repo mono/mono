@@ -69,6 +69,9 @@ Mono_Posix_Syscall_fcntl_lock (gint32 fd, gint32 cmd, struct Mono_Posix_Flock *l
 	if (Mono_Posix_FromFlock (lock, &_lock) == -1)
 		return -1;
 
+	if (Mono_Posix_FromFcntlCommand (cmd, &cmd) == -1)
+		return -1;
+
 	r = fcntl (fd, cmd, &_lock);
 
 	if (Mono_Posix_ToFlock (&_lock, lock) == -1)
@@ -95,6 +98,16 @@ Mono_Posix_Syscall_open_mode (const char *pathname, gint32 flags, guint32 mode)
 		return -1;
 
 	return open (pathname, flags, mode);
+}
+
+gint32
+Mono_Posix_Syscall_get_at_fdcwd ()
+{
+#ifdef AT_FDCWD
+	return AT_FDCWD;
+#else
+	return -1;
+#endif
 }
 
 gint32

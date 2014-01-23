@@ -10,6 +10,7 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.Design.Serialization;
+using System.Globalization;
 
 using NUnit.Framework;
 
@@ -162,8 +163,16 @@ namespace MonoTests.System.ComponentModel
 				Assert.IsTrue (ex.Message.IndexOf (typeof (string).FullName) != -1, "#B6");
 			}
 		}
+		
+		[Test]
+		public void ConvertToWithCulture ()
+		{
+			var culture = CultureInfo.CreateSpecificCulture ("sv-se");
+			
+			var converter = TypeDescriptor.GetConverter (typeof (string));
+			Assert.AreEqual ("0,5", (string) converter.ConvertTo (null, culture, 0.5, typeof (string)));
+		}
 
-#if NET_2_0
 		public class FooConverter<T> : TypeConverter
 		{
 		}
@@ -178,13 +187,19 @@ namespace MonoTests.System.ComponentModel
 		{
 			Assert.IsNotNull (GetType ().GetProperty ("FooProperty").GetCustomAttributes (false));
 		}
-#endif
 
 		[ExpectedException (typeof (NullReferenceException))]
 		public void GetConvertToException_DestinationType_Null ()
 		{
 			MockTypeConverter converter = new MockTypeConverter ();
 			converter.GetConvertToException ("B", (Type) null);
+		}
+
+		[Test]
+		public void IsValid ()
+		{
+			var tc = new TypeConverter ();
+			Assert.IsFalse (tc.IsValid (null));
 		}
 	}
 

@@ -9,7 +9,7 @@ class D {}
 
 
 class M {
-  static void Main () {
+  public static void Main () {
     List <D> x = new List<D> ();
     x.foo <C> (x);
     List <string> y = new List<string> ();

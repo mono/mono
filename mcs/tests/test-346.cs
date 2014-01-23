@@ -4,7 +4,7 @@ namespace TestMethods
 {
 	class Class1
 	{
-		static int Main()
+		public static int Main()
 		{
 			int test_int = 1;
 			TestClass testClass = new TestClass();

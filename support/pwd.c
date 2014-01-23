@@ -183,6 +183,10 @@ Mono_Posix_Syscall_getpwuid_r (mph_uid_t uid,
 	} while ((r = getpwuid_r (uid, &_pwbuf, buf, buflen, (struct passwd**) pwbufp)) && 
 			recheck_range (r));
 
+	if (r == 0 && !(*pwbufp))
+		/* On solaris, this function returns 0 even if the entry was not found */
+		r = errno = ENOENT;
+
 	if (r == 0 && copy_passwd (pwbuf, &_pwbuf) == -1)
 		r = errno = ENOMEM;
 	free (buf);

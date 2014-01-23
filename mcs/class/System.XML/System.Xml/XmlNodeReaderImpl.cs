@@ -161,7 +161,6 @@ namespace System.Xml
 			}
 		}
 
-#if !MOONLIGHT
 		public override bool HasValue {
 			get {
 				if (current == null)
@@ -182,7 +181,6 @@ namespace System.Xml
 			}
 			      
 		}
-#endif
 
 		public override bool IsDefault {
 			get {
@@ -819,12 +817,10 @@ namespace System.Xml
 			return base.ReadString ();
 		}
 
-#if !MOONLIGHT
 		public override void ResolveEntity ()
 		{
 			throw new NotSupportedException ("Should not happen.");
 		}
-#endif
 
 		public override void Skip ()
 		{

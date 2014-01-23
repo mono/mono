@@ -5,6 +5,11 @@
   </files>
   <methods>
     <method token="0x6000001">
+      <sequencepoints />
+      <locals />
+      <scopes />
+    </method>
+    <method token="0x6000002">
       <sequencepoints>
         <entry il="0x0" row="6" col="2" file_ref="1" hidden="false" />
         <entry il="0x1" row="7" col="2" file_ref="1" hidden="false" />
@@ -12,7 +17,7 @@
       <locals />
       <scopes />
     </method>
-    <method token="0x6000002">
+    <method token="0x6000003">
       <sequencepoints>
         <entry il="0x0" row="10" col="2" file_ref="1" hidden="false" />
         <entry il="0x1" row="12" col="3" file_ref="1" hidden="false" />
@@ -28,7 +33,7 @@
         <entry index="1" start="0xa" end="0xa" />
       </scopes>
     </method>
-    <method token="0x6000003">
+    <method token="0x6000004">
       <sequencepoints>
         <entry il="0x0" row="20" col="2" file_ref="1" hidden="false" />
         <entry il="0x1" row="22" col="3" file_ref="1" hidden="false" />
@@ -47,7 +52,7 @@
         <entry index="1" start="0xa" end="0xc" />
       </scopes>
     </method>
-    <method token="0x6000004">
+    <method token="0x6000005">
       <sequencepoints>
         <entry il="0x0" row="31" col="2" file_ref="1" hidden="false" />
         <entry il="0x1" row="33" col="3" file_ref="1" hidden="false" />
@@ -71,7 +76,7 @@
         <entry index="2" start="0x14" end="0x19" />
       </scopes>
     </method>
-    <method token="0x6000005">
+    <method token="0x6000006">
       <sequencepoints>
         <entry il="0x0" row="46" col="2" file_ref="1" hidden="false" />
         <entry il="0x1" row="48" col="3" file_ref="1" hidden="false" />
@@ -86,7 +91,7 @@
         <entry index="1" start="0x9" end="0x9" />
       </scopes>
     </method>
-    <method token="0x6000006">
+    <method token="0x6000007">
       <sequencepoints>
         <entry il="0x0" row="56" col="2" file_ref="1" hidden="false" />
         <entry il="0x1" row="58" col="3" file_ref="1" hidden="false" />
@@ -107,11 +112,6 @@
         <entry index="1" start="0xa" end="0xc" />
         <entry index="2" start="0x13" end="0x13" />
       </scopes>
-    </method>
-    <method token="0x6000007">
-      <sequencepoints />
-      <locals />
-      <scopes />
     </method>
   </methods>
 </symbols>

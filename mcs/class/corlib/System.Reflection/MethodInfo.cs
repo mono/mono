@@ -37,8 +37,11 @@ namespace System.Reflection {
 	[ComDefaultInterfaceAttribute (typeof (_MethodInfo))]
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
+#if MOBILE
+	public abstract class MethodInfo: MethodBase {
+#else
 	public abstract class MethodInfo: MethodBase, _MethodInfo {
-
+#endif
 		public abstract MethodInfo GetBaseDefinition();
 
 		internal virtual MethodInfo GetBaseMethod ()
@@ -58,9 +61,16 @@ namespace System.Reflection {
 
 		public abstract ICustomAttributeProvider ReturnTypeCustomAttributes { get; }
 
+#if !MOBILE
 		void _MethodInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
+		}
+
+		Type _MethodInfo.GetType ()
+		{
+			// Required or object::GetType becomes virtual final
+			return base.GetType ();
 		}
 
 		void _MethodInfo.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
@@ -77,6 +87,7 @@ namespace System.Reflection {
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		[ComVisible (true)]
 		public virtual MethodInfo GetGenericMethodDefinition ()
@@ -96,7 +107,7 @@ namespace System.Reflection {
 			return Type.EmptyTypes;
 		}
 
-#if !NET_4_0 && !MOONLIGHT
+#if !NET_4_0
 		public override bool IsGenericMethod {
 			get {
 				return false;
@@ -152,5 +163,16 @@ namespace System.Reflection {
 		}
 #endif
 
+#if NET_4_5
+		public virtual Delegate CreateDelegate (Type delegateType)
+		{
+			return Delegate.CreateDelegate (delegateType, this);
+		}
+
+		public virtual Delegate CreateDelegate (Type delegateType, object target)
+		{
+			return Delegate.CreateDelegate (delegateType, target, this);
+		}
+#endif
 	}
 }

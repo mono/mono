@@ -12,7 +12,9 @@
 using NUnit.Framework;
 using System;
 using System.Web.Services;
+#if !MOBILE
 using System.EnterpriseServices;
+#endif
 
 namespace MonoTests.System.Web.Services {
 

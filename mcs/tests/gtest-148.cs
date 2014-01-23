@@ -12,6 +12,6 @@ static class Test2 {
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

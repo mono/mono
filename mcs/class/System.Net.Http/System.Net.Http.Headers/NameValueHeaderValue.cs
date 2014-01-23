@@ -32,7 +32,7 @@ namespace System.Net.Http.Headers
 {
 	public class NameValueHeaderValue : ICloneable
 	{
-		string value;
+		internal string value;
 
 		public NameValueHeaderValue (string name)
 			: this (name, null)
@@ -53,11 +53,11 @@ namespace System.Net.Http.Headers
 			this.value = source.value;
 		}
 
-		private NameValueHeaderValue ()
+		internal NameValueHeaderValue ()
 		{
 		}
 
-		public string Name { get; private set; }
+		public string Name { get; internal set; }
 
 		public string Value {
 			get {
@@ -121,17 +121,22 @@ namespace System.Net.Http.Headers
 			throw new FormatException (input);
 		}
 
-		internal static bool ParseParameters (Lexer lexer, out List<NameValueHeaderValue> result)
+		internal static bool TryParsePragma (string input, int minimalCount, out List<NameValueHeaderValue> result)
 		{
+			return CollectionParser.TryParse (input, minimalCount, TryParseElement, out result);
+		}
+
+		internal static bool TryParseParameters (Lexer lexer, out List<NameValueHeaderValue> result, out Token t)
+		{		
 			var list = new List<NameValueHeaderValue> ();
 			result = null;
 
-			Token t;
-
-			do {
+			while (true) {
 				var attr = lexer.Scan ();
-				if (attr != Token.Type.Token)
+				if (attr != Token.Type.Token) {
+					t = Token.Empty;
 					return false;
+				}
 
 				string value = null;
 
@@ -146,19 +151,17 @@ namespace System.Net.Http.Headers
 					t = lexer.Scan ();
 				}
 
-				if (t == Token.Type.SeparatorSemicolon || t == Token.Type.End) {
-					list.Add (new NameValueHeaderValue () {
-						Name = lexer.GetStringValue (attr),
-						value = value
-					});
-				} else {
-					return false;
-				}
+				list.Add (new NameValueHeaderValue () {
+					Name = lexer.GetStringValue (attr),
+					value = value
+				});
 
-			} while (t == Token.Type.SeparatorSemicolon);
+				if (t == Token.Type.SeparatorSemicolon)
+					continue;
 
-			result = list;
-			return true;
+				result = list;
+				return true;
+			}
 		}
 
 		public override string ToString ()
@@ -171,34 +174,38 @@ namespace System.Net.Http.Headers
 
 		public static bool TryParse (string input, out NameValueHeaderValue parsedValue)
 		{
+			var lexer = new Lexer (input);
+			Token token;
+			if (TryParseElement (lexer, out parsedValue, out token) && token == Token.Type.End)
+				return true;
+
+			parsedValue = null;
+			return false;
+		}
+
+		static bool TryParseElement (Lexer lexer, out NameValueHeaderValue parsedValue, out Token t)
+		{
 			parsedValue = null;
 
-			var lexer = new Lexer (input);
-			var t = lexer.Scan ();
-			if (t != Token.Type.Token && t != Token.Type.QuotedString)
+			t = lexer.Scan ();
+			if (t != Token.Type.Token)
 				return false;
-
-			string v = null;
-			var token2 = lexer.Scan ();
-			if (token2 != Token.Type.End) {
-				if (token2 != Token.Type.SeparatorEqual)
-					return false;
-
-				token2 = lexer.Scan ();
-
-				if (token2 == Token.Type.Token || token2 == Token.Type.QuotedString) {
-					v = lexer.GetStringValue (token2);
-					token2 = lexer.Scan ();
-				}
-
-				if (token2 != Token.Type.End)
-					return false;
-			}
 
 			parsedValue = new NameValueHeaderValue () {
 				Name = lexer.GetStringValue (t),
-				value = v
 			};
+
+			t = lexer.Scan ();
+			if (t == Token.Type.SeparatorEqual) {
+				t = lexer.Scan ();
+
+				if (t == Token.Type.Token || t == Token.Type.QuotedString) {
+					parsedValue.value = lexer.GetStringValue (t);
+					t = lexer.Scan ();
+				} else {
+					return false;
+				}
+			}
 
 			return true;
 		}

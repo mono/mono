@@ -265,7 +265,7 @@ namespace System {
 						return false;
 
 					//KEY_EVENT == 1
-					if (record.EventType == 1 && record.KeyDown)
+					if (record.EventType == 1 && record.KeyDown && !IsModifierKey (record.VirtualKeyCode))
 						return true;
 
 					if (!ReadConsoleInput (inputHandle, out record, 1, out eventsRead))
@@ -542,7 +542,7 @@ namespace System {
 				throw new ArgumentOutOfRangeException ("left/top", "Windows error " + Marshal.GetLastWin32Error ());
 		}
 
-		private bool IsModifierKey(short virtualKeyCode)
+		static bool IsModifierKey (short virtualKeyCode)
 		{
 			// 0x10 through 0x14 is shift/control/alt/pause/capslock
 			// 0x2C is print screen, 0x90 is numlock, 0x91 is scroll lock
@@ -550,10 +550,7 @@ namespace System {
 			case 0x10:
 			case 0x11:
 			case 0x12:
-			case 0x13:
 			case 0x14:
-				return true;
-			case 0x2C:
 			case 0x90:
 			case 0x91:
 				return true;

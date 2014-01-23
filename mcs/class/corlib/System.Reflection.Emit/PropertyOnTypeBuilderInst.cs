@@ -27,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !FULL_AOT_RUNTIME
 using System;
 using System.Globalization;
 using System.Reflection;
@@ -114,7 +115,8 @@ namespace System.Reflection.Emit
 			MethodInfo method = GetGetMethod (true);
 			if (method != null)
 				return method.GetParameters ();
-			return new ParameterInfo [0];
+
+			return EmptyArray<ParameterInfo>.Value;
 		}
 
 		public override MethodInfo GetSetMethod (bool nonPublic)
@@ -158,3 +160,4 @@ namespace System.Reflection.Emit
 	}
 }
 
+#endif

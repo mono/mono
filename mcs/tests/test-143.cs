@@ -11,7 +11,7 @@ struct MonoEnumInfo {
                 return info.val;
         }
 
-        static int Main()
+        public static int Main()
 	{
 		MonoEnumInfo m;
 

@@ -11,5 +11,5 @@ struct Dingus {
 }
 
 class X {
-	static void Main () {}
+	public static void Main () {}
 }

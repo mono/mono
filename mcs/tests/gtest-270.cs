@@ -15,7 +15,7 @@ class X
 		}
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		if (Test (null) != -1)
 			return 1;

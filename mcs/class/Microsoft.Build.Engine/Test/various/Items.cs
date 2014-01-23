@@ -718,6 +718,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestEmptyItemsWithBatching ()
 		{
 			string project_xml = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
@@ -799,6 +800,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestItemsInTarget1 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -891,6 +893,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestItemsInTarget3 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -934,6 +937,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		//Test with ITaskItem[]
 		public void TestItemsInTarget3a ()
 		{
@@ -982,6 +986,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		//Test with string[]
 		public void TestItemsInTarget3b ()
 		{
@@ -1024,6 +1029,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		//Test with string
 		public void TestItemsInTarget3c ()
 		{
@@ -1131,6 +1137,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestSingleTaskItem1 ()
 		{
 			Project proj = BuildProjectForSingleTaskItem ("$(D)$(C)");
@@ -1138,6 +1145,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestSingleTaskItem2 ()
 		{
 			Project proj = BuildProjectForSingleTaskItem ("@(Item1)");
@@ -1145,6 +1153,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestSingleTaskItem3 ()
 		{
 			Project proj = BuildProjectForSingleTaskItem ("$(A).foo");
@@ -1152,6 +1161,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestSingleTaskItem4 ()
 		{
 			Project proj = BuildProjectForSingleTaskItem ("$(C)");

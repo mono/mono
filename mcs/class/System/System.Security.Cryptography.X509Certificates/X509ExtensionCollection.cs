@@ -29,11 +29,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP || MOONLIGHT
+#if SECURITY_DEP
 
-using System.Collections;
+#if MONOTOUCH
 using Mono.Security;
 using MX = Mono.Security.X509;
+#else
+extern alias MonoSecurity;
+using MonoSecurity::Mono.Security;
+using MX = MonoSecurity::Mono.Security.X509;
+#endif
+
+using System.Collections;
 
 namespace System.Security.Cryptography.X509Certificates {
 
@@ -55,20 +62,17 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (cert.Extensions.Count == 0)
 				return;
 
-#if !MOONLIGHT
-			object[] parameters = new object [2];
-#endif
 			foreach (MX.X509Extension ext in cert.Extensions) {
 				bool critical = ext.Critical;
 				string oid = ext.Oid;
 				byte[] raw_data = null;
 				// extension data is embedded in an octet stream (4)
-				ASN1 value = ext.Value;
+				var value = ext.Value;
 				if ((value.Tag == 0x04) && (value.Count > 0))
 					raw_data = value [0].GetBytes ();
 
 				X509Extension newt = null;
-#if MOONLIGHT
+#if FULL_AOT_RUNTIME
 				// non-extensible
 				switch (oid) {
 				case "2.5.29.14":
@@ -85,6 +89,7 @@ namespace System.Security.Cryptography.X509Certificates {
 					break;
 				}
 #else
+				object[] parameters = new object [2];
 				parameters [0] = new AsnEncodedData (oid, raw_data ?? Empty);
 				parameters [1] = critical;
 				newt = (X509Extension) CryptoConfig.CreateFromName (oid, parameters);

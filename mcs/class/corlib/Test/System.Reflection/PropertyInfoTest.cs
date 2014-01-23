@@ -31,7 +31,9 @@ using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
+#if !MONOTOUCH
 using System.Reflection.Emit;
+#endif
 using System.IO;
 
 using NUnit.Framework;
@@ -354,7 +356,7 @@ namespace MonoTests.System.Reflection
 				get { return 99; }
 			}
 		}
-
+#if !MONOTOUCH
 		[Test]
 		public void ConstantValue () {
 			/*This test looks scary because we can't generate a default value with C# */
@@ -399,8 +401,8 @@ namespace MonoTests.System.Reflection
 			} catch (InvalidOperationException) {
 			}
 		}
+#endif
 
-#if NET_2_0
 		public class A<T>
 		{
 			public string Property {
@@ -436,8 +438,13 @@ namespace MonoTests.System.Reflection
 			PropertyInfo property = type.GetProperty ("Property");
 			Assert.AreEqual (typeof (string).FullName, property.GetValue (instance, null));
 		}
-#endif
 
+		[Test]
+		public void ToStringTest ()
+		{
+			var pa = typeof (TestC).GetProperty ("Item");
+			Assert.AreEqual ("Int32 Item [System.Double[]]", pa.ToString ());
+		}
 
 		static bool HasAttribute (object [] attrs, Type attributeType)
 		{
@@ -520,6 +527,24 @@ namespace MonoTests.System.Reflection
 			} catch (TargetInvocationException ex) {
 				Assert.IsTrue (ex.InnerException is ObjectDisposedException);
 			}
+		}
+
+		public class DefaultValueTest
+		{
+			public string this[int val, string param = "test"]
+			{
+				get{ return val + param; }
+			}
+		}
+
+
+		[Test]
+		public void PropertyWithDefaultValue ()
+		{
+			var parameters = typeof (DefaultValueTest).GetProperty ("Item").GetIndexParameters ();
+			var defaultParam = parameters[parameters.Length - 1];
+			Assert.AreEqual ("param", defaultParam.Name, "#1");
+			Assert.AreEqual ("test", defaultParam.DefaultValue, "#2");
 		}
 	}
 }

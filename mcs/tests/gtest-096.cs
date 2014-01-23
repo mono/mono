@@ -18,7 +18,7 @@ class Test
 		Hello<U> (arr, 1);
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		Foo<int>[] foo = new Foo<int> [1];
 		foo [0] = new Foo<int> ();

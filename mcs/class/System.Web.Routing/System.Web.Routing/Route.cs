@@ -32,6 +32,7 @@ using System.Runtime.CompilerServices;
 using System.Security.Permissions;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Globalization;
 
 namespace System.Web.Routing
 {
@@ -102,11 +103,8 @@ namespace System.Web.Routing
 			if (values == null)
 				return null;
 
-			RouteValueDictionary constraints = Constraints;
-			if (constraints != null)
-				foreach (var p in constraints)
-					if (!ProcessConstraint (httpContext, p.Value, p.Key, values, RouteDirection.IncomingRequest))
-						return null;
+			if (!ProcessConstraints (httpContext, values, RouteDirection.IncomingRequest))
+				return null;
 			
 			var rd = new RouteData (this, RouteHandler);
 			RouteValueDictionary rdValues = rd.Values;
@@ -135,14 +133,27 @@ namespace System.Web.Routing
 			// if (values == null)
 			// 	values = requestContext.RouteData.Values;
 
-			string s;
-			if (!url.BuildUrl (this, requestContext, values, out s))
+			RouteValueDictionary usedValues;
+			string resultUrl = url.BuildUrl (this, requestContext, values, Constraints, out usedValues);
+
+			if (resultUrl == null)
 				return null;
 
-			return new VirtualPathData (this, s);
+			if (!ProcessConstraints (requestContext.HttpContext, usedValues, RouteDirection.UrlGeneration))
+				return null;
+
+			var result = new VirtualPathData (this, resultUrl);
+
+			RouteValueDictionary dataTokens = DataTokens;
+			if (dataTokens != null) {
+				foreach (var item in dataTokens)
+					result.DataTokens[item.Key] = item.Value;
+			}
+
+			return result;
 		}
 
-		internal static bool ProcessConstraintInternal (HttpContextBase httpContext, Route route, object constraint, string parameterName,
+		private bool ProcessConstraintInternal (HttpContextBase httpContext, Route route, object constraint, string parameterName,
 								RouteValueDictionary values, RouteDirection routeDirection, RequestContext reqContext,
 								out bool invalidConstraint)
 		{
@@ -153,13 +164,15 @@ namespace System.Web.Routing
 
 			string s = constraint as string;
 			if (s != null) {
-				string v;
+				string v = null;
 				object o;
 
+				// NOTE: If constraint was not an IRouteConstraint, is is asumed
+				// to be an object 'convertible' to string, or at least this is how
+				// ASP.NET seems to work by the tests i've done latelly. (pruiz)
+
 				if (values != null && values.TryGetValue (parameterName, out o))
-					v = o as string;
-				else
-					v = null;
+					v = Convert.ToString (o, CultureInfo.InvariantCulture);
 
 				if (!String.IsNullOrEmpty (v))
 					return MatchConstraintRegex (v, s);
@@ -174,7 +187,7 @@ namespace System.Web.Routing
 					if (!rdValues.TryGetValue (parameterName, out o))
 						return false;
 
-					v = o as string;
+					v = Convert.ToString (o, CultureInfo.InvariantCulture);
 					if (String.IsNullOrEmpty (v))
 						return false;
 
@@ -203,7 +216,7 @@ namespace System.Web.Routing
 					constraint += "$";
 			}
 
-			return Regex.Match (value, constraint).Success;
+			return Regex.IsMatch (value, constraint, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
 		}
 		
 		protected virtual bool ProcessConstraint (HttpContextBase httpContext, object constraint, string parameterName, RouteValueDictionary values, RouteDirection routeDirection)
@@ -234,6 +247,20 @@ namespace System.Web.Routing
 
 			return ret;
 		}
+
+		private bool ProcessConstraints (HttpContextBase httpContext, RouteValueDictionary values, RouteDirection routeDirection)
+		{
+			var constraints = Constraints;
+
+			if (Constraints != null) {
+				foreach (var p in constraints)
+					if (!ProcessConstraint (httpContext, p.Value, p.Key, values, routeDirection))
+						return false;
+			}
+
+			return true;
+		}
+
 #if NET_4_0
 		RequestContext SafeGetContext (HttpRequestBase req)
 		{

@@ -28,6 +28,7 @@
 //
 // (C) 2002 Ximian, Inc.
 
+#if !FULL_AOT_RUNTIME
 namespace System.Runtime.InteropServices
 {
 	[Obsolete]
@@ -39,3 +40,4 @@ namespace System.Runtime.InteropServices
 		void BindType([MarshalAs(UnmanagedType.LPWStr)] string szName, int lHashVal, out UCOMITypeInfo ppTInfo, out UCOMITypeComp ppTComp);
 	}
 }
+#endif

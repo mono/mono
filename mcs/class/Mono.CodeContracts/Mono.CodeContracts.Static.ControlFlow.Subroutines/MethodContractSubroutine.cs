@@ -30,7 +30,7 @@ using Mono.CodeContracts.Static.AST;
 using Mono.CodeContracts.Static.ControlFlow.Subroutines.Builders;
 
 namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
-	abstract class MethodContractSubroutine<Label> : SubroutineBase<Label>, IMethodInfo {
+	abstract class MethodContractSubroutine<TLabel> : SubroutineBase<TLabel>, IMethodInfo {
 		private readonly Method method;
 
 		protected MethodContractSubroutine (SubroutineFacade subroutineFacade,
@@ -41,15 +41,15 @@ namespace Mono.CodeContracts.Static.ControlFlow.Subroutines {
 
 		protected MethodContractSubroutine (SubroutineFacade subroutineFacade,
 		                                    Method method,
-		                                    SimpleSubroutineBuilder<Label> builder,
-		                                    Label startLabel) : base (subroutineFacade, startLabel, builder)
+		                                    SimpleSubroutineBuilder<TLabel> builder,
+		                                    TLabel startLabel) : base (subroutineFacade, startLabel, builder)
 		{
 			this.method = method;
 		}
 
-		protected new SimpleSubroutineBuilder<Label> Builder
+		protected new SimpleSubroutineBuilder<TLabel> Builder
 		{
-			get { return (SimpleSubroutineBuilder<Label>) base.Builder; }
+			get { return (SimpleSubroutineBuilder<TLabel>) base.Builder; }
 			set { base.Builder = value; }
 		}
 

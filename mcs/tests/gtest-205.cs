@@ -23,7 +23,7 @@ class X
 		mi.Invoke (null, new object[] { arg });
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		Test (typeof (Test<Foo<int>>), new Foo<int> ());
 		Test (typeof (Test<Bar<int>>), new Bar<int> ());

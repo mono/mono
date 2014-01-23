@@ -27,7 +27,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
-#include <mono/io-layer/atomic.h>
+#include <mono/utils/atomic.h>
 #include <mono/metadata/appdomain.h>
 #endif
 
@@ -107,7 +107,7 @@ int Mono_Posix_FromRealTimeSignum (int offset, int *r)
 
 #ifndef HOST_WIN32
 
-#ifdef WAPI_ATOMIC_ASM
+#ifndef WAPI_NO_ATOMIC_ASM
 	#define mph_int_get(p)     InterlockedExchangeAdd ((p), 0)
 	#define mph_int_inc(p)     InterlockedIncrement ((p))
 	#define mph_int_dec_test(p)     (InterlockedDecrement ((p)) == 0)

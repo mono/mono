@@ -10,7 +10,7 @@ struct S : I
 
 class Program
 {
-	static int Main ()
+	public static int Main ()
 	{
 		int? a = 5;
 		int? b = 5;

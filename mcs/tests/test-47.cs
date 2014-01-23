@@ -22,7 +22,7 @@ class X {
 		return true;
 	}			
 	
-	static int Main ()
+	public static int Main ()
 	{
 		if (t () && t ()){
 			f_count--;

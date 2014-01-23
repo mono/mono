@@ -69,17 +69,18 @@ namespace System.Linq.Parallel.QueryNodes
 
 		internal IEnumerable<IGrouping<TKey, TElement>> GetGroupedElements ()
 		{
-			return GetStore ().Select ((e) => new ConcurrentGrouping<TKey, TElement> (e.Key, e.Value));
+			return (IEnumerable<System.Linq.IGrouping<TKey,TElement>>)GetStore ().Select (e => (IGrouping<TKey,TElement>)new ConcurrentGrouping<TKey, TElement> (e.Key, e.Value));
 		}
 
 		internal ConcurrentDictionary<TKey, ConcurrentQueue<TElement>> GetStore ()
 		{
 			var store = new ConcurrentDictionary<TKey, ConcurrentQueue<TElement>> ();
+			Func<TKey, ConcurrentQueue<TElement>> queueFactory = (_) => new ConcurrentQueue<TElement> ();
 
 			ParallelExecuter.ProcessAndBlock (Parent, (e, c) => {
-					ConcurrentQueue<TElement> queue = store.GetOrAdd (keySelector (e), (_) => new ConcurrentQueue<TElement> ());
-					queue.Enqueue (elementSelector (e));
-				});
+				ConcurrentQueue<TElement> queue = store.GetOrAdd (keySelector (e), queueFactory);
+				queue.Enqueue (elementSelector (e));
+			});
 
 			return store;
 		}

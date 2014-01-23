@@ -45,7 +45,7 @@ class Foo {
       throw new Exception ();
   }
 
-  static void Main ()
+  public static void Main ()
   {
     test_while (100);
     test_do_while (100);

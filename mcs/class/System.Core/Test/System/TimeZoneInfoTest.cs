@@ -27,6 +27,8 @@
  */
 
 using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections;
 
 using NUnit.Framework;
@@ -150,6 +152,40 @@ namespace MonoTests.System
 				TimeZoneInfo.TransitionTime e2 = TimeZoneInfo.TransitionTime.CreateFloatingDateRule (new DateTime (1,1,1,4,0,0), 11, 2, DayOfWeek.Sunday);
 				TimeZoneInfo.AdjustmentRule r2 = TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule (new DateTime (2005,1,1), new DateTime (2007,1,1), new TimeSpan (1,0,0), s2, e2);
 				TimeZoneInfo.CreateCustomTimeZone ("mytimezone", new TimeSpan (6,0,0),null,null,null,new TimeZoneInfo.AdjustmentRule[] {r1, r2});
+			}
+
+			[Test]
+			public void SupportsDaylightSavingTime_NonEmptyAdjustmentRule ()
+			{
+				TimeZoneInfo.TransitionTime s1 = TimeZoneInfo.TransitionTime.CreateFloatingDateRule (new DateTime (1,1,1,4,0,0), 3, 2, DayOfWeek.Sunday);
+				TimeZoneInfo.TransitionTime e1 = TimeZoneInfo.TransitionTime.CreateFloatingDateRule (new DateTime (1,1,1,4,0,0), 10, 2, DayOfWeek.Sunday);
+				TimeZoneInfo.AdjustmentRule r1 = TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule (new DateTime (2000,1,1), new DateTime (2005,1,1), new TimeSpan (1,0,0), s1, e1);
+				TimeZoneInfo tz = TimeZoneInfo.CreateCustomTimeZone ("mytimezone", new TimeSpan (6,0,0),null,null,null,new TimeZoneInfo.AdjustmentRule[] {r1});
+				Assert.IsTrue (tz.SupportsDaylightSavingTime);
+			}
+
+			[Test]
+			public void SupportsDaylightSavingTime_EmptyAdjustmentRule ()
+			{
+				TimeZoneInfo tz = TimeZoneInfo.CreateCustomTimeZone ("mytimezone", new TimeSpan (6,0,0),null,null,null,null);
+				Assert.IsFalse (tz.SupportsDaylightSavingTime);
+			}
+
+			[Test]
+			public void SupportsDaylightSavingTime_NonEmptyAdjustmentRule_DisableDaylightSavingTime ()
+			{
+				TimeZoneInfo.TransitionTime s1 = TimeZoneInfo.TransitionTime.CreateFloatingDateRule (new DateTime (1,1,1,4,0,0), 3, 2, DayOfWeek.Sunday);
+				TimeZoneInfo.TransitionTime e1 = TimeZoneInfo.TransitionTime.CreateFloatingDateRule (new DateTime (1,1,1,4,0,0), 10, 2, DayOfWeek.Sunday);
+				TimeZoneInfo.AdjustmentRule r1 = TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule (new DateTime (2000,1,1), new DateTime (2005,1,1), new TimeSpan (1,0,0), s1, e1);
+				TimeZoneInfo tz = TimeZoneInfo.CreateCustomTimeZone ("mytimezone", new TimeSpan (6,0,0),null,null,null,new TimeZoneInfo.AdjustmentRule[] {r1}, true);
+				Assert.IsFalse (tz.SupportsDaylightSavingTime);
+			}
+
+			[Test]
+			public void SupportsDaylightSavingTime_EmptyAdjustmentRule_DisableDaylightSavingTime ()
+			{
+				TimeZoneInfo tz = TimeZoneInfo.CreateCustomTimeZone ("mytimezone", new TimeSpan (6,0,0),null,null,null,null,true);
+				Assert.IsFalse (tz.SupportsDaylightSavingTime);
 			}
 		}
 		
@@ -349,6 +385,32 @@ namespace MonoTests.System
 				Assert.AreEqual (back.Kind, DateTimeKind.Utc);
 				Assert.AreEqual (utc, back);
 		
+			}
+
+
+			[Test]
+			public void ConvertFromToLocal ()
+			{
+				DateTime utc = DateTime.UtcNow;
+				Assert.AreEqual(utc.Kind, DateTimeKind.Utc);
+				DateTime converted = TimeZoneInfo.ConvertTimeFromUtc(utc, TimeZoneInfo.Local);
+			#if NET_4_0
+				Assert.AreEqual(DateTimeKind.Local, converted.Kind);
+			#else
+				Assert.AreEqual(DateTimeKind.Unspecified, converted.Kind);
+			#endif
+				DateTime back = TimeZoneInfo.ConvertTimeToUtc(converted, TimeZoneInfo.Local);
+				Assert.AreEqual(back.Kind, DateTimeKind.Utc);
+				Assert.AreEqual(utc, back);
+			}
+
+			[Test]
+			public void ConvertToTimeZone ()
+			{
+				if (Environment.OSVersion.Platform != PlatformID.Unix)
+					return;
+
+				TimeZoneInfo.ConvertTime (DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Pacific/Auckland"));
 			}
 		}
 		
@@ -612,6 +674,27 @@ namespace MonoTests.System
 				TimeZoneInfo utc = TimeZoneInfo.Utc;
 				TimeZoneInfo custom = TimeZoneInfo.CreateCustomTimeZone ("Custom", new TimeSpan (0), "Custom", "Custom");
 				Assert.IsTrue (utc.HasSameRules (custom));
+			}
+		}
+
+		[TestFixture]
+		public class SerializationTests
+		{
+			[Test]
+			public void Serialization_Deserialization ()
+			{
+				TimeZoneInfo.TransitionTime start = TimeZoneInfo.TransitionTime.CreateFloatingDateRule (new DateTime (1,1,1,1,0,0), 3, 5, DayOfWeek.Sunday);
+				TimeZoneInfo.TransitionTime end = TimeZoneInfo.TransitionTime.CreateFloatingDateRule (new DateTime (1,1,1,2,0,0), 10, 5, DayOfWeek.Sunday);
+				TimeZoneInfo.AdjustmentRule rule = TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule (DateTime.MinValue.Date, DateTime.MaxValue.Date, new TimeSpan (1,0,0), start, end);
+				TimeZoneInfo london = TimeZoneInfo.CreateCustomTimeZone ("Europe/London", new TimeSpan (0), "Europe/London", "British Standard Time", "British Summer Time", new TimeZoneInfo.AdjustmentRule [] {rule});
+				MemoryStream stream = new MemoryStream ();
+				BinaryFormatter formatter = new BinaryFormatter ();
+				formatter.Serialize (stream, london);
+				stream.Position = 0;
+				TimeZoneInfo deserialized = (TimeZoneInfo) formatter.Deserialize (stream);
+				stream.Close ();
+				stream.Dispose ();
+				Assert.IsTrue (london.Equals (deserialized));
 			}
 		}
 	}

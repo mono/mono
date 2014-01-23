@@ -24,7 +24,7 @@ public class Foo
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Foo foo = new Foo ();
 		foo.Test ();

@@ -26,10 +26,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using Microsoft.Build.Internal;
-using System;
 
 namespace Microsoft.Build.Construction
 {
@@ -84,9 +85,9 @@ namespace Microsoft.Build.Construction
                         get { return "ItemGroup"; }
                 }
 
-                internal override ProjectElement LoadChildElement (string name)
+                internal override ProjectElement LoadChildElement (XmlReader reader)
                 {
-                        var item = ContainingProject.CreateItemElement (name);
+                        var item = ContainingProject.CreateItemElement (reader.LocalName);
                         AppendChild (item);
                         return item;
                 }

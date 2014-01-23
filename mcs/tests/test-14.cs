@@ -15,7 +15,7 @@ namespace Obj {
 		public new int H () {return 11;}
 	}
 	class Test {
-		static public int Main () {
+		public static int Main () {
 			int result = 0;
 			B b = new B ();
 			A a = b;

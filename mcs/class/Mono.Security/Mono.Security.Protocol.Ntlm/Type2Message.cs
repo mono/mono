@@ -34,13 +34,21 @@
 //
 
 using System;
+using System.Text;
 using System.Security.Cryptography;
 
 namespace Mono.Security.Protocol.Ntlm {
 
-	public class Type2Message : MessageBase {
+#if INSIDE_SYSTEM
+	internal
+#else
+	public
+#endif
+	class Type2Message : MessageBase {
 
 		private byte[] _nonce;
+		private string _targetName;
+		private byte[] _targetInfo;
 
 		public Type2Message () : base (2)
 		{
@@ -78,15 +86,42 @@ namespace Mono.Security.Protocol.Ntlm {
 			}
 		}
 
+		public string TargetName {
+			get { return _targetName; }
+		}
+
+		public byte[] TargetInfo {
+			get { return (byte[])_targetInfo.Clone (); }
+		}
+
 		// methods
 
-		protected override void Decode (byte[] message) 
+		protected override void Decode (byte[] message)
 		{
 			base.Decode (message);
 
-			Flags = (NtlmFlags) BitConverterLE.ToUInt32 (message, 20);
+			Flags = (NtlmFlags)BitConverterLE.ToUInt32 (message, 20);
 
 			Buffer.BlockCopy (message, 24, _nonce, 0, 8);
+
+			var tname_len = BitConverterLE.ToUInt16 (message, 12);
+			var tname_off = BitConverterLE.ToUInt16 (message, 16);
+			if (tname_len > 0) {
+				if ((Flags & NtlmFlags.NegotiateOem) != 0)
+					_targetName = Encoding.ASCII.GetString (message, tname_off, tname_len);
+				else
+					_targetName = Encoding.Unicode.GetString (message, tname_off, tname_len);
+			}
+			
+			// The Target Info block is optional.
+			if (message.Length >= 48) {
+				var tinfo_len = BitConverterLE.ToUInt16 (message, 40);
+				var tinfo_off = BitConverterLE.ToUInt16 (message, 44);
+				if (tinfo_len > 0) {
+					_targetInfo = new byte [tinfo_len];
+					Buffer.BlockCopy (message, tinfo_off, _targetInfo, 0, tinfo_len);
+				}
+			}
 		}
 
 		public override byte[] GetBytes ()

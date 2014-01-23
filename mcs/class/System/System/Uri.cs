@@ -94,7 +94,6 @@ namespace System {
 		private static readonly string hexUpperChars = "0123456789ABCDEF";
 		private static readonly string [] Empty = new string [0];
 		private static bool isWin32 = (Path.DirectorySeparatorChar == '\\');
-
 	
 		// Fields
 		
@@ -109,18 +108,27 @@ namespace System {
 		public static readonly string UriSchemeNntp = "nntp";
 		public static readonly string UriSchemeNetPipe = "net.pipe";
 		public static readonly string UriSchemeNetTcp = "net.tcp";
+		
+		private static readonly string [] knownUriSchemes =
+		{
+			UriSchemeFile,
+			UriSchemeFtp,
+			UriSchemeGopher,
+			UriSchemeHttp,
+			UriSchemeHttps,
+			UriSchemeMailto,
+			UriSchemeNews,
+			UriSchemeNntp,
+			UriSchemeNetPipe,
+			UriSchemeNetTcp
+		};
 
 		// Constructors		
 
-#if MOONLIGHT
-		public Uri (string uriString) : this (uriString, UriKind.Absolute) 
-		{
-		}
-#else
 		public Uri (string uriString) : this (uriString, false) 
 		{
 		}
-#endif
+
 		protected Uri (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
 			string uri = serializationInfo.GetString ("AbsoluteUri");
@@ -201,6 +209,9 @@ namespace System {
 					success = false;
 					break;
 				}
+
+				if (success && isAbsoluteUri && (path.Length > 0))
+					path = EscapeString (path);
 			}
 		}
 
@@ -326,7 +337,7 @@ namespace System {
 				query = relativeUri.Substring (pos);
 				if (!userEscaped)
 					query = EscapeString (query);
-#if !NET_4_0 && !MOONLIGHT && !MOBILE
+#if !NET_4_0 && !MOBILE
 				consider_query = query.Length > 0;
 #endif
 				relativeUri = pos == 0 ? String.Empty : relativeUri.Substring (0, pos);
@@ -773,6 +784,7 @@ namespace System {
 					if (i + 1 < len && name [i + 1] == '.')
 						return false;
 					count = 0;
+					continue;
 				} else if (!Char.IsLetterOrDigit (c) && c != '-' && c != '_') {
 					return false;
 				}
@@ -1001,7 +1013,7 @@ namespace System {
 		//
 		public Uri MakeRelativeUri (Uri uri)
 		{
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
 #endif
@@ -1019,11 +1031,13 @@ namespace System {
 					if (segments [k] != segments2 [k]) 
 						break;
 				
-				for (int i = k + 1; i < segments.Length; i++)
+				for (int i = k; i < segments.Length && segments [i].EndsWith ("/"); i++)
 					result += "../";
 				for (int i = k; i < segments2.Length; i++)
 					result += segments2 [i];
 				
+				if (result == string.Empty)
+					result = "./";
 			}
 			uri.AppendQueryAndFragment (ref result);
 
@@ -1108,12 +1122,8 @@ namespace System {
 			path = EscapeString (path);
 		}
 
-#if MOONLIGHT
-		static string EscapeString (string str)
-#else
 		[Obsolete]
 		protected static string EscapeString (string str) 
-#endif
 		{
 			return EscapeString (str, Uri.EscapeCommonHexBrackets);
 		}
@@ -1209,12 +1219,8 @@ namespace System {
 				path = EscapeString (path);
 		}
 
-#if MOONLIGHT
-		string Unescape (string path)
-#else
 		[Obsolete]
 		protected virtual string Unescape (string path)
-#endif
 		{
 			return Unescape (path, false, false);
 		}
@@ -1377,12 +1383,8 @@ namespace System {
 			if (uriString [0] == '/' && Path.DirectorySeparatorChar == '/'){
 				//Unix Path
 				ParseAsUnixAbsoluteFilePath (uriString);
-#if MOONLIGHT
-				isAbsoluteUri = false;
-#else
 				if (kind == UriKind.Relative)
 					isAbsoluteUri = false;
-#endif
 				return null;
 			} else if (uriString.Length >= 2 && uriString [0] == '\\' && uriString [1] == '\\') {
 				//Windows UNC
@@ -1430,6 +1432,8 @@ namespace System {
 				path = uriString;
 				return null;
 			}
+			
+			scheme = TryGetKnownUriSchemeInstance (scheme);
 
 			// from here we're practically working on uriString.Substring(startpos,endpos-startpos)
 			int startpos = pos + 1;
@@ -1636,7 +1640,17 @@ namespace System {
 
 			return null;
 		}
-
+		
+		private static string TryGetKnownUriSchemeInstance (string scheme)
+		{
+			foreach (string knownScheme in knownUriSchemes) {
+				if (knownScheme == scheme)
+					return knownScheme;
+			}
+			
+			return scheme;
+		}
+	
 		private static bool CompactEscaped (string scheme)
 		{
 			if (scheme == null || scheme.Length < 4)
@@ -2008,7 +2022,7 @@ namespace System {
 
 		public bool IsBaseOf (Uri uri)
 		{
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
 #endif
@@ -2202,7 +2216,7 @@ namespace System {
 			result = null;
 			if ((baseUri == null) || !baseUri.IsAbsoluteUri)
 				return false;
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 			if (relativeUri == null)
 				return false;
 #endif

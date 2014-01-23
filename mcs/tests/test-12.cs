@@ -4,7 +4,7 @@
 
 using System;
 class X {
-	static int Main (string [] args)
+	public static int Main (string [] args)
 	{
 		string a = "hello";
 		string b = "1";

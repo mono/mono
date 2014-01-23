@@ -36,7 +36,7 @@ namespace Test {
 	[My1(null)]
 	[My2(new string[0])]
 	public class Test {
-		static public int Main() {
+		public static int Main() {
 			System.Reflection.MemberInfo info = typeof (Test);
 			object[] attributes = info.GetCustomAttributes (false);
 			

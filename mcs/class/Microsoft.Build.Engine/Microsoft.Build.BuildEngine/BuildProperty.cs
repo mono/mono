@@ -27,11 +27,10 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
 using System.Text;
 using System.Xml;
+using System.Collections.Generic;
 
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -243,6 +242,14 @@ namespace Microsoft.Build.BuildEngine {
 		internal XmlElement XmlElement {
 			get { return propertyElement; }
 		}
+
+		internal IEnumerable<string> GetAttributes ()
+		{
+			if (!FromXml)
+				yield break;
+			foreach (XmlAttribute attr in propertyElement.Attributes)
+				yield return attr.Value;
+		}
 	}
 
 	internal enum PropertyType {
@@ -252,5 +259,3 @@ namespace Microsoft.Build.BuildEngine {
 		Environment
 	}
 }
-
-#endif

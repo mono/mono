@@ -30,192 +30,268 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+
 using Mono.CodeContracts.Static.DataStructures;
 
 namespace Mono.CodeContracts.Static.Lattices {
-	class EnvironmentDomain<K, V> : IAbstractDomain<EnvironmentDomain<K, V>>
-		where V : IAbstractDomain<V>
-		where K : IEquatable<K> {
-		public static readonly EnvironmentDomain<K, V> BottomValue = new EnvironmentDomain<K, V> (null);
-		private static Func<K, int> KeyConverter;
-		private readonly IImmutableMap<K, V> map;
+        class EnvironmentDomain<K, V> : IAbstractDomain<EnvironmentDomain<K, V>>
+                where V : IAbstractDomain<V>
+                where K : IEquatable<K> {
+                readonly IImmutableMapFactory<K, V> factory;
+                readonly IImmutableMap<K, V> map;
 
-		private EnvironmentDomain (IImmutableMap<K, V> map)
-		{
-			this.map = map;
-		}
+                EnvironmentDomain (IImmutableMapFactory<K, V> factory)
+                        : this (factory, factory.Empty)
+                {
+                }
 
-		public V this [K key]
-		{
-			get { return this.map == null ? default(V) : this.map [key]; }
-		}
+                EnvironmentDomain (IImmutableMap<K, V> map)
+                        : this (map.Factory (), map)
+                {
+                }
 
-		public IEnumerable<K> Keys
-		{
-			get { return this.map.Keys; }
-		}
+                EnvironmentDomain (IImmutableMapFactory<K, V> factory, IImmutableMap<K, V> map)
+                {
+                        this.factory = factory;
+                        this.map = map;
+                }
 
-		#region IAbstractDomain<EnvironmentDomain<K,V>> Members
-		public EnvironmentDomain<K, V> Top
-		{
-			get { return TopValue (KeyConverter); }
-		}
+                public V this [K key] { get { return map == null ? default(V) : map[key]; } }
 
-		public EnvironmentDomain<K, V> Bottom
-		{
-			get { return BottomValue; }
-		}
+                public IEnumerable<K> Keys { get { return map.Keys; } }
 
-		public bool IsTop
-		{
-			get { return this.map != null && this.map.Count == 0; }
-		}
+                #region IAbstractDomain<EnvironmentDomain<K,V>> Members
 
-		public bool IsBottom
-		{
-			get { return this.map == null; }
-		}
+                public EnvironmentDomain<K, V> Top { get { return new EnvironmentDomain<K, V> (factory.Empty); } }
 
-		public EnvironmentDomain<K, V> Join (EnvironmentDomain<K, V> that, bool widening, out bool weaker)
-		{
-			weaker = false;
-			if (this.map == that.map || IsTop)
-				return this;
-			if (that.IsTop) {
-				weaker = !IsTop;
-				return that;
-			}
-			if (IsBottom) {
-				weaker = !that.IsBottom;
-				return that;
-			}
-			if (that.IsBottom)
-				return this;
+                public EnvironmentDomain<K, V> Bottom { get { return new EnvironmentDomain<K, V> (factory, null); } }
 
-			IImmutableMap<K, V> min;
-			IImmutableMap<K, V> max;
-			GetMinAndMaxByCount (this.map, that.map, out min, out max);
+                public bool IsTop { get { return map != null && map.Count == 0; } }
 
-			IImmutableMap<K, V> intersect = min;
-			foreach (K key in min.Keys) {
-				if (!max.ContainsKey (key))
-					intersect = intersect.Remove (key);
-				else {
-					bool keyWeaker;
-					V join = min [key].Join (max [key], widening, out keyWeaker);
-					if (keyWeaker) {
-						weaker = true;
-						intersect = join.IsTop ? intersect.Remove (key) : intersect.Add (key, join);
-					}
-				}
-			}
+                public bool IsBottom { get { return map == null; } }
 
-			weaker |= intersect.Count < this.map.Count;
-			return new EnvironmentDomain<K, V> (intersect);
-		}
+                public EnvironmentDomain<K, V> Join (EnvironmentDomain<K, V> that)
+                {
+                        return JoinOrWiden (that, (a, b) => a.Join (b));
+                }
 
-		public EnvironmentDomain<K, V> Meet (EnvironmentDomain<K, V> that)
-		{
-			if (this.map == that.map)
-				return this;
-			if (IsTop)
-				return that;
-			if (that.IsTop || IsBottom)
-				return this;
-			if (that.IsBottom)
-				return that;
+                public EnvironmentDomain<K, V> Widen (EnvironmentDomain<K, V> that)
+                {
+                        return JoinOrWiden (that, (a, b) => a.Widen (b));
+                }
 
-			IImmutableMap<K, V> min;
-			IImmutableMap<K, V> max;
-			GetMinAndMaxByCount (this.map, that.map, out min, out max);
+                EnvironmentDomain<K, V> JoinOrWiden (EnvironmentDomain<K, V> that, Func<V, V, V> op)
+                {
+                        if (ReferenceEquals (map, that.map) || IsBottom)
+                                return that;
+                        if (that.IsBottom)
+                                return this;
 
-			IImmutableMap<K, V> union = max;
-			foreach (K key in min.Keys) {
-				if (!max.ContainsKey (key))
-					union = union.Add (key, min [key]);
-				else {
-					V meet = min [key].Meet (max [key]);
-					union = union.Add (key, meet);
-				}
-			}
+                        IImmutableMap<K, V> min;
+                        IImmutableMap<K, V> max;
+                        GetMinAndMaxByCount (map, that.map, out min, out max);
 
-			return new EnvironmentDomain<K, V> (union);
-		}
+                        var result = min; // intersection of keys
+                        foreach (var key in min.Keys) {
+                                V thatValue;
+                                if (max.TryGetValue (key, out thatValue)) {
+                                        var join = op (min[key], thatValue);
+                                        if (join.IsBottom)
+                                                return Bottom;
 
-		public bool LessEqual (EnvironmentDomain<K, V> that)
-		{
-			if (that.IsTop || IsBottom)
-				return true;
-			if (IsTop || that.IsBottom || this.map.Count < that.map.Count)
-				return false;
+                                        result = join.IsTop ? result.Remove (key) : result.Add (key, join);
+                                }
+                                else
+                                        result = result.Remove (key);
+                        }
 
-			return that.map.Keys.All (key => this.map.ContainsKey (key) && this.map [key].LessEqual (that.map [key]));
-		}
+                        return new EnvironmentDomain<K, V> (result);
+                }
 
-		public EnvironmentDomain<K, V> ImmutableVersion ()
-		{
-			return this;
-		}
+                public EnvironmentDomain<K, V> Join (EnvironmentDomain<K, V> that, bool widening, out bool weaker)
+                {
+                        //todo: remove it
 
-		public EnvironmentDomain<K, V> Clone ()
-		{
-			return this;
-		}
+                        weaker = false;
+                        if (map == that.map || IsTop)
+                                return this;
+                        if (that.IsTop) {
+                                weaker = !IsTop;
+                                return that;
+                        }
+                        if (IsBottom) {
+                                weaker = !that.IsBottom;
+                                return that;
+                        }
+                        if (that.IsBottom)
+                                return this;
 
-		public void Dump (TextWriter tw)
-		{
-			if (IsTop)
-				tw.WriteLine ("Top");
-			else if (IsBottom)
-				tw.WriteLine ("Bot");
-			else {
-				this.map.Visit ((k, v) => {
-				                	tw.WriteLine ("{0} -> {1}", k, v);
-				                	return VisitStatus.ContinueVisit;
-				                });
-			}
-		}
-		#endregion
+                        IImmutableMap<K, V> min;
+                        IImmutableMap<K, V> max;
+                        GetMinAndMaxByCount (map, that.map, out min, out max);
 
-		private static bool GetMinAndMaxByCount (IImmutableMap<K, V> a, IImmutableMap<K, V> b,
-		                                         out IImmutableMap<K, V> min, out IImmutableMap<K, V> max)
-		{
-			if (a.Count < b.Count) {
-				min = a;
-				max = b;
-				return true;
-			}
-			max = a;
-			min = b;
-			return false;
-		}
+                        var intersect = min;
+                        foreach (var key in min.Keys) {
+                                if (!max.ContainsKey (key))
+                                        intersect = intersect.Remove (key);
+                                else {
+                                        bool keyWeaker;
+                                        var join = min[key].Join (max[key], widening, out keyWeaker);
+                                        if (keyWeaker) {
+                                                weaker = true;
+                                                intersect = join.IsTop ? intersect.Remove (key) : intersect.Add (key, join);
+                                        }
+                                }
+                        }
 
-		public static EnvironmentDomain<K, V> TopValue (Func<K, int> keyConverter)
-		{
-			if (KeyConverter == null)
-				KeyConverter = keyConverter;
+                        weaker |= intersect.Count < map.Count;
+                        return new EnvironmentDomain<K, V> (intersect);
+                }
 
-			return new EnvironmentDomain<K, V> (ImmutableIntKeyMap<K, V>.Empty (KeyConverter));
-		}
+                public EnvironmentDomain<K, V> Meet (EnvironmentDomain<K, V> that)
+                {
+                        if (ReferenceEquals (map, that.map))
+                                return this;
+                        if (IsTop)
+                                return that;
+                        if (that.IsTop || IsBottom)
+                                return this;
+                        if (that.IsBottom)
+                                return that;
 
-		public EnvironmentDomain<K, V> Add (K key, V value)
-		{
-			return new EnvironmentDomain<K, V> (this.map.Add (key, value));
-		}
+                        IImmutableMap<K, V> min;
+                        IImmutableMap<K, V> max;
+                        GetMinAndMaxByCount (map, that.map, out min, out max);
 
-		public EnvironmentDomain<K, V> Remove (K key)
-		{
-			return new EnvironmentDomain<K, V> (this.map.Remove (key));
-		}
+                        var union = max;
+                        foreach (var key in min.Keys) {
+                                if (!max.ContainsKey (key))
+                                        union = union.Add (key, min[key]);
+                                else {
+                                        var meet = min[key].Meet (max[key]);
+                                        union = union.Add (key, meet);
+                                }
+                        }
 
-		public bool Contains (K key)
-		{
-			return this.map.ContainsKey (key);
-		}
+                        return new EnvironmentDomain<K, V> (union);
+                }
 
-		public EnvironmentDomain<K, V> Empty ()
-		{
-			return new EnvironmentDomain<K, V> (this.map.EmptyMap);
-		}
-	}
+                public bool LessEqual (EnvironmentDomain<K, V> that)
+                {
+                        bool result;
+                        if (this.TryTrivialLessEqual (that, out result))
+                                return result;
+
+                        if (map.Count < that.map.Count)
+                                return false;
+
+                        return that.map.Keys.All (key => map.ContainsKey (key) && map[key].LessEqual (that.map[key]));
+                }
+
+                public EnvironmentDomain<K, V> ImmutableVersion ()
+                {
+                        return this;
+                }
+
+                public EnvironmentDomain<K, V> Clone ()
+                {
+                        return this;
+                }
+
+                public void Dump (TextWriter tw)
+                {
+                        if (IsTop)
+                                tw.WriteLine ("Top");
+                        else if (IsBottom)
+                                tw.WriteLine (this.BottomSymbolIfAny ());
+                        else {
+                                map.Visit ((k, v) => {
+                                        tw.WriteLine ("{0} -> {1}", k, v);
+                                        return VisitStatus.ContinueVisit;
+                                });
+                        }
+                }
+
+                #endregion
+
+                public static EnvironmentDomain<K, V> TopValue (Func<K, int> keyConverter)
+                {
+                        if (keyConverter == null)
+                                throw new ArgumentNullException ("keyConverter");
+
+                        return new EnvironmentDomain<K, V> (ImmutableIntKeyMap<K, V>.Empty (keyConverter));
+                }
+
+                public static EnvironmentDomain<K, V> TopValue ()
+                {
+                        return new EnvironmentDomain<K, V> (ImmutableMap<K, V>.Empty);
+                }
+
+                public static EnvironmentDomain<K, V> BottomValue (Func<K, int> keyConverter)
+                {
+                        if (keyConverter == null)
+                                throw new ArgumentNullException ("keyConverter");
+
+                        return new EnvironmentDomain<K, V> (ImmutableIntKeyMap<K, V>.Empty (keyConverter).Factory (), null);
+                }
+
+                public static EnvironmentDomain<K, V> BottomValue ()
+                {
+                        return new EnvironmentDomain<K, V> (ImmutableMap<K, V>.Empty.Factory (), null);
+                }
+
+                public EnvironmentDomain<K, V> With (K key, V value)
+                {
+                        if (value.IsTop)
+                                return Without (key);
+
+                        return new EnvironmentDomain<K, V> (map.Add (key, value));
+                }
+
+                public EnvironmentDomain<K, V> RefineWith (K key, V value)
+                {
+                        V old;
+                        if (map.TryGetValue (key, out old))
+                                value = value.Meet (old);
+
+                        return With (key, value);
+                }
+
+                public EnvironmentDomain<K, V> Without (K key)
+                {
+                        return new EnvironmentDomain<K, V> (map.Remove (key));
+                }
+
+                public bool Contains (K key)
+                {
+                        return map != null && map.ContainsKey (key);
+                }
+
+                public bool TryGetValue (K key, out V value)
+                {
+                        if (map == null)
+                                return false.Without (out value);
+
+                        return map.TryGetValue (key, out value);
+                }
+
+                public EnvironmentDomain<K, V> Empty ()
+                {
+                        return new EnvironmentDomain<K, V> (factory.Empty);
+                }
+
+                static bool GetMinAndMaxByCount
+                        (IImmutableMap<K, V> a, IImmutableMap<K, V> b,
+                         out IImmutableMap<K, V> min, out IImmutableMap<K, V> max)
+                {
+                        if (a.Count < b.Count) {
+                                min = a;
+                                max = b;
+                                return true;
+                        }
+                        max = a;
+                        min = b;
+                        return false;
+                }
+                }
 }

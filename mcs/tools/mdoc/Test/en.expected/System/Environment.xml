@@ -32,7 +32,8 @@
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.NotSupportedException">To be added; from: <see cref="M:System.Environment.GetFolderPath(System.Environment.SpecialFolder)" /></exception>
+        <exception cref="T:System.NotSupportedException">To be added; from:
+          <see cref="M:System.Environment.GetFolderPath(System.Environment.SpecialFolder)" /></exception>
       </Docs>
     </Member>
   </Members>

@@ -17,7 +17,7 @@ public class MyClass : IDisposable
 
 public class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		using (var v = new MyClass("foo"))
 			if (v.GetType() != typeof (MyClass))

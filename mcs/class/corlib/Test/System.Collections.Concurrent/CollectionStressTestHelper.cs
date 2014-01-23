@@ -36,6 +36,7 @@ using MonoTests.System.Threading.Tasks;
 
 using NUnit;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 
 namespace MonoTests.System.Collections.Concurrent
 {
@@ -118,10 +119,10 @@ namespace MonoTests.System.Collections.Concurrent
 				string expected = range.Aggregate (string.Empty, (acc, v) => acc + v);
 				
 				if (order == CheckOrderingType.DontCare)
-					CollectionAssert.AreEquivalent (expected, actual, "#3");
+					Assert.That (actual, new CollectionEquivalentConstraint (expected), "#3");
 				else 
 					Assert.AreEqual (expected, actual, "#3");
-			}, 1000);
+			}, 10);
 		}
 	}
 }

@@ -171,6 +171,7 @@ System.Data.Common/SchemaInfo.cs
 System.Data.Common/SchemaTableColumn.cs
 System.Data.Common/SchemaTableOptionalColumn.cs
 System.Data.Common/SupportedJoinOperators.cs
+System.Data.Common/TaskHelper.cs
 System.Data.SqlTypes/INullable.cs
 System.Data.SqlTypes/SqlBinary.cs
 System.Data.SqlTypes/SqlBoolean.cs

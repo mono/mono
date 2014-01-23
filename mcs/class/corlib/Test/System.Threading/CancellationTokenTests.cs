@@ -26,7 +26,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 
 using System;
 using System.Threading;
@@ -93,6 +93,15 @@ namespace MonoTests.System.Threading
 
 			n.ThrowIfCancellationRequested ();
 			n.GetHashCode ();
+		}
+
+		[Test]
+		public void DefaultCancellationTokenRegistration ()
+		{
+			var registration = new CancellationTokenRegistration ();
+
+			// shouldn't throw
+			registration.Dispose ();
 		}
 	}
 }

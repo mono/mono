@@ -20,7 +20,7 @@ namespace NObjective
 				Console.WriteLine (TypedReference.ToObject (iter.GetNextArg ()));
 		}
 
-		static unsafe void Main (string[] args)
+		unsafe public static void Main (string[] args)
 		{
 			ArglistMethod (__arglist (1, 2, 3));
 		}

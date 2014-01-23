@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 class X {
 	static UnmanagedType UnmanagedType;
 
-	static int Main ()
+	public static int Main ()
 	{
 		UnmanagedType = (UnmanagedType) 0;
 

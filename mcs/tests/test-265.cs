@@ -6,7 +6,7 @@ internal class ClassFormatError
 	{
 	}
 
-	static void Main ()
+	public static void Main ()
 	{ }
 }
 

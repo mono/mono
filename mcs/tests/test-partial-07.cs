@@ -23,7 +23,7 @@ public struct Test_2 {
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		if (Attribute.GetCustomAttributes (typeof (Test)).Length != 1)
 			return 1;

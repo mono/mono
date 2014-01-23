@@ -18,7 +18,7 @@ struct X {
 		return new X (a);
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		X [] x = { new X (40), F (10) };
 

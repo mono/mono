@@ -5,14 +5,16 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{F5DF0317-B446-4E44-BB0D-0B36CB9455FE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>.\</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\System.Data.Linq-tests-net_4_0</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>False</NoConfig>
     
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>System.Data.Linq_test_net_4_0</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -25,7 +27,6 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;MONO_STRICT;MONO_DEPLOY</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,21 +35,24 @@
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;MONO_STRICT;MONO_DEPLOY</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="Test\dummy.cs" />
-   <Compile Include="src\DbLinq.SqlServer\Test\MsSqlDataContextTest.cs" />
-   <Compile Include="src\DbLinq\Test\BinaryTest.cs" />
-   <Compile Include="src\DbLinq\Test\DataContextTest.cs" />
-   <Compile Include="src\DbLinq\Test\EntitySetTest.cs" />
-   <Compile Include="src\DbLinq\Test\NullProvider.cs" />
-   <Compile Include="src\DbLinq\Test\PeopleTable.cs" />
-   <Compile Include="src\DbLinq\Test\Providers\DataContextTestBase.cs" />
-   <Compile Include="src\DbLinq\Test\TableTest.cs" />
-
-  </ItemGroup>
+    <Compile Include="src\DbLinq.SqlServer\Test\MsSqlDataContextTest.cs" />
+    <Compile Include="src\DbLinq\Test\BinaryTest.cs" />
+    <Compile Include="src\DbLinq\Test\DataContextTest.cs" />
+    <Compile Include="src\DbLinq\Test\EntitySetTest.cs" />
+    <Compile Include="src\DbLinq\Test\NullProvider.cs" />
+    <Compile Include="src\DbLinq\Test\PeopleTable.cs" />
+    <Compile Include="src\DbLinq\Test\Providers\DataContextTestBase.cs" />
+    <Compile Include="src\DbLinq\Test\TableTest.cs" />
+    <Compile Include="Test\dummy.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -57,48 +61,50 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_0\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="./../../class/lib/net_4_0/System.Data.Linq.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../class/lib/net_4_0/System.Data.Linq.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Core.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.Serialization.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Runtime.Serialization.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework" />
-
+    <Reference Include="..\lib\net_4_0\nunit.framework.dll" />
+    <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
+      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
+      <Name>corlib\corlib-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Data.Linq\System.Data.Linq-net_4_0.csproj">
+      <Project>{1935FCB6-165D-4043-B048-BCEDD04F86B8}</Project>
+      <Name>System.Data.Linq\System.Data.Linq-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_0-2.csproj">
+      <Project>{8260E24F-1471-4320-AB5B-7CC7B68521E3}</Project>
+      <Name>System\System-net_4_0-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Core\System.Core-net_4_0.csproj">
+      <Project>{D121EB80-19C6-4313-9BBE-6F66556CE8B7}</Project>
+      <Name>System.Core\System.Core-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_4_0-1.csproj">
+      <Project>{51720A26-B4D9-4B84-8CB5-9CBA57477FBB}</Project>
+      <Name>System.XML\System.Xml-net_4_0-1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Data\System.Data-net_4_0.csproj">
+      <Project>{BC1890C0-51E5-48D0-8DBA-B1DD23468F9C}</Project>
+      <Name>System.Data\System.Data-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Runtime.Serialization\System.Runtime.Serialization-net_4_0.csproj">
+      <Project>{4F614C6C-A83E-4C3C-859B-0548391F519E}</Project>
+      <Name>System.Runtime.Serialization\System.Runtime.Serialization-net_4_0</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-    <ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="./src/DbLinq/Schema/Dbml/DbmlSchema.xsd">
-       <LogicalName>DbLinq.Schema.Dbml.DbmlSchema.xsd</LogicalName>
+      <LogicalName>DbLinq.Schema.Dbml.DbmlSchema.xsd</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
-
 </Project>
-

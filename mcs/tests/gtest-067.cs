@@ -13,7 +13,7 @@ class X
 		return a + b;
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		Test test = new Test ();
 		test.Hello<int> (new Test.Foo<int> (Add), 5);

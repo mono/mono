@@ -14,7 +14,7 @@ class MyDispose : IDisposable {
 }
 
 class X {
-	static int Main ()
+	public static int Main ()
 	{
 		MyDispose copy_a, copy_b, copy_c;
 

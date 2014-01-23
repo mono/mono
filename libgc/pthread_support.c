@@ -66,12 +66,15 @@
     --> Macro replaced by USE_COMPILER_TLS
 # endif
 
+#ifndef USE_COMPILER_TLS
 # if (defined(GC_DGUX386_THREADS) || defined(GC_OSF1_THREADS) || \
       defined(GC_DARWIN_THREADS) || defined(GC_AIX_THREADS)) || \
       defined(GC_NETBSD_THREADS) && !defined(USE_PTHREAD_SPECIFIC) || \
+      defined(GC_FREEBSD_THREADS) && !defined(USE_PTHREAD_SPECIFIC) || \
       defined(GC_OPENBSD_THREADS)
 #   define USE_PTHREAD_SPECIFIC
 # endif
+#endif
 
 # if defined(GC_DGUX386_THREADS) && !defined(_POSIX4A_DRAFT10_SOURCE)
 #   define _POSIX4A_DRAFT10_SOURCE 1
@@ -182,6 +185,10 @@ static GC_bool parallel_initialized = FALSE;
 
 void GC_init_parallel();
 
+static pthread_t main_pthread_self;
+static void *main_stack, *main_altstack;
+static int main_stack_size, main_altstack_size;
+
 # if defined(THREAD_LOCAL_ALLOC) && !defined(DBG_HDRS_ALL)
 
 /* We don't really support thread-local allocation with DBG_HDRS_ALL */
@@ -214,14 +221,6 @@ static int GC_setspecific (GC_key_t key, void *value) {
 #endif
 
 static GC_bool keys_initialized;
-
-static pthread_t main_pthread_self;
-static void *main_stack, *main_altstack;
-static int main_stack_size, main_altstack_size;
-
-#ifdef MONO_DEBUGGER_SUPPORTED
-#include "include/libgc-mono-debugger.h"
-#endif
 
 /* Recover the contents of the freelist array fl into the global one gfl.*/
 /* Note that the indexing scheme differs, in that gfl has finer size	*/
@@ -684,10 +683,10 @@ void GC_mark_thread_local_free_lists(void)
 static struct GC_Thread_Rep first_thread;
 
 #ifdef NACL
-extern int nacl_thread_parked[MAX_NACL_GC_THREADS];
-extern int nacl_thread_used[MAX_NACL_GC_THREADS];
-extern int nacl_thread_parking_inited;
-extern int nacl_num_gc_threads;
+extern volatile int nacl_thread_parked[MAX_NACL_GC_THREADS];
+extern volatile int nacl_thread_used[MAX_NACL_GC_THREADS];
+extern volatile int nacl_thread_parking_inited;
+extern volatile int nacl_num_gc_threads;
 extern pthread_mutex_t nacl_thread_alloc_lock;
 extern __thread int nacl_thread_idx;
 extern __thread GC_thread nacl_gc_thread_self;
@@ -696,10 +695,20 @@ extern void nacl_pre_syscall_hook();
 extern void nacl_post_syscall_hook();
 extern void nacl_register_gc_hooks(void (*pre)(), void (*post)());
 
+#include <stdio.h>
+
+struct nacl_irt_blockhook {
+  int (*register_block_hooks)(void (*pre)(void), void (*post)(void));
+};
+
+extern size_t nacl_interface_query(const char *interface_ident,
+                            void *table, size_t tablesize);
+
 void nacl_initialize_gc_thread()
 {
     int i;
-    nacl_register_gc_hooks(nacl_pre_syscall_hook, nacl_post_syscall_hook);
+    static struct nacl_irt_blockhook gc_hook;
+
     pthread_mutex_lock(&nacl_thread_alloc_lock);
     if (!nacl_thread_parking_inited)
     {
@@ -707,6 +716,10 @@ void nacl_initialize_gc_thread()
             nacl_thread_used[i] = 0;
             nacl_thread_parked[i] = 0;
         }
+        // TODO: replace with public 'register hook' function when
+        // available from glibc
+        nacl_interface_query("nacl-irt-blockhook-0.1", &gc_hook, sizeof(gc_hook));
+        gc_hook.register_block_hooks(nacl_pre_syscall_hook, nacl_post_syscall_hook);
         nacl_thread_parking_inited = 1;
     }
     GC_ASSERT(nacl_num_gc_threads <= MAX_NACL_GC_THREADS);
@@ -787,10 +800,6 @@ void GC_delete_thread(pthread_t id)
     } else {
         prev -> next = p -> next;
     }
-#ifdef MONO_DEBUGGER_SUPPORTED
-    if (gc_thread_vtable && gc_thread_vtable->thread_exited)
-	gc_thread_vtable->thread_exited (id, &p->stop_info.stack_ptr);
-#endif
 	
 #ifdef GC_DARWIN_THREADS
 	mach_port_deallocate(mach_task_self(), p->stop_info.mach_thread);
@@ -939,6 +948,7 @@ int GC_segment_is_thread_stack(ptr_t lo, ptr_t hi)
 /* Return the number of processors, or i<= 0 if it can't be determined.	*/
 int GC_get_nprocs()
 {
+#ifndef NACL
     /* Should be "return sysconf(_SC_NPROCESSORS_ONLN);" but that	*/
     /* appears to be buggy in many cases.				*/
     /* We look for lines "cpu<n>" in /proc/stat.			*/
@@ -968,6 +978,9 @@ int GC_get_nprocs()
     }
     close(f);
     return result;
+#else /* NACL */
+    return sysconf(_SC_NPROCESSORS_ONLN);
+#endif
 }
 #endif /* GC_LINUX_THREADS */
 
@@ -1103,14 +1116,6 @@ void GC_thr_init()
          t -> stop_info.stack_ptr = (ptr_t)(&dummy);
 #     endif
       t -> flags = DETACHED | MAIN_THREAD;
-#ifdef MONO_DEBUGGER_SUPPORTED
-      if (gc_thread_vtable && gc_thread_vtable->thread_created)
-#     ifdef GC_DARWIN_THREADS
-        gc_thread_vtable->thread_created (mach_thread_self (), &t->stop_info.stack_ptr);
-#     else
-         gc_thread_vtable->thread_created (pthread_self (), &t->stop_info.stack_ptr);
-#     endif
-#endif
 		 if (pthread_self () == main_pthread_self) {
 			 t->stack = main_stack;
 			 t->stack_size = main_stack_size;
@@ -1359,12 +1364,10 @@ int WRAP_FUNC(pthread_join)(pthread_t thread, void **retval)
 }
 
 #ifdef NACL
-/* Native Client doesn't support pthread cleanup functions, */
-/* so wrap pthread_exit and manually cleanup the thread.    */
+/* TODO: remove, NaCl glibc now supports pthread cleanup functions. */
 void
 WRAP_FUNC(pthread_exit)(void *status)
 {
-    GC_thread_exit_proc(0); 
     REAL_FUNC(pthread_exit)(status);
 }
 #endif
@@ -1442,14 +1445,6 @@ void * GC_start_routine_head(void * arg, void *base_addr,
       /* This is also < 100% convincing.  We should also read this 	*/
       /* from /proc, but the hook to do so isn't there yet.		*/
 #   endif /* IA64 */
-#ifdef MONO_DEBUGGER_SUPPORTED
-    if (gc_thread_vtable && gc_thread_vtable->thread_created)
-#	ifdef GC_DARWIN_THREADS
-	gc_thread_vtable->thread_created (mach_thread_self(), &me->stop_info.stack_ptr);
-#	else
- 	gc_thread_vtable->thread_created (my_pthread, &me->stop_info.stack_ptr);
-#	endif
-#endif
     UNLOCK();
 
     if (start) *start = si -> start_routine;

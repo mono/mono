@@ -1029,8 +1029,11 @@ namespace System.Drawing
 		{
 			if (pen == null)
 				throw new ArgumentNullException ("pen");
-			Status status = GDIPlus.GdipDrawLine (nativeObject, pen.nativeObject, x1, y1, x2, y2);
-			GDIPlus.CheckStatus (status);
+			if (!float.IsNaN(x1) && !float.IsNaN(y1) &&
+			    !float.IsNaN(x2) && !float.IsNaN(y2)) {
+				Status status = GDIPlus.GdipDrawLine (nativeObject, pen.nativeObject, x1, y1, x2, y2);
+				GDIPlus.CheckStatus (status);
+			}
 		}
 
 		public void DrawLines (Pen pen, PointF [] points)

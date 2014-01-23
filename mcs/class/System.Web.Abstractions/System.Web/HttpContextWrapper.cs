@@ -127,7 +127,7 @@ namespace System.Web
 		}
 
 		public override HttpSessionStateBase Session {
-			get { return new HttpSessionStateWrapper (w.Session); }
+			get { return w.Session == null ? null : new HttpSessionStateWrapper (w.Session); }
 		}
 
 		public override bool SkipAuthorization {

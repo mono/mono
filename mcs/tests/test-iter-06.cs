@@ -38,7 +38,7 @@ class X {
 		yield return 1;
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		X y = new X ();
 

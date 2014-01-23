@@ -25,7 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -211,6 +211,16 @@ namespace System.Runtime.Serialization
 			: this (type, rootName, rootNamespace, knownTypes, maxObjectsInGraph, ignoreExtensionDataObject, preserveObjectReferences, dataContractSurrogate)
 		{
 			DataContractResolver = dataContractResolver;
+		}
+#endif
+
+#if NET_4_5
+		public DataContractSerializer (Type type, DataContractSerializerSettings settings)
+			: this (type, settings.RootName, settings.RootNamespace, settings.KnownTypes,
+			        settings.MaxItemsInObjectGraph, settings.IgnoreExtensionDataObject,
+			        settings.PreserveObjectReferences, settings.DataContractSurrogate,
+			        settings.DataContractResolver)
+		{
 		}
 #endif
 
@@ -455,21 +465,24 @@ namespace System.Runtime.Serialization
 
 			QName rootQName = null;
 			XmlDictionaryString name, ns;
-			if (DataContractResolver != null && DataContractResolver.TryResolveType (graph.GetType (), type, default_resolver, out name, out ns))
+			var graphType = graph.GetType ();
+			if (DataContractResolver != null && DataContractResolver.TryResolveType (graphType, type, default_resolver, out name, out ns))
 				rootQName = new QName (name.Value, ns.Value);
 
 			// It is error unless 1) TypeResolver resolved the type name, 2) the object is the exact type, 3) the object is known or 4) the type is primitive.
 
-			if (rootQName == null &&
-			    graph.GetType () != type &&
-			    IsUnknownType (graph.GetType ()))
-				throw new SerializationException (String.Format ("Type '{0}' is unexpected. The type should either be registered as a known type, or DataContractResolver should be used.", graph.GetType ()));
+			QName collectionQName;
+			if (KnownTypeCollection.IsInterchangeableCollectionType (type, graphType, out collectionQName)) {
+				graphType = type;
+				rootQName = collectionQName;
+			} else if (graphType != type && rootQName == null && IsUnknownType (type, graphType))
+				throw new SerializationException (String.Format ("Type '{0}' is unexpected. The type should either be registered as a known type, or DataContractResolver should be used.", graphType));
 
 			QName instName = rootQName;
 			rootQName = rootQName ?? known_types.GetQName (rootType);
-			QName graph_qname = known_types.GetQName (graph.GetType ());
+			QName graph_qname = known_types.GetQName (graphType);
 
-			known_types.Add (graph.GetType ());
+			known_types.Add (graphType);
 
 			if (names_filled)
 				writer.WriteStartElement (root_name.Value, root_ns.Value);
@@ -491,7 +504,7 @@ namespace System.Runtime.Serialization
 			/* Different names */
 			known_types.Add (rootType);
 
-			instName = instName ?? KnownTypeCollection.GetPredefinedTypeName (graph.GetType ());
+			instName = instName ?? KnownTypeCollection.GetPredefinedTypeName (graphType);
 			if (instName == QName.Empty)
 				/* Not a primitive type */
 				instName = graph_qname;
@@ -505,6 +518,16 @@ namespace System.Runtime.Serialization
 			writer.WriteQualifiedName (instName.Name, instName.Namespace);
 			writer.WriteEndAttribute ();
 */
+		}
+
+		bool IsUnknownType (Type contractType, Type type)
+		{
+			if (type.IsArray) {
+				if (KnownTypeCollection.GetAttribute<CollectionDataContractAttribute> (contractType) != null ||
+				    KnownTypeCollection.GetAttribute<DataContractAttribute> (contractType) != null)
+					return true;
+			}
+			return IsUnknownType (type);
 		}
 
 		bool IsUnknownType (Type type)
@@ -527,6 +550,12 @@ namespace System.Runtime.Serialization
 		{
 			WriteEndObject (XmlDictionaryWriter.CreateDictionaryWriter (writer));
 		}
+
+#if NET_4_5
+		[MonoTODO]
+		public bool SerializeReadOnlyTypes {
+			get { throw new NotImplementedException (); }
+		}
+#endif
 	}
 }
-#endif

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Metadata xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns="http://schemas.xmlsoap.org/ws/2004/09/mex">
+  <wsx:MetadataSection xmlns="" Dialect="http://schemas.xmlsoap.org/wsdl/" Identifier="http://tempuri.org/">
+    <wsdl:definitions xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:tns="http://tempuri.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" name="service" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+      <wsp:Policy wsu:Id="NetTcpBinding_IMyContract_policy">
+        <wsp:ExactlyOne>
+          <wsp:All>
+            <msb:BinaryEncoding xmlns:msb="http://schemas.microsoft.com/ws/06/2004/mspolicy/netbinary1" />
+            <wsaw:UsingAddressing />
+          </wsp:All>
+        </wsp:ExactlyOne>
+      </wsp:Policy>
+      <wsdl:types>
+        <xsd:schema targetNamespace="http://tempuri.org/Imports">
+          <xsd:import namespace="http://tempuri.org/" />
+        </xsd:schema>
+      </wsdl:types>
+      <wsdl:message name="IMyContract_Hello_InputMessage">
+        <wsdl:part name="parameters" element="tns:Hello" />
+      </wsdl:message>
+      <wsdl:message name="IMyContract_Hello_OutputMessage">
+        <wsdl:part name="parameters" element="tns:HelloResponse" />
+      </wsdl:message>
+      <wsdl:portType name="IMyContract">
+        <wsdl:operation name="Hello">
+          <wsdl:input wsaw:Action="http://tempuri.org/IMyContract/Hello" message="tns:IMyContract_Hello_InputMessage" />
+          <wsdl:output wsaw:Action="http://tempuri.org/IMyContract/HelloResponse" message="tns:IMyContract_Hello_OutputMessage" />
+        </wsdl:operation>
+      </wsdl:portType>
+      <wsdl:binding name="NetTcpBinding_IMyContract" type="tns:IMyContract">
+        <wsp:PolicyReference URI="#NetTcpBinding_IMyContract_policy" />
+        <soap12:binding transport="http://schemas.microsoft.com/soap/tcp" />
+        <wsdl:operation name="Hello">
+          <soap12:operation soapAction="http://tempuri.org/IMyContract/Hello" style="document" />
+          <wsdl:input>
+            <soap12:body use="literal" />
+          </wsdl:input>
+          <wsdl:output>
+            <soap12:body use="literal" />
+          </wsdl:output>
+        </wsdl:operation>
+      </wsdl:binding>
+      <wsdl:service name="service">
+        <wsdl:port name="NetTcpBinding_IMyContract" binding="tns:NetTcpBinding_IMyContract">
+          <soap12:address location="net-tcp://tempuri.org:8000/TestNetTcp/" />
+          <wsa10:EndpointReference>
+            <wsa10:Address>net-tcp://tempuri.org:8000/TestNetTcp/</wsa10:Address>
+          </wsa10:EndpointReference>
+        </wsdl:port>
+      </wsdl:service>
+    </wsdl:definitions>
+  </wsx:MetadataSection>
+  <wsx:MetadataSection xmlns="" Dialect="http://www.w3.org/2001/XMLSchema" Identifier="http://tempuri.org/">
+    <xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="Hello">
+        <xs:complexType>
+          <xs:sequence />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="HelloResponse">
+        <xs:complexType>
+          <xs:sequence />
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </wsx:MetadataSection>
+</Metadata>

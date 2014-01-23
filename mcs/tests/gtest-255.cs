@@ -15,6 +15,6 @@ public abstract class B : A
 
 public class C : B
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

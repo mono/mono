@@ -40,7 +40,7 @@ namespace N1
 			return true;
 		}
 	
-		static int Main ()
+		public static int Main ()
 		{
 			if (!IntCasting ())
 				return 1;

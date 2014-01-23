@@ -1709,6 +1709,7 @@ namespace MonoTests.System
 
 	public class CharCategoryUtils
 	{
+#if false
 		// Usage:
 		//   If you want to re-generate the dumps on your box,
 		//   run this program *under MS.NET*. The resulting
@@ -1789,7 +1790,7 @@ namespace MonoTests.System
 					WriteVarInit (arg, dump, 79);
 			}
 		}
-
+#endif
 		// NOTE: This method doesn't perform any escaping!
 		private static void WriteVarInit (string name, string value, int cut_at)
 		{

@@ -27,11 +27,12 @@
 // 
 
 using Mono.CodeContracts.Static.ControlFlow;
+using Mono.CodeContracts.Static.Lattices;
 using Mono.CodeContracts.Static.Proving;
 
 namespace Mono.CodeContracts.Static.Analysis.Drivers {
 	interface IMethodAnalysisFixPoint<Variable> {
 		IFactQuery<BoxedExpression, Variable> FactQuery { get; }
-		ProofOutcome ValidateExplicitAssertion (APC pc, Variable value);
+		FlatDomain<bool> ValidateExplicitAssertion (APC pc, Variable value);
 	}
 }

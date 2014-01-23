@@ -18,7 +18,7 @@ class X {
 		System.Console.WriteLine (" " + x);
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		int ok = 0, error = 0;
 		

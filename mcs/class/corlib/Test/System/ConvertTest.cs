@@ -2678,6 +2678,31 @@ namespace MonoTests.System {
 		  Convert.FromBase64String(brokenB64);
 		}
 
+		[Test] // bug #5464
+		[ExpectedException (typeof (FormatException))]
+		public void TestInvalidBase64_Bug5464 ()
+		{
+			Convert.FromBase64String ("dGVzdA==DQo=");
+		}
+
+		[Test] // bug #5464
+		public void TestValidBase64_Bug5464 ()
+		{
+			byte[] result = Convert.FromBase64String ("dGVzdA==");
+			Assert.AreEqual(4, result.Length, "Array.Length expected to be 4.");
+			Assert.AreEqual(116, result[0], "#A01");
+			Assert.AreEqual(101, result[1], "#A02");
+			Assert.AreEqual(115, result[2], "#A03");
+			Assert.AreEqual(116, result[3], "#A04");
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void TestInvalidBase64_TooManyPaddings ()
+		{
+			Convert.FromBase64String ("dGVzd===");
+		}
+
 		[Test]
 		public void TestBeginWithSpaces ()
 		{

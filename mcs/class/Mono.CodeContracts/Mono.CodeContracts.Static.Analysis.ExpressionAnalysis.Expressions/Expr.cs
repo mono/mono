@@ -43,7 +43,7 @@ namespace Mono.CodeContracts.Static.Analysis.ExpressionAnalysis.Expressions {
 		public abstract Result Decode<Data, Result, Visitor> (APC pc, TSymbolicValue dest, Visitor visitor, Data data)
 			where Visitor : IExpressionILVisitor<APC, TSymbolicValue, TSymbolicValue, Data, Result>;
 
-		public abstract Expr<TSymbolicValue> Substitute (IImmutableMap<TSymbolicValue, LispList<TSymbolicValue>> substitutions);
+		public abstract Expr<TSymbolicValue> Substitute (IImmutableMap<TSymbolicValue, Sequence<TSymbolicValue>> substitutions);
 
 		/// <summary>
 		/// Specifies that current expression is partially contained in candidates

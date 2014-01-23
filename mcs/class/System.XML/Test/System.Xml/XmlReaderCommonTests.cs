@@ -1540,7 +1540,7 @@ namespace MonoTests.System.Xml
 		// a bit revised version of bug #78706
 		public void CreateFromUrlClose ()
 		{
-			string file = "Test/XmlFiles/78706.xml";
+			string file = Path.Combine (Path.GetTempPath (), "78706.xml");
 			try {
 				if (!File.Exists (file))
 					File.Create (file).Close ();
@@ -1560,7 +1560,7 @@ namespace MonoTests.System.Xml
 		// a bit revised version of bug #385638
 		public void CreateFromUrlClose2 ()
 		{
-			string file = "Test/XmlFiles/385638.xml";
+			string file = Path.Combine (Path.GetTempPath (), "385638.xml");
 			try {
 				if (File.Exists (file))
 					File.Delete (file);

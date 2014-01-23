@@ -2,7 +2,7 @@ using System.Reflection;
 
 class T {
 	protected internal string s;
-	static int Main() {
+	public static int Main() {
 		FieldInfo f = typeof(T).GetField ("s", BindingFlags.NonPublic|BindingFlags.Instance);
 		if (f == null)
 			return 2;

@@ -3,6 +3,7 @@ System.Collections.ObjectModel/ReadOnlyObservableCollectionTest.cs
 System.Collections.Specialized/NotifyCollectionChangedEventArgsTest.cs
 System.Collections.Specialized/CollectionChangedEventValidators.cs
 System.ComponentModel/CurrentChangingEventArgsTest.cs
+System.ComponentModel/GroupDescriptionTest.cs
 System.ComponentModel/PropertyFilterAttributeTest.cs
 System.ComponentModel/SortDescriptionCollectionTest.cs
 System.ComponentModel/SortDescriptionTest.cs

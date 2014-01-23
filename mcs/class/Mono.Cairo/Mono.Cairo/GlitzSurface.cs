@@ -36,11 +36,8 @@ namespace Cairo {
 		}
 
 		public GlitzSurface (IntPtr glitz_surface)
+			: base (NativeMethods.cairo_glitz_surface_create (glitz_surface), true)
 		{
-			surface = NativeMethods.cairo_glitz_surface_create (glitz_surface);
-			lock (surfaces.SyncRoot) {
-				surfaces [surface] = this;
-			}
 		}
 	}
 }

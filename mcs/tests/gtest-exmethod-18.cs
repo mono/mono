@@ -16,7 +16,7 @@ static class FooExt {
 
 class Repro {
 
-	static void Main ()
+	public static void Main ()
 	{
 		var f = new Foo ();
 		Console.WriteLine (f.IsBar ());

@@ -23,7 +23,7 @@ public class Foo {
 		if (i != 0)
 			throw new Exception (""+i);
 	}
-	static void Main ()
+	public static void Main ()
 	{
 		Comparison<int> ci = Test.WrapComparison<int> (compare);
 		Comparison<string> cs = Test.WrapComparison<string> (compare);

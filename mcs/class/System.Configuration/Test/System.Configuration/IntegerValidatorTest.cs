@@ -4,8 +4,10 @@
 //
 // Author:
 //	Chris Toshok  <toshok@ximian.com>
+//	Andres G. Aragoneses  <andres@7digital.com>
 //
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2012 7digital Media, Ltd (http://www.7digital.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,6 +32,8 @@
 #if NET_2_0
 
 using System;
+using System.Xml;
+using System.IO;
 using System.Configuration;
 using NUnit.Framework;
 
@@ -105,6 +109,71 @@ namespace MonoTests.System.Configuration {
 
 			v.Validate (40000);
 		}
+
+		#region BNC654721 https://bugzilla.novell.com/show_bug.cgi?id=654721
+		public sealed class TestSection : ConfigurationSection
+		{
+			public void Load (string xml)
+			{
+				Init ();
+				using (var sr = new StringReader (xml))
+				using (var reader = new XmlTextReader (sr))
+				{
+					DeserializeSection (reader);
+				}
+			}
+
+			[ConfigurationProperty ("integerValidatorMinValue")]
+			public IntegerValidatorMinValueChildElement IntegerValidatorMinValue
+			{
+				get { return (IntegerValidatorMinValueChildElement)base["integerValidatorMinValue"]; }
+				set { base["integerValidatorMinValue"] = value; }
+			}
+
+			[ConfigurationProperty ("integerValidatorMaxValue")]
+			public IntegerValidatorMaxValueChildElement IntegerValidatorMaxValue
+			{
+				get { return (IntegerValidatorMaxValueChildElement)base["integerValidatorMaxValue"]; }
+				set { base["integerValidatorMaxValue"] = value; }
+			}
+		}
+
+		public sealed class IntegerValidatorMaxValueChildElement : ConfigurationElement
+		{
+			[ConfigurationProperty ("theProperty"), IntegerValidator (MaxValue = 100)]
+			public int TheProperty
+			{
+				get { return (int)base["theProperty"]; }
+				set { base ["theProperty"] = value; }
+			}
+		}
+
+		public sealed class IntegerValidatorMinValueChildElement : ConfigurationElement
+		{
+			[ConfigurationProperty ("theProperty"), IntegerValidator (MinValue = 0)]
+			public int TheProperty
+			{
+				get { return (int)base["theProperty"]; }
+				set { base ["theProperty"] = value; }
+			}
+		}
+
+		[Test]
+		public void IntegerValidatorMinValueTest ()
+		{
+			var section = new TestSection ();
+			section.Load (@"<someSection><integerValidatorMinValue theProperty=""15"" /></someSection>");
+			Assert.AreEqual (15, section.IntegerValidatorMinValue.TheProperty);
+		}
+
+		[Test]
+		public void IntegerValidatorMaxValueTest ()
+		{
+			var section = new TestSection ();
+			section.Load (@"<someSection><integerValidatorMaxValue theProperty=""25"" /></someSection>");
+			Assert.AreEqual (25, section.IntegerValidatorMaxValue.TheProperty);
+		}
+		#endregion
 	}
 }
 

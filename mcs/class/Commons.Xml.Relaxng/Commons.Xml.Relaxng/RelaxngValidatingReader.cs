@@ -3,7 +3,7 @@
 //
 // Author:
 //	Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
-//	Alexandre Alapetite <http://alexandre.alapetite.net/cv/>
+//	Alexandre Alapetite <http://alexandre.alapetite.fr/cv/>
 //
 // 2003 Atsushi Enomoto. "No rights reserved."
 //
@@ -629,12 +629,12 @@ namespace Commons.Xml.Relaxng
 				if (!Util.IsWhitespace (cachedValue)) {
 					// HandleError() is not really useful here since it involves else condition...
 					ts = memo.MixedTextDeriv (ts);
-					if (InvalidNodeFound != null) {
+					/*if (InvalidNodeFound != null) {
 						InvalidNodeFound (reader, "Not allowed text node was found.");
 						ts = vState;
 						cachedValue = null;
 					}
-					else
+					else*/
 						ts = TextDeriv (ts, cachedValue, reader);
 				}
 				break;

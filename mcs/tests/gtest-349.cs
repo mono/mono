@@ -6,7 +6,7 @@ class X
 {
 	public delegate R Function<T1, T2, R>(T1 arg1, T2 arg2);
 
-	static int Main ()
+	public static int Main ()
 	{
 		Delegate [] e = new Delegate [] {
 			new Function<IList,IList,int> (f2),

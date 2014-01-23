@@ -162,6 +162,14 @@ namespace System.ServiceModel.Configuration
 			foreach (var be in this)
 				b.Elements.Add (be.CreateBindingElement ());
 		}
+
+		internal void InitializeFrom (Binding binding)
+		{
+			CloseTimeout = binding.CloseTimeout;
+			OpenTimeout = binding.OpenTimeout;
+			ReceiveTimeout = binding.ReceiveTimeout;
+			SendTimeout = binding.SendTimeout;
+		}
 	}
 
 }

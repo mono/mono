@@ -30,6 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !FULL_AOT_RUNTIME
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -61,7 +62,7 @@ namespace System.Reflection.Emit
 		private TypeBuilder type;
 		internal ParameterBuilder[] pinfo;
 		private CustomAttributeBuilder[] cattrs;
-		private MethodInfo override_method;
+		private MethodInfo[] override_methods;
 		private string pi_dll;
 		private string pi_entry;
 		private CharSet charset;
@@ -218,17 +219,23 @@ namespace System.Reflection.Emit
 		{
 			if (!type.is_created)
 				throw NotSupported ();
+
+			return GetParametersInternal ();
+		}
+
+		internal override ParameterInfo[] GetParametersInternal ()
+		{
 			if (parameters == null)
 				return null;
 
 			ParameterInfo[] retval = new ParameterInfo [parameters.Length];
 			for (int i = 0; i < parameters.Length; i++) {
-				retval [i] = new ParameterInfo (pinfo == null ? null : pinfo [i + 1], parameters [i], this, i + 1);
+				retval [i] = ParameterInfo.New (pinfo == null ? null : pinfo [i + 1], parameters [i], this, i + 1);
 			}
 			return retval;
 		}
 		
-		internal override int GetParameterCount ()
+		internal override int GetParametersCount ()
 		{
 			if (parameters == null)
 				return 0;
@@ -329,8 +336,12 @@ namespace System.Reflection.Emit
 
 		internal void check_override ()
 		{
-			if (override_method != null && override_method.IsVirtual && !IsVirtual)
-				throw new TypeLoadException (String.Format("Method '{0}' override '{1}' but it is not virtual", name, override_method));
+			if (override_methods != null) {
+				foreach (var m in override_methods) {
+					if (m.IsVirtual && !IsVirtual)
+						throw new TypeLoadException (String.Format("Method '{0}' override '{1}' but it is not virtual", name, m));
+				}
+			}
 		}
 
 		internal void fixup ()
@@ -343,7 +354,7 @@ namespace System.Reflection.Emit
 											    DeclaringType.FullName, Name));
 			}
 			if (ilgen != null)
-				ilgen.label_fixup ();
+				ilgen.label_fixup (this);
 		}
 		
 		internal void GenerateDebugInfo (ISymbolWriter symbolWriter)
@@ -522,9 +533,20 @@ namespace System.Reflection.Emit
 			return type.get_next_table_index (obj, table, inc);
 		}
 
+		void ExtendArray<T> (ref T[] array, T elem) {
+			if (array == null) {
+				array = new T [1];
+			} else {
+				var newa = new T [array.Length + 1];
+				Array.Copy (array, newa, array.Length);
+				array = newa;
+			}
+			array [array.Length - 1] = elem;
+		}
+
 		internal void set_override (MethodInfo mdecl)
 		{
-			override_method = mdecl;
+			ExtendArray<MethodInfo> (ref override_methods, mdecl);
 		}
 
 		private void RejectIfCreated ()
@@ -657,10 +679,11 @@ namespace System.Reflection.Emit
 			throw new NotImplementedException ();
 		}
 
-#if NET_4_0 || MOONLIGHT
+#if NET_4_0
 		public override ParameterInfo ReturnParameter {
 			get { return base.ReturnParameter; }
 		}
 #endif
 	}
 }
+#endif

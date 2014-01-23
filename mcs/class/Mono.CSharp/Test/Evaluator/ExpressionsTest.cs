@@ -51,6 +51,12 @@ namespace MonoTests.EvaluatorTest
 		}
 
 		[Test]
+		public void AnonymousType ()
+		{
+			Evaluator.Run ("var foo = new { Bar = \"baz\" };");
+		}
+
+		[Test]
 		public void Simple ()
 		{
 			object res;
@@ -124,6 +130,22 @@ namespace MonoTests.EvaluatorTest
 			Assert.AreEqual ("1+", sres, "The result should have been the input string, since we have a partial input");
 		}
 
+		[Test]
+		public void GotoWithUnreachableStatement ()
+		{
+			Evaluator.Run ("using System;");
+
+			string code = "var x = new Action(() => {" +
+			"Console.WriteLine(\"beforeGoto\");" +
+			"goto L;" +
+		"L:" +
+			"Console.WriteLine(\"afterGoto\");" +
+			"});";
+
+			Assert.IsTrue (Evaluator.Run (code), "#1");
+			Assert.IsTrue (Evaluator.Run ("x();"), "#2");
+		}
+
 #if NET_4_0
 		[Test]
 		public void DynamicStatement ()
@@ -131,6 +153,17 @@ namespace MonoTests.EvaluatorTest
 			Evaluator.Run ("dynamic d = 1;");
 			Evaluator.Run ("d = 'a';");
 			Evaluator.Run ("d.GetType ();");
+		}
+#endif
+
+#if NET_4_5
+		[Test]
+		public void AwaitExpression ()
+		{
+			Evaluator.WaitOnTask = true;
+			var res = Evaluator.Evaluate("var res = await System.Threading.Tasks.Task.FromResult (1) + await System.Threading.Tasks.Task.FromResult (2);");
+			res = Evaluator.Evaluate ("res;");
+			Assert.AreEqual (3, res, "#1");
 		}
 #endif
 	}

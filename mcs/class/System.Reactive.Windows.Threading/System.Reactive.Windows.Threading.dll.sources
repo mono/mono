@@ -1,0 +1,9 @@
+Assembly/AssemblyInfo.cs
+../../../external/rx/Rx/NET/Source/System.Reactive.Windows.Threading/GlobalSuppressions.cs
+../../../external/rx/Rx/NET/Source/System.Reactive.Windows.Threading/Reactive/Concurrency/CoreDispatcherScheduler.cs
+../../../external/rx/Rx/NET/Source/System.Reactive.Windows.Threading/Reactive/Internal/Constants.cs
+../../../external/rx/Rx/NET/Source/System.Reactive.Windows.Threading/Reactive/Linq/CoreDispatcherObservable.cs
+../../../external/rx/Rx/NET/Source/System.Reactive.Windows.Threading/Reactive/Linq/DispatcherObservable.cs
+../../../external/rx/Rx/NET/Source/System.Reactive.Windows.Threading/Reactive/Concurrency/DispatcherScheduler.cs
+../../../external/rx/Rx/NET/Source/System.Reactive.Windows.Threading/Properties/AssemblyInfo.cs
+../../../external/rx/Rx/NET/Source/System.Reactive.Windows.Threading/Strings_WindowsThreading.Generated.cs

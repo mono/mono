@@ -1,6 +1,6 @@
 using System;
 public class Test {
-    static int Main () {
+    public static int Main () {
         object val1  = compare_gte(0, 0);
         object val2  = compare_gte(1, 0);
         object val3  = compare_gte(0, 1);

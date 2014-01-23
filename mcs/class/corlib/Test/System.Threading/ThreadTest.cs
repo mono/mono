@@ -86,6 +86,7 @@ namespace MonoTests.System.Threading
 	}
 
 	[TestFixture]
+	[Category("MobileNotWorking")] // Abort #10240
 	public class ThreadTest
 	{
 		TimeSpan Infinite = new TimeSpan (-10000);	// -10000 ticks == -1 ms
@@ -488,8 +489,13 @@ namespace MonoTests.System.Threading
 				TestThread.Abort();
 			}
 			
-			if (TestThread.IsAlive)
-				Assert.IsTrue (TestThread.IsBackground, "#52 Is Background Changed to Start ");
+			if (TestThread.IsAlive) {
+				try {
+					Assert.IsTrue (TestThread.IsBackground, "#52 Is Background Changed to Start ");
+				} catch (ThreadStateException) {
+					// Ignore if thread died meantime
+				}
+			}
 		}
 
 		[Test]
@@ -831,6 +837,13 @@ namespace MonoTests.System.Threading
 			}
 		}
 
+		[Test]
+		public void GetNamedDataSlotTest ()
+		{
+			Assert.IsNotNull (Thread.GetNamedDataSlot ("te#st"), "#1");
+			Assert.AreSame (Thread.GetNamedDataSlot ("te#st"), Thread.GetNamedDataSlot ("te#st"), "#2");
+		}
+
 		void CheckIsRunning (string s, Thread t)
 		{
 			int c = counter;
@@ -940,7 +953,7 @@ namespace MonoTests.System.Threading
 			public string ad_b2;
 			public string message;
 		}
-
+#if !MOBILE
 		[Test]
 		public void ManagedThreadId_AppDomains ()
 		{
@@ -981,7 +994,7 @@ namespace MonoTests.System.Threading
 			Assert.AreNotEqual (mbro.ad_b1, AppDomain.CurrentDomain.FriendlyName, "Name #5");
 			Assert.AreNotEqual (mbro.ad_b2, AppDomain.CurrentDomain.FriendlyName, "Name #6");
 		}
-
+#endif
 		void A1 ()
 		{
 			mbro.id_a1 = Thread.CurrentThread.ManagedThreadId;
@@ -1117,6 +1130,60 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		public void TestSetApartmentStateSameState ()
+		{
+			Thread t1 = new Thread (new ThreadStart (Start));
+			t1.SetApartmentState (ApartmentState.STA);
+			Assert.AreEqual (ApartmentState.STA, t1.ApartmentState, "Thread1 Set Once");
+
+			t1.SetApartmentState (ApartmentState.STA);
+			Assert.AreEqual (ApartmentState.STA, t1.ApartmentState, "Thread1 Set twice");
+		}
+
+		[Test]
+		[ExpectedException(typeof(InvalidOperationException))]
+		public void TestSetApartmentStateDiffState ()
+		{
+			Thread t1 = new Thread (new ThreadStart (Start));
+			t1.SetApartmentState (ApartmentState.STA);
+			Assert.AreEqual (ApartmentState.STA, t1.ApartmentState, "Thread1 Set Once");
+
+			t1.SetApartmentState (ApartmentState.MTA);
+		}
+
+		[Test]
+		public void TestTrySetApartmentState ()
+		{
+			Thread t1 = new Thread (new ThreadStart (Start));
+			t1.SetApartmentState (ApartmentState.STA);
+			Assert.AreEqual (ApartmentState.STA, t1.ApartmentState, "#1");
+
+			bool result = t1.TrySetApartmentState (ApartmentState.MTA);
+			Assert.IsFalse (result, "#2");
+
+			result = t1.TrySetApartmentState (ApartmentState.STA);
+			Assert.IsTrue (result, "#3");
+		}
+
+		[Test]
+		public void TestTrySetApartmentStateRunning ()
+		{
+			Thread t1 = new Thread (new ThreadStart (Start));
+			t1.SetApartmentState (ApartmentState.STA);
+			Assert.AreEqual (ApartmentState.STA, t1.ApartmentState, "#1");
+
+			t1.Start ();
+
+			try {
+				t1.TrySetApartmentState (ApartmentState.STA);
+				Assert.Fail ("#2");
+			} catch (ThreadStateException) {
+			}
+
+			t1.Join ();
+		}
+
+		[Test]
 		public void Volatile () {
 			double v3 = 55667;
 			Thread.VolatileWrite (ref v3, double.MaxValue);
@@ -1126,6 +1193,43 @@ namespace MonoTests.System.Threading
 			Thread.VolatileWrite (ref v4, float.MaxValue);
 			Assert.AreEqual (v4, float.MaxValue);
 		}
+
+		[Test]
+		public void Culture ()
+		{
+			Assert.IsNotNull (Thread.CurrentThread.CurrentCulture, "CurrentCulture");
+			Assert.IsNotNull (Thread.CurrentThread.CurrentUICulture, "CurrentUICulture");
+		}
+
+		[Test]
+		public void ThreadStartSimple ()
+		{
+			int i = 0;
+			Thread t = new Thread (delegate () {
+				// ensure the NSAutoreleasePool works
+				i++;
+			});
+			t.Start ();
+			t.Join ();
+			Assert.AreEqual (1, i, "ThreadStart");
+		}
+
+		[Test]
+		public void ParametrizedThreadStart ()
+		{
+			int i = 0;
+			object arg = null;
+			Thread t = new Thread (delegate (object obj) {
+				// ensure the NSAutoreleasePool works
+				i++;
+				arg = obj;
+			});
+			t.Start (this);
+			t.Join ();
+
+			Assert.AreEqual (1, i, "ParametrizedThreadStart");
+			Assert.AreEqual (this, arg, "obj");	
+		}		
 
 		[Test]
 		public void SetNameTpThread () {

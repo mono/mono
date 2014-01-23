@@ -4,7 +4,7 @@ class Foo {
 	{
 		try { yield break; } catch { } finally { }
 	}
-	static int Main ()
+	public static int Main ()
 	{
 		int i = 0;
 		foreach (object o in foo ())

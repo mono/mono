@@ -58,7 +58,10 @@ namespace Mono.CodeContracts.Static.ControlFlow {
 		IILDecoder<APC, Dummy, Dummy, IMethodContextProvider, Dummy> GetDecoder (IMetaDataProvider metaDataProvider);
 
 		void Print (TextWriter tw, ILPrinter<APC> printer,
-		            Func<CFGBlock, IEnumerable<LispList<Edge<CFGBlock, EdgeTag>>>> contextLookup,
-		            LispList<Edge<CFGBlock, EdgeTag>> context);
+		            Func<CFGBlock, IEnumerable<Sequence<Edge<CFGBlock, EdgeTag>>>> contextLookup,
+		            Sequence<Edge<CFGBlock, EdgeTag>> context);
+
+	    bool IsForwardBackEdge (APC @from, APC to);
+	        APC Post (APC pc);
 	}
 }

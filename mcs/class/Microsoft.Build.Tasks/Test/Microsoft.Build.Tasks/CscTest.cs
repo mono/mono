@@ -190,6 +190,18 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		}
 
 		[Test]
+		public void TestDisabledWarningsComma ()
+		{
+			CscExtended csc = new CscExtended ();
+			CommandLineBuilderExtension clbe = new CommandLineBuilderExtension ();
+
+			csc.DisabledWarnings = "A, B";
+			csc.ARFC (clbe);
+
+			Assert.AreEqual ("/nowarn:A;B", clbe.ToString (), "A1");
+		}
+
+		[Test]
 		public void TestDocumentationFile ()
 		{
 			CscExtended csc = new CscExtended ();

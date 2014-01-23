@@ -5,7 +5,7 @@ class Test {
 
 	static void True  (bool b) { False (!b); }
 	static void False (bool b) { if (b) throw new System.Exception (); }
-	static void Main ()
+	public static void Main ()
 	{
 		True  (false == false);
 		False (false == true);

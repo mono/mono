@@ -13,7 +13,7 @@ class X
 }
 
 class Demo {
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

@@ -2,7 +2,7 @@ using System.Collections;
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		object x = null;
 		R (ref x);

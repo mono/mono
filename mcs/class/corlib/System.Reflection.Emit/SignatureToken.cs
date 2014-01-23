@@ -25,6 +25,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !FULL_AOT_RUNTIME
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
@@ -38,14 +39,7 @@ namespace System.Reflection.Emit {
 
 		internal int tokValue;
 
-		public static readonly SignatureToken Empty;
-
-
-		static SignatureToken ()
-		{
-			Empty = new SignatureToken ();
-		}
-
+		public static readonly SignatureToken Empty = new SignatureToken ();
 
 		internal SignatureToken (int val)
 		{
@@ -104,3 +98,4 @@ namespace System.Reflection.Emit {
 
 }
 
+#endif

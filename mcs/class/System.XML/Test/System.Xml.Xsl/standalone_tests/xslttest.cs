@@ -17,10 +17,8 @@ namespace MonoTests.oasis_xslt {
 		ArrayList fixmeList = new ArrayList ();
 		#endregion
 	
-		TestSuite _suite;
-		SuiteBuilder (TestSuite suite)
+		public SuiteBuilder ()
 		{
-			_suite = suite;
 		}
 
 		void ReadLists ()
@@ -42,7 +40,7 @@ namespace MonoTests.oasis_xslt {
 			}
 		}
 
-		public void Build ()
+		void Build (TestSuite suite)
 		{
 //			if (Environment.GetEnvironmentVariables().Contains("START_DEBUG"))
 //				System.Diagnostics.Debugger.Launch ();
@@ -65,18 +63,23 @@ namespace MonoTests.oasis_xslt {
 				string expectedException = (string) expectedExceptions[testid];
 				bool isKnownFailure = knownFailures.Contains (testid) || fixmeList.Contains (testid);
 
-				_suite.Add (new TestFromCatalog (testid, stt, expectedException,
+				suite.Add (new TestFromCatalog (testid, stt, expectedException,
 					EnvOptions.InverseResults, isKnownFailure));
 			}
 		}
 
+		static object lock_obj = new object ();
+		static TestSuite _suite;
+
 		[Suite]
 		public static TestSuite Suite { 
 			get {
+				if (_suite == null) { lock (lock_obj) {
 				TestSuite suite = new TestSuite ("MonoTests.oasis_xslt.SuiteBuilder");
-				SuiteBuilder builder = new SuiteBuilder (suite);
-				builder.Build ();
-				return suite;
+				new SuiteBuilder ().Build (suite);
+				_suite = suite;
+				} }
+				return _suite;
 			}
 		}
 	}
@@ -99,7 +102,7 @@ namespace MonoTests.oasis_xslt {
 			ArrayList arr = new ArrayList ();
 			if (isKnownFailure) {
 				arr.Add ("KnownFailures");
-				this.IsExplicit = true;
+				//this.IsExplicit = true;
 			}
 			else
 				arr.Add ("Clean");

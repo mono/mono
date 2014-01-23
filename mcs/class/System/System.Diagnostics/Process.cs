@@ -102,7 +102,6 @@ namespace System.Diagnostics {
 
 		void StartExitCallbackIfNeeded ()
 		{
-#if !NET_2_1
 			bool start = (!already_waiting && enableRaisingEvents && exited_event != null);
 			if (start && process_handle != IntPtr.Zero) {
 				WaitOrTimerCallback cb = new WaitOrTimerCallback (CBOnExit);
@@ -110,7 +109,6 @@ namespace System.Diagnostics {
 				ThreadPool.RegisterWaitForSingleObject (h, cb, this, -1, true);
 				already_waiting = true;
 			}
-#endif
 		}
 
 		[DefaultValue (false), Browsable (false)]
@@ -685,11 +683,13 @@ namespace System.Diagnostics {
 		}
 
 		[MonoTODO]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden), Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The number of threads of this process.")]
 		public ProcessThreadCollection Threads {
 			get {
-				return ProcessThreadCollection.GetEmpty ();
+				// This'll return a correctly-sized array of empty ProcessThreads for now.
+				int error;
+				return new ProcessThreadCollection(new ProcessThread[GetProcessData (pid, 0, out error)]);
 			}
 		}
 
@@ -918,8 +918,7 @@ namespace System.Diagnostics {
 								  IntPtr stderr,
 								  ref ProcInfo proc_info);
 
-		private static bool Start_shell (ProcessStartInfo startInfo,
-						 Process process)
+		private static bool Start_shell (ProcessStartInfo startInfo)
 		{
 			ProcInfo proc_info=new ProcInfo();
 			bool ret;
@@ -945,11 +944,6 @@ namespace System.Diagnostics {
 			if (!ret) {
 				throw new Win32Exception (-proc_info.pid);
 			}
-
-			process.process_handle = proc_info.process_handle;
-			process.pid = proc_info.pid;
-
-			process.StartExitCallbackIfNeeded ();
 
 			return(ret);
 		}
@@ -1162,7 +1156,7 @@ namespace System.Diagnostics {
 			if (startInfo.UseShellExecute) {
 				if (!String.IsNullOrEmpty (startInfo.UserName))
 					throw new InvalidOperationException ("UserShellExecute must be false if an explicit UserName is specified when starting a process");
-				return (Start_shell (startInfo, process));
+				return (Start_shell (startInfo));
 			} else {
 				return (Start_noshell (startInfo, process));
 			}
@@ -1182,8 +1176,11 @@ namespace System.Diagnostics {
 			if (startInfo == null)
 				throw new ArgumentNullException ("startInfo");
 
-			Process process=new Process();
-			process.StartInfo = startInfo;
+			Process process = null;
+			if (!startInfo.UseShellExecute) {
+				process = new Process();
+				process.StartInfo = startInfo;
+			}
 			if (Start_common(startInfo, process))
 				return process;
 			return null;
@@ -1566,6 +1563,21 @@ namespace System.Diagnostics {
 							async_output.Close ();
 						if (async_error != null)
 							async_error.Close ();
+
+						if (input_stream != null) {
+							input_stream.Close();
+							input_stream = null;
+						}
+
+						if (output_stream != null) {
+							output_stream.Close();
+							output_stream = null;
+						}
+
+						if (error_stream != null) {
+							error_stream.Close();
+							error_stream = null;
+						}
 					}
 				}
 				
@@ -1575,21 +1587,6 @@ namespace System.Diagnostics {
 					if(process_handle!=IntPtr.Zero) {
 						Process_free_internal(process_handle);
 						process_handle=IntPtr.Zero;
-					}
-
-					if (input_stream != null) {
-						input_stream.Close();
-						input_stream = null;
-					}
-
-					if (output_stream != null) {
-						output_stream.Close();
-						output_stream = null;
-					}
-
-					if (error_stream != null) {
-						error_stream.Close();
-						error_stream = null;
 					}
 				}
 			}

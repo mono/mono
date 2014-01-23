@@ -10,7 +10,7 @@ class X {
 		return x;
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		if (g () [1] == 10)
 				return 0;

@@ -36,7 +36,7 @@ namespace System.Security.Cryptography {
 	public class RSAPKCS1SignatureFormatter : AsymmetricSignatureFormatter {
 	
 		private RSA rsa;
-		private HashAlgorithm hash;
+		private string hash;
 	
 		public RSAPKCS1SignatureFormatter ()
 		{
@@ -65,7 +65,9 @@ namespace System.Security.Cryptography {
 	
 		public override void SetHashAlgorithm (string strName) 
 		{
-			hash = HashAlgorithm.Create (strName);
+			if (strName == null)
+				throw new ArgumentNullException ("strName");
+			hash = strName;
 		}
 	
 		public override void SetKey (AsymmetricAlgorithm key) 

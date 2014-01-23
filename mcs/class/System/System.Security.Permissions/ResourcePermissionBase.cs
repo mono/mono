@@ -111,9 +111,12 @@ namespace System.Security.Permissions {
 		{
 			if (securityElement == null)
 				throw new ArgumentNullException ("securityElement");
+
+#if !BOOTSTRAP_BASIC				
 			CheckSecurityElement (securityElement, "securityElement", version, version);
 			// Note: we do not (yet) care about the return value 
 			// as we only accept version 1 (min/max values)
+#endif
 
 			_list.Clear ();
 			_unrestricted = PermissionHelper.IsUnrestricted (securityElement);
@@ -311,43 +314,6 @@ namespace System.Security.Permissions {
 					return true;
 			}
 			return false;
-		}
-
-		// logic isn't identical to PermissionHelper.CheckSecurityElement
-		// - no throw on version mismatch
-		internal int CheckSecurityElement (SecurityElement se, string parameterName, int minimumVersion, int maximumVersion) 
-		{
-			if (se == null)
-				throw new ArgumentNullException (parameterName);
-			// Tag is case-sensitive
-			if (se.Tag != "IPermission") {
-				string msg = String.Format (Locale.GetText ("Invalid tag {0}"), se.Tag);
-				throw new ArgumentException (msg, parameterName);
-			}
-			// Note: we do not care about the class attribute at 
-			// this stage (in fact we don't even if the class 
-			// attribute is present or not). Anyway the object has
-			// already be created, with success, if we're loading it
-
-			// we assume minimum version if no version number is supplied
-			int version = minimumVersion;
-			string v = se.Attribute ("version");
-			if (v != null) {
-				try {
-					version = Int32.Parse (v);
-				}
-				catch (Exception e) {
-					string msg = Locale.GetText ("Couldn't parse version from '{0}'.");
-					msg = String.Format (msg, v);
-					throw new ArgumentException (msg, parameterName, e);
-				}
-			}
-			if ((version < minimumVersion) || (version > maximumVersion)) {
-				string msg = Locale.GetText ("Unknown version '{0}', expected versions between ['{1}','{2}'].");
-				msg = String.Format (msg, version, minimumVersion, maximumVersion);
-				throw new ArgumentException (msg, parameterName);
-			}
-			return version;
 		}
 
 		// static helpers

@@ -1,5 +1,5 @@
 class X {
-	static void Main ()
+	public static void Main ()
 	{
 		System.IFormattable foo = -1;
 	}

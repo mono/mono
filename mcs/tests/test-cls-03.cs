@@ -11,5 +11,5 @@ public class CLSClass {
                 return null;
         }
        
-        static void Main() {}
+        public static void Main() {}
 }

@@ -35,29 +35,16 @@ namespace System
 	static
 	class BitConverter
 	{
-		static readonly bool SwappedWordsInDouble = DoubleWordsAreSwapped ();
 		public static readonly bool IsLittleEndian = AmILittleEndian ();
 
 		static unsafe bool AmILittleEndian ()
 		{
 			// binary representations of 1.0:
-			// big endian: 3f f0 00 00 00 00 00 00
-			// little endian: 00 00 00 00 00 00 f0 3f
-			// arm fpa little endian: 00 00 f0 3f 00 00 00 00
+			// big endian:            3f f0 00 00 00 00 00 00
+			// little endian:         00 00 00 00 00 00 f0 3f
 			double d = 1.0;
 			byte *b = (byte*)&d;
 			return (b [0] == 0);
-		}
-
-		static unsafe bool DoubleWordsAreSwapped ()
-		{
-			// binary representations of 1.0:
-			// big endian: 3f f0 00 00 00 00 00 00
-			// little endian: 00 00 00 00 00 00 f0 3f
-			// arm fpa little endian: 00 00 f0 3f 00 00 00 00
-			double d = 1.0;
-			byte *b = (byte*)&d;
-			return b [2] == 0xf0;
 		}
 
 		public unsafe static long DoubleToInt64Bits (double value)
@@ -70,11 +57,6 @@ namespace System
 			return *(double *) &value;
 		}
 
-		internal static double InternalInt64BitsToDouble (long value)
-		{
-			return SwappableToDouble (GetBytes (value), 0);
-		}
-		
 		unsafe static byte[] GetBytes (byte *ptr, int count)
 		{
 			byte [] ret = new byte [count];
@@ -136,21 +118,7 @@ namespace System
 
 		unsafe public static byte[] GetBytes (double value)
 		{
-			if (SwappedWordsInDouble) {
-				byte[] data = new byte [8];
-				byte *p = (byte*)&value;
-				data [0] = p [4];
-				data [1] = p [5];
-				data [2] = p [6];
-				data [3] = p [7];
-				data [4] = p [0];
-				data [5] = p [1];
-				data [6] = p [2];
-				data [7] = p [3];
-				return data;
-			} else {
-				return GetBytes ((byte *) &value, 8);
-			}
+			return GetBytes ((byte *) &value, 8);
 		}
 
 		unsafe static void PutBytes (byte *dst, byte[] src, int start_index, int count)
@@ -268,102 +236,11 @@ namespace System
 		{
 			double ret;
 
-			if (SwappedWordsInDouble) {
-				byte* p = (byte*)&ret;
-				if (value == null)
-					throw new ArgumentNullException ("value");
-
-				if (startIndex < 0 || (startIndex > value.Length - 1))
-					throw new ArgumentOutOfRangeException ("startIndex", "Index was"
-						+ " out of range. Must be non-negative and less than the"
-						+ " size of the collection.");
-
-				// avoid integer overflow (with large pos/neg start_index values)
-				if (value.Length - 8 < startIndex)
-					throw new ArgumentException ("Destination array is not long"
-						+ " enough to copy all the items in the collection."
-						+ " Check array index and length.");
-
-				p [0] = value [startIndex + 4];
-				p [1] = value [startIndex + 5];
-				p [2] = value [startIndex + 6];
-				p [3] = value [startIndex + 7];
-				p [4] = value [startIndex + 0];
-				p [5] = value [startIndex + 1];
-				p [6] = value [startIndex + 2];
-				p [7] = value [startIndex + 3];
-
-				return ret;
-			}
-
 			PutBytes ((byte *) &ret, value, startIndex, 8);
 
 			return ret;
 		}
 
-		unsafe internal static double SwappableToDouble (byte[] value, int startIndex)
-		{
-			double ret;
-
-			if (SwappedWordsInDouble) {
-				byte* p = (byte*)&ret;
-				if (value == null)
-					throw new ArgumentNullException ("value");
-
-				if (startIndex < 0 || (startIndex > value.Length - 1))
-					throw new ArgumentOutOfRangeException ("startIndex", "Index was"
-						+ " out of range. Must be non-negative and less than the"
-						+ " size of the collection.");
-
-				// avoid integer overflow (with large pos/neg start_index values)
-				if (value.Length - 8 < startIndex)
-					throw new ArgumentException ("Destination array is not long"
-						+ " enough to copy all the items in the collection."
-						+ " Check array index and length.");
-
-				p [0] = value [startIndex + 4];
-				p [1] = value [startIndex + 5];
-				p [2] = value [startIndex + 6];
-				p [3] = value [startIndex + 7];
-				p [4] = value [startIndex + 0];
-				p [5] = value [startIndex + 1];
-				p [6] = value [startIndex + 2];
-				p [7] = value [startIndex + 3];
-
-				return ret;
-			} else if (!IsLittleEndian) {
-				byte* p = (byte*)&ret;
-				if (value == null)
-					throw new ArgumentNullException ("value");
-
-				if (startIndex < 0 || (startIndex > value.Length - 1))
-					throw new ArgumentOutOfRangeException ("startIndex", "Index was"
-						+ " out of range. Must be non-negative and less than the"
-						+ " size of the collection.");
-
-				// avoid integer overflow (with large pos/neg start_index values)
-				if (value.Length - 8 < startIndex)
-					throw new ArgumentException ("Destination array is not long"
-						+ " enough to copy all the items in the collection."
-						+ " Check array index and length.");
-
-				p [0] = value [startIndex + 7];
-				p [1] = value [startIndex + 6];
-				p [2] = value [startIndex + 5];
-				p [3] = value [startIndex + 4];
-				p [4] = value [startIndex + 3];
-				p [5] = value [startIndex + 2];
-				p [6] = value [startIndex + 1];
-				p [7] = value [startIndex + 0];
-
-				return ret;
-			}
-
-			PutBytes ((byte *) &ret, value, startIndex, 8);
-
-			return ret;
-		}
-		
 		public static string ToString (byte[] value)
 		{
 			if (value == null)

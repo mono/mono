@@ -22,7 +22,7 @@ class X
 		Console.WriteLine ("Hello: {0}", hello);
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		Foo<string> foo = new Foo<string> ();
 		foo.MyEvent += new Test<string> (do_hello);

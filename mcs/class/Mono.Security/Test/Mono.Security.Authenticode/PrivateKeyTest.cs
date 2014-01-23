@@ -96,7 +96,13 @@ public class PrivateKeyTest : Assertion {
 		Assert (msg, a);
 	}
 
-	private const string testfile = "test.pvk";
+	string testfile;
+		
+	[TestFixtureSetUp]
+	public void FixtureSetup ()
+	{
+		testfile = Path.Combine (Path.GetTempPath (), "test.pvk");
+	}
 
 	[TearDown]
 	public void TearDown () 

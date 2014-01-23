@@ -2,7 +2,7 @@ delegate int Foo<in T> (T t);
 
 public class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		string message = "Hello World!";
 		Foo<object> foo = (o) => o.GetHashCode ();

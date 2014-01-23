@@ -7,7 +7,7 @@ interface IFoo
 
 class Hello : IFoo
 {
-	static void Main ()
+	public static void Main ()
 	{
 		IFoo f = new Hello ();
 		int i = f.GetHashCode ();

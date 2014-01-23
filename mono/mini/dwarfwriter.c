@@ -30,20 +30,35 @@
 
 #include <mono/utils/freebsd-dwarf.h>
 
+typedef struct {
+	MonoMethod *method;
+	char *start_symbol, *end_symbol;
+	guint8 *code;
+	guint32 code_size;
+} MethodLineNumberInfo;
+
 struct _MonoDwarfWriter
 {
 	MonoImageWriter *w;
 	GHashTable *class_to_die, *class_to_vtype_die, *class_to_pointer_die;
 	GHashTable *class_to_reference_die;
 	int fde_index, tdie_index, line_number_file_index, line_number_dir_index;
-	GHashTable *file_to_index, *dir_to_index;
+	GHashTable *file_to_index, *index_to_file, *dir_to_index;
 	FILE *il_file;
 	int il_file_line_index, loclist_index;
 	GSList *cie_program;
 	FILE *fp;
 	const char *temp_prefix;
-	gboolean emit_line, appending;
+	gboolean emit_line, appending, collect_line_info;
+	GSList *line_info;
+	int cur_file_index;
 };
+
+static void
+emit_line_number_info (MonoDwarfWriter *w, MonoMethod *method, 
+					   char *start_symbol, char *end_symbol,
+					   guint8 *code, guint32 code_size,
+					   MonoDebugMethodJitInfo *debug_info);
 
 /*
  * mono_dwarf_writer_create:
@@ -57,7 +72,7 @@ struct _MonoDwarfWriter
  * debug information.
  */
 MonoDwarfWriter*
-mono_dwarf_writer_create (MonoImageWriter *writer, FILE *il_file, int il_file_start_line, gboolean appending)
+mono_dwarf_writer_create (MonoImageWriter *writer, FILE *il_file, int il_file_start_line, gboolean appending, gboolean emit_line_numbers)
 {
 	MonoDwarfWriter *w = g_new0 (MonoDwarfWriter, 1);
 	
@@ -78,6 +93,22 @@ mono_dwarf_writer_create (MonoImageWriter *writer, FILE *il_file, int il_file_st
 	if (appending)
 		g_assert (img_writer_subsections_supported (w->w));
 
+	w->emit_line = TRUE;
+
+	if (appending) {
+		if (!img_writer_subsections_supported (w->w))
+			/* Can't emit line number info without subsections */
+			w->emit_line = FALSE;
+	} else {
+		/* Collect line number info and emit it at once */
+		w->collect_line_info = TRUE;
+	}
+
+	if (!emit_line_numbers) {
+		w->emit_line = FALSE;
+		w->collect_line_info = FALSE;
+	}
+
 	w->fp = img_writer_get_fp (w->w);
 	w->temp_prefix = img_writer_get_temp_label_prefix (w->w);
 
@@ -85,6 +116,7 @@ mono_dwarf_writer_create (MonoImageWriter *writer, FILE *il_file, int il_file_st
 	w->class_to_vtype_die = g_hash_table_new (NULL, NULL);
 	w->class_to_pointer_die = g_hash_table_new (NULL, NULL);
 	w->class_to_reference_die = g_hash_table_new (NULL, NULL);
+	w->cur_file_index = -1;
 
 	return w;
 }
@@ -409,6 +441,7 @@ emit_fde (MonoDwarfWriter *w, int fde_index, char *start_symbol, char *end_symbo
 #define ABBREV_PARAM_LOCLIST 15
 #define ABBREV_INHERITANCE 16
 #define ABBREV_STRUCT_TYPE_NOCHILDREN 17
+#define ABBREV_TRAMP_SUBPROGRAM 18
 
 static int compile_unit_attr [] = {
 	DW_AT_producer     ,DW_FORM_string,
@@ -422,9 +455,18 @@ static int compile_unit_attr [] = {
 
 static int subprogram_attr [] = {
 	DW_AT_name         , DW_FORM_string,
+#ifndef TARGET_IOS
+	DW_AT_description  , DW_FORM_string,
+#endif
     DW_AT_low_pc       , DW_FORM_addr,
     DW_AT_high_pc      , DW_FORM_addr,
 	DW_AT_frame_base   , DW_FORM_block1
+};
+
+static int tramp_subprogram_attr [] = {
+	DW_AT_name         , DW_FORM_string,
+    DW_AT_low_pc       , DW_FORM_addr,
+    DW_AT_high_pc      , DW_FORM_addr,
 };
 
 static int param_attr [] = {
@@ -598,21 +640,125 @@ emit_line_number_file_name (MonoDwarfWriter *w, const char *name,
 	return index;
 }
 
-static void
-emit_line_number_info_begin (MonoDwarfWriter *w)
+static int
+get_line_number_file_name (MonoDwarfWriter *w, const char *name)
 {
+	int index;
+
+	g_assert (w->file_to_index);
+	index = GPOINTER_TO_UINT (g_hash_table_lookup (w->file_to_index, name));
+	g_assert (index > 0);
+	return index - 1;
+}
+
+static int
+add_line_number_file_name (MonoDwarfWriter *w, const char *name,
+						   gint64 last_mod_time, gint64 file_size)
+{
+	int index;
+	char *copy;
+
+	if (!w->file_to_index) {
+		w->file_to_index = g_hash_table_new (g_str_hash, g_str_equal);
+		w->index_to_file = g_hash_table_new (NULL, NULL);
+	}
+
+	index = GPOINTER_TO_UINT (g_hash_table_lookup (w->file_to_index, name));
+	if (index > 0)
+		return index - 1;
+	index = w->line_number_file_index;
+	w->line_number_file_index ++;
+	copy = g_strdup (name);
+	g_hash_table_insert (w->file_to_index, copy, GUINT_TO_POINTER (index + 1));
+	g_hash_table_insert (w->index_to_file, GUINT_TO_POINTER (index + 1), copy);
+
+	return index;
+}
+
+char *
+mono_dwarf_escape_path (const char *name)
+{
+	if (strchr (name, '\\')) {
+		char *s;
+		int len, i, j;
+
+		len = strlen (name);
+		s = g_malloc0 ((len + 1) * 2);
+		j = 0;
+		for (i = 0; i < len; ++i) {
+			if (name [i] == '\\') {
+				s [j ++] = '\\';
+				s [j ++] = '\\';
+			} else {
+				s [j ++] = name [i];
+			}
+		}
+		return s;
+	}
+	return g_strdup (name);
+}
+
+static void
+emit_all_line_number_info (MonoDwarfWriter *w)
+{
+	int i;
+	GHashTable *dir_to_index, *index_to_dir;
+	GSList *l;
+	GSList *info_list;
+
+	g_assert (w->collect_line_info);
+
+	add_line_number_file_name (w, "<unknown>", 0, 0);
+
+	/* Collect files */
+	info_list = g_slist_reverse (w->line_info);
+	for (l = info_list; l; l = l->next) {
+		MethodLineNumberInfo *info = l->data;
+		MonoDebugMethodInfo *minfo;
+		char *source_file;
+		GPtrArray *source_file_list;
+
+		// FIXME: Free stuff
+		minfo = mono_debug_lookup_method (info->method);
+		if (!minfo)
+			continue;
+
+		mono_debug_symfile_get_line_numbers_full (minfo, &source_file, &source_file_list, NULL, NULL, NULL, NULL, NULL);
+		for (i = 0; i < source_file_list->len; ++i) {
+			MonoDebugSourceInfo *sinfo = g_ptr_array_index (source_file_list, i);
+			add_line_number_file_name (w, sinfo->source_file, 0, 0);
+		}
+	}		
+
+	/* Preprocess files */
+	dir_to_index = g_hash_table_new (g_str_hash, g_str_equal);
+	index_to_dir = g_hash_table_new (NULL, NULL);
+	for (i = 0; i < w->line_number_file_index; ++i) {
+		char *name = g_hash_table_lookup (w->index_to_file, GUINT_TO_POINTER (i + 1));
+		char *copy;
+		int dir_index = 0;
+
+		if (g_path_is_absolute (name)) {
+			char *dir = g_path_get_dirname (name);
+
+			dir_index = GPOINTER_TO_UINT (g_hash_table_lookup (dir_to_index, dir));
+			if (dir_index == 0) {
+				dir_index = w->line_number_dir_index;
+				w->line_number_dir_index ++;
+				copy = g_strdup (dir);
+				g_hash_table_insert (dir_to_index, copy, GUINT_TO_POINTER (dir_index + 1));
+				g_hash_table_insert (index_to_dir, GUINT_TO_POINTER (dir_index + 1), copy);
+			} else {
+				dir_index --;
+			}
+
+			g_free (dir);
+		}
+	}
+
 	/* Line number info header */
-	/* 
-	 * GAS seems to emit its own data to the end of the first subsection, so we use
-	 * subsections 1, 2 etc:
-	 * 1 - contains the header
-	 * 2 - contains the file names
-	 * 3 - contains the end of the header + the data
-	 * 4 - the end symbol
-	 */
 	emit_section_change (w, ".debug_line", 0);
 	emit_label (w, ".Ldebug_line_section_start");
-	emit_section_change (w, ".debug_line", LINE_SUBSECTION_HEADER);
 	emit_label (w, ".Ldebug_line_start");
 	emit_symbol_diff (w, ".Ldebug_line_end", ".", -4); /* length */
 	emit_int16 (w, 0x2); /* version */
@@ -636,23 +782,52 @@ emit_line_number_info_begin (MonoDwarfWriter *w)
 	emit_byte (w, 1);
 
 	/* Includes */
-	emit_section_change (w, ".debug_line", LINE_SUBSECTION_INCLUDES);
+	emit_section_change (w, ".debug_line", 0);
+	for (i = 0; i < w->line_number_dir_index; ++i) {
+		char *dir = g_hash_table_lookup (index_to_dir, GUINT_TO_POINTER (i + 1));
 
+		emit_string (w, mono_dwarf_escape_path (dir));
+	}
 	/* End of Includes */
-	emit_section_change (w, ".debug_line", LINE_SUBSECTION_FILES);
 	emit_byte (w, 0);
 
 	/* Files */
-	emit_line_number_file_name (w, "xdb.il", 0, 0);
+	for (i = 0; i < w->line_number_file_index; ++i) {
+		char *name = g_hash_table_lookup (w->index_to_file, GUINT_TO_POINTER (i + 1));
+		char *basename = NULL, *dir;
+		int dir_index = 0;
+
+		if (g_path_is_absolute (name)) {
+			dir = g_path_get_dirname (name);
+
+			dir_index = GPOINTER_TO_UINT (g_hash_table_lookup (dir_to_index, dir));
+			basename = g_path_get_basename (name);
+		}
+											 
+		if (basename)
+			emit_string (w, basename);
+		else
+			emit_string (w, mono_dwarf_escape_path (name));
+		emit_uleb128 (w, dir_index);
+		emit_byte (w, 0);
+		emit_byte (w, 0);
+	}
 
 	/* End of Files */
-	emit_section_change (w, ".debug_line", LINE_SUBSECTION_DATA);
 	emit_byte (w, 0);
 
 	emit_label (w, ".Ldebug_line_header_end");
 
-	/* Emit this into a separate subsection so it gets placed at the end */	
-	emit_section_change (w, ".debug_line", LINE_SUBSECTION_END);
+	/* Emit line number table */
+	for (l = info_list; l; l = l->next) {
+		MethodLineNumberInfo *info = l->data;
+		MonoDebugMethodJitInfo *dmji;
+
+		dmji = mono_debug_find_method (info->method, mono_domain_get ());;
+		emit_line_number_info (w, info->method, info->start_symbol, info->end_symbol, info->code, info->code_size, dmji);
+		mono_debug_free_method_jit_info (dmji);
+	}
+	g_slist_free (info_list);
 
 	emit_byte (w, 0);
 	emit_byte (w, 1);
@@ -678,16 +853,10 @@ emit_debug_info_end (MonoDwarfWriter *w)
 }
 
 void
-mono_dwarf_writer_emit_base_info (MonoDwarfWriter *w, GSList *base_unwind_program)
+mono_dwarf_writer_emit_base_info (MonoDwarfWriter *w, const char *cu_name, GSList *base_unwind_program)
 {
 	char *s, *build_info;
 	int i;
-
-	if (!img_writer_subsections_supported (w->w))
-		/* Can't emit line number info without subsections */
-		w->emit_line = FALSE;
-	else
-		w->emit_line = TRUE;
 
 	w->cie_program = base_unwind_program;
 
@@ -726,6 +895,8 @@ mono_dwarf_writer_emit_base_info (MonoDwarfWriter *w, GSList *base_unwind_progra
 					   reference_type_attr, G_N_ELEMENTS (reference_type_attr));
 	emit_dwarf_abbrev (w, ABBREV_INHERITANCE, DW_TAG_inheritance, FALSE,
 					   inheritance_attr, G_N_ELEMENTS (inheritance_attr));
+	emit_dwarf_abbrev (w, ABBREV_TRAMP_SUBPROGRAM, DW_TAG_subprogram, FALSE,
+					   tramp_subprogram_attr, G_N_ELEMENTS (tramp_subprogram_attr));
 	emit_byte (w, 0);
 
 	emit_section_change (w, ".debug_info", 0);
@@ -751,13 +922,16 @@ mono_dwarf_writer_emit_base_info (MonoDwarfWriter *w, GSList *base_unwind_progra
 	emit_string (w, s);
 	g_free (build_info);
 	g_free (s);
-	emit_string (w, "JITted code");
+	emit_string (w, cu_name);
 	emit_string (w, "");
 	emit_byte (w, DW_LANG_C);
 	emit_pointer_value (w, 0);
 	emit_pointer_value (w, 0);
 	/* offset into .debug_line section */
-	emit_symbol_diff (w, ".Ldebug_line_start", ".Ldebug_line_section_start", 0);
+	if (w->emit_line)
+		emit_symbol_diff (w, ".Ldebug_line_start", ".Ldebug_line_section_start", 0);
+	else
+		emit_pointer_value (w, 0);
 
 	/* Base types */
 	for (i = 0; i < G_N_ELEMENTS (basic_types); ++i) {
@@ -773,13 +947,6 @@ mono_dwarf_writer_emit_base_info (MonoDwarfWriter *w, GSList *base_unwind_progra
 	/* debug_loc section */
 	emit_section_change (w, ".debug_loc", 0);
 	emit_label (w, ".Ldebug_loc_start");
-
-	/* debug_line section */
-	/*
-	 * We emit some info even if emit_line is FALSE, as the
-	 * apple linker seems to require a .debug_line section.
-	 */
-	emit_line_number_info_begin (w);
 
 	emit_cie (w);
 }
@@ -797,6 +964,9 @@ mono_dwarf_writer_close (MonoDwarfWriter *w)
 		emit_byte (w, 0); /* close COMPILE_UNIT */
 		emit_label (w, ".Ldebug_info_end");
 	}
+
+	if (w->collect_line_info)
+		emit_all_line_number_info (w);
 }
 
 static void emit_type (MonoDwarfWriter *w, MonoType *t);
@@ -1368,6 +1538,7 @@ emit_advance_op (MonoDwarfWriter *w, int line_diff, int addr_diff)
 	if (opcode != 0) {
 		emit_byte (w, opcode);
 	} else {
+		//printf ("large: %d %d %d\n", line_diff, addr_diff, max_special_addr_diff);
 		emit_byte (w, DW_LNS_advance_line);
 		emit_sleb128 (w, line_diff);
 		emit_byte (w, DW_LNS_advance_pc);
@@ -1401,7 +1572,7 @@ emit_line_number_info (MonoDwarfWriter *w, MonoMethod *method,
 	MonoDebugMethodInfo *minfo;
 	MonoDebugLineNumberEntry *ln_array;
 	int *native_to_il_offset = NULL;
-
+	
 	if (!w->emit_line) {
 		mono_metadata_free_mh (header);
 		return;
@@ -1444,7 +1615,10 @@ emit_line_number_info (MonoDwarfWriter *w, MonoMethod *method,
 	prev_line = 1;
 	prev_il_offset = -1;
 
+	w->cur_file_index = -1;
 	for (i = 0; i < code_size; ++i) {
+		int line_diff, addr_diff;
+
 		if (!minfo)
 			continue;
 
@@ -1471,59 +1645,63 @@ emit_line_number_info (MonoDwarfWriter *w, MonoMethod *method,
 		prev_il_offset = il_offset;
 
 		loc = mono_debug_symfile_lookup_location (minfo, il_offset);
+		if (!(loc && loc->source_file))
+			continue;
 
-		// Added the loc->source_file check as otherwise we can
-		// crash, see the sample in bug 553191 that makes this code
-		// crash when we call strcmp on loc->source_file below
-		if (loc && loc->source_file) {
-			int line_diff = (gint32)loc->row - (gint32)prev_line;
-			int addr_diff = i - prev_native_offset;
+		line_diff = (gint32)loc->row - (gint32)prev_line;
+		addr_diff = i - prev_native_offset;
 
-			if (first) {	
-				emit_section_change (w, ".debug_line", LINE_SUBSECTION_DATA);
+		if (first) {	
+			emit_section_change (w, ".debug_line", LINE_SUBSECTION_DATA);
 
-				emit_byte (w, 0);
-				emit_byte (w, sizeof (gpointer) + 1);
-				emit_byte (w, DW_LNE_set_address);
-				if (start_symbol)
-					emit_pointer_unaligned (w, start_symbol);
+			emit_byte (w, 0);
+			emit_byte (w, sizeof (gpointer) + 1);
+			emit_byte (w, DW_LNE_set_address);
+			if (start_symbol)
+				emit_pointer_unaligned (w, start_symbol);
+			else
+				emit_pointer_value (w, code);
+
+			/* 
+			 * The prolog+initlocals region does not have a line number, this
+			 * makes them belong to the first line of the method.
+			 */
+			emit_byte (w, DW_LNS_advance_line);
+			//printf ("FIRST: %d %d %d\n", prev_line, loc->row, il_offset);
+			emit_sleb128 (w, (gint32)loc->row - (gint32)prev_line);
+			first = FALSE;
+		}
+
+		if (loc->row != prev_line) {
+			if (!prev_file_name || strcmp (loc->source_file, prev_file_name) != 0) {
+				/* Add an entry to the file table */
+				/* FIXME: Avoid duplicates */
+				if (w->collect_line_info)
+					file_index = get_line_number_file_name (w, loc->source_file) + 1;
 				else
-					emit_pointer_value (w, code);
-
-				/* 
-				 * The prolog+initlocals region does not have a line number, this
-				 * makes them belong to the first line of the method.
-				 */
-				emit_byte (w, DW_LNS_advance_line);
-				emit_sleb128 (w, (gint32)loc->row - (gint32)prev_line);
-				prev_line = loc->row;
-			}
-
-			if (loc->row != prev_line) {
-				if (!prev_file_name || strcmp (loc->source_file, prev_file_name) != 0) {
-					/* Add an entry to the file table */
-					/* FIXME: Avoid duplicates */
 					file_index = emit_line_number_file_name (w, loc->source_file, 0, 0);
-					g_free (prev_file_name);
-					prev_file_name = g_strdup (loc->source_file);
+				g_free (prev_file_name);
+				prev_file_name = g_strdup (loc->source_file);
 
+				if (w->cur_file_index != file_index) {
 					emit_byte (w, DW_LNS_set_file);
 					emit_uleb128 (w, file_index);
 					emit_byte (w, DW_LNS_copy);
-				}
-
-				//printf ("X: %p(+0x%x) %d %s:%d(+%d)\n", code + i, addr_diff, loc->il_offset, loc->source_file, loc->row, line_diff);
-
-				emit_advance_op (w, line_diff, addr_diff);
-
-				prev_line = loc->row;
-				prev_native_offset = i;
+					w->cur_file_index = file_index;
+				}					
 			}
-
-			first = FALSE;
-
-			mono_debug_symfile_free_location (loc);
 		}
+
+		if (loc->row != prev_line && !first) {
+			//printf ("X: %p(+0x%x) %d %s:%d(+%d)\n", code + i, addr_diff, loc->il_offset, loc->source_file, loc->row, line_diff);
+			emit_advance_op (w, line_diff, addr_diff);
+
+			prev_line = loc->row;
+			prev_native_offset = i;
+		}
+
+		mono_debug_symfile_free_location (loc);
+		first = FALSE;
 	}
 
 	g_free (native_to_il_offset);
@@ -1686,6 +1864,9 @@ mono_dwarf_writer_emit_method (MonoDwarfWriter *w, MonoCompile *cfg, MonoMethod 
 	emit_uleb128 (w, ABBREV_SUBPROGRAM);
 	name = mono_method_full_name (method, FALSE);
 	emit_string (w, name);
+#ifndef TARGET_IOS
+	emit_string (w, name);
+#endif
 	g_free (name);
 	if (start_symbol) {
 		emit_pointer_unaligned (w, start_symbol);
@@ -1825,8 +2006,22 @@ mono_dwarf_writer_emit_method (MonoDwarfWriter *w, MonoCompile *cfg, MonoMethod 
 
 	/* Emit line number info */
 	/* != could happen when using --regression */
-	if (debug_info && (debug_info->code_start == code))
-		emit_line_number_info (w, method, start_symbol, end_symbol, code, code_size, debug_info);
+	if (debug_info && (debug_info->code_start == code)) {
+		if (w->collect_line_info) {
+			MethodLineNumberInfo *info;
+
+			/* Save the information needed to emit the line number info later at once */
+			info = g_new0 (MethodLineNumberInfo, 1);
+			info->method = method;
+			info->start_symbol = g_strdup (start_symbol);
+			info->end_symbol = g_strdup (end_symbol);
+			info->code = code;
+			info->code_size = code_size;
+			w->line_info = g_slist_prepend (w->line_info, info);
+		} else {
+			emit_line_number_info (w, method, start_symbol, end_symbol, code, code_size, debug_info);
+		}
+	}
 
 	emit_line (w);
 	mono_metadata_free_mh (header);
@@ -1838,14 +2033,10 @@ mono_dwarf_writer_emit_trampoline (MonoDwarfWriter *w, const char *tramp_name, c
 	emit_section_change (w, ".debug_info", 0);
 
 	/* Subprogram */
-	emit_uleb128 (w, ABBREV_SUBPROGRAM);
+	emit_uleb128 (w, ABBREV_TRAMP_SUBPROGRAM);
 	emit_string (w, tramp_name);
 	emit_pointer_value (w, code);
 	emit_pointer_value (w, code + code_size);
-	/* frame_base */
-	emit_byte (w, 2);
-	emit_byte (w, DW_OP_breg6);
-	emit_byte (w, 16);
 
 	/* Subprogram end */
 	emit_uleb128 (w, 0x0);

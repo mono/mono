@@ -8,7 +8,7 @@ class P {
 	~P () {
 		T.finalized = true;
 		Thread.Sleep (1000);
-		//Console.WriteLine ("finalizer done");
+		// Console.WriteLine ("finalizer done");
 		count++;
 	}
 }
@@ -22,12 +22,10 @@ class T {
 		p = null;
 	}
 
-	static void callMakeP () {
-		makeP ();
-	}
-
 	static int Main () {
-		callMakeP ();
+		var t = new Thread (makeP);
+		t.Start ();
+		t.Join ();
 
 		GC.Collect ();
 		while (!finalized) {

@@ -33,8 +33,6 @@ namespace System.Security.AccessControl
 {
 	public sealed class FileSystemAccessRule : AccessRule
 	{
-		FileSystemRights rights;
-		
 		public FileSystemAccessRule (IdentityReference identity,
 					     FileSystemRights fileSystemRights,
 					     AccessControlType type)
@@ -45,7 +43,7 @@ namespace System.Security.AccessControl
 		public FileSystemAccessRule (string identity,
 					     FileSystemRights fileSystemRights,
 					     AccessControlType type)
-			: this (new SecurityIdentifier (identity), fileSystemRights, InheritanceFlags.None, PropagationFlags.None, type)
+			: this (new NTAccount (identity), fileSystemRights, InheritanceFlags.None, PropagationFlags.None, type)
 		{
 		}
 
@@ -54,9 +52,18 @@ namespace System.Security.AccessControl
 					     InheritanceFlags inheritanceFlags,
 					     PropagationFlags propagationFlags,
 					     AccessControlType type)
-			: base (identity, (int) fileSystemRights, false, inheritanceFlags, propagationFlags, type)
+			: this (identity, fileSystemRights, false, inheritanceFlags, propagationFlags, type)
 		{
-			this.rights = fileSystemRights;
+		}
+		
+		internal FileSystemAccessRule (IdentityReference identity,
+					       FileSystemRights fileSystemRights,
+					       bool isInherited,
+					       InheritanceFlags inheritanceFlags,
+					       PropagationFlags propagationFlags,
+					       AccessControlType type)
+			: base (identity, (int) fileSystemRights, isInherited, inheritanceFlags, propagationFlags, type)
+		{
 		}
 		
 		public FileSystemAccessRule (string identity,
@@ -64,12 +71,12 @@ namespace System.Security.AccessControl
 					     InheritanceFlags inheritanceFlags,
 					     PropagationFlags propagationFlags,
 					     AccessControlType type)
-			: this (new SecurityIdentifier (identity), fileSystemRights, inheritanceFlags, propagationFlags, type)
+			: this (new NTAccount (identity), fileSystemRights, inheritanceFlags, propagationFlags, type)
 		{
 		}
 		
 		public FileSystemRights FileSystemRights {
-			get { return rights; }
+			get { return (FileSystemRights)AccessMask; }
 		}
 	}
 }

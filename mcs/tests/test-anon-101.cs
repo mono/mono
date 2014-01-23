@@ -18,7 +18,7 @@ class X
 		Hello (u);
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		X x = new X ();
 		x.Test (3);

@@ -13,7 +13,7 @@ abstract class A<T>
 
 class C
 {
-	static int Main ()
+	public static int Main ()
 	{
 		var r = new A<short>.B ();
 		if (r.getT () != r)

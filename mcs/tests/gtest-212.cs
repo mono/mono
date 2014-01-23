@@ -18,7 +18,7 @@ public class Test
     bool a = t.Valid;
   }
 
-  static void Main()
+  public static void Main()
   {
     Fun(new SomeStruct());
   }

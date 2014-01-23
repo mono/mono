@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Tim Coleman (tim@timcoleman.com)
+// 	Martin Baulig <martin.baulig@xamarin.com>
 //
 // Copyright (C) Tim Coleman, 2004
+// Copyright (c) 2012 Xamarin Inc. (http://www.xamarin.com)
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -28,8 +30,6 @@
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
-
-#if NET_2_0
 
 using System.Collections;
 using System.Diagnostics;
@@ -368,6 +368,17 @@ namespace System.Configuration
 
 		protected internal override bool IsModified ()
 		{
+			if (modified)
+				return true;
+
+			for (int n=0; n<list.Count; n++) {
+				ConfigurationElement elem = (ConfigurationElement) list [n];
+				if (!elem.IsModified ())
+					continue;
+				modified = true;
+				break;
+			}
+
 			return modified;
 		}
 
@@ -377,9 +388,37 @@ namespace System.Configuration
 			return base.IsReadOnly ();
 		}
 
-		internal override bool HasValues ()
+		internal override void PrepareSave (ConfigurationElement parentElement, ConfigurationSaveMode mode)
 		{
-			return list.Count > 0;
+			var parent = (ConfigurationElementCollection)parentElement;
+			base.PrepareSave (parentElement, mode);
+
+			for (int n=0; n<list.Count; n++) {
+				ConfigurationElement elem = (ConfigurationElement) list [n];
+				object key = GetElementKey (elem);
+				ConfigurationElement pitem = parent != null ? parent.BaseGet (key) as ConfigurationElement : null;
+
+				elem.PrepareSave (pitem, mode);
+			}
+		}
+
+		internal override bool HasValues (ConfigurationElement parentElement, ConfigurationSaveMode mode)
+		{
+			var parent = (ConfigurationElementCollection)parentElement;
+
+			if (mode == ConfigurationSaveMode.Full)
+				return list.Count > 0;
+
+			for (int n=0; n<list.Count; n++) {
+				ConfigurationElement elem = (ConfigurationElement) list [n];
+				object key = GetElementKey (elem);
+				ConfigurationElement pitem = parent != null ? parent.BaseGet (key) as ConfigurationElement : null;
+
+				if (elem.HasValues (pitem, mode))
+					return true;
+			}
+
+			return false;
 		}
 
 		protected internal override void Reset (ConfigurationElement parentElement)
@@ -410,6 +449,10 @@ namespace System.Configuration
 		protected internal override void ResetModified ()
 		{
 			modified = false;
+			for (int n=0; n<list.Count; n++) {
+				ConfigurationElement elem = (ConfigurationElement) list [n];
+				elem.ResetModified ();
+			}
 		}
 
 		[MonoTODO]
@@ -521,14 +564,12 @@ namespace System.Configuration
 				ConfigurationElement sitem = source.BaseGet (n);
 				object key = source.GetElementKey (sitem);
 				ConfigurationElement pitem = parent != null ? parent.BaseGet (key) as ConfigurationElement : null;
+				ConfigurationElement nitem = CreateNewElementInternal (null);
 				if (pitem != null && updateMode != ConfigurationSaveMode.Full) {
-					ConfigurationElement nitem = CreateNewElementInternal (null);
-					nitem.Unmerge (sitem, pitem, ConfigurationSaveMode.Minimal);
-					if (nitem.HasValues ())
+					nitem.Unmerge (sitem, pitem, updateMode);
+					if (nitem.HasValues (pitem, updateMode))
 						BaseAdd (nitem);
-				}
-				else {
-					ConfigurationElement nitem = CreateNewElementInternal (null);
+				} else {
 					nitem.Unmerge (sitem, null, ConfigurationSaveMode.Full);
 					BaseAdd (nitem);
 				}
@@ -552,4 +593,3 @@ namespace System.Configuration
         }
 }
 
-#endif

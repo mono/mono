@@ -4,6 +4,9 @@ using System.ServiceModel;
 
 namespace System.ServiceModel.Channels
 {
+#if NET_4_0
+	[Obsolete ("Use AllowCookies.")]
+#endif
 	public class HttpCookieContainerBindingElement : BindingElement
 	{
 		HttpCookieContainerManager manager;

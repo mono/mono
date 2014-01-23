@@ -1,0 +1,4 @@
+-d:SIGNED
+-delaysign
+-keyfile:../reactive.pub
+-resource:Strings_Core.resources,System.Reactive.Strings_Core.resources

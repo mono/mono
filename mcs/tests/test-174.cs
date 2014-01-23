@@ -21,7 +21,7 @@ class ProtectedAccessToPropertyOnChild : Hashtable {
 		comparer = null;
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		TestAccessToProtectedOnChildInstanceFromParent t = new TestAccessToProtectedOnChildInstanceFromParent ();
 

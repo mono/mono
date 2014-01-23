@@ -10,7 +10,7 @@ class Foo<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Foo<int> foo = new Foo<int> ();
 		foo.Hello = 9;

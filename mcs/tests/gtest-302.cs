@@ -11,7 +11,7 @@ class Test : ITest {
 }
 
 class M {
-	static void Main ()
+	public static void Main ()
 	{
 		ITest foo = new Test ();
 		foreach (int i in foo)

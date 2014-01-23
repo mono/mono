@@ -33,9 +33,7 @@
 using System;
 using System.ComponentModel;
 using System.Globalization;
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 using System.ServiceProcess.Design;
 using System.Threading;
 
@@ -43,9 +41,7 @@ namespace System.ServiceProcess
 {
 	[Designer("System.ServiceProcess.Design.ServiceControllerDesigner, " + Consts.AssemblySystem_Design)]
 	[MonoTODO ("No unix implementation")]
-#if NET_2_0
 	[ServiceProcessDescription ("Provides the ability to connect to, query, and manipulate running or stopped Windows services.")]
-#endif
 	public class ServiceController : Component
 	{
 		private string _name;
@@ -84,9 +80,7 @@ namespace System.ServiceProcess
 		[ServiceProcessDescription ("Whether this service recognizes the Pause and Continue commands.")]
 		public bool CanPauseAndContinue {
 			get {
-#if NET_2_0
 				ValidateServiceName (ServiceName);
-#endif
 				return _impl.CanPauseAndContinue;
 			}
 		}
@@ -96,9 +90,7 @@ namespace System.ServiceProcess
 		public bool CanShutdown {
 			get
 			{
-#if NET_2_0
 				ValidateServiceName (ServiceName);
-#endif
 				return _impl.CanShutdown;
 			}
 		}
@@ -108,9 +100,7 @@ namespace System.ServiceProcess
 		public bool CanStop {
 			get
 			{
-#if NET_2_0
 				ValidateServiceName (ServiceName);
-#endif
 				return _impl.CanStop;
 			}
 		}
@@ -120,9 +110,7 @@ namespace System.ServiceProcess
 		public ServiceController [] DependentServices {
 			get
 			{
-#if NET_2_0
 				ValidateServiceName (ServiceName);
-#endif
 				if (_dependentServices == null)
 					_dependentServices = _impl.DependentServices;
 				return _dependentServices;
@@ -207,9 +195,7 @@ namespace System.ServiceProcess
 				if (_serviceName == value)
 					return;
 
-#if NET_2_0
 				ValidateServiceName (value);
-#endif
 
 				_serviceName = value;
 
@@ -233,16 +219,13 @@ namespace System.ServiceProcess
 		public ServiceController [] ServicesDependedOn {
 			get
 			{
-#if NET_2_0
 				ValidateServiceName (ServiceName);
-#endif
 				if (_servicesDependedOn == null)
 					_servicesDependedOn = _impl.ServicesDependedOn;
 				return _servicesDependedOn;
 			}
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -252,16 +235,13 @@ namespace System.ServiceProcess
 				throw new NotImplementedException ();
 			}
 		}
-#endif
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[ServiceProcessDescription ("The type of this service.")]
 		public ServiceType ServiceType {
 			get
 			{
-#if NET_2_0
 				ValidateServiceName (ServiceName);
-#endif
 				return _impl.ServiceType;
 			}
 		}
@@ -271,9 +251,7 @@ namespace System.ServiceProcess
 		public ServiceControllerStatus Status {
 			get
 			{
-#if NET_2_0
 				ValidateServiceName (ServiceName);
-#endif
 				return _impl.Status;
 			}
 		}
@@ -285,9 +263,7 @@ namespace System.ServiceProcess
 
 		public void Continue ()
 		{
-#if NET_2_0
 			ValidateServiceName (ServiceName);
-#endif
 			_impl.Continue ();
 		}
 
@@ -299,9 +275,7 @@ namespace System.ServiceProcess
 
 		public void ExecuteCommand (int command)
 		{
-#if NET_2_0
 			ValidateServiceName (ServiceName);
-#endif
 			_impl.ExecuteCommand (command);
 		}
 
@@ -337,9 +311,7 @@ namespace System.ServiceProcess
 
 		public void Pause ()
 		{
-#if NET_2_0
 			ValidateServiceName (ServiceName);
-#endif
 			_impl.Pause ();
 		}
 
@@ -362,17 +334,13 @@ namespace System.ServiceProcess
 
 		public void Start (string [] args)
 		{
-#if NET_2_0
 			ValidateServiceName (ServiceName);
-#endif
 			_impl.Start (args);
 		}
 
 		public void Stop ()
 		{
-#if NET_2_0
 			ValidateServiceName (ServiceName);
-#endif
 			_impl.Stop ();
 		}
 
@@ -383,9 +351,7 @@ namespace System.ServiceProcess
 
 		public void WaitForStatus (ServiceControllerStatus desiredStatus, TimeSpan timeout)
 		{
-#if NET_2_0
 			ValidateServiceName (ServiceName);
-#endif
 
 			DateTime start = DateTime.Now;
 			while (Status != desiredStatus) {
@@ -425,7 +391,6 @@ namespace System.ServiceProcess
 			}
 		}
 
-#if NET_2_0
 		private static void ValidateServiceName (string serviceName)
 		{
 			if (serviceName.Length == 0 || serviceName.Length > 80)
@@ -433,7 +398,6 @@ namespace System.ServiceProcess
 					"Service name {0} contains invalid characters, is empty"
 					+ " or is too long (max length = 80).", serviceName));
 		}
-#endif
 
 		private static void ValidateMachineName (string machineName)
 		{

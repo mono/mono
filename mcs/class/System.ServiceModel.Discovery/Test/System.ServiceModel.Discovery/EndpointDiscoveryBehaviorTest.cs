@@ -58,6 +58,7 @@ namespace MonoTests.System.ServiceModel.Discovery
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Use2 ()
 		{
 			// This time with ServiceDiscoveryBehavior.

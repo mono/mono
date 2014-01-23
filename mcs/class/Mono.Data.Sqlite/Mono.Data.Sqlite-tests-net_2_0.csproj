@@ -5,14 +5,16 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{D7ADECD6-0DB4-4D9D-A491-1686883B3342}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618</NoWarn>
-    <OutputPath>.\</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\Mono.Data.Sqlite-tests-net_2_0</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>False</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>Mono.Data.Sqlite_test_net_2_0</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -25,7 +27,6 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;SQLITE_STANDARD</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,18 +35,21 @@
     <DefineConstants>NET_1_1;NET_2_0;SQLITE_STANDARD</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_2_0</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="Test\SqliteCommandUnitTests.cs" />
-   <Compile Include="Test\SqliteConnectionTest.cs" />
-   <Compile Include="Test\SqliteDataAdapterUnitTests.cs" />
-   <Compile Include="Test\SqliteDataReaderTest.cs" />
-   <Compile Include="Test\SqliteExceptionUnitTests.cs" />
-   <Compile Include="Test\SqliteParameterUnitTests.cs" />
-
-  </ItemGroup>
+    <Compile Include="Test\SqliteCommandUnitTests.cs" />
+    <Compile Include="Test\SqliteConnectionTest.cs" />
+    <Compile Include="Test\SqliteDataAdapterUnitTests.cs" />
+    <Compile Include="Test\SqliteDataReaderTest.cs" />
+    <Compile Include="Test\SqliteExceptionUnitTests.cs" />
+    <Compile Include="Test\SqliteParameterUnitTests.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -54,53 +58,55 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="./../../class/lib/net_2_0/Mono.Data.Sqlite.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../class/lib/net_2_0/Mono.Data.Sqlite.dll</HintPath>
-    </Reference>
-    <Reference Include="System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Transactions.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Transactions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework" />
-
+    <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
+    <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
+      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
+      <Name>corlib\corlib-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mono.Data.Sqlite\Mono.Data.Sqlite-net_2_0.csproj">
+      <Project>{991C45A8-3B22-45BB-B688-DBF8BA835992}</Project>
+      <Name>Mono.Data.Sqlite\Mono.Data.Sqlite-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_2_0-2.csproj">
+      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
+      <Name>System\System-net_2_0-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Data\System.Data-net_2_0.csproj">
+      <Project>{49220562-83E1-49A2-971F-5D31C4AB0258}</Project>
+      <Name>System.Data\System.Data-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Transactions\System.Transactions-net_2_0.csproj">
+      <Project>{DD1B3195-5FEA-46A2-99B5-9839CA60485C}</Project>
+      <Name>System.Transactions\System.Transactions-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
+      <Project>{D9776E38-7673-45F6-BF19-7B77830DF9CA}</Project>
+      <Name>System.XML\System.Xml-net_2_0-1</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-    <ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="resources/SR.resources">
-       <LogicalName>SR.resources</LogicalName>
+      <LogicalName>SR.resources</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/SQLiteCommand.bmp">
-       <LogicalName>SQLiteCommand.bmp</LogicalName>
+      <LogicalName>SQLiteCommand.bmp</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/SQLiteConnection.bmp">
-       <LogicalName>SQLiteConnection.bmp</LogicalName>
+      <LogicalName>SQLiteConnection.bmp</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources/SQLiteDataAdapter.bmp">
-       <LogicalName>SQLiteDataAdapter.bmp</LogicalName>
+      <LogicalName>SQLiteDataAdapter.bmp</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
-
 </Project>
-

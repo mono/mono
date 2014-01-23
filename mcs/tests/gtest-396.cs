@@ -11,7 +11,7 @@ public class Test
 		return null;
 	}
 
-	static void Main()
+	public static void Main()
 	{
 		Invoke(Method, "one", 1);
 	}

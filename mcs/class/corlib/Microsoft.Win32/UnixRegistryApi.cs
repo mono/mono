@@ -134,8 +134,8 @@ namespace Microsoft.Win32 {
 			if (!Directory.Exists (actual_basedir)) {
 				try {
 					Directory.CreateDirectory (actual_basedir);
-				} catch (UnauthorizedAccessException){
-					throw new SecurityException ("No access to the given key");
+				} catch (UnauthorizedAccessException ex){
+					throw new SecurityException ("No access to the given key", ex);
 				}
 			}
 			Dir = basedir; // This is our identifier.
@@ -328,8 +328,9 @@ namespace Microsoft.Win32 {
 			try {
 				using (StreamWriter writer = new StreamWriter (path, false, Encoding.ASCII))
 					writer.WriteLine (btime.ToString ());
-			} catch (Exception e) {
-				Console.Error.WriteLine ("While saving registry data at {0}: {1}", path, e);
+			} catch (Exception) {
+				/* This can happen when a user process tries to write to MachineStore */
+				//Console.Error.WriteLine ("While saving registry data at {0}: {1}", path, e);
 			}
 		}
 			

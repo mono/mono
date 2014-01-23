@@ -27,7 +27,7 @@
 //
 //
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 
 using System.Collections.Generic;
 
@@ -104,24 +104,47 @@ namespace System.Threading.Tasks
 				return;
 
 			if ((continuationOptions & TaskContinuationOptions.ExecuteSynchronously) != 0)
-				task.RunSynchronously (task.scheduler);
+				task.RunSynchronouslyCore (task.scheduler);
 			else
 				task.Schedule ();
 		}
 	}
 
-	class ActionContinuation : IContinuation
+	class AwaiterActionContinuation : IContinuation
 	{
 		readonly Action action;
 
-		public ActionContinuation (Action action)
+		public AwaiterActionContinuation (Action action)
 		{
 			this.action = action;
 		}
 
 		public void Execute ()
 		{
-			action ();
+			//
+			// Continuation can be inlined only when the current context allows it. This is different to awaiter setup
+			// because the context where the awaiter task is set to completed can be anywhere (due to TaskCompletionSource)
+			//
+			if ((SynchronizationContext.Current == null || SynchronizationContext.Current.GetType () == typeof (SynchronizationContext)) && TaskScheduler.IsDefault) {
+				action ();
+			} else {
+				ThreadPool.UnsafeQueueUserWorkItem (l => ((Action) l) (), action);
+			}
+		}
+	}
+
+	class SchedulerAwaitContinuation : IContinuation
+	{
+		readonly Task task;
+
+		public SchedulerAwaitContinuation (Task task)
+		{
+			this.task = task;
+		}
+
+		public void Execute ()
+		{
+			task.RunSynchronouslyCore (task.scheduler);
 		}
 	}
 
@@ -179,7 +202,7 @@ namespace System.Threading.Tasks
 			}
 
 			if (exceptions != null) {
-				owner.TrySetException (new AggregateException (exceptions));
+				owner.TrySetException (new AggregateException (exceptions), false, false);
 				return;
 			}
 
@@ -239,7 +262,7 @@ namespace System.Threading.Tasks
 			}
 
 			if (exceptions != null) {
-				owner.TrySetException (new AggregateException (exceptions));
+				owner.TrySetException (new AggregateException (exceptions), false, false);
 				return;
 			}
 
@@ -256,12 +279,13 @@ namespace System.Threading.Tasks
 	{
 		readonly Task<T> owner;
 		readonly IList<T> tasks;
-		AtomicBooleanValue executed = new AtomicBooleanValue ();
+		AtomicBooleanValue executed;
 
 		public WhenAnyContinuation (Task<T> owner, IList<T> tasks)
 		{
 			this.owner = owner;
 			this.tasks = tasks;
+			executed = new AtomicBooleanValue ();
 		}
 
 		public void Execute ()
@@ -269,13 +293,19 @@ namespace System.Threading.Tasks
 			if (!executed.TryRelaxedSet ())
 				return;
 
+			bool owner_notified = false;
 			for (int i = 0; i < tasks.Count; ++i) {
 				var task = tasks[i];
-				if (!task.IsCompleted)
+				if (!task.IsCompleted) {
+					task.RemoveContinuation (this);
+					continue;
+				}
+
+				if (owner_notified)
 					continue;
 
 				owner.TrySetResult (task);
-				return;
+				owner_notified = true;
 			}
 		}
 	}
@@ -306,38 +336,10 @@ namespace System.Threading.Tasks
 		}
 	}
 
-	sealed class DelayContinuation : IContinuation, IDisposable
-	{
-		readonly ManualResetEventSlim evt;
-
-		public DelayContinuation ()
-		{
-			this.evt = new ManualResetEventSlim ();
-		}
-
-		public ManualResetEventSlim Event
-		{
-			get
-			{
-				return evt;
-			}
-		}
-
-		public void Dispose ()
-		{
-			evt.Dispose ();
-		}
-
-		public void Execute ()
-		{
-			Console.WriteLine ("execute");
-			evt.Set ();
-		}
-	}
-
 	sealed class CountdownContinuation : IContinuation, IDisposable
 	{
 		readonly CountdownEvent evt;
+		bool disposed;
 
 		public CountdownContinuation (int initialCount)
 		{
@@ -352,12 +354,33 @@ namespace System.Threading.Tasks
 
 		public void Dispose ()
 		{
+			disposed = true;
+			Thread.MemoryBarrier ();
+	
 			evt.Dispose ();
 		}
 
 		public void Execute ()
 		{
-			evt.Signal ();
+			// Guard against possible race when continuation is disposed and some tasks may still
+			// execute it (removal was late and the execution is slower than the Dispose thread)
+			if (!disposed)
+				evt.Signal ();
+		}
+	}
+
+	sealed class DisposeContinuation : IContinuation
+	{
+		readonly IDisposable instance;
+
+		public DisposeContinuation (IDisposable instance)
+		{
+			this.instance = instance;
+		}
+
+		public void Execute ()
+		{
+			instance.Dispose ();
 		}
 	}
 }

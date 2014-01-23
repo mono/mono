@@ -7,7 +7,7 @@ LIBRARY = Mono.Web.dll
 NO_TEST = yes
 
 # This is a .NET 2.0+ only assembly
-VALID_PROFILE := $(filter net_2_0 net_4_0 net_4_5, $(PROFILE))
+VALID_PROFILE := $(filter 2 4, $(FRAMEWORK_VERSION_MAJOR))
 ifdef VALID_PROFILE
 
 LIB_MCS_FLAGS = -r:$(corlib) \

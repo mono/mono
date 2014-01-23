@@ -62,7 +62,7 @@ using System;
 		 Console.WriteLine ("c = {0}, {1}", c.Name, c.Value);
 	 }
 
-	 static void Main ()
+	 public static void Main ()
 	 {
 		 MethodHandler mh = MethodSample;
 

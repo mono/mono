@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !FULL_AOT_RUNTIME
 using System;
 using System.IO;
 using System.Collections;
@@ -401,3 +402,4 @@ namespace System.Runtime.Serialization.Formatters.Binary
 	}
  }
  
+#endif

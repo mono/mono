@@ -140,6 +140,15 @@ namespace MonoTests.System {
 			Assert.IsFalse (g1 == g2);
 		}
 
+		[Test]
+		public void NewGuid_Stressed ()
+		{
+			for (int i = 0; i < 256; i++) {
+				Guid g = Guid.NewGuid ();
+				Assert.AreNotEqual (0, g.CompareTo (Guid.Empty), i.ToString ());
+			}
+		}
+
 #pragma warning disable 1718
 		[Test]
 		public void EqualityOp ()
@@ -381,6 +390,13 @@ namespace MonoTests.System {
 
 		[Test]
 		[ExpectedException (typeof (FormatException))]
+		public void ParseError_1 ()
+		{
+			Guid.Parse("08888888-0444-444-0444-012121212121");
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
 		public void ParseExactN ()
 		{
 			Guid.ParseExact ("00010203-0405-0607-0809-0a0b0c0d0e0f", "N");
@@ -391,6 +407,31 @@ namespace MonoTests.System {
 		public void ParseExactD ()
 		{
 			Guid.ParseExact ("{0x00010203,0x0405,0x0607,{0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f}}", "D");
+		}
+
+		[Test]
+		public void TryParse()
+		{
+			Guid guid;
+			Assert.IsFalse (Guid.TryParse(null, out guid), "A1");
+			Assert.AreEqual (Guid.Empty, guid, "A2");
+			Assert.IsFalse (Guid.TryParse("", out guid), "A3");
+			Assert.AreEqual (Guid.Empty, guid, "A4");
+			Assert.IsFalse (Guid.TryParse("foobar", out guid), "A5");
+			Assert.AreEqual (Guid.Empty, guid, "A6");
+			Assert.IsFalse (Guid.TryParse ("08888888-0444-444-0444-012121212121", out guid), "A7");
+		}
+
+		[Test]
+		public void TryParseExact()
+		{
+			Guid guid;
+			Assert.IsFalse (Guid.TryParseExact(null, null, out guid), "A1");
+			Assert.AreEqual (Guid.Empty, guid, "A2");
+			Assert.IsFalse (Guid.TryParseExact("", null, out guid), "A3");
+			Assert.AreEqual (Guid.Empty, guid, "A4");
+			Assert.IsFalse (Guid.TryParseExact("foobar", null, out guid), "A5");
+			Assert.AreEqual (Guid.Empty, guid, "A6");
 		}
 #endif
 	}

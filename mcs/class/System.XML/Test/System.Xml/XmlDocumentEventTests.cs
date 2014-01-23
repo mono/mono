@@ -18,11 +18,6 @@ namespace MonoTests.System.Xml
 	[TestFixture]
 	public class XmlDocumentEventTests
 	{
-		public static void Main ()
-		{
-			new XmlDocumentEventTests ().InsertingOrder ();
-		}
-
 		private StringBuilder eventLogBuilder = new StringBuilder ();
 
 		private XmlDocument GetEventDocument ()

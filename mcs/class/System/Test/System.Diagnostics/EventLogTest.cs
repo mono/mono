@@ -39,6 +39,8 @@
 // - WriteEvent tests with large instanceID (and check EventID)
 //
 
+#if !MOBILE
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -8200,3 +8202,5 @@ namespace MonoTests.System.Diagnostics
 		}
 	}
 }
+
+#endif

@@ -275,6 +275,12 @@ get_relation_from_ins (MonoVariableRelationsEvaluationArea *area, MonoInst *ins,
 		value->value.variable.variable = ins->sreg1;
 		value->value.variable.delta = 0;
 		break;
+	case OP_SEXT_I4:
+		value->type = MONO_VARIABLE_SUMMARIZED_VALUE;
+		value->value.variable.variable = ins->sreg1;
+		value->value.variable.delta = 0;
+		value_kind = MONO_INTEGER_VALUE_SIZE_8;
+		break;
 	case OP_PHI:
 		value->type = MONO_PHI_SUMMARIZED_VALUE;
 		value->value.phi.number_of_alternatives = *(ins->inst_phi_args);
@@ -290,7 +296,7 @@ get_relation_from_ins (MonoVariableRelationsEvaluationArea *area, MonoInst *ins,
 	case OP_ISUB_IMM:
 		value->type = MONO_VARIABLE_SUMMARIZED_VALUE;
 		value->value.variable.variable = ins->sreg1;
-		value->value.variable.delta = ins->inst_imm;
+		value->value.variable.delta = -ins->inst_imm;
 		/* FIXME: */
 		//check_delta_safety (area, result);
 		break;
@@ -989,8 +995,8 @@ remove_abc_from_inst (MonoInst *ins, MonoVariableRelationsEvaluationArea *area)
 		if (REPORT_ABC_REMOVAL) {
 			printf ("ARRAY-ACCESS: removed bounds check on array %d with index %d\n",
 					array_variable, index_variable);
-			NULLIFY_INS (ins);
 		}
+		NULLIFY_INS (ins);
 	} else {
 		if (TRACE_ABC_REMOVAL) {
 			if (index_context->ranges.zero.lower >= 0) {

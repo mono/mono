@@ -6,7 +6,7 @@ class Hello : IFoo
 	{
 	}
 	
-	static void Main ()
+	public static void Main ()
 	{
 	}
 }

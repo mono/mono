@@ -25,7 +25,7 @@ class Foo<T,U>
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		Foo<long,float> a = new Foo<long,float> ();
 		if (a.Test (3L, 3.14F) != 3)

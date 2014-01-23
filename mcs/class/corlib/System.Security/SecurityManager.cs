@@ -97,7 +97,7 @@ namespace System.Security {
 			return true; // always true outside Moonlight
 		}
 
-		[Conditional ("MOONLIGHT")]
+		[Conditional ("ENABLE_SANDBOX")] //??
 		internal static void EnsureElevatedPermissions ()
 		{
 			// do nothing outside of Moonlight

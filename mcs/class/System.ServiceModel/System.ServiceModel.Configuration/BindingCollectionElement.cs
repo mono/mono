@@ -58,16 +58,24 @@ namespace System.ServiceModel.Configuration
 	public abstract class BindingCollectionElement
 		 : ConfigurationElement
 	{
+		string _name;
 
 		protected BindingCollectionElement () {
 		}
 
-
 		// Properties
-		[MonoTODO ("not implemented")]
 		public string BindingName {
-			get { throw new NotImplementedException (); }
+			get {
+				if (_name != null)
+					return _name;
+				var extensions = ConfigUtil.ExtensionsSection.BindingExtensions;
+				_name = extensions.GetConfigurationElementName (GetType ());
+				if (_name == null)
+					throw new InvalidOperationException ();
+				return _name;
+			}
 		}
+
 		public abstract Type BindingType { get; }
 		public abstract ReadOnlyCollection<IBindingConfigurationElement> ConfiguredBindings { get; }
 

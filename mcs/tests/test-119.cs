@@ -31,7 +31,7 @@ class Derived : MyObject {
 }
 
 class Test {
-	static int Main ()
+	public static int Main ()
 	{
 		Value v = new Value ();
 

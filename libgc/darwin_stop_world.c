@@ -5,10 +5,6 @@
 #include <AvailabilityMacros.h>
 #include "mono/utils/mono-compiler.h"
 
-#ifdef MONO_DEBUGGER_SUPPORTED
-#include "include/libgc-mono-debugger.h"
-#endif
-
 /* From "Inside Mac OS X - Mach-O Runtime Architecture" published by Apple
    Page 49:
    "The space beneath the stack pointer, where a new stack frame would normally
@@ -115,7 +111,7 @@ void GC_push_all_stacks() {
 	if(r != KERN_SUCCESS) continue;
 	
 #if defined(I386)
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5
+#if defined (TARGET_IOS) || (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5)
 
 	lo = state.__esp;
 
@@ -391,7 +387,7 @@ void GC_push_all_stacks() {
 			     (natural_t *)&info, &outCount);
 	if(r != KERN_SUCCESS) continue;
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5
+#if defined (TARGET_IOS) || (MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5)
 	lo = (void*)info.__esp;
 	hi = (ptr_t)FindTopOfStack(info.__esp);
 
@@ -735,18 +731,5 @@ void GC_darwin_register_mach_handler_thread(mach_port_t thread) {
   GC_mach_handler_thread = thread;
   GC_use_mach_handler_thread = 1;
 }
-
-#ifdef MONO_DEBUGGER_SUPPORTED
-GCThreadFunctions *gc_thread_vtable = NULL;
-
-void *
-GC_mono_debugger_get_stack_ptr (void)
-{
-	GC_thread me;
-
-	me = GC_lookup_thread (pthread_self ());
-	return &me->stop_info.stack_ptr;
-}
-#endif
 
 #endif

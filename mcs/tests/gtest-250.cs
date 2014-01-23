@@ -20,6 +20,6 @@ public class GuardedIndexedSorted<T> : IIndexedSorted<T>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

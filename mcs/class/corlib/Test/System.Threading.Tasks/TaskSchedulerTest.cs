@@ -30,6 +30,9 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using NUnit.Framework;
+#if !MOBILE
+using NUnit.Framework.SyntaxHelpers;
+#endif
 
 namespace MonoTests.System.Threading.Tasks
 {
@@ -132,7 +135,7 @@ namespace MonoTests.System.Threading.Tasks
 
 			Assert.IsNotNull (ex);
 			Assert.IsNotNull (ex.InnerException);
-			Assert.IsInstanceOfType (typeof (InvalidOperationException), ex.InnerException);
+			Assert.That (ex.InnerException, Is.TypeOf (typeof (InvalidOperationException)));
 		}
 
 		[Test]

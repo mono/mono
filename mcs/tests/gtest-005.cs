@@ -5,7 +5,7 @@ class Test {
 }
 
 class T {
-	static void Main()
+	public static void Main()
 	{
 		Stack<Test> a;
 	}

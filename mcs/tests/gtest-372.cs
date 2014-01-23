@@ -14,7 +14,7 @@ public class TestClass2<T> where T : C
 
 public class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		new TestClass<object> ().Check (null, null);
 		new TestClass2<C> ().Check (null, null);

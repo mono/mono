@@ -11,7 +11,7 @@ TEST_MCS_FLAGS = /r:Mono.Cecil.dll /r:System.dll /r:System.Core.dll
 test-local: dtest-app.exe dtest-excfilter.exe
 
 dtest-app.exe: Test/dtest-app.cs
-	$(CSCOMPILE) -out:$@ -unsafe -debug Test/dtest-app.cs
+	$(CSCOMPILE) -out:$@ -unsafe -debug -optimize- Test/dtest-app.cs
 
 dtest-excfilter.exe: Test/dtest-excfilter.il
 	MONO_PATH=$(topdir)/class/lib/$(PROFILE) $(INTERNAL_ILASM) -out:$@ /exe /debug Test/dtest-excfilter.il

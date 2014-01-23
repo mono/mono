@@ -1,3 +1,5 @@
+#if !MOBILE
+
 using System;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
@@ -87,3 +89,5 @@ namespace MonoTests.System.ServiceModel.Activation
 		}
 	}
 }
+
+#endif

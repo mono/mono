@@ -58,13 +58,53 @@ namespace System.ServiceModel.Description
 			= new Dictionary<string,string> ();
 		Dictionary<ContractDescription,Type> referenced_types
 			= new Dictionary<ContractDescription,Type> ();
+		Dictionary<ContractDescription,ContractCacheEntry> generated_contracts
+			= new Dictionary<ContractDescription,ContractCacheEntry> ();
 		ServiceContractGenerationOptions options;
-		Dictionary<QName, QName> imported_names = null;
+		Dictionary<QName, QName> imported_names
+			= new Dictionary<QName, QName> ();
 		ServiceContractGenerationContext contract_context;
 		List<OPair> operation_contexts = new List<OPair> ();
 
 		XsdDataContractImporter data_contract_importer;
 		XmlSerializerMessageContractImporterInternal xml_serialization_importer;
+
+		class ContractCacheEntry {
+			public ContractDescription Contract {
+				get;
+				private set;
+			}
+
+			public string ConfigurationName {
+				get;
+				private set;
+			}
+
+			public CodeTypeDeclaration TypeDeclaration {
+				get;
+				private set;
+			}
+
+			public bool GeneratedContractType {
+				get; set;
+			}
+
+			public CodeTypeReference GetReference ()
+			{
+				return reference;
+			}
+
+			public ContractCacheEntry (ContractDescription cd, string config,
+			                           CodeTypeDeclaration tdecl)
+			{
+				Contract = cd;
+				ConfigurationName = config;
+				TypeDeclaration = tdecl;
+				reference = new CodeTypeReference (tdecl.Name);
+			}
+
+			readonly CodeTypeReference reference;
+		}
 
 		public ServiceContractGenerator ()
 			: this (null, null)
@@ -125,12 +165,26 @@ namespace System.ServiceModel.Description
 			get { return ccu; }
 		}
 
-		[MonoTODO]
 		public void GenerateBinding (Binding binding,
 			out string bindingSectionName,
 			out string configurationName)
 		{
-			throw new NotImplementedException ();
+			if (config == null)
+				throw new InvalidOperationException ();
+
+			var element = ConfigUtil.FindCollectionElement (binding, config);
+			if (element == null)
+				throw new InvalidOperationException ();
+
+			bindingSectionName = element.BindingName;
+
+			int idx = 0;
+			configurationName = binding.Name;
+			while (element.ContainsKey (configurationName))
+				configurationName = binding.Name + (++idx);
+
+			if (!element.TryAdd (configurationName, binding, config))
+				throw new InvalidOperationException ();
 		}
 
 		#region Service Contract Type
@@ -143,8 +197,9 @@ namespace System.ServiceModel.Description
 			ContractDescription contractDescription)
 		{
 			CodeNamespace cns = GetNamespace (contractDescription.Namespace);
-			imported_names = new Dictionary<QName, QName> ();
-			var ret = ExportInterface (contractDescription, cns);
+			var cache = ExportInterface_internal (contractDescription, cns);
+			if (cache.GeneratedContractType)
+				return cache.GetReference ();
 
 			// FIXME: handle duplex callback
 
@@ -169,18 +224,26 @@ namespace System.ServiceModel.Description
 			foreach (var opair in operation_contexts)
 				opair.Key.GenerateOperation (opair.Value);
 
-			return ret;
+			cache.GeneratedContractType = true;
+			return cache.GetReference ();
 		}
 
-		CodeNamespace GetNamespace (string ns)
+		CodeNamespace GetNamespace (string contractNs)
 		{
-			if (ns == null)
-				ns = String.Empty;
+			if (contractNs == null)
+				contractNs = String.Empty;
+			string csharpNs;
+			if (nsmappings.ContainsKey (contractNs))
+				csharpNs = nsmappings [contractNs];
+			else if (nsmappings.ContainsKey ("*"))
+				csharpNs = nsmappings ["*"];
+			else
+				csharpNs = string.Empty;
 			foreach (CodeNamespace cns in ccu.Namespaces)
-				if (cns.Name == ns)
+				if (cns.Name == csharpNs)
 					return cns;
 			CodeNamespace ncns = new CodeNamespace ();
-			//ncns.Name = ns;
+			ncns.Name = csharpNs;
 			ccu.Namespaces.Add (ncns);
 			return ncns;
 		}
@@ -297,25 +360,36 @@ namespace System.ServiceModel.Description
 
 		CodeTypeReference ExportInterface (ContractDescription cd, CodeNamespace cns)
 		{
-			CodeTypeDeclaration type = GetTypeDeclaration (cns, cd.Name);
-			if (type != null)
-				return new CodeTypeReference (type.Name);
-			type = new CodeTypeDeclaration ();
+			var cache = ExportInterface_internal (cd, cns);
+			return cache.GetReference ();
+		}
+
+		ContractCacheEntry ExportInterface_internal (ContractDescription cd, CodeNamespace cns)
+		{
+			if (generated_contracts.ContainsKey (cd))
+				return generated_contracts [cd];
+
+			var type = new CodeTypeDeclaration ();
 			type.TypeAttributes = TypeAttributes.Interface;
 			type.TypeAttributes |= TypeAttributes.Public;
 			cns.Types.Add (type);
 			type.Name = identifiers.AddUnique (cd.Name, null);
+
+			var configName = type.Name;
 			CodeAttributeDeclaration ad = 
 				new CodeAttributeDeclaration (
 					new CodeTypeReference (
-						typeof (ServiceContractAttribute)));
+					typeof (ServiceContractAttribute)));
 			ad.Arguments.Add (new CodeAttributeArgument ("Namespace", new CodePrimitiveExpression (cd.Namespace)));
+			ad.Arguments.Add (new CodeAttributeArgument ("ConfigurationName", new CodePrimitiveExpression (configName)));
 			type.CustomAttributes.Add (ad);
 			contract_context = new ServiceContractGenerationContext (this, cd, type);
-
+			
 			AddOperationMethods (type, cd);
 
-			return new CodeTypeReference (type.Name);
+			var cache = new ContractCacheEntry (cd, configName, type);
+			generated_contracts.Add (cd, cache);
+			return cache;
 		}
 
 		void AddBeginAsyncArgs (CodeMemberMethod cm)
@@ -761,12 +835,31 @@ namespace System.ServiceModel.Description
 
 		#endregion
 
-		[MonoTODO]
 		public CodeTypeReference GenerateServiceEndpoint (
 			ServiceEndpoint endpoint,
 			out ChannelEndpointElement channelElement)
 		{
-			throw new NotImplementedException ();
+			if (config == null)
+				throw new InvalidOperationException ();
+
+			var cd = endpoint.Contract;
+			var cns = GetNamespace (cd.Namespace);
+			var cache = ExportInterface_internal (cd, cns);
+
+			string bindingSectionName, configurationName;
+			GenerateBinding (endpoint.Binding, out bindingSectionName, out configurationName);
+
+			channelElement = new ChannelEndpointElement ();
+			channelElement.Binding = bindingSectionName;
+			channelElement.BindingConfiguration = configurationName;
+			channelElement.Name = configurationName;
+			channelElement.Contract = cache.ConfigurationName;
+			channelElement.Address = endpoint.Address.Uri;
+
+			var section = (ClientSection)config.GetSection ("system.serviceModel/client");
+			section.Endpoints.Add (channelElement);
+
+			return cache.GetReference ();
 		}
 
 		void MergeCompileUnit (CodeCompileUnit from, CodeCompileUnit to)

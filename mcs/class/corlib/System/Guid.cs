@@ -38,6 +38,9 @@
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
+#if MONOTOUCH && FULL_AOT_RUNTIME
+using Crimson.CommonCrypto;
+#endif
 
 namespace System {
 
@@ -73,8 +76,8 @@ namespace System {
 			X, // {0x00000000,0x0000,0x0000,{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}}
 		}
 
-		class GuidParser {
-
+		struct GuidParser
+		{
 			private string _src;
 			private int _length;
 			private int _cur;
@@ -82,7 +85,8 @@ namespace System {
 			public GuidParser (string src)
 			{
 				_src = src;
-				Reset ();
+				_cur = 0;
+				_length = _src.Length;
 			}
 
 			void Reset ()
@@ -232,19 +236,29 @@ namespace System {
 					if (Eof)
 						return !(strict && (i + 1 != length));
 
-					char c = Char.ToLowerInvariant (_src[_cur]);
+					char c = _src [_cur];
 					if (Char.IsDigit (c)) {
 						res = res * 16 + c - '0';
 						_cur++;
-					} else if (c >= 'a' && c <= 'f') {
+						continue;
+					}
+
+					if (c >= 'a' && c <= 'f') {
 						res = res * 16 + c - 'a' + 10;
 						_cur++;
-					} else {
-						if (!strict)
-							return true;
-
-						return !(strict && (i + 1 != length));
+						continue;
 					}
+
+					if (c >= 'A' && c <= 'F') {
+						res = res * 16 + c - 'A' + 10;
+						_cur++;
+						continue;
+					}
+
+					if (!strict)
+						return true;
+
+					return false; //!(strict && (i + 1 != length));
 				}
 
 				return true;
@@ -260,20 +274,28 @@ namespace System {
 
 			public bool Parse (out Guid guid)
 			{
-				if (TryParseNDBP (Format.N, out guid))
-					return true;
-
-				Reset ();
-				if (TryParseNDBP (Format.D, out guid))
-					return true;
-
-				Reset ();
-				if (TryParseNDBP (Format.B, out guid))
-					return true;
-
-				Reset ();
-				if (TryParseNDBP (Format.P, out guid))
-					return true;
+				switch (_length) {
+				case 32:
+					if (TryParseNDBP (Format.N, out guid))
+						return true;
+					break;
+				case 36:
+					if (TryParseNDBP (Format.D, out guid))
+						return true;
+					break;
+				case 38:
+					switch (_src [0]) {
+					case '{':
+						if (TryParseNDBP (Format.B, out guid))
+							return true;
+						break;
+					case '(':
+						if (TryParseNDBP (Format.P, out guid))
+							return true;
+						break;
+					}
+					break;
+				}
 
 				Reset ();
 				return TryParseX (out guid);
@@ -463,21 +485,37 @@ namespace System {
 			return (char)((b<0xA)?('0' + b):('a' + b - 0xA));
 		}
 
+#if !FULL_AOT_RUNTIME
 		private static object _rngAccess = new object ();
 		private static RandomNumberGenerator _rng;
 		private static RandomNumberGenerator _fastRng;
+#endif
 
+#if FULL_AOT_RUNTIME && !MONOTOUCH
+		// NSA approved random generator.
+		static void LameRandom (byte [] b)
+		{
+			var r = new Random ();
+			r.NextBytes (b);
+		}
+#endif
+		
 		// generated as per section 3.4 of the specification
 		public static Guid NewGuid ()
 		{
 			byte[] b = new byte [16];
-
+#if !FULL_AOT_RUNTIME
 			// thread-safe access to the prng
 			lock (_rngAccess) {
 				if (_rng == null)
 					_rng = RandomNumberGenerator.Create ();
 				_rng.GetBytes (b);
 			}
+#elif MONOTOUCH
+			Cryptor.GetRandom (b);
+#else
+			LameRandom (b);
+#endif
 
 			Guid res = new Guid (b);
 			// Mask in Variant 1-0 in Bit[7..6]
@@ -488,6 +526,7 @@ namespace System {
 			return res;
 		}
 
+#if !FULL_AOT_RUNTIME
 		// used in ModuleBuilder so mcs doesn't need to invoke 
 		// CryptoConfig for simple assemblies.
 		internal static byte[] FastNewGuidArray ()
@@ -512,7 +551,7 @@ namespace System {
 
 			return guid;
 		}
-
+#endif
 		public byte[] ToByteArray ()
 		{
 			byte[] res = new byte[16];
@@ -690,9 +729,12 @@ namespace System {
 			return !( a.Equals (b) );
 		}
 
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 		public static Guid Parse (string input)
 		{
+			if (input == null)
+				throw new ArgumentNullException ("input");
+
 			Guid guid;
 			if (!TryParse (input, out guid))
 				throw CreateFormatException (input);
@@ -702,6 +744,11 @@ namespace System {
 
 		public static Guid ParseExact (string input, string format)
 		{
+			if (input == null)
+				throw new ArgumentNullException ("input");
+			if (format == null)
+				throw new ArgumentNullException ("format");
+
 			Guid guid;
 			if (!TryParseExact (input, format, out guid))
 				throw CreateFormatException (input);
@@ -711,8 +758,10 @@ namespace System {
 
 		public static bool TryParse (string input, out Guid result)
 		{
-			if (input == null)
-				throw new ArgumentNullException ("input");
+			if (input == null) {
+				result = Empty;
+				return false;
+			}
 
 			var parser = new GuidParser (input);
 			return parser.Parse (out result);
@@ -720,10 +769,10 @@ namespace System {
 
 		public static bool TryParseExact (string input, string format, out Guid result)
 		{
-			if (input == null)
-				throw new ArgumentNullException ("input");
-			if (format == null)
-				throw new ArgumentNullException ("format");
+			if (input == null || format == null) {
+				result = Empty;
+				return false;
+			}
 
 			var parser = new GuidParser (input);
 			return parser.Parse (ParseFormat (format), out result);
@@ -748,7 +797,7 @@ namespace System {
 			case 'P':
 			case 'p':
 				return Format.P;
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 			case 'X':
 			case 'x':
 				return Format.X;
@@ -756,7 +805,7 @@ namespace System {
 			}
 
 			throw new FormatException (
-#if NET_4_0 || MOONLIGHT || MOBILE
+#if NET_4_0
 				"Format String can be only one of \"D\", \"d\", \"N\", \"n\", \"P\", \"p\", \"B\", \"b\", \"X\" or \"x\""
 #else
 				"Format String can be only one of \"D\", \"d\", \"N\", \"n\", \"P\", \"p\", \"B\" or \"b\""

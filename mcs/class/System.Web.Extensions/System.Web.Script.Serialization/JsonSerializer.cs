@@ -431,12 +431,12 @@ namespace System.Web.Script.Serialization
 
 		void WriteValue (StringBuilder output, float value)
 		{
-			StringBuilderExtensions.AppendCount (output, maxJsonLength, value.ToString ("r"));
+			StringBuilderExtensions.AppendCount (output, maxJsonLength, value.ToString ("r", CultureInfo.InvariantCulture));
 		}
 
 		void WriteValue (StringBuilder output, double value)
 		{
-			StringBuilderExtensions.AppendCount (output, maxJsonLength, value.ToString ("r"));
+			StringBuilderExtensions.AppendCount (output, maxJsonLength, value.ToString ("r", CultureInfo.InvariantCulture));
 		}
 		
 		void WriteValue (StringBuilder output, Guid value)

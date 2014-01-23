@@ -10,7 +10,7 @@ public class Test
 		return new { s };
 	}
 	
-	static int Main ()
+	public static int Main ()
 	{
 		string Foo = "Bar";
 		int Baz = 42;

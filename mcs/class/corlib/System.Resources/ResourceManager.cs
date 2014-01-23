@@ -45,8 +45,8 @@ namespace System.Resources
 	public class ResourceManager
 	{
 		static readonly object thisLock = new object ();
-		static Hashtable ResourceCache = new Hashtable (); 
-		static Hashtable NonExistent = Hashtable.Synchronized (new Hashtable ());
+		static readonly Hashtable ResourceCache = new Hashtable (); 
+		static readonly Hashtable NonExistent = Hashtable.Synchronized (new Hashtable ());
 		public static readonly int HeaderVersionNumber = 1;
 		public static readonly int MagicNumber = unchecked ((int) 0xBEEFCACE);
 
@@ -285,11 +285,9 @@ namespace System.Resources
 
 		private string GetResourceFilePath (CultureInfo culture)
 		{
-#if !MOONLIGHT
 			if (resourceDir != null)
 				return Path.Combine (resourceDir, GetResourceFileName (culture));
 			else
-#endif
 				return GetResourceFileName (culture);
 		}
 		

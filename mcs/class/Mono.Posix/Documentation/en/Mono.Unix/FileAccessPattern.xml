@@ -1,9 +1,11 @@
 <Type Name="FileAccessPattern" FullName="Mono.Unix.FileAccessPattern">
   <TypeSignature Language="C#" Value="public enum FileAccessPattern" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed FileAccessPattern extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>Mono.Posix</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -23,7 +25,13 @@
   <Members>
     <Member MemberName="FlushCache">
       <MemberSignature Language="C#" Value="FlushCache" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileAccessPattern FlushCache = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileAccessPattern</ReturnType>
       </ReturnValue>
@@ -31,14 +39,16 @@
         <summary>The specified data will not be needed, and should be removed
         from the disk cache if present.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NoReuse">
       <MemberSignature Language="C#" Value="NoReuse" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileAccessPattern NoReuse = int32(5)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileAccessPattern</ReturnType>
       </ReturnValue>
@@ -47,28 +57,32 @@
         used once), so it shouldn't be kept around in the disk cache after it
         has been used..</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Normal">
       <MemberSignature Language="C#" Value="Normal" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileAccessPattern Normal = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileAccessPattern</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>No advice given.  This is the default.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PreLoad">
       <MemberSignature Language="C#" Value="PreLoad" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileAccessPattern PreLoad = int32(3)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileAccessPattern</ReturnType>
       </ReturnValue>
@@ -76,28 +90,32 @@
         <summary>The specified data will soon be accessed, so it should be
         pre-loaded.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Random">
       <MemberSignature Language="C#" Value="Random" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileAccessPattern Random = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileAccessPattern</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>The specified data will be accessed in a random order.</summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Sequential">
       <MemberSignature Language="C#" Value="Sequential" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Unix.FileAccessPattern Sequential = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Mono.Unix.FileAccessPattern</ReturnType>
       </ReturnValue>
@@ -107,10 +125,6 @@
         beginning of file to end of file).
         </summary>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

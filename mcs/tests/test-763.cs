@@ -32,7 +32,7 @@ public class StaticDelegateWithSameNameAsInstance
 		i *= 3;
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		new StaticDelegateWithSameNameAsInstance ().StaticCallback ();
 

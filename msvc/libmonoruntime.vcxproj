@@ -52,6 +52,7 @@
     <ClCompile Include="..\mono\metadata\exception.c" />
     <ClCompile Include="..\mono\metadata\file-io.c" />
     <ClCompile Include="..\mono\metadata\filewatcher.c" />
+    <ClCompile Include="..\mono\metadata\gc-memfuncs.c" />
     <ClCompile Include="..\mono\metadata\gc.c" />
     <ClCompile Include="..\mono\metadata\icall.c" />
     <ClCompile Include="..\mono\metadata\image.c" />
@@ -96,21 +97,24 @@
     <ClCompile Include="..\mono\metadata\sgen-hash-table.c" />
     <ClCompile Include="..\mono\metadata\sgen-internal.c" />
     <ClCompile Include="..\mono\metadata\sgen-los.c" />
-    <ClCompile Include="..\mono\metadata\sgen-major-copying.c" />
     <ClCompile Include="..\mono\metadata\sgen-marksweep-fixed-par.c" />
     <ClCompile Include="..\mono\metadata\sgen-marksweep-fixed.c" />
     <ClCompile Include="..\mono\metadata\sgen-marksweep-par.c" />
     <ClCompile Include="..\mono\metadata\sgen-marksweep.c" />
+    <ClCompile Include="..\mono\metadata\sgen-memory-governor.c" />
     <ClCompile Include="..\mono\metadata\sgen-nursery-allocator.c" />
     <ClCompile Include="..\mono\metadata\sgen-os-mach.c" />
     <ClCompile Include="..\mono\metadata\sgen-os-posix.c" />
     <ClCompile Include="..\mono\metadata\sgen-os-win32.c" />
-    <ClCompile Include="..\mono\metadata\sgen-pinned-allocator.c" />
     <ClCompile Include="..\mono\metadata\sgen-pinning-stats.c" />
     <ClCompile Include="..\mono\metadata\sgen-pinning.c" />
     <ClCompile Include="..\mono\metadata\sgen-protocol.c" />
+    <ClCompile Include="..\mono\metadata\sgen-simple-nursery.c" />
+    <ClCompile Include="..\mono\metadata\sgen-split-nursery.c" />
     <ClCompile Include="..\mono\metadata\sgen-toggleref.c" />
     <ClCompile Include="..\mono\metadata\sgen-workers.c" />
+    <ClCompile Include="..\mono\metadata\sgen-fin-weak-hash.c" />
+    <ClCompile Include="..\mono\metadata\sgen-stw.c" />
     <ClCompile Include="..\mono\metadata\socket-io.c" />
     <ClCompile Include="..\mono\metadata\string-icalls.c" />
     <ClCompile Include="..\mono\metadata\sysmath.c" />
@@ -182,11 +186,15 @@
     <ClInclude Include="..\mono\metadata\sgen-bridge.h" />
     <ClInclude Include="..\mono\metadata\sgen-cardtable.h" />
     <ClInclude Include="..\mono\metadata\sgen-conf.h" />
+    <ClInclude Include="..\mono\metadata\sgen-copy-object.h" />
     <ClInclude Include="..\mono\metadata\sgen-descriptor.h" />
     <ClInclude Include="..\mono\metadata\sgen-gc.h" />
     <ClInclude Include="..\mono\metadata\sgen-gray.h" />
     <ClInclude Include="..\mono\metadata\sgen-major-copy-object.h" />
     <ClInclude Include="..\mono\metadata\sgen-major-scan-object.h" />
+    <ClInclude Include="..\mono\metadata\sgen-memory-governor.h" />
+    <ClInclude Include="..\mono\metadata\sgen-minor-copy-object.h" />
+    <ClInclude Include="..\mono\metadata\sgen-minor-scan-object.h" />
     <ClInclude Include="..\mono\metadata\sgen-pinning.h" />
     <ClInclude Include="..\mono\metadata\sgen-protocol.h" />
     <ClInclude Include="..\mono\metadata\sgen-scan-object.h" />
@@ -213,41 +221,49 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_SGen|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_SGen|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_SGen|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_SGen|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">

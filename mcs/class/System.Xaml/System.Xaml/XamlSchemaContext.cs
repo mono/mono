@@ -94,11 +94,7 @@ namespace System.Xaml
 		}
 
 		IEnumerable<Assembly> AssembliesInScope {
-#if MOONLIGHT
-			get { return reference_assemblies; }
-#else
 			get { return reference_assemblies ?? AppDomain.CurrentDomain.GetAssemblies (); }
-#endif
 		}
 
 		public bool SupportMarkupExtensionsWithDuplicateArity { get; private set; }
@@ -244,11 +240,7 @@ namespace System.Xaml
 
 		protected internal virtual Assembly OnAssemblyResolve (string assemblyName)
 		{
-#if MOONLIGHT
-			return Assembly.Load (assemblyName);
-#else
 			return Assembly.LoadWithPartialName (assemblyName);
-#endif
 		}
 
 		public virtual bool TryGetCompatibleXamlNamespace (string xamlNamespace, out string compatibleNamespace)

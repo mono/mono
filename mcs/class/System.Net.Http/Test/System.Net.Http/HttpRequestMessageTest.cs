@@ -29,11 +29,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 using System.Net.Http;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Linq;
+using System.IO;
 
 namespace MonoTests.System.Net.Http
 {
@@ -84,6 +86,27 @@ namespace MonoTests.System.Net.Http
 				Assert.Fail ("#4");
 			} catch (ArgumentException) {
 			}
+		}
+
+		[Test]
+		public void Ctor_RelativeUri ()
+		{
+			var client = new HttpClient ();
+			client.BaseAddress = new Uri ("http://en.wikipedia.org/wiki/");
+			var uri = new Uri ("Computer", UriKind.Relative);
+			var req = new HttpRequestMessage (HttpMethod.Get, uri);
+			// HttpRequestMessage does not rewrite it here.
+			Assert.AreEqual (req.RequestUri, uri);
+		}
+
+		[Test]
+		public void Ctor_RelativeUriString ()
+		{
+			var client = new HttpClient ();
+			client.BaseAddress = new Uri ("http://en.wikipedia.org/wiki/");
+			var req = new HttpRequestMessage (HttpMethod.Get, "Computer");
+			// HttpRequestMessage does not rewrite it here.
+			Assert.IsFalse (req.RequestUri.IsAbsoluteUri);
 		}
 
 		[Test]
@@ -197,6 +220,12 @@ namespace MonoTests.System.Net.Http
 			} catch (FormatException) {
 			}
 
+			try {
+				headers.Add ("pragma", "nocache,RequestID=1,g=");
+ 				Assert.Fail ("pragma");
+			} catch (FormatException) {				
+			}
+
 			headers.Add ("accept", "audio/y");
 			headers.Add ("accept-charset", "achs");
 			headers.Add ("accept-encoding", "aenc");
@@ -204,7 +233,6 @@ namespace MonoTests.System.Net.Http
 			headers.Add ("expect", "exp");
 			headers.Add ("if-match", "\"v\"");
 			headers.Add ("if-none-match", "\"v2\"");
-			headers.Add ("pragma", "p");
 			headers.Add ("TE", "0.8");
 			headers.Add ("trailer", "value2");
 			headers.Add ("transfer-encoding", "ttt");
@@ -212,6 +240,7 @@ namespace MonoTests.System.Net.Http
 			headers.Add ("user-agent", "uaua");
 			headers.Add ("via", "prot v");
 			headers.Add ("warning", "4 ww \"t\"");
+			headers.Add ("pragma", "nocache,R=1,g");
 
 			Assert.IsTrue (headers.Accept.SequenceEqual (
 				new[] {
@@ -274,7 +303,6 @@ namespace MonoTests.System.Net.Http
 			Assert.IsTrue (headers.IfNoneMatch.SequenceEqual (new EntityTagHeaderValue[] { new EntityTagHeaderValue ("\"tag2\"", true), new EntityTagHeaderValue ("\"v2\"", false) }));
 			Assert.AreEqual (new DateTimeOffset (DateTime.Today), headers.IfRange.Date);
 			Assert.AreEqual (headers.MaxForwards, 0x15b3);
-			Assert.IsTrue (headers.Pragma.SequenceEqual (new NameValueHeaderValue[] { new NameValueHeaderValue ("name", "value"), new NameValueHeaderValue ("p", null) }));
 			Assert.AreEqual ("p", headers.ProxyAuthorization.Parameter);
 			Assert.AreEqual ("s", headers.ProxyAuthorization.Scheme);
 			Assert.AreEqual (5, headers.Range.Ranges.First ().From);
@@ -323,6 +351,77 @@ namespace MonoTests.System.Net.Http
 				}
 			));
 
+			Assert.IsTrue (headers.Pragma.SequenceEqual (
+				new[] {
+					new NameValueHeaderValue ("name", "value"),
+					new NameValueHeaderValue ("nocache", null),
+					new NameValueHeaderValue ("R", "1"),
+					new NameValueHeaderValue ("g", null)
+				}
+			));			
+		}
+
+		[Test]
+		public void Headers_MultiValues ()
+		{
+			HttpRequestMessage message = new HttpRequestMessage ();
+			HttpRequestHeaders headers = message.Headers;
+
+			headers.Add ("Accept", "application/vnd.citrix.requesttokenresponse+xml, application/vnd.citrix.requesttokenchoices+xml");
+			headers.Add ("Accept-Charset", "aa ;Q=0,bb;Q=1");
+			headers.Add ("Expect", "x=1; v, y=5");
+			headers.Add ("If-Match", "\"a\",*, \"b\",*");
+			headers.Add ("user-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36");
+
+			Assert.AreEqual (2, headers.Accept.Count, "#1a");
+			Assert.IsTrue (headers.Accept.SequenceEqual (
+				new[] {
+					new MediaTypeWithQualityHeaderValue ("application/vnd.citrix.requesttokenresponse+xml"),
+					new MediaTypeWithQualityHeaderValue ("application/vnd.citrix.requesttokenchoices+xml"),
+				}
+			), "#1b");
+
+			Assert.AreEqual (2, headers.AcceptCharset.Count, "#2a");
+			Assert.IsTrue (headers.AcceptCharset.SequenceEqual (
+				new[] {
+					new StringWithQualityHeaderValue ("aa", 0),
+					new StringWithQualityHeaderValue ("bb", 1),
+				}
+			), "#2b");
+
+			Assert.AreEqual (2, headers.Expect.Count, "#3a");
+			var expect_expected = new[] {
+					new NameValueWithParametersHeaderValue ("x", "1") {
+					},
+					new NameValueWithParametersHeaderValue ("y", "5"),
+				};
+			expect_expected [0].Parameters.Add (new NameValueHeaderValue ("v"));
+			Assert.IsTrue (headers.Expect.SequenceEqual (
+				expect_expected
+			), "#3b");
+
+			Assert.AreEqual (4, headers.IfMatch.Count, "#4a");
+			Assert.IsTrue (headers.IfMatch.SequenceEqual (
+				new[] {
+					new EntityTagHeaderValue ("\"a\""),
+					EntityTagHeaderValue.Any,
+					new EntityTagHeaderValue ("\"b\""),
+					EntityTagHeaderValue.Any
+				}
+			), "#4b");
+
+			Assert.AreEqual (6, headers.UserAgent.Count, "#10a");
+
+			Assert.IsTrue (headers.UserAgent.SequenceEqual (
+				new[] {
+					new ProductInfoHeaderValue ("Mozilla", "5.0"),
+					new ProductInfoHeaderValue ("(Macintosh; Intel Mac OS X 10_8_4)"),
+					new ProductInfoHeaderValue ("AppleWebKit", "537.36"),
+					new ProductInfoHeaderValue ("(KHTML, like Gecko)"),
+					new ProductInfoHeaderValue ("Chrome", "29.0.1547.62"),
+					new ProductInfoHeaderValue ("Safari", "537.36")
+				}
+			), "#10b");
 		}
 
 		[Test]
@@ -468,7 +567,9 @@ namespace MonoTests.System.Net.Http
 			headers.TryAddWithoutValidation ("Age", "vv");
 			Assert.AreEqual ("vv", headers.GetValues ("Age").First (), "#2");
 
-			Assert.AreEqual ("Method: GET, RequestUri: '<null>', Version: 1.1, Content: <null>, Headers:\r\n{\r\nAge: vv\r\n}", message.ToString (), "#3");
+			// .NET encloses the "Age: vv" with two whitespaces.
+			var normalized = Regex.Replace (message.ToString (), @"\s", "");
+			Assert.AreEqual ("Method:GET,RequestUri:'<null>',Version:1.1,Content:<null>,Headers:{Age:vv}", normalized, "#3");
 		}
 
 		[Test]

@@ -969,7 +969,7 @@ word n;
       }
 #   endif
     expansion_slop = WORDS_TO_BYTES(min_words_allocd()) + 4*MAXHINCR*HBLKSIZE;
-    if (GC_last_heap_addr == 0 && !((word)space & SIGNB)
+    if ((GC_last_heap_addr == 0 && !((word)space & SIGNB))
         || (GC_last_heap_addr != 0 && GC_last_heap_addr < (ptr_t)space)) {
         /* Assume the heap is growing up */
         GC_greatest_plausible_heap_addr =

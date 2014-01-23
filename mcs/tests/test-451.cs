@@ -4,7 +4,7 @@ enum Foo { foo };
 
 public class Test
 {
-        static void Main ()
+        public static void Main ()
         {
                 ValueType vt = (ValueType) 1;
 		IComparable ic = (IComparable) 1;

@@ -136,7 +136,7 @@ namespace System.Reflection {
 			if (catch_type != null)
 				ret = String.Format ("{0}, CatchType={1}", ret, catch_type);
 			if (flags == ExceptionHandlingClauseOptions.Filter)
-				ret = String.Format (CultureInfo.InvariantCulture, "{0}, FilterOffset={1}", ret, filter_offset);
+				ret = String.Format ("{0}, FilterOffset={1}", ret, filter_offset);
 			return ret;
 		}
 	}

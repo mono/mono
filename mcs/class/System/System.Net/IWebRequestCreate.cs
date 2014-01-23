@@ -28,11 +28,7 @@
 
 namespace System.Net {
 
-#if MOONLIGHT && INSIDE_SYSTEM
-	internal interface IWebRequestCreate {
-#else
 	public interface IWebRequestCreate {
-#endif
 		WebRequest Create (Uri uri);		
 	}
 }

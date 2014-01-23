@@ -41,10 +41,6 @@ namespace System.IO.IsolatedStorage {
 
 		None = 0,
 		User = 1,
-#if MOONLIGHT
-		// Available in Silverlight
-		Application = 32,
-#else
 		Domain = 2,
 		Assembly = 4,
 
@@ -53,6 +49,5 @@ namespace System.IO.IsolatedStorage {
 
 		Machine = 16,
 		Application = 32
-#endif
 	}
 }

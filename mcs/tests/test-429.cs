@@ -9,7 +9,7 @@ namespace Foo {
 class A { }
 
 class X {
-	static void Main ()
+	public static void Main ()
 	{
 		A a = new global::A ();
 		System.Console.WriteLine (a.GetType ());

@@ -22,6 +22,6 @@ class SortedList<U> : MyLinkedList<U>
 }
 
 class X {
-	static void Main ()
+	public static void Main ()
 	{ }
 }

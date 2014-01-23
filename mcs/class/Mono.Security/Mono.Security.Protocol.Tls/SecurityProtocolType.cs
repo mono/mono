@@ -27,8 +27,13 @@ using System;
 namespace Mono.Security.Protocol.Tls
 {
 	[Flags]
+#if INSIDE_SYSTEM
+	internal
+#else
 	[Serializable]
-	public enum SecurityProtocolType
+	public
+#endif
+	enum SecurityProtocolType
 	{
 		Default = -1073741824,
 		Ssl2	= 12,

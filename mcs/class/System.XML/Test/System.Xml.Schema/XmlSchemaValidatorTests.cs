@@ -373,6 +373,84 @@ namespace MonoTests.System.Xml
 		{
 			Validate (File.ReadAllText ("Test/XmlFiles/676993.xml"), File.ReadAllText ("Test/XmlFiles/676993.xsd"));
 		}
+		
+		[Test]
+		public void Bug10245 ()
+		{
+			string xsd = @"
+	<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' targetNamespace='urn:foo'>
+	  <xs:element name='root'>
+		<xs:complexType>
+		  <xs:attribute name='d' default='v' use='optional' />
+		</xs:complexType>
+	  </xs:element>
+	</xs:schema>";
+			string xml = "<root xmlns='urn:foo' />";
+			var xrs = new XmlReaderSettings () { ValidationType = ValidationType.Schema };
+			xrs.Schemas.Add (XmlSchema.Read (new StringReader (xsd), null));
+			var xr = XmlReader.Create (new StringReader (xml), xrs);
+			xr.Read ();
+			bool more;
+			Assert.AreEqual (2, xr.AttributeCount, "#1");
+			int i = 0;
+			for (more = xr.MoveToFirstAttribute (); more; more = xr.MoveToNextAttribute ())
+				i++;
+			Assert.AreEqual (2, i, "#2");
+		}
+		
+		[Test]
+		public void Bug12035 ()
+		{
+			string xml = @"<UserSettings
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+  xmlns:xsd='http://www.w3.org/2001/XMLSchema'
+  xmlns='http://schema/test'><Enabled>false</Enabled><Time xsi:nil='true' /></UserSettings>";
+			string xsd = @"<?xml version='1.0' encoding='utf-8'?>
+<xs:schema
+  targetNamespace='http://schema/test'
+  xmlns='http://schema/test'
+  xmlns:xs='http://www.w3.org/2001/XMLSchema'
+  elementFormDefault='qualified'>
+  <xs:element name='UserSettings'>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name='Enabled' type='xs:boolean' />
+        <xs:element name='Time' type='CoarseTime' nillable='true' />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name='CoarseTime'>
+    <xs:sequence>
+      <xs:element name='Hours' type='xs:int' />
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>";
+			var schema = XmlSchema.Read (new StringReader (xsd), null);
+			var schemaSet = new XmlSchemaSet ();
+			schemaSet.Add (schema);
+			var xmlReaderSettings = new XmlReaderSettings { ValidationType = ValidationType.Schema };
+			xmlReaderSettings.ValidationFlags |= XmlSchemaValidationFlags.ReportValidationWarnings;
+			xmlReaderSettings.Schemas.Add (schemaSet);
+			
+			using (var configStream = new StringReader (xml)) {
+				using (var validatingReader = XmlReader.Create (configStream, xmlReaderSettings)) {
+					// Read the XML, throwing an exception if a validation error occurs
+					while (validatingReader.Read()) {
+					}
+				}
+			}
+		}
+		
+		[Test]
+		public void IgnoresInvalidBaseUri ()
+		{
+			var source = new StringReader (@"<?xml version='1.0' encoding='utf-8'?><Test></Test>");
+			var readerSettings = new XmlReaderSettings { ValidationType = ValidationType.Schema };
+			var reader = XmlReader.Create (source, readerSettings, "invalidBaseUri");
+
+			Assert.IsNotNull (reader);
+		}
 	}
 }
 

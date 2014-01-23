@@ -26,7 +26,7 @@
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
-#if NET_2_0
+
 using System;
 using System.Collections;
 using System.Runtime.CompilerServices;
@@ -108,12 +108,12 @@ namespace System.Configuration {
 			case ConfigurationUserLevel.PerUserRoaming:
 				map.RoamingUserConfigFilename = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData), GetAssemblyInfo(calling_assembly));
 				map.RoamingUserConfigFilename = Path.Combine (map.RoamingUserConfigFilename, "user.config");
-				goto case ConfigurationUserLevel.PerUserRoamingAndLocal;
+				goto case ConfigurationUserLevel.None;
 
 			case ConfigurationUserLevel.PerUserRoamingAndLocal:
 				map.LocalUserConfigFilename = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), GetAssemblyInfo(calling_assembly));
 				map.LocalUserConfigFilename = Path.Combine (map.LocalUserConfigFilename, "user.config");
-				break;
+				goto case ConfigurationUserLevel.PerUserRoaming;
 			}
 
 			return ConfigurationFactory.Create (typeof(ExeConfigurationHost), map, userLevel);
@@ -177,7 +177,6 @@ namespace System.Configuration {
 			}
 		}
 
-		[MonoTODO]
 		public static ConnectionStringSettingsCollection ConnectionStrings {
 			get {
 				ConnectionStringsSection connectionStrings = (ConnectionStringsSection) GetSection ("connectionStrings");
@@ -209,5 +208,3 @@ namespace System.Configuration {
 		}
 	}
 }
-
-#endif

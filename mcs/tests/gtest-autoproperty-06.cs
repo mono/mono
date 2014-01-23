@@ -14,7 +14,7 @@ class C : I<A>, I<B>
 
 class Program
 {
-	static void Main (string[] args)
+	public static void Main (string[] args)
 	{
 		C c = new C ();
 	}

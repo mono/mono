@@ -2455,6 +2455,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual Rectangle DisplayRectangle {
 			get {
+				// for the control class the DisplayRectangle == ClientRectangle
 				return ClientRectangle;
 			}
 		}
@@ -4412,7 +4413,7 @@ namespace System.Windows.Forms
 			switch (m.Msg) {
 				case (int)Msg.WM_SYSKEYDOWN:
 				case (int)Msg.WM_KEYDOWN: {
-					key_event = new KeyEventArgs ((Keys) m.WParam.ToInt32 ());
+					key_event = new KeyEventArgs (((Keys) m.WParam.ToInt32 ()) | XplatUI.State.ModifierKeys);
 					OnKeyDown (key_event);
 					suppressing_key_press = key_event.SuppressKeyPress;
 					return key_event.Handled;
@@ -4420,7 +4421,7 @@ namespace System.Windows.Forms
 
 				case (int)Msg.WM_SYSKEYUP:
 				case (int)Msg.WM_KEYUP: {
-					key_event = new KeyEventArgs ((Keys) m.WParam.ToInt32 ());
+					key_event = new KeyEventArgs (((Keys) m.WParam.ToInt32 ()) | XplatUI.State.ModifierKeys);
 					OnKeyUp (key_event);
 					return key_event.Handled;
 				}

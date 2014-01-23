@@ -245,11 +245,14 @@ mono_monoctx_to_sigctx (MonoContext *mctx, void *ctx)
 
 #include <mono/utils/mono-context.h>
 #include <mono/arch/arm/arm-codegen.h>
+#include <mono/arch/arm/arm-vfp-codegen.h>
 
 void
 mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 {
 #ifdef MONO_CROSS_COMPILE
+	g_assert_not_reached ();
+#elif defined(__native_client__)
 	g_assert_not_reached ();
 #else
 	arm_ucontext *my_uc = sigctx;
@@ -258,6 +261,9 @@ mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 	mctx->regs [ARMREG_SP] = UCONTEXT_REG_SP (my_uc);
 	mctx->cpsr = UCONTEXT_REG_CPSR (my_uc);
 	memcpy (&mctx->regs, &UCONTEXT_REG_R0 (my_uc), sizeof (mgreg_t) * 16);
+#ifdef UCONTEXT_REG_VFPREGS
+	memcpy (&mctx->fregs, UCONTEXT_REG_VFPREGS (my_uc), sizeof (double) * 16);
+#endif
 #endif
 }
 
@@ -265,6 +271,8 @@ void
 mono_monoctx_to_sigctx (MonoContext *mctx, void *ctx)
 {
 #ifdef MONO_CROSS_COMPILE
+	g_assert_not_reached ();
+#elif defined(__native_client__)
 	g_assert_not_reached ();
 #else
 	arm_ucontext *my_uc = ctx;
@@ -274,6 +282,9 @@ mono_monoctx_to_sigctx (MonoContext *mctx, void *ctx)
 	UCONTEXT_REG_CPSR (my_uc) = mctx->cpsr;
 	/* The upper registers are not guaranteed to be valid */
 	memcpy (&UCONTEXT_REG_R0 (my_uc), &mctx->regs, sizeof (mgreg_t) * 12);
+#ifdef UCONTEXT_REG_VFPREGS
+	memcpy (UCONTEXT_REG_VFPREGS (my_uc), &mctx->fregs, sizeof (double) * 16);
+#endif
 #endif
 }
 

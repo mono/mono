@@ -119,16 +119,20 @@ namespace Mono.Debugger.Soft {
 
 					val = CreateArg (vm, arg.value);
 
-					if (arg.is_property) {
-						foreach (var prop in ctor.DeclaringType.GetProperties ()) {
-							if (prop.Id == arg.id)
-								named_args [j] = new CustomAttributeNamedArgumentMirror (prop, null, val);
+					TypeMirror t = ctor.DeclaringType;
+					while (named_args [j] == null && t != null) {
+						if (arg.is_property) {
+							foreach (var prop in t.GetProperties ()) {
+								if (prop.Id == arg.id)
+									named_args [j] = new CustomAttributeNamedArgumentMirror (prop, null, val);
+							}
+						} else {
+							foreach (var field in t.GetFields ()) {
+								if (field.Id == arg.id)
+									named_args [j] = new CustomAttributeNamedArgumentMirror (null, field, val);
+							}
 						}
-					} else {
-						foreach (var field in ctor.DeclaringType.GetFields ()) {
-							if (field.Id == arg.id)
-								named_args [j] = new CustomAttributeNamedArgumentMirror (null, field, val);
-						}
+						t = t.BaseType;
 					}
 					if (named_args [j] == null)
 						throw new NotImplementedException ();

@@ -53,8 +53,8 @@ namespace System.Net.Http.Headers
 			}
 		}
 
-		private NameValueWithParametersHeaderValue (NameValueHeaderValue source)
-			: base (source)
+		private NameValueWithParametersHeaderValue ()
+			: base ()
 		{
 		}
 
@@ -102,15 +102,52 @@ namespace System.Net.Http.Headers
 
 		public static bool TryParse (string input, out NameValueWithParametersHeaderValue parsedValue)
 		{
-			List<NameValueHeaderValue> values;
-			if (!ParseParameters (new Lexer (input), out values)) {
-				parsedValue = null;
+			var lexer = new Lexer (input);
+			Token token;
+			if (TryParseElement (lexer, out parsedValue, out token) && token == Token.Type.End)
+				return true;
+
+			parsedValue = null;
+			return false;
+		}
+
+		internal static bool TryParse (string input, int minimalCount, out List<NameValueWithParametersHeaderValue> result)
+		{
+			return CollectionParser.TryParse (input, minimalCount, TryParseElement, out result);
+		}
+
+		static bool TryParseElement (Lexer lexer, out NameValueWithParametersHeaderValue parsedValue, out Token t)
+		{
+			parsedValue = null;
+
+			t = lexer.Scan ();
+			if (t != Token.Type.Token)
 				return false;
+
+			parsedValue = new NameValueWithParametersHeaderValue () {
+				Name = lexer.GetStringValue (t),
+			};
+
+			t = lexer.Scan ();
+			if (t == Token.Type.SeparatorEqual) {
+				t = lexer.Scan ();
+
+				if (t == Token.Type.Token || t == Token.Type.QuotedString) {
+					parsedValue.value = lexer.GetStringValue (t);
+					t = lexer.Scan ();
+				} else {
+					return false;
+				}
 			}
 
-			parsedValue = new NameValueWithParametersHeaderValue (values[0]);
-			values.RemoveAt (0);
-			parsedValue.parameters = values;
+			if (t == Token.Type.SeparatorSemicolon) {
+				List<NameValueHeaderValue> result;
+				if (!TryParseParameters (lexer,  out result, out t))
+					return false;
+
+				parsedValue.parameters = result;
+			}
+
 			return true;
 		}
 	}

@@ -214,6 +214,10 @@ public class UInt32Test
 		Assert.AreEqual (2000000, uint.Parse ("2E6", NumberStyles.AllowExponent), "A#4");
 		Assert.AreEqual (200, uint.Parse ("2E+2", NumberStyles.AllowExponent), "A#5");
 		Assert.AreEqual (2, uint.Parse ("2", NumberStyles.AllowExponent), "A#6");
+		Assert.AreEqual (21, uint.Parse ("2.1E1", NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent), "A#7");
+		Assert.AreEqual (520, uint.Parse (".52E3", NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent), "A#8");
+		Assert.AreEqual (32500000, uint.Parse ("32.5E6", NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent), "A#9");
+		Assert.AreEqual (890, uint.Parse ("8.9000E2", NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent), "A#10");		
 
 		try {
 			uint.Parse ("2E");
@@ -263,7 +267,69 @@ public class UInt32Test
 			Assert.Fail ("B#8");
 		} catch (FormatException) {
 		}
+
+		try {
+			uint.Parse ("2.09E1",  NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent);
+			Assert.Fail ("B#9");
+		} catch (OverflowException) {
+		}
 	}
+
+	[Test]
+	public void TestTryParse()
+	{
+		uint result;
+
+		Assert.AreEqual (true, UInt32.TryParse (MyString1, out result));
+		Assert.AreEqual (MyUInt32_1, result);
+		Assert.AreEqual (true, UInt32.TryParse (MyString2, out result));
+		Assert.AreEqual (MyUInt32_2, result);
+		Assert.AreEqual (true, UInt32.TryParse (MyString3, out result));
+		Assert.AreEqual (MyUInt32_3, result);
+
+		Assert.AreEqual (true, UInt32.TryParse ("1", out result));
+		Assert.AreEqual (1, result);
+		Assert.AreEqual (true, UInt32.TryParse (" 1", out result));
+		Assert.AreEqual (1, result);
+		Assert.AreEqual (true, UInt32.TryParse ("     1", out result));
+		Assert.AreEqual (1, result);
+		Assert.AreEqual (true, UInt32.TryParse ("1    ", out result));
+		Assert.AreEqual (1, result);
+		Assert.AreEqual (true, UInt32.TryParse ("+1", out result));
+		Assert.AreEqual (1, result);
+		Assert.AreEqual (false, UInt32.TryParse ("-1", out result));
+		Assert.AreEqual (false, UInt32.TryParse ("  -1", out result));
+		Assert.AreEqual (false, UInt32.TryParse ("  -1  ", out result));
+		Assert.AreEqual (false, UInt32.TryParse ("  -1  ", out result));
+
+		result = 1;
+		Assert.AreEqual (false, UInt32.TryParse (null, out result));
+		Assert.AreEqual (0, result);
+
+		Assert.AreEqual (false, UInt32.TryParse ("not-a-number", out result));
+
+		double OverInt = (double)UInt32.MaxValue + 1;
+		Assert.AreEqual (false, UInt32.TryParse (OverInt.ToString (), out result));
+		Assert.AreEqual (false, UInt32.TryParse (OverInt.ToString (), NumberStyles.None, CultureInfo.InvariantCulture, out result));
+
+		Assert.AreEqual (false, UInt32.TryParse ("$42", NumberStyles.Integer, null, out result));
+		Assert.AreEqual (false, UInt32.TryParse ("%42", NumberStyles.Integer, Nfi, out result));
+		Assert.AreEqual (false, UInt32.TryParse ("$42", NumberStyles.Integer, Nfi, out result));
+		Assert.AreEqual (false, UInt32.TryParse (" - 1 ", out result));
+		Assert.AreEqual (false, UInt32.TryParse (" - ", out result));
+		Assert.AreEqual (true, UInt32.TryParse ("100000000", NumberStyles.HexNumber, Nfi, out result));
+		Assert.AreEqual (false, UInt32.TryParse ("10000000000", out result));
+		Assert.AreEqual (false, UInt32.TryParse ("-10000000000", out result));
+		Assert.AreEqual (true, UInt32.TryParse ("7fffffff", NumberStyles.HexNumber, Nfi, out result));
+		Assert.AreEqual (Int32.MaxValue, result);
+		Assert.AreEqual (true, UInt32.TryParse ("80000000", NumberStyles.HexNumber, Nfi, out result));
+		Assert.AreEqual (Int32.MaxValue + (uint)1, result);
+		Assert.AreEqual (true, UInt32.TryParse ("ffffffff", NumberStyles.HexNumber, Nfi, out result));
+		Assert.AreEqual (uint.MaxValue, result);
+		Assert.AreEqual (true, UInt32.TryParse ("100000000", NumberStyles.HexNumber, Nfi, out result));
+		Assert.IsFalse (uint.TryParse ("-", NumberStyles.AllowLeadingSign, Nfi, out result));
+		Assert.IsFalse (uint.TryParse (Nfi.CurrencySymbol + "-", NumberStyles.AllowLeadingSign | NumberStyles.AllowCurrencySymbol, Nfi, out result));
+	}	
 
 	[Test]
 	public void TestToString()

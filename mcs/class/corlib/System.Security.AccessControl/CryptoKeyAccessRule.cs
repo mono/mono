@@ -33,26 +33,23 @@ namespace System.Security.AccessControl
 {
 	public sealed class CryptoKeyAccessRule : AccessRule
 	{
-		CryptoKeyRights rights;
-		
 		public CryptoKeyAccessRule (IdentityReference identity,
 					    CryptoKeyRights cryptoKeyRights,
 					    AccessControlType type)
-			// FIXME: accessMask=0 likely causes an error
-			: base (identity, 0, false, InheritanceFlags.None, PropagationFlags.None, AccessControlType.Allow)
+			: base (identity, (int)cryptoKeyRights, false,
+				InheritanceFlags.None, PropagationFlags.None, AccessControlType.Allow)
 		{
-			this.rights = cryptoKeyRights;
 		}
 
 		public CryptoKeyAccessRule (string identity,
 					    CryptoKeyRights cryptoKeyRights,
 					    AccessControlType type)
-			: this (new SecurityIdentifier (identity), cryptoKeyRights, type)
+			: this (new NTAccount (identity), cryptoKeyRights, type)
 		{
 		}
 		
 		public CryptoKeyRights CryptoKeyRights {
-			get { return rights; }
+			get { return (CryptoKeyRights)AccessMask; }
 		}
 	}
 }

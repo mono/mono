@@ -44,10 +44,10 @@ namespace Mono.Security.X509.Extensions {
 	 * KeyPurposeId ::= OBJECT IDENTIFIER
 	 */
 
-#if MOONLIGHT
+#if INSIDE_SYSTEM
 	internal
 #else
-	public 
+	public
 #endif
 	class ExtendedKeyUsageExtension : X509Extension {
 

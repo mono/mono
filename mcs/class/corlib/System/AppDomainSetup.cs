@@ -38,10 +38,8 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Runtime.Serialization.Formatters.Binary;
 
-#if(!MOONLIGHT)
 using System.Runtime.Hosting;
 using System.Security.Policy;
-#endif
 
 namespace System
 {
@@ -67,23 +65,26 @@ namespace System
 		string shadow_copy_files;
 		bool publisher_policy;
 		private bool path_changed;
+#if MOBILE
+		private int loader_optimization;
+#else
 		private LoaderOptimization loader_optimization;
+#endif
 		bool disallow_binding_redirects;
 		bool disallow_code_downloads;
 
-#if (!MOONLIGHT)
+#if MOBILE
+		object _activationArguments;
+		object domain_initializer;
+		object application_trust;
+#else
 		private ActivationArguments _activationArguments;
 		AppDomainInitializer domain_initializer;
 		[NonSerialized]
 		ApplicationTrust application_trust;
-		string [] domain_initializer_args;
-#else
-		object _activationArguments;
-		object domain_initializer; // always null
-		[NonSerialized]
-		object application_trust;  // dummy, always null
-		object domain_initializer_args;
 #endif
+		string [] domain_initializer_args;
+
 		bool disallow_appbase_probe;
 		byte [] configuration_bytes;
 
@@ -118,7 +119,6 @@ namespace System
 			configuration_bytes = setup.configuration_bytes;
 		}
 
-#if (!MOONLIGHT)
 		public AppDomainSetup (ActivationArguments activationArguments)
 		{
 			_activationArguments = activationArguments;
@@ -128,7 +128,6 @@ namespace System
 		{
 			_activationArguments = new ActivationArguments (activationContext);
 		}
-#endif
 
 		static string GetAppBase (string appBase)
 		{
@@ -164,7 +163,7 @@ namespace System
 				application_name = value;
 			}
 		}
-#if !MOONLIGHT
+
 		public string CachePath {
 			get {
 				return cache_path;
@@ -227,17 +226,21 @@ namespace System
 				license_file = value;
 			}
 		}
-#endif
+
 		[MonoLimitation ("In Mono this is controlled by the --share-code flag")]
 		public LoaderOptimization LoaderOptimization {
 			get {
-				return loader_optimization;
+				return (LoaderOptimization)loader_optimization;
 			}
 			set {
+#if MOBILE
+				loader_optimization = (int)value;
+#else
 				loader_optimization = value;
+#endif
 			}
 		}
-#if !MOONLIGHT
+
 		public string PrivateBinPath {
 			get {
 				return private_bin_path;
@@ -297,9 +300,9 @@ namespace System
 		public ActivationArguments ActivationArguments {
 			get {
 				if (_activationArguments != null)
-					return _activationArguments;
+					return (ActivationArguments)_activationArguments;
 				DeserializeNonPrimitives ();
-				return _activationArguments;
+				return (ActivationArguments)_activationArguments;
 			}
 			set { _activationArguments = value; }
 		}
@@ -308,9 +311,9 @@ namespace System
 		public AppDomainInitializer AppDomainInitializer {
 			get {
 				if (domain_initializer != null)
-					return domain_initializer;
+					return (AppDomainInitializer)domain_initializer;
 				DeserializeNonPrimitives ();
-				return domain_initializer;
+				return (AppDomainInitializer)domain_initializer;
 			}
 			set { domain_initializer = value; }
 		}
@@ -325,11 +328,11 @@ namespace System
 		public ApplicationTrust ApplicationTrust {
 			get {
 				if (application_trust != null)
-					return application_trust;
+					return (ApplicationTrust)application_trust;
 				DeserializeNonPrimitives ();
 				if (application_trust == null)
 					application_trust = new ApplicationTrust ();
-				return application_trust;
+				return (ApplicationTrust)application_trust;
 			}
 			set { application_trust = value; }
 		}
@@ -386,8 +389,8 @@ namespace System
 
 			serialized_non_primitives = ms.ToArray ();
 		}
-#endif // !NET_2_1
-#if NET_4_0 || MOONLIGHT || MOBILE
+
+#if NET_4_0
 		[MonoTODO ("not implemented, does not throw because it's used in testing moonlight")]
 		public void SetCompatibilitySwitches (IEnumerable<string> switches)
 		{

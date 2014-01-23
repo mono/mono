@@ -608,7 +608,7 @@ namespace nist_dom.fundamental
         //--------------------------- test case core-0011M ---------------------------
         //
         // Testing feature - The "removeNamedItem(name)" method returns null if the
-        //                   name specified does not exists in the map.
+        //                   name specified does not exist in the map.
         //
         // Testing approach - Retrieve the third employee and create a NamedNodeMap
         //                    object from the attributes in its last child.

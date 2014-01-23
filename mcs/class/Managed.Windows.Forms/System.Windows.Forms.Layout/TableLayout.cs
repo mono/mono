@@ -126,11 +126,12 @@ namespace System.Windows.Forms.Layout
 
 						grid[col, row] = c;
 
-						for (int i = 1; i < col_span; i++)
-							grid[col + i, row] = dummy_control;
-
-						for (int i = 1; i < row_span; i++)
-							grid[col, row + i] = dummy_control;
+						// Fill in the rest of this control's row/column extent with dummy
+						// controls, so that other controls don't get put there.
+						for (int i = 0; i < col_span; i++)
+							for (int j = 0; j < row_span; j++)
+								if (i != 0 || j != 0)
+									grid[col + i, row + j] = dummy_control;
 					}
 				}
 			}
@@ -177,11 +178,12 @@ namespace System.Windows.Forms.Layout
 
 							grid[x, y] = c;
 
-							for (int i = 1; i < col_span; i++)
-								grid[x + i, y] = dummy_control;
-
-							for (int i = 1; i < row_span; i++)
-								grid[x, y + i] = dummy_control;
+							// Fill in the rest of this control's row/column extent with dummy
+							// controls, so that other controls don't get put there.
+							for (int i = 0; i < col_span; i++)
+								for (int j = 0; j < row_span; j++)
+									if (i != 0 || j != 0)
+										grid[x + i, y + j] = dummy_control;
 
 							// I know someone will kill me for using a goto, but 
 							// sometimes they really are the easiest way...
@@ -262,6 +264,13 @@ namespace System.Windows.Forms.Layout
 			while (col_styles.Count > columns)
 				col_styles.RemoveAt (col_styles.Count - 1);
 				
+			// Find the largest column-span/row-span values.
+			int max_colspan = 0, max_rowspan = 0;
+			foreach (Control c in panel.Controls) {
+				max_colspan = Math.Max (max_colspan, settings.GetColumnSpan (c));
+				max_rowspan = Math.Max (max_rowspan, settings.GetRowSpan (c));
+			}
+
 			// Figure up all the column widths
 			int total_width = parentDisplayRectangle.Width - (border_width * (columns + 1));
 			int index = 0;
@@ -276,46 +285,59 @@ namespace System.Windows.Forms.Layout
 				index++;
 			}
 
-			index = 0;
-
-			// Next, assign all the AutoSize columns..
-			foreach (ColumnStyle cs in col_styles)
+			// Next, assign all the AutoSize columns to the width of their widest
+			// control.  If the table-layout is auto-sized, then make sure that
+			// no column with Percent styling clips its contents.
+			// (per http://msdn.microsoft.com/en-us/library/ms171690.aspx)
+			for (int colspan = 0; colspan < max_colspan; ++colspan)
 			{
-				if (cs.SizeType == SizeType.AutoSize)
+				for (index = colspan; index < col_styles.Count - colspan; ++index)
 				{
-					int max_width = 0; 
-					
-					// Find the widest control in the column
-					for (int i = 0; i < rows; i ++)
+					ColumnStyle cs = col_styles[index];
+					if (cs.SizeType == SizeType.AutoSize
+					|| (panel.AutoSize && cs.SizeType == SizeType.Percent))
 					{
-						Control c = panel.actual_positions[index, i];
+						int max_width = panel.column_widths[index];
 
-						if (c != null && c != dummy_control && c.VisibleInternal)
+						// Find the widest control in the column
+						for (int i = 0; i < rows; i ++)
 						{
-							if (settings.GetColumnSpan (c) > 1)
-								continue;
-								
-							if (c.AutoSize)
-								max_width = Math.Max (max_width, c.PreferredSize.Width + c.Margin.Horizontal);
-							else
-								max_width = Math.Max (max_width, c.ExplicitBounds.Width + c.Margin.Horizontal);
-							
-							if (c.Width + c.Margin.Left + c.Margin.Right > max_width)
-								max_width = c.Width + c.Margin.Left + c.Margin.Right;						
+							Control c = panel.actual_positions[index - colspan, i];
+
+							if (c != null && c != dummy_control && c.VisibleInternal)
+							{
+								// Skip any controls not being sized in this pass.
+								if (settings.GetColumnSpan (c) != colspan + 1)
+									continue;
+
+								// Calculate the maximum control width.
+								if (c.AutoSize)
+									max_width = Math.Max (max_width, c.PreferredSize.Width + c.Margin.Horizontal);
+								else
+									max_width = Math.Max (max_width, c.ExplicitBounds.Width + c.Margin.Horizontal);
+								max_width = Math.Max (max_width, c.Width + c.Margin.Left + c.Margin.Right);
+							}
+						}
+
+						// Subtract the width of prior columns, if any.
+						for (int i = Math.Max (index - colspan, 0); i < index; ++i)
+							max_width -= panel.column_widths[i];
+
+						// If necessary, increase this column's width.
+						if (max_width > panel.column_widths[index])
+						{
+							max_width -= panel.column_widths[index];
+							panel.column_widths[index] += max_width;
+							total_width -= max_width;
 						}
 					}
-
-					panel.column_widths[index] = max_width;
-					total_width -= max_width;				
 				}
-				
-				index++;
 			}
 			
 			index = 0;
 			float total_percent = 0;
 			
-			// Finally, assign the remaining space to Percent columns..
+			// Finally, assign the remaining space to Percent columns, if any.
 			if (total_width > 0)
 			{
 				int percent_width = total_width; 
@@ -327,13 +349,18 @@ namespace System.Windows.Forms.Layout
 						total_percent += cs.Width;
 				}
 
-				// Divy up the space..
+				// Divvy up the space..
 				foreach (ColumnStyle cs in col_styles) 
 				{
 					if (cs.SizeType == SizeType.Percent) 
 					{
-						panel.column_widths[index] = (int)((cs.Width / total_percent) * percent_width);
-						total_width -= panel.column_widths[index];
+						int width_change = (int)(((cs.Width / total_percent) * percent_width)
+							- panel.column_widths[index]);
+						if (width_change > 0)
+						{
+							panel.column_widths[index] += width_change;
+							total_width -= width_change;
+						}
 					}
 
 					index++;
@@ -359,40 +386,58 @@ namespace System.Windows.Forms.Layout
 
 			index = 0;
 
-			// Next, assign all the AutoSize rows..
-			foreach (RowStyle rs in row_styles) {
-				if (rs.SizeType == SizeType.AutoSize) {
-					int max_height = 0;
+			// Next, assign all the AutoSize rows to the height of their tallest
+			// control.  If the table-layout is auto-sized, then make sure that
+			// no row with Percent styling clips its contents.
+			// (per http://msdn.microsoft.com/en-us/library/ms171690.aspx)
+			for (int rowspan = 0; rowspan < max_rowspan; ++rowspan)
+			{
+				for (index = rowspan; index < row_styles.Count - rowspan; ++index)
+				{
+					RowStyle rs = row_styles[index];
+					if (rs.SizeType == SizeType.AutoSize
+					|| (panel.AutoSize && rs.SizeType == SizeType.Percent))
+					{
+						int max_height = panel.row_heights[index];
 
-					// Find the tallest control in the row
-					for (int i = 0; i < columns; i++) {
-						Control c = panel.actual_positions[i, index];
+						// Find the tallest control in the row
+						for (int i = 0; i < columns; i++) {
+							Control c = panel.actual_positions[i, index - rowspan];
 
-						if (c != null && c != dummy_control && c.VisibleInternal) {
-							if (settings.GetRowSpan (c) > 1)
-								continue; 
-								
-							if (c.AutoSize)
-								max_height = Math.Max (max_height, c.PreferredSize.Height + c.Margin.Vertical);
-							else
-								max_height = Math.Max (max_height, c.ExplicitBounds.Height + c.Margin.Vertical);
+							if (c != null && c != dummy_control && c.VisibleInternal)
+							{
+								// Skip any controls not being sized in this pass.
+								if (settings.GetRowSpan (c) != rowspan + 1)
+									continue;
 
-							if (c.Height + c.Margin.Top + c.Margin.Bottom > max_height)
-								max_height = c.Height + c.Margin.Top + c.Margin.Bottom;
+								// Calculate the maximum control height.
+								if (c.AutoSize)
+									max_height = Math.Max (max_height, c.PreferredSize.Height + c.Margin.Vertical);
+								else
+									max_height = Math.Max (max_height, c.ExplicitBounds.Height + c.Margin.Vertical);
+								max_height = Math.Max (max_height, c.Height + c.Margin.Top + c.Margin.Bottom);
+							}
+						}
+
+						// Subtract the height of prior rows, if any.
+						for (int i = Math.Max (index - rowspan, 0); i < index; ++i)
+							max_height -= panel.row_heights[i];
+
+						// If necessary, increase this row's height.
+						if (max_height > panel.row_heights[index])
+						{
+							max_height -= panel.row_heights[index];
+							panel.row_heights[index] += max_height;
+							total_height -= max_height;
 						}
 					}
-
-					panel.row_heights[index] = max_height;
-					total_height -= max_height;
 				}
-
-				index++;
 			}
 
 			index = 0;
 			total_percent = 0;
 
-			// Finally, assign the remaining space to Percent columns..
+			// Finally, assign the remaining space to Percent rows, if any.
 			if (total_height > 0) {
 				int percent_height = total_height;
 				
@@ -402,11 +447,16 @@ namespace System.Windows.Forms.Layout
 						total_percent += rs.Height;
 				}
 
-				// Divy up the space..
+				// Divvy up the space..
 				foreach (RowStyle rs in row_styles) {
 					if (rs.SizeType == SizeType.Percent) {
-						panel.row_heights[index] = (int)((rs.Height / total_percent) * percent_height);
-						total_height -= panel.row_heights[index];
+						int height_change = (int)(((rs.Height / total_percent) * percent_height)
+							- panel.row_heights[index]);
+						if (height_change > 0)
+						{
+							panel.row_heights[index] += height_change;
+							total_height -= height_change;
+						}
 					}
 
 					index++;

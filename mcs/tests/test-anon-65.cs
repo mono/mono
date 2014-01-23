@@ -20,7 +20,7 @@ public class TestClass : BaseClass
 	{
 	}
 
-	static int Main (string[] args)
+	public static int Main (string[] args)
 	{
 		TestClass c = new TestClass (1);
 		return 0;

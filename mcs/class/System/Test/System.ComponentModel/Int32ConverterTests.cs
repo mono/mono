@@ -65,6 +65,14 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (int.MaxValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "0X7FFFFFFF"), "#6");
 		}
 
+    [Test]
+    public void IsValid ()
+    {
+      Assert.IsTrue (converter.IsValid("1"));
+      Assert.IsTrue (converter.IsValid("545"));
+      Assert.IsFalse (converter.IsValid("fred"));
+    }
+    
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void ConvertFrom_Object ()

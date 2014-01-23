@@ -5,14 +5,16 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{155AEF28-C81F-405D-9072-9D52780E3E70}</ProjectGuid>
+    <ProjectGuid>{4C5A0721-050A-4457-8D1C-8FB58DA895DE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,649,618,169,612,219,168</NoWarn>
-    <OutputPath>.\</OutputPath>
-    <NoStdLib>true</NoStdLib>
+    <OutputPath>bin\Debug\System.Data-tests-net_4_5</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>False</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>System.Data_test_net_4_5</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -25,7 +27,6 @@
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,138 +35,141 @@
     <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AdditionalLibPaths>./../../class/lib/net_4_5</AdditionalLibPaths>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-   <Compile Include="Test\System.Data.Test.Utils\DataProvider.cs" />
-   <Compile Include="Test\System.Data.SqlTypes\SqlBinaryTest.cs" />
-   <Compile Include="Test\System.Data.SqlTypes\SqlBooleanTest.cs" />
-   <Compile Include="Test\System.Data.SqlTypes\SqlBytesTest.cs" />
-   <Compile Include="Test\System.Data.SqlTypes\SqlByteTest.cs" />
-   <Compile Include="Test\System.Data.SqlTypes\SqlCharsTest.cs" />
-   <Compile Include="Test\System.Data.SqlTypes\SqlDoubleTest.cs" />
-   <Compile Include="Test\System.Data.SqlTypes\SqlInt16Test.cs" />
-   <Compile Include="Test\System.Data.SqlTypes\SqlInt32Test.cs" />
-   <Compile Include="Test\System.Data.SqlTypes\SqlInt64Test.cs" />
-   <Compile Include="Test\System.Data.SqlTypes\SqlSingleTest.cs" />
-   <Compile Include="Test\System.Data.SqlTypes\SqlMoneyTest.cs" />
-   <Compile Include="Test\System.Data.SqlTypes\SqlDateTimeTest.cs" />
-   <Compile Include="Test\System.Data.SqlTypes\SqlGuidTest.cs" />
-   <Compile Include="Test\System.Data.SqlTypes\SqlDecimalTest.cs" />
-   <Compile Include="Test\System.Data.SqlTypes\SqlStringTest.cs" />
-   <Compile Include="Test\System.Data.SqlTypes\SqlXmlTest.cs" />
-   <Compile Include="Test\System.Xml\XmlDataDocumentTest.cs" />
-   <Compile Include="Test\System.Xml\XmlDataDocumentTest2.cs" />
-   <Compile Include="Test\System.Data\BinarySerializationTest.cs" />
-   <Compile Include="Test\System.Data\ConstraintCollectionTest.cs" />
-   <Compile Include="Test\System.Data\ConstraintCollectionTest2.cs" />
-   <Compile Include="Test\System.Data\ConstraintTest.cs" />
-   <Compile Include="Test\System.Data\DataColumnCollectionTest.cs" />
-   <Compile Include="Test\System.Data\DataColumnCollectionTest2.cs" />
-   <Compile Include="Test\System.Data\DataColumnTest.cs" />
-   <Compile Include="Test\System.Data\DataColumnTest2.cs" />
-   <Compile Include="Test\System.Data\DataRelationTest.cs" />
-   <Compile Include="Test\System.Data\DataRelationTest2.cs" />
-   <Compile Include="Test\System.Data\DataRowCollectionTest.cs" />
-   <Compile Include="Test\System.Data\DataRowCollectionTest2.cs" />
-   <Compile Include="Test\System.Data\DataRowTest.cs" />
-   <Compile Include="Test\System.Data\DataRowTest2.cs" />
-   <Compile Include="Test\System.Data\DataRowViewTest.cs" />
-   <Compile Include="Test\System.Data\DataRowViewTest2.cs" />
-   <Compile Include="Test\System.Data\DataSetAssertion.cs" />
-   <Compile Include="Test\System.Data\DataSetTest.cs" />
-   <Compile Include="Test\System.Data\DataSetTest2.cs" />
-   <Compile Include="Test\System.Data\DataSetReadXmlTest.cs" />
-   <Compile Include="Test\System.Data\DataSetReadXmlSchemaTest.cs" />
-   <Compile Include="Test\System.Data\DataSetInferXmlSchemaTest.cs" />
-   <Compile Include="Test\System.Data\DataSetTypedDataSetTest.cs" />
-   <Compile Include="Test\System.Data\DataTableTest.cs" />
-   <Compile Include="Test\System.Data\DataTableTest2.cs" />
-   <Compile Include="Test\System.Data\DataTableTest3.cs" />
-   <Compile Include="Test\System.Data\DataTableTest4.cs" />
-   <Compile Include="Test\System.Data\DataTableTest5.cs" />
-   <Compile Include="Test\System.Data\DataTableLoadRowTest.cs" />
-   <Compile Include="Test\System.Data\DataTableReaderTest.cs" />
-   <Compile Include="Test\System.Data\DataTableReadWriteXmlTest.cs" />
-   <Compile Include="Test\System.Data\DataTableReadXmlSchemaTest.cs" />
-   <Compile Include="Test\System.Data\DataSet1.Designer.cs" />
-   <Compile Include="Test\System.Data\DataViewManagerTest.cs" />
-   <Compile Include="Test\System.Data\DataViewTest.cs" />
-   <Compile Include="Test\System.Data\DataViewTest2.cs" />
-   <Compile Include="Test\System.Data\DataViewTest_IBindingList.cs" />
-   <Compile Include="Test\System.Data\DataViewTest_IBindingListView.cs" />
-   <Compile Include="Test\System.Data\DBConcurrencyExceptionTest.cs" />
-   <Compile Include="Test\System.Data\ForeignKeyConstraintTest.cs" />
-   <Compile Include="Test\System.Data\ForeignKeyConstraintTest2.cs" />
-   <Compile Include="Test\System.Data\MonkeyDataSet.cs" />
-   <Compile Include="Test\System.Data\TypedDataSetGeneratorTest.cs" />
-   <Compile Include="Test\System.Data\UniqueConstraintTest.cs" />
-   <Compile Include="Test\System.Data\UniqueConstraintTest2.cs" />
-   <Compile Include="Test\System.Data\DataRelationCollectionTest.cs" />
-   <Compile Include="Test\System.Data\DataRelationCollectionTest2.cs" />
-   <Compile Include="Test\System.Data\DataTableCollectionTest.cs" />
-   <Compile Include="Test\System.Data\DataTableCollectionTest2.cs" />
-   <Compile Include="Test\System.Data\DeletedRowInaccessibleExceptionTest.cs" />
-   <Compile Include="Test\System.Data\DuplicateNameExceptionTest.cs" />
-   <Compile Include="Test\System.Data\ConstraintExceptionTest.cs" />
-   <Compile Include="Test\System.Data\EvaluateExceptionTest.cs" />
-   <Compile Include="Test\System.Data\InRowChangingEventExceptionTest.cs" />
-   <Compile Include="Test\System.Data\InvalidConstraintExceptionTest.cs" />
-   <Compile Include="Test\System.Data\MissingPrimaryKeyExceptionTest.cs" />
-   <Compile Include="Test\System.Data\NoNullAllowedExceptionTest.cs" />
-   <Compile Include="Test\System.Data\ReadOnlyExceptionTest.cs" />
-   <Compile Include="Test\System.Data\SyntaxErrorExceptionTest.cs" />
-   <Compile Include="Test\System.Data\TrailingSpaceTest.cs" />
-   <Compile Include="Test\System.Data\RowNotInTableExceptionTest.cs" />
-   <Compile Include="Test\System.Data\VersionNotFoundException.cs" />
-   <Compile Include="Test\System.Data\XmlDataLoaderTest.cs" />
-   <Compile Include="Test\System.Data\XmlDataReaderTest.cs" />
-   <Compile Include="Test\System.Data\XmlExportOfTypedDataSetTest.cs" />
-   <Compile Include="Test\System.Data.Common\ConnectionStringsSectionTest.cs" />
-   <Compile Include="Test\System.Data.Common\DataAdapterTest.cs" />
-   <Compile Include="Test\System.Data.Common\DataColumnMappingCollectionTest.cs" />
-   <Compile Include="Test\System.Data.Common\DataTableMappingCollectionTest.cs" />
-   <Compile Include="Test\System.Data.Common\DBDataPermissionAttributeTest.cs" />
-   <Compile Include="Test\System.Data.Common\DBDataPermissionTest.cs" />
-   <Compile Include="Test\System.Data.Common\DbCommandBuilderTest.cs" />
-   <Compile Include="Test\System.Data.Common\DbConnectionStringBuilderTest.cs" />
-   <Compile Include="Test\System.Data.Common\DbDataAdapterTest.cs" />
-   <Compile Include="Test\System.Data.Common\DbProviderFactoriesConfigurationHandlerTest.cs" />
-   <Compile Include="Test\System.Data.Common\DbTransactionTest.cs" />
-   <Compile Include="Test\System.Data.Odbc\OdbcCommandBuilderTest.cs" />
-   <Compile Include="Test\System.Data.Odbc\OdbcCommandTest.cs" />
-   <Compile Include="Test\System.Data.Odbc\OdbcConnectionStringBuilderTest.cs" />
-   <Compile Include="Test\System.Data.Odbc\OdbcConnectionTest.cs" />
-   <Compile Include="Test\System.Data.Odbc\OdbcDataAdapterTest.cs" />
-   <Compile Include="Test\System.Data.Odbc\OdbcMetaDataCollectionNamesTest.cs" />
-   <Compile Include="Test\System.Data.Odbc\OdbcParameterCollectionTest.cs" />
-   <Compile Include="Test\System.Data.Odbc\OdbcParameterTest.cs" />
-   <Compile Include="Test\System.Data.Odbc\OdbcPermissionAttributeTest.cs" />
-   <Compile Include="Test\System.Data.Odbc\OdbcPermissionTest.cs" />
-   <Compile Include="Test\System.Data.OleDb\OleDbCommandTest.cs" />
-   <Compile Include="Test\System.Data.OleDb\OleDbConnectionTest.cs" />
-   <Compile Include="Test\System.Data.OleDb\OleDbDataAdapterTest.cs" />
-   <Compile Include="Test\System.Data.OleDb\OleDbMetaDataCollectionNamesTest.cs" />
-   <Compile Include="Test\System.Data.OleDb\OleDbParameterCollectionTest.cs" />
-   <Compile Include="Test\System.Data.OleDb\OleDbPermissionAttributeTest.cs" />
-   <Compile Include="Test\System.Data.OleDb\OleDbPermissionTest.cs" />
-   <Compile Include="Test\System.Data.Sql\SqlNotificationRequestTest.cs" />
-   <Compile Include="Test\System.Data.SqlClient\SqlCommandBuilderTest.cs" />
-   <Compile Include="Test\System.Data.SqlClient\SqlCommandTest.cs" />
-   <Compile Include="Test\System.Data.SqlClient\SqlConnectionTest.cs" />
-   <Compile Include="Test\System.Data.SqlClient\SqlConnectionStringBuilderTest.cs" />
-   <Compile Include="Test\System.Data.SqlClient\SqlClientMetaDataCollectionNamesTest.cs" />
-   <Compile Include="Test\System.Data.SqlClient\SqlClientPermissionAttributeTest.cs" />
-   <Compile Include="Test\System.Data.SqlClient\SqlClientPermissionTest.cs" />
-   <Compile Include="Test\System.Data.SqlClient\SqlDataAdapterTest.cs" />
-   <Compile Include="Test\System.Data.SqlClient\SqlParameterTest.cs" />
-   <Compile Include="Test\System.Data.SqlClient\SqlBulkCopyTest.cs" />
-   <Compile Include="Test\Mono.Data.SqlExpressions\DataColumnExpressionTest.cs" />
-   <Compile Include="Test\Mono.Data.SqlExpressions\DateComparisonTest.cs" />
-   <Compile Include="Mono.Data.SqlExpressions\Parser.cs" />
-
-  </ItemGroup>
+    <Compile Include="Test\Mono.Data.SqlExpressions\DataColumnExpressionTest.cs" />
+    <Compile Include="Test\Mono.Data.SqlExpressions\DateComparisonTest.cs" />
+    <Compile Include="Test\System.Data.Common\ConnectionStringsSectionTest.cs" />
+    <Compile Include="Test\System.Data.Common\DataAdapterTest.cs" />
+    <Compile Include="Test\System.Data.Common\DataColumnMappingCollectionTest.cs" />
+    <Compile Include="Test\System.Data.Common\DataTableMappingCollectionTest.cs" />
+    <Compile Include="Test\System.Data.Common\DbCommandBuilderTest.cs" />
+    <Compile Include="Test\System.Data.Common\DbConnectionStringBuilderTest.cs" />
+    <Compile Include="Test\System.Data.Common\DbDataAdapterTest.cs" />
+    <Compile Include="Test\System.Data.Common\DBDataPermissionAttributeTest.cs" />
+    <Compile Include="Test\System.Data.Common\DBDataPermissionTest.cs" />
+    <Compile Include="Test\System.Data.Common\DbProviderFactoriesConfigurationHandlerTest.cs" />
+    <Compile Include="Test\System.Data.Common\DbTransactionTest.cs" />
+    <Compile Include="Test\System.Data.Odbc\OdbcCommandBuilderTest.cs" />
+    <Compile Include="Test\System.Data.Odbc\OdbcCommandTest.cs" />
+    <Compile Include="Test\System.Data.Odbc\OdbcConnectionStringBuilderTest.cs" />
+    <Compile Include="Test\System.Data.Odbc\OdbcConnectionTest.cs" />
+    <Compile Include="Test\System.Data.Odbc\OdbcDataAdapterTest.cs" />
+    <Compile Include="Test\System.Data.Odbc\OdbcMetaDataCollectionNamesTest.cs" />
+    <Compile Include="Test\System.Data.Odbc\OdbcParameterCollectionTest.cs" />
+    <Compile Include="Test\System.Data.Odbc\OdbcParameterTest.cs" />
+    <Compile Include="Test\System.Data.Odbc\OdbcPermissionAttributeTest.cs" />
+    <Compile Include="Test\System.Data.Odbc\OdbcPermissionTest.cs" />
+    <Compile Include="Test\System.Data.OleDb\OleDbCommandTest.cs" />
+    <Compile Include="Test\System.Data.OleDb\OleDbConnectionTest.cs" />
+    <Compile Include="Test\System.Data.OleDb\OleDbDataAdapterTest.cs" />
+    <Compile Include="Test\System.Data.OleDb\OleDbMetaDataCollectionNamesTest.cs" />
+    <Compile Include="Test\System.Data.OleDb\OleDbParameterCollectionTest.cs" />
+    <Compile Include="Test\System.Data.OleDb\OleDbPermissionAttributeTest.cs" />
+    <Compile Include="Test\System.Data.OleDb\OleDbPermissionTest.cs" />
+    <Compile Include="Test\System.Data.Sql\SqlNotificationRequestTest.cs" />
+    <Compile Include="Test\System.Data.SqlClient\SqlBulkCopyTest.cs" />
+    <Compile Include="Test\System.Data.SqlClient\SqlClientMetaDataCollectionNamesTest.cs" />
+    <Compile Include="Test\System.Data.SqlClient\SqlClientPermissionAttributeTest.cs" />
+    <Compile Include="Test\System.Data.SqlClient\SqlClientPermissionTest.cs" />
+    <Compile Include="Test\System.Data.SqlClient\SqlCommandBuilderTest.cs" />
+    <Compile Include="Test\System.Data.SqlClient\SqlCommandTest.cs" />
+    <Compile Include="Test\System.Data.SqlClient\SqlConnectionStringBuilderTest.cs" />
+    <Compile Include="Test\System.Data.SqlClient\SqlConnectionTest.cs" />
+    <Compile Include="Test\System.Data.SqlClient\SqlDataAdapterTest.cs" />
+    <Compile Include="Test\System.Data.SqlClient\SqlParameterTest.cs" />
+    <Compile Include="Test\System.Data.SqlTypes\SqlBinaryTest.cs" />
+    <Compile Include="Test\System.Data.SqlTypes\SqlBooleanTest.cs" />
+    <Compile Include="Test\System.Data.SqlTypes\SqlBytesTest.cs" />
+    <Compile Include="Test\System.Data.SqlTypes\SqlByteTest.cs" />
+    <Compile Include="Test\System.Data.SqlTypes\SqlCharsTest.cs" />
+    <Compile Include="Test\System.Data.SqlTypes\SqlDateTimeTest.cs" />
+    <Compile Include="Test\System.Data.SqlTypes\SqlDecimalTest.cs" />
+    <Compile Include="Test\System.Data.SqlTypes\SqlDoubleTest.cs" />
+    <Compile Include="Test\System.Data.SqlTypes\SqlGuidTest.cs" />
+    <Compile Include="Test\System.Data.SqlTypes\SqlInt16Test.cs" />
+    <Compile Include="Test\System.Data.SqlTypes\SqlInt32Test.cs" />
+    <Compile Include="Test\System.Data.SqlTypes\SqlInt64Test.cs" />
+    <Compile Include="Test\System.Data.SqlTypes\SqlMoneyTest.cs" />
+    <Compile Include="Test\System.Data.SqlTypes\SqlSingleTest.cs" />
+    <Compile Include="Test\System.Data.SqlTypes\SqlStringTest.cs" />
+    <Compile Include="Test\System.Data.SqlTypes\SqlXmlTest.cs" />
+    <Compile Include="Test\System.Data.Test.Utils\DataProvider.cs" />
+    <Compile Include="Test\System.Data\BinarySerializationTest.cs" />
+    <Compile Include="Test\System.Data\ConstraintCollectionTest.cs" />
+    <Compile Include="Test\System.Data\ConstraintCollectionTest2.cs" />
+    <Compile Include="Test\System.Data\ConstraintExceptionTest.cs" />
+    <Compile Include="Test\System.Data\ConstraintTest.cs" />
+    <Compile Include="Test\System.Data\DataColumnCollectionTest.cs" />
+    <Compile Include="Test\System.Data\DataColumnCollectionTest2.cs" />
+    <Compile Include="Test\System.Data\DataColumnTest.cs" />
+    <Compile Include="Test\System.Data\DataColumnTest2.cs" />
+    <Compile Include="Test\System.Data\DataRelationCollectionTest.cs" />
+    <Compile Include="Test\System.Data\DataRelationCollectionTest2.cs" />
+    <Compile Include="Test\System.Data\DataRelationTest.cs" />
+    <Compile Include="Test\System.Data\DataRelationTest2.cs" />
+    <Compile Include="Test\System.Data\DataRowCollectionTest.cs" />
+    <Compile Include="Test\System.Data\DataRowCollectionTest2.cs" />
+    <Compile Include="Test\System.Data\DataRowTest.cs" />
+    <Compile Include="Test\System.Data\DataRowTest2.cs" />
+    <Compile Include="Test\System.Data\DataRowViewTest.cs" />
+    <Compile Include="Test\System.Data\DataRowViewTest2.cs" />
+    <Compile Include="Test\System.Data\DataSet1.Designer.cs" />
+    <Compile Include="Test\System.Data\DataSetAssertion.cs" />
+    <Compile Include="Test\System.Data\DataSetInferXmlSchemaTest.cs" />
+    <Compile Include="Test\System.Data\DataSetReadXmlSchemaTest.cs" />
+    <Compile Include="Test\System.Data\DataSetReadXmlTest.cs" />
+    <Compile Include="Test\System.Data\DataSetTest.cs" />
+    <Compile Include="Test\System.Data\DataSetTest2.cs" />
+    <Compile Include="Test\System.Data\DataSetTypedDataSetTest.cs" />
+    <Compile Include="Test\System.Data\DataTableCollectionTest.cs" />
+    <Compile Include="Test\System.Data\DataTableCollectionTest2.cs" />
+    <Compile Include="Test\System.Data\DataTableLoadRowTest.cs" />
+    <Compile Include="Test\System.Data\DataTableReaderTest.cs" />
+    <Compile Include="Test\System.Data\DataTableReadWriteXmlTest.cs" />
+    <Compile Include="Test\System.Data\DataTableReadXmlSchemaTest.cs" />
+    <Compile Include="Test\System.Data\DataTableTest.cs" />
+    <Compile Include="Test\System.Data\DataTableTest2.cs" />
+    <Compile Include="Test\System.Data\DataTableTest3.cs" />
+    <Compile Include="Test\System.Data\DataTableTest4.cs" />
+    <Compile Include="Test\System.Data\DataTableTest5.cs" />
+    <Compile Include="Test\System.Data\DataViewManagerTest.cs" />
+    <Compile Include="Test\System.Data\DataViewTest.cs" />
+    <Compile Include="Test\System.Data\DataViewTest_IBindingList.cs" />
+    <Compile Include="Test\System.Data\DataViewTest_IBindingListView.cs" />
+    <Compile Include="Test\System.Data\DataViewTest2.cs" />
+    <Compile Include="Test\System.Data\DBConcurrencyExceptionTest.cs" />
+    <Compile Include="Test\System.Data\DeletedRowInaccessibleExceptionTest.cs" />
+    <Compile Include="Test\System.Data\DuplicateNameExceptionTest.cs" />
+    <Compile Include="Test\System.Data\EvaluateExceptionTest.cs" />
+    <Compile Include="Test\System.Data\ForeignKeyConstraintTest.cs" />
+    <Compile Include="Test\System.Data\ForeignKeyConstraintTest2.cs" />
+    <Compile Include="Test\System.Data\InRowChangingEventExceptionTest.cs" />
+    <Compile Include="Test\System.Data\InvalidConstraintExceptionTest.cs" />
+    <Compile Include="Test\System.Data\MissingPrimaryKeyExceptionTest.cs" />
+    <Compile Include="Test\System.Data\MonkeyDataSet.cs" />
+    <Compile Include="Test\System.Data\NoNullAllowedExceptionTest.cs" />
+    <Compile Include="Test\System.Data\ReadOnlyExceptionTest.cs" />
+    <Compile Include="Test\System.Data\RowNotInTableExceptionTest.cs" />
+    <Compile Include="Test\System.Data\SyntaxErrorExceptionTest.cs" />
+    <Compile Include="Test\System.Data\TrailingSpaceTest.cs" />
+    <Compile Include="Test\System.Data\TypedDataSetGeneratorTest.cs" />
+    <Compile Include="Test\System.Data\UniqueConstraintTest.cs" />
+    <Compile Include="Test\System.Data\UniqueConstraintTest2.cs" />
+    <Compile Include="Test\System.Data\VersionNotFoundException.cs" />
+    <Compile Include="Test\System.Data\XmlDataLoaderTest.cs" />
+    <Compile Include="Test\System.Data\XmlDataReaderTest.cs" />
+    <Compile Include="Test\System.Data\XmlExportOfTypedDataSetTest.cs" />
+    <Compile Include="Test\System.Xml\XmlDataDocumentTest.cs" />
+    <Compile Include="Test\System.Xml\XmlDataDocumentTest2.cs" />
+    <Compile Include="Mono.Data.SqlExpressions\Parser.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -174,55 +178,57 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent></PreBuildEvent>
+    <PreBuildEvent>
+
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
+  </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="./../../class/lib/net_4_5/System.Data.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../class/lib/net_4_5/System.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="mscorlib.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="./../../class/lib/net_4_5/System.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>./../../class/lib/net_4_5/System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="System.EnterpriseServices.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.EnterpriseServices.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Data.Tds.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Mono.Data.Tds.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Configuration.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Transactions.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Transactions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Core.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>System.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework" />
-
+    <Reference Include="..\lib\net_4_5\nunit.framework.dll" />
+    <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
+      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
+      <Name>corlib\corlib-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Data\System.Data-net_4_5.csproj">
+      <Project>{663D8C81-B74E-4D44-8C59-2264C6942B30}</Project>
+      <Name>System.Data\System.Data-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_4_5-2.csproj">
+      <Project>{38FCD731-0E11-46F7-A31B-DCBE853AD8D7}</Project>
+      <Name>System\System-net_4_5-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
+      <Project>{4ED6CCE8-8E8A-4D82-8BCA-3EA4D4203AA4}</Project>
+      <Name>System.XML\System.Xml-net_4_5-1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.EnterpriseServices\System.EnterpriseServices-net_4_5.csproj">
+      <Project>{20B32D23-8DD0-4291-A98F-C52A3E99DFE8}</Project>
+      <Name>System.EnterpriseServices\System.EnterpriseServices-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mono.Data.Tds\Mono.Data.Tds-net_4_5.csproj">
+      <Project>{9B26C34E-8E81-4857-A1CB-B50F407EE7E1}</Project>
+      <Name>Mono.Data.Tds\Mono.Data.Tds-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Configuration\System.Configuration-net_4_5.csproj">
+      <Project>{CA2CD67B-1308-460D-BDBA-498F63DEAA31}</Project>
+      <Name>System.Configuration\System.Configuration-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Transactions\System.Transactions-net_4_5.csproj">
+      <Project>{9C3F8EFB-4A3A-4BD1-9072-881F1F558781}</Project>
+      <Name>System.Transactions\System.Transactions-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
+      <Project>{D8260595-C32F-4AC3-9C01-2CD2528CFA1D}</Project>
+      <Name>System.Core\System.Core-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mono.Data.Sqlite\Mono.Data.Sqlite-net_4_0.csproj">
+      <Project>{F26434C1-BA3D-41FB-B560-C009CB72B1B6}</Project>
+      <Name>Mono.Data.Sqlite\Mono.Data.Sqlite-net_4_0</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  
 </Project>
-

@@ -12,7 +12,7 @@ struct foo2 {
 
 class C
 {
-	static int Main ()
+	public static int Main ()
 	{
 		foo2 f = new foo2 ();
 

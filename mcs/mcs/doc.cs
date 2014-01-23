@@ -47,6 +47,8 @@ namespace Mono.CSharp
 		//
 		Dictionary<string, XmlDocument> StoredDocuments = new Dictionary<string, XmlDocument> ();
 
+		ParserSession session;
+
 		public DocumentationBuilder (ModuleContainer module)
 		{
 			doc_module = new ModuleContainer (module.Compiler);
@@ -145,16 +147,13 @@ namespace Mono.CSharp
 				}
 
 				// FIXME: it could be done with XmlReader
-				var ds_target = mc as TypeContainer;
-				if (ds_target == null)
-					ds_target = mc.Parent;
 
 				foreach (XmlElement see in n.SelectNodes (".//see"))
-					HandleSee (mc, ds_target, see);
+					HandleSee (mc, see);
 				foreach (XmlElement seealso in n.SelectNodes (".//seealso"))
-					HandleSeeAlso (mc, ds_target, seealso);
+					HandleSeeAlso (mc, seealso);
 				foreach (XmlElement see in n.SelectNodes (".//exception"))
-					HandleException (mc, ds_target, see);
+					HandleException (mc, see);
 				foreach (XmlElement node in n.SelectNodes (".//typeparam"))
 					HandleTypeParam (mc, node);
 				foreach (XmlElement node in n.SelectNodes (".//typeparamref"))
@@ -173,28 +172,31 @@ namespace Mono.CSharp
 			bool keep_include_node = false;
 			string file = el.GetAttribute ("file");
 			string path = el.GetAttribute ("path");
+
 			if (file == "") {
 				Report.Warning (1590, 1, mc.Location, "Invalid XML `include' element. Missing `file' attribute");
 				el.ParentNode.InsertBefore (el.OwnerDocument.CreateComment (" Include tag is invalid "), el);
 				keep_include_node = true;
-			}
-			else if (path.Length == 0) {
+			} else if (path.Length == 0) {
 				Report.Warning (1590, 1, mc.Location, "Invalid XML `include' element. Missing `path' attribute");
 				el.ParentNode.InsertBefore (el.OwnerDocument.CreateComment (" Include tag is invalid "), el);
 				keep_include_node = true;
-			}
-			else {
+			} else {
 				XmlDocument doc;
-				if (!StoredDocuments.TryGetValue (file, out doc)) {
+				Exception exception = null;
+				var full_path = Path.Combine (Path.GetDirectoryName (mc.Location.NameFullPath), file);
+
+				if (!StoredDocuments.TryGetValue (full_path, out doc)) {
 					try {
 						doc = new XmlDocument ();
-						doc.Load (file);
-						StoredDocuments.Add (file, doc);
-					} catch (Exception) {
+						doc.Load (full_path);
+						StoredDocuments.Add (full_path, doc);
+					} catch (Exception e) {
+						exception = e;
 						el.ParentNode.InsertBefore (el.OwnerDocument.CreateComment (String.Format (" Badly formed XML in at comment file `{0}': cannot be included ", file)), el);
-						Report.Warning (1592, 1, mc.Location, "Badly formed XML in included comments file -- `{0}'", file);
 					}
 				}
+
 				if (doc != null) {
 					try {
 						XmlNodeList nl = doc.SelectNodes (path);
@@ -206,36 +208,42 @@ namespace Mono.CSharp
 						foreach (XmlNode n in nl)
 							el.ParentNode.InsertBefore (el.OwnerDocument.ImportNode (n, true), el);
 					} catch (Exception ex) {
+						exception = ex;
 						el.ParentNode.InsertBefore (el.OwnerDocument.CreateComment (" Failed to insert some or all of included XML "), el);
-						Report.Warning (1589, 1, mc.Location, "Unable to include XML fragment `{0}' of file `{1}' ({2})", path, file, ex.Message);
 					}
 				}
+
+				if (exception != null) {
+					Report.Warning (1589, 1, mc.Location, "Unable to include XML fragment `{0}' of file `{1}'. {2}",
+						path, file, exception.Message);
+				}
 			}
+
 			return keep_include_node;
 		}
 
 		//
 		// Handles <see> elements.
 		//
-		void HandleSee (MemberCore mc, TypeContainer ds, XmlElement see)
+		void HandleSee (MemberCore mc, XmlElement see)
 		{
-			HandleXrefCommon (mc, ds, see);
+			HandleXrefCommon (mc, see);
 		}
 
 		//
 		// Handles <seealso> elements.
 		//
-		void HandleSeeAlso (MemberCore mc, TypeContainer ds, XmlElement seealso)
+		void HandleSeeAlso (MemberCore mc, XmlElement seealso)
 		{
-			HandleXrefCommon (mc, ds, seealso);
+			HandleXrefCommon (mc, seealso);
 		}
 
 		//
 		// Handles <exception> elements.
 		//
-		void HandleException (MemberCore mc, TypeContainer ds, XmlElement seealso)
+		void HandleException (MemberCore mc, XmlElement seealso)
 		{
-			HandleXrefCommon (mc, ds, seealso);
+			HandleXrefCommon (mc, seealso);
 		}
 
 		//
@@ -308,7 +316,7 @@ namespace Mono.CSharp
 		//
 		// Processes "see" or "seealso" elements from cref attribute.
 		//
-		void HandleXrefCommon (MemberCore mc, TypeContainer ds, XmlElement xref)
+		void HandleXrefCommon (MemberCore mc, XmlElement xref)
 		{
 			string cref = xref.GetAttribute ("cref");
 			// when, XmlReader, "if (cref == null)"
@@ -324,12 +332,18 @@ namespace Mono.CSharp
 
 			var encoding = module.Compiler.Settings.Encoding;
 			var s = new MemoryStream (encoding.GetBytes (cref));
-			SeekableStreamReader seekable = new SeekableStreamReader (s, encoding);
 
-			var source_file = new CompilationSourceFile (doc_module);
+			var source_file = new CompilationSourceFile (doc_module, mc.Location.SourceFile);
 			var report = new Report (doc_module.Compiler, new NullReportPrinter ());
 
-			var parser = new CSharpParser (seekable, source_file, report);
+			if (session == null)
+				session = new ParserSession {
+					UseJayGlobalArrays = true
+				};
+
+			SeekableStreamReader seekable = new SeekableStreamReader (s, encoding, session.StreamReaderBuffer);
+
+			var parser = new CSharpParser (seekable, source_file, report, session);
 			ParsedParameters = null;
 			ParsedName = null;
 			ParsedBuiltinType = null;

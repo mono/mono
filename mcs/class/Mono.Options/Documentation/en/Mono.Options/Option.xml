@@ -126,9 +126,9 @@
           </para>
           <para>
             This is equivalent to calling the 
-            <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32)" />
+            <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32,System.Boolean)" />
             constructor as with <c>Option(<paramref name="prototype" />, 
-            <paramref name="description" />, 1)</c>.
+            <paramref name="description" />, 1,false)</c>.
           </para>
         </remarks>
         <exception cref="T:System.ArgumentException">
@@ -197,8 +197,120 @@
             new instance using <paramref name="prototype" />, the 
             <see cref="P:Mono.Options.Option.Description" /> property of the
             new instance using <paramref name="description" />. and
+            initializes the <see cref="P:Mono.Options.Option.MaxValueCount" />
+            property of the new instance to <c>1</c>.
+          </para>
+          <para>
+            This is equivalent to calling the
+            <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32,System.Boolean)" />
+            constructor as with <c>Option(<paramref name="prototype" />,
+            <paramref name="description" />, <paramref name="maxValueCount" />, false)</c>.
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="prototype" /> is the empty string <c>""</c>.
+          </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="prototype" /> contains an empty alias, such as
+            <c>a||b</c>.
+          </para>
+          <para>-or-</para>
+          <para>
+            Conflicting <see cref="T:Mono.Options.OptionValueType" /> values
+            were found within <paramref name="prototype" />.
+          </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="maxValueCount" /> is <c>0</c> and
+            <paramref name="prototype" /> specified an
+            <see cref="T:Mono.Options.OptionValueType" /> value of
+            <see cref="F:Mono.Options.OptionValueType.Optional" /> or
+            <see cref="F:Mono.Options.OptionValueType.Required" />.
+          </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="maxValueCount" /> is greater than <c>1</c> and
+            <paramref name="prototype" /> specified an
+            <see cref="T:Mono.Options.OptionValueType" /> value of
+            <see cref="F:Mono.Options.OptionValueType.None" />.
+          </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="prototype" /> contains a separator list and
+            <paramref name="maxValueCount" /> is <c>0</c> or <c>1</c>.
+          </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="prototype" /> contains a badly formatted
+            separator list, such as <c>{{</c>, <c>}}</c>, <c>{{}</c>, etc.
+          </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="prototype" /> only includes the default handler
+            <c>&lt;&gt;</c> and <paramref name="prototype" /> did not specify an
+            <see cref="T:Mono.Options.OptionValueType" /> value of
+            <see cref="F:Mono.Options.OptionValueType.None" />.
+          </para>
+          <para>-or-</para>
+          <para>
+            <paramref name="prototype" /> includes the default handler
+            <c>&lt;&gt;</c>, and <paramref name="MaxValueCount" /> is greater
+            than <c>1</c>.
+          </para>
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="prototype" /> is <see langword="null" />.
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected Option (string prototype, string description, int maxValueCount, bool hidden);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(string prototype, string description, int32 maxValueCount, bool hidden) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="prototype" Type="System.String" />
+        <Parameter Name="description" Type="System.String" />
+        <Parameter Name="maxValueCount" Type="System.Int32" />
+        <Parameter Name="hidden" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="prototype">
+          A <see cref="T:System.String" /> containing a <c>|</c>-separated
+          list of option names (aliases) and an optional value-type specifier.
+        </param>
+        <param name="description">
+          A <see cref="T:System.String" /> containing documentation for the
+          option.
+        </param>
+        <param name="maxValueCount">
+          A <see cref="T:System.Int32" /> containing the number of values this
+          option accepts.
+        </param>
+        <param name="hidden">
+          A <see cref="T:System.Boolean" /> specifying whether or not the
+          Option should be displayed in
+          <see cref="M:Mono.Options.OptionSet.WriteOptionDescriptions" />.
+        </param>
+        <summary>
+          Creates and initializes a new instance of the
+          <see cref="T:Mono.Options.Option" /> class.
+        </summary>
+        <remarks>
+          <para>
+            This constructor initializes the
+            <see cref="P:Mono.Options.Option.Prototype" /> property of the
+            new instance using <paramref name="prototype" />, the
+            <see cref="P:Mono.Options.Option.Description" /> property of the
+            new instance using <paramref name="description" />,
             initializes the <see cref="P:Mono.Options.Option.MaxValueCount" /> 
-            property of the new instance using <paramref name="maxValueCount" />.
+            property of the new instance using <paramref name="maxValueCount" />,
+            and initializes the <see cref="P:Mono.Options.Option.Hidden" />
+            property of the new instance using <paramref name="hidden" />.
           </para>
           <para>
             <paramref name="prototype" /> is a <c>|</c>-separated list of
@@ -469,6 +581,33 @@
             <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32)" />
             constructor for more information.
           </para>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Hidden">
+      <MemberSignature Language="C#" Value="public bool Hidden { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Hidden" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          Whether
+          <see cref="M:Mono.Options.OptionSet.WriteOptionDescriptions" />
+          should write this option.
+        </summary>
+        <value>
+          If <see langword="true" />, then
+          <see cref="M:Mono.Options.OptionSet.WriteOptionDescriptions" />
+          will not print this option; otherwise,
+          <see cref="M:Mono.Options.OptionSet.WriteOptionDescriptions" />
+          will write this option.
+        </value>
+        <remarks>
         </remarks>
       </Docs>
     </Member>

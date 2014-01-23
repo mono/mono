@@ -8,7 +8,7 @@ class T {
 	public void Foo (Stack<Test> a)
 	{ }
 
-	static void Main()
+	public static void Main()
 	{
 	}
 }

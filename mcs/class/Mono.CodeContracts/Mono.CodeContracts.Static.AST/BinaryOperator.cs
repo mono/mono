@@ -26,6 +26,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // 
 
+using System;
+
+using Mono.CodeContracts.Static.Analysis.Numerical;
+
 namespace Mono.CodeContracts.Static.AST {
 	enum BinaryOperator {
 		Add,
@@ -61,4 +65,48 @@ namespace Mono.CodeContracts.Static.AST {
 		Sub_Ovf_Un,
 		Xor
 	}
+
+        static class BinaryOperatorExtensions {
+                public static ExpressionOperator ToExpressionOperator(this BinaryOperator op)
+                {
+                        switch (op) {
+                                case BinaryOperator.Add:
+                                        return ExpressionOperator.Add;
+                                case BinaryOperator.And:
+                                        return ExpressionOperator.And;
+                                case BinaryOperator.Ceq:
+                                        return ExpressionOperator.Equal;
+                                case BinaryOperator.Cobjeq:
+                                        return ExpressionOperator.Equal_Obj;
+                                case BinaryOperator.Cne_Un:
+                                        return ExpressionOperator.NotEqual;
+                                case BinaryOperator.Cge:
+                                        return ExpressionOperator.GreaterEqualThan;
+                                case BinaryOperator.Cgt:
+                                        return ExpressionOperator.GreaterThan;
+                                case BinaryOperator.Cle:
+                                        return ExpressionOperator.LessEqualThan;
+                                case BinaryOperator.Clt:
+                                        return ExpressionOperator.LessThan;
+                                case BinaryOperator.Div:
+                                        return ExpressionOperator.Div;
+                                case BinaryOperator.LogicalAnd:
+                                        return ExpressionOperator.LogicalAnd;
+                                case BinaryOperator.LogicalOr:
+                                        return ExpressionOperator.LogicalOr;
+                                case BinaryOperator.Mul:
+                                        return ExpressionOperator.Mult;
+                                case BinaryOperator.Or:
+                                        return ExpressionOperator.Or;
+                                case BinaryOperator.Rem:
+                                        return ExpressionOperator.Mod;
+                                case BinaryOperator.Sub:
+                                        return ExpressionOperator.Sub;
+                                case BinaryOperator.Xor:
+                                        return ExpressionOperator.Xor;
+                                default:
+                                        return ExpressionOperator.Unknown;
+                        }
+                }
+        }
 }

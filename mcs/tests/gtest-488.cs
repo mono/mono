@@ -18,7 +18,7 @@ class FooProcessor<T> where T : IFooDef {
 }
 
 class Program {
-    static void Main ()
+    public static void Main ()
     {
     }
 }

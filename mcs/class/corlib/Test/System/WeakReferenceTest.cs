@@ -95,6 +95,34 @@ namespace MonoTests.System {
 				Assert.IsFalse (wr.TrackResurrection, "TrackResurrection");
 			}
 		}
+
+		class Foo {
+			WeakReference wr;
+
+			public static bool failed;
+
+			public Foo () {
+				wr = new WeakReference (new object ());
+			}
+
+			~Foo () {
+				try {
+					var b = wr.IsAlive;
+				} catch (Exception) {
+					failed = true;
+				}
+			}
+		}
+
+		[Test]
+		public void WeakReference_IsAlive_Finalized ()
+		{
+			var f = new Foo ();
+			f = null;
+			GC.Collect ();
+			GC.WaitForPendingFinalizers ();
+			Assert.IsFalse (Foo.failed);
+		}
 	}
 }
 

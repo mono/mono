@@ -30,7 +30,7 @@
 //
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -84,15 +84,13 @@ namespace Mono.Globalization.Unicode
 		}
 	}
 
-	internal class ContractionComparer : IComparer
+	internal class ContractionComparer : IComparer<Contraction>
 	{
 		public static readonly ContractionComparer Instance =
 			new ContractionComparer ();
 
-		public int Compare (object o1, object o2)
+		public int Compare (Contraction c1, Contraction c2)
 		{
-			Contraction c1 = (Contraction) o1;
-			Contraction c2 = (Contraction) o2;
 			char [] a1 = c1.Source;
 			char [] a2 = c2.Source;
 			int min = a1.Length > a2.Length ?
@@ -117,19 +115,6 @@ namespace Mono.Globalization.Unicode
 		{
 			Source = source;
 			Replace = replace;
-		}
-	}
-
-	internal class Level2MapComparer : IComparer
-	{
-		public static readonly Level2MapComparer Instance =
-			new Level2MapComparer ();
-
-		public int Compare (object o1, object o2)
-		{
-			Level2Map m1 = (Level2Map) o1;
-			Level2Map m2 = (Level2Map) o2;
-			return (m1.Source - m2.Source);
 		}
 	}
 
@@ -174,8 +159,8 @@ namespace Mono.Globalization.Unicode
 			ref Level2Map [] diacriticals)
 		{
 			// collect tailoring entries.
-			ArrayList cmaps = new ArrayList ();
-			ArrayList dmaps = new ArrayList ();
+			var cmaps = new List<Contraction> ();
+			var dmaps = new List<Level2Map> ();
 			int iindex = 0;
 			fixed (char* tarr = tailoringArr){
 				int idx = t.TailoringIndex;
@@ -229,11 +214,9 @@ namespace Mono.Globalization.Unicode
 				}
 			}
 			cmaps.Sort (ContractionComparer.Instance);
-			dmaps.Sort (Level2MapComparer.Instance);
-			contractions = cmaps.ToArray (typeof (Contraction))
-				as Contraction [];
-			diacriticals = dmaps.ToArray (typeof (Level2Map))
-				as Level2Map [];
+			dmaps.Sort ((a, b) => a.Source - b.Source);
+			contractions = cmaps.ToArray ();
+			diacriticals = dmaps.ToArray ();
 		}
 
 		static void SetCJKReferences (string name,

@@ -6,7 +6,7 @@ using Mono.Test;
 
 class Program
 {
-	static int Main ()
+	public static int Main ()
 	{
 		BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance |
 			BindingFlags.DeclaredOnly;

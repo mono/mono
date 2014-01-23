@@ -31,9 +31,9 @@
 
 #if SECURITY_DEP
 
-#if !MOONLIGHT
+#if MONOTOUCH
+#else
 extern alias PrebuiltSystem;
-
 using X509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
 #endif
 

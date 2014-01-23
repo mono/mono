@@ -1,15 +1,14 @@
-// System.MonoCustomAttrs.cs
-// Hooks into the runtime to get custom attributes for reflection handles
+//
+// MonoCustomAttrs.cs: Hooks into the runtime to get custom attributes for reflection handles
 //
 // Authors:
 // 	Paolo Molaro (lupus@ximian.com)
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+// 	Marek Safar (marek.safar@gmail.com)
 //
 // (c) 2002,2003 Ximian, Inc. (http://www.ximian.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2013 Xamarin, Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,20 +34,29 @@ using System;
 using System.Reflection;
 using System.Collections;
 using System.Runtime.CompilerServices;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
+
 using System.Collections.Generic;
 
 namespace System
 {
-	internal class MonoCustomAttrs
+	static class MonoCustomAttrs
 	{
 		static Assembly corlib;
+		[ThreadStatic]
+		static Dictionary<Type, AttributeUsageAttribute> usage_cache;
 
 		/* Treat as user types all corlib types extending System.Type that are not MonoType and TypeBuilder */
 		static bool IsUserCattrProvider (object obj)
 		{
 			Type type = obj as Type;
+#if !FULL_AOT_RUNTIME
 			if ((type is MonoType) || (type is TypeBuilder))
+#else
+			if (type is MonoType)
+#endif
 				return false;
 			if ((obj is Type))
 				return true;
@@ -80,13 +88,13 @@ namespace System
 							return pseudoAttrs;
 						else
 							return new object [] { pseudoAttrs [i] };
-				return new object [0];
+				return EmptyArray<object>.Value;
 			}
-			else
-				return pseudoAttrs;
+
+			return pseudoAttrs;
 		}
 
-		internal static object[] GetCustomAttributesBase (ICustomAttributeProvider obj, Type attributeType)
+		internal static object[] GetCustomAttributesBase (ICustomAttributeProvider obj, Type attributeType, bool inheritedOnly)
 		{
 			object[] attrs;
 			if (IsUserCattrProvider (obj))
@@ -94,15 +102,21 @@ namespace System
 			else
 				attrs = GetCustomAttributesInternal (obj, attributeType, false);
 
-			object[] pseudoAttrs = GetPseudoCustomAttributes (obj, attributeType);
-			if (pseudoAttrs != null) {
-				object[] res = new object [attrs.Length + pseudoAttrs.Length];
-				System.Array.Copy (attrs, res, attrs.Length);
-				System.Array.Copy (pseudoAttrs, 0, res, attrs.Length, pseudoAttrs.Length);
-				return res;
+			//
+			// All pseudo custom attributes are Inherited = false hence we can avoid
+			// building attributes array which would be discarded by inherited checks
+			//
+			if (!inheritedOnly) {
+				object[] pseudoAttrs = GetPseudoCustomAttributes (obj, attributeType);
+				if (pseudoAttrs != null) {
+					object[] res = new object [attrs.Length + pseudoAttrs.Length];
+					System.Array.Copy (attrs, res, attrs.Length);
+					System.Array.Copy (pseudoAttrs, 0, res, attrs.Length, pseudoAttrs.Length);
+					return res;
+				}
 			}
-			else
-				return attrs;
+
+			return attrs;
 		}
 
 		internal static Attribute GetCustomAttribute (ICustomAttributeProvider obj,
@@ -135,79 +149,96 @@ namespace System
 				attributeType = null;
 			
 			object[] r;
-			object[] res = GetCustomAttributesBase (obj, attributeType);
+			object[] res = GetCustomAttributesBase (obj, attributeType, false);
 			// shortcut
-			if (!inherit && res.Length == 1)
-			{
+			if (!inherit && res.Length == 1) {
 				if (res [0] == null)
 					throw new CustomAttributeFormatException ("Invalid custom attribute format");
 
-				if (attributeType != null)
-				{
-					if (attributeType.IsAssignableFrom (res[0].GetType ()))
-					{
+				if (attributeType != null) {
+					if (attributeType.IsAssignableFrom (res[0].GetType ())) {
 						r = (object[]) Array.CreateInstance (attributeType, 1);
 						r[0] = res[0];
-					}
-					else
-					{
+					} else {
 						r = (object[]) Array.CreateInstance (attributeType, 0);
 					}
-				}
-				else
-				{
+				} else {
 					r = (object[]) Array.CreateInstance (res[0].GetType (), 1);
 					r[0] = res[0];
 				}
 				return r;
 			}
 
+			if (inherit && GetBase (obj) == null)
+				inherit = false;
+
 			// if AttributeType is sealed, and Inherited is set to false, then 
 			// there's no use in scanning base types 
-			if ((attributeType != null && attributeType.IsSealed) && inherit)
-			{
+			if ((attributeType != null && attributeType.IsSealed) && inherit) {
 				AttributeUsageAttribute usageAttribute = RetrieveAttributeUsage (
 					attributeType);
 				if (!usageAttribute.Inherited)
-				{
 					inherit = false;
-				}
 			}
 
-			int initialSize = res.Length < 16 ? res.Length : 16;
-
-			Hashtable attributeInfos = new Hashtable (initialSize);
-			ArrayList a = new ArrayList (initialSize);
+			var initialSize = Math.Max (res.Length, 16);
+			List<Object> a = null;
 			ICustomAttributeProvider btype = obj;
+			object[] array;
 
+			/* Non-inherit case */
+			if (!inherit) {
+				if (attributeType == null) {
+					foreach (object attr in res) {
+						if (attr == null)
+							throw new CustomAttributeFormatException ("Invalid custom attribute format");
+					}
+					var result = new Attribute [res.Length];
+					res.CopyTo (result, 0);
+					return result;
+				}
+
+				a = new List<object> (initialSize);
+				foreach (object attr in res) {
+					if (attr == null)
+						throw new CustomAttributeFormatException ("Invalid custom attribute format");
+
+					Type attrType = attr.GetType ();
+					if (attributeType != null && !attributeType.IsAssignableFrom (attrType))
+						continue;
+					a.Add (attr);
+				}
+
+				if (attributeType == null || attributeType.IsValueType)
+					array = new Attribute [a.Count];
+				else
+					array = Array.CreateInstance (attributeType, a.Count) as object[];
+				a.CopyTo (array, 0);
+				return array;
+			}
+
+			/* Inherit case */
+			var attributeInfos = new Dictionary<Type, AttributeInfo> (initialSize);
 			int inheritanceLevel = 0;
+			a = new List<object> (initialSize);
 
-			do
-			{
-				foreach (object attr in res)
-				{
+			do {
+				foreach (object attr in res) {
 					AttributeUsageAttribute usage;
 					if (attr == null)
 						throw new CustomAttributeFormatException ("Invalid custom attribute format");
 
 					Type attrType = attr.GetType ();
-					if (attributeType != null)
-					{
+					if (attributeType != null) {
 						if (!attributeType.IsAssignableFrom (attrType))
-						{
 							continue;
-						}
 					}
 
-					AttributeInfo firstAttribute = (AttributeInfo) attributeInfos[attrType];
-					if (firstAttribute != null)
-					{
+					AttributeInfo firstAttribute;
+					if (attributeInfos.TryGetValue (attrType, out firstAttribute))
 						usage = firstAttribute.Usage;
-					}
 					else
-					{
 						usage = RetrieveAttributeUsage (attrType);
-					}
 
 					// only add attribute to the list of attributes if 
 					// - we are on the first inheritance level, or the attribute can be inherited anyway
@@ -221,32 +252,22 @@ namespace System
 					if ((inheritanceLevel == 0 || usage.Inherited) && (usage.AllowMultiple || 
 						(firstAttribute == null || (firstAttribute != null 
 							&& firstAttribute.InheritanceLevel == inheritanceLevel))))
-					{
 						a.Add (attr);
-					}
 
 					if (firstAttribute == null)
-					{
 						attributeInfos.Add (attrType, new AttributeInfo (usage, inheritanceLevel));
-					}
 				}
 
-				if ((btype = GetBase (btype)) != null)
-				{
+				if ((btype = GetBase (btype)) != null) {
 					inheritanceLevel++;
-					res = GetCustomAttributesBase (btype, attributeType);
+					res = GetCustomAttributesBase (btype, attributeType, true);
 				}
 			} while (inherit && btype != null);
 
-			object[] array = null;
 			if (attributeType == null || attributeType.IsValueType)
-			{
-				array = (object[]) Array.CreateInstance (typeof(Attribute), a.Count);
-			}
+				array = new Attribute [a.Count];
 			else
-			{
 				array = Array.CreateInstance (attributeType, a.Count) as object[];
-			}
 
 			// copy attributes to array
 			a.CopyTo (array, 0);
@@ -260,7 +281,7 @@ namespace System
 				throw new ArgumentNullException ("obj");
 
 			if (!inherit)
-				return (object[]) GetCustomAttributesBase (obj, null).Clone ();
+				return (object[]) GetCustomAttributesBase (obj, null, false).Clone ();
 
 			return GetCustomAttributes (obj, typeof (MonoCustomAttrs), inherit);
 		}
@@ -315,7 +336,7 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern bool IsDefinedInternal (ICustomAttributeProvider obj, Type AttributeType);
 
-		static PropertyInfo GetBasePropertyDefinition (PropertyInfo property)
+		static PropertyInfo GetBasePropertyDefinition (MonoProperty property)
 		{
 			MethodInfo method = property.GetGetMethod (true);
 			if (method == null || !method.IsVirtual)
@@ -340,7 +361,7 @@ namespace System
 
 		}
 
-		static EventInfo GetBaseEventDefinition (EventInfo evt)
+		static EventInfo GetBaseEventDefinition (MonoEvent evt)
 		{
 			MethodInfo method = evt.GetAddMethod (true);
 			if (method == null || !method.IsVirtual)
@@ -395,15 +416,14 @@ namespace System
 			return baseMethod;
 		}
 
-		private static AttributeUsageAttribute RetrieveAttributeUsage (Type attributeType)
+		private static AttributeUsageAttribute RetrieveAttributeUsageNoCache (Type attributeType)
 		{
 			if (attributeType == typeof (AttributeUsageAttribute))
 				/* Avoid endless recursion */
 				return new AttributeUsageAttribute (AttributeTargets.Class);
 
 			AttributeUsageAttribute usageAttribute = null;
-			object[] attribs = GetCustomAttributes (attributeType,
-				MonoCustomAttrs.AttributeUsageType, false);
+			object[] attribs = GetCustomAttributes (attributeType, typeof(AttributeUsageAttribute), false);
 			if (attribs.Length == 0)
 			{
 				// if no AttributeUsage was defined on the attribute level, then
@@ -435,7 +455,19 @@ namespace System
 			return ((AttributeUsageAttribute) attribs[0]);
 		}
 
-		private static readonly Type AttributeUsageType = typeof(AttributeUsageAttribute);
+		static AttributeUsageAttribute RetrieveAttributeUsage (Type attributeType)
+		{
+			AttributeUsageAttribute usageAttribute = null;
+			/* Usage a thread-local cache to speed this up, since it is called a lot from GetCustomAttributes () */
+			if (usage_cache == null)
+				usage_cache = new Dictionary<Type, AttributeUsageAttribute> ();
+			if (usage_cache.TryGetValue (attributeType, out usageAttribute))
+				return usageAttribute;
+			usageAttribute = RetrieveAttributeUsageNoCache (attributeType);
+			usage_cache [attributeType] = usageAttribute;
+			return usageAttribute;
+		}
+
 		private static readonly AttributeUsageAttribute DefaultAttributeUsage =
 			new AttributeUsageAttribute (AttributeTargets.All);
 

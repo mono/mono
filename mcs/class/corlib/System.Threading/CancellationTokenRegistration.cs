@@ -24,7 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if NET_4_0 || MOBILE
+#if NET_4_0
 using System;
 using System.Threading;
 
@@ -44,7 +44,8 @@ namespace System.Threading
 		#region IDisposable implementation
 		public void Dispose ()
 		{
-			source.RemoveCallback (this);
+			if (source != null)
+				source.RemoveCallback (this);
 		}
 		#endregion
 

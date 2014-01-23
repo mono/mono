@@ -9,6 +9,8 @@
 // Copyright (c) 2006 Ivan N. Zlatev
 //
 
+#if !MOBILE
+
 using NUnit.Framework;
 using System;
 using System.ComponentModel;
@@ -772,3 +774,5 @@ namespace MonoTests.System.ComponentModel
 		}
 	}
 }
+
+#endif

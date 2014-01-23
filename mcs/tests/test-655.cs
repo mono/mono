@@ -11,7 +11,7 @@ public class D
 		}
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		D d = new D ();
 		byte b = 1;

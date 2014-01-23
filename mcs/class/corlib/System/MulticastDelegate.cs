@@ -43,19 +43,17 @@ namespace System
 	[StructLayout (LayoutKind.Sequential)]
 	public abstract class MulticastDelegate : Delegate
 	{
-		private MulticastDelegate prev;
-		private MulticastDelegate kpm_next;
+		MulticastDelegate prev;
+		MulticastDelegate kpm_next;
 
 		protected MulticastDelegate (object target, string method)
 			: base (target, method)
 		{
-			prev = null;
 		}
 
 		protected MulticastDelegate (Type target, string method)
 			: base (target, method)
 		{
-			prev = null;
 		}
 		
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
@@ -72,9 +70,6 @@ namespace System
 			return base.DynamicInvokeImpl (args);
 		}
 
-		internal bool HasSingleTarget {
-			get { return prev == null; }
-		}
 		// <remarks>
 		//   Equals: two multicast delegates are equal if their base is equal
 		//   and their invocations list is equal.
@@ -87,15 +82,20 @@ namespace System
 			MulticastDelegate d = obj as MulticastDelegate;
 			if (d == null)
 				return false;
-			
-			if (this.prev == null) {
-				if (d.prev == null)
-					return true;
-				else
-					return false;
-			}
 
-			return this.prev.Equals (d.prev);
+			MulticastDelegate this_prev = this.prev;
+			MulticastDelegate obj_prev = d.prev;
+
+			do {
+				if (this_prev == null)
+					return obj_prev == null;
+
+				if (!this_prev.Compare (obj_prev))
+					return false;
+				
+				this_prev = this_prev.prev;
+				obj_prev = obj_prev.prev;
+			} while (true);
 		}
 
 		//
@@ -146,7 +146,7 @@ namespace System
 			MulticastDelegate combined, orig, clone;
 
 			if (this.GetType() != follow.GetType ())
-				throw new ArgumentException (Locale.GetText ("Incompatible Delegate Types."));
+				throw new ArgumentException (Locale.GetText ("Incompatible Delegate Types. First is {0} second is {1}.", this.GetType ().FullName, follow.GetType ().FullName));
 
 			combined = (MulticastDelegate)follow.Clone ();
 			combined.SetMulticastInvoke ();
@@ -157,6 +157,7 @@ namespace System
 				clone = clone.prev;
 			}
 
+			clone.SetMulticastInvoke ();
 			clone.prev = (MulticastDelegate)this.Clone ();
 
 			for (clone = clone.prev, orig = this.prev; orig != null; orig = orig.prev) {

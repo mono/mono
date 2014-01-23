@@ -9,12 +9,14 @@
 #include <mono/utils/mono-context.h>
 #include <glib.h>
 
-#if defined(ARM_FPU_NONE) || (defined(__ARM_EABI__) && !defined(ARM_FPU_VFP) && !defined(ARM_FPU_VFP_HARD))
-#define MONO_ARCH_SOFT_FLOAT 1
+#ifdef __native_client_codegen__
+#define kNaClAlignmentARM 16
+#define kNaClAlignmentMaskARM (kNaClAlignmentARM - 1)
+#define kNaClLengthOfCallImm 4
 #endif
 
-#ifdef ARM_FPU_VFP_HARD
-#error "hardfp-abi not yet supported."
+#if defined(ARM_FPU_NONE)
+#define MONO_ARCH_SOFT_FLOAT_FALLBACK 1
 #endif
 
 #if defined(__ARM_EABI__)
@@ -27,16 +29,14 @@
 #define ARM_ARCHITECTURE "arm"
 #endif
 
-#if defined(ARM_FPU_FPA)
-#define ARM_FP_MODEL "fpa"
-#elif defined(ARM_FPU_VFP)
+#if defined(ARM_FPU_VFP)
 #define ARM_FP_MODEL "vfp"
 #elif defined(ARM_FPU_NONE)
-#define ARM_FP_MODEL "soft-float"
+#define ARM_FP_MODEL "vfp+fallback"
 #elif defined(ARM_FPU_VFP_HARD)
-#define ARM_FP_MODEL "vfp(hardfp-abi)"
+#define ARM_FP_MODEL "vfp+hard"
 #else
-#error "At least one of ARM_FPU_NONE, ARM_FPU_FPA, ARM_FPU_VFP or ARM_FPU_VFP_HARD must be defined."
+#error "At least one of ARM_FPU_NONE, ARM_FPU_VFP or ARM_FPU_VFP_HARD must be defined."
 #endif
 
 #define MONO_ARCH_ARCHITECTURE ARM_ARCHITECTURE "," ARM_FP_MODEL
@@ -52,10 +52,9 @@
 #endif
 
 #define MONO_MAX_IREGS 16
-#define MONO_MAX_FREGS 16
+#define MONO_MAX_FREGS 32
 
 #define MONO_SAVED_GREGS 10 /* r4-r11, ip, lr */
-#define MONO_SAVED_FREGS 8
 
 /* r4-r11, ip, lr: registers saved in the LMF  */
 #define MONO_ARM_REGSAVE_MASK 0x5ff0
@@ -67,35 +66,92 @@
 #define MONO_ARCH_CALLEE_REGS ((1<<ARMREG_R0) | (1<<ARMREG_R1) | (1<<ARMREG_R2) | (1<<ARMREG_R3) | (1<<ARMREG_IP))
 #define MONO_ARCH_CALLEE_SAVED_REGS ((1<<ARMREG_V1) | (1<<ARMREG_V2) | (1<<ARMREG_V3) | (1<<ARMREG_V4) | (1<<ARMREG_V5) | (1<<ARMREG_V6) | (1<<ARMREG_V7))
 
-#if defined(ARM_FPU_VFP) || defined(ARM_FPU_VFP_HARD)
-/* Every double precision vfp register, d0/d1 is reserved for a scratch reg */
-#define MONO_ARCH_CALLEE_FREGS 0x55555550
+/*
+ * TODO: Make use of VFP v3 registers d16-d31.
+ */
+
+/*
+ * TODO: We can't use registers d8-d15 in hard float mode because the
+ * register allocator doesn't allocate floating point registers globally.
+ */
+
+#if defined(ARM_FPU_VFP_HARD)
+#define MONO_SAVED_FREGS 16
+/*
+ * d8-d15 must be preserved across function calls. We use d14-d15 as
+ * scratch registers in the JIT. The rest have no meaning tied to them.
+ */
+#define MONO_ARCH_CALLEE_FREGS 0x00005555
+#define MONO_ARCH_CALLEE_SAVED_FREGS 0x55550000
 #else
-#define MONO_ARCH_CALLEE_FREGS 0xf
+#define MONO_SAVED_FREGS 0
+/*
+ * No registers need to be preserved across function calls. We use d14-d15
+ * as scratch registers in the JIT. The rest have no meaning tied to them.
+ */
+#define MONO_ARCH_CALLEE_FREGS 0x05555555
+#define MONO_ARCH_CALLEE_SAVED_FREGS 0x00000000
 #endif
-#define MONO_ARCH_CALLEE_SAVED_FREGS 0
 
 #define MONO_ARCH_USE_FPSTACK FALSE
 #define MONO_ARCH_FPSTACK_SIZE 0
 
 #define MONO_ARCH_INST_SREG2_MASK(ins) (0)
 
-#ifdef MONO_ARCH_SOFT_FLOAT
-#define MONO_ARCH_INST_FIXED_REG(desc) (((desc) == 'l' || (desc == 'f') || (desc == 'g')) ? ARM_LSW_REG: (((desc) == 'a') ? ARMREG_R0 : -1))
-#define MONO_ARCH_INST_IS_REGPAIR(desc) ((desc) == 'l' || (desc) == 'L' || (desc) == 'f' || (desc) == 'g')
-#define MONO_ARCH_INST_IS_FLOAT(desc) (FALSE)
-#else
-#define MONO_ARCH_INST_FIXED_REG(desc) (((desc) == 'l')? ARM_LSW_REG: (((desc) == 'a') ? ARMREG_R0 : -1))
-#define MONO_ARCH_INST_IS_REGPAIR(desc) (desc == 'l' || desc == 'L')
-#define MONO_ARCH_INST_IS_FLOAT(desc) ((desc == 'f') || (desc == 'g'))
-#endif
-#define MONO_ARCH_INST_REGPAIR_REG2(desc,hreg1) (desc == 'l'  || (desc == 'f') || (desc == 'g')? ARM_MSW_REG : -1)
+#define MONO_ARCH_INST_FIXED_REG(desc) \
+	(mono_arch_is_soft_float () ? \
+	((desc) == 'l' || (desc) == 'f' || (desc) == 'g' ? ARM_LSW_REG : (desc) == 'a' ? ARMREG_R0 : -1) : \
+	((desc) == 'l' ? ARM_LSW_REG : (desc) == 'a' ? ARMREG_R0 : -1))
+
+#define MONO_ARCH_INST_IS_REGPAIR(desc) \
+	(mono_arch_is_soft_float () ? \
+	((desc) == 'l' || (desc) == 'L' || (desc) == 'f' || (desc) == 'g') : \
+	((desc) == 'l' || (desc) == 'L'))
+
+#define MONO_ARCH_INST_IS_FLOAT(desc) \
+	(mono_arch_is_soft_float () ? \
+	(FALSE) : \
+	((desc) == 'f' || (desc) == 'g'))
+
+#define MONO_ARCH_INST_REGPAIR_REG2(desc,hreg1) ((desc) == 'l' || (desc) == 'f' || (desc) == 'g' ? ARM_MSW_REG : -1)
 
 #define MONO_ARCH_FRAME_ALIGNMENT 8
 
 /* fixme: align to 16byte instead of 32byte (we align to 32byte to get 
  * reproduceable results for benchmarks */
 #define MONO_ARCH_CODE_ALIGNMENT 32
+
+/* Return value marshalling for calls between gsharedvt and normal code */
+typedef enum {
+	GSHAREDVT_RET_NONE = 0,
+	GSHAREDVT_RET_IREG = 1,
+	GSHAREDVT_RET_IREGS = 2,
+	GSHAREDVT_RET_I1 = 3,
+	GSHAREDVT_RET_U1 = 4,
+	GSHAREDVT_RET_I2 = 5,
+	GSHAREDVT_RET_U2 = 6
+} GSharedVtRetMarshal;
+
+typedef struct {
+	/* Method address to call */
+	gpointer addr;
+	/* The trampoline reads this, so keep the size explicit */
+	int ret_marshal;
+	/* If ret_marshal != NONE, this is the reg of the vret arg, else -1 */
+	int vret_arg_reg;
+	/* The stack slot where the return value will be stored */
+	int vret_slot;
+	int stack_usage, map_count;
+	/* If not -1, then make a virtual call using this vtable offset */
+	int vcall_offset;
+	/* If 1, make an indirect call to the address in the rgctx reg */
+	int calli;
+	/* Whenever this is a in or an out call */
+	int gsharedvt_in;
+	/* Maps stack slots/registers in the caller to the stack slots/registers in the callee */
+	/* A negative value means a register, i.e. -1=r0, -2=r1 etc. */
+	int map [MONO_ZERO_LEN_ARRAY];
+} GSharedVtCallInfo;
 
 void arm_patch (guchar *code, const guchar *target);
 guint8* mono_arm_emit_load_imm (guint8 *code, int dreg, guint32 val);
@@ -104,11 +160,13 @@ int mono_arm_is_rotated_imm8 (guint32 val, gint *rot_amount);
 void
 mono_arm_throw_exception_by_token (guint32 type_token, mgreg_t pc, mgreg_t sp, mgreg_t *int_regs, gdouble *fp_regs);
 
+gpointer
+mono_arm_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpointer *callee, gpointer mrgctx_reg) MONO_INTERNAL;
+
 typedef enum {
 	MONO_ARM_FPU_NONE = 0,
-	MONO_ARM_FPU_FPA = 1,
-	MONO_ARM_FPU_VFP = 2,
-	MONO_ARM_FPU_VFP_HARD = 3
+	MONO_ARM_FPU_VFP = 1,
+	MONO_ARM_FPU_VFP_HARD = 2
 } MonoArmFPU;
 
 /* keep the size of the structure a multiple of 8 */
@@ -124,6 +182,10 @@ struct MonoLMF {
 	mgreg_t    sp;
 	mgreg_t    ip;
 	mgreg_t    fp;
+	/* Currently only used in trampolines on armhf to hold d0-d15. We don't really
+	 * need to put d0-d7 in the LMF, but it simplifies the trampoline code.
+	 */
+	double     fregs [16];
 	/* all but sp and pc: matches the PUSH instruction layout in the trampolines
 	 * 0-4 should be considered undefined (execpt in the magic tramp)
 	 * sp is saved at IP.
@@ -153,6 +215,11 @@ typedef struct MonoCompileArch {
 #define ARM_LAST_ARG_REG 3
 
 #define MONO_ARCH_USE_SIGACTION 1
+
+#if defined(__native_client__)
+#undef MONO_ARCH_USE_SIGACTION
+#endif
+
 #define MONO_ARCH_NEED_DIV_CHECK 1
 
 #define MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
@@ -183,9 +250,19 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_HAVE_SETUP_ASYNC_CALLBACK 1
 #define MONO_ARCH_HAVE_CONTEXT_SET_INT_REG 1
 #define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
+#define MONO_ARCH_GSHAREDVT_SUPPORTED 1
+#define MONO_ARCH_HAVE_GENERAL_RGCTX_LAZY_FETCH_TRAMPOLINE 1
+#define MONO_ARCH_HAVE_OPCODE_NEEDS_EMULATION 1
+#define MONO_ARCH_HAVE_OBJC_GET_SELECTOR 1
+
+#if defined(__native_client__)
+#undef MONO_ARCH_SOFT_DEBUG_SUPPORTED
+#undef MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX
+#undef MONO_ARCH_HAVE_CONTEXT_SET_INT_REG
+#endif
 
 /* Matches the HAVE_AEABI_READ_TP define in mini-arm.c */
-#if defined(__ARM_EABI__) && defined(__linux__) && !defined(TARGET_ANDROID)
+#if defined(__ARM_EABI__) && defined(__linux__) && !defined(TARGET_ANDROID) && !defined(__native_client__)
 #define MONO_ARCH_HAVE_TLS_GET 1
 #endif
 
@@ -222,5 +299,21 @@ mono_arm_get_exception_trampolines (gboolean aot) MONO_INTERNAL;
 guint8*
 mono_arm_get_thumb_plt_entry (guint8 *code) MONO_INTERNAL;
 
-#endif /* __MONO_MINI_ARM_H__ */
+guint8*
+mono_arm_patchable_b (guint8 *code, int cond);
 
+guint8*
+mono_arm_patchable_bl (guint8 *code, int cond);
+
+#ifdef USE_JUMP_TABLES
+guint8*
+mono_arm_load_jumptable_entry_addr (guint8 *code, gpointer *jte, ARMReg reg) MONO_INTERNAL;
+
+guint8*
+mono_arm_load_jumptable_entry (guint8 *code, gpointer *jte, ARMReg reg) MONO_INTERNAL;
+#endif
+
+gboolean
+mono_arm_is_hard_float (void) MONO_INTERNAL;
+
+#endif /* __MONO_MINI_ARM_H__ */

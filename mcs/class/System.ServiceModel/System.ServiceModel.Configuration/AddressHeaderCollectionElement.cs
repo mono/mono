@@ -97,7 +97,9 @@ namespace System.ServiceModel.Configuration
 
 		[MonoTODO]
 		protected override bool SerializeToXmlElement (
-			XmlWriter writer, string elementName) {
+			XmlWriter writer, string elementName)
+		{
+			return true;
 			throw new NotImplementedException ();
 		}
 

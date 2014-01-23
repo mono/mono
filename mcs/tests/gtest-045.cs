@@ -17,7 +17,7 @@ class Test<A,B>
 
 class X
 {
-	static void Main ()
+	public static void Main ()
 	{
 		Test<float,int> test = new Test<float,int> ();
 		test.Foo ("Hello World");

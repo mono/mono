@@ -29,6 +29,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using Microsoft.Build.Internal;
 
 namespace Microsoft.Build.Construction
@@ -53,9 +54,9 @@ namespace Microsoft.Build.Construction
                 internal override string XmlName {
                         get { return "ItemDefinitionGroup"; }
                 }
-                internal override ProjectElement LoadChildElement (string name)
+                internal override ProjectElement LoadChildElement (XmlReader reader)
                 {
-                        return AddItemDefinition (name);
+                        return AddItemDefinition (reader.LocalName);
                 }
         }
 }

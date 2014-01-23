@@ -1,7 +1,7 @@
 using foo = System;
 
 class X {
-	static void Main ()
+	public static void Main ()
 	{
 		foo::Console.WriteLine ("hello");
 	}

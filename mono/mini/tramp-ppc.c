@@ -22,8 +22,7 @@
 #include "mini.h"
 #include "mini-ppc.h"
 
-static guint8* nullified_class_init_trampoline;
-
+#if 0
 /* Same as mono_create_ftnptr, but doesn't require a domain */
 static gpointer
 mono_ppc_create_ftnptr (guint8 *code)
@@ -40,6 +39,7 @@ mono_ppc_create_ftnptr (guint8 *code)
 	return code;
 #endif
 }
+#endif
 
 /*
  * Return the instruction to jump from code to target, 0 if not
@@ -200,16 +200,13 @@ mono_arch_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *a
 void
 mono_arch_nullify_class_init_trampoline (guint8 *code, mgreg_t *regs)
 {
-	mono_arch_patch_callsite (NULL, code, nullified_class_init_trampoline);
+	mono_arch_patch_callsite (NULL, code, mini_get_nullified_class_init_trampoline ());
 }
 
 void
 mono_arch_nullify_plt_entry (guint8 *code, mgreg_t *regs)
 {
-	if (mono_aot_only && !nullified_class_init_trampoline)
-		nullified_class_init_trampoline = mono_aot_get_trampoline ("nullified_class_init_trampoline");
-
-	mono_arch_patch_plt_entry (code, NULL, regs, nullified_class_init_trampoline);
+	mono_arch_patch_plt_entry (code, NULL, regs, mini_get_nullified_class_init_trampoline ());
 }
 
 /* Stack size for trampoline function 
@@ -248,7 +245,7 @@ mono_arch_nullify_plt_entry (guint8 *code, mgreg_t *regs)
 guchar*
 mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInfo **info, gboolean aot)
 {
-
+	char *tramp_name;
 	guint8 *buf, *code = NULL;
 	int i, offset;
 	gconstpointer tramp_handler;
@@ -440,13 +437,11 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	/* Sanity check */
 	g_assert ((code - buf) <= size);
 
-	if (tramp_type == MONO_TRAMPOLINE_CLASS_INIT) {
-		/* Initialize the nullified class init trampoline */
-		nullified_class_init_trampoline = mono_ppc_create_ftnptr (mono_arch_get_nullified_class_init_trampoline (NULL));
+	if (info) {
+		tramp_name = mono_get_generic_trampoline_name (tramp_type);
+		*info = mono_tramp_info_create (tramp_name, buf, code - buf, ji, unwind_ops);
+		g_free (tramp_name);
 	}
-
-	if (info)
-		*info = mono_tramp_info_create (mono_get_generic_trampoline_name (tramp_type), buf, code - buf, ji, unwind_ops);
 
 	return buf;
 }
@@ -617,8 +612,11 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 
 	g_assert (code - buf <= tramp_size);
 
-	if (info)
-		*info = mono_tramp_info_create (mono_get_rgctx_fetch_trampoline_name (slot), buf, code - buf, ji, unwind_ops);
+	if (info) {
+		char *name = mono_get_rgctx_fetch_trampoline_name (slot);
+		*info = mono_tramp_info_create (name, buf, code - buf, ji, unwind_ops);
+		g_free (name);
+	}
 
 	return buf;
 #else
@@ -677,7 +675,7 @@ mono_arch_create_generic_class_init_trampoline (MonoTrampInfo **info, gboolean a
 	g_assert (code - buf <= tramp_size);
 
 	if (info)
-		*info = mono_tramp_info_create (g_strdup_printf ("generic_class_init_trampoline"), buf, code - buf, ji, unwind_ops);
+		*info = mono_tramp_info_create ("generic_class_init_trampoline", buf, code - buf, ji, unwind_ops);
 
 	return buf;
 }
@@ -696,7 +694,7 @@ mono_arch_get_nullified_class_init_trampoline (MonoTrampInfo **info)
 	g_assert (code - buf <= tramp_size);
 
 	if (info)
-		*info = mono_tramp_info_create (g_strdup_printf ("nullified_class_init_trampoline"), buf, code - buf, NULL, NULL);
+		*info = mono_tramp_info_create ("nullified_class_init_trampoline", buf, code - buf, NULL, NULL);
 
 	return buf;
 }

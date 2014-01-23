@@ -60,7 +60,7 @@
 #endif
 #else
 class X {
-	static int Main ()
+	public static int Main ()
 	{
 #if (TEST)
 		ns5.Y y = new ns5.Y ();

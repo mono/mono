@@ -25,9 +25,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
@@ -44,7 +43,8 @@ namespace Microsoft.Build.BuildEngine {
 		GroupingCollection	parentCollection;
 		Project			parentProject;
 		bool			read_only;
-		bool evaluated;
+		bool			evaluated;
+		bool			isDynamic;
 
 		public BuildItemGroup ()
 			: this (null, null, null, false)
@@ -57,12 +57,18 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		internal BuildItemGroup (XmlElement xmlElement, Project project, ImportedProject importedProject, bool readOnly)
+			: this (xmlElement, project, importedProject, readOnly, false)
+		{
+		}
+
+		internal BuildItemGroup (XmlElement xmlElement, Project project, ImportedProject importedProject, bool readOnly, bool dynamic)
 		{
 			this.buildItems = new List <BuildItem> ();
 			this.importedProject = importedProject;
 			this.itemGroupElement = xmlElement;
 			this.parentProject = project;
 			this.read_only = readOnly;
+			this.isDynamic = dynamic;
 			
 			if (!FromXml)
 				return;
@@ -72,13 +78,18 @@ namespace Microsoft.Build.BuildEngine {
 					continue;
 					
 				XmlElement xe = (XmlElement) xn;
-				BuildItem bi = new BuildItem (xe, this);
+				BuildItem bi = CreateItem (project, xe);
 				buildItems.Add (bi);
 				project.LastItemGroupContaining [bi.Name] = this;
 			}
 
 			DefinedInFileName = importedProject != null ? importedProject.FullFileName :
 						project != null ? project.FullFileName : null;
+		}
+
+		internal virtual BuildItem CreateItem (Project project, XmlElement xe)
+		{
+			return new BuildItem (xe, this);
 		}
 
 		public BuildItem AddNewItem (string itemName,
@@ -171,6 +182,24 @@ namespace Microsoft.Build.BuildEngine {
 			RemoveItem (item);
 		}
 
+		internal BuildItem FindItem (ITaskItem taskItem)
+		{
+			return buildItems.FirstOrDefault (i => i.FinalItemSpec == taskItem.ItemSpec);
+		}
+
+		internal void RemoveItem (ITaskItem itemToRemove)
+		{
+			if (itemToRemove == null)
+				return;
+
+			var item = FindItem (itemToRemove);
+			if (item == null)
+				return;
+
+			item.Detach ();
+			buildItems.Remove (item);
+		}
+
 		public BuildItem[] ToArray ()
 		{
 			return buildItems.ToArray ();
@@ -241,7 +270,7 @@ namespace Microsoft.Build.BuildEngine {
 
 		internal void Evaluate ()
 		{
-			if (evaluated)
+			if (!isDynamic && evaluated)
 				return;
 			foreach (BuildItem bi in buildItems) {
 				if (bi.Condition == String.Empty)
@@ -319,7 +348,11 @@ namespace Microsoft.Build.BuildEngine {
 				return itemGroupElement;
 			}	
 		}
+
+		internal bool IsDynamic {
+			get {
+				return isDynamic;
+			}
+		}
 	}
 }
-
-#endif

@@ -33,7 +33,10 @@
 #include <mono/utils/mono-path.h>
 #include <mono/metadata/reflection.h>
 #include <mono/metadata/coree.h>
+#include <mono/metadata/cil-coff.h>
 #include <mono/utils/mono-io-portability.h>
+#include <mono/utils/atomic.h>
+#include <mono/utils/mono-mutex.h>
 
 #ifndef HOST_WIN32
 #include <sys/types.h>
@@ -54,6 +57,7 @@ typedef struct  {
 /* the default search path is empty, the first slot is replaced with the computed value */
 static const char*
 default_path [] = {
+	NULL,
 	NULL,
 	NULL
 };
@@ -105,6 +109,8 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	{"System.Data", 0},
 	{"System.Data.Linq", 2},
 	{"System.Data.OracleClient", 0},
+	{"System.Data.Services", 2},
+	{"System.Data.Services.Client", 2},
 	{"System.Data.SqlXml", 0},
 	{"System.Design", 0},
 	{"System.DirectoryServices", 0},
@@ -113,18 +119,25 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	{"System.EnterpriseServices", 0},
 	{"System.Management", 0},
 	{"System.Messaging", 0},
+	{"System.Net", 2},
 	{"System.Runtime.Remoting", 0},
+	{"System.Runtime.Serialization", 3},
 	{"System.Runtime.Serialization.Formatters.Soap", 0},
 	{"System.Security", 0},
+	{"System.ServiceModel.Web", 2},
 	{"System.ServiceProcess", 0},
 	{"System.Transactions", 0},
 	{"System.Web", 0},
 	{"System.Web.Abstractions", 2},
+	{"System.Web.DynamicData", 2},
+	{"System.Web.Extensions", 2},
 	{"System.Web.Mobile", 0},
 	{"System.Web.Routing", 2},
 	{"System.Web.Services", 0},
 	{"System.Windows.Forms", 0},
 	{"System.Xml", 0},
+	{"System.Xml.Linq", 2},
+	{"WindowsBase", 3},
 	{"mscorlib", 0}
 };
 #endif
@@ -163,6 +176,8 @@ static CRITICAL_SECTION assemblies_mutex;
 
 /* If defined, points to the bundled assembly information */
 const MonoBundledAssembly **bundles;
+
+static mono_mutex_t assembly_binding_mutex;
 
 /* Loaded assembly binding info */
 static GSList *loaded_assembly_bindings = NULL;
@@ -253,10 +268,10 @@ static void
 check_path_env (void)
 {
 	const char* path;
-#ifdef __native_client__
-	path = nacl_mono_path;
-#else
 	path = g_getenv ("MONO_PATH");
+#ifdef __native_client__
+	if (!path)
+		path = nacl_mono_path;
 #endif
 	if (!path || assemblies_path != NULL)
 		return;
@@ -565,7 +580,7 @@ compute_base (char *path)
 		return NULL;
 
 	/* Not a well known Mono executable, we are embedded, cant guess the base  */
-	if (strcmp (p, "/mono") && strcmp (p, "/monodis") && strcmp (p, "/mint") && strcmp (p, "/monodiet"))
+	if (strcmp (p, "/mono") && strcmp (p, "/mono-sgen") && strcmp (p, "/pedump") && strcmp (p, "/monodis") && strcmp (p, "/mint") && strcmp (p, "/monodiet"))
 		return NULL;
 	    
 	*p = 0;
@@ -642,6 +657,7 @@ mono_set_rootdir (void)
 		gchar buf[4096];
  		guint buf_size = sizeof (buf);
  
+		name = NULL;
  		if (_NSGetExecutablePath (buf, &buf_size) == 0)
  			name = g_strdup (buf);
  
@@ -722,6 +738,19 @@ mono_assemblies_init (void)
 	check_extra_gac_path_env ();
 
 	InitializeCriticalSection (&assemblies_mutex);
+	mono_mutex_init (&assembly_binding_mutex);
+}
+
+static void
+mono_assembly_binding_lock (void)
+{
+	mono_locks_mutex_acquire (&assembly_binding_mutex, AssemblyBindingLock);
+}
+
+static void
+mono_assembly_binding_unlock (void)
+{
+	mono_locks_mutex_release (&assembly_binding_mutex, AssemblyBindingLock);
 }
 
 gboolean
@@ -729,6 +758,7 @@ mono_assembly_fill_assembly_name (MonoImage *image, MonoAssemblyName *aname)
 {
 	MonoTableInfo *t = &image->tables [MONO_TABLE_ASSEMBLY];
 	guint32 cols [MONO_ASSEMBLY_SIZE];
+	gint32 machine;
 
 	if (!t->rows)
 		return FALSE;
@@ -772,6 +802,24 @@ mono_assembly_fill_assembly_name (MonoImage *image, MonoAssemblyName *aname)
 	}
 	else
 		aname->public_key = 0;
+
+	machine = ((MonoCLIImageInfo*)(image->image_info))->cli_header.coff.coff_machine;
+	switch (machine) {
+	case COFF_MACHINE_I386:
+		aname->arch = MONO_PROCESSOR_ARCHITECTURE_X86;
+		break;
+	case COFF_MACHINE_IA64:
+		aname->arch = MONO_PROCESSOR_ARCHITECTURE_IA64;
+		break;
+	case COFF_MACHINE_AMD64:
+		aname->arch = MONO_PROCESSOR_ARCHITECTURE_AMD64;
+		break;
+	case COFF_MACHINE_ARM:
+		aname->arch = MONO_PROCESSOR_ARCHITECTURE_ARM;
+		break;
+	default:
+		break;
+	}
 
 	return TRUE;
 }
@@ -832,7 +880,60 @@ mono_assembly_addref (MonoAssembly *assembly)
 	InterlockedIncrement (&assembly->ref_count);
 }
 
-#ifndef DISABLE_ASSEMBLY_REMAPPING
+/*
+ * CAUTION: This table must be kept in sync with
+ *          ivkm/reflect/Fusion.cs
+ */
+
+#define SILVERLIGHT_KEY "7cec85d7bea7798e"
+#define WINFX_KEY "31bf3856ad364e35"
+#define ECMA_KEY "b77a5c561934e089"
+#define MSFINAL_KEY "b03f5f7f11d50a3a"
+
+typedef struct {
+	const char *name;
+	const char *from;
+	const char *to;
+} KeyRemapEntry;
+
+static KeyRemapEntry key_remap_table[] = {
+	{ "Microsoft.CSharp", WINFX_KEY, MSFINAL_KEY },
+	{ "System", SILVERLIGHT_KEY, ECMA_KEY },
+	{ "System.ComponentModel.Composition", WINFX_KEY, ECMA_KEY },
+	{ "System.ComponentModel.DataAnnotations", "ddd0da4d3e678217", WINFX_KEY },
+	{ "System.Core", SILVERLIGHT_KEY, ECMA_KEY },
+	// FIXME: MS uses MSFINAL_KEY for .NET 4.5
+	{ "System.Net", SILVERLIGHT_KEY, MSFINAL_KEY },
+	{ "System.Numerics", WINFX_KEY, ECMA_KEY },
+	{ "System.Runtime.Serialization", SILVERLIGHT_KEY, ECMA_KEY },
+	{ "System.ServiceModel", WINFX_KEY, ECMA_KEY },
+	{ "System.ServiceModel.Web", SILVERLIGHT_KEY, WINFX_KEY },
+	{ "System.Windows", SILVERLIGHT_KEY, MSFINAL_KEY },
+	{ "System.Xml", SILVERLIGHT_KEY, ECMA_KEY },
+	{ "System.Xml.Linq", WINFX_KEY, ECMA_KEY },
+	{ "System.Xml.Serialization", WINFX_KEY, ECMA_KEY }
+};
+
+static void
+remap_keys (MonoAssemblyName *aname)
+{
+	int i;
+	for (i = 0; i < G_N_ELEMENTS (key_remap_table); i++) {
+		const KeyRemapEntry *entry = &key_remap_table [i];
+
+		if (strcmp (aname->name, entry->name) ||
+		    !mono_public_tokens_are_equal (aname->public_key_token, (const unsigned char*) entry->from))
+			continue;
+
+		memcpy (aname->public_key_token, entry->to, MONO_PUBLIC_KEY_TOKEN_LENGTH);
+		     
+		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY,
+			    "Remapped public key token of retargetable assembly %s from %s to %s",
+			    aname->name, entry->from, entry->to);
+		return;
+	}
+}
+
 static MonoAssemblyName *
 mono_assembly_remap_version (MonoAssemblyName *aname, MonoAssemblyName *dest_aname)
 {
@@ -859,8 +960,10 @@ mono_assembly_remap_version (MonoAssemblyName *aname, MonoAssemblyName *dest_ana
 		/* Remap assembly name */
 		if (!strcmp (aname->name, "System.Net"))
 			dest_aname->name = g_strdup ("System");
+		
+		remap_keys (dest_aname);
 
-		mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_ASSEMBLY,
+		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY,
 					"The request to load the retargetable assembly %s v%d.%d.%d.%d was remapped to %s v%d.%d.%d.%d",
 					aname->name,
 					aname->major, aname->minor, aname->build, aname->revision,
@@ -870,7 +973,8 @@ mono_assembly_remap_version (MonoAssemblyName *aname, MonoAssemblyName *dest_ana
 
 		return dest_aname;
 	}
-
+	
+#ifndef DISABLE_ASSEMBLY_REMAPPING
 	first = 0;
 	last = G_N_ELEMENTS (framework_assemblies) - 1;
 	
@@ -908,9 +1012,10 @@ mono_assembly_remap_version (MonoAssemblyName *aname, MonoAssemblyName *dest_ana
 			first = pos + 1;
 		}
 	}
+#endif
+
 	return aname;
 }
-#endif
 
 /*
  * mono_assembly_get_assemblyref:
@@ -964,6 +1069,7 @@ mono_assembly_load_reference (MonoImage *image, int index)
 		MonoTableInfo *t = &image->tables [MONO_TABLE_ASSEMBLYREF];
 	
 		image->references = g_new0 (MonoAssembly *, t->rows + 1);
+		image->nreferences = t->rows;
 	}
 	reference = image->references [index];
 	mono_assemblies_unlock ();
@@ -2181,9 +2287,7 @@ mono_assembly_load_with_partial_name (const char *name, MonoImageOpenStatus *sta
 {
 	MonoAssembly *res;
 	MonoAssemblyName *aname, base_name;
-#ifndef DISABLE_ASSEMBLY_REMAPPING
-	MonoAssemblyName maped_aname;
-#endif
+	MonoAssemblyName mapped_aname;
 	gchar *fullname, *gacpath;
 	gchar **paths;
 
@@ -2193,14 +2297,12 @@ mono_assembly_load_with_partial_name (const char *name, MonoImageOpenStatus *sta
 	if (!mono_assembly_name_parse (name, aname))
 		return NULL;
 
-#ifndef DISABLE_ASSEMBLY_REMAPPING
 	/* 
 	 * If no specific version has been requested, make sure we load the
 	 * correct version for system assemblies.
 	 */ 
 	if ((aname->major | aname->minor | aname->build | aname->revision) == 0)
-		aname = mono_assembly_remap_version (aname, &maped_aname);
-#endif
+		aname = mono_assembly_remap_version (aname, &mapped_aname);
 	
 	res = mono_assembly_loaded (aname);
 	if (res) {
@@ -2383,7 +2485,7 @@ mono_assembly_bind_version (MonoAssemblyBindingInfo *info, MonoAssemblyName *ana
 	return dest_name;
 }
 
-/* LOCKING: Assumes that we are already locked */
+/* LOCKING: assembly_binding lock must be held */
 static MonoAssemblyBindingInfo*
 search_binding_loaded (MonoAssemblyName *aname)
 {
@@ -2519,15 +2621,17 @@ mono_assembly_apply_binding (MonoAssemblyName *aname, MonoAssemblyName *dest_nam
 		return aname;
 
 	domain = mono_domain_get ();
-	mono_loader_lock ();
+
+	mono_assembly_binding_lock ();
 	info = search_binding_loaded (aname);
+	mono_assembly_binding_unlock ();
+
 	if (!info) {
 		mono_domain_lock (domain);
 		info = get_per_domain_assembly_binding_info (domain, aname);
 		mono_domain_unlock (domain);
 	}
 
-	mono_loader_unlock ();
 	if (info) {
 		if (!check_policy_versions (info, aname))
 			return aname;
@@ -2551,10 +2655,7 @@ mono_assembly_apply_binding (MonoAssemblyName *aname, MonoAssemblyName *dest_nam
 				g_free (domain_config_file_name);
 			g_free (domain_config_file_path);
 		}
-		mono_domain_unlock (domain);
 
-		mono_loader_lock ();
-		mono_domain_lock (domain);
 		info2 = get_per_domain_assembly_binding_info (domain, aname);
 
 		if (info2) {
@@ -2565,7 +2666,6 @@ mono_assembly_apply_binding (MonoAssemblyName *aname, MonoAssemblyName *dest_nam
 		}
 
 		mono_domain_unlock (domain);
-		mono_loader_unlock ();
 	}
 
 	if (!info) {
@@ -2589,7 +2689,7 @@ mono_assembly_apply_binding (MonoAssemblyName *aname, MonoAssemblyName *dest_nam
 		g_strlcpy ((char *)info->public_key_token, (const char *)aname->public_key_token, MONO_PUBLIC_KEY_TOKEN_LENGTH);
 	}
 	
-	mono_loader_lock ();
+	mono_assembly_binding_lock ();
 	info2 = search_binding_loaded (aname);
 	if (info2) {
 		/* This binding was added by another thread 
@@ -2601,7 +2701,7 @@ mono_assembly_apply_binding (MonoAssemblyName *aname, MonoAssemblyName *dest_nam
 	} else
 		loaded_assembly_bindings = g_slist_prepend (loaded_assembly_bindings, info);
 		
-	mono_loader_unlock ();
+	mono_assembly_binding_unlock ();
 	
 	if (!info->is_valid || !check_policy_versions (info, aname))
 		return aname;
@@ -2734,7 +2834,10 @@ mono_assembly_load_corlib (const MonoRuntimeInfo *runtime, MonoImageOpenStatus *
 	}
 	corlib = load_in_path (corlib_file, default_path, status, FALSE);
 	g_free (corlib_file);
-
+	
+	if (corlib && !strcmp (runtime->framework_version, "4.5"))
+		default_path [1] = g_strdup_printf ("%s/mono/4.5/Facades", default_path [0]);
+		
 	return corlib;
 }
 
@@ -2746,17 +2849,13 @@ mono_assembly_load_full_nosearch (MonoAssemblyName *aname,
 {
 	MonoAssembly *result;
 	char *fullpath, *filename;
-#ifndef DISABLE_ASSEMBLY_REMAPPING
 	MonoAssemblyName maped_aname;
-#endif
 	MonoAssemblyName maped_name_pp;
 	int ext_index;
 	const char *ext;
 	int len;
 
-#ifndef DISABLE_ASSEMBLY_REMAPPING
 	aname = mono_assembly_remap_version (aname, &maped_aname);
-#endif
 	
 	/* Reflection only assemblies don't get assembly binding */
 	if (!refonly)
@@ -2867,11 +2966,9 @@ MonoAssembly*
 mono_assembly_loaded_full (MonoAssemblyName *aname, gboolean refonly)
 {
 	MonoAssembly *res;
-#ifndef DISABLE_ASSEMBLY_REMAPPING
 	MonoAssemblyName maped_aname;
 
 	aname = mono_assembly_remap_version (aname, &maped_aname);
-#endif
 
 	res = mono_assembly_invoke_search_hook_internal (aname, refonly, FALSE);
 
@@ -3016,6 +3113,7 @@ mono_assemblies_cleanup (void)
 	GSList *l;
 
 	DeleteCriticalSection (&assemblies_mutex);
+	mono_mutex_destroy (&assembly_binding_mutex);
 
 	for (l = loaded_assembly_bindings; l; l = l->next) {
 		MonoAssemblyBindingInfo *info = l->data;
@@ -3030,12 +3128,14 @@ mono_assemblies_cleanup (void)
 	free_assembly_preload_hooks ();
 }
 
-/*LOCKING assumes loader lock is held*/
+/*LOCKING takes the assembly_binding lock*/
 void
 mono_assembly_cleanup_domain_bindings (guint32 domain_id)
 {
-	GSList **iter = &loaded_assembly_bindings;
+	GSList **iter;
 
+	mono_assembly_binding_lock ();
+	iter = &loaded_assembly_bindings;
 	while (*iter) {
 		GSList *l = *iter;
 		MonoAssemblyBindingInfo *info = l->data;
@@ -3049,6 +3149,7 @@ mono_assembly_cleanup_domain_bindings (guint32 domain_id)
 			iter = &l->next;
 		}
 	}
+	mono_assembly_binding_unlock ();
 }
 
 /*

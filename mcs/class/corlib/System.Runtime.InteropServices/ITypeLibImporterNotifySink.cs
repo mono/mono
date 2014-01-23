@@ -30,6 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !FULL_AOT_RUNTIME
 using System.Reflection;
 
 namespace System.Runtime.InteropServices {
@@ -41,3 +42,4 @@ namespace System.Runtime.InteropServices {
 		Assembly ResolveRef([MarshalAs(UnmanagedType.Interface)] object typeLib);
 	}
 }
+#endif

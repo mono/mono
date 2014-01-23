@@ -5,7 +5,7 @@ using System;
 delegate void S ();
 
 class X {
-	static int Main ()
+	public static int Main ()
 	{
 		int i;
 		S b = null;

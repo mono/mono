@@ -12,5 +12,5 @@ public class A
 [A.B()]
 public class C
 {
-	static void Main () {}
+	public static void Main () {}
 }

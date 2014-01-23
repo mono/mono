@@ -42,20 +42,9 @@ namespace System.Security.AccessControl {
 			: base (identity, accessMask, isInherited,
 				inheritanceFlags, propagationFlags)
 		{
-			if (!(identity is SecurityIdentifier)) {
-				throw new ArgumentException ("identity");
-			}
 			if (type < AccessControlType.Allow ||
 			    type > AccessControlType.Deny) {
-				throw new ArgumentException ("type");
-			}
-			
-			
-			if (accessMask == 0) {
-				/* FIXME: check inheritance and
-				 * propagation flags too
-				 */
-				throw new ArgumentOutOfRangeException ();
+				throw new ArgumentException ("Invalid access control type.", "type");
 			}
 		
 			this.type = type;

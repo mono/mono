@@ -81,12 +81,5 @@ namespace System.ServiceModel.Description
 				has_protection_level = true;
 			}
 		}
-#if MOONLIGHT
-		// introduced for silverlight sdk compatibility
-		internal XmlName ElementName {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-#endif
 	}
 }

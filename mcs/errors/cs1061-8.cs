@@ -1,4 +1,4 @@
-// CS1061: Type `string' does not contain a definition for `Length2' and no extension method `Length2' of type `string' could be found (are you missing a using directive or an assembly reference?)
+// CS1061: Type `string' does not contain a definition for `Length2' and no extension method `Length2' of type `string' could be found. Are you missing an assembly reference?
 // Line: 12
 
 

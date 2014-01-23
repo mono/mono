@@ -5,7 +5,7 @@ namespace Mono.Test
 {
 	class Program
 	{
-		static int Main ()
+		public static int Main ()
 		{
 			Type t = typeof (B);
 			InterfaceMapping map = t.GetInterfaceMap (typeof (ITest));

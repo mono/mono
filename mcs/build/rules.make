@@ -81,8 +81,14 @@ include $(topdir)/build/config-default.make
 
 ifndef PLATFORM
 ifeq ($(OS),Windows_NT)
+ifneq ($(V),)
+$(info *** Assuming PLATFORM is 'win32'.)
+endif
 PLATFORM = win32
 else
+ifneq ($(V),)
+$(info *** Assuming PLATFORM is 'linux'.)
+endif
 PLATFORM = linux
 endif
 endif
@@ -108,6 +114,10 @@ endif
 
 include $(topdir)/build/profiles/$(PROFILE).make
 -include $(topdir)/build/config.make
+
+ifdef BCL_OPTIMIZE
+PROFILE_MCS_FLAGS += -optimize
+endif
 
 ifdef OVERRIDE_TARGET_ALL
 all: all.override

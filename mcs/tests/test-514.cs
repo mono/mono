@@ -13,7 +13,7 @@ class X {
 		throw new Exception ();
 	}
 
-        static int Main ()
+        public static int Main ()
 	{
 		int ret = 1;
 		try { HandleConflict (1); }

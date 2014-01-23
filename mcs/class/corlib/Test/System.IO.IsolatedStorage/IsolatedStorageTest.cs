@@ -39,17 +39,9 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 	// note: IsolatedStorage is abstract so we create a
 	// non-abstract class to test it
 
-// naming a class with the same name as a namespace is a BAD idea
-#if NET_2_0
-	#if __MonoCS__
-	public class NonAbstractIsolatedStorage : IsolatedStorage {
-	#else
-	// VS.NET 2005 requires the class to be fully named - including global::
-	public class NonAbstractIsolatedStorage : global::System.IO.IsolatedStorage.IsolatedStorage {
-	#endif
-#else
-	public class NonAbstractIsolatedStorage : IsolatedStorage {
-#endif
+	// naming a class with the same name as a namespace is a BAD idea
+	public class NonAbstractIsolatedStorage : global::System.IO.IsolatedStorage.IsolatedStorage
+	{
 		public NonAbstractIsolatedStorage ()
 		{
 			// no InitStore here
@@ -59,12 +51,12 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		{
 			InitStore (scope, domain, assembly);
 		}
-#if NET_2_0
+
 		public NonAbstractIsolatedStorage(IsolatedStorageScope scope, Type application)
 		{
 			InitStore (scope, application);
 		}
-#endif
+
 		protected override IsolatedStoragePermission GetPermission (PermissionSet ps)
 		{
 			throw new NotImplementedException();
@@ -138,7 +130,6 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			NonAbstractIsolatedStorage nais = new NonAbstractIsolatedStorage (IsolatedStorageScope.Roaming, null, null);
 		}
 
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void IsolatedStorage_Machine ()
@@ -147,12 +138,13 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		}
 
 		[Test]
+#if !MOBILE
 		[ExpectedException (typeof (IsolatedStorageException))]
+#endif
 		public void IsolatedStorage_Application ()
 		{
 			NonAbstractIsolatedStorage nais = new NonAbstractIsolatedStorage (IsolatedStorageScope.Application, null);
 		}
-#endif
 
 		[Test]
 		[ExpectedException (typeof (NotImplementedException))]
@@ -223,6 +215,43 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		{
 			NonAbstractIsolatedStorage nais = new NonAbstractIsolatedStorage ();
 			ulong ul = nais.MaximumSize;
+		}
+		
+		[Test]
+		public void MultiLevel ()
+		{
+			// see bug #4101
+			IsolatedStorageFile isf;
+#if MOBILE
+			isf = IsolatedStorageFile.GetUserStoreForApplication ();
+#else
+			isf = IsolatedStorageFile.GetStore (IsolatedStorageScope.User |  IsolatedStorageScope.Assembly | IsolatedStorageScope.Domain,
+	   					typeof (global::System.Security.Policy.Url), typeof (global::System.Security.Policy.Url));
+#endif
+
+			try {
+				isf.CreateDirectory ("dir1");
+				string [] dirs = isf.GetDirectoryNames ("*");
+				Assert.AreEqual (1, dirs.Length, "1a");
+				Assert.AreEqual ("dir1", dirs [0], "1b");
+	
+				isf.CreateDirectory ("dir1/test");
+				dirs = isf.GetDirectoryNames ("dir1/*");
+				Assert.AreEqual (1, dirs.Length, "2a");
+				Assert.AreEqual ("test", dirs [0], "2b");
+	
+				isf.CreateDirectory ("dir1/test/test2a");
+				isf.CreateDirectory ("dir1/test/test2b");
+				dirs = isf.GetDirectoryNames ("dir1/test/*");
+				Assert.AreEqual (2, dirs.Length, "3a");
+				Assert.AreEqual ("test2a", dirs [0], "3b");
+				Assert.AreEqual ("test2b", dirs [1], "3c");
+			} finally {
+				isf.DeleteDirectory ("dir1/test/test2a");
+				isf.DeleteDirectory ("dir1/test/test2b");
+				isf.DeleteDirectory ("dir1/test");
+				isf.DeleteDirectory ("dir1");
+			}
 		}
 
 #if NET_4_0

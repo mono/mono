@@ -119,6 +119,7 @@ namespace MonoTests.System.IO.Compression
 			decompressing.Read (dummy, 10, 20);
 		}
 
+#if !MOBILE
 		[Test]
 		[Category("NotWorking")]
 		[ExpectedException (typeof (InvalidDataException))]
@@ -130,6 +131,7 @@ namespace MonoTests.System.IO.Compression
 			DeflateStream decompressing = new DeflateStream (backing, CompressionMode.Decompress);
 			decompressing.Read (dummy, 0, 20);
 		}
+#endif
 
 		[Test]
 		[ExpectedException (typeof (ObjectDisposedException))]

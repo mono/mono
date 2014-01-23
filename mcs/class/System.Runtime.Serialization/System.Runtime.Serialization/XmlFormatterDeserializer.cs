@@ -104,19 +104,16 @@ namespace System.Runtime.Serialization
 			get { return references; }
 		}
 
-#if !MOONLIGHT
 		XmlDocument document;
 		
 		XmlDocument XmlDocument {
 			get { return (document = document ?? new XmlDocument ()); }
 		}
-#endif
 
 		// This method handles z:Ref, xsi:nil and primitive types, and then delegates to DeserializeByMap() for anything else.
 
 		public object Deserialize (Type type, XmlReader reader)
 		{
-#if !MOONLIGHT
 			if (type == typeof (XmlElement))
 				return XmlDocument.ReadNode (reader);
 			else if (type == typeof (XmlNode [])) {
@@ -127,7 +124,6 @@ namespace System.Runtime.Serialization
 				reader.ReadEndElement ();
 				return l.ToArray ();
 			}
-#endif
 			QName graph_qname = null;
 			
 			if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>)) {
@@ -275,15 +271,7 @@ namespace System.Runtime.Serialization
 			foreach (var ass in AppDomain.CurrentDomain.GetAssemblies ()) {
 				Type [] types;
 
-#if MOONLIGHT
-				try  {
-					types = ass.GetTypes ();
-				} catch (System.Reflection.ReflectionTypeLoadException rtle) {
-					types = rtle.Types;
-				}
-#else
 				types = ass.GetTypes ();
-#endif
 				if (types == null)
 					continue;
 

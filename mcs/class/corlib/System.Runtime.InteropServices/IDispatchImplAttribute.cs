@@ -35,8 +35,7 @@ namespace System.Runtime.InteropServices
 {
 	[Obsolete]
 	[ComVisible (true)]
-	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Assembly, 
-			 AllowMultiple = false, Inherited = false)]
+	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Assembly, Inherited = false)]
 	public sealed class IDispatchImplAttribute : Attribute
 	{
 		private IDispatchImplType Impl;

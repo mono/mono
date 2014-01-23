@@ -1024,8 +1024,13 @@ sw.Close ();
 					// be identical to the corresponding
 					// ASCII latins.
 					if (c != target && diacritical [cp] == 0) {
-						diacriticalOffset [c - 'A']++;
-						diacritical [cp] = (byte) (diacriticalOffset [c - 'A'] + 0x7C);
+						var diaidx = c - 'A';
+						if (diaidx < 0 || diaidx >= diacritical.Length)
+							Console.Error.WriteLine ("!!!!! warning: unexpected LATIN character: {0:X}", cp);
+						else {
+							diacriticalOffset [diaidx]++;
+							diacritical [cp] = (byte) (diacriticalOffset [diaidx] + 0x7C);
+						}
 					}
 				}
 			}
@@ -1577,7 +1582,8 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			category = "chs";
 			arr = cjkCHS;
 			offset = 0;//char.MaxValue - arr.Length;
-			doc.Load (zhXML);
+			using (var xr = XmlReader.Create (zhXML, new XmlReaderSettings () { XmlResolver = null, ProhibitDtd = false }))
+				doc.Load (xr);
 			s = doc.SelectSingleNode ("/ldml/collations/collation[@type='pinyin']/rules/pc").InnerText;
 			v = 0x8008;
 			foreach (char c in s) {
@@ -1675,7 +1681,8 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 			category = "ko";
 			arr = cjkKO;
 			offset = 0;//char.MaxValue - arr.Length;
-			doc.Load (koXML);
+			using (var xr = XmlReader.Create (koXML, new XmlReaderSettings () { XmlResolver = null, ProhibitDtd = false }))
+				doc.Load (xr);
 			foreach (XmlElement reset in doc.SelectNodes ("/ldml/collations/collation/rules/reset")) {
 				XmlElement sc = (XmlElement) reset.NextSibling;
 				// compute "category" and "level 1" for the 
@@ -3381,6 +3388,10 @@ throw new Exception (String.Format ("Should not happen. weights are {0} while la
 					length = 1;
 				}
 
+				if (primaryChar >= map.Length) {
+					Console.Error.WriteLine ("!!!!! warning: unexpected primary char {0:X}", i);
+					continue;
+				}
 				if (map [primaryChar].Level1 == 0)
 					continue;
 

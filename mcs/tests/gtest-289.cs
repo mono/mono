@@ -46,7 +46,7 @@ class Consts
 
 class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		ConstructorInfo mi = typeof(C).GetConstructors ()[0];
         MethodBody mb = mi.GetMethodBody();

@@ -14,10 +14,41 @@ class Test
 	{
 	}
 
-	static public int Main ()
+	[MethodImplAttribute((short)MethodImplOptions.Synchronized)]
+	public void test2 ()
 	{
-		MethodImplAttributes iflags = typeof (Test).GetMethod ("test").GetMethodImplementationFlags ();
-		return ((iflags & MethodImplAttributes.Synchronized) != 0 ? 0 : 1);
+	}
+
+	[MethodImplAttribute((byte)32)]
+	public void test3 ()
+	{
+	}
+
+	[MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
+	public void test4 ()
+	{
+	}
+
+	public static int Main ()
+	{
+		MethodImplAttributes iflags;
+		iflags = typeof (Test).GetMethod ("test").GetMethodImplementationFlags ();
+		if ((iflags & MethodImplAttributes.Synchronized) == 0)
+			return 1;
+
+		iflags = typeof (Test).GetMethod ("test2").GetMethodImplementationFlags ();
+		if ((iflags & MethodImplAttributes.Synchronized) == 0)
+			return 2;
+
+		iflags = typeof (Test).GetMethod ("test3").GetMethodImplementationFlags ();
+		if ((iflags & MethodImplAttributes.Synchronized) == 0)
+			return 3;
+
+		iflags = typeof (Test).GetMethod ("test3").GetMethodImplementationFlags ();
+		if ((iflags & MethodImplAttributes.Synchronized) == 0)
+			return 4;
+
+		return 0;
 	}
 }
 		

@@ -3,7 +3,7 @@ using System;
 delegate void D ();
 
 class X {
-	static void Main ()
+	public static void Main ()
 	{
 		X x = new X (1);
 		X y = new X (100);

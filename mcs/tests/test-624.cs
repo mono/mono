@@ -12,7 +12,7 @@ class X {
 		}
 	}
 
-	static void Main ()
+	public static void Main ()
 	{
 		Type t = (Type) null;
 	}

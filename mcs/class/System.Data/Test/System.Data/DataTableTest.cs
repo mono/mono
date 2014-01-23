@@ -53,7 +53,7 @@ namespace MonoTests.System.Data
 	[TestFixture]
 	public class DataTableTest :  DataSetAssertion
 	{
-		string EOL = Environment.NewLine;
+		string EOL = "\r\n";
 
 		[Test]
 		public void Ctor()
@@ -3091,8 +3091,8 @@ namespace MonoTests.System.Data
 		[Test]
 		public void ReadWriteXmlSchema_ByFileName ()
 		{
-			string sTempFileName1 = "tmpDataSet_ReadWriteXml_43899-1.xml";
-			string sTempFileName2 = "tmpDataSet_ReadWriteXml_43899-2.xml";
+			string sTempFileName1 = Path.Combine (Path.GetTempPath (), "tmpDataSet_ReadWriteXml_43899-1.xml");
+			string sTempFileName2 = Path.Combine (Path.GetTempPath (), "tmpDataSet_ReadWriteXml_43899-2.xml");
 
 			DataSet ds1 = new DataSet ();
 			ds1.Tables.Add (DataProvider.CreateParentDataTable ());
@@ -3236,6 +3236,7 @@ namespace MonoTests.System.Data
 			string TextString = GetNormalizedSchema (writer.ToString ());
 			//string TextString = writer.ToString ();
 
+			EOL = "\n";
 			string substring = TextString.Substring (0, TextString.IndexOf (EOL));
 			TextString = TextString.Substring (TextString.IndexOf (EOL) + EOL.Length);
 			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?>", substring, "test#01");
@@ -4152,7 +4153,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (5, n, "n");
 		}
 
-#if !TARGET_JVM
+#if !TARGET_JVM && !MONOTOUCH
 		[Test]
 		public void NFIFromBug55978 ()
 		{

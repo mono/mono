@@ -29,7 +29,9 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Reflection;
+#if !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
+#endif
 
 namespace System.Linq.Expressions {
 
@@ -66,9 +68,11 @@ namespace System.Linq.Expressions {
 			this.arguments = arguments;
 		}
 
+#if !FULL_AOT_RUNTIME
 		internal override void Emit (EmitContext ec)
 		{
 			ec.EmitCall (obj, arguments, method);
 		}
+#endif
 	}
 }

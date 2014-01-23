@@ -15,7 +15,7 @@ class A2
 
 class Test
 {
-	static int Main ()
+	public static int Main ()
 	{
 		A2.N<short> b1 = A2.N<short>.Method ();
 		A.N<byte> b2 = A.N<byte>.Method ();

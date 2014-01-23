@@ -12,7 +12,7 @@ public static class CoalescingWithGenericsBug
 		return null;
 	}
 
-	static int Main ()
+	public static int Main ()
 	{
 		Provide<Service> ().Foo ();
 		return 0;

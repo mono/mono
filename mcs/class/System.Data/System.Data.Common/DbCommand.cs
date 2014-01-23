@@ -30,10 +30,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 || TARGET_JVM
-
 using System.ComponentModel;
 using System.Data;
+
+#if NET_4_5
+using System.Threading;
+using System.Threading.Tasks;
+#endif
 
 namespace System.Data.Common {
 	public abstract class DbCommand : Component, IDbCommand, IDisposable
@@ -147,9 +150,95 @@ namespace System.Data.Common {
 
 		public abstract void Prepare ();
 		
+#if NET_4_5
+		protected virtual Task<DbDataReader> ExecuteDbDataReaderAsync (CommandBehavior behavior, CancellationToken cancellationToken)
+		{
+			if (cancellationToken.IsCancellationRequested) {
+				return TaskHelper.CreateCanceledTask<DbDataReader> ();
+			}
+			
+			try {
+				return Task.FromResult (ExecuteDbDataReader (behavior));
+			} catch (Exception e) {
+				return TaskHelper.CreateExceptionTask<DbDataReader> (e);
+			}
+		}
+		
+		public Task<int> ExecuteNonQueryAsync ()
+		{
+			return ExecuteNonQueryAsync (CancellationToken.None);
+		}
+		
+		public virtual Task<int> ExecuteNonQueryAsync (CancellationToken cancellationToken)
+		{
+			if (cancellationToken.IsCancellationRequested) {
+				return TaskHelper.CreateCanceledTask<int> ();
+			}
+			
+			try {
+				return Task.FromResult (ExecuteNonQuery ());
+			} catch (Exception e) {
+				return TaskHelper.CreateExceptionTask<int> (e);
+			}
+		}
+		
+		public Task<Object> ExecuteScalarAsync ()
+		{
+			return ExecuteScalarAsync (CancellationToken.None);
+		}
+		
+		public virtual Task<Object> ExecuteScalarAsync (CancellationToken cancellationToken)
+		{
+			if (cancellationToken.IsCancellationRequested) {
+				return TaskHelper.CreateCanceledTask<Object> ();
+			}
+			
+			try {
+				return Task.FromResult (ExecuteScalar ());
+			} catch (Exception e) {
+				return TaskHelper.CreateExceptionTask<Object> (e);
+			}
+		}
+		
+		public Task<DbDataReader> ExecuteReaderAsync ()
+		{
+			return ExecuteReaderAsync (CancellationToken.None);
+		}
+		
+		public Task<DbDataReader> ExecuteReaderAsync (CancellationToken cancellationToken)
+		{
+			if (cancellationToken.IsCancellationRequested) {
+				return TaskHelper.CreateCanceledTask<DbDataReader> ();
+			}
+			
+			try {
+				return Task.FromResult (ExecuteReader ());
+			} catch (Exception e) {
+				return TaskHelper.CreateExceptionTask<DbDataReader> (e);
+			}
+		}
+		
+		public Task<DbDataReader> ExecuteReaderAsync (CommandBehavior behavior)
+		{
+			return ExecuteReaderAsync (behavior, CancellationToken.None);
+		}
+		
+		public Task<DbDataReader> ExecuteReaderAsync (CommandBehavior behavior, CancellationToken cancellationToken)
+		{
+			if (cancellationToken.IsCancellationRequested) {
+				return TaskHelper.CreateCanceledTask<DbDataReader> ();
+			}
+			
+			try {
+				return Task.FromResult (ExecuteReader (behavior));
+			} catch (Exception e) {
+				return TaskHelper.CreateExceptionTask<DbDataReader> (e);
+			}
+		}
+
+#endif
+		
 		#endregion // Methods
 
 	}
 }
-
-#endif

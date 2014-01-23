@@ -41,7 +41,7 @@ class CCC
 
 class X
 {
-	static int Main ()
+	public static int Main ()
 	{
 		Type t = typeof (S);
 		if ((t.Attributes & TypeAttributes.BeforeFieldInit) == 0)

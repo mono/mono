@@ -12,7 +12,7 @@ public class Test2
 		{
 		}
 	}
-	static int Main ()
+	public static int Main ()
 	{
 		new Bar (new Foo ());
 		return 0;

@@ -25,6 +25,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !FULL_AOT_RUNTIME
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
@@ -38,11 +39,6 @@ namespace System.Reflection.Emit {
 	public struct StringToken {
 
 		internal int tokValue;
-
-		static StringToken ()
-		{
-		}
-
 
 		internal StringToken (int val)
 		{
@@ -101,3 +97,4 @@ namespace System.Reflection.Emit {
 
 }
 
+#endif
