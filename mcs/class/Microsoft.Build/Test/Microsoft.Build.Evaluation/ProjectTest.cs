@@ -268,6 +268,20 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			var inst = proj.CreateProjectInstance ();
 			Assert.AreEqual ("4.0", inst.ToolsVersion, "#1");
 		}
+		
+		[Test]
+		public void LoadCaseInsensitive ()
+		{
+            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <PropertyGroup>
+    <AssemblyName>Foo</AssemblyName>
+  </PropertyGroup>
+  <Import Project='$(MSBuildToolsPath)\Microsoft.CSharp.Targets' />
+</Project>";
+            var xml = XmlReader.Create (new StringReader (project_xml));
+            var root = ProjectRootElement.Create (xml);
+			new Project (root, null, "4.0");
+		}
 	}
 }
 
