@@ -44,7 +44,6 @@ ICSharpCode.SharpZipLib/GZip/GzipInputStream.cs
 ICSharpCode.SharpZipLib/GZip/GZIPConstants.cs
 ICSharpCode.SharpZipLib/GZip/GzipOutputStream.cs
 ICSharpCode.SharpZipLib/GZip/GZipException.cs
-ICSharpCode.SharpZipLib/Encryption/PkzipClassic.cs
 ICSharpCode.SharpZipLib/AssemblyInfo.cs
 ICSharpCode.SharpZipLib/Main.cs
 ICSharpCode.SharpZipLib/SharpZipBaseException.cs
