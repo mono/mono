@@ -419,7 +419,7 @@ namespace Microsoft.Build.Execution
 				ForwardingLoggers = remoteLoggers,
 				Loggers = loggers,
 			};
-			var requestData = new BuildRequestData (this, targets);
+			var requestData = new BuildRequestData (this, targets ?? DefaultTargets.ToArray ());
 			var result = manager.Build (parameters, requestData);
 			targetOutputs = result.ResultsByTarget;
 			return result.OverallResult == BuildResultCode.Success;

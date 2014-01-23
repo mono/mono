@@ -48,6 +48,8 @@ namespace Microsoft.Build.Execution
 		public BuildRequestData (ProjectInstance projectInstance, string[] targetsToBuild, HostServices hostServices,
 				BuildRequestDataFlags flags)
 		{
+			if (targetsToBuild == null)
+				throw new ArgumentNullException ("targetsToBuild");
 			ProjectInstance = projectInstance;
 			TargetNames = targetsToBuild;
 			HostServices = hostServices;
