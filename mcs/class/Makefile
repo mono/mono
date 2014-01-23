@@ -66,9 +66,7 @@ common_dirs := \
 	System.Design			\
 	PEAPI				\
 	Npgsql				\
-	Compat.ICSharpCode.SharpZipLib	\
 	ICSharpCode.SharpZipLib		\
-	Compat.ICSharpCode.SharpZipLib	\
 	ByteFX.Data			\
 	Commons.Xml.Relaxng		\
 	Novell.Directory.Ldap		\
