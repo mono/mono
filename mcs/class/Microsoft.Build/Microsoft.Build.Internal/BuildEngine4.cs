@@ -179,9 +179,10 @@ namespace Microsoft.Build.Internal
 			
 				event_source.FireTargetStarted (this, new TargetStartedEventArgs ("Target Started", null, target.Name, project.FullPath, target.FullPath));
 				try {
-					if (!string.IsNullOrEmpty (target.Inputs) != !string.IsNullOrEmpty (target.Outputs)) {
+					// FIXME: examine in which scenario Inputs/Outputs inconsistency results in errors. Now it rather prevents csproj build.
+					/*if (!string.IsNullOrEmpty (target.Inputs) != !string.IsNullOrEmpty (target.Outputs)) {
 						targetResult.Failure (new InvalidProjectFileException (target.Location, null, string.Format ("Target {0} has mismatching Inputs and Outputs specification. When one is specified, another one has to be specified too.", targetName), null, null, null));
-					} else {
+					} else*/ {
 						bool skip = false;
 						if (!string.IsNullOrEmpty (target.Inputs)) {
 							var inputs = args.Project.GetAllItems (target.Inputs, string.Empty, creator, creator, s => true, (t, s) => {
