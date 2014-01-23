@@ -6,7 +6,7 @@ use strict;
 use warnings;
 
 use File::Basename;
-use lib File::Spec->rel2abs(dirname(__FILE__) . "/..").'/perl_lib';
+use lib ("./perl_lib");
 
 use Getopt::Long;
 use Carp qw(croak carp);
