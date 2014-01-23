@@ -170,7 +170,6 @@ namespace Mono.XBuild.CommandLine {
 				}
 				foreach (var projectInstance in projectInstances) {
 					var targets = parameters.Targets.Length == 0 ? projectInstance.DefaultTargets.ToArray () : parameters.Targets;
-					Console.WriteLine ("!!!!! {0} {1}", projectInstance.FullPath, string.Join (";", targets));
 					result = projectInstance.Build (targets, parameters.Loggers.Count > 0 ? parameters.Loggers : project_collection.Loggers);
 					if (!result)
 						break;
