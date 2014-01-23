@@ -168,7 +168,9 @@ namespace Microsoft.Build.Internal
 			} else {
 				// process DependsOnTargets first.
 				foreach (var dep in project.ExpandString (target.DependsOnTargets).Split (';').Select (s => s.Trim ()).Where (s => !string.IsNullOrEmpty (s))) {
+					LogMessageEvent (new BuildMessageEventArgs (string.Format ("Target '{0}' depends on '{1}'.", target.Name, dep), null, null, MessageImportance.Low));
 					if (!BuildTargetByName (dep, args)) {
+						LogMessageEvent (new BuildMessageEventArgs (string.Format ("Quit target '{0}', as dependency target '{1}' has failed.", target.Name, dep), null, null, MessageImportance.Low));
 						return false;
 					}
 				}
@@ -262,12 +264,6 @@ namespace Microsoft.Build.Internal
 					}
 				}
 				
-				foreach (var c in target.Children.OfType<ProjectOnErrorInstance> ()) {
-					if (!args.Project.EvaluateCondition (c.Condition))
-						continue;
-					throw new NotImplementedException ();
-				}
-				
 				// run tasks
 				foreach (var ti in target.Children.OfType<ProjectTaskInstance> ()) {
 					current_task = ti;
@@ -278,6 +274,15 @@ namespace Microsoft.Build.Internal
 					if (!RunBuildTask (target, ti, targetResult, args))
 						return false;
 				}
+			} catch {
+				// fallback task specified by OnError element
+				foreach (var c in target.Children.OfType<ProjectOnErrorInstance> ()) {
+					if (!args.Project.EvaluateCondition (c.Condition))
+						continue;
+					foreach (var fallbackTarget in project.ExpandString (c.ExecuteTargets).Split (';'))
+						BuildTargetByName (fallbackTarget, args);
+				}
+				return false;
 			} finally {
 				// restore temporary property state to the original state.
 				foreach (var p in propsToRestore) {
