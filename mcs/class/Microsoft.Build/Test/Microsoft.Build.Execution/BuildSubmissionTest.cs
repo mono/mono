@@ -115,7 +115,7 @@ namespace MonoTests.Microsoft.Build.Execution
 		public void BuildParameterLoggersExplicitlyRequired ()
 		{
             string project_xml = @"<Project DefaultTargets='Foo' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
-  <Import Project='$(MSBuildToolsPath)\Microsoft.Common.targets' />
+  <Import Project='$(MSBuildToolsPath)\Microsoft.CSharp.targets' />
   <Target Name='Foo'>
     <ItemGroup>
       <Foo Condition='$(X)' Include='foo.txt' />
@@ -131,8 +131,8 @@ namespace MonoTests.Microsoft.Build.Execution
 			var proj = new ProjectInstance (root);
 			var bm = new BuildManager ();
 			var bp = new BuildParameters (pc);
-			var br = new BuildRequestData (proj, null);
-			Assert.IsFalse (bm.Build (bp, br).OverallResult == BuildResultCode.Failure, "#1");
+			var br = new BuildRequestData (proj, new string [] {"Foo"});
+			Assert.AreEqual (BuildResultCode.Failure, bm.Build (bp, br).OverallResult, "#1");
 			// the logger is *ignored*
 			Assert.IsFalse (sw.ToString ().Contains ("$(X)"), "#2");
 		}
@@ -141,7 +141,7 @@ namespace MonoTests.Microsoft.Build.Execution
 		public void ProjectInstanceBuildLoggersExplicitlyRequired ()
 		{
             string project_xml = @"<Project DefaultTargets='Foo' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
-  <Import Project='$(MSBuildToolsPath)\Microsoft.Common.targets' />
+  <Import Project='$(MSBuildToolsPath)\Microsoft.CSharp.targets' />
   <Target Name='Foo'>
     <ItemGroup>
       <Foo Condition='$(X)' Include='foo.txt' />
