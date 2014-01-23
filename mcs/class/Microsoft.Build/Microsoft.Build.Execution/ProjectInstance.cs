@@ -113,10 +113,34 @@ namespace Microsoft.Build.Execution
 		
 		List<string> GetDefaultTargets (ProjectRootElement xml)
 		{
-			var ret = xml.DefaultTargets.Split (item_target_sep, StringSplitOptions.RemoveEmptyEntries).Select (s => s.Trim ()).ToList ();
-			if (ret.Count == 0 && xml.Targets.Any ())
-				ret.Add (xml.Targets.First ().Name);
-			return ret;
+			var ret = GetDefaultTargets (xml, true, true);
+			return ret.Any () ? ret : GetDefaultTargets (xml, false, true);
+		}
+		
+		List<string> GetDefaultTargets (ProjectRootElement xml, bool fromAttribute, bool checkImports)
+		{
+			if (fromAttribute) {
+				var ret = xml.DefaultTargets.Split (item_target_sep, StringSplitOptions.RemoveEmptyEntries).Select (s => s.Trim ()).ToList ();
+				if (checkImports && ret.Count == 0) {
+					foreach (var imp in this.raw_imports) {
+						ret = GetDefaultTargets (imp.ImportedProject, true, false);
+						if (ret.Any ())
+							break;
+					}
+				}
+				return ret;
+			} else {
+				if (xml.Targets.Any ())
+					return new String [] { xml.Targets.First ().Name }.ToList ();
+				if (checkImports) {
+					foreach (var imp in this.raw_imports) {
+						var ret = GetDefaultTargets (imp.ImportedProject, false, false);
+						if (ret.Any ())
+							return ret;
+					}
+				}
+				return new List<string> ();
+			}
 		}
 
 		void InitializeProperties (ProjectRootElement xml, ProjectInstance parent)
@@ -126,7 +150,6 @@ namespace Microsoft.Build.Execution
 			#endif
 			full_path = xml.FullPath;
 			directory = string.IsNullOrWhiteSpace (xml.DirectoryPath) ? System.IO.Directory.GetCurrentDirectory () : xml.DirectoryPath;
-			DefaultTargets = GetDefaultTargets (xml);
 			InitialTargets = xml.InitialTargets.Split (item_target_sep, StringSplitOptions.RemoveEmptyEntries).Select (s => s.Trim ()).ToList ();
 
 			raw_imports = new List<ResolvedImport> ();
@@ -155,6 +178,8 @@ namespace Microsoft.Build.Execution
 			}
 
 			ProcessXml (parent, xml);
+			
+			DefaultTargets = GetDefaultTargets (xml);
 		}
 		
 		static readonly char [] item_target_sep = {';'};
@@ -264,8 +289,6 @@ namespace Microsoft.Build.Execution
 			try {
 				using (var reader = XmlReader.Create (path)) {
 					var root = ProjectRootElement.Create (reader, projects);
-					if (DefaultTargets.Count == 0)
-						DefaultTargets.AddRange (GetDefaultTargets (root));
 					raw_imports.Add (new ResolvedImport (import, root, true));
 					return this.EvaluatePropertiesAndImports (root.Children).ToArray ();
 				}

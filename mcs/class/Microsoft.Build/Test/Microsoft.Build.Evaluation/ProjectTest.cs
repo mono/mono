@@ -35,6 +35,7 @@ using NUnit.Framework;
 using Microsoft.Build.Exceptions;
 using Microsoft.Build.Logging;
 using Microsoft.Build.Framework;
+using System.Collections.Generic;
 
 namespace MonoTests.Microsoft.Build.Evaluation
 {
@@ -150,6 +151,25 @@ namespace MonoTests.Microsoft.Build.Evaluation
             var proj = new Project (root);
 			root.FullPath = "ProjectTest.BuildCSharpTargetGetFrameworkPaths.proj";
 			Assert.IsTrue (proj.Build ("GetFrameworkPaths", new ILogger [] {/*new ConsoleLogger ()*/}));
+		}
+		
+		[Test]
+		public void ProperiesMustBeDistinct ()
+		{
+            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <PropertyGroup>
+    <AssemblyName>Foo</AssemblyName>
+    <OutputPath>Test</OutputPath>
+  </PropertyGroup>
+</Project>";
+            var xml = XmlReader.Create (new StringReader (project_xml));
+            var root = ProjectRootElement.Create (xml);
+			root.FullPath = "ProjectTest.BuildCSharpTargetBuild.proj";
+			var proj = new Project (root);
+			var list = new List<ProjectProperty> ();
+			foreach (var p in proj.Properties)
+				if (list.Any (pp => pp.Name.Equals (p.Name, StringComparison.OrdinalIgnoreCase)))
+					Assert.Fail ("Property " + p.Name + " already exists.");
 		}
 		
 		[Test]

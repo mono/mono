@@ -111,6 +111,20 @@ namespace MonoTests.Microsoft.Build.Execution
 			Assert.AreEqual (1, proj.DefaultTargets.Count, "#1");
 			Assert.AreEqual ("Build", proj.DefaultTargets [0], "#2");
 		}
+		
+		[Test]
+		public void DefaultTargets2 ()
+		{
+            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <Import Project='$(MSBuildToolsPath)\Microsoft.CSharp.targets' />
+</Project>";
+            var xml = XmlReader.Create (new StringReader (project_xml));
+            var root = ProjectRootElement.Create (xml);
+			root.FullPath = "ProjectTest.BuildCSharpTargetBuild.proj";
+			var proj = new ProjectInstance (root);
+			Assert.AreEqual (1, proj.DefaultTargets.Count, "#1");
+			Assert.AreEqual ("Build", proj.DefaultTargets [0], "#2");
+		}
 	}
 }
 
