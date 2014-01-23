@@ -250,11 +250,7 @@ mono_gc_register_thread (void *baseptr)
 gboolean
 mono_gc_unregister_thread (MonoThread *thread)
 {
-#if defined(PLATFORM_WIN32)
 	return GC_thread_unregister_foreign ();
-#else
-	return TRUE;
-#endif
 }
 
 gboolean
