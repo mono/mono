@@ -1158,7 +1158,10 @@ imt_emit_ir (MonoImtBuilderEntry **sorted_array, int start, int end, GPtrArray *
 {
 	int count = end - start;
 	int chunk_start = out_array->len;
+/* ARM AOT implementation of imt_thunks supports only linear array(list) of IMT items  */
+#if !defined(__arm__) || !defined(DISABLE_JIT)
 	if (count < 4) {
+#endif
 		int i;
 		for (i = start; i < end; ++i) {
 			MonoIMTCheckItem *item = g_new0 (MonoIMTCheckItem, 1);
@@ -1172,6 +1175,7 @@ imt_emit_ir (MonoImtBuilderEntry **sorted_array, int start, int end, GPtrArray *
 				item->check_target_idx = 0;
 			g_ptr_array_add (out_array, item);
 		}
+#if !defined(__arm__) || !defined(DISABLE_JIT)
 	} else {
 		int middle = start + count / 2;
 		MonoIMTCheckItem *item = g_new0 (MonoIMTCheckItem, 1);
@@ -1182,6 +1186,7 @@ imt_emit_ir (MonoImtBuilderEntry **sorted_array, int start, int end, GPtrArray *
 		imt_emit_ir (sorted_array, start, middle, out_array);
 		item->check_target_idx = imt_emit_ir (sorted_array, middle, end, out_array);
 	}
+#endif 
 	return chunk_start;
 }
 

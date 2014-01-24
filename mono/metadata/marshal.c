@@ -1288,7 +1288,7 @@ emit_ptr_to_object_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 		mono_mb_emit_ldloc (mb, 1);
 		mono_mb_emit_ldloc (mb, 0);
 		mono_mb_emit_byte (mb, CEE_LDIND_I);
-#ifdef PLATFORM_WIN32
+#if defined(PLATFORM_WIN32) && !defined(PLATFORM_IPHONE_XCOMP)
 		mono_mb_emit_icall (mb, mono_string_from_utf16);
 #else
 		mono_mb_emit_icall (mb, mono_string_new_wrapper);
@@ -1419,7 +1419,7 @@ conv_to_icall (MonoMarshalConv conv)
 	case MONO_MARSHAL_CONV_LPSTR_STR:
 		return mono_string_new_wrapper;
 	case MONO_MARSHAL_CONV_STR_LPTSTR:
-#ifdef PLATFORM_WIN32
+#if defined(PLATFORM_WIN32) && !defined(PLATFORM_IPHONE_XCOMP)
 		return mono_marshal_string_to_utf16;
 #else
 		return mono_string_to_lpstr;
@@ -1436,7 +1436,7 @@ conv_to_icall (MonoMarshalConv conv)
 	case MONO_MARSHAL_CONV_SB_LPSTR:
 		return mono_string_builder_to_utf8;
 	case MONO_MARSHAL_CONV_SB_LPTSTR:
-#ifdef PLATFORM_WIN32
+#if defined(PLATFORM_WIN32) && !defined(PLATFORM_IPHONE_XCOMP)
 		return mono_string_builder_to_utf16;
 #else
 		return mono_string_builder_to_utf8;
@@ -1456,7 +1456,7 @@ conv_to_icall (MonoMarshalConv conv)
 	case MONO_MARSHAL_CONV_LPSTR_SB:
 		return mono_string_utf8_to_builder;
 	case MONO_MARSHAL_CONV_LPTSTR_SB:
-#ifdef PLATFORM_WIN32
+#if defined(PLATFORM_WIN32) && !defined(PLATFORM_IPHONE_XCOMP)
 		return mono_string_utf16_to_builder;
 #else
 		return mono_string_utf8_to_builder;
@@ -2156,7 +2156,7 @@ mono_marshal_get_string_encoding (MonoMethodPInvoke *piinfo, MonoMarshalSpec *sp
 	case PINVOKE_ATTRIBUTE_CHAR_SET_UNICODE:
 		return MONO_NATIVE_LPWSTR;
 	case PINVOKE_ATTRIBUTE_CHAR_SET_AUTO:
-#ifdef PLATFORM_WIN32
+#if defined(PLATFORM_WIN32) && !defined(PLATFORM_IPHONE_XCOMP)
 		return MONO_NATIVE_LPWSTR;
 #else
 		return MONO_NATIVE_LPSTR;
@@ -7924,7 +7924,7 @@ mono_marshal_emit_native_wrapper (MonoImage *image, MonoMethodBuilder *mb, MonoM
 			get_last_error_sig->pinvoke = 1;
 		}
 
-#ifdef PLATFORM_WIN32
+#if defined(PLATFORM_WIN32) && !defined(PLATFORM_IPHONE_XCOMP)
 		/* 
 		 * Have to call GetLastError () early and without a wrapper, since various runtime components could
 		 * clobber its value.
@@ -10477,11 +10477,19 @@ mono_type_native_stack_size (MonoType *t, guint32 *align)
 		*align = 4;
 		return 4;
 	case MONO_TYPE_R8:
+#if defined(PLATFORM_IPHONE_XCOMP)
+		*align = 4;
+#else
 		*align = ALIGNMENT (gdouble);
+#endif
 		return 8;
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8:
+#if defined(PLATFORM_IPHONE_XCOMP)
+		*align = 4;
+#else
 		*align = ALIGNMENT (glong);
+#endif
 		return 8;
 	case MONO_TYPE_GENERICINST:
 		if (!mono_type_generic_inst_is_valuetype (t)) {
@@ -10540,13 +10548,21 @@ mono_marshal_type_size (MonoType *type, MonoMarshalSpec *mspec, guint32 *align,
 		return 4;
 	case MONO_NATIVE_I8:
 	case MONO_NATIVE_U8:
+#if defined(PLATFORM_IPHONE_XCOMP)
+		*align = 4;
+#else
 		*align = ALIGNMENT(guint64);
+#endif
 		return 8;
 	case MONO_NATIVE_R4:
 		*align = 4;
 		return 4;
 	case MONO_NATIVE_R8:
+#if defined(PLATFORM_IPHONE_XCOMP)
+		*align = 4;
+#else
 		*align = ALIGNMENT(double);
+#endif
 		return 8;
 	case MONO_NATIVE_INT:
 	case MONO_NATIVE_UINT:
@@ -10564,7 +10580,11 @@ mono_marshal_type_size (MonoType *type, MonoMarshalSpec *mspec, guint32 *align,
 	case MONO_NATIVE_ASANY:
 	case MONO_NATIVE_FUNC:
 	case MONO_NATIVE_LPSTRUCT:
+#if defined(PLATFORM_IPHONE_XCOMP)
+		*align = 4;
+#else
 		*align = ALIGNMENT(gpointer);
+#endif
 		return sizeof (gpointer);
 	case MONO_NATIVE_STRUCT: 
 		klass = mono_class_from_mono_type (type);
