@@ -61,7 +61,7 @@ namespace MonoTests.Microsoft.Build.Execution
 		public void TaskOutputsToLoggers ()
 		{
             string project_xml = @"<Project DefaultTargets='Foo' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
-  <Import Project='$(MSBuildToolsPath)\Microsoft.Common.targets' />
+  <Import Project='$(MSBuildToolsPath)\Microsoft.CSharp.targets' />
   <Target Name='Foo'>
     <ItemGroup>
       <Foo Condition='$(X)' Include='foo.txt' />
@@ -109,6 +109,55 @@ namespace MonoTests.Microsoft.Build.Execution
 			DateTime endBuildDone = DateTime.Now;
 			Assert.IsTrue (endBuildDone - beforeExec >= TimeSpan.FromSeconds (1), "#2");
 			Assert.IsTrue (endBuildDone > waitDone, "#3");
+		}
+		
+		[Test]
+		public void BuildParameterLoggersExplicitlyRequired ()
+		{
+            string project_xml = @"<Project DefaultTargets='Foo' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <Import Project='$(MSBuildToolsPath)\Microsoft.CSharp.targets' />
+  <Target Name='Foo'>
+    <ItemGroup>
+      <Foo Condition='$(X)' Include='foo.txt' />
+    </ItemGroup>
+  </Target>
+</Project>";
+            var xml = XmlReader.Create (new StringReader (project_xml));
+            var root = ProjectRootElement.Create (xml);
+			root.FullPath = "BuildSubmissionTest.BuildParameterLoggersExplicitlyRequired.proj";
+			var pc = new ProjectCollection ();
+			var sw = new StringWriter ();
+			pc.RegisterLogger (new ConsoleLogger (LoggerVerbosity.Diagnostic, sw.WriteLine, null, null));
+			var proj = new ProjectInstance (root);
+			var bm = new BuildManager ();
+			var bp = new BuildParameters (pc);
+			var br = new BuildRequestData (proj, new string [] {"Foo"});
+			Assert.AreEqual (BuildResultCode.Failure, bm.Build (bp, br).OverallResult, "#1");
+			// the logger is *ignored*
+			Assert.IsFalse (sw.ToString ().Contains ("$(X)"), "#2");
+		}
+		
+		[Test]
+		public void ProjectInstanceBuildLoggersExplicitlyRequired ()
+		{
+            string project_xml = @"<Project DefaultTargets='Foo' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <Import Project='$(MSBuildToolsPath)\Microsoft.CSharp.targets' />
+  <Target Name='Foo'>
+    <ItemGroup>
+      <Foo Condition='$(X)' Include='foo.txt' />
+    </ItemGroup>
+  </Target>
+</Project>";
+            var xml = XmlReader.Create (new StringReader (project_xml));
+            var root = ProjectRootElement.Create (xml);
+			root.FullPath = "BuildSubmissionTest.TaskOutputsToLoggers.proj";
+			var pc = new ProjectCollection ();
+			var sw = new StringWriter ();
+			pc.RegisterLogger (new ConsoleLogger (LoggerVerbosity.Diagnostic, sw.WriteLine, null, null));
+			var proj = new ProjectInstance (root);
+			Assert.IsFalse (proj.Build (), "#1");
+			// the logger is *ignored* again
+			Assert.IsFalse (sw.ToString ().Contains ("$(X)"), "#2");
 		}
 	}
 }

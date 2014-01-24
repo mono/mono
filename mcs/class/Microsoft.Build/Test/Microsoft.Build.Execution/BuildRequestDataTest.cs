@@ -1,10 +1,10 @@
-//
-// WindowsCompatibilityExtensions.cs
+﻿//
+// BuildParametersTest.cs
 //
 // Author:
 //   Atsushi Enomoto (atsushi@xamarin.com)
 //
-// (C) 2013 Xamarin Inc.
+// Copyright (C) 2013 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,29 +26,35 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Globalization;
 using System.IO;
-using Mono.XBuild.Utilities;
+using System.Linq;
+using Microsoft.Build.Construction;
+using Microsoft.Build.Evaluation;
+using Microsoft.Build.Execution;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Logging;
+using NUnit.Framework;
+using System.Xml;
 
-namespace Microsoft.Build.Internal
+namespace MonoTests.Microsoft.Build.Execution
 {
-	static class WindowsCompatibilityExtensions
+	[TestFixture]
+	public class BuildRequestDataTest
 	{
-		public static string NormalizeFilePath (string path)
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void NullTargetsToBuild ()
 		{
-			if (MSBuildUtils.RunningOnWindows || string.IsNullOrWhiteSpace (path) || File.Exists (path) || Directory.Exists (path))
-				return path;
-			path = path.Replace ('\\', Path.DirectorySeparatorChar);
-			var file = Path.GetFileName (path);
-			var dir = NormalizeFilePath (Path.GetDirectoryName (path));
-			if (Directory.Exists (dir)) {
-				foreach (FileSystemInfo e in new DirectoryInfo (dir.Length > 0 ? dir : ".").EnumerateFileSystemInfos ()) {
-					if (e.Name.Equals (file, StringComparison.OrdinalIgnoreCase))
-						return dir.Length > 0 ? Path.Combine (dir, e.Name) : e.Name;
-				}
-			}
-			// The directory part is still based on case insensitive match.
-			return dir.Length > 0 ? Path.Combine (dir, file) : file;
+			string project_xml = @"<Project DefaultTargets='Foo' xmlns='http://schemas.microsoft.com/developer/msbuild/2003' />";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			root.FullPath = "BuildRequestDataTest.NullTargetsToBuild.proj";
+			var pc = new ProjectCollection ();
+			var sw = new StringWriter ();
+			pc.RegisterLogger (new ConsoleLogger (LoggerVerbosity.Diagnostic, sw.WriteLine, null, null));
+			var proj = new ProjectInstance (root);
+			new BuildRequestData (proj, null);
 		}
 	}
 }
-

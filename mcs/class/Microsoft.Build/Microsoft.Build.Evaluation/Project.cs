@@ -255,8 +255,9 @@ namespace Microsoft.Build.Evaluation
 				var ige = child as ProjectImportGroupElement;
 				if (ige != null && Evaluate (ige.Condition)) {
 					foreach (var incc in ige.Imports) {
-						foreach (var e in Import (incc))
-							yield return e;
+						if (Evaluate (incc.Condition))
+							foreach (var e in Import (incc))
+								yield return e;
 					}
 				}
 				var inc = child as ProjectImportElement;
@@ -682,7 +683,12 @@ namespace Microsoft.Build.Evaluation
 
 		public bool SkipEvaluation { get; set; }
 
-		public IDictionary<string, ProjectTargetInstance> Targets {
+		#if NET_4_5
+		public
+		#else
+		internal
+		#endif
+		IDictionary<string, ProjectTargetInstance> Targets {
 			get { return targets; }
 		}
 		

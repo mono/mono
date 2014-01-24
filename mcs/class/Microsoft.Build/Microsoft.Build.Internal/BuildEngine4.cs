@@ -35,6 +35,7 @@ using System.Linq;
 using System.IO;
 using Microsoft.Build.Exceptions;
 using System.Globalization;
+using Microsoft.Build.Construction;
 
 namespace Microsoft.Build.Internal
 {
@@ -112,7 +113,9 @@ namespace Microsoft.Build.Internal
 			var request = submission.BuildRequest;
 			var parameters = submission.BuildManager.OngoingBuildParameters;
 			this.project = args.Project;
-			
+
+			string directoryBackup = Directory.GetCurrentDirectory ();
+			Directory.SetCurrentDirectory (project.Directory);
 			event_source.FireBuildStarted (this, new BuildStartedEventArgs ("Build Started", null, DateTime.Now));
 			
 			try {
@@ -139,6 +142,7 @@ namespace Microsoft.Build.Internal
 				throw; // BuildSubmission re-catches this.
 			} finally {
 				event_source.FireBuildFinished (this, new BuildFinishedEventArgs ("Build Finished.", null, args.Result.OverallResult == BuildResultCode.Success, DateTime.Now));
+				Directory.SetCurrentDirectory (directoryBackup);
 			}
 		}
 		
@@ -158,6 +162,7 @@ namespace Microsoft.Build.Internal
 
 			// null key is allowed and regarded as blind success(!) (as long as it could retrieve target)
 			if (!request.ProjectInstance.Targets.TryGetValue (targetName, out target))
+				// FIXME: from MSBuild.exe it is given MSB4057. Can we assign a number too?
 				throw new InvalidOperationException (string.Format ("target '{0}' was not found in project '{1}'", targetName, project.FullPath));
 			else if (!args.Project.EvaluateCondition (target.Condition)) {
 				LogMessageEvent (new BuildMessageEventArgs (string.Format ("Target '{0}' was skipped because condition '{1}' was not met.", target.Name, target.Condition), null, null, MessageImportance.Low));
@@ -165,7 +170,9 @@ namespace Microsoft.Build.Internal
 			} else {
 				// process DependsOnTargets first.
 				foreach (var dep in project.ExpandString (target.DependsOnTargets).Split (';').Select (s => s.Trim ()).Where (s => !string.IsNullOrEmpty (s))) {
+					LogMessageEvent (new BuildMessageEventArgs (string.Format ("Target '{0}' depends on '{1}'.", target.Name, dep), null, null, MessageImportance.Low));
 					if (!BuildTargetByName (dep, args)) {
+						LogMessageEvent (new BuildMessageEventArgs (string.Format ("Quit target '{0}', as dependency target '{1}' has failed.", target.Name, dep), null, null, MessageImportance.Low));
 						return false;
 					}
 				}
@@ -174,9 +181,10 @@ namespace Microsoft.Build.Internal
 			
 				event_source.FireTargetStarted (this, new TargetStartedEventArgs ("Target Started", null, target.Name, project.FullPath, target.FullPath));
 				try {
-					if (!string.IsNullOrEmpty (target.Inputs) != !string.IsNullOrEmpty (target.Outputs)) {
+					// FIXME: examine in which scenario Inputs/Outputs inconsistency results in errors. Now it rather prevents csproj build.
+					/*if (!string.IsNullOrEmpty (target.Inputs) != !string.IsNullOrEmpty (target.Outputs)) {
 						targetResult.Failure (new InvalidProjectFileException (target.Location, null, string.Format ("Target {0} has mismatching Inputs and Outputs specification. When one is specified, another one has to be specified too.", targetName), null, null, null));
-					} else {
+					} else*/ {
 						bool skip = false;
 						if (!string.IsNullOrEmpty (target.Inputs)) {
 							var inputs = args.Project.GetAllItems (target.Inputs, string.Empty, creator, creator, s => true, (t, s) => {
@@ -219,7 +227,8 @@ namespace Microsoft.Build.Internal
 		{
 			return outputs.Where (o => !File.Exists (o.GetMetadata ("FullPath")) || inputs.Any (i => string.CompareOrdinal (i.GetMetadata ("LastModifiedTime"), o.GetMetadata ("LastModifiedTime")) > 0));
 		}
-		
+
+		// FIXME: Exception should be caught at caller site.
 		bool DoBuildTarget (ProjectTargetInstance target, TargetResult targetResult, InternalBuildArguments args)
 		{
 			var request = submission.BuildRequest;
@@ -259,12 +268,6 @@ namespace Microsoft.Build.Internal
 					}
 				}
 				
-				foreach (var c in target.Children.OfType<ProjectOnErrorInstance> ()) {
-					if (!args.Project.EvaluateCondition (c.Condition))
-						continue;
-					throw new NotImplementedException ();
-				}
-				
 				// run tasks
 				foreach (var ti in target.Children.OfType<ProjectTaskInstance> ()) {
 					current_task = ti;
@@ -275,6 +278,19 @@ namespace Microsoft.Build.Internal
 					if (!RunBuildTask (target, ti, targetResult, args))
 						return false;
 				}
+			} catch (Exception ex) {
+				// fallback task specified by OnError element
+				foreach (var c in target.Children.OfType<ProjectOnErrorInstance> ()) {
+					if (!args.Project.EvaluateCondition (c.Condition))
+						continue;
+					foreach (var fallbackTarget in project.ExpandString (c.ExecuteTargets).Split (';'))
+						BuildTargetByName (fallbackTarget, args);
+				}
+				int line = target.Location != null ? target.Location.Line : 0;
+				int col = target.Location != null ? target.Location.Column : 0;
+				LogErrorEvent (new BuildErrorEventArgs (null, null, target.FullPath, line, col, 0, 0, ex.Message, null, null));
+				targetResult.Failure (ex);
+				return false;
 			} finally {
 				// restore temporary property state to the original state.
 				foreach (var p in propsToRestore) {
@@ -317,6 +333,11 @@ namespace Microsoft.Build.Internal
 					taskInstance.Name, task.GetType (), string.Join (", ", missings.Select (p => p.Name).ToArray ())));
 			
 			foreach (var p in evaluatedTaskParams) {
+				switch (p.Key.ToLower ()) {
+				case "condition":
+				case "continueonerror":
+					continue;
+				}
 				var prop = task.GetType ().GetProperty (p.Key);
 				if (prop == null)
 					throw new InvalidOperationException (string.Format ("Task {0} does not have property {1}", taskInstance.Name, p.Key));
@@ -532,17 +553,15 @@ namespace Microsoft.Build.Internal
 
 		#region IBuildEngine2 implementation
 
+		// To NOT reuse this IBuildEngine instance for different build, we create another BuildManager and BuildSubmisson and then run it.
 		public bool BuildProjectFile (string projectFileName, string[] targetNames, IDictionary globalProperties, IDictionary targetOutputs, string toolsVersion)
 		{
-			var proj = GetProjectInstance (projectFileName, toolsVersion);
 			var globalPropertiesThatMakeSense = new Dictionary<string,string> ();
 			foreach (DictionaryEntry p in globalProperties)
 				globalPropertiesThatMakeSense [(string) p.Key] = (string) p.Value;
-			var result = new BuildResult ();
-			var outputs = new Dictionary<string, string> ();
-			BuildProject (() => false, result, proj, targetNames, globalPropertiesThatMakeSense, outputs, toolsVersion);
-			foreach (var p in outputs)
-				targetOutputs [p.Key] = p.Value;
+			var result = new BuildManager ().Build (this.submission.BuildManager.OngoingBuildParameters.Clone (), new BuildRequestData (projectFileName, globalPropertiesThatMakeSense, toolsVersion, targetNames, null));
+			foreach (var p in result.ResultsByTarget)
+				targetOutputs [p.Key] = p.Value.Items;
 			return result.OverallResult == BuildResultCode.Success;
 		}
 
