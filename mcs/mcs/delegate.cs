@@ -679,6 +679,9 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (type.IsNested)
+				return ContainsMethodTypeParameter (type.DeclaringType);
+
 			return false;
 		}
 		
