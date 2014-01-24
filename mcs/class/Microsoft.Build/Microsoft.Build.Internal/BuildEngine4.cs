@@ -161,6 +161,7 @@ namespace Microsoft.Build.Internal
 
 			// null key is allowed and regarded as blind success(!) (as long as it could retrieve target)
 			if (!request.ProjectInstance.Targets.TryGetValue (targetName, out target))
+				// FIXME: from MSBuild.exe it is given MSB4057. Can we assign a number too?
 				throw new InvalidOperationException (string.Format ("target '{0}' was not found in project '{1}'", targetName, project.FullPath));
 			else if (!args.Project.EvaluateCondition (target.Condition)) {
 				LogMessageEvent (new BuildMessageEventArgs (string.Format ("Target '{0}' was skipped because condition '{1}' was not met.", target.Name, target.Condition), null, null, MessageImportance.Low));
