@@ -282,6 +282,22 @@ namespace MonoTests.Microsoft.Build.Evaluation
             var root = ProjectRootElement.Create (xml);
 			new Project (root, null, "4.0");
 		}
+		
+		[Test]
+		public void SameNameTargets ()
+		{
+            string project_xml = @"<Project DefaultTargets='Foo' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <Target Name='Foo'><Message Text='This should not be written' /></Target>
+  <Target Name='Foo'><Message Text='This will be written' /></Target>
+</Project>";
+            var xml = XmlReader.Create (new StringReader (project_xml));
+            var root = ProjectRootElement.Create (xml);
+			var proj = new Project (root, null, "4.0");
+			var sw = new StringWriter ();
+			proj.Build (new ConsoleLogger (LoggerVerbosity.Diagnostic, sw.WriteLine, null, null));
+			Assert.IsTrue (sw.ToString ().Contains ("This will be written"), "#1");
+			Assert.IsFalse (sw.ToString ().Contains ("This should not be written"), "#2");
+		}
 	}
 }
 

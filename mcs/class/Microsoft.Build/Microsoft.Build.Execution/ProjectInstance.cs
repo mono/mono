@@ -202,7 +202,7 @@ namespace Microsoft.Build.Execution
 			EvaluateItems (xml, elements);
 			
 			// finally, evaluate targets and tasks
-			EvaluateTasks (elements);			
+			EvaluateTargets (elements);			
 		}
 		
 		IEnumerable<ProjectElement> EvaluatePropertiesAndImports (IEnumerable<ProjectElement> elements)
@@ -269,12 +269,13 @@ namespace Microsoft.Build.Execution
 			all_evaluated_items.Sort ((p1, p2) => string.Compare (p1.ItemType, p2.ItemType, StringComparison.OrdinalIgnoreCase));
 		}
 		
-		void EvaluateTasks (IEnumerable<ProjectElement> elements)
+		void EvaluateTargets (IEnumerable<ProjectElement> elements)
 		{
 			foreach (var child in elements) {
 				var te = child as ProjectTargetElement;
 				if (te != null)
-					this.targets.Add (te.Name, new ProjectTargetInstance (te));
+					// It overwrites same name target.
+					this.targets [te.Name] = new ProjectTargetInstance (te);
 			}
 		}
 		

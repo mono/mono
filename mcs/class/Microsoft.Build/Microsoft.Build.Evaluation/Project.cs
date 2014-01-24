@@ -308,7 +308,8 @@ namespace Microsoft.Build.Evaluation
 			foreach (var child in elements) {
 				var te = child as ProjectTargetElement;
 				if (te != null)
-					this.targets.Add (te.Name, new ProjectTargetInstance (te));
+					// It overwrites same name target.
+					this.targets [te.Name] = new ProjectTargetInstance (te);
 			}
 		}
 		
