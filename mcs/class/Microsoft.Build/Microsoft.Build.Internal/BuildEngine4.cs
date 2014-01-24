@@ -35,6 +35,7 @@ using System.Linq;
 using System.IO;
 using Microsoft.Build.Exceptions;
 using System.Globalization;
+using Microsoft.Build.Construction;
 
 namespace Microsoft.Build.Internal
 {
@@ -285,6 +286,9 @@ namespace Microsoft.Build.Internal
 					foreach (var fallbackTarget in project.ExpandString (c.ExecuteTargets).Split (';'))
 						BuildTargetByName (fallbackTarget, args);
 				}
+				int line = target.Location != null ? target.Location.Line : 0;
+				int col = target.Location != null ? target.Location.Column : 0;
+				LogErrorEvent (new BuildErrorEventArgs (null, null, target.FullPath, line, col, 0, 0, ex.Message, null, null));
 				targetResult.Failure (ex);
 				return false;
 			} finally {
