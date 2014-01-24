@@ -226,7 +226,8 @@ namespace Microsoft.Build.Internal
 		{
 			return outputs.Where (o => !File.Exists (o.GetMetadata ("FullPath")) || inputs.Any (i => string.CompareOrdinal (i.GetMetadata ("LastModifiedTime"), o.GetMetadata ("LastModifiedTime")) > 0));
 		}
-		
+
+		// FIXME: Exception should be caught at caller site.
 		bool DoBuildTarget (ProjectTargetInstance target, TargetResult targetResult, InternalBuildArguments args)
 		{
 			var request = submission.BuildRequest;
@@ -276,7 +277,7 @@ namespace Microsoft.Build.Internal
 					if (!RunBuildTask (target, ti, targetResult, args))
 						return false;
 				}
-			} catch {
+			} catch (Exception ex) {
 				// fallback task specified by OnError element
 				foreach (var c in target.Children.OfType<ProjectOnErrorInstance> ()) {
 					if (!args.Project.EvaluateCondition (c.Condition))
@@ -284,6 +285,7 @@ namespace Microsoft.Build.Internal
 					foreach (var fallbackTarget in project.ExpandString (c.ExecuteTargets).Split (';'))
 						BuildTargetByName (fallbackTarget, args);
 				}
+				targetResult.Failure (ex);
 				return false;
 			} finally {
 				// restore temporary property state to the original state.

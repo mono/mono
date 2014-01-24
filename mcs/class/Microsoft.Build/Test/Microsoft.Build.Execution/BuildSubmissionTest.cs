@@ -124,7 +124,7 @@ namespace MonoTests.Microsoft.Build.Execution
 </Project>";
             var xml = XmlReader.Create (new StringReader (project_xml));
             var root = ProjectRootElement.Create (xml);
-			root.FullPath = "BuildSubmissionTest.TaskOutputsToLoggers.proj";
+			root.FullPath = "BuildSubmissionTest.BuildParameterLoggersExplicitlyRequired.proj";
 			var pc = new ProjectCollection ();
 			var sw = new StringWriter ();
 			pc.RegisterLogger (new ConsoleLogger (LoggerVerbosity.Diagnostic, sw.WriteLine, null, null));
