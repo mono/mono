@@ -54,6 +54,7 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 include ../../build/library.make
 
 ifdef CYCLIC_DEP_FILES
+TEST_HARNESS_EXCLUDES += -exclude:NotWorkingInterpreter
 $(build_lib): $(INTERPRETER_DEP_FILE)
 endif
 

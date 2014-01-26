@@ -106,7 +106,8 @@ namespace Microsoft.Scripting.Interpreter {
         public override int ProducedStack { get { return 1; } }
 
         public override int Run(InterpretedFrame frame) {
-            frame.Data[frame.StackIndex++] = frame.Peek();
+            frame.Data[frame.StackIndex] = frame.Peek();
+			frame.StackIndex++;
             return +1;
         }
 

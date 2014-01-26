@@ -53,11 +53,13 @@ Assembly/AssemblyInfo.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/EqualInstruction.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/FieldOperations.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/GreaterThanInstruction.cs
+../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/GreaterThanOrEqualInstruction.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/Instruction.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/InstructionFactory.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/InstructionList.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/LabelInfo.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/LessThanInstruction.cs
+../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/LessThanOrEqualInstruction.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/LocalAccess.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/ModInstruction.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/MulInstruction.cs

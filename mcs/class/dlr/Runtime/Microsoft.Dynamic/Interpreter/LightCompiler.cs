@@ -566,29 +566,29 @@ namespace Microsoft.Scripting.Interpreter {
                         return;
 
                     case ExpressionType.Equal:
-                        CompileEqual(node.Left, node.Right);
+                        CompileEqual(node.Left, node.Right, node.IsLiftedToNull);
                         return;
 
                     case ExpressionType.NotEqual:
-                        CompileNotEqual(node.Left, node.Right);
+                        CompileNotEqual(node.Left, node.Right, node.IsLiftedToNull);
                         return;
 
                     case ExpressionType.LessThan:
                     case ExpressionType.LessThanOrEqual:
                     case ExpressionType.GreaterThan:
                     case ExpressionType.GreaterThanOrEqual:
-                        CompileComparison(node.NodeType, node.Left, node.Right);
+						CompileComparison(node.NodeType, node.Left, node.Right, node.IsLiftedToNull);
                         return;
 
                     case ExpressionType.LeftShift:
                     case ExpressionType.RightShift:
-                        CompileShift(node.NodeType, node.Left, node.Right);
+                        CompileShift(node.NodeType, node.Left, node.Right, node.IsLifted);
                         return;
 
                     case ExpressionType.And:
                     case ExpressionType.Or:
                     case ExpressionType.ExclusiveOr:
-                        CompileLogical(node.NodeType, node.Left, node.Right);
+                        CompileLogical(node.NodeType, node.Left, node.Right, node.IsLifted);
                         return;
 
                     default:
@@ -597,34 +597,31 @@ namespace Microsoft.Scripting.Interpreter {
             }
         }
 
-        private void CompileEqual(Expression left, Expression right) {
+        private void CompileEqual(Expression left, Expression right, bool liftedResult) {
             Debug.Assert(left.Type == right.Type || !left.Type.IsValueType() && !right.Type.IsValueType());
             Compile(left);
             Compile(right);
-            _instructions.EmitEqual(left.Type);
+            _instructions.EmitEqual(left.Type, liftedResult);
         }
 
-        private void CompileNotEqual(Expression left, Expression right) {
+        private void CompileNotEqual(Expression left, Expression right, bool liftedResult) {
             Debug.Assert(left.Type == right.Type || !left.Type.IsValueType() && !right.Type.IsValueType());
             Compile(left);
             Compile(right);
-            _instructions.EmitNotEqual(left.Type);
+            _instructions.EmitNotEqual(left.Type, liftedResult);
         }
 
-        private void CompileComparison(ExpressionType nodeType, Expression left, Expression right) {
+		private void CompileComparison(ExpressionType nodeType, Expression left, Expression right, bool liftedResult) {
             Debug.Assert(left.Type == right.Type && TypeUtils.IsNumeric(left.Type));
-
-            // TODO:
-            // if (TypeUtils.IsNullableType(left.Type) && liftToNull) ...
 
             Compile(left);
             Compile(right);
             
             switch (nodeType) {
-                case ExpressionType.LessThan: _instructions.EmitLessThan(left.Type); break;
-                case ExpressionType.LessThanOrEqual: _instructions.EmitLessThanOrEqual(left.Type); break;
-                case ExpressionType.GreaterThan: _instructions.EmitGreaterThan(left.Type); break;
-                case ExpressionType.GreaterThanOrEqual: _instructions.EmitGreaterThanOrEqual(left.Type); break;
+                case ExpressionType.LessThan: _instructions.EmitLessThan(left.Type, liftedResult); break;
+                case ExpressionType.LessThanOrEqual: _instructions.EmitLessThanOrEqual(left.Type, liftedResult); break;
+                case ExpressionType.GreaterThan: _instructions.EmitGreaterThan(left.Type, liftedResult); break;
+                case ExpressionType.GreaterThanOrEqual: _instructions.EmitGreaterThanOrEqual(left.Type, liftedResult); break;
                 default: throw Assert.Unreachable;
             }
         }
@@ -646,25 +643,25 @@ namespace Microsoft.Scripting.Interpreter {
             }
         }
 
-        private void CompileShift(ExpressionType nodeType, Expression left, Expression right) {
-            Debug.Assert(right.Type == typeof (int));
+        private void CompileShift(ExpressionType nodeType, Expression left, Expression right, bool lifted) {
+            Debug.Assert(right.Type == typeof (int) || right.Type == typeof (int?));
             Compile(left);
             Compile(right);
             switch (nodeType) {
-                case ExpressionType.LeftShift: _instructions.EmitShl(left.Type); break;
-                case ExpressionType.RightShift: _instructions.EmitShr(left.Type); break;
+                case ExpressionType.LeftShift: _instructions.EmitShl(TypeUtils.GetNonNullableType (left.Type), lifted); break;
+                case ExpressionType.RightShift: _instructions.EmitShr(TypeUtils.GetNonNullableType (left.Type), lifted); break;
                 default: throw Assert.Unreachable;
             }
         }
 
-        private void CompileLogical(ExpressionType nodeType, Expression left, Expression right) {
-            Debug.Assert(left.Type == right.Type && TypeUtils.IsIntegerOrBool(left.Type));
+        private void CompileLogical(ExpressionType nodeType, Expression left, Expression right, bool lifted) {
+            Debug.Assert(left.Type == right.Type); // && TypeUtils.IsIntegerOrBool(left.Type));
             Compile(left);
             Compile(right);
             switch (nodeType) {
-                case ExpressionType.And: _instructions.EmitAnd(left.Type); break;
-                case ExpressionType.Or: _instructions.EmitOr(left.Type); break;
-                case ExpressionType.ExclusiveOr: _instructions.EmitExclusiveOr(left.Type); break;
+                case ExpressionType.And: _instructions.EmitAnd(TypeUtils.GetNonNullableType (left.Type), lifted); break;
+                case ExpressionType.Or: _instructions.EmitOr(TypeUtils.GetNonNullableType (left.Type), lifted); break;
+                case ExpressionType.ExclusiveOr: _instructions.EmitExclusiveOr(TypeUtils.GetNonNullableType (left.Type), lifted); break;
                 default: throw Assert.Unreachable;
             }
         }
@@ -673,6 +670,9 @@ namespace Microsoft.Scripting.Interpreter {
             var node = (UnaryExpression)expr;
             if (node.Method != null) {
                 Compile(node.Operand);
+
+				if (node.IsLifted)
+					throw new NotImplementedException ();
 
                 // We should be able to ignore Int32ToObject
                 if (node.Method != Runtime.ScriptingRuntimeHelpers.Int32ToObjectMethod) {
@@ -693,6 +693,32 @@ namespace Microsoft.Scripting.Interpreter {
                 return;
             }
 
+            if (TypeUtils.IsNullableType (typeTo)) {
+                typeFrom = TypeUtils.GetNonNullableType (typeFrom);
+                typeTo = TypeUtils.GetNonNullableType (typeTo);
+
+                var nullValue = _instructions.MakeLabel();
+                var end = _instructions.MakeLabel();
+
+                _instructions.EmitDup ();
+                _instructions.EmitBranchNull(nullValue);
+                CompileConvertToType (typeFrom, typeTo, isChecked);
+                _instructions.EmitWrap (typeTo);
+                _instructions.EmitBranch (end);                
+                _instructions.MarkLabel(nullValue);
+                _instructions.EmitDup (); // Keep null on the stack
+                _instructions.MarkLabel(end);
+                return;
+            }
+
+            if (TypeUtils.IsNullableType (typeFrom)) {
+                if (typeTo.IsClass)
+                    return;
+
+                // TODO: should throw same exception as (int)(int?)null
+                throw new NotImplementedException ();
+            }
+
             TypeCode from = typeFrom.GetTypeCode();
             TypeCode to = typeTo.GetTypeCode();
             if (TypeUtils.IsNumeric(from) && TypeUtils.IsNumeric(to)) {
@@ -709,14 +735,14 @@ namespace Microsoft.Scripting.Interpreter {
             return;
         }
 
-        private void CompileNegateExpression(UnaryExpression node, bool @checked) {
+        private void CompileNegateExpression(UnaryExpression node, bool @checked, bool lifted) {
             Compile(node.Operand);
-            _instructions.EmitNegate(node.Type, @checked);
+            _instructions.EmitNegate(TypeUtils.GetNonNullableType (node.Type), @checked, lifted);
         }
 
-        private void CompileNotExpression(UnaryExpression node) {
+        private void CompileNotExpression(UnaryExpression node, bool lifted) {
             Compile(node.Operand);
-            _instructions.EmitNot(node.Type);
+            _instructions.EmitNot(TypeUtils.GetNonNullableType (node.Type), lifted);
         }
 
         private void CompileUnaryExpression(Expression expr) {
@@ -732,13 +758,13 @@ namespace Microsoft.Scripting.Interpreter {
                         _instructions.EmitGetArrayLength (node.Type);
                         return;
                     case ExpressionType.Negate:
-                        CompileNegateExpression(node, false);
+                        CompileNegateExpression(node, false, node.IsLifted);
                         return;
                     case ExpressionType.NegateChecked:
-                        CompileNegateExpression(node, true);
+                        CompileNegateExpression(node, true, node.IsLifted);
                         return;                    
                     case ExpressionType.Not:
-                        CompileNotExpression(node);
+                        CompileNotExpression(node, node.IsLifted);
                         return;
                     case ExpressionType.UnaryPlus:
                         // unary plus is a nop:
@@ -1535,6 +1561,10 @@ namespace Microsoft.Scripting.Interpreter {
             var node = (TypeBinaryExpression)expr;
 
             Compile(node.Expression);
+            if (node.Expression.Type == typeof (void)) {
+                _instructions.Emit (InstructionFactory<bool>.Factory.DefaultValue ());
+                return;
+            }
 
             // use TypeEqual for sealed types:
             if (node.TypeOperand.IsSealed()) {

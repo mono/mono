@@ -365,6 +365,7 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
+		[Category ("NotWorkingInterpreter")]
 		public void CompileNullableToNotNullable ()
 		{
 			var p = Expression.Parameter (typeof (int?), "i");
@@ -457,6 +458,7 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
+		[Category ("NotWorkingInterpreter")]
 		public void ConvertImplicitToShortToNullableInt ()
 		{
 			var a = Expression.Parameter (typeof (ImplicitToShort?), "a");
@@ -482,6 +484,7 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
+		[Category ("NotWorkingInterpreter")]
 		public void NullableImplicitToShort ()
 		{
 			var i = Expression.Parameter (typeof (ImplicitToShort?), "i");
@@ -517,6 +520,7 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
+		[Category ("NotWorkingInterpreter")]
 		public void ConvertNullableULongToNullableDecimal ()
 		{
 			var p = Expression.Parameter (typeof (ulong?), "l");
@@ -561,6 +565,7 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
+		[Category ("NotWorkingInterpreter")]
 		public void ConvertNullableImplictToIntToNullableLong ()
 		{
 			var i = Expression.Parameter (typeof (ImplicitToInt?), "i");
