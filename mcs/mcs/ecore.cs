@@ -2313,11 +2313,11 @@ namespace Mono.CSharp {
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			expr = expr.Resolve (rc);
-			if (expr != null) {
-				type = expr.Type;
-				eclass = expr.eclass;
-			}
+			if (expr == null)
+				return null;
 
+			type = expr.Type;
+			eclass = expr.eclass;
 			return this;
 		}
 
@@ -5846,7 +5846,6 @@ namespace Mono.CSharp {
 					InstanceExpression.FlowAnalysis (fc);
 			}
 		}
-
 
 		public void VerifyAssignedStructField (FlowAnalysisContext fc)
 		{
