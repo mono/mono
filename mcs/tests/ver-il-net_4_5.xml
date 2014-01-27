@@ -48716,6 +48716,65 @@
       </method>
     </type>
   </test>
+  <test name="test-884.cs">
+    <type name="C">
+      <method name="Void Main()" attrs="145">
+        <size>6</size>
+      </method>
+      <method name="Void AddEH[T]()" attrs="145">
+        <size>25</size>
+      </method>
+      <method name="Void EHandler()" attrs="145">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+E`1[T]">
+      <method name="Void add_EEvent(C+E`1+EMethod[T])" attrs="2182">
+        <size>42</size>
+      </method>
+      <method name="Void remove_EEvent(C+E`1+EMethod[T])" attrs="2182">
+        <size>42</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+E`1+EMethod[T]">
+      <method name="Void Invoke()" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)" attrs="454">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)" attrs="6278">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-885.cs">
+    <type name="A">
+      <method name="Void .ctor(Double)" attrs="6278">
+        <size>15</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Main()" attrs="145">
+        <size>92</size>
+      </method>
+      <method name="Boolean Foo(Double)" attrs="145">
+        <size>21</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-89.cs">
     <type name="X">
       <method name="X F(Int32)" attrs="145">
