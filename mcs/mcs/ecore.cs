@@ -5847,25 +5847,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void VerifyAssignedStructField (FlowAnalysisContext fc)
-		{
-			var fe = this;
-
-			do {
-				var var = fe.InstanceExpression as IVariableReference;
-				if (var != null) {
-					var vi = var.VariableInfo;
-
-					if (vi != null && !fc.IsStructFieldDefinitelyAssigned (vi, fe.Name) && !fe.type.IsStruct) {
-						fc.Report.Warning (1060, 1, fe.loc, "Use of possibly unassigned field `{0}'", fe.Name);
-					}
-				}
-
-				fe = fe.InstanceExpression as FieldExpr;
-
-			} while (fe != null);
-		}
-
 		Expression Error_AssignToReadonly (ResolveContext rc, Expression right_side)
 		{
 			// The return value is always null.  Returning a value simplifies calling code.
