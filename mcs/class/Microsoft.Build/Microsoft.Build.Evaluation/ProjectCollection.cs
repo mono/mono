@@ -218,7 +218,7 @@ namespace Microsoft.Build.Evaluation
 		}
 
 		readonly List<ILogger> loggers = new List<ILogger> ();
-		[MonoTODO]
+		
 		public ICollection<ILogger> Loggers {
 			get { return loggers; }
 		}
@@ -277,13 +277,11 @@ namespace Microsoft.Build.Evaluation
 			toolsets.Clear ();
 		}
 		
-		[MonoTODO ("not verified at all")]
 		public void RegisterLogger (ILogger logger)
 		{
 			loggers.Add (logger);
 		}
 		
-		[MonoTODO ("not verified at all")]
 		public void RegisterLoggers (IEnumerable<ILogger> loggers)
 		{
 			foreach (var logger in loggers)
