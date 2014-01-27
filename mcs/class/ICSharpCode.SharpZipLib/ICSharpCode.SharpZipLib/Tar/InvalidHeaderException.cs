@@ -1,4 +1,5 @@
 // InvalidHeaderException.cs
+//
 // Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -32,14 +33,37 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 
+using System;
+
+#if !NETCF_1_0 && !NETCF_2_0
+using System.Runtime.Serialization;
+#endif
+
 namespace ICSharpCode.SharpZipLib.Tar {
 	
 	/// <summary>
 	/// This exception is used to indicate that there is a problem
 	/// with a TAR archive header.
 	/// </summary>
+#if !NETCF_1_0 && !NETCF_2_0
+	[Serializable]
+#endif
 	public class InvalidHeaderException : TarException
 	{
+
+#if !NETCF_1_0 && !NETCF_2_0
+		/// <summary>
+		/// Deserialization constructor
+		/// </summary>
+		/// <param name="information"><see cref="SerializationInfo"/> for this constructor</param>
+		/// <param name="context"><see cref="StreamingContext"/> for this constructor</param>
+		protected InvalidHeaderException(SerializationInfo information, StreamingContext context)
+			: base(information, context)
+
+		{
+		}
+#endif
+
 		/// <summary>
 		/// Initialise a new instance of the InvalidHeaderException class.
 		/// </summary>
@@ -50,7 +74,19 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		/// <summary>
 		/// Initialises a new instance of the InvalidHeaderException class with a specified message.
 		/// </summary>
-		public InvalidHeaderException(string msg) : base(msg)
+		/// <param name="message">Message describing the exception cause.</param>
+		public InvalidHeaderException(string message)
+			: base(message)
+		{
+		}
+
+		/// <summary>
+		/// Initialise a new instance of InvalidHeaderException
+		/// </summary>
+		/// <param name="message">Message describing the problem.</param>
+		/// <param name="exception">The exception that is the cause of the current exception.</param>
+		public InvalidHeaderException(string message, Exception exception)
+			: base(message, exception)
 		{
 		}
 	}

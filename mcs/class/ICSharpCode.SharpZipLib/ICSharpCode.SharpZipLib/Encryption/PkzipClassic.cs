@@ -35,9 +35,11 @@
 // exception statement from your version.
 //
 
+
+#if !NETCF_1_0
+
 using System;
 using System.Security.Cryptography;
-
 using ICSharpCode.SharpZipLib.Checksums;
 
 namespace ICSharpCode.SharpZipLib.Encryption
@@ -47,31 +49,30 @@ namespace ICSharpCode.SharpZipLib.Encryption
 	/// While it has been superceded by more recent and more powerful algorithms, its still in use and 
 	/// is viable for preventing casual snooping
 	/// </summary>
-	public abstract class PkzipClassic  : SymmetricAlgorithm
+	public abstract class PkzipClassic : SymmetricAlgorithm
 	{
 		/// <summary>
 		/// Generates new encryption keys based on given seed
 		/// </summary>
+		/// <param name="seed">The seed value to initialise keys with.</param>
+		/// <returns>A new key value.</returns>
 		static public byte[] GenerateKeys(byte[] seed)
 		{
-			if ( seed == null ) 
-			{
+			if ( seed == null ) {
 				throw new ArgumentNullException("seed");
 			}
 
-			if ( seed.Length == 0 )
-			{
-				throw new ArgumentException("seed");
+			if ( seed.Length == 0 ) {
+				throw new ArgumentException("Length is zero", "seed");
 			}
 
 			uint[] newKeys = new uint[] {
-			                            0x12345678,
-			                            0x23456789,
-			                            0x34567890
-			                         };
+				0x12345678,
+				0x23456789,
+				0x34567890
+			 };
 			
-			for (int i = 0; i < seed.Length; ++i) 
-			{
+			for (int i = 0; i < seed.Length; ++i) {
 				newKeys[0] = Crc32.ComputeCrc32(newKeys[0], seed[i]);
 				newKeys[1] = newKeys[1] + (byte)newKeys[0];
 				newKeys[1] = newKeys[1] * 134775813 + 1;
@@ -101,8 +102,6 @@ namespace ICSharpCode.SharpZipLib.Encryption
 	/// </summary>
 	class PkzipClassicCryptoBase
 	{
-		uint[] keys     = null;
-
 		/// <summary>
 		/// Transform a single byte 
 		/// </summary>
@@ -115,6 +114,10 @@ namespace ICSharpCode.SharpZipLib.Encryption
 			return (byte)((temp * (temp ^ 1)) >> 8);
 		}
 
+		/// <summary>
+		/// Set the key schedule for encryption/decryption.
+		/// </summary>
+		/// <param name="keyData">The data use to set the keys from.</param>
 		protected void SetKeys(byte[] keyData)
 		{
 			if ( keyData == null ) {
@@ -122,7 +125,7 @@ namespace ICSharpCode.SharpZipLib.Encryption
 			}
 		
 			if ( keyData.Length != 12 ) {
-				throw new InvalidOperationException("Keys not valid");
+				throw new InvalidOperationException("Key length is not valid");
 			}
 			
 			keys = new uint[3];
@@ -151,6 +154,10 @@ namespace ICSharpCode.SharpZipLib.Encryption
 			keys[1] = 0;
 			keys[2] = 0;
 		}
+
+		#region Instance Fields
+		uint[] keys;
+		#endregion
 	}
 
 	/// <summary>
@@ -371,15 +378,19 @@ namespace ICSharpCode.SharpZipLib.Encryption
 	public sealed class PkzipClassicManaged : PkzipClassic
 	{
 		/// <summary>
-		/// Get / set the applicable block size.
+		/// Get / set the applicable block size in bits.
 		/// </summary>
 		/// <remarks>The only valid block size is 8.</remarks>
 		public override int BlockSize 
 		{
-			get { return 8; }
+			get {
+				return 8;
+			}
+
 			set {
-				if (value != 8)
-					throw new CryptographicException();
+				if (value != 8) {
+					throw new CryptographicException("Block size is invalid");
+				}
 			}
 		}
 
@@ -415,19 +426,29 @@ namespace ICSharpCode.SharpZipLib.Encryption
 			}
 		}
 
-		byte[] key;
-
 		/// <summary>
 		/// Get / set the key value applicable.
 		/// </summary>
 		public override byte[] Key
 		{
 			get {
-				return key;
+				if ( key_ == null ) {
+					GenerateKey();
+				}
+
+				return (byte[]) key_.Clone();
 			}
 		
 			set {
-				key = value;
+				if ( value == null ) {
+					throw new ArgumentNullException("value");
+				}
+
+				if ( value.Length != 12 ) {
+					throw new CryptographicException("Key size is illegal");
+				}
+
+				key_ = (byte[]) value.Clone();
 			}
 		}
 
@@ -436,9 +457,9 @@ namespace ICSharpCode.SharpZipLib.Encryption
 		/// </summary>
 		public override void GenerateKey()
 		{
-			key = new byte[12];
+			key_ = new byte[12];
 			Random rnd = new Random();
-			rnd.NextBytes(key);
+			rnd.NextBytes(key_);
 		}
 
 		/// <summary>
@@ -449,10 +470,10 @@ namespace ICSharpCode.SharpZipLib.Encryption
 		/// <returns>Returns a new PkzipClassic encryptor</returns>
 		public override ICryptoTransform CreateEncryptor(
 			byte[] rgbKey,
-			byte[] rgbIV
-		)
+			byte[] rgbIV)
 		{
-			return new PkzipClassicEncryptCryptoTransform(rgbKey);
+			key_ = rgbKey;
+			return new PkzipClassicEncryptCryptoTransform(Key);
 		}
 
 		/// <summary>
@@ -463,10 +484,15 @@ namespace ICSharpCode.SharpZipLib.Encryption
 		/// <returns>Returns a new decryptor.</returns>
 		public override ICryptoTransform CreateDecryptor(
 			byte[] rgbKey,
-			byte[] rgbIV
-		)
+			byte[] rgbIV)
 		{
-			return new PkzipClassicDecryptCryptoTransform(rgbKey);
+			key_ = rgbKey;
+			return new PkzipClassicDecryptCryptoTransform(Key);
 		}
+
+		#region Instance Fields
+		byte[] key_;
+		#endregion
 	}
 }
+#endif
