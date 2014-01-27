@@ -90,6 +90,29 @@ namespace Microsoft.Scripting.Interpreter {
         }
     }
 
+    public sealed class GetArrayLengthInstruction : Instruction {
+        private static Instruction instance;
+
+        private GetArrayLengthInstruction() { }
+
+        public override int ConsumedStack { get { return 1; } }
+        public override int ProducedStack { get { return 1; } }
+
+        public override int Run(InterpretedFrame frame) {
+            var array = (Array)frame.Pop();
+            frame.Push(array.Length);
+            return +1;
+        }
+
+        public static Instruction Create() {
+            return instance ?? (instance = new GetArrayLengthInstruction());
+        }
+
+        public override string InstructionName {
+            get { return "GetArrayLength"; }
+        }
+    }
+
     public sealed class SetArrayItemInstruction<TElement> : Instruction {
         internal SetArrayItemInstruction() { }
 

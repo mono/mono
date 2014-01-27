@@ -1,6 +1,7 @@
 Assembly/AssemblyInfo.cs
 Mono.Http/NtlmClient.cs
 System.CodeDom.Compiler/GeneratedCodeAttribute.cs
+System.CodeDom.Compiler/IndentedTextWriter.cs
 System.Collections.Generic/ISet.cs
 System.Collections.Generic/LinkedList.cs
 System.Collections.Generic/LinkedListNode.cs

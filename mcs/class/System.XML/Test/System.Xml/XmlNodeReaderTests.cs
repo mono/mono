@@ -138,7 +138,7 @@ namespace MonoTests.System.Xml
 			nr.Read ();	// root
 			nr.Read ();	// &ent3;
 			Assert.AreEqual (XmlNodeType.EntityReference, nr.NodeType);
-			// ent3 does not exists in this dtd.
+			// ent3 does not exist in this dtd.
 			nr.ResolveEntity ();
 			Assert.AreEqual (XmlNodeType.EntityReference, nr.NodeType);
 			nr.Read ();
@@ -170,7 +170,7 @@ namespace MonoTests.System.Xml
 			nr.Read ();	// root
 			nr.Read ();	// &ent;
 			Assert.AreEqual (XmlNodeType.EntityReference, nr.NodeType);
-			// ent does not exists in this dtd.
+			// ent does not exist in this dtd.
 			nr.ResolveEntity ();
 		}
 

@@ -541,6 +541,21 @@ in network-byte-order.</para>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="IsIPv6Teredo">
+      <MemberSignature Language="C#" Value="public bool IsIPv6Teredo { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="IsLoopback">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsLoopback(class System.Net.IPAddress address)" />
       <MemberSignature Language="C#" Value="public static bool IsLoopback (System.Net.IPAddress addr);" />

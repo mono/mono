@@ -20,6 +20,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using Microsoft.Scripting.Runtime;
 using Microsoft.Scripting.Utils;
+using System.Linq;
 
 namespace Microsoft.Scripting.Interpreter {
     internal sealed class CreateDelegateInstruction : Instruction {
@@ -158,6 +159,35 @@ namespace Microsoft.Scripting.Interpreter {
 
         public override string InstructionName {
             get { return "TypeEquals()"; }
+        }
+    }
+
+    internal sealed class WrapToNullableInstruction<T> : Instruction {
+
+        readonly Type elementType;
+        ConstructorInfo ctor;
+
+        public override int ConsumedStack { get { return 1; } }
+        public override int ProducedStack { get { return 1; } }
+
+        internal WrapToNullableInstruction(Type elementType) {
+            this.elementType = elementType;
+        }
+
+        public override int Run(InterpretedFrame frame) {
+            var r = frame.Data[frame.StackIndex - 1];
+
+            // Don't need to wrap null values
+            if (r == null)
+                return 1;
+
+            ctor = typeof (Nullable<>).MakeGenericType (elementType).GetDeclaredConstructors ().First ();
+            frame.Data[frame.StackIndex - 1] = ctor.Invoke (new [] { r });
+            return 1;
+        }
+
+        public override string InstructionName {
+            get { return "WrapTo " + typeof(T) + "?"; }
         }
     }
 }

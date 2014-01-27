@@ -119,6 +119,34 @@ namespace Microsoft.Scripting.Interpreter {
         }
     }
 
+	internal sealed class BranchNullInstruction : OffsetInstruction {
+		private static Instruction[] _cache;
+
+		public override Instruction[] Cache {
+			get {
+				if (_cache == null) {
+					_cache = new Instruction[CacheSize];
+				}
+				return _cache;
+			}
+		}
+
+		internal BranchNullInstruction() {
+		}
+
+		public override int ConsumedStack { get { return 1; } }
+
+		public override int Run(InterpretedFrame frame) {
+			Debug.Assert(_offset != Unknown);
+
+			if (frame.Pop() == null) {
+				return _offset;
+			}
+
+			return +1;
+		}
+	}
+
     internal sealed class CoalescingBranchInstruction : OffsetInstruction {
         private static Instruction[] _cache;
 

@@ -139,11 +139,13 @@ namespace MonoTests.Microsoft.Build.Execution
 	    <Error Text='expected error' />
 	</Target>
 </Project>";
-            var xml = XmlReader.Create (new StringReader (project_xml));
-            var root = ProjectRootElement.Create (xml);
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
 			root.FullPath = "ProjectInstanceTest.DependsOnTargets.proj";
-            var proj = new ProjectInstance (root);
+			var proj = new ProjectInstance (root);
+#if NET_4_5
 			Assert.AreEqual (2, proj.Targets.Count, "#1");
+#endif
 			Assert.IsFalse (proj.Build ("Bar", new ILogger [0]), "#2");
 		}
 		

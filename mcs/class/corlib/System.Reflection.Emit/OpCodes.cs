@@ -1,4 +1,4 @@
-#if !FULL_AOT_RUNTIME
+#if !FULL_AOT_RUNTIME || IOS_REFLECTION
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {

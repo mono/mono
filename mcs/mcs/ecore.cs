@@ -2313,11 +2313,11 @@ namespace Mono.CSharp {
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			expr = expr.Resolve (rc);
-			if (expr != null) {
-				type = expr.Type;
-				eclass = expr.eclass;
-			}
+			if (expr == null)
+				return null;
 
+			type = expr.Type;
+			eclass = expr.eclass;
 			return this;
 		}
 
@@ -5814,46 +5814,37 @@ namespace Mono.CSharp {
 			}
 
 			var fe = InstanceExpression as FieldExpr;
-			if (fe != null || lvalue_instance) {
-				if (fe == null)
-					return;
+			if (fe != null) {
+				Expression instance;
 
-				/*
-				while (fe.InstanceExpression is FieldExpr) {
-					fe = (FieldExpr) fe.InstanceExpression;
-					if (!fe.Spec.DeclaringType.IsStruct)
-						continue;
+				do {
+					instance = fe.InstanceExpression;
+					var fe_instance = instance as FieldExpr;
+					if ((fe_instance != null && !fe_instance.IsStatic) || instance is LocalVariableReference) {
+						if (TypeSpec.IsReferenceType (fe.Type) && instance.Type.IsStruct) {
+							var var = InstanceExpression as IVariableReference;
+							if (var != null && var.VariableInfo == null) {
+								var var_inst = instance as IVariableReference;
+								if (var_inst == null || (var_inst.VariableInfo != null && !fc.IsDefinitelyAssigned (var_inst.VariableInfo)))
+									fc.Report.Warning (1060, 1, fe.loc, "Use of possibly unassigned field `{0}'", fe.Name);
+							}
+						}
 
-					if (fe.VariableInfo != null && fc.IsStructFieldDefinitelyAssigned (fe.VariableInfo, fe.Name)) {
-						fc.Report.Warning (1060, 1, fe.loc, "Use of possibly unassigned field `{0}'", fe.Name);
+						if (fe_instance != null) {
+							fe = fe_instance;
+							continue;
+						}
 					}
-				}
 
-				fe.InstanceExpression.FlowAnalysis (fc);
-				*/
+					break;
+				} while (true);
+
+				if (instance != null && TypeSpec.IsReferenceType (instance.Type))
+					instance.FlowAnalysis (fc);
 			} else {
-				InstanceExpression.FlowAnalysis (fc);
+				if (TypeSpec.IsReferenceType (InstanceExpression.Type))
+					InstanceExpression.FlowAnalysis (fc);
 			}
-		}
-
-
-		public void VerifyAssignedStructField (FlowAnalysisContext fc)
-		{
-			var fe = this;
-
-			do {
-				var var = fe.InstanceExpression as IVariableReference;
-				if (var != null) {
-					var vi = var.VariableInfo;
-
-					if (vi != null && !fc.IsStructFieldDefinitelyAssigned (vi, fe.Name) && !fe.type.IsStruct) {
-						fc.Report.Warning (1060, 1, fe.loc, "Use of possibly unassigned field `{0}'", fe.Name);
-					}
-				}
-
-				fe = fe.InstanceExpression as FieldExpr;
-
-			} while (fe != null);
 		}
 
 		Expression Error_AssignToReadonly (ResolveContext rc, Expression right_side)
@@ -6525,6 +6516,8 @@ namespace Mono.CSharp {
 
 				if (expr != this)
 					return expr.ResolveLValue (ec, right_side);
+			} else {
+				ResolveInstanceExpression (ec, right_side);
 			}
 
 			if (!ResolveSetter (ec))

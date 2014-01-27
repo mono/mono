@@ -31,7 +31,7 @@ LIB_MCS_FLAGS +=	\
 	-r:J2SE.Helpers.dll			\
 	$(OTHER_LIB_MCS_FLAGS)
 else 
-MOBILE := $(filter monotouch monodroid mobile mobile_static, $(PROFILE))
+MOBILE := $(filter monotouch monodroid xammac mobile mobile_static, $(PROFILE))
 ifdef MOBILE
 LIB_MCS_FLAGS += \
 	-r:Mono.Data.Tds.dll \

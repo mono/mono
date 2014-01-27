@@ -472,6 +472,19 @@ namespace MonoTests.System.Threading
 				t2.Join (500);
 			}, 500);
 		}
+
+		[Test]
+		public void DisposeRace ()
+		{
+			for (int i = 0; i < 1000; ++i) {
+				var c1 = new CancellationTokenSource ();
+				using (c1) {
+					var wh = c1.Token.WaitHandle;
+					c1.CancelAfter (1);
+					Thread.Sleep (1);
+				}
+			}
+		}
 	}
 }
 

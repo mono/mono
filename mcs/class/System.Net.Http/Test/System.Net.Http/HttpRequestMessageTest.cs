@@ -35,6 +35,7 @@ using System.Net.Http;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Linq;
+using System.IO;
 
 namespace MonoTests.System.Net.Http
 {
@@ -361,15 +362,55 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
-		public void Headers_Complex ()
+		public void Headers_MultiValues ()
 		{
 			HttpRequestMessage message = new HttpRequestMessage ();
 			HttpRequestHeaders headers = message.Headers;
 
+			headers.Add ("Accept", "application/vnd.citrix.requesttokenresponse+xml, application/vnd.citrix.requesttokenchoices+xml");
+			headers.Add ("Accept-Charset", "aa ;Q=0,bb;Q=1");
+			headers.Add ("Expect", "x=1; v, y=5");
+			headers.Add ("If-Match", "\"a\",*, \"b\",*");
 			headers.Add ("user-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.62 Safari/537.36");
 
+			Assert.AreEqual (2, headers.Accept.Count, "#1a");
+			Assert.IsTrue (headers.Accept.SequenceEqual (
+				new[] {
+					new MediaTypeWithQualityHeaderValue ("application/vnd.citrix.requesttokenresponse+xml"),
+					new MediaTypeWithQualityHeaderValue ("application/vnd.citrix.requesttokenchoices+xml"),
+				}
+			), "#1b");
 
-			Assert.AreEqual (6, headers.UserAgent.Count);
+			Assert.AreEqual (2, headers.AcceptCharset.Count, "#2a");
+			Assert.IsTrue (headers.AcceptCharset.SequenceEqual (
+				new[] {
+					new StringWithQualityHeaderValue ("aa", 0),
+					new StringWithQualityHeaderValue ("bb", 1),
+				}
+			), "#2b");
+
+			Assert.AreEqual (2, headers.Expect.Count, "#3a");
+			var expect_expected = new[] {
+					new NameValueWithParametersHeaderValue ("x", "1") {
+					},
+					new NameValueWithParametersHeaderValue ("y", "5"),
+				};
+			expect_expected [0].Parameters.Add (new NameValueHeaderValue ("v"));
+			Assert.IsTrue (headers.Expect.SequenceEqual (
+				expect_expected
+			), "#3b");
+
+			Assert.AreEqual (4, headers.IfMatch.Count, "#4a");
+			Assert.IsTrue (headers.IfMatch.SequenceEqual (
+				new[] {
+					new EntityTagHeaderValue ("\"a\""),
+					EntityTagHeaderValue.Any,
+					new EntityTagHeaderValue ("\"b\""),
+					EntityTagHeaderValue.Any
+				}
+			), "#4b");
+
+			Assert.AreEqual (6, headers.UserAgent.Count, "#10a");
 
 			Assert.IsTrue (headers.UserAgent.SequenceEqual (
 				new[] {
@@ -380,7 +421,7 @@ namespace MonoTests.System.Net.Http
 					new ProductInfoHeaderValue ("Chrome", "29.0.1547.62"),
 					new ProductInfoHeaderValue ("Safari", "537.36")
 				}
-			));			
+			), "#10b");
 		}
 
 		[Test]

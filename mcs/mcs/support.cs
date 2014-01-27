@@ -36,7 +36,7 @@ namespace Mono.CSharp {
 			return System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode (obj);
 		}
 	}
-#if !NET_4_0 && !MONODROID
+#if !NET_4_0 && !MOBILE_DYNAMIC
 	public class Tuple<T1, T2> : IEquatable<Tuple<T1, T2>>
 	{
 		public Tuple (T1 item1, T2 item2)

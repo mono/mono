@@ -48,9 +48,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 #else
 		[Test]
-#if MONOTOUCH
-		[Category ("NotWorking")]
-#endif
 		[ExpectedException (typeof (ArgumentException))]
 		public void QuoteConstant ()
 		{
@@ -59,6 +56,7 @@ namespace MonoTests.System.Linq.Expressions
 #endif
 
 		[Test]
+		[Category ("NotWorkingInterpreter")]
 		public void CompiledQuote ()
 		{
 			var quote42 = Expression.Lambda<Func<Expression<Func<int>>>> (
@@ -72,9 +70,7 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-#if MONOTOUCH
-		[Category ("NotWorking")]
-#endif
+		[Category ("NotWorkingInterpreter")]
 		public void ParameterInQuotedExpression () // #550722
 		{
 			// Expression<Func<string, Expression<Func<string>>>> e = (string s) => () => s;

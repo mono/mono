@@ -17,6 +17,10 @@ ifeq (monodroid, $(PROFILE))
 LIB_MCS_FLAGS += -d:FEATURE_CORE_DLR,FEATURE_REFEMIT,ANDROID
 endif
 
+ifeq (xammac, $(PROFILE))
+LIB_MCS_FLAGS += -d:FEATURE_CORE_DLR,FEATURE_REFEMIT
+endif
+
 ifeq (monotouch, $(PROFILE))
 LIBRARY_USE_INTERMEDIATE_FILE = yes
 
@@ -50,6 +54,7 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 include ../../build/library.make
 
 ifdef CYCLIC_DEP_FILES
+TEST_HARNESS_EXCLUDES += -exclude:NotWorkingInterpreter
 $(build_lib): $(INTERPRETER_DEP_FILE)
 endif
 

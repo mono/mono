@@ -240,6 +240,43 @@ static void io_ops_init (void)
 /* Some utility functions.
  */
 
+/*
+ * Check if a file is writable by the current user.
+ *
+ * This is is a best effort kind of thing. It assumes a reasonable sane set
+ * of permissions by the underlying OS.
+ *
+ * We assume that basic unix permission bits are authoritative. Which might not
+ * be the case under systems with extended permissions systems (posix ACLs, SELinux, OSX/iOS sandboxing, etc)
+ *
+ * The choice of access as the fallback is due to the expected lower overhead compared to trying to open the file.
+ *
+ * The only expected problem with using access are for root, setuid or setgid programs as access is not consistent
+ * under those situations. It's to be expected that this should not happen in practice as those bits are very dangerous
+ * and should not be used with a dynamic runtime.
+ */
+static gboolean
+is_file_writable (struct stat *st, const char *path)
+{
+	/* Is it globally writable? */
+	if (st->st_mode & S_IWOTH)
+		return 1;
+
+	/* Am I the owner? */
+	if ((st->st_uid == geteuid ()) && (st->st_mode & S_IWUSR))
+		return 1;
+
+	/* Am I in the same group? */
+	if ((st->st_gid == getegid ()) && (st->st_mode & S_IWGRP))
+		return 1;
+
+	/* Fallback to using access(2). It's not ideal as it might not take into consideration euid/egid
+	 * but it's the only sane option we have on unix.
+	 */
+	return access (path, W_OK) == 0;
+}
+
+
 static guint32 _wapi_stat_to_file_attributes (const gchar *pathname,
 					      struct stat *buf,
 					      struct stat *lbuf)
@@ -259,14 +296,14 @@ static guint32 _wapi_stat_to_file_attributes (const gchar *pathname,
 
 	if (S_ISDIR (buf->st_mode)) {
 		attrs = FILE_ATTRIBUTE_DIRECTORY;
-		if (!(buf->st_mode & S_IWUSR)) {
+		if (!is_file_writable (buf, pathname)) {
 			attrs |= FILE_ATTRIBUTE_READONLY;
 		}
 		if (filename[0] == '.') {
 			attrs |= FILE_ATTRIBUTE_HIDDEN;
 		}
 	} else {
-		if (!(buf->st_mode & S_IWUSR)) {
+		if (!is_file_writable (buf, pathname)) {
 			attrs = FILE_ATTRIBUTE_READONLY;
 
 			if (filename[0] == '.') {
@@ -2045,7 +2082,7 @@ ReplaceFile (const gunichar2 *replacedFileName, const gunichar2 *replacementFile
 		      const gunichar2 *backupFileName, guint32 replaceFlags, 
 		      gpointer exclude, gpointer reserved)
 {
-	int result, errno_copy, backup_fd = -1,replaced_fd = -1;
+	int result, backup_fd = -1,replaced_fd = -1;
 	gchar *utf8_replacedFileName, *utf8_replacementFileName = NULL, *utf8_backupFileName = NULL;
 	struct stat stBackup;
 	gboolean ret = FALSE;
@@ -2063,13 +2100,11 @@ ReplaceFile (const gunichar2 *replacedFileName, const gunichar2 *replacementFile
 		// Open the backup file for read so we can restore the file if an error occurs.
 		backup_fd = _wapi_open (utf8_backupFileName, O_RDONLY, 0);
 		result = _wapi_rename (utf8_replacedFileName, utf8_backupFileName);
-		errno_copy = errno;
 		if (result == -1)
 			goto replace_cleanup;
 	}
 
 	result = _wapi_rename (utf8_replacementFileName, utf8_replacedFileName);
-	errno_copy = errno;
 	if (result == -1) {
 		_wapi_set_last_path_error_from_errno (NULL, utf8_replacementFileName);
 		_wapi_rename (utf8_backupFileName, utf8_replacedFileName);

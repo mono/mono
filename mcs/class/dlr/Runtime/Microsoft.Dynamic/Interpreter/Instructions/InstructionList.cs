@@ -601,6 +601,10 @@ namespace Microsoft.Scripting.Interpreter {
             }
         }
 
+        public void EmitGetArrayLength(Type arrayType) {
+            Emit(GetArrayLengthInstruction.Create());
+        }
+
         public void EmitSetArrayItem(Type arrayType) {
             Type elementType = arrayType.GetElementType();
             if (elementType.IsClass() || elementType.IsInterface()) {
@@ -634,48 +638,88 @@ namespace Microsoft.Scripting.Interpreter {
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
         public void EmitSub(Type type, bool @checked) {
-            throw new NotSupportedException();
+            if (@checked) {
+                Emit(SubOvfInstruction.Create(type));
+            } else {
+                Emit(SubInstruction.Create(type));
+            }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
         public void EmitMul(Type type, bool @checked) {
-            throw new NotSupportedException();
+            if (@checked) {
+                Emit(MulOvfInstruction.Create(type));
+            } else {
+                Emit(MulInstruction.Create(type));
+            }
         }
 
         public void EmitDiv(Type type) {
             Emit(DivInstruction.Create(type));
         }
 
+        public void EmitMod(Type type) {
+            Emit(ModInstruction.Create(type));
+        }
+
         #endregion
+
+        public void EmitShl(Type type, bool lifted) {
+            Emit(lifted ? ShlInstruction.CreateLifted(type) : ShlInstruction.Create(type));
+        }
+
+        public void EmitShr(Type type, bool lifted) {
+            Emit(lifted ? ShrInstruction.CreateLifted(type) : ShrInstruction.Create(type));
+        }
+
+        public void EmitOr(Type type, bool lifted) {
+            Emit(lifted ? OrInstruction.CreateLifted(type) : OrInstruction.Create(type));
+        }
+
+        public void EmitAnd(Type type, bool lifted) {
+            Emit(lifted ? AndInstruction.CreateLifted (type) : AndInstruction.Create(type));
+        }
+
+        public void EmitExclusiveOr(Type type, bool lifted) {
+            Emit(lifted ? XorInstruction.CreateLifted(type) : XorInstruction.Create(type));
+        }        
 
         #region Comparisons
 
-        public void EmitEqual(Type type) {
-            Emit(EqualInstruction.Create(type));
+		public void EmitEqual(Type type, bool liftedResult) {
+            Emit(liftedResult ?
+                EqualInstruction.CreateLifted(TypeUtils.GetNonNullableType (type)) :
+                EqualInstruction.Create(TypeUtils.GetNonNullableType (type)));
         }
 
-        public void EmitNotEqual(Type type) {
-            Emit(NotEqualInstruction.Create(type));
+        public void EmitNotEqual(Type type, bool liftedResult) {
+            Emit(liftedResult ?
+                NotEqualInstruction.CreateLifted(TypeUtils.GetNonNullableType (type)) :
+                NotEqualInstruction.Create(TypeUtils.GetNonNullableType (type)));
         }
 
-        public void EmitLessThan(Type type) {
-            Emit(LessThanInstruction.Create(type));
+        public void EmitLessThan(Type type, bool liftedResult) {
+            Emit(liftedResult ?
+                LessThanInstruction.CreateLifted(TypeUtils.GetNonNullableType (type)) :
+                LessThanInstruction.Create(TypeUtils.GetNonNullableType (type)));
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
-        public void EmitLessThanOrEqual(Type type) {
-            throw new NotSupportedException();
+        public void EmitLessThanOrEqual(Type type, bool liftedResult) {
+            Emit(liftedResult ?
+                LessThanOrEqualInstruction.CreateLifted(TypeUtils.GetNonNullableType (type)) :
+                LessThanOrEqualInstruction.Create(TypeUtils.GetNonNullableType (type)));
         }
 
-        public void EmitGreaterThan(Type type) {
-            Emit(GreaterThanInstruction.Create(type));
+        public void EmitGreaterThan(Type type, bool liftedResult) {
+            Emit(liftedResult ?
+                GreaterThanInstruction.CreateLifted(TypeUtils.GetNonNullableType (type)) :
+                GreaterThanInstruction.Create(TypeUtils.GetNonNullableType (type)));
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters")]
-        public void EmitGreaterThanOrEqual(Type type) {
-            throw new NotSupportedException();
+        public void EmitGreaterThanOrEqual(Type type, bool liftedResult) {
+            Emit(liftedResult ?
+                GreaterThanOrEqualInstruction.CreateLifted(TypeUtils.GetNonNullableType (type)) :
+                GreaterThanOrEqualInstruction.Create(TypeUtils.GetNonNullableType (type)));
         }
 
         #endregion
@@ -692,10 +736,26 @@ namespace Microsoft.Scripting.Interpreter {
 
         #endregion
 
-        #region Boolean Operators
+        #region Unary Operators
 
-        public void EmitNot() {
-            Emit(NotInstruction.Instance);
+        public void EmitNegate(Type type, bool @checked, bool lifted) {
+            if (@checked)
+                Emit(lifted ? NegateOvfInstruction.CreateLifted(type) : NegateOvfInstruction.Create(type));
+            else
+                Emit(lifted ? NegateInstruction.CreateLifted(type) : NegateInstruction.Create(type));            
+        }
+
+        public void EmitNot(Type type, bool lifted) {
+            Emit(lifted ? NotInstruction.CreateLifted (type) : NotInstruction.Create(type));
+        }
+
+        #endregion
+
+        #region Nullable operations
+
+        public void EmitWrap (Type elementType)
+        {
+            Emit(InstructionFactory.GetFactory(elementType).WrapToNullable (elementType));
         }
 
         #endregion
@@ -946,6 +1006,10 @@ namespace Microsoft.Scripting.Interpreter {
 
         public void EmitBranchFalse(BranchLabel elseLabel) {
             EmitBranch(new BranchFalseInstruction(), elseLabel);
+        }
+
+        public void EmitBranchNull(BranchLabel elseLabel) {
+            EmitBranch(new BranchNullInstruction(), elseLabel);
         }
 
         public void EmitThrow() {

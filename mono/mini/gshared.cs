@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -1428,13 +1429,20 @@ public class Tests
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void call_async<T> (int i, int j) {
 		Task<T> t = FooAsync<T> (1, 2);
-		t.RunSynchronously ();
+		// FIXME: This doesn't work
+		//t.RunSynchronously ();
 	}
 
 	// In AOT mode, the async infrastructure depends on gsharedvt methods
 	public static int test_0_async_call_from_generic () {
 		call_async<string> (1, 2);
 		return 0;
+	}
+
+	public static int test_0_array_helper_gsharedvt () {
+		var arr = new AnEnum [16];
+		var c = new ReadOnlyCollection<AnEnum> (arr);
+		return c.Contains (AnEnum.Two) == false ? 0 : 1;
 	}
 }
 

@@ -2000,6 +2000,7 @@ ret_type_to_call_opcode (MonoType *type, int calli, int virt, MonoGenericSharing
 
 handle_enum:
 	type = mini_get_basic_type_from_generic (gsctx, type);
+	type = mini_replace_type (type);
 	switch (type->type) {
 	case MONO_TYPE_VOID:
 		return calli? OP_VOIDCALL_REG: virt? OP_VOIDCALL_MEMBASE: OP_VOIDCALL;
@@ -3352,20 +3353,30 @@ get_gsharedvt_info_slot (MonoCompile *cfg, gpointer data, MonoRgctxInfoType rgct
 
 	g_assert (info);
 
-	for (i = 0; i < info->entries->len; ++i) {
-		MonoRuntimeGenericContextInfoTemplate *otemplate = g_ptr_array_index (info->entries, i);
+	for (i = 0; i < info->num_entries; ++i) {
+		MonoRuntimeGenericContextInfoTemplate *otemplate = &info->entries [i];
 
 		if (otemplate->info_type == rgctx_type && otemplate->data == data && rgctx_type != MONO_RGCTX_INFO_LOCAL_OFFSET)
 			return i;
 	}
 
-	template = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoRuntimeGenericContextInfoTemplate));
+	if (info->num_entries == info->count_entries) {
+		MonoRuntimeGenericContextInfoTemplate *new_entries;
+		int new_count_entries = info->count_entries ? info->count_entries * 2 : 16;
+
+		new_entries = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoRuntimeGenericContextInfoTemplate) * new_count_entries);
+
+		memcpy (new_entries, info->entries, sizeof (MonoRuntimeGenericContextInfoTemplate) * info->count_entries);
+		info->entries = new_entries;
+		info->count_entries = new_count_entries;
+	}
+
+	idx = info->num_entries;
+	template = &info->entries [idx];
 	template->info_type = rgctx_type;
 	template->data = data;
 
-	idx = info->entries->len;
-
-	g_ptr_array_add (info->entries, template);
+	info->num_entries ++;
 
 	return idx;
 }
@@ -4447,9 +4458,14 @@ handle_delegate_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, Mono
 
 	/* Set invoke_impl field */
 	if (cfg->compile_aot) {
-		EMIT_NEW_AOTCONST (cfg, tramp_ins, MONO_PATCH_INFO_DELEGATE_TRAMPOLINE, klass);
+		MonoClassMethodPair *del_tramp;
+
+		del_tramp = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoClassMethodPair));
+		del_tramp->klass = klass;
+		del_tramp->method = context_used ? NULL : method;
+		EMIT_NEW_AOTCONST (cfg, tramp_ins, MONO_PATCH_INFO_DELEGATE_TRAMPOLINE, del_tramp);
 	} else {
-		trampoline = mono_create_delegate_trampoline (cfg->domain, klass);
+		trampoline = mono_create_delegate_trampoline_with_method (cfg->domain, klass, context_used ? NULL : method);
 		EMIT_NEW_PCONST (cfg, tramp_ins, trampoline);
 	}
 	MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, obj->dreg, G_STRUCT_OFFSET (MonoDelegate, invoke_impl), tramp_ins->dreg);
@@ -4982,8 +4998,9 @@ emit_array_unsafe_access (MonoCompile *cfg, MonoMethodSignature *fsig, MonoInst 
 static MonoInst*
 mini_emit_inst_for_ctor (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
-	MonoInst *ins = NULL;
 #ifdef MONO_ARCH_SIMD_INTRINSICS
+	MonoInst *ins = NULL;
+
 	if (cfg->opt & MONO_OPT_SIMD) {
 		ins = mono_emit_simd_intrinsics (cfg, cmethod, fsig, args);
 		if (ins)
@@ -4991,7 +5008,7 @@ mini_emit_inst_for_ctor (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignat
 	}
 #endif
 
-	return ins;
+	return mono_emit_native_types_intrinsics (cfg, cmethod, fsig, args);
 }
 
 static MonoInst*
@@ -5567,6 +5584,10 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			return ins;
 	}
 #endif
+
+	ins = mono_emit_native_types_intrinsics (cfg, cmethod, fsig, args);
+	if (ins)
+		return ins;
 
 	if (COMPILE_LLVM (cfg)) {
 		ins = llvm_emit_inst_for_method (cfg, cmethod, fsig, args);
@@ -6969,8 +6990,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 		info = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoGSharedVtMethodInfo));
 		info->method = cfg->method;
-		// FIXME: Free this
-		info->entries = g_ptr_array_new ();
+		info->count_entries = 16;
+		info->entries = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoRuntimeGenericContextInfoTemplate) * info->count_entries);
 		cfg->gsharedvt_info = info;
 
 		var = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
@@ -12834,7 +12855,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 	}
 
 	if (cfg->gsharedvt) {
-		gsharedvt_vreg_to_idx = g_new0 (int, cfg->next_vreg);
+		gsharedvt_vreg_to_idx = mono_mempool_alloc0 (cfg->mempool, sizeof (int) * cfg->next_vreg);
 
 		for (i = 0; i < cfg->num_varinfo; ++i) {
 			MonoInst *ins = cfg->varinfo [i];

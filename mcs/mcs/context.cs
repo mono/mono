@@ -97,6 +97,9 @@ namespace Mono.CSharp
 			if (rc.HasSet (ResolveContext.Options.CheckedScope))
 				flags |= ResolveContext.Options.CheckedScope;
 
+			if (!rc.ConstantCheckState)
+				flags &= ~Options.ConstantCheckState;
+
 			if (rc.IsInProbingMode)
 				flags |= ResolveContext.Options.ProbingMode;
 

@@ -153,7 +153,7 @@ namespace System.IO
 		{
 			byte[] buffer = new byte [1];
 
-			if (Read (buffer, 0, 1) == 1)
+			if (Read (buffer, 0, 1) > 0)
 				return buffer [0];
 			
 			return -1;

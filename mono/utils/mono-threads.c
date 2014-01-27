@@ -14,8 +14,6 @@
 #include <mono/utils/mono-tls.h>
 #include <mono/utils/hazard-pointer.h>
 #include <mono/utils/mono-memory-model.h>
-#include <mono/metadata/appdomain.h>
-#include <mono/metadata/domain-internals.h>
 
 #include <errno.h>
 
@@ -447,8 +445,16 @@ mono_thread_info_resume (MonoNativeThreadId tid)
 	gboolean result = TRUE;
 	MonoThreadHazardPointers *hp = mono_hazard_pointer_get ();	
 	MonoThreadInfo *info = mono_thread_info_lookup (tid); /*info on HP1*/
+
 	if (!info)
 		return FALSE;
+
+	if (info->create_suspended) {
+		/* Have to special case this, as the normal suspend/resume pair are racy, they don't work if he resume is received before the suspend */
+		info->create_suspended = FALSE;
+		mono_threads_core_resume_created (info, tid);
+		return TRUE;
+	}
 
 	MONO_SEM_WAIT_UNITERRUPTIBLE (&info->suspend_semaphore);
 
@@ -690,3 +696,52 @@ mono_thread_info_is_async_context (void)
 		return FALSE;
 }
 
+/*
+ * mono_threads_create_thread:
+ *
+ *   Create a new thread executing START with argument ARG. Store its id into OUT_TID.
+ * Returns: a windows or io-layer handle for the thread.
+ */
+HANDLE
+mono_threads_create_thread (LPTHREAD_START_ROUTINE start, gpointer arg, guint32 stack_size, guint32 creation_flags, MonoNativeThreadId *out_tid)
+{
+	return mono_threads_core_create_thread (start, arg, stack_size, creation_flags, out_tid);
+}
+
+/*
+ * mono_thread_info_get_stack_bounds:
+ *
+ *   Return the address and size of the current threads stack. Return NULL as the 
+ * stack address if the stack address cannot be determined.
+ */
+void
+mono_thread_info_get_stack_bounds (guint8 **staddr, size_t *stsize)
+{
+	return mono_threads_core_get_stack_bounds (staddr, stsize);
+}
+
+gboolean
+mono_thread_info_yield (void)
+{
+	return mono_threads_core_yield ();
+}
+
+gpointer
+mono_thread_info_tls_get (THREAD_INFO_TYPE *info, MonoTlsKey key)
+{
+	return ((MonoThreadInfo*)info)->tls [key];
+}
+
+/*
+ * mono_threads_info_tls_set:
+ *
+ *   Set the TLS key to VALUE in the info structure. This can be used to obtain
+ * values of TLS variables for threads other than the current thread.
+ * This should only be used for infrequently changing TLS variables, and it should
+ * be paired with setting the real TLS variable since this provides no GC tracking.
+ */
+void
+mono_thread_info_tls_set (THREAD_INFO_TYPE *info, MonoTlsKey key, gpointer value)
+{
+	((MonoThreadInfo*)info)->tls [key] = value;
+}

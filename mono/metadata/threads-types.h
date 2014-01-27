@@ -54,10 +54,6 @@ typedef struct _MonoInternalThread MonoInternalThread;
 
 typedef void (*MonoThreadCleanupFunc) (MonoInternalThread* thread);
 
-gpointer mono_create_thread (WapiSecurityAttributes *security,
-							 guint32 stacksize, WapiThreadStart start,
-							 gpointer param, guint32 create, gsize *tid) MONO_INTERNAL;
-
 MonoInternalThread* mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, gboolean threadpool_thread, gboolean no_detach, guint32 stack_size) MONO_INTERNAL;
 
 void mono_threads_install_cleanup (MonoThreadCleanupFunc func) MONO_INTERNAL;
@@ -190,7 +186,6 @@ void     mono_thread_destroy_tls (uint32_t tls_offset) MONO_INTERNAL;
 void     mono_thread_destroy_domain_tls (MonoDomain *domain) MONO_INTERNAL;
 void mono_thread_free_local_slot_values (int slot, MonoBoolean thread_local) MONO_INTERNAL;
 void mono_thread_current_check_pending_interrupt (void) MONO_INTERNAL;
-void mono_thread_get_stack_bounds (guint8 **staddr, size_t *stsize) MONO_INTERNAL;
 
 void mono_thread_set_state (MonoInternalThread *thread, MonoThreadState state) MONO_INTERNAL;
 void mono_thread_clr_state (MonoInternalThread *thread, MonoThreadState state) MONO_INTERNAL;

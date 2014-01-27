@@ -62,6 +62,7 @@
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-memory-model.h>
+#include <mono/utils/mono-threads.h>
 #ifdef HOST_WIN32
 #include <direct.h>
 #endif
@@ -1599,6 +1600,8 @@ mono_is_shadow_copy_enabled (MonoDomain *domain, const gchar *dir_name)
 /*
 This function raises exceptions so it can cause as sorts of nasty stuff if called
 while holding a lock.
+Returns old file name if shadow copy is disabled, new shadow copy file name if successful
+or NULL if source file not found.
 FIXME bubble up the error instead of raising it here
 */
 char *
@@ -1608,6 +1611,7 @@ mono_make_shadow_copy (const char *filename)
 	gchar *sibling_source, *sibling_target;
 	gint sibling_source_len, sibling_target_len;
 	guint16 *orig, *dest;
+	guint32 attrs;
 	char *shadow;
 	gboolean copy_result;
 	MonoException *exc;
@@ -1660,6 +1664,16 @@ mono_make_shadow_copy (const char *filename)
 	orig = g_utf8_to_utf16 (filename, strlen (filename), NULL, NULL, NULL);
 	dest = g_utf8_to_utf16 (shadow, strlen (shadow), NULL, NULL, NULL);
 	DeleteFile (dest);
+
+	/* Fix for bug #17066 - make sure we can read the file. if not then don't error but rather 
+	 * let the assembly fail to load. This ensures you can do Type.GetType("NS.T, NonExistantAssembly)
+	 * and not have it runtime error" */
+	attrs = GetFileAttributes (orig);
+	if (attrs == INVALID_FILE_ATTRIBUTES) {
+		g_free (shadow);
+		return (char *)filename;
+	}
+
 	copy_result = CopyFile (orig, dest, FALSE);
 
 	/* Fix for bug #556884 - make sure the files have the correct mode so that they can be
@@ -1672,6 +1686,11 @@ mono_make_shadow_copy (const char *filename)
 
 	if (copy_result == FALSE) {
 		g_free (shadow);
+
+		/* Fix for bug #17251 - if file not found try finding assembly by other means (it is not fatal error) */
+		if (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND)
+			return NULL; /* file not found, shadow copy failed */
+
 		exc = mono_get_exception_execution_engine ("Failed to create shadow copy (CopyFile).");
 		mono_raise_exception (exc);
 	}
@@ -2372,10 +2391,10 @@ void
 mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 {
 	HANDLE thread_handle;
-	gsize tid;
 	MonoAppDomainState prev_state;
 	MonoMethod *method;
 	unload_data *thread_data;
+	MonoNativeThreadId tid;
 	MonoDomain *caller_domain = mono_domain_get ();
 
 	/* printf ("UNLOAD STARTING FOR %s (%p) IN THREAD 0x%x.\n", domain->friendly_name, domain, GetCurrentThreadId ()); */
@@ -2425,20 +2444,10 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 	 * First we create a separate thread for unloading, since
 	 * we might have to abort some threads, including the current one.
 	 */
-	/*
-	 * If we create a non-suspended thread, the runtime will hang.
-	 * See:
-	 * http://bugzilla.ximian.com/show_bug.cgi?id=27663
-	 */ 
-#if 0
-	thread_handle = mono_create_thread (NULL, 0, unload_thread_main, &thread_data, 0, &tid);
-#else
-	thread_handle = mono_create_thread (NULL, 0, (LPTHREAD_START_ROUTINE)unload_thread_main, thread_data, CREATE_SUSPENDED, &tid);
-	if (thread_handle == NULL) {
+	thread_handle = mono_threads_create_thread ((LPTHREAD_START_ROUTINE)unload_thread_main, thread_data, 0, CREATE_SUSPENDED, &tid);
+	if (thread_handle == NULL)
 		return;
-	}
-	ResumeThread (thread_handle);
-#endif
+	mono_thread_info_resume (tid);
 
 	/* Wait for the thread */	
 	while (!thread_data->done && WaitForSingleObjectEx (thread_handle, INFINITE, TRUE) == WAIT_IO_COMPLETION) {

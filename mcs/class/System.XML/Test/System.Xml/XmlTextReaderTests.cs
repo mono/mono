@@ -1074,7 +1074,7 @@ namespace MonoTests.System.Xml
 			dvr.Read ();	// root
 			dvr.Read ();	// &ent3;
 			Assert.AreEqual (XmlNodeType.EntityReference, dvr.NodeType);
-			// ent3 does not exists in this dtd.
+			// ent3 does not exist in this dtd.
 			Assert.AreEqual (XmlNodeType.EntityReference, dvr.NodeType);
 			try {
 				dvr.ResolveEntity ();

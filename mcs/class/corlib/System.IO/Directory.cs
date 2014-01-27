@@ -140,7 +140,7 @@ namespace System.IO
 			if (!success) {
 				/*
 				 * FIXME:
-				 * In io-layer/io.c rmdir returns error_file_not_found if directory does not exists.
+				 * In io-layer/io.c rmdir returns error_file_not_found if directory does not exist.
 				 * So maybe this could be handled somewhere else?
 				 */
 				if (error == MonoIOError.ERROR_FILE_NOT_FOUND) {

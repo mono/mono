@@ -603,7 +603,10 @@ namespace Mono {
 		RESULT_NOT_SET = 3,
 	
 		// Errors and warnings string follows
-		ERROR          = 4, 
+		ERROR          = 4,
+
+		// Stdout
+		STDOUT         = 5,
 	}
 
 	class ClientCSharpShell : CSharpShell {
@@ -649,6 +652,11 @@ namespace Mono {
 						case AgentStatus.ERROR:
 							string err = ns.GetString ();
 							Console.Error.WriteLine (err);
+							break;
+
+						case AgentStatus.STDOUT:
+							string stdout = ns.GetString ();
+							Console.WriteLine (stdout);
 							break;
 						
 						case AgentStatus.RESULT_NOT_SET:

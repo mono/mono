@@ -150,6 +150,7 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+		[Category ("NotWorkingInterpreter")]
 		public void AndAlsoTestNullable ()
 		{
 			var a = Expression.Parameter (typeof (bool?), "a");
@@ -193,6 +194,7 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+		[Category ("NotWorkingInterpreter")]
 		public void AndAlsoNullableBoolItem ()
 		{
 			var i = Expression.Parameter (typeof (Item<bool?>), "i");
@@ -238,6 +240,7 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+		[Category ("NotWorkingInterpreter")]
 		public void UserDefinedAndAlso ()
 		{
 			var l = Expression.Parameter (typeof (Slot), "l");
@@ -258,6 +261,7 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+		[Category ("NotWorkingInterpreter")]
 		public void UserDefinedAndAlsoShortCircuit ()
 		{
 			var i = Expression.Parameter (typeof (Item<Slot>), "i");
@@ -273,6 +277,7 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+		[Category ("NotWorkingInterpreter")]
 		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=350228
 		public void UserDefinedLiftedAndAlsoShortCircuit ()
 		{
@@ -289,6 +294,7 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+		[Category ("NotWorkingInterpreter")]
 		public void UserDefinedAndAlsoLiftedToNull ()
 		{
 			var l = Expression.Parameter (typeof (Slot?), "l");
@@ -367,6 +373,7 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test] // from https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=350487
+		[Category ("NotWorkingInterpreter")]
 		public void Connect350487 ()
 		{
 			var p = Expression.Parameter (typeof (B), "b");

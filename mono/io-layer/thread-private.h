@@ -34,7 +34,6 @@ struct _WapiHandle_thread
 	WapiThreadState state : 2;
 	guint joined : 1;
 	guint has_apc : 1;
-	guint32 create_flags;
 	/* Fields below this point are only valid for the owning process */
 	pthread_t id;
 	GPtrArray *owned_mutexes;
@@ -46,7 +45,6 @@ struct _WapiHandle_thread
 	 * This also acts as a reference for the handle.
 	 */
 	gpointer wait_handle;
-	MonoSemType suspend_sem;
 	guint32 (*start_routine)(gpointer arg);
 	gpointer start_arg;
 };

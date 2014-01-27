@@ -4946,11 +4946,17 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 	case MONO_PATCH_INFO_CLASS:
 	case MONO_PATCH_INFO_IID:
 	case MONO_PATCH_INFO_ADJUSTED_IID:
+	case MONO_PATCH_INFO_CLASS_INIT:
 		encode_klass_ref (acfg, patch_info->data.klass, p, &p);
 		break;
-	case MONO_PATCH_INFO_CLASS_INIT:
 	case MONO_PATCH_INFO_DELEGATE_TRAMPOLINE:
-		encode_klass_ref (acfg, patch_info->data.klass, p, &p);
+		encode_klass_ref (acfg, patch_info->data.del_tramp->klass, p, &p);
+		if (patch_info->data.del_tramp->method) {
+			encode_value (1, p, &p);
+			encode_method_ref (acfg, patch_info->data.del_tramp->method, p, &p);
+		} else {
+			encode_value (0, p, &p);
+		}
 		break;
 	case MONO_PATCH_INFO_FIELD:
 	case MONO_PATCH_INFO_SFLDA:
@@ -5014,9 +5020,9 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 		int i;
 
 		encode_method_ref (acfg, info->method, p, &p);
-		encode_value (info->entries->len, p, &p);
-		for (i = 0; i < info->entries->len; ++i) {
-			MonoRuntimeGenericContextInfoTemplate *template = g_ptr_array_index (info->entries, i);
+		encode_value (info->num_entries, p, &p);
+		for (i = 0; i < info->num_entries; ++i) {
+			MonoRuntimeGenericContextInfoTemplate *template = &info->entries [i];
 
 			encode_value (template->info_type, p, &p);
 			switch (mini_rgctx_info_type_to_patch_info_type (template->info_type)) {
@@ -8386,7 +8392,7 @@ compile_methods (MonoAotCompile *acfg)
 			user_data [1] = acfg;
 			user_data [2] = frag;
 			
-			handle = mono_create_thread (NULL, 0, (gpointer)compile_thread_main, user_data, 0, NULL);
+			handle = mono_threads_create_thread ((gpointer)compile_thread_main, user_data, 0, 0, NULL);
 			g_ptr_array_add (threads, handle);
 		}
 		g_free (methods);
@@ -8652,7 +8658,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 	TV_DECLARE (atv);
 	TV_DECLARE (btv);
 
-#if !defined(MONO_ARCH_GSHAREDVT_SUPPORTED) || (!defined(MONO_EXTENSIONS) && !defined(MONOTOUCH))
+#if !defined(MONO_ARCH_GSHAREDVT_SUPPORTED) || !defined(MONO_GSHARING)
 	if (opts & MONO_OPT_GSHAREDVT) {
 		fprintf (stderr, "-O=gsharedvt not supported on this platform.\n");
 		exit (1);
@@ -8902,8 +8908,10 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 	if (acfg->aot_opts.dwarf_debug && acfg->aot_opts.asm_only && acfg->aot_opts.gnu_asm) {
 		/*
 		 * CLANG supports GAS .file/.loc directives, so emit line number information this way
+		 * FIXME: CLANG only emits line number info for .loc directives followed by assembly, not
+		 * .byte directives.
 		 */
-		acfg->gas_line_numbers = TRUE;
+		//acfg->gas_line_numbers = TRUE;
 	}
 
 	if (!acfg->aot_opts.nodebug || acfg->aot_opts.dwarf_debug) {

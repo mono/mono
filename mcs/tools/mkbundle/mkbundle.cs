@@ -178,25 +178,9 @@ class MakeBundle {
 		List<string> assemblies = LoadAssemblies (sources);
 		List<string> files = new List<string> ();
 		foreach (string file in assemblies)
-			QueueAssembly (files, file);
+			if (!QueueAssembly (files, file))
+				return 1;
 			
-		// Special casing mscorlib.dll: any specified mscorlib.dll cannot be loaded
-		// by Assembly.ReflectionFromLoadFrom(). Instead the fx assembly which runs
-		// mkbundle.exe is loaded, which is not what we want.
-		// So, replace it with whatever actually specified.
-		foreach (string srcfile in sources) {
-			if (Path.GetFileName (srcfile) == "mscorlib.dll") {
-				foreach (string file in files) {
-					if (Path.GetFileName (new Uri (file).LocalPath) == "mscorlib.dll") {
-						files.Remove (file);
-						files.Add (new Uri (Path.GetFullPath (srcfile)).LocalPath);
-						break;
-					}
-				}
-				break;
-			}
-		}
-
 		GenerateBundles (files);
 		//GenerateJitWrapper ();
 		
@@ -568,27 +552,41 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 	}
 	
 	static readonly Universe universe = new Universe ();
+	static readonly Dictionary<string, string> loaded_assemblies = new Dictionary<string, string> ();
 	
-	static void QueueAssembly (List<string> files, string codebase)
+	static bool QueueAssembly (List<string> files, string codebase)
 	{
 		// Console.WriteLine ("CODE BASE IS {0}", codebase);
 		if (files.Contains (codebase))
-			return;
+			return true;
+
+		var path = new Uri(codebase).LocalPath;
+		var name = Path.GetFileName (path);
+		string found;
+		if (loaded_assemblies.TryGetValue (name, out found)) {
+			Error (string.Format ("Duplicate assembly name `{0}'. Both `{1}' and `{2}' use same assembly name.", name, path, found));
+			return false;
+		}
+
+		loaded_assemblies.Add (name, path);
 
 		files.Add (codebase);
 		if (!autodeps)
-			return;
+			return true;
 		try {
-			Assembly a = universe.LoadFile (new Uri(codebase).LocalPath);
+			Assembly a = universe.LoadFile (path);
 
 			foreach (AssemblyName an in a.GetReferencedAssemblies ()) {
-				a = universe.Load (an.Name);
-				QueueAssembly (files, a.CodeBase);
+				a = universe.Load (an.FullName);
+				if (!QueueAssembly (files, a.CodeBase))
+					return false;
 			}
 		} catch (Exception e) {
 			if (!skip_scan)
 				throw;
 		}
+
+		return true;
 	}
 
 	static Assembly LoadAssembly (string assembly)
@@ -639,7 +637,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 
 	static void Error (string msg)
 	{
-		Console.Error.WriteLine (msg);
+		Console.Error.WriteLine ("ERROR: " + msg);
 		Environment.Exit (1);
 	}
 

@@ -69,6 +69,7 @@ namespace Microsoft.Scripting.Interpreter {
         internal protected abstract Instruction DefaultValue();
         internal protected abstract Instruction NewArray();
         internal protected abstract Instruction NewArrayInit(int elementCount);
+        internal protected abstract Instruction WrapToNullable(Type elementType);
     }
 
     public sealed class InstructionFactory<T> : InstructionFactory {
@@ -81,6 +82,7 @@ namespace Microsoft.Scripting.Interpreter {
         private Instruction _defaultValue;
         private Instruction _newArray;
         private Instruction _typeAs;
+        private Instruction _nullableWrap;
 
         private InstructionFactory() { }
 
@@ -111,5 +113,9 @@ namespace Microsoft.Scripting.Interpreter {
         internal protected override Instruction NewArrayInit(int elementCount) {
             return new NewArrayInitInstruction<T>(elementCount);
         }
+
+        internal protected override Instruction WrapToNullable(Type elementType) {
+            return _nullableWrap ?? (_nullableWrap = new WrapToNullableInstruction<T>(elementType));
+        }        
     }
 }

@@ -103,5 +103,26 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ("(value(MonoTests.System.Linq.Expressions.OpClass) - value(MonoTests.System.Linq.Expressions.OpClass))",
 				expr.ToString(), "Subtract#13");
 		}
+
+		[Test]
+		public void CompileSubtract ()
+		{
+			var left = Expression.Parameter (typeof (int), "l");
+			var right = Expression.Parameter (typeof (int), "r");
+			var l = Expression.Lambda<Func<int, int, int>> (
+				Expression.Subtract (left, right), left, right);
+
+			var be = l.Body as BinaryExpression;
+			Assert.IsNotNull (be);
+			Assert.AreEqual (typeof (int), be.Type);
+			Assert.IsFalse (be.IsLifted);
+			Assert.IsFalse (be.IsLiftedToNull);
+
+			var c = l.Compile ();
+
+			Assert.AreEqual (0, c (6, 6));
+			Assert.AreEqual (-2, c (-1, 1));
+			Assert.AreEqual (4, c (1, -3));
+		}
 	}
 }

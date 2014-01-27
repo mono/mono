@@ -28,6 +28,7 @@
 
 using System.Net.Mail;
 using System.Globalization;
+using System.Collections.Generic;
 
 namespace System.Net.Http.Headers
 {

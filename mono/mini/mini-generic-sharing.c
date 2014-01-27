@@ -572,26 +572,26 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 		return inflated_method;
 	}
 	case MONO_RGCTX_INFO_METHOD_GSHAREDVT_INFO: {
-		MonoGSharedVtMethodInfo *info = data;
+		MonoGSharedVtMethodInfo *oinfo = data;
 		MonoGSharedVtMethodInfo *res;
+		MonoDomain *domain = mono_domain_get ();
 		int i;
 
-		// FIXME:
-		res = g_new0 (MonoGSharedVtMethodInfo, 1);
+		res = mono_domain_alloc0 (domain, sizeof (MonoGSharedVtMethodInfo));
 		/*
 		res->nlocals = info->nlocals;
 		res->locals_types = g_new0 (MonoType*, info->nlocals);
 		for (i = 0; i < info->nlocals; ++i)
 			res->locals_types [i] = mono_class_inflate_generic_type (info->locals_types [i], context);
 		*/
-		res->entries = g_ptr_array_new ();
-		for (i = 0; i < info->entries->len; ++i) {
-			MonoRuntimeGenericContextInfoTemplate *otemplate = g_ptr_array_index (info->entries, i);
-			MonoRuntimeGenericContextInfoTemplate *template = g_new0 (MonoRuntimeGenericContextInfoTemplate, 1);
+		res->num_entries = oinfo->num_entries;
+		res->entries = mono_domain_alloc0 (domain, sizeof (MonoRuntimeGenericContextInfoTemplate) * oinfo->num_entries);
+		for (i = 0; i < oinfo->num_entries; ++i) {
+			MonoRuntimeGenericContextInfoTemplate *otemplate = &oinfo->entries [i];
+			MonoRuntimeGenericContextInfoTemplate *template = &res->entries [i];
 
 			memcpy (template, otemplate, sizeof (MonoRuntimeGenericContextInfoTemplate));
 			template->data = inflate_info (template, context, class, FALSE);
-			g_ptr_array_add (res->entries, template);
 		}
 		return res;
 	}
@@ -603,9 +603,9 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 		MonoType *inflated_type = mono_class_inflate_generic_type (&method->klass->byval_arg, context);
 		MonoClass *inflated_class = mono_class_from_mono_type (inflated_type);
 		MonoJumpInfoGSharedVtCall *res;
+		MonoDomain *domain = mono_domain_get ();
 
-		// FIXME:
-		res = g_new0 (MonoJumpInfoGSharedVtCall, 1);
+		res = mono_domain_alloc0 (domain, sizeof (MonoJumpInfoGSharedVtCall));
 		/* Keep the original signature */
 		res->sig = info->sig;
 
@@ -1054,7 +1054,7 @@ class_type_info (MonoDomain *domain, MonoClass *class, MonoRgctxInfoType info_ty
 			sig = mono_method_signature (method);
 			gsig = mono_method_signature (gmethod);
 			ctx = mono_method_get_context (gmethod);
-			mini_init_gsctx (ctx, &gsctx);
+			mini_init_gsctx (NULL, NULL, ctx, &gsctx);
 
 			addr = mini_get_gsharedvt_wrapper (FALSE, addr, sig, gsig, &gsctx, -1, FALSE);
 			addr = mono_create_static_rgctx_trampoline (method, addr);
@@ -1446,11 +1446,11 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 		int i, offset, align, size;
 
 		// FIXME:
-		res = g_malloc0 (sizeof (MonoGSharedVtMethodRuntimeInfo) + (info->entries->len * sizeof (gpointer)));
+		res = g_malloc0 (sizeof (MonoGSharedVtMethodRuntimeInfo) + (info->num_entries * sizeof (gpointer)));
 
 		offset = 0;
-		for (i = 0; i < info->entries->len; ++i) {
-			MonoRuntimeGenericContextInfoTemplate *template = g_ptr_array_index (info->entries, i);
+		for (i = 0; i < info->num_entries; ++i) {
+			MonoRuntimeGenericContextInfoTemplate *template = &info->entries [i];
 
 			switch (template->info_type) {
 			case MONO_RGCTX_INFO_LOCAL_OFFSET:
@@ -2550,6 +2550,8 @@ mini_get_basic_type_from_generic (MonoGenericSharingContext *gsctx, MonoType *ty
 MonoType*
 mini_type_get_underlying_type (MonoGenericSharingContext *gsctx, MonoType *type)
 {
+	type = mini_native_type_replace_type (type);
+
 	if (type->byref)
 		return &mono_defaults.int_class->byval_arg;
 	if (!type->byref && (type->type == MONO_TYPE_VAR || type->type == MONO_TYPE_MVAR) && mini_is_gsharedvt_type_gsctx (gsctx, type))
@@ -2706,7 +2708,7 @@ mini_is_gsharedvt_variable_klass (MonoCompile *cfg, MonoClass *klass)
 	return mini_is_gsharedvt_variable_type (cfg, &klass->byval_arg);
 }
 
-#if defined(MONOTOUCH) || defined(MONO_EXTENSIONS)
+#if defined(MONO_GSHARING)
 
 #include "../../../mono-extensions/mono/mini/mini-generic-sharing-gsharedvt.c"
 

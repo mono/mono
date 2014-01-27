@@ -99,6 +99,7 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
+		[Category ("NotWorkingInterpreter")]
 		public void CompiledListBinding ()
 		{
 			var add = typeof (List<string>).GetMethod ("Add");

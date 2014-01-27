@@ -82,14 +82,16 @@ inner_start_thread (LPVOID arg)
 	DWORD result;
 	gboolean suspend = start_info->suspend;
 	HANDLE suspend_event = start_info->suspend_event;
+	MonoThreadInfo *info;
 
-	mono_thread_info_attach (&result)->runtime_thread = TRUE;
+	info = mono_thread_info_attach (&result);
+	info->runtime_thread = TRUE;
+	info->create_suspended = suspend;
 
 	post_result = MONO_SEM_POST (&(start_info->registered));
 	g_assert (!post_result);
 
-	if (suspend)
-	{
+	if (suspend) {
 		WaitForSingleObject (suspend_event, INFINITE); /* caller will suspend the thread before setting the event. */
 		CloseHandle (suspend_event);
 	}
@@ -104,11 +106,11 @@ inner_start_thread (LPVOID arg)
 }
 
 HANDLE
-mono_threads_CreateThread (LPSECURITY_ATTRIBUTES attributes, SIZE_T stack_size, LPTHREAD_START_ROUTINE start_routine,
-		LPVOID arg, DWORD creation_flags, LPDWORD thread_id)
+mono_threads_core_create_thread (LPTHREAD_START_ROUTINE start_routine, gpointer arg, guint32 stack_size, guint32 creation_flags, MonoNativeThreadId *out_tid)
 {
 	ThreadStartInfo *start_info;
 	HANDLE result;
+	DWORD thread_id;
 
 	start_info = g_malloc0 (sizeof (ThreadStartInfo));
 	if (!start_info)
@@ -118,27 +120,26 @@ mono_threads_CreateThread (LPSECURITY_ATTRIBUTES attributes, SIZE_T stack_size, 
 	start_info->start_routine = start_routine;
 	start_info->suspend = creation_flags & CREATE_SUSPENDED;
 	creation_flags &= ~CREATE_SUSPENDED;
-	if (start_info->suspend)
-	{
+	if (start_info->suspend) {
 		start_info->suspend_event = CreateEvent (NULL, TRUE, FALSE, NULL);
 		if (!start_info->suspend_event)
 			return NULL;
 	}
 
-	result = CreateThread (attributes, stack_size, inner_start_thread, start_info, creation_flags, thread_id);
-
+	result = CreateThread (NULL, stack_size, inner_start_thread, start_info, creation_flags, &thread_id);
 	if (result) {
 		while (MONO_SEM_WAIT (&(start_info->registered)) != 0) {
 			/*if (EINTR != errno) ABORT("sem_wait failed"); */
 		}
-		if (start_info->suspend)
-		{
+		if (start_info->suspend) {
 			g_assert (SuspendThread (result) != (DWORD)-1);
 			SetEvent (start_info->suspend_event);
 		}
-	}
-	else if (start_info->suspend)
+	} else if (start_info->suspend) {
 		CloseHandle (start_info->suspend_event);
+	}
+	if (out_tid)
+		*out_tid = thread_id;
 	MONO_SEM_DESTROY (&(start_info->registered));
 	g_free (start_info);
 	return result;
@@ -161,6 +162,49 @@ gboolean
 mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg)
 {
 	return CreateThread (NULL, 0, (func), (arg), 0, (tid)) != NULL;
+}
+
+void
+mono_threads_core_resume_created (MonoThreadInfo *info, MonoNativeThreadId tid)
+{
+	HANDLE handle;
+
+	handle = OpenThread (THREAD_ALL_ACCESS, TRUE, tid);
+	g_assert (handle);
+	ResumeThread (handle);
+	CloseHandle (handle);
+}
+
+#if HAVE_DECL___READFSDWORD==0
+static __inline__ __attribute__((always_inline))
+unsigned long long
+__readfsdword (unsigned long offset)
+{
+	unsigned long value;
+	//	__asm__("movl %%fs:%a[offset], %k[value]" : [value] "=q" (value) : [offset] "irm" (offset));
+   __asm__ volatile ("movl    %%fs:%1,%0"
+     : "=r" (value) ,"=m" ((*(volatile long *) offset)));
+	return value;
+}
+#endif
+
+void
+mono_threads_core_get_stack_bounds (guint8 **staddr, size_t *stsize)
+{
+	/* Windows */
+	/* http://en.wikipedia.org/wiki/Win32_Thread_Information_Block */
+	void* tib = (void*)__readfsdword(0x18);
+	guint8 *stackTop = (guint8*)*(int*)((char*)tib + 4);
+	guint8 *stackBottom = (guint8*)*(int*)((char*)tib + 8);
+
+	*staddr = stackBottom;
+	*stsize = stackTop - stackBottom;
+}
+
+gboolean
+mono_threads_core_yield (void)
+{
+	return SwitchToThread ();
 }
 
 #endif

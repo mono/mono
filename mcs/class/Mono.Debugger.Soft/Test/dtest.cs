@@ -551,7 +551,20 @@ public class DebuggerTests
 		var f = e.Thread.GetFrames () [0];
 		assert_location (e, "ss_recursive");
 		AssertValue (1, f.GetValue (f.Method.GetLocal ("n")));
+		req.Disable ();
 
+		// Check that single stepping doesn't clobber fp values
+		e = run_until ("ss_fp_clobber");
+		req = create_step (e);
+		while (true) {
+			f = e.Thread.GetFrames ()[0];
+			e = step_into ();
+			if ((e as StepEvent).Method.Name == "ss_fp_clobber_2")
+				break;
+			e = step_into ();
+		}
+		f = e.Thread.GetFrames ()[0];
+		AssertValue (7.0, f.GetValue (f.Method.GetParameters ()[0]));
 		req.Disable ();
 	}
 
@@ -1467,8 +1480,8 @@ public class DebuggerTests
 		StackFrame frame = e.Thread.GetFrames () [0];
 
 		var locals = frame.Method.GetLocals ();
-		Assert.AreEqual (7, locals.Length);
-		for (int i = 0; i < 7; ++i) {
+		Assert.AreEqual (8, locals.Length);
+		for (int i = 0; i < 8; ++i) {
 			if (locals [i].Name == "args") {
 				Assert.IsTrue (locals [i].IsArg);
 				Assert.AreEqual ("String[]", locals [i].Type.Name);
@@ -1491,6 +1504,7 @@ public class DebuggerTests
 			} else if (locals [i].Name == "rs") {
 				Assert.IsTrue (locals [i].IsArg);
 				Assert.AreEqual ("String", locals [i].Type.Name);
+			} else if (locals [i].Name == "astruct") {
 			} else {
 				Assert.Fail ();
 			}
@@ -2403,6 +2417,14 @@ public class DebuggerTests
 		p = frame.Method.GetParameters ()[3];
 		frame.SetValue (p, vm.RootDomain.CreateString ("DEF2"));
 		AssertValue ("DEF2", frame.GetValue (p));
+
+		// byref struct
+		p = frame.Method.GetParameters ()[4];
+		var v = frame.GetValue (p) as StructMirror;
+		v ["i"] = vm.CreateValue (43);
+		frame.SetValue (p, v);
+		v = frame.GetValue (p) as StructMirror;
+		AssertValue (43, v ["i"]);
 
 		// argument checking
 

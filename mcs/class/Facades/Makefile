@@ -17,6 +17,8 @@ net_4_5_SUBDIRS = $(monotouch_SUBDIRS) System.Reflection.Emit.ILGeneration Syste
 
 monodroid_SUBDIRS = $(net_4_5_SUBDIRS)
 
+xammac_SUBDIRS = $(net_4_5_SUBDIRS)
+
 SUBDIRS = $(net_4_5_SUBDIRS)
 
 include $(MCS_BUILD_DIR)/rules.make

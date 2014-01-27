@@ -35,6 +35,7 @@ using NUnit.Framework;
 using Microsoft.Build.Exceptions;
 using Microsoft.Build.Logging;
 using Microsoft.Build.Framework;
+using System.Collections.Generic;
 
 namespace MonoTests.Microsoft.Build.Evaluation
 {
@@ -153,6 +154,25 @@ namespace MonoTests.Microsoft.Build.Evaluation
 		}
 		
 		[Test]
+		public void ProperiesMustBeDistinct ()
+		{
+            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <PropertyGroup>
+    <AssemblyName>Foo</AssemblyName>
+    <OutputPath>Test</OutputPath>
+  </PropertyGroup>
+</Project>";
+            var xml = XmlReader.Create (new StringReader (project_xml));
+            var root = ProjectRootElement.Create (xml);
+			root.FullPath = "ProjectTest.BuildCSharpTargetBuild.proj";
+			var proj = new Project (root);
+			var list = new List<ProjectProperty> ();
+			foreach (var p in proj.Properties)
+				if (list.Any (pp => pp.Name.Equals (p.Name, StringComparison.OrdinalIgnoreCase)))
+					Assert.Fail ("Property " + p.Name + " already exists.");
+		}
+		
+		[Test]
 		public void BuildCSharpTargetBuild ()
 		{
             string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
@@ -247,6 +267,20 @@ namespace MonoTests.Microsoft.Build.Evaluation
 			var proj = new Project (root, null, "4.0");
 			var inst = proj.CreateProjectInstance ();
 			Assert.AreEqual ("4.0", inst.ToolsVersion, "#1");
+		}
+		
+		[Test]
+		public void LoadCaseInsensitive ()
+		{
+            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <PropertyGroup>
+    <AssemblyName>Foo</AssemblyName>
+  </PropertyGroup>
+  <Import Project='$(MSBuildToolsPath)\Microsoft.CSharp.Targets' />
+</Project>";
+            var xml = XmlReader.Create (new StringReader (project_xml));
+            var root = ProjectRootElement.Create (xml);
+			new Project (root, null, "4.0");
 		}
 	}
 }

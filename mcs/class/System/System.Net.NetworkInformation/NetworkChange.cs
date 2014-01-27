@@ -107,7 +107,7 @@ namespace System.Net.NetworkInformation {
 			try {
 				networkChange = new MacNetworkChange ();
 			} catch {
-#if !NETWORK_CHANGE_STANDALONE
+#if !NETWORK_CHANGE_STANDALONE && !MONOTOUCH
 				networkChange = new LinuxNetworkChange ();
 #endif
 			}
@@ -318,7 +318,7 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 
-#if !NETWORK_CHANGE_STANDALONE
+#if !NETWORK_CHANGE_STANDALONE && !MONOTOUCH
 
 	internal sealed class LinuxNetworkChange : INetworkChange {
 		[Flags]

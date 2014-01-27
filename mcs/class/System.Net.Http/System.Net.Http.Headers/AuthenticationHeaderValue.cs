@@ -26,6 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections.Generic;
+
 namespace System.Net.Http.Headers
 {
 	public class AuthenticationHeaderValue : ICloneable
@@ -85,8 +87,23 @@ namespace System.Net.Http.Headers
 		public static bool TryParse (string input, out AuthenticationHeaderValue parsedValue)
 		{
 			var lexer = new Lexer (input);
-			var t = lexer.Scan ();
-			if (t != Token.Type.Token || !(lexer.PeekChar () == ' ' || lexer.PeekChar () == -1)) {
+			Token token;
+			if (TryParseElement (lexer, out parsedValue, out token) && token == Token.Type.End)
+				return true;
+
+			parsedValue = null;
+			return false;
+		}
+
+		internal static bool TryParse (string input, int minimalCount, out List<AuthenticationHeaderValue> result)
+		{
+			return CollectionParser.TryParse (input, minimalCount, TryParseElement, out result);
+		}
+
+		static bool TryParseElement (Lexer lexer, out AuthenticationHeaderValue parsedValue, out Token t)
+		{
+			t = lexer.Scan ();
+			if (t != Token.Type.Token) {
 				parsedValue = null;
 				return false;
 			}
@@ -95,8 +112,11 @@ namespace System.Net.Http.Headers
 			parsedValue.Scheme = lexer.GetStringValue (t);
 
 			t = lexer.Scan ();
-			if (t != Token.Type.End)
+			if (t == Token.Type.Token) {
+				// TODO: Wrong with multi value parsing
 				parsedValue.Parameter = lexer.GetRemainingStringValue (t.StartPosition);
+				t = new Token (Token.Type.End, 0, 0);
+			}
 
 			return true;
 		}
