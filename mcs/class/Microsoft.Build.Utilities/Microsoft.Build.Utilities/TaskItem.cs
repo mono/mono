@@ -65,9 +65,6 @@ namespace Microsoft.Build.Utilities
 				throw new ArgumentNullException ("itemSpec");
 			
 			this.metadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
-
-			// FIXME: hack
-			this.itemSpec = itemSpec.Replace ('\\', Path.DirectorySeparatorChar);
 		}
 
 		public TaskItem (string itemSpec, IDictionary itemMetadata)
