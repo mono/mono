@@ -548,9 +548,6 @@ LivenessState* mono_unity_liveness_allocate_struct (MonoClass* filter, guint max
 	state->callback_userdata = callback_userdata;
 	state->filter_callback = callback;
 
-	GC_stop_world_external ();
-	// no allocations can happen beyond this point
-
 	return state;
 }
 
@@ -574,7 +571,7 @@ void mono_unity_liveness_free_struct (LivenessState* state)
 
 void mono_unity_liveness_stop_gc_world ()
 {
-	GC_stop_world ();
+	GC_stop_world_external ();
 	// no allocations can happen beyond this point
 }
 
