@@ -161,12 +161,12 @@ namespace MonoTests.Microsoft.Build.Execution
 		
 		public void FirstUsingTaskTakesPrecedenceCommon (bool importFirst, bool buildShouldSucceed)
 		{
-			string thisAssembly = GetType ().Assembly.GetName ().Name;
+			string thisAssembly = new Uri (GetType ().Assembly.CodeBase).LocalPath;
 			string filename = "Test/ProjectTargetInstanceTest.FirstUsingTaskTakesPrecedence.Import.proj";
 			string imported_xml = string.Format (@"<Project DefaultTargets='Foo' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
-  <UsingTask TaskName='MonoTests.Microsoft.Build.Execution.MyTask' AssemblyFile='{0}.dll' />
+  <UsingTask TaskName='MonoTests.Microsoft.Build.Execution.MyTask' AssemblyFile='{0}' />
 </Project>", thisAssembly);
-			string usingTask =  string.Format ("<UsingTask TaskName='MonoTests.Microsoft.Build.Execution.SubNamespace.MyTask' AssemblyFile='{0}.dll' />", thisAssembly);
+			string usingTask =  string.Format ("<UsingTask TaskName='MonoTests.Microsoft.Build.Execution.SubNamespace.MyTask' AssemblyFile='{0}' />", thisAssembly);
 			string import = string.Format ("<Import Project='{0}' />", filename);
 			string project_xml = string.Format (@"<Project DefaultTargets='Foo' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
 			{0}

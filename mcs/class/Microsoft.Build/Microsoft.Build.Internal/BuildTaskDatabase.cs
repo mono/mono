@@ -106,8 +106,9 @@ namespace Microsoft.Build.Internal
 			foreach (var ut in usingTasks) {
 				var ta = assemblies.FirstOrDefault (a => a.AssemblyFile.Equals (ut.AssemblyFile, StringComparison.OrdinalIgnoreCase) || a.AssemblyName.Equals (ut.AssemblyName, StringComparison.OrdinalIgnoreCase));
 				if (ta == null) {
+					var path = Path.GetDirectoryName (string.IsNullOrEmpty (ut.Location.File) ? projectInstance.FullPath : ut.Location.File);
 					ta = new TaskAssembly () { AssemblyName = ut.AssemblyName, AssemblyFile = ut.AssemblyFile };
-					ta.LoadedAssembly = !string.IsNullOrEmpty (ta.AssemblyName) ? Assembly.Load (ta.AssemblyName) : Assembly.LoadFile (ta.AssemblyFile);
+					ta.LoadedAssembly = !string.IsNullOrEmpty (ta.AssemblyName) ? Assembly.Load (ta.AssemblyName) : Assembly.LoadFile (Path.Combine (path, ta.AssemblyFile));
 					assemblies.Add (ta);
 				}
 				var pg = ut.ParameterGroup == null ? null : ut.ParameterGroup.Parameters.Select (p => new TaskPropertyInfo (p.Name, Type.GetType (p.ParameterType), cond (p.Output), cond (p.Required)))
