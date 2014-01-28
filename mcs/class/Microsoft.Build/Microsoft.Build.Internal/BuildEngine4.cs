@@ -239,44 +239,42 @@ namespace Microsoft.Build.Internal
 				return false;
 			}
 			
-			var propsToRestore = new Dictionary<string,string> ();
-			var itemsToRemove = new List<ProjectItemInstance> ();
 			try {
-				// Evaluate additional target properties
-				foreach (var c in target.Children.OfType<ProjectPropertyGroupTaskInstance> ()) {
-					if (!args.Project.EvaluateCondition (c.Condition))
-						continue;
-					foreach (var p in c.Properties) {
-						if (!args.Project.EvaluateCondition (p.Condition))
+				foreach (var child in target.Children) {
+					// Evaluate additional target properties
+					var tp = child as ProjectPropertyGroupTaskInstance;
+					if (tp != null) {
+						if (!args.Project.EvaluateCondition (tp.Condition))
 							continue;
-						var value = args.Project.ExpandString (p.Value);
-						propsToRestore.Add (p.Name, project.GetPropertyValue (value));
-						project.SetProperty (p.Name, value);
+						foreach (var p in tp.Properties) {
+							if (!args.Project.EvaluateCondition (p.Condition))
+								continue;
+							var value = args.Project.ExpandString (p.Value);
+							project.SetProperty (p.Name, value);
+						}
 					}
-				}
-				
-				// Evaluate additional target items
-				foreach (var c in target.Children.OfType<ProjectItemGroupTaskInstance> ()) {
-					if (!args.Project.EvaluateCondition (c.Condition))
-						continue;
-					foreach (var item in c.Items) {
-						if (!args.Project.EvaluateCondition (item.Condition))
+
+					var ii = child as ProjectItemGroupTaskInstance;
+					if (ii != null) {
+						if (!args.Project.EvaluateCondition (ii.Condition))
 							continue;
-						Func<string,ProjectItemInstance> creator = i => new ProjectItemInstance (project, item.ItemType, item.Metadata.Select (m => new KeyValuePair<string,string> (m.Name, m.Value)), i);
-						foreach (var ti in project.GetAllItems (item.Include, item.Exclude, creator, creator, s => s == item.ItemType, (ti, s) => ti.SetMetadata ("RecurseDir", s)))
-							itemsToRemove.Add (ti);
+						foreach (var item in ii.Items) {
+							if (!args.Project.EvaluateCondition (item.Condition))
+								continue;
+							project.AddItem (item.ItemType, project.ExpandString (item.Include));
+						}
 					}
-				}
-				
-				// run tasks
-				foreach (var ti in target.Children.OfType<ProjectTaskInstance> ()) {
-					current_task = ti;
-					if (!args.Project.EvaluateCondition (ti.Condition)) {
-						LogMessageEvent (new BuildMessageEventArgs (string.Format ("Task '{0}' was skipped because condition '{1}' wasn't met.", ti.Name, ti.Condition), null, null, MessageImportance.Low));
-						continue;
+					
+					var task = child as ProjectTaskInstance;
+					if (task != null) {
+						current_task = task;
+						if (!args.Project.EvaluateCondition (task.Condition)) {
+							LogMessageEvent (new BuildMessageEventArgs (string.Format ("Task '{0}' was skipped because condition '{1}' wasn't met.", task.Name, task.Condition), null, null, MessageImportance.Low));
+							continue;
+						}
+						if (!RunBuildTask (target, task, targetResult, args))
+							return false;
 					}
-					if (!RunBuildTask (target, ti, targetResult, args))
-						return false;
 				}
 			} catch (Exception ex) {
 				// fallback task specified by OnError element
@@ -291,16 +289,6 @@ namespace Microsoft.Build.Internal
 				LogErrorEvent (new BuildErrorEventArgs (null, null, target.FullPath, line, col, 0, 0, ex.Message, null, null));
 				targetResult.Failure (ex);
 				return false;
-			} finally {
-				// restore temporary property state to the original state.
-				foreach (var p in propsToRestore) {
-					if (p.Value == string.Empty)
-						project.RemoveProperty (p.Key);
-					else
-						project.SetProperty (p.Key, p.Value);
-				}
-				foreach (var item in itemsToRemove)
-					project.RemoveItem (item);
 			}
 			return true;
 		}
