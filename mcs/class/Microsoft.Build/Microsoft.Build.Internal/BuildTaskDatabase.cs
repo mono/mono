@@ -60,12 +60,12 @@ namespace Microsoft.Build.Internal
 			ProjectRootElement root;
 			using (var xml = XmlReader.Create (Path.Combine (toolset.ToolsPath, default_tasks_file)))
 				root = ProjectRootElement.Create (xml);
-			LoadUsingTasks (null, root);
+			LoadUsingTasks (null, root.UsingTasks);
 		}
 		
-		public BuildTaskDatabase (ProjectInstance projectInstance, ProjectRootElement projectRootElement)
+		public BuildTaskDatabase (ProjectInstance projectInstance)
 		{
-			LoadUsingTasks (projectInstance, projectRootElement);
+			LoadUsingTasks (projectInstance, projectInstance.UsingTasks);
 		}
 		
 		internal class TaskDescription
@@ -100,10 +100,10 @@ namespace Microsoft.Build.Internal
 			get { return task_descs; }
 		}
 		
-		void LoadUsingTasks (ProjectInstance projectInstance, ProjectRootElement project)
+		void LoadUsingTasks (ProjectInstance projectInstance, IEnumerable<ProjectUsingTaskElement> usingTasks)
 		{
 			Func<string,bool> cond = s => projectInstance != null ? projectInstance.EvaluateCondition (s) : Convert.ToBoolean (s);
-			foreach (var ut in project.UsingTasks) {
+			foreach (var ut in usingTasks) {
 				var ta = assemblies.FirstOrDefault (a => a.AssemblyFile.Equals (ut.AssemblyFile, StringComparison.OrdinalIgnoreCase) || a.AssemblyName.Equals (ut.AssemblyName, StringComparison.OrdinalIgnoreCase));
 				if (ta == null) {
 					ta = new TaskAssembly () { AssemblyName = ut.AssemblyName, AssemblyFile = ut.AssemblyFile };

@@ -86,7 +86,7 @@ namespace Microsoft.Build.Execution
 			tools_version = !string.IsNullOrEmpty (toolsVersion) ? toolsVersion :
 				!string.IsNullOrEmpty (xml.ToolsVersion) ? xml.ToolsVersion :
 				projects.DefaultToolsVersion;
-			InitializeProperties (xml, null);
+			InitializeProperties (xml);
 		}
 
 		public ProjectInstance (string projectFile, IDictionary<string, string> globalProperties,
@@ -143,7 +143,7 @@ namespace Microsoft.Build.Execution
 			}
 		}
 
-		void InitializeProperties (ProjectRootElement xml, ProjectInstance parent)
+		void InitializeProperties (ProjectRootElement xml)
 		{
 			#if NET_4_5
 			location = xml.Location;
@@ -157,36 +157,31 @@ namespace Microsoft.Build.Execution
 			targets = new Dictionary<string, ProjectTargetInstance> ();
 			raw_items = new List<ProjectItemInstance> ();
 			
-			// FIXME: this is likely hack. Test ImportedProject.Properties to see what exactly should happen.
-			if (parent != null) {
-				properties = parent.properties;
-			} else {
-				properties = new Dictionary<string,ProjectPropertyInstance> ();
-			
-				foreach (DictionaryEntry p in Environment.GetEnvironmentVariables ())
-					// FIXME: this is kind of workaround for unavoidable issue that PLATFORM=* is actually given
-					// on some platforms and that prevents setting default "PLATFORM=AnyCPU" property.
-					if (!string.Equals ("PLATFORM", (string) p.Key, StringComparison.OrdinalIgnoreCase))
-						this.properties [(string) p.Key] = new ProjectPropertyInstance ((string) p.Key, false, (string) p.Value);
-				foreach (var p in global_properties)
-					this.properties [p.Key] = new ProjectPropertyInstance (p.Key, false, p.Value);
-				var tools = projects.GetToolset (tools_version) ?? projects.GetToolset (projects.DefaultToolsVersion);
-				foreach (var p in projects.GetReservedProperties (tools, this, xml))
-					this.properties [p.Name] = p;
-				foreach (var p in ProjectCollection.GetWellKnownProperties (this))
-					this.properties [p.Name] = p;
-			}
+			properties = new Dictionary<string,ProjectPropertyInstance> ();
+		
+			foreach (DictionaryEntry p in Environment.GetEnvironmentVariables ())
+				// FIXME: this is kind of workaround for unavoidable issue that PLATFORM=* is actually given
+				// on some platforms and that prevents setting default "PLATFORM=AnyCPU" property.
+				if (!string.Equals ("PLATFORM", (string) p.Key, StringComparison.OrdinalIgnoreCase))
+					this.properties [(string) p.Key] = new ProjectPropertyInstance ((string) p.Key, false, (string) p.Value);
+			foreach (var p in global_properties)
+				this.properties [p.Key] = new ProjectPropertyInstance (p.Key, false, p.Value);
+			var tools = projects.GetToolset (tools_version) ?? projects.GetToolset (projects.DefaultToolsVersion);
+			foreach (var p in projects.GetReservedProperties (tools, this, xml))
+				this.properties [p.Name] = p;
+			foreach (var p in ProjectCollection.GetWellKnownProperties (this))
+				this.properties [p.Name] = p;
 
-			ProcessXml (parent, xml);
+			ProcessXml (xml);
 			
 			DefaultTargets = GetDefaultTargets (xml);
 		}
 		
 		static readonly char [] item_target_sep = {';'};
 		
-		void ProcessXml (ProjectInstance parent, ProjectRootElement xml)
+		void ProcessXml (ProjectRootElement xml)
 		{
-			TaskDatabase = new BuildTaskDatabase (this, xml);
+			UsingTasks = new List<ProjectUsingTaskElement> ();
 			
 			// this needs to be initialized here (regardless of that items won't be evaluated at property evaluation;
 			// Conditions could incorrectly reference items and lack of this list causes NRE.
@@ -196,20 +191,26 @@ namespace Microsoft.Build.Execution
 			// At first step, all non-imported properties are evaluated TOO, WHILE those properties are being evaluated.
 			// This means, Include and IncludeGroup elements with Condition attribute MAY contain references to
 			// properties and they will be expanded.
-			var elements = EvaluatePropertiesAndImports (xml.Children).ToArray (); // ToArray(): to not lazily evaluate elements.
+			var elements = EvaluatePropertiesUsingTasksAndImports (xml.Children).ToArray (); // ToArray(): to not lazily evaluate elements.
 			
 			// next, evaluate items
 			EvaluateItems (xml, elements);
 			
 			// finally, evaluate targets and tasks
-			EvaluateTargets (elements);			
+			EvaluateTargets (elements);
+
+			TaskDatabase = new BuildTaskDatabase (this);
 		}
 		
-		IEnumerable<ProjectElement> EvaluatePropertiesAndImports (IEnumerable<ProjectElement> elements)
+		IEnumerable<ProjectElement> EvaluatePropertiesUsingTasksAndImports (IEnumerable<ProjectElement> elements)
 		{
-			// First step: evaluate Properties
 			foreach (var child in elements) {
 				yield return child;
+				
+				var ute = child as ProjectUsingTaskElement;
+				if (ute != null && EvaluateCondition (ute.Condition))
+					UsingTasks.Add (ute);
+				
 				var pge = child as ProjectPropertyGroupElement;
 				if (pge != null && EvaluateCondition (pge.Condition))
 					foreach (var p in pge.Properties)
@@ -226,6 +227,7 @@ namespace Microsoft.Build.Execution
 								yield return e;
 					}
 				}
+				
 				var inc = child as ProjectImportElement;
 				if (inc != null && EvaluateCondition (inc.Condition))
 					foreach (var e in Import (inc))
@@ -291,7 +293,7 @@ namespace Microsoft.Build.Execution
 				using (var reader = XmlReader.Create (path)) {
 					var root = ProjectRootElement.Create (reader, projects);
 					raw_imports.Add (new ResolvedImport (import, root, true));
-					return this.EvaluatePropertiesAndImports (root.Children).ToArray ();
+					return this.EvaluatePropertiesUsingTasksAndImports (root.Children).ToArray ();
 				}
 			} finally {
 				projects.OngoingImports.Pop ();
@@ -545,6 +547,8 @@ namespace Microsoft.Build.Execution
 		}
 
 		internal BuildTaskDatabase TaskDatabase { get; private set; }
+
+		internal List<ProjectUsingTaskElement> UsingTasks { get; private set; }
 		
 		internal string GetFullPath (string pathRelativeToProject)
 		{

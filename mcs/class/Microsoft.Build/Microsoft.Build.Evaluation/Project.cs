@@ -131,18 +131,7 @@ namespace Microsoft.Build.Evaluation
 			this.ProjectCollection = projectCollection;
 			this.load_settings = loadSettings;
 
-			Initialize (null);
-		}
-		
-		Project (ProjectRootElement imported, Project parent)
-		{
-			this.Xml = imported;
-			this.GlobalProperties = parent.GlobalProperties;
-			this.ToolsVersion = parent.ToolsVersion;
-			this.ProjectCollection = parent.ProjectCollection;
-			this.load_settings = parent.load_settings;
-
-			Initialize (parent);
+			Initialize ();
 		}
 
 		public Project (string projectFile)
@@ -187,7 +176,7 @@ namespace Microsoft.Build.Evaluation
 		List<ProjectProperty> properties;
 		Dictionary<string, ProjectTargetInstance> targets;
 
-		void Initialize (Project parent)
+		void Initialize ()
 		{
 			dir_path = Directory.GetCurrentDirectory ();
 			raw_imports = new List<ResolvedImport> ();
@@ -195,32 +184,27 @@ namespace Microsoft.Build.Evaluation
 			targets = new Dictionary<string, ProjectTargetInstance> ();
 			raw_items = new List<ProjectItem> ();
 			
-			// FIXME: this is likely hack. Test ImportedProject.Properties to see what exactly should happen.
-			if (parent != null) {
-				properties = parent.properties;
-			} else {
-				properties = new List<ProjectProperty> ();
-			
-				foreach (DictionaryEntry p in Environment.GetEnvironmentVariables ())
-					// FIXME: this is kind of workaround for unavoidable issue that PLATFORM=* is actually given
-					// on some platforms and that prevents setting default "PLATFORM=AnyCPU" property.
-					if (!string.Equals ("PLATFORM", (string) p.Key, StringComparison.OrdinalIgnoreCase))
-						this.properties.Add (new EnvironmentProjectProperty (this, (string)p.Key, (string)p.Value));
-				foreach (var p in GlobalProperties)
-					this.properties.Add (new GlobalProjectProperty (this, p.Key, p.Value));
-				var tools = ProjectCollection.GetToolset (this.ToolsVersion) ?? ProjectCollection.GetToolset (this.ProjectCollection.DefaultToolsVersion);
-				foreach (var p in ProjectCollection.GetReservedProperties (tools, this))
-					this.properties.Add (p);
-				foreach (var p in ProjectCollection.GetWellKnownProperties (this))
-					this.properties.Add (p);
-			}
+			properties = new List<ProjectProperty> ();
+		
+			foreach (DictionaryEntry p in Environment.GetEnvironmentVariables ())
+				// FIXME: this is kind of workaround for unavoidable issue that PLATFORM=* is actually given
+				// on some platforms and that prevents setting default "PLATFORM=AnyCPU" property.
+				if (!string.Equals ("PLATFORM", (string) p.Key, StringComparison.OrdinalIgnoreCase))
+					this.properties.Add (new EnvironmentProjectProperty (this, (string)p.Key, (string)p.Value));
+			foreach (var p in GlobalProperties)
+				this.properties.Add (new GlobalProjectProperty (this, p.Key, p.Value));
+			var tools = ProjectCollection.GetToolset (this.ToolsVersion) ?? ProjectCollection.GetToolset (this.ProjectCollection.DefaultToolsVersion);
+			foreach (var p in ProjectCollection.GetReservedProperties (tools, this))
+				this.properties.Add (p);
+			foreach (var p in ProjectCollection.GetWellKnownProperties (this))
+				this.properties.Add (p);
 
-			ProcessXml (parent);
+			ProcessXml ();
 			
 			ProjectCollection.AddProject (this);
 		}
 		
-		void ProcessXml (Project parent)
+		void ProcessXml ()
 		{
 			// this needs to be initialized here (regardless of that items won't be evaluated at property evaluation;
 			// Conditions could incorrectly reference items and lack of this list causes NRE.
