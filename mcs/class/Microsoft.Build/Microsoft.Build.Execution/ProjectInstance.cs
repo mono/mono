@@ -107,7 +107,7 @@ namespace Microsoft.Build.Execution
 		List<ResolvedImport> raw_imports; // maybe we don't need this...
 		List<ProjectItemInstance> all_evaluated_items;
 		List<ProjectItemInstance> raw_items;
-		List<ProjectPropertyInstance> properties;
+		Dictionary<string,ProjectPropertyInstance> properties;
 		Dictionary<string, ProjectTargetInstance> targets;
 		string tools_version;
 		
@@ -161,20 +161,20 @@ namespace Microsoft.Build.Execution
 			if (parent != null) {
 				properties = parent.properties;
 			} else {
-				properties = new List<ProjectPropertyInstance> ();
+				properties = new Dictionary<string,ProjectPropertyInstance> ();
 			
 				foreach (DictionaryEntry p in Environment.GetEnvironmentVariables ())
 					// FIXME: this is kind of workaround for unavoidable issue that PLATFORM=* is actually given
 					// on some platforms and that prevents setting default "PLATFORM=AnyCPU" property.
 					if (!string.Equals ("PLATFORM", (string) p.Key, StringComparison.OrdinalIgnoreCase))
-						this.properties.Add (new ProjectPropertyInstance ((string) p.Key, false, (string) p.Value));
+						this.properties [(string) p.Key] = new ProjectPropertyInstance ((string) p.Key, false, (string) p.Value);
 				foreach (var p in global_properties)
-					this.properties.Add (new ProjectPropertyInstance (p.Key, false, p.Value));
+					this.properties [p.Key] = new ProjectPropertyInstance (p.Key, false, p.Value);
 				var tools = projects.GetToolset (tools_version) ?? projects.GetToolset (projects.DefaultToolsVersion);
 				foreach (var p in projects.GetReservedProperties (tools, this, xml))
-					this.properties.Add (p);
+					this.properties [p.Name] = p;
 				foreach (var p in ProjectCollection.GetWellKnownProperties (this))
-					this.properties.Add (p);
+					this.properties [p.Name] = p;
 			}
 
 			ProcessXml (parent, xml);
@@ -214,9 +214,9 @@ namespace Microsoft.Build.Execution
 				if (pge != null && EvaluateCondition (pge.Condition))
 					foreach (var p in pge.Properties)
 						// do not allow overwriting reserved or well-known properties by user
-						if (!this.properties.Any (_ => (_.IsImmutable) && _.Name.Equals (p.Name, StringComparison.InvariantCultureIgnoreCase)))
+						if (!this.properties.Any (_ => (_.Value.IsImmutable) && _.Key.Equals (p.Name, StringComparison.InvariantCultureIgnoreCase)))
 							if (EvaluateCondition (p.Condition))
-								this.properties.Add (new ProjectPropertyInstance (p.Name, false, ExpandString (p.Value)));
+								this.properties [p.Name] = new ProjectPropertyInstance (p.Name, false, ExpandString (p.Value));
 
 				var ige = child as ProjectImportGroupElement;
 				if (ige != null && EvaluateCondition (ige.Condition)) {
@@ -343,7 +343,7 @@ namespace Microsoft.Build.Execution
 #endif
 
 		public ICollection<ProjectPropertyInstance> Properties {
-			get { return properties; }
+			get { return properties.Values; }
 		}
 		
 		#if NET_4_5
@@ -463,7 +463,7 @@ namespace Microsoft.Build.Execution
 
 		public ProjectPropertyInstance GetProperty (string name)
 		{
-			return properties.FirstOrDefault (p => p.Name.Equals (name, StringComparison.OrdinalIgnoreCase));
+			return properties.Values.FirstOrDefault (p => p.Name.Equals (name, StringComparison.OrdinalIgnoreCase));
 		}
 		
 		public string GetPropertyValue (string name)
@@ -481,17 +481,17 @@ namespace Microsoft.Build.Execution
 
 		public bool RemoveProperty (string name)
 		{
-			var removed = properties.FirstOrDefault (p => p.Name.Equals (name, StringComparison.OrdinalIgnoreCase));
+			var removed = properties.Values.FirstOrDefault (p => p.Name.Equals (name, StringComparison.OrdinalIgnoreCase));
 			if (removed == null)
 				return false;
-			properties.Remove (removed);
+			properties.Remove (name);
 			return true;
 		}
 		
 		public ProjectPropertyInstance SetProperty (string name, string evaluatedValue)
 		{
 			var p = new ProjectPropertyInstance (name, false, evaluatedValue);
-			properties.Add (p);
+			properties [p.Name] = p;
 			return p;
 		}
 		

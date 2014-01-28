@@ -125,6 +125,24 @@ namespace MonoTests.Microsoft.Build.Execution
 			Assert.AreEqual (1, proj.DefaultTargets.Count, "#1");
 			Assert.AreEqual ("Build", proj.DefaultTargets [0], "#2");
 		}
+		
+		[Test]
+		public void PropertyOverrides ()
+		{
+            string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <PropertyGroup>
+    <X>x</X>
+  </PropertyGroup>
+  <PropertyGroup>
+    <X>y</X>
+  </PropertyGroup>
+</Project>";
+            var xml = XmlReader.Create (new StringReader (project_xml));
+            var root = ProjectRootElement.Create (xml);
+			root.FullPath = "ProjectTest.BuildCSharpTargetBuild.proj";
+			var proj = new ProjectInstance (root);
+			Assert.AreEqual ("y", proj.GetPropertyValue ("X"), "#1");
+		}
 	}
 }
 
