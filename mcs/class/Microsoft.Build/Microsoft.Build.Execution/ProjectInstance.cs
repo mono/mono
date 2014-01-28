@@ -198,8 +198,6 @@ namespace Microsoft.Build.Execution
 			
 			// finally, evaluate targets and tasks
 			EvaluateTargets (elements);
-
-			TaskDatabase = new BuildTaskDatabase (this);
 		}
 		
 		IEnumerable<ProjectElement> EvaluatePropertiesUsingTasksAndImports (IEnumerable<ProjectElement> elements)
@@ -545,8 +543,6 @@ namespace Microsoft.Build.Execution
 			//return ProjectCollection.Escape (property.EvaluatedValue);
 			return property.EvaluatedValue;
 		}
-
-		internal BuildTaskDatabase TaskDatabase { get; private set; }
 
 		internal List<ProjectUsingTaskElement> UsingTasks { get; private set; }
 		

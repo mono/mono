@@ -63,8 +63,9 @@ namespace Microsoft.Build.Internal
 			LoadUsingTasks (null, root.UsingTasks);
 		}
 		
-		public BuildTaskDatabase (ProjectInstance projectInstance)
+		public BuildTaskDatabase (IBuildEngine engine, ProjectInstance projectInstance)
 		{
+			this.engine = engine;
 			LoadUsingTasks (projectInstance, projectInstance.UsingTasks);
 		}
 		
@@ -92,14 +93,16 @@ namespace Microsoft.Build.Internal
 			public string AssemblyFile { get; set; }
 			public Assembly LoadedAssembly { get; set; }
 		}
-		
+
+		readonly IBuildEngine engine;
 		readonly List<TaskAssembly> assemblies = new List<TaskAssembly> ();
 		readonly List<TaskDescription> task_descs = new List<TaskDescription> ();
 
 		public List<TaskDescription> Tasks {
 			get { return task_descs; }
 		}
-		
+
+		// FIXME: my guess is the tasks does not have to be loaded entirely but only requested tasks must be loaded at invocation time.
 		void LoadUsingTasks (ProjectInstance projectInstance, IEnumerable<ProjectUsingTaskElement> usingTasks)
 		{
 			Func<string,bool> cond = s => projectInstance != null ? projectInstance.EvaluateCondition (s) : Convert.ToBoolean (s);
@@ -108,20 +111,44 @@ namespace Microsoft.Build.Internal
 				if (ta == null) {
 					var path = Path.GetDirectoryName (string.IsNullOrEmpty (ut.Location.File) ? projectInstance.FullPath : ut.Location.File);
 					ta = new TaskAssembly () { AssemblyName = ut.AssemblyName, AssemblyFile = ut.AssemblyFile };
-					ta.LoadedAssembly = !string.IsNullOrEmpty (ta.AssemblyName) ? Assembly.Load (ta.AssemblyName) : Assembly.LoadFile (Path.Combine (path, ta.AssemblyFile));
+					try {
+						ta.LoadedAssembly = !string.IsNullOrEmpty (ta.AssemblyName) ? Assembly.Load (ta.AssemblyName) : Assembly.LoadFile (Path.Combine (path, ta.AssemblyFile));
+					} catch {
+						var errorNotLoaded = string.Format ("For task '{0}' Specified assembly '{1}' was not found", ut.TaskName, string.IsNullOrEmpty (ta.AssemblyName) ? ta.AssemblyFile : ta.AssemblyName);
+						engine.LogWarningEvent (new BuildWarningEventArgs (null, null, projectInstance.FullPath, ut.Location.Line, ut.Location.Column, 0, 0, errorNotLoaded, null, null));
+						continue;
+					}
 					assemblies.Add (ta);
 				}
 				var pg = ut.ParameterGroup == null ? null : ut.ParameterGroup.Parameters.Select (p => new TaskPropertyInfo (p.Name, Type.GetType (p.ParameterType), cond (p.Output), cond (p.Required)))
 					.ToDictionary (p => p.Name);
-				var task = new TaskDescription () {
+				
+
+				Type type = null;
+				string error = null;
+				TaskDescription task = new TaskDescription () {
 					TaskAssembly = ta,
 					Name = ut.TaskName,
-					TaskFactoryType = string.IsNullOrEmpty (ut.TaskFactory) ? null : LoadTypeFrom (ta.LoadedAssembly, ut.TaskName, ut.TaskFactory),
-					TaskType = string.IsNullOrEmpty (ut.TaskFactory) ? LoadTypeFrom (ta.LoadedAssembly, ut.TaskName, ut.TaskName) : null,
 					TaskFactoryParameters = pg,
 					TaskBody = ut.TaskBody != null && cond (ut.TaskBody.Condition) ? ut.TaskBody.Evaluate : null,
 					};
-				task_descs.Add (task);
+				if (string.IsNullOrEmpty (ut.TaskFactory)) {
+					type = LoadTypeFrom (ta.LoadedAssembly, ut.TaskName, ut.TaskName);
+					if (type == null)
+						error = string.Format ("For task '{0}' Specified type '{1}' was not found in assembly '{2}'", ut.TaskName, ut.TaskName, ta.LoadedAssembly.FullName);
+					else
+						task.TaskType = type;
+				} else {
+					type = LoadTypeFrom (ta.LoadedAssembly, ut.TaskName, ut.TaskFactory);
+					if (type == null)
+						error = string.Format ("For task '{0}' Specified factory type '{1}' was not found in assembly '{2}'", ut.TaskName, ut.TaskFactory, ta.LoadedAssembly.FullName);
+					else
+						task.TaskFactoryType = type;
+				}
+				if (error != null)
+					engine.LogWarningEvent (new BuildWarningEventArgs (null, null, projectInstance.FullPath, ut.Location.Line, ut.Location.Column, 0, 0, error, null, null));
+				else
+					task_descs.Add (task);
 			}
 		}
 		
@@ -130,8 +157,6 @@ namespace Microsoft.Build.Internal
 			Type type = a.GetType (possiblyShortTypeName, false, true);
 			if (possiblyShortTypeName.IndexOf ('.') < 0)
 				type = a.GetTypes ().FirstOrDefault (t => t.Name == possiblyShortTypeName);
-			if (type == null)
-				throw new InvalidOperationException (string.Format ("For task '{0}' Specified type '{1}' was not found in assembly '{2}'", taskName, possiblyShortTypeName, a.FullName));
 			return type;
 		}
 	}

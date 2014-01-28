@@ -189,6 +189,36 @@ namespace MonoTests.Microsoft.Build.Execution
 				File.Delete (filename);
 			}
 		}
+		
+		[Test]
+		public void MissingTypeForUsingTaskStillWorks ()
+		{
+			string thisAssembly = new Uri (GetType ().Assembly.CodeBase).LocalPath;
+			string project_xml = string.Format (@"<Project DefaultTargets='X' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <UsingTask AssemblyFile='{0}' TaskName='NonExistent' />
+  <Target Name='X' />
+</Project>", thisAssembly);
+            var xml = XmlReader.Create (new StringReader (project_xml));
+            var root = ProjectRootElement.Create (xml);
+			root.FullPath = "ProjectInstanceTest.MissingTypeForUsingTaskStillWorks.proj";
+			var proj = new ProjectInstance (root);
+			Assert.IsTrue (proj.Build (), "#1");
+		}
+		
+		[Test]
+		public void MissingTypeForUsingTaskStillWorks2 ()
+		{
+			string thisAssembly = new Uri (GetType ().Assembly.CodeBase).LocalPath;
+			string project_xml = @"<Project DefaultTargets='X' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <UsingTask AssemblyFile='nonexistent.dll' TaskName='NonExistent' />
+  <Target Name='X' />
+</Project>";
+            var xml = XmlReader.Create (new StringReader (project_xml));
+            var root = ProjectRootElement.Create (xml);
+			root.FullPath = "ProjectInstanceTest.MissingTypeForUsingTaskStillWorks2.proj";
+			var proj = new ProjectInstance (root);
+			Assert.IsTrue (proj.Build (), "#1");
+		}
 	}
 	
 	namespace SubNamespace
