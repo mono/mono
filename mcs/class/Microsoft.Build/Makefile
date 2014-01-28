@@ -16,7 +16,8 @@ LIB_MCS_FLAGS = \
 	/r:Microsoft.Build.Framework.dll	\
 	/d:MICROSOFT_BUILD_DLL
 	
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) \
+	/r:Microsoft.Build.Utilities.v4.0.dll
 
 EXTRA_DISTFILES = \
 	Microsoft.Build.Internal/ExpressionParser.jay	\

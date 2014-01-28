@@ -33,6 +33,9 @@ using Microsoft.Build.Construction;
 using Microsoft.Build.Execution;
 using NUnit.Framework;
 using Microsoft.Build.Evaluation;
+using Microsoft.Build.Utilities;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Logging;
 
 namespace MonoTests.Microsoft.Build.Execution
 {
@@ -142,6 +145,68 @@ namespace MonoTests.Microsoft.Build.Execution
 			root.FullPath = "ProjectTest.BuildCSharpTargetBuild.proj";
 			var proj = new ProjectInstance (root);
 			Assert.AreEqual ("y", proj.GetPropertyValue ("X"), "#1");
+		}
+		
+		[Test]
+		public void FirstUsingTaskTakesPrecedence1 ()
+		{
+			FirstUsingTaskTakesPrecedenceCommon (false, false);
+		}
+		
+		[Test]
+		public void FirstUsingTaskTakesPrecedence2 ()
+		{
+			FirstUsingTaskTakesPrecedenceCommon (true, true);
+		}
+		
+		public void FirstUsingTaskTakesPrecedenceCommon (bool importFirst, bool buildShouldSucceed)
+		{
+			string thisAssembly = GetType ().Assembly.GetName ().Name;
+			string filename = "Test/ProjectTargetInstanceTest.FirstUsingTaskTakesPrecedence.Import.proj";
+			string imported_xml = string.Format (@"<Project DefaultTargets='Foo' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <UsingTask TaskName='MonoTests.Microsoft.Build.Execution.MyTask' AssemblyFile='{0}.dll' />
+</Project>", thisAssembly);
+			string usingTask =  string.Format ("<UsingTask TaskName='MonoTests.Microsoft.Build.Execution.SubNamespace.MyTask' AssemblyFile='{0}.dll' />", thisAssembly);
+			string import = string.Format ("<Import Project='{0}' />", filename);
+			string project_xml = string.Format (@"<Project DefaultTargets='Foo' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+			{0}
+			{1}
+  <Target Name='Foo'>
+    <MyTask />
+  </Target>
+</Project>", 
+				importFirst ? import : usingTask, importFirst ? usingTask : import);
+			try {
+				File.WriteAllText (filename, imported_xml);
+				var xml = XmlReader.Create (new StringReader (project_xml));
+				var root = ProjectRootElement.Create (xml);
+				Assert.IsTrue (root.UsingTasks.All (u => !string.IsNullOrEmpty (u.AssemblyFile)), "#1");
+				Assert.IsTrue (root.UsingTasks.All (u => string.IsNullOrEmpty (u.AssemblyName)), "#2");
+				root.FullPath = "ProjectTargetInstanceTest.FirstUsingTaskTakesPrecedence.proj";
+				var proj = new ProjectInstance (root);
+				Assert.AreEqual (buildShouldSucceed, proj.Build (), "#3");
+			} finally {
+				File.Delete (filename);
+			}
+		}
+	}
+	
+	namespace SubNamespace
+	{
+		public class MyTask : Task
+		{
+			public override bool Execute ()
+			{
+				return false;
+			}
+		}
+	}
+		
+	public class MyTask : Task
+	{
+		public override bool Execute ()
+		{
+			return true;
 		}
 	}
 }
