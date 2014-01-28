@@ -153,7 +153,7 @@ namespace Microsoft.Build.Utilities
 		
 		public string ItemSpec {
 			get { return MSBuildUtils.Unescape (itemSpec); }
-			set { itemSpec = MSBuildUtils.Escape (value); }
+			set { itemSpec = value; }
 		}
 
 		public int MetadataCount {
