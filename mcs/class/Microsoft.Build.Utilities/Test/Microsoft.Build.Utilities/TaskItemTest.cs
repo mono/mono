@@ -285,5 +285,19 @@ namespace MonoTests.Microsoft.Build.Utilities {
 			item = new TaskItem ("lalala");
 			item.SetMetadata ("Identity", "some value");
 		}
+
+		[Test]
+		public void TestSetItemSpec ()
+		{
+			var itemSpec = "foo@2x.png";
+			var escapedItemSpec =  global::Microsoft.Build.BuildEngine.Utilities.Escape (itemSpec);
+
+			var item = new TaskItem ("foo");
+			item.ItemSpec = itemSpec;
+			Assert.AreEqual (itemSpec, item.ItemSpec, "#1");
+
+			item.ItemSpec = escapedItemSpec;
+			Assert.AreEqual (itemSpec, item.ItemSpec, "#2");
+		}
 	}
 }
