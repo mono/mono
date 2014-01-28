@@ -13,7 +13,7 @@ LIB_MCS_FLAGS = \
 	/r:System.dll				\
 	/r:$(XBUILD_FRAMEWORK)
 
-TEST_MCS_FLAGS = /r:$(XBUILD_FRAMEWORK) -r:System.dll -r:System.Core.dll
+TEST_MCS_FLAGS = /r:$(XBUILD_ENGINE) /r:$(XBUILD_FRAMEWORK) -r:System.dll -r:System.Core.dll
 
 include $(XBUILD_DIR)/xbuild_test.make
 include ../../build/library.make
