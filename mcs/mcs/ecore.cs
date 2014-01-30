@@ -2780,6 +2780,17 @@ namespace Mono.CSharp {
 
 								ct = ct.DeclaringType;
 							} while (ct != null);
+						} else {
+							var cos = rc.CurrentMemberDefinition.Parent as ClassOrStruct;
+							if (cos != null && cos.PrimaryConstructorParameters != null) {
+								foreach (var p in cos.PrimaryConstructorParameters.FixedParameters) {
+									if (p.Name == Name) {
+										rc.Report.Error (9007, loc, "Primary constructor parameter `{0}' is not available in this context when using ref or out modifier",
+											Name);
+										return null;
+									}
+								}
+							}
 						}
 
 						if ((restrictions & MemberLookupRestrictions.InvocableOnly) == 0) {
@@ -3416,14 +3427,25 @@ namespace Mono.CSharp {
 
 			if (InstanceExpression == null || InstanceExpression is TypeExpr) {
 				if (InstanceExpression != null || !This.IsThisAvailable (rc, true)) {
-					if (rc.HasSet (ResolveContext.Options.FieldInitializerScope))
+					if (rc.HasSet (ResolveContext.Options.FieldInitializerScope)) {
 						rc.Report.Error (236, loc,
 							"A field initializer cannot reference the nonstatic field, method, or property `{0}'",
 							GetSignatureForError ());
-					else
-						rc.Report.Error (120, loc,
-							"An object reference is required to access non-static member `{0}'",
-							GetSignatureForError ());
+					} else {
+						var fe = this as FieldExpr;
+						if (fe != null && fe.Spec.MemberDefinition is PrimaryConstructorField) {
+							if (rc.HasSet (ResolveContext.Options.BaseInitializer)) {
+								rc.Report.Error (9005, loc, "Constructor initializer cannot access primary constructor parameters");
+							} else  {
+								rc.Report.Error (9006, loc, "An object reference is required to access primary constructor parameter `{0}'",
+									fe.Name);
+							}
+						} else {
+							rc.Report.Error (120, loc,
+								"An object reference is required to access non-static member `{0}'",
+								GetSignatureForError ());
+						}
+					}
 
 					InstanceExpression = new CompilerGeneratedThis (rc.CurrentType, loc).Resolve (rc);
 					return false;
