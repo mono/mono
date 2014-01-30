@@ -69,20 +69,23 @@ EXTRA_DISTFILES = \
 	data/2.0/Microsoft.Common.tasks \
 	data/3.5/Microsoft.Common.tasks \
 	data/4.0/Microsoft.Common.tasks \
+	data/12.0/Microsoft.Common.tasks \
 	data/2.0/Microsoft.Common.targets \
 	data/3.5/Microsoft.Common.targets \
 	data/4.0/Microsoft.Common.targets \
+	data/12.0/Microsoft.Common.targets \
 	data/Microsoft.CSharp.targets \
+	data/Microsoft.VisualBasic.targets \
 	data/MSBuild/Microsoft.Build.CommonTypes.xsd \
 	data/MSBuild/Microsoft.Build.Core.xsd \
 	frameworks/net_2.0.xml \
 	frameworks/net_3.0.xml \
 	frameworks/net_3.5.xml \
 	frameworks/net_4.0.xml \
+	frameworks/net_4.0_client.xml \
 	frameworks/net_4.5.xml \
 	targets/Microsoft.Portable.CSharp_4.0.targets \
 	targets/Microsoft.Portable.CSharp_4.5.targets \
-	targets/Microsoft.VisualBasic.targets \
 	targets/Microsoft.WebApplication.targets \
-	targets/Microsoft.Portable.CSharp.targets \
-	xbuild_tests.make
+	xbuild.make \
+	xbuild_test.make

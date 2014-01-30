@@ -261,7 +261,7 @@ include ../build/rules.make
 
 SUBDIRS = $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(mobile_dirs) $(monotouch_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs) $(net_4_5_dirs)
 
-DIST_ONLY_SUBDIRS = dlr aot-compiler $(xbuild_dirs)
+DIST_ONLY_SUBDIRS = dlr aot-compiler $(xbuild_4_0_dirs)
 
 # No new makefiles for: System.Messaging, System.Web.Mobile,
 # System.ServiceProcess
