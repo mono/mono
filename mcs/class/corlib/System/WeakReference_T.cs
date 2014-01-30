@@ -86,7 +86,7 @@ namespace System {
 			}
 
 			target = (T)handle.Target;
-			return true;
+			return target != null;
 		}
 
 		//Methods

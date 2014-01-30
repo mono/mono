@@ -123,6 +123,16 @@ namespace MonoTests.System {
 			GC.WaitForPendingFinalizers ();
 			Assert.IsFalse (Foo.failed);
 		}
+
+#if NET_4_5
+		[Test]
+		public void WeakReferenceT_TryGetTarget_NullTarget ()
+		{
+			var r = new WeakReference <object> (null);
+			object obj;
+			Assert.IsFalse (r.TryGetTarget (out obj), "#1");
+		}
+#endif
 	}
 }
 
