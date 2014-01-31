@@ -208,9 +208,9 @@ namespace Microsoft.Build.Internal.Expressions
 		{
 			switch (Operator) {
 			case Operator.EQ:
-				return string.Equals (Left.EvaluateAsString (context), Right.EvaluateAsString (context), StringComparison.OrdinalIgnoreCase);
+				return string.Equals (StripStringWrap (Left.EvaluateAsString (context)), StripStringWrap (Right.EvaluateAsString (context)), StringComparison.OrdinalIgnoreCase);
 			case Operator.NE:
-				return !string.Equals (Left.EvaluateAsString (context), Right.EvaluateAsString (context), StringComparison.OrdinalIgnoreCase);
+				return !string.Equals (StripStringWrap (Left.EvaluateAsString (context)), StripStringWrap (Right.EvaluateAsString (context)), StringComparison.OrdinalIgnoreCase);
 			case Operator.And:
 			case Operator.Or:
 				// evaluate first, to detect possible syntax error on right expr.
@@ -235,6 +235,18 @@ namespace Microsoft.Build.Internal.Expressions
 				return result < 0;
 			}
 			throw new InvalidOperationException ();
+		}
+		
+		string StripStringWrap (string s)
+		{
+			if (s == null)
+				return string.Empty;
+			s = s.Trim ();
+			if (s.Length > 1 && s [0] == '"' && s [s.Length - 1] == '"')
+				return s.Substring (1, s.Length - 2);
+			else if (s.Length > 1 && s [0] == '\'' && s [s.Length - 1] == '\'')
+				return s.Substring (1, s.Length - 2);
+			return s;
 		}
 		
 		public override object EvaluateAsObject (EvaluationContext context)
