@@ -1089,7 +1089,7 @@ namespace System
 						addone = true;
 					} else {
 						// banker's rounding applies
-						if (len > max) {
+						if (len > max + 1) {
 							addone = s [max + 1] > '0';
 						} else {
 							int previous = s [max - 1] - '0';
