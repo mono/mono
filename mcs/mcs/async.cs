@@ -959,10 +959,10 @@ namespace Mono.CSharp
 
 		public override void Emit (EmitContext ec)
 		{
-			Emit (ec, true);
+			EmitWithCleanup (ec, true);
 		}
 
-		public void Emit (EmitContext ec, bool release)
+		public void EmitWithCleanup (EmitContext ec, bool release)
 		{
 			base.Emit (ec);
 

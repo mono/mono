@@ -7492,7 +7492,7 @@ namespace Mono.CSharp
 							e = e.EmitToField (ec);
 						}
 
-						stackArray.Emit (ec, false);
+						stackArray.EmitWithCleanup (ec, false);
 					} else {
 						ec.Emit (OpCodes.Dup);
 					}
