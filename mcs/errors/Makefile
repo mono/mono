@@ -60,7 +60,7 @@ run-test-local: clean-local
 # -compiler-options:-v
 
 TEST_PATTERN = 'v4'
-TESTER_OPTIONS = -compiler-options:"-v -d:NET_4_0;NET_4_5"
+TESTER_OPTIONS = -compiler-options:"-v --break-on-ice -d:NET_4_0;NET_4_5"
 
 COMPILER = $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/mcs.exe
 TESTER = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(LOCAL_RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe

@@ -466,7 +466,7 @@ namespace Mono.CSharp {
 
 				return e;
 			} catch (Exception ex) {
-				if (loc.IsNull || ec.Module.Compiler.Settings.DebugFlags > 0 || ex is CompletionResult || ec.Report.IsDisabled || ex is FatalException ||
+				if (loc.IsNull || ec.Module.Compiler.Settings.BreakOnInternalError || ex is CompletionResult || ec.Report.IsDisabled || ex is FatalException ||
 					ec.Report.Printer is NullReportPrinter)
 					throw;
 
@@ -4618,7 +4618,7 @@ namespace Mono.CSharp {
 			if (ms != null && ms.IsGeneric) {
 				if (type_arguments != null) {
 					var g_args_count = ms.Arity;
-					if (g_args_count != type_arguments.Count)
+					if (g_args_count != type_arguments.Count || type_arguments.Arguments == null)
 						return int.MaxValue - 20000 + System.Math.Abs (type_arguments.Count - g_args_count);
 
 					ms = ms.MakeGenericMethod (ec, type_arguments.Arguments);

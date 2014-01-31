@@ -1412,25 +1412,23 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (ec.IsUnsafe) {
-				var target_pc = target_type as PointerContainer;
-				if (target_pc != null) {
-					if (expr_type.IsPointer) {
-						//
-						// Pointer types are same when they have same element types
-						//
-						if (expr_type == target_pc)
-							return expr;
+			var target_pc = target_type as PointerContainer;
+			if (target_pc != null) {
+				if (expr_type.IsPointer) {
+					//
+					// Pointer types are same when they have same element types
+					//
+					if (expr_type == target_pc)
+						return expr;
 
-						if (target_pc.Element.Kind == MemberKind.Void)
-							return EmptyCast.Create (expr, target_type);
+					if (target_pc.Element.Kind == MemberKind.Void)
+						return EmptyCast.Create (expr, target_type);
 
 						//return null;
-					}
-
-					if (expr_type == InternalType.NullLiteral)
-						return new NullPointer (target_type, loc);
 				}
+
+				if (expr_type == InternalType.NullLiteral)
+					return new NullPointer (target_type, loc);
 			}
 
 			if (expr_type == InternalType.AnonymousMethod){
