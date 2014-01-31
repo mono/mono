@@ -4618,10 +4618,11 @@ namespace Mono.CSharp {
 			if (ms != null && ms.IsGeneric) {
 				if (type_arguments != null) {
 					var g_args_count = ms.Arity;
-					if (g_args_count != type_arguments.Count || type_arguments.Arguments == null)
+					if (g_args_count != type_arguments.Count)
 						return int.MaxValue - 20000 + System.Math.Abs (type_arguments.Count - g_args_count);
 
-					ms = ms.MakeGenericMethod (ec, type_arguments.Arguments);
+					if (type_arguments.Arguments != null)
+						ms = ms.MakeGenericMethod (ec, type_arguments.Arguments);
 				} else {
 					//
 					// Deploy custom error reporting for infered anonymous expression or lambda methods. When
