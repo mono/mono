@@ -244,7 +244,7 @@ namespace Microsoft.Build.Internal.Expressions
 				return new ItemAccessExpression () {
 					Application = new ItemApplication () {
 						Name = new NameToken () { Name = name },
-						Expressions = Parse (idx, end - idx)
+						Expressions = Parse (idx + 2, end)
 						}
 					};
 			} else {
