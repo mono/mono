@@ -457,7 +457,8 @@ namespace Microsoft.Build.Internal
 				var wk = ProjectCollection.GetWellKnownMetadata (metadataName, ItemSpec, Path.GetFullPath, null);
 				if (wk != null)
 					return wk;
-				return (string) metadata [metadataName];
+				var ret = (string) metadata [metadataName];
+				return ret ?? string.Empty;
 			}
 			public void RemoveMetadata (string metadataName)
 			{

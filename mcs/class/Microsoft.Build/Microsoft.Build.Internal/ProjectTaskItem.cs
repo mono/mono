@@ -62,7 +62,7 @@ namespace Microsoft.Build.Internal
 			if (wk != null)
 				return wk;
 			var mde = item.Metadata.FirstOrDefault (m => m.Name == metadataName);
-			return mde != null ? mde.Value : null;
+			return mde != null ? mde.Value : string.Empty;
 		}
 		void ITaskItem.RemoveMetadata (string metadataName)
 		{
