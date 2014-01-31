@@ -501,7 +501,7 @@ namespace Microsoft.Build.Internal.Expressions
 				if (Arguments.Count != 1)
 					throw new InvalidProjectFileException (Location, "Function 'Exists' expects 1 argument");
 				string val = Arguments.First ().EvaluateAsString (context);
-				val = WindowsCompatibilityExtensions.NormalizeFilePath (val);
+				val = WindowsCompatibilityExtensions.FindMatchingPath (val);
 				return Directory.Exists (val) || System.IO.File.Exists (val);
 			}
 			if (string.Equals (Name.Name, "HasTrailingSlash", StringComparison.OrdinalIgnoreCase)) {

@@ -42,7 +42,7 @@ namespace Microsoft.Build.Internal
 		public ProjectTaskItem (ProjectItemElement item, string evaluatedIncludePart)
 		{
 			this.item = item;
-			this.evaluated_include_part = WindowsCompatibilityExtensions.NormalizeFilePath (evaluatedIncludePart);
+			this.evaluated_include_part = WindowsCompatibilityExtensions.FindMatchingPath (evaluatedIncludePart);
 		}
 		#region ITaskItem implementation
 		System.Collections.IDictionary ITaskItem.CloneCustomMetadata ()

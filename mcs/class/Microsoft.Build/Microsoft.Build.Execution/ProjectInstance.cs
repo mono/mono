@@ -282,7 +282,7 @@ namespace Microsoft.Build.Execution
 		IEnumerable<ProjectElement> Import (ProjectImportElement import)
 		{
 			string dir = projects.GetEvaluationTimeThisFileDirectory (() => FullPath);
-			string path = WindowsCompatibilityExtensions.NormalizeFilePath (ExpandString (import.Project));
+			string path = WindowsCompatibilityExtensions.FindMatchingPath (ExpandString (import.Project));
 			path = Path.IsPathRooted (path) ? path : dir != null ? Path.Combine (dir, path) : Path.GetFullPath (path);
 			if (projects.OngoingImports.Contains (path))
 				throw new InvalidProjectFileException (import.Location, null, string.Format ("Circular imports was detected: {0} is already on \"importing\" stack", path));
@@ -448,7 +448,7 @@ namespace Microsoft.Build.Execution
 		
 		string ExpandString (string unexpandedValue, string replacementForMissingStuff)
 		{
-			return new ExpressionEvaluator (this, replacementForMissingStuff).Evaluate (unexpandedValue);
+			return WindowsCompatibilityExtensions.NormalizeFilePath (new ExpressionEvaluator (this, replacementForMissingStuff).Evaluate (unexpandedValue));
 		}
 
 		public ICollection<ProjectItemInstance> GetItems (string itemType)

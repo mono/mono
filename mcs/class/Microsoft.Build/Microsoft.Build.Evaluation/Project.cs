@@ -300,7 +300,7 @@ namespace Microsoft.Build.Evaluation
 		IEnumerable<ProjectElement> Import (ProjectImportElement import)
 		{
 			string dir = ProjectCollection.GetEvaluationTimeThisFileDirectory (() => FullPath);
-			string path = WindowsCompatibilityExtensions.NormalizeFilePath (ExpandString (import.Project));
+			string path = WindowsCompatibilityExtensions.FindMatchingPath (ExpandString (import.Project));
 			path = Path.IsPathRooted (path) ? path : dir != null ? Path.Combine (dir, path) : Path.GetFullPath (path);
 			if (ProjectCollection.OngoingImports.Contains (path)) {
 				switch (load_settings) {
@@ -438,7 +438,7 @@ namespace Microsoft.Build.Evaluation
 		
 		string ExpandString (string unexpandedValue, string replacementForMissingStuff)
 		{
-			return new ExpressionEvaluator (this, replacementForMissingStuff).Evaluate (unexpandedValue);
+			return WindowsCompatibilityExtensions.NormalizeFilePath (new ExpressionEvaluator (this, replacementForMissingStuff).Evaluate (unexpandedValue));
 		}
 
 		public static string GetEvaluatedItemIncludeEscaped (ProjectItem item)

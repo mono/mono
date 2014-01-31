@@ -37,9 +37,16 @@ namespace Microsoft.Build.Internal
 		{
 			if (MSBuildUtils.RunningOnWindows || string.IsNullOrWhiteSpace (path) || File.Exists (path) || Directory.Exists (path))
 				return path;
+			return path.Replace ('\\', Path.DirectorySeparatorChar);
+		}
+		
+		public static string FindMatchingPath (string path)
+		{
+			if (MSBuildUtils.RunningOnWindows || string.IsNullOrWhiteSpace (path) || File.Exists (path) || Directory.Exists (path))
+				return path;
 			path = path.Replace ('\\', Path.DirectorySeparatorChar);
 			var file = Path.GetFileName (path);
-			var dir = NormalizeFilePath (Path.GetDirectoryName (path));
+			var dir = FindMatchingPath (Path.GetDirectoryName (path));
 			if (Directory.Exists (dir)) {
 				foreach (FileSystemInfo e in new DirectoryInfo (dir.Length > 0 ? dir : ".").EnumerateFileSystemInfos ()) {
 					if (e.Name.Equals (file, StringComparison.OrdinalIgnoreCase))

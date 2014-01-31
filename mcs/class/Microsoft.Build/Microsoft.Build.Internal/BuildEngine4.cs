@@ -385,7 +385,7 @@ namespace Microsoft.Build.Internal
 		object ConvertTo (string source, Type targetType)
 		{
 			if (targetType == typeof(ITaskItem) || targetType.IsSubclassOf (typeof(ITaskItem)))
-				return new TargetOutputTaskItem () { ItemSpec = WindowsCompatibilityExtensions.NormalizeFilePath (source.Trim ()) };
+				return new TargetOutputTaskItem () { ItemSpec = WindowsCompatibilityExtensions.FindMatchingPath (source.Trim ()) };
 			if (targetType.IsArray)
 				return new ArrayList (source.Split (';').Select (s => s.Trim ()).Where (s => !string.IsNullOrEmpty (s)).Select (s => ConvertTo (s, targetType.GetElementType ())).ToArray ())
 						.ToArray (targetType.GetElementType ());
