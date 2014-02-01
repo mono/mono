@@ -550,7 +550,7 @@ public class IPAddressTest
 	[Test]
 	public void IsIPv6Teredo ()
 	{
-		Assert.IsFalse (IPAddress.Parse ("2001::1").IsIPv6Teredo, "#1");
+		Assert.IsTrue (IPAddress.Parse ("2001::1").IsIPv6Teredo, "#1");
 		Assert.IsFalse (IPAddress.Parse ("2002::1").IsIPv6Teredo, "#2");
 	}
 #endif
