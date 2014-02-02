@@ -334,6 +334,9 @@ namespace System.Windows.Threading {
 		[SecurityCritical]
 		public static void Run ()
 		{
+			// Set Continue, because the previous run could clean
+			// this flag by Dispatcher.ExitAllFrames.
+			main_execution_frame.Continue = true;
 			PushFrame (main_execution_frame);
 		}
 		

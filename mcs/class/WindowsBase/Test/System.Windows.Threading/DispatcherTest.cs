@@ -155,11 +155,17 @@ namespace MonoTests.System.Windows.Threading
 		{
 			Dispatcher d = Dispatcher.CurrentDispatcher;
 			Action exit = delegate { Dispatcher.ExitAllFrames(); };
+			int counter = 0;
+			Action increment = delegate { counter++; };
 
 			d.BeginInvoke(DispatcherPriority.Normal, exit);
 			Dispatcher.Run();
+			d.BeginInvoke(DispatcherPriority.Normal, increment);
+			d.BeginInvoke(DispatcherPriority.Normal, increment);
 			d.BeginInvoke(DispatcherPriority.Normal, exit);
 			Dispatcher.Run();
+
+			Assert.AreEqual(2, counter, "Counter of delegate invocation");
 		}
 	}
 }
