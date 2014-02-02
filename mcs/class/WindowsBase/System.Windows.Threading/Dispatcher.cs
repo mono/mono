@@ -428,7 +428,10 @@ namespace System.Windows.Threading {
 								// If a higher-priority task comes in, go do that
 								//
 								if (current_bit < (queue_bits & ~current_bit))
+								{
+									i = TOP_PRIO + 1; // for-loop decreases by one
 									break;
+								}
 							} while (true);
 						}
 					}

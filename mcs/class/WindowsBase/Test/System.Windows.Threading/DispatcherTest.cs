@@ -209,6 +209,25 @@ namespace MonoTests.System.Windows.Threading
 			d.BeginInvoke(DispatcherPriority.Background, exit);
 			Dispatcher.PushFrame(frame);
 		}
+
+		[Test]
+		public void TestPreemptedByHigherPriorityTask()
+		{
+			Dispatcher d = Dispatcher.CurrentDispatcher;
+			DispatcherFrame frame = new DispatcherFrame();
+			int counter = 0;
+			Action increment = delegate { counter++; };
+
+			d.BeginInvoke(DispatcherPriority.Normal, (Action) delegate {
+				d.BeginInvoke(DispatcherPriority.Send, increment);
+			});
+			d.BeginInvoke(DispatcherPriority.Background, (Action) delegate {
+				frame.Continue = false;
+			});
+
+			Dispatcher.PushFrame(frame);
+			Assert.AreEqual(1, counter, "Counter of delegate invocation");
+		}
 	}
 }
 
