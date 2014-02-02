@@ -387,7 +387,7 @@ namespace System.Windows.Threading {
 		
 		void RunFrame (DispatcherFrame frame)
 		{
-			do {
+			while (frame.Continue) {
 				while (queue_bits != 0){
 					for (int i = TOP_PRIO; i > 0 && queue_bits != 0; i--){
 						int current_bit = queue_bits & (1 << i);
@@ -440,7 +440,7 @@ namespace System.Windows.Threading {
 				
 				wait.WaitOne ();
 				wait.Reset ();
-			} while (frame.Continue);
+			}
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]

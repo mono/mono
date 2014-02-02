@@ -167,6 +167,28 @@ namespace MonoTests.System.Windows.Threading
 
 			Assert.AreEqual(2, counter, "Counter of delegate invocation");
 		}
+
+		[Test]
+		public void TestStopIfContinueIsFalse()
+		{
+			Dispatcher d = Dispatcher.CurrentDispatcher;
+			DispatcherFrame frame = new DispatcherFrame();
+			int counter = 0;
+
+			d.BeginInvoke(DispatcherPriority.Normal, (Action) delegate {
+				counter++;
+			});
+			d.BeginInvoke(DispatcherPriority.Normal, (Action) delegate {
+				Dispatcher.ExitAllFrames();
+			});
+
+			frame.Continue = false;
+			Dispatcher.PushFrame(frame);
+			Assert.AreEqual(0, counter, "Counter of delegate invocation");
+			frame.Continue = true;
+			Dispatcher.PushFrame(frame);
+			Assert.AreEqual(1, counter, "Counter of delegate invocation");
+		}
 	}
 }
 
