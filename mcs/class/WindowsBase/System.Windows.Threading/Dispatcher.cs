@@ -358,6 +358,10 @@ namespace System.Windows.Threading {
 			frame.dispatcher = dis;
 
 			dis.RunFrame (frame);
+
+			frame.dispatcher = null;
+			dis.current_frame = frame.ParentFrame;
+			frame.ParentFrame = null;
 		}
 
 		void PerformShutdown ()

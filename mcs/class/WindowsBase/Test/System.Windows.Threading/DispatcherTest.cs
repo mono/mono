@@ -149,6 +149,18 @@ namespace MonoTests.System.Windows.Threading
 
 			Dispatcher.PushFrame(frame);
 		}
+
+		[Test]
+		public void TestRunTwice()
+		{
+			Dispatcher d = Dispatcher.CurrentDispatcher;
+			Action exit = delegate { Dispatcher.ExitAllFrames(); };
+
+			d.BeginInvoke(DispatcherPriority.Normal, exit);
+			Dispatcher.Run();
+			d.BeginInvoke(DispatcherPriority.Normal, exit);
+			Dispatcher.Run();
+		}
 	}
 }
 
