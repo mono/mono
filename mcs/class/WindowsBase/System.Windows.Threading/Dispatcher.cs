@@ -398,6 +398,11 @@ namespace System.Windows.Threading {
 								DispatcherOperation task;
 								
 								lock (q){
+									// if we are done with this queue, leave.
+									if (q.Count == 0){
+										queue_bits &= ~current_bit;
+										break;
+									}
 									task = (DispatcherOperation) q.Dequeue ();
 								}
 								
@@ -417,14 +422,6 @@ namespace System.Windows.Threading {
 								if (HasShutdownStarted){
 									PerformShutdown ();
 									return;
-								}
-								
-								// if we are done with this queue, leave.
-								lock (q){
-									if (q.Count == 0){
-										queue_bits &= ~(1 << i);
-										break;
-									}
 								}
 
 								//

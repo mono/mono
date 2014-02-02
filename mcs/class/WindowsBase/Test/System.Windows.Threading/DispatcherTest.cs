@@ -189,6 +189,26 @@ namespace MonoTests.System.Windows.Threading
 			Dispatcher.PushFrame(frame);
 			Assert.AreEqual(1, counter, "Counter of delegate invocation");
 		}
+
+		//
+		// When a Dispatcher exits due to 'frame.Continue' being false,
+		// it should not try to deque the same operation second time.
+		//
+		[Test]
+		public void TestOperationDequeue()
+		{
+
+			Dispatcher d = Dispatcher.CurrentDispatcher;
+			DispatcherFrame frame = new DispatcherFrame();
+			Action exit = delegate { frame.Continue = false; };
+
+			d.BeginInvoke(DispatcherPriority.Normal, exit);
+			Dispatcher.PushFrame(frame);
+
+			frame = new DispatcherFrame();
+			d.BeginInvoke(DispatcherPriority.Background, exit);
+			Dispatcher.PushFrame(frame);
+		}
 	}
 }
 
