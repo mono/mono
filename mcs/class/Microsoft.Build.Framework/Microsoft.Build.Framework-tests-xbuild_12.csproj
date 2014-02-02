@@ -5,14 +5,14 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{DB6937A9-D27A-42AB-A044-1DB4B1F97414}</ProjectGuid>
+    <ProjectGuid>{060D9305-FAFC-4CD3-A060-D2157C7338C6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>bin\Debug\Microsoft.Build.Framework-tests-net_4_5</OutputPath>
+    <OutputPath>bin\Debug\Microsoft.Build.Framework-tests-xbuild_12</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>False</NoConfig>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AssemblyName>Microsoft.Build.Framework_test_net_4_5</AssemblyName>
+    <AssemblyName>Microsoft.Build.Framework_test_xbuild_12</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -20,14 +20,14 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;XBUILD_12</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;XBUILD_12</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -68,7 +68,7 @@
     <PreBuildEvent>
     </PreBuildEvent>
     <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
+      xcopy $(TargetName).* $(ProjectDir)..\lib\xbuild_12\ /Y /R /D
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
@@ -80,9 +80,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Microsoft.Build.Framework-net_4_5.csproj">
-      <Project>{2BAFB878-D329-46A5-93AF-5A4ECD403A13}</Project>
-      <Name>Microsoft.Build.Framework-net_4_5</Name>
+    <ProjectReference Include="Microsoft.Build.Framework-xbuild_12.csproj">
+      <Project>{E2ED2605-001D-4AA7-9559-FF98D92AFE0A}</Project>
+      <Name>Microsoft.Build.Framework-xbuild_12</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

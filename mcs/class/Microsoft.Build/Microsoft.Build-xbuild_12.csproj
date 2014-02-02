@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{D8A2B8F2-F52B-44D5-A868-C344682749E2}</ProjectGuid>
+    <ProjectGuid>{F2D74140-CB9F-4FE0-90B8-AA13459E8468}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>bin\Debug\Microsoft.Build-net_4_5</OutputPath>
+    <OutputPath>bin\Debug\Microsoft.Build-xbuild_12</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -20,7 +20,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MICROSOFT_BUILD_DLL</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;XBUILD_12;MICROSOFT_BUILD_DLL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CustomCommands>
@@ -31,7 +31,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MICROSOFT_BUILD_DLL</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;XBUILD_12;MICROSOFT_BUILD_DLL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CustomCommands>
@@ -203,7 +203,7 @@
     <PreBuildEvent>
     </PreBuildEvent>
     <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
+      xcopy $(TargetName).* $(ProjectDir)..\lib\xbuild_12\ /Y /R /D
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
@@ -221,13 +221,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.Build.Engine\Microsoft.Build.Engine-net_4_5.csproj">
-      <Project>{0DA63190-E6E1-41C5-B683-A54FADBE61CB}</Project>
-      <Name>Microsoft.Build.Engine-net_4_5</Name>
+    <ProjectReference Include="..\Microsoft.Build.Engine\Microsoft.Build.Engine-xbuild_12.csproj">
+      <Project>{8D052799-BFD2-48CF-B2A3-ABA166087870}</Project>
+      <Name>Microsoft.Build.Engine-xbuild_12</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Microsoft.Build.Framework\Microsoft.Build.Framework-net_4_5.csproj">
-      <Project>{2BAFB878-D329-46A5-93AF-5A4ECD403A13}</Project>
-      <Name>Microsoft.Build.Framework-net_4_5</Name>
+    <ProjectReference Include="..\Microsoft.Build.Framework\Microsoft.Build.Framework-xbuild_12.csproj">
+      <Project>{E2ED2605-001D-4AA7-9559-FF98D92AFE0A}</Project>
+      <Name>Microsoft.Build.Framework-xbuild_12</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

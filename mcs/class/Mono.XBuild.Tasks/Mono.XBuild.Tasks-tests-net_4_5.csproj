@@ -72,4 +72,7 @@
       <Name>Mono.XBuild.Tasks-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
 </Project>

@@ -18,11 +18,9 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-#if NET_2_0
-using NUnit.Framework;
-using Mono.XBuild.CommandLine;
 using System.IO;
+using Mono.XBuild.CommandLine;
+using NUnit.Framework;
 
 namespace xbuild.tests
 {
@@ -41,7 +39,7 @@ namespace xbuild.tests
 					"/p:idea_build_server_build_id=\"13852\" " +
 					"/p:path_separator=\":\"";
 			File.WriteAllText (responseFile, contents);
-			var parameters = new Parameters ("bin");
+			var parameters = new Parameters ();
 			parameters.ParseArguments (
 			    new [] { "/noautorsp", string.Format ("@\"{0}\"", responseFile), "\"project.xml\""});
 			
@@ -53,6 +51,4 @@ namespace xbuild.tests
 		}
 	}
 }
-
-#endif
 

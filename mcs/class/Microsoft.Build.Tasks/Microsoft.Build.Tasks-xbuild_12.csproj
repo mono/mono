@@ -5,29 +5,29 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{3DD52713-DB38-4D0D-8692-650B8821B047}</ProjectGuid>
+    <ProjectGuid>{8CCD9FEC-3353-4321-B612-09DB0B4853A2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>bin\Debug\Microsoft.Build.Tasks-net_2_0</OutputPath>
+    <OutputPath>bin\Debug\Microsoft.Build.Tasks-xbuild_12</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AssemblyName>Microsoft.Build.Tasks</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <AssemblyName>Microsoft.Build.Tasks.v4.0</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;XBUILD_12</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;XBUILD_12</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -178,45 +178,41 @@
   -->
   <PropertyGroup>
     <PreBuildEvent>
-
     </PreBuildEvent>
     <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
+      xcopy $(TargetName).* $(ProjectDir)..\lib\xbuild_12\ /Y /R /D
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib">
-      <HintPath>..\lib\net_2_0\mscorlib.dll</HintPath>
+      <HintPath>..\lib\net_4_5\mscorlib.dll</HintPath>
     </Reference>
     <Reference Include="System">
-      <HintPath>..\lib\net_2_0\System.dll</HintPath>
+      <HintPath>..\lib\net_4_5\System.dll</HintPath>
     </Reference>
     <Reference Include="System.Core">
-      <HintPath>..\lib\net_2_0\System.Core.dll</HintPath>
+      <HintPath>..\lib\net_4_5\System.Core.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml">
-      <HintPath>..\lib\net_2_0\System.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Windows.Forms">
-      <HintPath>..\lib\net_2_0\System.Windows.Forms.dll</HintPath>
+      <HintPath>..\lib\net_4_5\System.Xml.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_2_0.csproj">
-      <Project>{4AC4EDEE-4895-4CF9-84DF-9419E6980F38}</Project>
-      <Name>Microsoft.Build.Utilities-net_2_0</Name>
+    <ProjectReference Include="..\Microsoft.Build.Engine\Microsoft.Build.Engine-xbuild_12.csproj">
+      <Project>{8D052799-BFD2-48CF-B2A3-ABA166087870}</Project>
+      <Name>Microsoft.Build.Engine-xbuild_12</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Microsoft.Build.Framework\Microsoft.Build.Framework-net_2_0.csproj">
-      <Project>{AB5EDD8C-84A4-4F96-80EE-1B6F3A86785B}</Project>
-      <Name>Microsoft.Build.Framework-net_2_0</Name>
+    <ProjectReference Include="..\Microsoft.Build.Framework\Microsoft.Build.Framework-xbuild_12.csproj">
+      <Project>{E2ED2605-001D-4AA7-9559-FF98D92AFE0A}</Project>
+      <Name>Microsoft.Build.Framework-xbuild_12</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Microsoft.Build.Engine\Microsoft.Build.Engine-net_2_0.csproj">
-      <Project>{E8E948B8-6DCF-48F2-A6BC-04309AED8740}</Project>
-      <Name>Microsoft.Build.Engine-net_2_0</Name>
+    <ProjectReference Include="..\Microsoft.Build.Utilities\Microsoft.Build.Utilities-xbuild_12.csproj">
+      <Project>{C37DA268-D58D-4187-9343-02DD031A5B17}</Project>
+      <Name>Microsoft.Build.Utilities-xbuild_12</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Mono.XBuild.Tasks\Mono.XBuild.Tasks-net_2_0.csproj">
-      <Project>{F5F84165-0541-4828-A81E-0AA1836E50C1}</Project>
-      <Name>Mono.XBuild.Tasks-net_2_0</Name>
+    <ProjectReference Include="..\Mono.XBuild.Tasks\Mono.XBuild.Tasks-xbuild_12.csproj">
+      <Project>{288F3172-625A-45D5-9ABC-73AC0DBCDBF7}</Project>
+      <Name>Mono.XBuild.Tasks-xbuild_12</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

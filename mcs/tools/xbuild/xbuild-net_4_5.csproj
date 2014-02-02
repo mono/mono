@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C5FC0E18-F320-429E-914E-67C06D41E6E7}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <NoWarn>1699</NoWarn>
+    <OutputPath>bin\Debug\xbuild-net_4_5</OutputPath>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>True</NoConfig>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <AssemblyName>xbuild</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>TRACE;DEBUG;NET_2_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE;NET_2_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs">
+      <Link>Consts.cs</Link>
+    </Compile>
+    <Compile Include="..\..\class\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\UnknownToolsVersionException.cs">
+      <Link>UnknownToolsVersionException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\class\Microsoft.Build.Framework\Mono.XBuild.Framework\AssemblyLoadInfo.cs">
+      <Link>AssemblyLoadInfo.cs</Link>
+    </Compile>
+    <Compile Include="XBuildConsts.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="CommandLineException.cs" />
+    <Compile Include="ErrorUtilities.cs" />
+    <Compile Include="LoggerInfo.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="Parameters.cs" />
+    <Compile Include="SolutionParser.cs" />
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
+    </PostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib">
+      <HintPath>..\..\class\lib\net_4_5\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <HintPath>..\..\class\lib\net_4_5\System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core">
+      <HintPath>..\..\class\lib\net_4_5\System.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\class\Microsoft.Build.Framework\Microsoft.Build.Framework-net_4_5.csproj">
+      <Project>{2BAFB878-D329-46A5-93AF-5A4ECD403A13}</Project>
+      <Name>Microsoft.Build.Framework-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\class\Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_4_5.csproj">
+      <Project>{5CD66EA1-51EB-48EE-8C1C-DDFD23E22C38}</Project>
+      <Name>Microsoft.Build.Utilities-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\class\Microsoft.Build.Engine\Microsoft.Build.Engine-net_4_5.csproj">
+      <Project>{0DA63190-E6E1-41C5-B683-A54FADBE61CB}</Project>
+      <Name>Microsoft.Build.Engine-net_4_5</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+</Project>

@@ -5,14 +5,14 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{E34212A3-F152-4A6F-88F7-7A4D0324D11C}</ProjectGuid>
+    <ProjectGuid>{6AFC9B98-094C-4B91-A3C7-CD0D325BC0F3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>bin\Debug\Microsoft.Build-tests-net_4_5</OutputPath>
+    <OutputPath>bin\Debug\Microsoft.Build-tests-xbuild_12</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>False</NoConfig>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AssemblyName>Microsoft.Build_test_net_4_5</AssemblyName>
+    <AssemblyName>Microsoft.Build_test_xbuild_12</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -20,14 +20,14 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;XBUILD_12</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;XBUILD_12</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -72,10 +72,9 @@
     <PreBuildEvent>
     </PreBuildEvent>
     <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
+      xcopy $(TargetName).* $(ProjectDir)..\lib\xbuild_12\ /Y /R /D
     </PostBuildEvent>
   </PropertyGroup>
-  <ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib">
       <HintPath>..\lib\net_4_5\mscorlib.dll</HintPath>
@@ -93,13 +92,14 @@
       <HintPath>..\lib\net_4_5\nunit.framework.dll</HintPath>
     </Reference>
   </ItemGroup>
-    <ProjectReference Include="..\Microsoft.Build.Framework\Microsoft.Build.Framework-net_4_5.csproj">
-      <Project>{2BAFB878-D329-46A5-93AF-5A4ECD403A13}</Project>
-      <Name>Microsoft.Build.Framework-net_4_5</Name>
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.Build.Framework\Microsoft.Build.Framework-xbuild_12.csproj">
+      <Project>{E2ED2605-001D-4AA7-9559-FF98D92AFE0A}</Project>
+      <Name>Microsoft.Build.Framework-xbuild_12</Name>
     </ProjectReference>
-    <ProjectReference Include="Microsoft.Build-net_4_5.csproj">
-      <Project>{D8A2B8F2-F52B-44D5-A868-C344682749E2}</Project>
-      <Name>Microsoft.Build-net_4_5</Name>
+    <ProjectReference Include="Microsoft.Build-xbuild_12.csproj">
+      <Project>{F2D74140-CB9F-4FE0-90B8-AA13459E8468}</Project>
+      <Name>Microsoft.Build-xbuild_12</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
