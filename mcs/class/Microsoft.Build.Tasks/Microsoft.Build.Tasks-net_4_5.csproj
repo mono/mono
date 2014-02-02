@@ -49,6 +49,9 @@
     <Compile Include="..\..\tools\xbuild\XBuildConsts.cs">
       <Link>XBuildConsts.cs</Link>
     </Compile>
+    <Compile Include="..\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\TaskItemDirectoryScanner.cs">
+      <Link>TaskItemDirectoryScanner.cs</Link>
+    </Compile>
     <Compile Include="Microsoft.Build.Tasks\AL.cs" />
     <Compile Include="Microsoft.Build.Tasks\AppDomainIsolatedTaskExtension.cs" />
     <Compile Include="Microsoft.Build.Tasks\AspNetCompiler.cs" />
@@ -159,15 +162,6 @@
     <Compile Include="Mono.XBuild.Tasks.GenerateResourceInternal\PoResourceWriter.cs" />
     <Compile Include="Mono.XBuild.Tasks.GenerateResourceInternal\TxtResourceReader.cs" />
     <Compile Include="Mono.XBuild.Tasks.GenerateResourceInternal\TxtResourceWriter.cs" />
-    <Compile Include="..\Microsoft.Build.Utilities\Mono.XBuild.Utilities\MSBuildUtils.cs">
-      <Link>MSBuildUtils.cs</Link>
-    </Compile>
-    <Compile Include="..\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\DirectoryScanner.cs">
-      <Link>DirectoryScanner.cs</Link>
-    </Compile>
-    <Compile Include="..\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\UnknownToolsVersionException.cs">
-      <Link>UnknownToolsVersionException.cs</Link>
-    </Compile>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -209,6 +203,10 @@
     <ProjectReference Include="..\Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_4_5.csproj">
       <Project>{5CD66EA1-51EB-48EE-8C1C-DDFD23E22C38}</Project>
       <Name>Microsoft.Build.Utilities-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mono.XBuild.Utilities\Mono.XBuild.Utilities-net_4_5.csproj">
+      <Project>{3C12A199-5255-4E96-910E-B6344BEAF2C4}</Project>
+      <Name>Mono.XBuild.Utilities-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.XBuild.Tasks\Mono.XBuild.Tasks-net_4_5.csproj">
       <Project>{9AC58525-C730-4552-A8FA-332979FCD055}</Project>

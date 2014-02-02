@@ -49,6 +49,9 @@
     <Compile Include="..\..\tools\xbuild\XBuildConsts.cs">
       <Link>XBuildConsts.cs</Link>
     </Compile>
+    <Compile Include="..\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\TaskItemDirectoryScanner.cs">
+      <Link>TaskItemDirectoryScanner.cs</Link>
+    </Compile>
     <Compile Include="Microsoft.Build.Tasks\AL.cs" />
     <Compile Include="Microsoft.Build.Tasks\AppDomainIsolatedTaskExtension.cs" />
     <Compile Include="Microsoft.Build.Tasks\AspNetCompiler.cs" />
@@ -159,15 +162,6 @@
     <Compile Include="Mono.XBuild.Tasks.GenerateResourceInternal\PoResourceWriter.cs" />
     <Compile Include="Mono.XBuild.Tasks.GenerateResourceInternal\TxtResourceReader.cs" />
     <Compile Include="Mono.XBuild.Tasks.GenerateResourceInternal\TxtResourceWriter.cs" />
-    <Compile Include="..\Microsoft.Build.Utilities\Mono.XBuild.Utilities\MSBuildUtils.cs">
-      <Link>MSBuildUtils.cs</Link>
-    </Compile>
-    <Compile Include="..\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\DirectoryScanner.cs">
-      <Link>DirectoryScanner.cs</Link>
-    </Compile>
-    <Compile Include="..\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\UnknownToolsVersionException.cs">
-      <Link>UnknownToolsVersionException.cs</Link>
-    </Compile>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -217,6 +211,10 @@
     <ProjectReference Include="..\Mono.XBuild.Tasks\Mono.XBuild.Tasks-net_2_0.csproj">
       <Project>{F5F84165-0541-4828-A81E-0AA1836E50C1}</Project>
       <Name>Mono.XBuild.Tasks-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mono.XBuild.Utilities\Mono.XBuild.Utilities-net_2_0.csproj">
+      <Project>{5D8F2568-B0B8-41BC-9D25-5B6A981F9F3E}</Project>
+      <Name>Mono.XBuild.Utilities-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

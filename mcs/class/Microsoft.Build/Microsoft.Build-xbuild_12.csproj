@@ -58,12 +58,6 @@
     <Compile Include="..\..\tools\xbuild\XBuildConsts.cs">
       <Link>XBuildConsts.cs</Link>
     </Compile>
-    <Compile Include="..\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\DirectoryScanner.cs">
-      <Link>DirectoryScanner.cs</Link>
-    </Compile>
-    <Compile Include="..\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\EventSource.cs">
-      <Link>EventSource.cs</Link>
-    </Compile>
     <Compile Include="..\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\ColorSetter.cs">
       <Link>ColorSetter.cs</Link>
     </Compile>
@@ -76,14 +70,11 @@
     <Compile Include="..\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\FileLogger.cs">
       <Link>FileLogger.cs</Link>
     </Compile>
+    <Compile Include="..\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\TaskItemDirectoryScanner.cs">
+      <Link>TaskItemDirectoryScanner.cs</Link>
+    </Compile>
     <Compile Include="..\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\WriteHandler.cs">
       <Link>WriteHandler.cs</Link>
-    </Compile>
-    <Compile Include="..\Microsoft.Build.Utilities\Mono.XBuild.Utilities\MSBuildUtils.cs">
-      <Link>MSBuildUtils.cs</Link>
-    </Compile>
-    <Compile Include="..\Microsoft.Build.Utilities\Mono.XBuild.Utilities\ReservedNameUtils.cs">
-      <Link>ReservedNameUtils.cs</Link>
     </Compile>
     <Compile Include="..\Microsoft.Build.Utilities\Microsoft.Build.Utilities\TaskItem.cs">
       <Link>TaskItem.cs</Link>
@@ -228,6 +219,10 @@
     <ProjectReference Include="..\Microsoft.Build.Framework\Microsoft.Build.Framework-xbuild_12.csproj">
       <Project>{E2ED2605-001D-4AA7-9559-FF98D92AFE0A}</Project>
       <Name>Microsoft.Build.Framework-xbuild_12</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mono.XBuild.Utilities\Mono.XBuild.Utilities-xbuild_12.csproj">
+      <Project>{F0D11EBD-092E-4393-A035-C78B89149D62}</Project>
+      <Name>Mono.XBuild.Utilities-xbuild_12</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

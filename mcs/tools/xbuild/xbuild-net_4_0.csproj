@@ -43,9 +43,6 @@
     <Compile Include="..\..\build\common\Consts.cs">
       <Link>Consts.cs</Link>
     </Compile>
-    <Compile Include="..\..\class\Microsoft.Build.Engine\Microsoft.Build.BuildEngine\UnknownToolsVersionException.cs">
-      <Link>UnknownToolsVersionException.cs</Link>
-    </Compile>
     <Compile Include="..\..\class\Microsoft.Build.Framework\Mono.XBuild.Framework\AssemblyLoadInfo.cs">
       <Link>AssemblyLoadInfo.cs</Link>
     </Compile>
@@ -95,6 +92,10 @@
     <ProjectReference Include="..\..\class\Microsoft.Build.Engine\Microsoft.Build.Engine-net_4_0.csproj">
       <Project>{9B0AC297-CB85-43C1-8C18-12997CF1B78D}</Project>
       <Name>Microsoft.Build.Engine-net_4_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\class\Mono.XBuild.Utilities\Mono.XBuild.Utilities-net_4_0.csproj">
+      <Project>{1462A17E-8E63-414F-91DE-47C7CE6B4986}</Project>
+      <Name>Mono.XBuild.Utilities-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

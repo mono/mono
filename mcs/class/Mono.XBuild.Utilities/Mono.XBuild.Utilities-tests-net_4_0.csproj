@@ -5,14 +5,14 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{A20F004B-16AC-44DE-A14E-2C2B5E9F72BE}</ProjectGuid>
+    <ProjectGuid>{B7576F0A-921E-4B75-AB40-BB5D3FC66B84}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>bin\Debug\Microsoft.Build.Utilities-net_4_0</OutputPath>
+    <OutputPath>bin\Debug\Mono.XBuild.Utilities-tests-net_4_0</OutputPath>
     <NoStdLib>True</NoStdLib>
-    <NoConfig>True</NoConfig>
+    <NoConfig>False</NoConfig>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AssemblyName>Microsoft.Build.Utilities.v4.0</AssemblyName>
+    <AssemblyName>Mono.XBuild.Utilities_test_net_4_0</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -20,14 +20,14 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
+    <DefineConstants>NET_2_0;NET_3_0;NET_3_5;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -39,33 +39,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\build\common\Consts.cs">
-      <Link>Consts.cs</Link>
-    </Compile>
-    <Compile Include="..\..\build\common\MonoTODOAttribute.cs">
-      <Link>MonoTODOAttribute.cs</Link>
-    </Compile>
-    <Compile Include="..\..\tools\xbuild\XBuildConsts.cs">
-      <Link>XBuildConsts.cs</Link>
-    </Compile>
-    <Compile Include="Assembly\AssemblyInfo.cs" />
-    <Compile Include="Microsoft.Build.Utilities\AppDomainIsolatedTask.cs" />
-    <Compile Include="Microsoft.Build.Utilities\CommandLineBuilder.cs" />
-    <Compile Include="Microsoft.Build.Utilities\HostObjectInitializationStatus.cs" />
-    <Compile Include="Microsoft.Build.Utilities\Logger.cs" />
-    <Compile Include="Microsoft.Build.Utilities\IAsyncOperation.cs" />
-    <Compile Include="Microsoft.Build.Utilities\IProcessAsyncOperation.cs" />
-    <Compile Include="Microsoft.Build.Utilities\ProcessWrapper.cs" />
-    <Compile Include="Microsoft.Build.Utilities\ProcessService.cs" />
-    <Compile Include="Microsoft.Build.Utilities\TargetDotNetFrameworkVersion.cs" />
-    <Compile Include="Microsoft.Build.Utilities\Task.cs" />
-    <Compile Include="Microsoft.Build.Utilities\TaskItem.cs" />
-    <Compile Include="Microsoft.Build.Utilities\TaskLoggingHelper.cs" />
-    <Compile Include="Microsoft.Build.Utilities\ToolLocationHelper.cs" />
-    <Compile Include="Microsoft.Build.Utilities\ToolTask.cs" />
-    <Compile Include="..\System\System.Collections.Specialized\ProcessStringDictionary.cs">
-      <Link>ProcessStringDictionary.cs</Link>
-    </Compile>
+    <Compile Include="Test\Mono.XBuild.Utilities\EmptyClass.cs" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -85,16 +59,12 @@
     <Reference Include="mscorlib">
       <HintPath>..\lib\net_4_0\mscorlib.dll</HintPath>
     </Reference>
-    <Reference Include="System">
-      <HintPath>..\lib\net_4_0\System.dll</HintPath>
+    <Reference Include="nunit.framework">
+      <HintPath>..\lib\net_4_0\nunit.framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.Build.Framework\Microsoft.Build.Framework-net_4_0.csproj">
-      <Project>{1D4BCF4D-31D1-4F92-A2B2-D9E41A640649}</Project>
-      <Name>Microsoft.Build.Framework-net_4_0</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Mono.XBuild.Utilities\Mono.XBuild.Utilities-net_4_0.csproj">
+    <ProjectReference Include="Mono.XBuild.Utilities-net_4_0.csproj">
       <Project>{1462A17E-8E63-414F-91DE-47C7CE6B4986}</Project>
       <Name>Mono.XBuild.Utilities-net_4_0</Name>
     </ProjectReference>

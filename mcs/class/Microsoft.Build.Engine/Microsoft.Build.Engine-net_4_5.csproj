@@ -52,12 +52,6 @@
     <Compile Include="..\Microsoft.Build.Framework\Mono.XBuild.Framework\AssemblyLoadInfo.cs">
       <Link>AssemblyLoadInfo.cs</Link>
     </Compile>
-    <Compile Include="..\Microsoft.Build.Utilities\Mono.XBuild.Utilities\MSBuildUtils.cs">
-      <Link>MSBuildUtils.cs</Link>
-    </Compile>
-    <Compile Include="..\Microsoft.Build.Utilities\Mono.XBuild.Utilities\ReservedNameUtils.cs">
-      <Link>ReservedNameUtils.cs</Link>
-    </Compile>
     <Compile Include="..\..\tools\xbuild\SolutionParser.cs">
       <Link>SolutionParser.cs</Link>
     </Compile>
@@ -91,9 +85,7 @@
     <Compile Include="Microsoft.Build.BuildEngine\ConditionRelationalExpression.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\ConditionTokenizer.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\ConsoleLogger.cs" />
-    <Compile Include="Microsoft.Build.BuildEngine\DirectoryScanner.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\Engine.cs" />
-    <Compile Include="Microsoft.Build.BuildEngine\EventSource.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\Expression.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\ExpressionCollection.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\ExpressionEvaluationException.cs" />
@@ -118,6 +110,7 @@
     <Compile Include="Microsoft.Build.BuildEngine\Target.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\TaskDatabase.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\TaskEngine.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\TaskItemDirectoryScanner.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\Token.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\Toolset.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\ToolsetCollection.cs" />
@@ -166,6 +159,10 @@
     <ProjectReference Include="..\Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_4_5.csproj">
       <Project>{5CD66EA1-51EB-48EE-8C1C-DDFD23E22C38}</Project>
       <Name>Microsoft.Build.Utilities-net_4_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mono.XBuild.Utilities\Mono.XBuild.Utilities-net_4_5.csproj">
+      <Project>{3C12A199-5255-4E96-910E-B6344BEAF2C4}</Project>
+      <Name>Mono.XBuild.Utilities-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

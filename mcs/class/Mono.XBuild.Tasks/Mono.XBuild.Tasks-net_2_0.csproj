@@ -44,9 +44,6 @@
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs">
       <Link>MonoTODOAttribute.cs</Link>
     </Compile>
-    <Compile Include="..\Microsoft.Build.Utilities\Mono.XBuild.Utilities\MSBuildUtils.cs">
-      <Link>MSBuildUtils.cs</Link>
-    </Compile>
     <Compile Include="Mono.XBuild.Tasks\LibraryPcFileCache.cs" />
     <Compile Include="Mono.XBuild.Tasks\PcFileCache.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
@@ -75,6 +72,12 @@
     <Reference Include="System.Xml">
       <HintPath>..\lib\net_2_0\System.Xml.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Mono.XBuild.Utilities\Mono.XBuild.Utilities-net_2_0.csproj">
+      <Project>{5D8F2568-B0B8-41BC-9D25-5B6A981F9F3E}</Project>
+      <Name>Mono.XBuild.Utilities-net_2_0</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

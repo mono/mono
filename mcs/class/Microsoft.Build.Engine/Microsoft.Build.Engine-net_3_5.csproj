@@ -52,12 +52,6 @@
     <Compile Include="..\Microsoft.Build.Framework\Mono.XBuild.Framework\AssemblyLoadInfo.cs">
       <Link>AssemblyLoadInfo.cs</Link>
     </Compile>
-    <Compile Include="..\Microsoft.Build.Utilities\Mono.XBuild.Utilities\MSBuildUtils.cs">
-      <Link>MSBuildUtils.cs</Link>
-    </Compile>
-    <Compile Include="..\Microsoft.Build.Utilities\Mono.XBuild.Utilities\ReservedNameUtils.cs">
-      <Link>ReservedNameUtils.cs</Link>
-    </Compile>
     <Compile Include="..\..\tools\xbuild\SolutionParser.cs">
       <Link>SolutionParser.cs</Link>
     </Compile>
@@ -91,9 +85,7 @@
     <Compile Include="Microsoft.Build.BuildEngine\ConditionRelationalExpression.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\ConditionTokenizer.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\ConsoleLogger.cs" />
-    <Compile Include="Microsoft.Build.BuildEngine\DirectoryScanner.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\Engine.cs" />
-    <Compile Include="Microsoft.Build.BuildEngine\EventSource.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\Expression.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\ExpressionCollection.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\ExpressionEvaluationException.cs" />
@@ -118,11 +110,11 @@
     <Compile Include="Microsoft.Build.BuildEngine\Target.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\TaskDatabase.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\TaskEngine.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\TaskItemDirectoryScanner.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\Token.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\Toolset.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\ToolsetCollection.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\ToolsetDefinitionLocations.cs" />
-    <Compile Include="Microsoft.Build.BuildEngine\UnknownToolsVersionException.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\UsingTask.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\UsingTaskCollection.cs" />
     <Compile Include="Microsoft.Build.BuildEngine\Utilities.cs" />
@@ -164,6 +156,10 @@
     <ProjectReference Include="..\Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_3_5.csproj">
       <Project>{5EA25213-0854-4620-A67B-67E9BC6D213E}</Project>
       <Name>Microsoft.Build.Utilities-net_3_5</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mono.XBuild.Utilities\Mono.XBuild.Utilities-net_3_5.csproj">
+      <Project>{9CE5C73F-6963-490B-A829-9A2E9FD771D3}</Project>
+      <Name>Mono.XBuild.Utilities-net_3_5</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
