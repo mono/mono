@@ -27,8 +27,8 @@
 
 using Microsoft.Build.Framework;
 
-namespace Microsoft.Build.BuildEngine {
-	internal class EventSource : IEventSource {
+namespace Mono.XBuild.BuildEngine {
+	public class EventSource : IEventSource {
 		
 		AnyEventHandler			anyEventRaised;
 		BuildFinishedEventHandler	buildFinished;

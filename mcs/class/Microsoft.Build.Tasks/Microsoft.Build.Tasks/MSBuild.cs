@@ -32,9 +32,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using Mono.XBuild.BuildEngine;
 
 namespace Microsoft.Build.Tasks {
 
@@ -95,8 +97,9 @@ namespace Microsoft.Build.Tasks {
 						// metadata on the Project item
 						tv = project.GetMetadata ("ToolsVersion");
 
-					if (!String.IsNullOrEmpty (tv) && Engine.GlobalEngine.Toolsets [tv] == null)
-						throw new UnknownToolsVersionException (tv);
+					var toolsets = Engine.GlobalEngine.Toolsets;
+					if (!String.IsNullOrEmpty (tv) && toolsets [tv] == null)
+						throw new UnknownToolsVersionException (tv, toolsets.Select(ts => ts.ToolsVersion));
 
 					result = BuildEngine2.BuildProjectFile (filename, targets, global_properties, outputs, tv);
 				} catch (InvalidProjectFileException e) {
@@ -143,8 +146,9 @@ namespace Microsoft.Build.Tasks {
 
 		void ThrowIfInvalidToolsVersion (string toolsVersion)
 		{
-			if (!String.IsNullOrEmpty (toolsVersion) && Engine.GlobalEngine.Toolsets [toolsVersion] == null)
-				throw new UnknownToolsVersionException (toolsVersion);
+			var toolsets = Engine.GlobalEngine.Toolsets;
+			if (!String.IsNullOrEmpty (toolsVersion) && toolsets [toolsVersion] == null)
+				throw new UnknownToolsVersionException (toolsVersion, toolsets.Select(ts => ts.ToolsVersion));
 		}
 
 		[Required]

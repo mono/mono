@@ -11,7 +11,8 @@ LIBRARY_NAME = Microsoft.Build.Utilities$(NAME_SUFFIX).dll
 LIB_MCS_FLAGS = \
 	/r:$(corlib)				\
 	/r:System.dll				\
-	/r:$(XBUILD_FRAMEWORK)
+	/r:$(XBUILD_FRAMEWORK)			\
+	/r:$(XBUILD_UTILITIES_MONO)
 
 TEST_MCS_FLAGS = /r:$(XBUILD_ENGINE) /r:$(XBUILD_FRAMEWORK) -r:System.dll -r:System.Core.dll
 

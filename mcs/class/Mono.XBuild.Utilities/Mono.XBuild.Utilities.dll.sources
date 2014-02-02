@@ -1,0 +1,10 @@
+../../build/common/Consts.cs
+../../build/common/MonoTODOAttribute.cs
+../../tools/xbuild/XBuildConsts.cs
+Assembly/AssemblyInfo.cs
+Mono.XBuild.BuildEngine/DirectoryScannerBase.cs
+Mono.XBuild.BuildEngine/EventSource.cs
+Mono.XBuild.BuildEngine/UnknownToolsVersionException.cs
+Mono.XBuild.Utilities/MSBuildUtils.cs
+Mono.XBuild.Utilities/MonoLocationHelper.cs
+Mono.XBuild.Utilities/ReservedNameUtils.cs

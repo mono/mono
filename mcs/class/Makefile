@@ -236,6 +236,7 @@ net_4_5_dirs := \
 
 xbuild_2_0_dirs := \
 	Microsoft.Build.Framework	\
+	Mono.XBuild.Utilities		\
 	Microsoft.Build.Utilities	\
 	Microsoft.Build.Engine		\
 	Mono.XBuild.Tasks		\

@@ -28,7 +28,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Construction;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
@@ -444,7 +444,7 @@ namespace Microsoft.Build.Evaluation
 				var item = creator (includes [0]);
 				yield return item;
 			} else {
-				var ds = new Microsoft.Build.BuildEngine.DirectoryScanner () {
+				var ds = new TaskItemDirectoryScanner {
 					BaseDirectory = new DirectoryInfo (directory),
 					Includes = includes.Where (s => !string.IsNullOrWhiteSpace (s)).Select (i => taskItemCreator (i)).ToArray (),
 					Excludes = excludes.Where (s => !string.IsNullOrWhiteSpace (s)).Select (e => taskItemCreator (e)).ToArray (),

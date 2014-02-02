@@ -35,6 +35,7 @@ using System.Text;
 using System.Xml;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using Mono.XBuild.BuildEngine;
 using Mono.XBuild.Utilities;
 
 namespace Microsoft.Build.BuildEngine {
@@ -315,8 +316,7 @@ namespace Microsoft.Build.BuildEngine {
 					return;
 				}
 			}
-			
-			DirectoryScanner directoryScanner;
+
 			Expression includeExpr, excludeExpr;
 			ITaskItem[] includes, excludes;
 
@@ -336,7 +336,7 @@ namespace Microsoft.Build.BuildEngine {
 			this.finalItemSpec = (string) includeExpr.ConvertTo (project, typeof (string),
 							ExpressionOptions.ExpandItemRefs);
 
-			directoryScanner = new DirectoryScanner ();
+			var directoryScanner = new TaskItemDirectoryScanner ();
 			
 			directoryScanner.Includes = includes;
 			directoryScanner.Excludes = excludes;
@@ -422,7 +422,7 @@ namespace Microsoft.Build.BuildEngine {
 			var removes = (ITaskItem[]) removeExpr.ConvertTo (
 				project, typeof (ITaskItem[]), ExpressionOptions.ExpandItemRefs);
 
-			var directoryScanner = new DirectoryScanner ();
+			var directoryScanner = new TaskItemDirectoryScanner ();
 			
 			directoryScanner.Includes = removes;
 

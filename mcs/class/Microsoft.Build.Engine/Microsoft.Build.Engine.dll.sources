@@ -3,8 +3,6 @@
 ../../tools/xbuild/XBuildConsts.cs
 Assembly/AssemblyInfo.cs
 ../Microsoft.Build.Framework/Mono.XBuild.Framework/AssemblyLoadInfo.cs
-../Microsoft.Build.Utilities/Mono.XBuild.Utilities/MSBuildUtils.cs
-../Microsoft.Build.Utilities/Mono.XBuild.Utilities/ReservedNameUtils.cs
 ../../tools/xbuild/SolutionParser.cs
 Microsoft.Build.BuildEngine/BatchingImplBase.cs
 Microsoft.Build.BuildEngine/TargetBatchingImpl.cs
@@ -36,9 +34,7 @@ Microsoft.Build.BuildEngine/ConditionParser.cs
 Microsoft.Build.BuildEngine/ConditionRelationalExpression.cs
 Microsoft.Build.BuildEngine/ConditionTokenizer.cs
 Microsoft.Build.BuildEngine/ConsoleLogger.cs
-Microsoft.Build.BuildEngine/DirectoryScanner.cs
 Microsoft.Build.BuildEngine/Engine.cs
-Microsoft.Build.BuildEngine/EventSource.cs
 Microsoft.Build.BuildEngine/Expression.cs
 Microsoft.Build.BuildEngine/ExpressionCollection.cs
 Microsoft.Build.BuildEngine/ExpressionEvaluationException.cs
@@ -63,11 +59,11 @@ Microsoft.Build.BuildEngine/TargetCollection.cs
 Microsoft.Build.BuildEngine/Target.cs
 Microsoft.Build.BuildEngine/TaskDatabase.cs
 Microsoft.Build.BuildEngine/TaskEngine.cs
+Microsoft.Build.BuildEngine/TaskItemDirectoryScanner.cs
 Microsoft.Build.BuildEngine/Token.cs
 Microsoft.Build.BuildEngine/Toolset.cs
 Microsoft.Build.BuildEngine/ToolsetCollection.cs
 Microsoft.Build.BuildEngine/ToolsetDefinitionLocations.cs
-Microsoft.Build.BuildEngine/UnknownToolsVersionException.cs
 Microsoft.Build.BuildEngine/UsingTask.cs
 Microsoft.Build.BuildEngine/UsingTaskCollection.cs
 Microsoft.Build.BuildEngine/Utilities.cs

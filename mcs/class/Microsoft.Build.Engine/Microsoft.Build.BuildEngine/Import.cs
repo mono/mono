@@ -35,6 +35,7 @@ using System.Xml;
 
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using Mono.XBuild.BuildEngine;
 using Mono.XBuild.Utilities;
 
 namespace Microsoft.Build.BuildEngine {
@@ -232,8 +233,8 @@ namespace Microsoft.Build.BuildEngine {
 				throw new InvalidProjectFileException ("The required attribute \"Project\" in Import is empty");
 
 #if NET_4_0
-			if (DirectoryScanner.HasWildcard (parsed_import)) {
-				var directoryScanner = new DirectoryScanner () {
+			if (DirectoryScannerBase.HasWildcard (parsed_import)) {
+				var directoryScanner = new TaskItemDirectoryScanner () {
 					Includes = new ITaskItem [] { new TaskItem (parsed_import) },
 					BaseDirectory = base_dir_info
 				};

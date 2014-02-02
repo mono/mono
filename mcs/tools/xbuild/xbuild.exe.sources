@@ -1,5 +1,4 @@
 ../../build/common/Consts.cs
-../../class/Microsoft.Build.Engine/Microsoft.Build.BuildEngine/UnknownToolsVersionException.cs
 ../../class/Microsoft.Build.Framework/Mono.XBuild.Framework/AssemblyLoadInfo.cs
 XBuildConsts.cs
 AssemblyInfo.cs

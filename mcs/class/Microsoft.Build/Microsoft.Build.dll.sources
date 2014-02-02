@@ -2,15 +2,12 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/MonoTODOAttribute.cs
 ../../tools/xbuild/XBuildConsts.cs
-../Microsoft.Build.Engine/Microsoft.Build.BuildEngine/DirectoryScanner.cs
-../Microsoft.Build.Engine/Microsoft.Build.BuildEngine/EventSource.cs
 ../Microsoft.Build.Engine/Microsoft.Build.BuildEngine/ColorSetter.cs
 ../Microsoft.Build.Engine/Microsoft.Build.BuildEngine/ColorResetter.cs
 ../Microsoft.Build.Engine/Microsoft.Build.BuildEngine/ConsoleLogger.cs
 ../Microsoft.Build.Engine/Microsoft.Build.BuildEngine/FileLogger.cs
+../Microsoft.Build.Engine/Microsoft.Build.BuildEngine/TaskItemDirectoryScanner.cs
 ../Microsoft.Build.Engine/Microsoft.Build.BuildEngine/WriteHandler.cs
-../Microsoft.Build.Utilities/Mono.XBuild.Utilities/MSBuildUtils.cs
-../Microsoft.Build.Utilities/Mono.XBuild.Utilities/ReservedNameUtils.cs
 ../Microsoft.Build.Utilities/Microsoft.Build.Utilities/TaskItem.cs
 ../Microsoft.Build.Utilities/Microsoft.Build.Utilities/ToolLocationHelper.cs
 ../Microsoft.Build.Utilities/Microsoft.Build.Utilities/TargetDotNetFrameworkVersion.cs
