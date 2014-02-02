@@ -134,6 +134,21 @@ namespace MonoTests.System.Windows.Threading
 			if (fail)
 				throw new Exception ("Expected all states to run");
 		}
+
+		[Test]
+		public void TestTwoArguments()
+		{
+			Dispatcher d = Dispatcher.CurrentDispatcher;
+			DispatcherFrame frame = new DispatcherFrame();
+
+			d.BeginInvoke (DispatcherPriority.Normal, (Action<int, string>) delegate(int arg1, string arg2) {
+				Assert.AreEqual(10, arg1, "arg1");
+				Assert.AreEqual("OK", arg2, "arg2");
+				frame.Continue = false;
+			}, 10, "OK");
+
+			Dispatcher.PushFrame(frame);
+		}
 	}
 }
 
