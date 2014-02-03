@@ -838,23 +838,6 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
-		public void RunSynchronously_SchedulerException ()
-		{
-			var scheduler = new MockScheduler ();
-			scheduler.TryExecuteTaskInlineHandler += (task, b) => {
-				throw new ApplicationException ();
-			};
-
-			Task t = new Task (() => { });
-			try {
-				t.RunSynchronously (scheduler);
-				Assert.Fail ();
-			} catch (Exception e) {
-				Assert.AreEqual (t.Exception.InnerException, e);
-			}
-		}
-
-		[Test]
 		public void RunSynchronouslyWithAttachedChildren ()
 		{
 			var result = false;
