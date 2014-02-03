@@ -1003,12 +1003,13 @@ namespace System
 
 					try {
 						destinationArray.SetValueImpl (srcval, dest_pos + i);
+					} catch (ArgumentException) {
+						throw CreateArrayTypeMismatchException ();
 					} catch {
-						if (src_type.Equals (typeof (Object)))
-							throw new InvalidCastException ();
-						else
-							throw new ArrayTypeMismatchException (String.Format (Locale.GetText (
-								"(Types: source={0};  target={1})"), src_type.FullName, dst_type.FullName));
+						if (CanAssignArrayElement (src_type, dst_type))
+							throw;
+
+						throw CreateArrayTypeMismatchException ();
 					}
 				}
 			}
@@ -1018,15 +1019,35 @@ namespace System
 
 					try {
 						destinationArray.SetValueImpl (srcval, dest_pos + i);
+					} catch (ArgumentException) {
+						throw CreateArrayTypeMismatchException ();
 					} catch {
-						if (src_type.Equals (typeof (Object)))
-							throw new InvalidCastException ();
-						else
-							throw new ArrayTypeMismatchException (String.Format (Locale.GetText (
-								"(Types: source={0};  target={1})"), src_type.FullName, dst_type.FullName));
+						if (CanAssignArrayElement (src_type, dst_type))
+							throw;
+
+						throw CreateArrayTypeMismatchException ();
 					}
 				}
 			}
+		}
+
+		static Exception CreateArrayTypeMismatchException ()
+		{
+			return new ArrayTypeMismatchException ();
+		}
+
+		static bool CanAssignArrayElement (Type source, Type target)
+		{
+			if (source.IsValueType)
+				return source.IsAssignableFrom (target);
+
+			if (source.IsInterface)
+				return !target.IsValueType;
+
+			if (target.IsInterface)
+				return !source.IsValueType;
+
+			return source.IsAssignableFrom (target) || target.IsAssignableFrom (source);
 		}
 
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
