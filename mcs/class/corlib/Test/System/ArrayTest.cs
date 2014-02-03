@@ -2510,6 +2510,27 @@ public class ArrayTest
 		}
 	}
 
+	[Test]
+	public void Sort_NullValues ()
+	{
+		var s = new [] { "a", null, "b", null };
+		Array.Sort (s, (a, b) => {
+			if (a == null) {
+				return b == null ? 0 : 1;
+			}
+
+			if (b == null)
+				return -1;
+
+			return a.CompareTo (b);
+		});
+
+		Assert.AreEqual ("a", s [0], "#1");
+		Assert.AreEqual ("b", s [1], "#2");
+		Assert.IsNull (s [2], "#3");
+		Assert.IsNull (s [3], "#4");
+	}
+
 	[Test] // #616416
 	public void SortNonGenericDoubleItems () {
             double[] doubleValues = new double[11];

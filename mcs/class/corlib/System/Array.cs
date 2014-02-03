@@ -2557,11 +2557,7 @@ namespace System
 					// switch to insertion sort
 					for (i = low + 1; i <= high; i++) {
 						for (k = i; k > low; k--) {
-							// if keys[k] >= keys[k-1], break
-							if (array[k-1] == null)
-								break;
-							
-							if (array[k] != null && compare (array[k], array[k-1]) >= 0)
+							if (compare (array[k], array[k-1]) >= 0)
 								break;
 							
 							swap<T> (array, k - 1, k);
