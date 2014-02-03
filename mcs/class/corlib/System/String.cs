@@ -1795,7 +1795,14 @@ namespace System
 				}
 				if (count == 0)
 					return this;
-				int nlen = this.length + ((newValue.length - oldValue.length) * count);
+				int nlen = 0;
+				checked {
+					try {
+						nlen = this.length + ((newValue.length - oldValue.length) * count);
+					} catch (OverflowException) {
+						throw new OutOfMemoryException ();
+					}
+				}
 				String tmp = InternalAllocateStr (nlen);
 
 				int curPos = 0, lastReadPos = 0;
@@ -2165,7 +2172,10 @@ namespace System
 			if (str1 == null || str1.Length == 0)
 				return str0; 
 
-			String tmp = InternalAllocateStr (str0.length + str1.length);
+			int nlen = str0.length + str1.length;
+			if (nlen < 0)
+				throw new OutOfMemoryException ();
+			String tmp = InternalAllocateStr (nlen);
 
 			fixed (char *dest = tmp, src = str0)
 				CharCopy (dest, src, str0.length);
@@ -2199,7 +2209,13 @@ namespace System
 				}
 			}
 
-			String tmp = InternalAllocateStr (str0.length + str1.length + str2.length);
+			int nlen = str0.length + str1.length;
+			if (nlen < 0)
+				throw new OutOfMemoryException ();
+			nlen += str2.length;
+			if (nlen < 0)
+				throw new OutOfMemoryException ();
+			String tmp = InternalAllocateStr (nlen);
 
 			if (str0.Length != 0) {
 				fixed (char *dest = tmp, src = str0) {
@@ -2234,6 +2250,15 @@ namespace System
 			if (str3 == null)
 				str3 = Empty;
 
+			int nlen = str0.length + str1.length;
+			if (nlen < 0)
+				throw new OutOfMemoryException ();
+			nlen += str2.length;
+			if (nlen < 0)
+				throw new OutOfMemoryException ();
+			nlen += str3.length;
+			if (nlen < 0)
+				throw new OutOfMemoryException ();
 			String tmp = InternalAllocateStr (str0.length + str1.length + str2.length + str3.length);
 
 			if (str0.Length != 0) {
@@ -2275,6 +2300,8 @@ namespace System
 				if (args[i] != null) {
 					strings[i] = args[i].ToString ();
 					len += strings[i].length;
+					if (len < 0)
+						throw new OutOfMemoryException ();
 				}
 			}
 
@@ -2291,6 +2318,8 @@ namespace System
 				String s = values[i];
 				if (s != null)
 					len += s.length;
+					if (len < 0)
+						throw new OutOfMemoryException ();
 			}
 
 			return ConcatInternal (values, len);
@@ -2300,6 +2329,8 @@ namespace System
 		{
 			if (length == 0)
 				return Empty;
+			if (length < 0)
+				throw new OutOfMemoryException ();
 
 			String tmp = InternalAllocateStr (length);
 
@@ -2330,7 +2361,12 @@ namespace System
 				return this;
 			if (this.Length == 0)
 				return value;
-			String tmp = InternalAllocateStr (this.length + value.length);
+
+			int nlen = this.length + value.length;
+			if (nlen < 0)
+				throw new OutOfMemoryException ();
+
+			String tmp = InternalAllocateStr (nlen);
 
 			fixed (char *dest = tmp, src = this, val = value) {
 				char *dst = dest;
@@ -2680,6 +2716,8 @@ namespace System
 				if (v == null)
 					continue;
 				len += v.Length;
+				if (len < 0)
+					throw new OutOfMemoryException ();
 				stringList.Add (v);
 			}
 			return ConcatInternal (stringList.ToArray (), len);
@@ -2696,6 +2734,8 @@ namespace System
 			foreach (var v in values){
 				string sr = v.ToString ();
 				len += sr.Length;
+				if (len < 0)
+					throw new OutOfMemoryException ();
 				stringList.Add (sr);
 			}
 			return ConcatInternal (stringList.ToArray (), len);
