@@ -334,6 +334,9 @@ namespace System.Windows.Threading {
 		[SecurityCritical]
 		public static void Run ()
 		{
+			// Set Continue, because the previous run could clean
+			// this flag by Dispatcher.ExitAllFrames.
+			main_execution_frame.Continue = true;
 			PushFrame (main_execution_frame);
 		}
 		
@@ -358,6 +361,10 @@ namespace System.Windows.Threading {
 			frame.dispatcher = dis;
 
 			dis.RunFrame (frame);
+
+			frame.dispatcher = null;
+			dis.current_frame = frame.ParentFrame;
+			frame.ParentFrame = null;
 		}
 
 		void PerformShutdown ()
@@ -380,7 +387,7 @@ namespace System.Windows.Threading {
 		
 		void RunFrame (DispatcherFrame frame)
 		{
-			do {
+			while (frame.Continue) {
 				while (queue_bits != 0){
 					for (int i = TOP_PRIO; i > 0 && queue_bits != 0; i--){
 						int current_bit = queue_bits & (1 << i);
@@ -391,6 +398,11 @@ namespace System.Windows.Threading {
 								DispatcherOperation task;
 								
 								lock (q){
+									// if we are done with this queue, leave.
+									if (q.Count == 0){
+										queue_bits &= ~current_bit;
+										break;
+									}
 									task = (DispatcherOperation) q.Dequeue ();
 								}
 								
@@ -411,20 +423,15 @@ namespace System.Windows.Threading {
 									PerformShutdown ();
 									return;
 								}
-								
-								// if we are done with this queue, leave.
-								lock (q){
-									if (q.Count == 0){
-										queue_bits &= ~(1 << i);
-										break;
-									}
-								}
 
 								//
 								// If a higher-priority task comes in, go do that
 								//
 								if (current_bit < (queue_bits & ~current_bit))
+								{
+									i = TOP_PRIO + 1; // for-loop decreases by one
 									break;
+								}
 							} while (true);
 						}
 					}
@@ -433,7 +440,7 @@ namespace System.Windows.Threading {
 				
 				wait.WaitOne ();
 				wait.Reset ();
-			} while (frame.Continue);
+			}
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
