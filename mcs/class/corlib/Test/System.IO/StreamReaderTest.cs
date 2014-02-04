@@ -838,6 +838,13 @@ public class StreamReaderTest
 		}
 	}
 
+	[Test]
+	public void NullStream ()
+	{
+		var buffer = new char[2];
+		Assert.AreEqual (0, StreamReader.Null.ReadBlock (buffer, 0, buffer.Length));
+	}
+
 #if NET_4_5
 	[Test]
 	public void ReadLineAsync ()

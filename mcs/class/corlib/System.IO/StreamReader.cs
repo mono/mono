@@ -44,6 +44,11 @@ namespace System.IO {
 	{
 		sealed class NullStreamReader : StreamReader
 		{
+			internal NullStreamReader ()
+			{
+				base_stream = Stream.Null;
+			}
+
 			public override int Peek ()
 			{
 				return -1;
