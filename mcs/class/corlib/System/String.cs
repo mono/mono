@@ -1596,7 +1596,13 @@ namespace System
 
 			fixed (char* dest = tmp, src = this) {
 				char* padPos = dest;
-				char* padTo = dest + (totalWidth - length);
+				char* padTo;
+				try {
+					padTo = checked (dest + (totalWidth - length));
+				} catch (OverflowException) {
+					throw new OutOfMemoryException ();
+				}
+
 				while (padPos != padTo)
 					*padPos++ = paddingChar;
 
@@ -1627,10 +1633,14 @@ namespace System
 			fixed (char* dest = tmp, src = this) {
 				CharCopy (dest, src, length);
 
-				char* padPos = dest + length;
-				char* padTo = dest + totalWidth;
-				while (padPos != padTo)
-					*padPos++ = paddingChar;
+				try {
+					char* padPos = checked (dest + length);
+					char* padTo = checked (dest + totalWidth);
+					while (padPos != padTo)
+						*padPos++ = paddingChar;
+				} catch (OverflowException) {
+					throw new OutOfMemoryException ();
+				}
 			}
 			return tmp;
 		}
