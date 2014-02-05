@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 using System.IO;
 using System.Collections;
@@ -567,6 +565,18 @@ namespace MonoTests.System.Collections.Generic
 			Assert.IsTrue (Throws (delegate { var x = e4.Current; GC.KeepAlive (x); }));
 		}
 
+		[Test]
+		public void ValueEnumeratorNotEmpty_Current ()
+		{
+			var dict = new SortedDictionary<int, string> ();
+			dict.Add (1, "1");
+
+			IEnumerator e = new SortedDictionary<int, string>.ValueCollection (dict).GetEnumerator ();
+			while (e.MoveNext()) {}
+
+			Assert.IsTrue (Throws (delegate { var x = e.Current; }));
+		}
+
 		// Serialize a dictionary out and deserialize it back in again
 		SortedDictionary<int, string> Roundtrip(SortedDictionary<int, string> dic)
 		{
@@ -635,5 +645,3 @@ namespace MonoTests.System.Collections.Generic
 		}
 	}
 }
-
-#endif

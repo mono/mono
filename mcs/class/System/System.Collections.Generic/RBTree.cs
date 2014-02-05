@@ -693,8 +693,8 @@ namespace System.Collections.Generic
 			internal void check_current ()
 			{
 				check_version ();
-				if (pennants == null)
-					throw new InvalidOperationException ("state invalid before the first MoveNext()");
+				if (pennants == null || pennants.Count == 0)
+					throw new InvalidOperationException ("Enumerator is before the first element or after the last element");
 			}
 		}
 	}
