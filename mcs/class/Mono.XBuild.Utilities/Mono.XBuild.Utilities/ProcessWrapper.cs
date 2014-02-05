@@ -3,11 +3,11 @@ using System;
 using System.Threading;
 using System.Diagnostics;
 
-namespace Microsoft.Build.Utilities
+namespace Mono.XBuild.Utilities
 {
-	internal delegate void ProcessEventHandler(object sender, string message);
+	public delegate void ProcessEventHandler(object sender, string message);
 
-	internal class ProcessWrapper : Process, IProcessAsyncOperation
+	public class ProcessWrapper : Process, IProcessAsyncOperation
 	{
 		private Thread captureOutputThread;
 		private Thread captureErrorThread;

@@ -1,5 +1,5 @@
 //
-// IProcessAsyncOperation.cs
+// IAsyncOperation.cs
 //
 // Author:
 //   Lluis Sanchez Gual
@@ -25,15 +25,16 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-using System;
-
-namespace Microsoft.Build.Utilities
+namespace Mono.XBuild.Utilities
 {
-	internal interface IProcessAsyncOperation: IAsyncOperation
+	public interface IAsyncOperation
 	{
-		int ExitCode { get; }
+		void Cancel ();
+		void WaitForCompleted ();
+		bool IsCompleted { get; }
+		bool Success { get; }
+		bool SuccessWithWarnings { get; }
 
-		int ProcessId { get; }
+		event OperationHandler Completed;
 	}
 }

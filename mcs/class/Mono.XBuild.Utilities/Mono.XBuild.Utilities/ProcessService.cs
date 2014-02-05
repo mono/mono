@@ -1,5 +1,3 @@
-#if NET_2_0
-
 using System;
 using System.IO;
 using System.Collections;
@@ -8,9 +6,9 @@ using System.Diagnostics;
 
 using SCS = System.Collections.Specialized;
 
-namespace Microsoft.Build.Utilities
+namespace Mono.XBuild.Utilities
 {
-	internal static class ProcessService {
+	public static class ProcessService {
 		static SCS.ProcessStringDictionary globalEnvironmentVariablesOverride;
 
 		public static StringDictionary GlobalEnvironmentVariblesOverride {
@@ -142,26 +140,4 @@ namespace Microsoft.Build.Utilities
 		}
 
 	}
-
-	class OutWriter
-	{
-		TextWriter writer;
-
-		public OutWriter (TextWriter writer)
-		{
-			this.writer = writer;
-		}
-
-		public void WriteOut (object sender, string s)
-		{
-			writer.Write (s);
-		}
-
-		public static ProcessEventHandler GetWriteHandler (TextWriter tw)
-		{
-			return tw != null ? new ProcessEventHandler(new OutWriter (tw).WriteOut) : null;
-		}
-	}
 }
-
-#endif

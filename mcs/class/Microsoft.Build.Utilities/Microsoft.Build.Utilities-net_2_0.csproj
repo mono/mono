@@ -53,10 +53,6 @@
     <Compile Include="Microsoft.Build.Utilities\CommandLineBuilder.cs" />
     <Compile Include="Microsoft.Build.Utilities\HostObjectInitializationStatus.cs" />
     <Compile Include="Microsoft.Build.Utilities\Logger.cs" />
-    <Compile Include="Microsoft.Build.Utilities\IAsyncOperation.cs" />
-    <Compile Include="Microsoft.Build.Utilities\IProcessAsyncOperation.cs" />
-    <Compile Include="Microsoft.Build.Utilities\ProcessWrapper.cs" />
-    <Compile Include="Microsoft.Build.Utilities\ProcessService.cs" />
     <Compile Include="Microsoft.Build.Utilities\TargetDotNetFrameworkVersion.cs" />
     <Compile Include="Microsoft.Build.Utilities\Task.cs" />
     <Compile Include="Microsoft.Build.Utilities\TaskItem.cs" />
