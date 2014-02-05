@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 ALL_PROGRAMS = mono-api-info.exe
 
-CECIL = ../../class/lib/net_1_1/Mono.Cecil.dll
+CECIL = ../../class/lib/net_2_0/Mono.Cecil.dll
 
 COMMON_SOURCES = \
 	AssemblyResolver.cs	\

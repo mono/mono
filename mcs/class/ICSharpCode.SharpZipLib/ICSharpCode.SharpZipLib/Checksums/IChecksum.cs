@@ -63,10 +63,10 @@ namespace ICSharpCode.SharpZipLib.Checksums
 		/// <summary>
 		/// Adds one byte to the data checksum.
 		/// </summary>
-		/// <param name = "bval">
+		/// <param name = "value">
 		/// the data value to add. The high byte of the int is ignored.
 		/// </param>
-		void Update(int bval);
+		void Update(int value);
 		
 		/// <summary>
 		/// Updates the data checksum with the bytes taken from the array.
@@ -79,15 +79,15 @@ namespace ICSharpCode.SharpZipLib.Checksums
 		/// <summary>
 		/// Adds the byte array to the data checksum.
 		/// </summary>
-		/// <param name = "buf">
-		/// the buffer which contains the data
+		/// <param name = "buffer">
+		/// The buffer which contains the data
 		/// </param>
-		/// <param name = "off">
-		/// the offset in the buffer where the data starts
+		/// <param name = "offset">
+		/// The offset in the buffer where the data starts
 		/// </param>
-		/// <param name = "len">
-		/// the length of the data
+		/// <param name = "count">
+		/// the number of data bytes to add.
 		/// </param>
-		void Update(byte[] buf, int off, int len);
+		void Update(byte[] buffer, int offset, int count);
 	}
 }

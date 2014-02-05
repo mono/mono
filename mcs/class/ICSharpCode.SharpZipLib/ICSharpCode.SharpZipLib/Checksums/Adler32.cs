@@ -91,9 +91,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
 		/// <summary>
 		/// largest prime smaller than 65536
 		/// </summary>
-		readonly static uint BASE = 65521;
-		
-		uint checksum;
+		const uint BASE = 65521;
 		
 		/// <summary>
 		/// Returns the Adler32 data checksum computed so far.
@@ -122,19 +120,19 @@ namespace ICSharpCode.SharpZipLib.Checksums
 		}
 		
 		/// <summary>
-		/// Updates the checksum with the byte b.
+		/// Updates the checksum with a byte value.
 		/// </summary>
-		/// <param name="bval">
+		/// <param name="value">
 		/// The data value to add. The high byte of the int is ignored.
 		/// </param>
-		public void Update(int bval)
+		public void Update(int value)
 		{
 			// We could make a length 1 byte array and call update again, but I
 			// would rather not have that overhead
 			uint s1 = checksum & 0xFFFF;
 			uint s2 = checksum >> 16;
 			
-			s1 = (s1 + ((uint)bval & 0xFF)) % BASE;
+			s1 = (s1 + ((uint)value & 0xFF)) % BASE;
 			s2 = (s1 + s2) % BASE;
 			
 			checksum = (s2 << 16) + s1;
@@ -148,46 +146,81 @@ namespace ICSharpCode.SharpZipLib.Checksums
 		/// </param>
 		public void Update(byte[] buffer)
 		{
+			if ( buffer == null ) {
+				throw new ArgumentNullException("buffer");
+			}
+
 			Update(buffer, 0, buffer.Length);
 		}
 		
 		/// <summary>
 		/// Updates the checksum with the bytes taken from the array.
 		/// </summary>
-		/// <param name="buf">
+		/// <param name="buffer">
 		/// an array of bytes
 		/// </param>
-		/// <param name="off">
+		/// <param name="offset">
 		/// the start of the data used for this update
 		/// </param>
-		/// <param name="len">
+		/// <param name="count">
 		/// the number of bytes to use for this update
 		/// </param>
-		public void Update(byte[] buf, int off, int len)
+		public void Update(byte[] buffer, int offset, int count)
 		{
-			if (buf == null) {
-				throw new ArgumentNullException("buf");
+			if (buffer == null) {
+				throw new ArgumentNullException("buffer");
 			}
 			
-			if (off < 0 || len < 0 || off + len > buf.Length) {
-				throw new ArgumentOutOfRangeException();
+			if (offset < 0) {
+#if NETCF_1_0
+				throw new ArgumentOutOfRangeException("offset");
+#else
+				throw new ArgumentOutOfRangeException("offset", "cannot be negative");
+#endif
+			}
+
+			if ( count < 0 )
+			{
+#if NETCF_1_0
+				throw new ArgumentOutOfRangeException("count");
+#else
+				throw new ArgumentOutOfRangeException("count", "cannot be negative");
+#endif
+			}
+
+			if (offset >= buffer.Length)
+			{
+#if NETCF_1_0
+				throw new ArgumentOutOfRangeException("offset");
+#else
+				throw new ArgumentOutOfRangeException("offset", "not a valid index into buffer");
+#endif
 			}
 			
+			if (offset + count > buffer.Length)
+			{
+#if NETCF_1_0
+				throw new ArgumentOutOfRangeException("count");
+#else
+				throw new ArgumentOutOfRangeException("count", "exceeds buffer size");
+#endif
+			}
+
 			//(By Per Bothner)
 			uint s1 = checksum & 0xFFFF;
 			uint s2 = checksum >> 16;
 			
-			while (len > 0) {
+			while (count > 0) {
 				// We can defer the modulo operation:
 				// s1 maximally grows from 65521 to 65521 + 255 * 3800
 				// s2 maximally grows by 3800 * median(s1) = 2090079800 < 2^31
 				int n = 3800;
-				if (n > len) {
-					n = len;
+				if (n > count) {
+					n = count;
 				}
-				len -= n;
+				count -= n;
 				while (--n >= 0) {
-					s1 = s1 + (uint)(buf[off++] & 0xFF);
+					s1 = s1 + (uint)(buffer[offset++] & 0xff);
 					s2 = s2 + s1;
 				}
 				s1 %= BASE;
@@ -196,5 +229,9 @@ namespace ICSharpCode.SharpZipLib.Checksums
 			
 			checksum = (s2 << 16) | s1;
 		}
+
+		#region Instance Fields
+		uint checksum;
+		#endregion
 	}
 }
