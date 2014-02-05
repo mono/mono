@@ -199,6 +199,8 @@ namespace MonoTests.System.IO
 			testPath = Path.Combine (testPath, "two" + DSC);
 			expected = "one" + DSC + "two" + DSC;
 			Assert.AreEqual (expected, testPath, "Combine #07");
+
+			Assert.AreEqual ("a", Path.Combine (new [] { "a", "" }), "Combine #08");
 		}
 
 		[Test]
