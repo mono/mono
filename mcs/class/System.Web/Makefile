@@ -260,7 +260,7 @@ OTHER_LIB_MCS_FLAGS = -d:INSIDE_SYSTEM_WEB -nowarn:618 -r:System.Configuration.d
 endif
 
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
-OTHER_LIB_MCS_FLAGS += -r:System.Web.ApplicationServices.dll
+OTHER_LIB_MCS_FLAGS += -r:System.Web.ApplicationServices.dll -r:System.ComponentModel.DataAnnotations
 OTHER_RES += $(RESOURCE_FILES_4)
 endif
 

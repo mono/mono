@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -11,7 +11,6 @@
     <OutputPath>bin\Debug\System.ComponentModel.DataAnnotations-net_4_5</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
-    
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>
     </RootNamespace>
@@ -60,6 +59,7 @@
     <Compile Include="System.ComponentModel.DataAnnotations\AssociatedMetadataTypeTypeDescriptionProvider.cs" />
     <Compile Include="System.ComponentModel.DataAnnotations\AssociatedMetadataTypeTypeDescriptor.cs" />
     <Compile Include="System.ComponentModel.DataAnnotations\AssociationAttribute.cs" />
+    <Compile Include="System.ComponentModel.DataAnnotations\BindableTypeAttribute.cs" />
     <Compile Include="System.ComponentModel.DataAnnotations\ConcurrencyCheckAttribute.cs" />
     <Compile Include="System.ComponentModel.DataAnnotations\ControlParameters.cs" />
     <Compile Include="System.ComponentModel.DataAnnotations\CustomValidationAttribute.cs" />
@@ -84,12 +84,14 @@
     <Compile Include="System.ComponentModel.DataAnnotations\StringLengthAttribute.cs" />
     <Compile Include="System.ComponentModel.DataAnnotations\TimestampAttribute.cs" />
     <Compile Include="System.ComponentModel.DataAnnotations\UIHintAttribute.cs" />
+    <Compile Include="System.ComponentModel.DataAnnotations\UrlAttribute.cs" />
     <Compile Include="System.ComponentModel.DataAnnotations\ValidationAttribute.cs" />
     <Compile Include="System.ComponentModel.DataAnnotations\ValidationAttributeCollectionExtensions.cs" />
     <Compile Include="System.ComponentModel.DataAnnotations\ValidationContext.cs" />
     <Compile Include="System.ComponentModel.DataAnnotations\ValidationException.cs" />
     <Compile Include="System.ComponentModel.DataAnnotations\ValidationResult.cs" />
-    <Compile Include="System.ComponentModel.DataAnnotations\Validator.cs" />  </ItemGroup>
+    <Compile Include="System.ComponentModel.DataAnnotations\Validator.cs" />
+  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -99,7 +101,6 @@
   -->
   <PropertyGroup>
     <PreBuildEvent>
-
     </PreBuildEvent>
     <PostBuildEvent>
       xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D

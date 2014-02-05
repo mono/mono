@@ -35,6 +35,9 @@ namespace System.Web.Security
 {
 	public static class MachineKey
 	{
+#if NET_4_5
+		[Obsolete ("This method is obsolete and is only provided for compatibility with existing code. It is recommended that new code use the Protect and Unprotect methods instead.")]
+#endif
 		public static byte[] Decode (string encodedData, MachineKeyProtection protectionOption)
 		{
 			if (encodedData == null)
@@ -77,7 +80,9 @@ namespace System.Web.Security
 			
 			return result;
 		}
-
+#if NET_4_5
+		[Obsolete ("This method is obsolete and is only provided for compatibility with existing code. It is recommended that new code use the Protect and Unprotect methods instead.")]
+#endif
 		public static string Encode (byte[] data, MachineKeyProtection protectionOption)
 		{
 			if (data == null)
@@ -104,5 +109,28 @@ namespace System.Web.Security
 			
 			return MachineKeySectionUtils.GetHexString (result);
 		}
+
+#if NET_4_5
+		[MonoTODO ("We ignore the purposes parameter for now, this allowes Unprotect to be called on any data")]
+		public static byte [] Protect (byte [] userData, params string [] purposes)
+		{
+			// TODO: generate key from purposes and use it
+			if (userData == null)
+				throw new ArgumentNullException ("userData");
+			var config = WebConfigurationManager.GetWebApplicationSection ("system.web/machineKey") as MachineKeySection;
+			return MachineKeySectionUtils.EncryptSign (config, userData);
+		}
+
+		[MonoTODO ("We ignore the purposes parameter for now, this allowes Unprotect to be called on any data")]
+		public static byte [] Unprotect (byte [] userData, params string [] purposes)
+		{
+			// TODO: generate key from purposes and use it
+			if (userData == null)
+				throw new ArgumentNullException ("userData");
+
+			var config = WebConfigurationManager.GetWebApplicationSection ("system.web/machineKey") as MachineKeySection;
+			return MachineKeySectionUtils.VerifyDecrypt (config, userData);
+		}
+#endif
 	}
 }

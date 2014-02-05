@@ -1,10 +1,8 @@
-//
-// System.Web.Configuration.MachineKeyCompatibilityMode
+﻿//
+// WebManagementEvent.cs
 //
 // Authors:
-//	Sebastien Pouliot  <sebastien@ximian.com>
-//
-// Copyright (C) 2010 Novell, Inc (http://www.novell.com)
+//	Matthias Dittrich <matthi.d@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,15 +23,37 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Security.Permissions;
 
-namespace System.Web.Configuration {
+namespace System.Web.Management {
 
-	public enum MachineKeyCompatibilityMode {
-		Framework20SP1 = 0,
-		Framework20SP2 = 1,
-#if NET_4_5
-		Framework45 = 2
-#endif
+	[PermissionSet(SecurityAction.InheritanceDemand, Unrestricted = true)]
+	public class WebManagementEvent : WebBaseEvent {
+		public WebProcessInformation ProcessInformation
+		{
+			get
+			{
+				return WebProcessInformation.Current;
+			}
+		}
+
+		static WebManagementEvent ()
+		{
+		}
+
+		protected internal WebManagementEvent (string message, object eventSource, int eventCode)
+			: base (message, eventSource, eventCode)
+		{
+		}
+
+		protected internal WebManagementEvent (string message, object eventSource, int eventCode, int eventDetailCode)
+			: base (message, eventSource, eventCode, eventDetailCode)
+		{
+		}
 	}
 }
-

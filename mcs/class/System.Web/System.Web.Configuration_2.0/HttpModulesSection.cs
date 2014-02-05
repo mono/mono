@@ -64,6 +64,23 @@ namespace System.Web.Configuration
 			}
 		}
 
+		internal ModuleManager LoadModules ()
+		{
+			ModuleManager manager = new ModuleManager ();
+			foreach (HttpModuleAction item in Modules) {
+				Type type = HttpApplication.LoadType (item.Type); 
+				if (type == null) {
+					/* XXX should we throw here? */
+					continue;
+				}
+				manager.Add (new ModuleLoader (item.Name, type));
+			}
+			{
+				manager.Add (new ModuleLoader ("DefaultAuthentication", typeof (DefaultAuthenticationModule)));
+			}
+			return manager;
+		}
+
 		/* stolen from the 1.0 S.W.Config ModulesConfiguration.cs */
 		internal HttpModuleCollection LoadModules (HttpApplication app)
 		{

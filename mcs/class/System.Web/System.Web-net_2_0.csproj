@@ -362,6 +362,12 @@
     <Compile Include="System.Web.Management\WebBaseEvent.cs" />
     <Compile Include="System.Web.Management\WebEventCodes.cs" />
     <Compile Include="System.Web.Management\WebEventFormatter.cs" />
+    <Compile Include="System.Web.Management\WebBaseErrorEvent.cs" />
+    <Compile Include="System.Web.Management\WebManagementEvent.cs" />
+    <Compile Include="System.Web.Management\WebProcessInformation.cs" />
+    <Compile Include="System.Web.Management\WebRequestErrorEvent.cs" />
+    <Compile Include="System.Web.Management\WebRequestInformation.cs" />
+    <Compile Include="System.Web.Management\WebThreadInformation.cs" />
     <Compile Include="System.Web.Profile\CustomProviderDataAttribute.cs" />
     <Compile Include="System.Web.Profile\DefaultProfile.cs" />
     <Compile Include="System.Web.Profile\ProfileAuthenticationOption.cs" />

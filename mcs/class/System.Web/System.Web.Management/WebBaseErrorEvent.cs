@@ -1,10 +1,8 @@
-//
-// System.Web.Configuration.MachineKeyCompatibilityMode
+﻿//
+// WebBaseErrorEvent.cs
 //
 // Authors:
-//	Sebastien Pouliot  <sebastien@ximian.com>
-//
-// Copyright (C) 2010 Novell, Inc (http://www.novell.com)
+//	Matthias Dittrich <matthi.d@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,15 +23,34 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace System.Web.Configuration {
+namespace System.Web.Management {
+	public class WebBaseErrorEvent : WebManagementEvent {
+		private Exception exception;
 
-	public enum MachineKeyCompatibilityMode {
-		Framework20SP1 = 0,
-		Framework20SP2 = 1,
-#if NET_4_5
-		Framework45 = 2
-#endif
+		public Exception ErrorException
+		{
+			get
+			{
+				return this.exception;
+			}
+		}
+
+		protected internal WebBaseErrorEvent (string message, object eventSource, int eventCode, Exception exception)
+			: base (message, eventSource, eventCode)
+		{
+			this.exception = exception;
+		}
+
+		protected internal WebBaseErrorEvent (string message, object eventSource, int eventCode, int eventDetailCode, Exception exception)
+			: base (message, eventSource, eventCode, eventDetailCode)
+		{
+			this.exception = exception;
+		}
 	}
 }
-

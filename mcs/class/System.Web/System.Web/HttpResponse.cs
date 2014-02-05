@@ -339,6 +339,8 @@ namespace System.Web
 		
 		public bool IsClientConnected {
 			get {
+				if (closed)
+					return false; // prevent objectdisposed exceptions on this property
 				if (WorkerRequest == null)
 					return true; // yep that's true
 
@@ -374,7 +376,10 @@ namespace System.Web
 				redirect_location = value;
 			}
 		}
-		
+#if NET_4_5
+		public bool SuppressFormsAuthenticationRedirect { get; set; }
+#endif
+
 		public string Status {
 			get { return String.Concat (status_code.ToString (), " ", StatusDescription); }
 

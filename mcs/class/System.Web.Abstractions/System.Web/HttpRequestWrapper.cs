@@ -207,7 +207,11 @@ namespace System.Web
 		public override int TotalBytes {
 			get { return w.TotalBytes; }
 		}
-
+#if NET_4_5
+		public override UnvalidatedRequestValuesBase Unvalidated {
+			get { return new UnvalidatedRequestValuesWrapper (w.Unvalidated); }
+		}
+#endif
 		public override Uri Url {
 			get { return w.Url; }
 		}
@@ -231,7 +235,12 @@ namespace System.Web
 		public override string [] UserLanguages {
 			get { return w.UserLanguages; }
 		}
-
+#if NET_4_5
+		public override void Abort ()
+		{
+			w.Abort ();
+		}
+#endif
 		public override byte [] BinaryRead (int count)
 		{
 			return w.BinaryRead (count);

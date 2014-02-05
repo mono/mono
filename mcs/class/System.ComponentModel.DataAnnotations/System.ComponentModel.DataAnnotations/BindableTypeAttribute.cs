@@ -1,10 +1,8 @@
-//
-// System.Web.Configuration.MachineKeyCompatibilityMode
+﻿//
+// BindableTypeAttribute.cs
 //
 // Authors:
-//	Sebastien Pouliot  <sebastien@ximian.com>
-//
-// Copyright (C) 2010 Novell, Inc (http://www.novell.com)
+//	Matthias Dittrich <matthi.d@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,15 +23,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System;
+using System.Runtime;
 
-namespace System.Web.Configuration {
+namespace System.ComponentModel.DataAnnotations {
+	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum, AllowMultiple = false, Inherited = true)]
+	public sealed class BindableTypeAttribute : Attribute {
+		public bool IsBindable { get; set; }
 
-	public enum MachineKeyCompatibilityMode {
-		Framework20SP1 = 0,
-		Framework20SP2 = 1,
-#if NET_4_5
-		Framework45 = 2
-#endif
+		public BindableTypeAttribute ()
+		{
+			this.IsBindable = true;
+		}
 	}
 }
-
