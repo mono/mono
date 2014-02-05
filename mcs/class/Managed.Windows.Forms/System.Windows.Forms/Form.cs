@@ -1978,10 +1978,12 @@ namespace System.Windows.Forms {
 
 		protected override void Dispose(bool disposing)
 		{
-			for (int i = 0; i < owned_forms.Count; i++)
-				((Form)owned_forms[i]).Owner = null;
+			if (owned_forms != null) {
+				for (int i = 0; i < owned_forms.Count; i++)
+					((Form)owned_forms[i]).Owner = null;
 
-			owned_forms.Clear ();
+				owned_forms.Clear ();
+			}
 			Owner = null;
 			base.Dispose (disposing);
 			
