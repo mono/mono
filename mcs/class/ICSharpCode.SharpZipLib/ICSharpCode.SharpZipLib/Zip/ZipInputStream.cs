@@ -37,16 +37,21 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 
+// HISTORY
+//	2010-05-25	Z-1663	Fixed exception when testing local header compressed size of -1
+
 using System;
-using System.Text;
 using System.IO;
 
 using ICSharpCode.SharpZipLib.Checksums;
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
-using ICSharpCode.SharpZipLib.Encryption;
 
-namespace ICSharpCode.SharpZipLib.Zip 
+#if !NETCF_1_0
+using ICSharpCode.SharpZipLib.Encryption;
+#endif
+
+namespace ICSharpCode.SharpZipLib.Zip
 {
 	/// <summary>
 	/// This is an InflaterInputStream that reads the files baseInputStream an zip archive
@@ -70,61 +75,83 @@ namespace ICSharpCode.SharpZipLib.Zip
 	/// {
 	/// 	public static void Main(string[] args)
 	/// 	{
-	/// 		ZipInputStream s = new ZipInputStream(File.OpenRead(args[0]));
-	/// 		
-	/// 		ZipEntry theEntry;
-	/// 		while ((theEntry = s.GetNextEntry()) != null) {
-	/// 			int size = 2048;
-	/// 			byte[] data = new byte[2048];
-	/// 			
-	/// 			Console.Write("Show contents (y/n) ?");
-	/// 			if (Console.ReadLine() == "y") {
-	/// 				while (true) {
-	/// 					size = s.Read(data, 0, data.Length);
-	/// 					if (size > 0) {
-	/// 						Console.Write(new ASCIIEncoding().GetString(data, 0, size));
-	/// 					} else {
-	/// 						break;
-	/// 					}
-	/// 				}
+	/// 		using ( ZipInputStream s = new ZipInputStream(File.OpenRead(args[0]))) {
+	///
+	/// 			ZipEntry theEntry;
+    /// 			const int size = 2048;
+    /// 			byte[] data = new byte[2048];
+    ///
+    /// 			while ((theEntry = s.GetNextEntry()) != null) {
+	///                 if ( entry.IsFile ) {
+	/// 				    Console.Write("Show contents (y/n) ?");
+	/// 				    if (Console.ReadLine() == "y") {
+	/// 				    	while (true) {
+	/// 				    		size = s.Read(data, 0, data.Length);
+	/// 				    		if (size > 0) {
+	/// 				    			Console.Write(new ASCIIEncoding().GetString(data, 0, size));
+	/// 				    		} else {
+	/// 				    			break;
+	/// 				    		}
+	/// 				    	}
+	/// 				    }
+    /// 				}
 	/// 			}
 	/// 		}
-	/// 		s.Close();
 	/// 	}
-	/// }	
+	/// }
 	/// </code>
 	/// </example>
 	public class ZipInputStream : InflaterInputStream
 	{
-		// Delegate for reading bytes from a stream.
-		delegate int ReaderDelegate(byte[] b, int offset, int length);
+		#region Instance Fields
+
+		/// <summary>
+		/// Delegate for reading bytes from a stream.
+		/// </summary>
+		delegate int ReadDataHandler(byte[] b, int offset, int length);
 
 		/// <summary>
 		/// The current reader this instance.
 		/// </summary>
-		ReaderDelegate internalReader;
+		ReadDataHandler internalReader;
 
 		Crc32 crc = new Crc32();
-		ZipEntry entry = null;
+		ZipEntry entry;
 		
 		long size;
 		int method;
 		int flags;
-		string password = null;
+		string password;
+		#endregion
 
+		#region Constructors
 		/// <summary>
 		/// Creates a new Zip input stream, for reading a zip archive.
 		/// </summary>
-		public ZipInputStream(Stream baseInputStream) : base(baseInputStream, new Inflater(true))
+		/// <param name="baseInputStream">The underlying <see cref="Stream"/> providing data.</param>
+		public ZipInputStream(Stream baseInputStream)
+			: base(baseInputStream, new Inflater(true))
 		{
-			internalReader = new ReaderDelegate(InitialRead);
+			internalReader = new ReadDataHandler(ReadingNotAvailable);
 		}
 
+        /// <summary>
+        /// Creates a new Zip input stream, for reading a zip archive.
+        /// </summary>
+        /// <param name="baseInputStream">The underlying <see cref="Stream"/> providing data.</param>
+        /// <param name="bufferSize">Size of the buffer.</param>
+        public ZipInputStream( Stream baseInputStream, int bufferSize )
+            : base(baseInputStream, new Inflater(true), bufferSize)
+        {
+            internalReader = new ReadDataHandler(ReadingNotAvailable);
+        }
+        #endregion
 		
 		/// <summary>
 		/// Optional password used for encryption when non-null
 		/// </summary>
-		public string Password 
+		/// <value>A password for all encrypted <see cref="ZipEntry">entries </see> in this <see cref="ZipInputStream"/></value>
+		public string Password
 		{
 			get {
 				return password;
@@ -136,7 +163,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		
 
 		/// <summary>
-		/// Gets a value indicating if the entry can be decompressed
+		/// Gets a value indicating if there is a current entry and it can be decompressed
 		/// </summary>
 		/// <remarks>
 		/// The entry can only be decompressed if the library supports the zip features required to extract it.
@@ -144,7 +171,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// </remarks>
 		public bool CanDecompressEntry {
 			get {
-				return entry != null && entry.Version <= ZipConstants.VERSION_MADE_BY;
+				return (entry != null) && entry.CanDecompress;
 			}
 		}
 		
@@ -161,7 +188,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// Input stream is closed
 		/// </exception>
 		/// <exception cref="ZipException">
-		/// Password is not set, password is invalid, compression method is invalid, 
+		/// Password is not set, password is invalid, compression method is invalid,
 		/// version required to extract is not supported
 		/// </exception>
 		public ZipEntry GetNextEntry()
@@ -176,22 +203,23 @@ namespace ICSharpCode.SharpZipLib.Zip
 
 			int header = inputBuffer.ReadLeInt();
 
-			if (header == ZipConstants.CENSIG || 
-			    header == ZipConstants.ENDSIG || 
-			    header == ZipConstants.CENDIGITALSIG || 
-			    header == ZipConstants.CENSIG64) {
-			    // No more individual entries exist
+			if (header == ZipConstants.CentralHeaderSignature ||
+				header == ZipConstants.EndOfCentralDirectorySignature ||
+				header == ZipConstants.CentralHeaderDigitalSignature ||
+				header == ZipConstants.ArchiveExtraDataSignature ||
+				header == ZipConstants.Zip64CentralFileHeaderSignature) {
+				// No more individual entries exist
 				Close();
 				return null;
 			}
 
 			// -jr- 07-Dec-2003 Ignore spanning temporary signatures if found
-			// SPANNINGSIG is same as descriptor signature and is untested as yet.
-			if (header == ZipConstants.SPANTEMPSIG || header == ZipConstants.SPANNINGSIG) {
+			// Spanning signature is same as descriptor signature and is untested as yet.
+			if ( (header == ZipConstants.SpanningTempSignature) || (header == ZipConstants.SpanningSignature) ) {
 				header = inputBuffer.ReadLeInt();
 			}
 			
-			if (header != ZipConstants.LOCSIG) {
+			if (header != ZipConstants.LocalHeaderSignature) {
 				throw new ZipException("Wrong Local header signature: 0x" + String.Format("{0:X}", header));
 			}
 			
@@ -211,18 +239,10 @@ namespace ICSharpCode.SharpZipLib.Zip
 			byte[] buffer = new byte[nameLen];
 			inputBuffer.ReadRawBuffer(buffer);
 			
-			string name = ZipConstants.ConvertToString(buffer);
+			string name = ZipConstants.ConvertToStringExt(flags, buffer);
 			
 			entry = new ZipEntry(name, versionRequiredToExtract);
 			entry.Flags = flags;
-			
-			if (method == (int)CompressionMethod.Stored && (!isCrypted && csize != size || (isCrypted && csize - ZipConstants.CRYPTO_HEADER_SIZE != size))) {
-				throw new ZipException("Stored, but compressed != uncompressed");
-			}
-			
-			if (method != (int)CompressionMethod.Stored && method != (int)CompressionMethod.Deflated) {
-				throw new ZipException("Unknown compression method " + method);
-			}
 			
 			entry.CompressionMethod = (CompressionMethod)method;
 			
@@ -230,10 +250,13 @@ namespace ICSharpCode.SharpZipLib.Zip
 				entry.Crc  = crc2 & 0xFFFFFFFFL;
 				entry.Size = size & 0xFFFFFFFFL;
 				entry.CompressedSize = csize & 0xFFFFFFFFL;
+
+				entry.CryptoCheckValue = (byte)((crc2 >> 24) & 0xff);
+
 			} else {
 				
-				// This allows for GNU, WinZip and possibly other archives, the PKZIP spec says these are zero
-				// under these circumstances.
+				// This allows for GNU, WinZip and possibly other archives, the PKZIP spec
+				// says these values are zero under these circumstances.
 				if (crc2 != 0) {
 					entry.Crc = crc2 & 0xFFFFFFFFL;
 				}
@@ -241,38 +264,98 @@ namespace ICSharpCode.SharpZipLib.Zip
 				if (size != 0) {
 					entry.Size = size & 0xFFFFFFFFL;
 				}
+
 				if (csize != 0) {
 					entry.CompressedSize = csize & 0xFFFFFFFFL;
 				}
+
+				entry.CryptoCheckValue = (byte)((dostime >> 8) & 0xff);
 			}
 			
 			entry.DosTime = dostime;
-			
+
+			// If local header requires Zip64 is true then the extended header should contain
+			// both values.
+
+			// Handle extra data if present.  This can set/alter some fields of the entry.
 			if (extraLen > 0) {
 				byte[] extra = new byte[extraLen];
 				inputBuffer.ReadRawBuffer(extra);
 				entry.ExtraData = extra;
 			}
 
-			internalReader = new ReaderDelegate(InitialRead);
+			entry.ProcessExtraData(true);
+			if ( entry.CompressedSize >= 0 ) {
+				csize = entry.CompressedSize;
+			}
+
+			if ( entry.Size >= 0 ) {
+				size = entry.Size;
+			}
+
+			if (method == (int)CompressionMethod.Stored && (!isCrypted && csize != size || (isCrypted && csize - ZipConstants.CryptoHeaderSize != size))) {
+				throw new ZipException("Stored, but compressed != uncompressed");
+			}
+
+			// Determine how to handle reading of data if this is attempted.
+			if (entry.IsCompressionMethodSupported()) {
+				internalReader = new ReadDataHandler(InitialRead);
+			} else {
+				internalReader = new ReadDataHandler(ReadingNotSupported);
+			}
+
 			return entry;
 		}
 		
-		// Read data descriptor at the end of compressed data.
+		/// <summary>
+		/// Read data descriptor at the end of compressed data.
+		/// </summary>
 		void ReadDataDescriptor()
 		{
-			if (inputBuffer.ReadLeInt() != ZipConstants.EXTSIG) {
+			if (inputBuffer.ReadLeInt() != ZipConstants.DataDescriptorSignature) {
 				throw new ZipException("Data descriptor signature not found");
 			}
 			
 			entry.Crc = inputBuffer.ReadLeInt() & 0xFFFFFFFFL;
-			csize = inputBuffer.ReadLeInt();
-			size = inputBuffer.ReadLeInt();
 			
-			entry.Size = size & 0xFFFFFFFFL;
-			entry.CompressedSize = csize & 0xFFFFFFFFL;
+			if ( entry.LocalHeaderRequiresZip64 ) {
+				csize = inputBuffer.ReadLeLong();
+				size = inputBuffer.ReadLeLong();
+			} else {
+				csize = inputBuffer.ReadLeInt();
+				size = inputBuffer.ReadLeInt();
+			}
+			entry.CompressedSize = csize;
+			entry.Size = size;
 		}
-		
+
+		/// <summary>
+		/// Complete cleanup as the final part of closing.
+		/// </summary>
+		/// <param name="testCrc">True if the crc value should be tested</param>
+		void CompleteCloseEntry(bool testCrc)
+		{
+			StopDecrypting();
+
+			if ((flags & 8) != 0) {
+				ReadDataDescriptor();
+			}
+
+			size = 0;
+
+			if ( testCrc &&
+				((crc.Value & 0xFFFFFFFFL) != entry.Crc) && (entry.Crc != -1)) {
+				throw new ZipException("CRC mismatch");
+			}
+
+			crc.Reset();
+
+			if (method == (int)CompressionMethod.Deflated) {
+				inf.Reset();
+			}
+			entry = null;
+		}
+
 		/// <summary>
 		/// Closes the current zip entry and moves to the next one.
 		/// </summary>
@@ -285,7 +368,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		public void CloseEntry()
 		{
 			if (crc == null) {
-				throw new InvalidOperationException("Closed.");
+				throw new InvalidOperationException("Closed");
 			}
 			
 			if (entry == null) {
@@ -295,38 +378,35 @@ namespace ICSharpCode.SharpZipLib.Zip
 			if (method == (int)CompressionMethod.Deflated) {
 				if ((flags & 8) != 0) {
 					// We don't know how much we must skip, read until end.
-					byte[] tmp = new byte[2048];
-					while (Read(tmp, 0, tmp.Length) > 0)
-						;
-					// read will close this entry
+					byte[] tmp = new byte[4096];
+
+					// Read will close this entry
+					while (Read(tmp, 0, tmp.Length) > 0) {
+					}
 					return;
 				}
+
 				csize -= inf.TotalIn;
-				inputBuffer.Available -= inf.RemainingInput;	
+				inputBuffer.Available += inf.RemainingInput;
 			}
 
-			if (inputBuffer.Available > csize && csize >= 0) {
+			if ( (inputBuffer.Available > csize) && (csize >= 0) ) {
 				inputBuffer.Available = (int)((long)inputBuffer.Available - csize);
 			} else {
 				csize -= inputBuffer.Available;
 				inputBuffer.Available = 0;
 				while (csize != 0) {
-					int skipped = (int)base.Skip(csize & 0xFFFFFFFFL);
-					
+					long skipped = base.Skip(csize);
+
 					if (skipped <= 0) {
 						throw new ZipException("Zip archive ends early.");
 					}
-					
+
 					csize -= skipped;
 				}
 			}
-			
-			size = 0;
-			crc.Reset();
-			if (method == (int)CompressionMethod.Deflated) {
-				inf.Reset();
-			}
-			entry = null;
+
+			CompleteCloseEntry(false);
 		}
 		
 		/// <summary>
@@ -340,17 +420,33 @@ namespace ICSharpCode.SharpZipLib.Zip
 		}
 		
 		/// <summary>
+		/// Returns the current size that can be read from the current entry if available
+		/// </summary>
+		/// <exception cref="ZipException">Thrown if the entry size is not known.</exception>
+		/// <exception cref="InvalidOperationException">Thrown if no entry is currently available.</exception>
+		public override long Length
+		{
+			get {
+				if ( entry != null ) {
+					if ( entry.Size >= 0 ) {
+						return entry.Size;
+					} else {
+						throw new ZipException("Length not available for the current entry");
+					}
+				}
+				else {
+					throw new InvalidOperationException("No current entry");
+				}
+			}
+
+		}
+
+		/// <summary>
 		/// Reads a byte from the current zip entry.
 		/// </summary>
 		/// <returns>
 		/// The byte or -1 if end of stream is reached.
 		/// </returns>
-		/// <exception name="System.IO.IOException">
-		/// An i/o error occured.
-		/// </exception>
-		/// <exception name="ICSharpCode.SharpZipLib.ZipException">
-		/// The deflated stream is corrupted.
-		/// </exception>
 		public override int ReadByte()
 		{
 			byte[] b = new byte[1];
@@ -360,69 +456,124 @@ namespace ICSharpCode.SharpZipLib.Zip
 			return b[0] & 0xff;
 		}
 
-		// Perform the initial read on an entry which may include 
-		// reading encryption headers and setting up inflation.
+		/// <summary>
+		/// Handle attempts to read by throwing an <see cref="InvalidOperationException"/>.
+		/// </summary>
+		/// <param name="destination">The destination array to store data in.</param>
+		/// <param name="offset">The offset at which data read should be stored.</param>
+		/// <param name="count">The maximum number of bytes to read.</param>
+		/// <returns>Returns the number of bytes actually read.</returns>
+		int ReadingNotAvailable(byte[] destination, int offset, int count)
+		{
+			throw new InvalidOperationException("Unable to read from this stream");
+		}
+
+		/// <summary>
+		/// Handle attempts to read from this entry by throwing an exception
+		/// </summary>
+		int ReadingNotSupported(byte[] destination, int offset, int count)
+		{
+			throw new ZipException("The compression method for this entry is not supported");
+		}
+
+		/// <summary>
+		/// Perform the initial read on an entry which may include
+		/// reading encryption headers and setting up inflation.
+		/// </summary>
+		/// <param name="destination">The destination to fill with data read.</param>
+		/// <param name="offset">The offset to start reading at.</param>
+		/// <param name="count">The maximum number of bytes to read.</param>
+		/// <returns>The actual number of bytes read.</returns>
 		int InitialRead(byte[] destination, int offset, int count)
 		{
-			if (entry.Version > ZipConstants.VERSION_MADE_BY) {
-				throw new ZipException("Libray cannot extract this entry version required (" + entry.Version.ToString() + ")");
+			if ( !CanDecompressEntry ) {
+				throw new ZipException("Library cannot extract this entry. Version required is (" + entry.Version.ToString() + ")");
 			}
 			
-			// test for encryption
+			// Handle encryption if required.
 			if (entry.IsCrypted) {
-		
+#if NETCF_1_0
+				throw new ZipException("Encryption not supported for Compact Framework 1.0");
+#else
 				if (password == null) {
 					throw new ZipException("No password set.");
 				}
-			
+
 				// Generate and set crypto transform...
 				PkzipClassicManaged managed = new PkzipClassicManaged();
-				byte[] key = PkzipClassic.GenerateKeys(Encoding.ASCII.GetBytes(password));
-					
+				byte[] key = PkzipClassic.GenerateKeys(ZipConstants.ConvertToArray(password));
+
 				inputBuffer.CryptoTransform = managed.CreateDecryptor(key, null);
-			
-				byte[] cryptbuffer = new byte[ZipConstants.CRYPTO_HEADER_SIZE];
-				inputBuffer.ReadClearTextBuffer(cryptbuffer, 0, ZipConstants.CRYPTO_HEADER_SIZE);
-					
-				if ((flags & 8) == 0) {
-					if (cryptbuffer[ZipConstants.CRYPTO_HEADER_SIZE - 1] != (byte)(entry.Crc >> 24)) {
-						throw new ZipException("Invalid password");
-					}
+
+				byte[] cryptbuffer = new byte[ZipConstants.CryptoHeaderSize];
+				inputBuffer.ReadClearTextBuffer(cryptbuffer, 0, ZipConstants.CryptoHeaderSize);
+
+				if (cryptbuffer[ZipConstants.CryptoHeaderSize - 1] != entry.CryptoCheckValue) {
+					throw new ZipException("Invalid password");
 				}
-				else {
-					if (cryptbuffer[ZipConstants.CRYPTO_HEADER_SIZE - 1] != (byte)((entry.DosTime >> 8) & 0xff)) {
-						throw new ZipException("Invalid password");
-					}
+
+				if (csize >= ZipConstants.CryptoHeaderSize) {
+					csize -= ZipConstants.CryptoHeaderSize;
 				}
-					
-				if (csize >= ZipConstants.CRYPTO_HEADER_SIZE) {
-					csize -= ZipConstants.CRYPTO_HEADER_SIZE;
+				else if ( (entry.Flags & (int)GeneralBitFlags.Descriptor) == 0 ) {
+					throw new ZipException(string.Format("Entry compressed size {0} too small for encryption", csize));
 				}
-			} 
-			else {
+#endif
+			} else {
+#if !NETCF_1_0
 				inputBuffer.CryptoTransform = null;
+#endif
 			}
-			
-			if (method == (int)CompressionMethod.Deflated && inputBuffer.Available > 0) {
-				inputBuffer.SetInflaterInput(inf);
+
+			if ((csize > 0) || ((flags & (int)GeneralBitFlags.Descriptor) != 0)) {
+				if ((method == (int)CompressionMethod.Deflated) && (inputBuffer.Available > 0)) {
+					inputBuffer.SetInflaterInput(inf);
+				}
+
+				internalReader = new ReadDataHandler(BodyRead);
+				return BodyRead(destination, offset, count);
 			}
-			
-			internalReader = new ReaderDelegate(BodyRead);
-			return BodyRead(destination, offset, count);
+			else {
+				internalReader = new ReadDataHandler(ReadingNotAvailable);
+				return 0;
+			}
 		}
 		
-
 		/// <summary>
 		/// Read a block of bytes from the stream.
 		/// </summary>
-		/// <param name="destination">The destination for the bytes.</param>
-		/// <param name="index">The index to start storing data.</param>
+		/// <param name="buffer">The destination for the bytes.</param>
+		/// <param name="offset">The index to start storing data.</param>
 		/// <param name="count">The number of bytes to attempt to read.</param>
 		/// <returns>Returns the number of bytes read.</returns>
 		/// <remarks>Zero bytes read means end of stream.</remarks>
-		public override int Read(byte[] destination, int index, int count)
+		public override int Read(byte[] buffer, int offset, int count)
 		{
-			return internalReader(destination, index, count);
+			if ( buffer == null ) {
+				throw new ArgumentNullException("buffer");
+			}
+
+			if ( offset < 0 ) {
+#if NETCF_1_0
+				throw new ArgumentOutOfRangeException("offset");
+#else
+				throw new ArgumentOutOfRangeException("offset", "Cannot be negative");
+#endif
+			}
+
+			if ( count < 0 ) {
+#if NETCF_1_0
+				throw new ArgumentOutOfRangeException("count");
+#else
+				throw new ArgumentOutOfRangeException("count", "Cannot be negative");
+#endif
+			}
+
+			if ( (buffer.Length - offset) < count ) {
+				throw new ArgumentException("Invalid offset/count combination");
+			}
+
+			return internalReader(buffer, offset, count);
 		}
 
 		/// <summary>
@@ -440,73 +591,73 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// <exception cref="InvalidOperationException">
 		/// The stream is not open.
 		/// </exception>
-		public int BodyRead(byte[] b, int off, int len)
+		int BodyRead(byte[] buffer, int offset, int count)
 		{
-			if (crc == null) {
-				throw new InvalidOperationException("Closed.");
+			if ( crc == null ) {
+				throw new InvalidOperationException("Closed");
 			}
 			
-			if (entry == null || len <= 0 ) {
+			if ( (entry == null) || (count <= 0) ) {
 				return 0;
+			}
+
+			if ( offset + count > buffer.Length ) {
+				throw new ArgumentException("Offset + count exceeds buffer size");
 			}
 			
 			bool finished = false;
 			
 			switch (method) {
 				case (int)CompressionMethod.Deflated:
-					len = base.Read(b, off, len);
-					if (len <= 0) {
+					count = base.Read(buffer, offset, count);
+					if (count <= 0) {
 						if (!inf.IsFinished) {
-							throw new ZipException("Inflater not finished!?");
+							throw new ZipException("Inflater not finished!");
 						}
 						inputBuffer.Available = inf.RemainingInput;
-						
-						if ((flags & 8) == 0 && (inf.TotalIn != csize || inf.TotalOut != size)) {
-							throw new ZipException("size mismatch: " + csize + ";" + size + " <-> " + inf.TotalIn + ";" + inf.TotalOut);
+
+						// A csize of -1 is from an unpatched local header
+						if ((flags & 8) == 0 &&
+							(inf.TotalIn != csize && csize != 0xFFFFFFFF && csize != -1 || inf.TotalOut != size)) {
+							throw new ZipException("Size mismatch: " + csize + ";" + size + " <-> " + inf.TotalIn + ";" + inf.TotalOut);
 						}
 						inf.Reset();
 						finished = true;
 					}
 					break;
-				
+
 				case (int)CompressionMethod.Stored:
-					if (len > csize && csize >= 0) {
-						len = (int)csize;
+					if ( (count > csize) && (csize >= 0) ) {
+						count = (int)csize;
 					}
-					len = inputBuffer.ReadClearTextBuffer(b, off, len);
-					if (len > 0) {
-						csize -= len;
-						size -= len;
+
+					if ( count > 0 ) {
+						count = inputBuffer.ReadClearTextBuffer(buffer, offset, count);
+						if (count > 0) {
+							csize -= count;
+							size -= count;
+						}
 					}
 					
 					if (csize == 0) {
 						finished = true;
 					} else {
-						if (len < 0) {
+						if (count < 0) {
 							throw new ZipException("EOF in stored block");
 						}
 					}
 					break;
 			}
-				
-			if (len > 0) {
-				crc.Update(b, off, len);
+
+			if (count > 0) {
+				crc.Update(buffer, offset, count);
 			}
 			
 			if (finished) {
-				StopDecrypting();
-				
-				if ((flags & 8) != 0) {
-					ReadDataDescriptor();
-				}
-				
-				if ((crc.Value & 0xFFFFFFFFL) != entry.Crc && entry.Crc != -1) {
-					throw new ZipException("CRC mismatch");
-				}
-				crc.Reset();
-				entry = null;
+				CompleteCloseEntry(true);
 			}
-			return len;
+
+			return count;
 		}
 
 		/// <summary>
@@ -514,9 +665,11 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// </summary>
 		public override void Close()
 		{
-			base.Close();
+			internalReader = new ReadDataHandler(ReadingNotAvailable);
 			crc = null;
 			entry = null;
+
+			base.Close();
 		}
 	}
 }
