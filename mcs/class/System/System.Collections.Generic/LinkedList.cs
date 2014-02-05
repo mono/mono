@@ -308,14 +308,18 @@ namespace System.Collections.Generic
 		
 		public void RemoveFirst ()
 		{
-			if (first != null)
-				Remove (first);
+			if (first == null)
+				throw new InvalidOperationException ();
+
+			Remove (first);
 		}
 		
 		public void RemoveLast ()
 		{
-			if (first != null)
-				Remove (first.back);			
+			if (first == null)
+				throw new InvalidOperationException ();
+
+			Remove (first.back);			
 		}
 		
 		void ICollection <T>.Add (T value)
@@ -424,19 +428,20 @@ namespace System.Collections.Generic
 				if (version != list.version)
 					throw new InvalidOperationException ("list modified");
 
-				if (current == null)
-					current = list.first;
-				else
-				{				
+				if (current == null) {
+					if (index < 0)
+						current = list.first;
+				} else {
 					current = current.forward;
 					if (current == list.first)
 						current = null;
 				}
-				if (current == null)
-				{
-					index = -1;
+
+				if (current == null) {
+					index = int.MaxValue;
 					return false;
 				}
+
 				++index;
 				return true;
 			}
