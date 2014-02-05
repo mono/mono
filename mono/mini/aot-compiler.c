@@ -4,10 +4,12 @@
  * Author:
  *   Dietmar Maurer (dietmar@ximian.com)
  *   Zoltan Varga (vargaz@gmail.com)
+ *   Andrés G. Aragoneses (aaragon@sinenomine.net)
  *
  * (C) 2002 Ximian, Inc.
  * Copyright 2003-2011 Novell, Inc 
  * Copyright 2011 Xamarin Inc (http://www.xamarin.com)
+ * Copyright 2014 Sine Nomine Associates (http://www.sinenomine.net)
  */
 
 /* Remaining AOT-only work:
@@ -297,6 +299,9 @@ get_patch_name (int info)
 
 static char*
 get_plt_entry_debug_sym (MonoAotCompile *acfg, MonoJumpInfo *ji, GHashTable *cache);
+
+static void
+add_types_from_method_header (MonoAotCompile *acfg, MonoMethod *method);
 
 /* Wrappers around the image writer functions */
 
@@ -3876,8 +3881,10 @@ add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth,
 		}
 		
 		if (mono_method_is_generic_sharable_full (method, FALSE, FALSE, use_gsharedvt))
-			/* Already added */
+		{
+			add_types_from_method_header (acfg, method);
 			continue;
+		}
 
 		if (method->is_generic)
 			/* FIXME: */
