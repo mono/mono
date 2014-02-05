@@ -4224,16 +4224,13 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// <returns>Returns the temporary output stream.</returns>
 		public override Stream GetTemporaryOutput()
 		{
-			if ( temporaryName_ != null ) {
-				temporaryName_ = GetTempFileName(temporaryName_, true);
-				temporaryStream_ = File.Open(temporaryName_, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
-			}
-			else {
-				// Determine where to place files based on internal strategy.
-				// Currently this is always done in system temp directory.
-				temporaryName_ = Path.GetTempFileName();
-				temporaryStream_ = File.Open(temporaryName_, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
-			}
+			if (temporaryStream_ != null)
+				return temporaryStream_;
+
+			// Determine where to place files based on internal strategy.
+			// Currently this is always done in system temp directory.
+			string tempName = Path.GetTempFileName();
+			temporaryStream_ = File.Open(tempName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
 
 			return temporaryStream_;
 		}
@@ -4245,19 +4242,21 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// the final storage for the archive.</returns>
 		public override Stream ConvertTemporaryToFinal()
 		{
-			if ( temporaryStream_ == null ) {
+			var stream = GetTemporaryOutput ();
+			if ( stream == null || !(stream is FileStream) ) {
 				throw new ZipException("No temporary stream has been created");
 			}
 
 			Stream result = null;
+			string tempName = ((FileStream)stream).Name;
 
 			string moveTempName = GetTempFileName(fileName_, false);
 			bool newFileCreated = false;
 
 			try	{
-				temporaryStream_.Close();
+				stream.Close();
 				File.Move(fileName_, moveTempName);
-				File.Move(temporaryName_, fileName_);
+				File.Move(tempName, fileName_);
 				newFileCreated = true;
 				File.Delete(moveTempName);
 
@@ -4269,7 +4268,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 				// Try to roll back changes...
 				if ( !newFileCreated ) {
 					File.Move(moveTempName, fileName_);
-					File.Delete(temporaryName_);
+					File.Delete(moveTempName);
 				}
 
 				throw;
@@ -4287,10 +4286,13 @@ namespace ICSharpCode.SharpZipLib.Zip
 		{
 			stream.Close();
 
-			temporaryName_ = GetTempFileName(fileName_, true);
-			File.Copy(fileName_, temporaryName_, true);
-			
-			temporaryStream_ = new FileStream(temporaryName_,
+			string tempName = GetTempFileName(fileName_, true);
+			File.Copy(fileName_, tempName, true);
+
+			if ( temporaryStream_ != null )
+				temporaryStream_.Close ();
+
+			temporaryStream_ = new FileStream(tempName,
 				FileMode.Open,
 				FileAccess.ReadWrite);
 			return temporaryStream_;
@@ -4375,7 +4377,6 @@ namespace ICSharpCode.SharpZipLib.Zip
 		#region Instance Fields
 		Stream temporaryStream_;
 		string fileName_;
-		string temporaryName_;
 		#endregion
 	}
 
