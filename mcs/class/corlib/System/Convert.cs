@@ -2400,7 +2400,7 @@ namespace System {
 					}
 				}
 
-				result = (fromBase * result + digitValue);
+				result = fromBase * result + digitValue;
 				chars ++;
 			}
 

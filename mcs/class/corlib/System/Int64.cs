@@ -205,7 +205,7 @@ namespace System {
 			NumberFormatInfo nfi = null;
 			if (fp != null) {
 				Type typeNFI = typeof (System.Globalization.NumberFormatInfo);
-				nfi = (NumberFormatInfo) fp.GetFormat (typeNFI);
+				nfi = fp.GetFormat (typeNFI) as NumberFormatInfo;
 			} 
 			if (nfi == null)
 				nfi = Thread.CurrentThread.CurrentCulture.NumberFormat;
