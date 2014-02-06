@@ -74,9 +74,11 @@ namespace System.Reflection {
 		Version version;
 		ProcessorArchitecture processor_architecture = ProcessorArchitecture.None;
 		#endregion
-		AssemblyContentType contentType;
 #pragma warning restore 169		
-		
+
+#if NET_4_5
+		AssemblyContentType contentType;
+#endif		
 		public AssemblyName ()
 		{
 			// defaults
