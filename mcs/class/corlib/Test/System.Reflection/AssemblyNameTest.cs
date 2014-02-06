@@ -357,7 +357,7 @@ public class AssemblyNameTest {
 		Assert.AreEqual (AssemblyHashAlgorithm.SHA1, an.HashAlgorithm, "HashAlgorithm");
 		Assert.IsNull (an.KeyPair, "KeyPair");
 		Assert.IsNotNull (an.Name, "Name");
-		Assert.AreNotEqual (ProcessorArchitecture.MSIL, an.ProcessorArchitecture, "PA"); // FIXME: AreEqual
+		Assert.AreEqual (ProcessorArchitecture.MSIL, an.ProcessorArchitecture, "PA");
 		Assert.AreEqual (new Version (0, 0, 0, 0), an.Version, "Version");
 		Assert.AreEqual (AssemblyVersionCompatibility.SameMachine,
 			an.VersionCompatibility, "VersionCompatibility");
