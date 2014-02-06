@@ -206,7 +206,7 @@ namespace System.Reflection {
 			int ret = ctorInfo == null ? 13 : (ctorInfo.GetHashCode () << 16);
 			// argument order-dependent
 			if (ctorArgs != null) {
-				for (int i = 0; i < ctorArgs.Count; i++)
+				for (int i = 0; i < ctorArgs.Count; i++) {
 					ret += ret ^ 7 + ctorArgs [i].GetHashCode () << (i * 4);
 				}
 			}
