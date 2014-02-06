@@ -508,8 +508,14 @@ namespace Mono.Data.Sqlite
 
         if (pr.FuncType != FunctionType.Collation)
           sqlbase.CreateFunction(pr.Name, pr.Arguments, (f is SqliteFunctionEx), f._InvokeFunc, f._StepFunc, f._FinalFunc);
-        else
-          sqlbase.CreateCollation(pr.Name, f._CompareFunc, f._CompareFunc16);
+        else {
+#if MONOTOUCH
+          GCHandle handle = GCHandle.Alloc (f);
+          sqlbase.CreateCollation(pr.Name, collation_callback, collation_callback16, GCHandle.ToIntPtr (handle));
+#else
+          sqlbase.CreateCollation(pr.Name, f._CompareFunc, f._CompareFunc16, IntPtr.Zero);
+#endif
+        }
 
 
         lFunctions.Add(f);
@@ -520,6 +526,24 @@ namespace Mono.Data.Sqlite
 
       return arFunctions;
     }
+
+#if MONOTOUCH
+    [MonoTouch.MonoPInvokeCallback (typeof (SQLiteCollation))]
+    internal static int collation_callback (IntPtr puser, int len1, IntPtr pv1, int len2, IntPtr pv2)
+    {
+      var handle = GCHandle.FromIntPtr (puser);
+      var func = (SqliteFunction) handle.Target;
+      return func._CompareFunc (IntPtr.Zero, len1, pv1, len2, pv2);
+    }
+
+    [MonoTouch.MonoPInvokeCallback (typeof (SQLiteCollation))]
+    internal static int collation_callback16 (IntPtr puser, int len1, IntPtr pv1, int len2, IntPtr pv2)
+    {
+      var handle = GCHandle.FromIntPtr (puser);
+      var func = (SqliteFunction) handle.Target;
+      return func._CompareFunc16 (IntPtr.Zero, len1, pv1, len2, pv2);
+    }
+#endif
   }
 
   /// <summary>

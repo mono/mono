@@ -126,7 +126,7 @@ namespace Mono.Data.Sqlite
     internal abstract DateTime GetDateTime(SqliteStatement stmt, int index);
     internal abstract bool IsNull(SqliteStatement stmt, int index);
 
-    internal abstract void CreateCollation(string strCollation, SQLiteCollation func, SQLiteCollation func16);
+    internal abstract void CreateCollation(string strCollation, SQLiteCollation func, SQLiteCollation func16, IntPtr user_data);
     internal abstract void CreateFunction(string strFunction, int nArgs, bool needCollSeq, SQLiteCallback func, SQLiteCallback funcstep, SQLiteFinalCallback funcfinal);
     internal abstract CollationSequence GetCollationSequence(SqliteFunction func, IntPtr context);
     internal abstract int ContextCollateCompare(CollationEncodingEnum enc, IntPtr context, string s1, string s2);
