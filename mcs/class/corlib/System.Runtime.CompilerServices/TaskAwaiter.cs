@@ -104,7 +104,7 @@ namespace System.Runtime.CompilerServices
 					cont_task.SetupScheduler (TaskScheduler.Current);
 				}
 
-				cont_task.Schedule ();
+				cont_task.Schedule (true);
 			}
 		}
 
