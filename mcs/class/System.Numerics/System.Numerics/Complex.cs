@@ -231,7 +231,7 @@ namespace System.Numerics {
 		public static Complex Cosh (Complex value)
 		{
 			return new Complex (Math.Cosh (value.real) * Math.Cos (value.imaginary),
-					    -Math.Sinh (value.real)  * Math.Sin (value.imaginary));
+					    Math.Sinh (value.real)  * Math.Sin (value.imaginary));
 		}
 		
 		public static Complex Negate (Complex value)
