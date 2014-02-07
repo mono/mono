@@ -27,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -39,6 +40,19 @@ namespace MonoTests.System.Collections.Generic
 	[TestFixture]
 	public class ComparerTest
 	{
+		class CustomComparer : IComparable, IComparable<object>
+		{
+			int IComparable<object>.CompareTo (object other)
+			{
+				throw new NotImplementedException ();
+			}
+
+			int IComparable.CompareTo (object obj)
+			{
+				return 9;
+			}
+		}
+
 #if NET_4_5
 		[Test]
 		public void Create ()
@@ -57,6 +71,29 @@ namespace MonoTests.System.Collections.Generic
 			}
 		}
 #endif
+
+		[Test]
+		public void DefaultComparer_UserComparable ()
+		{
+			IComparer c = Comparer<object>.Default;
+			Assert.AreEqual (-9, c.Compare (new object (), new CustomComparer ()), "#1");
+			Assert.AreEqual (9, c.Compare (new CustomComparer (), new object ()), "#2");
+		}
+
+		[Test]
+		public void DefaultComparer_NotComparableArgument ()
+		{
+			IComparer c = Comparer<object>.Default;
+			try {
+				c.Compare (new object (), new object ());
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+			}
+
+			var o = new object ();
+			Assert.AreEqual (0, c.Compare (o, o), "#2");
+		}
+
 
 #if !NET_4_0 // FIXME: the blob contains the 2.0 mscorlib version
 
