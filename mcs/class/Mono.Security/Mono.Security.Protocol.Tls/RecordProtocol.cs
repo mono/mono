@@ -437,10 +437,88 @@ namespace Mono.Security.Protocol.Tls
 
 		public byte[] ReceiveRecord(Stream record)
 		{
+			if (this.context.ReceivedConnectionEnd)
+			{
+				throw new TlsException(
+					AlertDescription.InternalError,
+					"The session is finished and it's no longer valid.");
+			}
 
-			IAsyncResult ar = this.BeginReceiveRecord(record, null, null);
-			return this.EndReceiveRecord(ar);
+			record_processing.Reset ();
+			byte[] recordTypeBuffer = new byte[1];
 
+			int bytesRead = record.Read(recordTypeBuffer, 0, recordTypeBuffer.Length);
+
+			//We're at the end of the stream. Time to bail.
+			if (bytesRead == 0)
+			{
+				return null;
+			}
+
+			// Try to read the Record Content Type
+			int type = recordTypeBuffer[0];
+
+			// Set last handshake message received to None
+			this.context.LastHandshakeMsg = HandshakeType.ClientHello;
+
+			ContentType	contentType	= (ContentType)type;
+			byte[] buffer = this.ReadRecordBuffer(type, record);
+			if (buffer == null)
+			{
+				// record incomplete (at the moment)
+				return null;
+			}
+
+			// Decrypt message contents if needed
+			if (contentType == ContentType.Alert && buffer.Length == 2)
+			{
+			}
+			else if ((this.Context.Read != null) && (this.Context.Read.Cipher != null))
+			{
+				buffer = this.decryptRecordFragment (contentType, buffer);
+				DebugHelper.WriteLine ("Decrypted record data", buffer);
+			}
+
+			// Process record
+			switch (contentType)
+			{
+			case ContentType.Alert:
+				this.ProcessAlert((AlertLevel)buffer [0], (AlertDescription)buffer [1]);
+				if (record.CanSeek) 
+				{
+					// don't reprocess that memory block
+					record.SetLength (0); 
+				}
+				buffer = null;
+				break;
+
+			case ContentType.ChangeCipherSpec:
+				this.ProcessChangeCipherSpec();
+				break;
+
+			case ContentType.ApplicationData:
+				break;
+
+			case ContentType.Handshake:
+				TlsStream message = new TlsStream (buffer);
+				while (!message.EOF)
+				{
+					this.ProcessHandshakeMessage(message);
+				}
+				break;
+
+			case (ContentType)0x80:
+				this.context.HandshakeMessages.Write (buffer);
+				break;
+
+			default:
+				throw new TlsException(
+					AlertDescription.UnexpectedMessage,
+					"Unknown record received from server.");
+			}
+
+			record_processing.Set ();
+			return buffer;
 		}
 
 		private byte[] ReadRecordBuffer (int contentType, Stream record)
@@ -655,6 +733,57 @@ namespace Mono.Security.Protocol.Tls
 			}
 		}
 
+		public void SendChangeCipherSpec(Stream recordStream)
+		{
+			DebugHelper.WriteLine(">>>> Write Change Cipher Spec");
+
+			byte[] record = this.EncodeRecord (ContentType.ChangeCipherSpec, new byte[] { 1 });
+
+			// Send Change Cipher Spec message with the current cipher
+			// or as plain text if this is the initial negotiation
+			recordStream.Write(record, 0, record.Length);
+
+			Context ctx = this.context;
+
+			// Reset sequence numbers
+			ctx.WriteSequenceNumber = 0;
+
+			// all further data sent will be encrypted with the negotiated
+			// security parameters (now the current parameters)
+			if (ctx is ClientContext) {
+				ctx.StartSwitchingSecurityParameters (true);
+			} else {
+				ctx.EndSwitchingSecurityParameters (false);
+			}
+		}
+
+		public IAsyncResult BeginSendChangeCipherSpec(AsyncCallback callback, object state)
+		{
+			DebugHelper.WriteLine (">>>> Write Change Cipher Spec");
+
+			// Send Change Cipher Spec message with the current cipher
+			// or as plain text if this is the initial negotiation
+			return this.BeginSendRecord (ContentType.ChangeCipherSpec, new byte[] { 1 }, callback, state);
+		}
+
+		public void EndSendChangeCipherSpec (IAsyncResult asyncResult)
+		{
+			this.EndSendRecord (asyncResult);
+
+			Context ctx = this.context;
+
+			// Reset sequence numbers
+			ctx.WriteSequenceNumber = 0;
+
+			// all further data sent will be encrypted with the negotiated
+			// security parameters (now the current parameters)
+			if (ctx is ClientContext) {
+				ctx.StartSwitchingSecurityParameters (true);
+			} else {
+				ctx.EndSwitchingSecurityParameters (false);
+			}
+		}
+
 		public IAsyncResult BeginSendRecord(HandshakeType handshakeType, AsyncCallback callback, object state)
 		{
 			HandshakeMessage msg = this.GetMessage(handshakeType);
@@ -793,7 +922,22 @@ namespace Mono.Security.Protocol.Tls
 
 			return record.ToArray();
 		}
-		
+
+		public byte[] EncodeHandshakeRecord(HandshakeType handshakeType)
+		{
+			HandshakeMessage msg = this.GetMessage(handshakeType);
+
+			msg.Process();
+
+			var bytes = this.EncodeRecord (msg.ContentType, msg.EncodeMessage ());
+
+			msg.Update();
+
+			msg.Reset();
+
+			return bytes;
+		}
+				
 		#endregion
 
 		#region Cryptography Methods
