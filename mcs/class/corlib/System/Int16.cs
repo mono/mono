@@ -49,13 +49,7 @@ namespace System {
 			if (!(value is System.Int16))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Int16"));
 
-			short xv = (short) value;
-			if (m_value == xv)
-				return 0;
-			if (m_value > xv)
-				return 1;
-			else
-				return -1;
+			return CompareTo ((short) value);
 		}
 
 		public override bool Equals (object obj)
@@ -73,12 +67,7 @@ namespace System {
 
 		public int CompareTo (short value)
 		{
-			if (m_value == value)
-				return 0;
-			if (m_value > value)
-				return 1;
-			else
-				return -1;
+			return m_value - value;
 		}
 
 		public bool Equals (short obj)

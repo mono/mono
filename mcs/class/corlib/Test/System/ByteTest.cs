@@ -95,27 +95,28 @@ public class ByteTest
 		Thread.CurrentThread.CurrentCulture = old_culture;
 	}
 
+	[Test]
 	public void TestMinMax()
 	{
 		Assert.AreEqual(Byte.MinValue, MyByte2);
 		Assert.AreEqual(Byte.MaxValue, MyByte3);
 	}
-	
+
+	[Test]	
 	public void TestCompareTo()
 	{
-		Assert.IsTrue (MyByte3.CompareTo(MyByte2) > 0);
-		Assert.IsTrue (MyByte2.CompareTo(MyByte2) == 0);
-		Assert.IsTrue (MyByte1.CompareTo((object)(Byte)42) == 0);
-		Assert.IsTrue (MyByte2.CompareTo(MyByte3) < 0);
+		Assert.AreEqual (255, MyByte3.CompareTo(MyByte2), "#1");
+		Assert.AreEqual (0, MyByte2.CompareTo(MyByte2), "#2");
+		Assert.AreEqual (0, MyByte1.CompareTo((object)(Byte)42), "#3");
+		Assert.AreEqual (-255, MyByte2.CompareTo(MyByte3), "#4");
 		try {
 			MyByte2.CompareTo((object)100);
 			Assert.Fail ("Should raise a System.ArgumentException");
-		}
-		catch (Exception e) {
-			Assert.IsTrue (typeof(ArgumentException) == e.GetType());
+		} catch (ArgumentException e) {
 		}
 	}
 
+	[Test]
 	public void TestEquals()
 	{
 		Assert.IsTrue (MyByte1.Equals(MyByte1));
@@ -124,6 +125,7 @@ public class ByteTest
 		Assert.IsTrue (MyByte1.Equals(MyByte2) == false);
 	}
 	
+	[Test]
 	public void TestGetHashCode()
 	{
 		try {
@@ -136,6 +138,7 @@ public class ByteTest
 		}
 	}
 	
+	[Test]
 	public void TestParse()
 	{
 		//test Parse(string s)
@@ -201,7 +204,7 @@ public class ByteTest
 		Byte.Parse(OverInt.ToString());
 	}
 
-
+	[Test]
 	public void TestToString()
 	{
 		//test ToString()
