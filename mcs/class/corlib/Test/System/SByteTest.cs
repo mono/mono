@@ -48,16 +48,14 @@ public class SByteTest
 	[Test]
 	public void TestCompareTo()
 	{
-		Assert.IsTrue(MySByte3.CompareTo(MySByte2) > 0);
-		Assert.IsTrue(MySByte2.CompareTo(MySByte2) == 0);
-		Assert.IsTrue(MySByte1.CompareTo((SByte)(-42)) == 0);
-		Assert.IsTrue(MySByte2.CompareTo(MySByte3) < 0);
+		Assert.AreEqual(255, MySByte3.CompareTo(MySByte2), "#1");
+		Assert.AreEqual(0, MySByte2.CompareTo(MySByte2), "#2");
+		Assert.AreEqual(0, MySByte1.CompareTo((SByte)(-42)), "#3");
+		Assert.AreEqual(-255, MySByte2.CompareTo(MySByte3), "#4");
 		try {
 			MySByte2.CompareTo((object)(int)100);
 			Assert.Fail("Should raise a System.ArgumentException");
-		}
-		catch (Exception e) {
-			Assert.IsTrue(typeof(ArgumentException) == e.GetType());
+		} catch (ArgumentException e) {
 		}
 	}
 
