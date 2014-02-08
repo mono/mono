@@ -1674,9 +1674,8 @@ namespace System.Numerics {
 				return false;
 			}
 
-			//signed hex value
+			//Signed hex value (Two's Complement)
 			if (AllowHexSpecifier && negative) {
-				//number = 123456;
 				BigInteger mask = BigInteger.Pow(16, nDigits) - 1;
 				number = (number ^ mask) + 1;
 			}
