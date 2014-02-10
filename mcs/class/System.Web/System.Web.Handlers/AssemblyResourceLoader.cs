@@ -79,7 +79,9 @@ namespace System.Web.Handlers
 					if (!hashAlg.CanReuseTransform) {
 						canReuseHashAlg = false;
 						hashAlg = null;
+						return null;
 					}
+					hashAlg.Key = MachineKeySectionUtils.GetValidationKey (mks);
 				}
 
 				if (hashAlg != null)
