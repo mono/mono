@@ -1050,7 +1050,7 @@ public class TupleGen
 			Console.WriteLine ("\t\t\th{0} = comparer.GetHashCode ({1});", destVar, GetItemName (start));
 		} else {
 			int subCount = 1 << IntLog2 (count - 1);
-			computeHash (destVar, start, subCount);
+			WriteHash (destVar, start, subCount);
 			start += subCount;
 			count -= subCount;
 			if (count == 1) {
@@ -1060,13 +1060,6 @@ public class TupleGen
 				Console.WriteLine ("\t\t\th{0} = (h{0} << 5) + h{0} ^ h{1};", destVar, destVar + 1);
 			}
 		}
-	}
-
-	static void computeHash (int destVar, int start, int count)
-	{
-		Console.WriteLine ("\t\t\th{0} = comparer.GetHashCode (item{1});", destVar, start);
-		if (--count > 0)
-			throw new NotImplementedException ();
 	}
 
 	static string GetTypeName (int arity)
