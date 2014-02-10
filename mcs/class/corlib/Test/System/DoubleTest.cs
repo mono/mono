@@ -629,5 +629,16 @@ namespace MonoTests.System
 				Thread.CurrentThread.CurrentCulture = originalCulture;
 			}
 		}
+
+		[Test]
+		public void ParseAdvanced ()
+		{
+			Assert.AreEqual (-456, double.Parse("(456 ) ", NumberStyles.AllowParentheses | NumberStyles.AllowTrailingWhite, CultureInfo.InvariantCulture), "#1");
+			Assert.AreEqual (-456, double.Parse("(456)", NumberStyles.AllowParentheses, CultureInfo.InvariantCulture), "#2");
+			Assert.AreEqual (-3, double.Parse("3-", NumberStyles.AllowTrailingSign, CultureInfo.InvariantCulture), "#3");
+			Assert.AreEqual (-3.5, double.Parse("3.5-", NumberStyles.AllowTrailingSign | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture), "#4");
+			Assert.AreEqual (-0.5, double.Parse ("0.5 - ", NumberStyles.AllowTrailingSign | NumberStyles.AllowDecimalPoint | NumberStyles.AllowTrailingWhite, CultureInfo.InvariantCulture), "#5");
+			Assert.AreEqual (-900000, double.Parse ("-9E5 " + CultureInfo.InvariantCulture.NumberFormat.CurrencySymbol + "   ", NumberStyles.Any, CultureInfo.InvariantCulture), "#6");
+		}
 	}
 }

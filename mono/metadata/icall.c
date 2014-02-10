@@ -5,10 +5,11 @@
  *   Dietmar Maurer (dietmar@ximian.com)
  *   Paolo Molaro (lupus@ximian.com)
  *	 Patrik Torstensson (patrik.torstensson@labs2.com)
+ *   Marek Safar (marek.safar@gmail.com)
  *
  * Copyright 2001-2003 Ximian, Inc (http://www.ximian.com)
  * Copyright 2004-2009 Novell, Inc (http://www.novell.com)
- * Copyright 2011-2012 Xamarin Inc (http://www.xamarin.com).
+ * Copyright 2011-2014 Xamarin Inc (http://www.xamarin.com).
  */
 
 #include <config.h>
@@ -963,7 +964,7 @@ ves_icall_System_ValueType_InternalGetHashCode (MonoObject *this, MonoArray **fi
 	MonoObject **values = NULL;
 	MonoObject *o;
 	int count = 0;
-	gint32 result = 0;
+	gint32 result = (int)mono_defaults.int32_class;
 	MonoClassField* field;
 	gpointer iter;
 
@@ -972,7 +973,7 @@ ves_icall_System_ValueType_InternalGetHashCode (MonoObject *this, MonoArray **fi
 	klass = mono_object_class (this);
 
 	if (mono_class_num_fields (klass) == 0)
-		return mono_object_hash (this);
+		return result;
 
 	/*
 	 * Compute the starting value of the hashcode for fields of primitive
@@ -3134,14 +3135,6 @@ ves_icall_System_Enum_compare_value_to (MonoObject *this, MonoObject *other)
 		return me > other ? 1 : -1; \
 	} while (0)
 
-#define COMPARE_ENUM_VALUES_RANGE(ENUM_TYPE) do { \
-		ENUM_TYPE me = *((ENUM_TYPE*)tdata); \
-		ENUM_TYPE other = *((ENUM_TYPE*)odata); \
-		if (me == other) \
-			return 0; \
-		return me - other; \
-	} while (0)
-
 	switch (basetype->type) {
 		case MONO_TYPE_U1:
 			COMPARE_ENUM_VALUES (guint8);
@@ -3149,7 +3142,7 @@ ves_icall_System_Enum_compare_value_to (MonoObject *this, MonoObject *other)
 			COMPARE_ENUM_VALUES (gint8);
 		case MONO_TYPE_CHAR:
 		case MONO_TYPE_U2:
-			COMPARE_ENUM_VALUES_RANGE (guint16);
+			COMPARE_ENUM_VALUES (guint16);
 		case MONO_TYPE_I2:
 			COMPARE_ENUM_VALUES (gint16);
 		case MONO_TYPE_U4:
@@ -3163,7 +3156,6 @@ ves_icall_System_Enum_compare_value_to (MonoObject *this, MonoObject *other)
 		default:
 			g_error ("Implement type 0x%02x in get_hashcode", basetype->type);
 	}
-#undef COMPARE_ENUM_VALUES_RANGE
 #undef COMPARE_ENUM_VALUES
 	return 0;
 }
@@ -3887,6 +3879,21 @@ handle_parent:
 	return NULL;
 }
 
+static guint
+event_hash (gconstpointer data)
+{
+	MonoEvent *event = (MonoEvent*)data;
+
+	return g_str_hash (event->name);
+}
+
+static gboolean
+event_equal (MonoEvent *event1, MonoEvent *event2)
+{
+	// Events are hide-by-name
+	return g_str_equal (event1->name, event2->name);
+}
+
 ICALL_EXPORT MonoArray*
 ves_icall_Type_GetEvents_internal (MonoReflectionType *type, guint32 bflags, MonoReflectionType *reftype)
 {
@@ -3899,7 +3906,7 @@ ves_icall_Type_GetEvents_internal (MonoReflectionType *type, guint32 bflags, Mon
 	MonoEvent *event;
 	int i, match;
 	gpointer iter;
-	
+	GHashTable *events = NULL;
 	MonoPtrArray tmp_array;
 
 	MONO_ARCH_SAVE_REGS;
@@ -3915,6 +3922,7 @@ ves_icall_Type_GetEvents_internal (MonoReflectionType *type, guint32 bflags, Mon
 		return mono_array_new_cached (domain, System_Reflection_EventInfo, 0);
 	klass = startklass = mono_class_from_mono_type (type->type);
 
+	events = g_hash_table_new (event_hash, (GEqualFunc)event_equal);
 handle_parent:
 	mono_class_setup_vtable (klass);
 	if (klass->exception_type != MONO_EXCEPTION_NONE || mono_loader_get_last_error ())
@@ -3958,10 +3966,18 @@ handle_parent:
 				match ++;
 		if (!match)
 			continue;
+
+		if (g_hash_table_lookup (events, event))
+			continue;
+
 		mono_ptr_array_append (tmp_array, mono_event_get_object (domain, startklass, event));
+
+		g_hash_table_insert (events, event, event);
 	}
 	if (!(bflags & BFLAGS_DeclaredOnly) && (klass = klass->parent))
 		goto handle_parent;
+
+	g_hash_table_destroy (events);
 
 	res = mono_array_new_cached (domain, System_Reflection_EventInfo, mono_ptr_array_size (tmp_array));
 

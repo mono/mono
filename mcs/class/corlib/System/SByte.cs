@@ -49,13 +49,7 @@ namespace System
 			if (!(obj is System.SByte))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.SByte."));
 
-			sbyte xv = (sbyte) obj;
-			if (m_value == xv)
-				return 0;
-			if (m_value > xv)
-				return 1;
-			else
-				return -1;
+			return CompareTo ((sbyte) obj);
 		}
 
 		public override bool Equals (object obj)
@@ -73,12 +67,7 @@ namespace System
 
 		public int CompareTo (sbyte value)
 		{
-			if (m_value == value)
-				return 0;
-			if (m_value > value)
-				return 1;
-			else
-				return -1;
+			return m_value - value;
 		}
 
 		public bool Equals (sbyte obj)

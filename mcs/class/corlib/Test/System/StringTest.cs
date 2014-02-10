@@ -2976,6 +2976,15 @@ public class StringTest
 		}
 	}
 
+	[Test]
+	public void PadLeft_Overflow ()
+	{
+		try {
+			"x".PadLeft (int.MaxValue, '-');
+		} catch (OutOfMemoryException) {
+		}
+	}
+
 	[Test] // PadRight (Int32)
 	public void PadRight1 ()
 	{
@@ -3015,6 +3024,15 @@ public class StringTest
 	{
 		Assert.AreEqual ("100000000000", "1".PadRight (12, '0'), "#1");
 		Assert.AreEqual ("000000000000", "".PadRight (12, '0'), "#2");
+	}
+
+	[Test]
+	public void PadRight_Overflow ()
+	{
+		try {
+			"x".PadRight (int.MaxValue, '-');
+		} catch (OutOfMemoryException) {
+		}
 	}
 
 	[Test] // Remove (Int32, Int32)

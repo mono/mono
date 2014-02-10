@@ -543,7 +543,7 @@ namespace System
 
 			NumberFormatInfo number_info = null;
 			if (formatProvider != null)
-				number_info = (NumberFormatInfo)formatProvider.GetFormat (typeof (NumberFormatInfo));
+				number_info = formatProvider.GetFormat (typeof (NumberFormatInfo)) as NumberFormatInfo;
 			if (number_info == null)
 				number_info = Thread.CurrentThread.CurrentCulture.NumberFormat;
 
@@ -756,11 +756,11 @@ namespace System
 				number_format = GetNumberFormatInfo (formatProvider);
 			}
 
-			NumberFormatInfo GetNumberFormatInfo (IFormatProvider formatProvider)
+			static NumberFormatInfo GetNumberFormatInfo (IFormatProvider formatProvider)
 			{
 				NumberFormatInfo format = null;
 				if (formatProvider != null)
-					format = (NumberFormatInfo) formatProvider.GetFormat (typeof (NumberFormatInfo));
+					format = formatProvider.GetFormat (typeof (NumberFormatInfo)) as NumberFormatInfo;
 				if (format == null)
 					format = Thread.CurrentThread.CurrentCulture.NumberFormat;
 

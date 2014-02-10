@@ -86,6 +86,24 @@ namespace MonoTests.System.Threading.Tasks
 			}
 		}
 
+		class ExceptionScheduler : TaskScheduler
+		{
+			protected override IEnumerable<Task> GetScheduledTasks ()
+			{
+				throw new ApplicationException ("1");
+			}
+
+			protected override void QueueTask (Task task)
+			{
+				throw new ApplicationException ("2");
+			}
+
+			protected override bool TryExecuteTaskInline (Task task, bool taskWasPreviouslyQueued)
+			{
+				throw new ApplicationException ("3");
+			}
+		}
+
 
 		Task[] tasks;
 		const int max = 6;
@@ -1085,6 +1103,45 @@ namespace MonoTests.System.Threading.Tasks
 			var task = new TaskFactory ().StartNew (() => { });
 			var ar = (IAsyncResult)task;
 			ar.AsyncWaitHandle.WaitOne ();
+		}
+
+		[Test]
+		public void StartOnBrokenScheduler ()
+		{
+			var t = new Task (delegate { });
+
+			try {
+				t.Start (new ExceptionScheduler ());
+				Assert.Fail ("#1");
+			} catch (TaskSchedulerException e) {
+				Assert.AreEqual (TaskStatus.Faulted, t.Status, "#2");
+				Assert.AreSame (e, t.Exception.InnerException, "#3");
+				Assert.IsTrue (e.InnerException is ApplicationException, "#4");
+			}
+		}
+
+		[Test]
+		public void ContinuationOnBrokenScheduler ()
+		{
+			var s = new ExceptionScheduler ();
+			Task t = new Task(delegate {});
+
+			var t2 = t.ContinueWith (delegate {
+			}, TaskContinuationOptions.ExecuteSynchronously, s);
+
+			var t3 = t.ContinueWith (delegate {
+			}, TaskContinuationOptions.ExecuteSynchronously, s);
+
+			t.Start ();
+
+			try {
+				Assert.IsTrue (t3.Wait (2000), "#0");
+				Assert.Fail ("#1");
+			} catch (AggregateException e) {
+			}
+
+			Assert.AreEqual (TaskStatus.Faulted, t2.Status, "#2");
+			Assert.AreEqual (TaskStatus.Faulted, t3.Status, "#3");
 		}
 
 #if NET_4_5

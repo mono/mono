@@ -49,7 +49,7 @@ namespace System
 			if(!(value is System.UInt16))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.UInt16."));
 
-			return this.m_value - ((ushort) value);
+			return CompareTo ((ushort) value);
 		}
 
 		public override bool Equals (object obj)

@@ -466,7 +466,7 @@ namespace Mono.CSharp {
 
 				return e;
 			} catch (Exception ex) {
-				if (loc.IsNull || ec.Module.Compiler.Settings.DebugFlags > 0 || ex is CompletionResult || ec.Report.IsDisabled || ex is FatalException ||
+				if (loc.IsNull || ec.Module.Compiler.Settings.BreakOnInternalError || ex is CompletionResult || ec.Report.IsDisabled || ex is FatalException ||
 					ec.Report.Printer is NullReportPrinter)
 					throw;
 
@@ -4621,7 +4621,8 @@ namespace Mono.CSharp {
 					if (g_args_count != type_arguments.Count)
 						return int.MaxValue - 20000 + System.Math.Abs (type_arguments.Count - g_args_count);
 
-					ms = ms.MakeGenericMethod (ec, type_arguments.Arguments);
+					if (type_arguments.Arguments != null)
+						ms = ms.MakeGenericMethod (ec, type_arguments.Arguments);
 				} else {
 					//
 					// Deploy custom error reporting for infered anonymous expression or lambda methods. When

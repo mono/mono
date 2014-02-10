@@ -62,15 +62,18 @@ namespace System.Runtime.CompilerServices
 
 		internal static Exception HandleUnexpectedTaskResult (Task task)
 		{
+			var slot = task.ExceptionSlot;
 			switch (task.Status) {
 			case TaskStatus.Canceled:
 				// Use original exception when we have one
-				if (task.ExceptionSlot.Exception != null)
+				if (slot.Exception != null)
 					goto case TaskStatus.Faulted;
 
 				return new TaskCanceledException (task);
 			case TaskStatus.Faulted:
-				return task.ExceptionSlot.Exception.InnerException;
+				// Mark the exception as observed when GetResult throws
+				slot.Observed = true;
+				return slot.Exception.InnerException;
 			default:
 				throw new ArgumentException (string.Format ("Unexpected task `{0}' status `{1}'", task.Id, task.Status));
 			}
@@ -104,7 +107,7 @@ namespace System.Runtime.CompilerServices
 					cont_task.SetupScheduler (TaskScheduler.Current);
 				}
 
-				cont_task.Schedule ();
+				cont_task.Schedule (true);
 			}
 		}
 

@@ -141,6 +141,8 @@ namespace MonoTests.System
 			get { return 1; }
 			set { }
 		}
+
+		public event EventHandler E;
 	}
 
 	class Derived1 : Base1
@@ -156,6 +158,8 @@ namespace MonoTests.System
 			get { return 1; }
 			set { }
 		}
+
+		public event Action E;
 	}
 
 	public class Foo<T>
@@ -397,6 +401,14 @@ namespace MonoTests.System
 
 			// Test overriding of properties when only the set accessor is overriden
 			Assert.AreEqual (1, typeof (Derived1).GetProperties ().Length, "#03");
+		}
+
+		[Test]
+		public void GetEvents ()
+		{
+			// Test hide-by-name
+			Assert.AreEqual (1, typeof (Derived2).GetEvents ().Length);
+			Assert.AreEqual (typeof (Derived2), typeof (Derived2).GetEvents ()[0].DeclaringType);
 		}
 
 		[Test]

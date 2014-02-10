@@ -100,7 +100,7 @@ inner_start_thread (LPVOID arg)
 
 	g_assert (!mono_domain_get ());
 
-	mono_thread_info_dettach ();
+	mono_thread_info_detach ();
 
 	return result;
 }
@@ -191,11 +191,17 @@ __readfsdword (unsigned long offset)
 void
 mono_threads_core_get_stack_bounds (guint8 **staddr, size_t *stsize)
 {
-	/* Windows */
+#ifdef TARGET_AMD64
+	/* win7 apis */
+	NT_TIB* tib = (NT_TIB*)NtCurrentTeb();
+	guint8 *stackTop = (guint8*)tib->StackBase;
+	guint8 *stackBottom = (guint8*)tib->StackLimit;
+#else
 	/* http://en.wikipedia.org/wiki/Win32_Thread_Information_Block */
 	void* tib = (void*)__readfsdword(0x18);
 	guint8 *stackTop = (guint8*)*(int*)((char*)tib + 4);
 	guint8 *stackBottom = (guint8*)*(int*)((char*)tib + 8);
+#endif
 
 	*staddr = stackBottom;
 	*stsize = stackTop - stackBottom;
@@ -205,6 +211,35 @@ gboolean
 mono_threads_core_yield (void)
 {
 	return SwitchToThread ();
+}
+
+void
+mono_threads_core_exit (int exit_code)
+{
+	ExitThread (exit_code);
+}
+
+void
+mono_threads_core_unregister (MonoThreadInfo *info)
+{
+}
+
+HANDLE
+mono_threads_core_open_handle (void)
+{
+	HANDLE thread_handle;
+
+	thread_handle = GetCurrentThread ();
+	g_assert (thread_handle);
+
+	/*
+	 * The handle returned by GetCurrentThread () is a pseudo handle, so it can't be used to
+	 * refer to the thread from other threads for things like aborting.
+	 */
+	DuplicateHandle (GetCurrentProcess (), thread_handle, GetCurrentProcess (), &thread_handle,
+					 THREAD_ALL_ACCESS, TRUE, 0);
+
+	return thread_handle;
 }
 
 #endif

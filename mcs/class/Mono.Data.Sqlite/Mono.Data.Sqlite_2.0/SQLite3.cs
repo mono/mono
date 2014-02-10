@@ -666,10 +666,10 @@ namespace Mono.Data.Sqlite
       if (n > 0) throw new SqliteException(n, SQLiteLastError());
     }
 
-    internal override void CreateCollation(string strCollation, SQLiteCollation func, SQLiteCollation func16)
+    internal override void CreateCollation(string strCollation, SQLiteCollation func, SQLiteCollation func16, IntPtr user_data)
     {
-      int n = UnsafeNativeMethods.sqlite3_create_collation(_sql, ToUTF8(strCollation), 2, IntPtr.Zero, func16);
-      if (n == 0) UnsafeNativeMethods.sqlite3_create_collation(_sql, ToUTF8(strCollation), 1, IntPtr.Zero, func);
+      int n = UnsafeNativeMethods.sqlite3_create_collation(_sql, ToUTF8(strCollation), 2, user_data, func16);
+      if (n == 0) UnsafeNativeMethods.sqlite3_create_collation(_sql, ToUTF8(strCollation), 1, user_data, func);
       if (n > 0) throw new SqliteException(n, SQLiteLastError());
     }
 

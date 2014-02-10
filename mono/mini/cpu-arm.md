@@ -62,7 +62,7 @@ seq_point: len:38 clob:c
 throw: src1:i len:24
 rethrow: src1:i len:20
 start_handler: len:20
-endfinally: len:20
+endfinally: len:32
 call_handler: len:16 clob:c
 endfilter: src1:i len:16
 
@@ -334,3 +334,4 @@ gc_liveness_def: len:0
 gc_liveness_use: len:0
 gc_spill_slot_liveness_def: len:0
 gc_param_slot_liveness_def: len:0
+card_table_wbarrier: src1:i src2:i len:96

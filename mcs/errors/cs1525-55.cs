@@ -1,6 +1,5 @@
-// CS0658: `)' is invalid attribute target. All attributes in this attribute section will be ignored
-// Line : 9
-// Compiler options: -warnaserror -warn:1
+// CS1525: Unexpected symbol `)', expecting `(', `,', `.', or `]'
+// Line: 8
 
 namespace CompilerCrashWithAttributes
 {

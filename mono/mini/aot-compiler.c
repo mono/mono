@@ -3815,6 +3815,9 @@ check_type_depth (MonoType *t, int depth)
 	return FALSE;
 }
 
+static void
+add_types_from_method_header (MonoAotCompile *acfg, MonoMethod *method);
+
 /*
  * add_generic_class:
  *
@@ -3875,9 +3878,11 @@ add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth,
 			continue;
 		}
 		
-		if (mono_method_is_generic_sharable_full (method, FALSE, FALSE, use_gsharedvt))
+		if (mono_method_is_generic_sharable_full (method, FALSE, FALSE, use_gsharedvt)) {
 			/* Already added */
+			add_types_from_method_header (acfg, method);
 			continue;
+		}
 
 		if (method->is_generic)
 			/* FIXME: */
@@ -4875,6 +4880,8 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 	case MONO_PATCH_INFO_JIT_TLS_ID:
 	case MONO_PATCH_INFO_GC_CARD_TABLE_ADDR:
 	case MONO_PATCH_INFO_CASTCLASS_CACHE:
+	case MONO_PATCH_INFO_NURSERY_START_SHIFTED:
+	case MONO_PATCH_INFO_NURSERY_SHIFT:
 		break;
 	case MONO_PATCH_INFO_METHOD_REL:
 		encode_value ((gint)patch_info->data.offset, p, &p);
@@ -4946,17 +4953,11 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 	case MONO_PATCH_INFO_CLASS:
 	case MONO_PATCH_INFO_IID:
 	case MONO_PATCH_INFO_ADJUSTED_IID:
-	case MONO_PATCH_INFO_CLASS_INIT:
 		encode_klass_ref (acfg, patch_info->data.klass, p, &p);
 		break;
+	case MONO_PATCH_INFO_CLASS_INIT:
 	case MONO_PATCH_INFO_DELEGATE_TRAMPOLINE:
-		encode_klass_ref (acfg, patch_info->data.del_tramp->klass, p, &p);
-		if (patch_info->data.del_tramp->method) {
-			encode_value (1, p, &p);
-			encode_method_ref (acfg, patch_info->data.del_tramp->method, p, &p);
-		} else {
-			encode_value (0, p, &p);
-		}
+		encode_klass_ref (acfg, patch_info->data.klass, p, &p);
 		break;
 	case MONO_PATCH_INFO_FIELD:
 	case MONO_PATCH_INFO_SFLDA:
@@ -8284,6 +8285,7 @@ collect_methods (MonoAotCompile *acfg)
 
 		if (!method) {
 			printf ("Failed to load method 0x%x from '%s'.\n", token, image->name);
+			printf ("Run with MONO_LOG_LEVEL=debug for more information.\n");
 			exit (1);
 		}
 			
@@ -8658,7 +8660,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 	TV_DECLARE (atv);
 	TV_DECLARE (btv);
 
-#if !defined(MONO_ARCH_GSHAREDVT_SUPPORTED) || !defined(MONO_GSHARING)
+#if !defined(MONO_ARCH_GSHAREDVT_SUPPORTED) || !defined(ENABLE_GSHAREDVT)
 	if (opts & MONO_OPT_GSHAREDVT) {
 		fprintf (stderr, "-O=gsharedvt not supported on this platform.\n");
 		exit (1);

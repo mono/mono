@@ -206,7 +206,7 @@ namespace System
 			NumberFormatInfo nfi = null;
 			if (provider != null) {
 				Type typeNFI = typeof (NumberFormatInfo);
-				nfi = (NumberFormatInfo) provider.GetFormat (typeNFI);
+				nfi = provider.GetFormat (typeNFI) as NumberFormatInfo;
 			}
 			if (nfi == null)
 				nfi = Thread.CurrentThread.CurrentCulture.NumberFormat;

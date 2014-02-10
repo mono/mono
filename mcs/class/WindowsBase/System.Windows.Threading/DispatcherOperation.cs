@@ -70,7 +70,7 @@ namespace System.Windows.Threading {
 			delegate_method = d;
 			delegate_args = new object [args.Length + 1];
 			delegate_args [0] = arg;
-			Array.Copy (args, 1, delegate_args, 0, args.Length);
+			Array.Copy (args, 0, delegate_args, 1, args.Length);
 		}
 
 		internal void Invoke ()

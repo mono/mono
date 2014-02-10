@@ -1433,8 +1433,13 @@ namespace System {
 
 		internal static bool ShouldPrintFullName (Type type)
 		{
-			return type.IsGenericType || (type.IsClass && (!type.IsPointer ||
-				(!type.GetElementType ().IsPrimitive && !type.GetElementType ().IsNested)));
+			while (type.HasElementType)
+				type = type.GetElementType ();
+
+			if (type == typeof (void) || type.IsNested)
+				return false;
+
+			return !type.IsPrimitive;
 		}
 
 		internal virtual Type InternalResolve ()

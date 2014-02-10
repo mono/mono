@@ -1,5 +1,5 @@
 //
-// Comparer
+// Comparer.cs
 //
 // Authors:
 //	Ben Maurer (bmaurer@ximian.com)
@@ -59,7 +59,8 @@ namespace System.Collections.Generic {
 
 		int IComparer.Compare (object x, object y)
 		{
-			
+			if (x == y)
+				return 0;
 			if (x == null)
 				return y == null ? 0 : -1;
 			if (y == null)
@@ -79,15 +80,18 @@ namespace System.Collections.Generic {
 				// `null' is less than any other ref type
 				if (x == null)
 					return y == null ? 0 : -1;
-				else if (y == null)
+				if (y == null)
 					return 1;
 	
-				if (x is IComparable<T>)
-					return ((IComparable<T>) x).CompareTo (y);
-				else if (x is IComparable)
-					return ((IComparable) x).CompareTo (y);
-				else
-					throw new ArgumentException ("does not implement right interface");
+				var i = x as IComparable;
+				if (i != null)
+					return i.CompareTo (y);
+
+				i = y as IComparable;
+				if (i != null)
+					return -i.CompareTo (x);
+
+				throw new ArgumentException ("At least one argument has to implement IComparable interface");
 			}
 		}
 	}

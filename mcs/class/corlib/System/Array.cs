@@ -781,22 +781,7 @@ namespace System
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static int BinarySearch (Array array, object value)
 		{
-			if (array == null)
-				throw new ArgumentNullException ("array");
-
-			if (value == null)
-				return -1;
-
-			if (array.Rank > 1)
-				throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
-
-			if (array.Length == 0)
-				return -1;
-
-			if (!(value is IComparable))
-				throw new ArgumentException (Locale.GetText ("value does not support IComparable."));
-
-			return DoBinarySearch (array, array.GetLowerBound (0), array.GetLength (0), value, null);
+			return BinarySearch (array, value, null);
 		}
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
@@ -811,41 +796,13 @@ namespace System
 			if (array.Length == 0)
 				return -1;
 
-			if ((comparer == null) && (value != null) && !(value is IComparable))
-				throw new ArgumentException (Locale.GetText (
-					"comparer is null and value does not support IComparable."));
-
 			return DoBinarySearch (array, array.GetLowerBound (0), array.GetLength (0), value, comparer);
 		}
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static int BinarySearch (Array array, int index, int length, object value)
 		{
-			if (array == null)
-				throw new ArgumentNullException ("array");
-
-			if (array.Rank > 1)
-				throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
-
-			if (index < array.GetLowerBound (0))
-				throw new ArgumentOutOfRangeException ("index", Locale.GetText (
-					"index is less than the lower bound of array."));
-			if (length < 0)
-				throw new ArgumentOutOfRangeException ("length", Locale.GetText (
-					"Value has to be >= 0."));
-			// re-ordered to avoid possible integer overflow
-			if (index > array.GetLowerBound (0) + array.GetLength (0) - length)
-				throw new ArgumentException (Locale.GetText (
-					"index and length do not specify a valid range in array."));
-
-			if (array.Length == 0)
-				return -1;
-
-			if ((value != null) && (!(value is IComparable)))
-				throw new ArgumentException (Locale.GetText (
-					"value does not support IComparable"));
-
-			return DoBinarySearch (array, index, length, value, null);
+			return BinarySearch (array, index, length, value, null);
 		}
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
@@ -870,10 +827,6 @@ namespace System
 
 			if (array.Length == 0)
 				return -1;
-
-			if ((comparer == null) && (value != null) && !(value is IComparable))
-				throw new ArgumentException (Locale.GetText (
-					"comparer is null and value does not support IComparable."));
 
 			return DoBinarySearch (array, index, length, value, comparer);
 		}
@@ -1003,12 +956,13 @@ namespace System
 
 					try {
 						destinationArray.SetValueImpl (srcval, dest_pos + i);
+					} catch (ArgumentException) {
+						throw CreateArrayTypeMismatchException ();
 					} catch {
-						if (src_type.Equals (typeof (Object)))
-							throw new InvalidCastException ();
-						else
-							throw new ArrayTypeMismatchException (String.Format (Locale.GetText (
-								"(Types: source={0};  target={1})"), src_type.FullName, dst_type.FullName));
+						if (CanAssignArrayElement (src_type, dst_type))
+							throw;
+
+						throw CreateArrayTypeMismatchException ();
 					}
 				}
 			}
@@ -1018,15 +972,35 @@ namespace System
 
 					try {
 						destinationArray.SetValueImpl (srcval, dest_pos + i);
+					} catch (ArgumentException) {
+						throw CreateArrayTypeMismatchException ();
 					} catch {
-						if (src_type.Equals (typeof (Object)))
-							throw new InvalidCastException ();
-						else
-							throw new ArrayTypeMismatchException (String.Format (Locale.GetText (
-								"(Types: source={0};  target={1})"), src_type.FullName, dst_type.FullName));
+						if (CanAssignArrayElement (src_type, dst_type))
+							throw;
+
+						throw CreateArrayTypeMismatchException ();
 					}
 				}
 			}
+		}
+
+		static Exception CreateArrayTypeMismatchException ()
+		{
+			return new ArrayTypeMismatchException ();
+		}
+
+		static bool CanAssignArrayElement (Type source, Type target)
+		{
+			if (source.IsValueType)
+				return source.IsAssignableFrom (target);
+
+			if (source.IsInterface)
+				return !target.IsValueType;
+
+			if (target.IsInterface)
+				return !source.IsValueType;
+
+			return source.IsAssignableFrom (target) || target.IsAssignableFrom (source);
 		}
 
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
@@ -2583,11 +2557,7 @@ namespace System
 					// switch to insertion sort
 					for (i = low + 1; i <= high; i++) {
 						for (k = i; k > low; k--) {
-							// if keys[k] >= keys[k-1], break
-							if (array[k-1] == null)
-								break;
-							
-							if (array[k] != null && compare (array[k], array[k-1]) >= 0)
+							if (compare (array[k], array[k-1]) >= 0)
 								break;
 							
 							swap<T> (array, k - 1, k);

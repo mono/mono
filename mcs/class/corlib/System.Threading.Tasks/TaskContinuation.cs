@@ -104,9 +104,9 @@ namespace System.Threading.Tasks
 				return;
 
 			if ((continuationOptions & TaskContinuationOptions.ExecuteSynchronously) != 0)
-				task.RunSynchronouslyCore (task.scheduler);
+				task.RunSynchronouslyCore (task.scheduler, false);
 			else
-				task.Schedule ();
+				task.Schedule (false);
 		}
 	}
 
@@ -144,7 +144,7 @@ namespace System.Threading.Tasks
 
 		public void Execute ()
 		{
-			task.RunSynchronouslyCore (task.scheduler);
+			task.RunSynchronouslyCore (task.scheduler, true);
 		}
 	}
 

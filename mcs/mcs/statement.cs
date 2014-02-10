@@ -3798,7 +3798,7 @@ namespace Mono.CSharp {
 					return false;
 
 			} catch (Exception e) {
-				if (e is CompletionResult || bc.Report.IsDisabled || e is FatalException || bc.Report.Printer is NullReportPrinter)
+				if (e is CompletionResult || bc.Report.IsDisabled || e is FatalException || bc.Report.Printer is NullReportPrinter || bc.Module.Compiler.Settings.BreakOnInternalError)
 					throw;
 
 				if (bc.CurrentBlock != null) {
@@ -3806,9 +3806,6 @@ namespace Mono.CSharp {
 				} else {
 					bc.Report.Error (587, "Internal compiler error: {0}", e.Message);
 				}
-
-				if (bc.Module.Compiler.Settings.DebugFlags > 0)
-					throw;
 			}
 
 			//

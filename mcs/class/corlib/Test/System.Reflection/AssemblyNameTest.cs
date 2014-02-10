@@ -98,10 +98,6 @@ public class AssemblyNameTest {
 		0x1A, 0x56, 0x76, 0x43, 0xDB, 0x64, 0x86, 0x41, 0x64, 0x8D,
 		0x4C, 0x91, 0x83, 0x4E, 0xF5, 0x6C };
 
-#if !NET_2_0
-	static byte [] kp_token = { 0xff, 0xef, 0x94, 0x53, 0x67, 0x69, 0xda, 0x06 };
-#endif
-
 	static byte [] publicKey1 = {
 		0x00, 0x24, 0x00, 0x00, 0x04, 0x80, 0x00, 0x00, 0x94, 0x00,
 		0x00, 0x00, 0x06, 0x02, 0x00, 0x00, 0x00, 0x24, 0x00, 0x00,
@@ -139,10 +135,6 @@ public class AssemblyNameTest {
 		0x49, 0xa3, 0x95, 0x1a, 0x61, 0xb4, 0x47, 0x90, 0x20, 0xcc,
 		0x50, 0xa4, 0x4d, 0x8b, 0x8a, 0x58, 0x17, 0x70, 0xa4, 0x53,
 		0xe4, 0xdc, 0x73, 0x5d, 0x8c, 0x4e, 0xb8, 0xd3, 0xa9, 0xbf };
-
-#if !NET_2_0
-	static byte [] pk_token2 = { 0x22, 0x7c, 0x9c, 0x2c, 0x3c, 0x00, 0x63, 0xe9 };
-#endif
 
 	static byte [] publicKey3 = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00,
@@ -188,27 +180,17 @@ public class AssemblyNameTest {
 		Assert.IsNull (an.CultureInfo, "CultureInfo");
 		Assert.IsNull (an.EscapedCodeBase, "EscapedCodeBase");
 		Assert.AreEqual (AssemblyNameFlags.None, an.Flags, "Flags");
-#if NET_2_0
 		Assert.AreEqual (String.Empty, an.FullName, "FullName");
-#else
-		Assert.IsNull (an.FullName, "FullName");
-#endif
 		Assert.AreEqual (AssemblyHashAlgorithm.None, an.HashAlgorithm, "HashAlgorithm");
 		Assert.IsNull (an.KeyPair, "KeyPair");
 		Assert.IsNull (an.Name, "Name");
-#if NET_2_0
 		Assert.AreEqual (ProcessorArchitecture.None, an.ProcessorArchitecture, "PA");
-#endif
 		Assert.IsNull (an.Version, "Version");
 		Assert.AreEqual (AssemblyVersionCompatibility.SameMachine, 
 			an.VersionCompatibility, "VersionCompatibility");
 		Assert.IsNull (an.GetPublicKey (), "GetPublicKey");
 		Assert.IsNull (an.GetPublicKeyToken (), "GetPublicKeyToken");
-#if NET_2_0
 		Assert.AreEqual (string.Empty, an.ToString (), "ToString");
-#else
-		Assert.AreEqual (typeof (AssemblyName).FullName, an.ToString (), "ToString");
-#endif
 	}
 
 	[Test]
@@ -233,11 +215,7 @@ public class AssemblyNameTest {
 		an.SetPublicKey ((byte []) null);
 
 		Assert.IsNull (an.GetPublicKey (), "#C1");
-#if NET_2_0
 		Assert.AreEqual (AssemblyNameFlags.None, an.Flags, "#C2");
-#else
-		Assert.AreEqual (AssemblyNameFlags.PublicKey, an.Flags, "#C2");
-#endif
 		Assert.IsNull (an.KeyPair, "#C3");
 		Assert.AreEqual (pk_token1, an.GetPublicKeyToken (), "#C4");
 
@@ -246,11 +224,7 @@ public class AssemblyNameTest {
 		an.SetPublicKey ((byte []) null);
 
 		Assert.IsNull (an.GetPublicKey (), "#D1");
-#if NET_2_0
 		Assert.AreEqual (AssemblyNameFlags.None, an.Flags, "#D2");
-#else
-		Assert.AreEqual (AssemblyNameFlags.PublicKey, an.Flags, "#D2");
-#endif
 		Assert.IsNull (an.KeyPair, "#D3");
 		Assert.AreEqual (pk_token1, an.GetPublicKeyToken (), "#D4");
 
@@ -259,11 +233,7 @@ public class AssemblyNameTest {
 		an.SetPublicKey ((byte []) null);
 
 		Assert.IsNull (an.GetPublicKey (), "#E1");
-#if NET_2_0
 		Assert.AreEqual (AssemblyNameFlags.None, an.Flags, "#E2");
-#else
-		Assert.AreEqual (AssemblyNameFlags.PublicKey, an.Flags, "#E2");
-#endif
 		Assert.IsNull (an.KeyPair, "#E3");
 		Assert.AreEqual (pk_token1, an.GetPublicKeyToken (), "#E4");
 
@@ -284,11 +254,7 @@ public class AssemblyNameTest {
 		an.SetPublicKeyToken (pk_token1);
 
 		Assert.IsNull (an.GetPublicKey (), "#G1");
-#if NET_2_0
 		Assert.AreEqual (AssemblyNameFlags.None, an.Flags, "#G2");
-#else
-		Assert.AreEqual (AssemblyNameFlags.PublicKey, an.Flags, "#G2");
-#endif
 		Assert.IsNull (an.KeyPair, "#G3");
 		Assert.AreEqual (pk_token1, an.GetPublicKeyToken (), "#G4");
 
@@ -299,12 +265,8 @@ public class AssemblyNameTest {
 		Assert.AreEqual (0, an.GetPublicKey ().Length, "#H2");
 		Assert.AreEqual (AssemblyNameFlags.PublicKey, an.Flags, "#H3");
 		Assert.IsNull (an.KeyPair, "#H4");
-#if NET_2_0
 		Assert.IsNotNull (an.GetPublicKeyToken (), "#H5");
 		Assert.AreEqual (0, an.GetPublicKeyToken ().Length, "#H6");
-#else
-		Assert.IsNull (an.GetPublicKeyToken (), "#H5");
-#endif
 
 		an = new AssemblyName ();
 		an.SetPublicKey (publicKey1);
@@ -316,11 +278,7 @@ public class AssemblyNameTest {
 		an.SetPublicKey ((byte []) null);
 		Assert.AreEqual (AssemblyNameFlags.PublicKey, an.Flags, "#J1");
 		an.SetPublicKey ((byte []) null);
-#if NET_2_0
 		Assert.AreEqual (AssemblyNameFlags.None, an.Flags, "#J2");
-#else
-		Assert.AreEqual (AssemblyNameFlags.PublicKey, an.Flags, "#J2");
-#endif
 		an.SetPublicKey ((byte []) null);
 		Assert.AreEqual (AssemblyNameFlags.PublicKey, an.Flags, "#J3");
 		an.SetPublicKey (publicKey1);
@@ -399,9 +357,7 @@ public class AssemblyNameTest {
 		Assert.AreEqual (AssemblyHashAlgorithm.SHA1, an.HashAlgorithm, "HashAlgorithm");
 		Assert.IsNull (an.KeyPair, "KeyPair");
 		Assert.IsNotNull (an.Name, "Name");
-#if NET_2_0
-		//Assert.AreEqual (ProcessorArchitecture.MSIL, an.ProcessorArchitecture, "PA");
-#endif
+		Assert.AreEqual (ProcessorArchitecture.MSIL, an.ProcessorArchitecture, "PA");
 		Assert.AreEqual (new Version (0, 0, 0, 0), an.Version, "Version");
 		Assert.AreEqual (AssemblyVersionCompatibility.SameMachine,
 			an.VersionCompatibility, "VersionCompatibility");
@@ -460,15 +416,10 @@ public class AssemblyNameTest {
 
 		// tests for AssemblyName with only name
 		an = new AssemblyName ();
-#if NET_2_0
 		an.Flags = AssemblyNameFlags.EnableJITcompileOptimizer |
 			AssemblyNameFlags.EnableJITcompileTracking |
 			AssemblyNameFlags.PublicKey |
 			AssemblyNameFlags.Retargetable;
-#else
-		an.Flags = AssemblyNameFlags.PublicKey |
-			AssemblyNameFlags.Retargetable;
-#endif
 		an.Name = assemblyName;
 		Assert.AreEqual (assemblyName + ", Retargetable=Yes", an.FullName, "#1");
 		an.Flags = AssemblyNameFlags.None;
@@ -515,11 +466,7 @@ public class AssemblyNameTest {
 		an.CultureInfo = new CultureInfo ("nl-BE");
 		Assert.AreEqual (assemblyName + ", Culture=nl-BE", an.FullName, "#2");
 		an.Name = null;
-#if NET_2_0
 		Assert.AreEqual (string.Empty, an.FullName, "#3");
-#else
-		Assert.IsNull (an.FullName, "#4");
-#endif
 	}
 
 	[Test]
@@ -537,11 +484,7 @@ public class AssemblyNameTest {
 		an.SetPublicKey (new byte [0]);
 		Assert.AreEqual (assemblyName + ", PublicKeyToken=null", an.FullName, "#A3");
 		an.Name = null;
-#if NET_2_0
 		Assert.AreEqual (string.Empty, an.FullName, "#A4");
-#else
-		Assert.IsNull (an.FullName, "#A4");
-#endif
 
 		an = new AssemblyName ();
 		an.HashAlgorithm = AssemblyHashAlgorithm.MD5;
@@ -549,19 +492,11 @@ public class AssemblyNameTest {
 		an.SetPublicKey (publicKey1);
 		Assert.AreEqual (assemblyName + ", PublicKeyToken=" + GetTokenString (pk_token1), an.FullName, "#B1");
 		an.SetPublicKeyToken (new byte [] { 0x0a, 0x22 });
-#if NET_2_0
 		Assert.AreEqual (assemblyName + ", PublicKeyToken=0a22", an.FullName, "#B2");
-#else
-		Assert.AreEqual (assemblyName + ", PublicKeyToken=" + GetTokenString (pk_token1), an.FullName, "#B2");
-#endif
 		an.SetPublicKeyToken ((byte []) null);
 		Assert.AreEqual (assemblyName + ", PublicKeyToken=" + GetTokenString (pk_token1), an.FullName, "#B3");
 		an.Name = null;
-#if NET_2_0
 		Assert.AreEqual (string.Empty, an.FullName, "#B4");
-#else
-		Assert.IsNull (an.FullName, "#B4");
-#endif
 
 		an = new AssemblyName ();
 		an.HashAlgorithm = AssemblyHashAlgorithm.None;
@@ -569,36 +504,20 @@ public class AssemblyNameTest {
 		an.SetPublicKey (publicKey1);
 		Assert.AreEqual (assemblyName + ", PublicKeyToken=" + GetTokenString (pk_token1), an.FullName, "#C1");
 		an.SetPublicKeyToken (new byte [] { 0x0a, 0x22 });
-#if NET_2_0
 		Assert.AreEqual (assemblyName + ", PublicKeyToken=0a22", an.FullName, "#C2");
-#else
-		Assert.AreEqual (assemblyName + ", PublicKeyToken=" + GetTokenString (pk_token1), an.FullName, "#C2");
-#endif
 		an.SetPublicKeyToken ((byte []) null);
 		Assert.AreEqual (assemblyName + ", PublicKeyToken=" + GetTokenString (pk_token1), an.FullName, "#C3");
 		an.Name = null;
-#if NET_2_0
 		Assert.AreEqual (string.Empty, an.FullName, "#C4");
-#else
-		Assert.IsNull (an.FullName, "#C4");
-#endif
 
 		an = new AssemblyName ();
 		an.Name = assemblyName;
 		an.SetPublicKey (new byte [0]);
 		Assert.AreEqual (assemblyName + ", PublicKeyToken=null", an.FullName, "#D1");
 		an.Name = null;
-#if NET_2_0
 		Assert.AreEqual (string.Empty, an.FullName, "#D2");
-#else
-		Assert.IsNull (an.FullName, "#D2");
-#endif
 		an.SetPublicKey (publicKey3);
-#if NET_2_0
 		Assert.AreEqual (string.Empty, an.FullName, "#D3");
-#else
-		Assert.IsNull (an.FullName, "#D3");
-#endif
 		an.Name = assemblyName;
 		Assert.AreEqual (assemblyName + ", PublicKeyToken=" + GetTokenString (pk_token3), an.FullName, "#D4");
 	}
@@ -612,7 +531,6 @@ public class AssemblyNameTest {
 		an = new AssemblyName ();
 		an.Name = assemblyName;
 		an.SetPublicKey (keyPair);
-#if NET_2_0
 		try {
 			Assert.Fail ("#A1: " + an.FullName);
 		} catch (SecurityException ex) {
@@ -622,19 +540,11 @@ public class AssemblyNameTest {
 			Assert.IsNull (ex.InnerException, "#A4");
 			Assert.IsNotNull (ex.Message, "#A5");
 		}
-#else
-		Assert.AreEqual (assemblyName + ", PublicKeyToken=" + GetTokenString (kp_token), an.FullName, "#A1");
-#endif
 
 		an.SetPublicKeyToken (new byte [0]);
-#if NET_2_0
 		Assert.AreEqual (assemblyName + ", PublicKeyToken=null", an.FullName, "#B1");
-#else
-		Assert.AreEqual (assemblyName + ", PublicKeyToken=" + GetTokenString (kp_token), an.FullName, "#B1");
-#endif
 
 		an.SetPublicKeyToken ((byte []) null);
-#if NET_2_0
 		try {
 			Assert.Fail ("#C1: " + an.FullName);
 		} catch (SecurityException ex) {
@@ -644,22 +554,11 @@ public class AssemblyNameTest {
 			Assert.IsNull (ex.InnerException, "#C4");
 			Assert.IsNotNull (ex.Message, "#C5");
 		}
-#else
-		Assert.AreEqual (assemblyName + ", PublicKeyToken=" + GetTokenString (kp_token), an.FullName, "#C1");
-#endif
 
 		an.SetPublicKeyToken (new byte [0]);
-#if NET_2_0
 		Assert.AreEqual (assemblyName + ", PublicKeyToken=null", an.FullName, "#D1");
-#else
-		Assert.AreEqual (assemblyName + ", PublicKeyToken=" + GetTokenString (kp_token), an.FullName, "#D1");
-#endif
 		an.SetPublicKey (publicKey1);
-#if NET_2_0
 		Assert.AreEqual (assemblyName + ", PublicKeyToken=null", an.FullName, "#D2");
-#else
-		Assert.AreEqual (assemblyName + ", PublicKeyToken=" + GetTokenString (pk_token1), an.FullName, "#D2");
-#endif
 		an.SetPublicKeyToken ((byte []) null);
 		Assert.AreEqual (assemblyName + ", PublicKeyToken=" + GetTokenString (pk_token1), an.FullName, "#D3");
 	}
@@ -680,11 +579,7 @@ public class AssemblyNameTest {
 		an.SetPublicKeyToken (pk_token1);
 		Assert.AreEqual (assemblyName + ", PublicKeyToken=" + GetTokenString (pk_token1), an.FullName, "#A4");
 		an.Name = null;
-#if NET_2_0
 		Assert.AreEqual (string.Empty, an.FullName, "#A5");
-#else
-		Assert.IsNull (an.FullName, "#A5");
-#endif
 
 		an = new AssemblyName ();
 		an.HashAlgorithm = AssemblyHashAlgorithm.MD5;
@@ -696,11 +591,7 @@ public class AssemblyNameTest {
 		an.SetPublicKeyToken ((byte []) null);
 		Assert.AreEqual (assemblyName, an.FullName, "#B3");
 		an.Name = null;
-#if NET_2_0
 		Assert.AreEqual (string.Empty, an.FullName, "#B4");
-#else
-		Assert.IsNull (an.FullName, "#B4");
-#endif
 
 		an = new AssemblyName ();
 		an.Name = assemblyName;
@@ -708,18 +599,10 @@ public class AssemblyNameTest {
 		an.SetPublicKeyToken (pk_token1);
 		Assert.AreEqual (assemblyName + ", PublicKeyToken=" + GetTokenString (pk_token1), an.FullName, "#C1");
 		an.SetPublicKey ((byte []) null);
-#if NET_2_0
 		Assert.AreEqual (assemblyName + ", PublicKeyToken=" + GetTokenString (pk_token1), an.FullName, "#C2");
-#else
-		Assert.AreEqual (assemblyName, an.FullName, "#C2");
-#endif
 		Assert.AreEqual (pk_token1, an.GetPublicKeyToken (), "#C3");
 		an.SetPublicKey (new byte [0]);
-#if NET_2_0
 		Assert.AreEqual (assemblyName + ", PublicKeyToken=" + GetTokenString (pk_token1), an.FullName, "#C4");
-#else
-		Assert.AreEqual (assemblyName + ", PublicKeyToken=null", an.FullName, "#C4");
-#endif
 		Assert.AreEqual (pk_token1, an.GetPublicKeyToken (), "#C5");
 
 		an = new AssemblyName ();
@@ -729,17 +612,9 @@ public class AssemblyNameTest {
 		an.SetPublicKey (new byte [0]);
 		Assert.AreEqual (assemblyName + ", PublicKeyToken=null", an.FullName, "#D2");
 		an.SetPublicKeyToken (pk_token1);
-#if NET_2_0
 		Assert.AreEqual (assemblyName + ", PublicKeyToken=" + GetTokenString (pk_token1), an.FullName, "#D3");
-#else
-		Assert.AreEqual (assemblyName + ", PublicKeyToken=null", an.FullName, "#D3");
-#endif
 		an.SetPublicKey ((byte []) null);
-#if NET_2_0
 		Assert.AreEqual (assemblyName + ", PublicKeyToken=" + GetTokenString (pk_token1), an.FullName, "#D4");
-#else
-		Assert.AreEqual (assemblyName, an.FullName, "#D4");
-#endif
 	}
 
 	[Test]
@@ -815,11 +690,7 @@ public class AssemblyNameTest {
 		an.Name = assemblyName;
 		an.SetPublicKey (publicKey2);
 		Assert.AreEqual (new byte [0], an.GetPublicKeyToken (), "#A6");
-#if NET_2_0
 		Assert.AreEqual (assemblyName + ", PublicKeyToken=null", an.FullName, "#A7");
-#else
-		Assert.AreEqual (assemblyName + ", PublicKeyToken=" + GetTokenString (pk_token2), an.FullName, "#A7");
-#endif
 
 		an = new AssemblyName ();
 		an.HashAlgorithm = AssemblyHashAlgorithm.MD5;
@@ -841,7 +712,6 @@ public class AssemblyNameTest {
 
 		an = new AssemblyName ();
 		an.SetPublicKey (keyPair);
-#if NET_2_0
 		try {
 			an.GetPublicKeyToken ();
 			Assert.Fail ("#E1");
@@ -852,9 +722,6 @@ public class AssemblyNameTest {
 			Assert.IsNull (ex.InnerException, "#E4");
 			Assert.IsNotNull (ex.Message, "#E5");
 		}
-#else
-		Assert.AreEqual (kp_token, an.GetPublicKeyToken (), "#E1");
-#endif
 	}
 
 	[Test]
@@ -882,11 +749,7 @@ public class AssemblyNameTest {
 	{
 		Assembly a = Assembly.GetExecutingAssembly ();
 		an = a.GetName ();
-#if NET_2_0
 		Assert.AreEqual (new byte [0], an.GetPublicKeyToken ());
-#else
-		Assert.IsNull (an.GetPublicKeyToken ());
-#endif
 	}
 
 	static int nameIndex = 0;
@@ -952,11 +815,7 @@ public class AssemblyNameTest {
 		a = GenerateAssembly (name);
 		culture = a.GetName ().CultureInfo;
 		Assert.IsFalse (culture.IsNeutralCulture, "#C1");
-#if NET_2_0
 		Assert.IsFalse (culture.IsReadOnly, "#C2");
-#else
-		Assert.IsTrue (culture.IsReadOnly, "#C2");
-#endif
 		Assert.AreEqual (127, culture.LCID, "#C3");
 		Assert.AreEqual (string.Empty, culture.Name, "#C4");
 		Assert.IsFalse (culture.UseUserOverride, "#C5");
@@ -965,11 +824,7 @@ public class AssemblyNameTest {
 		name = a.GetName ();
 		culture = name.CultureInfo;
 		Assert.IsFalse (culture.IsNeutralCulture, "#D1");
-#if NET_2_0
 		Assert.IsFalse (culture.IsReadOnly, "#D2");
-#else
-		Assert.IsTrue (culture.IsReadOnly, "#D2");
-#endif
 		Assert.AreEqual (127, culture.LCID, "#D3");
 		Assert.AreEqual (string.Empty, culture.Name, "#D4");
 		Assert.IsFalse (culture.UseUserOverride, "#D5");
@@ -978,11 +833,7 @@ public class AssemblyNameTest {
 		name = a.GetName ();
 		culture = name.CultureInfo;
 		Assert.IsFalse (culture.IsNeutralCulture, "#E1");
-#if NET_2_0
 		Assert.IsFalse (culture.IsReadOnly, "#E2");
-#else
-		Assert.IsTrue (culture.IsReadOnly, "#E2");
-#endif
 		Assert.AreEqual (127, culture.LCID, "#E3");
 		Assert.AreEqual (string.Empty, culture.Name, "#E4");
 		Assert.IsFalse (culture.UseUserOverride, "#E5");
@@ -994,11 +845,7 @@ public class AssemblyNameTest {
 			Assert.IsFalse (culture.IsReadOnly, "#F2:" + an.Name);
 			Assert.AreEqual (127, culture.LCID, "#F3:" + an.Name);
 			Assert.AreEqual (string.Empty, culture.Name, "#F4:" + an.Name);
-#if NET_2_0
 			Assert.IsFalse (culture.UseUserOverride, "#F5:" + an.Name);
-#else
-			Assert.IsTrue (culture.UseUserOverride, "#F5:" + an.Name);
-#endif
 		}
 	}
 
@@ -1025,7 +872,6 @@ public class AssemblyNameTest {
 	}
 
 	[Test]
-	[Category ("NotWorking")]
 	public void Version_Dynamic ()
 	{
 		AssemblyName name = GenAssemblyName ();
@@ -1038,21 +884,13 @@ public class AssemblyNameTest {
 		name.Version = new Version (1, 2, 3);
 
 		ab = GenerateDynamicAssembly (name);
-#if NET_2_0
 		Assert.AreEqual ("1.2.3.0", ab.GetName ().Version.ToString (), "1.2.3.0 dynamic");
-#else
-		Assert.AreEqual ("1.2.3.65535", ab.GetName ().Version.ToString (), "1.2.3.0 dynamic");
-#endif
 
 		name = GenAssemblyName ();
 		name.Version = new Version (1, 2);
 
 		ab = GenerateDynamicAssembly (name);
-#if NET_2_0
 		Assert.AreEqual ("1.2.0.0", ab.GetName ().Version.ToString (), "1.2.0.0 dynamic");
-#else
-		Assert.AreEqual ("1.2.65535.65535", ab.GetName ().Version.ToString (), "1.2.0.0 dynamic");
-#endif
 	}
 #endif // TARGET_JVM
 
@@ -1195,17 +1033,11 @@ public class AssemblyNameTest {
 		Assert.IsNull (clone.CultureInfo, "CultureInfo");
 		Assert.IsNull (clone.EscapedCodeBase, "EscapedCodeBase");
 		Assert.AreEqual (AssemblyNameFlags.None, clone.Flags, "Flags");
-#if NET_2_0
 		Assert.AreEqual (String.Empty, clone.FullName, "FullName");
-#else
-		Assert.IsNull (clone.FullName, "FullName");
-#endif
 		Assert.AreEqual (AssemblyHashAlgorithm.None, clone.HashAlgorithm, "HashAlgorithm");
 		Assert.IsNull (clone.KeyPair, "KeyPair");
 		Assert.IsNull (clone.Name, "Name");
-#if NET_2_0
 		Assert.AreEqual (ProcessorArchitecture.None, clone.ProcessorArchitecture, "PA");
-#endif
 		Assert.IsNull (clone.Version, "Version");
 		Assert.AreEqual (AssemblyVersionCompatibility.SameMachine, 
 			clone.VersionCompatibility, "VersionCompatibility");
@@ -1225,9 +1057,7 @@ public class AssemblyNameTest {
 		Assert.AreEqual (an.HashAlgorithm, clone.HashAlgorithm, "HashAlgorithm");
 		Assert.AreEqual (an.KeyPair, clone.KeyPair, "KeyPair");
 		Assert.AreEqual (an.Name, clone.Name, "Name");
-#if NET_2_0
-		//Assert.AreEqual (ProcessorArchitecture.MSIL, clone.ProcessorArchitecture, "PA");
-#endif
+		Assert.AreEqual (an.ProcessorArchitecture, clone.ProcessorArchitecture, "PA");
 		Assert.AreEqual (an.Version, clone.Version, "Version");
 		Assert.AreEqual (an.VersionCompatibility, clone.VersionCompatibility, "VersionCompatibility");
 		Assert.AreEqual (an.GetPublicKey (), clone.GetPublicKey (), "GetPublicKey");
@@ -1258,11 +1088,7 @@ public class AssemblyNameTest {
 				// process
 				Assert.AreEqual (typeof (FileLoadException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.FileName, "#3");
-#if NET_2_0
 				Assert.AreEqual (file, ex.FileName, "#4");
-#else
-				Assert.IsTrue (ex.FileName.IndexOf ("loadfailure.dll") != -1, "#4");
-#endif
 				Assert.IsNull (ex.InnerException, "#5");
 				Assert.IsNotNull (ex.Message, "#6");
 			}
@@ -1283,11 +1109,7 @@ public class AssemblyNameTest {
 		} catch (BadImageFormatException ex) {
 			Assert.AreEqual (typeof (BadImageFormatException), ex.GetType (), "#2");
 			Assert.IsNotNull (ex.FileName, "#3");
-#if NET_2_0
 			Assert.AreEqual (file, ex.FileName, "#4");
-#else
-			Assert.IsTrue (ex.FileName.IndexOf ("badimage.dll") != -1, "#4");
-#endif
 			Assert.IsNull (ex.InnerException, "#5");
 			Assert.IsNotNull (ex.Message, "#6");
 		} finally {
@@ -1316,7 +1138,6 @@ public class AssemblyNameTest {
 		return tokenString;
 	}
 
-#if NET_2_0
 	[Test] // ctor (String)
 	public void Constructor1_Name ()
 	{
@@ -1338,6 +1159,10 @@ public class AssemblyNameTest {
 		Assert.IsNull (an.GetPublicKey (), "GetPublicKey");
 		Assert.IsNull (an.GetPublicKeyToken (), "GetPublicKeyToken");
 		Assert.AreEqual ("TestAssembly", an.ToString (), "ToString");
+#if NET_4_5
+		Assert.IsNull (an.CultureName, "CultureName");
+		Assert.AreEqual (AssemblyContentType.Default, an.ContentType, "ContentType");
+#endif
 	}
 
 	[Test] // ctor (String)
@@ -1491,7 +1316,6 @@ public class AssemblyNameTest {
 	}
 
 	[Test] // ctor (String)
-	[Category ("NotWorking")] // bug #351708
 	public void Constructor1_ProcessorArchitecture ()
 	{
 		const string assemblyName = "TestAssembly";
@@ -1524,7 +1348,6 @@ public class AssemblyNameTest {
 	}
 
 	[Test] // ctor (String)
-	[Category ("NotWorking")] // bug #351708
 	public void Constructor1_ProcessorArchitecture_Incomplete ()
 	{
 		const string assemblyName = "TestAssembly";
@@ -1541,7 +1364,6 @@ public class AssemblyNameTest {
 	}
 
 	[Test] // ctor (String)
-	[Category ("NotWorking")] // bug #351708
 	public void Constructor1_ProcessorArchitecture_Invalid ()
 	{
 		const string assemblyName = "TestAssembly";
@@ -2031,7 +1853,6 @@ public class AssemblyNameTest {
 		Assert.IsTrue (AssemblyName.ReferenceMatchesDefinition (an3, an4));
 		Assert.IsFalse (AssemblyName.ReferenceMatchesDefinition (an5, an6));
 	}
-#endif
 }
 
 }

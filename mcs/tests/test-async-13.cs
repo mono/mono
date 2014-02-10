@@ -678,6 +678,12 @@ class Tester : Base
 		return a.Length == 13;
 	}
 	
+	async Task<bool> NewArrayInitTest_7 ()
+	{
+		var res = new [] { "a", new [] { "1", await Task.FromResult ("2") } [1], "b" };
+		return res [1] == "2";
+	}
+
 	async Task<bool> PropertyTest_1 ()
 	{
 		PropertyInt = await Task.Factory.StartNew (() => 6);

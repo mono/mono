@@ -784,13 +784,21 @@ namespace System.IO {
 			var ret = new StringBuilder ();
 			int pathsLen = paths.Length;
 			int slen;
+			need_sep = false;
+
 			foreach (var s in paths) {
-				need_sep = false;
 				if (s == null)
 					throw new ArgumentNullException ("One of the paths contains a null value", "paths");
+				if (s.Length == 0)
+					continue;
 				if (s.IndexOfAny (InvalidPathChars) != -1)
 					throw new ArgumentException ("Illegal characters in path.");
-				
+
+				if (need_sep) {
+					need_sep = false;
+					ret.Append (DirectorySeparatorStr);
+				}
+
 				pathsLen--;
 				if (IsPathRooted (s))
 					ret.Length = 0;
@@ -802,9 +810,6 @@ namespace System.IO {
 					if (p1end != DirectorySeparatorChar && p1end != AltDirectorySeparatorChar && p1end != VolumeSeparatorChar)
 						need_sep = true;
 				}
-				
-				if (need_sep)
-					ret.Append (DirectorySeparatorStr);
 			}
 
 			return ret.ToString ();

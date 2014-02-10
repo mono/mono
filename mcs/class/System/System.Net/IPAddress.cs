@@ -337,7 +337,7 @@ namespace System.Net {
 		public bool IsIPv6Teredo {
 			get {
 				return m_Family != AddressFamily.InterNetwork &&
-					m_Numbers[0] == 0x2001 &&
+					NetworkToHostOrder ((short) m_Numbers [0]) == 0x2001 &&
 					m_Numbers[1] == 0;
 			}
 		}

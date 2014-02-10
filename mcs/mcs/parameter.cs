@@ -1336,8 +1336,10 @@ namespace Mono.CSharp {
 		public void Resolve (ResolveContext rc, Parameter p)
 		{
 			var expr = Resolve (rc);
-			if (expr == null)
+			if (expr == null) {
+				this.expr = ErrorExpression.Instance;
 				return;
+			}
 
 			expr = Child;
 

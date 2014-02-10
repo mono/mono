@@ -2911,11 +2911,16 @@ emit_write_barrier (MonoCompile *cfg, MonoInst *ptr, MonoInst *value)
 
 	mono_gc_get_nursery (&nursery_shift_bits, &nursery_size);
 
+#ifdef MONO_ARCH_HAVE_CARD_TABLE_WBARRIER_IN_AOT
+	if (cfg->compile_aot)
+		has_card_table_wb = TRUE;
+#endif
 #ifdef MONO_ARCH_HAVE_CARD_TABLE_WBARRIER
-	has_card_table_wb = TRUE;
+	if (!cfg->compile_aot)
+		has_card_table_wb = TRUE;
 #endif
 
-	if (has_card_table_wb && !cfg->compile_aot && card_table && nursery_shift_bits > 0 && !COMPILE_LLVM (cfg)) {
+	if (has_card_table_wb && card_table && nursery_shift_bits > 0 && !COMPILE_LLVM (cfg)) {
 		MonoInst *wbarrier;
 
 		MONO_INST_NEW (cfg, wbarrier, OP_CARD_TABLE_WBARRIER);
@@ -4458,14 +4463,9 @@ handle_delegate_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, Mono
 
 	/* Set invoke_impl field */
 	if (cfg->compile_aot) {
-		MonoClassMethodPair *del_tramp;
-
-		del_tramp = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoClassMethodPair));
-		del_tramp->klass = klass;
-		del_tramp->method = context_used ? NULL : method;
-		EMIT_NEW_AOTCONST (cfg, tramp_ins, MONO_PATCH_INFO_DELEGATE_TRAMPOLINE, del_tramp);
+		EMIT_NEW_AOTCONST (cfg, tramp_ins, MONO_PATCH_INFO_DELEGATE_TRAMPOLINE, klass);
 	} else {
-		trampoline = mono_create_delegate_trampoline_with_method (cfg->domain, klass, context_used ? NULL : method);
+		trampoline = mono_create_delegate_trampoline (cfg->domain, klass);
 		EMIT_NEW_PCONST (cfg, tramp_ins, trampoline);
 	}
 	MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, obj->dreg, G_STRUCT_OFFSET (MonoDelegate, invoke_impl), tramp_ins->dreg);
@@ -4587,6 +4587,8 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 		if (method->iflags & METHOD_IMPL_ATTRIBUTE_AGGRESSIVE_INLINING) {
 			vtable = mono_class_vtable (cfg->domain, method->klass);
 			if (!vtable)
+				return FALSE;
+			if (cfg->compile_aot && mono_class_needs_cctor_run (method->klass, NULL))
 				return FALSE;
 			mono_runtime_class_init (vtable);
 		} else if (method->klass->flags & TYPE_ATTRIBUTE_BEFORE_FIELD_INIT) {

@@ -44,6 +44,11 @@ namespace System.IO {
 	{
 		sealed class NullStreamReader : StreamReader
 		{
+			internal NullStreamReader ()
+			{
+				base_stream = Stream.Null;
+			}
+
 			public override int Peek ()
 			{
 				return -1;
@@ -131,10 +136,10 @@ namespace System.IO {
 		private StreamReader() {}
 
 		public StreamReader(Stream stream)
-			: this (stream, Encoding.UTF8Unmarked, true, DefaultBufferSize) { }
+			: this (stream, Encoding.UTF8, true, DefaultBufferSize) { }
 
 		public StreamReader(Stream stream, bool detectEncodingFromByteOrderMarks)
-			: this (stream, Encoding.UTF8Unmarked, detectEncodingFromByteOrderMarks, DefaultBufferSize) { }
+			: this (stream, Encoding.UTF8, detectEncodingFromByteOrderMarks, DefaultBufferSize) { }
 
 		public StreamReader(Stream stream, Encoding encoding)
 			: this (stream, encoding, true, DefaultBufferSize) { }
@@ -162,10 +167,10 @@ namespace System.IO {
 		}
 
 		public StreamReader(string path)
-			: this (path, Encoding.UTF8Unmarked, true, DefaultFileBufferSize) { }
+			: this (path, Encoding.UTF8, true, DefaultFileBufferSize) { }
 
 		public StreamReader(string path, bool detectEncodingFromByteOrderMarks)
-			: this (path, Encoding.UTF8Unmarked, detectEncodingFromByteOrderMarks, DefaultFileBufferSize) { }
+			: this (path, Encoding.UTF8, detectEncodingFromByteOrderMarks, DefaultFileBufferSize) { }
 
 		public StreamReader(string path, Encoding encoding)
 			: this (path, encoding, true, DefaultFileBufferSize) { }
@@ -258,8 +263,6 @@ namespace System.IO {
 
 		public virtual Encoding CurrentEncoding {
 			get {
-				if (encoding == null)
-					throw new Exception ();
 				return encoding;
 			}
 		}

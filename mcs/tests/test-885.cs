@@ -12,7 +12,6 @@ class A : Attribute
 	}
 }
 
-
 class C
 {
 	[A (0.7f * 100.0f)]

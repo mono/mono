@@ -78,16 +78,14 @@ public class UInt16Test
 	[Test]
 	public void TestCompareTo()
 	{
-		Assert.IsTrue(MyUInt16_3.CompareTo(MyUInt16_2) > 0);
-		Assert.IsTrue(MyUInt16_2.CompareTo(MyUInt16_2) == 0);
-		Assert.IsTrue(MyUInt16_1.CompareTo((UInt16)(42)) == 0);
-		Assert.IsTrue(MyUInt16_2.CompareTo(MyUInt16_3) < 0);
+		Assert.AreEqual(65535, MyUInt16_3.CompareTo(MyUInt16_2), "#1");
+		Assert.AreEqual(0, MyUInt16_2.CompareTo(MyUInt16_2), "#2");
+		Assert.AreEqual(0, MyUInt16_1.CompareTo((UInt16)(42)), "#3");
+		Assert.AreEqual(-65535, MyUInt16_2.CompareTo(MyUInt16_3), "#4");
 		try {
 			MyUInt16_2.CompareTo((object)100);
 			Assert.Fail("Should raise a System.ArgumentException");
-		}
-		catch (Exception e) {
-			Assert.IsTrue(typeof(ArgumentException) == e.GetType());
+		} catch (ArgumentException e) {
 		}
 	}
 

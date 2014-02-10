@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.IO;
 using System.Collections;
 using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Framework;
@@ -682,10 +683,11 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			mc.References = null;
 			Assert.IsTrue (mc.CheckAllReferencesExistOnDisk (), "A2");
 
-			mc.References = new ITaskItem [1] { new TaskItem (@"Test\resources\test.cs") };
+			string path = Path.Combine (Path.Combine ("Test", "resources"), "test.cs");
+			mc.References = new ITaskItem [1] { new TaskItem (path) };
 			Assert.IsTrue (mc.CheckAllReferencesExistOnDisk (), "A3");
 
-			mc.References = new ITaskItem [2] { new TaskItem (@"Test\resources\test.cs"), new TaskItem ("X") };
+			mc.References = new ITaskItem [2] { new TaskItem (path), new TaskItem ("X") };
 			Assert.IsFalse (mc.CheckAllReferencesExistOnDisk (), "A4");
 		}
 	}

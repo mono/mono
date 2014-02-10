@@ -129,6 +129,11 @@ static CRITICAL_SECTION threads_mutex;
 #define mono_contexts_unlock() LeaveCriticalSection (&contexts_mutex)
 static CRITICAL_SECTION contexts_mutex;
 
+/* Controls access to the 'joinable_threads' hash table */
+#define joinable_threads_lock() EnterCriticalSection (&joinable_threads_mutex)
+#define joinable_threads_unlock() LeaveCriticalSection (&joinable_threads_mutex)
+static CRITICAL_SECTION joinable_threads_mutex;
+
 /* Holds current status of static data heap */
 static StaticDataInfo thread_static_info;
 static StaticDataInfo context_static_info;
@@ -151,6 +156,11 @@ static MonoGHashTable *thread_start_args = NULL;
 
 /* The TLS key that holds the MonoObject assigned to each thread */
 static MonoNativeTlsKey current_object_key;
+
+/* Contains tids */
+/* Protected by the threads lock */
+static GHashTable *joinable_threads;
+static int joinable_thread_count;
 
 #ifdef MONO_HAVE_FAST_TLS
 /* we need to use both the Tls* functions and __thread because
@@ -313,9 +323,31 @@ static gboolean handle_remove(MonoInternalThread *thread)
 	return ret;
 }
 
+static void ensure_synch_cs_set (MonoInternalThread *thread)
+{
+	CRITICAL_SECTION *synch_cs;
+
+	if (thread->synch_cs != NULL) {
+		return;
+	}
+
+	synch_cs = g_new0 (CRITICAL_SECTION, 1);
+	InitializeCriticalSection (synch_cs);
+
+	if (InterlockedCompareExchangePointer ((gpointer *)&thread->synch_cs,
+					       synch_cs, NULL) != NULL) {
+		/* Another thread must have installed this CS */
+		DeleteCriticalSection (synch_cs);
+		g_free (synch_cs);
+	}
+}
+
 static inline void
 lock_thread (MonoInternalThread *thread)
 {
+	if (!thread->synch_cs)
+		ensure_synch_cs_set (thread);
+
 	g_assert (thread->synch_cs);
 	EnterCriticalSection (thread->synch_cs);
 }
@@ -663,7 +695,7 @@ static guint32 WINAPI start_wrapper(void *data)
  * LOCKING: Acquires the threads lock.
  */
 static gboolean
-create_thread (MonoThread *thread, MonoInternalThread *internal, StartInfo *start_info, gboolean threadpool_thread, gboolean no_detach, guint32 stack_size,
+create_thread (MonoThread *thread, MonoInternalThread *internal, StartInfo *start_info, gboolean threadpool_thread, guint32 stack_size,
 			   gboolean throw_on_failure)
 {
 	HANDLE thread_handle;
@@ -711,10 +743,6 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, StartInfo *star
 	 * starts
 	 */
 	create_flags = CREATE_SUSPENDED;
-#ifndef HOST_WIN32
-	if (no_detach)
-		create_flags |= CREATE_NO_DETACH;
-#endif
 	thread_handle = mono_threads_create_thread ((LPTHREAD_START_ROUTINE)start_wrapper, start_info,
 												stack_size, create_flags, &tid);
 	if (thread_handle == NULL) {
@@ -788,12 +816,9 @@ guint32 mono_threads_get_default_stacksize (void)
 /*
  * mono_thread_create_internal:
  * 
- * If NO_DETACH is TRUE, then the thread is not detached using pthread_detach (). This is needed to fix the race condition where waiting for a thred to exit only waits for its exit event to be
- * signalled, which can cause shutdown crashes if the thread shutdown code accesses data already freed by the runtime shutdown.
- * Currently, this is only used for the finalizer thread.
  */
 MonoInternalThread*
-mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, gboolean threadpool_thread, gboolean no_detach, guint32 stack_size)
+mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, gboolean threadpool_thread, guint32 stack_size)
 {
 	MonoThread *thread;
 	MonoInternalThread *internal;
@@ -809,7 +834,7 @@ mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, gb
 	start_info->obj = thread;
 	start_info->start_arg = arg;
 
-	res = create_thread (thread, internal, start_info, threadpool_thread, no_detach, stack_size, TRUE);
+	res = create_thread (thread, internal, start_info, threadpool_thread, stack_size, TRUE);
 	if (!res)
 		return NULL;
 
@@ -823,7 +848,7 @@ mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, gb
 void
 mono_thread_create (MonoDomain *domain, gpointer func, gpointer arg)
 {
-	mono_thread_create_internal (domain, func, arg, FALSE, FALSE, 0);
+	mono_thread_create_internal (domain, func, arg, FALSE, 0);
 }
 
 MonoThread *
@@ -854,17 +879,10 @@ mono_thread_attach_full (MonoDomain *domain, gboolean force_attach)
 
 	thread = create_internal_thread ();
 
-	thread_handle = GetCurrentThread ();
+	thread_handle = mono_thread_info_open_handle ();
 	g_assert (thread_handle);
 
 	tid=GetCurrentThreadId ();
-
-	/* 
-	 * The handle returned by GetCurrentThread () is a pseudo handle, so it can't be used to
-	 * refer to the thread from other threads for things like aborting.
-	 */
-	DuplicateHandle (GetCurrentProcess (), thread_handle, GetCurrentProcess (), &thread_handle, 
-					 THREAD_ALL_ACCESS, TRUE, 0);
 
 	thread->handle=thread_handle;
 	thread->tid=tid;
@@ -951,7 +969,7 @@ mono_thread_exit ()
 	/* we could add a callback here for embedders to use. */
 	if (mono_thread_get_main () && (thread == mono_thread_get_main ()->internal_thread))
 		exit (mono_environment_exitcode_get ());
-	ExitThread (-1);
+	mono_thread_info_exit ();
 }
 
 void
@@ -998,7 +1016,7 @@ ves_icall_System_Threading_Thread_Thread_internal (MonoThread *this,
 	start_info->obj = this;
 	g_assert (this->obj.vtable->domain == mono_domain_get ());
 
-	res = create_thread (this, internal, start_info, FALSE, FALSE, 0, FALSE);
+	res = create_thread (this, internal, start_info, FALSE, 0, FALSE);
 	if (!res) {
 		UNLOCK_THREAD (internal);
 		return NULL;
@@ -2478,6 +2496,7 @@ void mono_thread_init (MonoThreadStartCB start_cb,
 	InitializeCriticalSection(&threads_mutex);
 	InitializeCriticalSection(&interlocked_mutex);
 	InitializeCriticalSection(&contexts_mutex);
+	InitializeCriticalSection(&joinable_threads_mutex);
 	
 	background_change_event = CreateEvent (NULL, TRUE, FALSE, NULL);
 	g_assert(background_change_event != NULL);
@@ -2588,7 +2607,13 @@ static void wait_for_tids (struct wait_data *wait, guint32 timeout)
 
 	for(i=0; i<wait->num; i++) {
 		gsize tid = wait->threads[i]->tid;
-		
+
+		/*
+		 * On !win32, when the thread handle becomes signalled, it just means the thread has exited user code,
+		 * it can still run io-layer etc. code. So wait for it to really exit.
+		 */
+		mono_thread_join ((gpointer)tid);
+
 		mono_threads_lock ();
 		if(mono_g_hash_table_lookup (threads, (gpointer)tid)!=NULL) {
 			/* This thread must have been killed, because
@@ -2780,7 +2805,7 @@ mono_threads_set_shutting_down (void)
 		mono_domain_unset ();
 
 		/* Wake up other threads potentially waiting for us */
-		ExitThread (0);
+		mono_thread_info_exit ();
 	} else {
 		shutting_down = TRUE;
 
@@ -4011,7 +4036,9 @@ static MonoException* mono_thread_execute_interruption (MonoInternalThread *thre
 	/* MonoThread::interruption_requested can only be changed with atomics */
 	if (InterlockedCompareExchange (&thread->interruption_requested, FALSE, TRUE)) {
 		/* this will consume pending APC calls */
+#ifdef HOST_WIN32
 		WaitForSingleObjectEx (GetCurrentThread(), 0, TRUE);
+#endif
 		InterlockedDecrement (&thread_interruption_requested);
 #ifndef HOST_WIN32
 		/* Clear the interrupted flag of the thread so it can wait again */
@@ -4667,4 +4694,98 @@ mono_thread_is_foreign (MonoThread *thread)
 {
 	MonoThreadInfo *info = thread->internal_thread->thread_info;
 	return info->runtime_thread == FALSE;
+}
+
+/*
+ * mono_add_joinable_thread:
+ *
+ *   Add TID to the list of joinable threads.
+ * LOCKING: Acquires the threads lock.
+ */
+void
+mono_threads_add_joinable_thread (gpointer tid)
+{
+#ifndef HOST_WIN32
+	/*
+	 * We cannot detach from threads because it causes problems like
+	 * 2fd16f60/r114307. So we collect them and join them when
+	 * we have time (in he finalizer thread).
+	 */
+	joinable_threads_lock ();
+	if (!joinable_threads)
+		joinable_threads = g_hash_table_new (NULL, NULL);
+	g_hash_table_insert (joinable_threads, tid, tid);
+	joinable_thread_count ++;
+	joinable_threads_unlock ();
+
+	mono_gc_finalize_notify ();
+#endif
+}
+
+/*
+ * mono_threads_join_threads:
+ *
+ *   Join all joinable threads. This is called from the finalizer thread.
+ * LOCKING: Acquires the threads lock.
+ */
+void
+mono_threads_join_threads (void)
+{
+#ifndef HOST_WIN32
+	GHashTableIter iter;
+	gpointer key;
+	gpointer tid;
+	pthread_t thread;
+	gboolean found;
+
+	/* Fastpath */
+	if (!joinable_thread_count)
+		return;
+
+	while (TRUE) {
+		joinable_threads_lock ();
+		found = FALSE;
+		if (g_hash_table_size (joinable_threads)) {
+			g_hash_table_iter_init (&iter, joinable_threads);
+			g_hash_table_iter_next (&iter, &key, (void**)&tid);
+			thread = (pthread_t)tid;
+			g_hash_table_remove (joinable_threads, key);
+			joinable_thread_count --;
+			found = TRUE;
+		}
+		joinable_threads_unlock ();
+		if (found) {
+			if (thread != pthread_self ())
+				/* This shouldn't block */
+				pthread_join (thread, NULL);
+		} else {
+			break;
+		}
+	}
+#endif
+}
+
+/*
+ * mono_thread_join:
+ *
+ *   Wait for thread TID to exit.
+ * LOCKING: Acquires the threads lock.
+ */
+void
+mono_thread_join (gpointer tid)
+{
+#ifndef HOST_WIN32
+	pthread_t thread;
+
+	joinable_threads_lock ();
+	if (!joinable_threads)
+		joinable_threads = g_hash_table_new (NULL, NULL);
+	if (g_hash_table_lookup (joinable_threads, tid)) {
+		g_hash_table_remove (joinable_threads, tid);
+		joinable_thread_count --;
+	}
+	joinable_threads_unlock ();
+	thread = (pthread_t)tid;
+	pthread_join (thread, NULL);
+#endif
 }

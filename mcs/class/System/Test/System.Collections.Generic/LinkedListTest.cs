@@ -270,6 +270,16 @@ namespace MonoTests.System.Collections.Generic
 			}
 			Assert.AreEqual(3, i);
 		}
+
+		public void EnumeratorAfterEnd ()
+		{
+			var linkedList = new LinkedList<string> ();
+			linkedList.AddLast ("a");
+			var e = linkedList.GetEnumerator ();
+			Assert.IsTrue (e.MoveNext (), "#1");
+			Assert.IsFalse (e.MoveNext (), "#2");
+			Assert.IsFalse (e.MoveNext (), "#3");
+		}
 		
 		[Test] //bug 481621
 		public void PlayWithNullValues ()
@@ -310,6 +320,23 @@ namespace MonoTests.System.Collections.Generic
 			Assert.IsTrue (list.Contains (test), "#1");
 			Assert.AreSame (mv, list.Find (test).Value, "#2");
 			Assert.AreSame (mv, list.FindLast (test).Value, "#3");
+		}
+
+		[Test]
+		public void RemoveFromEmptyList ()
+		{
+			var linkedList = new LinkedList<string> ();
+			try {
+				linkedList.RemoveFirst ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				linkedList.RemoveLast ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {
+			}
 		}
 	}
 }

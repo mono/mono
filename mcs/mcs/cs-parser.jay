@@ -739,7 +739,7 @@ attribute_section_cont
 	  }
 	| error
 	  {
- 		CheckAttributeTarget (GetTokenName (yyToken), GetLocation ($1)); 
+ 		CheckAttributeTarget (yyToken, GetTokenName (yyToken), GetLocation ($1)); 
  		$$ = null;
 	  }
 	;	
@@ -748,7 +748,7 @@ attribute_target
 	: IDENTIFIER
 	  {
 		var lt = (LocatedToken) $1;
-		$$ = CheckAttributeTarget (lt.Value, lt.Location);
+		$$ = CheckAttributeTarget (yyToken, lt.Value, lt.Location);
 	  }
 	| EVENT  { $$ = "event"; }
 	| RETURN { $$ = "return"; }
@@ -6980,15 +6980,20 @@ Location PopLocation ()
 	return location_stack.Pop ();
 }
 
-string CheckAttributeTarget (string a, Location l)
+string CheckAttributeTarget (int token, string a, Location l)
 {
 	switch (a) {
 	case "assembly" : case "module" : case "field" : case "method" : case "param" : case "property" : case "type" :
 			return a;
 	}
 
-	report.Warning (658, 1, l,
-		 "`{0}' is invalid attribute target. All attributes in this attribute section will be ignored", a);
+	if (!Tokenizer.IsValidIdentifier (a)) {
+		Error_SyntaxError (token);
+	} else {
+		report.Warning (658, 1, l,
+			 "`{0}' is invalid attribute target. All attributes in this attribute section will be ignored", a);
+	}
+
 	return string.Empty;
 }
 

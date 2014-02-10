@@ -758,7 +758,7 @@ mono_assembly_fill_assembly_name (MonoImage *image, MonoAssemblyName *aname)
 {
 	MonoTableInfo *t = &image->tables [MONO_TABLE_ASSEMBLY];
 	guint32 cols [MONO_ASSEMBLY_SIZE];
-	gint32 machine;
+	gint32 machine, flags;
 
 	if (!t->rows)
 		return FALSE;
@@ -804,9 +804,16 @@ mono_assembly_fill_assembly_name (MonoImage *image, MonoAssemblyName *aname)
 		aname->public_key = 0;
 
 	machine = ((MonoCLIImageInfo*)(image->image_info))->cli_header.coff.coff_machine;
+	flags = ((MonoCLIImageInfo*)(image->image_info))->cli_cli_header.ch_flags;
 	switch (machine) {
 	case COFF_MACHINE_I386:
-		aname->arch = MONO_PROCESSOR_ARCHITECTURE_X86;
+		/* https://bugzilla.xamarin.com/show_bug.cgi?id=17632 */
+		if (flags & (CLI_FLAGS_32BITREQUIRED|CLI_FLAGS_PREFERRED32BIT))
+			aname->arch = MONO_PROCESSOR_ARCHITECTURE_X86;
+		else if ((flags & 0x70) == 0x70)
+			aname->arch = MONO_PROCESSOR_ARCHITECTURE_NONE;
+		else
+			aname->arch = MONO_PROCESSOR_ARCHITECTURE_MSIL;
 		break;
 	case COFF_MACHINE_IA64:
 		aname->arch = MONO_PROCESSOR_ARCHITECTURE_IA64;
@@ -2109,9 +2116,7 @@ mono_assembly_name_parse_full (const char *name, MonoAssemblyName *aname, gboole
 		}
 
 		if (part_name_len == 21 && !g_ascii_strncasecmp (part_name, "ProcessorArchitecture", part_name_len)) {
-			if (!g_ascii_strcasecmp (value, "None"))
-				arch = MONO_PROCESSOR_ARCHITECTURE_NONE;
-			else if (!g_ascii_strcasecmp (value, "MSIL"))
+			if (!g_ascii_strcasecmp (value, "MSIL"))
 				arch = MONO_PROCESSOR_ARCHITECTURE_MSIL;
 			else if (!g_ascii_strcasecmp (value, "X86"))
 				arch = MONO_PROCESSOR_ARCHITECTURE_X86;
@@ -2562,16 +2567,23 @@ assembly_binding_info_parsed (MonoAssemblyBindingInfo *info, void *user_data)
 	domain->assembly_bindings = g_slist_append_mempool (domain->mp, domain->assembly_bindings, info_copy);
 }
 
+static int
+get_version_number (int major, int minor)
+{
+	return major * 256 + minor;
+}
+
 static inline gboolean
 info_major_minor_in_range (MonoAssemblyBindingInfo *info, MonoAssemblyName *aname)
 {
+	int aname_version_number = get_version_number (aname->major, aname->minor);
 	if (!info->has_old_version_bottom)
 		return FALSE;
 
-	if (info->old_version_bottom.major > aname->major || info->old_version_bottom.minor > aname->minor)
+	if (get_version_number (info->old_version_bottom.major, info->old_version_bottom.minor) > aname_version_number)
 		return FALSE;
 
-	if (info->has_old_version_top && (info->old_version_top.major < aname->major || info->old_version_top.minor < aname->minor))
+	if (info->has_old_version_top && get_version_number (info->old_version_top.major, info->old_version_top.minor) < aname_version_number)
 		return FALSE;
 
 	/* This is not the nicest way to do it, but it's a by-product of the way parsing is done */
