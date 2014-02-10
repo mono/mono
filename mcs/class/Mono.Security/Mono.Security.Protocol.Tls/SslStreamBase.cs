@@ -96,7 +96,7 @@ namespace Mono.Security.Protocol.Tls
 			{
 				try
 				{
-					this.EndNegotiateHandshake(asyncResult);
+					this.OnNegotiateHandshakeCallback(asyncResult);
 				}
 				catch (TlsException ex)
 				{
@@ -179,8 +179,8 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Abstracts/Virtuals
 
-		internal abstract IAsyncResult BeginNegotiateHandshake (AsyncCallback callback, object state);
-		internal abstract void EndNegotiateHandshake (IAsyncResult result);
+		internal abstract IAsyncResult OnBeginNegotiateHandshake(AsyncCallback callback, object state);
+		internal abstract void OnNegotiateHandshakeCallback(IAsyncResult asyncResult);
 
 		internal abstract X509Certificate OnLocalCertificateSelection(X509CertificateCollection clientCertificates,
 															X509Certificate serverCertificate,
@@ -492,7 +492,7 @@ namespace Mono.Security.Protocol.Tls
 				{
 					if (this.context.HandshakeState == HandshakeState.None)
 					{
-						this.BeginNegotiateHandshake(new AsyncCallback(AsyncHandshakeCallback), asyncResult);
+						this.OnBeginNegotiateHandshake(new AsyncCallback(AsyncHandshakeCallback), asyncResult);
 
 						return true;
 					}
