@@ -1066,16 +1066,28 @@ namespace System.Xml
 				switch (Type.GetTypeCode (type)) {
 				case TypeCode.Boolean:
 					return XQueryConvert.StringToBoolean (text);
+				case TypeCode.Byte:
+					return XmlConvert.ToByte (text);
+				case TypeCode.SByte:
+					return XmlConvert.ToSByte (text);
+				case TypeCode.Int16:
+					return XmlConvert.ToInt16 (text);
+				case TypeCode.UInt16:
+					return XQueryConvert.StringToUnsignedShort (text);
+				case TypeCode.Int32:
+					return XQueryConvert.StringToInt (text);
+				case TypeCode.UInt32:
+					return XQueryConvert.StringToUnsignedInt (text);
+				case TypeCode.Int64:
+					return XQueryConvert.StringToInteger (text);
+				case TypeCode.UInt64:
+					return XQueryConvert.StringToUnsignedLong (text);
 				case TypeCode.DateTime:
 					return XQueryConvert.StringToDateTime (text);
 				case TypeCode.Decimal:
 					return XQueryConvert.StringToDecimal (text);
 				case TypeCode.Double:
 					return XQueryConvert.StringToDouble (text);
-				case TypeCode.Int32:
-					return XQueryConvert.StringToInt (text);
-				case TypeCode.Int64:
-					return XQueryConvert.StringToInteger (text);
 				case TypeCode.Single:
 					return XQueryConvert.StringToFloat (text);
 				case TypeCode.String:

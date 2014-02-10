@@ -2270,6 +2270,23 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual (arr [1], ret [1], "#3");
 		}
 
+		[Test]
+		public void ReadContentAs ()
+		{
+			var xr = XmlReader.Create (new StringReader ("<doc a=' 1 '/>"));
+			xr.Read ();
+			xr.MoveToAttribute ("a");
+
+			Assert.AreEqual ((Byte) 1, xr.ReadContentAs (typeof (Byte), null), "#1");
+			Assert.AreEqual ((SByte) 1, xr.ReadContentAs (typeof (SByte), null), "#2");
+			Assert.AreEqual ((Int16) 1, xr.ReadContentAs (typeof (Int16), null), "#3");
+			Assert.AreEqual ((UInt16) 1, xr.ReadContentAs (typeof (UInt16), null), "#4");
+			Assert.AreEqual ((Int32) 1, xr.ReadContentAs (typeof (Int32), null), "#5");
+			Assert.AreEqual ((UInt32) 1, xr.ReadContentAs (typeof (UInt32), null), "#6");
+			Assert.AreEqual ((Int64) 1, xr.ReadContentAs (typeof (Int64), null), "#7");
+			Assert.AreEqual ((UInt64) 1, xr.ReadContentAs (typeof (UInt64), null), "#8");
+		}
+
 #if NET_4_5
 		[Test]
 		[ExpectedException(typeof(InvalidOperationException))]
