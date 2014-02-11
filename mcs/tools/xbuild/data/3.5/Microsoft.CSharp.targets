@@ -96,9 +96,4 @@
 	</Target>
 
 	<Import Project="Microsoft.Common.targets" />
-
-	<PropertyGroup>
-		<CscToolExe Condition="'$(CscToolExe)' == '' and '$(OS)' == 'Unix'">gmcs</CscToolExe>
-		<CscToolExe Condition="'$(CscToolExe)' == '' and '$(OS)' != 'Unix'">gmcs.bat</CscToolExe>
-	</PropertyGroup>
 </Project>

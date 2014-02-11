@@ -376,7 +376,9 @@ namespace Microsoft.Build.Tasks {
 
 		protected override string GenerateFullPathToTool ()
 		{
-			return Path.Combine (ToolPath, ToolExe);
+			if (!string.IsNullOrEmpty (ToolPath))
+				return Path.Combine (ToolPath, ToolExe);
+			return ToolLocationHelper.GetPathToDotNetFrameworkFile (ToolExe, TargetDotNetFrameworkVersion.VersionLatest);
 		}
 
 		protected override MessageImportance StandardOutputLoggingImportance {
@@ -384,7 +386,7 @@ namespace Microsoft.Build.Tasks {
 		}
 
 		protected override string ToolName {
-			get { return MSBuildUtils.RunningOnWindows ? "resgen2.bat" : "resgen2"; }
+			get { return "resgen.exe"; }
 		}
 
 		public string SourceFile { get; set; }
