@@ -33,25 +33,25 @@ XBUILD_12_0_PROFILE_DIR=$(topdir)/class/lib/xbuild_12
 copy-targets-2.0:
 	cp $(XBUILD_DATA_DIR)/2.0/Microsoft.Common.targets $(XBUILD_2_0_PROFILE_DIR)
 	cp $(XBUILD_DATA_DIR)/2.0/Microsoft.Common.tasks $(XBUILD_2_0_PROFILE_DIR)
-	cp $(XBUILD_DATA_DIR)/Microsoft.CSharp.targets $(XBUILD_2_0_PROFILE_DIR)
+	cp $(XBUILD_DATA_DIR)/2.0/Microsoft.CSharp.targets $(XBUILD_2_0_PROFILE_DIR)
 	cp $(XBUILD_DATA_DIR)/Microsoft.VisualBasic.targets $(XBUILD_2_0_PROFILE_DIR)
 
 copy-targets-3.5:
 	cp $(XBUILD_DATA_DIR)/3.5/Microsoft.Common.targets $(XBUILD_3_5_PROFILE_DIR)
 	cp $(XBUILD_DATA_DIR)/3.5/Microsoft.Common.tasks $(XBUILD_3_5_PROFILE_DIR)
-	cp $(XBUILD_DATA_DIR)/Microsoft.CSharp.targets $(XBUILD_3_5_PROFILE_DIR)
+	cp $(XBUILD_DATA_DIR)/3.5/Microsoft.CSharp.targets $(XBUILD_3_5_PROFILE_DIR)
 	cp $(XBUILD_DATA_DIR)/Microsoft.VisualBasic.targets $(XBUILD_3_5_PROFILE_DIR)
 
 copy-targets-4.0:
 	cp $(XBUILD_DATA_DIR)/4.0/Microsoft.Common.targets $(XBUILD_4_0_PROFILE_DIR)
 	cp $(XBUILD_DATA_DIR)/4.0/Microsoft.Common.tasks $(XBUILD_4_0_PROFILE_DIR)
-	cp $(XBUILD_DATA_DIR)/Microsoft.CSharp.targets $(XBUILD_4_0_PROFILE_DIR)
+	cp $(XBUILD_DATA_DIR)/4.0/Microsoft.CSharp.targets $(XBUILD_4_0_PROFILE_DIR)
 	cp $(XBUILD_DATA_DIR)/Microsoft.VisualBasic.targets $(XBUILD_4_0_PROFILE_DIR)
 
 copy-targets-12.0:
 	cp $(XBUILD_DATA_DIR)/12.0/Microsoft.Common.targets $(XBUILD_12_0_PROFILE_DIR)
 	cp $(XBUILD_DATA_DIR)/12.0/Microsoft.Common.tasks $(XBUILD_12_0_PROFILE_DIR)
-	cp $(XBUILD_DATA_DIR)/Microsoft.CSharp.targets $(XBUILD_12_0_PROFILE_DIR)
+	cp $(XBUILD_DATA_DIR)/12.0/Microsoft.CSharp.targets $(XBUILD_12_0_PROFILE_DIR)
 	cp $(XBUILD_DATA_DIR)/Microsoft.VisualBasic.targets $(XBUILD_12_0_PROFILE_DIR)
 
 clean-targets-2.0:

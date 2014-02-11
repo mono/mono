@@ -129,7 +129,11 @@ namespace Microsoft.Build.Tasks {
 
 		protected override string GenerateFullPathToTool ()
 		{
-			return Path.Combine (ToolPath, ToolExe);
+			string exe = !string.IsNullOrEmpty (ToolExe)? ToolExe : ToolName;
+			string path = ToolPath;
+			if (!string.IsNullOrEmpty (ToolPath))
+				return Path.Combine (path, exe);
+			return ToolLocationHelper.GetPathToDotNetFrameworkFile (exe, TargetDotNetFrameworkVersion.VersionLatest);
 		}
 
 		[MonoTODO]
@@ -200,11 +204,7 @@ namespace Microsoft.Build.Tasks {
 
 		protected override string ToolName {
 			get {
-#if NET_4_0
-				return MSBuildUtils.RunningOnWindows ? "dmcs.bat" : "dmcs";
-#else
-				return MSBuildUtils.RunningOnWindows ? "gmcs.bat" : "gmcs";
-#endif
+				return "mcs.exe";
 			}
 		}
 

@@ -121,11 +121,14 @@ namespace Microsoft.Build.Utilities
 			return mono_dir [(int)version];
 		}
 
-		[MonoTODO]
 		public static string GetPathToDotNetFrameworkFile (string fileName,
 								  TargetDotNetFrameworkVersion version)
 		{
-			throw new NotImplementedException ();
+			string dir = GetPathToDotNetFramework (version);
+			string file = Path.Combine (dir, fileName);
+			if (File.Exists (file))
+				return file;
+			return null;
 		}
 
 		public static string GetPathToDotNetFrameworkSdk (TargetDotNetFrameworkVersion version)
