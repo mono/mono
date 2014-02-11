@@ -1132,6 +1132,9 @@ class Tester
 		Assert (d << v2, 0x40000000, "#2");
 		dynamic d2 = (int?) -2;
 		Assert (d2 << 1, -4, "#2a");
+
+		dynamic d3 = (int?) null;
+		Assert (d3 << (null << null), (int?)null, "#3");
 	}
 
 	void LeftShiftAssignTest ()
@@ -1794,6 +1797,9 @@ class Tester
 		Assert (d >> v2, 0, "#2");
 		dynamic d2 = (int?) -200;
 		Assert (d2 >> 1, -100, "#2a");
+
+		dynamic d3 = (int?) null;
+		Assert (d3 >> (null >> null), (int?) null, "#3");
 	}
 
 	void RightShiftAssignTest ()

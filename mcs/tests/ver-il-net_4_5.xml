@@ -1035,7 +1035,7 @@
         <size>1367</size>
       </method>
       <method name="Void LeftShiftNullableTest()" attrs="129">
-        <size>1138</size>
+        <size>1363</size>
       </method>
       <method name="Void LeftShiftAssignTest()" attrs="129">
         <size>650</size>
@@ -1137,7 +1137,7 @@
         <size>1153</size>
       </method>
       <method name="Void RightShiftNullableTest()" attrs="129">
-        <size>1137</size>
+        <size>1362</size>
       </method>
       <method name="Void RightShiftAssignTest()" attrs="129">
         <size>650</size>

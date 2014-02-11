@@ -883,7 +883,6 @@ namespace Mono.CSharp {
 
 				IntConstant ic = right.ConvertImplicitly (ec.BuiltinTypes.Int) as IntConstant;
 				if (ic == null){
-					Binary.Error_OperatorCannotBeApplied (ec, left, right, oper, loc);
 					return null;
 				}
 
@@ -905,8 +904,7 @@ namespace Mono.CSharp {
 				if (left.Type.BuiltinType == BuiltinTypeSpec.Type.Int)
 					return new IntConstant (ec.BuiltinTypes, ((IntConstant) left).Value << lshift_val, left.Location);
 
-				Binary.Error_OperatorCannotBeApplied (ec, left, right, oper, loc);
-				break;
+				return null;
 
 				//
 				// There is no overflow checking on right shift
@@ -920,7 +918,6 @@ namespace Mono.CSharp {
 
 				IntConstant sic = right.ConvertImplicitly (ec.BuiltinTypes.Int) as IntConstant;
 				if (sic == null){
-					Binary.Error_OperatorCannotBeApplied (ec, left, right, oper, loc);
 					return null;
 				}
 				int rshift_val = sic.Value;
@@ -941,8 +938,7 @@ namespace Mono.CSharp {
 				if (left.Type.BuiltinType == BuiltinTypeSpec.Type.Int)
 					return new IntConstant (ec.BuiltinTypes, ((IntConstant) left).Value >> rshift_val, left.Location);
 
-				Binary.Error_OperatorCannotBeApplied (ec, left, right, oper, loc);
-				break;
+				return null;
 
 			case Binary.Operator.Equality:
 				if (TypeSpec.IsReferenceType (lt) && TypeSpec.IsReferenceType (rt) ||
@@ -1176,7 +1172,7 @@ namespace Mono.CSharp {
 
 				return new BoolConstant (ec.BuiltinTypes, bool_res, left.Location);
 			}
-					
+
 			return null;
 		}
 	}
