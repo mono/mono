@@ -1006,7 +1006,11 @@ namespace System.Xml
 #if NET_4_5
 		public virtual DateTimeOffset ReadContentAsDateTimeOffset ()
 		{
-			return XmlConvert.ToDateTimeOffset (ReadContentString ());
+			try {
+				return XmlConvert.ToDateTimeOffset (ReadContentString ());
+			} catch (Exception e) {
+				throw XmlError ("Typed value is invalid.", e);
+			}
 		}
 #endif
 
@@ -1022,6 +1026,11 @@ namespace System.Xml
 
 		public virtual object ReadElementContentAs (Type returnType, IXmlNamespaceResolver namespaceResolver, string localName, string namespaceURI)
 		{
+			if (localName == null)
+				throw new ArgumentNullException ("localName");
+			if (namespaceURI == null)
+				throw new ArgumentNullException ("namespaceURI");
+
 			bool isEmpty = IsEmptyElement;
 			ReadStartElement (localName, namespaceURI);
 			if (isEmpty)
@@ -1096,7 +1105,7 @@ namespace System.Xml
 			} catch (Exception ex) {
 				throw XmlError (String.Format ("Current text value '{0}' is not acceptable for specified type '{1}'. {2}", text, type, ex != null ? ex.Message : String.Empty), ex);
 			}
-			throw new ArgumentException (String.Format ("Specified type '{0}' is not supported.", type));
+			throw new XmlException (String.Format ("Specified type '{0}' is not supported.", type));
 		}
 
 		public virtual bool ReadElementContentAsBoolean ()
