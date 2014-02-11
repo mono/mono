@@ -1,4 +1,4 @@
-<Projec xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
 		<DefaultLanguageSourceExtension>.cs</DefaultLanguageSourceExtension>
 		<Language>C#</Language>
