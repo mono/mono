@@ -82,9 +82,19 @@ namespace System.Net {
 		static EndPointListener GetEPListener (string host, int port, HttpListener listener, bool secure)
 		{
 			IPAddress addr;
-			if (IPAddress.TryParse(host, out addr) == false)
+			if (host == "*")
 				addr = IPAddress.Any;
-
+			else if (IPAddress.TryParse(host, out addr) == false){
+				try {
+					IPHostEntry iphost = Dns.GetHostByName(host);
+					if (iphost != null)
+						addr = iphost.AddressList[0];
+					else
+						addr = IPAddress.Any;
+				} catch {
+					addr = IPAddress.Any;
+				} 
+			}
 			Hashtable p = null;  // Dictionary<int, EndPointListener>
 			if (ip_to_endpoints.ContainsKey (addr)) {
 				p = (Hashtable) ip_to_endpoints [addr];
