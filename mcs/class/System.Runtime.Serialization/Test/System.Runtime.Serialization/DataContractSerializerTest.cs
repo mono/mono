@@ -45,12 +45,20 @@ namespace MonoTests.System.Runtime.Serialization
 {
         [KnownType (typeof(MyObject[]))]
         [DataContract]
-        public class MyObject
+        public class MyObject2
         {
                 [DataMember]
                 public object NameList;
         }
 
+        [KnownType(typeof(string[]))]
+        [DataContract]
+        public class MyObject
+        {
+                [DataMember]
+                public object NameList;
+        }
+	
 	[TestFixture]
 	public class DataContractSerializerTestBugs {
 
@@ -68,5 +76,22 @@ namespace MonoTests.System.Runtime.Serialization
 
                         var ser = new DataContractSerializer (typeof(MyObject));
 		}
+
+		[Test]
+		public void Bug ()
+		{
+			var s = "<MyObject xmlns=\"http://schemas.datacontract.org/2004/07/MonoTests.System.Runtime.Serialization\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
+				"  <NameList i:type=\"a:ArrayOfstring\" xmlns:a=\"http://schemas.microsoft.com/2003/10/Serialization/Arrays\">\n" +
+				"    <a:string>Name1</a:string>\n" +
+				"    <a:string>Name2</a:string>\n" + 
+				"  </NameList>\n" +
+				"</MyObject>";
+
+ 			//<MyObject xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.datacontract.org/2004/07/ServiceTest">
+
+                        var ser = new DataContractSerializer(typeof(MyObject));
+			ser.ReadObject (XmlReader.Create(new StringReader(s)));
+		}
+		
 	}
 }
