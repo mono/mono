@@ -2104,6 +2104,78 @@ namespace MonoTests.System
 			DateTime result = DateTime.ParseExact ("2005-01-01T01:11:11+8:00", f, new DateTimeFormatInfo (), dts);
 		}
 
+        [Test]
+        public void TestParseExactXmlTimeFormats()
+        {
+            //Xamarin Bug 16742
+            string[] xmlTimeFormats = {
+                "HH:mm:ss", "HH:mm:ss.FFFFFFF",
+                "HH:mm:sszzz", "HH:mm:ss.FFFFFFFzzz",
+                "HH:mm:ssZ", "HH:mm:ss.FFFFFFFZ"
+            };
+            DateTimeStyles style = DateTimeStyles.AllowLeadingWhite | DateTimeStyles.AllowTrailingWhite;
+
+            //time local
+            Assert.AreEqual(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 000).Ticks,
+                DateTime.ParseExact("13:30:44", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+            Assert.AreEqual(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 000).Ticks,
+                DateTime.ParseExact("13:30:44.0", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+            Assert.AreEqual(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 000).Ticks,
+                DateTime.ParseExact("13:30:44.00", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+            Assert.AreEqual(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 000).Ticks,
+                DateTime.ParseExact("13:30:44.000", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+            Assert.AreEqual(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 000).Ticks,
+                DateTime.ParseExact("13:30:44.0000", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+            Assert.AreEqual(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 000).Ticks,
+                DateTime.ParseExact("13:30:44.00000", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+            Assert.AreEqual(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 000).Ticks,
+                DateTime.ParseExact("13:30:44.000000", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+            Assert.AreEqual(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 000).Ticks,
+                DateTime.ParseExact("13:30:44.0000000", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+            Assert.AreEqual(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 123).Ticks,
+                DateTime.ParseExact("13:30:44.123", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+
+            //time with zero timezone
+            Assert.AreEqual(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 000, DateTimeKind.Utc).ToLocalTime().Ticks,
+                DateTime.ParseExact("13:30:44Z", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+            Assert.AreEqual(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 000, DateTimeKind.Utc).ToLocalTime().Ticks,
+                DateTime.ParseExact("13:30:44.0Z", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+            Assert.AreEqual(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 000, DateTimeKind.Utc).ToLocalTime().Ticks,
+                DateTime.ParseExact("13:30:44.00Z", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+            Assert.AreEqual(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 000, DateTimeKind.Utc).ToLocalTime().Ticks,
+                DateTime.ParseExact("13:30:44.000Z", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+            Assert.AreEqual(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 000, DateTimeKind.Utc).ToLocalTime().Ticks,
+                DateTime.ParseExact("13:30:44.0000Z", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+            Assert.AreEqual(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 000, DateTimeKind.Utc).ToLocalTime().Ticks,
+                DateTime.ParseExact("13:30:44.00000Z", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+            Assert.AreEqual(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 000, DateTimeKind.Utc).ToLocalTime().Ticks,
+                DateTime.ParseExact("13:30:44.000000Z", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+            Assert.AreEqual(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 000, DateTimeKind.Utc).ToLocalTime().Ticks,
+                DateTime.ParseExact("13:30:44.0000000Z", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+            Assert.AreEqual(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 123, DateTimeKind.Utc).ToLocalTime().Ticks,
+                DateTime.ParseExact("13:30:44.123Z", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+
+            //time with timezone
+            Assert.AreEqual(new DateTimeOffset(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 000, new TimeSpan(13, 0, 0)).ToLocalTime().Ticks,
+                DateTime.ParseExact("13:30:44+13:00", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+            Assert.AreEqual(new DateTimeOffset(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 000, new TimeSpan(13, 0, 0)).ToLocalTime().Ticks,
+                DateTime.ParseExact("13:30:44.0+13:00", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+            Assert.AreEqual(new DateTimeOffset(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 000, new TimeSpan(13, 0, 0)).ToLocalTime().Ticks,
+                DateTime.ParseExact("13:30:44.00+13:00", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+            Assert.AreEqual(new DateTimeOffset(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 000, new TimeSpan(13, 0, 0)).ToLocalTime().Ticks,
+                DateTime.ParseExact("13:30:44.000+13:00", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+            Assert.AreEqual(new DateTimeOffset(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 000, new TimeSpan(13, 0, 0)).ToLocalTime().Ticks,
+                DateTime.ParseExact("13:30:44.0000+13:00", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+            Assert.AreEqual(new DateTimeOffset(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 000, new TimeSpan(13, 0, 0)).ToLocalTime().Ticks,
+                DateTime.ParseExact("13:30:44.00000+13:00", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+            Assert.AreEqual(new DateTimeOffset(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 000, new TimeSpan(13, 0, 0)).ToLocalTime().Ticks,
+                DateTime.ParseExact("13:30:44.000000+13:00", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+            Assert.AreEqual(new DateTimeOffset(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 000, new TimeSpan(13, 0, 0)).ToLocalTime().Ticks,
+                DateTime.ParseExact("13:30:44.0000000+13:00", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+            Assert.AreEqual(new DateTimeOffset(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 13, 30, 44, 123, new TimeSpan(13, 0, 0)).ToLocalTime().Ticks,
+                DateTime.ParseExact("13:30:44.123+13:00", xmlTimeFormats, DateTimeFormatInfo.InvariantInfo, style).Ticks);
+        }
+
 		[Test]
 		[ExpectedException (typeof (FormatException))]
 		public void EmptyString ()

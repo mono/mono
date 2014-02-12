@@ -1588,7 +1588,7 @@ namespace System
 					// '.FFF....' can be mapped to nothing
 					if (pos + 1 < len && chars[pos + 1] == 'F') {
 						++pos;
-						while (pos < len && chars[pos + 1] == 'F') {
+						while (pos + 1 < len && chars[pos + 1] == 'F') {
 							++pos;
 						}
 
@@ -1805,7 +1805,7 @@ namespace System
 			{
 				if ((style & DateTimeStyles.AdjustToUniversal) != 0 || (style & DateTimeStyles.AssumeLocal) != 0 ||
 					 (style & DateTimeStyles.AssumeUniversal) != 0)
-					throw new ArgumentException ("The DateTimeStyles value RoundtripKind cannot be used with the values AssumeLocal, Asersal or AdjustToUniversal.", "style");
+					throw new ArgumentException ("The DateTimeStyles value RoundtripKind cannot be used with the values AssumeLocal, AssumeUniversal or AdjustToUniversal.", "style");
 			}
 			if ((style & DateTimeStyles.AssumeUniversal) != 0 && (style & DateTimeStyles.AssumeLocal) != 0)			
 				throw new ArgumentException ("The DateTimeStyles values AssumeLocal and AssumeUniversal cannot be used together.", "style");
