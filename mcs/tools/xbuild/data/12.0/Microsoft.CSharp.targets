@@ -24,7 +24,7 @@
 		<DocFileItem Include="$(DocumentationFile)" Condition="'$(DocumentationFile)' != ''"/>
 	</ItemGroup>
 
-	<Target Name="_AddCorlibReference" DependsOn="GetReferenceAssemblyPaths">
+	<Target Name="_AddCorlibReference" DependsOnTargets="GetReferenceAssemblyPaths">
 		<!--
 		HACK: We don't yet support property functions, so can't calculate FrameworkPathOverride
 		by calling ToolLocationHelper.GetPathToStandardLibraries. Instead, we search the framework
