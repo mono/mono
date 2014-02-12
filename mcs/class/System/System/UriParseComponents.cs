@@ -114,27 +114,45 @@ namespace System {
 				ok = ParsePort (ref state);
 			return ok;
 		}
+
+		static bool IsUnreserved (char ch)
+		{
+			return ch == '-' || ch == '.' || ch == '_' || ch == '~';
+		}
+
+
+		static bool IsSubDelim (char ch)
+		{
+			return ch == '!' || ch == '$' || ch == '&' || ch == '\'' || ch == '(' || ch == ')' ||
+				ch == '*' || ch == '+' || ch == ',' || ch == ';' || ch == '=';
+		}
 		
 		// userinfo    = *( unreserved / pct-encoded / sub-delims / ":" )
 		private static bool ParseUser (ref ParserState state)
 		{
 			string part = state.remaining;
-			StringBuilder sb = new StringBuilder ();
-			
+			StringBuilder sb = null;
+
 			int index;
 			for (index = 0; index < part.Length; index++) {
-				
 				char ch = part [index];
-				
-				if (ch == '@' || ch == '/' && ch == '#' && ch == '?')
+
+				if (ch == '%'){
+					if (!Uri.IsHexEncoding (part, index))
+						return false;
+					ch = Uri.HexUnescape (part, ref index);
+				}
+
+				if (Char.IsLetterOrDigit (ch) || IsUnreserved (ch) || IsSubDelim (ch) || ch == ':'){
+					if (sb == null)
+					        sb = new StringBuilder ();
+					sb.Append (ch);
+				} else
 					break;
-				
-				sb.Append (ch);
 			}
-			
+
 			if (index + 1 <= part.Length && part [index] == '@') {
-				
-				state.elements.user = sb.ToString ();
+				state.elements.user = sb == null ? "" : sb.ToString ();
 				state.remaining = state.remaining.Substring (index + 1);
 			}
 				
