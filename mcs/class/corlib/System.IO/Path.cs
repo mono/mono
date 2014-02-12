@@ -741,6 +741,9 @@ namespace System.IO {
 						else
 							return current + ret;
 					}
+				} else {
+					if (root != "" && ret.Length > 0 && ret [0] != '/')
+						ret = root + ret;
 				}
 				return ret;
 			}

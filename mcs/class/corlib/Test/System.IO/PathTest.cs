@@ -491,6 +491,11 @@ namespace MonoTests.System.IO
 
 			testFullPath = Path.GetFullPath ("a//./.././foo.txt");
 			Assert.AreEqual (expected, testFullPath, "GetFullPath #02");
+
+			if (!Windows){
+				Assert.AreEqual ("/bin/bash", Path.GetFullPath ("/../bin/bash"));
+			}
+				
 		}
 
 		[Test]
