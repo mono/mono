@@ -152,10 +152,6 @@ namespace System.Net
 			set { throw GetMustImplement (); }
 		}
 		
-		public TokenImpersonationLevel ImpersonationLevel {
-			get { throw GetMustImplement (); }
-			set { throw GetMustImplement (); }
-		}
 
 		public virtual string Method { 
 			get { throw GetMustImplement (); }
@@ -190,7 +186,9 @@ namespace System.Net
 				throw GetMustImplement ();
 			}
 		}
-		
+
+		public TokenImpersonationLevel ImpersonationLevel { get; set; }
+
 //		volatile static IWebProxy proxy;
 		static readonly object lockobj = new object ();
 		
