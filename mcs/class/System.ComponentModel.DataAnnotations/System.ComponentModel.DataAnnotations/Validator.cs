@@ -93,15 +93,13 @@ namespace System.ComponentModel.DataAnnotations
 			Type propertyType = pdesc.PropertyType;
 			bool invalidType = false;
 
-			Console.WriteLine ("valueType == {0}; propertyType == {1} (reference? {2})", valueType == null ? "<null>" : valueType.FullName,
-					   propertyType, !propertyType.IsValueType || (Nullable.GetUnderlyingType (propertyType) != null));
 			if (valueType == null)
-				invalidType = !(!propertyType.IsValueType || (Nullable.GetUnderlyingType (propertyType) != null));
-			else if (propertyType != valueType)
-				invalidType = true;
-
+				invalidType = (propertyType.IsValueType && Nullable.GetUnderlyingType(propertyType) == null);
+			else
+				invalidType = !propertyType.IsAssignableFrom(valueType);
+			
 			if (invalidType)
-				throw new ArgumentException (String.Format ("The value of property '{0}' must be of type '{1}'.", propertyName, type.FullName), "propertyName");
+				throw new ArgumentException (String.Format ("The value of property '{0}' must be of type '{1}'.", propertyName, propertyType.FullName), "propertyName");
 			
 			return pdesc;
 		}
@@ -113,8 +111,6 @@ namespace System.ComponentModel.DataAnnotations
 				throw new ArgumentNullException ("validationContext");
 
 			PropertyDescriptor pdesc = GetProperty (validationContext.ObjectType, validationContext.MemberName, value);
-			if (value == null)
-				return true;
 
 			bool valid = true;
 			ValidateProperty (pdesc, value, validationContext, validationResults, true, ref valid);

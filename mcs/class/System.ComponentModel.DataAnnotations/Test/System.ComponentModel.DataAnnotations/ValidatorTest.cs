@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.Design;
 using System.Text;
 
 using NUnit.Framework;
@@ -972,6 +971,97 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				Validator.ValidateValue ("dummy", ctx, null);
 			}, "#B3");
 		}
+		
+		[Test]
+		public void TryValidateValue_Throws_ValidationException_When_Property_Is_NullableAndRequired_And_Value_Is_Null ()
+		{
+			EntityMock entity = new EntityMock ();
+			ICollection<ValidationResult> result = new List<ValidationResult>();
+
+			ICollection<ValidationAttribute> attributes = new List<ValidationAttribute> ();
+			attributes.Add (new RequiredAttribute ());
+
+			// Year = null
+			bool isValid = Validator.TryValidateValue (null, new ValidationContext (entity, null, null) { MemberName = "Year" }, result, attributes);
+
+			Assert.IsFalse (isValid, "#A1-1");
+			Assert.AreEqual (1, result.Count, "#A1-2");
+
+			// Name = null, string
+			result.Clear ();
+
+			isValid = Validator.TryValidateValue (null, new ValidationContext (entity, null, null) { MemberName =  "Name" }, result, attributes);
+
+			Assert.IsFalse (isValid, "#A2-1");
+			Assert.AreEqual (1, result.Count, "#A2-2");
+
+			// Name = string.Empty, string
+			result.Clear ();
+
+			isValid = Validator.TryValidateValue (String.Empty, new ValidationContext (entity, null, null) { MemberName = "Name" }, result, attributes);
+
+			Assert.IsFalse (isValid, "#A3-1");
+			Assert.AreEqual (1, result.Count, "#A3-2");
+		}
+
+		[Test]
+		public void TryValidateProperty_Throws_ValidationException_When_Property_Is_NullableAndRequired_And_Value_Is_Null ()
+		{
+			EntityMock entity = new EntityMock ();
+			ICollection<ValidationResult> result = new List<ValidationResult> ();
+
+			// Year = null
+			bool isValid = Validator.TryValidateProperty (null, new ValidationContext (entity, null, null) { MemberName = "Year" }, result);
+
+			Assert.IsFalse (isValid, "#A1-1");
+			Assert.AreEqual (1, result.Count, "#A1-2");
+
+			// Name = null, string
+			result.Clear ();
+
+			isValid = Validator.TryValidateProperty (null, new ValidationContext (entity, null, null) { MemberName = "Name" }, result);
+
+			Assert.IsFalse (isValid, "#A2-1");
+			Assert.AreEqual (1, result.Count, "#A2-2");
+
+			// Name = string.Empty, string
+			result.Clear ();
+
+			isValid = Validator.TryValidateProperty (String.Empty, new ValidationContext (entity, null, null) { MemberName = "Name" }, result);
+
+			Assert.IsFalse (isValid, "#A3-1");
+			Assert.AreEqual (1, result.Count, "#A3-2");
+		}
+
+		[Test]
+		public void TryValidateObject_Throws_ValidationException_When_Property_Is_NullableAndRequired_And_Value_Is_Null ()
+		{
+			EntityMock entity = new EntityMock ();
+			ICollection<ValidationResult> result = new List<ValidationResult> ();
+
+			// Year = null
+			bool isValid = Validator.TryValidateObject (entity, new ValidationContext (entity, null, null), result);
+
+			Assert.IsFalse (isValid, "#A1-1");
+			Assert.AreEqual (2, result.Count, "#A1-2");
+
+			// Name = null, string
+			result.Clear ();
+
+			isValid = Validator.TryValidateObject (entity, new ValidationContext (entity, null, null), result);
+
+			Assert.IsFalse (isValid, "#A2-1");
+			Assert.AreEqual (2, result.Count, "#A2-2");
+
+			// Name = string.Empty, string
+			result.Clear ();
+
+			entity.Name = String.Empty;
+			isValid = Validator.TryValidateObject (entity, new ValidationContext (entity, null, null), result);
+
+			Assert.IsFalse (isValid, "#A3-1");
+			Assert.AreEqual (2, result.Count, "#A3-2");
+		}
 
 		public static ValidationResult DummyValidationMethod (object o)
 		{
@@ -1114,6 +1204,33 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 
 			[CustomValidation (typeof (ValidatorTest), "SecondPropertyValidationMethod")]
 			public string SecondProperty { get; set; }
+		}
+		
+		class EntityMock
+		{
+			private int? _year;
+
+			[Required]
+			public int? Year
+			{
+				get { return _year; }
+				set
+				{
+					_year = value;
+				}
+			}
+
+			private string _name;
+
+			[Required]
+			public string Name
+			{
+				get { return _name; }
+				set
+				{
+					_name = value;
+				}
+			}
 		}
 	}
 #endif
