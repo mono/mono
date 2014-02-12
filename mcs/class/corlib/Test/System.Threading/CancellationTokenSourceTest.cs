@@ -78,7 +78,7 @@ namespace MonoTests.System.Threading
 		{
 			var cts = new CancellationTokenSource ();
 			try {
-				cts.CancelAfter (-9);
+				cts.	 (-9);
 				Assert.Fail ("#1");
 			} catch (ArgumentException) {
 			}
@@ -473,6 +473,7 @@ namespace MonoTests.System.Threading
 			}, 500);
 		}
 
+#if NET_4_5
 		[Test]
 		public void DisposeRace ()
 		{
@@ -485,6 +486,7 @@ namespace MonoTests.System.Threading
 				}
 			}
 		}
+#endif
 	}
 }
 
