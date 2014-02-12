@@ -182,10 +182,10 @@ case "$host" in
 		use_sigposix=yes
 		with_tls=pthread
 		libgc_threads=pthreads
-        with_sigaltstack=no 
- 	    with_glib=embedded 
- 	    disable_nls=yes 
-        parallel_mark=no
+		with_sigaltstack=no
+		with_glib=embedded
+		disable_nls=yes
+		parallel_mark=no
 		mono_cv_uscore=yes
 		;;
 	*-*-linux*)
