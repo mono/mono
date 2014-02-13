@@ -78,7 +78,7 @@ namespace MonoTests.System.Threading
 		{
 			var cts = new CancellationTokenSource ();
 			try {
-				cts.	 (-9);
+				cts.CancelAfter (-9);
 				Assert.Fail ("#1");
 			} catch (ArgumentException) {
 			}
