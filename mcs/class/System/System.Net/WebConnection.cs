@@ -46,6 +46,7 @@ using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
+using System.Diagnostics;
 
 namespace System.Net
 {
@@ -64,6 +65,7 @@ namespace System.Net
 		Stream nstream;
 		internal Socket socket;
 		object socketLock = new object ();
+		IWebConnectionState state;
 		WebExceptionStatus status;
 		WaitCallback initConn;
 		bool keepAlive;
@@ -77,7 +79,6 @@ namespace System.Net
 		Queue queue;
 		bool reused;
 		int position;
-		bool busy;		
 		HttpWebRequest priority_request;		
 		NetworkCredential ntlm_credentials;
 		bool ntlm_authenticated;
@@ -112,8 +113,9 @@ namespace System.Net
 			get { return chunkStream; }
 		}
 
-		public WebConnection (WebConnectionGroup group, ServicePoint sPoint)
+		public WebConnection (IWebConnectionState wcs, ServicePoint sPoint)
 		{
+			this.state = wcs;
 			this.sPoint = sPoint;
 			buffer = new byte [4096];
 			Data = new WebConnectionData ();
@@ -122,7 +124,7 @@ namespace System.Net
 					InitConnection (state);
 				} catch {}
 				});
-			queue = group.Queue;
+			queue = wcs.Group.Queue;
 			abortHelper = new AbortHelper ();
 			abortHelper.Connection = this;
 			abortHandler = new EventHandler (abortHelper.Abort);
@@ -803,8 +805,7 @@ namespace System.Net
 				return null;
 
 			lock (this) {
-				if (!busy) {
-					busy = true;
+				if (state.TrySetBusy ()) {
 					status = WebExceptionStatus.Success;
 					ThreadPool.QueueUserWorkItem (initConn, request);
 				} else {
@@ -850,7 +851,7 @@ namespace System.Net
 					Close (false);
 				}
 
-				busy = false;
+				state.SetIdle ();
 				if (priority_request != null) {
 					SendRequest (priority_request);
 					priority_request = null;
@@ -1215,7 +1216,7 @@ namespace System.Net
 						Data.ReadState = ReadState.Aborted;
 					}
 				}
-				busy = false;
+				state.SetIdle ();
 				Data = new WebConnectionData ();
 				if (sendNext)
 					SendNext ();
@@ -1265,10 +1266,6 @@ namespace System.Net
 			unsafe_sharing = false;
 		}
 
-		internal bool Busy {
-			get { lock (this) return busy; }
-		}
-		
 		internal bool Connected {
 			get {
 				lock (this) {

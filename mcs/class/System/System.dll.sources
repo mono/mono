@@ -733,6 +733,7 @@ System.Net/IPHostEntry.cs
 System.Net/IPv6Address.cs
 System.Net/IWebProxy.cs
 System.Net/IWebProxyScript.cs
+System.Net/IWebConnectionState.cs
 System.Net/IWebRequestCreate.cs
 System.Net/ListenerAsyncResult.cs
 System.Net/ListenerPrefix.cs

@@ -184,7 +184,7 @@ namespace System.Net
 		}
 
 		internal int ReadBufferOffset {
-			set { readBufferOffset = value;}
+			set { readBufferOffset = value; }
 		}
 		
 		internal int ReadBufferSize {

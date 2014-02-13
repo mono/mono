@@ -503,6 +503,7 @@ System.Net/IPEndPoint.cs
 System.Net/IPHostEntry.cs
 System.Net/IPv6Address.cs
 System.Net/IPv6Address.cs
+System.Net/IWebConnectionState.cs
 System.Net/IWebProxy.cs
 System.Net/IWebProxyScript.cs
 System.Net/IWebRequestCreate.cs
