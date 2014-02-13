@@ -638,7 +638,7 @@ namespace System.Net
 		{
 		}
 
-		internal void SetHeaders (byte [] buffer)
+		internal void SetHeadersAsync (byte[] buffer, WebAsyncResult result)
 		{
 			if (headersSent)
 				return;
@@ -652,14 +652,47 @@ namespace System.Net
 			               method == "COPY" || method == "MOVE" || method == "LOCK" ||
 			               method == "UNLOCK");
 			if (sendChunked || cl > -1 || no_writestream || webdav) {
-				WriteHeaders ();
+
+				headersSent = true;
+
+				try {
+					result.InnerAsyncResult = cnc.BeginWrite (request, headers, 0, headers.Length, new AsyncCallback(SetHeadersCB), result);
+					if (result.InnerAsyncResult == null) {
+						// when does BeginWrite return null? Is the case when the request is aborted?
+						if (!result.IsCompleted)
+							result.SetCompleted (true, 0);
+						result.DoCallback ();
+					}
+				} catch (Exception exc) {
+					result.SetCompleted (true, exc);
+					result.DoCallback ();
+				}
+			} else {
+				result.SetCompleted (true, 0);
+				result.DoCallback ();
+			}
+		}
+
+		void SetHeadersCB (IAsyncResult r)
+		{
+			WebAsyncResult result = (WebAsyncResult) r.AsyncState;
+			result.InnerAsyncResult = null;
+			try {
+				cnc.EndWrite2 (request, r);
+				result.SetCompleted (false, 0);
 				if (!initRead) {
 					initRead = true;
 					WebConnection.InitRead (cnc);
 				}
+				long cl = request.ContentLength;
 				if (!sendChunked && cl == 0)
 					requestWritten = true;
+			} catch (WebException e) {
+				result.SetCompleted (false, e);
+			} catch (Exception e) {
+				result.SetCompleted (false, new WebException ("Error writing headers", e, WebExceptionStatus.SendFailure));
 			}
+			result.DoCallback ();
 		}
 
 		internal bool RequestWritten {
@@ -673,17 +706,6 @@ namespace System.Net
 			int length = (int) writeBuffer.Length;
 			// Headers already written to the stream
 			return (length > 0) ? cnc.BeginWrite (request, bytes, 0, length, cb, state) : null;
-		}
-
-		void WriteHeaders ()
-		{
-			if (headersSent)
-				return;
-
-			headersSent = true;
-			string err_msg = null;
-			if (!cnc.Write (request, headers, 0, headers.Length, ref err_msg))
-				throw new WebException ("Error writing request: " + err_msg, null, WebExceptionStatus.SendFailure, null);
 		}
 
 		internal void WriteRequest ()
@@ -713,9 +735,15 @@ namespace System.Net
 							method == "TRACE");
 				if (!no_writestream)
 					request.InternalContentLength = length;
-				request.SendRequestHeaders (true);
+
+				byte[] requestHeaders = request.GetRequestHeaders ();
+				WebAsyncResult ar = new WebAsyncResult (null, null);
+				SetHeadersAsync (requestHeaders, ar);
+				ar.AsyncWaitHandle.WaitOne ();
+				if (ar.Exception != null)
+					throw ar.Exception;
 			}
-			WriteHeaders ();
+
 			if (cnc.Data.StatusCode != 0 && cnc.Data.StatusCode != 100)
 				return;
 				
