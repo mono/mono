@@ -22,7 +22,11 @@ PRFX=$PWD/tmp
 if [ ${UNITY_THISISABUILDMACHINE:+1} ]; then
 	echo "Erasing builds folder to make sure we start with a clean slate"
 	rm -rf builds
-	LIBTOOL=/usr/local/bin/libtool
+	if test -e /usr/local/bin/libtool; then
+		LIBTOOL=/usr/local/bin/libtool
+	elif test -e /usr/local/bin/glibtool; then
+		LIBTOOL=/usr/local/bin/glibtool
+	fi
 fi
 
 setenv () {
