@@ -828,6 +828,7 @@ namespace System.Collections.Generic {
 					throw new InvalidOperationException ("Collection was modified; enumeration operation may not execute.");
 
 				next = 0;
+				current = default (T);
 			}
 			
 			object IEnumerator.Current {
