@@ -120,12 +120,18 @@ namespace System.Net
 				writeBuffer = new MemoryStream ();
 		}
 
+		bool CheckAuthHeader (string headerName)
+		{
+			var authHeader = cnc.Data.Headers [headerName];
+			return (authHeader != null && authHeader.IndexOf ("NTLM", StringComparison.Ordinal) != -1);
+		}
+
 		bool IsNtlmAuth ()
 		{
 			bool isProxy = (request.Proxy != null && !request.Proxy.IsBypassed (request.Address));
-			string header_name = (isProxy) ? "Proxy-Authenticate" : "WWW-Authenticate";
-			string authHeader = cnc.Data.Headers [header_name];
-			return (authHeader != null && authHeader.IndexOf ("NTLM", StringComparison.Ordinal) != -1);
+			if (isProxy && CheckAuthHeader ("Proxy-Authenticate"))
+				return true;
+			return CheckAuthHeader ("WWW-Authenticate");
 		}
 
 		internal void CheckResponseInBuffer ()
@@ -211,15 +217,8 @@ namespace System.Net
 
 		internal void CheckComplete ()
 		{
-			var nrc = nextReadCalled;
-			var cstr = cnc.ChunkStream;
-
-			if (nrc)
-				return;
-			if (readBufferSize - readBufferOffset == contentLength) {
-				nextReadCalled = true;
-				cnc.NextRead ();
-			} else if (cstr != null && cstr.TotalDataSize == contentLength) {
+			bool nrc = nextReadCalled;
+			if (!nrc && readBufferSize - readBufferOffset == contentLength) {
 				nextReadCalled = true;
 				cnc.NextRead ();
 			}
