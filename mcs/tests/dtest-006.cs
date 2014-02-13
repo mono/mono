@@ -523,6 +523,11 @@ class Tester
 		dynamic d3 = new MyType? (new MyType (-7));
 		Assert (d3 & new MyType (6), new MyType (0), "#3a");
 		Assert<MyType?> (d3 + null, null, "#3b");
+
+		dynamic a = (bool?) true;
+		dynamic b = (bool?) null;
+		Assert (a & b, (bool?)null, "#4a");
+		Assert (b & a, (bool?)null, "#4b");
 	}
 
 	void AndAssignedTest ()
@@ -1608,6 +1613,11 @@ class Tester
 		Assert (d != true, false, "#5");
 		Assert (d != null, true, "#5a");
 		Assert (d != false, true, "#5b");
+
+		d = null;
+		long? l = null;
+		Assert (d != l, false, "#6a");
+		Assert (l != d, false, "#6b");
 	}
 
 	void NotEqualEnumTest ()
