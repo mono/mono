@@ -3,7 +3,7 @@
 //
 // Authors:
 //  Jb Evain  <jbevain@novell.com>
-//  Marek Safra (marek.safar@gmail.com)
+//  Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (C) 2010 Novell, Inc (http://www.novell.com)
 // Copyright (C) 2014 Xamarin Inc (http://www.xamarin.com)
