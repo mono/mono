@@ -942,7 +942,7 @@
         <size>671</size>
       </method>
       <method name="Void AndTestNullable()" attrs="129">
-        <size>1809</size>
+        <size>2255</size>
       </method>
       <method name="Void AndAssignedTest()" attrs="129">
         <size>912</size>
@@ -1101,7 +1101,7 @@
         <size>1946</size>
       </method>
       <method name="Void NotEqualNullableTest()" attrs="129">
-        <size>3034</size>
+        <size>3460</size>
       </method>
       <method name="Void NotEqualEnumTest()" attrs="129">
         <size>1048</size>

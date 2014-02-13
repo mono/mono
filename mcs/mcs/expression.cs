@@ -5031,7 +5031,7 @@ namespace Mono.CSharp
 			AParametersCollection pd = oper.Parameters;
 			if (!TypeSpecComparer.IsEqual (type, pd.Types[0]) || !TypeSpecComparer.IsEqual (type, pd.Types[1])) {
 				ec.Report.Error (217, loc,
-					"A user-defined operator `{0}' must have parameters and return values of the same type in order to be applicable as a short circuit operator",
+					"A user-defined operator `{0}' must have each parameter type and return type of the same type in order to be applicable as a short circuit operator",
 					oper.GetSignatureForError ());
 				return null;
 			}
