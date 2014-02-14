@@ -92,7 +92,7 @@ public class JapaneseLunisolarCalendar : EastAsianLunisolarCalendar {
 	}
 
 #if NET_4_5
-	protected virtual int DaysInYearBeforeMinSupportedYear {
+	protected override int DaysInYearBeforeMinSupportedYear {
 		get{
 			return 354;
 		}
