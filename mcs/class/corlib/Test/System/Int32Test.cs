@@ -252,6 +252,18 @@ public class Int32Test
 			Assert.IsTrue (typeof (ArgumentException) == e.GetType (), "C#42");
 		}
 
+		try {
+			Int32.Parse ("５", NumberStyles.Any, CultureInfo.InvariantCulture);
+			Assert.Fail ("C#42");
+		} catch (FormatException) {
+		}
+
+		try {
+			Int32.Parse ("\xFF15\xFF15", NumberStyles.Any, CultureInfo.InvariantCulture);
+			Assert.Fail ("C#43");
+		} catch (FormatException) {
+		}
+
 		// Pass a DateTimeFormatInfo, it is unable to format
 		// numbers, but we should not crash
 		
@@ -333,7 +345,7 @@ public class Int32Test
 			Int32.Parse ("2.09E1",  NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent);
 			Assert.Fail ("B#9");
 		} catch (OverflowException) {
-		}		
+		}
 	}
 
 	[Test]

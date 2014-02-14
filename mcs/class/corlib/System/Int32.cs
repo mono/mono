@@ -342,10 +342,7 @@ namespace System {
 
 		internal static bool ValidDigit (char e, bool allowHex)
 		{
-			if (allowHex)
-				return Char.IsDigit (e) || (e >= 'A' && e <= 'F') || (e >= 'a' && e <= 'f');
-
-			return Char.IsDigit (e);
+			return (e >= '0' && e <= '9') || (allowHex &&  (e >= 'A' && e <= 'F') || (e >= 'a' && e <= 'f'));
 		}
 		
 		internal static Exception GetFormatException ()
