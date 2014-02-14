@@ -342,7 +342,7 @@ namespace System {
 
 		internal static bool ValidDigit (char e, bool allowHex)
 		{
-			return (e >= '0' && e <= '9') || (allowHex &&  (e >= 'A' && e <= 'F') || (e >= 'a' && e <= 'f'));
+			return (e >= '0' && e <= '9') || (allowHex &&  ((e >= 'A' && e <= 'F') || (e >= 'a' && e <= 'f')));
 		}
 		
 		internal static Exception GetFormatException ()
