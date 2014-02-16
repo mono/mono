@@ -650,14 +650,14 @@ namespace System.Globalization
 			}
 
 			if (!construct_internal_locale_from_lcid (culture)) {
+				//
+				// Be careful not to cause recursive CultureInfo initialization
+				//
+				var msg = string.Format (InvariantCulture, "Culture ID {0} (0x{0:X4}) is not a supported culture.", culture.ToString (InvariantCulture));
 #if NET_4_0
-				throw new CultureNotFoundException ("culture", 
-					String.Format ("Culture ID {0} (0x{0:X4}) is not a " +
-							"supported culture.", culture));
+				throw new CultureNotFoundException ("culture", msg);
 #else
-				throw new ArgumentException (
-					String.Format ("Culture ID {0} (0x{0:X4}) is not a " +
-							"supported culture.", culture), "culture");
+				throw new ArgumentException (msg, "culture");
 #endif
 			}
 		}
