@@ -1253,6 +1253,9 @@ namespace Mono.CSharp
 						return false;
 				}
 
+				if (a.IsNested && b.IsNested)
+					return IsEqual (a.DeclaringType, b.DeclaringType);
+
 				return true;
 			}
 
