@@ -26,14 +26,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
 
 namespace Microsoft.Build.Framework
 {
 	[Serializable]
-	public abstract class BuildStatusEventArgs : LazyFormattedBuildEventArgs {
+	public abstract class BuildStatusEventArgs
+#if NET_4_0
+			: LazyFormattedBuildEventArgs {
+#else
+			: BuildEventArgs {
+#endif
 	
 		protected BuildStatusEventArgs ()
 		{
@@ -46,6 +49,7 @@ namespace Microsoft.Build.Framework
 		{
 		}
 
+#if NET_4_0
 		protected BuildStatusEventArgs (string message,
 						string helpKeyword,
 						string senderName,
@@ -62,7 +66,7 @@ namespace Microsoft.Build.Framework
 			: base (message, helpKeyword, senderName, eventTimestamp, messageArgs)
 		{
 		}
+#endif
 	}
 }
 
-#endif

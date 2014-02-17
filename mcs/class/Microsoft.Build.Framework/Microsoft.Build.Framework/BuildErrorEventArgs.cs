@@ -26,13 +26,16 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
 
 namespace Microsoft.Build.Framework {
 	[Serializable]
-	public class BuildErrorEventArgs : BuildEventArgs {
+	public class BuildErrorEventArgs
+#if NET_4_0
+			: LazyFormattedBuildEventArgs {
+#else
+			: BuildEventArgs {
+#endif
 	
 		string	code;
 		int	columnNumber;
@@ -41,7 +44,10 @@ namespace Microsoft.Build.Framework {
 		string 	file;
 		int	lineNumber;
 		string	subcategory;
-		
+#if NET_4_0
+		string projectFile;
+#endif
+
 		protected BuildErrorEventArgs ()
 		{
 		}
@@ -63,6 +69,35 @@ namespace Microsoft.Build.Framework {
 			this.endLineNumber = endLineNumber;
 			this.endColumnNumber = endColumnNumber;
 		}
+
+#if NET_4_0
+		public BuildErrorEventArgs (string subcategory, string code,
+				string file, int lineNumber, int columnNumber,
+				int endLineNumber, int endColumnNumber, string message,
+				string helpKeyword, string senderName, DateTime eventTimestamp)
+			: this (subcategory, code, file, lineNumber, columnNumber,
+				endLineNumber, endColumnNumber, message, helpKeyword,
+				senderName, eventTimestamp, new object[0])
+		{
+		}
+
+		public BuildErrorEventArgs (string subcategory, string code,
+				string file, int lineNumber, int columnNumber, int endLineNumber,
+				int endColumnNumber, string message, string helpKeyword,
+				string senderName, DateTime eventTimestamp,
+				params object[] messageArgs)
+			: base (message, helpKeyword, senderName, eventTimestamp, messageArgs)
+		{
+			this.subcategory = subcategory;
+			this.code = code;
+			this.file = file;
+			this.lineNumber = lineNumber;
+			this.columnNumber = columnNumber;
+			this.endLineNumber = endLineNumber;
+			this.endColumnNumber = endColumnNumber;
+
+		}
+#endif
 
 		public string Code {
 			get {
@@ -105,7 +140,14 @@ namespace Microsoft.Build.Framework {
 				return subcategory;
 			}
 		}
+
+#if NET_4_0
+		public string ProjectFile {
+			get { return projectFile; }
+			set {  projectFile = value; }
+		}
+#endif
+
 	}
 }
 
-#endif

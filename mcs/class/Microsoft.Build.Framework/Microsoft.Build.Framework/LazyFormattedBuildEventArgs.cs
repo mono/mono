@@ -25,31 +25,51 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#if NET_4_0
+
 using System;
-using System.Threading;
 
 namespace Microsoft.Build.Framework
 {
 	[Serializable]		
-	public abstract class LazyFormattedBuildEventArgs : BuildEventArgs
-	{
-		
+	public abstract class LazyFormattedBuildEventArgs : BuildEventArgs {
+
+		string message, format;
+		object[] args;
+
 		protected LazyFormattedBuildEventArgs ()
-			: this (null, null, null)
 		{
 		}
 
-		protected LazyFormattedBuildEventArgs (string message, string helpKeyword,
-					  string senderName)
-			: this (message, helpKeyword, senderName, DateTime.Now)
+		public LazyFormattedBuildEventArgs (string message,
+				string helpKeyword, string senderName)
+			: base (message, helpKeyword, senderName)
+
 		{
+			this.message = message;
 		}
 
-		protected LazyFormattedBuildEventArgs (string message, string helpKeyword,
-					  string senderName, DateTime eventTimestamp,
-					  params object [] messageArgs)
-			: base (string.Format (message, messageArgs), helpKeyword, senderName, eventTimestamp)
+		public LazyFormattedBuildEventArgs (string message,
+				string helpKeyword, string senderName,
+				DateTime eventTimestamp, params object[] messageArgs)
+			: base (message, helpKeyword, senderName, eventTimestamp)
 		{
+			if (messageArgs != null && messageArgs.Length > 0) {
+				args = messageArgs;
+				format = message;
+			} else {
+				this.message = message;
+			}
+		}
+
+		public override string Message {
+			get {
+				if (message == null && format != null)
+					message = string.Format (format, args);
+				return message;
+			}
 		}
 	}
 }
+
+#endif
