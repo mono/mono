@@ -8645,7 +8645,7 @@ namespace Mono.CSharp
 		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext ec)
 		{
 			if (alias == GlobalAlias) {
-				expr = ec.Module.GlobalRootNamespace;
+				expr = new NamespaceExpression (ec.Module.GlobalRootNamespace, loc);
 				return base.ResolveAsTypeOrNamespace (ec);
 			}
 
@@ -8808,12 +8808,12 @@ namespace Mono.CSharp
 			if (expr == null)
 				return null;
 
-			Namespace ns = expr as Namespace;
+			var ns = expr as NamespaceExpression;
 			if (ns != null) {
 				var retval = ns.LookupTypeOrNamespace (rc, Name, Arity, LookupMode.Normal, loc);
 
 				if (retval == null) {
-					ns.Error_NamespaceDoesNotExist (rc, Name, Arity, loc);
+					ns.Error_NamespaceDoesNotExist (rc, Name, Arity);
 					return null;
 				}
 
@@ -8948,12 +8948,12 @@ namespace Mono.CSharp
 			if (expr_resolved == null)
 				return null;
 
-			Namespace ns = expr_resolved as Namespace;
+			var ns = expr_resolved as NamespaceExpression;
 			if (ns != null) {
 				FullNamedExpression retval = ns.LookupTypeOrNamespace (rc, Name, Arity, LookupMode.Normal, loc);
 
 				if (retval == null) {
-					ns.Error_NamespaceDoesNotExist (rc, Name, Arity, loc);
+					ns.Error_NamespaceDoesNotExist (rc, Name, Arity);
 				} else if (HasTypeArguments) {
 					retval = new GenericTypeExpr (retval.Type, targs, loc);
 					if (retval.ResolveAsType (rc) == null)
