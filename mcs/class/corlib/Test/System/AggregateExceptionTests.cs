@@ -119,6 +119,14 @@ namespace MonoTests.System
 			Assert.AreEqual (expected, ae2.GetBaseException ().InnerException, "#2");
 		}
 
+		[Test]
+		public void GetBaseException_stops_at_first_inner_exception_that_is_not_AggregateException()
+		{
+			var inner = new ArgumentNullException();
+			var outer = new InvalidOperationException("x", inner);
+			Assert.AreEqual(outer, new AggregateException(outer).GetBaseException());
+		}
+
 		static void Throws (Type t, Action action)
 		{
 			Exception e = null;
