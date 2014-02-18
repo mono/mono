@@ -163,9 +163,12 @@ namespace System
 
 		public override Exception GetBaseException ()
 		{
-			if (innerExceptions == null || innerExceptions.Count != 1)
-				return this;
-			return innerExceptions[0].GetBaseException ();
+			var ret = (Exception)this;
+
+			while ((ret is AggregateException) && ((AggregateException)ret).InnerExceptions.Count == 1)
+				ret = ret.InnerException;
+
+			return ret;
 		}
 	}
 }
