@@ -334,7 +334,15 @@ namespace MonoTests.System.Collections.Concurrent
 			AssertThrowsArgumentNullException (() => map.TryGetValue (null, out value));
 			AssertThrowsArgumentNullException (() => map.TryRemove (null, out value));
 			AssertThrowsArgumentNullException (() => map.TryUpdate (null, 0, 0));
-		} 
+		}
+
+		[Test]
+		public void IDictionaryNullOnNonExistingKey ()
+		{
+			System.Collections.IDictionary dict = new ConcurrentDictionary<long, string> ();
+			object val = dict [1234L];
+			Assert.IsNull (val);
+		}
 
 		void AssertThrowsArgumentNullException (Action action)
 		{
