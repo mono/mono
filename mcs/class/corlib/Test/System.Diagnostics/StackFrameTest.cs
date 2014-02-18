@@ -323,7 +323,7 @@ namespace MonoTests.System.Diagnostics
 							 frame1.GetFileLineNumber (),
 							 "Line number (1)");
 
-			Assert.AreEqual (264,
+			Assert.AreEqual (270,
 							 frame2.GetFileLineNumber (),
 							 "Line number (2)");
 		}
