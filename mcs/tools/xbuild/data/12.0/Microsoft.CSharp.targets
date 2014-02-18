@@ -33,7 +33,7 @@
 		-->
 		<ItemGroup>
 			<_ExplicitReference Include="@(_TargetFrameworkDirectories->'%(FullPath)\mscorlib.dll')" Condition="Exists('%(FullPath)\mscorlib.dll')">
-				<CopyLocal>false</CopyLocal>
+				<Private>false</Private>
 			</_ExplicitReference>
 		</ItemGroup>
 	</Target>
