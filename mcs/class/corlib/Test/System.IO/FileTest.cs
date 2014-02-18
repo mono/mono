@@ -2763,7 +2763,9 @@ namespace MonoTests.System.IO
 
 		void MoveTest (FileAccess acc, FileShare share, bool works)
 		{
-			var file = "kk597rfdnllh89";
+			// use TEMP so since the default location (right along with the assemblies) 
+			// will get access denied when running under some environment (e.g. iOS devices)
+			var file = Path.Combine (Path.GetTempPath (), "kk597rfdnllh89");
 
 			File.Delete (file + ".old");
 			using (var v = File.Create (file)) { }
