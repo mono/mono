@@ -120,6 +120,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void GetBaseException_stops_at_first_inner_exception_that_is_not_AggregateException()
 		{
 			var inner = new ArgumentNullException();
