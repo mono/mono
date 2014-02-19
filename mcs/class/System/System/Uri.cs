@@ -91,9 +91,7 @@ namespace System {
 		private string cachedLocalPath;
 		private int cachedHashCode;
 
-		private static readonly string hexUpperChars = "0123456789ABCDEF";
-		private static readonly string [] Empty = new string [0];
-		private static bool isWin32 = (Path.DirectorySeparatorChar == '\\');
+		static readonly char[] hexUpperChars = new [] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 	
 		// Fields
 		
@@ -646,7 +644,7 @@ namespace System {
 
 				// return a (pre-allocated) empty array
 				if (path.Length == 0)
-					return Empty;
+					return EmptyArray<string>.Value;
 				// do not return the original array (since items can be changed)
 				if (segments != null)
 					return segments.ToArray ();
@@ -1598,7 +1596,7 @@ namespace System {
 				host = String.Empty;
 			} else if (scheme == UriSchemeFile) {
 				// under Windows all file:// URI are considered UNC, which is not the case other MacOS (e.g. Silverlight)
-				isUnc = isWin32;
+				isUnc = Environment.IsRunningOnWindows;
 			} else if (host.Length == 0 &&
 				   (scheme == UriSchemeHttp || scheme == UriSchemeGopher || scheme == UriSchemeNntp ||
 				    scheme == UriSchemeHttps || scheme == UriSchemeFtp)) {
