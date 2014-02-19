@@ -833,6 +833,7 @@ System.Net.Security/SslStream.cs
 System.Net.Security/SslPolicyErrors.cs
 System.Net/ServicePoint.cs
 System.Net/ServicePointManager.cs
+System.Net/ServicePointManager.extra.cs
 System.Net/SocketAddress.cs
 System.Net/SocketPermissionAttribute.cs
 System.Net/SocketPermission.cs

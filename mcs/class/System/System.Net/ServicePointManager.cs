@@ -78,7 +78,7 @@ using System.Diagnostics;
 
 namespace System.Net 
 {
-	public class ServicePointManager {
+	public partial class ServicePointManager {
 		class SPKey {
 			Uri uri; // schema/host/port
 			Uri proxy;

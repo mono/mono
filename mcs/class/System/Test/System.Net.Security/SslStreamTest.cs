@@ -1,11 +1,13 @@
 //
-// SslStream.cs
+// SslStreamTest.cs
 //      - Unit tests for System.Net.Security.SslStream
 //
-// Author:
+// Authors:
 //      Maciej Paszta (maciej.paszta@gmail.com)
+//      Sebastien Pouliot  <sebastien@xamarin.com>
 //
 // Copyright (C) Maciej Paszta, 2012
+// Copyright 2014 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,6 +31,8 @@
 
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Net.Sockets;
 using System.Net;
 using System.Net.Security;
@@ -53,7 +57,13 @@ public class SslStreamTest {
 	}
 
 	[Test] //bug https://bugzilla.novell.com/show_bug.cgi?id=457120
-	public void AuthenticateClientAndServer_ClientSendsNoData () {
+	public void AuthenticateClientAndServer_ClientSendsNoData ()
+	{
+		AuthenticateClientAndServer (true, true);
+	}
+
+	void AuthenticateClientAndServer (bool server, bool client)
+	{
 		IPEndPoint endPoint = new IPEndPoint (IPAddress.Parse ("127.0.0.1"), 10000);
 		ClientServerState state = new ClientServerState ();
 		state.Client = new TcpClient ();
@@ -61,14 +71,15 @@ public class SslStreamTest {
 		state.Listener.Start ();
 		state.ServerAuthenticated = new AutoResetEvent (false);
 		state.ClientAuthenticated = new AutoResetEvent (false);
+		state.ServerIOException = !server;
 		try {
 			Thread serverThread = new Thread (() => StartServerAndAuthenticate (state));
 			serverThread.Start (null);
 			Thread clientThread = new Thread (() => StartClientAndAuthenticate (state, endPoint));
 			clientThread.Start (null);
-			Assert.IsTrue (state.ServerAuthenticated.WaitOne (TimeSpan.FromSeconds (2)), 
+			Assert.AreEqual (server, state.ServerAuthenticated.WaitOne (TimeSpan.FromSeconds (2)), 
 				"server not authenticated");
-			Assert.IsTrue (state.ClientAuthenticated.WaitOne (TimeSpan.FromSeconds (2)), 
+			Assert.AreEqual (client, state.ClientAuthenticated.WaitOne (TimeSpan.FromSeconds (2)), 
 				"client not authenticated");
 		} finally {
 			if (state.ClientStream != null)
@@ -79,6 +90,80 @@ public class SslStreamTest {
 			if (state.ServerClient != null)
 				state.ServerClient.Close ();
 			state.Listener.Stop ();
+		}
+	}
+
+	[Test]
+	public void ClientCipherSuitesCallback ()
+	{
+		try {
+			ServicePointManager.ClientCipherSuitesCallback += (SecurityProtocolType p, IEnumerable<string> allCiphers) => {
+				string prefix = p == SecurityProtocolType.Tls ? "TLS_" : "SSL_";
+				return new List<string> { prefix + "RSA_WITH_AES_128_CBC_SHA" };
+			};
+			// client will only offers AES 128 - that's fine since the server support it (and many more ciphers)
+			AuthenticateClientAndServer_ClientSendsNoData ();
+		}
+		finally {
+			ServicePointManager.ClientCipherSuitesCallback = null;
+		}
+	}
+
+	[Test]
+	public void ServerCipherSuitesCallback ()
+	{
+		try {
+			ServicePointManager.ServerCipherSuitesCallback += (SecurityProtocolType p, IEnumerable<string> allCiphers) => {
+				string prefix = p == SecurityProtocolType.Tls ? "TLS_" : "SSL_";
+					return new List<string> { prefix + "RSA_WITH_AES_256_CBC_SHA" };
+			};
+			// server only accept AES 256 - that's fine since the client support it (and many more ciphers)
+			AuthenticateClientAndServer_ClientSendsNoData ();
+		}
+		finally {
+			ServicePointManager.ServerCipherSuitesCallback = null;
+		}
+	}
+
+	[Test]
+	public void CipherSuitesCallbacks ()
+	{
+		try {
+			ServicePointManager.ClientCipherSuitesCallback += (SecurityProtocolType p, IEnumerable<string> allCiphers) => {
+				string prefix = p == SecurityProtocolType.Tls ? "TLS_" : "SSL_";
+				return new List<string> { prefix + "RSA_WITH_AES_128_CBC_SHA", prefix + "RSA_WITH_AES_256_CBC_SHA" };
+			};
+			ServicePointManager.ServerCipherSuitesCallback += (SecurityProtocolType p, IEnumerable<string> allCiphers) => {
+				string prefix = p == SecurityProtocolType.Tls ? "TLS_" : "SSL_";
+				return new List<string> { prefix + "RSA_WITH_AES_128_CBC_SHA", prefix + "RSA_WITH_AES_256_CBC_SHA" };
+			};
+			// both client and server supports AES (128 and 256) - server will select 128 (first choice)
+			AuthenticateClientAndServer_ClientSendsNoData ();
+		}
+		finally {
+			ServicePointManager.ClientCipherSuitesCallback = null;
+			ServicePointManager.ServerCipherSuitesCallback = null;
+		}
+	}
+
+	[Test]
+	public void MismatchedCipherSuites ()
+	{
+		try {
+			ServicePointManager.ClientCipherSuitesCallback += (SecurityProtocolType p, IEnumerable<string> allCiphers) => {
+				string prefix = p == SecurityProtocolType.Tls ? "TLS_" : "SSL_";
+				return new List<string> { prefix + "RSA_WITH_AES_128_CBC_SHA" };
+			};
+			ServicePointManager.ServerCipherSuitesCallback += (SecurityProtocolType p, IEnumerable<string> allCiphers) => {
+				string prefix = p == SecurityProtocolType.Tls ? "TLS_" : "SSL_";
+				return new List<string> { prefix + "RSA_WITH_AES_256_CBC_SHA" };
+			};
+			// mismatch! server will refuse and send back an alert
+			AuthenticateClientAndServer (false, false);
+		}
+		finally {
+			ServicePointManager.ClientCipherSuitesCallback = null;
+			ServicePointManager.ServerCipherSuitesCallback = null;
 		}
 	}
 
@@ -104,7 +189,14 @@ public class SslStreamTest {
 						(a1, a2, a3, a4, a5) => m_serverCert);
 			state.ServerStream.AuthenticateAsServer (m_serverCert);
 			state.ServerAuthenticated.Set ();
-		} catch (ObjectDisposedException) { /* this can happen when closing connection it's irrelevant for the test result*/}
+		} catch (ObjectDisposedException) { /* this can happen when closing connection it's irrelevant for the test result*/
+		} catch (IOException) {
+			// The authentication or decryption has failed.
+			// ---> Mono.Security.Protocol.Tls.TlsException: Insuficient Security
+			// that's fine for MismatchedCipherSuites
+			if (!state.ServerIOException)
+				throw;
+		}
 	}
 	
 	private class ClientServerState {
@@ -115,6 +207,7 @@ public class SslStreamTest {
 		public SslStream ClientStream { get; set; }
 		public AutoResetEvent ServerAuthenticated { get; set; }
 		public AutoResetEvent ClientAuthenticated { get; set; }
+		public bool ServerIOException { get; set; }
 	}
 }	
 }
