@@ -27,6 +27,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using MonoTests.System.Threading.Tasks;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 
@@ -339,7 +340,7 @@ namespace MonoTests.System.Collections.Concurrent
 		[Test]
 		public void IDictionaryNullOnNonExistingKey ()
 		{
-			System.Collections.IDictionary dict = new ConcurrentDictionary<long, string> ();
+			IDictionary dict = new ConcurrentDictionary<long, string> ();
 			object val = dict [1234L];
 			Assert.IsNull (val);
 		}

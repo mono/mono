@@ -520,7 +520,7 @@ namespace MonoTests.System.Collections.Generic
 		[Test]
 		public void IDictionaryNullOnNonExistingKey ()
 		{
-			System.Collections.IDictionary list = new SortedList<long, string> ();
+			IDictionary list = new SortedList<long, string> ();
 			object val = list [1234L];
 			Assert.IsNull (val);
 		}
