@@ -33,6 +33,9 @@
 
 using System;
 using System.IO;
+using System.Collections.Generic;
+
+using Mono.Options;
 
 namespace Xamarin.ApiDiff {
 
@@ -54,36 +57,65 @@ namespace Xamarin.ApiDiff {
 		public static string BaseType { get; set; }
 
 		public static int Indent { get; set; }
+
+		static List<string> ignoreAdded = new List<string> ();
+		public static List<string> IgnoreAdded {
+			get { return ignoreAdded; }
+		}
 	}
 
 	class Program {
 
 		public static int Main (string[] args)
 		{
-			if (args.Length < 2) {
-				Console.WriteLine ("mono-api-html reference.xml assembly.xml [diff.html]");
+			var showHelp = false;
+			string diff = null;
+			List<string> extra = null;
+
+			var options = new OptionSet {
+				{ "h|help", "Show this help", v => showHelp = true },
+				{ "d|diff=", "HTML diff file out output (omit for stdout)", v => diff = v },
+				{ "i|ignore-added=", "Ignore added members with a given name", v => State.IgnoreAdded.Add (v) }
+			};
+
+			try {
+				extra = options.Parse (args);
+			} catch (OptionException e) {
+				Console.WriteLine ("Option error: {0}", e.Message);
+				showHelp = true;
+			}
+
+			if (showHelp || extra == null || extra.Count < 2 || extra.Count > 3) {
+				Console.WriteLine (@"Usage: mono-api-html [options] <reference.xml> <assembly.xml> [diff.html]");
+				Console.WriteLine ();
+				Console.WriteLine ("Available options:");
+				options.WriteOptionDescriptions (Console.Out);
+				Console.WriteLine ();
 				return 1;
 			}
 
+			var input = extra [0];
+			var output = extra [1];
+			if (extra.Count == 3 && diff == null)
+				diff = extra [2];
+
 			try {
-				string input = args [0];
-				string output = args [1];
 				var ac = new AssemblyComparer (input, output);
-				if (args.Length > 2) {
-					string diff = String.Empty;
+				if (diff != null) {
+					string diffHtml = String.Empty;
 					using (var writer = new StringWriter ()) {
 						State.Output = writer;
 						ac.Compare ();
-						diff = State.Output.ToString ();
+						diffHtml = State.Output.ToString ();
 					}
-					if (diff.Length > 0) {
-						using (var file = new StreamWriter (args [2])) {
+					if (diffHtml.Length > 0) {
+						using (var file = new StreamWriter (diff)) {
 							if (ac.SourceAssembly == ac.TargetAssembly) {
 								file.WriteLine ("<h1>{0}.dll</h1>", ac.SourceAssembly);
 							} else {
 								file.WriteLine ("<h1>{0}.dll vs {1}.dll</h1>", ac.SourceAssembly, ac.TargetAssembly);
 							}
-							file.Write (diff);
+							file.Write (diffHtml);
 						}
 					}
 				} else {

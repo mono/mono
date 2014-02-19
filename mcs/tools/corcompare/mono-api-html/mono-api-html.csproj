@@ -49,6 +49,9 @@
     <Compile Include="AssemblyComparer.cs" />
     <Compile Include="ClassComparer.cs" />
     <Compile Include="ApiDiff.cs" />
+    <Compile Include="..\..\..\class\Mono.Options\Mono.Options\Options.cs">
+      <Link>Options.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
