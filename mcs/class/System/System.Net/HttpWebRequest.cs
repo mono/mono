@@ -1286,7 +1286,7 @@ namespace System.Net
 			writeStream.SetHeadersAsync (requestHeaders, result);
 		}
 
-		void SetWriteStreamCB(IAsyncResult ar)
+		void SetWriteStreamCB (IAsyncResult ar)
 		{
 			WebAsyncResult result = ar as WebAsyncResult;
 

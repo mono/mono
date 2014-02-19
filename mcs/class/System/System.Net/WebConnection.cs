@@ -1054,10 +1054,10 @@ namespace System.Net
 			return result;
 		}
 
-		internal void EndWrite2 (HttpWebRequest request, IAsyncResult result)
+		internal bool EndWrite (HttpWebRequest request, bool throwOnError, IAsyncResult result)
 		{
 			if (request.FinishedReading)
-				return;
+				return true;
 
 			Stream s = null;
 			lock (this) {
@@ -1070,33 +1070,11 @@ namespace System.Net
 
 			try {
 				s.EndWrite (result);
+				return true;
 			} catch (Exception exc) {
 				status = WebExceptionStatus.SendFailure;
-				if (exc.InnerException != null)
+				if (throwOnError && exc.InnerException != null)
 					throw exc.InnerException;
-				throw;
-			}
-		}
-
-		internal bool EndWrite (HttpWebRequest request, IAsyncResult result)
-		{
-			if (request.FinishedReading)
-				return true;
-
-			Stream s = null;
-			lock (this) {
-				if (Data.request != request)
-					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
-				if (nstream == null)
-					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
-				s = nstream;
-			}
-
-			try {
-				s.EndWrite (result);
-				return true;
-			} catch {
-				status = WebExceptionStatus.SendFailure;
 				return false;
 			}
 		}
