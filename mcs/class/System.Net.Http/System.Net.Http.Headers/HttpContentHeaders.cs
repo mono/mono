@@ -73,6 +73,10 @@ namespace System.Net.Http.Headers
 				if (v != null)
 					return v;
 
+				v = content.LoadedBufferLength;
+				if (v != null)
+					return v;
+
 				long l;
 				if (content.TryComputeLength (out l))
 					return l;
