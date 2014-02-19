@@ -58,7 +58,7 @@ namespace Mono.Security.Protocol.Tls
 #if INSIDE_SYSTEM
 			// if SSL/TLS support is built-in System.dll (e.g. monotouch) then we can access ServicePointManager
 			// extension directly
-			var cb = server ? ServicePointManager.ServerCipherSuitesCallback : ClientCipherSuitesCallback;
+			var cb = server ? ServicePointManager.ServerCipherSuitesCallback : ServicePointManager.ClientCipherSuitesCallback;
 			if (cb == null)
 				return suites; // e.g. no callback was set
 
