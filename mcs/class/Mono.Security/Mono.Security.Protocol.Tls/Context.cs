@@ -432,9 +432,7 @@ namespace Mono.Security.Protocol.Tls
 				(this.SecurityProtocolFlags & SecurityProtocolType.Default) == SecurityProtocolType.Default)
 			{
 				this.SecurityProtocol = protocolType;
-				this.SupportedCiphers.Clear();
-				this.SupportedCiphers = null;
-				this.SupportedCiphers = CipherSuiteFactory.GetSupportedCiphers(protocolType);
+				this.SupportedCiphers = CipherSuiteFactory.GetSupportedCiphers ((this is ServerContext), protocolType);
 			}
 			else
 			{

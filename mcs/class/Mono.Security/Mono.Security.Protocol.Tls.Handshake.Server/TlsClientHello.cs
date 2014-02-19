@@ -115,9 +115,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 				(this.Context.SecurityProtocolFlags & SecurityProtocolType.Default) == SecurityProtocolType.Default)
 			{
 				this.Context.SecurityProtocol = clientProtocol;
-				this.Context.SupportedCiphers.Clear();
-				this.Context.SupportedCiphers = null;
-				this.Context.SupportedCiphers = CipherSuiteFactory.GetSupportedCiphers(clientProtocol);
+				this.Context.SupportedCiphers = CipherSuiteFactory.GetSupportedCiphers (true, clientProtocol);
 			}
 			else
 			{

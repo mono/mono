@@ -205,7 +205,7 @@ namespace Mono.Security.Protocol.Tls
 			}
 
 			// Obtain supported cipher suites
-			this.context.SupportedCiphers = CipherSuiteFactory.GetSupportedCiphers(this.context.SecurityProtocol);
+			this.context.SupportedCiphers = CipherSuiteFactory.GetSupportedCiphers (true, context.SecurityProtocol);
 
 			// Set handshake state
 			this.context.HandshakeState = HandshakeState.Started;
