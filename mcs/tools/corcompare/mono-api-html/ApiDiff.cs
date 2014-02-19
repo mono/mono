@@ -34,6 +34,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 using Mono.Options;
 
@@ -58,8 +59,8 @@ namespace Xamarin.ApiDiff {
 
 		public static int Indent { get; set; }
 
-		static List<string> ignoreAdded = new List<string> ();
-		public static List<string> IgnoreAdded {
+		static List<Regex> ignoreAdded = new List<Regex> ();
+		public static List<Regex> IgnoreAdded {
 			get { return ignoreAdded; }
 		}
 	}
@@ -75,7 +76,9 @@ namespace Xamarin.ApiDiff {
 			var options = new OptionSet {
 				{ "h|help", "Show this help", v => showHelp = true },
 				{ "d|diff=", "HTML diff file out output (omit for stdout)", v => diff = v },
-				{ "i|ignore-added=", "Ignore added members with a given name", v => State.IgnoreAdded.Add (v) }
+				{ "i|ignore-added=", "Ignore added members whose description matches a given C# regular expression (see below).",
+					v => State.IgnoreAdded.Add (new Regex (v))
+				}
 			};
 
 			try {
@@ -90,6 +93,19 @@ namespace Xamarin.ApiDiff {
 				Console.WriteLine ();
 				Console.WriteLine ("Available options:");
 				options.WriteOptionDescriptions (Console.Out);
+				Console.WriteLine ();
+				Console.WriteLine ("Ignoring Members:");
+				Console.WriteLine ();
+				Console.WriteLine ("  Members that were added can be filtered out of the diff by using the");
+				Console.WriteLine ("  -i, --ignore-added option. The option takes a C# regular expression");
+				Console.WriteLine ("  to match against member descriptions. For example, to ignore the");
+				Console.WriteLine ("  introduction of the interfaces 'INSCopying' and 'INSCoding' on types");
+				Console.WriteLine ("  pass the following to mono-api-html:");
+				Console.WriteLine ();
+				Console.WriteLine ("    mono-api-html ... -i 'INSCopying$' -i 'INSCoding$'");
+				Console.WriteLine ();
+				Console.WriteLine ("  The regular expressions will match any member description ending with");
+				Console.WriteLine ("  'INSCopying' or 'INSCoding'.");
 				Console.WriteLine ();
 				return 1;
 			}
