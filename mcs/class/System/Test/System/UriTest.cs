@@ -1194,7 +1194,15 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void RelativeUri ()
+		{
+			var u = new Uri ("/foo/bar");
+			Assert.IsFalse (u.IsAbsoluteUri, "#1");
+		}
+
+		[Test]
+		public void RelativeFragmentUri ()
 		{
 			Uri u = new Uri("http://localhost/../../../a");
 			Assert.AreEqual ("http://localhost/a", u.ToString ());
@@ -1204,7 +1212,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		public void RelativeUri2 ()
+		public void RelativeFragmentUri2 ()
 		{
 			Assert.AreEqual ("hoge:ext", new Uri (new Uri ("hoge:foo:bar:baz"), "hoge:ext").ToString (), "#1");
 			if (isWin32) {
