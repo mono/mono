@@ -712,7 +712,7 @@ mono_threads_create_thread (LPTHREAD_START_ROUTINE start, gpointer arg, guint32 
 
 	res = CreateThread (NULL, stack_size, start, arg, creation_flags, &real_tid);
 	if (out_tid)
-		*out_tid = (gpointer)real_tid;
+		*out_tid = real_tid;
 #endif
 
 	return res;
