@@ -710,8 +710,9 @@ namespace System.Collections.Generic {
 
 		object IDictionary.this [object key] {
 			get {
-				if (key is TKey && ContainsKey((TKey) key))
-					return this [ToTKey (key)];
+				TValue obj;
+				if (key is TKey && TryGetValue ((TKey) key, out obj))
+					return obj;
 				return null;
 			}
 			set { this [ToTKey (key)] = ToTValue (value); }
