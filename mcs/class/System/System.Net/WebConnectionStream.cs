@@ -448,7 +448,7 @@ namespace System.Net
 			return (nb >= 0) ? nb : 0;
 		}
 
-	   	void WriteRequestAsyncCB (IAsyncResult r)
+	   	void WriteAsyncCB (IAsyncResult r)
 		{
 			WebAsyncResult result = (WebAsyncResult) r.AsyncState;
 			result.InnerAsyncResult = null;
@@ -501,7 +501,7 @@ namespace System.Net
 			}
 
 			WebAsyncResult result = new WebAsyncResult (cb, state);
-			AsyncCallback callback = new AsyncCallback (WriteRequestAsyncCB);
+			AsyncCallback callback = new AsyncCallback (WriteAsyncCB);
 
 			if (sendChunked) {
 				requestWritten = true;
@@ -626,38 +626,32 @@ namespace System.Net
 		{
 		}
 
-		internal void SetHeadersAsync (byte[] buffer, WebAsyncResult result)
+		internal WebAsyncResult SetHeadersAsync (bool setInternalLength, AsyncCallback callback, object state)
 		{
 			if (headersSent)
-				return;
+				return null;
 
-			headers = buffer;
-			long cl = request.ContentLength;
 			string method = request.Method;
 			bool no_writestream = (method == "GET" || method == "CONNECT" || method == "HEAD" ||
-						method == "TRACE");
+			                      method == "TRACE");
 			bool webdav = (method == "PROPFIND" || method == "PROPPATCH" || method == "MKCOL" ||
-			               method == "COPY" || method == "MOVE" || method == "LOCK" ||
-			               method == "UNLOCK");
-			if (sendChunked || cl > -1 || no_writestream || webdav) {
-				headersSent = true;
+			              method == "COPY" || method == "MOVE" || method == "LOCK" ||
+			              method == "UNLOCK");
 
-				try {
-					result.InnerAsyncResult = cnc.BeginWrite (request, headers, 0, headers.Length, new AsyncCallback (SetHeadersCB), result);
-					if (result.InnerAsyncResult == null) {
-						// when does BeginWrite return null? Is the case when the request is aborted?
-						if (!result.IsCompleted)
-							result.SetCompleted (true, 0);
-						result.DoCallback ();
-					}
-				} catch (Exception exc) {
-					result.SetCompleted (true, exc);
-					result.DoCallback ();
-				}
-			} else {
-				result.SetCompleted (true, 0);
-				result.DoCallback ();
+			if (setInternalLength && !no_writestream && writeBuffer != null)
+				request.InternalContentLength = writeBuffer.Length;
+
+			if (sendChunked || request.ContentLength > -1 || no_writestream || webdav) {
+				headersSent = true;
+				headers = request.GetRequestHeaders ();
+
+				var result = new WebAsyncResult (callback, state);
+				result.InnerAsyncResult = cnc.BeginWrite (request, headers, 0, headers.Length, new AsyncCallback (SetHeadersCB), result);
+				if (result.InnerAsyncResult != null)
+					return result;
 			}
+
+			return null;
 		}
 
 		void SetHeadersCB (IAsyncResult r)
@@ -686,58 +680,84 @@ namespace System.Net
 			get { return requestWritten; }
 		}
 
-		internal void WriteRequest ()
+		internal WebAsyncResult WriteRequestAsync (AsyncCallback callback, object state)
 		{
 			if (requestWritten)
-				return;
+				return null;
 
 			requestWritten = true;
 			if (sendChunked)
-				return;
+				return null;
 
 			if (!allowBuffering || writeBuffer == null)
-				return;
+				return null;
 
-			byte [] bytes = writeBuffer.GetBuffer ();
-			int length = (int) writeBuffer.Length;
+			byte[] bytes = writeBuffer.GetBuffer ();
+			int length = (int)writeBuffer.Length;
 			if (request.ContentLength != -1 && request.ContentLength < length) {
 				nextReadCalled = true;
 				cnc.Close (true);
 				throw new WebException ("Specified Content-Length is less than the number of bytes to write", null,
-							WebExceptionStatus.ServerProtocolViolation, null);
+					WebExceptionStatus.ServerProtocolViolation, null);
 			}
 
-			if (!headersSent) {
-				string method = request.Method;
-				bool no_writestream = (method == "GET" || method == "CONNECT" || method == "HEAD" ||
-							method == "TRACE");
-				if (!no_writestream)
-					request.InternalContentLength = length;
+			var result = new WebAsyncResult (callback, state);
+			result.InnerAsyncResult = SetHeadersAsync (true, WriteRequestAsyncCB, result);
+			if (result.InnerAsyncResult == null)
+				WriteRequestAsyncCB (result);
+			return result;
+		}
 
-				byte[] requestHeaders = request.GetRequestHeaders ();
-				WebAsyncResult ar = new WebAsyncResult (null, null);
-				SetHeadersAsync (requestHeaders, ar);
-				ar.AsyncWaitHandle.WaitOne ();
-				if (ar.Exception != null)
-					throw ar.Exception;
-			}
+		void WriteRequestAsyncCB (IAsyncResult ar)
+		{
+			var result = (WebAsyncResult)ar;
+			var innerResult = (WebAsyncResult)result.InnerAsyncResult;
+			result.InnerAsyncResult = null;
 
-			if (cnc.Data.StatusCode != 0 && cnc.Data.StatusCode != 100)
+			if (innerResult != null && innerResult.GotException) {
+				result.SetCompleted (false, innerResult.Exception);
+				result.DoCallback ();
 				return;
-				
-			IAsyncResult result = null;
+			}
+
+			if (cnc.Data.StatusCode != 0 && cnc.Data.StatusCode != 100) {
+				result.SetCompleted (false, 0);
+				result.DoCallback ();
+				return;
+			}
+
+			byte[] bytes = writeBuffer.GetBuffer ();
+			int length = (int)writeBuffer.Length;
+
 			if (length > 0)
-				result = cnc.BeginWrite (request, bytes, 0, length, null, null);
-			
+				result.InnerAsyncResult = cnc.BeginWrite (request, bytes, 0, length, WriteRequestAsyncCB2, result);
+
 			if (!initRead) {
 				initRead = true;
 				WebConnection.InitRead (cnc);
 			}
 
-			if (length > 0) 
-				complete_request_written = cnc.EndWrite (request, false, result);
-			else
+			if (length == 0) {
+				result.SetCompleted (false, 0);
+				result.DoCallback ();
 				complete_request_written = true;
+			}
+		}
+
+		void WriteRequestAsyncCB2 (IAsyncResult ar)
+		{
+			var result = (WebAsyncResult)ar.AsyncState;
+			var innerResult = result.InnerAsyncResult;
+			result.InnerAsyncResult = null;
+
+			try {
+				complete_request_written = cnc.EndWrite (request, false, innerResult);
+				result.SetCompleted (false, 0);
+			} catch (Exception exc) {
+				result.SetCompleted (false, exc);
+			} finally {
+				result.DoCallback ();
+			}
 		}
 
 		internal void InternalClose ()
