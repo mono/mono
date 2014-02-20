@@ -28442,7 +28442,7 @@
         <size>5</size>
       </method>
       <method name="Int32 Main()" attrs="150">
-        <size>147</size>
+        <size>158</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -28455,6 +28455,12 @@
       </method>
       <method name="Void TestParams(Int32[])" attrs="145">
         <size>7</size>
+      </method>
+      <method name="Void TestParams2(System.String, Int32[])" attrs="145">
+        <size>7</size>
+      </method>
+      <method name="Void TestParams2(System.String, Int32)" attrs="145">
+        <size>2</size>
       </method>
     </type>
   </test>
@@ -28689,20 +28695,24 @@
     </type>
   </test>
   <test name="gtest-optional-14.cs">
-    <type name="A">
-      <method name="Int32 GetValues(System.String[], System.String)" attrs="134">
-        <size>10</size>
+    <type name="C">
+      <method name="Void M(Int32, Int32)" attrs="145">
+        <size>2</size>
       </method>
-      <method name="Int32 GetValues(System.String, System.String[])" attrs="134">
-        <size>10</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
+      <method name="Void M[T](T, Int32)" attrs="145">
         <size>7</size>
       </method>
-    </type>
-    <type name="B">
-      <method name="Int32 Main()" attrs="150">
-        <size>37</size>
+      <method name="Void M2[T,U](T, System.Func`2[T,U], Int32)" attrs="145">
+        <size>7</size>
+      </method>
+      <method name="Void M2[T,U](T, System.Func`2[T,System.Threading.Tasks.Task`1[U]], Int32)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Main()" attrs="145">
+        <size>45</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__0(Int32)" attrs="145">
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
