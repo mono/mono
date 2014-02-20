@@ -55,6 +55,8 @@ namespace MonoTests.System.Globalization
 			CultureInfo en_US = new CultureInfo ("en-US");
 			DateTimeFormatInfo dtfi = en_US.DateTimeFormat;
 			Assert.AreEqual ("AD", dtfi.GetAbbreviatedEraName (0), "#1");
+			Assert.AreEqual ("AD", dtfi.GetAbbreviatedEraName (1), "#7");
+			Assert.AreEqual ("A.D.", dtfi.GetEraName (0), "#8");
 			Assert.AreEqual ("A.D.", dtfi.GetEraName (1), "#2");
 			Assert.AreEqual (1, dtfi.GetEra ("A.D."), "#3");
 			Assert.AreEqual (1, dtfi.GetEra ("AD"), "#4");
