@@ -826,11 +826,6 @@ namespace System.Threading {
 			if ((maxStackSize % page_size) != 0) // round up to a divisible of page size
 				maxStackSize = (maxStackSize / (page_size - 1)) * page_size;
 
-			int default_stack_size = (IntPtr.Size / 4) * 1024 * 1024; // from wthreads.c
-
-			if (maxStackSize > default_stack_size)
-				return default_stack_size;
-
 			return maxStackSize; 
 		}
 
