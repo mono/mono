@@ -812,6 +812,8 @@ namespace System.Threading {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern public static void VolatileWrite (ref UIntPtr address, UIntPtr value);
 		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static int SystemMaxStackStize ();
 
 		static int CheckStackSize (int maxStackSize)
 		{
@@ -826,7 +828,8 @@ namespace System.Threading {
 			if ((maxStackSize % page_size) != 0) // round up to a divisible of page size
 				maxStackSize = (maxStackSize / (page_size - 1)) * page_size;
 
-			return maxStackSize; 
+			/* Respect the max stack size imposed by the system*/
+			return Math.Min (maxStackSize, SystemMaxStackStize ());
 		}
 
 		public Thread (ThreadStart start, int maxStackSize)
