@@ -34,5 +34,48 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>
 			t.Transform (new XPathDocument (new XmlTextReader (new StringReader ("<root attr='B'><foo attr='A'/><foo attr='B'/><foo attr='C'/></root>"))), null, sw);
 			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?><root>foo: B</root>", sw.ToString ());
 		}
+
+		[Test]
+		public void MSXslNodeSetAcceptsNodeSet ()
+		{
+			string xsl = @"<xsl:stylesheet version='1.0'
+xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-microsoft-com:xslt'>
+<xsl:template match='/'>
+	<root>
+		<!-- msxsl:node-set() accepts a node set -->
+		<xsl:for-each select='msxsl:node-set(root/foo)'>
+			<xsl:value-of select='name(.)' />: <xsl:value-of select='@attr' />
+		</xsl:for-each>
+	</root>
+</xsl:template>
+</xsl:stylesheet>";
+			StringWriter sw = new StringWriter ();
+			XslCompiledTransform t = new XslCompiledTransform ();
+			t.Load (new XPathDocument (new StringReader (xsl)));
+			// should transform without an exception
+			t.Transform (new XPathDocument (new XmlTextReader (new StringReader ("<root><foo attr='A'/><foo attr='B'/><foo attr='C'/></root>"))), null, sw);
+		}
+
+		[Test]
+		public void MSXslNodeSetAcceptsEmptyString ()
+		{
+			string xsl = @"<xsl:stylesheet version='1.0'
+xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-microsoft-com:xslt'>
+<xsl:template match='/'>
+	<root>
+		<!-- msxsl:node-set() accepts an empty string -->
+		<xsl:variable name='empty'></xsl:variable>
+		<xsl:for-each select='msxsl:node-set($empty)'>
+			<xsl:value-of select='name(.)' />: <xsl:value-of select='@attr' />
+		</xsl:for-each>
+	</root>
+</xsl:template>
+</xsl:stylesheet>";
+			StringWriter sw = new StringWriter ();
+			XslCompiledTransform t = new XslCompiledTransform ();
+			t.Load (new XPathDocument (new StringReader (xsl)));
+			// should transform without an exception
+			t.Transform (new XPathDocument (new XmlTextReader (new StringReader ("<root><foo attr='A'/><foo attr='B'/><foo attr='C'/></root>"))), null, sw);
+		}
 	}
 }
