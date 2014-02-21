@@ -1,4 +1,4 @@
-#if NET_4_5 && !MOBILE
+#if NET_4_5
 using System;
 using System.Net;
 using System.Threading;
@@ -226,7 +226,7 @@ namespace MonoTests.System.Net.WebSockets
 			Assert.AreEqual (error, wsEx.WebSocketErrorCode);
 			if (inner != null) {
 				Assert.IsNotNull (wsEx.InnerException);
-				Assert.IsInstanceOfType (inner, wsEx.InnerException);
+				Assert.IsTrue (inner.IsInstanceOfType (wsEx.InnerException));
 			}
 		}
 
