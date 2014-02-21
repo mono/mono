@@ -11280,4 +11280,13 @@ namespace Mono.CSharp
 				Name, initializer);
 		}
 	}
+
+	public class CatchFilterExpression : BooleanExpression
+	{
+		public CatchFilterExpression (Expression expr, Location loc)
+			: base (expr)
+		{
+			this.loc = loc;
+		}
+	}
 }

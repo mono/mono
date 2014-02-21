@@ -279,9 +279,19 @@ namespace Mono.CSharp
 			ig.BeginCatchBlock (type.GetMetaInfo ());
 		}
 
+		public void BeginFilterHandler ()
+		{
+			ig.BeginCatchBlock (null);
+		}
+
 		public void BeginExceptionBlock ()
 		{
 			ig.BeginExceptionBlock ();
+		}
+
+		public void BeginExceptionFilterBlock ()
+		{
+			ig.BeginExceptFilterBlock ();
 		}
 
 		public void BeginFinallyBlock ()
