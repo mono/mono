@@ -76,7 +76,9 @@ namespace Microsoft.Build.Tasks {
 			if (outputResources == null) {
 				foreach (ITaskItem source in sources) {
 					string sourceFile = source.ItemSpec;
-					string outputFile = Path.ChangeExtension (sourceFile, "resources");
+					string outputFile = source.GetMetadata ("AutoGen").Equals ("true", StringComparison.OrdinalIgnoreCase) ?
+						source.ItemSpec.Replace ('\\', '.').Replace ('/', '.') :
+						Path.ChangeExtension (sourceFile, "resources");
 
 					if (IsResgenRequired (sourceFile, outputFile))
 						result &= CompileResourceFile (sourceFile, outputFile);
