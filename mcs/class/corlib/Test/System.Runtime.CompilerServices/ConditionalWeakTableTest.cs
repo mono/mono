@@ -194,7 +194,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 	[Test]
 	public void Reachability () {
 		if (GC.MaxGeneration == 0) /*Boehm doesn't handle ephemerons */
-			return;
+			Assert.Ignore ("Not working on Boehm.");
 		var cwt = new ConditionalWeakTable <object,object> ();
 		List<object> keepAlive;
 		List<WeakReference> keys;
@@ -241,7 +241,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 	[Test]
 	public void InsertStress () {
 		if (GC.MaxGeneration == 0) /*Boehm doesn't handle ephemerons */
-			return;
+			Assert.Ignore ("Not working on Boehm.");
 		var cwt = new ConditionalWeakTable <object,object> ();
 
 		var a = new object ();
@@ -292,7 +292,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 	[Test]
 	public void OldGenStress () {
 		if (GC.MaxGeneration == 0) /*Boehm doesn't handle ephemerons */
-			return;
+			Assert.Ignore ("Not working on Boehm.");
 		var cwt = new ConditionalWeakTable <object,object>[1];
 		List<object> k = null;
 		List<WeakReference> res, res2;
@@ -436,7 +436,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 	public void FinalizableObjectsThatRetainDeadKeys ()
 	{
 		if (GC.MaxGeneration == 0) /*Boehm doesn't handle ephemerons */
-			return;
+			Assert.Ignore ("Not working on Boehm.");
 		lock (_lock1) { 
 			var cwt = new ConditionalWeakTable <object,object> ();
 			ThreadStart dele = () => { FillWithFinalizable (cwt); };
@@ -460,7 +460,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 	public void OldGenKeysMakeNewGenObjectsReachable ()
 	{
 		if (GC.MaxGeneration == 0) /*Boehm doesn't handle ephemerons */
-			return;
+			Assert.Ignore ("Not working on Boehm.");
 		ConditionalWeakTable<object, Val> table = new ConditionalWeakTable<object, Val>();
 		List<Key> keys = new List<Key>();
 

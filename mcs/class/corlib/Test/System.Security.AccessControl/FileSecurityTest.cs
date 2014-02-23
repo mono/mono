@@ -19,7 +19,7 @@ namespace MonoTests.System.Security.AccessControl
 		{
 			FileSecurity security;
 			if (PlatformID.Win32NT != Environment.OSVersion.Platform) {
-				Assert.Ignore (); return;
+				Assert.Ignore ();
 			}
 
 			string path = Path.GetTempFileName ();
@@ -42,7 +42,7 @@ namespace MonoTests.System.Security.AccessControl
 		{
 			FileSecurity security;
 			if (PlatformID.Win32NT != Environment.OSVersion.Platform) {
-				Assert.Ignore (); return;
+				Assert.Ignore ();
 			}
 
 			string path = Path.GetTempFileName ();
@@ -90,7 +90,7 @@ namespace MonoTests.System.Security.AccessControl
 		{
 			FileSecurity security;
 			if (PlatformID.Win32NT != Environment.OSVersion.Platform) {
-				Assert.Ignore (); return;
+				Assert.Ignore ();
 			}
 
 			string path = Path.GetTempFileName ();

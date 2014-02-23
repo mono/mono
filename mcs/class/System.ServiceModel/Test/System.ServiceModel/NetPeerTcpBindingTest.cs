@@ -43,7 +43,7 @@ namespace MonoTests.System.ServiceModel
 		public void DefaultValues ()
 		{
 			if (!NetPeerTcpBinding.IsPnrpAvailable)
-				return; // yes, we actually don't test it.
+				Assert.Ignore ("PNRP is not available."); // yes, we actually don't test it.
 
 			var n = new NetPeerTcpBinding ();
 			Assert.AreEqual (EnvelopeVersion.Soap12, n.EnvelopeVersion, "#1");

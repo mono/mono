@@ -750,7 +750,7 @@ namespace MonoTests.System.Net {
 				machineAddress = Dns.GetHostAddresses (Dns.GetHostName ());
 			} catch (SocketException){
 				// The build hosts sometimes can not resolve the hostname
-				return;
+				Assert.Ignore ("Hostname couldn't be resolved.");
 			}
 			
 			int port = 61234;

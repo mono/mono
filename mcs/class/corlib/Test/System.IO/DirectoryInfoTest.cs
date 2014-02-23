@@ -1030,7 +1030,7 @@ namespace MonoTests.System.IO
 		public void WindowsSystem32_76191 ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			Directory.SetCurrentDirectory (@"C:\WINDOWS\system32");
 			WindowsParentFullName ("C:", "C:\\WINDOWS");
@@ -1134,7 +1134,7 @@ namespace MonoTests.System.IO
 			// Linux-like platforms but mono-on-windows
 			// doesn't set the NotDotNet category
 			if (!RunningOnUnix) {
-				return;
+				Assert.Ignore ("Not running on Unix.");
 			}
 
 			Symlink_helper ();

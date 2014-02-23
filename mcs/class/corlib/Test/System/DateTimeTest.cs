@@ -2194,10 +2194,10 @@ namespace MonoTests.System
 		public void Kind ()
 		{
 			if (DateTime.Now == DateTime.UtcNow)
-				return; // This test does not make sense.
+				Assert.Ignore (); // This test does not make sense.
 			if (TimeZone.CurrentTimeZone.GetUtcOffset (DateTime.UtcNow)
 				!= TimeZone.CurrentTimeZone.GetUtcOffset (DateTime.Now))
-				return; // In this case it does not satisfy the test premises.
+				Assert.Ignore (); // In this case it does not satisfy the test premises.
 
 			Assert.AreEqual (DateTimeKind.Local, DateTime.Now.Kind, "#A1");
 			Assert.AreEqual (DateTimeKind.Local, DateTime.Today.Kind, "#A2");

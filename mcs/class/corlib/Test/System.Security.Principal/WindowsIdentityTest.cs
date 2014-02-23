@@ -200,7 +200,7 @@ namespace MonoTests.System.Security.Principal {
 		{
 			// remove g_warning from being show during unit tests
 			if (IsPosix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			WindowsIdentity wi = WindowsIdentity.GetCurrent ();
 			WindowsPrincipal wp = new WindowsPrincipal (wi);

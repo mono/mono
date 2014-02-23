@@ -22,7 +22,7 @@ namespace MonoTests.System.Security.AccessControl
 		public void PermissionsActuallyWork ()
 		{
 			if (PlatformID.Win32NT != Environment.OSVersion.Platform) {
-				Assert.Ignore (); return;
+				Assert.Ignore ();
 			}
 
 			bool createdNew; EventWaitHandleSecurity security;
