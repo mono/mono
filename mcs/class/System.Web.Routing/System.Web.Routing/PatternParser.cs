@@ -606,7 +606,7 @@ namespace System.Web.Routing
 							pendingPartsAreAllSafe = true;
 							pendingParts.Append (token.Name);
 						} else {
-							if (token.Type == PatternTokenType.Standard) {
+							if (token.Type == PatternTokenType.Standard || token.Type == PatternTokenType.CatchAll) {
 								if (pendingPartsAreAllSafe) {
 									// Accept
 									if (pendingParts.Length > 0) {
