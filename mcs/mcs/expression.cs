@@ -7504,26 +7504,8 @@ namespace Mono.CSharp
 					// If we are dealing with a struct, get the
 					// address of it, so we can store it.
 					//
-					if (dims == 1 && etype.IsStruct) {
-						switch (etype.BuiltinType) {
-						case BuiltinTypeSpec.Type.Byte:
-						case BuiltinTypeSpec.Type.SByte:
-						case BuiltinTypeSpec.Type.Bool:
-						case BuiltinTypeSpec.Type.Short:
-						case BuiltinTypeSpec.Type.UShort:
-						case BuiltinTypeSpec.Type.Char:
-						case BuiltinTypeSpec.Type.Int:
-						case BuiltinTypeSpec.Type.UInt:
-						case BuiltinTypeSpec.Type.Long:
-						case BuiltinTypeSpec.Type.ULong:
-						case BuiltinTypeSpec.Type.Float:
-						case BuiltinTypeSpec.Type.Double:
-							break;
-						default:
-							ec.Emit (OpCodes.Ldelema, etype);
-							break;
-						}
-					}
+					if (dims == 1 && etype.IsStruct && !BuiltinTypeSpec.IsPrimitiveType (etype))
+						ec.Emit (OpCodes.Ldelema, etype);
 
 					e.Emit (ec);
 
