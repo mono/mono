@@ -272,7 +272,7 @@ public class TimeZoneTest {
 		DateTime dst_start_utc = tz.GetDaylightChanges(2007).Start.ToUniversalTime ();
 
 		if (dst_start_utc == DateTime.MinValue)
-			return;
+			Assert.Ignore ("Couldn't get beginning of daylight saving time in 2007.");
 		Assert.IsTrue (tz.ToLocalTime (dst_start_utc.Subtract (new TimeSpan (0, 1, 0))) < tz.ToLocalTime (dst_start_utc), "0:1:59 < 0:3:00");
 		Assert.IsTrue (tz.ToLocalTime (dst_start_utc) < tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (0, 1, 0))), "0:3:00 < 0:3:01");
 		Assert.IsTrue (tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (0, 1, 0))) < tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (0, 59, 0))), "0:3:01 < 0:3:59");

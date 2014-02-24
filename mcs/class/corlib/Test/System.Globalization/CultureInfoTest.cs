@@ -650,7 +650,7 @@ namespace MonoTests.System.Globalization
 
 			// The test doesn't work if the current culture is already set
 			if (orig_culture != CultureInfo.InvariantCulture)
-				return;
+				Assert.Ignore ("The test doesn't work if the current culture is already set.");
 
 			/* Phase 0 - warm up */
 			new Thread (ThreadWithoutChange).Start ();

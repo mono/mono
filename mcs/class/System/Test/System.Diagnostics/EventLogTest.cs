@@ -111,7 +111,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -219,7 +219,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.Exists ("monologtemp", "."))
 				Assert.Ignore ("Event log 'monologtemp' should not exist.");
@@ -245,7 +245,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -308,7 +308,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -344,7 +344,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -375,7 +375,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -406,7 +406,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			EventLog eventLog = new EventLog ();
 			Assert.IsFalse (eventLog.EnableRaisingEvents, "#1");
@@ -450,7 +450,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -482,7 +482,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.Exists ("monologtemp", "."))
 				Assert.Ignore ("Event log 'monologtemp' should not exist.");
@@ -526,7 +526,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			EventLog eventLog = new EventLog (string.Empty);
 			Assert.IsFalse (eventLog.EnableRaisingEvents, "#A1");
@@ -577,7 +577,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -609,7 +609,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.Exists ("monologtemp", "."))
 				Assert.Ignore ("Event log 'monologtemp' should not exist.");
@@ -653,7 +653,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			EventLog eventLog = new EventLog (string.Empty, ".");
 			Assert.IsFalse (eventLog.EnableRaisingEvents, "#A1");
@@ -768,7 +768,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -805,7 +805,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.Exists ("monologtemp", "."))
 				Assert.Ignore ("Event log 'monologtemp' should not exist.");
@@ -849,7 +849,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -978,7 +978,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monoothersource", "."))
 				Assert.Ignore ("Event log source 'monoothersource' should not exist.");
@@ -1019,7 +1019,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -1055,7 +1055,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -1090,7 +1090,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -1188,7 +1188,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -1216,7 +1216,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -1263,7 +1263,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType != NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -1400,7 +1400,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType != NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -1460,7 +1460,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -1487,7 +1487,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -1545,7 +1545,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -1584,7 +1584,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -1642,7 +1642,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -1725,7 +1725,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -1769,7 +1769,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -1814,7 +1814,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -1922,7 +1922,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -1970,7 +1970,7 @@ namespace MonoTests.System.Diagnostics
 
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -2178,7 +2178,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.Exists ("monologtemp", "."))
 				Assert.Ignore ("Event log 'monologtemp' should not exist.");
@@ -2247,7 +2247,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -2412,7 +2412,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -2603,7 +2603,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -2779,7 +2779,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -2967,7 +2967,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType != WIN32_IMPL)
 				// test can only pass with win32 implementation
-				return;
+				Assert.Ignore ("Wrong EventLogImplType.");
 
 			using (RegistryKey logKey = FindLogKeyByName ("monotempsource")) {
 				if (logKey != null)
@@ -3035,7 +3035,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType != WIN32_IMPL)
 				// test can only pass with win32 implementation
-				return;
+				Assert.Ignore ("Wrong EventLogImplType.");
 
 			using (RegistryKey logKey = FindLogKeyByName ("monotempsource")) {
 				if (logKey != null)
@@ -3242,7 +3242,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -3332,7 +3332,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -3347,7 +3347,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			string logName = EventLog.LogNameFromSourceName (string.Empty, ".");
 			Assert.IsNotNull (logName, "#1");
@@ -3359,7 +3359,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			string logName = EventLog.LogNameFromSourceName (null, ".");
 			Assert.IsNotNull (logName, "#1");
@@ -3438,7 +3438,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -3489,7 +3489,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType != WIN32_IMPL)
 				// test can only pass with win32 implementation
-				return;
+				Assert.Ignore ("Wrong EventLogImplType.");
 
 			using (RegistryKey logKey = FindLogKeyByName ("monotempsource")) {
 				if (logKey != null)
@@ -3562,7 +3562,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType != WIN32_IMPL)
 				// test can only pass with win32 implementation
-				return;
+				Assert.Ignore ("Wrong EventLogImplType.");
 
 			using (RegistryKey logKey = FindLogKeyByName ("monotempsource")) {
 				if (logKey != null)
@@ -3697,7 +3697,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -3772,7 +3772,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -3806,7 +3806,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -3848,7 +3848,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -3899,7 +3899,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -3950,7 +3950,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -4012,7 +4012,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -4087,7 +4087,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -4121,7 +4121,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -4176,7 +4176,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -4227,7 +4227,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -4278,7 +4278,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -4348,7 +4348,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -4424,7 +4424,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -4469,7 +4469,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -4514,7 +4514,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -4584,7 +4584,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -4681,7 +4681,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -4747,7 +4747,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -4781,7 +4781,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -4858,7 +4858,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -4909,7 +4909,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -4960,7 +4960,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -5035,7 +5035,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -5112,7 +5112,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -5157,7 +5157,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -5202,7 +5202,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -5279,7 +5279,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -5379,7 +5379,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -5445,7 +5445,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -5479,7 +5479,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -5556,7 +5556,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -5607,7 +5607,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -5658,7 +5658,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -5728,7 +5728,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -5830,7 +5830,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -5906,7 +5906,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -5952,7 +5952,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -5998,7 +5998,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -6076,7 +6076,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -6178,7 +6178,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -6246,7 +6246,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -6280,7 +6280,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -6357,7 +6357,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -6408,7 +6408,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -6459,7 +6459,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -6529,7 +6529,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -6632,7 +6632,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -6708,7 +6708,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -6754,7 +6754,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -6800,7 +6800,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -6879,7 +6879,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -6984,7 +6984,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -7060,7 +7060,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -7106,7 +7106,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -7152,7 +7152,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -7326,7 +7326,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -7576,7 +7576,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -7772,7 +7772,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
@@ -8019,7 +8019,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
-				return;
+				Assert.Ignore ("No EventLogImplType.");
 
 			if (EventLog.SourceExists ("monotempsource", "."))
 				Assert.Ignore ("Event log source 'monotempsource' should not exist.");

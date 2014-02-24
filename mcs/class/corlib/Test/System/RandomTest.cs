@@ -198,7 +198,7 @@ namespace MonoTests.System {
 
 			// if the method is not present, e.g. on MS.NET, skip this test
 			if (next == null)
-				return;
+				Assert.Ignore ("The JKiss method is not present, e.g. on MS.NET.");
 
 			// ensure we match the original JKISS random stream
 			// first 64KB but without checking every value (one each KB)

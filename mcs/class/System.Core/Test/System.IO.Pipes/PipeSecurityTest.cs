@@ -23,7 +23,7 @@ namespace MonoTests.System.IO.Pipes
 		public void NamedPipeDefaultPermissionsWork ()
 		{
 			if (PlatformID.Win32NT != Environment.OSVersion.Platform) {
-				Assert.Ignore (); return;
+				Assert.Ignore ();
 			}
 
 			string name = @"Local\MonoTestPipeNPNPW";
@@ -40,7 +40,7 @@ namespace MonoTests.System.IO.Pipes
 		public void NamedPipeSetAccessControlFailsWithoutChangePermissionRight ()
 		{
 			if (PlatformID.Win32NT != Environment.OSVersion.Platform) {
-				Assert.Ignore (); return;
+				Assert.Ignore ();
 			}
 
 			string name = @"Local\MonoTestPipeNPSACFWCPR";
@@ -71,7 +71,7 @@ namespace MonoTests.System.IO.Pipes
 		void NamedPipePermissionsActuallyWorkSync (string name, bool addDenyEveryone)
 		{
 			if (PlatformID.Win32NT != Environment.OSVersion.Platform) {
-				Assert.Ignore (); return;
+				Assert.Ignore ();
 			}
 
 			PipeSecurity security = new PipeSecurity ();
@@ -116,7 +116,7 @@ namespace MonoTests.System.IO.Pipes
 		public void NamedPipePermissionsActuallyWorkAsync ()
 		{
 			if (PlatformID.Win32NT != Environment.OSVersion.Platform) {
-				Assert.Ignore (); return;
+				Assert.Ignore ();
 			}
 
 			IAsyncResult waitForConnection;

@@ -44,7 +44,7 @@ namespace MonoTests.Microsoft.Win32
 		{
 			// this test is for Windows only
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			// this regpath always exists under windows
 			RegistryKey k = Registry.CurrentUser
@@ -301,7 +301,7 @@ namespace MonoTests.Microsoft.Win32
 		{
 			// access to registry of remote machines is not implemented on unix
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			RegistryKey hive = RegistryKey.OpenRemoteBaseKey (
 				RegistryHive.CurrentUser, Environment.MachineName);
@@ -391,7 +391,7 @@ namespace MonoTests.Microsoft.Win32
 		{
 			// access to registry of remote machines is not implemented on unix
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			RegistryKey hive = RegistryKey.OpenRemoteBaseKey (
 				RegistryHive.CurrentUser, Environment.MachineName);
@@ -1677,7 +1677,7 @@ namespace MonoTests.Microsoft.Win32
 		{
 			// Not supported on Unix
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			string subKeyName = Guid.NewGuid ().ToString ();
 			try {
@@ -1705,7 +1705,7 @@ namespace MonoTests.Microsoft.Win32
 		{
 			// Not supported on Unix
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			string subKeyName = Guid.NewGuid ().ToString ();
 			try {
@@ -1731,7 +1731,7 @@ namespace MonoTests.Microsoft.Win32
 		public void Handle ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			string subKeyName = Guid.NewGuid ().ToString ();
 			RegistryKey subkey = null;
@@ -2173,7 +2173,7 @@ namespace MonoTests.Microsoft.Win32
 		{
 			// access to registry of remote machines is not implemented on unix
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			RegistryKey hive = RegistryKey.OpenRemoteBaseKey (
 				RegistryHive.CurrentUser, Environment.MachineName);
@@ -2207,7 +2207,7 @@ namespace MonoTests.Microsoft.Win32
 		{
 			// access to registry of remote machines is not implemented on unix
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			try {
 				RegistryKey.OpenRemoteBaseKey (RegistryHive.CurrentUser,
