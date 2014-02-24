@@ -1723,6 +1723,36 @@ namespace MonoTests.System.Web.Routing
 			Assert.AreEqual("2013/08/hello-world", vp.VirtualPath, "#2");
 		}
 
+		[Test (Description = "Xamarin Bug #17960")]
+		public void GetVirtualPathWithCatchall1()
+		{
+			var r = new MyRoute("HelloWorld/{*path}", new MyRouteHandler());
+			var hc = new HttpContextStub2("~/", String.Empty);
+			var values = new RouteValueDictionary()
+			{
+				{ "path", "foobar" },
+			};
+			var vp = r.GetVirtualPath(new RequestContext(hc, new RouteData()), values);
+
+			Assert.IsNotNull(vp, "#1");
+			Assert.AreEqual("HelloWorld/foobar", vp.VirtualPath, "#2");
+		}
+
+		[Test (Description = "Xamarin Bug #17960")]
+		public void GetVirtualPathWithCatchall2()
+		{
+			var r = new MyRoute("HelloWorld/{*path}", new MyRouteHandler());
+			var hc = new HttpContextStub2("~/", String.Empty);
+			var values = new RouteValueDictionary()
+			{
+				{ "path", "foo/bar/baz" },
+			};
+			var vp = r.GetVirtualPath(new RequestContext(hc, new RouteData()), values);
+
+			Assert.IsNotNull(vp, "#1");
+			Assert.AreEqual("HelloWorld/foo/bar/baz", vp.VirtualPath, "#2");
+		}
+
 		// Bug #500739
 		[Test]
 		public void RouteGetRequiredStringWithDefaults ()
