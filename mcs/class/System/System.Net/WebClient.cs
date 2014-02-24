@@ -79,6 +79,7 @@ namespace System.Net
 	[ComVisible(true)]
 	public class WebClient : Component
 	{
+		int socketBufferSize = 4096;
 		static readonly string urlEncodedCType = "application/x-www-form-urlencoded";
 		static byte [] hexBytes;
 		ICredentials credentials;
@@ -480,7 +481,18 @@ namespace System.Net
 				int contentLength = data.Length;
 				request.ContentLength = contentLength;
 				using (Stream stream = request.GetRequestStream ()) {
-					stream.Write (data, 0, contentLength);
+					int offset = 0;
+					while (offset < contentLength) {
+						var size = Math.Min (contentLength - offset, socketBufferSize);
+						stream.Write (data, offset, size);
+
+						offset += size;
+						int percent = 0;
+						if (contentLength > 0)
+							percent = (int) ((long)offset * 100 / contentLength);
+						var args = new UploadProgressChangedEventArgs (0, 0, offset, contentLength, percent, userToken);
+						OnUploadProgressChanged (args);
+					}
 				}
 				
 				return ReadAll (request, userToken);
