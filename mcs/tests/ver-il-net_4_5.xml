@@ -62155,6 +62155,51 @@
       </method>
     </type>
   </test>
+  <test name="test-async-60.cs">
+    <type name="C">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>19</size>
+      </method>
+      <method name="System.Threading.Tasks.Task AlignTwoItems()" attrs="134">
+        <size>41</size>
+      </method>
+      <method name="System.Threading.Tasks.Task MoveItemBy(System.Object, Int32, Int32)" attrs="129">
+        <size>15</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[B] AddItemAt(Int32, Int32)" attrs="129">
+        <size>33</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;AlignTwoItems&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>469</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="X+&lt;AddItemAt&gt;c__async1">
+      <method name="Void MoveNext()" attrs="486">
+        <size>43</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void add_Disposed(Delegate)" attrs="2182">

@@ -7492,7 +7492,7 @@ namespace Mono.CSharp
 							e = e.EmitToField (ec);
 						}
 
-						stackArray.EmitWithCleanup (ec, false);
+						stackArray.EmitLoad (ec);
 					} else {
 						ec.Emit (OpCodes.Dup);
 					}
@@ -7542,7 +7542,7 @@ namespace Mono.CSharp
 			}
 
 			if (stackArray != null)
-				stackArray.IsAvailableForReuse = true;
+				stackArray.PrepareCleanup (ec);
 		}
 
 		public override void Emit (EmitContext ec)

@@ -959,15 +959,19 @@ namespace Mono.CSharp
 
 		public override void Emit (EmitContext ec)
 		{
-			EmitWithCleanup (ec, true);
-		}
-
-		public void EmitWithCleanup (EmitContext ec, bool release)
-		{
 			base.Emit (ec);
 
-			if (release)
-				IsAvailableForReuse = true;
+			PrepareCleanup (ec);
+		}
+
+		public void EmitLoad (EmitContext ec)
+		{
+			base.Emit (ec);
+		}
+
+		public void PrepareCleanup (EmitContext ec)
+		{
+			IsAvailableForReuse = true;
 
 			//
 			// Release any captured reference type stack variables
