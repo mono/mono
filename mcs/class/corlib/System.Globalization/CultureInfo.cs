@@ -297,7 +297,7 @@ namespace System.Globalization
 						//
 						// Parent lcid is same but culture info is not for legacy zh culture
 						//
-						if (parent_lcid == 0x7C04 && EnglishName.EndsWith (" Legacy", StringComparison.Ordinal))
+						if (parent_lcid == 0x7C04 && EnglishName [EnglishName.Length - 1] == 'y')
 							return parent_culture = new CultureInfo ("zh-Hant");
 
 						return null;
