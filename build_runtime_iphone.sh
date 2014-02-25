@@ -20,8 +20,13 @@ PRFX=$PWD/tmp
 
 
 if [ ${UNITY_THISISABUILDMACHINE:+1} ]; then
-        echo "Erasing builds folder to make sure we start with a clean slate"
-        rm -rf builds
+	echo "Erasing builds folder to make sure we start with a clean slate"
+	rm -rf builds
+	if test -e /usr/local/bin/libtool; then
+		LIBTOOL=/usr/local/bin/libtool
+	elif test -e /usr/local/bin/glibtool; then
+		LIBTOOL=/usr/local/bin/glibtool
+	fi
 fi
 
 setenv () {
@@ -67,14 +72,14 @@ build_arm_mono ()
 
 	if [ $2 -eq 0 ]; then
 		make clean
-		rm config.h*
+		rm -f config.h*
 
 		pushd eglib 
-		./autogen.sh --host=arm-apple-darwin9 --prefix=$PRFX
+		LIBTOOL=$LIBTOOL ./autogen.sh --host=arm-apple-darwin9 --prefix=$PRFX
 		make clean
 		popd
 
-		./autogen.sh --prefix=$PRFX --disable-mcs-build --host=arm-apple-darwin9 --disable-shared-handles --with-tls=pthread --with-sigaltstack=no --with-glib=embedded --enable-minimal=jit,profiler,com --disable-nls || exit 1
+		LIBTOOL=$LIBTOOL ./autogen.sh --prefix=$PRFX --disable-mcs-build --host=arm-apple-darwin9 --disable-shared-handles --with-tls=pthread --with-sigaltstack=no --with-glib=embedded --enable-minimal=jit,profiler,com --disable-nls || exit 1
 		perl -pi -e 's/MONO_SIZEOF_SUNPATH 0/MONO_SIZEOF_SUNPATH 104/' config.h
 		perl -pi -e 's/#define HAVE_FINITE 1//' config.h
 		#perl -pi -e 's/#define HAVE_MMAP 1//' config.h
@@ -117,11 +122,11 @@ build_iphone_crosscompiler ()
 
     if [ $1 -eq 0 ]; then
 		pushd eglib 
-		./autogen.sh --prefix=$PRFX || exit 1
+		LIBTOOL=$LIBTOOL ./autogen.sh --prefix=$PRFX || exit 1
 		make clean
 		popd
 	
-		./autogen.sh --prefix=$PRFX --with-macversion=$MAC_SDK_VERSION --disable-mcs-build --disable-shared-handles --with-tls=pthread --with-signalstack=no --with-glib=embedded --target=arm-darwin --disable-nls || exit 1
+		LIBTOOL=$LIBTOOL ./autogen.sh --prefix=$PRFX --with-macversion=$MAC_SDK_VERSION --disable-mcs-build --disable-shared-handles --with-tls=pthread --with-signalstack=no --with-glib=embedded --target=arm-darwin --disable-nls || exit 1
 		perl -pi -e 's/#define HAVE_STRNDUP 1//' eglib/config.h
 		make clean || exit 1
 	else

@@ -4,12 +4,16 @@ package PrepareAndroidSDK;
 
 use strict;
 use warnings;
+
+use File::Basename;
+use lib ("./perl_lib");
+
 use Getopt::Long;
 use Carp qw(croak carp);
-use File::Path qw(make_path remove_tree);
+use File::Path qw(mkpath rmtree);
 use File::Spec::Functions;
 use File::Copy;
-use File::Basename;
+use File::Copy::Recursive;
 
 require Exporter;
 our @ISA = qw(Exporter);
@@ -34,7 +38,8 @@ our $sdks =
 	"android-13"	=> "android-3.2_r01-linux.zip",
 	"android-14"	=> "android-14_r03.zip",
 	"android-15"	=> "android-15_r03.zip",
-	"android-16"	=> "android-16_r02.zip"
+	"android-16"	=> "android-16_r02.zip",
+	"android-17"	=> "android-17_r01.zip",
 };
 
 our $sdk_tools =
@@ -114,6 +119,24 @@ our $ndks =
 						"windows" => "android-ndk-r8b-windows.zip",
 						"macosx" => "android-ndk-r8b-darwin-x86.tar.bz2",
 						"linux" => "android-ndk-r8b-linux-x86.tar.bz2",
+					},
+	"r8c"		=>
+					{
+						"windows" => "android-ndk-r8c-windows.zip",
+						"macosx" => "android-ndk-r8c-darwin-x86.tar.bz2",
+						"linux" => "android-ndk-r8c-linux-x86.tar.bz2",
+					},
+	"r8e"		=>
+					{
+						"windows" => "android-ndk-r8e-windows.zip",
+						"macosx" => "android-ndk-r8e-darwin-x86.tar.bz2",
+						"linux" => "android-ndk-r8e-linux-x86.tar.bz2",
+					},
+	"r9"		=>
+					{
+						"windows" => "android-ndk-r9-windows-x86.zip",
+						"macosx" => "android-ndk-r9-darwin-x86.tar.bz2",
+						"linux" => "android-ndk-r9-linux-x86.tar.bz2",
 					},
 };
 
@@ -345,13 +368,13 @@ sub DownloadAndUnpackArchive
 	print "\t\tDest name: " . $dest_name . "\n";
 
 	# remove old output
-	remove_tree($output);
-	make_path($dest_path);
+	rmtree($output);
+	mkpath($dest_path);
 
 	# create temporary locations
 	unlink($temporary_download_path);
-	remove_tree($temporary_unpack_path);
-	make_path($temporary_unpack_path);
+	rmtree($temporary_unpack_path);
+	mkpath($temporary_unpack_path);
 
 	system("lwp-download", $url, $temporary_download_path);
 
@@ -380,11 +403,18 @@ sub DownloadAndUnpackArchive
 	closedir $dh;
 	my $unpacked_subdir = catfile($temporary_unpack_path, $dirs[0]);
 
-	move($unpacked_subdir, $output);
+	if(move($unpacked_subdir, $output) == 0)
+	{
+		# move failed. Try to do a recursive copy instead
+		if(File::Copy::Recursive::dircopy($unpacked_subdir, $output) == 0)
+		{
+			print "\t\tMove/Copy Error: " . $! . "\n";
+		}
+	}
 
 	# clean up
 	unlink($temporary_download_path);
-	remove_tree($temporary_unpack_path);
+	rmtree($temporary_unpack_path);
 }
 
 
@@ -402,6 +432,10 @@ sub PrepareNDK
 		my $current = $content[0];
 		print "\tCurrently installed = " . $current . "\n";
 
+		# remove the possible '(64-bit)' from the end
+		my @curr_arr = split(' ', $current);
+		$current = $curr_arr[0];
+		
 		if ($ndk eq $current)
 		{
 			print "\tNDK '$ndk' is already installed\n";
@@ -418,7 +452,7 @@ sub PrepareNDK
 		}
 	}
 
-	remove_tree($ndk_root);
+	rmtree($ndk_root);
 
 	my $archive = $ndks->{$ndk}->{$HOST_ENV};
 	die ("Unknown NDK release '$ndk' (for $HOST_ENV)") if (!$archive);

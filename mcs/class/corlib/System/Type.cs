@@ -1204,7 +1204,6 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern Type MakeGenericType (Type gt, Type [] types);
 
-#if !MICRO_LIB
 		public virtual Type MakeGenericType (params Type[] typeArguments)
 		{
 			if (!IsGenericTypeDefinition)
@@ -1219,8 +1218,10 @@ namespace System {
 				Type t = typeArguments [i];
 				if (t == null)
 					throw new ArgumentNullException ("typeArguments");
+#if !MICRO_LIB
 				if (!(t is EnumBuilder || t is TypeBuilder))
 					t = t.UnderlyingSystemType;
+#endif // !MICRO_LIB
 				if (t == null || !t.IsSystemType)
 					throw new ArgumentNullException ("typeArguments");
 				systemTypes [i] = t;
@@ -1231,7 +1232,6 @@ namespace System {
 				throw new TypeLoadException ();
 			return res;
 		}
-#endif // !MICRO_LIB
 
 		public virtual bool IsGenericParameter {
 			get {
