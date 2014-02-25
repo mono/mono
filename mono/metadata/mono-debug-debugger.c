@@ -81,6 +81,10 @@ mono_debugger_unlock (void)
 void
 mono_debugger_initialize (gboolean use_debugger)
 {
+#if defined(PLATFORM_IPHONE_XCOMP)
+	GC_init();
+#endif
+
 	MONO_GC_REGISTER_ROOT (last_exception);
 	
 	g_assert (!mono_debugger_use_debugger);
