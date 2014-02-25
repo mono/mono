@@ -37,6 +37,7 @@ using System.Xml.Serialization;
 namespace System.Xml.Linq
 {
 	[XmlSchemaProvider (null, IsAny = true)]
+	[XmlTypeConvertor ("ConvertForAssignment")]
 	public class XElement : XContainer, IXmlSerializable
 	{
 		static IEnumerable <XElement> emptySequence =
@@ -88,6 +89,16 @@ namespace System.Xml.Linq
 				throw new ArgumentNullException ("other");
 			this.name = other.Name;
 			Add (other.Contents);
+		}
+
+		static object ConvertForAssignment (object value)
+		{
+			var node = value as XmlNode;
+			if (node == null)
+				return value;
+			var doc = new XmlDocument ();
+			doc.AppendChild (doc.ImportNode (node, true));
+			return XElement.Parse (doc.InnerXml);
 		}
 
 		[CLSCompliant (false)]

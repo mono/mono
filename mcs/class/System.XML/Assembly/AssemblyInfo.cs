@@ -72,5 +72,7 @@ using System.Runtime.InteropServices;
 	[assembly: AllowPartiallyTrustedCallers]
 #endif
 
+[assembly: InternalsVisibleTo ("System.Xml.Linq, PublicKey=00000000000000000400000000000000")]
+
 [assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
