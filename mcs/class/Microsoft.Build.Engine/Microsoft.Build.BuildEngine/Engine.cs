@@ -32,7 +32,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using Mono.XBuild.Utilities;
+using Mono.XBuild.BuildEngine;
 
 namespace Microsoft.Build.BuildEngine {
 	public class Engine {
@@ -492,7 +492,7 @@ namespace Microsoft.Build.BuildEngine {
 
 			var toolset = Toolsets [toolsVersion];
 			if (toolset == null)
-				throw new UnknownToolsVersionException (toolsVersion);
+				throw new UnknownToolsVersionException (toolsVersion, Toolsets.Select (ts => ts.ToolsVersion));
 
 			string toolsPath = toolset.ToolsPath;
 			string tasksFile = Path.Combine (toolsPath, defaultTasksProjectName);
@@ -567,7 +567,7 @@ namespace Microsoft.Build.BuildEngine {
 			}
 			set {
 				if (Toolsets [value] == null)
-					throw new UnknownToolsVersionException (value);
+					throw new UnknownToolsVersionException (value, Toolsets.Select(ts => ts.ToolsVersion));
 				defaultToolsVersion = value;
 			}
 		}

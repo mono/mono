@@ -10,7 +10,8 @@ LIBRARY = Mono.XBuild.Tasks.dll
 LIB_MCS_FLAGS = \
 	/r:$(corlib)				\
 	/r:System.dll				\
-	/r:System.Xml.dll
+	/r:System.Xml.dll			\
+	/r:$(XBUILD_UTILITIES_MONO)
 
 include $(XBUILD_DIR)/xbuild_test.make
 

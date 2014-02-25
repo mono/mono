@@ -1,0 +1,17 @@
+../../build/common/Consts.cs
+../../build/common/MonoTODOAttribute.cs
+../../tools/xbuild/XBuildConsts.cs
+../System/System.Collections.Specialized/ProcessStringDictionary.cs
+Assembly/AssemblyInfo.cs
+Mono.XBuild.BuildEngine/DirectoryScannerBase.cs
+Mono.XBuild.BuildEngine/EventSource.cs
+Mono.XBuild.BuildEngine/UnknownToolsVersionException.cs
+Mono.XBuild.Utilities/IAsyncOperation.cs
+Mono.XBuild.Utilities/IProcessAsyncOperation.cs
+Mono.XBuild.Utilities/MSBuildUtils.cs
+Mono.XBuild.Utilities/MonoLocationHelper.cs
+Mono.XBuild.Utilities/OperationHandler.cs
+Mono.XBuild.Utilities/OutWriter.cs
+Mono.XBuild.Utilities/ProcessService.cs
+Mono.XBuild.Utilities/ProcessWrapper.cs
+Mono.XBuild.Utilities/ReservedNameUtils.cs

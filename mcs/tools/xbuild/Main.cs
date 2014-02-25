@@ -34,11 +34,13 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using Mono.XBuild.BuildEngine;
 using Mono.XBuild.Framework;
 
 namespace Mono.XBuild.CommandLine {
@@ -82,8 +84,11 @@ namespace Mono.XBuild.CommandLine {
 				
 				engine  = Engine.GlobalEngine;
 				if (!String.IsNullOrEmpty (parameters.ToolsVersion)) {
-					if (engine.Toolsets [parameters.ToolsVersion] == null)
-						ErrorUtilities.ReportError (0, new UnknownToolsVersionException (parameters.ToolsVersion).Message);
+					if (engine.Toolsets [parameters.ToolsVersion] == null) {
+						var ex = new UnknownToolsVersionException (
+							parameters.ToolsVersion, engine.Toolsets.Select(ts => ts.ToolsVersion));
+							ErrorUtilities.ReportError (0, ex.Message);
+					}
 
 					engine.DefaultToolsVersion = parameters.ToolsVersion;
 				}

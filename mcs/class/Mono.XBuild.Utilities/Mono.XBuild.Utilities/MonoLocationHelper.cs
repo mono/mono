@@ -30,8 +30,10 @@
 using System;
 using System.IO;
 
-namespace Mono.XBuild.Utilities {
-	internal class MonoLocationHelper {
+namespace Mono.XBuild.Utilities
+{
+	public class MonoLocationHelper
+	{
 	
 		static string binDir;
 		static string libDir;
@@ -59,7 +61,7 @@ namespace Mono.XBuild.Utilities {
 			libDir = Path.Combine (t4.FullName, "lib");
 		}
 	
-		internal static string GetBinDir ()
+		public static string GetBinDir ()
 		{
 			return binDir;
 		}

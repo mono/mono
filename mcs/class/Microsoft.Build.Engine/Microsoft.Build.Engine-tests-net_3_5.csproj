@@ -11,10 +11,7 @@
     <OutputPath>bin\Debug\Microsoft.Build.Engine-tests-net_3_5</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>False</NoConfig>
-    
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>
-    </RootNamespace>
     <AssemblyName>Microsoft.Build.Engine_test_net_3_5</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -22,7 +19,6 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <NoWarn>1699</NoWarn>
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -30,7 +26,6 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>NET_1_1;NET_2_0;NET_3_5</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -44,14 +39,13 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\Microsoft.Build.Tasks\Test\Microsoft.Build.Tasks\TestMessageLogger.cs" />
     <Compile Include="Test\Microsoft.Build.BuildEngine\BuildChooseTest.cs" />
     <Compile Include="Test\Microsoft.Build.BuildEngine\BuildItemGroupCollectionTest.cs" />
     <Compile Include="Test\Microsoft.Build.BuildEngine\BuildItemGroupTest.cs" />
     <Compile Include="Test\Microsoft.Build.BuildEngine\BuildItemTest.cs" />
-    <Compile Include="Test\Microsoft.Build.BuildEngine\BuildPropertyGroupCollectionTest.cs" />
-    <Compile Include="Test\Microsoft.Build.BuildEngine\BuildPropertyGroupTest.cs" />
     <Compile Include="Test\Microsoft.Build.BuildEngine\BuildPropertyTest.cs" />
+    <Compile Include="Test\Microsoft.Build.BuildEngine\BuildPropertyGroupTest.cs" />
+    <Compile Include="Test\Microsoft.Build.BuildEngine\BuildPropertyGroupCollectionTest.cs" />
     <Compile Include="Test\Microsoft.Build.BuildEngine\BuildTaskTest.cs" />
     <Compile Include="Test\Microsoft.Build.BuildEngine\ConsoleLoggerTest.cs" />
     <Compile Include="Test\Microsoft.Build.BuildEngine\Consts.cs" />
@@ -64,8 +58,8 @@
     <Compile Include="Test\Microsoft.Build.BuildEngine\TargetCollectionTest.cs" />
     <Compile Include="Test\Microsoft.Build.BuildEngine\TargetTest.cs" />
     <Compile Include="Test\Microsoft.Build.BuildEngine\TestNamespaceManager.cs" />
-    <Compile Include="Test\Microsoft.Build.BuildEngine\UsingTaskCollectionTest.cs" />
     <Compile Include="Test\Microsoft.Build.BuildEngine\UsingTaskTest.cs" />
+    <Compile Include="Test\Microsoft.Build.BuildEngine\UsingTaskCollectionTest.cs" />
     <Compile Include="Test\Microsoft.Build.BuildEngine\UtilitiesTest.cs" />
     <Compile Include="Test\various\Build.cs" />
     <Compile Include="Test\various\Conditions.cs" />
@@ -73,7 +67,11 @@
     <Compile Include="Test\various\EvaluationOrder.cs" />
     <Compile Include="Test\various\Items.cs" />
     <Compile Include="Test\various\ProjectElement.cs" />
-    <Compile Include="Test\various\Properties.cs" />  </ItemGroup>
+    <Compile Include="Test\various\Properties.cs" />
+    <Compile Include="..\Microsoft.Build.Tasks\Test\Microsoft.Build.Tasks\TestMessageLogger.cs">
+      <Link>TestMessageLogger.cs</Link>
+    </Compile>
+  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -83,33 +81,34 @@
   -->
   <PropertyGroup>
     <PreBuildEvent>
-
     </PreBuildEvent>
     <PostBuildEvent>
       xcopy $(TargetName).* $(ProjectDir)..\lib\net_3_5\ /Y /R /D
-  </PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="..\lib\net_3_5\nunit.framework.dll" />
-    <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
-      <Name>corlib\corlib-net_2_0</Name>
-    </ProjectReference>
+    <Reference Include="mscorlib">
+      <HintPath>..\lib\net_3_5\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml">
+      <HintPath>..\lib\net_3_5\System.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\lib\net_3_5\nunit.framework.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Microsoft.Build.Engine\Microsoft.Build.Engine-net_3_5.csproj">
       <Project>{874516A3-F5F6-4EAB-B005-4D1A567C5E4D}</Project>
-      <Name>Microsoft.Build.Engine\Microsoft.Build.Engine-net_3_5</Name>
+      <Name>Microsoft.Build.Engine-net_3_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Framework\Microsoft.Build.Framework-net_3_5.csproj">
       <Project>{50A41B06-27A6-4003-BA97-763C6CA4D51B}</Project>
-      <Name>Microsoft.Build.Framework\Microsoft.Build.Framework-net_3_5</Name>
+      <Name>Microsoft.Build.Framework-net_3_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_3_5.csproj">
       <Project>{5EA25213-0854-4620-A67B-67E9BC6D213E}</Project>
-      <Name>Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_3_5</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
-      <Project>{D9776E38-7673-45F6-BF19-7B77830DF9CA}</Project>
-      <Name>System.XML\System.Xml-net_2_0-1</Name>
+      <Name>Microsoft.Build.Utilities-net_3_5</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -26,22 +26,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace Microsoft.Build.BuildEngine {
+namespace Mono.XBuild.BuildEngine {
 	[Serializable]
-	internal class UnknownToolsVersionException : Exception {
+	public class UnknownToolsVersionException : Exception {
 		string message;
 
-		public UnknownToolsVersionException (string toolsVersion)
+		public UnknownToolsVersionException (string toolsVersion, IEnumerable<string> knownToolsVersions)
 		{
-			this.message = GetErrorMessage (toolsVersion);
+			if (knownToolsVersions == null)
+				throw new ArgumentNullException ("knownToolsVersions");
+			this.message = GetErrorMessage (toolsVersion, knownToolsVersions);
 		}
 
-		public UnknownToolsVersionException (string toolsVersion, string message)
+		public UnknownToolsVersionException (string toolsVersion, string[] knownToolsVersions, string message)
 		{
-			this.message = String.Format ("{0}. {1}", message, GetErrorMessage (toolsVersion));
+			this.message = String.Format ("{0}. {1}", message, GetErrorMessage (toolsVersion, knownToolsVersions));
 		}
 
 		public UnknownToolsVersionException (string message,
@@ -60,13 +63,13 @@ namespace Microsoft.Build.BuildEngine {
 			get { return message; }
 		}
 
-		string GetErrorMessage (string toolsVersion)
+		string GetErrorMessage (string toolsVersion, IEnumerable<string> knownToolsVersions)
 		{
 			StringBuilder sb = new StringBuilder ();
 			sb.AppendFormat ("Unknown tools version: '{0}' . Known versions:", toolsVersion);
 
-			foreach (var ts in Engine.GlobalEngine.Toolsets)
-				sb.AppendFormat (" '{0}'", ts.ToolsVersion);
+			foreach (var tv in knownToolsVersions)
+				sb.AppendFormat (" '{0}'", tv);
 
 			return sb.ToString ();
 		}

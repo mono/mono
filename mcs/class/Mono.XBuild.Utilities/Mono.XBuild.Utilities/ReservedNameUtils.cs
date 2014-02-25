@@ -31,9 +31,10 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Text;
 
-namespace Mono.XBuild.Utilities {
-
-	internal static class ReservedNameUtils {
+namespace Mono.XBuild.Utilities
+{
+	public static class ReservedNameUtils
+	{
 	
 		static string[] reservedMetadataNames;
 		static Hashtable reservedMetadataHash;

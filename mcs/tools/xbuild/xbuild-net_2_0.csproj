@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{89938F1A-C851-41D5-96D2-C329E00887B6}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <NoWarn>1699</NoWarn>
+    <OutputPath>bin\Debug\xbuild-net_2_0</OutputPath>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>True</NoConfig>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <AssemblyName>xbuild</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>TRACE;DEBUG;NET_2_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE;NET_2_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs">
+      <Link>Consts.cs</Link>
+    </Compile>
+    <Compile Include="..\..\class\Microsoft.Build.Framework\Mono.XBuild.Framework\AssemblyLoadInfo.cs">
+      <Link>AssemblyLoadInfo.cs</Link>
+    </Compile>
+    <Compile Include="XBuildConsts.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="CommandLineException.cs" />
+    <Compile Include="ErrorUtilities.cs" />
+    <Compile Include="LoggerInfo.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="Parameters.cs" />
+    <Compile Include="SolutionParser.cs" />
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
+    </PostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib">
+      <HintPath>..\..\class\lib\net_2_0\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <HintPath>..\..\class\lib\net_2_0\System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core">
+      <HintPath>..\..\class\lib\net_2_0\System.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\class\Microsoft.Build.Framework\Microsoft.Build.Framework-net_2_0.csproj">
+      <Project>{AB5EDD8C-84A4-4F96-80EE-1B6F3A86785B}</Project>
+      <Name>Microsoft.Build.Framework-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\class\Microsoft.Build.Utilities\Microsoft.Build.Utilities-net_2_0.csproj">
+      <Project>{4AC4EDEE-4895-4CF9-84DF-9419E6980F38}</Project>
+      <Name>Microsoft.Build.Utilities-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\class\Microsoft.Build.Engine\Microsoft.Build.Engine-net_2_0.csproj">
+      <Project>{E8E948B8-6DCF-48F2-A6BC-04309AED8740}</Project>
+      <Name>Microsoft.Build.Engine-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\class\Mono.XBuild.Utilities\Mono.XBuild.Utilities-net_2_0.csproj">
+      <Project>{5D8F2568-B0B8-41BC-9D25-5B6A981F9F3E}</Project>
+      <Name>Mono.XBuild.Utilities-net_2_0</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+</Project>

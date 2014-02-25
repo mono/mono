@@ -36,6 +36,7 @@ using System.IO;
 using Microsoft.Build.Exceptions;
 using System.Globalization;
 using Microsoft.Build.Construction;
+using Mono.XBuild.BuildEngine;
 
 namespace Microsoft.Build.Internal
 {
@@ -49,7 +50,7 @@ namespace Microsoft.Build.Internal
 		public BuildEngine4 (BuildSubmission submission)
 		{
 			this.submission = submission;
-			event_source = new Microsoft.Build.BuildEngine.EventSource ();
+			event_source = new EventSource ();
 			if (submission.BuildManager.OngoingBuildParameters.Loggers != null)
 				foreach (var l in submission.BuildManager.OngoingBuildParameters.Loggers)
 					l.Initialize (event_source);
@@ -58,7 +59,7 @@ namespace Microsoft.Build.Internal
 		BuildSubmission submission;
 		ProjectInstance project;
 		ProjectTaskInstance current_task;
-		Microsoft.Build.BuildEngine.EventSource event_source;
+		EventSource event_source;
 		
 		public ProjectCollection Projects {
 			get { return submission.BuildManager.OngoingBuildParameters.ProjectCollection; }

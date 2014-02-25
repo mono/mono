@@ -1,6 +1,5 @@
-Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/MonoTODOAttribute.cs
-Mono.XBuild.Tasks/PcFileCache.cs
+Assembly/AssemblyInfo.cs
 Mono.XBuild.Tasks/LibraryPcFileCache.cs
-../Microsoft.Build.Utilities/Mono.XBuild.Utilities/MSBuildUtils.cs
+Mono.XBuild.Tasks/PcFileCache.cs

@@ -38,9 +38,12 @@
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Compile Include="..\..\build\common\Consts.cs" />
-    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
-    <Compile Include="..\Microsoft.Build.Utilities\Mono.XBuild.Utilities\MSBuildUtils.cs" />
+    <Compile Include="..\..\build\common\Consts.cs">
+      <Link>Consts.cs</Link>
+    </Compile>
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs">
+      <Link>MonoTODOAttribute.cs</Link>
+    </Compile>
     <Compile Include="Mono.XBuild.Tasks\LibraryPcFileCache.cs" />
     <Compile Include="Mono.XBuild.Tasks\PcFileCache.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
@@ -60,9 +63,6 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="Assembly\" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="mscorlib">
       <HintPath>..\lib\net_2_0\mscorlib.dll</HintPath>
     </Reference>
@@ -72,5 +72,14 @@
     <Reference Include="System.Xml">
       <HintPath>..\lib\net_2_0\System.Xml.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Mono.XBuild.Utilities\Mono.XBuild.Utilities-net_2_0.csproj">
+      <Project>{5D8F2568-B0B8-41BC-9D25-5B6A981F9F3E}</Project>
+      <Name>Mono.XBuild.Utilities-net_2_0</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 </Project>

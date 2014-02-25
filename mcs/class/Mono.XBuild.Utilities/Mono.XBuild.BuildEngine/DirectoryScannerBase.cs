@@ -24,32 +24,32 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
 using System.IO;
-
 using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
 
-namespace Microsoft.Build.BuildEngine {
-	internal class DirectoryScanner {
-		
+namespace Mono.XBuild.BuildEngine
+{
+	public abstract class DirectoryScannerBase
+	{
 		DirectoryInfo	baseDirectory;
 		ITaskItem[]	includes, excludes;
 		ITaskItem[]	matchedItems;
 
 		static bool _runningOnWindows;
 		
-		static DirectoryScanner ()
+		static DirectoryScannerBase ()
 		{
 			PlatformID pid = Environment.OSVersion.Platform;
 			_runningOnWindows =((int) pid != 128 && (int) pid != 4 && (int) pid != 6);
 		}
 
-		public DirectoryScanner ()
+		protected DirectoryScannerBase ()
 		{
 		}
+
+		protected abstract ITaskItem CreateTaskItem (ITaskItem sourceItem);
 		
 		public void Scan ()
 		{
@@ -116,7 +116,7 @@ namespace Microsoft.Build.BuildEngine {
 						itemName = itemName.Substring (baseDirectory.FullName.Length + 1);
 
 					if (!excludedItems.ContainsKey (itemName) &&  !excludedItems.ContainsKey (Path.GetFullPath (itemName))) {
-						TaskItem item = new TaskItem (include_item);
+						var item = CreateTaskItem (include_item);
 						item.ItemSpec = itemName;
 
 						if (wildcard_offset >= 0) {

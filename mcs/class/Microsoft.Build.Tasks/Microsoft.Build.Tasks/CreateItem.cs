@@ -30,6 +30,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.Tasks {
@@ -50,7 +51,7 @@ namespace Microsoft.Build.Tasks {
 				return true;
 
 			// Handle wild cards
-			var directoryScanner = new Microsoft.Build.BuildEngine.DirectoryScanner ();
+			var directoryScanner = new TaskItemDirectoryScanner ();
 			directoryScanner.Includes = include;
 			directoryScanner.Excludes = exclude;
 			directoryScanner.BaseDirectory = new DirectoryInfo (Directory.GetCurrentDirectory ());

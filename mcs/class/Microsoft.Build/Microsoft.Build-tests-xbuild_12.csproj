@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6AFC9B98-094C-4B91-A3C7-CD0D325BC0F3}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoWarn>1699</NoWarn>
+    <OutputPath>bin\Debug\Microsoft.Build-tests-xbuild_12</OutputPath>
+    <NoStdLib>True</NoStdLib>
+    <NoConfig>False</NoConfig>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <AssemblyName>Microsoft.Build_test_xbuild_12</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;XBUILD_12</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;XBUILD_12</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+  Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
+  is a problem to compile the Mono mscorlib.dll -->
+  <PropertyGroup>
+    <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Include="Test\FunctionalTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Construction\ProjectItemElementTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Construction\ProjectRootElementTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Evaluation\ProjectCollectionTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Evaluation\ProjectItemDefinitionTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Evaluation\ProjectItemTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Evaluation\ProjectTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Evaluation\ProjectPropertyTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Evaluation\ResolvedImportTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Evaluation\ToolsetTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Execution\BuildManagerTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Execution\BuildParametersTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Execution\BuildRequestDataTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Execution\BuildSubmissionTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Execution\ProjectInstanceTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Execution\ProjectMetadataInstanceTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Execution\ProjectTargetInstanceTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Internal\CollectionFromEnumerableTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Internal\ExpressionParserTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Logging\ConsoleLoggerTest.cs" />
+    <Compile Include="Test\Microsoft.Build.Logging\LoggerDescriptionTest.cs" />
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      xcopy $(TargetName).* $(ProjectDir)..\lib\xbuild_12\ /Y /R /D
+    </PostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib">
+      <HintPath>..\lib\net_4_5\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <HintPath>..\lib\net_4_5\System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core">
+      <HintPath>..\lib\net_4_5\System.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml">
+      <HintPath>..\lib\net_4_5\System.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\lib\net_4_5\nunit.framework.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.Build.Framework\Microsoft.Build.Framework-xbuild_12.csproj">
+      <Project>{E2ED2605-001D-4AA7-9559-FF98D92AFE0A}</Project>
+      <Name>Microsoft.Build.Framework-xbuild_12</Name>
+    </ProjectReference>
+    <ProjectReference Include="Microsoft.Build-xbuild_12.csproj">
+      <Project>{F2D74140-CB9F-4FE0-90B8-AA13459E8468}</Project>
+      <Name>Microsoft.Build-xbuild_12</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+</Project>

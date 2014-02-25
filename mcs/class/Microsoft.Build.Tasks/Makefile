@@ -15,6 +15,7 @@ LIB_MCS_FLAGS = \
 	/r:System.Core.dll			\
 	/r:System.Xml.dll			\
 	/r:System.Windows.Forms.dll		\
+	/r:$(XBUILD_UTILITIES_MONO)		\
 	/r:$(XBUILD_UTILITIES)			\
 	/r:$(XBUILD_FRAMEWORK)			\
 	/r:$(XBUILD_ENGINE)			\

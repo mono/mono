@@ -13,7 +13,8 @@ LIB_MCS_FLAGS = \
 	/r:System.Core.dll	\
 	/r:System.Xml.dll	\
 	/r:$(XBUILD_FRAMEWORK)	\
-	/r:$(XBUILD_UTILITIES)
+	/r:$(XBUILD_UTILITIES)	\
+	/r:$(XBUILD_UTILITIES_MONO)
 
 TEST_MCS_FLAGS = \
 	/r:$(XBUILD_FRAMEWORK)	\

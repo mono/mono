@@ -12,6 +12,7 @@ LIB_MCS_FLAGS = \
 	/r:System.dll				\
 	/r:System.Core.dll			\
 	/r:System.Xml.dll			\
+	/r:$(XBUILD_UTILITIES_MONO)		\
 	/r:Microsoft.Build.Engine.dll		\
 	/r:Microsoft.Build.Framework.dll	\
 	/d:MICROSOFT_BUILD_DLL

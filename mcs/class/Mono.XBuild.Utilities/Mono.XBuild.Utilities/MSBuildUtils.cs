@@ -31,8 +31,10 @@ using System.Text;
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace Mono.XBuild.Utilities {
-	internal static class MSBuildUtils {
+namespace Mono.XBuild.Utilities
+{
+	public static class MSBuildUtils
+	{
 
 		public readonly static bool RunningOnMac;
 		public readonly static bool RunningOnWindows;
@@ -71,7 +73,7 @@ namespace Mono.XBuild.Utilities {
 		}
 		
 		// FIXME: add tests for this
-		internal static string Unescape (string escapedExpression)
+		public static string Unescape (string escapedExpression)
 		{
 			StringBuilder sb = new StringBuilder ();
 			
@@ -83,7 +85,7 @@ namespace Mono.XBuild.Utilities {
 			return sb.ToString ();
 		}
 
-		internal static string UnescapeFromXml (string text)
+		public static string UnescapeFromXml (string text)
 		{
 			StringBuilder sb = new StringBuilder ();
 			for (int i = 0; i < text.Length; i++) {
@@ -142,7 +144,7 @@ namespace Mono.XBuild.Utilities {
 			return false;
 		}
 
-		internal static string FromMSBuildPath (string relPath)
+		public static string FromMSBuildPath (string relPath)
 		{
 			string result = null;
 			FromMSBuildPath (String.Empty, relPath, out result);
