@@ -831,5 +831,35 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (-1, dt.Rows.IndexOf (null));
 		}
 #endif
+
+		[Test]
+		public void Find_DoesntThrowWithNullObjectInArray() // Novell bug 519648
+		{
+			var dt = new DataTable ("datatable");
+
+			var column = new DataColumn ();
+			dt.Columns.Add (column);
+			var columns = new DataColumn [] { column };
+			dt.PrimaryKey = columns;
+
+			// This will throw "System.IndexOutOfRangeException: Array index is out of range." in Mono
+			// but will gracefully fail in Windows .NET.
+			Assert.AreEqual(null, dt.Rows.Find(new object [] { null }));
+		}
+
+		[Test]
+		public void Find_DoesntThrowWithNullObject() // Novell bug 519648
+		{
+			var dt = new DataTable ("datatable");
+
+			var column = new DataColumn ();
+			dt.Columns.Add (column);
+			var columns = new DataColumn [] { column };
+			dt.PrimaryKey = columns;
+
+			// This will throw "System.IndexOutOfRangeException: Array index is out of range." in Mono
+			// but will gracefully fail in Windows .NET.
+			Assert.AreEqual(null, dt.Rows.Find ( (object)null));
+		}
 	}
 }
