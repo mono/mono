@@ -54,7 +54,13 @@ namespace System.Data.Common
 			get { return IsNull (index) ? DBNull.Value : GetValue (index); }
 			set {
 				if (value == null) {
-					CopyValue (Column.Table.DefaultValuesRowIndex, index);
+					// Table might not have a default values row to copy from
+					if (Column.Table.DefaultValuesRowIndex == -1) {
+						ZeroOut (index);
+						null_values [index] = true;
+					} else {
+						CopyValue (Column.Table.DefaultValuesRowIndex, index);
+					}
 					return;
 				}
 
