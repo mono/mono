@@ -3,6 +3,7 @@
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
+//   Yuta Sato       (cannotdebug@gmail.com)
 // 
 // (C) 2006 Marek Sieradzki
 //
@@ -29,7 +30,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Reflection;
+using System.Text;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.Tasks {
 	public class GetAssemblyIdentity : TaskExtension {
@@ -41,17 +46,69 @@ namespace Microsoft.Build.Tasks {
 		{
 		}
 
-		[MonoTODO]
 		public override bool Execute ()
 		{
-			throw new NotImplementedException ();
+			List <ITaskItem> assembliesList = new List <ITaskItem> ();
+			ITaskItem [] items = this.AssemblyFiles;
+
+			foreach (ITaskItem i in items)
+			{
+				AssemblyName asmName;
+
+				try
+				{
+					asmName = AssemblyName.GetAssemblyName (i.ItemSpec);
+				}
+
+				catch (Exception ex)
+				{
+					base.Log.LogErrorWithCodeFromResources ("GetAssemblyIdentity.CouldNotGetAssemblyName", new object[]
+					{
+						i.ItemSpec,
+						ex.Message
+					});
+					continue;
+				}
+
+				ITaskItem j = new TaskItem (asmName.FullName);
+				j.SetMetadata ("Name", asmName.Name);
+
+				byte[] publicKeyToken = asmName.GetPublicKeyToken ();
+				if (publicKeyToken != null)
+				{
+					string hexToken = BytesToHex (publicKeyToken);
+					j.SetMetadata ("PublicKeyToken", hexToken);
+				}
+
+				if (asmName.Version != null)
+					j.SetMetadata ("Version", asmName.Version.ToString());
+
+				if (asmName.CultureInfo != null)
+					j.SetMetadata ("Culture", asmName.CultureInfo.ToString());
+
+				i.CopyMetadataTo (j);
+				assembliesList.Add (j);
+			}
+			
+			this.Assemblies = assembliesList.ToArray ();
+			return !base.Log.HasLoggedErrors;
 		}
 
+		private static string BytesToHex (byte[] bytes)
+		{
+			StringBuilder builder = new StringBuilder ();
+			foreach (byte b in bytes)
+				builder.Append (b.ToString ("X02", CultureInfo.InvariantCulture) );
+			return builder.ToString();
+		}
+
+		[Output]
 		public ITaskItem [] Assemblies {
 			get { return assemblies; }
 			set { assemblies = value; }
 		}
 
+		[Required]
 		public ITaskItem [] AssemblyFiles {
 			get { return assembly_files; }
 			set { assembly_files = value; }
