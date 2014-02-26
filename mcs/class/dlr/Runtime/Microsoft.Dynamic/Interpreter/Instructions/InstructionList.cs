@@ -664,6 +664,11 @@ namespace Microsoft.Scripting.Interpreter {
 
         #endregion
 
+        public void EmitIncrement (Type type) {
+            Emit (new PushIntegerValueInstruction (1));
+            EmitAdd (type, false);
+        }
+
         public void EmitShl(Type type, bool lifted) {
             Emit(lifted ? ShlInstruction.CreateLifted(type) : ShlInstruction.Create(type));
         }
