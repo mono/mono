@@ -611,6 +611,7 @@ void GC_stop_world()
 {
     if (GC_notify_event)
         GC_notify_event (GC_EVENT_PRE_STOP_WORLD);
+	GC_process_togglerefs ();
     /* Make sure all free list construction has stopped before we start. */
     /* No new construction can start, since free list construction is	*/
     /* required to acquire and release the GC lock before it starts,	*/
