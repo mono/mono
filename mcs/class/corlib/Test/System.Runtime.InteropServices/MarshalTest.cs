@@ -115,6 +115,13 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
+		public unsafe void Sizeof_Pointer ()
+		{
+			int size = Marshal.SizeOf (typeof (char*));
+			Assert.IsTrue (size == 4 || size == 8);
+		}
+
+		[Test]
 		public void PtrToStringWithNull ()
 		{
 			Assert.IsNull (Marshal.PtrToStringAnsi (IntPtr.Zero), "A");
