@@ -1,8 +1,10 @@
+//
+// EventCommandEventArgs.cs.cs
+//
 // Authors:
-//      Martin Baulig (martin.baulig@xamarin.com)
+//	Marek Safar  <marek.safar@gmail.com>
 //
-// Copyright 2012 Xamarin Inc. (http://www.xamarin.com)
-//
+// Copyright (C) 2014 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -11,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -23,47 +25,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 #if NET_4_5
-namespace System.Diagnostics.Contracts {
 
-	[AttributeUsageAttribute(AttributeTargets.All, AllowMultiple = true, Inherited = false)]
-	[ConditionalAttribute("CONTRACTS_FULL")]
-	public sealed class ContractOptionAttribute : Attribute {
-		public ContractOptionAttribute (string category, string setting, bool enabled)
-		{
-			Category = category;
-			Setting = setting;
-			Enabled = enabled;
-		}
-		
-		public ContractOptionAttribute (string category, string setting, string value)
-		{
-			Category = category;
-			Setting = setting;
-			Value = value;
-			Enabled = true;
-		}
-				
-		public string Category {
-			get;
-			private set;
-		}
-
-		public bool Enabled {
-			get;
-			private set;
-		}
-
-		public string Setting {
-			get;
-			private set;
-		}
-
-		public string Value {
-			get;
-			private set;
+namespace System.Diagnostics.Tracing
+{
+	public class EventCommandEventArgs : EventArgs
+	{
+		private EventCommandEventArgs ()
+		{			
 		}
 	}
-
 }
+
 #endif

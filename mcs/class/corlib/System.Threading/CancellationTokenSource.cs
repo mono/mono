@@ -125,7 +125,7 @@ namespace System.Threading
 		// Don't throw ObjectDisposedException if the callback
 		// is called concurrently with a Dispose
 		//
-		public void CancelSafe ()
+		void CancelSafe ()
 		{
 			if (!disposed)
 				Cancellation (true);
