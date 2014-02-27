@@ -24,7 +24,7 @@ namespace MonoTests.System.Security.AccessControl
 
 			RegistrySecurity security;
 			if (PlatformID.Win32NT != Environment.OSVersion.Platform) {
-				Assert.Ignore (); return;
+				Assert.Ignore ();
 			}
 
 			try {
@@ -55,7 +55,7 @@ namespace MonoTests.System.Security.AccessControl
 
 			RegistrySecurity security;
 			if (PlatformID.Win32NT != Environment.OSVersion.Platform) {
-				Assert.Ignore (); return;
+				Assert.Ignore ();
 			}
 
 			try {

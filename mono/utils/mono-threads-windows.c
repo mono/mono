@@ -12,6 +12,7 @@
 #if defined(HOST_WIN32)
 
 #include <mono/utils/mono-threads.h>
+#include <limits.h>
 
 
 void
@@ -240,6 +241,19 @@ mono_threads_core_open_handle (void)
 					 THREAD_ALL_ACCESS, TRUE, 0);
 
 	return thread_handle;
+}
+
+int
+mono_threads_get_max_stack_size (void)
+{
+	//FIXME
+	return INT_MAX;
+}
+
+HANDLE
+mono_threads_core_open_thread_handle (HANDLE handle, MonoNativeThreadId tid)
+{
+	return OpenThread (THREAD_ALL_ACCESS, TRUE, tid);
 }
 
 #endif

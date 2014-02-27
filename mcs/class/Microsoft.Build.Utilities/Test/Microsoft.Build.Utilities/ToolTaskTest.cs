@@ -56,6 +56,23 @@ namespace MonoTests.Microsoft.Build.Utilities {
 				task.Codes.Clear ();
 			}
 		}
+
+		[Test]
+		public void ToolExeAndPath ()
+		{
+			TestToolTask a = new TestToolTask ();
+			Assert.AreEqual (a.ToolExe, "TestTool.exe", "#1");
+			a.ToolExe = "Foo";
+			Assert.AreEqual (a.ToolExe, "Foo", "#2");
+			a.ToolExe = "";
+			Assert.AreEqual (a.ToolExe, "TestTool.exe", "#3");
+
+			Assert.AreEqual (a.ToolPath, null, "#4");
+			a.ToolPath = "Bar";
+			Assert.AreEqual (a.ToolPath, "Bar", "#5");
+			a.ToolPath = "";
+			Assert.AreEqual (a.ToolPath, "", "#6");
+		}
 	}
 
 	class LogEventsFromTextOutputToolTask : ToolTask {
@@ -135,6 +152,18 @@ namespace MonoTests.Microsoft.Build.Utilities {
 		public void LogWarningEvent (BuildWarningEventArgs e)
 		{
 			Codes.Add (e.Code);
+		}
+	}
+
+	class TestToolTask : ToolTask {
+
+		protected override string ToolName {
+			get { return "TestTool.exe"; }
+		}
+
+		protected override string GenerateFullPathToTool ()
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

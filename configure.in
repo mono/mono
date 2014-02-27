@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 #AC_PREREQ([2.62])
 
-AC_INIT(mono, [3.2.7],
+AC_INIT(mono, [3.4.0],
         [http://bugzilla.xamarin.com/enter_bug.cgi?classification=Mono])
 
 AC_CONFIG_SRCDIR([README.md])
@@ -2439,7 +2439,7 @@ if test "x$enable_llvm" = "xyes"; then
    else
       LLVM_LIBS=`$LLVM_CONFIG --libs core bitwriter jit mcjit $llvm_codegen`
    fi
-   LLVM_LIBS="$LLVM_LDFLAGS $LLVM_LIBS -lstdc++"
+   LLVM_LIBS="$LLVM_LIBS $LLVM_LDFLAGS -lstdc++"
 
    expected_llvm_version="3.4svn-mono-mono/e656cac"
 

@@ -35,6 +35,8 @@ using NUnit.Framework;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Exceptions;
 using System.Collections.Generic;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Logging;
 
 namespace MonoTests.Microsoft.Build.Internal
 {
@@ -281,6 +283,31 @@ namespace MonoTests.Microsoft.Build.Internal
 			var reader = XmlReader.Create (new StringReader (xml));
 			var root = ProjectRootElement.Create (reader);
 			new Project (root);
+		}
+		
+		[Test]
+		public void MetadataExpansion ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <PropertyGroup>
+    <X>a/b/c.txt</X>
+  </PropertyGroup>
+  <Target Name='Foo'>
+    <CreateItem Include='$(X)'>
+      <Output TaskParameter='Include' ItemName='I' />
+    </CreateItem>
+    <CreateProperty Value=""@(I->'%(Filename)%(Extension)')"">
+      <Output TaskParameter='Value' PropertyName='P' />
+    </CreateProperty>
+    <Error Text=""Expected 'c.txt' but got '$(P)'"" Condition=""'$(P)'!='c.txt'"" />
+  </Target>
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			var p = new ProjectInstance (root);
+			var sw = new StringWriter ();
+			var result = p.Build (new ILogger [] { new ConsoleLogger (LoggerVerbosity.Minimal, sw.WriteLine, null, null)});
+			Assert.IsTrue (result, "#1: " + sw);
 		}
 	}
 }

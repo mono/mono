@@ -385,10 +385,14 @@ static void thread_cleanup (MonoInternalThread *thread)
 			mono_array_set (thread->cached_culture_info, MonoObject*, i, NULL);
 	}
 
+	/*
+	 * thread->synch_cs can be NULL if this was called after
+	 * ves_icall_System_Threading_InternalThread_Thread_free_internal.
+	 * This can happen only during shutdown.
+	 * The shutting_down flag is not always set, so we can't assert on it.
+	 */
 	if (thread->synch_cs)
 		LOCK_THREAD (thread);
-	else
-		g_assert (shutting_down);
 
 	thread->state |= ThreadState_Stopped;
 	thread->state &= ~ThreadState_Background;
@@ -1031,15 +1035,18 @@ ves_icall_System_Threading_Thread_Thread_internal (MonoThread *this,
 }
 
 /*
- * This is called from the finalizer of the internal thread object. Since threads keep a reference to their
- * thread object while running, by the time this function is called, the thread has already exited/detached,
- * i.e. thread_cleanup () has ran.
+ * This is called from the finalizer of the internal thread object.
  */
 void
 ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThread *this, HANDLE thread)
 {
 	THREAD_DEBUG (g_message ("%s: Closing thread %p, handle %p", __func__, this, thread));
 
+	/*
+	 * Since threads keep a reference to their thread object while running, by the time this function is called,
+	 * the thread has already exited/detached, i.e. thread_cleanup () has ran. The exception is during shutdown,
+	 * when thread_cleanup () can be called after this.
+	 */
 	if (thread)
 		CloseHandle (thread);
 
@@ -1200,7 +1207,7 @@ byte_array_to_domain (MonoArray *arr, MonoDomain *domain)
 		return arr;
 
 	copy = mono_array_new (domain, mono_defaults.byte_class, arr->max_length);
-	mono_gc_memmove (mono_array_addr (copy, guint8, 0), mono_array_addr (arr, guint8, 0), arr->max_length);
+	memmove (mono_array_addr (copy, guint8, 0), mono_array_addr (arr, guint8, 0), arr->max_length);
 	return copy;
 }
 
@@ -2520,17 +2527,16 @@ void mono_thread_init (MonoThreadStartCB start_cb,
 void mono_thread_cleanup (void)
 {
 #if !defined(HOST_WIN32) && !defined(RUN_IN_SUBTHREAD)
+	MonoThreadInfo *info;
+
 	/* The main thread must abandon any held mutexes (particularly
 	 * important for named mutexes as they are shared across
 	 * processes, see bug 74680.)  This will happen when the
 	 * thread exits, but if it's not running in a subthread it
 	 * won't exit in time.
 	 */
-	/* Using non-w32 API is a nasty kludge, but I couldn't find
-	 * anything in the documentation that would let me do this
-	 * here yet still be safe to call on windows.
-	 */
-	_wapi_thread_signal_self (mono_environment_exitcode_get ());
+	info = mono_thread_info_current ();
+	wapi_thread_handle_set_exited (info->handle, mono_environment_exitcode_get ());
 #endif
 
 #if 0
@@ -2611,6 +2617,7 @@ static void wait_for_tids (struct wait_data *wait, guint32 timeout)
 		/*
 		 * On !win32, when the thread handle becomes signalled, it just means the thread has exited user code,
 		 * it can still run io-layer etc. code. So wait for it to really exit.
+		 * FIXME: This won't join threads which are not in the joinable_hash yet.
 		 */
 		mono_thread_join ((gpointer)tid);
 
@@ -2713,7 +2720,7 @@ static void build_wait_tids (gpointer key, gpointer value, gpointer user)
 			return;
 		}
 
-		handle = OpenThread (THREAD_ALL_ACCESS, TRUE, thread->tid);
+		handle = mono_threads_open_thread_handle (thread->handle, (MonoNativeThreadId)thread->tid);
 		if (handle == NULL) {
 			THREAD_DEBUG (g_message ("%s: ignoring unopenable thread %"G_GSIZE_FORMAT, __func__, (gsize)thread->tid));
 			return;
@@ -2753,7 +2760,7 @@ remove_and_abort_threads (gpointer key, gpointer value, gpointer user)
 	if (thread->tid != self && (thread->state & ThreadState_Background) != 0 &&
 		!(thread->flags & MONO_THREAD_FLAG_DONT_MANAGE)) {
 	
-		handle = OpenThread (THREAD_ALL_ACCESS, TRUE, thread->tid);
+		handle = mono_threads_open_thread_handle (thread->handle, (MonoNativeThreadId)thread->tid);
 		if (handle == NULL)
 			return FALSE;
 
@@ -2937,7 +2944,7 @@ collect_threads_for_suspend (gpointer key, gpointer value, gpointer user_data)
 		return;
 
 	if (wait->num<MAXIMUM_WAIT_OBJECTS) {
-		handle = OpenThread (THREAD_ALL_ACCESS, TRUE, thread->tid);
+		handle = mono_threads_open_thread_handle (thread->handle, (MonoNativeThreadId)thread->tid);
 		if (handle == NULL)
 			return;
 
@@ -3099,7 +3106,7 @@ collect_threads (gpointer key, gpointer value, gpointer user_data)
 	HANDLE handle;
 
 	if (wait->num<MAXIMUM_WAIT_OBJECTS) {
-		handle = OpenThread (THREAD_ALL_ACCESS, TRUE, thread->tid);
+		handle = mono_threads_open_thread_handle (thread->handle, (MonoNativeThreadId)thread->tid);
 		if (handle == NULL)
 			return;
 
@@ -3393,7 +3400,7 @@ collect_appdomain_thread (gpointer key, gpointer value, gpointer user_data)
 		/* printf ("ABORTING THREAD %p BECAUSE IT REFERENCES DOMAIN %s.\n", thread->tid, domain->friendly_name); */
 
 		if(data->wait.num<MAXIMUM_WAIT_OBJECTS) {
-			HANDLE handle = OpenThread (THREAD_ALL_ACCESS, TRUE, thread->tid);
+			HANDLE handle = mono_threads_open_thread_handle (thread->handle, (MonoNativeThreadId)thread->tid);
 			if (handle == NULL)
 				return;
 			data->wait.handles [data->wait.num] = handle;
@@ -3824,7 +3831,7 @@ free_thread_static_data_helper (gpointer key, gpointer value, gpointer user)
 	if (!thread->static_data || !thread->static_data [idx])
 		return;
 	ptr = ((char*) thread->static_data [idx]) + (data->offset & 0xffffff);
-	mono_gc_bzero (ptr, data->size);
+	mono_gc_bzero_atomic (ptr, data->size);
 }
 
 static void
@@ -4132,8 +4139,6 @@ mono_thread_request_interruption (gboolean running_managed)
 		/* Our implementation of this function ignores the func argument */
 #ifdef HOST_WIN32
 		QueueUserAPC ((PAPCFUNC)dummy_apc, thread->handle, NULL);
-#else
-		wapi_thread_interrupt_self ();
 #endif
 		return NULL;
 	}
@@ -4776,6 +4781,7 @@ mono_thread_join (gpointer tid)
 {
 #ifndef HOST_WIN32
 	pthread_t thread;
+	gboolean found = FALSE;
 
 	joinable_threads_lock ();
 	if (!joinable_threads)
@@ -4783,8 +4789,11 @@ mono_thread_join (gpointer tid)
 	if (g_hash_table_lookup (joinable_threads, tid)) {
 		g_hash_table_remove (joinable_threads, tid);
 		joinable_thread_count --;
+		found = TRUE;
 	}
 	joinable_threads_unlock ();
+	if (!found)
+		return;
 	thread = (pthread_t)tid;
 	pthread_join (thread, NULL);
 #endif

@@ -363,6 +363,9 @@ namespace MonoTests.System.Reflection
 		[Test]
 		public void GetMethodBody ()
 		{
+#if MONOTOUCH && !DEBUG
+			Assert.Ignore ("Release app (on devices) are stripped of (managed) IL so this test would fail");
+#endif
 			MethodBody mb = typeof (MethodInfoTest).GetMethod ("locals_method").GetMethodBody ();
 
 			Assert.IsTrue (mb.InitLocals, "#1");

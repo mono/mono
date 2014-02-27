@@ -580,6 +580,7 @@ void GC_stop_world()
     
     if (GC_notify_event)
         GC_notify_event (GC_EVENT_PRE_STOP_WORLD);
+	GC_process_togglerefs ();
 
 #   if DEBUG_THREADS
       GC_printf1("Stopping the world from 0x%lx\n", mach_thread_self());

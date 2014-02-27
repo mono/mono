@@ -31,6 +31,8 @@
 //
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Collections;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
@@ -50,24 +52,25 @@ namespace System.Net
 		X509Certificate clientCertificate;
 		IPHostEntry host;
 		bool usesProxy;
-		Hashtable groups;
+		WebConnectionGroup firstGroup;
+		Dictionary<string,WebConnectionGroup> groups;
 		bool sendContinue = true;
 		bool useConnect;
-		object locker = new object ();
 		object hostE = new object ();
 		bool useNagle;
 		BindIPEndPoint endPointCallback = null;
 		bool tcp_keepalive;
 		int tcp_keepalive_time;
 		int tcp_keepalive_interval;
-		
+		Timer idleTimer;
+
 		// Constructors
 
 		internal ServicePoint (Uri uri, int connectionLimit, int maxIdleTime)
 		{
 			this.uri = uri;  
 			this.connectionLimit = connectionLimit;
-			this.maxIdleTime = maxIdleTime;			
+			this.maxIdleTime = maxIdleTime;	
 			this.currentConnections = 0;
 			this.idleSince = DateTime.UtcNow;
 		}
@@ -132,18 +135,19 @@ namespace System.Net
 			get {
 				return idleSince.ToLocalTime ();
 			}
-			internal set {
-				lock (locker)
-					idleSince = value.ToUniversalTime ();
-			}
 		}
-		
+
 		public int MaxIdleTime {
 			get { return maxIdleTime; }
 			set { 
 				if (value < Timeout.Infinite || value > Int32.MaxValue)
 					throw new ArgumentOutOfRangeException ();
-				this.maxIdleTime = value; 
+
+				lock (this) {
+					maxIdleTime = value;
+					if (idleTimer != null)
+						idleTimer.Change (maxIdleTime, maxIdleTime);
+				}
 			}
 		}
 		
@@ -237,21 +241,131 @@ namespace System.Net
 			set { useConnect = value; }
 		}
 
-		internal bool AvailableForRecycling {
-			get { 
-				return CurrentConnections == 0
-				    && maxIdleTime != Timeout.Infinite
-			            && DateTime.UtcNow >= IdleSince.AddMilliseconds (maxIdleTime);
+		WebConnectionGroup GetConnectionGroup (string name)
+		{
+			if (name == null)
+				name = "";
+
+			/*
+			 * Optimization:
+			 * 
+			 * In the vast majority of cases, we only have one single WebConnectionGroup per ServicePoint, so we
+			 * don't need to allocate a dictionary.
+			 * 
+			 */
+
+			WebConnectionGroup group;
+			if (firstGroup != null && name == firstGroup.Name)
+				return firstGroup;
+			if (groups != null && groups.TryGetValue (name, out group))
+				return group;
+
+			group = new WebConnectionGroup (this, name);
+			group.ConnectionClosed += (s, e) => currentConnections--;
+
+			if (firstGroup == null)
+				firstGroup = group;
+			else {
+				if (groups == null)
+					groups = new Dictionary<string, WebConnectionGroup> ();
+				groups.Add (name, group);
+			}
+
+			return group;
+		}
+
+		void RemoveConnectionGroup (WebConnectionGroup group)
+		{
+			if (groups == null || groups.Count == 0) {
+				// No more connection groups left.
+				if (group != firstGroup)
+					throw new InvalidOperationException ();
+				else
+					firstGroup = null;
+				return;
+			}
+
+			if (group == firstGroup) {
+				// Steal one entry from the dictionary.
+				var en = groups.GetEnumerator ();
+				en.MoveNext ();
+				firstGroup = en.Current.Value;
+				groups.Remove (en.Current.Key);
+			} else {
+				groups.Remove (group.Name);
 			}
 		}
 
-		internal Hashtable Groups {
-			get {
-				if (groups == null)
-					groups = new Hashtable ();
+		internal bool CheckAvailableForRecycling (out DateTime outIdleSince)
+		{
+			outIdleSince = DateTime.MinValue;
 
-				return groups;
+			TimeSpan idleTimeSpan;
+			WebConnectionGroup singleGroup, singleRemove = null;
+			List<WebConnectionGroup> groupList = null, removeList = null;
+			lock (this) {
+				if (firstGroup == null) {
+					idleSince = DateTime.MinValue;
+					return true;
+				}
+
+				idleTimeSpan = TimeSpan.FromMilliseconds (maxIdleTime);
+
+				/*
+				 * WebConnectionGroup.TryRecycle() must run outside the lock, so we need to
+				 * copy the group dictionary if it exists.
+				 * 
+				 * In most cases, we only have a single connection group, so we can simply store
+				 * that in a local variable instead of copying a collection.
+				 * 
+				 */
+
+				singleGroup = firstGroup;
+				if (groups != null)
+					groupList = new List<WebConnectionGroup> (groups.Values);
 			}
+
+			if (singleGroup.TryRecycle (idleTimeSpan, ref outIdleSince))
+				singleRemove = singleGroup;
+
+			if (groupList != null) {
+				foreach (var group in groupList) {
+					if (!group.TryRecycle (idleTimeSpan, ref outIdleSince))
+						continue;
+					if (removeList == null)
+						removeList = new List<WebConnectionGroup> ();
+					removeList.Add (group);
+				}
+			}
+
+			lock (this) {
+				idleSince = outIdleSince;
+
+				if (singleRemove != null)
+					RemoveConnectionGroup (singleRemove);
+
+				if (removeList != null) {
+					foreach (var group in removeList)
+						RemoveConnectionGroup (group);
+				}
+
+				if (groups != null && groups.Count == 0)
+					groups = null;
+
+				if (firstGroup == null) {
+					idleTimer.Dispose ();
+					idleTimer = null;
+					return true;
+				}
+
+				return false;
+			}
+		}
+
+		void IdleTimerCallback (object obj)
+		{
+			DateTime dummy;
+			CheckAvailableForRecycling (out dummy);
 		}
 
 		internal IPHostEntry HostEntry
@@ -298,27 +412,19 @@ namespace System.Net
 		}
 
 #if !TARGET_JVM
-		WebConnectionGroup GetConnectionGroup (string name)
-		{
-			if (name == null)
-				name = "";
-
-			WebConnectionGroup group = Groups [name] as WebConnectionGroup;
-			if (group != null)
-				return group;
-
-			group = new WebConnectionGroup (this, name);
-			Groups [name] = group;
-			return group;
-		}
-
 		internal EventHandler SendRequest (HttpWebRequest request, string groupName)
 		{
 			WebConnection cnc;
 			
-			lock (locker) {
+			lock (this) {
+				bool created;
 				WebConnectionGroup cncGroup = GetConnectionGroup (groupName);
-				cnc = cncGroup.GetConnection (request);
+				cnc = cncGroup.GetConnection (request, out created);
+				if (created) {
+					++currentConnections;
+					if (idleTimer == null)
+						idleTimer = new Timer (IdleTimerCallback, null, maxIdleTime, maxIdleTime);
+				}
 			}
 			
 			return cnc.SendRequest (request);
@@ -326,7 +432,7 @@ namespace System.Net
 #endif
 		public bool CloseConnectionGroup (string connectionGroupName)
 		{
-			lock (locker) {
+			lock (this) {
 				WebConnectionGroup cncGroup = GetConnectionGroup (connectionGroupName);
 				if (cncGroup != null) {
 					cncGroup.Close ();
@@ -335,23 +441,6 @@ namespace System.Net
 			}
 
 			return false;
-		}
-
-		internal void IncrementConnection ()
-		{
-			lock (locker) {
-				currentConnections++;
-				idleSince = DateTime.UtcNow.AddMilliseconds (1000000);
-			}
-		}
-
-		internal void DecrementConnection ()
-		{
-			lock (locker) {
-				currentConnections--;
-				if (currentConnections == 0)
-					idleSince = DateTime.UtcNow;
-			}
 		}
 
 		internal void SetCertificates (X509Certificate client, X509Certificate server) 

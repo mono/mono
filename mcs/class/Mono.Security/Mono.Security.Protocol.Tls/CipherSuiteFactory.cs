@@ -1,5 +1,6 @@
 // Transport Security Layer (TLS)
 // Copyright (c) 2003-2004 Carlos Guzman Alvarez
+// Copyright 2013-2014 Xamarin Inc.
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -23,26 +24,81 @@
 //
 
 using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Net;
 
 namespace Mono.Security.Protocol.Tls
 {
-	internal class CipherSuiteFactory
+	internal static class CipherSuiteFactory
 	{
-		public static CipherSuiteCollection GetSupportedCiphers(SecurityProtocolType protocol)
+#if !INSIDE_SYSTEM && !BOOTSTRAP_BASIC
+		static Type spm = typeof (ServicePointManager);
+		static PropertyInfo client_callback;
+		static PropertyInfo server_callback;
+#endif
+
+		public static CipherSuiteCollection GetSupportedCiphers (bool server, SecurityProtocolType protocol)
 		{
-			switch (protocol)
-			{
-				case SecurityProtocolType.Default:
-				case SecurityProtocolType.Tls:				
-					return CipherSuiteFactory.GetTls1SupportedCiphers();
-
-				case SecurityProtocolType.Ssl3:
-					return CipherSuiteFactory.GetSsl3SupportedCiphers();
-
-				case SecurityProtocolType.Ssl2:
-				default:
-					throw new NotSupportedException("Unsupported security protocol type");
+			CipherSuiteCollection suites;
+			switch (protocol) {
+			case SecurityProtocolType.Default:
+			case SecurityProtocolType.Tls:				
+				suites = CipherSuiteFactory.GetTls1SupportedCiphers ();
+				break;
+			case SecurityProtocolType.Ssl3:
+				suites = CipherSuiteFactory.GetSsl3SupportedCiphers ();
+				break;
+			case SecurityProtocolType.Ssl2:
+			default:
+				throw new NotSupportedException ("Unsupported security protocol type");
 			}
+
+			IEnumerable<string> list = null;
+#if INSIDE_SYSTEM
+			// if SSL/TLS support is built-in System.dll (e.g. monotouch) then we can access ServicePointManager
+			// extension directly
+			var cb = server ? ServicePointManager.ServerCipherSuitesCallback : ServicePointManager.ClientCipherSuitesCallback;
+			if (cb == null)
+				return suites; // e.g. no callback was set
+
+			list = cb ((System.Net.SecurityProtocolType) (int) protocol, suites.GetNames ());
+#elif !BOOTSTRAP_BASIC
+			// Mono.Security must work on MS.NET so it cannot depend on any Mono-specific extensions
+			PropertyInfo pi = null;
+			if (server) {
+				if (server_callback == null)
+					server_callback = spm.GetProperty ("ServerCipherSuitesCallback", BindingFlags.Static | BindingFlags.Public);
+				pi = server_callback;
+			} else {
+				if (client_callback == null)
+					client_callback = spm.GetProperty ("ClientCipherSuitesCallback", BindingFlags.Static | BindingFlags.Public);
+				pi = client_callback;
+			}
+			if (pi == null)
+				return suites; // e.g. MS runtime - return every supported suites
+
+			var cb = (Delegate) pi.GetGetMethod ().Invoke (null, null);
+			if (cb == null)
+				return suites; // e.g. no callback was set - return every supported suites
+
+			list = (IEnumerable<string>) cb.DynamicInvoke (new object[] { 
+				(System.Net.SecurityProtocolType) (int) protocol, suites.GetNames () 
+			});
+#else
+			// TODO: right now the callback is only available when using System.Net.* types for SSL/TLS
+			return suites;
+#endif
+			CipherSuiteCollection allowed = new CipherSuiteCollection (protocol);
+			if (list != null) {
+				foreach (var name in list) {
+					// add any supported (ignore unknowns) ciphers requested by the callback
+					var cipher = suites [name];
+					if (cipher != null)
+						allowed.Add (cipher);
+				}
+			}
+			return allowed;
 		}
 
 		#region Private Static Methods
@@ -132,6 +188,7 @@ namespace Mono.Security.Protocol.Tls
 
 			// Supported ciphers
 			scs.Add((0x00 << 0x08) | 0x35, "SSL_RSA_WITH_AES_256_CBC_SHA", CipherAlgorithmType.Rijndael, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaKeyX, false, true, 32, 32, 256, 16, 16);
+			scs.Add((0x00 << 0x08) | 0x2F, "SSL_RSA_WITH_AES_128_CBC_SHA", CipherAlgorithmType.Rijndael, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaKeyX, false, true, 16, 16, 128, 16, 16);
 			scs.Add((0x00 << 0x08) | 0x0A, "SSL_RSA_WITH_3DES_EDE_CBC_SHA", CipherAlgorithmType.TripleDes, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaKeyX, false, true, 24, 24, 168, 8, 8);
 			scs.Add((0x00 << 0x08) | 0x05, "SSL_RSA_WITH_RC4_128_SHA", CipherAlgorithmType.Rc4, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaKeyX, false, false, 16, 16, 128, 0, 0);
 			scs.Add((0x00 << 0x08) | 0x04, "SSL_RSA_WITH_RC4_128_MD5", CipherAlgorithmType.Rc4, HashAlgorithmType.Md5, ExchangeAlgorithmType.RsaKeyX, false, false, 16, 16, 128, 0, 0);

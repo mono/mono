@@ -815,6 +815,34 @@ namespace MonoTests.System.Runtime.Serialization
 		}
 
 		[Test]
+		public void SerializeArrayOfAnyTypeGuid ()
+		{
+			DataContractSerializer ser = new DataContractSerializer (typeof(object[]));
+			StringWriter sw = new StringWriter ();
+			using (XmlWriter w = XmlWriter.Create (sw, settings)) {
+				ser.WriteObject (w, new object[] { Guid.Empty });
+			}
+
+			XmlComparer.AssertAreEqual (
+				"<ArrayOfanyType xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://schemas.microsoft.com/2003/10/Serialization/Arrays\"><anyType xmlns:d2p1=\"http://schemas.microsoft.com/2003/10/Serialization/\" i:type=\"d2p1:guid\">00000000-0000-0000-0000-000000000000</anyType></ArrayOfanyType>",
+				sw.ToString ());
+		}
+
+		[Test]
+		public void SerializeArrayOfAnyTypeChar ()
+		{
+			DataContractSerializer ser = new DataContractSerializer (typeof(object[]));
+			StringWriter sw = new StringWriter ();
+			using (XmlWriter w = XmlWriter.Create (sw, settings)) {
+				ser.WriteObject (w, new object[] { new char () });
+			}
+
+			XmlComparer.AssertAreEqual (
+				"<ArrayOfanyType xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://schemas.microsoft.com/2003/10/Serialization/Arrays\"><anyType xmlns:d2p1=\"http://schemas.microsoft.com/2003/10/Serialization/\" i:type=\"d2p1:char\">0</anyType></ArrayOfanyType>",
+				sw.ToString ());
+		}
+
+		[Test]
 		public void DeserializeEnum ()
 		{
 			Colors c = Deserialize<Colors> (

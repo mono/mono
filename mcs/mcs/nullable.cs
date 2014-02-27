@@ -659,10 +659,10 @@ namespace Mono.CSharp.Nullable
 		{
 			if (rc.IsRuntimeBinder) {
 				if (UnwrapLeft == null && !Left.Type.IsNullableType)
-					Left = Wrap.Create (Left, rc.Module.PredefinedTypes.Nullable.TypeSpec.MakeGenericType (rc.Module, new[] { Left.Type }));
+					Left = LiftOperand (rc, Left);
 
 				if (UnwrapRight == null && !Right.Type.IsNullableType)
-					Right = Wrap.Create (Right, rc.Module.PredefinedTypes.Nullable.TypeSpec.MakeGenericType (rc.Module, new[] { Right.Type }));
+					Right = LiftOperand (rc, Right);
 			} else {
 				if (UnwrapLeft == null && Left != null && Left.Type.IsNullableType) {
 					Left = Unwrap.CreateUnwrapped (Left);
@@ -679,6 +679,21 @@ namespace Mono.CSharp.Nullable
 			eclass = Binary.eclass;	
 
 			return this;
+		}
+
+		Expression LiftOperand (ResolveContext rc, Expression expr)
+		{
+			TypeSpec type;
+			if (expr.IsNull) {
+				type = Left.IsNull ? Right.Type : Left.Type;
+			} else {
+				type = expr.Type;
+			}
+
+			if (!type.IsNullableType)
+				type = rc.Module.PredefinedTypes.Nullable.TypeSpec.MakeGenericType (rc.Module, new[] { type });
+
+			return Wrap.Create (expr, type);
 		}
 
 		public override void Emit (EmitContext ec)

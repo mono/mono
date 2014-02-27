@@ -473,6 +473,7 @@ namespace MonoTests.System.Threading
 			}, 500);
 		}
 
+#if NET_4_5
 		[Test]
 		public void DisposeRace ()
 		{
@@ -485,6 +486,7 @@ namespace MonoTests.System.Threading
 				}
 			}
 		}
+#endif
 	}
 }
 

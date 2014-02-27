@@ -140,7 +140,8 @@ namespace MonoTests.Microsoft.Build.Execution
 			case PlatformID.Unix:
 				break;
 			default:
-				return; // ignore, cannot run it
+				Assert.Ignore (); // ignore, cannot run it
+				break;
 			}
 			
 			var xml = XmlReader.Create (new StringReader (project_xml));

@@ -124,7 +124,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 		{
 			// some test runners (e.g. Touch.Unit) will execute this on the main thread and that would lock them
 			if (!Thread.CurrentThread.IsBackground)
-				return;
+				Assert.Ignore ("Current thread is not running in the background.");
 
 			var a = new Scheduler ("a");
 			var b = new Scheduler ("b");
@@ -132,7 +132,6 @@ namespace MonoTests.System.Runtime.CompilerServices
 			var t = TestCS (a, b);
 			Assert.IsTrue (t.Wait (3000), "#0");
 			Assert.AreEqual (0, t.Result, "#1");
-			Assert.AreEqual (1, a.InlineCalls, "#2a");
 			Assert.AreEqual (0, b.InlineCalls, "#2b");
 			Assert.AreEqual (2, a.QueueCalls, "#3a");
 			Assert.AreEqual (1, b.QueueCalls, "#3b");

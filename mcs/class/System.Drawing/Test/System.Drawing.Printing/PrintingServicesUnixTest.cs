@@ -45,7 +45,7 @@ namespace MonoTests.System.Drawing.Printing {
 		{
 			// ensure libgdiplus is built with printing support enabled
 			if (GDIPlus.RunningOnWindows ())
-				return;
+				Assert.Ignore ("Running on Windows.");
 
 			Assert.AreEqual (Status.InvalidParameter, GdipGetPostScriptSavePage (IntPtr.Zero), "Missing printing support");
 		}

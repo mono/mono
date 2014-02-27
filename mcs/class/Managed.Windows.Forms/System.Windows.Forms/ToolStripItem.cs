@@ -958,7 +958,7 @@ namespace System.Windows.Forms
 				image = null;
 			}
 
-			if (owner != null)
+			if (owner != null && disposing)
 				owner.Items.Remove (this);
 			
 			base.Dispose (disposing);

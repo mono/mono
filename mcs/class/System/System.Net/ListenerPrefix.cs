@@ -88,9 +88,9 @@ namespace System.Net {
 
 		void Parse (string uri)
 		{
-			int default_port = (uri.StartsWith ("http://")) ? 80 : -1;
-			if (default_port == -1) {
-				default_port = (uri.StartsWith ("https://")) ? 443 : -1;
+			ushort default_port = 80;
+			if (uri.StartsWith ("https://")) {
+				default_port = 443;
 				secure = true;
 			}
 
@@ -109,6 +109,7 @@ namespace System.Net {
 			} else {
 				root = uri.IndexOf ('/', start_host, length - start_host);
 				host = uri.Substring (start_host, root - start_host);
+				port = default_port;
 				path = uri.Substring (root);
 			}
 			if (path.Length != 1)
@@ -120,10 +121,7 @@ namespace System.Net {
 			if (uri == null)
 				throw new ArgumentNullException ("uriPrefix");
 
-			int default_port = (uri.StartsWith ("http://")) ? 80 : -1;
-			if (default_port == -1)
-				default_port = (uri.StartsWith ("https://")) ? 443 : -1;
-			if (default_port == -1)
+			if(!uri.StartsWith ("http://") && !uri.StartsWith ("https://"))
 				throw new ArgumentException ("Only 'http' and 'https' schemes are supported.");
 
 			int length = uri.Length;

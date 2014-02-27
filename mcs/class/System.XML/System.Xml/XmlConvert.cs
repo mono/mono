@@ -140,48 +140,6 @@ namespace System.Xml {
 		  "---ddZ",
 		};
 
-#if NET_2_0
-		static readonly string [] defaultDateTimeFormats = new string [] {
-			"yyyy-MM-ddTHH:mm:ss", // dateTime(1)
-			"yyyy-MM-ddTHH:mm:ss.FFFFFFF", // dateTime(2)
-			"yyyy-MM-dd", // date
-			"HH:mm:ss", // time
-			"yyyy-MM", // gYearMonth
-			"yyyy", // gYear
-			"--MM-dd", // gMonthDay
-			"---dd", // gDay
-			};
-
-		static readonly string [] roundtripDateTimeFormats;
-		static readonly string [] localDateTimeFormats;
-		static readonly string [] utcDateTimeFormats;
-		static readonly string [] unspecifiedDateTimeFormats;
-
-		static XmlConvert ()
-		{
-			int l = defaultDateTimeFormats.Length;
-			roundtripDateTimeFormats = new string [l * 2];
-			localDateTimeFormats = new string [l * 2];
-			utcDateTimeFormats = new string [l * 3];
-			unspecifiedDateTimeFormats = new string [l * 5];
-			for (int i = 0; i < l; i++) {
-				string s = defaultDateTimeFormats [i];
-				var z = s + 'Z';
-				localDateTimeFormats [i * 2] = s + (s [s.Length - 1] == 's' || s [s.Length - 1] == 'F' ? "zzz" : String.Empty);
-				localDateTimeFormats [i * 2 + 1] = z;
-				roundtripDateTimeFormats [i * 2] = s + 'K';
-				roundtripDateTimeFormats [i * 2 + 1] = z;
-				utcDateTimeFormats [i * 3] = s;
-				utcDateTimeFormats [i * 3 + 1] = z;
-				utcDateTimeFormats [i * 3 + 2] = s + "zzz";
-				unspecifiedDateTimeFormats [i * 5] = s;
-				unspecifiedDateTimeFormats [i * 5 + 1] = z;
-				unspecifiedDateTimeFormats [i * 5 + 2] = localDateTimeFormats [i];
-				unspecifiedDateTimeFormats [i * 5 + 3] = roundtripDateTimeFormats [i];
-				unspecifiedDateTimeFormats [i * 5 + 4] = utcDateTimeFormats [i];
-			}
-		}
-#endif
 		static DateTimeStyles _defaultStyle = DateTimeStyles.AllowLeadingWhite | DateTimeStyles.AllowTrailingWhite;
 		
 		public XmlConvert()
@@ -369,20 +327,15 @@ namespace System.Xml {
 #if NET_2_0
 		public static DateTime ToDateTime (string s, XmlDateTimeSerializationMode dateTimeOption)
 		{
-			DateTime dt;
 			switch (dateTimeOption) {
 			case XmlDateTimeSerializationMode.Local:
-				dt = ToDateTime (s, localDateTimeFormats);
-				return new DateTime (dt.Ticks, DateTimeKind.Local);
+                return ToDateTime(s, datetimeFormats, _defaultStyle | DateTimeStyles.AssumeLocal).ToLocalTime();
 			case XmlDateTimeSerializationMode.RoundtripKind:
-				return ToDateTime (s, roundtripDateTimeFormats, _defaultStyle | DateTimeStyles.RoundtripKind);
+                return ToDateTime(s, datetimeFormats, _defaultStyle | DateTimeStyles.RoundtripKind);
 			case XmlDateTimeSerializationMode.Utc:
-				dt = ToDateTime (s, utcDateTimeFormats);
-				return new DateTime (dt.Ticks, DateTimeKind.Utc);
-			case XmlDateTimeSerializationMode.Unspecified:
-				return ToDateTime (s, unspecifiedDateTimeFormats);
+                return ToDateTime(s, datetimeFormats, _defaultStyle | DateTimeStyles.AssumeUniversal).ToUniversalTime();
 			default:
-				return ToDateTime (s, defaultDateTimeFormats);
+				return new DateTime (ToDateTime(s, datetimeFormats, _defaultStyle | DateTimeStyles.RoundtripKind).Ticks, DateTimeKind.Unspecified);
 			}
 		}
 #endif

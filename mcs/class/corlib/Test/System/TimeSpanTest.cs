@@ -1426,6 +1426,10 @@ public class TimeSpanTest {
 		Assert.AreEqual ("1", ts.ToString ("%h"), "#E0");
 		Assert.AreEqual ("3", ts.ToString ("%m"), "#E1");
 		Assert.AreEqual ("5", ts.ToString ("%s"), "#E2");
+
+		ts = new TimeSpan (123456789);
+		Assert.AreEqual ("12.3", ts.ToString ("s\\.f"), "#F0");
+		Assert.AreEqual ("12.3", ts.ToString ("s\\.F"), "#F1");
 	}
 
 	[Test]

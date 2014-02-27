@@ -72,7 +72,6 @@ namespace Microsoft.Build.Utilities
 		{
 			this.TaskResources = taskResources;
 			this.HelpKeywordPrefix = helpKeywordPrefix;
-			this.toolPath = MonoLocationHelper.GetBinDir ();
 			this.responseFileEncoding = Encoding.UTF8;
 			this.timeout = Int32.MaxValue;
 		}
@@ -440,15 +439,12 @@ namespace Microsoft.Build.Utilities
 		public virtual string ToolExe
 		{
 			get {
-				if (toolExe == null)
+				if (string.IsNullOrEmpty (toolExe))
 					return ToolName;
 				else
 					return toolExe;
 			}
-			set {
-				if (!String.IsNullOrEmpty (value))
-					toolExe = value;
-			}
+			set { toolExe = value; }
 		}
 
 		protected abstract string ToolName
@@ -459,10 +455,7 @@ namespace Microsoft.Build.Utilities
 		public string ToolPath
 		{
 			get { return toolPath; }
-			set {
-				if (!String.IsNullOrEmpty (value))
-					toolPath  = value;
-			}
+			set { toolPath  = value; }
 		}
 
 		// Keep in sync with mcs/class/System/Microsoft.CSharp/CSharpCodeCompiler.cs

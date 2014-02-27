@@ -26,8 +26,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
 
 namespace Microsoft.Build.Framework {
@@ -43,10 +41,12 @@ namespace Microsoft.Build.Framework {
 		public BuildFinishedEventArgs (string message,
 						  string helpKeyword,
 						  bool succeeded)
-			: this (message, helpKeyword, succeeded, DateTime.Now)
+			: base (message, helpKeyword, null)
 		{
+			this.succeeded = succeeded;
 		}
 
+#if NET_4_0
 		public BuildFinishedEventArgs (string message,
 						  string helpKeyword,
 						  bool succeeded,
@@ -65,6 +65,7 @@ namespace Microsoft.Build.Framework {
 		{
 			this.succeeded = succeeded;
 		}
+#endif
 
 		public bool Succeeded {
 			get {
@@ -74,4 +75,3 @@ namespace Microsoft.Build.Framework {
 	}
 }
 
-#endif

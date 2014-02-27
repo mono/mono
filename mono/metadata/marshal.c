@@ -9674,8 +9674,8 @@ mono_marshal_get_vtfixup_ftnptr (MonoImage *image, guint32 token, guint16 type)
 	sig = mono_method_signature (method);
 	mb = mono_mb_new (method->klass, method->name, MONO_WRAPPER_MANAGED_TO_MANAGED);
 
-#ifndef DISABLE_JIT
 	param_count = sig->param_count + sig->hasthis;
+#ifndef DISABLE_JIT
 	for (i = 0; i < param_count; i++)
 		mono_mb_emit_ldarg (mb, i);
 
@@ -11818,7 +11818,9 @@ ves_icall_System_Runtime_InteropServices_Marshal_SizeOf (MonoReflectionType *rty
 
 	layout = (klass->flags & TYPE_ATTRIBUTE_LAYOUT_MASK);
 
-	if (layout == TYPE_ATTRIBUTE_AUTO_LAYOUT) {
+	if (type->type == MONO_TYPE_PTR || type->type == MONO_TYPE_FNPTR) {
+		return sizeof (gpointer);
+	} else if (layout == TYPE_ATTRIBUTE_AUTO_LAYOUT) {
 		gchar *msg;
 		MonoException *exc;
 

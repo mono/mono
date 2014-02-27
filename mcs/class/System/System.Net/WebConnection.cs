@@ -46,6 +46,7 @@ using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
+using System.Diagnostics;
 
 namespace System.Net
 {
@@ -64,6 +65,7 @@ namespace System.Net
 		Stream nstream;
 		internal Socket socket;
 		object socketLock = new object ();
+		IWebConnectionState state;
 		WebExceptionStatus status;
 		WaitCallback initConn;
 		bool keepAlive;
@@ -77,7 +79,6 @@ namespace System.Net
 		Queue queue;
 		bool reused;
 		int position;
-		bool busy;		
 		HttpWebRequest priority_request;		
 		NetworkCredential ntlm_credentials;
 		bool ntlm_authenticated;
@@ -108,8 +109,13 @@ namespace System.Net
 		static extern void monotouch_start_wwan (string uri);
 #endif
 
-		public WebConnection (WebConnectionGroup group, ServicePoint sPoint)
+		internal ChunkStream ChunkStream {
+			get { return chunkStream; }
+		}
+
+		public WebConnection (IWebConnectionState wcs, ServicePoint sPoint)
 		{
+			this.state = wcs;
 			this.sPoint = sPoint;
 			buffer = new byte [4096];
 			Data = new WebConnectionData ();
@@ -118,7 +124,7 @@ namespace System.Net
 					InitConnection (state);
 				} catch {}
 				});
-			queue = group.Queue;
+			queue = wcs.Group.Queue;
 			abortHelper = new AbortHelper ();
 			abortHelper.Connection = this;
 			abortHandler = new EventHandler (abortHelper.Abort);
@@ -799,8 +805,7 @@ namespace System.Net
 				return null;
 
 			lock (this) {
-				if (!busy) {
-					busy = true;
+				if (state.TrySetBusy ()) {
 					status = WebExceptionStatus.Success;
 					ThreadPool.QueueUserWorkItem (initConn, request);
 				} else {
@@ -846,7 +851,7 @@ namespace System.Net
 					Close (false);
 				}
 
-				busy = false;
+				state.SetIdle ();
 				if (priority_request != null) {
 					SendRequest (priority_request);
 					priority_request = null;
@@ -1049,10 +1054,10 @@ namespace System.Net
 			return result;
 		}
 
-		internal void EndWrite2 (HttpWebRequest request, IAsyncResult result)
+		internal bool EndWrite (HttpWebRequest request, bool throwOnError, IAsyncResult result)
 		{
 			if (request.FinishedReading)
-				return;
+				return true;
 
 			Stream s = null;
 			lock (this) {
@@ -1065,33 +1070,11 @@ namespace System.Net
 
 			try {
 				s.EndWrite (result);
+				return true;
 			} catch (Exception exc) {
 				status = WebExceptionStatus.SendFailure;
-				if (exc.InnerException != null)
+				if (throwOnError && exc.InnerException != null)
 					throw exc.InnerException;
-				throw;
-			}
-		}
-
-		internal bool EndWrite (HttpWebRequest request, IAsyncResult result)
-		{
-			if (request.FinishedReading)
-				return true;
-
-			Stream s = null;
-			lock (this) {
-				if (Data.request != request)
-					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
-				if (nstream == null)
-					throw new ObjectDisposedException (typeof (NetworkStream).FullName);
-				s = nstream;
-			}
-
-			try {
-				s.EndWrite (result);
-				return true;
-			} catch {
-				status = WebExceptionStatus.SendFailure;
 				return false;
 			}
 		}
@@ -1211,7 +1194,7 @@ namespace System.Net
 						Data.ReadState = ReadState.Aborted;
 					}
 				}
-				busy = false;
+				state.SetIdle ();
 				Data = new WebConnectionData ();
 				if (sendNext)
 					SendNext ();
@@ -1261,10 +1244,6 @@ namespace System.Net
 			unsafe_sharing = false;
 		}
 
-		internal bool Busy {
-			get { lock (this) return busy; }
-		}
-		
 		internal bool Connected {
 			get {
 				lock (this) {

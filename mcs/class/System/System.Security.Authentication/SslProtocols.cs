@@ -3,10 +3,11 @@
 //
 // Authors:
 //	Tim Coleman (tim@timcoleman.com)
-//	Sebastien Pouliot  <sebastien@ximian.com>
+//	Sebastien Pouliot  <sebastien@xamarin.com>
 //
 // Copyright (C) Tim Coleman, 2004
 // Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2014 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,6 +37,12 @@ namespace System.Security.Authentication {
 		Ssl2 = 12,
 		Ssl3 = 48,
 		Tls = 192,
+#if NET_4_5
+		[MonoTODO ("unsupported")]
+		Tls11 = 768,
+		[MonoTODO ("unsupported")]
+		Tls12 = 3072,
+#endif
 		Default = Ssl3 | Tls
 	}
 }

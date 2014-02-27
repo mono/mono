@@ -72,7 +72,7 @@ namespace Microsoft.Build.Execution
 			if (wk != null)
 				return wk;
 			var m = GetMetadata (name);
-			return m != null ? m.EvaluatedValue : null;
+			return m != null ? m.EvaluatedValue : string.Empty;
 		}
 
 		public bool HasMetadata (string name)

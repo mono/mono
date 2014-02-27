@@ -22,9 +22,10 @@ namespace Mono.CSharp {
 		readonly Dictionary<string, Namespace> all_namespaces;
 
 		public RootNamespace (string alias_name)
-			: base (null, String.Empty)
+			: base ()
 		{
 			this.alias_name = alias_name;
+			RegisterNamespace (this);
 
 			all_namespaces = new Dictionary<string, Namespace> ();
 			all_namespaces.Add ("", this);
@@ -87,24 +88,13 @@ namespace Mono.CSharp {
 				all_namespaces.Add (child.Name, child);
 		}
 
-		public bool IsNamespace (string name)
-		{
-			return all_namespaces.ContainsKey (name);
-		}
-
-		protected void RegisterNamespace (string dotted_name)
-		{
-			if (dotted_name != null && dotted_name.Length != 0 && ! IsNamespace (dotted_name))
-				GetNamespace (dotted_name, true);
-		}
-
 		public override string GetSignatureForError ()
 		{
 			return alias_name + "::";
 		}
 	}
 
-	public class GlobalRootNamespace : RootNamespace
+	public sealed class GlobalRootNamespace : RootNamespace
 	{
 		public GlobalRootNamespace ()
 			: base ("global")
@@ -115,21 +105,15 @@ namespace Mono.CSharp {
 	//
 	// Namespace cache for imported and compiled namespaces
 	//
-	// This is an Expression to allow it to be referenced in the
-	// compiler parse/intermediate tree during name resolution.
-	//
-	public class Namespace : FullNamedExpression
+	public class Namespace
 	{
-		Namespace parent;
+		readonly Namespace parent;
 		string fullname;
 		protected Dictionary<string, Namespace> namespaces;
 		protected Dictionary<string, IList<TypeSpec>> types;
 		List<TypeSpec> extension_method_types;
 		Dictionary<string, TypeSpec> cached_types;
-		RootNamespace root;
 		bool cls_checked;
-
-		public readonly MemberName MemberName;
 
 		/// <summary>
 		///   Constructor Takes the current namespace and the
@@ -137,43 +121,34 @@ namespace Mono.CSharp {
 		///   and name = ""
 		/// </summary>
 		public Namespace (Namespace parent, string name)
+			: this ()
 		{
-			// Expression members.
-			this.eclass = ExprClass.Namespace;
-			this.Type = InternalType.Namespace;
-			this.loc = Location.Null;
+			if (name == null)
+				throw new ArgumentNullException ("name");
 
 			this.parent = parent;
 
-			if (parent != null)
-				this.root = parent.root;
-			else
-				this.root = this as RootNamespace;
-
-			if (this.root == null)
-				throw new InternalErrorException ("Root namespaces must be created using RootNamespace");
-			
-			string pname = parent != null ? parent.fullname : "";
+			string pname = parent != null ? parent.fullname : null;
 				
-			if (pname == "")
+			if (pname == null)
 				fullname = name;
 			else
-				fullname = parent.fullname + "." + name;
+				fullname = pname + "." + name;
 
-			if (fullname == null)
-				throw new InternalErrorException ("Namespace has a null fullname");
+			while (parent.parent != null)
+				parent = parent.parent;
 
-			if (parent != null && parent.MemberName != MemberName.Null)
-				MemberName = new MemberName (parent.MemberName, name, Location.Null);
-			else if (name.Length == 0)
-				MemberName = MemberName.Null;
-			else
-				MemberName = new MemberName (name, Location.Null);
-
-			namespaces = new Dictionary<string, Namespace> ();
-			cached_types = new Dictionary<string, TypeSpec> ();
+			var root = parent as RootNamespace;
+			if (root == null)
+				throw new InternalErrorException ("Root namespaces must be created using RootNamespace");
 
 			root.RegisterNamespace (this);
+		}
+
+		protected Namespace ()
+		{
+			namespaces = new Dictionary<string, Namespace> ();
+			cached_types = new Dictionary<string, TypeSpec> ();
 		}
 
 		#region Properties
@@ -195,85 +170,6 @@ namespace Mono.CSharp {
 
 		#endregion
 
-		protected override Expression DoResolve (ResolveContext ec)
-		{
-			return this;
-		}
-
-		public void Error_NamespaceDoesNotExist (IMemberContext ctx, string name, int arity, Location loc)
-		{
-			var retval = LookupType (ctx, name, arity, LookupMode.IgnoreAccessibility, loc);
-			if (retval != null) {
-//				ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (retval.MemberDefinition);
-				ErrorIsInaccesible (ctx, retval.GetSignatureForError (), loc);
-				return;
-			}
-
-			retval = LookupType (ctx, name, -System.Math.Max (1, arity), LookupMode.Probing, loc);
-			if (retval != null) {
-				Error_TypeArgumentsCannotBeUsed (ctx, retval, loc);
-				return;
-			}
-
-			Namespace ns;
-			if (arity > 0 && namespaces.TryGetValue (name, out ns)) {
-				ns.Error_TypeArgumentsCannotBeUsed (ctx, null, loc);
-				return;
-			}
-
-			string assembly = null;
-			string possible_name = fullname + "." + name;
-
-			// Only assembly unique name should be added
-			switch (possible_name) {
-			case "System.Drawing":
-			case "System.Web.Services":
-			case "System.Web":
-			case "System.Data":
-			case "System.Configuration":
-			case "System.Data.Services":
-			case "System.DirectoryServices":
-			case "System.Json":
-			case "System.Net.Http":
-			case "System.Numerics":
-			case "System.Runtime.Caching":
-			case "System.ServiceModel":
-			case "System.Transactions":
-			case "System.Web.Routing":
-			case "System.Xml.Linq":
-			case "System.Xml":
-				assembly = possible_name;
-				break;
-
-			case "System.Linq":
-			case "System.Linq.Expressions":
-				assembly = "System.Core";
-				break;
-
-			case "System.Windows.Forms":
-			case "System.Windows.Forms.Layout":
-				assembly = "System.Windows.Forms";
-				break;
-			}
-
-			assembly = assembly == null ? "an" : "`" + assembly + "'";
-
-			if (this is GlobalRootNamespace) {
-				ctx.Module.Compiler.Report.Error (400, loc,
-					"The type or namespace name `{0}' could not be found in the global namespace. Are you missing {1} assembly reference?",
-					name, assembly);
-			} else {
-				ctx.Module.Compiler.Report.Error (234, loc,
-					"The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing {2} assembly reference?",
-					name, GetSignatureForError (), assembly);
-			}
-		}
-
-		public override string GetSignatureForError ()
-		{
-			return fullname;
-		}
-
 		public Namespace AddNamespace (MemberName name)
 		{
 			var ns_parent = name.Left == null ? this : AddNamespace (name.Left);
@@ -290,6 +186,11 @@ namespace Mono.CSharp {
 			}
 
 			return ns;
+		}
+
+		public bool TryGetNamespace (string name, out Namespace ns)
+		{
+			return namespaces.TryGetValue (name, out ns);
 		}
 
 		// TODO: Replace with CreateNamespace where MemberName is created for the method call
@@ -325,6 +226,11 @@ namespace Mono.CSharp {
 				return null;
 
 			return found;
+		}
+
+		public virtual string GetSignatureForError ()
+		{
+			return fullname;
 		}
 
 		public TypeSpec LookupType (IMemberContext ctx, string name, int arity, LookupMode mode, Location loc)
@@ -415,7 +321,7 @@ namespace Mono.CSharp {
 			Namespace ns;
 			if (arity == 0 && namespaces.TryGetValue (name, out ns)) {
 				if (texpr == null)
-					return ns;
+					return new NamespaceExpression (ns, loc);
 
 				if (mode != LookupMode.Probing) {
 					//ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (texpr.Type);
@@ -426,7 +332,7 @@ namespace Mono.CSharp {
 				}
 
 				if (texpr.MemberDefinition.IsImported)
-					return ns;
+					return new NamespaceExpression (ns, loc);
 			}
 
 			if (texpr == null)
@@ -580,11 +486,6 @@ namespace Mono.CSharp {
 			cached_types.Remove (tc.Basename);
 		}
 
-		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext mc)
-		{
-			return this;
-		}
-
 		public void SetBuiltinType (BuiltinTypeSpec pts)
 		{
 			var found = types[pts.Name];
@@ -650,11 +551,6 @@ namespace Mono.CSharp {
 				compiled.Compiler.Report.Warning (3005, 1, compiled.Location,
 					"Identifier `{0}' differing only in case is not CLS-compliant", compiled.GetSignatureForError ());
 			}
-		}
-
-		public override string ToString ()
-		{
-			return Name;
 		}
 	}
 
@@ -1271,18 +1167,18 @@ namespace Mono.CSharp {
 						continue;
 					}
 
-					Namespace using_ns = entry.ResolvedExpression as Namespace;
+					var using_ns = entry.ResolvedExpression as NamespaceExpression;
 					if (using_ns == null)
 						continue;
 
-					if (list.Contains (using_ns)) {
+					if (list.Contains (using_ns.Namespace)) {
 						// Ensure we don't report the warning multiple times in repl
 						clauses.RemoveAt (i--);
 
 						Compiler.Report.Warning (105, 3, entry.Location,
 							"The using directive for `{0}' appeared previously in this namespace", using_ns.GetSignatureForError ());
 					} else {
-						list.Add (using_ns);
+						list.Add (using_ns.Namespace);
 					}
 				}
 
@@ -1397,7 +1293,7 @@ namespace Mono.CSharp {
 		public virtual void Define (NamespaceContainer ctx)
 		{
 			resolved = expr.ResolveAsTypeOrNamespace (ctx);
-			var ns = resolved as Namespace;
+			var ns = resolved as NamespaceExpression;
 			if (ns == null) {
 				if (resolved != null) {
 					ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (resolved.Type);
@@ -1423,12 +1319,15 @@ namespace Mono.CSharp {
 
 		public override void Define (NamespaceContainer ctx)
 		{
-			resolved = ctx.Module.GetRootNamespace (Alias.Value);
-			if (resolved == null) {
+			var ns = ctx.Module.GetRootNamespace (Alias.Value);
+			if (ns == null) {
 				ctx.Module.Compiler.Report.Error (430, Location,
 					"The extern alias `{0}' was not specified in -reference option",
 					Alias.Value);
+				return;
 			}
+
+			resolved = new NamespaceExpression (ns, Location);
 		}
 	}
 

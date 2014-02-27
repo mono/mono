@@ -17,20 +17,13 @@
 
 /* There doesn't seem to be a defined symbol for this */
 #define _WAPI_THREAD_CURRENT (gpointer)0xFFFFFFFE
-extern gpointer _wapi_thread_duplicate (void);
 
 extern struct _WapiHandleOps _wapi_thread_ops;
-
-typedef enum {
-	THREAD_STATE_START,
-	THREAD_STATE_EXITED
-} WapiThreadState;
 
 #define INTERRUPTION_REQUESTED_HANDLE (gpointer)0xFFFFFFFE
 
 struct _WapiHandle_thread
 {
-	guint has_apc : 1;
 	pthread_t id;
 	GPtrArray *owned_mutexes;
 	/* 
@@ -42,18 +35,12 @@ struct _WapiHandle_thread
 	gpointer wait_handle;
 };
 
-typedef struct
-{
-	guint32 (*callback)(gpointer arg);
-	gpointer param;
-} ApcInfo;
+typedef struct _WapiHandle_thread WapiHandle_thread;
 
 extern gboolean _wapi_thread_apc_pending (gpointer handle);
 extern gboolean _wapi_thread_cur_apc_pending (void);
-extern gboolean _wapi_thread_dispatch_apc_queue (gpointer handle);
 extern void _wapi_thread_own_mutex (gpointer mutex);
 extern void _wapi_thread_disown_mutex (gpointer mutex);
-extern gpointer _wapi_thread_handle_from_id (pthread_t tid);
 extern void _wapi_thread_cleanup (void);
 
 #endif /* _WAPI_THREAD_PRIVATE_H_ */

@@ -31,8 +31,8 @@ install-bin-data:
 	$(INSTALL_DATA) data/xbuild.rsp $(DESTDIR)$(XBUILD_BIN_DIR)
 	$(INSTALL_DATA) data/$(XBUILD_VERSION)/Microsoft.Common.tasks $(DESTDIR)$(XBUILD_BIN_DIR)
 	$(INSTALL_DATA) data/$(XBUILD_VERSION)/Microsoft.Common.targets $(DESTDIR)$(XBUILD_BIN_DIR)
+	$(INSTALL_DATA) data/$(XBUILD_VERSION)/Microsoft.CSharp.targets $(DESTDIR)$(XBUILD_BIN_DIR)
 	$(INSTALL_DATA) data/Microsoft.Build.xsd $(DESTDIR)$(XBUILD_BIN_DIR)
-	$(INSTALL_DATA) data/Microsoft.CSharp.targets $(DESTDIR)$(XBUILD_BIN_DIR)
 	$(INSTALL_DATA) data/Microsoft.VisualBasic.targets $(DESTDIR)$(XBUILD_BIN_DIR)
 	$(INSTALL_DATA) data/MSBuild/Microsoft.Build.CommonTypes.xsd $(DESTDIR)$(XBUILD_BIN_DIR)/MSBuild
 	$(INSTALL_DATA) data/MSBuild/Microsoft.Build.Core.xsd $(DESTDIR)$(XBUILD_BIN_DIR)/MSBuild
@@ -53,6 +53,8 @@ install-pcl-targets:
 	$(INSTALL_DATA) targets/Microsoft.Portable.CSharp_4.0.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.0/Microsoft.Portable.CSharp.targets
 	$(MKINSTALLDIRS) $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.5
 	$(INSTALL_DATA) targets/Microsoft.Portable.CSharp_4.5.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/v4.5/Microsoft.Portable.CSharp.targets
+	$(INSTALL_DATA) targets/Microsoft.Portable.Core.targets $(DESTDIR)$(PORTABLE_TARGETS_DIR)/Microsoft.Portable.Core.targets
+	$(INSTALL_DATA) targets/Microsoft.Portable.Core.props $(DESTDIR)$(PORTABLE_TARGETS_DIR)/Microsoft.Portable.Core.props
 
 install-web-targets:
 	$(MKINSTALLDIRS) $(DESTDIR)$(VS_TARGETS_DIR)/v9.0/WebApplications
@@ -74,7 +76,10 @@ EXTRA_DISTFILES = \
 	data/3.5/Microsoft.Common.targets \
 	data/4.0/Microsoft.Common.targets \
 	data/12.0/Microsoft.Common.targets \
-	data/Microsoft.CSharp.targets \
+	data/2.0/Microsoft.CSharp.targets \
+	data/3.5/Microsoft.CSharp.targets \
+	data/4.0/Microsoft.CSharp.targets \
+	data/12.0/Microsoft.CSharp.targets \
 	data/Microsoft.VisualBasic.targets \
 	data/MSBuild/Microsoft.Build.CommonTypes.xsd \
 	data/MSBuild/Microsoft.Build.Core.xsd \
@@ -86,6 +91,8 @@ EXTRA_DISTFILES = \
 	frameworks/net_4.5.xml \
 	targets/Microsoft.Portable.CSharp_4.0.targets \
 	targets/Microsoft.Portable.CSharp_4.5.targets \
+	targets/Microsoft.Portable.Core.targets \
+	targets/Microsoft.Portable.Core.props \
 	targets/Microsoft.WebApplication.targets \
 	xbuild.make \
 	xbuild_test.make

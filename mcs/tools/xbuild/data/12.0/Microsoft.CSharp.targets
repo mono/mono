@@ -16,9 +16,27 @@
 		<MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildToolsPath)\Microsoft.CSharp.targets</MSBuildAllProjects>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<NoCompilerStandardLib Condition="'$(NoCompilerStandardLib)'==''">true</NoCompilerStandardLib>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<DocFileItem Include="$(DocumentationFile)" Condition="'$(DocumentationFile)' != ''"/>
 	</ItemGroup>
+
+	<Target Name="_AddCorlibReference" DependsOnTargets="GetReferenceAssemblyPaths">
+		<!--
+		HACK: We don't yet support property functions, so can't calculate FrameworkPathOverride
+		by calling ToolLocationHelper.GetPathToStandardLibraries. Instead, we search the framework
+		directories for mscorlib.dll by constructing a filtered item set, and assume it only has
+		one item.
+		-->
+		<ItemGroup>
+			<_ExplicitReference Include="@(_TargetFrameworkDirectories->'%(FullPath)\mscorlib.dll')" Condition="Exists('%(FullPath)\mscorlib.dll')">
+				<Private>false</Private>
+			</_ExplicitReference>
+		</ItemGroup>
+	</Target>
 
 	<Target
 		Name="CoreCompile"
@@ -50,7 +68,7 @@
 			ModuleAssemblyName="$(ModuleAssemblyName)"
 			NoConfig="true"
 			NoLogo="$(NoLogo)"
-			NoStandardLib="$(NoStdLib)"
+			NoStandardLib="$(NoCompilerStandardLib)"
 			Optimize="$(Optimize)"
 			OutputAssembly="@(IntermediateAssembly)"
 			PdbFile="$(PdbFile)"
@@ -97,15 +115,8 @@
 
 	<Import Project="Microsoft.Common.targets" />
 
-	<PropertyGroup>
-		<CscToolExe Condition="'$(CscToolExe)' == '' and '$(TargetFrameworkVersion)' != 'v4.0' and '$(TargetFrameworkVersion)' != 'v4.5' and '$(OS)' != 'Windows_NT'">gmcs</CscToolExe>
-		<CscToolExe Condition="'$(CscToolExe)' == '' and '$(TargetFrameworkVersion)' != 'v4.0' and '$(TargetFrameworkVersion)' != 'v4.5' and '$(OS)' == 'Windows_NT'">gmcs.bat</CscToolExe>
-
-		<CscToolExe Condition="'$(CscToolExe)' == '' and '$(TargetFrameworkVersion)' == 'v4.5' and '$(OS)' != 'Windows_NT'">mcs</CscToolExe>
-		<CscToolExe Condition="'$(CscToolExe)' == '' and '$(TargetFrameworkVersion)' == 'v4.5' and '$(OS)' == 'Windows_NT'">mcs.bat</CscToolExe>
-
-		<CscToolExe Condition="'$(CscToolExe)' == '' and '$(TargetFrameworkVersion)' == 'v4.0' and '$(OS)' != 'Windows_NT'">dmcs</CscToolExe>
-		<CscToolExe Condition="'$(CscToolExe)' == '' and '$(TargetFrameworkVersion)' == 'v4.0' and '$(OS)' == 'Windows_NT'">dmcs.bat</CscToolExe>
+	<PropertyGroup Condition="'$(NoCompilerStandardLib)'=='true' and '$(NoStdLib)'!='true'">
+		<ResolveAssemblyReferencesDependsOn>$(ResolveAssemblyReferencesDependsOn);_AddCorlibReference</ResolveAssemblyReferencesDependsOn>
 	</PropertyGroup>
 
 	<PropertyGroup>

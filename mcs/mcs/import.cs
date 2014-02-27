@@ -376,7 +376,7 @@ namespace Mono.CSharp
 				kind = MemberKind.Method;
 				if (tparams == null && !mb.DeclaringType.IsInterface && name.Length > 6) {
 					if ((mod & (Modifiers.STATIC | Modifiers.PUBLIC)) == (Modifiers.STATIC | Modifiers.PUBLIC)) {
-						if (name[2] == '_' && name[1] == 'p' && name[0] == 'o') {
+						if (name[2] == '_' && name[1] == 'p' && name[0] == 'o' && (mb.Attributes & MethodAttributes.SpecialName) != 0) {
 							var op_type = Operator.GetType (name);
 							if (op_type.HasValue && parameters.Count > 0 && parameters.Count < 3) {
 								kind = MemberKind.Operator;

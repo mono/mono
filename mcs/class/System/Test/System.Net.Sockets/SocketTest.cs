@@ -1810,7 +1810,7 @@ namespace MonoTests.System.Net.Sockets
 			// Need at least two addresses.
 			var ips = Dns.GetHostAddresses (string.Empty);
 			if (ips.Length < 1)
-				return;
+				Assert.Ignore ("This test needs at least two IP addresses.");
 
 			var allIps = new IPAddress [ips.Length + 1];
 			allIps [0] = IPAddress.Loopback;
@@ -2304,7 +2304,7 @@ namespace MonoTests.System.Net.Sockets
 			// Need at least two addresses.
 			var ips = Dns.GetHostAddresses (string.Empty);
 			if (ips.Length < 1)
-				return;
+				Assert.Ignore ("This test needs at least two IP addresses.");
 
 			var allIps = new IPAddress [ips.Length + 1];
 			allIps [0] = IPAddress.Loopback;

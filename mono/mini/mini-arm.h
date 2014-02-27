@@ -52,7 +52,6 @@
 #endif
 
 #define MONO_MAX_IREGS 16
-#define MONO_MAX_FREGS 32
 
 #define MONO_SAVED_GREGS 10 /* r4-r11, ip, lr */
 
@@ -77,6 +76,8 @@
 
 #if defined(ARM_FPU_VFP_HARD)
 #define MONO_SAVED_FREGS 16
+#define MONO_MAX_FREGS 32
+
 /*
  * d8-d15 must be preserved across function calls. We use d14-d15 as
  * scratch registers in the JIT. The rest have no meaning tied to them.
@@ -84,12 +85,14 @@
 #define MONO_ARCH_CALLEE_FREGS 0x00005555
 #define MONO_ARCH_CALLEE_SAVED_FREGS 0x55550000
 #else
-#define MONO_SAVED_FREGS 0
+#define MONO_SAVED_FREGS 8
+#define MONO_MAX_FREGS 16
+
 /*
- * No registers need to be preserved across function calls. We use d14-d15
+ * No registers need to be preserved across function calls. We use d0-d1
  * as scratch registers in the JIT. The rest have no meaning tied to them.
  */
-#define MONO_ARCH_CALLEE_FREGS 0x05555555
+#define MONO_ARCH_CALLEE_FREGS 0x55555550
 #define MONO_ARCH_CALLEE_SAVED_FREGS 0x00000000
 #endif
 
@@ -199,6 +202,7 @@ typedef struct MonoCompileArch {
 	gpointer seq_point_bp_method_var;
 	gboolean omit_fp, omit_fp_computed;
 	gpointer cinfo;
+	gpointer *vfp_scratch_slots [2];
 } MonoCompileArch;
 
 #define MONO_ARCH_EMULATE_FCONV_TO_I8 1
@@ -254,7 +258,6 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_HAVE_GENERAL_RGCTX_LAZY_FETCH_TRAMPOLINE 1
 #define MONO_ARCH_HAVE_OPCODE_NEEDS_EMULATION 1
 #define MONO_ARCH_HAVE_OBJC_GET_SELECTOR 1
-#define MONO_ARCH_HAVE_CARD_TABLE_WBARRIER_IN_AOT 1
 
 #if defined(__native_client__)
 #undef MONO_ARCH_SOFT_DEBUG_SUPPORTED

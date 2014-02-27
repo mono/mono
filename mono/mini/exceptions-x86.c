@@ -343,8 +343,6 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 
 	/* load ESP into EBP */
 	x86_mov_reg_membase (code, X86_EBP, X86_EAX,  G_STRUCT_OFFSET (MonoContext, esp), 4);
-	/* Align it, it can be unaligned if it was captured asynchronously */
-	x86_alu_reg_imm (code, X86_AND, X86_EBP, ~(MONO_ARCH_LOCALLOC_ALIGNMENT - 1));
 	/* load return address into ECX */
 	x86_mov_reg_membase (code, X86_ECX, X86_EAX,  G_STRUCT_OFFSET (MonoContext, eip), 4);
 	/* save the return addr to the restored stack - 4 */
@@ -852,14 +850,24 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		}
 
 		/* Pop arguments off the stack */
-		/* 
-		 * FIXME: LLVM doesn't push these, we can't use ji->from_llvm as it describes
-		 * the callee.
-		 */
-#ifndef ENABLE_LLVM
-		if (ji->has_arch_eh_info)
-			new_ctx->esp += mono_jit_info_get_arch_eh_info (ji)->stack_size;
+		if (ji->has_arch_eh_info) {
+			int stack_size;
+
+			stack_size = mono_jit_info_get_arch_eh_info (ji)->stack_size;
+
+			if (stack_size) {
+#ifdef ENABLE_LLVM
+				MonoJitInfo *caller_ji;
+
+				caller_ji = mini_jit_info_table_find (domain, (char*)new_ctx->eip, NULL);
+				/* LLVM doesn't push the arguments */
+				if (caller_ji && !caller_ji->from_llvm)
+					new_ctx->esp += stack_size;
+#else
+					new_ctx->esp += stack_size;
 #endif
+			}
+		}
 
 		return TRUE;
 	} else if (*lmf) {

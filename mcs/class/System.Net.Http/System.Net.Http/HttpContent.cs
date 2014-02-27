@@ -75,6 +75,12 @@ namespace System.Net.Http
 			}
 		}
 
+		internal long? LoadedBufferLength {
+			get {
+				return buffer == null ? (long?)null : buffer.Length;
+			}
+		}
+
 		public Task CopyToAsync (Stream stream)
 		{
 			return CopyToAsync (stream, null);

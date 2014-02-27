@@ -91,9 +91,13 @@ namespace System {
 		private string cachedLocalPath;
 		private int cachedHashCode;
 
+#if BOOTSTRAP_BASIC
 		private static readonly string hexUpperChars = "0123456789ABCDEF";
 		private static readonly string [] Empty = new string [0];
 		private static bool isWin32 = (Path.DirectorySeparatorChar == '\\');
+#else
+		static readonly char[] hexUpperChars = new [] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+#endif
 	
 		// Fields
 		
@@ -646,7 +650,11 @@ namespace System {
 
 				// return a (pre-allocated) empty array
 				if (path.Length == 0)
+#if BOOTSTRAP_BASIC
 					return Empty;
+#else
+					return EmptyArray<string>.Value;
+#endif
 				// do not return the original array (since items can be changed)
 				if (segments != null)
 					return segments.ToArray ();
@@ -1598,7 +1606,11 @@ namespace System {
 				host = String.Empty;
 			} else if (scheme == UriSchemeFile) {
 				// under Windows all file:// URI are considered UNC, which is not the case other MacOS (e.g. Silverlight)
+#if BOOTSTRAP_BASIC
 				isUnc = isWin32;
+#else
+				isUnc = Environment.IsRunningOnWindows;
+#endif
 			} else if (host.Length == 0 &&
 				   (scheme == UriSchemeHttp || scheme == UriSchemeGopher || scheme == UriSchemeNntp ||
 				    scheme == UriSchemeHttps || scheme == UriSchemeFtp)) {

@@ -678,6 +678,7 @@ arch_init (MonoAotCompile *acfg)
 #endif
 }
 
+#ifdef MONO_ARCH_AOT_SUPPORTED
 /*
  * arch_emit_direct_call:
  *
@@ -685,7 +686,7 @@ arch_init (MonoAotCompile *acfg)
  * calling code.
  */
 static void
-arch_emit_direct_call (MonoAotCompile *acfg, const char *target, gboolean external, MonoJumpInfo *ji, int *call_size)
+arch_emit_direct_call (MonoAotCompile *acfg, const char *target, gboolean external, gboolean thumb, MonoJumpInfo *ji, int *call_size)
 {
 #if defined(TARGET_X86) || defined(TARGET_AMD64)
 	/* Need to make sure this is exactly 5 bytes long */
@@ -709,7 +710,10 @@ arch_emit_direct_call (MonoAotCompile *acfg, const char *target, gboolean extern
 		emit_bytes (acfg, buf, 4);
 	} else {
 		emit_unset_mode (acfg);
-		fprintf (acfg->fp, "bl %s\n", target);
+		if (thumb)
+			fprintf (acfg->fp, "blx %s\n", target);
+		else
+			fprintf (acfg->fp, "bl %s\n", target);
 	}
 	*call_size = 4;
 #elif defined(TARGET_POWERPC)
@@ -724,6 +728,7 @@ arch_emit_direct_call (MonoAotCompile *acfg, const char *target, gboolean extern
 	g_assert_not_reached ();
 #endif
 }
+#endif
 
 /*
  * PPC32 design:
@@ -840,6 +845,7 @@ arch_emit_got_access (MonoAotCompile *acfg, guint8 *code, int got_slot, int *cod
 
 #endif
 
+#ifdef MONO_ARCH_AOT_SUPPORTED
 /*
  * arch_emit_objc_selector_ref:
  *
@@ -868,6 +874,7 @@ arch_emit_objc_selector_ref (MonoAotCompile *acfg, guint8 *code, int index, int 
 	g_assert_not_reached ();
 #endif
 }
+#endif
 
 /*
  * arch_emit_plt_entry:
@@ -4331,6 +4338,7 @@ is_direct_callable (MonoAotCompile *acfg, MonoMethod *method, MonoJumpInfo *patc
 	return FALSE;
 }
 
+#ifdef MONO_ARCH_AOT_SUPPORTED
 static const char *
 get_pinvoke_import (MonoAotCompile *acfg, MonoMethod *method)
 {
@@ -4360,6 +4368,7 @@ get_pinvoke_import (MonoAotCompile *acfg, MonoMethod *method)
 	
 	return import;
 }
+#endif
 
 static gint
 compare_lne (MonoDebugLineNumberEntry *a, MonoDebugLineNumberEntry *b)
@@ -4490,10 +4499,13 @@ emit_and_reloc_code (MonoAotCompile *acfg, MonoMethod *method, guint8 *code, gui
 	MonoJumpInfo *patch_info;
 	MonoMethodHeader *header;
 	MonoDebugSourceLocation **locs = NULL;
-	gboolean skip, direct_call, external_call;
+	gboolean skip;
+#ifdef MONO_ARCH_AOT_SUPPORTED
+	gboolean direct_call, external_call;
 	guint32 got_slot;
 	const char *direct_call_target = 0;
 	const char *direct_pinvoke;
+#endif
 
 	if (method) {
 		header = mono_method_get_header (method);
@@ -4649,7 +4661,7 @@ emit_and_reloc_code (MonoAotCompile *acfg, MonoMethod *method, guint8 *code, gui
 				if (direct_call) {
 					int call_size;
 
-					arch_emit_direct_call (acfg, direct_call_target, external_call, patch_info, &call_size);
+					arch_emit_direct_call (acfg, direct_call_target, external_call, FALSE, patch_info, &call_size);
 					i += call_size - 1;
 				} else {
 					int code_size;
@@ -4880,8 +4892,6 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 	case MONO_PATCH_INFO_JIT_TLS_ID:
 	case MONO_PATCH_INFO_GC_CARD_TABLE_ADDR:
 	case MONO_PATCH_INFO_CASTCLASS_CACHE:
-	case MONO_PATCH_INFO_NURSERY_START_SHIFTED:
-	case MONO_PATCH_INFO_NURSERY_SHIFT:
 		break;
 	case MONO_PATCH_INFO_METHOD_REL:
 		encode_value ((gint)patch_info->data.offset, p, &p);
@@ -4953,11 +4963,17 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 	case MONO_PATCH_INFO_CLASS:
 	case MONO_PATCH_INFO_IID:
 	case MONO_PATCH_INFO_ADJUSTED_IID:
+	case MONO_PATCH_INFO_CLASS_INIT:
 		encode_klass_ref (acfg, patch_info->data.klass, p, &p);
 		break;
-	case MONO_PATCH_INFO_CLASS_INIT:
 	case MONO_PATCH_INFO_DELEGATE_TRAMPOLINE:
-		encode_klass_ref (acfg, patch_info->data.klass, p, &p);
+		encode_klass_ref (acfg, patch_info->data.del_tramp->klass, p, &p);
+		if (patch_info->data.del_tramp->method) {
+			encode_value (1, p, &p);
+			encode_method_ref (acfg, patch_info->data.del_tramp->method, p, &p);
+		} else {
+			encode_value (0, p, &p);
+		}
 		break;
 	case MONO_PATCH_INFO_FIELD:
 	case MONO_PATCH_INFO_SFLDA:
@@ -6405,7 +6421,6 @@ can_encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info)
 	}
 	case MONO_PATCH_INFO_VTABLE:
 	case MONO_PATCH_INFO_CLASS_INIT:
-	case MONO_PATCH_INFO_DELEGATE_TRAMPOLINE:
 	case MONO_PATCH_INFO_CLASS:
 	case MONO_PATCH_INFO_IID:
 	case MONO_PATCH_INFO_ADJUSTED_IID:
@@ -6414,6 +6429,13 @@ can_encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info)
 			return FALSE;
 		}
 		break;
+	case MONO_PATCH_INFO_DELEGATE_TRAMPOLINE: {
+		if (!can_encode_class (acfg, patch_info->data.del_tramp->klass)) {
+			//printf ("Skip: %s\n", mono_type_full_name (&patch_info->data.klass->byval_arg));
+			return FALSE;
+		}
+		break;
+	}
 	case MONO_PATCH_INFO_RGCTX_FETCH: {
 		MonoJumpInfoRgctxEntry *entry = patch_info->data.rgctx_entry;
 
@@ -6975,7 +6997,18 @@ emit_llvm_file (MonoAotCompile *acfg)
 	 */
 	opts = g_strdup ("-instcombine -simplifycfg");
 	//opts = g_strdup ("-simplifycfg -domtree -domfrontier -scalarrepl -instcombine -simplifycfg -domtree -domfrontier -scalarrepl -simplify-libcalls -instcombine -simplifycfg -instcombine -simplifycfg -reassociate -domtree -loops -loop-simplify -domfrontier -loop-simplify -lcssa -loop-rotate -licm -lcssa -loop-unswitch -instcombine -scalar-evolution -loop-simplify -lcssa -iv-users -indvars -loop-deletion -loop-simplify -lcssa -loop-unroll -instcombine -memdep -gvn -memdep -memcpyopt -sccp -instcombine -domtree -memdep -dse -adce -simplifycfg -preverify -domtree -verify");
-	opts = g_strdup ("-targetlibinfo -no-aa -basicaa -notti -instcombine -simplifycfg -sroa -domtree -early-cse -lazy-value-info -correlated-propagation -simplifycfg -instcombine -simplifycfg -reassociate -domtree -loops -loop-simplify -lcssa -loop-rotate -licm -lcssa -loop-unswitch -instcombine -scalar-evolution -loop-simplify -lcssa -indvars -loop-idiom -loop-deletion -loop-unroll -memdep -gvn -memdep -memcpyopt -sccp -instcombine -lazy-value-info -correlated-propagation -domtree -memdep -dse -adce -simplifycfg -instcombine -strip-dead-prototypes -preverify -domtree -verify");
+	/* The dse pass is disabled because of #13734 and #17616 */
+	/*
+	 * The dse bug is in DeadStoreElimination.cpp:isOverwrite ():
+	 * // If we have no DataLayout information around, then the size of the store
+	 *  // is inferrable from the pointee type.  If they are the same type, then
+	 * // we know that the store is safe.
+	 * if (AA.getDataLayout() == 0 &&
+	 * Later.Ptr->getType() == Earlier.Ptr->getType()) {
+	 * return OverwriteComplete;
+	 * Here, if 'Earlier' refers to a memset, and Later has no size info, it mistakenly thinks the memset is redundant.
+	 */
+	opts = g_strdup ("-targetlibinfo -no-aa -basicaa -notti -instcombine -simplifycfg -sroa -domtree -early-cse -lazy-value-info -correlated-propagation -simplifycfg -instcombine -simplifycfg -reassociate -domtree -loops -loop-simplify -lcssa -loop-rotate -licm -lcssa -loop-unswitch -instcombine -scalar-evolution -loop-simplify -lcssa -indvars -loop-idiom -loop-deletion -loop-unroll -memdep -gvn -memdep -memcpyopt -sccp -instcombine -lazy-value-info -correlated-propagation -domtree -memdep -adce -simplifycfg -instcombine -strip-dead-prototypes -preverify -domtree -verify");
 #if 1
 	command = g_strdup_printf ("%sopt -f %s -o \"%s.opt.bc\" \"%s.bc\"", acfg->aot_opts.llvm_path, opts, acfg->tmpbasename, acfg->tmpbasename);
 	printf ("Executing opt: %s\n", command);
@@ -7129,7 +7162,6 @@ emit_code (MonoAotCompile *acfg)
 		}
 	}
 
-#ifdef MONOTOUCH
 	if (acfg->direct_method_addresses) {
 		acfg->flags |= MONO_AOT_FILE_FLAG_DIRECT_METHOD_ADDRESSES;
 
@@ -7147,14 +7179,14 @@ emit_code (MonoAotCompile *acfg)
 			fprintf (acfg->fp, "	.no_dead_strip %s\n", symbol);
 
 		for (i = 0; i < acfg->nmethods; ++i) {
-			if (acfg->cfgs [i]) {
-				if (acfg->thumb_mixed && acfg->cfgs [i]->compile_llvm)
-					fprintf (acfg->fp, "\tblx %s\n", acfg->cfgs [i]->asm_symbol);
-				else
-					fprintf (acfg->fp, "\tbl %s\n", acfg->cfgs [i]->asm_symbol);
-			} else {
-				fprintf (acfg->fp, "\tbl method_addresses\n");
-			}
+			int call_size;
+
+#ifdef MONO_ARCH_AOT_SUPPORTED
+			if (acfg->cfgs [i])
+				arch_emit_direct_call (acfg, acfg->cfgs [i]->asm_symbol, FALSE, acfg->thumb_mixed && acfg->cfgs [i]->compile_llvm, NULL, &call_size);
+			else
+				arch_emit_direct_call (acfg, "method_addresses", FALSE, FALSE, NULL, &call_size);
+#endif
 		}
 
 		sprintf (symbol, "method_addresses_end");
@@ -7182,22 +7214,6 @@ emit_code (MonoAotCompile *acfg)
 			}
 		}
 	}
-#else
-	sprintf (symbol, "code_offsets");
-	emit_section_change (acfg, RODATA_SECT, 1);
-	emit_alignment (acfg, 8);
-	emit_label (acfg, symbol);
-
-	acfg->stats.offsets_size += acfg->nmethods * 4;
-
-	for (i = 0; i < acfg->nmethods; ++i) {
-		if (acfg->cfgs [i]) {
-			emit_symbol_diff (acfg, acfg->cfgs [i]->asm_symbol, acfg->methods_symbol, 0);
-		} else {
-			emit_int32 (acfg, 0xffffffff);
-		}
-	}
-#endif
 	emit_line (acfg);
 
 	/* Emit a sorted table mapping methods to their unbox trampolines */

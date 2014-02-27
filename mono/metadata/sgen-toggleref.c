@@ -90,14 +90,13 @@ sgen_process_togglerefs (void)
 		w);
 }
 
-void
-sgen_scan_togglerefs (char *start, char *end, ScanCopyContext ctx)
+void sgen_mark_togglerefs (char *start, char *end, ScanCopyContext ctx)
 {
 	CopyOrMarkObjectFunc copy_func = ctx.copy_func;
 	SgenGrayQueue *queue = ctx.queue;
 	int i;
 
-	SGEN_LOG (4, "Scanning ToggleRefs %d", toggleref_array_size);
+	SGEN_LOG (4, "Marking ToggleRefs %d", toggleref_array_size);
 
 	for (i = 0; i < toggleref_array_size; ++i) {
 		if (toggleref_array [i].strong_ref) {
@@ -106,7 +105,21 @@ sgen_scan_togglerefs (char *start, char *end, ScanCopyContext ctx)
 				SGEN_LOG (6, "\tcopying strong slot %d", i);
 				copy_func (&toggleref_array [i].strong_ref, queue);
 			}
-		} else if (toggleref_array [i].weak_ref) {
+		}
+	}
+	sgen_drain_gray_stack (-1, ctx);
+}
+
+void sgen_clear_togglerefs (char *start, char *end, ScanCopyContext ctx)
+{
+	CopyOrMarkObjectFunc copy_func = ctx.copy_func;
+	SgenGrayQueue *queue = ctx.queue;
+	int i;
+
+	SGEN_LOG (4, "Clearing ToggleRefs %d", toggleref_array_size);
+
+	for (i = 0; i < toggleref_array_size; ++i) {
+		if (toggleref_array [i].weak_ref) {
 			char *object = toggleref_array [i].weak_ref;
 
 			if (object >= start && object < end) {
@@ -120,6 +133,7 @@ sgen_scan_togglerefs (char *start, char *end, ScanCopyContext ctx)
 			}
 		}
 	}
+	sgen_drain_gray_stack (-1, ctx);
 }
 
 static void
@@ -189,6 +203,28 @@ void
 mono_gc_toggleref_register_callback (MonoToggleRefStatus (*proccess_toggleref) (MonoObject *obj))
 {
 	toggleref_callback = proccess_toggleref;
+}
+
+static MonoToggleRefStatus
+test_toggleref_callback (MonoObject *obj)
+{
+	static MonoClassField *mono_toggleref_test_field;
+	int status = MONO_TOGGLE_REF_DROP;
+
+	if (!mono_toggleref_test_field) {
+		mono_toggleref_test_field = mono_class_get_field_from_name (mono_object_get_class (obj), "__test");
+		g_assert (mono_toggleref_test_field);
+	}
+
+	mono_field_get_value (obj, mono_toggleref_test_field, &status);
+	printf ("toggleref-cb obj %d\n", status);
+	return status;
+}
+
+void
+sgen_register_test_toggleref_callback (void)
+{
+	toggleref_callback = test_toggleref_callback;
 }
 
 #endif

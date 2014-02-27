@@ -1,0 +1,45 @@
+<Type Name="HttpCompletionOption" FullName="System.Net.Http.HttpCompletionOption">
+  <TypeSignature Language="C#" Value="public enum HttpCompletionOption" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed HttpCompletionOption extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.Net.Http</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="ResponseContentRead">
+      <MemberSignature Language="C#" Value="ResponseContentRead" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Http.HttpCompletionOption ResponseContentRead = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.Http.HttpCompletionOption</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ResponseHeadersRead">
+      <MemberSignature Language="C#" Value="ResponseHeadersRead" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Http.HttpCompletionOption ResponseHeadersRead = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.Http.HttpCompletionOption</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

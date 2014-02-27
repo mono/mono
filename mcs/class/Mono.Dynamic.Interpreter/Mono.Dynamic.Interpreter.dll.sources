@@ -44,6 +44,7 @@ Assembly/AssemblyInfo.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/AndInstruction.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/ArrayOperations.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/CallInstruction.cs
+../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/ConstantInstruction.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/CallInstruction.Generated.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/ControlFlowInstructions.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/DivInstruction.cs

@@ -1120,6 +1120,7 @@ namespace MonoTests.System.Threading.Tasks
 			}
 		}
 
+#if NET_4_5
 		[Test]
 		public void ContinuationOnBrokenScheduler ()
 		{
@@ -1144,7 +1145,6 @@ namespace MonoTests.System.Threading.Tasks
 			Assert.AreEqual (TaskStatus.Faulted, t3.Status, "#3");
 		}
 
-#if NET_4_5
 		[Test]
 		public void Delay_Invalid ()
 		{

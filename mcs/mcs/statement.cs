@@ -6541,6 +6541,9 @@ namespace Mono.CSharp {
 				ok &= c.Resolve (bc);
 
 				TypeSpec resolved_type = c.CatchType;
+				if (resolved_type == null)
+					continue;
+
 				for (int ii = 0; ii < clauses.Count; ++ii) {
 					if (ii == i)
 						continue;

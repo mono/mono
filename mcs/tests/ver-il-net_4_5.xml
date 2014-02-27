@@ -942,7 +942,7 @@
         <size>671</size>
       </method>
       <method name="Void AndTestNullable()" attrs="129">
-        <size>1809</size>
+        <size>2255</size>
       </method>
       <method name="Void AndAssignedTest()" attrs="129">
         <size>912</size>
@@ -1035,7 +1035,7 @@
         <size>1367</size>
       </method>
       <method name="Void LeftShiftNullableTest()" attrs="129">
-        <size>1138</size>
+        <size>1363</size>
       </method>
       <method name="Void LeftShiftAssignTest()" attrs="129">
         <size>650</size>
@@ -1101,7 +1101,7 @@
         <size>1946</size>
       </method>
       <method name="Void NotEqualNullableTest()" attrs="129">
-        <size>3034</size>
+        <size>3460</size>
       </method>
       <method name="Void NotEqualEnumTest()" attrs="129">
         <size>1048</size>
@@ -1137,7 +1137,7 @@
         <size>1153</size>
       </method>
       <method name="Void RightShiftNullableTest()" attrs="129">
-        <size>1137</size>
+        <size>1362</size>
       </method>
       <method name="Void RightShiftAssignTest()" attrs="129">
         <size>650</size>
@@ -18918,6 +18918,21 @@
       </method>
     </type>
   </test>
+  <test name="gtest-604.cs">
+    <type name="A`1[T]">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="E">
+      <method name="Void Main()" attrs="150">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
@@ -28427,7 +28442,7 @@
         <size>5</size>
       </method>
       <method name="Int32 Main()" attrs="150">
-        <size>147</size>
+        <size>158</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -28440,6 +28455,12 @@
       </method>
       <method name="Void TestParams(Int32[])" attrs="145">
         <size>7</size>
+      </method>
+      <method name="Void TestParams2(System.String, Int32[])" attrs="145">
+        <size>7</size>
+      </method>
+      <method name="Void TestParams2(System.String, Int32)" attrs="145">
+        <size>2</size>
       </method>
     </type>
   </test>
@@ -28674,20 +28695,24 @@
     </type>
   </test>
   <test name="gtest-optional-14.cs">
-    <type name="A">
-      <method name="Int32 GetValues(System.String[], System.String)" attrs="134">
-        <size>10</size>
+    <type name="C">
+      <method name="Void M(Int32, Int32)" attrs="145">
+        <size>2</size>
       </method>
-      <method name="Int32 GetValues(System.String, System.String[])" attrs="134">
-        <size>10</size>
-      </method>
-      <method name="Void .ctor()" attrs="6278">
+      <method name="Void M[T](T, Int32)" attrs="145">
         <size>7</size>
       </method>
-    </type>
-    <type name="B">
-      <method name="Int32 Main()" attrs="150">
-        <size>37</size>
+      <method name="Void M2[T,U](T, System.Func`2[T,U], Int32)" attrs="145">
+        <size>7</size>
+      </method>
+      <method name="Void M2[T,U](T, System.Func`2[T,System.Threading.Tasks.Task`1[U]], Int32)" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void Main()" attrs="145">
+        <size>45</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[System.Int32] &lt;Main&gt;m__0(Int32)" attrs="145">
+        <size>14</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -62125,6 +62150,51 @@
       </method>
     </type>
     <type name="X+&lt;ThrowAsync&gt;c__async1">
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-async-60.cs">
+    <type name="C">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>19</size>
+      </method>
+      <method name="System.Threading.Tasks.Task AlignTwoItems()" attrs="134">
+        <size>41</size>
+      </method>
+      <method name="System.Threading.Tasks.Task MoveItemBy(System.Object, Int32, Int32)" attrs="129">
+        <size>15</size>
+      </method>
+      <method name="System.Threading.Tasks.Task`1[B] AddItemAt(Int32, Int32)" attrs="129">
+        <size>33</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;AlignTwoItems&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>469</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="X+&lt;AddItemAt&gt;c__async1">
+      <method name="Void MoveNext()" attrs="486">
+        <size>43</size>
+      </method>
       <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
         <size>13</size>
       </method>

@@ -132,7 +132,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			if (RunningOnUnix)
 				// on unix, all characters are allowed
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			string systemDir = Environment.GetFolderPath (Environment.SpecialFolder.System);
 			string exe = "\"" + Path.Combine (systemDir, "calc.exe") + "\"";
@@ -680,7 +680,7 @@ namespace MonoTests.System.Diagnostics
 		{
 			// Test requires cygwin, so we just bail out for now.
 			if (Path.DirectorySeparatorChar == '\\')
-				return;
+				Assert.Ignore ("Test requires cygwin.");
 			
 			Process p = new Process ();
 			p.StartInfo = new ProcessStartInfo ("/bin/sh", "-c \"sleep 2; echo hello\"");

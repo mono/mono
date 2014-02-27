@@ -1688,6 +1688,9 @@ void GC_finalize GC_PROTO((void));
   			/* for processing by GC_invoke_finalizers.	*/
   			/* Invoked with lock.				*/
 
+void GC_process_togglerefs (void);
+	/*Process the togglerefs before GC starts */
+
 void GC_notify_or_invoke_finalizers GC_PROTO((void));
 			/* If GC_finalize_on_demand is not set, invoke	*/
 			/* eligible finalizers. Otherwise:		*/

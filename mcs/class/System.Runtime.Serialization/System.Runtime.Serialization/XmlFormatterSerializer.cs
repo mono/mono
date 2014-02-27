@@ -135,7 +135,7 @@ namespace System.Runtime.Serialization
 					if (qname == QName.Empty) {
 						name = XmlConvert.EncodeLocalName (actualType.Name);
 						ns = KnownTypeCollection.DefaultClrNamespaceBase + actualType.Namespace;
-					} else if (qname.Namespace == KnownTypeCollection.MSSimpleNamespace)
+					} else if (XmlSchemaType.GetBuiltInSimpleType (new QName (qname.Name, XmlSchema.Namespace)) != null)
 						ns = XmlSchema.Namespace;
 					if (writer.LookupPrefix (ns) == null) // it goes first (extraneous, but it makes att order compatible)
 						writer.WriteXmlnsAttribute (null, ns);

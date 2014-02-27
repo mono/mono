@@ -862,7 +862,7 @@ namespace System.Xml.Serialization {
 				else 
 					mapAttribute.AttributeName = atts.XmlAttribute.AttributeName;
 
-				mapAttribute.AttributeName = XmlConvert.EncodeLocalName (mapAttribute.AttributeName);
+				mapAttribute.AttributeName = XmlConvert.EncodeName (mapAttribute.AttributeName);
 
 				if (typeData.IsComplexType)
 					mapAttribute.MappedType = ImportTypeMapping (typeData.Type, null, defaultNamespace);

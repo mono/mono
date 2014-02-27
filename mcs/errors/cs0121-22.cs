@@ -1,5 +1,5 @@
 // CS0121: The call is ambiguous between the following methods or properties: `A.Foo<int>(int, G<int>)' and `A.Foo<int>(int, object)'
-// Line:
+// Line: 18
 
 class A
 {

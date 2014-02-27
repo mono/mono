@@ -1,0 +1,107 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="System.Net.Http" Version="4.0.0.0">
+      <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 07 d1 fa 57 c4 ae d9 f0 a3 2e 84 aa 0f ae fd 0d e9 e8 fd 6a ec 8f 87 fb 03 76 6c 83 4c 99 92 1e b2 3b e7 9a d9 d5 dc c1 dd 9a d2 36 13 21 02 90 0b 72 3c f9 80 95 7f c4 e1 77 10 8f c6 07 77 4f 29 e8 32 0e 92 ea 05 ec e4 e8 21 c0 a5 ef e8 f1 64 5c 4c 0c 93 c1 ab 99 28 5d 62 2c aa 65 2c 1d fa d6 3d 74 5d 6f 2d e5 f1 7e 5e af 0f c4 96 3d 26 1c 8a 12 43 65 18 20 6d c0 93 34 4d 5a d2 93 ]</AssemblyPublicKey>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute+DebuggingModes.IgnoreSymbolStoreSequencePoints)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCompany("Mono development team")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCopyright("(c) Various Mono authors")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDefaultAlias("System.Net.Http.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription("System.Net.Http.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyFileVersion("4.0.30319.17020")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("4.0.30319.17020")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("Mono Common Language Infrastructure")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("System.Net.Http.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.NeutralResourcesLanguage("en-US")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.SatelliteContractVersion("4.0.0.0")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.InternalsVisibleTo("System.Net.Http.WebRequest, PublicKey=002400000480000094000000060200000024000052534131000400000100010007d1fa57c4aed9f0a32e84aa0faefd0de9e8fd6aec8f87fb03766c834c99921eb23be79ad9d5dcc1dd9ad236132102900b723cf980957fc4e177108fc607774f29e8320e92ea05ece4e821c0a5efe8f1645c4c0c93c1ab99285d622caa652c1dfad63d745d6f2de5f17e5eaf0fc4963d261c8a12436518206dc093344d5ad293")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="System.Net.Http">
+      <Type Name="ByteArrayContent" Kind="Class" />
+      <Type Name="ClientCertificateOption" Kind="Enumeration" />
+      <Type Name="DelegatingHandler" Kind="Class" />
+      <Type Name="FormUrlEncodedContent" Kind="Class" />
+      <Type Name="HttpClient" Kind="Class" />
+      <Type Name="HttpClientHandler" Kind="Class" />
+      <Type Name="HttpCompletionOption" Kind="Enumeration" />
+      <Type Name="HttpContent" Kind="Class" />
+      <Type Name="HttpMessageHandler" Kind="Class" />
+      <Type Name="HttpMessageInvoker" Kind="Class" />
+      <Type Name="HttpMethod" Kind="Class" />
+      <Type Name="HttpRequestException" Kind="Class" />
+      <Type Name="HttpRequestMessage" Kind="Class" />
+      <Type Name="HttpResponseMessage" Kind="Class" />
+      <Type Name="MessageProcessingHandler" Kind="Class" />
+      <Type Name="MultipartContent" Kind="Class" />
+      <Type Name="MultipartFormDataContent" Kind="Class" />
+      <Type Name="StreamContent" Kind="Class" />
+      <Type Name="StringContent" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Net.Http.Headers">
+      <Type Name="AuthenticationHeaderValue" Kind="Class" />
+      <Type Name="CacheControlHeaderValue" Kind="Class" />
+      <Type Name="ContentDispositionHeaderValue" Kind="Class" />
+      <Type Name="ContentRangeHeaderValue" Kind="Class" />
+      <Type Name="EntityTagHeaderValue" Kind="Class" />
+      <Type Name="HttpContentHeaders" Kind="Class" />
+      <Type Name="HttpHeaders" Kind="Class" />
+      <Type Name="HttpHeaderValueCollection`1" DisplayName="HttpHeaderValueCollection&lt;T&gt;" Kind="Class" />
+      <Type Name="HttpRequestHeaders" Kind="Class" />
+      <Type Name="HttpResponseHeaders" Kind="Class" />
+      <Type Name="MediaTypeHeaderValue" Kind="Class" />
+      <Type Name="MediaTypeWithQualityHeaderValue" Kind="Class" />
+      <Type Name="NameValueHeaderValue" Kind="Class" />
+      <Type Name="NameValueWithParametersHeaderValue" Kind="Class" />
+      <Type Name="ProductHeaderValue" Kind="Class" />
+      <Type Name="ProductInfoHeaderValue" Kind="Class" />
+      <Type Name="RangeConditionHeaderValue" Kind="Class" />
+      <Type Name="RangeHeaderValue" Kind="Class" />
+      <Type Name="RangeItemHeaderValue" Kind="Class" />
+      <Type Name="RetryConditionHeaderValue" Kind="Class" />
+      <Type Name="StringWithQualityHeaderValue" Kind="Class" />
+      <Type Name="TransferCodingHeaderValue" Kind="Class" />
+      <Type Name="TransferCodingWithQualityHeaderValue" Kind="Class" />
+      <Type Name="ViaHeaderValue" Kind="Class" />
+      <Type Name="WarningHeaderValue" Kind="Class" />
+    </Namespace>
+  </Types>
+  <Title>System.Net.Http</Title>
+</Overview>

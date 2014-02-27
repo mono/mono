@@ -235,7 +235,7 @@ environment variable that affects behavior:
 			r.WhitespaceHandling = WhitespaceHandling.Significant;
 			XmlTextWriter w = null;
 			if (args.Length > 2)
-				w = new XmlTextWriter (args [1], Encoding.UTF8);
+				w = new XmlTextWriter (args [2], Encoding.UTF8);
 			else
 				w = new XmlTextWriter (Console.Out);
 			w.Formatting = Formatting.Indented;

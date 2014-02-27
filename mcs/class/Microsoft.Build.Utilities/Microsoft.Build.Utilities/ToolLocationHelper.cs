@@ -121,11 +121,27 @@ namespace Microsoft.Build.Utilities
 			return mono_dir [(int)version];
 		}
 
-		[MonoTODO]
 		public static string GetPathToDotNetFrameworkFile (string fileName,
 								  TargetDotNetFrameworkVersion version)
 		{
-			throw new NotImplementedException ();
+			string dir = GetPathToDotNetFramework (version);
+			string file = Path.Combine (dir, fileName);
+			if (File.Exists (file))
+				return file;
+
+			//Mono doesn't ship multiple versions of tools that are backwards/forwards compatible
+			if (!runningOnDotNet) {
+#if NET_3_5
+				//most of the 3.5 tools are in the 2.0 directory
+				if (version == TargetDotNetFrameworkVersion.Version35)
+					return GetPathToDotNetFrameworkFile (fileName, TargetDotNetFrameworkVersion.Version20);
+#endif
+				//unversioned tools are in the 4.5 directory
+				if (version == TargetDotNetFrameworkVersion.Version20)
+					return GetPathToDotNetFrameworkFile (fileName, (TargetDotNetFrameworkVersion)5);
+			}
+
+			return null;
 		}
 
 		public static string GetPathToDotNetFrameworkSdk (TargetDotNetFrameworkVersion version)

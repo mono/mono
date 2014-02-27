@@ -280,7 +280,7 @@
 
 		<ResolveAssemblyReference
 			Assemblies="@(_Reference)"
-			AssemblyFiles="@(ChildProjectReferences)"
+			AssemblyFiles="@(ChildProjectReferences);@(_ExplicitReference)"
 			SearchPaths="$(AssemblySearchPaths)"
 			CandidateAssemblyFiles="@(Content);@(None)"
 			TargetFrameworkDirectories="$(TargetFrameworkDirectory)"

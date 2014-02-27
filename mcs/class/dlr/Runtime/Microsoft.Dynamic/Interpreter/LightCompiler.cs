@@ -1575,9 +1575,14 @@ namespace Microsoft.Scripting.Interpreter {
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "expr")]
         private void CompileReducibleExpression(Expression expr) {
-            throw new System.NotImplementedException();
+            switch (expr.NodeType) {
+            case ExpressionType.PreIncrementAssign:
+                _instructions.EmitIncrement (expr.Type);
+                break;
+            default:
+                throw Assert.Unreachable;
+            }
         }
 
         internal void Compile(Expression expr, bool asVoid) {

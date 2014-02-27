@@ -731,5 +731,51 @@ namespace MonoTests.System.Net {
 			t.Start ();
 			t.Stop ();
 		}
+
+		//
+		// Bugs: #17204, #10818
+		//
+		// Sadly, on Unix, if there are different calls to bind
+		// like *:port and host:port that is not an error,
+		// it would only be an error if host:port is done twice, so
+		// the best we can hope for is that listening on a specific interface
+		// does not also listen to another interface.
+		//
+		[Test]
+		public void BindToSingleInterface ()
+		{
+			IPAddress [] machineAddress = null;
+
+			try {
+				machineAddress = Dns.GetHostAddresses (Dns.GetHostName ());
+			} catch (SocketException){
+				// The build hosts sometimes can not resolve the hostname
+				Assert.Ignore ("Hostname couldn't be resolved.");
+			}
+			
+			int port = 61234;
+			var h = new HttpListener ();
+			h.Prefixes.Add ("http://" + machineAddress [0] + ":" + port + "/");
+			h.Start ();
+
+			try {
+				var c = new TcpClient ("localhost", port);
+				Assert.Fail ("The TcpClient should have failed to connect since HttpListener is not listening on localhost");
+			} catch (SocketException){
+				// Pass
+			}
+			h.Stop ();
+		}
+
+		[Test]
+		public void BindToAllInterfaces ()
+		{
+			var h = new HttpListener ();
+			int port = 62234;
+			h.Prefixes.Add ("http://*:" + port + "/");
+			h.Start ();
+			var c = new TcpClient ("localhost", port);
+			h.Stop ();
+		}
 	}
 }

@@ -43,7 +43,7 @@
 #include <metadata/profiler-private.h>
 #include <mono/metadata/coree.h>
 
-#define DEBUG_DOMAIN_UNLOAD 1
+//#define DEBUG_DOMAIN_UNLOAD 1
 
 /* we need to use both the Tls* functions and __thread because
  * some archs may generate faster jit code with one meachanism
@@ -125,6 +125,7 @@ static const MonoRuntimeInfo supported_runtimes[] = {
 	{"v4.0.30319","4.5", { {4,0,0,0}, {10,0,0,0}, {4,0,0,0}, {4,0,0,0} } },
 	{"v4.0.30128","4.0", { {4,0,0,0}, {10,0,0,0}, {4,0,0,0}, {4,0,0,0} } },
 	{"v4.0.20506","4.0", { {4,0,0,0}, {10,0,0,0}, {4,0,0,0}, {4,0,0,0} } },
+	{"mobile",    "2.1", { {2,0,5,0}, {10,0,0,0}, {2,0,5,0}, {2,0,5,0} } },
 	{"moonlight", "2.1", { {2,0,5,0}, { 9,0,0,0}, {3,5,0,0}, {3,0,0,0} } },
 };
 
@@ -1035,6 +1036,7 @@ lock_free_mempool_free (LockFreeMempool *mp)
 		mono_vfree (chunk, mono_pagesize ());
 		chunk = next;
 	}
+	g_free (mp);
 }
 
 /*
@@ -1975,6 +1977,13 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 
 	mono_reflection_cleanup_domain (domain);
 
+	/* This must be done before type_hash is freed */
+	if (domain->class_vtable_array) {
+		int i;
+		for (i = 0; i < domain->class_vtable_array->len; ++i)
+			unregister_vtable_reflection_type (g_ptr_array_index (domain->class_vtable_array, i));
+	}
+
 	if (domain->type_hash) {
 		mono_g_hash_table_destroy (domain->type_hash);
 		domain->type_hash = NULL;
@@ -1982,12 +1991,6 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	if (domain->type_init_exception_hash) {
 		mono_g_hash_table_destroy (domain->type_init_exception_hash);
 		domain->type_init_exception_hash = NULL;
-	}
-
-	if (domain->class_vtable_array) {
-		int i;
-		for (i = 0; i < domain->class_vtable_array->len; ++i)
-			unregister_vtable_reflection_type (g_ptr_array_index (domain->class_vtable_array, i));
 	}
 
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
@@ -2355,7 +2358,7 @@ mono_domain_add_class_static_data (MonoDomain *domain, MonoClass *klass, gpointe
 		if (next >= size) {
 			/* 'data' is allocated by alloc_fixed */
 			gpointer *new_array = mono_gc_alloc_fixed (sizeof (gpointer) * (size * 2), MONO_GC_ROOT_DESCR_FOR_FIXED (size * 2));
-			mono_gc_memmove (new_array, domain->static_data_array, sizeof (gpointer) * size);
+			mono_gc_memmove_aligned (new_array, domain->static_data_array, sizeof (gpointer) * size);
 			size *= 2;
 			new_array [1] = GINT_TO_POINTER (size);
 			mono_gc_free_fixed (domain->static_data_array);

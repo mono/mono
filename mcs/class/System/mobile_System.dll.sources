@@ -503,6 +503,7 @@ System.Net/IPEndPoint.cs
 System.Net/IPHostEntry.cs
 System.Net/IPv6Address.cs
 System.Net/IPv6Address.cs
+System.Net/IWebConnectionState.cs
 System.Net/IWebProxy.cs
 System.Net/IWebProxyScript.cs
 System.Net/IWebRequestCreate.cs
@@ -524,6 +525,7 @@ System.Net/ResponseStream.cs
 System.Net/SecurityProtocolType.cs
 System.Net/ServicePoint.cs
 System.Net/ServicePointManager.cs
+System.Net/ServicePointManager.extra.cs
 System.Net/SocketAddress.cs
 System.Net/TransportContext.cs
 System.Net/TransportType.cs
@@ -553,6 +555,17 @@ System.Net/WebRequest.cs
 System.Net/WebRequestMethods.cs
 System.Net/WebResponse.cs
 System.Net/WebUtility.cs
+System.Net.WebSockets/ClientWebSocket.cs
+System.Net.WebSockets/ClientWebSocketOptions.cs
+System.Net.WebSockets/HttpListenerWebSocketContext.cs
+System.Net.WebSockets/WebSocket.cs
+System.Net.WebSockets/WebSocketCloseStatus.cs
+System.Net.WebSockets/WebSocketContext.cs
+System.Net.WebSockets/WebSocketError.cs
+System.Net.WebSockets/WebSocketException.cs
+System.Net.WebSockets/WebSocketMessageType.cs
+System.Net.WebSockets/WebSocketReceiveResult.cs
+System.Net.WebSockets/WebSocketState.cs
 System.Runtime.InteropServices/DefaultParameterValueAttribute.cs
 System.Security.AccessControl/SemaphoreAccessRule.cs
 System.Security.AccessControl/SemaphoreAuditRule.cs

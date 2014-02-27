@@ -248,8 +248,10 @@ namespace System.Runtime.Serialization
 				return;
 
 			Type elementType = type;
-			if (type.HasElementType)
+			if (type.HasElementType) {
+				known_types.Add (type);
 				elementType = type.GetElementType ();
+			}
 
 			known_types.Add (elementType);
 

@@ -147,14 +147,14 @@ namespace Mono.CSharp {
 			}
 
 			var results = new List<string> ();
-			if (expr is Namespace) {
-				Namespace nexpr = expr as Namespace;
+			var nexpr = expr as NamespaceExpression;
+			if (nexpr != null) {
 				string namespaced_partial;
 
 				if (partial_name == null)
-					namespaced_partial = nexpr.Name;
+					namespaced_partial = nexpr.Namespace.Name;
 				else
-					namespaced_partial = nexpr.Name + "." + partial_name;
+					namespaced_partial = nexpr.Namespace.Name + "." + partial_name;
 
 				rc.CurrentMemberDefinition.GetCompletionStartingWith (namespaced_partial, results);
 				if (partial_name != null)

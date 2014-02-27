@@ -6,8 +6,10 @@
 //   Wictor Wilén (decode/encode functions) (wictor@ibizkit.se)
 //   Tim Coleman (tim@timcoleman.com)
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2014 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -130,6 +132,7 @@ namespace System.Net {
 			(long)'a' << 56 | (long)'m' << 48 | (long)'p' << 40, 
 			(long)'a' << 56 | (long)'n' << 48 | (long)'d' << 40, 
 			(long)'a' << 56 | (long)'n' << 48 | (long)'g' << 40, 
+			(long)'a' << 56 | (long)'p' << 48 | (long)'o' << 40 | (long)'s' << 32,
 			(long)'a' << 56 | (long)'r' << 48 | (long)'i' << 40 | (long)'n' << 32 | (long)'g' << 24, 
 			(long)'a' << 56 | (long)'s' << 48 | (long)'y' << 40 | (long)'m' << 32 | (long)'p' << 24, 
 			(long)'a' << 56 | (long)'t' << 48 | (long)'i' << 40 | (long)'l' << 32 | (long)'d' << 24 | (long)'e' << 16, 
@@ -385,6 +388,7 @@ namespace System.Net {
 			'\u0026',
 			'\u2227',
 			'\u2220',
+			'\u0027',
 			'\u00E5',
 			'\u2248',
 			'\u00E3',
@@ -568,6 +572,25 @@ namespace System.Net {
 			'\u03B6',
 			'\u200D',
 			'\u200C'
+		};
+
+		static readonly char[] hexChars = new [] {
+			'0',
+			'1',
+			'2',
+			'3',
+			'4',
+			'5',
+			'6',
+			'7',
+			'8',
+			'9',
+			'A',
+			'B',
+			'C',
+			'D',
+			'E',
+			'F'
 		};
 
 		#region Methods
@@ -861,11 +884,8 @@ namespace System.Net {
 	
 		public static string UrlEncode (string s, Encoding Enc) 
 		{
-			if (s == null)
-				return null;
-
-			if (s == "")
-				return "";
+			if (string.IsNullOrEmpty (s))
+				return s;
 
 			bool needEncode = false;
 			int len = s.Length;
@@ -938,12 +958,10 @@ namespace System.Net {
 
 			return UrlEncodeToBytes (bytes, 0, bytes.Length);
 		}
-
-		static char [] hexChars = "0123456789abcdef".ToCharArray ();
-
+			
 		static bool NotEncoded (char c)
 		{
-			return (c == '!' || c == '\'' || c == '(' || c == ')' || c == '*' || c == '-' || c == '.' || c == '_');
+			return (c == '!' || c == '(' || c == ')' || c == '*' || c == '-' || c == '.' || c == '_');
 		}
 
 		static void UrlEncodeChar (char c, Stream result, bool isUnicode) {
@@ -1043,17 +1061,22 @@ namespace System.Net {
 			return result.ToArray ();
 		}
 
-		static string ConvertKeyToEntity (string key)
+		static bool TryConvertKeyToEntity (string key, out char value)
 		{
 			var token = CalculateKeyValue (key);
-			if (token == 0)
-				return key;
+			if (token == 0) {
+				value = '\0';
+				return false;
+			}
 
 			var idx = Array.BinarySearch (entities, token);
-			if (idx < 0)
-				return key;
+			if (idx < 0) {
+				value = '\0';
+				return false;
+			}
 
-			return entities_values [idx].ToString ();
+			value = entities_values [idx];
+			return true;
 		}
 
 		static long CalculateKeyValue (string s)
@@ -1095,7 +1118,8 @@ namespace System.Net {
 			// 3 -> '#' found after '&' and getting numbers
 			int state = 0;
 			int number = 0;
-			bool have_trailing_digits = false;
+			int digit_start = 0;
+			bool hex_number = false;
 	
 			for (int i = 0; i < len; i++) {
 				char c = s [i];
@@ -1111,9 +1135,9 @@ namespace System.Net {
 
 				if (c == '&') {
 					state = 1;
-					if (have_trailing_digits) {
-						entity.Append (number.ToString (CultureInfo.InvariantCulture));
-						have_trailing_digits = false;
+					if (digit_start > 0) {
+						entity.Append (s, digit_start, i - digit_start);
+						digit_start = 0;
 					}
 
 					output.Append (entity.ToString ());
@@ -1122,64 +1146,99 @@ namespace System.Net {
 					continue;
 				}
 
-				if (state == 1) {
+				switch (state) {
+				case 1:
 					if (c == ';') {
 						state = 0;
 						output.Append (entity.ToString ());
 						output.Append (c);
 						entity.Length = 0;
-					} else {
-						number = 0;
-						if (c != '#') {
-							state = 2;
-						} else {
-							state = 3;
-						}
-						entity.Append (c);
+						break;
 					}
-				} else if (state == 2) {
+
+					number = 0;
+					hex_number = false;
+					if (c != '#') {
+						state = 2;
+					} else {
+						state = 3;
+					}
+					entity.Append (c);
+
+					break;
+				case 2:
 					entity.Append (c);
 					if (c == ';') {
 						string key = entity.ToString ();
+						state = 0;
+						entity.Length = 0;
+
 						if (key.Length > 1) {
 							var skey = key.Substring (1, key.Length - 2);
-							key = ConvertKeyToEntity (skey);
+							if (TryConvertKeyToEntity (skey, out c)) {
+								output.Append (c);
+								break;
+							}
 						}
 
 						output.Append (key);
-						state = 0;
-						entity.Length = 0;
 					}
-				} else if (state == 3) {
+
+					break;
+				case 3:
 					if (c == ';') {
-						if (number > 65535) {
-							output.Append ("&#");
-							output.Append (number.ToString (CultureInfo.InvariantCulture));
-							output.Append (";");
+						if (number < 0x10000) {
+							output.Append ((char)number);
 						} else {
-							output.Append ((char) number);
+							output.Append ((char)(0xd800 + ((number - 0x10000) >> 10)));
+							output.Append ((char)(0xdc00 + ((number - 0x10000) & 0x3ff)));
 						}
 						state = 0;
 						entity.Length = 0;
-						have_trailing_digits = false;
-					} else if (Char.IsDigit (c)) {
-						number = number * 10 + ((int) c - '0');
-						have_trailing_digits = true;
-					} else {
-						state = 2;
-						if (have_trailing_digits) {
-							entity.Append (number.ToString (CultureInfo.InvariantCulture));
-							have_trailing_digits = false;
-						}
-						entity.Append (c);
+						digit_start = 0;
+						break;
 					}
+
+					if (c == 'x' || c == 'X' && !hex_number) {
+						digit_start = i;
+						hex_number = true;
+						break;
+					}
+
+					if (Char.IsDigit (c)) {
+						if (digit_start == 0)
+							digit_start = i;
+
+						number = number * (hex_number ? 16 : 10) + ((int)c - '0');
+						break;
+					}
+
+					if (hex_number) {
+						if (c >= 'a' && c <= 'f') {
+							number = number * 16 + 10 + ((int)c - 'a');
+							break;
+						}
+						if (c >= 'A' && c <= 'F') {
+							number = number * 16 + 10 + ((int)c - 'A');
+							break;
+						}
+					}
+
+					state = 2;
+					if (digit_start > 0) {
+						entity.Append (s, digit_start, i - digit_start);
+						digit_start = 0;
+					}
+
+					entity.Append (c);
+					break;
 				}
 			}
 
 			if (entity.Length > 0) {
-				output.Append (entity.ToString ());
-			} else if (have_trailing_digits) {
-				output.Append (number.ToString (CultureInfo.InvariantCulture));
+				output.Append (entity);
+			} else if (digit_start > 0) {
+				output.Append (s, digit_start, s.Length - digit_start);
 			}
 			return output.ToString ();
 		}
@@ -1206,22 +1265,37 @@ namespace System.Net {
 				return null;
 
 			bool needEncode = false;
-			for (int i = 0; i < s.Length; i++) {
+			int i;
+			for (i = 0; i < s.Length; i++) {
 				char c = s [i];
-				if (c == '&' || c == '"' || c == '<' || c == '>' || c > 159) {
+				switch (c) {
+				case '&':
+				case '"':
+				case '<':
+				case '>':
+				case '\'':
 					needEncode = true;
 					break;
+				default:
+					if (c > 159) {
+						needEncode = true;
+						break;
+					}
+
+					continue;
 				}
+
+				break;
 			}
 
 			if (!needEncode)
 				return s;
 
-			StringBuilder output = new StringBuilder ();
+			StringBuilder output = new StringBuilder (s, 0, i, s.Length * 2);
 			
-			int len = s.Length;
-			for (int i = 0; i < len; i++) 
-				switch (s [i]) {
+			for (; i < s.Length; i++) {
+				var c = s [i];
+				switch (c) {
 				case '&' :
 					output.Append ("&amp;");
 					break;
@@ -1234,23 +1308,32 @@ namespace System.Net {
 				case '"' :
 					output.Append ("&quot;");
 					break;
+				case '\'':
+					output.Append ("&#39;");
+					break;
 				default:
 					// MS starts encoding with &# from 160 and stops at 255.
 					// We don't do that. One reason is the 65308/65310 unicode
 					// characters that look like '<' and '>'.
 #if TARGET_JVM
-					if (s [i] > 159 && s [i] < 256) {
+					if (c > 159 && c < 256) {
 #else
-					if (s [i] > 159) {
+					if (c > 159) {
 #endif
 						output.Append ("&#");
-						output.Append (((int) s [i]).ToString (CultureInfo.InvariantCulture));
+						if (char.IsSurrogate (c))
+							output.Append (char.ConvertToUtf32 (s, i++));
+						else
+							output.Append (((int) c).ToString (CultureInfo.InvariantCulture));
+
 						output.Append (";");
 					} else {
-						output.Append (s [i]);
+						output.Append (c);
 					}
 					break;
 				}
+			}
+
 			return output.ToString ();
 		}
 	

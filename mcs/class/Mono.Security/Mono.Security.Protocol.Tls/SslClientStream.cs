@@ -280,41 +280,9 @@ namespace Mono.Security.Protocol.Tls
 					Fig. 1 - Message flow for a full handshake		
 		*/
 
-		internal override IAsyncResult OnBeginNegotiateHandshake(AsyncCallback callback, object state)
+		private void SafeEndReceiveRecord (IAsyncResult ar, bool ignoreEmpty = false)
 		{
-			try
-			{
-				if (this.context.HandshakeState != HandshakeState.None)
-				{
-					this.context.Clear();
-				}
-
-				// Obtain supported cipher suites
-				this.context.SupportedCiphers = CipherSuiteFactory.GetSupportedCiphers(this.context.SecurityProtocol);
-
-				// Set handshake state
-				this.context.HandshakeState = HandshakeState.Started;
-
-				// Send client hello
-				return this.protocol.BeginSendRecord(HandshakeType.ClientHello, callback, state);
-			}
-			catch (TlsException ex)
-			{
-				this.protocol.SendAlert(ex.Alert);
-
-				throw new IOException("The authentication or decryption has failed.", ex);
-			}
-			catch (Exception ex)
-			{
-				this.protocol.SendAlert(AlertDescription.InternalError);
-
-				throw new IOException("The authentication or decryption has failed.", ex);
-			}
-		}
-
-		private void SafeReceiveRecord (Stream s, bool ignoreEmpty = false)
-		{
-			byte[] record = this.protocol.ReceiveRecord (s);
+			byte[] record = this.protocol.EndReceiveRecord (ar);
 			if (!ignoreEmpty && ((record == null) || (record.Length == 0))) {
 				throw new TlsException (
 					AlertDescription.HandshakeFailiure,
@@ -322,97 +290,313 @@ namespace Mono.Security.Protocol.Tls
 			}
 		}
 
-		internal override void OnNegotiateHandshakeCallback(IAsyncResult asyncResult)
+		private enum NegotiateState
 		{
-			this.protocol.EndSendRecord(asyncResult);
+			SentClientHello,
+			ReceiveClientHelloResponse,
+			SentCipherSpec,
+			ReceiveCipherSpecResponse,
+			SentKeyExchange,
+			ReceiveFinishResponse,
+			SentFinished,
+		};
 
-			// Read server response
-			while (this.context.LastHandshakeMsg != HandshakeType.ServerHelloDone) 
+		private class NegotiateAsyncResult : IAsyncResult
+		{
+			private object locker = new object ();
+			private AsyncCallback _userCallback;
+			private object _userState;
+			private Exception _asyncException;
+			private ManualResetEvent handle;
+			private NegotiateState _state;
+			private bool completed;
+
+			public NegotiateAsyncResult(AsyncCallback userCallback, object userState, NegotiateState state)
 			{
-				// Read next record (skip empty, e.g. warnings alerts)
-				SafeReceiveRecord (this.innerStream, true);
+				_userCallback = userCallback;
+				_userState = userState;
+				_state = state;
+			}
 
-				// special case for abbreviated handshake where no ServerHelloDone is sent from the server
-				if (this.context.AbbreviatedHandshake && (this.context.LastHandshakeMsg == HandshakeType.ServerHello))
+			public NegotiateState State
+			{
+				get { return _state; }
+				set { _state = value; }
+			}
+
+			public object AsyncState
+			{
+				get { return _userState; }
+			}
+
+			public Exception AsyncException
+			{
+				get { return _asyncException; }
+			}
+
+			public bool CompletedWithError
+			{
+				get {
+					if (!IsCompleted)
+						return false; // Perhaps throw InvalidOperationExcetion?
+
+					return null != _asyncException;
+				}
+			}
+
+			public WaitHandle AsyncWaitHandle
+			{
+				get {
+					lock (locker) {
+						if (handle == null)
+							handle = new ManualResetEvent (completed);
+					}
+					return handle;
+				}
+
+			}
+
+			public bool CompletedSynchronously
+			{
+				get { return false; }
+			}
+
+			public bool IsCompleted
+			{
+				get {
+					lock (locker) {
+						return completed;
+					}
+				}
+			}
+
+			public void SetComplete(Exception ex)
+			{
+				lock (locker) {
+					if (completed)
+						return;
+
+					completed = true;
+					if (handle != null)
+						handle.Set ();
+
+					if (_userCallback != null)
+						_userCallback.BeginInvoke (this, null, null);
+
+					_asyncException = ex;
+				}
+			}
+
+			public void SetComplete()
+			{
+				SetComplete(null);
+			}
+		}
+
+		internal override IAsyncResult BeginNegotiateHandshake(AsyncCallback callback, object state)
+		{
+			if (this.context.HandshakeState != HandshakeState.None) {
+				this.context.Clear ();
+			}
+
+			// Obtain supported cipher suites
+			this.context.SupportedCiphers = CipherSuiteFactory.GetSupportedCiphers (false, context.SecurityProtocol);
+
+			// Set handshake state
+			this.context.HandshakeState = HandshakeState.Started;
+
+			NegotiateAsyncResult result = new NegotiateAsyncResult (callback, state, NegotiateState.SentClientHello);
+
+			// Begin sending the client hello
+			this.protocol.BeginSendRecord (HandshakeType.ClientHello, NegotiateAsyncWorker, result);
+
+			return result;
+		}
+
+		internal override void EndNegotiateHandshake (IAsyncResult result)
+		{
+			NegotiateAsyncResult negotiate = result as NegotiateAsyncResult;
+
+			if (negotiate == null)
+				throw new ArgumentNullException ();
+			if (!negotiate.IsCompleted)
+				negotiate.AsyncWaitHandle.WaitOne();
+			if (negotiate.CompletedWithError)
+				throw negotiate.AsyncException;
+		}
+
+		private void NegotiateAsyncWorker (IAsyncResult result)
+		{
+			NegotiateAsyncResult negotiate = result.AsyncState as NegotiateAsyncResult;
+
+			try
+			{
+				switch (negotiate.State)
+				{
+				case NegotiateState.SentClientHello:
+					this.protocol.EndSendRecord (result);
+
+					// we are now ready to ready the receive the hello response.
+					negotiate.State = NegotiateState.ReceiveClientHelloResponse;
+
+					// Start reading the client hello response
+					this.protocol.BeginReceiveRecord (this.innerStream, NegotiateAsyncWorker, negotiate);
 					break;
-			}
 
-			// the handshake is much easier if we can reuse a previous session settings
-			if (this.context.AbbreviatedHandshake) 
+				case NegotiateState.ReceiveClientHelloResponse:
+					this.SafeEndReceiveRecord (result, true);
+
+					if (this.context.LastHandshakeMsg != HandshakeType.ServerHelloDone &&
+						(!this.context.AbbreviatedHandshake || this.context.LastHandshakeMsg != HandshakeType.ServerHello)) {
+						// Read next record (skip empty, e.g. warnings alerts)
+						this.protocol.BeginReceiveRecord (this.innerStream, NegotiateAsyncWorker, negotiate);
+						break;
+					}
+
+					// special case for abbreviated handshake where no ServerHelloDone is sent from the server
+					if (this.context.AbbreviatedHandshake) {
+						ClientSessionCache.SetContextFromCache (this.context);
+						this.context.Negotiating.Cipher.ComputeKeys ();
+						this.context.Negotiating.Cipher.InitializeCipher ();
+
+						negotiate.State = NegotiateState.SentCipherSpec;
+
+						// Send Change Cipher Spec message with the current cipher
+						// or as plain text if this is the initial negotiation
+						this.protocol.BeginSendChangeCipherSpec(NegotiateAsyncWorker, negotiate);
+					} else {
+						// Send client certificate if requested
+						// even if the server ask for it it _may_ still be optional
+						bool clientCertificate = this.context.ServerSettings.CertificateRequest;
+
+						using (var memstream = new MemoryStream())
+						{
+							// NOTE: sadly SSL3 and TLS1 differs in how they handle this and
+							// the current design doesn't allow a very cute way to handle 
+							// SSL3 alert warning for NoCertificate (41).
+							if (this.context.SecurityProtocol == SecurityProtocolType.Ssl3)
+							{
+								clientCertificate = ((this.context.ClientSettings.Certificates != null) &&
+									(this.context.ClientSettings.Certificates.Count > 0));
+								// this works well with OpenSSL (but only for SSL3)
+							}
+
+							byte[] record = null;
+
+							if (clientCertificate)
+							{
+								record = this.protocol.EncodeHandshakeRecord(HandshakeType.Certificate);
+								memstream.Write(record, 0, record.Length);
+							}
+
+							// Send Client Key Exchange
+							record = this.protocol.EncodeHandshakeRecord(HandshakeType.ClientKeyExchange);
+							memstream.Write(record, 0, record.Length);
+
+							// Now initialize session cipher with the generated keys
+							this.context.Negotiating.Cipher.InitializeCipher();
+
+							// Send certificate verify if requested (optional)
+							if (clientCertificate && (this.context.ClientSettings.ClientCertificate != null))
+							{
+								record = this.protocol.EncodeHandshakeRecord(HandshakeType.CertificateVerify);
+								memstream.Write(record, 0, record.Length);
+							}
+
+							// send the chnage cipher spec.
+							this.protocol.SendChangeCipherSpec(memstream);
+
+							// Send Finished message
+							record = this.protocol.EncodeHandshakeRecord(HandshakeType.Finished);
+							memstream.Write(record, 0, record.Length);
+
+							negotiate.State = NegotiateState.SentKeyExchange;
+
+							// send all the records.
+							this.innerStream.BeginWrite (memstream.GetBuffer (), 0, (int)memstream.Length, NegotiateAsyncWorker, negotiate);
+						}
+					}
+					break;
+
+				case NegotiateState.SentKeyExchange:
+					this.innerStream.EndWrite (result);
+
+					negotiate.State = NegotiateState.ReceiveFinishResponse;
+
+					this.protocol.BeginReceiveRecord (this.innerStream, NegotiateAsyncWorker, negotiate);
+
+					break;
+
+				case NegotiateState.ReceiveFinishResponse:
+					this.SafeEndReceiveRecord (result);
+
+					// Read record until server finished is received
+					if (this.context.HandshakeState != HandshakeState.Finished) {
+						// If all goes well this will process messages:
+						// 		Change Cipher Spec
+						//		Server finished
+						this.protocol.BeginReceiveRecord (this.innerStream, NegotiateAsyncWorker, negotiate);
+					}
+					else {
+						// Reset Handshake messages information
+						this.context.HandshakeMessages.Reset ();
+
+						// Clear Key Info
+						this.context.ClearKeyInfo();
+
+						negotiate.SetComplete ();
+					}
+					break;
+
+
+				case NegotiateState.SentCipherSpec:
+					this.protocol.EndSendChangeCipherSpec (result);
+
+					negotiate.State = NegotiateState.ReceiveCipherSpecResponse;
+
+					// Start reading the cipher spec response
+					this.protocol.BeginReceiveRecord (this.innerStream, NegotiateAsyncWorker, negotiate);
+					break;
+
+				case NegotiateState.ReceiveCipherSpecResponse:
+					this.SafeEndReceiveRecord (result, true);
+
+					if (this.context.HandshakeState != HandshakeState.Finished)
+					{
+						this.protocol.BeginReceiveRecord (this.innerStream, NegotiateAsyncWorker, negotiate);
+					}
+					else
+					{
+						negotiate.State = NegotiateState.SentFinished;
+						this.protocol.BeginSendRecord(HandshakeType.Finished, NegotiateAsyncWorker, negotiate);
+					}
+					break;
+
+				case NegotiateState.SentFinished:
+					this.protocol.EndSendRecord (result);
+
+					// Reset Handshake messages information
+					this.context.HandshakeMessages.Reset ();
+
+					// Clear Key Info
+					this.context.ClearKeyInfo();
+
+					negotiate.SetComplete ();
+
+					break;
+				}
+			}
+			catch (TlsException ex)
 			{
-				ClientSessionCache.SetContextFromCache (this.context);
-				this.context.Negotiating.Cipher.ComputeKeys ();
-				this.context.Negotiating.Cipher.InitializeCipher ();
-
-				// Send Cipher Spec protocol
-				this.protocol.SendChangeCipherSpec ();
-
-				// Read record until server finished is received
-				while (this.context.HandshakeState != HandshakeState.Finished) 
-				{
-					// If all goes well this will process messages:
-					// 		Change Cipher Spec
-					//		Server finished
-					SafeReceiveRecord (this.innerStream);
-				}
-
-				// Send Finished message
-				this.protocol.SendRecord (HandshakeType.Finished);
+				// FIXME: should the send alert also be done asynchronously here and below?
+				this.protocol.SendAlert(ex.Alert);
+				negotiate.SetComplete (new IOException("The authentication or decryption has failed.", ex));
 			}
-			else
+			catch (Exception ex)
 			{
-				// Send client certificate if requested
-				// even if the server ask for it it _may_ still be optional
-				bool clientCertificate = this.context.ServerSettings.CertificateRequest;
-
-				// NOTE: sadly SSL3 and TLS1 differs in how they handle this and
-				// the current design doesn't allow a very cute way to handle 
-				// SSL3 alert warning for NoCertificate (41).
-				if (this.context.SecurityProtocol == SecurityProtocolType.Ssl3)
-				{
-					clientCertificate = ((this.context.ClientSettings.Certificates != null) &&
-						(this.context.ClientSettings.Certificates.Count > 0));
-					// this works well with OpenSSL (but only for SSL3)
-				}
-
-				if (clientCertificate)
-				{
-					this.protocol.SendRecord(HandshakeType.Certificate);
-				}
-
-				// Send Client Key Exchange
-				this.protocol.SendRecord(HandshakeType.ClientKeyExchange);
-
-				// Now initialize session cipher with the generated keys
-				this.context.Negotiating.Cipher.InitializeCipher();
-
-				// Send certificate verify if requested (optional)
-				if (clientCertificate && (this.context.ClientSettings.ClientCertificate != null))
-				{
-					this.protocol.SendRecord(HandshakeType.CertificateVerify);
-				}
-
-				// Send Cipher Spec protocol
-				this.protocol.SendChangeCipherSpec ();
-
-				// Send Finished message
-				this.protocol.SendRecord (HandshakeType.Finished);
-
-				// Read record until server finished is received
-				while (this.context.HandshakeState != HandshakeState.Finished) {
-					// If all goes well this will process messages:
-					// 		Change Cipher Spec
-					//		Server finished
-					SafeReceiveRecord (this.innerStream);
-				}
+				this.protocol.SendAlert(AlertDescription.InternalError);
+				negotiate.SetComplete (new IOException("The authentication or decryption has failed.", ex));
 			}
-
-			// Reset Handshake messages information
-			this.context.HandshakeMessages.Reset ();
-
-			// Clear Key Info
-			this.context.ClearKeyInfo();
-
 		}
 
 		#endregion

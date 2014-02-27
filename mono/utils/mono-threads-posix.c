@@ -20,6 +20,7 @@
 #include <mono/utils/mono-tls.h>
 #include <mono/utils/mono-mmap.h>
 #include <mono/metadata/threads-types.h>
+#include <limits.h>
 
 #include <errno.h>
 
@@ -33,6 +34,7 @@ size_t pthread_get_stacksize_np(pthread_t);
 #endif
 
 #if defined(_POSIX_VERSION) || defined(__native_client__)
+#include <sys/resource.h>
 #include <signal.h>
 
 #if defined(__native_client__)
@@ -150,8 +152,8 @@ mono_threads_core_create_thread (LPTHREAD_START_ROUTINE start_routine, gpointer 
 	/* Actually start the thread */
 	res = mono_threads_get_callbacks ()->mono_gc_pthread_create (&thread, &attr, inner_start_thread, &start_info);
 	if (res) {
-		// FIXME:
-		g_assert_not_reached ();
+		MONO_SEM_DESTROY (&(start_info.registered));
+		return NULL;
 	}
 
 	/* Wait until the thread register itself in various places */
@@ -328,6 +330,28 @@ mono_threads_core_open_handle (void)
 	else
 		wapi_ref_thread_handle (info->handle);
 	return info->handle;
+}
+
+int
+mono_threads_get_max_stack_size (void)
+{
+	struct rlimit lim;
+
+	/* If getrlimit fails, we don't enforce any limits. */
+	if (getrlimit (RLIMIT_STACK, &lim))
+		return INT_MAX;
+	/* rlim_t is an unsigned long long on 64bits OSX but we want an int response. */
+	if (lim.rlim_max > (rlim_t)INT_MAX)
+		return INT_MAX;
+	return (int)lim.rlim_max;
+}
+
+HANDLE
+mono_threads_core_open_thread_handle (HANDLE handle, MonoNativeThreadId tid)
+{
+	wapi_ref_thread_handle (handle);
+
+	return handle;
 }
 
 #if !defined (__MACH__)

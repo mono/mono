@@ -123,16 +123,21 @@ namespace Microsoft.Build.Construction
                 internal ElementLocation LabelLocation { get; private set; }
                 internal ElementLocation ConditionLocation { get; private set; }
 #endif
-                
+                string GetFilePath (string baseURI)
+                {
+                        return string.IsNullOrEmpty (baseURI) ? string.Empty : new Uri (baseURI).LocalPath;
+                }
+
                 internal void FillLocation (XmlReader reader)
                 {
                         var l = reader as IXmlLineInfo;
+                        var path = GetFilePath (reader.BaseURI);
                         if (l != null && l.HasLineInfo ())
-                                Location = new ProjectElementLocation (reader.BaseURI, l);
+                                Location = new ProjectElementLocation (path, l);
                         if (reader.MoveToAttribute ("Condition") && l.HasLineInfo ())
-                                ConditionLocation = new ProjectElementLocation (reader.BaseURI, l);
+                                ConditionLocation = new ProjectElementLocation (path, l);
                         if (reader.MoveToAttribute ("Label") && l.HasLineInfo ())
-                                LabelLocation = new ProjectElementLocation (reader.BaseURI, l);
+                                LabelLocation = new ProjectElementLocation (path, l);
                         reader.MoveToElement ();
                 }
                 

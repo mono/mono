@@ -1756,21 +1756,27 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 	amodule->trampolines [MONO_AOT_TRAMP_GSHAREDVT_ARG] = info->gsharedvt_arg_trampolines;
 	amodule->thumb_end = info->thumb_end;
 
-#ifdef MONOTOUCH
 	if (info->flags & MONO_AOT_FILE_FLAG_DIRECT_METHOD_ADDRESSES) {
 		/* Compute code_offsets from the method addresses */
 		amodule->code_offsets = g_malloc0 (amodule->info.nmethods * sizeof (gint32));
 		for (i = 0; i < amodule->info.nmethods; ++i) {
 			/* method_addresses () contains a table of branches, since the ios linker can update those correctly */
-			void *addr = get_arm_bl_target ((guint32*)amodule->method_addresses + i);
+			void *addr = NULL;
 
+#ifdef TARGET_ARM
+			addr = get_arm_bl_target ((guint32*)amodule->method_addresses + i);
+#elif defined(TARGET_X86) || defined(TARGET_AMD64)
+			addr = mono_arch_get_call_target ((guint8*)amodule->method_addresses + (i * 5) + 5);
+#else
+			g_assert_not_reached ();
+#endif
+			g_assert (addr);
 			if (addr == amodule->method_addresses)
 				amodule->code_offsets [i] = 0xffffffff;
 			else
 				amodule->code_offsets [i] = (char*)addr - (char*)amodule->code;
 		}
 	}
-#endif
 
 	if (make_unreadable) {
 #ifndef TARGET_WIN32
@@ -2989,16 +2995,22 @@ decode_patch (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guin
 	case MONO_PATCH_INFO_CLASS:
 	case MONO_PATCH_INFO_IID:
 	case MONO_PATCH_INFO_ADJUSTED_IID:
+	case MONO_PATCH_INFO_CLASS_INIT:
 		/* Shared */
 		ji->data.klass = decode_klass_ref (aot_module, p, &p);
 		if (!ji->data.klass)
 			goto cleanup;
 		break;
-	case MONO_PATCH_INFO_CLASS_INIT:
 	case MONO_PATCH_INFO_DELEGATE_TRAMPOLINE:
-		ji->data.klass = decode_klass_ref (aot_module, p, &p);
-		if (!ji->data.klass)
+		ji->data.del_tramp = mono_mempool_alloc0 (mp, sizeof (MonoClassMethodPair));
+		ji->data.del_tramp->klass = decode_klass_ref (aot_module, p, &p);
+		if (!ji->data.del_tramp->klass)
 			goto cleanup;
+		if (decode_value (p, &p)) {
+			ji->data.del_tramp->method = decode_resolve_method_ref (aot_module, p, &p);
+			if (!ji->data.del_tramp->method)
+				goto cleanup;
+		}
 		break;
 	case MONO_PATCH_INFO_IMAGE:
 		ji->data.image = load_image (aot_module, decode_value (p, &p), TRUE);
@@ -3079,8 +3091,6 @@ decode_patch (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guin
 	case MONO_PATCH_INFO_GC_CARD_TABLE_ADDR:
 	case MONO_PATCH_INFO_CASTCLASS_CACHE:
 	case MONO_PATCH_INFO_JIT_TLS_ID:
-	case MONO_PATCH_INFO_NURSERY_START_SHIFTED:
-	case MONO_PATCH_INFO_NURSERY_SHIFT:
 		break;
 	case MONO_PATCH_INFO_RGCTX_FETCH: {
 		gboolean res;

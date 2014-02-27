@@ -109,6 +109,8 @@ namespace Xamarin.ApiDiff {
 			bool a = false;
 			foreach (var item in target) {
 				SetContext (item);
+				if (State.IgnoreAdded.Any (re => re.IsMatch (GetDescription (item))))
+					continue;
 				if (!a) {
 					BeforeAdding ();
 					a = true;

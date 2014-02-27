@@ -1367,6 +1367,20 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.IsTrue (Throws (delegate { var x = e4.Current; }));
 		}
 
+		[Test]
+		public void Enumerator_Reset ()
+		{
+			var l = new List<int> () {
+				4
+			};
+
+			IEnumerator<int> e = l.GetEnumerator ();
+			Assert.IsTrue (e.MoveNext (), "#1");
+			Assert.AreEqual (4, e.Current, "#2");
+			e.Reset ();
+			Assert.AreEqual (0, e.Current, "#3");
+		}
+
 		[Test] //bug #672907
 		public void ICollectionCopyToExceptions ()
 		{

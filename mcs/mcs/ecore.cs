@@ -2606,7 +2606,7 @@ namespace Mono.CSharp {
 				//
 				// dynamic namespace is ignored when dynamic is allowed (does not apply to types)
 				//
-				if (!(fne is Namespace))
+				if (!(fne is NamespaceExpression))
 					return fne;
 			}
 
@@ -2983,6 +2983,114 @@ namespace Mono.CSharp {
 			return type;
 		}
 	}
+
+	public class NamespaceExpression : FullNamedExpression
+	{
+		readonly Namespace ns;
+
+		public NamespaceExpression (Namespace ns, Location loc)
+		{
+			this.ns = ns;
+			this.Type = InternalType.Namespace;
+			this.eclass = ExprClass.Namespace;
+			this.loc = loc;
+		}
+
+		public Namespace Namespace {
+			get {
+				return ns;
+			}
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override FullNamedExpression ResolveAsTypeOrNamespace (IMemberContext mc)
+		{
+			return this;
+		}
+
+		public void Error_NamespaceDoesNotExist (IMemberContext ctx, string name, int arity)
+		{
+			var retval = Namespace.LookupType (ctx, name, arity, LookupMode.IgnoreAccessibility, loc);
+			if (retval != null) {
+//				ctx.Module.Compiler.Report.SymbolRelatedToPreviousError (retval.MemberDefinition);
+				ErrorIsInaccesible (ctx, retval.GetSignatureForError (), loc);
+				return;
+			}
+
+			retval = Namespace.LookupType (ctx, name, -System.Math.Max (1, arity), LookupMode.Probing, loc);
+			if (retval != null) {
+				Error_TypeArgumentsCannotBeUsed (ctx, retval, loc);
+				return;
+			}
+
+			Namespace ns;
+			if (arity > 0 && Namespace.TryGetNamespace (name, out ns)) {
+				Error_TypeArgumentsCannotBeUsed (ctx, ExprClassName, ns.GetSignatureForError (), loc);
+				return;
+			}
+
+			string assembly = null;
+			string possible_name = Namespace.GetSignatureForError () + "." + name;
+
+			// Only assembly unique name should be added
+			switch (possible_name) {
+			case "System.Drawing":
+			case "System.Web.Services":
+			case "System.Web":
+			case "System.Data":
+			case "System.Configuration":
+			case "System.Data.Services":
+			case "System.DirectoryServices":
+			case "System.Json":
+			case "System.Net.Http":
+			case "System.Numerics":
+			case "System.Runtime.Caching":
+			case "System.ServiceModel":
+			case "System.Transactions":
+			case "System.Web.Routing":
+			case "System.Xml.Linq":
+			case "System.Xml":
+				assembly = possible_name;
+				break;
+
+			case "System.Linq":
+			case "System.Linq.Expressions":
+				assembly = "System.Core";
+				break;
+
+			case "System.Windows.Forms":
+			case "System.Windows.Forms.Layout":
+				assembly = "System.Windows.Forms";
+				break;
+			}
+
+			assembly = assembly == null ? "an" : "`" + assembly + "'";
+
+			if (Namespace is GlobalRootNamespace) {
+				ctx.Module.Compiler.Report.Error (400, loc,
+					"The type or namespace name `{0}' could not be found in the global namespace. Are you missing {1} assembly reference?",
+					name, assembly);
+			} else {
+				ctx.Module.Compiler.Report.Error (234, loc,
+					"The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing {2} assembly reference?",
+					name, GetSignatureForError (), assembly);
+			}
+		}
+
+		public override string GetSignatureForError ()
+		{
+			return ns.GetSignatureForError ();
+		}
+
+		public FullNamedExpression LookupTypeOrNamespace (IMemberContext ctx, string name, int arity, LookupMode mode, Location loc)
+		{
+			return ns.LookupTypeOrNamespace (ctx, name, arity, mode, loc);
+		}
+    }
 
 	/// <summary>
 	///   This class denotes an expression which evaluates to a member
@@ -4269,7 +4377,7 @@ namespace Mono.CSharp {
 			AParametersCollection best_pd = ((IParametersMember) best).Parameters;
 
 			bool better_at_least_one = false;
-			bool same = true;
+			bool are_equivalent = true;
 			int args_count = args == null ? 0 : args.Count;
 			int j = 0;
 			Argument a = null;
@@ -4314,7 +4422,7 @@ namespace Mono.CSharp {
 				if (TypeSpecComparer.IsEqual (ct, bt))
 					continue;
 
-				same = false;
+				are_equivalent = false;
 				int result = BetterExpressionConversion (ec, a, ct, bt);
 
 				// for each argument, the conversion to 'ct' should be no worse than 
@@ -4332,67 +4440,55 @@ namespace Mono.CSharp {
 				return true;
 
 			//
-			// This handles the case
+			// Tie-breaking rules are applied only for equivalent parameter types
 			//
-			//   Add (float f1, float f2, float f3);
-			//   Add (params decimal [] foo);
-			//
-			// The call Add (3, 4, 5) should be ambiguous.  Without this check, the
-			// first candidate would've chosen as better.
-			//
-			if (!same && !a.IsDefaultArgument)
+			if (!are_equivalent)
 				return false;
 
 			//
-			// The two methods have equal non-optional parameter types, apply tie-breaking rules
+			// If candidate is applicable in its normal form and best has a params array and is applicable
+			// only in its expanded form, then candidate is better
 			//
+			if (candidate_params != best_params)
+				return !candidate_params;
 
 			//
-			// This handles the following cases:
+			// We have not reached end of parameters list due to params or used default parameters
 			//
-			//  Foo (int i) is better than Foo (int i, long l = 0)
-			//  Foo (params int[] args) is better than Foo (int i = 0, params int[] args)
-			//  Foo (string s, params string[] args) is better than Foo (params string[] args)
-			//
-			// Prefer non-optional version
-			//
-			// LAMESPEC: Specification claims this should be done at last but the opposite is true
-			//
-			if (candidate_params == best_params && candidate_pd.Count != best_pd.Count) {
-				if (j < candidate_pd.Count && candidate_pd.FixedParameters[j].HasDefaultValue)
-					return false;
+			if (j < candidate_pd.Count && j < best_pd.Count) {
+				var cand_param = candidate_pd.FixedParameters [j];
+				var best_param = best_pd.FixedParameters [j];
 
-				if (j < best_pd.Count && best_pd.FixedParameters[j].HasDefaultValue)
-					return true;
-
-				return candidate_pd.Count >= best_pd.Count;
+				if (candidate_pd.Count == best_pd.Count) {
+					//
+					// LAMESPEC:
+					//
+					// void Foo (params int[]) is better than void Foo (int i = 0) for Foo ()
+					// void Foo (string[] s, string value = null) is better than Foo (string s, params string[]) for Foo (null)
+					//
+					if (cand_param.HasDefaultValue != best_param.HasDefaultValue)
+						return !candidate_params;
+				} else {
+					//
+					// Neither is better when not all arguments are provided
+					//
+					// void Foo (string s, int i = 0) <-> Foo (string s, int i = 0, int i2 = 0)
+					// void Foo (string s, int i = 0) <-> Foo (string s, byte i = 0)
+					// void Foo (string s, params int[]) <-> Foo (string s, params byte[])
+					//
+					if (cand_param.HasDefaultValue && best_param.HasDefaultValue)
+						return false;
+				}
 			}
+
+			if (candidate_pd.Count != best_pd.Count)
+				return candidate_pd.Count < best_pd.Count;
 
 			//
 			// One is a non-generic method and second is a generic method, then non-generic is better
 			//
 			if (best.IsGeneric != candidate.IsGeneric)
 				return best.IsGeneric;
-
-			//
-			// This handles the following cases:
-			//
-			//   Trim () is better than Trim (params char[] chars)
-			//   Concat (string s1, string s2, string s3) is better than
-			//     Concat (string s1, params string [] srest)
-			//   Foo (int, params int [] rest) is better than Foo (params int [] rest)
-			//
-			// Prefer non-expanded version
-			//
-			if (candidate_params != best_params)
-				return best_params;
-
-			int candidate_param_count = candidate_pd.Count;
-			int best_param_count = best_pd.Count;
-
-			if (candidate_param_count != best_param_count)
-				// can only happen if (candidate_params && best_params)
-				return candidate_param_count > best_param_count && best_pd.HasParams;
 
 			//
 			// Both methods have the same number of parameters, and the parameters have equal types
@@ -4803,12 +4899,6 @@ namespace Mono.CSharp {
 					return (arg_count - i) * 2 + score;
 				}
 			}
-
-			//
-			// When params parameter has no argument it will be provided later if the method is the best candidate
-			//
-			if (arg_count + 1 == pd.Count && (cpd.FixedParameters [arg_count].ModFlags & Parameter.Modifier.PARAMS) != 0)
-				params_expanded_form = true;
 
 			//
 			// Restore original arguments for dynamic binder to keep the intention of original source code

@@ -170,5 +170,44 @@ namespace MonoTests.Microsoft.Build.Execution
 					File.Delete ("inputsandoutputstest.txt");
 			}
 		}
+		
+		[Test]
+		public void PropertiesInTarget ()
+		{
+			string project_xml = @"<Project DefaultTargets='Foo' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <Target Name='Foo' DependsOnTargets='Bar'>
+    <Error Text='error' Condition='$(X)!=x' />
+  </Target>
+  <Target Name='Bar'>
+    <PropertyGroup>
+      <X>x</X>
+    </PropertyGroup>
+  </Target>
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			root.FullPath = "ProjectTargetInstanceTest.PropertiesInTarget.proj";
+			var proj = new ProjectInstance (root);
+			Assert.IsTrue (proj.Build (), "#1"); // if it skips Bar or does not persist property X, it results in an error.
+		}
+		
+		[Test]
+		public void PropertiesInTarget2 ()
+		{
+			string project_xml = @"<Project DefaultTargets='Foo' xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <Target Name='Foo'>
+    <Error Text='error' Condition='$(X)!=x' />
+    <!-- defined later, means it does not affect Condition above -->
+    <PropertyGroup>
+      <X>x</X>
+    </PropertyGroup>
+  </Target>
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			root.FullPath = "ProjectTargetInstanceTest.PropertiesInTarget.proj";
+			var proj = new ProjectInstance (root);
+			Assert.IsFalse (proj.Build (), "#1");
+		}
 	}
 }

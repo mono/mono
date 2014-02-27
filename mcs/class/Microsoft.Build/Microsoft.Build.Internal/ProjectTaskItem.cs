@@ -42,7 +42,7 @@ namespace Microsoft.Build.Internal
 		public ProjectTaskItem (ProjectItemElement item, string evaluatedIncludePart)
 		{
 			this.item = item;
-			this.evaluated_include_part = WindowsCompatibilityExtensions.NormalizeFilePath (evaluatedIncludePart);
+			this.evaluated_include_part = WindowsCompatibilityExtensions.FindMatchingPath (evaluatedIncludePart);
 		}
 		#region ITaskItem implementation
 		System.Collections.IDictionary ITaskItem.CloneCustomMetadata ()
@@ -62,7 +62,7 @@ namespace Microsoft.Build.Internal
 			if (wk != null)
 				return wk;
 			var mde = item.Metadata.FirstOrDefault (m => m.Name == metadataName);
-			return mde != null ? mde.Value : null;
+			return mde != null ? mde.Value : string.Empty;
 		}
 		void ITaskItem.RemoveMetadata (string metadataName)
 		{
