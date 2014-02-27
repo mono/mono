@@ -2091,7 +2091,7 @@ namespace MonoTests.System.Xml.Linq
 			var res = serializer.Deserialize (new StringReader (xmlString));
 
 			Assert.IsNotNull (res, "#1");
-			Assert.IsInstanceOfType (typeof (SerializableClass), res, "#2");
+			Assert.AreEqual (typeof (SerializableClass), res.GetType (), "#2");
 			var xe = (SerializableClass)res;
 			Assert.AreEqual (xe.Content.ToString (), "<Data />", "#3");
 		}
