@@ -157,7 +157,7 @@ namespace System.Xml.Schema
 
 		private static string GetMessage (string message, string sourceUri, int lineNumber, int linePosition, XmlSchemaObject sourceObj)
 		{
-			string msg = "XmlSchema error: " + message;
+			string msg = message;
 			if (lineNumber > 0)
 				msg += String.Format (CultureInfo.InvariantCulture, " XML {0} Line {1}, Position {2}.",
 					(sourceUri != null && sourceUri != "") ? "URI: " + sourceUri + " ." : "",
