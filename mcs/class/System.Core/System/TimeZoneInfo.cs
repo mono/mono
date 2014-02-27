@@ -1172,8 +1172,6 @@ namespace System
 		{
 			return "offset: " + Offset + "s, is_dst: " + IsDst + ", zone name: " + Name;
 		}
-#else
-	}
 #endif
 	}
 }

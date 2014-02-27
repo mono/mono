@@ -36,7 +36,12 @@ RESOURCE_FILES = \
 	resources/collation.cjkKO.bin \
 	resources/collation.cjkKOlv2.bin
 
-LOCAL_MCS_FLAGS = -unsafe -nostdlib -nowarn:612,618 -d:INSIDE_CORLIB -d:LIBC
+LOCAL_MCS_FLAGS = -unsafe -nostdlib -nowarn:612,618 -d:INSIDE_CORLIB
+
+ifneq (win32, $(PLATFORM))
+LOCAL_MCS_FLAGS += -d:LIBC
+endif
+
 DEFAULT_REFERENCES =
 
 # System.IO/DirectoryInfoTest.cs needs Mono.Posix

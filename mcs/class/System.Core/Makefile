@@ -4,10 +4,14 @@ include ../../build/rules.make
 
 LIBRARY = System.Core.dll
 
-LIB_MCS_FLAGS = -d:INSIDE_SYSCORE -d:LIBC /r:System.dll -unsafe
+LIB_MCS_FLAGS = -d:INSIDE_SYSCORE /r:System.dll -unsafe
 
 INTERPRETER_DEP := Mono.Dynamic.Interpreter.dll
 INTERPRETER_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(INTERPRETER_DEP))
+
+ifneq (win32, $(PLATFORM))
+LIB_MCS_FLAGS += -d:LIBC
+endif
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NET_3_5 -nowarn:1720
@@ -58,3 +62,6 @@ TEST_HARNESS_EXCLUDES += -exclude:NotWorkingInterpreter
 $(build_lib): $(INTERPRETER_DEP_FILE)
 endif
 
+$(info PLATFORM is $(PLATFORM))
+$(info PROFILE is $(PROFILE))
+$(info LIB_MCS_FLAGS is $(LIB_MCS_FLAGS))
