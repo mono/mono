@@ -2277,6 +2277,32 @@ namespace MonoTests.System.XmlSerialization
 			}
 		}
 #endif
+
+		public class Bug594490Class
+		{
+			[XmlAttribute ("xml:lang")]
+			public string GroupName;
+		}
+
+		[Test]
+		public void Bug594490_SerializationOfXmlLangAttribute ()
+		{
+			var serializer = new XmlSerializer (typeof(Bug594490Class));
+
+			using (var writer = new StringWriter ()) {
+				var obj = new Bug594490Class ();
+
+				obj.GroupName = "hello world";
+
+				serializer.Serialize (writer, obj);
+				writer.Close ();
+
+				Assert.AreEqual (@"<?xml version=""1.0"" encoding=""utf-16""?>
+<Bug594490Class xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xml:lang=""hello world"" />",
+					writer.ToString (),
+					"Novell bug #594490 (https://bugzilla.novell.com/show_bug.cgi?id=594490) not fixed.");
+			}
+		}
 	}
 }
 
