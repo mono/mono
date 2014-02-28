@@ -61,7 +61,3 @@ ifdef CYCLIC_DEP_FILES
 TEST_HARNESS_EXCLUDES += -exclude:NotWorkingInterpreter
 $(build_lib): $(INTERPRETER_DEP_FILE)
 endif
-
-$(info PLATFORM is $(PLATFORM))
-$(info PROFILE is $(PROFILE))
-$(info LIB_MCS_FLAGS is $(LIB_MCS_FLAGS))

@@ -37,13 +37,18 @@ namespace MonoTests.System
 {
 	public class TimeZoneInfoTest
 	{
+        private static bool IsInvalidPlatform
+        {
+            get { return Environment.OSVersion.Platform == PlatformID.MacOSX || Environment.OSVersion.Platform == PlatformID.Xbox; }
+        }
+
 		[TestFixture]
 		public class PropertiesTests
 		{
 			[Test]
 			public void GetLocal ()
 			{
-				if (Environment.OSVersion.Platform != PlatformID.Unix)
+				if (IsInvalidPlatform)
 					return;
 				TimeZoneInfo local = TimeZoneInfo.Local;
 				Assert.IsNotNull (local);
@@ -89,14 +94,14 @@ namespace MonoTests.System
 				TimeZoneInfo.CreateCustomTimeZone ("mytimezone", - new TimeSpan (14, 1, 0), null, null);
 			}
 		
-		#if STRICT
+#if STRICT
 			[Test]
 			[ExpectedException (typeof (ArgumentException))]
 			public void IdLongerThan32 ()
 			{
 				TimeZoneInfo.CreateCustomTimeZone ("12345678901234567890123456789012345", new TimeSpan (0), null, null);	
 			}	
-		#endif
+#endif
 		
 			[Test]
 			[ExpectedException (typeof (InvalidTimeZoneException))]
@@ -213,7 +218,7 @@ namespace MonoTests.System
 			[Test]
 			public void DSTInLondon ()
 			{
-				if (Environment.OSVersion.Platform != PlatformID.Unix)
+				if (IsInvalidPlatform)
 					return;
 				DateTime june01 = new DateTime (2007, 06, 01);
 				DateTime xmas = new DateTime (2007, 12, 25);
@@ -224,7 +229,7 @@ namespace MonoTests.System
 			[Test]
 			public void DSTTransisions ()
 			{
-				if (Environment.OSVersion.Platform != PlatformID.Unix)
+				if (IsInvalidPlatform)
 					return;
 				DateTime beforeDST = new DateTime (2007, 03, 25, 0, 59, 59, DateTimeKind.Unspecified);
 				DateTime startDST = new DateTime (2007, 03, 25, 2, 0, 0, DateTimeKind.Unspecified);
@@ -249,7 +254,7 @@ namespace MonoTests.System
 				Assert.IsFalse (london.IsDaylightSavingTime (afterDST), "Just after DST");
 			}
 		
-		#if SLOW_TESTS
+#if SLOW_TESTS
 			[Test]
 			public void MatchTimeZoneBehavior ()
 			{
@@ -262,7 +267,7 @@ namespace MonoTests.System
 					Assert.IsTrue (tzone.IsDaylightSavingTime (date) == local.IsDaylightSavingTime (date));
 				}
 			}
-		#endif
+#endif
 		}
 		
 		[TestFixture]
@@ -283,7 +288,7 @@ namespace MonoTests.System
 			[ExpectedException (typeof (ArgumentException))]
 			public void ConvertFromUtc_KindIsLocalException ()
 			{
-				if (Environment.OSVersion.Platform != PlatformID.Unix)
+				if (IsInvalidPlatform)
 					throw new ArgumentException ();
 				TimeZoneInfo.ConvertTimeFromUtc (new DateTime (2007, 5, 3, 11, 8, 0, DateTimeKind.Local), TimeZoneInfo.Local);	
 			}
@@ -306,7 +311,7 @@ namespace MonoTests.System
 			[Test]
 			public void ConvertFromUTC_ConvertInWinter ()
 			{
-				if (Environment.OSVersion.Platform != PlatformID.Unix)
+				if (IsInvalidPlatform)
 					return;
 				DateTime utc = new DateTime (2007, 12, 25, 12, 0, 0);
 				DateTime converted = TimeZoneInfo.ConvertTimeFromUtc (utc, london);
@@ -316,7 +321,7 @@ namespace MonoTests.System
 			[Test]
 			public void ConvertFromUtc_ConvertInSummer ()
 			{
-				if (Environment.OSVersion.Platform != PlatformID.Unix)
+				if (IsInvalidPlatform)
 					return;
 				DateTime utc = new DateTime (2007, 06, 01, 12, 0, 0);
 				DateTime converted = TimeZoneInfo.ConvertTimeFromUtc (utc, london);
@@ -343,7 +348,7 @@ namespace MonoTests.System
 			[ExpectedException (typeof (ArgumentException))]
 			public void ConvertToUTC_KindIsLocalButSourceIsNot ()
 			{
-				if (Environment.OSVersion.Platform != PlatformID.Unix)
+				if (IsInvalidPlatform)
 					throw new ArgumentException ();
 				TimeZoneInfo.ConvertTimeToUtc (new DateTime (2007, 5, 3, 12, 8, 0, DateTimeKind.Local), london);	
 			}
@@ -362,7 +367,7 @@ namespace MonoTests.System
 				TimeZoneInfo.ConvertTimeToUtc (new DateTime (2007, 5, 3, 12, 16, 0), null);
 			}
 		
-		#if SLOW_TESTS
+#if SLOW_TESTS
 			[Test]
 			public void ConvertToUtc_MatchDateTimeBehavior ()
 			{
@@ -370,12 +375,12 @@ namespace MonoTests.System
 					Assert.AreEqual (TimeZoneInfo.ConvertTimeToUtc (date), date.ToUniversalTime ());
 				}
 			}
-		#endif
+#endif
 		
 			[Test]
 			public void ConvertFromToUtc ()
 			{
-				if (Environment.OSVersion.Platform != PlatformID.Unix)
+				if (IsInvalidPlatform)
 					return;
 				DateTime utc = DateTime.UtcNow;
 				Assert.AreEqual (utc.Kind, DateTimeKind.Utc);
@@ -394,11 +399,11 @@ namespace MonoTests.System
 				DateTime utc = DateTime.UtcNow;
 				Assert.AreEqual(utc.Kind, DateTimeKind.Utc);
 				DateTime converted = TimeZoneInfo.ConvertTimeFromUtc(utc, TimeZoneInfo.Local);
-			#if NET_4_0
+#if NET_4_0
 				Assert.AreEqual(DateTimeKind.Local, converted.Kind);
-			#else
+#else
 				Assert.AreEqual(DateTimeKind.Unspecified, converted.Kind);
-			#endif
+#endif
 				DateTime back = TimeZoneInfo.ConvertTimeToUtc(converted, TimeZoneInfo.Local);
 				Assert.AreEqual(back.Kind, DateTimeKind.Utc);
 				Assert.AreEqual(utc, back);
@@ -428,7 +433,7 @@ namespace MonoTests.System
 				london = TimeZoneInfo.CreateCustomTimeZone ("Europe/London", new TimeSpan (0), "Europe/London", "British Standard Time", "British Summer Time", new TimeZoneInfo.AdjustmentRule [] {rule});
 			}
 		
-		#if SLOW_TESTS
+#if SLOW_TESTS
 			[Test]
 			public void UTCDate ()
 			{
@@ -437,7 +442,7 @@ namespace MonoTests.System
 					Assert.IsFalse (london.IsInvalidTime (date));
 				}
 			}
-		#endif
+#endif
 			[Test]
 			public void InvalidDates ()
 			{
@@ -465,7 +470,7 @@ namespace MonoTests.System
 			[Test]
 			public void AmbiguousDates ()
 			{
-				if (Environment.OSVersion.Platform != PlatformID.Unix)
+				if (IsInvalidPlatform)
 					return;
 				Assert.IsFalse (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 1, 0, 0)));
 				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 1, 0, 1)));
@@ -476,7 +481,7 @@ namespace MonoTests.System
 			[Test]
 			public void AmbiguousUTCDates ()
 			{
-				if (Environment.OSVersion.Platform != PlatformID.Unix)
+				if (IsInvalidPlatform)
 					return;
 				Assert.IsFalse (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 0, 0, 0, DateTimeKind.Utc)));
 				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 0, 0, 1, DateTimeKind.Utc)));
@@ -484,7 +489,7 @@ namespace MonoTests.System
 				Assert.IsFalse (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 1, 0, 0, DateTimeKind.Utc)));
 			}
 		
-		#if SLOW_TESTS
+#if SLOW_TESTS
 			[Test]
 			public void AmbiguousInUTC ()
 			{
@@ -492,7 +497,7 @@ namespace MonoTests.System
 					Assert.IsFalse (TimeZoneInfo.Utc.IsAmbiguousTime (date));
 				}
 			}
-		#endif
+#endif
 		}
 		
 		[TestFixture]
@@ -501,7 +506,7 @@ namespace MonoTests.System
 			[Test]
 			public void NotEmpty ()
 			{
-				if (Environment.OSVersion.Platform != PlatformID.Unix)
+				if (IsInvalidPlatform)
 					return;
 				global::System.Collections.ObjectModel.ReadOnlyCollection<TimeZoneInfo> systemTZ = TimeZoneInfo.GetSystemTimeZones ();
 				Assert.IsNotNull(systemTZ, "SystemTZ is null");
@@ -619,7 +624,7 @@ namespace MonoTests.System
 				Assert.AreEqual (local, utc + TimeZoneInfo.Local.GetUtcOffset (utc), "ConvertTime/Local");
 			}
 		
-		#if SLOW_TESTS
+#if SLOW_TESTS
 			[Test]
 			public void BrusselsAdjustments ()
 			{
@@ -635,7 +640,7 @@ namespace MonoTests.System
 					Assert.AreEqual (brussels.IsDaylightSavingTime (date), brussels_sys.IsDaylightSavingTime (date));
 				}		
 			}
-		#endif
+#endif
 		}
 		
 		[TestFixture]
