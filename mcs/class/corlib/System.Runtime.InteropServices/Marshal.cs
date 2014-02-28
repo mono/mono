@@ -747,8 +747,8 @@ namespace System.Runtime.InteropServices
 			PtrToStructure (ptr, (object)structure);
 		}
 
-		public static object PtrToStructure<T> (IntPtr ptr) {
-			return PtrToStructure (ptr, typeof (T));
+		public static T PtrToStructure<T> (IntPtr ptr) {
+			return (T) PtrToStructure (ptr, typeof (T));
 		}
 #endif
 
@@ -1354,8 +1354,8 @@ namespace System.Runtime.InteropServices
 		}
 
 #if NET_4_5
-		public static Delegate GetDelegateForFunctionPointer<T> (IntPtr ptr) {
-			return GetDelegateForFunctionPointer (ptr, typeof (T));
+		public static TDelegate GetDelegateForFunctionPointer<TDelegate> (IntPtr ptr) {
+			return (TDelegate) (object) GetDelegateForFunctionPointer (ptr, typeof (TDelegate));
 		}
 #endif
 
