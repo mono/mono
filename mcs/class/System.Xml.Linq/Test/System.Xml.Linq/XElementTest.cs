@@ -2081,6 +2081,7 @@ namespace MonoTests.System.Xml.Linq
 			public XElement Content;
 		}
 
+#if NET_4_5
 		[Test]
 		// Bug #12571
 		public void DeserializeXElement ()
@@ -2095,6 +2096,6 @@ namespace MonoTests.System.Xml.Linq
 			var xe = (SerializableClass)res;
 			Assert.AreEqual (xe.Content.ToString (), "<Data />", "#3");
 		}
-
+#endif
 	}
 }
