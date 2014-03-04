@@ -849,6 +849,10 @@ namespace MonoTests.System.Numerics
 			
 			Assert.AreEqual (BitConverter.Int64BitsToDouble (-2748107935317889142), (double)new BigInteger (huge_a), "#15");
 			Assert.AreEqual (BitConverter.Int64BitsToDouble (-2354774254443231289), (double)new BigInteger (huge_b), "#16");
+			Assert.AreEqual (BitConverter.Int64BitsToDouble (8737073938546854790), (double)new BigInteger (huge_mul), "#17");
+			
+			Assert.AreEqual (BitConverter.Int64BitsToDouble (6912920136897069886), (double)(2278888483353476799 * BigInteger.Pow (2, 451)), "#18");
+			Assert.AreEqual (double.PositiveInfinity, (double)(843942696292817306 * BigInteger.Pow (2, 965)), "#19");
 		}
 
 		[Test]
