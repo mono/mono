@@ -828,6 +828,27 @@ namespace MonoTests.System.Numerics
 			Assert.AreEqual (double.PositiveInfinity, (double)BigInteger.Pow (2, 1024), "#2");
 			Assert.AreEqual (double.NegativeInfinity, (double)BigInteger.Pow (-2, 1025), "#3");
 
+			Assert.AreEqual (0d, (double)BigInteger.Zero, "#4");
+			Assert.AreEqual (1d, (double)BigInteger.One, "#5");
+			Assert.AreEqual (-1d, (double)BigInteger.MinusOne, "#6");
+			
+			var result1 = BitConverter.Int64BitsToDouble (-4337852273739220173);
+			Assert.AreEqual (result1, (double)new BigInteger (new byte[]{53, 152, 137, 177, 240, 81, 75, 198}), "#7");
+			var result2 = BitConverter.Int64BitsToDouble (4893382453283402035);
+			Assert.AreEqual (result2, (double)new BigInteger (new byte[]{53, 152, 137, 177, 240, 81, 75, 198, 0}), "#8");
+			
+			var result3 = BitConverter.Int64BitsToDouble (5010775143622804480);
+			var result4 = BitConverter.Int64BitsToDouble (5010775143622804481);
+			var result5 = BitConverter.Int64BitsToDouble (5010775143622804482);
+			Assert.AreEqual (result3, (double)new BigInteger (new byte[]{0, 0, 0, 0, 16, 128, 208, 159, 60, 46, 59, 3}), "#9");
+			Assert.AreEqual (result3, (double)new BigInteger (new byte[]{0, 0, 0, 0, 17, 128, 208, 159, 60, 46, 59, 3}), "#10");
+			Assert.AreEqual (result3, (double)new BigInteger (new byte[]{0, 0, 0, 0, 24, 128, 208, 159, 60, 46, 59, 3}), "#11");
+			Assert.AreEqual (result4, (double)new BigInteger (new byte[]{0, 0, 0, 0, 32, 128, 208, 159, 60, 46, 59, 3}), "#12");
+			Assert.AreEqual (result4, (double)new BigInteger (new byte[]{0, 0, 0, 0, 48, 128, 208, 159, 60, 46, 59, 3}), "#13");
+			Assert.AreEqual (result5, (double)new BigInteger (new byte[]{0, 0, 0, 0, 64, 128, 208, 159, 60, 46, 59, 3}), "#14");
+			
+			Assert.AreEqual (BitConverter.Int64BitsToDouble (-2748107935317889142), (double)new BigInteger (huge_a), "#15");
+			Assert.AreEqual (BitConverter.Int64BitsToDouble (-2354774254443231289), (double)new BigInteger (huge_b), "#16");
 		}
 
 		[Test]
