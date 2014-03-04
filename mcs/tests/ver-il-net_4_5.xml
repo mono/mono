@@ -18933,6 +18933,19 @@
       </method>
     </type>
   </test>
+  <test name="gtest-605.cs">
+    <type name="NullableAnd">
+      <method name="System.Object Foo(System.Object, System.Object)" attrs="145">
+        <size>59</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>76</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
