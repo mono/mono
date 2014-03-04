@@ -344,6 +344,16 @@ namespace System.Numerics {
 			return (int)(x & 0x0000003F);
 		}
 
+		//Based on code by Zilong Tan on Ulib released under MIT license
+		//Returns the number of bits set in @x
+		static int PopulationCount(ulong x)
+		{
+			x -= (x >> 1) & 0x5555555555555555UL;
+			x = (x & 0x3333333333333333UL) + ((x >> 2) & 0x3333333333333333UL);
+			x = (x + (x >> 4)) & 0x0f0f0f0f0f0f0f0fUL;
+			return (int)((x * 0x0101010101010101UL) >> 56);
+		}
+
 		static int LeadingZeroCount(uint value)
 		{
 			value |= value >> 1;
@@ -352,6 +362,61 @@ namespace System.Numerics {
 			value |= value >> 8;
 			value |= value >> 16;
 			return 32 - PopulationCount (value); // 32 = bits in uint
+		}
+
+		static int LeadingZeroCount(ulong value)
+		{
+			value |= value >> 1;
+			value |= value >> 2;
+			value |= value >> 4;
+			value |= value >> 8;
+			value |= value >> 16;
+			value |= value >> 32;
+			return 64 - PopulationCount (value); // 64 = bits in ulong
+		}
+
+		static double BuildDouble(int sign, ulong mantissa, int exponent)
+		{
+			const int exponentBias = 1023;
+			const int mantissaLength = 52;
+			const int exponentLength = 11;
+			const int maxExponent = 2046;
+			const long mantissaMask = 0xfffffffffffffL;
+			const long exponentMask = 0x7ffL;
+			const ulong negativeMark = 0x8000000000000000uL;
+			
+			if (sign == 0 || mantissa == 0) {
+				return 0.0;
+			} else {
+				exponent += exponentBias + mantissaLength;
+				int offset = LeadingZeroCount(mantissa) - exponentLength;
+				if (exponent - offset > maxExponent) {
+					return sign > 0 ? double.PositiveInfinity : double.NegativeInfinity;
+				} else {
+					if (offset < 0) {
+						mantissa >>= -offset;
+						exponent += -offset;
+					} else if (offset >= exponent) {
+						mantissa <<= exponent - 1;
+						exponent = 0;
+					} else {
+						mantissa <<= offset;
+						exponent -= offset;
+					}
+					mantissa = mantissa & mantissaMask;
+					if ((exponent & exponentMask) == exponent) {
+						unchecked {
+							ulong bits = mantissa | ((ulong)exponent << mantissaLength);
+							if (sign < 0) {
+								bits |= negativeMark;
+							}
+							return BitConverter.Int64BitsToDouble((long)bits);
+						}
+					} else {
+						return sign > 0 ? double.PositiveInfinity : double.NegativeInfinity;
+					}
+				}
+			}
 		}
 
 		public bool IsPowerOfTwo {
@@ -521,9 +586,9 @@ namespace System.Numerics {
 			case 0:
 				return 0.0;
 			case 1:
-				return (value.sign > 0 ? 1 : - 1) * (double)value.data [0];
+				return BuildDouble(value.sign, value.data [0], 0);
 			case 2:
-				return (value.sign > 0 ? 1 : - 1) * (double)((ulong)value.data [1] << 32 | (ulong)value.data [0]);
+				return BuildDouble(value.sign, (ulong)value.data [1] << 32 | (ulong)value.data [0], 0);
 			default:
 				var index = value.data.Length - 1;
 				var word = value.data [index];
@@ -535,9 +600,9 @@ namespace System.Numerics {
 				} else {
 					mantissa >>= -missing;
 				}
-				return (value.sign > 0 ? 1 : - 1) * (double)mantissa * Math.Pow (2, ((value.data.Length - 2) * 32) - missing);
+				return BuildDouble(value.sign, mantissa, ((value.data.Length - 2) * 32) - missing);
 			}
-        }
+		}
 
 		public static explicit operator float (BigInteger value)
 		{
