@@ -125,11 +125,13 @@ namespace Mono.Xml.Xsl
 		bool keyCompilationMode;	
 		string stylesheetVersion;
 		XsltDebuggerWrapper debugger;
+		bool strictMSXslNodeSet;
 
-		public Compiler (object debugger)
+		public Compiler (object debugger, bool strictMSXslNodeSet)
 		{
 			if (debugger != null)
 				this.debugger = new XsltDebuggerWrapper (debugger);
+			this.strictMSXslNodeSet = strictMSXslNodeSet;
 		}
 
 		public XsltDebuggerWrapper Debugger {
@@ -576,7 +578,7 @@ namespace Mono.Xml.Xsl
 		{
 			string ns = LookupNamespace (name.Namespace);
 			if (ns == XslStylesheet.MSXsltNamespace && name.Name == "node-set")
-				return new MSXslNodeSet (args);
+				return new MSXslNodeSet (strictMSXslNodeSet, args);
 			
 			if (ns != "")
 				return null;

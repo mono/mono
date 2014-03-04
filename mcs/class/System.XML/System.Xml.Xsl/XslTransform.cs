@@ -286,7 +286,7 @@ namespace System.Xml.Xsl {
 
 		public void Load (XPathNavigator stylesheet, XmlResolver resolver, Evidence evidence)
 		{
-			s = new Compiler (debugger).Compile (stylesheet, resolver, evidence);
+			s = new Compiler (debugger, true).Compile (stylesheet, resolver, evidence);
 		}
 
 		public void Load (XmlReader stylesheet, XmlResolver resolver, Evidence evidence)
