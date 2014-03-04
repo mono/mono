@@ -138,7 +138,7 @@ namespace Microsoft.Scripting.Utils {
     public static class ReflectionUtils {
         #region Accessibility
 
-        public static BindingFlags AllMembers = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+        public const BindingFlags AllMembers = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
         public static bool IsPublic(this PropertyInfo property) {
             return property.GetGetMethod(nonPublic: false) != null

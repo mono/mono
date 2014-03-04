@@ -53,12 +53,17 @@ namespace Microsoft.Scripting {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
         public static readonly PlatformAdaptationLayer Default = new PlatformAdaptationLayer();
 
+#if MONO_INTERPRETER
+        public const bool IsCompactFramework = false;
+#else
         public static readonly bool IsCompactFramework =
 #if WIN8
             false;
 #else
             Environment.OSVersion.Platform == PlatformID.WinCE ||
             Environment.OSVersion.Platform == PlatformID.Xbox;
+#endif
+
 #endif
 
 #if SILVERLIGHT

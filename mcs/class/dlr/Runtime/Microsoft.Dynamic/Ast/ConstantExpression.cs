@@ -61,18 +61,24 @@ namespace Microsoft.Scripting.Ast {
                 return NullLiteral;
             }
 
+#if !MONO_INTERPRETER
             BigInteger bi = value as BigInteger;
             if ((object)bi != null) {
                 return BigIntegerConstant(bi);
+#endif
+
 #if FEATURE_NUMERICS
-            } else if (value is BigInt) {
+            if (value is BigInt)
                 return BigIntConstant((BigInt)value);
-            } else if (value is Complex) {
+            if (value is Complex)
                 return ComplexConstant((Complex)value);
 #endif
-            } else if (value is Complex64) {
+
+#if !MONO_INTERPRETER
+            if (value is Complex64)
                 return Complex64Constant((Complex64)value);
-            } else if (value is Type) {
+#endif
+            if (value is Type) {
                 return Expression.Constant(value, typeof(Type));
             } else if (value is ConstructorInfo) {
                 return Expression.Constant(value, typeof(ConstructorInfo));
@@ -112,6 +118,7 @@ namespace Microsoft.Scripting.Ast {
             }
         }
 
+#if !MONO_INTERPRETER
         private static Expression BigIntegerConstant(BigInteger value) {
             int ival;
             if (value.AsInt32(out ival)) {
@@ -167,7 +174,7 @@ namespace Microsoft.Scripting.Ast {
             );
 #endif
         }
-
+#endif
         private static Expression CreateArray<T>(T[] array) {
             // TODO: could we use blobs?
             Expression[] init = new Expression[array.Length];
@@ -201,6 +208,7 @@ namespace Microsoft.Scripting.Ast {
         }
 #endif
 
+#if !MONO_INTERPRETER
         private static Expression Complex64Constant(Complex64 value) {
             if (value.Real != 0.0) {
                 if (value.Imag != 0.0) {
@@ -222,5 +230,6 @@ namespace Microsoft.Scripting.Ast {
                 );
             }
         }
+#endif
     }
 }

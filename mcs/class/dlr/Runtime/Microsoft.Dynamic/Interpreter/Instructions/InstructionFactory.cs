@@ -48,7 +48,9 @@ namespace Microsoft.Scripting.Interpreter {
 #if FEATURE_NUMERICS
                     { typeof(BigInt), InstructionFactory<BigInt>.Factory },
 #endif
+#if !MONO_INTERPRETER
                     { typeof(BigInteger), InstructionFactory<BigInteger>.Factory }  
+#endif
                 };
             }
 

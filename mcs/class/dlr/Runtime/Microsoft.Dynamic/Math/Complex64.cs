@@ -21,6 +21,8 @@ using BigInt = System.Numerics.BigInteger;
 #endif
 
 namespace Microsoft.Scripting.Math {
+
+#if !MONO_INTERPRETER
     /// <summary>
     /// Implementation of the complex number data type.
     /// </summary>
@@ -273,4 +275,6 @@ namespace Microsoft.Scripting.Math {
             return this == ((Complex64)obj);
         }
     }
+#endif
+
 }

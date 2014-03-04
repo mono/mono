@@ -32,92 +32,65 @@ using Microsoft.Scripting.Runtime;
 using Microsoft.Scripting.Utils;
 
 namespace Microsoft.Scripting.Interpreter {
-    internal abstract class ModInstruction : Instruction {
+    internal abstract class ModInstruction : AritmeticInstruction {
         private static Instruction _Int16, _Int32, _Int64, _UInt16, _UInt32, _UInt64, _Single, _Double;
-
-        public override int ConsumedStack { get { return 2; } }
-        public override int ProducedStack { get { return 1; } }
 
         private ModInstruction() {
         }
 
         internal sealed class ModInt32 : ModInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = ScriptingRuntimeHelpers.Int32ToObject(unchecked((Int32)l % (Int32)r));
-                frame.StackIndex--;
-                return +1;
+            protected override object Calculate (object l, object r)
+            {
+                return ScriptingRuntimeHelpers.Int32ToObject(unchecked((Int32)l % (Int32)r));
             }
         }
 
         internal sealed class ModInt16 : ModInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Int16)unchecked((Int16)l % (Int16)r);
-                frame.StackIndex--;
-                return +1;
+            protected override object Calculate (object l, object r)
+            {
+                return (Int16)unchecked((Int16)l % (Int16)r);
             }
         }
 
         internal sealed class ModInt64 : ModInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Int64)unchecked((Int64)l % (Int64)r);
-                frame.StackIndex--;
-                return +1;
+            protected override object Calculate (object l, object r)
+            {
+                return (Int64)unchecked((Int64)l % (Int64)r);
             }
         }
 
         internal sealed class ModUInt16 : ModInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (UInt16)unchecked((UInt16)l % (UInt16)r);
-                frame.StackIndex--;
-                return +1;
+            protected override object Calculate (object l, object r)
+            {
+                return (UInt16)unchecked((UInt16)l % (UInt16)r);
             }
         }
 
         internal sealed class ModUInt32 : ModInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (UInt32)unchecked((UInt32)l % (UInt32)r);
-                frame.StackIndex--;
-                return +1;
+            protected override object Calculate (object l, object r)
+            {
+                return (UInt32)unchecked((UInt32)l % (UInt32)r);
             }
         }
 
         internal sealed class ModUInt64 : ModInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (UInt64)unchecked((UInt64)l % (UInt64)r);
-                frame.StackIndex--;
-                return +1;
+            protected override object Calculate (object l, object r)
+            {
+                return (UInt64)unchecked((UInt64)l % (UInt64)r);
             }
         }
 
         internal sealed class ModSingle : ModInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Single)((Single)l % (Single)r);
-                frame.StackIndex--;
-                return +1;
+            protected override object Calculate (object l, object r)
+            {
+                return (Single)((Single)l % (Single)r);
             }
         }
 
         internal sealed class ModDouble : ModInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Double)l % (Double)r;
-                frame.StackIndex--;
-                return +1;
+            protected override object Calculate (object l, object r)
+            {
+                return (Double)l % (Double)r;
             }
         }
 

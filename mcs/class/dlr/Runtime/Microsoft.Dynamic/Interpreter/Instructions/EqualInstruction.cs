@@ -22,191 +22,113 @@ using Microsoft.Scripting.Runtime;
 using Microsoft.Scripting.Utils;
 
 namespace Microsoft.Scripting.Interpreter {
-    internal abstract class EqualInstruction : Instruction {
+    internal abstract class EqualInstruction : ComparisonInstruction {
         // Perf: EqualityComparer<T> but is 3/2 to 2 times slower.
         private static Instruction _Reference, _Boolean, _SByte, _Int16, _Char, _Int32, _Int64, _Byte, _UInt16, _UInt32, _UInt64, _Single, _Double;
         private static Instruction _BooleanLifted, _SByteLifted, _Int16Lifted, _CharLifted, _Int32Lifted, _Int64Lifted,
             _ByteLifted, _UInt16Lifted, _UInt32Lifted, _UInt64Lifted, _SingleLifted, _DoubleLifted;
 
-        public override int ConsumedStack { get { return 2; } }
-        public override int ProducedStack { get { return 1; } }
-
         private EqualInstruction() {
         }
 
-        public bool LiftedToNull { get; set; }
+        protected override object DoNullComparison (object l, object r)
+        {
+            return LiftedToNull ? (object) null : (object) l == r;
+        }
 
         internal sealed class EqualBoolean : EqualInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                if (l == null || r == null)
-                    frame.Data[frame.StackIndex - 2] = LiftedToNull ? (object) null : (object) l == r;
-                else
-                    frame.Data[frame.StackIndex - 2] = (Boolean)l == (Boolean)r;
-
-                frame.StackIndex--;
-                return +1;
+            protected override object DoCalculate (object l, object r)
+            {
+                return (Boolean)l == (Boolean)r;
             }
         }
 
         internal sealed class EqualSByte : EqualInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                if (l == null || r == null)
-                    frame.Data[frame.StackIndex - 2] = LiftedToNull ? (object) null : (object) l == r;
-                else
-                    frame.Data[frame.StackIndex - 2] = (SByte)l == (SByte)r;
-
-                frame.StackIndex--;
-                return +1;
+            protected override object DoCalculate (object l, object r)
+            {
+                return (SByte)l == (SByte)r;
             }
         }
 
         internal sealed class EqualInt16 : EqualInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                if (l == null || r == null)
-                    frame.Data[frame.StackIndex - 2] = LiftedToNull ? (object) null : (object) l == r;
-                else
-                    frame.Data[frame.StackIndex - 2] = (Int16)l == (Int16)r;
-
-                frame.StackIndex--;
-                return +1;
+            protected override object DoCalculate (object l, object r)
+            {
+                return (Int16)l == (Int16)r;
             }
         }
 
         internal sealed class EqualChar : EqualInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                if (l == null || r == null)
-                    frame.Data[frame.StackIndex - 2] = LiftedToNull ? (object) null : (object) l == r;
-                else
-                    frame.Data[frame.StackIndex - 2] = (Char)l == (Char)r;
-
-                frame.StackIndex--;
-                return +1;
+            protected override object DoCalculate (object l, object r)
+            {
+                return (Char)l == (Char)r;
             }
         }
 
         internal sealed class EqualInt32 : EqualInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                if (l == null || r == null)
-                    frame.Data[frame.StackIndex - 2] = LiftedToNull ? (object) null : (object) l == r;
-                else
-                    frame.Data[frame.StackIndex - 2] = (Int32)l == (Int32)r;
-
-                frame.StackIndex--;
-                return +1;            }
+            protected override object DoCalculate (object l, object r)
+            {
+                return (Int32)l == (Int32)r;
+            }
         }
 
         internal sealed class EqualInt64 : EqualInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                if (l == null || r == null)
-                    frame.Data[frame.StackIndex - 2] = LiftedToNull ? (object) null : (object) l == r;
-                else
-                    frame.Data[frame.StackIndex - 2] = (Int64)l == (Int64)r;
-
-                frame.StackIndex--;
-                return +1;
+            protected override object DoCalculate (object l, object r)
+            {
+                return (Int64)l == (Int64)r;
             }
         }
 
         internal sealed class EqualByte : EqualInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                if (l == null || r == null)
-                    frame.Data[frame.StackIndex - 2] = LiftedToNull ? (object) null : (object) l == r;
-                else
-                    frame.Data[frame.StackIndex - 2] = (Byte)l == (Byte)r;
-
-                frame.StackIndex--;
-                return +1;
+            protected override object DoCalculate (object l, object r)
+            {
+                return (Byte)l == (Byte)r;
             }
         }
 
         internal sealed class EqualUInt16 : EqualInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                if (l == null || r == null)
-                    frame.Data[frame.StackIndex - 2] = LiftedToNull ? (object) null : (object) l == r;
-                else
-                    frame.Data[frame.StackIndex - 2] = (UInt16)l == (UInt16)r;
-
-                frame.StackIndex--;
-                return +1;
+            protected override object DoCalculate (object l, object r)
+            {
+                return (UInt16)l == (UInt16)r;
             }
         }
 
         internal sealed class EqualUInt32 : EqualInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                if (l == null || r == null)
-                    frame.Data[frame.StackIndex - 2] = LiftedToNull ? (object) null : (object) l == r;
-                else
-                    frame.Data[frame.StackIndex - 2] = (UInt32)l == (UInt32)r;
-
-                frame.StackIndex--;
-                return +1;
+            protected override object DoCalculate (object l, object r)
+            {
+                return (UInt32)l == (UInt32)r;
             }
         }
 
         internal sealed class EqualUInt64 : EqualInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                if (l == null || r == null)
-                    frame.Data[frame.StackIndex - 2] = LiftedToNull ? (object) null : (object) l == r;
-                else
-                    frame.Data[frame.StackIndex - 2] = (UInt64)l == (UInt64)r;
-
-                frame.StackIndex--;
-                return +1;
+            protected override object DoCalculate (object l, object r)
+            {
+                return (UInt64)l == (UInt64)r;
             }
         }
 
         internal sealed class EqualSingle : EqualInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                if (l == null || r == null)
-                    frame.Data[frame.StackIndex - 2] = LiftedToNull ? (object) null : (object) l == r;
-                else
-                    frame.Data[frame.StackIndex - 2] = (Single)l == (Single)r;
-
-                frame.StackIndex--;
-                return +1;
+            protected override object DoCalculate (object l, object r)
+            {
+                return (Single)l == (Single)r;
             }
         }
 
         internal sealed class EqualDouble : EqualInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                if (l == null || r == null)
-                    frame.Data[frame.StackIndex - 2] = LiftedToNull ? (object) null : (object) l == r;
-                else
-                    frame.Data[frame.StackIndex - 2] = (Double)l == (Double)r;
-
-                frame.StackIndex--;
-                return +1;
+            protected override object DoCalculate (object l, object r)
+            {
+                return (Double)l == (Double)r;
             }
         }
 
         internal sealed class EqualReference : EqualInstruction {
-            public override int Run(InterpretedFrame frame) {
-                frame.Push(frame.Pop() == frame.Pop());
-                return +1;
+            protected override object Calculate (object l, object r)
+            {
+                return l == r;
+            }
+
+            protected override object DoCalculate (object l, object r)
+            {
+                throw Assert.Unreachable;
             }
         }
 

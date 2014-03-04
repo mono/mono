@@ -683,7 +683,7 @@ namespace Microsoft.Scripting.Utils {
 
             return four;
         }
-
+#if !MONO_INTERPRETER
 #if !FEATURE_NUMERICS
         public static BigInteger GetRandBits(this Random generator, int bits) {
             ContractUtils.Requires(bits > 0);
@@ -825,7 +825,6 @@ namespace Microsoft.Scripting.Utils {
             );
         }
 #endif
-
         public static bool TryToFloat64(this BigInteger self, out double result) {
             return StringUtils.TryParseDouble(
                 self.ToString(10),
@@ -865,7 +864,7 @@ namespace Microsoft.Scripting.Utils {
             return index * 8 + BitLength((int)bytes[index]);
         }
 #endif
-
+#endif
         // Like GetBitCount(Abs(x)), except 0 maps to 0
         public static int BitLength(long x) {
             if (x == 0) {
@@ -1163,6 +1162,7 @@ namespace Microsoft.Scripting.Utils {
 
         #endregion
 
+#if !MONO_INTERPRETER
         #region Complex
 
 #if !FEATURE_NUMERICS
@@ -1224,6 +1224,7 @@ namespace Microsoft.Scripting.Utils {
 #endif
 
         #endregion
+#endif
     }
 
 }

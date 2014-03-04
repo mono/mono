@@ -32,153 +32,108 @@ using Microsoft.Scripting.Runtime;
 using Microsoft.Scripting.Utils;
 
 namespace Microsoft.Scripting.Interpreter {
-    internal abstract class XorInstruction : Instruction {
+    internal abstract class XorInstruction : AritmeticInstruction {
         private static Instruction _Int16, _Int32, _Int64, _UInt16, _UInt32, _UInt64, _Boolean;
         private static Instruction _Int16Lifted, _Int32Lifted, _Int64Lifted, _UInt16Lifted, _UInt32Lifted, _UInt64Lifted, _BooleanLifted;
-
-        public override int ConsumedStack { get { return 2; } }
-        public override int ProducedStack { get { return 1; } }
 
         private XorInstruction() {
         }
 
         internal sealed class XorInt32 : XorInstruction {
-            public override int Run(InterpretedFrame frame) {
-                var l = (Int32)frame.Data[frame.StackIndex - 2];
-                var r = (Int32)frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = ScriptingRuntimeHelpers.Int32ToObject(l ^ r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return ScriptingRuntimeHelpers.Int32ToObject((Int32)l ^ (Int32)r);
             }
         }
 
         internal sealed class XorInt16 : XorInstruction {
-            public override int Run(InterpretedFrame frame) {
-                var l = (Int16)frame.Data[frame.StackIndex - 2];
-                var r = (Int16)frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Int16)(l ^ r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return (Int16)((Int16)l ^ (Int16)r);
             }
         }
 
         internal sealed class XorInt64 : XorInstruction {
-            public override int Run(InterpretedFrame frame) {
-                var l = (Int64)frame.Data[frame.StackIndex - 2];
-                var r = (Int64)frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Int64)(l ^ r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return (Int64)((Int64)l ^ (Int64)r);
             }
         }
 
         internal sealed class XorUInt16 : XorInstruction {
-            public override int Run(InterpretedFrame frame) {
-                var l = (UInt16)frame.Data[frame.StackIndex - 2];
-                var r = (UInt16)frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (UInt16)(l ^ r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return (UInt16)((UInt16)l ^ (UInt16)r);
             }
         }
 
         internal sealed class XorUInt32 : XorInstruction {
-            public override int Run(InterpretedFrame frame) {
-                var l = (UInt32)frame.Data[frame.StackIndex - 2];
-                var r = (UInt32)frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (UInt32)(l ^ r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return  (UInt32)((UInt32)l ^ (UInt32)r);
             }
         }
 
         internal sealed class XorUInt64 : XorInstruction {
-            public override int Run(InterpretedFrame frame) {
-                var l = (UInt64)frame.Data[frame.StackIndex - 2];
-                var r = (UInt64)frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (UInt64)(l ^ r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return (UInt64)((UInt64)l ^ (UInt64)r);
             }
         }
 
         internal sealed class XorBoolean : XorInstruction {
-            public override int Run(InterpretedFrame frame) {
-                var l = (Boolean)frame.Data[frame.StackIndex - 2];
-                var r = (Boolean)frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Boolean)(l ^ r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return (Boolean)((Boolean)l ^ (Boolean)r);
             }
         }
 
         internal sealed class XorInt32Lifted : XorInstruction {
-            public override int Run(InterpretedFrame frame) {
-                var l = (Int32?)frame.Data[frame.StackIndex - 2];
-                var r = (Int32?)frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Int32?)(l ^ r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return (Int32?)((Int32?)l ^ (Int32?)r);
             }
         }
 
         internal sealed class XorInt16Lifted : XorInstruction {
-            public override int Run(InterpretedFrame frame) {
-                var l = (Int16?)frame.Data[frame.StackIndex - 2];
-                var r = (Int16?)frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Int16?)(l ^ r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return  (Int16?)((Int16?)l ^ (Int16?)r);
             }
         }
 
         internal sealed class XorInt64Lifted : XorInstruction {
-            public override int Run(InterpretedFrame frame) {
-                var l = (Int64?)frame.Data[frame.StackIndex - 2];
-                var r = (Int64?)frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Int64?)(l ^ r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return (Int64?)((Int64?)l ^ (Int64?)r);
             }
         }
 
         internal sealed class XorUInt16Lifted : XorInstruction {
-            public override int Run(InterpretedFrame frame) {
-                var l = (UInt16?)frame.Data[frame.StackIndex - 2];
-                var r = (UInt16?)frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (UInt16?)(l ^ r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return (UInt16?)((UInt16?)l ^ (UInt16?)r);
             }
         }
 
         internal sealed class XorUInt32Lifted : XorInstruction {
-            public override int Run(InterpretedFrame frame) {
-                var l = (UInt32?)frame.Data[frame.StackIndex - 2];
-                var r = (UInt32?)frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (UInt32?)(l ^ r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return (UInt32?)((UInt32?)l ^ (UInt32?)r);
             }
         }
 
         internal sealed class XorUInt64Lifted : XorInstruction {
-            public override int Run(InterpretedFrame frame) {
-                var l = (UInt64?)frame.Data[frame.StackIndex - 2];
-                var r = (UInt64?)frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (UInt64?)(l ^ r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return (UInt64?)((UInt64?)l ^ (UInt64?)r);
             }
         }
 
         internal sealed class XorBooleanLifted : XorInstruction {
-            public override int Run(InterpretedFrame frame) {
-                var l = (Boolean?)frame.Data[frame.StackIndex - 2];
-                var r = (Boolean?)frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Boolean?)(l ^ r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return (Boolean?)((Boolean?)l ^ (Boolean?)r);
             }
         }
 
