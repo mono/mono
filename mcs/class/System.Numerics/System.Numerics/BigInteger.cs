@@ -344,6 +344,16 @@ namespace System.Numerics {
 			return (int)(x & 0x0000003F);
 		}
 
+		static int LeadingZeroCount(uint value)
+		{
+			value |= value >> 1;
+			value |= value >> 2;
+			value |= value >> 4;
+			value |= value >> 8;
+			value |= value >> 16;
+			return 32 - PopulationCount (value); // 32 = bits in uint
+		}
+
 		public bool IsPowerOfTwo {
 			get {
 				bool foundBit = false;
