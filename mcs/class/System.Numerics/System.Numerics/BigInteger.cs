@@ -586,9 +586,9 @@ namespace System.Numerics {
 			case 0:
 				return 0.0;
 			case 1:
-				return BuildDouble(value.sign, value.data [0], 0);
+				return BuildDouble (value.sign, value.data [0], 0);
 			case 2:
-				return BuildDouble(value.sign, (ulong)value.data [1] << 32 | (ulong)value.data [0], 0);
+				return BuildDouble (value.sign, (ulong)value.data [1] << 32 | (ulong)value.data [0], 0);
 			default:
 				var index = value.data.Length - 1;
 				var word = value.data [index];
@@ -600,29 +600,13 @@ namespace System.Numerics {
 				} else {
 					mantissa >>= -missing;
 				}
-				return BuildDouble(value.sign, mantissa, ((value.data.Length - 2) * 32) - missing);
+				return BuildDouble (value.sign, mantissa, ((value.data.Length - 2) * 32) - missing);
 			}
 		}
 
 		public static explicit operator float (BigInteger value)
 		{
-			switch (value.data.Length) {
-			case 0:
-				return 0.0f;
-			case 1:
-				return (value.sign > 0 ? 1 : - 1) * (float)value.data [0];
-			default:
-				var index = value.data.Length - 1;
-				var mantissa = value.data [index];
-				int missing = LeadingZeroCount (mantissa) - 8; // 8 = bits in exponent
-				if (missing > 0) {
-                    // add the missing bits from the next word
-					mantissa = (mantissa << missing) | (value.data [index - 1] >> (32 - missing));
-				} else {
-					mantissa >>= -missing;
-				}
-				return (value.sign > 0 ? 1 : - 1) * (float)(mantissa * Math.Pow (2, ((value.data.Length - 1) * 32) - missing));
-			}
+			return (float)(double)value;
 		}
 
 		public static explicit operator decimal (BigInteger value)
