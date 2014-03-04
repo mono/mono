@@ -517,23 +517,46 @@ namespace System.Numerics {
 
 		public static explicit operator double (BigInteger value)
 		{
-			//FIXME
-			try {
-	            return double.Parse (value.ToString (),
-    	            System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
-			} catch (OverflowException) {
-				return value.sign == -1 ? double.NegativeInfinity : double.PositiveInfinity;
+			switch (value.data.Length) {
+			case 0:
+				return 0.0;
+			case 1:
+				return (value.sign > 0 ? 1 : - 1) * (double)value.data [0];
+			case 2:
+				return (value.sign > 0 ? 1 : - 1) * (double)((ulong)value.data [1] << 32 | (ulong)value.data [0]);
+			default:
+				var index = value.data.Length - 1;
+				var word = value.data [index];
+				var mantissa = ((ulong)word << 32) | value.data [index - 1];
+				int missing = LeadingZeroCount (word) - 11; // 11 = bits in exponent
+				if (missing > 0) {
+					// add the missing bits from the next word
+					mantissa = (mantissa << missing) | (value.data [index - 2] >> (32 - missing));
+				} else {
+					mantissa >>= -missing;
+				}
+				return (value.sign > 0 ? 1 : - 1) * (double)mantissa * Math.Pow (2, ((value.data.Length - 2) * 32) - missing);
 			}
         }
 
 		public static explicit operator float (BigInteger value)
 		{
-			//FIXME
-			try {
-				return float.Parse (value.ToString (),
-				System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
-			} catch (OverflowException) {
-				return value.sign == -1 ? float.NegativeInfinity : float.PositiveInfinity;
+			switch (value.data.Length) {
+			case 0:
+				return 0.0f;
+			case 1:
+				return (value.sign > 0 ? 1 : - 1) * (float)value.data [0];
+			default:
+				var index = value.data.Length - 1;
+				var mantissa = value.data [index];
+				int missing = LeadingZeroCount (mantissa) - 8; // 8 = bits in exponent
+				if (missing > 0) {
+                    // add the missing bits from the next word
+					mantissa = (mantissa << missing) | (value.data [index - 1] >> (32 - missing));
+				} else {
+					mantissa >>= -missing;
+				}
+				return (value.sign > 0 ? 1 : - 1) * (float)(mantissa * Math.Pow (2, ((value.data.Length - 1) * 32) - missing));
 			}
 		}
 
