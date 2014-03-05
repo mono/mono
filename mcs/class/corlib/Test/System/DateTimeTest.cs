@@ -2554,5 +2554,17 @@ namespace MonoTests.System
 			var dt = new DateTime (2012, 9, 15);
 			Assert.AreEqual ("15 сентября", dt.ToString ("m", ci));
 		}
+
+		[Test]
+		public void Parse_ThaiCalendar ()
+		{
+			var culture = CultureInfo.GetCultureInfo ("th-TH");
+			Assert.IsTrue (culture.Calendar is ThaiBuddhistCalendar);
+			var dt = DateTime.Now.Date;
+			var s = dt.ToString (culture);
+			var parsed = DateTime.Parse (s, culture);
+
+			Assert.AreEqual (dt, parsed, "#1");
+		}
 	}
 }

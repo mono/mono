@@ -1706,17 +1706,12 @@ namespace System
 				}
 			}
 			
-			// For anything out of range 
-			// return false
-			if (year < 1 || year > 9999 || 
-				month < 1 || month >12  ||
-				day < 1 || day > DateTime.DaysInMonth(year, month) ||
-				hour < 0 || hour > 23 ||
-				minute < 0 || minute > 59 ||
-				second < 0 || second > 59)
+			try {
+				result = dfi.Calendar.ToDateTime (year, month, day, hour, minute, second, 0);
+			} catch {
 				return false;
+			}
 
-			result = new DateTime (year, month, day, hour, minute, second, 0);
 			result = result.AddSeconds(fractionalSeconds);
 
 			if (dayofweek != -1 && dayofweek != (int) result.DayOfWeek)
