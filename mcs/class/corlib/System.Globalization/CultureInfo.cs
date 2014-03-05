@@ -361,8 +361,22 @@ namespace System.Globalization
 
 		public void ClearCachedData()
 		{
-			Thread.CurrentThread.CurrentCulture = null;
-			Thread.CurrentThread.CurrentUICulture = null;
+			lock (shared_table_lock) {
+				shared_by_number = null;
+				shared_by_name = null;
+			}
+
+			//
+			// ClearCachedData method does not refresh the information in
+			// the Thread.CurrentCulture property for existing threads
+			//
+			default_current_culture = null;
+
+			RegionInfo.ClearCachedData ();
+			TimeZone.ClearCachedData ();
+#if !BOOTSTRAP_BASIC
+			TimeZoneInfo.ClearCachedData ();
+#endif
 		}
 
 		public virtual object Clone()

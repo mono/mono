@@ -1746,7 +1746,7 @@ namespace System
 			//
 			if (comparer == null) {
 				/* Avoid this when using full-aot to prevent the generation of many unused qsort<K,T> instantiations */
-#if FULL_AOT_RUNTIME
+#if !FULL_AOT_RUNTIME
 #if !BOOTSTRAP_BASIC
 				switch (Type.GetTypeCode (typeof (TKey))) {
 				case TypeCode.Int32:

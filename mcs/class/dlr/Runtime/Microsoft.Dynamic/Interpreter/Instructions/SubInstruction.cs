@@ -32,92 +32,66 @@ using Microsoft.Scripting.Runtime;
 using Microsoft.Scripting.Utils;
 
 namespace Microsoft.Scripting.Interpreter {
-    internal abstract class SubInstruction : Instruction {
-        private static Instruction _Int16, _Int32, _Int64, _UInt16, _UInt32, _UInt64, _Single, _Double;
+    internal abstract class SubInstruction : AritmeticInstruction {
 
-        public override int ConsumedStack { get { return 2; } }
-        public override int ProducedStack { get { return 1; } }
+        private static Instruction _Int16, _Int32, _Int64, _UInt16, _UInt32, _UInt64, _Single, _Double;
 
         private SubInstruction() {
         }
 
         internal sealed class SubInt32 : SubInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = ScriptingRuntimeHelpers.Int32ToObject(unchecked((Int32)l - (Int32)r));
-                frame.StackIndex--;
-                return +1;
+            protected override object Calculate (object l, object r)
+            {
+                return ScriptingRuntimeHelpers.Int32ToObject(unchecked((Int32)l - (Int32)r));
             }
         }
 
         internal sealed class SubInt16 : SubInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Int16)unchecked((Int16)l - (Int16)r);
-                frame.StackIndex--;
-                return +1;
+            protected override object Calculate (object l, object r)
+            {
+                return (Int16)unchecked((Int16)l - (Int16)r);
             }
         }
 
         internal sealed class SubInt64 : SubInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Int64)unchecked((Int64)l - (Int64)r);
-                frame.StackIndex--;
-                return +1;
+            protected override object Calculate (object l, object r)
+            {
+                return (Int64)unchecked((Int64)l - (Int64)r);
             }
         }
 
         internal sealed class SubUInt16 : SubInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (UInt16)unchecked((UInt16)l - (UInt16)r);
-                frame.StackIndex--;
-                return +1;
+            protected override object Calculate (object l, object r)
+            {
+                return (UInt16)unchecked((UInt16)l - (UInt16)r);
             }
         }
 
         internal sealed class SubUInt32 : SubInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (UInt32)unchecked((UInt32)l - (UInt32)r);
-                frame.StackIndex--;
-                return +1;
+            protected override object Calculate (object l, object r)
+            {
+                return (UInt32)unchecked((UInt32)l - (UInt32)r);
             }
         }
 
         internal sealed class SubUInt64 : SubInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (UInt64)unchecked((UInt64)l - (UInt64)r);
-                frame.StackIndex--;
-                return +1;
+            protected override object Calculate (object l, object r)
+            {
+                return (UInt64)unchecked((UInt64)l - (UInt64)r);
             }
         }
 
         internal sealed class SubSingle : SubInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Single)((Single)l - (Single)r);
-                frame.StackIndex--;
-                return +1;
+            protected override object Calculate (object l, object r)
+            {
+                return (Single)((Single)l - (Single)r);
             }
         }
 
         internal sealed class SubDouble : SubInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Double)l - (Double)r;
-                frame.StackIndex--;
-                return +1;
+            protected override object Calculate (object l, object r)
+            {
+                return (Double)l - (Double)r;
             }
         }
 
@@ -143,92 +117,66 @@ namespace Microsoft.Scripting.Interpreter {
         }
     }
 
-    internal abstract class SubOvfInstruction : Instruction {
-        private static Instruction _Int16, _Int32, _Int64, _UInt16, _UInt32, _UInt64, _Single, _Double;
+    internal abstract class SubOvfInstruction : AritmeticInstruction {
 
-        public override int ConsumedStack { get { return 2; } }
-        public override int ProducedStack { get { return 1; } }
+        private static Instruction _Int16, _Int32, _Int64, _UInt16, _UInt32, _UInt64, _Single, _Double;
 
         private SubOvfInstruction() {
         }
 
         internal sealed class SubOvfInt32 : SubOvfInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = ScriptingRuntimeHelpers.Int32ToObject(checked((Int32)l - (Int32)r));
-                frame.StackIndex--;
-                return +1;
+            protected override object Calculate (object l, object r)
+            {
+                return ScriptingRuntimeHelpers.Int32ToObject(checked((Int32)l - (Int32)r));
             }
         }
 
         internal sealed class SubOvfInt16 : SubOvfInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = checked((Int16)((Int16)l - (Int16)r));
-                frame.StackIndex--;
-                return +1;
+            protected override object Calculate (object l, object r)
+            {
+                return checked((Int16)((Int16)l - (Int16)r));
             }
         }
 
         internal sealed class SubOvfInt64 : SubOvfInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = checked((Int64)((Int64)l - (Int64)r));
-                frame.StackIndex--;
-                return +1;
+            protected override object Calculate (object l, object r)
+            {
+                return checked((Int64)((Int64)l - (Int64)r));
             }
         }
 
         internal sealed class SubOvfUInt16 : SubOvfInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = checked((UInt16)((UInt16)l - (UInt16)r));
-                frame.StackIndex--;
-                return +1;
+            protected override object Calculate (object l, object r)
+            {
+                return checked((UInt16)((UInt16)l - (UInt16)r));
             }
         }
 
         internal sealed class SubOvfUInt32 : SubOvfInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = checked((UInt32)((UInt32)l - (UInt32)r));
-                frame.StackIndex--;
-                return +1;
+            protected override object Calculate (object l, object r)
+            {
+                return checked((UInt32)((UInt32)l - (UInt32)r));
             }
         }
 
         internal sealed class SubOvfUInt64 : SubOvfInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = checked((UInt64)((UInt64)l - (UInt64)r));
-                frame.StackIndex--;
-                return +1;
+            protected override object Calculate (object l, object r)
+            {
+                return checked((UInt64)((UInt64)l - (UInt64)r));
             }
         }
 
         internal sealed class SubOvfSingle : SubOvfInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Single)((Single)l - (Single)r);
-                frame.StackIndex--;
-                return +1;
+            protected override object Calculate (object l, object r)
+            {
+                return (Single)((Single)l - (Single)r);
             }
         }
 
         internal sealed class SubOvfDouble : SubOvfInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Double)l - (Double)r;
-                frame.StackIndex--;
-                return +1;
+            protected override object Calculate (object l, object r)
+            {
+                return (Double)l - (Double)r;
             }
         }
 

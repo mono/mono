@@ -189,7 +189,7 @@ namespace System.Runtime.Serialization.Json
 		object ReadValueType (Type type, bool nullable)
 		{
 			string s = reader.ReadElementContentAsString ();
-			return nullable && s.Trim ().Length == 0 ? null : Convert.ChangeType (s, type, null);
+			return nullable && s.Trim ().Length == 0 ? null : Convert.ChangeType (s, type, CultureInfo.InvariantCulture);
 		}
 		
 

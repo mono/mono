@@ -258,6 +258,10 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_HAVE_GENERAL_RGCTX_LAZY_FETCH_TRAMPOLINE 1
 #define MONO_ARCH_HAVE_OPCODE_NEEDS_EMULATION 1
 #define MONO_ARCH_HAVE_OBJC_GET_SELECTOR 1
+#ifdef __linux__
+#define MONO_ARCH_HAVE_OP_TAIL_CALL 1
+#endif
+#define MONO_ARCH_HAVE_DUMMY_INIT 1
 
 #if defined(__native_client__)
 #undef MONO_ARCH_SOFT_DEBUG_SUPPORTED

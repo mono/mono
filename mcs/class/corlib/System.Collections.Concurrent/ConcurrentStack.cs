@@ -111,7 +111,7 @@ namespace System.Collections.Concurrent
 				first.Next = head;
 			} while (Interlocked.CompareExchange (ref head, insert, first.Next) != first.Next);
 			
-			Interlocked.Add (ref count, count);
+			Interlocked.Add (ref this.count, count);
 		}
 		
 		public bool TryPop (out T result)
@@ -280,3 +280,4 @@ namespace System.Collections.Concurrent
 	}
 }
 #endif
+

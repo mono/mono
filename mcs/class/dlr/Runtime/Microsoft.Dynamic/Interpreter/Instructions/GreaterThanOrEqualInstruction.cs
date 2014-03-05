@@ -35,169 +35,92 @@ using Microsoft.Scripting.Runtime;
 using Microsoft.Scripting.Utils;
 
 namespace Microsoft.Scripting.Interpreter {
-    public abstract class GreaterThanOrEqualInstruction : Instruction {
+    abstract class GreaterThanOrEqualInstruction : ComparisonInstruction {
         private static Instruction _SByte, _Int16, _Char, _Int32, _Int64, _Byte, _UInt16, _UInt32, _UInt64, _Single, _Double;
         private static Instruction _SByteLifted, _Int16Lifted, _CharLifted, _Int32Lifted, _Int64Lifted, _ByteLifted, _UInt16Lifted, _UInt32Lifted, _UInt64Lifted, _SingleLifted, _DoubleLifted;
-
-        public override int ConsumedStack { get { return 2; } }
-        public override int ProducedStack { get { return 1; } }
 
         private GreaterThanOrEqualInstruction() {
         }
 
-        public bool LiftedToNull { get; set; }
+        protected override object DoNullComparison (object l, object r)
+        {
+            return LiftedToNull ? (object) null : (object) false;
+        }
 
         internal sealed class GreaterThanOrEqualSByte : GreaterThanOrEqualInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                if (l == null || r == null)
-                    frame.Data[frame.StackIndex - 2] = LiftedToNull ? (object) null : (object) false;
-                else
-                    frame.Data[frame.StackIndex - 2] = (SByte)l >= (SByte)r;
-
-                frame.StackIndex--;
-                return +1;
+            protected override object DoCalculate (object l, object r)
+            {
+                return (SByte)l >= (SByte)r;
             }
         }
 
         internal sealed class GreaterThanOrEqualInt16 : GreaterThanOrEqualInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                if (l == null || r == null)
-                    frame.Data[frame.StackIndex - 2] = LiftedToNull ? (object) null : (object) false;
-                else
-                    frame.Data[frame.StackIndex - 2] = (Int16)l >= (Int16)r;
-
-                frame.StackIndex--;
-                return +1;
+            protected override object DoCalculate (object l, object r)
+            {
+                return (Int16)l >= (Int16)r;
             }
         }
 
         internal sealed class GreaterThanOrEqualChar : GreaterThanOrEqualInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                if (l == null || r == null)
-                    frame.Data[frame.StackIndex - 2] = LiftedToNull ? (object) null : (object) false;
-                else
-                    frame.Data[frame.StackIndex - 2] = (Char)l >= (Char)r;
-
-                frame.StackIndex--;
-                return +1;
+            protected override object DoCalculate (object l, object r)
+            {
+                return (Char)l >= (Char)r;
             }
         }
 
         internal sealed class GreaterThanOrEqualInt32 : GreaterThanOrEqualInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                if (l == null || r == null)
-                    frame.Data[frame.StackIndex - 2] = LiftedToNull ? (object) null : (object) false;
-                else
-                    frame.Data[frame.StackIndex - 2] = (Int32)l >= (Int32)r;
-
-                frame.StackIndex--;
-                return +1;
+            protected override object DoCalculate (object l, object r)
+            {
+                return (Int32)l >= (Int32)r;
             }
         }
 
         internal sealed class GreaterThanOrEqualInt64 : GreaterThanOrEqualInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                if (l == null || r == null)
-                    frame.Data[frame.StackIndex - 2] = LiftedToNull ? (object) null : (object) false;
-                else
-                    frame.Data[frame.StackIndex - 2] = (Int64)l >= (Int64)r;
-
-                frame.StackIndex--;
-                return +1;
+            protected override object DoCalculate (object l, object r)
+            {
+                return (Int64)l >= (Int64)r;
             }
         }
 
         internal sealed class GreaterThanOrEqualByte : GreaterThanOrEqualInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                if (l == null || r == null)
-                    frame.Data[frame.StackIndex - 2] = LiftedToNull ? (object) null : (object) false;
-                else
-                    frame.Data[frame.StackIndex - 2] = (Byte)l >= (Byte)r;
-
-                frame.StackIndex--;
-                return +1;
+            protected override object DoCalculate (object l, object r)
+            {
+                return (Byte)l >= (Byte)r;
             }
         }
 
         internal sealed class GreaterThanOrEqualUInt16 : GreaterThanOrEqualInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                if (l == null || r == null)
-                    frame.Data[frame.StackIndex - 2] = LiftedToNull ? (object) null : (object) false;
-                else
-                    frame.Data[frame.StackIndex - 2] = (UInt16)l >= (UInt16)r;
-
-                frame.StackIndex--;
-                return +1;
+            protected override object DoCalculate (object l, object r)
+            {
+                return (UInt16)l >= (UInt16)r;
             }
         }
 
         internal sealed class GreaterThanOrEqualUInt32 : GreaterThanOrEqualInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                if (l == null || r == null)
-                    frame.Data[frame.StackIndex - 2] = LiftedToNull ? (object) null : (object) false;
-                else
-                    frame.Data[frame.StackIndex - 2] = (UInt32)l >= (UInt32)r;
-
-                frame.StackIndex--;
-                return +1;
+            protected override object DoCalculate (object l, object r)
+            {
+                return (UInt32)l >= (UInt32)r;
             }
         }
 
         internal sealed class GreaterThanOrEqualUInt64 : GreaterThanOrEqualInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                if (l == null || r == null)
-                    frame.Data[frame.StackIndex - 2] = LiftedToNull ? (object) null : (object) false;
-                else
-                    frame.Data[frame.StackIndex - 2] = (UInt64)l >= (UInt64)r;
-
-                frame.StackIndex--;
-                return +1;
+            protected override object DoCalculate (object l, object r)
+            {
+                return (UInt64)l >= (UInt64)r;
             }
         }
 
         internal sealed class GreaterThanOrEqualSingle : GreaterThanOrEqualInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                if (l == null || r == null)
-                    frame.Data[frame.StackIndex - 2] = LiftedToNull ? (object) null : (object) false;
-                else
-                    frame.Data[frame.StackIndex - 2] = (Single)l >= (Single)r;
-
-                frame.StackIndex--;
-                return +1;
+            protected override object DoCalculate (object l, object r)
+            {
+                return (Single)l >= (Single)r;
             }
         }
 
         internal sealed class GreaterThanOrEqualDouble : GreaterThanOrEqualInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                if (l == null || r == null)
-                    frame.Data[frame.StackIndex - 2] = LiftedToNull ? (object) null : (object) false;
-                else
-                    frame.Data[frame.StackIndex - 2] = (Double)l >= (Double)r;
-
-                frame.StackIndex--;
-                return +1;
+            protected override object DoCalculate (object l, object r)
+            {
+                return (Double)l >= (Double)r;
             }
         }
 

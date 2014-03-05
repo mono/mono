@@ -197,6 +197,8 @@ namespace MonoTests.System.Collections
 			list.Capacity = 0;
 		}
 
+		// This doesn't fail on 64 bit systems
+		/*
 		[Test]
 		[ExpectedException (typeof (OutOfMemoryException))]
 		public void TestCapacity4 ()
@@ -204,6 +206,7 @@ namespace MonoTests.System.Collections
 			SortedList list = new SortedList ();
 			list.Capacity = Int32.MaxValue;
 		}
+		*/
 
 		[Test]
 		public void TestCount ()

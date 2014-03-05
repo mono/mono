@@ -42,8 +42,10 @@ Assembly/AssemblyInfo.cs
 
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/AddInstruction.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/AndInstruction.cs
+../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/AritmeticInstruction.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/ArrayOperations.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/CallInstruction.cs
+../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/ComparisonInstruction.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/ConstantInstruction.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/CallInstruction.Generated.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/ControlFlowInstructions.cs
@@ -76,7 +78,6 @@ Assembly/AssemblyInfo.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/TypeOperations.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/XorInstruction.cs
 
-../dlr/Runtime/Microsoft.Dynamic/Math/BigIntegerV4.cs
 ../dlr/Runtime/Microsoft.Dynamic/Math/Complex64.cs
 
 ../dlr/Runtime/Microsoft.Dynamic/Runtime/ArgumentArray.cs

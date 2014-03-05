@@ -29,6 +29,7 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 #if FEATURE_REFEMIT
 using System.Reflection.Emit;
 #endif
@@ -47,8 +48,8 @@ namespace Microsoft.Scripting.Generation {
     public delegate void ActionRef<T0, T1>(ref T0 arg0, ref T1 arg1);
 
     public static class CompilerHelpers {
-        public static readonly MethodAttributes PublicStatic = MethodAttributes.Public | MethodAttributes.Static;
-        private static readonly MethodInfo _CreateInstanceMethod = typeof(ScriptingRuntimeHelpers).GetMethod("CreateInstance");
+		public const MethodAttributes PublicStatic = MethodAttributes.Public | MethodAttributes.Static;
+		private static MethodInfo _CreateInstanceMethod;
 
         private static int _Counter; // for generating unique names for lambda methods
 
@@ -110,7 +111,10 @@ namespace Microsoft.Scripting.Generation {
             if (mb.IsGenericMethod) {
                 MethodInfo mi = mb as MethodInfo;
 
-                if (mi.GetGenericMethodDefinition() == _CreateInstanceMethod) {
+				if (_CreateInstanceMethod == null)
+					Interlocked.CompareExchange (ref _CreateInstanceMethod, typeof(ScriptingRuntimeHelpers).GetMethod ("CreateInstance"), null);
+
+				if (mi.GetGenericMethodDefinition() == _CreateInstanceMethod) {
                     return true;
                 }
             }
@@ -875,7 +879,7 @@ namespace Microsoft.Scripting.Generation {
                 )
             );
         }
-
+#if !MONO_INTERPRETER
         #region Factories
 #if !FEATURE_NUMERICS
         [CLSCompliant(false)]
@@ -902,5 +906,6 @@ namespace Microsoft.Scripting.Generation {
 
 #endif
         #endregion
+#endif
     }
 }

@@ -315,6 +315,7 @@ typedef struct
 	/* memcpy/bzero methods specialized for small constant sizes */
 	gpointer *memcpy_addr [17];
 	gpointer *bzero_addr [17];
+	gpointer llvm_module;
 } MonoJitDomainInfo;
 
 typedef struct {
@@ -1687,6 +1688,7 @@ enum {
 
 #if SIZEOF_VOID_P == 8
 #define OP_PCONST OP_I8CONST
+#define OP_DUMMY_PCONST OP_DUMMY_I8CONST
 #define OP_PADD OP_LADD
 #define OP_PADD_IMM OP_LADD_IMM
 #define OP_PAND_IMM OP_LAND_IMM
@@ -1710,6 +1712,7 @@ enum {
 #define OP_STOREP_MEMBASE_IMM OP_STOREI8_MEMBASE_IMM
 #else
 #define OP_PCONST OP_ICONST
+#define OP_DUMMY_PCONST OP_DUMMY_ICONST
 #define OP_PADD OP_IADD
 #define OP_PADD_IMM OP_IADD_IMM
 #define OP_PAND_IMM OP_IAND_IMM
@@ -1813,6 +1816,7 @@ typedef struct {
 	gboolean mdb_optimizations;
 	gboolean no_gdb_backtrace;
 	gboolean suspend_on_sigsegv;
+	gboolean suspend_on_exception;
 	gboolean suspend_on_unhandled;
 	gboolean dyn_runtime_invoke;
 	gboolean gdb;
@@ -2155,6 +2159,7 @@ void     mono_llvm_emit_call                (MonoCompile *cfg, MonoCallInst *cal
 void     mono_llvm_create_aot_module        (const char *got_symbol) MONO_LLVM_INTERNAL;
 void     mono_llvm_emit_aot_module          (const char *filename, int got_size) MONO_LLVM_INTERNAL;
 void     mono_llvm_check_method_supported   (MonoCompile *cfg) MONO_LLVM_INTERNAL;
+void     mono_llvm_free_domain_info         (MonoDomain *domain) MONO_LLVM_INTERNAL;
 
 gboolean  mono_method_blittable             (MonoMethod *method) MONO_INTERNAL;
 gboolean  mono_method_same_domain           (MonoJitInfo *caller, MonoJitInfo *callee) MONO_INTERNAL;
@@ -2856,6 +2861,12 @@ gboolean SIG_HANDLER_SIGNATURE (mono_chain_signal) MONO_INTERNAL;
 #define ARCH_VARARG_ICALLS 1
 #else
 #define ARCH_VARARG_ICALLS 0
+#endif
+
+#ifdef MONO_ARCH_HAVE_DUMMY_INIT
+#define ARCH_HAVE_DUMMY_INIT 1
+#else
+#define ARCH_HAVE_DUMMY_INIT 0
 #endif
 
 #endif /* __MONO_MINI_H__ */

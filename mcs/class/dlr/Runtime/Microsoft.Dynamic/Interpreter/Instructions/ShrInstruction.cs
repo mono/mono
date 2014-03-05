@@ -32,133 +32,94 @@ using Microsoft.Scripting.Runtime;
 using Microsoft.Scripting.Utils;
 
 namespace Microsoft.Scripting.Interpreter {
-    internal abstract class ShrInstruction : Instruction {
+    internal abstract class ShrInstruction : AritmeticInstruction {
         private static Instruction _Int16, _Int32, _Int64, _UInt16, _UInt32, _UInt64;
         private static Instruction _Int16Lifted, _Int32Lifted, _Int64Lifted, _UInt16Lifted, _UInt32Lifted, _UInt64Lifted;
-
-        public override int ConsumedStack { get { return 2; } }
-        public override int ProducedStack { get { return 1; } }
 
         private ShrInstruction() {
         }
 
         internal sealed class ShrInt32 : ShrInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = ScriptingRuntimeHelpers.Int32ToObject((Int32)l >> (Int32)r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return ScriptingRuntimeHelpers.Int32ToObject((Int32)l >> (Int32)r);
             }
         }
 
         internal sealed class ShrInt16 : ShrInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Int32)((Int16)l >> (Int32)r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return (Int32)((Int16)l >> (Int32)r);
             }
         }
 
         internal sealed class ShrInt64 : ShrInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Int64)((Int64)l >> (Int32)r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return (Int64)((Int64)l >> (Int32)r);
             }
         }
 
         internal sealed class ShrUInt16 : ShrInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Int32)((UInt16)l >> (Int32)r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return (Int32)((UInt16)l >> (Int32)r);
             }
         }
 
         internal sealed class ShrUInt32 : ShrInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (UInt32)((UInt32)l >> (Int32)r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return (UInt32)((UInt32)l >> (Int32)r);
             }
         }
 
         internal sealed class ShrUInt64 : ShrInstruction {
-            public override int Run(InterpretedFrame frame) {
-                object l = frame.Data[frame.StackIndex - 2];
-                object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (UInt64)((UInt64)l >> (Int32)r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return (UInt64)((UInt64)l >> (Int32)r);
             }
         }
 
         internal sealed class ShrInt32Lifted : ShrInstruction {
-            public override int Run(InterpretedFrame frame) {
-                var l = (Int32?)frame.Data[frame.StackIndex - 2];
-                var r = (Int32?)frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Int32?)(l >> r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return (Int32?)((Int32?)l >> (Int32?)r);
             }
         }
 
         internal sealed class ShrInt16Lifted : ShrInstruction {
-            public override int Run(InterpretedFrame frame) {
-                var l = (Int16?)frame.Data[frame.StackIndex - 2];
-                var r = (Int32?)frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Int32)(l >> r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return (Int32)((Int16?)l >> (Int32?)r);
             }
         }
 
         internal sealed class ShrInt64Lifted : ShrInstruction {
-            public override int Run(InterpretedFrame frame) {
-                var l = (Int64?)frame.Data[frame.StackIndex - 2];
-                var r = (Int32?)frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Int64?)(l >> r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return (Int64?)((Int64?)l >> (Int32?)r);
             }
         }
 
         internal sealed class ShrUInt16Lifted : ShrInstruction {
-            public override int Run(InterpretedFrame frame) {
-                var l = (UInt16?)frame.Data[frame.StackIndex - 2];
-                var r = (Int32?)frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Int32?)(l >> r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return (Int32?)((UInt16?)l >> (Int32?)r);
             }
         }
 
         internal sealed class ShrUInt32Lifted : ShrInstruction {
-            public override int Run(InterpretedFrame frame) {
-                var l = (UInt32?)frame.Data[frame.StackIndex - 2];
-                var r = (Int32?)frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (UInt32?)(l >> r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return (UInt32?)((UInt32?)l >> (Int32?)r);
             }
         }
 
         internal sealed class ShrUInt64Lifted : ShrInstruction {
-            public override int Run(InterpretedFrame frame) {
-                var l = (UInt64?)frame.Data[frame.StackIndex - 2];
-                var r = (Int32?)frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (UInt64?)(l >> r);
-                frame.StackIndex--;
-                return 1;
+            protected override object Calculate (object l, object r)
+            {
+                return (UInt64?)((UInt64?)l >> (Int32?)r);
             }
         }
 

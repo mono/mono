@@ -135,8 +135,6 @@ namespace System.Xml.Serialization
 			this.listItemTypeData = listItemTypeData;
 			this.sType = schemaType;
 			this.hasPublicConstructor = true;
-
-			LookupTypeConvertor ();
 		}
 
 		void LookupTypeConvertor ()

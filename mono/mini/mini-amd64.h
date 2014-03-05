@@ -404,6 +404,7 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_HAVE_CREATE_LLVM_NATIVE_THUNK 1
 #define MONO_ARCH_HAVE_OP_TAIL_CALL 1
 #define MONO_ARCH_HAVE_TRANSLATE_TLS_OFFSET 1
+#define MONO_ARCH_HAVE_DUMMY_INIT 1
 
 #if defined(TARGET_OSX) || defined(__linux__)
 #define MONO_ARCH_HAVE_TLS_GET_REG 1
@@ -450,7 +451,7 @@ GSList*
 mono_amd64_get_exception_trampolines (gboolean aot) MONO_INTERNAL;
 
 int
-mono_amd64_get_tls_gs_offset (void) MONO_INTERNAL;
+mono_amd64_get_tls_gs_offset (void) MONO_LLVM_INTERNAL;
 
 typedef struct {
 	guint8 *address;

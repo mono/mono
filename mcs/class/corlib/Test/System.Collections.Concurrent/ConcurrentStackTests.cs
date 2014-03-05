@@ -290,6 +290,17 @@ namespace MonoTests.System.Collections.Concurrent
 		{
 			stack.TryPopRange (null);
 		}
+		
+		[Test]
+		public void PushRangeTestCase()
+		{
+			var testStack = new ConcurrentStack<int>();
+			
+			var testData = new int[] { 1, 2, 3, 4, 5 };			
+			testStack.PushRange (testData);
+			
+			Assert.AreEqual (testData.Length, testStack.Count);
+		}
 	}
 }
 #endif

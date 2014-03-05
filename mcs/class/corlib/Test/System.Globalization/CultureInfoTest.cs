@@ -147,6 +147,14 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		public void ClearCachedData ()
+		{
+			var dt = DateTime.Now;
+			old_culture.ClearCachedData (); // It can be any culture instance as the method should be static
+			dt = DateTime.Now;
+		}
+
+		[Test]
 		public void CreateSpecificCulture ()
 		{
 			var ci = CultureInfo.CreateSpecificCulture ("en");

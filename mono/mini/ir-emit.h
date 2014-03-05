@@ -487,7 +487,7 @@ handle_gsharedvt_ldaddr (MonoCompile *cfg)
 			MonoInst *iargs [2]; \
 			iargs [0] = (inst); \
 			EMIT_NEW_VARLOADA (cfg, iargs [1], (var), (vartype)); \
-			mono_emit_jit_icall (cfg, mono_fstore_r4, iargs); \
+			(dest) = mono_emit_jit_icall (cfg, mono_fstore_r4, iargs);	\
 		} else { \
 			EMIT_NEW_VARSTORE ((cfg), (dest), (var), (vartype), (inst)); \
 		} \
@@ -598,6 +598,13 @@ handle_gsharedvt_ldaddr (MonoCompile *cfg)
         inst->dreg = dr; \
         inst->inst_l = imm; \
 	    MONO_ADD_INS ((cfg)->cbb, inst); \
+	} while (0)
+
+#define MONO_EMIT_NEW_DUMMY_INIT(cfg,dr,op) do {			  \
+		MonoInst *inst;										  \
+		MONO_INST_NEW ((cfg), (inst), (op));				  \
+		inst->dreg = dr;									  \
+		MONO_ADD_INS ((cfg)->cbb, inst);					  \
 	} while (0)
 
 #ifdef MONO_ARCH_NEED_GOT_VAR
