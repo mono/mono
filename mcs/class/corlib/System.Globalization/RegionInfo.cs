@@ -29,6 +29,7 @@
 //
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace System.Globalization
 {
@@ -41,16 +42,22 @@ namespace System.Globalization
 
 		public static RegionInfo CurrentRegion {
 			get {
-				if (currentRegion == null) {
+				var region = currentRegion;
+				if (region == null) {
 					CultureInfo ci = CultureInfo.CurrentCulture;
-					if (ci != null)
-						return currentRegion = new RegionInfo (ci);
-
+					if (ci != null) {
+						region = new RegionInfo (ci);
+					} else {
 #if MONOTOUCH
-					currentRegion = CreateFromNSLocale ();
+						region = CreateFromNSLocale ();
 #endif
+					}
+
+					if (Interlocked.CompareExchange (ref currentRegion, region, null) != null)
+						region = currentRegion;
 				}
-				return currentRegion;
+
+				return region;
 			}
 		}
 		
@@ -200,6 +207,11 @@ namespace System.Globalization
 		public override string ToString ()
 		{
 			return Name;
+		}
+
+		internal static void ClearCachedData ()
+		{
+			currentRegion = null;
 		}
 	}
 }

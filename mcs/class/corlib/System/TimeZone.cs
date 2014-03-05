@@ -69,15 +69,15 @@ namespace System
 		public static TimeZone CurrentTimeZone {
 			get {
 				long now = DateTime.GetNow ();
-				TimeZone tz;
+				TimeZone tz = currentTimeZone;
 				
 				lock (tz_lock) {
-					if (currentTimeZone == null || Math.Abs (now - timezone_check) > TimeSpan.TicksPerMinute) {
-						currentTimeZone = new CurrentSystemTimeZone (now);
+					if (tz == null || Math.Abs (now - timezone_check) > TimeSpan.TicksPerMinute) {
+						tz = new CurrentSystemTimeZone (now);
 						timezone_check = now;
+
+						currentTimeZone = tz;
 					}
-					
-					tz = currentTimeZone;
 				}
 				
 				return tz;
@@ -174,6 +174,11 @@ namespace System
 			}
 
 			return DateTime.SpecifyKind (new DateTime (time.Ticks - offset.Ticks), DateTimeKind.Utc);
+		}
+
+		internal static void ClearCachedData ()
+		{
+			currentTimeZone = null;
 		}
 
 		//
