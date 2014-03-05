@@ -374,7 +374,9 @@ namespace System.Globalization
 
 			RegionInfo.ClearCachedData ();
 			TimeZone.ClearCachedData ();
+#if !BOOTSTRAP_BASIC
 			TimeZoneInfo.ClearCachedData ();
+#endif
 		}
 
 		public virtual object Clone()
