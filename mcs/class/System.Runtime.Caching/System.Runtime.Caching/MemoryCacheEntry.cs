@@ -33,7 +33,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Runtime.Caching
 {
-	sealed class MemoryCacheEntry
+	sealed class MemoryCacheEntry : IComparable<MemoryCacheEntry>
 	{
 		object value;
 		DateTimeOffset absoluteExpiration;
@@ -194,6 +194,22 @@ namespace System.Runtime.Caching
 			removedCallback = policy.RemovedCallback;
 			slidingExpiration = policy.SlidingExpiration;
 			updateCallback = policy.UpdateCallback;
+		}
+		
+		public int CompareTo(MemoryCacheEntry other)
+		{
+			if (IsExpirable && other.IsExpirable) {
+				return (int)(expiresAt - other.expiresAt);
+			}
+			else if (IsExpirable) {
+				return -1;
+			}
+			else if (other.IsExpirable) {
+				return 1;
+			}
+			else {
+				return 0;
+			}
 		}
 	}
 }
