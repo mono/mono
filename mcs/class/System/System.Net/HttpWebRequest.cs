@@ -1109,6 +1109,13 @@ namespace System.Net
 			if (continueDelegate != null)
 				continueDelegate (statusCode, headers);
 		}
+
+		void RewriteRedirectToGet ()
+		{
+			method = "GET";
+			webHeaders.RemoveInternal ("Transfer-Encoding");
+			sendChunked = false;
+		}
 		
 		bool Redirect (WebAsyncResult result, HttpStatusCode code)
 		{
@@ -1122,12 +1129,12 @@ namespace System.Net
 			case HttpStatusCode.MovedPermanently: // 301
 			case HttpStatusCode.Redirect: // 302
 				if (method == "POST")
-					method = "GET";
+					RewriteRedirectToGet ();
 				break;
 			case HttpStatusCode.TemporaryRedirect: // 307
 				break;
 			case HttpStatusCode.SeeOther: //303
-				method = "GET";
+				RewriteRedirectToGet ();
 				break;
 			case HttpStatusCode.NotModified: // 304
 				return false;
