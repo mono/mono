@@ -88,8 +88,10 @@ namespace System.Runtime.Caching
 					newSize = halfTheSize + (heapCount / 3);
 				}
 
-				if ((heapCount < halfTheSize) && newSize > -1)
+				if ((heapCount < halfTheSize) && newSize > -1) {
 					Array.Resize <MemoryCacheEntry> (ref heap, newSize);
+					heapSize = newSize;
+				}
 			}
 			
 			return heap;
@@ -120,7 +122,6 @@ namespace System.Runtime.Caching
 			MemoryCacheEntry ret = null;
 			MemoryCacheEntry[] heap;
 			bool locked = false;
-			int index;
 			
 			try {
 				queueLock.EnterWriteLock ();
@@ -129,13 +130,8 @@ namespace System.Runtime.Caching
 				if (heap == null || heapCount == 0)
 					return null;
 
-				ret = heap [0];
-				index = checked(--heapCount);
-				heap [0] = heap [index];
-				heap [index] = null;
-				
-				if (heapCount > 0)
-					BubbleDown (heap);
+				BubbleDown(heap);
+				--heapCount;
 
 				return ret;
 			} finally {
@@ -162,46 +158,33 @@ namespace System.Runtime.Caching
 		}
 		
 		void BubbleDown (MemoryCacheEntry[] heap)
-		{
-			int index = 0;
-			int left = 1;
-			int right = 2;
-			MemoryCacheEntry item = heap [0];
-			int selected = (right < heapCount && heap [right].ExpiresAt < heap [left].ExpiresAt) ? 2 : 1;
-
-			while (selected < heapCount && heap [selected].ExpiresAt < item.ExpiresAt) {
-				heap [index] = heap [selected];
-				index = selected;
-				left = checked((index << 1) + 1);
-				right = left + 1;
-				selected = right < heapCount && heap [right].ExpiresAt < heap [left].ExpiresAt ? right : left;
-			}
-			heap [index] = item;
+		{	
+			for (int i = 0; i < heapCount - 1; i++) {
+				heap[i] = heap[i + 1];
+			}			
 		}
 		
 		void BubbleUp (MemoryCacheEntry[] heap)
 		{
-			int index, parentIndex;
-			MemoryCacheEntry parent, item;
-			
 			if (heapCount <= 1)
 				return;
-			
-			index = checked(heapCount - 1);
-			parentIndex = checked((index - 1) >> 1);
 
-			item = heap [index];
-			while (index > 0) {
-				parent = heap [parentIndex];
-				if (heap [index].ExpiresAt >= parent.ExpiresAt)
-					break;
-				
-				heap [index] = parent;
-				index = parentIndex;
-				parentIndex = (index - 1) >> 1;
+			var lastItemIndex = heapCount - 2;
+			var newItemIndex = heapCount - 1;
+			var newItem = heap[newItemIndex];
+
+			var insertIndex = Array.BinarySearch(heap, 0, lastItemIndex, newItem);
+			if (insertIndex < 0) {
+				insertIndex = ~insertIndex;
 			}
 
-			heap [index] = item;
+			if (insertIndex < lastItemIndex) {
+				for (int i = newItemIndex; i > insertIndex; i--) {
+					heap[i] = heap[i - 1];
+				}
+
+				heap[insertIndex] = newItem;
+			}
 		}
 	}
 }
