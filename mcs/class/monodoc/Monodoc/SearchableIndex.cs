@@ -7,6 +7,7 @@
 
 using System;
 using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 // Lucene imports
 using Lucene.Net.Index;
@@ -126,9 +127,19 @@ namespace Monodoc
 	}
 
 	//
+	// An object representing a single search result
+	// 
+	public class ResultItem {
+		public string Title { get; set; }
+		public string FullTitle { get; set; }
+		public string Url { get; set; }
+		public float Score { get; set; }
+	}
+
+	//
 	// An object representing the search term with the results
 	// 
-	public class Result {
+	public class Result : IEnumerable<ResultItem> {
 		string term;
 		Searcher searcher;
 		ScoreDoc[] docs;
@@ -166,6 +177,23 @@ namespace Monodoc
 		public float Score (int i)
 		{
 			return docs[i].Score;
+		}
+
+		IEnumerator IEnumerable.GetEnumerator () 
+		{
+		    return this.GetEnumerator (); 
+		}
+
+		public IEnumerator<ResultItem> GetEnumerator () 
+		{
+			for (int i = 0; i < this.Count; i++) {
+				yield return new ResultItem {
+					Title = GetTitle (i),
+					FullTitle = GetFullTitle (i),
+					Url = GetUrl (i),
+					Score = Score (i)
+				};
+			}
 		}
 
 		public Result (string Term, Searcher searcher, ScoreDoc[] docs) 
