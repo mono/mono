@@ -42,7 +42,8 @@ namespace System.Runtime.Remoting.Messaging
 	{
 		Hashtable _data;
 		CallContextRemotingData _remotingData = new CallContextRemotingData();
-		
+		object _hostContext;
+
 		internal LogicalCallContext ()
 		{
 		}
@@ -53,9 +54,17 @@ namespace System.Runtime.Remoting.Messaging
 			{
 				if (entry.Name == "__RemotingData")
 					_remotingData = (CallContextRemotingData) entry.Value;
+				else if (entry.Name == "__hostContext")
+					_hostContext = entry.Value;
 				else
 					SetData (entry.Name, entry.Value);
 			}
+		}
+
+		public object HostContext
+		{
+			get { return _hostContext; }
+			set { _hostContext = value; }
 		}
 
 		public bool HasInfo
@@ -86,6 +95,7 @@ namespace System.Runtime.Remoting.Messaging
 				foreach (DictionaryEntry de in _data)
 					info.AddValue ((string)de.Key, de.Value);
 			}
+			info.AddValue ("__hostContext", _hostContext);
 		}
 
 		public void SetData (string name, object data)
@@ -98,6 +108,7 @@ namespace System.Runtime.Remoting.Messaging
 		{
 			LogicalCallContext nc = new LogicalCallContext ();
 			nc._remotingData = (CallContextRemotingData) _remotingData.Clone ();
+			nc._hostContext = _hostContext;
 			if (_data != null)
 			{
 				nc._data = new Hashtable ();

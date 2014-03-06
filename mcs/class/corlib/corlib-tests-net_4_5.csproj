@@ -13,8 +13,6 @@
     <NoConfig>False</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>
-    </RootNamespace>
     <AssemblyName>corlib_test_net_4_5</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -22,7 +20,6 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <NoWarn>612,618,1699,168,219,618,672</NoWarn>
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG;TRACE;INSIDE_CORLIB;LIBC;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO_DATACONVERTER_STATIC_METHODS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -30,7 +27,6 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <NoWarn>612,618,1699,168,219,618,672</NoWarn>
     <Optimize>true</Optimize>
     <DefineConstants>INSIDE_CORLIB;LIBC;NET_1_1;NET_2_0;NET_3_0;NET_3_5;NET_4_0;NET_4_5;MONO_DATACONVERTER_STATIC_METHODS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -535,7 +531,9 @@
     <Compile Include="Test\System\UIntPtrTest.cs" />
     <Compile Include="Test\System\ValueTypeTest.cs" />
     <Compile Include="Test\System\VersionTest.cs" />
-    <Compile Include="Test\System\WeakReferenceTest.cs" />  </ItemGroup>
+    <Compile Include="Test\System\WeakReferenceTest.cs" />
+    <Compile Include="Test\System.Runtime.Remoting.Messaging\CallContextTest.cs" />
+  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -545,33 +543,37 @@
   -->
   <PropertyGroup>
     <PreBuildEvent>
-
     </PreBuildEvent>
     <PostBuildEvent>
       xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
   </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="..\lib\net_4_5\nunit.framework.dll" />
-    <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
+    <ProjectReference Include="corlib-net_4_5.csproj">
       <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
-      <Name>corlib\corlib-net_4_5</Name>
+      <Name>corlib-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Mono.Posix\Mono.Posix-net_4_0.csproj">
-      <Project>{7ADB0D4D-F0ED-4C82-BEE3-D261699A390B}</Project>
-      <Name>Mono.Posix\Mono.Posix-net_4_0</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\System.Core\System.Core-net_4_0.csproj">
-      <Project>{D121EB80-19C6-4313-9BBE-6F66556CE8B7}</Project>
-      <Name>System.Core\System.Core-net_4_0</Name>
-    </ProjectReference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\lib\net_4_5\nunit.framework.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+    <Folder Include="Test\System.Runtime.Remoting.Messaging\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Test/resources/Resources.resources">
+    <EmbeddedResource Include="Test\resources\Resources.resources">
       <LogicalName>Resources.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <TextStylePolicy inheritsSet="Mono" inheritsScope="text/plain" scope="text/x-csharp" />
+          <CSharpFormattingPolicy inheritsSet="Mono" inheritsScope="text/x-csharp" scope="text/x-csharp" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
 </Project>
