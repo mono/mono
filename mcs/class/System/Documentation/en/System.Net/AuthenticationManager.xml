@@ -1,6 +1,7 @@
 <Type Name="AuthenticationManager" FullName="System.Net.AuthenticationManager" FullNameSP="System_Net_AuthenticationManager" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public AuthenticationManager extends System.Object" />
   <TypeSignature Language="C#" Value="public class AuthenticationManager" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit AuthenticationManager extends System.Object" />
   <MemberOfLibrary>Networking</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
@@ -8,6 +9,7 @@
     <AssemblyVersion>1.0.x.x</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
   <Base>
@@ -40,7 +42,13 @@ method. Authentication modules are called in the order in which they are registe
     <Member MemberName="Authenticate">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Net.Authorization Authenticate(string challenge, class System.Net.WebRequest request, class System.Net.ICredentials credentials)" />
       <MemberSignature Language="C#" Value="public static System.Net.Authorization Authenticate (string challenge, System.Net.WebRequest request, System.Net.ICredentials credentials);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Net.Authorization Authenticate(string challenge, class System.Net.WebRequest request, class System.Net.ICredentials credentials) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Authorization</ReturnType>
       </ReturnValue>
@@ -82,16 +90,14 @@ client's response to the server challenge contained in <paramref name="challenge
           <paramref name="challenge " />, <paramref name="request " />, or <paramref name="credentials " /> is <see langword="null" />.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CredentialPolicy">
-      <MemberSignature Language="C#" Value="public static System.Net.ICredentialPolicy CredentialPolicy { set; get; }" />
+      <MemberSignature Language="C#" Value="public static System.Net.ICredentialPolicy CredentialPolicy { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Net.ICredentialPolicy CredentialPolicy" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.ICredentialPolicy</ReturnType>
@@ -104,10 +110,17 @@ client's response to the server challenge contained in <paramref name="challenge
     </Member>
     <Member MemberName="CustomTargetNameDictionary">
       <MemberSignature Language="C#" Value="public static System.Collections.Specialized.StringDictionary CustomTargetNameDictionary { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Collections.Specialized.StringDictionary CustomTargetNameDictionary" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Collections.Specialized.StringDictionary</ReturnType>
       </ReturnValue>
@@ -120,7 +133,13 @@ client's response to the server challenge contained in <paramref name="challenge
     <Member MemberName="PreAuthenticate">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Net.Authorization PreAuthenticate(class System.Net.WebRequest request, class System.Net.ICredentials credentials)" />
       <MemberSignature Language="C#" Value="public static System.Net.Authorization PreAuthenticate (System.Net.WebRequest request, System.Net.ICredentials credentials);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Net.Authorization PreAuthenticate(class System.Net.WebRequest request, class System.Net.ICredentials credentials) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Authorization</ReturnType>
       </ReturnValue>
@@ -171,15 +190,17 @@ authentication challenges.</block>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Register">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static void Register(class System.Net.IAuthenticationModule authenticationModule)" />
       <MemberSignature Language="C#" Value="public static void Register (System.Net.IAuthenticationModule authenticationModule);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Register(class System.Net.IAuthenticationModule authenticationModule) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -213,15 +234,17 @@ authentication challenges.</block>
           <paramref name="authenticationModule " /> is <see langword="null" />.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RegisteredModules">
       <MemberSignature Language="ILASM" Value=".property class System.Collections.IEnumerator RegisteredModules { public hidebysig static specialname class System.Collections.IEnumerator get_RegisteredModules() }" />
       <MemberSignature Language="C#" Value="public static System.Collections.IEnumerator RegisteredModules { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Collections.IEnumerator RegisteredModules" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.IEnumerator</ReturnType>
       </ReturnValue>
@@ -246,15 +269,17 @@ authentication challenges.</block>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Unregister">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static void Unregister(class System.Net.IAuthenticationModule authenticationModule)" />
       <MemberSignature Language="C#" Value="public static void Unregister (System.Net.IAuthenticationModule authenticationModule);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Unregister(class System.Net.IAuthenticationModule authenticationModule) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -279,15 +304,17 @@ authentication challenges.</block>
           <paramref name="authenticationModule " />is not a registered authentication module.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Unregister">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static void Unregister(string authenticationScheme)" />
       <MemberSignature Language="C#" Value="public static void Unregister (string authenticationScheme);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Unregister(string authenticationScheme) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -314,10 +341,6 @@ authentication challenges.</block>
         <exception cref="T:System.InvalidOperationException">There is no registered module with the <paramref name="authenticationScheme " /> authentication type.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

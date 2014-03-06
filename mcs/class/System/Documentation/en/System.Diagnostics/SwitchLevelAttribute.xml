@@ -1,8 +1,10 @@
 <Type Name="SwitchLevelAttribute" FullName="System.Diagnostics.SwitchLevelAttribute">
   <TypeSignature Language="C#" Value="public sealed class SwitchLevelAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SwitchLevelAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Attribute</BaseTypeName>
@@ -12,6 +14,9 @@
     <Attribute>
       <AttributeName>System.AttributeUsage(System.AttributeTargets.Class)</AttributeName>
     </Attribute>
+    <Attribute>
+      <AttributeName>System.MonoLimitation("This attribute is not considered in trace support.")</AttributeName>
+    </Attribute>
   </Attributes>
   <Docs>
     <summary>To be added.</summary>
@@ -20,9 +25,11 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SwitchLevelAttribute (Type switchLevelType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type switchLevelType) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="switchLevelType" Type="System.Type" />
@@ -34,10 +41,12 @@
       </Docs>
     </Member>
     <Member MemberName="SwitchLevelType">
-      <MemberSignature Language="C#" Value="public Type SwitchLevelType { set; get; }" />
+      <MemberSignature Language="C#" Value="public Type SwitchLevelType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type SwitchLevelType" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>

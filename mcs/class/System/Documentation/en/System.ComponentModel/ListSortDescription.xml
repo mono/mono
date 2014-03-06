@@ -1,8 +1,10 @@
 <Type Name="ListSortDescription" FullName="System.ComponentModel.ListSortDescription">
   <TypeSignature Language="C#" Value="public class ListSortDescription" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ListSortDescription extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -16,7 +18,12 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ListSortDescription (System.ComponentModel.PropertyDescriptor propertyDescriptor, System.ComponentModel.ListSortDirection sortDirection);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ComponentModel.PropertyDescriptor propertyDescriptor, valuetype System.ComponentModel.ListSortDirection sortDirection) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="propertyDescriptor" Type="System.ComponentModel.PropertyDescriptor" />
         <Parameter Name="sortDirection" Type="System.ComponentModel.ListSortDirection" />
@@ -28,13 +35,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PropertyDescriptor">
-      <MemberSignature Language="C#" Value="public System.ComponentModel.PropertyDescriptor PropertyDescriptor { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.ComponentModel.PropertyDescriptor PropertyDescriptor { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ComponentModel.PropertyDescriptor PropertyDescriptor" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.PropertyDescriptor</ReturnType>
       </ReturnValue>
@@ -44,13 +53,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SortDirection">
-      <MemberSignature Language="C#" Value="public System.ComponentModel.ListSortDirection SortDirection { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.ComponentModel.ListSortDirection SortDirection { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.ComponentModel.ListSortDirection SortDirection" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.ListSortDirection</ReturnType>
       </ReturnValue>
@@ -60,9 +71,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

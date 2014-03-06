@@ -1,8 +1,10 @@
 <Type Name="SessionSwitchEventHandler" FullName="Microsoft.Win32.SessionSwitchEventHandler">
   <TypeSignature Language="C#" Value="public delegate void SessionSwitchEventHandler(object sender, SessionSwitchEventArgs e);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SessionSwitchEventHandler extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>

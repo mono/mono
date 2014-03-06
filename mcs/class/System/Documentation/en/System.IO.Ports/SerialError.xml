@@ -1,8 +1,10 @@
 <Type Name="SerialError" FullName="System.IO.Ports.SerialError">
   <TypeSignature Language="C#" Value="public enum SerialError" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SerialError extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -15,7 +17,12 @@
   <Members>
     <Member MemberName="Frame">
       <MemberSignature Language="C#" Value="Frame" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Ports.SerialError Frame = int32(8)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Ports.SerialError</ReturnType>
       </ReturnValue>
@@ -23,13 +30,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Overrun">
       <MemberSignature Language="C#" Value="Overrun" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Ports.SerialError Overrun = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Ports.SerialError</ReturnType>
       </ReturnValue>
@@ -37,13 +46,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RXOver">
       <MemberSignature Language="C#" Value="RXOver" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Ports.SerialError RXOver = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Ports.SerialError</ReturnType>
       </ReturnValue>
@@ -51,13 +62,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RXParity">
       <MemberSignature Language="C#" Value="RXParity" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Ports.SerialError RXParity = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Ports.SerialError</ReturnType>
       </ReturnValue>
@@ -65,13 +78,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TXFull">
       <MemberSignature Language="C#" Value="TXFull" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.Ports.SerialError TXFull = int32(256)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Ports.SerialError</ReturnType>
       </ReturnValue>
@@ -79,9 +94,6 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

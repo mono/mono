@@ -1,8 +1,10 @@
 <Type Name="DesignerOptionService" FullName="System.ComponentModel.Design.DesignerOptionService">
   <TypeSignature Language="C#" Value="public abstract class DesignerOptionService : System.ComponentModel.Design.IDesignerOptionService" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit DesignerOptionService extends System.Object implements class System.ComponentModel.Design.IDesignerOptionService" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -19,9 +21,11 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected DesignerOptionService ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
@@ -31,9 +35,11 @@
     </Member>
     <Member MemberName="CreateOptionCollection">
       <MemberSignature Language="C#" Value="protected System.ComponentModel.Design.DesignerOptionService.DesignerOptionCollection CreateOptionCollection (System.ComponentModel.Design.DesignerOptionService.DesignerOptionCollection parent, string name, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance class System.ComponentModel.Design.DesignerOptionService/DesignerOptionCollection CreateOptionCollection(class System.ComponentModel.Design.DesignerOptionService/DesignerOptionCollection parent, string name, object value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.Design.DesignerOptionService+DesignerOptionCollection</ReturnType>
@@ -54,9 +60,11 @@
     </Member>
     <Member MemberName="Options">
       <MemberSignature Language="C#" Value="public System.ComponentModel.Design.DesignerOptionService.DesignerOptionCollection Options { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ComponentModel.Design.DesignerOptionService/DesignerOptionCollection Options" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.Design.DesignerOptionService+DesignerOptionCollection</ReturnType>
@@ -69,9 +77,11 @@
     </Member>
     <Member MemberName="PopulateOptionCollection">
       <MemberSignature Language="C#" Value="protected virtual void PopulateOptionCollection (System.ComponentModel.Design.DesignerOptionService.DesignerOptionCollection options);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void PopulateOptionCollection(class System.ComponentModel.Design.DesignerOptionService/DesignerOptionCollection options) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -87,9 +97,11 @@
     </Member>
     <Member MemberName="ShowDialog">
       <MemberSignature Language="C#" Value="protected virtual bool ShowDialog (System.ComponentModel.Design.DesignerOptionService.DesignerOptionCollection options, object optionObject);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance bool ShowDialog(class System.ComponentModel.Design.DesignerOptionService/DesignerOptionCollection options, object optionObject) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -108,9 +120,11 @@
     </Member>
     <Member MemberName="System.ComponentModel.Design.IDesignerOptionService.GetOptionValue">
       <MemberSignature Language="C#" Value="object IDesignerOptionService.GetOptionValue (string pageName, string valueName);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance object System.ComponentModel.Design.IDesignerOptionService.GetOptionValue(string pageName, string valueName) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
@@ -129,9 +143,11 @@
     </Member>
     <Member MemberName="System.ComponentModel.Design.IDesignerOptionService.SetOptionValue">
       <MemberSignature Language="C#" Value="void IDesignerOptionService.SetOptionValue (string pageName, string valueName, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.ComponentModel.Design.IDesignerOptionService.SetOptionValue(string pageName, string valueName, object value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>

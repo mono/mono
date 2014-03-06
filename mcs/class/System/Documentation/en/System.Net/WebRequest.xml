@@ -1,6 +1,7 @@
 <Type Name="WebRequest" FullName="System.Net.WebRequest" FullNameSP="System_Net_WebRequest" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public abstract serializable WebRequest extends System.MarshalByRefObject" />
   <TypeSignature Language="C#" Value="public abstract class WebRequest : MarshalByRefObject, System.Runtime.Serialization.ISerializable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable WebRequest extends System.MarshalByRefObject implements class System.Runtime.Serialization.ISerializable" />
   <MemberOfLibrary>Networking</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
@@ -8,6 +9,7 @@
     <AssemblyVersion>1.0.x.x</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
   <Base>
@@ -158,7 +160,13 @@ public class WebRequestExample {
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="family rtspecialname specialname instance void .ctor()" />
       <MemberSignature Language="C#" Value="protected WebRequest ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters />
       <Docs>
@@ -176,14 +184,16 @@ class.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected WebRequest (System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Runtime.Serialization.SerializationInfo serializationInfo, valuetype System.Runtime.Serialization.StreamingContext streamingContext) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="serializationInfo" Type="System.Runtime.Serialization.SerializationInfo" />
         <Parameter Name="streamingContext" Type="System.Runtime.Serialization.StreamingContext" />
@@ -194,15 +204,17 @@ class.</para>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Abort">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Abort()" />
       <MemberSignature Language="C#" Value="public virtual void Abort ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Abort() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -233,16 +245,14 @@ class.</para>
         <exception cref="T:System.NotSupportedException">This method is not overridden in the derived class.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AuthenticationLevel">
-      <MemberSignature Language="C#" Value="public System.Net.Security.AuthenticationLevel AuthenticationLevel { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Net.Security.AuthenticationLevel AuthenticationLevel { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Security.AuthenticationLevel AuthenticationLevel" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Security.AuthenticationLevel</ReturnType>
@@ -256,7 +266,13 @@ class.</para>
     <Member MemberName="BeginGetRequestStream">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.IAsyncResult BeginGetRequestStream(class System.AsyncCallback callback, object state)" />
       <MemberSignature Language="C#" Value="public virtual IAsyncResult BeginGetRequestStream (AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginGetRequestStream(class System.AsyncCallback callback, object state) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IAsyncResult</ReturnType>
       </ReturnValue>
@@ -312,15 +328,17 @@ throws <see cref="T:System.NotSupportedException" />.</block>
         <exception cref="T:System.NotSupportedException">This method is not overridden in the derived class.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="BeginGetResponse">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.IAsyncResult BeginGetResponse(class System.AsyncCallback callback, object state)" />
       <MemberSignature Language="C#" Value="public virtual IAsyncResult BeginGetResponse (AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginGetResponse(class System.AsyncCallback callback, object state) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IAsyncResult</ReturnType>
       </ReturnValue>
@@ -368,17 +386,20 @@ can call the <see cref="M:System.Net.WebRequest.EndGetResponse(System.IAsyncResu
         <exception cref="T:System.NotSupportedException">This method is not overridden in the derived class.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CachePolicy">
-      <MemberSignature Language="C#" Value="public virtual System.Net.Cache.RequestCachePolicy CachePolicy { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual System.Net.Cache.RequestCachePolicy CachePolicy { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.Cache.RequestCachePolicy CachePolicy" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("Implement the caching system. Currently always returns a policy with the NoCacheNoStore level")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Net.Cache.RequestCachePolicy</ReturnType>
       </ReturnValue>
@@ -390,8 +411,14 @@ can call the <see cref="M:System.Net.WebRequest.EndGetResponse(System.IAsyncResu
     </Member>
     <Member MemberName="ConnectionGroupName">
       <MemberSignature Language="ILASM" Value=".property string ConnectionGroupName { public hidebysig virtual specialname string get_ConnectionGroupName() public hidebysig virtual specialname void set_ConnectionGroupName(string value) }" />
-      <MemberSignature Language="C#" Value="public virtual string ConnectionGroupName { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual string ConnectionGroupName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ConnectionGroupName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -426,15 +453,17 @@ can call the <see cref="M:System.Net.WebRequest.EndGetResponse(System.IAsyncResu
         <exception cref="T:System.NotSupportedException">This property is not implemented in the derived class.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ContentLength">
       <MemberSignature Language="ILASM" Value=".property int64 ContentLength { public hidebysig virtual specialname int64 get_ContentLength() public hidebysig virtual specialname void set_ContentLength(int64 value) }" />
-      <MemberSignature Language="C#" Value="public virtual long ContentLength { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual long ContentLength { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 ContentLength" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -471,15 +500,17 @@ can call the <see cref="M:System.Net.WebRequest.EndGetResponse(System.IAsyncResu
         <exception cref="T:System.ArgumentOutOfRangeException">This property is being set to a value less than zero. </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ContentType">
       <MemberSignature Language="ILASM" Value=".property string ContentType { public hidebysig virtual specialname string get_ContentType() public hidebysig virtual specialname void set_ContentType(string value) }" />
-      <MemberSignature Language="C#" Value="public virtual string ContentType { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual string ContentType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ContentType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -519,15 +550,17 @@ property contains the media type of the request.</para>
         <exception cref="T:System.NotSupportedException">This property is not implemented in the derived class. </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Net.WebRequest Create(string requestUriString)" />
       <MemberSignature Language="C#" Value="public static System.Net.WebRequest Create (string requestUriString);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Net.WebRequest Create(string requestUriString) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebRequest</ReturnType>
       </ReturnValue>
@@ -568,15 +601,17 @@ property contains the media type of the request.</para>
         <permission cref="!:System.Security.Permissions.WebPermission">Requires permission to connect to the requested URI. See <see cref="F:System.Net.NetworkAccess.Connect" />.</permission>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Net.WebRequest Create(class System.Uri requestUri)" />
       <MemberSignature Language="C#" Value="public static System.Net.WebRequest Create (Uri requestUri);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Net.WebRequest Create(class System.Uri requestUri) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebRequest</ReturnType>
       </ReturnValue>
@@ -607,15 +642,17 @@ property contains the media type of the request.</para>
         <permission cref="!:System.Security.Permissions.WebPermission">Requires permission to connect to the requested URI. See <see cref="F:System.Net.NetworkAccess.Connect" />.</permission>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateDefault">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Net.WebRequest CreateDefault(class System.Uri requestUri)" />
       <MemberSignature Language="C#" Value="public static System.Net.WebRequest CreateDefault (Uri requestUri);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Net.WebRequest CreateDefault(class System.Uri requestUri) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebRequest</ReturnType>
       </ReturnValue>
@@ -684,15 +721,67 @@ public class CreateDefaultExample
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CreateHttp">
+      <MemberSignature Language="C#" Value="public static System.Net.HttpWebRequest CreateHttp (string requestUriString);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Net.HttpWebRequest CreateHttp(string requestUriString) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("for portable library support")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpWebRequest</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="requestUriString" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="requestUriString">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateHttp">
+      <MemberSignature Language="C#" Value="public static System.Net.HttpWebRequest CreateHttp (Uri requestUri);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Net.HttpWebRequest CreateHttp(class System.Uri requestUri) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("for portable library support")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Net.HttpWebRequest</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="requestUri" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <param name="requestUri">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="Credentials">
       <MemberSignature Language="ILASM" Value=".property class System.Net.ICredentials Credentials { public hidebysig virtual specialname class System.Net.ICredentials get_Credentials() public hidebysig virtual specialname void set_Credentials(class System.Net.ICredentials value) }" />
-      <MemberSignature Language="C#" Value="public virtual System.Net.ICredentials Credentials { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual System.Net.ICredentials Credentials { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.ICredentials Credentials" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.ICredentials</ReturnType>
       </ReturnValue>
@@ -727,16 +816,14 @@ public class CreateDefaultExample
         <exception cref="T:System.NotSupportedException">This property is not implemented in the derived class. </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DefaultCachePolicy">
-      <MemberSignature Language="C#" Value="public static System.Net.Cache.RequestCachePolicy DefaultCachePolicy { set; get; }" />
+      <MemberSignature Language="C#" Value="public static System.Net.Cache.RequestCachePolicy DefaultCachePolicy { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Net.Cache.RequestCachePolicy DefaultCachePolicy" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Cache.RequestCachePolicy</ReturnType>
@@ -748,10 +835,12 @@ public class CreateDefaultExample
       </Docs>
     </Member>
     <Member MemberName="DefaultWebProxy">
-      <MemberSignature Language="C#" Value="public static System.Net.IWebProxy DefaultWebProxy { set; get; }" />
+      <MemberSignature Language="C#" Value="public static System.Net.IWebProxy DefaultWebProxy { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Net.IWebProxy DefaultWebProxy" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.IWebProxy</ReturnType>
@@ -765,7 +854,13 @@ public class CreateDefaultExample
     <Member MemberName="EndGetRequestStream">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.IO.Stream EndGetRequestStream(class System.IAsyncResult asyncResult)" />
       <MemberSignature Language="C#" Value="public virtual System.IO.Stream EndGetRequestStream (IAsyncResult asyncResult);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream EndGetRequestStream(class System.IAsyncResult asyncResult) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
       </ReturnValue>
@@ -816,15 +911,17 @@ public class CreateDefaultExample
         <exception cref="T:System.Net.WebException">An error occurred while processing the request.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EndGetResponse">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Net.WebResponse EndGetResponse(class System.IAsyncResult asyncResult)" />
       <MemberSignature Language="C#" Value="public virtual System.Net.WebResponse EndGetResponse (IAsyncResult asyncResult);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Net.WebResponse EndGetResponse(class System.IAsyncResult asyncResult) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebResponse</ReturnType>
       </ReturnValue>
@@ -875,16 +972,14 @@ public class CreateDefaultExample
         <exception cref="T:System.Net.WebException">An error occurred while processing the request.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetObjectData">
       <MemberSignature Language="C#" Value="protected virtual void GetObjectData (System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void GetObjectData(class System.Runtime.Serialization.SerializationInfo serializationInfo, valuetype System.Runtime.Serialization.StreamingContext streamingContext) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -903,7 +998,13 @@ public class CreateDefaultExample
     <Member MemberName="GetRequestStream">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.IO.Stream GetRequestStream()" />
       <MemberSignature Language="C#" Value="public virtual System.IO.Stream GetRequestStream ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream GetRequestStream() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
       </ReturnValue>
@@ -940,15 +1041,34 @@ public class CreateDefaultExample
         <exception cref="T:System.NotSupportedException">This method is not overridden in the derived class.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetRequestStreamAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task&lt;System.IO.Stream&gt; GetRequestStreamAsync ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.IO.Stream&gt; GetRequestStreamAsync() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.IO.Stream&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="GetResponse">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Net.WebResponse GetResponse()" />
       <MemberSignature Language="C#" Value="public virtual System.Net.WebResponse GetResponse ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Net.WebResponse GetResponse() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebResponse</ReturnType>
       </ReturnValue>
@@ -993,17 +1113,37 @@ public class CreateDefaultExample
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetResponseAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task&lt;System.Net.WebResponse&gt; GetResponseAsync ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Net.WebResponse&gt; GetResponseAsync() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Net.WebResponse&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="GetSystemWebProxy">
       <MemberSignature Language="C#" Value="public static System.Net.IWebProxy GetSystemWebProxy ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Net.IWebProxy GetSystemWebProxy() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("Look in other places for proxy config info")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Net.IWebProxy</ReturnType>
       </ReturnValue>
@@ -1016,8 +1156,14 @@ public class CreateDefaultExample
     </Member>
     <Member MemberName="Headers">
       <MemberSignature Language="ILASM" Value=".property class System.Net.WebHeaderCollection Headers { public hidebysig virtual specialname class System.Net.WebHeaderCollection get_Headers() public hidebysig virtual specialname void set_Headers(class System.Net.WebHeaderCollection value) }" />
-      <MemberSignature Language="C#" Value="public virtual System.Net.WebHeaderCollection Headers { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual System.Net.WebHeaderCollection Headers { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.WebHeaderCollection Headers" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebHeaderCollection</ReturnType>
       </ReturnValue>
@@ -1056,16 +1202,14 @@ public class CreateDefaultExample
         <exception cref="T:System.NotSupportedException">This property is not implemented in the derived class. </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ImpersonationLevel">
-      <MemberSignature Language="C#" Value="public System.Security.Principal.TokenImpersonationLevel ImpersonationLevel { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Security.Principal.TokenImpersonationLevel ImpersonationLevel { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.Principal.TokenImpersonationLevel ImpersonationLevel" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Principal.TokenImpersonationLevel</ReturnType>
@@ -1078,8 +1222,14 @@ public class CreateDefaultExample
     </Member>
     <Member MemberName="Method">
       <MemberSignature Language="ILASM" Value=".property string Method { public hidebysig virtual specialname string get_Method() public hidebysig virtual specialname void set_Method(string value) }" />
-      <MemberSignature Language="C#" Value="public virtual string Method { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual string Method { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Method" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1115,15 +1265,17 @@ public class CreateDefaultExample
         <exception cref="T:System.NotSupportedException">This property is not implemented in the derived class. </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PreAuthenticate">
       <MemberSignature Language="ILASM" Value=".property bool PreAuthenticate { public hidebysig virtual specialname bool get_PreAuthenticate() public hidebysig virtual specialname void set_PreAuthenticate(bool value) }" />
-      <MemberSignature Language="C#" Value="public virtual bool PreAuthenticate { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual bool PreAuthenticate { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool PreAuthenticate" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1171,15 +1323,17 @@ a challenge from the server before sending credentials.</block>
         <exception cref="T:System.NotSupportedException">This property is not implemented in the derived class. </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Proxy">
       <MemberSignature Language="ILASM" Value=".property class System.Net.IWebProxy Proxy { public hidebysig virtual specialname class System.Net.IWebProxy get_Proxy() public hidebysig virtual specialname void set_Proxy(class System.Net.IWebProxy value) }" />
-      <MemberSignature Language="C#" Value="public virtual System.Net.IWebProxy Proxy { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual System.Net.IWebProxy Proxy { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.IWebProxy Proxy" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.IWebProxy</ReturnType>
       </ReturnValue>
@@ -1220,15 +1374,17 @@ throw a <see cref="T:System.ArgumentNullException" /> exception.</para>
         <exception cref="T:System.NotSupportedException">This property is not implemented in the derived class. </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RegisterPrefix">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static bool RegisterPrefix(string prefix, class System.Net.IWebRequestCreate creator)" />
       <MemberSignature Language="C#" Value="public static bool RegisterPrefix (string prefix, System.Net.IWebRequestCreate creator);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool RegisterPrefix(string prefix, class System.Net.IWebRequestCreate creator) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1310,15 +1466,17 @@ public class RegisterPrefixExample
         </example>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RequestUri">
       <MemberSignature Language="ILASM" Value=".property class System.Uri RequestUri { public hidebysig virtual specialname class System.Uri get_RequestUri() }" />
       <MemberSignature Language="C#" Value="public virtual Uri RequestUri { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Uri RequestUri" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
@@ -1364,17 +1522,15 @@ current instance.</para>
         <exception cref="T:System.NotSupportedException">This property is not implemented in the derived class. </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.Runtime.Serialization.ISerializable.GetObjectData">
       <MemberSignature Language="C#" Value="void ISerializable.GetObjectData (System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.Serialization.ISerializable.GetObjectData(class System.Runtime.Serialization.SerializationInfo serializationInfo, valuetype System.Runtime.Serialization.StreamingContext streamingContext) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -1392,8 +1548,14 @@ current instance.</para>
     </Member>
     <Member MemberName="Timeout">
       <MemberSignature Language="ILASM" Value=".property int32 Timeout { public hidebysig virtual specialname int32 get_Timeout() public hidebysig virtual specialname void set_Timeout(int32 value) }" />
-      <MemberSignature Language="C#" Value="public virtual int Timeout { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual int Timeout { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Timeout" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1432,16 +1594,14 @@ current instance.</para>
         <exception cref="T:System.NotSupportedException">This property is not implemented in the derived class. </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="UseDefaultCredentials">
-      <MemberSignature Language="C#" Value="public virtual bool UseDefaultCredentials { set; get; }" />
+      <MemberSignature Language="C#" Value="public virtual bool UseDefaultCredentials { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool UseDefaultCredentials" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>

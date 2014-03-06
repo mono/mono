@@ -1,11 +1,13 @@
 <Type Name="RegexOptions" FullName="System.Text.RegularExpressions.RegexOptions">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum RegexOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed RegexOptions extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -23,7 +25,13 @@
   <Members>
     <Member MemberName="Compiled">
       <MemberSignature Language="C#" Value="Compiled" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Text.RegularExpressions.RegexOptions Compiled = int32(8)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.RegularExpressions.RegexOptions</ReturnType>
       </ReturnValue>
@@ -32,14 +40,16 @@
         <summary>Precompiles the regular expression into an assembly.  Although this will speed up the execution time, the startup time will be increased.  This is very useful for a static regular expression used constantly.</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CultureInvariant">
       <MemberSignature Language="C#" Value="CultureInvariant" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Text.RegularExpressions.RegexOptions CultureInvariant = int32(512)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.RegularExpressions.RegexOptions</ReturnType>
       </ReturnValue>
@@ -48,14 +58,16 @@
         <summary>Enables the regular expression to ignore cultural differences in language when matching.</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ECMAScript">
       <MemberSignature Language="C#" Value="ECMAScript" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Text.RegularExpressions.RegexOptions ECMAScript = int32(256)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.RegularExpressions.RegexOptions</ReturnType>
       </ReturnValue>
@@ -64,14 +76,16 @@
         <summary>Enables EMCAScript compliant behavior for the regular expression.  It must be enabled in conjuction with <b>IgnoreCase</b>, <b>Multiline</b>, and <b>Compiled</b> or else it will raise an exception.</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ExplicitCapture">
       <MemberSignature Language="C#" Value="ExplicitCapture" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Text.RegularExpressions.RegexOptions ExplicitCapture = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.RegularExpressions.RegexOptions</ReturnType>
       </ReturnValue>
@@ -80,14 +94,16 @@
         <summary>This mode will change the behavior of the regular expression such that only captures which are explicitly named will be remembered.  As a result, unnamed groups become noncapturing groups without the use of the (?:) style.</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IgnoreCase">
       <MemberSignature Language="C#" Value="IgnoreCase" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Text.RegularExpressions.RegexOptions IgnoreCase = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.RegularExpressions.RegexOptions</ReturnType>
       </ReturnValue>
@@ -96,14 +112,16 @@
         <summary>Enables case insensitive matching of the regular expression.</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IgnorePatternWhitespace">
       <MemberSignature Language="C#" Value="IgnorePatternWhitespace" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Text.RegularExpressions.RegexOptions IgnorePatternWhitespace = int32(32)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.RegularExpressions.RegexOptions</ReturnType>
       </ReturnValue>
@@ -112,14 +130,16 @@
         <summary>Removes any unescaped whitespace in the pattern.  It also enables comments which are identified by the '#' character.</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Multiline">
       <MemberSignature Language="C#" Value="Multiline" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Text.RegularExpressions.RegexOptions Multiline = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.RegularExpressions.RegexOptions</ReturnType>
       </ReturnValue>
@@ -128,14 +148,16 @@
         <summary>Changes the behavior of the metacharacters ^ and $.  With this mode ^ matches the beginning of any line, and $ matches the end of any line.  The default behavior is to mach the beginning and ending of the entire string.</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Text.RegularExpressions.RegexOptions None = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.RegularExpressions.RegexOptions</ReturnType>
       </ReturnValue>
@@ -144,14 +166,16 @@
         <summary>This specifies that no options are set for the regular expression.</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RightToLeft">
       <MemberSignature Language="C#" Value="RightToLeft" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Text.RegularExpressions.RegexOptions RightToLeft = int32(64)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.RegularExpressions.RegexOptions</ReturnType>
       </ReturnValue>
@@ -160,14 +184,16 @@
         <summary>Specifies that the regular expression be run right to left rather than left to right.</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Singleline">
       <MemberSignature Language="C#" Value="Singleline" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Text.RegularExpressions.RegexOptions Singleline = int32(16)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.RegularExpressions.RegexOptions</ReturnType>
       </ReturnValue>
@@ -176,10 +202,6 @@
         <summary>This changes the behavior of the metacharacter . to mean any character rather than any character other than \n.</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -1,8 +1,10 @@
 <Type Name="MediaTypeNames" FullName="System.Net.Mime.MediaTypeNames">
   <TypeSignature Language="C#" Value="public static class MediaTypeNames" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit MediaTypeNames extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>

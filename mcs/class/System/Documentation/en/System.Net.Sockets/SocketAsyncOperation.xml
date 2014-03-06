@@ -1,8 +1,10 @@
 <Type Name="SocketAsyncOperation" FullName="System.Net.Sockets.SocketAsyncOperation">
   <TypeSignature Language="C#" Value="public enum SocketAsyncOperation" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SocketAsyncOperation extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -14,9 +16,11 @@
   <Members>
     <Member MemberName="Accept">
       <MemberSignature Language="C#" Value="Accept" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.SocketAsyncOperation Accept = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketAsyncOperation</ReturnType>
@@ -27,9 +31,11 @@
     </Member>
     <Member MemberName="Connect">
       <MemberSignature Language="C#" Value="Connect" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.SocketAsyncOperation Connect = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketAsyncOperation</ReturnType>
@@ -40,9 +46,11 @@
     </Member>
     <Member MemberName="Disconnect">
       <MemberSignature Language="C#" Value="Disconnect" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.SocketAsyncOperation Disconnect = int32(3)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketAsyncOperation</ReturnType>
@@ -53,9 +61,11 @@
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.SocketAsyncOperation None = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketAsyncOperation</ReturnType>
@@ -66,9 +76,11 @@
     </Member>
     <Member MemberName="Receive">
       <MemberSignature Language="C#" Value="Receive" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.SocketAsyncOperation Receive = int32(4)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketAsyncOperation</ReturnType>
@@ -79,9 +91,11 @@
     </Member>
     <Member MemberName="ReceiveFrom">
       <MemberSignature Language="C#" Value="ReceiveFrom" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.SocketAsyncOperation ReceiveFrom = int32(5)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketAsyncOperation</ReturnType>
@@ -92,9 +106,11 @@
     </Member>
     <Member MemberName="ReceiveMessageFrom">
       <MemberSignature Language="C#" Value="ReceiveMessageFrom" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.SocketAsyncOperation ReceiveMessageFrom = int32(6)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketAsyncOperation</ReturnType>
@@ -105,9 +121,11 @@
     </Member>
     <Member MemberName="Send">
       <MemberSignature Language="C#" Value="Send" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.SocketAsyncOperation Send = int32(7)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketAsyncOperation</ReturnType>
@@ -118,9 +136,11 @@
     </Member>
     <Member MemberName="SendPackets">
       <MemberSignature Language="C#" Value="SendPackets" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.SocketAsyncOperation SendPackets = int32(8)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketAsyncOperation</ReturnType>
@@ -131,9 +151,11 @@
     </Member>
     <Member MemberName="SendTo">
       <MemberSignature Language="C#" Value="SendTo" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.SocketAsyncOperation SendTo = int32(9)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketAsyncOperation</ReturnType>

@@ -1,8 +1,10 @@
 <Type Name="AddingNewEventHandler" FullName="System.ComponentModel.AddingNewEventHandler">
   <TypeSignature Language="C#" Value="public delegate void AddingNewEventHandler(object sender, AddingNewEventArgs e);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed AddingNewEventHandler extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>

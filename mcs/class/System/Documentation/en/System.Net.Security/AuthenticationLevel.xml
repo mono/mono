@@ -1,8 +1,10 @@
 <Type Name="AuthenticationLevel" FullName="System.Net.Security.AuthenticationLevel">
   <TypeSignature Language="C#" Value="public enum AuthenticationLevel" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed AuthenticationLevel extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -15,7 +17,12 @@
   <Members>
     <Member MemberName="MutualAuthRequested">
       <MemberSignature Language="C#" Value="MutualAuthRequested" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Security.AuthenticationLevel MutualAuthRequested = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Security.AuthenticationLevel</ReturnType>
       </ReturnValue>
@@ -23,13 +30,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MutualAuthRequired">
       <MemberSignature Language="C#" Value="MutualAuthRequired" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Security.AuthenticationLevel MutualAuthRequired = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Security.AuthenticationLevel</ReturnType>
       </ReturnValue>
@@ -37,13 +46,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Security.AuthenticationLevel None = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Security.AuthenticationLevel</ReturnType>
       </ReturnValue>
@@ -51,9 +62,6 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

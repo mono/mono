@@ -1,8 +1,10 @@
 <Type Name="ApplicationScopedSettingAttribute" FullName="System.Configuration.ApplicationScopedSettingAttribute">
   <TypeSignature Language="C#" Value="public sealed class ApplicationScopedSettingAttribute : System.Configuration.SettingAttribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ApplicationScopedSettingAttribute extends System.Configuration.SettingAttribute" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Configuration.SettingAttribute</BaseTypeName>
@@ -21,16 +23,18 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ApplicationScopedSettingAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters />
       <Docs>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

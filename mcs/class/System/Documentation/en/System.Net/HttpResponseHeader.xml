@@ -1,8 +1,10 @@
 <Type Name="HttpResponseHeader" FullName="System.Net.HttpResponseHeader">
   <TypeSignature Language="C#" Value="public enum HttpResponseHeader" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed HttpResponseHeader extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -15,7 +17,12 @@
   <Members>
     <Member MemberName="AcceptRanges">
       <MemberSignature Language="C#" Value="AcceptRanges" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader AcceptRanges = int32(20)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -23,13 +30,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Age">
       <MemberSignature Language="C#" Value="Age" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader Age = int32(21)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -37,13 +46,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Allow">
       <MemberSignature Language="C#" Value="Allow" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader Allow = int32(10)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -51,13 +62,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CacheControl">
       <MemberSignature Language="C#" Value="CacheControl" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader CacheControl = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -65,13 +78,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Connection">
       <MemberSignature Language="C#" Value="Connection" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader Connection = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -79,13 +94,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ContentEncoding">
       <MemberSignature Language="C#" Value="ContentEncoding" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader ContentEncoding = int32(13)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -93,13 +110,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ContentLanguage">
       <MemberSignature Language="C#" Value="ContentLanguage" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader ContentLanguage = int32(14)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -107,13 +126,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ContentLength">
       <MemberSignature Language="C#" Value="ContentLength" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader ContentLength = int32(11)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -121,13 +142,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ContentLocation">
       <MemberSignature Language="C#" Value="ContentLocation" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader ContentLocation = int32(15)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -135,13 +158,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ContentMd5">
       <MemberSignature Language="C#" Value="ContentMd5" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader ContentMd5 = int32(16)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -149,13 +174,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ContentRange">
       <MemberSignature Language="C#" Value="ContentRange" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader ContentRange = int32(17)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -163,13 +190,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ContentType">
       <MemberSignature Language="C#" Value="ContentType" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader ContentType = int32(12)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -177,13 +206,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Date">
       <MemberSignature Language="C#" Value="Date" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader Date = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -191,13 +222,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ETag">
       <MemberSignature Language="C#" Value="ETag" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader ETag = int32(22)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -205,13 +238,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Expires">
       <MemberSignature Language="C#" Value="Expires" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader Expires = int32(18)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -219,13 +254,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="KeepAlive">
       <MemberSignature Language="C#" Value="KeepAlive" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader KeepAlive = int32(3)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -233,13 +270,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LastModified">
       <MemberSignature Language="C#" Value="LastModified" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader LastModified = int32(19)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -247,13 +286,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Location">
       <MemberSignature Language="C#" Value="Location" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader Location = int32(23)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -261,13 +302,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Pragma">
       <MemberSignature Language="C#" Value="Pragma" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader Pragma = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -275,13 +318,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ProxyAuthenticate">
       <MemberSignature Language="C#" Value="ProxyAuthenticate" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader ProxyAuthenticate = int32(24)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -289,13 +334,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RetryAfter">
       <MemberSignature Language="C#" Value="RetryAfter" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader RetryAfter = int32(25)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -303,13 +350,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Server">
       <MemberSignature Language="C#" Value="Server" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader Server = int32(26)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -317,13 +366,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetCookie">
       <MemberSignature Language="C#" Value="SetCookie" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader SetCookie = int32(27)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -331,13 +382,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Trailer">
       <MemberSignature Language="C#" Value="Trailer" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader Trailer = int32(5)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -345,13 +398,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TransferEncoding">
       <MemberSignature Language="C#" Value="TransferEncoding" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader TransferEncoding = int32(6)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -359,13 +414,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Upgrade">
       <MemberSignature Language="C#" Value="Upgrade" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader Upgrade = int32(7)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -373,13 +430,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Vary">
       <MemberSignature Language="C#" Value="Vary" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader Vary = int32(28)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -387,13 +446,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Via">
       <MemberSignature Language="C#" Value="Via" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader Via = int32(8)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -401,13 +462,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Warning">
       <MemberSignature Language="C#" Value="Warning" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader Warning = int32(9)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -415,13 +478,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WwwAuthenticate">
       <MemberSignature Language="C#" Value="WwwAuthenticate" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.HttpResponseHeader WwwAuthenticate = int32(29)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.HttpResponseHeader</ReturnType>
       </ReturnValue>
@@ -429,9 +494,6 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

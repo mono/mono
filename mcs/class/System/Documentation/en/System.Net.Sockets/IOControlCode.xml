@@ -1,8 +1,10 @@
 <Type Name="IOControlCode" FullName="System.Net.Sockets.IOControlCode">
   <TypeSignature Language="C#" Value="public enum IOControlCode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed IOControlCode extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -14,9 +16,11 @@
   <Members>
     <Member MemberName="AbsorbRouterAlert">
       <MemberSignature Language="C#" Value="AbsorbRouterAlert" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode AbsorbRouterAlert = int64(2550136837)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -27,9 +31,11 @@
     </Member>
     <Member MemberName="AddMulticastGroupOnInterface">
       <MemberSignature Language="C#" Value="AddMulticastGroupOnInterface" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode AddMulticastGroupOnInterface = int64(2550136842)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -40,9 +46,11 @@
     </Member>
     <Member MemberName="AddressListChange">
       <MemberSignature Language="C#" Value="AddressListChange" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode AddressListChange = int64(671088663)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -53,9 +61,11 @@
     </Member>
     <Member MemberName="AddressListQuery">
       <MemberSignature Language="C#" Value="AddressListQuery" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode AddressListQuery = int64(1207959574)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -66,9 +76,11 @@
     </Member>
     <Member MemberName="AddressListSort">
       <MemberSignature Language="C#" Value="AddressListSort" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode AddressListSort = int64(3355443225)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -79,9 +91,11 @@
     </Member>
     <Member MemberName="AssociateHandle">
       <MemberSignature Language="C#" Value="AssociateHandle" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode AssociateHandle = int64(2281701377)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -92,9 +106,11 @@
     </Member>
     <Member MemberName="AsyncIO">
       <MemberSignature Language="C#" Value="AsyncIO" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode AsyncIO = int64(2147772029)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -105,9 +121,11 @@
     </Member>
     <Member MemberName="BindToInterface">
       <MemberSignature Language="C#" Value="BindToInterface" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode BindToInterface = int64(2550136840)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -118,9 +136,11 @@
     </Member>
     <Member MemberName="DataToRead">
       <MemberSignature Language="C#" Value="DataToRead" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode DataToRead = int64(1074030207)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -131,9 +151,11 @@
     </Member>
     <Member MemberName="DeleteMulticastGroupFromInterface">
       <MemberSignature Language="C#" Value="DeleteMulticastGroupFromInterface" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode DeleteMulticastGroupFromInterface = int64(2550136843)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -144,9 +166,11 @@
     </Member>
     <Member MemberName="EnableCircularQueuing">
       <MemberSignature Language="C#" Value="EnableCircularQueuing" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode EnableCircularQueuing = int64(671088642)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -157,9 +181,11 @@
     </Member>
     <Member MemberName="Flush">
       <MemberSignature Language="C#" Value="Flush" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode Flush = int64(671088644)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -170,9 +196,11 @@
     </Member>
     <Member MemberName="GetBroadcastAddress">
       <MemberSignature Language="C#" Value="GetBroadcastAddress" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode GetBroadcastAddress = int64(1207959557)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -183,9 +211,11 @@
     </Member>
     <Member MemberName="GetExtensionFunctionPointer">
       <MemberSignature Language="C#" Value="GetExtensionFunctionPointer" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode GetExtensionFunctionPointer = int64(3355443206)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -196,9 +226,11 @@
     </Member>
     <Member MemberName="GetGroupQos">
       <MemberSignature Language="C#" Value="GetGroupQos" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode GetGroupQos = int64(3355443208)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -209,9 +241,11 @@
     </Member>
     <Member MemberName="GetQos">
       <MemberSignature Language="C#" Value="GetQos" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode GetQos = int64(3355443207)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -222,9 +256,11 @@
     </Member>
     <Member MemberName="KeepAliveValues">
       <MemberSignature Language="C#" Value="KeepAliveValues" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode KeepAliveValues = int64(2550136836)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -235,9 +271,11 @@
     </Member>
     <Member MemberName="LimitBroadcasts">
       <MemberSignature Language="C#" Value="LimitBroadcasts" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode LimitBroadcasts = int64(2550136839)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -248,9 +286,11 @@
     </Member>
     <Member MemberName="MulticastInterface">
       <MemberSignature Language="C#" Value="MulticastInterface" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode MulticastInterface = int64(2550136841)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -261,9 +301,11 @@
     </Member>
     <Member MemberName="MulticastScope">
       <MemberSignature Language="C#" Value="MulticastScope" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode MulticastScope = int64(2281701386)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -274,9 +316,11 @@
     </Member>
     <Member MemberName="MultipointLoopback">
       <MemberSignature Language="C#" Value="MultipointLoopback" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode MultipointLoopback = int64(2281701385)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -287,9 +331,11 @@
     </Member>
     <Member MemberName="NamespaceChange">
       <MemberSignature Language="C#" Value="NamespaceChange" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode NamespaceChange = int64(2281701401)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -300,9 +346,11 @@
     </Member>
     <Member MemberName="NonBlockingIO">
       <MemberSignature Language="C#" Value="NonBlockingIO" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode NonBlockingIO = int64(2147772030)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -313,9 +361,11 @@
     </Member>
     <Member MemberName="OobDataRead">
       <MemberSignature Language="C#" Value="OobDataRead" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode OobDataRead = int64(1074033415)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -326,9 +376,11 @@
     </Member>
     <Member MemberName="QueryTargetPnpHandle">
       <MemberSignature Language="C#" Value="QueryTargetPnpHandle" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode QueryTargetPnpHandle = int64(1207959576)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -339,9 +391,11 @@
     </Member>
     <Member MemberName="ReceiveAll">
       <MemberSignature Language="C#" Value="ReceiveAll" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode ReceiveAll = int64(2550136833)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -352,9 +406,11 @@
     </Member>
     <Member MemberName="ReceiveAllIgmpMulticast">
       <MemberSignature Language="C#" Value="ReceiveAllIgmpMulticast" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode ReceiveAllIgmpMulticast = int64(2550136835)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -365,9 +421,11 @@
     </Member>
     <Member MemberName="ReceiveAllMulticast">
       <MemberSignature Language="C#" Value="ReceiveAllMulticast" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode ReceiveAllMulticast = int64(2550136834)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -378,9 +436,11 @@
     </Member>
     <Member MemberName="RoutingInterfaceChange">
       <MemberSignature Language="C#" Value="RoutingInterfaceChange" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode RoutingInterfaceChange = int64(2281701397)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -391,9 +451,11 @@
     </Member>
     <Member MemberName="RoutingInterfaceQuery">
       <MemberSignature Language="C#" Value="RoutingInterfaceQuery" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode RoutingInterfaceQuery = int64(3355443220)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -404,9 +466,11 @@
     </Member>
     <Member MemberName="SetGroupQos">
       <MemberSignature Language="C#" Value="SetGroupQos" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode SetGroupQos = int64(2281701388)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -417,9 +481,11 @@
     </Member>
     <Member MemberName="SetQos">
       <MemberSignature Language="C#" Value="SetQos" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode SetQos = int64(2281701387)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -430,9 +496,11 @@
     </Member>
     <Member MemberName="TranslateHandle">
       <MemberSignature Language="C#" Value="TranslateHandle" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode TranslateHandle = int64(3355443213)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>
@@ -443,9 +511,11 @@
     </Member>
     <Member MemberName="UnicastInterface">
       <MemberSignature Language="C#" Value="UnicastInterface" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Sockets.IOControlCode UnicastInterface = int64(2550136838)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IOControlCode</ReturnType>

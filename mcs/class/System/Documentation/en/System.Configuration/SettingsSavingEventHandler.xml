@@ -1,8 +1,10 @@
 <Type Name="SettingsSavingEventHandler" FullName="System.Configuration.SettingsSavingEventHandler">
   <TypeSignature Language="C#" Value="public delegate void SettingsSavingEventHandler(object sender, CancelEventArgs e);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SettingsSavingEventHandler extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>

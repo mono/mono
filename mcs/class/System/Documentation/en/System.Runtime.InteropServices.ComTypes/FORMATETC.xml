@@ -1,8 +1,10 @@
 <Type Name="FORMATETC" FullName="System.Runtime.InteropServices.ComTypes.FORMATETC">
   <TypeSignature Language="C#" Value="public struct FORMATETC" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit FORMATETC extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.ValueType</BaseTypeName>
@@ -15,9 +17,11 @@
   <Members>
     <Member MemberName="cfFormat">
       <MemberSignature Language="C#" Value="public short cfFormat;" />
+      <MemberSignature Language="ILAsm" Value=".field public int16 cfFormat" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
@@ -29,9 +33,11 @@
     </Member>
     <Member MemberName="dwAspect">
       <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.ComTypes.DVASPECT dwAspect;" />
+      <MemberSignature Language="ILAsm" Value=".field public valuetype System.Runtime.InteropServices.ComTypes.DVASPECT dwAspect" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.DVASPECT</ReturnType>
@@ -43,9 +49,11 @@
     </Member>
     <Member MemberName="lindex">
       <MemberSignature Language="C#" Value="public int lindex;" />
+      <MemberSignature Language="ILAsm" Value=".field public int32 lindex" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -57,9 +65,11 @@
     </Member>
     <Member MemberName="ptd">
       <MemberSignature Language="C#" Value="public IntPtr ptd;" />
+      <MemberSignature Language="ILAsm" Value=".field public native int ptd" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
@@ -71,9 +81,11 @@
     </Member>
     <Member MemberName="tymed">
       <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.ComTypes.TYMED tymed;" />
+      <MemberSignature Language="ILAsm" Value=".field public valuetype System.Runtime.InteropServices.ComTypes.TYMED tymed" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.TYMED</ReturnType>

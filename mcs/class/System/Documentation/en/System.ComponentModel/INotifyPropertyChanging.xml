@@ -1,8 +1,10 @@
 <Type Name="INotifyPropertyChanging" FullName="System.ComponentModel.INotifyPropertyChanging">
   <TypeSignature Language="C#" Value="public interface INotifyPropertyChanging" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract INotifyPropertyChanging" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
   <Docs>
@@ -12,9 +14,11 @@
   <Members>
     <Member MemberName="PropertyChanging">
       <MemberSignature Language="C#" Value="public event System.ComponentModel.PropertyChangingEventHandler PropertyChanging;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.ComponentModel.PropertyChangingEventHandler PropertyChanging" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.PropertyChangingEventHandler</ReturnType>

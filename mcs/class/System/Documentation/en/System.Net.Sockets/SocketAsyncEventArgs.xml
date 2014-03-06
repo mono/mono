@@ -1,8 +1,10 @@
 <Type Name="SocketAsyncEventArgs" FullName="System.Net.Sockets.SocketAsyncEventArgs">
   <TypeSignature Language="C#" Value="public class SocketAsyncEventArgs : EventArgs, IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SocketAsyncEventArgs extends System.EventArgs implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.EventArgs</BaseTypeName>
@@ -19,9 +21,11 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SocketAsyncEventArgs ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
@@ -30,10 +34,12 @@
       </Docs>
     </Member>
     <Member MemberName="AcceptSocket">
-      <MemberSignature Language="C#" Value="public System.Net.Sockets.Socket AcceptSocket { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Net.Sockets.Socket AcceptSocket { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.Sockets.Socket AcceptSocket" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.Socket</ReturnType>
@@ -46,9 +52,11 @@
     </Member>
     <Member MemberName="Buffer">
       <MemberSignature Language="C#" Value="public byte[] Buffer { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int8[] Buffer" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
@@ -60,10 +68,12 @@
       </Docs>
     </Member>
     <Member MemberName="BufferList">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; BufferList { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; BufferList { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IList`1&lt;valuetype System.ArraySegment`1&lt;unsigned int8&gt;&gt; BufferList" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;System.ArraySegment&lt;System.Byte&gt;&gt;</ReturnType>
@@ -76,9 +86,11 @@
     </Member>
     <Member MemberName="BytesTransferred">
       <MemberSignature Language="C#" Value="public int BytesTransferred { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 BytesTransferred" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -91,9 +103,11 @@
     </Member>
     <Member MemberName="Completed">
       <MemberSignature Language="C#" Value="public event EventHandler&lt;System.Net.Sockets.SocketAsyncEventArgs&gt; Completed;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.Net.Sockets.SocketAsyncEventArgs&gt; Completed" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.EventHandler&lt;System.Net.Sockets.SocketAsyncEventArgs&gt;</ReturnType>
@@ -103,11 +117,29 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="ConnectByNameError">
+      <MemberSignature Language="C#" Value="public Exception ConnectByNameError { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Exception ConnectByNameError" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Exception</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Count">
       <MemberSignature Language="C#" Value="public int Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -119,10 +151,12 @@
       </Docs>
     </Member>
     <Member MemberName="DisconnectReuseSocket">
-      <MemberSignature Language="C#" Value="public bool DisconnectReuseSocket { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool DisconnectReuseSocket { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool DisconnectReuseSocket" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -133,11 +167,29 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Finalize">
       <MemberSignature Language="C#" Value="~SocketAsyncEventArgs ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -150,9 +202,11 @@
     </Member>
     <Member MemberName="LastOperation">
       <MemberSignature Language="C#" Value="public System.Net.Sockets.SocketAsyncOperation LastOperation { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Sockets.SocketAsyncOperation LastOperation" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketAsyncOperation</ReturnType>
@@ -165,9 +219,11 @@
     </Member>
     <Member MemberName="Offset">
       <MemberSignature Language="C#" Value="public int Offset { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Offset" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -180,9 +236,11 @@
     </Member>
     <Member MemberName="OnCompleted">
       <MemberSignature Language="C#" Value="protected virtual void OnCompleted (System.Net.Sockets.SocketAsyncEventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnCompleted(class System.Net.Sockets.SocketAsyncEventArgs e) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -198,9 +256,11 @@
     </Member>
     <Member MemberName="ReceiveMessageFromPacketInfo">
       <MemberSignature Language="C#" Value="public System.Net.Sockets.IPPacketInformation ReceiveMessageFromPacketInfo { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Sockets.IPPacketInformation ReceiveMessageFromPacketInfo" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.IPPacketInformation</ReturnType>
@@ -212,10 +272,12 @@
       </Docs>
     </Member>
     <Member MemberName="RemoteEndPoint">
-      <MemberSignature Language="C#" Value="public System.Net.EndPoint RemoteEndPoint { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Net.EndPoint RemoteEndPoint { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.EndPoint RemoteEndPoint" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.EndPoint</ReturnType>
@@ -227,10 +289,12 @@
       </Docs>
     </Member>
     <Member MemberName="SendPacketsElements">
-      <MemberSignature Language="C#" Value="public System.Net.Sockets.SendPacketsElement[] SendPacketsElements { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Net.Sockets.SendPacketsElement[] SendPacketsElements { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.Sockets.SendPacketsElement[] SendPacketsElements" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SendPacketsElement[]</ReturnType>
@@ -242,10 +306,12 @@
       </Docs>
     </Member>
     <Member MemberName="SendPacketsFlags">
-      <MemberSignature Language="C#" Value="public System.Net.Sockets.TransmitFileOptions SendPacketsFlags { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Net.Sockets.TransmitFileOptions SendPacketsFlags { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Sockets.TransmitFileOptions SendPacketsFlags" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.TransmitFileOptions</ReturnType>
@@ -257,11 +323,18 @@
       </Docs>
     </Member>
     <Member MemberName="SendPacketsSendSize">
-      <MemberSignature Language="C#" Value="public int SendPacketsSendSize { set; get; }" />
+      <MemberSignature Language="C#" Value="public int SendPacketsSendSize { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 SendPacketsSendSize" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("unused property")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -273,9 +346,11 @@
     </Member>
     <Member MemberName="SetBuffer">
       <MemberSignature Language="C#" Value="public void SetBuffer (int offset, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetBuffer(int32 offset, int32 count) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -293,9 +368,11 @@
     </Member>
     <Member MemberName="SetBuffer">
       <MemberSignature Language="C#" Value="public void SetBuffer (byte[] buffer, int offset, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetBuffer(unsigned int8[] buffer, int32 offset, int32 count) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -314,10 +391,12 @@
       </Docs>
     </Member>
     <Member MemberName="SocketError">
-      <MemberSignature Language="C#" Value="public System.Net.Sockets.SocketError SocketError { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Net.Sockets.SocketError SocketError { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Sockets.SocketError SocketError" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketError</ReturnType>
@@ -329,10 +408,12 @@
       </Docs>
     </Member>
     <Member MemberName="SocketFlags">
-      <MemberSignature Language="C#" Value="public System.Net.Sockets.SocketFlags SocketFlags { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Net.Sockets.SocketFlags SocketFlags { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Sockets.SocketFlags SocketFlags" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketFlags</ReturnType>
@@ -359,10 +440,12 @@
       </Docs>
     </Member>
     <Member MemberName="UserToken">
-      <MemberSignature Language="C#" Value="public object UserToken { set; get; }" />
+      <MemberSignature Language="C#" Value="public object UserToken { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object UserToken" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>

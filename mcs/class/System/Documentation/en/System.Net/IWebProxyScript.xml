@@ -1,8 +1,10 @@
 <Type Name="IWebProxyScript" FullName="System.Net.IWebProxyScript">
   <TypeSignature Language="C#" Value="public interface IWebProxyScript" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IWebProxyScript" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
   <Docs>
@@ -12,9 +14,11 @@
   <Members>
     <Member MemberName="Close">
       <MemberSignature Language="C#" Value="public void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Close() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -26,22 +30,24 @@
       </Docs>
     </Member>
     <Member MemberName="Load">
-      <MemberSignature Language="C#" Value="public bool Load (Uri scriptLocation, string Script, Type helperType);" />
+      <MemberSignature Language="C#" Value="public bool Load (Uri scriptLocation, string script, Type helperType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Load(class System.Uri scriptLocation, string script, class System.Type helperType) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="scriptLocation" Type="System.Uri" />
-        <Parameter Name="Script" Type="System.String" />
+        <Parameter Name="script" Type="System.String" />
         <Parameter Name="helperType" Type="System.Type" />
       </Parameters>
       <Docs>
         <param name="scriptLocation">To be added.</param>
-        <param name="Script">To be added.</param>
+        <param name="script">To be added.</param>
         <param name="helperType">To be added.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
@@ -50,9 +56,11 @@
     </Member>
     <Member MemberName="Run">
       <MemberSignature Language="C#" Value="public string Run (string url, string host);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string Run(string url, string host) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>

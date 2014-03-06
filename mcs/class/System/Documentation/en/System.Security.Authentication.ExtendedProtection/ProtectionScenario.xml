@@ -1,0 +1,45 @@
+<Type Name="ProtectionScenario" FullName="System.Security.Authentication.ExtendedProtection.ProtectionScenario">
+  <TypeSignature Language="C#" Value="public enum ProtectionScenario" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ProtectionScenario extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="TransportSelected">
+      <MemberSignature Language="C#" Value="TransportSelected" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Authentication.ExtendedProtection.ProtectionScenario TransportSelected = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Authentication.ExtendedProtection.ProtectionScenario</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="TrustedProxy">
+      <MemberSignature Language="C#" Value="TrustedProxy" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Authentication.ExtendedProtection.ProtectionScenario TrustedProxy = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Authentication.ExtendedProtection.ProtectionScenario</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

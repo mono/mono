@@ -1,8 +1,10 @@
 <Type Name="AsyncOperationManager" FullName="System.ComponentModel.AsyncOperationManager">
   <TypeSignature Language="C#" Value="public static class AsyncOperationManager" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed AsyncOperationManager extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -16,7 +18,12 @@
   <Members>
     <Member MemberName="CreateOperation">
       <MemberSignature Language="C#" Value="public static System.ComponentModel.AsyncOperation CreateOperation (object userSuppliedState);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.AsyncOperation CreateOperation(object userSuppliedState) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.AsyncOperation</ReturnType>
       </ReturnValue>
@@ -30,13 +37,20 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SynchronizationContext">
-      <MemberSignature Language="C#" Value="public static System.Threading.SynchronizationContext SynchronizationContext { set; get; }" />
+      <MemberSignature Language="C#" Value="public static System.Threading.SynchronizationContext SynchronizationContext { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Threading.SynchronizationContext SynchronizationContext" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Threading.SynchronizationContext</ReturnType>
       </ReturnValue>
@@ -46,14 +60,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
   </Members>
 </Type>
