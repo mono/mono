@@ -544,8 +544,9 @@ namespace Mono.Data.Tds.Protocol
 			 * If the value is null, not setting the size to 0 will cause varchar
 			 * fields to get inserted as an empty string rather than an null.
 			 */
-			if (param.Value == null || param.Value == DBNull.Value)
-				size = 0;
+			//BUG! https://bugzilla.xamarin.com/show_bug.cgi?id=16892
+			//if (param.Value == null || param.Value == DBNull.Value)
+			//	size = 0;
 
 			// Change colType according to the following table
 			/* 

@@ -108,6 +108,83 @@ namespace Test.Mono.Data.SqlClient {
 			dropCommand.ExecuteNonQuery ();
 		}
 
+		static void ParameterDBnullValue(IDbConnection cnc)
+		{
+			IDbCommand command = cnc.CreateCommand ();
+
+			command.CommandText = "create table bug16892 (description varchar(20))";
+
+			command.ExecuteNonQuery ();
+
+			command.CommandText =
+				"CREATE PROCEDURE sp_bug16892(@Account1 integer, @Account2 integer, @Corr1 integer, @Corr2 integer) "
+				+ "AS " + Environment.NewLine
+				+ "BEGIN" + Environment.NewLine
+				+ "IF coalesce(nullif(@Account1,0),nullif(@Account2,0)) is not null" + Environment.NewLine
+				+ "BEGIN" + Environment.NewLine
+				+ "SELECT 1 as baccount1, 2 as baccount2, 3 as bcorr1, 4 as bcorr2" + Environment.NewLine
+				+ "END" + Environment.NewLine
+				+ "ELSE" + Environment.NewLine
+				+ "BEGIN" + Environment.NewLine
+				+ "SELECT null as baccount1, null as baccount2, 3 as bcorr1, 4 as bcorr2" + Environment.NewLine
+				+ "END" + Environment.NewLine
+				+ "END";
+			command.CommandType = CommandType.Text;
+			command.ExecuteNonQuery ();
+
+			SqlParameter account1 = new SqlParameter ();
+			account1.ParameterName = "Account1";
+			account1.Direction = ParameterDirection.Input;
+			account1.Value = 47062;
+			account1.DbType = DbType.Int32;
+
+			SqlParameter account2 = new SqlParameter ();
+			account2.ParameterName = "Account2";
+			account2.Direction = ParameterDirection.Input;
+			account2.Value = 47162;
+			account2.DbType = DbType.Int32;
+
+			SqlParameter corr1 = new SqlParameter ();
+			corr1.ParameterName = "Corr1";
+			corr1.DbType = DbType.Int32;
+			corr1.Direction = ParameterDirection.Input;
+			corr1.Value = DBNull.Value;
+
+			SqlParameter corr2 = new SqlParameter ();
+			corr2.ParameterName = "Corr2";
+			corr2.DbType = DbType.Int32;
+			corr2.Direction = ParameterDirection.Input;
+			corr2.Value = DBNull.Value;
+
+			command.CommandText = "sp_bug16892";
+			command.CommandTimeout = 0;
+			command.CommandType = CommandType.StoredProcedure;
+
+			command.Parameters.Add (account1);
+			command.Parameters.Add (account2);
+			command.Parameters.Add (corr1);
+			command.Parameters.Add (corr2);
+
+			SqlDataAdapter adapter = new SqlDataAdapter (c);
+
+			var dataSet = new DataSet ();
+
+			try
+			{
+				adapter.Fill (dataSet);
+			}
+			catch (SqlException ex) 
+			{
+				command.CommandText = "drop table bug16892";
+				command.ExecuteNonQuery ();
+				command.CommandText = "drop procedure sp_bug16892";
+				command.ExecuteNonQuery ();
+
+				//Data type 0x26 has an invalid data length or metadata length !
+				throw ex;
+			}
+		}
+
 		// execute stored procedure using ExecuteScalar()
 		static object CallStoredProcedure (IDbConnection cnc) {
 				 
@@ -654,6 +731,11 @@ namespace Test.Mono.Data.SqlClient {
 				/* Update values */
 				Console.WriteLine ("\t\tUpdate values: ");
 				UpdateData (cnc);
+				Console.WriteLine ("OK");
+
+				/* Create and exec stored procedure with dbnull.value params */
+				Console.WriteLine ("\t\tCreate and exec stored procedure with dbnull.value params: ");
+				ParameterDBnullValue(cnc);
 				Console.WriteLine ("OK");
 
 				/* Inserts values */
