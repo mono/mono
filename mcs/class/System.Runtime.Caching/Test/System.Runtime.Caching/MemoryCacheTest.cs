@@ -1232,5 +1232,54 @@ namespace MonoTests.System.Runtime.Caching
 				Assert.AreEqual ("key" + i.ToString (), removed [idx], "#A5-" + idx.ToString ());
 			}
 		}
+		
+		[Test]
+		public void TestCacheShrink ()
+		{
+			const int HEAP_RESIZE_THRESHOLD = 8192 + 2;
+			const int HEAP_RESIZE_SHORT_ENTRIES = 2048;
+			const int HEAP_RESIZE_LONG_ENTRIES = HEAP_RESIZE_THRESHOLD - HEAP_RESIZE_SHORT_ENTRIES;			
+			
+			var config = new NameValueCollection ();
+			config["cacheMemoryLimitMegabytes"] = 0.ToString ();
+			config["physicalMemoryLimitPercentage"] = 100.ToString ();
+			config["__MonoEmulateOneCPU"] = true.ToString ();
+
+			// it appears that pollingInterval does nothing, so we set the Mono timer as well
+			config["pollingInterval"] = new TimeSpan (0, 0, 1).ToString ();
+			config["__MonoTimerPeriod"] = 1.ToString ();
+			
+			using (var mc = new MemoryCache ("TestCacheShrink",  config)) {	
+				Assert.AreEqual (0, mc.GetCount (), "#CS1");
+							
+				// add some short duration entries
+				for (int i = 0; i < HEAP_RESIZE_SHORT_ENTRIES; i++) {
+					var expireAt = DateTimeOffset.Now.AddSeconds (1);
+					mc.Add ("short-" + i, i.ToString (), expireAt);
+				}
+				
+				Assert.AreEqual (HEAP_RESIZE_SHORT_ENTRIES, mc.GetCount (), "#CS2");
+							
+				// add some long duration entries				
+				for (int i = 0; i < HEAP_RESIZE_LONG_ENTRIES; i++) {
+					var expireAt = DateTimeOffset.Now.AddSeconds (10);
+					mc.Add ("long-" + i, i.ToString (), expireAt);
+				}															
+				
+				Assert.AreEqual (HEAP_RESIZE_LONG_ENTRIES + HEAP_RESIZE_SHORT_ENTRIES, mc.GetCount(), "#CS3");
+				
+				// wait for the cache thread to expire the short duration items, this will also shrink the size of the cache
+				global::System.Threading.Thread.Sleep (3 * 1000);
+				
+				Assert.AreEqual (HEAP_RESIZE_LONG_ENTRIES, mc.GetCount (), "#CS4");	
+				
+				// add some new items into the cache, this will grow the cache again
+				for (int i = 0; i < HEAP_RESIZE_LONG_ENTRIES; i++) {				
+					mc.Add("final-" + i, i.ToString (), DateTimeOffset.Now.AddSeconds (2));
+				}			
+				
+				Assert.AreEqual (HEAP_RESIZE_LONG_ENTRIES + HEAP_RESIZE_LONG_ENTRIES, mc.GetCount (), "#CS5");	
+			}
+		}
 	}
 }
