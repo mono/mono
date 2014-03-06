@@ -374,7 +374,7 @@ namespace System.Globalization
 
 			RegionInfo.ClearCachedData ();
 			TimeZone.ClearCachedData ();
-#if !BOOTSTRAP_BASIC
+#if NET_4_5
 			TimeZoneInfo.ClearCachedData ();
 #endif
 		}
