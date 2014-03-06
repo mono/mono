@@ -26,3 +26,8 @@ include $(MCS_BUILD_DIR)/rules.make
 dist-local: dist-default
 
 
+doc-update-local:
+	@echo "not doing docs"
+
+doc-update-recursive:
+	@echo "do not recurse the Facades folder"
