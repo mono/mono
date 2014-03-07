@@ -1,0 +1,246 @@
+<Type Name="NtlmFlags" FullName="Mono.Security.Protocol.Ntlm.NtlmFlags">
+  <TypeSignature Language="C#" Value="public enum NtlmFlags" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed NtlmFlags extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Negotiate128">
+      <MemberSignature Language="C#" Value="Negotiate128" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Security.Protocol.Ntlm.NtlmFlags Negotiate128 = int32(536870912)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Security.Protocol.Ntlm.NtlmFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Negotiate56">
+      <MemberSignature Language="C#" Value="Negotiate56" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Security.Protocol.Ntlm.NtlmFlags Negotiate56 = int32(-2147483648)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Security.Protocol.Ntlm.NtlmFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NegotiateAlwaysSign">
+      <MemberSignature Language="C#" Value="NegotiateAlwaysSign" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Security.Protocol.Ntlm.NtlmFlags NegotiateAlwaysSign = int32(32768)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Security.Protocol.Ntlm.NtlmFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NegotiateAnonymous">
+      <MemberSignature Language="C#" Value="NegotiateAnonymous" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Security.Protocol.Ntlm.NtlmFlags NegotiateAnonymous = int32(2048)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Security.Protocol.Ntlm.NtlmFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NegotiateDatagramStyle">
+      <MemberSignature Language="C#" Value="NegotiateDatagramStyle" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Security.Protocol.Ntlm.NtlmFlags NegotiateDatagramStyle = int32(64)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Security.Protocol.Ntlm.NtlmFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NegotiateDomainSupplied">
+      <MemberSignature Language="C#" Value="NegotiateDomainSupplied" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Security.Protocol.Ntlm.NtlmFlags NegotiateDomainSupplied = int32(4096)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Security.Protocol.Ntlm.NtlmFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NegotiateKeyExchange">
+      <MemberSignature Language="C#" Value="NegotiateKeyExchange" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Security.Protocol.Ntlm.NtlmFlags NegotiateKeyExchange = int32(1073741824)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Security.Protocol.Ntlm.NtlmFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NegotiateLm">
+      <MemberSignature Language="C#" Value="NegotiateLm" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Security.Protocol.Ntlm.NtlmFlags NegotiateLm = int32(128)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Security.Protocol.Ntlm.NtlmFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NegotiateNtlm">
+      <MemberSignature Language="C#" Value="NegotiateNtlm" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Security.Protocol.Ntlm.NtlmFlags NegotiateNtlm = int32(512)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Security.Protocol.Ntlm.NtlmFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NegotiateNtlm2Key">
+      <MemberSignature Language="C#" Value="NegotiateNtlm2Key" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Security.Protocol.Ntlm.NtlmFlags NegotiateNtlm2Key = int32(524288)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Security.Protocol.Ntlm.NtlmFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NegotiateOem">
+      <MemberSignature Language="C#" Value="NegotiateOem" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Security.Protocol.Ntlm.NtlmFlags NegotiateOem = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Security.Protocol.Ntlm.NtlmFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NegotiateSeal">
+      <MemberSignature Language="C#" Value="NegotiateSeal" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Security.Protocol.Ntlm.NtlmFlags NegotiateSeal = int32(32)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Security.Protocol.Ntlm.NtlmFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NegotiateSign">
+      <MemberSignature Language="C#" Value="NegotiateSign" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Security.Protocol.Ntlm.NtlmFlags NegotiateSign = int32(16)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Security.Protocol.Ntlm.NtlmFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NegotiateUnicode">
+      <MemberSignature Language="C#" Value="NegotiateUnicode" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Security.Protocol.Ntlm.NtlmFlags NegotiateUnicode = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Security.Protocol.Ntlm.NtlmFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="NegotiateWorkstationSupplied">
+      <MemberSignature Language="C#" Value="NegotiateWorkstationSupplied" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Security.Protocol.Ntlm.NtlmFlags NegotiateWorkstationSupplied = int32(8192)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Security.Protocol.Ntlm.NtlmFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="RequestTarget">
+      <MemberSignature Language="C#" Value="RequestTarget" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype Mono.Security.Protocol.Ntlm.NtlmFlags RequestTarget = int32(4)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Security.Protocol.Ntlm.NtlmFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

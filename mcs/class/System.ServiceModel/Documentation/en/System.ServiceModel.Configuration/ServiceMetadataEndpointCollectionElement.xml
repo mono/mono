@@ -1,0 +1,35 @@
+<Type Name="ServiceMetadataEndpointCollectionElement" FullName="System.ServiceModel.Configuration.ServiceMetadataEndpointCollectionElement">
+  <TypeSignature Language="C#" Value="public class ServiceMetadataEndpointCollectionElement : System.ServiceModel.Configuration.StandardEndpointCollectionElement&lt;System.ServiceModel.Description.ServiceMetadataEndpoint,System.ServiceModel.Configuration.ServiceMetadataEndpointElement&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ServiceMetadataEndpointCollectionElement extends System.ServiceModel.Configuration.StandardEndpointCollectionElement`2&lt;class System.ServiceModel.Description.ServiceMetadataEndpoint, class System.ServiceModel.Configuration.ServiceMetadataEndpointElement&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Configuration.StandardEndpointCollectionElement&lt;System.ServiceModel.Description.ServiceMetadataEndpoint,System.ServiceModel.Configuration.ServiceMetadataEndpointElement&gt;</BaseTypeName>
+    <BaseTypeArguments>
+      <BaseTypeArgument TypeParamName="TStandardEndpoint">System.ServiceModel.Description.ServiceMetadataEndpoint</BaseTypeArgument>
+      <BaseTypeArgument TypeParamName="TEndpointConfiguration">System.ServiceModel.Configuration.ServiceMetadataEndpointElement</BaseTypeArgument>
+    </BaseTypeArguments>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ServiceMetadataEndpointCollectionElement ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,22 @@
+<Type Name="InstanceContextIdleCallback" FullName="System.ServiceModel.Dispatcher.InstanceContextIdleCallback">
+  <TypeSignature Language="C#" Value="public delegate void InstanceContextIdleCallback(InstanceContext context);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed InstanceContextIdleCallback extends System.MulticastDelegate" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="context" Type="System.ServiceModel.InstanceContext" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="context">To be added.</param>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

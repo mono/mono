@@ -1,0 +1,21 @@
+<Type Name="IDuplexSessionChannel" FullName="System.ServiceModel.Channels.IDuplexSessionChannel">
+  <TypeSignature Language="C#" Value="public interface IDuplexSessionChannel : System.ServiceModel.Channels.IDuplexChannel, System.ServiceModel.Channels.ISessionChannel&lt;System.ServiceModel.Channels.IDuplexSession&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IDuplexSessionChannel implements class System.ServiceModel.Channels.IChannel, class System.ServiceModel.Channels.IDuplexChannel, class System.ServiceModel.Channels.IInputChannel, class System.ServiceModel.Channels.IOutputChannel, class System.ServiceModel.Channels.ISessionChannel`1&lt;class System.ServiceModel.Channels.IDuplexSession&gt;, class System.ServiceModel.ICommunicationObject" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Channels.IDuplexChannel</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.ServiceModel.Channels.ISessionChannel&lt;System.ServiceModel.Channels.IDuplexSession&gt;</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members />
+</Type>

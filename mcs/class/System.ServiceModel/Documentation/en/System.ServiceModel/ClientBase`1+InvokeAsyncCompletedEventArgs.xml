@@ -1,0 +1,41 @@
+<Type Name="ClientBase&lt;TChannel&gt;+InvokeAsyncCompletedEventArgs" FullName="System.ServiceModel.ClientBase&lt;TChannel&gt;+InvokeAsyncCompletedEventArgs">
+  <TypeSignature Language="C#" Value="protected class ClientBase&lt;TChannel&gt;.InvokeAsyncCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs where TChannel : class" />
+  <TypeSignature Language="ILAsm" Value=".class nested protected auto ansi beforefieldinit ClientBase`1/InvokeAsyncCompletedEventArgs&lt;class TChannel&gt; extends System.ComponentModel.AsyncCompletedEventArgs" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="TChannel">
+      <Constraints>
+        <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+      </Constraints>
+    </TypeParameter>
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.ComponentModel.AsyncCompletedEventArgs</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Results">
+      <MemberSignature Language="C#" Value="public object[] Results { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object[] Results" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
