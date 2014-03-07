@@ -842,8 +842,8 @@ namespace System.Globalization
 			case "arn": id = 1146; break;
 			case "as": id = 1101; break;
 			case "az": id = 1068; break;
-			case "az-Cyrl": id = 2092; break;
-			case "az-Latn": id = 1068; break;
+			case "az-cyrl": id = 2092; break;
+			case "az-latn": id = 1068; break;
 			case "ba": id = 1133; break;
 			case "be": id = 1059; break;
 			case "bg": id = 1026; break;
@@ -851,8 +851,8 @@ namespace System.Globalization
 			case "bo": id = 1105; break;
 			case "br": id = 1150; break;
 			case "bs": id = 5146; break;
-			case "bs-Cyrl": id = 8218; break;
-			case "bs-Latn": id = 5146; break;
+			case "bs-cyrl": id = 8218; break;
+			case "bs-latn": id = 5146; break;
 			case "ca": id = 1027; break;
 			case "co": id = 1155; break;
 			case "cs": id = 1029; break;
@@ -878,7 +878,7 @@ namespace System.Globalization
 			case "gsw": id = 1156; break;
 			case "gu": id = 1095; break;
 			case "ha": id = 1128; break;
-			case "ha-Latn": id = 1128; break;
+			case "ha-latn": id = 1128; break;
 			case "he": id = 1037; break;
 			case "hi": id = 1081; break;
 			case "hr": id = 1050; break;
@@ -891,8 +891,8 @@ namespace System.Globalization
 			case "is": id = 1039; break;
 			case "it": id = 1040; break;
 			case "iu": id = 2141; break;
-			case "iu-Cans": id = 1117; break;
-			case "iu-Latn": id = 2141; break;
+			case "iu-cans": id = 1117; break;
+			case "iu-latn": id = 2141; break;
 			case "ja": id = 1041; break;
 			case "ka": id = 1079; break;
 			case "kk": id = 1087; break;
@@ -910,8 +910,8 @@ namespace System.Globalization
 			case "mk": id = 1071; break;
 			case "ml": id = 1100; break;
 			case "mn": id = 1104; break;
-			case "mn-Cyrl": id = 1104; break;
-			case "mn-Mong": id = 2128; break;
+			case "mn-cyrl": id = 1104; break;
+			case "mn-mong": id = 2128; break;
 			case "moh": id = 1148; break;
 			case "mr": id = 1102; break;
 			case "ms": id = 1086; break;
@@ -947,36 +947,38 @@ namespace System.Globalization
 			case "sms": id = 8251; break;
 			case "sq": id = 1052; break;
 			case "sr": id = 9242; break;
-			case "sr-Cyrl": id = 10266; break;
-			case "sr-Latn": id = 9242; break;
+			case "sr-cyrl": id = 10266; break;
+			case "sr-latn": id = 9242; break;
 			case "sv": id = 1053; break;
 			case "sw": id = 1089; break;
 			case "syr": id = 1114; break;
 			case "ta": id = 1097; break;
 			case "te": id = 1098; break;
 			case "tg": id = 1064; break;
-			case "tg-Cyrl": id = 1064; break;
+			case "tg-cyrl": id = 1064; break;
 			case "th": id = 1054; break;
 			case "tk": id = 1090; break;
 			case "tn": id = 1074; break;
 			case "tr": id = 1055; break;
 			case "tt": id = 1092; break;
 			case "tzm": id = 2143; break;
-			case "tzm-Latn": id = 2143; break;
+			case "tzm-latn": id = 2143; break;
 			case "ug": id = 1152; break;
 			case "uk": id = 1058; break;
 			case "ur": id = 1056; break;
 			case "uz": id = 1091; break;
-			case "uz-Cyrl": id = 2115; break;
-			case "uz-Latn": id = 1091; break;
+			case "uz-cyrl": id = 2115; break;
+			case "uz-latn": id = 1091; break;
 			case "vi": id = 1066; break;
 			case "wo": id = 1160; break;
 			case "xh": id = 1076; break;
 			case "yo": id = 1130; break;
 			case "zh": id = 2052; break;
-			case "zh-CHS": case "zh-Hans":
+			case "zh-chs":
+			case "zh-hans":
 				id = 2052; break;
-			case "zh-CHT": case "zh-Hant":
+			case "zh-cht":
+			case "zh-hant":
 				id = 3076; break;
 			case "zu": id = 1077; break;
 			default:
