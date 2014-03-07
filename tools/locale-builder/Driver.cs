@@ -562,10 +562,19 @@ namespace Mono.Tools.LocaleBuilder
 					case "en":
 						nfe.CurrencySymbol = "$";
 						break;
+					case "bs":
+						nfe.CurrencySymbol = "KM";
+						break;
 					case "es":
 					case "fr":
+					case "de":
+					case "it":
+					case "se":
 						nfe.CurrencySymbol = "€";
 						break;
+					case "hr":
+						nfe.CurrencySymbol = "kn";
+						break;				
 					case "pt":
 						nfe.CurrencySymbol = "R$";
 						break;
@@ -586,6 +595,7 @@ namespace Mono.Tools.LocaleBuilder
 						nfe.CurrencySymbol = "Din.";
 						break;
 					case "zh":
+					case "zh-Hans":
 						nfe.CurrencySymbol = "¥";
 						break;
 					case "zh-Hant":
@@ -607,7 +617,7 @@ namespace Mono.Tools.LocaleBuilder
 						} else {
 							// .NET has weird concept of territory data available for neutral cultures (e.g. en, es, pt)
 							// We have to manually disambiguate the correct entry (which is artofficial anyway)
-							throw new ApplicationException (string.Format ("Ambiguous currency data for `{0}'", ci.Name));
+							throw new ApplicationException (string.Format ("Ambiguous currency data for `{0}'. Possible values '{1}'", ci.Name, string.Join (", ", children)));
 						}
 
 						break;
@@ -997,10 +1007,14 @@ namespace Mono.Tools.LocaleBuilder
 				ProcessAllNodes (nodes, df.MonthNames, AddOrReplaceValue);
 
 				// Apply global rule first <alias source="locale" path="../../monthContext[@type='format']/monthWidth[@type='abbreviated']"/>
-				nodes = node.SelectNodes ("months/monthContext[@type='format']/monthWidth[@type='abbreviated']/month");
-				ProcessAllNodes (nodes, df.AbbreviatedMonthNames, AddOrReplaceValue);
-				nodes = node.SelectNodes ("months/monthContext[@type='stand-alone']/monthWidth[@type='abbreviated']/month");
-				ProcessAllNodes (nodes, df.AbbreviatedMonthNames, AddOrReplaceValue);
+				if (ci.Name == "ja" || ci.Name == "ja-JP") {
+					// Use common number style
+				} else {
+					nodes = node.SelectNodes ("months/monthContext[@type='format']/monthWidth[@type='abbreviated']/month");
+					ProcessAllNodes (nodes, df.AbbreviatedMonthNames, AddOrReplaceValue);
+					nodes = node.SelectNodes ("months/monthContext[@type='stand-alone']/monthWidth[@type='abbreviated']/month");
+					ProcessAllNodes (nodes, df.AbbreviatedMonthNames, AddOrReplaceValue);
+				}
 
 				nodes = node.SelectNodes ("months/monthContext[@type='format']/monthWidth[@type='wide']/month");
 				if (nodes != null) {

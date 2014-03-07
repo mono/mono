@@ -307,7 +307,10 @@ namespace System.Globalization
 						parent_culture = InvariantCulture;
 					else if (cultureID == InvariantCultureId)
 						parent_culture = this;
-					else
+					else if (cultureID == 0x0404) {
+						// zh-tw has parent id 0x7C04 which is in this case zh-cht and not zh-hant
+						parent_culture = new CultureInfo ("zh-CHT");
+					} else
 						parent_culture = new CultureInfo (parent_lcid);
 				}
 				return parent_culture;
