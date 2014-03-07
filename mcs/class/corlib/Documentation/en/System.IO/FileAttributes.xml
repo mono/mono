@@ -1,5 +1,6 @@
 <Type Name="FileAttributes" FullName="System.IO.FileAttributes">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum FileAttributes" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed FileAttributes extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -26,7 +27,13 @@
   <Members>
     <Member MemberName="Archive">
       <MemberSignature Language="C#" Value="Archive" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileAttributes Archive = int32(32)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.FileAttributes</ReturnType>
       </ReturnValue>
@@ -35,15 +42,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Compressed">
       <MemberSignature Language="C#" Value="Compressed" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileAttributes Compressed = int32(2048)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.FileAttributes</ReturnType>
       </ReturnValue>
@@ -52,15 +60,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Device">
       <MemberSignature Language="C#" Value="Device" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileAttributes Device = int32(64)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.FileAttributes</ReturnType>
       </ReturnValue>
@@ -69,15 +78,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Directory">
       <MemberSignature Language="C#" Value="Directory" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileAttributes Directory = int32(16)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.FileAttributes</ReturnType>
       </ReturnValue>
@@ -86,15 +96,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Encrypted">
       <MemberSignature Language="C#" Value="Encrypted" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileAttributes Encrypted = int32(16384)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.FileAttributes</ReturnType>
       </ReturnValue>
@@ -103,15 +114,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Hidden">
       <MemberSignature Language="C#" Value="Hidden" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileAttributes Hidden = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.FileAttributes</ReturnType>
       </ReturnValue>
@@ -120,15 +132,30 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="IntegrityStream">
+      <MemberSignature Language="C#" Value="IntegrityStream" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileAttributes IntegrityStream = int32(32768)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.FileAttributes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
     </Member>
     <Member MemberName="Normal">
       <MemberSignature Language="C#" Value="Normal" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileAttributes Normal = int32(128)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.FileAttributes</ReturnType>
       </ReturnValue>
@@ -137,15 +164,30 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="NoScrubData">
+      <MemberSignature Language="C#" Value="NoScrubData" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileAttributes NoScrubData = int32(131072)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.FileAttributes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
     </Member>
     <Member MemberName="NotContentIndexed">
       <MemberSignature Language="C#" Value="NotContentIndexed" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileAttributes NotContentIndexed = int32(8192)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.FileAttributes</ReturnType>
       </ReturnValue>
@@ -154,15 +196,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Offline">
       <MemberSignature Language="C#" Value="Offline" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileAttributes Offline = int32(4096)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.FileAttributes</ReturnType>
       </ReturnValue>
@@ -171,15 +214,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadOnly">
       <MemberSignature Language="C#" Value="ReadOnly" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileAttributes ReadOnly = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.FileAttributes</ReturnType>
       </ReturnValue>
@@ -188,15 +232,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReparsePoint">
       <MemberSignature Language="C#" Value="ReparsePoint" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileAttributes ReparsePoint = int32(1024)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.FileAttributes</ReturnType>
       </ReturnValue>
@@ -205,15 +250,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SparseFile">
       <MemberSignature Language="C#" Value="SparseFile" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileAttributes SparseFile = int32(512)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.FileAttributes</ReturnType>
       </ReturnValue>
@@ -222,15 +268,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System">
       <MemberSignature Language="C#" Value="System" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileAttributes System = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.FileAttributes</ReturnType>
       </ReturnValue>
@@ -239,15 +286,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Temporary">
       <MemberSignature Language="C#" Value="Temporary" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.FileAttributes Temporary = int32(256)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.FileAttributes</ReturnType>
       </ReturnValue>
@@ -256,11 +304,6 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

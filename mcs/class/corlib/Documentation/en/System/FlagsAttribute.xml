@@ -1,6 +1,7 @@
 <Type Name="FlagsAttribute" FullName="System.FlagsAttribute" FullNameSP="System_FlagsAttribute" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public serializable FlagsAttribute extends System.Attribute" />
   <TypeSignature Language="C#" Value="public class FlagsAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit FlagsAttribute extends System.Attribute" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -89,7 +90,13 @@ public class enumFormat {
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
       <MemberSignature Language="C#" Value="public FlagsAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters />
       <Docs>
@@ -100,11 +107,6 @@ public class enumFormat {
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

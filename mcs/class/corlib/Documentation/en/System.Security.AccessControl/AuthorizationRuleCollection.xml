@@ -1,5 +1,6 @@
 <Type Name="AuthorizationRuleCollection" FullName="System.Security.AccessControl.AuthorizationRuleCollection">
   <TypeSignature Language="C#" Value="public sealed class AuthorizationRuleCollection : System.Collections.ReadOnlyCollectionBase" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit AuthorizationRuleCollection extends System.Collections.ReadOnlyCollectionBase" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -17,7 +18,12 @@
   <Members>
     <Member MemberName="CopyTo">
       <MemberSignature Language="C#" Value="public void CopyTo (System.Security.AccessControl.AuthorizationRule[] rules, int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CopyTo(class System.Security.AccessControl.AuthorizationRule[] rules, int32 index) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -32,14 +38,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="C#" Value="public System.Security.AccessControl.AuthorizationRule this[int index] { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.AccessControl.AuthorizationRule Item(int32)" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Item">
-      <MemberSignature Language="C#" Value="public System.Security.AccessControl.AuthorizationRule this[int index] { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.AccessControl.AuthorizationRule</ReturnType>
       </ReturnValue>
@@ -53,10 +60,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

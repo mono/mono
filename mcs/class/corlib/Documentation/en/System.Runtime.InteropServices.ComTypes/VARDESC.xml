@@ -1,5 +1,6 @@
 <Type Name="VARDESC" FullName="System.Runtime.InteropServices.ComTypes.VARDESC">
   <TypeSignature Language="C#" Value="public struct VARDESC" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential sealed beforefieldinit VARDESC extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -17,7 +18,12 @@
   <Members>
     <Member MemberName="desc">
       <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.ComTypes.VARDESC.DESCUNION desc;" />
+      <MemberSignature Language="ILAsm" Value=".field public valuetype System.Runtime.InteropServices.ComTypes.VARDESC/DESCUNION desc" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.VARDESC+DESCUNION</ReturnType>
       </ReturnValue>
@@ -26,14 +32,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="elemdescVar">
+      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.ComTypes.ELEMDESC elemdescVar;" />
+      <MemberSignature Language="ILAsm" Value=".field public valuetype System.Runtime.InteropServices.ComTypes.ELEMDESC elemdescVar" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="elemdescVar">
-      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.ComTypes.ELEMDESC elemdescVar;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.ELEMDESC</ReturnType>
       </ReturnValue>
@@ -42,14 +49,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="lpstrSchema">
+      <MemberSignature Language="C#" Value="public string lpstrSchema;" />
+      <MemberSignature Language="ILAsm" Value=".field public string lpstrSchema" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="lpstrSchema">
-      <MemberSignature Language="C#" Value="public string lpstrSchema;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -58,14 +66,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="memid">
+      <MemberSignature Language="C#" Value="public int memid;" />
+      <MemberSignature Language="ILAsm" Value=".field public int32 memid" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="memid">
-      <MemberSignature Language="C#" Value="public int memid;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -74,14 +83,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="varkind">
+      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.ComTypes.VARKIND varkind;" />
+      <MemberSignature Language="ILAsm" Value=".field public valuetype System.Runtime.InteropServices.ComTypes.VARKIND varkind" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="varkind">
-      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.ComTypes.VARKIND varkind;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.VARKIND</ReturnType>
       </ReturnValue>
@@ -90,14 +100,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="wVarFlags">
+      <MemberSignature Language="C#" Value="public short wVarFlags;" />
+      <MemberSignature Language="ILAsm" Value=".field public int16 wVarFlags" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="wVarFlags">
-      <MemberSignature Language="C#" Value="public short wVarFlags;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
@@ -106,10 +117,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

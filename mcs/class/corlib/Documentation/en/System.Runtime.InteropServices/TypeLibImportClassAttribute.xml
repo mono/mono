@@ -1,5 +1,6 @@
 <Type Name="TypeLibImportClassAttribute" FullName="System.Runtime.InteropServices.TypeLibImportClassAttribute">
   <TypeSignature Language="C#" Value="public sealed class TypeLibImportClassAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit TypeLibImportClassAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -25,7 +26,13 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public TypeLibImportClassAttribute (Type importClass);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type importClass) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="importClass" Type="System.Type" />
       </Parameters>
@@ -34,15 +41,16 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Value">
+      <MemberSignature Language="C#" Value="public string Value { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Value" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Value">
-      <MemberSignature Language="C#" Value="public string Value { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -52,11 +60,6 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

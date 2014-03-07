@@ -1,6 +1,7 @@
 <Type Name="UnhandledExceptionEventHandler" FullName="System.UnhandledExceptionEventHandler" FullNameSP="System_UnhandledExceptionEventHandler" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable UnhandledExceptionEventHandler extends System.Delegate" />
   <TypeSignature Language="C#" Value="public delegate void UnhandledExceptionEventHandler(object sender, UnhandledExceptionEventArgs e);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed UnhandledExceptionEventHandler extends System.MulticastDelegate" />
   <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -12,6 +13,18 @@
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
   </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Parameters>
+    <Parameter Name="sender" Type="System.Object" />
+    <Parameter Name="e" Type="System.UnhandledExceptionEventArgs" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
   <Docs>
     <param name="sender">The application domain that handled the <see cref="F:System.AppDomain.UnhandledException" /> event.</param>
     <param name="e">A <see cref="T:System.UnhandledExceptionEventArgs" /> that contains the event data.</param>
@@ -39,16 +52,4 @@ invoked whenever an object, typically a
   </Docs>
   <Members />
   <TypeExcluded>0</TypeExcluded>
-  <Parameters>
-    <Parameter Name="sender" Type="System.Object" />
-    <Parameter Name="e" Type="System.UnhandledExceptionEventArgs" />
-  </Parameters>
-  <ReturnValue>
-    <ReturnType>System.Void</ReturnType>
-  </ReturnValue>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

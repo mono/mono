@@ -1,5 +1,6 @@
 <Type Name="AceEnumerator" FullName="System.Security.AccessControl.AceEnumerator">
   <TypeSignature Language="C#" Value="public sealed class AceEnumerator : System.Collections.IEnumerator" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit AceEnumerator extends System.Object implements class System.Collections.IEnumerator" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -21,7 +22,12 @@
   <Members>
     <Member MemberName="Current">
       <MemberSignature Language="C#" Value="public System.Security.AccessControl.GenericAce Current { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.AccessControl.GenericAce Current" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.AccessControl.GenericAce</ReturnType>
       </ReturnValue>
@@ -31,14 +37,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="MoveNext">
+      <MemberSignature Language="C#" Value="public bool MoveNext ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool MoveNext() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MoveNext">
-      <MemberSignature Language="C#" Value="public bool MoveNext ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -49,14 +56,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Reset">
+      <MemberSignature Language="C#" Value="public void Reset ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Reset() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Reset">
-      <MemberSignature Language="C#" Value="public void Reset ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -66,14 +74,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="System.Collections.IEnumerator.Current">
+      <MemberSignature Language="C#" Value="object System.Collections.IEnumerator.Current { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object System.Collections.IEnumerator.Current" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Collections.IEnumerator.Current">
-      <MemberSignature Language="C#" Value="object System.Collections.IEnumerator.Current { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -83,10 +92,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

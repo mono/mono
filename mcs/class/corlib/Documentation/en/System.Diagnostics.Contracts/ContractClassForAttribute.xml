@@ -1,5 +1,6 @@
 <Type Name="ContractClassForAttribute" FullName="System.Diagnostics.Contracts.ContractClassForAttribute">
   <TypeSignature Language="C#" Value="public sealed class ContractClassForAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ContractClassForAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -23,6 +24,7 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ContractClassForAttribute (Type typeContractsAreFor);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type typeContractsAreFor) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -38,6 +40,7 @@
     </Member>
     <Member MemberName="TypeContractsAreFor">
       <MemberSignature Language="C#" Value="public Type TypeContractsAreFor { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type TypeContractsAreFor" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>

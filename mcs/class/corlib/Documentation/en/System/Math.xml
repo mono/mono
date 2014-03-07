@@ -1,6 +1,7 @@
 <Type Name="Math" FullName="System.Math" FullNameSP="System_Math" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed Math extends System.Object" />
   <TypeSignature Language="C#" Value="public static class Math" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Math extends System.Object" />
   <MemberOfLibrary>ExtendedNumerics</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -25,7 +26,13 @@
     <Member MemberName="Abs">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static decimal Abs(decimal value)" />
       <MemberSignature Language="C#" Value="public static decimal Abs (decimal value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Decimal Abs(valuetype System.Decimal value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>
       </ReturnValue>
@@ -67,16 +74,17 @@ public class MathAbsExample
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Abs">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Abs(float64 value)" />
+      <MemberSignature Language="C#" Value="public static double Abs (double value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Abs(float64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Abs">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Abs(float64 value)" />
-      <MemberSignature Language="C#" Value="public static double Abs (double value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -96,16 +104,17 @@ returns <see cref="F:System.Double.PositiveInfinity" />. If value is equal to <s
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Abs">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int16 Abs(int16 value)" />
+      <MemberSignature Language="C#" Value="public static short Abs (short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int16 Abs(int16 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Abs">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int16 Abs(int16 value)" />
-      <MemberSignature Language="C#" Value="public static short Abs (short value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
@@ -126,16 +135,17 @@ containing the absolute value of <paramref name="value" />.</para>
           <paramref name="value" /> equals <see cref="F:System.Int16.MinValue" />.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Abs">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Abs(int32 value)" />
+      <MemberSignature Language="C#" Value="public static int Abs (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Abs(int32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Abs">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Abs(int32 value)" />
-      <MemberSignature Language="C#" Value="public static int Abs (int value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -155,16 +165,17 @@ containing the absolute value of <paramref name="value" />.</para>
           <paramref name="value " /> equals <see cref="F:System.Int32.MinValue" />.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Abs">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int64 Abs(int64 value)" />
+      <MemberSignature Language="C#" Value="public static long Abs (long value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int64 Abs(int64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Abs">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int64 Abs(int64 value)" />
-      <MemberSignature Language="C#" Value="public static long Abs (long value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -184,16 +195,22 @@ containing the absolute value of <paramref name="value" />.</para>
           <paramref name="value " /> equals <see cref="F:System.Int64.MinValue" />.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Abs">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int8 Abs(int8 value)" />
+      <MemberSignature Language="C#" Value="public static sbyte Abs (sbyte value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int8 Abs(int8 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Abs">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int8 Abs(int8 value)" />
-      <MemberSignature Language="C#" Value="public static sbyte Abs (sbyte value);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.SByte</ReturnType>
       </ReturnValue>
@@ -216,21 +233,17 @@ containing the absolute value of <paramref name="value" />.</para>
           <paramref name="value" /> equals <see cref="F:System.SByte.MinValue" />.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Abs">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float32 Abs(float32 value)" />
+      <MemberSignature Language="C#" Value="public static float Abs (float value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float32 Abs(float32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Abs">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float32 Abs(float32 value)" />
-      <MemberSignature Language="C#" Value="public static float Abs (float value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Single</ReturnType>
       </ReturnValue>
@@ -251,16 +264,17 @@ or <see cref="F:System.Single.PositiveInfinity" />, returns <see cref="F:System.
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Acos">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Acos(float64 d)" />
+      <MemberSignature Language="C#" Value="public static double Acos (double d);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Acos(float64 d) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Acos">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Acos(float64 d)" />
-      <MemberSignature Language="C#" Value="public static double Acos (double d);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -286,16 +300,17 @@ or <see cref="F:System.Single.PositiveInfinity" />, returns <see cref="F:System.
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Asin">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Asin(float64 d)" />
+      <MemberSignature Language="C#" Value="public static double Asin (double d);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Asin(float64 d) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Asin">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Asin(float64 d)" />
-      <MemberSignature Language="C#" Value="public static double Asin (double d);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -325,16 +340,17 @@ or <see cref="F:System.Single.PositiveInfinity" />, returns <see cref="F:System.
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Atan">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Atan(float64 d)" />
+      <MemberSignature Language="C#" Value="public static double Atan (double d);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Atan(float64 d) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Atan">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Atan(float64 d)" />
-      <MemberSignature Language="C#" Value="public static double Atan (double d);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -390,16 +406,17 @@ or <see cref="F:System.Single.PositiveInfinity" />, returns <see cref="F:System.
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Atan2">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Atan2(float64 y, float64 x)" />
+      <MemberSignature Language="C#" Value="public static double Atan2 (double y, double x);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Atan2(float64 y, float64 x) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Atan2">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Atan2(float64 y, float64 x)" />
-      <MemberSignature Language="C#" Value="public static double Atan2 (double y, double x);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -551,16 +568,17 @@ public class MathAtan2Example
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="BigMul">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int64  BigMul(int32 a,int32 b)" />
+      <MemberSignature Language="C#" Value="public static long BigMul (int a, int b);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int64 BigMul(int32 a, int32 b) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="BigMul">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int64  BigMul(int32 a,int32 b)" />
-      <MemberSignature Language="C#" Value="public static long BigMul (int a, int b);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -583,15 +601,15 @@ public class MathAtan2Example
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Ceiling">
       <MemberSignature Language="C#" Value="public static decimal Ceiling (decimal d);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Decimal Ceiling(valuetype System.Decimal d) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>
       </ReturnValue>
@@ -605,15 +623,17 @@ public class MathAtan2Example
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Ceiling">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Ceiling(float64 a)" />
       <MemberSignature Language="C#" Value="public static double Ceiling (double a);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Ceiling(float64 a) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -661,16 +681,17 @@ public class MathCeilingExample
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Cos">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Cos(float64 d)" />
+      <MemberSignature Language="C#" Value="public static double Cos (double d);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Cos(float64 d) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Cos">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Cos(float64 d)" />
-      <MemberSignature Language="C#" Value="public static double Cos (double d);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -695,16 +716,17 @@ public class MathCeilingExample
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Cosh">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Cosh(float64 value)" />
+      <MemberSignature Language="C#" Value="public static double Cosh (double value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Cosh(float64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Cosh">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Cosh(float64 value)" />
-      <MemberSignature Language="C#" Value="public static double Cosh (double value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -730,16 +752,17 @@ public class MathCeilingExample
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="DivRem">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32  DivRem(int32 a,int32 b, [out] int32 &amp;result) " />
+      <MemberSignature Language="C#" Value="public static int DivRem (int a, int b, out int result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 DivRem(int32 a, int32 b, int32 result) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DivRem">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32  DivRem(int32 a,int32 b, [out] int32 &amp;result) " />
-      <MemberSignature Language="C#" Value="public static int DivRem (int a, int b, out int result);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -764,16 +787,17 @@ public class MathCeilingExample
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="DivRem">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int64  DivRem(int64 a,int64 b,[out] int64 &amp;result)" />
+      <MemberSignature Language="C#" Value="public static long DivRem (long a, long b, out long result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int64 DivRem(int64 a, int64 b, int64 result) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DivRem">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int64  DivRem(int64 a,int64 b,[out] int64 &amp;result)" />
-      <MemberSignature Language="C#" Value="public static long DivRem (long a, long b, out long result);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -798,20 +822,22 @@ public class MathCeilingExample
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="E">
+      <MemberSignature Language="ILASM" Value=".field public static literal float64 E = 2.71828182845905" />
+      <MemberSignature Language="C#" Value="public const double E = 2.71828182845905;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal float64 E = (2.71828182845905)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="E">
-      <MemberSignature Language="ILASM" Value=".field public static literal float64 E = 2.71828182845905" />
-      <MemberSignature Language="C#" Value="public const double E = 2.71828182845905;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
       <Parameters />
+      <MemberValue>2.71828182845905</MemberValue>
       <Docs>
         <summary>
           <para>A constant, <see langword="e" />, which specifies the natural logarithmic base rounded to 
@@ -822,17 +848,17 @@ public class MathCeilingExample
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <MemberValue>2.71828182845905</MemberValue>
+    </Member>
+    <Member MemberName="Exp">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Exp(float64 d)" />
+      <MemberSignature Language="C#" Value="public static double Exp (double d);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Exp(float64 d) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Exp">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Exp(float64 d)" />
-      <MemberSignature Language="C#" Value="public static double Exp (double d);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -864,15 +890,15 @@ public class MathCeilingExample
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Floor">
       <MemberSignature Language="C#" Value="public static decimal Floor (decimal d);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Decimal Floor(valuetype System.Decimal d) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>
       </ReturnValue>
@@ -886,15 +912,17 @@ public class MathCeilingExample
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Floor">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Floor(float64 d)" />
       <MemberSignature Language="C#" Value="public static double Floor (double d);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Floor(float64 d) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -942,16 +970,17 @@ public class MathFloorExample
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="IEEERemainder">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 IEEERemainder(float64 x, float64 y)" />
+      <MemberSignature Language="C#" Value="public static double IEEERemainder (double x, double y);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 IEEERemainder(float64 x, float64 y) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IEEERemainder">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 IEEERemainder(float64 x, float64 y)" />
-      <MemberSignature Language="C#" Value="public static double IEEERemainder (double x, double y);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -1048,16 +1077,17 @@ public class MathIEEERemainderExample
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Log">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Log(float64 d)" />
+      <MemberSignature Language="C#" Value="public static double Log (double d);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Log(float64 d) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Log">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Log(float64 d)" />
-      <MemberSignature Language="C#" Value="public static double Log (double d);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -1121,16 +1151,17 @@ is equal to <see cref="F:System.Double.PositiveInfinity" />.</term>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Log">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Log(float64 a, float64 newBase)" />
+      <MemberSignature Language="C#" Value="public static double Log (double a, double newBase);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Log(float64 a, float64 newBase) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Log">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Log(float64 a, float64 newBase)" />
-      <MemberSignature Language="C#" Value="public static double Log (double a, double newBase);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -1240,16 +1271,17 @@ in the specified base.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Log10">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Log10(float64 d)" />
+      <MemberSignature Language="C#" Value="public static double Log10 (double d);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Log10(float64 d) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Log10">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Log10(float64 d)" />
-      <MemberSignature Language="C#" Value="public static double Log10 (double d);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -1312,16 +1344,22 @@ in the specified base.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int8 Max(unsigned int8 val1, unsigned int8 val2)" />
+      <MemberSignature Language="C#" Value="public static byte Max (byte val1, byte val2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8 Max(unsigned int8 val1, unsigned int8 val2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Max">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int8 Max(unsigned int8 val1, unsigned int8 val2)" />
-      <MemberSignature Language="C#" Value="public static byte Max (byte val1, byte val2);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Byte</ReturnType>
       </ReturnValue>
@@ -1345,6 +1383,12 @@ values.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static decimal Max(decimal val1, decimal val2)" />
+      <MemberSignature Language="C#" Value="public static decimal Max (decimal val1, decimal val2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Decimal Max(valuetype System.Decimal val1, valuetype System.Decimal val2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1355,11 +1399,6 @@ values.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Max">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static decimal Max(decimal val1, decimal val2)" />
-      <MemberSignature Language="C#" Value="public static decimal Max (decimal val1, decimal val2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>
       </ReturnValue>
@@ -1381,6 +1420,12 @@ values.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Max(float64 val1, float64 val2)" />
+      <MemberSignature Language="C#" Value="public static double Max (double val1, double val2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Max(float64 val1, float64 val2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1391,11 +1436,6 @@ values.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Max">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Max(float64 val1, float64 val2)" />
-      <MemberSignature Language="C#" Value="public static double Max (double val1, double val2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -1418,6 +1458,12 @@ values.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int16 Max(int16 val1, int16 val2)" />
+      <MemberSignature Language="C#" Value="public static short Max (short val1, short val2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int16 Max(int16 val1, int16 val2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1428,11 +1474,6 @@ values.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Max">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int16 Max(int16 val1, int16 val2)" />
-      <MemberSignature Language="C#" Value="public static short Max (short val1, short val2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
@@ -1456,6 +1497,12 @@ values.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Max(int32 val1, int32 val2)" />
+      <MemberSignature Language="C#" Value="public static int Max (int val1, int val2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Max(int32 val1, int32 val2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1466,11 +1513,6 @@ values.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Max">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Max(int32 val1, int32 val2)" />
-      <MemberSignature Language="C#" Value="public static int Max (int val1, int val2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1492,6 +1534,12 @@ values.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int64 Max(int64 val1, int64 val2)" />
+      <MemberSignature Language="C#" Value="public static long Max (long val1, long val2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int64 Max(int64 val1, int64 val2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1502,11 +1550,6 @@ values.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Max">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int64 Max(int64 val1, int64 val2)" />
-      <MemberSignature Language="C#" Value="public static long Max (long val1, long val2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -1529,6 +1572,12 @@ values.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int8 Max(int8 val1, int8 val2)" />
+      <MemberSignature Language="C#" Value="public static sbyte Max (sbyte val1, sbyte val2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int8 Max(int8 val1, int8 val2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1536,14 +1585,12 @@ values.</para>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Max">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int8 Max(int8 val1, int8 val2)" />
-      <MemberSignature Language="C#" Value="public static sbyte Max (sbyte val1, sbyte val2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.SByte</ReturnType>
       </ReturnValue>
@@ -1570,6 +1617,12 @@ values.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float32 Max(float32 val1, float32 val2)" />
+      <MemberSignature Language="C#" Value="public static float Max (float val1, float val2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float32 Max(float32 val1, float32 val2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1577,17 +1630,9 @@ values.</para>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-        <Attribute>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Max">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float32 Max(float32 val1, float32 val2)" />
-      <MemberSignature Language="C#" Value="public static float Max (float val1, float val2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Single</ReturnType>
       </ReturnValue>
@@ -1612,6 +1657,12 @@ returned.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int16 Max(unsigned int16 val1, unsigned int16 val2)" />
+      <MemberSignature Language="C#" Value="public static ushort Max (ushort val1, ushort val2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int16 Max(unsigned int16 val1, unsigned int16 val2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1619,14 +1670,12 @@ returned.</para>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Max">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int16 Max(unsigned int16 val1, unsigned int16 val2)" />
-      <MemberSignature Language="C#" Value="public static ushort Max (ushort val1, ushort val2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt16</ReturnType>
       </ReturnValue>
@@ -1652,6 +1701,12 @@ values.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int32 Max(unsigned int32 val1, unsigned int32 val2)" />
+      <MemberSignature Language="C#" Value="public static uint Max (uint val1, uint val2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int32 Max(unsigned int32 val1, unsigned int32 val2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1665,11 +1720,6 @@ values.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Max">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int32 Max(unsigned int32 val1, unsigned int32 val2)" />
-      <MemberSignature Language="C#" Value="public static uint Max (uint val1, uint val2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt32</ReturnType>
       </ReturnValue>
@@ -1694,6 +1744,12 @@ values.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Max">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int64 Max(unsigned int64 val1, unsigned int64 val2)" />
+      <MemberSignature Language="C#" Value="public static ulong Max (ulong val1, ulong val2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int64 Max(unsigned int64 val1, unsigned int64 val2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1707,11 +1763,6 @@ values.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Max">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int64 Max(unsigned int64 val1, unsigned int64 val2)" />
-      <MemberSignature Language="C#" Value="public static ulong Max (ulong val1, ulong val2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt64</ReturnType>
       </ReturnValue>
@@ -1737,6 +1788,12 @@ values.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Min">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int8 Min(unsigned int8 val1, unsigned int8 val2)" />
+      <MemberSignature Language="C#" Value="public static byte Min (byte val1, byte val2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8 Min(unsigned int8 val1, unsigned int8 val2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1744,17 +1801,9 @@ values.</para>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-        <Attribute>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Min">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int8 Min(unsigned int8 val1, unsigned int8 val2)" />
-      <MemberSignature Language="C#" Value="public static byte Min (byte val1, byte val2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte</ReturnType>
       </ReturnValue>
@@ -1778,6 +1827,12 @@ values.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Min">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static decimal Min(decimal val1, decimal val2)" />
+      <MemberSignature Language="C#" Value="public static decimal Min (decimal val1, decimal val2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Decimal Min(valuetype System.Decimal val1, valuetype System.Decimal val2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1788,11 +1843,6 @@ values.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Min">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static decimal Min(decimal val1, decimal val2)" />
-      <MemberSignature Language="C#" Value="public static decimal Min (decimal val1, decimal val2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>
       </ReturnValue>
@@ -1814,6 +1864,12 @@ values.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Min">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Min(float64 val1, float64 val2)" />
+      <MemberSignature Language="C#" Value="public static double Min (double val1, double val2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Min(float64 val1, float64 val2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1824,11 +1880,6 @@ values.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Min">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Min(float64 val1, float64 val2)" />
-      <MemberSignature Language="C#" Value="public static double Min (double val1, double val2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -1854,6 +1905,12 @@ returned.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Min">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int16 Min(int16 val1, int16 val2)" />
+      <MemberSignature Language="C#" Value="public static short Min (short val1, short val2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int16 Min(int16 val1, int16 val2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1864,11 +1921,6 @@ returned.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Min">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int16 Min(int16 val1, int16 val2)" />
-      <MemberSignature Language="C#" Value="public static short Min (short val1, short val2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
@@ -1891,6 +1943,12 @@ values.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Min">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Min(int32 val1, int32 val2)" />
+      <MemberSignature Language="C#" Value="public static int Min (int val1, int val2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Min(int32 val1, int32 val2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1901,11 +1959,6 @@ values.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Min">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Min(int32 val1, int32 val2)" />
-      <MemberSignature Language="C#" Value="public static int Min (int val1, int val2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1927,6 +1980,12 @@ equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or eq
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Min">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int64 Min(int64 val1, int64 val2)" />
+      <MemberSignature Language="C#" Value="public static long Min (long val1, long val2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int64 Min(int64 val1, int64 val2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1937,11 +1996,6 @@ equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or eq
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Min">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int64 Min(int64 val1, int64 val2)" />
-      <MemberSignature Language="C#" Value="public static long Min (long val1, long val2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -1963,6 +2017,12 @@ equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or eq
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Min">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int8 Min(int8 val1, int8 val2)" />
+      <MemberSignature Language="C#" Value="public static sbyte Min (sbyte val1, sbyte val2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int8 Min(int8 val1, int8 val2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1970,14 +2030,12 @@ equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or eq
       </AssemblyInfo>
       <Attributes>
         <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Min">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int8 Min(int8 val1, int8 val2)" />
-      <MemberSignature Language="C#" Value="public static sbyte Min (sbyte val1, sbyte val2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.SByte</ReturnType>
       </ReturnValue>
@@ -2002,6 +2060,12 @@ equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or eq
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Min">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float32 Min(float32 val1, float32 val2)" />
+      <MemberSignature Language="C#" Value="public static float Min (float val1, float val2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float32 Min(float32 val1, float32 val2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2009,17 +2073,9 @@ equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or eq
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-        <Attribute>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Min">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float32 Min(float32 val1, float32 val2)" />
-      <MemberSignature Language="C#" Value="public static float Min (float val1, float val2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Single</ReturnType>
       </ReturnValue>
@@ -2044,6 +2100,12 @@ returned.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Min">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int16 Min(unsigned int16 val1, unsigned int16 val2)" />
+      <MemberSignature Language="C#" Value="public static ushort Min (ushort val1, ushort val2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int16 Min(unsigned int16 val1, unsigned int16 val2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2051,14 +2113,12 @@ returned.</para>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Min">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int16 Min(unsigned int16 val1, unsigned int16 val2)" />
-      <MemberSignature Language="C#" Value="public static ushort Min (ushort val1, ushort val2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt16</ReturnType>
       </ReturnValue>
@@ -2083,6 +2143,12 @@ values.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Min">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int32 Min(unsigned int32 val1, unsigned int32 val2)" />
+      <MemberSignature Language="C#" Value="public static uint Min (uint val1, uint val2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int32 Min(unsigned int32 val1, unsigned int32 val2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2096,11 +2162,6 @@ values.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Min">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int32 Min(unsigned int32 val1, unsigned int32 val2)" />
-      <MemberSignature Language="C#" Value="public static uint Min (uint val1, uint val2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt32</ReturnType>
       </ReturnValue>
@@ -2125,6 +2186,12 @@ equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or eq
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Min">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int64 Min(unsigned int64 val1, unsigned int64 val2)" />
+      <MemberSignature Language="C#" Value="public static ulong Min (ulong val1, ulong val2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int64 Min(unsigned int64 val1, unsigned int64 val2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2138,11 +2205,6 @@ equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or eq
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Min">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static unsigned int64 Min(unsigned int64 val1, unsigned int64 val2)" />
-      <MemberSignature Language="C#" Value="public static ulong Min (ulong val1, ulong val2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt64</ReturnType>
       </ReturnValue>
@@ -2166,28 +2228,22 @@ equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or eq
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="PI">
+      <MemberSignature Language="ILASM" Value=".field public static literal float64 PI = 3.14159265358979" />
+      <MemberSignature Language="C#" Value="public const double PI = 3.14159265358979;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal float64 PI = (3.14159265358979)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="PI">
-      <MemberSignature Language="ILASM" Value=".field public static literal float64 PI = 3.14159265358979" />
-      <MemberSignature Language="C#" Value="public const double PI = 3.14159265358979;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
       <Parameters />
+      <MemberValue>3.14159265358979</MemberValue>
       <Docs>
         <summary>
           <para> A constant, <pi />, which specifies the ratio of the circumference of a circle to
@@ -2198,17 +2254,17 @@ equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or eq
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <MemberValue>3.14159265358979</MemberValue>
+    </Member>
+    <Member MemberName="Pow">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Pow(float64 x, float64 y)" />
+      <MemberSignature Language="C#" Value="public static double Pow (double x, double y);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Pow(float64 x, float64 y) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Pow">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Pow(float64 x, float64 y)" />
-      <MemberSignature Language="C#" Value="public static double Pow (double x, double y);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -2362,16 +2418,17 @@ equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or eq
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Round">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static decimal Round(decimal d)" />
+      <MemberSignature Language="C#" Value="public static decimal Round (decimal d);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Decimal Round(valuetype System.Decimal d) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Round">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static decimal Round(decimal d)" />
-      <MemberSignature Language="C#" Value="public static decimal Round (decimal d);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>
       </ReturnValue>
@@ -2420,16 +2477,17 @@ public class MathRoundExample
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Round">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Round(float64 a)" />
+      <MemberSignature Language="C#" Value="public static double Round (double a);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Round(float64 a) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Round">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Round(float64 a)" />
-      <MemberSignature Language="C#" Value="public static double Round (double a);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -2478,15 +2536,16 @@ public class MathRoundExample
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Round">
+      <MemberSignature Language="C#" Value="public static decimal Round (decimal d, int decimals);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Decimal Round(valuetype System.Decimal d, int32 decimals) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Round">
-      <MemberSignature Language="C#" Value="public static decimal Round (decimal d, int decimals);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>
       </ReturnValue>
@@ -2501,15 +2560,15 @@ public class MathRoundExample
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Round">
       <MemberSignature Language="C#" Value="public static decimal Round (decimal d, MidpointRounding mode);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Decimal Round(valuetype System.Decimal d, valuetype System.MidpointRounding mode) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>
       </ReturnValue>
@@ -2525,15 +2584,17 @@ public class MathRoundExample
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Round">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Round(float64 value, int32 digits)" />
       <MemberSignature Language="C#" Value="public static double Round (double value, int digits);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Round(float64 value, int32 digits) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -2602,15 +2663,15 @@ public class MathRoundExample
         </example>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Round">
       <MemberSignature Language="C#" Value="public static double Round (double value, MidpointRounding mode);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Round(float64 value, valuetype System.MidpointRounding mode) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -2626,14 +2687,15 @@ public class MathRoundExample
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Round">
+      <MemberSignature Language="C#" Value="public static decimal Round (decimal d, int decimals, MidpointRounding mode);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Decimal Round(valuetype System.Decimal d, int32 decimals, valuetype System.MidpointRounding mode) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Round">
-      <MemberSignature Language="C#" Value="public static decimal Round (decimal d, int decimals, MidpointRounding mode);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>
       </ReturnValue>
@@ -2651,14 +2713,15 @@ public class MathRoundExample
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Round">
+      <MemberSignature Language="C#" Value="public static double Round (double value, int digits, MidpointRounding mode);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Round(float64 value, int32 digits, valuetype System.MidpointRounding mode) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Round">
-      <MemberSignature Language="C#" Value="public static double Round (double value, int digits, MidpointRounding mode);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -2676,15 +2739,17 @@ public class MathRoundExample
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Sign">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Sign(decimal value)" />
       <MemberSignature Language="C#" Value="public static int Sign (decimal value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Sign(valuetype System.Decimal value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2724,16 +2789,17 @@ public class MathRoundExample
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Sign">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Sign(float64 value)" />
+      <MemberSignature Language="C#" Value="public static int Sign (double value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Sign(float64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Sign">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Sign(float64 value)" />
-      <MemberSignature Language="C#" Value="public static int Sign (double value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2804,16 +2870,17 @@ public class MathSignExample
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Sign">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Sign(int16 value)" />
+      <MemberSignature Language="C#" Value="public static int Sign (short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Sign(int16 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Sign">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Sign(int16 value)" />
-      <MemberSignature Language="C#" Value="public static int Sign (short value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2853,16 +2920,17 @@ public class MathSignExample
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Sign">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Sign(int32 value)" />
+      <MemberSignature Language="C#" Value="public static int Sign (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Sign(int32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Sign">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Sign(int32 value)" />
-      <MemberSignature Language="C#" Value="public static int Sign (int value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2902,16 +2970,17 @@ public class MathSignExample
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Sign">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Sign(int64 value)" />
+      <MemberSignature Language="C#" Value="public static int Sign (long value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Sign(int64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Sign">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Sign(int64 value)" />
-      <MemberSignature Language="C#" Value="public static int Sign (long value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2951,16 +3020,22 @@ public class MathSignExample
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Sign">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Sign(int8 value)" />
+      <MemberSignature Language="C#" Value="public static int Sign (sbyte value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Sign(int8 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Sign">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Sign(int8 value)" />
-      <MemberSignature Language="C#" Value="public static int Sign (sbyte value);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3004,21 +3079,17 @@ public class MathSignExample
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Sign">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Sign(float32 value)" />
+      <MemberSignature Language="C#" Value="public static int Sign (float value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Sign(float32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Sign">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Sign(float32 value)" />
-      <MemberSignature Language="C#" Value="public static int Sign (float value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3060,16 +3131,17 @@ public class MathSignExample
           <paramref name="value" /> is equal to <see cref="F:System.Single.NaN" />.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Sin">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Sin(float64 a)" />
+      <MemberSignature Language="C#" Value="public static double Sin (double a);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Sin(float64 a) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Sin">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Sin(float64 a)" />
-      <MemberSignature Language="C#" Value="public static double Sin (double a);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -3119,16 +3191,17 @@ public class MathSinExample
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Sinh">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Sinh(float64 value)" />
+      <MemberSignature Language="C#" Value="public static double Sinh (double value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Sinh(float64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Sinh">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Sinh(float64 value)" />
-      <MemberSignature Language="C#" Value="public static double Sinh (double value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -3178,16 +3251,22 @@ public class MathSinhExample
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Sqrt">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Sqrt(float64 d)" />
+      <MemberSignature Language="C#" Value="public static double Sqrt (double d);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Sqrt(float64 d) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Sqrt">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Sqrt(float64 d)" />
-      <MemberSignature Language="C#" Value="public static double Sqrt (double d);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -3271,21 +3350,17 @@ public class MathSqrtExample
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Tan">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Tan(float64 a)" />
+      <MemberSignature Language="C#" Value="public static double Tan (double a);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Tan(float64 a) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Tan">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Tan(float64 a)" />
-      <MemberSignature Language="C#" Value="public static double Tan (double a);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -3335,16 +3410,17 @@ public class MathTanExample
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Tanh">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Tanh(float64 value)" />
+      <MemberSignature Language="C#" Value="public static double Tanh (double value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Tanh(float64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Tanh">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 Tanh(float64 value)" />
-      <MemberSignature Language="C#" Value="public static double Tanh (double value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -3393,15 +3469,15 @@ public class MathTanhExample
         </example>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Truncate">
       <MemberSignature Language="C#" Value="public static decimal Truncate (decimal d);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Decimal Truncate(valuetype System.Decimal d) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>
       </ReturnValue>
@@ -3415,14 +3491,15 @@ public class MathTanhExample
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Truncate">
+      <MemberSignature Language="C#" Value="public static double Truncate (double d);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Truncate(float64 d) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Truncate">
-      <MemberSignature Language="C#" Value="public static double Truncate (double d);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -3436,10 +3513,6 @@ public class MathTanhExample
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

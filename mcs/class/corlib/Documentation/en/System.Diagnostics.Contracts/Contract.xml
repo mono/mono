@@ -1,5 +1,6 @@
 <Type Name="Contract" FullName="System.Diagnostics.Contracts.Contract">
   <TypeSignature Language="C#" Value="public static class Contract" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Contract extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -15,19 +16,20 @@
   <Members>
     <Member MemberName="Assert">
       <MemberSignature Language="C#" Value="public static void Assert (bool condition);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Assert(bool condition) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
-        </Attribute>
-        <Attribute>
           <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -44,6 +46,7 @@
     </Member>
     <Member MemberName="Assert">
       <MemberSignature Language="C#" Value="public static void Assert (bool condition, string userMessage);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Assert(bool condition, string userMessage) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -56,7 +59,7 @@
           <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -75,6 +78,7 @@
     </Member>
     <Member MemberName="Assume">
       <MemberSignature Language="C#" Value="public static void Assume (bool condition);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Assume(bool condition) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -87,7 +91,7 @@
           <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -104,19 +108,20 @@
     </Member>
     <Member MemberName="Assume">
       <MemberSignature Language="C#" Value="public static void Assume (bool condition, string userMessage);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Assume(bool condition, string userMessage) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
-        </Attribute>
-        <Attribute>
           <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -135,6 +140,7 @@
     </Member>
     <Member MemberName="ContractFailed">
       <MemberSignature Language="C#" Value="public static event EventHandler&lt;System.Diagnostics.Contracts.ContractFailedEventArgs&gt; ContractFailed;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.Diagnostics.Contracts.ContractFailedEventArgs&gt; ContractFailed" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -144,16 +150,19 @@
       </ReturnValue>
       <Docs>
         <summary>Called on any contract failure.</summary>
-        <remarks><para>
+        <remarks>
+          <para>
 Event handlers can mark the contract failure as having been handling by calling <see cref="m:System.Diagnostics.Contracts.ContractFailedEventArgs.SetHandled()" />.
 </para>
-<para>
+          <para>
 Event handlers can this current contract failure unwind the stack by calling <see cref="m:System.Diagnostics.Contracts.ContractFailedEventArgs.SetUnwind()" />. This causes a <see cref="T:System.Diagnostics.Contracts.ContractException" /> to be thrown.
-</para></remarks>
+</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="EndContractBlock">
       <MemberSignature Language="C#" Value="public static void EndContractBlock ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void EndContractBlock() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -174,18 +183,17 @@ Event handlers can this current contract failure unwind the stack by calling <se
         <summary>Marker method to mark the end of the legacy requires code block.</summary>
         <remarks>Legacy requires are preconditions that perform tests and throw exceptions. This is the only form of legacy require allowed.
 
-<example>
-  <code lang="C#">
+<example><code lang="C#">
 if (parameter &lt; 0) {
 	throw new ArgumentException();
 }
 Contracts.EndContractBlock();
-  </code>
-</example></remarks>
+  </code></example></remarks>
       </Docs>
     </Member>
     <Member MemberName="Ensures">
       <MemberSignature Language="C#" Value="public static void Ensures (bool condition);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Ensures(bool condition) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -195,7 +203,7 @@ Contracts.EndContractBlock();
           <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -212,6 +220,7 @@ Contracts.EndContractBlock();
     </Member>
     <Member MemberName="Ensures">
       <MemberSignature Language="C#" Value="public static void Ensures (bool condition, string userMessage);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Ensures(bool condition, string userMessage) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -221,7 +230,7 @@ Contracts.EndContractBlock();
           <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -240,6 +249,7 @@ Contracts.EndContractBlock();
     </Member>
     <Member MemberName="EnsuresOnThrow&lt;TException&gt;">
       <MemberSignature Language="C#" Value="public static void EnsuresOnThrow&lt;TException&gt; (bool condition) where TException : Exception;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void EnsuresOnThrow&lt;(class System.Exception) TException&gt;(bool condition) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -249,7 +259,7 @@ Contracts.EndContractBlock();
           <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -274,6 +284,7 @@ Contracts.EndContractBlock();
     </Member>
     <Member MemberName="EnsuresOnThrow&lt;TException&gt;">
       <MemberSignature Language="C#" Value="public static void EnsuresOnThrow&lt;TException&gt; (bool condition, string userMessage) where TException : Exception;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void EnsuresOnThrow&lt;(class System.Exception) TException&gt;(bool condition, string userMessage) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -283,7 +294,7 @@ Contracts.EndContractBlock();
           <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -310,13 +321,14 @@ Contracts.EndContractBlock();
     </Member>
     <Member MemberName="Exists">
       <MemberSignature Language="C#" Value="public static bool Exists (int fromInclusive, int toExclusive, Predicate&lt;int&gt; predicate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Exists(int32 fromInclusive, int32 toExclusive, class System.Predicate`1&lt;int32&gt; predicate) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -338,13 +350,14 @@ Contracts.EndContractBlock();
     </Member>
     <Member MemberName="Exists&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static bool Exists&lt;T&gt; (System.Collections.Generic.IEnumerable&lt;T&gt; collection, Predicate&lt;T&gt; predicate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Exists&lt;T&gt;(class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; collection, class System.Predicate`1&lt;!!T&gt; predicate) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -368,13 +381,14 @@ Contracts.EndContractBlock();
     </Member>
     <Member MemberName="ForAll">
       <MemberSignature Language="C#" Value="public static bool ForAll (int fromInclusive, int toExclusive, Predicate&lt;int&gt; predicate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool ForAll(int32 fromInclusive, int32 toExclusive, class System.Predicate`1&lt;int32&gt; predicate) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -396,13 +410,14 @@ Contracts.EndContractBlock();
     </Member>
     <Member MemberName="ForAll&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static bool ForAll&lt;T&gt; (System.Collections.Generic.IEnumerable&lt;T&gt; collection, Predicate&lt;T&gt; predicate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool ForAll&lt;T&gt;(class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; collection, class System.Predicate`1&lt;!!T&gt; predicate) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -426,6 +441,7 @@ Contracts.EndContractBlock();
     </Member>
     <Member MemberName="Invariant">
       <MemberSignature Language="C#" Value="public static void Invariant (bool condition);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Invariant(bool condition) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -435,7 +451,7 @@ Contracts.EndContractBlock();
           <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -452,6 +468,7 @@ Contracts.EndContractBlock();
     </Member>
     <Member MemberName="Invariant">
       <MemberSignature Language="C#" Value="public static void Invariant (bool condition, string userMessage);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Invariant(bool condition, string userMessage) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -461,7 +478,7 @@ Contracts.EndContractBlock();
           <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -480,6 +497,7 @@ Contracts.EndContractBlock();
     </Member>
     <Member MemberName="OldValue&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static T OldValue&lt;T&gt; (T value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T OldValue&lt;T&gt;(!!T value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -508,6 +526,7 @@ Contracts.EndContractBlock();
     </Member>
     <Member MemberName="Requires">
       <MemberSignature Language="C#" Value="public static void Requires (bool condition);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Requires(bool condition) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -517,7 +536,7 @@ Contracts.EndContractBlock();
           <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -534,6 +553,7 @@ Contracts.EndContractBlock();
     </Member>
     <Member MemberName="Requires">
       <MemberSignature Language="C#" Value="public static void Requires (bool condition, string userMessage);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Requires(bool condition, string userMessage) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -543,7 +563,7 @@ Contracts.EndContractBlock();
           <AttributeName>System.Diagnostics.Conditional("CONTRACTS_FULL")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -558,6 +578,38 @@ Contracts.EndContractBlock();
         <param name="userMessage">Message to display on contract failure.</param>
         <summary>Specifies a precondition contract for normal return.</summary>
         <remarks>All code contract method calls must be at the beginning of the method or property. The code contract rewriter tool must be used to enable contracts to be verified at runtime.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Requires&lt;TException&gt;">
+      <MemberSignature Language="C#" Value="public static void Requires&lt;TException&gt; (bool condition) where TException : Exception;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Requires&lt;(class System.Exception) TException&gt;(bool condition) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TException">
+          <Constraints>
+            <BaseTypeName>System.Exception</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TException">To be added.</typeparam>
+        <param name="condition">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
       </Docs>
     </Member>
     <Member MemberName="Requires&lt;TException&gt;">
@@ -589,6 +641,138 @@ Contracts.EndContractBlock();
         <param name="condition">The precondition to verify.</param>
         <summary>Specifies a precondition contract for when an exception is thrown.</summary>
         <remarks>All code contract method calls must be at the beginning of the method or property. The code contract rewriter tool must be used to enable contracts to be verified at runtime.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Requires&lt;TException&gt;">
+      <MemberSignature Language="C#" Value="public static void Requires&lt;TException&gt; (bool condition) where TException : Exception;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Requires&lt;(class System.Exception) TException&gt;(bool condition) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TException">
+          <Constraints>
+            <BaseTypeName>System.Exception</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TException">To be added.</typeparam>
+        <param name="condition">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Requires&lt;TException&gt;">
+      <MemberSignature Language="C#" Value="public static void Requires&lt;TException&gt; (bool condition) where TException : Exception;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Requires&lt;(class System.Exception) TException&gt;(bool condition) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TException">
+          <Constraints>
+            <BaseTypeName>System.Exception</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TException">To be added.</typeparam>
+        <param name="condition">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Requires&lt;TException&gt;">
+      <MemberSignature Language="C#" Value="public static void Requires&lt;TException&gt; (bool condition, string userMessage) where TException : Exception;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Requires&lt;(class System.Exception) TException&gt;(bool condition, string userMessage) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TException">
+          <Constraints>
+            <BaseTypeName>System.Exception</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+        <Parameter Name="userMessage" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TException">To be added.</typeparam>
+        <param name="condition">To be added.</param>
+        <param name="userMessage">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Requires&lt;TException&gt;">
+      <MemberSignature Language="C#" Value="public static void Requires&lt;TException&gt; (bool condition, string userMessage) where TException : Exception;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Requires&lt;(class System.Exception) TException&gt;(bool condition, string userMessage) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TException">
+          <Constraints>
+            <BaseTypeName>System.Exception</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+        <Parameter Name="userMessage" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TException">To be added.</typeparam>
+        <param name="condition">To be added.</param>
+        <param name="userMessage">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
       </Docs>
     </Member>
     <Member MemberName="Requires&lt;TException&gt;">
@@ -624,8 +808,43 @@ Contracts.EndContractBlock();
         <remarks>All code contract method calls must be at the beginning of the method or property. The code contract rewriter tool must be used to enable contracts to be verified at runtime.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="Requires&lt;TException&gt;">
+      <MemberSignature Language="C#" Value="public static void Requires&lt;TException&gt; (bool condition, string userMessage) where TException : Exception;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Requires&lt;(class System.Exception) TException&gt;(bool condition, string userMessage) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TException">
+          <Constraints>
+            <BaseTypeName>System.Exception</BaseTypeName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+        <Parameter Name="userMessage" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TException">To be added.</typeparam>
+        <param name="condition">To be added.</param>
+        <param name="userMessage">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Result&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static T Result&lt;T&gt; ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T Result&lt;T&gt;() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -651,6 +870,7 @@ Contracts.EndContractBlock();
     </Member>
     <Member MemberName="ValueAtReturn&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static T ValueAtReturn&lt;T&gt; (out T value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T ValueAtReturn&lt;T&gt;(!!T value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>

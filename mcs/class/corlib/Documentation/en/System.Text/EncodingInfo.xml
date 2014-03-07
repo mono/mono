@@ -1,5 +1,6 @@
 <Type Name="EncodingInfo" FullName="System.Text.EncodingInfo">
   <TypeSignature Language="C#" Value="public sealed class EncodingInfo" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit EncodingInfo extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -17,7 +18,12 @@
   <Members>
     <Member MemberName="CodePage">
       <MemberSignature Language="C#" Value="public int CodePage { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 CodePage" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -27,14 +33,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="DisplayName">
+      <MemberSignature Language="C#" Value="public string DisplayName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string DisplayName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DisplayName">
-      <MemberSignature Language="C#" Value="public string DisplayName { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -44,14 +51,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Equals">
-      <MemberSignature Language="C#" Value="public override bool Equals (object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -65,14 +73,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetEncoding">
+      <MemberSignature Language="C#" Value="public System.Text.Encoding GetEncoding ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.Encoding GetEncoding() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetEncoding">
-      <MemberSignature Language="C#" Value="public System.Text.Encoding GetEncoding ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.Encoding</ReturnType>
       </ReturnValue>
@@ -83,14 +92,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetHashCode">
-      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -101,14 +111,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Name">
-      <MemberSignature Language="C#" Value="public string Name { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -118,10 +129,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

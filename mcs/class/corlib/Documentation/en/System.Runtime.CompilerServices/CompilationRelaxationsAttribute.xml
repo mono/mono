@@ -1,5 +1,6 @@
 <Type Name="CompilationRelaxationsAttribute" FullName="System.Runtime.CompilerServices.CompilationRelaxationsAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class CompilationRelaxationsAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CompilationRelaxationsAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -38,7 +39,13 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CompilationRelaxationsAttribute (int relaxations);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 relaxations) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="relaxations" Type="System.Int32" />
@@ -53,15 +60,15 @@
         </remarks>
         <exception cref="T:System.ArgumentException">For some xxx, <paramref name="relaxations" />  has both Strictxxx and Relaxedxx set, or has both StringInterning and NoStringInterning set.</exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public CompilationRelaxationsAttribute (System.Runtime.CompilerServices.CompilationRelaxations relaxations);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Runtime.CompilerServices.CompilationRelaxations relaxations) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="relaxations" Type="System.Runtime.CompilerServices.CompilationRelaxations" />
       </Parameters>
@@ -71,14 +78,16 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CompilationRelaxations">
       <MemberSignature Language="C#" Value="public int CompilationRelaxations { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 CompilationRelaxations" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -93,11 +102,6 @@
           <para>This property is read-only.</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

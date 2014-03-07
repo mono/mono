@@ -1,5 +1,6 @@
 <Type Name="GCNotificationStatus" FullName="System.GCNotificationStatus">
   <TypeSignature Language="C#" Value="public enum GCNotificationStatus" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed GCNotificationStatus extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -15,6 +16,7 @@
   <Members>
     <Member MemberName="Canceled">
       <MemberSignature Language="C#" Value="Canceled" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.GCNotificationStatus Canceled = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -29,6 +31,7 @@
     </Member>
     <Member MemberName="Failed">
       <MemberSignature Language="C#" Value="Failed" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.GCNotificationStatus Failed = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -43,6 +46,7 @@
     </Member>
     <Member MemberName="NotApplicable">
       <MemberSignature Language="C#" Value="NotApplicable" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.GCNotificationStatus NotApplicable = int32(4)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -57,6 +61,7 @@
     </Member>
     <Member MemberName="Succeeded">
       <MemberSignature Language="C#" Value="Succeeded" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.GCNotificationStatus Succeeded = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -71,6 +76,7 @@
     </Member>
     <Member MemberName="Timeout">
       <MemberSignature Language="C#" Value="Timeout" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.GCNotificationStatus Timeout = int32(3)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,5 +1,6 @@
 <Type Name="Overlapped" FullName="System.Threading.Overlapped">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class Overlapped" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Overlapped extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,6 +13,11 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>To be added</summary>
     <remarks>To be added</remarks>
@@ -19,22 +25,34 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Overlapped ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters />
       <Docs>
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Overlapped (int offsetLo, int offsetHi, int hEvent, IAsyncResult ar);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 offsetLo, int32 offsetHi, int32 hEvent, class System.IAsyncResult ar) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public Overlapped (int offsetLo, int offsetHi, int hEvent, IAsyncResult ar);" />
-      <MemberType>Constructor</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Not 64bit compatible.  Please use the constructor that takes IntPtr for the event handle")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue />
       <Parameters>
         <Parameter Name="offsetLo" Type="System.Int32" />
@@ -50,20 +68,15 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Not 64bit compatible.  Please use the constructor that takes IntPtr for the event handle", false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Overlapped (int offsetLo, int offsetHi, IntPtr hEvent, IAsyncResult ar);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 offsetLo, int32 offsetHi, native int hEvent, class System.IAsyncResult ar) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="offsetLo" Type="System.Int32" />
         <Parameter Name="offsetHi" Type="System.Int32" />
@@ -79,14 +92,16 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="AsyncResult">
+      <MemberSignature Language="C#" Value="public IAsyncResult AsyncResult { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.IAsyncResult AsyncResult" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AsyncResult">
-      <MemberSignature Language="C#" Value="public IAsyncResult AsyncResult { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.IAsyncResult</ReturnType>
       </ReturnValue>
@@ -95,15 +110,21 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="EventHandle">
+      <MemberSignature Language="C#" Value="public int EventHandle { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 EventHandle" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="EventHandle">
-      <MemberSignature Language="C#" Value="public int EventHandle { set; get; }" />
-      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Not 64bit compatible.  Use EventHandleIntPtr instead.")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -112,20 +133,15 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="EventHandleIntPtr">
+      <MemberSignature Language="C#" Value="public IntPtr EventHandleIntPtr { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance native int EventHandleIntPtr" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Not 64bit compatible.  Use EventHandleIntPtr instead.", false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="EventHandleIntPtr">
-      <MemberSignature Language="C#" Value="public IntPtr EventHandleIntPtr { set; get; }" />
-      <MemberType>Property</MemberType>
       <Attributes>
         <Attribute>
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
@@ -140,14 +156,21 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Free">
       <MemberSignature Language="C#" Value="public static void Free (System.Threading.NativeOverlapped* nativeOverlappedPtr);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Free(valuetype System.Threading.NativeOverlapped* nativeOverlappedPtr) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -159,6 +182,47 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="OffsetHigh">
+      <MemberSignature Language="C#" Value="public int OffsetHigh { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 OffsetHigh" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OffsetLow">
+      <MemberSignature Language="C#" Value="public int OffsetLow { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 OffsetLow" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Pack">
+      <MemberSignature Language="C#" Value="public System.Threading.NativeOverlapped* Pack (System.Threading.IOCompletionCallback iocb);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Threading.NativeOverlapped* Pack(class System.Threading.IOCompletionCallback iocb) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -168,45 +232,10 @@
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use Pack(iocb, userData) instead")</AttributeName>
+        </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="OffsetHigh">
-      <MemberSignature Language="C#" Value="public int OffsetHigh { set; get; }" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="OffsetLow">
-      <MemberSignature Language="C#" Value="public int OffsetLow { set; get; }" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="Pack">
-      <MemberSignature Language="C#" Value="public System.Threading.NativeOverlapped* Pack (System.Threading.IOCompletionCallback iocb);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Threading.NativeOverlapped*</ReturnType>
       </ReturnValue>
@@ -219,8 +248,12 @@
         <returns>To be added: an object of type 'NativeOverlapped*'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Pack">
+      <MemberSignature Language="C#" Value="public System.Threading.NativeOverlapped* Pack (System.Threading.IOCompletionCallback iocb, object userData);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Threading.NativeOverlapped* Pack(class System.Threading.IOCompletionCallback iocb, object userData) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -229,13 +262,9 @@
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Obsolete("Use Pack(iocb, userData) instead", false)</AttributeName>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Pack">
-      <MemberSignature Language="C#" Value="public System.Threading.NativeOverlapped* Pack (System.Threading.IOCompletionCallback iocb, object userData);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Threading.NativeOverlapped*</ReturnType>
       </ReturnValue>
@@ -251,7 +280,13 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Unpack">
+      <MemberSignature Language="C#" Value="public static System.Threading.Overlapped Unpack (System.Threading.NativeOverlapped* nativeOverlappedPtr);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Threading.Overlapped Unpack(valuetype System.Threading.NativeOverlapped* nativeOverlappedPtr) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -259,14 +294,7 @@
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Unpack">
-      <MemberSignature Language="C#" Value="public static System.Threading.Overlapped Unpack (System.Threading.NativeOverlapped* nativeOverlappedPtr);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Threading.Overlapped</ReturnType>
       </ReturnValue>
@@ -279,6 +307,11 @@
         <returns>To be added: an object of type 'Overlapped'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="UnsafePack">
+      <MemberSignature Language="C#" Value="public System.Threading.NativeOverlapped* UnsafePack (System.Threading.IOCompletionCallback iocb);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Threading.NativeOverlapped* UnsafePack(class System.Threading.IOCompletionCallback iocb) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -288,11 +321,10 @@
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use UnsafePack(iocb, userData) instead")</AttributeName>
+        </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="UnsafePack">
-      <MemberSignature Language="C#" Value="public System.Threading.NativeOverlapped* UnsafePack (System.Threading.IOCompletionCallback iocb);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Threading.NativeOverlapped*</ReturnType>
       </ReturnValue>
@@ -305,8 +337,12 @@
         <returns>To be added: an object of type 'NativeOverlapped*'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="UnsafePack">
+      <MemberSignature Language="C#" Value="public System.Threading.NativeOverlapped* UnsafePack (System.Threading.IOCompletionCallback iocb, object userData);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Threading.NativeOverlapped* UnsafePack(class System.Threading.IOCompletionCallback iocb, object userData) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -315,13 +351,9 @@
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Obsolete("Use UnsafePack(iocb, userData) instead", false)</AttributeName>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="UnsafePack">
-      <MemberSignature Language="C#" Value="public System.Threading.NativeOverlapped* UnsafePack (System.Threading.IOCompletionCallback iocb, object userData);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Threading.NativeOverlapped*</ReturnType>
       </ReturnValue>
@@ -337,23 +369,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

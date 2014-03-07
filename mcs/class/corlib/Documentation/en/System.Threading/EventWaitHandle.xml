@@ -1,5 +1,6 @@
 <Type Name="EventWaitHandle" FullName="System.Threading.EventWaitHandle">
   <TypeSignature Language="C#" Value="public class EventWaitHandle : System.Threading.WaitHandle" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit EventWaitHandle extends System.Threading.WaitHandle" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -9,6 +10,11 @@
     <BaseTypeName>System.Threading.WaitHandle</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>To be added.</summary>
     <remarks>To be added.</remarks>
@@ -17,7 +23,12 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public EventWaitHandle (bool initialState, System.Threading.EventResetMode mode);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool initialState, valuetype System.Threading.EventResetMode mode) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="initialState" Type="System.Boolean" />
         <Parameter Name="mode" Type="System.Threading.EventResetMode" />
@@ -29,14 +40,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public EventWaitHandle (bool initialState, System.Threading.EventResetMode mode, string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool initialState, valuetype System.Threading.EventResetMode mode, string name) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public EventWaitHandle (bool initialState, System.Threading.EventResetMode mode, string name);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="initialState" Type="System.Boolean" />
         <Parameter Name="mode" Type="System.Threading.EventResetMode" />
@@ -50,14 +62,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public EventWaitHandle (bool initialState, System.Threading.EventResetMode mode, string name, out bool createdNew);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool initialState, valuetype System.Threading.EventResetMode mode, string name, bool createdNew) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public EventWaitHandle (bool initialState, System.Threading.EventResetMode mode, string name, out bool createdNew);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="initialState" Type="System.Boolean" />
         <Parameter Name="mode" Type="System.Threading.EventResetMode" />
@@ -73,14 +86,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public EventWaitHandle (bool initialState, System.Threading.EventResetMode mode, string name, out bool createdNew, System.Security.AccessControl.EventWaitHandleSecurity eventSecurity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool initialState, valuetype System.Threading.EventResetMode mode, string name, bool createdNew, class System.Security.AccessControl.EventWaitHandleSecurity eventSecurity) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public EventWaitHandle (bool initialState, System.Threading.EventResetMode mode, string name, out bool createdNew, System.Security.AccessControl.EventWaitHandleSecurity eventSecurity);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="initialState" Type="System.Boolean" />
         <Parameter Name="mode" Type="System.Threading.EventResetMode" />
@@ -98,14 +112,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetAccessControl">
+      <MemberSignature Language="C#" Value="public System.Security.AccessControl.EventWaitHandleSecurity GetAccessControl ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.AccessControl.EventWaitHandleSecurity GetAccessControl() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetAccessControl">
-      <MemberSignature Language="C#" Value="public System.Security.AccessControl.EventWaitHandleSecurity GetAccessControl ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.AccessControl.EventWaitHandleSecurity</ReturnType>
       </ReturnValue>
@@ -116,14 +131,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="OpenExisting">
+      <MemberSignature Language="C#" Value="public static System.Threading.EventWaitHandle OpenExisting (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Threading.EventWaitHandle OpenExisting(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OpenExisting">
-      <MemberSignature Language="C#" Value="public static System.Threading.EventWaitHandle OpenExisting (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Threading.EventWaitHandle</ReturnType>
       </ReturnValue>
@@ -137,14 +153,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="OpenExisting">
+      <MemberSignature Language="C#" Value="public static System.Threading.EventWaitHandle OpenExisting (string name, System.Security.AccessControl.EventWaitHandleRights rights);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Threading.EventWaitHandle OpenExisting(string name, valuetype System.Security.AccessControl.EventWaitHandleRights rights) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OpenExisting">
-      <MemberSignature Language="C#" Value="public static System.Threading.EventWaitHandle OpenExisting (string name, System.Security.AccessControl.EventWaitHandleRights rights);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Threading.EventWaitHandle</ReturnType>
       </ReturnValue>
@@ -160,14 +177,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Reset">
       <MemberSignature Language="C#" Value="public bool Reset ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Reset() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -178,14 +196,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Set">
       <MemberSignature Language="C#" Value="public bool Set ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Set() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -196,14 +215,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="SetAccessControl">
+      <MemberSignature Language="C#" Value="public void SetAccessControl (System.Security.AccessControl.EventWaitHandleSecurity eventSecurity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetAccessControl(class System.Security.AccessControl.EventWaitHandleSecurity eventSecurity) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetAccessControl">
-      <MemberSignature Language="C#" Value="public void SetAccessControl (System.Security.AccessControl.EventWaitHandleSecurity eventSecurity);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -216,15 +236,52 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="TryOpenExisting">
+      <MemberSignature Language="C#" Value="public static bool TryOpenExisting (string name, out System.Threading.EventWaitHandle result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryOpenExisting(string name, class System.Threading.EventWaitHandle result) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="result" Type="System.Threading.EventWaitHandle&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="result">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryOpenExisting">
+      <MemberSignature Language="C#" Value="public static bool TryOpenExisting (string name, System.Security.AccessControl.EventWaitHandleRights rights, out System.Threading.EventWaitHandle result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryOpenExisting(string name, valuetype System.Security.AccessControl.EventWaitHandleRights rights, class System.Threading.EventWaitHandle result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="rights" Type="System.Security.AccessControl.EventWaitHandleRights" />
+        <Parameter Name="result" Type="System.Threading.EventWaitHandle&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="rights">To be added.</param>
+        <param name="result">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

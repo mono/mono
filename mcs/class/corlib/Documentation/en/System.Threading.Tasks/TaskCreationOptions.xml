@@ -1,5 +1,6 @@
 <Type Name="TaskCreationOptions" FullName="System.Threading.Tasks.TaskCreationOptions">
   <TypeSignature Language="C#" Value="public enum TaskCreationOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed TaskCreationOptions extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -19,6 +20,35 @@
   <Members>
     <Member MemberName="AttachedToParent">
       <MemberSignature Language="C#" Value="AttachedToParent" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskCreationOptions AttachedToParent = int32(4)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.TaskCreationOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="DenyChildAttach">
+      <MemberSignature Language="C#" Value="DenyChildAttach" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskCreationOptions DenyChildAttach = int32(8)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.TaskCreationOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="HideScheduler">
+      <MemberSignature Language="C#" Value="HideScheduler" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskCreationOptions HideScheduler = int32(16)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -32,6 +62,7 @@
     </Member>
     <Member MemberName="LongRunning">
       <MemberSignature Language="C#" Value="LongRunning" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskCreationOptions LongRunning = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -45,6 +76,7 @@
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskCreationOptions None = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -58,6 +90,7 @@
     </Member>
     <Member MemberName="PreferFairness">
       <MemberSignature Language="C#" Value="PreferFairness" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.Tasks.TaskCreationOptions PreferFairness = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>

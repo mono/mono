@@ -1,5 +1,6 @@
 <Type Name="IOCompletionCallback" FullName="System.Threading.IOCompletionCallback">
   <TypeSignature Maintainer="auto" Language="C#" Value="public delegate void IOCompletionCallback(uint errorCode, uint numBytes, NativeOverlapped* pOVERLAP);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed IOCompletionCallback extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -11,22 +12,6 @@
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
   </Base>
-  <Docs>
-    <param name="errorCode">To be added.</param>
-    <param name="numBytes">To be added.</param>
-    <param name="pOVERLAP">To be added.</param>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
-  </Docs>
-  <Members />
-  <Parameters>
-    <Parameter Name="errorCode" Type="System.UInt32" />
-    <Parameter Name="numBytes" Type="System.UInt32" />
-    <Parameter Name="pOVERLAP" Type="System.Threading.NativeOverlapped*" />
-  </Parameters>
-  <ReturnValue>
-    <ReturnType>System.Void</ReturnType>
-  </ReturnValue>
   <Attributes>
     <Attribute>
       <AttributeName>System.CLSCompliant(false)</AttributeName>
@@ -35,4 +20,20 @@
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
+  <Parameters>
+    <Parameter Name="errorCode" Type="System.UInt32" />
+    <Parameter Name="numBytes" Type="System.UInt32" />
+    <Parameter Name="pOVERLAP" Type="System.Threading.NativeOverlapped*" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="errorCode">To be added.</param>
+    <param name="numBytes">To be added.</param>
+    <param name="pOVERLAP">To be added.</param>
+    <summary>To be added</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members />
 </Type>

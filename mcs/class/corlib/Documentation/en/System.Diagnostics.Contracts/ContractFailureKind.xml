@@ -1,5 +1,6 @@
 <Type Name="ContractFailureKind" FullName="System.Diagnostics.Contracts.ContractFailureKind">
   <TypeSignature Language="C#" Value="public enum ContractFailureKind" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ContractFailureKind extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -14,6 +15,7 @@
   <Members>
     <Member MemberName="Assert">
       <MemberSignature Language="C#" Value="Assert" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.Contracts.ContractFailureKind Assert = int32(4)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -27,6 +29,7 @@
     </Member>
     <Member MemberName="Assume">
       <MemberSignature Language="C#" Value="Assume" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.Contracts.ContractFailureKind Assume = int32(5)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -40,6 +43,7 @@
     </Member>
     <Member MemberName="Invariant">
       <MemberSignature Language="C#" Value="Invariant" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.Contracts.ContractFailureKind Invariant = int32(3)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -53,6 +57,7 @@
     </Member>
     <Member MemberName="Postcondition">
       <MemberSignature Language="C#" Value="Postcondition" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.Contracts.ContractFailureKind Postcondition = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -66,6 +71,7 @@
     </Member>
     <Member MemberName="PostconditionOnException">
       <MemberSignature Language="C#" Value="PostconditionOnException" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.Contracts.ContractFailureKind PostconditionOnException = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -79,6 +85,7 @@
     </Member>
     <Member MemberName="Precondition">
       <MemberSignature Language="C#" Value="Precondition" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.Contracts.ContractFailureKind Precondition = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>

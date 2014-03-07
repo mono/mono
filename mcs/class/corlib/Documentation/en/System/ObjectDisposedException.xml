@@ -1,6 +1,7 @@
 <Type Name="ObjectDisposedException" FullName="System.ObjectDisposedException" FullNameSP="System_ObjectDisposedException" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public serializable ObjectDisposedException extends System.InvalidOperationException" />
   <TypeSignature Language="C#" Value="public class ObjectDisposedException : InvalidOperationException" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit ObjectDisposedException extends System.InvalidOperationException" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -14,6 +15,11 @@
     <BaseTypeName>System.InvalidOperationException</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>
       <para> Represents the error that occurs when an operation is
@@ -54,7 +60,13 @@ public class ObjectDisposedExceptionTest {
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string objectName)" />
       <MemberSignature Language="C#" Value="public ObjectDisposedException (string objectName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string objectName) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="objectName" Type="System.String" />
@@ -137,15 +149,16 @@ public class ExampleDisposableObject : IDisposable {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected ObjectDisposedException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="protected ObjectDisposedException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
@@ -156,15 +169,15 @@ public class ExampleDisposableObject : IDisposable {
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ObjectDisposedException (string message, Exception innerException);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string message, class System.Exception innerException) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="message" Type="System.String" />
         <Parameter Name="innerException" Type="System.Exception" />
@@ -176,15 +189,17 @@ public class ExampleDisposableObject : IDisposable {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string objectName, string message)" />
       <MemberSignature Language="C#" Value="public ObjectDisposedException (string objectName, string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string objectName, string message) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="objectName" Type="System.String" />
@@ -267,15 +282,16 @@ public class ExampleDisposableObject : IDisposable {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="public override void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void GetObjectData(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetObjectData">
-      <MemberSignature Language="C#" Value="public override void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -289,16 +305,17 @@ public class ExampleDisposableObject : IDisposable {
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Message">
+      <MemberSignature Language="ILASM" Value=".property string Message { public hidebysig virtual specialname string get_Message() }" />
+      <MemberSignature Language="C#" Value="public override string Message { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Message" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Message">
-      <MemberSignature Language="ILASM" Value=".property string Message { public hidebysig virtual specialname string get_Message() }" />
-      <MemberSignature Language="C#" Value="public override string Message { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -322,16 +339,17 @@ public class ExampleDisposableObject : IDisposable {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ObjectName">
+      <MemberSignature Language="ILASM" Value=".property string ObjectName { public hidebysig specialname instance string get_ObjectName() }" />
+      <MemberSignature Language="C#" Value="public string ObjectName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ObjectName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ObjectName">
-      <MemberSignature Language="ILASM" Value=".property string ObjectName { public hidebysig specialname instance string get_ObjectName() }" />
-      <MemberSignature Language="C#" Value="public string ObjectName { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -353,17 +371,7 @@ public class ExampleDisposableObject : IDisposable {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

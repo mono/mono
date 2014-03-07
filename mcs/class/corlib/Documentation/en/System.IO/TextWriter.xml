@@ -1,6 +1,7 @@
 <Type Name="TextWriter" FullName="System.IO.TextWriter" FullNameSP="System_IO_TextWriter" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public abstract serializable TextWriter extends System.MarshalByRefObject implements System.IDisposable" />
   <TypeSignature Language="C#" Value="public abstract class TextWriter : MarshalByRefObject, IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable beforefieldinit TextWriter extends System.MarshalByRefObject implements class System.IDisposable" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -18,6 +19,11 @@
       <InterfaceName>System.IDisposable</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>
       <para> 
@@ -38,7 +44,13 @@ thread-safe wrapper. </block>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="family rtspecialname specialname instance void .ctor()" />
       <MemberSignature Language="C#" Value="protected TextWriter ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters />
       <Docs>
@@ -48,16 +60,17 @@ thread-safe wrapper. </block>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="family rtspecialname specialname instance void .ctor(class System.IFormatProvider formatProvider)" />
+      <MemberSignature Language="C#" Value="protected TextWriter (IFormatProvider formatProvider);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.IFormatProvider formatProvider) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="family rtspecialname specialname instance void .ctor(class System.IFormatProvider formatProvider)" />
-      <MemberSignature Language="C#" Value="protected TextWriter (IFormatProvider formatProvider);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="formatProvider" Type="System.IFormatProvider" />
@@ -71,16 +84,17 @@ thread-safe wrapper. </block>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Close()" />
+      <MemberSignature Language="C#" Value="public virtual void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Close() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Close">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Close()" />
-      <MemberSignature Language="C#" Value="public virtual void Close ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -102,15 +116,16 @@ thread-safe wrapper. </block>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CoreNewLine">
+      <MemberSignature Language="C#" Value="protected char[] CoreNewLine;" />
+      <MemberSignature Language="ILAsm" Value=".field family char[] CoreNewLine" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CoreNewLine">
-      <MemberSignature Language="C#" Value="protected char[] CoreNewLine;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Char[]</ReturnType>
       </ReturnValue>
@@ -118,15 +133,15 @@ thread-safe wrapper. </block>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -136,15 +151,17 @@ thread-safe wrapper. </block>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="ILASM" Value=".method family hidebysig virtual void Dispose(bool disposing)" />
       <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Dispose(bool disposing) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -173,16 +190,17 @@ to reference objects that have been previously disposed in an earlier call to
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Encoding">
+      <MemberSignature Language="ILASM" Value=".property class System.Text.Encoding Encoding { public hidebysig virtual abstract specialname class System.Text.Encoding get_Encoding() }" />
+      <MemberSignature Language="C#" Value="public abstract System.Text.Encoding Encoding { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Text.Encoding Encoding" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Encoding">
-      <MemberSignature Language="ILASM" Value=".property class System.Text.Encoding Encoding { public hidebysig virtual abstract specialname class System.Text.Encoding get_Encoding() }" />
-      <MemberSignature Language="C#" Value="public abstract System.Text.Encoding Encoding { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.Encoding</ReturnType>
       </ReturnValue>
@@ -208,16 +226,17 @@ to reference objects that have been previously disposed in an earlier call to
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Flush">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Flush()" />
+      <MemberSignature Language="C#" Value="public virtual void Flush ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Flush() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Flush">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Flush()" />
-      <MemberSignature Language="C#" Value="public virtual void Flush ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -238,16 +257,34 @@ to reference objects that have been previously disposed in an earlier call to
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="FlushAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task FlushAsync ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task FlushAsync() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FormatProvider">
+      <MemberSignature Language="ILASM" Value=".property class System.IFormatProvider FormatProvider { public hidebysig virtual specialname class System.IFormatProvider get_FormatProvider() }" />
+      <MemberSignature Language="C#" Value="public virtual IFormatProvider FormatProvider { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.IFormatProvider FormatProvider" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FormatProvider">
-      <MemberSignature Language="ILASM" Value=".property class System.IFormatProvider FormatProvider { public hidebysig virtual specialname class System.IFormatProvider get_FormatProvider() }" />
-      <MemberSignature Language="C#" Value="public virtual IFormatProvider FormatProvider { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.IFormatProvider</ReturnType>
       </ReturnValue>
@@ -268,16 +305,17 @@ to reference objects that have been previously disposed in an earlier call to
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="NewLine">
+      <MemberSignature Language="ILASM" Value=".property string NewLine { public hidebysig virtual specialname string get_NewLine() public hidebysig virtual specialname void set_NewLine(string value) }" />
+      <MemberSignature Language="C#" Value="public virtual string NewLine { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string NewLine" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="NewLine">
-      <MemberSignature Language="ILASM" Value=".property string NewLine { public hidebysig virtual specialname string get_NewLine() public hidebysig virtual specialname void set_NewLine(string value) }" />
-      <MemberSignature Language="C#" Value="public virtual string NewLine { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -305,16 +343,17 @@ to reference objects that have been previously disposed in an earlier call to
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Null">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly class System.IO.TextWriter Null" />
+      <MemberSignature Language="C#" Value="public static readonly System.IO.TextWriter Null;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.IO.TextWriter Null" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Null">
-      <MemberSignature Language="ILASM" Value=".field public static initOnly class System.IO.TextWriter Null" />
-      <MemberSignature Language="C#" Value="public static readonly System.IO.TextWriter Null;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.TextWriter</ReturnType>
       </ReturnValue>
@@ -332,16 +371,17 @@ to any backing store.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Synchronized">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.TextWriter Synchronized(class System.IO.TextWriter writer)" />
+      <MemberSignature Language="C#" Value="public static System.IO.TextWriter Synchronized (System.IO.TextWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.TextWriter Synchronized(class System.IO.TextWriter writer) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Synchronized">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.TextWriter Synchronized(class System.IO.TextWriter writer)" />
-      <MemberSignature Language="C#" Value="public static System.IO.TextWriter Synchronized (System.IO.TextWriter writer);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.TextWriter</ReturnType>
       </ReturnValue>
@@ -367,11 +407,6 @@ to any backing store.</para>
           <paramref name="writer" /> is <see langword="null" />.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.IDisposable.Dispose">
       <MemberSignature Language="C#" Value="void IDisposable.Dispose ();" />
@@ -391,7 +426,13 @@ to any backing store.</para>
     <Member MemberName="Write">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(bool value)" />
       <MemberSignature Language="C#" Value="public virtual void Write (bool value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Write(bool value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -416,16 +457,17 @@ value to the text stream.</para>
         <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(valuetype System.Char value)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (char value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Write(char value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(valuetype System.Char value)" />
-      <MemberSignature Language="C#" Value="public virtual void Write (char value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -450,16 +492,17 @@ value to the text stream.</para>
         <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(class System.Char[] buffer)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (char[] buffer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Write(char[] buffer) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(class System.Char[] buffer)" />
-      <MemberSignature Language="C#" Value="public virtual void Write (char[] buffer);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -486,16 +529,17 @@ value to the text stream.</para>
         <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(decimal value)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (decimal value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Write(valuetype System.Decimal value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(decimal value)" />
-      <MemberSignature Language="C#" Value="public virtual void Write (decimal value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -520,16 +564,17 @@ value to the text stream.</para>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(float64 value)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (double value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Write(float64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(float64 value)" />
-      <MemberSignature Language="C#" Value="public virtual void Write (double value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -554,16 +599,17 @@ value to the text stream.</para>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(int32 value)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Write(int32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(int32 value)" />
-      <MemberSignature Language="C#" Value="public virtual void Write (int value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -588,16 +634,17 @@ value to the text stream.</para>
         <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(int64 value)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (long value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Write(int64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(int64 value)" />
-      <MemberSignature Language="C#" Value="public virtual void Write (long value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -623,16 +670,17 @@ value to the text stream.</para>
         <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(object value)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Write(object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(object value)" />
-      <MemberSignature Language="C#" Value="public virtual void Write (object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -658,16 +706,17 @@ value to the text stream.</para>
         <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(float32 value)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (float value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Write(float32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(float32 value)" />
-      <MemberSignature Language="C#" Value="public virtual void Write (float value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -692,16 +741,17 @@ value to the text stream.</para>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(string value)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Write(string value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(string value)" />
-      <MemberSignature Language="C#" Value="public virtual void Write (string value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -729,16 +779,22 @@ value to the text stream.</para>
         <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(unsigned int32 value)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (uint value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Write(unsigned int32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(unsigned int32 value)" />
-      <MemberSignature Language="C#" Value="public virtual void Write (uint value);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -764,6 +820,12 @@ value to the text stream.</para>
         <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(unsigned int64 value)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (ulong value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Write(unsigned int64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -774,11 +836,6 @@ value to the text stream.</para>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(unsigned int64 value)" />
-      <MemberSignature Language="C#" Value="public virtual void Write (ulong value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -807,21 +864,17 @@ value to the text stream.</para>
         <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(string format, object arg0)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (string format, object arg0);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Write(string format, object arg0) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(string format, object arg0)" />
-      <MemberSignature Language="C#" Value="public virtual void Write (string format, object arg0);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -861,16 +914,17 @@ value to the text stream.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(string format, class System.Object[] arg)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (string format, object[] arg);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Write(string format, object[] arg) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(string format, class System.Object[] arg)" />
-      <MemberSignature Language="C#" Value="public virtual void Write (string format, object[] arg);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -918,16 +972,17 @@ value to the text stream.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(class System.Char[] buffer, int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (char[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Write(char[] buffer, int32 index, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(class System.Char[] buffer, int32 index, int32 count)" />
-      <MemberSignature Language="C#" Value="public virtual void Write (char[] buffer, int index, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -965,16 +1020,17 @@ value to the text stream.</para>
         <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(string format, object arg0, object arg1)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (string format, object arg0, object arg1);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Write(string format, object arg0, object arg1) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(string format, object arg0, object arg1)" />
-      <MemberSignature Language="C#" Value="public virtual void Write (string format, object arg0, object arg1);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1016,16 +1072,17 @@ value to the text stream.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(string format, object arg0, object arg1, object arg2)" />
+      <MemberSignature Language="C#" Value="public virtual void Write (string format, object arg0, object arg1, object arg2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Write(string format, object arg0, object arg1, object arg2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void Write(string format, object arg0, object arg1, object arg2)" />
-      <MemberSignature Language="C#" Value="public virtual void Write (string format, object arg0, object arg1, object arg2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1069,16 +1126,101 @@ value to the text stream.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task WriteAsync (char value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task WriteAsync(char value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task WriteAsync (char[] buffer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.Tasks.Task WriteAsync(char[] buffer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Char[]" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task WriteAsync (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task WriteAsync(string value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task WriteAsync (char[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task WriteAsync(char[] buffer, int32 index, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Char[]" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">To be added.</param>
+        <param name="index">To be added.</param>
+        <param name="count">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine()" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteLine() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine()" />
-      <MemberSignature Language="C#" Value="public virtual void WriteLine ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1097,16 +1239,17 @@ value to the text stream.</para>
         <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(bool value)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (bool value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteLine(bool value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(bool value)" />
-      <MemberSignature Language="C#" Value="public virtual void WriteLine (bool value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1130,16 +1273,17 @@ value to the text stream.</para>
         <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(valuetype System.Char value)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (char value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteLine(char value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(valuetype System.Char value)" />
-      <MemberSignature Language="C#" Value="public virtual void WriteLine (char value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1163,16 +1307,17 @@ value to the text stream.</para>
         <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(class System.Char[] buffer)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (char[] buffer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteLine(char[] buffer) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(class System.Char[] buffer)" />
-      <MemberSignature Language="C#" Value="public virtual void WriteLine (char[] buffer);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1201,16 +1346,17 @@ value to the text stream.</para>
         <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(decimal value)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (decimal value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteLine(valuetype System.Decimal value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(decimal value)" />
-      <MemberSignature Language="C#" Value="public virtual void WriteLine (decimal value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1234,16 +1380,17 @@ value to the text stream.</para>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(float64 value)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (double value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteLine(float64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(float64 value)" />
-      <MemberSignature Language="C#" Value="public virtual void WriteLine (double value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1267,16 +1414,17 @@ value to the text stream.</para>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(int32 value)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteLine(int32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(int32 value)" />
-      <MemberSignature Language="C#" Value="public virtual void WriteLine (int value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1299,16 +1447,17 @@ value to the text stream.</para>
         <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(int64 value)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (long value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteLine(int64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(int64 value)" />
-      <MemberSignature Language="C#" Value="public virtual void WriteLine (long value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1332,16 +1481,17 @@ value to the text stream.</para>
         <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(object value)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteLine(object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(object value)" />
-      <MemberSignature Language="C#" Value="public virtual void WriteLine (object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1364,16 +1514,17 @@ value to the text stream.</para>
         <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(float32 value)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (float value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteLine(float32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(float32 value)" />
-      <MemberSignature Language="C#" Value="public virtual void WriteLine (float value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1397,16 +1548,17 @@ value to the text stream.</para>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(string value)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteLine(string value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(string value)" />
-      <MemberSignature Language="C#" Value="public virtual void WriteLine (string value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1435,16 +1587,22 @@ value to the text stream.</para>
         <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(unsigned int32 value)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (uint value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteLine(unsigned int32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(unsigned int32 value)" />
-      <MemberSignature Language="C#" Value="public virtual void WriteLine (uint value);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1471,6 +1629,12 @@ value to the text stream.</para>
         <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(unsigned int64 value)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (ulong value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteLine(unsigned int64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1481,11 +1645,6 @@ value to the text stream.</para>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(unsigned int64 value)" />
-      <MemberSignature Language="C#" Value="public virtual void WriteLine (ulong value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1512,21 +1671,17 @@ value to the text stream.</para>
         <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(string format, object arg0)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (string format, object arg0);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteLine(string format, object arg0) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(string format, object arg0)" />
-      <MemberSignature Language="C#" Value="public virtual void WriteLine (string format, object arg0);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1566,16 +1721,17 @@ value to the text stream.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(string format, class System.Object[] arg)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (string format, object[] arg);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteLine(string format, object[] arg) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(string format, class System.Object[] arg)" />
-      <MemberSignature Language="C#" Value="public virtual void WriteLine (string format, object[] arg);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1620,16 +1776,17 @@ value to the text stream.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(class System.Char[] buffer, int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (char[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteLine(char[] buffer, int32 index, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(class System.Char[] buffer, int32 index, int32 count)" />
-      <MemberSignature Language="C#" Value="public virtual void WriteLine (char[] buffer, int index, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1672,16 +1829,17 @@ value to the text stream.</para>
         <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(string format, object arg0, object arg1)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (string format, object arg0, object arg1);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteLine(string format, object arg0, object arg1) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(string format, object arg0, object arg1)" />
-      <MemberSignature Language="C#" Value="public virtual void WriteLine (string format, object arg0, object arg1);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1724,16 +1882,17 @@ value to the text stream.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(string format, object arg0, object arg1, object arg2)" />
+      <MemberSignature Language="C#" Value="public virtual void WriteLine (string format, object arg0, object arg1, object arg2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void WriteLine(string format, object arg0, object arg1, object arg2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void WriteLine(string format, object arg0, object arg1, object arg2)" />
-      <MemberSignature Language="C#" Value="public virtual void WriteLine (string format, object arg0, object arg1, object arg2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1779,17 +1938,108 @@ value to the text stream.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLineAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task WriteLineAsync ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task WriteLineAsync() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteLineAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task WriteLineAsync (char value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task WriteLineAsync(char value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteLineAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task WriteLineAsync (char[] buffer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.Tasks.Task WriteLineAsync(char[] buffer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Char[]" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteLineAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task WriteLineAsync (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task WriteLineAsync(string value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteLineAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task WriteLineAsync (char[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task WriteLineAsync(char[] buffer, int32 index, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Char[]" />
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">To be added.</param>
+        <param name="index">To be added.</param>
+        <param name="count">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

@@ -1,5 +1,6 @@
 <Type Name="SpinWait" FullName="System.Threading.SpinWait">
   <TypeSignature Language="C#" Value="public struct SpinWait" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit SpinWait extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -15,6 +16,7 @@
   <Members>
     <Member MemberName="Count">
       <MemberSignature Language="C#" Value="public int Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -30,6 +32,7 @@
     </Member>
     <Member MemberName="NextSpinWillYield">
       <MemberSignature Language="C#" Value="public bool NextSpinWillYield { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool NextSpinWillYield" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -45,6 +48,7 @@
     </Member>
     <Member MemberName="Reset">
       <MemberSignature Language="C#" Value="public void Reset ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Reset() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -60,6 +64,7 @@
     </Member>
     <Member MemberName="SpinOnce">
       <MemberSignature Language="C#" Value="public void SpinOnce ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SpinOnce() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -74,7 +79,8 @@
       </Docs>
     </Member>
     <Member MemberName="SpinUntil">
-      <MemberSignature Language="C#" Value="public static void SpinUntil (Func&lt;bool&gt; predicate);" />
+      <MemberSignature Language="C#" Value="public static void SpinUntil (Func&lt;bool&gt; condition);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SpinUntil(class System.Func`1&lt;bool&gt; condition) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -83,16 +89,17 @@
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="predicate" Type="System.Func&lt;System.Boolean&gt;" />
+        <Parameter Name="condition" Type="System.Func&lt;System.Boolean&gt;" />
       </Parameters>
       <Docs>
-        <param name="predicate">To be added.</param>
+        <param name="condition">To be added.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
     <Member MemberName="SpinUntil">
-      <MemberSignature Language="C#" Value="public static bool SpinUntil (Func&lt;bool&gt; predicate, int milliseconds);" />
+      <MemberSignature Language="C#" Value="public static bool SpinUntil (Func&lt;bool&gt; condition, int millisecondsTimeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool SpinUntil(class System.Func`1&lt;bool&gt; condition, int32 millisecondsTimeout) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -101,19 +108,20 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="predicate" Type="System.Func&lt;System.Boolean&gt;" />
-        <Parameter Name="milliseconds" Type="System.Int32" />
+        <Parameter Name="condition" Type="System.Func&lt;System.Boolean&gt;" />
+        <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="predicate">To be added.</param>
-        <param name="milliseconds">To be added.</param>
+        <param name="condition">To be added.</param>
+        <param name="millisecondsTimeout">To be added.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
     <Member MemberName="SpinUntil">
-      <MemberSignature Language="C#" Value="public static bool SpinUntil (Func&lt;bool&gt; predicate, TimeSpan ts);" />
+      <MemberSignature Language="C#" Value="public static bool SpinUntil (Func&lt;bool&gt; condition, TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool SpinUntil(class System.Func`1&lt;bool&gt; condition, valuetype System.TimeSpan timeout) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -122,12 +130,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="predicate" Type="System.Func&lt;System.Boolean&gt;" />
-        <Parameter Name="ts" Type="System.TimeSpan" />
+        <Parameter Name="condition" Type="System.Func&lt;System.Boolean&gt;" />
+        <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="predicate">To be added.</param>
-        <param name="ts">To be added.</param>
+        <param name="condition">To be added.</param>
+        <param name="timeout">To be added.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>

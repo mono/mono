@@ -1,5 +1,6 @@
 <Type Name="ParallelOptions" FullName="System.Threading.Tasks.ParallelOptions">
   <TypeSignature Language="C#" Value="public class ParallelOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ParallelOptions extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -15,6 +16,7 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ParallelOptions ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -26,7 +28,8 @@
       </Docs>
     </Member>
     <Member MemberName="CancellationToken">
-      <MemberSignature Language="C#" Value="public System.Threading.CancellationToken CancellationToken { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Threading.CancellationToken CancellationToken { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Threading.CancellationToken CancellationToken" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -41,7 +44,8 @@
       </Docs>
     </Member>
     <Member MemberName="MaxDegreeOfParallelism">
-      <MemberSignature Language="C#" Value="public int MaxDegreeOfParallelism { set; get; }" />
+      <MemberSignature Language="C#" Value="public int MaxDegreeOfParallelism { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxDegreeOfParallelism" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -56,7 +60,8 @@
       </Docs>
     </Member>
     <Member MemberName="TaskScheduler">
-      <MemberSignature Language="C#" Value="public System.Threading.Tasks.TaskScheduler TaskScheduler { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.TaskScheduler TaskScheduler { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Threading.Tasks.TaskScheduler TaskScheduler" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>

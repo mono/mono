@@ -1,5 +1,6 @@
 <Type Name="TimeZone" FullName="System.TimeZone">
   <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class TimeZone" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable beforefieldinit TimeZone extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,6 +13,11 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>Provides support for the differences in time from the time zone and UTC.</summary>
     <remarks>To be added</remarks>
@@ -19,22 +25,29 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected TimeZone ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters />
       <Docs>
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="CurrentTimeZone">
+      <MemberSignature Language="C#" Value="public static TimeZone CurrentTimeZone { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.TimeZone CurrentTimeZone" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CurrentTimeZone">
-      <MemberSignature Language="C#" Value="public static TimeZone CurrentTimeZone { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.TimeZone</ReturnType>
       </ReturnValue>
@@ -43,15 +56,16 @@
         <value>To be added: an object of type 'TimeZone'</value>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="DaylightName">
+      <MemberSignature Language="C#" Value="public abstract string DaylightName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string DaylightName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DaylightName">
-      <MemberSignature Language="C#" Value="public abstract string DaylightName { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -60,15 +74,16 @@
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetDaylightChanges">
+      <MemberSignature Language="C#" Value="public abstract System.Globalization.DaylightTime GetDaylightChanges (int year);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Globalization.DaylightTime GetDaylightChanges(int32 year) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetDaylightChanges">
-      <MemberSignature Language="C#" Value="public abstract System.Globalization.DaylightTime GetDaylightChanges (int year);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.DaylightTime</ReturnType>
       </ReturnValue>
@@ -81,15 +96,16 @@
         <returns>To be added: an object of type 'Globalization.DaylightTime'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetUtcOffset">
+      <MemberSignature Language="C#" Value="public abstract TimeSpan GetUtcOffset (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.TimeSpan GetUtcOffset(valuetype System.DateTime time) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetUtcOffset">
-      <MemberSignature Language="C#" Value="public abstract TimeSpan GetUtcOffset (DateTime time);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
@@ -102,15 +118,16 @@
         <returns>To be added: an object of type 'TimeSpan'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="IsDaylightSavingTime">
+      <MemberSignature Language="C#" Value="public virtual bool IsDaylightSavingTime (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool IsDaylightSavingTime(valuetype System.DateTime time) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsDaylightSavingTime">
-      <MemberSignature Language="C#" Value="public virtual bool IsDaylightSavingTime (DateTime time);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -123,15 +140,16 @@
         <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="IsDaylightSavingTime">
+      <MemberSignature Language="C#" Value="public static bool IsDaylightSavingTime (DateTime time, System.Globalization.DaylightTime daylightTimes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDaylightSavingTime(valuetype System.DateTime time, class System.Globalization.DaylightTime daylightTimes) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsDaylightSavingTime">
-      <MemberSignature Language="C#" Value="public static bool IsDaylightSavingTime (DateTime time, System.Globalization.DaylightTime daylightTimes);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -146,15 +164,16 @@
         <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="StandardName">
+      <MemberSignature Language="C#" Value="public abstract string StandardName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string StandardName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="StandardName">
-      <MemberSignature Language="C#" Value="public abstract string StandardName { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -163,15 +182,16 @@
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="ToLocalTime">
+      <MemberSignature Language="C#" Value="public virtual DateTime ToLocalTime (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.DateTime ToLocalTime(valuetype System.DateTime time) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToLocalTime">
-      <MemberSignature Language="C#" Value="public virtual DateTime ToLocalTime (DateTime time);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -184,15 +204,16 @@
         <returns>A DateTime object adjusted for the object's time zone.</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="ToUniversalTime">
+      <MemberSignature Language="C#" Value="public virtual DateTime ToUniversalTime (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.DateTime ToUniversalTime(valuetype System.DateTime time) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToUniversalTime">
-      <MemberSignature Language="C#" Value="public virtual DateTime ToUniversalTime (DateTime time);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -205,16 +226,6 @@
         <returns>To be added: an object of type 'DateTime'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

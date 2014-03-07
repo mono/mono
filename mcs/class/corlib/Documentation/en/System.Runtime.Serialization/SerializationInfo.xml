@@ -1,5 +1,6 @@
 <Type Name="SerializationInfo" FullName="System.Runtime.Serialization.SerializationInfo">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class SerializationInfo" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SerializationInfo extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,6 +13,11 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>To be added</summary>
     <remarks>To be added</remarks>
@@ -19,7 +25,18 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SerializationInfo (Type type, System.Runtime.Serialization.IFormatterConverter converter);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type type, class System.Runtime.Serialization.IFormatterConverter converter) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue />
       <Parameters>
         <Parameter Name="type" Type="System.Type" />
@@ -31,20 +48,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
+    </Member>
+    <Member MemberName="AddValue">
+      <MemberSignature Language="C#" Value="public void AddValue (string name, bool value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddValue(string name, bool value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AddValue">
-      <MemberSignature Language="C#" Value="public void AddValue (string name, bool value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -58,15 +71,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="AddValue">
+      <MemberSignature Language="C#" Value="public void AddValue (string name, byte value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddValue(string name, unsigned int8 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AddValue">
-      <MemberSignature Language="C#" Value="public void AddValue (string name, byte value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -80,15 +94,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="AddValue">
+      <MemberSignature Language="C#" Value="public void AddValue (string name, char value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddValue(string name, char value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AddValue">
-      <MemberSignature Language="C#" Value="public void AddValue (string name, char value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -102,15 +117,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="AddValue">
+      <MemberSignature Language="C#" Value="public void AddValue (string name, DateTime value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddValue(string name, valuetype System.DateTime value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AddValue">
-      <MemberSignature Language="C#" Value="public void AddValue (string name, DateTime value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -124,15 +140,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="AddValue">
+      <MemberSignature Language="C#" Value="public void AddValue (string name, decimal value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddValue(string name, valuetype System.Decimal value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AddValue">
-      <MemberSignature Language="C#" Value="public void AddValue (string name, decimal value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -146,15 +163,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="AddValue">
+      <MemberSignature Language="C#" Value="public void AddValue (string name, double value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddValue(string name, float64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AddValue">
-      <MemberSignature Language="C#" Value="public void AddValue (string name, double value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -168,15 +186,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="AddValue">
+      <MemberSignature Language="C#" Value="public void AddValue (string name, short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddValue(string name, int16 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AddValue">
-      <MemberSignature Language="C#" Value="public void AddValue (string name, short value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -190,15 +209,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="AddValue">
+      <MemberSignature Language="C#" Value="public void AddValue (string name, int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddValue(string name, int32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AddValue">
-      <MemberSignature Language="C#" Value="public void AddValue (string name, int value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -212,15 +232,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="AddValue">
+      <MemberSignature Language="C#" Value="public void AddValue (string name, long value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddValue(string name, int64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AddValue">
-      <MemberSignature Language="C#" Value="public void AddValue (string name, long value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -234,15 +255,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="AddValue">
+      <MemberSignature Language="C#" Value="public void AddValue (string name, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddValue(string name, object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AddValue">
-      <MemberSignature Language="C#" Value="public void AddValue (string name, object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -256,15 +278,21 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="AddValue">
+      <MemberSignature Language="C#" Value="public void AddValue (string name, sbyte value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddValue(string name, int8 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AddValue">
-      <MemberSignature Language="C#" Value="public void AddValue (string name, sbyte value);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -278,20 +306,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="AddValue">
+      <MemberSignature Language="C#" Value="public void AddValue (string name, float value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddValue(string name, float32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="AddValue">
-      <MemberSignature Language="C#" Value="public void AddValue (string name, float value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -305,15 +329,21 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="AddValue">
+      <MemberSignature Language="C#" Value="public void AddValue (string name, ushort value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddValue(string name, unsigned int16 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AddValue">
-      <MemberSignature Language="C#" Value="public void AddValue (string name, ushort value);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -327,6 +357,11 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="AddValue">
+      <MemberSignature Language="C#" Value="public void AddValue (string name, uint value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddValue(string name, unsigned int32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -337,10 +372,6 @@
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="AddValue">
-      <MemberSignature Language="C#" Value="public void AddValue (string name, uint value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -354,6 +385,11 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="AddValue">
+      <MemberSignature Language="C#" Value="public void AddValue (string name, ulong value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddValue(string name, unsigned int64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -364,10 +400,6 @@
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="AddValue">
-      <MemberSignature Language="C#" Value="public void AddValue (string name, ulong value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -381,20 +413,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="AddValue">
+      <MemberSignature Language="C#" Value="public void AddValue (string name, object value, Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddValue(string name, object value, class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="AddValue">
-      <MemberSignature Language="C#" Value="public void AddValue (string name, object value, Type type);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -410,15 +438,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AssemblyName">
-      <MemberSignature Language="C#" Value="public string AssemblyName { set; get; }" />
+      <MemberSignature Language="C#" Value="public string AssemblyName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string AssemblyName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -427,15 +456,16 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FullTypeName">
-      <MemberSignature Language="C#" Value="public string FullTypeName { set; get; }" />
+      <MemberSignature Language="C#" Value="public string FullTypeName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FullTypeName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -444,15 +474,16 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetBoolean">
       <MemberSignature Language="C#" Value="public bool GetBoolean (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool GetBoolean(string name) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -465,15 +496,16 @@
         <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetByte">
+      <MemberSignature Language="C#" Value="public byte GetByte (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int8 GetByte(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetByte">
-      <MemberSignature Language="C#" Value="public byte GetByte (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte</ReturnType>
       </ReturnValue>
@@ -486,15 +518,16 @@
         <returns>To be added: an object of type 'byte'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetChar">
+      <MemberSignature Language="C#" Value="public char GetChar (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance char GetChar(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetChar">
-      <MemberSignature Language="C#" Value="public char GetChar (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Char</ReturnType>
       </ReturnValue>
@@ -507,15 +540,16 @@
         <returns>To be added: an object of type 'char'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetDateTime">
+      <MemberSignature Language="C#" Value="public DateTime GetDateTime (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.DateTime GetDateTime(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetDateTime">
-      <MemberSignature Language="C#" Value="public DateTime GetDateTime (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -528,15 +562,16 @@
         <returns>To be added: an object of type 'DateTime'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetDecimal">
+      <MemberSignature Language="C#" Value="public decimal GetDecimal (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Decimal GetDecimal(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetDecimal">
-      <MemberSignature Language="C#" Value="public decimal GetDecimal (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>
       </ReturnValue>
@@ -549,15 +584,16 @@
         <returns>To be added: an object of type 'decimal'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetDouble">
+      <MemberSignature Language="C#" Value="public double GetDouble (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance float64 GetDouble(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetDouble">
-      <MemberSignature Language="C#" Value="public double GetDouble (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -570,15 +606,16 @@
         <returns>To be added: an object of type 'double'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetEnumerator">
+      <MemberSignature Language="C#" Value="public System.Runtime.Serialization.SerializationInfoEnumerator GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Runtime.Serialization.SerializationInfoEnumerator GetEnumerator() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetEnumerator">
-      <MemberSignature Language="C#" Value="public System.Runtime.Serialization.SerializationInfoEnumerator GetEnumerator ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Serialization.SerializationInfoEnumerator</ReturnType>
       </ReturnValue>
@@ -588,15 +625,16 @@
         <returns>To be added: an object of type 'SerializationInfoEnumerator'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetInt16">
+      <MemberSignature Language="C#" Value="public short GetInt16 (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int16 GetInt16(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetInt16">
-      <MemberSignature Language="C#" Value="public short GetInt16 (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
@@ -609,15 +647,16 @@
         <returns>To be added: an object of type 'short'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetInt32">
+      <MemberSignature Language="C#" Value="public int GetInt32 (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 GetInt32(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetInt32">
-      <MemberSignature Language="C#" Value="public int GetInt32 (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -630,15 +669,16 @@
         <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetInt64">
+      <MemberSignature Language="C#" Value="public long GetInt64 (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int64 GetInt64(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetInt64">
-      <MemberSignature Language="C#" Value="public long GetInt64 (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -651,15 +691,21 @@
         <returns>To be added: an object of type 'long'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetSByte">
+      <MemberSignature Language="C#" Value="public sbyte GetSByte (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int8 GetSByte(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetSByte">
-      <MemberSignature Language="C#" Value="public sbyte GetSByte (string name);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.SByte</ReturnType>
       </ReturnValue>
@@ -672,20 +718,16 @@
         <returns>To be added: an object of type 'sbyte'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetSingle">
+      <MemberSignature Language="C#" Value="public float GetSingle (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance float32 GetSingle(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="GetSingle">
-      <MemberSignature Language="C#" Value="public float GetSingle (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Single</ReturnType>
       </ReturnValue>
@@ -698,15 +740,16 @@
         <returns>To be added: an object of type 'float'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetString">
+      <MemberSignature Language="C#" Value="public string GetString (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string GetString(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetString">
-      <MemberSignature Language="C#" Value="public string GetString (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -719,15 +762,21 @@
         <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetUInt16">
+      <MemberSignature Language="C#" Value="public ushort GetUInt16 (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int16 GetUInt16(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetUInt16">
-      <MemberSignature Language="C#" Value="public ushort GetUInt16 (string name);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.UInt16</ReturnType>
       </ReturnValue>
@@ -740,6 +789,11 @@
         <returns>To be added: an object of type 'ushort'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetUInt32">
+      <MemberSignature Language="C#" Value="public uint GetUInt32 (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int32 GetUInt32(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -750,10 +804,6 @@
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="GetUInt32">
-      <MemberSignature Language="C#" Value="public uint GetUInt32 (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt32</ReturnType>
       </ReturnValue>
@@ -766,6 +816,11 @@
         <returns>To be added: an object of type 'uint'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetUInt64">
+      <MemberSignature Language="C#" Value="public ulong GetUInt64 (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int64 GetUInt64(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -776,10 +831,6 @@
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="GetUInt64">
-      <MemberSignature Language="C#" Value="public ulong GetUInt64 (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt64</ReturnType>
       </ReturnValue>
@@ -792,20 +843,16 @@
         <returns>To be added: an object of type 'ulong'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetValue">
+      <MemberSignature Language="C#" Value="public object GetValue (string name, Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance object GetValue(string name, class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="GetValue">
-      <MemberSignature Language="C#" Value="public object GetValue (string name, Type type);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -820,15 +867,48 @@
         <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="IsAssemblyNameSetExplicit">
+      <MemberSignature Language="C#" Value="public bool IsAssemblyNameSetExplicit { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsAssemblyNameSetExplicit" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsFullTypeNameSetExplicit">
+      <MemberSignature Language="C#" Value="public bool IsFullTypeNameSetExplicit { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsFullTypeNameSetExplicit" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MemberCount">
+      <MemberSignature Language="C#" Value="public int MemberCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MemberCount" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MemberCount">
-      <MemberSignature Language="C#" Value="public int MemberCount { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -837,15 +917,32 @@
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="ObjectType">
+      <MemberSignature Language="C#" Value="public Type ObjectType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type ObjectType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SetType">
+      <MemberSignature Language="C#" Value="public void SetType (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetType(class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetType">
-      <MemberSignature Language="C#" Value="public void SetType (Type type);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -857,16 +954,6 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

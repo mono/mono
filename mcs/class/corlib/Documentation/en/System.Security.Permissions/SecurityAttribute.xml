@@ -1,6 +1,7 @@
 <Type Name="SecurityAttribute" FullName="System.Security.Permissions.SecurityAttribute" FullNameSP="System_Security_Permissions_SecurityAttribute" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public abstract serializable SecurityAttribute extends System.Attribute" />
   <TypeSignature Language="C#" Value="public abstract class SecurityAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable beforefieldinit SecurityAttribute extends System.Attribute" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -33,7 +34,13 @@
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(valuetype System.Security.Permissions.SecurityAction action)" />
       <MemberSignature Language="C#" Value="protected SecurityAttribute (System.Security.Permissions.SecurityAction action);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(valuetype System.Security.Permissions.SecurityAction action) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="action" Type="System.Security.Permissions.SecurityAction" />
@@ -49,15 +56,16 @@ with the specified <see cref="T:System.Security.Permissions.SecurityAction" />.<
           <paramref name="action" /> is not a valid <see cref="T:System.Security.Permissions.SecurityAction" /> value. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Action">
+      <MemberSignature Language="C#" Value="public System.Security.Permissions.SecurityAction Action { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.Permissions.SecurityAction Action" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Action">
-      <MemberSignature Language="C#" Value="public System.Security.Permissions.SecurityAction Action { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Permissions.SecurityAction</ReturnType>
       </ReturnValue>
@@ -66,16 +74,17 @@ with the specified <see cref="T:System.Security.Permissions.SecurityAction" />.<
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="CreatePermission">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Security.IPermission CreatePermission()" />
+      <MemberSignature Language="C#" Value="public abstract System.Security.IPermission CreatePermission ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Security.IPermission CreatePermission() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreatePermission">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Security.IPermission CreatePermission()" />
-      <MemberSignature Language="C#" Value="public abstract System.Security.IPermission CreatePermission ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.IPermission</ReturnType>
       </ReturnValue>
@@ -110,16 +119,17 @@ with the specified <see cref="T:System.Security.Permissions.SecurityAction" />.<
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Unrestricted">
+      <MemberSignature Language="ILASM" Value=".property bool Unrestricted { public hidebysig specialname instance bool get_Unrestricted() public hidebysig specialname instance void set_Unrestricted(bool value) }" />
+      <MemberSignature Language="C#" Value="public bool Unrestricted { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Unrestricted" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Unrestricted">
-      <MemberSignature Language="ILASM" Value=".property bool Unrestricted { public hidebysig specialname instance bool get_Unrestricted() public hidebysig specialname instance void set_Unrestricted(bool value) }" />
-      <MemberSignature Language="C#" Value="public bool Unrestricted { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -138,11 +148,6 @@ with the specified <see cref="T:System.Security.Permissions.SecurityAction" />.<
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

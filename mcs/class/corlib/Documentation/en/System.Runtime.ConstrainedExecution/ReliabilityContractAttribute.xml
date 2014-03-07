@@ -1,5 +1,6 @@
 <Type Name="ReliabilityContractAttribute" FullName="System.Runtime.ConstrainedExecution.ReliabilityContractAttribute">
   <TypeSignature Language="C#" Value="public sealed class ReliabilityContractAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ReliabilityContractAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -22,7 +23,12 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ReliabilityContractAttribute (System.Runtime.ConstrainedExecution.Consistency consistencyGuarantee, System.Runtime.ConstrainedExecution.Cer cer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Runtime.ConstrainedExecution.Consistency consistencyGuarantee, valuetype System.Runtime.ConstrainedExecution.Cer cer) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="consistencyGuarantee" Type="System.Runtime.ConstrainedExecution.Consistency" />
         <Parameter Name="cer" Type="System.Runtime.ConstrainedExecution.Cer" />
@@ -34,14 +40,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Cer">
+      <MemberSignature Language="C#" Value="public System.Runtime.ConstrainedExecution.Cer Cer { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Runtime.ConstrainedExecution.Cer Cer" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Cer">
-      <MemberSignature Language="C#" Value="public System.Runtime.ConstrainedExecution.Cer Cer { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.ConstrainedExecution.Cer</ReturnType>
       </ReturnValue>
@@ -51,14 +58,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="ConsistencyGuarantee">
+      <MemberSignature Language="C#" Value="public System.Runtime.ConstrainedExecution.Consistency ConsistencyGuarantee { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Runtime.ConstrainedExecution.Consistency ConsistencyGuarantee" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ConsistencyGuarantee">
-      <MemberSignature Language="C#" Value="public System.Runtime.ConstrainedExecution.Consistency ConsistencyGuarantee { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.ConstrainedExecution.Consistency</ReturnType>
       </ReturnValue>
@@ -68,10 +76,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

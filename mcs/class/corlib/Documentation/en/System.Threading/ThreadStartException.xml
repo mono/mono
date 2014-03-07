@@ -1,5 +1,6 @@
 <Type Name="ThreadStartException" FullName="System.Threading.ThreadStartException">
   <TypeSignature Language="C#" Value="public sealed class ThreadStartException : SystemException" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit ThreadStartException extends System.SystemException" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>

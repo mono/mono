@@ -1,5 +1,6 @@
 <Type Name="MTAThreadAttribute" FullName="System.MTAThreadAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class MTAThreadAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit MTAThreadAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -35,18 +36,19 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public MTAThreadAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters />
       <Docs>
         <summary>Creates a new instance of the <see cref="T:System.MTAThreadAttribute" />.</summary>
         <remarks>Creates a new instance of the <see cref="T:System.MTAThreadAttribute" />.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

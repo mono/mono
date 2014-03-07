@@ -1,5 +1,6 @@
 <Type Name="SecurityRulesAttribute" FullName="System.Security.SecurityRulesAttribute">
   <TypeSignature Language="C#" Value="public sealed class SecurityRulesAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SecurityRulesAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -20,6 +21,7 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SecurityRulesAttribute (System.Security.SecurityRuleSet ruleSet);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Security.SecurityRuleSet ruleSet) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -35,6 +37,7 @@
     </Member>
     <Member MemberName="RuleSet">
       <MemberSignature Language="C#" Value="public System.Security.SecurityRuleSet RuleSet { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.SecurityRuleSet RuleSet" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -49,7 +52,8 @@
       </Docs>
     </Member>
     <Member MemberName="SkipVerificationInFullTrust">
-      <MemberSignature Language="C#" Value="public bool SkipVerificationInFullTrust { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool SkipVerificationInFullTrust { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SkipVerificationInFullTrust" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>

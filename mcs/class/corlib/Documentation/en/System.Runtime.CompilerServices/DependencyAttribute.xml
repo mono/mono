@@ -1,5 +1,6 @@
 <Type Name="DependencyAttribute" FullName="System.Runtime.CompilerServices.DependencyAttribute">
   <TypeSignature Language="C#" Value="public sealed class DependencyAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit DependencyAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -22,7 +23,12 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public DependencyAttribute (string dependentAssemblyArgument, System.Runtime.CompilerServices.LoadHint loadHintArgument);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string dependentAssemblyArgument, valuetype System.Runtime.CompilerServices.LoadHint loadHintArgument) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="dependentAssemblyArgument" Type="System.String" />
         <Parameter Name="loadHintArgument" Type="System.Runtime.CompilerServices.LoadHint" />
@@ -34,14 +40,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="DependentAssembly">
+      <MemberSignature Language="C#" Value="public string DependentAssembly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string DependentAssembly" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DependentAssembly">
-      <MemberSignature Language="C#" Value="public string DependentAssembly { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -51,14 +58,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="LoadHint">
+      <MemberSignature Language="C#" Value="public System.Runtime.CompilerServices.LoadHint LoadHint { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Runtime.CompilerServices.LoadHint LoadHint" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LoadHint">
-      <MemberSignature Language="C#" Value="public System.Runtime.CompilerServices.LoadHint LoadHint { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.CompilerServices.LoadHint</ReturnType>
       </ReturnValue>
@@ -68,10 +76,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

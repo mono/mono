@@ -1,5 +1,6 @@
 <Type Name="QualifiedAce" FullName="System.Security.AccessControl.QualifiedAce">
   <TypeSignature Language="C#" Value="public abstract class QualifiedAce : System.Security.AccessControl.KnownAce" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit QualifiedAce extends System.Security.AccessControl.KnownAce" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -17,7 +18,12 @@
   <Members>
     <Member MemberName="AceQualifier">
       <MemberSignature Language="C#" Value="public System.Security.AccessControl.AceQualifier AceQualifier { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.AccessControl.AceQualifier AceQualifier" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.AccessControl.AceQualifier</ReturnType>
       </ReturnValue>
@@ -27,14 +33,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetOpaque">
+      <MemberSignature Language="C#" Value="public byte[] GetOpaque ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int8[] GetOpaque() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetOpaque">
-      <MemberSignature Language="C#" Value="public byte[] GetOpaque ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -45,14 +52,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="IsCallback">
+      <MemberSignature Language="C#" Value="public bool IsCallback { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsCallback" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsCallback">
-      <MemberSignature Language="C#" Value="public bool IsCallback { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -62,14 +70,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="OpaqueLength">
+      <MemberSignature Language="C#" Value="public int OpaqueLength { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 OpaqueLength" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OpaqueLength">
-      <MemberSignature Language="C#" Value="public int OpaqueLength { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -79,14 +88,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="SetOpaque">
+      <MemberSignature Language="C#" Value="public void SetOpaque (byte[] opaque);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetOpaque(unsigned int8[] opaque) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetOpaque">
-      <MemberSignature Language="C#" Value="public void SetOpaque (byte[] opaque);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -99,10 +109,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

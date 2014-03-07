@@ -1,6 +1,7 @@
 <Type Name="ThreadPriority" FullName="System.Threading.ThreadPriority" FullNameSP="System_Threading_ThreadPriority" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable ThreadPriority extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum ThreadPriority" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed ThreadPriority extends System.Enum" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -12,6 +13,11 @@
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>
       <para> Specifies the scheduling priority of a <see cref="T:System.Threading.Thread" />.
@@ -48,7 +54,13 @@ the <see cref="F:System.Threading.ThreadState.Stopped" /> state.
     <Member MemberName="AboveNormal">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Threading.ThreadPriority AboveNormal = 3" />
       <MemberSignature Language="C#" Value="AboveNormal" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.ThreadPriority AboveNormal = int32(3)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.ThreadPriority</ReturnType>
       </ReturnValue>
@@ -62,16 +74,17 @@ the <see cref="F:System.Threading.ThreadState.Stopped" /> state.
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="BelowNormal">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Threading.ThreadPriority BelowNormal = 1" />
+      <MemberSignature Language="C#" Value="BelowNormal" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.ThreadPriority BelowNormal = int32(1)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="BelowNormal">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Threading.ThreadPriority BelowNormal = 1" />
-      <MemberSignature Language="C#" Value="BelowNormal" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Threading.ThreadPriority</ReturnType>
       </ReturnValue>
@@ -87,16 +100,17 @@ the <see cref="F:System.Threading.ThreadState.Stopped" /> state.
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Highest">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Threading.ThreadPriority Highest = 4" />
+      <MemberSignature Language="C#" Value="Highest" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.ThreadPriority Highest = int32(4)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Highest">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Threading.ThreadPriority Highest = 4" />
-      <MemberSignature Language="C#" Value="Highest" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Threading.ThreadPriority</ReturnType>
       </ReturnValue>
@@ -112,16 +126,17 @@ the <see cref="F:System.Threading.ThreadState.Stopped" /> state.
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Lowest">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Threading.ThreadPriority Lowest = 0" />
+      <MemberSignature Language="C#" Value="Lowest" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.ThreadPriority Lowest = int32(0)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Lowest">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Threading.ThreadPriority Lowest = 0" />
-      <MemberSignature Language="C#" Value="Lowest" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Threading.ThreadPriority</ReturnType>
       </ReturnValue>
@@ -138,16 +153,17 @@ the <see cref="F:System.Threading.ThreadState.Stopped" /> state.
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Normal">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Threading.ThreadPriority Normal = 2" />
+      <MemberSignature Language="C#" Value="Normal" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.ThreadPriority Normal = int32(2)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Normal">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Threading.ThreadPriority Normal = 2" />
-      <MemberSignature Language="C#" Value="Normal" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Threading.ThreadPriority</ReturnType>
       </ReturnValue>
@@ -163,17 +179,7 @@ default.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

@@ -1,5 +1,6 @@
 <Type Name="PKCS1MaskGenerationMethod" FullName="System.Security.Cryptography.PKCS1MaskGenerationMethod">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class PKCS1MaskGenerationMethod : System.Security.Cryptography.MaskGenerationMethod" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit PKCS1MaskGenerationMethod extends System.Security.Cryptography.MaskGenerationMethod" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,6 +13,11 @@
     <BaseTypeName>System.Security.Cryptography.MaskGenerationMethod</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>This class implements MGF1 from PKCS#1: RSA Cryptography Standard (http://www.rsasecurity.com/rsalabs/pkcs/pkcs-1/index.html).</summary>
     <remarks>This implementation is not compatible with Microsoft .NET Framework v1.0 and v1.1 (implementation bug) but is compatible with PKCS #1.</remarks>
@@ -19,22 +25,29 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public PKCS1MaskGenerationMethod ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters />
       <Docs>
         <summary>Create a new instance of the PKCS#1 Mask Generation Function #1 (MGF1).</summary>
         <remarks>This class isn't normally used by application developers. It is required to build the PKCS1 formatters and deformatters.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GenerateMask">
+      <MemberSignature Language="C#" Value="public override byte[] GenerateMask (byte[] rgbSeed, int cbReturn);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance unsigned int8[] GenerateMask(unsigned int8[] rgbSeed, int32 cbReturn) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GenerateMask">
-      <MemberSignature Language="C#" Value="public override byte[] GenerateMask (byte[] rgbSeed, int cbReturn);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -50,15 +63,16 @@
         <remarks>This method is not compatible with the one provided by Microsoft in framework 1.0 and 1.1 (known bug) but IS compliant with PKCS#1 v.2.1 and work for implementing OAEP.
 </remarks>
       </Docs>
+    </Member>
+    <Member MemberName="HashName">
+      <MemberSignature Language="C#" Value="public string HashName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string HashName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="HashName">
-      <MemberSignature Language="C#" Value="public string HashName { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -67,16 +81,6 @@
         <value>The current hash algorithm being used to generate masks.</value>
         <remarks>Default is <see cref="T:System.Security.Cryptography.SHA1" />.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

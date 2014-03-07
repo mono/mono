@@ -1,5 +1,6 @@
 <Type Name="InternalActivationContextHelper" FullName="System.Deployment.Internal.InternalActivationContextHelper">
   <TypeSignature Language="C#" Value="public static class InternalActivationContextHelper" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit InternalActivationContextHelper extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -21,6 +22,7 @@
   <Members>
     <Member MemberName="GetActivationContextData">
       <MemberSignature Language="C#" Value="public static object GetActivationContextData (ActivationContext appInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object GetActivationContextData(class System.ActivationContext appInfo) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -41,6 +43,7 @@
     </Member>
     <Member MemberName="GetApplicationComponentManifest">
       <MemberSignature Language="C#" Value="public static object GetApplicationComponentManifest (ActivationContext appInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object GetApplicationComponentManifest(class System.ActivationContext appInfo) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -61,6 +64,7 @@
     </Member>
     <Member MemberName="GetApplicationManifestBytes">
       <MemberSignature Language="C#" Value="public static byte[] GetApplicationManifestBytes (ActivationContext appInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8[] GetApplicationManifestBytes(class System.ActivationContext appInfo) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -81,6 +85,7 @@
     </Member>
     <Member MemberName="GetDeploymentComponentManifest">
       <MemberSignature Language="C#" Value="public static object GetDeploymentComponentManifest (ActivationContext appInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object GetDeploymentComponentManifest(class System.ActivationContext appInfo) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -101,6 +106,7 @@
     </Member>
     <Member MemberName="GetDeploymentManifestBytes">
       <MemberSignature Language="C#" Value="public static byte[] GetDeploymentManifestBytes (ActivationContext appInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8[] GetDeploymentManifestBytes(class System.ActivationContext appInfo) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -121,6 +127,7 @@
     </Member>
     <Member MemberName="IsFirstRun">
       <MemberSignature Language="C#" Value="public static bool IsFirstRun (ActivationContext appInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsFirstRun(class System.ActivationContext appInfo) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -141,6 +148,7 @@
     </Member>
     <Member MemberName="PrepareForExecution">
       <MemberSignature Language="C#" Value="public static void PrepareForExecution (ActivationContext appInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void PrepareForExecution(class System.ActivationContext appInfo) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

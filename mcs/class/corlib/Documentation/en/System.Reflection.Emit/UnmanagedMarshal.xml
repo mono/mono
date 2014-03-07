@@ -1,5 +1,6 @@
 <Type Name="UnmanagedMarshal" FullName="System.Reflection.Emit.UnmanagedMarshal">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class UnmanagedMarshal" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi serializable sealed beforefieldinit UnmanagedMarshal extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,6 +13,14 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Obsolete("An alternate API is available: Emit the MarshalAs custom attribute instead.")</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>To be added</summary>
     <remarks>To be added</remarks>
@@ -19,7 +28,13 @@
   <Members>
     <Member MemberName="BaseType">
       <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.UnmanagedType BaseType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Runtime.InteropServices.UnmanagedType BaseType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
       </ReturnValue>
@@ -28,15 +43,16 @@
         <value>To be added: an object of type 'Runtime.InteropServices.UnmanagedType'</value>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DefineByValArray">
       <MemberSignature Language="C#" Value="public static System.Reflection.Emit.UnmanagedMarshal DefineByValArray (int elemCount);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.Emit.UnmanagedMarshal DefineByValArray(int32 elemCount) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.UnmanagedMarshal</ReturnType>
       </ReturnValue>
@@ -49,15 +65,16 @@
         <returns>To be added: an object of type 'UnmanagedMarshal'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DefineByValTStr">
       <MemberSignature Language="C#" Value="public static System.Reflection.Emit.UnmanagedMarshal DefineByValTStr (int elemCount);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.Emit.UnmanagedMarshal DefineByValTStr(int32 elemCount) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.UnmanagedMarshal</ReturnType>
       </ReturnValue>
@@ -70,11 +87,6 @@
         <returns>To be added: an object of type 'UnmanagedMarshal'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DefineCustom">
       <MemberSignature Language="C#" Value="public static System.Reflection.Emit.UnmanagedMarshal DefineCustom (Type typeref, string cookie, string mtype, Guid id);" />
@@ -100,12 +112,17 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
     <Member MemberName="DefineLPArray">
       <MemberSignature Language="C#" Value="public static System.Reflection.Emit.UnmanagedMarshal DefineLPArray (System.Runtime.InteropServices.UnmanagedType elemType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.Emit.UnmanagedMarshal DefineLPArray(valuetype System.Runtime.InteropServices.UnmanagedType elemType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.UnmanagedMarshal</ReturnType>
       </ReturnValue>
@@ -118,15 +135,16 @@
         <returns>To be added: an object of type 'UnmanagedMarshal'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DefineSafeArray">
       <MemberSignature Language="C#" Value="public static System.Reflection.Emit.UnmanagedMarshal DefineSafeArray (System.Runtime.InteropServices.UnmanagedType elemType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.Emit.UnmanagedMarshal DefineSafeArray(valuetype System.Runtime.InteropServices.UnmanagedType elemType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.UnmanagedMarshal</ReturnType>
       </ReturnValue>
@@ -139,15 +157,16 @@
         <returns>To be added: an object of type 'UnmanagedMarshal'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="DefineUnmanagedMarshal">
+      <MemberSignature Language="C#" Value="public static System.Reflection.Emit.UnmanagedMarshal DefineUnmanagedMarshal (System.Runtime.InteropServices.UnmanagedType unmanagedType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.Emit.UnmanagedMarshal DefineUnmanagedMarshal(valuetype System.Runtime.InteropServices.UnmanagedType unmanagedType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DefineUnmanagedMarshal">
-      <MemberSignature Language="C#" Value="public static System.Reflection.Emit.UnmanagedMarshal DefineUnmanagedMarshal (System.Runtime.InteropServices.UnmanagedType unmanagedType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.UnmanagedMarshal</ReturnType>
       </ReturnValue>
@@ -160,15 +179,16 @@
         <returns>To be added: an object of type 'UnmanagedMarshal'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="ElementCount">
+      <MemberSignature Language="C#" Value="public int ElementCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 ElementCount" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ElementCount">
-      <MemberSignature Language="C#" Value="public int ElementCount { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -177,15 +197,16 @@
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetUnmanagedType">
+      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.UnmanagedType GetUnmanagedType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Runtime.InteropServices.UnmanagedType GetUnmanagedType" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetUnmanagedType">
-      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.UnmanagedType GetUnmanagedType { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.UnmanagedType</ReturnType>
       </ReturnValue>
@@ -194,15 +215,16 @@
         <value>To be added: an object of type 'Runtime.InteropServices.UnmanagedType'</value>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="IIDGuid">
+      <MemberSignature Language="C#" Value="public Guid IIDGuid { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Guid IIDGuid" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IIDGuid">
-      <MemberSignature Language="C#" Value="public Guid IIDGuid { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Guid</ReturnType>
       </ReturnValue>
@@ -211,19 +233,6 @@
         <value>To be added: an object of type 'Guid'</value>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Obsolete("An alternate API is available: Emit the MarshalAs custom attribute instead.")</AttributeName>
-    </Attribute>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

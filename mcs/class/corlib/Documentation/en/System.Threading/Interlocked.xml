@@ -1,6 +1,7 @@
 <Type Name="Interlocked" FullName="System.Threading.Interlocked" FullNameSP="System_Threading_Interlocked" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed Interlocked extends System.Object" />
   <TypeSignature Language="C#" Value="public static class Interlocked" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Interlocked extends System.Object" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -41,7 +42,17 @@ variables, based on the outcome of the comparison.</para>
   <Members>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public static int Add (ref int location1, int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Add(int32 location1, int32 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -57,6 +68,11 @@ variables, based on the outcome of the comparison.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public static long Add (ref long location1, long value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int64 Add(int64 location1, int64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -66,10 +82,6 @@ variables, based on the outcome of the comparison.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Add">
-      <MemberSignature Language="C#" Value="public static long Add (ref long location1, long value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -85,19 +97,15 @@ variables, based on the outcome of the comparison.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="CompareExchange">
+      <MemberSignature Language="C#" Value="public static double CompareExchange (ref double location1, double value, double comparand);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 CompareExchange(float64 location1, float64 value, float64 comparand) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="CompareExchange">
-      <MemberSignature Language="C#" Value="public static double CompareExchange (ref double location1, double value, double comparand);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -115,15 +123,22 @@ variables, based on the outcome of the comparison.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CompareExchange">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 CompareExchange(class System.Int32&amp; location1, int32 value, int32 comparand)" />
       <MemberSignature Language="C#" Value="public static int CompareExchange (ref int location1, int value, int comparand);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 CompareExchange(int32 location1, int32 value, int32 comparand) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -150,20 +165,15 @@ variables, based on the outcome of the comparison.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="CompareExchange">
       <MemberSignature Language="C#" Value="public static long CompareExchange (ref long location1, long value, long comparand);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int64 CompareExchange(int64 location1, int64 value, int64 comparand) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -181,14 +191,20 @@ variables, based on the outcome of the comparison.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="CompareExchange">
+      <MemberSignature Language="C#" Value="public static IntPtr CompareExchange (ref IntPtr location1, IntPtr value, IntPtr comparand);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig native int CompareExchange(native int location1, native int value, native int comparand) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CompareExchange">
-      <MemberSignature Language="C#" Value="public static IntPtr CompareExchange (ref IntPtr location1, IntPtr value, IntPtr comparand);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -206,7 +222,14 @@ variables, based on the outcome of the comparison.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="CompareExchange">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static object CompareExchange(class System.Object&amp; location1, object value, object comparand)" />
+      <MemberSignature Language="C#" Value="public static object CompareExchange (ref object location1, object value, object comparand);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object CompareExchange(object location1, object value, object comparand) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -215,11 +238,6 @@ variables, based on the outcome of the comparison.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="CompareExchange">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static object CompareExchange(class System.Object&amp; location1, object value, object comparand)" />
-      <MemberSignature Language="C#" Value="public static object CompareExchange (ref object location1, object value, object comparand);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -247,21 +265,17 @@ variables, based on the outcome of the comparison.</para>
         <exception cref="T:System.ArgumentNullException">The address of <paramref name="location1" /> is <see langword="null" /> .</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CompareExchange">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float32 CompareExchange(class System.Single&amp; location1, float32 value, float32 comparand)" />
+      <MemberSignature Language="C#" Value="public static float CompareExchange (ref float location1, float value, float comparand);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float32 CompareExchange(float32 location1, float32 value, float32 comparand) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="CompareExchange">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float32 CompareExchange(class System.Single&amp; location1, float32 value, float32 comparand)" />
-      <MemberSignature Language="C#" Value="public static float CompareExchange (ref float location1, float value, float comparand);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Single</ReturnType>
       </ReturnValue>
@@ -290,18 +304,33 @@ variables, based on the outcome of the comparison.</para>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CompareExchange&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static T CompareExchange&lt;T&gt; (ref T location1, T value, T comparand) where T : class;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T CompareExchange&lt;class T&gt;(!!T location1, !!T value, !!T comparand) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>T</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
       <Parameters>
         <Parameter Name="location1" Type="T&amp;" RefType="ref" />
         <Parameter Name="value" Type="T" />
@@ -317,7 +346,14 @@ variables, based on the outcome of the comparison.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Decrement">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Decrement(class System.Int32&amp; location)" />
+      <MemberSignature Language="C#" Value="public static int Decrement (ref int location);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Decrement(int32 location) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -325,22 +361,7 @@ variables, based on the outcome of the comparison.</para>
         <Attribute>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
       </Attributes>
-      <TypeParameters>
-        <TypeParameter Name="T">
-          <Constraints>
-            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
-          </Constraints>
-        </TypeParameter>
-      </TypeParameters>
-    </Member>
-    <Member MemberName="Decrement">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Decrement(class System.Int32&amp; location)" />
-      <MemberSignature Language="C#" Value="public static int Decrement (ref int location);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -366,21 +387,17 @@ variables, based on the outcome of the comparison.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Decrement">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int64 Decrement(class System.Int64&amp; location)" />
+      <MemberSignature Language="C#" Value="public static long Decrement (ref long location);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int64 Decrement(int64 location) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Decrement">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int64 Decrement(class System.Int64&amp; location)" />
-      <MemberSignature Language="C#" Value="public static long Decrement (ref long location);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -409,15 +426,15 @@ containing the decremented value. </para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Exchange">
       <MemberSignature Language="C#" Value="public static double Exchange (ref double location1, double value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Exchange(float64 location1, float64 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -433,15 +450,22 @@ containing the decremented value. </para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Exchange">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Exchange(class System.Int32&amp; location1, int32 value)" />
       <MemberSignature Language="C#" Value="public static int Exchange (ref int location1, int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Exchange(int32 location1, int32 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -464,20 +488,15 @@ before the exchange.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="Exchange">
       <MemberSignature Language="C#" Value="public static long Exchange (ref long location1, long value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int64 Exchange(int64 location1, int64 value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -493,14 +512,20 @@ before the exchange.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Exchange">
+      <MemberSignature Language="C#" Value="public static IntPtr Exchange (ref IntPtr location1, IntPtr value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig native int Exchange(native int location1, native int value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Exchange">
-      <MemberSignature Language="C#" Value="public static IntPtr Exchange (ref IntPtr location1, IntPtr value);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -516,7 +541,14 @@ before the exchange.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Exchange">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static object Exchange(class System.Object&amp; location1, object value)" />
+      <MemberSignature Language="C#" Value="public static object Exchange (ref object location1, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object Exchange(object location1, object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -525,11 +557,6 @@ before the exchange.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Exchange">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static object Exchange(class System.Object&amp; location1, object value)" />
-      <MemberSignature Language="C#" Value="public static object Exchange (ref object location1, object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -553,21 +580,17 @@ before the exchange.</para>
         <exception cref="T:System.ArgumentNullException">The address of <paramref name="location1" /> is <see langword="null" /> .</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Exchange">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float32 Exchange(class System.Single&amp; location1, float32 value)" />
+      <MemberSignature Language="C#" Value="public static float Exchange (ref float location1, float value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float32 Exchange(float32 location1, float32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Exchange">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float32 Exchange(class System.Single&amp; location1, float32 value)" />
-      <MemberSignature Language="C#" Value="public static float Exchange (ref float location1, float value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Single</ReturnType>
       </ReturnValue>
@@ -591,18 +614,33 @@ before the exchange.</para>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Exchange&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static T Exchange&lt;T&gt; (ref T location1, T value) where T : class;" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T Exchange&lt;class T&gt;(!!T location1, !!T value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>T</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
       <Parameters>
         <Parameter Name="location1" Type="T&amp;" RefType="ref" />
         <Parameter Name="value" Type="T" />
@@ -616,7 +654,14 @@ before the exchange.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Increment">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Increment(class System.Int32&amp; location)" />
+      <MemberSignature Language="C#" Value="public static int Increment (ref int location);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Increment(int32 location) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -624,22 +669,7 @@ before the exchange.</para>
         <Attribute>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
       </Attributes>
-      <TypeParameters>
-        <TypeParameter Name="T">
-          <Constraints>
-            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
-          </Constraints>
-        </TypeParameter>
-      </TypeParameters>
-    </Member>
-    <Member MemberName="Increment">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Increment(class System.Int32&amp; location)" />
-      <MemberSignature Language="C#" Value="public static int Increment (ref int location);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -663,6 +693,12 @@ before the exchange.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Increment">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int64 Increment(class System.Int64&amp; location)" />
+      <MemberSignature Language="C#" Value="public static long Increment (ref long location);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int64 Increment(int64 location) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -673,11 +709,6 @@ before the exchange.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Increment">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int64 Increment(class System.Int64&amp; location)" />
-      <MemberSignature Language="C#" Value="public static long Increment (ref long location);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -705,15 +736,31 @@ other, but not with respect to other means of accessing the data.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="MemoryBarrier">
+      <MemberSignature Language="C#" Value="public static void MemoryBarrier ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void MemoryBarrier() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="Read">
       <MemberSignature Language="C#" Value="public static long Read (ref long location);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int64 Read(int64 location) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -727,10 +774,6 @@ other, but not with respect to other means of accessing the data.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

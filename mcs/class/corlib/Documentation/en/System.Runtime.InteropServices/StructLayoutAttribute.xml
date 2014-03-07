@@ -1,6 +1,7 @@
 <Type Name="StructLayoutAttribute" FullName="System.Runtime.InteropServices.StructLayoutAttribute" FullNameSP="System_Runtime_InteropServices_StructLayoutAttribute" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed StructLayoutAttribute extends System.Attribute" />
   <TypeSignature Language="C#" Value="public sealed class StructLayoutAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit StructLayoutAttribute extends System.Attribute" />
   <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -126,7 +127,13 @@ public class StructLayoutTest {
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int16 layoutKind)" />
       <MemberSignature Language="C#" Value="public StructLayoutAttribute (short layoutKind);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int16 layoutKind) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="layoutKind" Type="System.Int16" />
@@ -146,16 +153,17 @@ runtime error occurs.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(valuetype System.Runtime.InteropServices.LayoutKind layoutKind)" />
+      <MemberSignature Language="C#" Value="public StructLayoutAttribute (System.Runtime.InteropServices.LayoutKind layoutKind);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Runtime.InteropServices.LayoutKind layoutKind) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(valuetype System.Runtime.InteropServices.LayoutKind layoutKind)" />
-      <MemberSignature Language="C#" Value="public StructLayoutAttribute (System.Runtime.InteropServices.LayoutKind layoutKind);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="layoutKind" Type="System.Runtime.InteropServices.LayoutKind" />
@@ -173,16 +181,17 @@ runtime error occurs.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CharSet">
+      <MemberSignature Language="ILASM" Value=".field public valuetype System.Runtime.InteropServices.CharSet CharSet" />
+      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.CharSet CharSet;" />
+      <MemberSignature Language="ILAsm" Value=".field public valuetype System.Runtime.InteropServices.CharSet CharSet" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CharSet">
-      <MemberSignature Language="ILASM" Value=".field public valuetype System.Runtime.InteropServices.CharSet CharSet" />
-      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.CharSet CharSet;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.CharSet</ReturnType>
       </ReturnValue>
@@ -202,16 +211,17 @@ enumeration for a description of different character sets.</block>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Pack">
+      <MemberSignature Language="ILASM" Value=".field public int32 Pack" />
+      <MemberSignature Language="C#" Value="public int Pack;" />
+      <MemberSignature Language="ILAsm" Value=".field public int32 Pack" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Pack">
-      <MemberSignature Language="ILASM" Value=".field public int32 Pack" />
-      <MemberSignature Language="C#" Value="public int Pack;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -236,16 +246,17 @@ The default value is implementation-defined.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Size">
+      <MemberSignature Language="ILASM" Value=".field public int32 Size" />
+      <MemberSignature Language="C#" Value="public int Size;" />
+      <MemberSignature Language="ILAsm" Value=".field public int32 Size" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Size">
-      <MemberSignature Language="ILASM" Value=".field public int32 Size" />
-      <MemberSignature Language="C#" Value="public int Size;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -271,16 +282,17 @@ The default value is implementation-defined.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Value">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.Runtime.InteropServices.LayoutKind Value { public hidebysig specialname instance valuetype System.Runtime.InteropServices.LayoutKind get_Value() }" />
+      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.LayoutKind Value { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Runtime.InteropServices.LayoutKind Value" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Value">
-      <MemberSignature Language="ILASM" Value=".property valuetype System.Runtime.InteropServices.LayoutKind Value { public hidebysig specialname instance valuetype System.Runtime.InteropServices.LayoutKind get_Value() }" />
-      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.LayoutKind Value { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.LayoutKind</ReturnType>
       </ReturnValue>
@@ -299,11 +311,6 @@ The default value is implementation-defined.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

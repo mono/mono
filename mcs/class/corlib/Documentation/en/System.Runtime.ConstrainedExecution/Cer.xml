@@ -1,5 +1,6 @@
 <Type Name="Cer" FullName="System.Runtime.ConstrainedExecution.Cer">
   <TypeSignature Language="C#" Value="public enum Cer" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed Cer extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -16,7 +17,12 @@
   <Members>
     <Member MemberName="MayFail">
       <MemberSignature Language="C#" Value="MayFail" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.ConstrainedExecution.Cer MayFail = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.ConstrainedExecution.Cer</ReturnType>
       </ReturnValue>
@@ -24,14 +30,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.ConstrainedExecution.Cer None = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.ConstrainedExecution.Cer</ReturnType>
       </ReturnValue>
@@ -39,14 +46,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Success">
       <MemberSignature Language="C#" Value="Success" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.ConstrainedExecution.Cer Success = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.ConstrainedExecution.Cer</ReturnType>
       </ReturnValue>
@@ -54,10 +62,6 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

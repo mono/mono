@@ -1,6 +1,7 @@
 <Type Name="Array" FullName="System.Array" FullNameSP="System_Array" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public abstract serializable Array extends System.Object implements System.ICloneable, System.Collections.ICollection, System.Collections.IEnumerable, System.Collections.IList" />
   <TypeSignature Language="C#" Value="public abstract class Array : ICloneable, System.Collections.IList, System.Collections.IStructuralComparable, System.Collections.IStructuralEquatable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable beforefieldinit Array extends System.Object implements class System.Collections.ICollection, class System.Collections.IEnumerable, class System.Collections.IList, class System.Collections.IStructuralComparable, class System.Collections.IStructuralEquatable, class System.ICloneable" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -27,6 +28,11 @@
       <InterfaceName>System.ICloneable</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>
       <para> Serves as the base class for arrays. Provides methods for creating,
@@ -116,10 +122,18 @@ and the second dimension indexed by 1, 2, and 3. </para>
   <Members>
     <Member MemberName="AsReadOnly&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static System.Collections.ObjectModel.ReadOnlyCollection&lt;T&gt; AsReadOnly&lt;T&gt; (T[] array);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;!!T&gt; AsReadOnly&lt;T&gt;(!!T[] array) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;T&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
       </Parameters>
@@ -143,18 +157,22 @@ and the second dimension indexed by 1, 2, and 3. </para>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" /> is <see langword="null" />.</exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
     </Member>
     <Member MemberName="BinarySearch">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 BinarySearch(class System.Array array, object value)" />
       <MemberSignature Language="C#" Value="public static int BinarySearch (Array array, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 BinarySearch(class System.Array array, object value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -243,6 +261,12 @@ is not already sorted, correct results are not guaranteed.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="BinarySearch">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 BinarySearch(class System.Array array, object value, class System.Collections.IComparer comparer)" />
+      <MemberSignature Language="C#" Value="public static int BinarySearch (Array array, object value, System.Collections.IComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 BinarySearch(class System.Array array, object value, class System.Collections.IComparer comparer) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -253,11 +277,6 @@ is not already sorted, correct results are not guaranteed.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="BinarySearch">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 BinarySearch(class System.Array array, object value, class System.Collections.IComparer comparer)" />
-      <MemberSignature Language="C#" Value="public static int BinarySearch (Array array, object value, System.Collections.IComparer comparer);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -354,6 +373,12 @@ not already sorted, correct results are not guaranteed.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="BinarySearch">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 BinarySearch(class System.Array array, int32 index, int32 length, object value)" />
+      <MemberSignature Language="C#" Value="public static int BinarySearch (Array array, int index, int length, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 BinarySearch(class System.Array array, int32 index, int32 length, object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -364,11 +389,6 @@ not already sorted, correct results are not guaranteed.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="BinarySearch">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 BinarySearch(class System.Array array, int32 index, int32 length, object value)" />
-      <MemberSignature Language="C#" Value="public static int BinarySearch (Array array, int index, int length, object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -467,6 +487,12 @@ are not guaranteed. </para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="BinarySearch">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 BinarySearch(class System.Array array, int32 index, int32 length, object value, class System.Collections.IComparer comparer)" />
+      <MemberSignature Language="C#" Value="public static int BinarySearch (Array array, int index, int length, object value, System.Collections.IComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 BinarySearch(class System.Array array, int32 index, int32 length, object value, class System.Collections.IComparer comparer) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -477,11 +503,6 @@ are not guaranteed. </para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="BinarySearch">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 BinarySearch(class System.Array array, int32 index, int32 length, object value, class System.Collections.IComparer comparer)" />
-      <MemberSignature Language="C#" Value="public static int BinarySearch (Array array, int index, int length, object value, System.Collections.IComparer comparer);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -630,8 +651,12 @@ class BinarySearchExample {
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="BinarySearch&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static int BinarySearch&lt;T&gt; (T[] array, T value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 BinarySearch&lt;T&gt;(!!T[] array, !!T value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -640,13 +665,12 @@ class BinarySearchExample {
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="BinarySearch&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public static int BinarySearch&lt;T&gt; (T[] array, T value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="value" Type="T" />
@@ -697,6 +721,11 @@ class BinarySearchExample {
           <para>Neither <paramref name="value" /> nor the elements of the array implement the <see cref="T:System.IComparable&lt;T&gt;" /> or <see cref="T:System.IComparable" /> interfaces.</para>
         </exception>
       </Docs>
+    </Member>
+    <Member MemberName="BinarySearch&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static int BinarySearch&lt;T&gt; (T[] array, T value, System.Collections.Generic.IComparer&lt;T&gt; comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 BinarySearch&lt;T&gt;(!!T[] array, !!T value, class System.Collections.Generic.IComparer`1&lt;!!T&gt; comparer) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -706,16 +735,12 @@ class BinarySearchExample {
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
-    </Member>
-    <Member MemberName="BinarySearch&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public static int BinarySearch&lt;T&gt; (T[] array, T value, System.Collections.Generic.IComparer&lt;T&gt; comparer);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="value" Type="T" />
@@ -777,6 +802,11 @@ class BinarySearchExample {
             <paramref name="comparer" /> is <see langword="null" />, and neither <paramref name="value" /> nor the elements of the array implement the <see cref="T:System.IComparable&lt;T&gt;" /> or <see cref="T:System.IComparable" /> interface.</para>
         </exception>
       </Docs>
+    </Member>
+    <Member MemberName="BinarySearch&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static int BinarySearch&lt;T&gt; (T[] array, int index, int length, T value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 BinarySearch&lt;T&gt;(!!T[] array, int32 index, int32 length, !!T value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -786,16 +816,12 @@ class BinarySearchExample {
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
-    </Member>
-    <Member MemberName="BinarySearch&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public static int BinarySearch&lt;T&gt; (T[] array, int index, int length, T value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="index" Type="System.Int32" />
@@ -861,6 +887,11 @@ class BinarySearchExample {
           <para>Neither <paramref name="value" /> nor the elements of the array implement the <see cref="T:System.IComparable&lt;T&gt;" /> or <see cref="T:System.IComparable" /> interface.</para>
         </exception>
       </Docs>
+    </Member>
+    <Member MemberName="BinarySearch&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static int BinarySearch&lt;T&gt; (T[] array, int index, int length, T value, System.Collections.Generic.IComparer&lt;T&gt; comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 BinarySearch&lt;T&gt;(!!T[] array, int32 index, int32 length, !!T value, class System.Collections.Generic.IComparer`1&lt;!!T&gt; comparer) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -870,16 +901,12 @@ class BinarySearchExample {
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
-    </Member>
-    <Member MemberName="BinarySearch&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public static int BinarySearch&lt;T&gt; (T[] array, int index, int length, T value, System.Collections.Generic.IComparer&lt;T&gt; comparer);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="index" Type="System.Int32" />
@@ -956,23 +983,22 @@ class BinarySearchExample {
             <paramref name="comparer" /> is <see langword="null" />, and neither <paramref name="value" /> nor the elements of the array implement the <see cref="T:System.IComparable&lt;T&gt;" /> or <see cref="T:System.IComparable" /> interface.</para>
         </exception>
       </Docs>
+    </Member>
+    <Member MemberName="Clear">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Clear(class System.Array array, int32 index, int32 length)" />
+      <MemberSignature Language="C#" Value="public static void Clear (Array array, int index, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Clear(class System.Array array, int32 index, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
-    </Member>
-    <Member MemberName="Clear">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Clear(class System.Array array, int32 index, int32 length)" />
-      <MemberSignature Language="C#" Value="public static void Clear (Array array, int index, int length);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1009,21 +1035,17 @@ class BinarySearchExample {
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Clone">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual object Clone()" />
+      <MemberSignature Language="C#" Value="public object Clone ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object Clone() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Clone">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual object Clone()" />
-      <MemberSignature Language="C#" Value="public object Clone ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -1101,15 +1123,20 @@ public class ArrayCloneExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ConstrainedCopy">
       <MemberSignature Language="C#" Value="public static void ConstrainedCopy (Array sourceArray, int sourceIndex, Array destinationArray, int destinationIndex, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ConstrainedCopy(class System.Array sourceArray, int32 sourceIndex, class System.Array destinationArray, int32 destinationIndex, int32 length) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1130,22 +1157,22 @@ public class ArrayCloneExample {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="ConvertAll&lt;TInput,TOutput&gt;">
+      <MemberSignature Language="C#" Value="public static TOutput[] ConvertAll&lt;TInput,TOutput&gt; (TInput[] array, Converter&lt;TInput,TOutput&gt; converter);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TOutput[] ConvertAll&lt;TInput, TOutput&gt;(!!TInput[] array, class System.Converter`2&lt;!!TInput, !!TOutput&gt; converter) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="ConvertAll&lt;TInput,TOutput&gt;">
-      <MemberSignature Language="C#" Value="public static TOutput[] ConvertAll&lt;TInput,TOutput&gt; (TInput[] array, Converter&lt;TInput,TOutput&gt; converter);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>TOutput[]</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TInput" />
+        <TypeParameter Name="TOutput" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="TInput[]" />
         <Parameter Name="converter" Type="System.Converter&lt;TInput,TOutput&gt;" />
@@ -1170,19 +1197,22 @@ public class ArrayCloneExample {
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" /> is <see langword="null" /> or <paramref name="converter" /> is <see langword="null" />.</exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <TypeParameters>
-        <TypeParameter Name="TInput" />
-        <TypeParameter Name="TOutput" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Copy">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static void Copy(class System.Array sourceArray, class System.Array destinationArray, int32 length)" />
       <MemberSignature Language="C#" Value="public static void Copy (Array sourceArray, Array destinationArray, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Copy(class System.Array sourceArray, class System.Array destinationArray, int32 length) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1274,6 +1304,11 @@ public class ArrayCopyExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Copy">
+      <MemberSignature Language="C#" Value="public static void Copy (Array sourceArray, Array destinationArray, long length);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Copy(class System.Array sourceArray, class System.Array destinationArray, int64 length) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1284,10 +1319,6 @@ public class ArrayCopyExample {
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Copy">
-      <MemberSignature Language="C#" Value="public static void Copy (Array sourceArray, Array destinationArray, long length);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1303,6 +1334,12 @@ public class ArrayCopyExample {
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Copy">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Copy(class System.Array sourceArray, int32 sourceIndex, class System.Array destinationArray, int32 destinationIndex, int32 length)" />
+      <MemberSignature Language="C#" Value="public static void Copy (Array sourceArray, int sourceIndex, Array destinationArray, int destinationIndex, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Copy(class System.Array sourceArray, int32 sourceIndex, class System.Array destinationArray, int32 destinationIndex, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1313,11 +1350,6 @@ public class ArrayCopyExample {
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Copy">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Copy(class System.Array sourceArray, int32 sourceIndex, class System.Array destinationArray, int32 destinationIndex, int32 length)" />
-      <MemberSignature Language="C#" Value="public static void Copy (Array sourceArray, int sourceIndex, Array destinationArray, int destinationIndex, int length);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1414,6 +1446,11 @@ class ArrayCopyExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Copy">
+      <MemberSignature Language="C#" Value="public static void Copy (Array sourceArray, long sourceIndex, Array destinationArray, long destinationIndex, long length);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Copy(class System.Array sourceArray, int64 sourceIndex, class System.Array destinationArray, int64 destinationIndex, int64 length) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1424,10 +1461,6 @@ class ArrayCopyExample {
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Copy">
-      <MemberSignature Language="C#" Value="public static void Copy (Array sourceArray, long sourceIndex, Array destinationArray, long destinationIndex, long length);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1447,21 +1480,17 @@ class ArrayCopyExample {
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void CopyTo(class System.Array array, int32 index)" />
+      <MemberSignature Language="C#" Value="public void CopyTo (Array array, int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void CopyTo(class System.Array array, int32 index) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="CopyTo">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual void CopyTo(class System.Array array, int32 index)" />
-      <MemberSignature Language="C#" Value="public void CopyTo (Array array, int index);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1574,15 +1603,21 @@ public class ArrayCopyToExample
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="C#" Value="public void CopyTo (Array array, long index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CopyTo(class System.Array array, int64 index) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CopyTo">
-      <MemberSignature Language="C#" Value="public void CopyTo (Array array, long index);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1596,21 +1631,17 @@ public class ArrayCopyToExample
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="CreateInstance">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Array CreateInstance(class System.Type elementType, int32 length)" />
+      <MemberSignature Language="C#" Value="public static Array CreateInstance (Type elementType, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Array CreateInstance(class System.Type elementType, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="CreateInstance">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Array CreateInstance(class System.Type elementType, int32 length)" />
-      <MemberSignature Language="C#" Value="public static Array CreateInstance (Type elementType, int length);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Array</ReturnType>
       </ReturnValue>
@@ -1673,16 +1704,17 @@ public class ArrayCreateInstanceExample
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CreateInstance">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Array CreateInstance(class System.Type elementType, class System.Int32[] lengths)" />
+      <MemberSignature Language="C#" Value="public static Array CreateInstance (Type elementType, int[] lengths);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Array CreateInstance(class System.Type elementType, int32[] lengths) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreateInstance">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Array CreateInstance(class System.Type elementType, class System.Int32[] lengths)" />
-      <MemberSignature Language="C#" Value="public static Array CreateInstance (Type elementType, int[] lengths);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Array</ReturnType>
       </ReturnValue>
@@ -1790,15 +1822,16 @@ public class CreateMultiDimArrayExample
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedArray</ExcludedLibrary>
+    </Member>
+    <Member MemberName="CreateInstance">
+      <MemberSignature Language="C#" Value="public static Array CreateInstance (Type elementType, long[] lengths);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Array CreateInstance(class System.Type elementType, int64[] lengths) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreateInstance">
-      <MemberSignature Language="C#" Value="public static Array CreateInstance (Type elementType, long[] lengths);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Array</ReturnType>
       </ReturnValue>
@@ -1819,16 +1852,17 @@ public class CreateMultiDimArrayExample
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="CreateInstance">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Array CreateInstance(class System.Type elementType, int32 length1, int32 length2)" />
+      <MemberSignature Language="C#" Value="public static Array CreateInstance (Type elementType, int length1, int length2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Array CreateInstance(class System.Type elementType, int32 length1, int32 length2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreateInstance">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Array CreateInstance(class System.Type elementType, int32 length1, int32 length2)" />
-      <MemberSignature Language="C#" Value="public static Array CreateInstance (Type elementType, int length1, int length2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Array</ReturnType>
       </ReturnValue>
@@ -1915,16 +1949,17 @@ public class Create2DArrayExample
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedArray</ExcludedLibrary>
+    </Member>
+    <Member MemberName="CreateInstance">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Array CreateInstance(class System.Type elementType, class System.Int32[] lengths, class System.Int32[] lowerBounds)" />
+      <MemberSignature Language="C#" Value="public static Array CreateInstance (Type elementType, int[] lengths, int[] lowerBounds);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Array CreateInstance(class System.Type elementType, int32[] lengths, int32[] lowerBounds) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreateInstance">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Array CreateInstance(class System.Type elementType, class System.Int32[] lengths, class System.Int32[] lowerBounds)" />
-      <MemberSignature Language="C#" Value="public static Array CreateInstance (Type elementType, int[] lengths, int[] lowerBounds);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Array</ReturnType>
       </ReturnValue>
@@ -2037,16 +2072,17 @@ public class MultiDimNonZeroBoundExample
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedArray</ExcludedLibrary>
+    </Member>
+    <Member MemberName="CreateInstance">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Array CreateInstance(class System.Type elementType, int32 length1, int32 length2, int32 length3)" />
+      <MemberSignature Language="C#" Value="public static Array CreateInstance (Type elementType, int length1, int length2, int length3);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Array CreateInstance(class System.Type elementType, int32 length1, int32 length2, int32 length3) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreateInstance">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Array CreateInstance(class System.Type elementType, int32 length1, int32 length2, int32 length3)" />
-      <MemberSignature Language="C#" Value="public static Array CreateInstance (Type elementType, int length1, int length2, int length3);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Array</ReturnType>
       </ReturnValue>
@@ -2149,18 +2185,21 @@ public class Create3DArrayExample
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedArray</ExcludedLibrary>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Exists&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static bool Exists&lt;T&gt; (T[] array, Predicate&lt;T&gt; match);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Exists&lt;T&gt;(!!T[] array, class System.Predicate`1&lt;!!T&gt; match) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
@@ -2185,20 +2224,21 @@ public class Create3DArrayExample
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
       </Docs>
+    </Member>
+    <Member MemberName="Find&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static T Find&lt;T&gt; (T[] array, Predicate&lt;T&gt; match);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T Find&lt;T&gt;(!!T[] array, class System.Predicate`1&lt;!!T&gt; match) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
-    </Member>
-    <Member MemberName="Find&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public static T Find&lt;T&gt; (T[] array, Predicate&lt;T&gt; match);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>T</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
@@ -2222,20 +2262,21 @@ public class Create3DArrayExample
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
       </Docs>
+    </Member>
+    <Member MemberName="FindAll&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static T[] FindAll&lt;T&gt; (T[] array, Predicate&lt;T&gt; match);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T[] FindAll&lt;T&gt;(!!T[] array, class System.Predicate`1&lt;!!T&gt; match) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
-    </Member>
-    <Member MemberName="FindAll&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public static T[] FindAll&lt;T&gt; (T[] array, Predicate&lt;T&gt; match);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>T[]</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
@@ -2259,20 +2300,21 @@ public class Create3DArrayExample
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
       </Docs>
+    </Member>
+    <Member MemberName="FindIndex&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static int FindIndex&lt;T&gt; (T[] array, Predicate&lt;T&gt; match);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FindIndex&lt;T&gt;(!!T[] array, class System.Predicate`1&lt;!!T&gt; match) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
-    </Member>
-    <Member MemberName="FindIndex&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public static int FindIndex&lt;T&gt; (T[] array, Predicate&lt;T&gt; match);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
@@ -2296,20 +2338,21 @@ public class Create3DArrayExample
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
       </Docs>
+    </Member>
+    <Member MemberName="FindIndex&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static int FindIndex&lt;T&gt; (T[] array, int startIndex, Predicate&lt;T&gt; match);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FindIndex&lt;T&gt;(!!T[] array, int32 startIndex, class System.Predicate`1&lt;!!T&gt; match) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
-    </Member>
-    <Member MemberName="FindIndex&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public static int FindIndex&lt;T&gt; (T[] array, int startIndex, Predicate&lt;T&gt; match);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="startIndex" Type="System.Int32" />
@@ -2339,20 +2382,21 @@ public class Create3DArrayExample
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="startIndex" /> is less than zero or greater than <paramref name="array" /><see langword=".Length" />.</exception>
       </Docs>
+    </Member>
+    <Member MemberName="FindIndex&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static int FindIndex&lt;T&gt; (T[] array, int startIndex, int count, Predicate&lt;T&gt; match);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FindIndex&lt;T&gt;(!!T[] array, int32 startIndex, int32 count, class System.Predicate`1&lt;!!T&gt; match) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
-    </Member>
-    <Member MemberName="FindIndex&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public static int FindIndex&lt;T&gt; (T[] array, int startIndex, int count, Predicate&lt;T&gt; match);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="startIndex" Type="System.Int32" />
@@ -2394,20 +2438,21 @@ public class Create3DArrayExample
             <paramref name="startIndex" /> + <paramref name="count" /> is greater than <paramref name="array" /><see langword=".Length" />.</para>
         </exception>
       </Docs>
+    </Member>
+    <Member MemberName="FindLast&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static T FindLast&lt;T&gt; (T[] array, Predicate&lt;T&gt; match);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T FindLast&lt;T&gt;(!!T[] array, class System.Predicate`1&lt;!!T&gt; match) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
-    </Member>
-    <Member MemberName="FindLast&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public static T FindLast&lt;T&gt; (T[] array, Predicate&lt;T&gt; match);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>T</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
@@ -2431,20 +2476,21 @@ public class Create3DArrayExample
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
       </Docs>
+    </Member>
+    <Member MemberName="FindLastIndex&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static int FindLastIndex&lt;T&gt; (T[] array, Predicate&lt;T&gt; match);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FindLastIndex&lt;T&gt;(!!T[] array, class System.Predicate`1&lt;!!T&gt; match) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
-    </Member>
-    <Member MemberName="FindLastIndex&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public static int FindLastIndex&lt;T&gt; (T[] array, Predicate&lt;T&gt; match);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
@@ -2468,20 +2514,21 @@ public class Create3DArrayExample
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
       </Docs>
+    </Member>
+    <Member MemberName="FindLastIndex&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static int FindLastIndex&lt;T&gt; (T[] array, int startIndex, Predicate&lt;T&gt; match);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FindLastIndex&lt;T&gt;(!!T[] array, int32 startIndex, class System.Predicate`1&lt;!!T&gt; match) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
-    </Member>
-    <Member MemberName="FindLastIndex&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public static int FindLastIndex&lt;T&gt; (T[] array, int startIndex, Predicate&lt;T&gt; match);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="startIndex" Type="System.Int32" />
@@ -2511,20 +2558,21 @@ public class Create3DArrayExample
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="startIndex" /> is less than zero or greater than <paramref name="array" /><see langword=".Length" />.</exception>
       </Docs>
+    </Member>
+    <Member MemberName="FindLastIndex&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static int FindLastIndex&lt;T&gt; (T[] array, int startIndex, int count, Predicate&lt;T&gt; match);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 FindLastIndex&lt;T&gt;(!!T[] array, int32 startIndex, int32 count, class System.Predicate`1&lt;!!T&gt; match) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
-    </Member>
-    <Member MemberName="FindLastIndex&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public static int FindLastIndex&lt;T&gt; (T[] array, int startIndex, int count, Predicate&lt;T&gt; match);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="startIndex" Type="System.Int32" />
@@ -2566,20 +2614,21 @@ public class Create3DArrayExample
             <paramref name="count" /> is greater than <paramref name="startIndex" /> + 1.</para>
         </exception>
       </Docs>
+    </Member>
+    <Member MemberName="ForEach&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static void ForEach&lt;T&gt; (T[] array, Action&lt;T&gt; action);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ForEach&lt;T&gt;(!!T[] array, class System.Action`1&lt;!!T&gt; action) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
-    </Member>
-    <Member MemberName="ForEach&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public static void ForEach&lt;T&gt; (T[] array, Action&lt;T&gt; action);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="action" Type="System.Action&lt;T&gt;" />
@@ -2600,18 +2649,17 @@ public class Create3DArrayExample
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="action" /> is <see langword="null" />.</exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
     </Member>
     <Member MemberName="GetEnumerator">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Collections.IEnumerator GetEnumerator()" />
       <MemberSignature Language="C#" Value="public System.Collections.IEnumerator GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.IEnumerator GetEnumerator() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.IEnumerator</ReturnType>
       </ReturnValue>
@@ -2685,15 +2733,16 @@ public class ArrayGetEnumerator {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetLength">
+      <MemberSignature Language="C#" Value="public int GetLength (int dimension);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 GetLength(int32 dimension) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetLength">
-      <MemberSignature Language="C#" Value="public int GetLength (int dimension);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2717,15 +2766,21 @@ public class ArrayGetEnumerator {
             <paramref name="dimension" /> is equal to or greater than <see cref="P:System.Array.Rank" />.</para>
         </exception>
       </Docs>
+    </Member>
+    <Member MemberName="GetLongLength">
+      <MemberSignature Language="C#" Value="public long GetLongLength (int dimension);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int64 GetLongLength(int32 dimension) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetLongLength">
-      <MemberSignature Language="C#" Value="public long GetLongLength (int dimension);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -2738,6 +2793,12 @@ public class ArrayGetEnumerator {
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetLowerBound">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 GetLowerBound(int32 dimension)" />
+      <MemberSignature Language="C#" Value="public int GetLowerBound (int dimension);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 GetLowerBound(int32 dimension) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2745,14 +2806,9 @@ public class ArrayGetEnumerator {
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="GetLowerBound">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 GetLowerBound(int32 dimension)" />
-      <MemberSignature Language="C#" Value="public int GetLowerBound (int dimension);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2787,6 +2843,12 @@ public class ArrayGetEnumerator {
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>RuntimeInfrastructure</ExcludedLibrary>
+    </Member>
+    <Member MemberName="GetUpperBound">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 GetUpperBound(int32 dimension)" />
+      <MemberSignature Language="C#" Value="public int GetUpperBound (int dimension);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 GetUpperBound(int32 dimension) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2797,11 +2859,6 @@ public class ArrayGetEnumerator {
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="GetUpperBound">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 GetUpperBound(int32 dimension)" />
-      <MemberSignature Language="C#" Value="public int GetUpperBound (int dimension);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2836,21 +2893,17 @@ of the current instance.</block>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>RuntimeInfrastructure</ExcludedLibrary>
+    </Member>
+    <Member MemberName="GetValue">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance object GetValue(int32 index)" />
+      <MemberSignature Language="C#" Value="public object GetValue (int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance object GetValue(int32 index) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="GetValue">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance object GetValue(int32 index)" />
-      <MemberSignature Language="C#" Value="public object GetValue (int index);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -2899,16 +2952,17 @@ public class ArrayGetValueExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetValue">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance object GetValue(class System.Int32[] indices)" />
+      <MemberSignature Language="C#" Value="public object GetValue (int[] indices);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance object GetValue(int32[] indices) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetValue">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance object GetValue(class System.Int32[] indices)" />
-      <MemberSignature Language="C#" Value="public object GetValue (int[] indices);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -2951,15 +3005,21 @@ bounds.</block>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedArray</ExcludedLibrary>
+    </Member>
+    <Member MemberName="GetValue">
+      <MemberSignature Language="C#" Value="public object GetValue (long index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance object GetValue(int64 index) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetValue">
-      <MemberSignature Language="C#" Value="public object GetValue (long index);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -2972,6 +3032,11 @@ bounds.</block>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetValue">
+      <MemberSignature Language="C#" Value="public object GetValue (long[] indices);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance object GetValue(int64[] indices) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2982,10 +3047,6 @@ bounds.</block>
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="GetValue">
-      <MemberSignature Language="C#" Value="public object GetValue (long[] indices);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -3004,21 +3065,17 @@ bounds.</block>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetValue">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance object GetValue(int32 index1, int32 index2)" />
+      <MemberSignature Language="C#" Value="public object GetValue (int index1, int index2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance object GetValue(int32 index1, int32 index2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="GetValue">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance object GetValue(int32 index1, int32 index2)" />
-      <MemberSignature Language="C#" Value="public object GetValue (int index1, int index2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -3049,15 +3106,21 @@ bounds.</block>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedArray</ExcludedLibrary>
+    </Member>
+    <Member MemberName="GetValue">
+      <MemberSignature Language="C#" Value="public object GetValue (long index1, long index2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance object GetValue(int64 index1, int64 index2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetValue">
-      <MemberSignature Language="C#" Value="public object GetValue (long index1, long index2);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -3072,21 +3135,17 @@ bounds.</block>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetValue">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance object GetValue(int32 index1, int32 index2, int32 index3)" />
+      <MemberSignature Language="C#" Value="public object GetValue (int index1, int index2, int index3);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance object GetValue(int32 index1, int32 index2, int32 index3) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="GetValue">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance object GetValue(int32 index1, int32 index2, int32 index3)" />
-      <MemberSignature Language="C#" Value="public object GetValue (int index1, int index2, int index3);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -3121,15 +3180,21 @@ bounds.</block>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedArray</ExcludedLibrary>
+    </Member>
+    <Member MemberName="GetValue">
+      <MemberSignature Language="C#" Value="public object GetValue (long index1, long index2, long index3);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance object GetValue(int64 index1, int64 index2, int64 index3) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetValue">
-      <MemberSignature Language="C#" Value="public object GetValue (long index1, long index2, long index3);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -3146,6 +3211,12 @@ bounds.</block>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="IndexOf">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 IndexOf(class System.Array array, object value)" />
+      <MemberSignature Language="C#" Value="public static int IndexOf (Array array, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 IndexOf(class System.Array array, object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -3153,14 +3224,9 @@ bounds.</block>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="IndexOf">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 IndexOf(class System.Array array, object value)" />
-      <MemberSignature Language="C#" Value="public static int IndexOf (Array array, object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3212,6 +3278,12 @@ public class ArrayIndexOfExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="IndexOf">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 IndexOf(class System.Array array, object value, int32 startIndex)" />
+      <MemberSignature Language="C#" Value="public static int IndexOf (Array array, object value, int startIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 IndexOf(class System.Array array, object value, int32 startIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -3222,11 +3294,6 @@ public class ArrayIndexOfExample {
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="IndexOf">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 IndexOf(class System.Array array, object value, int32 startIndex)" />
-      <MemberSignature Language="C#" Value="public static int IndexOf (Array array, object value, int startIndex);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3268,6 +3335,12 @@ public class ArrayIndexOfExample {
           <paramref name="array" /> has more than one dimension.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="IndexOf">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 IndexOf(class System.Array array, object value, int32 startIndex, int32 count)" />
+      <MemberSignature Language="C#" Value="public static int IndexOf (Array array, object value, int startIndex, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 IndexOf(class System.Array array, object value, int32 startIndex, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -3278,11 +3351,6 @@ public class ArrayIndexOfExample {
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="IndexOf">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 IndexOf(class System.Array array, object value, int32 startIndex, int32 count)" />
-      <MemberSignature Language="C#" Value="public static int IndexOf (Array array, object value, int startIndex, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3330,23 +3398,21 @@ found, the return value will be -1. This provides the caller with a standard cod
           <paramref name="array" /> has more than one dimension.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="IndexOf&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static int IndexOf&lt;T&gt; (T[] array, T value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 IndexOf&lt;T&gt;(!!T[] array, !!T value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="value" Type="T" />
@@ -3371,20 +3437,21 @@ found, the return value will be -1. This provides the caller with a standard cod
             <paramref name="array" /> is <see langword="null" />.</para>
         </exception>
       </Docs>
+    </Member>
+    <Member MemberName="IndexOf&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static int IndexOf&lt;T&gt; (T[] array, T value, int startIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 IndexOf&lt;T&gt;(!!T[] array, !!T value, int32 startIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
-    </Member>
-    <Member MemberName="IndexOf&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public static int IndexOf&lt;T&gt; (T[] array, T value, int startIndex);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="value" Type="T" />
@@ -3416,20 +3483,21 @@ found, the return value will be -1. This provides the caller with a standard cod
             <paramref name="startIndex" /> is less than zero or greater than <paramref name="array" /><see langword=".Length" />.</para>
         </exception>
       </Docs>
+    </Member>
+    <Member MemberName="IndexOf&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static int IndexOf&lt;T&gt; (T[] array, T value, int startIndex, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 IndexOf&lt;T&gt;(!!T[] array, !!T value, int32 startIndex, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
-    </Member>
-    <Member MemberName="IndexOf&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public static int IndexOf&lt;T&gt; (T[] array, T value, int startIndex, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="value" Type="T" />
@@ -3470,18 +3538,17 @@ found, the return value will be -1. This provides the caller with a standard cod
             <paramref name="startIndex" /> + <paramref name="count" /> is greater than <see cref="P:System.Array.Length" />.</para>
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Initialize">
       <MemberSignature Language="ILASM" Value=".method public hidebysig instance void Initialize()" />
       <MemberSignature Language="C#" Value="public void Initialize ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Initialize() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -3505,16 +3572,17 @@ found, the return value will be -1. This provides the caller with a standard cod
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>RuntimeInfrastructure</ExcludedLibrary>
+    </Member>
+    <Member MemberName="IsFixedSize">
+      <MemberSignature Language="ILASM" Value=".property bool IList.IsFixedSize { public hidebysig virtual abstract specialname bool get_IList.IsFixedSize() }" />
+      <MemberSignature Language="C#" Value="public bool IsFixedSize { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsFixedSize" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsFixedSize">
-      <MemberSignature Language="ILASM" Value=".property bool IList.IsFixedSize { public hidebysig virtual abstract specialname bool get_IList.IsFixedSize() }" />
-      <MemberSignature Language="C#" Value="public bool IsFixedSize { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3525,16 +3593,17 @@ found, the return value will be -1. This provides the caller with a standard cod
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="IsReadOnly">
+      <MemberSignature Language="ILASM" Value=".property bool IList.IsReadOnly { public hidebysig virtual abstract specialname bool get_IList.IsReadOnly() }" />
+      <MemberSignature Language="C#" Value="public bool IsReadOnly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsReadOnly" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsReadOnly">
-      <MemberSignature Language="ILASM" Value=".property bool IList.IsReadOnly { public hidebysig virtual abstract specialname bool get_IList.IsReadOnly() }" />
-      <MemberSignature Language="C#" Value="public bool IsReadOnly { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3545,16 +3614,17 @@ found, the return value will be -1. This provides the caller with a standard cod
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="IsSynchronized">
+      <MemberSignature Language="ILASM" Value=".property bool ICollection.IsSynchronized { public hidebysig virtual abstract specialname bool get_ICollection.IsSynchronized() }" />
+      <MemberSignature Language="C#" Value="public bool IsSynchronized { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsSynchronized" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsSynchronized">
-      <MemberSignature Language="ILASM" Value=".property bool ICollection.IsSynchronized { public hidebysig virtual abstract specialname bool get_ICollection.IsSynchronized() }" />
-      <MemberSignature Language="C#" Value="public bool IsSynchronized { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3565,16 +3635,22 @@ found, the return value will be -1. This provides the caller with a standard cod
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="LastIndexOf">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 LastIndexOf(class System.Array array, object value)" />
+      <MemberSignature Language="C#" Value="public static int LastIndexOf (Array array, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 LastIndexOf(class System.Array array, object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LastIndexOf">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 LastIndexOf(class System.Array array, object value)" />
-      <MemberSignature Language="C#" Value="public static int LastIndexOf (Array array, object value);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3629,6 +3705,12 @@ public class ArrayLastIndexOfExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="LastIndexOf">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 LastIndexOf(class System.Array array, object value, int32 startIndex)" />
+      <MemberSignature Language="C#" Value="public static int LastIndexOf (Array array, object value, int startIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 LastIndexOf(class System.Array array, object value, int32 startIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -3639,11 +3721,6 @@ public class ArrayLastIndexOfExample {
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="LastIndexOf">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 LastIndexOf(class System.Array array, object value, int32 startIndex)" />
-      <MemberSignature Language="C#" Value="public static int LastIndexOf (Array array, object value, int startIndex);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3683,6 +3760,12 @@ public class ArrayLastIndexOfExample {
           <paramref name="array" /> has more than one dimension.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="LastIndexOf">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 LastIndexOf(class System.Array array, object value, int32 startIndex, int32 count)" />
+      <MemberSignature Language="C#" Value="public static int LastIndexOf (Array array, object value, int startIndex, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 LastIndexOf(class System.Array array, object value, int32 startIndex, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -3693,11 +3776,6 @@ public class ArrayLastIndexOfExample {
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="LastIndexOf">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 LastIndexOf(class System.Array array, object value, int32 startIndex, int32 count)" />
-      <MemberSignature Language="C#" Value="public static int LastIndexOf (Array array, object value, int startIndex, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3745,23 +3823,21 @@ public class ArrayLastIndexOfExample {
           <paramref name="array" /> has more than one dimension.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="LastIndexOf&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static int LastIndexOf&lt;T&gt; (T[] array, T value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 LastIndexOf&lt;T&gt;(!!T[] array, !!T value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="value" Type="T" />
@@ -3786,20 +3862,21 @@ public class ArrayLastIndexOfExample {
             <paramref name="array" /> is <see langword="null" />.</para>
         </exception>
       </Docs>
+    </Member>
+    <Member MemberName="LastIndexOf&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static int LastIndexOf&lt;T&gt; (T[] array, T value, int startIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 LastIndexOf&lt;T&gt;(!!T[] array, !!T value, int32 startIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
-    </Member>
-    <Member MemberName="LastIndexOf&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public static int LastIndexOf&lt;T&gt; (T[] array, T value, int startIndex);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="value" Type="T" />
@@ -3831,20 +3908,21 @@ public class ArrayLastIndexOfExample {
             <paramref name="startIndex" /> is outside the range of valid indices for <paramref name="array" />.</para>
         </exception>
       </Docs>
+    </Member>
+    <Member MemberName="LastIndexOf&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static int LastIndexOf&lt;T&gt; (T[] array, T value, int startIndex, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 LastIndexOf&lt;T&gt;(!!T[] array, !!T value, int32 startIndex, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
-    </Member>
-    <Member MemberName="LastIndexOf&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public static int LastIndexOf&lt;T&gt; (T[] array, T value, int startIndex, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="value" Type="T" />
@@ -3885,18 +3963,22 @@ public class ArrayLastIndexOfExample {
             <paramref name="count" /> is greater than <paramref name="startIndex" /> + 1.</para>
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Length">
       <MemberSignature Language="ILASM" Value=".property int32 Length { public hidebysig specialname instance int32 get_Length() }" />
       <MemberSignature Language="C#" Value="public int Length { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Length" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>get: System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3915,6 +3997,12 @@ public class ArrayLastIndexOfExample {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="LongLength">
+      <MemberSignature Language="ILASM" value=".property int32 Length { public hidebysig specialname instance int32 get_LongLength() }" />
+      <MemberSignature Language="C#" Value="public long LongLength { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 LongLength" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -3922,14 +4010,12 @@ public class ArrayLastIndexOfExample {
       </AssemblyInfo>
       <Attributes>
         <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
           <AttributeName>get: System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="LongLength">
-      <MemberSignature Language="ILASM" value=".property int32 Length { public hidebysig specialname instance int32 get_LongLength() }" />
-      <MemberSignature Language="C#" Value="public long LongLength { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -3946,24 +4032,22 @@ public class ArrayLastIndexOfExample {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>get: System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
-        </Attribute>
-      </Attributes>
+    </Member>
+    <Member MemberName="Rank">
+      <MemberSignature Language="ILASM" Value=".property int32 Rank { public hidebysig specialname instance int32 get_Rank() }" />
+      <MemberSignature Language="C#" Value="public int Rank { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Rank" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Rank">
-      <MemberSignature Language="ILASM" Value=".property int32 Rank { public hidebysig specialname instance int32 get_Rank() }" />
-      <MemberSignature Language="C#" Value="public int Rank { get; }" />
-      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>get: System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3980,23 +4064,26 @@ public class ArrayLastIndexOfExample {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Resize&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static void Resize&lt;T&gt; (ref T[] array, int newSize);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Resize&lt;T&gt;(!!T[] array, int32 newSize) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>get: System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Resize&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public static void Resize&lt;T&gt; (ref T[] array, int newSize);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]&amp;" RefType="ref" />
         <Parameter Name="newSize" Type="System.Int32" />
@@ -4009,23 +4096,22 @@ public class ArrayLastIndexOfExample {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Reverse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Reverse(class System.Array array)" />
+      <MemberSignature Language="C#" Value="public static void Reverse (Array array);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Reverse(class System.Array array) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
-    </Member>
-    <Member MemberName="Reverse">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Reverse(class System.Array array)" />
-      <MemberSignature Language="C#" Value="public static void Reverse (Array array);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -4048,6 +4134,12 @@ public class ArrayLastIndexOfExample {
           <paramref name="array" /> has more than one dimension.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Reverse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Reverse(class System.Array array, int32 index, int32 length)" />
+      <MemberSignature Language="C#" Value="public static void Reverse (Array array, int index, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Reverse(class System.Array array, int32 index, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -4058,11 +4150,6 @@ public class ArrayLastIndexOfExample {
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Reverse">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Reverse(class System.Array array, int32 index, int32 length)" />
-      <MemberSignature Language="C#" Value="public static void Reverse (Array array, int index, int length);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -4119,21 +4206,17 @@ public class ArrayReverseExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="SetValue">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void SetValue(object value, int32 index)" />
+      <MemberSignature Language="C#" Value="public void SetValue (object value, int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetValue(object value, int32 index) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="SetValue">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void SetValue(object value, int32 index)" />
-      <MemberSignature Language="C#" Value="public void SetValue (object value, int index);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -4170,16 +4253,17 @@ public class ArrayReverseExample {
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="SetValue">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void SetValue(object value, class System.Int32[] indices)" />
+      <MemberSignature Language="C#" Value="public void SetValue (object value, int[] indices);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetValue(object value, int32[] indices) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetValue">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void SetValue(object value, class System.Int32[] indices)" />
-      <MemberSignature Language="C#" Value="public void SetValue (object value, int[] indices);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -4226,15 +4310,21 @@ public class ArrayReverseExample {
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedArray</ExcludedLibrary>
+    </Member>
+    <Member MemberName="SetValue">
+      <MemberSignature Language="C#" Value="public void SetValue (object value, long index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetValue(object value, int64 index) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetValue">
-      <MemberSignature Language="C#" Value="public void SetValue (object value, long index);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -4248,6 +4338,11 @@ public class ArrayReverseExample {
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="SetValue">
+      <MemberSignature Language="C#" Value="public void SetValue (object value, long[] indices);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetValue(object value, int64[] indices) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -4258,10 +4353,6 @@ public class ArrayReverseExample {
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="SetValue">
-      <MemberSignature Language="C#" Value="public void SetValue (object value, long[] indices);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -4281,21 +4372,17 @@ public class ArrayReverseExample {
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="SetValue">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void SetValue(object value, int32 index1, int32 index2)" />
+      <MemberSignature Language="C#" Value="public void SetValue (object value, int index1, int index2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetValue(object value, int32 index1, int32 index2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="SetValue">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void SetValue(object value, int32 index1, int32 index2)" />
-      <MemberSignature Language="C#" Value="public void SetValue (object value, int index1, int index2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -4331,15 +4418,21 @@ public class ArrayReverseExample {
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedArray</ExcludedLibrary>
+    </Member>
+    <Member MemberName="SetValue">
+      <MemberSignature Language="C#" Value="public void SetValue (object value, long index1, long index2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetValue(object value, int64 index1, int64 index2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetValue">
-      <MemberSignature Language="C#" Value="public void SetValue (object value, long index1, long index2);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -4355,21 +4448,17 @@ public class ArrayReverseExample {
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="SetValue">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void SetValue(object value, int32 index1, int32 index2, int32 index3)" />
+      <MemberSignature Language="C#" Value="public void SetValue (object value, int index1, int index2, int index3);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetValue(object value, int32 index1, int32 index2, int32 index3) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="SetValue">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void SetValue(object value, int32 index1, int32 index2, int32 index3)" />
-      <MemberSignature Language="C#" Value="public void SetValue (object value, int index1, int index2, int index3);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -4408,15 +4497,21 @@ public class ArrayReverseExample {
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedArray</ExcludedLibrary>
+    </Member>
+    <Member MemberName="SetValue">
+      <MemberSignature Language="C#" Value="public void SetValue (object value, long index1, long index2, long index3);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetValue(object value, int64 index1, int64 index2, int64 index3) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetValue">
-      <MemberSignature Language="C#" Value="public void SetValue (object value, long index1, long index2, long index3);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -4434,6 +4529,12 @@ public class ArrayReverseExample {
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Sort">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Sort(class System.Array array)" />
+      <MemberSignature Language="C#" Value="public static void Sort (Array array);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Sort(class System.Array array) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -4441,14 +4542,9 @@ public class ArrayReverseExample {
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Sort">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Sort(class System.Array array)" />
-      <MemberSignature Language="C#" Value="public static void Sort (Array array);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -4499,6 +4595,12 @@ public class ArraySortExample {
         <exception cref="T:System.InvalidOperationException">One or more elements in <paramref name="array" /> that are used in a comparison do not implement the <see cref="T:System.IComparable" /> interface.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Sort">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Sort(class System.Array keys, class System.Array items)" />
+      <MemberSignature Language="C#" Value="public static void Sort (Array keys, Array items);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Sort(class System.Array keys, class System.Array items) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -4509,11 +4611,6 @@ public class ArraySortExample {
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Sort">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Sort(class System.Array keys, class System.Array items)" />
-      <MemberSignature Language="C#" Value="public static void Sort (Array keys, Array items);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -4600,6 +4697,12 @@ public class ArraySortExample {
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Sort">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Sort(class System.Array array, class System.Collections.IComparer comparer)" />
+      <MemberSignature Language="C#" Value="public static void Sort (Array array, System.Collections.IComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Sort(class System.Array array, class System.Collections.IComparer comparer) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -4610,11 +4713,6 @@ public class ArraySortExample {
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Sort">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Sort(class System.Array array, class System.Collections.IComparer comparer)" />
-      <MemberSignature Language="C#" Value="public static void Sort (Array array, System.Collections.IComparer comparer);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -4649,6 +4747,12 @@ completed, the results are unspecified.</para>
           <paramref name="comparer" /> is a null reference, and one or more elements in <paramref name="array" /> that are used in a comparison do not implement the <see cref="T:System.IComparable" /> interface.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Sort">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Sort(class System.Array keys, class System.Array items, class System.Collections.IComparer comparer)" />
+      <MemberSignature Language="C#" Value="public static void Sort (Array keys, Array items, System.Collections.IComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Sort(class System.Array keys, class System.Array items, class System.Collections.IComparer comparer) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -4659,11 +4763,6 @@ completed, the results are unspecified.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Sort">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Sort(class System.Array keys, class System.Array items, class System.Collections.IComparer comparer)" />
-      <MemberSignature Language="C#" Value="public static void Sort (Array keys, Array items, System.Collections.IComparer comparer);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -4725,6 +4824,12 @@ with every other element in <paramref name="keys" />.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Sort">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Sort(class System.Array array, int32 index, int32 length)" />
+      <MemberSignature Language="C#" Value="public static void Sort (Array array, int index, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Sort(class System.Array array, int32 index, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -4735,11 +4840,6 @@ with every other element in <paramref name="keys" />.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Sort">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Sort(class System.Array array, int32 index, int32 length)" />
-      <MemberSignature Language="C#" Value="public static void Sort (Array array, int index, int length);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -4786,6 +4886,12 @@ results are unspecified.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Sort">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Sort(class System.Array keys, class System.Array items, int32 index, int32 length)" />
+      <MemberSignature Language="C#" Value="public static void Sort (Array keys, Array items, int index, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Sort(class System.Array keys, class System.Array items, int32 index, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -4796,11 +4902,6 @@ results are unspecified.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Sort">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Sort(class System.Array keys, class System.Array items, int32 index, int32 length)" />
-      <MemberSignature Language="C#" Value="public static void Sort (Array keys, Array items, int index, int length);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -4868,6 +4969,12 @@ be capable of comparisons with every other element in <paramref name="keys" />.<
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Sort">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Sort(class System.Array array, int32 index, int32 length, class System.Collections.IComparer comparer)" />
+      <MemberSignature Language="C#" Value="public static void Sort (Array array, int index, int length, System.Collections.IComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Sort(class System.Array array, int32 index, int32 length, class System.Collections.IComparer comparer) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -4878,11 +4985,6 @@ be capable of comparisons with every other element in <paramref name="keys" />.<
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Sort">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Sort(class System.Array array, int32 index, int32 length, class System.Collections.IComparer comparer)" />
-      <MemberSignature Language="C#" Value="public static void Sort (Array array, int index, int length, System.Collections.IComparer comparer);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -4933,6 +5035,12 @@ completed, the results are unspecified.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Sort">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Sort(class System.Array keys, class System.Array items, int32 index, int32 length, class System.Collections.IComparer comparer)" />
+      <MemberSignature Language="C#" Value="public static void Sort (Array keys, Array items, int index, int length, System.Collections.IComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Sort(class System.Array keys, class System.Array items, int32 index, int32 length, class System.Collections.IComparer comparer) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -4943,11 +5051,6 @@ completed, the results are unspecified.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Sort">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Sort(class System.Array keys, class System.Array items, int32 index, int32 length, class System.Collections.IComparer comparer)" />
-      <MemberSignature Language="C#" Value="public static void Sort (Array keys, Array items, int index, int length, System.Collections.IComparer comparer);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -5021,8 +5124,12 @@ with every other element in <paramref name="keys" />.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Sort&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static void Sort&lt;T&gt; (T[] array);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Sort&lt;T&gt;(!!T[] array) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
@@ -5031,13 +5138,12 @@ with every other element in <paramref name="keys" />.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Sort&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public static void Sort&lt;T&gt; (T[] array);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
       </Parameters>
@@ -5063,6 +5169,11 @@ with every other element in <paramref name="keys" />.</para>
           <para>One or more elements in <paramref name="array" /> that are used in a comparison are the null reference or do not implement the <see cref="T:System.IComparable&lt;T&gt;" /> or <see cref="T: System.IComparable" /> interface.</para>
         </exception>
       </Docs>
+    </Member>
+    <Member MemberName="Sort&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static void Sort&lt;T&gt; (T[] array, System.Collections.Generic.IComparer&lt;T&gt; comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Sort&lt;T&gt;(!!T[] array, class System.Collections.Generic.IComparer`1&lt;!!T&gt; comparer) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -5072,16 +5183,12 @@ with every other element in <paramref name="keys" />.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
-    </Member>
-    <Member MemberName="Sort&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public static void Sort&lt;T&gt; (T[] array, System.Collections.Generic.IComparer&lt;T&gt; comparer);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="comparer" Type="System.Collections.Generic.IComparer&lt;T&gt;" />
@@ -5115,25 +5222,21 @@ with every other element in <paramref name="keys" />.</para>
             <paramref name="comparer" /> is <see langword="null" />, and one or more elements in <paramref name="array" /> that are used in a comparison do not implement the <see cref="T:System.IComparable&lt;T&gt;" /> or <see cref="T: System.IComparable" /> interface.</para>
         </exception>
       </Docs>
+    </Member>
+    <Member MemberName="Sort&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static void Sort&lt;T&gt; (T[] array, Comparison&lt;T&gt; comparison);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Sort&lt;T&gt;(!!T[] array, class System.Comparison`1&lt;!!T&gt; comparison) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
-        </Attribute>
-      </Attributes>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
-    </Member>
-    <Member MemberName="Sort&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public static void Sort&lt;T&gt; (T[] array, Comparison&lt;T&gt; comparison);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="comparison" Type="System.Comparison&lt;T&gt;" />
@@ -5162,20 +5265,26 @@ with every other element in <paramref name="keys" />.</para>
             <paramref name="comparison" /> is <see langword="null" />.</para>
         </exception>
       </Docs>
+    </Member>
+    <Member MemberName="Sort&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static void Sort&lt;T&gt; (T[] array, int index, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Sort&lt;T&gt;(!!T[] array, int32 index, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
-    </Member>
-    <Member MemberName="Sort&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public static void Sort&lt;T&gt; (T[] array, int index, int length);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="index" Type="System.Int32" />
@@ -5216,6 +5325,11 @@ with every other element in <paramref name="keys" />.</para>
           <para>One or more elements in <paramref name="array" /> that are used in a comparison do not implement the <see cref="T:System.IComparable&lt;T&gt;" /> or <see cref="T: System.IComparable" /> interface.</para>
         </exception>
       </Docs>
+    </Member>
+    <Member MemberName="Sort&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static void Sort&lt;T&gt; (T[] array, int index, int length, System.Collections.Generic.IComparer&lt;T&gt; comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Sort&lt;T&gt;(!!T[] array, int32 index, int32 length, class System.Collections.Generic.IComparer`1&lt;!!T&gt; comparer) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -5225,16 +5339,12 @@ with every other element in <paramref name="keys" />.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
-    </Member>
-    <Member MemberName="Sort&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public static void Sort&lt;T&gt; (T[] array, int index, int length, System.Collections.Generic.IComparer&lt;T&gt; comparer);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="index" Type="System.Int32" />
@@ -5283,6 +5393,11 @@ with every other element in <paramref name="keys" />.</para>
             <paramref name="comparer" /> is <see langword="null" />, and one or more elements in <paramref name="array" /> that are used in a comparison do not implement the <see cref="T:System.IComparable&lt;K&gt;" /> or <see cref="T: System.IComparable" /> interface.</para>
         </exception>
       </Docs>
+    </Member>
+    <Member MemberName="Sort&lt;TKey,TValue&gt;">
+      <MemberSignature Language="C#" Value="public static void Sort&lt;TKey,TValue&gt; (TKey[] keys, TValue[] items);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Sort&lt;TKey, TValue&gt;(!!TKey[] keys, !!TValue[] items) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -5292,16 +5407,13 @@ with every other element in <paramref name="keys" />.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
-    </Member>
-    <Member MemberName="Sort&lt;TKey,TValue&gt;">
-      <MemberSignature Language="C#" Value="public static void Sort&lt;TKey,TValue&gt; (TKey[] keys, TValue[] items);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TKey" />
+        <TypeParameter Name="TValue" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="keys" Type="TKey[]" />
         <Parameter Name="items" Type="TValue[]" />
@@ -5343,6 +5455,11 @@ with every other element in <paramref name="keys" />.</para>
           <para>One or more elements in <paramref name="keys" /> that are used in a comparison  are the null reference or do not implement the <see cref="T:System.IComparable&lt;K&gt;" /> or <see cref="T: System.IComparable" /> interface.</para>
         </exception>
       </Docs>
+    </Member>
+    <Member MemberName="Sort&lt;TKey,TValue&gt;">
+      <MemberSignature Language="C#" Value="public static void Sort&lt;TKey,TValue&gt; (TKey[] keys, TValue[] items, System.Collections.Generic.IComparer&lt;TKey&gt; comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Sort&lt;TKey, TValue&gt;(!!TKey[] keys, !!TValue[] items, class System.Collections.Generic.IComparer`1&lt;!!TKey&gt; comparer) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -5352,17 +5469,13 @@ with every other element in <paramref name="keys" />.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
       <TypeParameters>
         <TypeParameter Name="TKey" />
         <TypeParameter Name="TValue" />
       </TypeParameters>
-    </Member>
-    <Member MemberName="Sort&lt;TKey,TValue&gt;">
-      <MemberSignature Language="C#" Value="public static void Sort&lt;TKey,TValue&gt; (TKey[] keys, TValue[] items, System.Collections.Generic.IComparer&lt;TKey&gt; comparer);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
       <Parameters>
         <Parameter Name="keys" Type="TKey[]" />
         <Parameter Name="items" Type="TValue[]" />
@@ -5416,6 +5529,11 @@ with every other element in <paramref name="keys" />.</para>
             <paramref name="comparer" /> is <see langword="null" />, and one or more elements in <paramref name="keys" /> that are used in a comparison  do not implement the <see cref="T:System.IComparable&lt;K&gt;" /> or <see cref="T: System.IComparable" /> interface.</para>
         </exception>
       </Docs>
+    </Member>
+    <Member MemberName="Sort&lt;TKey,TValue&gt;">
+      <MemberSignature Language="C#" Value="public static void Sort&lt;TKey,TValue&gt; (TKey[] keys, TValue[] items, int index, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Sort&lt;TKey, TValue&gt;(!!TKey[] keys, !!TValue[] items, int32 index, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -5425,17 +5543,13 @@ with every other element in <paramref name="keys" />.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
       <TypeParameters>
         <TypeParameter Name="TKey" />
         <TypeParameter Name="TValue" />
       </TypeParameters>
-    </Member>
-    <Member MemberName="Sort&lt;TKey,TValue&gt;">
-      <MemberSignature Language="C#" Value="public static void Sort&lt;TKey,TValue&gt; (TKey[] keys, TValue[] items, int index, int length);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
       <Parameters>
         <Parameter Name="keys" Type="TKey[]" />
         <Parameter Name="items" Type="TValue[]" />
@@ -5491,6 +5605,11 @@ with every other element in <paramref name="keys" />.</para>
           <para>One or more elements in <paramref name="keys" /> that are used in a comparison are the null reference or do not implement the <see cref="T:System.IComparable&lt;K&gt;" /> or <see cref="T: System.IComparable" /> interface.</para>
         </exception>
       </Docs>
+    </Member>
+    <Member MemberName="Sort&lt;TKey,TValue&gt;">
+      <MemberSignature Language="C#" Value="public static void Sort&lt;TKey,TValue&gt; (TKey[] keys, TValue[] items, int index, int length, System.Collections.Generic.IComparer&lt;TKey&gt; comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Sort&lt;TKey, TValue&gt;(!!TKey[] keys, !!TValue[] items, int32 index, int32 length, class System.Collections.Generic.IComparer`1&lt;!!TKey&gt; comparer) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -5500,17 +5619,13 @@ with every other element in <paramref name="keys" />.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
       <TypeParameters>
         <TypeParameter Name="TKey" />
         <TypeParameter Name="TValue" />
       </TypeParameters>
-    </Member>
-    <Member MemberName="Sort&lt;TKey,TValue&gt;">
-      <MemberSignature Language="C#" Value="public static void Sort&lt;TKey,TValue&gt; (TKey[] keys, TValue[] items, int index, int length, System.Collections.Generic.IComparer&lt;TKey&gt; comparer);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
       <Parameters>
         <Parameter Name="keys" Type="TKey[]" />
         <Parameter Name="items" Type="TValue[]" />
@@ -5577,24 +5692,17 @@ with every other element in <paramref name="keys" />.</para>
             <paramref name="comparer" /> is <see langword="null" />, and one or more elements in <paramref name="keys" /> that are used in a comparison do not implement the <see cref="T:System.IComparable&lt;K&gt;" /> or <see cref="T: System.IComparable" /> interface.</para>
         </exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.MayCorruptInstance, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
-        </Attribute>
-      </Attributes>
-      <TypeParameters>
-        <TypeParameter Name="TKey" />
-        <TypeParameter Name="TValue" />
-      </TypeParameters>
     </Member>
     <Member MemberName="SyncRoot">
       <MemberSignature Language="ILASM" Value=".property object ICollection.SyncRoot { public hidebysig virtual abstract specialname object get_ICollection.SyncRoot() }" />
       <MemberSignature Language="C#" Value="public object SyncRoot { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object SyncRoot" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -5605,15 +5713,16 @@ with every other element in <paramref name="keys" />.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="System.Collections.ICollection.Count">
+      <MemberSignature Language="C#" Value="int System.Collections.ICollection.Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 System.Collections.ICollection.Count" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Collections.ICollection.Count">
-      <MemberSignature Language="C#" Value="int System.Collections.ICollection.Count { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -5622,15 +5731,16 @@ with every other element in <paramref name="keys" />.</para>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Collections.IList.Add">
+      <MemberSignature Language="C#" Value="int IList.Add (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int32 System.Collections.IList.Add(object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Collections.IList.Add">
-      <MemberSignature Language="C#" Value="int IList.Add (object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -5643,15 +5753,16 @@ with every other element in <paramref name="keys" />.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Collections.IList.Clear">
+      <MemberSignature Language="C#" Value="void IList.Clear ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Collections.IList.Clear() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Collections.IList.Clear">
-      <MemberSignature Language="C#" Value="void IList.Clear ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -5660,15 +5771,16 @@ with every other element in <paramref name="keys" />.</para>
         <summary>Implemented to support the <see cref="T:System.Collections.IList" /> interface. [Note: For more information, see <see cref="M:System.Collections.IList.Clear" />.]</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Collections.IList.Contains">
+      <MemberSignature Language="C#" Value="bool IList.Contains (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance bool System.Collections.IList.Contains(object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Collections.IList.Contains">
-      <MemberSignature Language="C#" Value="bool IList.Contains (object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -5681,15 +5793,21 @@ with every other element in <paramref name="keys" />.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Collections.IList.IndexOf">
+      <MemberSignature Language="C#" Value="int IList.IndexOf (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int32 System.Collections.IList.IndexOf(object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Collections.IList.IndexOf">
-      <MemberSignature Language="C#" Value="int IList.IndexOf (object value);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -5702,20 +5820,16 @@ with every other element in <paramref name="keys" />.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Collections.IList.Insert">
+      <MemberSignature Language="C#" Value="void IList.Insert (int index, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Collections.IList.Insert(int32 index, object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="System.Collections.IList.Insert">
-      <MemberSignature Language="C#" Value="void IList.Insert (int index, object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -5729,15 +5843,16 @@ with every other element in <paramref name="keys" />.</para>
         <summary>Implemented to support the <see cref="T:System.Collections.IList" /> interface. [Note: For more information, see <see cref="M:System.Collections.IList.Insert" />.]</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Collections.IList.Item">
+      <MemberSignature Language="C#" Value="object System.Collections.IList.Item[int index] { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object System.Collections.IList.Item(int32)" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Collections.IList.Item">
-      <MemberSignature Language="C#" Value="object System.Collections.IList.Item[int index] { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -5750,15 +5865,16 @@ with every other element in <paramref name="keys" />.</para>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Collections.IList.Remove">
+      <MemberSignature Language="C#" Value="void IList.Remove (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Collections.IList.Remove(object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Collections.IList.Remove">
-      <MemberSignature Language="C#" Value="void IList.Remove (object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -5770,15 +5886,16 @@ with every other element in <paramref name="keys" />.</para>
         <summary>Implemented to support the <see cref="T:System.Collections.IList" /> interface. [Note: For more information, see <see cref="M:System.Collections.IList.Remove" />.]</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Collections.IList.RemoveAt">
+      <MemberSignature Language="C#" Value="void IList.RemoveAt (int index);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Collections.IList.RemoveAt(int32 index) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Collections.IList.RemoveAt">
-      <MemberSignature Language="C#" Value="void IList.RemoveAt (int index);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -5790,14 +5907,10 @@ with every other element in <paramref name="keys" />.</para>
         <summary>Implemented to support the <see cref="T:System.Collections.IList" /> interface. [Note: For more information, see <see cref="M:System.Collections.IList.RemoveAt" />.]</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.Collections.IStructuralComparable.CompareTo">
       <MemberSignature Language="C#" Value="int IStructuralComparable.CompareTo (object other, System.Collections.IComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int32 System.Collections.IStructuralComparable.CompareTo(object other, class System.Collections.IComparer comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -5819,6 +5932,7 @@ with every other element in <paramref name="keys" />.</para>
     </Member>
     <Member MemberName="System.Collections.IStructuralEquatable.Equals">
       <MemberSignature Language="C#" Value="bool IStructuralEquatable.Equals (object other, System.Collections.IEqualityComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance bool System.Collections.IStructuralEquatable.Equals(object other, class System.Collections.IEqualityComparer comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -5840,6 +5954,7 @@ with every other element in <paramref name="keys" />.</para>
     </Member>
     <Member MemberName="System.Collections.IStructuralEquatable.GetHashCode">
       <MemberSignature Language="C#" Value="int IStructuralEquatable.GetHashCode (System.Collections.IEqualityComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int32 System.Collections.IStructuralEquatable.GetHashCode(class System.Collections.IEqualityComparer comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -5859,10 +5974,18 @@ with every other element in <paramref name="keys" />.</para>
     </Member>
     <Member MemberName="TrueForAll&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static bool TrueForAll&lt;T&gt; (T[] array, Predicate&lt;T&gt; match);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TrueForAll&lt;T&gt;(!!T[] array, class System.Predicate`1&lt;!!T&gt; match) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="array" Type="T[]" />
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
@@ -5887,19 +6010,7 @@ with every other element in <paramref name="keys" />.</para>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <TypeParameters>
-        <TypeParameter Name="T" />
-      </TypeParameters>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

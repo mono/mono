@@ -1,5 +1,6 @@
 <Type Name="AccessRule" FullName="System.Security.AccessControl.AccessRule">
   <TypeSignature Language="C#" Value="public abstract class AccessRule : System.Security.AccessControl.AuthorizationRule" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit AccessRule extends System.Security.AccessControl.AuthorizationRule" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -17,7 +18,12 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected AccessRule (System.Security.Principal.IdentityReference identity, int accessMask, bool isInherited, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AccessControlType type);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Security.Principal.IdentityReference identity, int32 accessMask, bool isInherited, valuetype System.Security.AccessControl.InheritanceFlags inheritanceFlags, valuetype System.Security.AccessControl.PropagationFlags propagationFlags, valuetype System.Security.AccessControl.AccessControlType type) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="identity" Type="System.Security.Principal.IdentityReference" />
         <Parameter Name="accessMask" Type="System.Int32" />
@@ -37,14 +43,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="AccessControlType">
+      <MemberSignature Language="C#" Value="public System.Security.AccessControl.AccessControlType AccessControlType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.AccessControl.AccessControlType AccessControlType" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AccessControlType">
-      <MemberSignature Language="C#" Value="public System.Security.AccessControl.AccessControlType AccessControlType { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.AccessControl.AccessControlType</ReturnType>
       </ReturnValue>
@@ -54,10 +61,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

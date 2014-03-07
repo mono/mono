@@ -1,5 +1,6 @@
 <Type Name="Partitioner&lt;TSource&gt;" FullName="System.Collections.Concurrent.Partitioner&lt;TSource&gt;">
   <TypeSignature Language="C#" Value="public abstract class Partitioner&lt;TSource&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit Partitioner`1&lt;TSource&gt; extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -19,6 +20,7 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected Partitioner ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -31,6 +33,7 @@
     </Member>
     <Member MemberName="GetDynamicPartitions">
       <MemberSignature Language="C#" Value="public virtual System.Collections.Generic.IEnumerable&lt;TSource&gt; GetDynamicPartitions ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;!TSource&gt; GetDynamicPartitions() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -47,6 +50,7 @@
     </Member>
     <Member MemberName="GetPartitions">
       <MemberSignature Language="C#" Value="public abstract System.Collections.Generic.IList&lt;System.Collections.Generic.IEnumerator&lt;TSource&gt;&gt; GetPartitions (int partitionCount);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;class System.Collections.Generic.IEnumerator`1&lt;!TSource&gt;&gt; GetPartitions(int32 partitionCount) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -66,6 +70,7 @@
     </Member>
     <Member MemberName="SupportsDynamicPartitions">
       <MemberSignature Language="C#" Value="public virtual bool SupportsDynamicPartitions { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SupportsDynamicPartitions" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>

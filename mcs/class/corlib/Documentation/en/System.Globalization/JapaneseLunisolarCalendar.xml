@@ -1,5 +1,6 @@
 <Type Name="JapaneseLunisolarCalendar" FullName="System.Globalization.JapaneseLunisolarCalendar">
   <TypeSignature Language="C#" Value="public class JapaneseLunisolarCalendar : System.Globalization.EastAsianLunisolarCalendar" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable JapaneseLunisolarCalendar extends System.Globalization.EastAsianLunisolarCalendar" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersions>
@@ -20,27 +21,43 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public JapaneseLunisolarCalendar ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
-      <AssemblyVersions>
+      <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyVersions>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters />
       <Docs>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="DaysInYearBeforeMinSupportedYear">
+      <MemberSignature Language="C#" Value="protected override int DaysInYearBeforeMinSupportedYear { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 DaysInYearBeforeMinSupportedYear" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Eras">
+      <MemberSignature Language="C#" Value="public override int[] Eras { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32[] Eras" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Eras">
-      <MemberSignature Language="C#" Value="public override int[] Eras { get; }" />
-      <MemberType>Property</MemberType>
-      <AssemblyVersions>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyVersions>
       <ReturnValue>
         <ReturnType>System.Int32[]</ReturnType>
       </ReturnValue>
@@ -50,17 +67,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetEra">
+      <MemberSignature Language="C#" Value="public override int GetEra (DateTime time);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetEra(valuetype System.DateTime time) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetEra">
-      <MemberSignature Language="C#" Value="public override int GetEra (DateTime time);" />
-      <MemberType>Method</MemberType>
-      <AssemblyVersions>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyVersions>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -74,17 +89,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="JapaneseEra">
+      <MemberSignature Language="C#" Value="public const int JapaneseEra = 1;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal int32 JapaneseEra = (1)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="JapaneseEra">
-      <MemberSignature Language="C#" Value="public const int JapaneseEra = 1;" />
-      <MemberType>Field</MemberType>
-      <AssemblyVersions>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyVersions>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -94,17 +107,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MaxSupportedDateTime">
       <MemberSignature Language="C#" Value="public override DateTime MaxSupportedDateTime { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime MaxSupportedDateTime" />
       <MemberType>Property</MemberType>
-      <AssemblyVersions>
+      <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyVersions>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -114,17 +125,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MinSupportedDateTime">
       <MemberSignature Language="C#" Value="public override DateTime MinSupportedDateTime { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime MinSupportedDateTime" />
       <MemberType>Property</MemberType>
-      <AssemblyVersions>
+      <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyVersions>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -134,10 +143,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

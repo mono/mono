@@ -1,5 +1,6 @@
 <Type Name="EventWaitHandleAccessRule" FullName="System.Security.AccessControl.EventWaitHandleAccessRule">
   <TypeSignature Language="C#" Value="public sealed class EventWaitHandleAccessRule : System.Security.AccessControl.AccessRule" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit EventWaitHandleAccessRule extends System.Security.AccessControl.AccessRule" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -17,7 +18,12 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public EventWaitHandleAccessRule (System.Security.Principal.IdentityReference identity, System.Security.AccessControl.EventWaitHandleRights eventRights, System.Security.AccessControl.AccessControlType type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Security.Principal.IdentityReference identity, valuetype System.Security.AccessControl.EventWaitHandleRights eventRights, valuetype System.Security.AccessControl.AccessControlType type) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="identity" Type="System.Security.Principal.IdentityReference" />
         <Parameter Name="eventRights" Type="System.Security.AccessControl.EventWaitHandleRights" />
@@ -31,14 +37,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public EventWaitHandleAccessRule (string identity, System.Security.AccessControl.EventWaitHandleRights eventRights, System.Security.AccessControl.AccessControlType type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string identity, valuetype System.Security.AccessControl.EventWaitHandleRights eventRights, valuetype System.Security.AccessControl.AccessControlType type) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public EventWaitHandleAccessRule (string identity, System.Security.AccessControl.EventWaitHandleRights eventRights, System.Security.AccessControl.AccessControlType type);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="identity" Type="System.String" />
         <Parameter Name="eventRights" Type="System.Security.AccessControl.EventWaitHandleRights" />
@@ -52,14 +59,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="EventWaitHandleRights">
+      <MemberSignature Language="C#" Value="public System.Security.AccessControl.EventWaitHandleRights EventWaitHandleRights { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.AccessControl.EventWaitHandleRights EventWaitHandleRights" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="EventWaitHandleRights">
-      <MemberSignature Language="C#" Value="public System.Security.AccessControl.EventWaitHandleRights EventWaitHandleRights { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.AccessControl.EventWaitHandleRights</ReturnType>
       </ReturnValue>
@@ -69,10 +77,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -1,6 +1,7 @@
 <Type Name="FieldAttributes" FullName="System.Reflection.FieldAttributes" FullNameSP="System_Reflection_FieldAttributes" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable FieldAttributes extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum FieldAttributes" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed FieldAttributes extends System.Enum" />
   <MemberOfLibrary>Reflection</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -12,6 +13,14 @@
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>
       <para>Specifies flags that describe the attributes of a field.</para>
@@ -24,7 +33,13 @@
     <Member MemberName="Assembly">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes Assembly = 3" />
       <MemberSignature Language="C#" Value="Assembly" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes Assembly = int32(3)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.FieldAttributes</ReturnType>
       </ReturnValue>
@@ -39,16 +54,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="FamANDAssem">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes FamANDAssem = 2" />
+      <MemberSignature Language="C#" Value="FamANDAssem" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes FamANDAssem = int32(2)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FamANDAssem">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes FamANDAssem = 2" />
-      <MemberSignature Language="C#" Value="FamANDAssem" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.FieldAttributes</ReturnType>
       </ReturnValue>
@@ -62,16 +78,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Family">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes Family = 4" />
+      <MemberSignature Language="C#" Value="Family" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes Family = int32(4)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Family">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes Family = 4" />
-      <MemberSignature Language="C#" Value="Family" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.FieldAttributes</ReturnType>
       </ReturnValue>
@@ -85,16 +102,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="FamORAssem">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes FamORAssem = 5" />
+      <MemberSignature Language="C#" Value="FamORAssem" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes FamORAssem = int32(5)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FamORAssem">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes FamORAssem = 5" />
-      <MemberSignature Language="C#" Value="FamORAssem" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.FieldAttributes</ReturnType>
       </ReturnValue>
@@ -110,16 +128,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="FieldAccessMask">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes FieldAccessMask = 7" />
+      <MemberSignature Language="C#" Value="FieldAccessMask" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes FieldAccessMask = int32(7)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FieldAccessMask">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes FieldAccessMask = 7" />
-      <MemberSignature Language="C#" Value="FieldAccessMask" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.FieldAttributes</ReturnType>
       </ReturnValue>
@@ -136,15 +155,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="HasDefault">
+      <MemberSignature Language="C#" Value="HasDefault" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes HasDefault = int32(32768)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="HasDefault">
-      <MemberSignature Language="C#" Value="HasDefault" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.FieldAttributes</ReturnType>
       </ReturnValue>
@@ -153,15 +173,16 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="HasFieldMarshal">
+      <MemberSignature Language="C#" Value="HasFieldMarshal" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes HasFieldMarshal = int32(4096)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="HasFieldMarshal">
-      <MemberSignature Language="C#" Value="HasFieldMarshal" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.FieldAttributes</ReturnType>
       </ReturnValue>
@@ -170,15 +191,16 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="HasFieldRVA">
+      <MemberSignature Language="C#" Value="HasFieldRVA" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes HasFieldRVA = int32(256)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="HasFieldRVA">
-      <MemberSignature Language="C#" Value="HasFieldRVA" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.FieldAttributes</ReturnType>
       </ReturnValue>
@@ -187,16 +209,17 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="InitOnly">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes InitOnly = 32" />
+      <MemberSignature Language="C#" Value="InitOnly" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes InitOnly = int32(32)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="InitOnly">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes InitOnly = 32" />
-      <MemberSignature Language="C#" Value="InitOnly" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.FieldAttributes</ReturnType>
       </ReturnValue>
@@ -212,16 +235,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Literal">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes Literal = 64" />
+      <MemberSignature Language="C#" Value="Literal" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes Literal = int32(64)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Literal">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes Literal = 64" />
-      <MemberSignature Language="C#" Value="Literal" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.FieldAttributes</ReturnType>
       </ReturnValue>
@@ -235,15 +259,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="NotSerialized">
+      <MemberSignature Language="C#" Value="NotSerialized" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes NotSerialized = int32(128)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="NotSerialized">
-      <MemberSignature Language="C#" Value="NotSerialized" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.FieldAttributes</ReturnType>
       </ReturnValue>
@@ -252,16 +277,17 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="PinvokeImpl">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes PinvokeImpl = 8192" />
+      <MemberSignature Language="C#" Value="PinvokeImpl" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes PinvokeImpl = int32(8192)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="PinvokeImpl">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes PinvokeImpl = 8192" />
-      <MemberSignature Language="C#" Value="PinvokeImpl" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.FieldAttributes</ReturnType>
       </ReturnValue>
@@ -278,16 +304,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Private">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes Private = 1" />
+      <MemberSignature Language="C#" Value="Private" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes Private = int32(1)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Private">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes Private = 1" />
-      <MemberSignature Language="C#" Value="Private" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.FieldAttributes</ReturnType>
       </ReturnValue>
@@ -301,16 +328,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="PrivateScope">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes PrivateScope = 0" />
+      <MemberSignature Language="C#" Value="PrivateScope" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes PrivateScope = int32(0)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="PrivateScope">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes PrivateScope = 0" />
-      <MemberSignature Language="C#" Value="PrivateScope" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.FieldAttributes</ReturnType>
       </ReturnValue>
@@ -325,16 +353,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Public">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes Public = 6" />
+      <MemberSignature Language="C#" Value="Public" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes Public = int32(6)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Public">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes Public = 6" />
-      <MemberSignature Language="C#" Value="Public" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.FieldAttributes</ReturnType>
       </ReturnValue>
@@ -349,15 +378,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ReservedMask">
+      <MemberSignature Language="C#" Value="ReservedMask" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes ReservedMask = int32(38144)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReservedMask">
-      <MemberSignature Language="C#" Value="ReservedMask" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.FieldAttributes</ReturnType>
       </ReturnValue>
@@ -366,15 +396,16 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="RTSpecialName">
+      <MemberSignature Language="C#" Value="RTSpecialName" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes RTSpecialName = int32(1024)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RTSpecialName">
-      <MemberSignature Language="C#" Value="RTSpecialName" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.FieldAttributes</ReturnType>
       </ReturnValue>
@@ -383,16 +414,17 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="SpecialName">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes SpecialName = 512" />
+      <MemberSignature Language="C#" Value="SpecialName" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes SpecialName = int32(512)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SpecialName">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes SpecialName = 512" />
-      <MemberSignature Language="C#" Value="SpecialName" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.FieldAttributes</ReturnType>
       </ReturnValue>
@@ -413,16 +445,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Static">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes Static = 16" />
+      <MemberSignature Language="C#" Value="Static" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.FieldAttributes Static = int32(16)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Static">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Reflection.FieldAttributes Static = 16" />
-      <MemberSignature Language="C#" Value="Static" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.FieldAttributes</ReturnType>
       </ReturnValue>
@@ -438,20 +471,7 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Flags</AttributeName>
-    </Attribute>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

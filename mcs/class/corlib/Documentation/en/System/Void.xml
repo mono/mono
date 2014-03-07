@@ -1,6 +1,7 @@
 <Type Name="Void" FullName="System.Void" FullNameSP="System_Void" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sequential sealed serializable Void extends System.ValueType" />
   <TypeSignature Language="C#" Value="public struct Void" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi serializable sealed beforefieldinit void extends System.ValueType" />
   <MemberOfLibrary>Reflection</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -14,6 +15,11 @@
     <BaseTypeName>System.ValueType</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>
       <para>Indicates a method that does not return a value; that is, 
@@ -26,9 +32,4 @@
   </Docs>
   <Members />
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

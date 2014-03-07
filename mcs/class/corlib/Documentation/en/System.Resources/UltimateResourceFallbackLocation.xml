@@ -38,9 +38,6 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyVersions>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyVersions>
     </Member>
     <Member MemberName="Satellite">
       <MemberSignature Language="C#" Value="Satellite" />
@@ -57,9 +54,6 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyVersions>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyVersions>
     </Member>
   </Members>
 </Type>

@@ -1,5 +1,6 @@
 <Type Name="ModuleHandle" FullName="System.ModuleHandle">
   <TypeSignature Language="C#" Value="public struct ModuleHandle" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit ModuleHandle extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -22,7 +23,12 @@
   <Members>
     <Member MemberName="EmptyHandle">
       <MemberSignature Language="C#" Value="public static readonly ModuleHandle EmptyHandle;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype System.ModuleHandle EmptyHandle" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ModuleHandle</ReturnType>
       </ReturnValue>
@@ -31,14 +37,20 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public bool Equals (ModuleHandle handle);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Equals(valuetype System.ModuleHandle handle) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Equals">
-      <MemberSignature Language="C#" Value="public bool Equals (ModuleHandle handle);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -52,6 +64,11 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -61,10 +78,6 @@
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Equals">
-      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -78,19 +91,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="GetHashCode">
-      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -101,14 +110,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetRuntimeFieldHandleFromMetadataToken">
+      <MemberSignature Language="C#" Value="public RuntimeFieldHandle GetRuntimeFieldHandleFromMetadataToken (int fieldToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.RuntimeFieldHandle GetRuntimeFieldHandleFromMetadataToken(int32 fieldToken) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetRuntimeFieldHandleFromMetadataToken">
-      <MemberSignature Language="C#" Value="public RuntimeFieldHandle GetRuntimeFieldHandleFromMetadataToken (int fieldToken);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.RuntimeFieldHandle</ReturnType>
       </ReturnValue>
@@ -122,14 +132,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetRuntimeMethodHandleFromMetadataToken">
+      <MemberSignature Language="C#" Value="public RuntimeMethodHandle GetRuntimeMethodHandleFromMetadataToken (int methodToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.RuntimeMethodHandle GetRuntimeMethodHandleFromMetadataToken(int32 methodToken) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetRuntimeMethodHandleFromMetadataToken">
-      <MemberSignature Language="C#" Value="public RuntimeMethodHandle GetRuntimeMethodHandleFromMetadataToken (int methodToken);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.RuntimeMethodHandle</ReturnType>
       </ReturnValue>
@@ -143,14 +154,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetRuntimeTypeHandleFromMetadataToken">
+      <MemberSignature Language="C#" Value="public RuntimeTypeHandle GetRuntimeTypeHandleFromMetadataToken (int typeToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.RuntimeTypeHandle GetRuntimeTypeHandleFromMetadataToken(int32 typeToken) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetRuntimeTypeHandleFromMetadataToken">
-      <MemberSignature Language="C#" Value="public RuntimeTypeHandle GetRuntimeTypeHandleFromMetadataToken (int typeToken);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.RuntimeTypeHandle</ReturnType>
       </ReturnValue>
@@ -164,13 +176,10 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MDStreamVersion">
       <MemberSignature Language="C#" Value="public int MDStreamVersion { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MDStreamVersion" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -187,6 +196,7 @@
     </Member>
     <Member MemberName="op_Equality">
       <MemberSignature Language="C#" Value="public static bool op_Equality (ModuleHandle left, ModuleHandle right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Equality(valuetype System.ModuleHandle left, valuetype System.ModuleHandle right) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -209,6 +219,7 @@
     </Member>
     <Member MemberName="op_Inequality">
       <MemberSignature Language="C#" Value="public static bool op_Inequality (ModuleHandle left, ModuleHandle right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Inequality(valuetype System.ModuleHandle left, valuetype System.ModuleHandle right) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -231,7 +242,12 @@
     </Member>
     <Member MemberName="ResolveFieldHandle">
       <MemberSignature Language="C#" Value="public RuntimeFieldHandle ResolveFieldHandle (int fieldToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.RuntimeFieldHandle ResolveFieldHandle(int32 fieldToken) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.RuntimeFieldHandle</ReturnType>
       </ReturnValue>
@@ -245,13 +261,10 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ResolveFieldHandle">
       <MemberSignature Language="C#" Value="public RuntimeFieldHandle ResolveFieldHandle (int fieldToken, RuntimeTypeHandle[] typeInstantiationContext, RuntimeTypeHandle[] methodInstantiationContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.RuntimeFieldHandle ResolveFieldHandle(int32 fieldToken, valuetype System.RuntimeTypeHandle[] typeInstantiationContext, valuetype System.RuntimeTypeHandle[] methodInstantiationContext) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -276,7 +289,12 @@
     </Member>
     <Member MemberName="ResolveMethodHandle">
       <MemberSignature Language="C#" Value="public RuntimeMethodHandle ResolveMethodHandle (int methodToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.RuntimeMethodHandle ResolveMethodHandle(int32 methodToken) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.RuntimeMethodHandle</ReturnType>
       </ReturnValue>
@@ -290,13 +308,10 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ResolveMethodHandle">
       <MemberSignature Language="C#" Value="public RuntimeMethodHandle ResolveMethodHandle (int methodToken, RuntimeTypeHandle[] typeInstantiationContext, RuntimeTypeHandle[] methodInstantiationContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.RuntimeMethodHandle ResolveMethodHandle(int32 methodToken, valuetype System.RuntimeTypeHandle[] typeInstantiationContext, valuetype System.RuntimeTypeHandle[] methodInstantiationContext) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -321,7 +336,12 @@
     </Member>
     <Member MemberName="ResolveTypeHandle">
       <MemberSignature Language="C#" Value="public RuntimeTypeHandle ResolveTypeHandle (int typeToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.RuntimeTypeHandle ResolveTypeHandle(int32 typeToken) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.RuntimeTypeHandle</ReturnType>
       </ReturnValue>
@@ -335,13 +355,10 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ResolveTypeHandle">
       <MemberSignature Language="C#" Value="public RuntimeTypeHandle ResolveTypeHandle (int typeToken, RuntimeTypeHandle[] typeInstantiationContext, RuntimeTypeHandle[] methodInstantiationContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.RuntimeTypeHandle ResolveTypeHandle(int32 typeToken, valuetype System.RuntimeTypeHandle[] typeInstantiationContext, valuetype System.RuntimeTypeHandle[] methodInstantiationContext) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

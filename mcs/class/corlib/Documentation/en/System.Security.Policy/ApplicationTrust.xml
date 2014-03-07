@@ -1,12 +1,13 @@
 <Type Name="ApplicationTrust" FullName="System.Security.Policy.ApplicationTrust">
-  <TypeSignature Language="C#" Value="public sealed class ApplicationTrust : System.Security.ISecurityEncodable" />
+  <TypeSignature Language="C#" Value="public sealed class ApplicationTrust : System.Security.Policy.EvidenceBase, System.Security.ISecurityEncodable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit ApplicationTrust extends System.Security.Policy.EvidenceBase implements class System.Security.ISecurityEncodable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>System.Object</BaseTypeName>
+    <BaseTypeName>System.Security.Policy.EvidenceBase</BaseTypeName>
   </Base>
   <Interfaces>
     <Interface>
@@ -26,21 +27,27 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ApplicationTrust ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters />
       <Docs>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ApplicationTrust (ApplicationIdentity applicationIdentity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ApplicationIdentity applicationIdentity) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public ApplicationTrust (ApplicationIdentity applicationIdentity);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="applicationIdentity" Type="System.ApplicationIdentity" />
       </Parameters>
@@ -50,13 +57,10 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ApplicationTrust (System.Security.PermissionSet defaultGrantSet, System.Collections.Generic.IEnumerable&lt;System.Security.Policy.StrongName&gt; fullTrustAssemblies);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Security.PermissionSet defaultGrantSet, class System.Collections.Generic.IEnumerable`1&lt;class System.Security.Policy.StrongName&gt; fullTrustAssemblies) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -73,8 +77,13 @@
       </Docs>
     </Member>
     <Member MemberName="ApplicationIdentity">
-      <MemberSignature Language="C#" Value="public ApplicationIdentity ApplicationIdentity { set; get; }" />
+      <MemberSignature Language="C#" Value="public ApplicationIdentity ApplicationIdentity { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ApplicationIdentity ApplicationIdentity" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ApplicationIdentity</ReturnType>
       </ReturnValue>
@@ -84,14 +93,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="DefaultGrantSet">
+      <MemberSignature Language="C#" Value="public System.Security.Policy.PolicyStatement DefaultGrantSet { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Policy.PolicyStatement DefaultGrantSet" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DefaultGrantSet">
-      <MemberSignature Language="C#" Value="public System.Security.Policy.PolicyStatement DefaultGrantSet { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Policy.PolicyStatement</ReturnType>
       </ReturnValue>
@@ -101,14 +111,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="ExtraInfo">
+      <MemberSignature Language="C#" Value="public object ExtraInfo { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object ExtraInfo" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ExtraInfo">
-      <MemberSignature Language="C#" Value="public object ExtraInfo { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -118,14 +129,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="FromXml">
+      <MemberSignature Language="C#" Value="public void FromXml (System.Security.SecurityElement element);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void FromXml(class System.Security.SecurityElement element) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FromXml">
-      <MemberSignature Language="C#" Value="public void FromXml (System.Security.SecurityElement element);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -138,13 +150,10 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FullTrustAssemblies">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;System.Security.Policy.StrongName&gt; FullTrustAssemblies { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IList`1&lt;class System.Security.Policy.StrongName&gt; FullTrustAssemblies" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -159,8 +168,13 @@
       </Docs>
     </Member>
     <Member MemberName="IsApplicationTrustedToRun">
-      <MemberSignature Language="C#" Value="public bool IsApplicationTrustedToRun { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool IsApplicationTrustedToRun { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsApplicationTrustedToRun" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -170,14 +184,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Persist">
-      <MemberSignature Language="C#" Value="public bool Persist { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool Persist { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Persist" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -187,14 +202,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToXml">
       <MemberSignature Language="C#" Value="public System.Security.SecurityElement ToXml ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Security.SecurityElement ToXml() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.SecurityElement</ReturnType>
       </ReturnValue>
@@ -205,10 +221,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

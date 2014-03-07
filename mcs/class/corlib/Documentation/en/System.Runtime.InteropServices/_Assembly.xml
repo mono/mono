@@ -1,5 +1,6 @@
 <Type Name="_Assembly" FullName="System.Runtime.InteropServices._Assembly">
   <TypeSignature Language="C#" Value="public interface _Assembly" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract _Assembly" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -31,7 +32,13 @@
   <Members>
     <Member MemberName="CodeBase">
       <MemberSignature Language="C#" Value="public string CodeBase { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string CodeBase" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -41,15 +48,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="CreateInstance">
+      <MemberSignature Language="C#" Value="public object CreateInstance (string typeName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object CreateInstance(string typeName) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreateInstance">
-      <MemberSignature Language="C#" Value="public object CreateInstance (string typeName);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -63,15 +71,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="CreateInstance">
+      <MemberSignature Language="C#" Value="public object CreateInstance (string typeName, bool ignoreCase);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object CreateInstance(string typeName, bool ignoreCase) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreateInstance">
-      <MemberSignature Language="C#" Value="public object CreateInstance (string typeName, bool ignoreCase);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -87,15 +96,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="CreateInstance">
+      <MemberSignature Language="C#" Value="public object CreateInstance (string typeName, bool ignoreCase, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, object[] args, System.Globalization.CultureInfo culture, object[] activationAttributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object CreateInstance(string typeName, bool ignoreCase, valuetype System.Reflection.BindingFlags bindingAttr, class System.Reflection.Binder binder, object[] args, class System.Globalization.CultureInfo culture, object[] activationAttributes) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreateInstance">
-      <MemberSignature Language="C#" Value="public object CreateInstance (string typeName, bool ignoreCase, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, object[] args, System.Globalization.CultureInfo culture, object[] activationAttributes);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -121,15 +131,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="EntryPoint">
+      <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo EntryPoint { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Reflection.MethodInfo EntryPoint" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="EntryPoint">
-      <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo EntryPoint { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.MethodInfo</ReturnType>
       </ReturnValue>
@@ -139,15 +150,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public bool Equals (object other);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Equals(object other) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Equals">
-      <MemberSignature Language="C#" Value="public bool Equals (object other);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -161,15 +173,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="EscapedCodeBase">
+      <MemberSignature Language="C#" Value="public string EscapedCodeBase { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string EscapedCodeBase" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="EscapedCodeBase">
-      <MemberSignature Language="C#" Value="public string EscapedCodeBase { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -179,15 +192,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="Evidence">
+      <MemberSignature Language="C#" Value="public System.Security.Policy.Evidence Evidence { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Policy.Evidence Evidence" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Evidence">
-      <MemberSignature Language="C#" Value="public System.Security.Policy.Evidence Evidence { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Policy.Evidence</ReturnType>
       </ReturnValue>
@@ -197,15 +211,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="FullName">
+      <MemberSignature Language="C#" Value="public string FullName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FullName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FullName">
-      <MemberSignature Language="C#" Value="public string FullName { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -215,15 +230,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public object[] GetCustomAttributes (bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object[] GetCustomAttributes(bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCustomAttributes">
-      <MemberSignature Language="C#" Value="public object[] GetCustomAttributes (bool inherit);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object[]</ReturnType>
       </ReturnValue>
@@ -237,15 +253,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetCustomAttributes">
+      <MemberSignature Language="C#" Value="public object[] GetCustomAttributes (Type attributeType, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object[] GetCustomAttributes(class System.Type attributeType, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCustomAttributes">
-      <MemberSignature Language="C#" Value="public object[] GetCustomAttributes (Type attributeType, bool inherit);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object[]</ReturnType>
       </ReturnValue>
@@ -261,15 +278,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetExportedTypes">
+      <MemberSignature Language="C#" Value="public Type[] GetExportedTypes ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Type[] GetExportedTypes() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetExportedTypes">
-      <MemberSignature Language="C#" Value="public Type[] GetExportedTypes ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Type[]</ReturnType>
       </ReturnValue>
@@ -280,15 +298,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetFile">
+      <MemberSignature Language="C#" Value="public System.IO.FileStream GetFile (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.FileStream GetFile(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetFile">
-      <MemberSignature Language="C#" Value="public System.IO.FileStream GetFile (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileStream</ReturnType>
       </ReturnValue>
@@ -302,15 +321,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetFiles">
+      <MemberSignature Language="C#" Value="public System.IO.FileStream[] GetFiles ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.FileStream[] GetFiles() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetFiles">
-      <MemberSignature Language="C#" Value="public System.IO.FileStream[] GetFiles ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileStream[]</ReturnType>
       </ReturnValue>
@@ -321,15 +341,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetFiles">
+      <MemberSignature Language="C#" Value="public System.IO.FileStream[] GetFiles (bool getResourceModules);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.FileStream[] GetFiles(bool getResourceModules) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetFiles">
-      <MemberSignature Language="C#" Value="public System.IO.FileStream[] GetFiles (bool getResourceModules);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileStream[]</ReturnType>
       </ReturnValue>
@@ -343,15 +364,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetHashCode">
-      <MemberSignature Language="C#" Value="public int GetHashCode ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -362,15 +384,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetLoadedModules">
+      <MemberSignature Language="C#" Value="public System.Reflection.Module[] GetLoadedModules ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.Module[] GetLoadedModules() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetLoadedModules">
-      <MemberSignature Language="C#" Value="public System.Reflection.Module[] GetLoadedModules ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Module[]</ReturnType>
       </ReturnValue>
@@ -381,15 +404,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetLoadedModules">
+      <MemberSignature Language="C#" Value="public System.Reflection.Module[] GetLoadedModules (bool getResourceModules);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.Module[] GetLoadedModules(bool getResourceModules) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetLoadedModules">
-      <MemberSignature Language="C#" Value="public System.Reflection.Module[] GetLoadedModules (bool getResourceModules);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Module[]</ReturnType>
       </ReturnValue>
@@ -403,15 +427,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetManifestResourceInfo">
+      <MemberSignature Language="C#" Value="public System.Reflection.ManifestResourceInfo GetManifestResourceInfo (string resourceName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.ManifestResourceInfo GetManifestResourceInfo(string resourceName) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetManifestResourceInfo">
-      <MemberSignature Language="C#" Value="public System.Reflection.ManifestResourceInfo GetManifestResourceInfo (string resourceName);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.ManifestResourceInfo</ReturnType>
       </ReturnValue>
@@ -425,15 +450,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetManifestResourceNames">
+      <MemberSignature Language="C#" Value="public string[] GetManifestResourceNames ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string[] GetManifestResourceNames() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetManifestResourceNames">
-      <MemberSignature Language="C#" Value="public string[] GetManifestResourceNames ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
@@ -444,15 +470,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetManifestResourceStream">
+      <MemberSignature Language="C#" Value="public System.IO.Stream GetManifestResourceStream (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream GetManifestResourceStream(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetManifestResourceStream">
-      <MemberSignature Language="C#" Value="public System.IO.Stream GetManifestResourceStream (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
       </ReturnValue>
@@ -466,15 +493,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetManifestResourceStream">
+      <MemberSignature Language="C#" Value="public System.IO.Stream GetManifestResourceStream (Type type, string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream GetManifestResourceStream(class System.Type type, string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetManifestResourceStream">
-      <MemberSignature Language="C#" Value="public System.IO.Stream GetManifestResourceStream (Type type, string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
       </ReturnValue>
@@ -490,15 +518,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetModule">
+      <MemberSignature Language="C#" Value="public System.Reflection.Module GetModule (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.Module GetModule(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetModule">
-      <MemberSignature Language="C#" Value="public System.Reflection.Module GetModule (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Module</ReturnType>
       </ReturnValue>
@@ -512,15 +541,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetModules">
+      <MemberSignature Language="C#" Value="public System.Reflection.Module[] GetModules ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.Module[] GetModules() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetModules">
-      <MemberSignature Language="C#" Value="public System.Reflection.Module[] GetModules ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Module[]</ReturnType>
       </ReturnValue>
@@ -531,15 +561,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetModules">
+      <MemberSignature Language="C#" Value="public System.Reflection.Module[] GetModules (bool getResourceModules);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.Module[] GetModules(bool getResourceModules) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetModules">
-      <MemberSignature Language="C#" Value="public System.Reflection.Module[] GetModules (bool getResourceModules);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Module[]</ReturnType>
       </ReturnValue>
@@ -553,15 +584,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetName">
+      <MemberSignature Language="C#" Value="public System.Reflection.AssemblyName GetName ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.AssemblyName GetName() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetName">
-      <MemberSignature Language="C#" Value="public System.Reflection.AssemblyName GetName ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.AssemblyName</ReturnType>
       </ReturnValue>
@@ -572,15 +604,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetName">
+      <MemberSignature Language="C#" Value="public System.Reflection.AssemblyName GetName (bool copiedName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.AssemblyName GetName(bool copiedName) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetName">
-      <MemberSignature Language="C#" Value="public System.Reflection.AssemblyName GetName (bool copiedName);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.AssemblyName</ReturnType>
       </ReturnValue>
@@ -594,15 +627,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="public void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GetObjectData(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetObjectData">
-      <MemberSignature Language="C#" Value="public void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -617,15 +651,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetReferencedAssemblies">
+      <MemberSignature Language="C#" Value="public System.Reflection.AssemblyName[] GetReferencedAssemblies ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.AssemblyName[] GetReferencedAssemblies() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetReferencedAssemblies">
-      <MemberSignature Language="C#" Value="public System.Reflection.AssemblyName[] GetReferencedAssemblies ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.AssemblyName[]</ReturnType>
       </ReturnValue>
@@ -636,15 +671,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetSatelliteAssembly">
+      <MemberSignature Language="C#" Value="public System.Reflection.Assembly GetSatelliteAssembly (System.Globalization.CultureInfo culture);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.Assembly GetSatelliteAssembly(class System.Globalization.CultureInfo culture) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetSatelliteAssembly">
-      <MemberSignature Language="C#" Value="public System.Reflection.Assembly GetSatelliteAssembly (System.Globalization.CultureInfo culture);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Assembly</ReturnType>
       </ReturnValue>
@@ -658,15 +694,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetSatelliteAssembly">
+      <MemberSignature Language="C#" Value="public System.Reflection.Assembly GetSatelliteAssembly (System.Globalization.CultureInfo culture, Version version);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.Assembly GetSatelliteAssembly(class System.Globalization.CultureInfo culture, class System.Version version) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetSatelliteAssembly">
-      <MemberSignature Language="C#" Value="public System.Reflection.Assembly GetSatelliteAssembly (System.Globalization.CultureInfo culture, Version version);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Assembly</ReturnType>
       </ReturnValue>
@@ -682,15 +719,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetType">
+      <MemberSignature Language="C#" Value="public Type GetType ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Type GetType() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetType">
-      <MemberSignature Language="C#" Value="public Type GetType ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
@@ -701,15 +739,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetType">
+      <MemberSignature Language="C#" Value="public Type GetType (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Type GetType(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetType">
-      <MemberSignature Language="C#" Value="public Type GetType (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
@@ -723,15 +762,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetType">
+      <MemberSignature Language="C#" Value="public Type GetType (string name, bool throwOnError);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Type GetType(string name, bool throwOnError) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetType">
-      <MemberSignature Language="C#" Value="public Type GetType (string name, bool throwOnError);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
@@ -747,15 +787,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetType">
+      <MemberSignature Language="C#" Value="public Type GetType (string name, bool throwOnError, bool ignoreCase);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Type GetType(string name, bool throwOnError, bool ignoreCase) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetType">
-      <MemberSignature Language="C#" Value="public Type GetType (string name, bool throwOnError, bool ignoreCase);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
@@ -773,15 +814,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GetTypes">
+      <MemberSignature Language="C#" Value="public Type[] GetTypes ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Type[] GetTypes() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetTypes">
-      <MemberSignature Language="C#" Value="public Type[] GetTypes ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Type[]</ReturnType>
       </ReturnValue>
@@ -792,15 +834,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="GlobalAssemblyCache">
+      <MemberSignature Language="C#" Value="public bool GlobalAssemblyCache { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool GlobalAssemblyCache" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GlobalAssemblyCache">
-      <MemberSignature Language="C#" Value="public bool GlobalAssemblyCache { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -810,15 +853,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="IsDefined">
+      <MemberSignature Language="C#" Value="public bool IsDefined (Type attributeType, bool inherit);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool IsDefined(class System.Type attributeType, bool inherit) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsDefined">
-      <MemberSignature Language="C#" Value="public bool IsDefined (Type attributeType, bool inherit);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -834,15 +878,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="LoadModule">
+      <MemberSignature Language="C#" Value="public System.Reflection.Module LoadModule (string moduleName, byte[] rawModule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.Module LoadModule(string moduleName, unsigned int8[] rawModule) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LoadModule">
-      <MemberSignature Language="C#" Value="public System.Reflection.Module LoadModule (string moduleName, byte[] rawModule);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Module</ReturnType>
       </ReturnValue>
@@ -858,15 +903,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="LoadModule">
+      <MemberSignature Language="C#" Value="public System.Reflection.Module LoadModule (string moduleName, byte[] rawModule, byte[] rawSymbolStore);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.Module LoadModule(string moduleName, unsigned int8[] rawModule, unsigned int8[] rawSymbolStore) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LoadModule">
-      <MemberSignature Language="C#" Value="public System.Reflection.Module LoadModule (string moduleName, byte[] rawModule, byte[] rawSymbolStore);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Module</ReturnType>
       </ReturnValue>
@@ -884,15 +930,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="Location">
+      <MemberSignature Language="C#" Value="public string Location { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Location" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Location">
-      <MemberSignature Language="C#" Value="public string Location { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -902,15 +949,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="ModuleResolve">
+      <MemberSignature Language="C#" Value="public event System.Reflection.ModuleResolveEventHandler ModuleResolve;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Reflection.ModuleResolveEventHandler ModuleResolve" />
+      <MemberType>Event</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ModuleResolve">
-      <MemberSignature Language="C#" Value="public event System.Reflection.ModuleResolveEventHandler ModuleResolve;" />
-      <MemberType>Event</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.ModuleResolveEventHandler</ReturnType>
       </ReturnValue>
@@ -919,15 +967,16 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="C#" Value="public string ToString ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -938,11 +987,6 @@
         <remarks>To be added.</remarks>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

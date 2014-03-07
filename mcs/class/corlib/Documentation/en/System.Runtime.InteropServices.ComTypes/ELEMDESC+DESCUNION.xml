@@ -1,5 +1,6 @@
 <Type Name="ELEMDESC+DESCUNION" FullName="System.Runtime.InteropServices.ComTypes.ELEMDESC+DESCUNION">
   <TypeSignature Language="C#" Value="public struct ELEMDESC.DESCUNION" />
+  <TypeSignature Language="ILAsm" Value=".class nested public sealed beforefieldinit ELEMDESC/DESCUNION extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -17,7 +18,12 @@
   <Members>
     <Member MemberName="idldesc">
       <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.ComTypes.IDLDESC idldesc;" />
+      <MemberSignature Language="ILAsm" Value=".field public valuetype System.Runtime.InteropServices.ComTypes.IDLDESC idldesc" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.IDLDESC</ReturnType>
       </ReturnValue>
@@ -26,14 +32,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="paramdesc">
+      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.ComTypes.PARAMDESC paramdesc;" />
+      <MemberSignature Language="ILAsm" Value=".field public valuetype System.Runtime.InteropServices.ComTypes.PARAMDESC paramdesc" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="paramdesc">
-      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.ComTypes.PARAMDESC paramdesc;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.PARAMDESC</ReturnType>
       </ReturnValue>
@@ -42,10 +49,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

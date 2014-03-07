@@ -1,6 +1,7 @@
 <Type Name="TimeSpan" FullName="System.TimeSpan" FullNameSP="System_TimeSpan" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sequential sealed serializable TimeSpan extends System.ValueType implements System.IComparable" />
   <TypeSignature Language="C#" Value="public struct TimeSpan : IComparable, IComparable&lt;TimeSpan&gt;, IEquatable&lt;TimeSpan&gt;, IFormattable" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi serializable sealed beforefieldinit TimeSpan extends System.ValueType implements class System.IComparable, class System.IComparable`1&lt;valuetype System.TimeSpan&gt;, class System.IEquatable`1&lt;valuetype System.TimeSpan&gt;, class System.IFormattable" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -27,6 +28,11 @@
       <InterfaceName>System.IFormattable</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>
       <para>Represents an interval of time.</para>
@@ -54,7 +60,13 @@ seconds.</para>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int64 ticks)" />
       <MemberSignature Language="C#" Value="public TimeSpan (long ticks);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int64 ticks) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="ticks" Type="System.Int64" />
@@ -68,16 +80,17 @@ seconds.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 hours, int32 minutes, int32 seconds)" />
+      <MemberSignature Language="C#" Value="public TimeSpan (int hours, int minutes, int seconds);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 hours, int32 minutes, int32 seconds) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 hours, int32 minutes, int32 seconds)" />
-      <MemberSignature Language="C#" Value="public TimeSpan (int hours, int minutes, int seconds);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="hours" Type="System.Int32" />
@@ -100,16 +113,17 @@ seconds.</para>
         <exception cref="T:System.ArgumentOutOfRangeException">The parameters specify a <see cref="T:System.TimeSpan" /> value less than <see cref="F:System.TimeSpan.MinValue" /> or greater than <see cref="F:System.TimeSpan.MaxValue" />.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 days, int32 hours, int32 minutes, int32 seconds)" />
+      <MemberSignature Language="C#" Value="public TimeSpan (int days, int hours, int minutes, int seconds);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 days, int32 hours, int32 minutes, int32 seconds) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 days, int32 hours, int32 minutes, int32 seconds)" />
-      <MemberSignature Language="C#" Value="public TimeSpan (int days, int hours, int minutes, int seconds);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="days" Type="System.Int32" />
@@ -134,16 +148,17 @@ seconds.</para>
         <exception cref="T:System.ArgumentOutOfRangeException">The parameters specify a <see cref="T:System.TimeSpan" /> value less than <see cref="F:System.TimeSpan.MinValue" /> or greater than <see cref="F:System.TimeSpan.MaxValue" />.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 days, int32 hours, int32 minutes, int32 seconds, int32 milliseconds)" />
+      <MemberSignature Language="C#" Value="public TimeSpan (int days, int hours, int minutes, int seconds, int milliseconds);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 days, int32 hours, int32 minutes, int32 seconds, int32 milliseconds) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 days, int32 hours, int32 minutes, int32 seconds, int32 milliseconds)" />
-      <MemberSignature Language="C#" Value="public TimeSpan (int days, int hours, int minutes, int seconds, int milliseconds);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="days" Type="System.Int32" />
@@ -171,16 +186,17 @@ seconds.</para>
         <exception cref="T:System.ArgumentOutOfRangeException">The parameters specify a <see cref="T:System.TimeSpan" /> value less than <see cref="F:System.TimeSpan.MinValue" /> or greater than <see cref="F:System.TimeSpan.MaxValue" />.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.TimeSpan Add(valuetype System.TimeSpan ts)" />
+      <MemberSignature Language="C#" Value="public TimeSpan Add (TimeSpan ts);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.TimeSpan Add(valuetype System.TimeSpan ts) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Add">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.TimeSpan Add(valuetype System.TimeSpan ts)" />
-      <MemberSignature Language="C#" Value="public TimeSpan Add (TimeSpan ts);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
@@ -217,16 +233,17 @@ public class TimeSpanAddExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Compare">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Compare(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
+      <MemberSignature Language="C#" Value="public static int Compare (TimeSpan t1, TimeSpan t2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Compare(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Compare">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Compare(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
-      <MemberSignature Language="C#" Value="public static int Compare (TimeSpan t1, TimeSpan t2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -273,16 +290,17 @@ structures.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CompareTo">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual int32 CompareTo(object value)" />
+      <MemberSignature Language="C#" Value="public int CompareTo (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 CompareTo(object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CompareTo">
-      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual int32 CompareTo(object value)" />
-      <MemberSignature Language="C#" Value="public int CompareTo (object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -336,15 +354,15 @@ structures.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CompareTo">
       <MemberSignature Language="C#" Value="public int CompareTo (TimeSpan value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 CompareTo(valuetype System.TimeSpan value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -389,15 +407,17 @@ structures.</para>
         </remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Days">
       <MemberSignature Language="ILASM" Value=".property int32 Days { public hidebysig specialname instance int32 get_Days() }" />
       <MemberSignature Language="C#" Value="public int Days { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Days" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -433,16 +453,17 @@ public class TimeSpanPropertiesExampleOne {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Duration">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.TimeSpan Duration()" />
+      <MemberSignature Language="C#" Value="public TimeSpan Duration ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.TimeSpan Duration() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Duration">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.TimeSpan Duration()" />
-      <MemberSignature Language="C#" Value="public TimeSpan Duration ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
@@ -478,16 +499,17 @@ public class TimeSpanDurationExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object value)" />
+      <MemberSignature Language="C#" Value="public override bool Equals (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Equals">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object value)" />
-      <MemberSignature Language="C#" Value="public override bool Equals (object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -514,15 +536,15 @@ public class TimeSpanDurationExample {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public bool Equals (TimeSpan obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Equals(valuetype System.TimeSpan obj) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -545,15 +567,17 @@ public class TimeSpanDurationExample {
         </remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static bool Equals(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
       <MemberSignature Language="C#" Value="public static bool Equals (TimeSpan t1, TimeSpan t2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Equals(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -575,16 +599,17 @@ represent the same value; otherwise, <see langword="false" />.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="FromDays">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.TimeSpan FromDays(float64 value)" />
+      <MemberSignature Language="C#" Value="public static TimeSpan FromDays (double value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.TimeSpan FromDays(float64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FromDays">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.TimeSpan FromDays(float64 value)" />
-      <MemberSignature Language="C#" Value="public static TimeSpan FromDays (double value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
@@ -615,16 +640,17 @@ with the value <see cref="F:System.TimeSpan.MinValue" /> is returned. </para>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="FromHours">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.TimeSpan FromHours(float64 value)" />
+      <MemberSignature Language="C#" Value="public static TimeSpan FromHours (double value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.TimeSpan FromHours(float64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FromHours">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.TimeSpan FromHours(float64 value)" />
-      <MemberSignature Language="C#" Value="public static TimeSpan FromHours (double value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
@@ -657,16 +683,17 @@ with the value <see cref="F:System.TimeSpan.MinValue" /> is returned.</para>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="FromMilliseconds">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.TimeSpan FromMilliseconds(float64 value)" />
+      <MemberSignature Language="C#" Value="public static TimeSpan FromMilliseconds (double value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.TimeSpan FromMilliseconds(float64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FromMilliseconds">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.TimeSpan FromMilliseconds(float64 value)" />
-      <MemberSignature Language="C#" Value="public static TimeSpan FromMilliseconds (double value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
@@ -698,16 +725,17 @@ returned.</para>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="FromMinutes">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.TimeSpan FromMinutes(float64 value)" />
+      <MemberSignature Language="C#" Value="public static TimeSpan FromMinutes (double value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.TimeSpan FromMinutes(float64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FromMinutes">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.TimeSpan FromMinutes(float64 value)" />
-      <MemberSignature Language="C#" Value="public static TimeSpan FromMinutes (double value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
@@ -739,16 +767,17 @@ returned.</para>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="FromSeconds">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.TimeSpan FromSeconds(float64 value)" />
+      <MemberSignature Language="C#" Value="public static TimeSpan FromSeconds (double value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.TimeSpan FromSeconds(float64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FromSeconds">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.TimeSpan FromSeconds(float64 value)" />
-      <MemberSignature Language="C#" Value="public static TimeSpan FromSeconds (double value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
@@ -782,16 +811,17 @@ the value <see cref="F:System.TimeSpan.MinValue" /> is returned.</para>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="FromTicks">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.TimeSpan FromTicks(int64 value)" />
+      <MemberSignature Language="C#" Value="public static TimeSpan FromTicks (long value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.TimeSpan FromTicks(int64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FromTicks">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.TimeSpan FromTicks(int64 value)" />
-      <MemberSignature Language="C#" Value="public static TimeSpan FromTicks (long value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
@@ -812,16 +842,17 @@ the value <see cref="F:System.TimeSpan.MinValue" /> is returned.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetHashCode">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
-      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -844,16 +875,17 @@ value containing a hash code for the current instance.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Hours">
+      <MemberSignature Language="ILASM" Value=".property int32 Hours { public hidebysig specialname instance int32 get_Hours() }" />
+      <MemberSignature Language="C#" Value="public int Hours { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Hours" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Hours">
-      <MemberSignature Language="ILASM" Value=".property int32 Hours { public hidebysig specialname instance int32 get_Hours() }" />
-      <MemberSignature Language="C#" Value="public int Hours { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -889,16 +921,17 @@ public class TimeSpanPropertiesExampleOne {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="MaxValue">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly valuetype System.TimeSpan MaxValue" />
+      <MemberSignature Language="C#" Value="public static readonly TimeSpan MaxValue;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype System.TimeSpan MaxValue" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MaxValue">
-      <MemberSignature Language="ILASM" Value=".field public static initOnly valuetype System.TimeSpan MaxValue" />
-      <MemberSignature Language="C#" Value="public static readonly TimeSpan MaxValue;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
@@ -916,16 +949,17 @@ public class TimeSpanPropertiesExampleOne {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Milliseconds">
+      <MemberSignature Language="ILASM" Value=".property int32 Milliseconds { public hidebysig specialname instance int32 get_Milliseconds() }" />
+      <MemberSignature Language="C#" Value="public int Milliseconds { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Milliseconds" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Milliseconds">
-      <MemberSignature Language="ILASM" Value=".property int32 Milliseconds { public hidebysig specialname instance int32 get_Milliseconds() }" />
-      <MemberSignature Language="C#" Value="public int Milliseconds { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -963,16 +997,17 @@ public class TimeSpanPropertiesExampleOne {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Minutes">
+      <MemberSignature Language="ILASM" Value=".property int32 Minutes { public hidebysig specialname instance int32 get_Minutes() }" />
+      <MemberSignature Language="C#" Value="public int Minutes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Minutes" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Minutes">
-      <MemberSignature Language="ILASM" Value=".property int32 Minutes { public hidebysig specialname instance int32 get_Minutes() }" />
-      <MemberSignature Language="C#" Value="public int Minutes { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1009,16 +1044,17 @@ public class TimeSpanPropertiesExampleOne {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="MinValue">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly valuetype System.TimeSpan MinValue" />
+      <MemberSignature Language="C#" Value="public static readonly TimeSpan MinValue;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype System.TimeSpan MinValue" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MinValue">
-      <MemberSignature Language="ILASM" Value=".field public static initOnly valuetype System.TimeSpan MinValue" />
-      <MemberSignature Language="C#" Value="public static readonly TimeSpan MinValue;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
@@ -1036,16 +1072,17 @@ public class TimeSpanPropertiesExampleOne {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Negate">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.TimeSpan Negate()" />
+      <MemberSignature Language="C#" Value="public TimeSpan Negate ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.TimeSpan Negate() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Negate">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.TimeSpan Negate()" />
-      <MemberSignature Language="C#" Value="public TimeSpan Negate ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
@@ -1062,16 +1099,17 @@ public class TimeSpanPropertiesExampleOne {
         <exception cref="T:System.OverflowException">The value of the current instance is <see cref="F:System.TimeSpan.MinValue" />.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="op_Addition">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname valuetype System.TimeSpan op_Addition(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
+      <MemberSignature Language="C#" Value="public static TimeSpan op_Addition (TimeSpan t1, TimeSpan t2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.TimeSpan op_Addition(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="op_Addition">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname valuetype System.TimeSpan op_Addition(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
-      <MemberSignature Language="C#" Value="public static TimeSpan op_Addition (TimeSpan t1, TimeSpan t2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
@@ -1093,16 +1131,17 @@ public class TimeSpanPropertiesExampleOne {
         <exception cref="T:System.OverflowException">The sum of <paramref name="t1" /> and <paramref name="t2" /> is less than <see cref="F:System.TimeSpan.MinValue" /> or greater than <see cref="F:System.TimeSpan.MaxValue" />.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="op_Equality">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_Equality(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
+      <MemberSignature Language="C#" Value="public static bool op_Equality (TimeSpan t1, TimeSpan t2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Equality(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="op_Equality">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_Equality(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
-      <MemberSignature Language="C#" Value="public static bool op_Equality (TimeSpan t1, TimeSpan t2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1128,16 +1167,17 @@ public class TimeSpanPropertiesExampleOne {
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="op_GreaterThan">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_GreaterThan(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
+      <MemberSignature Language="C#" Value="public static bool op_GreaterThan (TimeSpan t1, TimeSpan t2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_GreaterThan(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="op_GreaterThan">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_GreaterThan(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
-      <MemberSignature Language="C#" Value="public static bool op_GreaterThan (TimeSpan t1, TimeSpan t2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1161,16 +1201,17 @@ public class TimeSpanPropertiesExampleOne {
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="op_GreaterThanOrEqual">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_GreaterThanOrEqual(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
+      <MemberSignature Language="C#" Value="public static bool op_GreaterThanOrEqual (TimeSpan t1, TimeSpan t2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_GreaterThanOrEqual(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="op_GreaterThanOrEqual">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_GreaterThanOrEqual(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
-      <MemberSignature Language="C#" Value="public static bool op_GreaterThanOrEqual (TimeSpan t1, TimeSpan t2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1195,16 +1236,17 @@ public class TimeSpanPropertiesExampleOne {
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="op_Inequality">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_Inequality(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
+      <MemberSignature Language="C#" Value="public static bool op_Inequality (TimeSpan t1, TimeSpan t2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Inequality(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="op_Inequality">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_Inequality(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
-      <MemberSignature Language="C#" Value="public static bool op_Inequality (TimeSpan t1, TimeSpan t2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1227,16 +1269,17 @@ public class TimeSpanPropertiesExampleOne {
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="op_LessThan">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_LessThan(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
+      <MemberSignature Language="C#" Value="public static bool op_LessThan (TimeSpan t1, TimeSpan t2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_LessThan(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="op_LessThan">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_LessThan(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
-      <MemberSignature Language="C#" Value="public static bool op_LessThan (TimeSpan t1, TimeSpan t2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1259,16 +1302,17 @@ public class TimeSpanPropertiesExampleOne {
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="op_LessThanOrEqual">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_LessThanOrEqual(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
+      <MemberSignature Language="C#" Value="public static bool op_LessThanOrEqual (TimeSpan t1, TimeSpan t2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_LessThanOrEqual(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="op_LessThanOrEqual">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_LessThanOrEqual(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
-      <MemberSignature Language="C#" Value="public static bool op_LessThanOrEqual (TimeSpan t1, TimeSpan t2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1292,16 +1336,17 @@ public class TimeSpanPropertiesExampleOne {
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="op_Subtraction">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname valuetype System.TimeSpan op_Subtraction(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
+      <MemberSignature Language="C#" Value="public static TimeSpan op_Subtraction (TimeSpan t1, TimeSpan t2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.TimeSpan op_Subtraction(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="op_Subtraction">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname valuetype System.TimeSpan op_Subtraction(valuetype System.TimeSpan t1, valuetype System.TimeSpan t2)" />
-      <MemberSignature Language="C#" Value="public static TimeSpan op_Subtraction (TimeSpan t1, TimeSpan t2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
@@ -1324,16 +1369,17 @@ minus the value of <paramref name="t2" />.</para>
         <exception cref="T:System.OverflowException">The value of <paramref name="t2" /> subtracted from <paramref name="t1" /> is less than <see cref="F:System.TimeSpan.MinValue" /> or greater than <see cref="F:System.TimeSpan.MaxValue" />.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="op_UnaryNegation">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname valuetype System.TimeSpan op_UnaryNegation(valuetype System.TimeSpan t)" />
+      <MemberSignature Language="C#" Value="public static TimeSpan op_UnaryNegation (TimeSpan t);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.TimeSpan op_UnaryNegation(valuetype System.TimeSpan t) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="op_UnaryNegation">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname valuetype System.TimeSpan op_UnaryNegation(valuetype System.TimeSpan t)" />
-      <MemberSignature Language="C#" Value="public static TimeSpan op_UnaryNegation (TimeSpan t);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
@@ -1355,16 +1401,17 @@ minus the value of <paramref name="t2" />.</para>
           <paramref name="t" /> equals <see cref="F:System.TimeSpan.MinValue" />.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="op_UnaryPlus">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname valuetype System.TimeSpan op_UnaryPlus(valuetype System.TimeSpan t)" />
+      <MemberSignature Language="C#" Value="public static TimeSpan op_UnaryPlus (TimeSpan t);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.TimeSpan op_UnaryPlus(valuetype System.TimeSpan t) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="op_UnaryPlus">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname valuetype System.TimeSpan op_UnaryPlus(valuetype System.TimeSpan t)" />
-      <MemberSignature Language="C#" Value="public static TimeSpan op_UnaryPlus (TimeSpan t);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
@@ -1386,16 +1433,17 @@ minus the value of <paramref name="t2" />.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.TimeSpan Parse(string s)" />
+      <MemberSignature Language="C#" Value="public static TimeSpan Parse (string s);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.TimeSpan Parse(string s) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Parse">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.TimeSpan Parse(string s)" />
-      <MemberSignature Language="C#" Value="public static TimeSpan Parse (string s);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
@@ -1485,14 +1533,10 @@ parses to TimeSpan -5.12:34:56.7890000
         </example>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Parse">
-      <MemberSignature Language="C#" Value="public static TimeSpan Parse (string s, IFormatProvider formatProvider);" />
+      <MemberSignature Language="C#" Value="public static TimeSpan Parse (string input, IFormatProvider formatProvider);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.TimeSpan Parse(string input, class System.IFormatProvider formatProvider) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1501,11 +1545,11 @@ parses to TimeSpan -5.12:34:56.7890000
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="input" Type="System.String" />
         <Parameter Name="formatProvider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
+        <param name="input">To be added.</param>
         <param name="formatProvider">To be added.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
@@ -1514,6 +1558,7 @@ parses to TimeSpan -5.12:34:56.7890000
     </Member>
     <Member MemberName="ParseExact">
       <MemberSignature Language="C#" Value="public static TimeSpan ParseExact (string input, string format, IFormatProvider formatProvider);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.TimeSpan ParseExact(string input, string format, class System.IFormatProvider formatProvider) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1537,6 +1582,7 @@ parses to TimeSpan -5.12:34:56.7890000
     </Member>
     <Member MemberName="ParseExact">
       <MemberSignature Language="C#" Value="public static TimeSpan ParseExact (string input, string[] formats, IFormatProvider formatProvider);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.TimeSpan ParseExact(string input, string[] formats, class System.IFormatProvider formatProvider) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1560,6 +1606,7 @@ parses to TimeSpan -5.12:34:56.7890000
     </Member>
     <Member MemberName="ParseExact">
       <MemberSignature Language="C#" Value="public static TimeSpan ParseExact (string input, string format, IFormatProvider formatProvider, System.Globalization.TimeSpanStyles styles);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.TimeSpan ParseExact(string input, string format, class System.IFormatProvider formatProvider, valuetype System.Globalization.TimeSpanStyles styles) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1585,6 +1632,7 @@ parses to TimeSpan -5.12:34:56.7890000
     </Member>
     <Member MemberName="ParseExact">
       <MemberSignature Language="C#" Value="public static TimeSpan ParseExact (string input, string[] formats, IFormatProvider formatProvider, System.Globalization.TimeSpanStyles styles);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.TimeSpan ParseExact(string input, string[] formats, class System.IFormatProvider formatProvider, valuetype System.Globalization.TimeSpanStyles styles) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1611,7 +1659,13 @@ parses to TimeSpan -5.12:34:56.7890000
     <Member MemberName="Seconds">
       <MemberSignature Language="ILASM" Value=".property int32 Seconds { public hidebysig specialname instance int32 get_Seconds() }" />
       <MemberSignature Language="C#" Value="public int Seconds { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Seconds" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1647,16 +1701,17 @@ public class TimeSpanPropertiesExampleOne {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Subtract">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.TimeSpan Subtract(valuetype System.TimeSpan ts)" />
+      <MemberSignature Language="C#" Value="public TimeSpan Subtract (TimeSpan ts);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.TimeSpan Subtract(valuetype System.TimeSpan ts) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Subtract">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.TimeSpan Subtract(valuetype System.TimeSpan ts)" />
-      <MemberSignature Language="C#" Value="public TimeSpan Subtract (TimeSpan ts);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
@@ -1677,16 +1732,17 @@ public class TimeSpanPropertiesExampleOne {
         <exception cref="T:System.OverflowException">The difference between the value of the current instance and <paramref name="ts" /> is less than <see cref="F:System.TimeSpan.MinValue" /> or greater than <see cref="F:System.TimeSpan.MaxValue" />.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Ticks">
+      <MemberSignature Language="ILASM" Value=".property int64 Ticks { public hidebysig specialname instance int64 get_Ticks() }" />
+      <MemberSignature Language="C#" Value="public long Ticks { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 Ticks" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Ticks">
-      <MemberSignature Language="ILASM" Value=".property int64 Ticks { public hidebysig specialname instance int64 get_Ticks() }" />
-      <MemberSignature Language="C#" Value="public long Ticks { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -1704,16 +1760,17 @@ public class TimeSpanPropertiesExampleOne {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="TicksPerDay">
+      <MemberSignature Language="ILASM" Value=".field public static literal int64 TicksPerDay = 864000000000" />
+      <MemberSignature Language="C#" Value="public const long TicksPerDay = 864000000000;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal int64 TicksPerDay = (864000000000)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="TicksPerDay">
-      <MemberSignature Language="ILASM" Value=".field public static literal int64 TicksPerDay = 864000000000" />
-      <MemberSignature Language="C#" Value="public const long TicksPerDay = 864000000000;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -1729,16 +1786,17 @@ public class TimeSpanPropertiesExampleOne {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="TicksPerHour">
+      <MemberSignature Language="ILASM" Value=".field public static literal int64 TicksPerHour = 36000000000" />
+      <MemberSignature Language="C#" Value="public const long TicksPerHour = 36000000000;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal int64 TicksPerHour = (36000000000)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="TicksPerHour">
-      <MemberSignature Language="ILASM" Value=".field public static literal int64 TicksPerHour = 36000000000" />
-      <MemberSignature Language="C#" Value="public const long TicksPerHour = 36000000000;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -1754,16 +1812,17 @@ public class TimeSpanPropertiesExampleOne {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="TicksPerMillisecond">
+      <MemberSignature Language="ILASM" Value=".field public static literal int64 TicksPerMillisecond = 10000" />
+      <MemberSignature Language="C#" Value="public const long TicksPerMillisecond = 10000;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal int64 TicksPerMillisecond = (10000)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="TicksPerMillisecond">
-      <MemberSignature Language="ILASM" Value=".field public static literal int64 TicksPerMillisecond = 10000" />
-      <MemberSignature Language="C#" Value="public const long TicksPerMillisecond = 10000;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -1780,16 +1839,17 @@ public class TimeSpanPropertiesExampleOne {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="TicksPerMinute">
+      <MemberSignature Language="ILASM" Value=".field public static literal int64 TicksPerMinute = 600000000" />
+      <MemberSignature Language="C#" Value="public const long TicksPerMinute = 600000000;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal int64 TicksPerMinute = (600000000)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="TicksPerMinute">
-      <MemberSignature Language="ILASM" Value=".field public static literal int64 TicksPerMinute = 600000000" />
-      <MemberSignature Language="C#" Value="public const long TicksPerMinute = 600000000;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -1805,16 +1865,17 @@ public class TimeSpanPropertiesExampleOne {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="TicksPerSecond">
+      <MemberSignature Language="ILASM" Value=".field public static literal int64 TicksPerSecond = 10000000" />
+      <MemberSignature Language="C#" Value="public const long TicksPerSecond = 10000000;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal int64 TicksPerSecond = (10000000)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="TicksPerSecond">
-      <MemberSignature Language="ILASM" Value=".field public static literal int64 TicksPerSecond = 10000000" />
-      <MemberSignature Language="C#" Value="public const long TicksPerSecond = 10000000;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -1830,16 +1891,17 @@ public class TimeSpanPropertiesExampleOne {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
-      <MemberSignature Language="C#" Value="public override string ToString ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1915,14 +1977,10 @@ public class TimeSpanToStringExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="C#" Value="public string ToString (string format);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ToString(string format) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1942,6 +2000,7 @@ public class TimeSpanToStringExample {
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="C#" Value="public string ToString (string format, IFormatProvider formatProvider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string ToString(string format, class System.IFormatProvider formatProvider) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1964,7 +2023,13 @@ public class TimeSpanToStringExample {
     <Member MemberName="TotalDays">
       <MemberSignature Language="ILASM" Value=".property float64 TotalDays { public hidebysig specialname instance float64 get_TotalDays() }" />
       <MemberSignature Language="C#" Value="public double TotalDays { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance float64 TotalDays" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -2004,16 +2069,17 @@ public class TimeSpanTotalUnitsProperties{
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="TotalHours">
+      <MemberSignature Language="ILASM" Value=".property float64 TotalHours { public hidebysig specialname instance float64 get_TotalHours() }" />
+      <MemberSignature Language="C#" Value="public double TotalHours { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance float64 TotalHours" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="TotalHours">
-      <MemberSignature Language="ILASM" Value=".property float64 TotalHours { public hidebysig specialname instance float64 get_TotalHours() }" />
-      <MemberSignature Language="C#" Value="public double TotalHours { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -2053,16 +2119,17 @@ public class TimeSpanTotalUnitsProperties{
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="TotalMilliseconds">
+      <MemberSignature Language="ILASM" Value=".property float64 TotalMilliseconds { public hidebysig specialname instance float64 get_TotalMilliseconds() }" />
+      <MemberSignature Language="C#" Value="public double TotalMilliseconds { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance float64 TotalMilliseconds" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="TotalMilliseconds">
-      <MemberSignature Language="ILASM" Value=".property float64 TotalMilliseconds { public hidebysig specialname instance float64 get_TotalMilliseconds() }" />
-      <MemberSignature Language="C#" Value="public double TotalMilliseconds { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -2102,16 +2169,17 @@ public class TimeSpanTotalUnitsProperties{
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="TotalMinutes">
+      <MemberSignature Language="ILASM" Value=".property float64 TotalMinutes { public hidebysig specialname instance float64 get_TotalMinutes() }" />
+      <MemberSignature Language="C#" Value="public double TotalMinutes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance float64 TotalMinutes" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="TotalMinutes">
-      <MemberSignature Language="ILASM" Value=".property float64 TotalMinutes { public hidebysig specialname instance float64 get_TotalMinutes() }" />
-      <MemberSignature Language="C#" Value="public double TotalMinutes { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -2151,16 +2219,17 @@ public class TimeSpanTotalUnitsProperties{
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="TotalSeconds">
+      <MemberSignature Language="ILASM" Value=".property float64 TotalSeconds { public hidebysig specialname instance float64 get_TotalSeconds() }" />
+      <MemberSignature Language="C#" Value="public double TotalSeconds { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance float64 TotalSeconds" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="TotalSeconds">
-      <MemberSignature Language="ILASM" Value=".property float64 TotalSeconds { public hidebysig specialname instance float64 get_TotalSeconds() }" />
-      <MemberSignature Language="C#" Value="public double TotalSeconds { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -2200,15 +2269,15 @@ public class TimeSpanTotalUnitsProperties{
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryParse">
       <MemberSignature Language="C#" Value="public static bool TryParse (string s, out TimeSpan result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryParse(string s, valuetype System.TimeSpan result) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2224,13 +2293,10 @@ public class TimeSpanTotalUnitsProperties{
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryParse">
-      <MemberSignature Language="C#" Value="public static bool TryParse (string s, IFormatProvider formatProvider, out TimeSpan result);" />
+      <MemberSignature Language="C#" Value="public static bool TryParse (string input, IFormatProvider formatProvider, out TimeSpan result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryParse(string input, class System.IFormatProvider formatProvider, valuetype System.TimeSpan result) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -2239,12 +2305,12 @@ public class TimeSpanTotalUnitsProperties{
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="s" Type="System.String" />
+        <Parameter Name="input" Type="System.String" />
         <Parameter Name="formatProvider" Type="System.IFormatProvider" />
         <Parameter Name="result" Type="System.TimeSpan&amp;" RefType="out" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
+        <param name="input">To be added.</param>
         <param name="formatProvider">To be added.</param>
         <param name="result">To be added.</param>
         <summary>To be added.</summary>
@@ -2254,6 +2320,7 @@ public class TimeSpanTotalUnitsProperties{
     </Member>
     <Member MemberName="TryParseExact">
       <MemberSignature Language="C#" Value="public static bool TryParseExact (string input, string format, IFormatProvider formatProvider, out TimeSpan result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryParseExact(string input, string format, class System.IFormatProvider formatProvider, valuetype System.TimeSpan result) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -2279,6 +2346,7 @@ public class TimeSpanTotalUnitsProperties{
     </Member>
     <Member MemberName="TryParseExact">
       <MemberSignature Language="C#" Value="public static bool TryParseExact (string input, string[] formats, IFormatProvider formatProvider, out TimeSpan result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryParseExact(string input, string[] formats, class System.IFormatProvider formatProvider, valuetype System.TimeSpan result) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -2304,6 +2372,7 @@ public class TimeSpanTotalUnitsProperties{
     </Member>
     <Member MemberName="TryParseExact">
       <MemberSignature Language="C#" Value="public static bool TryParseExact (string input, string format, IFormatProvider formatProvider, System.Globalization.TimeSpanStyles styles, out TimeSpan result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryParseExact(string input, string format, class System.IFormatProvider formatProvider, valuetype System.Globalization.TimeSpanStyles styles, valuetype System.TimeSpan result) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -2331,6 +2400,7 @@ public class TimeSpanTotalUnitsProperties{
     </Member>
     <Member MemberName="TryParseExact">
       <MemberSignature Language="C#" Value="public static bool TryParseExact (string input, string[] formats, IFormatProvider formatProvider, System.Globalization.TimeSpanStyles styles, out TimeSpan result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryParseExact(string input, string[] formats, class System.IFormatProvider formatProvider, valuetype System.Globalization.TimeSpanStyles styles, valuetype System.TimeSpan result) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -2359,7 +2429,13 @@ public class TimeSpanTotalUnitsProperties{
     <Member MemberName="Zero">
       <MemberSignature Language="ILASM" Value=".field public static initOnly valuetype System.TimeSpan Zero" />
       <MemberSignature Language="C#" Value="public static readonly TimeSpan Zero;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype System.TimeSpan Zero" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
@@ -2374,17 +2450,7 @@ public class TimeSpanTotalUnitsProperties{
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

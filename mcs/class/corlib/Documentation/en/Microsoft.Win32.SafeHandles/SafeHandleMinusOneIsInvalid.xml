@@ -1,5 +1,6 @@
 <Type Name="SafeHandleMinusOneIsInvalid" FullName="Microsoft.Win32.SafeHandles.SafeHandleMinusOneIsInvalid">
   <TypeSignature Language="C#" Value="public abstract class SafeHandleMinusOneIsInvalid : System.Runtime.InteropServices.SafeHandle" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit SafeHandleMinusOneIsInvalid extends System.Runtime.InteropServices.SafeHandle implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersions>
@@ -20,10 +21,12 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected SafeHandleMinusOneIsInvalid (bool ownsHandle);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(bool ownsHandle) cil managed" />
       <MemberType>Constructor</MemberType>
-      <AssemblyVersions>
+      <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyVersions>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
@@ -38,17 +41,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="IsInvalid">
+      <MemberSignature Language="C#" Value="public override bool IsInvalid { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsInvalid" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsInvalid">
-      <MemberSignature Language="C#" Value="public override bool IsInvalid { get; }" />
-      <MemberType>Property</MemberType>
-      <AssemblyVersions>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyVersions>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -58,10 +59,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

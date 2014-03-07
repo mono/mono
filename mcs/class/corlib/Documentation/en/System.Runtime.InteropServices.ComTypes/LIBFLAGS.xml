@@ -1,5 +1,6 @@
 <Type Name="LIBFLAGS" FullName="System.Runtime.InteropServices.ComTypes.LIBFLAGS">
   <TypeSignature Language="C#" Value="public enum LIBFLAGS" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed LIBFLAGS extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -21,7 +22,12 @@
   <Members>
     <Member MemberName="LIBFLAG_FCONTROL">
       <MemberSignature Language="C#" Value="LIBFLAG_FCONTROL" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.LIBFLAGS LIBFLAG_FCONTROL = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.LIBFLAGS</ReturnType>
       </ReturnValue>
@@ -29,14 +35,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LIBFLAG_FHASDISKIMAGE">
       <MemberSignature Language="C#" Value="LIBFLAG_FHASDISKIMAGE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.LIBFLAGS LIBFLAG_FHASDISKIMAGE = int32(8)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.LIBFLAGS</ReturnType>
       </ReturnValue>
@@ -44,14 +51,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LIBFLAG_FHIDDEN">
       <MemberSignature Language="C#" Value="LIBFLAG_FHIDDEN" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.LIBFLAGS LIBFLAG_FHIDDEN = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.LIBFLAGS</ReturnType>
       </ReturnValue>
@@ -59,14 +67,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LIBFLAG_FRESTRICTED">
       <MemberSignature Language="C#" Value="LIBFLAG_FRESTRICTED" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.LIBFLAGS LIBFLAG_FRESTRICTED = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.LIBFLAGS</ReturnType>
       </ReturnValue>
@@ -74,10 +83,6 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

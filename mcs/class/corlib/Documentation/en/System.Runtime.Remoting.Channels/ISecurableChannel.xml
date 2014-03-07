@@ -1,5 +1,6 @@
 <Type Name="ISecurableChannel" FullName="System.Runtime.Remoting.Channels.ISecurableChannel">
   <TypeSignature Language="C#" Value="public interface ISecurableChannel" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISecurableChannel" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -13,8 +14,13 @@
   </Docs>
   <Members>
     <Member MemberName="IsSecured">
-      <MemberSignature Language="C#" Value="public bool IsSecured { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool IsSecured { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsSecured" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -24,10 +30,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

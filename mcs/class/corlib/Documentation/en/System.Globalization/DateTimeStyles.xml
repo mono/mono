@@ -1,6 +1,7 @@
 <Type Name="DateTimeStyles" FullName="System.Globalization.DateTimeStyles" FullNameSP="System_Globalization_DateTimeStyles" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable DateTimeStyles extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum DateTimeStyles" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed DateTimeStyles extends System.Enum" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -39,7 +40,13 @@
     <Member MemberName="AdjustToUniversal">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.DateTimeStyles AdjustToUniversal = 0x10" />
       <MemberSignature Language="C#" Value="AdjustToUniversal" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.DateTimeStyles AdjustToUniversal = int32(16)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Globalization.DateTimeStyles</ReturnType>
       </ReturnValue>
@@ -53,16 +60,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AllowInnerWhite">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.DateTimeStyles AllowInnerWhite = 0x4" />
+      <MemberSignature Language="C#" Value="AllowInnerWhite" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.DateTimeStyles AllowInnerWhite = int32(4)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AllowInnerWhite">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.DateTimeStyles AllowInnerWhite = 0x4" />
-      <MemberSignature Language="C#" Value="AllowInnerWhite" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.DateTimeStyles</ReturnType>
       </ReturnValue>
@@ -76,16 +84,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AllowLeadingWhite">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.DateTimeStyles AllowLeadingWhite = 0x1" />
+      <MemberSignature Language="C#" Value="AllowLeadingWhite" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.DateTimeStyles AllowLeadingWhite = int32(1)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AllowLeadingWhite">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.DateTimeStyles AllowLeadingWhite = 0x1" />
-      <MemberSignature Language="C#" Value="AllowLeadingWhite" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.DateTimeStyles</ReturnType>
       </ReturnValue>
@@ -98,16 +107,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AllowTrailingWhite">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.DateTimeStyles AllowTrailingWhite = 0x2" />
+      <MemberSignature Language="C#" Value="AllowTrailingWhite" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.DateTimeStyles AllowTrailingWhite = int32(2)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AllowTrailingWhite">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.DateTimeStyles AllowTrailingWhite = 0x2" />
-      <MemberSignature Language="C#" Value="AllowTrailingWhite" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.DateTimeStyles</ReturnType>
       </ReturnValue>
@@ -120,16 +130,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AllowWhiteSpaces">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.DateTimeStyles AllowWhiteSpaces = AllowLeadingWhite | AllowTrailingWhite | AllowInnerWhite" />
+      <MemberSignature Language="C#" Value="AllowWhiteSpaces" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.DateTimeStyles AllowWhiteSpaces = int32(7)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AllowWhiteSpaces">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.DateTimeStyles AllowWhiteSpaces = AllowLeadingWhite | AllowTrailingWhite | AllowInnerWhite" />
-      <MemberSignature Language="C#" Value="AllowWhiteSpaces" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.DateTimeStyles</ReturnType>
       </ReturnValue>
@@ -143,46 +154,49 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AssumeLocal">
+      <MemberSignature Language="C#" Value="AssumeLocal" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.DateTimeStyles AssumeLocal = int32(32)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Globalization.DateTimeStyles</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="AssumeUniversal">
+      <MemberSignature Language="C#" Value="AssumeUniversal" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.DateTimeStyles AssumeUniversal = int32(64)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Globalization.DateTimeStyles</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="NoCurrentDateDefault">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.DateTimeStyles NoCurrentDateDefault = 0x8" />
+      <MemberSignature Language="C#" Value="NoCurrentDateDefault" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.DateTimeStyles NoCurrentDateDefault = int32(8)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AssumeLocal">
-      <MemberSignature Language="C#" Value="AssumeLocal" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.DateTimeStyles</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="AssumeUniversal">
-      <MemberSignature Language="C#" Value="AssumeUniversal" />
-      <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.DateTimeStyles</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-    </Member>
-    <Member MemberName="NoCurrentDateDefault">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.DateTimeStyles NoCurrentDateDefault = 0x8" />
-      <MemberSignature Language="C#" Value="NoCurrentDateDefault" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.DateTimeStyles</ReturnType>
       </ReturnValue>
@@ -198,16 +212,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.DateTimeStyles None = 0x0" />
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.DateTimeStyles None = int32(0)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="None">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.DateTimeStyles None = 0x0" />
-      <MemberSignature Language="C#" Value="None" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.DateTimeStyles</ReturnType>
       </ReturnValue>
@@ -220,15 +235,15 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RoundtripKind">
       <MemberSignature Language="C#" Value="RoundtripKind" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.DateTimeStyles RoundtripKind = int32(128)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Globalization.DateTimeStyles</ReturnType>
       </ReturnValue>
@@ -236,10 +251,6 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

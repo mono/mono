@@ -1,5 +1,6 @@
 <Type Name="TYPEDESC" FullName="System.Runtime.InteropServices.ComTypes.TYPEDESC">
   <TypeSignature Language="C#" Value="public struct TYPEDESC" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential sealed beforefieldinit TYPEDESC extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -17,7 +18,12 @@
   <Members>
     <Member MemberName="lpValue">
       <MemberSignature Language="C#" Value="public IntPtr lpValue;" />
+      <MemberSignature Language="ILAsm" Value=".field public native int lpValue" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -26,14 +32,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="vt">
+      <MemberSignature Language="C#" Value="public short vt;" />
+      <MemberSignature Language="ILAsm" Value=".field public int16 vt" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="vt">
-      <MemberSignature Language="C#" Value="public short vt;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
@@ -42,10 +49,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

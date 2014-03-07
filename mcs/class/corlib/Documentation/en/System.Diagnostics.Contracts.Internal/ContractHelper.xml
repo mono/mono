@@ -1,5 +1,6 @@
 <Type Name="ContractHelper" FullName="System.Diagnostics.Contracts.Internal.ContractHelper">
   <TypeSignature Language="C#" Value="public static class ContractHelper" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit ContractHelper extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -8,6 +9,11 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Obsolete("Type has been moved to System.Runtime.CompilerServices")</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>Methods required by the contract rewriter to handle contract failures.</summary>
     <remarks>These methods are called by code that has been rewritten by the Ccrewrite tool.</remarks>
@@ -15,6 +21,7 @@
   <Members>
     <Member MemberName="RaiseContractFailedEvent">
       <MemberSignature Language="C#" Value="public static string RaiseContractFailedEvent (System.Diagnostics.Contracts.ContractFailureKind failureKind, string userMessage, string conditionText, Exception innerException);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string RaiseContractFailedEvent(valuetype System.Diagnostics.Contracts.ContractFailureKind failureKind, string userMessage, string conditionText, class System.Exception innerException) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -24,7 +31,7 @@
           <AttributeName>System.Diagnostics.DebuggerNonUserCode</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -48,6 +55,7 @@
     </Member>
     <Member MemberName="TriggerFailure">
       <MemberSignature Language="C#" Value="public static void TriggerFailure (System.Diagnostics.Contracts.ContractFailureKind kind, string displayMessage, string userMessage, string conditionText, Exception innerException);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void TriggerFailure(valuetype System.Diagnostics.Contracts.ContractFailureKind kind, string displayMessage, string userMessage, string conditionText, class System.Exception innerException) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>

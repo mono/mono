@@ -1,5 +1,6 @@
 <Type Name="InternalsVisibleToAttribute" FullName="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
   <TypeSignature Language="C#" Value="public sealed class InternalsVisibleToAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit InternalsVisibleToAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,7 +56,12 @@ Use this key then as the PublicKey value inside the string:
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public InternalsVisibleToAttribute (string assemblyName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string assemblyName) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="assemblyName" Type="System.String" />
       </Parameters>
@@ -65,13 +71,10 @@ Use this key then as the PublicKey value inside the string:
         <remarks>Allows the specified assembly to have access to the internal classes and members  of this assembly.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AllInternalsVisible">
-      <MemberSignature Language="C#" Value="public bool AllInternalsVisible { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool AllInternalsVisible { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AllInternalsVisible" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -88,7 +91,12 @@ Use this key then as the PublicKey value inside the string:
     </Member>
     <Member MemberName="AssemblyName">
       <MemberSignature Language="C#" Value="public string AssemblyName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string AssemblyName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -98,10 +106,6 @@ Use this key then as the PublicKey value inside the string:
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

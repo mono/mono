@@ -1,5 +1,6 @@
 <Type Name="CalendarAlgorithmType" FullName="System.Globalization.CalendarAlgorithmType">
   <TypeSignature Language="C#" Value="public enum CalendarAlgorithmType" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed CalendarAlgorithmType extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -21,7 +22,12 @@
   <Members>
     <Member MemberName="LunarCalendar">
       <MemberSignature Language="C#" Value="LunarCalendar" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CalendarAlgorithmType LunarCalendar = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Globalization.CalendarAlgorithmType</ReturnType>
       </ReturnValue>
@@ -29,14 +35,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LunisolarCalendar">
       <MemberSignature Language="C#" Value="LunisolarCalendar" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CalendarAlgorithmType LunisolarCalendar = int32(3)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Globalization.CalendarAlgorithmType</ReturnType>
       </ReturnValue>
@@ -44,14 +51,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SolarCalendar">
       <MemberSignature Language="C#" Value="SolarCalendar" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CalendarAlgorithmType SolarCalendar = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Globalization.CalendarAlgorithmType</ReturnType>
       </ReturnValue>
@@ -59,14 +67,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Unknown">
       <MemberSignature Language="C#" Value="Unknown" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CalendarAlgorithmType Unknown = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Globalization.CalendarAlgorithmType</ReturnType>
       </ReturnValue>
@@ -74,10 +83,6 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -1,5 +1,6 @@
 <Type Name="IStructuralEquatable" FullName="System.Collections.IStructuralEquatable">
   <TypeSignature Language="C#" Value="public interface IStructuralEquatable" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IStructuralEquatable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -12,6 +13,7 @@
   <Members>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public bool Equals (object other, System.Collections.IEqualityComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Equals(object other, class System.Collections.IEqualityComparer comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -33,6 +35,7 @@
     </Member>
     <Member MemberName="GetHashCode">
       <MemberSignature Language="C#" Value="public int GetHashCode (System.Collections.IEqualityComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetHashCode(class System.Collections.IEqualityComparer comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>

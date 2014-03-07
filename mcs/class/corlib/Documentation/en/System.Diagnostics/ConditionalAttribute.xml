@@ -1,6 +1,7 @@
 <Type Name="ConditionalAttribute" FullName="System.Diagnostics.ConditionalAttribute" FullNameSP="System_Diagnostics_ConditionalAttribute" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable ConditionalAttribute extends System.Attribute" />
   <TypeSignature Language="C#" Value="public sealed class ConditionalAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit ConditionalAttribute extends System.Attribute" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -121,7 +122,13 @@ How was this compiled?</para>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string conditionString)" />
       <MemberSignature Language="C#" Value="public ConditionalAttribute (string conditionString);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string conditionString) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="conditionString" Type="System.String" />
@@ -137,16 +144,17 @@ How was this compiled?</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ConditionString">
+      <MemberSignature Language="ILASM" Value=".property string ConditionString { public hidebysig specialname instance string get_ConditionString() }" />
+      <MemberSignature Language="C#" Value="public string ConditionString { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ConditionString" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ConditionString">
-      <MemberSignature Language="ILASM" Value=".property string ConditionString { public hidebysig specialname instance string get_ConditionString() }" />
-      <MemberSignature Language="C#" Value="public string ConditionString { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -166,11 +174,6 @@ method of the current instance.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
