@@ -1,8 +1,10 @@
 <Type Name="IXmlTextParser" FullName="System.Xml.Serialization.IXmlTextParser">
   <TypeSignature Language="C#" Value="public interface IXmlTextParser" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IXmlTextParser" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
   <Docs>
@@ -12,8 +14,13 @@
   </Docs>
   <Members>
     <Member MemberName="Normalized">
-      <MemberSignature Language="C#" Value="public bool Normalized { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool Normalized { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Normalized" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -23,13 +30,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WhitespaceHandling">
-      <MemberSignature Language="C#" Value="public System.Xml.WhitespaceHandling WhitespaceHandling { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Xml.WhitespaceHandling WhitespaceHandling { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.WhitespaceHandling WhitespaceHandling" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.WhitespaceHandling</ReturnType>
       </ReturnValue>
@@ -39,9 +48,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

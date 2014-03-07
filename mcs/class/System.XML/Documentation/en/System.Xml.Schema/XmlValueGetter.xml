@@ -1,8 +1,10 @@
 <Type Name="XmlValueGetter" FullName="System.Xml.Schema.XmlValueGetter">
   <TypeSignature Language="C#" Value="public delegate object XmlValueGetter();" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed XmlValueGetter extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
@@ -13,7 +15,7 @@
   </ReturnValue>
   <Docs>
     <summary>To be added.</summary>
-    <value>To be added.</value>
+    <returns>To be added.</returns>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
   </Docs>

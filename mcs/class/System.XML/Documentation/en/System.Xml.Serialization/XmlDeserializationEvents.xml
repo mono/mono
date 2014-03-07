@@ -1,8 +1,10 @@
 <Type Name="XmlDeserializationEvents" FullName="System.Xml.Serialization.XmlDeserializationEvents">
   <TypeSignature Language="C#" Value="public struct XmlDeserializationEvents" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit XmlDeserializationEvents extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.ValueType</BaseTypeName>
@@ -15,8 +17,13 @@
   </Docs>
   <Members>
     <Member MemberName="OnUnknownAttribute">
-      <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlAttributeEventHandler OnUnknownAttribute { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlAttributeEventHandler OnUnknownAttribute { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Serialization.XmlAttributeEventHandler OnUnknownAttribute" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.XmlAttributeEventHandler</ReturnType>
       </ReturnValue>
@@ -26,13 +33,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OnUnknownElement">
-      <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlElementEventHandler OnUnknownElement { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlElementEventHandler OnUnknownElement { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Serialization.XmlElementEventHandler OnUnknownElement" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.XmlElementEventHandler</ReturnType>
       </ReturnValue>
@@ -42,13 +51,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OnUnknownNode">
-      <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlNodeEventHandler OnUnknownNode { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Xml.Serialization.XmlNodeEventHandler OnUnknownNode { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Serialization.XmlNodeEventHandler OnUnknownNode" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.XmlNodeEventHandler</ReturnType>
       </ReturnValue>
@@ -58,13 +69,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OnUnreferencedObject">
-      <MemberSignature Language="C#" Value="public System.Xml.Serialization.UnreferencedObjectEventHandler OnUnreferencedObject { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Xml.Serialization.UnreferencedObjectEventHandler OnUnreferencedObject { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Serialization.UnreferencedObjectEventHandler OnUnreferencedObject" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.UnreferencedObjectEventHandler</ReturnType>
       </ReturnValue>
@@ -74,9 +87,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>
