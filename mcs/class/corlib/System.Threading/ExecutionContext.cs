@@ -85,7 +85,11 @@ namespace System.Threading {
 			if (ec.FlowSuppressed)
 				return null;
 
-			if (nullOnEmpty && ec._sc == null && (ec._lcc == null || !ec._lcc.HasInfo))
+			if (nullOnEmpty
+#if !MOBILE
+			 && ec._sc == null
+#endif
+				&& (ec._lcc == null || !ec._lcc.HasInfo))
 				return null;
 
 			ExecutionContext capture = new ExecutionContext (ec);
