@@ -447,6 +447,17 @@ namespace MonoTests.System.Xml.TestClasses
 		public IList<string> StrList { get { return strList; } }
 	}
 
+	[Serializable]
+	public class ReadOnlyListProperty {
+		List<string> strList = new List<string> { "listString1", "listString2" };
+
+		public List<string> StrList
+		{
+			get { return strList; }
+		}
+	}
+
+
 	[XmlRoot ("root")]
 	public class ListDefaults
 	{
