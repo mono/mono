@@ -1134,12 +1134,31 @@ namespace Mono.Tools.LocaleBuilder
 				if (el != null)
 					ni.PercentSymbol = el.InnerText;
 
-				el = node.SelectSingleNode ("group");
-				if (el != null) {
-					ni.NumberGroupSeparator =
-					ni.PercentGroupSeparator =
-					ni.CurrencyGroupSeparator = el.InnerText;
+			}
+
+			string value = null;
+
+			// .net has incorrect separators for some countries and we want to be compatible
+			switch (ci.Name) {
+			case "es-ES":
+				// es-ES does not have group separator but .net has '.'
+				value = ".";
+				break;
+			default:
+				if (node != null) {
+					el = node.SelectSingleNode ("group");
+					if (el != null) {
+						value = el.InnerText;
+					}
 				}
+
+				break;
+			}
+					
+			if (value != null) {
+				ni.NumberGroupSeparator =
+				ni.PercentGroupSeparator =
+				ni.CurrencyGroupSeparator = value;
 			}
 		}
 
