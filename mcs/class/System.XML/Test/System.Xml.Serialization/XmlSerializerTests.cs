@@ -1936,6 +1936,15 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		public void TestSerializeReadOnlyListProp ()
+		{
+			ReadOnlyListProperty ts = new ReadOnlyListProperty ();
+			Serialize (ts);
+			Assert.AreEqual (Infoset ("<ReadOnlyListProperty xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><StrList><string>listString1</string><string>listString2</string></StrList></ReadOnlyListProperty>"), WriterText);
+		}
+
+
+		[Test]
 		public void TestSerializeIList ()
 		{
 			clsPerson k = new clsPerson ();
