@@ -136,7 +136,6 @@ namespace System.Windows.Forms
 					value.panel = this;
 					
 					this.settings = value;
-					value.isSerialized = false;
 				} else
 					throw new NotSupportedException ("LayoutSettings value cannot be set directly.");
 			}
