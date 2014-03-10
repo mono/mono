@@ -1,8 +1,10 @@
 <Type Name="ProtectedMemory" FullName="System.Security.Cryptography.ProtectedMemory">
   <TypeSignature Language="C#" Value="public sealed class ProtectedMemory" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ProtectedMemory extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System.Security</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -16,7 +18,12 @@
   <Members>
     <Member MemberName="Protect">
       <MemberSignature Language="C#" Value="public static void Protect (byte[] userData, System.Security.Cryptography.MemoryProtectionScope scope);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Protect(unsigned int8[] userData, valuetype System.Security.Cryptography.MemoryProtectionScope scope) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -31,13 +38,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Unprotect">
       <MemberSignature Language="C#" Value="public static void Unprotect (byte[] encryptedData, System.Security.Cryptography.MemoryProtectionScope scope);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Unprotect(unsigned int8[] encryptedData, valuetype System.Security.Cryptography.MemoryProtectionScope scope) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -52,9 +61,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

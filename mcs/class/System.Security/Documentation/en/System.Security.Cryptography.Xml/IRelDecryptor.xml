@@ -1,8 +1,10 @@
 <Type Name="IRelDecryptor" FullName="System.Security.Cryptography.Xml.IRelDecryptor">
   <TypeSignature Language="C#" Value="public interface IRelDecryptor" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IRelDecryptor" />
   <AssemblyInfo>
     <AssemblyName>System.Security</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
   <Docs>
@@ -13,7 +15,12 @@
   <Members>
     <Member MemberName="Decrypt">
       <MemberSignature Language="C#" Value="public System.IO.Stream Decrypt (System.Security.Cryptography.Xml.EncryptionMethod encryptionMethod, System.Security.Cryptography.Xml.KeyInfo keyInfo, System.IO.Stream toDecrypt);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream Decrypt(class System.Security.Cryptography.Xml.EncryptionMethod encryptionMethod, class System.Security.Cryptography.Xml.KeyInfo keyInfo, class System.IO.Stream toDecrypt) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
       </ReturnValue>
@@ -31,9 +38,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>
