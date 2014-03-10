@@ -1,0 +1,75 @@
+<Type Name="ExportFactory&lt;T&gt;" FullName="System.ComponentModel.Composition.ExportFactory&lt;T&gt;">
+  <TypeSignature Language="C#" Value="public class ExportFactory&lt;T&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ExportFactory`1&lt;T&gt; extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ComponentModel.Composition</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="T" />
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <typeparam name="T">To be added.</typeparam>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ExportFactory (Func&lt;Tuple&lt;T,Action&gt;&gt; exportLifetimeContextCreator);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Func`1&lt;class System.Tuple`2&lt;!T, class System.Action&gt;&gt; exportLifetimeContextCreator) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="exportLifetimeContextCreator" Type="System.Func&lt;System.Tuple&lt;T,System.Action&gt;&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="exportLifetimeContextCreator">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateExport">
+      <MemberSignature Language="C#" Value="public System.ComponentModel.Composition.ExportLifetimeContext&lt;T&gt; CreateExport ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.ComponentModel.Composition.ExportLifetimeContext`1&lt;!T&gt; CreateExport() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Composition.ExportLifetimeContext&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnFilterScopedCatalog">
+      <MemberSignature Language="C#" Value="protected virtual bool OnFilterScopedCatalog (System.ComponentModel.Composition.Primitives.ComposablePartDefinition composablePartDefinition);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance bool OnFilterScopedCatalog(class System.ComponentModel.Composition.Primitives.ComposablePartDefinition composablePartDefinition) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="composablePartDefinition" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="composablePartDefinition">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

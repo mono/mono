@@ -1,0 +1,38 @@
+<Type Name="CatalogExtensions" FullName="System.ComponentModel.Composition.Hosting.CatalogExtensions">
+  <TypeSignature Language="C#" Value="public static class CatalogExtensions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit CatalogExtensions extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ComponentModel.Composition</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="CreateCompositionService">
+      <MemberSignature Language="C#" Value="public static System.ComponentModel.Composition.Hosting.CompositionService CreateCompositionService (this System.ComponentModel.Composition.Primitives.ComposablePartCatalog composablePartCatalog);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.Composition.Hosting.CompositionService CreateCompositionService(class System.ComponentModel.Composition.Primitives.ComposablePartCatalog composablePartCatalog) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.Composition.Hosting.CompositionService</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="composablePartCatalog" Type="System.ComponentModel.Composition.Primitives.ComposablePartCatalog" RefType="this" />
+      </Parameters>
+      <Docs>
+        <param name="composablePartCatalog">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
