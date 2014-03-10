@@ -55,13 +55,19 @@ namespace Microsoft.Scripting.Interpreter {
 
         // Adaptive compilation support
         private readonly LightDelegateCreator _delegateCreator;
+#if MONO_INTERPRETER
+        const Delegate _compiled = null;
+#else
         private Delegate _compiled;
+#endif
         private int _compilationThreshold;
 
+#if !MONO_INTERPRETER
         /// <summary>
         /// Provides notification that the LightLambda has been compiled.
         /// </summary>
         public event EventHandler<LightLambdaCompileEventArgs> Compile;
+#endif
 
         internal LightLambda(LightDelegateCreator delegateCreator, StrongBox<object>[] closure, int compilationThreshold) {
             _delegateCreator = delegateCreator;
@@ -175,6 +181,7 @@ namespace Microsoft.Scripting.Interpreter {
         }
 
         private bool TryGetCompiled() {
+#if !MONO_INTERPRETER
             // Use the compiled delegate if available.
             if (_delegateCreator.HasCompiled) {
                 _compiled = _delegateCreator.CreateCompiledDelegate(_closure);
@@ -218,7 +225,7 @@ namespace Microsoft.Scripting.Interpreter {
 #endif
                 }
             }
-
+#endif
             return false;
         }
 
@@ -246,7 +253,7 @@ namespace Microsoft.Scripting.Interpreter {
             }
         }
 
-        
+#if !MONO_INTERPRETER
         public object Run(params object[] arguments) {
             if (_compiled != null || TryGetCompiled()) {
                 try {
@@ -268,5 +275,6 @@ namespace Microsoft.Scripting.Interpreter {
             }
             return frame.Pop();
         }
+#endif
     }
 }
