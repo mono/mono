@@ -1,8 +1,10 @@
 <Type Name="PerformanceCounterInstanceLifetime" FullName="System.Diagnostics.PerformanceCounterInstanceLifetime">
   <TypeSignature Language="C#" Value="public enum PerformanceCounterInstanceLifetime" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed PerformanceCounterInstanceLifetime extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -14,9 +16,11 @@
   <Members>
     <Member MemberName="Global">
       <MemberSignature Language="C#" Value="Global" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.PerformanceCounterInstanceLifetime Global = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.PerformanceCounterInstanceLifetime</ReturnType>
@@ -27,9 +31,11 @@
     </Member>
     <Member MemberName="Process">
       <MemberSignature Language="C#" Value="Process" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.PerformanceCounterInstanceLifetime Process = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.PerformanceCounterInstanceLifetime</ReturnType>

@@ -1,6 +1,7 @@
 <Type Name="String" FullName="System.String" FullNameSP="System_String" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable String extends System.Object implements System.ICloneable, System.IComparable, System.Collections.IEnumerable" />
   <TypeSignature Language="C#" Value="public sealed class String : ICloneable, IComparable, IComparable&lt;string&gt;, IConvertible, IEquatable&lt;string&gt;, System.Collections.Generic.IEnumerable&lt;char&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi serializable sealed beforefieldinit string extends System.Object implements class System.Collections.Generic.IEnumerable`1&lt;char&gt;, class System.Collections.IEnumerable, class System.ICloneable, class System.IComparable, class System.IComparable`1&lt;string&gt;, class System.IConvertible, class System.IEquatable`1&lt;string&gt;" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -240,7 +241,13 @@ class EmptyStringSearch {
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Char* value)" />
       <MemberSignature Language="C#" Value="public String (char* value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(char* value) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
@@ -271,16 +278,17 @@ class EmptyStringSearch {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Char[] value)" />
+      <MemberSignature Language="C#" Value="public String (char[] value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(char[] value) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Char[] value)" />
-      <MemberSignature Language="C#" Value="public String (char[] value);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="value" Type="System.Char[]" />
@@ -297,15 +305,16 @@ by copying the specified array of Unicode characters.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public String (sbyte* value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int8* value) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public String (sbyte* value);" />
-      <MemberType>Constructor</MemberType>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
@@ -319,16 +328,17 @@ by copying the specified array of Unicode characters.</para>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(valuetype System.Char c, int32 count)" />
+      <MemberSignature Language="C#" Value="public String (char c, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(char c, int32 count) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(valuetype System.Char c, int32 count)" />
-      <MemberSignature Language="C#" Value="public String (char c, int count);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="c" Type="System.Char" />
@@ -368,16 +378,17 @@ public class StringExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Char* value, int32 startIndex, int32 length)" />
+      <MemberSignature Language="C#" Value="public String (char* value, int startIndex, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(char* value, int32 startIndex, int32 length) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Char* value, int32 startIndex, int32 length)" />
-      <MemberSignature Language="C#" Value="public String (char* value, int startIndex, int length);" />
-      <MemberType>Constructor</MemberType>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
@@ -423,16 +434,17 @@ public class StringExample {
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Char[] value, int32 startIndex, int32 length)" />
+      <MemberSignature Language="C#" Value="public String (char[] value, int startIndex, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(char[] value, int32 startIndex, int32 length) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Char[] value, int32 startIndex, int32 length)" />
-      <MemberSignature Language="C#" Value="public String (char[] value, int startIndex, int length);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="value" Type="System.Char[]" />
@@ -463,15 +475,16 @@ public class StringExample {
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public String (sbyte* value, int startIndex, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int8* value, int32 startIndex, int32 length) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public String (sbyte* value, int startIndex, int length);" />
-      <MemberType>Constructor</MemberType>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
@@ -489,16 +502,17 @@ public class StringExample {
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.SByte* value, int32 startIndex, int32 length, class System.Text.Encoding enc)" />
+      <MemberSignature Language="C#" Value="public String (sbyte* value, int startIndex, int length, System.Text.Encoding enc);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int8* value, int32 startIndex, int32 length, class System.Text.Encoding enc) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.SByte* value, int32 startIndex, int32 length, class System.Text.Encoding enc)" />
-      <MemberSignature Language="C#" Value="public String (sbyte* value, int startIndex, int length, System.Text.Encoding enc);" />
-      <MemberType>Constructor</MemberType>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
@@ -537,16 +551,17 @@ public class StringExample {
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>RuntimeInfrastructure</ExcludedLibrary>
+    </Member>
+    <Member MemberName="Chars">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.Char Chars[int32 index] { public hidebysig specialname instance valuetype System.Char get_Chars(int32 index) }" />
+      <MemberSignature Language="C#" Value="public char this[int index] { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance char Chars(int32)" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Chars">
-      <MemberSignature Language="ILASM" Value=".property valuetype System.Char Chars[int32 index] { public hidebysig specialname instance valuetype System.Char get_Chars(int32 index) }" />
-      <MemberSignature Language="C#" Value="public char this[int index] { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Char</ReturnType>
       </ReturnValue>
@@ -575,16 +590,17 @@ public class StringExample {
           <paramref name="index" /> is greater than or equal to the length of the current instance or less than zero.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Clone">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual object Clone()" />
+      <MemberSignature Language="C#" Value="public object Clone ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object Clone() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Clone">
-      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual object Clone()" />
-      <MemberSignature Language="C#" Value="public object Clone ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -607,16 +623,17 @@ public class StringExample {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Compare">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Compare(string strA, string strB)" />
+      <MemberSignature Language="C#" Value="public static int Compare (string strA, string strB);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Compare(string strA, string strB) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Compare">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Compare(string strA, string strB)" />
-      <MemberSignature Language="C#" Value="public static int Compare (string strA, string strB);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -668,16 +685,17 @@ public class StringExample {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Compare">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Compare(string strA, string strB, bool ignoreCase)" />
+      <MemberSignature Language="C#" Value="public static int Compare (string strA, string strB, bool ignoreCase);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Compare(string strA, string strB, bool ignoreCase) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Compare">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Compare(string strA, string strB, bool ignoreCase)" />
-      <MemberSignature Language="C#" Value="public static int Compare (string strA, string strB, bool ignoreCase);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -762,15 +780,15 @@ public class StringCompareExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Compare">
       <MemberSignature Language="C#" Value="public static int Compare (string strA, string strB, StringComparison comparisonType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Compare(string strA, string strB, valuetype System.StringComparison comparisonType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -788,14 +806,16 @@ public class StringCompareExample {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Compare">
       <MemberSignature Language="C#" Value="public static int Compare (string strA, string strB, bool ignoreCase, System.Globalization.CultureInfo culture);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Compare(string strA, string strB, bool ignoreCase, class System.Globalization.CultureInfo culture) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -814,14 +834,10 @@ public class StringCompareExample {
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Compare">
       <MemberSignature Language="C#" Value="public static int Compare (string strA, string strB, System.Globalization.CultureInfo culture, System.Globalization.CompareOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Compare(string strA, string strB, class System.Globalization.CultureInfo culture, valuetype System.Globalization.CompareOptions options) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -849,7 +865,13 @@ public class StringCompareExample {
     <Member MemberName="Compare">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Compare(string strA, int32 indexA, string strB, int32 indexB, int32 length)" />
       <MemberSignature Language="C#" Value="public static int Compare (string strA, int indexA, string strB, int indexB, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Compare(string strA, int32 indexA, string strB, int32 indexB, int32 length) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -938,16 +960,17 @@ public class StringCompareExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Compare">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Compare(string strA, int32 indexA, string strB, int32 indexB, int32 length, bool ignoreCase)" />
+      <MemberSignature Language="C#" Value="public static int Compare (string strA, int indexA, string strB, int indexB, int length, bool ignoreCase);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Compare(string strA, int32 indexA, string strB, int32 indexB, int32 length, bool ignoreCase) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Compare">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Compare(string strA, int32 indexA, string strB, int32 indexB, int32 length, bool ignoreCase)" />
-      <MemberSignature Language="C#" Value="public static int Compare (string strA, int indexA, string strB, int indexB, int length, bool ignoreCase);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1049,15 +1072,15 @@ public class StringCompareExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Compare">
       <MemberSignature Language="C#" Value="public static int Compare (string strA, int indexA, string strB, int indexB, int length, StringComparison comparisonType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Compare(string strA, int32 indexA, string strB, int32 indexB, int32 length, valuetype System.StringComparison comparisonType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1081,14 +1104,16 @@ public class StringCompareExample {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Compare">
       <MemberSignature Language="C#" Value="public static int Compare (string strA, int indexA, string strB, int indexB, int length, bool ignoreCase, System.Globalization.CultureInfo culture);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Compare(string strA, int32 indexA, string strB, int32 indexB, int32 length, bool ignoreCase, class System.Globalization.CultureInfo culture) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1113,14 +1138,10 @@ public class StringCompareExample {
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Compare">
       <MemberSignature Language="C#" Value="public static int Compare (string strA, int indexA, string strB, int indexB, int length, System.Globalization.CultureInfo culture, System.Globalization.CompareOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Compare(string strA, int32 indexA, string strB, int32 indexB, int32 length, class System.Globalization.CultureInfo culture, valuetype System.Globalization.CompareOptions options) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1154,7 +1175,13 @@ public class StringCompareExample {
     <Member MemberName="CompareOrdinal">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 CompareOrdinal(string strA, string strB)" />
       <MemberSignature Language="C#" Value="public static int CompareOrdinal (string strA, string strB);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 CompareOrdinal(string strA, string strB) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1210,16 +1237,17 @@ is a null reference.</description>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CompareOrdinal">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 CompareOrdinal(string strA, int32 indexA, string strB, int32 indexB, int32 length)" />
+      <MemberSignature Language="C#" Value="public static int CompareOrdinal (string strA, int indexA, string strB, int indexB, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 CompareOrdinal(string strA, int32 indexA, string strB, int32 indexB, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CompareOrdinal">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 CompareOrdinal(string strA, int32 indexA, string strB, int32 indexB, int32 length)" />
-      <MemberSignature Language="C#" Value="public static int CompareOrdinal (string strA, int indexA, string strB, int indexB, int length);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1293,16 +1321,17 @@ the code points of the contained Unicode characters.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CompareTo">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual int32 CompareTo(object value)" />
+      <MemberSignature Language="C#" Value="public int CompareTo (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 CompareTo(object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CompareTo">
-      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual int32 CompareTo(object value)" />
-      <MemberSignature Language="C#" Value="public int CompareTo (object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1363,15 +1392,16 @@ object.</para>
           <paramref name="value" /> is not a <see cref="T:System.String" />.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CompareTo">
+      <MemberSignature Language="C#" Value="public int CompareTo (string strB);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 CompareTo(string strB) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CompareTo">
-      <MemberSignature Language="C#" Value="public int CompareTo (string strB);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1420,14 +1450,10 @@ object.</para>
           </block>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Concat">
       <MemberSignature Language="C#" Value="public static string Concat (System.Collections.Generic.IEnumerable&lt;string&gt; values);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Concat(class System.Collections.Generic.IEnumerable`1&lt;string&gt; values) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1452,7 +1478,13 @@ object.</para>
     </Member>
     <Member MemberName="Concat">
       <MemberSignature Language="C#" Value="public static string Concat (object arg0);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Concat(object arg0) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1465,16 +1497,17 @@ object.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Concat">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Concat(class System.Object[] args)" />
+      <MemberSignature Language="C#" Value="public static string Concat (object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Concat(object[] args) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Concat">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Concat(class System.Object[] args)" />
-      <MemberSignature Language="C#" Value="public static string Concat (object[] args);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1524,16 +1557,17 @@ public class StringConcatExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Concat">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Concat(class System.String[] values)" />
+      <MemberSignature Language="C#" Value="public static string Concat (string[] values);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Concat(string[] values) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Concat">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Concat(class System.String[] values)" />
-      <MemberSignature Language="C#" Value="public static string Concat (string[] values);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1578,16 +1612,17 @@ public class StringConcatExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Concat">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Concat(object arg0, object arg1)" />
+      <MemberSignature Language="C#" Value="public static string Concat (object arg0, object arg1);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Concat(object arg0, object arg1) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Concat">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Concat(object arg0, object arg1)" />
-      <MemberSignature Language="C#" Value="public static string Concat (object arg0, object arg1);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1634,16 +1669,17 @@ public class StringConcatExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Concat">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Concat(string str0, string str1)" />
+      <MemberSignature Language="C#" Value="public static string Concat (string str0, string str1);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Concat(string str0, string str1) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Concat">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Concat(string str0, string str1)" />
-      <MemberSignature Language="C#" Value="public static string Concat (string str0, string str1);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1683,16 +1719,17 @@ public class StringConcatExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Concat">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Concat(object arg0, object arg1, object arg2)" />
+      <MemberSignature Language="C#" Value="public static string Concat (object arg0, object arg1, object arg2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Concat(object arg0, object arg1, object arg2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Concat">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Concat(object arg0, object arg1, object arg2)" />
-      <MemberSignature Language="C#" Value="public static string Concat (object arg0, object arg1, object arg2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1738,16 +1775,17 @@ public class StringConcatExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Concat">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Concat(string str0, string str1, string str2)" />
+      <MemberSignature Language="C#" Value="public static string Concat (string str0, string str1, string str2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Concat(string str0, string str1, string str2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Concat">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Concat(string str0, string str1, string str2)" />
-      <MemberSignature Language="C#" Value="public static string Concat (string str0, string str1, string str2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1789,15 +1827,21 @@ public class StringConcatExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Concat">
+      <MemberSignature Language="C#" Value="public static string Concat (object arg0, object arg1, object arg2, object arg3);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Concat(object arg0, object arg1, object arg2, object arg3) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Concat">
-      <MemberSignature Language="C#" Value="public static string Concat (object arg0, object arg1, object arg2, object arg3);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1816,20 +1860,16 @@ public class StringConcatExample {
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Concat">
+      <MemberSignature Language="C#" Value="public static string Concat (string str0, string str1, string str2, string str3);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Concat(string str0, string str1, string str2, string str3) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Concat">
-      <MemberSignature Language="C#" Value="public static string Concat (string str0, string str1, string str2, string str3);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1848,14 +1888,10 @@ public class StringConcatExample {
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Concat&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static string Concat&lt;T&gt; (System.Collections.Generic.IEnumerable&lt;T&gt; values);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Concat&lt;T&gt;(class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; values) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1884,7 +1920,12 @@ public class StringConcatExample {
     </Member>
     <Member MemberName="Contains">
       <MemberSignature Language="C#" Value="public bool Contains (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Contains(string value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1898,15 +1939,17 @@ public class StringConcatExample {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Copy">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static string Copy(string str)" />
       <MemberSignature Language="C#" Value="public static string Copy (string str);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Copy(string str) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1951,16 +1994,17 @@ public class StringCopyExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void CopyTo(int32 sourceIndex, class System.Char[] destination, int32 destinationIndex, int32 count)" />
+      <MemberSignature Language="C#" Value="public void CopyTo (int sourceIndex, char[] destination, int destinationIndex, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CopyTo(int32 sourceIndex, char[] destination, int32 destinationIndex, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CopyTo">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void CopyTo(int32 sourceIndex, class System.Char[] destination, int32 destinationIndex, int32 count)" />
-      <MemberSignature Language="C#" Value="public void CopyTo (int sourceIndex, char[] destination, int destinationIndex, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2024,16 +2068,17 @@ public class StringCopyToExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Empty">
+      <MemberSignature Language="ILASM" Value=".field public static initOnly string Empty" />
+      <MemberSignature Language="C#" Value="public static readonly string Empty;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly string Empty" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Empty">
-      <MemberSignature Language="ILASM" Value=".field public static initOnly string Empty" />
-      <MemberSignature Language="C#" Value="public static readonly string Empty;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -2048,16 +2093,17 @@ public class StringCopyToExample {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="EndsWith">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance bool EndsWith(string value)" />
+      <MemberSignature Language="C#" Value="public bool EndsWith (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool EndsWith(string value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="EndsWith">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance bool EndsWith(string value)" />
-      <MemberSignature Language="C#" Value="public bool EndsWith (string value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2110,15 +2156,20 @@ public class StringEndsWithExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EndsWith">
       <MemberSignature Language="C#" Value="public bool EndsWith (string value, StringComparison comparisonType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool EndsWith(string value, valuetype System.StringComparison comparisonType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2134,19 +2185,15 @@ public class StringEndsWithExample {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="EndsWith">
+      <MemberSignature Language="C#" Value="public bool EndsWith (string value, bool ignoreCase, System.Globalization.CultureInfo culture);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool EndsWith(string value, bool ignoreCase, class System.Globalization.CultureInfo culture) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="EndsWith">
-      <MemberSignature Language="C#" Value="public bool EndsWith (string value, bool ignoreCase, System.Globalization.CultureInfo culture);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2164,15 +2211,22 @@ public class StringEndsWithExample {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object obj)" />
       <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2224,6 +2278,11 @@ public class StringEqualsExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public bool Equals (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Equals(string value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2234,10 +2293,6 @@ public class StringEqualsExample {
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Equals">
-      <MemberSignature Language="C#" Value="public bool Equals (string value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2262,21 +2317,17 @@ public class StringEqualsExample {
           </para>
         </remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool Equals(string a, string b)" />
+      <MemberSignature Language="C#" Value="public static bool Equals (string a, string b);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Equals(string a, string b) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Equals">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static bool Equals(string a, string b)" />
-      <MemberSignature Language="C#" Value="public static bool Equals (string a, string b);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2324,15 +2375,15 @@ public class StringEqualsExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public bool Equals (string value, StringComparison comparisonType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Equals(string value, valuetype System.StringComparison comparisonType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2348,14 +2399,15 @@ public class StringEqualsExample {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public static bool Equals (string a, string b, StringComparison comparisonType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Equals(string a, string b, valuetype System.StringComparison comparisonType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Equals">
-      <MemberSignature Language="C#" Value="public static bool Equals (string a, string b, StringComparison comparisonType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -2373,15 +2425,17 @@ public class StringEqualsExample {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Format">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static string Format(string format, object arg0)" />
       <MemberSignature Language="C#" Value="public static string Format (string format, object arg0);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Format(string format, object arg0) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -2436,16 +2490,17 @@ The museum had 88     visitors today.
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Format">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Format(string format, class System.Object[] args)" />
+      <MemberSignature Language="C#" Value="public static string Format (string format, object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Format(string format, object[] args) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Format">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Format(string format, class System.Object[] args)" />
-      <MemberSignature Language="C#" Value="public static string Format (string format, object[] args);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -2510,16 +2565,17 @@ The winning numbers were 5     10    11    37    42     today.
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Format">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Format(class System.IFormatProvider provider, string format, class System.Object[] args)" />
+      <MemberSignature Language="C#" Value="public static string Format (IFormatProvider provider, string format, object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Format(class System.IFormatProvider provider, string format, object[] args) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Format">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Format(class System.IFormatProvider provider, string format, class System.Object[] args)" />
-      <MemberSignature Language="C#" Value="public static string Format (IFormatProvider provider, string format, object[] args);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -2570,16 +2626,17 @@ The winning numbers were 5     10    11    37    42     today.
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Format">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Format(string format, object arg0, object arg1)" />
+      <MemberSignature Language="C#" Value="public static string Format (string format, object arg0, object arg1);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Format(string format, object arg0, object arg1) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Format">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Format(string format, object arg0, object arg1)" />
-      <MemberSignature Language="C#" Value="public static string Format (string format, object arg0, object arg1);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -2642,16 +2699,17 @@ The temperature today oscillated between 78   and 100  degrees.
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Format">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Format(string format, object arg0, object arg1, object arg2)" />
+      <MemberSignature Language="C#" Value="public static string Format (string format, object arg0, object arg1, object arg2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Format(string format, object arg0, object arg1, object arg2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Format">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Format(string format, object arg0, object arg1, object arg2)" />
-      <MemberSignature Language="C#" Value="public static string Format (string format, object arg0, object arg1, object arg2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -2714,16 +2772,17 @@ The temperature today oscillated between   78 and  100 degrees. The average temp
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetEnumerator">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.CharEnumerator GetEnumerator()" />
+      <MemberSignature Language="C#" Value="public CharEnumerator GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.CharEnumerator GetEnumerator() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetEnumerator">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.CharEnumerator GetEnumerator()" />
-      <MemberSignature Language="C#" Value="public CharEnumerator GetEnumerator ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.CharEnumerator</ReturnType>
       </ReturnValue>
@@ -2743,16 +2802,22 @@ The temperature today oscillated between   78 and  100 degrees. The average temp
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetHashCode">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
-      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2774,20 +2839,16 @@ The temperature today oscillated between   78 and  100 degrees. The average temp
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetTypeCode">
+      <MemberSignature Language="C#" Value="public TypeCode GetTypeCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.TypeCode GetTypeCode() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="GetTypeCode">
-      <MemberSignature Language="C#" Value="public TypeCode GetTypeCode ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.TypeCode</ReturnType>
       </ReturnValue>
@@ -2797,16 +2858,17 @@ The temperature today oscillated between   78 and  100 degrees. The average temp
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="IndexOf">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 IndexOf(valuetype System.Char value)" />
+      <MemberSignature Language="C#" Value="public int IndexOf (char value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 IndexOf(char value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IndexOf">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 IndexOf(valuetype System.Char value)" />
-      <MemberSignature Language="C#" Value="public int IndexOf (char value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2828,16 +2890,17 @@ The temperature today oscillated between   78 and  100 degrees. The average temp
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="IndexOf">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 IndexOf(string value)" />
+      <MemberSignature Language="C#" Value="public int IndexOf (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 IndexOf(string value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IndexOf">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 IndexOf(string value)" />
-      <MemberSignature Language="C#" Value="public int IndexOf (string value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2904,16 +2967,17 @@ public class StringIndexOf {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="IndexOf">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 IndexOf(valuetype System.Char value, int32 startIndex)" />
+      <MemberSignature Language="C#" Value="public int IndexOf (char value, int startIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 IndexOf(char value, int32 startIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IndexOf">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 IndexOf(valuetype System.Char value, int32 startIndex)" />
-      <MemberSignature Language="C#" Value="public int IndexOf (char value, int startIndex);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2957,16 +3021,17 @@ public class StringIndexOf {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="IndexOf">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 IndexOf(string value, int32 startIndex)" />
+      <MemberSignature Language="C#" Value="public int IndexOf (string value, int startIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 IndexOf(string value, int32 startIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IndexOf">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 IndexOf(string value, int32 startIndex)" />
-      <MemberSignature Language="C#" Value="public int IndexOf (string value, int startIndex);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3016,15 +3081,15 @@ public class StringIndexOf {
         </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IndexOf">
       <MemberSignature Language="C#" Value="public int IndexOf (string value, StringComparison comparisonType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 IndexOf(string value, valuetype System.StringComparison comparisonType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3040,15 +3105,17 @@ public class StringIndexOf {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IndexOf">
       <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 IndexOf(valuetype System.Char value, int32 startIndex, int32 count)" />
       <MemberSignature Language="C#" Value="public int IndexOf (char value, int startIndex, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 IndexOf(char value, int32 startIndex, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3087,16 +3154,17 @@ was not found.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="IndexOf">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 IndexOf(string value, int32 startIndex, int32 count)" />
+      <MemberSignature Language="C#" Value="public int IndexOf (string value, int startIndex, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 IndexOf(string value, int32 startIndex, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IndexOf">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 IndexOf(string value, int32 startIndex, int32 count)" />
-      <MemberSignature Language="C#" Value="public int IndexOf (string value, int startIndex, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3156,15 +3224,15 @@ was not found.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IndexOf">
       <MemberSignature Language="C#" Value="public int IndexOf (string value, int startIndex, StringComparison comparisonType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 IndexOf(string value, int32 startIndex, valuetype System.StringComparison comparisonType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3182,14 +3250,15 @@ was not found.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="IndexOf">
+      <MemberSignature Language="C#" Value="public int IndexOf (string value, int startIndex, int count, StringComparison comparisonType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 IndexOf(string value, int32 startIndex, int32 count, valuetype System.StringComparison comparisonType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IndexOf">
-      <MemberSignature Language="C#" Value="public int IndexOf (string value, int startIndex, int count, StringComparison comparisonType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3209,15 +3278,17 @@ was not found.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IndexOfAny">
       <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 IndexOfAny(class System.Char[] anyOf)" />
       <MemberSignature Language="C#" Value="public int IndexOfAny (char[] anyOf);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 IndexOfAny(char[] anyOf) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3242,16 +3313,17 @@ was not found.</para>
           <paramref name="anyOf" /> is a null reference.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="IndexOfAny">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 IndexOfAny(class System.Char[] anyOf, int32 startIndex)" />
+      <MemberSignature Language="C#" Value="public int IndexOfAny (char[] anyOf, int startIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 IndexOfAny(char[] anyOf, int32 startIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IndexOfAny">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 IndexOfAny(class System.Char[] anyOf, int32 startIndex)" />
-      <MemberSignature Language="C#" Value="public int IndexOfAny (char[] anyOf, int startIndex);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3282,16 +3354,17 @@ was not found.</para>
           <paramref name="startIndex" /> is greater than the length of the current instance</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="IndexOfAny">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 IndexOfAny(class System.Char[] anyOf, int32 startIndex, int32 count)" />
+      <MemberSignature Language="C#" Value="public int IndexOfAny (char[] anyOf, int startIndex, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 IndexOfAny(char[] anyOf, int32 startIndex, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IndexOfAny">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 IndexOfAny(class System.Char[] anyOf, int32 startIndex, int32 count)" />
-      <MemberSignature Language="C#" Value="public int IndexOfAny (char[] anyOf, int startIndex, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3331,16 +3404,17 @@ was not found.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string Insert(int32 startIndex, string value)" />
+      <MemberSignature Language="C#" Value="public string Insert (int startIndex, string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string Insert(int32 startIndex, string value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Insert">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string Insert(int32 startIndex, string value)" />
-      <MemberSignature Language="C#" Value="public string Insert (int startIndex, string value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -3373,16 +3447,17 @@ was not found.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Intern">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Intern(string str)" />
+      <MemberSignature Language="C#" Value="public static string Intern (string str);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Intern(string str) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Intern">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Intern(string str)" />
-      <MemberSignature Language="C#" Value="public static string Intern (string str);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -3446,16 +3521,17 @@ public class StringExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="IsInterned">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string IsInterned(string str)" />
+      <MemberSignature Language="C#" Value="public static string IsInterned (string str);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string IsInterned(string str) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsInterned">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static string IsInterned(string str)" />
-      <MemberSignature Language="C#" Value="public static string IsInterned (string str);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -3509,15 +3585,15 @@ public class StringExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsNormalized">
       <MemberSignature Language="C#" Value="public bool IsNormalized ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool IsNormalized() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3528,14 +3604,15 @@ public class StringExample {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="IsNormalized">
+      <MemberSignature Language="C#" Value="public bool IsNormalized (System.Text.NormalizationForm normalizationForm);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool IsNormalized(valuetype System.Text.NormalizationForm normalizationForm) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsNormalized">
-      <MemberSignature Language="C#" Value="public bool IsNormalized (System.Text.NormalizationForm normalizationForm);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3549,14 +3626,15 @@ public class StringExample {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="IsNullOrEmpty">
+      <MemberSignature Language="C#" Value="public static bool IsNullOrEmpty (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsNullOrEmpty(string value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsNullOrEmpty">
-      <MemberSignature Language="C#" Value="public static bool IsNullOrEmpty (string value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -3570,13 +3648,10 @@ public class StringExample {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsNullOrWhiteSpace">
       <MemberSignature Language="C#" Value="public static bool IsNullOrWhiteSpace (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsNullOrWhiteSpace(string value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -3596,6 +3671,7 @@ public class StringExample {
     </Member>
     <Member MemberName="Join">
       <MemberSignature Language="C#" Value="public static string Join (string separator, System.Collections.Generic.IEnumerable&lt;string&gt; values);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Join(string separator, class System.Collections.Generic.IEnumerable`1&lt;string&gt; values) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -3622,6 +3698,7 @@ public class StringExample {
     </Member>
     <Member MemberName="Join">
       <MemberSignature Language="C#" Value="public static string Join (string separator, object[] values);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Join(string separator, object[] values) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -3655,13 +3732,25 @@ public class StringExample {
     <Member MemberName="Join">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static string Join(string separator, class System.String[] value)" />
       <MemberSignature Language="C#" Value="public static string Join (string separator, string[] value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Join(string separator, string[] value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="separator" Type="System.String" />
-        <Parameter Name="value" Type="System.String[]" />
+        <Parameter Name="value" Type="System.String[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
       </Parameters>
       <Docs>
         <param name="separator">A <see cref="T:System.String" />. </param>
@@ -3697,16 +3786,17 @@ public class StringJoin {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Join">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Join(string separator, class System.String[] value, int32 startIndex, int32 count)" />
+      <MemberSignature Language="C#" Value="public static string Join (string separator, string[] value, int startIndex, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Join(string separator, string[] value, int32 startIndex, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Join">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static string Join(string separator, class System.String[] value, int32 startIndex, int32 count)" />
-      <MemberSignature Language="C#" Value="public static string Join (string separator, string[] value, int startIndex, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -3755,14 +3845,10 @@ public class StringJoin {
         </example>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Join&lt;T&gt;">
       <MemberSignature Language="C#" Value="public static string Join&lt;T&gt; (string separator, System.Collections.Generic.IEnumerable&lt;T&gt; values);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Join&lt;T&gt;(string separator, class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; values) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -3794,7 +3880,13 @@ public class StringJoin {
     <Member MemberName="LastIndexOf">
       <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 LastIndexOf(valuetype System.Char value)" />
       <MemberSignature Language="C#" Value="public int LastIndexOf (char value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 LastIndexOf(char value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3816,16 +3908,17 @@ in the current instance, if found; otherwise, -1.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="LastIndexOf">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 LastIndexOf(string value)" />
+      <MemberSignature Language="C#" Value="public int LastIndexOf (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 LastIndexOf(string value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LastIndexOf">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 LastIndexOf(string value)" />
-      <MemberSignature Language="C#" Value="public int LastIndexOf (string value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3851,16 +3944,17 @@ in the current instance, if found; otherwise, -1.</para>
           <paramref name="value" /> is a null reference.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="LastIndexOf">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 LastIndexOf(valuetype System.Char value, int32 startIndex)" />
+      <MemberSignature Language="C#" Value="public int LastIndexOf (char value, int startIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 LastIndexOf(char value, int32 startIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LastIndexOf">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 LastIndexOf(valuetype System.Char value, int32 startIndex)" />
-      <MemberSignature Language="C#" Value="public int LastIndexOf (char value, int startIndex);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3906,16 +4000,17 @@ public class StringLastIndexOfTest {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="LastIndexOf">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 LastIndexOf(string value, int32 startIndex)" />
+      <MemberSignature Language="C#" Value="public int LastIndexOf (string value, int startIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 LastIndexOf(string value, int32 startIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LastIndexOf">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 LastIndexOf(string value, int32 startIndex)" />
-      <MemberSignature Language="C#" Value="public int LastIndexOf (string value, int startIndex);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3964,15 +4059,15 @@ in the current instance as follows:</para>
           <paramref name="startIndex" /> is less than zero or greater than or equal to the length of the current instance. </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LastIndexOf">
       <MemberSignature Language="C#" Value="public int LastIndexOf (string value, StringComparison comparisonType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 LastIndexOf(string value, valuetype System.StringComparison comparisonType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -3988,15 +4083,17 @@ in the current instance as follows:</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LastIndexOf">
       <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 LastIndexOf(valuetype System.Char value, int32 startIndex, int32 count)" />
       <MemberSignature Language="C#" Value="public int LastIndexOf (char value, int startIndex, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 LastIndexOf(char value, int32 startIndex, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -4031,16 +4128,17 @@ in the current instance as follows:</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="LastIndexOf">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 LastIndexOf(string value, int32 startIndex, int32 count)" />
+      <MemberSignature Language="C#" Value="public int LastIndexOf (string value, int startIndex, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 LastIndexOf(string value, int32 startIndex, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LastIndexOf">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 LastIndexOf(string value, int32 startIndex, int32 count)" />
-      <MemberSignature Language="C#" Value="public int LastIndexOf (string value, int startIndex, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -4081,15 +4179,15 @@ in the current instance as follows:</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LastIndexOf">
       <MemberSignature Language="C#" Value="public int LastIndexOf (string value, int startIndex, StringComparison comparisonType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 LastIndexOf(string value, int32 startIndex, valuetype System.StringComparison comparisonType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -4107,14 +4205,15 @@ in the current instance as follows:</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="LastIndexOf">
+      <MemberSignature Language="C#" Value="public int LastIndexOf (string value, int startIndex, int count, StringComparison comparisonType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 LastIndexOf(string value, int32 startIndex, int32 count, valuetype System.StringComparison comparisonType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LastIndexOf">
-      <MemberSignature Language="C#" Value="public int LastIndexOf (string value, int startIndex, int count, StringComparison comparisonType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -4134,15 +4233,17 @@ in the current instance as follows:</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LastIndexOfAny">
       <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 LastIndexOfAny(class System.Char[] anyOf)" />
       <MemberSignature Language="C#" Value="public int LastIndexOfAny (char[] anyOf);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 LastIndexOfAny(char[] anyOf) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -4165,16 +4266,17 @@ in the current instance as follows:</para>
           <paramref name="anyOf" /> is a null reference. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="LastIndexOfAny">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 LastIndexOfAny(class System.Char[] anyOf, int32 startIndex)" />
+      <MemberSignature Language="C#" Value="public int LastIndexOfAny (char[] anyOf, int startIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 LastIndexOfAny(char[] anyOf, int32 startIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LastIndexOfAny">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 LastIndexOfAny(class System.Char[] anyOf, int32 startIndex)" />
-      <MemberSignature Language="C#" Value="public int LastIndexOfAny (char[] anyOf, int startIndex);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -4205,16 +4307,17 @@ in the current instance as follows:</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="LastIndexOfAny">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 LastIndexOfAny(class System.Char[] anyOf, int32 startIndex, int32 count)" />
+      <MemberSignature Language="C#" Value="public int LastIndexOfAny (char[] anyOf, int startIndex, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 LastIndexOfAny(char[] anyOf, int32 startIndex, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LastIndexOfAny">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 LastIndexOfAny(class System.Char[] anyOf, int32 startIndex, int32 count)" />
-      <MemberSignature Language="C#" Value="public int LastIndexOfAny (char[] anyOf, int startIndex, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -4254,16 +4357,17 @@ in the current instance as follows:</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Length">
+      <MemberSignature Language="ILASM" Value=".property int32 Length { public hidebysig specialname instance int32 get_Length() }" />
+      <MemberSignature Language="C#" Value="public int Length { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Length" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Length">
-      <MemberSignature Language="ILASM" Value=".property int32 Length { public hidebysig specialname instance int32 get_Length() }" />
-      <MemberSignature Language="C#" Value="public int Length { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -4296,15 +4400,15 @@ public class StringLengthExample {
         </example>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Normalize">
       <MemberSignature Language="C#" Value="public string Normalize ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string Normalize() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -4315,14 +4419,15 @@ public class StringLengthExample {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Normalize">
+      <MemberSignature Language="C#" Value="public string Normalize (System.Text.NormalizationForm normalizationForm);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string Normalize(valuetype System.Text.NormalizationForm normalizationForm) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Normalize">
-      <MemberSignature Language="C#" Value="public string Normalize (System.Text.NormalizationForm normalizationForm);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -4336,15 +4441,17 @@ public class StringLengthExample {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="op_Equality">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_Equality(string a, string b)" />
       <MemberSignature Language="C#" Value="public static bool op_Equality (string a, string b);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Equality(string a, string b) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -4369,16 +4476,17 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         <altmember cref="M:System.String.Equals(System.Object)" />
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="op_Inequality">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_Inequality(string a, string b)" />
+      <MemberSignature Language="C#" Value="public static bool op_Inequality (string a, string b);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Inequality(string a, string b) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="op_Inequality">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname bool op_Inequality(string a, string b)" />
-      <MemberSignature Language="C#" Value="public static bool op_Inequality (string a, string b);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -4403,16 +4511,17 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         <altmember cref="M:System.String.Equals(System.Object)" />
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="PadLeft">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string PadLeft(int32 totalWidth)" />
+      <MemberSignature Language="C#" Value="public string PadLeft (int totalWidth);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string PadLeft(int32 totalWidth) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="PadLeft">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string PadLeft(int32 totalWidth)" />
-      <MemberSignature Language="C#" Value="public string PadLeft (int totalWidth);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -4442,16 +4551,17 @@ represent the same string value; otherwise, <see langword="false" />.</para>
           <paramref name="totalWidth " /> is less than zero.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="PadLeft">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string PadLeft(int32 totalWidth, valuetype System.Char paddingChar)" />
+      <MemberSignature Language="C#" Value="public string PadLeft (int totalWidth, char paddingChar);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string PadLeft(int32 totalWidth, char paddingChar) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="PadLeft">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string PadLeft(int32 totalWidth, valuetype System.Char paddingChar)" />
-      <MemberSignature Language="C#" Value="public string PadLeft (int totalWidth, char paddingChar);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -4478,16 +4588,17 @@ represent the same string value; otherwise, <see langword="false" />.</para>
           <paramref name="totalWidth" /> is less than zero.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="PadRight">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string PadRight(int32 totalWidth)" />
+      <MemberSignature Language="C#" Value="public string PadRight (int totalWidth);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string PadRight(int32 totalWidth) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="PadRight">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string PadRight(int32 totalWidth)" />
-      <MemberSignature Language="C#" Value="public string PadRight (int totalWidth);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -4512,16 +4623,17 @@ represent the same string value; otherwise, <see langword="false" />.</para>
           <paramref name="totalWidth " />is less than zero.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="PadRight">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string PadRight(int32 totalWidth, valuetype System.Char paddingChar)" />
+      <MemberSignature Language="C#" Value="public string PadRight (int totalWidth, char paddingChar);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string PadRight(int32 totalWidth, char paddingChar) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="PadRight">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string PadRight(int32 totalWidth, valuetype System.Char paddingChar)" />
-      <MemberSignature Language="C#" Value="public string PadRight (int totalWidth, char paddingChar);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -4548,15 +4660,15 @@ represent the same string value; otherwise, <see langword="false" />.</para>
           <paramref name="totalWidth" /> is less than zero.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Remove">
       <MemberSignature Language="C#" Value="public string Remove (int startIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string Remove(int32 startIndex) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -4570,15 +4682,17 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Remove">
       <MemberSignature Language="ILASM" Value=".method public hidebysig instance string Remove(int32 startIndex, int32 count)" />
       <MemberSignature Language="C#" Value="public string Remove (int startIndex, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string Remove(int32 startIndex, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -4607,16 +4721,17 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Replace">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string Replace(valuetype System.Char oldChar, valuetype System.Char newChar)" />
+      <MemberSignature Language="C#" Value="public string Replace (char oldChar, char newChar);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string Replace(char oldChar, char newChar) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Replace">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string Replace(valuetype System.Char oldChar, valuetype System.Char newChar)" />
-      <MemberSignature Language="C#" Value="public string Replace (char oldChar, char newChar);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -4638,16 +4753,17 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Replace">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string Replace(string oldValue, string newValue)" />
+      <MemberSignature Language="C#" Value="public string Replace (string oldValue, string newValue);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string Replace(string oldValue, string newValue) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Replace">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string Replace(string oldValue, string newValue)" />
-      <MemberSignature Language="C#" Value="public string Replace (string oldValue, string newValue);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -4670,16 +4786,17 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Split">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.String[] Split(class System.Char[] separator)" />
+      <MemberSignature Language="C#" Value="public string[] Split (char[] separator);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string[] Split(char[] separator) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Split">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.String[] Split(class System.Char[] separator)" />
-      <MemberSignature Language="C#" Value="public string[] Split (char[] separator);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
@@ -4740,16 +4857,17 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Split">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.String[] Split(class System.Char[] separator, int32 count)" />
+      <MemberSignature Language="C#" Value="public string[] Split (char[] separator, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string[] Split(char[] separator, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Split">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.String[] Split(class System.Char[] separator, int32 count)" />
-      <MemberSignature Language="C#" Value="public string[] Split (char[] separator, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
@@ -4812,132 +4930,137 @@ represent the same string value; otherwise, <see langword="false" />.</para>
           <paramref name="count" /> is negative.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Split">
+      <MemberSignature Language="C#" Value="public string[] Split (char[] separator, StringSplitOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string[] Split(char[] separator, valuetype System.StringSplitOptions options) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="separator" Type="System.Char[]" />
+        <Parameter Name="options" Type="System.StringSplitOptions" />
+      </Parameters>
+      <Docs>
+        <param name="separator">To be added.</param>
+        <param name="options">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="Split">
+      <MemberSignature Language="C#" Value="public string[] Split (string[] separator, StringSplitOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string[] Split(string[] separator, valuetype System.StringSplitOptions options) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="separator" Type="System.String[]" />
+        <Parameter Name="options" Type="System.StringSplitOptions" />
+      </Parameters>
+      <Docs>
+        <param name="separator">To be added.</param>
+        <param name="options">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="Split">
+      <MemberSignature Language="C#" Value="public string[] Split (char[] separator, int count, StringSplitOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string[] Split(char[] separator, int32 count, valuetype System.StringSplitOptions options) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="separator" Type="System.Char[]" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="options" Type="System.StringSplitOptions" />
+      </Parameters>
+      <Docs>
+        <param name="separator">To be added.</param>
+        <param name="count">To be added.</param>
+        <param name="options">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="Split">
+      <MemberSignature Language="C#" Value="public string[] Split (string[] separator, int count, StringSplitOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string[] Split(string[] separator, int32 count, valuetype System.StringSplitOptions options) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="separator" Type="System.String[]" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="options" Type="System.StringSplitOptions" />
+      </Parameters>
+      <Docs>
+        <param name="separator">To be added.</param>
+        <param name="count">To be added.</param>
+        <param name="options">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
+    </Member>
+    <Member MemberName="StartsWith">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance bool StartsWith(string value)" />
+      <MemberSignature Language="C#" Value="public bool StartsWith (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool StartsWith(string value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Split">
-      <MemberSignature Language="C#" Value="public string[] Split (char[] separator, StringSplitOptions options);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String[]</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="separator" Type="System.Char[]" />
-        <Parameter Name="options" Type="System.StringSplitOptions" />
-      </Parameters>
-      <Docs>
-        <param name="separator">To be added.</param>
-        <param name="options">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Split">
-      <MemberSignature Language="C#" Value="public string[] Split (string[] separator, StringSplitOptions options);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String[]</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="separator" Type="System.String[]" />
-        <Parameter Name="options" Type="System.StringSplitOptions" />
-      </Parameters>
-      <Docs>
-        <param name="separator">To be added.</param>
-        <param name="options">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Split">
-      <MemberSignature Language="C#" Value="public string[] Split (char[] separator, int count, StringSplitOptions options);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String[]</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="separator" Type="System.Char[]" />
-        <Parameter Name="count" Type="System.Int32" />
-        <Parameter Name="options" Type="System.StringSplitOptions" />
-      </Parameters>
-      <Docs>
-        <param name="separator">To be added.</param>
-        <param name="count">To be added.</param>
-        <param name="options">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Split">
-      <MemberSignature Language="C#" Value="public string[] Split (string[] separator, int count, StringSplitOptions options);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.String[]</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="separator" Type="System.String[]" />
-        <Parameter Name="count" Type="System.Int32" />
-        <Parameter Name="options" Type="System.StringSplitOptions" />
-      </Parameters>
-      <Docs>
-        <param name="separator">To be added.</param>
-        <param name="count">To be added.</param>
-        <param name="options">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="StartsWith">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance bool StartsWith(string value)" />
-      <MemberSignature Language="C#" Value="public bool StartsWith (string value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -4973,15 +5096,20 @@ represent the same string value; otherwise, <see langword="false" />.</para>
           <paramref name="value" /> is a null reference. </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="StartsWith">
       <MemberSignature Language="C#" Value="public bool StartsWith (string value, StringComparison comparisonType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool StartsWith(string value, valuetype System.StringComparison comparisonType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -4997,19 +5125,15 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="StartsWith">
+      <MemberSignature Language="C#" Value="public bool StartsWith (string value, bool ignoreCase, System.Globalization.CultureInfo culture);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool StartsWith(string value, bool ignoreCase, class System.Globalization.CultureInfo culture) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="StartsWith">
-      <MemberSignature Language="C#" Value="public bool StartsWith (string value, bool ignoreCase, System.Globalization.CultureInfo culture);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -5027,15 +5151,17 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Substring">
       <MemberSignature Language="ILASM" Value=".method public hidebysig instance string Substring(int32 startIndex)" />
       <MemberSignature Language="C#" Value="public string Substring (int startIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string Substring(int32 startIndex) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -5058,16 +5184,17 @@ represent the same string value; otherwise, <see langword="false" />.</para>
           <paramref name="startIndex" /> is less than zero or greater than the length of the current instance.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Substring">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string Substring(int32 startIndex, int32 length)" />
+      <MemberSignature Language="C#" Value="public string Substring (int startIndex, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string Substring(int32 startIndex, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Substring">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string Substring(int32 startIndex, int32 length)" />
-      <MemberSignature Language="C#" Value="public string Substring (int startIndex, int length);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -5097,15 +5224,15 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.Collections.Generic.IEnumerable&lt;System.Char&gt;.GetEnumerator">
       <MemberSignature Language="C#" Value="System.Collections.Generic.IEnumerator&lt;char&gt; IEnumerable&lt;char&gt;.GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Collections.Generic.IEnumerator`1&lt;char&gt; System.Collections.Generic.IEnumerable&lt;char&gt;.GetEnumerator() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerator&lt;System.Char&gt;</ReturnType>
       </ReturnValue>
@@ -5118,14 +5245,16 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
       <MemberSignature Language="C#" Value="System.Collections.IEnumerator IEnumerable.GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.IEnumerator</ReturnType>
       </ReturnValue>
@@ -5135,15 +5264,16 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToBoolean">
+      <MemberSignature Language="C#" Value="bool IConvertible.ToBoolean (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance bool System.IConvertible.ToBoolean(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToBoolean">
-      <MemberSignature Language="C#" Value="bool IConvertible.ToBoolean (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -5156,15 +5286,16 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToByte">
+      <MemberSignature Language="C#" Value="byte IConvertible.ToByte (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance unsigned int8 System.IConvertible.ToByte(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToByte">
-      <MemberSignature Language="C#" Value="byte IConvertible.ToByte (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte</ReturnType>
       </ReturnValue>
@@ -5177,15 +5308,16 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToChar">
+      <MemberSignature Language="C#" Value="char IConvertible.ToChar (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance char System.IConvertible.ToChar(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToChar">
-      <MemberSignature Language="C#" Value="char IConvertible.ToChar (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Char</ReturnType>
       </ReturnValue>
@@ -5198,15 +5330,16 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToDateTime">
+      <MemberSignature Language="C#" Value="DateTime IConvertible.ToDateTime (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance valuetype System.DateTime System.IConvertible.ToDateTime(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToDateTime">
-      <MemberSignature Language="C#" Value="DateTime IConvertible.ToDateTime (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -5219,15 +5352,16 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToDecimal">
+      <MemberSignature Language="C#" Value="decimal IConvertible.ToDecimal (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance valuetype System.Decimal System.IConvertible.ToDecimal(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToDecimal">
-      <MemberSignature Language="C#" Value="decimal IConvertible.ToDecimal (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>
       </ReturnValue>
@@ -5240,15 +5374,16 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToDouble">
+      <MemberSignature Language="C#" Value="double IConvertible.ToDouble (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance float64 System.IConvertible.ToDouble(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToDouble">
-      <MemberSignature Language="C#" Value="double IConvertible.ToDouble (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -5261,15 +5396,16 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToInt16">
+      <MemberSignature Language="C#" Value="short IConvertible.ToInt16 (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int16 System.IConvertible.ToInt16(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToInt16">
-      <MemberSignature Language="C#" Value="short IConvertible.ToInt16 (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
@@ -5282,15 +5418,16 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToInt32">
+      <MemberSignature Language="C#" Value="int IConvertible.ToInt32 (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int32 System.IConvertible.ToInt32(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToInt32">
-      <MemberSignature Language="C#" Value="int IConvertible.ToInt32 (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -5303,15 +5440,16 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToInt64">
+      <MemberSignature Language="C#" Value="long IConvertible.ToInt64 (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int64 System.IConvertible.ToInt64(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToInt64">
-      <MemberSignature Language="C#" Value="long IConvertible.ToInt64 (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -5324,15 +5462,16 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToSByte">
+      <MemberSignature Language="C#" Value="sbyte IConvertible.ToSByte (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance int8 System.IConvertible.ToSByte(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToSByte">
-      <MemberSignature Language="C#" Value="sbyte IConvertible.ToSByte (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.SByte</ReturnType>
       </ReturnValue>
@@ -5345,15 +5484,16 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToSingle">
+      <MemberSignature Language="C#" Value="float IConvertible.ToSingle (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance float32 System.IConvertible.ToSingle(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToSingle">
-      <MemberSignature Language="C#" Value="float IConvertible.ToSingle (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Single</ReturnType>
       </ReturnValue>
@@ -5366,15 +5506,16 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToType">
+      <MemberSignature Language="C#" Value="object IConvertible.ToType (Type targetType, IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance object System.IConvertible.ToType(class System.Type targetType, class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToType">
-      <MemberSignature Language="C#" Value="object IConvertible.ToType (Type targetType, IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -5389,15 +5530,16 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToUInt16">
+      <MemberSignature Language="C#" Value="ushort IConvertible.ToUInt16 (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance unsigned int16 System.IConvertible.ToUInt16(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToUInt16">
-      <MemberSignature Language="C#" Value="ushort IConvertible.ToUInt16 (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt16</ReturnType>
       </ReturnValue>
@@ -5410,15 +5552,16 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToUInt32">
+      <MemberSignature Language="C#" Value="uint IConvertible.ToUInt32 (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance unsigned int32 System.IConvertible.ToUInt32(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToUInt32">
-      <MemberSignature Language="C#" Value="uint IConvertible.ToUInt32 (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt32</ReturnType>
       </ReturnValue>
@@ -5431,15 +5574,16 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.IConvertible.ToUInt64">
+      <MemberSignature Language="C#" Value="ulong IConvertible.ToUInt64 (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance unsigned int64 System.IConvertible.ToUInt64(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.IConvertible.ToUInt64">
-      <MemberSignature Language="C#" Value="ulong IConvertible.ToUInt64 (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt64</ReturnType>
       </ReturnValue>
@@ -5452,16 +5596,17 @@ represent the same string value; otherwise, <see langword="false" />.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="ToCharArray">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Char[] ToCharArray()" />
+      <MemberSignature Language="C#" Value="public char[] ToCharArray ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance char[] ToCharArray() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToCharArray">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Char[] ToCharArray()" />
-      <MemberSignature Language="C#" Value="public char[] ToCharArray ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Char[]</ReturnType>
       </ReturnValue>
@@ -5479,16 +5624,17 @@ and has a zero length.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ToCharArray">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Char[] ToCharArray(int32 startIndex, int32 length)" />
+      <MemberSignature Language="C#" Value="public char[] ToCharArray (int startIndex, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance char[] ToCharArray(int32 startIndex, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToCharArray">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Char[] ToCharArray(int32 startIndex, int32 length)" />
-      <MemberSignature Language="C#" Value="public char[] ToCharArray (int startIndex, int length);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Char[]</ReturnType>
       </ReturnValue>
@@ -5520,16 +5666,17 @@ and has a zero length.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ToLower">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string ToLower()" />
+      <MemberSignature Language="C#" Value="public string ToLower ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ToLower() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToLower">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string ToLower()" />
-      <MemberSignature Language="C#" Value="public string ToLower ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -5546,15 +5693,16 @@ and has a zero length.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ToLower">
+      <MemberSignature Language="C#" Value="public string ToLower (System.Globalization.CultureInfo culture);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ToLower(class System.Globalization.CultureInfo culture) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToLower">
-      <MemberSignature Language="C#" Value="public string ToLower (System.Globalization.CultureInfo culture);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -5567,15 +5715,15 @@ and has a zero length.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToLowerInvariant">
       <MemberSignature Language="C#" Value="public string ToLowerInvariant ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ToLowerInvariant() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -5586,15 +5734,17 @@ and has a zero length.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
       <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -5615,16 +5765,17 @@ and has a zero length.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual string ToString(class System.IFormatProvider provider)" />
+      <MemberSignature Language="C#" Value="public string ToString (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string ToString(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual string ToString(class System.IFormatProvider provider)" />
-      <MemberSignature Language="C#" Value="public string ToString (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -5647,16 +5798,17 @@ and has a zero length.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ToUpper">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string ToUpper()" />
+      <MemberSignature Language="C#" Value="public string ToUpper ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ToUpper() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToUpper">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string ToUpper()" />
-      <MemberSignature Language="C#" Value="public string ToUpper ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -5674,15 +5826,16 @@ in uppercase.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ToUpper">
+      <MemberSignature Language="C#" Value="public string ToUpper (System.Globalization.CultureInfo culture);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ToUpper(class System.Globalization.CultureInfo culture) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToUpper">
-      <MemberSignature Language="C#" Value="public string ToUpper (System.Globalization.CultureInfo culture);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -5695,15 +5848,15 @@ in uppercase.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToUpperInvariant">
       <MemberSignature Language="C#" Value="public string ToUpperInvariant ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ToUpperInvariant() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -5714,15 +5867,17 @@ in uppercase.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Trim">
       <MemberSignature Language="ILASM" Value=".method public hidebysig instance string Trim()" />
       <MemberSignature Language="C#" Value="public string Trim ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string Trim() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -5741,16 +5896,17 @@ in uppercase.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Trim">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string Trim(class System.Char[] trimChars)" />
+      <MemberSignature Language="C#" Value="public string Trim (char[] trimChars);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string Trim(char[] trimChars) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Trim">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string Trim(class System.Char[] trimChars)" />
-      <MemberSignature Language="C#" Value="public string Trim (char[] trimChars);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -5780,16 +5936,17 @@ in uppercase.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="TrimEnd">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string TrimEnd(class System.Char[] trimChars)" />
+      <MemberSignature Language="C#" Value="public string TrimEnd (char[] trimChars);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string TrimEnd(char[] trimChars) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="TrimEnd">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string TrimEnd(class System.Char[] trimChars)" />
-      <MemberSignature Language="C#" Value="public string TrimEnd (char[] trimChars);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -5817,16 +5974,17 @@ in uppercase.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="TrimStart">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string TrimStart(class System.Char[] trimChars)" />
+      <MemberSignature Language="C#" Value="public string TrimStart (char[] trimChars);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string TrimStart(char[] trimChars) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="TrimStart">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string TrimStart(class System.Char[] trimChars)" />
-      <MemberSignature Language="C#" Value="public string TrimStart (char[] trimChars);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -5854,11 +6012,6 @@ in uppercase.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

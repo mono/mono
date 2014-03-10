@@ -1,5 +1,6 @@
 <Type Name="ConsoleCancelEventHandler" FullName="System.ConsoleCancelEventHandler">
   <TypeSignature Language="C#" Value="public delegate void ConsoleCancelEventHandler(object sender, ConsoleCancelEventArgs e);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ConsoleCancelEventHandler extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>

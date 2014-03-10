@@ -1,6 +1,7 @@
 <Type Name="UnicodeCategory" FullName="System.Globalization.UnicodeCategory" FullNameSP="System_Globalization_UnicodeCategory" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable UnicodeCategory extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum UnicodeCategory" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed UnicodeCategory extends System.Enum" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -12,6 +13,11 @@
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>
       <para>Designates the general Unicode category of a <see cref="T:System.Char" /> .</para>
@@ -37,7 +43,13 @@
     <Member MemberName="ClosePunctuation">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory ClosePunctuation = 21" />
       <MemberSignature Language="C#" Value="ClosePunctuation" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory ClosePunctuation = int32(21)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -50,16 +62,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ConnectorPunctuation">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory ConnectorPunctuation = 18" />
+      <MemberSignature Language="C#" Value="ConnectorPunctuation" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory ConnectorPunctuation = int32(18)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ConnectorPunctuation">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory ConnectorPunctuation = 18" />
-      <MemberSignature Language="C#" Value="ConnectorPunctuation" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -72,16 +85,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Control">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory Control = 14" />
+      <MemberSignature Language="C#" Value="Control" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory Control = int32(14)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Control">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory Control = 14" />
-      <MemberSignature Language="C#" Value="Control" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -94,16 +108,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CurrencySymbol">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory CurrencySymbol = 26" />
+      <MemberSignature Language="C#" Value="CurrencySymbol" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory CurrencySymbol = int32(26)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CurrencySymbol">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory CurrencySymbol = 26" />
-      <MemberSignature Language="C#" Value="CurrencySymbol" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -116,16 +131,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="DashPunctuation">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory DashPunctuation = 19" />
+      <MemberSignature Language="C#" Value="DashPunctuation" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory DashPunctuation = int32(19)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DashPunctuation">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory DashPunctuation = 19" />
-      <MemberSignature Language="C#" Value="DashPunctuation" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -138,16 +154,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="DecimalDigitNumber">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory DecimalDigitNumber = 8" />
+      <MemberSignature Language="C#" Value="DecimalDigitNumber" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory DecimalDigitNumber = int32(8)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DecimalDigitNumber">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory DecimalDigitNumber = 8" />
-      <MemberSignature Language="C#" Value="DecimalDigitNumber" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -160,16 +177,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="EnclosingMark">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory EnclosingMark = 7" />
+      <MemberSignature Language="C#" Value="EnclosingMark" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory EnclosingMark = int32(7)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="EnclosingMark">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory EnclosingMark = 7" />
-      <MemberSignature Language="C#" Value="EnclosingMark" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -182,16 +200,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="FinalQuotePunctuation">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory FinalQuotePunctuation = 23" />
+      <MemberSignature Language="C#" Value="FinalQuotePunctuation" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory FinalQuotePunctuation = int32(23)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FinalQuotePunctuation">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory FinalQuotePunctuation = 23" />
-      <MemberSignature Language="C#" Value="FinalQuotePunctuation" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -204,16 +223,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Format">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory Format = 15" />
+      <MemberSignature Language="C#" Value="Format" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory Format = int32(15)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Format">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory Format = 15" />
-      <MemberSignature Language="C#" Value="Format" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -226,16 +246,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="InitialQuotePunctuation">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory InitialQuotePunctuation = 22" />
+      <MemberSignature Language="C#" Value="InitialQuotePunctuation" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory InitialQuotePunctuation = int32(22)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="InitialQuotePunctuation">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory InitialQuotePunctuation = 22" />
-      <MemberSignature Language="C#" Value="InitialQuotePunctuation" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -248,16 +269,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="LetterNumber">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory LetterNumber = 9" />
+      <MemberSignature Language="C#" Value="LetterNumber" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory LetterNumber = int32(9)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LetterNumber">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory LetterNumber = 9" />
-      <MemberSignature Language="C#" Value="LetterNumber" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -270,16 +292,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="LineSeparator">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory LineSeparator = 12" />
+      <MemberSignature Language="C#" Value="LineSeparator" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory LineSeparator = int32(12)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LineSeparator">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory LineSeparator = 12" />
-      <MemberSignature Language="C#" Value="LineSeparator" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -292,16 +315,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="LowercaseLetter">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory LowercaseLetter = 1" />
+      <MemberSignature Language="C#" Value="LowercaseLetter" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory LowercaseLetter = int32(1)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LowercaseLetter">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory LowercaseLetter = 1" />
-      <MemberSignature Language="C#" Value="LowercaseLetter" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -314,16 +338,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="MathSymbol">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory MathSymbol = 25" />
+      <MemberSignature Language="C#" Value="MathSymbol" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory MathSymbol = int32(25)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MathSymbol">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory MathSymbol = 25" />
-      <MemberSignature Language="C#" Value="MathSymbol" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -336,16 +361,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ModifierLetter">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory ModifierLetter = 3" />
+      <MemberSignature Language="C#" Value="ModifierLetter" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory ModifierLetter = int32(3)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ModifierLetter">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory ModifierLetter = 3" />
-      <MemberSignature Language="C#" Value="ModifierLetter" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -358,16 +384,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ModifierSymbol">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory ModifierSymbol = 27" />
+      <MemberSignature Language="C#" Value="ModifierSymbol" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory ModifierSymbol = int32(27)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ModifierSymbol">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory ModifierSymbol = 27" />
-      <MemberSignature Language="C#" Value="ModifierSymbol" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -380,16 +407,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="NonSpacingMark">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory NonSpacingMark = 5" />
+      <MemberSignature Language="C#" Value="NonSpacingMark" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory NonSpacingMark = int32(5)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="NonSpacingMark">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory NonSpacingMark = 5" />
-      <MemberSignature Language="C#" Value="NonSpacingMark" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -402,16 +430,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="OpenPunctuation">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory OpenPunctuation = 20" />
+      <MemberSignature Language="C#" Value="OpenPunctuation" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory OpenPunctuation = int32(20)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OpenPunctuation">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory OpenPunctuation = 20" />
-      <MemberSignature Language="C#" Value="OpenPunctuation" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -424,16 +453,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="OtherLetter">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory OtherLetter = 4" />
+      <MemberSignature Language="C#" Value="OtherLetter" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory OtherLetter = int32(4)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OtherLetter">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory OtherLetter = 4" />
-      <MemberSignature Language="C#" Value="OtherLetter" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -447,16 +477,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="OtherNotAssigned">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory OtherNotAssigned = 29" />
+      <MemberSignature Language="C#" Value="OtherNotAssigned" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory OtherNotAssigned = int32(29)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OtherNotAssigned">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory OtherNotAssigned = 29" />
-      <MemberSignature Language="C#" Value="OtherNotAssigned" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -469,16 +500,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="OtherNumber">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory OtherNumber = 10" />
+      <MemberSignature Language="C#" Value="OtherNumber" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory OtherNumber = int32(10)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OtherNumber">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory OtherNumber = 10" />
-      <MemberSignature Language="C#" Value="OtherNumber" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -492,16 +524,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="OtherPunctuation">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory OtherPunctuation = 24" />
+      <MemberSignature Language="C#" Value="OtherPunctuation" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory OtherPunctuation = int32(24)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OtherPunctuation">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory OtherPunctuation = 24" />
-      <MemberSignature Language="C#" Value="OtherPunctuation" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -515,16 +548,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="OtherSymbol">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory OtherSymbol = 28" />
+      <MemberSignature Language="C#" Value="OtherSymbol" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory OtherSymbol = int32(28)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OtherSymbol">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory OtherSymbol = 28" />
-      <MemberSignature Language="C#" Value="OtherSymbol" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -538,16 +572,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ParagraphSeparator">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory ParagraphSeparator = 13" />
+      <MemberSignature Language="C#" Value="ParagraphSeparator" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory ParagraphSeparator = int32(13)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ParagraphSeparator">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory ParagraphSeparator = 13" />
-      <MemberSignature Language="C#" Value="ParagraphSeparator" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -560,16 +595,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="PrivateUse">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory PrivateUse = 17" />
+      <MemberSignature Language="C#" Value="PrivateUse" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory PrivateUse = int32(17)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="PrivateUse">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory PrivateUse = 17" />
-      <MemberSignature Language="C#" Value="PrivateUse" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -582,16 +618,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="SpaceSeparator">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory SpaceSeparator = 11" />
+      <MemberSignature Language="C#" Value="SpaceSeparator" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory SpaceSeparator = int32(11)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SpaceSeparator">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory SpaceSeparator = 11" />
-      <MemberSignature Language="C#" Value="SpaceSeparator" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -604,16 +641,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="SpacingCombiningMark">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory SpacingCombiningMark = 6" />
+      <MemberSignature Language="C#" Value="SpacingCombiningMark" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory SpacingCombiningMark = int32(6)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SpacingCombiningMark">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory SpacingCombiningMark = 6" />
-      <MemberSignature Language="C#" Value="SpacingCombiningMark" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -626,16 +664,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Surrogate">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory Surrogate = 16" />
+      <MemberSignature Language="C#" Value="Surrogate" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory Surrogate = int32(16)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Surrogate">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory Surrogate = 16" />
-      <MemberSignature Language="C#" Value="Surrogate" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -648,16 +687,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="TitlecaseLetter">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory TitlecaseLetter = 2" />
+      <MemberSignature Language="C#" Value="TitlecaseLetter" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory TitlecaseLetter = int32(2)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="TitlecaseLetter">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory TitlecaseLetter = 2" />
-      <MemberSignature Language="C#" Value="TitlecaseLetter" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -670,16 +710,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="UppercaseLetter">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory UppercaseLetter = 0" />
+      <MemberSignature Language="C#" Value="UppercaseLetter" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.UnicodeCategory UppercaseLetter = int32(0)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="UppercaseLetter">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.UnicodeCategory UppercaseLetter = 0" />
-      <MemberSignature Language="C#" Value="UppercaseLetter" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
       </ReturnValue>
@@ -692,17 +733,7 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

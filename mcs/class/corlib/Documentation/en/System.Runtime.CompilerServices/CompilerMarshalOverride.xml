@@ -1,5 +1,6 @@
 <Type Name="CompilerMarshalOverride" FullName="System.Runtime.CompilerServices.CompilerMarshalOverride">
   <TypeSignature Language="C#" Value="public static class CompilerMarshalOverride" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit CompilerMarshalOverride extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>

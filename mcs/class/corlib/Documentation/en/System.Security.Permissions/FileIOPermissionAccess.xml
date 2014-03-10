@@ -1,6 +1,7 @@
 <Type Name="FileIOPermissionAccess" FullName="System.Security.Permissions.FileIOPermissionAccess" FullNameSP="System_Security_Permissions_FileIOPermissionAccess" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable FileIOPermissionAccess extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum FileIOPermissionAccess" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed FileIOPermissionAccess extends System.Enum" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -35,7 +36,13 @@
     <Member MemberName="AllAccess">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Security.Permissions.FileIOPermissionAccess AllAccess = Read | Write | Append | PathDiscovery" />
       <MemberSignature Language="C#" Value="AllAccess" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.FileIOPermissionAccess AllAccess = int32(15)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Permissions.FileIOPermissionAccess</ReturnType>
       </ReturnValue>
@@ -50,16 +57,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Security.Permissions.FileIOPermissionAccess Append = 0x4" />
+      <MemberSignature Language="C#" Value="Append" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.FileIOPermissionAccess Append = int32(4)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Append">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Security.Permissions.FileIOPermissionAccess Append = 0x4" />
-      <MemberSignature Language="C#" Value="Append" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Permissions.FileIOPermissionAccess</ReturnType>
       </ReturnValue>
@@ -73,16 +81,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="NoAccess">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Security.Permissions.FileIOPermissionAccess NoAccess = 0x0" />
+      <MemberSignature Language="C#" Value="NoAccess" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.FileIOPermissionAccess NoAccess = int32(0)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="NoAccess">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Security.Permissions.FileIOPermissionAccess NoAccess = 0x0" />
-      <MemberSignature Language="C#" Value="NoAccess" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Permissions.FileIOPermissionAccess</ReturnType>
       </ReturnValue>
@@ -96,16 +105,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="PathDiscovery">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Security.Permissions.FileIOPermissionAccess PathDiscovery = 0x8" />
+      <MemberSignature Language="C#" Value="PathDiscovery" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.FileIOPermissionAccess PathDiscovery = int32(8)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="PathDiscovery">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Security.Permissions.FileIOPermissionAccess PathDiscovery = 0x8" />
-      <MemberSignature Language="C#" Value="PathDiscovery" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Permissions.FileIOPermissionAccess</ReturnType>
       </ReturnValue>
@@ -126,16 +136,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Read">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Security.Permissions.FileIOPermissionAccess Read = 0x1" />
+      <MemberSignature Language="C#" Value="Read" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.FileIOPermissionAccess Read = int32(1)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Read">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Security.Permissions.FileIOPermissionAccess Read = 0x1" />
-      <MemberSignature Language="C#" Value="Read" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Permissions.FileIOPermissionAccess</ReturnType>
       </ReturnValue>
@@ -148,16 +159,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Security.Permissions.FileIOPermissionAccess Write = 0x2" />
+      <MemberSignature Language="C#" Value="Write" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.FileIOPermissionAccess Write = int32(2)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Security.Permissions.FileIOPermissionAccess Write = 0x2" />
-      <MemberSignature Language="C#" Value="Write" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Permissions.FileIOPermissionAccess</ReturnType>
       </ReturnValue>
@@ -171,11 +183,6 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

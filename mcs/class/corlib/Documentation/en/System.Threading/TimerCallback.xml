@@ -1,6 +1,7 @@
 <Type Name="TimerCallback" FullName="System.Threading.TimerCallback" FullNameSP="System_Threading_TimerCallback" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable TimerCallback extends System.Delegate" />
   <TypeSignature Language="C#" Value="public delegate void TimerCallback(object state);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed TimerCallback extends System.MulticastDelegate" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -12,6 +13,17 @@
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
   </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Parameters>
+    <Parameter Name="state" Type="System.Object" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
   <Docs>
     <param name="state">A <see cref="T:System.Object" /> containing application-specific information relevant to the methods invoked by instances of this delegate, or <see langword="null" /> . </param>
     <summary>
@@ -35,15 +47,4 @@
   </Docs>
   <Members />
   <TypeExcluded>0</TypeExcluded>
-  <Parameters>
-    <Parameter Name="state" Type="System.Object" />
-  </Parameters>
-  <ReturnValue>
-    <ReturnType>System.Void</ReturnType>
-  </ReturnValue>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

@@ -1,6 +1,7 @@
 <Type Name="SeekOrigin" FullName="System.IO.SeekOrigin" FullNameSP="System_IO_SeekOrigin" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable SeekOrigin extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum SeekOrigin" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed SeekOrigin extends System.Enum" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -12,6 +13,11 @@
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>
       <para> Defines the seek reference positions.</para>
@@ -26,7 +32,13 @@
     <Member MemberName="Begin">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.SeekOrigin Begin = 0" />
       <MemberSignature Language="C#" Value="Begin" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.SeekOrigin Begin = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.SeekOrigin</ReturnType>
       </ReturnValue>
@@ -40,16 +52,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Current">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.SeekOrigin Current = 1" />
+      <MemberSignature Language="C#" Value="Current" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.SeekOrigin Current = int32(1)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Current">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.SeekOrigin Current = 1" />
-      <MemberSignature Language="C#" Value="Current" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.SeekOrigin</ReturnType>
       </ReturnValue>
@@ -63,16 +76,17 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="End">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.SeekOrigin End = 2" />
+      <MemberSignature Language="C#" Value="End" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.IO.SeekOrigin End = int32(2)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="End">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.IO.SeekOrigin End = 2" />
-      <MemberSignature Language="C#" Value="End" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.SeekOrigin</ReturnType>
       </ReturnValue>
@@ -85,17 +99,7 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

@@ -1,8 +1,10 @@
 <Type Name="SocketInformation" FullName="System.Net.Sockets.SocketInformation">
   <TypeSignature Language="C#" Value="public struct SocketInformation" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi serializable sealed beforefieldinit SocketInformation extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.ValueType</BaseTypeName>
@@ -14,10 +16,12 @@
   </Docs>
   <Members>
     <Member MemberName="Options">
-      <MemberSignature Language="C#" Value="public System.Net.Sockets.SocketInformationOptions Options { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Net.Sockets.SocketInformationOptions Options { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Sockets.SocketInformationOptions Options" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.SocketInformationOptions</ReturnType>
@@ -29,10 +33,12 @@
       </Docs>
     </Member>
     <Member MemberName="ProtocolInformation">
-      <MemberSignature Language="C#" Value="public byte[] ProtocolInformation { set; get; }" />
+      <MemberSignature Language="C#" Value="public byte[] ProtocolInformation { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int8[] ProtocolInformation" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>

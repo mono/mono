@@ -1,0 +1,108 @@
+<Type Name="CompositionConstants" FullName="System.ComponentModel.Composition.Hosting.CompositionConstants">
+  <TypeSignature Language="C#" Value="public static class CompositionConstants" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit CompositionConstants extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ComponentModel.Composition</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="ExportTypeIdentityMetadataName">
+      <MemberSignature Language="C#" Value="public const string ExportTypeIdentityMetadataName;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string ExportTypeIdentityMetadataName" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GenericContractMetadataName">
+      <MemberSignature Language="C#" Value="public const string GenericContractMetadataName;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string GenericContractMetadataName" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GenericParametersMetadataName">
+      <MemberSignature Language="C#" Value="public const string GenericParametersMetadataName;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string GenericParametersMetadataName" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ImportSourceMetadataName">
+      <MemberSignature Language="C#" Value="public const string ImportSourceMetadataName;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string ImportSourceMetadataName" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsGenericPartMetadataName">
+      <MemberSignature Language="C#" Value="public const string IsGenericPartMetadataName;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string IsGenericPartMetadataName" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PartCreationPolicyMetadataName">
+      <MemberSignature Language="C#" Value="public const string PartCreationPolicyMetadataName;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal string PartCreationPolicyMetadataName" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

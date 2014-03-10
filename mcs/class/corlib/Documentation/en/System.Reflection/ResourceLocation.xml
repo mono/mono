@@ -1,5 +1,6 @@
 <Type Name="ResourceLocation" FullName="System.Reflection.ResourceLocation">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum ResourceLocation" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed ResourceLocation extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -26,7 +27,13 @@
   <Members>
     <Member MemberName="ContainedInAnotherAssembly">
       <MemberSignature Language="C#" Value="ContainedInAnotherAssembly" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.ResourceLocation ContainedInAnotherAssembly = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.ResourceLocation</ReturnType>
       </ReturnValue>
@@ -35,15 +42,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ContainedInManifestFile">
       <MemberSignature Language="C#" Value="ContainedInManifestFile" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.ResourceLocation ContainedInManifestFile = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.ResourceLocation</ReturnType>
       </ReturnValue>
@@ -52,15 +60,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Embedded">
       <MemberSignature Language="C#" Value="Embedded" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.ResourceLocation Embedded = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.ResourceLocation</ReturnType>
       </ReturnValue>
@@ -69,11 +78,6 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

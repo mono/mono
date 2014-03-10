@@ -1,12 +1,17 @@
 <Type Name="INestedSite" FullName="System.ComponentModel.INestedSite">
-  <TypeSignature Language="C#" Value="public interface INestedSite : System.ComponentModel.ISite" />
+  <TypeSignature Language="C#" Value="public interface INestedSite : IServiceProvider, System.ComponentModel.ISite" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract INestedSite implements class System.ComponentModel.ISite, class System.IServiceProvider" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces>
     <Interface>
       <InterfaceName>System.ComponentModel.ISite</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IServiceProvider</InterfaceName>
     </Interface>
   </Interfaces>
   <Docs>
@@ -16,9 +21,11 @@
   <Members>
     <Member MemberName="FullName">
       <MemberSignature Language="C#" Value="public string FullName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FullName" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>

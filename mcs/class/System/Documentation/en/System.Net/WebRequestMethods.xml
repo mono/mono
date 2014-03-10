@@ -1,8 +1,10 @@
 <Type Name="WebRequestMethods" FullName="System.Net.WebRequestMethods">
   <TypeSignature Language="C#" Value="public static class WebRequestMethods" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit WebRequestMethods extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>

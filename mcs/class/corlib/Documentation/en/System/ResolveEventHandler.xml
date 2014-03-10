@@ -1,5 +1,6 @@
 <Type Name="ResolveEventHandler" FullName="System.ResolveEventHandler">
   <TypeSignature Maintainer="auto" Language="C#" Value="public delegate System.Reflection.Assembly ResolveEventHandler(object sender, ResolveEventArgs args);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed ResolveEventHandler extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -11,14 +12,11 @@
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
   </Base>
-  <Docs>
-    <param name="sender">An instance of <see cref="T:System.AppDomain" /></param>
-    <param name="args">The arguments to the resolution callback.</param>
-    <summary>Signature for various events emitted by the <see cref="T:System.AppDomain" />.</summary>
-    <value>The assembly that this event resolved to.</value>
-    <remarks />
-  </Docs>
-  <Members />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Parameters>
     <Parameter Name="sender" Type="System.Object" />
     <Parameter Name="args" Type="System.ResolveEventArgs" />
@@ -26,9 +24,12 @@
   <ReturnValue>
     <ReturnType>System.Reflection.Assembly</ReturnType>
   </ReturnValue>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
+  <Docs>
+    <param name="sender">An instance of <see cref="T:System.AppDomain" /></param>
+    <param name="args">The arguments to the resolution callback.</param>
+    <summary>Signature for various events emitted by the <see cref="T:System.AppDomain" />.</summary>
+    <returns>The assembly that this event resolved to.</returns>
+    <remarks />
+  </Docs>
+  <Members />
 </Type>

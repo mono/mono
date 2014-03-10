@@ -1,5 +1,6 @@
 <Type Name="ParameterizedThreadStart" FullName="System.Threading.ParameterizedThreadStart">
   <TypeSignature Language="C#" Value="public delegate void ParameterizedThreadStart(object obj);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ParameterizedThreadStart extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -8,6 +9,11 @@
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
   </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Parameters>
     <Parameter Name="obj" Type="System.Object" />
   </Parameters>
@@ -20,9 +26,4 @@
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
   </Docs>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

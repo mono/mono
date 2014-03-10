@@ -1,8 +1,10 @@
 <Type Name="SerialErrorReceivedEventHandler" FullName="System.IO.Ports.SerialErrorReceivedEventHandler">
   <TypeSignature Language="C#" Value="public delegate void SerialErrorReceivedEventHandler(object sender, SerialErrorReceivedEventArgs e);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SerialErrorReceivedEventHandler extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>

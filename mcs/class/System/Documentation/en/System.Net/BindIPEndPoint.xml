@@ -1,8 +1,10 @@
 <Type Name="BindIPEndPoint" FullName="System.Net.BindIPEndPoint">
   <TypeSignature Language="C#" Value="public delegate System.Net.IPEndPoint BindIPEndPoint(ServicePoint servicePoint, IPEndPoint remoteEndPoint, int retryCount);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed BindIPEndPoint extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
@@ -20,7 +22,7 @@
     <param name="remoteEndPoint">To be added.</param>
     <param name="retryCount">To be added.</param>
     <summary>To be added.</summary>
-    <value>To be added.</value>
+    <returns>To be added.</returns>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
   </Docs>

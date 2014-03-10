@@ -1,6 +1,7 @@
 <Type Name="StringBuilder" FullName="System.Text.StringBuilder" FullNameSP="System_Text_StringBuilder" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable StringBuilder extends System.Object" />
   <TypeSignature Language="C#" Value="public sealed class StringBuilder : System.Runtime.Serialization.ISerializable" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi serializable sealed beforefieldinit StringBuilder extends System.Object implements class System.Runtime.Serialization.ISerializable" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -64,7 +65,13 @@ implementation specific.</para>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
       <MemberSignature Language="C#" Value="public StringBuilder ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters />
       <Docs>
@@ -83,16 +90,17 @@ is set to the default capacity.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 capacity)" />
+      <MemberSignature Language="C#" Value="public StringBuilder (int capacity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 capacity) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int32 capacity)" />
-      <MemberSignature Language="C#" Value="public StringBuilder (int capacity);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="capacity" Type="System.Int32" />
@@ -123,16 +131,17 @@ is set to the default capacity.</para>
           <paramref name="capacity" /> is less than zero.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string value)" />
+      <MemberSignature Language="C#" Value="public StringBuilder (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string value) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string value)" />
-      <MemberSignature Language="C#" Value="public StringBuilder (string value);" />
-      <MemberType>Constructor</MemberType>
       <ReturnValue />
       <Parameters>
         <Parameter Name="value" Type="System.String" />
@@ -150,15 +159,16 @@ is set to the default capacity.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public StringBuilder (int capacity, int maxCapacity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 capacity, int32 maxCapacity) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public StringBuilder (int capacity, int maxCapacity);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="capacity" Type="System.Int32" />
         <Parameter Name="maxCapacity" Type="System.Int32" />
@@ -169,15 +179,16 @@ is set to the default capacity.</para>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public StringBuilder (string value, int capacity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string value, int32 capacity) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public StringBuilder (string value, int capacity);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="value" Type="System.String" />
         <Parameter Name="capacity" Type="System.Int32" />
@@ -188,15 +199,16 @@ is set to the default capacity.</para>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public StringBuilder (string value, int startIndex, int length, int capacity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string value, int32 startIndex, int32 length, int32 capacity) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public StringBuilder (string value, int startIndex, int length, int capacity);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="value" Type="System.String" />
         <Parameter Name="startIndex" Type="System.Int32" />
@@ -211,16 +223,17 @@ is set to the default capacity.</para>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(bool value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (bool value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Append(bool value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Append">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(bool value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (bool value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -247,16 +260,17 @@ of the current instance is increased as necessary.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(unsigned int8 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (byte value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Append(unsigned int8 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Append">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(unsigned int8 value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (byte value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -280,16 +294,17 @@ of the current instance is increased as necessary.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(valuetype System.Char value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (char value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Append(char value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Append">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(valuetype System.Char value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (char value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -312,16 +327,17 @@ of the current instance is increased as necessary.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(class System.Char[] value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (char[] value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Append(char[] value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Append">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(class System.Char[] value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (char[] value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -348,16 +364,17 @@ of the current instance is increased as necessary.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(decimal value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (decimal value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Append(valuetype System.Decimal value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Append">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(decimal value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (decimal value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -386,16 +403,17 @@ of the current instance is increased as necessary.</para>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(float64 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (double value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Append(float64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Append">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(float64 value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (double value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -421,16 +439,17 @@ to the end of the current instance.</para>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(int16 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Append(int16 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Append">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(int16 value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (short value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -456,16 +475,17 @@ to the end of the current instance.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(int32 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Append(int32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Append">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(int32 value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (int value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -490,16 +510,17 @@ to the end of the current instance.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(int64 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (long value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Append(int64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Append">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(int64 value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (long value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -524,16 +545,17 @@ to the end of the current instance.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(object value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Append(object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Append">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(object value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -559,16 +581,22 @@ to the end of the current instance.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(int8 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (sbyte value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Append(int8 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Append">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(int8 value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (sbyte value);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -595,21 +623,17 @@ to the end of the current instance.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(float32 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (float value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Append(float32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Append">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(float32 value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (float value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -635,16 +659,17 @@ to the end of the current instance.</para>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(string value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Append(string value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Append">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(string value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (string value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -668,16 +693,22 @@ necessary.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(unsigned int16 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (ushort value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Append(unsigned int16 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Append">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(unsigned int16 value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (ushort value);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -705,6 +736,12 @@ necessary.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(unsigned int32 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (uint value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Append(unsigned int32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -715,11 +752,6 @@ necessary.</para>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Append">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(unsigned int32 value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (uint value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -747,6 +779,12 @@ necessary.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(unsigned int64 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (ulong value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Append(unsigned int64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -757,11 +795,6 @@ necessary.</para>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Append">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(unsigned int64 value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (ulong value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -789,21 +822,17 @@ necessary.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(valuetype System.Char value, int32 repeatCount)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (char value, int repeatCount);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Append(char value, int32 repeatCount) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Append">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(valuetype System.Char value, int32 repeatCount)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (char value, int repeatCount);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -833,16 +862,17 @@ necessary.</para>
           <paramref name="repeatCount" /> is less than zero.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(class System.Char[] value, int32 startIndex, int32 charCount)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (char[] value, int startIndex, int charCount);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Append(char[] value, int32 startIndex, int32 charCount) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Append">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(class System.Char[] value, int32 startIndex, int32 charCount)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (char[] value, int startIndex, int charCount);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -880,16 +910,17 @@ necessary.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(string value, int32 startIndex, int32 count)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (string value, int startIndex, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Append(string value, int32 startIndex, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Append">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Append(string value, int32 startIndex, int32 count)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Append (string value, int startIndex, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -927,16 +958,17 @@ necessary.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AppendFormat">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder AppendFormat(string format, object arg0)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder AppendFormat (string format, object arg0);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder AppendFormat(string format, object arg0) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AppendFormat">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder AppendFormat(string format, object arg0)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder AppendFormat (string format, object arg0);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -988,16 +1020,17 @@ public class StringBuilderTest {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AppendFormat">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder AppendFormat(string format, class System.Object[] args)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder AppendFormat (string format, object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder AppendFormat(string format, object[] args) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AppendFormat">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder AppendFormat(string format, class System.Object[] args)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder AppendFormat (string format, object[] args);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -1062,16 +1095,17 @@ public class StringBuilderTest {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AppendFormat">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder AppendFormat(class System.IFormatProvider provider, string format, class System.Object[] args)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder AppendFormat (IFormatProvider provider, string format, object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder AppendFormat(class System.IFormatProvider provider, string format, object[] args) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AppendFormat">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder AppendFormat(class System.IFormatProvider provider, string format, class System.Object[] args)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder AppendFormat (IFormatProvider provider, string format, object[] args);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -1142,16 +1176,17 @@ public class StringBuilderTest {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AppendFormat">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder AppendFormat(string format, object arg0, object arg1)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder AppendFormat (string format, object arg0, object arg1);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder AppendFormat(string format, object arg0, object arg1) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AppendFormat">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder AppendFormat(string format, object arg0, object arg1)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder AppendFormat (string format, object arg0, object arg1);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -1209,16 +1244,17 @@ public class StringBuilderTest {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AppendFormat">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder AppendFormat(string format, object arg0, object arg1, object arg2)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder AppendFormat (string format, object arg0, object arg1, object arg2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder AppendFormat(string format, object arg0, object arg1, object arg2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AppendFormat">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder AppendFormat(string format, object arg0, object arg1, object arg2)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder AppendFormat (string format, object arg0, object arg1, object arg2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -1280,15 +1316,20 @@ public class StringBuilderTest {
         </example>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AppendLine">
       <MemberSignature Language="C#" Value="public System.Text.StringBuilder AppendLine ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder AppendLine() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -1299,6 +1340,11 @@ public class StringBuilderTest {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="AppendLine">
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder AppendLine (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder AppendLine(string value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1308,10 +1354,6 @@ public class StringBuilderTest {
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="AppendLine">
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder AppendLine (string value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -1325,20 +1367,17 @@ public class StringBuilderTest {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="Capacity">
       <MemberSignature Language="ILASM" Value=".property int32 Capacity { public hidebysig specialname instance int32 get_Capacity() public hidebysig specialname instance void set_Capacity(int32 value) }" />
-      <MemberSignature Language="C#" Value="public int Capacity { set; get; }" />
+      <MemberSignature Language="C#" Value="public int Capacity { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Capacity" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1366,16 +1405,17 @@ public class StringBuilderTest {
         <exception cref="T:System.ArgumentException">The value specified for a set operation is less than <see cref="P:System.Text.StringBuilder.Length" />.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Chars">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.Char Chars[int32 index] { public hidebysig specialname instance valuetype System.Char get_Chars(int32 index) public hidebysig specialname instance void set_Chars(int32 index, valuetype System.Char value) }" />
+      <MemberSignature Language="C#" Value="public char this[int index] { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance char Chars(int32)" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Chars">
-      <MemberSignature Language="ILASM" Value=".property valuetype System.Char Chars[int32 index] { public hidebysig specialname instance valuetype System.Char get_Chars(int32 index) public hidebysig specialname instance void set_Chars(int32 index, valuetype System.Char value) }" />
-      <MemberSignature Language="C#" Value="public char this[int index] { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Char</ReturnType>
       </ReturnValue>
@@ -1408,14 +1448,10 @@ public class StringBuilderTest {
         </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Clear">
       <MemberSignature Language="C#" Value="public System.Text.StringBuilder Clear ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Clear() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1432,7 +1468,17 @@ public class StringBuilderTest {
     </Member>
     <Member MemberName="CopyTo">
       <MemberSignature Language="C#" Value="public void CopyTo (int sourceIndex, char[] destination, int destinationIndex, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CopyTo(int32 sourceIndex, char[] destination, int32 destinationIndex, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1451,20 +1497,17 @@ public class StringBuilderTest {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="EnsureCapacity">
       <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 EnsureCapacity(int32 capacity)" />
       <MemberSignature Language="C#" Value="public int EnsureCapacity (int capacity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 EnsureCapacity(int32 capacity) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1496,16 +1539,17 @@ public class StringBuilderTest {
           <paramref name="capacity" /> is less zero. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance bool Equals(class System.Text.StringBuilder sb)" />
+      <MemberSignature Language="C#" Value="public bool Equals (System.Text.StringBuilder sb);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Equals(class System.Text.StringBuilder sb) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Equals">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance bool Equals(class System.Text.StringBuilder sb)" />
-      <MemberSignature Language="C#" Value="public bool Equals (System.Text.StringBuilder sb);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1526,16 +1570,17 @@ public class StringBuilderTest {
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, bool value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, bool value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, bool value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Insert">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, bool value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, bool value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -1571,16 +1616,17 @@ public class StringBuilderTest {
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, unsigned int8 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, byte value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, unsigned int8 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Insert">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, unsigned int8 value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, byte value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -1616,16 +1662,17 @@ public class StringBuilderTest {
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, valuetype System.Char value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, char value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, char value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Insert">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, valuetype System.Char value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, char value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -1660,16 +1707,17 @@ public class StringBuilderTest {
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, class System.Char[] value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, char[] value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, char[] value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Insert">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, class System.Char[] value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, char[] value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -1705,16 +1753,17 @@ public class StringBuilderTest {
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, decimal value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, decimal value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, valuetype System.Decimal value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Insert">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, decimal value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, decimal value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -1749,16 +1798,17 @@ public class StringBuilderTest {
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, float64 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, double value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, float64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Insert">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, float64 value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, double value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -1793,16 +1843,17 @@ public class StringBuilderTest {
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, int16 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, int16 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Insert">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, int16 value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, short value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -1837,16 +1888,17 @@ public class StringBuilderTest {
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, int32 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, int32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Insert">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, int32 value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, int value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -1880,16 +1932,17 @@ public class StringBuilderTest {
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, int64 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, long value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, int64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Insert">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, int64 value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, long value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -1924,16 +1977,17 @@ public class StringBuilderTest {
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, object value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Insert">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, object value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -1970,16 +2024,22 @@ public class StringBuilderTest {
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, int8 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, sbyte value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, int8 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Insert">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, int8 value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, sbyte value);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -2015,21 +2075,17 @@ public class StringBuilderTest {
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, float32 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, float value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, float32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Insert">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, float32 value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, float value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -2064,16 +2120,17 @@ public class StringBuilderTest {
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, string value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, string value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Insert">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, string value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, string value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -2110,16 +2167,22 @@ not changed.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, unsigned int16 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, ushort value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, unsigned int16 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Insert">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, unsigned int16 value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, ushort value);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -2155,6 +2218,12 @@ not changed.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, unsigned int32 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, uint value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, unsigned int32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2165,11 +2234,6 @@ not changed.</para>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Insert">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, unsigned int32 value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, uint value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -2205,6 +2269,12 @@ not changed.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, unsigned int64 value)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, ulong value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, unsigned int64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2215,11 +2285,6 @@ not changed.</para>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Insert">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, unsigned int64 value)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, ulong value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -2255,21 +2320,17 @@ not changed.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, string value, int32 count)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, string value, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, string value, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Insert">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, string value, int32 count)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, string value, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -2311,16 +2372,17 @@ not changed. </para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, class System.Char[] value, int32 startIndex, int32 charCount)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, char[] value, int startIndex, int charCount);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, char[] value, int32 startIndex, int32 charCount) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Insert">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Insert(int32 index, class System.Char[] value, int32 startIndex, int32 charCount)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Insert (int index, char[] value, int startIndex, int charCount);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -2364,16 +2426,17 @@ not changed. </para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Length">
+      <MemberSignature Language="ILASM" Value=".property int32 Length { public hidebysig specialname instance int32 get_Length() public hidebysig specialname instance void set_Length(int32 value) }" />
+      <MemberSignature Language="C#" Value="public int Length { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Length" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Length">
-      <MemberSignature Language="ILASM" Value=".property int32 Length { public hidebysig specialname instance int32 get_Length() public hidebysig specialname instance void set_Length(int32 value) }" />
-      <MemberSignature Language="C#" Value="public int Length { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2407,15 +2470,16 @@ not changed. </para>
         <exception cref="T:System.ArgumentOutOfRangeException">The value specified for a set operation is less than 0.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="MaxCapacity">
+      <MemberSignature Language="C#" Value="public int MaxCapacity { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxCapacity" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MaxCapacity">
-      <MemberSignature Language="C#" Value="public int MaxCapacity { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2424,16 +2488,17 @@ not changed. </para>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Remove">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Remove(int32 startIndex, int32 length)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Remove (int startIndex, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Remove(int32 startIndex, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Remove">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Remove(int32 startIndex, int32 length)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Remove (int startIndex, int length);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -2490,16 +2555,17 @@ public class StringBuilderTest  {
         </example>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Replace">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Replace(valuetype System.Char oldChar, valuetype System.Char newChar)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Replace (char oldChar, char newChar);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Replace(char oldChar, char newChar) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Replace">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Replace(valuetype System.Char oldChar, valuetype System.Char newChar)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Replace (char oldChar, char newChar);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -2524,16 +2590,17 @@ public class StringBuilderTest  {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Replace">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Replace(string oldValue, string newValue)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Replace (string oldValue, string newValue);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Replace(string oldValue, string newValue) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Replace">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Replace(string oldValue, string newValue)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Replace (string oldValue, string newValue);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -2564,16 +2631,17 @@ public class StringBuilderTest  {
         <exception cref="T:System.ArgumentException">The length of <paramref name="oldvalue" /> is zero.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Replace">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Replace(valuetype System.Char oldChar, valuetype System.Char newChar, int32 startIndex, int32 count)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Replace (char oldChar, char newChar, int startIndex, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Replace(char oldChar, char newChar, int32 startIndex, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Replace">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Replace(valuetype System.Char oldChar, valuetype System.Char newChar, int32 startIndex, int32 count)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Replace (char oldChar, char newChar, int startIndex, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -2608,16 +2676,17 @@ public class StringBuilderTest  {
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Replace">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Replace(string oldValue, string newValue, int32 startIndex, int32 count)" />
+      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Replace (string oldValue, string newValue, int startIndex, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.StringBuilder Replace(string oldValue, string newValue, int32 startIndex, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Replace">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Text.StringBuilder Replace(string oldValue, string newValue, int32 startIndex, int32 count)" />
-      <MemberSignature Language="C#" Value="public System.Text.StringBuilder Replace (string oldValue, string newValue, int startIndex, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
@@ -2659,15 +2728,15 @@ public class StringBuilderTest  {
         <exception cref="T:System.ArgumentException">The length of <paramref name="oldvalue" /> is zero.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.Runtime.Serialization.ISerializable.GetObjectData">
       <MemberSignature Language="C#" Value="void ISerializable.GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.Serialization.ISerializable.GetObjectData(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2682,15 +2751,17 @@ public class StringBuilderTest  {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
       <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -2708,16 +2779,17 @@ public class StringBuilderTest  {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string ToString(int32 startIndex, int32 length)" />
+      <MemberSignature Language="C#" Value="public string ToString (int startIndex, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ToString(int32 startIndex, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string ToString(int32 startIndex, int32 length)" />
-      <MemberSignature Language="C#" Value="public string ToString (int startIndex, int length);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -2744,11 +2816,6 @@ public class StringBuilderTest  {
         </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

@@ -1,5 +1,6 @@
 <Type Name="ActivationContext+ContextForm" FullName="System.ActivationContext+ContextForm">
   <TypeSignature Language="C#" Value="public enum ActivationContext.ContextForm" />
+  <TypeSignature Language="ILAsm" Value=".class nested public auto ansi sealed ActivationContext/ContextForm extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -16,7 +17,12 @@
   <Members>
     <Member MemberName="Loose">
       <MemberSignature Language="C#" Value="Loose" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ActivationContext/ContextForm Loose = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ActivationContext+ContextForm</ReturnType>
       </ReturnValue>
@@ -24,14 +30,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="StoreBounded">
       <MemberSignature Language="C#" Value="StoreBounded" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ActivationContext/ContextForm StoreBounded = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ActivationContext+ContextForm</ReturnType>
       </ReturnValue>
@@ -39,10 +46,6 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -1,0 +1,24 @@
+<Type Name="IssuedSecurityTokenHandler" FullName="System.ServiceModel.Security.Tokens.IssuedSecurityTokenHandler">
+  <TypeSignature Language="C#" Value="public delegate void IssuedSecurityTokenHandler(SecurityToken issuedToken, EndpointAddress tokenRequestor);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed IssuedSecurityTokenHandler extends System.MulticastDelegate" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="issuedToken" Type="System.IdentityModel.Tokens.SecurityToken" />
+    <Parameter Name="tokenRequestor" Type="System.ServiceModel.EndpointAddress" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="issuedToken">To be added.</param>
+    <param name="tokenRequestor">To be added.</param>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

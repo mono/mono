@@ -1,8 +1,10 @@
 <Type Name="DATADIR" FullName="System.Runtime.InteropServices.ComTypes.DATADIR">
   <TypeSignature Language="C#" Value="public enum DATADIR" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed DATADIR extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -14,9 +16,11 @@
   <Members>
     <Member MemberName="DATADIR_GET">
       <MemberSignature Language="C#" Value="DATADIR_GET" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.DATADIR DATADIR_GET = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.DATADIR</ReturnType>
@@ -27,9 +31,11 @@
     </Member>
     <Member MemberName="DATADIR_SET">
       <MemberSignature Language="C#" Value="DATADIR_SET" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.DATADIR DATADIR_SET = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.DATADIR</ReturnType>

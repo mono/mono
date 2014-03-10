@@ -1,5 +1,6 @@
 <Type Name="PureAttribute" FullName="System.Diagnostics.Contracts.PureAttribute">
   <TypeSignature Language="C#" Value="public sealed class PureAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit PureAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -18,16 +19,19 @@
   </Attributes>
   <Docs>
     <summary>Marks a method or type to indicate that it has no side effects.</summary>
-    <remarks><para>
+    <remarks>
+      <para>
 Only methods marked Pure may be used within code contract definitions. This is to ensure that checking a contract causes no side-effects.
 </para>
-<para>
+      <para>
 Methods within the System.Diagnostics.Contracts namespace are always considered to be pure. Some delegates are always considered to be pure, such as <see cref="T:System.Predicate&lt;T&gt;" /> and <see cref="T:System.Comparison&lt;T&gt;" />.
-</para></remarks>
+</para>
+    </remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public PureAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>

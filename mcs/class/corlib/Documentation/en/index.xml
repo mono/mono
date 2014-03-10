@@ -148,6 +148,7 @@
       <Type Name="InvalidTimeZoneException" Kind="Class" />
       <Type Name="IObservable`1" DisplayName="IObservable&lt;T&gt;" Kind="Interface" />
       <Type Name="IObserver`1" DisplayName="IObserver&lt;T&gt;" Kind="Interface" />
+      <Type Name="IProgress`1" DisplayName="IProgress&lt;T&gt;" Kind="Interface" />
       <Type Name="IServiceProvider" Kind="Interface" />
       <Type Name="Lazy`1" DisplayName="Lazy&lt;T&gt;" Kind="Class" />
       <Type Name="LoaderOptimization" Kind="Enumeration" />
@@ -183,6 +184,7 @@
       <Type Name="PlatformID" Kind="Enumeration" />
       <Type Name="PlatformNotSupportedException" Kind="Class" />
       <Type Name="Predicate`1" DisplayName="Predicate&lt;T&gt;" Kind="Delegate" />
+      <Type Name="Progress`1" DisplayName="Progress&lt;T&gt;" Kind="Class" />
       <Type Name="Random" Kind="Class" />
       <Type Name="RankException" Kind="Class" />
       <Type Name="ResolveEventArgs" Kind="Class" />
@@ -236,6 +238,7 @@
       <Type Name="Version" Kind="Class" />
       <Type Name="Void" Kind="Structure" />
       <Type Name="WeakReference" Kind="Class" />
+      <Type Name="WeakReference`1" DisplayName="WeakReference&lt;T&gt;" Kind="Class" />
     </Namespace>
     <Namespace Name="System.Collections">
       <Type Name="ArrayList" Kind="Class" />
@@ -268,6 +271,7 @@
       <Type Name="ConcurrentDictionary`2" DisplayName="ConcurrentDictionary&lt;TKey,TValue&gt;" Kind="Class" />
       <Type Name="ConcurrentQueue`1" DisplayName="ConcurrentQueue&lt;T&gt;" Kind="Class" />
       <Type Name="ConcurrentStack`1" DisplayName="ConcurrentStack&lt;T&gt;" Kind="Class" />
+      <Type Name="EnumerablePartitionerOptions" Kind="Enumeration" />
       <Type Name="IProducerConsumerCollection`1" DisplayName="IProducerConsumerCollection&lt;T&gt;" Kind="Interface" />
       <Type Name="OrderablePartitioner`1" DisplayName="OrderablePartitioner&lt;TSource&gt;" Kind="Class" />
       <Type Name="Partitioner" Kind="Class" />
@@ -289,6 +293,9 @@
       <Type Name="IEnumerator`1" DisplayName="IEnumerator&lt;T&gt;" Kind="Interface" />
       <Type Name="IEqualityComparer`1" DisplayName="IEqualityComparer&lt;T&gt;" Kind="Interface" />
       <Type Name="IList`1" DisplayName="IList&lt;T&gt;" Kind="Interface" />
+      <Type Name="IReadOnlyCollection`1" DisplayName="IReadOnlyCollection&lt;T&gt;" Kind="Interface" />
+      <Type Name="IReadOnlyDictionary`2" DisplayName="IReadOnlyDictionary&lt;TKey,TValue&gt;" Kind="Interface" />
+      <Type Name="IReadOnlyList`1" DisplayName="IReadOnlyList&lt;T&gt;" Kind="Interface" />
       <Type Name="KeyNotFoundException" Kind="Class" />
       <Type Name="KeyValuePair`2" DisplayName="KeyValuePair&lt;TKey,TValue&gt;" Kind="Structure" />
       <Type Name="List`1" DisplayName="List&lt;T&gt;" Kind="Class" />
@@ -298,6 +305,9 @@
       <Type Name="Collection`1" DisplayName="Collection&lt;T&gt;" Kind="Class" />
       <Type Name="KeyedCollection`2" DisplayName="KeyedCollection&lt;TKey,TItem&gt;" Kind="Class" />
       <Type Name="ReadOnlyCollection`1" DisplayName="ReadOnlyCollection&lt;T&gt;" Kind="Class" />
+      <Type Name="ReadOnlyDictionary`2" DisplayName="ReadOnlyDictionary&lt;TKey,TValue&gt;" Kind="Class" />
+      <Type Name="ReadOnlyDictionary`2+KeyCollection" DisplayName="ReadOnlyDictionary&lt;TKey,TValue&gt;+KeyCollection" Kind="Class" />
+      <Type Name="ReadOnlyDictionary`2+ValueCollection" DisplayName="ReadOnlyDictionary&lt;TKey,TValue&gt;+ValueCollection" Kind="Class" />
     </Namespace>
     <Namespace Name="System.Configuration.Assemblies">
       <Type Name="AssemblyHash" Kind="Structure" />
@@ -330,11 +340,14 @@
     </Namespace>
     <Namespace Name="System.Diagnostics.Contracts">
       <Type Name="Contract" Kind="Class" />
+      <Type Name="ContractAbbreviatorAttribute" Kind="Class" />
+      <Type Name="ContractArgumentValidatorAttribute" Kind="Class" />
       <Type Name="ContractClassAttribute" Kind="Class" />
       <Type Name="ContractClassForAttribute" Kind="Class" />
       <Type Name="ContractFailedEventArgs" Kind="Class" />
       <Type Name="ContractFailureKind" Kind="Enumeration" />
       <Type Name="ContractInvariantMethodAttribute" Kind="Class" />
+      <Type Name="ContractOptionAttribute" Kind="Class" />
       <Type Name="ContractPublicPropertyNameAttribute" Kind="Class" />
       <Type Name="ContractReferenceAssemblyAttribute" Kind="Class" />
       <Type Name="ContractRuntimeIgnoredAttribute" Kind="Class" />
@@ -360,6 +373,10 @@
       <Type Name="SymDocumentType" Kind="Class" />
       <Type Name="SymLanguageType" Kind="Class" />
       <Type Name="SymLanguageVendor" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Diagnostics.Tracing">
+      <Type Name="EventCommandEventArgs" Kind="Class" />
+      <Type Name="EventSource" Kind="Class" />
     </Namespace>
     <Namespace Name="System.Globalization">
       <Type Name="Calendar" Kind="Class" />
@@ -456,6 +473,7 @@
       <Type Name="AssemblyAlgorithmIdAttribute" Kind="Class" />
       <Type Name="AssemblyCompanyAttribute" Kind="Class" />
       <Type Name="AssemblyConfigurationAttribute" Kind="Class" />
+      <Type Name="AssemblyContentType" Kind="Enumeration" />
       <Type Name="AssemblyCopyrightAttribute" Kind="Class" />
       <Type Name="AssemblyCultureAttribute" Kind="Class" />
       <Type Name="AssemblyDefaultAliasAttribute" Kind="Class" />
@@ -466,10 +484,12 @@
       <Type Name="AssemblyInformationalVersionAttribute" Kind="Class" />
       <Type Name="AssemblyKeyFileAttribute" Kind="Class" />
       <Type Name="AssemblyKeyNameAttribute" Kind="Class" />
+      <Type Name="AssemblyMetadataAttribute" Kind="Class" />
       <Type Name="AssemblyName" Kind="Class" />
       <Type Name="AssemblyNameFlags" Kind="Enumeration" />
       <Type Name="AssemblyNameProxy" Kind="Class" />
       <Type Name="AssemblyProductAttribute" Kind="Class" />
+      <Type Name="AssemblySignatureKeyAttribute" Kind="Class" />
       <Type Name="AssemblyTitleAttribute" Kind="Class" />
       <Type Name="AssemblyTrademarkAttribute" Kind="Class" />
       <Type Name="AssemblyVersionAttribute" Kind="Class" />
@@ -478,6 +498,7 @@
       <Type Name="CallingConventions" Kind="Enumeration" />
       <Type Name="ConstructorInfo" Kind="Class" />
       <Type Name="CustomAttributeData" Kind="Class" />
+      <Type Name="CustomAttributeExtensions" Kind="Class" />
       <Type Name="CustomAttributeFormatException" Kind="Class" />
       <Type Name="CustomAttributeNamedArgument" Kind="Structure" />
       <Type Name="CustomAttributeTypedArgument" Kind="Structure" />
@@ -492,8 +513,10 @@
       <Type Name="ICustomAttributeProvider" Kind="Interface" />
       <Type Name="ImageFileMachine" Kind="Enumeration" />
       <Type Name="InterfaceMapping" Kind="Structure" />
+      <Type Name="IntrospectionExtensions" Kind="Class" />
       <Type Name="InvalidFilterCriteriaException" Kind="Class" />
       <Type Name="IReflect" Kind="Interface" />
+      <Type Name="IReflectableType" Kind="Interface" />
       <Type Name="LocalVariableInfo" Kind="Class" />
       <Type Name="ManifestResourceInfo" Kind="Class" />
       <Type Name="MemberFilter" Kind="Delegate" />
@@ -517,9 +540,11 @@
       <Type Name="ProcessorArchitecture" Kind="Enumeration" />
       <Type Name="PropertyAttributes" Kind="Enumeration" />
       <Type Name="PropertyInfo" Kind="Class" />
+      <Type Name="ReflectionContext" Kind="Class" />
       <Type Name="ReflectionTypeLoadException" Kind="Class" />
       <Type Name="ResourceAttributes" Kind="Enumeration" />
       <Type Name="ResourceLocation" Kind="Enumeration" />
+      <Type Name="RuntimeReflectionExtensions" Kind="Class" />
       <Type Name="StrongNameKeyPair" Kind="Class" />
       <Type Name="TargetException" Kind="Class" />
       <Type Name="TargetInvocationException" Kind="Class" />
@@ -527,6 +552,7 @@
       <Type Name="TypeAttributes" Kind="Enumeration" />
       <Type Name="TypeDelegator" Kind="Class" />
       <Type Name="TypeFilter" Kind="Delegate" />
+      <Type Name="TypeInfo" Kind="Class" />
     </Namespace>
     <Namespace Name="System.Reflection.Emit">
       <Type Name="AssemblyBuilder" Kind="Class" />
@@ -589,10 +615,17 @@
     </Namespace>
     <Namespace Name="System.Runtime.CompilerServices">
       <Type Name="AccessedThroughPropertyAttribute" Kind="Class" />
+      <Type Name="AsyncStateMachineAttribute" Kind="Class" />
+      <Type Name="AsyncTaskMethodBuilder" Kind="Structure" />
+      <Type Name="AsyncTaskMethodBuilder`1" DisplayName="AsyncTaskMethodBuilder&lt;TResult&gt;" Kind="Structure" />
+      <Type Name="AsyncVoidMethodBuilder" Kind="Structure" />
       <Type Name="CallConvCdecl" Kind="Class" />
       <Type Name="CallConvFastcall" Kind="Class" />
       <Type Name="CallConvStdcall" Kind="Class" />
       <Type Name="CallConvThiscall" Kind="Class" />
+      <Type Name="CallerFilePathAttribute" Kind="Class" />
+      <Type Name="CallerLineNumberAttribute" Kind="Class" />
+      <Type Name="CallerMemberNameAttribute" Kind="Class" />
       <Type Name="CompilationRelaxations" Kind="Enumeration" />
       <Type Name="CompilationRelaxationsAttribute" Kind="Class" />
       <Type Name="CompilerGeneratedAttribute" Kind="Class" />
@@ -600,17 +633,26 @@
       <Type Name="CompilerMarshalOverride" Kind="Class" />
       <Type Name="ConditionalWeakTable`2" DisplayName="ConditionalWeakTable&lt;TKey,TValue&gt;" Kind="Class" />
       <Type Name="ConditionalWeakTable`2+CreateValueCallback" DisplayName="ConditionalWeakTable&lt;TKey,TValue&gt;+CreateValueCallback" Kind="Delegate" />
+      <Type Name="ConfiguredTaskAwaitable" Kind="Structure" />
+      <Type Name="ConfiguredTaskAwaitable`1" DisplayName="ConfiguredTaskAwaitable&lt;TResult&gt;" Kind="Structure" />
+      <Type Name="ConfiguredTaskAwaitable`1+ConfiguredTaskAwaiter" DisplayName="ConfiguredTaskAwaitable&lt;TResult&gt;+ConfiguredTaskAwaiter" Kind="Structure" />
+      <Type Name="ConfiguredTaskAwaitable+ConfiguredTaskAwaiter" Kind="Structure" />
+      <Type Name="ContractHelper" Kind="Class" />
       <Type Name="CustomConstantAttribute" Kind="Class" />
       <Type Name="DateTimeConstantAttribute" Kind="Class" />
       <Type Name="DecimalConstantAttribute" Kind="Class" />
       <Type Name="DefaultDependencyAttribute" Kind="Class" />
       <Type Name="DependencyAttribute" Kind="Class" />
       <Type Name="DiscardableAttribute" Kind="Class" />
+      <Type Name="ExtensionAttribute" Kind="Class" />
       <Type Name="FixedAddressValueTypeAttribute" Kind="Class" />
       <Type Name="FixedBufferAttribute" Kind="Class" />
       <Type Name="HasCopySemanticsAttribute" Kind="Class" />
+      <Type Name="IAsyncStateMachine" Kind="Interface" />
+      <Type Name="ICriticalNotifyCompletion" Kind="Interface" />
       <Type Name="IDispatchConstantAttribute" Kind="Class" />
       <Type Name="IndexerNameAttribute" Kind="Class" />
+      <Type Name="INotifyCompletion" Kind="Interface" />
       <Type Name="InternalsVisibleToAttribute" Kind="Class" />
       <Type Name="IsBoxed" Kind="Class" />
       <Type Name="IsByValue" Kind="Class" />
@@ -624,6 +666,7 @@
       <Type Name="IsSignUnspecifiedByte" Kind="Class" />
       <Type Name="IsUdtReturn" Kind="Class" />
       <Type Name="IsVolatile" Kind="Class" />
+      <Type Name="IteratorStateMachineAttribute" Kind="Class" />
       <Type Name="IUnknownConstantAttribute" Kind="Class" />
       <Type Name="LoadHint" Kind="Enumeration" />
       <Type Name="MethodCodeType" Kind="Enumeration" />
@@ -639,11 +682,16 @@
       <Type Name="RuntimeWrappedException" Kind="Class" />
       <Type Name="ScopelessEnumAttribute" Kind="Class" />
       <Type Name="SpecialNameAttribute" Kind="Class" />
+      <Type Name="StateMachineAttribute" Kind="Class" />
       <Type Name="StringFreezingAttribute" Kind="Class" />
       <Type Name="SuppressIldasmAttribute" Kind="Class" />
+      <Type Name="TaskAwaiter" Kind="Structure" />
+      <Type Name="TaskAwaiter`1" DisplayName="TaskAwaiter&lt;TResult&gt;" Kind="Structure" />
       <Type Name="TypeForwardedFromAttribute" Kind="Class" />
       <Type Name="TypeForwardedToAttribute" Kind="Class" />
       <Type Name="UnsafeValueTypeAttribute" Kind="Class" />
+      <Type Name="YieldAwaitable" Kind="Structure" />
+      <Type Name="YieldAwaitable+YieldAwaiter" Kind="Structure" />
     </Namespace>
     <Namespace Name="System.Runtime.ConstrainedExecution">
       <Type Name="Cer" Kind="Enumeration" />
@@ -651,6 +699,11 @@
       <Type Name="CriticalFinalizerObject" Kind="Class" />
       <Type Name="PrePrepareMethodAttribute" Kind="Class" />
       <Type Name="ReliabilityContractAttribute" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Runtime.ExceptionServices">
+      <Type Name="ExceptionDispatchInfo" Kind="Class" />
+      <Type Name="FirstChanceExceptionEventArgs" Kind="Class" />
+      <Type Name="HandleProcessCorruptedStateExceptionsAttribute" Kind="Class" />
     </Namespace>
     <Namespace Name="System.Runtime.Hosting">
       <Type Name="ActivationArguments" Kind="Class" />
@@ -790,6 +843,7 @@
       <Type Name="TYPEATTR" Kind="Structure" />
       <Type Name="TYPEDESC" Kind="Structure" />
       <Type Name="TYPEFLAGS" Kind="Enumeration" />
+      <Type Name="TypeIdentifierAttribute" Kind="Class" />
       <Type Name="TYPEKIND" Kind="Enumeration" />
       <Type Name="TYPELIBATTR" Kind="Structure" />
       <Type Name="TypeLibConverter" Kind="Class" />
@@ -879,6 +933,20 @@
     </Namespace>
     <Namespace Name="System.Runtime.InteropServices.Expando">
       <Type Name="IExpando" Kind="Interface" />
+    </Namespace>
+    <Namespace Name="System.Runtime.InteropServices.WindowsRuntime">
+      <Type Name="DefaultInterfaceAttribute" Kind="Class" />
+      <Type Name="DesignerNamespaceResolveEventArgs" Kind="Class" />
+      <Type Name="EventRegistrationToken" Kind="Structure" />
+      <Type Name="EventRegistrationTokenTable`1" DisplayName="EventRegistrationTokenTable&lt;T&gt;" Kind="Class" />
+      <Type Name="IActivationFactory" Kind="Interface" />
+      <Type Name="InterfaceImplementedInVersionAttribute" Kind="Class" />
+      <Type Name="NamespaceResolveEventArgs" Kind="Class" />
+      <Type Name="ReadOnlyArrayAttribute" Kind="Class" />
+      <Type Name="ReturnValueNameAttribute" Kind="Class" />
+      <Type Name="WindowsRuntimeMarshal" Kind="Class" />
+      <Type Name="WindowsRuntimeMetadata" Kind="Class" />
+      <Type Name="WriteOnlyArrayAttribute" Kind="Class" />
     </Namespace>
     <Namespace Name="System.Runtime.Remoting">
       <Type Name="ActivatedClientTypeEntry" Kind="Class" />
@@ -1088,6 +1156,8 @@
       <Type Name="BinaryFormatter" Kind="Class" />
     </Namespace>
     <Namespace Name="System.Runtime.Versioning">
+      <Type Name="ComponentGuaranteesAttribute" Kind="Class" />
+      <Type Name="ComponentGuaranteesOptions" Kind="Enumeration" />
       <Type Name="ResourceConsumptionAttribute" Kind="Class" />
       <Type Name="ResourceExposureAttribute" Kind="Class" />
       <Type Name="ResourceScope" Kind="Enumeration" />
@@ -1134,12 +1204,14 @@
       <Type Name="AccessControlSections" Kind="Enumeration" />
       <Type Name="AccessControlType" Kind="Enumeration" />
       <Type Name="AccessRule" Kind="Class" />
+      <Type Name="AccessRule`1" DisplayName="AccessRule&lt;T&gt;" Kind="Class" />
       <Type Name="AceEnumerator" Kind="Class" />
       <Type Name="AceFlags" Kind="Enumeration" />
       <Type Name="AceQualifier" Kind="Enumeration" />
       <Type Name="AceType" Kind="Enumeration" />
       <Type Name="AuditFlags" Kind="Enumeration" />
       <Type Name="AuditRule" Kind="Class" />
+      <Type Name="AuditRule`1" DisplayName="AuditRule&lt;T&gt;" Kind="Class" />
       <Type Name="AuthorizationRule" Kind="Class" />
       <Type Name="AuthorizationRuleCollection" Kind="Class" />
       <Type Name="CommonAce" Kind="Class" />
@@ -1176,6 +1248,7 @@
       <Type Name="MutexRights" Kind="Enumeration" />
       <Type Name="MutexSecurity" Kind="Class" />
       <Type Name="NativeObjectSecurity" Kind="Class" />
+      <Type Name="NativeObjectSecurity+ExceptionFromErrorCode" Kind="Delegate" />
       <Type Name="ObjectAccessRule" Kind="Class" />
       <Type Name="ObjectAce" Kind="Class" />
       <Type Name="ObjectAceFlags" Kind="Enumeration" />
@@ -1352,6 +1425,7 @@
       <Type Name="CodeConnectAccess" Kind="Class" />
       <Type Name="CodeGroup" Kind="Class" />
       <Type Name="Evidence" Kind="Class" />
+      <Type Name="EvidenceBase" Kind="Class" />
       <Type Name="FileCodeGroup" Kind="Class" />
       <Type Name="FirstMatchCodeGroup" Kind="Class" />
       <Type Name="GacInstalled" Kind="Class" />
@@ -1479,12 +1553,14 @@
       <Type Name="Timeout" Kind="Class" />
       <Type Name="Timer" Kind="Class" />
       <Type Name="TimerCallback" Kind="Delegate" />
+      <Type Name="Volatile" Kind="Class" />
       <Type Name="WaitCallback" Kind="Delegate" />
       <Type Name="WaitHandle" Kind="Class" />
       <Type Name="WaitHandleCannotBeOpenedException" Kind="Class" />
       <Type Name="WaitOrTimerCallback" Kind="Delegate" />
     </Namespace>
     <Namespace Name="System.Threading.Tasks">
+      <Type Name="ConcurrentExclusiveSchedulerPair" Kind="Class" />
       <Type Name="Parallel" Kind="Class" />
       <Type Name="ParallelLoopResult" Kind="Structure" />
       <Type Name="ParallelLoopState" Kind="Class" />
@@ -1506,6 +1582,7 @@
   <Title>mscorlib</Title>
   <Assemblies>
     <Assembly Name="mscorlib" Version="4.0.0.0">
+      <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(true)</AttributeName>
@@ -1514,10 +1591,10 @@
           <AttributeName>System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute+DebuggingModes.IgnoreSymbolStoreSequencePoints)</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyCompany("MONO development team")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyCompany("Mono development team")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyCopyright("(c) various MONO Authors")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyCopyright("(c) Various Mono authors")</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Reflection.AssemblyDefaultAlias("mscorlib.dll")</AttributeName>
@@ -1526,13 +1603,13 @@
           <AttributeName>System.Reflection.AssemblyDescription("mscorlib.dll")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyFileVersion("4.0.30319.1")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyFileVersion("4.0.30319.17020")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyInformationalVersion("4.0.30319.1")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("4.0.30319.17020")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyProduct("MONO Common language infrastructure")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyProduct("Mono Common Language Infrastructure")</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Reflection.AssemblyTitle("mscorlib.dll")</AttributeName>
@@ -1550,6 +1627,12 @@
           <AttributeName>System.Runtime.CompilerServices.DefaultDependency(System.Runtime.CompilerServices.LoadHint.Always)</AttributeName>
         </Attribute>
         <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.InternalsVisibleTo("System, PublicKey=00000000000000000400000000000000")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.InternalsVisibleTo("System.Core, PublicKey=00000000000000000400000000000000")</AttributeName>
+        </Attribute>
+        <Attribute>
           <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
         </Attribute>
         <Attribute>
@@ -1565,7 +1648,7 @@
           <AttributeName>System.Runtime.InteropServices.Guid("BED7F4EA-1A96-11D2-8F08-00A0C9A6186D")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.InteropServices.TypeLibVersion(2, 0)</AttributeName>
+          <AttributeName>System.Runtime.InteropServices.TypeLibVersion(2, 4)</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Security.AllowPartiallyTrustedCallers</AttributeName>
@@ -1573,4 +1656,1182 @@
       </Attributes>
     </Assembly>
   </Assemblies>
+  <ExtensionMethods>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.Assembly" />
+      </Targets>
+      <Member MemberName="GetCustomAttribute">
+        <MemberSignature Language="C#" Value="public static Attribute GetCustomAttribute (this System.Reflection.Assembly element, Type attributeType);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute GetCustomAttribute(class System.Reflection.Assembly element, class System.Type attributeType) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Attribute</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.Assembly" RefType="this" />
+          <Parameter Name="attributeType" Type="System.Type" />
+        </Parameters>
+        <Docs>
+          <param name="element">To be added.</param>
+          <param name="attributeType">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttribute(System.Reflection.Assembly,System.Type)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.MemberInfo" />
+      </Targets>
+      <Member MemberName="GetCustomAttribute">
+        <MemberSignature Language="C#" Value="public static Attribute GetCustomAttribute (this System.Reflection.MemberInfo element, Type attributeType);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute GetCustomAttribute(class System.Reflection.MemberInfo element, class System.Type attributeType) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Attribute</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
+          <Parameter Name="attributeType" Type="System.Type" />
+        </Parameters>
+        <Docs>
+          <param name="element">To be added.</param>
+          <param name="attributeType">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttribute(System.Reflection.MemberInfo,System.Type)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.MemberInfo" />
+      </Targets>
+      <Member MemberName="GetCustomAttribute">
+        <MemberSignature Language="C#" Value="public static Attribute GetCustomAttribute (this System.Reflection.MemberInfo element, Type attributeType, bool inherit);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute GetCustomAttribute(class System.Reflection.MemberInfo element, class System.Type attributeType, bool inherit) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Attribute</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
+          <Parameter Name="attributeType" Type="System.Type" />
+          <Parameter Name="inherit" Type="System.Boolean" />
+        </Parameters>
+        <Docs>
+          <param name="element">To be added.</param>
+          <param name="attributeType">To be added.</param>
+          <param name="inherit">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttribute(System.Reflection.MemberInfo,System.Type,System.Boolean)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.Module" />
+      </Targets>
+      <Member MemberName="GetCustomAttribute">
+        <MemberSignature Language="C#" Value="public static Attribute GetCustomAttribute (this System.Reflection.Module element, Type attributeType);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute GetCustomAttribute(class System.Reflection.Module element, class System.Type attributeType) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Attribute</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.Module" RefType="this" />
+          <Parameter Name="attributeType" Type="System.Type" />
+        </Parameters>
+        <Docs>
+          <param name="element">To be added.</param>
+          <param name="attributeType">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttribute(System.Reflection.Module,System.Type)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.ParameterInfo" />
+      </Targets>
+      <Member MemberName="GetCustomAttribute">
+        <MemberSignature Language="C#" Value="public static Attribute GetCustomAttribute (this System.Reflection.ParameterInfo element, Type attributeType);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute GetCustomAttribute(class System.Reflection.ParameterInfo element, class System.Type attributeType) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Attribute</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
+          <Parameter Name="attributeType" Type="System.Type" />
+        </Parameters>
+        <Docs>
+          <param name="element">To be added.</param>
+          <param name="attributeType">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttribute(System.Reflection.ParameterInfo,System.Type)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.ParameterInfo" />
+      </Targets>
+      <Member MemberName="GetCustomAttribute">
+        <MemberSignature Language="C#" Value="public static Attribute GetCustomAttribute (this System.Reflection.ParameterInfo element, Type attributeType, bool inherit);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Attribute GetCustomAttribute(class System.Reflection.ParameterInfo element, class System.Type attributeType, bool inherit) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Attribute</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
+          <Parameter Name="attributeType" Type="System.Type" />
+          <Parameter Name="inherit" Type="System.Boolean" />
+        </Parameters>
+        <Docs>
+          <param name="element">To be added.</param>
+          <param name="attributeType">To be added.</param>
+          <param name="inherit">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttribute(System.Reflection.ParameterInfo,System.Type,System.Boolean)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.Assembly" />
+      </Targets>
+      <Member MemberName="GetCustomAttribute&lt;T&gt;">
+        <MemberSignature Language="C#" Value="public static T GetCustomAttribute&lt;T&gt; (this System.Reflection.Assembly element) where T : Attribute;" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T GetCustomAttribute&lt;(class System.Attribute) T&gt;(class System.Reflection.Assembly element) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>T</ReturnType>
+        </ReturnValue>
+        <TypeParameters>
+          <TypeParameter Name="T">
+            <Constraints>
+              <BaseTypeName>System.Attribute</BaseTypeName>
+            </Constraints>
+          </TypeParameter>
+        </TypeParameters>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.Assembly" RefType="this" />
+        </Parameters>
+        <Docs>
+          <typeparam name="T">To be added.</typeparam>
+          <param name="element">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttribute``1(System.Reflection.Assembly)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.MemberInfo" />
+      </Targets>
+      <Member MemberName="GetCustomAttribute&lt;T&gt;">
+        <MemberSignature Language="C#" Value="public static T GetCustomAttribute&lt;T&gt; (this System.Reflection.MemberInfo element) where T : Attribute;" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T GetCustomAttribute&lt;(class System.Attribute) T&gt;(class System.Reflection.MemberInfo element) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>T</ReturnType>
+        </ReturnValue>
+        <TypeParameters>
+          <TypeParameter Name="T">
+            <Constraints>
+              <BaseTypeName>System.Attribute</BaseTypeName>
+            </Constraints>
+          </TypeParameter>
+        </TypeParameters>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
+        </Parameters>
+        <Docs>
+          <typeparam name="T">To be added.</typeparam>
+          <param name="element">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttribute``1(System.Reflection.MemberInfo)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.MemberInfo" />
+      </Targets>
+      <Member MemberName="GetCustomAttribute&lt;T&gt;">
+        <MemberSignature Language="C#" Value="public static T GetCustomAttribute&lt;T&gt; (this System.Reflection.MemberInfo element, bool inherit) where T : Attribute;" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T GetCustomAttribute&lt;(class System.Attribute) T&gt;(class System.Reflection.MemberInfo element, bool inherit) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>T</ReturnType>
+        </ReturnValue>
+        <TypeParameters>
+          <TypeParameter Name="T">
+            <Constraints>
+              <BaseTypeName>System.Attribute</BaseTypeName>
+            </Constraints>
+          </TypeParameter>
+        </TypeParameters>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
+          <Parameter Name="inherit" Type="System.Boolean" />
+        </Parameters>
+        <Docs>
+          <typeparam name="T">To be added.</typeparam>
+          <param name="element">To be added.</param>
+          <param name="inherit">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttribute``1(System.Reflection.MemberInfo,System.Boolean)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.Module" />
+      </Targets>
+      <Member MemberName="GetCustomAttribute&lt;T&gt;">
+        <MemberSignature Language="C#" Value="public static T GetCustomAttribute&lt;T&gt; (this System.Reflection.Module element) where T : Attribute;" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T GetCustomAttribute&lt;(class System.Attribute) T&gt;(class System.Reflection.Module element) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>T</ReturnType>
+        </ReturnValue>
+        <TypeParameters>
+          <TypeParameter Name="T">
+            <Constraints>
+              <BaseTypeName>System.Attribute</BaseTypeName>
+            </Constraints>
+          </TypeParameter>
+        </TypeParameters>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.Module" RefType="this" />
+        </Parameters>
+        <Docs>
+          <typeparam name="T">To be added.</typeparam>
+          <param name="element">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttribute``1(System.Reflection.Module)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.ParameterInfo" />
+      </Targets>
+      <Member MemberName="GetCustomAttribute&lt;T&gt;">
+        <MemberSignature Language="C#" Value="public static T GetCustomAttribute&lt;T&gt; (this System.Reflection.ParameterInfo element) where T : Attribute;" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T GetCustomAttribute&lt;(class System.Attribute) T&gt;(class System.Reflection.ParameterInfo element) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>T</ReturnType>
+        </ReturnValue>
+        <TypeParameters>
+          <TypeParameter Name="T">
+            <Constraints>
+              <BaseTypeName>System.Attribute</BaseTypeName>
+            </Constraints>
+          </TypeParameter>
+        </TypeParameters>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
+        </Parameters>
+        <Docs>
+          <typeparam name="T">To be added.</typeparam>
+          <param name="element">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttribute``1(System.Reflection.ParameterInfo)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.ParameterInfo" />
+      </Targets>
+      <Member MemberName="GetCustomAttribute&lt;T&gt;">
+        <MemberSignature Language="C#" Value="public static T GetCustomAttribute&lt;T&gt; (this System.Reflection.ParameterInfo element, bool inherit) where T : Attribute;" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!T GetCustomAttribute&lt;(class System.Attribute) T&gt;(class System.Reflection.ParameterInfo element, bool inherit) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>T</ReturnType>
+        </ReturnValue>
+        <TypeParameters>
+          <TypeParameter Name="T">
+            <Constraints>
+              <BaseTypeName>System.Attribute</BaseTypeName>
+            </Constraints>
+          </TypeParameter>
+        </TypeParameters>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
+          <Parameter Name="inherit" Type="System.Boolean" />
+        </Parameters>
+        <Docs>
+          <typeparam name="T">To be added.</typeparam>
+          <param name="element">To be added.</param>
+          <param name="inherit">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttribute``1(System.Reflection.ParameterInfo,System.Boolean)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.Assembly" />
+      </Targets>
+      <Member MemberName="GetCustomAttributes">
+        <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;Attribute&gt; GetCustomAttributes (this System.Reflection.Assembly element);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Attribute&gt; GetCustomAttributes(class System.Reflection.Assembly element) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.Assembly" RefType="this" />
+        </Parameters>
+        <Docs>
+          <param name="element">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes(System.Reflection.Assembly)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.Assembly" />
+      </Targets>
+      <Member MemberName="GetCustomAttributes">
+        <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;Attribute&gt; GetCustomAttributes (this System.Reflection.Assembly element, Type attributeType);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Attribute&gt; GetCustomAttributes(class System.Reflection.Assembly element, class System.Type attributeType) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.Assembly" RefType="this" />
+          <Parameter Name="attributeType" Type="System.Type" />
+        </Parameters>
+        <Docs>
+          <param name="element">To be added.</param>
+          <param name="attributeType">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes(System.Reflection.Assembly,System.Type)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.MemberInfo" />
+      </Targets>
+      <Member MemberName="GetCustomAttributes">
+        <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;Attribute&gt; GetCustomAttributes (this System.Reflection.MemberInfo element);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Attribute&gt; GetCustomAttributes(class System.Reflection.MemberInfo element) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
+        </Parameters>
+        <Docs>
+          <param name="element">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes(System.Reflection.MemberInfo)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.MemberInfo" />
+      </Targets>
+      <Member MemberName="GetCustomAttributes">
+        <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;Attribute&gt; GetCustomAttributes (this System.Reflection.MemberInfo element, bool inherit);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Attribute&gt; GetCustomAttributes(class System.Reflection.MemberInfo element, bool inherit) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
+          <Parameter Name="inherit" Type="System.Boolean" />
+        </Parameters>
+        <Docs>
+          <param name="element">To be added.</param>
+          <param name="inherit">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes(System.Reflection.MemberInfo,System.Boolean)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.MemberInfo" />
+      </Targets>
+      <Member MemberName="GetCustomAttributes">
+        <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;Attribute&gt; GetCustomAttributes (this System.Reflection.MemberInfo element, Type attributeType);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Attribute&gt; GetCustomAttributes(class System.Reflection.MemberInfo element, class System.Type attributeType) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
+          <Parameter Name="attributeType" Type="System.Type" />
+        </Parameters>
+        <Docs>
+          <param name="element">To be added.</param>
+          <param name="attributeType">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes(System.Reflection.MemberInfo,System.Type)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.MemberInfo" />
+      </Targets>
+      <Member MemberName="GetCustomAttributes">
+        <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;Attribute&gt; GetCustomAttributes (this System.Reflection.MemberInfo element, Type attributeType, bool inherit);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Attribute&gt; GetCustomAttributes(class System.Reflection.MemberInfo element, class System.Type attributeType, bool inherit) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
+          <Parameter Name="attributeType" Type="System.Type" />
+          <Parameter Name="inherit" Type="System.Boolean" />
+        </Parameters>
+        <Docs>
+          <param name="element">To be added.</param>
+          <param name="attributeType">To be added.</param>
+          <param name="inherit">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes(System.Reflection.MemberInfo,System.Type,System.Boolean)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.Module" />
+      </Targets>
+      <Member MemberName="GetCustomAttributes">
+        <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;Attribute&gt; GetCustomAttributes (this System.Reflection.Module element);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Attribute&gt; GetCustomAttributes(class System.Reflection.Module element) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.Module" RefType="this" />
+        </Parameters>
+        <Docs>
+          <param name="element">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes(System.Reflection.Module)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.Module" />
+      </Targets>
+      <Member MemberName="GetCustomAttributes">
+        <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;Attribute&gt; GetCustomAttributes (this System.Reflection.Module element, Type attributeType);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Attribute&gt; GetCustomAttributes(class System.Reflection.Module element, class System.Type attributeType) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.Module" RefType="this" />
+          <Parameter Name="attributeType" Type="System.Type" />
+        </Parameters>
+        <Docs>
+          <param name="element">To be added.</param>
+          <param name="attributeType">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes(System.Reflection.Module,System.Type)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.ParameterInfo" />
+      </Targets>
+      <Member MemberName="GetCustomAttributes">
+        <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;Attribute&gt; GetCustomAttributes (this System.Reflection.ParameterInfo element);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Attribute&gt; GetCustomAttributes(class System.Reflection.ParameterInfo element) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
+        </Parameters>
+        <Docs>
+          <param name="element">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes(System.Reflection.ParameterInfo)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.ParameterInfo" />
+      </Targets>
+      <Member MemberName="GetCustomAttributes">
+        <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;Attribute&gt; GetCustomAttributes (this System.Reflection.ParameterInfo element, bool inherit);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Attribute&gt; GetCustomAttributes(class System.Reflection.ParameterInfo element, bool inherit) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
+          <Parameter Name="inherit" Type="System.Boolean" />
+        </Parameters>
+        <Docs>
+          <param name="element">To be added.</param>
+          <param name="inherit">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes(System.Reflection.ParameterInfo,System.Boolean)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.ParameterInfo" />
+      </Targets>
+      <Member MemberName="GetCustomAttributes">
+        <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;Attribute&gt; GetCustomAttributes (this System.Reflection.ParameterInfo element, Type attributeType);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Attribute&gt; GetCustomAttributes(class System.Reflection.ParameterInfo element, class System.Type attributeType) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
+          <Parameter Name="attributeType" Type="System.Type" />
+        </Parameters>
+        <Docs>
+          <param name="element">To be added.</param>
+          <param name="attributeType">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes(System.Reflection.ParameterInfo,System.Type)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.ParameterInfo" />
+      </Targets>
+      <Member MemberName="GetCustomAttributes">
+        <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;Attribute&gt; GetCustomAttributes (this System.Reflection.ParameterInfo element, Type attributeType, bool inherit);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Attribute&gt; GetCustomAttributes(class System.Reflection.ParameterInfo element, class System.Type attributeType, bool inherit) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Attribute&gt;</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
+          <Parameter Name="attributeType" Type="System.Type" />
+          <Parameter Name="inherit" Type="System.Boolean" />
+        </Parameters>
+        <Docs>
+          <param name="element">To be added.</param>
+          <param name="attributeType">To be added.</param>
+          <param name="inherit">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes(System.Reflection.ParameterInfo,System.Type,System.Boolean)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.Assembly" />
+      </Targets>
+      <Member MemberName="GetCustomAttributes&lt;T&gt;">
+        <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;T&gt; GetCustomAttributes&lt;T&gt; (this System.Reflection.Assembly element) where T : Attribute;" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; GetCustomAttributes&lt;(class System.Attribute) T&gt;(class System.Reflection.Assembly element) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Collections.Generic.IEnumerable&lt;T&gt;</ReturnType>
+        </ReturnValue>
+        <TypeParameters>
+          <TypeParameter Name="T">
+            <Constraints>
+              <BaseTypeName>System.Attribute</BaseTypeName>
+            </Constraints>
+          </TypeParameter>
+        </TypeParameters>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.Assembly" RefType="this" />
+        </Parameters>
+        <Docs>
+          <typeparam name="T">To be added.</typeparam>
+          <param name="element">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes``1(System.Reflection.Assembly)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.MemberInfo" />
+      </Targets>
+      <Member MemberName="GetCustomAttributes&lt;T&gt;">
+        <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;T&gt; GetCustomAttributes&lt;T&gt; (this System.Reflection.MemberInfo element) where T : Attribute;" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; GetCustomAttributes&lt;(class System.Attribute) T&gt;(class System.Reflection.MemberInfo element) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Collections.Generic.IEnumerable&lt;T&gt;</ReturnType>
+        </ReturnValue>
+        <TypeParameters>
+          <TypeParameter Name="T">
+            <Constraints>
+              <BaseTypeName>System.Attribute</BaseTypeName>
+            </Constraints>
+          </TypeParameter>
+        </TypeParameters>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
+        </Parameters>
+        <Docs>
+          <typeparam name="T">To be added.</typeparam>
+          <param name="element">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes``1(System.Reflection.MemberInfo)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.MemberInfo" />
+      </Targets>
+      <Member MemberName="GetCustomAttributes&lt;T&gt;">
+        <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;T&gt; GetCustomAttributes&lt;T&gt; (this System.Reflection.MemberInfo element, bool inherit) where T : Attribute;" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; GetCustomAttributes&lt;(class System.Attribute) T&gt;(class System.Reflection.MemberInfo element, bool inherit) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Collections.Generic.IEnumerable&lt;T&gt;</ReturnType>
+        </ReturnValue>
+        <TypeParameters>
+          <TypeParameter Name="T">
+            <Constraints>
+              <BaseTypeName>System.Attribute</BaseTypeName>
+            </Constraints>
+          </TypeParameter>
+        </TypeParameters>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
+          <Parameter Name="inherit" Type="System.Boolean" />
+        </Parameters>
+        <Docs>
+          <typeparam name="T">To be added.</typeparam>
+          <param name="element">To be added.</param>
+          <param name="inherit">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes``1(System.Reflection.MemberInfo,System.Boolean)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.Module" />
+      </Targets>
+      <Member MemberName="GetCustomAttributes&lt;T&gt;">
+        <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;T&gt; GetCustomAttributes&lt;T&gt; (this System.Reflection.Module element) where T : Attribute;" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; GetCustomAttributes&lt;(class System.Attribute) T&gt;(class System.Reflection.Module element) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Collections.Generic.IEnumerable&lt;T&gt;</ReturnType>
+        </ReturnValue>
+        <TypeParameters>
+          <TypeParameter Name="T">
+            <Constraints>
+              <BaseTypeName>System.Attribute</BaseTypeName>
+            </Constraints>
+          </TypeParameter>
+        </TypeParameters>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.Module" RefType="this" />
+        </Parameters>
+        <Docs>
+          <typeparam name="T">To be added.</typeparam>
+          <param name="element">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes``1(System.Reflection.Module)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.ParameterInfo" />
+      </Targets>
+      <Member MemberName="GetCustomAttributes&lt;T&gt;">
+        <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;T&gt; GetCustomAttributes&lt;T&gt; (this System.Reflection.ParameterInfo element) where T : Attribute;" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; GetCustomAttributes&lt;(class System.Attribute) T&gt;(class System.Reflection.ParameterInfo element) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Collections.Generic.IEnumerable&lt;T&gt;</ReturnType>
+        </ReturnValue>
+        <TypeParameters>
+          <TypeParameter Name="T">
+            <Constraints>
+              <BaseTypeName>System.Attribute</BaseTypeName>
+            </Constraints>
+          </TypeParameter>
+        </TypeParameters>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
+        </Parameters>
+        <Docs>
+          <typeparam name="T">To be added.</typeparam>
+          <param name="element">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes``1(System.Reflection.ParameterInfo)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.ParameterInfo" />
+      </Targets>
+      <Member MemberName="GetCustomAttributes&lt;T&gt;">
+        <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;T&gt; GetCustomAttributes&lt;T&gt; (this System.Reflection.ParameterInfo element, bool inherit) where T : Attribute;" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; GetCustomAttributes&lt;(class System.Attribute) T&gt;(class System.Reflection.ParameterInfo element, bool inherit) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Collections.Generic.IEnumerable&lt;T&gt;</ReturnType>
+        </ReturnValue>
+        <TypeParameters>
+          <TypeParameter Name="T">
+            <Constraints>
+              <BaseTypeName>System.Attribute</BaseTypeName>
+            </Constraints>
+          </TypeParameter>
+        </TypeParameters>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
+          <Parameter Name="inherit" Type="System.Boolean" />
+        </Parameters>
+        <Docs>
+          <typeparam name="T">To be added.</typeparam>
+          <param name="element">To be added.</param>
+          <param name="inherit">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.GetCustomAttributes``1(System.Reflection.ParameterInfo,System.Boolean)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.Assembly" />
+      </Targets>
+      <Member MemberName="IsDefined">
+        <MemberSignature Language="C#" Value="public static bool IsDefined (this System.Reflection.Assembly element, Type attributeType);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDefined(class System.Reflection.Assembly element, class System.Type attributeType) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Boolean</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.Assembly" RefType="this" />
+          <Parameter Name="attributeType" Type="System.Type" />
+        </Parameters>
+        <Docs>
+          <param name="element">To be added.</param>
+          <param name="attributeType">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.IsDefined(System.Reflection.Assembly,System.Type)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.MemberInfo" />
+      </Targets>
+      <Member MemberName="IsDefined">
+        <MemberSignature Language="C#" Value="public static bool IsDefined (this System.Reflection.MemberInfo element, Type attributeType);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDefined(class System.Reflection.MemberInfo element, class System.Type attributeType) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Boolean</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
+          <Parameter Name="attributeType" Type="System.Type" />
+        </Parameters>
+        <Docs>
+          <param name="element">To be added.</param>
+          <param name="attributeType">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.IsDefined(System.Reflection.MemberInfo,System.Type)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.MemberInfo" />
+      </Targets>
+      <Member MemberName="IsDefined">
+        <MemberSignature Language="C#" Value="public static bool IsDefined (this System.Reflection.MemberInfo element, Type attributeType, bool inherit);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDefined(class System.Reflection.MemberInfo element, class System.Type attributeType, bool inherit) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Boolean</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
+          <Parameter Name="attributeType" Type="System.Type" />
+          <Parameter Name="inherit" Type="System.Boolean" />
+        </Parameters>
+        <Docs>
+          <param name="element">To be added.</param>
+          <param name="attributeType">To be added.</param>
+          <param name="inherit">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.IsDefined(System.Reflection.MemberInfo,System.Type,System.Boolean)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.Module" />
+      </Targets>
+      <Member MemberName="IsDefined">
+        <MemberSignature Language="C#" Value="public static bool IsDefined (this System.Reflection.Module element, Type attributeType);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDefined(class System.Reflection.Module element, class System.Type attributeType) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Boolean</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.Module" RefType="this" />
+          <Parameter Name="attributeType" Type="System.Type" />
+        </Parameters>
+        <Docs>
+          <param name="element">To be added.</param>
+          <param name="attributeType">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.IsDefined(System.Reflection.Module,System.Type)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.ParameterInfo" />
+      </Targets>
+      <Member MemberName="IsDefined">
+        <MemberSignature Language="C#" Value="public static bool IsDefined (this System.Reflection.ParameterInfo element, Type attributeType);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDefined(class System.Reflection.ParameterInfo element, class System.Type attributeType) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Boolean</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
+          <Parameter Name="attributeType" Type="System.Type" />
+        </Parameters>
+        <Docs>
+          <param name="element">To be added.</param>
+          <param name="attributeType">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.IsDefined(System.Reflection.ParameterInfo,System.Type)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.ParameterInfo" />
+      </Targets>
+      <Member MemberName="IsDefined">
+        <MemberSignature Language="C#" Value="public static bool IsDefined (this System.Reflection.ParameterInfo element, Type attributeType, bool inherit);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsDefined(class System.Reflection.ParameterInfo element, class System.Type attributeType, bool inherit) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Boolean</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
+          <Parameter Name="attributeType" Type="System.Type" />
+          <Parameter Name="inherit" Type="System.Boolean" />
+        </Parameters>
+        <Docs>
+          <param name="element">To be added.</param>
+          <param name="attributeType">To be added.</param>
+          <param name="inherit">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.CustomAttributeExtensions" Member="M:System.Reflection.CustomAttributeExtensions.IsDefined(System.Reflection.ParameterInfo,System.Type,System.Boolean)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Type" />
+      </Targets>
+      <Member MemberName="GetTypeInfo">
+        <MemberSignature Language="C#" Value="public static System.Reflection.TypeInfo GetTypeInfo (this Type type);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.TypeInfo GetTypeInfo(class System.Type type) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Reflection.TypeInfo</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="type" Type="System.Type" RefType="this" />
+        </Parameters>
+        <Docs>
+          <param name="type">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.IntrospectionExtensions" Member="M:System.Reflection.IntrospectionExtensions.GetTypeInfo(System.Type)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Delegate" />
+      </Targets>
+      <Member MemberName="GetMethodInfo">
+        <MemberSignature Language="C#" Value="public static System.Reflection.MethodInfo GetMethodInfo (this Delegate del);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.MethodInfo GetMethodInfo(class System.Delegate del) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Reflection.MethodInfo</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="del" Type="System.Delegate" RefType="this" />
+        </Parameters>
+        <Docs>
+          <param name="del">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.RuntimeReflectionExtensions" Member="M:System.Reflection.RuntimeReflectionExtensions.GetMethodInfo(System.Delegate)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.MethodInfo" />
+      </Targets>
+      <Member MemberName="GetRuntimeBaseDefinition">
+        <MemberSignature Language="C#" Value="public static System.Reflection.MethodInfo GetRuntimeBaseDefinition (this System.Reflection.MethodInfo method);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.MethodInfo GetRuntimeBaseDefinition(class System.Reflection.MethodInfo method) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Reflection.MethodInfo</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="method" Type="System.Reflection.MethodInfo" RefType="this" />
+        </Parameters>
+        <Docs>
+          <param name="method">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.RuntimeReflectionExtensions" Member="M:System.Reflection.RuntimeReflectionExtensions.GetRuntimeBaseDefinition(System.Reflection.MethodInfo)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Type" />
+      </Targets>
+      <Member MemberName="GetRuntimeEvent">
+        <MemberSignature Language="C#" Value="public static System.Reflection.EventInfo GetRuntimeEvent (this Type type, string name);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.EventInfo GetRuntimeEvent(class System.Type type, string name) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Reflection.EventInfo</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="type" Type="System.Type" RefType="this" />
+          <Parameter Name="name" Type="System.String" />
+        </Parameters>
+        <Docs>
+          <param name="type">To be added.</param>
+          <param name="name">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.RuntimeReflectionExtensions" Member="M:System.Reflection.RuntimeReflectionExtensions.GetRuntimeEvent(System.Type,System.String)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Type" />
+      </Targets>
+      <Member MemberName="GetRuntimeEvents">
+        <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;System.Reflection.EventInfo&gt; GetRuntimeEvents (this Type type);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Reflection.EventInfo&gt; GetRuntimeEvents(class System.Type type) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Reflection.EventInfo&gt;</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="type" Type="System.Type" RefType="this" />
+        </Parameters>
+        <Docs>
+          <param name="type">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.RuntimeReflectionExtensions" Member="M:System.Reflection.RuntimeReflectionExtensions.GetRuntimeEvents(System.Type)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Type" />
+      </Targets>
+      <Member MemberName="GetRuntimeField">
+        <MemberSignature Language="C#" Value="public static System.Reflection.FieldInfo GetRuntimeField (this Type type, string name);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.FieldInfo GetRuntimeField(class System.Type type, string name) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Reflection.FieldInfo</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="type" Type="System.Type" RefType="this" />
+          <Parameter Name="name" Type="System.String" />
+        </Parameters>
+        <Docs>
+          <param name="type">To be added.</param>
+          <param name="name">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.RuntimeReflectionExtensions" Member="M:System.Reflection.RuntimeReflectionExtensions.GetRuntimeField(System.Type,System.String)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Type" />
+      </Targets>
+      <Member MemberName="GetRuntimeFields">
+        <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;System.Reflection.FieldInfo&gt; GetRuntimeFields (this Type type);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Reflection.FieldInfo&gt; GetRuntimeFields(class System.Type type) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Reflection.FieldInfo&gt;</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="type" Type="System.Type" RefType="this" />
+        </Parameters>
+        <Docs>
+          <param name="type">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.RuntimeReflectionExtensions" Member="M:System.Reflection.RuntimeReflectionExtensions.GetRuntimeFields(System.Type)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Reflection.TypeInfo" />
+      </Targets>
+      <Member MemberName="GetRuntimeInterfaceMap">
+        <MemberSignature Language="C#" Value="public static System.Reflection.InterfaceMapping GetRuntimeInterfaceMap (this System.Reflection.TypeInfo typeInfo, Type interfaceType);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Reflection.InterfaceMapping GetRuntimeInterfaceMap(class System.Reflection.TypeInfo typeInfo, class System.Type interfaceType) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Reflection.InterfaceMapping</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="typeInfo" Type="System.Reflection.TypeInfo" RefType="this" />
+          <Parameter Name="interfaceType" Type="System.Type" />
+        </Parameters>
+        <Docs>
+          <param name="typeInfo">To be added.</param>
+          <param name="interfaceType">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.RuntimeReflectionExtensions" Member="M:System.Reflection.RuntimeReflectionExtensions.GetRuntimeInterfaceMap(System.Reflection.TypeInfo,System.Type)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Type" />
+      </Targets>
+      <Member MemberName="GetRuntimeMethod">
+        <MemberSignature Language="C#" Value="public static System.Reflection.MethodInfo GetRuntimeMethod (this Type type, string name, Type[] parameters);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.MethodInfo GetRuntimeMethod(class System.Type type, string name, class System.Type[] parameters) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Reflection.MethodInfo</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="type" Type="System.Type" RefType="this" />
+          <Parameter Name="name" Type="System.String" />
+          <Parameter Name="parameters" Type="System.Type[]" />
+        </Parameters>
+        <Docs>
+          <param name="type">To be added.</param>
+          <param name="name">To be added.</param>
+          <param name="parameters">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.RuntimeReflectionExtensions" Member="M:System.Reflection.RuntimeReflectionExtensions.GetRuntimeMethod(System.Type,System.String,System.Type[])" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Type" />
+      </Targets>
+      <Member MemberName="GetRuntimeMethods">
+        <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;System.Reflection.MethodInfo&gt; GetRuntimeMethods (this Type type);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Reflection.MethodInfo&gt; GetRuntimeMethods(class System.Type type) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Reflection.MethodInfo&gt;</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="type" Type="System.Type" RefType="this" />
+        </Parameters>
+        <Docs>
+          <param name="type">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.RuntimeReflectionExtensions" Member="M:System.Reflection.RuntimeReflectionExtensions.GetRuntimeMethods(System.Type)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Type" />
+      </Targets>
+      <Member MemberName="GetRuntimeProperties">
+        <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;System.Reflection.PropertyInfo&gt; GetRuntimeProperties (this Type type);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;class System.Reflection.PropertyInfo&gt; GetRuntimeProperties(class System.Type type) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Reflection.PropertyInfo&gt;</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="type" Type="System.Type" RefType="this" />
+        </Parameters>
+        <Docs>
+          <param name="type">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.RuntimeReflectionExtensions" Member="M:System.Reflection.RuntimeReflectionExtensions.GetRuntimeProperties(System.Type)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.Type" />
+      </Targets>
+      <Member MemberName="GetRuntimeProperty">
+        <MemberSignature Language="C#" Value="public static System.Reflection.PropertyInfo GetRuntimeProperty (this Type type, string name);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Reflection.PropertyInfo GetRuntimeProperty(class System.Type type, string name) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Reflection.PropertyInfo</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="type" Type="System.Type" RefType="this" />
+          <Parameter Name="name" Type="System.String" />
+        </Parameters>
+        <Docs>
+          <param name="type">To be added.</param>
+          <param name="name">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.Reflection.RuntimeReflectionExtensions" Member="M:System.Reflection.RuntimeReflectionExtensions.GetRuntimeProperty(System.Type,System.String)" />
+      </Member>
+    </ExtensionMethod>
+  </ExtensionMethods>
 </Overview>

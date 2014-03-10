@@ -1,6 +1,7 @@
 <Type Name="WebExceptionStatus" FullName="System.Net.WebExceptionStatus" FullNameSP="System_Net_WebExceptionStatus" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable WebExceptionStatus extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum WebExceptionStatus" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed WebExceptionStatus extends System.Enum" />
   <MemberOfLibrary>Networking</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
@@ -8,6 +9,7 @@
     <AssemblyVersion>1.0.x.x</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -26,9 +28,11 @@
   <Members>
     <Member MemberName="CacheEntryNotFound">
       <MemberSignature Language="C#" Value="CacheEntryNotFound" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus CacheEntryNotFound = int32(18)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
@@ -40,7 +44,13 @@
     <Member MemberName="ConnectFailure">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus ConnectFailure = 2" />
       <MemberSignature Language="C#" Value="ConnectFailure" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus ConnectFailure = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -53,15 +63,17 @@
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ConnectionClosed">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus ConnectionClosed = 8" />
       <MemberSignature Language="C#" Value="ConnectionClosed" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus ConnectionClosed = int32(8)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -75,15 +87,17 @@
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="KeepAliveFailure">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus KeepAliveFailure = 12" />
       <MemberSignature Language="C#" Value="KeepAliveFailure" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus KeepAliveFailure = int32(12)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -96,14 +110,16 @@
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MessageLengthLimitExceeded">
       <MemberSignature Language="C#" Value="MessageLengthLimitExceeded" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus MessageLengthLimitExceeded = int32(17)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -112,15 +128,17 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NameResolutionFailure">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus NameResolutionFailure = 1" />
       <MemberSignature Language="C#" Value="NameResolutionFailure" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus NameResolutionFailure = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -134,15 +152,17 @@
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Pending">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus Pending = 13" />
       <MemberSignature Language="C#" Value="Pending" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus Pending = int32(13)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -154,15 +174,17 @@
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PipelineFailure">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus PipelineFailure = 5" />
       <MemberSignature Language="C#" Value="PipelineFailure" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus PipelineFailure = int32(5)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -175,15 +197,17 @@
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ProtocolError">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus ProtocolError = 7" />
       <MemberSignature Language="C#" Value="ProtocolError" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus ProtocolError = int32(7)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -202,15 +226,17 @@
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ProxyNameResolutionFailure">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus ProxyNameResolutionFailure = 15" />
       <MemberSignature Language="C#" Value="ProxyNameResolutionFailure" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus ProxyNameResolutionFailure = int32(15)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -222,15 +248,17 @@
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReceiveFailure">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus ReceiveFailure = 3" />
       <MemberSignature Language="C#" Value="ReceiveFailure" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus ReceiveFailure = int32(3)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -244,15 +272,17 @@
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RequestCanceled">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus RequestCanceled = 6" />
       <MemberSignature Language="C#" Value="RequestCanceled" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus RequestCanceled = int32(6)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -265,16 +295,14 @@
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RequestProhibitedByCachePolicy">
       <MemberSignature Language="C#" Value="RequestProhibitedByCachePolicy" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus RequestProhibitedByCachePolicy = int32(19)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
@@ -285,9 +313,11 @@
     </Member>
     <Member MemberName="RequestProhibitedByProxy">
       <MemberSignature Language="C#" Value="RequestProhibitedByProxy" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus RequestProhibitedByProxy = int32(20)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
@@ -299,7 +329,13 @@
     <Member MemberName="SecureChannelFailure">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus SecureChannelFailure = 10" />
       <MemberSignature Language="C#" Value="SecureChannelFailure" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus SecureChannelFailure = int32(10)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -313,15 +349,17 @@
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SendFailure">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus SendFailure = 4" />
       <MemberSignature Language="C#" Value="SendFailure" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus SendFailure = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -335,15 +373,17 @@
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ServerProtocolViolation">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus ServerProtocolViolation = 11" />
       <MemberSignature Language="C#" Value="ServerProtocolViolation" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus ServerProtocolViolation = int32(11)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -355,15 +395,17 @@
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Success">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus Success = 0" />
       <MemberSignature Language="C#" Value="Success" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus Success = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -376,15 +418,17 @@
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Timeout">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus Timeout = 14" />
       <MemberSignature Language="C#" Value="Timeout" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus Timeout = int32(14)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -396,15 +440,17 @@
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TrustFailure">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Net.WebExceptionStatus TrustFailure = 9" />
       <MemberSignature Language="C#" Value="TrustFailure" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus TrustFailure = int32(9)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -418,14 +464,16 @@
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="UnknownError">
       <MemberSignature Language="C#" Value="UnknownError" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.WebExceptionStatus UnknownError = int32(16)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
@@ -440,10 +488,6 @@
         </summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

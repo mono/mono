@@ -1858,6 +1858,12 @@ class MDocUpdater : MDocCommand
 	
 	private static bool UpdateAssemblyVersions(XmlElement root, string[] assemblyVersions, bool add)
 	{
+		XmlElement av = (XmlElement) root.SelectSingleNode ("AssemblyVersions");
+		if (av != null) {
+				// AssemblyVersions is not part of the spec
+				root.RemoveChild (av);
+		}
+
 		XmlElement e = (XmlElement) root.SelectSingleNode ("AssemblyInfo");
 		if (e == null) {
 			e = root.OwnerDocument.CreateElement("AssemblyInfo");

@@ -1,0 +1,78 @@
+<Type Name="CodeLessEqualThan" FullName="Mono.CodeGeneration.CodeLessEqualThan">
+  <TypeSignature Language="C#" Value="public class CodeLessEqualThan : Mono.CodeGeneration.CodeBinaryComparison" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CodeLessEqualThan extends Mono.CodeGeneration.CodeBinaryComparison" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Mono.CodeGeneration.CodeBinaryComparison</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CodeLessEqualThan (Mono.CodeGeneration.CodeExpression exp1, Mono.CodeGeneration.CodeExpression exp2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class Mono.CodeGeneration.CodeExpression exp1, class Mono.CodeGeneration.CodeExpression exp2) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="exp1" Type="Mono.CodeGeneration.CodeExpression" />
+        <Parameter Name="exp2" Type="Mono.CodeGeneration.CodeExpression" />
+      </Parameters>
+      <Docs>
+        <param name="exp1">To be added.</param>
+        <param name="exp2">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Generate">
+      <MemberSignature Language="C#" Value="public override void Generate (System.Reflection.Emit.ILGenerator gen);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Generate(class System.Reflection.Emit.ILGenerator gen) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="gen" Type="System.Reflection.Emit.ILGenerator" />
+      </Parameters>
+      <Docs>
+        <param name="gen">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GenerateForBranch">
+      <MemberSignature Language="C#" Value="public override void GenerateForBranch (System.Reflection.Emit.ILGenerator gen, System.Reflection.Emit.Label label, bool branchCase);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void GenerateForBranch(class System.Reflection.Emit.ILGenerator gen, valuetype System.Reflection.Emit.Label label, bool branchCase) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="gen" Type="System.Reflection.Emit.ILGenerator" />
+        <Parameter Name="label" Type="System.Reflection.Emit.Label" />
+        <Parameter Name="branchCase" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="gen">To be added.</param>
+        <param name="label">To be added.</param>
+        <param name="branchCase">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

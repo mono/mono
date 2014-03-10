@@ -1,0 +1,24 @@
+<Type Name="RenewedSecurityTokenHandler" FullName="System.ServiceModel.Security.Tokens.RenewedSecurityTokenHandler">
+  <TypeSignature Language="C#" Value="public delegate void RenewedSecurityTokenHandler(SecurityToken newSecurityToken, SecurityToken oldSecurityToken);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed RenewedSecurityTokenHandler extends System.MulticastDelegate" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="newSecurityToken" Type="System.IdentityModel.Tokens.SecurityToken" />
+    <Parameter Name="oldSecurityToken" Type="System.IdentityModel.Tokens.SecurityToken" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="newSecurityToken">To be added.</param>
+    <param name="oldSecurityToken">To be added.</param>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

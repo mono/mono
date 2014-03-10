@@ -1,0 +1,25 @@
+<Type Name="CipherSuitesCallback" FullName="System.Net.CipherSuitesCallback">
+  <TypeSignature Language="C#" Value="public delegate System.Collections.Generic.IEnumerable&lt;string&gt; CipherSuitesCallback(SecurityProtocolType protocol, IEnumerable&lt;string&gt; allCiphers);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed CipherSuitesCallback extends System.MulticastDelegate" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="protocol" Type="System.Net.SecurityProtocolType" />
+    <Parameter Name="allCiphers" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Collections.Generic.IEnumerable&lt;System.String&gt;</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="protocol">To be added.</param>
+    <param name="allCiphers">To be added.</param>
+    <summary>To be added.</summary>
+    <returns>To be added.</returns>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

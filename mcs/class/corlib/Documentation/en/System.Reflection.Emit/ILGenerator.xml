@@ -1,5 +1,6 @@
 <Type Name="ILGenerator" FullName="System.Reflection.Emit.ILGenerator">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class ILGenerator : System.Runtime.InteropServices._ILGenerator" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi beforefieldinit ILGenerator extends System.Object implements class System.Runtime.InteropServices._ILGenerator" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -16,6 +17,17 @@
       <InterfaceName>System.Runtime.InteropServices._ILGenerator</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComDefaultInterface(typeof(System.Runtime.InteropServices._ILGenerator))</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>To be added</summary>
     <remarks>To be added</remarks>
@@ -23,7 +35,13 @@
   <Members>
     <Member MemberName="BeginCatchBlock">
       <MemberSignature Language="C#" Value="public virtual void BeginCatchBlock (Type exceptionType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void BeginCatchBlock(class System.Type exceptionType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -35,15 +53,16 @@
         <summary>Starts a handler for a particular exception.</summary>
         <remarks>Any exceptions thrown in between the call to <see cref="M:System.Reflection.Emit.ILGenerator.BeginExceptionBlock()" /> of a type derived from the <paramref name="exceptionType" /> will be handled by the code following this point in the generated IL stream.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="BeginExceptFilterBlock">
+      <MemberSignature Language="C#" Value="public virtual void BeginExceptFilterBlock ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void BeginExceptFilterBlock() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="BeginExceptFilterBlock">
-      <MemberSignature Language="C#" Value="public virtual void BeginExceptFilterBlock ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -52,15 +71,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="BeginExceptionBlock">
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.Emit.Label BeginExceptionBlock ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.Reflection.Emit.Label BeginExceptionBlock() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="BeginExceptionBlock">
-      <MemberSignature Language="C#" Value="public virtual System.Reflection.Emit.Label BeginExceptionBlock ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.Label</ReturnType>
       </ReturnValue>
@@ -72,15 +92,16 @@
           <para>Use this method to flag the beginning of a try block.  See "Exception Handling" on the ECMA documentation Partition II for details on exception handling.</para>
         </remarks>
       </Docs>
+    </Member>
+    <Member MemberName="BeginFaultBlock">
+      <MemberSignature Language="C#" Value="public virtual void BeginFaultBlock ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void BeginFaultBlock() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="BeginFaultBlock">
-      <MemberSignature Language="C#" Value="public virtual void BeginFaultBlock ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -89,15 +110,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="BeginFinallyBlock">
+      <MemberSignature Language="C#" Value="public virtual void BeginFinallyBlock ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void BeginFinallyBlock() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="BeginFinallyBlock">
-      <MemberSignature Language="C#" Value="public virtual void BeginFinallyBlock ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -106,15 +128,16 @@
         <summary>Flags the current instruction stream as the entry point for finally handlers.</summary>
         <remarks>Code that was protected by the <see cref="M:System.Reflectoin.Emit.ILGenerator.BeginExceptionBlock()" /> will always execude the code following this point.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="BeginScope">
+      <MemberSignature Language="C#" Value="public virtual void BeginScope ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void BeginScope() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="BeginScope">
-      <MemberSignature Language="C#" Value="public virtual void BeginScope ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -123,15 +146,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="DeclareLocal">
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.Emit.LocalBuilder DeclareLocal (Type localType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.Emit.LocalBuilder DeclareLocal(class System.Type localType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DeclareLocal">
-      <MemberSignature Language="C#" Value="public virtual System.Reflection.Emit.LocalBuilder DeclareLocal (Type localType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.LocalBuilder</ReturnType>
       </ReturnValue>
@@ -144,15 +168,15 @@
         <returns>To be added: an object of type 'LocalBuilder'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DeclareLocal">
       <MemberSignature Language="C#" Value="public virtual System.Reflection.Emit.LocalBuilder DeclareLocal (Type localType, bool pinned);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.Emit.LocalBuilder DeclareLocal(class System.Type localType, bool pinned) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.LocalBuilder</ReturnType>
       </ReturnValue>
@@ -168,14 +192,16 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DefineLabel">
       <MemberSignature Language="C#" Value="public virtual System.Reflection.Emit.Label DefineLabel ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.Reflection.Emit.Label DefineLabel() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.Emit.Label</ReturnType>
       </ReturnValue>
@@ -185,15 +211,16 @@
         <returns>The newly defined label.</returns>
         <remarks>This method only tells the <see cref="T:System.Reflection.Emit.ILGenerator" /> that the given label exists, and that it can be used as a branch target by branch instructions. It doesn't tell the <see cref="T:System.Reflection.Emit.ILGenerator" /> where the actual branch target is though, which is done using the <see cref="M:System.Reflection.Emit.ILGenerator.MarkLabel" /> method, This two step approach allows you to jump to code that hasn't been emitted yet.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Emit(valuetype System.Reflection.Emit.OpCode opcode) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Emit">
-      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -205,15 +232,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, byte arg);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Emit(valuetype System.Reflection.Emit.OpCode opcode, unsigned int8 arg) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Emit">
-      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, byte arg);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -227,15 +255,16 @@
         <summary>Inserts an opcode with a byte argument into the IL stream.</summary>
         <remarks />
       </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, double arg);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Emit(valuetype System.Reflection.Emit.OpCode opcode, float64 arg) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Emit">
-      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, double arg);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -250,15 +279,16 @@
 </summary>
         <remarks />
       </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, short arg);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Emit(valuetype System.Reflection.Emit.OpCode opcode, int16 arg) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Emit">
-      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, short arg);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -272,15 +302,16 @@
         <summary>To be added</summary>
         <remarks />
       </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, int arg);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Emit(valuetype System.Reflection.Emit.OpCode opcode, int32 arg) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Emit">
-      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, int arg);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -295,15 +326,16 @@
 </summary>
         <remarks />
       </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, long arg);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Emit(valuetype System.Reflection.Emit.OpCode opcode, int64 arg) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Emit">
-      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, long arg);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -318,15 +350,21 @@
 </summary>
         <remarks />
       </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, System.Reflection.ConstructorInfo con);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Emit(valuetype System.Reflection.Emit.OpCode opcode, class System.Reflection.ConstructorInfo con) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Emit">
-      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, System.Reflection.ConstructorInfo con);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -340,20 +378,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, System.Reflection.Emit.Label label);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Emit(valuetype System.Reflection.Emit.OpCode opcode, valuetype System.Reflection.Emit.Label label) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Emit">
-      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, System.Reflection.Emit.Label label);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -367,15 +401,16 @@
         <summary>Inserts an opcode with a branch target as argument into the IL stream.</summary>
         <remarks />
       </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, System.Reflection.Emit.Label[] labels);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Emit(valuetype System.Reflection.Emit.OpCode opcode, valuetype System.Reflection.Emit.Label[] labels) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Emit">
-      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, System.Reflection.Emit.Label[] labels);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -389,15 +424,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, System.Reflection.Emit.LocalBuilder local);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Emit(valuetype System.Reflection.Emit.OpCode opcode, class System.Reflection.Emit.LocalBuilder local) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Emit">
-      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, System.Reflection.Emit.LocalBuilder local);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -411,15 +447,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, System.Reflection.Emit.SignatureHelper signature);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Emit(valuetype System.Reflection.Emit.OpCode opcode, class System.Reflection.Emit.SignatureHelper signature) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Emit">
-      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, System.Reflection.Emit.SignatureHelper signature);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -433,15 +470,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, System.Reflection.FieldInfo field);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Emit(valuetype System.Reflection.Emit.OpCode opcode, class System.Reflection.FieldInfo field) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Emit">
-      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, System.Reflection.FieldInfo field);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -455,15 +493,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, System.Reflection.MethodInfo meth);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Emit(valuetype System.Reflection.Emit.OpCode opcode, class System.Reflection.MethodInfo meth) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Emit">
-      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, System.Reflection.MethodInfo meth);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -477,15 +516,21 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public void Emit (System.Reflection.Emit.OpCode opcode, sbyte arg);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Emit(valuetype System.Reflection.Emit.OpCode opcode, int8 arg) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Emit">
-      <MemberSignature Language="C#" Value="public void Emit (System.Reflection.Emit.OpCode opcode, sbyte arg);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -500,20 +545,16 @@
 </summary>
         <remarks />
       </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, float arg);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Emit(valuetype System.Reflection.Emit.OpCode opcode, float32 arg) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Emit">
-      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, float arg);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -528,15 +569,16 @@
 </summary>
         <remarks />
       </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, string str);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Emit(valuetype System.Reflection.Emit.OpCode opcode, string str) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Emit">
-      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, string str);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -550,15 +592,16 @@
         <summary>To be added</summary>
         <remarks />
       </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, Type cls);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Emit(valuetype System.Reflection.Emit.OpCode opcode, class System.Type cls) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Emit">
-      <MemberSignature Language="C#" Value="public virtual void Emit (System.Reflection.Emit.OpCode opcode, Type cls);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -572,15 +615,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="EmitCall">
+      <MemberSignature Language="C#" Value="public virtual void EmitCall (System.Reflection.Emit.OpCode opcode, System.Reflection.MethodInfo methodInfo, Type[] optionalParameterTypes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void EmitCall(valuetype System.Reflection.Emit.OpCode opcode, class System.Reflection.MethodInfo methodInfo, class System.Type[] optionalParameterTypes) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="EmitCall">
-      <MemberSignature Language="C#" Value="public virtual void EmitCall (System.Reflection.Emit.OpCode opcode, System.Reflection.MethodInfo methodInfo, Type[] optionalParameterTypes);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -596,15 +640,16 @@
         <summary>Emits a call to a method (supports varargs invocations)</summary>
         <remarks>Emits a call to the method.   If <paramref name="optionalParameterTypes" /> is non-null, then this is used to emit calls to vararg mehod.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="EmitCalli">
+      <MemberSignature Language="C#" Value="public virtual void EmitCalli (System.Reflection.Emit.OpCode opcode, System.Runtime.InteropServices.CallingConvention unmanagedCallConv, Type returnType, Type[] parameterTypes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void EmitCalli(valuetype System.Reflection.Emit.OpCode opcode, valuetype System.Runtime.InteropServices.CallingConvention unmanagedCallConv, class System.Type returnType, class System.Type[] parameterTypes) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="EmitCalli">
-      <MemberSignature Language="C#" Value="public virtual void EmitCalli (System.Reflection.Emit.OpCode opcode, System.Runtime.InteropServices.CallingConvention unmanagedCallConv, Type returnType, Type[] parameterTypes);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -622,15 +667,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="EmitCalli">
+      <MemberSignature Language="C#" Value="public virtual void EmitCalli (System.Reflection.Emit.OpCode opcode, System.Reflection.CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Type[] optionalParameterTypes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void EmitCalli(valuetype System.Reflection.Emit.OpCode opcode, valuetype System.Reflection.CallingConventions callingConvention, class System.Type returnType, class System.Type[] parameterTypes, class System.Type[] optionalParameterTypes) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="EmitCalli">
-      <MemberSignature Language="C#" Value="public virtual void EmitCalli (System.Reflection.Emit.OpCode opcode, System.Reflection.CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Type[] optionalParameterTypes);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -650,15 +696,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="EmitWriteLine">
+      <MemberSignature Language="C#" Value="public virtual void EmitWriteLine (System.Reflection.Emit.LocalBuilder localBuilder);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void EmitWriteLine(class System.Reflection.Emit.LocalBuilder localBuilder) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="EmitWriteLine">
-      <MemberSignature Language="C#" Value="public virtual void EmitWriteLine (System.Reflection.Emit.LocalBuilder localBuilder);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -670,15 +717,16 @@
         <summary>Helper routine to emits a call to WriteLine on the local variable.</summary>
         <remarks />
       </Docs>
+    </Member>
+    <Member MemberName="EmitWriteLine">
+      <MemberSignature Language="C#" Value="public virtual void EmitWriteLine (System.Reflection.FieldInfo fld);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void EmitWriteLine(class System.Reflection.FieldInfo fld) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="EmitWriteLine">
-      <MemberSignature Language="C#" Value="public virtual void EmitWriteLine (System.Reflection.FieldInfo fld);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -690,15 +738,16 @@
         <summary>Helper routine to emits a WriteLine call to print out the value of a field.</summary>
         <remarks />
       </Docs>
+    </Member>
+    <Member MemberName="EmitWriteLine">
+      <MemberSignature Language="C#" Value="public virtual void EmitWriteLine (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void EmitWriteLine(string value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="EmitWriteLine">
-      <MemberSignature Language="C#" Value="public virtual void EmitWriteLine (string value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -710,15 +759,16 @@
         <summary>Helper routine to emit a call to WriteLine a constant string.</summary>
         <remarks />
       </Docs>
+    </Member>
+    <Member MemberName="EndExceptionBlock">
+      <MemberSignature Language="C#" Value="public virtual void EndExceptionBlock ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void EndExceptionBlock() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="EndExceptionBlock">
-      <MemberSignature Language="C#" Value="public virtual void EndExceptionBlock ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -727,15 +777,16 @@
         <summary>Terminates an exception block.</summary>
         <remarks>This terminates an exception block that was started with <see cref="M:System.Reflection.Emit.BeginExceptionBlock" />.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="EndScope">
+      <MemberSignature Language="C#" Value="public virtual void EndScope ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void EndScope() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="EndScope">
-      <MemberSignature Language="C#" Value="public virtual void EndScope ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -744,14 +795,10 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ILOffset">
       <MemberSignature Language="C#" Value="public virtual int ILOffset { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 ILOffset" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -767,7 +814,13 @@
     </Member>
     <Member MemberName="MarkLabel">
       <MemberSignature Language="C#" Value="public virtual void MarkLabel (System.Reflection.Emit.Label loc);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void MarkLabel(valuetype System.Reflection.Emit.Label loc) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -779,15 +832,16 @@
         <summary>Marks the current position in the <see cref="T:System.Reflection.Emit.ILGenerator" />'s code stream as the place where branches to the given label should branch to.</summary>
         <remarks />
       </Docs>
+    </Member>
+    <Member MemberName="MarkSequencePoint">
+      <MemberSignature Language="C#" Value="public virtual void MarkSequencePoint (System.Diagnostics.SymbolStore.ISymbolDocumentWriter document, int startLine, int startColumn, int endLine, int endColumn);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void MarkSequencePoint(class System.Diagnostics.SymbolStore.ISymbolDocumentWriter document, int32 startLine, int32 startColumn, int32 endLine, int32 endColumn) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MarkSequencePoint">
-      <MemberSignature Language="C#" Value="public virtual void MarkSequencePoint (System.Diagnostics.SymbolStore.ISymbolDocumentWriter document, int startLine, int startColumn, int endLine, int endColumn);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -812,15 +866,16 @@ The block defined by the start/end line and columns is associated with the code 
 </para>
         </remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._ILGenerator.GetIDsOfNames">
+      <MemberSignature Language="C#" Value="void _ILGenerator.GetIDsOfNames (ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._ILGenerator.GetIDsOfNames(valuetype System.Guid riid, native int rgszNames, unsigned int32 cNames, unsigned int32 lcid, native int rgDispId) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._ILGenerator.GetIDsOfNames">
-      <MemberSignature Language="C#" Value="void _ILGenerator.GetIDsOfNames (ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -840,15 +895,16 @@ The block defined by the start/end line and columns is associated with the code 
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._ILGenerator.GetTypeInfo">
+      <MemberSignature Language="C#" Value="void _ILGenerator.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._ILGenerator.GetTypeInfo(unsigned int32 iTInfo, unsigned int32 lcid, native int ppTInfo) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._ILGenerator.GetTypeInfo">
-      <MemberSignature Language="C#" Value="void _ILGenerator.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -864,15 +920,16 @@ The block defined by the start/end line and columns is associated with the code 
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._ILGenerator.GetTypeInfoCount">
+      <MemberSignature Language="C#" Value="void _ILGenerator.GetTypeInfoCount (out uint pcTInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._ILGenerator.GetTypeInfoCount(unsigned int32 pcTInfo) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._ILGenerator.GetTypeInfoCount">
-      <MemberSignature Language="C#" Value="void _ILGenerator.GetTypeInfoCount (out uint pcTInfo);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -884,15 +941,16 @@ The block defined by the start/end line and columns is associated with the code 
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._ILGenerator.Invoke">
+      <MemberSignature Language="C#" Value="void _ILGenerator.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._ILGenerator.Invoke(unsigned int32 dispIdMember, valuetype System.Guid riid, unsigned int32 lcid, int16 wFlags, native int pDispParams, native int pVarResult, native int pExcepInfo, native int puArgErr) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._ILGenerator.Invoke">
-      <MemberSignature Language="C#" Value="void _ILGenerator.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -918,15 +976,16 @@ The block defined by the start/end line and columns is associated with the code 
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="ThrowException">
+      <MemberSignature Language="C#" Value="public virtual void ThrowException (Type excType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ThrowException(class System.Type excType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ThrowException">
-      <MemberSignature Language="C#" Value="public virtual void ThrowException (Type excType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -938,15 +997,16 @@ The block defined by the start/end line and columns is associated with the code 
         <summary>Helper routine to throw an exception.</summary>
         <remarks>This will create an instance of the exception specified by the <paramref name="excType" /> and throw that.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="UsingNamespace">
+      <MemberSignature Language="C#" Value="public virtual void UsingNamespace (string usingNamespace);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void UsingNamespace(string usingNamespace) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="UsingNamespace">
-      <MemberSignature Language="C#" Value="public virtual void UsingNamespace (string usingNamespace);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -958,22 +1018,6 @@ The block defined by the start/end line and columns is associated with the code 
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
-    </Attribute>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComDefaultInterface(typeof(System.Runtime.InteropServices._ILGenerator))</AttributeName>
-    </Attribute>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

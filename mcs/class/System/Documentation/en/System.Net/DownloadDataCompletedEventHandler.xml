@@ -1,8 +1,10 @@
 <Type Name="DownloadDataCompletedEventHandler" FullName="System.Net.DownloadDataCompletedEventHandler">
   <TypeSignature Language="C#" Value="public delegate void DownloadDataCompletedEventHandler(object sender, DownloadDataCompletedEventArgs e);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed DownloadDataCompletedEventHandler extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>

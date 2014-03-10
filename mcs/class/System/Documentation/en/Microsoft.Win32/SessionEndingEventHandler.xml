@@ -1,9 +1,11 @@
 <Type Name="SessionEndingEventHandler" FullName="Microsoft.Win32.SessionEndingEventHandler">
   <TypeSignature Language="C#" Value="public delegate void SessionEndingEventHandler(object sender, SessionEndingEventArgs e);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SessionEndingEventHandler extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>

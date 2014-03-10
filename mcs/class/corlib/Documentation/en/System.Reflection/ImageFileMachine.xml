@@ -1,5 +1,6 @@
 <Type Name="ImageFileMachine" FullName="System.Reflection.ImageFileMachine">
   <TypeSignature Language="C#" Value="public enum ImageFileMachine" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed ImageFileMachine extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -21,7 +22,12 @@
   <Members>
     <Member MemberName="AMD64">
       <MemberSignature Language="C#" Value="AMD64" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.ImageFileMachine AMD64 = int32(34404)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.ImageFileMachine</ReturnType>
       </ReturnValue>
@@ -29,14 +35,29 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="ARM">
+      <MemberSignature Language="C#" Value="ARM" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.ImageFileMachine ARM = int32(452)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.ImageFileMachine</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
     </Member>
     <Member MemberName="I386">
       <MemberSignature Language="C#" Value="I386" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.ImageFileMachine I386 = int32(332)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.ImageFileMachine</ReturnType>
       </ReturnValue>
@@ -44,14 +65,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IA64">
       <MemberSignature Language="C#" Value="IA64" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.ImageFileMachine IA64 = int32(512)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.ImageFileMachine</ReturnType>
       </ReturnValue>
@@ -59,10 +81,6 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

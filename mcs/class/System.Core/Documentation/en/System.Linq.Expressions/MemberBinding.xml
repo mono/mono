@@ -1,8 +1,10 @@
 <Type Name="MemberBinding" FullName="System.Linq.Expressions.MemberBinding">
   <TypeSignature Language="C#" Value="public abstract class MemberBinding" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit MemberBinding extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System.Core</AssemblyName>
     <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -14,17 +16,24 @@
   </Docs>
   <Members>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="protected MemberBinding (System.Linq.Expressions.MemberBindingType binding_type, System.Reflection.MemberInfo member);" />
+      <MemberSignature Language="C#" Value="protected MemberBinding (System.Linq.Expressions.MemberBindingType type, System.Reflection.MemberInfo member);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(valuetype System.Linq.Expressions.MemberBindingType type, class System.Reflection.MemberInfo member) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Do not use this constructor. It will be removed in future releases.")</AttributeName>
+        </Attribute>
+      </Attributes>
       <Parameters>
-        <Parameter Name="binding_type" Type="System.Linq.Expressions.MemberBindingType" />
+        <Parameter Name="type" Type="System.Linq.Expressions.MemberBindingType" />
         <Parameter Name="member" Type="System.Reflection.MemberInfo" />
       </Parameters>
       <Docs>
-        <param name="binding_type">To be added.</param>
+        <param name="type">To be added.</param>
         <param name="member">To be added.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
@@ -32,9 +41,11 @@
     </Member>
     <Member MemberName="BindingType">
       <MemberSignature Language="C#" Value="public System.Linq.Expressions.MemberBindingType BindingType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Linq.Expressions.MemberBindingType BindingType" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.MemberBindingType</ReturnType>
@@ -47,9 +58,11 @@
     </Member>
     <Member MemberName="Member">
       <MemberSignature Language="C#" Value="public System.Reflection.MemberInfo Member { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Reflection.MemberInfo Member" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.MemberInfo</ReturnType>
@@ -62,9 +75,11 @@
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>

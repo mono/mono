@@ -1,5 +1,6 @@
 <Type Name="Partitioner" FullName="System.Collections.Concurrent.Partitioner">
   <TypeSignature Language="C#" Value="public static class Partitioner" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Partitioner extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -15,6 +16,7 @@
   <Members>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;Tuple&lt;int,int&gt;&gt; Create (int fromInclusive, int toExclusive);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Concurrent.OrderablePartitioner`1&lt;class System.Tuple`2&lt;int32, int32&gt;&gt; Create(int32 fromInclusive, int32 toExclusive) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -36,6 +38,7 @@
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;Tuple&lt;long,long&gt;&gt; Create (long fromInclusive, long toExclusive);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Concurrent.OrderablePartitioner`1&lt;class System.Tuple`2&lt;int64, int64&gt;&gt; Create(int64 fromInclusive, int64 toExclusive) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -57,6 +60,7 @@
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;Tuple&lt;int,int&gt;&gt; Create (int fromInclusive, int toExclusive, int rangeSize);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Concurrent.OrderablePartitioner`1&lt;class System.Tuple`2&lt;int32, int32&gt;&gt; Create(int32 fromInclusive, int32 toExclusive, int32 rangeSize) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -80,6 +84,7 @@
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;Tuple&lt;long,long&gt;&gt; Create (long fromInclusive, long toExclusive, long rangeSize);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Concurrent.OrderablePartitioner`1&lt;class System.Tuple`2&lt;int64, int64&gt;&gt; Create(int64 fromInclusive, int64 toExclusive, int64 rangeSize) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -103,6 +108,7 @@
     </Member>
     <Member MemberName="Create&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt; Create&lt;TSource&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Concurrent.OrderablePartitioner`1&lt;!!TSource&gt; Create&lt;TSource&gt;(class System.Collections.Generic.IEnumerable`1&lt;!!TSource&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -125,7 +131,8 @@
       </Docs>
     </Member>
     <Member MemberName="Create&lt;TSource&gt;">
-      <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt; Create&lt;TSource&gt; (System.Collections.Generic.IList&lt;TSource&gt; source, bool loadBalance);" />
+      <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt; Create&lt;TSource&gt; (System.Collections.Generic.IEnumerable&lt;TSource&gt; source, System.Collections.Concurrent.EnumerablePartitionerOptions partitionerOptions);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Concurrent.OrderablePartitioner`1&lt;!!TSource&gt; Create&lt;TSource&gt;(class System.Collections.Generic.IEnumerable`1&lt;!!TSource&gt; source, valuetype System.Collections.Concurrent.EnumerablePartitionerOptions partitionerOptions) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -137,12 +144,38 @@
         <TypeParameter Name="TSource" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="source" Type="System.Collections.Generic.IList&lt;TSource&gt;" />
-        <Parameter Name="loadBalance" Type="System.Boolean" />
+        <Parameter Name="source" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
+        <Parameter Name="partitionerOptions" Type="System.Collections.Concurrent.EnumerablePartitionerOptions" />
       </Parameters>
       <Docs>
         <typeparam name="TSource">To be added.</typeparam>
         <param name="source">To be added.</param>
+        <param name="partitionerOptions">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create&lt;TSource&gt;">
+      <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt; Create&lt;TSource&gt; (System.Collections.Generic.IList&lt;TSource&gt; list, bool loadBalance);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Concurrent.OrderablePartitioner`1&lt;!!TSource&gt; Create&lt;TSource&gt;(class System.Collections.Generic.IList`1&lt;!!TSource&gt; list, bool loadBalance) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="list" Type="System.Collections.Generic.IList&lt;TSource&gt;" />
+        <Parameter Name="loadBalance" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TSource">To be added.</typeparam>
+        <param name="list">To be added.</param>
         <param name="loadBalance">To be added.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
@@ -150,7 +183,8 @@
       </Docs>
     </Member>
     <Member MemberName="Create&lt;TSource&gt;">
-      <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt; Create&lt;TSource&gt; (TSource[] source, bool loadBalance);" />
+      <MemberSignature Language="C#" Value="public static System.Collections.Concurrent.OrderablePartitioner&lt;TSource&gt; Create&lt;TSource&gt; (TSource[] array, bool loadBalance);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Concurrent.OrderablePartitioner`1&lt;!!TSource&gt; Create&lt;TSource&gt;(!!TSource[] array, bool loadBalance) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -162,12 +196,12 @@
         <TypeParameter Name="TSource" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="source" Type="TSource[]" />
+        <Parameter Name="array" Type="TSource[]" />
         <Parameter Name="loadBalance" Type="System.Boolean" />
       </Parameters>
       <Docs>
         <typeparam name="TSource">To be added.</typeparam>
-        <param name="source">To be added.</param>
+        <param name="array">To be added.</param>
         <param name="loadBalance">To be added.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>

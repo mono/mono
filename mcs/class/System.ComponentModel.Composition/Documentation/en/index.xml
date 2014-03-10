@@ -1,0 +1,663 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="System.ComponentModel.Composition" Version="4.0.0.0">
+      <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute+DebuggingModes.IgnoreSymbolStoreSequencePoints)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCompany("Mono development team")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCopyright("(c) Microsoft Corporation. All rights reserved.")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDefaultAlias("System.ComponentModel.Composition.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription("System.ComponentModel.Composition.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyFileVersion("4.0.30319.17020")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("4.0.30319.17020")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("Mono Common Language Infrastructure")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("System.ComponentModel.Composition.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.NeutralResourcesLanguage("en-US")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.SatelliteContractVersion("4.0.0.0")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Security.AllowPartiallyTrustedCallers</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Security.SecurityCritical</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="System">
+      <Type Name="Lazy`2" DisplayName="Lazy&lt;T,TMetadata&gt;" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.ComponentModel.Composition">
+      <Type Name="AttributedModelServices" Kind="Class" />
+      <Type Name="CatalogReflectionContextAttribute" Kind="Class" />
+      <Type Name="ChangeRejectedException" Kind="Class" />
+      <Type Name="CompositionContractMismatchException" Kind="Class" />
+      <Type Name="CompositionError" Kind="Class" />
+      <Type Name="CompositionException" Kind="Class" />
+      <Type Name="CreationPolicy" Kind="Enumeration" />
+      <Type Name="ExportAttribute" Kind="Class" />
+      <Type Name="ExportFactory`1" DisplayName="ExportFactory&lt;T&gt;" Kind="Class" />
+      <Type Name="ExportFactory`2" DisplayName="ExportFactory&lt;T,TMetadata&gt;" Kind="Class" />
+      <Type Name="ExportLifetimeContext`1" DisplayName="ExportLifetimeContext&lt;T&gt;" Kind="Class" />
+      <Type Name="ExportMetadataAttribute" Kind="Class" />
+      <Type Name="ICompositionService" Kind="Interface" />
+      <Type Name="ImportAttribute" Kind="Class" />
+      <Type Name="ImportCardinalityMismatchException" Kind="Class" />
+      <Type Name="ImportingConstructorAttribute" Kind="Class" />
+      <Type Name="ImportManyAttribute" Kind="Class" />
+      <Type Name="ImportSource" Kind="Enumeration" />
+      <Type Name="InheritedExportAttribute" Kind="Class" />
+      <Type Name="IPartImportsSatisfiedNotification" Kind="Interface" />
+      <Type Name="MetadataAttributeAttribute" Kind="Class" />
+      <Type Name="MetadataViewImplementationAttribute" Kind="Class" />
+      <Type Name="PartCreationPolicyAttribute" Kind="Class" />
+      <Type Name="PartMetadataAttribute" Kind="Class" />
+      <Type Name="PartNotDiscoverableAttribute" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.ComponentModel.Composition.Hosting">
+      <Type Name="AggregateCatalog" Kind="Class" />
+      <Type Name="AggregateExportProvider" Kind="Class" />
+      <Type Name="ApplicationCatalog" Kind="Class" />
+      <Type Name="AssemblyCatalog" Kind="Class" />
+      <Type Name="AtomicComposition" Kind="Class" />
+      <Type Name="CatalogExportProvider" Kind="Class" />
+      <Type Name="CatalogExtensions" Kind="Class" />
+      <Type Name="ComposablePartCatalogChangeEventArgs" Kind="Class" />
+      <Type Name="ComposablePartExportProvider" Kind="Class" />
+      <Type Name="CompositionBatch" Kind="Class" />
+      <Type Name="CompositionConstants" Kind="Class" />
+      <Type Name="CompositionContainer" Kind="Class" />
+      <Type Name="CompositionOptions" Kind="Enumeration" />
+      <Type Name="CompositionScopeDefinition" Kind="Class" />
+      <Type Name="CompositionService" Kind="Class" />
+      <Type Name="DirectoryCatalog" Kind="Class" />
+      <Type Name="ExportProvider" Kind="Class" />
+      <Type Name="ExportsChangeEventArgs" Kind="Class" />
+      <Type Name="FilteredCatalog" Kind="Class" />
+      <Type Name="ImportEngine" Kind="Class" />
+      <Type Name="INotifyComposablePartCatalogChanged" Kind="Interface" />
+      <Type Name="ScopingExtensions" Kind="Class" />
+      <Type Name="TypeCatalog" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.ComponentModel.Composition.Primitives">
+      <Type Name="ComposablePart" Kind="Class" />
+      <Type Name="ComposablePartCatalog" Kind="Class" />
+      <Type Name="ComposablePartDefinition" Kind="Class" />
+      <Type Name="ComposablePartException" Kind="Class" />
+      <Type Name="ContractBasedImportDefinition" Kind="Class" />
+      <Type Name="Export" Kind="Class" />
+      <Type Name="ExportDefinition" Kind="Class" />
+      <Type Name="ExportedDelegate" Kind="Class" />
+      <Type Name="ICompositionElement" Kind="Interface" />
+      <Type Name="ImportCardinality" Kind="Enumeration" />
+      <Type Name="ImportDefinition" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.ComponentModel.Composition.ReflectionModel">
+      <Type Name="LazyMemberInfo" Kind="Structure" />
+      <Type Name="ReflectionModelServices" Kind="Class" />
+    </Namespace>
+  </Types>
+  <Title>System.ComponentModel.Composition</Title>
+  <ExtensionMethods>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.ComponentModel.Composition.Hosting.CompositionBatch" />
+      </Targets>
+      <Member MemberName="AddExportedValue&lt;T&gt;">
+        <MemberSignature Language="C#" Value="public static System.ComponentModel.Composition.Primitives.ComposablePart AddExportedValue&lt;T&gt; (this System.ComponentModel.Composition.Hosting.CompositionBatch batch, T exportedValue);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.Composition.Primitives.ComposablePart AddExportedValue&lt;T&gt;(class System.ComponentModel.Composition.Hosting.CompositionBatch batch, !!T exportedValue) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.ComponentModel.Composition.Primitives.ComposablePart</ReturnType>
+        </ReturnValue>
+        <TypeParameters>
+          <TypeParameter Name="T" />
+        </TypeParameters>
+        <Parameters>
+          <Parameter Name="batch" Type="System.ComponentModel.Composition.Hosting.CompositionBatch" RefType="this" />
+          <Parameter Name="exportedValue" Type="T" />
+        </Parameters>
+        <Docs>
+          <typeparam name="T">To be added.</typeparam>
+          <param name="batch">To be added.</param>
+          <param name="exportedValue">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.ComponentModel.Composition.AttributedModelServices" Member="M:System.ComponentModel.Composition.AttributedModelServices.AddExportedValue``1(System.ComponentModel.Composition.Hosting.CompositionBatch,``0)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.ComponentModel.Composition.Hosting.CompositionBatch" />
+      </Targets>
+      <Member MemberName="AddExportedValue&lt;T&gt;">
+        <MemberSignature Language="C#" Value="public static System.ComponentModel.Composition.Primitives.ComposablePart AddExportedValue&lt;T&gt; (this System.ComponentModel.Composition.Hosting.CompositionBatch batch, string contractName, T exportedValue);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.Composition.Primitives.ComposablePart AddExportedValue&lt;T&gt;(class System.ComponentModel.Composition.Hosting.CompositionBatch batch, string contractName, !!T exportedValue) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.ComponentModel.Composition.Primitives.ComposablePart</ReturnType>
+        </ReturnValue>
+        <TypeParameters>
+          <TypeParameter Name="T" />
+        </TypeParameters>
+        <Parameters>
+          <Parameter Name="batch" Type="System.ComponentModel.Composition.Hosting.CompositionBatch" RefType="this" />
+          <Parameter Name="contractName" Type="System.String" />
+          <Parameter Name="exportedValue" Type="T" />
+        </Parameters>
+        <Docs>
+          <typeparam name="T">To be added.</typeparam>
+          <param name="batch">To be added.</param>
+          <param name="contractName">To be added.</param>
+          <param name="exportedValue">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.ComponentModel.Composition.AttributedModelServices" Member="M:System.ComponentModel.Composition.AttributedModelServices.AddExportedValue``1(System.ComponentModel.Composition.Hosting.CompositionBatch,System.String,``0)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.ComponentModel.Composition.Hosting.CompositionBatch" />
+      </Targets>
+      <Member MemberName="AddPart">
+        <MemberSignature Language="C#" Value="public static System.ComponentModel.Composition.Primitives.ComposablePart AddPart (this System.ComponentModel.Composition.Hosting.CompositionBatch batch, object attributedPart);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.Composition.Primitives.ComposablePart AddPart(class System.ComponentModel.Composition.Hosting.CompositionBatch batch, object attributedPart) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.ComponentModel.Composition.Primitives.ComposablePart</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="batch" Type="System.ComponentModel.Composition.Hosting.CompositionBatch" RefType="this" />
+          <Parameter Name="attributedPart" Type="System.Object" />
+        </Parameters>
+        <Docs>
+          <param name="batch">To be added.</param>
+          <param name="attributedPart">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.ComponentModel.Composition.AttributedModelServices" Member="M:System.ComponentModel.Composition.AttributedModelServices.AddPart(System.ComponentModel.Composition.Hosting.CompositionBatch,System.Object)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.ComponentModel.Composition.Hosting.CompositionContainer" />
+      </Targets>
+      <Member MemberName="ComposeExportedValue&lt;T&gt;">
+        <MemberSignature Language="C#" Value="public static void ComposeExportedValue&lt;T&gt; (this System.ComponentModel.Composition.Hosting.CompositionContainer container, T exportedValue);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ComposeExportedValue&lt;T&gt;(class System.ComponentModel.Composition.Hosting.CompositionContainer container, !!T exportedValue) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Void</ReturnType>
+        </ReturnValue>
+        <TypeParameters>
+          <TypeParameter Name="T" />
+        </TypeParameters>
+        <Parameters>
+          <Parameter Name="container" Type="System.ComponentModel.Composition.Hosting.CompositionContainer" RefType="this" />
+          <Parameter Name="exportedValue" Type="T" />
+        </Parameters>
+        <Docs>
+          <typeparam name="T">To be added.</typeparam>
+          <param name="container">To be added.</param>
+          <param name="exportedValue">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.ComponentModel.Composition.AttributedModelServices" Member="M:System.ComponentModel.Composition.AttributedModelServices.ComposeExportedValue``1(System.ComponentModel.Composition.Hosting.CompositionContainer,``0)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.ComponentModel.Composition.Hosting.CompositionContainer" />
+      </Targets>
+      <Member MemberName="ComposeExportedValue&lt;T&gt;">
+        <MemberSignature Language="C#" Value="public static void ComposeExportedValue&lt;T&gt; (this System.ComponentModel.Composition.Hosting.CompositionContainer container, string contractName, T exportedValue);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ComposeExportedValue&lt;T&gt;(class System.ComponentModel.Composition.Hosting.CompositionContainer container, string contractName, !!T exportedValue) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Void</ReturnType>
+        </ReturnValue>
+        <TypeParameters>
+          <TypeParameter Name="T" />
+        </TypeParameters>
+        <Parameters>
+          <Parameter Name="container" Type="System.ComponentModel.Composition.Hosting.CompositionContainer" RefType="this" />
+          <Parameter Name="contractName" Type="System.String" />
+          <Parameter Name="exportedValue" Type="T" />
+        </Parameters>
+        <Docs>
+          <typeparam name="T">To be added.</typeparam>
+          <param name="container">To be added.</param>
+          <param name="contractName">To be added.</param>
+          <param name="exportedValue">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.ComponentModel.Composition.AttributedModelServices" Member="M:System.ComponentModel.Composition.AttributedModelServices.ComposeExportedValue``1(System.ComponentModel.Composition.Hosting.CompositionContainer,System.String,``0)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.ComponentModel.Composition.Hosting.CompositionContainer" />
+      </Targets>
+      <Member MemberName="ComposeParts">
+        <MemberSignature Language="C#" Value="public static void ComposeParts (this System.ComponentModel.Composition.Hosting.CompositionContainer container, object[] attributedParts);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ComposeParts(class System.ComponentModel.Composition.Hosting.CompositionContainer container, object[] attributedParts) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Void</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="container" Type="System.ComponentModel.Composition.Hosting.CompositionContainer" RefType="this" />
+          <Parameter Name="attributedParts" Type="System.Object[]">
+            <Attributes>
+              <Attribute>
+                <AttributeName>System.ParamArray</AttributeName>
+              </Attribute>
+            </Attributes>
+          </Parameter>
+        </Parameters>
+        <Docs>
+          <param name="container">To be added.</param>
+          <param name="attributedParts">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.ComponentModel.Composition.AttributedModelServices" Member="M:System.ComponentModel.Composition.AttributedModelServices.ComposeParts(System.ComponentModel.Composition.Hosting.CompositionContainer,System.Object[])" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.ComponentModel.Composition.Primitives.ComposablePartDefinition" />
+      </Targets>
+      <Member MemberName="Exports">
+        <MemberSignature Language="C#" Value="public static bool Exports (this System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, Type contractType);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Exports(class System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, class System.Type contractType) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Boolean</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="part" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" RefType="this" />
+          <Parameter Name="contractType" Type="System.Type" />
+        </Parameters>
+        <Docs>
+          <param name="part">To be added.</param>
+          <param name="contractType">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.ComponentModel.Composition.AttributedModelServices" Member="M:System.ComponentModel.Composition.AttributedModelServices.Exports(System.ComponentModel.Composition.Primitives.ComposablePartDefinition,System.Type)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.ComponentModel.Composition.Primitives.ComposablePartDefinition" />
+      </Targets>
+      <Member MemberName="Exports&lt;T&gt;">
+        <MemberSignature Language="C#" Value="public static bool Exports&lt;T&gt; (this System.ComponentModel.Composition.Primitives.ComposablePartDefinition part);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Exports&lt;T&gt;(class System.ComponentModel.Composition.Primitives.ComposablePartDefinition part) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Boolean</ReturnType>
+        </ReturnValue>
+        <TypeParameters>
+          <TypeParameter Name="T" />
+        </TypeParameters>
+        <Parameters>
+          <Parameter Name="part" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" RefType="this" />
+        </Parameters>
+        <Docs>
+          <typeparam name="T">To be added.</typeparam>
+          <param name="part">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.ComponentModel.Composition.AttributedModelServices" Member="M:System.ComponentModel.Composition.AttributedModelServices.Exports``1(System.ComponentModel.Composition.Primitives.ComposablePartDefinition)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.ComponentModel.Composition.Primitives.ComposablePartDefinition" />
+      </Targets>
+      <Member MemberName="Imports">
+        <MemberSignature Language="C#" Value="public static bool Imports (this System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, Type contractType);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Imports(class System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, class System.Type contractType) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Boolean</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="part" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" RefType="this" />
+          <Parameter Name="contractType" Type="System.Type" />
+        </Parameters>
+        <Docs>
+          <param name="part">To be added.</param>
+          <param name="contractType">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.ComponentModel.Composition.AttributedModelServices" Member="M:System.ComponentModel.Composition.AttributedModelServices.Imports(System.ComponentModel.Composition.Primitives.ComposablePartDefinition,System.Type)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.ComponentModel.Composition.Primitives.ComposablePartDefinition" />
+      </Targets>
+      <Member MemberName="Imports">
+        <MemberSignature Language="C#" Value="public static bool Imports (this System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, Type contractType, System.ComponentModel.Composition.Primitives.ImportCardinality importCardinality);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Imports(class System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, class System.Type contractType, valuetype System.ComponentModel.Composition.Primitives.ImportCardinality importCardinality) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Boolean</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="part" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" RefType="this" />
+          <Parameter Name="contractType" Type="System.Type" />
+          <Parameter Name="importCardinality" Type="System.ComponentModel.Composition.Primitives.ImportCardinality" />
+        </Parameters>
+        <Docs>
+          <param name="part">To be added.</param>
+          <param name="contractType">To be added.</param>
+          <param name="importCardinality">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.ComponentModel.Composition.AttributedModelServices" Member="M:System.ComponentModel.Composition.AttributedModelServices.Imports(System.ComponentModel.Composition.Primitives.ComposablePartDefinition,System.Type,System.ComponentModel.Composition.Primitives.ImportCardinality)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.ComponentModel.Composition.Primitives.ComposablePartDefinition" />
+      </Targets>
+      <Member MemberName="Imports&lt;T&gt;">
+        <MemberSignature Language="C#" Value="public static bool Imports&lt;T&gt; (this System.ComponentModel.Composition.Primitives.ComposablePartDefinition part);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Imports&lt;T&gt;(class System.ComponentModel.Composition.Primitives.ComposablePartDefinition part) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Boolean</ReturnType>
+        </ReturnValue>
+        <TypeParameters>
+          <TypeParameter Name="T" />
+        </TypeParameters>
+        <Parameters>
+          <Parameter Name="part" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" RefType="this" />
+        </Parameters>
+        <Docs>
+          <typeparam name="T">To be added.</typeparam>
+          <param name="part">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.ComponentModel.Composition.AttributedModelServices" Member="M:System.ComponentModel.Composition.AttributedModelServices.Imports``1(System.ComponentModel.Composition.Primitives.ComposablePartDefinition)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.ComponentModel.Composition.Primitives.ComposablePartDefinition" />
+      </Targets>
+      <Member MemberName="Imports&lt;T&gt;">
+        <MemberSignature Language="C#" Value="public static bool Imports&lt;T&gt; (this System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, System.ComponentModel.Composition.Primitives.ImportCardinality importCardinality);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Imports&lt;T&gt;(class System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, valuetype System.ComponentModel.Composition.Primitives.ImportCardinality importCardinality) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Boolean</ReturnType>
+        </ReturnValue>
+        <TypeParameters>
+          <TypeParameter Name="T" />
+        </TypeParameters>
+        <Parameters>
+          <Parameter Name="part" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" RefType="this" />
+          <Parameter Name="importCardinality" Type="System.ComponentModel.Composition.Primitives.ImportCardinality" />
+        </Parameters>
+        <Docs>
+          <typeparam name="T">To be added.</typeparam>
+          <param name="part">To be added.</param>
+          <param name="importCardinality">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.ComponentModel.Composition.AttributedModelServices" Member="M:System.ComponentModel.Composition.AttributedModelServices.Imports``1(System.ComponentModel.Composition.Primitives.ComposablePartDefinition,System.ComponentModel.Composition.Primitives.ImportCardinality)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.ComponentModel.Composition.ICompositionService" />
+      </Targets>
+      <Member MemberName="SatisfyImportsOnce">
+        <MemberSignature Language="C#" Value="public static System.ComponentModel.Composition.Primitives.ComposablePart SatisfyImportsOnce (this System.ComponentModel.Composition.ICompositionService compositionService, object attributedPart);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.Composition.Primitives.ComposablePart SatisfyImportsOnce(class System.ComponentModel.Composition.ICompositionService compositionService, object attributedPart) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.ComponentModel.Composition.Primitives.ComposablePart</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="compositionService" Type="System.ComponentModel.Composition.ICompositionService" RefType="this" />
+          <Parameter Name="attributedPart" Type="System.Object" />
+        </Parameters>
+        <Docs>
+          <param name="compositionService">To be added.</param>
+          <param name="attributedPart">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.ComponentModel.Composition.AttributedModelServices" Member="M:System.ComponentModel.Composition.AttributedModelServices.SatisfyImportsOnce(System.ComponentModel.Composition.ICompositionService,System.Object)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.ComponentModel.Composition.ICompositionService" />
+      </Targets>
+      <Member MemberName="SatisfyImportsOnce">
+        <MemberSignature Language="C#" Value="public static System.ComponentModel.Composition.Primitives.ComposablePart SatisfyImportsOnce (this System.ComponentModel.Composition.ICompositionService compositionService, object attributedPart, System.Reflection.ReflectionContext reflectionContext);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.Composition.Primitives.ComposablePart SatisfyImportsOnce(class System.ComponentModel.Composition.ICompositionService compositionService, object attributedPart, class System.Reflection.ReflectionContext reflectionContext) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.ComponentModel.Composition.Primitives.ComposablePart</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="compositionService" Type="System.ComponentModel.Composition.ICompositionService" RefType="this" />
+          <Parameter Name="attributedPart" Type="System.Object" />
+          <Parameter Name="reflectionContext" Type="System.Reflection.ReflectionContext" />
+        </Parameters>
+        <Docs>
+          <param name="compositionService">To be added.</param>
+          <param name="attributedPart">To be added.</param>
+          <param name="reflectionContext">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.ComponentModel.Composition.AttributedModelServices" Member="M:System.ComponentModel.Composition.AttributedModelServices.SatisfyImportsOnce(System.ComponentModel.Composition.ICompositionService,System.Object,System.Reflection.ReflectionContext)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.ComponentModel.Composition.Primitives.ComposablePartCatalog" />
+      </Targets>
+      <Member MemberName="CreateCompositionService">
+        <MemberSignature Language="C#" Value="public static System.ComponentModel.Composition.Hosting.CompositionService CreateCompositionService (this System.ComponentModel.Composition.Primitives.ComposablePartCatalog composablePartCatalog);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.Composition.Hosting.CompositionService CreateCompositionService(class System.ComponentModel.Composition.Primitives.ComposablePartCatalog composablePartCatalog) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.ComponentModel.Composition.Hosting.CompositionService</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="composablePartCatalog" Type="System.ComponentModel.Composition.Primitives.ComposablePartCatalog" RefType="this" />
+        </Parameters>
+        <Docs>
+          <param name="composablePartCatalog">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.ComponentModel.Composition.Hosting.CatalogExtensions" Member="M:System.ComponentModel.Composition.Hosting.CatalogExtensions.CreateCompositionService(System.ComponentModel.Composition.Primitives.ComposablePartCatalog)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.ComponentModel.Composition.Primitives.ComposablePartDefinition" />
+      </Targets>
+      <Member MemberName="ContainsPartMetadata&lt;T&gt;">
+        <MemberSignature Language="C#" Value="public static bool ContainsPartMetadata&lt;T&gt; (this System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, string key, T value);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool ContainsPartMetadata&lt;T&gt;(class System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, string key, !!T value) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Boolean</ReturnType>
+        </ReturnValue>
+        <TypeParameters>
+          <TypeParameter Name="T" />
+        </TypeParameters>
+        <Parameters>
+          <Parameter Name="part" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" RefType="this" />
+          <Parameter Name="key" Type="System.String" />
+          <Parameter Name="value" Type="T" />
+        </Parameters>
+        <Docs>
+          <typeparam name="T">To be added.</typeparam>
+          <param name="part">To be added.</param>
+          <param name="key">To be added.</param>
+          <param name="value">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.ComponentModel.Composition.Hosting.ScopingExtensions" Member="M:System.ComponentModel.Composition.Hosting.ScopingExtensions.ContainsPartMetadata``1(System.ComponentModel.Composition.Primitives.ComposablePartDefinition,System.String,``0)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.ComponentModel.Composition.Primitives.ComposablePartDefinition" />
+      </Targets>
+      <Member MemberName="ContainsPartMetadataWithKey">
+        <MemberSignature Language="C#" Value="public static bool ContainsPartMetadataWithKey (this System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, string key);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool ContainsPartMetadataWithKey(class System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, string key) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Boolean</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="part" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" RefType="this" />
+          <Parameter Name="key" Type="System.String" />
+        </Parameters>
+        <Docs>
+          <param name="part">To be added.</param>
+          <param name="key">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.ComponentModel.Composition.Hosting.ScopingExtensions" Member="M:System.ComponentModel.Composition.Hosting.ScopingExtensions.ContainsPartMetadataWithKey(System.ComponentModel.Composition.Primitives.ComposablePartDefinition,System.String)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.ComponentModel.Composition.Primitives.ComposablePartDefinition" />
+      </Targets>
+      <Member MemberName="Exports">
+        <MemberSignature Language="C#" Value="public static bool Exports (this System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, string contractName);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Exports(class System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, string contractName) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Boolean</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="part" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" RefType="this" />
+          <Parameter Name="contractName" Type="System.String" />
+        </Parameters>
+        <Docs>
+          <param name="part">To be added.</param>
+          <param name="contractName">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.ComponentModel.Composition.Hosting.ScopingExtensions" Member="M:System.ComponentModel.Composition.Hosting.ScopingExtensions.Exports(System.ComponentModel.Composition.Primitives.ComposablePartDefinition,System.String)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.ComponentModel.Composition.Primitives.ComposablePartCatalog" />
+      </Targets>
+      <Member MemberName="Filter">
+        <MemberSignature Language="C#" Value="public static System.ComponentModel.Composition.Hosting.FilteredCatalog Filter (this System.ComponentModel.Composition.Primitives.ComposablePartCatalog catalog, Func&lt;System.ComponentModel.Composition.Primitives.ComposablePartDefinition,bool&gt; filter);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ComponentModel.Composition.Hosting.FilteredCatalog Filter(class System.ComponentModel.Composition.Primitives.ComposablePartCatalog catalog, class System.Func`2&lt;class System.ComponentModel.Composition.Primitives.ComposablePartDefinition, bool&gt; filter) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.ComponentModel.Composition.Hosting.FilteredCatalog</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="catalog" Type="System.ComponentModel.Composition.Primitives.ComposablePartCatalog" RefType="this" />
+          <Parameter Name="filter" Type="System.Func&lt;System.ComponentModel.Composition.Primitives.ComposablePartDefinition,System.Boolean&gt;" />
+        </Parameters>
+        <Docs>
+          <param name="catalog">To be added.</param>
+          <param name="filter">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.ComponentModel.Composition.Hosting.ScopingExtensions" Member="M:System.ComponentModel.Composition.Hosting.ScopingExtensions.Filter(System.ComponentModel.Composition.Primitives.ComposablePartCatalog,System.Func{System.ComponentModel.Composition.Primitives.ComposablePartDefinition,System.Boolean})" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.ComponentModel.Composition.Primitives.ComposablePartDefinition" />
+      </Targets>
+      <Member MemberName="Imports">
+        <MemberSignature Language="C#" Value="public static bool Imports (this System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, string contractName);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Imports(class System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, string contractName) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Boolean</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="part" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" RefType="this" />
+          <Parameter Name="contractName" Type="System.String" />
+        </Parameters>
+        <Docs>
+          <param name="part">To be added.</param>
+          <param name="contractName">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.ComponentModel.Composition.Hosting.ScopingExtensions" Member="M:System.ComponentModel.Composition.Hosting.ScopingExtensions.Imports(System.ComponentModel.Composition.Primitives.ComposablePartDefinition,System.String)" />
+      </Member>
+    </ExtensionMethod>
+    <ExtensionMethod>
+      <Targets>
+        <Target Type="T:System.ComponentModel.Composition.Primitives.ComposablePartDefinition" />
+      </Targets>
+      <Member MemberName="Imports">
+        <MemberSignature Language="C#" Value="public static bool Imports (this System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, string contractName, System.ComponentModel.Composition.Primitives.ImportCardinality importCardinality);" />
+        <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Imports(class System.ComponentModel.Composition.Primitives.ComposablePartDefinition part, string contractName, valuetype System.ComponentModel.Composition.Primitives.ImportCardinality importCardinality) cil managed" />
+        <MemberType>ExtensionMethod</MemberType>
+        <ReturnValue>
+          <ReturnType>System.Boolean</ReturnType>
+        </ReturnValue>
+        <Parameters>
+          <Parameter Name="part" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" RefType="this" />
+          <Parameter Name="contractName" Type="System.String" />
+          <Parameter Name="importCardinality" Type="System.ComponentModel.Composition.Primitives.ImportCardinality" />
+        </Parameters>
+        <Docs>
+          <param name="part">To be added.</param>
+          <param name="contractName">To be added.</param>
+          <param name="importCardinality">To be added.</param>
+          <summary>To be added.</summary>
+        </Docs>
+        <Link Type="System.ComponentModel.Composition.Hosting.ScopingExtensions" Member="M:System.ComponentModel.Composition.Hosting.ScopingExtensions.Imports(System.ComponentModel.Composition.Primitives.ComposablePartDefinition,System.String,System.ComponentModel.Composition.Primitives.ImportCardinality)" />
+      </Member>
+    </ExtensionMethod>
+  </ExtensionMethods>
+</Overview>
