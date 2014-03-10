@@ -214,12 +214,14 @@ namespace System.Windows.Forms
 				int max_width = (int) (Screen.GetWorkingArea (this).Width * 0.6);
 
 				// First we have to know the size of text + image
-				Drawing.SizeF tsize = TextRenderer.MeasureString (msgbox_text, this.Font, max_width);
+				Drawing.SizeF tsize = TextRenderer.MeasureText (msgbox_text, this.Font, new Size (max_width, int.MaxValue), TextFormatFlags.WordBreak);
 				text_rect = new RectangleF ();
-				text_rect.Size = tsize;
-				
+				text_rect.Height = tsize.Height;
+
+				int iconImageWidth = 0;
 				if (icon_image != null) {
-					tsize.Width += icon_image.Width + 10;
+					iconImageWidth = icon_image.Width + 10;
+					tsize.Width += iconImageWidth;
 					if(icon_image.Height > tsize.Height) {
 						// Place text middle-right
 						text_rect.Location = new Point (icon_image.Width + space_image_text + space_border, (int)((icon_image.Height/2)-(tsize.Height/2)) + space_border);
@@ -232,6 +234,7 @@ namespace System.Windows.Forms
 					text_rect.Location = new Point (space_border + button_space, space_border);
 				}
 				tsize.Height += space_border * 2;
+				text_rect.Height += space_border;
 
 				// Now we want to know the amount of buttons
 				int buttoncount;
@@ -283,6 +286,8 @@ namespace System.Windows.Forms
 					this.ClientSize = new Size (new_size.Width + (space_border * 2), Height = new_size.Height + (space_border * 4));
 				else
 					this.ClientSize = new Size (tb_width + (space_border * 2), Height = new_size.Height + (space_border * 4));
+
+				text_rect.Width = new_size.Width - iconImageWidth;
 
 				// Now we set the left of the buttons
 				button_left = (this.ClientSize.Width / 2) - (tb_width / 2) + 5;
