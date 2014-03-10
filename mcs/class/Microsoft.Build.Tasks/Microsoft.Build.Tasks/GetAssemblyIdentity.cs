@@ -25,11 +25,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
 using System.Collections.Generic;
 using Microsoft.Build.Framework;
+using System.Reflection;
+using System.Globalization;
+using Microsoft.Build.Utilities;
+using System.Text;
 
 namespace Microsoft.Build.Tasks {
 	public class GetAssemblyIdentity : TaskExtension {
@@ -41,22 +43,56 @@ namespace Microsoft.Build.Tasks {
 		{
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Error handling")]
 		public override bool Execute ()
 		{
-			throw new NotImplementedException ();
+			assemblies = new ITaskItem [assembly_files.Length];
+
+			for (int i = 0; i < assemblies.Length; i++) {
+				string file = assembly_files [i].ItemSpec;
+				AssemblyName an = AssemblyName.GetAssemblyName (file);
+				TaskItem item = new TaskItem (an.FullName);
+
+				item.SetMetadata ("Version", an.Version.ToString ());
+
+				byte[] pk = an.GetPublicKeyToken ();
+				string pkStr = pk != null? ByteArrayToString (pk) : "null";
+				item.SetMetadata ("PublicKeyToken", pkStr);
+
+				CultureInfo culture = an.CultureInfo;
+				if (culture != null) {
+					string cn;
+					if (culture.LCID == CultureInfo.InvariantCulture.LCID)
+						cn = "neutral";
+					else
+						cn = culture.Name;
+					item.SetMetadata ("Culture", cn);
+				}
+
+				assemblies[i] = item;
+			}
+
+			return true;
 		}
 
+		static string ByteArrayToString (byte[] arr)
+		{
+			StringBuilder sb = new StringBuilder ();
+			for (int i = 0; i < arr.Length; i++)
+				sb.Append (arr[i].ToString ("x2"));
+			return sb.ToString ();
+		}
+
+		[Output]
 		public ITaskItem [] Assemblies {
 			get { return assemblies; }
 			set { assemblies = value; }
 		}
 
+		[Required]
 		public ITaskItem [] AssemblyFiles {
 			get { return assembly_files; }
 			set { assembly_files = value; }
 		}
 	}
 }
-
-#endif
