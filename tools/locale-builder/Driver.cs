@@ -1073,17 +1073,30 @@ namespace Mono.Tools.LocaleBuilder
 					// Apply global rule first <alias source="locale" path="../dayPeriodWidth[@type='wide']"/>
 					el = node.SelectSingleNode ("dayPeriods/dayPeriodContext/dayPeriodWidth[@type='wide']/dayPeriod[@type='am']");
 
-				if (el != null)
-					df.AMDesignator = el.InnerText;
+				switch (ci.Name) {
+				case "en-AU":
+					df.AMDesignator = "AM";
+					break;
+				default:
+					if (el != null)
+						df.AMDesignator = el.InnerText;
+					break;
+				}
 
 				el = node.SelectSingleNode ("dayPeriods/dayPeriodContext/dayPeriodWidth[@type='abbreviated']/dayPeriod[@type='pm']");
 				if (el == null)
 					// Apply global rule first <alias source="locale" path="../dayPeriodWidth[@type='wide']"/>
 					el = node.SelectSingleNode ("dayPeriods/dayPeriodContext/dayPeriodWidth[@type='wide']/dayPeriod[@type='pm']");
 
-				// No data
-				if (el != null)
-					df.PMDesignator = el.InnerText;
+				switch (ci.Name) {
+				case "en-AU":
+					df.PMDesignator = "PM";
+					break;
+				default:
+					if (el != null)
+						df.PMDesignator = el.InnerText;
+					break;
+				}
 			}
 
 			var ni = ci.NumberFormatEntry;
