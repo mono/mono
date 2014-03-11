@@ -1,5 +1,5 @@
 // 
-// AritmeticInstruction.cs:
+// ArithmeticInstruction.cs:
 //
 // Authors: Marek Safar (marek.safar@gmail.com)
 //     
@@ -32,7 +32,7 @@ using Microsoft.Scripting.Runtime;
 using Microsoft.Scripting.Utils;
 
 namespace Microsoft.Scripting.Interpreter {
-    internal abstract class ComparisonInstruction : AritmeticInstruction {
+    internal abstract class ComparisonInstruction : ArithmeticInstruction {
 
         protected bool LiftedToNull { get; set; }
 

@@ -1,5 +1,5 @@
 // 
-// AritmeticInstruction.cs:
+// ArithmeticInstruction.cs:
 //
 // Authors: Marek Safar (marek.safar@gmail.com)
 //     
@@ -32,7 +32,7 @@ using Microsoft.Scripting.Runtime;
 using Microsoft.Scripting.Utils;
 
 namespace Microsoft.Scripting.Interpreter {
-    internal abstract class AritmeticInstruction : Instruction {
+    internal abstract class ArithmeticInstruction : Instruction {
 
         public override int ConsumedStack { get { return 2; } }
         public override int ProducedStack { get { return 1; } }

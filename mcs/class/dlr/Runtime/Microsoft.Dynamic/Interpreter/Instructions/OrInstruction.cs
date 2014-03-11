@@ -32,7 +32,7 @@ using Microsoft.Scripting.Runtime;
 using Microsoft.Scripting.Utils;
 
 namespace Microsoft.Scripting.Interpreter {
-    internal abstract class OrInstruction : AritmeticInstruction {
+    internal abstract class OrInstruction : ArithmeticInstruction {
         private static Instruction _Int16, _Int32, _Int64, _UInt16, _UInt32, _UInt64, _Boolean;
         private static Instruction _Int16Lifted, _Int32Lifted, _Int64Lifted, _UInt16Lifted, _UInt32Lifted, _UInt64Lifted, _BooleanLifted;
 
