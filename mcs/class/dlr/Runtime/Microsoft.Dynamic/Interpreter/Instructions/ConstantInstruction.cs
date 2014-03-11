@@ -35,16 +35,13 @@ using Microsoft.Scripting.Runtime;
 using Microsoft.Scripting.Utils;
 
 namespace Microsoft.Scripting.Interpreter {
-    abstract class ConstantInstruction : Instruction {
+    sealed class PushValueInstruction : Instruction {
+        object value;
 
         public override int ConsumedStack { get { return 0; } }
         public override int ProducedStack { get { return 1; } }
-    }
 
-    sealed class PushIntegerValueInstruction : ConstantInstruction {
-        int value;
-
-        public PushIntegerValueInstruction (int value)
+        public PushValueInstruction (object value)
         {
             this.value = value;
         }

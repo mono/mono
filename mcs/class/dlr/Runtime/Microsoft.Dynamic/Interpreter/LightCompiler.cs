@@ -1478,6 +1478,10 @@ namespace Microsoft.Scripting.Interpreter {
             _instructions.EmitCreateDelegate(creator);
         }
 
+		private void CompileQuotedLambdaExpression(Expression expr) {
+			_instructions.EmitStore (expr);
+		}
+
         private void CompileCoalesceBinaryExpression(Expression expr) {
             var node = (BinaryExpression)expr;
 
@@ -1531,9 +1535,9 @@ namespace Microsoft.Scripting.Interpreter {
             throw new System.NotImplementedException();
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "expr")]
-        private void CompileQuoteUnaryExpression(Expression expr) {
-            throw new System.NotImplementedException();
+		private void CompileQuoteUnaryExpression(Expression expr) {
+			var qe = (UnaryExpression)expr;
+			CompileQuotedLambdaExpression (qe.Operand);
         }
 
         private void CompileUnboxUnaryExpression(Expression expr) {

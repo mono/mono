@@ -56,7 +56,6 @@ namespace MonoTests.System.Linq.Expressions
 #endif
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
 		public void CompiledQuote ()
 		{
 			var quote42 = Expression.Lambda<Func<Expression<Func<int>>>> (
