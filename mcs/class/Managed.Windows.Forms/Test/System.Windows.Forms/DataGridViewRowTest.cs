@@ -62,26 +62,63 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		public void MinimumHeight ()
+		public void Height_SetHeightLessThanMinHeightSilentlySetsToMinHeight()
 		{
-			DataGridViewRow row = new DataGridViewRow();
-			Assert.IsTrue (row.MinimumHeight > 0, "#A1");
-			Assert.IsFalse (row.Height > row.MinimumHeight, "#A2");
-			row.MinimumHeight = 40;
-			row.Height = 50;
-			Assert.AreEqual (40, row.MinimumHeight, "#B1");
-			Assert.AreEqual (50, row.Height, "#B2");
-			row.MinimumHeight = 20;
-			Assert.AreEqual (20, row.MinimumHeight, "#C1");
-			Assert.AreEqual (20, row.Height, "#C2");
-			row.MinimumHeight = 40;
-			Assert.AreEqual (40, row.MinimumHeight, "#D1");
-			Assert.AreEqual (40, row.Height, "#D2");
+			using (var row = new DataGridViewRow ()) {
+				// Setup
+				row.MinimumHeight = 5;
+
+				// Execute
+				row.Height = 2;
+
+				// Verify
+				Assert.AreEqual (5, row.Height, "Height didn't get set to MinimumHeight");
+			}
 		}
-		
-		
-		
+
+		[Test]
+		public void MinimumHeight_DefaultValues ()
+		{
+			using (DataGridViewRow row = new DataGridViewRow ()) {
+				Assert.IsTrue (row.MinimumHeight > 0, "#A1");
+				Assert.IsTrue (row.Height >= row.MinimumHeight, "#A2");
+			}
+		}
+
+		[Test]
+		public void MinimumHeight_SetValues ()
+		{
+			using (DataGridViewRow row = new DataGridViewRow ()) {
+				row.MinimumHeight = 40;
+				row.Height = 50;
+				Assert.AreEqual (40, row.MinimumHeight, "#B1");
+				Assert.AreEqual (50, row.Height, "#B2");
+			}
+		}
+
+		[Test]
+		public void MinimumHeight_IncreaseMinHeightChangesHeight ()
+		{
+			using (DataGridViewRow row = new DataGridViewRow ()) {
+				row.MinimumHeight = 20;
+				row.Height = 20;
+				Assert.AreEqual (20, row.MinimumHeight, "#C1");
+				Assert.AreEqual (20, row.Height, "#C2");
+				row.MinimumHeight = 40;
+				Assert.AreEqual (40, row.MinimumHeight, "#D1");
+				Assert.AreEqual (40, row.Height, "#D2");
+			}
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentOutOfRangeException))]
+		public void MinimumHeight_SettingToLessThan2ThrowsException ()
+		{
+			using (DataGridViewRow row = new DataGridViewRow ()) {
+				// We expect the next line to throw an ArgumentOutOfRangeException
+				row.MinimumHeight = 1;
+			}
+		}
 
 		[Test]
 		[NUnit.Framework.Category ("NotWorking")]	// DGVComboBox not implemented
