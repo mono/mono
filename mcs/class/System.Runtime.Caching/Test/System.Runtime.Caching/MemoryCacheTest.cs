@@ -1281,5 +1281,45 @@ namespace MonoTests.System.Runtime.Caching
 				Assert.AreEqual (HEAP_RESIZE_LONG_ENTRIES + HEAP_RESIZE_LONG_ENTRIES, mc.GetCount (), "#CS5");	
 			}
 		}
+
+		[Test]
+		public void TestExpiredGetValues ()
+		{
+			var config = new NameValueCollection ();
+			config["cacheMemoryLimitMegabytes"] = 0.ToString ();
+			config["physicalMemoryLimitPercentage"] = 100.ToString ();
+			config["__MonoEmulateOneCPU"] = true.ToString ();
+
+			// it appears that pollingInterval does nothing, so we set the Mono timer as well
+			config["pollingInterval"] = new TimeSpan (0, 0, 10).ToString ();
+			config["__MonoTimerPeriod"] = 10.ToString ();
+			
+			using (var mc = new MemoryCache ("TestExpiredGetValues",  config)) {
+				Assert.AreEqual (0, mc.GetCount (), "#EGV1");
+
+				var keys = new List<string> ();
+
+				// add some short duration entries
+				for (int i = 0; i < 10; i++) {
+					var key = "short-" + i;
+					var expireAt = DateTimeOffset.Now.AddSeconds (1);
+					mc.Add (key, i.ToString (), expireAt);
+
+					keys.Add (key);
+				}
+
+				Assert.AreEqual (10, mc.GetCount (), "#EGV2");
+
+				global::System.Threading.Thread.Sleep (1000);
+
+				// we have waited but the items won't be expired by the timer since it wont have fired yet
+				Assert.AreEqual (10, mc.GetCount (), "#EGV3");
+
+				// calling GetValues() will expire the items since we are now past their expiresAt
+				mc.GetValues (keys);
+
+				Assert.AreEqual (0, mc.GetCount (), "#EGV4");
+			}
+		}
 	}
 }
