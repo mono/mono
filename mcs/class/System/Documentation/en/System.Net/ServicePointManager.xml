@@ -92,20 +92,39 @@ instance. </para>
         <ReturnType>System.Net.CipherSuitesCallback</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>You can filter and/or re-order the ciphers suites that will be sent to the
-			SSL/TLS server by providing your own callback.</summary>
-	    <value>Your custom delegate or null for the default behaviour.</value>
-        <remarks>This mechanism cannot be used to add new ciphers. Undefined ciphers will be ignored. 
-			This API is only available in Mono and Xamarin products.</remarks>
-		<example>
-			<para>The following example removes weak (export) ciphers from the list that will be offered to the server.</para>
-			<code lang="C#">ServicePointManager.ClientCipherSuitesCallback += (SecurityProtocolType
-p, IEnumerable&lt;string&gt; allCiphers) => {
-            return from cipher in allCiphers where !cipher.Contains ("EXPORT")
-select cipher;
-        };
-			</code>
-		</example>
+        <summary>You can filter and/or re-order the ciphers suites that will be sent to the SSL/TLS server by providing your own callback.</summary>
+	<value>Your custom delegate or null for the default behaviour.</value>
+        <remarks>
+	  <para>
+	    This mechanism cannot be used to add new ciphers. Undefined ciphers will be ignored. 
+	  </para>
+	  <para>
+	    This API is only available in Mono and Xamarin products.
+	  </para>
+	  <para>
+	    You can filter and/or re-order the ciphers suites that the SSL/TLS server
+	    will accept from a client. The first match for a supported client cipher suite
+	    will be used (so the order is important).
+	  </para>
+	  <example>
+	    <para>The following example removes weak (export) ciphers from the list that will be offered to the server.</para>
+	    <code lang="C#">
+ServicePointManager.ClientCipherSuitesCallback += (SecurityProtocolType p, IEnumerable&lt;string&gt; allCiphers) => {
+    return from cipher in allCiphers where !cipher.Contains ("EXPORT")
+    select cipher;
+};
+	  </code>
+	</example>
+	<example>
+	  <para>Example: Use AES128 (preference) or AES256 (allowed) but no other ciphers.</para>
+
+	  <code lang="C#">
+ServicePointManager.ClientCipherSuitesCallback += (SecurityProtocolType p, IEnumerable<string> allCiphers) => {
+    string prefix = p == SecurityProtocolType.Tls ? "TLS_" : "SSL_";
+    return new List<string> { prefix + "RSA_WITH_AES_128_CBC_SHA", prefix + "RSA_WITH_AES_256_CBC_SHA" };
+};
+	</example>
+      </remarks>
       </Docs>
     </Member>
     <Member MemberName="DefaultConnectionLimit">
