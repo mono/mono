@@ -105,6 +105,12 @@ namespace System.Diagnostics
 		public static extern void Log(int level, string category, string message);
 
 #if NET_4_0
+		public static void NotifyOfCrossThreadDependency ()
+		{
+		}
+#endif
+
+#if NET_4_0
 		[ObsoleteAttribute("Call the static methods directly on this type", true)]
 #endif
 		public Debugger()

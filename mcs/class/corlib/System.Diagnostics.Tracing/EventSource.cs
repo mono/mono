@@ -45,6 +45,11 @@ namespace System.Diagnostics.Tracing
 			return false;
 		}
 
+		public bool IsEnabled (EventLevel level, EventKeywords keywords)
+		{
+			return false;
+		}
+
 		public void Dispose ()
 		{
 			Dispose (true);
@@ -54,7 +59,23 @@ namespace System.Diagnostics.Tracing
 		{			
 		}
 
+		protected virtual void OnEventCommand (EventCommandEventArgs command)
+		{
+		}
+
+		protected void WriteEvent (int eventId, string arg1)
+		{
+		}
+
+		protected void WriteEvent (int eventId, string arg1, int arg2)
+		{
+		}
+
 		protected void WriteEvent (int eventId, int arg1, int arg2, int arg3)
+		{
+		}
+
+		protected void WriteEvent (int eventId, string arg1, int arg2, int arg3)
 		{
 		}
 	}

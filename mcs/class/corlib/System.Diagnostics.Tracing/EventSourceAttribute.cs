@@ -1,13 +1,10 @@
 //
-// System.Runtime.InteropServices.ComInterfaceType.cs
+// EventSourceAttribute.cs
 //
-// Author: Duncan Mak (duncan@ximian.com)
+// Authors:
+//	Marek Safar  <marek.safar@gmail.com>
 //
-// (C) Ximian, Inc.
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2014 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -16,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -29,17 +26,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Runtime.InteropServices
-{
-	[Serializable]
-	[ComVisible (true)]
-	public enum ComInterfaceType
-	{
-		InterfaceIsDual = 0,
-		InterfaceIsIUnknown = 1,
-		InterfaceIsIDispatch = 2,
 #if NET_4_5
-		InterfaceIsIInspectable = 3
-#endif
+
+namespace System.Diagnostics.Tracing
+{
+	[AttributeUsageAttribute (AttributeTargets.Class)]
+	public sealed class EventSourceAttribute : Attribute
+	{
+		public string Guid {
+			get; set;
+		}
+
+		public string LocalizationResources {
+			get; set;
+		}
+
+		public string Name {
+			get; set;
+		}
 	}
 }
+
+#endif

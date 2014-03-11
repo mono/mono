@@ -1,5 +1,5 @@
 //
-// EventCommandEventArgs.cs.cs
+// EventCommandEventArgs.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -28,6 +28,8 @@
 
 #if NET_4_5
 
+using System.Collections.Generic;
+
 namespace System.Diagnostics.Tracing
 {
 	public class EventCommandEventArgs : EventArgs
@@ -35,6 +37,29 @@ namespace System.Diagnostics.Tracing
 		private EventCommandEventArgs ()
 		{			
 		}
+
+		public IDictionary<string, string> Arguments {
+			get {
+				throw new NotImplementedException ();
+			}			
+		}
+
+		public EventCommand Command {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public bool DisableEvent (int eventId)
+		{
+			return true;
+		}
+
+		public bool EnableEvent (int eventId)
+		{
+			return true;
+		}
+
 	}
 }
 
