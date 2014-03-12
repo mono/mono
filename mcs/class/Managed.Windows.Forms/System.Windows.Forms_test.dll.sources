@@ -63,6 +63,7 @@ System.Windows.Forms/DataGridViewLinkCellTest.cs
 System.Windows.Forms/DataGridViewImageCellTest.cs
 System.Windows.Forms/DataGridViewRowCollectionTest.cs
 System.Windows.Forms/DataGridViewRowHeaderTest.cs
+System.Windows.Forms/DataGridViewRowHeightInfoNeededEventArgsTests.cs
 System.Windows.Forms/DataGridViewRowTest.cs
 System.Windows.Forms/DataGridViewTest.cs
 System.Windows.Forms/DataGridViewTextBoxCellTest.cs
