@@ -335,6 +335,15 @@ namespace System.Net {
 			if (port != null && port.Length != 0)
 				result.Append (";Port=").Append (port);	
 						
+			if (expires != DateTime.MinValue)
+			        result.Append (";Expires=").Append (ToCookieDateFormat(expires));
+			        
+			if (!string.IsNullOrEmpty (comment) )
+				result.Append (";Comment=").Append (comment);
+				
+			if (secure)
+				result.Append (";Secure");
+						
 			return result.ToString ();
 		}
 
@@ -346,6 +355,11 @@ namespace System.Net {
 			else 
 				return "\"" + value.Replace("\"", "\\\"") + "\"";
 	    	}			    	    
+
+		string ToCookieDateFormat(DateTime date)
+		{
+			return string.Format( "{0:ddd}, {0:dd}-{0:MMM}-{0:yy} {0:HH}:{0:mm}:{0:ss}", date );
+		}
 
 	    	bool IsToken (string value) 
 	    	{
