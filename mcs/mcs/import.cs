@@ -190,6 +190,12 @@ namespace Mono.CSharp
 
 			try {
 				field_type = ImportType (fi.FieldType, new DynamicTypeReader (fi));
+
+				//
+				// Private field has private type which is not fixed buffer
+				//
+				if (field_type == null)
+					return null;
 			} catch (Exception e) {
 				// TODO: I should construct fake TypeSpec based on TypeRef signature
 				// but there is no way to do it with System.Reflection
