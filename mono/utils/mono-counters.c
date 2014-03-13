@@ -7,8 +7,6 @@
 #include <glib.h>
 #include "mono-counters-internals.h"
 
-typedef struct _MonoCounter MonoCounter;
-
 struct _MonoCounter {
 	MonoCounter *next;
 	const char *name;
@@ -17,6 +15,7 @@ struct _MonoCounter {
 	MonoCounterCategory category;
 	MonoCounterUnit unit;
 	MonoCounterVariance variance;
+	gboolean is_callback;
 };
 
 static MonoCounter *counters = NULL;
@@ -34,15 +33,13 @@ mono_counters_enable (int section_mask)
 	valid_mask = section_mask & MONO_COUNTER_SECTION_MASK;
 }
 
-void
+MonoCounter*
 mono_counters_register_full (MonoCounterCategory category, const char *name, MonoCounterType type, MonoCounterUnit unit, MonoCounterVariance variance, void *addr)
 {
 	MonoCounter *counter;
-	if (!(type & valid_mask))
-		return;
 	counter = malloc (sizeof (MonoCounter));
 	if (!counter)
-		return;
+		return NULL;
 	counter->name = name;
 	counter->addr = addr;
 	counter->type = type;
@@ -60,7 +57,7 @@ mono_counters_register_full (MonoCounterCategory category, const char *name, Mon
 	} else {
 		counters = counter;
 	}
-
+	return counter;
 }
 
 static void*
@@ -79,10 +76,14 @@ mono_counters_new (MonoCounterCategory category, const char *name, MonoCounterTy
 	g_assert (type >= MONO_COUNTER_TYPE_INT && type <= MONO_COUNTER_TYPE_WORD);
 
 	addr = mono_counters_alloc_space (sizes [type]);
-	mono_counters_register_full (category, name, type, unit, variance, addr);
+	if (!addr)
+		return NULL;
+	if (!mono_counters_register_full (category, name, type, unit, variance, addr))
+		return NULL; //FIXME release the counter memory?
 
 	return addr;
 }
+
 
 static int
 section_to_category (int type)
@@ -102,6 +103,7 @@ section_to_category (int type)
 		g_error ("Invalid section %x", type & MONO_COUNTER_SECTION_MASK);
 	}
 }
+
 /**
  * mono_counters_register:
  * @name: The name for this counters.
@@ -115,13 +117,13 @@ section_to_category (int type)
  * It may be a function pointer if MONO_COUNTER_CALLBACK is specified:
  * the function should return the value and take no arguments.
  */
-void 
+void
 mono_counters_register (const char* name, int type, void *addr)
 {
 	MonoCounterCategory cat = section_to_category (type);
 	MonoCounterType counter_type;
 	MonoCounterUnit unit = MONO_COUNTER_UNIT_NONE;
-
+	MonoCounter *counter;
 
 	switch (type & MONO_COUNTER_TYPE_MASK) {
 	case MONO_COUNTER_INT:
@@ -146,7 +148,9 @@ mono_counters_register (const char* name, int type, void *addr)
 		g_error ("Invalid type %x", type & MONO_COUNTER_TYPE_MASK);
 	}
 
-	mono_counters_register_full (cat, name, counter_type, unit, MONO_COUNTER_UNIT_VARIABLE, addr);
+	counter = mono_counters_register_full (cat, name, counter_type, unit, MONO_COUNTER_UNIT_VARIABLE, addr);
+	if (counter && type & MONO_COUNTER_CALLBACK)
+		counter->is_callback = TRUE;
 }
 
 
@@ -165,15 +169,25 @@ dump_counter (MonoCounter *counter, FILE *outfile) {
 #if SIZEOF_VOID_P == 4
 	case MONO_COUNTER_TYPE_WORD:
 #endif
-	case MONO_COUNTER_TYPE_INT:
-		fprintf (outfile, ENTRY_FMT "%d\n", counter->name, *(int*)counter->addr);
+	case MONO_COUNTER_TYPE_INT: {
+		int value;
+		if (counter->is_callback)
+			value = ((IntFunc)counter->addr) ();
+		else
+			value = *(int*)counter->addr;
+		fprintf (outfile, ENTRY_FMT "%d\n", counter->name, value);
 		break;
+	}
 
 #if SIZEOF_VOID_P == 8
 	case MONO_COUNTER_TYPE_WORD:
-#endif	
+#endif
 	case MONO_COUNTER_TYPE_LONG:{
-		gint64 value = *(gint64*)counter->addr;
+		gint64 value;
+		if (counter->is_callback)
+			value = ((LongFunc)counter->addr) ();
+		else
+			value = *(gint64*)counter->addr;
 		if (counter->unit == MONO_COUNTER_UNIT_TIME)
 			fprintf (outfile, ENTRY_FMT "%.2f ms\n", counter->name, (double)value / 1000.0);
 		else

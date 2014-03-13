@@ -38,20 +38,21 @@ typedef enum {
 	MONO_COUNTER_UNIT_VARIABLE, /* This counter value can be anything on each sampling */
 } MonoCounterVariance;
 
-
+typedef struct _MonoCounter MonoCounter;
 /*
 TODO:
 	Helpers based on size.
 	Helpers for constants.
 	String type.
-	Sampler function (we'll do managed perf counters with it)
+	Sampler function that take user data (could we use them for user perf counters?)
 	Dynamic category registration.
 	Error handling/assertion
+	MonoCounter size diet once we're done with the above.
 */
 void*
 mono_counters_new (MonoCounterCategory category, const char *name, MonoCounterType type, MonoCounterUnit unit, MonoCounterVariance variance) MONO_INTERNAL;
 
-void
+MonoCounter*
 mono_counters_register_full (MonoCounterCategory category, const char *name, MonoCounterType type, MonoCounterUnit unit, MonoCounterVariance variance, void *addr) MONO_INTERNAL;
 
 #endif
