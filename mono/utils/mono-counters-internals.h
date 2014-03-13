@@ -43,11 +43,12 @@ typedef enum {
 
 typedef struct _MonoCounter MonoCounter;
 /*
+Limitations:
+	The old-style string counter type won't work as they cannot be safely sampled during execution.
+
 TODO:
-	Helpers based on size.
-	Helpers for constants.
-	The old-style counter string type won't work as they cannot be safely sampled during execution.
-	Sampler function that take user data (could we use them for user perf counters?)
+	Size-bounded String counter.
+	Sampler function that take user data arguments (could we use them for user perf counters?)
 	Dynamic category registration.
 	MonoCounter size diet once we're done with the above.
 */
@@ -56,5 +57,16 @@ mono_counters_new (MonoCounterCategory category, const char *name, MonoCounterTy
 
 MonoCounter*
 mono_counters_register_full (MonoCounterCategory category, const char *name, MonoCounterType type, MonoCounterUnit unit, MonoCounterVariance variance, void *addr) MONO_INTERNAL;
+
+#define mono_counters_new_int(cat,name,unit,variance) mono_counters_new(cat,name,MONO_COUNTER_TYPE_INT,unit,variance)
+#define mono_counters_new_word(cat,name,unit,variance) mono_counters_new(cat,name,MONO_COUNTER_TYPE_WORD,unit,variance)
+#define mono_counters_new_long(cat,name,unit,variance) mono_counters_new(cat,name,MONO_COUNTER_TYPE_LONG,unit,variance)
+#define mono_counters_new_double(cat,name,unit,variance) mono_counters_new(cat,name,MONO_COUNTER_TYPE_double,unit,variance)
+
+#define mono_counters_new_int_const(cat,name,unit,value) do { int *__ptr = mono_counters_new(cat,name,MONO_COUNTER_TYPE_INT,unit,variance); *__ptr = value; } while (0)
+#define mono_counters_new_word_const(cat,name,unit,value) do { ssize_t *__ptr = mono_counters_new(cat,name,MONO_COUNTER_TYPE_INT,unit,variance); *__ptr = value; } while (0)
+#define mono_counters_new_long_const(cat,name,unit,value) do { gint64 *__ptr = mono_counters_new(cat,name,MONO_COUNTER_TYPE_INT,unit,variance); *__ptr = value; } while (0)
+#define mono_counters_new_double_const(cat,name,unit,value) do { double *__ptr = mono_counters_new(cat,name,MONO_COUNTER_TYPE_INT,unit,variance); *__ptr = value; } while (0)
+
 
 #endif
