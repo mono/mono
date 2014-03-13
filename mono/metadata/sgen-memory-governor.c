@@ -45,9 +45,15 @@ static mword soft_heap_limit = ((mword)0) - ((mword)1);
 static double default_allowance_nursery_size_ratio = SGEN_DEFAULT_ALLOWANCE_NURSERY_SIZE_RATIO;
 static double save_target_ratio = SGEN_DEFAULT_SAVE_TARGET_RATIO;
 
-/**/
-static mword allocated_heap;
-static mword total_alloc = 0;
+/* Heap memory is in use*/
+static mword active_heap_memory;
+
+/* Heap memory is currently allocated */
+static mword allocated_heap_memory;
+
+/* An estimate of the total consumption by the GC */
+static mword total_gc_memory;
+
 
 /* GC triggers. */
 
@@ -308,9 +314,11 @@ sgen_alloc_os_memory (size_t size, SgenAllocFlags flags, const char *assert_desc
 	ptr = mono_valloc (0, size, prot_flags_for_activate (flags & SGEN_ALLOC_ACTIVATE));
 	sgen_assert_memory_alloc (ptr, size, assert_description);
 	if (ptr) {
-		SGEN_ATOMIC_ADD_P (total_alloc, size);
-		if (flags & SGEN_ALLOC_HEAP)
+		SGEN_ATOMIC_ADD_P (total_gc_memory, size);
+		if (flags & SGEN_ALLOC_HEAP) {
+			SGEN_ATOMIC_ADD_P (allocated_heap_memory, size);
 			MONO_GC_HEAP_ALLOC ((mword)ptr, size);
+		}
 	}
 	return ptr;
 }
@@ -326,9 +334,11 @@ sgen_alloc_os_memory_aligned (size_t size, mword alignment, SgenAllocFlags flags
 	ptr = mono_valloc_aligned (size, alignment, prot_flags_for_activate (flags & SGEN_ALLOC_ACTIVATE));
 	sgen_assert_memory_alloc (ptr, size, assert_description);
 	if (ptr) {
-		SGEN_ATOMIC_ADD_P (total_alloc, size);
-		if (flags & SGEN_ALLOC_HEAP)
+		SGEN_ATOMIC_ADD_P (total_gc_memory, size);
+		if (flags & SGEN_ALLOC_HEAP) {
+			SGEN_ATOMIC_ADD_P (allocated_heap_memory, size);
 			MONO_GC_HEAP_ALLOC ((mword)ptr, size);
+		}
 	}
 	return ptr;
 }
@@ -342,15 +352,17 @@ sgen_free_os_memory (void *addr, size_t size, SgenAllocFlags flags)
 	g_assert (!(flags & ~SGEN_ALLOC_HEAP));
 
 	mono_vfree (addr, size);
-	SGEN_ATOMIC_ADD_P (total_alloc, -size);
-	if (flags & SGEN_ALLOC_HEAP)
+	SGEN_ATOMIC_ADD_P (total_gc_memory, -size);
+	if (flags & SGEN_ALLOC_HEAP) {
+		SGEN_ATOMIC_ADD_P (allocated_heap_memory, -size);
 		MONO_GC_HEAP_FREE ((mword)addr, size);
+	}
 }
 
 int64_t
 mono_gc_get_heap_size (void)
 {
-	return total_alloc;
+	return total_gc_memory;
 }
 
 
@@ -363,23 +375,27 @@ for other parts of the GC.
 static mword
 sgen_memgov_available_free_space (void)
 {
-	return max_heap_size - MIN (allocated_heap, max_heap_size);
+	return max_heap_size - MIN (active_heap_memory, max_heap_size);
 }
+
 
 void
 sgen_memgov_release_space (mword size, int space)
 {
-	SGEN_ATOMIC_ADD_P (allocated_heap, -size);
+	SGEN_ATOMIC_ADD_P (active_heap_memory, -size);
 }
 
+/*
+Try to add active memory to the pool
+*/
 gboolean
 sgen_memgov_try_alloc_space (mword size, int space)
 {
 	if (sgen_memgov_available_free_space () < size)
 		return FALSE;
 
-	SGEN_ATOMIC_ADD_P (allocated_heap, size);
-	mono_runtime_resource_check_limit (MONO_RESOURCE_GC_HEAP, allocated_heap);
+	SGEN_ATOMIC_ADD_P (active_heap_memory, size);
+	mono_runtime_resource_check_limit (MONO_RESOURCE_GC_HEAP, active_heap_memory);
 	return TRUE;
 }
 
