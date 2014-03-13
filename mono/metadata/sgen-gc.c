@@ -355,6 +355,7 @@ int gc_debug_level = 0;
 FILE* gc_debug_file;
 
 /* New style counters */
+
 static int *major_gc_count;
 static int *minor_gc_count;
 
@@ -2215,10 +2216,6 @@ init_stats (void)
 
 	if (inited)
 		return;
-
-	minor_gc_count = mono_counters_new_int (MONO_COUNTER_CAT_GC, "Minor GC collections", MONO_COUNTER_UNIT_EVENTS, MONO_COUNTER_UNIT_MONOTONIC);
-	major_gc_count = mono_counters_new_int (MONO_COUNTER_CAT_GC, "Major GC collections", MONO_COUNTER_UNIT_EVENTS, MONO_COUNTER_UNIT_MONOTONIC);
-
 	mono_counters_register ("Minor fragment clear", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_minor_pre_collection_fragment_clear);
 	mono_counters_register ("Minor pinning", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_minor_pinning);
 	mono_counters_register ("Minor scan remembered set", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_minor_scan_remsets);
@@ -2276,6 +2273,10 @@ init_stats (void)
 	sgen_nursery_allocator_init_heavy_stats ();
 	sgen_alloc_init_heavy_stats ();
 #endif
+
+	/* New style counters */
+	minor_gc_count = mono_counters_new_int (MONO_COUNTER_CAT_GC, "Minor GC collections", MONO_COUNTER_UNIT_EVENTS, MONO_COUNTER_UNIT_MONOTONIC);
+	major_gc_count = mono_counters_new_int (MONO_COUNTER_CAT_GC, "Major GC collections", MONO_COUNTER_UNIT_EVENTS, MONO_COUNTER_UNIT_MONOTONIC);
 
 	inited = TRUE;
 }
@@ -5187,6 +5188,8 @@ mono_gc_base_init (void)
 	if (minor_collector_opt)
 		g_free (minor_collector_opt);
 
+	sgen_memgov_init (max_heap, soft_limit, allowance_ratio, save_target);
+
 	alloc_nursery ();
 
 	sgen_cement_init (cement_enabled);
@@ -5338,7 +5341,7 @@ mono_gc_base_init (void)
 	if (major_collector.post_param_init)
 		major_collector.post_param_init (&major_collector);
 
-	sgen_memgov_init (max_heap, soft_limit, debug_print_allowance, allowance_ratio, save_target);
+	sgen_memgov_init_debug (debug_print_allowance);
 
 	memset (&remset, 0, sizeof (remset));
 
